@@ -19,11 +19,13 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!--<Content Include="..\Data\goat.png">
+  <ItemGroup><!--<Content Include="..\Data\goat.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>false</Visible>
     </Content>-->
+  
+    <Folder Include="Interface\" />
+    <Folder Include="Structs\" />
   </ItemGroup>
 
   <PropertyGroup>
