@@ -1,4 +1,5 @@
 # Ktisis
+[![discord](https://img.shields.io/discord/975894364020686878)](https://discord.gg/kUG3W8B8Ny)
 
 This is my attempt at creating an internal posing tool that allows for actor and bone manipulation.
 
