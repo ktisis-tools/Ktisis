@@ -1,8 +1,6 @@
 # Ktisis
 
-This is my attempt at creating an internal posing tool that allows for actor and bone manipulation from within the game.
-
-The goal is to gradually increase the scope of features with each release, starting with the simplest.
+This is my attempt at creating an internal posing tool that allows for actor and bone manipulation.
 
 #### List of target features, ascending:
 - [x] Skeleton overlay
