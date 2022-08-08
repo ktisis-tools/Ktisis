@@ -58,7 +58,7 @@ namespace Ktisis {
 			ImGui.Begin("Ktisis Overlay", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs);
 			ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
 
-			SkeletonOverlay.Subject = actor;
+			//SkeletonOverlay.Subject = actor;
 			SkeletonOverlay.Draw();
 
 			var draw = ImGui.GetWindowDrawList();
