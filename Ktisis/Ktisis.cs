@@ -3,6 +3,8 @@ using System.IO;
 using System.Reflection;
 using System.Numerics;
 
+using ImGuiNET;
+
 using Dalamud;
 using Dalamud.IoC;
 using Dalamud.Plugin;
@@ -11,10 +13,6 @@ using Dalamud.Interface;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState;
-
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
-
-using ImGuiNET;
 
 using Ktisis.Overlay;
 

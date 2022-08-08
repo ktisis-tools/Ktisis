@@ -25,7 +25,6 @@
     </Content>-->
   
     <Folder Include="Interface\" />
-    <Folder Include="Structs\" />
   </ItemGroup>
 
   <PropertyGroup>
