@@ -1,14 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Numerics;
+﻿using System.Numerics;
 
 using ImGuiNET;
 
-using Dalamud;
-using Dalamud.IoC;
 using Dalamud.Plugin;
-using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Command;
@@ -58,10 +52,10 @@ namespace Ktisis {
 			ImGui.Begin("Ktisis Overlay", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs);
 			ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
 
-			//SkeletonOverlay.Subject = actor;
-			SkeletonOverlay.Draw();
-
 			var draw = ImGui.GetWindowDrawList();
+
+			SkeletonOverlay.Subject = actor;
+			SkeletonOverlay.Draw(draw);
 
 			ImGui.End();
 			ImGui.PopStyleVar();

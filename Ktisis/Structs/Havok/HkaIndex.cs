@@ -8,7 +8,6 @@ namespace Ktisis.Structs.Havok {
 		[FieldOffset(0x12C)] public short BoneNodeIndex;
 		[FieldOffset(0x12E)] public short BoneParentIndex;
 
-		[FieldOffset(0x140), MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-		public void* Poses;
+		[FieldOffset(0x140)] public HkaPose* Pose; // 4
 	}
 }
