@@ -6,12 +6,18 @@ using Ktisis.Structs.Ktisis;
 
 namespace Ktisis.Structs {
 	public unsafe class BoneList : IEnumerable {
+		public int Id = -1;
+
 		public HkaSkeleton Skeleton;
 		public ShitVecReversed<Transform> Transforms;
 
 		public BoneList(HkaPose* pose) {
 			Skeleton = *pose->Skeleton;
 			Transforms = pose->Transforms;
+		}
+
+		public BoneList(int id, HkaPose* pose) : this(pose) {
+			Id = id;
 		}
 
 		public Bone GetParentOf(Bone bone) {

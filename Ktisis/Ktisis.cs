@@ -5,6 +5,7 @@ using ImGuiNET;
 
 using Dalamud.Plugin;
 using Dalamud.Interface;
+using Dalamud.Game;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState;
@@ -18,26 +19,31 @@ namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
 		public string Name => "Ktisis";
 
-		private DalamudPluginInterface PluginInterface { get; init; }
-		private CommandManager CommandManager { get; init; }
-		private ClientState ClientState { get; init; }
-		private ObjectTable ObjectTable { get; init; }
+		internal DalamudPluginInterface PluginInterface { get; init; }
+		internal CommandManager CommandManager { get; init; }
+		internal ClientState ClientState { get; init; }
+		internal ObjectTable ObjectTable { get; init; }
+		internal SigScanner SigScanner { get; init; }
+		internal GameGui GameGui { get; init; }
 
-		private Skeleton SkeletonOverlay { get; init; }
+		private SkeletonEditor SkeletonEditor { get; init; }
 
 		public Ktisis(
 			DalamudPluginInterface pluginInterface,
 			CommandManager cmdManager,
 			ClientState clientState,
 			ObjectTable objTable,
+			SigScanner sigScanner,
 			GameGui gameGui
 		) {
 			PluginInterface = pluginInterface;
 			CommandManager = cmdManager;
 			ClientState = clientState;
 			ObjectTable = objTable;
+			SigScanner = sigScanner;
+			GameGui = gameGui;
 
-			SkeletonOverlay = new Skeleton(gameGui, null);
+			SkeletonEditor = new SkeletonEditor(this, null);
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += Draw;
@@ -58,11 +64,12 @@ namespace Ktisis {
 
 			var draw = ImGui.GetWindowDrawList();
 
-			var tarSys = TargetSystem.Instance();
+			/*var tarSys = TargetSystem.Instance();
 			if (tarSys != null) {
-				SkeletonOverlay.Subject = ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
-				SkeletonOverlay.Draw(draw);
-			}
+				SkeletonEditor.Subject = ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
+				SkeletonEditor.Draw(draw);
+			}*/
+			SkeletonEditor.Draw(draw);
 
 			ImGui.End();
 			ImGui.PopStyleVar();

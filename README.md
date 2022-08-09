@@ -13,6 +13,7 @@ This is my attempt at creating an internal posing tool that allows for actor and
 - Timeline editor for rudimentary animation
 - Creation of additional actors and editing
 - Placement and rendering of 3D props in-game
+- Export characters as fully rigged Blender models
 
 ## Disclaimers
 

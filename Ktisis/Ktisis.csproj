@@ -61,6 +61,14 @@
       <HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
       <Private>false</Private>
     </Reference>
+	<Reference Include="SharpDX">
+      <HintPath>$(DalamudLibPath)SharpDX.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+	<Reference Include="SharpDX.Mathematics">
+      <HintPath>$(DalamudLibPath)SharpDX.Mathematics.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
 </Project>
