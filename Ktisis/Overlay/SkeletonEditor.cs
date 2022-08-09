@@ -147,7 +147,7 @@ namespace Ktisis.Overlay {
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
 						ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
-						ImGuizmo.Manipulate(ref cameraView[0], ref matrix->ProjectionM1, OPERATION.TRANSLATE, MODE.WORLD, ref bone.Matrix.M11);
+						ImGuizmo.Manipulate(ref cameraView[0], ref matrix->Projection.M11, OPERATION.TRANSLATE, MODE.WORLD, ref bone.Matrix.M11);
 
 						var t = bone.Transform;
 						ImGuizmo.DecomposeMatrixToComponents(ref bone.Matrix.M11, ref t.Translate.X, ref t.Rotate.X, ref t.Scale.X);

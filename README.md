@@ -30,4 +30,6 @@ My focus is not on recreating the functionality of either, so it will likely bes
 - Thanks to the developers from [Goat Corp](https://github.com/goatcorp) and [XIV Tools](https://github.com/XIV-Tools), whose existing work in this area provided excellent insight into internal memory and data structures.
 - [@Fayti1703](https://github.com/Fayti1703) and [@hackmud-dtr](https://github.com/hackmud-dtr) for their helpful insights into reverse engineering and low-level code, and overall helpfulness in answering questions.
 - [@BobTheBob9](https://github.com/BobTheBob9) for their helpful insights into reverse engineering and IDA.
-- The other developers from [Bnuuy Central](https://github.com/Bnuuy-Central) who were excellent moral and practical support.
+- The other developers from [Bnuuy Central](https://github.com/Bnuuy-Central) who were excellent practical and moral support.
+
+This plugin is based off my original work from [xiv-reversal-rs](https://github.com/ktisis-tools/xiv-reversal-rs).
