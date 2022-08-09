@@ -102,7 +102,10 @@ namespace Ktisis.Overlay {
 				foreach (Bone bone in bones) {
 					var pair = (bones.Id, bone.Index);
 
-					var worldPos = Subject.Position + bone.Rotate(model->Rotation) * model->Height;
+					var boneTranslate = bone.Rotate(model->Rotation) * model->Height;
+					//var boneTransMtx;
+
+					var worldPos = Subject.Position + boneTranslate;
 					Gui.WorldToScreen(worldPos, out var pos);
 
 					var radius = Math.Max(3.0f, 10.0f - cam->Distance);
@@ -137,12 +140,6 @@ namespace Ktisis.Overlay {
 						var matrix = (WorldMatrix*)GetMatrix();
 						if (matrix == null)
 							return;
-
-						var pTransform = default(SharpDX.Matrix);
-						var pee = model->Position;
-						var ree = model->Rotation;
-						var eee = new Vector3(1.0f, 1.0f, 1.0f);
-						ImGuizmo.RecomposeMatrixFromComponents(ref pee.X, ref ree.X, ref ree.X, ref pTransform.M11);
 
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
