@@ -20,7 +20,6 @@ namespace Ktisis {
 
 		private DalamudPluginInterface PluginInterface { get; init; }
 		private CommandManager CommandManager { get; init; }
-		private TargetManager TargetManager { get; init; }
 		private ClientState ClientState { get; init; }
 		private ObjectTable ObjectTable { get; init; }
 
@@ -29,14 +28,12 @@ namespace Ktisis {
 		public Ktisis(
 			DalamudPluginInterface pluginInterface,
 			CommandManager cmdManager,
-			TargetManager tarManager,
 			ClientState clientState,
 			ObjectTable objTable,
 			GameGui gameGui
 		) {
 			PluginInterface = pluginInterface;
 			CommandManager = cmdManager;
-			TargetManager = tarManager;
 			ClientState = clientState;
 			ObjectTable = objTable;
 
@@ -61,7 +58,7 @@ namespace Ktisis {
 
 			var draw = ImGui.GetWindowDrawList();
 
-			var tarSys = (TargetSystem*)TargetManager.Address;
+			var tarSys = TargetSystem.Instance();
 			if (tarSys != null) {
 				SkeletonOverlay.Subject = ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
 				SkeletonOverlay.Draw(draw);
