@@ -1,7 +1,13 @@
-﻿using ImGuiNET;
+﻿using System;
 
+using ImGuiNET;
+
+using Dalamud.Logging;
 using Dalamud.Game.Gui;
 using Dalamud.Game.ClientState.Objects.Types;
+
+using FFXIVClientStructs.FFXIV.Client.Game;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
@@ -11,6 +17,7 @@ using Ktisis.Structs.Ktisis;
 namespace Ktisis.Overlay {
 	public sealed class Skeleton {
 		public GameGui Gui;
+
 		public GameObject? Subject;
 
 		public Skeleton(GameGui gui, GameObject? subject) {
@@ -30,6 +37,9 @@ namespace Ktisis.Overlay {
 			if (model == null)
 				return;
 
+			var cam = CameraManager.Instance()->Camera;
+			//PluginLog.Information(string.Format("{0}", cam->Distance));
+
 			foreach (HkaIndex index in *model->HkaIndex) {
 				var pose = index.Pose;
 				if (index.Pose == null)
@@ -40,7 +50,7 @@ namespace Ktisis.Overlay {
 					var worldPos = Subject.Position + bone.Rotate(model->Rotation) * model->Height;
 
 					Gui.WorldToScreen(worldPos, out var pos);
-					draw.AddCircleFilled(pos, 5.0f, 0xc0ffffff, 100);
+					draw.AddCircleFilled(pos, Math.Max(3.0f, 10.0f - cam->Distance), 0x80ffffff, 100);
 
 					if (bone.ParentId > 0) {
 						var parent = bones.GetParentOf(bone);
