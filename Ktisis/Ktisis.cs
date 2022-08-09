@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 using ImGuiNET;
 
@@ -7,6 +8,9 @@ using Dalamud.Interface;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState;
+using Dalamud.Game.ClientState.Objects;
+
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using Ktisis.Overlay;
 
@@ -16,22 +20,29 @@ namespace Ktisis {
 
 		private DalamudPluginInterface PluginInterface { get; init; }
 		private CommandManager CommandManager { get; init; }
+		private TargetManager TargetManager { get; init; }
 		private ClientState ClientState { get; init; }
+		private ObjectTable ObjectTable { get; init; }
 
 		private Skeleton SkeletonOverlay { get; init; }
 
 		public Ktisis(
 			DalamudPluginInterface pluginInterface,
 			CommandManager cmdManager,
+			TargetManager tarManager,
 			ClientState clientState,
+			ObjectTable objTable,
 			GameGui gameGui
 		) {
 			PluginInterface = pluginInterface;
 			CommandManager = cmdManager;
+			TargetManager = tarManager;
 			ClientState = clientState;
+			ObjectTable = objTable;
 
 			SkeletonOverlay = new Skeleton(gameGui, null);
 
+			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += Draw;
 		}
 
@@ -40,10 +51,6 @@ namespace Ktisis {
 		}
 
 		public unsafe void Draw() {
-			var actor = ClientState.LocalPlayer;
-			if (actor == null)
-				return;
-
 			ImGuiHelpers.ForceNextWindowMainViewport();
 			ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
 
@@ -54,8 +61,11 @@ namespace Ktisis {
 
 			var draw = ImGui.GetWindowDrawList();
 
-			SkeletonOverlay.Subject = actor;
-			SkeletonOverlay.Draw(draw);
+			var tarSys = (TargetSystem*)TargetManager.Address;
+			if (tarSys != null) {
+				SkeletonOverlay.Subject = ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
+				SkeletonOverlay.Draw(draw);
+			}
 
 			ImGui.End();
 			ImGui.PopStyleVar();

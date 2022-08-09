@@ -11,7 +11,6 @@ using Ktisis.Structs.Ktisis;
 namespace Ktisis.Overlay {
 	public sealed class Skeleton {
 		public GameGui Gui;
-
 		public GameObject? Subject;
 
 		public Skeleton(GameGui gui, GameObject? subject) {
