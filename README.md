@@ -8,6 +8,7 @@ This is my attempt at creating an internal posing tool that allows for actor and
 - [ ] Bone manipulation via overlay
 - [ ] Actor list with dropdowns for bone selection
 - [ ] Free camera movement within GPose
+	- [ ] Disable unwanted camera movements (i.e. on selection)
 
 #### Features to explore, not currently in scope:
 - Timeline editor for rudimentary animation

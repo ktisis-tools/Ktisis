@@ -103,37 +103,19 @@ namespace Ktisis.Overlay {
 					var pair = (bones.Id, bone.Index);
 
 					var boneTranslate = bone.Rotate(model->Rotation) * model->Height;
-					//var boneTransMtx;
 
 					var worldPos = Subject.Position + boneTranslate;
 					Gui.WorldToScreen(worldPos, out var pos);
 
-					var radius = Math.Max(3.0f, 10.0f - cam->Distance);
-					var area = new Vector2(radius, radius);
-
-					var rectMin = pos - area;
-					var rectMax = pos + area;
-
-					var selected = pair == BoneSelection;
-					var hovered = ImGui.IsMouseHoveringRect(rectMin, rectMax);
-
-					if (hovered && !selected) {
-						hasBoneHovered = true;
-						if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
-							BoneSelection = (bones.Id, bone.Index);
-					}
-
-					draw.AddCircleFilled(pos, Math.Max(3.0f, 10.0f - cam->Distance), hovered ? 0xffffffff : 0xb0ffffff, 100);
-
-					if (bone.ParentId > 0) {
+					if (bone.ParentId > 0) { // Lines
 						var parent = bones.GetParentOf(bone);
 						var parentPos = Subject.Position + parent.Rotate(model->Rotation) * model->Height;
 
 						Gui.WorldToScreen(parentPos, out var pPos);
 						draw.AddLine(pos, pPos, 0xffffffff);
 					}
-					
-					if (selected) {
+
+					if (pair == BoneSelection) { // Gizmo
 						var io = ImGui.GetIO();
 						var wp = ImGui.GetWindowPos();
 
@@ -150,6 +132,21 @@ namespace Ktisis.Overlay {
 						ImGuizmo.DecomposeMatrixToComponents(ref bone.Matrix.M11, ref t.Translate.X, ref t.Rotate.X, ref t.Scale.X);
 						bone.Transform = t;
 						bones.Transforms[bone.Index] = bone.Transform;
+					} else { // Dot
+						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
+
+						var area = new Vector2(radius, radius);
+						var rectMin = pos - area;
+						var rectMax = pos + area;
+
+						var hovered = ImGui.IsMouseHoveringRect(rectMin, rectMax);
+						if (hovered) {
+							hasBoneHovered = true;
+							if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
+								BoneSelection = (bones.Id, bone.Index);
+						}
+
+						draw.AddCircleFilled(pos, Math.Max(3.0f, 10.0f - cam->Distance), hovered ? 0xffffffff : 0xb0ffffff, 100);
 					}
 				}
 			}
