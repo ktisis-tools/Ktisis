@@ -5,12 +5,13 @@ This is my attempt at creating an internal posing tool that allows for actor and
 
 #### List of target features, ascending:
 - [x] Skeleton overlay
-- [ ] Bone manipulation via overlay
+- [x] Bone manipulation via overlay
 - [ ] Actor list with dropdowns for bone selection
 - [ ] Free camera movement within GPose
 	- [ ] Disable unwanted camera movements (i.e. on selection)
 
 #### Features to explore, not currently in scope:
+- Inverse kinematics
 - Timeline editor for rudimentary animation
 - Creation of additional actors and editing
 - Placement and rendering of 3D props in-game

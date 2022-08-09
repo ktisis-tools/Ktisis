@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using ImGuiNET;
 using ImGuizmoNET;
 
+using Dalamud.Logging;
 using Dalamud.Game.Gui;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -26,6 +27,9 @@ namespace Ktisis.Overlay {
 		public List<BoneList>? Skeleton;
 
 		public (int, int) BoneSelection;
+		public SharpDX.Matrix BoneMatrix;
+		public Vector4 BoneTransform;
+		public Vector3 BonePosition;
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate IntPtr GetMatrixDelegate();
@@ -126,11 +130,15 @@ namespace Ktisis.Overlay {
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
 						ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
-						ImGuizmo.Manipulate(ref cameraView[0], ref matrix->Projection.M11, OPERATION.TRANSLATE, MODE.WORLD, ref bone.Matrix.M11);
+						ImGuizmo.Manipulate(ref cameraView[0], ref matrix->Projection.M11, OPERATION.TRANSLATE, MODE.WORLD, ref BoneMatrix.M11);
 
 						var t = bone.Transform;
-						ImGuizmo.DecomposeMatrixToComponents(ref bone.Matrix.M11, ref t.Translate.X, ref t.Rotate.X, ref t.Scale.X);
-						bone.Transform = t;
+						ImGuizmo.DecomposeMatrixToComponents(ref BoneMatrix.M11, ref t.Translate.X, ref t.Rotate.X, ref t.Scale.X);
+
+						var delta = BonePosition - new Vector3(t.Translate.X, t.Translate.Y, t.Translate.Z);
+						PluginLog.Information("{0}", delta);
+
+						bone.Transform.Translate = BoneTransform - new Vector4(delta, 0.0f);
 						bones.Transforms[bone.Index] = bone.Transform;
 					} else { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
@@ -142,8 +150,18 @@ namespace Ktisis.Overlay {
 						var hovered = ImGui.IsMouseHoveringRect(rectMin, rectMax);
 						if (hovered) {
 							hasBoneHovered = true;
-							if (ImGui.IsMouseReleased(ImGuiMouseButton.Left))
+							if (ImGui.IsMouseReleased(ImGuiMouseButton.Left)) {
 								BoneSelection = (bones.Id, bone.Index);
+								BoneTransform = bone.Transform.Translate;
+								BonePosition = worldPos;
+
+								ImGuizmo.RecomposeMatrixFromComponents(
+									ref worldPos.X,
+									ref bone.Transform.Rotate.X,
+									ref bone.Transform.Scale.X,
+									ref BoneMatrix.M11
+								);
+							}
 						}
 
 						draw.AddCircleFilled(pos, Math.Max(3.0f, 10.0f - cam->Distance), hovered ? 0xffffffff : 0xb0ffffff, 100);

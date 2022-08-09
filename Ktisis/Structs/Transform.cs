@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using System.Runtime.InteropServices;
 
 namespace Ktisis.Structs {
 	public struct Transform {
