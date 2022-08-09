@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 using ImGuiNET;
 
@@ -10,8 +9,6 @@ using Dalamud.Game.Gui;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Objects;
-
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using Ktisis.Overlay;
 

@@ -2,8 +2,6 @@
 
 using ImGuizmoNET;
 
-using Dalamud.Utility;
-
 using Ktisis.Structs.Havok;
 
 namespace Ktisis.Structs.Ktisis {

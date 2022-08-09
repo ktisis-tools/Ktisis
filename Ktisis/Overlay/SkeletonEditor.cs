@@ -77,7 +77,7 @@ namespace Ktisis.Overlay {
 				return;
 
 			var target = ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
-			if (target != null && (Subject == null || Subject.Address != target.Address)) {
+			if (target == null || Subject == null || Subject.Address != target.Address) {
 				Subject = target;
 				if (Subject != null)
 					BuildSkeleton();
@@ -137,6 +137,12 @@ namespace Ktisis.Overlay {
 						var matrix = (WorldMatrix*)GetMatrix();
 						if (matrix == null)
 							return;
+
+						var pTransform = default(SharpDX.Matrix);
+						var pee = model->Position;
+						var ree = model->Rotation;
+						var eee = new Vector3(1.0f, 1.0f, 1.0f);
+						ImGuizmo.RecomposeMatrixFromComponents(ref pee.X, ref ree.X, ref ree.X, ref pTransform.M11);
 
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
