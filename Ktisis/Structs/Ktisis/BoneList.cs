@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-
+using System.Collections.Generic;
 using Ktisis.Structs.Havok;
 using Ktisis.Structs.Ktisis;
 
@@ -22,6 +22,15 @@ namespace Ktisis.Structs {
 
 		public Bone GetParentOf(Bone bone) {
 			return this[bone.ParentId];
+		}
+
+		public List<Bone> GetChildren(Bone bone) {
+			var children = new List<Bone>();
+			foreach (Bone v in this) {
+				if (v.ParentId == bone.Index)
+					children.Add(v);
+			}
+			return children;
 		}
 
 		public Bone this[int index] {

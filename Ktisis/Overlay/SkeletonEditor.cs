@@ -106,9 +106,10 @@ namespace Ktisis.Overlay {
 				foreach (Bone bone in bones) {
 					var pair = (bones.Id, bone.Index);
 
-					var boneTranslate = bone.Rotate(model->Rotation) * model->Height;
+					if (bone.Transform.Translate.W == 0.0)
+						continue;
 
-					var worldPos = model->Position + boneTranslate;
+					var worldPos = model->Position + bone.Rotate(model->Rotation) * model->Height;
 					Gui.WorldToScreen(worldPos, out var pos);
 
 					if (bone.ParentId > 0) { // Lines
@@ -130,18 +131,25 @@ namespace Ktisis.Overlay {
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
 						ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
-						ImGuizmo.Manipulate(ref matrix->Projection.M11, ref cameraView[0], OPERATION.TRANSLATE, MODE.LOCAL, ref BoneMatrix.M11, ref DeltaMatrix.M11);
+						ImGuizmo.Manipulate(ref matrix->Projection.M11, ref cameraView[0], OPERATION.UNIVERSAL, MODE.LOCAL, ref BoneMatrix.M11, ref DeltaMatrix.M11);
+
+						// TODO: Streamline this.
 
 						var delta = new Transform();
 						ImGuizmo.DecomposeMatrixToComponents(ref DeltaMatrix.M11, ref delta.Translate.X, ref delta.Rotate.X, ref delta.Scale.X);
 
-						bone.Transform.Translate += Vector4.Transform(
+						var inverse = Quaternion.Inverse(model->Rotation);
+						delta.Translate = Vector4.Transform(
 							delta.Translate,
-							Quaternion.Inverse(model->Rotation)
+							inverse
 						) / model->Height;
-						bone.Transform.Rotate += delta.Rotate;
+
+						bone.Transform.Translate += delta.Translate;
+						// doesn't work, disable this for now.
+						//bone.Transform.Rotate += delta.Rotate;
 						bone.Transform.Scale *= delta.Scale;
 
+						bone.TransformChildren(bones, delta);
 						bones.Transforms[bone.Index] = bone.Transform;
 					} else { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
@@ -158,19 +166,24 @@ namespace Ktisis.Overlay {
 								BoneTranslate = bone.Transform;
 								DeltaMatrix = default(SharpDX.Matrix);
 
-								var test = new Vector3(0.0f, 0.0f, 0.0f);
 								ImGuizmo.RecomposeMatrixFromComponents(
 									ref worldPos.X,
 									ref bone.Transform.Rotate.X,
 									ref bone.Transform.Scale.X,
 									ref BoneMatrix.M11
 								);
+							} else {
+								var name = bone.HkaBone.Name;
+								if (name != null)
+									draw.AddText(pos, 0xffffffff, name);
 							}
 						}
 
-						draw.AddCircleFilled(pos, Math.Max(3.0f, 10.0f - cam->Distance), hovered ? 0xffffffff : 0xb0ffffff, 100);
+						draw.AddCircleFilled(pos, Math.Max(2.0f, 8.0f - cam->Distance), hovered ? 0xffffffff : 0xb0ffffff, 100);
 					}
 				}
+
+				//break;
 			}
 
 			if (hasBoneHovered)
