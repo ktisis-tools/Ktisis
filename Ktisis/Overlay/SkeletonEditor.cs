@@ -27,9 +27,9 @@ namespace Ktisis.Overlay {
 		public List<BoneList>? Skeleton;
 
 		public (int, int) BoneSelection;
+		public Transform BoneTranslate;
 		public SharpDX.Matrix BoneMatrix;
-		public Vector4 BoneTransform;
-		public Vector3 BonePosition;
+		public SharpDX.Matrix DeltaMatrix;
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate IntPtr GetMatrixDelegate();
@@ -108,12 +108,12 @@ namespace Ktisis.Overlay {
 
 					var boneTranslate = bone.Rotate(model->Rotation) * model->Height;
 
-					var worldPos = Subject.Position + boneTranslate;
+					var worldPos = model->Position + boneTranslate;
 					Gui.WorldToScreen(worldPos, out var pos);
 
 					if (bone.ParentId > 0) { // Lines
 						var parent = bones.GetParentOf(bone);
-						var parentPos = Subject.Position + parent.Rotate(model->Rotation) * model->Height;
+						var parentPos = model->Position + parent.Rotate(model->Rotation) * model->Height;
 
 						Gui.WorldToScreen(parentPos, out var pPos);
 						draw.AddLine(pos, pPos, 0xffffffff);
@@ -130,15 +130,18 @@ namespace Ktisis.Overlay {
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
 						ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
-						ImGuizmo.Manipulate(ref cameraView[0], ref matrix->Projection.M11, OPERATION.TRANSLATE, MODE.WORLD, ref BoneMatrix.M11);
+						ImGuizmo.Manipulate(ref matrix->Projection.M11, ref cameraView[0], OPERATION.TRANSLATE, MODE.LOCAL, ref BoneMatrix.M11, ref DeltaMatrix.M11);
 
-						var t = bone.Transform;
-						ImGuizmo.DecomposeMatrixToComponents(ref BoneMatrix.M11, ref t.Translate.X, ref t.Rotate.X, ref t.Scale.X);
+						var delta = new Transform();
+						ImGuizmo.DecomposeMatrixToComponents(ref DeltaMatrix.M11, ref delta.Translate.X, ref delta.Rotate.X, ref delta.Scale.X);
 
-						var delta = BonePosition - new Vector3(t.Translate.X, t.Translate.Y, t.Translate.Z);
-						PluginLog.Information("{0}", delta);
+						bone.Transform.Translate += Vector4.Transform(
+							delta.Translate,
+							Quaternion.Inverse(model->Rotation)
+						) / model->Height;
+						bone.Transform.Rotate += delta.Rotate;
+						bone.Transform.Scale *= delta.Scale;
 
-						bone.Transform.Translate = BoneTransform - new Vector4(delta, 0.0f);
 						bones.Transforms[bone.Index] = bone.Transform;
 					} else { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
@@ -152,9 +155,10 @@ namespace Ktisis.Overlay {
 							hasBoneHovered = true;
 							if (ImGui.IsMouseReleased(ImGuiMouseButton.Left)) {
 								BoneSelection = (bones.Id, bone.Index);
-								BoneTransform = bone.Transform.Translate;
-								BonePosition = worldPos;
+								BoneTranslate = bone.Transform;
+								DeltaMatrix = default(SharpDX.Matrix);
 
+								var test = new Vector3(0.0f, 0.0f, 0.0f);
 								ImGuizmo.RecomposeMatrixFromComponents(
 									ref worldPos.X,
 									ref bone.Transform.Rotate.X,
