@@ -7,7 +7,7 @@ If you would like to reach out about this project, please feel free to join the 
 
 #### List of target features, ascending:
 - [x] Skeleton overlay
-	- [ ] Selection assistant6
+	- [ ] Selection assistant
 - [x] Bone manipulation via overlay
 	- [ ] Translate bone children
 	- [ ] Transform locking
