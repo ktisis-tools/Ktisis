@@ -26,6 +26,7 @@ namespace Ktisis.Overlay {
 		public GameObject? Subject;
 		public List<BoneList>? Skeleton;
 
+		// TODO: Clean this up
 		public (int, int) BoneSelection;
 		public Transform BoneTranslate;
 		public SharpDX.Matrix BoneMatrix;
@@ -144,12 +145,7 @@ namespace Ktisis.Overlay {
 							inverse
 						) / model->Height;
 
-						bone.Transform.Translate += delta.Translate;
-						// doesn't work, disable this for now.
-						//bone.Transform.Rotate += delta.Rotate;
-						bone.Transform.Scale *= delta.Scale;
-
-						bone.TransformChildren(bones, delta);
+						bone.TransformChildren(delta, bones);
 						bones.Transforms[bone.Index] = bone.Transform;
 					} else { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);

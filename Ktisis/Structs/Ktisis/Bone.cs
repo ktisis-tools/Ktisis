@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuizmoNET;
 
@@ -30,16 +31,36 @@ namespace Ktisis.Structs.Ktisis {
 			return Vector3.Transform(new Vector3(t.X, t.Y, t.Z), quat);
 		}
 
-		public void TransformChildren(BoneList bones, Transform transform) {
-			var children = bones.GetChildren(this);
-			foreach (var child in children) {
-				// TODO: +=
-				child.Transform.Translate += transform.Translate;
-				//child.Transform.Rotate += transform.Rotate;
-				//child.Transform.Scale += transform.Scale;
-				bones.Transforms[child.Index] = child.Transform;
+		// Update Transform
 
-				child.TransformChildren(bones, transform);
+		public void UpdateTransform(BoneList bones) {
+			bones.Transforms[Index] = Transform;
+		}
+
+		// Transform Bone
+
+		public void TransformBone(Transform t) {
+			Transform.Translate += t.Translate;
+			// doesn't work, disable this for now.
+			//bone.Transform.Rotate += delta.Rotate;
+			Transform.Scale *= t.Scale;
+		}
+
+		public void TransformBone(Transform t, BoneList bones, bool parenting = false) {
+			TransformBone(t);
+			UpdateTransform(bones);
+			if (parenting)
+				TransformChildren(t, bones);
+		}
+
+		// Transform Children
+
+		public void TransformChildren(Transform t, BoneList bones) {
+			var children = new List<Bone>();
+			bones.GetChildrenRecursive(this, ref children);
+
+			foreach (var child in children) {
+				child.TransformBone(t, bones);
 			}
 		}
 	}

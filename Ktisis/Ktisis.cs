@@ -61,11 +61,6 @@ namespace Ktisis {
 
 			var draw = ImGui.GetWindowDrawList();
 
-			/*var tarSys = TargetSystem.Instance();
-			if (tarSys != null) {
-				SkeletonEditor.Subject = ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
-				SkeletonEditor.Draw(draw);
-			}*/
 			SkeletonEditor.Draw(draw);
 
 			ImGui.End();

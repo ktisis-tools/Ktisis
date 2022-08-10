@@ -33,6 +33,15 @@ namespace Ktisis.Structs {
 			return children;
 		}
 
+		public void GetChildrenRecursive(Bone bone, ref List<Bone> children) {
+			foreach (Bone v in this) {
+				if (v.ParentId == bone.Index) {
+					children.Add(v);
+					GetChildrenRecursive(v, ref children);
+				}
+			}
+		}
+
 		public Bone this[int index] {
 			get => new Bone(this, index);
 			set => new NotImplementedException();
