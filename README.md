@@ -9,7 +9,7 @@ If you would like to reach out about this project, please feel free to join the 
 - [x] Skeleton overlay
 	- [ ] Selection assistant
 - [x] Bone manipulation via overlay
-	- [x] Translate bone children
+	- [x] Bone parenting
 	- [ ] Transform locking
 - [ ] Actor list with dropdowns for bone selection
 - [ ] Free camera movement within GPose
