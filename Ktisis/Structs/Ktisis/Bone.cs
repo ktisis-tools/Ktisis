@@ -74,6 +74,7 @@ namespace Ktisis.Structs.Ktisis {
 			var children = new List<Bone>();
 
 			var bones = skeleton[0];
+			TransformBone(t, bones);
 			bones.GetChildrenRecursive(this, ref children);
 			foreach (var child in children) {
 				child.TransformBone(t, bones);
