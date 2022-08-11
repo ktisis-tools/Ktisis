@@ -15,6 +15,8 @@ namespace Ktisis.Structs.Ktisis {
 
 		public SharpDX.Matrix Matrix;
 
+		// Constructor
+
 		public Bone(BoneList bones, int index) {
 			Index = index;
 			ParentId = bones.Skeleton.ParentIndex[index];
@@ -22,22 +24,31 @@ namespace Ktisis.Structs.Ktisis {
 
 			HkaBone = bones.Skeleton.Bones[index];
 
-			var t = Transform;
+			UpdateTransform(bones);
+		}
+
+		// Update stored transform from matrix
+
+		public void UpdateTransform(BoneList bones) {
+			var t = bones.Transforms[Index];
+			Transform = t;
 			ImGuizmo.RecomposeMatrixFromComponents(ref t.Translate.X, ref t.Rotate.X, ref t.Scale.X, ref Matrix.M11);
 		}
+
+		// Apply stored transform
+
+		public void ApplyTransform(BoneList bones) {
+			bones.Transforms[Index] = Transform;
+		}
+
+		// Quaternion rotation
 
 		public Vector3 Rotate(Quaternion quat) {
 			var t = Transform.Translate;
 			return Vector3.Transform(new Vector3(t.X, t.Y, t.Z), quat);
 		}
 
-		// Update Transform
-
-		public void UpdateTransform(BoneList bones) {
-			bones.Transforms[Index] = Transform;
-		}
-
-		// Transform Bone
+		// Transform bone
 
 		public void TransformBone(Transform t) {
 			Transform.Translate += t.Translate;
@@ -48,12 +59,12 @@ namespace Ktisis.Structs.Ktisis {
 
 		public void TransformBone(Transform t, BoneList bones, bool parenting = false) {
 			TransformBone(t);
-			UpdateTransform(bones);
+			ApplyTransform(bones);
 			if (parenting)
 				TransformChildren(t, bones);
 		}
 
-		// Transform Children
+		// Transform children
 
 		public void TransformChildren(Transform t, BoneList bones) {
 			var children = new List<Bone>();

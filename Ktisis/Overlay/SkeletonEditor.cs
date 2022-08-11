@@ -65,7 +65,29 @@ namespace Ktisis.Overlay {
 			if (model == null)
 				return;
 
+			var LinkList = new Dictionary<string, List<int>>(); // name : index
+
 			var list = *model->HkaIndex;
+			for (int i = list.Count - 1; i >= 0; i--) {
+				// Iterate in reverse to first get linked nodes.
+				var index = list[i];
+				if (index.Pose == null)
+					continue;
+
+				var bones = new BoneList(i, index.Pose);
+
+				// Is linked
+				if (i > 0) {
+					var first = bones[0];
+
+				} else {
+
+				}
+
+				Skeleton.Add(bones);
+			}
+
+			/*var list = *model->HkaIndex;
 			for (int i = 0; i < list.Count; i++) {
 				var index = list[i];
 				if (index.Pose == null)
@@ -73,7 +95,7 @@ namespace Ktisis.Overlay {
 
 				var bones = new BoneList(i, index.Pose);
 				Skeleton.Add(bones);
-			}
+			}*/
 		}
 
 		public unsafe void Draw(ImDrawListPtr draw) {
@@ -145,8 +167,7 @@ namespace Ktisis.Overlay {
 							inverse
 						) / model->Height;
 
-						bone.TransformChildren(delta, bones);
-						bones.Transforms[bone.Index] = bone.Transform;
+						bone.TransformBone(delta, bones, true);
 					} else { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
 
