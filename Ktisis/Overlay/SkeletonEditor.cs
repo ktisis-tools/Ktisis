@@ -67,9 +67,10 @@ namespace Ktisis.Overlay {
 
 			var linkList = new Dictionary<string, List<int>>(); // name : [index]
 
+			// Create BoneLists
+
 			var list = *model->HkaIndex;
-			for (int i = list.Count - 1; i >= 0; i--) {
-				// Iterate in reverse to first get linked nodes.
+			for (int i = 0; i < list.Count; i++) {
 				var index = list[i];
 				if (index.Pose == null)
 					continue;
@@ -86,15 +87,17 @@ namespace Ktisis.Overlay {
 					if (!linkList.ContainsKey(firstName))
 						linkList.Add(firstName, new List<int>());
 					linkList[firstName].Add(i);
-				} else {
-					foreach (Bone bone in bones) {
-						var name = bone.HkaBone.Name!;
-						if (linkList.ContainsKey(name))
-							bone.LinkedTo = linkList[name];
-					}
 				}
 
 				Skeleton.Add(bones);
+			}
+
+			// Set LinkedTo
+
+			foreach (Bone bone in Skeleton[0]) {
+				var name = bone.HkaBone.Name!;
+				if (linkList.ContainsKey(name))
+					bone.LinkedTo = linkList[name];
 			}
 		}
 
@@ -168,6 +171,7 @@ namespace Ktisis.Overlay {
 						) / model->Height;
 
 						bone.TransformBone(delta, bones, true);
+						//bone.TransformBone(delta, Skeleton);
 					} else { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
 

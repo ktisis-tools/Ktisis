@@ -70,6 +70,10 @@ namespace Ktisis.Structs.Ktisis {
 				TransformChildren(t, bones);
 		}
 
+		public void TransformBone(Transform t, List<BoneList> skeleton) {
+
+		}
+
 		// Transform children
 
 		public void TransformChildren(Transform t, BoneList bones) {
