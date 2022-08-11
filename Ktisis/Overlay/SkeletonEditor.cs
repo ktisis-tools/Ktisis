@@ -157,7 +157,7 @@ namespace Ktisis.Overlay {
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
 						ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
-						ImGuizmo.Manipulate(ref matrix->Projection.M11, ref cameraView[0], OPERATION.UNIVERSAL, MODE.LOCAL, ref BoneMatrix.M11, ref DeltaMatrix.M11);
+						ImGuizmo.Manipulate(ref matrix->Projection.M11, ref cameraView[0], OPERATION.TRANSLATE, MODE.LOCAL, ref BoneMatrix.M11, ref DeltaMatrix.M11);
 
 						// TODO: Streamline this.
 
@@ -170,8 +170,7 @@ namespace Ktisis.Overlay {
 							inverse
 						) / model->Height;
 
-						bone.TransformBone(delta, bones, true);
-						//bone.TransformBone(delta, Skeleton);
+						bone.TransformBone(delta, Skeleton);
 					} else { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
 
