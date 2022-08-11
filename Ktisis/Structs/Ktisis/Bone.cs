@@ -60,7 +60,8 @@ namespace Ktisis.Structs.Ktisis {
 			Transform.Translate += t.Translate;
 			// doesn't work, disable this for now.
 			//bone.Transform.Rotate += delta.Rotate;
-			Transform.Scale *= t.Scale;
+			// also disable this while reworking BoneMod
+			//Transform.Scale *= t.Scale;
 		}
 
 		public void TransformBone(Transform t, BoneList bones, bool parenting = false) {

@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using ImGuiNET;
 using ImGuizmoNET;
 
-using Dalamud.Logging;
 using Dalamud.Game.Gui;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -26,11 +25,8 @@ namespace Ktisis.Overlay {
 		public GameObject? Subject;
 		public List<BoneList>? Skeleton;
 
-		// TODO: Clean this up
-		public (int, int) BoneSelection;
-		public Transform BoneTranslate;
-		public SharpDX.Matrix BoneMatrix;
-		public SharpDX.Matrix DeltaMatrix;
+		public (int, int) BoneSelection; // Find a better way of doing this
+		public BoneMod BoneMod;
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal delegate IntPtr GetMatrixDelegate();
@@ -49,14 +45,26 @@ namespace Ktisis.Overlay {
 
 			Subject = subject;
 			BoneSelection = (-1, -1);
+			BoneMod = new BoneMod();
 
 			var matrixAddr = plugin.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? 48 89 4c 24 ?? 4C 8D 4D ?? 4C 8D 44 24 ??");
 			GetMatrix = Marshal.GetDelegateForFunctionPointer<GetMatrixDelegate>(matrixAddr);
 		}
 
+		// Get ActorModel
+
 		public unsafe ActorModel* GetSubjectModel() {
 			return ((Actor*)Subject?.Address)->Model;
 		}
+
+		// Bone selection
+
+		public unsafe void SelectBone(Bone bone, BoneList bones, ActorModel* model) {
+			BoneSelection = (bones.Id, bone.Index);
+			BoneMod.SnapshotBone(bone, model);
+		}
+
+		// Build skeleton
 
 		public unsafe void BuildSkeleton() {
 			Skeleton = new List<BoneList>();
@@ -100,6 +108,8 @@ namespace Ktisis.Overlay {
 					bone.LinkedTo = linkList[name];
 			}
 		}
+
+		// Draw
 
 		public unsafe void Draw(ImDrawListPtr draw) {
 			var tarSys = TargetSystem.Instance();
@@ -157,20 +167,20 @@ namespace Ktisis.Overlay {
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
 						ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
-						ImGuizmo.Manipulate(ref matrix->Projection.M11, ref cameraView[0], OPERATION.TRANSLATE, MODE.LOCAL, ref BoneMatrix.M11, ref DeltaMatrix.M11);
+						ImGuizmo.Manipulate(
+							ref matrix->Projection.M11,
+							ref cameraView[0],
+							OPERATION.UNIVERSAL,
+							MODE.LOCAL,
+							ref BoneMod.BoneMatrix.M11,
+							ref BoneMod.DeltaMatrix.M11
+						);
 
 						// TODO: Streamline this.
 
-						var delta = new Transform();
-						ImGuizmo.DecomposeMatrixToComponents(ref DeltaMatrix.M11, ref delta.Translate.X, ref delta.Rotate.X, ref delta.Scale.X);
-
-						var inverse = Quaternion.Inverse(model->Rotation);
-						delta.Translate = Vector4.Transform(
-							delta.Translate,
-							inverse
-						) / model->Height;
-
+						var delta = BoneMod.GetDelta();
 						bone.TransformBone(delta, Skeleton);
+
 					} else { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
 
@@ -182,16 +192,7 @@ namespace Ktisis.Overlay {
 						if (hovered) {
 							hasBoneHovered = true;
 							if (ImGui.IsMouseReleased(ImGuiMouseButton.Left)) {
-								BoneSelection = (bones.Id, bone.Index);
-								BoneTranslate = bone.Transform;
-								DeltaMatrix = default(SharpDX.Matrix);
-
-								ImGuizmo.RecomposeMatrixFromComponents(
-									ref worldPos.X,
-									ref bone.Transform.Rotate.X,
-									ref bone.Transform.Scale.X,
-									ref BoneMatrix.M11
-								);
+								SelectBone(bone, bones, model);
 							} else {
 								var name = bone.HkaBone.Name;
 								if (name != null)
