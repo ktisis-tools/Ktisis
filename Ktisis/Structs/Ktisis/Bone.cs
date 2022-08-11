@@ -15,6 +15,9 @@ namespace Ktisis.Structs.Ktisis {
 
 		public SharpDX.Matrix Matrix;
 
+		public bool IsRoot = false;
+		public List<int> LinkedTo;
+
 		// Constructor
 
 		public Bone(BoneList bones, int index) {
@@ -25,6 +28,8 @@ namespace Ktisis.Structs.Ktisis {
 			HkaBone = bones.Skeleton.Bones[index];
 
 			UpdateTransform(bones);
+
+			LinkedTo = new List<int>();
 		}
 
 		// Update stored transform from matrix
@@ -38,6 +43,7 @@ namespace Ktisis.Structs.Ktisis {
 		// Apply stored transform
 
 		public void ApplyTransform(BoneList bones) {
+			if (ParentId == -1) return; // no
 			bones.Transforms[Index] = Transform;
 		}
 

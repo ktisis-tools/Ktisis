@@ -65,7 +65,7 @@ namespace Ktisis.Overlay {
 			if (model == null)
 				return;
 
-			var LinkList = new Dictionary<string, List<int>>(); // name : index
+			var linkList = new Dictionary<string, List<int>>(); // name : [index]
 
 			var list = *model->HkaIndex;
 			for (int i = list.Count - 1; i >= 0; i--) {
@@ -76,26 +76,26 @@ namespace Ktisis.Overlay {
 
 				var bones = new BoneList(i, index.Pose);
 
+				var first = bones[0];
+				first.IsRoot = true;
+
 				// Is linked
 				if (i > 0) {
-					var first = bones[0];
+					var firstName = first.HkaBone.Name!;
 
+					if (!linkList.ContainsKey(firstName))
+						linkList.Add(firstName, new List<int>());
+					linkList[firstName].Add(i);
 				} else {
-
+					foreach (Bone bone in bones) {
+						var name = bone.HkaBone.Name!;
+						if (linkList.ContainsKey(name))
+							bone.LinkedTo = linkList[name];
+					}
 				}
 
 				Skeleton.Add(bones);
 			}
-
-			/*var list = *model->HkaIndex;
-			for (int i = 0; i < list.Count; i++) {
-				var index = list[i];
-				if (index.Pose == null)
-					continue;
-
-				var bones = new BoneList(i, index.Pose);
-				Skeleton.Add(bones);
-			}*/
 		}
 
 		public unsafe void Draw(ImDrawListPtr draw) {
@@ -127,10 +127,10 @@ namespace Ktisis.Overlay {
 
 			foreach (BoneList bones in Skeleton) {
 				foreach (Bone bone in bones) {
-					var pair = (bones.Id, bone.Index);
-
-					if (bone.Transform.Translate.W == 0.0)
+					if (bone.IsRoot)
 						continue;
+
+					var pair = (bones.Id, bone.Index);
 
 					var worldPos = model->Position + bone.Rotate(model->Rotation) * model->Height;
 					Gui.WorldToScreen(worldPos, out var pos);
