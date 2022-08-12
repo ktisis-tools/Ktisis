@@ -17,9 +17,10 @@ namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
 		public string Name => "Ktisis";
 
-		public Configuration Configuration;
+		public Configuration Configuration { get; init; }
 
-		internal KtisisUI Interface;
+		internal KtisisUI Interface { get; init; }
+		internal ConfigUI ConfigInterface { get; init; }
 		internal SkeletonEditor SkeletonEditor { get; init; }
 
 		internal DalamudPluginInterface PluginInterface { get; init; }
@@ -47,6 +48,7 @@ namespace Ktisis {
 			Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
 			Interface = new KtisisUI(this);
+			ConfigInterface = new ConfigUI(this);
 			SkeletonEditor = new SkeletonEditor(this, null);
 
 			Interface.Show();
@@ -71,6 +73,7 @@ namespace Ktisis {
 			var draw = ImGui.GetWindowDrawList();
 
 			Interface.Draw();
+			ConfigInterface.Draw();
 
 			SkeletonEditor.Draw(draw);
 

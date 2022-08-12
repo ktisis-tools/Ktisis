@@ -19,9 +19,9 @@ using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Overlay {
 	public sealed class SkeletonEditor {
-		public Ktisis Plugin;
-		public GameGui Gui;
-		public ObjectTable ObjectTable;
+		private Ktisis Plugin;
+		private GameGui Gui;
+		private ObjectTable ObjectTable;
 
 		public bool Visible = true;
 

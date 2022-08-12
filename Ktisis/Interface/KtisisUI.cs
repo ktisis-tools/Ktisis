@@ -4,9 +4,12 @@ using ImGuiNET;
 
 namespace Ktisis.Interface {
 	internal class KtisisUI {
-		public Ktisis Plugin;
+		private Ktisis Plugin;
 
 		public bool Visible = false;
+
+		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
+		public static Vector4 ColRed = new Vector4(255, 0, 0, 255);
 
 		// Constructor
 
@@ -41,23 +44,29 @@ namespace Ktisis.Interface {
 			if (ImGui.Begin("Ktisis", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoResize)) {
 				var cfg = Plugin.Configuration;
 
+				ImGui.TextColored(
+					gposeEnabled ? ColGreen : ColRed,
+					gposeEnabled ? "GPose Enabled" : "GPose Disabled"
+				);
+
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
 
-				if (ImGui.Button("Settings")) {
-					// TODO
-				}
+				//ImGui.Text(string.Format("In GPose: {0}", gposeEnabled));
+
+				if (ImGui.Button("Settings"))
+					Plugin.ConfigInterface.Show();
 
 				ImGui.Separator();
 
 				var showSkeleton = cfg.ShowSkeleton;
-				if (ImGui.Checkbox("Show Skeleton", ref showSkeleton)) {
+				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
 					cfg.ShowSkeleton = showSkeleton;
 					cfg.Save(Plugin);
 				}
 
 				var _ = false;
-				if (ImGui.Checkbox("Enable Posing", ref _)) {
+				if (ImGui.Checkbox("Toggle Posing", ref _)) {
 					// TODO
 				}
 
@@ -65,7 +74,6 @@ namespace Ktisis.Interface {
 			}
 
 			ImGui.PopStyleVar(1);
-
 			ImGui.End();
 		}
 	}
