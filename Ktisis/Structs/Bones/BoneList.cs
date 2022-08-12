@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Ktisis.Structs.Havok;
-using Ktisis.Structs.Ktisis;
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Structs {
 	public unsafe class BoneList : IEnumerable {

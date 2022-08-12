@@ -5,7 +5,7 @@ using ImGuizmoNET;
 
 using Ktisis.Structs.Havok;
 
-namespace Ktisis.Structs.Ktisis {
+namespace Ktisis.Structs.Bones {
 	public class Bone {
 		public int Index;
 		public short ParentId;

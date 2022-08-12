@@ -6,7 +6,7 @@ using ImGuizmoNET;
 using Ktisis.Helpers;
 using Ktisis.Structs.Actor;
 
-namespace Ktisis.Structs.Ktisis {
+namespace Ktisis.Structs.Bones {
 	public class BoneMod {
 		public SharpDX.Matrix BoneMatrix;
 		public SharpDX.Matrix DeltaMatrix;

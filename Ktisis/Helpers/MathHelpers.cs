@@ -15,7 +15,7 @@ namespace Ktisis.Helpers {
         private static readonly float Rad2Deg = 360 / ((float)Math.PI * 2);
 
         // Euler <=> Quaternion
-        // Borrowed from CMTool
+        // Borrowed from BDTH
 
         public static Quaternion ToQuaternion(Vector3 euler) {
             var xOver2 = euler.X * Deg2Rad * 0.5f;

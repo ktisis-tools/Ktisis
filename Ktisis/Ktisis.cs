@@ -11,10 +11,16 @@ using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Objects;
 
 using Ktisis.Overlay;
+using Ktisis.Interface;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
 		public string Name => "Ktisis";
+
+		public Configuration Configuration;
+
+		internal KtisisUI Interface;
+		internal SkeletonEditor SkeletonEditor { get; init; }
 
 		internal DalamudPluginInterface PluginInterface { get; init; }
 		internal CommandManager CommandManager { get; init; }
@@ -22,8 +28,6 @@ namespace Ktisis {
 		internal ObjectTable ObjectTable { get; init; }
 		internal SigScanner SigScanner { get; init; }
 		internal GameGui GameGui { get; init; }
-
-		private SkeletonEditor SkeletonEditor { get; init; }
 
 		public Ktisis(
 			DalamudPluginInterface pluginInterface,
@@ -40,7 +44,12 @@ namespace Ktisis {
 			SigScanner = sigScanner;
 			GameGui = gameGui;
 
+			Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+
+			Interface = new KtisisUI(this);
 			SkeletonEditor = new SkeletonEditor(this, null);
+
+			Interface.Show();
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += Draw;
@@ -61,10 +70,16 @@ namespace Ktisis {
 
 			var draw = ImGui.GetWindowDrawList();
 
+			Interface.Draw();
+
 			SkeletonEditor.Draw(draw);
 
 			ImGui.End();
 			ImGui.PopStyleVar();
+		}
+
+		public bool IsInGpose() {
+			return PluginInterface.UiBuilder.GposeActive;
 		}
 	}
 }

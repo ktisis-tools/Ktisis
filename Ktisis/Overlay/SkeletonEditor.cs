@@ -14,13 +14,16 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Ktisis;
+using Ktisis.Structs.Bones;
 using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Overlay {
 	public sealed class SkeletonEditor {
+		public Ktisis Plugin;
 		public GameGui Gui;
 		public ObjectTable ObjectTable;
+
+		public bool Visible = true;
 
 		public GameObject? Subject;
 		public List<BoneList>? Skeleton;
@@ -39,7 +42,10 @@ namespace Ktisis.Overlay {
 			0.0f, 0.0f, 0.0f, 1.0f
 		};
 
+		// Constructor
+
 		public unsafe SkeletonEditor(Ktisis plugin, GameObject? subject) {
+			Plugin = plugin;
 			Gui = plugin.GameGui;
 			ObjectTable = plugin.ObjectTable;
 
@@ -49,6 +55,16 @@ namespace Ktisis.Overlay {
 
 			var matrixAddr = plugin.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? 48 89 4c 24 ?? 4C 8D 4D ?? 4C 8D 44 24 ??");
 			GetMatrix = Marshal.GetDelegateForFunctionPointer<GetMatrixDelegate>(matrixAddr);
+		}
+
+		// Toggle visibility
+
+		public void Show() {
+			Visible = true;
+		}
+
+		public void Hide() {
+			Visible = false;
 		}
 
 		// Get ActorModel
@@ -112,6 +128,12 @@ namespace Ktisis.Overlay {
 		// Draw
 
 		public unsafe void Draw(ImDrawListPtr draw) {
+			if (!Visible || !Plugin.Configuration.ShowSkeleton)
+				return;
+
+			if (!Plugin.IsInGpose())
+				return;
+
 			var tarSys = TargetSystem.Instance();
 			if (tarSys == null)
 				return;
@@ -137,6 +159,7 @@ namespace Ktisis.Overlay {
 				return;
 
 			var hasBoneHovered = false;
+			var hoveredBones = new List<Bone>();
 
 			foreach (BoneList bones in Skeleton) {
 				foreach (Bone bone in bones) {
