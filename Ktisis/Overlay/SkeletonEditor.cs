@@ -28,7 +28,8 @@ namespace Ktisis.Overlay {
 		public GameObject? Subject;
 		public List<BoneList>? Skeleton;
 
-		public (int, int) BoneSelection; // Find a better way of doing this
+		//public (int, int) BoneSelection; // Find a better way of doing this
+		public BoneSelector BoneSelector;
 		public BoneMod BoneMod;
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -50,7 +51,8 @@ namespace Ktisis.Overlay {
 			ObjectTable = plugin.ObjectTable;
 
 			Subject = subject;
-			BoneSelection = (-1, -1);
+
+			BoneSelector = new BoneSelector();
 			BoneMod = new BoneMod();
 
 			var matrixAddr = plugin.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? 48 89 4c 24 ?? 4C 8D 4D ?? 4C 8D 44 24 ??");
@@ -75,8 +77,11 @@ namespace Ktisis.Overlay {
 
 		// Bone selection
 
-		public unsafe void SelectBone(Bone bone, BoneList bones, ActorModel* model) {
-			BoneSelection = (bones.Id, bone.Index);
+		public unsafe void SelectBone(Bone bone, BoneList bones) {
+			var model = GetSubjectModel();
+			if (model == null) return;
+
+			BoneSelector.Current = (bones.Id, bone.Index);
 			BoneMod.SnapshotBone(bone, model);
 		}
 
@@ -158,8 +163,8 @@ namespace Ktisis.Overlay {
 			if (cam == null)
 				return;
 
-			var hasBoneHovered = false;
-			var hoveredBones = new List<Bone>();
+			//var hasBoneHovered = false;
+			var hoveredBones = new List<(int ListId, int Index)>();
 
 			foreach (BoneList bones in Skeleton) {
 				foreach (Bone bone in bones) {
@@ -179,7 +184,7 @@ namespace Ktisis.Overlay {
 						draw.AddLine(pos, pPos, 0xffffffff);
 					}
 
-					if (pair == BoneSelection) { // Gizmo
+					if (pair == BoneSelector.Current) { // Gizmo
 						var io = ImGui.GetIO();
 						var wp = ImGui.GetWindowPos();
 
@@ -214,16 +219,8 @@ namespace Ktisis.Overlay {
 						var rectMax = pos + area;
 
 						var hovered = ImGui.IsMouseHoveringRect(rectMin, rectMax);
-						if (hovered) {
-							hasBoneHovered = true;
-							if (ImGui.IsMouseReleased(ImGuiMouseButton.Left)) {
-								SelectBone(bone, bones, model);
-							} else {
-								var name = bone.HkaBone.Name;
-								if (name != null)
-									draw.AddText(pos, 0xffffffff, name);
-							}
-						}
+						if (hovered)
+							hoveredBones.Add(pair);
 
 						draw.AddCircleFilled(pos, Math.Max(2.0f, 8.0f - cam->Distance), hovered ? 0xffffffff : 0xb0ffffff, 100);
 					}
@@ -232,8 +229,10 @@ namespace Ktisis.Overlay {
 				//break;
 			}
 
-			if (hasBoneHovered)
-				ImGui.SetNextFrameWantCaptureMouse(hasBoneHovered);
+			if (hoveredBones.Count > 0)
+				BoneSelector.Draw(this, hoveredBones);
+			/*if (hasBoneHovered)
+				ImGui.SetNextFrameWantCaptureMouse(hasBoneHovered);*/
 		}
 	}
 }
