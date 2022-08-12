@@ -38,10 +38,13 @@ namespace Ktisis.Interface {
 
 			if (ImGui.Begin("Ktisis Settings", ref Visible, ImGuiWindowFlags.NoResize)) {
 				if (ImGui.BeginTabBar("Settings")) {
+					var cfg = Plugin.Configuration;
+
 					if (ImGui.BeginTabItem("Overlay"))
-						DrawOverlayTab();
+						DrawOverlayTab(cfg);
 					if (ImGui.BeginTabItem("Gizmo"))
-						DrawGizmoTab();
+						DrawGizmoTab(cfg);
+
 					ImGui.EndTabBar();
 				}
 			}
@@ -52,15 +55,19 @@ namespace Ktisis.Interface {
 
 		// Overlay
 
-		public void DrawOverlayTab() {
-			ImGui.Text("Overlay");
+		public void DrawOverlayTab(Configuration cfg) {
 			ImGui.EndTabItem();
 		}
 
 		// Gizmo
 
-		public void DrawGizmoTab() {
-			ImGui.Text("Gizmo");
+		public void DrawGizmoTab(Configuration cfg) {
+			var allowAxisFlip = cfg.AllowAxisFlip;
+			if (ImGui.Checkbox("Flip axis to face camera", ref allowAxisFlip)) {
+				cfg.AllowAxisFlip = allowAxisFlip;
+				cfg.Save(Plugin);
+			}
+
 			ImGui.EndTabItem();
 		}
 	}

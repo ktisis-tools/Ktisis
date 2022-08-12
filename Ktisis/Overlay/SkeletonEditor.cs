@@ -194,6 +194,9 @@ namespace Ktisis.Overlay {
 						ImGuizmo.BeginFrame();
 						ImGuizmo.SetDrawlist();
 						ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
+
+						ImGuizmo.AllowAxisFlip(Plugin.Configuration.AllowAxisFlip);
+
 						ImGuizmo.Manipulate(
 							ref matrix->Projection.M11,
 							ref cameraView[0],
