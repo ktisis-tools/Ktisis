@@ -163,7 +163,6 @@ namespace Ktisis.Overlay {
 			if (cam == null)
 				return;
 
-			//var hasBoneHovered = false;
 			var hoveredBones = new List<(int ListId, int Index)>();
 
 			foreach (BoneList bones in Skeleton) {
@@ -231,8 +230,6 @@ namespace Ktisis.Overlay {
 
 			if (hoveredBones.Count > 0)
 				BoneSelector.Draw(this, hoveredBones);
-			/*if (hasBoneHovered)
-				ImGui.SetNextFrameWantCaptureMouse(hasBoneHovered);*/
 		}
 	}
 }

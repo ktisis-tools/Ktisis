@@ -16,7 +16,6 @@ namespace Ktisis.Structs.Bones {
 			ImGui.SetNextFrameWantCaptureMouse(true);
 
 			var pos = ImGui.GetMousePos();
-			Dalamud.Logging.PluginLog.Information(string.Format("{0}", pos));
 			ImGui.SetNextWindowPos(pos + new Vector2(20, 0));
 
 			var size = new Vector2(-1, -1);
