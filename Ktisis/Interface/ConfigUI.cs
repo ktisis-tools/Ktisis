@@ -56,6 +56,12 @@ namespace Ktisis.Interface {
 		// Overlay
 
 		public void DrawOverlayTab(Configuration cfg) {
+			var drawLines = cfg.DrawLinesOnSkeleton;
+			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines)) {
+				cfg.DrawLinesOnSkeleton = drawLines;
+				cfg.Save(Plugin);
+			}
+
 			ImGui.EndTabItem();
 		}
 

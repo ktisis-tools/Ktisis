@@ -12,7 +12,15 @@ namespace Ktisis {
 
 		public UserLocale Localization { get; set; } = UserLocale.En;
 
+		// Interface
+
 		public bool ShowOnEnterGpose { get; set; } = true;
+
+		// Overlay
+
+		public bool DrawLinesOnSkeleton { get; set; } = true;
+
+		// Gizmo
 
 		public bool AllowAxisFlip { get; set; } = true;
 
