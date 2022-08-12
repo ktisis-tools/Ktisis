@@ -31,7 +31,7 @@ namespace Ktisis.Structs.Bones {
 				ScrollIndex = ScrollIndex - (int)mouseWheel;
 				if (ScrollIndex >= hover.Count)
 					ScrollIndex = 0;
-				else if (ScrollIndex <= 0)
+				else if (ScrollIndex < 0)
 					ScrollIndex = hover.Count - 1;
 
 				for (int i = 0; i < hover.Count; i++) {
