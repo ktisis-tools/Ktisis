@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 using ImGuizmoNET;
 
@@ -23,7 +24,8 @@ namespace Ktisis.Structs.Ktisis {
 
 			WorldPos = new Vector3();
 			Rotation = new Vector3();
-			Scale = new Vector3();
+			//Scale = new Vector3();
+			Scale = new Vector3(1.0f, 1.0f, 1.0f);
 
 			RootRotation = new Quaternion();
 			ScaleModifier = 1.0f;
@@ -36,7 +38,7 @@ namespace Ktisis.Structs.Ktisis {
 			WorldPos = model->Position + bone.Rotate(RootRotation) * ScaleModifier;
 
 			Rotation = MathHelpers.ToEuler(bone.Transform.Rotate);
-			Scale = MathHelpers.Normalize(bone.Transform.Scale);
+			Scale = MathHelpers.ToVector3(bone.Transform.Scale);
 
 			ImGuizmo.RecomposeMatrixFromComponents(
 				ref WorldPos.X,
@@ -74,11 +76,15 @@ namespace Ktisis.Structs.Ktisis {
 				inverse
 			) / ScaleModifier);
 
+			// Attempt rotation
+
+			delta.Rotate = MathHelpers.ToQuaternion(rotation);
+
 			// Update stored values
 
 			WorldPos = translate;
-			Rotation = rotation;
-			Scale = scale;
+			//Rotation = rotation;
+			//Scale = scale;
 
 			// :D
 
