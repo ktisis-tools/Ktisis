@@ -15,7 +15,7 @@ namespace Ktisis.Structs {
 
 		// Constructors
 
-		public BoneList(HkaPose* pose) { // TODO: Possibly dead code
+		public BoneList(HkaPose* pose) {
 			Skeleton = *pose->Skeleton;
 			Transforms = pose->Transforms;
 

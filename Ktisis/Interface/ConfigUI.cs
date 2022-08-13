@@ -40,6 +40,8 @@ namespace Ktisis.Interface {
 				if (ImGui.BeginTabBar("Settings")) {
 					var cfg = Plugin.Configuration;
 
+					if (ImGui.BeginTabItem("Interface"))
+						DrawInterfaceTab(cfg);
 					if (ImGui.BeginTabItem("Overlay"))
 						DrawOverlayTab(cfg);
 					if (ImGui.BeginTabItem("Gizmo"))
@@ -51,6 +53,18 @@ namespace Ktisis.Interface {
 
 			ImGui.PopStyleVar(1);
 			ImGui.End();
+		}
+
+		// Interface
+
+		public void DrawInterfaceTab(Configuration cfg) {
+			/*var autoOpen = cfg.AutoOpen;
+			if (ImGui.Checkbox("Auto Open", ref autoOpen)) {
+				cfg.AutoOpen = autoOpen;
+				cfg.Save(Plugin);
+			}*/
+
+			ImGui.EndTabItem();
 		}
 
 		// Overlay

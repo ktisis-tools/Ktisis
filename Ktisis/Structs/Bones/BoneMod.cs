@@ -24,7 +24,6 @@ namespace Ktisis.Structs.Bones {
 
 			WorldPos = new Vector3();
 			Rotation = new Vector3();
-			//Scale = new Vector3();
 			Scale = new Vector3(1.0f, 1.0f, 1.0f);
 
 			RootRotation = new Quaternion();
@@ -37,7 +36,7 @@ namespace Ktisis.Structs.Bones {
 
 			WorldPos = model->Position + bone.Rotate(RootRotation) * ScaleModifier;
 
-			Rotation = MathHelpers.ToEuler(bone.Transform.Rotate);
+			Rotation = MathHelpers.ToEuler(bone.Transform.Rotate * RootRotation);
 			Scale = MathHelpers.ToVector3(bone.Transform.Scale);
 
 			ImGuizmo.RecomposeMatrixFromComponents(
@@ -56,10 +55,24 @@ namespace Ktisis.Structs.Bones {
 			var scale = new Vector3();
 
 			// Decompose into vectors
+			/*
+				This is a little hacky due to 2 separate bugs -
+				Rotation via BoneMatrix suffers from gimbal lock
+				Rotation via DeltaMatrix also results in unwanted translation
+			*/
+
+			var _ = new Vector3();
 
 			ImGuizmo.DecomposeMatrixToComponents(
 				ref BoneMatrix.M11,
 				ref translate.X,
+				ref _.X,
+				ref _.X
+			);
+
+			ImGuizmo.DecomposeMatrixToComponents(
+				ref DeltaMatrix.M11,
+				ref _.X,
 				ref rotation.X,
 				ref scale.X
 			);
@@ -71,10 +84,10 @@ namespace Ktisis.Structs.Bones {
 			// Convert position
 
 			var inverse = Quaternion.Inverse(RootRotation);
-			delta.Translate = (Vector4.Transform(
+			delta.Translate = Vector4.Transform(
 				translate - WorldPos,
 				inverse
-			) / ScaleModifier);
+			) / ScaleModifier;
 
 			// Attempt rotation
 
@@ -83,8 +96,8 @@ namespace Ktisis.Structs.Bones {
 			// Update stored values
 
 			WorldPos = translate;
-			//Rotation = rotation;
-			//Scale = scale;
+			Rotation = rotation;
+			Scale = scale;
 
 			// :D
 

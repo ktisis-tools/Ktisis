@@ -14,7 +14,7 @@ namespace Ktisis {
 
 		// Interface
 
-		public bool ShowOnEnterGpose { get; set; } = true;
+		public bool AutoOpen { get; set; } = true;
 
 		// Overlay
 

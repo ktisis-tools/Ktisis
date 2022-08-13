@@ -13,7 +13,7 @@ namespace Ktisis.Structs.Bones {
 
 		public HkaBone HkaBone;
 
-		public SharpDX.Matrix Matrix;
+		public Quaternion RootRotation;
 
 		public bool IsRoot = false;
 		public List<int> LinkedTo;
@@ -37,7 +37,6 @@ namespace Ktisis.Structs.Bones {
 		public void UpdateTransform(BoneList bones) {
 			var t = bones.Transforms[Index];
 			Transform = t;
-			ImGuizmo.RecomposeMatrixFromComponents(ref t.Translate.X, ref t.Rotate.X, ref t.Scale.X, ref Matrix.M11);
 		}
 
 		// Apply stored transform
@@ -59,7 +58,7 @@ namespace Ktisis.Structs.Bones {
 		public void TransformBone(Transform t) {
 			Transform.Translate += t.Translate;
 			// doesn't work, disable this for now.
-			//bone.Transform.Rotate += delta.Rotate;
+			//bone.Transform.Rotate = t.Rotate;
 			// also disable this while reworking BoneMod
 			//Transform.Scale *= t.Scale;
 		}
@@ -67,8 +66,8 @@ namespace Ktisis.Structs.Bones {
 		public void TransformBone(Transform t, BoneList bones, bool parenting = false) {
 			TransformBone(t);
 			ApplyTransform(bones);
-			if (parenting)
-				TransformChildren(t, bones);
+			/*if (parenting)
+				TransformChildren(t, bones);*/
 		}
 
 		public void TransformBone(Transform t, List<BoneList> skeleton) {
