@@ -96,8 +96,8 @@ namespace Ktisis.Structs.Bones {
 			// Update stored values
 
 			WorldPos = translate;
-			Rotation = rotation;
-			Scale = scale;
+			//Rotation = rotation;
+			//Scale = scale;
 
 			// :D
 

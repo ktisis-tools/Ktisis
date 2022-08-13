@@ -202,7 +202,7 @@ namespace Ktisis.Overlay {
 						ImGuizmo.Manipulate(
 							ref matrix->Projection.M11,
 							ref cameraView[0],
-							OPERATION.ROTATE,
+							OPERATION.UNIVERSAL,
 							MODE.LOCAL,
 							ref BoneMod.BoneMatrix.M11,
 							ref BoneMod.DeltaMatrix.M11
@@ -213,8 +213,6 @@ namespace Ktisis.Overlay {
 						var delta = BoneMod.GetDelta();
 
 						bone.Transform.Rotate *= delta.Rotate;
-						bone.ApplyTransform(bones);
-
 						bone.TransformBone(delta, Skeleton);
 
 					} else { // Dot

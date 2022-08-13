@@ -58,26 +58,26 @@ namespace Ktisis.Structs.Bones {
 		public void TransformBone(Transform t) {
 			Transform.Translate += t.Translate;
 			// doesn't work, disable this for now.
-			//bone.Transform.Rotate = t.Rotate;
+			//Transform.Rotate *= t.Rotate;
 			// also disable this while reworking BoneMod
 			//Transform.Scale *= t.Scale;
 		}
 
-		public void TransformBone(Transform t, BoneList bones, bool parenting = false) {
+		public void TransformBone(Transform t, BoneList bones, bool parenting) {
 			TransformBone(t);
 			ApplyTransform(bones);
-			/*if (parenting)
-				TransformChildren(t, bones);*/
+			if (parenting)
+				TransformChildren(t, bones);
 		}
 
 		public void TransformBone(Transform t, List<BoneList> skeleton) {
 			var children = new List<Bone>();
 
 			var bones = skeleton[0];
-			TransformBone(t, bones);
+			TransformBone(t, bones, false);
 			bones.GetChildrenRecursive(this, ref children);
 			foreach (var child in children) {
-				child.TransformBone(t, bones);
+				child.TransformBone(t, bones, false);
 				
 				foreach (int index in child.LinkedTo) {
 					var childBones = skeleton[index];
@@ -93,7 +93,7 @@ namespace Ktisis.Structs.Bones {
 			bones.GetChildrenRecursive(this, ref children);
 
 			foreach (var child in children) {
-				child.TransformBone(t, bones);
+				child.TransformBone(t, bones, false);
 			}
 		}
 	}
