@@ -31,14 +31,13 @@ namespace Ktisis.Structs.Bones {
 			ScaleModifier = 1.0f;
 		}
 
-		public unsafe void SnapshotBone(Bone bone, ActorModel* model) {
+		public unsafe void SnapshotBone(Bone bone, ActorModel* model, MODE mode = MODE.WORLD) {
 			RootRotation = model->Rotation;
 			ScaleModifier = model->Height;
 
 			WorldPos = model->Position + bone.Rotate(RootRotation) * ScaleModifier;
 
-			//var rot1 = MathHelpers.ToQuaternion( new Vector3(0, 90, 0) );
-			Rotation = MathHelpers.ToEuler(RootRotation);
+			Rotation = MathHelpers.ToEuler(mode == MODE.WORLD ? RootRotation : bone.Transform.Rotate);
 
 			Scale = MathHelpers.ToVector3(bone.Transform.Scale);
 			Scale = new Vector3(0.015f, 0.015f, 0.015f);
@@ -95,10 +94,12 @@ namespace Ktisis.Structs.Bones {
 
 			// Attempt rotation
 
-			var q = MathHelpers.ToQuaternion(Vector3.Transform(
-				rotation,
-				inverse
-			));
+			var q = MathHelpers.ToQuaternion(
+				Vector3.Transform(
+					rotation,
+					inverse
+				)
+			);
 
 			delta.Rotate = q;
 

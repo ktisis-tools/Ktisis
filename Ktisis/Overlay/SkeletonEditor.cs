@@ -45,7 +45,7 @@ namespace Ktisis.Overlay {
 		// Controls
 
 		public OPERATION GizmoOp = OPERATION.UNIVERSAL;
-		public MODE Gizmode = MODE.LOCAL; // TODO (These are basically identical right now)
+		public MODE Gizmode = MODE.LOCAL; // TODO: Improve this.
 
 		// Constructor
 
@@ -86,7 +86,7 @@ namespace Ktisis.Overlay {
 			if (model == null) return;
 
 			BoneSelector.Current = (bones.Id, bone.Index);
-			BoneMod.SnapshotBone(bone, model);
+			BoneMod.SnapshotBone(bone, model, Gizmode);
 		}
 
 		// Build skeleton
