@@ -71,6 +71,10 @@ namespace Ktisis.Interface {
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
 					Plugin.SkeletonEditor.GizmoOp = OPERATION.UNIVERSAL;
 
+				var gizmode = Plugin.SkeletonEditor.Gizmode;
+				if (ImGuiComponents.IconButton(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home))
+					Plugin.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+
 				// Config
 
 				var cfg = Plugin.Configuration;

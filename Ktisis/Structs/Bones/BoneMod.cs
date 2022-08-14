@@ -38,8 +38,6 @@ namespace Ktisis.Structs.Bones {
 
 			Rotation = MathHelpers.ToEuler(RootRotation);
 
-			var rootAng = MathHelpers.ToEuler(RootRotation);
-
 			Scale = MathHelpers.ToVector3(bone.Transform.Scale);
 
 			ImGuizmo.RecomposeMatrixFromComponents(
@@ -94,18 +92,7 @@ namespace Ktisis.Structs.Bones {
 
 			// Attempt rotation
 
-			/*var largest = Math.Max(Math.Max(rotation.X, rotation.Y), rotation.Z);
-			if (largest == rotation.X)
-				Dalamud.Logging.PluginLog.Information("{0}", rotation);
-			else if (largest == rotation.Y)*/
-
-			//
-			//Dalamud.Logging.PluginLog.Information("{0}", rotation);
-
-			var r = MathHelpers.ToQuaternion(rotation);
-			Dalamud.Logging.PluginLog.Information("{0}", r);
-			delta.Rotate = r;
-			//Dalamud.Logging.PluginLog.Information("{0}", );
+			delta.Rotate = MathHelpers.ToQuaternion(rotation);
 
 			// Update stored values
 
