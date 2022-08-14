@@ -1,6 +1,10 @@
 ﻿using System.Numerics;
 
 using ImGuiNET;
+using ImGuizmoNET;
+
+using Dalamud.Interface;
+using Dalamud.Interface.Components;
 
 namespace Ktisis.Interface {
 	internal class KtisisUI {
@@ -42,19 +46,37 @@ namespace Ktisis.Interface {
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
 			if (ImGui.Begin("Ktisis", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoResize)) {
-				var cfg = Plugin.Configuration;
+				ImGui.BeginGroup();
+				ImGui.AlignTextToFramePadding();
 
 				ImGui.TextColored(
 					gposeEnabled ? ColGreen : ColRed,
 					gposeEnabled ? "GPose Enabled" : "GPose Disabled"
 				);
 
-				ImGui.BeginGroup();
-				ImGui.AlignTextToFramePadding();
+				// Gizmo Controls
 
-				//ImGui.Text(string.Format("In GPose: {0}", gposeEnabled));
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow))
+					Plugin.SkeletonEditor.GizmoOp = OPERATION.TRANSLATE;
 
-				if (ImGui.Button("Settings"))
+				ImGui.SameLine();
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync))
+					Plugin.SkeletonEditor.GizmoOp = OPERATION.ROTATE;
+
+				ImGui.SameLine();
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandArrowsAlt))
+					Plugin.SkeletonEditor.GizmoOp = OPERATION.SCALE;
+
+				ImGui.SameLine();
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
+					Plugin.SkeletonEditor.GizmoOp = OPERATION.UNIVERSAL;
+
+				// Config
+
+				var cfg = Plugin.Configuration;
+
+				ImGui.SameLine();
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
 					Plugin.ConfigInterface.Show();
 
 				ImGui.Separator();

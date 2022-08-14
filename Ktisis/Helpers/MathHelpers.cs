@@ -18,6 +18,10 @@ namespace Ktisis.Helpers {
 		// Borrowed from Anamnesis
 
 		public static Quaternion ToQuaternion(Vector3 euler) {
+			/*var _z = euler.Z;
+			euler.Z = euler.Y;
+			euler.Y = _z;*/
+
 			double yaw = euler.Y * Deg2Rad;
 			double pitch = euler.X * Deg2Rad;
 			double roll = euler.Z * Deg2Rad;
@@ -41,6 +45,8 @@ namespace Ktisis.Helpers {
 		}
 
 		public static Vector3 ToEuler(Quaternion q) {
+			//var q = new Quaternion(q2.W, q2.Z, q2.X, q2.Y);
+
 			var v = new Vector3();
 
 			double test = (q.X * q.Y) + (q.Z * q.W);

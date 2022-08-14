@@ -28,7 +28,6 @@ namespace Ktisis.Overlay {
 		public GameObject? Subject;
 		public List<BoneList>? Skeleton;
 
-		//public (int, int) BoneSelection; // Find a better way of doing this
 		public BoneSelector BoneSelector;
 		public BoneMod BoneMod;
 
@@ -42,6 +41,11 @@ namespace Ktisis.Overlay {
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		};
+
+		// Controls
+
+		public OPERATION GizmoOp = OPERATION.UNIVERSAL;
+		public MODE Gizmode = MODE.LOCAL;
 
 		// Constructor
 
@@ -202,8 +206,8 @@ namespace Ktisis.Overlay {
 						ImGuizmo.Manipulate(
 							ref matrix->Projection.M11,
 							ref cameraView[0],
-							OPERATION.UNIVERSAL,
-							MODE.LOCAL,
+							GizmoOp,
+							Gizmode,
 							ref BoneMod.BoneMatrix.M11,
 							ref BoneMod.DeltaMatrix.M11
 						);
