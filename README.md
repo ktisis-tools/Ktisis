@@ -17,6 +17,8 @@ If you would like to reach out about this project, please feel free to join the 
 
 #### Features to explore, not currently in scope:
 - Inverse kinematics
+- Time controls
+- Animation selector
 - Timeline editor for rudimentary animation
 - Creation of additional actors and editing
 - Placement and rendering of 3D props in-game

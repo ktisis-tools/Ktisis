@@ -45,7 +45,7 @@ namespace Ktisis.Overlay {
 		// Controls
 
 		public OPERATION GizmoOp = OPERATION.UNIVERSAL;
-		public MODE Gizmode = MODE.LOCAL;
+		public MODE Gizmode = MODE.LOCAL; // TODO (These are basically identical right now)
 
 		// Constructor
 
@@ -169,6 +169,7 @@ namespace Ktisis.Overlay {
 
 			var hoveredBones = new List<(int ListId, int Index)>();
 
+
 			foreach (BoneList bones in Skeleton) {
 				foreach (Bone bone in bones) {
 					if (bone.IsRoot)
@@ -185,7 +186,7 @@ namespace Ktisis.Overlay {
 							var parentPos = model->Position + parent.Rotate(model->Rotation) * model->Height;
 
 							Gui.WorldToScreen(parentPos, out var pPos);
-							draw.AddLine(pos, pPos, 0xffffffff);
+							draw.AddLine(pos, pPos, 0x90ffffff);
 						}
 					}
 
@@ -212,7 +213,16 @@ namespace Ktisis.Overlay {
 							ref BoneMod.DeltaMatrix.M11
 						);
 
+						ImGuizmo.DrawCubes(
+							ref matrix->Projection.M11,
+							ref cameraView[0],
+							ref BoneMod.BoneMatrix.M11,
+							1
+						);
+
 						// TODO: Streamline this.
+
+						//BoneMod.SnapshotBone(bone, model);
 
 						var delta = BoneMod.GetDelta();
 
@@ -230,7 +240,7 @@ namespace Ktisis.Overlay {
 						if (hovered)
 							hoveredBones.Add(pair);
 
-						draw.AddCircleFilled(pos, Math.Max(2.0f, 8.0f - cam->Distance), hovered ? 0xffffffff : 0xb0ffffff, 100);
+						draw.AddCircleFilled(pos, Math.Max(2.0f, 8.0f - cam->Distance), hovered ? 0xffffffff : 0x90ffffff, 100);
 					}
 				}
 
