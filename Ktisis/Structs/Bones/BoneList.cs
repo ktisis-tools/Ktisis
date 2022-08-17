@@ -32,7 +32,7 @@ namespace Ktisis.Structs {
 
 		// Find parent
 
-		public Bone GetParentOf(Bone bone) {
+		public Bone? GetParentOf(Bone bone) {
 			return this[bone.ParentId];
 		}
 

@@ -182,7 +182,7 @@ namespace Ktisis.Overlay {
 
 					if (Plugin.Configuration.DrawLinesOnSkeleton) {
 						if (bone.ParentId > 0) { // Lines
-							var parent = bones.GetParentOf(bone);
+							var parent = bone.GetParent()!;
 							var parentPos = model->Position + parent.Rotate(model->Rotation) * model->Height;
 
 							Gui.WorldToScreen(parentPos, out var pPos);

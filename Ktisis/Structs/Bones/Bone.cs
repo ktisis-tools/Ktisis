@@ -18,9 +18,13 @@ namespace Ktisis.Structs.Bones {
 		public bool IsRoot = false;
 		public List<int> LinkedTo;
 
+		public BoneList BoneList;
+
 		// Constructor
 
 		public Bone(BoneList bones, int index) {
+			BoneList = bones;
+
 			Index = index;
 			ParentId = bones.Skeleton.ParentIndex[index];
 			Transform = bones.Transforms[index];
@@ -95,6 +99,12 @@ namespace Ktisis.Structs.Bones {
 			foreach (var child in children) {
 				child.TransformBone(t, bones, false);
 			}
+		}
+
+		// Get parent
+
+		public Bone? GetParent() {
+			return BoneList.GetParentOf(this);
 		}
 	}
 }
