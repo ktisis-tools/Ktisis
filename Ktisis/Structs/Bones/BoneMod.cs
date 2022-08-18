@@ -94,7 +94,15 @@ namespace Ktisis.Structs.Bones {
 
 			// Attempt rotation
 
-			delta.Rotation = MathHelpers.ToQuaternion(rotation);
+			var q = MathHelpers.ToQuaternion(
+				Vector3.Transform(
+					rotation,
+					inverse
+				)
+			);
+
+			delta.Rotation = q;
+			//delta.Rotation = MathHelpers.ToQuaternion(rotation);
 
 			// Update stored values
 
