@@ -17,8 +17,8 @@ namespace Ktisis.Helpers {
 		// Euler <=> Quaternion
 		// Borrowed from Anamnesis
 
-		public static Quaternion ToQuaternion(Vector3 e) {
-			var euler = new Vector3(e.X, e.Z, e.Y);
+		public static Quaternion ToQuaternion(Vector3 euler) {
+			//var euler = new Vector3(e.X, e.Z, e.Y);
 
 			double yaw = euler.Y * Deg2Rad;
 			double pitch = euler.X * Deg2Rad;

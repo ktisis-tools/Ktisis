@@ -101,8 +101,8 @@ namespace Ktisis.Structs.Bones {
 				)
 			);
 
-			delta.Rotation = q;
-			//delta.Rotation = MathHelpers.ToQuaternion(rotation);
+			//delta.Rotation = q;
+			delta.Rotation = MathHelpers.ToQuaternion(rotation);
 
 			// Update stored values
 
