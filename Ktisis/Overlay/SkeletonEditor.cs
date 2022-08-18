@@ -226,7 +226,7 @@ namespace Ktisis.Overlay {
 
 						var delta = BoneMod.GetDelta();
 
-						bone.Transform.Rotate *= delta.Rotate;
+						bone.Transform.Rotation *= delta.Rotation;
 						bone.TransformBone(delta, Skeleton);
 
 					} else { // Dot

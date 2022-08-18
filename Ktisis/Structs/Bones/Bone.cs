@@ -53,14 +53,14 @@ namespace Ktisis.Structs.Bones {
 		// Quaternion rotation
 
 		public Vector3 Rotate(Quaternion quat) {
-			var t = Transform.Translate;
+			var t = Transform.Position;
 			return Vector3.Transform(new Vector3(t.X, t.Y, t.Z), quat);
 		}
 
 		// Transform bone
 
 		public void TransformBone(Transform t) {
-			Transform.Translate += t.Translate;
+			Transform.Position += t.Position;
 			// doesn't work, disable this for now.
 			//Transform.Rotate *= t.Rotate;
 			// also disable this while reworking BoneMod

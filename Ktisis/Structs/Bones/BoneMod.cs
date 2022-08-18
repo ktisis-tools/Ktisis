@@ -37,7 +37,7 @@ namespace Ktisis.Structs.Bones {
 
 			WorldPos = model->Position + bone.Rotate(RootRotation) * ScaleModifier;
 
-			Rotation = MathHelpers.ToEuler(mode == MODE.WORLD ? RootRotation : bone.Transform.Rotate);
+			Rotation = MathHelpers.ToEuler(RootRotation * bone.Transform.Rotation);
 
 			Scale = MathHelpers.ToVector3(bone.Transform.Scale);
 			Scale = new Vector3(0.015f, 0.015f, 0.015f);
@@ -87,7 +87,7 @@ namespace Ktisis.Structs.Bones {
 			// Convert position
 
 			var inverse = Quaternion.Inverse(RootRotation);
-			delta.Translate = Vector4.Transform(
+			delta.Position = Vector4.Transform(
 				translate - WorldPos,
 				inverse
 			) / ScaleModifier;
@@ -101,7 +101,7 @@ namespace Ktisis.Structs.Bones {
 				)
 			);
 
-			delta.Rotate = q;
+			delta.Rotation = q;
 
 			// Update stored values
 
