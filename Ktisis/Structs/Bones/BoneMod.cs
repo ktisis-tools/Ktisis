@@ -37,10 +37,10 @@ namespace Ktisis.Structs.Bones {
 
 			WorldPos = model->Position + bone.Rotate(RootRotation) * ScaleModifier;
 
-			Rotation = MathHelpers.ToEuler(RootRotation * bone.Transform.Rotation);
+			Rotation = MathHelpers.ToEuler(bone.Transform.Rotation * RootRotation);
 
 			Scale = MathHelpers.ToVector3(bone.Transform.Scale);
-			Scale = new Vector3(0.015f, 0.015f, 0.015f);
+			Scale = new Vector3(0.015f, 0.015f, 0.015f); // temp for debugging
 
 			ImGuizmo.RecomposeMatrixFromComponents(
 				ref WorldPos.X,
@@ -94,14 +94,7 @@ namespace Ktisis.Structs.Bones {
 
 			// Attempt rotation
 
-			var q = MathHelpers.ToQuaternion(
-				Vector3.Transform(
-					rotation,
-					inverse
-				)
-			);
-
-			delta.Rotation = q;
+			delta.Rotation = MathHelpers.ToQuaternion(rotation);
 
 			// Update stored values
 
