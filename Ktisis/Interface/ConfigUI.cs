@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using ImGuiNET;
 
-using Ktisis.Locale;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface {
 	internal class ConfigUI {

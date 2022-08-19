@@ -3,7 +3,7 @@
 using Dalamud.Plugin;
 using Dalamud.Configuration;
 
-using Ktisis.Locale;
+using Ktisis.Localization;
 
 namespace Ktisis {
 	[Serializable]

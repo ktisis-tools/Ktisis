@@ -12,7 +12,7 @@ using Dalamud.Game.ClientState.Objects;
 
 using Ktisis.Overlay;
 using Ktisis.Interface;
-using System;
+using Ktisis.Localization;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -24,6 +24,8 @@ namespace Ktisis {
 		internal KtisisUI Interface { get; init; }
 		internal ConfigUI ConfigInterface { get; init; }
 		internal SkeletonEditor SkeletonEditor { get; init; }
+
+		internal Locale Locale { get; init; }
 
 		internal DalamudPluginInterface PluginInterface { get; init; }
 		internal CommandManager CommandManager { get; init; }
@@ -54,6 +56,10 @@ namespace Ktisis {
 			CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
 				HelpMessage = "/ktisis - Show the Ktisis interface."
 			});
+
+			// i18n
+
+			Locale = new Locale(this);
 
 			// Overlays & UI
 

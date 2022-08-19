@@ -1,4 +1,4 @@
-﻿namespace Ktisis.Locale {
+﻿namespace Ktisis.Localization {
 	public class Locale {
 		private Ktisis Plugin;
 
