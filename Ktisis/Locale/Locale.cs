@@ -1,6 +1,18 @@
 ﻿namespace Ktisis.Locale {
 	public class Locale {
+		private Ktisis Plugin;
 
+		public Locale(Ktisis plugin) {
+			Plugin = plugin;
+		}
+
+		public UserLocale GetCurrent() {
+			return Plugin.Configuration.Localization;
+		}
+
+		public string GetString(string handle) {
+			return handle; // Not implemented
+		}
 	}
 
 	public enum UserLocale {
