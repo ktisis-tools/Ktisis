@@ -3,6 +3,8 @@
 using Dalamud.Plugin;
 using Dalamud.Configuration;
 
+using Ktisis.Locale;
+
 namespace Ktisis {
 	[Serializable]
 	public class Configuration : IPluginConfiguration {
@@ -35,13 +37,5 @@ namespace Ktisis {
 		public void Save(Ktisis plugin) {
 			plugin.PluginInterface.SavePluginConfig(this);
 		}
-	}
-
-	public enum UserLocale {
-		// these don't exist yet
-		En = 0,
-		De = 1,
-		Jp = 2,
-		Fr = 3
 	}
 }

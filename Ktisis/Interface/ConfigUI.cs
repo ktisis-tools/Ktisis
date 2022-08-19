@@ -1,6 +1,9 @@
 ﻿using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
+
+using Ktisis.Locale;
 
 namespace Ktisis.Interface {
 	internal class ConfigUI {
@@ -9,6 +12,15 @@ namespace Ktisis.Interface {
 		private Configuration Cfg;
 
 		public bool Visible = false;
+
+		// Langauge dropdown
+
+		public static Dictionary<string, UserLocale> Languages = new() {
+			["English"] = UserLocale.En/*,
+			["French"] = UserLocale.Fr,
+			["German"] = UserLocale.De,
+			["Japanese"] = UserLocale.Jp*/
+		};
 
 		// Constructor
 
@@ -97,7 +109,31 @@ namespace Ktisis.Interface {
 		// Language
 
 		public void DrawLanguageTab() {
+			var selected = "Unknown";
+			foreach (var lang in Languages) {
+				if (Languages[lang.Key] == Cfg.Localization) {
+					selected = lang.Key;
+					break;
+				}
+			}
 
+			if (ImGui.BeginCombo("Language", selected)) {
+				foreach (var lang in Languages) {
+					if (ImGui.Selectable(lang.Key, lang.Key == selected)) {
+						Cfg.Localization = lang.Value;
+						Cfg.Save(Plugin);
+					}
+				}
+
+				ImGui.SetItemDefaultFocus();
+				ImGui.EndCombo();
+			}
+
+			var translateBones = Cfg.TranslateBones;
+			if (ImGui.Checkbox("Translate bone names", ref translateBones)) {
+				Cfg.TranslateBones = translateBones;
+				Cfg.Save(Plugin);
+			}
 
 			ImGui.EndTabItem();
 		}
