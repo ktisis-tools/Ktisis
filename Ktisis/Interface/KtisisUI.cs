@@ -129,7 +129,7 @@ namespace Ktisis.Interface {
 			if (children.Count == 0)
 				flag |= ImGuiTreeNodeFlags.Leaf;
 
-			var show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, Plugin.Locale.GetString(bone.HkaBone.Name!));
+			var show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, Plugin.Locale.GetBoneName(bone.HkaBone.Name!));
 
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();

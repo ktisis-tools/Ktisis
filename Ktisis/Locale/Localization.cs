@@ -46,6 +46,10 @@ namespace Ktisis.Localization {
 			return Strings.ContainsKey(handle) ? (string)Strings[handle]! : handle;
 		}
 
+		public string GetBoneName(string handle) {
+			return Plugin.Configuration.TranslateBones ? GetString(handle) : handle;
+		}
+
 		public static Stream GetLocaleFile(UserLocale lang) {
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			string assemblyName = assembly.GetName().Name!;
