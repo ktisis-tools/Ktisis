@@ -12,10 +12,12 @@ using Dalamud.Game.ClientState.Objects;
 
 using Ktisis.Overlay;
 using Ktisis.Interface;
+using System;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
 		public string Name => "Ktisis";
+		public string CommandName = "/ktisis";
 
 		public Configuration Configuration { get; init; }
 
@@ -47,6 +49,14 @@ namespace Ktisis {
 
 			Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
+			// Register command
+
+			CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
+				HelpMessage = "/ktisis - Show the Ktisis interface."
+			});
+
+			// Overlays & UI
+
 			Interface = new KtisisUI(this);
 			ConfigInterface = new ConfigUI(this);
 			SkeletonEditor = new SkeletonEditor(this, null);
@@ -59,6 +69,11 @@ namespace Ktisis {
 
 		public void Dispose() {
 			// TODO
+			CommandManager.RemoveHandler(CommandName);
+		}
+
+		private void OnCommand(string command, string arguments) {
+			Interface.Show();
 		}
 
 		public unsafe void Draw() {
