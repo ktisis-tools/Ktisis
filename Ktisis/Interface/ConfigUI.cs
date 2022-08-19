@@ -13,15 +13,6 @@ namespace Ktisis.Interface {
 
 		public bool Visible = false;
 
-		// Langauge dropdown
-
-		public static Dictionary<string, UserLocale> Languages = new() {
-			["English"] = UserLocale.En/*,
-			["French"] = UserLocale.Fr,
-			["German"] = UserLocale.De,
-			["Japanese"] = UserLocale.Jp*/
-		};
-
 		// Constructor
 
 		public ConfigUI(Ktisis plugin) {
@@ -110,17 +101,17 @@ namespace Ktisis.Interface {
 
 		public void DrawLanguageTab() {
 			var selected = "Unknown";
-			foreach (var lang in Languages) {
-				if (Languages[lang.Key] == Cfg.Localization) {
-					selected = lang.Key;
+			foreach (var lang in Locale.Languages) {
+				if (lang.Key == Cfg.Localization) {
+					selected = lang.Value;
 					break;
 				}
 			}
 
 			if (ImGui.BeginCombo("Language", selected)) {
-				foreach (var lang in Languages) {
-					if (ImGui.Selectable(lang.Key, lang.Key == selected)) {
-						Cfg.Localization = lang.Value;
+				foreach (var lang in Locale.Languages) {
+					if (ImGui.Selectable(lang.Value, lang.Value == selected)) {
+						Cfg.Localization = lang.Key;
 						Cfg.Save(Plugin);
 					}
 				}
