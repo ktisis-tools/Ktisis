@@ -129,18 +129,21 @@ namespace Ktisis.Interface {
 			if (children.Count == 0)
 				flag |= ImGuiTreeNodeFlags.Leaf;
 
-			var show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, Plugin.Locale.GetBoneName(bone.HkaBone.Name!));
+			var show = bone.IsRoot;
+			if (!show) {
+				show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, Plugin.Locale.GetBoneName(bone.HkaBone.Name!));
 
-			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
-			var rectMax = ImGui.GetItemRectMax();
+				var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
+				var rectMax = ImGui.GetItemRectMax();
 
-			var mousePos = ImGui.GetMousePos();
-			if (
-				ImGui.IsMouseClicked(ImGuiMouseButton.Left)
-				&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
-				&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
-			) {
-				Plugin.SkeletonEditor.SelectBone(bone);
+				var mousePos = ImGui.GetMousePos();
+				if (
+					ImGui.IsMouseClicked(ImGuiMouseButton.Left)
+					&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
+					&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
+				) {
+					Plugin.SkeletonEditor.SelectBone(bone);
+				}
 			}
 
 			if (show) {
