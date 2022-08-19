@@ -81,11 +81,11 @@ namespace Ktisis.Overlay {
 
 		// Bone selection
 
-		public unsafe void SelectBone(Bone bone, BoneList bones) {
+		public unsafe void SelectBone(Bone bone) {
 			var model = GetSubjectModel();
 			if (model == null) return;
 
-			BoneSelector.Current = (bones.Id, bone.Index);
+			BoneSelector.Current = (bone.BoneList.Id, bone.Index);
 			BoneMod.SnapshotBone(bone, model, Gizmode);
 		}
 

@@ -106,5 +106,11 @@ namespace Ktisis.Structs.Bones {
 		public Bone? GetParent() {
 			return BoneList.GetParentOf(this);
 		}
+
+		// Get children
+
+		public List<Bone> GetChildren() {
+			return BoneList.GetChildrenDirect(this);
+		}
 	}
 }

@@ -6,6 +6,8 @@ using ImGuizmoNET;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
+using Ktisis.Structs.Bones;
+
 namespace Ktisis.Interface {
 	internal class KtisisUI {
 		private Ktisis Plugin;
@@ -14,6 +16,8 @@ namespace Ktisis.Interface {
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
 		public static Vector4 ColRed = new Vector4(255, 0, 0, 255);
+
+		public static ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags.OpenOnArrow;
 
 		// Constructor
 
@@ -97,10 +101,74 @@ namespace Ktisis.Interface {
 				}
 
 				ImGui.Separator();
+
+				// Bone tree
+
+				DrawBoneTree();
 			}
 
 			ImGui.PopStyleVar(1);
 			ImGui.End();
+		}
+
+		// Bone Tree
+
+		public void DrawBoneTree() {
+			//var select = false;
+
+			var editor = Plugin.SkeletonEditor;
+			var actor = editor.Subject;
+
+			if (editor.Skeleton != null && editor.Skeleton.Count > 0)
+				DrawBoneTree(editor.Skeleton[0].Bones[0]);
+
+			/*if (ImGui.TreeNodeEx("Test", mode, "Test 2")) {
+				if (ImGui.IsItemClicked())
+					ImGui.Text("AAA");
+				ImGui.Text("hi");
+				ImGui.Text(string.Format("{0}", mode));
+				ImGui.TreePop();
+			}*/
+
+			/*var show = ImGui.TreeNode("");
+			ImGui.SameLine();
+			ImGui.Selectable("test");
+			if (show) {
+				ImGui.Text("hi");
+				ImGui.TreePop();
+			}*/
+		}
+
+		public void DrawBoneTree(Bone bone) {
+			var flag = BaseFlags;
+
+			if (Plugin.SkeletonEditor.BoneSelector.IsSelected(bone))
+				flag |= ImGuiTreeNodeFlags.Selected;
+
+			var children = bone.GetChildren();
+			if (children.Count == 0)
+				flag |= ImGuiTreeNodeFlags.Leaf;
+
+			var show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, bone.HkaBone.Name);
+
+			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
+			var rectMax = ImGui.GetItemRectMax();
+
+			var mousePos = ImGui.GetMousePos();
+			if (
+				ImGui.IsMouseClicked(ImGuiMouseButton.Left)
+				&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
+				&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
+			) {
+				Plugin.SkeletonEditor.SelectBone(bone);
+			}
+
+			if (show) {
+				// Show children
+				foreach (var child in children)
+					DrawBoneTree(child);
+				ImGui.TreePop();
+			}
 		}
 	}
 }

@@ -47,13 +47,17 @@ namespace Ktisis.Structs.Bones {
 					ImGui.Selectable(string.Format("{0}", bone.HkaBone.Name), isSelected);
 
 					if (isSelected && mouseDown)
-						editor.SelectBone(bone, bones!);
+						editor.SelectBone(bone);
 				}
 			}
 
 			ImGui.PopStyleVar(1);
 
 			ImGui.End();
+		}
+
+		public bool IsSelected(Bone bone) {
+			return (bone.BoneList.Id, bone.Index) == Current;
 		}
 	}
 }
