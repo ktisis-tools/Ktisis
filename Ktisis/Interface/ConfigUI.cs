@@ -6,12 +6,15 @@ namespace Ktisis.Interface {
 	internal class ConfigUI {
 		private Ktisis Plugin;
 
+		private Configuration Cfg;
+
 		public bool Visible = false;
 
 		// Constructor
 
 		public ConfigUI(Ktisis plugin) {
 			Plugin = plugin;
+			Cfg = Plugin.Configuration;
 		}
 
 		// Toggle visibility
@@ -38,14 +41,14 @@ namespace Ktisis.Interface {
 
 			if (ImGui.Begin("Ktisis Settings", ref Visible, ImGuiWindowFlags.NoResize)) {
 				if (ImGui.BeginTabBar("Settings")) {
-					var cfg = Plugin.Configuration;
-
 					if (ImGui.BeginTabItem("Interface"))
-						DrawInterfaceTab(cfg);
+						DrawInterfaceTab();
 					if (ImGui.BeginTabItem("Overlay"))
-						DrawOverlayTab(cfg);
+						DrawOverlayTab();
 					if (ImGui.BeginTabItem("Gizmo"))
-						DrawGizmoTab(cfg);
+						DrawGizmoTab();
+					if (ImGui.BeginTabItem("Language"))
+						DrawLanguageTab();
 
 					ImGui.EndTabBar();
 				}
@@ -57,7 +60,7 @@ namespace Ktisis.Interface {
 
 		// Interface
 
-		public void DrawInterfaceTab(Configuration cfg) {
+		public void DrawInterfaceTab() {
 			/*var autoOpen = cfg.AutoOpen;
 			if (ImGui.Checkbox("Auto Open", ref autoOpen)) {
 				cfg.AutoOpen = autoOpen;
@@ -69,11 +72,11 @@ namespace Ktisis.Interface {
 
 		// Overlay
 
-		public void DrawOverlayTab(Configuration cfg) {
-			var drawLines = cfg.DrawLinesOnSkeleton;
+		public void DrawOverlayTab() {
+			var drawLines = Cfg.DrawLinesOnSkeleton;
 			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines)) {
-				cfg.DrawLinesOnSkeleton = drawLines;
-				cfg.Save(Plugin);
+				Cfg.DrawLinesOnSkeleton = drawLines;
+				Cfg.Save(Plugin);
 			}
 
 			ImGui.EndTabItem();
@@ -81,12 +84,20 @@ namespace Ktisis.Interface {
 
 		// Gizmo
 
-		public void DrawGizmoTab(Configuration cfg) {
-			var allowAxisFlip = cfg.AllowAxisFlip;
+		public void DrawGizmoTab() {
+			var allowAxisFlip = Cfg.AllowAxisFlip;
 			if (ImGui.Checkbox("Flip axis to face camera", ref allowAxisFlip)) {
-				cfg.AllowAxisFlip = allowAxisFlip;
-				cfg.Save(Plugin);
+				Cfg.AllowAxisFlip = allowAxisFlip;
+				Cfg.Save(Plugin);
 			}
+
+			ImGui.EndTabItem();
+		}
+
+		// Language
+
+		public void DrawLanguageTab() {
+
 
 			ImGui.EndTabItem();
 		}

@@ -8,10 +8,6 @@ namespace Ktisis {
 	public class Configuration : IPluginConfiguration {
 		public int Version { get; set; } = 0;
 
-		// Plugin settings & preferences
-
-		public UserLocale Localization { get; set; } = UserLocale.En;
-
 		// Interface
 
 		public bool AutoOpen { get; set; } = true;
@@ -23,6 +19,12 @@ namespace Ktisis {
 		// Gizmo
 
 		public bool AllowAxisFlip { get; set; } = true;
+
+		// Language
+
+		public UserLocale Localization { get; set; } = UserLocale.En;
+
+		public bool TranslateBones = true;
 
 		// UI memory
 
