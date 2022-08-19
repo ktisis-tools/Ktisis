@@ -153,5 +153,7 @@
     "j_f_dlip": "Lower Lip",
     "j_ex_met_va": "Visor",
     "mh_n_hara": "Main Hand",
-    "oh_n_hara": "Off Hand"
+    "oh_n_hara": "Off Hand",
+    "j_half_l": "Left Half",
+    "j_half_r": "Right Half"
 }
