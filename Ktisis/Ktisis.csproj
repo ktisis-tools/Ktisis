@@ -24,6 +24,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Locale\i18n\English.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Locale\i18n\English.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 

@@ -19,7 +19,7 @@ using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Overlay {
 	public sealed class SkeletonEditor {
-		private Ktisis Plugin;
+		internal Ktisis Plugin;
 		private GameGui Gui;
 		private ObjectTable ObjectTable;
 

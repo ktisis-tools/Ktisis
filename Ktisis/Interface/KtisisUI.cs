@@ -114,29 +114,9 @@ namespace Ktisis.Interface {
 		// Bone Tree
 
 		public void DrawBoneTree() {
-			//var select = false;
-
 			var editor = Plugin.SkeletonEditor;
-			var actor = editor.Subject;
-
 			if (editor.Skeleton != null && editor.Skeleton.Count > 0)
 				DrawBoneTree(editor.Skeleton[0].Bones[0]);
-
-			/*if (ImGui.TreeNodeEx("Test", mode, "Test 2")) {
-				if (ImGui.IsItemClicked())
-					ImGui.Text("AAA");
-				ImGui.Text("hi");
-				ImGui.Text(string.Format("{0}", mode));
-				ImGui.TreePop();
-			}*/
-
-			/*var show = ImGui.TreeNode("");
-			ImGui.SameLine();
-			ImGui.Selectable("test");
-			if (show) {
-				ImGui.Text("hi");
-				ImGui.TreePop();
-			}*/
 		}
 
 		public void DrawBoneTree(Bone bone) {
@@ -149,7 +129,7 @@ namespace Ktisis.Interface {
 			if (children.Count == 0)
 				flag |= ImGuiTreeNodeFlags.Leaf;
 
-			var show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, bone.HkaBone.Name);
+			var show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, Plugin.Locale.GetString(bone.HkaBone.Name!));
 
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();

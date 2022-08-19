@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System.IO;
+using System.Reflection;
+using System.Collections.Generic;
 
-using Newtonsoft;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using Dalamud.Logging;
 
 namespace Ktisis.Localization {
 	public class Locale {
 		private Ktisis Plugin;
 
 		public UserLocale Loaded = UserLocale.None;
-		public Dictionary<string, string> Dict = new();
+		public JObject Strings = new();
 
 		public static Dictionary<UserLocale, string> Languages = new() {
 			[UserLocale.En] = "English"/*,
@@ -27,10 +32,31 @@ namespace Ktisis.Localization {
 		public string GetString(string handle) {
 			var lang = GetCurrent();
 			if (lang != Loaded) {
+				Loaded = lang;
 
+				try {
+					var file = new StreamReader( GetLocaleFile(lang) );
+					using (var reader = new JsonTextReader(file))
+						Strings = (JObject)JToken.ReadFrom(reader);
+				} catch {
+					PluginLog.Error($"Failed to fetch localization: {lang}");
+				}
 			}
 
-			return handle; // Not implemented
+			return Strings.ContainsKey(handle) ? (string)Strings[handle]! : handle;
+		}
+
+		public static Stream GetLocaleFile(UserLocale lang) {
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			string assemblyName = assembly.GetName().Name!;
+
+			var path = $"{assemblyName}.Locale.i18n.{Languages[lang]}.json";
+
+			Stream? stream = assembly.GetManifestResourceStream(path);
+			if (stream == null)
+				throw new FileNotFoundException(path);
+
+			return stream;
 		}
 	}
 
@@ -38,8 +64,8 @@ namespace Ktisis.Localization {
 		None = -1,
 		// these don't exist yet
 		En = 0,
-		De = 1,
-		Jp = 2,
-		Fr = 3
+		Fr = 1,
+		De = 2,
+		Jp = 3
 	}
 }

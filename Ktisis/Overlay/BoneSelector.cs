@@ -45,8 +45,9 @@ namespace Ktisis.Structs.Bones {
 					var bone = bones?[item.Index];
 					if (bone == null) continue;
 
+					var name = editor.Plugin.Locale.GetString(bone.HkaBone.Name!);
 					var isSelected = i == ScrollIndex;
-					ImGui.Selectable(string.Format("{0}", bone.HkaBone.Name), isSelected);
+					ImGui.Selectable(name, isSelected);
 
 					if (isSelected && mouseDown)
 						editor.SelectBone(bone);
