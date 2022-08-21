@@ -23,6 +23,7 @@ namespace Ktisis {
 
 		internal KtisisUI Interface { get; init; }
 		internal ConfigUI ConfigInterface { get; init; }
+		internal CustomizeUI CustomizeInterface { get; init; }
 		internal SkeletonEditor SkeletonEditor { get; init; }
 
 		internal Locale Locale { get; init; }
@@ -65,6 +66,7 @@ namespace Ktisis {
 
 			Interface = new KtisisUI(this);
 			ConfigInterface = new ConfigUI(this);
+			CustomizeInterface = new CustomizeUI(this);
 			SkeletonEditor = new SkeletonEditor(this, null);
 
 			Interface.Show();
@@ -95,6 +97,7 @@ namespace Ktisis {
 
 			Interface.Draw();
 			ConfigInterface.Draw();
+			CustomizeInterface.Draw();
 
 			SkeletonEditor.Draw(draw);
 
