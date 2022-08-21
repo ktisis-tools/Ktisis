@@ -73,12 +73,12 @@ namespace Ktisis.Interface {
 
 				// Race
 
-				var curRace = $"{custard.Race}";
+				var curRace = Plugin.Locale.GetString($"{custard.Race}");
 				if (ImGui.BeginCombo("Race", curRace)) {
 					foreach (var race in Enum.GetValues(typeof(Race))) {
-						var raceName = $"{race}";
-						if (ImGui.Selectable($"{race}", raceName == curRace)) {
-
+						var raceName = Plugin.Locale.GetString($"{race}");
+						if (ImGui.Selectable(raceName, raceName == curRace)) {
+							custard.Race = (Race)race;
 						}
 					}
 
