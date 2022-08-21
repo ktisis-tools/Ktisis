@@ -75,9 +75,16 @@ namespace Ktisis.Interface {
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
 					Plugin.SkeletonEditor.GizmoOp = OPERATION.UNIVERSAL;
 
+				// Second row
+
 				var gizmode = Plugin.SkeletonEditor.Gizmode;
 				if (ImGuiComponents.IconButton(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home))
 					Plugin.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+
+				ImGui.SameLine();
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.PencilAlt)) {
+					Plugin.CustomizeInterface.Show(Plugin.SkeletonEditor.Subject);
+				}
 
 				// Config
 

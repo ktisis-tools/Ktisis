@@ -14,6 +14,8 @@ namespace Ktisis {
 
 		public bool AutoOpen { get; set; } = true;
 
+		public bool DisplayCharName = true;
+
 		// Overlay
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;

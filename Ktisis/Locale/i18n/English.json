@@ -1,6 +1,25 @@
 {
-	// Bone Names
-	// Pulled from Anamnesis - ty!
+    /*
+        English Localization
+        Maintained by @chirpcodes et al
+
+        This file omits strings with identical key:value pairs.
+        Do not directly copy it as reference for new translations without including these strings.
+        You will need to define translations of all enum variants (i.e. Race, Tribe).
+    */
+
+    //// Game Jargon ////
+
+    // Race Names
+    "Miqote": "Miqo'te",
+    "AuRa": "Au Ra",
+    // Tribe Names
+    "SunSeeker": "Seeker of the Sun",
+    "MoonKeeper": "Keeper of the Moon",
+    "SeaWolf": "Sea Wolf",
+    "Lost": "The Lost",
+    // Bone Names
+    // Pulled from Anamnesis - ty!
     "n_root": "Root",
     "n_hara": "Abdomen",
     "n_throw": "Throw",
