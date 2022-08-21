@@ -70,6 +70,12 @@ namespace Ktisis.Interface {
 				cfg.Save(Plugin);
 			}*/
 
+			var displayCharName = Cfg.DisplayCharName;
+			if (ImGui.Checkbox("Display character name", ref displayCharName)) {
+				Cfg.DisplayCharName = displayCharName;
+				Cfg.Save(Plugin);
+			}
+
 			ImGui.EndTabItem();
 		}
 

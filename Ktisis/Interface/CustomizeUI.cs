@@ -70,7 +70,8 @@ namespace Ktisis.Interface {
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
 			// Create window
-			if (ImGui.Begin($"{Target->Name}", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoResize)) {
+			var title = Plugin.Configuration.DisplayCharName ? $"{Target->Name}" : "Appearance";
+			if (ImGui.Begin(title, ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoResize)) {
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
 
