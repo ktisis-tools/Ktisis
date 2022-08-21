@@ -1,4 +1,15 @@
 {
+    /*
+        English Localization
+        Maintained by @chirpcodes et al
+
+        This file omits strings with identical key:value pairs.
+        Do not directly copy it as reference for new translations without including these strings.
+        You will need to define translations of all enum variants (i.e. Race, Tribe).
+    */
+
+    //// Game Jargon ////
+
     // Race Names
     "Miqote": "Miqo'te",
     "AuRa": "Au Ra",

@@ -33,6 +33,10 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset((int)CustomizeIndex.RaceFeatureType)] public byte RaceFeatureType;
 		[FieldOffset((int)CustomizeIndex.SkinColor)] public byte SkinColor;
 		[FieldOffset((int)CustomizeIndex.Tribe)] public Tribe Tribe;
+
+		public static byte GetRaceTribeIndex(Race race) {
+			return (byte)((byte)race * 2 - 1); // idk
+		}
 	}
 
 	[Flags]
@@ -54,34 +58,32 @@ namespace Ktisis.Structs.Actor {
 	}
 
 	public enum Race : byte {
-		None,
-		Hyur,
-		Elezen,
-		Lalafell,
-		Miqote,
-		Roegadyn,
-		AuRa,
-		Hrothgar,
-		Viera
+		Hyur = 1,
+		Elezen = 2,
+		Lalafell = 3,
+		Miqote = 4,
+		Roegadyn = 5,
+		AuRa = 6,
+		Hrothgar = 7,
+		Viera = 8
 	}
 
 	public enum Tribe : byte {
-		None,
-		Midlander,
-		Highlander,
-		Wildwood,
-		Duskwight,
-		Plainsfolk,
-		Dunesfolk,
-		SunSeeker,
-		MoonKeeper,
-		SeaWolf,
-		Hellsguard,
-		Raen,
-		Xaela,
-		Helion,
-		Lost,
-		Rava,
-		Veena
+		Midlander = 1,
+		Highlander = 2,
+		Wildwood = 3,
+		Duskwight = 4,
+		Plainsfolk = 5,
+		Dunesfolk = 6,
+		SunSeeker = 7,
+		MoonKeeper = 8,
+		SeaWolf = 9,
+		Hellsguard = 10,
+		Raen = 11,
+		Xaela = 12,
+		Helion = 13,
+		Lost = 14,
+		Rava = 15,
+		Veena = 16
 	}
 }

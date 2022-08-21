@@ -75,10 +75,14 @@ namespace Ktisis.Interface {
 
 				var curRace = Plugin.Locale.GetString($"{custard.Race}");
 				if (ImGui.BeginCombo("Race", curRace)) {
-					foreach (var race in Enum.GetValues(typeof(Race))) {
+					foreach (Race race in Enum.GetValues(typeof(Race))) {
 						var raceName = Plugin.Locale.GetString($"{race}");
-						if (ImGui.Selectable(raceName, raceName == curRace)) {
-							custard.Race = (Race)race;
+						if (ImGui.Selectable(raceName, race == custard.Race)) {
+							custard.Race = race;
+							custard.Tribe = (Tribe)(
+								Customize.GetRaceTribeIndex(race)
+								+ 1 - (byte)custard.Tribe % 2
+							);
 						}
 					}
 
@@ -86,7 +90,22 @@ namespace Ktisis.Interface {
 					ImGui.EndCombo();
 				}
 
+				var curTribe = Plugin.Locale.GetString($"{custard.Tribe}");
+				if (ImGui.BeginCombo("Tribe", curTribe)) {
+					var tribes = Enum.GetValues(typeof(Tribe));
+					for (int i = 0; i < 2; i++) {
+						var tribe = (Tribe)(Customize.GetRaceTribeIndex(custard.Race) + i);
+						if (ImGui.Selectable(Plugin.Locale.GetString($"{tribe}"), tribe == custard.Tribe))
+							custard.Tribe = tribe;
+					}
+
+					ImGui.SetItemDefaultFocus();
+					ImGui.EndCombo();
+				}
+
 				// End
+
+				Target->Customize = custard;
 
 				ImGui.PopStyleVar(1);
 				ImGui.End();
