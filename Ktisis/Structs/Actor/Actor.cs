@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
@@ -9,5 +10,10 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x0F0)] public ActorModel* Model;
 		[FieldOffset(0x830)] public Customize Customize;
+
+		public string? Name {
+			get => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
+			set => throw new NotImplementedException();
+		}
 	}
 }

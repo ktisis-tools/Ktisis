@@ -1,6 +1,14 @@
 {
-	// Bone Names
-	// Pulled from Anamnesis - ty!
+    // Race Names
+    "Miqote": "Miqo'te",
+    "AuRa": "Au Ra",
+    // Tribe Names
+    "SunSeeker": "Seeker of the Sun",
+    "MoonKeeper": "Keeper of the Moon",
+    "SeaWolf": "Sea Wolf",
+    "Lost": "The Lost",
+    // Bone Names
+    // Pulled from Anamnesis - ty!
     "n_root": "Root",
     "n_hara": "Abdomen",
     "n_throw": "Throw",
