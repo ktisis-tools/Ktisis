@@ -152,6 +152,9 @@ namespace Ktisis.Overlay {
 				Subject = target;
 				if (Subject != null)
 					BuildSkeleton();
+
+				var custard = ((Actor*)Subject?.Address)->Customize;
+				Dalamud.Logging.PluginLog.Information($"{custard.Race} {custard.Gender} {custard.Tribe} {custard.BustSize} {custard.Height}");
 			}
 
 			if (Subject == null)

@@ -49,37 +49,39 @@ namespace Ktisis.Structs.Actor {
 	}
 
 	public enum Gender : byte {
-		Male = 0,
-		Female = 1
+		Male,
+		Female
 	}
 
 	public enum Race : byte {
-		Hyur = 1,
-		Elezen = 2,
-		Lalafell = 3,
-		Miqote = 4,
-		Roegadyn = 5,
-		AuRa = 6,
-		Hrothgar = 7,
-		Viera = 8
+		None,
+		Hyur,
+		Elezen,
+		Lalafell,
+		Miqote,
+		Roegadyn,
+		AuRa,
+		Hrothgar,
+		Viera
 	}
 
 	public enum Tribe : byte {
-		Midlander = 1,
-		Highlander = 2,
-		Wildwood = 3,
-		Duskwight = 4,
-		Plainsfolk = 5,
-		Dunesfolk = 6,
-		SunSeeker = 7,
-		MoonKeeper = 8,
-		SeaWolf = 9,
-		Hellsguard = 10,
-		Raen = 11,
-		Xaela = 12,
-		Helion = 13,
-		Lost = 14,
-		Rava = 15,
-		Veena = 16
+		None,
+		Midlander,
+		Highlander,
+		Wildwood,
+		Duskwight,
+		Plainsfolk,
+		Dunesfolk,
+		SunSeeker,
+		MoonKeeper,
+		SeaWolf,
+		Hellsguard,
+		Raen,
+		Xaela,
+		Helion,
+		Lost,
+		Rava,
+		Veena
 	}
 }
