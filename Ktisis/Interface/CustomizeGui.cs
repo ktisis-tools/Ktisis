@@ -3,6 +3,8 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Dalamud.Interface;
+using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Structs.Actor;
@@ -79,6 +81,17 @@ namespace Ktisis.Interface {
 
 				var custom = Target->Customize;
 
+				// Gender
+
+				var isM = custom.Gender == Gender.Male;
+				if (ImGuiComponents.IconButton(isM ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus)) {
+					custom.Gender = isM ? Gender.Female : Gender.Male;
+					Apply(custom);
+				}
+
+				ImGui.SameLine();
+				ImGui.Text(isM ? "Male" : "Female");
+
 				// Race
 
 				var curRace = Plugin.Locale.GetString($"{custom.Race}");
@@ -107,7 +120,7 @@ namespace Ktisis.Interface {
 					for (int i = 0; i < 2; i++) {
 						var tribe = (Tribe)(Customize.GetRaceTribeIndex(custom.Race) + i);
 						if (ImGui.Selectable(Plugin.Locale.GetString($"{tribe}"), tribe == custom.Tribe)) {
-							custom.Tribe = tribe;
+								custom.Tribe = tribe;
 							Apply(custom);
 						}
 					}
