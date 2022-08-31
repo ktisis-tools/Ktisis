@@ -9,7 +9,7 @@ using Dalamud.Interface.Components;
 using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface {
-	internal class KtisisUI {
+	internal class KtisisGui {
 		private Ktisis Plugin;
 
 		public bool Visible = false;
@@ -21,7 +21,7 @@ namespace Ktisis.Interface {
 
 		// Constructor
 
-		public KtisisUI(Ktisis plogon) {
+		public KtisisGui(Ktisis plogon) {
 			Plugin = plogon;
 		}
 
@@ -83,7 +83,7 @@ namespace Ktisis.Interface {
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.PencilAlt)) {
-					Plugin.CustomizeInterface.Show(Plugin.SkeletonEditor.Subject);
+					Plugin.CustomizeGui.Show(Plugin.SkeletonEditor.Subject);
 				}
 
 				// Config
@@ -92,7 +92,7 @@ namespace Ktisis.Interface {
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
-					Plugin.ConfigInterface.Show();
+					Plugin.ConfigGui.Show();
 
 				ImGui.Separator();
 

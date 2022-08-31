@@ -21,9 +21,9 @@ namespace Ktisis {
 
 		public Configuration Configuration { get; init; }
 
-		internal KtisisUI Interface { get; init; }
-		internal ConfigUI ConfigInterface { get; init; }
-		internal CustomizeUI CustomizeInterface { get; init; }
+		internal KtisisGui Gui { get; init; }
+		internal ConfigGui ConfigGui { get; init; }
+		internal CustomizeGui CustomizeGui { get; init; }
 		internal SkeletonEditor SkeletonEditor { get; init; }
 
 		internal Locale Locale { get; init; }
@@ -64,12 +64,12 @@ namespace Ktisis {
 
 			// Overlays & UI
 
-			Interface = new KtisisUI(this);
-			ConfigInterface = new ConfigUI(this);
-			CustomizeInterface = new CustomizeUI(this);
+			Gui = new KtisisGui(this);
+			ConfigGui = new ConfigGui(this);
+			CustomizeGui = new CustomizeGui(this);
 			SkeletonEditor = new SkeletonEditor(this, null);
 
-			Interface.Show();
+			Gui.Show();
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += Draw;
@@ -81,7 +81,7 @@ namespace Ktisis {
 		}
 
 		private void OnCommand(string command, string arguments) {
-			Interface.Show();
+			Gui.Show();
 		}
 
 		public unsafe void Draw() {
@@ -95,9 +95,9 @@ namespace Ktisis {
 
 			var draw = ImGui.GetWindowDrawList();
 
-			Interface.Draw();
-			ConfigInterface.Draw();
-			CustomizeInterface.Draw();
+			Gui.Draw();
+			ConfigGui.Draw();
+			CustomizeGui.Draw();
 
 			SkeletonEditor.Draw(draw);
 

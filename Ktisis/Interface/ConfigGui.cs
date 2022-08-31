@@ -6,7 +6,7 @@ using ImGuiNET;
 using Ktisis.Localization;
 
 namespace Ktisis.Interface {
-	internal class ConfigUI {
+	internal class ConfigGui {
 		private Ktisis Plugin;
 
 		private Configuration Cfg;
@@ -15,7 +15,7 @@ namespace Ktisis.Interface {
 
 		// Constructor
 
-		public ConfigUI(Ktisis plugin) {
+		public ConfigGui(Ktisis plugin) {
 			Plugin = plugin;
 			Cfg = Plugin.Configuration;
 		}

@@ -8,7 +8,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface {
-	internal unsafe class CustomizeUI {
+	internal unsafe class CustomizeGui {
 		Ktisis Plugin;
 
 		public bool Visible = false;
@@ -17,7 +17,7 @@ namespace Ktisis.Interface {
 
 		// Constructor
 
-		public CustomizeUI(Ktisis plugin) {
+		public CustomizeGui(Ktisis plugin) {
 			Plugin = plugin;
 		}
 
