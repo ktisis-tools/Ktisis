@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net6.0-windows7.0": {
+      "DalamudPackager": {
+        "type": "Direct",
+        "requested": "[2.1.6, )",
+        "resolved": "2.1.6",
+        "contentHash": "JGgpGP2FMM5Vt4utyDD+xV2+XXfo3Rb3VgJ4FnvzkWlvn4JG/bBILo6mDubWCPjDGqT0n6dF1JRG0r5ygLv/ng=="
+      }
+    }
+  }
+}

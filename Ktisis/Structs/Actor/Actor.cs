@@ -9,7 +9,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0)] public GameObject GameObject;
 
 		[FieldOffset(0x0F0)] public ActorModel* Model;
-		[FieldOffset(0x830)] public Customize Customize;
+		[FieldOffset(0x840)] public Customize Customize;
 
 		public string? Name {
 			get => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
