@@ -83,106 +83,166 @@ namespace Ktisis.Interface {
 
 				var custom = Target->Customize;
 
-				// Gender
-
-				var isM = custom.Gender == Gender.Male;
-				if (ImGuiComponents.IconButton(isM ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus)) {
-					custom.Gender = isM ? Gender.Female : Gender.Male;
-					Apply(custom);
-				}
-
-				ImGui.SameLine();
-				ImGui.Text(isM ? "Male" : "Female");
-
-				// Race
-
-				var curRace = Plugin.Locale.GetString($"{custom.Race}");
-				if (ImGui.BeginCombo("Race", curRace)) {
-					foreach (Race race in Enum.GetValues(typeof(Race))) {
-						var raceName = Plugin.Locale.GetString($"{race}");
-						if (ImGui.Selectable(raceName, race == custom.Race)) {
-							custom.Race = race;
-							custom.Tribe = (Tribe)(
-								Customize.GetRaceTribeIndex(race)
-								+ 1 - (byte)custom.Tribe % 2
-							);
-							Apply(custom);
-						}
-					}
-
-					ImGui.SetItemDefaultFocus();
-					ImGui.EndCombo();
-				}
-
-				// Tribe
-
-				var curTribe = Plugin.Locale.GetString($"{custom.Tribe}");
-				if (ImGui.BeginCombo("Tribe", curTribe)) {
-					var tribes = Enum.GetValues(typeof(Tribe));
-					for (int i = 0; i < 2; i++) {
-						var tribe = (Tribe)(Customize.GetRaceTribeIndex(custom.Race) + i);
-						if (ImGui.Selectable(Plugin.Locale.GetString($"{tribe}"), tribe == custom.Tribe)) {
-								custom.Tribe = tribe;
-							Apply(custom);
-						}
-					}
-
-					ImGui.SetItemDefaultFocus();
-					ImGui.EndCombo();
-				}
-
-				// Sliders
+				DrawFundamental(custom);
 
 				ImGui.Separator();
-
-				// Height
-
-				var height = (int)custom.Height;
-				if (ImGui.DragInt("Height", ref height, SliderRate, 0, 100)) {
-					custom.Height = (byte)height;
-					Apply(custom);
-				}
-
-				// Feature
-
-				var feat = (int)custom.RaceFeatureSize;
-				var featName = "Feature";
-
-				// TODO: Streamline this; pull from CharaMakeCustomize.
-				if (custom.Race == Race.Miqote
-				|| custom.Race == Race.AuRa
-				|| custom.Race == Race.Hrothgar) {
-					featName = "Tail Length";
-				} else if (custom.Race == Race.Viera
-				|| custom.Race == Race.Elezen
-				|| custom.Race == Race.Lalafell) {
-					featName = "Ear Length";
-				} else if (custom.Race == Race.Hyur
-				|| custom.Race == Race.Roegadyn) {
-					featName = "Muscle Tone";
-				}
-
-				if (ImGui.DragInt(featName, ref feat, SliderRate, 0, 100)) {
-					custom.RaceFeatureSize = (byte)feat;
-					Apply(custom);
-				}
-
-				// Boobas
-
-				var bust = (int)custom.BustSize;
-				if (ImGui.DragInt("Bust Size", ref bust, SliderRate, 0, 100)) {
-					custom.BustSize = (byte)bust;
-					Apply(custom);
-				}
-
-				// Numbers
+				DrawSliders(custom);
 
 				ImGui.Separator();
+				DrawNumValues(custom);
 
 				// End
 
 				ImGui.PopStyleVar(1);
 				ImGui.End();
+			}
+		}
+
+		// Gender/Race/Tribe
+
+		public void DrawFundamental(Customize custom) {
+			// Gender
+
+			var isM = custom.Gender == Gender.Male;
+			if (ImGuiComponents.IconButton(isM ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus)) {
+				custom.Gender = isM ? Gender.Female : Gender.Male;
+				Apply(custom);
+			}
+
+			ImGui.SameLine();
+			ImGui.Text(isM ? "Male" : "Female");
+
+			// Race
+
+			var curRace = Plugin.Locale.GetString($"{custom.Race}");
+			if (ImGui.BeginCombo("Race", curRace)) {
+				foreach (Race race in Enum.GetValues(typeof(Race))) {
+					var raceName = Plugin.Locale.GetString($"{race}");
+					if (ImGui.Selectable(raceName, race == custom.Race)) {
+						custom.Race = race;
+						custom.Tribe = (Tribe)(
+							Customize.GetRaceTribeIndex(race)
+							+ 1 - (byte)custom.Tribe % 2
+						);
+						Apply(custom);
+					}
+				}
+
+				ImGui.SetItemDefaultFocus();
+				ImGui.EndCombo();
+			}
+
+			// Tribe
+
+			var curTribe = Plugin.Locale.GetString($"{custom.Tribe}");
+			if (ImGui.BeginCombo("Tribe", curTribe)) {
+				var tribes = Enum.GetValues(typeof(Tribe));
+				for (int i = 0; i < 2; i++) {
+					var tribe = (Tribe)(Customize.GetRaceTribeIndex(custom.Race) + i);
+					if (ImGui.Selectable(Plugin.Locale.GetString($"{tribe}"), tribe == custom.Tribe)) {
+						custom.Tribe = tribe;
+						Apply(custom);
+					}
+				}
+
+				ImGui.SetItemDefaultFocus();
+				ImGui.EndCombo();
+			}
+		}
+
+		// Sliders
+
+		public void DrawSliders(Customize custom) {
+			// Height
+
+			var height = (int)custom.Height;
+			if (ImGui.DragInt("Height", ref height, SliderRate, 0, 100)) {
+				custom.Height = (byte)height;
+				Apply(custom);
+			}
+
+			// Feature
+
+			var feat = (int)custom.RaceFeatureSize;
+			var featName = "Feature";
+
+			// TODO: Streamline this; pull from CharaMakeCustomize.
+			if (custom.Race == Race.Miqote
+			|| custom.Race == Race.AuRa
+			|| custom.Race == Race.Hrothgar) {
+				featName = "Tail Length";
+			} else if (custom.Race == Race.Viera
+			|| custom.Race == Race.Elezen
+			|| custom.Race == Race.Lalafell) {
+				featName = "Ear Length";
+			} else if (custom.Race == Race.Hyur
+			|| custom.Race == Race.Roegadyn) {
+				featName = "Muscle Tone";
+			}
+
+			if (ImGui.DragInt(featName, ref feat, SliderRate, 0, 100)) {
+				custom.RaceFeatureSize = (byte)feat;
+				Apply(custom);
+			}
+
+			// Boobas
+
+			var bust = (int)custom.BustSize;
+			if (ImGui.DragInt("Bust Size", ref bust, SliderRate, 0, 100)) {
+				custom.BustSize = (byte)bust;
+				Apply(custom);
+			}
+		}
+
+		// Num values
+
+		public void DrawNumValues(Customize custom) {
+			// Face Type
+
+			var face = (int)custom.FaceType;
+			if (ImGui.InputInt("Face", ref face)) {
+				custom.FaceType = (byte)face;
+				Apply(custom);
+			}
+
+			// Eyebrows
+
+			var brows = (int)custom.Eyebrows;
+			if (ImGui.InputInt("Eyebrows", ref brows)) {
+				custom.Eyebrows = (byte)brows;
+				Apply(custom);
+			}
+
+			// Eye Shape
+
+			var eyes = (int)custom.EyeShape;
+			if (ImGui.InputInt("Eyes", ref eyes)) {
+				custom.EyeShape = (byte)eyes;
+				Apply(custom);
+			}
+
+			// Nose
+
+			var nose = (int)custom.NoseShape;
+			if (ImGui.InputInt("Nose", ref nose)) {
+				custom.NoseShape = (byte)nose;
+				Apply(custom);
+			}
+
+			// Jaw
+
+			var jaw = (int)custom.JawShape;
+			if (ImGui.InputInt("Jaw", ref jaw)) {
+				custom.JawShape = (byte)jaw;
+				Apply(custom);
+			}
+
+			// Mouth
+
+			var mouth = (int)custom.LipStyle;
+			if (ImGui.InputInt("Mouth", ref mouth)) {
+				custom.LipStyle = (byte)mouth;
+				Apply(custom);
 			}
 		}
 	}
