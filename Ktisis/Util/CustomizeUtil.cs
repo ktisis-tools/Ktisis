@@ -1,16 +1,20 @@
-﻿using Dalamud.Data;
+﻿using System;
+using System.Collections;
 
-using Lumina.Excel;
+using Dalamud.Data;
+using Dalamud.Game.ClientState.Objects.Enums;
+
 using Lumina.Excel.GeneratedSheets;
 
 using Ktisis.Structs.Actor;
-using Race = Ktisis.Structs.Actor.Race;
-using Tribe = Ktisis.Structs.Actor.Tribe;
+using Ktisis.Structs.Data;
 
 namespace Ktisis.Util {
 	internal class CustomizeUtil {
 		public Ktisis Plugin;
 		public DataManager Data;
+
+		public CharaMakeType? Cached;
 
 		public CustomizeUtil(Ktisis plugin) {
 			Plugin = plugin;
@@ -26,10 +30,49 @@ namespace Ktisis.Util {
 		}
 
 		public CharaMakeType? GetMakeData(Customize custom) {
-			var lang = Plugin.Configuration.SheetLocale;
-			var sheet = Data.GetExcelSheet<CharaMakeType>(lang);
 			var index = GetMakeIndex(custom);
-			return sheet == null ? null : sheet.GetRow(index);
+			if (Cached != null && Cached.RowId == index) {
+				return Cached;
+			} else {
+				var lang = Plugin.Configuration.SheetLocale;
+				var sheet = Data.GetExcelSheet<CharaMakeType>(lang);
+				var row = sheet == null ? null : sheet.GetRow(index);
+				Cached = row;
+				return row;
+			}
+		}
+
+		public CharaMakeIterator? GetIterator(Customize custom) {
+			var data = GetMakeData(custom);
+			return data == null ? null : new(data);
+		}
+	}
+
+	public class CharaMakeIterator : IEnumerable {
+		public CharaMakeType Make;
+
+		public CharaMakeIterator(CharaMakeType make) {
+			Make = make;
+		}
+
+		public CharaMakeOption GetMakeOption(int i) {
+			return new CharaMakeOption() {
+				Name = Make.Menu[i].Value!.Text,
+				Default = Make.InitVal[i],
+				Type = (MenuType)Make.SubMenuType[i],
+				Index = (CustomizeIndex)Make.Customize[i],
+				Count = Make.SubMenuNum[i]
+			};
+		}
+
+		public CharaMakeOption this[int index] {
+			get => GetMakeOption(index);
+			set => new NotImplementedException();
+		}
+
+		public IEnumerator GetEnumerator() {
+			for (int i = 0; i < 28; i++)
+				yield return this[i];
 		}
 	}
 }

@@ -9,6 +9,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Data;
 
 namespace Ktisis.Interface {
 	internal unsafe class CustomizeGui {
@@ -85,6 +86,10 @@ namespace Ktisis.Interface {
 				// Customize
 
 				var custom = Target->Customize;
+
+				var menu = CustomizeUtil.GetIterator(custom);
+				if (menu == null)
+					return;
 
 				DrawFundamental(custom);
 

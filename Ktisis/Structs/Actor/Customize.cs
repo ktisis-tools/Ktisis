@@ -5,7 +5,9 @@ using Dalamud.Game.ClientState.Objects.Enums;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x1A)]
-	public struct Customize {
+	public unsafe struct Customize {
+		[FieldOffset(0)] public fixed byte Bytes[0x1A];
+
 		// this is auto-generated
 		[FieldOffset((int)CustomizeIndex.BustSize)] public byte BustSize;
 		[FieldOffset((int)CustomizeIndex.Eyebrows)] public byte Eyebrows;
