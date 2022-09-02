@@ -4,6 +4,7 @@ using ImGuiNET;
 
 using Dalamud.Plugin;
 using Dalamud.Interface;
+using Dalamud.Data;
 using Dalamud.Game;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Command;
@@ -30,6 +31,7 @@ namespace Ktisis {
 
 		internal DalamudPluginInterface PluginInterface { get; init; }
 		internal CommandManager CommandManager { get; init; }
+		internal DataManager DataManager { get; init; }
 		internal ClientState ClientState { get; init; }
 		internal ObjectTable ObjectTable { get; init; }
 		internal SigScanner SigScanner { get; init; }
@@ -38,13 +40,16 @@ namespace Ktisis {
 		public Ktisis(
 			DalamudPluginInterface pluginInterface,
 			CommandManager cmdManager,
+			DataManager dataManager,
 			ClientState clientState,
 			ObjectTable objTable,
 			SigScanner sigScanner,
 			GameGui gameGui
 		) {
+			// TODO: Streamline this.
 			PluginInterface = pluginInterface;
 			CommandManager = cmdManager;
+			DataManager = dataManager;
 			ClientState = clientState;
 			ObjectTable = objTable;
 			SigScanner = sigScanner;

@@ -7,11 +7,13 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Types;
 
+using Ktisis.Util;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface {
 	internal unsafe class CustomizeGui {
 		Ktisis Plugin;
+		CustomizeUtil CustomizeUtil;
 
 		public bool Visible = false;
 
@@ -23,6 +25,7 @@ namespace Ktisis.Interface {
 
 		public CustomizeGui(Ktisis plugin) {
 			Plugin = plugin;
+			CustomizeUtil = new(plugin);
 		}
 
 		// Toggle visibility

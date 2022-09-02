@@ -14,11 +14,8 @@ namespace Ktisis.Localization {
 		public UserLocale Loaded = UserLocale.None;
 		public JObject Strings = new();
 
-		public static Dictionary<UserLocale, string> Languages = new() {
-			[UserLocale.En] = "English"/*,
-			[UserLocale.Fr] = "French",
-			[UserLocale.De] = "German",
-			[UserLocale.Jp] = "Japanese"*/
+		public static List<UserLocale> Languages = new() {
+			UserLocale.English
 		};
 
 		public Locale(Ktisis plugin) {
@@ -54,7 +51,7 @@ namespace Ktisis.Localization {
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			string assemblyName = assembly.GetName().Name!;
 
-			var path = $"{assemblyName}.Locale.i18n.{Languages[lang]}.json";
+			var path = $"{assemblyName}.Locale.i18n.{lang}.json";
 
 			Stream? stream = assembly.GetManifestResourceStream(path);
 			if (stream == null)
@@ -67,9 +64,9 @@ namespace Ktisis.Localization {
 	public enum UserLocale {
 		None = -1,
 		// these don't exist yet
-		En = 0,
-		Fr = 1,
-		De = 2,
-		Jp = 3
+		English = 0,
+		French = 1,
+		German = 2,
+		Japanese = 3
 	}
 }

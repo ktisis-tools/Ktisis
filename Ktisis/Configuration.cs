@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Dalamud.Plugin;
+using Dalamud;
 using Dalamud.Configuration;
 
 using Ktisis.Localization;
@@ -26,7 +26,8 @@ namespace Ktisis {
 
 		// Language
 
-		public UserLocale Localization { get; set; } = UserLocale.En;
+		public UserLocale Localization { get; set; } = UserLocale.English;
+		public ClientLanguage SheetLocale { get; set; } = ClientLanguage.English;
 
 		public bool TranslateBones = true;
 

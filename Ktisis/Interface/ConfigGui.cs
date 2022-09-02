@@ -106,18 +106,19 @@ namespace Ktisis.Interface {
 		// Language
 
 		public void DrawLanguageTab() {
-			var selected = "Unknown";
+			var selected = "";
 			foreach (var lang in Locale.Languages) {
-				if (lang.Key == Cfg.Localization) {
-					selected = lang.Value;
+				if (lang == Cfg.Localization) {
+					selected = $"{lang}";
 					break;
 				}
 			}
 
 			if (ImGui.BeginCombo("Language", selected)) {
 				foreach (var lang in Locale.Languages) {
-					if (ImGui.Selectable(lang.Value, lang.Value == selected)) {
-						Cfg.Localization = lang.Key;
+					var name = $"{lang}";
+					if (ImGui.Selectable(name, name == selected)) {
+						Cfg.Localization = lang;
 						Cfg.Save(Plugin);
 					}
 				}
