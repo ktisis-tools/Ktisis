@@ -191,8 +191,7 @@ namespace Ktisis.Interface {
 
 			var col = option.Color;
 			if (col != null) {
-				var rgba = new Vector4(255, 255, 255, 255);
-				ImGuiComponents.ColorPickerWithPalette(index, "", rgba);
+				// TODO
 			}
 		}
 	}

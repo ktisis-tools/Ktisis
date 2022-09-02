@@ -70,6 +70,9 @@ namespace Ktisis.Util {
 						if (val.Index == 0)
 							break;
 
+						if (val.Index == CustomizeIndex.EyeColor2)
+							continue; // TODO: Heterochromia
+
 						var type = val.Type;
 						if (type == MenuType.Unknown1)
 							type = MenuType.Color;
@@ -80,11 +83,12 @@ namespace Ktisis.Util {
 							options[type] = new();
 
 						var opt = new MenuOption(val);
-						options[type].Add(opt);
 
 						var next = menu[i + 1];
 						if (next.Type == MenuType.Color)
 							opt.Color = next;
+
+						options[type].Add(opt);
 					}
 				}
 			}
