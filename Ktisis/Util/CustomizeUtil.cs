@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
 using Dalamud.Data;
 using Dalamud.Game.ClientState.Objects.Enums;
 
-using Lumina.Excel.GeneratedSheets;
+//using Lumina.Excel.GeneratedSheets;
 
+using Ktisis.Data;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Data;
 
 namespace Ktisis.Util {
 	internal class CustomizeUtil {
@@ -63,33 +64,31 @@ namespace Ktisis.Util {
 
 			var data = GetMakeData(index);
 			if (data != null) {
-				var menu = new CharaMakeIterator(data);
-				if (menu != null) {
-					for (int i = 0; i < CharaMakeIterator.Count; i++) {
-						var val = menu[i];
-						if (val.Index == 0)
-							break;
+				for (int i = 0; i < CharaMakeType.MenuCt; i++) {
+					var val = data.Menus[i];
 
-						if (val.Index == CustomizeIndex.EyeColor2)
-							continue; // TODO: Heterochromia
+					if (val.Index == 0)
+						break;
 
-						var type = val.Type;
-						if (type == MenuType.Unknown1)
-							type = MenuType.Color;
-						if (type == MenuType.Color)
-							continue;
+					if (val.Index == CustomizeIndex.EyeColor2)
+						continue; // TODO: Heterochromia
 
-						if (!options.ContainsKey(type))
-							options[type] = new();
+					var type = val.Type;
+					if (type == MenuType.Unknown1)
+						type = MenuType.Color;
+					if (type == MenuType.Color)
+						continue;
 
-						var opt = new MenuOption(val);
+					if (!options.ContainsKey(type))
+						options[type] = new();
 
-						var next = menu[i + 1];
-						if (next.Type == MenuType.Color)
-							opt.Color = next;
+					var opt = new MenuOption(val);
 
-						options[type].Add(opt);
-					}
+					var next = data.Menus[i + 1];
+					if (next.Type == MenuType.Color)
+						opt.Color = next;
+
+					options[type].Add(opt);
 				}
 			}
 
@@ -107,32 +106,26 @@ namespace Ktisis.Util {
 			Make = make;
 		}
 
-		public CharaMakeOption GetMakeOption(int i) {
-			return new CharaMakeOption() {
-				Name = Make.Menu[i].Value!.Text,
-				Default = Make.InitVal[i],
-				Type = (MenuType)Make.SubMenuType[i],
-				Index = (CustomizeIndex)Make.Customize[i],
-				Count = Make.SubMenuNum[i]
-			};
+		public Menu GetMakeOption(int i) {
+			return Make.Menus[i];
 		}
 
-		public CharaMakeOption this[int index] {
+		public Menu this[int index] {
 			get => GetMakeOption(index);
 			set => new NotImplementedException();
 		}
 
 		public IEnumerator GetEnumerator() {
-			for (int i = 0; i < 28; i++)
+			for (int i = 0; i < Count; i++)
 				yield return this[i];
 		}
 	}
 
 	internal struct MenuOption {
-		internal CharaMakeOption Option;
-		internal CharaMakeOption? Color;
+		internal Menu Option;
+		internal Menu? Color;
 
-		public MenuOption(CharaMakeOption option) {
+		public MenuOption(Menu option) {
 			Option = option;
 			Color = null;
 		}

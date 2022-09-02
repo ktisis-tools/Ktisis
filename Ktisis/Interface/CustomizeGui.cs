@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using System.Collections.Generic;
 
 using ImGuiNET;
 
@@ -8,9 +7,9 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Types;
 
+using Ktisis.Data;
 using Ktisis.Util;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Data;
 
 namespace Ktisis.Interface {
 	internal unsafe class CustomizeGui {
