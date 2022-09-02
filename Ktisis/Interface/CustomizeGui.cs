@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
 
@@ -86,10 +87,6 @@ namespace Ktisis.Interface {
 				// Customize
 
 				var custom = Target->Customize;
-
-				var menu = CustomizeUtil.GetIterator(custom);
-				if (menu == null)
-					return;
 
 				DrawFundamental(custom);
 

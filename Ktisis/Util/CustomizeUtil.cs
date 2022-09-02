@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 using Dalamud.Data;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -15,11 +16,14 @@ namespace Ktisis.Util {
 		public DataManager Data;
 
 		public CharaMakeType? Cached;
+		public Dictionary<MenuType, List<MenuOption>>? CachedMenu;
 
 		public CustomizeUtil(Ktisis plugin) {
 			Plugin = plugin;
 			Data = plugin.DataManager;
 		}
+
+		// Calculate row index
 
 		public uint GetMakeIndex(Customize custom) {
 			var r = (uint)custom.Race;
@@ -29,8 +33,9 @@ namespace Ktisis.Util {
 			return ((r - 1) * 4) + ((t - i) * 2) + g; // Thanks cait
 		}
 
-		public CharaMakeType? GetMakeData(Customize custom) {
-			var index = GetMakeIndex(custom);
+		// Fetch char creator data from cache or sheet
+
+		public CharaMakeType? GetMakeData(uint index) {
 			if (Cached != null && Cached.RowId == index) {
 				return Cached;
 			} else {
@@ -42,13 +47,56 @@ namespace Ktisis.Util {
 			}
 		}
 
-		public CharaMakeIterator? GetIterator(Customize custom) {
-			var data = GetMakeData(custom);
-			return data == null ? null : new(data);
+		public CharaMakeType? GetMakeData(Customize custom) {
+			var index = GetMakeIndex(custom);
+			return GetMakeData(index);
+		}
+
+		// Build char creator options
+
+		public Dictionary<MenuType, List<MenuOption>> GetMenuOptions(Customize custom) {
+			var options = new Dictionary<MenuType, List<MenuOption>>();
+
+			var index = GetMakeIndex(custom);
+			if (Cached != null && CachedMenu != null && index == Cached.RowId)
+				return CachedMenu;
+
+			var data = GetMakeData(index);
+			if (data != null) {
+				var menu = new CharaMakeIterator(data);
+				if (menu != null) {
+					for (int i = 0; i < CharaMakeIterator.Count; i++) {
+						var val = menu[i];
+						if (val.Index == 0)
+							break;
+
+						var type = val.Type;
+						if (type == MenuType.Unknown1)
+							type = MenuType.Color;
+						if (type == MenuType.Color)
+							continue;
+
+						if (!options.ContainsKey(type))
+							options[type] = new();
+
+						var opt = new MenuOption(val);
+						options[type].Add(opt);
+
+						var next = menu[i + 1];
+						if (next.Type == MenuType.Color)
+							opt.Color = next;
+					}
+				}
+			}
+
+			CachedMenu = options;
+			return options;
 		}
 	}
 
 	public class CharaMakeIterator : IEnumerable {
+		public const int Count = 28;
+
 		public CharaMakeType Make;
 
 		public CharaMakeIterator(CharaMakeType make) {
@@ -73,6 +121,16 @@ namespace Ktisis.Util {
 		public IEnumerator GetEnumerator() {
 			for (int i = 0; i < 28; i++)
 				yield return this[i];
+		}
+	}
+
+	internal struct MenuOption {
+		internal CharaMakeOption Option;
+		internal CharaMakeOption? Color;
+
+		public MenuOption(CharaMakeOption option) {
+			Option = option;
+			Color = null;
 		}
 	}
 }
