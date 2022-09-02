@@ -91,42 +91,24 @@ namespace Ktisis.Interface {
 				DrawFundamental(custom);
 
 				var menu = CustomizeUtil.GetMenuOptions(custom);
-
 				foreach (var type in menu.Keys) {
 					ImGui.Separator();
 					foreach (var option in menu[type]) {
-						var opt = option.Option;
-
 						switch (type) {
 							case MenuType.Slider:
-								DrawSlider(custom, opt);
+								DrawSlider(custom, option);
+								break;
+							default:
+								DrawNumValue(custom, option);
 								break;
 						}
 					}
 				}
 
-				/*ImGui.Separator();
-				DrawSliders(custom);
-
-				ImGui.Separator();
-				DrawNumValues(custom);*/
-
 				// End
 
 				ImGui.PopStyleVar(1);
 				ImGui.End();
-			}
-		}
-
-		// Slider
-
-		public void DrawSlider(Customize custom, CharaMakeOption opt) {
-			var index = (int)opt.Index;
-			var val = (int)custom.Bytes[index];
-
-			if (ImGui.DragInt(opt.Name, ref val, SliderRate, 0, 100)) {
-				custom.Bytes[index] = (byte)val;
-				Apply(custom);
 			}
 		}
 
@@ -182,55 +164,35 @@ namespace Ktisis.Interface {
 			}
 		}
 
+		// Slider
+
+		public void DrawSlider(Customize custom, MenuOption option) {
+			var opt = option.Option;
+			var index = (int)opt.Index;
+			var val = (int)custom.Bytes[index];
+
+			if (ImGui.DragInt(opt.Name, ref val, SliderRate, 0, 100)) {
+				custom.Bytes[index] = (byte)val;
+				Apply(custom);
+			}
+		}
+
 		// Num values
 
-		public void DrawNumValues(Customize custom) {
-			// Face Type
+		public void DrawNumValue(Customize custom, MenuOption option) {
+			var opt = option.Option;
+			var index = (int)opt.Index;
+			var val = (int)custom.Bytes[index];
 
-			var face = (int)custom.FaceType;
-			if (ImGui.InputInt("Face", ref face)) {
-				custom.FaceType = (byte)face;
+			if (ImGui.InputInt(opt.Name, ref val)) {
+				custom.Bytes[index] = (byte)val;
 				Apply(custom);
 			}
 
-			// Eyebrows
-
-			var brows = (int)custom.Eyebrows;
-			if (ImGui.InputInt("Eyebrows", ref brows)) {
-				custom.Eyebrows = (byte)brows;
-				Apply(custom);
-			}
-
-			// Eye Shape
-
-			var eyes = (int)custom.EyeShape;
-			if (ImGui.InputInt("Eyes", ref eyes)) {
-				custom.EyeShape = (byte)eyes;
-				Apply(custom);
-			}
-
-			// Nose
-
-			var nose = (int)custom.NoseShape;
-			if (ImGui.InputInt("Nose", ref nose)) {
-				custom.NoseShape = (byte)nose;
-				Apply(custom);
-			}
-
-			// Jaw
-
-			var jaw = (int)custom.JawShape;
-			if (ImGui.InputInt("Jaw", ref jaw)) {
-				custom.JawShape = (byte)jaw;
-				Apply(custom);
-			}
-
-			// Mouth
-
-			var mouth = (int)custom.LipStyle;
-			if (ImGui.InputInt("Mouth", ref mouth)) {
-				custom.LipStyle = (byte)mouth;
-				Apply(custom);
+			var col = option.Color;
+			if (col != null) {
+				var rgba = new Vector4(255, 255, 255, 255);
+				ImGuiComponents.ColorPickerWithPalette(index, "", rgba);
 			}
 		}
 	}
