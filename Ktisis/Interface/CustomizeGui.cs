@@ -90,16 +90,43 @@ namespace Ktisis.Interface {
 
 				DrawFundamental(custom);
 
-				ImGui.Separator();
+				var menu = CustomizeUtil.GetMenuOptions(custom);
+
+				foreach (var type in menu.Keys) {
+					ImGui.Separator();
+					foreach (var option in menu[type]) {
+						var opt = option.Option;
+
+						switch (type) {
+							case MenuType.Slider:
+								DrawSlider(custom, opt);
+								break;
+						}
+					}
+				}
+
+				/*ImGui.Separator();
 				DrawSliders(custom);
 
 				ImGui.Separator();
-				DrawNumValues(custom);
+				DrawNumValues(custom);*/
 
 				// End
 
 				ImGui.PopStyleVar(1);
 				ImGui.End();
+			}
+		}
+
+		// Slider
+
+		public void DrawSlider(Customize custom, CharaMakeOption opt) {
+			var index = (int)opt.Index;
+			var val = (int)custom.Bytes[index];
+
+			if (ImGui.DragInt(opt.Name, ref val, SliderRate, 0, 100)) {
+				custom.Bytes[index] = (byte)val;
+				Apply(custom);
 			}
 		}
 
@@ -152,50 +179,6 @@ namespace Ktisis.Interface {
 
 				ImGui.SetItemDefaultFocus();
 				ImGui.EndCombo();
-			}
-		}
-
-		// Sliders
-
-		public void DrawSliders(Customize custom) {
-			// Height
-
-			var height = (int)custom.Height;
-			if (ImGui.DragInt("Height", ref height, SliderRate, 0, 100)) {
-				custom.Height = (byte)height;
-				Apply(custom);
-			}
-
-			// Feature
-
-			var feat = (int)custom.RaceFeatureSize;
-			var featName = "Feature";
-
-			// TODO: Streamline this; pull from CharaMakeCustomize.
-			if (custom.Race == Race.Miqote
-			|| custom.Race == Race.AuRa
-			|| custom.Race == Race.Hrothgar) {
-				featName = "Tail Length";
-			} else if (custom.Race == Race.Viera
-			|| custom.Race == Race.Elezen
-			|| custom.Race == Race.Lalafell) {
-				featName = "Ear Length";
-			} else if (custom.Race == Race.Hyur
-			|| custom.Race == Race.Roegadyn) {
-				featName = "Muscle Tone";
-			}
-
-			if (ImGui.DragInt(featName, ref feat, SliderRate, 0, 100)) {
-				custom.RaceFeatureSize = (byte)feat;
-				Apply(custom);
-			}
-
-			// Boobas
-
-			var bust = (int)custom.BustSize;
-			if (ImGui.DragInt("Bust Size", ref bust, SliderRate, 0, 100)) {
-				custom.BustSize = (byte)bust;
-				Apply(custom);
 			}
 		}
 
