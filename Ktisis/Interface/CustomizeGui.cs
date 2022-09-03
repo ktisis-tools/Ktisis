@@ -20,8 +20,6 @@ namespace Ktisis.Interface {
 
 		public Actor* Target;
 
-		public static readonly float SliderRate = 0.25f;
-
 		// Constructor
 
 		public CustomizeGui(Ktisis plugin) {
@@ -170,7 +168,7 @@ namespace Ktisis.Interface {
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
 
-			if (ImGui.DragInt(opt.Name, ref val, SliderRate, 0, 100)) {
+			if (ImGui.SliderInt(opt.Name, ref val, 0, 100)) {
 				custom.Bytes[index] = (byte)val;
 				Apply(custom);
 			}

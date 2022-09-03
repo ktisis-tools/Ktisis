@@ -69,7 +69,9 @@ namespace Ktisis.Data {
 				|| menu.Type == MenuType.Select
 				|| menu.Type == MenuType.SelectMulti) {
 					for (var p = 0; p < ct; p++)
-						menu.Params[p] = parser.ReadColumn<uint>(3 + (7 * p) * MenuCt + i);
+						menu.Params[p] = parser.ReadColumn<uint>(3 + (7 + p) * MenuCt + i);
+					for (var g = 0; g < GraphicCt; g++)
+						menu.Graphics[g] = parser.ReadColumn<byte>(3 + (107 + g) * MenuCt + i);
 				}
 
 				Menus[i] = menu;

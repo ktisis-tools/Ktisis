@@ -121,9 +121,10 @@ namespace Ktisis.Util {
 		}
 	}
 
-	internal struct MenuOption {
-		internal Menu Option;
-		internal Menu? Color;
+	public struct MenuOption {
+		public Menu Option;
+		public Menu? Color;
+		//public List<>
 
 		public MenuOption(Menu option) {
 			Option = option;
