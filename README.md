@@ -6,14 +6,12 @@ This is my attempt at creating a scene editing tool that allows for actor and bo
 If you would like to reach out about this project, please feel free to join the [Discord](https://discord.gg/kUG3W8B8Ny) or message me at chirp#1337.
 
 #### List of target features, ascending:
-- [x] Skeleton overlay
-	- [ ] Selection assistant
-- [x] Bone manipulation via overlay
-	- [x] Bone parenting
-	- [ ] Transform locking
-- [ ] Actor list with dropdowns for bone selection
-- [ ] Free camera movement within GPose
-	- [ ] Disable unwanted camera movements (i.e. on selection)
+- Skeleton overlay
+- Bone manipulation via overlay
+- Bone parenting / FK
+- Actor list with dropdowns for bone selection
+- Free camera movement within GPose
+- Disable unwanted camera movements (i.e. on selection)
 
 #### Features to explore, not currently in scope:
 - Inverse kinematics
