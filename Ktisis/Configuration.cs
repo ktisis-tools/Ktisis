@@ -19,6 +19,7 @@ namespace Ktisis {
 		// Overlay
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
+		public float SkeletonLineThickness { get; set; } = 2.0F;
 
 		// Gizmo
 

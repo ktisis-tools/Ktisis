@@ -176,7 +176,7 @@ namespace Ktisis.Overlay {
 						continue;
 
 					var pair = (bones.Id, bone.Index);
-
+					
 					var worldPos = model->Position + bone.Rotate(model->Rotation) * model->Height;
 					Gui.WorldToScreen(worldPos, out var pos);
 
@@ -186,7 +186,7 @@ namespace Ktisis.Overlay {
 							var parentPos = model->Position + parent.Rotate(model->Rotation) * model->Height;
 
 							Gui.WorldToScreen(parentPos, out var pPos);
-							draw.AddLine(pos, pPos, 0x90ffffff);
+							draw.AddLine(pos, pPos, 0x90ffffff, Plugin.Configuration.SkeletonLineThickness);
 						}
 					}
 

@@ -83,8 +83,13 @@ namespace Ktisis.Interface {
 
 		public void DrawOverlayTab() {
 			var drawLines = Cfg.DrawLinesOnSkeleton;
+			var lineThickness = Cfg.SkeletonLineThickness;
 			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines)) {
 				Cfg.DrawLinesOnSkeleton = drawLines;
+				Cfg.Save(Plugin);
+			}
+			if (ImGui.SliderFloat("Lines thickness", ref lineThickness,0.01F , 15F, "%.1f")) {
+				Cfg.SkeletonLineThickness = lineThickness;
 				Cfg.Save(Plugin);
 			}
 
