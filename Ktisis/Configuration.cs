@@ -26,23 +26,25 @@ namespace Ktisis {
 		public float SkeletonLineThickness { get; set; } = 2.0F;
 		public UInt32 CategoryColor(Bone bone)
 		{
-			Vector4 color = LinkedBoneCategoryColor;
+			Vector4? color;
 			if (LinkBoneCategoryColors) color = LinkedBoneCategoryColor;
-			else if (BoneCategoryColors.ContainsKey(bone.Category.Name)) color = BoneCategoryColors[bone.Category.Name];
+			else BoneCategoryColors.TryGetValue(bone.Category.Name, out color);
+			color ??= LinkedBoneCategoryColor;
 
-			return ImGui.GetColorU32(color);
+			return ImGui.GetColorU32((Vector4)color);
 		}
 		public bool IsBoneVisible(Bone bone)
 		{
-			bool showBone = true;
-			if (ShowBoneByCategory.ContainsKey(bone.Category.Name)) showBone = ShowBoneByCategory[bone.Category.Name];
-			return DrawLinesOnSkeleton && showBone;
+			ShowBoneByCategory.TryGetValue(bone.Category.Name, out bool? boneVisible);
+			boneVisible ??= true;
+			return DrawLinesOnSkeleton && (bool)boneVisible;
 		}
 
 		public bool IsBoneCategoryVisible(Category category)
 		{
-			if (ShowBoneByCategory.ContainsKey(category.Name)) return ShowBoneByCategory[category.Name];
-			return true;
+			ShowBoneByCategory.TryGetValue(category.Name, out bool? boneCategoryVisible);
+			boneCategoryVisible ??= true;
+			return (bool)boneCategoryVisible;
 		}
 
 
@@ -60,10 +62,10 @@ namespace Ktisis {
 		// UI memory
 
 		public bool ShowSkeleton { get; set; } = false;
-		public Dictionary<string, bool> ShowBoneByCategory = new();
+		public Dictionary<string, bool?> ShowBoneByCategory = new();
 		public bool LinkBoneCategoryColors { get; set; } = false;
 		public Vector4 LinkedBoneCategoryColor { get; set; } = new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F);
-		public Dictionary<string, Vector4> BoneCategoryColors = new();
+		public Dictionary<string, Vector4?> BoneCategoryColors = new();
 
 		// save
 

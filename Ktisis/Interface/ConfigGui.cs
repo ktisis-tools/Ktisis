@@ -148,8 +148,8 @@ namespace Ktisis.Interface {
 
 				foreach ((string categoryName, Category category) in Category.Categories)
 				{
-					Vector4 categoryColor = Cfg.LinkedBoneCategoryColor;
-					if (Cfg.BoneCategoryColors.ContainsKey(category.Name)) categoryColor = Cfg.BoneCategoryColors[category.Name];
+					Cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4? configuredCategoryColor);
+					Vector4 categoryColor = (Vector4)(configuredCategoryColor == null ? Cfg.LinkedBoneCategoryColor : configuredCategoryColor);
 
 					if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 					{
