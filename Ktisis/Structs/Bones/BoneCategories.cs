@@ -9,8 +9,8 @@ namespace Ktisis.Structs.Bones {
 
 		public static Category FindCategory(string categoryName)
 		{
-			Category.Categories.TryGetValue(categoryName, out Category? category);
-			category ??= DefaultCategory; // TODO: potential infinite loop
+			if(!Category.Categories.TryGetValue(categoryName, out Category? category))
+				return DefaultCategory; // TODO: potential infinite loop
 			return category;
 		}
 
@@ -197,9 +197,8 @@ namespace Ktisis.Structs.Bones {
 
 		public static Category GetCategory(string? boneName)
 		{
-			boneName ??= "";
-			BonesCategories.TryGetValue(boneName, out Category? cat);
-			cat ??= DefaultCategory;
+			if(!BonesCategories.TryGetValue(boneName ?? "", out Category? cat))
+				return DefaultCategory;
 			return cat;
 		}
 		public static string GetCategoryName(string? boneName) => GetCategory(boneName).Name;

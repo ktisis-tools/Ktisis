@@ -113,7 +113,7 @@ namespace Ktisis.Interface {
 			ImGui.SameLine();
 			if (ImGuiComponents.IconButton(FontAwesomeIcon.Eraser))
 			{
-				Vector4 eraseColor = new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F);
+				Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 				if(linkBoneCategoriesColors)
 					Cfg.LinkedBoneCategoryColor = eraseColor;
 				else
@@ -148,8 +148,8 @@ namespace Ktisis.Interface {
 
 				foreach ((string categoryName, Category category) in Category.Categories)
 				{
-					Cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4? configuredCategoryColor);
-					Vector4 categoryColor = (Vector4)(configuredCategoryColor == null ? Cfg.LinkedBoneCategoryColor : configuredCategoryColor);
+					if (!Cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
+						categoryColor = Cfg.LinkedBoneCategoryColor;
 
 					if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 					{
