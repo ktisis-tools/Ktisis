@@ -104,8 +104,8 @@ namespace Ktisis.Interface {
 
 				if (ImGui.CollapsingHeader("By Category"))
 				{
-					ImGui.BeginChildFrame(65, new Vector2(200, BoneCategories.Categories.Count * 42)); // TODO: better frame size calculation
-					foreach (Category category in BoneCategories.Categories)
+					ImGui.BeginChildFrame(65, new Vector2(200, Category.Categories.Count * 42)); // TODO: better frame size calculation
+					foreach ((string categoryName, Category category) in Category.Categories)
 					{
 						bool categoryState = cfg.IsBoneCategoryVisible(category);
 						if (!cfg.ShowSkeleton) categoryState = false;
@@ -117,7 +117,7 @@ namespace Ktisis.Interface {
 								cfg.ShowSkeleton = true;
 								cfg.Save(Plugin);
 							}
-							cfg.ShowBoneByCategory[category] = categoryState;
+							cfg.ShowBoneByCategory[category.Name] = categoryState;
 							cfg.Save(Plugin);
 						}
 					}

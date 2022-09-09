@@ -6,18 +6,14 @@ using System.Numerics;
 namespace Ktisis.Structs.Bones {
 	public class BoneCategories {
 
-		public static readonly List<Category> Categories = new() {
-			{new Category("body"      , new Vector4(1.0F, 0.0F, 0.0F, 0.5647059F))},
-			{new Category("head"      , new Vector4(0.0F, 1.0F, 0.0F, 0.5647059F))},
-			{new Category("hair"      , new Vector4(0.0F, 0.0F, 1.0F, 0.5647059F))},
-			{new Category("clothes"   , new Vector4(1.0F, 1.0F, 0.0F, 0.5647059F))},
-			{new Category("right hand", new Vector4(1.0F, 0.0F, 1.0F, 0.5647059F))},
-			{new Category("left hand" , new Vector4(0.0F, 1.0F, 1.0F, 0.5647059F))},
-			{new Category("tail"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
-			{new Category("ears"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
-		};
 
-		public static Category FindCategory(string categoryName) => Categories.First(c => c.Name == categoryName);
+		public static Category FindCategory(string categoryName)
+		{
+			Category.Categories.TryGetValue(categoryName, out Category? category);
+			category ??= DefaultCategory; // TODO: potential infinite loop
+			return category;
+		}
+
 		public static Category DefaultCategory => FindCategory("body");
 
 

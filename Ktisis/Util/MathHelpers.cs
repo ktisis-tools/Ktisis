@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Numerics;
 
-using ImGuiNET;
-
 namespace Ktisis.Helpers {
 	public class MathHelpers {
 		// Normalize Vector4
@@ -95,10 +93,5 @@ namespace Ktisis.Helpers {
 			return angle;
 		}
 
-		public static UInt32 ConvertVector4ToUInt32(Vector4 color)
-		{
-			//if(color == null) return null;
-			return ImGui.GetColorU32((Vector4)color);
-		}
 	}
 }

@@ -117,8 +117,8 @@ namespace Ktisis.Interface {
 				if(linkBoneCategoriesColors)
 					Cfg.LinkedBoneCategoryColor = eraseColor;
 				else
-					foreach (Category category in BoneCategories.Categories)
-						Cfg.BoneCategoryColors[category] = eraseColor;
+					foreach ((string categoryName, Category category) in Category.Categories)
+						Cfg.BoneCategoryColors[category.Name] = eraseColor;
 				Cfg.Save(Plugin);
 			}
 
@@ -137,22 +137,23 @@ namespace Ktisis.Interface {
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Rainbow))
 				{
-					foreach (Category category in BoneCategories.Categories)
+					foreach ((string categoryName, Category category) in Category.Categories)
 					{
-						Cfg.BoneCategoryColors[category] = category.DefaultColor;
+						Cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
 					}
 					Cfg.Save(Plugin);
 				}
 
 				ImGui.Text("Bone colors by category");
 
-				foreach (Category category in BoneCategories.Categories)
+				foreach ((string categoryName, Category category) in Category.Categories)
 				{
-					Vector4 categoryColor = new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F);
-					if (Cfg.BoneCategoryColors.ContainsKey(category)) categoryColor = Cfg.BoneCategoryColors[category];
+					Vector4 categoryColor = Cfg.LinkedBoneCategoryColor;
+					if (Cfg.BoneCategoryColors.ContainsKey(category.Name)) categoryColor = Cfg.BoneCategoryColors[category.Name];
+
 					if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 					{
-						Cfg.BoneCategoryColors[category] = categoryColor;
+						Cfg.BoneCategoryColors[category.Name] = categoryColor;
 						Cfg.Save(Plugin);
 					}
 				}
