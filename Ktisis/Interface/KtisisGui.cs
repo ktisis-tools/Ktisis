@@ -102,6 +102,29 @@ namespace Ktisis.Interface {
 					cfg.Save(Plugin);
 				}
 
+				if (ImGui.CollapsingHeader("By Category"))
+				{
+					ImGui.BeginChildFrame(65, new Vector2(200, BoneCategories.Categories.Count * 42)); // TODO: better frame size calculation
+					foreach (Category category in BoneCategories.Categories)
+					{
+						bool categoryState = cfg.IsBoneCategoryVisible(category);
+						if (!cfg.ShowSkeleton) categoryState = false;
+
+						if (ImGui.Checkbox(category.Name, ref categoryState))
+						{
+							if(!cfg.ShowSkeleton && categoryState)
+							{
+								cfg.ShowSkeleton = true;
+								cfg.Save(Plugin);
+							}
+							cfg.ShowBoneByCategory[category] = categoryState;
+							cfg.Save(Plugin);
+						}
+					}
+					ImGui.EndChildFrame();
+				}
+
+
 				var _ = false;
 				if (ImGui.Checkbox("Toggle Posing", ref _)) {
 					// TODO

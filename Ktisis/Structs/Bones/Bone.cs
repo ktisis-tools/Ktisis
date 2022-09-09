@@ -1,6 +1,8 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using System.Collections.Generic;
 
+using ImGuiNET;
 using ImGuizmoNET;
 
 using Ktisis.Structs.Havok;
@@ -112,5 +114,17 @@ namespace Ktisis.Structs.Bones {
 		public List<Bone> GetChildren() {
 			return BoneList.GetChildrenDirect(this);
 		}
+
+		public Category Category
+		{
+			get
+			{
+				if (HkaBone.Name == null) return BoneCategories.DefaultCategory;
+				return BoneCategories.GetCategory(HkaBone.Name);
+			}
+		}
+
+		public string CategoryName => BoneCategories.GetCategoryName(HkaBone.Name);
+
 	}
 }

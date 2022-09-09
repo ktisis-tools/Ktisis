@@ -175,18 +175,20 @@ namespace Ktisis.Overlay {
 					if (bone.IsRoot)
 						continue;
 
+					uint boneColor = Plugin.Configuration.CategoryColor(bone);
+
 					var pair = (bones.Id, bone.Index);
 					
 					var worldPos = model->Position + bone.Rotate(model->Rotation) * model->Height;
 					Gui.WorldToScreen(worldPos, out var pos);
 
-					if (Plugin.Configuration.DrawLinesOnSkeleton) {
+					if (Plugin.Configuration.IsBoneVisible(bone)) {
 						if (bone.ParentId > 0) { // Lines
 							var parent = bone.GetParent()!;
 							var parentPos = model->Position + parent.Rotate(model->Rotation) * model->Height;
 
 							Gui.WorldToScreen(parentPos, out var pPos);
-							draw.AddLine(pos, pPos, 0x90ffffff, Plugin.Configuration.SkeletonLineThickness);
+							draw.AddLine(pos, pPos, boneColor, Plugin.Configuration.SkeletonLineThickness);
 						}
 					}
 
@@ -229,7 +231,7 @@ namespace Ktisis.Overlay {
 						bone.Transform.Rotation *= delta.Rotation;
 						bone.TransformBone(delta, Skeleton);
 
-					} else { // Dot
+					} else if(Plugin.Configuration.IsBoneVisible(bone)) { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
 
 						var area = new Vector2(radius, radius);
@@ -240,7 +242,7 @@ namespace Ktisis.Overlay {
 						if (hovered)
 							hoveredBones.Add(pair);
 
-						draw.AddCircleFilled(pos, Math.Max(2.0f, 8.0f - cam->Distance), hovered ? 0xffffffff : 0x90ffffff, 100);
+						draw.AddCircleFilled(pos, Math.Max(2.0f, 8.0f - cam->Distance), hovered ? (boneColor | 0xff000000) : boneColor, 100);
 					}
 				}
 
