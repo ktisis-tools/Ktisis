@@ -7,7 +7,8 @@ namespace Ktisis.Structs.Bones
 	{
 		public string Name { get; set; }
 		public Vector4 DefaultColor { get; set; }
-		public readonly List<string> Bones = new();
+		public readonly List<string> DetectedBones = new();
+		public readonly List<string> PossibleBones = new();
 
 
 		public static readonly Dictionary<string,Category> Categories = new() {
@@ -24,17 +25,18 @@ namespace Ktisis.Structs.Bones
 
 		public Category(string name, Vector4 defaultColor)
 		{
-			this.Name = name;
+			Name = name;
 			DefaultColor = defaultColor;
+			foreach ((string boneName, string categoryName) in BoneCategories.BonesCategoriesAssociation)
+				if (Name == categoryName) PossibleBones.Add(boneName);
 		}
 
-		public bool IsEmpty() => Bones.Count == 0;
+		public bool IsEmpty() => DetectedBones.Count == 0;
 
 		public void RegisterBone(string boneName)
 		{
-			if(!Bones.Contains(boneName))
-				Bones.Add(boneName);
-			//PluginLog.Debug($"Bone count:{Bones.Count}");
+			if(!DetectedBones.Contains(boneName))
+				DetectedBones.Add(boneName);
 		}
 
 		internal void Deconstruct(out string name, out Vector4 defaultColor)
