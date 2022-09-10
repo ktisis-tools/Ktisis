@@ -12,7 +12,10 @@ namespace Ktisis.Structs.Bones {
 		private static Category Cat(string categoryName)
 		{
 			if(!Category.Categories.TryGetValue(categoryName, out Category? category))
-				return DefaultCategory; // TODO: fix potential infinite loop
+			{
+				Category.Categories.Add(categoryName, new Category(categoryName, new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F)));
+				category = Category.Categories[categoryName];
+			}
 			return category;
 		}
 
@@ -198,61 +201,61 @@ namespace Ktisis.Structs.Bones {
 
 			// IVCS bones
 			// 3rd finger joints
-			{ "iv_ko_c_l"       , Cat("right hand")}, // Pinky     rotation
-			{ "iv_ko_c_r"       , Cat("right hand")}, // Pinky
-			{ "iv_kusu_c_l"     , Cat("right hand")}, // Ring
-			{ "iv_kusu_c_r"     , Cat("right hand")}, // Ring
-			{ "iv_naka_c_l"     , Cat("right hand")}, // Middle
-			{ "iv_naka_c_r"     , Cat("right hand")}, // Middle
-			{ "iv_hito_c_l"     , Cat("right hand")}, // Index
-			{ "iv_hito_c_r"     , Cat("right hand")}, // Index
+			{ "iv_ko_c_l"       , Cat("ivcs left hand")}, // Pinky     rotation
+			{ "iv_ko_c_r"       , Cat("ivcs right hand")}, // Pinky
+			{ "iv_kusu_c_l"     , Cat("ivcs left hand")}, // Ring
+			{ "iv_kusu_c_r"     , Cat("ivcs right hand")}, // Ring
+			{ "iv_naka_c_l"     , Cat("ivcs left hand")}, // Middle
+			{ "iv_naka_c_r"     , Cat("ivcs right hand")}, // Middle
+			{ "iv_hito_c_l"     , Cat("ivcs left hand")}, // Index
+			{ "iv_hito_c_r"     , Cat("ivcs right hand")}, // Index
 			// Toes
-			{ "iv_asi_oya_a_l"  , Cat("feet")}, // Big toe   rotation
-			{ "iv_asi_oya_b_l"  , Cat("feet")}, // Big toe
-			{ "iv_asi_oya_a_r"  , Cat("feet")}, // Big toe
-			{ "iv_asi_oya_b_r"  , Cat("feet")}, // Big toe
-			{ "iv_asi_hito_a_l" , Cat("feet")}, // Index    rotation
-			{ "iv_asi_hito_b_l" , Cat("feet")}, // Index
-			{ "iv_asi_hito_a_r" , Cat("feet")}, // Index
-			{ "iv_asi_hito_b_r" , Cat("feet")}, // Index
-			{ "iv_asi_naka_a_l" , Cat("feet")}, // Middle    rotation
-			{ "iv_asi_naka_b_l" , Cat("feet")}, // Middle
-			{ "iv_asi_naka_a_r" , Cat("feet")}, // Middle
-			{ "iv_asi_naka_b_r" , Cat("feet")}, // Middle
-			{ "iv_asi_kusu_a_l" , Cat("feet")}, // Fore toe   rotation
-			{ "iv_asi_kusu_b_l" , Cat("feet")}, // Fore toe
-			{ "iv_asi_kusu_a_r" , Cat("feet")}, // Fore toe
-			{ "iv_asi_kusu_b_r" , Cat("feet")}, // Fore toe
-			{ "iv_asi_ko_a_l"   , Cat("feet")}, // Pinky toe   rotation
-			{ "iv_asi_ko_b_l"   , Cat("feet")}, // Pinky toe
-			{ "iv_asi_ko_a_r"   , Cat("feet")}, // Pinky toe
-			{ "iv_asi_ko_b_r"   , Cat("feet")}, // Pinky toe
+			{ "iv_asi_oya_a_l"  , Cat("ivcs left foot")}, // Big toe   rotation
+			{ "iv_asi_oya_b_l"  , Cat("ivcs left foot")}, // Big toe
+			{ "iv_asi_oya_a_r"  , Cat("ivcs right foot")}, // Big toe
+			{ "iv_asi_oya_b_r"  , Cat("ivcs right foot")}, // Big toe
+			{ "iv_asi_hito_a_l" , Cat("ivcs left foot")}, // Index    rotation
+			{ "iv_asi_hito_b_l" , Cat("ivcs left foot")}, // Index
+			{ "iv_asi_hito_a_r" , Cat("ivcs right foot")}, // Index
+			{ "iv_asi_hito_b_r" , Cat("ivcs right foot")}, // Index
+			{ "iv_asi_naka_a_l" , Cat("ivcs left foot")}, // Middle    rotation
+			{ "iv_asi_naka_b_l" , Cat("ivcs left foot")}, // Middle
+			{ "iv_asi_naka_a_r" , Cat("ivcs right foot")}, // Middle
+			{ "iv_asi_naka_b_r" , Cat("ivcs right foot")}, // Middle
+			{ "iv_asi_kusu_a_l" , Cat("ivcs left foot")}, // Fore toe   rotation
+			{ "iv_asi_kusu_b_l" , Cat("ivcs left foot")}, // Fore toe
+			{ "iv_asi_kusu_a_r" , Cat("ivcs right foot")}, // Fore toe
+			{ "iv_asi_kusu_b_r" , Cat("ivcs right foot")}, // Fore toe
+			{ "iv_asi_ko_a_l"   , Cat("ivcs left foot")}, // Pinky toe   rotation
+			{ "iv_asi_ko_b_l"   , Cat("ivcs left foot")}, // Pinky toe
+			{ "iv_asi_ko_a_r"   , Cat("ivcs right foot")}, // Pinky toe
+			{ "iv_asi_ko_b_r"   , Cat("ivcs right foot")}, // Pinky toe
 			// Arms
-			{ "iv_nitoukin_l"   , Cat("body")}, // Biceps    rotation, scale, position
-			{ "iv_nitoukin_r"   , Cat("body")}, // Biceps
+			{ "iv_nitoukin_l"   , Cat("ivcs body")}, // Biceps    rotation, scale, position
+			{ "iv_nitoukin_r"   , Cat("ivcs body")}, // Biceps
 
 			// Control override bones (override physics for animations only)
-			{ "iv_c_mune_l"     , Cat("body")}, // Breasts    rotation, scale, position
-			{ "iv_c_mune_r"     , Cat("body")}, // Breasts
+			{ "iv_c_mune_l"     , Cat("ivcs body")}, // Breasts    rotation, scale, position
+			{ "iv_c_mune_r"     , Cat("ivcs body")}, // Breasts
 			// Genitals
-			{ "iv_kougan_l"     , Cat("ivcs")}, // Scrotum    rotation, scale, position
-			{ "iv_kougan_r"     , Cat("ivcs")}, // Scrotum
-			{ "iv_ochinko_a"    , Cat("ivcs")}, // Penis     rotation, scale*
-			{ "iv_ochinko_b"    , Cat("ivcs")}, // Penis     *if you want to adjust size
-			{ "iv_ochinko_c"    , Cat("ivcs")}, // Penis     you will need to adjust
-			{ "iv_ochinko_d"    , Cat("ivcs")}, // Penis     position and scale
-			{ "iv_ochinko_e"    , Cat("ivcs")}, // Penis     for all 6 penis bones
-			{ "iv_ochinko_f"    , Cat("ivcs")}, // Penis     individually
-			{ "iv_omanko"       , Cat("ivcs")}, // Vagina    rotation, position, scale
-			{ "iv_kuritto"      , Cat("ivcs")}, // Clitoris   rotation, position, scale
-			{ "iv_inshin_l"     , Cat("ivcs")}, // Labia    rotation, position, scale
-			{ "iv_inshin_r"     , Cat("ivcs")}, // Labia
+			{ "iv_kougan_l"     , Cat("ivcs penis")}, // Scrotum    rotation, scale, position
+			{ "iv_kougan_r"     , Cat("ivcs penis")}, // Scrotum
+			{ "iv_ochinko_a"    , Cat("ivcs penis")}, // Penis     rotation, scale*
+			{ "iv_ochinko_b"    , Cat("ivcs penis")}, // Penis     *if you want to adjust size
+			{ "iv_ochinko_c"    , Cat("ivcs penis")}, // Penis     you will need to adjust
+			{ "iv_ochinko_d"    , Cat("ivcs penis")}, // Penis     position and scale
+			{ "iv_ochinko_e"    , Cat("ivcs penis")}, // Penis     for all 6 penis bones
+			{ "iv_ochinko_f"    , Cat("ivcs penis")}, // Penis     individually
+			{ "iv_omanko"       , Cat("ivcs vagina")}, // Vagina    rotation, position, scale
+			{ "iv_kuritto"      , Cat("ivcs vagina")}, // Clitoris   rotation, position, scale
+			{ "iv_inshin_l"     , Cat("ivcs vagina")}, // Labia    rotation, position, scale
+			{ "iv_inshin_r"     , Cat("ivcs vagina")}, // Labia
 			// Butt stuffs
-			{ "iv_koumon"       , Cat("ivcs")}, // Anus    rotation, scale, position
-			{ "iv_koumon_l"     , Cat("ivcs")}, // Anus
-			{ "iv_koumon_r"     , Cat("ivcs")}, // Anus
-			{ "iv_shiri_l"      , Cat("ivcs")}, // Buttocks   rotation, scale, position
-			{ "iv_shiri_r"      , Cat("ivcs")}, // Buttocks
+			{ "iv_koumon"       , Cat("ivcs buttlocks")}, // Anus    rotation, scale, position
+			{ "iv_koumon_l"     , Cat("ivcs buttlocks")}, // Anus
+			{ "iv_koumon_r"     , Cat("ivcs buttlocks")}, // Anus
+			{ "iv_shiri_l"      , Cat("ivcs buttlocks")}, // Buttocks   rotation, scale, position
+			{ "iv_shiri_r"      , Cat("ivcs buttlocks")}, // Buttocks
 
 		};
 

@@ -20,8 +20,6 @@ namespace Ktisis.Structs.Bones
 			{"tail"      ,new Category("tail"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
 			{"ears"      ,new Category("ears"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
 			{"feet"      ,new Category("feet"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
-			{"ivcs"      ,new Category("ivcs"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
-			{"custom"    ,new Category("custom"    , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
 		};
 
 		public Category(string name, Vector4 defaultColor)
