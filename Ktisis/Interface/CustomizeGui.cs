@@ -115,13 +115,14 @@ namespace Ktisis.Interface {
 			// Gender
 
 			var isM = custom.Gender == Gender.Male;
+
 			if (ImGuiComponents.IconButton(isM ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus)) {
 				custom.Gender = isM ? Gender.Female : Gender.Male;
 				Apply(custom);
 			}
 
 			ImGui.SameLine();
-			ImGui.Text(isM ? "Male" : "Female");
+			ImGui.Text(isM ? "Masculine" : "Feminine");
 
 			// Race
 
