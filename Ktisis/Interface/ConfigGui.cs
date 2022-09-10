@@ -117,7 +117,7 @@ namespace Ktisis.Interface {
 				if(linkBoneCategoriesColors)
 					Cfg.LinkedBoneCategoryColor = eraseColor;
 				else
-					foreach ((string categoryName, Category category) in Category.Categories)
+					foreach (Category category in Category.Categories.Values)
 						if (!(category.IsEmpty() && !Cfg.BoneCategoryColors.ContainsKey(category.Name)))
 							Cfg.BoneCategoryColors[category.Name] = eraseColor;
 				Cfg.Save(Plugin);
@@ -149,7 +149,7 @@ namespace Ktisis.Interface {
 				ImGui.Text("Bone colors by category");
 
 				bool hasShownAnyCategory = false;
-				foreach ((string categoryName, Category category) in Category.Categories)
+				foreach (Category category in Category.Categories.Values)
 				{
 					if (category.IsEmpty() && !Cfg.BoneCategoryColors.ContainsKey(category.Name)) continue;
 

@@ -106,7 +106,7 @@ namespace Ktisis.Interface {
 				{
 
 					ImGui.Indent(16.0f);
-					foreach ((string categoryName, Category category) in Category.Categories)
+					foreach (Category category in Category.Categories.Values)
 					{
 						//if(category.Name == "ivcs" || category.Name == "custom") PluginLog.Debug($"category.Bones {category.Name} count:{category.Bones.Count}");
 
