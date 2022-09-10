@@ -119,8 +119,8 @@ namespace Ktisis.Structs.Bones {
 		{
 			get
 			{
-				if (HkaBone.Name == null) return BoneCategories.DefaultCategory;
-				return BoneCategories.GetCategory(HkaBone.Name);
+				if (HkaBone.Name == null) return Category.DefaultCategory;
+				return Category.GetForBone(HkaBone.Name);
 			}
 		}
 

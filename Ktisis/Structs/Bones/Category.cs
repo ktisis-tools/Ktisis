@@ -37,6 +37,20 @@ namespace Ktisis.Structs.Bones
 		{
 			this.ShouldDisplay = true;
 		}
+		public static Category DefaultCategory => Categories["custom"];
+
+		public static Category GetForBone(string? boneName)
+		{
+			if (string.IsNullOrEmpty(boneName))
+				return DefaultCategory;
+
+			if(!CategoriesByBone.TryGetValue(boneName, out Category? category))
+				category = DefaultCategory;
+
+			category.MarkForDisplay();
+
+			return category;
+		}
 
 		internal void Deconstruct(out string name, out Vector4 defaultColor)
 		{
