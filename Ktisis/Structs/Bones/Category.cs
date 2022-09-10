@@ -11,24 +11,22 @@ namespace Ktisis.Structs.Bones
 		public readonly List<string> PossibleBones = new();
 
 
-		public static readonly Dictionary<string,Category> Categories = new() {
-			{"body"      ,new Category("body"      , new Vector4(1.0F, 0.0F, 0.0F, 0.5647059F))},
-			{"head"      ,new Category("head"      , new Vector4(0.0F, 1.0F, 0.0F, 0.5647059F))},
-			{"hair"      ,new Category("hair"      , new Vector4(0.0F, 0.0F, 1.0F, 0.5647059F))},
-			{"clothes"   ,new Category("clothes"   , new Vector4(1.0F, 1.0F, 0.0F, 0.5647059F))},
-			{"right hand",new Category("right hand", new Vector4(1.0F, 0.0F, 1.0F, 0.5647059F))},
-			{"left hand" ,new Category("left hand" , new Vector4(0.0F, 1.0F, 1.0F, 0.5647059F))},
-			{"tail"      ,new Category("tail"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
-			{"ears"      ,new Category("ears"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
-			{"feet"      ,new Category("feet"      , new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F))},
-		};
+		public static readonly Dictionary<string, Category> Categories = new();
 
-		public Category(string name, Vector4 defaultColor)
+		private Category(string name, Vector4 defaultColor)
 		{
 			Name = name;
 			DefaultColor = defaultColor;
 			foreach ((string boneName, string categoryName) in BoneCategories.BonesCategoriesAssociation)
 				if (Name == categoryName) PossibleBones.Add(boneName);
+		}
+
+		public static Category CreateCategory(string name, Vector4 defaultColor)
+		{
+			/* TODO: We currently throw for duplicated categories. This may turn out to be a problem in the future. */
+			Category cat = new(name, defaultColor);
+			Categories.Add(name, cat);
+			return cat;
 		}
 
 		public bool IsEmpty() => DetectedBones.Count == 0;
@@ -46,5 +44,22 @@ namespace Ktisis.Structs.Bones
 		}
 		internal void Deconstruct(out string name) => name = Name;
 
+		static Category()
+		{
+			Vector4 defaultColor = new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F);
+
+			/* Default fallback category */
+			CreateCategory("custom", new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F));
+
+			CreateCategory("body", new Vector4(1.0F, 0.0F, 0.0F, 0.5647059F));
+			CreateCategory("head", new Vector4(0.0F, 1.0F, 0.0F, 0.5647059F));
+			CreateCategory("hair", new Vector4(0.0F, 0.0F, 1.0F, 0.5647059F));
+			CreateCategory("clothes", new Vector4(1.0F, 1.0F, 0.0F, 0.5647059F));
+			CreateCategory("right hand", new Vector4(1.0F, 0.0F, 1.0F, 0.5647059F));
+			CreateCategory("left hand", new Vector4(0.0F, 1.0F, 1.0F, 0.5647059F));
+			CreateCategory("tail", defaultColor);
+			CreateCategory("ears", defaultColor);
+			CreateCategory("feet", defaultColor);
+		}
 	}
 }

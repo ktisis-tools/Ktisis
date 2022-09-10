@@ -1,23 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace Ktisis.Structs.Bones {
 	public class BoneCategories {
-
-
-		private static Category FindCategory(string categoryName)
-		{
-			if(!Category.Categories.TryGetValue(categoryName, out Category? category))
-			{
-				Category.Categories.Add(categoryName, new Category(categoryName, new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F)));
-				category = Category.Categories[categoryName];
-			}
-			return category;
-		}
-
-		public static Category DefaultCategory => FindCategory("custom");
+		public static Category DefaultCategory => Category.Categories["custom"];
 
 
 		public static readonly Dictionary<string, string> BonesCategoriesAssociation = new() {
