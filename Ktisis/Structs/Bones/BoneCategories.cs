@@ -8,17 +8,13 @@ namespace Ktisis.Structs.Bones {
 
 		public static Category GetCategory(string? boneName)
 		{
-			if (boneName == null || boneName == "")
+			if (string.IsNullOrEmpty(boneName))
 				return DefaultCategory;
 
-			Category? category = null;
-			foreach ((string categoryName, Category posibleCategory) in Category.Categories)
-			{
-				if (posibleCategory.PossibleBones.Contains(boneName ?? ""))
-					category = posibleCategory;
+			Category? category;
+			if(!Category.CategoriesByBone.TryGetValue(boneName, out category)) {
+				category = DefaultCategory;
 			}
-
-			category ??= DefaultCategory;
 
 			category.RegisterBone(boneName);
 

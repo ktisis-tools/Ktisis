@@ -12,6 +12,7 @@ namespace Ktisis.Structs.Bones
 
 
 		public static readonly Dictionary<string, Category> Categories = new();
+		public static readonly Dictionary<string, Category> CategoriesByBone = new();
 
 		private Category(string name, Vector4 defaultColor, List<string> boneNames)
 		{
@@ -25,6 +26,10 @@ namespace Ktisis.Structs.Bones
 			/* TODO: We currently throw for duplicated categories. This may turn out to be a problem in the future. */
 			Category cat = new(name, defaultColor, boneNames);
 			Categories.Add(name, cat);
+			foreach(string boneName in cat.PossibleBones) {
+				/* On collision, use the first registered category */
+				_ = CategoriesByBone.TryAdd(boneName, cat);
+			}
 			return cat;
 		}
 
