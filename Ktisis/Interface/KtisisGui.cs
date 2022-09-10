@@ -96,6 +96,11 @@ namespace Ktisis.Interface {
 
 				ImGui.Separator();
 
+				var _ = false;
+				if (ImGui.Checkbox("Toggle Posing", ref _)) {
+					// TODO
+				}
+
 				var showSkeleton = cfg.ShowSkeleton;
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
 					cfg.ShowSkeleton = showSkeleton;
@@ -108,8 +113,6 @@ namespace Ktisis.Interface {
 					ImGui.Indent(16.0f);
 					foreach (Category category in Category.Categories.Values)
 					{
-						//if(category.Name == "ivcs" || category.Name == "custom") PluginLog.Debug($"category.Bones {category.Name} count:{category.Bones.Count}");
-
 						if (!category.ShouldDisplay) continue;
 
 						bool categoryState = cfg.IsBoneCategoryVisible(category);
@@ -128,12 +131,6 @@ namespace Ktisis.Interface {
 					}
 					ImGui.Unindent(16.0f);
 
-				}
-
-
-				var _ = false;
-				if (ImGui.Checkbox("Toggle Posing", ref _)) {
-					// TODO
 				}
 
 				ImGui.Separator();
