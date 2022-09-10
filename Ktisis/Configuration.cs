@@ -36,7 +36,7 @@ namespace Ktisis {
 		public bool IsBoneVisible(Bone bone)
 		{
 			if (!ShowBoneByCategory.TryGetValue(bone.Category.Name, out bool boneVisible))
-				return true;
+				return DrawLinesOnSkeleton;
 			return DrawLinesOnSkeleton && boneVisible;
 		}
 
