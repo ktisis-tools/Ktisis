@@ -40,7 +40,7 @@ namespace Ktisis.Structs.Bones
 		{
 			this.ShouldDisplay = true;
 		}
-		public static Category DefaultCategory => Categories["custom"];
+		public static Category DefaultCategory => Categories["other"];
 
 		public static Category GetForBone(string? boneName)
 		{
@@ -60,7 +60,7 @@ namespace Ktisis.Structs.Bones
 			Vector4 defaultColor = new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F);
 
 			/* Default fallback category (do not assign bones here) */
-			CreateCategory("custom", new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F), new List<string>());
+			CreateCategory("other", new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F), new List<string>());
 
 			CreateCategory("body", new Vector4(1.0F, 0.0F, 0.0F, 0.5647059F), new List<string> {
 				"n_root",
