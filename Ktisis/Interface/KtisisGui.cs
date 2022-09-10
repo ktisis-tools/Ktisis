@@ -110,7 +110,7 @@ namespace Ktisis.Interface {
 					{
 						//if(category.Name == "ivcs" || category.Name == "custom") PluginLog.Debug($"category.Bones {category.Name} count:{category.Bones.Count}");
 
-						if (category.IsEmpty()) continue;
+						if (!category.ShouldDisplay) continue;
 
 						bool categoryState = cfg.IsBoneCategoryVisible(category);
 						if (!cfg.ShowSkeleton) categoryState = false;

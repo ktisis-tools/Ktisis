@@ -8,6 +8,7 @@ namespace Ktisis.Structs.Bones
 		public string Name { get; set; }
 		public Vector4 DefaultColor { get; set; }
 		public readonly List<string> DetectedBones = new();
+		public bool ShouldDisplay => DetectedBones.Count > 0;
 		public readonly List<string> PossibleBones;
 
 
@@ -32,8 +33,6 @@ namespace Ktisis.Structs.Bones
 			}
 			return cat;
 		}
-
-		public bool IsEmpty() => DetectedBones.Count == 0;
 
 		public void RegisterBone(string boneName)
 		{
