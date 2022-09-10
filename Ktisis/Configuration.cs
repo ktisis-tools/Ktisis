@@ -1,11 +1,10 @@
 ﻿using System;
-
-using System.Collections.Generic;
 using System.Numerics;
+using System.Collections.Generic;
+
 using Dalamud;
 using Dalamud.Configuration;
-using ImGuiNET;
-using Ktisis.Helpers;
+
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 
@@ -24,6 +23,7 @@ namespace Ktisis {
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
 		public float SkeletonLineThickness { get; set; } = 2.0F;
+
 		public Vector4 CategoryColor(Bone bone)
 		{
 			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
@@ -32,6 +32,7 @@ namespace Ktisis {
 
 			return color;
 		}
+
 		public bool IsBoneVisible(Bone bone)
 		{
 			if (!ShowBoneByCategory.TryGetValue(bone.Category.Name, out bool boneVisible))
@@ -45,7 +46,6 @@ namespace Ktisis {
 				return true;
 			return boneCategoryVisible;
 		}
-
 
 		// Gizmo
 

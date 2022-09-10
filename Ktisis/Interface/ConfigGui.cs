@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using System.Collections.Generic;
 
 using ImGuiNET;
 
@@ -114,15 +113,16 @@ namespace Ktisis.Interface {
 			if (ImGuiComponents.IconButton(FontAwesomeIcon.Eraser))
 			{
 				Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
-				if(linkBoneCategoriesColors)
+				if (linkBoneCategoriesColors) {
 					Cfg.LinkedBoneCategoryColor = eraseColor;
-				else
-					foreach (Category category in Category.Categories.Values)
+				} else {
+					foreach (Category category in Category.Categories.Values) {
 						if (category.ShouldDisplay || Cfg.BoneCategoryColors.ContainsKey(category.Name))
 							Cfg.BoneCategoryColors[category.Name] = eraseColor;
+					}
+				}
 				Cfg.Save(Plugin);
 			}
-
 
 			if (linkBoneCategoriesColors)
 			{
@@ -132,7 +132,6 @@ namespace Ktisis.Interface {
 					Cfg.LinkedBoneCategoryColor = linkedBoneColor;
 					Cfg.Save(Plugin);
 				}
-
 			} else {
 
 				ImGui.SameLine();
@@ -140,7 +139,8 @@ namespace Ktisis.Interface {
 				{
 					foreach ((string categoryName, Category category) in Category.Categories)
 					{
-						if (!category.ShouldDisplay && !Cfg.BoneCategoryColors.ContainsKey(category.Name)) continue;
+						if (!category.ShouldDisplay && !Cfg.BoneCategoryColors.ContainsKey(category.Name))
+							continue;
 						Cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
 					}
 					Cfg.Save(Plugin);
@@ -151,7 +151,8 @@ namespace Ktisis.Interface {
 				bool hasShownAnyCategory = false;
 				foreach (Category category in Category.Categories.Values)
 				{
-					if (!category.ShouldDisplay && !Cfg.BoneCategoryColors.ContainsKey(category.Name)) continue;
+					if (!category.ShouldDisplay && !Cfg.BoneCategoryColors.ContainsKey(category.Name))
+						continue;
 
 					if (!Cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
 						categoryColor = Cfg.LinkedBoneCategoryColor;
@@ -163,7 +164,8 @@ namespace Ktisis.Interface {
 					}
 					hasShownAnyCategory = true;
 				}
-				if (!hasShownAnyCategory) ImGui.TextWrapped("Categories will be added after bones are displayed once.");
+				if (!hasShownAnyCategory)
+					ImGui.TextWrapped("Categories will be added after bones are displayed once.");
 			}
 
 			ImGui.EndTabItem();

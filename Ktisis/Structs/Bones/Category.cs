@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Numerics;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Numerics;
 
 namespace Ktisis.Structs.Bones
 {
@@ -12,17 +12,18 @@ namespace Ktisis.Structs.Bones
 		public IReadOnlyList<string> PossibleBones => new ReadOnlyCollection<string>(_PossibleBones);
 		private readonly List<string> _PossibleBones;
 
-
 		public static IReadOnlyDictionary<string, Category> Categories
 			=> new ReadOnlyDictionary<string, Category>(_Categories);
 		private static readonly Dictionary<string,Category> _Categories = new();
 		private static readonly Dictionary<string, Category> CategoriesByBone = new();
 
+		public static Category DefaultCategory => Categories["other"];
+
 		private Category(string name, Vector4 defaultColor, List<string> boneNames)
 		{
 			Name = name;
 			DefaultColor = defaultColor;
-			this._PossibleBones = boneNames;
+			_PossibleBones = boneNames;
 		}
 		public static Category CreateCategory(string name, Vector4 defaultColor, List<string> boneNames)
 		{
@@ -38,9 +39,8 @@ namespace Ktisis.Structs.Bones
 
 		public void MarkForDisplay()
 		{
-			this.ShouldDisplay = true;
+			ShouldDisplay = true;
 		}
-		public static Category DefaultCategory => Categories["other"];
 
 		public static Category GetForBone(string? boneName)
 		{
