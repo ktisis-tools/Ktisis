@@ -92,5 +92,6 @@ namespace Ktisis.Helpers {
 
 			return angle;
 		}
+
 	}
 }

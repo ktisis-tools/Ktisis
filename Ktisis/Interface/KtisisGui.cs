@@ -96,15 +96,41 @@ namespace Ktisis.Interface {
 
 				ImGui.Separator();
 
+				var _ = false;
+				if (ImGui.Checkbox("Toggle Posing", ref _)) {
+					// TODO
+				}
+
 				var showSkeleton = cfg.ShowSkeleton;
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
 					cfg.ShowSkeleton = showSkeleton;
 					cfg.Save(Plugin);
 				}
 
-				var _ = false;
-				if (ImGui.Checkbox("Toggle Posing", ref _)) {
-					// TODO
+				if (ImGui.CollapsingHeader("Toggle Bone Categories  "))
+				{
+
+					ImGui.Indent(16.0f);
+					foreach (Category category in Category.Categories.Values)
+					{
+						if (!category.ShouldDisplay) continue;
+
+						bool categoryState = cfg.IsBoneCategoryVisible(category);
+						if (!cfg.ShowSkeleton) categoryState = false;
+
+						if (ImGui.Checkbox(category.Name, ref categoryState))
+						{
+							if(!cfg.ShowSkeleton && categoryState)
+							{
+								cfg.ShowSkeleton = true;
+								cfg.Save(Plugin);
+							}
+							cfg.ShowBoneByCategory[category.Name] = categoryState;
+							cfg.Save(Plugin);
+						}
+					}
+					ImGui.Unindent(16.0f);
+
 				}
 
 				ImGui.Separator();

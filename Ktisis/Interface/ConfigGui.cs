@@ -1,9 +1,12 @@
 ﻿using System.Numerics;
-using System.Collections.Generic;
 
 using ImGuiNET;
 
+using Dalamud.Interface.Components;
+using Dalamud.Interface;
+
 using Ktisis.Localization;
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface {
 	internal class ConfigGui {
@@ -83,14 +86,86 @@ namespace Ktisis.Interface {
 
 		public void DrawOverlayTab() {
 			var drawLines = Cfg.DrawLinesOnSkeleton;
-			var lineThickness = Cfg.SkeletonLineThickness;
 			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines)) {
 				Cfg.DrawLinesOnSkeleton = drawLines;
 				Cfg.Save(Plugin);
 			}
-			if (ImGui.SliderFloat("Lines thickness", ref lineThickness,0.01F , 15F, "%.1f")) {
+
+			var lineThickness = Cfg.SkeletonLineThickness;
+			if (ImGui.SliderFloat("Lines thickness", ref lineThickness, 0.01F, 15F, "%.1f")) {
 				Cfg.SkeletonLineThickness = lineThickness;
 				Cfg.Save(Plugin);
+			}
+
+			ImGui.Separator();
+
+			bool linkBoneCategoriesColors = Cfg.LinkBoneCategoryColors;
+			if (ImGuiComponents.IconButton(FontAwesomeIcon.Link, linkBoneCategoriesColors ? new Vector4(0.0F, 1.0F, 0.0F, 0.4F) : null))
+			{
+				Cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
+				Cfg.Save(Plugin);
+			}
+
+			ImGui.SameLine();
+			ImGui.Text(linkBoneCategoriesColors ? "Unlink bones colors" : "Link bones colors");
+
+			ImGui.SameLine();
+			if (ImGuiComponents.IconButton(FontAwesomeIcon.Eraser))
+			{
+				Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
+				if (linkBoneCategoriesColors) {
+					Cfg.LinkedBoneCategoryColor = eraseColor;
+				} else {
+					foreach (Category category in Category.Categories.Values) {
+						if (category.ShouldDisplay || Cfg.BoneCategoryColors.ContainsKey(category.Name))
+							Cfg.BoneCategoryColors[category.Name] = eraseColor;
+					}
+				}
+				Cfg.Save(Plugin);
+			}
+
+			if (linkBoneCategoriesColors)
+			{
+				Vector4 linkedBoneColor = Cfg.LinkedBoneCategoryColor;
+				if (ImGui.ColorEdit4("Bones color", ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
+				{
+					Cfg.LinkedBoneCategoryColor = linkedBoneColor;
+					Cfg.Save(Plugin);
+				}
+			} else {
+
+				ImGui.SameLine();
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.Rainbow))
+				{
+					foreach ((string categoryName, Category category) in Category.Categories)
+					{
+						if (!category.ShouldDisplay && !Cfg.BoneCategoryColors.ContainsKey(category.Name))
+							continue;
+						Cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
+					}
+					Cfg.Save(Plugin);
+				}
+
+				ImGui.Text("Bone colors by category");
+
+				bool hasShownAnyCategory = false;
+				foreach (Category category in Category.Categories.Values)
+				{
+					if (!category.ShouldDisplay && !Cfg.BoneCategoryColors.ContainsKey(category.Name))
+						continue;
+
+					if (!Cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
+						categoryColor = Cfg.LinkedBoneCategoryColor;
+
+					if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
+					{
+						Cfg.BoneCategoryColors[category.Name] = categoryColor;
+						Cfg.Save(Plugin);
+					}
+					hasShownAnyCategory = true;
+				}
+				if (!hasShownAnyCategory)
+					ImGui.TextWrapped("Categories will be added after bones are displayed once.");
 			}
 
 			ImGui.EndTabItem();
