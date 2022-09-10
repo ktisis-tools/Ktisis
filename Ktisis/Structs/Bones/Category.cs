@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Numerics;
 
 namespace Ktisis.Structs.Bones
@@ -8,24 +9,26 @@ namespace Ktisis.Structs.Bones
 		public string Name { get; set; }
 		public Vector4 DefaultColor { get; set; }
 		public bool ShouldDisplay { get; private set; } = false;
-		public readonly List<string> PossibleBones;
+		public IReadOnlyList<string> PossibleBones => new ReadOnlyCollection<string>(_PossibleBones);
+		private readonly List<string> _PossibleBones;
 
 
-		public static readonly Dictionary<string, Category> Categories = new();
-		public static readonly Dictionary<string, Category> CategoriesByBone = new();
+		public static IReadOnlyDictionary<string, Category> Categories
+			=> new ReadOnlyDictionary<string, Category>(_Categories);
+		private static readonly Dictionary<string,Category> _Categories = new();
+		private static readonly Dictionary<string, Category> CategoriesByBone = new();
 
 		private Category(string name, Vector4 defaultColor, List<string> boneNames)
 		{
 			Name = name;
 			DefaultColor = defaultColor;
-			this.PossibleBones = boneNames;
+			this._PossibleBones = boneNames;
 		}
-
 		public static Category CreateCategory(string name, Vector4 defaultColor, List<string> boneNames)
 		{
 			/* TODO: We currently throw for duplicated categories. This may turn out to be a problem in the future. */
 			Category cat = new(name, defaultColor, boneNames);
-			Categories.Add(name, cat);
+			_Categories.Add(name, cat);
 			foreach(string boneName in cat.PossibleBones) {
 				/* On collision, use the first registered category */
 				_ = CategoriesByBone.TryAdd(boneName, cat);
