@@ -55,13 +55,6 @@ namespace Ktisis.Structs.Bones
 			return category;
 		}
 
-		internal void Deconstruct(out string name, out Vector4 defaultColor)
-		{
-			name = Name;
-			defaultColor = DefaultColor;
-		}
-		internal void Deconstruct(out string name) => name = Name;
-
 		static Category()
 		{
 			Vector4 defaultColor = new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F);
