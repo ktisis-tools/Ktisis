@@ -175,7 +175,7 @@ namespace Ktisis.Overlay {
 					if (bone.IsRoot)
 						continue;
 
-					uint boneColor = Plugin.Configuration.CategoryColor(bone);
+					uint boneColor = ImGui.GetColorU32(Plugin.Configuration.CategoryColor(bone));
 
 					var pair = (bones.Id, bone.Index);
 					

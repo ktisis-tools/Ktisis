@@ -24,14 +24,13 @@ namespace Ktisis {
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
 		public float SkeletonLineThickness { get; set; } = 2.0F;
-		public UInt32 CategoryColor(Bone bone)
+		public Vector4 CategoryColor(Bone bone)
 		{
-			Vector4 color;
-			if (LinkBoneCategoryColors) color = LinkedBoneCategoryColor;
-			else if (!BoneCategoryColors.TryGetValue(bone.Category.Name, out color))
-				color = LinkedBoneCategoryColor;
+			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
+			if (!BoneCategoryColors.TryGetValue(bone.Category.Name, out Vector4 color))
+				return LinkedBoneCategoryColor;
 
-			return ImGui.GetColorU32(color);
+			return color;
 		}
 		public bool IsBoneVisible(Bone bone)
 		{
