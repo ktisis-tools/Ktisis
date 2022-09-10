@@ -7,8 +7,7 @@ namespace Ktisis.Structs.Bones
 	{
 		public string Name { get; set; }
 		public Vector4 DefaultColor { get; set; }
-		public readonly List<string> DetectedBones = new();
-		public bool ShouldDisplay => DetectedBones.Count > 0;
+		public bool ShouldDisplay { get; private set; } = false;
 		public readonly List<string> PossibleBones;
 
 
@@ -34,10 +33,9 @@ namespace Ktisis.Structs.Bones
 			return cat;
 		}
 
-		public void RegisterBone(string boneName)
+		public void MarkForDisplay()
 		{
-			if(!DetectedBones.Contains(boneName))
-				DetectedBones.Add(boneName);
+			this.ShouldDisplay = true;
 		}
 
 		internal void Deconstruct(out string name, out Vector4 defaultColor)

@@ -16,7 +16,7 @@ namespace Ktisis.Structs.Bones {
 				category = DefaultCategory;
 			}
 
-			category.RegisterBone(boneName);
+			category.MarkForDisplay();
 
 			return category;
 		}
