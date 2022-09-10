@@ -118,7 +118,8 @@ namespace Ktisis.Interface {
 					Cfg.LinkedBoneCategoryColor = eraseColor;
 				else
 					foreach ((string categoryName, Category category) in Category.Categories)
-						Cfg.BoneCategoryColors[category.Name] = eraseColor;
+						if (!(category.IsEmpty() && !Cfg.BoneCategoryColors.ContainsKey(category.Name)))
+							Cfg.BoneCategoryColors[category.Name] = eraseColor;
 				Cfg.Save(Plugin);
 			}
 
@@ -139,6 +140,7 @@ namespace Ktisis.Interface {
 				{
 					foreach ((string categoryName, Category category) in Category.Categories)
 					{
+						if (category.IsEmpty() && !Cfg.BoneCategoryColors.ContainsKey(category.Name)) continue;
 						Cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
 					}
 					Cfg.Save(Plugin);
@@ -146,8 +148,11 @@ namespace Ktisis.Interface {
 
 				ImGui.Text("Bone colors by category");
 
+				bool hasShownAnyCategory = false;
 				foreach ((string categoryName, Category category) in Category.Categories)
 				{
+					if (category.IsEmpty() && !Cfg.BoneCategoryColors.ContainsKey(category.Name)) continue;
+
 					if (!Cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
 						categoryColor = Cfg.LinkedBoneCategoryColor;
 
@@ -156,7 +161,9 @@ namespace Ktisis.Interface {
 						Cfg.BoneCategoryColors[category.Name] = categoryColor;
 						Cfg.Save(Plugin);
 					}
+					hasShownAnyCategory = true;
 				}
+				if (!hasShownAnyCategory) ImGui.TextWrapped("Categories will be added after bones are displayed once.");
 			}
 
 			ImGui.EndTabItem();

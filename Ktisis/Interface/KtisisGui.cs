@@ -102,11 +102,16 @@ namespace Ktisis.Interface {
 					cfg.Save(Plugin);
 				}
 
-				if (ImGui.CollapsingHeader("By Category"))
+				if (ImGui.CollapsingHeader("Toggle Bone Categories  "))
 				{
-					ImGui.BeginChildFrame(65, new Vector2(200, Category.Categories.Count * 42)); // TODO: better frame size calculation
+
+					ImGui.Indent(16.0f);
 					foreach ((string categoryName, Category category) in Category.Categories)
 					{
+						//if(category.Name == "ivcs" || category.Name == "custom") PluginLog.Debug($"category.Bones {category.Name} count:{category.Bones.Count}");
+
+						if (category.IsEmpty()) continue;
+
 						bool categoryState = cfg.IsBoneCategoryVisible(category);
 						if (!cfg.ShowSkeleton) categoryState = false;
 
@@ -121,7 +126,8 @@ namespace Ktisis.Interface {
 							cfg.Save(Plugin);
 						}
 					}
-					ImGui.EndChildFrame();
+					ImGui.Unindent(16.0f);
+
 				}
 
 
