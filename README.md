@@ -5,22 +5,7 @@ This is my attempt at creating a scene editing tool that allows for actor and bo
 
 If you would like to reach out about this project, please feel free to join the [Discord](https://discord.gg/kUG3W8B8Ny) or message me at chirp#1337.
 
-#### List of target features, ascending:
-- Skeleton overlay
-- Bone manipulation via overlay
-- Bone parenting / FK
-- Actor list with dropdowns for bone selection
-- Free camera movement within GPose
-- Disable unwanted camera movements (i.e. on selection)
-
-#### Features to explore, not currently in scope:
-- Inverse kinematics
-- Time controls
-- Animation selector
-- Timeline editor for rudimentary animation
-- Creation of additional actors and editing
-- Placement and rendering of 3D props in-game
-- Export characters as fully rigged Blender models
+To see a list of target features as well as their current progress on implementation, see our [Trello](https://trello.com/b/w64GYAWJ/ktisis-plugin) board.
 
 ## Disclaimers
 
