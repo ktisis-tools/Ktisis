@@ -24,6 +24,9 @@ namespace Ktisis.Data {
 		public CustomizeIndex Index;
 		public uint[] Params;
 		public byte[] Graphics;
+
+		public bool HasIcon => Type == MenuType.Select || Type == MenuType.SelectMulti;
+		public bool IsFeature => HasIcon && Graphics[0] == 0; // don't question it
 	}
 
 	[Sheet("CharaMakeType")]
@@ -64,9 +67,7 @@ namespace Ktisis.Data {
 					Graphics = new byte[GraphicCt]
 				};
 
-				if (menu.Type == MenuType.List
-				|| menu.Type == MenuType.Select
-				|| menu.Type == MenuType.SelectMulti) {
+				if (menu.HasIcon || menu.Type == MenuType.List) {
 					for (var p = 0; p < ct; p++)
 						menu.Params[p] = parser.ReadColumn<uint>(3 + (7 + p) * MenuCt + i);
 					for (var g = 0; g < GraphicCt; g++)

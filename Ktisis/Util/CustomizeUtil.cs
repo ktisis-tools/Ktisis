@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
 using Dalamud.Data;
 using Dalamud.Game.ClientState.Objects.Enums;
 
-//using Lumina.Excel.GeneratedSheets;
+using ImGuiScene;
 
 using Ktisis.Data;
 using Ktisis.Structs.Actor;
@@ -124,11 +123,13 @@ namespace Ktisis.Util {
 	public struct MenuOption {
 		public Menu Option;
 		public Menu? Color;
-		//public List<>
+
+		public Dictionary<uint, TextureWrap>? Select;
 
 		public MenuOption(Menu option) {
 			Option = option;
 			Color = null;
+			Select = null;
 		}
 	}
 }
