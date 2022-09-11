@@ -1,0 +1,28 @@
+{
+    /*
+        English Localization
+        Maintained by @Fayti1703, @chirpcodes et al
+    */
+
+    //// Game Jargon ////
+
+    // Race Names
+    "Hyur": "Hyuran",
+    "Miqote": "Miqo'te",
+    "AuRa": "Au Ra",
+    // Tribe Names
+    "Midlander": "Wiesländer",
+    "Highlander": "Hochländer",
+    "Wildwood": "Erischatten",
+    "Duskwight": "Dunkelalb",
+    "Plainsfolk": "Halmling",
+    "Dunesfolk": "Sandling",
+    "SunSeeker": "Goldtatze",
+    "MoonKeeper": "Mondstreuner",
+    "SeaWolf": "Seewolf",
+    "Hellsguard": "Lohengarde",
+    "Helions": "Helion",
+    "Lost": "Losgesagter"
+    // Bone Names
+    // TODO
+}

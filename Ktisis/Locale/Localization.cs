@@ -15,7 +15,8 @@ namespace Ktisis.Localization {
 		public JObject Strings = new();
 
 		public static List<UserLocale> Languages = new() {
-			UserLocale.English
+			UserLocale.English,
+			UserLocale.German
 		};
 
 		public Locale(Ktisis plugin) {
