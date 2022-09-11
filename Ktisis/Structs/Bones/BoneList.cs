@@ -61,15 +61,14 @@ namespace Ktisis.Structs {
 
 		// Reverse bone tree to find all parents
 		public List<Bone> GetParents(Bone bone) {
-			// this is the most unoptimised algorithm ever
-			var cur = bone;
 			var parents = new List<Bone>();
-			while (true) {
-				cur = GetParentOf(cur);
-				if (cur == null) break;
+			var cur = GetParentOf(bone);
+			while (cur != null) {
 				parents.Add(cur);
+				cur = GetParentOf(cur);
 			}
 			return parents;
+
 		}
 
 		// Enumerator
