@@ -59,6 +59,22 @@ namespace Ktisis.Structs {
 			}
 		}
 
+		public void GetParentsRecursive(Bone bone, ref List<Bone> parents) {
+			// this is the most unoptimised algorithm ever
+			var pid = bone.ParentId;
+			while (true) {
+				foreach (Bone v in this) {
+					if (v.Index == pid) {
+						pid = v.ParentId;
+						parents.Add(v);
+						goto cont;
+					}
+				}
+				break;
+				cont: {}
+			}
+		}
+
 		// Enumerator
 
 		public Bone GetAndUpdate(int index) {

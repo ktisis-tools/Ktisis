@@ -112,6 +112,12 @@ namespace Ktisis.Structs.Bones {
 			return BoneList.GetChildrenDirect(this);
 		}
 
+		public List<Bone> GetParents() {
+			var parents = new List<Bone>();
+			BoneList.GetParentsRecursive(this, ref parents);
+			return parents;
+		}
+
 		public Category Category => Category.GetForBone(HkaBone.Name);
 	}
 }

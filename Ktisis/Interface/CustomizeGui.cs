@@ -124,6 +124,8 @@ namespace Ktisis.Interface {
 			ImGui.SameLine();
 			ImGui.Text(isM ? "Masculine" : "Feminine");
 
+			// TODO: Use Race and Tribe data from Lumina.
+
 			// Race
 
 			var curRace = Plugin.Locale.GetString($"{custom.Race}");
