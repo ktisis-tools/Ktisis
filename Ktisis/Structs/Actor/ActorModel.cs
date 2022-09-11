@@ -15,7 +15,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x060)] public Quaternion Rotation;
 		[FieldOffset(0x070)] public Vector3 Scale;
 
-		[FieldOffset(0x26C)] public float Height;
+		[FieldOffset(0x274)] public float Height;
 
 		[FieldOffset(0x0A0)] public HkaIndexVec* HkaIndex;
 	}
