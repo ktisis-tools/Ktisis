@@ -105,6 +105,8 @@ namespace Ktisis.Interface {
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
 					cfg.ShowSkeleton = showSkeleton;
 					cfg.Save(Plugin);
+					if (!showSkeleton)
+						Plugin.SkeletonEditor.ResetState();
 				}
 
 				if (ImGui.CollapsingHeader("Toggle Bone Categories  "))

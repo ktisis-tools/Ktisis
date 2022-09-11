@@ -12,6 +12,11 @@ namespace Ktisis.Structs.Bones {
 
 		public int ScrollIndex = 0;
 
+		public void ResetState() {
+			Current = (-1, -1);
+			ScrollIndex = 0;
+		}
+
 		public void Draw(SkeletonEditor editor, List<(int ListId, int Index)> hover) {
 			// Capture mouse input while hovering a bone.
 			// This allows us to intercept mouse clicks.

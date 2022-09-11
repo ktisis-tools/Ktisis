@@ -134,6 +134,14 @@ namespace Ktisis.Overlay {
 			}
 		}
 
+		// Reset state
+
+		public void ResetState() {
+			Subject = null;
+			Skeleton = null;
+			BoneSelector.ResetState();
+		}
+
 		// Draw
 
 		public unsafe void Draw(ImDrawListPtr draw) {
