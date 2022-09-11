@@ -7,6 +7,7 @@ using Dalamud.Interface;
 
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
+using Ktisis.Util;
 
 namespace Ktisis.Interface {
 	internal class ConfigGui {
@@ -110,7 +111,7 @@ namespace Ktisis.Interface {
 			ImGui.Text(linkBoneCategoriesColors ? "Unlink bones colors" : "Link bones colors");
 
 			ImGui.SameLine();
-			if (ImGuiComponents.IconButton(FontAwesomeIcon.Eraser))
+			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Eraser, "Hold Control and Shift to erase colors.", ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
 			{
 				Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 				if (linkBoneCategoriesColors) {
@@ -135,7 +136,7 @@ namespace Ktisis.Interface {
 			} else {
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.Rainbow))
+				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, "Hold Control and Shift to reset colors to their default values.", ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
 				{
 					foreach ((string categoryName, Category category) in Category.Categories)
 					{
