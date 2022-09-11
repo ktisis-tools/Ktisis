@@ -46,8 +46,7 @@ namespace Ktisis.Data {
 		// Build sheet
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			RowId = parser.RowId;
-			SubRowId = parser.SubRowId;
+			base.PopulateData(parser, gameData, language);
 
 			Race = new LazyRow<Race>(gameData, parser.ReadColumn<int>(0), language);
 			Tribe = new LazyRow<Tribe>(gameData, parser.ReadColumn<int>(1), language);
