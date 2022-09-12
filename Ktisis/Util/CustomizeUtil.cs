@@ -93,6 +93,8 @@ namespace Ktisis.Util {
 							foreach (var row in val.Features) {
 								var feat = row.Value!;
 								var icon = Data.GetImGuiTextureHqIcon(feat.Icon);
+								if (feat.FeatureId == 0)
+									continue;
 								icons.Add(feat.FeatureId, icon!);
 							}
 						} else {
@@ -101,6 +103,7 @@ namespace Ktisis.Util {
 								icons.Add(val.Graphics[x], icon!);
 							}
 						}
+						opt.Select = icons;
 					}
 
 					options[type].Add(opt);

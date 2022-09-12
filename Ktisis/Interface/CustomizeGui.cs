@@ -13,6 +13,13 @@ using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface {
 	internal unsafe class CustomizeGui {
+		// Constants
+
+		public static int IconSize = 60;
+		public static int IconPadding = 8;
+
+		// Properties
+
 		Ktisis Plugin;
 		CustomizeUtil CustomizeUtil;
 
@@ -182,6 +189,19 @@ namespace Ktisis.Interface {
 			var opt = option.Option;
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
+
+			var sel = option.Select;
+			if (opt.HasIcon && sel != null) {
+				var size = new Vector2(IconSize, IconSize);
+				if (sel.ContainsKey((uint)val)) {
+					ImGui.ImageButton(sel[(uint)val].ImGuiHandle, size);
+				} else {
+					size.X += IconPadding;
+					size.Y += IconPadding;
+					ImGui.Button($"{val}", size);
+				}
+				ImGui.SameLine();
+			}
 
 			if (ImGui.InputInt(opt.Name, ref val)) {
 				custom.Bytes[index] = (byte)val;
