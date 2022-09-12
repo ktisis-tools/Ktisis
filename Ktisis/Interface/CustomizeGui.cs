@@ -150,7 +150,6 @@ namespace Ktisis.Interface {
 
 			var curTribe = Plugin.Locale.GetString($"{custom.Tribe}");
 			if (ImGui.BeginCombo("Tribe", curTribe)) {
-				var tribes = Enum.GetValues(typeof(Tribe));
 				for (int i = 0; i < 2; i++) {
 					var tribe = (Tribe)(Customize.GetRaceTribeIndex(custom.Race) + i);
 					if (ImGui.Selectable(Plugin.Locale.GetString($"{tribe}"), tribe == custom.Tribe)) {

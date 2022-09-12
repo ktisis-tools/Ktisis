@@ -25,6 +25,8 @@ namespace Ktisis.Data {
 		public uint[] Params;
 		public byte[] Graphics;
 
+		public LazyRow<CharaMakeCustomize>[] Features;
+
 		public bool HasIcon => Type == MenuType.Select || Type == MenuType.SelectMulti;
 		public bool IsFeature => HasIcon && Graphics[0] == 0; // don't question it
 	}
@@ -72,6 +74,13 @@ namespace Ktisis.Data {
 						menu.Params[p] = parser.ReadColumn<uint>(3 + (7 + p) * MenuCt + i);
 					for (var g = 0; g < GraphicCt; g++)
 						menu.Graphics[g] = parser.ReadColumn<byte>(3 + (107 + g) * MenuCt + i);
+				}
+
+				if (menu.IsFeature) {
+					var feats = new LazyRow<CharaMakeCustomize>[ct];
+					for (var x = 0; x < ct; x++)
+						feats[x] = new LazyRow<CharaMakeCustomize>(gameData, menu.Params[x]);
+					menu.Features = feats;
 				}
 
 				Menus[i] = menu;

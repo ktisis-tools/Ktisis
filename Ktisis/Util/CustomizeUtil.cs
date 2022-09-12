@@ -87,6 +87,22 @@ namespace Ktisis.Util {
 					if (next.Type == MenuType.Color)
 						opt.Color = next;
 
+					if (val.HasIcon) {
+						var icons = new Dictionary<uint, TextureWrap>();
+						if (val.IsFeature) {
+							foreach (var row in val.Features) {
+								var feat = row.Value!;
+								var icon = Data.GetImGuiTextureHqIcon(feat.Icon);
+								icons.Add(feat.FeatureId, icon!);
+							}
+						} else {
+							for (var x = 0; x < val.Count; x++) {
+								var icon = Data.GetImGuiTextureHqIcon(val.Params[x]);
+								icons.Add(val.Graphics[x], icon!);
+							}
+						}
+					}
+
 					options[type].Add(opt);
 				}
 			}
