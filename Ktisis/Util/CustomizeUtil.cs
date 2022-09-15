@@ -141,14 +141,12 @@ namespace Ktisis.Util {
 
 	public struct MenuOption {
 		public Menu Option;
-		public Menu? Color;
+		public Menu? Color = null;
 
-		public Dictionary<uint, TextureWrap>? Select;
+		public Dictionary<uint, TextureWrap>? Select = null;
 
 		public MenuOption(Menu option) {
 			Option = option;
-			Color = null;
-			Select = null;
 		}
 	}
 }

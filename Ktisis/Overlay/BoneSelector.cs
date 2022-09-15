@@ -27,7 +27,6 @@ namespace Ktisis.Structs.Bones {
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
-			ImGui.SetNextWindowSizeConstraints(size, size);
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
@@ -57,11 +56,10 @@ namespace Ktisis.Structs.Bones {
 					if (isSelected && mouseDown)
 						editor.SelectBone(bone);
 				}
+
+				ImGui.PopStyleVar(1);
+				ImGui.End();
 			}
-
-			ImGui.PopStyleVar(1);
-
-			ImGui.End();
 		}
 
 		public bool IsSelected(Bone bone) {

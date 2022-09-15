@@ -1,28 +1,37 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
+﻿using System;
+using System.Numerics;
+using System.Collections.Generic;
+
+using ImGuiNET;
+
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-using ImGuiNET;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.ClientState.Objects.Enums;
+
 using Ktisis.Data;
 using Ktisis.Structs.Actor;
 using Ktisis.Util;
-using System;
-using System.Numerics;
 
 namespace Ktisis.Interface {
 	internal unsafe class CustomizeGui {
 		// Constants
 
-		public static int IconSize = 60;
+		public static int IconSize = 54;
 		public static int IconPadding = 8;
+		public static int InputSize = 260;
 
 		// Properties
 
 		Ktisis Plugin;
 		CustomizeUtil CustomizeUtil;
 
+		public Actor* Target;
+
 		public bool Visible = false;
 
-		public Actor* Target;
+		public CustomizeIndex? Selecting;
+		public Vector2 SelectPos;
 
 		// Constructor
 
@@ -73,7 +82,7 @@ namespace Ktisis.Interface {
 			if (Target == null)
 				return;
 
-			var size = new Vector2(450, -1);
+			var size = new Vector2(400, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
@@ -186,27 +195,17 @@ namespace Ktisis.Interface {
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
 
-			var sel = option.Select;
-			var hasIcon = opt.HasIcon && sel != null;
-			if (hasIcon) {
-				var size = new Vector2(IconSize, IconSize);
-				if (sel!.ContainsKey((uint)val)) {
-					ImGui.ImageButton(sel[(uint)val].ImGuiHandle, size);
-				} else {
-					size.X += IconPadding;
-					size.Y += IconPadding;
-					ImGui.Button($"{val}", size);
-				}
+			if (opt.HasIcon && option.Select != null) {
+				DrawIconSelector(custom, option, (uint)val);
 				ImGui.SameLine();
-
-				ImGui.PushItemWidth(215);
-			}
+				ImGui.PushItemWidth(InputSize - IconSize - IconPadding - 8);
+			} else ImGui.PushItemWidth(InputSize);
 
 			if (ImGui.InputInt(opt.Name, ref val)) {
 				custom.Bytes[index] = (byte)val;
 				Apply(custom);
 			}
-			if (hasIcon) ImGui.PopItemWidth();
+			ImGui.PopItemWidth();
 
 			var col = option.Color;
 			if (col != null) {
@@ -216,8 +215,58 @@ namespace Ktisis.Interface {
 
 		// Icon selector
 
-		public void IconSelector() {
+		public void DrawIconSelector(Customize custom, MenuOption option, uint val) {
+			var sel = option.Select;
+			var size = new Vector2(IconSize, IconSize);
 
+			bool click;
+			if (sel!.ContainsKey(val)) {
+				click = ImGui.ImageButton(sel[val].ImGuiHandle, size);
+			} else {
+				size.X += IconPadding;
+				size.Y += IconPadding;
+				click = ImGui.Button($"{val}", size);
+			}
+
+			var index = option.Option.Index;
+			if (click) {
+				Selecting = option.Option.Index;
+				SelectPos = ImGui.GetMousePos();
+				ImGui.SetNextWindowFocus();
+			}
+
+			if (Selecting == index)
+				DrawIconList(custom, option);
+		}
+
+		public void DrawIconList(Customize custom, MenuOption option) {
+			var size = new Vector2(-1, -1);
+			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
+
+			ImGui.SetNextWindowPos(SelectPos);
+			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
+
+			var opt = option.Option;
+			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
+				if (ImGui.IsWindowFocused()) {
+					int i = 0;
+					foreach (var (val, icon) in option.Select!) {
+						if (ImGui.ImageButton(icon.ImGuiHandle, new Vector2(IconSize, IconSize))) {
+							custom.Bytes[(uint)opt.Index] = (byte)val;
+							Apply(custom);
+						}
+
+						i++;
+						if (i % 6 != 0)
+							ImGui.SameLine();
+					}
+				} else {
+					Selecting = null;
+				}
+
+				ImGui.PopStyleVar(1);
+				ImGui.End();
+			}
 		}
 	}
 }
