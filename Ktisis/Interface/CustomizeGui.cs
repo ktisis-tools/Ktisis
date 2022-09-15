@@ -1,15 +1,12 @@
-﻿using System;
-using System.Numerics;
-
-using ImGuiNET;
-
+﻿using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-using Dalamud.Game.ClientState.Objects.Types;
-
+using ImGuiNET;
 using Ktisis.Data;
-using Ktisis.Util;
 using Ktisis.Structs.Actor;
+using Ktisis.Util;
+using System;
+using System.Numerics;
 
 namespace Ktisis.Interface {
 	internal unsafe class CustomizeGui {
@@ -76,9 +73,8 @@ namespace Ktisis.Interface {
 			if (Target == null)
 				return;
 
-			var size = new Vector2(-1, -1);
+			var size = new Vector2(450, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
-			ImGui.SetNextWindowSizeConstraints(size, size);
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
@@ -191,9 +187,10 @@ namespace Ktisis.Interface {
 			var val = (int)custom.Bytes[index];
 
 			var sel = option.Select;
-			if (opt.HasIcon && sel != null) {
+			var hasIcon = opt.HasIcon && sel != null;
+			if (hasIcon) {
 				var size = new Vector2(IconSize, IconSize);
-				if (sel.ContainsKey((uint)val)) {
+				if (sel!.ContainsKey((uint)val)) {
 					ImGui.ImageButton(sel[(uint)val].ImGuiHandle, size);
 				} else {
 					size.X += IconPadding;
@@ -201,17 +198,26 @@ namespace Ktisis.Interface {
 					ImGui.Button($"{val}", size);
 				}
 				ImGui.SameLine();
+
+				ImGui.PushItemWidth(215);
 			}
 
 			if (ImGui.InputInt(opt.Name, ref val)) {
 				custom.Bytes[index] = (byte)val;
 				Apply(custom);
 			}
+			if (hasIcon) ImGui.PopItemWidth();
 
 			var col = option.Color;
 			if (col != null) {
 				// TODO
 			}
+		}
+
+		// Icon selector
+
+		public void IconSelector() {
+
 		}
 	}
 }
