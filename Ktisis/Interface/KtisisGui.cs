@@ -7,6 +7,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
 using Ktisis.Structs.Bones;
+using Ktisis.Util;
 
 namespace Ktisis.Interface {
 	internal class KtisisGui {
@@ -78,11 +79,12 @@ namespace Ktisis.Interface {
 				// Second row
 
 				var gizmode = Plugin.SkeletonEditor.Gizmode;
-				if (ImGuiComponents.IconButton(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home))
+				if (GuiHelpers.IconButtonTooltip(
+					gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch."))
 					Plugin.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.PencilAlt)) {
+				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt,"Edit targeted Actor's appearance.")) {
 					Plugin.CustomizeGui.Show(Plugin.SkeletonEditor.Subject);
 				}
 
