@@ -89,6 +89,20 @@ namespace Ktisis.Overlay {
 			BoneMod.SnapshotBone(bone, model, Gizmode);
 		}
 
+
+		public unsafe Bone? GetSelectedBone()
+		{
+			(int ListId, int Index) = BoneSelector.Current;
+
+			if (Skeleton == null) return null;
+			foreach (BoneList boneList in Skeleton)
+				if(boneList.Id == ListId)
+					foreach (Bone bone in boneList)
+						if (bone.Index == Index) return bone;
+
+			return null;
+		}
+
 		// Build skeleton
 
 		public unsafe void BuildSkeleton() {

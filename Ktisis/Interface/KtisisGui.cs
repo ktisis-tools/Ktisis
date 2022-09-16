@@ -50,7 +50,7 @@ namespace Ktisis.Interface {
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-			if (ImGui.Begin("Ktisis (Alpha)", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoResize)) {
+			if (ImGui.Begin("Ktisis (Alpha)", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize)) {
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
 
@@ -95,6 +95,10 @@ namespace Ktisis.Interface {
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
 					Plugin.ConfigGui.Show();
+
+				ImGui.Separator();
+
+				Coordinates();
 
 				ImGui.Separator();
 
@@ -146,6 +150,26 @@ namespace Ktisis.Interface {
 
 			ImGui.PopStyleVar(1);
 			ImGui.End();
+		}
+
+		// Coordinates table
+		private void Coordinates()
+		{
+			Bone? selectedBone = Plugin.SkeletonEditor.GetSelectedBone();
+			if (Plugin.SkeletonEditor.Skeleton == null || selectedBone == null)
+			{
+				ImGuiComponents.HelpMarker("Select a bone to spawn Coordinates table.");
+				return;
+			};
+
+			GuiHelpers.DragVec4intoVec3("Position", ref selectedBone.Transform.Position, 0.0001f);
+			GuiHelpers.DragQuatIntoEuler("Rotation", ref selectedBone.Transform.Rotation, 0.1f);
+			GuiHelpers.DragVec4intoVec3("Scale", ref selectedBone.Transform.Scale, 0.01f);
+
+			// Use the same functions found in SkeletonEditor.Draw()
+			var delta = Plugin.SkeletonEditor.BoneMod.GetDelta();
+			selectedBone.Transform.Rotation *= delta.Rotation;
+			selectedBone.TransformBone(delta, Plugin.SkeletonEditor.Skeleton);
 		}
 
 		// Bone Tree
