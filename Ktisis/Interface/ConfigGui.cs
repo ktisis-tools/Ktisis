@@ -11,18 +11,7 @@ using Ktisis.Util;
 
 namespace Ktisis.Interface {
 	internal class ConfigGui {
-		private Ktisis Plugin;
-
-		private Configuration Cfg;
-
 		public bool Visible = false;
-
-		// Constructor
-
-		public ConfigGui(Ktisis plugin) {
-			Plugin = plugin;
-			Cfg = Plugin.Configuration;
-		}
 
 		// Toggle visibility
 
@@ -48,14 +37,15 @@ namespace Ktisis.Interface {
 
 			if (ImGui.Begin("Ktisis Settings", ref Visible, ImGuiWindowFlags.NoResize)) {
 				if (ImGui.BeginTabBar("Settings")) {
+					var cfg = Ktisis.Configuration;
 					if (ImGui.BeginTabItem("Interface"))
-						DrawInterfaceTab();
+						DrawInterfaceTab(cfg);
 					if (ImGui.BeginTabItem("Overlay"))
-						DrawOverlayTab();
+						DrawOverlayTab(cfg);
 					if (ImGui.BeginTabItem("Gizmo"))
-						DrawGizmoTab();
+						DrawGizmoTab(cfg);
 					if (ImGui.BeginTabItem("Language"))
-						DrawLanguageTab();
+						DrawLanguageTab(cfg);
 
 					ImGui.EndTabBar();
 				}
@@ -67,17 +57,11 @@ namespace Ktisis.Interface {
 
 		// Interface
 
-		public void DrawInterfaceTab() {
-			/*var autoOpen = cfg.AutoOpen;
-			if (ImGui.Checkbox("Auto Open", ref autoOpen)) {
-				cfg.AutoOpen = autoOpen;
-				cfg.Save(Plugin);
-			}*/
-
-			var displayCharName = Cfg.DisplayCharName;
+		public void DrawInterfaceTab(Configuration cfg) {
+			var displayCharName = cfg.DisplayCharName;
 			if (ImGui.Checkbox("Display character name", ref displayCharName)) {
-				Cfg.DisplayCharName = displayCharName;
-				Cfg.Save(Plugin);
+				cfg.DisplayCharName = displayCharName;
+				cfg.Save();
 			}
 
 			ImGui.EndTabItem();
@@ -85,26 +69,26 @@ namespace Ktisis.Interface {
 
 		// Overlay
 
-		public void DrawOverlayTab() {
-			var drawLines = Cfg.DrawLinesOnSkeleton;
+		public void DrawOverlayTab(Configuration cfg) {
+			var drawLines = cfg.DrawLinesOnSkeleton;
 			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines)) {
-				Cfg.DrawLinesOnSkeleton = drawLines;
-				Cfg.Save(Plugin);
+				cfg.DrawLinesOnSkeleton = drawLines;
+				cfg.Save();
 			}
 
-			var lineThickness = Cfg.SkeletonLineThickness;
+			var lineThickness = cfg.SkeletonLineThickness;
 			if (ImGui.SliderFloat("Lines thickness", ref lineThickness, 0.01F, 15F, "%.1f")) {
-				Cfg.SkeletonLineThickness = lineThickness;
-				Cfg.Save(Plugin);
+				cfg.SkeletonLineThickness = lineThickness;
+				cfg.Save();
 			}
 
 			ImGui.Separator();
 
-			bool linkBoneCategoriesColors = Cfg.LinkBoneCategoryColors;
+			bool linkBoneCategoriesColors = cfg.LinkBoneCategoryColors;
 			if (ImGuiComponents.IconButton(FontAwesomeIcon.Link, linkBoneCategoriesColors ? new Vector4(0.0F, 1.0F, 0.0F, 0.4F) : null))
 			{
-				Cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
-				Cfg.Save(Plugin);
+				cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
+				cfg.Save();
 			}
 
 			ImGui.SameLine();
@@ -115,23 +99,23 @@ namespace Ktisis.Interface {
 			{
 				Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 				if (linkBoneCategoriesColors) {
-					Cfg.LinkedBoneCategoryColor = eraseColor;
+					cfg.LinkedBoneCategoryColor = eraseColor;
 				} else {
 					foreach (Category category in Category.Categories.Values) {
-						if (category.ShouldDisplay || Cfg.BoneCategoryColors.ContainsKey(category.Name))
-							Cfg.BoneCategoryColors[category.Name] = eraseColor;
+						if (category.ShouldDisplay || cfg.BoneCategoryColors.ContainsKey(category.Name))
+							cfg.BoneCategoryColors[category.Name] = eraseColor;
 					}
 				}
-				Cfg.Save(Plugin);
+				cfg.Save();
 			}
 
 			if (linkBoneCategoriesColors)
 			{
-				Vector4 linkedBoneColor = Cfg.LinkedBoneCategoryColor;
+				Vector4 linkedBoneColor = cfg.LinkedBoneCategoryColor;
 				if (ImGui.ColorEdit4("Bones color", ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 				{
-					Cfg.LinkedBoneCategoryColor = linkedBoneColor;
-					Cfg.Save(Plugin);
+					cfg.LinkedBoneCategoryColor = linkedBoneColor;
+					cfg.Save();
 				}
 			} else {
 
@@ -140,11 +124,11 @@ namespace Ktisis.Interface {
 				{
 					foreach ((string categoryName, Category category) in Category.Categories)
 					{
-						if (!category.ShouldDisplay && !Cfg.BoneCategoryColors.ContainsKey(category.Name))
+						if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
 							continue;
-						Cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
+						cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
 					}
-					Cfg.Save(Plugin);
+					cfg.Save();
 				}
 
 				ImGui.Text("Bone colors by category");
@@ -152,16 +136,16 @@ namespace Ktisis.Interface {
 				bool hasShownAnyCategory = false;
 				foreach (Category category in Category.Categories.Values)
 				{
-					if (!category.ShouldDisplay && !Cfg.BoneCategoryColors.ContainsKey(category.Name))
+					if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
 						continue;
 
-					if (!Cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
-						categoryColor = Cfg.LinkedBoneCategoryColor;
+					if (!cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
+						categoryColor = cfg.LinkedBoneCategoryColor;
 
 					if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 					{
-						Cfg.BoneCategoryColors[category.Name] = categoryColor;
-						Cfg.Save(Plugin);
+						cfg.BoneCategoryColors[category.Name] = categoryColor;
+						cfg.Save();
 					}
 					hasShownAnyCategory = true;
 				}
@@ -174,11 +158,11 @@ namespace Ktisis.Interface {
 
 		// Gizmo
 
-		public void DrawGizmoTab() {
-			var allowAxisFlip = Cfg.AllowAxisFlip;
+		public void DrawGizmoTab(Configuration cfg) {
+			var allowAxisFlip = cfg.AllowAxisFlip;
 			if (ImGui.Checkbox("Flip axis to face camera", ref allowAxisFlip)) {
-				Cfg.AllowAxisFlip = allowAxisFlip;
-				Cfg.Save(Plugin);
+				cfg.AllowAxisFlip = allowAxisFlip;
+				cfg.Save();
 			}
 
 			ImGui.EndTabItem();
@@ -186,10 +170,10 @@ namespace Ktisis.Interface {
 
 		// Language
 
-		public void DrawLanguageTab() {
+		public void DrawLanguageTab(Configuration cfg) {
 			var selected = "";
 			foreach (var lang in Locale.Languages) {
-				if (lang == Cfg.Localization) {
+				if (lang == cfg.Localization) {
 					selected = $"{lang}";
 					break;
 				}
@@ -199,8 +183,8 @@ namespace Ktisis.Interface {
 				foreach (var lang in Locale.Languages) {
 					var name = $"{lang}";
 					if (ImGui.Selectable(name, name == selected)) {
-						Cfg.Localization = lang;
-						Cfg.Save(Plugin);
+						cfg.Localization = lang;
+						cfg.Save();
 					}
 				}
 
@@ -208,10 +192,10 @@ namespace Ktisis.Interface {
 				ImGui.EndCombo();
 			}
 
-			var translateBones = Cfg.TranslateBones;
+			var translateBones = cfg.TranslateBones;
 			if (ImGui.Checkbox("Translate bone names", ref translateBones)) {
-				Cfg.TranslateBones = translateBones;
-				Cfg.Save(Plugin);
+				cfg.TranslateBones = translateBones;
+				cfg.Save();
 			}
 
 			ImGui.EndTabItem();

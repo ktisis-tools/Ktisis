@@ -9,25 +9,19 @@ using Dalamud.Logging;
 
 namespace Ktisis.Localization {
 	public class Locale {
-		private Ktisis Plugin;
-
-		public UserLocale Loaded = UserLocale.None;
-		public JObject Strings = new();
+		public static UserLocale Loaded = UserLocale.None;
+		public static JObject Strings = new();
 
 		public static List<UserLocale> Languages = new() {
 			UserLocale.English,
 			UserLocale.German
 		};
 
-		public Locale(Ktisis plugin) {
-			Plugin = plugin;
+		public static UserLocale GetCurrent() {
+			return Ktisis.Configuration.Localization;
 		}
 
-		public UserLocale GetCurrent() {
-			return Plugin.Configuration.Localization;
-		}
-
-		public string GetString(string handle) {
+		public static string GetString(string handle) {
 			var lang = GetCurrent();
 			if (lang != Loaded) {
 				Loaded = lang;
@@ -44,8 +38,8 @@ namespace Ktisis.Localization {
 			return Strings.ContainsKey(handle) ? (string)Strings[handle]! : handle;
 		}
 
-		public string GetBoneName(string handle) {
-			return Plugin.Configuration.TranslateBones ? GetString(handle) : handle;
+		public static string GetBoneName(string handle) {
+			return Ktisis.Configuration.TranslateBones ? GetString(handle) : handle;
 		}
 
 		public static Stream GetLocaleFile(UserLocale lang) {

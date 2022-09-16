@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ImGuiNET;
 
 using Ktisis.Overlay;
+using Ktisis.Localization;
 
 namespace Ktisis.Structs.Bones {
 	public class BoneSelector {
@@ -49,7 +50,7 @@ namespace Ktisis.Structs.Bones {
 					var bone = bones?[item.Index];
 					if (bone == null) continue;
 
-					var name = editor.Plugin.Locale.GetBoneName(bone.HkaBone.Name!);
+					var name = Locale.GetBoneName(bone.HkaBone.Name!);
 					var isSelected = i == ScrollIndex;
 					ImGui.Selectable(name, isSelected);
 

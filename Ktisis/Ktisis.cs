@@ -4,12 +4,7 @@ using ImGuiNET;
 
 using Dalamud.Plugin;
 using Dalamud.Interface;
-using Dalamud.Data;
-using Dalamud.Game;
-using Dalamud.Game.Gui;
 using Dalamud.Game.Command;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.ClientState.Objects;
 
 using Ktisis.Overlay;
 using Ktisis.Interface;
@@ -20,59 +15,32 @@ namespace Ktisis {
 		public string Name => "Ktisis";
 		public string CommandName = "/ktisis";
 
-		public Configuration Configuration { get; init; }
+		public static Configuration Configuration { get; private set; } = null!;
+		internal static Locale Locale { get; private set; } = null!;
 
 		internal KtisisGui Gui { get; init; }
 		internal ConfigGui ConfigGui { get; init; }
 		internal CustomizeGui CustomizeGui { get; init; }
 		internal SkeletonEditor SkeletonEditor { get; init; }
 
-		internal Locale Locale { get; init; }
-
-		internal DalamudPluginInterface PluginInterface { get; init; }
-		internal CommandManager CommandManager { get; init; }
-		internal DataManager DataManager { get; init; }
-		internal ClientState ClientState { get; init; }
-		internal ObjectTable ObjectTable { get; init; }
-		internal SigScanner SigScanner { get; init; }
-		internal GameGui GameGui { get; init; }
-
 		public Ktisis(
-			DalamudPluginInterface pluginInterface,
-			CommandManager cmdManager,
-			DataManager dataManager,
-			ClientState clientState,
-			ObjectTable objTable,
-			SigScanner sigScanner,
-			GameGui gameGui
+			DalamudPluginInterface pluginInterface
 		) {
-			// TODO: Streamline this.
-			PluginInterface = pluginInterface;
-			CommandManager = cmdManager;
-			DataManager = dataManager;
-			ClientState = clientState;
-			ObjectTable = objTable;
-			SigScanner = sigScanner;
-			GameGui = gameGui;
-
-			Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+			Dalamud.Init(pluginInterface);
+			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
 			// Register command
 
-			CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
+			Dalamud.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
 				HelpMessage = "/ktisis - Show the Ktisis interface."
 			});
-
-			// i18n
-
-			Locale = new Locale(this);
 
 			// Overlays & UI
 
 			Gui = new KtisisGui(this);
-			ConfigGui = new ConfigGui(this);
-			CustomizeGui = new CustomizeGui(this);
-			SkeletonEditor = new SkeletonEditor(this, null);
+			ConfigGui = new ConfigGui();
+			CustomizeGui = new CustomizeGui();
+			SkeletonEditor = new SkeletonEditor();
 
 			Gui.Show();
 
@@ -82,7 +50,7 @@ namespace Ktisis {
 
 		public void Dispose() {
 			// TODO
-			CommandManager.RemoveHandler(CommandName);
+			Dalamud.CommandManager.RemoveHandler(CommandName);
 		}
 
 		private void OnCommand(string command, string arguments) {
@@ -110,8 +78,8 @@ namespace Ktisis {
 			ImGui.PopStyleVar();
 		}
 
-		public bool IsInGpose() {
-			return PluginInterface.UiBuilder.GposeActive;
+		public static bool IsInGpose() {
+			return Dalamud.PluginInterface.UiBuilder.GposeActive;
 		}
 	}
 }

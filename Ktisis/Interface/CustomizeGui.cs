@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using System.Collections.Generic;
 
 using ImGuiNET;
 
@@ -10,6 +9,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Objects.Enums;
 
 using Ktisis.Util;
+using Ktisis.Localization;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
 
@@ -23,22 +23,12 @@ namespace Ktisis.Interface {
 
 		// Properties
 
-		Ktisis Plugin;
-		CustomizeUtil CustomizeUtil;
-
 		public Actor* Target;
 
 		public bool Visible = false;
 
 		public CustomizeIndex? Selecting;
 		public Vector2 SelectPos;
-
-		// Constructor
-
-		public CustomizeGui(Ktisis plugin) {
-			Plugin = plugin;
-			CustomizeUtil = new(plugin);
-		}
 
 		// Toggle visibility
 
@@ -88,7 +78,7 @@ namespace Ktisis.Interface {
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
 			// Create window
-			var title = Plugin.Configuration.DisplayCharName ? $"{Target->Name}" : "Appearance";
+			var title = Ktisis.Configuration.DisplayCharName ? $"{Target->Name}" : "Appearance";
 			if (ImGui.Begin(title, ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoResize)) {
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
@@ -140,10 +130,10 @@ namespace Ktisis.Interface {
 
 			// Race
 
-			var curRace = Plugin.Locale.GetString($"{custom.Race}");
+			var curRace = Locale.GetString($"{custom.Race}");
 			if (ImGui.BeginCombo("Race", curRace)) {
 				foreach (Race race in Enum.GetValues(typeof(Race))) {
-					var raceName = Plugin.Locale.GetString($"{race}");
+					var raceName = Locale.GetString($"{race}");
 					if (ImGui.Selectable(raceName, race == custom.Race)) {
 						custom.Race = race;
 						custom.Tribe = (Tribe)(
@@ -160,11 +150,11 @@ namespace Ktisis.Interface {
 
 			// Tribe
 
-			var curTribe = Plugin.Locale.GetString($"{custom.Tribe}");
+			var curTribe = Locale.GetString($"{custom.Tribe}");
 			if (ImGui.BeginCombo("Tribe", curTribe)) {
 				for (int i = 0; i < 2; i++) {
 					var tribe = (Tribe)(Customize.GetRaceTribeIndex(custom.Race) + i);
-					if (ImGui.Selectable(Plugin.Locale.GetString($"{tribe}"), tribe == custom.Tribe)) {
+					if (ImGui.Selectable(Locale.GetString($"{tribe}"), tribe == custom.Tribe)) {
 						custom.Tribe = tribe;
 						Apply(custom);
 					}

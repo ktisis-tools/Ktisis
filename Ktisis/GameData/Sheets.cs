@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Dalamud.Data;
-
-using Lumina;
 using Lumina.Excel;
-
-using Ktisis.GameData.Excel;
 
 namespace Ktisis.GameData {
 	internal class Sheets {

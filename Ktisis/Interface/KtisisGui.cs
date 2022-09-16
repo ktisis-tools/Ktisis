@@ -6,8 +6,9 @@ using ImGuizmoNET;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
-using Ktisis.Structs.Bones;
 using Ktisis.Util;
+using Ktisis.Localization;
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface {
 	internal class KtisisGui {
@@ -42,7 +43,7 @@ namespace Ktisis.Interface {
 			if (!Visible)
 				return;
 
-			var gposeEnabled = Plugin.IsInGpose();
+			var gposeEnabled = Ktisis.IsInGpose();
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
@@ -90,7 +91,7 @@ namespace Ktisis.Interface {
 
 				// Config
 
-				var cfg = Plugin.Configuration;
+				var cfg = Ktisis.Configuration;
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
@@ -106,7 +107,7 @@ namespace Ktisis.Interface {
 				var showSkeleton = cfg.ShowSkeleton;
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
 					cfg.ShowSkeleton = showSkeleton;
-					cfg.Save(Plugin);
+					cfg.Save();
 					if (!showSkeleton)
 						Plugin.SkeletonEditor.ResetState();
 				}
@@ -127,10 +128,10 @@ namespace Ktisis.Interface {
 							if(!cfg.ShowSkeleton && categoryState)
 							{
 								cfg.ShowSkeleton = true;
-								cfg.Save(Plugin);
+								cfg.Save();
 							}
 							cfg.ShowBoneByCategory[category.Name] = categoryState;
-							cfg.Save(Plugin);
+							cfg.Save();
 						}
 					}
 					ImGui.Unindent(16.0f);
@@ -168,7 +169,7 @@ namespace Ktisis.Interface {
 
 			var show = bone.IsRoot;
 			if (!show) {
-				show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, Plugin.Locale.GetBoneName(bone.HkaBone.Name!));
+				show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, Locale.GetBoneName(bone.HkaBone.Name!));
 
 				var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 				var rectMax = ImGui.GetItemRectMax();

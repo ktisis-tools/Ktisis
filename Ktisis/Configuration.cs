@@ -68,8 +68,8 @@ namespace Ktisis {
 
 		// save
 
-		public void Save(Ktisis plugin) {
-			plugin.PluginInterface.SavePluginConfig(this);
+		public void Save() {
+			Dalamud.PluginInterface.SavePluginConfig(Ktisis.Configuration);
 		}
 	}
 }

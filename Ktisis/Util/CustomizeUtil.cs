@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-using Dalamud.Data;
 using Dalamud.Game.ClientState.Objects.Enums;
 
 using ImGuiScene;
@@ -12,20 +11,12 @@ using Ktisis.Structs.Actor;
 
 namespace Ktisis.Util {
 	internal class CustomizeUtil {
-		public Ktisis Plugin;
-		public DataManager Data;
-
-		public CharaMakeType? Cached;
-		public Dictionary<MenuType, List<MenuOption>>? CachedMenu;
-
-		public CustomizeUtil(Ktisis plugin) {
-			Plugin = plugin;
-			Data = plugin.DataManager;
-		}
+		public static CharaMakeType? Cached;
+		public static Dictionary<MenuType, List<MenuOption>>? CachedMenu;
 
 		// Calculate row index
 
-		public uint GetMakeIndex(Customize custom) {
+		public static uint GetMakeIndex(Customize custom) {
 			var r = (uint)custom.Race;
 			var t = (uint)custom.Tribe;
 			var g = (uint)custom.Gender;
@@ -35,26 +26,26 @@ namespace Ktisis.Util {
 
 		// Fetch char creator data from cache or sheet
 
-		public CharaMakeType? GetMakeData(uint index) {
+		public static CharaMakeType? GetMakeData(uint index) {
 			if (Cached != null && Cached.RowId == index) {
 				return Cached;
 			} else {
-				var lang = Plugin.Configuration.SheetLocale;
-				var sheet = Data.GetExcelSheet<CharaMakeType>(lang);
+				var lang = Ktisis.Configuration.SheetLocale;
+				var sheet = Dalamud.DataManager.GetExcelSheet<CharaMakeType>(lang);
 				var row = sheet == null ? null : sheet.GetRow(index);
 				Cached = row;
 				return row;
 			}
 		}
 
-		public CharaMakeType? GetMakeData(Customize custom) {
+		public static CharaMakeType? GetMakeData(Customize custom) {
 			var index = GetMakeIndex(custom);
 			return GetMakeData(index);
 		}
 
 		// Build char creator options
 
-		public Dictionary<MenuType, List<MenuOption>> GetMenuOptions(Customize custom) {
+		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(Customize custom) {
 			var options = new Dictionary<MenuType, List<MenuOption>>();
 
 			var index = GetMakeIndex(custom);
@@ -92,14 +83,14 @@ namespace Ktisis.Util {
 						if (val.IsFeature) {
 							foreach (var row in val.Features) {
 								var feat = row.Value!;
-								var icon = Data.GetImGuiTextureHqIcon(feat.Icon);
+								var icon = Dalamud.DataManager.GetImGuiTextureHqIcon(feat.Icon);
 								if (feat.FeatureId == 0)
 									continue;
 								icons.Add(feat.FeatureId, icon!);
 							}
 						} else {
 							for (var x = 0; x < val.Count; x++) {
-								var icon = Data.GetImGuiTextureHqIcon(val.Params[x]);
+								var icon = Dalamud.DataManager.GetImGuiTextureHqIcon(val.Params[x]);
 								icons.Add(val.Graphics[x], icon!);
 							}
 						}

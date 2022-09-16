@@ -6,8 +6,6 @@ using System.Runtime.InteropServices;
 using ImGuiNET;
 using ImGuizmoNET;
 
-using Dalamud.Game.Gui;
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
@@ -19,10 +17,6 @@ using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Overlay {
 	public sealed class SkeletonEditor {
-		internal Ktisis Plugin;
-		private GameGui Gui;
-		private ObjectTable ObjectTable;
-
 		public bool Visible = true;
 
 		public GameObject? Subject;
@@ -49,17 +43,13 @@ namespace Ktisis.Overlay {
 
 		// Constructor
 
-		public unsafe SkeletonEditor(Ktisis plugin, GameObject? subject) {
-			Plugin = plugin;
-			Gui = plugin.GameGui;
-			ObjectTable = plugin.ObjectTable;
-
+		public unsafe SkeletonEditor(GameObject? subject = null) {
 			Subject = subject;
 
 			BoneSelector = new BoneSelector();
 			BoneMod = new BoneMod();
 
-			var matrixAddr = plugin.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? 48 89 4c 24 ?? 4C 8D 4D ?? 4C 8D 44 24 ??");
+			var matrixAddr = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? 48 89 4c 24 ?? 4C 8D 4D ?? 4C 8D 44 24 ??");
 			GetMatrix = Marshal.GetDelegateForFunctionPointer<GetMatrixDelegate>(matrixAddr);
 		}
 
@@ -145,17 +135,17 @@ namespace Ktisis.Overlay {
 		// Draw
 
 		public unsafe void Draw(ImDrawListPtr draw) {
-			if (!Visible || !Plugin.Configuration.ShowSkeleton)
+			if (!Visible || !Ktisis.Configuration.ShowSkeleton)
 				return;
 
-			if (!Plugin.IsInGpose())
+			if (!Ktisis.IsInGpose())
 				return;
 
 			var tarSys = TargetSystem.Instance();
 			if (tarSys == null)
 				return;
 
-			var target = ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
+			var target = Dalamud.ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
 			if (target == null || Subject == null || Subject.Address != target.Address) {
 				Subject = target;
 				if (Subject != null)
@@ -183,20 +173,20 @@ namespace Ktisis.Overlay {
 					if (bone.IsRoot)
 						continue;
 
-					uint boneColor = ImGui.GetColorU32(Plugin.Configuration.GetCategoryColor(bone));
+					uint boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
 
 					var pair = (bones.Id, bone.Index);
 					
 					var worldPos = model->Position + bone.Rotate(model->Rotation) * model->Height;
-					Gui.WorldToScreen(worldPos, out var pos);
+					Dalamud.GameGui.WorldToScreen(worldPos, out var pos);
 
-					if (Plugin.Configuration.IsBoneVisible(bone)) {
+					if (Ktisis.Configuration.IsBoneVisible(bone)) {
 						if (bone.ParentId > 0) { // Lines
 							var parent = bone.GetParent()!;
 							var parentPos = model->Position + parent.Rotate(model->Rotation) * model->Height;
 
-							Gui.WorldToScreen(parentPos, out var pPos);
-							draw.AddLine(pos, pPos, boneColor, Plugin.Configuration.SkeletonLineThickness);
+							Dalamud.GameGui.WorldToScreen(parentPos, out var pPos);
+							draw.AddLine(pos, pPos, boneColor, Ktisis.Configuration.SkeletonLineThickness);
 						}
 					}
 
@@ -212,7 +202,7 @@ namespace Ktisis.Overlay {
 						ImGuizmo.SetDrawlist();
 						ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
 
-						ImGuizmo.AllowAxisFlip(Plugin.Configuration.AllowAxisFlip);
+						ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
 
 						ImGuizmo.Manipulate(
 							ref matrix->Projection.M11,
@@ -239,7 +229,7 @@ namespace Ktisis.Overlay {
 						bone.Transform.Rotation *= delta.Rotation;
 						bone.TransformBone(delta, Skeleton);
 
-					} else if(Plugin.Configuration.IsBoneVisible(bone)) { // Dot
+					} else if(Ktisis.Configuration.IsBoneVisible(bone)) { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
 
 						var area = new Vector2(radius, radius);
