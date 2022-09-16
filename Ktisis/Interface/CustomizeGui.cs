@@ -9,9 +9,9 @@ using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Objects.Enums;
 
-using Ktisis.Data;
-using Ktisis.Structs.Actor;
 using Ktisis.Util;
+using Ktisis.GameData.Excel;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface {
 	internal unsafe class CustomizeGui {

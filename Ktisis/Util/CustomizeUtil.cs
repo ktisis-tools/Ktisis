@@ -7,7 +7,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 
 using ImGuiScene;
 
-using Ktisis.Data;
+using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Util {

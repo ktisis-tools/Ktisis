@@ -1,9 +1,8 @@
-﻿using Lumina;
-using Lumina.Data;
+﻿using Lumina.Data;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 
-namespace Ktisis.Data {
+namespace Ktisis.GameData.Excel {
 	[Sheet("CharaMakeCustomize")]
 	public class CharaMakeCustomize : ExcelRow {
 		public string Name { get; set; } = "";
@@ -16,7 +15,7 @@ namespace Ktisis.Data {
 		public LazyRow<Item> HintItem { get; set; } = null!;
 		public byte FaceType { get; set; }
 
-		public override void PopulateData(RowParser parser, GameData gameData, Language language) {
+		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
 			base.PopulateData(parser, gameData, language);
 
 			FeatureId = parser.ReadColumn<byte>(0);

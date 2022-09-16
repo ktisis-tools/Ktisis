@@ -4,7 +4,7 @@ using Lumina.Excel.GeneratedSheets;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 
-namespace Ktisis.Data {
+namespace Ktisis.GameData.Excel {
 	public enum MenuType : byte {
 		List = 0,
 		Select = 1,
