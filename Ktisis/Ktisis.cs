@@ -51,6 +51,7 @@ namespace Ktisis {
 		public void Dispose() {
 			// TODO
 			Dalamud.CommandManager.RemoveHandler(CommandName);
+			Configuration.Save();
 		}
 
 		private void OnCommand(string command, string arguments) {

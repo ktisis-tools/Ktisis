@@ -59,10 +59,8 @@ namespace Ktisis.Interface {
 
 		public void DrawInterfaceTab(Configuration cfg) {
 			var displayCharName = cfg.DisplayCharName;
-			if (ImGui.Checkbox("Display character name", ref displayCharName)) {
+			if (ImGui.Checkbox("Display character name", ref displayCharName))
 				cfg.DisplayCharName = displayCharName;
-				cfg.Save();
-			}
 
 			ImGui.EndTabItem();
 		}
@@ -71,25 +69,18 @@ namespace Ktisis.Interface {
 
 		public void DrawOverlayTab(Configuration cfg) {
 			var drawLines = cfg.DrawLinesOnSkeleton;
-			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines)) {
+			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines))
 				cfg.DrawLinesOnSkeleton = drawLines;
-				cfg.Save();
-			}
 
 			var lineThickness = cfg.SkeletonLineThickness;
-			if (ImGui.SliderFloat("Lines thickness", ref lineThickness, 0.01F, 15F, "%.1f")) {
+			if (ImGui.SliderFloat("Lines thickness", ref lineThickness, 0.01F, 15F, "%.1f"))
 				cfg.SkeletonLineThickness = lineThickness;
-				cfg.Save();
-			}
 
 			ImGui.Separator();
 
 			bool linkBoneCategoriesColors = cfg.LinkBoneCategoryColors;
 			if (ImGuiComponents.IconButton(FontAwesomeIcon.Link, linkBoneCategoriesColors ? new Vector4(0.0F, 1.0F, 0.0F, 0.4F) : null))
-			{
 				cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
-				cfg.Save();
-			}
 
 			ImGui.SameLine();
 			ImGui.Text(linkBoneCategoriesColors ? "Unlink bones colors" : "Link bones colors");
@@ -106,17 +97,13 @@ namespace Ktisis.Interface {
 							cfg.BoneCategoryColors[category.Name] = eraseColor;
 					}
 				}
-				cfg.Save();
 			}
 
 			if (linkBoneCategoriesColors)
 			{
 				Vector4 linkedBoneColor = cfg.LinkedBoneCategoryColor;
 				if (ImGui.ColorEdit4("Bones color", ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
-				{
 					cfg.LinkedBoneCategoryColor = linkedBoneColor;
-					cfg.Save();
-				}
 			} else {
 
 				ImGui.SameLine();
@@ -128,7 +115,6 @@ namespace Ktisis.Interface {
 							continue;
 						cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
 					}
-					cfg.Save();
 				}
 
 				ImGui.Text("Bone colors by category");
@@ -143,10 +129,7 @@ namespace Ktisis.Interface {
 						categoryColor = cfg.LinkedBoneCategoryColor;
 
 					if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
-					{
 						cfg.BoneCategoryColors[category.Name] = categoryColor;
-						cfg.Save();
-					}
 					hasShownAnyCategory = true;
 				}
 				if (!hasShownAnyCategory)
@@ -160,10 +143,8 @@ namespace Ktisis.Interface {
 
 		public void DrawGizmoTab(Configuration cfg) {
 			var allowAxisFlip = cfg.AllowAxisFlip;
-			if (ImGui.Checkbox("Flip axis to face camera", ref allowAxisFlip)) {
+			if (ImGui.Checkbox("Flip axis to face camera", ref allowAxisFlip))
 				cfg.AllowAxisFlip = allowAxisFlip;
-				cfg.Save();
-			}
 
 			ImGui.EndTabItem();
 		}
@@ -182,10 +163,8 @@ namespace Ktisis.Interface {
 			if (ImGui.BeginCombo("Language", selected)) {
 				foreach (var lang in Locale.Languages) {
 					var name = $"{lang}";
-					if (ImGui.Selectable(name, name == selected)) {
+					if (ImGui.Selectable(name, name == selected))
 						cfg.Localization = lang;
-						cfg.Save();
-					}
 				}
 
 				ImGui.SetItemDefaultFocus();
@@ -193,10 +172,8 @@ namespace Ktisis.Interface {
 			}
 
 			var translateBones = cfg.TranslateBones;
-			if (ImGui.Checkbox("Translate bone names", ref translateBones)) {
+			if (ImGui.Checkbox("Translate bone names", ref translateBones))
 				cfg.TranslateBones = translateBones;
-				cfg.Save();
-			}
 
 			ImGui.EndTabItem();
 		}
