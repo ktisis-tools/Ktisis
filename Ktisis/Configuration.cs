@@ -65,11 +65,5 @@ namespace Ktisis {
 		public bool LinkBoneCategoryColors { get; set; } = false;
 		public Vector4 LinkedBoneCategoryColor { get; set; } = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
-
-		// save
-
-		public void Save() {
-			Dalamud.PluginInterface.SavePluginConfig(Ktisis.Configuration);
-		}
 	}
 }
