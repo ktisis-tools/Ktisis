@@ -5,12 +5,6 @@ using Lumina.Excel;
 
 namespace Ktisis.GameData {
 	internal class Sheets {
-		internal static Lumina.GameData Data { get; set; } = null!;
-
-		public static void Init(Lumina.GameData data) {
-			Data = data;
-		}
-
 		// Sheets
 
 		internal static Dictionary<Type, ExcelSheetImpl> Cache = new();
@@ -20,7 +14,7 @@ namespace Ktisis.GameData {
 			if (Cache.ContainsKey(type))
 				return (ExcelSheet<T>)Cache[type];
 
-			var sheet = Data.GetExcelSheet<T>()!;
+			var sheet = Dalamud.DataManager.GetExcelSheet<T>()!;
 			Cache.Add(type, sheet);
 			return sheet;
 		}

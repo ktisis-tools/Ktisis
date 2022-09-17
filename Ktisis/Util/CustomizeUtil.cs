@@ -6,14 +6,12 @@ using Dalamud.Game.ClientState.Objects.Enums;
 
 using ImGuiScene;
 
+using Ktisis.GameData;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Util {
 	internal class CustomizeUtil {
-		public static CharaMakeType? Cached;
-		public static Dictionary<MenuType, List<MenuOption>>? CachedMenu;
-
 		// Calculate row index
 
 		public static uint GetMakeIndex(Customize custom) {
@@ -24,35 +22,13 @@ namespace Ktisis.Util {
 			return ((r - 1) * 4) + ((t - i) * 2) + g; // Thanks cait
 		}
 
-		// Fetch char creator data from cache or sheet
-
-		public static CharaMakeType? GetMakeData(uint index) {
-			if (Cached != null && Cached.RowId == index) {
-				return Cached;
-			} else {
-				var lang = Ktisis.Configuration.SheetLocale;
-				var sheet = Dalamud.DataManager.GetExcelSheet<CharaMakeType>(lang);
-				var row = sheet == null ? null : sheet.GetRow(index);
-				Cached = row;
-				return row;
-			}
-		}
-
-		public static CharaMakeType? GetMakeData(Customize custom) {
-			var index = GetMakeIndex(custom);
-			return GetMakeData(index);
-		}
-
 		// Build char creator options
 
-		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(Customize custom) {
+		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(uint index) {
 			var options = new Dictionary<MenuType, List<MenuOption>>();
 
-			var index = GetMakeIndex(custom);
-			if (Cached != null && CachedMenu != null && index == Cached.RowId)
-				return CachedMenu;
+			var data = Sheets.GetSheet<CharaMakeType>().GetRow(index);
 
-			var data = GetMakeData(index);
 			if (data != null) {
 				for (int i = 0; i < CharaMakeType.MenuCt; i++) {
 					var val = data.Menus[i];
@@ -101,11 +77,11 @@ namespace Ktisis.Util {
 				}
 			}
 
-			CachedMenu = options;
 			return options;
 		}
 	}
 
+	// TODO: Possible dead code?
 	public class CharaMakeIterator : IEnumerable {
 		public const int Count = 28;
 

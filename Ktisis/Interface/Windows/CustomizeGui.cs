@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
 
@@ -28,18 +29,15 @@ namespace Ktisis.Interface.Windows {
 		public static CustomizeIndex? Selecting;
 		public static Vector2 SelectPos;
 
+		public static uint? CustomIndex = null;
+		public static Dictionary<MenuType, List<MenuOption>> MenuOptions = new();
+
 		public unsafe static Actor* Target
 			=> Ktisis.GPoseTarget != null ? (Actor*)Ktisis.GPoseTarget.Address : null;
 
 		// Toggle visibility
 
-		public static void Show() {
-			Visible = true;
-		}
-
-		public static void Hide() {
-			Visible = false;
-		}
+		public static void Show() => Visible = true;
 
 		// Apply customize
 
@@ -76,10 +74,15 @@ namespace Ktisis.Interface.Windows {
 
 				DrawFundamental(custom);
 
-				var menu = CustomizeUtil.GetMenuOptions(custom);
-				foreach (var type in menu.Keys) {
+				var index = CustomizeUtil.GetMakeIndex(custom);
+				if (index != CustomIndex) {
+					MenuOptions = CustomizeUtil.GetMenuOptions(index);
+					CustomIndex = index;
+				}
+
+				foreach (var type in MenuOptions.Keys) {
 					ImGui.Separator();
-					foreach (var option in menu[type]) {
+					foreach (var option in MenuOptions[type]) {
 						switch (type) {
 							case MenuType.Slider:
 								DrawSlider(custom, option);
