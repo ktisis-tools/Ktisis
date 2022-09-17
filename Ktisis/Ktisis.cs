@@ -18,8 +18,6 @@ namespace Ktisis {
 		public static Configuration Configuration { get; private set; } = null!;
 		internal static Locale Locale { get; private set; } = null!;
 
-		internal static SkeletonEditor SkeletonEditor { get; set; } = null!;
-
 		public Ktisis(
 			DalamudPluginInterface pluginInterface
 		) {
@@ -34,12 +32,10 @@ namespace Ktisis {
 
 			// Overlays & UI
 
-			SkeletonEditor = new SkeletonEditor();
-
-			KtisisGui.Show();
+			Workspace.Show();
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
-			pluginInterface.UiBuilder.Draw += Draw;
+			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
 		}
 
 		public void Dispose() {
@@ -49,32 +45,7 @@ namespace Ktisis {
 		}
 
 		private void OnCommand(string command, string arguments) {
-			KtisisGui.Show();
-		}
-
-		public unsafe void Draw() {
-			ImGuiHelpers.ForceNextWindowMainViewport();
-			ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
-
-			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
-
-			ImGui.Begin("Ktisis Overlay", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs);
-			ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
-
-			var draw = ImGui.GetWindowDrawList();
-
-			KtisisGui.Draw();
-			ConfigGui.Draw();
-			CustomizeGui.Draw();
-
-			SkeletonEditor.Draw(draw);
-
-			ImGui.End();
-			ImGui.PopStyleVar();
-		}
-
-		public static bool IsInGpose() {
-			return Dalamud.PluginInterface.UiBuilder.GposeActive;
+			Workspace.Show();
 		}
 	}
 }
