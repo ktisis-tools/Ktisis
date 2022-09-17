@@ -8,7 +8,6 @@ using Dalamud.Game.Command;
 
 using Ktisis.Overlay;
 using Ktisis.Interface;
-using Ktisis.Localization;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -16,7 +15,6 @@ namespace Ktisis {
 		public string CommandName = "/ktisis";
 
 		public static Configuration Configuration { get; private set; } = null!;
-		internal static Locale Locale { get; private set; } = null!;
 
 		public Ktisis(
 			DalamudPluginInterface pluginInterface

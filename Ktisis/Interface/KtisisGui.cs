@@ -1,10 +1,4 @@
-﻿using System.Numerics;
-
-using ImGuiNET;
-
-using Dalamud.Interface;
-
-using Ktisis.Overlay;
+﻿using Ktisis.Overlay;
 
 namespace Ktisis.Interface {
 	public class KtisisGui {
@@ -19,6 +13,5 @@ namespace Ktisis.Interface {
 
 			SkeletonEditor.Draw();
 		}
-
 	}
 }
