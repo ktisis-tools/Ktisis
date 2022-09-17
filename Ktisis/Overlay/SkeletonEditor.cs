@@ -6,10 +6,12 @@ using System.Runtime.InteropServices;
 using ImGuiNET;
 using ImGuizmoNET;
 
+using Dalamud.Interface;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
+using Ktisis.Interface;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
@@ -148,11 +150,11 @@ namespace Ktisis.Overlay {
 
 		// Draw
 
-		public unsafe void Draw(ImDrawListPtr draw) {
+		public unsafe void Draw() {
 			if (!Visible || !Ktisis.Configuration.ShowSkeleton)
 				return;
 
-			if (!Ktisis.IsInGpose())
+			if (!KtisisGui.IsInGpose())
 				return;
 
 			var tarSys = TargetSystem.Instance();
@@ -166,11 +168,32 @@ namespace Ktisis.Overlay {
 					BuildSkeleton();
 			}
 
-			if (Subject == null)
-				return;
-			if (Skeleton == null)
+			if (Subject == null || Skeleton == null)
 				return;
 
+			// Create window & fetch draw list
+
+			ImGuiHelpers.ForceNextWindowMainViewport();
+			ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
+
+			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
+
+			ImGui.Begin("Ktisis Overlay", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs);
+			ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
+
+			// Draw skeleton
+
+			DrawSkeleton();
+
+			// End window draw
+
+			ImGui.End();
+			ImGui.PopStyleVar();
+		}
+
+		// Draw skeleton
+
+		public unsafe void DrawSkeleton() {
 			var model = GetSubjectModel();
 			if (model == null)
 				return;
@@ -179,10 +202,11 @@ namespace Ktisis.Overlay {
 			if (cam == null)
 				return;
 
+			var draw = ImGui.GetWindowDrawList();
+
 			var hoveredBones = new List<(int ListId, int Index)>();
 
-
-			foreach (BoneList bones in Skeleton) {
+			foreach (BoneList bones in Skeleton!) {
 				foreach (Bone bone in bones) {
 					if (bone.IsRoot)
 						continue;
@@ -190,7 +214,7 @@ namespace Ktisis.Overlay {
 					uint boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
 
 					var pair = (bones.Id, bone.Index);
-					
+
 					var worldPos = model->Position + bone.Rotate(model->Rotation) * model->Height;
 					Dalamud.GameGui.WorldToScreen(worldPos, out var pos);
 
@@ -243,7 +267,7 @@ namespace Ktisis.Overlay {
 						bone.Transform.Rotation *= delta.Rotation;
 						bone.TransformBone(delta, Skeleton);
 
-					} else if(Ktisis.Configuration.IsBoneVisible(bone)) { // Dot
+					} else if (Ktisis.Configuration.IsBoneVisible(bone)) { // Dot
 						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
 
 						var area = new Vector2(radius, radius);
