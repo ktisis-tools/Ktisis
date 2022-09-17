@@ -81,31 +81,6 @@ namespace Ktisis.Util {
 		}
 	}
 
-	// TODO: Possible dead code?
-	public class CharaMakeIterator : IEnumerable {
-		public const int Count = 28;
-
-		public CharaMakeType Make;
-
-		public CharaMakeIterator(CharaMakeType make) {
-			Make = make;
-		}
-
-		public Menu GetMakeOption(int i) {
-			return Make.Menus[i];
-		}
-
-		public Menu this[int index] {
-			get => GetMakeOption(index);
-			set => new NotImplementedException();
-		}
-
-		public IEnumerator GetEnumerator() {
-			for (int i = 0; i < Count; i++)
-				yield return this[i];
-		}
-	}
-
 	public struct MenuOption {
 		public Menu Option;
 		public Menu? Color = null;
