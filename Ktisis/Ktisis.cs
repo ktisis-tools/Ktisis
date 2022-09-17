@@ -11,6 +11,8 @@ namespace Ktisis {
 
 		public static Configuration Configuration { get; private set; } = null!;
 
+		//public static GposeTarget => ;
+
 		public Ktisis(
 			DalamudPluginInterface pluginInterface
 		) {

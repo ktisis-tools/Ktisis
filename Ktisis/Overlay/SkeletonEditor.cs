@@ -157,11 +157,7 @@ namespace Ktisis.Overlay {
 			if (!KtisisGui.IsInGpose())
 				return;
 
-			var tarSys = TargetSystem.Instance();
-			if (tarSys == null)
-				return;
-
-			var target = Dalamud.ObjectTable.CreateObjectReference((IntPtr)(tarSys->GPoseTarget));
+			var target = Dalamud.ObjectTable.CreateObjectReference((IntPtr)(Dalamud.Targets->GPoseTarget));
 			if (target == null || Subject == null || Subject.Address != target.Address) {
 				Subject = target;
 				if (Subject != null)
