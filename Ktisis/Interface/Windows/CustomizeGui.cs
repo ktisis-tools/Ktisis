@@ -23,12 +23,13 @@ namespace Ktisis.Interface.Windows {
 
 		// Properties
 
-		public static Actor* Target;
-
 		public static bool Visible = false;
 
 		public static CustomizeIndex? Selecting;
 		public static Vector2 SelectPos;
+
+		public static Actor* Target
+			=> Ktisis.GPoseTarget != null ? (Actor*)Ktisis.GPoseTarget.Address : null;
 
 		// Toggle visibility
 
@@ -40,27 +41,13 @@ namespace Ktisis.Interface.Windows {
 			Visible = false;
 		}
 
-		// Set target
-
-		public static void Show(GameObject? actor) {
-			if (actor != null)
-				SetTarget(actor);
-			Show();
-		}
-
-		public static unsafe void SetTarget(Actor* actor) {
-			Target = actor;
-		}
-
-		public static unsafe void SetTarget(GameObject actor) {
-			SetTarget((Actor*)actor.Address);
-		}
-
 		// Apply customize
 
 		public static void Apply(Customize custard) {
-			Target->Customize = custard;
-			Target->Redraw();
+			if (Target != null) {
+				Target->Customize = custard;
+				Target->Redraw();
+			}
 		}
 
 		// Draw window

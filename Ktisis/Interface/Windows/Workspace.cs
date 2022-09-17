@@ -78,7 +78,7 @@ namespace Ktisis.Interface.Windows {
 
 				ImGui.SameLine();
 				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit targeted Actor's appearance.")) {
-					CustomizeGui.Show(KtisisGui.SkeletonEditor.Subject);
+					CustomizeGui.Show();
 				}
 
 				// Config

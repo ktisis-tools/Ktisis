@@ -1,5 +1,8 @@
-﻿using Dalamud.Plugin;
+﻿using System;
+
+using Dalamud.Plugin;
 using Dalamud.Game.Command;
+using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
@@ -11,11 +14,10 @@ namespace Ktisis {
 
 		public static Configuration Configuration { get; private set; } = null!;
 
-		//public static GposeTarget => ;
+		public unsafe static GameObject? GPoseTarget
+			=> Dalamud.ObjectTable.CreateObjectReference((IntPtr)Dalamud.Targets->GPoseTarget);
 
-		public Ktisis(
-			DalamudPluginInterface pluginInterface
-		) {
+		public Ktisis(DalamudPluginInterface pluginInterface) {
 			Dalamud.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 

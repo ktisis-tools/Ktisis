@@ -21,7 +21,7 @@ namespace Ktisis.Overlay {
 	public sealed class SkeletonEditor {
 		public bool Visible = true;
 
-		public GameObject? Subject;
+		public IntPtr? Subject;
 		public List<BoneList>? Skeleton;
 
 		public BoneSelector BoneSelector;
@@ -46,7 +46,7 @@ namespace Ktisis.Overlay {
 		// Constructor
 
 		public unsafe SkeletonEditor(GameObject? subject = null) {
-			Subject = subject;
+			//Subject = subject;
 
 			BoneSelector = new BoneSelector();
 			BoneMod = new BoneMod();
@@ -67,14 +67,14 @@ namespace Ktisis.Overlay {
 
 		// Get ActorModel
 
-		public unsafe ActorModel* GetSubjectModel() {
-			return ((Actor*)Subject?.Address)->Model;
+		public unsafe ActorModel* GetTargetModel() {
+			return ((Actor*)Ktisis.GPoseTarget?.Address)->Model;
 		}
 
 		// Bone selection
 
 		public unsafe void SelectBone(Bone bone) {
-			var model = GetSubjectModel();
+			var model = GetTargetModel();
 			if (model == null) return;
 
 			BoneSelector.Current = (bone.BoneList.Id, bone.Index);
@@ -100,7 +100,7 @@ namespace Ktisis.Overlay {
 		public unsafe void BuildSkeleton() {
 			Skeleton = new List<BoneList>();
 
-			var model = GetSubjectModel();
+			var model = GetTargetModel();
 			if (model == null)
 				return;
 
@@ -143,7 +143,6 @@ namespace Ktisis.Overlay {
 		// Reset state
 
 		public void ResetState() {
-			Subject = null;
 			Skeleton = null;
 			BoneSelector.ResetState();
 		}
@@ -157,11 +156,15 @@ namespace Ktisis.Overlay {
 			if (!KtisisGui.IsInGpose())
 				return;
 
-			var target = Dalamud.ObjectTable.CreateObjectReference((IntPtr)(Dalamud.Targets->GPoseTarget));
-			if (target == null || Subject == null || Subject.Address != target.Address) {
-				Subject = target;
-				if (Subject != null)
-					BuildSkeleton();
+			var target = Ktisis.GPoseTarget;
+			if (target == null) {
+				Subject = null;
+				return;
+			}
+
+			if (Subject != target.Address || Skeleton == null) {
+				Subject = target!.Address;
+				BuildSkeleton();
 			}
 
 			if (Subject == null || Skeleton == null)
@@ -190,7 +193,7 @@ namespace Ktisis.Overlay {
 		// Draw skeleton
 
 		public unsafe void DrawSkeleton() {
-			var model = GetSubjectModel();
+			var model = GetTargetModel();
 			if (model == null)
 				return;
 
