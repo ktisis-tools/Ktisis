@@ -9,7 +9,7 @@ using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 
-namespace Ktisis.Interface {
+namespace Ktisis.Interface.Windows {
 	internal class ConfigGui {
 		public static bool Visible = false;
 

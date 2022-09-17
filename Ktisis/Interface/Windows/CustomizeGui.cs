@@ -13,7 +13,7 @@ using Ktisis.Localization;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
 
-namespace Ktisis.Interface {
+namespace Ktisis.Interface.Windows {
 	internal unsafe class CustomizeGui {
 		// Constants
 

@@ -1,13 +1,8 @@
-﻿using System.Numerics;
-
-using ImGuiNET;
-
-using Dalamud.Plugin;
-using Dalamud.Interface;
+﻿using Dalamud.Plugin;
 using Dalamud.Game.Command;
 
-using Ktisis.Overlay;
 using Ktisis.Interface;
+using Ktisis.Interface.Windows;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {

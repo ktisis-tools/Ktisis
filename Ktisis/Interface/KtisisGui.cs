@@ -1,4 +1,5 @@
 ﻿using Ktisis.Overlay;
+using Ktisis.Interface.Windows;
 
 namespace Ktisis.Interface {
 	public class KtisisGui {
