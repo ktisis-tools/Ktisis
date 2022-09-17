@@ -111,7 +111,6 @@ namespace Ktisis.Interface {
 				var showSkeleton = cfg.ShowSkeleton;
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
 					cfg.ShowSkeleton = showSkeleton;
-					cfg.Save();
 					if (!showSkeleton)
 						Plugin.SkeletonEditor.ResetState();
 				}
@@ -132,14 +131,11 @@ namespace Ktisis.Interface {
 							if(!cfg.ShowSkeleton && categoryState)
 							{
 								cfg.ShowSkeleton = true;
-								cfg.Save();
 							}
 							cfg.ShowBoneByCategory[category.Name] = categoryState;
-							cfg.Save();
 						}
 					}
 					ImGui.Unindent(16.0f);
-
 				}
 
 				ImGui.Separator();
