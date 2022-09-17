@@ -14,7 +14,7 @@ using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows {
-	internal unsafe class CustomizeGui {
+	internal class CustomizeGui {
 		// Constants
 
 		public const int IconSize = 54;
@@ -28,7 +28,7 @@ namespace Ktisis.Interface.Windows {
 		public static CustomizeIndex? Selecting;
 		public static Vector2 SelectPos;
 
-		public static Actor* Target
+		public unsafe static Actor* Target
 			=> Ktisis.GPoseTarget != null ? (Actor*)Ktisis.GPoseTarget.Address : null;
 
 		// Toggle visibility
@@ -43,7 +43,7 @@ namespace Ktisis.Interface.Windows {
 
 		// Apply customize
 
-		public static void Apply(Customize custard) {
+		public unsafe static void Apply(Customize custard) {
 			if (Target != null) {
 				Target->Customize = custard;
 				Target->Redraw();
@@ -52,7 +52,7 @@ namespace Ktisis.Interface.Windows {
 
 		// Draw window
 
-		public static void Draw() {
+		public unsafe static void Draw() {
 			if (!Visible)
 				return;
 
@@ -154,7 +154,7 @@ namespace Ktisis.Interface.Windows {
 
 		// Slider
 
-		public static void DrawSlider(Customize custom, MenuOption option) {
+		public unsafe static void DrawSlider(Customize custom, MenuOption option) {
 			var opt = option.Option;
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
@@ -167,7 +167,7 @@ namespace Ktisis.Interface.Windows {
 
 		// Num values
 
-		public static void DrawNumValue(Customize custom, MenuOption option) {
+		public unsafe static void DrawNumValue(Customize custom, MenuOption option) {
 			var opt = option.Option;
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
@@ -216,7 +216,7 @@ namespace Ktisis.Interface.Windows {
 				DrawIconList(custom, option);
 		}
 
-		public static void DrawIconList(Customize custom, MenuOption option) {
+		public unsafe static void DrawIconList(Customize custom, MenuOption option) {
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
 
