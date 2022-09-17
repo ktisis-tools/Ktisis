@@ -5,27 +5,27 @@ using ImGuiNET;
 using Dalamud.Interface.Components;
 using Dalamud.Interface;
 
+using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
-using Ktisis.Util;
 
 namespace Ktisis.Interface {
 	internal class ConfigGui {
-		public bool Visible = false;
+		public static bool Visible = false;
 
 		// Toggle visibility
 
-		public void Show() {
+		public static void Show() {
 			Visible = true;
 		}
 
-		public void Hide() {
+		public static void Hide() {
 			Visible = false;
 		}
 
 		// Draw
 
-		public void Draw() {
+		public static void Draw() {
 			if (!Visible)
 				return;
 
@@ -57,7 +57,7 @@ namespace Ktisis.Interface {
 
 		// Interface
 
-		public void DrawInterfaceTab(Configuration cfg) {
+		public static void DrawInterfaceTab(Configuration cfg) {
 			var displayCharName = cfg.DisplayCharName;
 			if (ImGui.Checkbox("Display character name", ref displayCharName))
 				cfg.DisplayCharName = displayCharName;
@@ -67,7 +67,7 @@ namespace Ktisis.Interface {
 
 		// Overlay
 
-		public void DrawOverlayTab(Configuration cfg) {
+		public static void DrawOverlayTab(Configuration cfg) {
 			var drawLines = cfg.DrawLinesOnSkeleton;
 			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines))
 				cfg.DrawLinesOnSkeleton = drawLines;
@@ -141,7 +141,7 @@ namespace Ktisis.Interface {
 
 		// Gizmo
 
-		public void DrawGizmoTab(Configuration cfg) {
+		public static void DrawGizmoTab(Configuration cfg) {
 			var allowAxisFlip = cfg.AllowAxisFlip;
 			if (ImGui.Checkbox("Flip axis to face camera", ref allowAxisFlip))
 				cfg.AllowAxisFlip = allowAxisFlip;
@@ -151,7 +151,7 @@ namespace Ktisis.Interface {
 
 		// Language
 
-		public void DrawLanguageTab(Configuration cfg) {
+		public static void DrawLanguageTab(Configuration cfg) {
 			var selected = "";
 			foreach (var lang in Locale.Languages) {
 				if (lang == cfg.Localization) {

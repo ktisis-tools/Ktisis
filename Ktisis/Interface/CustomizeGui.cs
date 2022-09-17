@@ -17,55 +17,55 @@ namespace Ktisis.Interface {
 	internal unsafe class CustomizeGui {
 		// Constants
 
-		public static int IconSize = 54;
-		public static int IconPadding = 8;
-		public static int InputSize = 260;
+		public const int IconSize = 54;
+		public const int IconPadding = 8;
+		public const int InputSize = 260;
 
 		// Properties
 
-		public Actor* Target;
+		public static Actor* Target;
 
-		public bool Visible = false;
+		public static bool Visible = false;
 
-		public CustomizeIndex? Selecting;
-		public Vector2 SelectPos;
+		public static CustomizeIndex? Selecting;
+		public static Vector2 SelectPos;
 
 		// Toggle visibility
 
-		public void Show() {
+		public static void Show() {
 			Visible = true;
 		}
 
-		public void Hide() {
+		public static void Hide() {
 			Visible = false;
 		}
 
 		// Set target
 
-		public void Show(GameObject? actor) {
+		public static void Show(GameObject? actor) {
 			if (actor != null)
 				SetTarget(actor);
 			Show();
 		}
 
-		public unsafe void SetTarget(Actor* actor) {
+		public static unsafe void SetTarget(Actor* actor) {
 			Target = actor;
 		}
 
-		public unsafe void SetTarget(GameObject actor) {
+		public static unsafe void SetTarget(GameObject actor) {
 			SetTarget((Actor*)actor.Address);
 		}
 
 		// Apply customize
 
-		public void Apply(Customize custard) {
+		public static void Apply(Customize custard) {
 			Target->Customize = custard;
 			Target->Redraw();
 		}
 
 		// Draw window
 
-		public void Draw() {
+		public static void Draw() {
 			if (!Visible)
 				return;
 
@@ -113,7 +113,7 @@ namespace Ktisis.Interface {
 
 		// Gender/Race/Tribe
 
-		public void DrawFundamental(Customize custom) {
+		public static void DrawFundamental(Customize custom) {
 			// Gender
 
 			var isM = custom.Gender == Gender.Male;
@@ -167,7 +167,7 @@ namespace Ktisis.Interface {
 
 		// Slider
 
-		public void DrawSlider(Customize custom, MenuOption option) {
+		public static void DrawSlider(Customize custom, MenuOption option) {
 			var opt = option.Option;
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
@@ -180,7 +180,7 @@ namespace Ktisis.Interface {
 
 		// Num values
 
-		public void DrawNumValue(Customize custom, MenuOption option) {
+		public static void DrawNumValue(Customize custom, MenuOption option) {
 			var opt = option.Option;
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
@@ -205,7 +205,7 @@ namespace Ktisis.Interface {
 
 		// Icon selector
 
-		public void DrawIconSelector(Customize custom, MenuOption option, uint val) {
+		public static void DrawIconSelector(Customize custom, MenuOption option, uint val) {
 			var sel = option.Select;
 			var size = new Vector2(IconSize, IconSize);
 
@@ -229,7 +229,7 @@ namespace Ktisis.Interface {
 				DrawIconList(custom, option);
 		}
 
-		public void DrawIconList(Customize custom, MenuOption option) {
+		public static void DrawIconList(Customize custom, MenuOption option) {
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
 

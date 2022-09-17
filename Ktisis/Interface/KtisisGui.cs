@@ -12,34 +12,26 @@ using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface {
 	internal class KtisisGui {
-		private Ktisis Plugin;
-
-		public bool Visible = false;
+		public static bool Visible = false;
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
 		public static Vector4 ColRed = new Vector4(255, 0, 0, 255);
 
-		public static ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags.OpenOnArrow;
-
-		// Constructor
-
-		public KtisisGui(Ktisis plogon) {
-			Plugin = plogon;
-		}
+		public const ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags.OpenOnArrow;
 
 		// Toggle visibility
 
-		public void Show() {
+		public static void Show() {
 			Visible = true;
 		}
 
-		public void Hide() {
+		public static void Hide() {
 			Visible = false;
 		}
 
 		// Draw window
 
-		public void Draw() {
+		public static void Draw() {
 			if (!Visible)
 				return;
 
@@ -63,30 +55,30 @@ namespace Ktisis.Interface {
 				// Gizmo Controls
 
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow))
-					Plugin.SkeletonEditor.GizmoOp = OPERATION.TRANSLATE;
+					Ktisis.SkeletonEditor.GizmoOp = OPERATION.TRANSLATE;
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync))
-					Plugin.SkeletonEditor.GizmoOp = OPERATION.ROTATE;
+					Ktisis.SkeletonEditor.GizmoOp = OPERATION.ROTATE;
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandArrowsAlt))
-					Plugin.SkeletonEditor.GizmoOp = OPERATION.SCALE;
+					Ktisis.SkeletonEditor.GizmoOp = OPERATION.SCALE;
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
-					Plugin.SkeletonEditor.GizmoOp = OPERATION.UNIVERSAL;
+					Ktisis.SkeletonEditor.GizmoOp = OPERATION.UNIVERSAL;
 
 				// Second row
 
-				var gizmode = Plugin.SkeletonEditor.Gizmode;
+				var gizmode = Ktisis.SkeletonEditor.Gizmode;
 				if (GuiHelpers.IconButtonTooltip(
 					gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch."))
-					Plugin.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+					Ktisis.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
 
 				ImGui.SameLine();
 				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt,"Edit targeted Actor's appearance.")) {
-					Plugin.CustomizeGui.Show(Plugin.SkeletonEditor.Subject);
+					CustomizeGui.Show(Ktisis.SkeletonEditor.Subject);
 				}
 
 				// Config
@@ -95,7 +87,7 @@ namespace Ktisis.Interface {
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
-					Plugin.ConfigGui.Show();
+					ConfigGui.Show();
 
 				ImGui.Separator();
 
@@ -112,7 +104,7 @@ namespace Ktisis.Interface {
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
 					cfg.ShowSkeleton = showSkeleton;
 					if (!showSkeleton)
-						Plugin.SkeletonEditor.ResetState();
+						Ktisis.SkeletonEditor.ResetState();
 				}
 
 				if (ImGui.CollapsingHeader("Toggle Bone Categories  "))
@@ -150,10 +142,10 @@ namespace Ktisis.Interface {
 		}
 
 		// Coordinates table
-		private void Coordinates()
+		private static void Coordinates()
 		{
-			Bone? selectedBone = Plugin.SkeletonEditor.GetSelectedBone();
-			if (Plugin.SkeletonEditor.Skeleton == null || selectedBone == null)
+			Bone? selectedBone = Ktisis.SkeletonEditor.GetSelectedBone();
+			if (Ktisis.SkeletonEditor.Skeleton == null || selectedBone == null)
 			{
 				ImGuiComponents.HelpMarker("Select a bone to spawn Coordinates table.");
 				return;
@@ -164,23 +156,23 @@ namespace Ktisis.Interface {
 			GuiHelpers.DragVec4intoVec3("Scale", ref selectedBone.Transform.Scale, 0.01f);
 
 			// Use the same functions found in SkeletonEditor.Draw()
-			var delta = Plugin.SkeletonEditor.BoneMod.GetDelta();
+			var delta = Ktisis.SkeletonEditor.BoneMod.GetDelta();
 			selectedBone.Transform.Rotation *= delta.Rotation;
-			selectedBone.TransformBone(delta, Plugin.SkeletonEditor.Skeleton);
+			selectedBone.TransformBone(delta, Ktisis.SkeletonEditor.Skeleton);
 		}
 
 		// Bone Tree
 
-		public void DrawBoneTree() {
-			var editor = Plugin.SkeletonEditor;
+		public static void DrawBoneTree() {
+			var editor = Ktisis.SkeletonEditor;
 			if (editor.Skeleton != null && editor.Skeleton.Count > 0)
 				DrawBoneTree(editor.Skeleton[0].Bones[0]);
 		}
 
-		public void DrawBoneTree(Bone bone) {
+		public static void DrawBoneTree(Bone bone) {
 			var flag = BaseFlags;
 
-			if (Plugin.SkeletonEditor.BoneSelector.IsSelected(bone))
+			if (Ktisis.SkeletonEditor.BoneSelector.IsSelected(bone))
 				flag |= ImGuiTreeNodeFlags.Selected;
 
 			var children = bone.GetChildren();
@@ -200,7 +192,7 @@ namespace Ktisis.Interface {
 					&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
 					&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
 				) {
-					Plugin.SkeletonEditor.SelectBone(bone);
+					Ktisis.SkeletonEditor.SelectBone(bone);
 				}
 			}
 

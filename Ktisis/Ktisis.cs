@@ -18,10 +18,7 @@ namespace Ktisis {
 		public static Configuration Configuration { get; private set; } = null!;
 		internal static Locale Locale { get; private set; } = null!;
 
-		internal KtisisGui Gui { get; init; }
-		internal ConfigGui ConfigGui { get; init; }
-		internal CustomizeGui CustomizeGui { get; init; }
-		internal SkeletonEditor SkeletonEditor { get; init; }
+		internal static SkeletonEditor SkeletonEditor { get; set; } = null!;
 
 		public Ktisis(
 			DalamudPluginInterface pluginInterface
@@ -37,12 +34,9 @@ namespace Ktisis {
 
 			// Overlays & UI
 
-			Gui = new KtisisGui(this);
-			ConfigGui = new ConfigGui();
-			CustomizeGui = new CustomizeGui();
 			SkeletonEditor = new SkeletonEditor();
 
-			Gui.Show();
+			KtisisGui.Show();
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += Draw;
@@ -55,7 +49,7 @@ namespace Ktisis {
 		}
 
 		private void OnCommand(string command, string arguments) {
-			Gui.Show();
+			KtisisGui.Show();
 		}
 
 		public unsafe void Draw() {
@@ -69,7 +63,7 @@ namespace Ktisis {
 
 			var draw = ImGui.GetWindowDrawList();
 
-			Gui.Draw();
+			KtisisGui.Draw();
 			ConfigGui.Draw();
 			CustomizeGui.Draw();
 
