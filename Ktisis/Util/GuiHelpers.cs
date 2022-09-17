@@ -2,6 +2,8 @@ using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+using Ktisis.Helpers;
+using System.Numerics;
 
 namespace Ktisis.Util
 {
@@ -34,6 +36,22 @@ namespace Ktisis.Util
 				ImGui.EndTooltip();
 			}
 
+		}
+
+		public static bool DragVec4intoVec3(string label, ref Vector4 vector4, float speed = 0.1f)
+		{
+			Vector3 vector3 = new(vector4.X, vector4.Y, vector4.Z);
+			bool modified = ImGui.DragFloat3(label, ref vector3, speed);
+			vector4.X = vector3.X;
+			vector4.Y = vector3.Y;
+			vector4.Z = vector3.Z;
+			return modified;
+		}
+		public static bool DragQuatIntoEuler(string label, ref Quaternion quaternion, float speed = 0.1f) {
+			Vector3 euler = MathHelpers.ToEuler(quaternion);
+			bool modified = ImGui.DragFloat3(label, ref euler, speed);
+			quaternion = MathHelpers.ToQuaternion(euler);
+			return modified;
 		}
 	}
 }
