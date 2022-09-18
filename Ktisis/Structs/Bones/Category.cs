@@ -152,12 +152,6 @@ namespace Ktisis.Structs.Bones
 				"j_sk_f_b_r",     // ClothFrontBRight
 				"j_sk_s_b_l",     // ClothSideBLeft
 				"j_sk_s_b_r",     // ClothSideBRight
-				"j_buki_sebo_l",  // ScabbardLeft
-				"j_buki_sebo_r",  // ScabbardRight
-				"j_buki2_kosi_l", // HolsterLeft
-				"j_buki2_kosi_r", // HolsterRight
-				"j_buki_kosi_l",  // SheatheLeft
-				"j_buki_kosi_r",  // SheatheRight
 				"j_sk_b_a_l",     // ClothBackALeft
 				"j_sk_b_a_r",     // ClothBackARight
 				"j_sk_f_a_l",     // ClothFrontALeft
@@ -174,14 +168,24 @@ namespace Ktisis.Structs.Bones
 				"n_hizasoubi_r",  // PoleynRight
 				"n_kataarmor_l",  // PauldronLeft
 				"n_kataarmor_r",  // PauldronRight
-				"n_buki_tate_l",  // ShieldLeft
-				"n_buki_tate_r",  // ShieldRight
 				"n_hijisoubi_l",  // CouterLeft
 				"n_hijisoubi_r",  // CouterRight
 				"n_ear_a_l",      // EarringALeft
 				"n_ear_a_r",      // EarringARight
 				"n_ear_b_l",      // EarringBLeft
 				"n_ear_b_r"       // EarringBRight
+			});
+			CreateCategory("weapons", new Vector4(1.0F, 0.0F, 1.0F, 0.5647059F), new List<string> {
+				"j_buki_sebo_l",  // ScabbardLeft
+				"j_buki_sebo_r",  // ScabbardRight
+				"j_buki2_kosi_l", // HolsterLeft
+				"j_buki2_kosi_r", // HolsterRight
+				"j_buki_kosi_l",  // SheatheLeft
+				"j_buki_kosi_r",  // SheatheRight
+				"n_buki_r",       // WeaponRight
+				"n_buki_l",       // WeaponLeft
+				"n_buki_tate_l",  // ShieldLeft
+				"n_buki_tate_r",  // ShieldRight
 			});
 			CreateCategory("right hand", new Vector4(1.0F, 0.0F, 1.0F, 0.5647059F), new List<string> {
 				"n_hte_r",    // WristRight
@@ -190,7 +194,6 @@ namespace Ktisis.Structs.Bones
 				"j_kusu_a_r", // RingARight
 				"j_naka_a_r", // MiddleARight
 				"j_oya_a_r",  // ThumbARight
-				"n_buki_r",   // WeaponRight
 				"j_hito_b_r", // IndexBRight
 				"j_ko_b_r",   // PinkyBRight
 				"j_kusu_b_r", // RingBRight
@@ -204,7 +207,6 @@ namespace Ktisis.Structs.Bones
 				"j_kusu_a_l", // RingALeft
 				"j_naka_a_l", // MiddleALeft
 				"j_oya_a_l",  // ThumbALeft
-				"n_buki_l",   // WeaponLeft
 				"j_hito_b_l", // IndexBLeft
 				"j_ko_b_l",   // PinkyBLeft
 				"j_kusu_b_l", // RingBLeft
