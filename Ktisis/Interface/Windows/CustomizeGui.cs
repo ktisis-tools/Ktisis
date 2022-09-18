@@ -74,7 +74,7 @@ namespace Ktisis.Interface.Windows {
 
 				DrawFundamental(custom);
 
-				var index = CustomizeUtil.GetMakeIndex(custom);
+				var index = custom.GetMakeIndex();
 				if (index != CustomIndex) {
 					MenuOptions = CustomizeUtil.GetMenuOptions(index);
 					CustomIndex = index;
@@ -127,7 +127,7 @@ namespace Ktisis.Interface.Windows {
 					if (ImGui.Selectable(raceName, race == custom.Race)) {
 						custom.Race = race;
 						custom.Tribe = (Tribe)(
-							Customize.GetRaceTribeIndex(race)
+							custom.GetRaceTribeIndex()
 							+ 1 - (byte)custom.Tribe % 2
 						);
 						Apply(custom);
@@ -143,7 +143,7 @@ namespace Ktisis.Interface.Windows {
 			var curTribe = Locale.GetString($"{custom.Tribe}");
 			if (ImGui.BeginCombo("Tribe", curTribe)) {
 				for (int i = 0; i < 2; i++) {
-					var tribe = (Tribe)(Customize.GetRaceTribeIndex(custom.Race) + i);
+					var tribe = (Tribe)(custom.GetRaceTribeIndex() + i);
 					if (ImGui.Selectable(Locale.GetString($"{tribe}"), tribe == custom.Tribe)) {
 						custom.Tribe = tribe;
 						Apply(custom);

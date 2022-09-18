@@ -36,9 +36,10 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset((int)CustomizeIndex.SkinColor)] public byte SkinColor;
 		[FieldOffset((int)CustomizeIndex.Tribe)] public Tribe Tribe;
 
-		public static byte GetRaceTribeIndex(Race race) {
-			return (byte)((byte)race * 2 - 1); // idk
-		}
+		public byte GetRaceTribeIndex()
+			=> (byte)((byte)Race * 2 - 1);
+		public uint GetMakeIndex() 
+			=> (((uint)Race - 1) * 4) + (((uint)Tribe - GetRaceTribeIndex()) * 2) + (uint)Gender; // Thanks cait
 	}
 
 	[Flags]

@@ -12,16 +12,6 @@ using Ktisis.Structs.Actor;
 
 namespace Ktisis.Util {
 	internal class CustomizeUtil {
-		// Calculate row index
-
-		public static uint GetMakeIndex(Customize custom) {
-			var r = (uint)custom.Race;
-			var t = (uint)custom.Tribe;
-			var g = (uint)custom.Gender;
-			var i = Customize.GetRaceTribeIndex(custom.Race);
-			return ((r - 1) * 4) + ((t - i) * 2) + g; // Thanks cait
-		}
-
 		// Build char creator options
 
 		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(uint index) {
