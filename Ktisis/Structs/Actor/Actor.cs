@@ -8,12 +8,21 @@ namespace Ktisis.Structs.Actor {
 	public unsafe struct Actor {
 		[FieldOffset(0)] public GameObject GameObject;
 
+		[FieldOffset(0x88)] public byte ObjectID;
+
 		[FieldOffset(0x0F0)] public ActorModel* Model;
 		[FieldOffset(0x840)] public Customize Customize;
 
-		public string? Name {
-			get => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
-			set => throw new NotImplementedException();
+		[FieldOffset(0x1A68)] public uint TargetObjectID;
+		[FieldOffset(0x1A6C)] public byte TargetMode;
+
+		public string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
+
+		// Force target
+
+		public void TargetActor(Actor* actor) {
+			TargetObjectID = actor->ObjectID;
+			TargetMode = 2;
 		}
 
 		// https://github.com/xivdev/Penumbra/blob/master/Penumbra/Interop/ObjectReloader.cs

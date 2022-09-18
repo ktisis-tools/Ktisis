@@ -8,6 +8,7 @@ using ImGuiScene;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Logging;
 
 using Ktisis.GameData;
 using Ktisis.Localization;
@@ -48,7 +49,7 @@ namespace Ktisis.Interface.Windows {
 
 		// Toggle visibility
 
-		public static void Show() => Visible = true;
+		public unsafe static void Show() => Visible = true;
 
 		// Apply customize
 
