@@ -223,7 +223,10 @@ namespace Ktisis.Overlay {
 							var parentPos = model->Position + parent.Rotate(model->Rotation) * model->Height;
 
 							Dalamud.GameGui.WorldToScreen(parentPos, out var pPos);
-							draw.AddLine(pos, pPos, boneColor, Ktisis.Configuration.SkeletonLineThickness);
+							uint lineColor = boneColor;
+							float lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / cam->Distance * 2.0f);
+
+							draw.AddLine(pos, pPos, lineColor, lineThickness);
 						}
 					}
 
@@ -267,7 +270,8 @@ namespace Ktisis.Overlay {
 						bone.TransformBone(delta, Skeleton);
 
 					} else if (Ktisis.Configuration.IsBoneVisible(bone)) { // Dot
-						var radius = Math.Max(3.0f, 10.0f - cam->Distance);
+						var radius = Math.Max(3.0f, (10.0f - cam->Distance) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
+						var dotRadius = Math.Max(2.0f, (8.0f - cam->Distance) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
 
 						var area = new Vector2(radius, radius);
 						var rectMin = pos - area;
@@ -277,7 +281,7 @@ namespace Ktisis.Overlay {
 						if (hovered)
 							hoveredBones.Add(pair);
 
-						draw.AddCircleFilled(pos, Math.Max(2.0f, 8.0f - cam->Distance), hovered ? (boneColor | 0xff000000) : boneColor, 100);
+						draw.AddCircleFilled(pos, dotRadius, hovered ? (boneColor | 0xff000000) : boneColor, 100);
 					}
 				}
 
