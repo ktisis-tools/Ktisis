@@ -3,6 +3,8 @@
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Equipment {
+		[FieldOffset(0)] public unsafe fixed int Slots[0x4 * 10];
+
 		[FieldOffset(0x00)] public EquipItem Head;
 		[FieldOffset(0x04)] public EquipItem Chest;
 		[FieldOffset(0x08)] public EquipItem Hands;
@@ -20,5 +22,18 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0)] public ushort Id;
 		[FieldOffset(2)] public byte Variant;
 		[FieldOffset(3)] public byte Dye;
+	}
+
+	public enum EquipIndex : uint {
+		Head = 0,
+		Chest = 1,
+		Hands = 2,
+		Legs = 3,
+		Feet = 4,
+		Earring = 5,
+		Necklace = 6,
+		Bracelet = 7,
+		RingRight = 8,
+		RingLeft = 9
 	}
 }

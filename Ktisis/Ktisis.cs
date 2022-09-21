@@ -21,6 +21,10 @@ namespace Ktisis {
 			Dalamud.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
+			// Init hooks & delegates
+
+			Hooks.ActorHooks.Init();
+
 			// Register command
 
 			Dalamud.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
@@ -39,6 +43,8 @@ namespace Ktisis {
 			// TODO
 			Dalamud.CommandManager.RemoveHandler(CommandName);
 			Dalamud.PluginInterface.SavePluginConfig(Configuration);
+
+			Hooks.ActorHooks.Dispose();
 		}
 
 		private void OnCommand(string command, string arguments) {
