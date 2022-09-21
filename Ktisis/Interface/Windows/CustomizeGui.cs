@@ -49,7 +49,7 @@ namespace Ktisis.Interface.Windows {
 
 		// Toggle visibility
 
-		public unsafe static void Show() => Visible = true;
+		public static void Show() => Visible = true;
 
 		// Apply customize
 
