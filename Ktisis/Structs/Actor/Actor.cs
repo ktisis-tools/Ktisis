@@ -58,20 +58,11 @@ namespace Ktisis.Structs.Actor {
 			}
 		}
 
-		// https://github.com/xivdev/Penumbra/blob/master/Penumbra/Interop/ObjectReloader.cs
-
-		public unsafe static void DisableDraw(IntPtr addr)
-		=> ((delegate* unmanaged<IntPtr, void>**)addr)[0][17](addr);
-
-		public unsafe static void EnableDraw(IntPtr addr)
-		=> ((delegate* unmanaged<IntPtr, void>**)addr)[0][16](addr);
+		// Actor redraw
 
 		public unsafe void Redraw() {
-			fixed (Actor* self = &this) {
-				var ptr = (IntPtr)self;
-				DisableDraw(ptr);
-				EnableDraw(ptr);
-			}
+			GameObject.DisableDraw();
+			GameObject.EnableDraw();
 		}
 	}
 }
