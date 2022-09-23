@@ -14,6 +14,8 @@ using Ktisis.Localization;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
 
+using Dalamud.Logging;
+
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
 		public Menu Option;
@@ -21,9 +23,7 @@ namespace Ktisis.Interface.Windows {
 
 		public Dictionary<uint, TextureWrap>? Select = null;
 
-		public MenuOption(Menu option) {
-			Option = option;
-		}
+		public MenuOption(Menu option) => Option = option;
 	}
 
 	internal class CustomizeGui {
@@ -54,8 +54,16 @@ namespace Ktisis.Interface.Windows {
 
 		public unsafe static void Apply(Customize custard) {
 			if (Target != null) {
+				var cur = Target->Customize;
 				Target->Customize = custard;
-				Target->Redraw();
+				if (cur.Race != custard.Race
+					|| cur.Gender != custard.Gender
+					|| (cur.Race == Race.Hyur && cur.Tribe != custard.Tribe)
+				) {
+					Target->Redraw();
+				} else {
+					Target->UpdateCustomize();
+				}
 			}
 		}
 
