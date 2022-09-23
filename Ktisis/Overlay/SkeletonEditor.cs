@@ -223,11 +223,9 @@ namespace Ktisis.Overlay {
 							var parentPos = model->Position + parent.Rotate(model->Rotation) * model->Height;
 
 							Dalamud.GameGui.WorldToScreen(parentPos, out var pPos);
-							uint lineColor = boneColor;
-							if (bone.Category != parent.Category) lineColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(parent));
 							float lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / cam->Distance * 2.0f);
 
-							draw.AddLine(pos, pPos, lineColor, lineThickness);
+							draw.AddLine(pos, pPos, boneColor, lineThickness);
 						}
 					}
 
