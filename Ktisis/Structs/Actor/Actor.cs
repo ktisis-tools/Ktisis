@@ -2,10 +2,9 @@
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Hooks;
-
-using Dalamud.Logging;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
@@ -36,7 +35,7 @@ namespace Ktisis.Structs.Actor {
 
 			fixed (Actor* self = &this) {
 				ActorHooks.LookAt(
-					IntPtr.Add((IntPtr)self, 0xC10),
+					(IntPtr)self + 0xC10,
 					(IntPtr)tar,
 					bodyPart,
 					IntPtr.Zero
@@ -49,13 +48,15 @@ namespace Ktisis.Structs.Actor {
 		public unsafe void Equip(EquipIndex index, EquipItem item) {
 			if (ActorHooks.ChangeEquip == null) return;
 
-			fixed (Actor* self = &this) {
-				PluginLog.Information("DOING IT");
-				ActorHooks.ChangeEquip(
-					IntPtr.Add((IntPtr)self, 0x6D0),
-					1, item
-				);
-			}
+			fixed (Actor* self = &this)
+				ActorHooks.ChangeEquip((IntPtr)self + 0x6D0, index, item);
+		}
+
+		// Change customize - no redraw method
+
+		public unsafe bool UpdateCustomize() {
+			fixed (Customize* custom = &Customize)
+				return ((Human*)Model)->UpdateDrawData((byte*)custom, true);
 		}
 
 		// Actor redraw

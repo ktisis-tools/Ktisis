@@ -14,7 +14,7 @@ namespace Ktisis.Hooks {
 		// Change actor equipment
 		// a1 = Actor + 0x6D0, a2 = EquipIndex, a3 = EquipItem
 
-		internal delegate IntPtr ChangeEquipDelegate(IntPtr writeTo, uint index, EquipItem item);
+		internal delegate IntPtr ChangeEquipDelegate(IntPtr writeTo, EquipIndex index, EquipItem item);
 		internal static ChangeEquipDelegate? ChangeEquip;
 
 		// Init & Dispose
