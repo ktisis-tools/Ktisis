@@ -43,6 +43,8 @@ namespace Ktisis.Interface.Windows {
 		public static uint? CustomIndex = null;
 		public static Dictionary<MenuType, List<MenuOption>> MenuOptions = new();
 
+		public static CharaMakeType CharaMakeType = null!;
+
 		public unsafe static Actor* Target
 			=> Ktisis.GPoseTarget != null ? (Actor*)Ktisis.GPoseTarget.Address : null;
 
@@ -273,7 +275,11 @@ namespace Ktisis.Interface.Windows {
 		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(uint index) {
 			var options = new Dictionary<MenuType, List<MenuOption>>();
 
-			var data = Sheets.GetSheet<CharaMakeType>().GetRow(index);
+			var data = CharaMakeType;
+			if (data == null || data.RowId != index) {
+				CharaMakeType = Sheets.GetSheet<CharaMakeType>().GetRow(index)!;
+				data = CharaMakeType;
+			}
 
 			if (data != null) {
 				for (int i = 0; i < CharaMakeType.MenuCt; i++) {
