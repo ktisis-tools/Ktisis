@@ -21,6 +21,9 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x1A68)] public uint TargetObjectID;
 		[FieldOffset(0x1A6C)] public byte TargetMode;
 
+		[FieldOffset(0xC10 + 64)] public TrackPos LookAtHead;
+		[FieldOffset(0xC10 + 64 + 480 * 2)] public TrackPos LookAtEyes;
+
 		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
 
 		// Targeting
@@ -30,7 +33,7 @@ namespace Ktisis.Structs.Actor {
 			TargetMode = 2;
 		}
 
-		public unsafe void LookAt(TrackPos* tar, uint bodyPart) {
+		public unsafe void LookAt(TrackPos* tar, int bodyPart) {
 			if (ActorHooks.LookAt == null) return;
 
 			fixed (Actor* self = &this) {

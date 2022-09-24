@@ -8,7 +8,7 @@ namespace Ktisis.Interop {
 		// Make actor look at co-ordinate point
 		// a1 = Actor + 0xC10, a2 = TrackPos*, a3 = bodypart, a4 = ?
 
-		internal delegate char LookAtDelegate(IntPtr writeTo, IntPtr readFrom, uint bodyPart, IntPtr unk4);
+		internal delegate char LookAtDelegate(IntPtr writeTo, IntPtr readFrom, int bodyPart, IntPtr unk4);
 		internal static LookAtDelegate? LookAt;
 
 		// Change actor equipment
