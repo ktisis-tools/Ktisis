@@ -64,6 +64,8 @@ namespace Ktisis.Interface.Windows {
 				) {
 					Target->Redraw();
 				} else {
+					var track = new TrackPos() { Mode = 3 };
+					Target->LookAt(&track, 2);
 					Target->UpdateCustomize();
 				}
 			}

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Hooks;
+using Ktisis.Interop;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]

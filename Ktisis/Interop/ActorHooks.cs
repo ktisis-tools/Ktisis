@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 using Ktisis.Structs.Actor;
 
-namespace Ktisis.Hooks {
+namespace Ktisis.Interop {
 	public class ActorHooks {
 		// Make actor look at co-ordinate point
 		// a1 = Actor + 0xC10, a2 = TrackPos*, a3 = bodypart, a4 = ?
