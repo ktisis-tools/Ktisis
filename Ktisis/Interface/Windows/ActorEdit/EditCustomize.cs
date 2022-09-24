@@ -13,8 +13,7 @@ using Ktisis.GameData;
 using Ktisis.Localization;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
-
-using Dalamud.Logging;
+using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
@@ -26,7 +25,7 @@ namespace Ktisis.Interface.Windows {
 		public MenuOption(Menu option) => Option = option;
 	}
 
-	internal class CustomizeGui {
+	public class EditCustomize {
 		// Constants
 
 		public const int IconSize = 54;
@@ -45,8 +44,7 @@ namespace Ktisis.Interface.Windows {
 
 		public static CharaMakeType CharaMakeType = null!;
 
-		public unsafe static Actor* Target
-			=> Ktisis.GPoseTarget != null ? (Actor*)Ktisis.GPoseTarget.Address : null;
+		public unsafe static Actor* Target => EditActor.Target;
 
 		// Toggle visibility
 
@@ -62,7 +60,7 @@ namespace Ktisis.Interface.Windows {
 				var tribeRedraw = cur.Race == Race.Hyur || cur.Race == Race.AuRa;
 				if (cur.Race != custard.Race
 					|| cur.Gender != custard.Gender
-					|| cur.FaceType != custard.FaceType
+					|| cur.FaceType != custard.FaceType // Segfault at +31ACA4 and +31BA39
 					|| (tribeRedraw && cur.Tribe != custard.Tribe)
 				) {
 					Target->Redraw();
@@ -75,53 +73,30 @@ namespace Ktisis.Interface.Windows {
 		// Draw window
 
 		public unsafe static void Draw() {
-			if (!Visible)
-				return;
+			// Customize
 
-			if (Target == null)
-				return;
+			var custom = Target->Customize;
 
-			var size = new Vector2(400, -1);
-			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
+			DrawFundamental(custom);
 
-			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
+			var index = custom.GetMakeIndex();
+			if (index != CustomIndex) {
+				MenuOptions = GetMenuOptions(index);
+				CustomIndex = index;
+			}
 
-			// Create window
-			var title = Ktisis.Configuration.DisplayCharName ? $"{Target->Name}" : "Appearance";
-			if (ImGui.Begin(title, ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoResize)) {
-				ImGui.BeginGroup();
-				ImGui.AlignTextToFramePadding();
-
-				// Customize
-
-				var custom = Target->Customize;
-
-				DrawFundamental(custom);
-
-				var index = custom.GetMakeIndex();
-				if (index != CustomIndex) {
-					MenuOptions = GetMenuOptions(index);
-					CustomIndex = index;
-				}
-
-				foreach (var type in MenuOptions.Keys) {
-					ImGui.Separator();
-					foreach (var option in MenuOptions[type]) {
-						switch (type) {
-							case MenuType.Slider:
-								DrawSlider(custom, option);
-								break;
-							default:
-								DrawNumValue(custom, option);
-								break;
-						}
+			foreach (var type in MenuOptions.Keys) {
+				ImGui.Separator();
+				foreach (var option in MenuOptions[type]) {
+					switch (type) {
+						case MenuType.Slider:
+							DrawSlider(custom, option);
+							break;
+						default:
+							DrawNumValue(custom, option);
+							break;
 					}
 				}
-
-				// End
-
-				ImGui.PopStyleVar(1);
-				ImGui.End();
 			}
 		}
 
@@ -177,6 +152,8 @@ namespace Ktisis.Interface.Windows {
 				ImGui.SetItemDefaultFocus();
 				ImGui.EndCombo();
 			}
+
+			ImGui.EndTabItem();
 		}
 
 		// Slider

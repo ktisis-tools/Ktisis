@@ -9,6 +9,7 @@ using Dalamud.Interface.Components;
 using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
+using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows {
 	public class Workspace {
@@ -78,7 +79,7 @@ namespace Ktisis.Interface.Windows {
 
 				ImGui.SameLine();
 				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit targeted Actor's appearance.")) {
-					CustomizeGui.Show();
+					EditActor.Show();
 				}
 
 				// Config

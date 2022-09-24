@@ -1,5 +1,6 @@
 ﻿using Ktisis.Overlay;
 using Ktisis.Interface.Windows;
+using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface {
 	public class KtisisGui {
@@ -10,7 +11,7 @@ namespace Ktisis.Interface {
 		public static void Draw() {
 			Workspace.Draw();
 			ConfigGui.Draw();
-			CustomizeGui.Draw();
+			EditActor.Draw();
 
 			SkeletonEditor.Draw();
 		}
