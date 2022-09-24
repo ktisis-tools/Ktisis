@@ -58,20 +58,16 @@ namespace Ktisis.Interface.Windows {
 			if (Target != null) {
 				var cur = Target->Customize;
 				Target->Customize = custard;
+
+				var tribeRedraw = cur.Race == Race.Hyur || cur.Race == Race.AuRa;
 				if (cur.Race != custard.Race
 					|| cur.Gender != custard.Gender
-					|| (cur.Race == Race.Hyur && cur.Tribe != custard.Tribe)
+					|| cur.FaceType != custard.FaceType
+					|| (tribeRedraw && cur.Tribe != custard.Tribe)
 				) {
 					Target->Redraw();
 				} else {
-					var eyes = Target->LookAtEyes.Mode;
-					if (eyes == 0) {
-						Target->UpdateCustomize();
-					} else {
-						Target->LookAtEyes.Mode = 0;
-						Target->UpdateCustomize();
-						Target->LookAtEyes.Mode = eyes;
-					}
+					Target->UpdateCustomize();
 				}
 			}
 		}

@@ -13,16 +13,16 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x88)] public byte ObjectID;
 
-		[FieldOffset(0x0F0)] public unsafe ActorModel* Model;
+		[FieldOffset(0xF0)] public unsafe ActorModel* Model;
 
 		[FieldOffset(0x818)] public Equipment Equipment;
 		[FieldOffset(0x840)] public Customize Customize;
 
-		[FieldOffset(0x1A68)] public uint TargetObjectID;
-		[FieldOffset(0x1A6C)] public byte TargetMode;
-
 		[FieldOffset(0xC10 + 64)] public TrackPos LookAtHead;
 		[FieldOffset(0xC10 + 64 + 480 * 2)] public TrackPos LookAtEyes;
+
+		[FieldOffset(0x1A68)] public uint TargetObjectID;
+		[FieldOffset(0x1A6C)] public byte TargetMode;
 
 		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
 
