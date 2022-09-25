@@ -39,10 +39,6 @@ namespace Ktisis {
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
-
-			unsafe {
-				PluginLog.Information($"{GPoseTarget!.Address + 0xC10}");
-			}
 		}
 
 		public void Dispose() {
