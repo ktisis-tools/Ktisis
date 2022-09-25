@@ -14,6 +14,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x88)] public byte ObjectID;
 
 		[FieldOffset(0xF0)] public unsafe ActorModel* Model;
+		[FieldOffset(0x1B4)] public int ModelId;
 
 		[FieldOffset(0x818)] public Equipment Equipment;
 		[FieldOffset(0x840)] public Customize Customize;
@@ -26,6 +27,10 @@ namespace Ktisis.Structs.Actor {
 
 		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
 
+		public unsafe IntPtr GetAddress() {
+			fixed (Actor* self = &this) return (IntPtr)self;
+		}
+
 		// Targeting
 
 		public unsafe void TargetActor(Actor* actor) {
@@ -33,26 +38,22 @@ namespace Ktisis.Structs.Actor {
 			TargetMode = 2;
 		}
 
-		public unsafe void LookAt(TrackPos* tar, int bodyPart) {
+		public unsafe void LookAt(TrackPos* tar, uint bodyPart) {
 			if (ActorHooks.LookAt == null) return;
 
-			fixed (Actor* self = &this) {
-				ActorHooks.LookAt(
-					(IntPtr)self + 0xC10,
-					(IntPtr)tar,
-					bodyPart,
-					IntPtr.Zero
-				);
-			}
+			ActorHooks.LookAt(
+				GetAddress() + 0xC10,
+				(IntPtr)tar,
+				bodyPart,
+				IntPtr.Zero
+			);
 		}
 
 		// Change equipment - no redraw method
 
 		public unsafe void Equip(EquipIndex index, EquipItem item) {
 			if (ActorHooks.ChangeEquip == null) return;
-
-			fixed (Actor* self = &this)
-				ActorHooks.ChangeEquip((IntPtr)self + 0x6D0, index, item);
+			ActorHooks.ChangeEquip(GetAddress() + 0x6D0, index, item);
 		}
 
 		// Change customize - no redraw method

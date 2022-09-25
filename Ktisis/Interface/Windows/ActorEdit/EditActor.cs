@@ -2,10 +2,12 @@
 
 using ImGuiNET;
 
+using Dalamud.Logging;
+
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
-	internal class EditActor {
+	public class EditActor {
 		// Properties
 
 		public static bool Visible = false;
@@ -41,9 +43,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					if (ImGui.BeginTabItem("Customize"))
 						EditCustomize.Draw();
 					if (ImGui.BeginTabItem("Equipment"))
-						ImGui.EndTabItem();
+						EditEquip.Draw();
 					if (ImGui.BeginTabItem("Advanced"))
-						ImGui.EndTabItem();
+						AdvancedEdit();
 
 					ImGui.EndTabBar();
 				}
@@ -51,6 +53,16 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				ImGui.PopStyleVar(1);
 				ImGui.End();
 			}
+		}
+
+		public unsafe static void AdvancedEdit() {
+			var modelId = Target->ModelId;
+			if (ImGui.InputInt("Model ID", ref modelId)) {
+				Target->ModelId = modelId;
+				Target->Redraw(); // TODO: No redraw? If even possible
+			}
+
+			ImGui.EndTabItem();
 		}
 	}
 }

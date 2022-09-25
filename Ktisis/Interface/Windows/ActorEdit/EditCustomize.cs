@@ -73,6 +73,9 @@ namespace Ktisis.Interface.Windows {
 		// Draw window
 
 		public unsafe static void Draw() {
+			Target->LookAtEyes.Mode = 0;
+			Target->LookAt(&Target->LookAtEyes, 0xffffffff);
+
 			// Customize
 
 			var custom = Target->Customize;
