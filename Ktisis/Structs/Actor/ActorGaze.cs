@@ -6,6 +6,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x30 + 480 * 0)] public Gaze Torso;
 		[FieldOffset(0x30 + 480 * 1)] public Gaze Head;
 		[FieldOffset(0x30 + 480 * 2)] public Gaze Eyes;
+		[FieldOffset(0x30 + 480 * 3)] public Gaze _Unused;
 	}
 
 	[StructLayout(LayoutKind.Explicit)]

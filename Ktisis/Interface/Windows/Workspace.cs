@@ -36,7 +36,7 @@ namespace Ktisis.Interface.Windows {
 			if (!Visible)
 				return;
 
-			var gposeOn = KtisisGui.IsInGpose();
+			var gposeOn = Ktisis.IsInGPose;
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);

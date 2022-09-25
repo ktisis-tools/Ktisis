@@ -16,8 +16,10 @@ namespace Ktisis {
 
 		public static Configuration Configuration { get; private set; } = null!;
 
+		public static bool IsInGPose => Dalamud.PluginInterface.UiBuilder.GposeActive;
+
 		public unsafe static GameObject? GPoseTarget
-			=> Dalamud.ObjectTable.CreateObjectReference((IntPtr)Dalamud.Targets->GPoseTarget);
+			=> IsInGPose ? Dalamud.ObjectTable.CreateObjectReference((IntPtr)Dalamud.Targets->GPoseTarget) : null;
 
 		public Ktisis(DalamudPluginInterface pluginInterface) {
 			Dalamud.Init(pluginInterface);

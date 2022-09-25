@@ -154,7 +154,7 @@ namespace Ktisis.Overlay {
 			if (!Visible || !Ktisis.Configuration.ShowSkeleton)
 				return;
 
-			if (!KtisisGui.IsInGpose())
+			if (!Ktisis.IsInGPose)
 				return;
 
 			var target = Ktisis.GPoseTarget;
