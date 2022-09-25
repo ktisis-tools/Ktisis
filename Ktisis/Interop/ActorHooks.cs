@@ -9,9 +9,9 @@ using Ktisis.Structs.Actor;
 namespace Ktisis.Interop {
 	public class ActorHooks {
 		// Make actor look at co-ordinate point
-		// a1 = Actor + 0xC10, a2 = TrackPos*, a3 = bodypart, a4 = ?
+		// a1 = Actor + 0xC20, a2 = TrackPos*, a3 = bodypart, a4 = ?
 
-		internal delegate char LookAtDelegate(IntPtr writeTo, IntPtr readFrom, int bodyPart, IntPtr unk4);
+		internal delegate char LookAtDelegate(IntPtr writeTo, IntPtr readFrom, GazeControl bodyPart, IntPtr unk4);
 		internal static LookAtDelegate? LookAt;
 
 		internal static Hook<LookAtDelegate> _DEBUG_HOOK = null!;
@@ -23,22 +23,13 @@ namespace Ktisis.Interop {
 		internal static ChangeEquipDelegate? ChangeEquip;
 
 		// Control actor gaze
-		// a1 = Actor + 0xC10
+		// a1 = Actor + 0xC20
 
 		internal delegate IntPtr ControlGazeDelegate(IntPtr a1);
 		internal static Hook<ControlGazeDelegate> ControlGazeHook = null!;
 
-		internal static TrackPos TestGaze = new TrackPos() {
-			Mode = 3,
-			X = 0,
-			Y = 5,
-			Z = 0,
-			Unknown5 = 0
-		};
-
 		internal unsafe static IntPtr ControlGaze(IntPtr a1) {
 			var actor = (Actor*)(a1 - 0xC10);
-			//actor->LookAt(&actor->LookAtHead, -1);
 			return ControlGazeHook.Original(a1);
 		}
 

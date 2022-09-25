@@ -19,8 +19,9 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x818)] public Equipment Equipment;
 		[FieldOffset(0x840)] public Customize Customize;
 
-		[FieldOffset(0xC10 + 64)] public TrackPos LookAtHead;
-		[FieldOffset(0xC10 + 64 + 480 * 2)] public TrackPos LookAtEyes;
+		[FieldOffset(0xC10 + 64)] public Gaze GazeTorso;
+		[FieldOffset(0xC10 + 64 + 480 * 1)] public Gaze GazeHead;
+		[FieldOffset(0xC10 + 64 + 480 * 2)] public Gaze GazeEyes;
 
 		[FieldOffset(0x1A68)] public uint TargetObjectID;
 		[FieldOffset(0x1A6C)] public byte TargetMode;
@@ -38,7 +39,7 @@ namespace Ktisis.Structs.Actor {
 			TargetMode = 2;
 		}
 
-		public unsafe void LookAt(TrackPos* tar, int bodyPart) {
+		public unsafe void LookAt(Gaze* tar, GazeControl bodyPart) {
 			if (ActorHooks.LookAt == null) return;
 
 			ActorHooks.LookAt(
