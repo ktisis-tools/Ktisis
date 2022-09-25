@@ -2,7 +2,6 @@
 using System.Runtime.InteropServices;
 
 using Dalamud.Hooking;
-using Dalamud.Logging;
 
 using Ktisis.Structs.Actor;
 
@@ -11,10 +10,8 @@ namespace Ktisis.Interop {
 		// Make actor look at co-ordinate point
 		// a1 = Actor + 0xC20, a2 = TrackPos*, a3 = bodypart, a4 = ?
 
-		internal delegate char LookAtDelegate(IntPtr writeTo, IntPtr readFrom, GazeControl bodyPart, IntPtr unk4);
+		internal unsafe delegate char LookAtDelegate(ActorGaze* writeTo, Gaze* readFrom, GazeControl bodyPart, IntPtr unk4);
 		internal static LookAtDelegate? LookAt;
-
-		internal static Hook<LookAtDelegate> _DEBUG_HOOK = null!;
 
 		// Change actor equipment
 		// a1 = Actor + 0x6D0, a2 = EquipIndex, a3 = EquipItem

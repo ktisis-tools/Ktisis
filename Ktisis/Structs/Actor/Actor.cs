@@ -19,9 +19,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x818)] public Equipment Equipment;
 		[FieldOffset(0x840)] public Customize Customize;
 
-		[FieldOffset(0xC10 + 64)] public Gaze GazeTorso;
-		[FieldOffset(0xC10 + 64 + 480 * 1)] public Gaze GazeHead;
-		[FieldOffset(0xC10 + 64 + 480 * 2)] public Gaze GazeEyes;
+		[FieldOffset(0xC20)] public ActorGaze Gaze;
 
 		[FieldOffset(0x1A68)] public uint TargetObjectID;
 		[FieldOffset(0x1A6C)] public byte TargetMode;
@@ -41,13 +39,14 @@ namespace Ktisis.Structs.Actor {
 
 		public unsafe void LookAt(Gaze* tar, GazeControl bodyPart) {
 			if (ActorHooks.LookAt == null) return;
-
-			ActorHooks.LookAt(
-				GetAddress() + 0xC20,
-				(IntPtr)tar,
-				bodyPart,
-				IntPtr.Zero
-			);
+			fixed (ActorGaze* gaze = &Gaze) {
+				ActorHooks.LookAt(
+					gaze,
+					tar,
+					bodyPart,
+					IntPtr.Zero
+				);
+			}
 		}
 
 		// Change equipment - no redraw method
