@@ -38,11 +38,11 @@ namespace Ktisis.Structs.Actor {
 			TargetMode = 2;
 		}
 
-		public unsafe void LookAt(TrackPos* tar, uint bodyPart) {
+		public unsafe void LookAt(TrackPos* tar, int bodyPart) {
 			if (ActorHooks.LookAt == null) return;
 
 			ActorHooks.LookAt(
-				GetAddress() + 0xC10,
+				GetAddress() + 0xC20,
 				(IntPtr)tar,
 				bodyPart,
 				IntPtr.Zero

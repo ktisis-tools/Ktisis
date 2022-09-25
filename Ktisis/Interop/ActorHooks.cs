@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+using Dalamud.Hooking;
+using Dalamud.Logging;
+
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interop {
@@ -8,14 +11,36 @@ namespace Ktisis.Interop {
 		// Make actor look at co-ordinate point
 		// a1 = Actor + 0xC10, a2 = TrackPos*, a3 = bodypart, a4 = ?
 
-		internal delegate char LookAtDelegate(IntPtr writeTo, IntPtr readFrom, uint bodyPart, IntPtr unk4);
+		internal delegate char LookAtDelegate(IntPtr writeTo, IntPtr readFrom, int bodyPart, IntPtr unk4);
 		internal static LookAtDelegate? LookAt;
+
+		internal static Hook<LookAtDelegate> _DEBUG_HOOK = null!;
 
 		// Change actor equipment
 		// a1 = Actor + 0x6D0, a2 = EquipIndex, a3 = EquipItem
 
 		internal delegate IntPtr ChangeEquipDelegate(IntPtr writeTo, EquipIndex index, EquipItem item);
 		internal static ChangeEquipDelegate? ChangeEquip;
+
+		// Control actor gaze
+		// a1 = Actor + 0xC10
+
+		internal delegate IntPtr ControlGazeDelegate(IntPtr a1);
+		internal static Hook<ControlGazeDelegate> ControlGazeHook = null!;
+
+		internal static TrackPos TestGaze = new TrackPos() {
+			Mode = 3,
+			X = 0,
+			Y = 5,
+			Z = 0,
+			Unknown5 = 0
+		};
+
+		internal unsafe static IntPtr ControlGaze(IntPtr a1) {
+			var actor = (Actor*)(a1 - 0xC10);
+			//actor->LookAt(&actor->LookAtHead, -1);
+			return ControlGazeHook.Original(a1);
+		}
 
 		// Init & Dispose
 
@@ -25,11 +50,18 @@ namespace Ktisis.Interop {
 
 			var changeEquip = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 41 B5 01 FF C3");
 			ChangeEquip = Marshal.GetDelegateForFunctionPointer<ChangeEquipDelegate>(changeEquip);
+
+			var controlGaze = Dalamud.SigScanner.ScanText("40 53 41 54 41 55 48 81 EC ?? ?? ?? ?? 48 8B D9");
+			ControlGazeHook = Hook<ControlGazeDelegate>.FromAddress(controlGaze, ControlGaze);
+			ControlGazeHook.Enable();
 		}
 
 		internal static void Dispose() {
 			LookAt = null;
 			ChangeEquip = null;
+
+			ControlGazeHook.Disable();
+			ControlGazeHook.Dispose();
 		}
 	}
 }
