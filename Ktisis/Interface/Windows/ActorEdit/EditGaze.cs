@@ -3,7 +3,7 @@
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
-	public class EditEquip {
+	public class EditGaze {
 		public unsafe static Actor* Target => EditActor.Target;
 
 		// UI Code

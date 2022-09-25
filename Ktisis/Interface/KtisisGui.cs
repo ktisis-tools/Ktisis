@@ -1,4 +1,6 @@
-﻿using Ktisis.Overlay;
+﻿using Dalamud.Logging;
+
+using Ktisis.Overlay;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 

@@ -268,9 +268,9 @@ namespace Ktisis.Overlay {
 						bone.TransformBone(delta, Skeleton);
 
 					} else if (Ktisis.Configuration.IsBoneVisible(bone)) { // Dot
-						var dist = *(float*)((IntPtr)cam + 0x17c); // TODO: ClientStructs PR
+						var dist = *(float*)((IntPtr)cam + 0x17c); // https://github.com/aers/FFXIVClientStructs/pull/254
 						var radius = Math.Max(3.0f, (10.0f - dist) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
-						var dotRadius = Math.Max(2.0f, (8.0f - dist) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
+						var dotRadius = Math.Max(2.0f, (15.0f - dist) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
 
 						var area = new Vector2(radius, radius);
 						var rectMin = pos - area;

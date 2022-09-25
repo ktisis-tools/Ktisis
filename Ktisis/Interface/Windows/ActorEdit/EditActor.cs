@@ -2,8 +2,6 @@
 
 using ImGuiNET;
 
-using Dalamud.Logging;
-
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
@@ -44,6 +42,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 						EditCustomize.Draw();
 					if (ImGui.BeginTabItem("Equipment"))
 						EditEquip.Draw();
+					if (ImGui.BeginTabItem("Gaze"))
+						EditGaze.Draw();
 					if (ImGui.BeginTabItem("Advanced"))
 						AdvancedEdit();
 
@@ -59,7 +59,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			var modelId = Target->ModelId;
 			if (ImGui.InputInt("Model ID", ref modelId)) {
 				Target->ModelId = modelId;
-				Target->Redraw(); // TODO: No redraw? If even possible
+				Target->Redraw();
 			}
 
 			ImGui.EndTabItem();

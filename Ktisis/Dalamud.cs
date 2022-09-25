@@ -22,7 +22,7 @@ namespace Ktisis {
 		internal unsafe static TargetSystem* Targets = TargetSystem.Instance();
 		internal unsafe static CameraManager* Camera = CameraManager.Instance();
 
-		public unsafe static void Init(DalamudPluginInterface dalamud) {
+		public static void Init(DalamudPluginInterface dalamud) {
 			dalamud.Create<Dalamud>();
 		}
 	}
