@@ -20,8 +20,9 @@ namespace Ktisis {
 		[PluginService] internal static GameGui GameGui { get; private set; } = null!;
 
 		internal unsafe static TargetSystem* Targets = TargetSystem.Instance();
+		internal unsafe static CameraManager* Camera = CameraManager.Instance();
 
-		public static void Init(DalamudPluginInterface dalamud) {
+		public unsafe static void Init(DalamudPluginInterface dalamud) {
 			dalamud.Create<Dalamud>();
 		}
 	}

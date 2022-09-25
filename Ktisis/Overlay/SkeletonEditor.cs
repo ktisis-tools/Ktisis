@@ -7,6 +7,7 @@ using ImGuiNET;
 using ImGuizmoNET;
 
 using Dalamud.Interface;
+using Dalamud.Logging;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
@@ -197,9 +198,7 @@ namespace Ktisis.Overlay {
 			if (model == null)
 				return;
 
-			var cam = CameraManager.Instance()->Camera;
-			if (cam == null)
-				return;
+			var cam = Dalamud.Camera->Camera;
 
 			var draw = ImGui.GetWindowDrawList();
 
@@ -269,8 +268,9 @@ namespace Ktisis.Overlay {
 						bone.TransformBone(delta, Skeleton);
 
 					} else if (Ktisis.Configuration.IsBoneVisible(bone)) { // Dot
-						var radius = Math.Max(3.0f, (10.0f - cam->Distance) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
-						var dotRadius = Math.Max(2.0f, (8.0f - cam->Distance) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
+						var dist = *(float*)((IntPtr)cam + 0x17c); // TODO: ClientStructs PR
+						var radius = Math.Max(3.0f, (10.0f - dist) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
+						var dotRadius = Math.Max(2.0f, (8.0f - dist) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
 
 						var area = new Vector2(radius, radius);
 						var rectMin = pos - area;
