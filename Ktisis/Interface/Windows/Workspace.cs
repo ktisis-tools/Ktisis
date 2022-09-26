@@ -5,11 +5,11 @@ using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-
 using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Interop;
 
 namespace Ktisis.Interface.Windows {
 	public class Workspace {
@@ -95,11 +95,16 @@ namespace Ktisis.Interface.Windows {
 				Coordinates();
 
 				ImGui.Separator();
+				
+				if (!Ktisis.IsInGPose)
+					PoseHooks.DisablePosing();
 
-				var _ = false;
-				if (ImGui.Checkbox("Toggle Posing", ref _)) {
-					// TODO
+				ImGui.BeginDisabled(!Ktisis.IsInGPose);
+				var pose = PoseHooks.PosingEnabled;
+				if (ImGui.Checkbox("Toggle Posing", ref pose)) {
+					PoseHooks.TogglePosing();
 				}
+				ImGui.EndDisabled();
 
 				var showSkeleton = cfg.ShowSkeleton;
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
@@ -152,7 +157,6 @@ namespace Ktisis.Interface.Windows {
 
 			// Use the same functions found in SkeletonEditor.Draw()
 			var delta = KtisisGui.SkeletonEditor.BoneMod.GetDelta();
-			selectedBone.Transform.Rotation *= delta.Rotation;
 			selectedBone.TransformBone(delta, KtisisGui.SkeletonEditor.Skeleton);
 		}
 

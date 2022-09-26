@@ -28,6 +28,7 @@ namespace Ktisis {
 			// Init hooks & delegates
 
 			Interop.ActorHooks.Init();
+			Interop.PoseHooks.Init();
 
 			// Register command
 
@@ -49,6 +50,7 @@ namespace Ktisis {
 			Dalamud.PluginInterface.SavePluginConfig(Configuration);
 
 			Interop.ActorHooks.Dispose();
+			Interop.PoseHooks.Dispose();
 		}
 
 		private void OnCommand(string command, string arguments) {
