@@ -5,6 +5,7 @@ using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+
 using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
@@ -96,7 +97,7 @@ namespace Ktisis.Interface.Windows {
 
 				ImGui.Separator();
 				
-				if (!Ktisis.IsInGPose)
+				if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
 					PoseHooks.DisablePosing();
 
 				ImGui.BeginDisabled(!Ktisis.IsInGPose);
@@ -157,6 +158,7 @@ namespace Ktisis.Interface.Windows {
 
 			// Use the same functions found in SkeletonEditor.Draw()
 			var delta = KtisisGui.SkeletonEditor.BoneMod.GetDelta();
+			selectedBone.Transform.Rotation *= delta.Rotation;
 			selectedBone.TransformBone(delta, KtisisGui.SkeletonEditor.Skeleton);
 		}
 

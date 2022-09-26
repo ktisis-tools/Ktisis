@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Dalamud.Hooking;
-using Ktisis.Structs.Actor;
 using Ktisis.Structs.Havok;
 
 namespace Ktisis.Interop {
@@ -63,18 +62,18 @@ namespace Ktisis.Interop {
 		/// <returns></returns>
 		internal static bool TogglePosing()
 		{
-			if (CalculateBoneModelSpaceHook.IsEnabled)
+			if (PosingEnabled)
+			{
 				CalculateBoneModelSpaceHook.Disable();
-			else
-				CalculateBoneModelSpaceHook.Enable();
-			if (SetBoneModelSpaceFfxivHook.IsEnabled)
 				SetBoneModelSpaceFfxivHook.Disable();
-			else
-				SetBoneModelSpaceFfxivHook.Enable();
-			if (SyncModelSpaceHook.IsEnabled)
 				SyncModelSpaceHook.Disable();
+			}
 			else
+			{
+				CalculateBoneModelSpaceHook.Enable();
+				SetBoneModelSpaceFfxivHook.Enable();
 				SyncModelSpaceHook.Enable();
+			}
 			PosingEnabled = !PosingEnabled;
 			return PosingEnabled;
 		}
