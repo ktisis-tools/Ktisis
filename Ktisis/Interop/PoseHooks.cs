@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Dalamud.Hooking;
+using Dalamud.Logging;
 using Ktisis.Structs.Havok;
 
 namespace Ktisis.Interop {
@@ -13,6 +14,9 @@ namespace Ktisis.Interop {
 		
 		private unsafe delegate void SyncModelSpaceDelegate(HkaPose* pose);
 		private static Hook<SyncModelSpaceDelegate> SyncModelSpaceHook = null!;
+
+		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
+		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
 		
 		private unsafe delegate hkQsTransform* AccessBoneModelSpaceDelegate(HkaPose* pose, int boneIdx, int propagate);
 		private static AccessBoneModelSpaceDelegate AccessBoneModelSpaceFunc = null!;
@@ -38,6 +42,9 @@ namespace Ktisis.Interop {
 			
 			var accessBoneLocalSpace = Dalamud.SigScanner.ScanText("4C 8B DC 53 55 56 57 41 54 41 56 48 81 EC");
 			AccessBoneLocalSpaceFunc = Marshal.GetDelegateForFunctionPointer<AccessBoneLocalSpaceDelegate>(accessBoneLocalSpace);
+
+			var lookAtIK = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
+			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
 		}
 
 		internal static void DisablePosing()
@@ -45,6 +52,7 @@ namespace Ktisis.Interop {
 			CalculateBoneModelSpaceHook?.Disable();
 			SetBoneModelSpaceFfxivHook?.Disable();
 			SyncModelSpaceHook?.Disable();
+			LookAtIKHook?.Disable();
 			PosingEnabled = false;
 		}
 
@@ -53,6 +61,7 @@ namespace Ktisis.Interop {
 			CalculateBoneModelSpaceHook?.Enable();
 			SetBoneModelSpaceFfxivHook?.Enable();
 			SyncModelSpaceHook?.Enable();
+			LookAtIKHook?.Enable();
 			PosingEnabled = true;
 		}
 
@@ -67,12 +76,14 @@ namespace Ktisis.Interop {
 				CalculateBoneModelSpaceHook.Disable();
 				SetBoneModelSpaceFfxivHook.Disable();
 				SyncModelSpaceHook.Disable();
+				LookAtIKHook.Disable();
 			}
 			else
 			{
 				CalculateBoneModelSpaceHook.Enable();
 				SetBoneModelSpaceFfxivHook.Enable();
 				SyncModelSpaceHook.Enable();
+				LookAtIKHook.Enable();
 			}
 			PosingEnabled = !PosingEnabled;
 			return PosingEnabled;
@@ -93,7 +104,11 @@ namespace Ktisis.Interop {
 		{
 			
 		}
-		
+
+		public unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {
+			return (byte*)IntPtr.Zero;
+		}
+
 		public static unsafe void SyncBone(HkaPose* bonesPose, int index)
 		{
 			CalculateBoneModelSpaceHook.Original(ref *bonesPose, index);
@@ -116,6 +131,8 @@ namespace Ktisis.Interop {
 			CalculateBoneModelSpaceHook.Dispose();
 			SyncModelSpaceHook.Disable();
 			SyncModelSpaceHook.Dispose();
+			LookAtIKHook.Disable();
+			LookAtIKHook.Dispose();
 		}
 	}
 }
