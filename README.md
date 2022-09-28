@@ -23,5 +23,3 @@ My focus is not on recreating the functionality of either, so it will likely bes
 - [@Fayti1703](https://github.com/Fayti1703) and [@hackmud-dtr](https://github.com/hackmud-dtr) for their helpful insights into reverse engineering and low-level code, and overall helpfulness in answering questions.
 - [@BobTheBob9](https://github.com/BobTheBob9) for their helpful insights into reverse engineering and IDA.
 - The other developers from [Bnuuy Central](https://github.com/Bnuuy-Central) who were excellent practical and moral support.
-
-This plugin is based off my original work from [xiv-reversal-rs](https://github.com/ktisis-tools/xiv-reversal-rs).

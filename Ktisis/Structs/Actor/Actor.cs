@@ -21,7 +21,7 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0xC20)] public ActorGaze Gaze;
 
-		[FieldOffset(0x1A68)] public uint TargetObjectID;
+		[FieldOffset(0x1A68)] public byte TargetObjectID;
 		[FieldOffset(0x1A6C)] public byte TargetMode;
 
 		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
