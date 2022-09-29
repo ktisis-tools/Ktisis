@@ -148,6 +148,13 @@ namespace Ktisis.Overlay {
 			BoneSelector.ResetState();
 		}
 
+		public void SelectActorTarget()
+		{
+			ResetState();
+
+			// TODO: place and render gizmo on actor
+		}
+
 		// Draw
 
 		public unsafe void Draw() {
@@ -261,11 +268,7 @@ namespace Ktisis.Overlay {
 						// TODO: Streamline this.
 
 						//BoneMod.SnapshotBone(bone, model);
-
-						var delta = BoneMod.GetDelta();
-
-						bone.Transform.Rotation *= delta.Rotation;
-						bone.TransformBone(delta, Skeleton);
+						BoneMod.ApplyDelta(bone, Skeleton);
 
 					} else if (Ktisis.Configuration.IsBoneVisible(bone)) { // Dot
 						var dist = *(float*)((IntPtr)cam + 0x17c); // https://github.com/aers/FFXIVClientStructs/pull/254

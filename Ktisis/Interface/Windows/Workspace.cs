@@ -11,6 +11,7 @@ using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interop;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows {
 	public class Workspace {
@@ -91,8 +92,6 @@ namespace Ktisis.Interface.Windows {
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
 					ConfigGui.Show();
 
-				ImGui.Separator();
-
 				Coordinates();
 
 				ImGui.Separator();
@@ -145,21 +144,24 @@ namespace Ktisis.Interface.Windows {
 		}
 
 		// Coordinates table
-		private static void Coordinates() {
+		private static unsafe bool Coordinates() {
+			if (Ktisis.GPoseTarget == null) return false;
+
+			ImGui.Separator();
+
 			Bone? selectedBone = KtisisGui.SkeletonEditor.GetSelectedBone();
+
+			var target = (Actor*)Ktisis.GPoseTarget.Address;
+			string? targetName = Ktisis.Configuration.DisplayCharName ? target->Name : "target";
+			string title = "Transforming " + targetName;
+
 			if (KtisisGui.SkeletonEditor.Skeleton == null || selectedBone == null) {
-				ImGuiComponents.HelpMarker("Select a bone to spawn Coordinates table.");
-				return;
+				ImGui.TextDisabled(title);
+				return GuiHelpers.CoordinatesTable(target->Model);
 			};
 
-			GuiHelpers.DragVec4intoVec3("Position", ref selectedBone.Transform.Position, 0.0001f);
-			GuiHelpers.DragQuatIntoEuler("Rotation", ref selectedBone.Transform.Rotation, 0.1f);
-			GuiHelpers.DragVec4intoVec3("Scale", ref selectedBone.Transform.Scale, 0.01f);
-
-			// Use the same functions found in SkeletonEditor.Draw()
-			var delta = KtisisGui.SkeletonEditor.BoneMod.GetDelta();
-			selectedBone.Transform.Rotation *= delta.Rotation;
-			selectedBone.TransformBone(delta, KtisisGui.SkeletonEditor.Skeleton);
+			ImGui.TextDisabled(title+"'s " + Locale.GetBoneName(selectedBone.HkaBone.Name!));
+			return GuiHelpers.CoordinatesTable(selectedBone.Transform, () => KtisisGui.SkeletonEditor.BoneMod.ApplyDelta(selectedBone, KtisisGui.SkeletonEditor.Skeleton));
 		}
 
 		// Bone Tree
@@ -168,6 +170,8 @@ namespace Ktisis.Interface.Windows {
 			var editor = KtisisGui.SkeletonEditor;
 			if (editor.Skeleton != null && editor.Skeleton.Count > 0)
 				DrawBoneTree(editor.Skeleton[0].Bones[0]);
+
+			GuiHelpers.DrawBoneNode("actor_target", ImGuiTreeNodeFlags.Leaf, "Actor", () => KtisisGui.SkeletonEditor.SelectActorTarget());
 		}
 
 		public static void DrawBoneTree(Bone bone) {
@@ -180,23 +184,10 @@ namespace Ktisis.Interface.Windows {
 			if (children.Count == 0)
 				flag |= ImGuiTreeNodeFlags.Leaf;
 
-			var show = bone.IsRoot;
-			if (!show) {
-				show = ImGui.TreeNodeEx(bone.HkaBone.Name, flag, Locale.GetBoneName(bone.HkaBone.Name!));
+			var show = bone.IsRoot; 
 
-				var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
-				var rectMax = ImGui.GetItemRectMax();
-
-				var mousePos = ImGui.GetMousePos();
-				if (
-					ImGui.IsMouseClicked(ImGuiMouseButton.Left)
-					&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
-					&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
-				) {
-					KtisisGui.SkeletonEditor.SelectBone(bone);
-				}
-			}
-
+			if (!show) show = GuiHelpers.DrawBoneNode(bone.HkaBone.Name, flag, Locale.GetBoneName(bone.HkaBone.Name!),() => KtisisGui.SkeletonEditor.SelectBone(bone));
+			
 			if (show) {
 				// Show children
 				foreach (var child in children)

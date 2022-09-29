@@ -6,6 +6,8 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
 using Ktisis.Helpers;
+using Ktisis.Structs;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis.Util
 {
@@ -54,6 +56,44 @@ namespace Ktisis.Util
 			bool modified = ImGui.DragFloat3(label, ref euler, speed);
 			quaternion = MathHelpers.ToQuaternion(euler);
 			return modified;
+		}
+		public static bool DrawBoneNode(string? str_id, ImGuiTreeNodeFlags flag, string fmt, System.Action? executeIfClicked = null)
+		{
+			bool show = ImGui.TreeNodeEx(str_id, flag, fmt);
+
+			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
+			var rectMax = ImGui.GetItemRectMax();
+
+			var mousePos = ImGui.GetMousePos();
+			if (
+				ImGui.IsMouseClicked(ImGuiMouseButton.Left)
+				&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
+				&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
+			)
+			{
+				executeIfClicked?.Invoke();
+			}
+			return show;
+		}
+		public static unsafe bool CoordinatesTable(ActorModel* actorModel, System.Action? doAfter = null)
+		{
+			bool active = false;
+			active |= ImGui.DragFloat3("Position", ref actorModel->Position, 0.005f);
+			active |= GuiHelpers.DragQuatIntoEuler("Rotation", ref actorModel->Rotation, 0.1f);
+			active |= ImGui.DragFloat3("Scale", ref actorModel->Scale, 0.005f);
+
+			doAfter?.Invoke();
+			return active;
+		}
+		public static bool CoordinatesTable(Transform transform, System.Action? doAfter = null)
+		{
+			bool active = false;
+			active |= GuiHelpers.DragVec4intoVec3("Position", ref transform.Position, 0.0001f);
+			active |= GuiHelpers.DragQuatIntoEuler("Rotation", ref transform.Rotation, 0.1f);
+			active |= GuiHelpers.DragVec4intoVec3("Scale", ref transform.Scale, 0.01f);
+
+			doAfter?.Invoke();
+			return active;
 		}
 	}
 }

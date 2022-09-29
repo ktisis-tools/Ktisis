@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 using ImGuizmoNET;
@@ -113,6 +114,14 @@ namespace Ktisis.Structs.Bones {
 			// :D
 
 			return delta;
+		}
+
+		public void ApplyDelta(Bone bone, List<BoneList> skeleton)
+		{
+			Transform delta = GetDelta();
+
+			bone.Transform.Rotation *= delta.Rotation;
+			bone.TransformBone(delta, skeleton);
 		}
 	}
 }
