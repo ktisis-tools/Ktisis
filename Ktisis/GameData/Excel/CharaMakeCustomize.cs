@@ -1,6 +1,6 @@
 ﻿using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
+using Lobby = Lumina.Excel.GeneratedSheets.Lobby;
 
 namespace Ktisis.GameData.Excel {
 	[Sheet("CharaMakeCustomize")]
@@ -16,8 +16,6 @@ namespace Ktisis.GameData.Excel {
 		public byte FaceType { get; set; }
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
-
 			FeatureId = parser.ReadColumn<byte>(0);
 			Icon = parser.ReadColumn<uint>(1);
 			Data = parser.ReadColumn<ushort>(2);
