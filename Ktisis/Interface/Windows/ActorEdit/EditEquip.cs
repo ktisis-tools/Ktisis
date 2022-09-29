@@ -92,7 +92,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 	public class ItemCache {
 		public EquipItem EquipItem;
-		public Item? Item = null!;
+		public Item? Item;
 		public TextureWrap? Icon;
 	}
 }

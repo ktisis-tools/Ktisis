@@ -52,6 +52,12 @@ namespace Ktisis {
 
 			Interop.ActorHooks.Dispose();
 			Interop.PoseHooks.Dispose();
+
+			GameData.Sheets.Cache.Clear();
+			if (EditEquip.Items != null) {
+				EditEquip.Items.Clear();
+				EditEquip.Items = null;
+			}
 		}
 
 		private void OnCommand(string command, string arguments) {
