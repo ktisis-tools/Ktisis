@@ -1,17 +1,25 @@
 ﻿using System.Linq;
+using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
+using ImGuiScene;
 
 using Dalamud.Logging;
 
 using Ktisis.GameData;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
-using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
 	public class EditEquip {
+		// Constants
+
+		public const int _IconSize = 36;
+		public static Vector2 IconSize = new(_IconSize, _IconSize);
+
+		// Properties
+
 		public unsafe static Actor* Target => EditActor.Target;
 
 		public static List<Item>? Items;
@@ -30,8 +38,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public unsafe static void Draw() {
 			if (Items == null)
 				Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable()).ToList();
-
-			var tar = EditActor.Target;
 
 			for (var i = 2; i < 13; i++) {
 				var slot = (EquipSlot)i;
@@ -55,9 +61,18 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			} else if (!Equipped[slot].EquipItem.Equals(equip)) {
 				Equipped[slot].EquipItem = equip;
 				Equipped[slot].Item = FindItem(equip, slot);
+				Equipped[slot].Icon = null;
 			}
 
 			var item = Equipped[slot];
+
+			if (item.Icon == null && item.Item != null)
+				item.Icon = Dalamud.DataManager.GetImGuiTextureIcon(item.Item == null ? (uint)0 : item.Item.Icon);
+
+			ImGui.ImageButton(item.Icon!.ImGuiHandle, IconSize);
+
+			ImGui.SameLine();
+			ImGui.BeginGroup();
 
 			var name = item.Item == null ? "Unknown" : item.Item.Name;
 			ImGui.Text(name);
@@ -70,11 +85,14 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				tar->Equip(index, equip);
 			}
 			ImGui.PopItemWidth();
+
+			ImGui.EndGroup();
 		}
 	}
 
 	public class ItemCache {
 		public EquipItem EquipItem;
 		public Item? Item = null!;
+		public TextureWrap? Icon;
 	}
 }

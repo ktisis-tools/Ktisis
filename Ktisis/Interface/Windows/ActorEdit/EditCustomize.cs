@@ -291,14 +291,14 @@ namespace Ktisis.Interface.Windows {
 						if (val.IsFeature) {
 							foreach (var row in val.Features) {
 								var feat = row.Value!;
-								var icon = Dalamud.DataManager.GetImGuiTextureHqIcon(feat.Icon);
+								var icon = Dalamud.DataManager.GetImGuiTextureIcon(feat.Icon);
 								if (feat.FeatureId == 0)
 									continue;
 								icons.Add(feat.FeatureId, icon!);
 							}
 						} else {
 							for (var x = 0; x < val.Count; x++) {
-								var icon = Dalamud.DataManager.GetImGuiTextureHqIcon(val.Params[x]);
+								var icon = Dalamud.DataManager.GetImGuiTextureIcon(val.Params[x]);
 								icons.Add(val.Graphics[x], icon!);
 							}
 						}
