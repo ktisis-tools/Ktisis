@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
@@ -24,22 +25,24 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(3)] public byte Dye;
 
 		public static explicit operator EquipItem(uint num) => new() {
-			Id = (ushort)(num >> 16),
-			Variant = (byte)(num << 16 >> 24),
-			Dye = (byte)(num << 24 >> 24)
+			Id = (ushort)(num & 0xFFFF),
+			Variant = (byte)(num >> 16 & 0xFF),
+			Dye = (byte)(num >> 24)
 		};
+
+		public bool Equals(EquipItem other) => Id == other.Id && Variant == other.Variant;
 	}
 
 	public enum EquipIndex : uint {
-		Head = 0,
-		Chest = 1,
-		Hands = 2,
-		Legs = 3,
-		Feet = 4,
-		Earring = 5,
-		Necklace = 6,
-		Bracelet = 7,
-		RingRight = 8,
-		RingLeft = 9
+		Head,
+		Chest,
+		Hands,
+		Legs,
+		Feet,
+		Earring,
+		Necklace,
+		Bracelet,
+		RingRight,
+		RingLeft
 	}
 }

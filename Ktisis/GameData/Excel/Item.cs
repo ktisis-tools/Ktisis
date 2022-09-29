@@ -13,8 +13,8 @@ namespace Ktisis.GameData.Excel {
 		MainHand,
 		OffHand,
 		Head,
-		Body,
-		Gloves,
+		Chest,
+		Hands,
 		Waist,
 		Legs,
 		Feet,
@@ -54,6 +54,8 @@ namespace Ktisis.GameData.Excel {
 		public bool IsWeapon => IsEquippable(EquipSlot.MainHand) || IsEquippable(EquipSlot.OffHand);
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
+			RowId = parser.RowId;
+
 			Name = parser.ReadColumn<SeString>(9) ?? "";
 			Icon = parser.ReadColumn<ushort>(10);
 
