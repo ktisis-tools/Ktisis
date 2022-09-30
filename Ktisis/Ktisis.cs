@@ -29,6 +29,7 @@ namespace Ktisis {
 			// Init hooks & delegates
 
 			Interop.ActorHooks.Init();
+			Interop.CameraHooks.Init();
 			Interop.PoseHooks.Init();
 
 			// Register command
@@ -51,6 +52,7 @@ namespace Ktisis {
 			Dalamud.PluginInterface.SavePluginConfig(Configuration);
 
 			Interop.ActorHooks.Dispose();
+			Interop.CameraHooks.Dispose();
 			Interop.PoseHooks.Dispose();
 
 			GameData.Sheets.Cache.Clear();

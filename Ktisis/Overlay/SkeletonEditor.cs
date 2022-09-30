@@ -12,14 +12,14 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
-using Ktisis.Interface;
+using Ktisis.Interop;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Overlay {
-	public sealed class SkeletonEditor {
+	public class SkeletonEditor {
 		public bool Visible = true;
 
 		public IntPtr? Subject;
@@ -28,9 +28,7 @@ namespace Ktisis.Overlay {
 		public BoneSelector BoneSelector;
 		public BoneMod BoneMod;
 
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		internal delegate IntPtr GetMatrixDelegate();
-		internal GetMatrixDelegate GetMatrix;
+		public unsafe WorldMatrix* matrix;
 
 		float[] cameraView = {
 			1.0f, 0.0f, 0.0f, 0.0f,
@@ -54,8 +52,7 @@ namespace Ktisis.Overlay {
 			BoneSelector = new BoneSelector();
 			BoneMod = new BoneMod();
 
-			var matrixAddr = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? 48 89 4c 24 ?? 4C 8D 4D ?? 4C 8D 44 24 ??");
-			GetMatrix = Marshal.GetDelegateForFunctionPointer<GetMatrixDelegate>(matrixAddr);
+			matrix = (WorldMatrix*)CameraHooks.GetMatrix!();
 		}
 
 		// Toggle visibility
@@ -241,7 +238,6 @@ namespace Ktisis.Overlay {
 						var io = ImGui.GetIO();
 						var wp = ImGui.GetWindowPos();
 
-						var matrix = (WorldMatrix*)GetMatrix();
 						if (matrix == null)
 							return;
 

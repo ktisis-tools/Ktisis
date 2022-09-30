@@ -7,7 +7,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interop {
-	public class ActorHooks {
+	internal class ActorHooks {
 		// Make actor look at co-ordinate point
 		// a1 = Actor + 0xC20, a2 = TrackPos*, a3 = bodypart, a4 = ?
 
