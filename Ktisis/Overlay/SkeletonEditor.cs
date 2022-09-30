@@ -13,6 +13,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using Ktisis.Interop;
+using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
@@ -179,22 +180,9 @@ namespace Ktisis.Overlay {
 
 			// Create window & fetch draw list
 
-			ImGuiHelpers.ForceNextWindowMainViewport();
-			ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
-
-			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
-
-			ImGui.Begin("Ktisis Overlay", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs);
-			ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
-
-			// Draw skeleton
-
+			Overlay.Begin();
 			DrawSkeleton();
-
-			// End window draw
-
-			ImGui.End();
-			ImGui.PopStyleVar();
+			Overlay.End();
 		}
 
 		// Draw skeleton

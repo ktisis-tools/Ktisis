@@ -5,6 +5,10 @@ using Matrix = SharpDX.Matrix;
 using ImGuiNET;
 using ImGuizmoNET;
 
+using Dalamud.Logging;
+using Dalamud.Interface;
+
+using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Overlay {
@@ -45,7 +49,7 @@ namespace Ktisis.Overlay {
 		// Compose updates the matrix using given values.
 		// Decompose retrieves values from the matrix.
 
-		public void ComposeMatrix(Vector3 pos, Vector3 rot, Vector3 scale) {
+		public void ComposeMatrix(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
 			ImGuizmo.RecomposeMatrixFromComponents(
 				ref pos.X,
 				ref rot.X,
@@ -53,6 +57,9 @@ namespace Ktisis.Overlay {
 				ref Matrix.M11
 			);
 		}
+
+		public void ComposeMatrix(Vector3 pos, Vector3 rot, Vector3 scale)
+			=> ComposeMatrix(ref pos, ref rot, ref scale);
 
 		public void DecomposeMatrix(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
 			ImGuizmo.DecomposeMatrixToComponents(
@@ -65,7 +72,7 @@ namespace Ktisis.Overlay {
 
 		public void DecomposeDelta(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
 			ImGuizmo.DecomposeMatrixToComponents(
-				ref Matrix.M11,
+				ref Delta.M11,
 				ref pos.X,
 				ref rot.X,
 				ref scale.X
@@ -74,12 +81,20 @@ namespace Ktisis.Overlay {
 
 		// Draw
 
-		public unsafe void Draw() {
+		internal void BeginFrame() {
+			Io = ImGui.GetIO();
+			Wp = ImGui.GetWindowPos();
+
 			ImGuizmo.BeginFrame();
 			ImGuizmo.SetDrawlist();
 			ImGuizmo.SetRect(Wp.X, Wp.Y, Io.DisplaySize.X, Io.DisplaySize.Y);
 
 			ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
+		}
+
+		internal unsafe void Manipulate() {
+			if (WorldMatrix == null)
+				WorldMatrix = (WorldMatrix*)CameraHooks.GetMatrix!();
 
 			ImGuizmo.Manipulate(
 				ref WorldMatrix->Projection.M11,
@@ -89,6 +104,20 @@ namespace Ktisis.Overlay {
 				ref Matrix.M11,
 				ref Delta.M11
 			);
+		}
+
+		public void Draw() {
+			Overlay.Begin();
+			BeginFrame();
+			Manipulate();
+			Overlay.End();
+		}
+
+		public void Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
+			ComposeMatrix(ref pos, ref rot, ref scale);
+			Draw();
+			DecomposeMatrix(ref pos, ref rot, ref scale);
+			PluginLog.Information($"{pos.X}, {pos.Y}, {pos.Z}");
 		}
 	}
 }

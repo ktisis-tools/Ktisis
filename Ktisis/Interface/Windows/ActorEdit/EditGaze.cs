@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
 using ImGuizmoNET;
@@ -7,6 +8,7 @@ using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
+using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
@@ -15,7 +17,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public static Dictionary<byte, ActorGaze>? ActorControl = null; // ObjectID : ActorGaze
 
-		public static GazeControl? Gizmo =  null;
+		public static Gizmo Gizmo = new();
+		public static GazeControl? GizmoActive =  null;
 
 		public static bool IsLinked {
 			get => Ktisis.Configuration.LinkedGaze;
@@ -55,8 +58,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (result)
 				ActorControl[id] = gaze;
 
-			DrawGizmo();
-
 			ImGui.EndTabItem();
 		}
 
@@ -72,24 +73,35 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
 
 			ImGui.SameLine();
-			if (ImGuiComponents.IconButton(FontAwesomeIcon.EllipsisH))
-				Gizmo = Gizmo == type ? null : type;
+			if (ImGuiComponents.IconButton($"{FontAwesomeExtensions.ToIconChar(FontAwesomeIcon.EllipsisH)}##{type}")) {
+				// TODO: Place gizmo closer to character/camera.
+				GizmoActive = GizmoActive == type ? null : type;
+				gaze.Mode = GizmoActive != null ? GazeMode.Target : GazeMode.Disabled;
+			}
+
+			// TODO: Rotation mode.
+
+			if (GizmoActive == type) {
+				DrawGizmo(ref gaze);
+				result |= true;
+			}
 
 			return result;
 		}
 
 		// Gizmo woo gizmo!!!
 
-		public static void DrawGizmo() {
-			if (Gizmo == null)
+		public static void DrawGizmo(ref Gaze gaze) {
+			if (GizmoActive == null)
 				return;
 
 			if (KtisisGui.SkeletonEditor.HasSelected()) {
-				Gizmo = null;
+				GizmoActive = null;
 				return;
 			}
 
-			
+			var _ = new Vector3(0.0f, 0.0f, 0.0f);
+			Gizmo.Draw(ref gaze.Pos, ref _, ref _);
 		}
 
 		// ControlGaze Hook
