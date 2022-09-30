@@ -65,7 +65,7 @@ namespace Ktisis.Interface.Windows {
 					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.ROTATE;
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandArrowsAlt))
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandAlt))
 					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.SCALE;
 
 				ImGui.SameLine();

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
 using Dalamud.Logging;
 using Dalamud.Interface;
@@ -13,6 +14,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public unsafe static Actor* Target => EditActor.Target;
 
 		public static Dictionary<byte, ActorGaze>? ActorControl = null; // ObjectID : ActorGaze
+
+		public static GazeControl? Gizmo =  null;
 
 		public static bool IsLinked {
 			get => Ktisis.Configuration.LinkedGaze;
@@ -27,6 +30,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			if (ImGuiComponents.IconButton(IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink))
 				IsLinked = !IsLinked;
+			ImGui.SameLine();
+			ImGui.Text(IsLinked ? "Linked" : "Unlinked");
+
+			ImGui.Spacing();
 
 			var id = Target->ObjectID;
 			if (!ActorControl.ContainsKey(id))
@@ -39,12 +46,16 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				result |= DrawGaze(ref gaze.Other, GazeControl.All);
 			} else {
 				result |= DrawGaze(ref gaze.Eyes, GazeControl.Eyes);
+				ImGui.Spacing();
 				result |= DrawGaze(ref gaze.Head, GazeControl.Head);
+				ImGui.Spacing();
 				result |= DrawGaze(ref gaze.Torso, GazeControl.Torso);
 			}
 
 			if (result)
 				ActorControl[id] = gaze;
+
+			DrawGizmo();
 
 			ImGui.EndTabItem();
 		}
@@ -60,7 +71,25 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
 
+			ImGui.SameLine();
+			if (ImGuiComponents.IconButton(FontAwesomeIcon.EllipsisH))
+				Gizmo = Gizmo == type ? null : type;
+
 			return result;
+		}
+
+		// Gizmo woo gizmo!!!
+
+		public static void DrawGizmo() {
+			if (Gizmo == null)
+				return;
+
+			if (KtisisGui.SkeletonEditor.HasSelected()) {
+				Gizmo = null;
+				return;
+			}
+
+			
 		}
 
 		// ControlGaze Hook

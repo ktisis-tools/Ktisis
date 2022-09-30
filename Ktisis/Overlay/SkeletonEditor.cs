@@ -39,6 +39,8 @@ namespace Ktisis.Overlay {
 			0.0f, 0.0f, 0.0f, 1.0f
 		};
 
+		public bool HasSelected() => BoneSelector.Current != (-1, -1);
+
 		// Controls
 
 		public OPERATION GizmoOp = OPERATION.UNIVERSAL;
