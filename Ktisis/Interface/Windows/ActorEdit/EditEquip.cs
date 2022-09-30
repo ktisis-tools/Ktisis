@@ -28,7 +28,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		// Helper stuff. Will move if there's ever a need for this elsewhere.
 
-		public static Item? FindItem(EquipItem item, EquipSlot slot) 
+		public static Item? FindItem(EquipItem item, EquipSlot slot)
 			=> Items?.FirstOrDefault(i => i.IsEquippable(slot) && i.Model.Id == item.Id && i.Model.Variant == item.Variant, null!);
 
 		public static EquipIndex SlotToIndex(EquipSlot slot) => (EquipIndex)(slot - ((int)slot >= 5 ? 3 : 2));

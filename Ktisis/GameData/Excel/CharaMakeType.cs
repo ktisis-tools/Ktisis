@@ -28,7 +28,7 @@ namespace Ktisis.GameData.Excel {
 		public LazyRow<CharaMakeCustomize>[] Features;
 
 		public bool HasIcon => Type == MenuType.Select || Type == MenuType.SelectMulti;
-		public bool IsFeature => HasIcon && Graphics[0] == 0; // don't question it
+		public bool IsFeature => HasIcon && Graphics[0] == 0;
 	}
 
 	[Sheet("CharaMakeType")]
@@ -51,6 +51,8 @@ namespace Ktisis.GameData.Excel {
 		// Build sheet
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
+			base.PopulateData(parser, gameData, language);
+
 			Race = new LazyRow<Race>(gameData, parser.ReadColumn<int>(0), language);
 			Tribe = new LazyRow<Tribe>(gameData, parser.ReadColumn<int>(1), language);
 			Gender = parser.ReadColumn<sbyte>(2);

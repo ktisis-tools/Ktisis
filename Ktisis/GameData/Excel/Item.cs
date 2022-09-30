@@ -26,10 +26,10 @@ namespace Ktisis.GameData.Excel {
 		SoulCrystal
 	}
 
-	public struct ItemModel {
-		public ushort Id;
-		public ushort Base;
-		public ushort Variant;
+	public class ItemModel {
+		public ushort Id { get; set; }
+		public ushort Base { get; set; }
+		public ushort Variant { get; set; }
 
 		public ItemModel(ulong var, bool isWep = false) {
 			Id = (ushort)var;
@@ -45,23 +45,23 @@ namespace Ktisis.GameData.Excel {
 
 		public LazyRow<EquipSlotCategory> EquipSlotCategory { get; set; } = null!;
 
-		public ItemModel Model { get; set; }
-		public ItemModel SubModel { get; set; }
+		public ItemModel Model { get; set; } = null!;
+		public ItemModel SubModel { get; set; } = null!;
 
 		public bool IsEquippable() => EquipSlotCategory.Value!.RowId != 0;
 		public bool IsEquippable(EquipSlot slot) => IsEquippable() && EquipSlotCategory.Value!.IsEquippable(slot);
 
-		public bool IsWeapon => IsEquippable(EquipSlot.MainHand) || IsEquippable(EquipSlot.OffHand);
+		public bool IsWeapon() => IsEquippable(EquipSlot.MainHand) || IsEquippable(EquipSlot.OffHand);
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			RowId = parser.RowId;
+			base.PopulateData(parser, gameData, language);
 
 			Name = parser.ReadColumn<SeString>(9) ?? "";
 			Icon = parser.ReadColumn<ushort>(10);
 
 			EquipSlotCategory = new LazyRow<EquipSlotCategory>(gameData, parser.ReadColumn<byte>(17), language);
 
-			var isWep = IsWeapon;
+			var isWep = IsWeapon();
 			var model = parser.ReadColumn<ulong>(47);
 			var subModel = parser.ReadColumn<ulong>(48);
 			Model = new ItemModel(model, isWep);
@@ -71,14 +71,15 @@ namespace Ktisis.GameData.Excel {
 
 	[Sheet("EquipSlotCategory")]
 	public class EquipSlotCategory : ExcelRow {
-		public List<sbyte> Slots { get; set; } = new();
+		public sbyte[] Slots { get; set; } = new sbyte[14];
 
 		public bool IsEquippable(EquipSlot slot) => Slots[(int)slot] == 1;
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
 			base.PopulateData(parser, gameData, language);
+
 			for (var i = 0; i < 14; i++)
-				Slots.Add(parser.ReadColumn<sbyte>(i));
+				Slots[i] = parser.ReadColumn<sbyte>(i);
 		}
 	}
 }
