@@ -115,11 +115,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
 			if (ImGui.Begin("Item Select", ImGuiWindowFlags.NoDecoration)) {
-				var focus = ImGui.IsWindowFocused();
+				var focus = ImGui.IsWindowFocused() || ImGui.IsWindowHovered();
 
 				ImGui.PushItemWidth(400);
 				ImGui.InputTextWithHint("##equip_search", "Search...", ref ItemSearch, 32);
-				ImGui.BeginListBox("##equip_items");
+				ImGui.BeginListBox("##equip_items", new Vector2(-1, 500));
 				var items = SlotItems;
 				if (ItemSearch.Length > 0)
 					items = items.Where(i => i.Name.Contains(ItemSearch));
@@ -132,6 +132,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					focus |= ImGui.IsItemFocused();
 				}
 				ImGui.EndListBox();
+				focus |= ImGui.IsItemActive();
 				ImGui.PopItemWidth();
 
 				if (!focus) {
