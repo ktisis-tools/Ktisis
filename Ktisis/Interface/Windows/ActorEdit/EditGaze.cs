@@ -58,9 +58,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				gaze.Mode = enabled ? GazeMode.Target : GazeMode.Disabled;
 			}
 
-			result |= ImGui.DragFloat($"X {type}", ref gaze.Pos.X, 0.005f);
-			result |= ImGui.DragFloat($"Y {type}", ref gaze.Pos.Y, 0.005f);
-			result |= ImGui.DragFloat($"Z {type}", ref gaze.Pos.Z, 0.005f);
+			result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
 
 			return result;
 		}

@@ -44,11 +44,18 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (Items == null)
 				Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
 
+			ImGui.BeginGroup();
 			for (var i = 2; i < 13; i++) {
 				var slot = (EquipSlot)i;
 				if (slot == EquipSlot.Waist) continue;
+				if (i == 8) {
+					ImGui.EndGroup();
+					ImGui.SameLine();
+					ImGui.BeginGroup();
+				}
 				DrawSelector(slot);
 			}
+			ImGui.EndGroup();
 
 			ImGui.EndTabItem();
 		}
@@ -85,7 +92,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			ImGui.PushItemWidth(100);
 			var val = new int[2] { equip.Id, equip.Variant };
-			if (ImGui.InputInt2($"{slot}", ref val[0])) {
+			if (ImGui.InputInt2($"##{slot}", ref val[0])) {
 				equip.Id = (ushort)val[0];
 				equip.Variant = (byte)val[1];
 				tar->Equip(index, equip);
@@ -119,11 +126,12 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 				ImGui.PushItemWidth(400);
 				ImGui.InputTextWithHint("##equip_search", "Search...", ref ItemSearch, 32);
-				ImGui.BeginListBox("##equip_items", new Vector2(-1, 500));
+				ImGui.BeginListBox("##equip_items", new Vector2(-1, 300));
 				var items = SlotItems;
 				if (ItemSearch.Length > 0)
 					items = items.Where(i => i.Name.Contains(ItemSearch));
 				foreach (var item in items) {
+					// TODO: Icon?
 					if (ImGui.Selectable($"{item.Name}")) {
 						equip.Id = item.Model.Id;
 						equip.Variant = (byte)item.Model.Variant;

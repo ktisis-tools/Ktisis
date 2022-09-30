@@ -26,14 +26,14 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (Target == null)
 				return;
 
-			var size = new Vector2(400, -1);
+			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
 			// Create window
 			var title = Ktisis.Configuration.DisplayCharName ? $"{Target->Name}" : "Appearance";
-			if (ImGui.Begin(title, ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoResize)) {
+			if (ImGui.Begin(title, ref Visible)) {
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
 
