@@ -22,14 +22,14 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public unsafe static Actor* Target => EditActor.Target;
 
-		public static List<Item>? Items;
+		public static IEnumerable<Item>? Items;
 
 		public static Dictionary<EquipSlot, ItemCache> Equipped = new();
 
 		// Helper stuff. Will move if there's ever a need for this elsewhere.
 
-		public static Item? FindItem(EquipItem item, EquipSlot slot)
-			=> Items?.Find(i => i.IsEquippable(slot) && i.Model.Id == item.Id && i.Model.Variant == item.Variant);
+		public static Item? FindItem(EquipItem item, EquipSlot slot) 
+			=> Items?.FirstOrDefault(i => i.IsEquippable(slot) && i.Model.Id == item.Id && i.Model.Variant == item.Variant, null!);
 
 		public static EquipIndex SlotToIndex(EquipSlot slot) => (EquipIndex)(slot - ((int)slot >= 5 ? 3 : 2));
 
@@ -37,7 +37,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public unsafe static void Draw() {
 			if (Items == null)
-				Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable()).ToList();
+				Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
 
 			for (var i = 2; i < 13; i++) {
 				var slot = (EquipSlot)i;
@@ -66,7 +66,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			var item = Equipped[slot];
 
-			if (item.Icon == null && item.Item != null)
+			if (item.Icon == null)
 				item.Icon = Dalamud.DataManager.GetImGuiTextureIcon(item.Item == null ? (uint)0 : item.Item.Icon);
 
 			ImGui.ImageButton(item.Icon!.ImGuiHandle, IconSize);
