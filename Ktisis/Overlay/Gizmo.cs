@@ -5,9 +5,6 @@ using Matrix = SharpDX.Matrix;
 using ImGuiNET;
 using ImGuizmoNET;
 
-using Dalamud.Logging;
-using Dalamud.Interface;
-
 using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;
 
@@ -82,9 +79,6 @@ namespace Ktisis.Overlay {
 		// Draw
 
 		internal void BeginFrame() {
-			Io = ImGui.GetIO();
-			Wp = ImGui.GetWindowPos();
-
 			ImGuizmo.BeginFrame();
 			ImGuizmo.SetDrawlist();
 			ImGuizmo.SetRect(Wp.X, Wp.Y, Io.DisplaySize.X, Io.DisplaySize.Y);
@@ -117,7 +111,6 @@ namespace Ktisis.Overlay {
 			ComposeMatrix(ref pos, ref rot, ref scale);
 			Draw();
 			DecomposeMatrix(ref pos, ref rot, ref scale);
-			PluginLog.Information($"{pos.X}, {pos.Y}, {pos.Z}");
 		}
 	}
 }

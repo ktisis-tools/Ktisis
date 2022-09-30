@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Numerics;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 using ImGuiNET;
 using ImGuizmoNET;
 
-using Dalamud.Interface;
-using Dalamud.Logging;
 using Dalamud.Game.ClientState.Objects.Types;
 
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
-
 using Ktisis.Interop;
-using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
@@ -29,7 +23,7 @@ namespace Ktisis.Overlay {
 		public BoneSelector BoneSelector;
 		public BoneMod BoneMod;
 
-		public unsafe WorldMatrix* matrix;
+		public unsafe WorldMatrix* Matrix;
 
 		float[] cameraView = {
 			1.0f, 0.0f, 0.0f, 0.0f,
@@ -53,7 +47,7 @@ namespace Ktisis.Overlay {
 			BoneSelector = new BoneSelector();
 			BoneMod = new BoneMod();
 
-			matrix = (WorldMatrix*)CameraHooks.GetMatrix!();
+			Matrix = (WorldMatrix*)CameraHooks.GetMatrix!();
 		}
 
 		// Toggle visibility
@@ -226,7 +220,7 @@ namespace Ktisis.Overlay {
 						var io = ImGui.GetIO();
 						var wp = ImGui.GetWindowPos();
 
-						if (matrix == null)
+						if (Matrix == null)
 							return;
 
 						ImGuizmo.BeginFrame();
@@ -236,7 +230,7 @@ namespace Ktisis.Overlay {
 						ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
 
 						ImGuizmo.Manipulate(
-							ref matrix->Projection.M11,
+							ref Matrix->Projection.M11,
 							ref cameraView[0],
 							GizmoOp,
 							Gizmode,

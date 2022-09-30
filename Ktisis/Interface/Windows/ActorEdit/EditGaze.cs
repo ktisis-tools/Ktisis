@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 
 using ImGuiNET;
-using ImGuizmoNET;
 
-using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
