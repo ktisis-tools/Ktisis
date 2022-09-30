@@ -256,13 +256,6 @@ namespace Ktisis.Overlay {
 							ref BoneMod.DeltaMatrix.M11
 						);
 
-						ImGuizmo.DrawCubes(
-							ref matrix->Projection.M11,
-							ref cameraView[0],
-							ref BoneMod.BoneMatrix.M11,
-							1
-						);
-
 						// TODO: Streamline this.
 
 						//BoneMod.SnapshotBone(bone, model);

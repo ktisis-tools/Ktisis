@@ -41,7 +41,6 @@ namespace Ktisis.Structs.Bones {
 			Rotation = MathHelpers.ToEuler(bone.Transform.Rotation * RootRotation);
 
 			Scale = MathHelpers.ToVector3(bone.Transform.Scale);
-			Scale = new Vector3(0.015f, 0.015f, 0.015f); // temp for debugging
 
 			ImGuizmo.RecomposeMatrixFromComponents(
 				ref WorldPos.X,
