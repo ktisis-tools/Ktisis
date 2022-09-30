@@ -229,7 +229,7 @@ namespace Ktisis.Interface.Windows {
 
 			var opt = option.Option;
 			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
-				if (ImGui.IsWindowFocused()) {
+				if (ImGui.IsWindowFocused() || ImGui.IsItemFocused()) {
 					int i = 0;
 					foreach (var (val, icon) in option.Select!) {
 						if (ImGui.ImageButton(icon.ImGuiHandle, new Vector2(IconSize, IconSize))) {

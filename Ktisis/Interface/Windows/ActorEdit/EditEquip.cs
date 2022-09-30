@@ -26,6 +26,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public static Dictionary<EquipSlot, ItemCache> Equipped = new();
 
+		public static Vector2 SelectPos;
+		public static EquipSlot? SlotSelect;
+		public static IEnumerable<Item>? SlotItems;
+		public static string ItemSearch = "";
+
 		// Helper stuff. Will move if there's ever a need for this elsewhere.
 
 		public static Item? FindItem(EquipItem item, EquipSlot slot)
@@ -69,7 +74,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (item.Icon == null)
 				item.Icon = Dalamud.DataManager.GetImGuiTextureIcon(item.Item == null ? (uint)0 : item.Item.Icon);
 
-			ImGui.ImageButton(item.Icon!.ImGuiHandle, IconSize);
+			if (ImGui.ImageButton(item.Icon!.ImGuiHandle, IconSize) && SlotSelect == null)
+				OpenSelector(slot);
 
 			ImGui.SameLine();
 			ImGui.BeginGroup();
@@ -87,6 +93,54 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.PopItemWidth();
 
 			ImGui.EndGroup();
+
+			if (SlotSelect == slot)
+				DrawSelectorList(index, equip);
+		}
+
+		public static void OpenSelector(EquipSlot slot) {
+			SlotSelect = slot;
+			SlotItems = Items!.Where(i => i.IsEquippable(slot));
+			SelectPos = ImGui.GetMousePos();
+		}
+
+		public unsafe static void DrawSelectorList(EquipIndex index, EquipItem equip) {
+			if (SlotItems == null)
+				return;
+
+			var size = new Vector2(-1, -1);
+			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
+
+			ImGui.SetNextWindowPos(SelectPos);
+			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
+
+			if (ImGui.Begin("Item Select", ImGuiWindowFlags.NoDecoration)) {
+				var focus = ImGui.IsWindowFocused();
+
+				ImGui.PushItemWidth(400);
+				ImGui.InputTextWithHint("##equip_search", "Search...", ref ItemSearch, 32);
+				ImGui.BeginListBox("##equip_items");
+				var items = SlotItems;
+				if (ItemSearch.Length > 0)
+					items = items.Where(i => i.Name.Contains(ItemSearch));
+				foreach (var item in items) {
+					if (ImGui.Selectable($"{item.Name}")) {
+						equip.Id = item.Model.Id;
+						equip.Variant = (byte)item.Model.Variant;
+						Target->Equip(index, equip);
+					}
+					focus |= ImGui.IsItemFocused();
+				}
+				ImGui.EndListBox();
+				ImGui.PopItemWidth();
+
+				if (!focus) {
+					SlotSelect = null;
+					SlotItems = null;
+				}
+			}
+
+			ImGui.End();
 		}
 	}
 
