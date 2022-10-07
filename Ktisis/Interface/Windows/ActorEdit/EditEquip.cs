@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
@@ -30,6 +31,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static EquipSlot? SlotSelect;
 		public static IEnumerable<Item>? SlotItems;
 		public static string ItemSearch = "";
+		public static int? LastSelectedItemKey = null;
 
 		// Helper stuff. Will move if there's ever a need for this elsewhere.
 
@@ -127,15 +129,31 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				ImGui.PushItemWidth(400);
 				ImGui.InputTextWithHint("##equip_search", "Search...", ref ItemSearch, 32);
 				ImGui.BeginListBox("##equip_items", new Vector2(-1, 300));
+				// TODO: scroll the list to the currently selected item when using ImGuiKey
+
 				var items = SlotItems;
 				if (ItemSearch.Length > 0)
 					items = items.Where(i => i.Name.Contains(ItemSearch));
+				int itemKey = 0;
+				bool isAnItemSelected = false; // allows one selection per foreach
+
 				foreach (var item in items) {
+					itemKey++;
 					// TODO: Icon?
-					if (ImGui.Selectable($"{item.Name}")) {
+
+					// TODO: mark the currently selected item
+					bool selecting = false;
+
+					selecting |= ImGui.Selectable($"{item.Name}");
+					selecting |= ImGui.IsKeyPressed(ImGuiKey.RightShift) && !isAnItemSelected && itemKey == LastSelectedItemKey - 1;
+					selecting |= ImGui.IsKeyPressed(ImGuiKey.RightCtrl) && !isAnItemSelected && itemKey == LastSelectedItemKey + 1;
+
+					if (selecting) {
 						equip.Id = item.Model.Id;
 						equip.Variant = (byte)item.Model.Variant;
 						Target->Equip(index, equip);
+						LastSelectedItemKey = itemKey;
+						isAnItemSelected = true;
 					}
 					focus |= ImGui.IsItemFocused();
 				}
