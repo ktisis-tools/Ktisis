@@ -133,7 +133,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 				var items = SlotItems;
 				if (ItemSearch.Length > 0)
-					items = items.Where(i => i.Name.Contains(ItemSearch));
+					items = items.Where(i => i.Name.Contains(ItemSearch, StringComparison.OrdinalIgnoreCase));
+
 				int itemKey = 0;
 				bool isAnItemSelected = false; // allows one selection per foreach
 
