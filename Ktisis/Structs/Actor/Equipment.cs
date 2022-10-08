@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+using Ktisis.GameData.Excel;
+
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Equipment {
@@ -16,6 +18,25 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x1C)] public EquipItem Bracelet;
 		[FieldOffset(0x20)] public EquipItem RingRight;
 		[FieldOffset(0x24)] public EquipItem RingLeft;
+
+		public static EquipSlot EquipIndexToItemSlot(EquipIndex equipIndex) // sorry, I don't know where to put this
+		{
+			EquipSlot[] slots =
+			{
+				EquipSlot.Head,
+				EquipSlot.Chest,
+				EquipSlot.Hands,
+				EquipSlot.Legs,
+				EquipSlot.Feet,
+				EquipSlot.Earring,
+				EquipSlot.Necklace,
+				EquipSlot.Bracelet,
+				EquipSlot.RingRight,
+				EquipSlot.RingLeft
+			};
+			return slots[(uint)equipIndex];
+		}
+
 	}
 
 	[StructLayout(LayoutKind.Explicit, Size = 0x4)]
