@@ -38,7 +38,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static IEnumerable<Item>? SlotItems;
 		public static string ItemSearch = "";
 		public static string SetSearch = "";
-		public static int? LastSelectedItemKey = null;
+		public static int LastSelectedItemKey = 0;
 		public static bool DrawSetSelection = false;
 		public static EquipmentSets? Sets = null;
 
@@ -156,22 +156,26 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 				int indexKey = 0;
 				bool isOneSelected = false; // allows one selection per foreach
+				if (LastSelectedItemKey >= items.Count()) LastSelectedItemKey = items.Count() - 1;
 
 				foreach (var item in items) {
-					indexKey++;
 					// TODO: Icon?
 
 					bool selecting = false;
 
 					selecting |= ImGui.Selectable($"{item.Name}", indexKey == LastSelectedItemKey);
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && !isOneSelected && indexKey == LastSelectedItemKey - 1;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && !isOneSelected && indexKey == LastSelectedItemKey + 1;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUpFast) && !isOneSelected && indexKey == LastSelectedItemKey - FastScrollLineJump;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDownFast) && !isOneSelected && indexKey == LastSelectedItemKey + FastScrollLineJump;
-					selecting |= pressedEnter && !isOneSelected;
+					if (!isOneSelected)
+					{
+						selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && indexKey == LastSelectedItemKey - 1;
+						selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && indexKey == LastSelectedItemKey + 1;
+						selecting |= ImGui.IsKeyPressed(KeyBindBrowseUpFast) && indexKey == LastSelectedItemKey - FastScrollLineJump;
+						selecting |= ImGui.IsKeyPressed(KeyBindBrowseDownFast) && indexKey == LastSelectedItemKey + FastScrollLineJump;
+						selecting |= pressedEnter;
+					}
 
 					if (selecting) {
-						if (ImGui.IsKeyPressed(KeyBindBrowseUp) || ImGui.IsKeyPressed(KeyBindBrowseDown) || ImGui.IsKeyPressed(KeyBindBrowseUpFast) || ImGui.IsKeyPressed(KeyBindBrowseDownFast)) ImGui.SetScrollY(ImGui.GetCursorPosY() - 60);
+						if (ImGui.IsKeyPressed(KeyBindBrowseUp) || ImGui.IsKeyPressed(KeyBindBrowseDown) || ImGui.IsKeyPressed(KeyBindBrowseUpFast) || ImGui.IsKeyPressed(KeyBindBrowseDownFast))
+							ImGui.SetScrollY(ImGui.GetCursorPosY() - (ImGui.GetWindowHeight() /2));
 						equip.Id = item.Model.Id;
 						equip.Variant = (byte)item.Model.Variant;
 						Target->Equip(index, equip);
@@ -179,6 +183,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 						isOneSelected = true;
 					}
 					focus |= ImGui.IsItemFocused();
+					indexKey++;
 				}
 				ImGui.EndListBox();
 				focus |= ImGui.IsItemActive();
@@ -242,10 +247,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 				int indexKey = 0;
 				bool isOneSelected = false; // allows one selection per foreach
+				if (LastSelectedItemKey >= sets.Count) LastSelectedItemKey = sets.Count -1;
 
 				foreach (var set in sets)
 				{
-					indexKey++;
 					bool selecting = false;
 
 					selecting |= ImGui.Selectable($"{set.Name}", indexKey == LastSelectedItemKey);
@@ -256,21 +261,26 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					GuiHelpers.TextCentered($"{set.Source}");
 					ImGui.PopStyleVar();
 
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && !isOneSelected && indexKey == LastSelectedItemKey - 1;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && !isOneSelected && indexKey == LastSelectedItemKey + 1;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUpFast) && !isOneSelected && indexKey == LastSelectedItemKey - 10;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDownFast) && !isOneSelected && indexKey == LastSelectedItemKey + 10;
-					selecting |= pressedEnter && !isOneSelected;
+					if (!isOneSelected)
+					{
+						selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && indexKey == LastSelectedItemKey - 1;
+						selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && indexKey == LastSelectedItemKey + 1;
+						selecting |= ImGui.IsKeyPressed(KeyBindBrowseUpFast) && indexKey == LastSelectedItemKey - 10;
+						selecting |= ImGui.IsKeyPressed(KeyBindBrowseDownFast) && indexKey == LastSelectedItemKey + 10;
+						selecting |= pressedEnter;
+					}
 
 					if (selecting)
 					{
-						if (ImGui.IsKeyPressed(KeyBindBrowseUp) || ImGui.IsKeyPressed(KeyBindBrowseDown) || ImGui.IsKeyPressed(KeyBindBrowseUpFast) || ImGui.IsKeyPressed(KeyBindBrowseDownFast)) ImGui.SetScrollY(ImGui.GetCursorPosY() - 60);
+						if (ImGui.IsKeyPressed(KeyBindBrowseUp) || ImGui.IsKeyPressed(KeyBindBrowseDown) || ImGui.IsKeyPressed(KeyBindBrowseUpFast) || ImGui.IsKeyPressed(KeyBindBrowseDownFast))
+							ImGui.SetScrollY(ImGui.GetCursorPosY() - (ImGui.GetWindowHeight() / 2));
 						Target->Equip(Sets.GetItems(set));
 
 						LastSelectedItemKey = indexKey;
 						isOneSelected = true;
 					}
 					focus |= ImGui.IsItemFocused();
+					indexKey++;
 				}
 				ImGui.EndListBox();
 				focus |= ImGui.IsItemActive();
