@@ -19,8 +19,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public const int _IconSize = 36;
 		public static Vector2 IconSize = new(_IconSize, _IconSize);
 
-		public static ImGuiKey KeyBindBrowseUp = ImGuiKey.RightShift;
-		public static ImGuiKey KeyBindBrowseDown = ImGuiKey.RightCtrl;
+		public const ImGuiKey KeyBindBrowseUp = ImGuiKey.UpArrow;
+		public const ImGuiKey KeyBindBrowseDown = ImGuiKey.DownArrow;
+		public const ImGuiKey KeyBindBrowseUpFast = ImGuiKey.PageUp;
+		public const ImGuiKey KeyBindBrowseDownFast = ImGuiKey.PageDown;
+		public const int FastScrollLineJump = 8; // number of lines on the screen?
 
 		// Properties
 
@@ -34,6 +37,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static EquipSlot? SlotSelect;
 		public static IEnumerable<Item>? SlotItems;
 		public static string ItemSearch = "";
+		public static string SetSearch = "";
 		public static int? LastSelectedItemKey = null;
 		public static bool DrawSetSelection = false;
 		public static EquipmentSets? Sets = null;
@@ -140,9 +144,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				var focus = ImGui.IsWindowFocused() || ImGui.IsWindowHovered();
 
 				ImGui.PushItemWidth(400);
-				ImGui.InputTextWithHint("##equip_search", "Search...", ref ItemSearch, 32);
+				bool pressedEnter = ImGui.InputTextWithHint("##equip_search", "Search...", ref ItemSearch, 32, ImGuiInputTextFlags.EnterReturnsTrue);
+				if (ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows) && !ImGui.IsAnyItemActive() && !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+					ImGui.SetKeyboardFocusHere(-1);
+
 				ImGui.BeginListBox("##equip_items", new Vector2(-1, 300));
-				// TODO: scroll the list to the currently selected set when using ImGuiKey
 
 				var items = SlotItems;
 				if (ItemSearch.Length > 0)
@@ -155,14 +161,17 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					indexKey++;
 					// TODO: Icon?
 
-					// TODO: mark the currently selected set
 					bool selecting = false;
 
-					selecting |= ImGui.Selectable($"{item.Name}");
+					selecting |= ImGui.Selectable($"{item.Name}", indexKey == LastSelectedItemKey);
 					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && !isOneSelected && indexKey == LastSelectedItemKey - 1;
 					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && !isOneSelected && indexKey == LastSelectedItemKey + 1;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUpFast) && !isOneSelected && indexKey == LastSelectedItemKey - FastScrollLineJump;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDownFast) && !isOneSelected && indexKey == LastSelectedItemKey + FastScrollLineJump;
+					selecting |= pressedEnter && !isOneSelected;
 
 					if (selecting) {
+						if (ImGui.IsKeyPressed(KeyBindBrowseUp) || ImGui.IsKeyPressed(KeyBindBrowseDown) || ImGui.IsKeyPressed(KeyBindBrowseUpFast) || ImGui.IsKeyPressed(KeyBindBrowseDownFast)) ImGui.SetScrollY(ImGui.GetCursorPosY() - 60);
 						equip.Id = item.Model.Id;
 						equip.Variant = (byte)item.Model.Variant;
 						Target->Equip(index, equip);
@@ -175,7 +184,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				focus |= ImGui.IsItemActive();
 				ImGui.PopItemWidth();
 
-				if (!focus) {
+				if (!focus || ImGui.IsKeyPressed(ImGuiKey.Escape)) {
 					SlotSelect = null;
 					SlotItems = null;
 				}
@@ -221,13 +230,15 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				var focus = ImGui.IsWindowFocused() || ImGui.IsWindowHovered();
 
 				ImGui.PushItemWidth(400);
-				string searchInput = "";
-				ImGui.InputTextWithHint("##equip_search", "Search...", ref searchInput, 32);
-				ImGui.BeginListBox("##equip_items", new Vector2(-1, 300));
-				// TODO: scroll the list to the currently selected set when using ImGuiKey
+				bool pressedEnter = ImGui.InputTextWithHint("##equip_search", "Search...", ref SetSearch, 32, ImGuiInputTextFlags.EnterReturnsTrue);
 
-				if (searchInput.Length > 0)
-					sets = sets.Where(s => s.Name.Contains(searchInput, StringComparison.OrdinalIgnoreCase)).ToList();
+				if (ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows) && !ImGui.IsAnyItemActive() && !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+					ImGui.SetKeyboardFocusHere(-1);
+
+				ImGui.BeginListBox("##equip_items", new Vector2(-1, 300));
+
+				if (SetSearch.Length > 0)
+					sets = sets.Where(s => s.Name.Contains(SetSearch, StringComparison.OrdinalIgnoreCase)).ToList();
 
 				int indexKey = 0;
 				bool isOneSelected = false; // allows one selection per foreach
@@ -235,10 +246,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				foreach (var set in sets)
 				{
 					indexKey++;
-					// TODO: mark the currently selected set
 					bool selecting = false;
 
-					selecting |= ImGui.Selectable($"{set.Name}");
+					selecting |= ImGui.Selectable($"{set.Name}", indexKey == LastSelectedItemKey);
+					focus |= ImGui.IsItemFocused();
+
 					ImGui.SameLine();
 					ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
 					GuiHelpers.TextCentered($"{set.Source}");
@@ -246,9 +258,13 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && !isOneSelected && indexKey == LastSelectedItemKey - 1;
 					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && !isOneSelected && indexKey == LastSelectedItemKey + 1;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUpFast) && !isOneSelected && indexKey == LastSelectedItemKey - 10;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDownFast) && !isOneSelected && indexKey == LastSelectedItemKey + 10;
+					selecting |= pressedEnter && !isOneSelected;
 
 					if (selecting)
 					{
+						if (ImGui.IsKeyPressed(KeyBindBrowseUp) || ImGui.IsKeyPressed(KeyBindBrowseDown) || ImGui.IsKeyPressed(KeyBindBrowseUpFast) || ImGui.IsKeyPressed(KeyBindBrowseDownFast)) ImGui.SetScrollY(ImGui.GetCursorPosY() - 60);
 						Target->Equip(Sets.GetItems(set));
 
 						LastSelectedItemKey = indexKey;
@@ -260,7 +276,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				focus |= ImGui.IsItemActive();
 				ImGui.PopItemWidth();
 
-				if (!focus)
+				if (!focus || ImGui.IsKeyPressed(ImGuiKey.Escape))
 					DrawSetSelection = false;
 			}
 
