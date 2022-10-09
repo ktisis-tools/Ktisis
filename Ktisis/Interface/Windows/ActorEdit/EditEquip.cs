@@ -19,6 +19,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public const int _IconSize = 36;
 		public static Vector2 IconSize = new(_IconSize, _IconSize);
 
+		public static ImGuiKey KeyBindBrowseUp = ImGuiKey.RightShift;
+		public static ImGuiKey KeyBindBrowseDown = ImGuiKey.RightCtrl;
+
 		// Properties
 
 		public unsafe static Actor* Target => EditActor.Target;
@@ -156,8 +159,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					bool selecting = false;
 
 					selecting |= ImGui.Selectable($"{item.Name}");
-					selecting |= ImGui.IsKeyPressed(ImGuiKey.RightShift) && !isOneSelected && indexKey == LastSelectedItemKey - 1;
-					selecting |= ImGui.IsKeyPressed(ImGuiKey.RightCtrl) && !isOneSelected && indexKey == LastSelectedItemKey + 1;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && !isOneSelected && indexKey == LastSelectedItemKey - 1;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && !isOneSelected && indexKey == LastSelectedItemKey + 1;
 
 					if (selecting) {
 						equip.Id = item.Model.Id;
@@ -241,8 +244,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					GuiHelpers.TextCentered($"{set.Source}");
 					ImGui.PopStyleVar();
 
-					selecting |= ImGui.IsKeyPressed(ImGuiKey.RightShift) && !isOneSelected && indexKey == LastSelectedItemKey - 1;
-					selecting |= ImGui.IsKeyPressed(ImGuiKey.RightCtrl) && !isOneSelected && indexKey == LastSelectedItemKey + 1;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && !isOneSelected && indexKey == LastSelectedItemKey - 1;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && !isOneSelected && indexKey == LastSelectedItemKey + 1;
 
 					if (selecting)
 					{
