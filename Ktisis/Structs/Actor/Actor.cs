@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
@@ -54,6 +55,10 @@ namespace Ktisis.Structs.Actor {
 		public unsafe void Equip(EquipIndex index, EquipItem item) {
 			if (ActorHooks.ChangeEquip == null) return;
 			ActorHooks.ChangeEquip(GetAddress() + 0x6D0, index, item);
+		}
+		public void Equip(List<(EquipIndex, EquipItem)> items) {
+			foreach((EquipIndex index, EquipItem item) in items)
+				Equip(index, item);
 		}
 
 		// Change customize - no redraw method
