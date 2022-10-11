@@ -26,9 +26,9 @@ namespace Ktisis.Structs.Actor {
 	public class EquipmentSets
 	{
 		public List<EquipmentSet> Sets;
-		private IEnumerable<Item>? ItemsSheet;
+		private IEnumerable<Item> ItemsSheet;
 
-		public EquipmentSets(IEnumerable<Item>? itemsSheet)
+		public EquipmentSets(IEnumerable<Item> itemsSheet)
 		{
 			ItemsSheet = itemsSheet;
 			Sets = new();
@@ -38,10 +38,9 @@ namespace Ktisis.Structs.Actor {
 		private Item GetEmperorNewItemForSlot(EquipIndex equipIndex) => ItemsSheet!.Where(i => i.IsEquippable(Equipment.EquipIndexToItemSlot(equipIndex)) && i.Name.Contains("Emperor's New")).First(); // TODO: improve performances, maybe cache them in constructor
 
 		// public managers
-		public static EquipmentSets Init(IEnumerable<Item>? itemsSheet) => new EquipmentSets(itemsSheet);
-		public static EquipmentSets InitAndLoadSources(IEnumerable<Item>? itemsSheet)
+		public static EquipmentSets InitAndLoadSources(IEnumerable<Item> itemsSheet)
 		{
-			var sets = Init(itemsSheet);
+			var sets = new EquipmentSets(itemsSheet!);
 			sets.LoadSources();
 			return sets;
 		}
@@ -52,7 +51,7 @@ namespace Ktisis.Structs.Actor {
 			return false;
 		}
 		public List<EquipmentSet> GetSets() => Sets;
-		public void RefreshItemSheet(IEnumerable<Item>? itemsSheet) => ItemsSheet = itemsSheet;
+		public void RefreshItemSheet(IEnumerable<Item> itemsSheet) => ItemsSheet = itemsSheet;
 
 
 		// Set Finders

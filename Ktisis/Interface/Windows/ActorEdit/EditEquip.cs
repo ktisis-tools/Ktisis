@@ -199,7 +199,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		}
 		public static void DrawControls()
 		{
-			Sets = EquipmentSets.Init(Items);
+			Sets = new EquipmentSets(Items!);
 
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Tshirt, "Look up for a set."))
 				OpenSetSelector();
@@ -217,7 +217,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public unsafe static void DrawSetSelectorList()
 		{
 			if (Sets?.LoadSources() == null)
-				Sets = EquipmentSets.InitAndLoadSources(Items);
+				Sets = EquipmentSets.InitAndLoadSources(Items!);
 
 			List<EquipmentSet> sets = Sets.GetSets();
 
