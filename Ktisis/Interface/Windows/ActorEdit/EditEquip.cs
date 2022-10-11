@@ -199,7 +199,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 				LoopHoverPopupWindow(
 					HoverPopupWindowFlags.SelectorList,
-					sets,
+					sets.Cast<dynamic>(),
 					(i) => { // draw Before Line
 
 						return false; // return true to select
