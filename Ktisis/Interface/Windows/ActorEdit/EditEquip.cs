@@ -52,11 +52,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		// UI Code
 
 		public unsafe static void Draw() {
-			DrawControls();
 
 			if (Items == null)
 				Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
 
+			DrawControls();
 
 			ImGui.BeginGroup();
 			for (var i = 2; i < 13; i++) {
