@@ -148,37 +148,26 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (SlotItems == null)
 				return;
 
-			if (BeginHoverPopupWindow(HoverPopupWindowFlags.SelectorList | HoverPopupWindowFlags.SearchBar, ref ItemSearch, "Item Select", "##equip_items"))
-			{
-				var items = SlotItems;
-				if (ItemSearch.Length > 0)
-					items = items.Where(i => i.Name.Contains(ItemSearch, StringComparison.OrdinalIgnoreCase));
-
-				LoopHoverPopupWindow(
-					HoverPopupWindowFlags.SelectorList,
-					items,
-					(i) => { // draw Before Line
-
-						return false; // return true to select
-					},
-					(i) => { // draw After Line
-
-						return false; // return true to select
-					},
+			HoverPopupWindow(
+					HoverPopupWindowFlags.SelectorList | HoverPopupWindowFlags.SearchBar,
+					SlotItems,
+					(i) => false, // draw Before Line
+					(i) => i.Name, // lineLabel
+					(i) => false, // draw After Line
 					(i) => { // on Select
 						equip.Id = i.Model.Id;
 						equip.Variant = (byte)i.Model.Variant;
 						Target->Equip(index, equip);
-
 					},
-					null);
-			}
-			EndHoverPopupWindow(
-				HoverPopupWindowFlags.SelectorList,
-				() => { // on close
-					SlotSelect = null;
-					SlotItems = null;
-				});
+					() => { // on close
+						SlotSelect = null;
+						SlotItems = null;
+						//ItemSearch = ""; // to forget the search input on close
+					},
+					ref ItemSearch,
+					"Item Select",
+					"##equip_items"
+					);
 		}
 
 		public unsafe static void DrawSetSelectorList()
@@ -191,19 +180,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (!sets.Any())
 				return;
 
-
-			if (BeginHoverPopupWindow(HoverPopupWindowFlags.SelectorList | HoverPopupWindowFlags.SearchBar, ref SetSearch, "Set Select", "##equip_sets"))
-			{
-				if (SetSearch.Length > 0)
-					sets = sets.Where(s => s.Name.Contains(SetSearch, StringComparison.OrdinalIgnoreCase));
-
-				LoopHoverPopupWindow(
-					HoverPopupWindowFlags.SelectorList,
+			HoverPopupWindow(
+					HoverPopupWindowFlags.SelectorList | HoverPopupWindowFlags.SearchBar,
 					sets.Cast<dynamic>(),
-					(i) => { // draw Before Line
-
-						return false; // return true to select
-					},
+					(i) => false, // draw Before Line
+					(i) => i.Name, // lineLabel
 					(i) => { // draw After Line
 						ImGui.SameLine();
 						ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
@@ -212,17 +193,12 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 						return false; // return true to select
 					},
-					(i) => { // on Select
-						Target->Equip(Sets.GetItems(i));
-
-					},
-					null);
-			}
-			EndHoverPopupWindow(
-				HoverPopupWindowFlags.SelectorList,
-				() => { // on close
-					DrawSetSelection = false;
-				});
+					(i) => Target->Equip(Sets.GetItems(i)), // on Select
+					() => DrawSetSelection = false, // on close
+					ref SetSearch,
+					"Set Select",
+					"##equip_sets"
+					);
 		}
 
 
@@ -236,6 +212,32 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			SelectorList,
 			SearchBar,
 		}
+
+		private static void HoverPopupWindow(
+			HoverPopupWindowFlags flags,
+			IEnumerable<dynamic> enumerable,
+			Func<dynamic, bool> drawBeforeLine,
+			Func<dynamic, string> lineLabel,
+			Func<dynamic, bool> drawAfterLine,
+			Action<dynamic> onSelect,
+			Action onClose,
+			ref string InputSearch,
+			string windowLabel = "",
+			string listLabel = ""
+			)
+		{
+			if(BeginHoverPopupWindow(flags, ref InputSearch, windowLabel, listLabel))
+			{
+				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar))
+					if (SetSearch.Length > 0)
+						enumerable = enumerable.Where(s => lineLabel(s).Contains(SetSearch, StringComparison.OrdinalIgnoreCase));
+
+				LoopHoverPopupWindow(flags, enumerable, drawBeforeLine, drawAfterLine, onSelect, lineLabel);
+			}
+			EndHoverPopupWindow(flags, onClose);
+		}
+
+
 
 		private static bool BeginHoverPopupWindow(HoverPopupWindowFlags flags, ref string InputSearch, string windowLabel = "",string listLabel = "")
 		{
@@ -277,7 +279,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			ImGui.End();
 		}
-		private static void LoopHoverPopupWindow(HoverPopupWindowFlags flags, IEnumerable<dynamic> enumerable, Func<dynamic, bool> drawBeforeLine, Func<dynamic, bool> drawAfterLine, Action<dynamic> onSelect, string? lineLabel = null)
+		private static void LoopHoverPopupWindow(HoverPopupWindowFlags flags, IEnumerable<dynamic> enumerable, Func<dynamic, bool> drawBeforeLine, Func<dynamic, bool> drawAfterLine, Action<dynamic> onSelect, Func<dynamic, string> lineLabel)
 		{
 			if (!HoverPopupWindowIsBegan) return;
 
@@ -291,7 +293,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 				selecting |= drawBeforeLine(i);
 				if(flags.HasFlag(HoverPopupWindowFlags.SelectorList))
-					selecting |= ImGui.Selectable(lineLabel ?? $"{i.Name}", indexKey == LastSelectedItemKey);
+					selecting |= ImGui.Selectable(lineLabel(i), indexKey == LastSelectedItemKey);
 				HoverPopupWindowFocus |= ImGui.IsItemFocused();
 				selecting |= drawAfterLine(i);
 
