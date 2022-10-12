@@ -19,12 +19,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public const int _IconSize = 36;
 		public static Vector2 IconSize = new(_IconSize, _IconSize);
 
-		public const ImGuiKey KeyBindBrowseUp = ImGuiKey.UpArrow;
-		public const ImGuiKey KeyBindBrowseDown = ImGuiKey.DownArrow;
-		public const ImGuiKey KeyBindBrowseUpFast = ImGuiKey.PageUp;
-		public const ImGuiKey KeyBindBrowseDownFast = ImGuiKey.PageDown;
-		public const int FastScrollLineJump = 8; // number of lines on the screen?
-
 		// Properties
 
 		public unsafe static Actor* Target => EditActor.Target;
@@ -33,12 +27,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public static Dictionary<EquipSlot, ItemCache> Equipped = new();
 
-		public static Vector2 SelectPos;
 		public static EquipSlot? SlotSelect;
 		public static IEnumerable<Item>? SlotItems;
 		public static string ItemSearch = "";
 		public static string SetSearch = "";
-		public static int LastSelectedItemKey = 0;
 		public static bool DrawSetSelection = false;
 		public static EquipmentSets? Sets = null;
 
@@ -122,12 +114,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static void OpenSelector(EquipSlot slot) {
 			SlotSelect = slot;
 			SlotItems = Items!.Where(i => i.IsEquippable(slot));
-			SelectPos = ImGui.GetMousePos();
 		}
 
 		public static void OpenSetSelector() {
 			DrawSetSelection = true;
-			SelectPos = ImGui.GetMousePos();
 		}
 
 		public static void DrawControls()
@@ -148,8 +138,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (SlotItems == null)
 				return;
 
-			HoverPopupWindow(
-					HoverPopupWindowFlags.SelectorList | HoverPopupWindowFlags.SearchBar,
+			GuiHelpers.HoverPopupWindow(
+					GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
 					SlotItems,
 					(i) => false, // draw Before Line
 					(i) => i.Name, // lineLabel
@@ -166,7 +156,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					},
 					ref ItemSearch,
 					"Item Select",
-					"##equip_items"
+					"##equip_items",
+					"##equip_search"
 					);
 		}
 
@@ -180,8 +171,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (!sets.Any())
 				return;
 
-			HoverPopupWindow(
-					HoverPopupWindowFlags.SelectorList | HoverPopupWindowFlags.SearchBar,
+			GuiHelpers.HoverPopupWindow(
+					GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
 					sets.Cast<dynamic>(),
 					(i) => false, // draw Before Line
 					(i) => i.Name, // lineLabel
@@ -197,129 +188,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					() => DrawSetSelection = false, // on close
 					ref SetSearch,
 					"Set Select",
-					"##equip_sets"
+					"##equip_sets",
+					"##set_search"
 					);
 		}
-
-
-		// HoverPopupWindow properties and methods
-		private static bool HoverPopupWindowIsBegan = false;
-		private static bool HoverPopupWindowFocus = false;
-		private static bool HoverPopupWindowSearchBarValidated = false;
-		public enum HoverPopupWindowFlags
-		{
-			None,
-			SelectorList,
-			SearchBar,
-		}
-
-		private static void HoverPopupWindow(
-			HoverPopupWindowFlags flags,
-			IEnumerable<dynamic> enumerable,
-			Func<dynamic, bool> drawBeforeLine,
-			Func<dynamic, string> lineLabel,
-			Func<dynamic, bool> drawAfterLine,
-			Action<dynamic> onSelect,
-			Action onClose,
-			ref string InputSearch,
-			string windowLabel = "",
-			string listLabel = ""
-			)
-		{
-			if(BeginHoverPopupWindow(flags, ref InputSearch, windowLabel, listLabel))
-			{
-				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar))
-					if (SetSearch.Length > 0)
-						enumerable = enumerable.Where(s => lineLabel(s).Contains(SetSearch, StringComparison.OrdinalIgnoreCase));
-
-				LoopHoverPopupWindow(flags, enumerable, drawBeforeLine, drawAfterLine, onSelect, lineLabel);
-			}
-			EndHoverPopupWindow(flags, onClose);
-		}
-
-
-
-		private static bool BeginHoverPopupWindow(HoverPopupWindowFlags flags, ref string InputSearch, string windowLabel = "",string listLabel = "")
-		{
-			var size = new Vector2(-1, -1);
-			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
-
-			ImGui.SetNextWindowPos(SelectPos);
-			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
-
-			HoverPopupWindowIsBegan = ImGui.Begin(windowLabel, ImGuiWindowFlags.NoDecoration);
-			if (HoverPopupWindowIsBegan)
-			{
-
-				HoverPopupWindowFocus = ImGui.IsWindowFocused() || ImGui.IsWindowHovered();
-				ImGui.PushItemWidth(400);
-				if(flags.HasFlag(HoverPopupWindowFlags.SearchBar))
-					HoverPopupWindowSearchBarValidated = ImGui.InputTextWithHint("##equip_search", "Search...", ref InputSearch, 32, ImGuiInputTextFlags.EnterReturnsTrue);
-
-				if (ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows) && !ImGui.IsAnyItemActive() && !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-					ImGui.SetKeyboardFocusHere(flags.HasFlag(HoverPopupWindowFlags.SearchBar)?-1:0); // TODO: verify the keyboarf focus behaviour when searchbar is disabled
-
-				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList))
-					ImGui.BeginListBox(listLabel, new Vector2(-1, 300));
-
-			}
-			return HoverPopupWindowIsBegan;
-		}
-		private static void EndHoverPopupWindow( HoverPopupWindowFlags flags, Action onClose)
-		{
-			if (HoverPopupWindowIsBegan) {
-				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList))
-					ImGui.EndListBox();
-				HoverPopupWindowFocus |= ImGui.IsItemActive();
-				ImGui.PopItemWidth();
-
-				if (!HoverPopupWindowFocus || ImGui.IsKeyPressed(ImGuiKey.Escape))
-					onClose();
-			}
-
-			ImGui.End();
-		}
-		private static void LoopHoverPopupWindow(HoverPopupWindowFlags flags, IEnumerable<dynamic> enumerable, Func<dynamic, bool> drawBeforeLine, Func<dynamic, bool> drawAfterLine, Action<dynamic> onSelect, Func<dynamic, string> lineLabel)
-		{
-			if (!HoverPopupWindowIsBegan) return;
-
-			int indexKey = 0;
-			bool isOneSelected = false; // allows one selection per foreach
-			if (LastSelectedItemKey >= enumerable.Count()) LastSelectedItemKey = enumerable.Count() - 1;
-
-			foreach (var i in enumerable)
-			{
-				bool selecting = false;
-
-				selecting |= drawBeforeLine(i);
-				if(flags.HasFlag(HoverPopupWindowFlags.SelectorList))
-					selecting |= ImGui.Selectable(lineLabel(i), indexKey == LastSelectedItemKey);
-				HoverPopupWindowFocus |= ImGui.IsItemFocused();
-				selecting |= drawAfterLine(i);
-
-				if (!isOneSelected)
-				{
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && indexKey == LastSelectedItemKey - 1;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && indexKey == LastSelectedItemKey + 1;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUpFast) && indexKey == LastSelectedItemKey - FastScrollLineJump;
-					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDownFast) && indexKey == LastSelectedItemKey + FastScrollLineJump;
-					selecting |= HoverPopupWindowSearchBarValidated;
-				}
-
-				if (selecting)
-				{
-					if (ImGui.IsKeyPressed(KeyBindBrowseUp) || ImGui.IsKeyPressed(KeyBindBrowseDown) || ImGui.IsKeyPressed(KeyBindBrowseUpFast) || ImGui.IsKeyPressed(KeyBindBrowseDownFast))
-						ImGui.SetScrollY(ImGui.GetCursorPosY() - (ImGui.GetWindowHeight() / 2));
-
-					onSelect(i);
-					LastSelectedItemKey = indexKey;
-					isOneSelected = true;
-				}
-				HoverPopupWindowFocus |= ImGui.IsItemFocused();
-				indexKey++;
-			}
-		}
-
 
 	}
 
