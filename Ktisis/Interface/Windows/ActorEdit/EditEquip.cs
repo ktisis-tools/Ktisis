@@ -1,15 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
 using ImGuiScene;
 
-using Dalamud.Logging;
-
 using Ktisis.GameData;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
+using Ktisis.Util;
+using Dalamud.Interface;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
 	public class EditEquip {
@@ -26,10 +27,12 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public static Dictionary<EquipSlot, ItemCache> Equipped = new();
 
-		public static Vector2 SelectPos;
 		public static EquipSlot? SlotSelect;
 		public static IEnumerable<Item>? SlotItems;
 		public static string ItemSearch = "";
+		public static string SetSearch = "";
+		public static bool DrawSetSelection = false;
+		public static EquipmentSets? Sets = null;
 
 		// Helper stuff. Will move if there's ever a need for this elsewhere.
 
@@ -41,8 +44,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		// UI Code
 
 		public unsafe static void Draw() {
+
 			if (Items == null)
 				Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
+
+			DrawControls();
 
 			ImGui.BeginGroup();
 			for (var i = 2; i < 13; i++) {
@@ -108,49 +114,85 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static void OpenSelector(EquipSlot slot) {
 			SlotSelect = slot;
 			SlotItems = Items!.Where(i => i.IsEquippable(slot));
-			SelectPos = ImGui.GetMousePos();
 		}
 
-		public unsafe static void DrawSelectorList(EquipIndex index, EquipItem equip) {
+		public static void OpenSetSelector() {
+			DrawSetSelection = true;
+		}
+
+		public static void DrawControls()
+		{
+			Sets = new EquipmentSets(Items!);
+
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Tshirt, "Look up for a set."))
+				OpenSetSelector();
+
+			if (DrawSetSelection)
+				DrawSetSelectorList();
+
+			ImGui.Separator();
+		}
+
+		public unsafe static void DrawSelectorList(EquipIndex index, EquipItem equip)
+		{
 			if (SlotItems == null)
 				return;
 
-			var size = new Vector2(-1, -1);
-			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
-
-			ImGui.SetNextWindowPos(SelectPos);
-			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
-
-			if (ImGui.Begin("Item Select", ImGuiWindowFlags.NoDecoration)) {
-				var focus = ImGui.IsWindowFocused() || ImGui.IsWindowHovered();
-
-				ImGui.PushItemWidth(400);
-				ImGui.InputTextWithHint("##equip_search", "Search...", ref ItemSearch, 32);
-				ImGui.BeginListBox("##equip_items", new Vector2(-1, 300));
-				var items = SlotItems;
-				if (ItemSearch.Length > 0)
-					items = items.Where(i => i.Name.Contains(ItemSearch));
-				foreach (var item in items) {
-					// TODO: Icon?
-					if (ImGui.Selectable($"{item.Name}")) {
-						equip.Id = item.Model.Id;
-						equip.Variant = (byte)item.Model.Variant;
+			GuiHelpers.HoverPopupWindow(
+					GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
+					SlotItems,
+					(i) => false, // draw Before Line
+					(i) => i.Name, // lineLabel
+					(i) => false, // draw After Line
+					(i) => { // on Select
+						equip.Id = i.Model.Id;
+						equip.Variant = (byte)i.Model.Variant;
 						Target->Equip(index, equip);
-					}
-					focus |= ImGui.IsItemFocused();
-				}
-				ImGui.EndListBox();
-				focus |= ImGui.IsItemActive();
-				ImGui.PopItemWidth();
-
-				if (!focus) {
-					SlotSelect = null;
-					SlotItems = null;
-				}
-			}
-
-			ImGui.End();
+					},
+					() => { // on close
+						SlotSelect = null;
+						SlotItems = null;
+						//ItemSearch = ""; // to forget the search input on close
+					},
+					ref ItemSearch,
+					"Item Select",
+					"##equip_items",
+					"##equip_search"
+					);
 		}
+
+		public unsafe static void DrawSetSelectorList()
+		{
+			if (Sets?.LoadSources() == null)
+				Sets = EquipmentSets.InitAndLoadSources(Items!);
+
+			IEnumerable<EquipmentSet> sets = Sets.GetSets();
+
+			if (!sets.Any())
+				return;
+
+			GuiHelpers.HoverPopupWindow(
+					GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
+					sets.Cast<dynamic>(),
+					(i) => false, // draw Before Line
+					(i) => i.Name, // lineLabel
+					(i) => { // draw After Line
+						ImGui.SameLine();
+						ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+						GuiHelpers.TextCentered($"{i.Source}");
+						ImGui.PopStyleVar();
+
+						return false; // return true to select
+					},
+					(i) => Target->Equip(Sets.GetItems(i)), // on Select
+					() => DrawSetSelection = false, // on close
+					ref SetSearch,
+					"Set Select",
+					"##equip_sets",
+					"##set_search"
+					);
+		}
+
 	}
 
 	public class ItemCache {

@@ -8,6 +8,9 @@ using Dalamud.Interface.Components;
 using Ktisis.Helpers;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
+using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace Ktisis.Util
 {
@@ -95,5 +98,159 @@ namespace Ktisis.Util
 			doAfter?.Invoke();
 			return active;
 		}
+
+		public static void TextCentered(string text)
+		{
+			var windowWidth = ImGui.GetWindowSize().X;
+			var textWidth = ImGui.CalcTextSize(text).X;
+
+			ImGui.SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui.Text(text);
+		}
+
+
+
+
+
+		// HoverPopupWindow Method
+		// Constants
+		private const ImGuiKey KeyBindBrowseUp = ImGuiKey.UpArrow;
+		private const ImGuiKey KeyBindBrowseDown = ImGuiKey.DownArrow;
+		private const ImGuiKey KeyBindBrowseUpFast = ImGuiKey.PageUp;
+		private const ImGuiKey KeyBindBrowseDownFast = ImGuiKey.PageDown;
+		private const int HoverPopupWindowFastScrollLineJump = 8; // number of lines on the screen?
+
+		// Properties
+		private static Vector2 HoverPopupWindowSelectPos = Vector2.Zero;
+		private static bool HoverPopupWindowIsBegan = false;
+		private static bool HoverPopupWindowFocus = false;
+		private static bool HoverPopupWindowSearchBarValidated = false;
+		private static int HoverPopupWindowLastSelectedItemKey = 0;
+
+
+		public enum HoverPopupWindowFlags
+		{
+			None,
+			SelectorList,
+			SearchBar,
+		}
+
+		public static void HoverPopupWindow(
+			HoverPopupWindowFlags flags,
+			IEnumerable<dynamic> enumerable,
+			Func<dynamic, bool> drawBeforeLine,
+			Func<dynamic, string> lineLabel,
+			Func<dynamic, bool> drawAfterLine,
+			Action<dynamic> onSelect,
+			Action onClose,
+			ref string InputSearch,
+			string windowLabel = "",
+			string listLabel = "",
+			string searchBarLabel = "##search",
+			string searchBarHint = "Search..."
+			)
+		{
+			if (BeginHoverPopupWindow(flags, ref InputSearch, windowLabel, listLabel, searchBarLabel, searchBarHint))
+			{
+				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar))
+					if (InputSearch.Length > 0)
+					{
+						var inputSearch = InputSearch;
+						enumerable = enumerable.Where(s => lineLabel(s).Contains(inputSearch, StringComparison.OrdinalIgnoreCase));
+					}
+
+				LoopHoverPopupWindow(flags, enumerable, drawBeforeLine, drawAfterLine, onSelect, lineLabel);
+			}
+			EndHoverPopupWindow(flags, onClose);
+		}
+
+
+
+		private static bool BeginHoverPopupWindow(HoverPopupWindowFlags flags, ref string InputSearch, string windowLabel, string listLabel, string searchBarLabel, string searchBarHint)
+		{
+			var size = new Vector2(-1, -1);
+			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
+
+			if(HoverPopupWindowSelectPos == Vector2.Zero) HoverPopupWindowSelectPos = ImGui.GetMousePos();
+			ImGui.SetNextWindowPos(HoverPopupWindowSelectPos);
+			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
+
+			HoverPopupWindowIsBegan = ImGui.Begin(windowLabel, ImGuiWindowFlags.NoDecoration);
+			if (HoverPopupWindowIsBegan)
+			{
+
+				HoverPopupWindowFocus = ImGui.IsWindowFocused() || ImGui.IsWindowHovered();
+				ImGui.PushItemWidth(400);
+				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar))
+					HoverPopupWindowSearchBarValidated = ImGui.InputTextWithHint(searchBarLabel, searchBarHint, ref InputSearch, 32, ImGuiInputTextFlags.EnterReturnsTrue);
+
+				if (ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows) && !ImGui.IsAnyItemActive() && !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+					ImGui.SetKeyboardFocusHere(flags.HasFlag(HoverPopupWindowFlags.SearchBar) ? -1 : 0); // TODO: verify the keyboarf focus behaviour when searchbar is disabled
+
+				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList))
+					ImGui.BeginListBox(listLabel, new Vector2(-1, 300));
+
+			}
+			return HoverPopupWindowIsBegan;
+		}
+		private static void EndHoverPopupWindow(HoverPopupWindowFlags flags, Action onClose)
+		{
+			if (HoverPopupWindowIsBegan)
+			{
+				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList))
+					ImGui.EndListBox();
+				HoverPopupWindowFocus |= ImGui.IsItemActive();
+				ImGui.PopItemWidth();
+
+				if (!HoverPopupWindowFocus || ImGui.IsKeyPressed(ImGuiKey.Escape))
+				{
+					onClose();
+					HoverPopupWindowSelectPos = Vector2.Zero;
+				}
+			}
+
+			ImGui.End();
+		}
+		private static void LoopHoverPopupWindow(HoverPopupWindowFlags flags, IEnumerable<dynamic> enumerable, Func<dynamic, bool> drawBeforeLine, Func<dynamic, bool> drawAfterLine, Action<dynamic> onSelect, Func<dynamic, string> lineLabel)
+		{
+			if (!HoverPopupWindowIsBegan) return;
+
+			int indexKey = 0;
+			bool isOneSelected = false; // allows one selection per foreach
+			if (HoverPopupWindowLastSelectedItemKey >= enumerable.Count()) HoverPopupWindowLastSelectedItemKey = enumerable.Count() - 1;
+
+			foreach (var i in enumerable)
+			{
+				bool selecting = false;
+
+				selecting |= drawBeforeLine(i);
+				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList))
+					selecting |= ImGui.Selectable(lineLabel(i), indexKey == HoverPopupWindowLastSelectedItemKey);
+				HoverPopupWindowFocus |= ImGui.IsItemFocused();
+				selecting |= drawAfterLine(i);
+
+				if (!isOneSelected)
+				{
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUp) && indexKey == HoverPopupWindowLastSelectedItemKey - 1;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDown) && indexKey == HoverPopupWindowLastSelectedItemKey + 1;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseUpFast) && indexKey == HoverPopupWindowLastSelectedItemKey - HoverPopupWindowFastScrollLineJump;
+					selecting |= ImGui.IsKeyPressed(KeyBindBrowseDownFast) && indexKey == HoverPopupWindowLastSelectedItemKey + HoverPopupWindowFastScrollLineJump;
+					selecting |= HoverPopupWindowSearchBarValidated;
+				}
+
+				if (selecting)
+				{
+					if (ImGui.IsKeyPressed(KeyBindBrowseUp) || ImGui.IsKeyPressed(KeyBindBrowseDown) || ImGui.IsKeyPressed(KeyBindBrowseUpFast) || ImGui.IsKeyPressed(KeyBindBrowseDownFast))
+						ImGui.SetScrollY(ImGui.GetCursorPosY() - (ImGui.GetWindowHeight() / 2));
+
+					onSelect(i);
+					HoverPopupWindowLastSelectedItemKey = indexKey;
+					isOneSelected = true;
+				}
+				HoverPopupWindowFocus |= ImGui.IsItemFocused();
+				indexKey++;
+			}
+		}
+
 	}
 }
