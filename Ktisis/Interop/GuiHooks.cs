@@ -12,10 +12,8 @@ namespace Ktisis.Interop {
 		internal static string ReplaceTarName = "(Hidden by Ktisis)";
 		internal unsafe static void UpdateTarName(IntPtr a1) {
 			if (!Ktisis.Configuration.DisplayCharName) {
-				for (var i = 0; i < ReplaceTarName.Length; i++) {
-					var c = ReplaceTarName[i];
-					*(char*)(a1 + 488 + i) = c;
-				}
+				for (var i = 0; i < ReplaceTarName.Length; i++)
+					*(char*)(a1 + 488 + i) = ReplaceTarName[i];
 			}
 			TarNameHook.Original(a1);
 		}

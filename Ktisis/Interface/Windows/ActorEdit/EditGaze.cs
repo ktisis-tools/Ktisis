@@ -29,13 +29,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (ActorControl == null)
 				ActorControl = new();
 
-			if (ImGuiComponents.IconButton(IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink))
-				IsLinked = !IsLinked;
-			ImGui.SameLine();
-			ImGui.Text(IsLinked ? "Linked" : "Unlinked");
-
-			ImGui.Spacing();
-
 			var id = Target->ObjectID;
 			if (!ActorControl.ContainsKey(id))
 				ActorControl.Add(id, new ActorGaze());
@@ -43,6 +36,25 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			var gaze = ActorControl[id];
 
 			var result = false;
+
+			if (ImGuiComponents.IconButton(IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink)) {
+				if (IsLinked) {
+					var move = gaze.Other;
+					if (move.Mode != 0) {
+						result = true;
+						gaze.Head = move;
+						gaze.Eyes = move;
+						gaze.Torso = move;
+						gaze.Other.Mode = GazeMode.Disabled;
+					}
+				}
+				IsLinked = !IsLinked;
+			}
+			ImGui.SameLine();
+			ImGui.Text(IsLinked ? "Linked" : "Unlinked");
+
+			ImGui.Spacing();
+
 			if (IsLinked) {
 				result |= DrawGaze(ref gaze.Other, GazeControl.All);
 			} else {
@@ -59,13 +71,21 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.EndTabItem();
 		}
 
-		public static bool DrawGaze(ref Gaze gaze, GazeControl type) {
+		public unsafe static bool DrawGaze(ref Gaze gaze, GazeControl type) {
 			var result = false;
 
 			var enabled = gaze.Mode != 0;
 			if (ImGui.Checkbox($"{type}", ref enabled)) {
 				result = true;
 				gaze.Mode = enabled ? GazeMode.Target : GazeMode.Disabled;
+				if (!enabled && type == GizmoActive)
+					GizmoActive = null;
+			}
+
+			if (type != GazeControl.All) {
+				var baseGaze = Target->Gaze.Get(type);
+				if (baseGaze.Mode != 0 && (!enabled || result))
+					gaze.Pos = baseGaze.Pos;
 			}
 
 			result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
