@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Logging;
+using FFXIVClientStructs.Havok;
 using Ktisis.Structs.Havok;
 
 namespace Ktisis.Interop {
@@ -122,6 +124,26 @@ namespace Ktisis.Interop {
 		public static unsafe hkQsTransform* AccessBoneLocalSpace(HkaPose* pose, int index)
 		{
 			return AccessBoneLocalSpaceFunc(pose, index);
+		}
+
+		public static unsafe bool IsGamePlaybackRunning(GameObject? gPoseTarget)
+		{
+			var animationControl = GetAnimationControl(gPoseTarget);
+			if (animationControl == null) return true;
+			return animationControl->PlaybackSpeed == 1;
+		}
+
+		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(GameObject? go)
+		{
+			if (go == null) return null;
+			var csObject = (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*) go.Address;
+			if (csObject->DrawObject == null || 
+			    csObject->DrawObject->Skeleton == null || 
+			    csObject->DrawObject->Skeleton->PartialSkeletons == null ||
+			    csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0) == null ||
+			    csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0].Value == null) 
+				return null;
+			return csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0];
 		}
 
 		internal static void Dispose() {

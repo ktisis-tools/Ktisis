@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 using ImGuiNET;
 using ImGuizmoNET;
@@ -113,6 +113,20 @@ namespace Ktisis.Interface.Windows {
 						KtisisGui.SkeletonEditor.ResetState();
 				}
 
+				if (ImGui.CollapsingHeader("Animation Control"))
+				{
+					unsafe
+					{
+						var control = PoseHooks.GetAnimationControl(Ktisis.GPoseTarget);
+						if (!Ktisis.IsInGPose || 
+						    PoseHooks.IsGamePlaybackRunning(Ktisis.GPoseTarget) ||
+						    control == null)
+							ImGui.Text("Unavailable at this time.");
+						else
+							GuiHelpers.AnimationControls(control);
+					}
+				}
+				
 				if (ImGui.CollapsingHeader("Toggle Bone Categories  ")) {
 
 					ImGui.Indent(16.0f);

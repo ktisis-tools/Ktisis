@@ -23,6 +23,7 @@ namespace Ktisis {
 			=> IsInGPose ? Dalamud.ObjectTable.CreateObjectReference((IntPtr)Dalamud.Targets->GPoseTarget) : null;
 
 		public Ktisis(DalamudPluginInterface pluginInterface) {
+			FFXIVClientStructs.Resolver.InitializeParallel();
 			Dalamud.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 

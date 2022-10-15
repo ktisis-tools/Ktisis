@@ -11,6 +11,7 @@ using Ktisis.Structs.Actor;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using FFXIVClientStructs.Havok;
 
 namespace Ktisis.Util
 {
@@ -106,6 +107,18 @@ namespace Ktisis.Util
 
 			ImGui.SetCursorPosX((windowWidth - textWidth) * 0.5f);
 			ImGui.Text(text);
+		}
+		
+		public static unsafe void AnimationControls(hkaDefaultAnimationControl* control)
+		{
+			var duration = control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
+			var durationLimit = duration - 0.05f;
+			
+			if (control->hkaAnimationControl.LocalTime >= durationLimit)
+				control->hkaAnimationControl.LocalTime = 0f;
+        
+			ImGui.SliderFloat("Seek", ref control->hkaAnimationControl.LocalTime, 0, durationLimit);
+			ImGui.SliderFloat("Speed", ref control->PlaybackSpeed, 0f, 0.999f);
 		}
 
 
