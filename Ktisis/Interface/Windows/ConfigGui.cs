@@ -58,9 +58,9 @@ namespace Ktisis.Interface.Windows {
 		// Interface
 
 		public static void DrawInterfaceTab(Configuration cfg) {
-			var displayCharName = cfg.DisplayCharName;
-			if (ImGui.Checkbox("Display character name", ref displayCharName))
-				cfg.DisplayCharName = displayCharName;
+			var displayCharName = !cfg.DisplayCharName;
+			if (ImGui.Checkbox("Hide character name", ref displayCharName))
+				cfg.DisplayCharName = !displayCharName;
 
 			ImGui.EndTabItem();
 		}

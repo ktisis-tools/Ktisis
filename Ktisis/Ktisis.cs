@@ -31,6 +31,7 @@ namespace Ktisis {
 			Interop.ActorHooks.Init();
 			Interop.CameraHooks.Init();
 			Interop.PoseHooks.Init();
+			Interop.GuiHooks.Init();
 
 			// Register command
 
@@ -54,6 +55,7 @@ namespace Ktisis {
 			Interop.ActorHooks.Dispose();
 			Interop.CameraHooks.Dispose();
 			Interop.PoseHooks.Dispose();
+			Interop.GuiHooks.Dispose();
 
 			GameData.Sheets.Cache.Clear();
 			if (EditEquip.Items != null)
