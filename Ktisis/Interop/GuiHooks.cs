@@ -16,9 +16,8 @@ namespace Ktisis.Interop {
 					var c = ReplaceTarName[i];
 					*(char*)(a1 + 488 + i) = c;
 				}
-			} else {
-				TarNameHook.Original(a1);
 			}
+			TarNameHook.Original(a1);
 		}
 
 		// Init & dispose
