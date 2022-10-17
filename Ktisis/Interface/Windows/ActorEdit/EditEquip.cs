@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using ImGuiNET;
 using ImGuiScene;
 
+using Dalamud.Interface;
+
 using Ktisis.GameData;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
 using Ktisis.Util;
-using Dalamud.Interface;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
 	public class EditEquip {
@@ -38,8 +39,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		private static EquipSlot? SlotSelectDye;
 		public static readonly IEnumerable<Dye> Dyes = Sheets.GetSheet<Dye>()
-				.Where(i => i.IsValid())
-				.OrderBy(i => i.Shade).ThenBy(i => i.SubOrder);
+			.Where(i => i.IsValid())
+			.OrderBy(i => i.Shade).ThenBy(i => i.SubOrder);
 
 		// Helper stuff. Will move if there's ever a need for this elsewhere.
 
@@ -51,7 +52,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		// UI Code
 
 		public unsafe static void Draw() {
-
 			if (Items == null)
 				Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
 
@@ -168,25 +168,25 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				return;
 
 			GuiHelpers.HoverPopupWindow(
-					GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
-					SlotItems,
-					(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
-					(i) => { },
-					(i, a) => (  // draw Line
-							ImGui.Selectable(i.Name, a),
-							ImGui.IsItemFocused()
-					),
-					(i) => { // on Select
-						equip.Id = i.Model.Id;
-						equip.Variant = (byte)i.Model.Variant;
-						Target->Equip(index, equip);
-					},
-					CloseSelector,
-					ref ItemSearch,
-					"Item Select",
-					"##equip_items",
-					"##equip_search"
-					);
+				GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
+				SlotItems,
+				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
+				(i) => { },
+				(i, a) => (  // draw Line
+						ImGui.Selectable(i.Name, a),
+						ImGui.IsItemFocused()
+				),
+				(i) => { // on Select
+					equip.Id = i.Model.Id;
+					equip.Variant = (byte)i.Model.Variant;
+					Target->Equip(index, equip);
+				},
+				CloseSelector,
+				ref ItemSearch,
+				"Item Select",
+				"##equip_items",
+				"##equip_search"
+			);
 		}
 
 		public unsafe static void DrawSetSelectorList()
@@ -200,95 +200,83 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				return;
 
 			GuiHelpers.HoverPopupWindow(
-					GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
-					sets.Cast<dynamic>(),
-					(e,input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
-					(i) => { },
-					(i,a) => {
-						bool selected = ImGui.Selectable(i.Name, a);
-						bool focus = ImGui.IsItemFocused();
+				GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
+				sets.Cast<dynamic>(),
+				(e,input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
+				(i) => { },
+				(i,a) => {
+					bool selected = ImGui.Selectable(i.Name, a);
+					bool focus = ImGui.IsItemFocused();
 
-						ImGui.SameLine();
-						ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
-						GuiHelpers.TextCentered($"{i.Source}");
-						ImGui.PopStyleVar();
+					ImGui.SameLine();
+					ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+					GuiHelpers.TextCentered($"{i.Source}");
+					ImGui.PopStyleVar();
 
-
-						return (selected, focus);
-					}, // draw Before Line
-					(i) => Target->Equip(Sets.GetItems(i)), // on Select
-					CloseSetSelector, // on close
-					ref SetSearch,
-					"Set Select",
-					"##equip_sets",
-					"##set_search"
-					);
+					return (selected, focus);
+				}, // draw Before Line
+				(i) => Target->Equip(Sets.GetItems(i)), // on Select
+				CloseSetSelector, // on close
+				ref SetSearch,
+				"Set Select",
+				"##equip_sets",
+				"##set_search"
+			);
 		}
-
-
-
 
 		private static int DyeLastSubOrder = -1;
 		private const int DyePickerWidth = 485;
 		public static unsafe void DrawDyePicker(EquipIndex index, EquipItem equip)
 		{
 			GuiHelpers.HoverPopupWindow(
-					GuiHelpers.HoverPopupWindowFlags.SearchBar
-					| GuiHelpers.HoverPopupWindowFlags.TwoDimenssion
-					| GuiHelpers.HoverPopupWindowFlags.Header
-					//| GuiHelpers.HoverPopupWindowFlags.StayWhenLoseFocus
-					//| GuiHelpers.HoverPopupWindowFlags.Grabbable
-					,
-					Dyes,
-					(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
-					DrawDyePickerHeader,
-					DrawDyePickerItem,
-					(i) =>  // on Select
-					{
-						equip.Dye = (byte)i.RowId;
-						Target->Equip(index, equip);
-					},
-					CloseDyePicker, // on close
-					ref DyeSearch,
-					$"Dye {index}##{equip.Id}",
-					"",
-					$"##dye_search##{index}",
-					"Search...", // searchbar hint
-					DyePickerWidth, // window width
-					12 // number of columns
-					);
+				GuiHelpers.HoverPopupWindowFlags.SearchBar
+				| GuiHelpers.HoverPopupWindowFlags.TwoDimenssion
+				| GuiHelpers.HoverPopupWindowFlags.Header,
+				Dyes,
+				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
+				DrawDyePickerHeader,
+				DrawDyePickerItem,
+				(i) => { // on Select
+					equip.Dye = (byte)i.RowId;
+					Target->Equip(index, equip);
+				},
+				CloseDyePicker, // on close
+				ref DyeSearch,
+				$"Dye {index}##{equip.Id}",
+				"",
+				$"##dye_search##{index}",
+				"Search...", // searchbar hint
+				DyePickerWidth, // window width
+				12 // number of columns
+			);
 		}
 		public static unsafe void DrawSetDyePicker()
 		{
 			GuiHelpers.HoverPopupWindow(
-					GuiHelpers.HoverPopupWindowFlags.SearchBar
-					| GuiHelpers.HoverPopupWindowFlags.TwoDimenssion
-					| GuiHelpers.HoverPopupWindowFlags.Header
-					//| GuiHelpers.HoverPopupWindowFlags.StayWhenLoseFocus
-					//| GuiHelpers.HoverPopupWindowFlags.Grabbable
-					,
-					Dyes,
-					(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
-					DrawDyePickerHeader,
-					DrawDyePickerItem,
-					(i) =>  // on Select
+				GuiHelpers.HoverPopupWindowFlags.SearchBar
+				| GuiHelpers.HoverPopupWindowFlags.TwoDimenssion
+				| GuiHelpers.HoverPopupWindowFlags.Header,
+				Dyes,
+				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
+				DrawDyePickerHeader,
+				DrawDyePickerItem,
+				(i) => { // on Select
+					foreach ((EquipSlot equipSlot, ItemCache itemCache) in Equipped)
 					{
-						foreach ((EquipSlot equipSlot, ItemCache itemCache) in Equipped)
-						{
-							var equip = itemCache.EquipItem;
-							equip.Dye = (byte)i.RowId;
-							Target->Equip(SlotToIndex(equipSlot), equip);
-						}
-					},
-					CloseSetDyePicker, // on close
-					ref DyeSearch,
-					$"Dye All##dye_all",
-					"",
-					$"##dye_all_search##dye_all_search",
-					"Search...", // searchbar hint
-					DyePickerWidth, // window width
-					12 // number of columns
-					);
+						var equip = itemCache.EquipItem;
+						equip.Dye = (byte)i.RowId;
+						Target->Equip(SlotToIndex(equipSlot), equip);
+					}
+				},
+				CloseSetDyePicker, // on close
+				ref DyeSearch,
+				$"Dye All##dye_all",
+				"",
+				$"##dye_all_search##dye_all_search",
+				"Search...", // searchbar hint
+				DyePickerWidth, // window width
+				12 // number of columns
+			);
 		}
 		private static (bool, bool) DrawDyePickerItem(dynamic i, bool isActive)
 		{
@@ -300,8 +288,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				// skip some index key if we don't finish the row
 				int howManyMissedButtons = 12 - (DyeLastSubOrder % 12);
 				GuiHelpers.HoverPopupWindowIndexKey += howManyMissedButtons;
-			}
-			else if (!isThisRealNewLine && !isThisANewShade)
+			} else if (!isThisRealNewLine && !isThisANewShade)
 				ImGui.SameLine();
 			if (isThisANewShade)
 				ImGui.Spacing();
@@ -317,10 +304,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 1f);
 			}
 			var selecting = ImGui.ColorButton($"{i.Name}##{i.RowId}", i.ColorVector4);
-			if (isActive) ImGui.PopStyleVar(2);
+			if (isActive)
+				ImGui.PopStyleVar(2);
 
 			return (selecting, ImGui.IsItemFocused());
-
 		}
 		private static void DrawDyePickerHeader(dynamic i)
 		{
@@ -332,10 +319,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.Text(i.Name);
 			ImGui.SameLine();
 			ImGui.ColorButton($"{i.Name}##{i.RowId}##selected2", i.ColorVector4, ImGuiColorEditFlags.None, new Vector2(dyeShowcaseWidth, textSize.Y));
-
 		}
-
-
 	}
 
 	public class ItemCache {

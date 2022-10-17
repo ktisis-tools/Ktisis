@@ -1,29 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System.Numerics;
 
-using Lumina;
+using ImGuiNET;
+
 using Lumina.Data;
-using Lumina.Text;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 
-using Ktisis.Structs.Actor;
-using Dalamud.Logging;
-using ImGuiNET;
-using System.Numerics;
-
 namespace Ktisis.GameData.Excel {
-
-
 	[Sheet("Stain")]
 	public class Dye : ExcelRow {
-
 		public string Name { get; set; } = "";
 		public uint Color { get; set; }
 		public byte Shade { get; set; }
 		public byte SubOrder { get; set; }
 		public bool IsMetallic { get; set; }
 		public bool UnknownBool { get; set; }
-
 
 		public LazyRow<Stain> Stain { get; set; } = null!;
 
@@ -49,5 +40,4 @@ namespace Ktisis.GameData.Excel {
 				Name = "Terebinth"; // TODO: translation
 		}
 	}
-
 }

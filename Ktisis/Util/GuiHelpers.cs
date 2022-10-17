@@ -1,4 +1,7 @@
+using System;
+using System.Linq;
 using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
 
@@ -8,11 +11,6 @@ using Dalamud.Interface.Components;
 using Ktisis.Helpers;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
-using System.Collections.Generic;
-using System;
-using System.Linq;
-using Dalamud.Logging;
-using Dalamud.Interface.Windowing;
 
 namespace Ktisis.Util
 {
@@ -28,12 +26,14 @@ namespace Ktisis.Util
 
 			return accepting && isHoldingKey;
 		}
+
 		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip)
 		{
 			bool accepting = ImGuiComponents.IconButton(icon);
 			Tooltip(tooltip);
 			return accepting;
 		}
+
 		public static void Tooltip(string text)
 		{
 			if (ImGui.IsItemHovered())
@@ -44,7 +44,6 @@ namespace Ktisis.Util
 				ImGui.PopTextWrapPos();
 				ImGui.EndTooltip();
 			}
-
 		}
 
 		public static bool DragVec4intoVec3(string label, ref Vector4 vector4, float speed = 0.1f)
@@ -109,10 +108,6 @@ namespace Ktisis.Util
 			ImGui.SetCursorPosX((windowWidth - textWidth) * 0.5f);
 			ImGui.Text(text);
 		}
-
-
-
-
 
 		// HoverPopupWindow Method
 		// Constants
@@ -194,11 +189,10 @@ namespace Ktisis.Util
 			HoverPopupWindowIsBegan = ImGui.Begin(windowLabel, windowFlags);
 			if (HoverPopupWindowIsBegan)
 			{
-
 				HoverPopupWindowFocus = ImGui.IsWindowFocused() || ImGui.IsWindowHovered();
 				ImGui.PushItemWidth(minWidth);
 				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar))
-				HoverPopupWindowSearchBarValidated = ImGui.InputTextWithHint(searchBarLabel, searchBarHint, ref inputSearch, 32, ImGuiInputTextFlags.EnterReturnsTrue);
+					HoverPopupWindowSearchBarValidated = ImGui.InputTextWithHint(searchBarLabel, searchBarHint, ref inputSearch, 32, ImGuiInputTextFlags.EnterReturnsTrue);
 
 				if (ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows) && !ImGui.IsAnyItemActive() && !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
 					ImGui.SetKeyboardFocusHere(flags.HasFlag(HoverPopupWindowFlags.SearchBar) ? -1 : 0); // TODO: verify the keyboarf focus behaviour when searchbar is disabled
@@ -209,16 +203,18 @@ namespace Ktisis.Util
 
 				if (flags.HasFlag(HoverPopupWindowFlags.Header))
 				{
-					if (HoverPopupWindowItemForHeader != null) header(HoverPopupWindowItemForHeader);
-					else ImGui.Text("");
+					if (HoverPopupWindowItemForHeader != null)
+						header(HoverPopupWindowItemForHeader);
+					else
+						ImGui.Text("");
 				}
 
-				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar))
-					if (inputSearch.Length > 0)
-					{
+				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar)) {
+					if (inputSearch.Length > 0) {
 						var inputSearch2 = inputSearch;
 						enumerable = filter(enumerable, inputSearch2);
 					}
+				}
 
 				HoverPopupWindowIndexKey = 0;
 				bool isOneSelected = false; // allows one selection per foreach
