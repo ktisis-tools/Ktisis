@@ -2,31 +2,49 @@
 
 using ImGuiNET;
 
-using Dalamud.Logging;
+using Ktisis.Interop;
+using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Overlay {
 	public class OverlayWindow {
+		// Rendering
+
+		public unsafe static WorldMatrix* WorldMatrix;
+
+		public static float[] ViewMatrix = {
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		};
+
+		// Gizmo
+
 		public static bool HasBegun = false;
 
-		public static Gizmo? Gizmo = null;
+		public static Gizmo Gizmo = new();
 		public static string? GizmoOwner = null;
 
-		public static bool IsGizmoOwner(string? id) => GizmoOwner == id;
-		public static void SetGizmoOwner(string? id) => GizmoOwner = id;
-		public static Gizmo? GetGizmo(string? id) => IsGizmoOwner(id) ? Gizmo : null;
+		public static bool IsGizmoVisible => Gizmo != null && GizmoOwner != null;
 
-		public static void Clear() {
-			Gizmo = null;
-			GizmoOwner = null;
+		public static bool IsGizmoOwner(string? id) => GizmoOwner == id;
+		public static Gizmo? SetGizmoOwner(string? id) {
+			GizmoOwner = id;
+			return id == null ? null : Gizmo;
 		}
+		public static Gizmo? GetGizmo(string? id) => IsGizmoOwner(id) ? Gizmo : null;
 
 		public static void Begin() {
 			if (HasBegun) return;
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
-
 			ImGui.Begin("Ktisis Overlay", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs);
-			ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
+
+			var io = ImGui.GetIO();
+			ImGui.SetWindowSize(io.DisplaySize);
+
+			var wp = ImGui.GetWindowPos();
+			Gizmo.BeginFrame(wp, io);
 
 			HasBegun = true;
 		}
@@ -38,13 +56,13 @@ namespace Ktisis.Overlay {
 			HasBegun = false;
 		}
 
-		public static void Draw() {
-			if (GizmoOwner != null) {
+		public unsafe static void Draw() {
+			if (WorldMatrix == null)
+				WorldMatrix = (WorldMatrix*)CameraHooks.GetMatrix!();
+
+			if (IsGizmoVisible)
 				Begin();
-				if (Gizmo == null)
-					Gizmo = new();
-				Gizmo.Draw();
-			}
+
 			End();
 		}
 	}
