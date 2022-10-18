@@ -92,9 +92,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.SameLine();
 			if (ImGuiComponents.IconButton($"{FontAwesomeExtensions.ToIconChar(FontAwesomeIcon.EllipsisH)}##{type}")) {
 				// TODO: Place gizmo closer to character/camera.
-				OverlayWindow.SetGizmoOwner("edit_gaze");
 				GizmoActive = GizmoActive == type ? null : type;
 				gaze.Mode = GizmoActive != null ? GazeMode.Target : GazeMode.Disabled;
+				OverlayWindow.SetGizmoOwner(GizmoActive != null ? "edit_gaze" : null);
 			}
 
 			// TODO: Rotation mode.
@@ -110,16 +110,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		// Gizmo woo gizmo!!!
 
 		public static void DrawGizmo(ref Gaze gaze) {
-			if (GizmoActive == null)
-				return;
-
 			var gizmo = OverlayWindow.GetGizmo("edit_gaze");
-			if (gizmo != null) {
-				var _ = new Vector3(0.0f, 0.0f, 0.0f);
-				gizmo.Draw(ref gaze.Pos, ref _, ref _);
-			} else {
+			if (gizmo != null)
+				gizmo.Draw(ref gaze.Pos);
+			else
 				GizmoActive = null;
-			}
 		}
 
 		// ControlGaze Hook

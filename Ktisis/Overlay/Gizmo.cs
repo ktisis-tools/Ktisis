@@ -105,6 +105,11 @@ namespace Ktisis.Overlay {
 			Manipulate();
 		}
 
+		public void Draw(ref Vector3 pos) {
+			var _ = new Vector3();
+			Draw(ref pos, ref _, ref _);
+		}
+
 		public void Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
 			ComposeMatrix(ref pos, ref rot, ref scale);
 			Draw();

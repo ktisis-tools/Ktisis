@@ -2,6 +2,8 @@
 
 using ImGuiNET;
 
+using Dalamud.Logging;
+
 namespace Ktisis.Overlay {
 	public class OverlayWindow {
 		public static bool HasBegun = false;
@@ -9,9 +11,9 @@ namespace Ktisis.Overlay {
 		public static Gizmo? Gizmo = null;
 		public static string? GizmoOwner = null;
 
-		public static bool IsGizmoOwner(string id) => GizmoOwner == id;
-		public static void SetGizmoOwner(string id) => GizmoOwner = id;
-		public static Gizmo? GetGizmo(string id) => IsGizmoOwner(id) ? Gizmo : null;
+		public static bool IsGizmoOwner(string? id) => GizmoOwner == id;
+		public static void SetGizmoOwner(string? id) => GizmoOwner = id;
+		public static Gizmo? GetGizmo(string? id) => IsGizmoOwner(id) ? Gizmo : null;
 
 		public static void Clear() {
 			Gizmo = null;
