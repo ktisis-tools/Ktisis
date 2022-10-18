@@ -15,7 +15,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public static Dictionary<byte, ActorGaze>? ActorControl = null; // ObjectID : ActorGaze
 
-		public static Gizmo Gizmo = new();
 		public static GazeControl? GizmoActive =  null;
 
 		public static bool IsLinked {
@@ -93,6 +92,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.SameLine();
 			if (ImGuiComponents.IconButton($"{FontAwesomeExtensions.ToIconChar(FontAwesomeIcon.EllipsisH)}##{type}")) {
 				// TODO: Place gizmo closer to character/camera.
+				OverlayWindow.SetGizmoOwner("edit_gaze");
 				GizmoActive = GizmoActive == type ? null : type;
 				gaze.Mode = GizmoActive != null ? GazeMode.Target : GazeMode.Disabled;
 			}
@@ -113,13 +113,13 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (GizmoActive == null)
 				return;
 
-			if (KtisisGui.SkeletonEditor.HasSelected()) {
+			var gizmo = OverlayWindow.GetGizmo("edit_gaze");
+			if (gizmo != null) {
+				var _ = new Vector3(0.0f, 0.0f, 0.0f);
+				gizmo.Draw(ref gaze.Pos, ref _, ref _);
+			} else {
 				GizmoActive = null;
-				return;
 			}
-
-			var _ = new Vector3(0.0f, 0.0f, 0.0f);
-			Gizmo.Draw(ref gaze.Pos, ref _, ref _);
 		}
 
 		// ControlGaze Hook

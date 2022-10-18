@@ -56,28 +56,25 @@ namespace Ktisis.Interface.Windows {
 				);
 
 				// Gizmo Controls
+				// TODO
 
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow))
-					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.TRANSLATE;
-
-				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync))
-					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.ROTATE;
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow)) { }
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandAlt))
-					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.SCALE;
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync)) { }
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
-					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.UNIVERSAL;
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandAlt)) { }
+
+				ImGui.SameLine();
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle)) { }
 
 				// Second row
 
-				var gizmode = KtisisGui.SkeletonEditor.Gizmode;
+				/*var gizmode = KtisisGui.SkeletonEditor.Gizmode;
 				if (GuiHelpers.IconButtonTooltip(
 					gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch."))
-					KtisisGui.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+					KtisisGui.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;*/
 
 				ImGui.SameLine();
 				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit targeted Actor's appearance.")) {
@@ -109,8 +106,7 @@ namespace Ktisis.Interface.Windows {
 				var showSkeleton = cfg.ShowSkeleton;
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
 					cfg.ShowSkeleton = showSkeleton;
-					if (!showSkeleton)
-						KtisisGui.SkeletonEditor.ResetState();
+					// TODO
 				}
 
 				if (ImGui.CollapsingHeader("Toggle Bone Categories  ")) {
@@ -145,7 +141,9 @@ namespace Ktisis.Interface.Windows {
 
 		// Coordinates table
 		private static unsafe bool Coordinates() {
-			if (Ktisis.GPoseTarget == null) return false;
+			// TODO
+			return false;
+			/*if (Ktisis.GPoseTarget == null) return false;
 
 			ImGui.Separator();
 
@@ -161,21 +159,21 @@ namespace Ktisis.Interface.Windows {
 			};
 
 			ImGui.TextDisabled(title+"'s " + Locale.GetBoneName(selectedBone.HkaBone.Name!));
-			return GuiHelpers.CoordinatesTable(selectedBone.Transform, () => KtisisGui.SkeletonEditor.BoneMod.ApplyDelta(selectedBone, KtisisGui.SkeletonEditor.Skeleton));
+			return GuiHelpers.CoordinatesTable(selectedBone.Transform, () => KtisisGui.SkeletonEditor.BoneMod.ApplyDelta(selectedBone, KtisisGui.SkeletonEditor.Skeleton));*/
 		}
 
 		// Bone Tree
 
 		public static void DrawBoneTree() {
-			var editor = KtisisGui.SkeletonEditor;
+			/*var editor = KtisisGui.SkeletonEditor;
 			if (editor.Skeleton != null && editor.Skeleton.Count > 0)
 				DrawBoneTree(editor.Skeleton[0].Bones[0]);
 
-			GuiHelpers.DrawBoneNode("actor_target", ImGuiTreeNodeFlags.Leaf, "Actor", () => KtisisGui.SkeletonEditor.SelectActorTarget());
+			GuiHelpers.DrawBoneNode("actor_target", ImGuiTreeNodeFlags.Leaf, "Actor", () => KtisisGui.SkeletonEditor.SelectActorTarget());*/
 		}
 
 		public static void DrawBoneTree(Bone bone) {
-			var flag = BaseFlags;
+			/*var flag = BaseFlags;
 
 			if (KtisisGui.SkeletonEditor.BoneSelector.IsSelected(bone))
 				flag |= ImGuiTreeNodeFlags.Selected;
@@ -193,7 +191,7 @@ namespace Ktisis.Interface.Windows {
 				foreach (var child in children)
 					DrawBoneTree(child);
 				ImGui.TreePop();
-			}
+			}*/
 		}
 	}
 }

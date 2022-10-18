@@ -101,10 +101,8 @@ namespace Ktisis.Overlay {
 		}
 
 		public void Draw() {
-			Overlay.Begin();
 			BeginFrame();
 			Manipulate();
-			Overlay.End();
 		}
 
 		public void Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {

@@ -4,14 +4,14 @@ using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface {
 	public class KtisisGui {
-		public static SkeletonEditor SkeletonEditor { get; set; } = new(); // TODO Code refactor
-
 		public static void Draw() {
+			// Overlay
+			OverlayWindow.Draw();
+
+			// GUI
 			Workspace.Draw();
 			ConfigGui.Draw();
 			EditActor.Draw();
-
-			SkeletonEditor.Draw();
 		}
 	}
 }
