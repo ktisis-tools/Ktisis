@@ -172,8 +172,8 @@ namespace Ktisis.Interface.Windows {
 			GuiHelpers.DrawBoneNode("actor_target", ImGuiTreeNodeFlags.Leaf, "Actor", () => KtisisGui.SkeletonEditor.SelectActorTarget());*/
 		}
 
-		public static void DrawBoneTree(Bone bone) {
-			/*var flag = BaseFlags;
+		/*public static void DrawBoneTree(Bone bone) {
+			var flag = BaseFlags;
 
 			if (KtisisGui.SkeletonEditor.BoneSelector.IsSelected(bone))
 				flag |= ImGuiTreeNodeFlags.Selected;
@@ -191,7 +191,7 @@ namespace Ktisis.Interface.Windows {
 				foreach (var child in children)
 					DrawBoneTree(child);
 				ImGui.TreePop();
-			}*/
-		}
+			}
+		}*/
 	}
 }

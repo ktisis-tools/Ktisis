@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 using ImGuiNET;
 
@@ -17,6 +18,9 @@ namespace Ktisis.Overlay {
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		};
+
+		public static ImGuiIOPtr Io;
+		public static Vector2 Wp;
 
 		// Gizmo
 
@@ -40,11 +44,11 @@ namespace Ktisis.Overlay {
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
 			ImGui.Begin("Ktisis Overlay", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs);
 
-			var io = ImGui.GetIO();
-			ImGui.SetWindowSize(io.DisplaySize);
+			Io = ImGui.GetIO();
+			ImGui.SetWindowSize(Io.DisplaySize);
 
-			var wp = ImGui.GetWindowPos();
-			Gizmo.BeginFrame(wp, io);
+			Wp = ImGui.GetWindowPos();
+			Gizmo.BeginFrame(Wp, Io);
 
 			HasBegun = true;
 		}
@@ -60,8 +64,13 @@ namespace Ktisis.Overlay {
 			if (WorldMatrix == null)
 				WorldMatrix = (WorldMatrix*)CameraHooks.GetMatrix!();
 
-			if (IsGizmoVisible)
+			var drawSkele = Ktisis.Configuration.ShowSkeleton;
+
+			if (IsGizmoVisible || drawSkele)
 				Begin();
+
+			if (drawSkele)
+				Skeleton.Draw();
 
 			End();
 		}

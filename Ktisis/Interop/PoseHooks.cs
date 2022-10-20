@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+
 using Dalamud.Hooking;
 using Dalamud.Logging;
-using Ktisis.Structs.Havok;
+
+using FFXIVClientStructs.Havok;
 
 namespace Ktisis.Interop {
 	public static class PoseHooks {
 		private delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
 		private static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;
 
-		private delegate IntPtr CalculateBoneModelSpaceDelegate(ref HkaPose pose, int boneIdx);
+		private delegate IntPtr CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
 		private static Hook<CalculateBoneModelSpaceDelegate> CalculateBoneModelSpaceHook = null!;
 		
-		private unsafe delegate void SyncModelSpaceDelegate(HkaPose* pose);
+		private unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
 		private static Hook<SyncModelSpaceDelegate> SyncModelSpaceHook = null!;
 
 		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
 		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
 		
-		private unsafe delegate hkQsTransform* AccessBoneModelSpaceDelegate(HkaPose* pose, int boneIdx, int propagate);
+		private unsafe delegate hkQsTransformf* AccessBoneModelSpaceDelegate(hkaPose* pose, int boneIdx, int propagate);
 		private static AccessBoneModelSpaceDelegate AccessBoneModelSpaceFunc = null!;
 		
-		private unsafe delegate hkQsTransform* AccessBoneLocalSpaceDelegate(HkaPose* pose, int boneIdx);
+		private unsafe delegate hkQsTransformf* AccessBoneLocalSpaceDelegate(hkaPose* pose, int boneIdx);
 		private static AccessBoneLocalSpaceDelegate AccessBoneLocalSpaceFunc = null!;
 		
 		internal static bool PosingEnabled { get; private set; }
@@ -94,13 +96,13 @@ namespace Ktisis.Interop {
 			return boneId;
 		}
 		
-		private static unsafe IntPtr CalculateBoneModelSpaceDetour(ref HkaPose pose, int boneIdx)
+		private static unsafe IntPtr CalculateBoneModelSpaceDetour(ref hkaPose pose, int boneIdx)
 		{
 			// This is expected to return the hkQsTransform at the given index in the pose's ModelSpace transform array.
-			return (IntPtr) (pose.Transforms.Handle + boneIdx);
+			return (IntPtr)(pose.ModelPose.Data + boneIdx); // unsure if this is correct, needs testing.
 		}
 
-		private static unsafe void SyncModelSpaceDetour(HkaPose* pose)
+		private static unsafe void SyncModelSpaceDetour(hkaPose* pose)
 		{
 			
 		}
@@ -109,17 +111,17 @@ namespace Ktisis.Interop {
 			return (byte*)IntPtr.Zero;
 		}
 
-		public static unsafe void SyncBone(HkaPose* bonesPose, int index)
+		public static unsafe void SyncBone(hkaPose* bonesPose, int index)
 		{
 			CalculateBoneModelSpaceHook.Original(ref *bonesPose, index);
 		}
 
-		public static unsafe hkQsTransform* AccessBoneModelSpace(HkaPose* pose, int index, bool propagate)
+		public static unsafe hkQsTransformf* AccessBoneModelSpace(hkaPose* pose, int index, bool propagate)
 		{
 			return AccessBoneModelSpaceFunc(pose, index, propagate ? 1 : 0);
 		}
 		
-		public static unsafe hkQsTransform* AccessBoneLocalSpace(HkaPose* pose, int index)
+		public static unsafe hkQsTransformf* AccessBoneLocalSpace(hkaPose* pose, int index)
 		{
 			return AccessBoneLocalSpaceFunc(pose, index);
 		}
