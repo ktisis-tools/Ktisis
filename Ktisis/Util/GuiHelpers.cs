@@ -89,7 +89,7 @@ namespace Ktisis.Util
 			doAfter?.Invoke();
 			return active;
 		}
-		public static bool CoordinatesTable(Transform transform, System.Action? doAfter = null)
+		/*public static bool CoordinatesTable(Transform transform, System.Action? doAfter = null)
 		{
 			bool active = false;
 			active |= GuiHelpers.DragVec4intoVec3("Position", ref transform.Position, 0.0001f);
@@ -98,7 +98,7 @@ namespace Ktisis.Util
 
 			doAfter?.Invoke();
 			return active;
-		}
+		}*/
 
 		public static void TextCentered(string text)
 		{
