@@ -5,7 +5,7 @@ using ImGuiNET;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
-	public class EditActor {
+	public static class EditActor {
 		// Properties
 
 		public static bool Visible = false;

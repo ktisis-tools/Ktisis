@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using Dalamud;
+using Dalamud.Logging;
 using Dalamud.Configuration;
 
 using Ktisis.Localization;
@@ -11,7 +12,8 @@ using Ktisis.Structs.Bones;
 namespace Ktisis {
 	[Serializable]
 	public class Configuration : IPluginConfiguration {
-		public int Version { get; set; } = 0;
+		public const int CurVersion = 0;
+		public int Version { get; set; } = CurVersion;
 
 		// Interface
 
@@ -24,8 +26,7 @@ namespace Ktisis {
 		public bool DrawLinesOnSkeleton { get; set; } = true;
 		public float SkeletonLineThickness { get; set; } = 2.0F;
 
-		/*public Vector4 GetCategoryColor(Bone bone)
-		{
+		public Vector4 GetCategoryColor(Bone bone) {
 			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
 			if (!BoneCategoryColors.TryGetValue(bone.Category.Name, out Vector4 color))
 				return LinkedBoneCategoryColor;
@@ -33,12 +34,11 @@ namespace Ktisis {
 			return color;
 		}
 
-		public bool IsBoneVisible(Bone bone)
-		{
+		public bool IsBoneVisible(Bone bone) {
 			if (!ShowBoneByCategory.TryGetValue(bone.Category.Name, out bool boneVisible))
 				return DrawLinesOnSkeleton;
 			return DrawLinesOnSkeleton && boneVisible;
-		}*/
+		}
 
 		public bool IsBoneCategoryVisible(Category category)
 		{
@@ -67,5 +67,18 @@ namespace Ktisis {
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
 
 		public bool LinkedGaze { get; set; } = true;
+
+		// Validate for changes in config versions.
+
+		public void Validate() {
+			if (Version == CurVersion)
+				return;
+
+			PluginLog.Warning($"Updating config to reflect changes between config versions {Version}-{CurVersion}.\nThis is nothing to worry about, but some settings may change or get reset!");
+
+			//switch (Version) {}
+
+			Version = CurVersion;
+		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using ImGuiNET;
+﻿using System;
+
+using ImGuiNET;
 
 using Dalamud.Logging;
 
@@ -7,7 +9,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 
 namespace Ktisis.Overlay {
-	public class Skeleton {
+	public static class Skeleton {
 		public unsafe static void Draw() {
 			// Fetch actor, model & skeleton
 
@@ -24,22 +26,40 @@ namespace Ktisis.Overlay {
 			// Draw skeleton
 
 			var skele = model->Skeleton;
+
+			// Iterate partial skeletons
 			for (var p = 0; p < skele->PartialSkeletonCount; p++) {
 				var partial = skele->PartialSkeletons[p];
 				var pose = partial.GetHavokPose(0);
 				if (pose == null) continue;
 
+				// Iterate bones
 				var bones = pose->GetBones();
 				foreach (Bone bone in bones) {
+					if (!Ktisis.Configuration.IsBoneVisible(bone))
+						continue; // Bone is hidden, move onto the next one.
+
+					// Fetch bone category color & convert world pos to screen
+
+					var boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
 					Dalamud.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos);
+
+					// Draw line to bone parent if any
 					
 					if (bone.ParentIndex > 0) {
 						var parent = bones[bone.ParentIndex];
+
 						Dalamud.GameGui.WorldToScreen(parent.GetWorldPos(model), out var posParent);
-						draw.AddLine(pos, posParent, 0xffffffff, 2f);
+
+						var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Dalamud.Camera->Camera->InterpDistance * 2f);
+						draw.AddLine(pos, posParent, boneColor, lineThickness);
 					}
 
-					draw.AddCircleFilled(pos, 5f, 0xffffffff, 100);
+					// Add selectable item
+
+					var item = Selection.AddItem(bone.HkaBone.Name.String, pos, boneColor);
+					if (item.IsClicked())
+						PluginLog.Information(item.Name);
 				}
 			}
 		}

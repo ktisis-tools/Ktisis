@@ -25,7 +25,7 @@ namespace Ktisis.Interface.Windows {
 		public MenuOption(Menu option) => Option = option;
 	}
 
-	public class EditCustomize {
+	public static class EditCustomize {
 		// Constants
 
 		public const int IconSize = 54;

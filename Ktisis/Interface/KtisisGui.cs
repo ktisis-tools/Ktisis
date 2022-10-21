@@ -3,7 +3,7 @@ using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface {
-	public class KtisisGui {
+	public static class KtisisGui {
 		public static void Draw() {
 			// Overlay
 			OverlayWindow.Draw();

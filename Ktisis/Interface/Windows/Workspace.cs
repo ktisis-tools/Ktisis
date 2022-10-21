@@ -14,7 +14,7 @@ using Ktisis.Interop;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows {
-	public class Workspace {
+	public static class Workspace {
 		public static bool Visible = false;
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);

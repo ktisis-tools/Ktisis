@@ -26,6 +26,8 @@ namespace Ktisis {
 			Dalamud.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
+			Configuration.Validate();
+
 			// Init hooks & delegates
 
 			Interop.ActorHooks.Init();

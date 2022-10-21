@@ -7,7 +7,7 @@ using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Overlay {
-	public class OverlayWindow {
+	public static class OverlayWindow {
 		// Rendering
 
 		public unsafe static WorldMatrix* WorldMatrix;
@@ -51,6 +51,9 @@ namespace Ktisis.Overlay {
 			Gizmo.BeginFrame(Wp, Io);
 
 			HasBegun = true;
+
+			if (Selection.DrawQueue.Count >= 1000) // something *probably* fucked up (thrown error in Selection.Draw?)
+				Selection.DrawQueue.Clear(); // don't let it get worse
 		}
 
 		public static void End() {
@@ -64,13 +67,20 @@ namespace Ktisis.Overlay {
 			if (WorldMatrix == null)
 				WorldMatrix = (WorldMatrix*)CameraHooks.GetMatrix!();
 
-			var drawSkele = Ktisis.Configuration.ShowSkeleton;
+			// Might need a different name for Begin?
 
-			if (IsGizmoVisible || drawSkele)
+			if (IsGizmoVisible)
 				Begin();
 
-			if (drawSkele)
+			if (Ktisis.Configuration.ShowSkeleton) {
+				Begin();
 				Skeleton.Draw();
+			}
+
+			if (Selection.DrawQueue.Count > 0) {
+				Begin();
+				Selection.Draw();
+			}
 
 			End();
 		}

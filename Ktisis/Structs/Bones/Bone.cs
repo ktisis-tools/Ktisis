@@ -13,5 +13,7 @@ namespace Ktisis.Structs.Bones {
 		public hkQsTransformf Transform;
 
 		public unsafe Vector3 GetWorldPos(ActorModel* model) => model->Position + Transform.Translation.Rotate(model->Rotation) * model->Height;
+
+		public Category Category => Category.GetForBone(HkaBone.Name.String);
 	}
 }

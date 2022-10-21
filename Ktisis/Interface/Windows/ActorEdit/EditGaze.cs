@@ -10,7 +10,7 @@ using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
-	public class EditGaze {
+	public static class EditGaze {
 		public unsafe static Actor* Target => EditActor.Target;
 
 		public static Dictionary<byte, ActorGaze>? ActorControl = null; // ObjectID : ActorGaze
