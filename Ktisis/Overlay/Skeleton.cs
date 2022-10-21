@@ -4,6 +4,7 @@ using ImGuiNET;
 
 using Dalamud.Logging;
 
+using Ktisis.Localization;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
@@ -39,6 +40,9 @@ namespace Ktisis.Overlay {
 					if (!Ktisis.Configuration.IsBoneVisible(bone))
 						continue; // Bone is hidden, move onto the next one.
 
+					var boneName = bone.HkaBone.Name.String;
+					var gizmoId = $"{p}_{boneName}";
+
 					// Fetch bone category color & convert world pos to screen
 
 					var boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
@@ -57,9 +61,16 @@ namespace Ktisis.Overlay {
 
 					// Add selectable item
 
-					var item = Selection.AddItem(bone.HkaBone.Name.String, pos, boneColor);
+					var item = Selection.AddItem($"{Locale.GetBoneName(boneName)}##{p}", pos, boneColor);
 					if (item.IsClicked())
-						PluginLog.Information(item.Name);
+						OverlayWindow.SetGizmoOwner(gizmoId);
+
+					// Bone selection & gizmo
+
+					var gizmo = OverlayWindow.GetGizmo(gizmoId);
+					if (gizmo != null) {
+						
+					}
 				}
 			}
 		}
