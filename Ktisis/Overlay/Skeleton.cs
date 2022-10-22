@@ -73,7 +73,6 @@ namespace Ktisis.Overlay {
 					var gizmo = OverlayWindow.GetGizmo(gizmoId);
 					if (gizmo != null) {
 						var trans = bone.Transform;
-						var worldPos = bone.GetWorldPos(model);
 
 						var matrix = gizmo.Matrix;
 						trans.get4x4ColumnMajor(&matrix.M11);

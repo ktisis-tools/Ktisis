@@ -3,6 +3,8 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Dalamud.Interface;
+
 using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;
 
@@ -40,6 +42,8 @@ namespace Ktisis.Overlay {
 
 		public static void Begin() {
 			if (HasBegun) return;
+
+			ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
 			ImGui.Begin("Ktisis Overlay", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs);
