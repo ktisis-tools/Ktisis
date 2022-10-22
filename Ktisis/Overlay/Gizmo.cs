@@ -58,8 +58,8 @@ namespace Ktisis.Overlay {
 			ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
 		}
 
-		internal unsafe void Manipulate() {
-			ImGuizmo.Manipulate(
+		internal unsafe bool Manipulate() {
+			return ImGuizmo.Manipulate(
 				ref OverlayWindow.WorldMatrix->Projection.M11,
 				ref OverlayWindow.ViewMatrix[0],
 				Operation,
@@ -68,19 +68,18 @@ namespace Ktisis.Overlay {
 			);
 		}
 
-		public void Draw() {
-			Manipulate();
-		}
+		public bool Draw() => Manipulate();
 
-		public void Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
+		public bool Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
 			ComposeMatrix(ref pos, ref rot, ref scale);
-			Manipulate();
+			var result = Manipulate();
 			DecomposeMatrix(ref pos, ref rot, ref scale);
+			return result;
 		}
 
-		public void Draw(ref Vector3 pos) {
+		public bool Draw(ref Vector3 pos) {
 			var _ = new Vector3(0, 0, 0);
-			Draw(ref pos, ref _, ref _);
+			return Draw(ref pos, ref _, ref _);
 		}
 	}
 }

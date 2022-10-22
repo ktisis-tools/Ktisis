@@ -3,20 +3,33 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Dalamud.Logging;
+
+using FFXIVClientStructs.Havok;
+
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using Ktisis.Localization;
 
-using FFXIVClientStructs.Havok;
-
 namespace Ktisis.Overlay {
 	public static class Skeleton {
 		// because C# hates nullable structs for some reason.
+		public static bool UpdateSelect = false;
 		public static bool HasSelectedBone = false;
 		public static Bone SelectedBone;
 
+		public static void Toggle() {
+			var visible = !Ktisis.Configuration.ShowSkeleton;
+			Ktisis.Configuration.ShowSkeleton = visible;
+			if (!visible && HasSelectedBone) {
+				HasSelectedBone = false;
+				OverlayWindow.SetGizmoOwner(null);
+			}
+		}
+
 		public unsafe static void Draw() {
+			UpdateSelect = false;
 			HasSelectedBone = false;
 
 			// Fetch actor, model & skeleton
@@ -69,8 +82,10 @@ namespace Ktisis.Overlay {
 					// Add selectable item
 
 					var item = Selection.AddItem($"{Locale.GetBoneName(boneName)}##{p}", pos2d, boneColor);
-					if (item.IsClicked())
+					if (item.IsClicked()) {
+						UpdateSelect = true;
 						OverlayWindow.SetGizmoOwner(gizmoId);
+					}
 
 					// Bone selection & gizmo
 
@@ -84,13 +99,17 @@ namespace Ktisis.Overlay {
 						matrix.Translation *= model->Height;
 						gizmo.Matrix = Matrix4x4.Transform(matrix, model->Rotation);
 						gizmo.Matrix.Translation += model->Position;
-						gizmo.Draw();
-						gizmo.Matrix.Translation -= model->Position;
-						matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
-						matrix.Translation /= model->Height;
 
-						trans.set((hkMatrix4f*)&matrix);
-						pose->ModelPose[bone.Index] = trans;
+						if (gizmo.Draw()) {
+							UpdateSelect = true;
+
+							gizmo.Matrix.Translation -= model->Position;
+							matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
+							matrix.Translation /= model->Height;
+
+							trans.set((hkMatrix4f*)&matrix);
+							pose->ModelPose[bone.Index] = trans;
+						}
 
 						HasSelectedBone = true;
 						SelectedBone = bone;

@@ -64,9 +64,7 @@ namespace Ktisis.Helpers {
 			}
 
 			v *= Rad2Deg;
-			NormalizeAngles(v);
-
-			return v;
+			return NormalizeAngles(v);
 		}
 
 		public static Vector3 ToEuler2(Quaternion q2) {

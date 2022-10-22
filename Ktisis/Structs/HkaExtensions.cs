@@ -14,10 +14,25 @@ namespace Ktisis.Structs {
 
 		public static Vector3 Rotate(this hkVector4f vec, Quaternion rot) => Vector3.Transform(vec.ToVector3(), rot);
 
+		public static hkVector4f SetFromVector3(this hkVector4f tar, Vector3 vec) {
+			tar.X = vec.X;
+			tar.Y = vec.Y;
+			tar.Z = vec.Z;
+			return tar;
+		}
+
 		// hkQuaternionf
 
 		public static Quaternion ToQuat(this hkQuaternionf q) => new Quaternion(q.X, q.Y, q.Z, q.W);
 		public static hkQuaternionf ToHavok(this Quaternion q) => new hkQuaternionf { X = q.X, Y = q.Y, Z = q.Z, W = q.W };
+
+		public static hkQuaternionf SetFromQuat(this hkQuaternionf tar, Quaternion q) {
+			tar.X = q.X;
+			tar.Y = q.Y;
+			tar.Z = q.Z;
+			tar.W = q.W;
+			return tar;
+		}
 
 		// hkaPose
 

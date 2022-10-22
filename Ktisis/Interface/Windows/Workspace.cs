@@ -13,6 +13,7 @@ using Ktisis.Overlay;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
+using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows {
@@ -21,6 +22,8 @@ namespace Ktisis.Interface.Windows {
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
 		public static Vector4 ColRed = new Vector4(255, 0, 0, 255);
+
+		public static TransformTable Transform = new();
 
 		public const ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags.OpenOnArrow;
 
@@ -109,10 +112,8 @@ namespace Ktisis.Interface.Windows {
 				ImGui.EndDisabled();
 
 				var showSkeleton = cfg.ShowSkeleton;
-				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
-					cfg.ShowSkeleton = showSkeleton;
-					// TODO
-				}
+				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton))
+					Skeleton.Toggle();
 
 				if (ImGui.CollapsingHeader("Toggle Bone Categories  ")) {
 
@@ -145,32 +146,37 @@ namespace Ktisis.Interface.Windows {
 		}
 
 		// Coordinates table
+
 		private static unsafe bool Coordinates() {
 			if (Ktisis.GPoseTarget == null) return false;
 
 			ImGui.Separator();
 
-			Bone selectedBone = Skeleton.SelectedBone;
-
 			var target = (Actor*)Ktisis.GPoseTarget.Address;
 			if (target->Model == null) return false;
 
-			string? targetName = Ktisis.Configuration.DisplayCharName ? target->Name : "target";
-			string title = "Transforming " + targetName;
+			string targetName = !Ktisis.Configuration.DisplayCharName || target->Name == null ? "target" : target->Name!;
+			string title = $"Transforming {targetName}";
 
 			if (!Skeleton.HasSelectedBone) {
 				ImGui.TextDisabled(title);
-				return GuiHelpers.CoordinatesTable(target->Model);
-			};
+				var model = target->Model;
+				return Transform.Draw(ref model->Position, ref model->Rotation, ref model->Scale);
+			}
 
-			ImGui.TextDisabled(title+"'s " + Locale.GetBoneName(selectedBone.HkaBone.Name.String));
+			var bone = Skeleton.SelectedBone;
 
-			var trans = selectedBone.Transform;
-			return GuiHelpers.CoordinatesTable(ref trans, () => {
-				var skele = target->Model->Skeleton->PartialSkeletons[selectedBone._Partial];
+			ImGui.TextDisabled($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");
+
+			var trans = bone.Transform;
+			if (Transform.Draw(Skeleton.UpdateSelect, ref trans.Translation, ref trans.Rotation, ref trans.Scale)) {
+				var skele = target->Model->Skeleton->PartialSkeletons[bone._Partial];
 				var pose = skele.GetHavokPose(0);
-				pose->ModelPose[selectedBone.Index] = trans;
-			});
+				pose->ModelPose[bone.Index] = trans;
+				return true;
+			}
+
+			return false;
 		}
 
 		// Bone Tree
