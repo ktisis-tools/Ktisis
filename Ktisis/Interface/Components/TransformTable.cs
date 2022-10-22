@@ -49,9 +49,14 @@ namespace Ktisis.Interface.Components {
 
 		public bool Draw(ref hkVector4f pos, ref hkQuaternionf rot, ref hkVector4f scale) {
 			var result = DrawTable();
+
 			pos = pos.SetFromVector3(Position);
-			rot = MathHelpers.ToQuaternion(Rotation).ToHavok();
+
+			var rad = MathHelpers.ToRadians(Rotation);
+			rot.setFromEulerAngles1(rad.X, rad.Y, rad.Z);
+
 			scale = scale.SetFromVector3(Scale);
+
 			return result;
 		}
 

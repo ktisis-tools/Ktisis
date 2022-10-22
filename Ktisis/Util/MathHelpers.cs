@@ -11,8 +11,8 @@ namespace Ktisis.Helpers {
 
 		// Degreees <=> Radians
 
-		private static readonly float Deg2Rad = ((float)Math.PI * 2) / 360;
-		private static readonly float Rad2Deg = 360 / ((float)Math.PI * 2);
+		public static readonly float Deg2Rad = ((float)Math.PI * 2) / 360;
+		public static readonly float Rad2Deg = 360 / ((float)Math.PI * 2);
 
 		// Euler <=> Quaternion
 		// Borrowed from Anamnesis
@@ -65,6 +65,13 @@ namespace Ktisis.Helpers {
 
 			v *= Rad2Deg;
 			return NormalizeAngles(v);
+		}
+
+		public static Vector3 ToRadians(Vector3 vec) {
+			vec.X *= Deg2Rad;
+			vec.Y *= Deg2Rad;
+			vec.Z *= Deg2Rad;
+			return vec;
 		}
 
 		public static Vector3 ToEuler2(Quaternion q2) {
