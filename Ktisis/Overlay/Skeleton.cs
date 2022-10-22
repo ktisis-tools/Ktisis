@@ -3,6 +3,8 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Structs;
@@ -56,7 +58,7 @@ namespace Ktisis.Overlay {
 				// Iterate bones
 				var bones = pose->GetBones();
 				foreach (Bone bone in bones) {
-					if (!Ktisis.Configuration.IsBoneVisible(bone))
+					if (!Ktisis.Configuration.IsBoneVisible(bone) || bone.Index == 0)
 						continue; // Bone is hidden, move onto the next one.
 
 					var boneName = bone.HkaBone.Name.String;
