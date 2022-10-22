@@ -77,9 +77,13 @@ namespace Ktisis.Overlay {
 						var matrix = gizmo.Matrix;
 						trans.get4x4ColumnMajor(&matrix.M11);
 
+						matrix.Translation *= model->Height;
 						gizmo.Matrix = Matrix4x4.Transform(matrix, model->Rotation);
+						gizmo.Matrix.Translation += model->Position;
 						gizmo.Draw();
+						gizmo.Matrix.Translation -= model->Position;
 						matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
+						matrix.Translation /= model->Height;
 
 						trans.set((hkMatrix4f*)&matrix);
 						pose->ModelPose[bone.Index] = trans;
