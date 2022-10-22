@@ -82,10 +82,12 @@ namespace Ktisis.Overlay {
 
 					// Add selectable item
 
-					var item = Selection.AddItem($"{Locale.GetBoneName(boneName)}##{p}", pos2d, boneColor);
-					if (item.IsClicked()) {
-						UpdateSelect = true;
-						OverlayWindow.SetGizmoOwner(gizmoId);
+					if (bone.HkaBone.Name.String != "j_ago" || p == 0) {
+						var item = Selection.AddItem($"{Locale.GetBoneName(boneName)}##{p}", pos2d, boneColor);
+						if (item.IsClicked()) {
+							UpdateSelect = true;
+							OverlayWindow.SetGizmoOwner(gizmoId);
+						}
 					}
 
 					// Bone selection & gizmo
@@ -113,6 +115,9 @@ namespace Ktisis.Overlay {
 						HasSelectedBone = true;
 						SelectedBone = bone;
 						SelectedBone._Partial = p;
+					} else if (HasSelectedBone && SelectedBone.HkaBone.Name.String == bone.HkaBone.Name.String) {
+						// this is jank as fuck. as far as I'm aware this only exists for the jaw bone?
+						*pose->AccessBoneModelSpace(bone.Index, hkaPose.PropagateOrNot.Propagate) = SelectedBone.Transform;
 					}
 				}
 
