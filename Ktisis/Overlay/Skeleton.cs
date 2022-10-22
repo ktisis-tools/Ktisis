@@ -3,8 +3,6 @@ using System.Numerics;
 
 using ImGuiNET;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Structs;
@@ -92,10 +90,8 @@ namespace Ktisis.Overlay {
 
 					var gizmo = OverlayWindow.GetGizmo(gizmoId);
 					if (gizmo != null) {
-						var trans = bone.Transform;
-
 						var matrix = gizmo.Matrix;
-						trans.get4x4ColumnMajor(&matrix.M11);
+						bone.Transform.get4x4ColumnMajor(&matrix.M11);
 
 						matrix.Translation *= model->Height;
 						gizmo.Matrix = Matrix4x4.Transform(matrix, model->Rotation);

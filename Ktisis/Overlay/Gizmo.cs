@@ -13,6 +13,8 @@ namespace Ktisis.Overlay {
 		public Matrix4x4 Matrix = new();
 		public Matrix4x4 Delta = new();
 
+		public OPERATION? ForceOp = null;
+
 		// Compose & Decompose
 		// Compose updates the matrix using given values.
 		// Decompose retrieves values from the matrix.
@@ -50,6 +52,8 @@ namespace Ktisis.Overlay {
 		// Draw
 
 		internal void BeginFrame(Vector2 wp, ImGuiIOPtr io) {
+			ForceOp = null;
+
 			ImGuizmo.BeginFrame();
 			ImGuizmo.SetDrawlist();
 
@@ -62,7 +66,7 @@ namespace Ktisis.Overlay {
 			return ImGuizmo.Manipulate(
 				ref OverlayWindow.WorldMatrix->Projection.M11,
 				ref OverlayWindow.ViewMatrix[0],
-				Operation,
+				ForceOp ?? Operation,
 				Mode,
 				ref Matrix.M11
 			);

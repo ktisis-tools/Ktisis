@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -78,7 +79,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			}
 
 			if (type != GazeControl.All) {
-				// If this gaze type is not being overwritten, copy values from the vanilla system.
+				// If this gaze type is not being overwritten, copy the vanilla values.
 				var baseGaze = Target->Gaze.Get(type);
 				if (baseGaze.Mode != 0 && (!enabled || result))
 					gaze.Pos = baseGaze.Pos;
@@ -106,8 +107,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			if (gizmo != null) {
 				if (enabled) {
-					gizmo.Draw(ref gaze.Pos);
-					result = true;
+					gizmo.ForceOp = OPERATION.TRANSLATE;
+					result |= gizmo.Draw(ref gaze.Pos);
 				} else {
 					OverlayWindow.SetGizmoOwner(null);
 				}
