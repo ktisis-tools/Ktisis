@@ -3,15 +3,17 @@
 using ImGuiNET;
 using ImGuizmoNET;
 
+using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
 using Ktisis.Util;
+using Ktisis.Interop;
+using Ktisis.Overlay;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
-using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Interop;
 using Ktisis.Structs.Actor;
+using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows {
 	public static class Workspace {
@@ -144,25 +146,31 @@ namespace Ktisis.Interface.Windows {
 
 		// Coordinates table
 		private static unsafe bool Coordinates() {
-			// TODO
-			return false;
-			/*if (Ktisis.GPoseTarget == null) return false;
+			if (Ktisis.GPoseTarget == null) return false;
 
 			ImGui.Separator();
 
-			Bone? selectedBone = KtisisGui.SkeletonEditor.GetSelectedBone();
+			Bone selectedBone = Skeleton.SelectedBone;
 
 			var target = (Actor*)Ktisis.GPoseTarget.Address;
+			if (target->Model == null) return false;
+
 			string? targetName = Ktisis.Configuration.DisplayCharName ? target->Name : "target";
 			string title = "Transforming " + targetName;
 
-			if (KtisisGui.SkeletonEditor.Skeleton == null || selectedBone == null) {
+			if (!Skeleton.HasSelectedBone) {
 				ImGui.TextDisabled(title);
 				return GuiHelpers.CoordinatesTable(target->Model);
 			};
 
-			ImGui.TextDisabled(title+"'s " + Locale.GetBoneName(selectedBone.HkaBone.Name!));
-			return GuiHelpers.CoordinatesTable(selectedBone.Transform, () => KtisisGui.SkeletonEditor.BoneMod.ApplyDelta(selectedBone, KtisisGui.SkeletonEditor.Skeleton));*/
+			ImGui.TextDisabled(title+"'s " + Locale.GetBoneName(selectedBone.HkaBone.Name.String));
+
+			var trans = selectedBone.Transform;
+			return GuiHelpers.CoordinatesTable(ref trans, () => {
+				var skele = target->Model->Skeleton->PartialSkeletons[selectedBone._Partial];
+				var pose = skele.GetHavokPose(0);
+				pose->ModelPose[selectedBone.Index] = trans;
+			});
 		}
 
 		// Bone Tree

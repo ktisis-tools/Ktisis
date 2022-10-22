@@ -3,8 +3,6 @@ using System.Numerics;
 
 using ImGuiNET;
 
-using Dalamud.Logging;
-
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
@@ -14,7 +12,13 @@ using FFXIVClientStructs.Havok;
 
 namespace Ktisis.Overlay {
 	public static class Skeleton {
+		// because C# hates nullable structs for some reason.
+		public static bool HasSelectedBone = false;
+		public static Bone SelectedBone;
+
 		public unsafe static void Draw() {
+			HasSelectedBone = false;
+
 			// Fetch actor, model & skeleton
 
 			if (Ktisis.GPoseTarget == null) return;
@@ -87,6 +91,10 @@ namespace Ktisis.Overlay {
 
 						trans.set((hkMatrix4f*)&matrix);
 						pose->ModelPose[bone.Index] = trans;
+
+						HasSelectedBone = true;
+						SelectedBone = bone;
+						SelectedBone._Partial = p;
 					}
 				}
 			}

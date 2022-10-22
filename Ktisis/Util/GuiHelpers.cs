@@ -5,8 +5,11 @@ using System.Collections.Generic;
 
 using ImGuiNET;
 
+using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+
+using FFXIVClientStructs.Havok;
 
 using Ktisis.Helpers;
 using Ktisis.Structs;
@@ -46,7 +49,7 @@ namespace Ktisis.Util
 			}
 		}
 
-		public static bool DragVec4intoVec3(string label, ref Vector4 vector4, float speed = 0.1f)
+		public static bool DragVec4intoVec3(string label, ref hkVector4f vector4, float speed = 0.1f)
 		{
 			Vector3 vector3 = new(vector4.X, vector4.Y, vector4.Z);
 			bool modified = ImGui.DragFloat3(label, ref vector3, speed);
@@ -55,12 +58,20 @@ namespace Ktisis.Util
 			vector4.Z = vector3.Z;
 			return modified;
 		}
+
 		public static bool DragQuatIntoEuler(string label, ref Quaternion quaternion, float speed = 0.1f) {
 			Vector3 euler = MathHelpers.ToEuler(quaternion);
 			bool modified = ImGui.DragFloat3(label, ref euler, speed);
 			quaternion = MathHelpers.ToQuaternion(euler);
 			return modified;
 		}
+		public static bool DragQuatIntoEuler(string label, ref hkQuaternionf quaternion, float speed = 0.1f) {
+			Vector3 euler = MathHelpers.ToEuler(quaternion.ToQuat());
+			bool modified = ImGui.DragFloat3(label, ref euler, speed);
+			quaternion = MathHelpers.ToQuaternion(euler).ToHavok();
+			return modified;
+		}
+
 		public static bool DrawBoneNode(string? str_id, ImGuiTreeNodeFlags flag, string fmt, System.Action? executeIfClicked = null)
 		{
 			bool show = ImGui.TreeNodeEx(str_id, flag, fmt);
@@ -89,16 +100,19 @@ namespace Ktisis.Util
 			doAfter?.Invoke();
 			return active;
 		}
-		/*public static bool CoordinatesTable(Transform transform, System.Action? doAfter = null)
+		public static bool CoordinatesTable(ref hkQsTransformf transform, System.Action? doAfter = null)
 		{
 			bool active = false;
-			active |= GuiHelpers.DragVec4intoVec3("Position", ref transform.Position, 0.0001f);
-			active |= GuiHelpers.DragQuatIntoEuler("Rotation", ref transform.Rotation, 0.1f);
+
+			active |= GuiHelpers.DragVec4intoVec3("Position", ref transform.Translation, 0.001f);
+			active |= GuiHelpers.DragQuatIntoEuler("Rotation", ref transform.Rotation, 0.5f);
 			active |= GuiHelpers.DragVec4intoVec3("Scale", ref transform.Scale, 0.01f);
 
-			doAfter?.Invoke();
+			if (active)
+				doAfter?.Invoke();
+
 			return active;
-		}*/
+		}
 
 		public static void TextCentered(string text)
 		{
