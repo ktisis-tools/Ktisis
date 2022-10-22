@@ -49,6 +49,7 @@ namespace Ktisis.Overlay {
 			var skele = model->Skeleton;
 
 			// Iterate partial skeletons
+			var sync = false;
 			for (var p = 0; p < skele->PartialSkeletonCount; p++) {
 				var partial = skele->PartialSkeletons[p];
 				var pose = partial.GetHavokPose(0);
@@ -101,14 +102,14 @@ namespace Ktisis.Overlay {
 						gizmo.Matrix.Translation += model->Position;
 
 						if (gizmo.Draw()) {
-							UpdateSelect = true;
-
 							gizmo.Matrix.Translation -= model->Position;
 							matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
 							matrix.Translation /= model->Height;
 
-							trans.set((hkMatrix4f*)&matrix);
-							pose->ModelPose[bone.Index] = trans;
+							pose->AccessBoneModelSpace(bone.Index, hkaPose.PropagateOrNot.Propagate)->set((hkMatrix4f*)&matrix);
+
+							sync = true;
+							UpdateSelect = true;
 						}
 
 						HasSelectedBone = true;
@@ -116,6 +117,9 @@ namespace Ktisis.Overlay {
 						SelectedBone._Partial = p;
 					}
 				}
+
+				if (sync)
+					Interop.PoseHooks.SyncModelSpaceHook.Original(pose);
 			}
 		}
 	}

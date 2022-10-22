@@ -14,8 +14,8 @@ namespace Ktisis.Interop {
 		private delegate IntPtr CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
 		private static Hook<CalculateBoneModelSpaceDelegate> CalculateBoneModelSpaceHook = null!;
 		
-		private unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
-		private static Hook<SyncModelSpaceDelegate> SyncModelSpaceHook = null!;
+		internal unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
+		internal static Hook<SyncModelSpaceDelegate> SyncModelSpaceHook = null!;
 
 		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
 		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
