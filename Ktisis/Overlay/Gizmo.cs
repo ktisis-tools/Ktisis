@@ -1,7 +1,5 @@
 ﻿using System.Numerics;
 
-using Matrix = SharpDX.Matrix;
-
 using ImGuiNET;
 using ImGuizmoNET;
 
@@ -12,12 +10,12 @@ namespace Ktisis.Overlay {
 		public MODE Mode;
 		public OPERATION Operation;
 
-		public Matrix Matrix;
-		public Matrix Delta;
+		public Matrix4x4 Matrix;
+		public Matrix4x4 Delta;
 
 		// Constructor
 
-		public Gizmo(MODE mode = MODE.WORLD, OPERATION op = OPERATION.TRANSLATE) {
+		public Gizmo(MODE mode = MODE.WORLD, OPERATION op = OPERATION.UNIVERSAL) {
 			Mode = mode;
 			Operation = op;
 
@@ -76,9 +74,12 @@ namespace Ktisis.Overlay {
 				ref OverlayWindow.ViewMatrix[0],
 				Operation,
 				Mode,
-				ref Matrix.M11,
-				ref Delta.M11
+				ref Matrix.M11
 			);
+		}
+
+		public void Draw() {
+			Manipulate();
 		}
 
 		public void Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {

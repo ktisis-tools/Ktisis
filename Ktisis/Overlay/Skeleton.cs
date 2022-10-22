@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Numerics;
 
 using ImGuiNET;
 
 using Dalamud.Logging;
 
-using Ktisis.Localization;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+using Ktisis.Localization;
+
+using FFXIVClientStructs.Havok;
 
 namespace Ktisis.Overlay {
 	public static class Skeleton {
@@ -46,22 +49,22 @@ namespace Ktisis.Overlay {
 					// Fetch bone category color & convert world pos to screen
 
 					var boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
-					Dalamud.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos);
+					Dalamud.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
-					
+
 					if (bone.ParentIndex > 0) {
 						var parent = bones[bone.ParentIndex];
 
 						Dalamud.GameGui.WorldToScreen(parent.GetWorldPos(model), out var posParent);
 
 						var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Dalamud.Camera->Camera->InterpDistance * 2f);
-						draw.AddLine(pos, posParent, boneColor, lineThickness);
+						draw.AddLine(pos2d, posParent, boneColor, lineThickness);
 					}
 
 					// Add selectable item
 
-					var item = Selection.AddItem($"{Locale.GetBoneName(boneName)}##{p}", pos, boneColor);
+					var item = Selection.AddItem($"{Locale.GetBoneName(boneName)}##{p}", pos2d, boneColor);
 					if (item.IsClicked())
 						OverlayWindow.SetGizmoOwner(gizmoId);
 
@@ -69,7 +72,18 @@ namespace Ktisis.Overlay {
 
 					var gizmo = OverlayWindow.GetGizmo(gizmoId);
 					if (gizmo != null) {
-						
+						var trans = bone.Transform;
+						var worldPos = bone.GetWorldPos(model);
+
+						var matrix = gizmo.Matrix;
+						trans.get4x4ColumnMajor(&matrix.M11);
+
+						gizmo.Matrix = Matrix4x4.Transform(matrix, model->Rotation);
+						gizmo.Draw();
+						matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
+
+						trans.set((hkMatrix4f*)&matrix);
+						pose->ModelPose[bone.Index] = trans;
 					}
 				}
 			}
