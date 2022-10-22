@@ -7,21 +7,11 @@ namespace Ktisis.Overlay {
 	public class Gizmo {
 		// Instanced properties
 
-		public MODE Mode;
-		public OPERATION Operation;
+		public MODE Mode => Ktisis.Configuration.GizmoMode;
+		public OPERATION Operation => Ktisis.Configuration.GizmoOp;
 
-		public Matrix4x4 Matrix;
-		public Matrix4x4 Delta;
-
-		// Constructor
-
-		public Gizmo(MODE mode = MODE.WORLD, OPERATION op = OPERATION.UNIVERSAL) {
-			Mode = mode;
-			Operation = op;
-
-			Matrix = new();
-			Delta = new();
-		}
+		public Matrix4x4 Matrix = new();
+		public Matrix4x4 Delta = new();
 
 		// Compose & Decompose
 		// Compose updates the matrix using given values.

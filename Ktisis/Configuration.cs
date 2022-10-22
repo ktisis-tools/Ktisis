@@ -2,6 +2,8 @@
 using System.Numerics;
 using System.Collections.Generic;
 
+using ImGuizmoNET;
+
 using Dalamud;
 using Dalamud.Logging;
 using Dalamud.Configuration;
@@ -48,6 +50,9 @@ namespace Ktisis {
 		}
 
 		// Gizmo
+
+		public MODE GizmoMode { get; set; } = MODE.LOCAL;
+		public OPERATION GizmoOp { get; set; } = OPERATION.TRANSLATE;
 
 		public bool AllowAxisFlip { get; set; } = true;
 

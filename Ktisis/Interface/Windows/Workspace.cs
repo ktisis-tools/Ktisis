@@ -58,23 +58,26 @@ namespace Ktisis.Interface.Windows {
 				// Gizmo Controls
 				// TODO
 
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow)) { }
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow))
+					Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync)) { }
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync))
+					Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandAlt)) { }
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandAlt))
+					Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle)) { }
+				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
+					Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
 
 				// Second row
 
-				/*var gizmode = KtisisGui.SkeletonEditor.Gizmode;
-				if (GuiHelpers.IconButtonTooltip(
-					gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch."))
-					KtisisGui.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;*/
+				var gizmode = Ktisis.Configuration.GizmoMode;
+				if (GuiHelpers.IconButtonTooltip(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch."))
+					Ktisis.Configuration.GizmoMode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
 
 				ImGui.SameLine();
 				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit targeted Actor's appearance.")) {
