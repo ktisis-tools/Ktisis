@@ -49,7 +49,6 @@ namespace Ktisis.Overlay {
 			var skele = model->Skeleton;
 
 			// Iterate partial skeletons
-			var sync = false;
 			for (var p = 0; p < skele->PartialSkeletonCount; p++) {
 				var partial = skele->PartialSkeletons[p];
 				var pose = partial.GetHavokPose(0);
@@ -108,7 +107,6 @@ namespace Ktisis.Overlay {
 
 							pose->AccessBoneModelSpace(bone.Index, hkaPose.PropagateOrNot.Propagate)->set((hkMatrix4f*)&matrix);
 
-							sync = true;
 							UpdateSelect = true;
 						}
 
@@ -120,9 +118,6 @@ namespace Ktisis.Overlay {
 						*pose->AccessBoneModelSpace(bone.Index, hkaPose.PropagateOrNot.Propagate) = SelectedBone.Transform;
 					}
 				}
-
-				if (sync)
-					Interop.PoseHooks.SyncModelSpaceHook.Original(pose);
 			}
 		}
 	}
