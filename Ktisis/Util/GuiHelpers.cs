@@ -5,18 +5,9 @@ using System.Collections.Generic;
 
 using ImGuiNET;
 
-using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
-using FFXIVClientStructs.Havok;
-
-using Ktisis.Helpers;
-using Ktisis.Structs;
-using Ktisis.Structs.Actor;
-using System.Collections.Generic;
-using System;
-using System.Linq;
 using FFXIVClientStructs.Havok;
 
 namespace Ktisis.Util
