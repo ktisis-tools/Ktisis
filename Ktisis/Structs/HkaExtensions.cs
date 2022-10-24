@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Structs.Bones;
 
@@ -36,6 +37,6 @@ namespace Ktisis.Structs {
 
 		// hkaPose
 
-		public static BoneIterator GetBones(this hkaPose pose) => new BoneIterator(pose);
+		public unsafe static Bone GetBone(this Skeleton skele, int partial, int bone) => new Bone(&skele, partial, bone);
 	}
 }

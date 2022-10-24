@@ -35,15 +35,13 @@ namespace Ktisis {
 
 			return color;
 		}
-
 		public bool IsBoneVisible(Bone bone) {
 			if (!ShowBoneByCategory.TryGetValue(bone.Category.Name, out bool boneVisible))
 				return DrawLinesOnSkeleton;
 			return DrawLinesOnSkeleton && boneVisible;
 		}
 
-		public bool IsBoneCategoryVisible(Category category)
-		{
+		public bool IsBoneCategoryVisible(Category category) {
 			if (!ShowBoneByCategory.TryGetValue(category.Name, out bool boneCategoryVisible))
 				return true;
 			return boneCategoryVisible;

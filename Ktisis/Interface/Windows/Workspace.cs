@@ -10,6 +10,7 @@ using Dalamud.Interface.Components;
 using Ktisis.Util;
 using Ktisis.Interop;
 using Ktisis.Overlay;
+using Ktisis.Structs;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
@@ -172,21 +173,20 @@ namespace Ktisis.Interface.Windows {
 			string targetName = !Ktisis.Configuration.DisplayCharName || target->Name == null ? "target" : target->Name!;
 			string title = $"Transforming {targetName}";
 
-			if (!Skeleton.HasSelectedBone) {
+			var select = Skeleton.BoneSelect;
+			if (!select.Active) {
 				ImGui.TextDisabled(title);
 				var model = target->Model;
 				return Transform.Draw(ref model->Position, ref model->Rotation, ref model->Scale);
 			}
 
-			var bone = Skeleton.SelectedBone;
+			var bone = target->Model->Skeleton->GetBone(select.Partial, select.Index);
 
 			ImGui.TextDisabled($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");
 
 			var trans = bone.Transform;
-			if (Transform.Draw(Skeleton.UpdateSelect, ref trans.Translation, ref trans.Rotation, ref trans.Scale)) {
-				var skele = target->Model->Skeleton->PartialSkeletons[bone._Partial];
-				var pose = skele.GetHavokPose(0);
-				pose->ModelPose[bone.Index] = trans;
+			if (Transform.Draw(select.Update, ref trans.Translation, ref trans.Rotation, ref trans.Scale)) {
+				bone.Transform = trans;
 				return true;
 			}
 

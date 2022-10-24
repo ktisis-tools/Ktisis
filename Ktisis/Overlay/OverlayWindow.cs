@@ -76,6 +76,8 @@ namespace Ktisis.Overlay {
 			if (IsGizmoVisible)
 				Begin();
 
+			Skeleton.BoneSelect.Active = false;
+			Skeleton.BoneSelect.Update = false;
 			if (Ktisis.Configuration.ShowSkeleton) {
 				Begin();
 				Skeleton.Draw();
