@@ -4,7 +4,8 @@ using System.Numerics;
 using ImGuiNET;
 
 using FFXIVClientStructs.Havok;
-using PropagateOrNot = FFXIVClientStructs.Havok.hkaPose.PropagateOrNot;
+using static FFXIVClientStructs.Havok.hkaPose;
+using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
@@ -20,7 +21,8 @@ namespace Ktisis.Overlay {
 			bool Active, // A bone is currently selected.
 			bool Update, // Signal to any class that caches transforms, that they need to be updated.
 			int Partial,
-			int Index
+			int Index,
+			string Name
 		) BoneSelect;
 
 		public static void Toggle() {
@@ -72,6 +74,8 @@ namespace Ktisis.Overlay {
 
 					// Draw line to bone parent if any
 					if (parentId > 0) {
+						// TODO: Draw lines for parents of partials.
+
 						var parent = model->Skeleton->GetBone(p, parentId);
 
 						var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Dalamud.Camera->Camera->InterpDistance * 2f);
@@ -80,10 +84,11 @@ namespace Ktisis.Overlay {
 					}
 
 					// Create selectable item
-					if (boneName != "j_ago") {
+					if (boneName != "j_ago" || p == 0) {
 						var item = Selection.AddItem(uniqueName, pos2d, boneColor);
 						if (item.IsClicked()) {
 							BoneSelect.Update = true;
+							BoneSelect.Name = boneName;
 							OverlayWindow.SetGizmoOwner(uniqueName);
 						}
 					}
@@ -116,12 +121,16 @@ namespace Ktisis.Overlay {
 						BoneSelect.Active = true;
 						BoneSelect.Partial = p;
 						BoneSelect.Index = i;
+					} else if (BoneSelect.Active && BoneSelect.Name == boneName) {
+						// this is janky. as far as I'm aware this only exists for the jaw bone?
+						var parent = GetSelectedBone(model->Skeleton);
+						*transform = parent.Transform;
 					}
 				}
 			}
 		}
 
-		public unsafe static Vector3 GetBoneWorldPos(ActorModel* model, hkQsTransformf* transform)
-			=> model->Position + transform->Translation.Rotate(model->Rotation) * model->Height;
+		public unsafe static Bone GetSelectedBone(ActorSkeleton* skeleton)
+			=> skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index);
 	}
 }
