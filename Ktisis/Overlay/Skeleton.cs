@@ -84,7 +84,8 @@ namespace Ktisis.Overlay {
 					}
 
 					// Create selectable item
-					if (boneName != "j_ago" || p == 0) {
+					// TODO: Hide when moving gizmo?
+					if (!(BoneSelect.Partial == p && BoneSelect.Index == i) && (boneName != "j_ago" || p == 0)) {
 						var item = Selection.AddItem(uniqueName, pos2d, boneColor);
 						if (item.IsClicked()) {
 							BoneSelect.Update = true;
@@ -123,14 +124,23 @@ namespace Ktisis.Overlay {
 						BoneSelect.Index = i;
 					} else if (BoneSelect.Active && BoneSelect.Name == boneName) {
 						// this is janky. as far as I'm aware this only exists for the jaw bone?
-						var parent = GetSelectedBone(model->Skeleton);
+						var parent = GetSelectedBone(model->Skeleton)!;
 						*transform = parent.Transform;
 					}
 				}
 			}
 		}
 
-		public unsafe static Bone GetSelectedBone(ActorSkeleton* skeleton)
-			=> skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index);
+		public unsafe static Bone? GetSelectedBone(ActorSkeleton* skeleton) {
+			if (!BoneSelect.Active) return null;
+
+			var target = Ktisis.GPoseTarget;
+			if (target == null) return null;
+
+			var model = ((Actor*)target.Address)->Model;
+			if (model == null) return null;
+
+			return model->Skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index);
+		}
 	}
 }

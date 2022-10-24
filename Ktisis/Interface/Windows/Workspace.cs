@@ -120,13 +120,16 @@ namespace Ktisis.Interface.Windows {
 				{
 					unsafe
 					{
-						var control = PoseHooks.GetAnimationControl(Ktisis.GPoseTarget);
-						if (!Ktisis.IsInGPose || 
-						    PoseHooks.IsGamePlaybackRunning(Ktisis.GPoseTarget) ||
-						    control == null)
-							ImGui.Text("Unavailable at this time.");
-						else
-							GuiHelpers.AnimationControls(control);
+						var target = Ktisis.GPoseTarget;
+						if (target != null) {
+							var control = PoseHooks.GetAnimationControl(target);
+							if (!Ktisis.IsInGPose ||
+								PoseHooks.IsGamePlaybackRunning(target) ||
+								control == null)
+								ImGui.Text("Unavailable at this time.");
+							else
+								GuiHelpers.AnimationControls(control);
+						}
 					}
 				}
 				
@@ -181,6 +184,7 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			var bone = Skeleton.GetSelectedBone(target->Model->Skeleton);
+			if (bone == null) return false;
 
 			ImGui.TextDisabled($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");
 
