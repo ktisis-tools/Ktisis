@@ -14,44 +14,36 @@ namespace Ktisis.Interop {
 
 		private delegate IntPtr CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
 		private static Hook<CalculateBoneModelSpaceDelegate> CalculateBoneModelSpaceHook = null!;
-		
+
 		internal unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
 		internal static Hook<SyncModelSpaceDelegate> SyncModelSpaceHook = null!;
 
 		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
 		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
-		
-		private unsafe delegate hkQsTransformf* AccessBoneModelSpaceDelegate(hkaPose* pose, int boneIdx, int propagate);
-		private static AccessBoneModelSpaceDelegate AccessBoneModelSpaceFunc = null!;
-		
-		private unsafe delegate hkQsTransformf* AccessBoneLocalSpaceDelegate(hkaPose* pose, int boneIdx);
-		private static AccessBoneLocalSpaceDelegate AccessBoneLocalSpaceFunc = null!;
-		
+
+		public unsafe delegate void GetDescendentsDelegate(hkaSkeleton* skeleton, short startBone, hkArray<short>* bonesOut, bool includeStart = false);
+		public static GetDescendentsDelegate GetDescendentsFunc = null!;
+
 		internal static bool PosingEnabled { get; private set; }
-		
+
 		internal static unsafe void Init() {
 			var setBoneModelSpaceFfxiv = Dalamud.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
 			SetBoneModelSpaceFfxivHook = Hook<SetBoneModelSpaceFfxivDelegate>.FromAddress(setBoneModelSpaceFfxiv, SetBoneModelSpaceFfxivDetour);
-			
+
 			var calculateBoneModelSpace = Dalamud.SigScanner.ScanText("40 53 48 83 EC 10 4C 8B 49 28");
 			CalculateBoneModelSpaceHook = Hook<CalculateBoneModelSpaceDelegate>.FromAddress(calculateBoneModelSpace, CalculateBoneModelSpaceDetour);
 
 			var syncModelSpace = Dalamud.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
 			SyncModelSpaceHook = Hook<SyncModelSpaceDelegate>.FromAddress(syncModelSpace, SyncModelSpaceDetour);
 
-			// Not necessary for posing but useful for attempting bone parenting, check Havok docs
-			var accessBoneModelSpace = Dalamud.SigScanner.ScanText("48 8B C4 89 50 10 53 57");
-			AccessBoneModelSpaceFunc = Marshal.GetDelegateForFunctionPointer<AccessBoneModelSpaceDelegate>(accessBoneModelSpace);
-			
-			var accessBoneLocalSpace = Dalamud.SigScanner.ScanText("4C 8B DC 53 55 56 57 41 54 41 56 48 81 EC");
-			AccessBoneLocalSpaceFunc = Marshal.GetDelegateForFunctionPointer<AccessBoneLocalSpaceDelegate>(accessBoneLocalSpace);
-
 			var lookAtIK = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
 			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
+
+			var getDescendents = Dalamud.SigScanner.ScanText("48 89 5C 24 ?? 48 89 74 24 ?? 48 89 7C 24 ?? 55 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 50 8B 79 30");
+			GetDescendentsFunc = Marshal.GetDelegateForFunctionPointer<GetDescendentsDelegate>(getDescendents);
 		}
 
-		internal static void DisablePosing()
-		{
+		internal static void DisablePosing() {
 			CalculateBoneModelSpaceHook?.Disable();
 			SetBoneModelSpaceFfxivHook?.Disable();
 			SyncModelSpaceHook?.Disable();
@@ -59,8 +51,7 @@ namespace Ktisis.Interop {
 			PosingEnabled = false;
 		}
 
-		internal static void EnablePosing()
-		{
+		internal static void EnablePosing() {
 			CalculateBoneModelSpaceHook?.Enable();
 			SetBoneModelSpaceFfxivHook?.Enable();
 			SyncModelSpaceHook?.Enable();
@@ -72,17 +63,13 @@ namespace Ktisis.Interop {
 		/// Toggles posing mode via hooks.
 		/// </summary>
 		/// <returns></returns>
-		internal static bool TogglePosing()
-		{
-			if (PosingEnabled)
-			{
+		internal static bool TogglePosing() {
+			if (PosingEnabled) {
 				CalculateBoneModelSpaceHook.Disable();
 				SetBoneModelSpaceFfxivHook.Disable();
 				SyncModelSpaceHook.Disable();
 				LookAtIKHook.Disable();
-			}
-			else
-			{
+			} else {
 				CalculateBoneModelSpaceHook.Enable();
 				SetBoneModelSpaceFfxivHook.Enable();
 				SyncModelSpaceHook.Enable();
@@ -91,59 +78,43 @@ namespace Ktisis.Interop {
 			PosingEnabled = !PosingEnabled;
 			return PosingEnabled;
 		}
-		
-		private static ulong SetBoneModelSpaceFfxivDetour(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate)
-		{
+
+		private static ulong SetBoneModelSpaceFfxivDetour(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate) {
 			return boneId;
 		}
-		
-		private static unsafe IntPtr CalculateBoneModelSpaceDetour(ref hkaPose pose, int boneIdx)
-		{
+
+		private static unsafe IntPtr CalculateBoneModelSpaceDetour(ref hkaPose pose, int boneIdx) {
 			// This is expected to return the hkQsTransform at the given index in the pose's ModelSpace transform array.
-			return (IntPtr)(pose.ModelPose.Data + boneIdx); // unsure if this is correct, needs testing.
+			return (IntPtr)(pose.ModelPose.Data + boneIdx);
 		}
 
-		private static unsafe void SyncModelSpaceDetour(hkaPose* pose)
-		{
-			
+		private static unsafe void SyncModelSpaceDetour(hkaPose* pose) {
+
 		}
 
 		public unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {
 			return (byte*)IntPtr.Zero;
 		}
 
-		public static unsafe void SyncBone(hkaPose* bonesPose, int index)
-		{
+		public static unsafe void SyncBone(hkaPose* bonesPose, int index) {
 			CalculateBoneModelSpaceHook.Original(ref *bonesPose, index);
 		}
 
-		public static unsafe hkQsTransformf* AccessBoneModelSpace(hkaPose* pose, int index, bool propagate)
-		{
-			return AccessBoneModelSpaceFunc(pose, index, propagate ? 1 : 0);
-		}
-		
-		public static unsafe hkQsTransformf* AccessBoneLocalSpace(hkaPose* pose, int index)
-		{
-			return AccessBoneLocalSpaceFunc(pose, index);
-		}
-
-		public static unsafe bool IsGamePlaybackRunning(GameObject? gPoseTarget)
-		{
+		public static unsafe bool IsGamePlaybackRunning(GameObject? gPoseTarget) {
 			var animationControl = GetAnimationControl(gPoseTarget);
 			if (animationControl == null) return true;
 			return animationControl->PlaybackSpeed == 1;
 		}
 
-		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(GameObject? go)
-		{
+		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(GameObject? go) {
 			if (go == null) return null;
-			var csObject = (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*) go.Address;
-			if (csObject->DrawObject == null || 
-			    csObject->DrawObject->Skeleton == null || 
-			    csObject->DrawObject->Skeleton->PartialSkeletons == null ||
-			    csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0) == null ||
+			var csObject = (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)go.Address;
+			if (csObject->DrawObject == null ||
+				csObject->DrawObject->Skeleton == null ||
+				csObject->DrawObject->Skeleton->PartialSkeletons == null ||
+				csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0) == null ||
 				csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls.Length == 0 ||
-				csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0].Value == null) 
+				csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0].Value == null)
 				return null;
 			return csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0];
 		}
