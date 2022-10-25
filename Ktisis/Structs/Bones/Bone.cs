@@ -9,10 +9,12 @@ using Ktisis.Structs.Actor;
 namespace Ktisis.Structs.Bones {
 	public class Bone {
 		public int Index;
+		public int Partial;
 		public unsafe hkaPose* Pose;
 
 		public unsafe Bone(Skeleton* skeleton, int partialId, int boneId) {
 			Index = boneId;
+			Partial = partialId;
 
 			var partial = skeleton->PartialSkeletons[partialId];
 			var pose = partial.GetHavokPose(0);

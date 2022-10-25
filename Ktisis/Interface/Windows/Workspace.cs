@@ -173,7 +173,7 @@ namespace Ktisis.Interface.Windows {
 			var target = (Actor*)Ktisis.GPoseTarget.Address;
 			if (target->Model == null) return false;
 
-			string targetName = !Ktisis.Configuration.DisplayCharName || target->Name == null ? "target" : target->Name!;
+			string targetName = target->GetNameOr("target");
 			string title = $"Transforming {targetName}";
 
 			var select = Skeleton.BoneSelect;

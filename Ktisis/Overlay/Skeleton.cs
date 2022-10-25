@@ -3,6 +3,8 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
 using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
@@ -11,6 +13,8 @@ using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using Ktisis.Localization;
+
+using System.Runtime.InteropServices;
 
 namespace Ktisis.Overlay {
 	public static class Skeleton {
@@ -24,6 +28,8 @@ namespace Ktisis.Overlay {
 			int Index,
 			string Name
 		) BoneSelect;
+
+		public static bool IsBoneSelected(Bone bone) => BoneSelect.Active && BoneSelect.Partial == bone.Partial && BoneSelect.Index == bone.Index;
 
 		public static void Toggle() {
 			var visible = !Ktisis.Configuration.ShowSkeleton;
@@ -85,7 +91,7 @@ namespace Ktisis.Overlay {
 
 					// Create selectable item
 					// TODO: Hide when moving gizmo?
-					if (!(BoneSelect.Partial == p && BoneSelect.Index == i) && (boneName != "j_ago" || p == 0)) {
+					if (!IsBoneSelected(bone) && (boneName != "j_ago" || p == 0)) {
 						var item = Selection.AddItem(uniqueName, pos2d, boneColor);
 						if (item.IsClicked()) {
 							BoneSelect.Update = true;
@@ -102,7 +108,7 @@ namespace Ktisis.Overlay {
 
 						// Apply the root transform of the actor's model.
 						// This is important for the gizmo's orientation to show correctly.
-						matrix.Translation *= model->Height;
+						matrix.Translation *= model->Height * model->Scale;
 						gizmo.Matrix = Matrix4x4.Transform(matrix, model->Rotation);
 						gizmo.Matrix.Translation += model->Position;
 
@@ -111,7 +117,7 @@ namespace Ktisis.Overlay {
 							// Reverse the previous transform we did.
 							gizmo.Matrix.Translation -= model->Position;
 							matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
-							matrix.Translation /= model->Height;
+							matrix.Translation /= model->Height * model->Scale;
 
 							// Write our updated matrix to memory.
 							transform->set((hkMatrix4f*)&matrix);

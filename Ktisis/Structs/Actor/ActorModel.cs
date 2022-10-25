@@ -1,11 +1,12 @@
 ﻿using System.Numerics;
 using System.Runtime.InteropServices;
 
+using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace Ktisis.Structs.Actor {
-	[StructLayout(LayoutKind.Explicit, Size = 0x2B4)]
+	[StructLayout(LayoutKind.Explicit)]
 	public unsafe struct ActorModel {
 		[FieldOffset(0)] public Object Object;
 
