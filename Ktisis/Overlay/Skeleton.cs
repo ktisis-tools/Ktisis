@@ -49,16 +49,11 @@ namespace Ktisis.Overlay {
 			var model = actor->Model;
 			if (model == null) return;
 
+			var matrix = Interop.Alloc.Matrix;
+
 			// ImGui rendering
 
 			var draw = ImGui.GetWindowDrawList();
-
-			// Allocate space for our matrix to be aligned on a 16-byte boundary.
-			// This is required due to ffxiv's use of the MOVAPS instruction.
-			// Thanks to Fayti1703 for helping with debugging and coming up with this fix.
-
-			var mAlloc = Marshal.AllocHGlobal(sizeof(float) * 16 + 16);
-			var matrix = (Matrix4x4*)(16 * ((long)(mAlloc + 15) / 16));
 
 			// Draw skeleton
 
@@ -141,9 +136,6 @@ namespace Ktisis.Overlay {
 					}
 				}
 			}
-
-			// Free our aligned memory.
-			Marshal.FreeHGlobal(mAlloc);
 		}
 
 		public unsafe static Bone? GetSelectedBone(ActorSkeleton* skeleton) {
