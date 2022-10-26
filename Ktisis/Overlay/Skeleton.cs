@@ -49,11 +49,30 @@ namespace Ktisis.Overlay {
 			var model = actor->Model;
 			if (model == null) return;
 
-			var matrix = Interop.Alloc.Matrix;
+			var matrix = Interop.Alloc.GetMatrix();
 
 			// ImGui rendering
 
 			var draw = ImGui.GetWindowDrawList();
+
+			// Make selectable model root
+
+			{
+				var actorName = actor->GetNameOr("Actor");
+				var gizmo = OverlayWindow.GetGizmo(actorName);
+				if (gizmo != null) {
+					model->Transform.get4x4ColumnMajor(&matrix.M11);
+					gizmo.Matrix = matrix;
+					if (gizmo.Draw()) {
+						matrix = gizmo.Matrix;
+						model->Transform.set((hkMatrix4f*)&matrix);
+					}
+				} else {
+					Dalamud.GameGui.WorldToScreen(model->Position, out var pos2d);
+					if (Selection.AddItem(actorName, pos2d).IsClicked())
+						OverlayWindow.SetGizmoOwner(actorName);
+				}
+			}
 
 			// Draw skeleton
 
@@ -105,23 +124,23 @@ namespace Ktisis.Overlay {
 					// Bone selection & gizmo
 					var gizmo = OverlayWindow.GetGizmo(uniqueName);
 					if (gizmo != null) {
-						transform->get4x4ColumnMajor(&matrix->M11);
+						transform->get4x4ColumnMajor(&matrix.M11);
 
 						// Apply the root transform of the actor's model.
 						// This is important for the gizmo's orientation to show correctly.
-						matrix->Translation *= model->Height * model->Scale;
-						gizmo.Matrix = Matrix4x4.Transform(*matrix, model->Rotation);
+						matrix.Translation *= model->Height * model->Scale;
+						gizmo.Matrix = Matrix4x4.Transform(matrix, model->Rotation);
 						gizmo.Matrix.Translation += model->Position;
 
 						// Draw the gizmo. This returns true if it has been moved.
 						if (gizmo.Draw()) {		
 							// Reverse the previous transform we did.
 							gizmo.Matrix.Translation -= model->Position;
-							*matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
-							matrix->Translation /= model->Height * model->Scale;
+							matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
+							matrix.Translation /= model->Height * model->Scale;
 
 							// Write our updated matrix to memory.
-							transform->set((hkMatrix4f*)matrix);
+							transform->set((hkMatrix4f*)&matrix);
 
 							BoneSelect.Update = true;
 						}
