@@ -53,6 +53,13 @@ namespace Ktisis.Overlay {
 
 			var draw = ImGui.GetWindowDrawList();
 
+			// Allocate space for our matrix to be aligned on a 16-byte boundary.
+			// This is required due to ffxiv's use of the MOVAPS instruction.
+			// Thanks to Fayti1703 for helping with debugging and coming up with this fix.
+
+			var mAlloc = Marshal.AllocHGlobal(sizeof(float) * 16 + 16);
+			var matrix = (Matrix4x4*)(16 * ((long)(mAlloc + 15) / 16));
+
 			// Draw skeleton
 
 			for (var p = 0; p < model->Skeleton->PartialSkeletonCount; p++) {
@@ -103,24 +110,23 @@ namespace Ktisis.Overlay {
 					// Bone selection & gizmo
 					var gizmo = OverlayWindow.GetGizmo(uniqueName);
 					if (gizmo != null) {
-						var matrix = gizmo.Matrix;
-						transform->get4x4ColumnMajor(&matrix.M11);
+						transform->get4x4ColumnMajor(&matrix->M11);
 
 						// Apply the root transform of the actor's model.
 						// This is important for the gizmo's orientation to show correctly.
-						matrix.Translation *= model->Height * model->Scale;
-						gizmo.Matrix = Matrix4x4.Transform(matrix, model->Rotation);
+						matrix->Translation *= model->Height * model->Scale;
+						gizmo.Matrix = Matrix4x4.Transform(*matrix, model->Rotation);
 						gizmo.Matrix.Translation += model->Position;
 
 						// Draw the gizmo. This returns true if it has been moved.
-						if (gizmo.Draw()) {
+						if (gizmo.Draw()) {		
 							// Reverse the previous transform we did.
 							gizmo.Matrix.Translation -= model->Position;
-							matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
-							matrix.Translation /= model->Height * model->Scale;
+							*matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
+							matrix->Translation /= model->Height * model->Scale;
 
 							// Write our updated matrix to memory.
-							transform->set((hkMatrix4f*)&matrix);
+							transform->set((hkMatrix4f*)matrix);
 
 							BoneSelect.Update = true;
 						}
@@ -135,6 +141,9 @@ namespace Ktisis.Overlay {
 					}
 				}
 			}
+
+			// Free our aligned memory.
+			Marshal.FreeHGlobal(mAlloc);
 		}
 
 		public unsafe static Bone? GetSelectedBone(ActorSkeleton* skeleton) {
