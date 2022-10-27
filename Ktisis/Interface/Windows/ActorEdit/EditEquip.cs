@@ -34,7 +34,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		private static string DyeSearch = "";
 		private static bool DrawSetSelection = false;
 		private static bool DrawSetDyeSelection = false;
-		private static EquipmentSets? Sets = null;
+		public static EquipmentSets? Sets = null;
 
 		private static EquipSlot? SlotSelectDye;
 		public static readonly IEnumerable<Dye> Dyes = Sheets.GetSheet<Dye>()
@@ -257,7 +257,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 					ImGui.SameLine();
 					ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
-					GuiHelpers.TextCentered($"{i.Source}");
+					GuiHelpers.TextRight($"{i.Source}");
 					ImGui.PopStyleVar();
 
 					return (selected, focus);

@@ -46,6 +46,8 @@ namespace Ktisis.Interface.Windows {
 						DrawGizmoTab(cfg);
 					if (ImGui.BeginTabItem("Language"))
 						DrawLanguageTab(cfg);
+					if (ImGui.BeginTabItem("Data"))
+						DrawDataTab(cfg);
 
 					ImGui.EndTabBar();
 				}
@@ -176,6 +178,27 @@ namespace Ktisis.Interface.Windows {
 				cfg.TranslateBones = translateBones;
 
 			ImGui.EndTabItem();
+		}
+		public static void DrawDataTab(Configuration cfg)
+		{
+			ImGui.Spacing();
+			var validGlamPlatesFound = Structs.Actor.EquipmentSetSources.GlamourDresser.CountValid();
+			GuiHelpers.TextTooltip($"Glamour Plates in memory: {validGlamPlatesFound}  ", $"Found {validGlamPlatesFound} valid Glamour Plates");
+			ImGui.SameLine();
+
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, "Refresh Glamour Plate memory for the Sets lookups.\nThis memory is kept after a restart.\n\nRequirements:\n One of these windows must be opened: \"Glamour Plate Creation\" (by the Glamour Dresser) or \"Plate Selection\" (by the Glamour Plate skill)."))
+				Structs.Actor.EquipmentSetSources.GlamourDresser.PopulatePlatesData();
+
+			Components.Equipment.CreateGlamourQuestionPopup();
+
+			ImGui.SameLine();
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, "Dispose of the Glamour Plates memory and remove configurations for ALL characters."))
+			{
+				Structs.Actor.EquipmentSets.Dispose();
+				cfg.GlamourPlateData = null;
+			}
+
+			ImGui.Spacing();
 		}
 	}
 }

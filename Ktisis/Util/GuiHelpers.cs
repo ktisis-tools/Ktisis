@@ -33,6 +33,22 @@ namespace Ktisis.Util
 			Tooltip(tooltip);
 			return accepting;
 		}
+		public static bool TextButtonTooltip(string label, string tooltip)
+		{
+			bool accepting = ImGui.Button(label);
+			Tooltip(tooltip);
+			return accepting;
+		}
+		public static void TextTooltip(string label, string tooltip)
+		{
+			ImGui.Text(label);
+			Tooltip(tooltip);
+		}
+		public static void TextDisabledTooltip(string label, string tooltip)
+		{
+			ImGui.TextDisabled(label);
+			Tooltip(tooltip);
+		}
 
 		public static void Tooltip(string text)
 		{
@@ -43,6 +59,37 @@ namespace Ktisis.Util
 				ImGui.TextUnformatted(text);
 				ImGui.PopTextWrapPos();
 				ImGui.EndTooltip();
+			}
+		}
+		public static void PopupConfirm(string label, Action contents, Action onAccept)
+		{
+			ImGui.SetNextWindowPos(ImGui.GetMainViewport().GetCenter(), ImGuiCond.Always, new Vector2(0.5f));
+			if (ImGui.BeginPopup(label, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove))
+			{
+				contents();
+				ImGui.Separator();
+
+				var okSize = new Vector2(120, 0) * ImGui.GetIO().FontGlobalScale;
+				var cancelSize = new Vector2(120, 0) * ImGui.GetIO().FontGlobalScale;
+
+				var buttonSize = okSize.X + cancelSize.X;
+				var buttonCenter = (ImGui.GetWindowContentRegionMax().X - buttonSize) / 2;
+
+				ImGui.SetCursorPosX(buttonCenter);
+				if (ImGui.Button("OK", okSize))
+				{
+					ImGui.CloseCurrentPopup();
+					onAccept();
+				}
+
+				ImGui.SetItemDefaultFocus();
+				ImGui.SameLine();
+				if (ImGui.Button("Cancel", cancelSize))
+				{
+					ImGui.CloseCurrentPopup();
+				}
+
+				ImGui.EndPopup();
 			}
 		}
 
@@ -63,6 +110,13 @@ namespace Ktisis.Util
 				executeIfClicked?.Invoke();
 			}
 			return show;
+		}
+
+		public static void TextRight(string text, float offset = 0)
+		{
+			offset = ImGui.GetContentRegionAvail().X - offset - ImGui.CalcTextSize(text).X;
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);
+			ImGui.TextUnformatted(text);
 		}
 
 		public static void TextCentered(string text)
