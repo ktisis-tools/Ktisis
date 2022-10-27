@@ -10,6 +10,8 @@ using Dalamud.Interface.Components;
 
 using FFXIVClientStructs.Havok;
 
+using Ktisis.Structs.Bones;
+
 namespace Ktisis.Util
 {
 	internal class GuiHelpers
@@ -44,9 +46,9 @@ namespace Ktisis.Util
 			}
 		}
 
-		public static bool DrawBoneNode(string? str_id, ImGuiTreeNodeFlags flag, string fmt, System.Action? executeIfClicked = null)
+		public static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, System.Action? executeIfClicked = null)
 		{
-			bool show = ImGui.TreeNodeEx(str_id, flag, fmt);
+			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
 
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();

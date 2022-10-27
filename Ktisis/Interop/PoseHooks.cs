@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Dalamud.Hooking;
-using Dalamud.Logging;
 
 using FFXIVClientStructs.Havok;
 
@@ -21,9 +19,6 @@ namespace Ktisis.Interop {
 		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
 		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
 
-		public unsafe delegate void GetDescendentsDelegate(hkaSkeleton* skeleton, short startBone, hkArray<short>* bonesOut, bool includeStart = false);
-		public static GetDescendentsDelegate GetDescendentsFunc = null!;
-
 		internal static bool PosingEnabled { get; private set; }
 
 		internal static unsafe void Init() {
@@ -38,9 +33,6 @@ namespace Ktisis.Interop {
 
 			var lookAtIK = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
 			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
-
-			var getDescendents = Dalamud.SigScanner.ScanText("48 89 5C 24 ?? 48 89 74 24 ?? 48 89 7C 24 ?? 55 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 50 8B 79 30");
-			GetDescendentsFunc = Marshal.GetDelegateForFunctionPointer<GetDescendentsDelegate>(getDescendents);
 		}
 
 		internal static void DisablePosing() {

@@ -3,8 +3,6 @@ using System.Numerics;
 
 using ImGuiNET;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
 using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
@@ -12,9 +10,6 @@ using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
-using Ktisis.Localization;
-
-using System.Runtime.InteropServices;
 
 namespace Ktisis.Overlay {
 	public static class Skeleton {
@@ -87,7 +82,7 @@ namespace Ktisis.Overlay {
 					var boneName = bone.HkaBone.Name.String;
 					var parentId = bone.ParentId;
 
-					var uniqueName = $"{Locale.GetBoneName(boneName)}##{p}";
+					var uniqueName = bone.UniqueName;
 
 					if (!Ktisis.Configuration.IsBoneVisible(bone))
 						continue; // Bone is hidden, move onto the next one.

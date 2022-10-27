@@ -8,7 +8,7 @@ namespace Ktisis.Interop {
 		private static IntPtr MatrixAlloc;
 
 		// Access
-		internal unsafe static Matrix4x4 GetMatrix() => *(Matrix4x4*)(16 * ((long)(MatrixAlloc + 15) / 16)); // 16-byte boundary
+		internal unsafe static Matrix4x4 GetMatrix() => *(Matrix4x4*)(16 * ((long)(MatrixAlloc + 15) / 16)); // Align to 16-byte boundary
 
 		// Init & disspose
 		public static void Init() {
