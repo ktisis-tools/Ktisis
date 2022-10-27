@@ -5,7 +5,7 @@ using ImGuiNET;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
-	public class EditActor {
+	public static class EditActor {
 		// Properties
 
 		public static bool Visible = false;
@@ -32,8 +32,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
 			// Create window
-			var title = Ktisis.Configuration.DisplayCharName ? $"{Target->Name}" : "Appearance";
-			if (ImGui.Begin(title, ref Visible)) {
+
+			if (ImGui.Begin("Appearance", ref Visible)) {
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
 

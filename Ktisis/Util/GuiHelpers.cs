@@ -8,9 +8,9 @@ using ImGuiNET;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
-using Ktisis.Helpers;
-using Ktisis.Structs;
-using Ktisis.Structs.Actor;
+using FFXIVClientStructs.Havok;
+
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Util
 {
@@ -46,24 +46,9 @@ namespace Ktisis.Util
 			}
 		}
 
-		public static bool DragVec4intoVec3(string label, ref Vector4 vector4, float speed = 0.1f)
+		public static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, System.Action? executeIfClicked = null)
 		{
-			Vector3 vector3 = new(vector4.X, vector4.Y, vector4.Z);
-			bool modified = ImGui.DragFloat3(label, ref vector3, speed);
-			vector4.X = vector3.X;
-			vector4.Y = vector3.Y;
-			vector4.Z = vector3.Z;
-			return modified;
-		}
-		public static bool DragQuatIntoEuler(string label, ref Quaternion quaternion, float speed = 0.1f) {
-			Vector3 euler = MathHelpers.ToEuler(quaternion);
-			bool modified = ImGui.DragFloat3(label, ref euler, speed);
-			quaternion = MathHelpers.ToQuaternion(euler);
-			return modified;
-		}
-		public static bool DrawBoneNode(string? str_id, ImGuiTreeNodeFlags flag, string fmt, System.Action? executeIfClicked = null)
-		{
-			bool show = ImGui.TreeNodeEx(str_id, flag, fmt);
+			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
 
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();
@@ -79,26 +64,6 @@ namespace Ktisis.Util
 			}
 			return show;
 		}
-		public static unsafe bool CoordinatesTable(ActorModel* actorModel, System.Action? doAfter = null)
-		{
-			bool active = false;
-			active |= ImGui.DragFloat3("Position", ref actorModel->Position, 0.005f);
-			active |= GuiHelpers.DragQuatIntoEuler("Rotation", ref actorModel->Rotation, 0.1f);
-			active |= ImGui.DragFloat3("Scale", ref actorModel->Scale, 0.005f);
-
-			doAfter?.Invoke();
-			return active;
-		}
-		public static bool CoordinatesTable(Transform transform, System.Action? doAfter = null)
-		{
-			bool active = false;
-			active |= GuiHelpers.DragVec4intoVec3("Position", ref transform.Position, 0.0001f);
-			active |= GuiHelpers.DragQuatIntoEuler("Rotation", ref transform.Rotation, 0.1f);
-			active |= GuiHelpers.DragVec4intoVec3("Scale", ref transform.Scale, 0.01f);
-
-			doAfter?.Invoke();
-			return active;
-		}
 
 		public static void TextCentered(string text)
 		{
@@ -107,6 +72,18 @@ namespace Ktisis.Util
 
 			ImGui.SetCursorPosX((windowWidth - textWidth) * 0.5f);
 			ImGui.Text(text);
+		}
+		
+		public static unsafe void AnimationControls(hkaDefaultAnimationControl* control)
+		{
+			var duration = control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
+			var durationLimit = duration - 0.05f;
+			
+			if (control->hkaAnimationControl.LocalTime >= durationLimit)
+				control->hkaAnimationControl.LocalTime = 0f;
+        
+			ImGui.SliderFloat("Seek", ref control->hkaAnimationControl.LocalTime, 0, durationLimit);
+			ImGui.SliderFloat("Speed", ref control->PlaybackSpeed, 0f, 0.999f);
 		}
 
 		// HoverPopupWindow Method

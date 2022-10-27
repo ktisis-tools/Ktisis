@@ -14,7 +14,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
-	public class EditEquip {
+	public static class EditEquip {
 		// Constants
 
 		public const int _IconSize = 36;

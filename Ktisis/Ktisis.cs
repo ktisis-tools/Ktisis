@@ -26,6 +26,12 @@ namespace Ktisis {
 			Dalamud.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
+			Configuration.Validate();
+
+			// Init memory allocations
+
+			Interop.Alloc.Init();
+
 			// Init hooks & delegates
 
 			Interop.ActorHooks.Init();
@@ -48,10 +54,10 @@ namespace Ktisis {
 		}
 
 		public void Dispose() {
-			// TODO
 			Dalamud.CommandManager.RemoveHandler(CommandName);
 			Dalamud.PluginInterface.SavePluginConfig(Configuration);
 
+			Interop.Alloc.Dispose();
 			Interop.ActorHooks.Dispose();
 			Interop.CameraHooks.Dispose();
 			Interop.PoseHooks.Dispose();

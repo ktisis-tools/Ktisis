@@ -1,46 +1,19 @@
 ﻿using System.Numerics;
 
-using Matrix = SharpDX.Matrix;
-
 using ImGuiNET;
 using ImGuizmoNET;
 
-using Ktisis.Interop;
-using Ktisis.Structs.FFXIV;
-
 namespace Ktisis.Overlay {
 	public class Gizmo {
-		// Static properties
-
-		public unsafe static WorldMatrix* WorldMatrix;
-
-		public float[] ViewMatrix = {
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		};
-
-		public static ImGuiIOPtr Io = ImGui.GetIO();
-		public static Vector2 Wp = ImGui.GetWindowPos();
-
 		// Instanced properties
 
-		public MODE Mode;
-		public OPERATION Operation;
+		public MODE Mode => Ktisis.Configuration.GizmoMode;
+		public OPERATION Operation => Ktisis.Configuration.GizmoOp;
 
-		public Matrix Matrix;
-		public Matrix Delta;
+		public Matrix4x4 Matrix = new();
+		public Matrix4x4 Delta = new();
 
-		// Constructor
-
-		public Gizmo(MODE mode = MODE.WORLD, OPERATION op = OPERATION.TRANSLATE) {
-			Mode = mode;
-			Operation = op;
-
-			Matrix = new();
-			Delta = new();
-		}
+		public OPERATION? ForceOp = null;
 
 		// Compose & Decompose
 		// Compose updates the matrix using given values.
@@ -78,39 +51,39 @@ namespace Ktisis.Overlay {
 
 		// Draw
 
-		internal void BeginFrame() {
+		internal void BeginFrame(Vector2 wp, ImGuiIOPtr io) {
+			ForceOp = null;
+
 			ImGuizmo.BeginFrame();
 			ImGuizmo.SetDrawlist();
-			ImGuizmo.SetRect(Wp.X, Wp.Y, Io.DisplaySize.X, Io.DisplaySize.Y);
+
+			ImGuizmo.SetRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
 
 			ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
 		}
 
-		internal unsafe void Manipulate() {
-			if (WorldMatrix == null)
-				WorldMatrix = (WorldMatrix*)CameraHooks.GetMatrix!();
-
-			ImGuizmo.Manipulate(
-				ref WorldMatrix->Projection.M11,
-				ref ViewMatrix[0],
-				Operation,
+		internal unsafe bool Manipulate() {
+			return ImGuizmo.Manipulate(
+				ref OverlayWindow.WorldMatrix->Projection.M11,
+				ref OverlayWindow.ViewMatrix[0],
+				ForceOp ?? Operation,
 				Mode,
-				ref Matrix.M11,
-				ref Delta.M11
+				ref Matrix.M11
 			);
 		}
 
-		public void Draw() {
-			Overlay.Begin();
-			BeginFrame();
-			Manipulate();
-			Overlay.End();
+		public bool Draw() => Manipulate();
+
+		public bool Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
+			ComposeMatrix(ref pos, ref rot, ref scale);
+			var result = Manipulate();
+			DecomposeMatrix(ref pos, ref rot, ref scale);
+			return result;
 		}
 
-		public void Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
-			ComposeMatrix(ref pos, ref rot, ref scale);
-			Draw();
-			DecomposeMatrix(ref pos, ref rot, ref scale);
+		public bool Draw(ref Vector3 pos) {
+			var _ = new Vector3(0, 0, 0);
+			return Draw(ref pos, ref _, ref _);
 		}
 	}
 }

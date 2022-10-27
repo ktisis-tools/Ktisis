@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 using ImGuiNET;
 using ImGuizmoNET;
@@ -7,20 +7,23 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
 using Ktisis.Util;
+using Ktisis.Interop;
+using Ktisis.Overlay;
+using Ktisis.Structs;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
-using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Interop;
 using Ktisis.Structs.Actor;
+using Ktisis.Interface.Components;
+using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows {
-	public class Workspace {
+	public static class Workspace {
 		public static bool Visible = false;
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
 		public static Vector4 ColRed = new Vector4(255, 0, 0, 255);
 
-		public const ImGuiTreeNodeFlags BaseFlags = ImGuiTreeNodeFlags.OpenOnArrow;
+		public static TransformTable Transform = new();
 
 		// Toggle visibility
 
@@ -56,28 +59,28 @@ namespace Ktisis.Interface.Windows {
 				);
 
 				// Gizmo Controls
+				// TODO
 
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow))
-					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.TRANSLATE;
+					Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync))
-					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.ROTATE;
+					Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandAlt))
-					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.SCALE;
+					Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
 
 				ImGui.SameLine();
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
-					KtisisGui.SkeletonEditor.GizmoOp = OPERATION.UNIVERSAL;
+					Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
 
 				// Second row
 
-				var gizmode = KtisisGui.SkeletonEditor.Gizmode;
-				if (GuiHelpers.IconButtonTooltip(
-					gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch."))
-					KtisisGui.SkeletonEditor.Gizmode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+				var gizmode = Ktisis.Configuration.GizmoMode;
+				if (GuiHelpers.IconButtonTooltip(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch."))
+					Ktisis.Configuration.GizmoMode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
 
 				ImGui.SameLine();
 				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit targeted Actor's appearance.")) {
@@ -92,8 +95,6 @@ namespace Ktisis.Interface.Windows {
 				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
 					ConfigGui.Show();
 
-				Coordinates();
-
 				ImGui.Separator();
 				
 				if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
@@ -101,97 +102,119 @@ namespace Ktisis.Interface.Windows {
 
 				ImGui.BeginDisabled(!Ktisis.IsInGPose);
 				var pose = PoseHooks.PosingEnabled;
-				if (ImGui.Checkbox("Toggle Posing", ref pose)) {
+				if (ImGui.Checkbox("Toggle Posing", ref pose))
 					PoseHooks.TogglePosing();
-				}
 				ImGui.EndDisabled();
 
 				var showSkeleton = cfg.ShowSkeleton;
-				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton)) {
-					cfg.ShowSkeleton = showSkeleton;
-					if (!showSkeleton)
-						KtisisGui.SkeletonEditor.ResetState();
-				}
+				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton))
+					Skeleton.Toggle();
 
-				if (ImGui.CollapsingHeader("Toggle Bone Categories  ")) {
-
-					ImGui.Indent(16.0f);
-					foreach (Category category in Category.Categories.Values) {
-						if (!category.ShouldDisplay) continue;
-
-						bool categoryState = cfg.IsBoneCategoryVisible(category);
-						if (!cfg.ShowSkeleton) categoryState = false;
-
-						if (ImGui.Checkbox(category.Name, ref categoryState)) {
-							if (!cfg.ShowSkeleton && categoryState) {
-								cfg.ShowSkeleton = true;
-							}
-							cfg.ShowBoneByCategory[category.Name] = categoryState;
-						}
-					}
-					ImGui.Unindent(16.0f);
-				}
+				// Actor control
 
 				ImGui.Separator();
-
-				// Bone tree
-
-				DrawBoneTree();
+				ActorControl();
 			}
 
 			ImGui.PopStyleVar(1);
 			ImGui.End();
 		}
 
+		// Actor control
+
+		private unsafe static void ActorControl() {
+			var cfg = Ktisis.Configuration;
+
+			// Get target actor, model, etc
+
+			var target = Ktisis.GPoseTarget;
+			if (target == null) return;
+
+			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
+			if (actor->Model == null) return;
+
+			// Draw co-ordinate table
+			Coordinates(actor);
+
+			// Animation control
+			if (ImGui.CollapsingHeader("Animation Control")) {
+				var control = PoseHooks.GetAnimationControl(target);
+				if (!Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null)
+					ImGui.Text("Unavailable at this time.");
+				else
+					GuiHelpers.AnimationControls(control);
+			}
+
+			// Bone categories
+			if (ImGui.CollapsingHeader("Toggle Bone Categories  ")) {
+
+				ImGui.Indent(16.0f);
+				foreach (Category category in Category.Categories.Values) {
+					if (!category.ShouldDisplay) continue;
+
+					bool categoryState = cfg.IsBoneCategoryVisible(category);
+					if (!cfg.ShowSkeleton) categoryState = false;
+
+					if (ImGui.Checkbox(category.Name, ref categoryState)) {
+						if (!cfg.ShowSkeleton && categoryState) {
+							cfg.ShowSkeleton = true;
+						}
+						cfg.ShowBoneByCategory[category.Name] = categoryState;
+					}
+				}
+				ImGui.Unindent(16.0f);
+			}
+
+			// Bone tree
+			if (ImGui.CollapsingHeader("Bone List")) {
+				if (ImGui.BeginListBox("##bone_list", new Vector2(-1, 300))) {
+					var body = actor->Model->Skeleton->GetBone(0, 1);
+					DrawBoneTreeNode(body);
+					ImGui.EndListBox();
+				}
+			}
+		}
+
 		// Coordinates table
-		private static unsafe bool Coordinates() {
-			if (Ktisis.GPoseTarget == null) return false;
 
-			ImGui.Separator();
+		private static unsafe bool Coordinates(Actor* target) {
+			string targetName = target->GetNameOr("target");
+			string title = $"Transforming {targetName}";
 
-			Bone? selectedBone = KtisisGui.SkeletonEditor.GetSelectedBone();
-
-			var target = (Actor*)Ktisis.GPoseTarget.Address;
-			string? targetName = Ktisis.Configuration.DisplayCharName ? target->Name : "target";
-			string title = "Transforming " + targetName;
-
-			if (KtisisGui.SkeletonEditor.Skeleton == null || selectedBone == null) {
+			var select = Skeleton.BoneSelect;
+			if (!select.Active) {
 				ImGui.TextDisabled(title);
-				return GuiHelpers.CoordinatesTable(target->Model);
-			};
+				var model = target->Model;
+				return Transform.Draw(ref model->Position, ref model->Rotation, ref model->Scale);
+			}
 
-			ImGui.TextDisabled(title+"'s " + Locale.GetBoneName(selectedBone.HkaBone.Name!));
-			return GuiHelpers.CoordinatesTable(selectedBone.Transform, () => KtisisGui.SkeletonEditor.BoneMod.ApplyDelta(selectedBone, KtisisGui.SkeletonEditor.Skeleton));
+			var bone = Skeleton.GetSelectedBone(target->Model->Skeleton);
+			if (bone == null) return false;
+
+			ImGui.TextDisabled($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");
+
+			var trans = bone.Transform;
+			if (Transform.Draw(select.Update, ref trans.Translation, ref trans.Rotation, ref trans.Scale)) {
+				bone.Transform = trans;
+				return true;
+			}
+
+			return false;
 		}
 
 		// Bone Tree
 
-		public static void DrawBoneTree() {
-			var editor = KtisisGui.SkeletonEditor;
-			if (editor.Skeleton != null && editor.Skeleton.Count > 0)
-				DrawBoneTree(editor.Skeleton[0].Bones[0]);
+		public unsafe static void DrawBoneTreeNode(Bone bone) {
+			var children = bone.GetChildren();
 
-			GuiHelpers.DrawBoneNode("actor_target", ImGuiTreeNodeFlags.Leaf, "Actor", () => KtisisGui.SkeletonEditor.SelectActorTarget());
-		}
-
-		public static void DrawBoneTree(Bone bone) {
-			var flag = BaseFlags;
-
-			if (KtisisGui.SkeletonEditor.BoneSelector.IsSelected(bone))
+			var flag = children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
+			if (Skeleton.IsBoneSelected(bone))
 				flag |= ImGuiTreeNodeFlags.Selected;
 
-			var children = bone.GetChildren();
-			if (children.Count == 0)
-				flag |= ImGuiTreeNodeFlags.Leaf;
-
-			var show = bone.IsRoot; 
-
-			if (!show) show = GuiHelpers.DrawBoneNode(bone.HkaBone.Name, flag, Locale.GetBoneName(bone.HkaBone.Name!),() => KtisisGui.SkeletonEditor.SelectBone(bone));
-			
+			var show = GuiHelpers.DrawBoneNode(bone, flag, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
 			if (show) {
-				// Show children
 				foreach (var child in children)
-					DrawBoneTree(child);
+					DrawBoneTreeNode(child);
 				ImGui.TreePop();
 			}
 		}

@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using Dalamud.Logging;
 
 namespace Ktisis.Localization {
-	public class Locale {
+	public static class Locale {
 		public static UserLocale Loaded = UserLocale.None;
 		public static JObject Strings = new();
 

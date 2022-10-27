@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -10,13 +11,10 @@ using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
-	public class EditGaze {
+	public static class EditGaze {
 		public unsafe static Actor* Target => EditActor.Target;
 
 		public static Dictionary<byte, ActorGaze>? ActorControl = null; // ObjectID : ActorGaze
-
-		public static Gizmo Gizmo = new();
-		public static GazeControl? GizmoActive =  null;
 
 		public static bool IsLinked {
 			get => Ktisis.Configuration.LinkedGaze;
@@ -78,11 +76,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (ImGui.Checkbox($"{type}", ref enabled)) {
 				result = true;
 				gaze.Mode = enabled ? GazeMode.Target : GazeMode.Disabled;
-				if (!enabled && type == GizmoActive)
-					GizmoActive = null;
 			}
 
 			if (type != GazeControl.All) {
+				// If this gaze type is not being overwritten, copy the vanilla values.
 				var baseGaze = Target->Gaze.Get(type);
 				if (baseGaze.Mode != 0 && (!enabled || result))
 					gaze.Pos = baseGaze.Pos;
@@ -90,36 +87,34 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
 
+			// Gizmo controls
+			// TODO: rotation mode.
+
+			var gizmoId = $"edit_gaze_{type}";
+			var gizmo = OverlayWindow.GetGizmo(gizmoId);
+
 			ImGui.SameLine();
 			if (ImGuiComponents.IconButton($"{FontAwesomeExtensions.ToIconChar(FontAwesomeIcon.EllipsisH)}##{type}")) {
+				// Toggle gizmo on or off.
 				// TODO: Place gizmo closer to character/camera.
-				GizmoActive = GizmoActive == type ? null : type;
-				gaze.Mode = GizmoActive != null ? GazeMode.Target : GazeMode.Disabled;
+				if (!enabled) { // Enable override if not already.
+					result = true;
+					enabled = true;
+					gaze.Mode = GazeMode.Target;
+				}
+				gizmo = OverlayWindow.SetGizmoOwner(gizmo == null ? gizmoId : null);
 			}
 
-			// TODO: Rotation mode.
-
-			if (GizmoActive == type) {
-				DrawGizmo(ref gaze);
-				result |= true;
+			if (gizmo != null) {
+				if (enabled) {
+					gizmo.ForceOp = OPERATION.TRANSLATE;
+					result |= gizmo.Draw(ref gaze.Pos);
+				} else {
+					OverlayWindow.SetGizmoOwner(null);
+				}
 			}
 
 			return result;
-		}
-
-		// Gizmo woo gizmo!!!
-
-		public static void DrawGizmo(ref Gaze gaze) {
-			if (GizmoActive == null)
-				return;
-
-			if (KtisisGui.SkeletonEditor.HasSelected()) {
-				GizmoActive = null;
-				return;
-			}
-
-			var _ = new Vector3(0.0f, 0.0f, 0.0f);
-			Gizmo.Draw(ref gaze.Pos, ref _, ref _);
 		}
 
 		// ControlGaze Hook

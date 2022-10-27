@@ -10,7 +10,7 @@ using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface.Windows {
-	internal class ConfigGui {
+	internal static class ConfigGui {
 		public static bool Visible = false;
 
 		// Toggle visibility

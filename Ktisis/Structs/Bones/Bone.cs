@@ -1,121 +1,68 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
 
+using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using static FFXIVClientStructs.Havok.hkaPose;
 
-using Ktisis.Structs.Havok;
+using Ktisis.Localization;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis.Structs.Bones {
 	public class Bone {
 		public int Index;
-		public short ParentId;
-		public Transform Transform;
+		public int Partial;
+		public unsafe hkaPose* Pose;
+		public unsafe Skeleton* Skeleton;
 
-		public HkaBone HkaBone;
+		public unsafe Bone(Skeleton* skeleton, int partialId, int boneId) {
+			Index = boneId;
+			Partial = partialId;
 
-		public Quaternion RootRotation;
-
-		public bool IsRoot = false;
-		public List<int> LinkedTo;
-
-		public BoneList BoneList;
-
-		// Constructor
-
-		public Bone(BoneList bones, int index) {
-			BoneList = bones;
-
-			Index = index;
-			ParentId = bones.Skeleton.ParentIndex[index];
-			Transform = bones.Transforms[index];
-
-			HkaBone = bones.Skeleton.Bones[index];
-
-			UpdateTransform(bones);
-
-			LinkedTo = new List<int>();
+			var partial = skeleton->PartialSkeletons[partialId];
+			var pose = partial.GetHavokPose(0);
+			Pose = pose;
+			Skeleton = skeleton;
 		}
 
-		// Update stored transform from matrix
-
-		public void UpdateTransform(BoneList bones) {
-			var t = bones.Transforms[Index];
-			Transform = t;
+		public unsafe hkaBone HkaBone => Pose->Skeleton->Bones[Index];
+		public unsafe int ParentId => Pose->Skeleton->ParentIndices[Index];
+		public unsafe hkQsTransformf Transform {
+			get => Pose->ModelPose.Data[Index];
+			set => Pose->ModelPose.Data[Index] = value;
 		}
 
-		// Apply stored transform
+		public string LocaleName => Locale.GetBoneName(HkaBone.Name.String);
 
-		public void ApplyTransform(BoneList bones) {
-			if (ParentId == -1) return; // no
-			bones.Transforms[Index] = Transform;
-		}
+		public string UniqueId => $"{Partial}_{Index}";
+		public string UniqueName => $"{LocaleName}##{UniqueId}";
 
-		// Quaternion rotation
+		public Category Category => Category.GetForBone(HkaBone.Name.String);
 
-		public Vector3 Rotate(Quaternion quat) {
-			var t = Transform.Position;
-			return Vector3.Transform(new Vector3(t.X, t.Y, t.Z), quat);
-		}
+		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate) => Pose->AccessBoneModelSpace(Index, propagate);
 
-		// Transform bone
+		public unsafe Vector3 GetWorldPos(ActorModel* model) => model->Position + Transform.Translation.Rotate(model->Rotation) * model->Height;
 
-		public void TransformBone(Transform t) {
-			Transform.Position += t.Position;
-			// doesn't work, disable this for now.
-			//Transform.Rotate *= t.Rotate;
-			// also disable this while reworking BoneMod
-			//Transform.Scale *= t.Scale;
-		}
-
-		public void TransformBone(Transform t, BoneList bones, bool parenting) {
-			TransformBone(t);
-			ApplyTransform(bones);
-			if (parenting)
-				TransformChildren(t, bones);
-		}
-
-		public void TransformBone(Transform t, List<BoneList> skeleton) {
-			var children = new List<Bone>();
-
-			var bones = skeleton[0];
-			TransformBone(t, bones, false);
-			bones.GetChildrenRecursive(this, ref children);
-			foreach (var child in children) {
-				child.TransformBone(t, bones, false);
-				
-				foreach (int index in child.LinkedTo) {
-					var childBones = skeleton[index];
-					childBones[0].TransformBone(t, childBones, true);
+		public unsafe List<Bone> GetChildren() {
+			var result = new List<Bone>();
+			// Add child bones from same partial
+			for (var i = Index + 1; i < Pose->Skeleton->ParentIndices.Length; i++) {
+				var child = new Bone(Skeleton, Partial, i);
+				if (child.ParentId != Index) continue;
+				result.Add(child);
+			}
+			// Add child bones from connected partials
+			for (var p = 0; p < Skeleton->PartialSkeletonCount; p++) {
+				if (p == Partial) continue;
+				var partial = Skeleton->PartialSkeletons[p];
+				if (partial.ConnectedParentBoneIndex == Index) {
+					var partialRoot = new Bone(Skeleton, p, partial.ConnectedBoneIndex);
+					var children = partialRoot.GetChildren();
+					foreach (var child in children)
+						result.Add(child);
 				}
 			}
+			return result;
 		}
-
-		// Transform children
-
-		public void TransformChildren(Transform t, BoneList bones) {
-			var children = new List<Bone>();
-			bones.GetChildrenRecursive(this, ref children);
-
-			foreach (var child in children) {
-				child.TransformBone(t, bones, false);
-			}
-		}
-
-		// Get parent
-
-		public Bone? GetParent() {
-			return BoneList.GetParentOf(this);
-		}
-
-		// Get children
-
-		public List<Bone> GetChildren() {
-			return BoneList.GetChildrenDirect(this);
-		}
-
-		public List<Bone> GetParents() {
-			return BoneList.GetParents(this);
-		}
-
-		public Category Category => Category.GetForBone(HkaBone.Name);
 	}
 }
