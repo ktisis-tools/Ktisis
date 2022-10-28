@@ -3,6 +3,8 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
 using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
@@ -44,8 +46,6 @@ namespace Ktisis.Overlay {
 			var model = actor->Model;
 			if (model == null) return;
 
-			var matrix = Interop.Alloc.GetMatrix();
-
 			// ImGui rendering
 
 			var draw = ImGui.GetWindowDrawList();
@@ -56,11 +56,11 @@ namespace Ktisis.Overlay {
 				var actorName = actor->GetNameOr("Actor");
 				var gizmo = OverlayWindow.GetGizmo(actorName);
 				if (gizmo != null) {
-					model->Transform.get4x4ColumnMajor(&matrix.M11);
+					var matrix = Interop.Alloc.GetMatrix(&model->Transform);
 					gizmo.Matrix = matrix;
 					if (gizmo.Draw()) {
 						matrix = gizmo.Matrix;
-						model->Transform.set((hkMatrix4f*)&matrix);
+						Interop.Alloc.SetMatrix(&model->Transform, matrix);
 					}
 				} else {
 					Dalamud.GameGui.WorldToScreen(model->Position, out var pos2d);
@@ -88,7 +88,7 @@ namespace Ktisis.Overlay {
 						continue; // Bone is hidden, move onto the next one.
 
 					// Access bone transform
-					var transform = bone.AccessModelSpace(PropagateOrNot.Propagate);
+					var transform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 
 					// Get bone color and screen position
 					var boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
@@ -119,7 +119,7 @@ namespace Ktisis.Overlay {
 					// Bone selection & gizmo
 					var gizmo = OverlayWindow.GetGizmo(uniqueName);
 					if (gizmo != null) {
-						transform->get4x4ColumnMajor(&matrix.M11);
+						var matrix = Interop.Alloc.GetMatrix(transform);
 
 						// Apply the root transform of the actor's model.
 						// This is important for the gizmo's orientation to show correctly.
@@ -128,16 +128,37 @@ namespace Ktisis.Overlay {
 						gizmo.Matrix.Translation += model->Position;
 
 						// Draw the gizmo. This returns true if it has been moved.
-						if (gizmo.Draw()) {		
+						if (gizmo.Draw()) {
+							BoneSelect.Update = true;
+
 							// Reverse the previous transform we did.
 							gizmo.Matrix.Translation -= model->Position;
 							matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
 							matrix.Translation /= model->Height * model->Scale;
 
 							// Write our updated matrix to memory.
-							transform->set((hkMatrix4f*)&matrix);
+							var initialRot = transform->Rotation.ToQuat();
+							var initialPos = transform->Translation.ToVector3();
+							Interop.Alloc.SetMatrix(transform, matrix);
 
-							BoneSelect.Update = true;
+							// Bone parenting
+							// Adapted from Anamnesis Studio code shared by Yuki - thank you!
+							var descendants = bone.GetDescendants();
+							foreach (var child in descendants) {
+								var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
+
+								var sourcePos = transform->Translation.ToVector3();
+								var deltaRot = transform->Rotation.ToQuat() / initialRot;
+								var deltaPos = transform->Translation.ToVector3() - initialPos;
+
+								var offset = access->Translation.ToVector3() - sourcePos;
+								offset = Vector3.Transform(offset, deltaRot);
+
+								matrix = Interop.Alloc.GetMatrix(access);
+								matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
+								matrix.Translation = deltaPos + sourcePos + offset;
+								Interop.Alloc.SetMatrix(access, matrix);
+							}
 						}
 
 						BoneSelect.Active = true;
