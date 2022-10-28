@@ -1,14 +1,12 @@
 ﻿using System;
 
 using Dalamud.Plugin;
-using Dalamud.Logging;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Structs.Actor;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {

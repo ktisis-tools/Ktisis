@@ -2,10 +2,8 @@
 using System.Runtime.InteropServices;
 
 using Dalamud.Hooking;
-using Dalamud.Logging;
 
 using Ktisis.Structs.Actor;
-using Ktisis.GameData.Excel;
 using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interop {
@@ -19,7 +17,7 @@ namespace Ktisis.Interop {
 		// Change actor equipment
 		// a1 = Actor + 0x6D0, a2 = EquipIndex, a3 = EquipItem
 
-		internal delegate IntPtr ChangeEquipDelegate(IntPtr writeTo, EquipIndex index, EquipItem item);
+		internal delegate IntPtr ChangeEquipDelegate(IntPtr writeTo, EquipIndex index, ItemEquip item);
 		internal static ChangeEquipDelegate? ChangeEquip;
 
 		internal delegate void ChangeWeaponDelegate(IntPtr writeTo, int slot, WeaponEquip weapon, byte a4, byte a5, byte a6, byte a7); // a4-a7 is always 0,1,0,0.

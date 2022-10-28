@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-
-using Lumina;
-using Lumina.Data;
+﻿using Lumina.Data;
 using Lumina.Text;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
 
 using Ktisis.Structs.Actor;
 
@@ -66,6 +62,14 @@ namespace Ktisis.GameData.Excel {
 			var subModel = parser.ReadColumn<ulong>(48);
 			Model = new ItemModel(model, isWep);
 			SubModel = new ItemModel(subModel, isWep);
+		}
+
+		public bool IsEquipItem(object equip) {
+			if (equip is WeaponEquip wep)
+				return (wep.Set == Model.Id || wep.Set == SubModel.Id) && wep.Base == Model.Base && wep.Variant == Model.Variant;
+			if (equip is ItemEquip item)
+				return item.Id == Model.Id && item.Variant == Model.Variant;
+			return equip.Equals(this);
 		}
 	}
 

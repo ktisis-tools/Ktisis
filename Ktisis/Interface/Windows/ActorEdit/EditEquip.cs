@@ -42,10 +42,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			.Where(i => i.IsValid())
 			.OrderBy(i => i.Shade).ThenBy(i => i.SubOrder);
 
-		// Helper stuff. Will move if there's ever a need for this elsewhere.
-
-		public static Item? FindItem(EquipItem item, EquipSlot slot)
-			=> Items?.FirstOrDefault(i => i.IsEquippable(slot) && i.Model.Id == item.Id && i.Model.Variant == item.Variant, null!);
+		public static Item? FindItem(object item, EquipSlot slot)
+			=> Items?.FirstOrDefault(i => (item is WeaponEquip ? i.IsWeapon() : i.IsEquippable(slot)) && i.IsEquipItem(item), null!);
 
 		public static EquipIndex SlotToIndex(EquipSlot slot) => (EquipIndex)(slot - ((int)slot >= 5 ? 3 : 2));
 
@@ -65,7 +63,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					ImGui.EndGroup();
 					ImGui.SameLine();
 					ImGui.BeginGroup();
+					DrawSelector(EquipSlot.OffHand);
 				}
+				if (i == 2) DrawSelector(EquipSlot.MainHand);
 				DrawSelector(slot);
 			}
 			ImGui.EndGroup();
@@ -75,27 +75,39 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public unsafe static void DrawSelector(EquipSlot slot) {
 			var tar = EditActor.Target;
-			var index = SlotToIndex(slot);
+			var isWeapon = slot == EquipSlot.MainHand || slot == EquipSlot.OffHand;
+			var index = isWeapon ? SlotToIndex(slot) : 0;
 
-			var equip = (EquipItem)tar->Equipment.Slots[(int)index];
+			object equipObj;
+			if (isWeapon)
+				equipObj = slot == EquipSlot.MainHand ? tar->MainHand.Equip : tar->OffHand.Equip;
+			else
+				equipObj = (ItemEquip)tar->Equipment.Slots[(int)SlotToIndex(slot)];
+
 			if (!Equipped.ContainsKey(slot)) {
 				Equipped.Add(slot, new() {
-					EquipItem = equip,
-					Item = FindItem(equip, slot)
+					Equip = equipObj,
+					Item = FindItem(equipObj, slot)
 				});
-			} else if (!Equipped[slot].EquipItem.Equals(equip)) {
-				Equipped[slot].EquipItem = equip;
-				Equipped[slot].Item = FindItem(equip, slot);
+			} else if (!Equipped[slot].Equip!.Equals(equipObj)) {
+				Equipped[slot].Equip = equipObj;
+				Equipped[slot].Item = FindItem(equipObj, slot);
 				Equipped[slot].Icon = null;
 			}
 
 			var item = Equipped[slot];
-
 			if (item.Icon == null)
 				item.Icon = Dalamud.DataManager.GetImGuiTextureIcon(item.Item == null ? (uint)0 : item.Item.Icon);
 
 			if (ImGui.ImageButton(item.Icon!.ImGuiHandle, IconSize) && SlotSelect == null)
 				OpenSelector(slot);
+
+			if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
+				if (isWeapon)
+					tar->Equip((int)slot, new WeaponEquip() { Dye = ((WeaponEquip)equipObj).Dye });
+				else
+					tar->Equip(SlotToIndex(slot), new ItemEquip() { Dye = ((ItemEquip)equipObj).Dye });
+			}
 
 			ImGui.SameLine();
 			ImGui.BeginGroup();
@@ -103,27 +115,38 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			var name = item.Item == null ? "Unknown" : item.Item.Name;
 			ImGui.Text(name);
 
-			ImGui.PushItemWidth(100);
-			var val = new int[2] { equip.Id, equip.Variant };
-			if (ImGui.InputInt2($"##{slot}", ref val[0])) {
-				equip.Id = (ushort)val[0];
-				equip.Variant = (byte)val[1];
-				tar->Equip(index, equip);
+			ImGui.PushItemWidth(120);
+			if (isWeapon) {
+				var equip = (WeaponEquip)equipObj;
+				var val = new int[3] { equip.Set, equip.Base, equip.Variant };
+				if (ImGui.InputInt3($"##{slot}", ref val[0])) {
+					equip.Set = (ushort)val[0];
+					equip.Base = (ushort)val[1];
+					equip.Variant = (ushort)val[2];
+					tar->Equip((int)slot, equip);
+				}
+			} else {
+				var equip = (ItemEquip)equipObj;
+				var val = new int[2] { equip.Id, equip.Variant };
+				if (ImGui.InputInt2($"##{slot}", ref val[0])) {
+					equip.Id = (ushort)val[0];
+					equip.Variant = (byte)val[1];
+					tar->Equip(index, equip);
+				}
 			}
 			ImGui.PopItemWidth();
-
 			ImGui.SameLine();
-			var dye = Dyes.FirstOrDefault(i => i.RowId == equip.Dye)!;
 
+			var dye = Dyes.FirstOrDefault(i => i.RowId == (isWeapon ? ((WeaponEquip)equipObj).Dye : ((ItemEquip)equipObj).Dye))!;
 			if (ImGui.ColorButton($"{dye.Name} [{dye.RowId}]##{slot}", dye.ColorVector4, ImGuiColorEditFlags.NoBorder))
 				OpenDyePicker(slot);
 
 			ImGui.EndGroup();
 
 			if (SlotSelect == slot)
-				DrawSelectorList(index, equip);
+				DrawSelectorList(slot, equipObj);
 			if (SlotSelectDye == slot)
-				DrawDyePicker(index, equip);
+				DrawDyePicker(slot, equipObj);
 		}
 
 		public static void OpenSelector(EquipSlot slot) {
@@ -162,7 +185,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.Separator();
 		}
 
-		public unsafe static void DrawSelectorList(EquipIndex index, EquipItem equip)
+		public unsafe static void DrawSelectorList(EquipSlot slot, object equipObj)
 		{
 			if (SlotItems == null)
 				return;
@@ -177,9 +200,16 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 						ImGui.IsItemFocused()
 				),
 				(i) => { // on Select
-					equip.Id = i.Model.Id;
-					equip.Variant = (byte)i.Model.Variant;
-					Target->Equip(index, equip);
+					if (equipObj is ItemEquip item) {
+						item.Id = i.Model.Id;
+						item.Variant = (byte)i.Model.Variant;
+						Target->Equip(SlotToIndex(slot), item);
+					} else if (equipObj is WeaponEquip wep) {
+						wep.Set = i.Model.Id;
+						wep.Base = i.Model.Base;
+						wep.Variant = i.Model.Variant;
+						Target->Equip((int)slot, wep);
+					}
 				},
 				CloseSelector,
 				ref ItemSearch,
@@ -226,7 +256,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		private static int DyeLastSubOrder = -1;
 		private const int DyePickerWidth = 485;
-		public static unsafe void DrawDyePicker(EquipIndex index, EquipItem equip)
+		public static unsafe void DrawDyePicker(EquipSlot slot, object equipObj)
 		{
 			GuiHelpers.HoverPopupWindow(
 				GuiHelpers.HoverPopupWindowFlags.SearchBar
@@ -237,14 +267,19 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				DrawDyePickerHeader,
 				DrawDyePickerItem,
 				(i) => { // on Select
-					equip.Dye = (byte)i.RowId;
-					Target->Equip(index, equip);
+					if (equipObj is WeaponEquip wep) {
+						wep.Dye = (byte)i.RowId;
+						Target->Equip((int)slot, wep);
+					} else if (equipObj is ItemEquip item) {
+						item.Dye = (byte)i.RowId;
+						Target->Equip(SlotToIndex(slot), item);
+					}
 				},
 				CloseDyePicker, // on close
 				ref DyeSearch,
-				$"Dye {index}##{equip.Id}",
+				$"Dye {slot}",
 				"",
-				$"##dye_search##{index}",
+				$"##dye_search",
 				"Search...", // searchbar hint
 				DyePickerWidth, // window width
 				12 // number of columns
@@ -263,9 +298,14 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				(i) => { // on Select
 					foreach ((EquipSlot equipSlot, ItemCache itemCache) in Equipped)
 					{
-						var equip = itemCache.EquipItem;
-						equip.Dye = (byte)i.RowId;
-						Target->Equip(SlotToIndex(equipSlot), equip);
+						var equip = itemCache.Equip;
+						if (equip is WeaponEquip wep) {
+							wep.Dye = (byte)i.RowId;
+							Target->Equip((int)equipSlot, wep);
+						} else if (equip is ItemEquip item) {
+							item.Dye = (byte)i.RowId;
+							Target->Equip(SlotToIndex(equipSlot), item);
+						}
 					}
 				},
 				CloseSetDyePicker, // on close
@@ -323,7 +363,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 	}
 
 	public class ItemCache {
-		public EquipItem EquipItem;
+		public object? Equip;
 		public Item? Item;
 		public TextureWrap? Icon;
 	}

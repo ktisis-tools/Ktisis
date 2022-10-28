@@ -56,12 +56,12 @@ namespace Ktisis.Structs.Actor {
 
 		// Change equipment - no redraw method
 
-		public unsafe void Equip(EquipIndex index, EquipItem item) {
+		public unsafe void Equip(EquipIndex index, ItemEquip item) {
 			if (ActorHooks.ChangeEquip == null) return;
 			ActorHooks.ChangeEquip(GetAddress() + 0x6D0, index, item);
 		}
-		public void Equip(List<(EquipIndex, EquipItem)> items) {
-			foreach((EquipIndex index, EquipItem item) in items)
+		public void Equip(List<(EquipIndex, ItemEquip)> items) {
+			foreach((EquipIndex index, ItemEquip item) in items)
 				Equip(index, item);
 		}
 

@@ -94,9 +94,9 @@ namespace Ktisis.Structs.Actor {
 
 
 		// Find items of the selected set
-		public List<(EquipIndex, EquipItem)> GetItems(EquipmentSet set)
+		public List<(EquipIndex, ItemEquip)> GetItems(EquipmentSet set)
 		{
-			List<(EquipIndex index, EquipItem equip)> items = new();
+			List<(EquipIndex index, ItemEquip equip)> items = new();
 			switch (set.Source)
 			{
 				case SetSource.GearSet: items = GetItemsGearset(set); break;
@@ -104,9 +104,9 @@ namespace Ktisis.Structs.Actor {
 			}
 			return items;
 		}
-		private unsafe List<(EquipIndex index, EquipItem equip)> GetItemsGearset(EquipmentSet set)
+		private unsafe List<(EquipIndex index, ItemEquip equip)> GetItemsGearset(EquipmentSet set)
 		{
-			List<(EquipIndex index, EquipItem equip)> itemsToEquip = new();
+			List<(EquipIndex index, ItemEquip equip)> itemsToEquip = new();
 			var gearset = RaptureGearsetModule.Instance()->Gearset[set.ID];
 
 			if (gearset->GlamourSetLink > 0)
@@ -178,7 +178,7 @@ namespace Ktisis.Structs.Actor {
 				byte dye = (invItem?.Stain) ?? default;
 
 
-				EquipItem newItem = new()
+				ItemEquip newItem = new()
 				{
 					Id = (item?.Model.Id) ?? 0,
 					Variant = (byte)((item?.Model.Variant) ?? 0),
@@ -189,7 +189,7 @@ namespace Ktisis.Structs.Actor {
 
 			return itemsToEquip;
 		}
-		private List<(EquipIndex index, EquipItem equip)> GetItemsGlamourDresser(EquipmentSet set)
+		private List<(EquipIndex index, ItemEquip equip)> GetItemsGlamourDresser(EquipmentSet set)
 		{
 			throw new NotImplementedException();
 		}
