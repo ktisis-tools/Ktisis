@@ -68,7 +68,8 @@ namespace Ktisis.Overlay {
 				ref OverlayWindow.ViewMatrix[0],
 				ForceOp ?? Operation,
 				Mode,
-				ref Matrix.M11
+				ref Matrix.M11,
+				ref Delta.M11
 			);
 		}
 
