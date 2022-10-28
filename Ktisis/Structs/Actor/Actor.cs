@@ -17,6 +17,8 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0xF0)] public unsafe ActorModel* Model;
 		[FieldOffset(0x1B4)] public int ModelId;
 
+		[FieldOffset(0x6E0)] public Weapon MainHand;
+		[FieldOffset(0x748)] public Weapon OffHand;
 		[FieldOffset(0x818)] public Equipment Equipment;
 		[FieldOffset(0x840)] public Customize Customize;
 
@@ -27,7 +29,7 @@ namespace Ktisis.Structs.Actor {
 
 		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
 
-		public string GetNameOr(string fallback) => !Ktisis.Configuration.DisplayCharName || Name == null ? "target" : Name;
+		public string GetNameOr(string fallback) => !Ktisis.Configuration.DisplayCharName || Name == null ? fallback : Name;
 
 		public unsafe IntPtr GetAddress() {
 			fixed (Actor* self = &this) return (IntPtr)self;

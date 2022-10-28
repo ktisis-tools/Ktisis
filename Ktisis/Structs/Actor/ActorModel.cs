@@ -7,7 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
-	public unsafe struct ActorModel {
+	public struct ActorModel {
 		[FieldOffset(0)] public Object Object;
 
 		[FieldOffset(0x050)] public hkQsTransformf Transform;
@@ -17,6 +17,6 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x274)] public float Height;
 
-		[FieldOffset(0x0A0)] public Skeleton* Skeleton;
+		[FieldOffset(0x0A0)] public unsafe Skeleton* Skeleton;
 	}
 }

@@ -37,7 +37,7 @@ namespace Ktisis.GameData.Excel {
 			IsMetallic = parser.ReadColumn<bool>(4);
 
 			if (Name == "")
-				Name = "Terebinth"; // TODO: translation
+				Name = "Undyed"; // TODO: translation
 		}
 	}
 }
