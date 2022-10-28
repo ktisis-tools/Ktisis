@@ -2,8 +2,10 @@
 using System.Runtime.InteropServices;
 
 using Dalamud.Hooking;
+using Dalamud.Logging;
 
 using Ktisis.Structs.Actor;
+using Ktisis.GameData.Excel;
 using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interop {
@@ -19,6 +21,9 @@ namespace Ktisis.Interop {
 
 		internal delegate IntPtr ChangeEquipDelegate(IntPtr writeTo, EquipIndex index, EquipItem item);
 		internal static ChangeEquipDelegate? ChangeEquip;
+
+		internal delegate void ChangeWeaponDelegate(IntPtr writeTo, int slot, WeaponEquip weapon, byte a4, byte a5, byte a6, byte a7); // a4-a7 is always 0,1,0,0.
+		internal static ChangeWeaponDelegate? ChangeWeapon;
 
 		// Control actor gaze
 		// a1 = Actor + 0xC20
@@ -40,6 +45,9 @@ namespace Ktisis.Interop {
 
 			var changeEquip = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 41 B5 01 FF C3");
 			ChangeEquip = Marshal.GetDelegateForFunctionPointer<ChangeEquipDelegate>(changeEquip);
+
+			var changeWeapon = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7F 25 00");
+			ChangeWeapon = Marshal.GetDelegateForFunctionPointer<ChangeWeaponDelegate>(changeWeapon);
 
 			var controlGaze = Dalamud.SigScanner.ScanText("40 53 41 54 41 55 48 81 EC ?? ?? ?? ?? 48 8B D9");
 			ControlGazeHook = Hook<ControlGazeDelegate>.FromAddress(controlGaze, ControlGaze);

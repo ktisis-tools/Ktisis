@@ -7,12 +7,17 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Weapon {
+		[FieldOffset(0x00)] public WeaponEquip Equip;
+		[FieldOffset(0x08)] public unsafe WeaponModel* Model;
+		[FieldOffset(0x40)] public bool IsSheathed;
+	}
+
+	[StructLayout(LayoutKind.Explicit)]
+	public struct WeaponEquip {
 		[FieldOffset(0x00)] public ushort Set;
 		[FieldOffset(0x02)] public ushort Base;
 		[FieldOffset(0x04)] public ushort Variant;
 		[FieldOffset(0x06)] public byte Dye;
-
-		[FieldOffset(0x40)] public bool IsSheathed;
 	}
 
 	[StructLayout(LayoutKind.Explicit)]

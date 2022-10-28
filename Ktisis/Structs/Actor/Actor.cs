@@ -65,6 +65,11 @@ namespace Ktisis.Structs.Actor {
 				Equip(index, item);
 		}
 
+		public void Equip(int slot, WeaponEquip item) {
+			if (ActorHooks.ChangeWeapon == null) return;
+			ActorHooks.ChangeWeapon(GetAddress() + 0x6D0, slot, item, 0, 1, 0, 0);
+		}
+
 		// Change customize - no redraw method
 
 		public unsafe bool UpdateCustomize() {
