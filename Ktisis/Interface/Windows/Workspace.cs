@@ -83,9 +83,8 @@ namespace Ktisis.Interface.Windows {
 					Ktisis.Configuration.GizmoMode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
 
 				ImGui.SameLine();
-				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit targeted Actor's appearance.")) {
+				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit targeted Actor's appearance."))
 					EditActor.Show();
-				}
 
 				// Config
 

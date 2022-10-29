@@ -27,7 +27,7 @@ namespace Ktisis.GameData.Excel {
 
 		public LazyRow<CharaMakeCustomize>[] Features;
 
-		public bool HasIcon => Type == MenuType.Select || Type == MenuType.SelectMulti;
+		public bool HasIcon => Type == MenuType.Select;
 		public bool IsFeature => HasIcon && Graphics[0] == 0;
 	}
 
@@ -47,6 +47,7 @@ namespace Ktisis.GameData.Excel {
 
 		public Menu[] Menus { get; set; } = new Menu[MenuCt];
 		public byte[] Voices { get; set; } = new byte[VoiceCt];
+		public int[] FacialFeatures { get; set; } = new int[7 * 8];
 
 		// Build sheet
 
@@ -56,6 +57,9 @@ namespace Ktisis.GameData.Excel {
 			Race = new LazyRow<Race>(gameData, parser.ReadColumn<int>(0), language);
 			Tribe = new LazyRow<Tribe>(gameData, parser.ReadColumn<int>(1), language);
 			Gender = parser.ReadColumn<sbyte>(2);
+
+			for (var i = 0; i < 7 * 8; i++)
+				FacialFeatures[i] = parser.ReadColumn<int>(3291 + i);
 
 			for (var i = 0; i < MenuCt; i++) {
 				var ct = parser.ReadColumn<byte>(3 + 3 * MenuCt + i);

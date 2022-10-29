@@ -42,6 +42,9 @@ namespace Ktisis.Interface.Windows {
 		public static uint? CustomIndex = null;
 		public static Dictionary<MenuType, List<MenuOption>> MenuOptions = new();
 
+		public static int FaceType = -1;
+		public static List<TextureWrap>? FacialFeatureIcons = null;
+
 		public static CharaMakeType CharaMakeType = null!;
 
 		public unsafe static Actor* Target => EditActor.Target;
@@ -83,6 +86,7 @@ namespace Ktisis.Interface.Windows {
 			if (index != CustomIndex) {
 				MenuOptions = GetMenuOptions(index);
 				CustomIndex = index;
+				FacialFeatureIcons = null;
 			}
 
 			foreach (var type in MenuOptions.Keys) {
@@ -92,12 +96,17 @@ namespace Ktisis.Interface.Windows {
 						case MenuType.Slider:
 							DrawSlider(custom, option);
 							break;
+						case MenuType.SelectMulti:
+							break;
 						default:
 							DrawNumValue(custom, option);
 							break;
 					}
 				}
 			}
+
+			ImGui.Separator();
+			DrawFacialFeatures(custom);
 		}
 
 		// Gender/Race/Tribe
@@ -230,6 +239,8 @@ namespace Ktisis.Interface.Windows {
 			var opt = option.Option;
 			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
 				if (ImGui.IsWindowFocused() || ImGui.IsItemFocused()) {
+					ImGui.BeginListBox("##feature_select", new Vector2(435, 200));
+
 					int i = 0;
 					foreach (var (val, icon) in option.Select!) {
 						if (ImGui.ImageButton(icon.ImGuiHandle, new Vector2(IconSize, IconSize))) {
@@ -241,6 +252,8 @@ namespace Ktisis.Interface.Windows {
 						if (i % 6 != 0)
 							ImGui.SameLine();
 					}
+
+					ImGui.EndListBox();
 				} else {
 					Selecting = null;
 				}
@@ -248,6 +261,51 @@ namespace Ktisis.Interface.Windows {
 				ImGui.PopStyleVar(1);
 				ImGui.End();
 			}
+		}
+
+		// Facial feature selector
+
+		public static void DrawFacialFeatures(Customize custom) {
+			if (FacialFeatureIcons == null || custom.FaceType != FaceType) {
+				var features = new List<TextureWrap>();
+				for (var i = 0; i < 7; i++) {
+					var index = custom.FaceType - 1 + (8 * i);
+					var icon = Dalamud.DataManager.GetImGuiTextureIcon((uint)CharaMakeType.FacialFeatures[index]);
+					features.Add(icon!);
+				}
+				FacialFeatureIcons = features;
+				FaceType = custom.FaceType;
+			}
+
+			ImGui.Text("Facial Features");
+			var input = (int)custom.FaceFeatures;
+			if (ImGui.InputInt("##face_features", ref input)) {
+				custom.FaceFeatures = (byte)input;
+				Apply(custom);
+			}
+
+			ImGui.PushItemWidth(InputSize - IconSize - IconPadding - 8);
+			for (var i = 0; i < 8; i++) {
+				if (i > 0 && i % 4 != 0)
+					ImGui.SameLine();
+
+				var value = (byte)Math.Pow(2, i);
+				var isActive = (custom.FaceFeatures & value) != 0;
+
+				bool button = false;
+				ImGui.PushStyleColor(ImGuiCol.Button, (uint)(isActive ? 0x5F5F5FFF : 0x00000000));
+				if (i == 7) // Legacy tattoo
+					button |= ImGui.Button("Legacy\nTattoo", new Vector2(IconSize + IconPadding, IconSize + IconPadding));
+				else
+					button |= ImGui.ImageButton(FacialFeatureIcons[i].ImGuiHandle, new Vector2(IconSize, IconSize));
+				ImGui.PopStyleColor();
+
+				if (button) {
+					custom.FaceFeatures ^= value;
+					Apply(custom);
+				}
+			}
+			ImGui.PopItemWidth();
 		}
 
 		// Build menu options
@@ -274,7 +332,7 @@ namespace Ktisis.Interface.Windows {
 					var type = val.Type;
 					if (type == MenuType.Unknown1)
 						type = MenuType.Color;
-					if (type == MenuType.Color)
+					if (type == MenuType.Color || type == MenuType.SelectMulti)
 						continue;
 
 					if (!options.ContainsKey(type))
