@@ -1,12 +1,15 @@
 {
-  "Author": "Chirp",
-  "Name": "Ktisis",
-  "Punchline": "An internal posing tool.",
-  "Description": "An internal posing tool.",
-  "InternalName": "Ktisis",
-  "ApplicableVersion": "any",
-  "Tags": [
-    "gpose",
-    "posing"
-  ]
+	"Author": "Chirp",
+	"Name": "Ktisis",
+	"PunchLine": "A robust posing tool for creating screenshots in GPose.",
+	"InternalName": "Ktisis",
+	"RepoUrl": "https://github.com/ktisis-tools/Ktisis",
+	"IconUrl": "https://github.com/ktisis-tools/Ktisis/raw/main/icon.png",
+	"AssemblyVersion": "0.1.0.0",
+	"ApplicableVersion": "any",
+	"DalamudApiLevel": 7,
+	"Tags": [
+		"gpose",
+		"posing"
+	]
 }
