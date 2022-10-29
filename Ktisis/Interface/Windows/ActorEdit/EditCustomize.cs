@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ImGuiNET;
 using ImGuiScene;
 
+using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;

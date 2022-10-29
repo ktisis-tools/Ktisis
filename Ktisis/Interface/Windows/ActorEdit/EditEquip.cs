@@ -17,8 +17,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 	public static class EditEquip {
 		// Constants
 
-		public const int _IconSize = 36;
-		public static Vector2 IconSize = new(_IconSize, _IconSize);
+		public static Vector2 IconSize = new(36, 36);
 
 		// Properties
 
@@ -76,7 +75,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public unsafe static void DrawSelector(EquipSlot slot) {
 			var tar = EditActor.Target;
 			var isWeapon = slot == EquipSlot.MainHand || slot == EquipSlot.OffHand;
-			var index = isWeapon ? SlotToIndex(slot) : 0;
 
 			object equipObj;
 			if (isWeapon)
@@ -127,7 +125,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (isWeapon) {
 				var equip = (WeaponEquip)equipObj;
 				var val = new int[3] { equip.Set, equip.Base, equip.Variant };
-				if (ImGui.InputInt3($"##{slot}", ref val[0])) {
+				if (ImGui.InputInt3($"##{(int)slot}", ref val[0])) {
 					equip.Set = (ushort)val[0];
 					equip.Base = (ushort)val[1];
 					equip.Variant = (ushort)val[2];
@@ -139,7 +137,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				if (ImGui.InputInt2($"##{slot}", ref val[0])) {
 					equip.Id = (ushort)val[0];
 					equip.Variant = (byte)val[1];
-					tar->Equip(index, equip);
+					tar->Equip(SlotToIndex(slot), equip);
 				}
 			}
 			ImGui.PopItemWidth();
@@ -213,14 +211,16 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 						item.Variant = (byte)i.Model.Variant;
 						Target->Equip(SlotToIndex(slot), item);
 					} else if (equipObj is WeaponEquip wep) {
-						if (slot == EquipSlot.MainHand) {
+						var isMain = slot == EquipSlot.MainHand;
+
+						if (isMain) {
 							wep.Set = i.Model.Id;
 							wep.Base = i.Model.Base;
 							wep.Variant = i.Model.Variant;
 							Target->Equip(0, wep);
 						}
 
-						if (i.SubModel.Id != 0) {
+						if (isMain || i.SubModel.Id != 0) {
 							wep.Set = i.SubModel.Id;
 							wep.Base = i.SubModel.Base;
 							wep.Variant = i.SubModel.Variant;
