@@ -205,10 +205,19 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 						item.Variant = (byte)i.Model.Variant;
 						Target->Equip(SlotToIndex(slot), item);
 					} else if (equipObj is WeaponEquip wep) {
-						wep.Set = i.Model.Id;
-						wep.Base = i.Model.Base;
-						wep.Variant = i.Model.Variant;
-						Target->Equip((int)slot, wep);
+						if (slot == EquipSlot.MainHand) {
+							wep.Set = i.Model.Id;
+							wep.Base = i.Model.Base;
+							wep.Variant = i.Model.Variant;
+							Target->Equip(0, wep);
+						}
+
+						if (i.SubModel.Id != 0) {
+							wep.Set = i.SubModel.Id;
+							wep.Base = i.SubModel.Base;
+							wep.Variant = i.SubModel.Variant;
+							Target->Equip(1, wep);
+						}
 					}
 				},
 				CloseSelector,

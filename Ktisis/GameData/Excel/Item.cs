@@ -65,8 +65,11 @@ namespace Ktisis.GameData.Excel {
 		}
 
 		public bool IsEquipItem(object equip) {
-			if (equip is WeaponEquip wep)
-				return (wep.Set == Model.Id || wep.Set == SubModel.Id) && wep.Base == Model.Base && wep.Variant == Model.Variant;
+			if (equip is WeaponEquip wep) {
+				var m1 = wep.Set == Model.Id && wep.Base == Model.Base && wep.Variant == Model.Variant;
+				var m2 = wep.Set == SubModel.Id && wep.Base == SubModel.Base && wep.Variant == SubModel.Variant;
+				return m1 || m2;
+			}
 			if (equip is ItemEquip item)
 				return item.Id == Model.Id && item.Variant == Model.Variant;
 			return equip.Equals(this);
@@ -77,7 +80,7 @@ namespace Ktisis.GameData.Excel {
 	public class EquipSlotCategory : ExcelRow {
 		public sbyte[] Slots { get; set; } = new sbyte[14];
 
-		public bool IsEquippable(EquipSlot slot) => Slots[(int)slot] == 1;
+		public bool IsEquippable(EquipSlot slot) => Slots[(int)slot] == 1 || (slot == EquipSlot.MainHand && Slots[1] == 1) || (slot == EquipSlot.OffHand && Slots[0] == 1);
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
 			base.PopulateData(parser, gameData, language);
