@@ -84,6 +84,14 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			else
 				equipObj = (ItemEquip)tar->Equipment.Slots[(int)SlotToIndex(slot)];
 
+			var isEmpty = true;
+			{
+				if (equipObj is ItemEquip equip)
+					isEmpty = equip.Id == 0;
+				else if (equipObj is WeaponEquip wep)
+					isEmpty = wep.Set == 0;
+			}
+
 			if (!Equipped.ContainsKey(slot)) {
 				Equipped.Add(slot, new() {
 					Equip = equipObj,
@@ -91,7 +99,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				});
 			} else if (!Equipped[slot].Equip!.Equals(equipObj)) {
 				Equipped[slot].Equip = equipObj;
-				Equipped[slot].Item = FindItem(equipObj, slot);
+				Equipped[slot].Item = isEmpty ? null : FindItem(equipObj, slot);
 				Equipped[slot].Icon = null;
 			}
 
@@ -112,7 +120,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.SameLine();
 			ImGui.BeginGroup();
 
-			var name = item.Item == null ? "Unknown" : item.Item.Name;
+			var name = item.Item == null ? (isEmpty ? "Empty" : "Unknown") : item.Item.Name;
 			ImGui.Text(name);
 
 			ImGui.PushItemWidth(120);
