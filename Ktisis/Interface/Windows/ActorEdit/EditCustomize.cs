@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ImGuiNET;
 using ImGuiScene;
 
+using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -28,9 +29,10 @@ namespace Ktisis.Interface.Windows {
 	public static class EditCustomize {
 		// Constants
 
-		public const int IconSize = 54;
+		public const int IconSize = 48;
 		public const int IconPadding = 8;
-		public const int InputSize = 260;
+		public const int InputSize = 120;
+		public const int MiscInputSize = 250;
 
 		// Properties
 
@@ -80,8 +82,6 @@ namespace Ktisis.Interface.Windows {
 
 			var custom = Target->Customize;
 
-			DrawFundamental(custom);
-
 			var index = custom.GetMakeIndex();
 			if (index != CustomIndex) {
 				MenuOptions = GetMenuOptions(index);
@@ -89,24 +89,32 @@ namespace Ktisis.Interface.Windows {
 				FacialFeatureIcons = null;
 			}
 
-			foreach (var type in MenuOptions.Keys) {
-				ImGui.Separator();
-				foreach (var option in MenuOptions[type]) {
-					switch (type) {
-						case MenuType.Slider:
-							DrawSlider(custom, option);
-							break;
-						case MenuType.SelectMulti:
-							break;
-						default:
-							DrawNumValue(custom, option);
-							break;
-					}
+			DrawFundamental(custom);
+			DrawMenuType(custom, MenuType.Slider);
+			DrawMenuType(custom, MenuType.List);
+			DrawMenuType(custom, MenuType.Select);
+			DrawFacialFeatures(custom);
+		}
+
+		public static void DrawMenuType(Customize custom, MenuType type) {
+			var i = 0;
+			foreach (var option in MenuOptions[type]) {
+				switch (type) {
+					case MenuType.Slider:
+						DrawSlider(custom, option);
+						break;
+					case MenuType.SelectMulti:
+						break;
+					default:
+						if (option.Option.HasIcon) {
+							i++;
+							if (i % 2 == 0) ImGui.SameLine();
+						}
+						DrawNumValue(custom, option);
+						break;
 				}
 			}
-
 			ImGui.Separator();
-			DrawFacialFeatures(custom);
 		}
 
 		// Gender/Race/Tribe
@@ -124,7 +132,11 @@ namespace Ktisis.Interface.Windows {
 			ImGui.SameLine();
 			ImGui.Text(isM ? "Masculine" : "Feminine");
 
+			ImGui.BeginGroup();
+
 			// TODO: Use Race and Tribe data from Lumina.
+
+			ImGui.PushItemWidth(MiscInputSize);
 
 			// Race
 
@@ -162,6 +174,8 @@ namespace Ktisis.Interface.Windows {
 				ImGui.EndCombo();
 			}
 
+			ImGui.PopItemWidth();
+
 			ImGui.EndTabItem();
 		}
 
@@ -172,10 +186,12 @@ namespace Ktisis.Interface.Windows {
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
 
+			ImGui.PushItemWidth(MiscInputSize);
 			if (ImGui.SliderInt(opt.Name, ref val, 0, 100)) {
 				custom.Bytes[index] = (byte)val;
 				Apply(custom);
 			}
+			ImGui.PopItemWidth();
 		}
 
 		// Num values
@@ -188,14 +204,19 @@ namespace Ktisis.Interface.Windows {
 			if (opt.HasIcon && option.Select != null) {
 				DrawIconSelector(custom, option, (uint)val);
 				ImGui.SameLine();
-				ImGui.PushItemWidth(InputSize - IconSize - IconPadding - 8);
-			} else ImGui.PushItemWidth(InputSize);
+			}
 
-			if (ImGui.InputInt(opt.Name, ref val)) {
+			ImGui.BeginGroup();
+
+			if (opt.HasIcon) ImGui.Text(opt.Name);
+			ImGui.PushItemWidth(opt.HasIcon ? InputSize : MiscInputSize);
+			if (ImGui.InputInt($"{(opt.HasIcon ? "##" : "")}{opt.Name}", ref val)) {
 				custom.Bytes[index] = (byte)val;
 				Apply(custom);
 			}
 			ImGui.PopItemWidth();
+
+			ImGui.EndGroup();
 
 			var col = option.Color;
 			if (col != null) {
@@ -235,6 +256,7 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.SetNextWindowPos(SelectPos);
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
+			ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0, 0));
 
 			var opt = option.Option;
 			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
@@ -250,7 +272,7 @@ namespace Ktisis.Interface.Windows {
 
 						i++;
 						if (i % 6 != 0)
-							ImGui.SameLine();
+							ImGui.SameLine(0f);
 					}
 
 					ImGui.EndListBox();
@@ -258,7 +280,7 @@ namespace Ktisis.Interface.Windows {
 					Selecting = null;
 				}
 
-				ImGui.PopStyleVar(1);
+				ImGui.PopStyleVar(2);
 				ImGui.End();
 			}
 		}
@@ -277,13 +299,7 @@ namespace Ktisis.Interface.Windows {
 				FaceType = custom.FaceType;
 			}
 
-			ImGui.Text("Facial Features");
-			var input = (int)custom.FaceFeatures;
-			if (ImGui.InputInt("##face_features", ref input)) {
-				custom.FaceFeatures = (byte)input;
-				Apply(custom);
-			}
-
+			ImGui.BeginGroup();
 			ImGui.PushItemWidth(InputSize - IconSize - IconPadding - 8);
 			for (var i = 0; i < 8; i++) {
 				if (i > 0 && i % 4 != 0)
@@ -293,7 +309,7 @@ namespace Ktisis.Interface.Windows {
 				var isActive = (custom.FaceFeatures & value) != 0;
 
 				bool button = false;
-				ImGui.PushStyleColor(ImGuiCol.Button, (uint)(isActive ? 0x5F5F5FFF : 0x00000000));
+				ImGui.PushStyleColor(ImGuiCol.Button, (uint)(isActive ? 0x5F4F4FEF : 0x1FFFFFFF));
 				if (i == 7) // Legacy tattoo
 					button |= ImGui.Button("Legacy\nTattoo", new Vector2(IconSize + IconPadding, IconSize + IconPadding));
 				else
@@ -306,6 +322,22 @@ namespace Ktisis.Interface.Windows {
 				}
 			}
 			ImGui.PopItemWidth();
+			ImGui.EndGroup();
+
+			ImGui.SameLine();
+
+			ImGui.BeginGroup();
+			ImGui.Text("Facial Features");
+
+			var input = (int)custom.FaceFeatures;
+			ImGui.PushItemWidth(InputSize);
+			if (ImGui.InputInt("##face_features", ref input)) {
+				custom.FaceFeatures = (byte)input;
+				Apply(custom);
+			}
+
+			ImGui.PopItemWidth();
+			ImGui.EndGroup();
 		}
 
 		// Build menu options
