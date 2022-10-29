@@ -29,10 +29,11 @@ namespace Ktisis.Interface.Windows {
 	public static class EditCustomize {
 		// Constants
 
-		public const int IconSize = 48;
-		public const int IconPadding = 8;
-		public const int InputSize = 120;
-		public const int MiscInputSize = 250;
+		public static Vector2 IconSize = new(48, 48);
+		public static Vector2 ListIconSize = new(58, 58);
+		public static Vector2 IconPadding = new(8, 8);
+		public static Vector2 InputSize = new(120, 120);
+		public static Vector2 MiscInputSize = new(250, 250);
 
 		// Properties
 
@@ -136,7 +137,7 @@ namespace Ktisis.Interface.Windows {
 
 			// TODO: Use Race and Tribe data from Lumina.
 
-			ImGui.PushItemWidth(MiscInputSize);
+			ImGui.PushItemWidth(MiscInputSize.X);
 
 			// Race
 
@@ -186,7 +187,7 @@ namespace Ktisis.Interface.Windows {
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
 
-			ImGui.PushItemWidth(MiscInputSize);
+			ImGui.PushItemWidth(MiscInputSize.X);
 			if (ImGui.SliderInt(opt.Name, ref val, 0, 100)) {
 				custom.Bytes[index] = (byte)val;
 				Apply(custom);
@@ -209,7 +210,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.BeginGroup();
 
 			if (opt.HasIcon) ImGui.Text(opt.Name);
-			ImGui.PushItemWidth(opt.HasIcon ? InputSize : MiscInputSize);
+			ImGui.PushItemWidth(opt.HasIcon ? InputSize.X : MiscInputSize.X);
 			if (ImGui.InputInt($"{(opt.HasIcon ? "##" : "")}{opt.Name}", ref val)) {
 				custom.Bytes[index] = (byte)val;
 				Apply(custom);
@@ -228,15 +229,13 @@ namespace Ktisis.Interface.Windows {
 
 		public static void DrawIconSelector(Customize custom, MenuOption option, uint val) {
 			var sel = option.Select;
-			var size = new Vector2(IconSize, IconSize);
+			var size = IconSize;
 
 			bool click;
 			if (sel!.ContainsKey(val)) {
 				click = ImGui.ImageButton(sel[val].ImGuiHandle, size);
 			} else {
-				size.X += IconPadding;
-				size.Y += IconPadding;
-				click = ImGui.Button($"{val}", size);
+				click = ImGui.Button($"{val}", size + IconPadding);
 			}
 
 			var index = option.Option.Index;
@@ -256,16 +255,15 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.SetNextWindowPos(SelectPos);
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
-			ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0, 0));
 
 			var opt = option.Option;
 			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
-				if (ImGui.IsWindowFocused() || ImGui.IsItemFocused()) {
-					ImGui.BeginListBox("##feature_select", new Vector2(435, 200));
+				if (Selecting != null) {
+					ImGui.BeginListBox("##feature_select", new Vector2(ListIconSize.X * 6 * 1.25f + 30, 200));
 
 					int i = 0;
 					foreach (var (val, icon) in option.Select!) {
-						if (ImGui.ImageButton(icon.ImGuiHandle, new Vector2(IconSize, IconSize))) {
+						if (ImGui.ImageButton(icon.ImGuiHandle, ListIconSize)) {
 							custom.Bytes[(uint)opt.Index] = (byte)val;
 							Apply(custom);
 						}
@@ -276,11 +274,12 @@ namespace Ktisis.Interface.Windows {
 					}
 
 					ImGui.EndListBox();
-				} else {
-					Selecting = null;
+
+					if (!ImGui.IsWindowFocused() && !ImGui.IsItemFocused())
+						Selecting = null;
 				}
 
-				ImGui.PopStyleVar(2);
+				ImGui.PopStyleVar(1);
 				ImGui.End();
 			}
 		}
@@ -300,7 +299,7 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			ImGui.BeginGroup();
-			ImGui.PushItemWidth(InputSize - IconSize - IconPadding - 8);
+			ImGui.PushItemWidth(InputSize.X - IconSize.X - IconPadding.X - 8);
 			for (var i = 0; i < 8; i++) {
 				if (i > 0 && i % 4 != 0)
 					ImGui.SameLine();
@@ -311,9 +310,9 @@ namespace Ktisis.Interface.Windows {
 				bool button = false;
 				ImGui.PushStyleColor(ImGuiCol.Button, (uint)(isActive ? 0x5F4F4FEF : 0x1FFFFFFF));
 				if (i == 7) // Legacy tattoo
-					button |= ImGui.Button("Legacy\nTattoo", new Vector2(IconSize + IconPadding, IconSize + IconPadding));
+					button |= ImGui.Button("Legacy\nTattoo", IconSize + IconPadding);
 				else
-					button |= ImGui.ImageButton(FacialFeatureIcons[i].ImGuiHandle, new Vector2(IconSize, IconSize));
+					button |= ImGui.ImageButton(FacialFeatureIcons[i].ImGuiHandle, IconSize);
 				ImGui.PopStyleColor();
 
 				if (button) {
@@ -330,7 +329,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Text("Facial Features");
 
 			var input = (int)custom.FaceFeatures;
-			ImGui.PushItemWidth(InputSize);
+			ImGui.PushItemWidth(InputSize.X);
 			if (ImGui.InputInt("##face_features", ref input)) {
 				custom.FaceFeatures = (byte)input;
 				Apply(custom);
