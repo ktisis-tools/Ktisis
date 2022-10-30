@@ -93,8 +93,12 @@ namespace Ktisis.Interface.Windows {
 
 			DrawFundamental(custom);
 			DrawMenuType(custom, MenuType.Slider);
+			ImGui.Separator();
+			DrawCheckboxes(custom);
 			DrawMenuType(custom, MenuType.List);
+			ImGui.Separator();
 			DrawMenuType(custom, MenuType.Select);
+			ImGui.Separator();
 			DrawFacialFeatures(custom);
 		}
 
@@ -116,7 +120,6 @@ namespace Ktisis.Interface.Windows {
 						break;
 				}
 			}
-			ImGui.Separator();
 		}
 
 		// Gender/Race/Tribe
@@ -204,7 +207,7 @@ namespace Ktisis.Interface.Windows {
 			var val = (int)custom.Bytes[index];
 
 			if (opt.HasIcon && option.Select != null) {
-				DrawIconSelector(custom, option, (uint)val);
+				DrawIconSelector(custom, option, (uint)(val & ~0x80));
 				ImGui.SameLine();
 			}
 
@@ -350,6 +353,37 @@ namespace Ktisis.Interface.Windows {
 			ImGui.EndGroup();
 		}
 
+		// Checkbox options
+
+		public static void DrawCheckboxes(Customize custom) {
+			var highlights = custom.HasHighlights == 0x80;
+			if (ImGui.Checkbox("Highlights", ref highlights)) {
+				custom.HasHighlights ^= 0x80;
+				Apply(custom);
+			}
+
+			var flipPaint = ((uint)custom.Facepaint & 0x80) > 0;
+			ImGui.SameLine();
+			if (ImGui.Checkbox("Flip Facepaint", ref flipPaint)) {
+				custom.Facepaint ^= (FacialFeature)0x80;
+				Apply(custom);
+			}
+
+			var smallIris = (custom.EyeShape & 0x80) > 0;
+			ImGui.SameLine();
+			if (ImGui.Checkbox("Small Iris", ref smallIris)) {
+				custom.EyeShape ^= 0x80;
+				Apply(custom);
+			}
+
+			var lipCol = (custom.LipStyle & 0x80) > 0;
+			ImGui.SameLine();
+			if (ImGui.Checkbox("Lip Color", ref lipCol)) {
+				custom.LipStyle ^= 0x80;
+				Apply(custom);
+			}
+		}
+
 		// Build menu options
 
 		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(uint index) {
@@ -407,14 +441,6 @@ namespace Ktisis.Interface.Windows {
 								var icon = Dalamud.DataManager.GetImGuiTextureIcon(feat.Icon);
 								icons.Add(feat.FeatureId, icon!);
 							}
-
-							/*foreach (var row in val.Features) {
-								var feat = row.Value!;
-								var icon = Dalamud.DataManager.GetImGuiTextureIcon(feat.Icon);
-								if (feat.FeatureId == 0)
-									continue;
-								icons.Add(feat.FeatureId, icon!);
-							}*/
 						} else {
 							for (var x = 0; x < val.Count; x++) {
 								var icon = Dalamud.DataManager.GetImGuiTextureIcon(val.Params[x]);
