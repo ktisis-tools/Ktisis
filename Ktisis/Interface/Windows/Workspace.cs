@@ -192,13 +192,7 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.TextDisabled($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");
 
-			var trans = bone.Transform;
-			if (Transform.Draw(select.Update, ref trans.Translation, ref trans.Rotation, ref trans.Scale)) {
-				bone.Transform = trans;
-				return true;
-			}
-
-			return false;
+			return Transform.Draw(bone);
 		}
 
 		// Bone Tree

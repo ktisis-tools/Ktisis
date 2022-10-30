@@ -4,7 +4,9 @@ using ImGuiNET;
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Helpers;
+using Ktisis.Overlay;
 using Ktisis.Structs;
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface.Components {
 	// Thanks to Emyka for the original code:
@@ -36,6 +38,33 @@ namespace Ktisis.Interface.Components {
 			return result;
 		}
 
+		public bool Draw(Bone bone)
+		{
+			var result = false;
+			var gizmo = OverlayWindow.GetGizmo(bone.UniqueName);
+			if (gizmo != null)
+			{
+				(var savedPosition, var savedRotation, var savedScale) = gizmo.Decompose();
+				(var position, var rotation, var scale) = (savedPosition, savedRotation, savedScale);
+				if (Draw(ref position, ref rotation, ref scale))
+				{
+					(var deltaPosition, var deltaRotation, var deltaScale) = (savedPosition - position, savedRotation - rotation, savedScale - scale);
+					gizmo.InsertEulerDeltaMatrix(deltaPosition, deltaRotation, deltaScale);
+					result = true;
+				}
+			}
+			IsEditing = result;
+			return result;
+		}
+		public bool Draw(ref Vector3 position, ref Vector3 rotation, ref Vector3 scale)
+		{
+			var result = false;
+			result |= ImGui.DragFloat3("Position", ref position, 0.0005f, -10000f, 10000f, "%.5f");
+			result |= ImGui.DragFloat3("Rotation", ref rotation, 0.1f);
+			result |= ImGui.DragFloat3("Scale", ref scale, 0.01f);
+			IsEditing = result;
+			return result;
+		}
 		public bool Draw(ref Vector3 pos, ref Quaternion rot, ref Vector3 scale) {
 			if (!IsEditing)
 				Update(pos, rot, scale);

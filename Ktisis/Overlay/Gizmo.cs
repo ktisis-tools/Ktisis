@@ -12,6 +12,7 @@ namespace Ktisis.Overlay {
 
 		public Matrix4x4 Matrix = new();
 		public Matrix4x4 Delta = new();
+		public SharpDX.Matrix3x3 EulerDeltaMatrix = new(); // for non gizmo manipulation, euler based, which must have an effect on the gizmo
 
 		public OPERATION? ForceOp = null;
 
@@ -39,6 +40,14 @@ namespace Ktisis.Overlay {
 				ref scale.X
 			);
 		}
+		public (Vector3, Vector3, Vector3) Decompose()
+		{
+			Vector3 pos = new();
+			Vector3 rot = new();
+			Vector3 scale = new();
+			DecomposeMatrix(ref pos, ref rot, ref scale);
+			return (pos, rot, scale);
+		}
 
 		public void DecomposeDelta(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
 			ImGuizmo.DecomposeMatrixToComponents(
@@ -62,6 +71,37 @@ namespace Ktisis.Overlay {
 			ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
 		}
 
+		internal void InsertEulerDeltaMatrix(Vector3 posDelta,Vector3 rotDelta,Vector3 scaDelta)
+		{
+			EulerDeltaMatrix = new(
+				posDelta.X, posDelta.Y, posDelta.Z,
+				rotDelta.X, rotDelta.Y, rotDelta.Z,
+				scaDelta.X, scaDelta.Y, scaDelta.Z
+				);
+		}
+		internal bool ManipulateEuler()
+		{
+			// skip if no delta detected
+			bool isActive = EulerDeltaMatrix != new SharpDX.Matrix3x3();
+			if (!isActive) return false;
+
+			Vector3 posDelta = new(EulerDeltaMatrix.M11, EulerDeltaMatrix.M12, EulerDeltaMatrix.M13);
+			Vector3 rotDelta = new(EulerDeltaMatrix.M21, EulerDeltaMatrix.M22, EulerDeltaMatrix.M23);
+			Vector3 scaDelta = new(EulerDeltaMatrix.M31, EulerDeltaMatrix.M32, EulerDeltaMatrix.M33);
+
+			// calculate final euler coordinates from delta
+			(Vector3 position, Vector3 rotation, Vector3 scale) = (new(), new(), new());
+			DecomposeMatrix(ref position, ref rotation, ref scale);
+			position += posDelta;
+			rotation += rotDelta;
+			scale += scaDelta;
+
+			// apply euler to matrix
+			ComposeMatrix(position, rotation, scale);
+
+			EulerDeltaMatrix = new();
+			return true;
+		}
 		internal unsafe bool Manipulate() {
 			return ImGuizmo.Manipulate(
 				ref OverlayWindow.WorldMatrix->Projection.M11,
