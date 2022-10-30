@@ -103,6 +103,8 @@ namespace Ktisis.Interface.Windows {
 		}
 
 		public static void DrawMenuType(Customize custom, MenuType type) {
+			if (!MenuOptions.ContainsKey(type)) return;
+
 			var i = 0;
 			foreach (var option in MenuOptions[type]) {
 				switch (type) {
@@ -305,7 +307,17 @@ namespace Ktisis.Interface.Windows {
 				var features = new List<TextureWrap>();
 				for (var i = 0; i < 7; i++) {
 					var index = custom.FaceType - 1 + (8 * i);
-					var icon = Dalamud.DataManager.GetImGuiTextureIcon((uint)CharaMakeType.FacialFeatures[index]);
+					if (custom.Race == Race.Hrothgar)
+						index -= 4; // ???
+
+					if (index < 0 || index >= CharaMakeType.FacialFeatures.Length)
+						index = 8 * i;
+
+					var iconId = (uint)CharaMakeType.FacialFeatures[index];
+					if (iconId == 0)
+						iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
+
+					var icon = Dalamud.DataManager.GetImGuiTextureIcon(iconId);
 					features.Add(icon!);
 				}
 				FacialFeatureIcons = features;
@@ -376,11 +388,13 @@ namespace Ktisis.Interface.Windows {
 				Apply(custom);
 			}
 
-			var lipCol = (custom.LipStyle & 0x80) > 0;
-			ImGui.SameLine();
-			if (ImGui.Checkbox("Lip Color", ref lipCol)) {
-				custom.LipStyle ^= 0x80;
-				Apply(custom);
+			if (custom.Race != Race.Hrothgar) {
+				var lipCol = (custom.LipStyle & 0x80) > 0;
+				ImGui.SameLine();
+				if (ImGui.Checkbox("Lip Color", ref lipCol)) {
+					custom.LipStyle ^= 0x80;
+					Apply(custom);
+				}
 			}
 		}
 
