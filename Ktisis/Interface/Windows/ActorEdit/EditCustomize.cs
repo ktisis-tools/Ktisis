@@ -209,7 +209,7 @@ namespace Ktisis.Interface.Windows {
 			var val = (int)custom.Bytes[index];
 
 			if (opt.HasIcon && option.Select != null) {
-				DrawIconSelector(custom, option, (uint)(val & ~0x80));
+				DrawIconSelector(custom, option, val);
 				ImGui.SameLine();
 			}
 
@@ -233,9 +233,13 @@ namespace Ktisis.Interface.Windows {
 
 		// Icon selector
 
-		public static void DrawIconSelector(Customize custom, MenuOption option, uint val) {
+		public static void DrawIconSelector(Customize custom, MenuOption option, int _val) {
 			var sel = option.Select;
 			var size = IconSize;
+
+			var val = (uint)_val;
+			if (option.Option.Index == CustomizeIndex.Facepaint)
+				val = (uint)(val & ~0x80);
 
 			bool click;
 			if (sel!.ContainsKey(val)) {

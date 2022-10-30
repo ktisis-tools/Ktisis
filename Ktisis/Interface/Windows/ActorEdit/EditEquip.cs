@@ -220,10 +220,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 							Target->Equip(0, wep);
 						}
 
-						if (isMain || i.SubModel.Id != 0) {
-							wep.Set = i.SubModel.Id;
-							wep.Base = i.SubModel.Base;
-							wep.Variant = i.SubModel.Variant;
+						if (slot == EquipSlot.OffHand || i.SubModel.Id != 0) {
+							var model = i.SubModel.Id != 0 ? i.SubModel : i.Model;
+							wep.Set = model.Id;
+							wep.Base = model.Base;
+							wep.Variant = model.Variant;
 							Target->Equip(1, wep);
 						}
 					}
