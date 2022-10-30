@@ -49,6 +49,8 @@ namespace Ktisis.GameData.Excel {
 		public byte[] Voices { get; set; } = new byte[VoiceCt];
 		public int[] FacialFeatures { get; set; } = new int[7 * 8];
 
+		public LazyRow<HairMakeType> FeatureMake { get; set; } = null!;
+
 		// Build sheet
 
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
@@ -57,6 +59,8 @@ namespace Ktisis.GameData.Excel {
 			Race = new LazyRow<Race>(gameData, parser.ReadColumn<int>(0), language);
 			Tribe = new LazyRow<Tribe>(gameData, parser.ReadColumn<int>(1), language);
 			Gender = parser.ReadColumn<sbyte>(2);
+
+			FeatureMake = new LazyRow<HairMakeType>(gameData, RowId, language);
 
 			for (var i = 0; i < 7 * 8; i++)
 				FacialFeatures[i] = parser.ReadColumn<int>(3291 + i);

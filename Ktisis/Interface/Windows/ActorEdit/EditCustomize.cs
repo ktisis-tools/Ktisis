@@ -15,6 +15,7 @@ using Ktisis.Localization;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.ActorEdit;
+using Lumina.Excel;
 
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
@@ -388,13 +389,32 @@ namespace Ktisis.Interface.Windows {
 					if (val.HasIcon) {
 						var icons = new Dictionary<uint, TextureWrap>();
 						if (val.IsFeature) {
-							foreach (var row in val.Features) {
+							var featMake = CharaMakeType.FeatureMake.Value;
+							if (featMake == null)
+								continue;
+
+							List<LazyRow<CharaMakeCustomize>> features;
+							if (val.Index == CustomizeIndex.HairStyle)
+								features = featMake.HairStyles;
+							else if (val.Index == CustomizeIndex.Facepaint)
+								features = featMake.Facepaints;
+							else continue;
+
+							foreach (var feature in features) {
+								var feat = feature.Value;
+								if (feat == null || feat.FeatureId == 0) break;
+
+								var icon = Dalamud.DataManager.GetImGuiTextureIcon(feat.Icon);
+								icons.Add(feat.FeatureId, icon!);
+							}
+
+							/*foreach (var row in val.Features) {
 								var feat = row.Value!;
 								var icon = Dalamud.DataManager.GetImGuiTextureIcon(feat.Icon);
 								if (feat.FeatureId == 0)
 									continue;
 								icons.Add(feat.FeatureId, icon!);
-							}
+							}*/
 						} else {
 							for (var x = 0; x < val.Count; x++) {
 								var icon = Dalamud.DataManager.GetImGuiTextureIcon(val.Params[x]);
