@@ -22,13 +22,17 @@ namespace Ktisis.GameData.Files {
 		public uint[] GetHairHighlights()
 			=> Colors[256..448];
 
-		public uint[] GetFacepaintColors()
-			=> Colors[512..736];
+		public uint[] GetFacepaintColors() {
+			var colors = new uint[224];
+			Colors[512..608].CopyTo(colors, 0);
+			Colors[640..736].CopyTo(colors, 128);
+			return colors;
+		}
 		
 		public uint[] GetLipColors() {
-			var colors = new uint[192];
+			var colors = new uint[224];
 			Colors[512..608].CopyTo(colors, 0);
-			Colors[1792..1888].CopyTo(colors, 96);
+			Colors[1792..1888].CopyTo(colors, 128);
 			return colors;
 		}
 

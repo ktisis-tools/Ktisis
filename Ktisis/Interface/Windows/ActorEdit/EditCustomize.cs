@@ -400,11 +400,12 @@ namespace Ktisis.Interface.Windows {
 					ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0,0));
 					ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 0);
 					for (var i = 0; i < color.Colors.Length; i++) {
-						var hex = color.Colors[i];
+						var rgb = color.Colors[i];
+						if (rgb == 0) continue;
 
 						if (i % 8 != 0) ImGui.SameLine();
 
-						var rgba = ImGui.ColorConvertU32ToFloat4(hex);
+						var rgba = ImGui.ColorConvertU32ToFloat4(rgb);
 						if (ImGui.ColorButton($"##{color.Name}_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
 							result = true;
 							value = (byte)i;
