@@ -20,17 +20,17 @@ namespace Ktisis.Structs.FFXIV
 		[FieldOffset(0)] public AgentInterface AgentInterface;
 
 		//[FieldOffset(40 + 36)] public IntPtr* PlatesPointer;
-		//[FieldOffset(40 + 36)] public fixed Plate Plates[20]; // This would be ideal, TODO: try to find a way to achieve this
+		//[FieldOffset(40 + 36)] public fixed MiragePage Plates[20]; // This would be ideal, TODO: try to find a way to achieve this
 
 		internal static unsafe AgentInterface* MiragePlateAgent() => Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
 
 		// this getter exists because we cannot specify a sized array in the variable
-		public Plate[] Pages
+		public MiragePage[] Pages
 		{
 			get
 			{
 				var totalPages = GlamourDresser._platesNumber + 1; // the currently viewing/editing page is added at the end of the array
-				Plate[] pages = new Plate[totalPages];
+				MiragePage[] pages = new MiragePage[totalPages];
 
 				if (!AgentInterface.IsAgentActive()) return pages; ;
 
@@ -41,7 +41,7 @@ namespace Ktisis.Structs.FFXIV
 				for (int plateNumber = 0; plateNumber < totalPages; plateNumber++)
 				{
 					var offset = 44 * 12 * plateNumber;
-					pages[plateNumber] = *(Plate*)(glamPlatePointer + offset);
+					pages[plateNumber] = *(MiragePage*)(glamPlatePointer + offset);
 
 				}
 				return pages;
@@ -50,7 +50,7 @@ namespace Ktisis.Structs.FFXIV
 	}
 
 	[StructLayout(LayoutKind.Explicit, Size = 0x210)]
-	public struct Plate
+	public struct MiragePage
 	{
 		[FieldOffset(0x2C * 00)] public MirageItem MainHand;
 		[FieldOffset(0x2C * 01)] public MirageItem OffHand;

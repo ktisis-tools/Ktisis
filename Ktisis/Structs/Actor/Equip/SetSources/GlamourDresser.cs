@@ -108,9 +108,9 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 				Items = items;
 			}
 
-			internal GlamourPlate(Plate plate)
+			internal GlamourPlate(MiragePage plate)
 			{
-				var fields = typeof(Plate).GetFields();
+				var fields = typeof(MiragePage).GetFields();
 				for (int slot = 0; slot < fields.Length; slot++)
 				{
 					MirageItem item = (MirageItem)fields[slot].GetValue(plate)!;
