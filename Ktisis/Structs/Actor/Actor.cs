@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-
+using Ktisis.GameData.Excel;
 using Ktisis.Interop;
 
 namespace Ktisis.Structs.Actor {
@@ -60,9 +60,12 @@ namespace Ktisis.Structs.Actor {
 			if (ActorHooks.ChangeEquip == null) return;
 			ActorHooks.ChangeEquip(GetAddress() + 0x6D0, index, item);
 		}
-		public void Equip(List<(EquipIndex, ItemEquip)> items) {
-			foreach((EquipIndex index, ItemEquip item) in items)
-				Equip(index, item);
+		public void Equip(List<(EquipSlot, object)> items) {
+			foreach ((EquipSlot slot, object item) in items)
+				if (item is ItemEquip equip)
+					Equip(Interface.Windows.ActorEdit.EditEquip.SlotToIndex(slot), equip);
+				else if (item is WeaponEquip wep)
+					Equip((int)slot, wep);
 		}
 
 		public void Equip(int slot, WeaponEquip item) {

@@ -17,24 +17,6 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x1C)] public ItemEquip Bracelet;
 		[FieldOffset(0x20)] public ItemEquip RingRight;
 		[FieldOffset(0x24)] public ItemEquip RingLeft;
-
-		public static EquipSlot EquipIndexToItemSlot(EquipIndex equipIndex) // sorry, I don't know where to put this
-		{
-			EquipSlot[] slots = {
-				EquipSlot.Head,
-				EquipSlot.Chest,
-				EquipSlot.Hands,
-				EquipSlot.Legs,
-				EquipSlot.Feet,
-				EquipSlot.Earring,
-				EquipSlot.Necklace,
-				EquipSlot.Bracelet,
-				EquipSlot.RingRight,
-				EquipSlot.RingLeft
-			};
-			return slots[(uint)equipIndex];
-		}
-
 	}
 
 	[StructLayout(LayoutKind.Explicit, Size = 0x4)]

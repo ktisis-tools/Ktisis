@@ -39,7 +39,12 @@ namespace Ktisis.Structs.Actor {
 		}
 
 		// helpers
-		private Item GetEmperorNewItemForSlot(EquipIndex equipIndex) => ItemsSheet!.Where(i => i.IsEquippable(Equipment.EquipIndexToItemSlot(equipIndex)) && i.Name.Contains("Emperor's New")).First(); // TODO: improve performances, maybe cache them in constructor
+		private static object EmptySlot(EquipSlot equipSlot)
+		{
+			if (equipSlot == EquipSlot.MainHand || equipSlot == EquipSlot.OffHand)
+				return new WeaponEquip();
+			return new ItemEquip();
+		}
 
 		// public managers
 		public static EquipmentSets InitAndLoadSources(IEnumerable<Item> itemsSheet)
@@ -98,7 +103,7 @@ namespace Ktisis.Structs.Actor {
 			var sets = new List<EquipmentSet>();
 
 			// no smarts here, we just make the plate list if it has been populated
-			if(EquipmentSetSources.GlamourDresser.Plates != null)
+			if (EquipmentSetSources.GlamourDresser.Plates != null)
 				for (int i = 1; i <= EquipmentSetSources.GlamourDresser._platesNumber; i++)
 					sets.Add(new EquipmentSet(i, $"Glamour Plate {i}", SetSource.GlamourDresser));
 
@@ -115,9 +120,9 @@ namespace Ktisis.Structs.Actor {
 
 
 		// Find items of the selected set
-		public List<(EquipIndex, ItemEquip)> GetItems(EquipmentSet set)
+		public List<(EquipSlot, object)> GetItems(EquipmentSet set)
 		{
-			List<(EquipIndex index, ItemEquip equip)> items = new();
+			List<(EquipSlot, object)> items = new();
 			switch (set.Source)
 			{
 				case SetSource.GearSet: items = GetItemsGearset(set); break;
@@ -125,20 +130,16 @@ namespace Ktisis.Structs.Actor {
 			}
 			return items;
 		}
-		private unsafe List<(EquipIndex index, ItemEquip equip)> GetItemsGearset(EquipmentSet set)
+		private unsafe List<(EquipSlot, object)> GetItemsGearset(EquipmentSet set)
 		{
-			List<(EquipIndex index, ItemEquip equip)> itemsToEquip = new();
+			List<(EquipSlot, object)> itemsToEquip = new();
 			var gearset = RaptureGearsetModule.Instance()->Gearset[set.ID];
-
-			if (gearset->GlamourSetLink > 0)
-				return GetItemsGlamourDresser(Sets.Find(s => s.ID == gearset->GlamourSetLink));
 
 			// find inventory containers
 			InventoryType[] inventoryTypes =
 			{
-				//InventoryType.ArmoryMainHand,
-				//InventoryType.ArmoryOffHand,
-
+				InventoryType.ArmoryMainHand,
+				InventoryType.ArmoryOffHand,
 				InventoryType.EquippedItems,
 				InventoryType.ArmoryHead,
 				InventoryType.ArmoryBody,
@@ -163,93 +164,128 @@ namespace Ktisis.Structs.Actor {
 					inventoryItems.Add(Armoury->Items[i]);
 
 			// get item IDs from gearset
-			List<(uint id, EquipIndex ind)> itemsToRemodel = new()
+			List<(uint, EquipSlot)> itemsToRemodel = new()
 			{
-				(gearset->Head.ItemID, EquipIndex.Head),
-				(gearset->Body.ItemID, EquipIndex.Chest),
-				(gearset->Hands.ItemID, EquipIndex.Hands),
-				(gearset->Legs.ItemID, EquipIndex.Legs),
-				(gearset->Feet.ItemID, EquipIndex.Feet),
-				(gearset->Ears.ItemID, EquipIndex.Earring),
-				(gearset->Neck.ItemID, EquipIndex.Necklace),
-				(gearset->Wrists.ItemID, EquipIndex.Bracelet),
-				(gearset->RingRight.ItemID, EquipIndex.RingRight),
-				(gearset->RightLeft.ItemID, EquipIndex.RingLeft) // rightleft? :x
+				(gearset->MainHand.ItemID, EquipSlot.MainHand),
+				(gearset->OffHand.ItemID, EquipSlot.OffHand),
+				(gearset->Head.ItemID, EquipSlot.Head),
+				(gearset->Body.ItemID, EquipSlot.Chest),
+				(gearset->Hands.ItemID, EquipSlot.Hands),
+				(gearset->Legs.ItemID, EquipSlot.Legs),
+				(gearset->Feet.ItemID, EquipSlot.Feet),
+				(gearset->Ears.ItemID, EquipSlot.Earring),
+				(gearset->Neck.ItemID, EquipSlot.Necklace),
+				(gearset->Wrists.ItemID, EquipSlot.Bracelet),
+				(gearset->RightLeft.ItemID, EquipSlot.RingLeft),
+				(gearset->RingRight.ItemID, EquipSlot.RingRight),
 			};
 
-			foreach ((uint id, EquipIndex ind) in itemsToRemodel)
+
+			foreach ((uint id, EquipSlot slot) in itemsToRemodel)
 			{
+				if (id == 0) {
+					// if gearset slot is not set
+					itemsToEquip.Add((slot, EmptySlot(slot)));
+					continue;
+				}
 
 				Item? item = null;
 				InventoryItem? invItem = null;
 
-				if (id != 0)
-				{
-					// get the inventory item by the gearset item id
-					var invItems = inventoryItems.Where(i => i.ItemID == id);
-					if (!invItems.Any()) invItems = inventoryItems.Where(i => i.ItemID == uint.Parse(id.ToString()[2..])); // not sure why, sometimes item IDs have numbers prepended to them (mostly "10")
-					if (invItems.Any()) invItem = invItems.First();
+				// get the inventory item by the gearset item id
+				var invItems = inventoryItems.Where(i => i.ItemID == id);
+				if (!invItems.Any()) invItems = inventoryItems.Where(i => i.ItemID == uint.Parse(id.ToString()[2..])); // not sure why, sometimes item IDs have numbers prepended to them (mostly "10")
+				if (invItems.Any()) invItem = invItems.First();
 
-					// get the Item that contains the model Id
-					var items = ItemsSheet.Where(i => i.RowId == (invItem?.GlamourID == 0 ? invItem?.ItemID : invItem?.GlamourID));
-					if (items.Any()) item = items.First();
+				// get the Item that contains the model Id
+				var items = ItemsSheet.Where(i => i.RowId == (invItem?.GlamourID == 0 ? invItem?.ItemID : invItem?.GlamourID));
+				if (items.Any()) item = items.First();
+
+				if(item == null) {
+					// if gearset slot is set, but item wasn't found in inventories
+					itemsToEquip.Add((slot, EmptySlot(slot)));
+					continue;
 				}
 
-				// if no item found, choose "The Emperor's New ..." in this slot
-				item ??= GetEmperorNewItemForSlot(ind);
 				byte dye = (invItem?.Stain) ?? default;
-
-
-				ItemEquip newItem = new()
-				{
-					Id = (item?.Model.Id) ?? 0,
-					Variant = (byte)((item?.Model.Variant) ?? 0),
-					Dye = dye,
-				};
-				itemsToEquip.Add((ind, newItem));
+				itemsToEquip.Add((slot, ItemToEquipObject(item, dye, slot)));
 			}
 
+			if (gearset->GlamourSetLink == 0) return itemsToEquip; // not linked to
+
+			var glamourItems = GetItemsGlamourDresser(Sets.Find(s => s.ID == gearset->GlamourSetLink));
+
+			// overwrite gearset items with valid items from the glam plate
+			foreach (var tGlam in glamourItems.FindAll(FindAllValidEquip)) // keep only items that are not 0
+			{
+				int index = itemsToEquip.FindIndex(t => tGlam.Item1 == t.Item1);
+				if (index >= 0)
+					itemsToEquip[index] = tGlam;
+			}
 			return itemsToEquip;
 		}
-		private List<(EquipIndex index, ItemEquip equip)> GetItemsGlamourDresser(EquipmentSet set)
+
+		public static bool FindAllValidEquip((EquipSlot, object)a)
 		{
-			List<(EquipIndex index, ItemEquip equip)> itemsToEquip = new();
+			var item = a.Item2;
+			if (item is WeaponEquip w)
+				return w.Set != 0;
+			else if (item is ItemEquip e)
+				return e.Id != 0;
+			return false;
+		}
+		private List<(EquipSlot, object)> GetItemsGlamourDresser(EquipmentSet set)
+		{
+			List<(EquipSlot, object)> itemsToEquip = new();
 			var plates = EquipmentSetSources.GlamourDresser.Plates;
 			if (plates == null) throw new NotImplementedException();
 
 
 			foreach (var plateItem in plates[set.ID - 1].Items)
 			{
-				if (plateItem.Slot == EquipmentSetSources.GlamourDresser.GlamourPlateSlot.MainHand
-					|| plateItem.Slot == EquipmentSetSources.GlamourDresser.GlamourPlateSlot.OffHand
-					) continue; // TODO: remove this then implementing weapons
-
 				var itemId = plateItem.ItemId;
 				var dyeId = plateItem.DyeId;
-				var index = EquipmentSetSources.GlamourDresser.GlamourPlateSlotToIndex(plateItem.Slot);
+				var slot = EquipmentSetSources.GlamourDresser.GlamourPlateSlotToEquipSlot(plateItem.Slot);
+
+				if(itemId == 0) {
+					// if slot is left empty remove the item
+					itemsToEquip.Add((slot, EmptySlot(slot)));
+				}
 
 				Item? item = null;
+				var items = ItemsSheet.Where(i => i.RowId == itemId);
+				if (items.Any()) item = items.First();
 
-				if (itemId == 0) item = GetEmperorNewItemForSlot(index);
-				else
-				{
-					var items = ItemsSheet.Where(i => i.RowId == itemId);
-					if (items.Any()) item = items.First();
+				if (itemId == 0 || item == null) {
+					itemsToEquip.Add((slot, EmptySlot(slot)));
+					continue;
 				}
-				if (itemId == 0 || item == null) item = GetEmperorNewItemForSlot(index);
-
-				ItemEquip newItem = new()
-				{
-					Id = (item?.Model.Id) ?? 0,
-					Variant = (byte)((item?.Model.Variant) ?? 0),
-					Dye = dyeId,
-				};
-				itemsToEquip.Add((index, newItem));
+				itemsToEquip.Add((slot, ItemToEquipObject(item, dyeId, slot)));
 			}
 
 			return itemsToEquip;
 		}
+		public static object ItemToEquipObject(Item? item, byte dyeId, EquipSlot slot)
+		{
+			var id = (item?.Model.Id) ?? 0;
+			var variant = (byte)((item?.Model.Variant) ?? 0);
 
+			if (slot == EquipSlot.MainHand || slot == EquipSlot.OffHand)
+				return new WeaponEquip
+				{
+					Set = id,
+					Base = (item?.Model.Base) ?? 0,
+					Dye = dyeId,
+					Variant = variant,
+				};
+			else
+				return new ItemEquip
+				{
+					Id = id,
+					Variant = variant,
+					Dye = dyeId,
+				};
+		}
 	}
 
 	public enum SetSource
@@ -321,9 +357,6 @@ namespace Ktisis.Structs.Actor.EquipmentSetSources
 		internal static void PopupOfferOpenGlamourPlates_open()
 		{
 			// This is a way to actively get the data, with the user's authorization
-
-			// TODO:
-			// check if it's ready to be opened, e.g. sanctuary and not under retricted condition
 			if(GameMain.IsInSanctuary())
 				Interface.Components.Equipment.OpenGlamourQuestionPopup();
 		}
@@ -334,7 +367,7 @@ namespace Ktisis.Structs.Actor.EquipmentSetSources
 		}
 
 		internal static unsafe AgentInterface* MiragePlateAgent() => Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
-		public static EquipIndex GlamourPlateSlotToIndex(GlamourPlateSlot slot) => (EquipIndex)((int)slot - 2);  // TODO: these enums should become the same when implementing weapons
+		public static EquipSlot GlamourPlateSlotToEquipSlot(GlamourPlateSlot slot) => (EquipSlot)((int)slot + ((int)slot > 4 ? 1 : 0));
 
 		internal static unsafe void GetDataFromDresser()
 		{
