@@ -9,7 +9,7 @@ using Dalamud.Logging;
 using Dalamud.Configuration;
 
 using Ktisis.Localization;
-using Ktisis.Structs.Actor.EquipmentSetSources;
+using Ktisis.Structs.Actor.Equip.SetSources;
 using Ktisis.Structs.Bones;
 
 namespace Ktisis {
@@ -73,7 +73,7 @@ namespace Ktisis {
 		public bool LinkedGaze { get; set; } = true;
 
 		// Data memory
-		public Dictionary<string,GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
+		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
 
 		// Validate for changes in config versions.
 

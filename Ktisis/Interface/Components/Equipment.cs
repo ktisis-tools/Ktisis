@@ -6,6 +6,7 @@ using FFXIVClientStructs.Havok;
 using Ktisis.Helpers;
 using Ktisis.Structs;
 using Ktisis.Util;
+using Ktisis.Structs.Actor.Equip.SetSources;
 
 namespace Ktisis.Interface.Components {
 
@@ -15,7 +16,7 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.PopupConfirm(
 				"##popup_glamour_plate_use##1",
 				() => ImGui.Text("Every time a Glamour Plate windows is closed, the Glamour Plates memory is updated.\n\nWould you like to open Glamour Plates?"),
-				() => Structs.Actor.EquipmentSetSources.GlamourDresser.PopupOfferOpenGlamourPlates_confirmed());
+				() => GlamourDresser.PopupOfferOpenGlamourPlates_confirmed());
 		}
 		public static void OpenGlamourQuestionPopup()
 		{

@@ -11,6 +11,7 @@ using Dalamud.Interface;
 using Ktisis.GameData;
 using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Actor.Equip;
 using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
@@ -241,7 +242,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (Sets?.LoadSources() == null)
 				Sets = EquipmentSets.InitAndLoadSources(Items!);
 
-			IEnumerable<EquipmentSet> sets = Sets.GetSets();
+			IEnumerable<Set> sets = Sets.GetSets();
 
 			if (!sets.Any())
 				return;

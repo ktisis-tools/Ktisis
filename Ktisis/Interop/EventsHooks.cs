@@ -8,7 +8,8 @@ using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using Ktisis.Structs.Actor;
+using Ktisis.Structs.Actor.Equip;
+using Ktisis.Structs.Actor.Equip.SetSources;
 
 namespace Ktisis.Interop
 {
@@ -71,7 +72,7 @@ namespace Ktisis.Interop
 				// || e.SenderID == 0 && e.EventArgs->Int == 17 // Change Glamour Plate Page
 				// || e.SenderID == 0 && e.EventArgs->Int == -2 // Has been closed, Plate memory has already been disposed so it's too late to read data.
 				)
-				Structs.Actor.EquipmentSetSources.GlamourDresser.PopulatePlatesData();
+				GlamourDresser.PopulatePlatesData();
 		}
 	}
 
