@@ -259,7 +259,10 @@ namespace Ktisis.Interface.Windows {
 			var opt = option.Option;
 			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
 				if (Selecting != null) {
+					var focus = false;
+
 					ImGui.BeginListBox("##feature_select", new Vector2(ListIconSize.X * 6 * 1.25f + 30, 200));
+					focus |= ImGui.IsItemFocused() || ImGui.IsItemActive() || ImGui.IsItemActivated() || ImGui.IsItemHovered();
 
 					int i = 0;
 					foreach (var (val, icon) in option.Select!) {
@@ -267,6 +270,7 @@ namespace Ktisis.Interface.Windows {
 							custom.Bytes[(uint)opt.Index] = (byte)val;
 							Apply(custom);
 						}
+						focus |= ImGui.IsItemFocused();
 
 						i++;
 						if (i % 6 != 0)
@@ -275,7 +279,13 @@ namespace Ktisis.Interface.Windows {
 
 					ImGui.EndListBox();
 
-					if (!ImGui.IsWindowFocused() && !ImGui.IsItemFocused())
+					focus |= ImGui.IsItemFocused();
+					if (!focus && ImGui.IsItemHovered()) {
+						ImGui.SetWindowFocus();
+						focus = true;
+					}
+
+					if (!ImGui.IsWindowFocused() && !focus)
 						Selecting = null;
 				}
 

@@ -125,7 +125,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (isWeapon) {
 				var equip = (WeaponEquip)equipObj;
 				var val = new int[3] { equip.Set, equip.Base, equip.Variant };
-				if (ImGui.InputInt3($"##{(int)slot}", ref val[0])) {
+				if (ImGui.InputInt3($"##{slot}", ref val[0])) {
 					equip.Set = (ushort)val[0];
 					equip.Base = (ushort)val[1];
 					equip.Variant = (ushort)val[2];

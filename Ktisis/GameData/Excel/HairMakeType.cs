@@ -6,6 +6,9 @@ namespace Ktisis.GameData.Excel {
 	public class HairMakeType : ExcelRow {
 		// Properties
 
+		public const uint HairLength = 100;
+		public const uint FacepaintLength = 50;
+
 		public uint HairStartIndex { get; set; } // 66
 		public uint FacepaintStartIndex { get; set; } // 82
 
