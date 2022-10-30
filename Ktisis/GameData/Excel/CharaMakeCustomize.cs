@@ -14,8 +14,6 @@ namespace Ktisis.GameData.Excel {
 		public LazyRow<Lobby> Hint { get; set; } = null!;
 		public byte FaceType { get; set; }
 
-		public LazyRow<HairMakeType> FeatureMake { get; set; } = null!;
-
 		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
 			base.PopulateData(parser, gameData, language);
 
@@ -25,8 +23,6 @@ namespace Ktisis.GameData.Excel {
 			IsPurchasable = parser.ReadColumn<bool>(3);
 			Hint = new LazyRow<Lobby>(gameData, parser.ReadColumn<uint>(4), language);
 			FaceType = parser.ReadColumn<byte>(6);
-
-			FeatureMake = new LazyRow<HairMakeType>(gameData, RowId, language);
 		}
 	}
 }

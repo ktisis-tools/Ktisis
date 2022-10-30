@@ -126,7 +126,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (isWeapon) {
 				var equip = (WeaponEquip)equipObj;
 				var val = new int[3] { equip.Set, equip.Base, equip.Variant };
-				if (ImGui.InputInt3($"##{(int)slot}", ref val[0])) {
+				if (ImGui.InputInt3($"##{slot}", ref val[0])) {
 					equip.Set = (ushort)val[0];
 					equip.Base = (ushort)val[1];
 					equip.Variant = (ushort)val[2];
@@ -221,10 +221,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 							Target->Equip(0, wep);
 						}
 
-						if (isMain || i.SubModel.Id != 0) {
-							wep.Set = i.SubModel.Id;
-							wep.Base = i.SubModel.Base;
-							wep.Variant = i.SubModel.Variant;
+						if (slot == EquipSlot.OffHand || i.SubModel.Id != 0) {
+							var model = i.SubModel.Id != 0 ? i.SubModel : i.Model;
+							wep.Set = model.Id;
+							wep.Base = model.Base;
+							wep.Variant = model.Variant;
 							Target->Equip(1, wep);
 						}
 					}

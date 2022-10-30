@@ -68,7 +68,7 @@ namespace Ktisis.GameData.Excel {
 			if (equip is WeaponEquip wep) {
 				if (Model.Id == 0 && SubModel.Id == 0) return false;
 				var m1 = wep.Set == Model.Id && wep.Base == Model.Base && wep.Variant == Model.Variant;
-				var m2 = wep.Set == SubModel.Id && wep.Base == SubModel.Base && wep.Variant == SubModel.Variant;
+				var m2 = SubModel.Id != 0 && wep.Set == SubModel.Id && wep.Base == SubModel.Base && wep.Variant == SubModel.Variant;
 				return m1 || m2;
 			}
 			if (equip is ItemEquip item)

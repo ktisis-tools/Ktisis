@@ -30,7 +30,9 @@ namespace Ktisis.Overlay {
 					hovered.Add(dot.Name);
 				}
 
-				draw.AddCircleFilled(dot.Pos, dot.GetRadius(), col);
+				var radius = dot.GetRadius();
+				draw.AddCircleFilled(dot.Pos, radius, col);
+				draw.AddCircle(dot.Pos, radius, 0xaf000000);
 			}
 
 			// Selection list
