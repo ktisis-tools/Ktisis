@@ -71,7 +71,7 @@ namespace Ktisis.Overlay {
 			ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
 		}
 
-		internal void InsertEulerDeltaMatrix(Vector3 posDelta,Vector3 rotDelta,Vector3 scaDelta)
+		public void InsertEulerDeltaMatrix(Vector3 posDelta,Vector3 rotDelta,Vector3 scaDelta)
 		{
 			EulerDeltaMatrix = new(
 				posDelta.X, posDelta.Y, posDelta.Z,
