@@ -338,7 +338,7 @@ namespace Ktisis.Interface.Windows {
 				var isActive = (custom.FaceFeatures & value) != 0;
 
 				bool button = false;
-				ImGui.PushStyleColor(ImGuiCol.Button, (uint)(isActive ? 0x5F4F4FEF : 0x1FFFFFFF));
+				ImGui.PushStyleColor(ImGuiCol.Button, isActive ? 0x5F4F4FEFu : 0x1FFFFFFFu);
 				if (i == 7) // Legacy tattoo
 					button |= ImGui.Button("Legacy\nTattoo", IconSize + IconPadding);
 				else
