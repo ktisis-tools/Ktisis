@@ -76,7 +76,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 		}
 		internal static unsafe void PopupOfferOpenGlamourPlates_confirmed()
 		{
-			var agent = MiragePrismMiragePlates.MiragePlateAgent();
+			var agent = MiragePrismMiragePlate.MiragePlateAgent();
 			agent->Show();
 		}
 
@@ -84,9 +84,9 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 
 		internal static unsafe void GetDataFromDresser()
 		{
-			var agent = MiragePrismMiragePlates.MiragePlateAgent();
+			var agent = MiragePrismMiragePlate.MiragePlateAgent();
 			if (agent == null) return;
-			var miragePlates = (MiragePrismMiragePlates*)agent;
+			var miragePlates = (MiragePrismMiragePlate*)agent;
 			if (!miragePlates->AgentInterface.IsAgentActive()) return;
 
 			var platePages = miragePlates->Pages;

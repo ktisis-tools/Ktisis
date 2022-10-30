@@ -14,7 +14,7 @@ namespace Ktisis.Structs.FFXIV
 	// Game structs
 	[Agent(AgentId.MiragePrismMiragePlate)]
 	[StructLayout(LayoutKind.Explicit)]
-	public unsafe partial struct MiragePrismMiragePlates
+	public unsafe partial struct MiragePrismMiragePlate
 	{
 
 		[FieldOffset(0)] public AgentInterface AgentInterface;
