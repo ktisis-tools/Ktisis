@@ -1,30 +1,48 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
 using ImGuiScene;
 
+using Lumina.Excel;
+
 using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
 
+using Ktisis.Util;
 using Ktisis.GameData;
 using Ktisis.Localization;
-using Ktisis.GameData.Excel;
 using Ktisis.Structs.Actor;
+using Ktisis.GameData.Excel;
+using Ktisis.GameData.Files;
 using Ktisis.Interface.Windows.ActorEdit;
-using Lumina.Excel;
 
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
 		public Menu Option;
-		public Menu? Color = null;
+		public CustomizeIndex ColorIndex = 0;
+		public uint[] Colors = new uint[0];
 
 		public Dictionary<uint, TextureWrap>? Select = null;
 
 		public MenuOption(Menu option) => Option = option;
+	}
+
+	public struct MenuColor {
+		public string Name;
+		public CustomizeIndex Index = 0;
+		public CustomizeIndex AltIndex = 0;
+		public uint[] Colors = new uint[0];
+		public bool Iterable = true;
+
+		public MenuColor(string name, CustomizeIndex index) {
+			Name = name;
+			Index = index;
+		}
 	}
 
 	public static class EditCustomize {
@@ -35,6 +53,8 @@ namespace Ktisis.Interface.Windows {
 		public static Vector2 IconPadding = new(8, 8);
 		public static Vector2 InputSize = new(120, 120);
 		public static Vector2 MiscInputSize = new(250, 250);
+		public static Vector2 ColButtonSize = new(28, 28);
+		public static Vector2 ColButtonSizeSmall = new(20, 20);
 
 		// Properties
 
@@ -45,11 +65,15 @@ namespace Ktisis.Interface.Windows {
 
 		public static uint? CustomIndex = null;
 		public static Dictionary<MenuType, List<MenuOption>> MenuOptions = new();
+		public static List<MenuColor> MenuColors = new();
 
 		public static int FaceType = -1;
+		public static string FacialFeatureName = "";
 		public static List<TextureWrap>? FacialFeatureIcons = null;
 
 		public static CharaMakeType CharaMakeType = null!;
+
+		public static HumanCmp HumanCmp = new();
 
 		public unsafe static Actor* Target => EditActor.Target;
 
@@ -86,7 +110,7 @@ namespace Ktisis.Interface.Windows {
 
 			var index = custom.GetMakeIndex();
 			if (index != CustomIndex) {
-				MenuOptions = GetMenuOptions(index);
+				MenuOptions = GetMenuOptions(index, custom);
 				CustomIndex = index;
 				FacialFeatureIcons = null;
 			}
@@ -97,31 +121,11 @@ namespace Ktisis.Interface.Windows {
 			DrawCheckboxes(custom);
 			DrawMenuType(custom, MenuType.List);
 			ImGui.Separator();
+			DrawColors(custom);
+			ImGui.Separator();
 			DrawMenuType(custom, MenuType.Select);
 			ImGui.Separator();
 			DrawFacialFeatures(custom);
-		}
-
-		public static void DrawMenuType(Customize custom, MenuType type) {
-			if (!MenuOptions.ContainsKey(type)) return;
-
-			var i = 0;
-			foreach (var option in MenuOptions[type]) {
-				switch (type) {
-					case MenuType.Slider:
-						DrawSlider(custom, option);
-						break;
-					case MenuType.SelectMulti:
-						break;
-					default:
-						if (option.Option.HasIcon) {
-							i++;
-							if (i % 2 == 0) ImGui.SameLine();
-						}
-						DrawNumValue(custom, option);
-						break;
-				}
-			}
 		}
 
 		// Gender/Race/Tribe
@@ -138,8 +142,6 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.SameLine();
 			ImGui.Text(isM ? "Masculine" : "Feminine");
-
-			ImGui.BeginGroup();
 
 			// TODO: Use Race and Tribe data from Lumina.
 
@@ -186,6 +188,28 @@ namespace Ktisis.Interface.Windows {
 			ImGui.EndTabItem();
 		}
 
+		// Draw MenuType
+
+		public static void DrawMenuType(Customize custom, MenuType type) {
+			if (!MenuOptions.ContainsKey(type)) return;
+
+			var i = 0;
+			foreach (var option in MenuOptions[type]) {
+				switch (type) {
+					case MenuType.Slider:
+						DrawSlider(custom, option);
+						break;
+					default:
+						if (option.Option.HasIcon) {
+							i++;
+							if (i % 2 == 0) ImGui.SameLine();
+						}
+						DrawNumValue(custom, option);
+						break;
+				}
+			}
+		}
+
 		// Slider
 
 		public unsafe static void DrawSlider(Customize custom, MenuOption option) {
@@ -199,6 +223,39 @@ namespace Ktisis.Interface.Windows {
 				Apply(custom);
 			}
 			ImGui.PopItemWidth();
+		}
+
+		// Checkbox options
+
+		public static void DrawCheckboxes(Customize custom) {
+			var highlights = custom.HasHighlights == 0x80;
+			if (ImGui.Checkbox("Highlights", ref highlights)) {
+				custom.HasHighlights ^= 0x80;
+				Apply(custom);
+			}
+
+			var flipPaint = ((uint)custom.Facepaint & 0x80) > 0;
+			ImGui.SameLine();
+			if (ImGui.Checkbox("Flip Facepaint", ref flipPaint)) {
+				custom.Facepaint ^= (FacialFeature)0x80;
+				Apply(custom);
+			}
+
+			var smallIris = (custom.EyeShape & 0x80) > 0;
+			ImGui.SameLine();
+			if (ImGui.Checkbox("Small Iris", ref smallIris)) {
+				custom.EyeShape ^= 0x80;
+				Apply(custom);
+			}
+
+			if (custom.Race != Race.Hrothgar) {
+				var lipCol = (custom.LipStyle & 0x80) > 0;
+				ImGui.SameLine();
+				if (ImGui.Checkbox("Lip Color", ref lipCol)) {
+					custom.LipStyle ^= 0x80;
+					Apply(custom);
+				}
+			}
 		}
 
 		// Num values
@@ -224,29 +281,22 @@ namespace Ktisis.Interface.Windows {
 			ImGui.PopItemWidth();
 
 			ImGui.EndGroup();
-
-			var col = option.Color;
-			if (col != null) {
-				// TODO
-			}
 		}
 
 		// Icon selector
 
 		public static void DrawIconSelector(Customize custom, MenuOption option, int _val) {
 			var sel = option.Select;
-			var size = IconSize;
 
 			var val = (uint)_val;
 			if (option.Option.Index == CustomizeIndex.Facepaint)
 				val = (uint)(val & ~0x80);
 
 			bool click;
-			if (sel!.ContainsKey(val)) {
-				click = ImGui.ImageButton(sel[val].ImGuiHandle, size);
-			} else {
-				click = ImGui.Button($"{val}", size + IconPadding);
-			}
+			if (sel!.ContainsKey(val))
+				click = ImGui.ImageButton(sel[val].ImGuiHandle, IconSize);
+			else
+				click = ImGui.Button($"{val}", IconSize + IconPadding);
 
 			var index = option.Option.Index;
 			if (click) {
@@ -259,35 +309,111 @@ namespace Ktisis.Interface.Windows {
 				DrawIconList(custom, option);
 		}
 
-		public unsafe static void DrawIconList(Customize custom, MenuOption option) {
+		// Color selection
+
+		public unsafe static void DrawColors(Customize custom) {
+			var colors = MenuColors.OrderBy(c => c.AltIndex);
+
+			var i = 0;
+			foreach (var color in colors) {
+				if (!color.Iterable) continue;
+
+				if (color.AltIndex != 0 && i > -1) i = -1;
+				if (i != -1) {
+					if (i % 4 != 0) ImGui.SameLine();
+					i++;
+				}
+
+				DrawColor(custom, color);
+			}
+		}
+
+		public unsafe static void DrawColor(Customize custom, MenuColor color) {
+			var colIndex = custom.Bytes[(uint)color.Index];
+			var colRgb = color.Colors[colIndex];
+
+			CustomizeIndex selecting = 0;
+
+			ImGui.BeginGroup();
+
+			if (DrawColorButton($"{colIndex}##{color.Name}", colRgb))
+				selecting = color.Index;
+
+			if (color.AltIndex != 0) {
+				var altIndex = custom.Bytes[(uint)color.AltIndex];
+				var altRgb = color.Colors[altIndex];
+				ImGui.SameLine();
+				if (DrawColorButton($"{altIndex}##{color.Name}", altRgb))
+					selecting = color.AltIndex;
+			}
+
+			if (selecting != 0) {
+				Selecting = selecting;
+				SelectPos = ImGui.GetMousePos();
+				ImGui.SetNextWindowFocus();
+			}
+
+			ImGui.SameLine();
+
+			var name = color.Name;
+			if (color.AltIndex != 0) name += "s";
+			ImGui.Text(name);
+
+			if ((Selecting == color.Index || Selecting == color.AltIndex) && DrawColorList(color, out byte value)) {
+				custom.Bytes[(uint)Selecting] = value;
+				Apply(custom);
+			}
+
+			ImGui.EndGroup();
+		}
+
+		public static bool DrawColorButton(string name, uint color) {
+			var textCol = GuiHelpers.CalcContrastRatio(0xffffffff, color) < 1.5 ? 0xff000000 : 0xffffffff;
+			ImGui.PushStyleColor(ImGuiCol.Text, textCol);
+			ImGui.PushStyleColor(ImGuiCol.Button, color);
+			ImGui.PushStyleColor(ImGuiCol.ButtonHovered, color);
+
+			var result = ImGui.Button(name, ColButtonSize);
+
+			ImGui.PopStyleColor(3);
+
+			return result;
+		}
+
+		public static bool DrawColorList(MenuColor color, out byte value) {
+			var result = false;
+			value = 0;
+
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
 
 			ImGui.SetNextWindowPos(SelectPos);
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-			var opt = option.Option;
 			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
 				if (Selecting != null) {
 					var focus = false;
 
-					ImGui.BeginListBox("##feature_select", new Vector2(ListIconSize.X * 6 * 1.25f + 30, 200));
-					focus |= ImGui.IsItemFocused() || ImGui.IsItemActive() || ImGui.IsItemActivated() || ImGui.IsItemHovered();
+					//ImGui.BeginListBox("##feature_select", new Vector2(ListIconSize.X * 6 * 1.25f + 30, 200));
+					//focus |= ImGui.IsItemFocused() || ImGui.IsItemActive() || ImGui.IsItemActivated() || ImGui.IsItemHovered();
 
-					int i = 0;
-					foreach (var (val, icon) in option.Select!) {
-						if (ImGui.ImageButton(icon.ImGuiHandle, ListIconSize)) {
-							custom.Bytes[(uint)opt.Index] = (byte)val;
-							Apply(custom);
+					ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0,0));
+					ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 0);
+					for (var i = 0; i < color.Colors.Length; i++) {
+						var hex = color.Colors[i];
+
+						if (i % 8 != 0) ImGui.SameLine();
+
+						var rgba = ImGui.ColorConvertU32ToFloat4(hex);
+						if (ImGui.ColorButton($"##{color.Name}_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
+							result = true;
+							value = (byte)i;
+							ImGui.SetWindowFocus();
 						}
-						focus |= ImGui.IsItemFocused();
-
-						i++;
-						if (i % 6 != 0)
-							ImGui.SameLine(0f);
 					}
+					ImGui.PopStyleVar(2);
 
-					ImGui.EndListBox();
+					//ImGui.EndListBox();
 
 					focus |= ImGui.IsItemFocused();
 					if (!focus && ImGui.IsItemHovered()) {
@@ -302,6 +428,8 @@ namespace Ktisis.Interface.Windows {
 				ImGui.PopStyleVar(1);
 				ImGui.End();
 			}
+
+			return result;
 		}
 
 		// Facial feature selector
@@ -356,8 +484,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.SameLine();
 
 			ImGui.BeginGroup();
-			ImGui.Text("Facial Features");
-
+			ImGui.Text(FacialFeatureName);
 			var input = (int)custom.FaceFeatures;
 			ImGui.PushItemWidth(InputSize.X);
 			if (ImGui.InputInt("##face_features", ref input)) {
@@ -365,51 +492,74 @@ namespace Ktisis.Interface.Windows {
 				Apply(custom);
 			}
 
+			ImGui.Separator();
+
+
+			foreach (var color in MenuColors) {
+				if (color.Index != CustomizeIndex.FaceFeaturesColor) continue;
+				DrawColor(custom, color);
+			}
+
 			ImGui.PopItemWidth();
 			ImGui.EndGroup();
 		}
 
-		// Checkbox options
+		// Icon selection
 
-		public static void DrawCheckboxes(Customize custom) {
-			var highlights = custom.HasHighlights == 0x80;
-			if (ImGui.Checkbox("Highlights", ref highlights)) {
-				custom.HasHighlights ^= 0x80;
-				Apply(custom);
-			}
+		public unsafe static void DrawIconList(Customize custom, MenuOption option) {
+			var size = new Vector2(-1, -1);
+			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
 
-			var flipPaint = ((uint)custom.Facepaint & 0x80) > 0;
-			ImGui.SameLine();
-			if (ImGui.Checkbox("Flip Facepaint", ref flipPaint)) {
-				custom.Facepaint ^= (FacialFeature)0x80;
-				Apply(custom);
-			}
+			ImGui.SetNextWindowPos(SelectPos);
+			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-			var smallIris = (custom.EyeShape & 0x80) > 0;
-			ImGui.SameLine();
-			if (ImGui.Checkbox("Small Iris", ref smallIris)) {
-				custom.EyeShape ^= 0x80;
-				Apply(custom);
-			}
+			var opt = option.Option;
+			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
+				if (Selecting != null) {
+					var focus = false;
 
-			if (custom.Race != Race.Hrothgar) {
-				var lipCol = (custom.LipStyle & 0x80) > 0;
-				ImGui.SameLine();
-				if (ImGui.Checkbox("Lip Color", ref lipCol)) {
-					custom.LipStyle ^= 0x80;
-					Apply(custom);
+					ImGui.BeginListBox("##feature_select", new Vector2(ListIconSize.X * 6 * 1.25f + 30, 200));
+					focus |= ImGui.IsItemFocused() || ImGui.IsItemActive() || ImGui.IsItemActivated() || ImGui.IsItemHovered();
+
+					int i = 0;
+					foreach (var (val, icon) in option.Select!) {
+						if (ImGui.ImageButton(icon.ImGuiHandle, ListIconSize)) {
+							custom.Bytes[(uint)opt.Index] = (byte)val;
+							Apply(custom);
+						}
+						focus |= ImGui.IsItemFocused();
+
+						i++;
+						if (i % 6 != 0)
+							ImGui.SameLine(0f);
+					}
+
+					ImGui.EndListBox();
+
+					focus |= ImGui.IsItemFocused();
+					if (!focus && ImGui.IsItemHovered()) {
+						ImGui.SetWindowFocus();
+						focus = true;
+					}
+
+					if (!ImGui.IsWindowFocused() && !focus)
+						Selecting = null;
 				}
+
+				ImGui.PopStyleVar(1);
+				ImGui.End();
 			}
 		}
 
 		// Build menu options
 
-		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(uint index) {
+		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(uint index, Customize custom) {
 			var options = new Dictionary<MenuType, List<MenuOption>>();
 
 			var data = CharaMakeType;
 			if (data == null || data.RowId != index) {
 				CharaMakeType = Sheets.GetSheet<CharaMakeType>().GetRow(index)!;
+				MenuColors.Clear();
 				data = CharaMakeType;
 			}
 
@@ -420,23 +570,52 @@ namespace Ktisis.Interface.Windows {
 					if (val.Index == 0)
 						break;
 
-					if (val.Index == CustomizeIndex.EyeColor2)
-						continue; // TODO: Heterochromia
-
 					var type = val.Type;
 					if (type == MenuType.Unknown1)
 						type = MenuType.Color;
-					if (type == MenuType.Color || type == MenuType.SelectMulti)
+
+					if (type == MenuType.Color) { // I gave up on making this work procedurally
+						var menuCol = new MenuColor(val.Name, val.Index);
+						switch (val.Index) {
+							case CustomizeIndex.EyeColor:
+								menuCol.Colors = HumanCmp.GetEyeColors();
+								menuCol.AltIndex = CustomizeIndex.EyeColor2;
+								break;
+							case CustomizeIndex.FaceFeaturesColor:
+								menuCol.Colors = HumanCmp.GetEyeColors();
+								menuCol.Iterable = false;
+								break;
+							case CustomizeIndex.FacepaintColor:
+								menuCol.Colors = HumanCmp.GetFacepaintColors();
+								break;
+							case CustomizeIndex.HairColor:
+								menuCol.Colors = HumanCmp.GetHairColors(data.TribeEnum, data.GenderEnum);
+								menuCol.AltIndex = CustomizeIndex.HairColor2;
+								break;
+							case CustomizeIndex.LipColor:
+								menuCol.Colors = HumanCmp.GetLipColors();
+								break;
+							case CustomizeIndex.SkinColor:
+								menuCol.Colors = HumanCmp.GetSkinColors(data.TribeEnum, data.GenderEnum);
+								break;
+							default:
+								PluginLog.Warning($"Color not implemented: {val.Index}");
+								break;
+						}
+						MenuColors.Add(menuCol);
 						continue;
+					}
+
+					if (type == MenuType.SelectMulti) {
+						if (val.Index == CustomizeIndex.FaceFeatures)
+							FacialFeatureName = val.Name;
+						continue;
+					}
 
 					if (!options.ContainsKey(type))
 						options[type] = new();
 
 					var opt = new MenuOption(val);
-
-					var next = data.Menus[i + 1];
-					if (next.Type == MenuType.Color)
-						opt.Color = next;
 
 					if (val.HasIcon) {
 						var icons = new Dictionary<uint, TextureWrap>();

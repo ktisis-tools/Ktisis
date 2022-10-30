@@ -4,6 +4,10 @@ using Lumina.Excel.GeneratedSheets;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 
+using RaceEnum = Ktisis.Structs.Actor.Race;
+using TribeEnum = Ktisis.Structs.Actor.Tribe;
+using Gender = Ktisis.Structs.Actor.Gender;
+
 namespace Ktisis.GameData.Excel {
 	public enum MenuType : byte {
 		List = 0,
@@ -50,6 +54,10 @@ namespace Ktisis.GameData.Excel {
 		public int[] FacialFeatures { get; set; } = new int[7 * 8];
 
 		public LazyRow<HairMakeType> FeatureMake { get; set; } = null!;
+
+		public RaceEnum RaceEnum => (RaceEnum)Race.Row;
+		public TribeEnum TribeEnum => (TribeEnum)Tribe.Row;
+		public Gender GenderEnum => (Gender)Gender;
 
 		// Build sheet
 
