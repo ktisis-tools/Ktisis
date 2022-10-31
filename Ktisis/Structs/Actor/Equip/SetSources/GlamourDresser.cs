@@ -24,7 +24,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 		// In this variable will be stored the plates,
 		// it will be updated when loading configurations
 		// and detecting a change
-		public static GlamourPlate[]? Plates = null;
+		internal static GlamourPlate[]? Plates = null;
 
 
 
@@ -73,16 +73,14 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 
 
 
-		public static int CountValid()
-		{
+		public static int CountValid() {
 			if (Plates == null) return 0;
 			if (Plates.Length == 0) return 0;
 
 			return Plates.Count((p) => p.IsValid())!;
 		}
 
-		public static void PopulatePlatesData()
-		{
+		public static void PopulatePlatesData() {
 			var local_character_id = Dalamud.ClientState.LocalContentId;
 			if (local_character_id == 0) return;
 
@@ -91,8 +89,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			if (Plates == platesBefore) PopupOfferOpenGlamourPlates_open(); // if unsuccessfull, proceed with active dialog
 			else SavePlatesToConfig();
 		}
-		private static bool SavePlatesToConfig()
-		{
+		private static bool SavePlatesToConfig() {
 			if (Plates == null) return false;
 
 			if (Ktisis.Configuration.GlamourPlateData == null)
@@ -109,8 +106,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			if (success) PluginLog.Verbose($"Saved {Ktisis.Configuration.GlamourPlateData[character_key]!.Count((p) => p.IsValid())} Plates for {character_key} into config.");
 			return true;
 		}
-		public static void LoadGlamourPlatesIntoMemory()
-		{
+		public static void LoadGlamourPlatesIntoMemory() {
 			var local_character_id = Dalamud.ClientState.LocalContentId;
 			if (local_character_id == 0) return;
 
@@ -120,22 +116,19 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			PluginLog.Verbose($"Loaded {CountValid()} Plates for {character_key} into memory.");
 		}
 
-		internal static void PopupOfferOpenGlamourPlates_open()
-		{
+		internal static void PopupOfferOpenGlamourPlates_open() {
 			// This is a way to actively get the data, with the user's authorization
 			if (GameMain.IsInSanctuary())
 				Interface.Components.Equipment.OpenGlamourQuestionPopup();
 		}
-		internal static unsafe void PopupOfferOpenGlamourPlates_confirmed()
-		{
+		internal static unsafe void PopupOfferOpenGlamourPlates_confirmed() {
 			var agent = MiragePrismMiragePlate.MiragePlateAgent();
 			agent->Show();
 		}
 
 		public static EquipSlot GlamourPlateSlotToEquipSlot(GlamourPlateSlot slot) => (EquipSlot)((int)slot + ((int)slot > 4 ? 1 : 0));
 
-		internal static unsafe void GetDataFromDresser()
-		{
+		internal static unsafe void GetDataFromDresser() {
 			var agent = MiragePrismMiragePlate.MiragePlateAgent();
 			if (agent == null) return;
 			var miragePlates = (MiragePrismMiragePlate*)agent;
@@ -148,57 +141,53 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 				Plates[plateNumber] = new GlamourPlate(platePages[plateNumber]);
 		}
 
+
+		// Serializable classes to save MiragePage[] in configuration.
 		[Serializable]
-		public class GlamourPlate
-		{
+		public class GlamourPlate {
 			public GlamourPlateItem[] Items = new GlamourPlateItem[12];
 			public bool IsValid() => Items.Any((i) => i.IsValid());
 
+			// Json Configuration constructor
 			[JsonConstructor]
-			public GlamourPlate(GlamourPlateItem[] items)
-			{
+			public GlamourPlate(GlamourPlateItem[] items) {
 				Items = items;
 			}
 
-			internal GlamourPlate(MiragePage plate)
-			{
+			// pseudo "cast" constructor to convert Game struct into serializable
+			internal GlamourPlate(MiragePage plate) {
 				var fields = typeof(MiragePage).GetFields();
-				for (int slot = 0; slot < fields.Length; slot++)
-				{
+				for (int slot = 0; slot < fields.Length; slot++) {
 					MirageItem item = (MirageItem)fields[slot].GetValue(plate)!;
 					Items[slot] = new GlamourPlateItem(item, (GlamourPlateSlot)slot);
 				}
 			}
-
 		}
 
 		[Serializable]
-		public class GlamourPlateItem
-		{
+		public class GlamourPlateItem {
 			public uint ItemId { get; set; }
 			public byte DyeId { get; set; }
 			public GlamourPlateSlot Slot { get; set; }
 			public bool IsValid() => ItemId != 0;
 
+			// Json Configuration constructor
 			[JsonConstructor]
-			public GlamourPlateItem(uint itemId, byte dyeId, GlamourPlateSlot slot)
-			{
+			public GlamourPlateItem(uint itemId, byte dyeId, GlamourPlateSlot slot) {
 				ItemId = itemId;
 				DyeId = dyeId;
 				Slot = slot;
 			}
 
-			internal GlamourPlateItem(MirageItem item, GlamourPlateSlot slot)
-			{
+			// pseudo "cast" constructor to convert Game struct into serializable
+			internal GlamourPlateItem(MirageItem item, GlamourPlateSlot slot) {
 				ItemId = item.ItemId;
 				DyeId = item.DyeId;
 				Slot = slot;
 			}
-
 		}
 
-		public enum GlamourPlateSlot : uint
-		{
+		public enum GlamourPlateSlot : uint {
 			MainHand = 0,
 			OffHand = 1,
 			Head = 2,
@@ -213,5 +202,4 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			LeftRing = 11,
 		}
 	}
-
 }

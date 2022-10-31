@@ -181,8 +181,7 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.EndTabItem();
 		}
-		public static void DrawDataTab(Configuration cfg)
-		{
+		public static void DrawDataTab(Configuration cfg) {
 			ImGui.Spacing();
 			var validGlamPlatesFound = GlamourDresser.CountValid();
 			GuiHelpers.TextTooltip($"Glamour Plates in memory: {validGlamPlatesFound}  ", $"Found {validGlamPlatesFound} valid Glamour Plates");
@@ -194,8 +193,7 @@ namespace Ktisis.Interface.Windows {
 			Components.Equipment.CreateGlamourQuestionPopup();
 
 			ImGui.SameLine();
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, "Dispose of the Glamour Plates memory and remove configurations for ALL characters."))
-			{
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, "Dispose of the Glamour Plates memory and remove configurations for ALL characters.")) {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}

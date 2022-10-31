@@ -8,12 +8,10 @@ using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 
 using Ktisis.GameData.Excel;
 
-namespace Ktisis.Structs.Actor.Equip.SetSources
-{
-	public class GearSet
-	{
-		const int _gearSetNumber = 101; // Max number on Simple Tweaks
+namespace Ktisis.Structs.Actor.Equip.SetSources {
+	public class GearSet {
 
+		const int _gearSetNumber = 101; // Max number on Simple Tweaks
 
 		public static unsafe Dictionary<int,string> List() {
 			Dictionary<int, string> nameList = new();
@@ -117,7 +115,6 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 					itemsToEquip[index] = tGlam;
 			}
 			return itemsToEquip;
-
 		}
 	}
 }

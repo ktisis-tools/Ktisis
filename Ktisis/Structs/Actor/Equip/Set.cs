@@ -6,14 +6,13 @@ using System.Text;
 using Ktisis.GameData;
 using Ktisis.GameData.Excel;
 
-namespace Ktisis.Structs.Actor.Equip
-{
+namespace Ktisis.Structs.Actor.Equip {
+
 	public struct Set {
 		public int ID;
 		public SetSource Source;
 		public string Name;
-		public Set(int iD, string name, SetSource source)
-		{
+		public Set(int iD, string name, SetSource source) {
 			ID = iD;
 			Name = name;
 			Source = source;
@@ -65,7 +64,7 @@ namespace Ktisis.Structs.Actor.Equip
 
 		// The methods with a name starting with FindSets (e.g. FindSetsGearSet)
 		// will be called when creating the selectable list.
-		private static List<Set> FindSetsGearSet() =>  SetSources.GearSet.List().Select((i) => new Set(
+		private static List<Set> FindSetsGearSet() => SetSources.GearSet.List().Select((i) => new Set(
 				i.Key,
 				i.Value,
 				SetSource.GearSet)

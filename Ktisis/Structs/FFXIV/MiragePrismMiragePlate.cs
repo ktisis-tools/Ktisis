@@ -8,14 +8,12 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using Ktisis.Structs.Actor.Equip.SetSources;
 
-namespace Ktisis.Structs.FFXIV
-{
+namespace Ktisis.Structs.FFXIV {
 
 	// Game structs
 	[Agent(AgentId.MiragePrismMiragePlate)]
 	[StructLayout(LayoutKind.Explicit)]
-	public unsafe partial struct MiragePrismMiragePlate
-	{
+	public unsafe partial struct MiragePrismMiragePlate {
 
 		[FieldOffset(0)] public AgentInterface AgentInterface;
 
@@ -25,10 +23,8 @@ namespace Ktisis.Structs.FFXIV
 		internal static unsafe AgentInterface* MiragePlateAgent() => Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
 
 		// this getter exists because we cannot specify a sized array in the variable
-		public MiragePage[] Pages
-		{
-			get
-			{
+		public MiragePage[] Pages {
+			get {
 				var totalPages = GlamourDresser._platesNumber + 1; // the currently viewing/editing page is added at the end of the array
 				MiragePage[] pages = new MiragePage[totalPages];
 
@@ -38,8 +34,7 @@ namespace Ktisis.Structs.FFXIV
 				var agent = MiragePlateAgent();
 				var glamPlatePointer = *(IntPtr*)((IntPtr)agent + 40) + 36;
 
-				for (int plateNumber = 0; plateNumber < totalPages; plateNumber++)
-				{
+				for (int plateNumber = 0; plateNumber < totalPages; plateNumber++) {
 					var offset = 44 * 12 * plateNumber;
 					pages[plateNumber] = *(MiragePage*)(glamPlatePointer + offset);
 
@@ -50,8 +45,7 @@ namespace Ktisis.Structs.FFXIV
 	}
 
 	[StructLayout(LayoutKind.Explicit, Size = 0x210)]
-	public struct MiragePage
-	{
+	public struct MiragePage {
 		[FieldOffset(0x2C * 00)] public MirageItem MainHand;
 		[FieldOffset(0x2C * 01)] public MirageItem OffHand;
 		[FieldOffset(0x2C * 02)] public MirageItem Head;
@@ -69,8 +63,7 @@ namespace Ktisis.Structs.FFXIV
 	// Thanks to Anna's Glamaholic code
 	// for showing the logic behind the Glamour Plates <3
 	[StructLayout(LayoutKind.Explicit, Size = 44)]
-	public struct MirageItem
-	{
+	public struct MirageItem {
 		[FieldOffset(0)] public uint ItemId;
 		//[FieldOffset(4)] public uint Unk1; // > 0 when previewing an item
 		//[FieldOffset(8)] public uint Unk2; // = 1 when previwing item

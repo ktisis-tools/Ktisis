@@ -30,19 +30,16 @@ namespace Ktisis.Util
 			Tooltip(tooltip);
 			return accepting;
 		}
-		public static bool TextButtonTooltip(string label, string tooltip)
-		{
+		public static bool TextButtonTooltip(string label, string tooltip) {
 			bool accepting = ImGui.Button(label);
 			Tooltip(tooltip);
 			return accepting;
 		}
-		public static void TextTooltip(string label, string tooltip)
-		{
+		public static void TextTooltip(string label, string tooltip) {
 			ImGui.Text(label);
 			Tooltip(tooltip);
 		}
-		public static void TextDisabledTooltip(string label, string tooltip)
-		{
+		public static void TextDisabledTooltip(string label, string tooltip) {
 			ImGui.TextDisabled(label);
 			Tooltip(tooltip);
 		}
@@ -56,11 +53,9 @@ namespace Ktisis.Util
 				ImGui.EndTooltip();
 			}
 		}
-		public static void PopupConfirm(string label, Action contents, Action onAccept)
-		{
+		public static void PopupConfirm(string label, Action contents, Action onAccept) {
 			ImGui.SetNextWindowPos(ImGui.GetMainViewport().GetCenter(), ImGuiCond.Always, new Vector2(0.5f));
-			if (ImGui.BeginPopup(label, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove))
-			{
+			if (ImGui.BeginPopup(label, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove)) {
 				contents();
 				ImGui.Separator();
 
@@ -71,16 +66,14 @@ namespace Ktisis.Util
 				var buttonCenter = (ImGui.GetWindowContentRegionMax().X - buttonSize) / 2;
 
 				ImGui.SetCursorPosX(buttonCenter);
-				if (ImGui.Button("OK", okSize))
-				{
+				if (ImGui.Button("OK", okSize)) {
 					ImGui.CloseCurrentPopup();
 					onAccept();
 				}
 
 				ImGui.SetItemDefaultFocus();
 				ImGui.SameLine();
-				if (ImGui.Button("Cancel", cancelSize))
-				{
+				if (ImGui.Button("Cancel", cancelSize)) {
 					ImGui.CloseCurrentPopup();
 				}
 
@@ -105,15 +98,13 @@ namespace Ktisis.Util
 			return show;
 		}
 
-		public static void TextRight(string text, float offset = 0)
-		{
+		public static void TextRight(string text, float offset = 0) {
 			offset = ImGui.GetContentRegionAvail().X - offset - ImGui.CalcTextSize(text).X;
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);
 			ImGui.TextUnformatted(text);
 		}
 
 		public static void TextCentered(string text) {
-
 			var windowWidth = ImGui.GetWindowSize().X;
 			var textWidth = ImGui.CalcTextSize(text).X;
 

@@ -11,12 +11,9 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
 
-namespace Ktisis.Interop
-{
-	public class EventsHooks
-	{
-		public static void Init()
-		{
+namespace Ktisis.Interop {
+	public class EventsHooks {
+		public static void Init() {
 			Dalamud.AddonManager = new AddonManager();
 			Dalamud.ClientState.Login += OnLogin;
 			Dalamud.ClientState.Logout += OnLogout;
@@ -28,8 +25,7 @@ namespace Ktisis.Interop
 			OnLogin(null!, null!);
 		}
 
-		public static void Dispose()
-		{
+		public static void Dispose() {
 			Dalamud.AddonManager.Dispose();
 			Dalamud.ClientState.Logout -= OnLogout;
 			Dalamud.ClientState.Login -= OnLogin;
@@ -42,29 +38,23 @@ namespace Ktisis.Interop
 		}
 
 		// Various event methods
-
-		private static void OnLogin(object? sender, EventArgs e)
-		{
+		private static void OnLogin(object? sender, EventArgs e) {
 			Sets.Init();
 		}
-		private static void OnLogout(object? sender, EventArgs e)
-		{
+		private static void OnLogout(object? sender, EventArgs e) {
 			Sets.Dispose();
 		}
-		private static void ConditionChange(ConditionFlag flag, bool value)
-		{
+		private static void ConditionChange(ConditionFlag flag, bool value) {
 			//PluginLog.Debug($"condition changed to {flag}=>{value}");
 
 			// TODO: find a better way to watch for OnGposeEnter, and make OnGposeLeave()
 			if (flag == ConditionFlag.WatchingCutscene && value && Ktisis.IsInGPose) OnGposeEnter();
 		}
-		private static void OnGposeEnter()
-		{
+		private static void OnGposeEnter() {
 			PluginLog.Verbose($"Entered Gpose");
 		}
 
-		private static unsafe void OnGlamourPlatesReceiveEvent(object? sender, ReceiveEventArgs e)
-		{
+		private static unsafe void OnGlamourPlatesReceiveEvent(object? sender, ReceiveEventArgs e) {
 			//PluginLog.Verbose($"OnGlamourPlatesReceiveEvent {e.SenderID} {e.EventArgs->Int}");
 
 			if (
@@ -80,53 +70,47 @@ namespace Ktisis.Interop
 	// The classes AddonManager and ReceiveEventArgs are from DailyDuty plugin.
 	// MiragePrismMiragePlateAddon class is strongly inspired from the different addons managed in DailyDuty.
 	// Thank you MidoriKami <3
-	internal class AddonManager : IDisposable
-	{
+
+	// their role is to manage events for any kind of AgentInterface
+	internal class AddonManager : IDisposable {
 		private readonly List<IDisposable> addons = new()
 		{
 			new MiragePrismMiragePlateAddon(),
 		};
 
-		public void Dispose()
-		{
-			foreach (var addon in addons)
-			{
+		public void Dispose() {
+			foreach (var addon in addons) {
 				addon.Dispose();
 			}
 		}
 
-		public T Get<T>()
-		{
+		public T Get<T>() {
 			return addons.OfType<T>().First();
 		}
 	}
-	internal unsafe class MiragePrismMiragePlateAddon : IDisposable
-	{
+
+	// This is Glamour Plate event hook
+	// If adding new agents, it may be a good idea to move them in their own files
+	internal unsafe class MiragePrismMiragePlateAddon : IDisposable {
 		public event EventHandler<ReceiveEventArgs>? ReceiveEvent;
 		private delegate void* AgentReceiveEvent(AgentInterface* agent, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong sender);
 		private readonly Hook<AgentReceiveEvent>? receiveEventHook;
 
-		public MiragePrismMiragePlateAddon()
-		{
+		public MiragePrismMiragePlateAddon() {
 			var MiragePrismMiragePlateAgentInterface = Framework.Instance()->UIModule->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
 			receiveEventHook ??= Hook<AgentReceiveEvent>.FromAddress(new IntPtr(MiragePrismMiragePlateAgentInterface->VTable->ReceiveEvent), OnReceiveEvent);
 
 			receiveEventHook?.Enable();
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			receiveEventHook?.Dispose();
 		}
 
-		private void* OnReceiveEvent(AgentInterface* agent, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong sender)
-		{
-			try
-			{
+		private void* OnReceiveEvent(AgentInterface* agent, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong sender) {
+			try {
 				ReceiveEvent?.Invoke(this, new ReceiveEventArgs(agent, rawData, eventArgs, eventArgsCount, sender));
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				PluginLog.Error(ex, "Something went wrong when the MiragePrismMiragePlates Addon was opened");
 			}
 
@@ -134,10 +118,8 @@ namespace Ktisis.Interop
 		}
 	}
 
-	internal unsafe class ReceiveEventArgs : EventArgs
-	{
-		public ReceiveEventArgs(AgentInterface* agentInterface, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong senderID)
-		{
+	internal unsafe class ReceiveEventArgs : EventArgs {
+		public ReceiveEventArgs(AgentInterface* agentInterface, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong senderID) {
 			AgentInterface = agentInterface;
 			RawData = rawData;
 			EventArgs = eventArgs;
@@ -151,8 +133,7 @@ namespace Ktisis.Interop
 		public uint EventArgsCount;
 		public ulong SenderID;
 
-		public void PrintData()
-		{
+		public void PrintData() {
 			PluginLog.Verbose("ReceiveEvent Argument Printout --------------");
 			PluginLog.Verbose($"AgentInterface: {(IntPtr)AgentInterface:X8}");
 			PluginLog.Verbose($"RawData: {(IntPtr)RawData:X8}");
@@ -160,8 +141,7 @@ namespace Ktisis.Interop
 			PluginLog.Verbose($"EventArgsCount: {EventArgsCount}");
 			PluginLog.Verbose($"SenderID: {SenderID}");
 
-			for (var i = 0; i < EventArgsCount; i++)
-			{
+			for (var i = 0; i < EventArgsCount; i++) {
 				PluginLog.Verbose($"[{i}] {EventArgs[i].Int}, {EventArgs[i].Type}");
 			}
 
