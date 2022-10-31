@@ -101,7 +101,7 @@ namespace Ktisis.Interface.Windows {
 				var cfg = Ktisis.Configuration;
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
+				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Cog, "Open Settings."))
 					ConfigGui.Show();
 
 				ImGui.Separator();
