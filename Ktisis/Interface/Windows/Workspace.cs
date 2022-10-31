@@ -149,8 +149,11 @@ namespace Ktisis.Interface.Windows {
 			// Animation control
 			if (ImGui.CollapsingHeader("Animation Control")) {
 				var control = PoseHooks.GetAnimationControl(target);
-				if (!Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null)
-					ImGui.Text("Unavailable at this time.");
+				if (PoseHooks.PosingEnabled || !Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null) {
+					ImGui.Text("Animation Control is available when:");
+					ImGui.BulletText("Game animation is paused");
+					ImGui.BulletText("Posing is off");
+				}
 				else
 					GuiHelpers.AnimationControls(control);
 			}
