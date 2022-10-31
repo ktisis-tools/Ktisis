@@ -58,23 +58,39 @@ namespace Ktisis.Interface.Windows {
 					gposeOn ? "GPose Enabled" : "GPose Disabled"
 				);
 
+
+				ImGui.SameLine();
+				ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8)); // Prevents text overlap
+
+				ImGui.BeginDisabled(!Ktisis.IsInGPose);
+				var pose = PoseHooks.PosingEnabled;
+				if(Ktisis.IsInGPose) ImGui.PushStyleColor(ImGuiCol.Text, pose ? ColGreen : ColRed);
+				var label = pose ? "Posing" : "Not Posing";
+				float toggleWidth = ImGui.GetFrameHeight() * 1.55f;
+				float offsetWidth  = toggleWidth + (ImGui.GetStyle().WindowPadding.X * .75f) + 0.1f;
+				GuiHelpers.TextRight(label, offsetWidth);
+				if (Ktisis.IsInGPose) ImGui.PopStyleColor();
+				ImGui.SameLine();
+
+				if (!Ktisis.IsInGPose)
+					ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
+				else
+					if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? ColGreen : ColRed))
+						PoseHooks.TogglePosing();
+
+
+				ImGui.EndDisabled();
+
 				// Gizmo Controls
 				// TODO
 
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow))
-					Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
-
+				GuiHelpers.ButtonChangeOperation(OPERATION.TRANSLATE, FontAwesomeIcon.LocationArrow);
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync))
-					Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
-
+				GuiHelpers.ButtonChangeOperation(OPERATION.ROTATE, FontAwesomeIcon.Sync);
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandAlt))
-					Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
-
+				GuiHelpers.ButtonChangeOperation(OPERATION.SCALE, FontAwesomeIcon.ExpandAlt);
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
-					Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
+				GuiHelpers.ButtonChangeOperation(OPERATION.UNIVERSAL, FontAwesomeIcon.DotCircle);
 
 				// Second row
 
@@ -91,19 +107,13 @@ namespace Ktisis.Interface.Windows {
 				var cfg = Ktisis.Configuration;
 
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
+				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Cog, "Open Settings."))
 					ConfigGui.Show();
 
 				ImGui.Separator();
 				
 				if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
 					PoseHooks.DisablePosing();
-
-				ImGui.BeginDisabled(!Ktisis.IsInGPose);
-				var pose = PoseHooks.PosingEnabled;
-				if (ImGui.Checkbox("Toggle Posing", ref pose))
-					PoseHooks.TogglePosing();
-				ImGui.EndDisabled();
 
 				var showSkeleton = cfg.ShowSkeleton;
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton))
@@ -138,8 +148,11 @@ namespace Ktisis.Interface.Windows {
 			// Animation control
 			if (ImGui.CollapsingHeader("Animation Control")) {
 				var control = PoseHooks.GetAnimationControl(target);
-				if (!Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null)
-					ImGui.Text("Unavailable at this time.");
+				if (PoseHooks.PosingEnabled || !Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null) {
+					ImGui.Text("Animation Control is available when:");
+					ImGui.BulletText("Game animation is paused");
+					ImGui.BulletText("Posing is off");
+				}
 				else
 					GuiHelpers.AnimationControls(control);
 			}
