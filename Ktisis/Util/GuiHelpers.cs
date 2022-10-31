@@ -106,8 +106,10 @@ namespace Ktisis.Util
 			if (control->hkaAnimationControl.LocalTime >= durationLimit)
 				control->hkaAnimationControl.LocalTime = 0f;
 
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - (ImGui.CalcTextSize("Speed").X + ImGui.GetFontSize() * .25f));
 			ImGui.SliderFloat("Seek", ref control->hkaAnimationControl.LocalTime, 0, durationLimit);
 			ImGui.SliderFloat("Speed", ref control->PlaybackSpeed, 0f, 0.999f);
+			ImGui.PopItemWidth();
 		}
 
 		// HoverPopupWindow Method
