@@ -110,6 +110,13 @@ namespace Ktisis.Util
 			return show;
 		}
 
+		// this function usually goes with TextRight or inputs/drag to calculate a safe right margin
+		public static float GetRightOffset(float calculatedTextSize) {
+			return calculatedTextSize
+				+ ImGui.GetStyle().ItemSpacing.X
+				//+ ImGui.GetStyle().WindowPadding.X
+				+ 0.5f; // extra safety
+		}
 		public static void TextRight(string text, float offset = 0) {
 			offset = ImGui.GetContentRegionAvail().X - offset - ImGui.CalcTextSize(text).X;
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);
@@ -151,7 +158,7 @@ namespace Ktisis.Util
 			if (control->hkaAnimationControl.LocalTime >= durationLimit)
 				control->hkaAnimationControl.LocalTime = 0f;
 
-			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - (ImGui.CalcTextSize("Speed").X + ImGui.GetFontSize() * .25f));
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - GetRightOffset(ImGui.CalcTextSize("Speed").X));
 			ImGui.SliderFloat("Seek", ref control->hkaAnimationControl.LocalTime, 0, durationLimit);
 			ImGui.SliderFloat("Speed", ref control->PlaybackSpeed, 0f, 0.999f);
 			ImGui.PopItemWidth();
