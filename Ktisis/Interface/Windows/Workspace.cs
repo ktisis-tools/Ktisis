@@ -78,20 +78,13 @@ namespace Ktisis.Interface.Windows {
 				// Gizmo Controls
 				// TODO
 
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.LocationArrow))
-					Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
-
+				GuiHelpers.ButtonChangeOperation(OPERATION.TRANSLATE, FontAwesomeIcon.LocationArrow);
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.Sync))
-					Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
-
+				GuiHelpers.ButtonChangeOperation(OPERATION.ROTATE, FontAwesomeIcon.Sync);
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.ExpandAlt))
-					Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
-
+				GuiHelpers.ButtonChangeOperation(OPERATION.SCALE, FontAwesomeIcon.ExpandAlt);
 				ImGui.SameLine();
-				if (ImGuiComponents.IconButton(FontAwesomeIcon.DotCircle))
-					Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
+				GuiHelpers.ButtonChangeOperation(OPERATION.UNIVERSAL, FontAwesomeIcon.DotCircle);
 
 				// Second row
 

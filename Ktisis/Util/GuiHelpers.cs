@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -97,6 +98,14 @@ namespace Ktisis.Util
 
 			ImGui.SetCursorPosX((windowWidth - textWidth) * 0.5f);
 			ImGui.Text(text);
+		}
+
+		public static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
+			var isCurrentOperation = Ktisis.Configuration.GizmoOp == operation;
+			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive]);
+			if (ImGuiComponents.IconButton(icon))
+				Ktisis.Configuration.GizmoOp = operation;
+			if (isCurrentOperation) ImGui.PopStyleColor();
 		}
 
 		public static unsafe void AnimationControls(hkaDefaultAnimationControl* control) {
