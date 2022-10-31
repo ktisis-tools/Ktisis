@@ -196,7 +196,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.SameLine();
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, "Dispose of the Glamour Plates memory and remove configurations for ALL characters."))
 			{
-				EquipmentSets.Dispose();
+				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
 

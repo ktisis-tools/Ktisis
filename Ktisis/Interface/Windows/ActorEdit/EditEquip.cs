@@ -236,7 +236,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public unsafe static void DrawSetSelectorList()
 		{
-			IEnumerable<Set> sets = EquipmentSets.FindSets();
+			IEnumerable<Set> sets = Sets.FindSets();
 
 			if (!sets.Any())
 				return;
@@ -257,7 +257,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 					return (selected, focus);
 				}, // draw Before Line
-				(i) => Target->Equip(EquipmentSets.GetItems(i)), // on Select
+				(i) => Target->Equip(Sets.GetItems(i)), // on Select
 				CloseSetSelector, // on close
 				ref SetSearch,
 				"Set Select",

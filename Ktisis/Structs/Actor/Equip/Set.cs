@@ -31,7 +31,7 @@ namespace Ktisis.Structs.Actor.Equip
 
 	// This class is where are made the all the connections between
 	// the selection lists, the data lookup and data storage.
-	public static class EquipmentSets {
+	public static class Sets {
 
 		internal static IEnumerable<Item> ItemsSheet = Sheets.GetSheet<Item>();
 

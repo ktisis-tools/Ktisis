@@ -79,7 +79,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			foreach ((uint id, EquipSlot slot) in itemsToRemodel) {
 				if (id == 0) {
 					// if gearset slot is not set
-					itemsToEquip.Add((slot, EquipmentSets.EmptySlot(slot)));
+					itemsToEquip.Add((slot, Sets.EmptySlot(slot)));
 					continue;
 				}
 
@@ -92,25 +92,25 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 				if (invItems.Any()) invItem = invItems.First();
 
 				// get the Item that contains the model Id
-				var items = EquipmentSets.ItemsSheet.Where(i => i.RowId == (invItem?.GlamourID == 0 ? invItem?.ItemID : invItem?.GlamourID));
+				var items = Sets.ItemsSheet.Where(i => i.RowId == (invItem?.GlamourID == 0 ? invItem?.ItemID : invItem?.GlamourID));
 				if (items.Any()) item = items.First();
 
 				if (item == null) {
 					// if gearset slot is set, but item wasn't found in inventories
-					itemsToEquip.Add((slot, EquipmentSets.EmptySlot(slot)));
+					itemsToEquip.Add((slot, Sets.EmptySlot(slot)));
 					continue;
 				}
 
 				byte dye = (invItem?.Stain) ?? default;
-				itemsToEquip.Add((slot, EquipmentSets.ItemToEquipObject(item, dye, slot)));
+				itemsToEquip.Add((slot, Sets.ItemToEquipObject(item, dye, slot)));
 			}
 
 			if (gearset->GlamourSetLink == 0) return itemsToEquip; // not linked to
 
-			var glamourItems = EquipmentSets.GetItemsGlamourDresser(EquipmentSets.FindSetsGlamourPlate().Find(s => s.ID == gearset->GlamourSetLink));
+			var glamourItems = Sets.GetItemsGlamourDresser(Sets.FindSetsGlamourPlate().Find(s => s.ID == gearset->GlamourSetLink));
 
 			// overwrite gearset items with valid items from the glam plate
-			foreach (var tGlam in glamourItems.FindAll(EquipmentSets.FindAllValidEquip)) // keep only items that are not 0
+			foreach (var tGlam in glamourItems.FindAll(Sets.FindAllValidEquip)) // keep only items that are not 0
 			{
 				int index = itemsToEquip.FindIndex(t => tGlam.Item1 == t.Item1);
 				if (index >= 0)

@@ -53,18 +53,18 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 
 				if (itemId == 0) {
 					// if slot is left empty remove the item
-					itemsToEquip.Add((slot, EquipmentSets.EmptySlot(slot)));
+					itemsToEquip.Add((slot, Sets.EmptySlot(slot)));
 				}
 
 				Item? item = null;
-				var items = EquipmentSets.ItemsSheet.Where(i => i.RowId == itemId);
+				var items = Sets.ItemsSheet.Where(i => i.RowId == itemId);
 				if (items.Any()) item = items.First();
 
 				if (itemId == 0 || item == null) {
-					itemsToEquip.Add((slot, EquipmentSets.EmptySlot(slot)));
+					itemsToEquip.Add((slot, Sets.EmptySlot(slot)));
 					continue;
 				}
-				itemsToEquip.Add((slot, EquipmentSets.ItemToEquipObject(item, dyeId, slot)));
+				itemsToEquip.Add((slot, Sets.ItemToEquipObject(item, dyeId, slot)));
 			}
 
 			return itemsToEquip;

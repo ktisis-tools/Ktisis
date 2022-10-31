@@ -45,11 +45,11 @@ namespace Ktisis.Interop
 
 		private static void OnLogin(object? sender, EventArgs e)
 		{
-			EquipmentSets.Init();
+			Sets.Init();
 		}
 		private static void OnLogout(object? sender, EventArgs e)
 		{
-			EquipmentSets.Dispose();
+			Sets.Dispose();
 		}
 		private static void ConditionChange(ConditionFlag flag, bool value)
 		{
