@@ -17,7 +17,7 @@ namespace Ktisis.Util
 {
 	internal class GuiHelpers {
 		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, bool isHoldingKey) {
-			if (!isHoldingKey) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+			if (!isHoldingKey) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, ImGui.GetStyle().DisabledAlpha);
 			bool accepting = ImGuiComponents.IconButton(icon);
 			if (!isHoldingKey) ImGui.PopStyleVar();
 
