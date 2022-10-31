@@ -71,8 +71,14 @@ namespace Ktisis.Interface.Windows {
 				GuiHelpers.TextRight(label, offsetWidth);
 				if (Ktisis.IsInGPose) ImGui.PopStyleColor();
 				ImGui.SameLine();
-				if (ImGuiComponents.ToggleButton("Toggle Posing", ref pose))
-					PoseHooks.TogglePosing();
+
+				if (!Ktisis.IsInGPose)
+					ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
+				else
+					if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? ColGreen : ColRed))
+						PoseHooks.TogglePosing();
+
+
 				ImGui.EndDisabled();
 
 				// Gizmo Controls
