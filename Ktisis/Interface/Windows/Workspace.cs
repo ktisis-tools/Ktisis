@@ -58,6 +58,23 @@ namespace Ktisis.Interface.Windows {
 					gposeOn ? "GPose Enabled" : "GPose Disabled"
 				);
 
+
+				ImGui.SameLine();
+				ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8)); // Prevents text overlap
+
+				ImGui.BeginDisabled(!Ktisis.IsInGPose);
+				var pose = PoseHooks.PosingEnabled;
+				ImGui.PushStyleColor(ImGuiCol.Text, pose ? ColGreen : ColRed);
+				var label = pose ? "Posing" : "Not Posing";
+				float toggleWidth = ImGui.GetFrameHeight() * 1.55f;
+				float offsetWidth  = toggleWidth + (ImGui.GetStyle().WindowPadding.X * .75f) + 0.1f;
+				GuiHelpers.TextRight(label, offsetWidth);
+				ImGui.PopStyleColor();
+				ImGui.SameLine();
+				if (ImGuiComponents.ToggleButton("Toggle Posing", ref pose))
+					PoseHooks.TogglePosing();
+				ImGui.EndDisabled();
+
 				// Gizmo Controls
 				// TODO
 
@@ -98,12 +115,6 @@ namespace Ktisis.Interface.Windows {
 				
 				if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
 					PoseHooks.DisablePosing();
-
-				ImGui.BeginDisabled(!Ktisis.IsInGPose);
-				var pose = PoseHooks.PosingEnabled;
-				if (ImGui.Checkbox("Toggle Posing", ref pose))
-					PoseHooks.TogglePosing();
-				ImGui.EndDisabled();
 
 				var showSkeleton = cfg.ShowSkeleton;
 				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton))
