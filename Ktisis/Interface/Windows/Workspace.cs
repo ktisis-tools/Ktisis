@@ -64,12 +64,12 @@ namespace Ktisis.Interface.Windows {
 
 				ImGui.BeginDisabled(!Ktisis.IsInGPose);
 				var pose = PoseHooks.PosingEnabled;
-				ImGui.PushStyleColor(ImGuiCol.Text, pose ? ColGreen : ColRed);
+				if(Ktisis.IsInGPose) ImGui.PushStyleColor(ImGuiCol.Text, pose ? ColGreen : ColRed);
 				var label = pose ? "Posing" : "Not Posing";
 				float toggleWidth = ImGui.GetFrameHeight() * 1.55f;
 				float offsetWidth  = toggleWidth + (ImGui.GetStyle().WindowPadding.X * .75f) + 0.1f;
 				GuiHelpers.TextRight(label, offsetWidth);
-				ImGui.PopStyleColor();
+				if (Ktisis.IsInGPose) ImGui.PopStyleColor();
 				ImGui.SameLine();
 				if (ImGuiComponents.ToggleButton("Toggle Posing", ref pose))
 					PoseHooks.TogglePosing();
