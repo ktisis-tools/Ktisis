@@ -12,6 +12,8 @@ using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Structs.Actor.Equip.SetSources
 {
+	// This class will handle the interaction between different aspects
+	// of Glamour plates data: hook, storage and lookup
 	public class GlamourDresser
 	{
 
@@ -19,7 +21,57 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 		// TODO: find this variable from the game's memory
 		public const int _platesNumber = 20;
 
+		// In this variable will be stored the plates,
+		// it will be updated when loading configurations
+		// and detecting a change
 		public static GlamourPlate[]? Plates = null;
+
+
+
+		internal static Dictionary<int, string> List() {
+			// no smarts here, we just make the plate list if it has been populated
+			// TODO: if not too resource heavy, each plate could be checked if it is
+			// Populated or not with the isValid() method
+
+			Dictionary<int, string> nameList = new();
+			if (Plates != null)
+				for (int i = 1; i <= _platesNumber; i++)
+					nameList.Add(i, $"Glamour Plate {i}");
+
+			return nameList;
+		}
+		internal static List<(EquipSlot, object)> GetItemsForSet(Set set) {
+			List<(EquipSlot, object)> itemsToEquip = new();
+			var plates = Plates;
+			if (plates == null) throw new NotImplementedException();
+
+
+			foreach (var plateItem in plates[set.ID - 1].Items) {
+				var itemId = plateItem.ItemId;
+				var dyeId = plateItem.DyeId;
+				var slot = GlamourPlateSlotToEquipSlot(plateItem.Slot);
+
+				if (itemId == 0) {
+					// if slot is left empty remove the item
+					itemsToEquip.Add((slot, EquipmentSets.EmptySlot(slot)));
+				}
+
+				Item? item = null;
+				var items = EquipmentSets.ItemsSheet.Where(i => i.RowId == itemId);
+				if (items.Any()) item = items.First();
+
+				if (itemId == 0 || item == null) {
+					itemsToEquip.Add((slot, EquipmentSets.EmptySlot(slot)));
+					continue;
+				}
+				itemsToEquip.Add((slot, EquipmentSets.ItemToEquipObject(item, dyeId, slot)));
+			}
+
+			return itemsToEquip;
+		}
+
+
+
 
 		public static int CountValid()
 		{
