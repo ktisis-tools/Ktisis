@@ -106,6 +106,19 @@ namespace Ktisis.Util
 			if (ImGuiComponents.IconButton(icon))
 				Ktisis.Configuration.GizmoOp = operation;
 			if (isCurrentOperation) ImGui.PopStyleColor();
+
+			string help = "";
+			if (isCurrentOperation)
+				help += "Current gizmo operation is ";
+			else
+				help += "Change gizmo operation to ";
+
+			if(operation == OPERATION.TRANSLATE) help += "Position";
+			if(operation == OPERATION.ROTATE) help += "Rotation";
+			if(operation == OPERATION.SCALE) help += "Scale";
+			if(operation == OPERATION.UNIVERSAL) help += "Universal";
+
+			Tooltip(help+".");
 		}
 
 		public static unsafe void AnimationControls(hkaDefaultAnimationControl* control) {
