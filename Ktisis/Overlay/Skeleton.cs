@@ -128,7 +128,7 @@ namespace Ktisis.Overlay {
 						gizmo.Matrix.Translation += model->Position;
 
 						// Draw the gizmo. This returns true if it has been moved.
-						if (gizmo.Draw()) {
+						if (gizmo.Draw() || gizmo.ManipulateEuler()) {
 							BoneSelect.Update = true;
 
 							// Reverse the previous transform we did.

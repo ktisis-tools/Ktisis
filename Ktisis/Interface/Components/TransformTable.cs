@@ -1,10 +1,15 @@
 ﻿using System.Numerics;
+using System.Linq;
 using ImGuiNET;
 
+using Dalamud.Interface;
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Helpers;
+using Ktisis.Overlay;
 using Ktisis.Structs;
+using Ktisis.Structs.Bones;
+using Ktisis.Util;
 
 namespace Ktisis.Interface.Components {
 	// Thanks to Emyka for the original code:
@@ -29,13 +34,47 @@ namespace Ktisis.Interface.Components {
 
 		public bool DrawTable() {
 			var result = false;
-			result |= ImGui.DragFloat3("Position", ref Position, 0.0005f);
-			result |= ImGui.DragFloat3("Rotation", ref Rotation, 0.1f);
-			result |= ImGui.DragFloat3("Scale", ref Scale, 0.01f);
+
+			var iconPos = FontAwesomeIcon.LocationArrow;
+			var iconRot = FontAwesomeIcon.Sync;
+			var iconSca = FontAwesomeIcon.ExpandAlt;
+
+			// Attempt to find the exact size for any font and font size.
+			float[] sizes = new float[3];
+			sizes[0] = GuiHelpers.CalcIconSize(iconPos).X;
+			sizes[1] = GuiHelpers.CalcIconSize(iconRot).X;
+			sizes[2] = GuiHelpers.CalcIconSize(iconSca).X;
+			var rightOffset = GuiHelpers.GetRightOffset(sizes.Max());
+
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
+			result |= ImGui.DragFloat3("##Position", ref Position, 0.0005f);
+			ImGui.SameLine();
+			GuiHelpers.IconTooltip(iconPos, "Position", true);
+			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
+			ImGui.SameLine();
+			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
+			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
+			ImGui.SameLine();
+			GuiHelpers.IconTooltip(iconSca, "Scale", true);
+			ImGui.PopItemWidth();
 			IsEditing = result;
 			return result;
 		}
-
+		public bool Draw(Bone bone) {
+			var result = false;
+			var gizmo = OverlayWindow.GetGizmo(bone.UniqueName);
+			if (gizmo != null) {
+				(var savedPosition, var savedRotation, var savedScale) = gizmo.Decompose();
+				(Position, Rotation, Scale) = (savedPosition, savedRotation, savedScale);
+				if (DrawTable()) {
+					(var deltaPosition, var deltaRotation, var deltaScale) = (savedPosition - Position, savedRotation - Rotation, savedScale - Scale);
+					gizmo.InsertEulerDeltaMatrix(deltaPosition, deltaRotation, deltaScale);
+					result = true;
+				}
+			}
+			IsEditing = result;
+			return result;
+		}
 		public bool Draw(ref Vector3 pos, ref Quaternion rot, ref Vector3 scale) {
 			if (!IsEditing)
 				Update(pos, rot, scale);

@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -16,7 +17,7 @@ namespace Ktisis.Util
 {
 	internal class GuiHelpers {
 		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, bool isHoldingKey) {
-			if (!isHoldingKey) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+			if (!isHoldingKey) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, ImGui.GetStyle().DisabledAlpha);
 			bool accepting = ImGuiComponents.IconButton(icon);
 			if (!isHoldingKey) ImGui.PopStyleVar();
 
@@ -44,6 +45,34 @@ namespace Ktisis.Util
 			Tooltip(tooltip);
 		}
 
+		public static void Icon(FontAwesomeIcon icon, bool enabled = true, Vector4? color = null) {
+			string iconText = icon.ToIconString() ?? "";
+			int num = 0;
+			if (color.HasValue) {
+				ImGui.PushStyleColor(ImGuiCol.Button, color.Value);
+				num++;
+			}
+
+			ImGui.PushFont(UiBuilder.IconFont);
+			if (enabled) ImGui.Text(iconText);
+			else ImGui.TextDisabled(iconText);
+			ImGui.PopFont();
+			if (num > 0) {
+				ImGui.PopStyleColor(num);
+			}
+		}
+		public static Vector2 CalcIconSize(FontAwesomeIcon icon) {
+			ImGui.PushFont(UiBuilder.IconFont);
+			var size = ImGui.CalcTextSize(icon.ToIconString());
+			ImGui.PopFont();
+			return size;
+		}
+		public static void IconTooltip(FontAwesomeIcon icon, string tooltip, bool enabled = true, Vector4? color = null) {
+			Icon(icon, enabled, color);
+			Tooltip(tooltip);
+		}
+
+
 		public static void Tooltip(string text) {
 			if (ImGui.IsItemHovered()) {
 				ImGui.BeginTooltip();
@@ -53,6 +82,7 @@ namespace Ktisis.Util
 				ImGui.EndTooltip();
 			}
 		}
+
 		public static void PopupConfirm(string label, Action contents, Action onAccept) {
 			ImGui.SetNextWindowPos(ImGui.GetMainViewport().GetCenter(), ImGuiCond.Always, new Vector2(0.5f));
 			if (ImGui.BeginPopup(label, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove)) {
@@ -81,6 +111,30 @@ namespace Ktisis.Util
 			}
 		}
 
+		// Copy from Dalamud's ToggleButton but with colorizable circle
+		public static bool ToggleButton(string id, ref bool v, Vector4 circleColor) {
+			RangeAccessor<Vector4> colors = ImGui.GetStyle().Colors;
+			Vector2 cursorScreenPos = ImGui.GetCursorScreenPos();
+			ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
+			float frameHeight = ImGui.GetFrameHeight();
+			float num = frameHeight * 1.55f;
+			float num2 = frameHeight * 0.5f;
+			bool result = false;
+			ImGui.InvisibleButton(id, new Vector2(num, frameHeight));
+			if (ImGui.IsItemClicked()) {
+				v = !v;
+				result = true;
+			}
+
+			if (ImGui.IsItemHovered()) {
+				windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? colors[23] : new Vector4(0.78f, 0.78f, 0.78f, 1f)), frameHeight * 0.5f);
+			} else {
+				windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? (colors[21] * 0.6f) : new Vector4(0.35f, 0.35f, 0.35f, 1f)), frameHeight * 0.5f);
+			}
+
+			windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (float)(v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(circleColor));
+			return result;
+		}
 		public static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, System.Action? executeIfClicked = null) {
 			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
 
@@ -98,6 +152,14 @@ namespace Ktisis.Util
 			return show;
 		}
 
+		// this function usually goes with TextRight or inputs/drag to calculate a safe right margin
+		public static float GetRightOffset(float calculatedTextSize) {
+			return calculatedTextSize
+				+ ImGui.GetStyle().ItemSpacing.X
+				//+ ImGui.GetStyle().WindowPadding.X
+				+ 0.5f; // extra safety
+		}
+
 		public static void TextRight(string text, float offset = 0) {
 			offset = ImGui.GetContentRegionAvail().X - offset - ImGui.CalcTextSize(text).X;
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);
@@ -112,6 +174,27 @@ namespace Ktisis.Util
 			ImGui.Text(text);
 		}
 
+		public static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
+			var isCurrentOperation = Ktisis.Configuration.GizmoOp == operation;
+			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive]);
+			if (ImGuiComponents.IconButton(icon))
+				Ktisis.Configuration.GizmoOp = operation;
+			if (isCurrentOperation) ImGui.PopStyleColor();
+
+			string help = "";
+			if (isCurrentOperation)
+				help += "Current gizmo operation is ";
+			else
+				help += "Change gizmo operation to ";
+
+			if(operation == OPERATION.TRANSLATE) help += "Position";
+			if(operation == OPERATION.ROTATE) help += "Rotation";
+			if(operation == OPERATION.SCALE) help += "Scale";
+			if(operation == OPERATION.UNIVERSAL) help += "Universal";
+
+			Tooltip(help+".");
+		}
+
 		public static unsafe void AnimationControls(hkaDefaultAnimationControl* control) {
 			var duration = control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
 			var durationLimit = duration - 0.05f;
@@ -119,8 +202,10 @@ namespace Ktisis.Util
 			if (control->hkaAnimationControl.LocalTime >= durationLimit)
 				control->hkaAnimationControl.LocalTime = 0f;
 
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - GetRightOffset(ImGui.CalcTextSize("Speed").X));
 			ImGui.SliderFloat("Seek", ref control->hkaAnimationControl.LocalTime, 0, durationLimit);
 			ImGui.SliderFloat("Speed", ref control->PlaybackSpeed, 0f, 0.999f);
+			ImGui.PopItemWidth();
 		}
 
 		// HoverPopupWindow Method

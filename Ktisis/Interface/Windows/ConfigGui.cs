@@ -81,13 +81,11 @@ namespace Ktisis.Interface.Windows {
 				cfg.SkeletonLineThickness = lineThickness;
 
 			ImGui.Separator();
+			ImGui.Text("Bone colors");
 
 			bool linkBoneCategoriesColors = cfg.LinkBoneCategoryColors;
-			if (ImGuiComponents.IconButton(FontAwesomeIcon.Link, linkBoneCategoriesColors ? new Vector4(0.0F, 1.0F, 0.0F, 0.4F) : null))
+			if (GuiHelpers.IconButtonTooltip(cfg.LinkBoneCategoryColors ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink, linkBoneCategoriesColors ? "Unlink bones colors" : "Link bones colors"))
 				cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
-
-			ImGui.SameLine();
-			ImGui.Text(linkBoneCategoriesColors ? "Unlink bones colors" : "Link bones colors");
 
 			ImGui.SameLine();
 			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Eraser, "Hold Control and Shift to erase colors.", ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
@@ -121,11 +119,11 @@ namespace Ktisis.Interface.Windows {
 					}
 				}
 
-				ImGui.Text("Bone colors by category");
-
+				ImGui.Text("Categories colors:");
+				ImGui.Columns(2);
+				int i = 0;
 				bool hasShownAnyCategory = false;
-				foreach (Category category in Category.Categories.Values)
-				{
+				foreach (Category category in Category.Categories.Values) {
 					if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
 						continue;
 
@@ -134,8 +132,12 @@ namespace Ktisis.Interface.Windows {
 
 					if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 						cfg.BoneCategoryColors[category.Name] = categoryColor;
+
+					if (i % 2 != 0) ImGui.NextColumn();
+					i++;
 					hasShownAnyCategory = true;
 				}
+				ImGui.Columns();
 				if (!hasShownAnyCategory)
 					ImGui.TextWrapped("Categories will be added after bones are displayed once.");
 			}
