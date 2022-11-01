@@ -67,7 +67,7 @@ namespace Ktisis.Interface.Windows {
 				if(Ktisis.IsInGPose) ImGui.PushStyleColor(ImGuiCol.Text, pose ? ColGreen : ColRed);
 				var label = pose ? "Posing" : "Not Posing";
 				float toggleWidth = ImGui.GetFrameHeight() * 1.55f;
-				float offsetWidth  = toggleWidth + (ImGui.GetStyle().WindowPadding.X * .75f) + 0.1f;
+				float offsetWidth = GuiHelpers.GetRightOffset(toggleWidth);
 				GuiHelpers.TextRight(label, offsetWidth);
 				if (Ktisis.IsInGPose) ImGui.PopStyleColor();
 				ImGui.SameLine();
