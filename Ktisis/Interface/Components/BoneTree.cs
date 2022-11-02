@@ -6,6 +6,7 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
+using System.Linq;
 
 namespace Ktisis.Interface.Components {
 	public class BoneTree {
@@ -35,7 +36,11 @@ namespace Ktisis.Interface.Components {
 		}
 
 		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, System.Action? executeIfClicked = null) {
+			bool isAncester = bone.GetDescendants().Any(b => b.UniqueId == $"{Skeleton.BoneSelect.Partial}_{Skeleton.BoneSelect.Index}");
+			if (isAncester) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive]);
 			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
+			if (isAncester) ImGui.PopStyleColor();
+
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();
 
