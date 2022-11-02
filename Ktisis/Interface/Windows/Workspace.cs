@@ -87,8 +87,6 @@ namespace Ktisis.Interface.Windows {
 				ControlButtons.Draw();
 
 				// Actor control
-
-				ImGui.Separator();
 				ActorControl();
 			}
 
@@ -108,6 +106,8 @@ namespace Ktisis.Interface.Windows {
 
 			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
 			if (actor->Model == null) return;
+
+			ImGui.Separator();
 
 			// Draw co-ordinate table
 			Coordinates(actor);
