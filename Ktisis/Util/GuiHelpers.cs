@@ -11,8 +11,6 @@ using Dalamud.Interface.Components;
 
 using FFXIVClientStructs.Havok;
 
-using Ktisis.Structs.Bones;
-
 namespace Ktisis.Util
 {
 	internal class GuiHelpers {

@@ -14,7 +14,7 @@ namespace Ktisis.Interface.Components {
 			if (ImGui.CollapsingHeader("Bone List")) {
 				if (ImGui.BeginListBox("##bone_list", new Vector2(-1, 300))) {
 					var body = actor->Model->Skeleton->GetBone(0, 1);
-					BoneTree.DrawBoneTreeNode(body);
+					DrawBoneTreeNode(body);
 					ImGui.EndListBox();
 				}
 			}
