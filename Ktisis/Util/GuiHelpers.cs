@@ -120,27 +120,6 @@ namespace Ktisis.Util
 			ImGui.Text(text);
 		}
 
-		public static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
-			var isCurrentOperation = Ktisis.Configuration.GizmoOp == operation;
-			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive]);
-			if (ImGuiComponents.IconButton(icon))
-				Ktisis.Configuration.GizmoOp = operation;
-			if (isCurrentOperation) ImGui.PopStyleColor();
-
-			string help = "";
-			if (isCurrentOperation)
-				help += "Current gizmo operation is ";
-			else
-				help += "Change gizmo operation to ";
-
-			if(operation == OPERATION.TRANSLATE) help += "Position";
-			if(operation == OPERATION.ROTATE) help += "Rotation";
-			if(operation == OPERATION.SCALE) help += "Scale";
-			if(operation == OPERATION.UNIVERSAL) help += "Universal";
-
-			Tooltip(help+".");
-		}
-
 		public static unsafe void AnimationControls(hkaDefaultAnimationControl* control) {
 			var duration = control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
 			var durationLimit = duration - 0.05f;

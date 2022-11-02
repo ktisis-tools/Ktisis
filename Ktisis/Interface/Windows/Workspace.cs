@@ -78,46 +78,13 @@ namespace Ktisis.Interface.Windows {
 					if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? ColGreen : ColRed))
 						PoseHooks.TogglePosing();
 
-
-				ImGui.EndDisabled();
-
-				// Gizmo Controls
-				// TODO
-
-				GuiHelpers.ButtonChangeOperation(OPERATION.TRANSLATE, FontAwesomeIcon.LocationArrow);
-				ImGui.SameLine();
-				GuiHelpers.ButtonChangeOperation(OPERATION.ROTATE, FontAwesomeIcon.Sync);
-				ImGui.SameLine();
-				GuiHelpers.ButtonChangeOperation(OPERATION.SCALE, FontAwesomeIcon.ExpandAlt);
-				ImGui.SameLine();
-				GuiHelpers.ButtonChangeOperation(OPERATION.UNIVERSAL, FontAwesomeIcon.DotCircle);
-
-				// Second row
-
-				var gizmode = Ktisis.Configuration.GizmoMode;
-				if (GuiHelpers.IconButtonTooltip(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch."))
-					Ktisis.Configuration.GizmoMode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
-
-				ImGui.SameLine();
-				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit targeted Actor's appearance."))
-					EditActor.Show();
-
-				// Config
-
-				var cfg = Ktisis.Configuration;
-
-				ImGui.SameLine();
-				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Cog, "Open Settings."))
-					ConfigGui.Show();
-
-				ImGui.Separator();
-				
 				if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
 					PoseHooks.DisablePosing();
 
-				var showSkeleton = cfg.ShowSkeleton;
-				if (ImGui.Checkbox("Toggle Skeleton", ref showSkeleton))
-					Skeleton.Toggle();
+				ImGui.EndDisabled();
+
+				// control buttons (gizmo op + extra)
+				ControlButtons.Draw();
 
 				// Actor control
 
