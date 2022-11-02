@@ -144,8 +144,14 @@ namespace Ktisis.Interface.Windows {
 					hasShownAnyCategory = true;
 				}
 				ImGui.Columns();
-				if (!hasShownAnyCategory)
-					ImGui.TextWrapped("No bone category found.\nNewly found categories be added\n after a belonging bone is displayed once.");
+				if (!hasShownAnyCategory) {
+					ImGui.Text("No bone found.");
+					ImGui.Text("Show Skeleton (");
+					ImGui.SameLine();
+					GuiHelpers.Icon(FontAwesomeIcon.EyeSlash);
+					ImGui.SameLine();
+					ImGui.Text(") to fill this.");
+				}
 
 				ImGui.Unindent(16.0f);
 			}
