@@ -125,9 +125,12 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			// Bone categories
-			if (ImGui.CollapsingHeader("Toggle Bone Categories  ")) {
+			if (ImGui.CollapsingHeader("Bone Category Visibility")) {
 
 				ImGui.Indent(16.0f);
+				ImGui.Columns(2);
+				int i = 0;
+				bool hasShownAnyCategory = false;
 				foreach (Category category in Category.Categories.Values) {
 					if (!category.ShouldDisplay) continue;
 
@@ -140,7 +143,14 @@ namespace Ktisis.Interface.Windows {
 						}
 						cfg.ShowBoneByCategory[category.Name] = categoryState;
 					}
+					if (i % 2 != 0) ImGui.NextColumn();
+					i++;
+					hasShownAnyCategory = true;
 				}
+				ImGui.Columns();
+				if (!hasShownAnyCategory)
+					ImGui.TextWrapped("No bone category found.\nNewly found categories be added\n after a belonging bone is displayed once.");
+
 				ImGui.Unindent(16.0f);
 			}
 
