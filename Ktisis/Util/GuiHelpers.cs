@@ -16,9 +16,9 @@ using Ktisis.Structs.Bones;
 namespace Ktisis.Util
 {
 	internal class GuiHelpers {
-		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, bool isHoldingKey) {
+		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, bool isHoldingKey, Vector2 size = default) {
 			if (!isHoldingKey) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, ImGui.GetStyle().DisabledAlpha);
-			bool accepting = ImGuiComponents.IconButton(icon);
+			bool accepting = IconButton(icon, size);
 			if (!isHoldingKey) ImGui.PopStyleVar();
 
 			Tooltip(tooltip);
@@ -26,9 +26,15 @@ namespace Ktisis.Util
 			return accepting && isHoldingKey;
 		}
 
-		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip) {
-			bool accepting = ImGuiComponents.IconButton(icon);
+		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip, Vector2 size = default) {
+			bool accepting = IconButton(icon, size);
 			Tooltip(tooltip);
+			return accepting;
+		}
+		public static bool IconButton(FontAwesomeIcon icon, Vector2 size = default) {
+			ImGui.PushFont(UiBuilder.IconFont);
+			bool accepting = ImGui.Button(icon.ToIconString() ?? "", size);
+			ImGui.PopFont();
 			return accepting;
 		}
 
