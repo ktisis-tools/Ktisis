@@ -42,11 +42,6 @@ namespace Ktisis.Interface.Components {
 				Ktisis.Configuration.GizmoMode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
 
 			ImGui.SameLine();
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.UserEdit, "Edit targeted Actor's appearance.", ControlButtons.ButtonSize))
-				if (EditActor.Visible) EditActor.Hide();
-				else EditActor.Show();
-
-			ImGui.SameLine();
 			var showSkeleton = Ktisis.Configuration.ShowSkeleton;
 			if (showSkeleton) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive]);
 			if (GuiHelpers.IconButton(showSkeleton ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, ButtonSize))

@@ -151,8 +151,14 @@ namespace Ktisis.Interface.Windows {
 		// Coordinates table
 
 		private static unsafe bool Coordinates(Actor* target) {
-			string targetName = target->GetNameOr("target");
-			string title = $"Transforming {targetName}";
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.UserEdit, "Edit targeted Actor's appearance.", ControlButtons.ButtonSize))
+				if (EditActor.Visible) EditActor.Hide();
+				else EditActor.Show();
+			ImGui.SameLine();
+
+			ControlButtons.AlignTextOnButtonSize();
+			string targetName = target->GetNameOr("Target #"+ target->ObjectID);
+			string title = $"{targetName}";
 
 			var select = Skeleton.BoneSelect;
 			if (!select.Active) {
