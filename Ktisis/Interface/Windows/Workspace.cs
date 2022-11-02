@@ -135,14 +135,10 @@ namespace Ktisis.Interface.Windows {
 					if (!category.ShouldDisplay) continue;
 
 					bool categoryState = cfg.IsBoneCategoryVisible(category);
-					if (!cfg.ShowSkeleton) categoryState = false;
 
-					if (ImGui.Checkbox(category.Name, ref categoryState)) {
-						if (!cfg.ShowSkeleton && categoryState) {
-							cfg.ShowSkeleton = true;
-						}
+					if (ImGui.Checkbox(category.Name, ref categoryState))
 						cfg.ShowBoneByCategory[category.Name] = categoryState;
-					}
+
 					if (i % 2 != 0) ImGui.NextColumn();
 					i++;
 					hasShownAnyCategory = true;
