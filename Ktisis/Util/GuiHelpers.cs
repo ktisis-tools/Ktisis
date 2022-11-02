@@ -99,22 +99,6 @@ namespace Ktisis.Util
 			windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (float)(v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(circleColor));
 			return result;
 		}
-		public static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, System.Action? executeIfClicked = null) {
-			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
-
-			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
-			var rectMax = ImGui.GetItemRectMax();
-
-			var mousePos = ImGui.GetMousePos();
-			if (
-				ImGui.IsMouseClicked(ImGuiMouseButton.Left)
-				&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
-				&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
-			) {
-				executeIfClicked?.Invoke();
-			}
-			return show;
-		}
 
 		// this function usually goes with TextRight or inputs/drag to calculate a safe right margin
 		public static float GetRightOffset(float calculatedTextSize) {

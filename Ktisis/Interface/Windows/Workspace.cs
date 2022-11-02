@@ -178,13 +178,7 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			// Bone tree
-			if (ImGui.CollapsingHeader("Bone List")) {
-				if (ImGui.BeginListBox("##bone_list", new Vector2(-1, 300))) {
-					var body = actor->Model->Skeleton->GetBone(0, 1);
-					DrawBoneTreeNode(body);
-					ImGui.EndListBox();
-				}
-			}
+			BoneTree.Draw(actor);
 		}
 
 		// Coordinates table
@@ -210,19 +204,6 @@ namespace Ktisis.Interface.Windows {
 
 		// Bone Tree
 
-		public unsafe static void DrawBoneTreeNode(Bone bone) {
-			var children = bone.GetChildren();
 
-			var flag = children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
-			if (Skeleton.IsBoneSelected(bone))
-				flag |= ImGuiTreeNodeFlags.Selected;
-
-			var show = GuiHelpers.DrawBoneNode(bone, flag, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
-			if (show) {
-				foreach (var child in children)
-					DrawBoneTreeNode(child);
-				ImGui.TreePop();
-			}
-		}
 	}
 }
