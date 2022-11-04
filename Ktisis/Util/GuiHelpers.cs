@@ -118,20 +118,6 @@ namespace Ktisis.Util
 			ImGui.Text(text);
 		}
 
-		public static unsafe void AnimationControls(hkaDefaultAnimationControl* control) {
-			var duration = control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
-			var durationLimit = duration - 0.05f;
-
-			if (control->hkaAnimationControl.LocalTime >= durationLimit)
-				control->hkaAnimationControl.LocalTime = 0f;
-
-			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - GetRightOffset(ImGui.CalcTextSize("Speed").X));
-			ImGui.SliderFloat("Seek", ref control->hkaAnimationControl.LocalTime, 0, durationLimit);
-			ImGui.SliderFloat("Speed", ref control->PlaybackSpeed, 0f, 0.999f);
-			ImGui.PopItemWidth();
-		}
-
-
 		public static float CalcContrastRatio(uint background, uint foreground) {
 			// https://github.com/ocornut/imgui/issues/3798
 			float sa0 = ((background >> 24) & 0xFF);

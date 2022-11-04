@@ -94,16 +94,7 @@ namespace Ktisis.Interface.Windows {
 			Coordinates(actor);
 
 			// Animation control
-			if (ImGui.CollapsingHeader("Animation Control")) {
-				var control = PoseHooks.GetAnimationControl(target);
-				if (PoseHooks.PosingEnabled || !Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null) {
-					ImGui.Text("Animation Control is available when:");
-					ImGui.BulletText("Game animation is paused");
-					ImGui.BulletText("Posing is off");
-				}
-				else
-					GuiHelpers.AnimationControls(control);
-			}
+			AnimationControls.Draw(target);
 
 			// Bone categories
 			if (ImGui.CollapsingHeader("Bone Category Visibility")) {
