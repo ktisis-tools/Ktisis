@@ -10,6 +10,7 @@ using Dalamud.Interface;
 
 using Ktisis.GameData;
 using Ktisis.GameData.Excel;
+using Ktisis.Interface.Components;
 using Ktisis.Structs.Actor;
 using Ktisis.Util;
 
@@ -195,9 +196,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		{
 			if (SlotItems == null)
 				return;
-
-			GuiHelpers.HoverPopupWindow(
-				GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
+			PopupSelect.HoverPopupWindow(
+				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
 				SlotItems,
 				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
 				(i) => { },
@@ -247,8 +247,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (!sets.Any())
 				return;
 
-			GuiHelpers.HoverPopupWindow(
-				GuiHelpers.HoverPopupWindowFlags.SelectorList | GuiHelpers.HoverPopupWindowFlags.SearchBar,
+			PopupSelect.HoverPopupWindow(
+				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
 				sets.Cast<dynamic>(),
 				(e,input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
 				(i) => { },
@@ -276,10 +276,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		private const int DyePickerWidth = 485;
 		public static unsafe void DrawDyePicker(EquipSlot slot, object equipObj)
 		{
-			GuiHelpers.HoverPopupWindow(
-				GuiHelpers.HoverPopupWindowFlags.SearchBar
-				| GuiHelpers.HoverPopupWindowFlags.TwoDimenssion
-				| GuiHelpers.HoverPopupWindowFlags.Header,
+			PopupSelect.HoverPopupWindow(
+				PopupSelect.HoverPopupWindowFlags.SearchBar
+				| PopupSelect.HoverPopupWindowFlags.TwoDimenssion
+				| PopupSelect.HoverPopupWindowFlags.Header,
 				Dyes,
 				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
 				DrawDyePickerHeader,
@@ -305,10 +305,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		}
 		public static unsafe void DrawSetDyePicker()
 		{
-			GuiHelpers.HoverPopupWindow(
-				GuiHelpers.HoverPopupWindowFlags.SearchBar
-				| GuiHelpers.HoverPopupWindowFlags.TwoDimenssion
-				| GuiHelpers.HoverPopupWindowFlags.Header,
+			PopupSelect.HoverPopupWindow(
+				PopupSelect.HoverPopupWindowFlags.SearchBar
+				| PopupSelect.HoverPopupWindowFlags.TwoDimenssion
+				| PopupSelect.HoverPopupWindowFlags.Header,
 				Dyes,
 				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
 				DrawDyePickerHeader,
@@ -338,14 +338,14 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		}
 		private static (bool, bool) DrawDyePickerItem(dynamic i, bool isActive)
 		{
-			bool isThisRealNewLine = GuiHelpers.HoverPopupWindowIndexKey % GuiHelpers.HoverPopupWindowColumns == 0;
+			bool isThisRealNewLine = PopupSelect.HoverPopupWindowIndexKey % PopupSelect.HoverPopupWindowColumns == 0;
 			bool isThisANewShade = i.SubOrder == 1;
 
 			if (!isThisRealNewLine && isThisANewShade)
 			{
 				// skip some index key if we don't finish the row
 				int howManyMissedButtons = 12 - (DyeLastSubOrder % 12);
-				GuiHelpers.HoverPopupWindowIndexKey += howManyMissedButtons;
+				PopupSelect.HoverPopupWindowIndexKey += howManyMissedButtons;
 			} else if (!isThisRealNewLine && !isThisANewShade)
 				ImGui.SameLine();
 			if (isThisANewShade)
@@ -354,7 +354,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			DyeLastSubOrder = i.SubOrder;
 
 			// as we previously changed the index key, let's calculate calculate isActive again
-			isActive = GuiHelpers.HoverPopupWindowIndexKey == GuiHelpers.HoverPopupWindowLastSelectedItemKey;
+			isActive = PopupSelect.HoverPopupWindowIndexKey == PopupSelect.HoverPopupWindowLastSelectedItemKey;
 
 			if (isActive)
 			{
