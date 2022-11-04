@@ -60,28 +60,9 @@ namespace Ktisis.Interface.Windows {
 
 
 				ImGui.SameLine();
-				ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8)); // Prevents text overlap
 
-				ImGui.BeginDisabled(!Ktisis.IsInGPose);
-				var pose = PoseHooks.PosingEnabled;
-				if(Ktisis.IsInGPose) ImGui.PushStyleColor(ImGuiCol.Text, pose ? ColGreen : ColRed);
-				var label = pose ? "Posing" : "Not Posing";
-				float toggleWidth = ImGui.GetFrameHeight() * 1.55f;
-				float offsetWidth = GuiHelpers.GetRightOffset(toggleWidth);
-				GuiHelpers.TextRight(label, offsetWidth);
-				if (Ktisis.IsInGPose) ImGui.PopStyleColor();
-				ImGui.SameLine();
-
-				if (!Ktisis.IsInGPose)
-					ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
-				else
-					if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? ColGreen : ColRed))
-						PoseHooks.TogglePosing();
-
-				if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
-					PoseHooks.DisablePosing();
-
-				ImGui.EndDisabled();
+				// Pose switch
+				ControlButtons.DrawPoseSwitch();
 
 				// control buttons (gizmo op + extra)
 				ControlButtons.Draw();

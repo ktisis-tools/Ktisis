@@ -4,11 +4,12 @@ using ImGuiNET;
 using ImGuizmoNET;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Components;
 
 using Ktisis.Interface.Windows;
+using Ktisis.Interop;
 using Ktisis.Overlay;
 using Ktisis.Util;
-using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
@@ -96,6 +97,33 @@ namespace Ktisis.Interface.Components {
 			if (operation == OPERATION.UNIVERSAL) help += "Universal";
 
 			GuiHelpers.Tooltip(help + ".");
+		}
+
+		// Independant from the others
+		public static void DrawPoseSwitch() {
+			ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8)); // Prevents text overlap
+
+			ImGui.BeginDisabled(!Ktisis.IsInGPose);
+			var pose = PoseHooks.PosingEnabled;
+			if (Ktisis.IsInGPose) ImGui.PushStyleColor(ImGuiCol.Text, pose ? Workspace.ColGreen : Workspace.ColRed);
+			var label = pose ? "Posing" : "Not Posing";
+			float toggleWidth = ImGui.GetFrameHeight() * 1.55f;
+			float offsetWidth = GuiHelpers.GetRightOffset(toggleWidth);
+			GuiHelpers.TextRight(label, offsetWidth);
+			if (Ktisis.IsInGPose) ImGui.PopStyleColor();
+			ImGui.SameLine();
+
+			if (!Ktisis.IsInGPose)
+				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
+			else
+				if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? Workspace.ColGreen : Workspace.ColRed))
+				PoseHooks.TogglePosing();
+
+			if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
+				PoseHooks.DisablePosing();
+
+			ImGui.EndDisabled();
+
 		}
 	}
 }
