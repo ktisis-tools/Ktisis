@@ -103,7 +103,7 @@ namespace Ktisis.Util
 			return calculatedTextSize
 				+ ImGui.GetStyle().ItemSpacing.X
 				//+ ImGui.GetStyle().WindowPadding.X
-				+ 0.5f; // extra safety
+				+ 0.1f; // extra safety
 		}
 		public static void TextRight(string text, float offset = 0) {
 			offset = ImGui.GetContentRegionAvail().X - offset - ImGui.CalcTextSize(text).X;

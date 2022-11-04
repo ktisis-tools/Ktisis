@@ -53,7 +53,7 @@ namespace Ktisis.Interface.Components {
 		// As the settings button is a bit special and should not be as present as others
 		// we remove the border and change the hover behavior.
 		private static void DrawSettings() {
-			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X) + (ImGui.GetStyle().ItemSpacing.X * 1.5f));
+			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X) + (ImGui.GetStyle().FramePadding.X * 2f));
 
 			ImGui.SameLine();
 			AlignTextOnButtonSize(0.5f); // align text with button size
