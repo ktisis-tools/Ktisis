@@ -43,7 +43,7 @@ namespace Ktisis.Interface.Components {
 
 			ImGui.SameLine();
 			var showSkeleton = Ktisis.Configuration.ShowSkeleton;
-			if (showSkeleton) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive]);
+			if (showSkeleton) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
 			if (GuiHelpers.IconButton(showSkeleton ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, ButtonSize))
 				Skeleton.Toggle();
 			if (showSkeleton) ImGui.PopStyleColor();
@@ -79,7 +79,7 @@ namespace Ktisis.Interface.Components {
 
 		private static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
 			var isCurrentOperation = Ktisis.Configuration.GizmoOp == operation;
-			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive]);
+			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
 			if (GuiHelpers.IconButton(icon, ButtonSize))
 				Ktisis.Configuration.GizmoOp = operation;
 			if (isCurrentOperation) ImGui.PopStyleColor();

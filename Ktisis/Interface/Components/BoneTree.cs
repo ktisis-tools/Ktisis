@@ -37,7 +37,7 @@ namespace Ktisis.Interface.Components {
 
 		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, System.Action? executeIfClicked = null) {
 			bool isAncester = bone.GetDescendants().Any(b => b.UniqueId == $"{Skeleton.BoneSelect.Partial}_{Skeleton.BoneSelect.Index}");
-			if (isAncester) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.ButtonActive]);
+			if (isAncester) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
 			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
 			if (isAncester) ImGui.PopStyleColor();
 

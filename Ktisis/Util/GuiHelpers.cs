@@ -89,9 +89,9 @@ namespace Ktisis.Util
 			}
 
 			if (ImGui.IsItemHovered()) {
-				windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? colors[23] : new Vector4(0.78f, 0.78f, 0.78f, 1f)), frameHeight * 0.5f);
+				windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? colors[(int)ImGuiCol.ButtonActive] : new Vector4(0.78f, 0.78f, 0.78f, 1f)), frameHeight * 0.5f);
 			} else {
-				windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? (colors[21] * 0.6f) : new Vector4(0.35f, 0.35f, 0.35f, 1f)), frameHeight * 0.5f);
+				windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? new Vector4(0.78f, 0.78f, 0.78f, 0.2f) : new Vector4(0.35f, 0.35f, 0.35f, 1f)), frameHeight * 0.5f);
 			}
 
 			windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (float)(v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(circleColor));
