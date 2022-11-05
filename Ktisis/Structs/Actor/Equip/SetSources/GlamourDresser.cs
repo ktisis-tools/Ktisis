@@ -121,11 +121,6 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			if (GameMain.IsInSanctuary())
 				Interface.Components.Equipment.OpenGlamourQuestionPopup();
 		}
-		internal static unsafe void PopupOfferOpenGlamourPlates_confirmed() {
-			var agent = MiragePrismMiragePlate.MiragePlateAgent();
-			agent->Show();
-		}
-
 		public static EquipSlot GlamourPlateSlotToEquipSlot(GlamourPlateSlot slot) => (EquipSlot)((int)slot + ((int)slot > 4 ? 1 : 0));
 
 		internal static unsafe void GetDataFromDresser() {
