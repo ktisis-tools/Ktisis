@@ -5,7 +5,7 @@ using Dalamud.Hooking;
 
 using FFXIVClientStructs.Havok;
 
-namespace Ktisis.Interop {
+namespace Ktisis.Interop.Hooks {
 	public static class PoseHooks {
 		private delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
 		private static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;

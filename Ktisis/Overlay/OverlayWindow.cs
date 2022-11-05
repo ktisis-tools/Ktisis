@@ -68,7 +68,7 @@ namespace Ktisis.Overlay {
 
 		public unsafe static void Draw() {
 			if (WorldMatrix == null)
-				WorldMatrix = (WorldMatrix*)CameraHooks.GetMatrix!();
+				WorldMatrix = Methods.GetMatrix!();
 
 			// Might need a different name for Begin?
 

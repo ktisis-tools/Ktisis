@@ -7,12 +7,12 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
 using Ktisis.Util;
-using Ktisis.Interop;
 using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Localization;
-using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Bones;
+using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 
