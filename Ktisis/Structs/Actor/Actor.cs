@@ -43,9 +43,9 @@ namespace Ktisis.Structs.Actor {
 		}
 
 		public unsafe void LookAt(Gaze* tar, GazeControl bodyPart) {
-			if (ActorHooks.LookAt == null) return;
+			if (Methods.ActorLookAt == null) return;
 			fixed (ActorGaze* gaze = &Gaze) {
-				ActorHooks.LookAt(
+				Methods.ActorLookAt(
 					gaze,
 					tar,
 					bodyPart,
@@ -57,8 +57,8 @@ namespace Ktisis.Structs.Actor {
 		// Change equipment - no redraw method
 
 		public unsafe void Equip(EquipIndex index, ItemEquip item) {
-			if (ActorHooks.ChangeEquip == null) return;
-			ActorHooks.ChangeEquip(GetAddress() + 0x6D0, index, item);
+			if (Methods.ActorChangeEquip == null) return;
+			Methods.ActorChangeEquip(GetAddress() + 0x6D0, index, item);
 		}
 		public void Equip(List<(EquipSlot, object)> items) {
 			foreach ((EquipSlot slot, object item) in items)
@@ -69,8 +69,8 @@ namespace Ktisis.Structs.Actor {
 		}
 
 		public void Equip(int slot, WeaponEquip item) {
-			if (ActorHooks.ChangeWeapon == null) return;
-			ActorHooks.ChangeWeapon(GetAddress() + 0x6D0, slot, item, 0, 1, 0, 0);
+			if (Methods.ActorChangeWeapon == null) return;
+			Methods.ActorChangeWeapon(GetAddress() + 0x6D0, slot, item, 0, 1, 0, 0);
 		}
 
 		// Change customize - no redraw method

@@ -32,11 +32,12 @@ namespace Ktisis {
 
 			// Init hooks & delegates
 
-			Interop.ActorHooks.Init();
-			Interop.CameraHooks.Init();
-			Interop.PoseHooks.Init();
-			Interop.GuiHooks.Init();
-			Interop.EventsHooks.Init();
+			Interop.Methods.Init();
+
+			Interop.Hooks.ActorHooks.Init();
+			Interop.Hooks.PoseHooks.Init();
+			Interop.Hooks.GuiHooks.Init();
+			Interop.Hooks.EventsHooks.Init();
 
 			// Register command
 
@@ -57,11 +58,10 @@ namespace Ktisis {
 			Dalamud.PluginInterface.SavePluginConfig(Configuration);
 
 			Interop.Alloc.Dispose();
-			Interop.ActorHooks.Dispose();
-			Interop.CameraHooks.Dispose();
-			Interop.PoseHooks.Dispose();
-			Interop.GuiHooks.Dispose();
-			Interop.EventsHooks.Dispose();
+			Interop.Hooks.ActorHooks.Dispose();
+			Interop.Hooks.PoseHooks.Dispose();
+			Interop.Hooks.GuiHooks.Dispose();
+			Interop.Hooks.EventsHooks.Dispose();
 
 			GameData.Sheets.Cache.Clear();
 			if (EditEquip.Items != null)

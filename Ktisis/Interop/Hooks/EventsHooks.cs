@@ -11,7 +11,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
 
-namespace Ktisis.Interop {
+namespace Ktisis.Interop.Hooks {
 	public class EventsHooks {
 		public static void Init() {
 			Dalamud.AddonManager = new AddonManager();
@@ -59,8 +59,8 @@ namespace Ktisis.Interop {
 
 			if (
 				e.SenderID == 0 && e.EventArgs->Int == 18 // used "Close" button, the (X) button, Close UI Component keybind, Cancel Keybind. NOT when using the "Glamour Plate" toggle skill to close it.
-				// || e.SenderID == 0 && e.EventArgs->Int == 17 // Change Glamour Plate Page
-				// || e.SenderID == 0 && e.EventArgs->Int == -2 // Has been closed, Plate memory has already been disposed so it's too late to read data.
+				  // || e.SenderID == 0 && e.EventArgs->Int == 17 // Change Glamour Plate Page
+				  // || e.SenderID == 0 && e.EventArgs->Int == -2 // Has been closed, Plate memory has already been disposed so it's too late to read data.
 				)
 				GlamourDresser.PopulatePlatesData();
 		}

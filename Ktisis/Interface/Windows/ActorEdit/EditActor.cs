@@ -16,6 +16,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		// Toggle visibility
 
 		public static void Show() => Visible = true;
+		public static void Hide() => Visible = false;
 
 		// Display
 

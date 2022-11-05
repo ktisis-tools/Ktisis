@@ -2,7 +2,7 @@
 
 using Dalamud.Hooking;
 
-namespace Ktisis.Interop {
+namespace Ktisis.Interop.Hooks {
 	internal class GuiHooks {
 		// Target name in the GPose window
 
