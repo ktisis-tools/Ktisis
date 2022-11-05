@@ -83,7 +83,7 @@ namespace Ktisis.Util
 			}
 		}
 
-		public static void PopupConfirm(string label, Action contents, Action onAccept) {
+		public static void PopupConfirm(string label, Action contents, Action? onAccept, bool understoodOnly = false) {
 			ImGui.SetNextWindowPos(ImGui.GetMainViewport().GetCenter(), ImGuiCond.Always, new Vector2(0.5f));
 			if (ImGui.BeginPopup(label, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove)) {
 				contents();
@@ -93,18 +93,18 @@ namespace Ktisis.Util
 				var cancelSize = new Vector2(120, 0) * ImGui.GetIO().FontGlobalScale;
 
 				var buttonSize = okSize.X + cancelSize.X;
-				var buttonCenter = (ImGui.GetWindowContentRegionMax().X - buttonSize) / 2;
+				var buttonCenter = (ImGui.GetWindowContentRegionMax().X - (understoodOnly? okSize.X : buttonSize)) / 2;
 
 				ImGui.SetCursorPosX(buttonCenter);
-				if (ImGui.Button("OK", okSize)) {
+				if (ImGui.Button(understoodOnly ? "Understood" : "OK", okSize)) {
 					ImGui.CloseCurrentPopup();
-					onAccept();
+					onAccept?.Invoke();
 				}
-
-				ImGui.SetItemDefaultFocus();
-				ImGui.SameLine();
-				if (ImGui.Button("Cancel", cancelSize)) {
-					ImGui.CloseCurrentPopup();
+				if (!understoodOnly) {
+					ImGui.SetItemDefaultFocus();
+					ImGui.SameLine();
+					if (ImGui.Button("Cancel", cancelSize))
+						ImGui.CloseCurrentPopup();
 				}
 
 				ImGui.EndPopup();
