@@ -140,7 +140,7 @@ namespace Ktisis.Interface.Windows {
 				else EditActor.Show();
 			ImGui.SameLine();
 
-			ControlButtons.AlignTextOnButtonSize();
+			ControlButtons.VerticalAlignTextOnButtonSize();
 			string targetName = target->GetNameOr("Target #"+ target->ObjectID);
 			string title = $"{targetName}";
 

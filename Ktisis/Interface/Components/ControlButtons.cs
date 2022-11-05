@@ -19,7 +19,7 @@ namespace Ktisis.Interface.Components {
 		private static bool IsSettingsActive = false;
 
 		// utils
-		public static void AlignTextOnButtonSize(float percentage = 0.75f) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ButtonSize.Y / 2 - ImGui.GetFontSize() * percentage)); // align text with button size
+		public static void VerticalAlignTextOnButtonSize(float percentage = 0.667f) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ButtonSize.Y / 2 - ImGui.GetFontSize() * percentage)); // align text with button size
 
 		public static void Draw() {
 			DrawGizmoOperations();
@@ -58,7 +58,7 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X) + (ImGui.GetStyle().FramePadding.X * 2f));
 
 			ImGui.SameLine();
-			AlignTextOnButtonSize(0.5f); // align text with button size
+			VerticalAlignTextOnButtonSize(0.5f); // align text with button size
 			var buttonColor = !IsSettingsHovered ? ImGuiCol.TextDisabled : (IsSettingsActive ? ImGuiCol.ButtonActive : ImGuiCol.Text);
 			ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)(buttonColor)]);
 			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
