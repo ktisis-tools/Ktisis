@@ -142,10 +142,8 @@ namespace Ktisis.Interface.Components {
 			ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ImGui.GetFontSize() * 1.5f));
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (ImGui.GetFontSize() * (isGamePlaybackRunning? 0.25f : 0.85f)));
 
-			ImGui.PushStyleColor(ImGuiCol.Text, isGamePlaybackRunning ? Workspace.ColRed : Workspace.ColGreen);
 			GuiHelpers.Icon(isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause);
-			ImGui.PopStyleColor();
-			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target.\nPosing may reset periodically." : "Game Animation is paused for this target.");
+			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target."+(PoseHooks.PosingEnabled?"\nPosing may reset periodically.":"") : "Game Animation is paused for this target."+(!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
 		}
 	}
 }
