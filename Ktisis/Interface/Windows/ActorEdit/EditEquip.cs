@@ -249,7 +249,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			PopupSelect.HoverPopupWindow(
 				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
-				sets.Cast<dynamic>(),
+				sets,
 				(e,input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
 				(i) => { },
 				(i,a) => {

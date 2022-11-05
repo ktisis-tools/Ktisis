@@ -43,13 +43,13 @@ namespace Ktisis.Interface.Components {
 		private static int ColFromKey(int key) => key % HoverPopupWindowColumns;
 		private static int KeyFromRowCol(int row, int col) => (row * HoverPopupWindowColumns) + col;
 
-		public static void HoverPopupWindow(
+		public static void HoverPopupWindow<T>(
 				HoverPopupWindowFlags flags,
-				IEnumerable<dynamic> enumerable,
-				Func<IEnumerable<dynamic>, string, IEnumerable<dynamic>> filter,
-				Action<dynamic> header,
-				Func<dynamic, bool, (bool, bool)> drawBeforeLine, // Parameters: dynamic item, bool isActive. Returns bool isSelected, bool Focus.
-				Action<dynamic> onSelect,
+				IEnumerable<T> enumerable,
+				Func<IEnumerable<T>, string, IEnumerable<T>> filter,
+				Action<T> header,
+				Func<T, bool, (bool, bool)> drawBeforeLine, // Parameters: T item, bool isActive. Returns bool isSelected, bool Focus.
+				Action<T> onSelect,
 				Action onClose,
 				ref string inputSearch,
 				string windowLabel = "",
