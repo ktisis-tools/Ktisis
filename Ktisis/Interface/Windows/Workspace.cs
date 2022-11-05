@@ -146,7 +146,7 @@ namespace Ktisis.Interface.Windows {
 
 			var select = Skeleton.BoneSelect;
 			if (!select.Active) {
-				ImGui.TextDisabled(title);
+				ImGui.Text(title);
 				var model = target->Model;
 				return Transform.Draw(ref model->Position, ref model->Rotation, ref model->Scale);
 			}
@@ -154,7 +154,7 @@ namespace Ktisis.Interface.Windows {
 			var bone = Skeleton.GetSelectedBone(target->Model->Skeleton);
 			if (bone == null) return false;
 
-			ImGui.TextDisabled($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");
+			ImGui.Text($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");
 
 			return Transform.Draw(bone);
 		}
