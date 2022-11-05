@@ -1,9 +1,10 @@
 ﻿using ImGuiNET;
 
-using Ktisis.Interop;
-using Ktisis.Util;
-using FFXIVClientStructs.Havok;
 using Dalamud.Game.ClientState.Objects.Types;
+using FFXIVClientStructs.Havok;
+
+using Ktisis.Interop.Hooks;
+using Ktisis.Util;
 
 namespace Ktisis.Interface.Components {
 	public static class AnimationControls {

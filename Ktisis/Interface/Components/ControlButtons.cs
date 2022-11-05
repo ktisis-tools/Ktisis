@@ -3,14 +3,14 @@
 using ImGuiNET;
 using ImGuizmoNET;
 
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
 using Ktisis.Interface.Windows;
-using Ktisis.Interop;
+using Ktisis.Interop.Hooks;
 using Ktisis.Overlay;
 using Ktisis.Util;
-using Dalamud.Game.ClientState.Objects.Types;
 
 namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
