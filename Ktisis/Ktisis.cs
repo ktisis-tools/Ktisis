@@ -26,14 +26,11 @@ namespace Ktisis {
 
 			Configuration.Validate();
 
-			// Init memory allocations
+			// Init interop stuff
 
 			Interop.Alloc.Init();
-
-			// Init hooks & delegates
-
 			Interop.Methods.Init();
-
+			Interop.StaticOffsets.Init();
 			Interop.Hooks.ActorHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 			Interop.Hooks.GuiHooks.Init();
