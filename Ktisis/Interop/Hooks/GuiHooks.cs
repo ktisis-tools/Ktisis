@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Dalamud.Hooking;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interop.Hooks {
 	internal class GuiHooks {
@@ -11,10 +12,20 @@ namespace Ktisis.Interop.Hooks {
 
 		internal static string ReplaceTarName = "(Hidden by Ktisis)";
 		internal unsafe static void UpdateTarName(IntPtr a1) {
-			if (!Ktisis.Configuration.DisplayCharName) {
-				for (var i = 0; i < ReplaceTarName.Length; i++)
-					*(char*)(a1 + 488 + i) = ReplaceTarName[i];
+			string nameToDisplay = ReplaceTarName;
+
+			if (Ktisis.Configuration.DisplayCharName) {
+				var target = Ktisis.GPoseTarget;
+				if (target != null) {
+					var actor = (Actor*)Ktisis.GPoseTarget!.Address;
+					if (actor != null && actor->Model != null && actor->Name != null)
+						nameToDisplay = actor->Name!;
+				}
 			}
+
+			for (var i = 0; i < nameToDisplay.Length; i++)
+				*(char*)(a1 + 488 + i) = nameToDisplay[i];
+
 			TarNameHook.Original(a1);
 		}
 
