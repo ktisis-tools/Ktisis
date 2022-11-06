@@ -90,6 +90,9 @@ namespace Ktisis.Overlay {
 					// Access bone transform
 					var transform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 
+					if (float.IsNaN(transform->Translation.X))
+						continue; // bone's busted, skip it.
+
 					// Get bone color and screen position
 					var boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
 					Dalamud.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
