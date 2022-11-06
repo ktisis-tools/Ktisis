@@ -18,7 +18,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 	public static class EditEquip {
 		// Constants
 
-		public static Vector2 IconSize = new(36, 36);
+		public static Vector2 IconSize = new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y);
 
 		// Properties
 

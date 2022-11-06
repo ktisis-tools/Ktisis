@@ -48,13 +48,13 @@ namespace Ktisis.Interface.Windows {
 	public static class EditCustomize {
 		// Constants
 
-		public static Vector2 IconSize = new(48, 48);
-		public static Vector2 ListIconSize = new(58, 58);
-		public static Vector2 IconPadding = new(8, 8);
-		public static Vector2 InputSize = new(120, 120);
-		public static Vector2 MiscInputSize = new(250, 250);
-		public static Vector2 ColButtonSize = new(28, 28);
-		public static Vector2 ColButtonSizeSmall = new(20, 20);
+		public static Vector2 IconSize = new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 48
+		public static Vector2 ListIconSize = new(3 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 58
+		public static Vector2 IconPadding = new(8, 8); // 8
+		public static Vector2 InputSize = new(8 * ImGui.GetFontSize()); // 120
+		public static Vector2 MiscInputSize = new(16 * ImGui.GetFontSize()); // 250
+		public static Vector2 ColButtonSize = new(1.25f * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 28
+		public static Vector2 ColButtonSizeSmall = new(ImGui.GetTextLineHeight()); // 20
 
 		// Properties
 
