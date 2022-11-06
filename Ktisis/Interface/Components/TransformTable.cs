@@ -82,7 +82,8 @@ namespace Ktisis.Interface.Components {
 			var result = DrawTable();
 			pos = Position;
 			rot = MathHelpers.ToQuaternion(Rotation);
-			scale = Scale;
+			if (Scale.X > 0 && Scale.Y > 0 && Scale.Z > 0)
+				scale = Scale;
 			return result;
 		}
 
