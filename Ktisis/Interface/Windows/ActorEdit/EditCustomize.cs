@@ -81,6 +81,8 @@ namespace Ktisis.Interface.Windows {
 
 		public static void Show() => Visible = true;
 
+		public static bool IsPosing => Interop.Hooks.PoseHooks.PosingEnabled;
+
 		// Apply customize
 
 		public unsafe static void Apply(Customize custard) {
@@ -88,13 +90,12 @@ namespace Ktisis.Interface.Windows {
 				var cur = Target->Customize;
 				Target->Customize = custard;
 
-				var tribeRedraw = cur.Race == Race.Hyur || cur.Race == Race.AuRa;
 				if (cur.Race != custard.Race
+					|| cur.Tribe != custard.Tribe // Eye glitch.
 					|| cur.Gender != custard.Gender
-					|| cur.FaceType != custard.FaceType // Segfault at +31ACA4 and +31BA39
-					|| (tribeRedraw && cur.Tribe != custard.Tribe)
+					|| cur.FaceType != custard.FaceType // Eye glitch.
 				) {
-					Target->Redraw();
+					if (!IsPosing) Target->Redraw();
 				} else {
 					Target->UpdateCustomize();
 				}
@@ -115,7 +116,9 @@ namespace Ktisis.Interface.Windows {
 				FacialFeatureIcons = null;
 			}
 
+			if (IsPosing) ImGui.BeginDisabled();
 			DrawFundamental(custom);
+			if (IsPosing) ImGui.EndDisabled();
 			DrawMenuType(custom, MenuType.Slider);
 			ImGui.Separator();
 			DrawCheckboxes(custom);
@@ -265,6 +268,10 @@ namespace Ktisis.Interface.Windows {
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
 
+			var willExplode = (opt.Index == CustomizeIndex.FaceType || opt.Index == CustomizeIndex.HairStyle) && IsPosing;
+
+			if (willExplode) ImGui.BeginDisabled();
+
 			if (opt.HasIcon && option.Select != null) {
 				DrawIconSelector(custom, option, val);
 				ImGui.SameLine();
@@ -281,6 +288,8 @@ namespace Ktisis.Interface.Windows {
 			ImGui.PopItemWidth();
 
 			ImGui.EndGroup();
+
+			if (willExplode) ImGui.EndDisabled();
 		}
 
 		// Icon selector
