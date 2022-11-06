@@ -2,6 +2,7 @@
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Dalamud.Hooking;
+using Dalamud.Logging;
 
 using FFXIVClientStructs.Havok;
 
@@ -19,6 +20,9 @@ namespace Ktisis.Interop.Hooks {
 		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
 		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
 
+		private unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
+		private static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
+
 		internal static bool PosingEnabled { get; private set; }
 
 		internal static unsafe void Init() {
@@ -33,6 +37,9 @@ namespace Ktisis.Interop.Hooks {
 
 			var lookAtIK = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
 			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
+
+			var animFrozen = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
+			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
 		}
 
 		internal static void DisablePosing() {
@@ -40,6 +47,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Disable();
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
+			AnimFrozenHook?.Disable();
 			PosingEnabled = false;
 		}
 
@@ -48,6 +56,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Enable();
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
+			AnimFrozenHook?.Enable();
 			PosingEnabled = true;
 		}
 
@@ -61,11 +70,13 @@ namespace Ktisis.Interop.Hooks {
 				SetBoneModelSpaceFfxivHook.Disable();
 				SyncModelSpaceHook.Disable();
 				LookAtIKHook.Disable();
+				AnimFrozenHook.Disable();
 			} else {
 				CalculateBoneModelSpaceHook.Enable();
 				SetBoneModelSpaceFfxivHook.Enable();
 				SyncModelSpaceHook.Enable();
 				LookAtIKHook.Enable();
+				AnimFrozenHook.Enable();
 			}
 			PosingEnabled = !PosingEnabled;
 			return PosingEnabled;
@@ -86,6 +97,10 @@ namespace Ktisis.Interop.Hooks {
 
 		public unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {
 			return (byte*)IntPtr.Zero;
+		}
+
+		public unsafe static byte AnimFrozenDetour(uint* a1, int a2) {
+			return 1;
 		}
 
 		public static unsafe void SyncBone(hkaPose* bonesPose, int index) {
@@ -120,6 +135,8 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook.Dispose();
 			LookAtIKHook.Disable();
 			LookAtIKHook.Dispose();
+			AnimFrozenHook.Disable();
+			AnimFrozenHook.Dispose();
 		}
 	}
 }

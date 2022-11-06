@@ -7,7 +7,7 @@ namespace Ktisis.GameData.Files {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct FfxivCharaDat {
 		public uint Magic; // 0x2013FF14
-		public uint Version; // 0x03
+		public uint Version; // 0x05
 		public ulong Checksum;
 		public Race Race;
 		public Gender Gender;
