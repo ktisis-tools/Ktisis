@@ -343,7 +343,7 @@ namespace Ktisis.Interface.Windows {
 				var altIndex = custom.Bytes[(uint)color.AltIndex];
 				var altRgb = color.Colors[altIndex];
 				ImGui.SameLine();
-				if (DrawColorButton($"{altIndex}##{color.Name}", altRgb))
+				if (DrawColorButton($"{altIndex}##{color.Name}##alt", altRgb))
 					selecting = color.AltIndex;
 			}
 
