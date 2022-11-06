@@ -92,7 +92,10 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		private static unsafe void SyncModelSpaceDetour(hkaPose* pose) {
-
+			if (!Ktisis.IsInGPose && PosingEnabled) {
+				DisablePosing();
+				SyncModelSpaceHook.Original(pose);
+			}
 		}
 
 		public unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {

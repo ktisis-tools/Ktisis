@@ -121,9 +121,6 @@ namespace Ktisis.Interface.Components {
 				if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? Workspace.ColGreen : Workspace.ColRed))
 				PoseHooks.TogglePosing();
 
-			if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
-				PoseHooks.DisablePosing();
-
 			ImGui.EndDisabled();
 
 
