@@ -48,13 +48,13 @@ namespace Ktisis.Interface.Windows {
 	public static class EditCustomize {
 		// Constants
 
-		public static Vector2 IconSize = new(48, 48);
-		public static Vector2 ListIconSize = new(58, 58);
-		public static Vector2 IconPadding = new(8, 8);
-		public static Vector2 InputSize = new(120, 120);
-		public static Vector2 MiscInputSize = new(250, 250);
-		public static Vector2 ColButtonSize = new(28, 28);
-		public static Vector2 ColButtonSizeSmall = new(20, 20);
+		public static Vector2 IconSize = new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 48 <= these are the original values by Chirp
+		public static Vector2 ListIconSize = new(3 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 58
+		public static Vector2 ButtonIconSize = IconSize + (ImGui.GetStyle().FramePadding * 2); // originally IconPadding = 8
+		public static Vector2 InputSize = new(8 * ImGui.GetFontSize()); // 120
+		public static Vector2 MiscInputSize = new(16 * ImGui.GetFontSize()); // 250
+		public static Vector2 ColButtonSize = new Vector2(ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y) + (ImGui.GetStyle().FramePadding * 2); // 28
+		public static Vector2 ColButtonSizeSmall = new(ImGui.GetTextLineHeight()); // 20
 
 		// Properties
 
@@ -277,6 +277,7 @@ namespace Ktisis.Interface.Windows {
 				ImGui.SameLine();
 			}
 
+			// TODO: fix FramePadding Y not rewinded on SameLine under some conditions
 			ImGui.BeginGroup();
 
 			if (opt.HasIcon) ImGui.Text(opt.Name);
@@ -305,7 +306,7 @@ namespace Ktisis.Interface.Windows {
 			if (sel!.ContainsKey(val))
 				click = ImGui.ImageButton(sel[val].ImGuiHandle, IconSize);
 			else
-				click = ImGui.Button($"{val}", IconSize + IconPadding);
+				click = ImGui.Button($"{val}", ButtonIconSize);
 
 			var index = option.Option.Index;
 			if (click) {
@@ -467,7 +468,7 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			ImGui.BeginGroup();
-			ImGui.PushItemWidth(InputSize.X - IconSize.X - IconPadding.X - 8);
+			ImGui.PushItemWidth(InputSize.X - ButtonIconSize.X);
 			for (var i = 0; i < 8; i++) {
 				if (i > 0 && i % 4 != 0)
 					ImGui.SameLine();
@@ -478,7 +479,7 @@ namespace Ktisis.Interface.Windows {
 				bool button = false;
 				ImGui.PushStyleColor(ImGuiCol.Button, isActive ? 0x5F4F4FEFu : 0x1FFFFFFFu);
 				if (i == 7) // Legacy tattoo
-					button |= ImGui.Button("Legacy\nTattoo", IconSize + IconPadding);
+					button |= ImGui.Button("Legacy\nTattoo", ButtonIconSize);
 				else
 					button |= ImGui.ImageButton(FacialFeatureIcons[i].ImGuiHandle, IconSize);
 				ImGui.PopStyleColor();
