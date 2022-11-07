@@ -110,7 +110,7 @@ namespace Ktisis.Overlay {
 
 					// Create selectable item
 					// TODO: Hide when moving gizmo?
-					if (!IsBoneSelected(bone) && (boneName != "j_ago" || p == 0)) {
+					if (!IsBoneSelected(bone) && !(boneName == "j_ago" && p == 0)) {
 						var item = Selection.AddItem(uniqueName, pos2d, boneColor);
 						if (item.IsClicked()) {
 							BoneSelect.Update = true;
@@ -168,10 +168,6 @@ namespace Ktisis.Overlay {
 						BoneSelect.Active = true;
 						BoneSelect.Partial = p;
 						BoneSelect.Index = i;
-					} else if (BoneSelect.Active && BoneSelect.Name == boneName) {
-						// this is janky. as far as I'm aware this only exists for the jaw bone?
-						var parent = GetSelectedBone(model->Skeleton)!;
-						*transform = parent.Transform;
 					}
 				}
 			}
