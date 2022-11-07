@@ -53,7 +53,7 @@ namespace Ktisis.Interface.Windows {
 		public static Vector2 ButtonIconSize = IconSize + (ImGui.GetStyle().FramePadding * 2); // originally IconPadding = 8
 		public static Vector2 InputSize = new(8 * ImGui.GetFontSize()); // 120
 		public static Vector2 MiscInputSize = new(16 * ImGui.GetFontSize()); // 250
-		public static Vector2 ColButtonSize = new(1.25f * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 28
+		public static Vector2 ColButtonSize = new Vector2(ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y) + (ImGui.GetStyle().FramePadding * 2); // 28
 		public static Vector2 ColButtonSizeSmall = new(ImGui.GetTextLineHeight()); // 20
 
 		// Properties
