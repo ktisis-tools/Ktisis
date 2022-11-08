@@ -1,4 +1,5 @@
 ﻿using Dalamud.Game;
+using Dalamud.Game.ClientState.Keys;
 using Dalamud.IoC;
 using Dalamud.Logging;
 using ImGuiNET;
@@ -12,8 +13,8 @@ namespace Ktisis.History
 {
     public sealed class HistoryManager : IDisposable
     {
-        public static List<HistoryItem> history = new List<HistoryItem>();
-        private static int currentIdx = 0;
+        public List<HistoryItem> history { get; set; } = new List<HistoryItem>();
+        private int currentIdx = 0;
 
         private HistoryManager() 
         {
@@ -48,13 +49,7 @@ namespace Ktisis.History
 
         public void Monitor(Framework framework)
         {
-            foreach (HistoryItem item in history)
-            {
-                if (item.Global)
-                {
-                    PluginLog.Information("Global: " + item.Ttc.ToString());
-                }
-            }
+            //PluginLog.Information(Dalamud.Keys[VirtualKey.G].ToString());
         }
     }
 }
