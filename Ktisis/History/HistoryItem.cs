@@ -10,13 +10,15 @@ namespace Ktisis.History
 {
     public class HistoryItem
     {
-        private TransformTable tt;
-        private Bone bone;
+        public TransformTableCopy Ttc { get; private set; }
+        public Bone? Bone { get; private set; }
+        public bool Global { get; private set; } = false;
 
-        public HistoryItem(TransformTable tt, Bone bone)
+        public HistoryItem(TransformTableCopy ttc, Bone? bone)
         {
-            this.tt = tt;
-            this.bone = bone;
+            this.Ttc = ttc;
+            this.Bone = bone;
+            this.Global = (Bone == null);
         }
     }
 }

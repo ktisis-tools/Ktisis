@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game;
 using Dalamud.IoC;
 using Dalamud.Logging;
+using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,13 @@ namespace Ktisis.History
 
         public void Monitor(Framework framework)
         {
-            
+            foreach (HistoryItem item in history)
+            {
+                if (item.Global)
+                {
+                    PluginLog.Information("Global: " + item.Ttc.ToString());
+                }
+            }
         }
     }
 }

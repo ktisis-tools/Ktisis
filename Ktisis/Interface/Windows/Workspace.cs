@@ -15,6 +15,7 @@ using Ktisis.Structs.Bones;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.History;
 
 namespace Ktisis.Interface.Windows {
 	public static class Workspace {
@@ -148,6 +149,7 @@ namespace Ktisis.Interface.Windows {
 			if (!select.Active) {
 				ImGui.Text(title);
 				var model = target->Model;
+				HistoryManager.history.Add(new HistoryItem(new TransformTableCopy(model->Position, model->Rotation, model->Scale), null));
 				return Transform.Draw(ref model->Position, ref model->Rotation, ref model->Scale);
 			}
 

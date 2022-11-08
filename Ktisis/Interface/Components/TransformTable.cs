@@ -10,6 +10,9 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Util;
+using System;
+using static Dalamud.Game.Framework;
+using Ktisis.History;
 
 namespace Ktisis.Interface.Components {
 	// Thanks to Emyka for the original code:
@@ -22,9 +25,9 @@ namespace Ktisis.Interface.Components {
 		public Vector3 Rotation;
 		public Vector3 Scale;
 
-		// Set stored values.
+        // Set stored values.
 
-		public void Update(Vector3 pos, Quaternion rot, Vector3 scale) {
+        public void Update(Vector3 pos, Quaternion rot, Vector3 scale) {
 			Position = pos;
 			Rotation = MathHelpers.ToEuler(rot);
 			Scale = scale;
@@ -75,7 +78,7 @@ namespace Ktisis.Interface.Components {
 				}
 			}
 			IsEditing = result;
-			return result;
+            return result;
 		}
 		public bool Draw(ref Vector3 pos, ref Quaternion rot, ref Vector3 scale) {
 			if (!IsEditing)
@@ -86,7 +89,7 @@ namespace Ktisis.Interface.Components {
 			rot = MathHelpers.ToQuaternion(Rotation);
 			if (Scale.X > 0 && Scale.Y > 0 && Scale.Z > 0)
 				scale = Scale;
-			return result;
+            return result;
 		}
 
 		public bool Draw(ref hkVector4f pos, ref hkQuaternionf rot, ref hkVector4f scale) {
