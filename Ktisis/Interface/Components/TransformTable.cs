@@ -18,6 +18,13 @@ namespace Ktisis.Interface.Components {
 	public class TransformTable {
 		public bool IsEditing = false;
 
+		const float BaseSpeedPos = 0.0005f;
+		const float BaseSpeedRot = 0.1f;
+		const float BaseSpeedSca = 0.001f;
+		const float ModifierMultCtrl = 0.1f;
+		const float ModifierMultShift = 10f;
+		const string DigitPrecision = "%.3f";
+
 		public Vector3 Position;
 		public Vector3 Rotation;
 		public Vector3 Scale;
@@ -39,6 +46,10 @@ namespace Ktisis.Interface.Components {
 			var iconRot = FontAwesomeIcon.Sync;
 			var iconSca = FontAwesomeIcon.ExpandAlt;
 
+			var multiplier = 1f;
+			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
+			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift;
+
 			// Attempt to find the exact size for any font and font size.
 			float[] sizes = new float[3];
 			sizes[0] = GuiHelpers.CalcIconSize(iconPos).X;
@@ -46,14 +57,15 @@ namespace Ktisis.Interface.Components {
 			sizes[2] = GuiHelpers.CalcIconSize(iconSca).X;
 			var rightOffset = GuiHelpers.GetRightOffset(sizes.Max());
 
-			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
-			result |= ImGui.DragFloat3("##Position", ref Position, 0.0005f);
+			var inputsWidth = ImGui.GetContentRegionAvail().X - rightOffset;
+			ImGui.PushItemWidth(inputsWidth);
+			result |= ImGui.DragFloat3("##Position", ref Position, BaseSpeedPos * multiplier,0,0, DigitPrecision);
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
-			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
+			result |= ImGui.DragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, 0, 0, DigitPrecision);
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
-			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
+			result |= ImGui.DragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, 0, 0, DigitPrecision);
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
