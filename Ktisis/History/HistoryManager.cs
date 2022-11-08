@@ -24,13 +24,16 @@ namespace Ktisis.History
 
         private static HistoryManager? _instance;
 
-        public static HistoryManager Instance()
+        public static HistoryManager Instance
         {
-            if (_instance == null)
+            get
             {
-                _instance = new HistoryManager();
+                if (_instance == null)
+                {
+                    _instance = new HistoryManager();
+                }
+                return _instance!;
             }
-            return _instance;
         }
 
         /* 
@@ -39,7 +42,7 @@ namespace Ktisis.History
         */
         public static void Init() 
         {
-            Instance();
+            _ = Instance;
         }
 
         public void Dispose()
