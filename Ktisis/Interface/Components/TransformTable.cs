@@ -64,11 +64,13 @@ namespace Ktisis.Interface.Components {
 			var result = false;
 			var gizmo = OverlayWindow.GetGizmo(bone.UniqueName);
 			if (gizmo != null) {
-				(var savedPosition, var savedRotation, var savedScale) = gizmo.Decompose();
-				(Position, Rotation, Scale) = (savedPosition, savedRotation, savedScale);
+				if (!IsEditing)
+					(Position, Rotation, Scale) = gizmo.Decompose();
+
+				(var savedPosition, var savedRotation, var savedScale) = (Position, Rotation, Scale);
 				if (DrawTable()) {
 					(var deltaPosition, var deltaRotation, var deltaScale) = (savedPosition - Position, savedRotation - Rotation, savedScale - Scale);
-					gizmo.InsertEulerDeltaMatrix(deltaPosition, deltaRotation, deltaScale);
+					gizmo.InsertEulerDeltaMatrix(-deltaPosition, -deltaRotation, -deltaScale);
 					result = true;
 				}
 			}
