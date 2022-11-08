@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Linq;
 using ImGuiNET;
 
@@ -18,12 +18,12 @@ namespace Ktisis.Interface.Components {
 	public class TransformTable {
 		public bool IsEditing = false;
 
-		const float BaseSpeedPos = 0.0005f;
-		const float BaseSpeedRot = 0.1f;
-		const float BaseSpeedSca = 0.001f;
-		const float ModifierMultCtrl = 0.1f;
-		const float ModifierMultShift = 10f;
-		const string DigitPrecision = "%.3f";
+		private float BaseSpeedPos = 0.0005f;
+		private float BaseSpeedRot = 0.1f;
+		private float BaseSpeedSca = 0.001f;
+		private float ModifierMultCtrl = 0.1f;
+		private float ModifierMultShift = 10f;
+		private string DigitPrecision = "%.3f";
 
 		public Vector3 Position;
 		public Vector3 Rotation;
@@ -70,6 +70,16 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
+
+			var cellWidth = inputsWidth / 3 - (ImGui.GetStyle().ItemSpacing.X / 2);
+			ImGui.PushItemWidth(cellWidth);
+			ImGui.DragFloat("##SpeedMult##shift", ref ModifierMultShift, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic);
+			ImGui.SameLine();
+			ImGui.DragFloat("##SpeedMult##ctrl", ref ModifierMultCtrl, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic);
+			ImGui.PopItemWidth();
+			ImGui.SameLine();
+			GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
+
 			return result;
 		}
 		public bool Draw(Bone bone) {
