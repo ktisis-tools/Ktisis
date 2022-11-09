@@ -60,9 +60,9 @@ namespace Ktisis.Interface.Components {
 
 			var multiplier = 1f;
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
-			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift;
+			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
 
-			// Attempt to find the exact size for any font and font size.
+ 			// Attempt to find the exact size for any font and font size.
 			float[] sizes = new float[3];
 			sizes[0] = GuiHelpers.CalcIconSize(iconPos).X;
 			sizes[1] = GuiHelpers.CalcIconSize(iconRot).X;
@@ -87,9 +87,11 @@ namespace Ktisis.Interface.Components {
 			if (Ktisis.Configuration.TransformTableDisplayMultiplierInputs) {
 				var cellWidth = inputsWidth / 3 - (ImGui.GetStyle().ItemSpacing.X / 2);
 				ImGui.PushItemWidth(cellWidth);
-				ImGui.DragFloat("##SpeedMult##shift", ref ModifierMultShift, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic);
+				if (ImGui.DragFloat("##SpeedMult##shift", ref ModifierMultShift, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
+					Ktisis.Configuration.TransformTableModifierMultShift = ModifierMultShift;
 				ImGui.SameLine();
-				ImGui.DragFloat("##SpeedMult##ctrl", ref ModifierMultCtrl, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic);
+				if(ImGui.DragFloat("##SpeedMult##ctrl", ref ModifierMultCtrl, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
+					Ktisis.Configuration.TransformTableModifierMultCtrl = ModifierMultCtrl;
 				ImGui.PopItemWidth();
 				ImGui.SameLine();
 				GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
