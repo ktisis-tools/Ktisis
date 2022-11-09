@@ -13,6 +13,9 @@ using Ktisis.Util;
 using System;
 using static Dalamud.Game.Framework;
 using Ktisis.History;
+using Ktisis.Events;
+using Dalamud.Game.ClientState.Keys;
+using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Components {
 	// Thanks to Emyka for the original code:
@@ -33,9 +36,9 @@ namespace Ktisis.Interface.Components {
 			Scale = scale;
 		}
 
-		// Draw table.
+        // Draw table.
 
-		public bool DrawTable() {
+        public unsafe bool DrawTable() {
 			var result = false;
 
 			var iconPos = FontAwesomeIcon.LocationArrow;
@@ -51,17 +54,20 @@ namespace Ktisis.Interface.Components {
 
 			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
 			result |= ImGui.DragFloat3("##Position", ref Position, 0.0005f);
-			ImGui.SameLine();
+			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
+            ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
 			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
-			ImGui.SameLine();
+			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
+            ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
 			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
-			ImGui.SameLine();
+            if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
+            ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
-			return result;
+            return result;
 		}
 		public bool Draw(Bone bone) {
 			var result = false;

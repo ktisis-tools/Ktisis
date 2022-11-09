@@ -6,6 +6,9 @@ using Dalamud.Interface;
 
 using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;
+using Ktisis.Interface.Windows;
+using Ktisis.Events;
+using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Overlay {
 	public static class OverlayWindow {
@@ -53,18 +56,19 @@ namespace Ktisis.Overlay {
 			Wp = ImGui.GetWindowPos();
 			Gizmo.BeginFrame(Wp, Io);
 
-			HasBegun = true;
+			
 
-			if (Selection.DrawQueue.Count >= 1000) // something *probably* fucked up (thrown error in Selection.Draw?)
+			HasBegun = true;
+            if (Selection.DrawQueue.Count >= 1000) // something *probably* fucked up (thrown error in Selection.Draw?)
 				Selection.DrawQueue.Clear(); // don't let it get worse
 		}
 
-		public static void End() {
+		public unsafe static void End() {
 			if (!HasBegun) return;
 			ImGui.End();
 			ImGui.PopStyleVar();
 			HasBegun = false;
-		}
+        }
 
 		public unsafe static void Draw() {
 			if (WorldMatrix == null)
@@ -73,9 +77,13 @@ namespace Ktisis.Overlay {
 			// Might need a different name for Begin?
 
 			if (IsGizmoVisible)
-				Begin();
+			{
+                Gizmo.UpdateGizmoState();
+                Begin();
+			}
+            
 
-			Skeleton.BoneSelect.Active = false;
+            Skeleton.BoneSelect.Active = false;
 			Skeleton.BoneSelect.Update = false;
 			if (Ktisis.Configuration.ShowSkeleton) {
 				Begin();

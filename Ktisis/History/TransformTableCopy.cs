@@ -20,10 +20,5 @@ namespace Ktisis.History
             this.rot = rot;
             this.scale = scale;
         }
-
-        public override string ToString()
-        {
-            return pos.ToString() + rot.ToString() + scale.ToString();
-        }
     }
 }

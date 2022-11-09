@@ -149,7 +149,6 @@ namespace Ktisis.Interface.Windows {
 			if (!select.Active) {
 				ImGui.Text(title);
 				var model = target->Model;
-				HistoryManager.Instance.history.Add(new HistoryItem(new TransformTableCopy(model->Position, model->Rotation, model->Scale), null));
 				return Transform.Draw(ref model->Position, ref model->Rotation, ref model->Scale);
 			}
 
