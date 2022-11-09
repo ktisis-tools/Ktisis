@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Linq;
 using ImGuiNET;
 
@@ -24,11 +24,28 @@ namespace Ktisis.Interface.Components {
 	public class TransformTable {
 		public bool IsEditing = false;
 
+		private float BaseSpeedPos;
+		private float BaseSpeedRot;
+		private float BaseSpeedSca;
+		private float ModifierMultCtrl;
+		private float ModifierMultShift;
+		private string DigitPrecision = "%.3f";
+
 		public Vector3 Position;
 		public Vector3 Rotation;
 		public Vector3 Scale;
 
-        // Set stored values.
+		public void FetchConfigurations() {
+			BaseSpeedPos = Ktisis.Configuration.TransformTableBaseSpeedPos;
+			BaseSpeedRot = Ktisis.Configuration.TransformTableBaseSpeedRot;
+			BaseSpeedSca = Ktisis.Configuration.TransformTableBaseSpeedSca;
+			ModifierMultCtrl = Ktisis.Configuration.TransformTableModifierMultCtrl;
+			ModifierMultShift = Ktisis.Configuration.TransformTableModifierMultShift;
+			DigitPrecision = $"%.{Ktisis.Configuration.TransformTableDigitPrecision}f";
+		}
+
+
+		// Set stored values.
 
         public void Update(Vector3 pos, Quaternion rot, Vector3 scale) {
 			Position = pos;
@@ -41,11 +58,17 @@ namespace Ktisis.Interface.Components {
         public unsafe bool DrawTable() {
 			var result = false;
 
+			FetchConfigurations();
+
 			var iconPos = FontAwesomeIcon.LocationArrow;
 			var iconRot = FontAwesomeIcon.Sync;
 			var iconSca = FontAwesomeIcon.ExpandAlt;
 
-			// Attempt to find the exact size for any font and font size.
+			var multiplier = 1f;
+			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
+			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
+
+ 			// Attempt to find the exact size for any font and font size.
 			float[] sizes = new float[3];
 			sizes[0] = GuiHelpers.CalcIconSize(iconPos).X;
 			sizes[1] = GuiHelpers.CalcIconSize(iconRot).X;
@@ -54,20 +77,17 @@ namespace Ktisis.Interface.Components {
 
 			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
 			result |= ImGui.DragFloat3("##Position", ref Position, 0.0005f);
-			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
-            ImGui.SameLine();
+			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
 			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
-			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
-            ImGui.SameLine();
+			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
 			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
-            if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
-            ImGui.SameLine();
+			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
-            return result;
+			return result;
 		}
 		public bool Draw(Bone bone) {
 			var result = false;

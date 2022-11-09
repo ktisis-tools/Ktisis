@@ -23,6 +23,14 @@ namespace Ktisis {
 
 		public bool DisplayCharName = true;
 
+		public bool TransformTableDisplayMultiplierInputs { get; set; } = false;
+		public float TransformTableBaseSpeedPos { get; set; } = 0.0005f;
+		public float TransformTableBaseSpeedRot { get; set; } = 0.1f;
+		public float TransformTableBaseSpeedSca { get; set; } = 0.001f;
+		public float TransformTableModifierMultCtrl { get; set; } = 0.1f;
+		public float TransformTableModifierMultShift { get; set; } = 10f;
+		public int TransformTableDigitPrecision { get; set; } = 3;
+
 		// Overlay
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
