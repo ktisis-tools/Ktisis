@@ -77,13 +77,16 @@ namespace Ktisis.Interface.Components {
 
 			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
 			result |= ImGui.DragFloat3("##Position", ref Position, 0.0005f);
-			ImGui.SameLine();
+            if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
+            ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
 			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
-			ImGui.SameLine();
+            if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
+            ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
 			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
-			ImGui.SameLine();
+            if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.OnTransformationMatrixChange!(this, Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
+            ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
