@@ -18,16 +18,26 @@ namespace Ktisis.Interface.Components {
 	public class TransformTable {
 		public bool IsEditing = false;
 
-		private float BaseSpeedPos = 0.0005f;
-		private float BaseSpeedRot = 0.1f;
-		private float BaseSpeedSca = 0.001f;
-		private float ModifierMultCtrl = 0.1f;
-		private float ModifierMultShift = 10f;
+		private float BaseSpeedPos;
+		private float BaseSpeedRot;
+		private float BaseSpeedSca;
+		private float ModifierMultCtrl;
+		private float ModifierMultShift;
 		private string DigitPrecision = "%.3f";
 
 		public Vector3 Position;
 		public Vector3 Rotation;
 		public Vector3 Scale;
+
+		public void FetchConfigurations() {
+			BaseSpeedPos = Ktisis.Configuration.TransformTableBaseSpeedPos;
+			BaseSpeedRot = Ktisis.Configuration.TransformTableBaseSpeedRot;
+			BaseSpeedSca = Ktisis.Configuration.TransformTableBaseSpeedSca;
+			ModifierMultCtrl = Ktisis.Configuration.TransformTableModifierMultCtrl;
+			ModifierMultShift = Ktisis.Configuration.TransformTableModifierMultShift;
+			DigitPrecision = $"%.{Ktisis.Configuration.TransformTableDigitPrecision}f";
+		}
+
 
 		// Set stored values.
 
@@ -41,6 +51,8 @@ namespace Ktisis.Interface.Components {
 
 		public bool DrawTable() {
 			var result = false;
+
+			FetchConfigurations();
 
 			var iconPos = FontAwesomeIcon.LocationArrow;
 			var iconRot = FontAwesomeIcon.Sync;
@@ -71,14 +83,17 @@ namespace Ktisis.Interface.Components {
 			ImGui.PopItemWidth();
 			IsEditing = result;
 
-			var cellWidth = inputsWidth / 3 - (ImGui.GetStyle().ItemSpacing.X / 2);
-			ImGui.PushItemWidth(cellWidth);
-			ImGui.DragFloat("##SpeedMult##shift", ref ModifierMultShift, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic);
-			ImGui.SameLine();
-			ImGui.DragFloat("##SpeedMult##ctrl", ref ModifierMultCtrl, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic);
-			ImGui.PopItemWidth();
-			ImGui.SameLine();
-			GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
+
+			if (Ktisis.Configuration.TransformTableDisplayMultiplierInputs) {
+				var cellWidth = inputsWidth / 3 - (ImGui.GetStyle().ItemSpacing.X / 2);
+				ImGui.PushItemWidth(cellWidth);
+				ImGui.DragFloat("##SpeedMult##shift", ref ModifierMultShift, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic);
+				ImGui.SameLine();
+				ImGui.DragFloat("##SpeedMult##ctrl", ref ModifierMultCtrl, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic);
+				ImGui.PopItemWidth();
+				ImGui.SameLine();
+				GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
+			}
 
 			return result;
 		}
