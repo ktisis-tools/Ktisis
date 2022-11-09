@@ -20,9 +20,12 @@ namespace Ktisis.History
 {
     public sealed class HistoryManager : IDisposable
     {
-        public List<HistoryItem> history { get; set; } = new List<HistoryItem>();
-        private int currentIdx = 0;
+        public List<HistoryItem> History { get; set; }
+        private int _currentIdx = 0;
         private GizmoState _currentState;
+        private bool _isInGpose = false;
+        private bool _undoIsPressed;
+        private bool _redoIsPressed;
 
         private HistoryManager() 
         {
@@ -38,17 +41,28 @@ namespace Ktisis.History
 
         private void AddEntryToHistory(TransformTable tt, Bone? bone)
         {
-            history.Add(new(tt, bone));
-            currentIdx++;
+            if (bone is null)
+            {
+                History.Add(new(tt.Clone(), null));
+            } else
+            {
+                History.Add(new(tt.Clone(), bone));
+            }
+            _currentIdx++;
             printHistory();
         }
 
         private void printHistory()
         {
             var str = "";
-            foreach(HistoryItem entry in history)
+            foreach(HistoryItem entry in History)
             {
-                str += $"Pos: {entry.Tt.Position} - Rot: {entry.Tt.Rotation} - Scale: {entry.Tt.Scale} | Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)};"
+                if (entry.Bone is null)
+                {
+                    str += $"Pos: {entry.Tt.Position} - Rot: {entry.Tt.Rotation} - Scale: {entry.Tt.Scale} | Bone Global \n";
+                    continue;
+                }
+                str += $"Pos: {entry.Tt.Position} - Rot: {entry.Tt.Rotation} - Scale: {entry.Tt.Scale} | Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}\n";
             }
             PluginLog.Information(str);
         }
@@ -60,9 +74,8 @@ namespace Ktisis.History
             {
                 Bone bone = Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton)!;
                 TransformTable tt = Workspace.Transform;
-                AddEntryToHistory(tt, bone);
+                AddEntryToHistory(tt.Clone(), bone);
             }
-
             _currentState = newState;
         }
 
@@ -99,7 +112,44 @@ namespace Ktisis.History
 
         public void Monitor(Framework framework)
         {
-            //PluginLog.Information(Dalamud.Keys[VirtualKey.G].ToString());
+            if (!Ktisis.IsInGPose)
+            {
+                _isInGpose = Ktisis.IsInGPose;
+                return;
+            }
+
+            var newIsInGpose = Ktisis.IsInGPose;
+            var newUndoIsPressed = Dalamud.Keys[VirtualKey.CONTROL] && Dalamud.Keys[VirtualKey.Z];
+            var newRedoIsPressed = Dalamud.Keys[VirtualKey.CONTROL] && Dalamud.Keys[VirtualKey.Y];
+
+            if (newIsInGpose != _isInGpose)
+            {
+                PluginLog.Information("Clearing previous history...");
+                History = new List<HistoryItem>();
+            }
+
+            if (newUndoIsPressed != _undoIsPressed)
+            {
+                //Without this check, anything inside  'if (newUndoIsPressed != _undoIsPressed)' gets executed twice.
+                //The first time when CTRL and Z are pressed together.
+                //The second time when either CTRL or Z is released.
+                if (newUndoIsPressed) 
+                {
+                    PluginLog.Information($"CTRL+Z pressed. Undo.");
+                }
+            }
+
+            if (newRedoIsPressed != _redoIsPressed)
+            {
+                if (newRedoIsPressed)
+                {
+                    PluginLog.Information("CTRL+Y pressed. Redo.");
+                }
+            }
+
+            _isInGpose = newIsInGpose;
+            _undoIsPressed = newUndoIsPressed;
+            _redoIsPressed = newRedoIsPressed;
         }
     }
 }

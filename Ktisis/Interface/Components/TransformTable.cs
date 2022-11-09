@@ -44,6 +44,15 @@ namespace Ktisis.Interface.Components {
 			DigitPrecision = $"%.{Ktisis.Configuration.TransformTableDigitPrecision}f";
 		}
 
+		public TransformTable Clone()
+		{
+			TransformTable tt = new();
+			tt.Position = Position;
+			tt.Rotation = Rotation;
+			tt.Scale = Scale;
+			return tt;
+		}
+
 
 		// Set stored values.
 
