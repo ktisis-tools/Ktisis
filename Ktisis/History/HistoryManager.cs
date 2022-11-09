@@ -31,14 +31,26 @@ namespace Ktisis.History
             EventManager.OnGizmoChange += this.OnGizmoChange;
         }
 
-        private void OnTransformationMatrixChange(TransformTable sender, Bone? bone)
+        private void OnTransformationMatrixChange(TransformTable tt, Bone? bone)
         {
-            if (bone is null)
+            AddEntryToHistory(tt, bone);
+        }
+
+        private void AddEntryToHistory(TransformTable tt, Bone? bone)
+        {
+            history.Add(new(tt, bone));
+            currentIdx++;
+            printHistory();
+        }
+
+        private void printHistory()
+        {
+            var str = "";
+            foreach(HistoryItem entry in history)
             {
-                PluginLog.Information("The actor had its global skeleton modified. Saving...");
-                return;
+                str += $"Pos: {entry.Tt.Position} - Rot: {entry.Tt.Rotation} - Scale: {entry.Tt.Scale} | Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)};"
             }
-            PluginLog.Information($"The actor had its { Locale.GetBoneName(bone.HkaBone.Name.String)} modified. Saving...");
+            PluginLog.Information(str);
         }
 
         private unsafe void OnGizmoChange(GizmoState state)
@@ -48,7 +60,7 @@ namespace Ktisis.History
             {
                 Bone bone = Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton)!;
                 TransformTable tt = Workspace.Transform;
-                PluginLog.Information($"The actor had its {Locale.GetBoneName(bone!.HkaBone.Name.String)} modified via gizmo. Saving...");
+                AddEntryToHistory(tt, bone);
             }
 
             _currentState = newState;
