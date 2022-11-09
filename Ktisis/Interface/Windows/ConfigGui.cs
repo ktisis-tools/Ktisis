@@ -58,34 +58,40 @@ namespace Ktisis.Interface.Windows {
 		// Interface
 
 		public static void DrawInterfaceTab(Configuration cfg) {
+
+			ImGui.Text("General");
+
 			var displayCharName = !cfg.DisplayCharName;
 			if (ImGui.Checkbox("Hide character name", ref displayCharName))
 				cfg.DisplayCharName = !displayCharName;
 
+			ImGui.Spacing();
 			ImGui.Separator();
+			ImGui.Text("Transform Table");
+
 			ImGui.PushItemWidth(ImGui.GetFontSize() * 4);
 			var transformTablePointDigits = cfg.TransformTableDigitPrecision;
 			if (ImGui.DragInt("Digit Precision", ref transformTablePointDigits, 1f, 1, 8))
 				cfg.TransformTableDigitPrecision = transformTablePointDigits;
 
 			var transformTableBaseSpeedPos = cfg.TransformTableBaseSpeedPos;
-			if (ImGui.DragFloat("Base position speed", ref transformTableBaseSpeedPos, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat("Base position speed", ref transformTableBaseSpeedPos, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedPos = transformTableBaseSpeedPos;
 
 			var transformTableBaseSpeedRot = cfg.TransformTableBaseSpeedRot;
-			if (ImGui.DragFloat("Base rotation speed", ref transformTableBaseSpeedRot, 1f, 0.00001f, 10000f, null,ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat("Base rotation speed", ref transformTableBaseSpeedRot, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedRot = transformTableBaseSpeedRot;
 
 			var transformTableBaseSpeedSca = cfg.TransformTableBaseSpeedSca;
-			if (ImGui.DragFloat("Base scale speed", ref transformTableBaseSpeedSca, 1f, 0.00001f, 10000f, null,ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat("Base scale speed", ref transformTableBaseSpeedSca, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedSca = transformTableBaseSpeedSca;
 
 			var transformTableModifierMultCtrl = cfg.TransformTableModifierMultCtrl;
-			if (ImGui.DragFloat("Ctrl speed multiplier", ref transformTableModifierMultCtrl, 1f, 0.00001f, 10000f, null,ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat("Ctrl speed multiplier", ref transformTableModifierMultCtrl, 1f, 0.00001f, 10000f, "%.4f",ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableModifierMultCtrl = transformTableModifierMultCtrl;
 
 			var transformTableModifierMultShift = cfg.TransformTableModifierMultShift;
-			if (ImGui.DragFloat("Shift speed multiplier", ref transformTableModifierMultShift, 1f, 0.00001f, 10000f, null,ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat("Shift speed multiplier", ref transformTableModifierMultShift, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableModifierMultShift = transformTableModifierMultShift;
 
 			var displayMultiplierInputs = cfg.TransformTableDisplayMultiplierInputs;
