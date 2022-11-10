@@ -7,8 +7,10 @@ using ImGuizmoNET;
 using Dalamud;
 using Dalamud.Logging;
 using Dalamud.Configuration;
+using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Localization;
+using Ktisis.Interface;
 using Ktisis.Structs.Bones;
 
 namespace Ktisis {
@@ -30,6 +32,9 @@ namespace Ktisis {
 		public float TransformTableModifierMultCtrl { get; set; } = 0.1f;
 		public float TransformTableModifierMultShift { get; set; } = 10f;
 		public int TransformTableDigitPrecision { get; set; } = 3;
+
+		// Input
+		public Dictionary<Input.Purpose, VirtualKey> KeyBinds { get; set; } = new();
 
 		// Overlay
 

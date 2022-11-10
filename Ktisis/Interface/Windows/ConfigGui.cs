@@ -1,8 +1,11 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using System.Collections.Generic;
+using System.Linq;
 
 using ImGuiNET;
 
-using Dalamud.Interface.Components;
+using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
 
 using Ktisis.Util;
@@ -98,6 +101,11 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox("Show speed multipler inputs", ref displayMultiplierInputs))
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
 			ImGui.PopItemWidth();
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Text("Keybind");
+			DrawInput(cfg);
 
 			ImGui.EndTabItem();
 		}
@@ -215,6 +223,32 @@ namespace Ktisis.Interface.Windows {
 				cfg.TranslateBones = translateBones;
 
 			ImGui.EndTabItem();
+		}
+
+
+		// input selector
+		public static void DrawInput(Configuration cfg) {
+			Dictionary<Input.Purpose,string> inputs = Input.Purposes.ToDictionary(p => p, p=>"");
+
+			string[] strings = new string[Input.Purposes.Count()];
+			foreach (var purpose in Input.Purposes) {
+				if (!cfg.KeyBinds.TryGetValue(purpose, out VirtualKey configuredKey)) {
+					if (!Input.DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
+						defaultKey = Input.FallbackKey;
+					configuredKey = defaultKey;
+				}
+
+				if (ImGui.BeginCombo($"{purpose}",$"{configuredKey}")) {
+					foreach (var key in Enum.GetValues<VirtualKey>()) {
+						if (!Dalamud.KeyState.IsVirtualKeyValid(key)) continue;
+						if (ImGui.Selectable($"{key}", key == configuredKey))
+							cfg.KeyBinds[purpose] = key;
+					}
+
+					ImGui.SetItemDefaultFocus();
+					ImGui.EndCombo();
+				}
+			}
 		}
 	}
 }
