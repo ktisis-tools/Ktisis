@@ -238,6 +238,7 @@ namespace Ktisis.Interface.Windows {
 					configuredKey = defaultKey;
 				}
 
+				// TODO: find a way to record a key when pressing it, instead of a select list
 				if (ImGui.BeginCombo($"{purpose}",$"{configuredKey}")) {
 					foreach (var key in Enum.GetValues<VirtualKey>()) {
 						if (!Dalamud.KeyState.IsVirtualKeyValid(key)) continue;
