@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Logging;
 using ImGuizmoNET;
+
 using Ktisis.Overlay;
-using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface {
 	public sealed class Input : IDisposable {
@@ -19,6 +20,8 @@ namespace Ktisis.Interface {
 
 		public void Monitor(Framework framework) {
 			if (!Ktisis.IsInGPose) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis
+
+			if (!Ktisis.Configuration.KeyBinds.Any()) Ktisis.Configuration.KeyBinds = DefaultKeys;
 			GetPurposesStates();
 
 			if (IsPurposeReleased(Purpose.SwitchToTranslate) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
