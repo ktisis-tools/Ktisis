@@ -21,7 +21,6 @@ namespace Ktisis.Interface {
 		public void Monitor(Framework framework) {
 			if (!Ktisis.IsInGPose) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis
 
-			if (!Ktisis.Configuration.KeyBinds.Any()) Ktisis.Configuration.KeyBinds = DefaultKeys;
 			GetPurposesStates();
 
 			if (IsPurposeReleased(Purpose.SwitchToTranslate) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
@@ -84,8 +83,11 @@ namespace Ktisis.Interface {
 			get => Enum.GetValues<Purpose>().ToImmutableList();
 		}
 		private static VirtualKey PurposeToVirtualKey(Purpose purpose) {
-			if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out VirtualKey key))
-				key = VirtualKey.NO_KEY;
+			if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out VirtualKey key)) {
+				if (!DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
+					defaultKey = FallbackKey;
+				key = defaultKey;
+			}
 			return Dalamud.KeyState.IsVirtualKeyValid(key) ? key : FallbackKey;
 		}
 		private void GetPurposesStates() {
