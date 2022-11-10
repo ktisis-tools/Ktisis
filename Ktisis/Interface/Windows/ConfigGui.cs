@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Numerics;
-using System.Collections.Generic;
-using System.Linq;
+using System.Text.RegularExpressions;
 
 using ImGuiNET;
 
@@ -235,8 +234,9 @@ namespace Ktisis.Interface.Windows {
 				if (!cfg.KeyBinds.TryGetValue(purpose, out VirtualKey configuredKey))
 					configuredKey = defaultKey;
 
+				ImGui.PushItemWidth(ImGui.GetFontSize() * 6);
 				// TODO: find a way to record a key when pressing it, instead of a select list
-				if (ImGui.BeginCombo($"{purpose}",$"{configuredKey}")) {
+				if (ImGui.BeginCombo($"{Regex.Replace(purpose.ToString(), @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0")}",$"{configuredKey}")) {
 					foreach (var key in Enum.GetValues<VirtualKey>()) {
 						if (!Dalamud.KeyState.IsVirtualKeyValid(key)) continue;
 						if (ImGui.Selectable($"{key}", key == configuredKey))
@@ -247,6 +247,7 @@ namespace Ktisis.Interface.Windows {
 					ImGui.SetItemDefaultFocus();
 					ImGui.EndCombo();
 				}
+				ImGui.PopItemWidth();
 			}
 		}
 	}
