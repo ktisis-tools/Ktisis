@@ -232,18 +232,18 @@ namespace Ktisis.Interface.Windows {
 
 			string[] strings = new string[Input.Purposes.Count()];
 			foreach (var purpose in Input.Purposes) {
-				if (!cfg.KeyBinds.TryGetValue(purpose, out VirtualKey configuredKey)) {
-					if (!Input.DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
-						defaultKey = Input.FallbackKey;
+				if (!Input.DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
+					defaultKey = Input.FallbackKey;
+				if (!cfg.KeyBinds.TryGetValue(purpose, out VirtualKey configuredKey))
 					configuredKey = defaultKey;
-				}
 
 				// TODO: find a way to record a key when pressing it, instead of a select list
 				if (ImGui.BeginCombo($"{purpose}",$"{configuredKey}")) {
 					foreach (var key in Enum.GetValues<VirtualKey>()) {
 						if (!Dalamud.KeyState.IsVirtualKeyValid(key)) continue;
 						if (ImGui.Selectable($"{key}", key == configuredKey))
-							cfg.KeyBinds[purpose] = key;
+							if (key == defaultKey) cfg.KeyBinds.Remove(purpose);
+							else cfg.KeyBinds[purpose] = key;
 					}
 
 					ImGui.SetItemDefaultFocus();
