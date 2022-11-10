@@ -19,7 +19,7 @@ namespace Ktisis.Interface {
 		//  - add the default key in DefaultKeys
 
 		public void Monitor(Framework framework) {
-			if (!Ktisis.IsInGPose) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis
+			if (!Ktisis.IsInGPose || !Ktisis.Configuration.EnableKeybinds) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis
 
 			ReadPurposesStates();
 
@@ -36,6 +36,7 @@ namespace Ktisis.Interface {
 
 		[Serializable]
 		public enum Purpose {
+			GlobalModifierKey,
 			SwitchToTranslate,
 			SwitchToRotate,
 			SwitchToScale,
@@ -45,6 +46,7 @@ namespace Ktisis.Interface {
 		}
 
 		public static readonly Dictionary<Purpose, VirtualKey> DefaultKeys = new(){
+			{Purpose.GlobalModifierKey, VirtualKey.CONTROL},
 			{Purpose.SwitchToTranslate, VirtualKey.G},
 			{Purpose.SwitchToRotate, VirtualKey.R},
 			{Purpose.SwitchToScale, VirtualKey.T},
@@ -77,7 +79,7 @@ namespace Ktisis.Interface {
 
 
 		// Below are the methods and variables needed for Monitor to handle inputs
-		public const VirtualKey FallbackKey = VirtualKey.OEM_102;
+		public const VirtualKey FallbackKey = VirtualKey.NO_KEY;
 
 		private Dictionary<Purpose, bool> PrevriousKeyStates = new();
 		private Dictionary<Purpose, bool>? CurrentKeyStates = new();
@@ -94,13 +96,19 @@ namespace Ktisis.Interface {
 			return Dalamud.KeyState.IsVirtualKeyValid(key) ? key : FallbackKey;
 		}
 		private void ReadPurposesStates() {
-			CurrentKeyStates = Purposes.Select(p =>
-				(purpose: p, state: Dalamud.KeyState[PurposeToVirtualKey(p)])
-			).ToDictionary(kp => kp.purpose, kp => kp.state);
+			CurrentKeyStates = Purposes.Select(p => {
+				var key = PurposeToVirtualKey(p);
+				bool state;
+				if (key != VirtualKey.NO_KEY) state = Dalamud.KeyState[key];
+				else state = false;
+				return (purpose: p, state);
+			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
 
 		// Below are methods to check different kind of key state
 		private bool IsPurposeChanged(Purpose purpose) {
+			var modifierKey = PurposeToVirtualKey(Purpose.GlobalModifierKey);
+			if (purpose != Purpose.GlobalModifierKey && modifierKey != VirtualKey.NO_KEY && !Dalamud.KeyState[modifierKey]) return false;
 			if (!PrevriousKeyStates.TryGetValue(purpose, out bool previous)) return false;
 			if (CurrentKeyStates == null) return false;
 			if (!CurrentKeyStates.TryGetValue(purpose, out bool current)) return false;

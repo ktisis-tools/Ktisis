@@ -34,6 +34,7 @@ namespace Ktisis {
 		public int TransformTableDigitPrecision { get; set; } = 3;
 
 		// Input
+		public bool EnableKeybinds { get; set; } = true;
 		public Dictionary<Input.Purpose, VirtualKey> KeyBinds { get; set; } = new();
 
 		// Overlay
