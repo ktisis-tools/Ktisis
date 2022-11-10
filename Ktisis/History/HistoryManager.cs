@@ -2,13 +2,17 @@
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.IoC;
 using Dalamud.Logging;
+using FFXIVClientStructs.Havok;
 using ImGuiNET;
 using Ktisis.Events;
+using Ktisis.Helpers;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Localization;
 using Ktisis.Overlay;
+using Ktisis.Structs;
+using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using System;
 using System.Collections.Generic;
@@ -20,12 +24,14 @@ namespace Ktisis.History
 {
     public sealed class HistoryManager : IDisposable
     {
-        public List<HistoryItem> History { get; set; }
+        public List<HistoryItem>? History { get; set; }
         private int _currentIdx = 0;
+        private int _maxIdx = 0;
         private GizmoState _currentState;
         private bool _isInGpose = false;
         private bool _undoIsPressed;
         private bool _redoIsPressed;
+        private int _alternativeTimelinesCreated = 0;
 
         private HistoryManager() 
         {
@@ -36,28 +42,31 @@ namespace Ktisis.History
 
         private void OnTransformationMatrixChange(TransformTable tt, Bone? bone)
         {
+            if (_maxIdx != _currentIdx)
+            {
+                alternativeTimelineWarning();
+            }
+            _maxIdx = _currentIdx;
             AddEntryToHistory(tt, bone);
+            printHistory();
         }
 
-        private void AddEntryToHistory(TransformTable tt, Bone? bone)
+        private unsafe void AddEntryToHistory(TransformTable tt, Bone? bone)
         {
-            if (bone is null)
-            {
-                History.Add(new(tt.Clone(), null));
-            } else
-            {
-                History.Add(new(tt.Clone(), bone));
-            }
+            History!.Insert(_maxIdx, new(tt.Clone(), bone, (Actor*)Ktisis.GPoseTarget!.Address));
             _currentIdx++;
-            printHistory();
+            _maxIdx++;
+            PluginLog.Information($"Current Idx: {_currentIdx} - Max Idx: {_maxIdx}");
         }
 
         private void printHistory()
         {
-            var str = "";
-            foreach(HistoryItem entry in History)
+            var str = "\n";
+            for (int i = 0; i < _maxIdx; i++)
             {
-                if (entry.Bone is null)
+                str += $"{i + 1}: ";
+                var entry = History![i];
+                if (entry.IsGlobalTransform)
                 {
                     str += $"Pos: {entry.Tt.Position} - Rot: {entry.Tt.Rotation} - Scale: {entry.Tt.Scale} | Bone Global \n";
                     continue;
@@ -72,9 +81,13 @@ namespace Ktisis.History
             var newState = state;
             if ((newState == GizmoState.IDLE) && (_currentState == GizmoState.EDITING))
             {
-                Bone bone = Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton)!;
-                TransformTable tt = Workspace.Transform;
-                AddEntryToHistory(tt.Clone(), bone);
+                AddEntryToHistory(Workspace.Transform.Clone(), Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
+                _maxIdx = _currentIdx; //Discarding everything contained after _currentIdx because the user won't need it anymore.
+                if (_maxIdx != _currentIdx)
+                {
+                    alternativeTimelineWarning();
+                }
+                printHistory();
             }
             _currentState = newState;
         }
@@ -110,7 +123,7 @@ namespace Ktisis.History
             EventManager.OnGizmoChange -= this.OnGizmoChange;
         }
 
-        public void Monitor(Framework framework)
+        public unsafe void Monitor(Framework framework)
         {
             if (!Ktisis.IsInGPose)
             {
@@ -125,6 +138,8 @@ namespace Ktisis.History
             if (newIsInGpose != _isInGpose)
             {
                 PluginLog.Information("Clearing previous history...");
+                _currentIdx = 0;
+                _maxIdx = 0;
                 History = new List<HistoryItem>();
             }
 
@@ -135,7 +150,14 @@ namespace Ktisis.History
                 //The second time when either CTRL or Z is released.
                 if (newUndoIsPressed) 
                 {
-                    PluginLog.Information($"CTRL+Z pressed. Undo.");
+                    if (_currentIdx > 1)
+                    {
+                        _currentIdx--;
+                        UpdateSkeleton();
+                        PluginLog.Information($"CTRL+Z pressed. Undo.");
+                    }
+
+
                 }
             }
 
@@ -143,13 +165,55 @@ namespace Ktisis.History
             {
                 if (newRedoIsPressed)
                 {
-                    PluginLog.Information("CTRL+Y pressed. Redo.");
+                    if (_currentIdx < _maxIdx)
+                    {
+                        _currentIdx++;
+                        UpdateSkeleton();
+                        PluginLog.Information("CTRL+Y pressed. Redo.");
+                    }
+                    
                 }
             }
 
             _isInGpose = newIsInGpose;
             _undoIsPressed = newUndoIsPressed;
             _redoIsPressed = newRedoIsPressed;
+        }
+
+        private unsafe void UpdateSkeleton()
+        {
+            var historyToUndo = History![_currentIdx - 1];
+            var damnQuaternion = MathHelpers.ToQuaternion(historyToUndo.Tt.Rotation);
+            var transformToRollbackTo = historyToUndo.Tt;
+            var bone = historyToUndo.Bone;
+            var actor = historyToUndo.Actor;
+            if (historyToUndo.IsGlobalTransform)
+            {
+                actor->Model->Position = transformToRollbackTo.Position;
+                actor->Model->Rotation = damnQuaternion;
+                actor->Model->Scale = transformToRollbackTo.Scale;
+            }
+            else
+            {
+                hkVector4f bonePos = new();
+                hkVector4f boneScale = new();
+                hkQuaternionf boneRot = new();
+                var boneTransform = bone!.Transform;
+                bonePos = bonePos.SetFromVector3(transformToRollbackTo.Position);
+                var rad = MathHelpers.ToRadians(transformToRollbackTo.Rotation);
+                boneRot.setFromEulerAngles1(rad.X, rad.Y, rad.Z);
+                boneScale = boneScale.SetFromVector3(transformToRollbackTo.Scale);
+
+                boneTransform.Translation = bonePos;
+                boneTransform.Rotation = boneRot;
+                boneTransform.Scale = boneScale;
+            }
+        }
+
+        private void alternativeTimelineWarning()
+        {
+            _alternativeTimelinesCreated++;
+            PluginLog.Information($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
         }
     }
 }

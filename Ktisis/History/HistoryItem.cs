@@ -1,4 +1,5 @@
 ﻿using Ktisis.Interface.Components;
+using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,15 @@ namespace Ktisis.History
     {
         public TransformTable Tt { get; private set; }
         public Bone? Bone { get; private set; }
-        public bool Global { get; private set; } = false;
+        public bool IsGlobalTransform { get; private set; } = false;
+        public unsafe Actor* Actor { get; private set; }
 
-        public HistoryItem(TransformTable tt, Bone? bone)
+        public unsafe HistoryItem(TransformTable tt, Bone? bone, Actor* Actor)
         {
             this.Tt = tt;
             this.Bone = bone;
-            this.Global = (Bone == null);
+            this.IsGlobalTransform = (Bone == null);
+            this.Actor = Actor;
         }
     }
 }
