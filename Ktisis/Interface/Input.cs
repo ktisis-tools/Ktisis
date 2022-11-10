@@ -26,6 +26,7 @@ namespace Ktisis.Interface {
 			if (IsPurposeReleased(Purpose.SwitchToTranslate) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
 			if (IsPurposeReleased(Purpose.SwitchToRotate) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
 			if (IsPurposeReleased(Purpose.SwitchToScale) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
+			if (IsPurposeReleased(Purpose.SwitchToUniversal) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
 			if (IsPurposeReleased(Purpose.ToggleLocalWorld) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
 			if (IsPurposeChanged(Purpose.HoldToHideSkeleton)) Skeleton.Toggle();
 
@@ -40,6 +41,7 @@ namespace Ktisis.Interface {
 			SwitchToScale,
 			ToggleLocalWorld,
 			HoldToHideSkeleton,
+			SwitchToUniversal,
 		}
 
 		public static readonly Dictionary<Purpose, VirtualKey> DefaultKeys = new(){
@@ -48,6 +50,7 @@ namespace Ktisis.Interface {
 			{Purpose.SwitchToScale, VirtualKey.T},
 			{Purpose.ToggleLocalWorld, VirtualKey.X},
 			{Purpose.HoldToHideSkeleton, VirtualKey.V},
+			{Purpose.SwitchToUniversal, VirtualKey.U},
 		};
 
 
