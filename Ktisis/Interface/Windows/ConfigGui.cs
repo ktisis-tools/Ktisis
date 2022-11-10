@@ -228,9 +228,7 @@ namespace Ktisis.Interface.Windows {
 
 		// input selector
 		public static void DrawInput(Configuration cfg) {
-			Dictionary<Input.Purpose,string> inputs = Input.Purposes.ToDictionary(p => p, p=>"");
 
-			string[] strings = new string[Input.Purposes.Count()];
 			foreach (var purpose in Input.Purposes) {
 				if (!Input.DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
 					defaultKey = Input.FallbackKey;
