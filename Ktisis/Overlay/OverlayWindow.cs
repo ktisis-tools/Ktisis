@@ -13,12 +13,8 @@ namespace Ktisis.Overlay {
 
 		public unsafe static WorldMatrix* WorldMatrix;
 
-		public static float[] ViewMatrix = {
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		};
+		public static Matrix4x4 ViewMatrix;
+		public static Matrix4x4 ProjMatrix;
 
 		public static ImGuiIOPtr Io;
 		public static Vector2 Wp;
