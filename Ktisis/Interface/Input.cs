@@ -22,12 +22,20 @@ namespace Ktisis.Interface {
 			if (!Ktisis.IsInGPose || IsChatInputActive() || !Ktisis.Configuration.EnableKeybinds) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis.cs
 			ReadPurposesStates();
 
-			if (IsPurposeReleased(Purpose.SwitchToTranslate) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
-			if (IsPurposeReleased(Purpose.SwitchToRotate) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
-			if (IsPurposeReleased(Purpose.SwitchToScale) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
-			if (IsPurposeReleased(Purpose.SwitchToUniversal) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
-			if (IsPurposeReleased(Purpose.ToggleLocalWorld) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
-			if (IsPurposeChanged(Purpose.HoldToHideSkeleton)) Skeleton.Toggle();
+			if (!ImGuizmo.IsUsing()) {
+				if (IsPurposeReleased(Purpose.SwitchToTranslate))
+					Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
+				if (IsPurposeReleased(Purpose.SwitchToRotate))
+					Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
+				if (IsPurposeReleased(Purpose.SwitchToScale))
+					Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
+				if (IsPurposeReleased(Purpose.SwitchToUniversal))
+					Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
+				if (IsPurposeReleased(Purpose.ToggleLocalWorld))
+					Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+			}
+			if (IsPurposeChanged(Purpose.HoldToHideSkeleton))
+				Skeleton.Toggle();
 
 			PrevriousKeyStates = CurrentKeyStates!;
 			CurrentKeyStates = null;
@@ -54,8 +62,6 @@ namespace Ktisis.Interface {
 			{Purpose.SwitchToUniversal, VirtualKey.U},
 		};
 
-
-
 		// Thanks to (Edited) for the intgration with the Framework Update <3
 		private static Input? _instance = null;
 		private Input() {
@@ -73,9 +79,6 @@ namespace Ktisis.Interface {
 		public void Dispose() {
 			Dalamud.Framework.Update -= Monitor;
 		}
-
-
-
 
 		// Below are the methods and variables needed for Monitor to handle inputs
 		public const VirtualKey FallbackKey = VirtualKey.NO_KEY;
