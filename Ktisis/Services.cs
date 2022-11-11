@@ -11,7 +11,7 @@ using Dalamud.Game.ClientState.Objects;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 namespace Ktisis {
-	internal class Dalamud {
+	internal class Services {
 		[PluginService] internal static DalamudPluginInterface PluginInterface { get; private set; } = null!;
 		[PluginService] internal static CommandManager CommandManager { get; private set; } = null!;
 		[PluginService] internal static DataManager DataManager { get; private set; } = null!;
@@ -27,7 +27,7 @@ namespace Ktisis {
 		internal unsafe static CameraManager* Camera = CameraManager.Instance();
 
 		public static void Init(DalamudPluginInterface dalamud) {
-			dalamud.Create<Dalamud>();
+			dalamud.Create<Services>();
 		}
 	}
 }

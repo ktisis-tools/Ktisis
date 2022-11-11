@@ -26,19 +26,19 @@ namespace Ktisis.Interop.Hooks {
 		internal static bool PosingEnabled { get; private set; }
 
 		internal static unsafe void Init() {
-			var setBoneModelSpaceFfxiv = Dalamud.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
+			var setBoneModelSpaceFfxiv = Services.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
 			SetBoneModelSpaceFfxivHook = Hook<SetBoneModelSpaceFfxivDelegate>.FromAddress(setBoneModelSpaceFfxiv, SetBoneModelSpaceFfxivDetour);
 
-			var calculateBoneModelSpace = Dalamud.SigScanner.ScanText("40 53 48 83 EC 10 4C 8B 49 28");
+			var calculateBoneModelSpace = Services.SigScanner.ScanText("40 53 48 83 EC 10 4C 8B 49 28");
 			CalculateBoneModelSpaceHook = Hook<CalculateBoneModelSpaceDelegate>.FromAddress(calculateBoneModelSpace, CalculateBoneModelSpaceDetour);
 
-			var syncModelSpace = Dalamud.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
+			var syncModelSpace = Services.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
 			SyncModelSpaceHook = Hook<SyncModelSpaceDelegate>.FromAddress(syncModelSpace, SyncModelSpaceDetour);
 
-			var lookAtIK = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
+			var lookAtIK = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
 			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
 
-			var animFrozen = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
+			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
 			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
 		}
 

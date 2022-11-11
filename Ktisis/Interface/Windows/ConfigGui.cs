@@ -235,8 +235,8 @@ namespace Ktisis.Interface.Windows {
 
 			VirtualKey pressDemo = VirtualKey.NO_KEY;
 			foreach (var key in Enum.GetValues<VirtualKey>()) {
-				if (!Dalamud.KeyState.IsVirtualKeyValid(key)) continue;
-				var state = Dalamud.KeyState[key];
+				if (!Services.KeyState.IsVirtualKeyValid(key)) continue;
+				var state = Services.KeyState[key];
 				if (state) {
 					pressDemo = key;
 					break;
@@ -258,7 +258,7 @@ namespace Ktisis.Interface.Windows {
 				// TODO: find a way to record a key when pressing it, instead of a select list
 				if (ImGui.BeginCombo($"{Regex.Replace(purpose.ToString(), @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0")}",$"{VirtualKeyExtensions.GetFancyName(configuredKey)}")) {
 					foreach (var key in Enum.GetValues<VirtualKey>()) {
-						if (!Dalamud.KeyState.IsVirtualKeyValid(key) && key != VirtualKey.NO_KEY) continue;
+						if (!Services.KeyState.IsVirtualKeyValid(key) && key != VirtualKey.NO_KEY) continue;
 						if (ImGui.Selectable($"{VirtualKeyExtensions.GetFancyName(key)}", key == configuredKey))
 							if (key == defaultKey) cfg.KeyBinds.Remove(purpose);
 							else cfg.KeyBinds[purpose] = key;

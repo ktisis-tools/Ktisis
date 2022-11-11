@@ -100,7 +100,7 @@ namespace Ktisis.Overlay {
 		}
 
 		public unsafe float GetRadius() {
-			var dist = Dalamud.Camera->Camera->InterpDistance;
+			var dist = Services.Camera->Camera->InterpDistance;
 			return Math.Max(2f, (15f - dist) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
 		}
 

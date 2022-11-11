@@ -104,7 +104,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			var item = Equipped[slot];
 			if (item.Icon == null)
-				item.Icon = Dalamud.DataManager.GetImGuiTextureIcon(item.Item == null ? (uint)0 : item.Item.Icon);
+				item.Icon = Services.DataManager.GetImGuiTextureIcon(item.Item == null ? (uint)0 : item.Item.Icon);
 
 			if (ImGui.ImageButton(item.Icon!.ImGuiHandle, IconSize) && SlotSelect == null)
 				OpenSelector(slot);

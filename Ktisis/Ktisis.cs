@@ -16,13 +16,13 @@ namespace Ktisis {
 
 		public static Configuration Configuration { get; private set; } = null!;
 
-		public static bool IsInGPose => Dalamud.PluginInterface.UiBuilder.GposeActive;
+		public static bool IsInGPose => Services.PluginInterface.UiBuilder.GposeActive;
 
 		public unsafe static GameObject? GPoseTarget
-			=> IsInGPose ? Dalamud.ObjectTable.CreateObjectReference((IntPtr)Dalamud.Targets->GPoseTarget) : null;
+			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
 
 		public Ktisis(DalamudPluginInterface pluginInterface) {
-			Dalamud.Init(pluginInterface);
+			Services.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
 			Configuration.Validate();
@@ -40,7 +40,7 @@ namespace Ktisis {
 
 			// Register command
 
-			Dalamud.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
+			Services.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
 				HelpMessage = "/ktisis - Show the Ktisis interface."
 			});
 
@@ -57,8 +57,8 @@ namespace Ktisis {
 		}
 
 		public void Dispose() {
-			Dalamud.CommandManager.RemoveHandler(CommandName);
-			Dalamud.PluginInterface.SavePluginConfig(Configuration);
+			Services.CommandManager.RemoveHandler(CommandName);
+			Services.PluginInterface.SavePluginConfig(Configuration);
 
 			Interop.Alloc.Dispose();
 			Interop.Hooks.ActorHooks.Dispose();

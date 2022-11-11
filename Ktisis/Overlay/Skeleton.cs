@@ -63,7 +63,7 @@ namespace Ktisis.Overlay {
 						Interop.Alloc.SetMatrix(&model->Transform, matrix);
 					}
 				} else {
-					Dalamud.GameGui.WorldToScreen(model->Position, out var pos2d);
+					Services.GameGui.WorldToScreen(model->Position, out var pos2d);
 					if (Selection.AddItem(actorName, pos2d).IsClicked())
 						OverlayWindow.SetGizmoOwner(actorName);
 				}
@@ -95,7 +95,7 @@ namespace Ktisis.Overlay {
 
 					// Get bone color and screen position
 					var boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
-					Dalamud.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
+					Services.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
 					if (parentId > 0) {
@@ -103,8 +103,8 @@ namespace Ktisis.Overlay {
 
 						var parent = model->Skeleton->GetBone(p, parentId);
 
-						var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Dalamud.Camera->Camera->InterpDistance * 2f);
-						Dalamud.GameGui.WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
+						var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Services.Camera->Camera->InterpDistance * 2f);
+						Services.GameGui.WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
 						draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
 					}
 
