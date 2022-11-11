@@ -41,7 +41,7 @@ namespace Ktisis.History
 
         private unsafe HistoryManager() 
         {
-            Dalamud.Framework.Update += this.Monitor;
+            Services.Framework.Update += this.Monitor;
             EventManager.OnTransformationMatrixChange += this.OnTransformationMatrixChange;
             EventManager.OnGizmoChange += this.OnGizmoChange;
         }
@@ -121,7 +121,7 @@ namespace Ktisis.History
 
         public unsafe void Dispose()
         {
-            Dalamud.Framework.Update -= this.Monitor;
+            Services.Framework.Update -= this.Monitor;
             EventManager.OnTransformationMatrixChange -= this.OnTransformationMatrixChange;
             EventManager.OnGizmoChange -= this.OnGizmoChange;
         }
@@ -135,8 +135,8 @@ namespace Ktisis.History
             }
 
             var newIsInGpose = Ktisis.IsInGPose;
-            var newUndoIsPressed = Dalamud.Keys[VirtualKey.CONTROL] && Dalamud.Keys[VirtualKey.Z];
-            var newRedoIsPressed = Dalamud.Keys[VirtualKey.CONTROL] && Dalamud.Keys[VirtualKey.Y];
+            var newUndoIsPressed = Services.Keys[VirtualKey.CONTROL] && Services.Keys[VirtualKey.Z];
+            var newRedoIsPressed = Services.Keys[VirtualKey.CONTROL] && Services.Keys[VirtualKey.Y];
 
             if (newIsInGpose != _isInGpose)
             {
