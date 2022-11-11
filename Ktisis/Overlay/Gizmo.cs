@@ -1,5 +1,7 @@
 ﻿using System.Numerics;
 
+using Dalamud.Logging;
+
 using ImGuiNET;
 using ImGuizmoNET;
 
@@ -77,7 +79,7 @@ namespace Ktisis.Overlay {
 				posDelta.X, posDelta.Y, posDelta.Z,
 				rotDelta.X, rotDelta.Y, rotDelta.Z,
 				scaDelta.X, scaDelta.Y, scaDelta.Z
-				);
+			);
 		}
 		internal bool ManipulateEuler()
 		{
@@ -103,9 +105,13 @@ namespace Ktisis.Overlay {
 			return true;
 		}
 		internal unsafe bool Manipulate() {
+			var view = OverlayWindow.ViewMatrix;
+			var proj = OverlayWindow.ProjMatrix;
+			view.M44 = 1;
+
 			return ImGuizmo.Manipulate(
-				ref OverlayWindow.WorldMatrix->Projection.M11,
-				ref OverlayWindow.ViewMatrix[0],
+				ref view.M11,
+				ref proj.M11,
 				ForceOp ?? Operation,
 				Mode,
 				ref Matrix.M11,

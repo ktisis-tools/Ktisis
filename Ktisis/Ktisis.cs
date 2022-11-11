@@ -32,6 +32,7 @@ namespace Ktisis {
 			Interop.Methods.Init();
 			Interop.StaticOffsets.Init();
 			Interop.Hooks.ActorHooks.Init();
+			Interop.Hooks.CameraHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 			Interop.Hooks.GuiHooks.Init();
 
@@ -55,6 +56,7 @@ namespace Ktisis {
 
 			Interop.Alloc.Dispose();
 			Interop.Hooks.ActorHooks.Dispose();
+			Interop.Hooks.CameraHooks.Dispose();
 			Interop.Hooks.PoseHooks.Dispose();
 			Interop.Hooks.GuiHooks.Dispose();
 
