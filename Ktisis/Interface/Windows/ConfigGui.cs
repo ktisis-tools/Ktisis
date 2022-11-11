@@ -48,10 +48,10 @@ namespace Ktisis.Interface.Windows {
 						DrawLanguageTab(cfg);
 
 					ImGui.EndTabBar();
-                }
-            }
+				}
+			}
 
-            ImGui.PopStyleVar(1);
+			ImGui.PopStyleVar(1);
 			ImGui.End();
 		}
 
