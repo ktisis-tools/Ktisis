@@ -30,7 +30,7 @@ namespace Ktisis.Interop {
 		// Init & Dispose
 
 		private static TDelegate Retrieve<TDelegate>(string sig)
-			=> Marshal.GetDelegateForFunctionPointer<TDelegate>(Dalamud.SigScanner.ScanText(sig));
+			=> Marshal.GetDelegateForFunctionPointer<TDelegate>(Services.SigScanner.ScanText(sig));
 
 		internal static void Init() {
 			ActorLookAt = Retrieve<LookAtDelegate>("40 53 55 57 41 56 41 57 48 83 EC 70");

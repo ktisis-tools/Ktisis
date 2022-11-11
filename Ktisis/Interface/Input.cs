@@ -65,7 +65,7 @@ namespace Ktisis.Interface {
 		// Thanks to (Edited) for the intgration with the Framework Update <3
 		private static Input? _instance = null;
 		private Input() {
-			Dalamud.Framework.Update += Monitor;
+			Services.Framework.Update += Monitor;
 		}
 		public static Input Instance {
 			get {
@@ -77,7 +77,7 @@ namespace Ktisis.Interface {
 			var _ = Instance;
 		}
 		public void Dispose() {
-			Dalamud.Framework.Update -= Monitor;
+			Services.Framework.Update -= Monitor;
 		}
 
 		// Below are the methods and variables needed for Monitor to handle inputs
@@ -95,23 +95,23 @@ namespace Ktisis.Interface {
 					defaultKey = FallbackKey;
 				key = defaultKey;
 			}
-			return Dalamud.KeyState.IsVirtualKeyValid(key) ? key : FallbackKey;
+			return Services.KeyState.IsVirtualKeyValid(key) ? key : FallbackKey;
 		}
 		private void ReadPurposesStates() {
 			CurrentKeyStates = Purposes.Select(p => {
 				var key = PurposeToVirtualKey(p);
 				bool state;
-				if (key != VirtualKey.NO_KEY) state = Dalamud.KeyState[key];
+				if (key != VirtualKey.NO_KEY) state = Services.KeyState[key];
 				else state = false;
 				return (purpose: p, state);
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
-		private unsafe bool IsChatInputActive() => ((UIModule*)Dalamud.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
+		private unsafe bool IsChatInputActive() => ((UIModule*)Services.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
 
 		// Below are methods to check different kind of key state
 		private bool IsPurposeChanged(Purpose purpose) {
 			var modifierKey = PurposeToVirtualKey(Purpose.GlobalModifierKey);
-			if (purpose != Purpose.GlobalModifierKey && modifierKey != VirtualKey.NO_KEY && !Dalamud.KeyState[modifierKey]) return false;
+			if (purpose != Purpose.GlobalModifierKey && modifierKey != VirtualKey.NO_KEY && !Services.KeyState[modifierKey]) return false;
 			if (!PrevriousKeyStates.TryGetValue(purpose, out bool previous)) return false;
 			if (CurrentKeyStates == null) return false;
 			if (!CurrentKeyStates.TryGetValue(purpose, out bool current)) return false;

@@ -463,7 +463,7 @@ namespace Ktisis.Interface.Windows {
 					if (iconId == 0)
 						iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
 
-					var icon = Dalamud.DataManager.GetImGuiTextureIcon(iconId);
+					var icon = Services.DataManager.GetImGuiTextureIcon(iconId);
 					features.Add(icon!);
 				}
 				FacialFeatureIcons = features;
@@ -652,12 +652,12 @@ namespace Ktisis.Interface.Windows {
 								var feat = feature.Value;
 								if (feat == null || feat.FeatureId == 0) break;
 
-								var icon = Dalamud.DataManager.GetImGuiTextureIcon(feat.Icon);
+								var icon = Services.DataManager.GetImGuiTextureIcon(feat.Icon);
 								icons.Add(feat.FeatureId, icon!);
 							}
 						} else {
 							for (var x = 0; x < val.Count; x++) {
-								var icon = Dalamud.DataManager.GetImGuiTextureIcon(val.Params[x]);
+								var icon = Services.DataManager.GetImGuiTextureIcon(val.Params[x]);
 								icons.Add(val.Graphics[x], icon!);
 							}
 						}
