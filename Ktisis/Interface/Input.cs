@@ -45,7 +45,7 @@ namespace Ktisis.Interface {
 		}
 
 		public static readonly Dictionary<Purpose, VirtualKey> DefaultKeys = new(){
-			{Purpose.GlobalModifierKey, VirtualKey.CONTROL},
+			{Purpose.GlobalModifierKey, VirtualKey.NO_KEY},
 			{Purpose.SwitchToTranslate, VirtualKey.G},
 			{Purpose.SwitchToRotate, VirtualKey.R},
 			{Purpose.SwitchToScale, VirtualKey.T},
