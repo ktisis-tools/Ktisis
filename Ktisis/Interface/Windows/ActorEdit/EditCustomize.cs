@@ -453,6 +453,9 @@ namespace Ktisis.Interface.Windows {
 					if (custom.Race == Race.Hrothgar)
 						index -= 4; // ???
 
+					if (CharaMakeType == null)
+						break;
+
 					if (index < 0 || index >= CharaMakeType.FacialFeatures.Length)
 						index = 8 * i;
 
@@ -470,6 +473,9 @@ namespace Ktisis.Interface.Windows {
 			ImGui.BeginGroup();
 			ImGui.PushItemWidth(InputSize.X - ButtonIconSize.X);
 			for (var i = 0; i < 8; i++) {
+				if (i >= FacialFeatureIcons.Count)
+					break;
+
 				if (i > 0 && i % 4 != 0)
 					ImGui.SameLine();
 
