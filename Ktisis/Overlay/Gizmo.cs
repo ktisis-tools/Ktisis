@@ -107,8 +107,6 @@ namespace Ktisis.Overlay {
 		internal unsafe bool Manipulate() {
 			var view = OverlayWindow.ViewMatrix;
 			var proj = OverlayWindow.ProjMatrix;
-
-			view.M34 = 0;
 			view.M44 = 1;
 
 			return ImGuizmo.Manipulate(
