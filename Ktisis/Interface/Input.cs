@@ -5,7 +5,7 @@ using System.Linq;
 
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Keys;
-using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuizmoNET;
 
 using Ktisis.Overlay;
@@ -19,8 +19,7 @@ namespace Ktisis.Interface {
 		//  - add the default key in DefaultKeys
 
 		public void Monitor(Framework framework) {
-			if (!Ktisis.IsInGPose || !Ktisis.Configuration.EnableKeybinds) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis
-
+			if (!Ktisis.IsInGPose || IsChatInputActive() || !Ktisis.Configuration.EnableKeybinds) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis.cs
 			ReadPurposesStates();
 
 			if (IsPurposeReleased(Purpose.SwitchToTranslate) && !ImGuizmo.IsUsing()) Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
@@ -104,6 +103,7 @@ namespace Ktisis.Interface {
 				return (purpose: p, state);
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
+		private unsafe bool IsChatInputActive() => ((UIModule*)Dalamud.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
 
 		// Below are methods to check different kind of key state
 		private bool IsPurposeChanged(Purpose purpose) {
