@@ -63,8 +63,17 @@ namespace Ktisis.History
             _currentIdx++;
             _maxIdx++;
             PluginLog.Information($"Current Idx: {_currentIdx} - Max Idx: {_maxIdx}");
+            printHistory();
         }
 
+        private string printTransformationMatrix(Matrix4x4 m)
+        {
+            return "\n" +
+                   $"[{m.M11}, {m.M12}, {m.M13}, {m.M14}]\n" +
+                   $"[{m.M21}, {m.M22}, {m.M23}, {m.M24}]\n" +
+                   $"[{m.M31}, {m.M32}, {m.M33}, {m.M34}]\n" +
+                   $"[{m.M41}, {m.M42}, {m.M43}, {m.M44}]\n";
+        }
         private void printHistory()
         {
             var str = "\n";
@@ -72,7 +81,11 @@ namespace Ktisis.History
             {
                 str += $"{i + 1}: ";
                 var entry = History![i];
-                str += $"Transform Matrix: {entry.TransformationMatrix} | Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}\n";
+                //var matrixStr = printTransformationMatrix(entry.TransformationMatrix);
+                //str += $"Transformation Matrix {matrixStr}
+                str += $"Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}" +
+                    $"- PartialId {entry.Bone.Partial}\n" +
+                    $"- Index {entry.Bone.Index}\n";
             }
             PluginLog.Information(str);
         }
@@ -218,11 +231,6 @@ namespace Ktisis.History
             var deltaRot = boneTransform->Rotation.ToQuat() / initialRot;
             var deltaPos = sourcePos - initialPos;
 
-            UpdateChildren(bone, sourcePos, deltaRot, deltaPos);
-        }
-
-        private static unsafe void UpdateChildren(Bone bone, Vector3 sourcePos, Quaternion deltaRot, Vector3 deltaPos)
-        {
             Matrix4x4 matrix;
             var descendants = bone!.GetDescendants();
             foreach (var child in descendants)

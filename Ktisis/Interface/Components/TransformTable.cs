@@ -86,7 +86,7 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
 			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
 			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.FireOnTransformationMatrixChangeEvent();
-
+            ImGui.SameLine();
             GuiHelpers.IconTooltip(iconRot, "Rotation", true);
 			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
 			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.FireOnTransformationMatrixChangeEvent();
