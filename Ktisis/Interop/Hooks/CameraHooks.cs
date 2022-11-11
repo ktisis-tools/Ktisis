@@ -2,6 +2,7 @@
 using System.Numerics;
 
 using Dalamud.Hooking;
+using Dalamud.Logging;
 
 using Ktisis.Overlay;
 
@@ -12,7 +13,7 @@ namespace Ktisis.Interop.Hooks {
 
 		internal unsafe static IntPtr ProjMatrixDetour(IntPtr a1, IntPtr a2, float a3, float a4, float a5) {
 			var exec = ProjHook.Original(a1, a2, a3, a4, a5);
-			if (a5 == 1000)
+			if (a5 >= 1000)
 				OverlayWindow.ProjMatrix = *(Matrix4x4*)exec;
 			return exec;
 		}

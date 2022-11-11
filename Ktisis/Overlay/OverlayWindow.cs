@@ -13,8 +13,8 @@ namespace Ktisis.Overlay {
 
 		public unsafe static WorldMatrix* WorldMatrix;
 
-		public static Matrix4x4 ViewMatrix;
-		public static Matrix4x4 ProjMatrix;
+		public static Matrix4x4 ViewMatrix = new();
+		public static Matrix4x4 ProjMatrix = new();
 
 		public static ImGuiIOPtr Io;
 		public static Vector2 Wp;
