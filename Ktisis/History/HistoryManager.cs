@@ -3,6 +3,7 @@ using Dalamud.Game.ClientState.Keys;
 using Dalamud.IoC;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.Havok;
 using ImGuiNET;
 using Ktisis.Events;
@@ -36,27 +37,32 @@ namespace Ktisis.History
         private bool _redoIsPressed;
         private int _alternativeTimelinesCreated = 0;
 
-        private HistoryManager() 
+        private void alternativeTimelineWarning()
+        {
+            _alternativeTimelinesCreated++;
+            PluginLog.Information($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
+        }
+
+        private unsafe HistoryManager() 
         {
             Dalamud.Framework.Update += this.Monitor;
             EventManager.OnTransformationMatrixChange += this.OnTransformationMatrixChange;
             EventManager.OnGizmoChange += this.OnGizmoChange;
         }
 
-        private void OnTransformationMatrixChange(TransformTable tt, Bone? bone)
+        private unsafe void OnTransformationMatrixChange(Matrix4x4 matrix, Bone? bone, Actor* actor)
         {
             if (_maxIdx != _currentIdx)
             {
                 alternativeTimelineWarning();
             }
             _maxIdx = _currentIdx;
-            AddEntryToHistory(tt, bone);
-            printHistory();
+            AddEntryToHistory(matrix, bone);
         }
 
-        private unsafe void AddEntryToHistory(TransformTable tt, Bone? bone)
+        private unsafe void AddEntryToHistory(Matrix4x4 tt, Bone? bone)
         {
-            History!.Insert(_maxIdx, new(tt.Clone(), bone, (Actor*)Ktisis.GPoseTarget!.Address));
+            History!.Insert(_maxIdx, new(tt, bone, (Actor*)Ktisis.GPoseTarget!.Address));
             _currentIdx++;
             _maxIdx++;
             PluginLog.Information($"Current Idx: {_currentIdx} - Max Idx: {_maxIdx}");
@@ -69,12 +75,7 @@ namespace Ktisis.History
             {
                 str += $"{i + 1}: ";
                 var entry = History![i];
-                if (entry.IsGlobalTransform)
-                {
-                    str += $"Pos: {entry.Tt.Position} - Rot: {entry.Tt.Rotation} - Scale: {entry.Tt.Scale} | Bone Global \n";
-                    continue;
-                }
-                str += $"Pos: {entry.Tt.Position} - Rot: {entry.Tt.Rotation} - Scale: {entry.Tt.Scale} | Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}\n";
+                str += $"Transform Matrix: {entry.TransformationMatrix} | Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}\n";
             }
             PluginLog.Information(str);
         }
@@ -84,13 +85,15 @@ namespace Ktisis.History
             var newState = state;
             if ((newState == GizmoState.IDLE) && (_currentState == GizmoState.EDITING))
             {
-                AddEntryToHistory(Workspace.Transform.Clone(), Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
+                var bone = Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton);
+                var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+                AddEntryToHistory(Interop.Alloc.GetMatrix(boneTransform), Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
                 _maxIdx = _currentIdx; //Discarding everything contained after _currentIdx because the user won't need it anymore.
                 if (_maxIdx != _currentIdx)
                 {
                     alternativeTimelineWarning();
                 }
-                printHistory();
+                //printHistory();
             }
             _currentState = newState;
         }
@@ -119,7 +122,7 @@ namespace Ktisis.History
             _ = Instance;
         }
 
-        public void Dispose()
+        public unsafe void Dispose()
         {
             Dalamud.Framework.Update -= this.Monitor;
             EventManager.OnTransformationMatrixChange -= this.OnTransformationMatrixChange;
@@ -186,39 +189,11 @@ namespace Ktisis.History
         private unsafe void UpdateSkeleton()
         {
             var historyToUndo = History![_currentIdx - 1];
-            var damnQuaternion = MathHelpers.ToQuaternion(historyToUndo.Tt.Rotation);
-            var transformToRollbackTo = historyToUndo.Tt;
+            var transformToRollbackTo = historyToUndo.TransformationMatrix;
             var bone = historyToUndo.Bone;
             var actor = historyToUndo.Actor;
-            if (historyToUndo.IsGlobalTransform)
-            {
-                actor->Model->Position = transformToRollbackTo.Position;
-                actor->Model->Rotation = damnQuaternion;
-                actor->Model->Scale = transformToRollbackTo.Scale;
-            }
-            else
-            {
-                hkVector4f newBonePos = new();
-                hkVector4f newBoneScale = new();
-                hkQuaternionf newBoneRot = new();
-                hkQsTransformf* boneTransform = bone!.AccessModelSpace(PropagateOrNot.Propagate);
-                
-                newBonePos = newBonePos.SetFromVector3(transformToRollbackTo.Position);
-                var rad = MathHelpers.ToRadians(transformToRollbackTo.Rotation);
-                newBoneRot.setFromEulerAngles1(rad.X, rad.Y, rad.Z);
-                newBoneScale = newBoneScale.SetFromVector3(transformToRollbackTo.Scale);
-                boneTransform->Translation = newBonePos;
-                boneTransform->Rotation = newBoneRot;
-                boneTransform->Scale = newBoneScale;
-                Matrix4x4 matrix = Interop.Alloc.GetMatrix(boneTransform);
-                Interop.Alloc.SetMatrix(boneTransform, matrix);
-            }
-        }
-
-        private void alternativeTimelineWarning()
-        {
-            _alternativeTimelinesCreated++;
-            PluginLog.Information($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
+            hkQsTransformf* boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+            Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);  
         }
     }
 }
