@@ -5,8 +5,8 @@
 		Maintained by @Fayti1703, @EstoyMejor, @chirpcodes et al
 
 		Diese Datei lässt Zeichenfolgen mit identischen Schlüssel:Wert-Paaren aus.
-    Kopieren Sie es nicht direkt als Referenz für neue Übersetzungen, ohne diese Zeichenfolgen einzuschließen.
-    Sie müssen Übersetzungen aller Enum-Varianten (z. B. Rasse, Volk) definieren.
+		Kopieren Sie es nicht direkt als Referenz für neue Übersetzungen, ohne diese Zeichenfolgen einzuschließen.
+		Sie müssen Übersetzungen aller Enum-Varianten (z. B. Rasse, Volk) definieren.
 	*/
 
 	//// Plugin ////
@@ -18,7 +18,7 @@
 	"Interface": "Oberfläche",
 	"Gizmo": "Gizmo",
 	"Overlay": "Overlay",
-	"General": "Generell",
+	"General": "Allgemein",
 	"Hide_char_name": "Characternamen Verstecken",
 	"Transform_table": "Tranformier Tabelle",
 	"Digit_precision": "Nachkomma Präzision",
