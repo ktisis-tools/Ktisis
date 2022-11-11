@@ -2,6 +2,7 @@
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.IoC;
 using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.Havok;
 using ImGuiNET;
 using Ktisis.Events;
@@ -17,8 +18,10 @@ using Ktisis.Structs.Bones;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static FFXIVClientStructs.Havok.hkaPose;
 
 namespace Ktisis.History
 {
@@ -195,18 +198,20 @@ namespace Ktisis.History
             }
             else
             {
-                hkVector4f bonePos = new();
-                hkVector4f boneScale = new();
-                hkQuaternionf boneRot = new();
-                var boneTransform = bone!.Transform;
-                bonePos = bonePos.SetFromVector3(transformToRollbackTo.Position);
+                hkVector4f newBonePos = new();
+                hkVector4f newBoneScale = new();
+                hkQuaternionf newBoneRot = new();
+                hkQsTransformf* boneTransform = bone!.AccessModelSpace(PropagateOrNot.Propagate);
+                
+                newBonePos = newBonePos.SetFromVector3(transformToRollbackTo.Position);
                 var rad = MathHelpers.ToRadians(transformToRollbackTo.Rotation);
-                boneRot.setFromEulerAngles1(rad.X, rad.Y, rad.Z);
-                boneScale = boneScale.SetFromVector3(transformToRollbackTo.Scale);
-
-                boneTransform.Translation = bonePos;
-                boneTransform.Rotation = boneRot;
-                boneTransform.Scale = boneScale;
+                newBoneRot.setFromEulerAngles1(rad.X, rad.Y, rad.Z);
+                newBoneScale = newBoneScale.SetFromVector3(transformToRollbackTo.Scale);
+                boneTransform->Translation = newBonePos;
+                boneTransform->Rotation = newBoneRot;
+                boneTransform->Scale = newBoneScale;
+                Matrix4x4 matrix = Interop.Alloc.GetMatrix(boneTransform);
+                Interop.Alloc.SetMatrix(boneTransform, matrix);
             }
         }
 
