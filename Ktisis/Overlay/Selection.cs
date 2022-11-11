@@ -24,16 +24,18 @@ namespace Ktisis.Overlay {
 
 			// Draw them dots
 
-			foreach (var dot in DrawQueue) {
-				var col = dot.Color;
-				if (dot.IsHovered()) {
-					col |= 0xff000000;
-					hovered.Add(dot.Name);
-				}
+			if (!ImGuizmo.IsUsing()) {
+				foreach (var dot in DrawQueue) {
+					var col = dot.Color;
+					if (dot.IsHovered()) {
+						col |= 0xff000000;
+						hovered.Add(dot.Name);
+					}
 
-				var radius = dot.GetRadius();
-				draw.AddCircleFilled(dot.Pos, radius, col);
-				draw.AddCircle(dot.Pos, radius, 0xaf000000);
+					var radius = dot.GetRadius();
+					draw.AddCircleFilled(dot.Pos, radius, col);
+					draw.AddCircle(dot.Pos, radius, 0xaf000000);
+				}
 			}
 
 			// Selection list
