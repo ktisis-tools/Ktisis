@@ -65,7 +65,7 @@ namespace Ktisis.Structs.Actor {
 				Equip(index, item);
 		}
 
-		public void Equip(int slot, WeaponEquip item) {
+        public void Equip(int slot, WeaponEquip item) {
 			if (Methods.ActorChangeWeapon == null) return;
 			Methods.ActorChangeWeapon(GetAddress() + 0x6D0, slot, item, 0, 1, 0, 0);
 		}

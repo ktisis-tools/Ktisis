@@ -1,28 +1,24 @@
 ﻿using Dalamud.Game;
 using Dalamud.Game.ClientState.Keys;
-using Dalamud.IoC;
 using Dalamud.Logging;
-using FFXIVClientStructs.FFXIV.Client.Graphics;
-using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.Havok;
-using ImGuiNET;
+
 using Ktisis.Events;
-using Ktisis.Helpers;
-using Ktisis.Interface.Components;
-using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Localization;
 using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+
 using static FFXIVClientStructs.Havok.hkaPose;
+using FFXIVClientStructs.Havok;
+using Lumina.Models.Models;
+using Ktisis.Interface.Components;
+using Ktisis.Interop.Hooks;
 
 namespace Ktisis.History
 {
@@ -52,7 +48,8 @@ namespace Ktisis.History
 
         private unsafe void OnTransformationMatrixChange(Matrix4x4 matrix, Bone? bone, Actor* actor)
         {
-            if (_maxIdx != _currentIdx)
+            if (!PoseHooks.PosingEnabled) return;
+            if (_maxIdx != _currentIdx) //We're changing after doing CTRL+Z at least once.
             {
                 alternativeTimelineWarning();
             }
@@ -82,6 +79,7 @@ namespace Ktisis.History
 
         private unsafe void OnGizmoChange(GizmoState state)
         {
+            if (!PoseHooks.PosingEnabled) return;
             var newState = state;
             if ((newState == GizmoState.IDLE) && (_currentState == GizmoState.EDITING))
             {
@@ -93,7 +91,6 @@ namespace Ktisis.History
                 {
                     alternativeTimelineWarning();
                 }
-                //printHistory();
             }
             _currentState = newState;
         }
@@ -133,7 +130,7 @@ namespace Ktisis.History
         {
             if (!Ktisis.IsInGPose)
             {
-                _isInGpose = Ktisis.IsInGPose;
+                _isInGpose = false; //Without that, _isInGpose stays true all the time after being changed once.
                 return;
             }
 
@@ -185,15 +182,61 @@ namespace Ktisis.History
             _undoIsPressed = newUndoIsPressed;
             _redoIsPressed = newRedoIsPressed;
         }
-
+           
+        //Thanks Emyla for the help on the bone undo/redo!
         private unsafe void UpdateSkeleton()
         {
             var historyToUndo = History![_currentIdx - 1];
             var transformToRollbackTo = historyToUndo.TransformationMatrix;
-            var bone = historyToUndo.Bone;
-            var actor = historyToUndo.Actor;
-            hkQsTransformf* boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
-            Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);  
+            var historyBone = historyToUndo.Bone!;
+            var isGlobalRotation = historyBone is null;
+            var model = historyToUndo.Actor->Model;
+            hkQsTransformf* boneTransform;
+            
+            if (model is null) return;
+
+            if (isGlobalRotation) //There is no bone if you have a global rotation.
+            {
+                boneTransform = &model->Transform;
+                Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);
+                return;
+            }
+
+            var bone = model->Skeleton->GetBone(historyBone!.Partial, historyBone!.Index);
+            boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+           
+            // Write our updated matrix to memory.
+            var initialRot = boneTransform->Rotation.ToQuat();
+            var initialPos = boneTransform->Translation.ToVector3();
+
+            Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);
+
+            // Bone parenting
+            // Adapted from Anamnesis Studio code shared by Yuki - thank you!
+
+            var sourcePos = boneTransform->Translation.ToVector3();
+            var deltaRot = boneTransform->Rotation.ToQuat() / initialRot;
+            var deltaPos = sourcePos - initialPos;
+
+            UpdateChildren(bone, sourcePos, deltaRot, deltaPos);
+        }
+
+        private static unsafe void UpdateChildren(Bone bone, Vector3 sourcePos, Quaternion deltaRot, Vector3 deltaPos)
+        {
+            Matrix4x4 matrix;
+            var descendants = bone!.GetDescendants();
+            foreach (var child in descendants)
+            {
+                var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
+
+                var offset = access->Translation.ToVector3() - sourcePos;
+                offset = Vector3.Transform(offset, deltaRot);
+
+                matrix = Interop.Alloc.GetMatrix(access);
+                matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
+                matrix.Translation = deltaPos + sourcePos + offset;
+                Interop.Alloc.SetMatrix(access, matrix);
+            }
         }
     }
 }
