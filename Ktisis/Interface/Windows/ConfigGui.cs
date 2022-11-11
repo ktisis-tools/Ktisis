@@ -1,13 +1,16 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using System.Text.RegularExpressions;
 
 using ImGuiNET;
 
-using Dalamud.Interface.Components;
+using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
 
 using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
+using Dalamud.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
@@ -98,6 +101,11 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox(Locale.GetString("Show_speed_multipler_inputs"), ref displayMultiplierInputs))
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
 			ImGui.PopItemWidth();
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Text("Keybind");
+			DrawInput(cfg);
 
 			ImGui.EndTabItem();
 		}
@@ -215,6 +223,56 @@ namespace Ktisis.Interface.Windows {
 				cfg.TranslateBones = translateBones;
 
 			ImGui.EndTabItem();
+		}
+
+
+		// input selector
+		public static void DrawInput(Configuration cfg) {
+			var enableKeybinds = cfg.EnableKeybinds;
+			if(ImGui.Checkbox("Enable Keybinds", ref enableKeybinds))
+				cfg.EnableKeybinds = enableKeybinds;
+			if (!cfg.EnableKeybinds) return;
+
+			VirtualKey pressDemo = VirtualKey.NO_KEY;
+			foreach (var key in Enum.GetValues<VirtualKey>()) {
+				if (!Dalamud.KeyState.IsVirtualKeyValid(key)) continue;
+				var state = Dalamud.KeyState[key];
+				if (state) {
+					pressDemo = key;
+					break;
+				}
+			}
+			ImGui.Text($"Pressing Key: {VirtualKeyExtensions.GetFancyName(pressDemo)}");
+			ImGui.SameLine();
+			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X));
+			ImGuiComponents.HelpMarker("Right click on keybind while pressing a key to assign it.");
+
+
+			foreach (var purpose in Input.Purposes) {
+				if (!Input.DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
+					defaultKey = Input.FallbackKey;
+				if (!cfg.KeyBinds.TryGetValue(purpose, out VirtualKey configuredKey))
+					configuredKey = defaultKey;
+
+				ImGui.PushItemWidth(ImGui.GetFontSize() * 6);
+				// TODO: find a way to record a key when pressing it, instead of a select list
+				if (ImGui.BeginCombo($"{Regex.Replace(purpose.ToString(), @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0")}",$"{VirtualKeyExtensions.GetFancyName(configuredKey)}")) {
+					foreach (var key in Enum.GetValues<VirtualKey>()) {
+						if (!Dalamud.KeyState.IsVirtualKeyValid(key) && key != VirtualKey.NO_KEY) continue;
+						if (ImGui.Selectable($"{VirtualKeyExtensions.GetFancyName(key)}", key == configuredKey))
+							if (key == defaultKey) cfg.KeyBinds.Remove(purpose);
+							else cfg.KeyBinds[purpose] = key;
+					}
+
+					ImGui.SetItemDefaultFocus();
+					ImGui.EndCombo();
+				}
+				if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+					if (pressDemo == defaultKey) cfg.KeyBinds.Remove(purpose);
+					else cfg.KeyBinds[purpose] = pressDemo;
+
+				ImGui.PopItemWidth();
+			}
 		}
 	}
 }
