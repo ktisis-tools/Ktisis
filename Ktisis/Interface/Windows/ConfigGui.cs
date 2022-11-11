@@ -1,13 +1,16 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
+using System.Text.RegularExpressions;
 
 using ImGuiNET;
 
-using Dalamud.Interface.Components;
+using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
 
 using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
+using Dalamud.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
@@ -35,16 +38,16 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-			if (ImGui.Begin("Ktisis Settings", ref Visible, ImGuiWindowFlags.NoResize)) {
-				if (ImGui.BeginTabBar("Settings")) {
+			if (ImGui.Begin(Locale.GetString("Ktisis_settings"), ref Visible, ImGuiWindowFlags.NoResize)) {
+				if (ImGui.BeginTabBar(Locale.GetString("Settings"))) {
 					var cfg = Ktisis.Configuration;
-					if (ImGui.BeginTabItem("Interface"))
+					if (ImGui.BeginTabItem(Locale.GetString("Interface")))
 						DrawInterfaceTab(cfg);
-					if (ImGui.BeginTabItem("Overlay"))
+					if (ImGui.BeginTabItem(Locale.GetString("Overlay")))
 						DrawOverlayTab(cfg);
-					if (ImGui.BeginTabItem("Gizmo"))
+					if (ImGui.BeginTabItem(Locale.GetString("Gizmo")))
 						DrawGizmoTab(cfg);
-					if (ImGui.BeginTabItem("Language"))
+					if (ImGui.BeginTabItem(Locale.GetString("Language")))
 						DrawLanguageTab(cfg);
 
 					ImGui.EndTabBar();
@@ -59,45 +62,50 @@ namespace Ktisis.Interface.Windows {
 
 		public static void DrawInterfaceTab(Configuration cfg) {
 
-			ImGui.Text("General");
+			ImGui.Text(Locale.GetString("General"));
 
 			var displayCharName = !cfg.DisplayCharName;
-			if (ImGui.Checkbox("Hide character name", ref displayCharName))
+			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))
 				cfg.DisplayCharName = !displayCharName;
 
 			ImGui.Spacing();
 			ImGui.Separator();
-			ImGui.Text("Transform Table");
+			ImGui.Text(Locale.GetString("Transform_table"));
 
 			ImGui.PushItemWidth(ImGui.GetFontSize() * 4);
 			var transformTablePointDigits = cfg.TransformTableDigitPrecision;
-			if (ImGui.DragInt("Digit Precision", ref transformTablePointDigits, 1f, 1, 8))
+			if (ImGui.DragInt(Locale.GetString("Digit_precision"), ref transformTablePointDigits, 1f, 1, 8))
 				cfg.TransformTableDigitPrecision = transformTablePointDigits;
 
 			var transformTableBaseSpeedPos = cfg.TransformTableBaseSpeedPos;
-			if (ImGui.DragFloat("Base position speed", ref transformTableBaseSpeedPos, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("Base_position_speed"), ref transformTableBaseSpeedPos, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedPos = transformTableBaseSpeedPos;
 
 			var transformTableBaseSpeedRot = cfg.TransformTableBaseSpeedRot;
-			if (ImGui.DragFloat("Base rotation speed", ref transformTableBaseSpeedRot, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("Base_rotation_speed"), ref transformTableBaseSpeedRot, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedRot = transformTableBaseSpeedRot;
 
 			var transformTableBaseSpeedSca = cfg.TransformTableBaseSpeedSca;
-			if (ImGui.DragFloat("Base scale speed", ref transformTableBaseSpeedSca, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("Base_scale_speed"), ref transformTableBaseSpeedSca, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedSca = transformTableBaseSpeedSca;
 
 			var transformTableModifierMultCtrl = cfg.TransformTableModifierMultCtrl;
-			if (ImGui.DragFloat("Ctrl speed multiplier", ref transformTableModifierMultCtrl, 1f, 0.00001f, 10000f, "%.4f",ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("Ctrl_speed_multiplier"), ref transformTableModifierMultCtrl, 1f, 0.00001f, 10000f, "%.4f",ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableModifierMultCtrl = transformTableModifierMultCtrl;
 
 			var transformTableModifierMultShift = cfg.TransformTableModifierMultShift;
-			if (ImGui.DragFloat("Shift speed multiplier", ref transformTableModifierMultShift, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("Shift_speed_multiplier"), ref transformTableModifierMultShift, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableModifierMultShift = transformTableModifierMultShift;
 
 			var displayMultiplierInputs = cfg.TransformTableDisplayMultiplierInputs;
-			if (ImGui.Checkbox("Show speed multipler inputs", ref displayMultiplierInputs))
+			if (ImGui.Checkbox(Locale.GetString("Show_speed_multipler_inputs"), ref displayMultiplierInputs))
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
 			ImGui.PopItemWidth();
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Text("Keybind");
+			DrawInput(cfg);
 
 			ImGui.EndTabItem();
 		}
@@ -106,22 +114,22 @@ namespace Ktisis.Interface.Windows {
 
 		public static void DrawOverlayTab(Configuration cfg) {
 			var drawLines = cfg.DrawLinesOnSkeleton;
-			if (ImGui.Checkbox("Draw lines on skeleton", ref drawLines))
+			if (ImGui.Checkbox(Locale.GetString("Draw_lines_on_skeleton"), ref drawLines))
 				cfg.DrawLinesOnSkeleton = drawLines;
 
 			var lineThickness = cfg.SkeletonLineThickness;
-			if (ImGui.SliderFloat("Lines thickness", ref lineThickness, 0.01F, 15F, "%.1f"))
+			if (ImGui.SliderFloat(Locale.GetString("Lines_thickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
 				cfg.SkeletonLineThickness = lineThickness;
 
 			ImGui.Separator();
-			ImGui.Text("Bone colors");
+			ImGui.Text(Locale.GetString("Bone_colors"));
 
 			bool linkBoneCategoriesColors = cfg.LinkBoneCategoryColors;
-			if (GuiHelpers.IconButtonTooltip(cfg.LinkBoneCategoryColors ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink, linkBoneCategoriesColors ? "Unlink bones colors" : "Link bones colors"))
+			if (GuiHelpers.IconButtonTooltip(cfg.LinkBoneCategoryColors ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink, linkBoneCategoriesColors ? Locale.GetString("Unlink_bones_colors") : Locale.GetString("Link_bones_colors")))
 				cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
 
 			ImGui.SameLine();
-			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Eraser, "Hold Control and Shift to erase colors.", ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
+			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Eraser, Locale.GetString("Hold_Control_and_Shift_to_erase_colors"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
 			{
 				Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 				if (linkBoneCategoriesColors) {
@@ -137,12 +145,12 @@ namespace Ktisis.Interface.Windows {
 			if (linkBoneCategoriesColors)
 			{
 				Vector4 linkedBoneColor = cfg.LinkedBoneCategoryColor;
-				if (ImGui.ColorEdit4("Bones color", ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
+				if (ImGui.ColorEdit4(Locale.GetString("Bone_colors"), ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 					cfg.LinkedBoneCategoryColor = linkedBoneColor;
 			} else {
 
 				ImGui.SameLine();
-				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, "Hold Control and Shift to reset colors to their default values.", ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
+				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, "Hold_Control_and_Shift_to_reset_colors_to_their_default_values", ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
 				{
 					foreach ((string categoryName, Category category) in Category.Categories)
 					{
@@ -152,7 +160,7 @@ namespace Ktisis.Interface.Windows {
 					}
 				}
 
-				ImGui.Text("Categories colors:");
+				ImGui.Text(Locale.GetString("Categories_colors"));
 				ImGui.Columns(2);
 				int i = 0;
 				bool hasShownAnyCategory = false;
@@ -172,7 +180,7 @@ namespace Ktisis.Interface.Windows {
 				}
 				ImGui.Columns();
 				if (!hasShownAnyCategory)
-					ImGui.TextWrapped("Categories will be added after bones are displayed once.");
+					ImGui.TextWrapped(Locale.GetString("Categories_will_be_added_after_bones_are_displayed_once"));
 			}
 
 			ImGui.EndTabItem();
@@ -182,7 +190,7 @@ namespace Ktisis.Interface.Windows {
 
 		public static void DrawGizmoTab(Configuration cfg) {
 			var allowAxisFlip = cfg.AllowAxisFlip;
-			if (ImGui.Checkbox("Flip axis to face camera", ref allowAxisFlip))
+			if (ImGui.Checkbox(Locale.GetString("Flip_axis_to_face_camera"), ref allowAxisFlip))
 				cfg.AllowAxisFlip = allowAxisFlip;
 
 			ImGui.EndTabItem();
@@ -199,7 +207,7 @@ namespace Ktisis.Interface.Windows {
 				}
 			}
 
-			if (ImGui.BeginCombo("Language", selected)) {
+			if (ImGui.BeginCombo(Locale.GetString("Language"), selected)) {
 				foreach (var lang in Locale.Languages) {
 					var name = $"{lang}";
 					if (ImGui.Selectable(name, name == selected))
@@ -211,10 +219,60 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			var translateBones = cfg.TranslateBones;
-			if (ImGui.Checkbox("Translate bone names", ref translateBones))
+			if (ImGui.Checkbox(Locale.GetString("Translate_bone_names"), ref translateBones))
 				cfg.TranslateBones = translateBones;
 
 			ImGui.EndTabItem();
+		}
+
+
+		// input selector
+		public static void DrawInput(Configuration cfg) {
+			var enableKeybinds = cfg.EnableKeybinds;
+			if(ImGui.Checkbox("Enable Keybinds", ref enableKeybinds))
+				cfg.EnableKeybinds = enableKeybinds;
+			if (!cfg.EnableKeybinds) return;
+
+			VirtualKey pressDemo = VirtualKey.NO_KEY;
+			foreach (var key in Enum.GetValues<VirtualKey>()) {
+				if (!Dalamud.KeyState.IsVirtualKeyValid(key)) continue;
+				var state = Dalamud.KeyState[key];
+				if (state) {
+					pressDemo = key;
+					break;
+				}
+			}
+			ImGui.Text($"Pressing Key: {VirtualKeyExtensions.GetFancyName(pressDemo)}");
+			ImGui.SameLine();
+			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X));
+			ImGuiComponents.HelpMarker("Right click on keybind while pressing a key to assign it.");
+
+
+			foreach (var purpose in Input.Purposes) {
+				if (!Input.DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
+					defaultKey = Input.FallbackKey;
+				if (!cfg.KeyBinds.TryGetValue(purpose, out VirtualKey configuredKey))
+					configuredKey = defaultKey;
+
+				ImGui.PushItemWidth(ImGui.GetFontSize() * 6);
+				// TODO: find a way to record a key when pressing it, instead of a select list
+				if (ImGui.BeginCombo($"{Regex.Replace(purpose.ToString(), @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0")}",$"{VirtualKeyExtensions.GetFancyName(configuredKey)}")) {
+					foreach (var key in Enum.GetValues<VirtualKey>()) {
+						if (!Dalamud.KeyState.IsVirtualKeyValid(key) && key != VirtualKey.NO_KEY) continue;
+						if (ImGui.Selectable($"{VirtualKeyExtensions.GetFancyName(key)}", key == configuredKey))
+							if (key == defaultKey) cfg.KeyBinds.Remove(purpose);
+							else cfg.KeyBinds[purpose] = key;
+					}
+
+					ImGui.SetItemDefaultFocus();
+					ImGui.EndCombo();
+				}
+				if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+					if (pressDemo == defaultKey) cfg.KeyBinds.Remove(purpose);
+					else cfg.KeyBinds[purpose] = pressDemo;
+
+				ImGui.PopItemWidth();
+			}
 		}
 	}
 }

@@ -8,6 +8,38 @@
         You will need to define translations of all enum variants (i.e. Race, Tribe).
     */
 
+
+    //// Plugin ////
+
+    // ConfigGui.cs
+    "Ktisis_settings": "Ktisis Settings",
+    "Settings": "Settings",
+    "Language": "Language",
+    "Interface": "Interface",
+    "Gizmo": "Gizmo",
+    "Overlay": "Overlay",
+    "General": "General",
+    "Hide_char_name": "Hide character name",
+    "Transform_table": "Transform Table",
+    "Digit_precision": "Digit Precision",
+    "Base_position_speed": "Base position speed",
+    "Base_rotation_speed": "Base rotation speed",
+    "Base_scale_speed": "Base scale speed",
+    "Ctrl_speed_multiplier": "Ctrl speed multiplier",
+    "Shift_speed_multiplier": "Shift speed multiplier",
+    "Show_speed_multipler_inputs": "Show speed multipler inputs",
+    "Draw_lines_on_skeleton": "Draw lines on skeleton",
+    "Lines_thickness": "Lines thickness",
+    "Bone_colors": "Bone colors",
+    "Hold_Control_and_Shift_to_erase_colors": "Hold Control and Shift to erase colors.",
+    "Unlink_bones_colors": "Unlink bones colors",
+    "Link_bones_colors": "Link bones colors",
+    "Hold_Control_and_Shift_to_reset_colors_to_their_default_values": "Hold Control and Shift to reset colors to their default values.",
+    "Categories_colors": "Categories colors:",
+    "Categories_will_be_added_after_bones_are_displayed_once": "Categories will be added after bones are displayed once.",
+    "Flip_axis_to_face_camera": "Flip axis to face camera",
+    "Translate_bone_names": "Translate bone names",
+
     //// Game Jargon ////
 
     // Race Names
