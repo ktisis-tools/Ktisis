@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
 namespace Ktisis.Overlay {
 	public static class Selection {
@@ -51,6 +52,9 @@ namespace Ktisis.Overlay {
 		public static string? ClickedItem = null;
 
 		public static void DrawList(List<string> items) {
+			if (ImGuizmo.IsUsing())
+				return;
+
 			// Capture mouse input to intercept mouse clicks.
 			// Note that this prevents button presses from going to the game!
 			ImGui.SetNextFrameWantCaptureMouse(true);
