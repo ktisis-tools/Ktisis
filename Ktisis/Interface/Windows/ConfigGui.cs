@@ -35,19 +35,19 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-            if (ImGui.Begin(Locale.GetString("Ktisis_settings"), ref Visible, ImGuiWindowFlags.NoResize)) {
-                if (ImGui.BeginTabBar(Locale.GetString("Settings"))) {
-                    var cfg = Ktisis.Configuration;
-                    if (ImGui.BeginTabItem(Locale.GetString("Interface")))
-                        DrawInterfaceTab(cfg);
-                    if (ImGui.BeginTabItem(Locale.GetString("Overlay")))
-                        DrawOverlayTab(cfg);
-                    if (ImGui.BeginTabItem(Locale.GetString("Gizmo")))
-                        DrawGizmoTab(cfg);
-                    if (ImGui.BeginTabItem(Locale.GetString("Language")))
-                        DrawLanguageTab(cfg);
+			if (ImGui.Begin(Locale.GetString("Ktisis_settings"), ref Visible, ImGuiWindowFlags.NoResize)) {
+				if (ImGui.BeginTabBar(Locale.GetString("Settings"))) {
+					var cfg = Ktisis.Configuration;
+					if (ImGui.BeginTabItem(Locale.GetString("Interface")))
+						DrawInterfaceTab(cfg);
+					if (ImGui.BeginTabItem(Locale.GetString("Overlay")))
+						DrawOverlayTab(cfg);
+					if (ImGui.BeginTabItem(Locale.GetString("Gizmo")))
+						DrawGizmoTab(cfg);
+					if (ImGui.BeginTabItem(Locale.GetString("Language")))
+						DrawLanguageTab(cfg);
 
-                    ImGui.EndTabBar();
+					ImGui.EndTabBar();
                 }
             }
 
