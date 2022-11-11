@@ -233,7 +233,7 @@ namespace Ktisis.Interface.Windows {
 				cfg.EnableKeybinds = enableKeybinds;
 			if (!cfg.EnableKeybinds) return;
 
-			VirtualKey? pressDemo = VirtualKey.NO_KEY;
+			VirtualKey pressDemo = VirtualKey.NO_KEY;
 			foreach (var key in Enum.GetValues<VirtualKey>()) {
 				if (!Dalamud.KeyState.IsVirtualKeyValid(key)) continue;
 				var state = Dalamud.KeyState[key];
@@ -242,7 +242,7 @@ namespace Ktisis.Interface.Windows {
 					break;
 				}
 			}
-			ImGui.Text($"Pressing Key: {pressDemo}");
+			ImGui.Text($"Pressing Key: {VirtualKeyExtensions.GetFancyName(pressDemo)}");
 			ImGui.SameLine();
 			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X));
 			ImGuiComponents.HelpMarker("Right click on keybind while pressing a key to assign it.");
@@ -256,10 +256,10 @@ namespace Ktisis.Interface.Windows {
 
 				ImGui.PushItemWidth(ImGui.GetFontSize() * 6);
 				// TODO: find a way to record a key when pressing it, instead of a select list
-				if (ImGui.BeginCombo($"{Regex.Replace(purpose.ToString(), @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0")}",$"{configuredKey}")) {
+				if (ImGui.BeginCombo($"{Regex.Replace(purpose.ToString(), @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0")}",$"{VirtualKeyExtensions.GetFancyName(configuredKey)}")) {
 					foreach (var key in Enum.GetValues<VirtualKey>()) {
 						if (!Dalamud.KeyState.IsVirtualKeyValid(key) && key != VirtualKey.NO_KEY) continue;
-						if (ImGui.Selectable($"{key}", key == configuredKey))
+						if (ImGui.Selectable($"{VirtualKeyExtensions.GetFancyName(key)}", key == configuredKey))
 							if (key == defaultKey) cfg.KeyBinds.Remove(purpose);
 							else cfg.KeyBinds[purpose] = key;
 					}
@@ -267,9 +267,9 @@ namespace Ktisis.Interface.Windows {
 					ImGui.SetItemDefaultFocus();
 					ImGui.EndCombo();
 				}
-				if (ImGui.IsItemClicked(ImGuiMouseButton.Right) && pressDemo != null)
+				if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
 					if (pressDemo == defaultKey) cfg.KeyBinds.Remove(purpose);
-					else cfg.KeyBinds[purpose] = (VirtualKey)pressDemo;
+					else cfg.KeyBinds[purpose] = pressDemo;
 
 				ImGui.PopItemWidth();
 			}
