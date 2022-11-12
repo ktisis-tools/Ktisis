@@ -1,12 +1,9 @@
-﻿using Ktisis.Interface.Components;
-using Ktisis.Structs.Actor;
+﻿using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ktisis.History
 {
@@ -21,6 +18,11 @@ namespace Ktisis.History
             this.TransformationMatrix = transformationMatrix;
             this.Bone = bone;
             this.Actor = Actor;
+        }
+
+        public unsafe HistoryItem Clone()
+        {
+            return new HistoryItem(TransformationMatrix, Bone, Actor);
         }
     }
 }

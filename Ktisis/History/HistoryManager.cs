@@ -3,12 +3,14 @@ using Dalamud.Game.ClientState.Keys;
 using Dalamud.Logging;
 
 using Ktisis.Events;
+using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Localization;
 using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+using Ktisis.Interop.Hooks;
 
 using System;
 using System.Collections.Generic;
@@ -16,9 +18,7 @@ using System.Numerics;
 
 using static FFXIVClientStructs.Havok.hkaPose;
 using FFXIVClientStructs.Havok;
-using Lumina.Models.Models;
-using Ktisis.Interface.Components;
-using Ktisis.Interop.Hooks;
+using System.Linq;
 
 namespace Ktisis.History
 {
@@ -27,7 +27,8 @@ namespace Ktisis.History
         public List<HistoryItem>? History { get; set; }
         private int _currentIdx = 0;
         private int _maxIdx = 0;
-        private GizmoState _currentState;
+        private GizmoState _currentGizmoState;
+        private TransformTableState _currentTtState;
         private bool _isInGpose = false;
         private bool _undoIsPressed;
         private bool _redoIsPressed;
@@ -35,8 +36,29 @@ namespace Ktisis.History
 
         private void alternativeTimelineWarning()
         {
+            if (History is null) return;
+
             _alternativeTimelinesCreated++;
             PluginLog.Information($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
+
+            var newHistory = History!
+                .Select(e => e.Clone())
+                .ToList()
+                .GetRange(0, _currentIdx);
+
+            printHistory(_currentIdx - 1);
+            var currBone = newHistory[_currentIdx - 1].Bone;
+            var isBoneInHistory = newHistory?.FirstOrDefault(historyItem => historyItem.Bone?.UniqueName == currBone?.UniqueName) != null;
+
+            //We need to decrement by 1 if there is only one appearance of that bone in the History => It is the idle state.
+            var offset = isBoneInHistory ? 1 : 0;
+
+            
+
+            var newMaxIdx = _currentIdx - offset;
+            History = newHistory!.GetRange(0, newMaxIdx);
+            _maxIdx = newMaxIdx;
+            _currentIdx = newMaxIdx; 
         }
 
         private unsafe HistoryManager() 
@@ -46,15 +68,25 @@ namespace Ktisis.History
             EventManager.OnGizmoChange += this.OnGizmoChange;
         }
 
-        private unsafe void OnTransformationMatrixChange(Matrix4x4 matrix, Bone? bone, Actor* actor)
+        private unsafe void OnTransformationMatrixChange(TransformTableState state, Matrix4x4 matrix, Bone? bone, Actor* actor)
         {
             if (!PoseHooks.PosingEnabled) return;
-            if (_maxIdx != _currentIdx) //We're changing after doing CTRL+Z at least once.
+            var newState = state;
+            if ((newState == TransformTableState.EDITING) && (_currentTtState == TransformTableState.IDLE))
             {
-                alternativeTimelineWarning();
+                PluginLog.Information("Started TT edit");
+                if (_maxIdx != _currentIdx) alternativeTimelineWarning();
+                var isBoneInHistory = History?.FirstOrDefault(historyItem => historyItem.Bone?.UniqueName == bone?.UniqueName) != null;
+                if (!isBoneInHistory) AddEntryToHistory(matrix, bone);
             }
-            _maxIdx = _currentIdx;
-            AddEntryToHistory(matrix, bone);
+
+            if ((newState == TransformTableState.IDLE) && (_currentTtState == TransformTableState.EDITING))
+            {
+                PluginLog.Information("Finished TT edit");
+                AddEntryToHistory(matrix, bone);
+            }
+
+            _currentTtState = newState;
         }
 
         private unsafe void AddEntryToHistory(Matrix4x4 tt, Bone? bone)
@@ -63,29 +95,19 @@ namespace Ktisis.History
             _currentIdx++;
             _maxIdx++;
             PluginLog.Information($"Current Idx: {_currentIdx} - Max Idx: {_maxIdx}");
-            printHistory();
+            printHistory(_maxIdx);
         }
 
-        private string printTransformationMatrix(Matrix4x4 m)
-        {
-            return "\n" +
-                   $"[{m.M11}, {m.M12}, {m.M13}, {m.M14}]\n" +
-                   $"[{m.M21}, {m.M22}, {m.M23}, {m.M24}]\n" +
-                   $"[{m.M31}, {m.M32}, {m.M33}, {m.M34}]\n" +
-                   $"[{m.M41}, {m.M42}, {m.M43}, {m.M44}]\n";
-        }
-        private void printHistory()
+        private void printHistory(int until)
         {
             var str = "\n";
-            for (int i = 0; i < _maxIdx; i++)
+            for (int i = 0; i < until; i++)
             {
                 str += $"{i + 1}: ";
                 var entry = History![i];
-                //var matrixStr = printTransformationMatrix(entry.TransformationMatrix);
-                //str += $"Transformation Matrix {matrixStr}
-                str += $"Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}" +
-                    $"- PartialId {entry.Bone.Partial}\n" +
-                    $"- Index {entry.Bone.Index}\n";
+                if (entry.Bone is null) str += $"Bone Global";
+                else str += $"Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}";
+                str += "\n";
             }
             PluginLog.Information(str);
         }
@@ -93,19 +115,25 @@ namespace Ktisis.History
         private unsafe void OnGizmoChange(GizmoState state)
         {
             if (!PoseHooks.PosingEnabled) return;
+
             var newState = state;
-            if ((newState == GizmoState.IDLE) && (_currentState == GizmoState.EDITING))
+            var bone = Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton);
+            var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+            var matrix = Interop.Alloc.GetMatrix(boneTransform);
+
+            if ((newState == GizmoState.EDITING) && (_currentGizmoState == GizmoState.IDLE))
             {
-                var bone = Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton);
-                var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
-                AddEntryToHistory(Interop.Alloc.GetMatrix(boneTransform), Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton));
-                _maxIdx = _currentIdx; //Discarding everything contained after _currentIdx because the user won't need it anymore.
-                if (_maxIdx != _currentIdx)
-                {
-                    alternativeTimelineWarning();
-                }
+                PluginLog.Information("Started Gizmo edit");
+                if (_maxIdx != _currentIdx) alternativeTimelineWarning();
+                var isBoneInHistory = History?.FirstOrDefault(historyItem => historyItem.Bone?.UniqueName == bone?.UniqueName) != null;
+                if (!isBoneInHistory) AddEntryToHistory(matrix, bone);
             }
-            _currentState = newState;
+            if ((newState == GizmoState.IDLE) && (_currentGizmoState == GizmoState.EDITING))
+            {
+                PluginLog.Information("Ended Gizmo edit");
+                AddEntryToHistory(matrix, bone);
+            }
+            _currentGizmoState = newState;
         }
 
 
@@ -169,6 +197,7 @@ namespace Ktisis.History
                     if (_currentIdx > 1)
                     {
                         _currentIdx--;
+                        PluginLog.Information($"Current Idx: {_currentIdx}");
                         UpdateSkeleton();
                         PluginLog.Information($"CTRL+Z pressed. Undo.");
                     }
@@ -184,6 +213,7 @@ namespace Ktisis.History
                     if (_currentIdx < _maxIdx)
                     {
                         _currentIdx++;
+                        PluginLog.Information($"Current Idx: {_currentIdx}");
                         UpdateSkeleton();
                         PluginLog.Information("CTRL+Y pressed. Redo.");
                     }
@@ -204,20 +234,17 @@ namespace Ktisis.History
             var historyBone = historyToUndo.Bone!;
             var isGlobalRotation = historyBone is null;
             var model = historyToUndo.Actor->Model;
-            hkQsTransformf* boneTransform;
-            
-            if (model is null) return;
 
+            if (model is null) return;
             if (isGlobalRotation) //There is no bone if you have a global rotation.
             {
-                boneTransform = &model->Transform;
-                Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);
+                Interop.Alloc.SetMatrix(&model->Transform, transformToRollbackTo);
                 return;
             }
 
             var bone = model->Skeleton->GetBone(historyBone!.Partial, historyBone!.Index);
-            boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
-           
+            var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+
             // Write our updated matrix to memory.
             var initialRot = boneTransform->Rotation.ToQuat();
             var initialPos = boneTransform->Translation.ToVector3();
@@ -231,6 +258,11 @@ namespace Ktisis.History
             var deltaRot = boneTransform->Rotation.ToQuat() / initialRot;
             var deltaPos = sourcePos - initialPos;
 
+            UpdateChildren(bone, sourcePos, deltaRot, deltaPos);
+        }
+
+        private static unsafe void UpdateChildren(Bone bone, Vector3 sourcePos, Quaternion deltaRot, Vector3 deltaPos)
+        {
             Matrix4x4 matrix;
             var descendants = bone!.GetDescendants();
             foreach (var child in descendants)

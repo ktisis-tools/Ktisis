@@ -30,6 +30,7 @@ namespace Ktisis.Interface.Components {
 		public Vector3 Rotation;
 		public Vector3 Scale;
 
+		private TransformTableState _state = TransformTableState.IDLE;
 		public void FetchConfigurations() {
 			BaseSpeedPos = Ktisis.Configuration.TransformTableBaseSpeedPos;
 			BaseSpeedRot = Ktisis.Configuration.TransformTableBaseSpeedRot;
@@ -59,7 +60,8 @@ namespace Ktisis.Interface.Components {
 
         // Draw table.
 
-        public unsafe bool DrawTable() {
+        public unsafe bool DrawTable()
+		{
 			var result = false;
 
 			FetchConfigurations();
@@ -72,7 +74,7 @@ namespace Ktisis.Interface.Components {
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
 			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
 
- 			// Attempt to find the exact size for any font and font size.
+			// Attempt to find the exact size for any font and font size.
 			float[] sizes = new float[3];
 			sizes[0] = GuiHelpers.CalcIconSize(iconPos).X;
 			sizes[1] = GuiHelpers.CalcIconSize(iconRot).X;
@@ -81,21 +83,34 @@ namespace Ktisis.Interface.Components {
 
 			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
 			result |= ImGui.DragFloat3("##Position", ref Position, 0.0005f);
-			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.FireOnTransformationMatrixChangeEvent();
+			UpdateTransformTableState();
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
 			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
-			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.FireOnTransformationMatrixChangeEvent();
+            UpdateTransformTableState();
             ImGui.SameLine();
-            GuiHelpers.IconTooltip(iconRot, "Rotation", true);
+			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
 			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
-			if (ImGui.IsItemDeactivatedAfterEdit()) EventManager.FireOnTransformationMatrixChangeEvent();
+            UpdateTransformTableState();
             ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
 			return result;
 		}
+
+		private unsafe void UpdateTransformTableState()
+		{
+			if (ImGui.IsItemClicked() &&
+				(ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) || ImGui.IsMouseDown(ImGuiMouseButton.Left)))
+			{
+                _state = TransformTableState.EDITING;
+            }
+			
+			if (ImGui.IsItemDeactivatedAfterEdit()) _state = TransformTableState.IDLE;
+
+            EventManager.FireOnTransformationMatrixChangeEvent(_state);
+        }
 
 		public bool Draw(Bone bone) {
 			var result = false;
