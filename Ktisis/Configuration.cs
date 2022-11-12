@@ -35,7 +35,7 @@ namespace Ktisis {
 
 		// Input
 		public bool EnableKeybinds { get; set; } = true;
-		public Dictionary<Input.Purpose, VirtualKey> KeyBinds { get; set; } = new();
+		public Dictionary<Input.Purpose, List<VirtualKey>> KeyBinds { get; set; } = new();
 
 		// Overlay
 

@@ -17,6 +17,7 @@ namespace Ktisis.Interface {
 		//      (held/release/changed [+ extra conditions] and what it executes )
 		//  - add the key action in Purpose enum
 		//  - add the default key in DefaultKeys
+		//  - add translation, handle format: Keyboard_Action_{Purpose}
 
 		public void Monitor(Framework framework) {
 			if (!Ktisis.IsInGPose || IsChatInputActive() || !Ktisis.Configuration.EnableKeybinds) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis.cs
@@ -52,14 +53,14 @@ namespace Ktisis.Interface {
 			SwitchToUniversal,
 		}
 
-		public static readonly Dictionary<Purpose, VirtualKey> DefaultKeys = new(){
-			{Purpose.GlobalModifierKey, VirtualKey.NO_KEY},
-			{Purpose.SwitchToTranslate, VirtualKey.G},
-			{Purpose.SwitchToRotate, VirtualKey.R},
-			{Purpose.SwitchToScale, VirtualKey.T},
-			{Purpose.ToggleLocalWorld, VirtualKey.X},
-			{Purpose.HoldToHideSkeleton, VirtualKey.V},
-			{Purpose.SwitchToUniversal, VirtualKey.U},
+		public static readonly Dictionary<Purpose, List<VirtualKey>> DefaultKeys = new(){
+			{Purpose.GlobalModifierKey, new(){VirtualKey.NO_KEY}},
+			{Purpose.SwitchToTranslate, new(){VirtualKey.G}},
+			{Purpose.SwitchToRotate, new(){VirtualKey.R}},
+			{Purpose.SwitchToScale, new(){VirtualKey.T}},
+			{Purpose.ToggleLocalWorld, new(){VirtualKey.X}},
+			{Purpose.HoldToHideSkeleton, new(){VirtualKey.V}},
+			{Purpose.SwitchToUniversal, new(){VirtualKey.U}},
 		};
 
 		// Thanks to (Edited) for the intgration with the Framework Update <3
@@ -81,7 +82,7 @@ namespace Ktisis.Interface {
 		}
 
 		// Below are the methods and variables needed for Monitor to handle inputs
-		public const VirtualKey FallbackKey = VirtualKey.NO_KEY;
+		public static List<VirtualKey> FallbackKey = new() { VirtualKey.NO_KEY };
 
 		private Dictionary<Purpose, bool> PrevriousKeyStates = new();
 		private Dictionary<Purpose, bool>? CurrentKeyStates = new();
@@ -89,20 +90,27 @@ namespace Ktisis.Interface {
 		public static IEnumerable<Purpose> Purposes {
 			get => Enum.GetValues<Purpose>().ToImmutableList();
 		}
-		private static VirtualKey PurposeToVirtualKey(Purpose purpose) {
-			if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out VirtualKey key)) {
-				if (!DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
-					defaultKey = FallbackKey;
-				key = defaultKey;
+		private static List<VirtualKey> PurposeToVirtualKeys(Purpose purpose) {
+			if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out List<VirtualKey>? keys)) {
+				if (!DefaultKeys.TryGetValue(purpose, out List<VirtualKey>? defaultKeys))
+					defaultKeys = FallbackKey;
+				keys = defaultKeys;
 			}
-			return Services.KeyState.IsVirtualKeyValid(key) ? key : FallbackKey;
+			if(keys == null) return FallbackKey;
+			foreach (var key in keys)
+				if (!Services.KeyState.IsVirtualKeyValid(key)) return FallbackKey;
+
+			return keys;
 		}
 		private void ReadPurposesStates() {
 			CurrentKeyStates = Purposes.Select(p => {
-				var key = PurposeToVirtualKey(p);
-				bool state;
-				if (key != VirtualKey.NO_KEY) state = Services.KeyState[key];
-				else state = false;
+				var keys = PurposeToVirtualKeys(p);
+				bool state = true;
+
+				if (keys == FallbackKey) state = false;
+				else foreach (var key in keys)
+						state &= Services.KeyState[key];
+
 				return (purpose: p, state);
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
@@ -110,8 +118,11 @@ namespace Ktisis.Interface {
 
 		// Below are methods to check different kind of key state
 		private bool IsPurposeChanged(Purpose purpose) {
-			var modifierKey = PurposeToVirtualKey(Purpose.GlobalModifierKey);
-			if (purpose != Purpose.GlobalModifierKey && modifierKey != VirtualKey.NO_KEY && !Services.KeyState[modifierKey]) return false;
+			var modifierKeys = PurposeToVirtualKeys(Purpose.GlobalModifierKey);
+			if (purpose != Purpose.GlobalModifierKey && modifierKeys != FallbackKey) {
+				foreach (var key in modifierKeys)
+					if(!Services.KeyState[key]) return false;
+			}
 			if (!PrevriousKeyStates.TryGetValue(purpose, out bool previous)) return false;
 			if (CurrentKeyStates == null) return false;
 			if (!CurrentKeyStates.TryGetValue(purpose, out bool current)) return false;
