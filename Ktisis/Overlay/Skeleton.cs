@@ -90,7 +90,7 @@ namespace Ktisis.Overlay {
 					// Access bone transform
 					var transform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 
-					if (float.IsNaN(transform->Translation.X))
+					if (bone.IsBusted())
 						continue; // bone's busted, skip it.
 
 					// Get bone color and screen position

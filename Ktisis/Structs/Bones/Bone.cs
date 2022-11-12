@@ -71,5 +71,11 @@ namespace Ktisis.Structs.Bones {
 				list.AddRange(list[i].GetChildren());
 			return list;
 		}
+
+		public bool IsBusted() =>
+			float.IsNaN(Transform.Translation.X)
+			|| float.IsNaN(Transform.Translation.Y)
+			|| float.IsNaN(Transform.Translation.Z)
+			|| Transform.Rotation.W == 0;
 	}
 }
