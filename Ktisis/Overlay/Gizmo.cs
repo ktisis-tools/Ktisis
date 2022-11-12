@@ -1,16 +1,8 @@
-﻿using System;
-using System.Numerics;
-
-using Dalamud.Logging;
-
-using Dalamud.Game.ClientState.Keys;
-using ImGuiNET;
-
+﻿using ImGuiNET;
 using ImGuizmoNET;
 
 using Ktisis.Events;
 
-using System;
 using System.Numerics;
 
 namespace Ktisis.Overlay
