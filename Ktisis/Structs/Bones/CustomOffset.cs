@@ -20,13 +20,13 @@ namespace Ktisis.Structs.Bones {
 
 			if (gender == Gender.Male)
 				switch (race) {
-					case Race.Lalafell: return BodyType.LalafellinMale;
+					case Race.Lalafell: return BodyType.LalafellMale;
 					case Race.Roegadyn:
 					case Race.Hrothgar: return BodyType.HrothgarRoegadyn;
-					default: return BodyType.tallMale;
+					default: return BodyType.TallMale;
 				} else switch (race) {
-					case Race.Lalafell: return BodyType.LalafellinFemale;
-					default: return BodyType.tallFemale;
+					case Race.Lalafell: return BodyType.LalafellFemale;
+					default: return BodyType.TallFemale;
 				}
 		}
 
@@ -34,12 +34,13 @@ namespace Ktisis.Structs.Bones {
 		public static unsafe Vector3 CalculateWorldOffset(ActorModel* model, Bone bone) =>
 			Vector3.Transform(Vector3.Transform(GetBoneOffset(bone), bone.Transform.Rotation.ToQuat()), model->Rotation);
 
+
 		public enum BodyType {
-			tallMale,
-			tallFemale,
+			TallMale,
+			TallFemale,
 			HrothgarRoegadyn,
-			LalafellinMale,
-			LalafellinFemale,
+			LalafellMale,
+			LalafellFemale,
 		}
 	}
 }
