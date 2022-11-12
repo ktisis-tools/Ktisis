@@ -1,13 +1,13 @@
 ﻿namespace Ktisis.Overlay
 {
-	/* Guizmo State machine:
-							  ^
-							  |
-							  |event: OnGuizmoChange(GuizmoState)
-							  |
-							  |
-							  |
-				IsUsing()     |
+    /* Guizmo State machine:
+								^
+								|
+								|event: OnGuizmoChange(GuizmoState)
+								|
+								|
+								|
+					IsUsing()	|
 			 +----------------+---------+
 			 |                          |
 			 |                          v
@@ -21,7 +21,7 @@
 					|
 					v
  */
-	public enum GizmoState
+    public enum GizmoState
 	{
 		IDLE,
 		EDITING,

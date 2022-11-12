@@ -17,7 +17,7 @@ namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
 		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.75f);
 		private static bool IsSettingsHovered = false;
-		private static bool IsSettingsActive  = false;
+		private static bool IsSettingsActive = false;
 
 		// utils
 		public static void VerticalAlignTextOnButtonSize(float percentage = 0.667f) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ButtonSize.Y / 2 - ImGui.GetFontSize() * percentage)); // align text with button size
