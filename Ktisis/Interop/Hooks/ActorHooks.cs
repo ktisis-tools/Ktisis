@@ -3,7 +3,7 @@
 using Dalamud.Hooking;
 
 using Ktisis.Structs.Actor;
-using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis.Interop.Hooks {
 	internal class ActorHooks {
