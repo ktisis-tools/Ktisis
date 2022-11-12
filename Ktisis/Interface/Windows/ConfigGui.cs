@@ -7,13 +7,14 @@ using ImGuiNET;
 
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
+using Dalamud.Interface.Components;
 
 using Ktisis.Util;
 using Ktisis.Localization;
+using Ktisis.Overlay;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
-using Dalamud.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
@@ -309,7 +310,7 @@ namespace Ktisis.Interface.Windows {
 		}
 		private static string PrettyKeys(List<VirtualKey>  keys) => string.Join(" + ", keys.Select(k => VirtualKeyExtensions.GetFancyName(k)));
 
-		public static void DrawDataTab(Configuration cfg) {
+		public static unsafe void DrawDataTab(Configuration cfg) {
 			ImGui.Spacing();
 			var validGlamPlatesFound = GlamourDresser.CountValid();
 			GuiHelpers.TextTooltip($"Glamour Plates in memory: {validGlamPlatesFound}  ", $"Found {validGlamPlatesFound} valid Glamour Plates");
@@ -325,6 +326,75 @@ namespace Ktisis.Interface.Windows {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
+
+			ImGui.Separator();
+			ImGui.Spacing();
+			ImGui.Text($"Custom bone offsets");
+
+			var bone = Skeleton.GetSelectedBone();
+			if (bone != null) {
+				var targetBodyType = CustomOffset.GetBodyTypeFromActor(Ktisis.Target);
+				var targetBoneOffset = CustomOffset.GetBoneOffset(bone);
+
+				ImGui.Text($"Edit {targetBodyType}'s {bone.LocaleName}  ");
+				ImGui.SameLine();
+
+				if (!Ktisis.Configuration.CustomBoneOffset.TryGetValue(targetBodyType, out var _))
+					Ktisis.Configuration.CustomBoneOffset.Add(targetBodyType,new());
+
+				ImGui.SameLine();
+				if (GuiHelpers.IconButton(FontAwesomeIcon.Trash,default,"dropSingleOffset"))
+					Ktisis.Configuration.CustomBoneOffset[targetBodyType][bone.HkaBone.Name.String] = new();
+
+				if (ImGui.DragFloat3($"##currentTargetOffset", ref targetBoneOffset, .00001f, 0, 0, "%.5f"))
+					Ktisis.Configuration.CustomBoneOffset[targetBodyType][bone.HkaBone.Name.String] = targetBoneOffset;
+			} else {
+				ImGuiComponents.HelpMarker("Select a Bone to add a position offset.");
+			}
+
+			ImGui.Spacing();
+
+			foreach (var bt in Ktisis.Configuration.CustomBoneOffset) {
+				var bodyType = bt.Key;
+				if (ImGui.CollapsingHeader($"{bodyType}")) {
+					ImGui.Text($"{bodyType}");
+					ImGui.SameLine();
+					if (GuiHelpers.IconButton(FontAwesomeIcon.Trash, default, $"drop##{bodyType}"))
+						Ktisis.Configuration.CustomBoneOffset[bodyType] = new();
+
+					ImGui.SameLine();
+					if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"export##{bodyType}"))
+						ImGui.SetClipboardText(Ktisis.Configuration.CustomBoneOffset[bodyType].ToString());
+
+					if (ImGui.BeginTable("offsetBonesTable", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.BordersInnerH | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.PadOuterX)) {
+
+						ImGui.TableSetupScrollFreeze(0, 1); // Make top row always visible
+						ImGui.TableSetupColumn("Bone");
+						ImGui.TableSetupColumn("X");
+						ImGui.TableSetupColumn("Y");
+						ImGui.TableSetupColumn("Z");
+						ImGui.TableHeadersRow();
+
+						foreach (var os in bt.Value) {
+							var boneName = os.Key;
+							var offsets = os.Value;
+							ImGui.TableNextRow();
+							ImGui.TableNextColumn();
+							if (ImGui.Selectable($"{Locale.GetBoneName(boneName)}##{bodyType}##customBoneOffset", false, ImGuiSelectableFlags.SpanAllColumns))
+								ImGui.SetClipboardText(offsets.ToString());
+							ImGui.TableNextColumn();
+							ImGui.Text($"{offsets.X:F5}");
+							ImGui.TableNextColumn();
+							ImGui.Text($"{offsets.Y:F5}");
+							ImGui.TableNextColumn();
+							ImGui.Text($"{offsets.Z:F5}");
+						}
+						ImGui.EndTable();
+					}
+				}
+			}
+			if (GuiHelpers.IconButton(FontAwesomeIcon.Trash, default, "dropAllOffset"))
+				Ktisis.Configuration.CustomBoneOffset = new();
 
 			ImGui.Spacing();
 		}

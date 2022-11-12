@@ -41,8 +41,8 @@ namespace Ktisis.Structs.Bones {
 
 		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate) => Pose->AccessBoneModelSpace(Index, propagate);
 
-		public unsafe Vector3 GetWorldPos(ActorModel* model) => model->Position + CustomOffset.GetBoneOffset(this) + Transform.Translation.Rotate(model->Rotation) * model->Height * model->Scale;
-
+		public unsafe Vector3 GetWorldPos(ActorModel* model) => model->Position + GetOffset(model) + Transform.Translation.Rotate(model->Rotation) * model->Height * model->Scale;
+		private unsafe Vector3 GetOffset(ActorModel* model) => CustomOffset.CalculateWorldOffset(model, this);
 		public unsafe List<Bone> GetChildren() {
 			var result = new List<Bone>();
 			// Add child bones from same partial
