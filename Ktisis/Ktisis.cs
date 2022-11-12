@@ -5,8 +5,9 @@ using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Interface;
-using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Interface.Windows.Workspace;
+using Ktisis.History;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
