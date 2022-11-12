@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
 namespace Ktisis.Overlay {
 	public static class Selection {
@@ -23,16 +24,18 @@ namespace Ktisis.Overlay {
 
 			// Draw them dots
 
-			foreach (var dot in DrawQueue) {
-				var col = dot.Color;
-				if (dot.IsHovered()) {
-					col |= 0xff000000;
-					hovered.Add(dot.Name);
-				}
+			if (!ImGuizmo.IsUsing()) {
+				foreach (var dot in DrawQueue) {
+					var col = dot.Color;
+					if (dot.IsHovered()) {
+						col |= 0xff000000;
+						hovered.Add(dot.Name);
+					}
 
-				var radius = dot.GetRadius();
-				draw.AddCircleFilled(dot.Pos, radius, col);
-				draw.AddCircle(dot.Pos, radius, 0xaf000000);
+					var radius = dot.GetRadius();
+					draw.AddCircleFilled(dot.Pos, radius, col);
+					draw.AddCircle(dot.Pos, radius, 0xaf000000);
+				}
 			}
 
 			// Selection list
@@ -51,6 +54,9 @@ namespace Ktisis.Overlay {
 		public static string? ClickedItem = null;
 
 		public static void DrawList(List<string> items) {
+			if (ImGuizmo.IsUsing())
+				return;
+
 			// Capture mouse input to intercept mouse clicks.
 			// Note that this prevents button presses from going to the game!
 			ImGui.SetNextFrameWantCaptureMouse(true);
@@ -96,7 +102,7 @@ namespace Ktisis.Overlay {
 		}
 
 		public unsafe float GetRadius() {
-			var dist = Dalamud.Camera->Camera->InterpDistance;
+			var dist = Services.Camera->Camera->InterpDistance;
 			return Math.Max(2f, (15f - dist) * (Ktisis.Configuration.SkeletonLineThickness / 5f));
 		}
 

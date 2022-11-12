@@ -5,7 +5,7 @@ namespace Ktisis.GameData.Files {
 		public uint[] Colors;
 
 		public HumanCmp() {
-			var file = Dalamud.DataManager.GetFile("chara/xls/charamake/human.cmp")!;
+			var file = Services.DataManager.GetFile("chara/xls/charamake/human.cmp")!;
 
 			Colors = new uint[file.Data.Length >> 2];
 			for (var i = 0; i < file.Data.Length; i += 4) {

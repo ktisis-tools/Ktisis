@@ -7,9 +7,11 @@ using ImGuizmoNET;
 using Dalamud;
 using Dalamud.Logging;
 using Dalamud.Configuration;
+using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Localization;
 using Ktisis.Structs.Actor.Equip.SetSources;
+using Ktisis.Interface;
 using Ktisis.Structs.Bones;
 
 namespace Ktisis {
@@ -23,6 +25,18 @@ namespace Ktisis {
 		public bool AutoOpen { get; set; } = true;
 
 		public bool DisplayCharName = true;
+
+		public bool TransformTableDisplayMultiplierInputs { get; set; } = false;
+		public float TransformTableBaseSpeedPos { get; set; } = 0.0005f;
+		public float TransformTableBaseSpeedRot { get; set; } = 0.1f;
+		public float TransformTableBaseSpeedSca { get; set; } = 0.001f;
+		public float TransformTableModifierMultCtrl { get; set; } = 0.1f;
+		public float TransformTableModifierMultShift { get; set; } = 10f;
+		public int TransformTableDigitPrecision { get; set; } = 3;
+
+		// Input
+		public bool EnableKeybinds { get; set; } = true;
+		public Dictionary<Input.Purpose, VirtualKey> KeyBinds { get; set; } = new();
 
 		// Overlay
 

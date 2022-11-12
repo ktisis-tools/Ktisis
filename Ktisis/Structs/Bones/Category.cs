@@ -88,18 +88,12 @@ namespace Ktisis.Structs.Bones
 				"j_ude_a_r", // ArmRight
 				"j_asi_e_l", // ToesLeft
 				"j_asi_e_r", // ToesRight
-				"n_hte_r",   // WristRight
-				"n_hte_l",   // WristLeft
 				"j_ude_b_l", // ForearmLeft
 				"j_ude_b_r", // ForearmRight
 				"n_hkata_l", // ShoulderLeft
 				"n_hkata_r", // ShoulderRight
-				"j_te_l",    // HandLeft
-				"j_te_r",    // HandRight
 				"n_hhiji_l", // ElbowLeft
 				"n_hhiji_r"  // ElbowRight
-
-
 			});
 			CreateCategory("head", new Vector4(0.0F, 1.0F, 0.0F, 0.5647059F), new List<string> {
 				"j_kao", // RootHead
@@ -201,7 +195,9 @@ namespace Ktisis.Structs.Bones
 				"j_ko_b_r",   // PinkyBRight
 				"j_kusu_b_r", // RingBRight
 				"j_naka_b_r", // MiddleBRight
-				"j_oya_b_r"   // ThumbBRight
+				"j_oya_b_r",  // ThumbBRight
+				"j_te_r",     // HandRight
+				"n_hte_r"     // WristRight
 			});
 			CreateCategory("left hand", new Vector4(0.0F, 1.0F, 1.0F, 0.5647059F), new List<string> {
 				"j_hito_a_l", // IndexALeft
@@ -213,7 +209,9 @@ namespace Ktisis.Structs.Bones
 				"j_ko_b_l",   // PinkyBLeft
 				"j_kusu_b_l", // RingBLeft
 				"j_naka_b_l", // MiddleBLeft
-				"j_oya_b_l"   // ThumbBLeft
+				"j_oya_b_l",  // ThumbBLeft
+				"j_te_l",     // HandLeft
+				"n_hte_l",    // WristLeft
 			});
 			CreateCategory("tail", defaultColor, new List<string> {
 				// Tail A-E

@@ -43,8 +43,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 						EditCustomize.Draw();
 					if (ImGui.BeginTabItem("Equipment"))
 						EditEquip.Draw();
-					if (ImGui.BeginTabItem("Gaze"))
-						EditGaze.Draw();
 					if (ImGui.BeginTabItem("Advanced"))
 						AdvancedEdit();
 

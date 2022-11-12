@@ -2,10 +2,8 @@
 using System.Numerics;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
-using Dalamud.Logging;
-
-using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
 using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
@@ -63,13 +61,15 @@ namespace Ktisis.Overlay {
 						Interop.Alloc.SetMatrix(&model->Transform, matrix);
 					}
 				} else {
-					Dalamud.GameGui.WorldToScreen(model->Position, out var pos2d);
+					Services.GameGui.WorldToScreen(model->Position, out var pos2d);
 					if (Selection.AddItem(actorName, pos2d).IsClicked())
 						OverlayWindow.SetGizmoOwner(actorName);
 				}
 			}
 
 			// Draw skeleton
+
+			var isUsing = ImGuizmo.IsUsing();
 
 			for (var p = 0; p < model->Skeleton->PartialSkeletonCount; p++) {
 				var partial = model->Skeleton->PartialSkeletons[p];
@@ -90,24 +90,31 @@ namespace Ktisis.Overlay {
 					// Access bone transform
 					var transform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 
+					if (float.IsNaN(transform->Translation.X))
+						continue; // bone's busted, skip it.
+
 					// Get bone color and screen position
-					var boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
-					Dalamud.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
+					var boneColRgb = Ktisis.Configuration.GetCategoryColor(bone);
+					if (isUsing) boneColRgb.W = Math.Min(0.15f, boneColRgb.W);
+					var boneColor = ImGui.GetColorU32(boneColRgb);
+					Services.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
 					if (parentId > 0) {
 						// TODO: Draw lines for parents of partials.
 
 						var parent = model->Skeleton->GetBone(p, parentId);
-
-						var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Dalamud.Camera->Camera->InterpDistance * 2f);
-						Dalamud.GameGui.WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
-						draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
+						if (Ktisis.Configuration.IsBoneVisible(parent)) {
+							var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Services.Camera->Camera->InterpDistance * 2f);
+							Services.GameGui.WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
+								
+							draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
+						}
 					}
 
 					// Create selectable item
 					// TODO: Hide when moving gizmo?
-					if (!IsBoneSelected(bone) && (boneName != "j_ago" || p == 0)) {
+					if (!IsBoneSelected(bone) && !(boneName == "j_ago" && p == 0)) {
 						var item = Selection.AddItem(uniqueName, pos2d, boneColor);
 						if (item.IsClicked()) {
 							BoneSelect.Update = true;
@@ -165,10 +172,6 @@ namespace Ktisis.Overlay {
 						BoneSelect.Active = true;
 						BoneSelect.Partial = p;
 						BoneSelect.Index = i;
-					} else if (BoneSelect.Active && BoneSelect.Name == boneName) {
-						// this is janky. as far as I'm aware this only exists for the jaw bone?
-						var parent = GetSelectedBone(model->Skeleton)!;
-						*transform = parent.Transform;
 					}
 				}
 			}

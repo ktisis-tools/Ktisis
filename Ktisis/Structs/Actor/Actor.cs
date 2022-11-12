@@ -82,9 +82,12 @@ namespace Ktisis.Structs.Actor {
 
 		// Actor redraw
 
-		public unsafe void Redraw() {
+		public unsafe void Redraw(bool faceHack = false) {
+			faceHack &= GameObject.ObjectKind == (byte)ObjectKind.Pc;
 			GameObject.DisableDraw();
+			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.BattleNpc;
 			GameObject.EnableDraw();
+			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.Pc;
 		}
 	}
 }

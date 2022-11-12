@@ -3,14 +3,15 @@
 using ImGuiNET;
 using ImGuizmoNET;
 
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+using Dalamud.Game.ClientState.Objects.Types;
 
-using Ktisis.Interface.Windows;
-using Ktisis.Interop.Hooks;
-using Ktisis.Overlay;
 using Ktisis.Util;
+using Ktisis.Overlay;
+using Ktisis.Interop.Hooks;
+using Ktisis.Interface.Windows;
+using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
@@ -120,9 +121,6 @@ namespace Ktisis.Interface.Components {
 			else
 				if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? Workspace.ColGreen : Workspace.ColRed))
 				PoseHooks.TogglePosing();
-
-			if (!Ktisis.IsInGPose && PoseHooks.PosingEnabled)
-				PoseHooks.DisablePosing();
 
 			ImGui.EndDisabled();
 

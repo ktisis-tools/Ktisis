@@ -7,6 +7,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -15,33 +16,31 @@ namespace Ktisis {
 
 		public static Configuration Configuration { get; private set; } = null!;
 
-		public static bool IsInGPose => Dalamud.PluginInterface.UiBuilder.GposeActive;
+		public static bool IsInGPose => Services.PluginInterface.UiBuilder.GposeActive;
 
 		public unsafe static GameObject? GPoseTarget
-			=> IsInGPose ? Dalamud.ObjectTable.CreateObjectReference((IntPtr)Dalamud.Targets->GPoseTarget) : null;
+			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
 
 		public Ktisis(DalamudPluginInterface pluginInterface) {
-			Dalamud.Init(pluginInterface);
+			Services.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
 			Configuration.Validate();
 
-			// Init memory allocations
+			// Init interop stuff
 
 			Interop.Alloc.Init();
-
-			// Init hooks & delegates
-
 			Interop.Methods.Init();
-
+			Interop.StaticOffsets.Init();
 			Interop.Hooks.ActorHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 			Interop.Hooks.GuiHooks.Init();
 			Interop.Hooks.EventsHooks.Init();
+			Input.Init();
 
 			// Register command
 
-			Dalamud.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
+			Services.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
 				HelpMessage = "/ktisis - Show the Ktisis interface."
 			});
 
@@ -54,14 +53,15 @@ namespace Ktisis {
 		}
 
 		public void Dispose() {
-			Dalamud.CommandManager.RemoveHandler(CommandName);
-			Dalamud.PluginInterface.SavePluginConfig(Configuration);
+			Services.CommandManager.RemoveHandler(CommandName);
+			Services.PluginInterface.SavePluginConfig(Configuration);
 
 			Interop.Alloc.Dispose();
 			Interop.Hooks.ActorHooks.Dispose();
 			Interop.Hooks.PoseHooks.Dispose();
 			Interop.Hooks.GuiHooks.Dispose();
 			Interop.Hooks.EventsHooks.Dispose();
+			Input.Instance.Dispose();
 
 			GameData.Sheets.Cache.Clear();
 			if (EditEquip.Items != null)

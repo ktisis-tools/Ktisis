@@ -19,7 +19,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 	public static class EditEquip {
 		// Constants
 
-		public static Vector2 IconSize = new(36, 36);
+		public static Vector2 IconSize = new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y);
 
 		// Properties
 
@@ -104,7 +104,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			var item = Equipped[slot];
 			if (item.Icon == null)
-				item.Icon = Dalamud.DataManager.GetImGuiTextureIcon(item.Item == null ? (uint)0 : item.Item.Icon);
+				item.Icon = Services.DataManager.GetImGuiTextureIcon(item.Item == null ? (uint)0 : item.Item.Icon);
 
 			if (ImGui.ImageButton(item.Icon!.ImGuiHandle, IconSize) && SlotSelect == null)
 				OpenSelector(slot);

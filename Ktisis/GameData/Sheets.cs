@@ -14,7 +14,7 @@ namespace Ktisis.GameData {
 			if (Cache.ContainsKey(type))
 				return (ExcelSheet<T>)Cache[type];
 
-			var sheet = Dalamud.DataManager.GetExcelSheet<T>()!;
+			var sheet = Services.DataManager.GetExcelSheet<T>()!;
 			Cache.Add(type, sheet);
 			return sheet;
 		}

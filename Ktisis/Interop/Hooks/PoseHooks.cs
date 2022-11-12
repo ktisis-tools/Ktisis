@@ -2,6 +2,7 @@
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Dalamud.Hooking;
+using Dalamud.Logging;
 
 using FFXIVClientStructs.Havok;
 
@@ -19,20 +20,26 @@ namespace Ktisis.Interop.Hooks {
 		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
 		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
 
+		private unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
+		private static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
+
 		internal static bool PosingEnabled { get; private set; }
 
 		internal static unsafe void Init() {
-			var setBoneModelSpaceFfxiv = Dalamud.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
+			var setBoneModelSpaceFfxiv = Services.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
 			SetBoneModelSpaceFfxivHook = Hook<SetBoneModelSpaceFfxivDelegate>.FromAddress(setBoneModelSpaceFfxiv, SetBoneModelSpaceFfxivDetour);
 
-			var calculateBoneModelSpace = Dalamud.SigScanner.ScanText("40 53 48 83 EC 10 4C 8B 49 28");
+			var calculateBoneModelSpace = Services.SigScanner.ScanText("40 53 48 83 EC 10 4C 8B 49 28");
 			CalculateBoneModelSpaceHook = Hook<CalculateBoneModelSpaceDelegate>.FromAddress(calculateBoneModelSpace, CalculateBoneModelSpaceDetour);
 
-			var syncModelSpace = Dalamud.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
+			var syncModelSpace = Services.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
 			SyncModelSpaceHook = Hook<SyncModelSpaceDelegate>.FromAddress(syncModelSpace, SyncModelSpaceDetour);
 
-			var lookAtIK = Dalamud.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
+			var lookAtIK = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
 			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
+
+			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
+			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
 		}
 
 		internal static void DisablePosing() {
@@ -40,6 +47,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Disable();
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
+			AnimFrozenHook?.Disable();
 			PosingEnabled = false;
 		}
 
@@ -48,6 +56,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Enable();
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
+			AnimFrozenHook?.Enable();
 			PosingEnabled = true;
 		}
 
@@ -61,11 +70,13 @@ namespace Ktisis.Interop.Hooks {
 				SetBoneModelSpaceFfxivHook.Disable();
 				SyncModelSpaceHook.Disable();
 				LookAtIKHook.Disable();
+				AnimFrozenHook.Disable();
 			} else {
 				CalculateBoneModelSpaceHook.Enable();
 				SetBoneModelSpaceFfxivHook.Enable();
 				SyncModelSpaceHook.Enable();
 				LookAtIKHook.Enable();
+				AnimFrozenHook.Enable();
 			}
 			PosingEnabled = !PosingEnabled;
 			return PosingEnabled;
@@ -81,11 +92,18 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		private static unsafe void SyncModelSpaceDetour(hkaPose* pose) {
-
+			if (!Ktisis.IsInGPose && PosingEnabled) {
+				DisablePosing();
+				SyncModelSpaceHook.Original(pose);
+			}
 		}
 
 		public unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {
 			return (byte*)IntPtr.Zero;
+		}
+
+		public unsafe static byte AnimFrozenDetour(uint* a1, int a2) {
+			return 1;
 		}
 
 		public static unsafe void SyncBone(hkaPose* bonesPose, int index) {
@@ -120,6 +138,8 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook.Dispose();
 			LookAtIKHook.Disable();
 			LookAtIKHook.Dispose();
+			AnimFrozenHook.Disable();
+			AnimFrozenHook.Dispose();
 		}
 	}
 }
