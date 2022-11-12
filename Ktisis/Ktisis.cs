@@ -8,6 +8,7 @@ using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
+using Ktisis.History;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -50,6 +51,10 @@ namespace Ktisis {
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
+
+			// History
+
+			HistoryManager.Init();
 		}
 
 		public void Dispose() {
@@ -66,6 +71,8 @@ namespace Ktisis {
 			GameData.Sheets.Cache.Clear();
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
+
+			HistoryManager.Instance.Dispose();
 		}
 
 		private void OnCommand(string command, string arguments) {

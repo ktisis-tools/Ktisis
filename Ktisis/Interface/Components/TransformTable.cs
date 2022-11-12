@@ -1,17 +1,21 @@
-using System.Numerics;
-using System.Linq;
-using ImGuiNET;
-
 using Dalamud.Interface;
+
 using FFXIVClientStructs.Havok;
 
+using ImGuiNET;
+
+using Ktisis.Events;
 using Ktisis.Helpers;
 using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Util;
 
-namespace Ktisis.Interface.Components {
+using System.Linq;
+using System.Numerics;
+
+namespace Ktisis.Interface.Components
+{
 	// Thanks to Emyka for the original code:
 	// https://github.com/ktisis-tools/Ktisis/pull/5
 
@@ -29,6 +33,7 @@ namespace Ktisis.Interface.Components {
 		public Vector3 Rotation;
 		public Vector3 Scale;
 
+		private TransformTableState _state = TransformTableState.IDLE;
 		public void FetchConfigurations() {
 			BaseSpeedPos = Ktisis.Configuration.TransformTableBaseSpeedPos;
 			BaseSpeedRot = Ktisis.Configuration.TransformTableBaseSpeedRot;
@@ -36,6 +41,15 @@ namespace Ktisis.Interface.Components {
 			ModifierMultCtrl = Ktisis.Configuration.TransformTableModifierMultCtrl;
 			ModifierMultShift = Ktisis.Configuration.TransformTableModifierMultShift;
 			DigitPrecision = $"%.{Ktisis.Configuration.TransformTableDigitPrecision}f";
+		}
+
+		public TransformTable Clone()
+		{
+			TransformTable tt = new();
+			tt.Position = Position;
+			tt.Rotation = Rotation;
+			tt.Scale = Scale;
+			return tt;
 		}
 
 
@@ -49,7 +63,8 @@ namespace Ktisis.Interface.Components {
 
 		// Draw table.
 
-		public bool DrawTable() {
+		public unsafe bool DrawTable()
+		{
 			var result = false;
 
 			FetchConfigurations();
@@ -62,43 +77,44 @@ namespace Ktisis.Interface.Components {
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
 			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
 
- 			// Attempt to find the exact size for any font and font size.
+			// Attempt to find the exact size for any font and font size.
 			float[] sizes = new float[3];
 			sizes[0] = GuiHelpers.CalcIconSize(iconPos).X;
 			sizes[1] = GuiHelpers.CalcIconSize(iconRot).X;
 			sizes[2] = GuiHelpers.CalcIconSize(iconSca).X;
 			var rightOffset = GuiHelpers.GetRightOffset(sizes.Max());
 
-			var inputsWidth = ImGui.GetContentRegionAvail().X - rightOffset;
-			ImGui.PushItemWidth(inputsWidth);
-			result |= ImGui.DragFloat3("##Position", ref Position, BaseSpeedPos * multiplier,0,0, DigitPrecision);
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
+			result |= ImGui.DragFloat3("##Position", ref Position, 0.0005f);
+			UpdateTransformTableState();
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
-			result |= ImGui.DragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, 0, 0, DigitPrecision);
+			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
+			UpdateTransformTableState();
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
-			result |= ImGui.DragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, 0, 0, DigitPrecision);
+			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
+			UpdateTransformTableState();
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
-
-
-			if (Ktisis.Configuration.TransformTableDisplayMultiplierInputs) {
-				var cellWidth = inputsWidth / 3 - (ImGui.GetStyle().ItemSpacing.X / 2);
-				ImGui.PushItemWidth(cellWidth);
-				if (ImGui.DragFloat("##SpeedMult##shift", ref ModifierMultShift, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
-					Ktisis.Configuration.TransformTableModifierMultShift = ModifierMultShift;
-				ImGui.SameLine();
-				if(ImGui.DragFloat("##SpeedMult##ctrl", ref ModifierMultCtrl, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
-					Ktisis.Configuration.TransformTableModifierMultCtrl = ModifierMultCtrl;
-				ImGui.PopItemWidth();
-				ImGui.SameLine();
-				GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
-			}
-
 			return result;
 		}
+
+		private unsafe void UpdateTransformTableState()
+		{
+			if (ImGui.IsItemClicked() &&
+				(ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) || ImGui.IsMouseDown(ImGuiMouseButton.Left)))
+			{
+				_state = TransformTableState.EDITING;
+			}
+			
+			if (ImGui.IsItemDeactivatedAfterEdit()) _state = TransformTableState.IDLE;
+
+			EventManager.FireOnTransformationMatrixChangeEvent(_state);
+		}
+
 		public bool Draw(Bone bone) {
 			var result = false;
 			var gizmo = OverlayWindow.GetGizmo(bone.UniqueName);
