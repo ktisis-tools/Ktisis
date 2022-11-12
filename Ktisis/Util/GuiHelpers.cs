@@ -89,6 +89,19 @@ namespace Ktisis.Util
 			}
 		}
 
+		public static bool DragFloat3FillWidth(string label, bool icon, string? tooltip, ref Vector3 vector,float speed, string format) {
+			if (icon) ImGui.PushFont(UiBuilder.IconFont);
+			var labelSize = ImGui.CalcTextSize(label).X;
+			var rightOffset = GetRightOffset(labelSize);
+			var inputsWidth = ImGui.GetContentRegionAvail().X - rightOffset;
+			ImGui.PushItemWidth(inputsWidth);
+			var result = ImGui.DragFloat3(label, ref vector, speed, 0, 0, format);
+			ImGui.PopItemWidth();
+			if (icon) ImGui.PopFont();
+			if(tooltip != "" && tooltip != null) Tooltip(tooltip);
+			return result;
+		}
+
 		public static void PopupConfirm(string label, Action contents, Action? onAccept, bool understoodOnly = false) {
 			ImGui.SetNextWindowPos(ImGui.GetMainViewport().GetCenter(), ImGuiCond.Always, new Vector2(0.5f));
 			if (ImGui.BeginPopup(label, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove)) {

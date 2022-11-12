@@ -188,6 +188,7 @@ namespace Ktisis.Interface.Windows {
 					ImGui.TextWrapped(Locale.GetString("Categories_will_be_added_after_bones_are_displayed_once"));
 			}
 
+			DrawBonesOffset(cfg);
 			ImGui.EndTabItem();
 		}
 
@@ -328,6 +329,10 @@ namespace Ktisis.Interface.Windows {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
+			ImGui.EndTabItem();
+		}
+
+		public static unsafe void DrawBonesOffset(Configuration cfg) {
 
 			ImGui.Separator();
 			ImGui.Spacing();
@@ -339,42 +344,37 @@ namespace Ktisis.Interface.Windows {
 				var targetBoneOffset = CustomOffset.GetBoneOffset(bone);
 
 				ImGui.Text($"Edit {targetBodyType}'s {bone.LocaleName}  ");
-				ImGui.SameLine();
 
-				if (!Ktisis.Configuration.CustomBoneOffset.TryGetValue(targetBodyType, out var _))
-					Ktisis.Configuration.CustomBoneOffset.Add(targetBodyType,new());
+				if (!cfg.CustomBoneOffset.TryGetValue(targetBodyType, out var _))
+					cfg.CustomBoneOffset.Add(targetBodyType,new());
 
-				ImGui.SameLine();
-				if (GuiHelpers.IconButton(FontAwesomeIcon.Trash,default,"dropSingleOffset"))
-					Ktisis.Configuration.CustomBoneOffset[targetBodyType].Remove(bone.HkaBone.Name.String);
-
-				if (ImGui.DragFloat3($"##currentTargetOffset", ref targetBoneOffset, .00001f, 0, 0, "%.5f"))
-					Ktisis.Configuration.CustomBoneOffset[targetBodyType][bone.HkaBone.Name.String] = targetBoneOffset;
+				if (GuiHelpers.DragFloat3FillWidth($"##currentTargetOffset", false, null, ref targetBoneOffset, .00001f, "%.5f"))
+					cfg.CustomBoneOffset[targetBodyType][bone.HkaBone.Name.String] = targetBoneOffset;
 			} else {
-				ImGuiComponents.HelpMarker("Select a Bone to add a position offset.");
+				ImGuiComponents.HelpMarker("Select a Bone to start adjusting its position.");
 			}
 
 			ImGui.Spacing();
 
-			foreach (var bt in Ktisis.Configuration.CustomBoneOffset) {
+			foreach (var bt in cfg.CustomBoneOffset) {
 				var bodyType = bt.Key;
 				if (ImGui.CollapsingHeader($"{bodyType}")) {
-					ImGui.Text($"{bodyType}");
-					ImGui.SameLine();
 					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash,$"Hold Ctrl and Shift to drop all {bodyType} bone offsets.", default, $"dropall##{bodyType}"))
-						Ktisis.Configuration.CustomBoneOffset.Remove(bodyType);
+						cfg.CustomBoneOffset.Remove(bodyType);
 					ImGui.SameLine();
 					if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"export##{bodyType}"))
-						ImGui.SetClipboardText(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Ktisis.Configuration.CustomBoneOffset[bodyType]))));
+						ImGui.SetClipboardText(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(cfg.CustomBoneOffset[bodyType]))));
 					ImGui.SameLine();
 					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Paste, $"Hold Ctrl and Shift to paste and replace all {bodyType} bone offsets.", default, $"pasteReplaceAll##{bodyType}")) {
 						var parsedPasteAll = JsonConvert.DeserializeObject<Dictionary<string, Vector3>>(Encoding.UTF8.GetString(Convert.FromBase64String(ImGui.GetClipboardText())));
 						if (parsedPasteAll != null)
-							Ktisis.Configuration.CustomBoneOffset[bodyType] = parsedPasteAll;
+							cfg.CustomBoneOffset[bodyType] = parsedPasteAll;
 					}
 
 					ImGuiComponents.HelpMarker("Tips:\n" +
-						"Hover");
+						"Click on a row to copy it into clipboard" +
+						"Ctrl + Shift + Right click to remove a row" +
+						"The plus (+) button will insert a copied row");
 
 
 					if (ImGui.BeginTable("offsetBonesTable", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.BordersInnerH | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.PadOuterX)) {
@@ -397,7 +397,7 @@ namespace Ktisis.Interface.Windows {
 								ImGui.SetClipboardText(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject((boneName,offsets)))));
 							if (isDeletable) ImGui.PopStyleColor();
 							if (isDeletable && ImGui.IsItemClicked(ImGuiMouseButton.Right))
-								Ktisis.Configuration.CustomBoneOffset[bodyType].Remove(boneName);
+								cfg.CustomBoneOffset[bodyType].Remove(boneName);
 							ImGui.TableNextColumn();
 							ImGui.Text($"{offsets.X:F6}");
 							ImGui.TableNextColumn();
@@ -408,13 +408,13 @@ namespace Ktisis.Interface.Windows {
 						ImGui.EndTable();
 						if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus,"Add a line from clipboard.", default, $"{bodyType}##Clipboard##AddLine")) {
 							var parsedPasteLine = JsonConvert.DeserializeObject<(string, Vector3)>(Encoding.UTF8.GetString(Convert.FromBase64String(ImGui.GetClipboardText()))) ;
-							Ktisis.Configuration.CustomBoneOffset[bodyType][parsedPasteLine.Item1] = parsedPasteLine.Item2;
+							cfg.CustomBoneOffset[bodyType][parsedPasteLine.Item1] = parsedPasteLine.Item2;
 						}
 					}
 				}
 			}
 			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Hold Ctrl and Shift to drop ALL bone offsets.", default, "dropAllOffset"))
-				Ktisis.Configuration.CustomBoneOffset = new();
+				cfg.CustomBoneOffset = new();
 
 			ImGui.Spacing();
 		}

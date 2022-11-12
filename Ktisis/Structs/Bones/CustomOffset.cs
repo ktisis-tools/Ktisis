@@ -13,6 +13,8 @@ namespace Ktisis.Structs.Bones {
 				return new();
 			return offset;
 		}
+
+		// changed from BodyType to string Race_Gender
 		public unsafe static string GetRaceGenderFromActor(Actor.Actor* actor) =>
 			$"{actor->Customize.Race}_{actor->Customize.Gender}";
 		public unsafe static BodyType GetBodyTypeFromActor(Actor.Actor* actor) {
