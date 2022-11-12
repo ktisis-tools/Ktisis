@@ -1,15 +1,14 @@
-﻿using System;
+﻿using ImGuiNET;
+
+using ImGuizmoNET;
+
+using Ktisis.Events;
+
+using System;
 using System.Numerics;
 
-using Dalamud.Logging;
-
-using Dalamud.Game.ClientState.Keys;
-using ImGuiNET;
-using ImGuizmoNET;
-using Ktisis.Events;
-using Ktisis.Interface.Windows;
-
-namespace Ktisis.Overlay {
+namespace Ktisis.Overlay
+{
 	public class Gizmo {
 		// Instanced properties
 
@@ -22,14 +21,13 @@ namespace Ktisis.Overlay {
 
 		public OPERATION? ForceOp = null;
 
-		public bool IsUsing = ImGuizmo.IsUsing();
 		private GizmoState _state = GizmoState.IDLE;
 
-        // Compose & Decompose
-        // Compose updates the matrix using given values.
-        // Decompose retrieves values from the matrix.
+		// Compose & Decompose
+		// Compose updates the matrix using given values.
+		// Decompose retrieves values from the matrix.
 
-        public void ComposeMatrix(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
+		public void ComposeMatrix(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
 			ImGuizmo.RecomposeMatrixFromComponents(
 				ref pos.X,
 				ref rot.X,
@@ -134,15 +132,15 @@ namespace Ktisis.Overlay {
 			if ((_state == GizmoState.IDLE) && ImGuizmo.IsUsing())
 			{
 				_state = GizmoState.EDITING;
-				EventManager.OnGizmoChange!(_state);
-            }
+			}
 
-            if ((_state == GizmoState.EDITING) && !ImGuizmo.IsUsing())
-            {
-                _state = GizmoState.IDLE;
-                EventManager.OnGizmoChange!(_state);
-            }
-        }
+			if ((_state == GizmoState.EDITING) && !ImGuizmo.IsUsing())
+			{
+				_state = GizmoState.IDLE;
+			}
+
+			EventManager.FireOnGizmoChangeEvent(_state);
+		}
 
 		public bool Draw() => Manipulate();
 

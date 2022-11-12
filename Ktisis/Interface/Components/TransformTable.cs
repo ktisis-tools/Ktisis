@@ -1,18 +1,21 @@
-using System.Numerics;
-using System.Linq;
-using ImGuiNET;
-
 using Dalamud.Interface;
+
 using FFXIVClientStructs.Havok;
 
+using ImGuiNET;
+
+using Ktisis.Events;
 using Ktisis.Helpers;
 using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Util;
-using Ktisis.Events;
 
-namespace Ktisis.Interface.Components {
+using System.Linq;
+using System.Numerics;
+
+namespace Ktisis.Interface.Components
+{
 	// Thanks to Emyka for the original code:
 	// https://github.com/ktisis-tools/Ktisis/pull/5
 
@@ -52,15 +55,15 @@ namespace Ktisis.Interface.Components {
 
 		// Set stored values.
 
-        public void Update(Vector3 pos, Quaternion rot, Vector3 scale) {
+		public void Update(Vector3 pos, Quaternion rot, Vector3 scale) {
 			Position = pos;
 			Rotation = MathHelpers.ToEuler(rot);
 			Scale = scale;
 		}
 
-        // Draw table.
+		// Draw table.
 
-        public unsafe bool DrawTable()
+		public unsafe bool DrawTable()
 		{
 			var result = false;
 
@@ -87,12 +90,12 @@ namespace Ktisis.Interface.Components {
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
 			result |= ImGui.DragFloat3("##Rotation", ref Rotation, 0.1f);
-            UpdateTransformTableState();
-            ImGui.SameLine();
+			UpdateTransformTableState();
+			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
 			result |= ImGui.DragFloat3("##Scale", ref Scale, 0.01f);
-            UpdateTransformTableState();
-            ImGui.SameLine();
+			UpdateTransformTableState();
+			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
@@ -104,13 +107,13 @@ namespace Ktisis.Interface.Components {
 			if (ImGui.IsItemClicked() &&
 				(ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) || ImGui.IsMouseDown(ImGuiMouseButton.Left)))
 			{
-                _state = TransformTableState.EDITING;
-            }
+				_state = TransformTableState.EDITING;
+			}
 			
 			if (ImGui.IsItemDeactivatedAfterEdit()) _state = TransformTableState.IDLE;
 
-            EventManager.FireOnTransformationMatrixChangeEvent(_state);
-        }
+			EventManager.FireOnTransformationMatrixChangeEvent(_state);
+		}
 
 		public bool Draw(Bone bone) {
 			var result = false;
@@ -127,7 +130,7 @@ namespace Ktisis.Interface.Components {
 				}
 			}
 			IsEditing = result;
-            return result;
+			return result;
 		}
 		public bool Draw(ref Vector3 pos, ref Quaternion rot, ref Vector3 scale) {
 			if (!IsEditing)
@@ -138,7 +141,7 @@ namespace Ktisis.Interface.Components {
 			rot = MathHelpers.ToQuaternion(Rotation);
 			if (Scale.X > 0 && Scale.Y > 0 && Scale.Z > 0)
 				scale = Scale;
-            return result;
+			return result;
 		}
 
 		public bool Draw(ref hkVector4f pos, ref hkQuaternionf rot, ref hkVector4f scale) {

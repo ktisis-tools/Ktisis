@@ -1,8 +1,6 @@
 ﻿using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 
-using Newtonsoft.Json;
-using System;
 using System.Numerics;
 
 namespace Ktisis.History

@@ -5,20 +5,19 @@ using Dalamud.Logging;
 using Ktisis.Events;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Interop.Hooks;
 using Ktisis.Localization;
 using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
-using Ktisis.Interop.Hooks;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using static FFXIVClientStructs.Havok.hkaPose;
-using FFXIVClientStructs.Havok;
-using System.Linq;
 
 namespace Ktisis.History
 {

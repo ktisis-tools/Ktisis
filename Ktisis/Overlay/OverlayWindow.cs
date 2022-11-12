@@ -55,7 +55,7 @@ namespace Ktisis.Overlay {
 			
 
 			HasBegun = true;
-            if (Selection.DrawQueue.Count >= 1000) // something *probably* fucked up (thrown error in Selection.Draw?)
+			if (Selection.DrawQueue.Count >= 1000) // something *probably* fucked up (thrown error in Selection.Draw?)
 				Selection.DrawQueue.Clear(); // don't let it get worse
 		}
 
@@ -64,7 +64,7 @@ namespace Ktisis.Overlay {
 			ImGui.End();
 			ImGui.PopStyleVar();
 			HasBegun = false;
-        }
+		}
 
 		public unsafe static void Draw() {
 			if (WorldMatrix == null)
@@ -74,12 +74,12 @@ namespace Ktisis.Overlay {
 
 			if (IsGizmoVisible)
 			{
-                Gizmo.UpdateGizmoState();
-                Begin();
+				Gizmo.UpdateGizmoState();
+				Begin();
 			}
-            
+			
 
-            Skeleton.BoneSelect.Active = false;
+			Skeleton.BoneSelect.Active = false;
 			Skeleton.BoneSelect.Update = false;
 			if (Ktisis.Configuration.ShowSkeleton) {
 				Begin();
