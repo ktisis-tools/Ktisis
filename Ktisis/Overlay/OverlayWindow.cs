@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 using ImGuiNET;
 
@@ -16,11 +17,21 @@ namespace Ktisis.Overlay {
 
 		public unsafe static WorldMatrix* WorldMatrix;
 
-		public static Matrix4x4 ViewMatrix = new();
-		public static Matrix4x4 ProjMatrix = new();
-
 		public static ImGuiIOPtr Io;
 		public static Vector2 Wp;
+
+		// hacky solution until we push these to clientstructs
+
+		public unsafe static Matrix4x4 GetProjectionMatrix() {
+			var camera = (IntPtr)Services.Camera->Camera;
+			return *(Matrix4x4*)(*(IntPtr*)(camera + 240) + 80);
+		}
+		public unsafe static Matrix4x4 GetViewMatrix() {
+			var camera = (IntPtr)Services.Camera->Camera;
+			var view = *(Matrix4x4*)(camera + 0xB0);
+			view.M44 = 1;
+			return view;
+		}
 
 		// Gizmo
 
