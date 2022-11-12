@@ -106,12 +106,12 @@ namespace Ktisis.Overlay {
 			return true;
 		}
 		internal unsafe bool Manipulate() {
-			var view = OverlayWindow.ViewMatrix;
-			view.M44 = 1;
-
 			// hacky solution until we push this to clientstructs
 			var camera = (IntPtr)Services.Camera->Camera;
-			var proj = *(Matrix4x4*)(*(IntPtr*)(camera + 240) + 80);
+			var proj = *(Matrix4x4*)(*(IntPtr*)(camera + 240) + (sizeof(IntPtr) * 10));
+
+			var view = *(Matrix4x4*)(camera + 0xB0);
+			view.M44 = 1;
 
 			return ImGuizmo.Manipulate(
 				ref view.M11,
