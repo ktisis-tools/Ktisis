@@ -4,6 +4,7 @@ using ImGuiNET;
 using ImGuizmoNET;
 
 using Ktisis.Structs.Extensions;
+using Ktisis.Events;
 
 namespace Ktisis.Overlay {
 	public class Gizmo {
@@ -17,6 +18,8 @@ namespace Ktisis.Overlay {
 		public SharpDX.Matrix3x3 EulerDeltaMatrix = new(); // for non gizmo manipulation, euler based, which must have an effect on the gizmo
 
 		public OPERATION? ForceOp = null;
+
+		private GizmoState _state = GizmoState.IDLE;
 
 		// Compose & Decompose
 		// Compose updates the matrix using given values.
@@ -117,6 +120,20 @@ namespace Ktisis.Overlay {
 				ref Matrix.M11,
 				ref Delta.M11
 			);
+		}
+
+		public void UpdateGizmoState() {
+			if ((_state == GizmoState.IDLE) && ImGuizmo.IsUsing())
+			{
+				_state = GizmoState.EDITING;
+			}
+
+			if ((_state == GizmoState.EDITING) && !ImGuizmo.IsUsing())
+			{
+				_state = GizmoState.IDLE;
+			}
+
+			EventManager.FireOnGizmoChangeEvent(_state);
 		}
 
 		public bool Draw() => Manipulate();

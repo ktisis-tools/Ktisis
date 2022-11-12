@@ -5,6 +5,7 @@ using ImGuiNET;
 using Dalamud.Interface;
 using FFXIVClientStructs.Havok;
 
+using Ktisis.Events;
 using Ktisis.Helpers;
 using Ktisis.Overlay;
 using Ktisis.Structs;
@@ -30,6 +31,7 @@ namespace Ktisis.Interface.Components {
 		public Vector3 Rotation;
 		public Vector3 Scale;
 
+		private TransformTableState _state = TransformTableState.IDLE;
 		public void FetchConfigurations() {
 			BaseSpeedPos = Ktisis.Configuration.TransformTableBaseSpeedPos;
 			BaseSpeedRot = Ktisis.Configuration.TransformTableBaseSpeedRot;
@@ -37,6 +39,14 @@ namespace Ktisis.Interface.Components {
 			ModifierMultCtrl = Ktisis.Configuration.TransformTableModifierMultCtrl;
 			ModifierMultShift = Ktisis.Configuration.TransformTableModifierMultShift;
 			DigitPrecision = $"%.{Ktisis.Configuration.TransformTableDigitPrecision}f";
+		}
+
+		public TransformTable Clone() {
+			TransformTable tt = new();
+			tt.Position = Position;
+			tt.Rotation = Rotation;
+			tt.Scale = Scale;
+			return tt;
 		}
 
 
@@ -70,21 +80,23 @@ namespace Ktisis.Interface.Components {
 			sizes[2] = GuiHelpers.CalcIconSize(iconSca).X;
 			var rightOffset = GuiHelpers.GetRightOffset(sizes.Max());
 
+
 			var inputsWidth = ImGui.GetContentRegionAvail().X - rightOffset;
 			ImGui.PushItemWidth(inputsWidth);
 			result |= ImGui.DragFloat3("##Position", ref Position, BaseSpeedPos * multiplier,0,0, DigitPrecision);
+			UpdateTransformTableState();
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconPos, "Position", true);
 			result |= ImGui.DragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, 0, 0, DigitPrecision);
+			UpdateTransformTableState();
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
 			result |= ImGui.DragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, 0, 0, DigitPrecision);
+			UpdateTransformTableState();
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
-
-
 			if (Ktisis.Configuration.TransformTableDisplayMultiplierInputs) {
 				var input2Width = (inputsWidth / 3 * 2) - (ImGui.GetStyle().ItemInnerSpacing.X /3);
 
@@ -101,6 +113,20 @@ namespace Ktisis.Interface.Components {
 
 			return result;
 		}
+
+		private unsafe void UpdateTransformTableState() {
+			if (
+				ImGui.IsItemClicked() &&
+				(ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) || ImGui.IsMouseDown(ImGuiMouseButton.Left))
+			) {
+				_state = TransformTableState.EDITING;
+			}
+
+			if (ImGui.IsItemDeactivatedAfterEdit()) _state = TransformTableState.IDLE;
+
+			EventManager.FireOnTransformationMatrixChangeEvent(_state);
+		}
+
 		public bool Draw(Bone bone) {
 			var result = false;
 			var gizmo = OverlayWindow.GetGizmo(bone.UniqueName);
