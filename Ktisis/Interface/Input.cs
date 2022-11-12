@@ -107,7 +107,11 @@ namespace Ktisis.Interface {
 				var keys = PurposeToVirtualKeys(p);
 				bool state = true;
 
-				if (keys == FallbackKey) state = false;
+				// check if any other key is pressed, if yes, the state is not true (e.g. to have an action with V, and another with ctrl+V)
+				var allowedKeys = keys.Union(PurposeToVirtualKeys(Purpose.GlobalModifierKey));
+				var otherHeld = Enum.GetValues<VirtualKey>().Any(k => Services.KeyState.IsVirtualKeyValid(k) && !allowedKeys.Any(a => k == a) && Services.KeyState[k]);
+
+				if (keys == FallbackKey || otherHeld) state = false;
 				else foreach (var key in keys)
 						state &= Services.KeyState[key];
 
