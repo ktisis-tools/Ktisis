@@ -24,14 +24,14 @@ namespace Ktisis.Util
 			return accepting && isHoldingKey;
 		}
 
-		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip, Vector2 size = default) {
-			bool accepting = IconButton(icon, size);
+		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string hiddenLabel = "") {
+			bool accepting = IconButton(icon, size, hiddenLabel);
 			Tooltip(tooltip);
 			return accepting;
 		}
-		public static bool IconButton(FontAwesomeIcon icon, Vector2 size = default) {
+		public static bool IconButton(FontAwesomeIcon icon, Vector2 size = default, string hiddenLabel = "") {
 			ImGui.PushFont(UiBuilder.IconFont);
-			bool accepting = ImGui.Button(icon.ToIconString() ?? "", size);
+			bool accepting = ImGui.Button((icon.ToIconString() ?? "")+"##"+ hiddenLabel, size);
 			ImGui.PopFont();
 			return accepting;
 		}
