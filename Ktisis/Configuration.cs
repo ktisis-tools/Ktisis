@@ -10,6 +10,7 @@ using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Localization;
+using Ktisis.Structs.Actor.Equip.SetSources;
 using Ktisis.Interface;
 using Ktisis.Structs.Bones;
 
@@ -84,6 +85,9 @@ namespace Ktisis {
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
 
 		public bool LinkedGaze { get; set; } = true;
+
+		// Data memory
+		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
 
 		// Validate for changes in config versions.
 

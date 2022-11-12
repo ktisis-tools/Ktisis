@@ -22,6 +22,7 @@ namespace Ktisis {
 		[PluginService] internal static KeyState KeyState { get; private set; } = null!;
 		[PluginService] internal static GameGui GameGui { get; private set; } = null!;
 
+		internal static Interop.Hooks.AddonManager AddonManager = null!;
 		internal unsafe static TargetSystem* Targets = TargetSystem.Instance();
 		internal unsafe static CameraManager* Camera = CameraManager.Instance();
 

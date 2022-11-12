@@ -35,6 +35,7 @@ namespace Ktisis {
 			Interop.Hooks.ActorHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 			Interop.Hooks.GuiHooks.Init();
+			Interop.Hooks.EventsHooks.Init();
 			Input.Init();
 
 			// Register command
@@ -59,6 +60,7 @@ namespace Ktisis {
 			Interop.Hooks.ActorHooks.Dispose();
 			Interop.Hooks.PoseHooks.Dispose();
 			Interop.Hooks.GuiHooks.Dispose();
+			Interop.Hooks.EventsHooks.Dispose();
 			Input.Instance.Dispose();
 
 			GameData.Sheets.Cache.Clear();

@@ -11,6 +11,8 @@ using Dalamud.Interface;
 using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Actor.Equip;
+using Ktisis.Structs.Actor.Equip.SetSources;
 using Dalamud.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
@@ -52,6 +54,8 @@ namespace Ktisis.Interface.Windows {
 						DrawInputTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Language")))
 						DrawLanguageTab(cfg);
+					if (ImGui.BeginTabItem("Data"))
+						DrawDataTab(cfg);
 
 					ImGui.EndTabBar();
 				}
@@ -304,5 +308,25 @@ namespace Ktisis.Interface.Windows {
 
 		}
 		private static string PrettyKeys(List<VirtualKey>  keys) => string.Join(" + ", keys.Select(k => VirtualKeyExtensions.GetFancyName(k)));
+
+		public static void DrawDataTab(Configuration cfg) {
+			ImGui.Spacing();
+			var validGlamPlatesFound = GlamourDresser.CountValid();
+			GuiHelpers.TextTooltip($"Glamour Plates in memory: {validGlamPlatesFound}  ", $"Found {validGlamPlatesFound} valid Glamour Plates");
+			ImGui.SameLine();
+
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, "Refresh Glamour Plate memory for the Sets lookups.\nThis memory is kept after a restart.\n\nRequirements:\n One of these windows must be opened: \"Glamour Plate Creation\" (by the Glamour Dresser) or \"Plate Selection\" (by the Glamour Plate skill)."))
+				GlamourDresser.PopulatePlatesData();
+
+			Components.Equipment.CreateGlamourQuestionPopup();
+
+			ImGui.SameLine();
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, "Dispose of the Glamour Plates memory and remove configurations for ALL characters.")) {
+				Sets.Dispose();
+				cfg.GlamourPlateData = null;
+			}
+
+			ImGui.Spacing();
+		}
 	}
 }

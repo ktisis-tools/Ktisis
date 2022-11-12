@@ -35,6 +35,19 @@ namespace Ktisis.Util
 			ImGui.PopFont();
 			return accepting;
 		}
+		public static bool TextButtonTooltip(string label, string tooltip) {
+			bool accepting = ImGui.Button(label);
+			Tooltip(tooltip);
+			return accepting;
+		}
+		public static void TextTooltip(string label, string tooltip) {
+			ImGui.Text(label);
+			Tooltip(tooltip);
+		}
+		public static void TextDisabledTooltip(string label, string tooltip) {
+			ImGui.TextDisabled(label);
+			Tooltip(tooltip);
+		}
 
 		public static void Icon(FontAwesomeIcon icon, bool enabled = true, Vector4? color = null) {
 			string iconText = icon.ToIconString() ?? "";
@@ -73,6 +86,35 @@ namespace Ktisis.Util
 				ImGui.EndTooltip();
 			}
 		}
+
+		public static void PopupConfirm(string label, Action contents, Action? onAccept, bool understoodOnly = false) {
+			ImGui.SetNextWindowPos(ImGui.GetMainViewport().GetCenter(), ImGuiCond.Always, new Vector2(0.5f));
+			if (ImGui.BeginPopup(label, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove)) {
+				contents();
+				ImGui.Separator();
+
+				var okSize = new Vector2(120, 0) * ImGui.GetIO().FontGlobalScale;
+				var cancelSize = new Vector2(120, 0) * ImGui.GetIO().FontGlobalScale;
+
+				var buttonSize = okSize.X + cancelSize.X;
+				var buttonCenter = (ImGui.GetWindowContentRegionMax().X - (understoodOnly? okSize.X : buttonSize)) / 2;
+
+				ImGui.SetCursorPosX(buttonCenter);
+				if (ImGui.Button(understoodOnly ? "Understood" : "OK", okSize)) {
+					ImGui.CloseCurrentPopup();
+					onAccept?.Invoke();
+				}
+				if (!understoodOnly) {
+					ImGui.SetItemDefaultFocus();
+					ImGui.SameLine();
+					if (ImGui.Button("Cancel", cancelSize))
+						ImGui.CloseCurrentPopup();
+				}
+
+				ImGui.EndPopup();
+			}
+		}
+
 		// Copy from Dalamud's ToggleButton but with colorizable circle
 		public static bool ToggleButton(string id, ref bool v, Vector4 circleColor) {
 			RangeAccessor<Vector4> colors = ImGui.GetStyle().Colors;
@@ -105,11 +147,13 @@ namespace Ktisis.Util
 				//+ ImGui.GetStyle().WindowPadding.X
 				+ 0.1f; // extra safety
 		}
+
 		public static void TextRight(string text, float offset = 0) {
 			offset = ImGui.GetContentRegionAvail().X - offset - ImGui.CalcTextSize(text).X;
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);
 			ImGui.TextUnformatted(text);
 		}
+
 		public static void TextCentered(string text) {
 			var windowWidth = ImGui.GetWindowSize().X;
 			var textWidth = ImGui.CalcTextSize(text).X;

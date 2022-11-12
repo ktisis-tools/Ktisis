@@ -12,6 +12,7 @@ using Ktisis.GameData;
 using Ktisis.GameData.Excel;
 using Ktisis.Interface.Components;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Actor.Equip;
 using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
@@ -35,7 +36,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		private static string DyeSearch = "";
 		private static bool DrawSetSelection = false;
 		private static bool DrawSetDyeSelection = false;
-		private static EquipmentSets? Sets = null;
 
 		private static EquipSlot? SlotSelectDye;
 		public static readonly IEnumerable<Dye> Dyes = Sheets.GetSheet<Dye>()
@@ -174,10 +174,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static void CloseSetDyePicker() => DrawSetDyeSelection = false;
 
 
-		public static void DrawControls()
-		{
-			Sets = new EquipmentSets(Items!);
-
+		public static void DrawControls() {
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Tshirt, "Look up for a set."))
 				OpenSetSelector();
 			ImGui.SameLine();
@@ -239,10 +236,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public unsafe static void DrawSetSelectorList()
 		{
-			if (Sets?.LoadSources() == null)
-				Sets = EquipmentSets.InitAndLoadSources(Items!);
-
-			IEnumerable<EquipmentSet> sets = Sets.GetSets();
+			IEnumerable<Set> sets = Sets.FindSets();
 
 			if (!sets.Any())
 				return;
@@ -258,7 +252,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 					ImGui.SameLine();
 					ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
-					GuiHelpers.TextCentered($"{i.Source}");
+					GuiHelpers.TextRight($"{i.Source}");
 					ImGui.PopStyleVar();
 
 					return (selected, focus);
