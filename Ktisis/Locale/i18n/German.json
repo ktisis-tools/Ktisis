@@ -39,6 +39,14 @@
 	"Categories_will_be_added_after_bones_are_displayed_once": "Kategorien werden angezeigt nachdem Knochen erstmalig angezeigt wurden.",
 	"Flip_axis_to_face_camera": "Achse zu Kamera drehen",
 	"Translate_bone_names": "Knochen Namen übersetzen",
+	// Tastatur konfigurationsanzeige enum definiert in Input.cs
+	"Keyboard_Action_GlobalModifierKey": "Globaler modifikator",
+	"Keyboard_Action_SwitchToTranslate": "Wechseln zu Übersetzen",
+	"Keyboard_Action_SwitchToRotate": "Wechseln zu Rotation",
+	"Keyboard_Action_SwitchToScale": "Wechseln zu Skalieren",
+	"Keyboard_Action_SwitchToUniversal": "Wechseln zu Universal",
+	"Keyboard_Action_ToggleLocalWorld": "Lokal/Welt umschalten",
+	"Keyboard_Action_HoldToHideSkeleton": "Halten um Skelett zu verstecken",
 
 	//// Spiel Jargon ////
 
