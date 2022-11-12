@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 using Dalamud.Logging;
 
@@ -106,8 +107,11 @@ namespace Ktisis.Overlay {
 		}
 		internal unsafe bool Manipulate() {
 			var view = OverlayWindow.ViewMatrix;
-			var proj = OverlayWindow.ProjMatrix;
 			view.M44 = 1;
+
+			// hacky solution until we push this to clientstructs
+			var camera = (IntPtr)Services.Camera->Camera;
+			var proj = *(Matrix4x4*)(*(IntPtr*)(camera + 240) + 80);
 
 			return ImGuizmo.Manipulate(
 				ref view.M11,
