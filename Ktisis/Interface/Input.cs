@@ -63,6 +63,13 @@ namespace Ktisis.Interface {
 			{Purpose.SwitchToUniversal, new(){VirtualKey.U}},
 		};
 
+		// Helpers
+		public static bool IsHeld(Purpose purpose) {
+			if (Instance.PrevriousKeyStates.TryGetValue(purpose, out bool shiftPressed))
+				return false;
+			return shiftPressed;
+		}
+
 		// Thanks to (Edited) for the intgration with the Framework Update <3
 		private static Input? _instance = null;
 		private Input() {
