@@ -95,7 +95,7 @@ namespace Ktisis.Interface.Windows {
 					|| cur.Gender != custard.Gender
 					|| cur.FaceType != custard.FaceType // Eye glitch.
 				) {
-					if (!IsPosing) Target->Redraw();
+					if (!IsPosing) Target->Redraw(cur.FaceType != custard.FaceType);
 				} else {
 					Target->UpdateCustomize();
 				}
@@ -473,7 +473,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.BeginGroup();
 			ImGui.PushItemWidth(InputSize.X - ButtonIconSize.X);
 			for (var i = 0; i < 8; i++) {
-				if (i >= FacialFeatureIcons.Count)
+				if (i < 7 && i >= FacialFeatureIcons.Count)
 					break;
 
 				if (i > 0 && i % 4 != 0)

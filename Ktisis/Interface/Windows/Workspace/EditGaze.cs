@@ -10,10 +10,8 @@ using Dalamud.Interface.Components;
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 
-namespace Ktisis.Interface.Windows.ActorEdit {
+namespace Ktisis.Interface.Windows.Workspace {
 	public static class EditGaze {
-		public unsafe static Actor* Target => EditActor.Target;
-
 		public static Dictionary<byte, ActorGaze>? ActorControl = null; // ObjectID : ActorGaze
 
 		public static bool IsLinked {
@@ -23,11 +21,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		// UI Code
 
-		public unsafe static void Draw() {
+		public unsafe static void Draw(Actor* target) {
 			if (ActorControl == null)
 				ActorControl = new();
 
-			var id = Target->ObjectID;
+			var id = target->ObjectID;
 			if (!ActorControl.ContainsKey(id))
 				ActorControl.Add(id, new ActorGaze());
 
@@ -54,13 +52,13 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.Spacing();
 
 			if (IsLinked) {
-				result |= DrawGaze(ref gaze.Other, GazeControl.All);
+				result |= DrawGaze(target, ref gaze.Other, GazeControl.All);
 			} else {
-				result |= DrawGaze(ref gaze.Eyes, GazeControl.Eyes);
+				result |= DrawGaze(target, ref gaze.Eyes, GazeControl.Eyes);
 				ImGui.Spacing();
-				result |= DrawGaze(ref gaze.Head, GazeControl.Head);
+				result |= DrawGaze(target, ref gaze.Head, GazeControl.Head);
 				ImGui.Spacing();
-				result |= DrawGaze(ref gaze.Torso, GazeControl.Torso);
+				result |= DrawGaze(target, ref gaze.Torso, GazeControl.Torso);
 			}
 
 			if (result)
@@ -69,7 +67,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.EndTabItem();
 		}
 
-		public unsafe static bool DrawGaze(ref Gaze gaze, GazeControl type) {
+		public unsafe static bool DrawGaze(Actor* target, ref Gaze gaze, GazeControl type) {
 			var result = false;
 
 			var enabled = gaze.Mode != 0;
@@ -80,7 +78,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			if (type != GazeControl.All) {
 				// If this gaze type is not being overwritten, copy the vanilla values.
-				var baseGaze = Target->Gaze.Get(type);
+				var baseGaze = target->Gaze.Get(type);
 				if (baseGaze.Mode != 0 && (!enabled || result))
 					gaze.Pos = baseGaze.Pos;
 			}
@@ -94,7 +92,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			var gizmo = OverlayWindow.GetGizmo(gizmoId);
 
 			ImGui.SameLine();
-			if (ImGuiComponents.IconButton($"{FontAwesomeExtensions.ToIconChar(FontAwesomeIcon.EllipsisH)}##{type}")) {
+			if (ImGuiComponents.IconButton($"{FontAwesomeExtensions.ToIconChar(FontAwesomeIcon.LocationArrow)}##{type}")) {
 				// Toggle gizmo on or off.
 				// TODO: Place gizmo closer to character/camera.
 				if (!enabled) { // Enable override if not already.

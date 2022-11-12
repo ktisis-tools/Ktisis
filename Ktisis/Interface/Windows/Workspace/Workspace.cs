@@ -1,23 +1,19 @@
 using System.Numerics;
 
 using ImGuiNET;
-using ImGuizmoNET;
 
 using Dalamud.Interface;
-using Dalamud.Interface.Components;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
-using Ktisis.Structs;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
-using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.History;
 
-namespace Ktisis.Interface.Windows {
+namespace Ktisis.Interface.Windows.Workspace {
 	public static class Workspace {
 		public static bool Visible = false;
 
@@ -96,6 +92,10 @@ namespace Ktisis.Interface.Windows {
 
 			// Animation control
 			AnimationControls.Draw(target);
+
+			// Gaze control
+			if (ImGui.CollapsingHeader("Gaze Control"))
+				EditGaze.Draw(actor);
 
 			// Bone categories
 			if (ImGui.CollapsingHeader("Bone Category Visibility")) {

@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
-using System.Text.RegularExpressions;
 
 using ImGuiNET;
 
@@ -10,6 +11,8 @@ using Dalamud.Interface;
 using Ktisis.Util;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Actor.Equip;
+using Ktisis.Structs.Actor.Equip.SetSources;
 using Dalamud.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
@@ -47,8 +50,12 @@ namespace Ktisis.Interface.Windows {
 						DrawOverlayTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Gizmo")))
 						DrawGizmoTab(cfg);
+					if (ImGui.BeginTabItem(Locale.GetString("Input")))
+						DrawInputTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Language")))
 						DrawLanguageTab(cfg);
+					if (ImGui.BeginTabItem("Data"))
+						DrawDataTab(cfg);
 
 					ImGui.EndTabBar();
 				}
@@ -101,11 +108,6 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox(Locale.GetString("Show_speed_multipler_inputs"), ref displayMultiplierInputs))
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
 			ImGui.PopItemWidth();
-
-			ImGui.Spacing();
-			ImGui.Separator();
-			ImGui.Text("Keybind");
-			DrawInput(cfg);
 
 			ImGui.EndTabItem();
 		}
@@ -227,52 +229,104 @@ namespace Ktisis.Interface.Windows {
 
 
 		// input selector
-		public static void DrawInput(Configuration cfg) {
+		public static void DrawInputTab(Configuration cfg) {
+			ImGui.Spacing();
+			ImGui.Text("Keyboard Shortcuts");
+			ImGui.Spacing();
+
+			// completely enable/disable keyboard shortcuts
 			var enableKeybinds = cfg.EnableKeybinds;
-			if(ImGui.Checkbox("Enable Keybinds", ref enableKeybinds))
+			if(ImGui.Checkbox("Enable", ref enableKeybinds))
 				cfg.EnableKeybinds = enableKeybinds;
 			if (!cfg.EnableKeybinds) return;
 
-			VirtualKey pressDemo = VirtualKey.NO_KEY;
+			// display the currently pressed keys
+			List<VirtualKey> pressDemo = Input.FallbackKey;
 			foreach (var key in Enum.GetValues<VirtualKey>()) {
 				if (!Services.KeyState.IsVirtualKeyValid(key)) continue;
 				var state = Services.KeyState[key];
-				if (state) {
-					pressDemo = key;
-					break;
-				}
+				if (state && pressDemo == Input.FallbackKey)
+					pressDemo = new();
+				if (state)
+					pressDemo.Add(key);
 			}
-			ImGui.Text($"Pressing Key: {VirtualKeyExtensions.GetFancyName(pressDemo)}");
+
+			ImGui.Text($"Pressing Keys");
+			ImGuiComponents.HelpMarker("To assign a key or key combination:\n" +
+				"1. Hold the key or key combination\n" +
+				"2. Click on the desired action\n\n" +
+				"Do not hold any key to unassign.");
 			ImGui.SameLine();
-			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X));
-			ImGuiComponents.HelpMarker("Right click on keybind while pressing a key to assign it.");
+			ImGui.Text($":   {PrettyKeys(pressDemo)}");
+			ImGui.Spacing();
+			ImGui.Spacing();
 
 
-			foreach (var purpose in Input.Purposes) {
-				if (!Input.DefaultKeys.TryGetValue(purpose, out VirtualKey defaultKey))
-					defaultKey = Input.FallbackKey;
-				if (!cfg.KeyBinds.TryGetValue(purpose, out VirtualKey configuredKey))
-					configuredKey = defaultKey;
+			// key/Action table
+			ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, ImGui.GetStyle().CellPadding * 3);
+			if (ImGui.BeginTable("keybinds_table", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.BordersInnerH | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.PadOuterX)) {
 
-				ImGui.PushItemWidth(ImGui.GetFontSize() * 6);
-				// TODO: find a way to record a key when pressing it, instead of a select list
-				if (ImGui.BeginCombo($"{Regex.Replace(purpose.ToString(), @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0")}",$"{VirtualKeyExtensions.GetFancyName(configuredKey)}")) {
-					foreach (var key in Enum.GetValues<VirtualKey>()) {
-						if (!Services.KeyState.IsVirtualKeyValid(key) && key != VirtualKey.NO_KEY) continue;
-						if (ImGui.Selectable($"{VirtualKeyExtensions.GetFancyName(key)}", key == configuredKey))
-							if (key == defaultKey) cfg.KeyBinds.Remove(purpose);
-							else cfg.KeyBinds[purpose] = key;
-					}
+				// display and configureheaders
+				ImGui.TableSetupScrollFreeze(0, 1); // Make top row always visible
+				ImGui.TableSetupColumn("Keys");
+				ImGui.TableSetupColumn("Action");
+				ImGui.TableHeadersRow();
 
-					ImGui.SetItemDefaultFocus();
-					ImGui.EndCombo();
+				foreach (var purpose in Input.Purposes) {
+
+					// get currently configured or default keys
+					if (!Input.DefaultKeys.TryGetValue(purpose, out List<VirtualKey>? defaultKeys))
+						defaultKeys = Input.FallbackKey;
+					if (!cfg.KeyBinds.TryGetValue(purpose, out List<VirtualKey>? configuredKeys))
+						configuredKeys = defaultKeys;
+
+					ImGui.TableNextRow();
+					var clickRow = false;
+
+					// display the current key (config or default)
+					ImGui.TableNextColumn();
+					var configuredKeysPretty = PrettyKeys(configuredKeys);
+					ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(configuredKeysPretty).X) / 2));
+					ImGui.Selectable($"{configuredKeysPretty}##{purpose}", false, ImGuiSelectableFlags.SpanAllColumns);
+					clickRow |= ImGui.IsItemClicked(ImGuiMouseButton.Left) || ImGui.IsItemClicked(ImGuiMouseButton.Right);
+
+					// display the purpose
+					ImGui.TableNextColumn();
+					ImGui.Selectable(Locale.GetString($"Keyboard_Action_{purpose}"), false, ImGuiSelectableFlags.SpanAllColumns);
+					clickRow |= ImGui.IsItemClicked(ImGuiMouseButton.Left) || ImGui.IsItemClicked(ImGuiMouseButton.Right);
+
+					// execute the change if clicked
+					if (clickRow)
+						if (pressDemo == defaultKeys) cfg.KeyBinds.Remove(purpose);
+						else cfg.KeyBinds[purpose] = pressDemo;
+
 				}
-				if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-					if (pressDemo == defaultKey) cfg.KeyBinds.Remove(purpose);
-					else cfg.KeyBinds[purpose] = pressDemo;
-
-				ImGui.PopItemWidth();
+				ImGui.EndTable();
 			}
+			ImGui.PopStyleVar();
+			ImGui.EndTabItem();
+
+		}
+		private static string PrettyKeys(List<VirtualKey>  keys) => string.Join(" + ", keys.Select(k => VirtualKeyExtensions.GetFancyName(k)));
+
+		public static void DrawDataTab(Configuration cfg) {
+			ImGui.Spacing();
+			var validGlamPlatesFound = GlamourDresser.CountValid();
+			GuiHelpers.TextTooltip($"Glamour Plates in memory: {validGlamPlatesFound}  ", $"Found {validGlamPlatesFound} valid Glamour Plates");
+			ImGui.SameLine();
+
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, "Refresh Glamour Plate memory for the Sets lookups.\nThis memory is kept after a restart.\n\nRequirements:\n One of these windows must be opened: \"Glamour Plate Creation\" (by the Glamour Dresser) or \"Plate Selection\" (by the Glamour Plate skill)."))
+				GlamourDresser.PopulatePlatesData();
+
+			Components.Equipment.CreateGlamourQuestionPopup();
+
+			ImGui.SameLine();
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, "Dispose of the Glamour Plates memory and remove configurations for ALL characters.")) {
+				Sets.Dispose();
+				cfg.GlamourPlateData = null;
+			}
+
+			ImGui.Spacing();
 		}
 	}
 }

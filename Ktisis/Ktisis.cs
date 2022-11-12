@@ -7,7 +7,6 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.History;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -33,9 +32,9 @@ namespace Ktisis {
 			Interop.Methods.Init();
 			Interop.StaticOffsets.Init();
 			Interop.Hooks.ActorHooks.Init();
-			Interop.Hooks.CameraHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 			Interop.Hooks.GuiHooks.Init();
+			Interop.Hooks.EventsHooks.Init();
 			Input.Init();
 
 			// Register command
@@ -62,9 +61,9 @@ namespace Ktisis {
 
 			Interop.Alloc.Dispose();
 			Interop.Hooks.ActorHooks.Dispose();
-			Interop.Hooks.CameraHooks.Dispose();
 			Interop.Hooks.PoseHooks.Dispose();
 			Interop.Hooks.GuiHooks.Dispose();
+			Interop.Hooks.EventsHooks.Dispose();
 			Input.Instance.Dispose();
 
 			GameData.Sheets.Cache.Clear();

@@ -2,10 +2,8 @@
 using System.Numerics;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
-using Dalamud.Logging;
-
-using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
 using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
@@ -71,6 +69,8 @@ namespace Ktisis.Overlay {
 
 			// Draw skeleton
 
+			var isUsing = ImGuizmo.IsUsing();
+
 			for (var p = 0; p < model->Skeleton->PartialSkeletonCount; p++) {
 				var partial = model->Skeleton->PartialSkeletons[p];
 				var pose = partial.GetHavokPose(0);
@@ -90,11 +90,13 @@ namespace Ktisis.Overlay {
 					// Access bone transform
 					var transform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 
-					if (float.IsNaN(transform->Translation.X))
+					if (bone.IsBusted())
 						continue; // bone's busted, skip it.
 
 					// Get bone color and screen position
-					var boneColor = ImGui.GetColorU32(Ktisis.Configuration.GetCategoryColor(bone));
+					var boneColRgb = Ktisis.Configuration.GetCategoryColor(bone);
+					if (isUsing) boneColRgb.W = Math.Min(0.15f, boneColRgb.W);
+					var boneColor = ImGui.GetColorU32(boneColRgb);
 					Services.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
@@ -102,10 +104,12 @@ namespace Ktisis.Overlay {
 						// TODO: Draw lines for parents of partials.
 
 						var parent = model->Skeleton->GetBone(p, parentId);
-
-						var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Services.Camera->Camera->InterpDistance * 2f);
-						Services.GameGui.WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
-						draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
+						if (Ktisis.Configuration.IsBoneVisible(parent)) {
+							var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Services.Camera->Camera->InterpDistance * 2f);
+							Services.GameGui.WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
+								
+							draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
+						}
 					}
 
 					// Create selectable item
