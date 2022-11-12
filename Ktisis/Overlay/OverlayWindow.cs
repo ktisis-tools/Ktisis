@@ -1,17 +1,15 @@
-﻿using System;
-using System.Numerics;
+﻿using Dalamud.Interface;
 
 using ImGuiNET;
 
-using Dalamud.Interface;
-
 using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;
-using Ktisis.Interface.Windows;
-using Ktisis.Events;
-using Ktisis.Interface.Windows.ActorEdit;
 
-namespace Ktisis.Overlay {
+using System;
+using System.Numerics;
+
+namespace Ktisis.Overlay
+{
 	public static class OverlayWindow {
 		// Rendering
 
@@ -70,7 +68,7 @@ namespace Ktisis.Overlay {
 				Selection.DrawQueue.Clear(); // don't let it get worse
 		}
 
-		public unsafe static void End() {
+		public static void End() {
 			if (!HasBegun) return;
 			ImGui.End();
 			ImGui.PopStyleVar();

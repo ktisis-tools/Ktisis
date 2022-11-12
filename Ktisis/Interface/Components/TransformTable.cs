@@ -84,7 +84,9 @@ namespace Ktisis.Interface.Components
 			sizes[2] = GuiHelpers.CalcIconSize(iconSca).X;
 			var rightOffset = GuiHelpers.GetRightOffset(sizes.Max());
 
-			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
+
+            var inputsWidth = ImGui.GetContentRegionAvail().X - rightOffset;
+            ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - rightOffset);
 			result |= ImGui.DragFloat3("##Position", ref Position, 0.0005f);
 			UpdateTransformTableState();
 			ImGui.SameLine();
@@ -99,7 +101,20 @@ namespace Ktisis.Interface.Components
 			GuiHelpers.IconTooltip(iconSca, "Scale", true);
 			ImGui.PopItemWidth();
 			IsEditing = result;
-			return result;
+            if (Ktisis.Configuration.TransformTableDisplayMultiplierInputs)
+            {
+                var cellWidth = inputsWidth / 3 - (ImGui.GetStyle().ItemSpacing.X / 2);
+                ImGui.PushItemWidth(cellWidth);
+                if (ImGui.DragFloat("##SpeedMult##shift", ref ModifierMultShift, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
+                    Ktisis.Configuration.TransformTableModifierMultShift = ModifierMultShift;
+                ImGui.SameLine();
+                if (ImGui.DragFloat("##SpeedMult##ctrl", ref ModifierMultCtrl, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
+                    Ktisis.Configuration.TransformTableModifierMultCtrl = ModifierMultCtrl;
+                ImGui.PopItemWidth();
+                ImGui.SameLine();
+                GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
+            }
+            return result;
 		}
 
 		private unsafe void UpdateTransformTableState()
