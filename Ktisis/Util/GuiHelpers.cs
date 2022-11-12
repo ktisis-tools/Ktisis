@@ -14,15 +14,17 @@ using FFXIVClientStructs.Havok;
 namespace Ktisis.Util
 {
 	internal class GuiHelpers {
-		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, bool isHoldingKey, Vector2 size = default) {
+		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, bool isHoldingKey, Vector2 size = default, string hiddenLabel = "") {
 			if (!isHoldingKey) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, ImGui.GetStyle().DisabledAlpha);
-			bool accepting = IconButton(icon, size);
+			bool accepting = IconButton(icon, size, hiddenLabel);
 			if (!isHoldingKey) ImGui.PopStyleVar();
 
 			Tooltip(tooltip);
 
 			return accepting && isHoldingKey;
 		}
+		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string hiddenLabel = "") =>
+			IconButtonHoldConfirm(icon, tooltip, ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift, size, hiddenLabel);
 
 		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string hiddenLabel = "") {
 			bool accepting = IconButton(icon, size, hiddenLabel);
