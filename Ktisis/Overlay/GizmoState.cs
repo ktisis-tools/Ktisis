@@ -1,6 +1,6 @@
 ﻿namespace Ktisis.Overlay
 {
-    /* Guizmo State machine:
+	/* Guizmo State machine:
 								^
 								|
 								|event: OnGuizmoChange(GuizmoState)
@@ -21,7 +21,7 @@
 					|
 					v
  */
-    public enum GizmoState
+	public enum GizmoState
 	{
 		IDLE,
 		EDITING,
