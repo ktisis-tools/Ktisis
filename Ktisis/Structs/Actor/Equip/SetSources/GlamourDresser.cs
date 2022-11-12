@@ -81,7 +81,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 		}
 
 		public static void PopulatePlatesData() {
-			var local_character_id = Dalamud.ClientState.LocalContentId;
+			var local_character_id = Services.ClientState.LocalContentId;
 			if (local_character_id == 0) return;
 
 			var platesBefore = Plates;
@@ -96,7 +96,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 				Ktisis.Configuration.GlamourPlateData = new Dictionary<string, GlamourPlate[]?>();
 			if (Ktisis.Configuration.GlamourPlateData == null) return false;
 
-			var character_key = $"FFXIV_CHR{Dalamud.ClientState.LocalContentId:X16}";
+			var character_key = $"FFXIV_CHR{Services.ClientState.LocalContentId:X16}";
 			Ktisis.Configuration.GlamourPlateData.TryGetValue(character_key, out var platesFromConfig);
 			if (Plates == platesFromConfig) return false;
 
@@ -107,7 +107,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			return true;
 		}
 		public static void LoadGlamourPlatesIntoMemory() {
-			var local_character_id = Dalamud.ClientState.LocalContentId;
+			var local_character_id = Services.ClientState.LocalContentId;
 			if (local_character_id == 0) return;
 
 			if (Ktisis.Configuration.GlamourPlateData == null) return;

@@ -14,24 +14,24 @@ using Ktisis.Structs.Actor.Equip.SetSources;
 namespace Ktisis.Interop.Hooks {
 	public class EventsHooks {
 		public static void Init() {
-			Dalamud.AddonManager = new AddonManager();
-			Dalamud.ClientState.Login += OnLogin;
-			Dalamud.ClientState.Logout += OnLogout;
-			//Dalamud.Condition.ConditionChange += ConditionChange;
+			Services.AddonManager = new AddonManager();
+			Services.ClientState.Login += OnLogin;
+			Services.ClientState.Logout += OnLogout;
+			//Services.Condition.ConditionChange += ConditionChange;
 
-			var MiragePrismMiragePlate = Dalamud.AddonManager.Get<MiragePrismMiragePlateAddon>();
+			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent += OnGlamourPlatesReceiveEvent;
 
 			OnLogin(null!, null!);
 		}
 
 		public static void Dispose() {
-			Dalamud.AddonManager.Dispose();
-			Dalamud.ClientState.Logout -= OnLogout;
-			Dalamud.ClientState.Login -= OnLogin;
-			//Dalamud.Condition.ConditionChange -= ConditionChange;
+			Services.AddonManager.Dispose();
+			Services.ClientState.Logout -= OnLogout;
+			Services.ClientState.Login -= OnLogin;
+			//Services.Condition.ConditionChange -= ConditionChange;
 
-			var MiragePrismMiragePlate = Dalamud.AddonManager.Get<MiragePrismMiragePlateAddon>();
+			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent -= OnGlamourPlatesReceiveEvent;
 
 			OnLogout(null!, null!);
