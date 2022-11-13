@@ -47,7 +47,7 @@
 	"Edit_bone_positions": "Knochen Position bearbeiten",
 	// Tastatur konfigurationsanzeige enum definiert in Input.cs
 	"Keyboard_Action_GlobalModifierKey": "Globaler modifikator",
-	"Keyboard_Action_SwitchToTranslate": "Wechseln zu Übersetzen",
+	"Keyboard_Action_SwitchToTranslate": "Wechseln zu Positionieren",
 	"Keyboard_Action_SwitchToRotate": "Wechseln zu Rotation",
 	"Keyboard_Action_SwitchToScale": "Wechseln zu Skalieren",
 	"Keyboard_Action_SwitchToUniversal": "Wechseln zu Universal",
