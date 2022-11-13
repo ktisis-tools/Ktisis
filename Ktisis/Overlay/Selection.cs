@@ -24,23 +24,24 @@ namespace Ktisis.Overlay {
 
 			// Draw them dots
 
-			if (!ImGuizmo.IsUsing()) {
-				foreach (var dot in DrawQueue) {
-					var col = dot.Color;
-					if (dot.IsHovered()) {
-						col |= 0xff000000;
-						hovered.Add(dot.Name);
-					}
+			var isManipulating = ImGuizmo.IsUsing();
+			var isCursorBusy = OverlayWindow.IsCursorBusy();
 
-					var radius = dot.GetRadius();
-					draw.AddCircleFilled(dot.Pos, radius, col);
-					draw.AddCircle(dot.Pos, radius, 0xaf000000);
+			foreach (var dot in DrawQueue) {
+				var col = dot.Color;
+				if (dot.IsHovered() && !isCursorBusy) {
+					col |= 0xff000000;
+					hovered.Add(dot.Name);
 				}
+
+				var radius = dot.GetRadius();
+				draw.AddCircleFilled(dot.Pos, radius, col);
+				if(!isManipulating) draw.AddCircle(dot.Pos, radius, 0xaf000000);
 			}
 
 			// Selection list
 
-			if (hovered.Count > 0)
+			if (hovered.Count > 0 && !isCursorBusy)
 				DrawList(hovered);
 
 			// Empty draw queue
