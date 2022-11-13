@@ -23,17 +23,16 @@ namespace Ktisis.Structs.Bones {
 			var race = actor->Customize.Race;
 
 			if (gender == Gender.Male)
-				switch (race) {
-					case Race.Lalafell: return BodyType.LalafellMale;
-					case Race.Roegadyn:
-					case Race.Hrothgar: return BodyType.HrothgarRoegadyn;
-					default: return BodyType.TallMale;
-				}
+				return race switch {
+					Race.Lalafell => BodyType.LalafellMale,
+					Race.Roegadyn or Race.Hrothgar => BodyType.HrothgarRoegadyn,
+					_ => BodyType.TallMale,
+				};
 			else
-				switch (race) {
-					case Race.Lalafell: return BodyType.LalafellFemale;
-					default: return BodyType.TallFemale;
-				}
+				return race switch {
+					Race.Lalafell => BodyType.LalafellFemale,
+					_ => BodyType.TallFemale,
+				};
 		}
 
 		// This does the math to be inserted in Bone.GetWorldPos() equation
