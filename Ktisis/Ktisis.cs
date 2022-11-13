@@ -7,6 +7,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -19,7 +20,7 @@ namespace Ktisis {
 
 		public unsafe static GameObject? GPoseTarget
 			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
-
+		public unsafe static Actor* Target => GPoseTarget != null ? (Actor*)GPoseTarget.Address : null;
 		public Ktisis(DalamudPluginInterface pluginInterface) {
 			Services.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();

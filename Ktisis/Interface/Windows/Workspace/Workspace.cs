@@ -151,7 +151,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 				return Transform.Draw(ref model->Position, ref model->Rotation, ref model->Scale);
 			}
 
-			var bone = Skeleton.GetSelectedBone(target->Model->Skeleton);
+			var bone = Skeleton.GetSelectedBone();
 			if (bone == null) return false;
 
 			ImGui.Text($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");

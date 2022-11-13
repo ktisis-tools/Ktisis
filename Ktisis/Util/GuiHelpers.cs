@@ -14,24 +14,26 @@ using FFXIVClientStructs.Havok;
 namespace Ktisis.Util
 {
 	internal class GuiHelpers {
-		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, bool isHoldingKey, Vector2 size = default) {
+		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, bool isHoldingKey, Vector2 size = default, string hiddenLabel = "") {
 			if (!isHoldingKey) ImGui.PushStyleVar(ImGuiStyleVar.Alpha, ImGui.GetStyle().DisabledAlpha);
-			bool accepting = IconButton(icon, size);
+			bool accepting = IconButton(icon, size, hiddenLabel);
 			if (!isHoldingKey) ImGui.PopStyleVar();
 
 			Tooltip(tooltip);
 
 			return accepting && isHoldingKey;
 		}
+		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string hiddenLabel = "") =>
+			IconButtonHoldConfirm(icon, tooltip, ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift, size, hiddenLabel);
 
-		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip, Vector2 size = default) {
-			bool accepting = IconButton(icon, size);
+		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string hiddenLabel = "") {
+			bool accepting = IconButton(icon, size, hiddenLabel);
 			Tooltip(tooltip);
 			return accepting;
 		}
-		public static bool IconButton(FontAwesomeIcon icon, Vector2 size = default) {
+		public static bool IconButton(FontAwesomeIcon icon, Vector2 size = default, string hiddenLabel = "") {
 			ImGui.PushFont(UiBuilder.IconFont);
-			bool accepting = ImGui.Button(icon.ToIconString() ?? "", size);
+			bool accepting = ImGui.Button((icon.ToIconString() ?? "")+"##"+ hiddenLabel, size);
 			ImGui.PopFont();
 			return accepting;
 		}
@@ -85,6 +87,19 @@ namespace Ktisis.Util
 				ImGui.PopTextWrapPos();
 				ImGui.EndTooltip();
 			}
+		}
+
+		public static bool DragFloat3FillWidth(string label, bool icon, string? tooltip, ref Vector3 vector, float speed, string format) {
+			if (icon) ImGui.PushFont(UiBuilder.IconFont);
+			var labelSize = ImGui.CalcTextSize(label).X;
+			var rightOffset = GetRightOffset(labelSize);
+			var inputsWidth = ImGui.GetContentRegionAvail().X - rightOffset;
+			ImGui.PushItemWidth(inputsWidth);
+			var result = ImGui.DragFloat3(label, ref vector, speed, 0, 0, format);
+			ImGui.PopItemWidth();
+			if (icon) ImGui.PopFont();
+			if (tooltip != "" && tooltip != null) Tooltip(tooltip);
+			return result;
 		}
 
 		public static void PopupConfirm(string label, Action contents, Action? onAccept, bool understoodOnly = false) {
