@@ -11,14 +11,16 @@
 
     //// Plugin ////
 
-    // ConfigGui.cs
-    "Ktisis_settings": "Ktisis Settings",
+    // General //
+    "General": "General",
     "Settings": "Settings",
     "Language": "Language",
+    "Enable": "Enable",
     "Interface": "Interface",
     "Gizmo": "Gizmo",
     "Overlay": "Overlay",
-    "General": "General",
+    // ConfigGui.cs
+    "Ktisis_settings": "Ktisis Settings",
     "Hide_char_name": "Hide character name",
     "Transform_table": "Transform Table",
     "Digit_precision": "Digit Precision",
@@ -39,6 +41,8 @@
     "Categories_will_be_added_after_bones_are_displayed_once": "Categories will be added after bones are displayed once.",
     "Flip_axis_to_face_camera": "Flip axis to face camera",
     "Translate_bone_names": "Translate bone names",
+    "Keyboard_shortcuts": "Keyboard Shortcuts",
+    "Pressing_keys": "Pressing Keys",
     // Display keyboard configs from enum defined in Input.cs
     "Keyboard_Action_GlobalModifierKey": "Global modifier",
     "Keyboard_Action_SwitchToTranslate": "Switch to translate",
