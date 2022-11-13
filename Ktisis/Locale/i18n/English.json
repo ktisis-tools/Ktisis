@@ -44,6 +44,7 @@
     "Translate_bone_names": "Translate bone names",
     "Keyboard_shortcuts": "Keyboard Shortcuts",
     "Pressing_keys": "Pressing Keys",
+    "Edit_bone_positions": "Edit bone positions",
     // Display keyboard configs from enum defined in Input.cs
     "Keyboard_Action_GlobalModifierKey": "Global modifier",
     "Keyboard_Action_SwitchToTranslate": "Switch to translate",

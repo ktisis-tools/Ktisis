@@ -44,6 +44,7 @@
 	"Translate_bone_names": "Knochen Namen übersetzen",
 	"Keyboard_shortcuts": "Tastatur Belegung",
 	"Pressing_keys": "Gedrückter Knopf",
+	"Edit_bone_positions": "Knochen Position bearbeiten",
 	// Tastatur konfigurationsanzeige enum definiert in Input.cs
 	"Keyboard_Action_GlobalModifierKey": "Globaler modifikator",
 	"Keyboard_Action_SwitchToTranslate": "Wechseln zu Übersetzen",
