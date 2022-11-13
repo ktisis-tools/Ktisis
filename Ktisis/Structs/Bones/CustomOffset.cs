@@ -28,7 +28,9 @@ namespace Ktisis.Structs.Bones {
 					case Race.Roegadyn:
 					case Race.Hrothgar: return BodyType.HrothgarRoegadyn;
 					default: return BodyType.TallMale;
-				} else switch (race) {
+				}
+			else
+				switch (race) {
 					case Race.Lalafell: return BodyType.LalafellFemale;
 					default: return BodyType.TallFemale;
 				}
