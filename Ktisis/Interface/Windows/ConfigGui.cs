@@ -119,6 +119,10 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox(Locale.GetString("Draw_lines_on_skeleton"), ref drawLines))
 				cfg.DrawLinesOnSkeleton = drawLines;
 
+			var dotRadius = cfg.SkeletonDotRadius;
+			if (ImGui.SliderFloat(Locale.GetString("Dot_radius"), ref dotRadius, 0.01F, 15F, "%.1f"))
+				cfg.SkeletonDotRadius = dotRadius;
+
 			var lineThickness = cfg.SkeletonLineThickness;
 			if (ImGui.SliderFloat(Locale.GetString("Lines_thickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
 				cfg.SkeletonLineThickness = lineThickness;
