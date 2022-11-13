@@ -71,6 +71,10 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.Text(Locale.GetString("General"));
 
+			var openCtor = cfg.AutoOpenCtor;
+			if (ImGui.Checkbox(Locale.GetString("Open_plugin_load"), ref openCtor))
+				cfg.AutoOpenCtor = openCtor;
+
 			var displayCharName = !cfg.DisplayCharName;
 			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))
 				cfg.DisplayCharName = !displayCharName;

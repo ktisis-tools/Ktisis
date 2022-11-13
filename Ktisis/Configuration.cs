@@ -23,8 +23,9 @@ namespace Ktisis {
 		// Interface
 
 		public bool AutoOpen { get; set; } = true;
+		public bool AutoOpenCtor { get; set; } = false;
 
-		public bool DisplayCharName = true;
+		public bool DisplayCharName { get; set; } = true;
 
 		public bool TransformTableDisplayMultiplierInputs { get; set; } = false;
 		public float TransformTableBaseSpeedPos { get; set; } = 0.0005f;
