@@ -3,6 +3,8 @@
 using ImGuiNET;
 using ImGuizmoNET;
 
+using Ktisis.Structs.Extensions;
+
 namespace Ktisis.Overlay {
 	public class Gizmo {
 		// Instanced properties
@@ -103,8 +105,10 @@ namespace Ktisis.Overlay {
 			return true;
 		}
 		internal unsafe bool Manipulate() {
-			var view = OverlayWindow.GetViewMatrix();
-			var proj = OverlayWindow.GetProjectionMatrix();
+			var camera = Services.Camera->Camera;
+
+			var view = camera->GetViewMatrix();
+			var proj = camera->GetProjectionMatrix();
 
 			return ImGuizmo.Manipulate(
 				ref view.M11,

@@ -2,18 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text;
 
 using ImGuiNET;
+using Newtonsoft.Json;
 
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface;
+using Dalamud.Interface.Components;
 
 using Ktisis.Util;
 using Ktisis.Localization;
+using Ktisis.Overlay;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
-using Dalamud.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
@@ -71,6 +74,10 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.Text(Locale.GetString("General"));
 
+			var openCtor = cfg.AutoOpenCtor;
+			if (ImGui.Checkbox(Locale.GetString("Open_plugin_load"), ref openCtor))
+				cfg.AutoOpenCtor = openCtor;
+
 			var displayCharName = !cfg.DisplayCharName;
 			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))
 				cfg.DisplayCharName = !displayCharName;
@@ -115,76 +122,77 @@ namespace Ktisis.Interface.Windows {
 		// Overlay
 
 		public static void DrawOverlayTab(Configuration cfg) {
-			var drawLines = cfg.DrawLinesOnSkeleton;
-			if (ImGui.Checkbox(Locale.GetString("Draw_lines_on_skeleton"), ref drawLines))
-				cfg.DrawLinesOnSkeleton = drawLines;
+			if (ImGui.CollapsingHeader(Locale.GetString("Skeleton_lines_and_dots"), ImGuiTreeNodeFlags.DefaultOpen)) {
+				ImGui.Separator();
+				var drawLines = cfg.DrawLinesOnSkeleton;
+				if (ImGui.Checkbox(Locale.GetString("Draw_lines_on_skeleton"), ref drawLines))
+					cfg.DrawLinesOnSkeleton = drawLines;
 
-			var lineThickness = cfg.SkeletonLineThickness;
-			if (ImGui.SliderFloat(Locale.GetString("Lines_thickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
-				cfg.SkeletonLineThickness = lineThickness;
-
-			ImGui.Separator();
-			ImGui.Text(Locale.GetString("Bone_colors"));
-
-			bool linkBoneCategoriesColors = cfg.LinkBoneCategoryColors;
-			if (GuiHelpers.IconButtonTooltip(cfg.LinkBoneCategoryColors ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink, linkBoneCategoriesColors ? Locale.GetString("Unlink_bones_colors") : Locale.GetString("Link_bones_colors")))
-				cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
-
-			ImGui.SameLine();
-			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Eraser, Locale.GetString("Hold_Control_and_Shift_to_erase_colors"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
-			{
-				Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
-				if (linkBoneCategoriesColors) {
-					cfg.LinkedBoneCategoryColor = eraseColor;
-				} else {
-					foreach (Category category in Category.Categories.Values) {
-						if (category.ShouldDisplay || cfg.BoneCategoryColors.ContainsKey(category.Name))
-							cfg.BoneCategoryColors[category.Name] = eraseColor;
-					}
-				}
+				var lineThickness = cfg.SkeletonLineThickness;
+				if (ImGui.SliderFloat(Locale.GetString("Lines_thickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
+					cfg.SkeletonLineThickness = lineThickness;
 			}
+			if (ImGui.CollapsingHeader(Locale.GetString("Bone_colors"), ImGuiTreeNodeFlags.DefaultOpen)) {
 
-			if (linkBoneCategoriesColors)
-			{
-				Vector4 linkedBoneColor = cfg.LinkedBoneCategoryColor;
-				if (ImGui.ColorEdit4(Locale.GetString("Bone_colors"), ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
-					cfg.LinkedBoneCategoryColor = linkedBoneColor;
-			} else {
+				ImGui.Separator();
+
+				bool linkBoneCategoriesColors = cfg.LinkBoneCategoryColors;
+				if (GuiHelpers.IconButtonTooltip(cfg.LinkBoneCategoryColors ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink, linkBoneCategoriesColors ? Locale.GetString("Unlink_bones_colors") : Locale.GetString("Link_bones_colors")))
+					cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
 
 				ImGui.SameLine();
-				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, Locale.GetString("Hold_Control_and_Shift_to_reset_colors_to_their_default_values"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift))
-				{
-					foreach ((string categoryName, Category category) in Category.Categories)
-					{
-						if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
-							continue;
-						cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
+				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Eraser, Locale.GetString("Hold_Control_and_Shift_to_erase_colors"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
+					Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
+					if (linkBoneCategoriesColors) {
+						cfg.LinkedBoneCategoryColor = eraseColor;
+					} else {
+						foreach (Category category in Category.Categories.Values) {
+							if (category.ShouldDisplay || cfg.BoneCategoryColors.ContainsKey(category.Name))
+								cfg.BoneCategoryColors[category.Name] = eraseColor;
+						}
 					}
 				}
 
-				ImGui.Text(Locale.GetString("Categories_colors"));
-				ImGui.Columns(2);
-				int i = 0;
-				bool hasShownAnyCategory = false;
-				foreach (Category category in Category.Categories.Values) {
-					if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
-						continue;
+				if (linkBoneCategoriesColors) {
+					Vector4 linkedBoneColor = cfg.LinkedBoneCategoryColor;
+					if (ImGui.ColorEdit4(Locale.GetString("Bone_colors"), ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
+						cfg.LinkedBoneCategoryColor = linkedBoneColor;
+				} else {
 
-					if (!cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
-						categoryColor = cfg.LinkedBoneCategoryColor;
+					ImGui.SameLine();
+					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, Locale.GetString("Hold_Control_and_Shift_to_reset_colors_to_their_default_values"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
+						foreach ((string categoryName, Category category) in Category.Categories) {
+							if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
+								continue;
+							cfg.BoneCategoryColors[category.Name] = category.DefaultColor;
+						}
+					}
 
-					if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
-						cfg.BoneCategoryColors[category.Name] = categoryColor;
+					ImGui.Text(Locale.GetString("Categories_colors"));
+					ImGui.Columns(2);
+					int i = 0;
+					bool hasShownAnyCategory = false;
+					foreach (Category category in Category.Categories.Values) {
+						if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
+							continue;
 
-					if (i % 2 != 0) ImGui.NextColumn();
-					i++;
-					hasShownAnyCategory = true;
+						if (!cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
+							categoryColor = cfg.LinkedBoneCategoryColor;
+
+						if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
+							cfg.BoneCategoryColors[category.Name] = categoryColor;
+
+						if (i % 2 != 0) ImGui.NextColumn();
+						i++;
+						hasShownAnyCategory = true;
+					}
+					ImGui.Columns();
+					if (!hasShownAnyCategory)
+						ImGui.TextWrapped(Locale.GetString("Categories_will_be_added_after_bones_are_displayed_once"));
 				}
-				ImGui.Columns();
-				if (!hasShownAnyCategory)
-					ImGui.TextWrapped(Locale.GetString("Categories_will_be_added_after_bones_are_displayed_once"));
 			}
-
+			if (ImGui.CollapsingHeader(Locale.GetString("Edit_bone_positions")))
+				DrawBonesOffset(cfg);
 			ImGui.EndTabItem();
 		}
 
@@ -325,6 +333,89 @@ namespace Ktisis.Interface.Windows {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
+			ImGui.EndTabItem();
+		}
+
+		public static unsafe void DrawBonesOffset(Configuration cfg) {
+
+			ImGui.Separator();
+			var bone = Skeleton.GetSelectedBone();
+			if (bone != null) {
+				var targetBodyType = CustomOffset.GetRaceGenderFromActor(Ktisis.Target);
+				var targetBoneOffset = CustomOffset.GetBoneOffset(bone);
+
+				ImGui.Text($"Edit {targetBodyType}'s {bone.LocaleName}  ");
+
+				if (!cfg.CustomBoneOffset.TryGetValue(targetBodyType, out var _))
+					cfg.CustomBoneOffset.Add(targetBodyType,new());
+
+				if (GuiHelpers.DragFloat3FillWidth($"##currentTargetOffset", false, null, ref targetBoneOffset, .00001f, "%.5f"))
+					cfg.CustomBoneOffset[targetBodyType][bone.HkaBone.Name.String] = targetBoneOffset;
+			} else {
+				ImGuiComponents.HelpMarker("Select a Bone to start adjusting its position.");
+			}
+
+			ImGui.Spacing();
+
+			foreach (var bt in cfg.CustomBoneOffset) {
+				var bodyType = bt.Key;
+				if (ImGui.CollapsingHeader($"{bodyType}")) {
+					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash,$"Hold Ctrl and Shift to drop all {bodyType} bone offsets.", default, $"dropall##{bodyType}"))
+						cfg.CustomBoneOffset.Remove(bodyType);
+					ImGui.SameLine();
+					if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"export##{bodyType}"))
+						ImGui.SetClipboardText(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(cfg.CustomBoneOffset[bodyType]))));
+					ImGui.SameLine();
+					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Paste, $"Hold Ctrl and Shift to paste and replace all {bodyType} bone offsets.", default, $"pasteReplaceAll##{bodyType}")) {
+						var parsedPasteAll = JsonConvert.DeserializeObject<Dictionary<string, Vector3>>(Encoding.UTF8.GetString(Convert.FromBase64String(ImGui.GetClipboardText())));
+						if (parsedPasteAll != null)
+							cfg.CustomBoneOffset[bodyType] = parsedPasteAll;
+					}
+
+					ImGuiComponents.HelpMarker("Tips:\n" +
+						"Click on a row to copy it into clipboard" +
+						"Ctrl + Shift + Right click to remove a row" +
+						"The plus (+) button will insert a copied row");
+
+
+					if (ImGui.BeginTable("offsetBonesTable", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.BordersInnerH | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.PadOuterX)) {
+
+						ImGui.TableSetupScrollFreeze(0, 1); // Make top row always visible
+						ImGui.TableSetupColumn("Bone");
+						ImGui.TableSetupColumn("X");
+						ImGui.TableSetupColumn("Y");
+						ImGui.TableSetupColumn("Z");
+						ImGui.TableHeadersRow();
+
+						foreach (var os in bt.Value) {
+							var boneName = os.Key;
+							var offsets = os.Value;
+							ImGui.TableNextRow();
+							ImGui.TableNextColumn();
+							var isDeletable = ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift;
+							if(isDeletable) ImGui.PushStyleColor(ImGuiCol.HeaderHovered, Workspace.Workspace.ColRed);
+							if (ImGui.Selectable($"{Locale.GetBoneName(boneName)}##{bodyType}##customBoneOffset", false, ImGuiSelectableFlags.SpanAllColumns))
+								ImGui.SetClipboardText(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject((boneName,offsets)))));
+							if (isDeletable) ImGui.PopStyleColor();
+							if (isDeletable && ImGui.IsItemClicked(ImGuiMouseButton.Right))
+								cfg.CustomBoneOffset[bodyType].Remove(boneName);
+							ImGui.TableNextColumn();
+							ImGui.Text($"{offsets.X:F6}");
+							ImGui.TableNextColumn();
+							ImGui.Text($"{offsets.Y:F6}");
+							ImGui.TableNextColumn();
+							ImGui.Text($"{offsets.Z:F6}");
+						}
+						ImGui.EndTable();
+						if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus,"Add a line from clipboard.", default, $"{bodyType}##Clipboard##AddLine")) {
+							var parsedPasteLine = JsonConvert.DeserializeObject<(string, Vector3)>(Encoding.UTF8.GetString(Convert.FromBase64String(ImGui.GetClipboardText()))) ;
+							cfg.CustomBoneOffset[bodyType][parsedPasteLine.Item1] = parsedPasteLine.Item2;
+						}
+					}
+				}
+			}
+			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Hold Ctrl and Shift to drop ALL bone offsets.", default, "dropAllOffset"))
+				cfg.CustomBoneOffset = new();
 
 			ImGui.Spacing();
 		}

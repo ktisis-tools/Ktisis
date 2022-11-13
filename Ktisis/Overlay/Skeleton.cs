@@ -177,7 +177,7 @@ namespace Ktisis.Overlay {
 			}
 		}
 
-		public unsafe static Bone? GetSelectedBone(ActorSkeleton* skeleton) {
+		public unsafe static Bone? GetSelectedBone() {
 			if (!BoneSelect.Active) return null;
 
 			var target = Ktisis.GPoseTarget;

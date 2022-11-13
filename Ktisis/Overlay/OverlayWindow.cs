@@ -17,19 +17,6 @@ namespace Ktisis.Overlay {
 		public static ImGuiIOPtr Io;
 		public static Vector2 Wp;
 
-		// hacky solution until we push these to clientstructs
-
-		public unsafe static Matrix4x4 GetProjectionMatrix() {
-			var camera = (IntPtr)Services.Camera->Camera;
-			return *(Matrix4x4*)(*(IntPtr*)(camera + 240) + 80);
-		}
-		public unsafe static Matrix4x4 GetViewMatrix() {
-			var camera = (IntPtr)Services.Camera->Camera;
-			var view = *(Matrix4x4*)(camera + 0xB0);
-			view.M44 = 1;
-			return view;
-		}
-
 		// Gizmo
 
 		public static bool HasBegun = false;

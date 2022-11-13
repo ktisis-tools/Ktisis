@@ -11,14 +11,17 @@
 
 	//// Plugin ////
 
-	// ConfigGui.cs
-	"Ktisis_settings": "Ktisis Einstellungen",
+	// General //
+	"General": "Allgemein",
 	"Settings": "Einstellungen",
 	"Language": "Sprache",
+	"Enable": "Enable",
 	"Interface": "Oberfläche",
 	"Gizmo": "Gizmo",
 	"Overlay": "Overlay",
-	"General": "Allgemein",
+	// ConfigGui.cs
+	"Ktisis_settings": "Ktisis Einstellungen",
+	"Open_plugin_load": "Automatisches öffnen beim laden des Plugins",
 	"Hide_char_name": "Characternamen Verstecken",
 	"Transform_table": "Tranformier Tabelle",
 	"Digit_precision": "Nachkomma Präzision",

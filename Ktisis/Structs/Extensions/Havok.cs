@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
@@ -7,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Structs.Bones;
 
 namespace Ktisis.Structs {
-	public static class HkaExtensions {
+	public static class Havok {
 		// hkVector4f
 
 		public static Vector3 ToVector3(this hkVector4f vec) => new Vector3(vec.X, vec.Y, vec.Z);
