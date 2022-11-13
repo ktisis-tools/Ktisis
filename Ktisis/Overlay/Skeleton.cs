@@ -100,7 +100,7 @@ namespace Ktisis.Overlay {
 					Services.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
-					if (parentId > 0) {
+					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton) {
 						// TODO: Draw lines for parents of partials.
 
 						var parent = model->Skeleton->GetBone(p, parentId);
