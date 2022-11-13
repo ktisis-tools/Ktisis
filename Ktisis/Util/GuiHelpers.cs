@@ -89,7 +89,7 @@ namespace Ktisis.Util
 			}
 		}
 
-		public static bool DragFloat3FillWidth(string label, bool icon, string? tooltip, ref Vector3 vector,float speed, string format) {
+		public static bool DragFloat3FillWidth(string label, bool icon, string? tooltip, ref Vector3 vector, float speed, string format) {
 			if (icon) ImGui.PushFont(UiBuilder.IconFont);
 			var labelSize = ImGui.CalcTextSize(label).X;
 			var rightOffset = GetRightOffset(labelSize);
@@ -98,7 +98,7 @@ namespace Ktisis.Util
 			var result = ImGui.DragFloat3(label, ref vector, speed, 0, 0, format);
 			ImGui.PopItemWidth();
 			if (icon) ImGui.PopFont();
-			if(tooltip != "" && tooltip != null) Tooltip(tooltip);
+			if (tooltip != "" && tooltip != null) Tooltip(tooltip);
 			return result;
 		}
 
