@@ -39,12 +39,11 @@ namespace Ktisis.Interface.Windows {
 				return;
 
 			var size = new Vector2(-1, -1);
-			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
-			ImGui.SetNextWindowSizeConstraints(size, size);
+			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-			if (ImGui.Begin(Locale.GetString("Ktisis_settings"), ref Visible, ImGuiWindowFlags.NoResize)) {
+			if (ImGui.Begin(Locale.GetString("Ktisis_settings"), ref Visible, ImGuiWindowFlags.AlwaysAutoResize)) {
 				if (ImGui.BeginTabBar(Locale.GetString("Settings"))) {
 					var cfg = Ktisis.Configuration;
 					if (ImGui.BeginTabItem(Locale.GetString("Interface")))

@@ -41,8 +41,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 			var gposeOn = Ktisis.IsInGPose;
 
 			var size = new Vector2(-1, -1);
-			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
-			ImGui.SetNextWindowSizeConstraints(size, size);
+			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 

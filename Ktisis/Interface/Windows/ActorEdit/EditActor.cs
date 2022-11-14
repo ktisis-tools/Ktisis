@@ -28,13 +28,13 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				return;
 
 			var size = new Vector2(-1, -1);
-			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
+			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
 			// Create window
 
-			if (ImGui.Begin("Appearance", ref Visible)) {
+			if (ImGui.Begin("Appearance", ref Visible,ImGuiWindowFlags.AlwaysAutoResize)) {
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
 
