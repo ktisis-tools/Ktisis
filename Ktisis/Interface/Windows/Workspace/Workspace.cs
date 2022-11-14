@@ -11,6 +11,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class Workspace {
@@ -156,7 +157,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 				ImGui.Text($"{targetName}");
 
 				ImGui.SameLine();
-				ControlButtons.GameAnimationIndicatorAlignRight();
+				GameAnimationIndicatorAlignRight();
 
 				// display selected bone name
 				if (select.Active && bone != null) {
@@ -172,6 +173,20 @@ namespace Ktisis.Interface.Windows.Workspace {
 			if (!select.Active) return Transform.Draw(target);
 			if (bone == null) return false;
 			return Transform.Draw(bone);
+		}
+
+		private static unsafe void GameAnimationIndicatorAlignRight() {
+			var target = Ktisis.GPoseTarget;
+			if (target == null) return;
+
+			var isGamePlaybackRunning = PoseHooks.IsGamePlaybackRunning(target);
+			var icon = isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause;
+
+			GuiHelpers.TextRight("", GuiHelpers.CalcIconSize(icon).X + ImGui.GetStyle().FramePadding.X * 2);
+
+			ImGui.SameLine();
+			GuiHelpers.Icon(icon);
+			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target." + (PoseHooks.PosingEnabled ? "\nPosing may reset periodically." : "") : "Game Animation is paused for this target." + (!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
 		}
 	}
 }

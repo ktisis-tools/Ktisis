@@ -5,7 +5,6 @@ using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
@@ -130,20 +129,6 @@ namespace Ktisis.Interface.Components {
 				PoseHooks.TogglePosing();
 
 			ImGui.EndDisabled();
-		}
-
-		internal static unsafe void GameAnimationIndicatorAlignRight() {
-			var target = Ktisis.GPoseTarget;
-			if (target == null) return;
-
-			var isGamePlaybackRunning = PoseHooks.IsGamePlaybackRunning(target);
-			var icon = isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause;
-
-			GuiHelpers.TextRight("", GuiHelpers.CalcIconSize(icon).X + ImGui.GetStyle().FramePadding.X * 2);
-
-			ImGui.SameLine();
-			GuiHelpers.Icon(icon);
-			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target."+(PoseHooks.PosingEnabled?"\nPosing may reset periodically.":"") : "Game Animation is paused for this target."+(!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
 		}
 	}
 }
