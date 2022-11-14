@@ -85,13 +85,14 @@ namespace Ktisis.Interface.Components {
 
 
 			if (Ktisis.Configuration.TransformTableDisplayMultiplierInputs) {
-				var cellWidth = inputsWidth / 3 - (ImGui.GetStyle().ItemSpacing.X / 2);
-				ImGui.PushItemWidth(cellWidth);
-				if (ImGui.DragFloat("##SpeedMult##shift", ref ModifierMultShift, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
-					Ktisis.Configuration.TransformTableModifierMultShift = ModifierMultShift;
-				ImGui.SameLine();
-				if(ImGui.DragFloat("##SpeedMult##ctrl", ref ModifierMultCtrl, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic))
-					Ktisis.Configuration.TransformTableModifierMultCtrl = ModifierMultCtrl;
+				var input2Width = (inputsWidth / 3 * 2) - (ImGui.GetStyle().ItemInnerSpacing.X /3);
+
+				Vector2 mults = new(ModifierMultShift, ModifierMultCtrl);
+				ImGui.PushItemWidth(input2Width);
+				if (ImGui.DragFloat2("##SpeedMult##shiftCtrl", ref mults, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic)) {
+					Ktisis.Configuration.TransformTableModifierMultShift = mults.X;
+					Ktisis.Configuration.TransformTableModifierMultCtrl = mults.Y;
+				}
 				ImGui.PopItemWidth();
 				ImGui.SameLine();
 				GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
