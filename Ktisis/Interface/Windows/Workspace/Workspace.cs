@@ -54,7 +54,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 					gposeOn ? "GPose Enabled" : "GPose Disabled"
 				);
 
-
 				ImGui.SameLine();
 
 				// Pose switch
@@ -91,8 +90,12 @@ namespace Ktisis.Interface.Windows.Workspace {
 			AnimationControls.Draw(target);
 
 			// Gaze control
-			if (ImGui.CollapsingHeader("Gaze Control"))
-				EditGaze.Draw(actor);
+			if (ImGui.CollapsingHeader("Gaze Control")) {
+				if (Interop.Hooks.PoseHooks.PosingEnabled)
+					ImGui.Text("Gaze controls are unavailable while posing.");
+				else
+					EditGaze.Draw(actor);
+			}
 
 			// Bone categories
 			if (ImGui.CollapsingHeader("Bone Category Visibility")) {
@@ -142,7 +145,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 			ImGui.SameLine();
 
 			var select = Skeleton.BoneSelect;
-			var bone = Skeleton.GetSelectedBone(target->Model->Skeleton);
+			var bone = Skeleton.GetSelectedBone();
 
 			var frameSize = new Vector2(ImGui.GetContentRegionAvail().X, panelHeight);
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetStyle().FramePadding.X, ImGui.GetStyle().FramePadding.Y / 2));

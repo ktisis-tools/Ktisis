@@ -19,6 +19,7 @@
     "Gizmo": "Gizmo",
     "Overlay": "Overlay",
     "General": "General",
+    "Open_plugin_load": "Auto open on plugin load",
     "Hide_char_name": "Hide character name",
     "Transform_table": "Transform Table",
     "Digit_precision": "Digit Precision",

@@ -9,6 +9,7 @@ using Dalamud.Interface.Components;
 
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class EditGaze {
@@ -18,6 +19,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 			get => Ktisis.Configuration.LinkedGaze;
 			set => Ktisis.Configuration.LinkedGaze = value;
 		}
+
+		public const uint UsingColor = 0xffde851f;
 
 		// UI Code
 
@@ -70,20 +73,13 @@ namespace Ktisis.Interface.Windows.Workspace {
 		public unsafe static bool DrawGaze(Actor* target, ref Gaze gaze, GazeControl type) {
 			var result = false;
 
+			var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
+
 			var enabled = gaze.Mode != 0;
 			if (ImGui.Checkbox($"{type}", ref enabled)) {
 				result = true;
 				gaze.Mode = enabled ? GazeMode.Target : GazeMode.Disabled;
 			}
-
-			if (type != GazeControl.All) {
-				// If this gaze type is not being overwritten, copy the vanilla values.
-				var baseGaze = target->Gaze.Get(type);
-				if (baseGaze.Mode != 0 && (!enabled || result))
-					gaze.Pos = baseGaze.Pos;
-			}
-
-			result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
 
 			// Gizmo controls
 			// TODO: rotation mode.
@@ -91,7 +87,13 @@ namespace Ktisis.Interface.Windows.Workspace {
 			var gizmoId = $"edit_gaze_{type}";
 			var gizmo = OverlayWindow.GetGizmo(gizmoId);
 
-			ImGui.SameLine();
+			var hasGizmo = gizmo != null;
+
+			ImGui.SameLine(ImGui.GetContentRegionAvail().X - 60);
+
+			if (isTracking) ImGui.BeginDisabled();
+			else if (hasGizmo) ImGui.PushStyleColor(ImGuiCol.Button, UsingColor);
+
 			if (ImGuiComponents.IconButton($"{FontAwesomeExtensions.ToIconChar(FontAwesomeIcon.LocationArrow)}##{type}")) {
 				// Toggle gizmo on or off.
 				// TODO: Place gizmo closer to character/camera.
@@ -103,6 +105,11 @@ namespace Ktisis.Interface.Windows.Workspace {
 				gizmo = OverlayWindow.SetGizmoOwner(gizmo == null ? gizmoId : null);
 			}
 
+			if (isTracking) ImGui.EndDisabled();
+			else if (hasGizmo) ImGui.PopStyleColor();
+
+			// Draw gizmo
+
 			if (gizmo != null) {
 				if (enabled) {
 					gizmo.ForceOp = OPERATION.TRANSLATE;
@@ -111,6 +118,31 @@ namespace Ktisis.Interface.Windows.Workspace {
 					OverlayWindow.SetGizmoOwner(null);
 				}
 			}
+
+			// Camera tracking
+
+			ImGui.SameLine();
+			if (isTracking) ImGui.PushStyleColor(ImGuiCol.Button, UsingColor);
+			if (ImGuiComponents.IconButton($"{FontAwesomeExtensions.ToIconChar(FontAwesomeIcon.Eye)}##{type}")) {
+				result = true;
+				enabled = true;
+				gaze.Mode = isTracking ? GazeMode.Target : GazeMode._KtisisFollowCam_;
+				if (hasGizmo) OverlayWindow.SetGizmoOwner(null);
+			}
+			if (isTracking) ImGui.PopStyleColor();
+
+			// Position
+
+			if (type != GazeControl.All) {
+				// If this gaze type is not being overwritten, copy the vanilla values.
+				var baseGaze = target->Gaze[type];
+				if (baseGaze.Mode != 0 && (!enabled || result))
+					gaze.Pos = baseGaze.Pos;
+			}
+
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
+			result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
+			ImGui.PopItemWidth();
 
 			return result;
 		}
@@ -123,15 +155,27 @@ namespace Ktisis.Interface.Windows.Workspace {
 				var id = actor->ObjectID;
 				if (ActorControl!.ContainsKey(id)) {
 					var gaze = ActorControl[id];
-					if (gaze.Other.Mode != 0) {
-						actor->LookAt(&gaze.Other, GazeControl.All);
-					} else {
-						if (gaze.Torso.Mode != 0)
-							actor->LookAt(&gaze.Torso, GazeControl.Torso);
-						if (gaze.Head.Mode != 0)
-							actor->LookAt(&gaze.Head, GazeControl.Head);
-						if (gaze.Eyes.Mode != 0)
-							actor->LookAt(&gaze.Eyes, GazeControl.Eyes);
+
+					for (var i = -1; i < 3; i++) {
+						var type = (GazeControl)i;
+
+						var ctrl = gaze[type];
+						if (ctrl.Mode != 0) {
+							if (ctrl.Mode == GazeMode._KtisisFollowCam_) {
+								var camera = Services.Camera->Camera;
+
+								ctrl.Pos = camera->GetCameraPos();
+								gaze[type] = ctrl;
+								ActorControl[id] = gaze;
+
+								ctrl.Mode = GazeMode.Target;
+							}
+
+							actor->LookAt(&ctrl, type);
+
+							if (type == GazeControl.All)
+								break;
+						}
 					}
 				}
 			} else if (isValid) {
