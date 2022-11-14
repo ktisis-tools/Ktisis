@@ -21,7 +21,7 @@
 	"Overlay": "Overlay",
 	// ConfigGui.cs
 	"Ktisis_settings": "Ktisis Einstellungen",
-	"Open_plugin_load": "Automatisches öffnen beim laden des Plugins",
+	"Open_plugin_load": "Automatisches Öffnen beim Laden des Plugins",
 	"Hide_char_name": "Characternamen Verstecken",
 	"Transform_table": "Tranformier Tabelle",
 	"Digit_precision": "Nachkomma Präzision",
