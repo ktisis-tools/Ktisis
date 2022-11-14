@@ -156,7 +156,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 				string targetName = target->GetNameOr($"{Locale.GetString("Target")} #" + target->ObjectID);
 				ImGui.Text($"{targetName}");
 
-				ImGui.SameLine();
 				GameAnimationIndicatorAlignRight();
 
 				// display selected bone name
@@ -182,9 +181,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 			var isGamePlaybackRunning = PoseHooks.IsGamePlaybackRunning(target);
 			var icon = isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause;
 
-			GuiHelpers.TextRight("", GuiHelpers.CalcIconSize(icon).X + ImGui.GetStyle().FramePadding.X * 2);
+			ImGui.SameLine(ImGui.GetContentRegionAvail().X - GuiHelpers.CalcIconSize(icon).X);
 
-			ImGui.SameLine();
 			GuiHelpers.Icon(icon);
 			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target." + (PoseHooks.PosingEnabled ? "\nPosing may reset periodically." : "") : "Game Animation is paused for this target." + (!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
 		}
