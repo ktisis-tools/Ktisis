@@ -10,6 +10,7 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Util;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Components {
 	// Thanks to Emyka for the original code:
@@ -117,15 +118,15 @@ namespace Ktisis.Interface.Components {
 			IsEditing = result;
 			return result;
 		}
-		public bool Draw(ref Vector3 pos, ref Quaternion rot, ref Vector3 scale) {
+		public unsafe bool Draw(Actor* target) {
 			if (!IsEditing)
-				Update(pos, rot, scale);
+				Update(target->Model->Position, target->Model->Rotation, target->Model->Scale);
 
 			var result = DrawTable();
-			pos = Position;
-			rot = MathHelpers.ToQuaternion(Rotation);
+			target->Model->Position = Position;
+			target->Model->Rotation = MathHelpers.ToQuaternion(Rotation);
 			if (Scale.X > 0 && Scale.Y > 0 && Scale.Z > 0)
-				scale = Scale;
+				target->Model->Scale = Scale;
 			return result;
 		}
 

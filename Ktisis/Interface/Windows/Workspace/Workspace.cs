@@ -84,10 +84,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
 			if (actor->Model == null) return;
 
-			ImGui.Separator();
-
 			// Draw co-ordinate table
-			Coordinates(actor);
+			TransformTableAndExtra(actor);
 
 			// Animation control
 			AnimationControls.Draw(target);
@@ -132,35 +130,42 @@ namespace Ktisis.Interface.Windows.Workspace {
 			BoneTree.Draw(actor);
 		}
 
-		// Coordinates table
+		// Transform Table actor and bone names display, actor related extra
 
-		private static unsafe bool Coordinates(Actor* target) {
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.UserEdit, "Edit targeted Actor's appearance.", ControlButtons.ButtonSize))
+		private static unsafe bool TransformTableAndExtra(Actor* target) {
+			float panelHeight = ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y; // + ImGui.GetStyle().FramePadding.Y
+
+			// Customize button
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.UserEdit, "Edit targeted Actor's appearance.", new Vector2(ControlButtons.ButtonSize.X, panelHeight)))
 				if (EditActor.Visible) EditActor.Hide();
 				else EditActor.Show();
 			ImGui.SameLine();
 
-			ControlButtons.VerticalAlignTextOnButtonSize();
-			string targetName = target->GetNameOr("Target #"+ target->ObjectID);
-			string title = $"{targetName}";
-
 			var select = Skeleton.BoneSelect;
-			if (!select.Active) {
-				ImGui.Text(title);
-				var model = target->Model;
-				return Transform.Draw(ref model->Position, ref model->Rotation, ref model->Scale);
-			}
-
 			var bone = Skeleton.GetSelectedBone(target->Model->Skeleton);
+
+			var frameSize = new Vector2(ImGui.GetContentRegionAvail().X, panelHeight);
+			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetStyle().FramePadding.X, ImGui.GetStyle().FramePadding.Y / 2));
+			if (ImGui.BeginChildFrame(8, frameSize, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar)) {
+
+				// display target name
+				string targetName = target->GetNameOr($"{Locale.GetString("Target")} #" + target->ObjectID);
+				ImGui.Text($"{targetName}");
+
+				// display selected bone name
+				if (select.Active && bone != null) {
+					ImGui.SetCursorPosY(ImGui.GetCursorPosY() - (ImGui.GetStyle().ItemSpacing.Y / 2) - (ImGui.GetStyle().FramePadding.Y / 2));
+					ImGui.Text($"{bone.LocaleName}");
+				}
+
+				ImGui.EndChildFrame();
+			}
+			ImGui.PopStyleVar();
+
+			// Draw Transform Table
+			if (!select.Active) return Transform.Draw(target);
 			if (bone == null) return false;
-
-			ImGui.Text($"{title}'s {Locale.GetBoneName(bone.HkaBone.Name.String)}");
-
 			return Transform.Draw(bone);
 		}
-
-		// Bone Tree
-
-
 	}
 }
