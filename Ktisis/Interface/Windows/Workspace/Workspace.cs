@@ -155,6 +155,9 @@ namespace Ktisis.Interface.Windows.Workspace {
 				string targetName = target->GetNameOr($"{Locale.GetString("Target")} #" + target->ObjectID);
 				ImGui.Text($"{targetName}");
 
+				ImGui.SameLine();
+				ControlButtons.GameAnimationIndicatorAlignRight();
+
 				// display selected bone name
 				if (select.Active && bone != null) {
 					ImGui.SetCursorPosY(ImGui.GetCursorPosY() - (ImGui.GetStyle().ItemSpacing.Y / 2) - (ImGui.GetStyle().FramePadding.Y / 2));

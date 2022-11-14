@@ -122,7 +122,6 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.TextRight(label, offsetWidth);
 			if (Ktisis.IsInGPose) ImGui.PopStyleColor();
 			ImGui.SameLine();
-			var togglePos = ImGui.GetCursorPos(); // keep these coordinate as a starting point for GameAnimationIndicator
 
 			if (!Ktisis.IsInGPose)
 				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
@@ -131,24 +130,19 @@ namespace Ktisis.Interface.Components {
 				PoseHooks.TogglePosing();
 
 			ImGui.EndDisabled();
-
-
-			// prints game indicator at the previously saved position togglePos
-			var curCur = ImGui.GetCursorPos();
-			ImGui.SetCursorPos(togglePos);
-			GameAnimationIndicator(Ktisis.GPoseTarget);
-			ImGui.SetCursorPos(curCur); // restore cursor
 		}
 
-		private static unsafe void GameAnimationIndicator(GameObject? target) {
+		internal static unsafe void GameAnimationIndicatorAlignRight() {
+			var target = Ktisis.GPoseTarget;
 			if (target == null) return;
 
 			var isGamePlaybackRunning = PoseHooks.IsGamePlaybackRunning(target);
+			var icon = isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause;
 
-			ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ImGui.GetFontSize() * 1.5f));
-			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (ImGui.GetFontSize() * (isGamePlaybackRunning? 0.25f : 0.85f)));
+			GuiHelpers.TextRight("", GuiHelpers.CalcIconSize(icon).X + ImGui.GetStyle().FramePadding.X * 2);
 
-			GuiHelpers.Icon(isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause);
+			ImGui.SameLine();
+			GuiHelpers.Icon(icon);
 			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target."+(PoseHooks.PosingEnabled?"\nPosing may reset periodically.":"") : "Game Animation is paused for this target."+(!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
 		}
 	}
