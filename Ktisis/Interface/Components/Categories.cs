@@ -34,9 +34,6 @@ namespace Ktisis.Interface.Components {
 
 		public static bool DrawConfigList(Configuration cfg) {
 			return DrawList(category => {
-				if (!cfg.BoneCategoryColors.ContainsKey(category.Name))
-					return false;
-
 				if (!cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
 					categoryColor = cfg.LinkedBoneCategoryColor;
 
