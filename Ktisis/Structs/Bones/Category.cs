@@ -47,16 +47,41 @@ namespace Ktisis.Structs.Bones
 			if (string.IsNullOrEmpty(boneName))
 				return DefaultCategory;
 
-			if(!CategoriesByBone.TryGetValue(boneName, out Category? category))
-				category = DefaultCategory;
+			if (!CategoriesByBone.TryGetValue(boneName, out Category? category)) {
+				// This is needed for bone names with an ID, such as hair bones, e.g. j_ex_h0116_ke_b_a
+				var testedBoneName = RemoveSpecialCharacters(boneName);
+				if (!CategoriesByBone.TryGetValue(testedBoneName, out category))
+					category = DefaultCategory;
+			}
 
 			category.MarkForDisplay();
 
 			return category;
 		}
 
+		private readonly static bool[] _lookup = new bool[65536];
+
+		public static string RemoveSpecialCharacters(string str) {
+			char[] buffer = new char[str.Length];
+			int index = 0;
+			foreach (char c in str) {
+				if (_lookup[c]) {
+					buffer[index] = c;
+					index++;
+				}
+			}
+			return new string(buffer, 0, index);
+		}
+
 		static Category()
 		{
+			// Create a lookup to strip numbers from bone names when checking them.
+			// it's relative fast, according to stackoverflow
+			//for (char c = '0'; c <= '9'; c++) _lookup[c] = true; // we strip numbers from the bone name
+			for (char c = 'A'; c <= 'Z'; c++) _lookup[c] = true;
+			for (char c = 'a'; c <= 'z'; c++) _lookup[c] = true;
+			_lookup['_'] = true;
+
 			Vector4 defaultColor = new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F);
 
 			/* Default fallback category (do not assign bones here) */
@@ -142,6 +167,28 @@ namespace Ktisis.Structs.Bones
 				"j_kami_f_r", // HairFrontRight
 				"j_kami_b", // HairB
 				"j_ex_met_va", // HairB
+
+				"j_ex_h_ke_a", // the bones below must be stipped from digits
+				"j_ex_h_ke_b", // some are real, some are guessed by pattern
+				"j_ex_h_ke_s",
+				"j_ex_h_ke_s_r",
+				"j_ex_h_ke_s_l",
+				"j_ex_h_ke_a_r",
+				"j_ex_h_ke_a_l",
+				"j_ex_h_ke_b_a",
+				"j_ex_h_ke_b_b",
+				"j_ex_h_ke_b_l",
+				"j_ex_h_ke_b_r",
+				"j_ex_h_ke_u",
+				"j_ex_h_ke_u_r",
+				"j_ex_h_ke_u_l",
+				"j_ex_h_ke_f",
+				"j_ex_h_ke_f_a",
+				"j_ex_h_ke_f_b",
+				"j_ex_h_ke_f_l",
+				"j_ex_h_ke_f_r",
+				"j_ex_h_ke_l",
+				"j_ex_h_ke_r",
 			});
 			CreateCategory("clothes", new Vector4(1.0F, 1.0F, 0.0F, 0.5647059F), new List<string> {
 				"j_sk_b_b_l",     // ClothBackBLeft
