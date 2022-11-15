@@ -11,12 +11,14 @@ using System.Threading.Tasks;
 namespace Ktisis.Interface.Components {
 	internal static class Categories {
 
-		public static bool DrawList(Func<Category,bool> drawForEach) {
+		private static bool DrawList(Func<Category,bool> drawForEach) {
 			ImGui.Columns(2);
 			int i = 0;
 			bool hasShownAnyCategory = false;
 			foreach (Category category in Category.Categories.Values) {
 				if (!category.ShouldDisplay)
+					continue;
+				if (Ktisis.Configuration.CensorNsfw && category.IsNsfw)
 					continue;
 
 				if (!drawForEach(category)) continue;

@@ -11,6 +11,7 @@ namespace Ktisis.Structs.Bones
 		public bool ShouldDisplay { get; private set; } = false;
 		public IReadOnlyList<string> PossibleBones => new ReadOnlyCollection<string>(_PossibleBones);
 		private readonly List<string> _PossibleBones;
+		public bool IsNsfw { get; private set; } = false;
 
 		public static IReadOnlyDictionary<string, Category> Categories
 			=> new ReadOnlyDictionary<string, Category>(_Categories);
@@ -19,16 +20,17 @@ namespace Ktisis.Structs.Bones
 
 		public static Category DefaultCategory => Categories["other"];
 
-		private Category(string name, Vector4 defaultColor, List<string> boneNames)
+		private Category(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw)
 		{
 			Name = name;
 			DefaultColor = defaultColor;
 			_PossibleBones = boneNames;
+			IsNsfw = isNsfw;
 		}
-		public static Category CreateCategory(string name, Vector4 defaultColor, List<string> boneNames)
+		public static Category CreateCategory(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw = false)
 		{
 			/* TODO: We currently throw for duplicated categories. This may turn out to be a problem in the future. */
-			Category cat = new(name, defaultColor, boneNames);
+			Category cat = new(name, defaultColor, boneNames, isNsfw);
 			_Categories.Add(name, cat);
 			foreach(string boneName in cat.PossibleBones) {
 				/* On collision, use the first registered category */
@@ -354,12 +356,12 @@ namespace Ktisis.Structs.Bones
 				"iv_ochinko_d",
 				"iv_ochinko_e",
 				"iv_ochinko_f",
-			});
+			},true);
 			CreateCategory("ivcs vagina", defaultColor, new List<string> {
 				"iv_kuritto", // Clitoris   rotation, position, scale
 				"iv_inshin_l", // Labia    rotation, position, scale
 				"iv_inshin_r", // Labia
-			});
+			},true);
 			CreateCategory("ivcs buttocks", defaultColor, new List<string> {
 				// Anus (rotation, scale, position)
 				"iv_koumon",
@@ -369,7 +371,7 @@ namespace Ktisis.Structs.Bones
 				// Buttocks (rotation, scale, position)
 				"iv_shiri_l",
 				"iv_shiri_r",
-			});
+			},true);
 		}
 	}
 }
