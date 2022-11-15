@@ -169,26 +169,10 @@ namespace Ktisis.Interface.Windows {
 					}
 
 					ImGui.Text(Locale.GetString("Categories_colors"));
-					ImGui.Columns(2);
-					int i = 0;
-					bool hasShownAnyCategory = false;
-					foreach (Category category in Category.Categories.Values) {
-						if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
-							continue;
 
-						if (!cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
-							categoryColor = cfg.LinkedBoneCategoryColor;
-
-						if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
-							cfg.BoneCategoryColors[category.Name] = categoryColor;
-
-						if (i % 2 != 0) ImGui.NextColumn();
-						i++;
-						hasShownAnyCategory = true;
-					}
-					ImGui.Columns();
-					if (!hasShownAnyCategory)
+					if (!Components.Categories.DrawConfigList(cfg))
 						ImGui.TextWrapped(Locale.GetString("Categories_will_be_added_after_bones_are_displayed_once"));
+
 				}
 			}
 			if (ImGui.CollapsingHeader(Locale.GetString("Edit_bone_positions")))
