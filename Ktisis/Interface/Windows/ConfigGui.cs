@@ -229,7 +229,7 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			var translateBones = cfg.TranslateBones;
-			if (ImGui.Checkbox(Locale.GetString("config_tab.langBones"), ref translateBones))
+			if (ImGui.Checkbox(Locale.GetString("onfig_tab.langBones"), ref translateBones))
 				cfg.TranslateBones = translateBones;
 
 			ImGui.EndTabItem();
