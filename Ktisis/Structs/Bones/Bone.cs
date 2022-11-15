@@ -37,7 +37,7 @@ namespace Ktisis.Structs.Bones {
 		public string UniqueId => $"{Partial}_{Index}";
 		public string UniqueName => $"{LocaleName}##{UniqueId}";
 
-		public Category Category => Category.GetForBone(HkaBone.Name.String);
+		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String);
 
 		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate) => Pose->AccessBoneModelSpace(Index, propagate);
 

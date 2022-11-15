@@ -47,15 +47,18 @@ namespace Ktisis {
 
 		public Vector4 GetCategoryColor(Bone bone) {
 			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
-			if (!BoneCategoryColors.TryGetValue(bone.Category.Name, out Vector4 color))
-				return LinkedBoneCategoryColor;
-
-			return color;
+			// pick the first category found
+			foreach (var category in bone.Categories)
+				if (IsBoneCategoryVisible(category) && BoneCategoryColors.TryGetValue(category.Name, out Vector4 color))
+					return color;
+			return LinkedBoneCategoryColor;
 		}
 		public bool IsBoneVisible(Bone bone) {
-			if (!ShowBoneByCategory.TryGetValue(bone.Category.Name, out bool boneVisible))
-				return DrawLinesOnSkeleton;
-			return DrawLinesOnSkeleton && boneVisible;
+			// bone will be visible if any category is visible
+			foreach (var category in bone.Categories)
+				if (ShowBoneByCategory.TryGetValue(category.Name, out bool boneVisible))
+					if (boneVisible) return true;
+			return false;
 		}
 
 		public bool IsBoneCategoryVisible(Category category) {

@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Ktisis.Structs.Bones
 {
@@ -16,9 +17,10 @@ namespace Ktisis.Structs.Bones
 		public static IReadOnlyDictionary<string, Category> Categories
 			=> new ReadOnlyDictionary<string, Category>(_Categories);
 		private static readonly Dictionary<string,Category> _Categories = new();
-		private static readonly Dictionary<string, Category> CategoriesByBone = new();
+		private static readonly Dictionary<string, List<Category>> CategoriesByBone = new();
 
 		public static Category DefaultCategory => Categories["other"];
+		public static List<Category> DefaultCategories => new() { DefaultCategory };
 
 		private Category(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw)
 		{
@@ -33,8 +35,8 @@ namespace Ktisis.Structs.Bones
 			Category cat = new(name, defaultColor, boneNames, isNsfw);
 			_Categories.Add(name, cat);
 			foreach(string boneName in cat.PossibleBones) {
-				/* On collision, use the first registered category */
-				_ = CategoriesByBone.TryAdd(boneName, cat);
+				if (!CategoriesByBone.TryAdd(boneName, new List<Category> { cat }))
+					CategoriesByBone[boneName].Add(cat);
 			}
 			return cat;
 		}
@@ -44,21 +46,21 @@ namespace Ktisis.Structs.Bones
 			ShouldDisplay = true;
 		}
 
-		public static Category GetForBone(string? boneName)
+		public static List<Category> GetForBone(string? boneName)
 		{
 			if (string.IsNullOrEmpty(boneName))
-				return DefaultCategory;
+				return DefaultCategories;
 
-			if (!CategoriesByBone.TryGetValue(boneName, out Category? category)) {
+			if (!CategoriesByBone.TryGetValue(boneName, out List<Category>? categories)) {
 				// This is needed for bone names with an ID, such as hair bones, e.g. j_ex_h0116_ke_b_a
 				var testedBoneName = RemoveSpecialCharacters(boneName);
-				if (!CategoriesByBone.TryGetValue(testedBoneName, out category))
-					category = DefaultCategory;
+				if (!CategoriesByBone.TryGetValue(testedBoneName, out categories))
+					categories = DefaultCategories;
 			}
 
-			category.MarkForDisplay();
+			categories.ForEach(category => category.MarkForDisplay());
 
-			return category;
+			return categories;
 		}
 
 		private readonly static bool[] _lookup = new bool[65536];
@@ -293,8 +295,6 @@ namespace Ktisis.Structs.Bones
 				//"j_f_ulip_b", // VieraLipUpperB
 				//"j_f_dlip_b", // VieraLipLowerB
 			});
-			/* TODO? */
-			CreateCategory("feet", defaultColor, new List<string>());
 
 			/* IVCS Categories */
 			CreateCategory("ivcs left hand", defaultColor, new List<string> {
@@ -372,6 +372,28 @@ namespace Ktisis.Structs.Bones
 				"iv_shiri_l",
 				"iv_shiri_r",
 			},true);
+
+			// compount categories
+			// The categories below have bones in common with other categories above.
+
+			// feet
+			List<string> feetBones = new() {
+				"j_asi_d_l", // FootLeft
+				"j_asi_d_r", // FootRight
+				"j_asi_e_l", // ToesLeft
+				"j_asi_e_r", // ToesRight
+			};
+			foreach (string name in new string[] { "ivcs left foot", "ivcs right foot", })
+				if (_Categories.TryGetValue(name, out Category? cat))
+					feetBones = feetBones.Concat(cat.PossibleBones).ToList();
+			CreateCategory("feet", defaultColor, feetBones);
+
+			// hands
+			List<string> handsBones = new();
+			foreach (string name in new string[] { "right hand", "left hand", "ivcs left hand", "ivcs right hand", })
+				if (_Categories.TryGetValue(name, out Category? cat))
+					handsBones = handsBones.Concat(cat.PossibleBones).ToList();
+			CreateCategory("hands", defaultColor, handsBones);
 		}
 	}
 }
