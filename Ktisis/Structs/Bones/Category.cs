@@ -63,13 +63,11 @@ namespace Ktisis.Structs.Bones
 			return categories;
 		}
 
-		private readonly static bool[] _lookup = new bool[65536];
-
 		public static string RemoveSpecialCharacters(string str) {
 			char[] buffer = new char[str.Length];
 			int index = 0;
 			foreach (char c in str) {
-				if (_lookup[c]) {
+				if (c < '0' || c > '9') {
 					buffer[index] = c;
 					index++;
 				}
@@ -79,13 +77,6 @@ namespace Ktisis.Structs.Bones
 
 		static Category()
 		{
-			// Create a lookup to strip numbers from bone names when checking them.
-			// it's relative fast, according to stackoverflow
-			//for (char c = '0'; c <= '9'; c++) _lookup[c] = true; // we strip numbers from the bone name
-			for (char c = 'A'; c <= 'Z'; c++) _lookup[c] = true;
-			for (char c = 'a'; c <= 'z'; c++) _lookup[c] = true;
-			_lookup['_'] = true;
-
 			Vector4 defaultColor = new Vector4(1.0F, 1.0F, 1.0F, 0.5647059F);
 
 			/* Default fallback category (do not assign bones here) */
