@@ -268,7 +268,10 @@ namespace Ktisis.Interface.Windows {
 				ImGui.TableSetupColumn("Action");
 				ImGui.TableHeadersRow();
 
-				foreach (var purpose in Input.Purposes) {
+				foreach (var purpose in Input.PurposesWithCategories) {
+					if ((int)purpose >= Input.FirstCategoryPurposeHold)
+						if (Input.PurposesCategories.TryGetValue(purpose, out var category))
+							if ((!cfg.KeyBinds.Any(t => t.Key == purpose) && !category.ShouldDisplay) || (cfg.CensorNsfw && category.IsNsfw)) continue;
 
 					// get currently configured or default keys
 					if (!Input.DefaultKeys.TryGetValue(purpose, out List<VirtualKey>? defaultKeys))

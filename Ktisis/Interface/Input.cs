@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuizmoNET;
 
 using Ktisis.Overlay;
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface {
 	public sealed class Input : IDisposable {
@@ -37,6 +38,13 @@ namespace Ktisis.Interface {
 			}
 			if (IsPurposeChanged(Purpose.HoldToHideSkeleton))
 				Skeleton.Toggle();
+
+			foreach ((var p, var c) in PurposesCategoriesHold)
+				if(IsPurposeChanged(p))
+					HoldCategory(c);
+			foreach ((var p, var c) in PurposesCategoriesToggle)
+				if(IsPurposeReleased(p))
+					HoldCategory(c);
 
 			PrevriousKeyStates = CurrentKeyStates!;
 			CurrentKeyStates = null;
@@ -90,12 +98,47 @@ namespace Ktisis.Interface {
 
 		// Below are the methods and variables needed for Monitor to handle inputs
 		public static List<VirtualKey> FallbackKey = new() { VirtualKey.NO_KEY };
+		public static readonly Dictionary<Purpose, Category> PurposesCategories = new();
+		public static readonly Dictionary<Purpose, Category> PurposesCategoriesHold = new();
+		public static readonly Dictionary<Purpose, Category> PurposesCategoriesToggle = new();
+		public const int FirstCategoryPurposeHold = 1000;
+		public const int FirstCategoryPurposeToggle = 2000;
+		public static List<string> CategoryOverload = new();
 
 		private Dictionary<Purpose, bool> PrevriousKeyStates = new();
 		private Dictionary<Purpose, bool>? CurrentKeyStates = new();
 
 		public static IEnumerable<Purpose> Purposes {
 			get => Enum.GetValues<Purpose>().ToImmutableList();
+		}
+		public static IEnumerable<Purpose> PurposesWithCategories {
+			get {
+				var purposesWithCategories = Enum.GetValues<Purpose>().ToList();
+
+				int i = FirstCategoryPurposeHold; // start of categories in Purpose enum
+				foreach (var category in Category.Categories) {
+					PurposesCategories.TryAdd((Purpose)i, category.Value);
+					PurposesCategoriesHold.TryAdd((Purpose)i, category.Value);
+					purposesWithCategories.Add((Purpose)i);
+					i++;
+				}
+
+				i = FirstCategoryPurposeToggle; // start of categories in Purpose enum
+				foreach (var category in Category.Categories) {
+					PurposesCategories.TryAdd((Purpose)i, category.Value);
+					PurposesCategoriesToggle.TryAdd((Purpose)i, category.Value);
+					purposesWithCategories.Add((Purpose)i);
+					i++;
+				}
+
+				return purposesWithCategories;
+			}
+		}
+		private static void HoldCategory(Category category) {
+			if (CategoryOverload.Any(s => s == category.Name))
+				CategoryOverload.Remove(category.Name);
+			else
+				CategoryOverload.Add(category.Name);
 		}
 		private static List<VirtualKey> PurposeToVirtualKeys(Purpose purpose) {
 			if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out List<VirtualKey>? keys)) {
@@ -110,7 +153,7 @@ namespace Ktisis.Interface {
 			return keys;
 		}
 		private void ReadPurposesStates() {
-			CurrentKeyStates = Purposes.Select(p => {
+			CurrentKeyStates = PurposesWithCategories.Select(p => {
 				var keys = PurposeToVirtualKeys(p);
 				bool state = true;
 

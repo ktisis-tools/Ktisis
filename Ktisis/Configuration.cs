@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
@@ -54,6 +55,13 @@ namespace Ktisis {
 			return LinkedBoneCategoryColor;
 		}
 		public bool IsBoneVisible(Bone bone) {
+			// Check if input is forcing a category to show solo
+			if (Input.CategoryOverload.Count > 0)
+				if (Input.CategoryOverload.Intersect(bone.Categories.Select(c => c.Name)).Any())
+					return true;
+				else
+					return false;
+
 			// bone will be visible if any category is visible
 			foreach (var category in bone.Categories)
 				if (ShowBoneByCategory.TryGetValue(category.Name, out bool boneVisible))
