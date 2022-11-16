@@ -257,6 +257,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Spacing();
 			ImGui.Spacing();
 
+			ImGui.BeginChildFrame(74, new(-1, ImGui.GetFontSize() * 20));
 
 			// key/Action table
 			ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, ImGui.GetStyle().CellPadding * 3);
@@ -304,7 +305,7 @@ namespace Ktisis.Interface.Windows {
 			}
 			ImGui.PopStyleVar();
 			ImGui.EndTabItem();
-
+			ImGui.EndChildFrame();
 		}
 		private static string PrettyKeys(List<VirtualKey>  keys) => string.Join(" + ", keys.Select(k => VirtualKeyExtensions.GetFancyName(k)));
 
