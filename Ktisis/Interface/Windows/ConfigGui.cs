@@ -291,7 +291,7 @@ namespace Ktisis.Interface.Windows {
 
 					// display the purpose
 					ImGui.TableNextColumn();
-					ImGui.Selectable(Locale.GetString($"Keyboard_Action_{purpose}"), false, ImGuiSelectableFlags.SpanAllColumns);
+					ImGui.Selectable(Locale.GetInputPurposeName(purpose), false, ImGuiSelectableFlags.SpanAllColumns);
 					clickRow |= ImGui.IsItemClicked(ImGuiMouseButton.Left) || ImGui.IsItemClicked(ImGuiMouseButton.Right);
 
 					// execute the change if clicked

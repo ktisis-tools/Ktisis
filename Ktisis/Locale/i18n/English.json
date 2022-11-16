@@ -41,6 +41,10 @@
     "Flip_axis_to_face_camera": "Flip axis to face camera",
     "Translate_bone_names": "Translate bone names",
     // Display keyboard configs from enum defined in Input.cs
+    "Input_Generic_Toggle": "Toggle",
+    "Input_Generic_Hold": "Hold",
+    "Input_Generic_Release": "Release",
+    "Input_Generic_Not_Applicable": "N/A",
     "Keyboard_Action_GlobalModifierKey": "Global modifier",
     "Keyboard_Action_SwitchToTranslate": "Switch to translate",
     "Keyboard_Action_SwitchToRotate": "Switch to rotate",
@@ -215,5 +219,27 @@
     "mh_n_hara": "Main Hand",
     "oh_n_hara": "Off Hand",
     "j_half_l": "Left Half",
-    "j_half_r": "Right Half"
+    "j_half_r": "Right Half",
+
+    // Bone Category names
+    "other": "Other",
+    "body": "Body",
+    "head": "Head",
+    "hair": "Hair",
+    "clothes": "Clothes",
+    "weapons": "Weapons",
+    "right hand": "Right hand",
+    "left hand": "Left hand",
+    "feet": "Feet",
+    "hands": "Hands",
+    "tail": "Tail",
+    "ears": "Ears",
+    "ivcs left hand": "IVCS left hand",
+    "ivcs right hand": "IVCS right hand",
+    "ivcs left foot": "IVCS left foot",
+    "ivcs right foot": "IVCS right foot",
+    "ivcs body": "IVCS body",
+    "ivcs penis": "IVCS penis",
+    "ivcs vagina": "IVCS vagina",
+    "ivcs buttocks": "IVCS buttocks"
 }

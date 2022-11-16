@@ -37,7 +37,7 @@ namespace Ktisis.Interface.Components {
 				if (!cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
 					categoryColor = cfg.LinkedBoneCategoryColor;
 
-				if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
+				if (ImGui.ColorEdit4(Locale.GetString(category.Name), ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 					cfg.BoneCategoryColors[category.Name] = categoryColor;
 
 				return true;
@@ -47,7 +47,7 @@ namespace Ktisis.Interface.Components {
 		public static bool DrawToggleList(Configuration cfg) {
 			return DrawList(category => {
 				bool categoryState = cfg.IsBoneCategoryVisible(category);
-				if (ImGui.Checkbox(category.Name, ref categoryState))
+				if (ImGui.Checkbox(Locale.GetString(category.Name), ref categoryState))
 					cfg.ShowBoneByCategory[category.Name] = categoryState;
 
 				return true;
