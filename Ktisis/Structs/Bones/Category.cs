@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Ktisis.Structs.Bones
-{
-	public class Category
-	{
+namespace Ktisis.Structs.Bones {
+	public class Category {
 		public string Name { get; set; }
 		public Vector4 DefaultColor { get; set; }
 		public bool ShouldDisplay { get; private set; } = false;
@@ -16,38 +14,34 @@ namespace Ktisis.Structs.Bones
 
 		public static IReadOnlyDictionary<string, Category> Categories
 			=> new ReadOnlyDictionary<string, Category>(_Categories);
-		private static readonly Dictionary<string,Category> _Categories = new();
+		private static readonly Dictionary<string, Category> _Categories = new();
 		private static readonly Dictionary<string, List<Category>> CategoriesByBone = new();
 
 		public static Category DefaultCategory => Categories["other"];
 		public static List<Category> DefaultCategories => new() { DefaultCategory };
 
-		private Category(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw)
-		{
+		private Category(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw) {
 			Name = name;
 			DefaultColor = defaultColor;
 			_PossibleBones = boneNames;
 			IsNsfw = isNsfw;
 		}
-		public static Category CreateCategory(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw = false)
-		{
+		public static Category CreateCategory(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw = false) {
 			/* TODO: We currently throw for duplicated categories. This may turn out to be a problem in the future. */
 			Category cat = new(name, defaultColor, boneNames, isNsfw);
 			_Categories.Add(name, cat);
-			foreach(string boneName in cat.PossibleBones) {
+			foreach (string boneName in cat.PossibleBones) {
 				if (!CategoriesByBone.TryAdd(boneName, new List<Category> { cat }))
 					CategoriesByBone[boneName].Add(cat);
 			}
 			return cat;
 		}
 
-		public void MarkForDisplay()
-		{
+		public void MarkForDisplay() {
 			ShouldDisplay = true;
 		}
 
-		public static List<Category> GetForBone(string? boneName)
-		{
+		public static List<Category> GetForBone(string? boneName) {
 			if (string.IsNullOrEmpty(boneName))
 				return DefaultCategories;
 
@@ -347,12 +341,12 @@ namespace Ktisis.Structs.Bones
 				"iv_ochinko_d",
 				"iv_ochinko_e",
 				"iv_ochinko_f",
-			},true);
+			}, true);
 			CreateCategory("ivcs vagina", defaultColor, new List<string> {
 				"iv_kuritto", // Clitoris   rotation, position, scale
 				"iv_inshin_l", // Labia    rotation, position, scale
 				"iv_inshin_r", // Labia
-			},true);
+			}, true);
 			CreateCategory("ivcs buttocks", defaultColor, new List<string> {
 				// Anus (rotation, scale, position)
 				"iv_koumon",
@@ -362,7 +356,7 @@ namespace Ktisis.Structs.Bones
 				// Buttocks (rotation, scale, position)
 				"iv_shiri_l",
 				"iv_shiri_r",
-			},true);
+			}, true);
 
 			// compount categories
 			// The categories below have bones in common with other categories above.
