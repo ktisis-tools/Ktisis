@@ -157,27 +157,37 @@ namespace Ktisis.Structs.Bones {
 				"j_kami_b", // HairB
 				"j_ex_met_va", // HairB
 
-				"j_ex_h_ke_a", // the bones below must be stipped from digits
-				"j_ex_h_ke_b", // some are real, some are guessed by pattern
-				"j_ex_h_ke_s",
-				"j_ex_h_ke_s_r",
-				"j_ex_h_ke_s_l",
-				"j_ex_h_ke_a_r",
+				// some are real, some are guessed by pattern
+				// the bones below must be stipped from digits
 				"j_ex_h_ke_a_l",
+				"j_ex_h_ke_a_r",
+				"j_ex_h_ke_a",
 				"j_ex_h_ke_b_a",
 				"j_ex_h_ke_b_b",
 				"j_ex_h_ke_b_l",
 				"j_ex_h_ke_b_r",
-				"j_ex_h_ke_u",
-				"j_ex_h_ke_u_r",
-				"j_ex_h_ke_u_l",
-				"j_ex_h_ke_f",
+				"j_ex_h_ke_b",
+				"j_ex_h_ke_c_l",
+				"j_ex_h_ke_c_r",
+				"j_ex_h_ke_c",
+				"j_ex_h_ke_d",
+				"j_ex_h_ke_da",
+				"j_ex_h_ke_db",
+				"j_ex_h_ke_e",
 				"j_ex_h_ke_f_a",
 				"j_ex_h_ke_f_b",
 				"j_ex_h_ke_f_l",
 				"j_ex_h_ke_f_r",
+				"j_ex_h_ke_f",
 				"j_ex_h_ke_l",
 				"j_ex_h_ke_r",
+				"j_ex_h_ke_s_l",
+				"j_ex_h_ke_s_r",
+				"j_ex_h_ke_s",
+				"j_ex_h_ke_u_l",
+				"j_ex_h_ke_u_r",
+				"j_ex_h_ke_u",
+				"j_ex_h_ke_u",
 			});
 			CreateCategory("clothes", new Vector4(1.0F, 1.0F, 0.0F, 0.5647059F), new List<string> {
 				"j_sk_b_b_l",     // ClothBackBLeft
@@ -207,7 +217,11 @@ namespace Ktisis.Structs.Bones {
 				"n_ear_a_l",      // EarringALeft
 				"n_ear_a_r",      // EarringARight
 				"n_ear_b_l",      // EarringBLeft
-				"n_ear_b_r"       // EarringBRight
+				"n_ear_b_r",       // EarringBRight
+				"j_ex_top_a_r",
+				"j_ex_top_a_l",
+				"j_ex_top_b_r",
+				"j_ex_top_b_l",
 			});
 			CreateCategory("weapons", new Vector4(1.0F, 0.0F, 1.0F, 0.5647059F), new List<string> {
 				"j_buki_sebo_l",  // ScabbardLeft
