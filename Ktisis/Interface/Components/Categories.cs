@@ -60,10 +60,10 @@ namespace Ktisis.Interface.Components {
 				// clicks and modifiers handles
 				if (ImGui.GetIO().KeyShift) {
 					if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-						Category.ToggleVisibilityOverload(category);
+						category.ToggleVisibilityOverload();
 					else if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
 						Category.VisibilityOverload.Clear();
-						Category.ToggleVisibilityOverload(category);
+						category.ToggleVisibilityOverload();
 					}
 
 				} else if (ImGui.IsItemClicked(ImGuiMouseButton.Right))

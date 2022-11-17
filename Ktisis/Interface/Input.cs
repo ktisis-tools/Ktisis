@@ -42,10 +42,10 @@ namespace Ktisis.Interface {
 
 				foreach ((var p, var c) in PurposesCategoriesHold)
 					if (IsPurposeChanged(p))
-						Category.ToggleVisibilityOverload(c);
+						c.ToggleVisibilityOverload();
 				foreach ((var p, var c) in PurposesCategoriesToggle)
 					if (IsPurposeReleased(p))
-						Category.ToggleVisibilityOverload(c);
+						c.ToggleVisibilityOverload();
 			}
 			if (IsPurposeChanged(Purpose.HoldToHideSkeleton))
 				Skeleton.Toggle();

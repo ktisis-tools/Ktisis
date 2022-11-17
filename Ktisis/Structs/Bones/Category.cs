@@ -72,11 +72,11 @@ namespace Ktisis.Structs.Bones {
 			return new string(buffer, 0, index);
 		}
 
-		public static void ToggleVisibilityOverload(Category category) {
-			if (VisibilityOverload.Any(s => s == category.Name))
-				VisibilityOverload.Remove(category.Name);
+		public void ToggleVisibilityOverload() {
+			if (VisibilityOverload.Any(s => s == this.Name))
+				VisibilityOverload.Remove(this.Name);
 			else
-				VisibilityOverload.Add(category.Name);
+				VisibilityOverload.Add(this.Name);
 		}
 		public static void ToggleAllVisibilityOverload() {
 			if (VisibilityOverload.Any())
