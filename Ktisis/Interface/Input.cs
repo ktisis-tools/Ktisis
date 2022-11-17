@@ -35,6 +35,10 @@ namespace Ktisis.Interface {
 					Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
 				if (IsPurposeReleased(Purpose.ToggleLocalWorld))
 					Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+				if (IsPurposeReleased(Purpose.ClearCategoryVisibilityOverload))
+					Category.VisibilityOverload.Clear();
+				if (IsPurposeChanged(Purpose.HoldAllCategoryVisibilityOverload))
+					Category.ToggleAllVisibilityOverload();
 
 				foreach ((var p, var c) in PurposesCategoriesHold)
 					if (IsPurposeChanged(p))
@@ -59,6 +63,8 @@ namespace Ktisis.Interface {
 			ToggleLocalWorld,
 			HoldToHideSkeleton,
 			SwitchToUniversal,
+			ClearCategoryVisibilityOverload,
+			HoldAllCategoryVisibilityOverload,
 		}
 
 		public static readonly Dictionary<Purpose, List<VirtualKey>> DefaultKeys = new(){
@@ -69,6 +75,8 @@ namespace Ktisis.Interface {
 			{Purpose.ToggleLocalWorld, new(){VirtualKey.X}},
 			{Purpose.HoldToHideSkeleton, new(){VirtualKey.V}},
 			{Purpose.SwitchToUniversal, new(){VirtualKey.U}},
+			{Purpose.ClearCategoryVisibilityOverload, new(){VirtualKey.J}},
+			{Purpose.HoldAllCategoryVisibilityOverload, new(){VirtualKey.J, VirtualKey.SHIFT}},
 		};
 
 		// Helpers

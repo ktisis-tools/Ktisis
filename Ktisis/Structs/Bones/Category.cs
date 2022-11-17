@@ -78,6 +78,12 @@ namespace Ktisis.Structs.Bones {
 			else
 				VisibilityOverload.Add(category.Name);
 		}
+		public static void ToggleAllVisibilityOverload() {
+			if (VisibilityOverload.Any())
+				VisibilityOverload.Clear();
+			else
+				VisibilityOverload = Categories.Where(p => p.Value.ShouldDisplay).Select(p => p.Key).ToList();
+		}
 
 		static Category()
 		{
