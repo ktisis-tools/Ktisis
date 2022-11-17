@@ -56,8 +56,8 @@ namespace Ktisis {
 		}
 		public bool IsBoneVisible(Bone bone) {
 			// Check if input is forcing a category to show solo
-			if (Input.CategoryOverload.Count > 0)
-				if (Input.CategoryOverload.Intersect(bone.Categories.Select(c => c.Name)).Any())
+			if (Category.VisibilityOverload.Count > 0)
+				if (Category.VisibilityOverload.Intersect(bone.Categories.Select(c => c.Name)).Any())
 					return true;
 				else
 					return false;

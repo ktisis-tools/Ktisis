@@ -41,10 +41,10 @@ namespace Ktisis.Interface {
 
 			foreach ((var p, var c) in PurposesCategoriesHold)
 				if(IsPurposeChanged(p))
-					HoldCategory(c);
+					Category.ToggleVisibilityOverload(c);
 			foreach ((var p, var c) in PurposesCategoriesToggle)
 				if(IsPurposeReleased(p))
-					HoldCategory(c);
+					Category.ToggleVisibilityOverload(c);
 
 			PrevriousKeyStates = CurrentKeyStates!;
 			CurrentKeyStates = null;
@@ -103,7 +103,6 @@ namespace Ktisis.Interface {
 		public static readonly Dictionary<Purpose, Category> PurposesCategoriesToggle = new();
 		public const int FirstCategoryPurposeHold = 1000;
 		public const int FirstCategoryPurposeToggle = 2000;
-		public static List<string> CategoryOverload = new();
 
 		private Dictionary<Purpose, bool> PrevriousKeyStates = new();
 		private Dictionary<Purpose, bool>? CurrentKeyStates = new();
@@ -133,12 +132,6 @@ namespace Ktisis.Interface {
 
 				return purposesWithCategories;
 			}
-		}
-		public static void HoldCategory(Category category) {
-			if (CategoryOverload.Any(s => s == category.Name))
-				CategoryOverload.Remove(category.Name);
-			else
-				CategoryOverload.Add(category.Name);
 		}
 		private static List<VirtualKey> PurposeToVirtualKeys(Purpose purpose) {
 			if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out List<VirtualKey>? keys)) {

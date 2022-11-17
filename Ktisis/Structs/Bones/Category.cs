@@ -20,6 +20,8 @@ namespace Ktisis.Structs.Bones {
 		public static Category DefaultCategory => Categories["other"];
 		public static List<Category> DefaultCategories => new() { DefaultCategory };
 
+		public static List<string> VisibilityOverload = new();
+
 		private Category(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw) {
 			Name = name;
 			DefaultColor = defaultColor;
@@ -40,6 +42,7 @@ namespace Ktisis.Structs.Bones {
 		public void MarkForDisplay() {
 			ShouldDisplay = true;
 		}
+
 
 		public static List<Category> GetForBone(string? boneName) {
 			if (string.IsNullOrEmpty(boneName))
@@ -67,6 +70,13 @@ namespace Ktisis.Structs.Bones {
 				}
 			}
 			return new string(buffer, 0, index);
+		}
+
+		public static void ToggleVisibilityOverload(Category category) {
+			if (VisibilityOverload.Any(s => s == category.Name))
+				VisibilityOverload.Remove(category.Name);
+			else
+				VisibilityOverload.Add(category.Name);
 		}
 
 		static Category()

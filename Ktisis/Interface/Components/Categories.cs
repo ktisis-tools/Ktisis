@@ -46,7 +46,7 @@ namespace Ktisis.Interface.Components {
 
 		public static bool DrawToggleList(Configuration cfg) {
 			return DrawList(category => {
-				bool isOverloaded = Input.CategoryOverload.Any(c => c == category.Name);
+				bool isOverloaded = Category.VisibilityOverload.Any(c => c == category.Name);
 				bool categoryState = isOverloaded || cfg.IsBoneCategoryVisible(category);
 				if (isOverloaded) ImGui.PushStyleColor(ImGuiCol.CheckMark, Workspace.ColGreen);
 				var changed = ImGui.Checkbox(Locale.GetString(category.Name), ref categoryState);
@@ -54,9 +54,9 @@ namespace Ktisis.Interface.Components {
 
 				if (ImGui.GetIO().KeyShift) {
 					if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-						Input.HoldCategory(category);
+						Category.ToggleVisibilityOverload(category);
 				} else if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-					Input.HoldCategory(category);
+					Category.ToggleVisibilityOverload(category);
 				else if (changed)
 					cfg.ShowBoneByCategory[category.Name] = categoryState;
 
