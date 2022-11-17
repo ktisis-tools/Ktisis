@@ -35,16 +35,16 @@ namespace Ktisis.Interface {
 					Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
 				if (IsPurposeReleased(Purpose.ToggleLocalWorld))
 					Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+
+				foreach ((var p, var c) in PurposesCategoriesHold)
+					if (IsPurposeChanged(p))
+						Category.ToggleVisibilityOverload(c);
+				foreach ((var p, var c) in PurposesCategoriesToggle)
+					if (IsPurposeReleased(p))
+						Category.ToggleVisibilityOverload(c);
 			}
 			if (IsPurposeChanged(Purpose.HoldToHideSkeleton))
 				Skeleton.Toggle();
-
-			foreach ((var p, var c) in PurposesCategoriesHold)
-				if(IsPurposeChanged(p))
-					Category.ToggleVisibilityOverload(c);
-			foreach ((var p, var c) in PurposesCategoriesToggle)
-				if(IsPurposeReleased(p))
-					Category.ToggleVisibilityOverload(c);
 
 			PrevriousKeyStates = CurrentKeyStates!;
 			CurrentKeyStates = null;
