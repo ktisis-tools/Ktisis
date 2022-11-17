@@ -102,7 +102,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 			// Bone categories
 			if (ImGui.CollapsingHeader("Bone Category Visibility")) {
 
-				ImGui.Indent(16.0f);
 				if (!Categories.DrawToggleList(cfg)) {
 					ImGui.Text("No bone found.");
 					ImGui.Text("Show Skeleton (");
@@ -111,7 +110,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 					ImGui.SameLine();
 					ImGui.Text(") to fill this.");
 				}
-				ImGui.Unindent(16.0f);
 			}
 
 			// Bone tree
