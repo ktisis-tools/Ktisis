@@ -4,6 +4,7 @@ using System.Numerics;
 using ImGuiNET;
 using ImGuizmoNET;
 
+using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
 using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
@@ -148,26 +149,39 @@ namespace Ktisis.Overlay {
 							var initialPos = transform->Translation.ToVector3();
 							Interop.Alloc.SetMatrix(transform, matrix);
 
-							// Bone parenting
-							// Adapted from Anamnesis Studio code shared by Yuki - thank you!
+							PropagateChildren(bone, transform, initialPos, initialRot);
 
-							var sourcePos = transform->Translation.ToVector3();
-							var deltaRot = transform->Rotation.ToQuat() / initialRot;
-							var deltaPos = sourcePos - initialPos;
-
-							var descendants = bone.GetDescendants();
-							foreach (var child in descendants) {
-								var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
-
-								var offset = access->Translation.ToVector3() - sourcePos;
-								offset = Vector3.Transform(offset, deltaRot);
-
-								matrix = Interop.Alloc.GetMatrix(access);
-								matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
-								matrix.Translation = deltaPos + sourcePos + offset;
-								Interop.Alloc.SetMatrix(access, matrix);
-							}
 						}
+
+						BoneSelect.Active = true;
+						BoneSelect.Partial = p;
+						BoneSelect.Index = i;
+					}
+				}
+			}
+		}
+
+		private unsafe static void PropagateChildren(Bone bone, hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot) {
+			// Bone parenting
+			// Adapted from Anamnesis Studio code shared by Yuki - thank you!
+
+			var sourcePos = transform->Translation.ToVector3();
+			var deltaRot = transform->Rotation.ToQuat() / initialRot;
+			var deltaPos = sourcePos - initialPos;
+
+			var descendants = bone.GetDescendants();
+			foreach (var child in descendants) {
+				var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
+
+				var offset = access->Translation.ToVector3() - sourcePos;
+				offset = Vector3.Transform(offset, deltaRot);
+
+				var matrix = Interop.Alloc.GetMatrix(access);
+				matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
+				matrix.Translation = deltaPos + sourcePos + offset;
+				Interop.Alloc.SetMatrix(access, matrix);
+			}
+		}
 
 						BoneSelect.Active = true;
 						BoneSelect.Partial = p;
