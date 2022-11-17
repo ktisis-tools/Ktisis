@@ -134,7 +134,7 @@ namespace Ktisis.Interface {
 				return purposesWithCategories;
 			}
 		}
-		private static void HoldCategory(Category category) {
+		public static void HoldCategory(Category category) {
 			if (CategoryOverload.Any(s => s == category.Name))
 				CategoryOverload.Remove(category.Name);
 			else

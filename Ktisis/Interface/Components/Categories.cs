@@ -1,12 +1,12 @@
-﻿using ImGuiNET;
-using Ktisis.Localization;
-using Ktisis.Structs.Bones;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+
+using ImGuiNET;
+
+using Ktisis.Interface.Windows.Workspace;
+using Ktisis.Localization;
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface.Components {
 	internal static class Categories {
@@ -46,8 +46,18 @@ namespace Ktisis.Interface.Components {
 
 		public static bool DrawToggleList(Configuration cfg) {
 			return DrawList(category => {
-				bool categoryState = cfg.IsBoneCategoryVisible(category);
-				if (ImGui.Checkbox(Locale.GetString(category.Name), ref categoryState))
+				bool isOverloaded = Input.CategoryOverload.Any(c => c == category.Name);
+				bool categoryState = isOverloaded || cfg.IsBoneCategoryVisible(category);
+				if (isOverloaded) ImGui.PushStyleColor(ImGuiCol.CheckMark, Workspace.ColGreen);
+				var changed = ImGui.Checkbox(Locale.GetString(category.Name), ref categoryState);
+				if (isOverloaded) ImGui.PopStyleColor();
+
+				if (ImGui.GetIO().KeyShift) {
+					if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+						Input.HoldCategory(category);
+				} else if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+					Input.HoldCategory(category);
+				else if (changed)
 					cfg.ShowBoneByCategory[category.Name] = categoryState;
 
 				return true;
