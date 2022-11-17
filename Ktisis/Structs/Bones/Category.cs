@@ -232,6 +232,10 @@ namespace Ktisis.Structs.Bones {
 				"j_ex_top_a_l",
 				"j_ex_top_b_r",
 				"j_ex_top_b_l",
+				"j_ex_met_a",
+				"j_ex_met_b",
+				"j_ex_met_c",
+				"j_ex_met_d",
 			});
 			CreateCategory("weapons", new Vector4(1.0F, 0.0F, 1.0F, 0.5647059F), new List<string> {
 				"j_buki_sebo_l",  // ScabbardLeft
