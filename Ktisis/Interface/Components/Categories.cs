@@ -56,13 +56,16 @@ namespace Ktisis.Interface.Components {
 					if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
 						Category.ToggleVisibilityOverload(category);
 				} else if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-					Category.ToggleVisibilityOverload(category);
+					SelectOnlyCategory(category);
 				else if (changed)
 					cfg.ShowBoneByCategory[category.Name] = categoryState;
 
 				return true;
 			});
 		}
-
+		public static void SelectOnlyCategory(Category category) {
+			Ktisis.Configuration.ShowBoneByCategory = Ktisis.Configuration.ShowBoneByCategory.ToDictionary(p => p.Key, p => false);
+			Ktisis.Configuration.ShowBoneByCategory[category.Name] = true;
+		}
 	}
 }
