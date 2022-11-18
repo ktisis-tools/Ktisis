@@ -163,10 +163,12 @@ namespace Ktisis.Interface.Components {
 
 			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
 			if (GuiHelpers.IconButton(SiblingLinkToIcon(siblingLink), ButtonSize))
-				Ktisis.Configuration.SiblingLink = siblingLink == Enum.GetValues(typeof(SiblingLink)).Cast<SiblingLink>().Last() ? SiblingLink.None : siblingLink + 1;
+				CircleTroughSiblingLinkModes();
 			if (siblingLink != SiblingLink.None) ImGui.PopStyleColor();
 			GuiHelpers.Tooltip(SiblingLinkToTooltip(siblingLink));
 		}
+		public static void CircleTroughSiblingLinkModes() =>
+			Ktisis.Configuration.SiblingLink = Ktisis.Configuration.SiblingLink == Enum.GetValues(typeof(SiblingLink)).Cast<SiblingLink>().Last() ? SiblingLink.None : Ktisis.Configuration.SiblingLink + 1;
 		private static FontAwesomeIcon SiblingLinkToIcon(SiblingLink siblingLink)
 			=> siblingLink switch {
 				SiblingLink.Rotation => FontAwesomeIcon.Link,
