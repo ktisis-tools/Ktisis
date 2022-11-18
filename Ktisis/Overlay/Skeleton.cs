@@ -202,12 +202,11 @@ namespace Ktisis.Overlay {
 			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
 			matrix.Translation = offset;
 
-			// TODO: parenting
-			//var initialRot = access->Rotation.ToQuat();
-			//var initialPos = access->Translation.ToVector3();
+			var initialRot = access->Rotation.ToQuat();
+			var initialPos = access->Translation.ToVector3();
 			Interop.Alloc.SetMatrix(access, matrix);
 
-			//PropagateChildren(child, access, initialPos, initialRot);
+			PropagateChildren(child, access, initialPos, initialRot);
 		}
 		public unsafe static Bone? GetSelectedBone() {
 			if (!BoneSelect.Active) return null;

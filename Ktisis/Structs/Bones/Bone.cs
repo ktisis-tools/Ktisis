@@ -74,9 +74,9 @@ namespace Ktisis.Structs.Bones {
 				var pose = partial.GetHavokPose(0);
 				if (pose == null) continue;
 
-				var skeleton = pose->Skeleton;
-				for (var i = 1; i < skeleton->Bones.Length; i++) {
-					var potentialBone = Skeleton->GetBone(p, i);
+				var poseSkeleton = pose->Skeleton;
+				for (var i = 1; i < poseSkeleton->Bones.Length; i++) {
+					var potentialBone = new Bone(Skeleton, p, i);
 					if (potentialBone == null) continue;
 					var pBName = potentialBone.HkaBone.Name.String;
 					if (pBName[..^2] == prefix && pBName != name)
