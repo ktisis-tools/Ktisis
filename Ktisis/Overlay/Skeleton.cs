@@ -156,7 +156,7 @@ namespace Ktisis.Overlay {
 							if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
 								var siblingBone = bone.GetMirrorSibling();
 								if (siblingBone != null)
-									LinkRota(siblingBone, transform->Rotation.ToQuat() / initialRot);
+									PropagateSibling(siblingBone, transform->Rotation.ToQuat() / initialRot);
 							}
 						}
 
@@ -168,7 +168,7 @@ namespace Ktisis.Overlay {
 			}
 		}
 
-		private unsafe static void PropagateChildren(Bone bone, hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot) {
+		private unsafe static void PropagateChildren(Bone parent, hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot) {
 			// Bone parenting
 			// Adapted from Anamnesis Studio code shared by Yuki - thank you!
 
@@ -176,7 +176,7 @@ namespace Ktisis.Overlay {
 			var deltaRot = transform->Rotation.ToQuat() / initialRot;
 			var deltaPos = sourcePos - initialPos;
 
-			var descendants = bone.GetDescendants();
+			var descendants = parent.GetDescendants();
 			foreach (var child in descendants) {
 				var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
 
@@ -189,10 +189,10 @@ namespace Ktisis.Overlay {
 				Interop.Alloc.SetMatrix(access, matrix);
 			}
 		}
-		private unsafe static void LinkRota (Bone child, Quaternion deltaRot) {
+		private unsafe static void PropagateSibling(Bone sibling, Quaternion deltaRot) {
 			if (Ktisis.Configuration.SiblingLink == SiblingLink.None) return;
 
-			var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
+			var access = sibling.AccessModelSpace(PropagateOrNot.DontPropagate);
 			var offset = access->Translation.ToVector3();
 
 			if(Ktisis.Configuration.SiblingLink == SiblingLink.RotationMirrorX)
@@ -206,7 +206,7 @@ namespace Ktisis.Overlay {
 			var initialPos = access->Translation.ToVector3();
 			Interop.Alloc.SetMatrix(access, matrix);
 
-			PropagateChildren(child, access, initialPos, initialRot);
+			PropagateChildren(sibling, access, initialPos, initialRot);
 		}
 		public unsafe static Bone? GetSelectedBone() {
 			if (!BoneSelect.Active) return null;
