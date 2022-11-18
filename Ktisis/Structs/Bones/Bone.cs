@@ -65,6 +65,27 @@ namespace Ktisis.Structs.Bones {
 			return result;
 		}
 
+		public unsafe Bone? GetMirrorSibling() {
+			var name = HkaBone.Name.String;
+			var prefix = name[..^2];
+
+			for (var p = 0; p < Skeleton->PartialSkeletonCount; p++) {
+				var partial = Skeleton->PartialSkeletons[p];
+				var pose = partial.GetHavokPose(0);
+				if (pose == null) continue;
+
+				var skeleton = pose->Skeleton;
+				for (var i = 1; i < skeleton->Bones.Length; i++) {
+					var potentialBone = Skeleton->GetBone(p, i);
+					if (potentialBone == null) continue;
+					var pBName = potentialBone.HkaBone.Name.String;
+					if (pBName[..^2] == prefix && pBName != name)
+						return potentialBone;
+				}
+			}
+			return null;
+		}
+
 		public List<Bone> GetDescendants() {
 			var list = GetChildren();
 			for (var i = 0; i < list.Count; i++)

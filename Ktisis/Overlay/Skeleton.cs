@@ -149,8 +149,15 @@ namespace Ktisis.Overlay {
 							var initialPos = transform->Translation.ToVector3();
 							Interop.Alloc.SetMatrix(transform, matrix);
 
+							// handles parenting
 							PropagateChildren(bone, transform, initialPos, initialRot);
 
+							// handles linking
+							if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
+								var siblingBone = bone.GetMirrorSibling();
+								if (siblingBone != null)
+									LinkRota(siblingBone, transform->Rotation.ToQuat() / initialRot);
+							}
 						}
 
 						BoneSelect.Active = true;
@@ -182,15 +189,26 @@ namespace Ktisis.Overlay {
 				Interop.Alloc.SetMatrix(access, matrix);
 			}
 		}
+		private unsafe static void LinkRota (Bone child, Quaternion deltaRot) {
+			var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
+			var offset = access->Translation.ToVector3();
 
-						BoneSelect.Active = true;
-						BoneSelect.Partial = p;
-						BoneSelect.Index = i;
-					}
-				}
-			}
+			// TODO: mirror toggle
+			//var isMirror = false;
+			//if (isMirror)
+			//	deltaRot = new(-deltaRot.X, deltaRot.Y, deltaRot.Z, -deltaRot.W);
+
+			var matrix = Interop.Alloc.GetMatrix(access);
+			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
+			matrix.Translation = offset;
+
+			// TODO: parenting
+			//var initialRot = access->Rotation.ToQuat();
+			//var initialPos = access->Translation.ToVector3();
+			Interop.Alloc.SetMatrix(access, matrix);
+
+			//PropagateChildren(child, access, initialPos, initialRot);
 		}
-
 		public unsafe static Bone? GetSelectedBone() {
 			if (!BoneSelect.Active) return null;
 
