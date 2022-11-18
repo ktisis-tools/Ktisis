@@ -190,13 +190,13 @@ namespace Ktisis.Overlay {
 			}
 		}
 		private unsafe static void LinkRota (Bone child, Quaternion deltaRot) {
+			if (Ktisis.Configuration.SiblingLink == SiblingLink.None) return;
+
 			var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
 			var offset = access->Translation.ToVector3();
 
-			// TODO: mirror toggle
-			//var isMirror = false;
-			//if (isMirror)
-			//	deltaRot = new(-deltaRot.X, deltaRot.Y, deltaRot.Z, -deltaRot.W);
+			if(Ktisis.Configuration.SiblingLink == SiblingLink.RotationMirrorX)
+				deltaRot = new(-deltaRot.X, deltaRot.Y, deltaRot.Z, -deltaRot.W);
 
 			var matrix = Interop.Alloc.GetMatrix(access);
 			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
@@ -219,6 +219,11 @@ namespace Ktisis.Overlay {
 			if (model == null) return null;
 
 			return model->Skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index);
+		}
+		public enum SiblingLink {
+			None,
+			Rotation,
+			RotationMirrorX,
 		}
 	}
 }

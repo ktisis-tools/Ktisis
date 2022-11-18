@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Linq;
+using System.Numerics;
 
 using ImGuiNET;
 using ImGuizmoNET;
@@ -9,6 +11,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
+using static Ktisis.Overlay.Skeleton;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.Workspace;
@@ -59,6 +62,9 @@ namespace Ktisis.Interface.Components {
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.MinusCircle, "Deselect gizmo", ButtonSize))
 				OverlayWindow.SetGizmoOwner(null);
 			if (!gizmoActive) ImGui.EndDisabled();
+
+			ImGui.SameLine();
+			DrawSiblingLink();
 		}
 
 		// As the settings button is a bit special and should not be as present as others
@@ -151,5 +157,27 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.Icon(isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause);
 			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target."+(PoseHooks.PosingEnabled?"\nPosing may reset periodically.":"") : "Game Animation is paused for this target."+(!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
 		}
+
+		private static void DrawSiblingLink() {
+			var siblingLink = Ktisis.Configuration.SiblingLink;
+
+			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			if (GuiHelpers.IconButton(SiblingLinkToIcon(siblingLink), ButtonSize))
+				Ktisis.Configuration.SiblingLink = siblingLink == Enum.GetValues(typeof(SiblingLink)).Cast<SiblingLink>().Last() ? SiblingLink.None : siblingLink + 1;
+			if (siblingLink != SiblingLink.None) ImGui.PopStyleColor();
+			GuiHelpers.Tooltip(SiblingLinkToTooltip(siblingLink));
+		}
+		private static FontAwesomeIcon SiblingLinkToIcon(SiblingLink siblingLink)
+			=> siblingLink switch {
+				SiblingLink.Rotation => FontAwesomeIcon.Link,
+				SiblingLink.RotationMirrorX => FontAwesomeIcon.Adjust,
+				_ => FontAwesomeIcon.ArrowUp
+			};
+		private static string SiblingLinkToTooltip(SiblingLink siblingLink)
+			=> siblingLink switch {
+				SiblingLink.Rotation => "Link rotation",
+				SiblingLink.RotationMirrorX => "Mirror rotation",
+				_ => "No sibling link"
+			};
 	}
 }
