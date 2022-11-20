@@ -171,7 +171,9 @@ namespace Ktisis.Interop.Hooks {
 
 			if (actor != null) {
 				// prevents selecting target on left click
-				if(clickType == ClickType.Left)
+				if (Ktisis.Configuration.DisableChangeTargetOnLeftClick && clickType == ClickType.Left)
+					return false;
+				if (Ktisis.Configuration.DisableChangeTargetOnRightClick && clickType == ClickType.Right)
 					return false;
 
 				// cast (Actor*)actor if need do something with actor
