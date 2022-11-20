@@ -5,6 +5,7 @@ using System.Numerics;
 
 using ImGuiNET;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using Dalamud.Interface;
 
 using Ktisis.Structs.Actor;
 using Ktisis.Util;
@@ -47,6 +48,16 @@ namespace Ktisis.Interface.Components {
 				if (GuiHelpers.IconButtonTooltip(Dalamud.Interface.FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
 					OpenSelector();
 
+				ImGui.SameLine(ImGui.GetContentRegionAvail().X - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
+				ControlButtons.VerticalAlignTextOnButtonSize();
+
+				// help hover
+				GuiHelpers.Icon(FontAwesomeIcon.InfoCircle, false);
+				if (ImGui.IsItemHovered()) {
+					ImGui.BeginTooltip();
+					ImGui.Text("Right click to remove an Actor from the list");
+					ImGui.EndTooltip();
+				}
 				if (IsSelectorListOpened)
 					DrawListAddActor();
 			}
