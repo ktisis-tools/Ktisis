@@ -2,7 +2,7 @@
 using System.Numerics;
 
 namespace Ktisis.Helpers {
-	public class MathHelpers {
+	public static class MathHelpers {
 		// Normalize Vector4
 
 		public static Vector3 ToVector3(Vector4 v) {
