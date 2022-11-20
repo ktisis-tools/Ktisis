@@ -55,6 +55,7 @@ namespace Ktisis {
 					return color;
 			return LinkedBoneCategoryColor;
 		}
+
 		public bool IsBoneVisible(Bone bone) {
 			// Check if input is forcing a category to show solo
 			if (Category.VisibilityOverload.Count > 0)
@@ -65,8 +66,9 @@ namespace Ktisis {
 
 			// bone will be visible if any category is visible
 			foreach (var category in bone.Categories)
-				if (ShowBoneByCategory.TryGetValue(category.Name, out bool boneVisible))
-					if (boneVisible) return true;
+				if (ShowBoneByCategory.GetValueOrDefault(category.Name, true))
+					return true;
+
 			return false;
 		}
 
