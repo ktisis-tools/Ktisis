@@ -81,9 +81,9 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))
 				cfg.DisplayCharName = !displayCharName;
 
-			var censorNsfw = !cfg.CensorNsfw;
+			var censorNsfw = cfg.CensorNsfw;
 			if (ImGui.Checkbox(Locale.GetString("Censor_nsfw"), ref censorNsfw))
-				cfg.CensorNsfw = !censorNsfw;
+				cfg.CensorNsfw = censorNsfw;
 
 			ImGui.Spacing();
 			ImGui.Separator();
