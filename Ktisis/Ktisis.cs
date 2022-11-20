@@ -7,6 +7,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
+using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis {
@@ -37,6 +38,7 @@ namespace Ktisis {
 			Interop.Hooks.GuiHooks.Init();
 			Interop.Hooks.EventsHooks.Init();
 			Input.Init();
+			ActorStateWatcher.Init();
 
 			// Register command
 
@@ -63,6 +65,7 @@ namespace Ktisis {
 			Interop.Hooks.GuiHooks.Dispose();
 			Interop.Hooks.EventsHooks.Dispose();
 			Input.Instance.Dispose();
+			ActorStateWatcher.Instance.Dispose();
 
 			GameData.Sheets.Cache.Clear();
 			if (EditEquip.Items != null)
