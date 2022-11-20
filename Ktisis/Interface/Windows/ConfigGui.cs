@@ -163,7 +163,7 @@ namespace Ktisis.Interface.Windows {
 				} else {
 
 					ImGui.SameLine();
-					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, "Hold_Control_and_Shift_to_reset_colors_to_their_default_values", ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
+					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, Locale.GetString("Hold_Control_and_Shift_to_reset_colors_to_their_default_values"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
 						foreach ((string categoryName, Category category) in Category.Categories) {
 							if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
 								continue;
@@ -242,12 +242,12 @@ namespace Ktisis.Interface.Windows {
 		// input selector
 		public static void DrawInputTab(Configuration cfg) {
 			ImGui.Spacing();
-			ImGui.Text("Keyboard Shortcuts");
+			ImGui.Text(Locale.GetString("Keyboard_shortcuts"));
 			ImGui.Spacing();
 
 			// completely enable/disable keyboard shortcuts
 			var enableKeybinds = cfg.EnableKeybinds;
-			if(ImGui.Checkbox("Enable", ref enableKeybinds))
+			if(ImGui.Checkbox(Locale.GetString("Enable"), ref enableKeybinds))
 				cfg.EnableKeybinds = enableKeybinds;
 			if (!cfg.EnableKeybinds) return;
 
@@ -262,7 +262,7 @@ namespace Ktisis.Interface.Windows {
 					pressDemo.Add(key);
 			}
 
-			ImGui.Text($"Pressing Keys");
+			ImGui.Text(Locale.GetString("Pressing_keys"));
 			ImGuiComponents.HelpMarker("To assign a key or key combination:\n" +
 				"1. Hold the key or key combination\n" +
 				"2. Click on the desired action\n\n" +
