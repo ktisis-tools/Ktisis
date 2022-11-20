@@ -8,6 +8,7 @@ using Dalamud.Game.ClientState.Keys;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuizmoNET;
 
+using Ktisis.Interface.Components;
 using Ktisis.Overlay;
 
 namespace Ktisis.Interface {
@@ -37,6 +38,8 @@ namespace Ktisis.Interface {
 			}
 			if (IsPurposeChanged(Purpose.HoldToHideSkeleton))
 				Skeleton.Toggle();
+			if (IsPurposeHeld(Purpose.CircleThroughSiblingLinkModes))
+				ControlButtons.CircleTroughSiblingLinkModes();
 
 			PrevriousKeyStates = CurrentKeyStates!;
 			CurrentKeyStates = null;
@@ -51,6 +54,7 @@ namespace Ktisis.Interface {
 			ToggleLocalWorld,
 			HoldToHideSkeleton,
 			SwitchToUniversal,
+			CircleThroughSiblingLinkModes,
 		}
 
 		public static readonly Dictionary<Purpose, List<VirtualKey>> DefaultKeys = new(){
@@ -61,6 +65,7 @@ namespace Ktisis.Interface {
 			{Purpose.ToggleLocalWorld, new(){VirtualKey.X}},
 			{Purpose.HoldToHideSkeleton, new(){VirtualKey.V}},
 			{Purpose.SwitchToUniversal, new(){VirtualKey.U}},
+			{Purpose.CircleThroughSiblingLinkModes, new(){VirtualKey.C}},
 		};
 
 		// Helpers

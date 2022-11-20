@@ -69,6 +69,8 @@ namespace Ktisis {
 		public MODE GizmoMode { get; set; } = MODE.LOCAL;
 		public OPERATION GizmoOp { get; set; } = OPERATION.TRANSLATE;
 
+		public Overlay.Skeleton.SiblingLink SiblingLink { get; set; } = Overlay.Skeleton.SiblingLink.None;
+
 		public bool AllowAxisFlip { get; set; } = true;
 
 		// Language
