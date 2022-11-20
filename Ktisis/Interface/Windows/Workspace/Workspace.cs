@@ -112,6 +112,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			// Bone tree
 			BoneTree.Draw(actor);
+
+			ActorsList.Draw();
 		}
 
 		// Transform Table actor and bone names display, actor related extra
