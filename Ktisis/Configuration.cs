@@ -43,6 +43,7 @@ namespace Ktisis {
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
 		public float SkeletonLineThickness { get; set; } = 2.0F;
+		public float SkeletonDotRadius { get; set; } = 3.0F;
 
 		public Vector4 GetCategoryColor(Bone bone) {
 			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
@@ -53,8 +54,8 @@ namespace Ktisis {
 		}
 		public bool IsBoneVisible(Bone bone) {
 			if (!ShowBoneByCategory.TryGetValue(bone.Category.Name, out bool boneVisible))
-				return DrawLinesOnSkeleton;
-			return DrawLinesOnSkeleton && boneVisible;
+				return false;
+			return boneVisible;
 		}
 
 		public bool IsBoneCategoryVisible(Category category) {

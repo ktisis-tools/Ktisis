@@ -5,7 +5,6 @@ using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
@@ -15,7 +14,7 @@ using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
-		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.75f);
+		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.6f) + ImGui.GetStyle().FramePadding;
 		private static bool IsSettingsHovered = false;
 		private static bool IsSettingsActive = false;
 
@@ -122,7 +121,6 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.TextRight(label, offsetWidth);
 			if (Ktisis.IsInGPose) ImGui.PopStyleColor();
 			ImGui.SameLine();
-			var togglePos = ImGui.GetCursorPos(); // keep these coordinate as a starting point for GameAnimationIndicator
 
 			if (!Ktisis.IsInGPose)
 				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
@@ -131,25 +129,6 @@ namespace Ktisis.Interface.Components {
 				PoseHooks.TogglePosing();
 
 			ImGui.EndDisabled();
-
-
-			// prints game indicator at the previously saved position togglePos
-			var curCur = ImGui.GetCursorPos();
-			ImGui.SetCursorPos(togglePos);
-			GameAnimationIndicator(Ktisis.GPoseTarget);
-			ImGui.SetCursorPos(curCur); // restore cursor
-		}
-
-		private static unsafe void GameAnimationIndicator(GameObject? target) {
-			if (target == null) return;
-
-			var isGamePlaybackRunning = PoseHooks.IsGamePlaybackRunning(target);
-
-			ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ImGui.GetFontSize() * 1.5f));
-			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (ImGui.GetFontSize() * (isGamePlaybackRunning? 0.25f : 0.85f)));
-
-			GuiHelpers.Icon(isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause);
-			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target."+(PoseHooks.PosingEnabled?"\nPosing may reset periodically.":"") : "Game Animation is paused for this target."+(!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
 		}
 	}
 }

@@ -13,10 +13,10 @@ namespace Ktisis.Interface.Components {
 
 		public static unsafe void Draw(Actor* actor) {
 			if (ImGui.CollapsingHeader("Bone List")) {
-				if (ImGui.BeginListBox("##bone_list", new Vector2(-1, 300))) {
+				if (ImGui.BeginChildFrame(471, new Vector2(-1, ImGui.GetTextLineHeight() * 12),ImGuiWindowFlags.HorizontalScrollbar)) {
 					var body = actor->Model->Skeleton->GetBone(0, 1);
 					DrawBoneTreeNode(body);
-					ImGui.EndListBox();
+					ImGui.EndChildFrame();
 				}
 			}
 		}

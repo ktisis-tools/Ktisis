@@ -2,6 +2,7 @@
 using System.Numerics;
 
 using ImGuiNET;
+using ImGuizmoNET;
 
 using Dalamud.Interface;
 
@@ -32,6 +33,11 @@ namespace Ktisis.Overlay {
 			return id == null ? null : Gizmo;
 		}
 		public static Gizmo? GetGizmo(string? id) => IsGizmoOwner(id) ? Gizmo : null;
+
+		public static bool IsCursorBusy() =>
+			ImGuizmo.IsUsing() || ImGuizmo.IsOver()
+			|| ImGui.IsAnyItemActive() || ImGui.IsAnyItemHovered()
+			|| ImGui.IsAnyItemFocused() || ImGui.IsAnyMouseDown();
 
 		public static void Begin() {
 			if (HasBegun) return;
