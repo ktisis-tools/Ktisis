@@ -24,7 +24,7 @@ namespace Ktisis.Interface.Components {
 			SavedObjects.RemoveAll(o => {
 				var target = (GameObject*)o;
 				if (target == null) return true;
-				if (!Services.Targets->IsObjectInViewRange(target)) return true; // TODO: check if this is safe
+				// if (!Services.Targets->IsObjectInViewRange(target)) return true; // "View range" is not "Spawn range", we want a way to check if the actor has despawned
 				return false;
 			});
 
