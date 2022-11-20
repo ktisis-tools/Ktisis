@@ -23,6 +23,7 @@
     "Ktisis_settings": "Ktisis Settings",
     "Open_plugin_load": "Auto open on plugin load",
     "Hide_char_name": "Hide character name",
+    "Censor_nsfw": "Censor NSFW",
     "Transform_table": "Transform Table",
     "Digit_precision": "Digit Precision",
     "Base_position_speed": "Base position speed",
@@ -31,7 +32,9 @@
     "Ctrl_speed_multiplier": "Ctrl speed multiplier",
     "Shift_speed_multiplier": "Shift speed multiplier",
     "Show_speed_multipler_inputs": "Show speed multipler inputs",
+    "Skeleton_lines_and_dots": "Skeleton lines and dots",
     "Draw_lines_on_skeleton": "Draw lines on skeleton",
+    "Dot_radius": "Dot radius",
     "Lines_thickness": "Lines thickness",
     "Bone_colors": "Bone colors",
     "Hold_Control_and_Shift_to_erase_colors": "Hold Control and Shift to erase colors.",
@@ -57,6 +60,9 @@
     "Keyboard_Action_SwitchToUniversal": "Switch to universal",
     "Keyboard_Action_ToggleLocalWorld": "Toggle local/world",
     "Keyboard_Action_HoldToHideSkeleton": "Hold to hide skeleton",
+    "Keyboard_Action_ClearCategoryVisibilityOverload": "Clear category visibility overload",
+    "Keyboard_Action_HoldAllCategoryVisibilityOverload": "Hold all category visibility overload",
+    "Keyboard_Action_CircleThroughSiblingLinkModes": "Circle through sibling link modes",
 
     //// Game Jargon ////
 
