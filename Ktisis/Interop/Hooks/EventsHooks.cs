@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Game.ClientState.Conditions;
 
 using Dalamud.Hooking;
 using Dalamud.Logging;
@@ -17,7 +16,6 @@ namespace Ktisis.Interop.Hooks {
 			Services.AddonManager = new AddonManager();
 			Services.ClientState.Login += OnLogin;
 			Services.ClientState.Logout += OnLogout;
-			//Services.Condition.ConditionChange += ConditionChange;
 
 			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent += OnGlamourPlatesReceiveEvent;
@@ -29,7 +27,6 @@ namespace Ktisis.Interop.Hooks {
 			Services.AddonManager.Dispose();
 			Services.ClientState.Logout -= OnLogout;
 			Services.ClientState.Login -= OnLogin;
-			//Services.Condition.ConditionChange -= ConditionChange;
 
 			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent -= OnGlamourPlatesReceiveEvent;
@@ -43,12 +40,6 @@ namespace Ktisis.Interop.Hooks {
 		}
 		private static void OnLogout(object? sender, EventArgs e) {
 			Sets.Dispose();
-		}
-		private static void ConditionChange(ConditionFlag flag, bool value) {
-			//PluginLog.Debug($"condition changed to {flag}=>{value}");
-
-			// TODO: find a better way to watch for OnGposeEnter, and make OnGposeLeave()
-			if (flag == ConditionFlag.WatchingCutscene && value && Ktisis.IsInGPose) OnGposeEnter();
 		}
 		private static void OnGposeEnter() {
 			PluginLog.Verbose($"Entered Gpose");
