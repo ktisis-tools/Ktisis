@@ -106,7 +106,6 @@ namespace Ktisis.Overlay {
 		}
 		internal unsafe bool Manipulate() {
 			var camera = Services.Camera->Camera;
-
 			var view = camera->GetViewMatrix();
 			var proj = camera->GetProjectionMatrix();
 
