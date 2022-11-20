@@ -10,6 +10,7 @@ using Dalamud.Interface.Components;
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
+using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class EditGaze {
@@ -89,7 +90,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			var hasGizmo = gizmo != null;
 
-			ImGui.SameLine(ImGui.GetContentRegionAvail().X - 60);
+			float buttonsWidth = GuiHelpers.CalcIconSize(FontAwesomeIcon.LocationArrow).X + GuiHelpers.CalcIconSize(FontAwesomeIcon.Eye).X + (ImGui.GetStyle().FramePadding.X * 4) + (ImGui.GetStyle().ItemSpacing.X * 2);
+			ImGui.SameLine(ImGui.GetContentRegionAvail().X - buttonsWidth);
 
 			if (isTracking) ImGui.BeginDisabled();
 			else if (hasGizmo) ImGui.PushStyleColor(ImGuiCol.Button, UsingColor);
@@ -140,7 +142,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 					gaze.Pos = baseGaze.Pos;
 			}
 
-			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
 			result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
 			ImGui.PopItemWidth();
 

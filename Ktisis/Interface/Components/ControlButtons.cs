@@ -1,21 +1,23 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Linq;
+using System.Numerics;
 
 using ImGuiNET;
 using ImGuizmoNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
+using static Ktisis.Overlay.Skeleton;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
-		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.75f);
+		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.6f) + ImGui.GetStyle().FramePadding;
 		private static bool IsSettingsHovered = false;
 		private static bool IsSettingsActive = false;
 
@@ -59,6 +61,9 @@ namespace Ktisis.Interface.Components {
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.MinusCircle, "Deselect gizmo", ButtonSize))
 				OverlayWindow.SetGizmoOwner(null);
 			if (!gizmoActive) ImGui.EndDisabled();
+
+			ImGui.SameLine();
+			DrawSiblingLink();
 		}
 
 		// As the settings button is a bit special and should not be as present as others
@@ -122,7 +127,6 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.TextRight(label, offsetWidth);
 			if (Ktisis.IsInGPose) ImGui.PopStyleColor();
 			ImGui.SameLine();
-			var togglePos = ImGui.GetCursorPos(); // keep these coordinate as a starting point for GameAnimationIndicator
 
 			if (!Ktisis.IsInGPose)
 				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
@@ -131,25 +135,30 @@ namespace Ktisis.Interface.Components {
 				PoseHooks.TogglePosing();
 
 			ImGui.EndDisabled();
-
-
-			// prints game indicator at the previously saved position togglePos
-			var curCur = ImGui.GetCursorPos();
-			ImGui.SetCursorPos(togglePos);
-			GameAnimationIndicator(Ktisis.GPoseTarget);
-			ImGui.SetCursorPos(curCur); // restore cursor
 		}
 
-		private static unsafe void GameAnimationIndicator(GameObject? target) {
-			if (target == null) return;
+		private static void DrawSiblingLink() {
+			var siblingLink = Ktisis.Configuration.SiblingLink;
 
-			var isGamePlaybackRunning = PoseHooks.IsGamePlaybackRunning(target);
-
-			ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ImGui.GetFontSize() * 1.5f));
-			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (ImGui.GetFontSize() * (isGamePlaybackRunning? 0.25f : 0.85f)));
-
-			GuiHelpers.Icon(isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause);
-			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target."+(PoseHooks.PosingEnabled?"\nPosing may reset periodically.":"") : "Game Animation is paused for this target."+(!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
+			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			if (GuiHelpers.IconButton(SiblingLinkToIcon(siblingLink), ButtonSize))
+				CircleTroughSiblingLinkModes();
+			if (siblingLink != SiblingLink.None) ImGui.PopStyleColor();
+			GuiHelpers.Tooltip(SiblingLinkToTooltip(siblingLink));
 		}
+		public static void CircleTroughSiblingLinkModes() =>
+			Ktisis.Configuration.SiblingLink = Ktisis.Configuration.SiblingLink == Enum.GetValues(typeof(SiblingLink)).Cast<SiblingLink>().Last() ? SiblingLink.None : Ktisis.Configuration.SiblingLink + 1;
+		private static FontAwesomeIcon SiblingLinkToIcon(SiblingLink siblingLink)
+			=> siblingLink switch {
+				SiblingLink.Rotation => FontAwesomeIcon.Link,
+				SiblingLink.RotationMirrorX => FontAwesomeIcon.Adjust,
+				_ => FontAwesomeIcon.ArrowUp
+			};
+		private static string SiblingLinkToTooltip(SiblingLink siblingLink)
+			=> siblingLink switch {
+				SiblingLink.Rotation => "Link rotation",
+				SiblingLink.RotationMirrorX => "Mirror rotation",
+				_ => "No sibling link"
+			};
 	}
 }

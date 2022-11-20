@@ -4,6 +4,7 @@ using System.Numerics;
 using ImGuiNET;
 using ImGuizmoNET;
 
+using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
 using ActorSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
@@ -100,7 +101,7 @@ namespace Ktisis.Overlay {
 					Services.GameGui.WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
-					if (parentId > 0) {
+					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton) {
 						// TODO: Draw lines for parents of partials.
 
 						var parent = model->Skeleton->GetBone(p, parentId);
@@ -148,24 +149,14 @@ namespace Ktisis.Overlay {
 							var initialPos = transform->Translation.ToVector3();
 							Interop.Alloc.SetMatrix(transform, matrix);
 
-							// Bone parenting
-							// Adapted from Anamnesis Studio code shared by Yuki - thank you!
+							// handles parenting
+							PropagateChildren(bone, transform, initialPos, initialRot);
 
-							var sourcePos = transform->Translation.ToVector3();
-							var deltaRot = transform->Rotation.ToQuat() / initialRot;
-							var deltaPos = sourcePos - initialPos;
-
-							var descendants = bone.GetDescendants();
-							foreach (var child in descendants) {
-								var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
-
-								var offset = access->Translation.ToVector3() - sourcePos;
-								offset = Vector3.Transform(offset, deltaRot);
-
-								matrix = Interop.Alloc.GetMatrix(access);
-								matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
-								matrix.Translation = deltaPos + sourcePos + offset;
-								Interop.Alloc.SetMatrix(access, matrix);
+							// handles linking
+							if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
+								var siblingBone = bone.GetMirrorSibling();
+								if (siblingBone != null)
+									PropagateSibling(siblingBone, transform->Rotation.ToQuat() / initialRot);
 							}
 						}
 
@@ -177,6 +168,46 @@ namespace Ktisis.Overlay {
 			}
 		}
 
+		private unsafe static void PropagateChildren(Bone parent, hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot) {
+			// Bone parenting
+			// Adapted from Anamnesis Studio code shared by Yuki - thank you!
+
+			var sourcePos = transform->Translation.ToVector3();
+			var deltaRot = transform->Rotation.ToQuat() / initialRot;
+			var deltaPos = sourcePos - initialPos;
+
+			var descendants = parent.GetDescendants();
+			foreach (var child in descendants) {
+				var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
+
+				var offset = access->Translation.ToVector3() - sourcePos;
+				offset = Vector3.Transform(offset, deltaRot);
+
+				var matrix = Interop.Alloc.GetMatrix(access);
+				matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
+				matrix.Translation = deltaPos + sourcePos + offset;
+				Interop.Alloc.SetMatrix(access, matrix);
+			}
+		}
+		private unsafe static void PropagateSibling(Bone sibling, Quaternion deltaRot) {
+			if (Ktisis.Configuration.SiblingLink == SiblingLink.None) return;
+
+			var access = sibling.AccessModelSpace(PropagateOrNot.DontPropagate);
+			var offset = access->Translation.ToVector3();
+
+			if(Ktisis.Configuration.SiblingLink == SiblingLink.RotationMirrorX)
+				deltaRot = new(-deltaRot.X, deltaRot.Y, deltaRot.Z, -deltaRot.W);
+
+			var matrix = Interop.Alloc.GetMatrix(access);
+			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
+			matrix.Translation = offset;
+
+			var initialRot = access->Rotation.ToQuat();
+			var initialPos = access->Translation.ToVector3();
+			Interop.Alloc.SetMatrix(access, matrix);
+
+			PropagateChildren(sibling, access, initialPos, initialRot);
+		}
 		public unsafe static Bone? GetSelectedBone() {
 			if (!BoneSelect.Active) return null;
 
@@ -187,6 +218,11 @@ namespace Ktisis.Overlay {
 			if (model == null) return null;
 
 			return model->Skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index);
+		}
+		public enum SiblingLink {
+			None,
+			Rotation,
+			RotationMirrorX,
 		}
 	}
 }

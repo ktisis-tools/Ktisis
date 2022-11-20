@@ -45,6 +45,7 @@ namespace Ktisis {
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
 		public float SkeletonLineThickness { get; set; } = 2.0F;
+		public float SkeletonDotRadius { get; set; } = 3.0F;
 
 		public Vector4 GetCategoryColor(Bone bone) {
 			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
@@ -79,6 +80,8 @@ namespace Ktisis {
 
 		public MODE GizmoMode { get; set; } = MODE.LOCAL;
 		public OPERATION GizmoOp { get; set; } = OPERATION.TRANSLATE;
+
+		public Overlay.Skeleton.SiblingLink SiblingLink { get; set; } = Overlay.Skeleton.SiblingLink.None;
 
 		public bool AllowAxisFlip { get; set; } = true;
 

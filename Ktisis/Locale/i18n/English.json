@@ -11,14 +11,16 @@
 
     //// Plugin ////
 
-    // ConfigGui.cs
-    "Ktisis_settings": "Ktisis Settings",
+    // General //
+    "General": "General",
     "Settings": "Settings",
     "Language": "Language",
+    "Enable": "Enable",
     "Interface": "Interface",
     "Gizmo": "Gizmo",
     "Overlay": "Overlay",
-    "General": "General",
+    // ConfigGui.cs
+    "Ktisis_settings": "Ktisis Settings",
     "Open_plugin_load": "Auto open on plugin load",
     "Hide_char_name": "Hide character name",
     "Transform_table": "Transform Table",
@@ -40,6 +42,9 @@
     "Categories_will_be_added_after_bones_are_displayed_once": "Categories will be added after bones are displayed once.",
     "Flip_axis_to_face_camera": "Flip axis to face camera",
     "Translate_bone_names": "Translate bone names",
+    "Keyboard_shortcuts": "Keyboard Shortcuts",
+    "Pressing_keys": "Pressing Keys",
+    "Edit_bone_positions": "Edit bone positions",
     // Display keyboard configs from enum defined in Input.cs
     "Input_Generic_Toggle": "Toggle",
     "Input_Generic_Hold": "Hold",
@@ -56,6 +61,7 @@
     //// Game Jargon ////
 
     // Race Names
+    "Hyur": "Hyur",
     "Miqote": "Miqo'te",
     "AuRa": "Au Ra",
     // Tribe Names
