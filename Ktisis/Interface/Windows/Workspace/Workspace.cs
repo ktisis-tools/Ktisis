@@ -100,24 +100,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 			// Bone categories
 			if (ImGui.CollapsingHeader("Bone Category Visibility")) {
 
-				ImGui.Indent(16.0f);
-				ImGui.Columns(2);
-				int i = 0;
-				bool hasShownAnyCategory = false;
-				foreach (Category category in Category.Categories.Values) {
-					if (!category.ShouldDisplay) continue;
-
-					bool categoryState = cfg.IsBoneCategoryVisible(category);
-
-					if (ImGui.Checkbox(category.Name, ref categoryState))
-						cfg.ShowBoneByCategory[category.Name] = categoryState;
-
-					if (i % 2 != 0) ImGui.NextColumn();
-					i++;
-					hasShownAnyCategory = true;
-				}
-				ImGui.Columns();
-				if (!hasShownAnyCategory) {
+				if (!Categories.DrawToggleList(cfg)) {
 					ImGui.Text("No bone found.");
 					ImGui.Text("Show Skeleton (");
 					ImGui.SameLine();
@@ -125,8 +108,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 					ImGui.SameLine();
 					ImGui.Text(") to fill this.");
 				}
-
-				ImGui.Unindent(16.0f);
 			}
 
 			// Bone tree

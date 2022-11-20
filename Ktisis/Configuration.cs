@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
@@ -26,6 +27,7 @@ namespace Ktisis {
 		public bool AutoOpenCtor { get; set; } = false;
 
 		public bool DisplayCharName { get; set; } = true;
+		public bool CensorNsfw { get; set; } = true;
 
 		public bool TransformTableDisplayMultiplierInputs { get; set; } = false;
 		public float TransformTableBaseSpeedPos { get; set; } = 0.0005f;
@@ -47,15 +49,25 @@ namespace Ktisis {
 
 		public Vector4 GetCategoryColor(Bone bone) {
 			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
-			if (!BoneCategoryColors.TryGetValue(bone.Category.Name, out Vector4 color))
-				return LinkedBoneCategoryColor;
-
-			return color;
+			// pick the first category found
+			foreach (var category in bone.Categories)
+				if (IsBoneCategoryVisible(category) && BoneCategoryColors.TryGetValue(category.Name, out Vector4 color))
+					return color;
+			return LinkedBoneCategoryColor;
 		}
 		public bool IsBoneVisible(Bone bone) {
-			if (!ShowBoneByCategory.TryGetValue(bone.Category.Name, out bool boneVisible))
-				return false;
-			return boneVisible;
+			// Check if input is forcing a category to show solo
+			if (Category.VisibilityOverload.Count > 0)
+				if (Category.VisibilityOverload.Intersect(bone.Categories.Select(c => c.Name)).Any())
+					return true;
+				else
+					return false;
+
+			// bone will be visible if any category is visible
+			foreach (var category in bone.Categories)
+				if (ShowBoneByCategory.TryGetValue(category.Name, out bool boneVisible))
+					if (boneVisible) return true;
+			return false;
 		}
 
 		public bool IsBoneCategoryVisible(Category category) {

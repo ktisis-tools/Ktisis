@@ -1,58 +1,88 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
-namespace Ktisis.Structs.Bones
-{
-	public class Category
-	{
+namespace Ktisis.Structs.Bones {
+	public class Category {
 		public string Name { get; set; }
 		public Vector4 DefaultColor { get; set; }
 		public bool ShouldDisplay { get; private set; } = false;
 		public IReadOnlyList<string> PossibleBones => new ReadOnlyCollection<string>(_PossibleBones);
 		private readonly List<string> _PossibleBones;
+		public bool IsNsfw { get; private set; } = false;
 
 		public static IReadOnlyDictionary<string, Category> Categories
 			=> new ReadOnlyDictionary<string, Category>(_Categories);
-		private static readonly Dictionary<string,Category> _Categories = new();
-		private static readonly Dictionary<string, Category> CategoriesByBone = new();
+		private static readonly Dictionary<string, Category> _Categories = new();
+		private static readonly Dictionary<string, List<Category>> CategoriesByBone = new();
 
 		public static Category DefaultCategory => Categories["other"];
+		public static List<Category> DefaultCategories => new() { DefaultCategory };
 
-		private Category(string name, Vector4 defaultColor, List<string> boneNames)
-		{
+		public static List<string> VisibilityOverload = new();
+
+		private Category(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw) {
 			Name = name;
 			DefaultColor = defaultColor;
 			_PossibleBones = boneNames;
+			IsNsfw = isNsfw;
 		}
-		public static Category CreateCategory(string name, Vector4 defaultColor, List<string> boneNames)
-		{
+		public static Category CreateCategory(string name, Vector4 defaultColor, List<string> boneNames, bool isNsfw = false) {
 			/* TODO: We currently throw for duplicated categories. This may turn out to be a problem in the future. */
-			Category cat = new(name, defaultColor, boneNames);
+			Category cat = new(name, defaultColor, boneNames, isNsfw);
 			_Categories.Add(name, cat);
-			foreach(string boneName in cat.PossibleBones) {
-				/* On collision, use the first registered category */
-				_ = CategoriesByBone.TryAdd(boneName, cat);
+			foreach (string boneName in cat.PossibleBones) {
+				if (!CategoriesByBone.TryAdd(boneName, new List<Category> { cat }))
+					CategoriesByBone[boneName].Add(cat);
 			}
 			return cat;
 		}
 
-		public void MarkForDisplay()
-		{
+		public void MarkForDisplay() {
 			ShouldDisplay = true;
 		}
 
-		public static Category GetForBone(string? boneName)
-		{
+
+		public static List<Category> GetForBone(string? boneName) {
 			if (string.IsNullOrEmpty(boneName))
-				return DefaultCategory;
+				return DefaultCategories;
 
-			if(!CategoriesByBone.TryGetValue(boneName, out Category? category))
-				category = DefaultCategory;
+			if (!CategoriesByBone.TryGetValue(boneName, out List<Category>? categories)) {
+				// This is needed for bone names with an ID, such as hair bones, e.g. j_ex_h0116_ke_b_a
+				var testedBoneName = RemoveSpecialCharacters(boneName);
+				if (!CategoriesByBone.TryGetValue(testedBoneName, out categories))
+					categories = DefaultCategories;
+			}
 
-			category.MarkForDisplay();
+			categories.ForEach(category => category.MarkForDisplay());
 
-			return category;
+			return categories;
+		}
+
+		public static string RemoveSpecialCharacters(string str) {
+			char[] buffer = new char[str.Length];
+			int index = 0;
+			foreach (char c in str) {
+				if (c < '0' || c > '9') {
+					buffer[index] = c;
+					index++;
+				}
+			}
+			return new string(buffer, 0, index);
+		}
+
+		public void ToggleVisibilityOverload() {
+			if (VisibilityOverload.Any(s => s == this.Name))
+				VisibilityOverload.Remove(this.Name);
+			else
+				VisibilityOverload.Add(this.Name);
+		}
+		public static void ToggleAllVisibilityOverload() {
+			if (VisibilityOverload.Any())
+				VisibilityOverload.Clear();
+			else
+				VisibilityOverload = Categories.Where(p => p.Value.ShouldDisplay).Select(p => p.Key).ToList();
 		}
 
 		static Category()
@@ -142,6 +172,38 @@ namespace Ktisis.Structs.Bones
 				"j_kami_f_r", // HairFrontRight
 				"j_kami_b", // HairB
 				"j_ex_met_va", // HairB
+
+				// some are real, some are guessed by pattern
+				// the bones below must be stipped from digits
+				"j_ex_h_ke_a_l",
+				"j_ex_h_ke_a_r",
+				"j_ex_h_ke_a",
+				"j_ex_h_ke_b_a",
+				"j_ex_h_ke_b_b",
+				"j_ex_h_ke_b_l",
+				"j_ex_h_ke_b_r",
+				"j_ex_h_ke_b",
+				"j_ex_h_ke_c_l",
+				"j_ex_h_ke_c_r",
+				"j_ex_h_ke_c",
+				"j_ex_h_ke_d",
+				"j_ex_h_ke_da",
+				"j_ex_h_ke_db",
+				"j_ex_h_ke_e",
+				"j_ex_h_ke_f_a",
+				"j_ex_h_ke_f_b",
+				"j_ex_h_ke_f_l",
+				"j_ex_h_ke_f_r",
+				"j_ex_h_ke_f",
+				"j_ex_h_ke_l",
+				"j_ex_h_ke_r",
+				"j_ex_h_ke_s_l",
+				"j_ex_h_ke_s_r",
+				"j_ex_h_ke_s",
+				"j_ex_h_ke_u_l",
+				"j_ex_h_ke_u_r",
+				"j_ex_h_ke_u",
+				"j_ex_h_ke_u",
 			});
 			CreateCategory("clothes", new Vector4(1.0F, 1.0F, 0.0F, 0.5647059F), new List<string> {
 				"j_sk_b_b_l",     // ClothBackBLeft
@@ -171,7 +233,15 @@ namespace Ktisis.Structs.Bones
 				"n_ear_a_l",      // EarringALeft
 				"n_ear_a_r",      // EarringARight
 				"n_ear_b_l",      // EarringBLeft
-				"n_ear_b_r"       // EarringBRight
+				"n_ear_b_r",       // EarringBRight
+				"j_ex_top_a_r",
+				"j_ex_top_a_l",
+				"j_ex_top_b_r",
+				"j_ex_top_b_l",
+				"j_ex_met_a",
+				"j_ex_met_b",
+				"j_ex_met_c",
+				"j_ex_met_d",
 			});
 			CreateCategory("weapons", new Vector4(1.0F, 0.0F, 1.0F, 0.5647059F), new List<string> {
 				"j_buki_sebo_l",  // ScabbardLeft
@@ -244,8 +314,6 @@ namespace Ktisis.Structs.Bones
 				//"j_f_ulip_b", // VieraLipUpperB
 				//"j_f_dlip_b", // VieraLipLowerB
 			});
-			/* TODO? */
-			CreateCategory("feet", defaultColor, new List<string>());
 
 			/* IVCS Categories */
 			CreateCategory("ivcs left hand", defaultColor, new List<string> {
@@ -307,12 +375,12 @@ namespace Ktisis.Structs.Bones
 				"iv_ochinko_d",
 				"iv_ochinko_e",
 				"iv_ochinko_f",
-			});
+			}, true);
 			CreateCategory("ivcs vagina", defaultColor, new List<string> {
 				"iv_kuritto", // Clitoris   rotation, position, scale
 				"iv_inshin_l", // Labia    rotation, position, scale
 				"iv_inshin_r", // Labia
-			});
+			}, true);
 			CreateCategory("ivcs buttocks", defaultColor, new List<string> {
 				// Anus (rotation, scale, position)
 				"iv_koumon",
@@ -322,7 +390,29 @@ namespace Ktisis.Structs.Bones
 				// Buttocks (rotation, scale, position)
 				"iv_shiri_l",
 				"iv_shiri_r",
-			});
+			}, true);
+
+			// compount categories
+			// The categories below have bones in common with other categories above.
+
+			// feet
+			List<string> feetBones = new() {
+				"j_asi_d_l", // FootLeft
+				"j_asi_d_r", // FootRight
+				"j_asi_e_l", // ToesLeft
+				"j_asi_e_r", // ToesRight
+			};
+			foreach (string name in new string[] { "ivcs left foot", "ivcs right foot", })
+				if (_Categories.TryGetValue(name, out Category? cat))
+					feetBones = feetBones.Concat(cat.PossibleBones).ToList();
+			CreateCategory("feet", defaultColor, feetBones);
+
+			// hands
+			List<string> handsBones = new();
+			foreach (string name in new string[] { "right hand", "left hand", "ivcs left hand", "ivcs right hand", })
+				if (_Categories.TryGetValue(name, out Category? cat))
+					handsBones = handsBones.Concat(cat.PossibleBones).ToList();
+			CreateCategory("hands", defaultColor, handsBones);
 		}
 	}
 }

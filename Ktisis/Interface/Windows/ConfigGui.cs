@@ -81,6 +81,10 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))
 				cfg.DisplayCharName = !displayCharName;
 
+			var censorNsfw = !cfg.CensorNsfw;
+			if (ImGui.Checkbox(Locale.GetString("Censor_nsfw"), ref censorNsfw))
+				cfg.CensorNsfw = !censorNsfw;
+
 			ImGui.Spacing();
 			ImGui.Separator();
 			ImGui.Text(Locale.GetString("Transform_table"));
@@ -172,26 +176,10 @@ namespace Ktisis.Interface.Windows {
 					}
 
 					ImGui.Text(Locale.GetString("Categories_colors"));
-					ImGui.Columns(2);
-					int i = 0;
-					bool hasShownAnyCategory = false;
-					foreach (Category category in Category.Categories.Values) {
-						if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
-							continue;
 
-						if (!cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
-							categoryColor = cfg.LinkedBoneCategoryColor;
-
-						if (ImGui.ColorEdit4(category.Name, ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
-							cfg.BoneCategoryColors[category.Name] = categoryColor;
-
-						if (i % 2 != 0) ImGui.NextColumn();
-						i++;
-						hasShownAnyCategory = true;
-					}
-					ImGui.Columns();
-					if (!hasShownAnyCategory)
+					if (!Components.Categories.DrawConfigList(cfg))
 						ImGui.TextWrapped(Locale.GetString("Categories_will_be_added_after_bones_are_displayed_once"));
+
 				}
 			}
 			if (ImGui.CollapsingHeader(Locale.GetString("Edit_bone_positions")))
@@ -272,6 +260,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Spacing();
 			ImGui.Spacing();
 
+			ImGui.BeginChildFrame(74, new(-1, ImGui.GetFontSize() * 20));
 
 			// key/Action table
 			ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, ImGui.GetStyle().CellPadding * 3);
@@ -283,7 +272,10 @@ namespace Ktisis.Interface.Windows {
 				ImGui.TableSetupColumn("Action");
 				ImGui.TableHeadersRow();
 
-				foreach (var purpose in Input.Purposes) {
+				foreach (var purpose in Input.PurposesWithCategories) {
+					if ((int)purpose >= Input.FirstCategoryPurposeHold)
+						if (Input.PurposesCategories.TryGetValue(purpose, out var category))
+							if ((!cfg.KeyBinds.Any(t => t.Key == purpose) && !category.ShouldDisplay) || (cfg.CensorNsfw && category.IsNsfw)) continue;
 
 					// get currently configured or default keys
 					if (!Input.DefaultKeys.TryGetValue(purpose, out List<VirtualKey>? defaultKeys))
@@ -303,7 +295,7 @@ namespace Ktisis.Interface.Windows {
 
 					// display the purpose
 					ImGui.TableNextColumn();
-					ImGui.Selectable(Locale.GetString($"Keyboard_Action_{purpose}"), false, ImGuiSelectableFlags.SpanAllColumns);
+					ImGui.Selectable(Locale.GetInputPurposeName(purpose), false, ImGuiSelectableFlags.SpanAllColumns);
 					clickRow |= ImGui.IsItemClicked(ImGuiMouseButton.Left) || ImGui.IsItemClicked(ImGuiMouseButton.Right);
 
 					// execute the change if clicked
@@ -316,7 +308,7 @@ namespace Ktisis.Interface.Windows {
 			}
 			ImGui.PopStyleVar();
 			ImGui.EndTabItem();
-
+			ImGui.EndChildFrame();
 		}
 		private static string PrettyKeys(List<VirtualKey>  keys) => string.Join(" + ", keys.Select(k => VirtualKeyExtensions.GetFancyName(k)));
 
