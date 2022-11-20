@@ -32,6 +32,7 @@ namespace Ktisis.Interface.Components {
 			var buttonSize = new Vector2(ImGui.GetContentRegionAvail().X, ControlButtons.ButtonSize.Y);
 
 			if (ImGui.CollapsingHeader("Actor List")) {
+				long? toRemove = null;
 				foreach (var pointer in SavedObjects) {
 
 					var target = (GameObject*)pointer;
@@ -42,8 +43,9 @@ namespace Ktisis.Interface.Components {
 					if (ImGui.Button($"{actor->GetNameOrId()}##ActorList##{pointer}", buttonSize))
 						Services.Targets->GPoseTarget = target; // TODO: check if this is safe for expected actors, and unexpected actors
 					if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-						SavedObjects.Remove(pointer);
+						toRemove = pointer;
 				}
+				if (toRemove != null) SavedObjects.Remove((long)toRemove);
 
 				if (GuiHelpers.IconButtonTooltip(Dalamud.Interface.FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
 					OpenSelector();
