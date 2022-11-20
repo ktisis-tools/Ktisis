@@ -64,6 +64,9 @@ namespace Ktisis {
 				else
 					return false;
 
+			if (CensorNsfw && bone.Categories.Any(c => c.IsNsfw))
+				return false;
+
 			// bone will be visible if any category is visible
 			foreach (var category in bone.Categories)
 				if (ShowBoneByCategory.GetValueOrDefault(category.Name, true))
