@@ -16,9 +16,11 @@
     "Settings": "Settings",
     "Language": "Language",
     "Enable": "Enable",
+    "Disable": "Disable",
     "Interface": "Interface",
     "Gizmo": "Gizmo",
     "Overlay": "Overlay",
+    "Data": "Data",
     // ConfigGui.cs
     "Ktisis_settings": "Ktisis Settings",
     "Open_plugin_load": "Auto open on plugin load",
@@ -50,6 +52,10 @@
     "Keyboard_shortcuts": "Keyboard Shortcuts",
     "Pressing_keys": "Pressing Keys",
     "Edit_bone_positions": "Edit bone positions",
+    "keybinds_table": "Keybinds Table",
+    "Keys": "Keys",
+    "Action": "Action",
+    "dispose_of_glam_plates_mem_and_remove_config_for_all_chars": "Dispose of the Glamour Plates memory and remove configurations for ALL characters.",
     // Display keyboard configs from enum defined in Input.cs
     "Input_Generic_Toggle": "Toggle",
     "Input_Generic_Hold": "Hold",

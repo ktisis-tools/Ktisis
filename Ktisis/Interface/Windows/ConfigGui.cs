@@ -56,7 +56,7 @@ namespace Ktisis.Interface.Windows {
 						DrawInputTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Language")))
 						DrawLanguageTab(cfg);
-					if (ImGui.BeginTabItem("Data"))
+					if (ImGui.BeginTabItem(Locale.GetString("Data")))
 						DrawDataTab(cfg);
 
 					ImGui.EndTabBar();
@@ -278,7 +278,7 @@ namespace Ktisis.Interface.Windows {
 
 			// key/Action table
 			ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, ImGui.GetStyle().CellPadding * 3);
-			if (ImGui.BeginTable("keybinds_table", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.BordersInnerH | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.PadOuterX)) {
+			if (ImGui.BeginTable(Locale.GetString("keybinds_table"), 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.BordersInnerH | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.PadOuterX)) {
 
 				// display and configureheaders
 				ImGui.TableSetupScrollFreeze(0, 1); // Make top row always visible
@@ -338,7 +338,7 @@ namespace Ktisis.Interface.Windows {
 			Components.Equipment.CreateGlamourQuestionPopup();
 
 			ImGui.SameLine();
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, "Dispose of the Glamour Plates memory and remove configurations for ALL characters.")) {
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, Locale.GetString("dispose_of_glam_plates_mem_and_remove_config_for_all_chars"))) {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
