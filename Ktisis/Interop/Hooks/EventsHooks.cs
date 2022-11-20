@@ -7,6 +7,7 @@ using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
 
@@ -20,6 +21,7 @@ namespace Ktisis.Interop.Hooks {
 			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent += OnGlamourPlatesReceiveEvent;
 
+			OnGposeEnter(); // TODO: move this call on "enter gpose" event
 			OnLogin(null!, null!);
 		}
 
@@ -31,6 +33,7 @@ namespace Ktisis.Interop.Hooks {
 			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent -= OnGlamourPlatesReceiveEvent;
 
+			OnGposeLeave();
 			OnLogout(null!, null!);
 		}
 
@@ -42,7 +45,12 @@ namespace Ktisis.Interop.Hooks {
 			Sets.Dispose();
 		}
 		private static void OnGposeEnter() {
-			PluginLog.Verbose($"Entered Gpose");
+			var ClickTargetAddon = Services.AddonManager.Get<ClickTargetAddon>();
+			ClickTargetAddon.Enable();
+		}
+		private static void OnGposeLeave() {
+			var ClickTargetAddon = Services.AddonManager.Get<ClickTargetAddon>();
+			ClickTargetAddon.Dispose();
 		}
 
 		private static unsafe void OnGlamourPlatesReceiveEvent(object? sender, ReceiveEventArgs e) {
@@ -67,6 +75,7 @@ namespace Ktisis.Interop.Hooks {
 		private readonly List<IDisposable> addons = new()
 		{
 			new MiragePrismMiragePlateAddon(),
+			new ClickTargetAddon(),
 		};
 
 		public void Dispose() {
@@ -108,7 +117,73 @@ namespace Ktisis.Interop.Hooks {
 			return receiveEventHook!.Original(agent, rawData, eventArgs, eventArgsCount, sender);
 		}
 	}
+	internal unsafe class ClickTargetAddon : IDisposable {
 
+
+		private delegate void* ClickTarget(void** a1, byte* a2, bool a3);
+		private readonly Hook<ClickTarget>? rightClickTargetHook;
+		private readonly Hook<ClickTarget>? leftClickTargetHook;
+
+		public ClickTargetAddon() {
+			rightClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), new ClickTarget(RightClickTargetDetour));
+			leftClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), new ClickTarget(LeftClickTargetDetour));
+		}
+
+		public void Enable() {
+			rightClickTargetHook?.Enable();
+			leftClickTargetHook?.Enable();
+		}
+
+		public void Dispose() {
+			// Verify presence of hooks, in case of calls when it's already been disposed
+			if (!(bool)rightClickTargetHook?.IsDisposed!) {
+				if ((bool)rightClickTargetHook?.IsEnabled!)
+						rightClickTargetHook?.Disable();
+				rightClickTargetHook?.Dispose();
+			}
+			if (!(bool)leftClickTargetHook?.IsDisposed!) {
+				if ((bool)leftClickTargetHook?.IsEnabled!)
+						leftClickTargetHook?.Disable();
+				leftClickTargetHook?.Dispose();
+			}
+		}
+
+
+		private void* RightClickTargetDetour(void** a1, byte* a2, bool a3) {
+			if (Ktisis.IsInGPose && !ClickEvent(a1, a2, a3, ClickType.Right)) {
+				// it seems that returning null is not enough to prevent original event,
+				// so we return the current target to target change on click
+				return rightClickTargetHook!.Original(a1, (byte*)Ktisis.Target, a3);
+			}
+			return rightClickTargetHook!.Original(a1, a2, a3);
+		}
+		private void* LeftClickTargetDetour(void** a1, byte* a2, bool a3) {
+			if(Ktisis.IsInGPose && !ClickEvent(a1, a2, a3, ClickType.Left)) {
+				// it seems that returning null is not enough to prevent original event,
+				// so we return the current target to target change on click
+				return leftClickTargetHook!.Original(a1, (byte*)Ktisis.Target, a3);
+			}
+			return leftClickTargetHook!.Original(a1, a2, a3);
+		}
+
+		private bool ClickEvent(void** a1, byte* actor, bool a3, ClickType clickType) {
+			if (!Ktisis.IsInGPose) return true;
+
+			if (actor != null) {
+				// prevents selecting target on left click
+				if(clickType == ClickType.Left)
+					return false;
+
+				// cast (Actor*)actor if need do something with actor
+			}
+
+			return true;
+		}
+		internal enum ClickType {
+			Left,
+			Right
+		}
+	}
 	internal unsafe class ReceiveEventArgs : EventArgs {
 		public ReceiveEventArgs(AgentInterface* agentInterface, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong senderID) {
 			AgentInterface = agentInterface;
