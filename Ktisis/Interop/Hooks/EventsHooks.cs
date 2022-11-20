@@ -149,37 +149,28 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 
-		private void* RightClickTargetDetour(void** a1, byte* a2, bool a3) {
-			if (Ktisis.IsInGPose && !ClickEvent(a1, a2, a3, ClickType.Right)) {
-				// it seems that returning null is not enough to prevent original event,
-				// so we return the current target to target change on click
-				return rightClickTargetHook!.Original(a1, (byte*)Ktisis.Target, a3);
-			}
-			return rightClickTargetHook!.Original(a1, a2, a3);
-		}
-		private void* LeftClickTargetDetour(void** a1, byte* a2, bool a3) {
-			if(Ktisis.IsInGPose && !ClickEvent(a1, a2, a3, ClickType.Left)) {
-				// it seems that returning null is not enough to prevent original event,
-				// so we return the current target to target change on click
-				return leftClickTargetHook!.Original(a1, (byte*)Ktisis.Target, a3);
-			}
-			return leftClickTargetHook!.Original(a1, a2, a3);
-		}
+		private void* RightClickTargetDetour(void** a1, byte* a2, bool a3) =>
+			ClickEvent(a1, a2, a3, ClickType.Right);
+		private void* LeftClickTargetDetour(void** a1, byte* a2, bool a3) =>
+			ClickEvent(a1, a2, a3, ClickType.Left);
 
-		private bool ClickEvent(void** a1, byte* actor, bool a3, ClickType clickType) {
-			if (!Ktisis.IsInGPose) return true;
 
-			if (actor != null) {
-				// prevents selecting target on left click
+		private void* ClickEvent(void** a1, byte* actor, bool a3, ClickType clickType) {
+			if (Ktisis.IsInGPose) {
+				//if (actor != null) // cast (Actor*)actor if need do something with actor
+
+				// 1. Prevents target self when clicking somewhere else with left click
+				// 2. Prevent target change with left and right clicks
+				// returning null wasn't enough for 1. so we pass the current target instead
 				if (Ktisis.Configuration.DisableChangeTargetOnLeftClick && clickType == ClickType.Left)
-					return false;
+					return leftClickTargetHook!.Original(a1, (byte*)Ktisis.Target, a3);
 				if (Ktisis.Configuration.DisableChangeTargetOnRightClick && clickType == ClickType.Right)
-					return false;
-
-				// cast (Actor*)actor if need do something with actor
+					return rightClickTargetHook!.Original(a1, (byte*)Ktisis.Target, a3);
 			}
 
-			return true;
+			if (clickType == ClickType.Left) leftClickTargetHook!.Original(a1, actor, a3);
+			if (clickType == ClickType.Right) rightClickTargetHook!.Original(a1, actor, a3);
+			return null;
 		}
 		internal enum ClickType {
 			Left,
