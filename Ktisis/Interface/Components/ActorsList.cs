@@ -15,7 +15,7 @@ namespace Ktisis.Interface.Components {
 		private static List<long> SavedObjects = new(); // TODO: clean the list on gpose leave
 		private static bool IsSelectorListOpened = false;
 		private static string Search = "";
-		private static readonly ObjectKind[] WhitelistObjectKinds =  {
+		private static readonly HashSet<ObjectKind> WhitelistObjectKinds = new(){
 				ObjectKind.Pc,
 				ObjectKind.BattleNpc,
 				ObjectKind.EventNpc,
