@@ -92,7 +92,8 @@ namespace Ktisis.Interface.Components {
 					cfg.ShowBoneByCategory = cfg.ShowBoneByCategory.ToDictionary(p => p.Key, p => true);
 				ImGui.SameLine();
 				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Times, "Deselect all categories", ControlButtons.ButtonSize))
-					cfg.ShowBoneByCategory = cfg.ShowBoneByCategory.ToDictionary(p => p.Key, p => false);
+					foreach (var key in Category.Categories.Keys)
+						cfg.ShowBoneByCategory[key] = false;
 			}
 			ImGui.SameLine(ImGui.GetContentRegionAvail().X - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
 			ControlButtons.VerticalAlignTextOnButtonSize();
