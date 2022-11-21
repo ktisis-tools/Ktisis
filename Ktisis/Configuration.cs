@@ -41,7 +41,7 @@ namespace Ktisis {
 		public bool EnableKeybinds { get; set; } = true;
 		public Dictionary<Input.Purpose, List<VirtualKey>> KeyBinds { get; set; } = new();
 
-		public bool DisableChangeTargetOnLeftClick { get; set; } = true;
+		public bool DisableChangeTargetOnLeftClick { get; set; } = false;
 		public bool DisableChangeTargetOnRightClick { get; set; } = false;
 
 		// Overlay
