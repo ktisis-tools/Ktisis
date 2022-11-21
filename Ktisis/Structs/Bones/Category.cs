@@ -377,6 +377,7 @@ namespace Ktisis.Structs.Bones {
 				"iv_ochinko_f",
 			}, true);
 			CreateCategory("ivcs vagina", defaultColor, new List<string> {
+				"iv_omanko",
 				"iv_kuritto", // Clitoris   rotation, position, scale
 				"iv_inshin_l", // Labia    rotation, position, scale
 				"iv_inshin_r", // Labia
