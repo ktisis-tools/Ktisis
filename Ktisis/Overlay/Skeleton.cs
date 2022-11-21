@@ -173,6 +173,9 @@ namespace Ktisis.Overlay {
 			// Bone parenting
 			// Adapted from Anamnesis Studio code shared by Yuki - thank you!
 
+			if (!Ktisis.Configuration.EnableParenting)
+				return;
+
 			var sourcePos = transform->Translation.ToVector3();
 			var deltaRot = transform->Rotation.ToQuat() / initialRot;
 			var deltaPos = sourcePos - initialPos;

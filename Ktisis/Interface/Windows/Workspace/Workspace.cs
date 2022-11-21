@@ -137,6 +137,12 @@ namespace Ktisis.Interface.Windows.Workspace {
 			var actor = (Actor*)target.Address;
 			if (actor->Model == null) return;
 
+			// Parenting
+
+			var parent = cfg.EnableParenting;
+			if (ImGui.Checkbox("Parenting", ref parent))
+				cfg.EnableParenting = parent;
+
 			// Transform table
 			TransformTable(actor);
 

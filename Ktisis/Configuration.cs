@@ -108,6 +108,8 @@ namespace Ktisis {
 		public Vector4 LinkedBoneCategoryColor { get; set; } = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
 
+		public bool EnableParenting { get; set; } = true;
+
 		public bool LinkedGaze { get; set; } = true;
 
 		// Data memory
