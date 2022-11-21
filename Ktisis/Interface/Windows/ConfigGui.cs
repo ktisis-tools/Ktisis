@@ -184,6 +184,7 @@ namespace Ktisis.Interface.Windows {
 			}
 			if (ImGui.CollapsingHeader(Locale.GetString("Edit_bone_positions")))
 				DrawBonesOffset(cfg);
+
 			ImGui.EndTabItem();
 		}
 
@@ -307,8 +308,8 @@ namespace Ktisis.Interface.Windows {
 				ImGui.EndTable();
 			}
 			ImGui.PopStyleVar();
-			ImGui.EndTabItem();
 			ImGui.EndChildFrame();
+			ImGui.EndTabItem();
 		}
 		private static string PrettyKeys(List<VirtualKey>  keys) => string.Join(" + ", keys.Select(k => VirtualKeyExtensions.GetFancyName(k)));
 
