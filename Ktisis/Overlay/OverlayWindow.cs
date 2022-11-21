@@ -35,7 +35,7 @@ namespace Ktisis.Overlay {
 		public static Gizmo? GetGizmo(string? id) => IsGizmoOwner(id) ? Gizmo : null;
 
 		public static bool IsCursorBusy() =>
-			ImGuizmo.IsUsing() || ImGuizmo.IsOver()
+			(GizmoOwner != null && (ImGuizmo.IsUsing() || ImGuizmo.IsOver()))
 			|| ImGui.IsAnyItemActive() || ImGui.IsAnyItemHovered()
 			|| ImGui.IsAnyItemFocused() || ImGui.IsAnyMouseDown();
 

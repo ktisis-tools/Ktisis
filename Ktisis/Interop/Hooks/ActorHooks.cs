@@ -6,7 +6,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis.Interop.Hooks {
-	internal class ActorHooks {
+	internal static class ActorHooks {
 		// Control actor gaze
 		// a1 = Actor + 0xC20
 

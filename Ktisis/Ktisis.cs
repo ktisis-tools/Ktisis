@@ -33,10 +33,13 @@ namespace Ktisis {
 			Interop.Alloc.Init();
 			Interop.Methods.Init();
 			Interop.StaticOffsets.Init();
+
 			Interop.Hooks.ActorHooks.Init();
-			Interop.Hooks.PoseHooks.Init();
-			Interop.Hooks.GuiHooks.Init();
+			Interop.Hooks.ControlHooks.Init();
 			Interop.Hooks.EventsHooks.Init();
+			Interop.Hooks.GuiHooks.Init();
+			Interop.Hooks.PoseHooks.Init();
+
 			Input.Init();
 			ActorStateWatcher.Init();
 
@@ -59,11 +62,13 @@ namespace Ktisis {
 			Services.CommandManager.RemoveHandler(CommandName);
 			Services.PluginInterface.SavePluginConfig(Configuration);
 
-			Interop.Alloc.Dispose();
 			Interop.Hooks.ActorHooks.Dispose();
-			Interop.Hooks.PoseHooks.Dispose();
-			Interop.Hooks.GuiHooks.Dispose();
+			Interop.Hooks.ControlHooks.Dispose();
 			Interop.Hooks.EventsHooks.Dispose();
+			Interop.Hooks.GuiHooks.Dispose();
+			Interop.Hooks.PoseHooks.Dispose();
+
+			Interop.Alloc.Dispose();
 			Input.Instance.Dispose();
 			ActorStateWatcher.Instance.Dispose();
 
