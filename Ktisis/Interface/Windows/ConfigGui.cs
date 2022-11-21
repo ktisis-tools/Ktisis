@@ -231,6 +231,19 @@ namespace Ktisis.Interface.Windows {
 		// input selector
 		public static void DrawInputTab(Configuration cfg) {
 			ImGui.Spacing();
+			ImGui.Text("Selection Behavior");
+			ImGui.Spacing();
+
+			var disableChangeTargetOnLeftClick = cfg.DisableChangeTargetOnLeftClick;
+			if (ImGui.Checkbox(Locale.GetString("Disable_Change_Target_On_Left_Click"), ref disableChangeTargetOnLeftClick))
+				cfg.DisableChangeTargetOnLeftClick = disableChangeTargetOnLeftClick;
+
+			var disableChangeTargetOnRightClick = cfg.DisableChangeTargetOnRightClick;
+			if (ImGui.Checkbox(Locale.GetString("Disable_Change_Target_On_Right_Click"), ref disableChangeTargetOnRightClick))
+				cfg.DisableChangeTargetOnRightClick = disableChangeTargetOnRightClick;
+
+
+			ImGui.Spacing();
 			ImGui.Text(Locale.GetString("Keyboard_shortcuts"));
 			ImGui.Spacing();
 

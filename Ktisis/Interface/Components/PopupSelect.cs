@@ -43,6 +43,23 @@ namespace Ktisis.Interface.Components {
 		private static int ColFromKey(int key) => key % HoverPopupWindowColumns;
 		private static int KeyFromRowCol(int row, int col) => (row * HoverPopupWindowColumns) + col;
 
+
+		public static void HoverPopupWindow<T>(
+		HoverPopupWindowFlags flags,
+		IEnumerable<T> enumerable,
+		Func<IEnumerable<T>, string, IEnumerable<T>> filter,
+		Func<T, bool, (bool, bool)> drawLine,
+		Action<T> onSelect,
+		Action onClose,
+		ref string inputSearch,
+		string windowLabel = "",
+		string listLabel = "",
+		string searchBarLabel = "##search",
+		string searchBarHint = "Search...",
+		float minWidth = 400,
+		int columns = 12
+		) => HoverPopupWindow<T>(flags, enumerable, filter, (i) => { }, drawLine, onSelect, onClose, ref inputSearch, windowLabel, listLabel, searchBarLabel, searchBarHint, minWidth, columns);
+
 		public static void HoverPopupWindow<T>(
 				HoverPopupWindowFlags flags,
 				IEnumerable<T> enumerable,

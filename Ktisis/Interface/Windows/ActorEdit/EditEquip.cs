@@ -197,7 +197,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
 				SlotItems,
 				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
-				(i) => { },
 				(i, a) => (  // draw Line
 						ImGui.Selectable(i.Name, a),
 						ImGui.IsItemFocused()
@@ -245,7 +244,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
 				sets,
 				(e,input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
-				(i) => { },
 				(i,a) => {
 					bool selected = ImGui.Selectable(i.Name, a);
 					bool focus = ImGui.IsItemFocused();

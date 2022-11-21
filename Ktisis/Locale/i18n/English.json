@@ -37,6 +37,8 @@
     "Hold_Control_and_Shift_to_erase_colors": "Hold Control and Shift to erase colors.",
     "Unlink_bones_colors": "Unlink bones colors",
     "Link_bones_colors": "Link bones colors",
+    "Disable_Change_Target_On_Left_Click": "Disable change target on Left click",
+    "Disable_Change_Target_On_Right_Click": "Disable change target on Right click",
     "Hold_Control_and_Shift_to_reset_colors_to_their_default_values": "Hold Control and Shift to reset colors to their default values.",
     "Categories_colors": "Categories colors:",
     "Categories_will_be_added_after_bones_are_displayed_once": "Categories will be added after bones are displayed once.",

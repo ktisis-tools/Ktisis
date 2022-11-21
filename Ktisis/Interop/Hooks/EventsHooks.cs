@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Game.ClientState.Conditions;
 
 using Dalamud.Hooking;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
 
@@ -17,11 +17,11 @@ namespace Ktisis.Interop.Hooks {
 			Services.AddonManager = new AddonManager();
 			Services.ClientState.Login += OnLogin;
 			Services.ClientState.Logout += OnLogout;
-			//Services.Condition.ConditionChange += ConditionChange;
 
 			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent += OnGlamourPlatesReceiveEvent;
 
+			OnGposeEnter(); // TODO: move this call on "enter gpose" event
 			OnLogin(null!, null!);
 		}
 
@@ -29,11 +29,11 @@ namespace Ktisis.Interop.Hooks {
 			Services.AddonManager.Dispose();
 			Services.ClientState.Logout -= OnLogout;
 			Services.ClientState.Login -= OnLogin;
-			//Services.Condition.ConditionChange -= ConditionChange;
 
 			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent -= OnGlamourPlatesReceiveEvent;
 
+			OnGposeLeave();
 			OnLogout(null!, null!);
 		}
 
@@ -44,14 +44,13 @@ namespace Ktisis.Interop.Hooks {
 		private static void OnLogout(object? sender, EventArgs e) {
 			Sets.Dispose();
 		}
-		private static void ConditionChange(ConditionFlag flag, bool value) {
-			//PluginLog.Debug($"condition changed to {flag}=>{value}");
-
-			// TODO: find a better way to watch for OnGposeEnter, and make OnGposeLeave()
-			if (flag == ConditionFlag.WatchingCutscene && value && Ktisis.IsInGPose) OnGposeEnter();
-		}
 		private static void OnGposeEnter() {
-			PluginLog.Verbose($"Entered Gpose");
+			var ClickTargetAddon = Services.AddonManager.Get<ClickTargetAddon>();
+			ClickTargetAddon.Enable();
+		}
+		private static void OnGposeLeave() {
+			var ClickTargetAddon = Services.AddonManager.Get<ClickTargetAddon>();
+			ClickTargetAddon.Dispose();
 		}
 
 		private static unsafe void OnGlamourPlatesReceiveEvent(object? sender, ReceiveEventArgs e) {
@@ -76,6 +75,7 @@ namespace Ktisis.Interop.Hooks {
 		private readonly List<IDisposable> addons = new()
 		{
 			new MiragePrismMiragePlateAddon(),
+			new ClickTargetAddon(),
 		};
 
 		public void Dispose() {
@@ -117,7 +117,66 @@ namespace Ktisis.Interop.Hooks {
 			return receiveEventHook!.Original(agent, rawData, eventArgs, eventArgsCount, sender);
 		}
 	}
+	internal unsafe class ClickTargetAddon : IDisposable {
 
+
+		private delegate void* ClickTarget(void** a1, byte* a2, bool a3);
+		private readonly Hook<ClickTarget>? rightClickTargetHook;
+		private readonly Hook<ClickTarget>? leftClickTargetHook;
+
+		public ClickTargetAddon() {
+			rightClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), new ClickTarget(RightClickTargetDetour));
+			leftClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), new ClickTarget(LeftClickTargetDetour));
+		}
+
+		public void Enable() {
+			rightClickTargetHook?.Enable();
+			leftClickTargetHook?.Enable();
+		}
+
+		public void Dispose() {
+			// Verify presence of hooks, in case of calls when it's already been disposed
+			if (!(bool)rightClickTargetHook?.IsDisposed!) {
+				if ((bool)rightClickTargetHook?.IsEnabled!)
+						rightClickTargetHook?.Disable();
+				rightClickTargetHook?.Dispose();
+			}
+			if (!(bool)leftClickTargetHook?.IsDisposed!) {
+				if ((bool)leftClickTargetHook?.IsEnabled!)
+						leftClickTargetHook?.Disable();
+				leftClickTargetHook?.Dispose();
+			}
+		}
+
+
+		private void* RightClickTargetDetour(void** a1, byte* a2, bool a3) =>
+			ClickEvent(a1, a2, a3, ClickType.Right);
+		private void* LeftClickTargetDetour(void** a1, byte* a2, bool a3) =>
+			ClickEvent(a1, a2, a3, ClickType.Left);
+
+
+		private void* ClickEvent(void** a1, byte* actor, bool a3, ClickType clickType) {
+			if (Ktisis.IsInGPose) {
+				//if (actor != null) // cast (Actor*)actor if need do something with actor
+
+				// 1. Prevents target self when clicking somewhere else with left click
+				// 2. Prevent target change with left and right clicks
+				// returning null wasn't enough for 1. so we pass the current target instead
+				if (Ktisis.Configuration.DisableChangeTargetOnLeftClick && clickType == ClickType.Left)
+					return leftClickTargetHook!.Original(a1, (byte*)Ktisis.Target, a3);
+				if (Ktisis.Configuration.DisableChangeTargetOnRightClick && clickType == ClickType.Right)
+					return rightClickTargetHook!.Original(a1, (byte*)Ktisis.Target, a3);
+			}
+
+			if (clickType == ClickType.Left) leftClickTargetHook!.Original(a1, actor, a3);
+			if (clickType == ClickType.Right) rightClickTargetHook!.Original(a1, actor, a3);
+			return null;
+		}
+		internal enum ClickType {
+			Left,
+			Right
+		}
+	}
 	internal unsafe class ReceiveEventArgs : EventArgs {
 		public ReceiveEventArgs(AgentInterface* agentInterface, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong senderID) {
 			AgentInterface = agentInterface;

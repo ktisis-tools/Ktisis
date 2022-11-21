@@ -112,6 +112,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			// Bone tree
 			BoneTree.Draw(actor);
+
+			ActorsList.Draw();
 		}
 
 		// Transform Table actor and bone names display, actor related extra
@@ -133,8 +135,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 			if (ImGui.BeginChildFrame(8, frameSize, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar)) {
 
 				// display target name
-				string targetName = target->GetNameOr($"{Locale.GetString("Target")} #" + target->ObjectID);
-				ImGui.Text($"{targetName}");
+				ImGui.Text(target->GetNameOrId());
 
 				GameAnimationIndicatorAlignRight();
 
