@@ -40,7 +40,7 @@ namespace Ktisis.Structs.Input {
 
 	[StructLayout(LayoutKind.Explicit)]
 	public unsafe struct QueueItem {
-		[FieldOffset(0)] public byte Event;
+		[FieldOffset(0)] public KeyEvent Event;
 		[FieldOffset(1)] public byte KeyCode;
 		[FieldOffset(4)] public byte Unknown;
 	}

@@ -6,4 +6,11 @@ namespace Ktisis.Structs.Input {
 		public IntPtr UnknownDevice;
 		public KeyboardDevice* Keyboard;
 	}
+
+	public enum KeyEvent : byte {
+		None = 0,
+		Pressed = 1,
+		Released = 2,
+		Held = 4
+	}
 }
