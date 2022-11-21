@@ -2,17 +2,19 @@
 
 using Dalamud.Hooking;
 
-using ImGuizmoNET;
-
 using Ktisis.Overlay;
 using Ktisis.Structs.Input;
 
 namespace Ktisis.Interop.Hooks {
 	internal static class ControlHooks {
-		internal unsafe delegate void InputDelegate(InputEvent* keyState, IntPtr a2, IntPtr a3, short* a4, IntPtr a5);
+		internal unsafe delegate void InputDelegate(InputEvent* keyState, IntPtr a2, IntPtr a3, MouseState* mouseState, IntPtr a5);
 		internal static Hook<InputDelegate> InputHook = null!;
 
-		internal unsafe static void InputDetour(InputEvent* keyState, IntPtr a2, IntPtr a3, short* a4, IntPtr a5) {
+		internal unsafe static void InputDetour(InputEvent* keyState, IntPtr a2, IntPtr a3, MouseState* mouseState, IntPtr a5) {
+			if (mouseState != null) {
+				// TODO
+			}
+
 			if (keyState != null) {
 				var keys = keyState->Keyboard->GetQueue();
 				for (var i = 0; i < keys->QueueCount; i++) {
@@ -29,7 +31,7 @@ namespace Ktisis.Interop.Hooks {
 				}
 			}
 
-			InputHook.Original(keyState, a2, a3, a4, a5);
+			InputHook.Original(keyState, a2, a3, mouseState, a5);
 		}
 
 		// Init & dispose

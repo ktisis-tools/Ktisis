@@ -19,7 +19,6 @@ namespace Ktisis.Structs.Input {
 		public byte IsKeyPressed;
 		public fixed uint KeyMap[159];
 		public KeyboardQueue Queue;
-		public byte Padding1;
 		public long QueueCount;
 
 		public bool IsKeyDown(byte code)
@@ -28,7 +27,7 @@ namespace Ktisis.Structs.Input {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct KeyboardQueue {
-		public fixed Int64 _Raw[65];
+		public fixed Int64 _Raw[66];
 
 		public QueueItem* this[int i] {
 			get {
