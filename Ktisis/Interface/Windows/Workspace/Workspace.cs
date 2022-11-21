@@ -8,10 +8,12 @@ using Ktisis.Util;
 using Ktisis.Overlay;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Bones;
+using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Interop.Hooks;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface.Components;
+using System.Runtime.CompilerServices;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class Workspace {
@@ -24,17 +26,13 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 		// Toggle visibility
 
-		public static void Show() {
-			Visible = true;
-		}
+		public static void Show() => Visible = true;
 
-		public static void Hide() {
-			Visible = false;
-		}
+		public static float PanelHeight => ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y;
 
 		// Draw window
 
-		public static void Draw() {
+		public unsafe static void Draw() {
 			if (!Visible)
 				return;
 
@@ -62,43 +60,92 @@ namespace Ktisis.Interface.Windows.Workspace {
 				// control buttons (gizmo op + extra)
 				ControlButtons.Draw();
 
+				var target = Ktisis.GPoseTarget;
+				if (target == null) return;
+
+				// Selection info
+				SelectInfo(target);
+
 				// Actor control
-				ActorControl();
+
+				ImGui.Separator();
+
+				if (ImGui.BeginTabBar(Locale.GetString("Workspace"))) {
+					if (ImGui.BeginTabItem(Locale.GetString("Actor")))
+						ActorTab(target);
+					/*if (ImGui.BeginTabItem(Locale.GetString("Scene")))
+						SceneTab();*/
+					if (ImGui.BeginTabItem(Locale.GetString("Pose")))
+						PoseTab(target);
+				}
+
+				//ActorControl();
 			}
 
-			ImGui.PopStyleVar(1);
+			ImGui.PopStyleVar();
 			ImGui.End();
 		}
 
-		// Actor control
+		// Actor tab (Real)
 
-		private unsafe static void ActorControl() {
+		private unsafe static void ActorTab(GameObject target) {
 			var cfg = Ktisis.Configuration;
 
-			// Get target actor, model, etc
-
-			var target = Ktisis.GPoseTarget;
 			if (target == null) return;
 
-			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
+			var actor = (Actor*)target.Address;
 			if (actor->Model == null) return;
 
-			// Draw co-ordinate table
-			TransformTableAndExtra(actor);
+			// Actor details
+
+			ImGui.Spacing();
+
+			// Customize button
+			if (ImGuiComponents.IconButton(FontAwesomeIcon.UserEdit)) {
+				if (EditActor.Visible)
+					EditActor.Hide();
+				else
+					EditActor.Show();
+			}
+			ImGui.SameLine();
+			ImGui.Text("Edit actor's appearance");
+
+			ImGui.Spacing();
+
+			// Actor list
+			ActorsList.Draw();
 
 			// Animation control
 			AnimationControls.Draw(target);
 
 			// Gaze control
 			if (ImGui.CollapsingHeader("Gaze Control")) {
-				if (Interop.Hooks.PoseHooks.PosingEnabled)
+				if (PoseHooks.PosingEnabled)
 					ImGui.TextWrapped("Gaze controls are unavailable while posing.");
 				else
 					EditGaze.Draw(actor);
 			}
 
+			ImGui.EndTabItem();
+		}
+
+		// Pose tab
+
+		private unsafe static void PoseTab(GameObject target) {
+			var cfg = Ktisis.Configuration;
+
+			if (target == null) return;
+
+			var actor = (Actor*)target.Address;
+			if (actor->Model == null) return;
+
+			// Transform table
+			TransformTable(actor);
+
+			ImGui.Spacing();
+
 			// Bone categories
-			if (ImGui.CollapsingHeader("Bone Category Visibility")) {
+			if (ImGui.CollapsingHeader("Bone Categories")) {
 
 				if (!Categories.DrawToggleList(cfg)) {
 					ImGui.Text("No bone found.");
@@ -113,59 +160,78 @@ namespace Ktisis.Interface.Windows.Workspace {
 			// Bone tree
 			BoneTree.Draw(actor);
 
-			ActorsList.Draw();
+			ImGui.EndTabItem();
 		}
 
 		// Transform Table actor and bone names display, actor related extra
 
-		private static unsafe bool TransformTableAndExtra(Actor* target) {
-			float panelHeight = ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y; // + ImGui.GetStyle().FramePadding.Y
+		private static unsafe bool TransformTable(Actor* target) {
+			var select = Skeleton.BoneSelect;
+			var bone = Skeleton.GetSelectedBone();
 
-			// Customize button
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.UserEdit, "Edit targeted Actor's appearance.", new Vector2(ControlButtons.ButtonSize.X, panelHeight)))
-				if (EditActor.Visible) EditActor.Hide();
-				else EditActor.Show();
-			ImGui.SameLine();
+			if (!select.Active) return Transform.Draw(target);
+			if (bone == null) return false;
+
+			return Transform.Draw(bone);
+		}
+
+		// Selection details
+
+		private unsafe static void SelectInfo(GameObject target) {
+			var actor = (Actor*)target.Address;
 
 			var select = Skeleton.BoneSelect;
 			var bone = Skeleton.GetSelectedBone();
 
-			var frameSize = new Vector2(ImGui.GetContentRegionAvail().X, panelHeight);
+			var frameSize = new Vector2(ImGui.GetContentRegionAvail().X, PanelHeight);
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetStyle().FramePadding.X, ImGui.GetStyle().FramePadding.Y / 2));
 			if (ImGui.BeginChildFrame(8, frameSize, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar)) {
+				GameAnimationIndicator();
+
+				ImGui.BeginGroup();
 
 				// display target name
-				ImGui.Text(target->GetNameOrId());
-
-				GameAnimationIndicatorAlignRight();
+				ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ImGui.GetStyle().FramePadding.Y / 2));
+				ImGui.Text(actor->GetNameOrId());
 
 				// display selected bone name
+				ImGui.SetCursorPosY(ImGui.GetCursorPosY() - (ImGui.GetStyle().ItemSpacing.Y / 2) - (ImGui.GetStyle().FramePadding.Y / 2));
 				if (select.Active && bone != null) {
-					ImGui.SetCursorPosY(ImGui.GetCursorPosY() - (ImGui.GetStyle().ItemSpacing.Y / 2) - (ImGui.GetStyle().FramePadding.Y / 2));
 					ImGui.Text($"{bone.LocaleName}");
+				} else {
+					ImGui.BeginDisabled();
+					ImGui.Text("No bone selected");
+					ImGui.EndDisabled();
 				}
+
+				ImGui.EndGroup();
 
 				ImGui.EndChildFrame();
 			}
 			ImGui.PopStyleVar();
-
-			// Draw Transform Table
-			if (!select.Active) return Transform.Draw(target);
-			if (bone == null) return false;
-			return Transform.Draw(bone);
 		}
 
-		private static unsafe void GameAnimationIndicatorAlignRight() {
+		private static unsafe void GameAnimationIndicator() {
 			var target = Ktisis.GPoseTarget;
 			if (target == null) return;
 
 			var isGamePlaybackRunning = PoseHooks.IsGamePlaybackRunning(target);
 			var icon = isGamePlaybackRunning ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause;
 
-			ImGui.SameLine(ImGui.GetContentRegionAvail().X - GuiHelpers.CalcIconSize(icon).X);
+			var size = GuiHelpers.CalcIconSize(icon).X;
+
+			ImGui.SameLine(size / 1.5f);
+
+			ImGui.BeginGroup();
+
+			ImGui.Dummy(new Vector2(size, size) / 2);
 
 			GuiHelpers.Icon(icon);
 			GuiHelpers.Tooltip(isGamePlaybackRunning ? "Game Animation is playing for this target." + (PoseHooks.PosingEnabled ? "\nPosing may reset periodically." : "") : "Game Animation is paused for this target." + (!PoseHooks.PosingEnabled ? "\nAnimation Control Can be used." : ""));
+
+			ImGui.EndGroup();
+
+			ImGui.SameLine(size * 2.5f);
 		}
 	}
 }

@@ -17,7 +17,7 @@ Additionally, this tool is not made to be a replacement for Anamnesis. Instead, 
 
 Huge thanks go out to:
 - [Goat Corp](https://github.com/goatcorp) and [XIV Tools](https://github.com/XIV-Tools), whose existing work in this area provided excellent insight into internal memory and data structures.
-- [@BobTheBob9](https://github.com/BobTheBob9), [@Fayti1703](https://github.com/Fayti1703) and [@hackmud-dtr](https://github.com/hackmud-dtr) for their help with engineering and low-level code.
+- [@BobTheBob9](https://github.com/BobTheBob9), [@Fayti1703](https://github.com/Fayti1703) and [@hackmud-dtr](https://github.com/hackmud-dtr) for their help with reverse engineering and low-level code.
 - The other developers from [Bnuuy Central](https://github.com/Bnuuy-Central) who have supported and helped me through this project's development.
 - perchird ([@lmcintyre](https://github.com/lmcintyre/)) for their amazing work on Havok structs which helped to make this possible.
 - [@Emyka](https://github.com/Emyka) for their continued efforts to help with accessibility and customisation.
