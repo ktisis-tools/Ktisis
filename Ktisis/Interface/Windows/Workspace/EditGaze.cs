@@ -67,8 +67,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			if (result)
 				ActorControl[id] = gaze;
-
-			ImGui.EndTabItem();
 		}
 
 		public unsafe static bool DrawGaze(Actor* target, ref Gaze gaze, GazeControl type) {

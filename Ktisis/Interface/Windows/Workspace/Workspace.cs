@@ -32,7 +32,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 		// Draw window
 
-		public unsafe static void Draw() {
+		public static void Draw() {
 			if (!Visible)
 				return;
 
@@ -78,8 +78,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 					if (ImGui.BeginTabItem(Locale.GetString("Pose")))
 						PoseTab(target);
 				}
-
-				//ActorControl();
 			}
 
 			ImGui.PopStyleVar();
