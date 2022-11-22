@@ -23,7 +23,7 @@ namespace Ktisis.Interop.Hooks {
 					// TODO: Input event manager
 					if (k->Event == KeyEvent.Pressed && k->KeyCode == 27) {
 						if (OverlayWindow.GizmoOwner != null) {
-							OverlayWindow.SetGizmoOwner(null);
+							OverlayWindow.DeselectGizmo();
 							k->Event = KeyEvent.None;
 							keyState->Keyboard->ClearQueue();
 						}

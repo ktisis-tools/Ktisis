@@ -31,7 +31,7 @@ namespace Ktisis.Overlay {
 			Ktisis.Configuration.ShowSkeleton = visible;
 			if (!visible && BoneSelect.Active) {
 				BoneSelect.Active = false;
-				OverlayWindow.SetGizmoOwner(null);
+				OverlayWindow.DeselectGizmo();
 			}
 		}
 

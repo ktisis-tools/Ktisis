@@ -59,7 +59,7 @@ namespace Ktisis.Interface.Components {
 			var gizmoActive = OverlayWindow.IsGizmoVisible;
 			if (!gizmoActive) ImGui.BeginDisabled();
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.MinusCircle, "Deselect gizmo", ButtonSize))
-				OverlayWindow.SetGizmoOwner(null);
+				OverlayWindow.DeselectGizmo();
 			if (!gizmoActive) ImGui.EndDisabled();
 
 			ImGui.SameLine();
