@@ -99,7 +99,7 @@ namespace Ktisis.Overlay {
 					if (isUsing) boneColRgb.W = Math.Min(0.15f, boneColRgb.W);
 
 					var boneColor = ImGui.GetColorU32(boneColRgb);
-					world->WorldToScreen(bone.GetWorldPos(model), out var pos2d);
+					var isVisible = world->WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
 					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton) {
@@ -108,9 +108,9 @@ namespace Ktisis.Overlay {
 						var parent = model->Skeleton->GetBone(p, parentId);
 						if (Ktisis.Configuration.IsBoneVisible(parent)) {
 							var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Services.Camera->Camera->InterpDistance * 2f);
-							world->WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
-
-							draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
+							isVisible &= world->WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
+							if (isVisible)
+								draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
 						}
 					}
 
