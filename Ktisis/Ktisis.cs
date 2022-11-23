@@ -81,7 +81,7 @@ namespace Ktisis {
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
 
-			HistoryManager.Instance.Dispose();
+			HistoryManager.Dispose();
 		}
 
 		private void OnCommand(string command, string arguments) {
