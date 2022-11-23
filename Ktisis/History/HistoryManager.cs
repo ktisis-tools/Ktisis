@@ -103,7 +103,7 @@ namespace Ktisis.History {
 			if (!PoseHooks.PosingEnabled) return;
 
 			var newState = state;
-			var bone = Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton);
+			var bone = Skeleton.GetSelectedBone();
 			var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
 			var matrix = Interop.Alloc.GetMatrix(boneTransform);
 

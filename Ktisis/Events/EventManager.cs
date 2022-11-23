@@ -28,14 +28,14 @@ namespace Ktisis.Events {
 
 		public static unsafe void FireOnTransformationMatrixChangeEvent(TransformTableState state) {
 			if (OnTransformationMatrixChange == null) return;
-			var bone = Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton);
+			var bone = Skeleton.GetSelectedBone();
 			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
 			hkQsTransformf* boneTransform =
 				bone is null ? &actor->Model->Transform : bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
 			OnTransformationMatrixChange(
 				state,
 				Interop.Alloc.GetMatrix(boneTransform),
-				Skeleton.GetSelectedBone(EditActor.Target->Model->Skeleton),
+				Skeleton.GetSelectedBone(),
 				actor
 			);
 		}
