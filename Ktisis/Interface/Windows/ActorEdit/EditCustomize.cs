@@ -90,14 +90,23 @@ namespace Ktisis.Interface.Windows {
 				var cur = Target->Customize;
 				Target->Customize = custard;
 
+				// Fix UpdateCustomize on Carbuncles & Minions
+				if (Target->Customize.ModelType == 0)
+					Target->Customize.ModelType = 1;
+
+				var faceHack = cur.FaceType != custard.FaceType;
 				if (cur.Race != custard.Race
 					|| cur.Tribe != custard.Tribe // Eye glitch.
 					|| cur.Gender != custard.Gender
 					|| cur.FaceType != custard.FaceType // Eye glitch.
 				) {
-					if (!IsPosing) Target->Redraw(cur.FaceType != custard.FaceType);
+					if (!IsPosing) Target->Redraw(faceHack);
 				} else {
-					Target->UpdateCustomize();
+					var res = Target->UpdateCustomize();
+					if (!res && !IsPosing) {
+						PluginLog.Warning("Failed to update character. Forcing redraw.");
+						Target->Redraw(faceHack);
+					}
 				}
 			}
 		}
@@ -108,6 +117,12 @@ namespace Ktisis.Interface.Windows {
 			// Customize
 
 			var custom = Target->Customize;
+
+			if (custom.Race == 0 || custom.Tribe == 0) {
+				custom.Race = Race.Hyur;
+				custom.Tribe = Tribe.Highlander;
+				Target->Customize = custom;
+			}
 
 			var index = custom.GetMakeIndex();
 			if (index != CustomIndex) {
