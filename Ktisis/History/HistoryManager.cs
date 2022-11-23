@@ -11,6 +11,7 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Input;
 
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,6 @@ namespace Ktisis.History {
 		private int _maxIdx = 0;
 		private GizmoState _currentGizmoState;
 		private TransformTableState _currentTtState;
-		private bool _isInGpose = false;
-		private bool _undoIsPressed;
-		private bool _redoIsPressed;
 		private int _alternativeTimelinesCreated = 0;
 
 		private void alternativeTimelineWarning() {
@@ -56,9 +54,10 @@ namespace Ktisis.History {
 		}
 
 		private unsafe HistoryManager() {
-			Services.Framework.Update += this.Monitor;
-			EventManager.OnTransformationMatrixChange += this.OnTransformationMatrixChange;
-			EventManager.OnGizmoChange += this.OnGizmoChange;
+			//Services.Framework.Update += this.Monitor;
+			EventManager.OnInputEvent += OnInput;
+			EventManager.OnTransformationMatrixChange += OnTransformationMatrixChange;
+			EventManager.OnGizmoChange += OnGizmoChange;
 		}
 
 		private unsafe void OnTransformationMatrixChange(TransformTableState state, Matrix4x4 matrix, Bone? bone, Actor* actor) {
@@ -140,12 +139,13 @@ namespace Ktisis.History {
 		}
 
 		public unsafe void Dispose() {
-			Services.Framework.Update -= this.Monitor;
+			//Services.Framework.Update -= this.Monitor;
+			EventManager.OnInputEvent -= OnInput;
 			EventManager.OnTransformationMatrixChange -= this.OnTransformationMatrixChange;
 			EventManager.OnGizmoChange -= this.OnGizmoChange;
 		}
 
-		public unsafe void Monitor(Framework framework) {
+		/*public unsafe void Monitor(Framework framework) {
 			if (!Ktisis.IsInGPose) {
 				_isInGpose = false; //Without that, _isInGpose stays true all the time after being changed once.
 				return;
@@ -190,6 +190,34 @@ namespace Ktisis.History {
 			_isInGpose = newIsInGpose;
 			_undoIsPressed = newUndoIsPressed;
 			_redoIsPressed = newRedoIsPressed;
+		}*/
+
+		public bool OnInput(QueueItem input, KeyboardState state) {
+			// TODO: Clear history on exiting GPose
+
+			if (state.IsKeyDown(VirtualKey.CONTROL)) {
+				PluginLog.Information($"{input.VirtualKey}");
+
+				if (input.VirtualKey == VirtualKey.Z) {
+					if (_currentIdx > 1) {
+						_currentIdx--;
+						PluginLog.Information($"Current Idx: {_currentIdx}");
+						UpdateSkeleton();
+						PluginLog.Information("CTRL+Z pressed. Undo.");
+					}
+					return true;
+				} else if (input.VirtualKey == VirtualKey.Y) {
+					if (_currentIdx < _maxIdx) {
+						_currentIdx++;
+						PluginLog.Information($"Current Idx: {_currentIdx}");
+						UpdateSkeleton();
+						PluginLog.Information("CTRL+Y pressed. Redo.");
+					}
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		//Thanks Emyka for the help on the bone undo/redo!

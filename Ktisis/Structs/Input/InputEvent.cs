@@ -11,6 +11,7 @@ namespace Ktisis.Structs.Input {
 		None = 0,
 		Pressed = 1,
 		Released = 2,
-		Held = 4
+		AnyKeyHeld = 4,
+		Held = 8
 	}
 }

@@ -1,37 +1,45 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Dalamud.Hooking;
+using Dalamud.Logging;
 
-using Ktisis.Overlay;
+using Ktisis.Events;
 using Ktisis.Structs.Input;
 
 namespace Ktisis.Interop.Hooks {
 	internal static class ControlHooks {
-		internal unsafe delegate void InputDelegate(InputEvent* keyState, IntPtr a2, IntPtr a3, MouseState* mouseState, IntPtr a5);
+		internal unsafe delegate void InputDelegate(InputEvent* input, IntPtr a2, IntPtr a3, MouseState* mouseState, KeyboardState* keyState);
 		internal static Hook<InputDelegate> InputHook = null!;
 
-		internal unsafe static void InputDetour(InputEvent* keyState, IntPtr a2, IntPtr a3, MouseState* mouseState, IntPtr a5) {
+		internal unsafe static void InputDetour(InputEvent* input, IntPtr a2, IntPtr a3, MouseState* mouseState, KeyboardState* keyState) {
+			InputHook.Original(input, a2, a3, mouseState, keyState);
+
+			if (!Ktisis.IsInGPose) return;
+
 			if (mouseState != null) {
 				// TODO
 			}
 
-			if (keyState != null) {
-				var keys = keyState->Keyboard->GetQueue();
-				for (var i = 0; i < keys->QueueCount; i++) {
-					var k = keys->Queue[i];
+			// TODO: Track released keys
 
-					// TODO: Input event manager
-					if (k->Event == KeyEvent.Pressed && k->KeyCode == 27) {
-						if (OverlayWindow.GizmoOwner != null) {
-							OverlayWindow.DeselectGizmo();
-							k->Event = KeyEvent.None;
-							keyState->Keyboard->ClearQueue();
+			var keys = input->Keyboard->GetQueue();
+			for (var i = 0; i < keyState->QueueCount; i++) {
+				var k = keyState->Queue[i];
+
+				if (k->Event == KeyEvent.AnyKeyHeld) continue; // dont care didnt ask (use KeyEvent.Held)
+
+				if (EventManager.OnInputEvent != null) {
+					var invokeList = EventManager.OnInputEvent.GetInvocationList();
+					foreach (var invoke in invokeList) {
+						var res = (bool)invoke.Method.Invoke(invoke.Target, new object[] { *k, *keys })!;
+						if (res) {
+							keys->KeyMap[k->KeyCode] = 0;
+							keyState->KeyMap[k->KeyCode] = 0;
 						}
 					}
 				}
 			}
-
-			InputHook.Original(keyState, a2, a3, mouseState, a5);
 		}
 
 		// Init & dispose

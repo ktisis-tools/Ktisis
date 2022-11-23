@@ -6,6 +6,7 @@ using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 ﻿using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Input;
 
 using System.Numerics;
 
@@ -25,6 +26,9 @@ namespace Ktisis.Events {
 
 		public delegate void GizmoChange(GizmoState state);
 		public static GizmoChange? OnGizmoChange = null;
+
+		internal delegate bool InputEventDelegate(QueueItem key, KeyboardState state);
+		internal static InputEventDelegate? OnInputEvent;
 
 		public static unsafe void FireOnTransformationMatrixChangeEvent(TransformTableState state) {
 			if (OnTransformationMatrixChange == null) return;
