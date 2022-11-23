@@ -102,7 +102,11 @@ namespace Ktisis.Interface.Windows.Workspace {
 					enabled = true;
 					gaze.Mode = GazeMode.Target;
 				}
-				gizmo = OverlayWindow.SetGizmoOwner(gizmo == null ? gizmoId : null);
+
+				if (gizmo == null)
+					OverlayWindow.SetGizmoOwner(gizmoId);
+				else
+					OverlayWindow.DeselectGizmo();
 			}
 
 			if (isTracking) ImGui.EndDisabled();
@@ -115,7 +119,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 					gizmo.ForceOp = OPERATION.TRANSLATE;
 					result |= gizmo.Draw(ref gaze.Pos);
 				} else {
-					OverlayWindow.SetGizmoOwner(null);
+					OverlayWindow.DeselectGizmo();
 				}
 			}
 
@@ -127,7 +131,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 				result = true;
 				enabled = true;
 				gaze.Mode = isTracking ? GazeMode.Target : GazeMode._KtisisFollowCam_;
-				if (hasGizmo) OverlayWindow.SetGizmoOwner(null);
+				if (hasGizmo) OverlayWindow.DeselectGizmo();
 			}
 			if (isTracking) ImGui.PopStyleColor();
 

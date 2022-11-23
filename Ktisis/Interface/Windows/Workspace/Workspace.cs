@@ -3,6 +3,8 @@ using System.Numerics;
 using ImGuiNET;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Components;
+using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
@@ -11,9 +13,8 @@ using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface.Components;
-using System.Runtime.CompilerServices;
+
+using ImGuizmoNET;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class Workspace {

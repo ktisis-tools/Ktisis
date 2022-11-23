@@ -21,7 +21,7 @@ namespace Ktisis.Interop {
 		internal delegate void ChangeWeaponDelegate(IntPtr writeTo, int slot, WeaponEquip weapon, byte a4, byte a5, byte a6, byte a7); // a4-a7 is always 0,1,0,0.
 		internal static ChangeWeaponDelegate? ActorChangeWeapon;
 
-		// Get perspective matrix
+		// Get world matrix
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		internal unsafe delegate WorldMatrix* GetMatrixDelegate();

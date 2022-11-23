@@ -34,6 +34,15 @@ namespace Ktisis.Overlay {
 		}
 		public static Gizmo? GetGizmo(string? id) => IsGizmoOwner(id) ? Gizmo : null;
 
+		public static void DeselectGizmo() {
+			SetGizmoOwner(null);
+			Skeleton.BoneSelect.Active = false;
+
+			// This is a hack to reset ImGuizmo's mbUsing state.
+			ImGuizmo.Enable(false);
+			ImGuizmo.Enable(true);
+		}
+
 		public static bool IsCursorBusy() =>
 			(GizmoOwner != null && (ImGuizmo.IsUsing() || ImGuizmo.IsOver()))
 			|| ImGui.IsAnyItemActive() || ImGui.IsAnyItemHovered()

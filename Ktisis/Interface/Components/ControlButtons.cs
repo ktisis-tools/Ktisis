@@ -54,16 +54,17 @@ namespace Ktisis.Interface.Components {
 			if (showSkeleton) ImGui.PopStyleColor();
 			GuiHelpers.Tooltip((showSkeleton ? "Hide" : "Show") + " skeleton lines and bones.");
 
+
+			ImGui.SameLine();
+			DrawSiblingLink();
+
 			ImGui.SameLine();
 
 			var gizmoActive = OverlayWindow.IsGizmoVisible;
 			if (!gizmoActive) ImGui.BeginDisabled();
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.MinusCircle, "Deselect gizmo", ButtonSize))
-				OverlayWindow.SetGizmoOwner(null);
+				OverlayWindow.DeselectGizmo();
 			if (!gizmoActive) ImGui.EndDisabled();
-
-			ImGui.SameLine();
-			DrawSiblingLink();
 		}
 
 		// As the settings button is a bit special and should not be as present as others
