@@ -85,11 +85,22 @@ namespace Ktisis.Interface.Components {
 
 		}
 
-		private static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
-			var isCurrentOperation = Ktisis.Configuration.GizmoOp == operation;
+		public static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
+			var isCurrentOperation = (Ktisis.Configuration.GizmoOp & operation) == operation;
 			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			
 			if (GuiHelpers.IconButton(icon, ButtonSize))
-				Ktisis.Configuration.GizmoOp = operation;
+				if(!isCurrentOperation)
+					if (ImGui.GetIO().KeyShift)
+						Ktisis.Configuration.GizmoOp |= operation;
+					else
+						Ktisis.Configuration.GizmoOp = operation;
+				else
+					if (ImGui.GetIO().KeyShift)
+						Ktisis.Configuration.GizmoOp &= ~operation;
+					else
+						Ktisis.Configuration.GizmoOp = operation;
+			
 			if (isCurrentOperation) ImGui.PopStyleColor();
 
 			string help = "";
