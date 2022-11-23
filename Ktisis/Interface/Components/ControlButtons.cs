@@ -24,22 +24,7 @@ namespace Ktisis.Interface.Components {
 		// utils
 		public static void VerticalAlignTextOnButtonSize(float percentage = 0.667f) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ButtonSize.Y / 2 - ImGui.GetFontSize() * percentage)); // align text with button size
 
-		public static void Draw() {
-			DrawGizmoOperations();
-
-			DrawExtra();
-		}
-
-		private static void DrawGizmoOperations() {
-			ButtonChangeOperation(OPERATION.TRANSLATE, FontAwesomeIcon.LocationArrow);
-			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.ROTATE, FontAwesomeIcon.Sync);
-			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.SCALE, FontAwesomeIcon.ExpandAlt);
-			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.UNIVERSAL, FontAwesomeIcon.DotCircle);
-		}
-		private static void DrawExtra() {
+		public static void DrawExtra() {
 			var gizmode = Ktisis.Configuration.GizmoMode;
 			if (GuiHelpers.IconButtonTooltip(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ButtonSize))
 				Ktisis.Configuration.GizmoMode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
@@ -114,16 +99,16 @@ namespace Ktisis.Interface.Components {
 				help += "Change gizmo operation to ";
 
 			if (operation == OPERATION.TRANSLATE) help += "Position";
-			if (operation == OPERATION.ROTATE) help += "Rotation";
-			if (operation == OPERATION.SCALE) help += "Scale";
-			if (operation == OPERATION.UNIVERSAL) help += "Universal";
+			else if (operation == OPERATION.ROTATE) help += "Rotation";
+			else if (operation == OPERATION.SCALE) help += "Scale";
+			else if (operation == OPERATION.UNIVERSAL) help += "Universal";
 
 			GuiHelpers.Tooltip(help + ".");
 		}
 
 		// Independant from the others
 		public static void DrawPoseSwitch() {
-			ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8)); // Prevents text overlap
+			ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8) + ImGui.GetStyle().ItemSpacing.X + GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X); // Prevents text overlap
 
 			ImGui.BeginDisabled(!Ktisis.IsInGPose);
 			var pose = PoseHooks.PosingEnabled;
