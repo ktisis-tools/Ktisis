@@ -17,10 +17,6 @@ namespace Ktisis.Events {
 		public delegate void GPoseChange(ActorGposeState state);
 		public static GPoseChange? OnGPoseChange = null;
 
-		public static void FireOnGposeChangeEvent(ActorGposeState state) {
-			OnGPoseChange?.Invoke(state);
-		}
-
 		public unsafe delegate void TransformationMatrixChange(TransformTableState state, Matrix4x4 transformationMatrix, Bone? bone, Actor* actor);
 		public static TransformationMatrixChange? OnTransformationMatrixChange = null;
 
@@ -29,6 +25,10 @@ namespace Ktisis.Events {
 
 		internal delegate bool InputEventDelegate(QueueItem key, KeyboardState state);
 		internal static InputEventDelegate? OnInputEvent;
+
+		public static void FireOnGposeChangeEvent(ActorGposeState state) {
+			OnGPoseChange?.Invoke(state);
+		}
 
 		public static unsafe void FireOnTransformationMatrixChangeEvent(TransformTableState state) {
 			if (OnTransformationMatrixChange == null) return;

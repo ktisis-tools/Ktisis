@@ -1,24 +1,23 @@
-﻿using Dalamud.Game;
-using Dalamud.Game.ClientState.Keys;
+﻿using System;
+using System.Linq;
+using System.Numerics;
+using System.Collections.Generic;
+
 using Dalamud.Logging;
+using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Events;
-using Ktisis.Interface.Components;
-using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Interop.Hooks;
-using Ktisis.Localization;
 using Ktisis.Overlay;
+using Ktisis.Localization;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
+using Ktisis.Interop.Hooks;
+using Ktisis.Interface.Components;
 
 using static FFXIVClientStructs.Havok.hkaPose;
+using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.History {
 	public sealed class HistoryManager : IDisposable {
@@ -33,7 +32,7 @@ namespace Ktisis.History {
 			if (History is null) return;
 
 			_alternativeTimelinesCreated++;
-			PluginLog.Information($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
+			PluginLog.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
 
 			var newHistory = History!
 				.Select(e => e.Clone())
@@ -54,24 +53,24 @@ namespace Ktisis.History {
 		}
 
 		private unsafe HistoryManager() {
-			//Services.Framework.Update += this.Monitor;
 			EventManager.OnInputEvent += OnInput;
-			EventManager.OnTransformationMatrixChange += OnTransformationMatrixChange;
+			EventManager.OnGPoseChange += OnGPoseChange;
 			EventManager.OnGizmoChange += OnGizmoChange;
+			EventManager.OnTransformationMatrixChange += OnTransformationMatrixChange;
 		}
 
 		private unsafe void OnTransformationMatrixChange(TransformTableState state, Matrix4x4 matrix, Bone? bone, Actor* actor) {
 			if (!PoseHooks.PosingEnabled) return;
 			var newState = state;
 			if ((newState == TransformTableState.EDITING) && (_currentTtState == TransformTableState.IDLE)) {
-				PluginLog.Information("Started TT edit");
+				PluginLog.Verbose("Started TT edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
 				var isBoneInHistory = History?.FirstOrDefault(historyItem => historyItem.Bone?.UniqueName == bone?.UniqueName) != null;
 				if (!isBoneInHistory) AddEntryToHistory(matrix, bone);
 			}
 
 			if ((newState == TransformTableState.IDLE) && (_currentTtState == TransformTableState.EDITING)) {
-				PluginLog.Information("Finished TT edit");
+				PluginLog.Verbose("Finished TT edit");
 				AddEntryToHistory(matrix, bone);
 			}
 
@@ -79,10 +78,15 @@ namespace Ktisis.History {
 		}
 
 		private unsafe void AddEntryToHistory(Matrix4x4 tt, Bone? bone) {
+			if (History == null) {
+				PluginLog.Warning("Attempted to add entry to uninitialised History list.");
+				return;
+			}
+
 			History!.Insert(_maxIdx, new(tt, bone, (Actor*)Ktisis.GPoseTarget!.Address));
 			_currentIdx++;
 			_maxIdx++;
-			PluginLog.Information($"Current Idx: {_currentIdx} - Max Idx: {_maxIdx}");
+			PluginLog.Verbose($"Current Idx: {_currentIdx} - Max Idx: {_maxIdx}");
 			printHistory(_maxIdx);
 		}
 
@@ -95,7 +99,7 @@ namespace Ktisis.History {
 				else str += $"Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}";
 				str += "\n";
 			}
-			PluginLog.Information(str);
+			PluginLog.Verbose(str);
 		}
 
 		private unsafe void OnGizmoChange(GizmoState state) {
@@ -107,13 +111,13 @@ namespace Ktisis.History {
 			var matrix = Interop.Alloc.GetMatrix(boneTransform);
 
 			if ((newState == GizmoState.EDITING) && (_currentGizmoState == GizmoState.IDLE)) {
-				PluginLog.Information("Started Gizmo edit");
+				PluginLog.Verbose("Started Gizmo edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
 				var isBoneInHistory = History?.FirstOrDefault(historyItem => historyItem.Bone?.UniqueName == bone?.UniqueName) != null;
 				if (!isBoneInHistory) AddEntryToHistory(matrix, bone);
 			}
 			if (newState == GizmoState.IDLE && _currentGizmoState == GizmoState.EDITING) {
-				PluginLog.Information("Ended Gizmo edit");
+				PluginLog.Verbose("Ended Gizmo edit");
 				AddEntryToHistory(matrix, bone);
 			}
 			_currentGizmoState = newState;
@@ -139,85 +143,41 @@ namespace Ktisis.History {
 		}
 
 		public unsafe void Dispose() {
-			//Services.Framework.Update -= this.Monitor;
 			EventManager.OnInputEvent -= OnInput;
-			EventManager.OnTransformationMatrixChange -= this.OnTransformationMatrixChange;
-			EventManager.OnGizmoChange -= this.OnGizmoChange;
+			EventManager.OnGPoseChange -= OnGPoseChange;
+			EventManager.OnGizmoChange -= OnGizmoChange;
+			EventManager.OnTransformationMatrixChange -= OnTransformationMatrixChange;
 		}
 
-		/*public unsafe void Monitor(Framework framework) {
-			if (!Ktisis.IsInGPose) {
-				_isInGpose = false; //Without that, _isInGpose stays true all the time after being changed once.
-				return;
-			}
-
-			var newIsInGpose = Ktisis.IsInGPose;
-			var newUndoIsPressed = Services.KeyState[VirtualKey.CONTROL] && Services.KeyState[VirtualKey.Z];
-			var newRedoIsPressed = Services.KeyState[VirtualKey.CONTROL] && Services.KeyState[VirtualKey.Y];
-
-			if (newIsInGpose != _isInGpose) {
-				PluginLog.Information("Clearing previous history...");
-				_currentIdx = 0;
-				_maxIdx = 0;
-				History = new List<HistoryItem>();
-			}
-
-			if (newUndoIsPressed != _undoIsPressed) {
-				//Without this check, anything inside  'if (newUndoIsPressed != _undoIsPressed)' gets executed twice.
-				//The first time when CTRL and Z are pressed together.
-				//The second time when either CTRL or Z is released.
-				if (newUndoIsPressed) {
-					if (_currentIdx > 1) {
-						_currentIdx--;
-						PluginLog.Information($"Current Idx: {_currentIdx}");
-						UpdateSkeleton();
-						PluginLog.Information($"CTRL+Z pressed. Undo.");
-					}
-				}
-			}
-
-			if (newRedoIsPressed != _redoIsPressed) {
-				if (newRedoIsPressed) {
-					if (_currentIdx < _maxIdx) {
-						_currentIdx++;
-						PluginLog.Information($"Current Idx: {_currentIdx}");
-						UpdateSkeleton();
-						PluginLog.Information("CTRL+Y pressed. Redo.");
-					}
-				}
-			}
-
-			_isInGpose = newIsInGpose;
-			_undoIsPressed = newUndoIsPressed;
-			_redoIsPressed = newRedoIsPressed;
-		}*/
-
 		public bool OnInput(QueueItem input, KeyboardState state) {
-			// TODO: Clear history on exiting GPose
-
 			if (state.IsKeyDown(VirtualKey.CONTROL)) {
-				PluginLog.Information($"{input.VirtualKey}");
-
 				if (input.VirtualKey == VirtualKey.Z) {
 					if (_currentIdx > 1) {
 						_currentIdx--;
-						PluginLog.Information($"Current Idx: {_currentIdx}");
+						PluginLog.Verbose($"Current Idx: {_currentIdx}");
 						UpdateSkeleton();
-						PluginLog.Information("CTRL+Z pressed. Undo.");
+						PluginLog.Verbose("CTRL+Z pressed. Undo.");
 					}
 					return true;
 				} else if (input.VirtualKey == VirtualKey.Y) {
 					if (_currentIdx < _maxIdx) {
 						_currentIdx++;
-						PluginLog.Information($"Current Idx: {_currentIdx}");
+						PluginLog.Verbose($"Current Idx: {_currentIdx}");
 						UpdateSkeleton();
-						PluginLog.Information("CTRL+Y pressed. Redo.");
+						PluginLog.Verbose("CTRL+Y pressed. Redo.");
 					}
 					return true;
 				}
 			}
 
 			return false;
+		}
+
+		internal void OnGPoseChange(ActorGposeState _state) {
+			PluginLog.Verbose("Clearing previous history...");
+			_currentIdx = 0;
+			_maxIdx = 0;
+			History = new List<HistoryItem>();
 		}
 
 		//Thanks Emyka for the help on the bone undo/redo!
