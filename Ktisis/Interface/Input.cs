@@ -75,6 +75,11 @@ namespace Ktisis.Interface {
 					}
 				}
 
+				// Toggled purposes
+				foreach ((var p, var c) in PurposesCategoriesToggle)
+					if (IsPurposeUsed(p, input, state))
+						c.ToggleVisibilityOverload();
+
 				// Deselect gizmo
 				if (input.VirtualKey == VirtualKey.ESCAPE && OverlayWindow.GizmoOwner != null) {
 					OverlayWindow.DeselectGizmo();
