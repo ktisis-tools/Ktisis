@@ -107,6 +107,7 @@ namespace Ktisis.Interface.Components {
 
 			var actor = (Actor*)gameObject;
 			if (actor == null) return false;
+			if (actor->Model == null) return false;
 
 			var objectKind = (ObjectKind)gameObject->ObjectKind;
 			if (!WhitelistObjectKinds.Contains(objectKind))
