@@ -15,7 +15,7 @@ using Ktisis.Util;
 namespace Ktisis.Interface.Components {
 	internal static class ActorsList {
 
-		private static List<long> SavedObjects = new(); // TODO: clean the list on gpose leave
+		private static List<long> SavedObjects = new();
 		private static List<DalamudGameObject>? SelectorList = null;
 		private static string Search = "";
 		private static readonly HashSet<ObjectKind> WhitelistObjectKinds = new(){
@@ -28,6 +28,10 @@ namespace Ktisis.Interface.Components {
 
 		// TODO to clear the list on gpose leave
 		public static void Clear() => SavedObjects.Clear();
+
+
+		// Draw
+
 		public unsafe static void Draw() {
 			// Prevent displaying the same target multiple time
 			SavedObjects = SavedObjects.Distinct().ToList();
@@ -69,9 +73,8 @@ namespace Ktisis.Interface.Components {
 			}
 		}
 
-		public unsafe static void OpenSelector() =>
+		private static void OpenSelector() =>
 			SelectorList = Services.ObjectTable
-
 			// filter unwanted objects
 			.Where(o =>
 				o.IsValid()
@@ -89,8 +92,7 @@ namespace Ktisis.Interface.Components {
 			.OrderBy(a => Distance(a))
 			.ToList();
 
-		public static void CloseSelector() => SelectorList = null;
-
+		private static void CloseSelector() => SelectorList = null;
 
 		private unsafe static void DrawListAddActor() {
 			PopupSelect.HoverPopupWindow(
@@ -110,7 +112,10 @@ namespace Ktisis.Interface.Components {
 				"##actor_search");
 		}
 
-		public unsafe static bool IsValidActor(long target) {
+
+		// Filters
+
+		private unsafe static bool IsValidActor(long target) {
 			var gameObject = (GameObject*)target;
 			if (gameObject == null) return false;
 
@@ -124,40 +129,37 @@ namespace Ktisis.Interface.Components {
 
 			return true;
 		}
-		public unsafe static bool IsValidActor(DalamudGameObject gameObject) =>
+		private static bool IsValidActor(DalamudGameObject gameObject) =>
 			IsValidActor((long)gameObject.Address);
 		private static bool IsNonNetworkObject(DalamudGameObject gameObject) =>
 			gameObject.ObjectId == DalamudGameObject.InvalidGameObjectId;
 		private static string ExtraInfo(DalamudGameObject gameObject) {
 			List<string> info = new();
-			if (IsGposeActor(gameObject)) info.Add("GPose");
-			if (IsYou(gameObject)) info.Add("You");
-			else if (IsPlayer(gameObject)) info.Add("Player");
+			if (IsGposeActor(gameObject))
+				info.Add("GPose");
+			if (IsYou(gameObject))
+				info.Add("You");
+			else if (IsPlayer(gameObject))
+				info.Add("Player");
 			return info.Any() ? $" ({String.Join(", ", info)})" : "";
 		}
 		private static string ExtraInfo(long gameObjectPointer) =>
 			ExtraInfo(Services.ObjectTable.CreateObjectReference((IntPtr)gameObjectPointer)!);
 		private static float Distance(DalamudGameObject gameObject) =>
 			(float)Math.Sqrt(gameObject.YalmDistanceX * gameObject.YalmDistanceX + gameObject.YalmDistanceZ * gameObject.YalmDistanceZ);
-		private static bool IsGposeActor(DalamudGameObject gameObject) {
-			return GetGposeId(gameObject) >= 200;
-		}
-		private static bool IsYou(DalamudGameObject gameObject) {
-			return GetGposeId(gameObject) == 201;
-		}
-		private static bool IsGposeSpecialObject(DalamudGameObject gameObject) {
+		private static bool IsYou(DalamudGameObject gameObject) =>
+			GetGposeId(gameObject) == 201;
+		private static bool IsGposeActor(DalamudGameObject gameObject) =>
+			GetGposeId(gameObject) >= 200;
+		private static bool IsGposeSpecialObject(DalamudGameObject gameObject) =>
 			// this matches the weird object on ObjectID 200
-			return GetGposeId(gameObject) == 200;
-		}
-		private static bool IsPlayer(DalamudGameObject gameObject) {
-			return gameObject.ObjectKind == ObjectKind.Player;
-		}
-		private static bool IsPlayerNotGpose(DalamudGameObject gameObject) {
-			return gameObject.ObjectKind == ObjectKind.Player && GetGposeId(gameObject) < 200;
-		}
-		private unsafe static byte GetGposeId(DalamudGameObject gameObject) {
-			return ((Actor*)gameObject.Address)->ObjectID;
-		}
+			GetGposeId(gameObject) == 200;
+		private static bool IsPlayer(DalamudGameObject gameObject) =>
+			gameObject.ObjectKind == ObjectKind.Player;
+		private static bool IsPlayerNotGpose(DalamudGameObject gameObject) =>
+			gameObject.ObjectKind == ObjectKind.Player && GetGposeId(gameObject) < 200;
+		private unsafe static byte GetGposeId(DalamudGameObject gameObject) =>
+			((Actor*)gameObject.Address)->ObjectID;
 
 	}
 }
