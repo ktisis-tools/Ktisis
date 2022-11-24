@@ -1,4 +1,6 @@
-﻿using FFXIVClientStructs.Havok;
+﻿using Dalamud.Game.ClientState.Keys;
+
+using FFXIVClientStructs.Havok;
 
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
@@ -23,8 +25,11 @@ namespace Ktisis.Events {
 		public delegate void GizmoChange(GizmoState state);
 		public static GizmoChange? OnGizmoChange = null;
 
-		internal delegate bool InputEventDelegate(QueueItem key, KeyboardState state);
-		internal static InputEventDelegate? OnInputEvent;
+		internal delegate bool KeyPressEventDelegate(QueueItem e);
+		internal static KeyPressEventDelegate? OnKeyPressed;
+
+		internal delegate void KeyReleaseEventDelegate(VirtualKey key);
+		internal static KeyReleaseEventDelegate? OnKeyReleased;
 
 		public static void FireOnGposeChangeEvent(ActorGposeState state) {
 			OnGPoseChange?.Invoke(state);

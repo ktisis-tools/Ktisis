@@ -1,10 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
 using Dalamud.Logging;
 using Dalamud.Game.ClientState.Keys;
+
+using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Events;
 using Ktisis.Overlay;
@@ -15,8 +16,6 @@ using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
-
-using static FFXIVClientStructs.Havok.hkaPose;
 using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.History {
@@ -31,14 +30,14 @@ namespace Ktisis.History {
 		// Init & Dispose
 
 		public unsafe static void Init() {
-			EventManager.OnInputEvent += OnInput;
+			EventManager.OnKeyPressed += OnInput;
 			EventManager.OnGPoseChange += OnGPoseChange;
 			EventManager.OnGizmoChange += OnGizmoChange;
 			EventManager.OnTransformationMatrixChange += OnTransformationMatrixChange;
 		}
 
 		public unsafe static void Dispose() {
-			EventManager.OnInputEvent -= OnInput;
+			EventManager.OnKeyPressed -= OnInput;
 			EventManager.OnGPoseChange -= OnGPoseChange;
 			EventManager.OnGizmoChange -= OnGizmoChange;
 			EventManager.OnTransformationMatrixChange -= OnTransformationMatrixChange;
@@ -46,8 +45,8 @@ namespace Ktisis.History {
 
 		// Events
 
-		public static bool OnInput(QueueItem input, KeyboardState state) {
-			if (state.IsKeyDown(VirtualKey.CONTROL)) {
+		public static bool OnInput(QueueItem input) {
+			if (ControlHooks.KeyboardState!.IsKeyDown(VirtualKey.CONTROL)) {
 				if (input.VirtualKey == VirtualKey.Z) {
 					if (_currentIdx > 1) {
 						_currentIdx--;

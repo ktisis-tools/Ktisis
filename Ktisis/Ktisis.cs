@@ -74,13 +74,13 @@ namespace Ktisis {
 			Interop.Hooks.PoseHooks.Dispose();
 
 			Interop.Alloc.Dispose();
-			Input.Instance.Dispose();
 			ActorStateWatcher.Instance.Dispose();
 
 			GameData.Sheets.Cache.Clear();
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
 
+			Input.Dispose();
 			HistoryManager.Dispose();
 		}
 
