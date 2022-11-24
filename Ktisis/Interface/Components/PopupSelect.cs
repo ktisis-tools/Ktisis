@@ -20,7 +20,6 @@ namespace Ktisis.Interface.Components {
 
 		// Properties
 		private static Vector2 HoverPopupWindowSelectPos = Vector2.Zero;
-		private static bool HoverPopupWindowIsBegan = false;
 		private static bool HoverPopupWindowFocus = false;
 		private static bool HoverPopupWindowSearchBarValidated = false;
 		public static int HoverPopupWindowLastSelectedItemKey = 0;
@@ -99,8 +98,7 @@ namespace Ktisis.Interface.Components {
 			if (!flags.HasFlag(HoverPopupWindowFlags.Grabbable))
 				windowFlags |= ImGuiWindowFlags.NoDecoration;
 
-			HoverPopupWindowIsBegan = ImGui.Begin(windowLabel, windowFlags);
-			if (HoverPopupWindowIsBegan) {
+			if (ImGui.Begin(windowLabel, windowFlags)) {
 				HoverPopupWindowFocus = ImGui.IsWindowFocused() || ImGui.IsWindowHovered();
 				ImGui.PushItemWidth(minWidth);
 				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar))
