@@ -131,7 +131,8 @@ namespace Ktisis.Interface.Components {
 		private static string ExtraInfo(DalamudGameObject gameObject) {
 			List<string> info = new();
 			if (IsGposeActor(gameObject)) info.Add("GPose");
-			if (IsPlayer(gameObject)) info.Add("Player");
+			if (IsYou(gameObject)) info.Add("You");
+			else if (IsPlayer(gameObject)) info.Add("Player");
 			return info.Any() ? $" ({String.Join(", ", info)})" : "";
 		}
 		private static string ExtraInfo(long gameObjectPointer) =>
@@ -140,6 +141,9 @@ namespace Ktisis.Interface.Components {
 			(float)Math.Sqrt(gameObject.YalmDistanceX * gameObject.YalmDistanceX + gameObject.YalmDistanceZ * gameObject.YalmDistanceZ);
 		private static bool IsGposeActor(DalamudGameObject gameObject) {
 			return GetGposeId(gameObject) >= 200;
+		}
+		private static bool IsYou(DalamudGameObject gameObject) {
+			return GetGposeId(gameObject) == 201;
 		}
 		private static bool IsGposeSpecialObject(DalamudGameObject gameObject) {
 			// this matches the weird object on ObjectID 200
