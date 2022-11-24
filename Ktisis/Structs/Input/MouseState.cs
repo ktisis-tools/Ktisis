@@ -1,4 +1,4 @@
-﻿namespace Ktisis.Structs.Input {
+namespace Ktisis.Structs.Input {
 	public struct MouseState {
 		public int PosX;
 		public int PosY;

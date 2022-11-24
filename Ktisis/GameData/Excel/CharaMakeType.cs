@@ -1,4 +1,4 @@
-﻿using Lumina.Data;
+using Lumina.Data;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 

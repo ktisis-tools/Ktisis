@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Dalamud.Plugin;
 using Dalamud.Game.Command;

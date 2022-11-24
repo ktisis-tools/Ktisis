@@ -1,4 +1,4 @@
-﻿using Ktisis.Structs.Actor.State;
+using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.Events {
 	public static class EventManager {

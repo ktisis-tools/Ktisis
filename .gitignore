@@ -354,3 +354,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# Rider data files
+# (.sln, .csproj and .editorconfig have enough info for a restore for now)
+.idea/

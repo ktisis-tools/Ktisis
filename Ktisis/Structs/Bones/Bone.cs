@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Collections.Generic;
 
 using FFXIVClientStructs.Havok;
