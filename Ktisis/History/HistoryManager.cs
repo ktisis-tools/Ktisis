@@ -81,6 +81,8 @@ namespace Ktisis.History {
 
 			var newState = state;
 			var bone = Skeleton.GetSelectedBone();
+			if (bone == null) return;
+
 			var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
 			var matrix = Interop.Alloc.GetMatrix(boneTransform);
 
