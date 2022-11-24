@@ -103,7 +103,7 @@ namespace Ktisis.Interface.Components {
 				ImGui.PushItemWidth(minWidth);
 				if (flags.HasFlag(HoverPopupWindowFlags.SearchBar))
 					HoverPopupWindowSearchBarValidated = ImGui.InputTextWithHint(searchBarLabel, searchBarHint, ref inputSearch, 32, ImGuiInputTextFlags.EnterReturnsTrue);
-
+				ImGui.PopItemWidth();
 				if (ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows) && !ImGui.IsAnyItemActive() && !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
 					ImGui.SetKeyboardFocusHere(flags.HasFlag(HoverPopupWindowFlags.SearchBar) ? -1 : 0); // TODO: verify the keyboarf focus behaviour when searchbar is disabled
 
@@ -175,7 +175,6 @@ namespace Ktisis.Interface.Components {
 				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList))
 					ImGui.EndListBox();
 				HoverPopupWindowFocus |= ImGui.IsItemActive();
-				ImGui.PopItemWidth();
 
 				if ((!flags.HasFlag(HoverPopupWindowFlags.StayWhenLoseFocus) && !HoverPopupWindowFocus) || ImGui.IsKeyPressed(ImGuiKey.Escape)) {
 					onClose();
