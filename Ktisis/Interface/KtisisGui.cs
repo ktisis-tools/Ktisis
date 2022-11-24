@@ -1,4 +1,4 @@
-﻿using Ktisis.Overlay;
+using Ktisis.Overlay;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;

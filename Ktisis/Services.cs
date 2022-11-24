@@ -1,4 +1,4 @@
-﻿using Dalamud.IoC;
+using Dalamud.IoC;
 using Dalamud.Data;
 using Dalamud.Game;
 using Dalamud.Plugin;

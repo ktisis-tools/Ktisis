@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+using ImGuiNET;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.Havok;

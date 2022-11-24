@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;

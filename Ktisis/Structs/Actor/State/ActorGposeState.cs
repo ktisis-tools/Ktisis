@@ -1,4 +1,4 @@
-﻿namespace Ktisis.Structs.Actor.State {
+namespace Ktisis.Structs.Actor.State {
 	public enum ActorGposeState {
 		ON,
 		OFF

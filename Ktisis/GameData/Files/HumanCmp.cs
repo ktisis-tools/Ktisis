@@ -1,4 +1,4 @@
-﻿using Ktisis.Structs.Actor;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis.GameData.Files {
 	public class HumanCmp {
