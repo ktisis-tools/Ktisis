@@ -7,6 +7,7 @@ using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
 using System.Linq;
+using Dalamud.Logging;
 
 namespace Ktisis.Interface.Components {
 	public class BoneTree {
@@ -44,11 +45,15 @@ namespace Ktisis.Interface.Components {
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();
 
+			var scrollMin = ImGui.GetScrollY();
+			var scrollMax = ImGui.GetScrollMaxY();
+
 			var mousePos = ImGui.GetMousePos();
 			if (
 				ImGui.IsMouseClicked(ImGuiMouseButton.Left)
 				&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
 				&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
+				&& mousePos.Y > scrollMin && mousePos.Y < scrollMax
 			) {
 				executeIfClicked?.Invoke();
 			}
