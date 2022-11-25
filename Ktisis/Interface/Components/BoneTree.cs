@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 
 using ImGuiNET;
@@ -6,7 +7,6 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
-using System.Linq;
 using Dalamud.Logging;
 
 namespace Ktisis.Interface.Components {
@@ -14,7 +14,7 @@ namespace Ktisis.Interface.Components {
 
 		public static unsafe void Draw(Actor* actor) {
 			if (ImGui.CollapsingHeader("Bone List")) {
-				if (ImGui.BeginChildFrame(471, new Vector2(-1, ImGui.GetTextLineHeight() * 12),ImGuiWindowFlags.HorizontalScrollbar)) {
+				if (ImGui.BeginChildFrame(471, new Vector2(-1, ImGui.GetTextLineHeight() * 12), ImGuiWindowFlags.HorizontalScrollbar)) {
 					var body = actor->Model->Skeleton->GetBone(0, 1);
 					DrawBoneTreeNode(body);
 					ImGui.EndChildFrame();
@@ -46,7 +46,7 @@ namespace Ktisis.Interface.Components {
 			var rectMax = ImGui.GetItemRectMax();
 
 			var scrollMin = ImGui.GetScrollY();
-			var scrollMax = ImGui.GetScrollMaxY();
+			var scrollMax = ImGui.GetScrollMaxY() + ImGui.GetTextLineHeight() * 2;
 
 			var mousePos = ImGui.GetMousePos();
 			if (
