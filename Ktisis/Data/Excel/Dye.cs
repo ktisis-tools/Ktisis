@@ -6,7 +6,7 @@ using Lumina.Data;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 
-namespace Ktisis.GameData.Excel {
+namespace Ktisis.Data.Excel {
 	[Sheet("Stain")]
 	public class Dye : ExcelRow {
 		public string Name { get; set; } = "";

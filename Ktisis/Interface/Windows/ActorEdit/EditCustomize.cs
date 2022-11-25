@@ -14,11 +14,11 @@ using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
 
 using Ktisis.Util;
-using Ktisis.GameData;
+using Ktisis.Data;
+using Ktisis.Data.Excel;
+using Ktisis.Data.Files;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
-using Ktisis.GameData.Excel;
-using Ktisis.GameData.Files;
 using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows {
