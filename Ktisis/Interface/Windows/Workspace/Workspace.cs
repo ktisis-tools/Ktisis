@@ -45,6 +45,9 @@ namespace Ktisis.Interface.Windows.Workspace {
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
 			if (ImGui.Begin("Ktisis (Alpha)", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize)) {
+
+				ControlButtons.PlaceAndRenderSettings();
+
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
 

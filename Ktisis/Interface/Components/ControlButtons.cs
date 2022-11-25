@@ -28,8 +28,6 @@ namespace Ktisis.Interface.Components {
 			DrawGizmoOperations();
 
 			DrawExtra();
-			ImGui.SameLine();
-			DrawSettings();
 		}
 
 		private static void DrawGizmoOperations() {
@@ -70,28 +68,36 @@ namespace Ktisis.Interface.Components {
 		// As the settings button is a bit special and should not be as present as others
 		// we remove the border and change the hover behavior.
 		private static void DrawSettings() {
-			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X) + (ImGui.GetStyle().FramePadding.X * 2f));
-
-			ImGui.SameLine();
-			VerticalAlignTextOnButtonSize(0.5f); // align text with button size
-			var buttonColor = !IsSettingsHovered ? ImGuiCol.TextDisabled : (IsSettingsActive ? ImGuiCol.ButtonActive : ImGuiCol.Text);
-			ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)(buttonColor)]);
 			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
-			ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0x00000000);
-			ImGui.PushStyleColor(ImGuiCol.ButtonHovered, 0x00000000);
-			ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 0f);
+			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
+			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
 
-			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog))
+			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog, new(ImGui.GetFontSize() * 1.5f)))
 				if (ConfigGui.Visible) ConfigGui.Hide();
 				else ConfigGui.Show();
 
-			ImGui.PopStyleColor(4);
-			ImGui.PopStyleVar();
+			ImGui.PopStyleColor();
+			ImGui.PopStyleVar(2);
 
 			IsSettingsHovered = ImGui.IsItemHovered();
 			IsSettingsActive = ImGui.IsItemActive();
 
 			GuiHelpers.Tooltip("Open Settings.");
+		}
+		public static void PlaceAndRenderSettings() {
+
+			var initialPos = ImGui.GetCursorPos();
+			ImGui.PushClipRect(ImGui.GetWindowPos(), ImGui.GetWindowPos() + ImGui.GetWindowSize(), false);
+
+			// A bit complicated formulas to handle any styles values
+			ImGui.SetCursorPosX(initialPos.X + ImGui.GetContentRegionAvail().X - ImGui.GetStyle().FramePadding.X - ImGui.GetFontSize() * 3.5f - (float)Math.Exp(ImGui.GetFontSize() / 18));
+			ImGui.SetCursorPosY(initialPos.Y - ImGui.GetStyle().FramePadding.Y - (float)Math.Log2(ImGui.GetTextLineHeight()) * 3.5f - ImGui.GetTextLineHeight()*1.05f);
+
+			DrawSettings();
+
+			ImGui.PopClipRect();
+			ImGui.SetCursorPos(initialPos);
+
 		}
 
 		private static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
