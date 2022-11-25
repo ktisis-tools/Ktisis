@@ -13,6 +13,7 @@ namespace Ktisis.Interface {
 			Workspace.Draw();
 			ConfigGui.Draw();
 			EditActor.Draw();
+			References.Draw();
 		}
 	}
 }
