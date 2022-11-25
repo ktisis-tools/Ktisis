@@ -35,6 +35,7 @@ namespace Ktisis.Interface.Windows {
 		public static void Hide() {
 			Visible = false;
 		}
+		public static void Toggle() => Visible = !Visible;
 
 		// Draw
 
