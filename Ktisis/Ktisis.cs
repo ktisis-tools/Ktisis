@@ -11,6 +11,7 @@ using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
 using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Actor;
+using Ktisis.Events;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -44,6 +45,8 @@ namespace Ktisis {
 			Interop.Hooks.GuiHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 
+			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.Init()
+
 			Input.Init();
 			ActorStateWatcher.Init();
 
@@ -55,7 +58,7 @@ namespace Ktisis {
 
 			// Overlays & UI
 
-			if (Configuration.AutoOpenCtor)
+			if (Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
 				Workspace.Show();
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
@@ -77,6 +80,8 @@ namespace Ktisis {
 			Interop.Alloc.Dispose();
 			Input.Instance.Dispose();
 			ActorStateWatcher.Instance.Dispose();
+
+			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
 			GameData.Sheets.Cache.Clear();
 			if (EditEquip.Items != null)

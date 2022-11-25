@@ -81,9 +81,19 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.Text(Locale.GetString("General"));
 
-			var openCtor = cfg.AutoOpenCtor;
-			if (ImGui.Checkbox(Locale.GetString("Open_plugin_load"), ref openCtor))
-				cfg.AutoOpenCtor = openCtor;
+			ImGui.AlignTextToFramePadding();
+			ImGui.Text(Locale.GetString("Open_plugin_load") + " ");
+			ImGui.SameLine();
+			var selectedOpenKtisisMethod = cfg.OpenKtisisMethod;
+			ImGui.SetNextItemWidth(GuiHelpers.AvailableWidth(0));
+			if (ImGui.BeginCombo("##OpenKtisisMethod", $"{selectedOpenKtisisMethod}")) {
+				foreach (var openKtisisMethod in Enum.GetValues<OpenKtisisMethod>()) {
+					if (ImGui.Selectable($"{openKtisisMethod}", openKtisisMethod == selectedOpenKtisisMethod))
+						cfg.OpenKtisisMethod = openKtisisMethod;
+				}
+				ImGui.SetItemDefaultFocus();
+				ImGui.EndCombo();
+			}
 
 			var displayCharName = !cfg.DisplayCharName;
 			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))

@@ -21,7 +21,7 @@
     "Overlay": "Overlay",
     // ConfigGui.cs
     "Ktisis_settings": "Ktisis Settings",
-    "Open_plugin_load": "Auto open on plugin load",
+    "Open_plugin_load": "Open Ktisis",
     "config.references_tab.title": "References",
     "config.references_tab.explanation": "Overlay reference images onto your game, helping you to get just the right pose.",
     "config.references_tab.image_transparency": "Image transparency",

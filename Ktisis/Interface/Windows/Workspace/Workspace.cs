@@ -28,6 +28,10 @@ namespace Ktisis.Interface.Windows.Workspace {
 		// Toggle visibility
 
 		public static void Show() => Visible = true;
+		public static void OnEnterGposeToggle(Structs.Actor.State.ActorGposeState gposeState) {
+			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnEnterGpose)
+				Visible = gposeState == Structs.Actor.State.ActorGposeState.ON;
+		}
 
 		public static float PanelHeight => ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y;
 

@@ -18,13 +18,15 @@ using Ktisis.Structs.Bones;
 namespace Ktisis {
 	[Serializable]
 	public class Configuration : IPluginConfiguration {
-		public const int CurVersion = 0;
+		public const int CurVersion = 1;
 		public int Version { get; set; } = CurVersion;
 
 		// Interface
-
+		[Obsolete("Replaced by AutoOpenCtor")]
 		public bool AutoOpen { get; set; } = true;
+		[Obsolete("Replaced by OpenKtisisMethod")]
 		public bool AutoOpenCtor { get; set; } = false;
+		public OpenKtisisMethod OpenKtisisMethod { get; set; } = OpenKtisisMethod.OnEnterGpose;
 
 		public bool DisplayCharName { get; set; } = true;
 		public bool CensorNsfw { get; set; } = true;
@@ -131,8 +133,13 @@ namespace Ktisis {
 
 			PluginLog.Warning($"Updating config to reflect changes between config versions {Version}-{CurVersion}.\nThis is nothing to worry about, but some settings may change or get reset!");
 
-			//switch (Version) {}
+#pragma warning disable CS0612, CS0618
+			// Apply changes from obsolete attributes
 
+			if (Version < 1)
+				if (AutoOpenCtor) OpenKtisisMethod = OpenKtisisMethod.OnPluginLoad;
+
+#pragma warning restore CS0612, CS0618
 			Version = CurVersion;
 		}
 	}
@@ -140,5 +147,11 @@ namespace Ktisis {
 	public class ReferenceInfo {
 		public bool Showing { get; set; }
 		public string? Path { get; set; }
+	}
+	[Serializable]
+	public enum OpenKtisisMethod {
+		Manually,
+		OnPluginLoad,
+		OnEnterGpose,
 	}
 }
