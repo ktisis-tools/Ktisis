@@ -20,6 +20,7 @@ using Ktisis.Data.Files;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.ActorEdit;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
@@ -326,7 +327,7 @@ namespace Ktisis.Interface.Windows {
 			var index = option.Option.Index;
 			if (click) {
 				Selecting = option.Option.Index;
-				SelectPos = ImGui.GetMousePos();
+				SelectPos = new Vector2(ImGui.GetItemRectMax().X + 5, ImGui.GetItemRectMin().Y);
 				ImGui.SetNextWindowFocus();
 			}
 
@@ -374,7 +375,7 @@ namespace Ktisis.Interface.Windows {
 
 			if (selecting != 0) {
 				Selecting = selecting;
-				SelectPos = ImGui.GetMousePos();
+				SelectPos = new Vector2(ImGui.GetItemRectMax().X + 5, ImGui.GetItemRectMin().Y);
 				ImGui.SetNextWindowFocus();
 			}
 
@@ -449,6 +450,15 @@ namespace Ktisis.Interface.Windows {
 
 					if (!ImGui.IsWindowFocused() && !focus)
 						Selecting = null;
+				}
+
+				var maxPos = SelectPos + ImGui.GetWindowContentRegionMax();
+				var displaySize = ImGui.GetIO().DisplaySize;
+				if (maxPos.X > displaySize.X || maxPos.Y > displaySize.Y) {
+					SelectPos = new Vector2(
+						Math.Min(SelectPos.X, SelectPos.X - (maxPos.X - displaySize.X)),
+						Math.Min(SelectPos.Y, SelectPos.Y - (maxPos.Y - displaySize.Y))
+					);
 				}
 
 				ImGui.PopStyleVar(1);
