@@ -50,6 +50,13 @@ namespace Ktisis {
 		public float SkeletonLineThickness { get; set; } = 2.0F;
 		public float SkeletonDotRadius { get; set; } = 3.0F;
 
+		// References
+		// The reference Key creates a uniqueness constraint for imgui window IDs for each reference.
+		public Dictionary<int, ReferenceInfo> References { get; set; } = new();
+		public float ReferenceAlpha { get; set; } = 1.0f;
+		public bool ReferenceHideDecoration { get; set; } = false;
+		public int NextReferenceKey => References.Count == 0 ? 0 : References.Max(x => x.Key) + 1;
+
 		public Vector4 GetCategoryColor(Bone bone) {
 			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
 			// pick the first category found
@@ -128,5 +135,10 @@ namespace Ktisis {
 
 			Version = CurVersion;
 		}
+	}
+	[Serializable]
+	public class ReferenceInfo {
+		public bool Showing { get; set; }
+		public string? Path { get; set; }
 	}
 }

@@ -31,7 +31,7 @@ namespace Ktisis.Structs.Actor {
 
 		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
 
-		public string GetNameOr(string fallback) => !Ktisis.Configuration.DisplayCharName || Name == null ? fallback : Name;
+		public string GetNameOr(string fallback) => ((ObjectKind)GameObject.ObjectKind == ObjectKind.Pc && !Ktisis.Configuration.DisplayCharName) || string.IsNullOrEmpty(Name)? fallback : Name;
 		public string GetNameOrId() => GetNameOr("Actor #" + ObjectID);
 
 		public unsafe IntPtr GetAddress() {

@@ -12,8 +12,6 @@ namespace Ktisis.Structs {
 		public static Vector3 ToVector3(this hkVector4f vec) => new Vector3(vec.X, vec.Y, vec.Z);
 		public static Vector4 ToVector4(this hkVector4f vec) => new Vector4(vec.X, vec.Y, vec.Z, vec.W);
 
-		public static Vector3 Rotate(this hkVector4f vec, Quaternion rot) => Vector3.Transform(vec.ToVector3(), rot);
-
 		public static hkVector4f SetFromVector3(this hkVector4f tar, Vector3 vec) {
 			tar.X = vec.X;
 			tar.Y = vec.Y;

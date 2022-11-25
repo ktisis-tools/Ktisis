@@ -3,8 +3,10 @@ using System;
 using Dalamud.Plugin;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface;
 
 using Ktisis.Interface;
+using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
 using Ktisis.Structs.Actor.State;
@@ -16,6 +18,7 @@ namespace Ktisis {
 		public string CommandName = "/ktisis";
 
 		public static Configuration Configuration { get; private set; } = null!;
+		public static UiBuilder UiBuilder { get; private set; } = null!;
 
 		public static bool IsInGPose => Services.PluginInterface.UiBuilder.GposeActive;
 
@@ -25,6 +28,7 @@ namespace Ktisis {
 		public Ktisis(DalamudPluginInterface pluginInterface) {
 			Services.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+			UiBuilder = pluginInterface.UiBuilder;
 
 			Configuration.Validate();
 
@@ -56,6 +60,8 @@ namespace Ktisis {
 
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
+
+			References.LoadReferences(Configuration);
 		}
 
 		public void Dispose() {
@@ -75,6 +81,10 @@ namespace Ktisis {
 			GameData.Sheets.Cache.Clear();
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
+
+			foreach (var (_, texture) in References.Textures) {
+				texture.Dispose();
+			}
 		}
 
 		private void OnCommand(string command, string arguments) {
