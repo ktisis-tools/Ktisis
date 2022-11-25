@@ -64,13 +64,7 @@ namespace Ktisis.Interface.Components {
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
 			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
 
-			var offset_x = new[]{
-					GuiHelpers.CalcIconSize(iconPosition).X,
-					GuiHelpers.CalcIconSize(iconRotation).X,
-					GuiHelpers.CalcIconSize(iconScale).X
-			}.Max();
-
-			var inputsWidth = ImGui.GetContentRegionAvail().X - offset_x - ImGui.GetStyle().ItemSpacing.X*3;
+			var inputsWidth = ImGui.GetContentRegionAvail().X - ControlButtons.ButtonSize.X - ImGui.GetStyle().ItemSpacing.X;
 			ImGui.PushItemWidth(inputsWidth);
 
 			// Position
