@@ -7,7 +7,6 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
-using Dalamud.Logging;
 
 namespace Ktisis.Interface.Components {
 	public class BoneTree {
