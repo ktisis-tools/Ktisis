@@ -61,9 +61,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 				// Pose switch
 				ControlButtons.DrawPoseSwitch();
 
-				// control buttons (gizmo op + extra)
-				ControlButtons.Draw();
-
 				var target = Ktisis.GPoseTarget;
 				if (target == null) return;
 
@@ -140,6 +137,9 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			var actor = (Actor*)target.Address;
 			if (actor->Model == null) return;
+
+			// Extra Controls
+			ControlButtons.DrawExtra();
 
 			// Parenting
 
