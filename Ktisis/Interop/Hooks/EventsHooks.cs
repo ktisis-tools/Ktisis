@@ -54,7 +54,7 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		private static unsafe void OnGlamourPlatesReceiveEvent(object? sender, ReceiveEventArgs e) {
-			//PluginLog.Verbose($"OnGlamourPlatesReceiveEvent {e.SenderID} {e.EventArgs->Int}");
+			//Logger.Verbose($"OnGlamourPlatesReceiveEvent {e.SenderID} {e.EventArgs->Int}");
 
 			if (
 				e.SenderID == 0 && e.EventArgs->Int == 18 // used "Close" button, the (X) button, Close UI Component keybind, Cancel Keybind. NOT when using the "Glamour Plate" toggle skill to close it.
@@ -111,7 +111,7 @@ namespace Ktisis.Interop.Hooks {
 			try {
 				ReceiveEvent?.Invoke(this, new ReceiveEventArgs(agent, rawData, eventArgs, eventArgsCount, sender));
 			} catch (Exception ex) {
-				PluginLog.Error(ex, "Something went wrong when the MiragePrismMiragePlates Addon was opened");
+				Logger.Error(ex, "Something went wrong when the MiragePrismMiragePlates Addon was opened");
 			}
 
 			return receiveEventHook!.Original(agent, rawData, eventArgs, eventArgsCount, sender);
@@ -193,18 +193,18 @@ namespace Ktisis.Interop.Hooks {
 		public ulong SenderID;
 
 		public void PrintData() {
-			PluginLog.Verbose("ReceiveEvent Argument Printout --------------");
-			PluginLog.Verbose($"AgentInterface: {(IntPtr)AgentInterface:X8}");
-			PluginLog.Verbose($"RawData: {(IntPtr)RawData:X8}");
-			PluginLog.Verbose($"EventArgs: {(IntPtr)EventArgs:X8}");
-			PluginLog.Verbose($"EventArgsCount: {EventArgsCount}");
-			PluginLog.Verbose($"SenderID: {SenderID}");
+			Logger.Verbose("ReceiveEvent Argument Printout --------------");
+			Logger.Verbose($"AgentInterface: {(IntPtr)AgentInterface:X8}");
+			Logger.Verbose($"RawData: {(IntPtr)RawData:X8}");
+			Logger.Verbose($"EventArgs: {(IntPtr)EventArgs:X8}");
+			Logger.Verbose($"EventArgsCount: {EventArgsCount}");
+			Logger.Verbose($"SenderID: {SenderID}");
 
 			for (var i = 0; i < EventArgsCount; i++) {
-				PluginLog.Verbose($"[{i}] {EventArgs[i].Int}, {EventArgs[i].Type}");
+				Logger.Verbose($"[{i}] {EventArgs[i].Int}, {EventArgs[i].Type}");
 			}
 
-			PluginLog.Verbose("End -----------------------------------------");
+			Logger.Verbose("End -----------------------------------------");
 		}
 	}
 }

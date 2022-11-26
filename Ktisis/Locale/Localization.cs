@@ -33,7 +33,7 @@ namespace Ktisis.Localization {
 					using (var reader = new JsonTextReader(file))
 						Strings = (JObject)JToken.ReadFrom(reader);
 				} catch {
-					PluginLog.Error($"Failed to fetch localization: {lang}");
+					Logger.Error($"Failed to fetch localization: {lang}");
 				}
 			}
 
