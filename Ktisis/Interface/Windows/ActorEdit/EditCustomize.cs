@@ -284,7 +284,7 @@ namespace Ktisis.Interface.Windows {
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
 
-			var willExplode = (opt.Index == CustomizeIndex.FaceType || opt.Index == CustomizeIndex.HairStyle) && IsPosing;
+			var willExplode = (opt.Index == CustomizeIndex.FaceType) && IsPosing;
 
 			if (willExplode) ImGui.BeginDisabled();
 

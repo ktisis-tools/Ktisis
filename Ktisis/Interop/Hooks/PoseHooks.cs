@@ -1,9 +1,11 @@
 using System;
+
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Dalamud.Hooking;
 using Dalamud.Logging;
 
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
 namespace Ktisis.Interop.Hooks {
@@ -23,6 +25,9 @@ namespace Ktisis.Interop.Hooks {
 		private unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
 		private static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
 
+		private unsafe delegate void SetPartialSkeletonDelegate(PartialSkeleton* a1, IntPtr a2, IntPtr a3);
+		private static Hook<SetPartialSkeletonDelegate> SetPartialSkeletonHook = null!;
+
 		internal static bool PosingEnabled { get; private set; }
 
 		internal static unsafe void Init() {
@@ -40,6 +45,9 @@ namespace Ktisis.Interop.Hooks {
 
 			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
 			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
+
+			var setPartial = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 5C 24 ?? B0 01 48 8B 6C 24 ?? 48 8B 74 24 ?? 48 8B 7C 24 ?? 48 83 C4 20 41 5E");
+			SetPartialSkeletonHook = Hook<SetPartialSkeletonDelegate>.FromAddress(setPartial, SetPartialSkeletonDetour);
 		}
 
 		internal static void DisablePosing() {
@@ -48,6 +56,7 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
 			AnimFrozenHook?.Disable();
+			SetPartialSkeletonHook?.Disable();
 			PosingEnabled = false;
 		}
 
@@ -57,6 +66,7 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
 			AnimFrozenHook?.Enable();
+			SetPartialSkeletonHook?.Enable();
 			PosingEnabled = true;
 		}
 
@@ -71,12 +81,14 @@ namespace Ktisis.Interop.Hooks {
 				SyncModelSpaceHook.Disable();
 				LookAtIKHook.Disable();
 				AnimFrozenHook.Disable();
+				SetPartialSkeletonHook.Disable();
 			} else {
 				CalculateBoneModelSpaceHook.Enable();
 				SetBoneModelSpaceFfxivHook.Enable();
 				SyncModelSpaceHook.Enable();
 				LookAtIKHook.Enable();
 				AnimFrozenHook.Enable();
+				SetPartialSkeletonHook.Enable();
 			}
 			PosingEnabled = !PosingEnabled;
 			return PosingEnabled;
@@ -96,6 +108,16 @@ namespace Ktisis.Interop.Hooks {
 				DisablePosing();
 				SyncModelSpaceHook.Original(pose);
 			}
+		}
+
+		private static unsafe void SetPartialSkeletonDetour(PartialSkeleton* a1, IntPtr a2, IntPtr a3) {
+			SetPartialSkeletonHook.Original(a1, a2, a3);
+
+			var pose = a1->GetHavokPose(0);
+			if (pose == null) return;
+
+			pose->SetToReferencePose();
+			SyncModelSpaceHook.Original(pose);
 		}
 
 		public unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {
@@ -140,6 +162,8 @@ namespace Ktisis.Interop.Hooks {
 			LookAtIKHook.Dispose();
 			AnimFrozenHook.Disable();
 			AnimFrozenHook.Dispose();
+			SetPartialSkeletonHook.Disable();
+			SetPartialSkeletonHook.Dispose();
 		}
 	}
 }
