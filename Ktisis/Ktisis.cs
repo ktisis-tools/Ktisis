@@ -20,7 +20,8 @@ namespace Ktisis {
 		public static Configuration Configuration { get; private set; } = null!;
 		public static UiBuilder UiBuilder { get; private set; } = null!;
 
-		public static bool IsInGPose => Services.PluginInterface.UiBuilder.GposeActive;
+		public static bool IsInGPose => Services.PluginInterface.UiBuilder.GposeActive && IsGposeTargetPresent();
+		public unsafe static bool IsGposeTargetPresent() => (IntPtr)Services.Targets->GPoseTarget != IntPtr.Zero;
 
 		public unsafe static GameObject? GPoseTarget
 			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
