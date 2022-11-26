@@ -54,7 +54,7 @@ namespace Ktisis.Interop.Hooks {
 				}
 			}
 			catch (Exception e) {
-				PluginLog.Error(e, "Error in InputDetour.");
+				Logger.Error(e, "Error in InputDetour.");
 			}
 		}
 

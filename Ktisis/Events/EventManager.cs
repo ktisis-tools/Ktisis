@@ -32,7 +32,7 @@ namespace Ktisis.Events {
 		internal static KeyReleaseEventDelegate? OnKeyReleased;
 
 		public static void FireOnGposeChangeEvent(ActorGposeState state) {
-			PluginLog.Debug($"FireOnGposeChangeEvent {state}");
+			Logger.Debug($"FireOnGposeChangeEvent {state}");
 			OnGPoseChange?.Invoke(state);
 		}
 

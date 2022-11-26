@@ -621,7 +621,7 @@ namespace Ktisis.Interface.Windows {
 								menuCol.Colors = HumanCmp.GetSkinColors(data.TribeEnum, data.GenderEnum);
 								break;
 							default:
-								PluginLog.Warning($"Color not implemented: {val.Index}");
+								Logger.Warning($"Color not implemented: {val.Index}");
 								break;
 						}
 						MenuColors.Add(menuCol);

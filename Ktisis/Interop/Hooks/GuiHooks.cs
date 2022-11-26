@@ -29,7 +29,7 @@ namespace Ktisis.Interop.Hooks {
 				for (var i = 0; i < nameToDisplay.Length; i++)
 					*(char*)(a1 + 488 + i) = nameToDisplay[i];
 			} catch (Exception e) {
-				PluginLog.Error(e, "Error in UpdateTarName. Disabling hook.");
+				Logger.Error(e, "Error in UpdateTarName. Disabling hook.");
 				TarNameHook.Disable();
 			}
 

@@ -60,8 +60,8 @@ namespace Ktisis.History {
 
 			_currentIdx++;
 			UpdateSkeleton();
-			PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-			PluginLog.Verbose("CTRL+Y pressed. Redo.");
+			Logger.Verbose($"Current Idx: {_currentIdx - 1}");
+			Logger.Verbose("CTRL+Y pressed. Redo.");
 		}
 		public static void Undo() {
 			if (_currentIdx <= 1)
@@ -69,12 +69,12 @@ namespace Ktisis.History {
 
 			_currentIdx--;
 			UpdateSkeleton();
-			PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-			PluginLog.Verbose("CTRL+Z pressed. Undo.");
+			Logger.Verbose($"Current Idx: {_currentIdx - 1}");
+			Logger.Verbose("CTRL+Z pressed. Undo.");
 		}
 
 		internal static void OnGPoseChange(ActorGposeState _state) {
-			PluginLog.Verbose("Clearing previous history...");
+			Logger.Verbose("Clearing previous history...");
 			_currentIdx = 0;
 			_maxIdx = 0;
 			History = new List<HistoryItem>();
@@ -87,12 +87,12 @@ namespace Ktisis.History {
 
 			var newState = state;
 			if ((newState == GizmoState.EDITING) && (_currentGizmoState == GizmoState.IDLE)) {
-				PluginLog.Verbose("Started Gizmo edit");
+				Logger.Verbose("Started Gizmo edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
 				UpdateHistory("ActorBone");
 			}
 			if (newState == GizmoState.IDLE && _currentGizmoState == GizmoState.EDITING) {
-				PluginLog.Verbose("Ended Gizmo edit");
+				Logger.Verbose("Ended Gizmo edit");
 				UpdateHistory("ActorBone");
 			}
 			_currentGizmoState = newState;
@@ -104,7 +104,7 @@ namespace Ktisis.History {
 				if (entryToAdd != null)
 					AddEntryToHistory(entryToAdd);
 			} catch (System.ArgumentException e) {
-				PluginLog.Fatal(e.Message);
+				Logger.Fatal(e.Message);
 				return;
 			}
 		}
@@ -117,13 +117,13 @@ namespace Ktisis.History {
 			var newState = state;
 
 			if ((newState == TransformTableState.EDITING) && (_currentTtState == TransformTableState.IDLE)) {
-				PluginLog.Verbose("Started TT edit");
+				Logger.Verbose("Started TT edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
 				UpdateHistory("ActorBone");
 			}
 
 			if ((newState == TransformTableState.IDLE) && (_currentTtState == TransformTableState.EDITING)) {
-				PluginLog.Verbose("Finished TT edit");
+				Logger.Verbose("Finished TT edit");
 				UpdateHistory("ActorBone");
 			}
 
@@ -134,7 +134,7 @@ namespace Ktisis.History {
 
 		public unsafe static void AddEntryToHistory(HistoryItem historyItem) {
 			if (History == null) {
-				PluginLog.Warning("Attempted to add an entry to an uninitialised history list.");
+				Logger.Warning("Attempted to add an entry to an uninitialised history list.");
 				return;
 			}
 			History.Insert(_maxIdx, historyItem);
@@ -148,7 +148,7 @@ namespace Ktisis.History {
 
 		private static void alternativeTimelineWarning() {
 			_alternativeTimelinesCreated++;
-			PluginLog.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
+			Logger.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
 			createNewTimeline();
 		}
 

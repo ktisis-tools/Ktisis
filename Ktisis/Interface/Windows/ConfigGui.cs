@@ -523,11 +523,11 @@ namespace Ktisis.Interface.Windows {
 					Showing = true,
 				};
 				References.Textures[newPath] = texture;
-				PluginLog.Information("Successfully loaded reference image {0}", newPath);
+				Logger.Information("Successfully loaded reference image {0}", newPath);
 				References.DisposeUnreferencedTextures(cfg);
 				return true;
 			} catch (Exception e) {
-				PluginLog.Error(e, "Failed to load reference image {0}", newPath);
+				Logger.Error(e, "Failed to load reference image {0}", newPath);
 				return false;
 			}
 		}
