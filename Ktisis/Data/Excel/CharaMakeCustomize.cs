@@ -2,7 +2,7 @@ using Lumina.Data;
 using Lumina.Excel;
 using Lobby = Lumina.Excel.GeneratedSheets.Lobby;
 
-namespace Ktisis.GameData.Excel {
+namespace Ktisis.Data.Excel {
 	[Sheet("CharaMakeCustomize")]
 	public class CharaMakeCustomize : ExcelRow {
 		public string Name { get; set; } = "";

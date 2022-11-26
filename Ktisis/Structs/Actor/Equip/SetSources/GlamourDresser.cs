@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Dalamud.Logging;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using Newtonsoft.Json;
 
-using Ktisis.GameData.Excel;
-using Ktisis.Structs.FFXIV;
+using Dalamud.Logging;
 
+using FFXIVClientStructs.FFXIV.Client.Game;
+
+using Ktisis.Data.Excel;
+using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Structs.Actor.Equip.SetSources
 {

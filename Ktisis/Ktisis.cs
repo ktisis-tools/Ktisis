@@ -82,10 +82,10 @@ namespace Ktisis {
 			Interop.Alloc.Dispose();
 			Input.Instance.Dispose();
 			ActorStateWatcher.Instance.Dispose();
-
 			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
-			GameData.Sheets.Cache.Clear();
+			Data.Sheets.Cache.Clear();
+
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
 

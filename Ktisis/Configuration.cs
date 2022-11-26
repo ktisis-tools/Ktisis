@@ -49,6 +49,9 @@ namespace Ktisis {
 		// Overlay
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
+		public bool DrawLinesWithGizmo { get; set; } = true;
+		public bool DrawDotsWithGizmo { get; set; } = true;
+
 		public float SkeletonLineThickness { get; set; } = 2.0F;
 		public float SkeletonDotRadius { get; set; } = 3.0F;
 

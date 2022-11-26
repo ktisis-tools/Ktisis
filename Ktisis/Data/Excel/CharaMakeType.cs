@@ -8,7 +8,7 @@ using RaceEnum = Ktisis.Structs.Actor.Race;
 using TribeEnum = Ktisis.Structs.Actor.Tribe;
 using Gender = Ktisis.Structs.Actor.Gender;
 
-namespace Ktisis.GameData.Excel {
+namespace Ktisis.Data.Excel {
 	public enum MenuType : byte {
 		List = 0,
 		Select = 1,

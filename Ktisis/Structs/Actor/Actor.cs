@@ -6,8 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
-using Ktisis.GameData.Excel;
-using Ktisis.Structs.Extensions;
+using Ktisis.Data.Excel;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]

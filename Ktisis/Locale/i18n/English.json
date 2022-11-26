@@ -42,6 +42,8 @@
     "Show_speed_multipler_inputs": "Show speed multipler inputs",
     "Skeleton_lines_and_dots": "Skeleton lines and dots",
     "Draw_lines_on_skeleton": "Draw lines on skeleton",
+    "Draw_lines_with_gizmo": "Draw lines with gizmo active",
+    "Draw_dots_with_gizmo": "Draw dots with gizmo active",
     "Dot_radius": "Dot radius",
     "Lines_thickness": "Lines thickness",
     "Bone_colors": "Bone colors",
