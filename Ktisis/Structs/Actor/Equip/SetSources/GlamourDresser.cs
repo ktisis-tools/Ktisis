@@ -104,7 +104,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			Ktisis.Configuration.GlamourPlateData[character_key] = Plates; // actually save
 
 			bool success = Ktisis.Configuration.GlamourPlateData[character_key] == Plates;
-			if (success) PluginLog.Verbose($"Saved {Ktisis.Configuration.GlamourPlateData[character_key]!.Count((p) => p.IsValid())} Plates for {character_key} into config.");
+			if (success) Logger.Verbose($"Saved {Ktisis.Configuration.GlamourPlateData[character_key]!.Count((p) => p.IsValid())} Plates for {character_key} into config.");
 			return true;
 		}
 		public static void LoadGlamourPlatesIntoMemory() {
@@ -114,7 +114,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			if (Ktisis.Configuration.GlamourPlateData == null) return;
 			var character_key = $"FFXIV_CHR{local_character_id:X16}";
 			Ktisis.Configuration.GlamourPlateData!.TryGetValue(character_key, out Plates);
-			PluginLog.Verbose($"Loaded {CountValid()} Plates for {character_key} into memory.");
+			Logger.Verbose($"Loaded {CountValid()} Plates for {character_key} into memory.");
 		}
 
 		internal static void PopupOfferOpenGlamourPlates_open() {
