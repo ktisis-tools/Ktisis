@@ -26,7 +26,7 @@ namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
 		public Menu Option;
 		public CustomizeIndex ColorIndex = 0;
-		public uint[] Colors = new uint[0];
+		public uint[] Colors = Array.Empty<uint>();
 
 		public Dictionary<uint, TextureWrap>? Select = null;
 
@@ -37,7 +37,7 @@ namespace Ktisis.Interface.Windows {
 		public string Name;
 		public CustomizeIndex Index = 0;
 		public CustomizeIndex AltIndex = 0;
-		public uint[] Colors = new uint[0];
+		public uint[] Colors = Array.Empty<uint>();
 		public bool Iterable = true;
 
 		public MenuColor(string name, CustomizeIndex index) {
