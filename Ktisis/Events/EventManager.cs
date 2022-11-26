@@ -1,3 +1,5 @@
+using Dalamud.Logging;
+
 using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.Events {
@@ -6,6 +8,7 @@ namespace Ktisis.Events {
 		public static GPoseChange? OnGPoseChange = null;
 
 		public static void FireOnGposeChangeEvent(ActorGposeState state) {
+			PluginLog.Debug($"FireOnGposeChangeEvent {state}");
 			OnGPoseChange?.Invoke(state);
 		}
 	}

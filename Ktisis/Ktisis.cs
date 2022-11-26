@@ -11,6 +11,7 @@ using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
 using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Actor;
+using Ktisis.Events;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -45,6 +46,8 @@ namespace Ktisis {
 			Interop.Hooks.GuiHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 
+			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.Init()
+
 			Input.Init();
 			ActorStateWatcher.Init();
 
@@ -56,9 +59,10 @@ namespace Ktisis {
 
 			// Overlays & UI
 
-			if (Configuration.AutoOpenCtor)
+			if (Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
 				Workspace.Show();
 
+			pluginInterface.UiBuilder.OpenConfigUi += ConfigGui.Toggle;
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
 
@@ -68,6 +72,7 @@ namespace Ktisis {
 		public void Dispose() {
 			Services.CommandManager.RemoveHandler(CommandName);
 			Services.PluginInterface.SavePluginConfig(Configuration);
+			Services.PluginInterface.UiBuilder.OpenConfigUi -= ConfigGui.Toggle;
 
 			Interop.Hooks.ActorHooks.Dispose();
 			Interop.Hooks.ControlHooks.Dispose();
@@ -78,8 +83,10 @@ namespace Ktisis {
 			Interop.Alloc.Dispose();
 			Input.Instance.Dispose();
 			ActorStateWatcher.Instance.Dispose();
+			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
 			Data.Sheets.Cache.Clear();
+
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
 
