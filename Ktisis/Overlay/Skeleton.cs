@@ -89,7 +89,7 @@ namespace Ktisis.Overlay {
 						continue; // Bone is hidden, move onto the next one.
 
 					// Access bone transform
-					var transform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
+					var transform = bone.AccessModelSpace();
 
 					if (bone.IsBusted())
 						continue; // bone's busted, skip it.
