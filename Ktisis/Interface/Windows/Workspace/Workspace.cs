@@ -53,6 +53,9 @@ namespace Ktisis.Interface.Windows.Workspace
 			if (!Visible)
 				return;
 
+			//if(Ktisis.Configuration.ModularConfig != null)
+				Modular.Manager.Render();
+
 			var gposeOn = Ktisis.IsInGPose;
 
 			var size = new Vector2(-1, -1);

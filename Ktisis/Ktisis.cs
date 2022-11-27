@@ -47,6 +47,7 @@ namespace Ktisis {
 
 			Configuration.Validate();
 
+			Interface.Modular.Manager.Init();
 			// Init interop stuff
 
 			Interop.Alloc.Init();
@@ -99,6 +100,8 @@ namespace Ktisis {
 			Interop.Alloc.Dispose();
 			ActorStateWatcher.Instance.Dispose();
 			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
+
+			Interface.Modular.Manager.Dispose();
 
 			Data.Sheets.Cache.Clear();
 

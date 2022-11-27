@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
@@ -11,6 +11,7 @@ using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Interface;
+using Ktisis.Interface.Modular;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip.SetSources;
@@ -34,6 +35,7 @@ namespace Ktisis
 		public bool AutoOpenCtor { get; set; } = false;
 		public OpenKtisisMethod OpenKtisisMethod { get; set; } = OpenKtisisMethod.OnEnterGpose;
 
+		public List<ConfigObject>? ModularConfig { get; set; } = null;
 		public bool DisplayCharName { get; set; } = true;
 		public bool CensorNsfw { get; set; } = true;
 
