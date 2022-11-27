@@ -2,8 +2,13 @@
 
 namespace Ktisis.Interface.Modular {
 	public class Container {
-		public static void Window(ContentsInfo contentsInfo) {
+		public static void WindowResizable(ContentsInfo contentsInfo) {
 			if (ImGui.Begin(contentsInfo.Handle))
+				contentsInfo.Actions?.ForEach(a => a.Item1?.DynamicInvoke(a.Item2));
+			ImGui.End();
+		}
+		public static void WindowAutoResize(ContentsInfo contentsInfo) {
+			if (ImGui.Begin(contentsInfo.Handle, ImGuiWindowFlags.AlwaysAutoResize))
 				contentsInfo.Actions?.ForEach(a => a.Item1?.DynamicInvoke(a.Item2));
 			ImGui.End();
 		}
