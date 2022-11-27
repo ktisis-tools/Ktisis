@@ -109,7 +109,16 @@ namespace Ktisis
 
 		// Language
 
-		public UserLocale Localization { get; set; } = UserLocale.English;
+		private UserLocale _locale = UserLocale.English;
+
+		public UserLocale Localization {
+			get => _locale;
+			set {
+				_locale = value;
+				Locale.LoadLocale(value);
+			}
+		}
+
 		public ClientLanguage SheetLocale { get; set; } = ClientLanguage.English;
 
 		public bool TranslateBones = true;
