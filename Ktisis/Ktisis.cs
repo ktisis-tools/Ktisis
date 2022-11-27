@@ -9,6 +9,7 @@ using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
+using Ktisis.Localization;
 using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Actor;
 using Ktisis.History;
@@ -50,6 +51,9 @@ namespace Ktisis {
 			}
 
 			Configuration.Validate();
+
+			/* Load the current localization */
+			Locale.LoadLocale(Configuration.Localization);
 
 			// Init interop stuff
 
