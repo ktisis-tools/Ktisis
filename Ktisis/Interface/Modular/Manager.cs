@@ -13,12 +13,12 @@ using Ktisis.Util;
 namespace Ktisis.Interface.Modular {
 	internal class Manager {
 
-		private static readonly List<Type> AvailableContainers = Assembly.GetExecutingAssembly().GetTypes()
-					  .Where(t => t.Namespace == "Ktisis.Interface.Modular.ItemTypes.Container")
-					  .ToList();
-		private static readonly List<Type> Available = Assembly.GetExecutingAssembly().GetTypes()
-					  .Where(t => t.Namespace == "Ktisis.Interface.Modular.ItemTypes")
-					  .ToList();
+		private const string NamespacePrefix = "Ktisis.Interface.Modular.ItemTypes.";
+
+		private static readonly List<Type> AvailableContainers = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Container").ToList();
+		private static readonly List<Type> AvailableSpliters = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Spliter").ToList();
+		private static readonly List<Type> AvailablePanel = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Panel").ToList();
+		private static readonly List<Type> Available = AvailableContainers.Concat(AvailableSpliters).Concat(AvailablePanel).ToList();
 
 
 		public static List<string> Handles = new();
