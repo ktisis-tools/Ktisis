@@ -39,7 +39,7 @@ namespace Ktisis.Interface.Components {
 				if (!cfg.BoneCategoryColors.TryGetValue(category.Name, out Vector4 categoryColor))
 					categoryColor = cfg.LinkedBoneCategoryColor;
 
-				if (ImGui.ColorEdit4(Locale.GetString(category.Name), ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
+				if (ImGui.ColorEdit4(Locale.GetString("boneCategory." + category.Name), ref categoryColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 					cfg.BoneCategoryColors[category.Name] = categoryColor;
 
 				return true;
@@ -53,7 +53,7 @@ namespace Ktisis.Interface.Components {
 				bool isOverloaded = Category.VisibilityOverload.Any(c => c == category.Name);
 				bool categoryState = isOverloaded || cfg.IsBoneCategoryVisible(category);
 				if (isOverloaded) ImGui.PushStyleColor(ImGuiCol.CheckMark, Workspace.ColGreen);
-				var changed = ImGui.Checkbox(Locale.GetString(category.Name), ref categoryState);
+				var changed = ImGui.Checkbox(Locale.GetString("boneCategory."+category.Name), ref categoryState);
 				if (isOverloaded) ImGui.PopStyleColor();
 
 				// clicks and modifiers handles
