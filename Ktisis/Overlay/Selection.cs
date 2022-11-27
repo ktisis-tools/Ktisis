@@ -18,6 +18,9 @@ namespace Ktisis.Overlay {
 		public static void Draw() {
 			ClickedItem = null;
 
+			if (OverlayWindow.GizmoOwner != null && !Ktisis.Configuration.DrawDotsWithGizmo)
+				return;
+
 			var draw = ImGui.GetWindowDrawList();
 
 			var hovered = new List<string>();

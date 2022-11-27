@@ -89,7 +89,7 @@ namespace Ktisis.Overlay {
 						continue; // Bone is hidden, move onto the next one.
 
 					// Access bone transform
-					var transform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
+					var transform = bone.AccessModelSpace();
 
 					if (bone.IsBusted())
 						continue; // bone's busted, skip it.
@@ -102,7 +102,7 @@ namespace Ktisis.Overlay {
 					var isVisible = world->WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
-					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton) {
+					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton && !(!Ktisis.Configuration.DrawLinesWithGizmo && OverlayWindow.GizmoOwner != null)) {
 						// TODO: Draw lines for parents of partials.
 
 						var parent = model->Skeleton->GetBone(p, parentId);

@@ -35,6 +35,7 @@ namespace Ktisis.Interface.Windows {
 		public static void Hide() {
 			Visible = false;
 		}
+		public static void Toggle() => Visible = !Visible;
 
 		// Draw
 
@@ -81,9 +82,19 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.Text(Locale.GetString("General"));
 
-			var openCtor = cfg.AutoOpenCtor;
-			if (ImGui.Checkbox(Locale.GetString("Open_plugin_load"), ref openCtor))
-				cfg.AutoOpenCtor = openCtor;
+			ImGui.AlignTextToFramePadding();
+			ImGui.Text(Locale.GetString("Open_plugin_load") + " ");
+			ImGui.SameLine();
+			var selectedOpenKtisisMethod = cfg.OpenKtisisMethod;
+			ImGui.SetNextItemWidth(GuiHelpers.AvailableWidth(0));
+			if (ImGui.BeginCombo("##OpenKtisisMethod", $"{selectedOpenKtisisMethod}")) {
+				foreach (var openKtisisMethod in Enum.GetValues<OpenKtisisMethod>()) {
+					if (ImGui.Selectable($"{openKtisisMethod}", openKtisisMethod == selectedOpenKtisisMethod))
+						cfg.OpenKtisisMethod = openKtisisMethod;
+				}
+				ImGui.SetItemDefaultFocus();
+				ImGui.EndCombo();
+			}
 
 			var displayCharName = !cfg.DisplayCharName;
 			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))
@@ -138,6 +149,14 @@ namespace Ktisis.Interface.Windows {
 				var drawLines = cfg.DrawLinesOnSkeleton;
 				if (ImGui.Checkbox(Locale.GetString("Draw_lines_on_skeleton"), ref drawLines))
 					cfg.DrawLinesOnSkeleton = drawLines;
+
+				var drawLinesGizmo = cfg.DrawLinesWithGizmo;
+				if (ImGui.Checkbox(Locale.GetString("Draw_lines_with_gizmo"), ref drawLinesGizmo))
+					cfg.DrawLinesWithGizmo = drawLinesGizmo;
+
+				var drawDotsGizmo = cfg.DrawDotsWithGizmo;
+				if (ImGui.Checkbox(Locale.GetString("Draw_dots_with_gizmo"), ref drawDotsGizmo))
+					cfg.DrawDotsWithGizmo = drawDotsGizmo;
 
 				var dotRadius = cfg.SkeletonDotRadius;
 				if (ImGui.SliderFloat(Locale.GetString("Dot_radius"), ref dotRadius, 0.01F, 15F, "%.1f"))

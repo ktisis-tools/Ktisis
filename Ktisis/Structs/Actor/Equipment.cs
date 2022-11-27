@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-using Ktisis.GameData.Excel;
+using Ktisis.Data.Excel;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]

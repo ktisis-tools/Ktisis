@@ -1,6 +1,6 @@
 using Ktisis.Structs.Actor;
 
-namespace Ktisis.GameData.Files {
+namespace Ktisis.Data.Files {
 	public class HumanCmp {
 		public uint[] Colors;
 

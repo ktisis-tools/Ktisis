@@ -11,6 +11,7 @@ using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Util;
 using Ktisis.Structs.Actor;
+using ImGuizmoNET;
 
 namespace Ktisis.Interface.Components {
 	// Thanks to Emyka for the original code:
@@ -53,37 +54,36 @@ namespace Ktisis.Interface.Components {
 		public bool DrawTable() {
 			var result = false;
 
-			FetchConfigurations();
+			var iconPosition = FontAwesomeIcon.LocationArrow;
+			var iconRotation = FontAwesomeIcon.Sync;
+			var iconScale = FontAwesomeIcon.ExpandAlt;
 
-			var iconPos = FontAwesomeIcon.LocationArrow;
-			var iconRot = FontAwesomeIcon.Sync;
-			var iconSca = FontAwesomeIcon.ExpandAlt;
+			FetchConfigurations();
 
 			var multiplier = 1f;
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
 			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
 
- 			// Attempt to find the exact size for any font and font size.
-			float[] sizes = new float[3];
-			sizes[0] = GuiHelpers.CalcIconSize(iconPos).X;
-			sizes[1] = GuiHelpers.CalcIconSize(iconRot).X;
-			sizes[2] = GuiHelpers.CalcIconSize(iconSca).X;
-			var rightOffset = GuiHelpers.GetRightOffset(sizes.Max());
-
-			var inputsWidth = ImGui.GetContentRegionAvail().X - rightOffset;
+			var inputsWidth = ImGui.GetContentRegionAvail().X - ControlButtons.ButtonSize.X - ImGui.GetStyle().ItemSpacing.X;
 			ImGui.PushItemWidth(inputsWidth);
+
+			// Position
 			result |= ImGui.DragFloat3("##Position", ref Position, BaseSpeedPos * multiplier,0,0, DigitPrecision);
 			ImGui.SameLine();
-			GuiHelpers.IconTooltip(iconPos, "Position", true);
+			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, iconPosition);
+ 
+			// Rotation
 			result |= ImGui.DragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, 0, 0, DigitPrecision);
 			ImGui.SameLine();
-			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
+			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, iconRotation);
+ 
+			// Scale
 			result |= ImGui.DragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, 0, 0, DigitPrecision);
 			ImGui.SameLine();
-			GuiHelpers.IconTooltip(iconSca, "Scale", true);
+			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, iconScale);
+
 			ImGui.PopItemWidth();
 			IsEditing = result;
-
 
 			if (Ktisis.Configuration.TransformTableDisplayMultiplierInputs) {
 				var input2Width = (inputsWidth / 3 * 2) - (ImGui.GetStyle().ItemInnerSpacing.X /3);

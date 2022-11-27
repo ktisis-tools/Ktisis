@@ -28,6 +28,10 @@ namespace Ktisis.Interface.Windows.Workspace {
 		// Toggle visibility
 
 		public static void Show() => Visible = true;
+		public static void OnEnterGposeToggle(Structs.Actor.State.ActorGposeState gposeState) {
+			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnEnterGpose)
+				Visible = gposeState == Structs.Actor.State.ActorGposeState.ON;
+		}
 
 		public static float PanelHeight => ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y;
 
@@ -60,9 +64,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 				// Pose switch
 				ControlButtons.DrawPoseSwitch();
-
-				// control buttons (gizmo op + extra)
-				ControlButtons.Draw();
 
 				var target = Ktisis.GPoseTarget;
 				if (target == null) return;
@@ -140,6 +141,9 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			var actor = (Actor*)target.Address;
 			if (actor->Model == null) return;
+
+			// Extra Controls
+			ControlButtons.DrawExtra();
 
 			// Parenting
 

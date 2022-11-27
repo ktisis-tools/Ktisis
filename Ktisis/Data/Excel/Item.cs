@@ -4,7 +4,7 @@ using Lumina.Excel;
 
 using Ktisis.Structs.Actor;
 
-namespace Ktisis.GameData.Excel {
+namespace Ktisis.Data.Excel {
 	public enum EquipSlot {
 		MainHand,
 		OffHand,

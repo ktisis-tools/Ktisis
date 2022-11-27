@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 
 using ImGuiNET;
@@ -6,17 +7,24 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
-using System.Linq;
 
 namespace Ktisis.Interface.Components {
 	public class BoneTree {
+		private static Vector2 _FrameMin;
+		private static Vector2 _FrameMax;
 
 		public static unsafe void Draw(Actor* actor) {
 			if (ImGui.CollapsingHeader("Bone List")) {
-				if (ImGui.BeginChildFrame(471, new Vector2(-1, ImGui.GetTextLineHeight() * 12),ImGuiWindowFlags.HorizontalScrollbar)) {
+				var lineHeight = ImGui.GetTextLineHeight();
+				if (ImGui.BeginChildFrame(471, new Vector2(-1, lineHeight * 12), ImGuiWindowFlags.HorizontalScrollbar)) {
 					var body = actor->Model->Skeleton->GetBone(0, 1);
 					DrawBoneTreeNode(body);
+
 					ImGui.EndChildFrame();
+
+					_FrameMin = ImGui.GetItemRectMin();
+					_FrameMax.X = ImGui.GetItemRectMax().X;
+					_FrameMax.Y = _FrameMin.Y + lineHeight * 11;
 				}
 			}
 		}
@@ -45,10 +53,16 @@ namespace Ktisis.Interface.Components {
 			var rectMax = ImGui.GetItemRectMax();
 
 			var mousePos = ImGui.GetMousePos();
+
+			var scrollMin = ImGui.GetScrollY();
+			var scrollMax = ImGui.GetScrollMaxY();
+
 			if (
 				ImGui.IsMouseClicked(ImGuiMouseButton.Left)
 				&& mousePos.X > rectMin.X && mousePos.X < rectMax.X
 				&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y
+				&& mousePos.X > _FrameMin.X && mousePos.X < _FrameMax.X
+				&& mousePos.Y > _FrameMin.Y && mousePos.Y < _FrameMax.Y
 			) {
 				executeIfClicked?.Invoke();
 			}
