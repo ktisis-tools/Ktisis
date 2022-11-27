@@ -45,6 +45,16 @@
     "overlay": {
       "title": "Overlay",
       
+      "skeleton": {
+        "header":"Skeleton lines and dots",
+        "drawLines": "Draw lines on skeleton",
+        "drawLineWhenSelecting": "Draw lines when selecting",
+        "drawDotsWhenSelecting": "Draw Dots when selecting",
+        "dotRadius": "Dot Radius",
+        "lineThickness": "Line Thickness"
+
+      },
+
       "boneColors": {
         "header": "Bone Colors",
         "link": {
