@@ -13,62 +13,61 @@ using Ktisis.Util;
 namespace Ktisis.Interface.Modular {
 	internal class Manager {
 
-		private static MethodInfo[] AvailableContainers = typeof(Container).GetMethods(BindingFlags.Public | BindingFlags.Static);
-		private static MethodInfo[] AvailableSpliters = typeof(Spliter).GetMethods(BindingFlags.Public | BindingFlags.Static);
-		private static MethodInfo[] AvailablePanels = typeof(Panel).GetMethods(BindingFlags.Public | BindingFlags.Static);
-		private static List<string> Available = AvailableContainers.Select(a => a.Name).Concat(AvailableSpliters.Select(a => a.Name)).Concat(AvailablePanels.Select(a => a.Name)).ToList();
+		private static readonly List<Type> AvailableContainers = Assembly.GetExecutingAssembly().GetTypes()
+					  .Where(t => t.Namespace == "Ktisis.Interface.Modular.ItemTypes.Container")
+					  .ToList();
+		private static readonly List<Type> Available = Assembly.GetExecutingAssembly().GetTypes()
+					  .Where(t => t.Namespace == "Ktisis.Interface.Modular.ItemTypes")
+					  .ToList();
 
-		public delegate void CI(ContentsInfo ci);
-		public static List<(Delegate, ContentsInfo)>? Config = new();
 
 		public static List<string> Handles = new();
+		public static List<IModularItem> Config = new();
 
 		public static void Init() {
 			Handles.Clear();
 			Config = ListConfigObjectToDelegate(Ktisis.Configuration.ModularConfig);
 		}
 		public static void Dispose() => Config = null;
-		public static void Render() => Config?.ForEach(d => d.Item1.DynamicInvoke(d.Item2));
+		public static void Render() => Config?.ForEach(d => d.Draw());
 
-		private static List<(Delegate, ContentsInfo)>? ListConfigObjectToDelegate(List<ConfigObject>? configObjects) {
+		private static List<IModularItem>? ListConfigObjectToDelegate(List<ConfigObject>? configObjects) {
 			if (configObjects == null) return null;
-			List<(Delegate, ContentsInfo)> listDelegateAndInfo = new();
+
+			List<IModularItem> listDelegateAndInfo = new();
 			foreach (var o in configObjects) {
 				var delegateAndInfo = ConfigObjectToDelegate(o);
 				if (delegateAndInfo == null) continue;
-				listDelegateAndInfo.Add(((Delegate, ContentsInfo))delegateAndInfo);
+				listDelegateAndInfo.Add(delegateAndInfo);
 			}
 			if (listDelegateAndInfo.Any())
 				return listDelegateAndInfo;
 			return null;
 		}
-		private static (Delegate, ContentsInfo)? ConfigObjectToDelegate(ConfigObject configObject) {
+		private static IModularItem? ConfigObjectToDelegate(ConfigObject configObject) {
 
-			Type? type = AvailableContainers.FirstOrDefault(i => i.Name == configObject.Name)?.DeclaringType;
-			if (type == null)
-				type = AvailableSpliters.FirstOrDefault(i => i.Name == configObject.Name)?.DeclaringType;
-			if (type == null)
-				type = AvailablePanels.FirstOrDefault(i => i.Name == configObject.Name)?.DeclaringType;
+			Type? type = Available.FirstOrDefault(i => i.Name == configObject.Type)?.DeclaringType;
 			if (type == null) return null;
 
-			MethodInfo? mi = type?.GetMethod(configObject.Name, BindingFlags.Public | BindingFlags.Static);
-			if (mi != null) {
 
-				var reflectionDelgate = Delegate.CreateDelegate(typeof(CI), mi);
+			string handle = $"Window {Handles.Count}##Modular##{Handles.Count}";
+			var param = new object[] {
+				Handles.Count,
+				handle,
+				ListConfigObjectToDelegate(configObject.Items)!
+			};
+			Handles.Add(handle);
+			var modularObject = Activator.CreateInstance(type, param);
 
-				string handle = $"Window {Handles.Count}##Modular##{Handles.Count}";
-				Handles.Add(handle);
+			MethodInfo? mi = type?.GetMethod(configObject.Type, BindingFlags.Public | BindingFlags.Static);
+			if (modularObject != null) {
 
-				List<(Delegate, ContentsInfo)>? actions = null;
-				if(configObject.Contents != null)
-					actions = ListConfigObjectToDelegate(configObject.Contents);
+	
 
-				var ci = new ContentsInfo {
-					Handle = handle,
-					Actions = actions
-				};
+				if(configObject.Items != null)
+					modularObject = ListConfigObjectToDelegate(configObject.Items);
 
-				return (reflectionDelgate, ci);
+				return (IModularItem)modularObject;
 			}
 			return null;
 		}
@@ -101,13 +100,13 @@ namespace Ktisis.Interface.Modular {
 			PopupSelect.HoverPopupWindow(
 				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
 				Available,
-				(e, input) => e.Where(t => t.Contains(input, StringComparison.OrdinalIgnoreCase)),
+				(e, input) => e.Where(t => t.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
 				(t, a) => { // draw Line
 					bool selected = ImGui.Selectable($"{t}##Modular##AddPanel##{t}", a);
 					bool focus = ImGui.IsItemFocused();
 					return (selected, focus);
 				},
-				(t) => Add(t),
+				(t) => Add(t.Name),
 				()=> IsAddPanelOpen = false, // on close
 				ref AddPanelSearch,
 				"Add Panel",
@@ -119,15 +118,15 @@ namespace Ktisis.Interface.Modular {
 		private static void Add(ConfigObject toAdd) {
 			if (Ktisis.Configuration.ModularConfig == null)
 				Ktisis.Configuration.ModularConfig = new();
-			if (IsContainer(toAdd.Name))
+			if (IsContainer(toAdd.Type))
 				Ktisis.Configuration.ModularConfig.Add(toAdd);
 			else
 				if (Ktisis.Configuration.ModularConfig!.Any()) {
 
-				if (Ktisis.Configuration.ModularConfig.Last()?.Contents == null)
-					Ktisis.Configuration.ModularConfig.Last().Contents = new() { toAdd };
+				if (Ktisis.Configuration.ModularConfig.Last()?.Items == null)
+					Ktisis.Configuration.ModularConfig.Last().Items = new() { toAdd };
 				else
-					Ktisis.Configuration.ModularConfig.Last().Contents?.Add(toAdd);
+					Ktisis.Configuration.ModularConfig.Last().Items?.Add(toAdd);
 			}
 			Init();
 		}
@@ -137,15 +136,15 @@ namespace Ktisis.Interface.Modular {
 			Init();
 		}
 		private static void DeleteSub(ConfigObject parent,ConfigObject toRemove) {
-			parent.Contents?.Remove(toRemove);
-			parent.Contents?.ForEach(cc => DeleteSub(cc, toRemove));
+			parent.Items?.Remove(toRemove);
+			parent.Items?.ForEach(cc => DeleteSub(cc, toRemove));
 		}
 
 
 		private static void TreeNode(ConfigObject cfgObj, bool selected = false) {
 
-			bool isLeaf = cfgObj.Contents == null || !cfgObj.Contents.Any();
-			string handle = cfgObj.Name;
+			bool isLeaf = cfgObj.Items == null || !cfgObj.Items.Any();
+			string handle = cfgObj.Type;
 			string id = cfgObj.GetHashCode().ToString();
 
 			bool open = ImGui.TreeNodeEx(id, ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.DefaultOpen | (selected ? ImGuiTreeNodeFlags.Selected : 0) | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow), handle);
@@ -178,7 +177,7 @@ namespace Ktisis.Interface.Modular {
 			if (open) {
 				// Recursive call...
 				if(!isLeaf)
-					cfgObj.Contents?.ForEach(c => TreeNode(c));
+					cfgObj.Items?.ForEach(c => TreeNode(c));
 
 				ImGui.TreePop();
 			}
@@ -192,12 +191,12 @@ namespace Ktisis.Interface.Modular {
 
 	[Serializable]
 	public class ConfigObject {
-		public string Name;
-		public List<ConfigObject>? Contents;
+		public string Type;
+		public List<ConfigObject>? Items;
 
-		public ConfigObject(string name, List<ConfigObject>? contents = null) {
-			this.Name = name;
-			this.Contents = contents;
+		public ConfigObject(string type, List<ConfigObject>? items = null) {
+			this.Type = type;
+			this.Items = items;
 		}
 	}
 }
