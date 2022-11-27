@@ -154,10 +154,10 @@ namespace Ktisis.Interface.Modular {
 					else
 						if (Ktisis.Configuration.ModularConfig!.Any()) {
 
-						if (Ktisis.Configuration.ModularConfig.First()?.Contents == null)
-							Ktisis.Configuration.ModularConfig.First().Contents = new() { addConfigObject };
+						if (Ktisis.Configuration.ModularConfig.Last()?.Contents == null)
+							Ktisis.Configuration.ModularConfig.Last().Contents = new() { addConfigObject };
 						else
-							Ktisis.Configuration.ModularConfig.First().Contents?.Add(addConfigObject);
+							Ktisis.Configuration.ModularConfig.Last().Contents?.Add(addConfigObject);
 					}
 					Init();
 				},
