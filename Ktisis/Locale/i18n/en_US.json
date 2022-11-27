@@ -1,0 +1,184 @@
+{
+	"$meta": {
+		"displayName": "English",
+		"selfName": "English",
+		"__comment": "Using null element to signal 'et al' in the array below. Don't do this for your own localization.",
+		"maintainers": [
+			"@chirpcodes",
+			null
+		]
+	},
+
+	"tab": {
+		"general": {
+			"title": "General"
+		},
+		"settings": {
+			"title": "Settings"
+		}
+	},
+
+	"config": {
+
+		"title": "Ktisis Settings",
+
+		"interface": {
+			"title": "Interface",
+			"general": {
+				"title": "General",
+				"autoOpenCtor": "Auto-open on plugin load",
+				"hideCharName": "Hide Character Name",
+				"censorNSFW": "Censor NSFW"
+			},
+			"transformTable": {
+				"title": "Transform Table",
+				"digitPrecision": "Digit Precision",
+				"basePositionSpeed": "Base Position Speed",
+				"baseRotationSpeed": "Base Rotation Speed",
+				"baseScaleSpeed": "Base Scale Speed",
+				"ctrlSpeedMult": "Ctrl Speed Multiplier",
+				"shiftSpeedMult": "Shift Speed Multiplier",
+				"showSpeedMultiplierInputs": "Show speed multiplier inputs"
+			}
+		},
+
+		"overlay": {
+			"title": "Overlay",
+
+			"boneColors": {
+				"header": "Bone Colors",
+				"link": {
+					"enable": "Link bone colors",
+					"disable": "Unlink bone colors"
+				},
+				"erase": {
+					"tooltip": "Hold Control and Shift to erase colors"
+				},
+				"allEdit": {
+					"label": "Bone colors"
+				},
+				"categories": {
+					"reset": {
+						"tooltip": "Hold Control and Shift to reset colors to their default values"
+					},
+					"placeholderText": "Categories will be added after bones are displayed once"
+				}
+			},
+
+			"bonePositions": {
+				"header": "Edit Bone Positions"
+			}
+		},
+
+		"gizmo": {
+			"title": "Gizmo",
+			"allowAxisFlip": "Flip axis to face camera"
+		},
+
+		"input": {
+			"title": "Input",
+			"selectBehavior": {
+				"__comment": "Below key is not yet inserted.",
+				"title": "Selection Behavior",
+				"disableLeftClickTarget": "Disable changing target with left click",
+				"disableRightClickTarget": "Disable changing target with right click"
+			},
+
+			"keybind": {
+				"title": "Keyboard Shortcuts",
+				"enable": "Enable",
+
+				"assignByKeyPress": {
+					"title": "Pressing Keys",
+					"helpText": "To assign a key or key combination:\n1. Hold the key or key combination\n2. Click on the desired action\n\nDo not hold any key to unassign."
+				},
+
+				"keybindTable": {
+					"keys": "Keys",
+					"action": "Action"
+				},
+
+				"purpose": {
+					"generic": {
+						"__comment": "These are used for category keybindings. (Likely to be replaced with a placeholder system in future)",
+						"toggle": "Toggle",
+						"hold": "Hold",
+						"release": "Release",
+						"__comment": "This key is (hopefully) never used.",
+						"invalid": "N/A"
+					},
+					"globalModifierKey": "Global Modifier Key",
+					"switchToTranslate": "Switch to translate",
+					"switchToRotate": "Switch to translate",
+					"switchToScale": "Switch to translate",
+					"switchToUniversal": "Switch to universal",
+					"toggleLocalWorld": "Toggle local/world",
+					"holdToHideSkeleton": "Hold to hide skeleton",
+					"clearCategoryVisibilityOverload": "Clear category visibility overload",
+					"holdAllCategoryVisibilityOverload": "Hold all category visibility overload",
+					"cycleSiblingLinkModes": "Circle through sibling link modes"
+				}
+			}
+		},
+		"references": {
+			"title": "References",
+			"explanation": "Overlay reference images onto your game, helping you to get just the right pose.",
+			"imageAlpha": "Opacity",
+			"hideWindowDecoration": "Hide window decoration",
+			"images": {
+				"title": "Reference images",
+				"dialog": {
+					"title": "Add reference file",
+					"__comment": "The previous translation files included the actual technical file filter here as well, which is... dangerous.",
+					"filter": "Image files",
+
+				},
+				"addText": "Add new reference image",
+				"add": "Add reference file",
+				"supportedTypes": ""
+			}
+		},
+
+		"language": {
+			"title": "Language",
+			"select": "Language",
+			"translateBones": "Translate Bone Names"
+		},
+
+		"data": {
+			"title": "Data",
+			"glamourDresser": {
+				"__comment": "These are currently a little messy... need placeholder system to fix this.",
+				"memoryCount": "Glamour Plates in memory: ",
+				"validCount": {
+					"pre": "Found ",
+					"post": "valid Glamour Plates"
+				}
+			},
+
+			"sync": {
+				"tooltip": "Refresh Glamour Plate memory for the Sets lookups.\nThis memory is kept after a restart.\n\nRequirements:\n One of these windows must be opened: \"Glamour Plate Creation\" (by the Glamour Dresser) or \"Plate Selection\" (by the Glamour Plate skill)."
+			},
+			"dispose": {
+				"tooltip": "Dispose of the Glamour Plates memory and remove configurations for ALL characters."
+			}
+		}
+	},
+
+	"tribe": {
+
+	},
+
+	"race": {
+
+	},
+
+	"bone": {
+
+	},
+
+	"boneCategory": {
+
+	}
+
+}
