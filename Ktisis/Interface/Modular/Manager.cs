@@ -102,8 +102,12 @@ namespace Ktisis.Interface.Modular {
 				Available,
 				(e, input) => e.Where(t => t.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
 				(t, a) => { // draw Line
-					bool selected = ImGui.Selectable($"{t}##Modular##AddPanel##{t}", a);
+					bool selected = ImGui.Selectable($"{t.Name}##Modular##AddPanel##{t}", a);
 					bool focus = ImGui.IsItemFocused();
+					ImGui.SameLine();
+					ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
+					GuiHelpers.TextRight(t.Namespace!.Split('.').Last());
+					ImGui.PopStyleVar();
 					return (selected, focus);
 				},
 				(t) => Add(t.Name),
