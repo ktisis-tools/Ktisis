@@ -151,7 +151,6 @@ namespace Ktisis.Interface.Modular {
 			bool isLeaf = cfgObj.Contents == null || !cfgObj.Contents.Any();
 			string handle = cfgObj.Name;
 			string id = cfgObj.GetHashCode().ToString();
-			//PluginLog.Debug($"modular node {handle} {isLeaf} {cfgObj.Contents?.Count}");
 
 			bool open = ImGui.TreeNodeEx(id, ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.DefaultOpen | (selected ? ImGuiTreeNodeFlags.Selected : 0) | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow), handle);
 
@@ -190,9 +189,6 @@ namespace Ktisis.Interface.Modular {
 		}
 	}
 
-	internal class ModItem {
-		public StringHandle handle { get; set; }
-	}
 	public class ContentsInfo {
 		public string Handle = "##modular##handle";
 		public List<(Delegate, ContentsInfo)>? Actions = null;
