@@ -117,16 +117,16 @@
             "__comment": "This key is (hopefully) never used.",
             "invalid": "N/A"
           },
-          "globalModifierKey": "Global Modifier Key",
-          "switchToTranslate": "Switch to translate",
-          "switchToRotate": "Switch to translate",
-          "switchToScale": "Switch to translate",
-          "switchToUniversal": "Switch to universal",
-          "toggleLocalWorld": "Toggle local/world",
-          "holdToHideSkeleton": "Hold to hide skeleton",
-          "clearCategoryVisibilityOverload": "Clear category visibility overload",
-          "holdAllCategoryVisibilityOverload": "Hold all category visibility overload",
-          "cycleSiblingLinkModes": "Circle through sibling link modes"
+          "GlobalModifierKey": "Global Modifier Key",
+          "SwitchToTranslate": "Switch to translate",
+          "SwitchToRotate": "Switch to translate",
+          "SwitchToScale": "Switch to translate",
+          "SwitchToUniversal": "Switch to universal",
+          "ToggleLocalWorld": "Toggle local/world",
+          "HoldToHideSkeleton": "Hold to hide skeleton",
+          "ClearCategoryVisibilityOverload": "Clear category visibility overload",
+          "HoldAllCategoryVisibilityOverload": "Hold all category visibility overload",
+          "CircleThroughSiblingLinkModes": "Circle through sibling link modes"
         }
       }
     },
