@@ -21,9 +21,24 @@ namespace Ktisis.Interface.Components {
 		private static bool IsSettingsHovered = false;
 		private static bool IsSettingsActive = false;
 
+
+		public static FontAwesomeIcon IconPosition = FontAwesomeIcon.LocationArrow;
+		public static FontAwesomeIcon IconRotation = FontAwesomeIcon.Sync;
+		public static FontAwesomeIcon IconScale = FontAwesomeIcon.ExpandAlt;
+		public static FontAwesomeIcon IconUniversal = FontAwesomeIcon.Circle;
+
 		// utils
 		public static void VerticalAlignTextOnButtonSize(float percentage = 0.667f) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ButtonSize.Y / 2 - ImGui.GetFontSize() * percentage)); // align text with button size
 
+		public static void DrawGizmoOperations() {
+			ButtonChangeOperation(OPERATION.TRANSLATE, IconPosition);
+			ImGui.SameLine();
+			ButtonChangeOperation(OPERATION.ROTATE, IconRotation);
+			ImGui.SameLine();
+			ButtonChangeOperation(OPERATION.SCALE, IconScale);
+			ImGui.SameLine();
+			ButtonChangeOperation(OPERATION.UNIVERSAL, IconUniversal);
+		}
 		public static void DrawExtra() {
 			var gizmode = Ktisis.Configuration.GizmoMode;
 			if (GuiHelpers.IconButtonTooltip(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ButtonSize))
@@ -155,6 +170,7 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.TextRight(label, offsetWidth);
 			if (Ktisis.IsInGPose) ImGui.PopStyleColor();
 			ImGui.SameLine();
+
 
 			if (!Ktisis.IsInGPose)
 				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);

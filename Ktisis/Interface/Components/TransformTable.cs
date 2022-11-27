@@ -68,9 +68,6 @@ namespace Ktisis.Interface.Components {
 		public bool DrawTable() {
 			var result = false;
 
-			var iconPosition = FontAwesomeIcon.LocationArrow;
-			var iconRotation = FontAwesomeIcon.Sync;
-			var iconScale = FontAwesomeIcon.ExpandAlt;
 
 			FetchConfigurations();
 
@@ -86,17 +83,17 @@ namespace Ktisis.Interface.Components {
 			// Position
 			result |= ColoredDragFloat3("##Position", ref Position, BaseSpeedPos * multiplier, axisColors);
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, iconPosition);
-
+			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, ControlButtons.IconPosition);
+ 
 			// Rotation
 			result |= ColoredDragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, axisColors);
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, iconRotation);
-
+			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, ControlButtons.IconRotation);
+ 
 			// Scale
 			result |= ColoredDragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, axisColors);
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, iconScale);
+			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, ControlButtons.IconScale);
 
 			IsEditing = result;
 
