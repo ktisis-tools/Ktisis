@@ -17,6 +17,7 @@ using Ktisis.Structs.Input;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Structs.Actor.State;
+using System;
 
 namespace Ktisis.History {
 	public static class HistoryManager {
@@ -78,40 +79,43 @@ namespace Ktisis.History {
 
 		private unsafe static void OnGizmoChange(GizmoState state) {
 			if (!PoseHooks.PosingEnabled) return;
+			if (History == null) return;
 
-			var newState = state;
 			var bone = Skeleton.GetSelectedBone();
 			if (bone == null) return;
 
+			var newState = state;
 			var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
 			var matrix = Interop.Alloc.GetMatrix(boneTransform);
 
 			if ((newState == GizmoState.EDITING) && (_currentGizmoState == GizmoState.IDLE)) {
 				PluginLog.Verbose("Started Gizmo edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
-				var isBoneInHistory = History?.FirstOrDefault(historyItem => historyItem.Bone?.UniqueName == bone?.UniqueName) != null;
-				if (!isBoneInHistory) AddEntryToHistory(matrix, bone);
+				HistoryItem entryToAdd = new ActorBone(matrix, bone);
+				if (!entryToAdd.IsElemInHistory()) AddEntryToHistory(new ActorBone(matrix, bone));
 			}
 			if (newState == GizmoState.IDLE && _currentGizmoState == GizmoState.EDITING) {
 				PluginLog.Verbose("Ended Gizmo edit");
-				AddEntryToHistory(matrix, bone);
+				AddEntryToHistory(new ActorBone(matrix, bone));
 			}
 			_currentGizmoState = newState;
 		}
 
 		private unsafe static void OnTransformationMatrixChange(TransformTableState state, Matrix4x4 matrix, Bone? bone, Actor* actor) {
 			if (!PoseHooks.PosingEnabled) return;
+			if (History == null) return;
+
 			var newState = state;
 			if ((newState == TransformTableState.EDITING) && (_currentTtState == TransformTableState.IDLE)) {
 				PluginLog.Verbose("Started TT edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
-				var isBoneInHistory = History?.FirstOrDefault(historyItem => historyItem.Bone?.UniqueName == bone?.UniqueName) != null;
-				if (!isBoneInHistory) AddEntryToHistory(matrix, bone);
+				HistoryItem entryToAdd = new ActorBone(matrix, bone);
+				if (!entryToAdd.IsElemInHistory()) AddEntryToHistory(new ActorBone(matrix, bone));
 			}
 
 			if ((newState == TransformTableState.IDLE) && (_currentTtState == TransformTableState.EDITING)) {
 				PluginLog.Verbose("Finished TT edit");
-				AddEntryToHistory(matrix, bone);
+				AddEntryToHistory(new ActorBone(matrix, bone));
 			}
 
 			_currentTtState = newState;
@@ -119,78 +123,39 @@ namespace Ktisis.History {
 
 		// Methods
 
-		private unsafe static void AddEntryToHistory(Matrix4x4 tt, Bone? bone) {
+		private unsafe static void AddEntryToHistory(HistoryItem historyItem) {
 			if (History == null) {
 				PluginLog.Warning("Attempted to add entry to uninitialised History list.");
 				return;
 			}
-
-			History!.Insert(_maxIdx, new(tt, bone, (Actor*)Ktisis.GPoseTarget!.Address));
-			_currentIdx++;
-			_maxIdx++;
-			PluginLog.Verbose($"Current Idx: {_currentIdx} - Max Idx: {_maxIdx}");
-			printHistory(_maxIdx);
-		}
-
-		//Thanks Emyka for the help on the bone undo/redo!
-		private unsafe static void UpdateSkeleton() {
-			var historyToUndo = History![_currentIdx - 1];
-			var transformToRollbackTo = historyToUndo.TransformationMatrix;
-			var historyBone = historyToUndo.Bone!;
-			var isGlobalRotation = historyBone is null;
-			var model = historyToUndo.Actor->Model;
-
-			if (model is null) return;
-			if (isGlobalRotation) { //There is no bone if you have a global rotation.
-				Interop.Alloc.SetMatrix(&model->Transform, transformToRollbackTo);
+			if (historyItem == null) {
+				PluginLog.Warning("Attempted to add a null entry to the history list.");
 				return;
 			}
 
-			var bone = model->Skeleton->GetBone(historyBone!.Partial, historyBone!.Index);
-			var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+			HistoryItem? historyToAdd =
+				historyItem switch {
+					ActorBone actorBone => new ActorBone(actorBone.TransformationMatrix, actorBone.Bone),
+					_ => null,
+				};
+			if (historyToAdd == null) return;
 
-			// Write our updated matrix to memory.
-			var initialRot = boneTransform->Rotation.ToQuat();
-			var initialPos = boneTransform->Translation.ToVector3();
-
-			Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);
-
-			// Bone parenting
-			// Adapted from Anamnesis Studio code shared by Yuki - thank you!
-
-			var sourcePos = boneTransform->Translation.ToVector3();
-			var deltaRot = boneTransform->Rotation.ToQuat() / initialRot;
-			var deltaPos = sourcePos - initialPos;
-
-			UpdateChildren(bone, sourcePos, deltaRot, deltaPos);
+			History.Insert(_maxIdx, historyToAdd);
+			_currentIdx++;
+			_maxIdx++;
 		}
 
-		private static unsafe void UpdateChildren(Bone bone, Vector3 sourcePos, Quaternion deltaRot, Vector3 deltaPos) {
-			Matrix4x4 matrix;
-			var descendants = bone!.GetDescendants();
-			foreach (var child in descendants) {
-				var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
-
-				var offset = access->Translation.ToVector3() - sourcePos;
-				offset = Vector3.Transform(offset, deltaRot);
-
-				matrix = Interop.Alloc.GetMatrix(access);
-				matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
-				matrix.Translation = deltaPos + sourcePos + offset;
-				Interop.Alloc.SetMatrix(access, matrix);
-			}
+		private unsafe static void UpdateSkeleton() {
+			History![_currentIdx - 1].Update();
 		}
 
 		// Debugging
 
-		private static void printHistory(int until) {
+		private static void PrintHistory(int until) {
+			if (History == null) return;
 			var str = "\n";
 			for (int i = 0; i < until; i++) {
-				str += $"{i + 1}: ";
-				var entry = History![i];
-				if (entry.Bone is null) str += $"Bone Global";
-				else str += $"Bone {Locale.GetBoneName(entry.Bone!.HkaBone.Name.String)}";
-				str += "\n";
+				str += $"{i + 1}: {History[i].DebugPrint()}\n";
 			}
 			PluginLog.Verbose(str);
 		}
@@ -200,18 +165,21 @@ namespace Ktisis.History {
 
 			_alternativeTimelinesCreated++;
 			PluginLog.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
+			createNewTimeline();
+		}
 
+		private static void createNewTimeline() {
 			var newHistory = History!
-				.Select(e => e.Clone())
-				.ToList()
-				.GetRange(0, _currentIdx);
+							.Select(e => e.Clone())
+							.ToList()
+							.GetRange(0, _currentIdx);
 
-			printHistory(_currentIdx - 1);
-			var currBone = newHistory[_currentIdx - 1].Bone;
-			var isBoneInHistory = newHistory?.FirstOrDefault(historyItem => historyItem.Bone?.UniqueName == currBone?.UniqueName) != null;
+			HistoryItem? currentElem = newHistory[_currentIdx - 1];
+			var isElemInHistory = currentElem.IsElemInHistory();
 
-			//We need to decrement by 1 if there is only one appearance of that bone in the History => It is the idle state.
-			var offset = isBoneInHistory ? 1 : 0;
+			//We need to decrement by 1 if there is only one appearance of that elem in the History => It is the idle state.
+			//IMPORTANT: Could this cause an issue? 
+			var offset = isElemInHistory ? 1 : 0;
 
 			var newMaxIdx = _currentIdx - offset;
 			History = newHistory!.GetRange(0, newMaxIdx);
