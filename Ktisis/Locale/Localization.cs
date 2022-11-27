@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
@@ -9,33 +10,19 @@ using Ktisis.Interface;
 
 namespace Ktisis.Localization {
 	public static class Locale {
-		public static UserLocale Loaded = UserLocale.None;
-		public static JObject Strings = new();
+		private static LocaleData Data = null!;
 
 		public static List<UserLocale> Languages = new() {
 			UserLocale.English,
 			UserLocale.German
 		};
 
-		public static UserLocale GetCurrent() {
-			return Ktisis.Configuration.Localization;
+		public static string GetString(string handle) {
+			return Data.Translate(handle);
 		}
 
-		public static string GetString(string handle) {
-			var lang = GetCurrent();
-			if (lang != Loaded) {
-				Loaded = lang;
-
-				try {
-					var file = new StreamReader( GetLocaleFile(lang) );
-					using (var reader = new JsonTextReader(file))
-						Strings = (JObject)JToken.ReadFrom(reader);
-				} catch {
-					Logger.Error($"Failed to fetch localization: {lang}");
-				}
-			}
-
-			return Strings.ContainsKey(handle) ? (string)Strings[handle]! : handle;
+		public static bool HasTranslationFor(string handle) {
+			return Data.HasTranslationFor(handle);
 		}
 
 		public static string GetBoneName(string handle) {
@@ -43,7 +30,7 @@ namespace Ktisis.Localization {
 		}
 		public static string GetInputPurposeName(Input.Purpose purpose) {
 			string regularPurposeString = $"Keyboard_Action_{purpose}";
-			if(Strings.ContainsKey(regularPurposeString))
+			if(HasTranslationFor(regularPurposeString))
 				return GetString(regularPurposeString);
 
 			bool isHold = (int)purpose >= Input.FirstCategoryPurposeHold && (int)purpose < Input.FirstCategoryPurposeToggle;
@@ -56,20 +43,25 @@ namespace Ktisis.Localization {
 			return regularPurposeString;
 		}
 
-		public static Stream GetLocaleFile(UserLocale lang) {
-			Assembly assembly = Assembly.GetExecutingAssembly();
-			string assemblyName = assembly.GetName().Name!;
+		/* TODO: Remove this, and instead use the technical name as the identifier */
+		public static void LoadLocale(UserLocale value) {
+			LoadLocale(value switch {
+				UserLocale.English => "en_US",
+				UserLocale.French => "fr_FR",
+				UserLocale.German => "de_DE",
+				UserLocale.Japanese => "jp_JP",
+				var _ => throw new ArgumentException("Unknown UserLocale", nameof(value))
+			});
+		}
 
-			var path = $"{assemblyName}.Locale.i18n.{lang}.json";
-
-			Stream? stream = assembly.GetManifestResourceStream(path);
-			if (stream == null)
-				throw new FileNotFoundException(path);
-
-			return stream;
+		public static void LoadLocale(string technicalName) {
+			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+			if (Data == null || Data.MetaData.TechnicalName != technicalName)
+				Data = LocaleDataLoader.LoadData(technicalName);
 		}
 	}
 
+	/* TODO: Remove this and instead scan for locale resources in the Assembly */
 	public enum UserLocale {
 		None = -1,
 		// these don't exist yet
