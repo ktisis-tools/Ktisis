@@ -28,16 +28,16 @@ namespace Ktisis.Localization {
 		}
 
 		public static string GetBoneName(string handle) {
-			return Ktisis.Configuration.TranslateBones ? GetString(handle) : handle;
+			return Ktisis.Configuration.TranslateBones ? GetString("bone." + handle) : handle;
 		}
 		public static string GetInputPurposeName(Input.Purpose purpose) {
-			string regularPurposeString = $"Keyboard_Action_{purpose}";
+			string regularPurposeString = $"config.input.keybind.purpose.{purpose}";
 			if(HasTranslationFor(regularPurposeString))
 				return GetString(regularPurposeString);
 
 			bool isHold = (int)purpose >= Input.FirstCategoryPurposeHold && (int)purpose < Input.FirstCategoryPurposeToggle;
 			bool isToggle = (int)purpose >= Input.FirstCategoryPurposeToggle;
-			string actionHandle = isHold ? "Input_Generic_Hold" : (isToggle ? "Input_Generic_Toggle" : "Input_Generic_Not_Applicable");
+			string actionHandle = isHold ? "config.input.keybind.purpose.generic.hold" : (isToggle ? "config.input.keybind.purpose.generic.toggle" : "config.input.keybind.purpose.generic.invalid");
 
 			if (Input.PurposesCategories.TryGetValue(purpose, out var category))
 				return GetString(actionHandle) + " " + GetString(category.Name);
