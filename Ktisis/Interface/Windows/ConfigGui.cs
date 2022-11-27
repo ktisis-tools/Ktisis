@@ -501,7 +501,7 @@ namespace Ktisis.Interface.Windows {
 		// References
 
 		public static void DrawReferencesTab(Configuration cfg) {
-			ImGui.Text(Locale.GetString("config.references_tab.explanation"));
+			ImGui.TextWrapped(Locale.GetString("config.references_tab.explanation"));
 			var alpha = cfg.ReferenceAlpha;
 			if (ImGui.SliderFloat(Locale.GetString("config.references_tab.image_transparency"), ref alpha, 0.0f, 1.0f)) {
 				cfg.ReferenceAlpha = alpha;
