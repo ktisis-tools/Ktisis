@@ -64,6 +64,7 @@ namespace Ktisis.Interface.Windows {
 						DrawLanguageTab(cfg);
 					if (ImGui.BeginTabItem("Data"))
 						DrawDataTab(cfg);
+					Modular.Manager.DrawConfigTab(cfg);
 
 					ImGui.EndTabBar();
 				}

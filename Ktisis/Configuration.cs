@@ -35,7 +35,7 @@ namespace Ktisis
 		public bool AutoOpenCtor { get; set; } = false;
 		public OpenKtisisMethod OpenKtisisMethod { get; set; } = OpenKtisisMethod.OnEnterGpose;
 
-		public List<ConfigObject>? ModularConfig { get; set; } = null;
+		public List<ConfigObject> ModularConfig { get; set; } = new();
 		public bool DisplayCharName { get; set; } = true;
 		public bool CensorNsfw { get; set; } = true;
 

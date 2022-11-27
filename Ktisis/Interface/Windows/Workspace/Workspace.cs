@@ -53,7 +53,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			if (!Visible)
 				return;
 
-			//if(Ktisis.Configuration.ModularConfig != null)
+			if(Ktisis.Configuration.ModularConfig != null)
 				Modular.Manager.Render();
 
 			var gposeOn = Ktisis.IsInGPose;
