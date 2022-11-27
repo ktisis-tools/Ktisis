@@ -157,6 +157,8 @@ namespace Ktisis.Interface.Modular {
 
 			ImGui.PushID(id);
 			if (ImGui.BeginPopupContextItem()) {
+				if (GuiHelpers.IconButtonHoldConfirm(Dalamud.Interface.FontAwesomeIcon.Trash, $"Delete {handle}"))
+					DeleteCfgObject(cfgObj);
 				// Some processing...
 				ImGui.EndPopup();
 			}
