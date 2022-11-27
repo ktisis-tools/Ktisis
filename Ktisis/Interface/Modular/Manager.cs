@@ -18,7 +18,6 @@ namespace Ktisis.Interface.Modular {
 		private static MethodInfo[] AvailablePanels = typeof(Panel).GetMethods(BindingFlags.Public | BindingFlags.Static);
 		private static List<string> Available = AvailableContainers.Select(a => a.Name).Concat(AvailableSpliters.Select(a => a.Name)).Concat(AvailablePanels.Select(a => a.Name)).ToList();
 
-
 		public delegate void CI(ContentsInfo ci);
 		public static List<(Delegate, ContentsInfo)>? Config = new();
 
@@ -31,9 +30,7 @@ namespace Ktisis.Interface.Modular {
 		public static void Dispose() => Config = null;
 		public static void Render() => Config?.ForEach(d => d.Item1.DynamicInvoke(d.Item2));
 
-
-
-		public static List<(Delegate, ContentsInfo)>? ListConfigObjectToDelegate(List<ConfigObject>? configObjects) {
+		private static List<(Delegate, ContentsInfo)>? ListConfigObjectToDelegate(List<ConfigObject>? configObjects) {
 			if (configObjects == null) return null;
 			List<(Delegate, ContentsInfo)> listDelegateAndInfo = new();
 			foreach (var o in configObjects) {
@@ -45,7 +42,7 @@ namespace Ktisis.Interface.Modular {
 				return listDelegateAndInfo;
 			return null;
 		}
-		public static (Delegate, ContentsInfo)? ConfigObjectToDelegate(ConfigObject configObject) {
+		private static (Delegate, ContentsInfo)? ConfigObjectToDelegate(ConfigObject configObject) {
 
 			Type? type = AvailableContainers.FirstOrDefault(i => i.Name == configObject.Name)?.DeclaringType;
 			if (type == null)
@@ -84,14 +81,14 @@ namespace Ktisis.Interface.Modular {
 		public static void DrawConfigTab(Configuration cfg) {
 			if (ImGui.BeginTabItem("Modular")) {
 
-				if(ImGui.BeginChildFrame(958,new(ImGui.GetContentRegionAvail().X,300))){
+				if (ImGui.BeginChildFrame(958, new(ImGui.GetContentRegionAvail().X, 300))) {
 					var modularConfig = cfg.ModularConfig;
 					modularConfig?.ForEach(c => TreeNode(c));
 					ImGui.EndChildFrame();
 				}
 
 				if (GuiHelpers.IconButton(Dalamud.Interface.FontAwesomeIcon.Plus))
-				IsAddPanelOpen = true;
+					IsAddPanelOpen = true;
 
 				ImGui.EndTabItem();
 			}
@@ -110,39 +107,38 @@ namespace Ktisis.Interface.Modular {
 					bool focus = ImGui.IsItemFocused();
 					return (selected, focus);
 				},
-				(t) => { // on Select
-					PluginLog.Debug($"adding {t}");
-					ConfigObject addConfigObject = new ConfigObject(t);
-					if (Ktisis.Configuration.ModularConfig == null)
-						Ktisis.Configuration.ModularConfig = new();
-					if (IsContainer(t))
-						Ktisis.Configuration.ModularConfig.Add(addConfigObject);
-					else
-						if (Ktisis.Configuration.ModularConfig!.Any()) {
-
-						if (Ktisis.Configuration.ModularConfig.Last()?.Contents == null)
-							Ktisis.Configuration.ModularConfig.Last().Contents = new() { addConfigObject };
-						else
-							Ktisis.Configuration.ModularConfig.Last().Contents?.Add(addConfigObject);
-					}
-					Init();
-				},
+				(t) => Add(t),
 				()=> IsAddPanelOpen = false, // on close
 				ref AddPanelSearch,
 				"Add Panel",
 				"##addpanel_select",
 				"##addpanel_search");
 		}
+		private static bool IsContainer(string handle) => AvailableContainers.Any(a => a.Name == handle);
+		private static void Add(string handle) => Add(new ConfigObject(handle));
+		private static void Add(ConfigObject toAdd) {
+			if (Ktisis.Configuration.ModularConfig == null)
+				Ktisis.Configuration.ModularConfig = new();
+			if (IsContainer(toAdd.Name))
+				Ktisis.Configuration.ModularConfig.Add(toAdd);
+			else
+				if (Ktisis.Configuration.ModularConfig!.Any()) {
 
-		public static bool IsContainer(string handle) => AvailableContainers.Any(a => a.Name == handle);
-		public static void DeleteCfgObject(ConfigObject toRemove) {
-			Ktisis.Configuration.ModularConfig?.ForEach(c => DeleteSubCfgObject(c, toRemove));
+				if (Ktisis.Configuration.ModularConfig.Last()?.Contents == null)
+					Ktisis.Configuration.ModularConfig.Last().Contents = new() { toAdd };
+				else
+					Ktisis.Configuration.ModularConfig.Last().Contents?.Add(toAdd);
+			}
+			Init();
+		}
+		private static void Delete(ConfigObject toRemove) {
+			Ktisis.Configuration.ModularConfig?.ForEach(c => DeleteSub(c, toRemove));
 			Ktisis.Configuration.ModularConfig?.Remove(toRemove);
 			Init();
 		}
-		public static void DeleteSubCfgObject(ConfigObject parent,ConfigObject toRemove) {
+		private static void DeleteSub(ConfigObject parent,ConfigObject toRemove) {
 			parent.Contents?.Remove(toRemove);
-			parent.Contents?.ForEach(cc => DeleteSubCfgObject(cc, toRemove));
+			parent.Contents?.ForEach(cc => DeleteSub(cc, toRemove));
 		}
 
 
@@ -157,7 +153,7 @@ namespace Ktisis.Interface.Modular {
 			ImGui.PushID(id);
 			if (ImGui.BeginPopupContextItem()) {
 				if (GuiHelpers.IconButtonHoldConfirm(Dalamud.Interface.FontAwesomeIcon.Trash, $"Delete {handle}"))
-					DeleteCfgObject(cfgObj);
+					Delete(cfgObj);
 				// Some processing...
 				ImGui.EndPopup();
 			}
@@ -167,7 +163,7 @@ namespace Ktisis.Interface.Modular {
 				// Some processing...
 			}
 			if (ImGui.IsItemClicked() && ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)
-				DeleteCfgObject(cfgObj);
+				Delete(cfgObj);
 
 			if (ImGui.BeginDragDropTarget()) {
 				// Some processing...
