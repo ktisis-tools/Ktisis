@@ -13,39 +13,23 @@ using Ktisis.Util;
 namespace Ktisis.Interface.Modular {
 	internal class Manager {
 
-
-		public delegate void Spliters(string handle, List<Action>? contents);
-		public static Spliters? OnSpliters = null;
-
-
 		private static MethodInfo[] AvailableContainers = typeof(Container).GetMethods(BindingFlags.Public | BindingFlags.Static);
 		private static MethodInfo[] AvailableSpliters = typeof(Spliter).GetMethods(BindingFlags.Public | BindingFlags.Static);
 		private static MethodInfo[] AvailablePanels = typeof(Panel).GetMethods(BindingFlags.Public | BindingFlags.Static);
-
-		private static List<string> Available = AvailableContainers.Select(a=>a.Name).Concat(AvailableSpliters.Select(a=>a.Name)).Concat(AvailablePanels.Select(a => a.Name)).ToList();
+		private static List<string> Available = AvailableContainers.Select(a => a.Name).Concat(AvailableSpliters.Select(a => a.Name)).Concat(AvailablePanels.Select(a => a.Name)).ToList();
 
 
 		public delegate void CI(ContentsInfo ci);
-
-
-		// Acts as deserialized json for testing
-		private static List<ConfigObject> Test = new() {
-			new("Window", new() {
-				new ConfigObject("ActorsList")
-			}),
-			new("Window", new() {
-			}),
-		};
-
 		public static List<(Delegate, ContentsInfo)>? Config = new();
 
 		public static List<string> Handles = new();
-
 
 		public static void Init() {
 			Handles.Clear();
 			Config = ListConfigObjectToDelegate(Ktisis.Configuration.ModularConfig);
 		}
+		public static void Dispose() => Config = null;
+		public static void Render() => Config?.ForEach(d => d.Item1.DynamicInvoke(d.Item2));
 
 
 
@@ -69,28 +53,18 @@ namespace Ktisis.Interface.Modular {
 			if (type == null)
 				type = AvailablePanels.FirstOrDefault(i => i.Name == configObject.Name)?.DeclaringType;
 			if (type == null) return null;
-			PluginLog.Debug($" type {configObject.Name}: {type?.Name}");
-
-
-
 
 			MethodInfo? mi = type?.GetMethod(configObject.Name, BindingFlags.Public | BindingFlags.Static);
 			if (mi != null) {
 
-
 				var reflectionDelgate = Delegate.CreateDelegate(typeof(CI), mi);
 
-
-
 				string handle = $"Window {Handles.Count}##Modular##{Handles.Count}";
-				PluginLog.Debug($" mi not null {reflectionDelgate.Method.Name} {handle}");
 				Handles.Add(handle);
-
 
 				List<(Delegate, ContentsInfo)>? actions = null;
 				if(configObject.Contents != null)
 					actions = ListConfigObjectToDelegate(configObject.Contents);
-
 
 				var ci = new ContentsInfo {
 					Handle = handle,
@@ -101,9 +75,6 @@ namespace Ktisis.Interface.Modular {
 			}
 			return null;
 		}
-		public static void Dispose() => OnSpliters = null;
-
-		public static void Render() => Config?.ForEach(d => d.Item1.DynamicInvoke(d.Item2));
 
 
 		// Below is config rendering logic
@@ -113,16 +84,12 @@ namespace Ktisis.Interface.Modular {
 		public static void DrawConfigTab(Configuration cfg) {
 			if (ImGui.BeginTabItem("Modular")) {
 
-
-
 				if(ImGui.BeginChildFrame(958,new(ImGui.GetContentRegionAvail().X,300))){
-
 					var modularConfig = cfg.ModularConfig;
-
 					modularConfig?.ForEach(c => TreeNode(c));
-
 					ImGui.EndChildFrame();
 				}
+
 				if (GuiHelpers.IconButton(Dalamud.Interface.FontAwesomeIcon.Plus))
 				IsAddPanelOpen = true;
 
@@ -131,7 +98,6 @@ namespace Ktisis.Interface.Modular {
 
 			if (IsAddPanelOpen)
 				DrawAddPanel();
-
 		}
 
 		private static void DrawAddPanel() {
@@ -181,7 +147,6 @@ namespace Ktisis.Interface.Modular {
 
 
 		private static void TreeNode(ConfigObject cfgObj, bool selected = false) {
-
 
 			bool isLeaf = cfgObj.Contents == null || !cfgObj.Contents.Any();
 			string handle = cfgObj.Name;
