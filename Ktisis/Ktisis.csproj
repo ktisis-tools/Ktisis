@@ -37,8 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Locale\i18n\German.json" />
-    <EmbeddedResource Include="Locale\i18n\English.json" />
+    <EmbeddedResource Include="Locale\i18n\*.json" />
   </ItemGroup>
 
   <ItemGroup>
