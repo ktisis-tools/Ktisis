@@ -1,12 +1,18 @@
 ﻿using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+
+using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Structs {
 	public class PoseContainer : Dictionary<string, Transform> {
 		// TODO: Make a helper function somewhere for skeleton iteration?
 
 		public unsafe void Store(Skeleton* modelSkeleton) {
+			Clear();
+
 			var partialCt = modelSkeleton->PartialSkeletonCount;
 			var partials = modelSkeleton->PartialSkeletons;
 			for (var p = 0; p < partialCt; p++) {
@@ -41,9 +47,6 @@ namespace Ktisis.Structs {
 
 				var skeleton = pose->Skeleton;
 				for (var i = 1; i < skeleton->Bones.Length; i++) {
-					if (i == partial.ConnectedBoneIndex)
-						continue;
-
 					var bone = modelSkeleton->GetBone(p, i);
 
 					var name = bone.HkaBone.Name.String;
@@ -52,6 +55,8 @@ namespace Ktisis.Structs {
 						*transform = val.ToHavok();
 					}
 				}
+
+				PoseHooks.SyncModelSpaceHook.Original(pose);
 			}
 		}
 	}

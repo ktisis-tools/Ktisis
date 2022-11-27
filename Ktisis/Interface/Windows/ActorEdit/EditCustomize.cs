@@ -20,7 +20,6 @@ using Ktisis.Data.Files;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.ActorEdit;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
@@ -101,7 +100,7 @@ namespace Ktisis.Interface.Windows {
 					|| cur.Gender != custard.Gender
 					|| cur.FaceType != custard.FaceType // Eye glitch.
 				) {
-					if (!IsPosing) Target->Redraw(faceHack);
+					Target->Redraw(faceHack);
 				} else {
 					var res = Target->UpdateCustomize();
 					if (!res && !IsPosing) {
@@ -132,9 +131,7 @@ namespace Ktisis.Interface.Windows {
 				FacialFeatureIcons = null;
 			}
 
-			if (IsPosing) ImGui.BeginDisabled();
 			DrawFundamental(custom);
-			if (IsPosing) ImGui.EndDisabled();
 			DrawMenuType(custom, MenuType.Slider);
 			ImGui.Separator();
 			DrawCheckboxes(custom);
@@ -284,10 +281,6 @@ namespace Ktisis.Interface.Windows {
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
 
-			var willExplode = (opt.Index == CustomizeIndex.FaceType) && IsPosing;
-
-			if (willExplode) ImGui.BeginDisabled();
-
 			if (opt.HasIcon && option.Select != null) {
 				DrawIconSelector(custom, option, val);
 				ImGui.SameLine();
@@ -305,8 +298,6 @@ namespace Ktisis.Interface.Windows {
 			ImGui.PopItemWidth();
 
 			ImGui.EndGroup();
-
-			if (willExplode) ImGui.EndDisabled();
 		}
 
 		// Icon selector

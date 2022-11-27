@@ -2,6 +2,7 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interface.Windows.ActorEdit {

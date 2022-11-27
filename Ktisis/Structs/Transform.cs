@@ -4,9 +4,9 @@ using FFXIVClientStructs.Havok;
 
 namespace Ktisis.Structs {
 	public class Transform {
-		Vector3 Position;
-		Quaternion Rotation;
-		Vector3 Scale;
+		public Vector3 Position;
+		public Quaternion Rotation;
+		public Vector3 Scale;
 
 		public static Transform FromHavok(hkQsTransformf t) => new Transform {
 			Position = t.Translation.ToVector3(),

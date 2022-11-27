@@ -7,6 +7,8 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
 using Ktisis.Data.Excel;
+using Ktisis.Interop.Hooks;
+using Dalamud.Logging;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
@@ -16,6 +18,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x88)] public byte ObjectID;
 
 		[FieldOffset(0xF0)] public unsafe ActorModel* Model;
+		[FieldOffset(0x104)] public RenderMode RenderMode;
 		[FieldOffset(0x1B4)] public int ModelId;
 
 		[FieldOffset(0x6E0)] public Weapon MainHand;
@@ -91,5 +94,11 @@ namespace Ktisis.Structs.Actor {
 			GameObject.EnableDraw();
 			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.Pc;
 		}
+	}
+
+	public enum RenderMode : uint {
+		Draw = 0,
+		Unload = 2,
+		Load = 4
 	}
 }

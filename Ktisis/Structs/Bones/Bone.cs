@@ -40,6 +40,7 @@ namespace Ktisis.Structs.Bones {
 		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String);
 
 		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate = PropagateOrNot.DontPropagate) => Pose->AccessBoneModelSpace(Index, propagate);
+		public unsafe hkQsTransformf* AccessLocalSpace() => Pose->AccessBoneLocalSpace(Index);
 
 		public unsafe Vector3 GetWorldPos(ActorModel* model)
 			=> model->Position + GetOffset(model) + Vector3.Transform(Transform.Translation.ToVector3() * model->Scale, model->Rotation) * model->Height;
