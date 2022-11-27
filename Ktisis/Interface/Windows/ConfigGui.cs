@@ -61,22 +61,22 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-			if (ImGui.Begin(Locale.GetString("Ktisis_settings"), ref Visible)) {
-				if (ImGui.BeginTabBar(Locale.GetString("Settings"))) {
+			if (ImGui.Begin(Locale.GetString("config.title"), ref Visible)) {
+				if (ImGui.BeginTabBar(Locale.GetString("config.title"))) {
 					var cfg = Ktisis.Configuration;
-					if (ImGui.BeginTabItem(Locale.GetString("Interface")))
+					if (ImGui.BeginTabItem(Locale.GetString("config.interface.title")))
 						DrawInterfaceTab(cfg);
-					if (ImGui.BeginTabItem(Locale.GetString("Overlay")))
+					if (ImGui.BeginTabItem(Locale.GetString("config.overlay.title")))
 						DrawOverlayTab(cfg);
-					if (ImGui.BeginTabItem(Locale.GetString("Gizmo")))
+					if (ImGui.BeginTabItem(Locale.GetString("config.gizmo.title")))
 						DrawGizmoTab(cfg);
-					if (ImGui.BeginTabItem(Locale.GetString("Input")))
+					if (ImGui.BeginTabItem(Locale.GetString("config.input.title")))
 						DrawInputTab(cfg);
-					if (ImGui.BeginTabItem(Locale.GetString("References")))
+					if (ImGui.BeginTabItem(Locale.GetString("config.references.title")))
 						DrawReferencesTab(cfg);
-					if (ImGui.BeginTabItem(Locale.GetString("Language")))
+					if (ImGui.BeginTabItem(Locale.GetString("config.language.title")))
 						DrawLanguageTab(cfg);
-					if (ImGui.BeginTabItem("Data"))
+					if (ImGui.BeginTabItem(Locale.GetString("config.data.title")))
 						DrawDataTab(cfg);
 
 					ImGui.EndTabBar();
@@ -91,10 +91,10 @@ namespace Ktisis.Interface.Windows {
 
 		public static void DrawInterfaceTab(Configuration cfg) {
 
-			ImGui.Text(Locale.GetString("General"));
+			ImGui.Text(Locale.GetString("config.interface.general.title"));
 
 			ImGui.AlignTextToFramePadding();
-			ImGui.Text(Locale.GetString("Open_plugin_load") + " ");
+			ImGui.Text(Locale.GetString("config.interface.general.openMethod.fieldLabel") + " ");
 			ImGui.SameLine();
 			var selectedOpenKtisisMethod = cfg.OpenKtisisMethod;
 			ImGui.SetNextItemWidth(GuiHelpers.AvailableWidth(0));
@@ -108,44 +108,44 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			var displayCharName = !cfg.DisplayCharName;
-			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))
+			if (ImGui.Checkbox(Locale.GetString("config.interface.general.hideCharName"), ref displayCharName))
 				cfg.DisplayCharName = !displayCharName;
 
 			var censorNsfw = cfg.CensorNsfw;
-			if (ImGui.Checkbox(Locale.GetString("Censor_nsfw"), ref censorNsfw))
+			if (ImGui.Checkbox(Locale.GetString("config.interface.general.censorNSFW"), ref censorNsfw))
 				cfg.CensorNsfw = censorNsfw;
 
 			ImGui.Spacing();
 			ImGui.Separator();
-			ImGui.Text(Locale.GetString("Transform_table"));
+			ImGui.Text(Locale.GetString("config.interface.transformTable.title"));
 
 			ImGui.PushItemWidth(ImGui.GetFontSize() * 4);
 			var transformTablePointDigits = cfg.TransformTableDigitPrecision;
-			if (ImGui.DragInt(Locale.GetString("Digit_precision"), ref transformTablePointDigits, 1f, 1, 8))
+			if (ImGui.DragInt(Locale.GetString("config.interface.transformTable.digitPrecision"), ref transformTablePointDigits, 1f, 1, 8))
 				cfg.TransformTableDigitPrecision = transformTablePointDigits;
 
 			var transformTableBaseSpeedPos = cfg.TransformTableBaseSpeedPos;
-			if (ImGui.DragFloat(Locale.GetString("Base_position_speed"), ref transformTableBaseSpeedPos, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("config.interface.transformTable.basePositionSpeed"), ref transformTableBaseSpeedPos, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedPos = transformTableBaseSpeedPos;
 
 			var transformTableBaseSpeedRot = cfg.TransformTableBaseSpeedRot;
-			if (ImGui.DragFloat(Locale.GetString("Base_rotation_speed"), ref transformTableBaseSpeedRot, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("config.interface.transformTable.baseRotationSpeed"), ref transformTableBaseSpeedRot, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedRot = transformTableBaseSpeedRot;
 
 			var transformTableBaseSpeedSca = cfg.TransformTableBaseSpeedSca;
-			if (ImGui.DragFloat(Locale.GetString("Base_scale_speed"), ref transformTableBaseSpeedSca, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("config.interface.transformTable.baseScaleSpeed"), ref transformTableBaseSpeedSca, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableBaseSpeedSca = transformTableBaseSpeedSca;
 
 			var transformTableModifierMultCtrl = cfg.TransformTableModifierMultCtrl;
-			if (ImGui.DragFloat(Locale.GetString("Ctrl_speed_multiplier"), ref transformTableModifierMultCtrl, 1f, 0.00001f, 10000f, "%.4f",ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("config.interface.transformTable.ctrlSpeedMult"), ref transformTableModifierMultCtrl, 1f, 0.00001f, 10000f, "%.4f",ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableModifierMultCtrl = transformTableModifierMultCtrl;
 
 			var transformTableModifierMultShift = cfg.TransformTableModifierMultShift;
-			if (ImGui.DragFloat(Locale.GetString("Shift_speed_multiplier"), ref transformTableModifierMultShift, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
+			if (ImGui.DragFloat(Locale.GetString("config.interface.transformTable.shiftSpeedMult"), ref transformTableModifierMultShift, 1f, 0.00001f, 10000f, "%.4f", ImGuiSliderFlags.Logarithmic))
 				cfg.TransformTableModifierMultShift = transformTableModifierMultShift;
 
 			var displayMultiplierInputs = cfg.TransformTableDisplayMultiplierInputs;
-			if (ImGui.Checkbox(Locale.GetString("Show_speed_multipler_inputs"), ref displayMultiplierInputs))
+			if (ImGui.Checkbox(Locale.GetString("config.interface.transformTable.showSpeedMultiplierInputs"), ref displayMultiplierInputs))
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
 			
 			var showToolbar = cfg.ShowToolbar;
@@ -170,26 +170,26 @@ namespace Ktisis.Interface.Windows {
 		// Overlay
 
 		public static void DrawOverlayTab(Configuration cfg) {
-			if (ImGui.CollapsingHeader(Locale.GetString("Skeleton_lines_and_dots"), ImGuiTreeNodeFlags.DefaultOpen)) {
+			if (ImGui.CollapsingHeader(Locale.GetString("config.overlay.skeleton.header"), ImGuiTreeNodeFlags.DefaultOpen)) {
 				ImGui.Separator();
 				var drawLines = cfg.DrawLinesOnSkeleton;
-				if (ImGui.Checkbox(Locale.GetString("Draw_lines_on_skeleton"), ref drawLines))
+				if (ImGui.Checkbox(Locale.GetString("config.overlay.skeleton.drawLines"), ref drawLines))
 					cfg.DrawLinesOnSkeleton = drawLines;
 
 				var drawLinesGizmo = cfg.DrawLinesWithGizmo;
-				if (ImGui.Checkbox(Locale.GetString("Draw_lines_with_gizmo"), ref drawLinesGizmo))
+				if (ImGui.Checkbox(Locale.GetString("config.overlay.skeleton.drawLineWhenSelecting"), ref drawLinesGizmo))
 					cfg.DrawLinesWithGizmo = drawLinesGizmo;
 
 				var drawDotsGizmo = cfg.DrawDotsWithGizmo;
-				if (ImGui.Checkbox(Locale.GetString("Draw_dots_with_gizmo"), ref drawDotsGizmo))
+				if (ImGui.Checkbox(Locale.GetString("config.overlay.skeleton.drawDotsWhenSelecting"), ref drawDotsGizmo))
 					cfg.DrawDotsWithGizmo = drawDotsGizmo;
 
 				var dotRadius = cfg.SkeletonDotRadius;
-				if (ImGui.SliderFloat(Locale.GetString("Dot_radius"), ref dotRadius, 0.01F, 15F, "%.1f"))
+				if (ImGui.SliderFloat(Locale.GetString("config.overlay.skeleton.dotRadius"), ref dotRadius, 0.01F, 15F, "%.1f"))
 					cfg.SkeletonDotRadius = dotRadius;
 
 				var lineThickness = cfg.SkeletonLineThickness;
-				if (ImGui.SliderFloat(Locale.GetString("Lines_thickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
+				if (ImGui.SliderFloat(Locale.GetString("config.overlay.skeleton.lineThickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
 					cfg.SkeletonLineThickness = lineThickness;
 				
 				var lineOpacity = cfg.SkeletonLineOpacity;
@@ -200,16 +200,16 @@ namespace Ktisis.Interface.Windows {
 				if (ImGui.SliderFloat(Locale.GetString("Lines_opacity_while_using"), ref lineOpacityWhileUsing, 0.01F, 1F, "%.2f"))
 					cfg.SkeletonLineOpacityWhileUsing = lineOpacityWhileUsing;
 			}
-			if (ImGui.CollapsingHeader(Locale.GetString("Bone_colors"), ImGuiTreeNodeFlags.DefaultOpen)) {
+			if (ImGui.CollapsingHeader(Locale.GetString("config.overlay.boneColors.header"), ImGuiTreeNodeFlags.DefaultOpen)) {
 
 				ImGui.Separator();
 
 				bool linkBoneCategoriesColors = cfg.LinkBoneCategoryColors;
-				if (GuiHelpers.IconButtonTooltip(cfg.LinkBoneCategoryColors ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink, linkBoneCategoriesColors ? Locale.GetString("Unlink_bones_colors") : Locale.GetString("Link_bones_colors")))
+				if (GuiHelpers.IconButtonTooltip(cfg.LinkBoneCategoryColors ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink, linkBoneCategoriesColors ? Locale.GetString("config.overlay.boneColors.link.disable") : Locale.GetString("config.overlay.boneColors.link.enable")))
 					cfg.LinkBoneCategoryColors = !linkBoneCategoriesColors;
 
 				ImGui.SameLine();
-				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Eraser, Locale.GetString("Hold_Control_and_Shift_to_erase_colors"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
+				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Eraser, Locale.GetString("config.overlay.boneColors.erase.tooltip"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
 					Vector4 eraseColor = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 					if (linkBoneCategoriesColors) {
 						cfg.LinkedBoneCategoryColor = eraseColor;
@@ -223,12 +223,12 @@ namespace Ktisis.Interface.Windows {
 
 				if (linkBoneCategoriesColors) {
 					Vector4 linkedBoneColor = cfg.LinkedBoneCategoryColor;
-					if (ImGui.ColorEdit4(Locale.GetString("Bone_colors"), ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
+					if (ImGui.ColorEdit4(Locale.GetString("config.overlay.boneColors.allEdit.label"), ref linkedBoneColor, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.AlphaBar))
 						cfg.LinkedBoneCategoryColor = linkedBoneColor;
 				} else {
 
 					ImGui.SameLine();
-					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, Locale.GetString("Hold_Control_and_Shift_to_reset_colors_to_their_default_values"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
+					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, Locale.GetString("config.overlay.boneColors.categories.reset.tooltip"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
 						foreach ((string _, Category category) in Category.Categories) {
 							if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
 								continue;
@@ -236,14 +236,14 @@ namespace Ktisis.Interface.Windows {
 						}
 					}
 
-					ImGui.Text(Locale.GetString("Categories_colors"));
+					ImGui.Text(Locale.GetString("config.overlay.categories.title"));
 
 					if (!Components.Categories.DrawConfigList(cfg))
-						ImGui.TextWrapped(Locale.GetString("Categories_will_be_added_after_bones_are_displayed_once"));
+						ImGui.TextWrapped(Locale.GetString("config.overlay.categories.placeholderText"));
 
 				}
 			}
-			if (ImGui.CollapsingHeader(Locale.GetString("Edit_bone_positions")))
+			if (ImGui.CollapsingHeader(Locale.GetString("config.overlay.bonePositions.header")))
 				DrawBonesOffset(cfg);
 
 			ImGui.EndTabItem();
@@ -253,7 +253,7 @@ namespace Ktisis.Interface.Windows {
 
 		public static void DrawGizmoTab(Configuration cfg) {
 			var allowAxisFlip = cfg.AllowAxisFlip;
-			if (ImGui.Checkbox(Locale.GetString("Flip_axis_to_face_camera"), ref allowAxisFlip))
+			if (ImGui.Checkbox(Locale.GetString("config.gizmo.allowAxisFlip"), ref allowAxisFlip))
 				cfg.AllowAxisFlip = allowAxisFlip;
 
 			ImGui.EndTabItem();
@@ -275,7 +275,7 @@ namespace Ktisis.Interface.Windows {
 				}
 			}
 
-			if (ImGui.BeginCombo(Locale.GetString("Language"), selected)) {
+			if (ImGui.BeginCombo(Locale.GetString("config.language.select"), selected)) {
 				foreach (var lang in Locale.Languages) {
 					var name = $"{lang}";
 					if (ImGui.Selectable(name, name == selected))
@@ -287,7 +287,7 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			var translateBones = cfg.TranslateBones;
-			if (ImGui.Checkbox(Locale.GetString("Translate_bone_names"), ref translateBones))
+			if (ImGui.Checkbox(Locale.GetString("config.language.translateBones"), ref translateBones))
 				cfg.TranslateBones = translateBones;
 
 			ImGui.EndTabItem();
@@ -297,25 +297,25 @@ namespace Ktisis.Interface.Windows {
 		// input selector
 		public static void DrawInputTab(Configuration cfg) {
 			ImGui.Spacing();
-			ImGui.Text("Selection Behavior");
+			ImGui.Text(Locale.GetString("config.input.selectBehavior.title"));
 			ImGui.Spacing();
 
 			var disableChangeTargetOnLeftClick = cfg.DisableChangeTargetOnLeftClick;
-			if (ImGui.Checkbox(Locale.GetString("Disable_Change_Target_On_Left_Click"), ref disableChangeTargetOnLeftClick))
+			if (ImGui.Checkbox(Locale.GetString("config.input.selectBehavior.disableLeftClickTarget"), ref disableChangeTargetOnLeftClick))
 				cfg.DisableChangeTargetOnLeftClick = disableChangeTargetOnLeftClick;
 
 			var disableChangeTargetOnRightClick = cfg.DisableChangeTargetOnRightClick;
-			if (ImGui.Checkbox(Locale.GetString("Disable_Change_Target_On_Right_Click"), ref disableChangeTargetOnRightClick))
+			if (ImGui.Checkbox(Locale.GetString("config.input.selectBehavior.disableRightClickTarget"), ref disableChangeTargetOnRightClick))
 				cfg.DisableChangeTargetOnRightClick = disableChangeTargetOnRightClick;
 
 
 			ImGui.Spacing();
-			ImGui.Text(Locale.GetString("Keyboard_shortcuts"));
+			ImGui.Text(Locale.GetString("config.input.keybind.title"));
 			ImGui.Spacing();
 
 			// completely enable/disable keyboard shortcuts
 			var enableKeybinds = cfg.EnableKeybinds;
-			if(ImGui.Checkbox(Locale.GetString("Enable"), ref enableKeybinds))
+			if(ImGui.Checkbox(Locale.GetString("config.input.keybind.enable"), ref enableKeybinds))
 				cfg.EnableKeybinds = enableKeybinds;
 			if (!cfg.EnableKeybinds) {
 				ImGui.EndTabItem();
@@ -333,11 +333,8 @@ namespace Ktisis.Interface.Windows {
 					pressDemo.Add(key);
 			}
 
-			ImGui.Text(Locale.GetString("Pressing_keys"));
-			ImGuiComponents.HelpMarker("To assign a key or key combination:\n" +
-				"1. Hold the key or key combination\n" +
-				"2. Click on the desired action\n\n" +
-				"Do not hold any key to unassign.");
+			ImGui.Text(Locale.GetString("config.input.keybind.assignByKeyPress.title"));
+			ImGuiComponents.HelpMarker(Locale.GetString("config.input.keybind.assignByKeyPress.helpText"));
 			ImGui.SameLine();
 			ImGui.Text($":   {PrettyKeys(pressDemo)}");
 			ImGui.Spacing();
@@ -351,8 +348,8 @@ namespace Ktisis.Interface.Windows {
 
 				// display and configureheaders
 				ImGui.TableSetupScrollFreeze(0, 1); // Make top row always visible
-				ImGui.TableSetupColumn("Keys");
-				ImGui.TableSetupColumn("Action");
+				ImGui.TableSetupColumn(Locale.GetString("config.input.keybind.keybindTable.keys"));
+				ImGui.TableSetupColumn(Locale.GetString("config.input.keybind.keybindTable.action"));
 				ImGui.TableHeadersRow();
 
 				foreach (var purpose in Input.PurposesWithCategories) {
@@ -398,16 +395,16 @@ namespace Ktisis.Interface.Windows {
 		public static void DrawDataTab(Configuration cfg) {
 			ImGui.Spacing();
 			var validGlamPlatesFound = GlamourDresser.CountValid();
-			GuiHelpers.TextTooltip($"Glamour Plates in memory: {validGlamPlatesFound}  ", $"Found {validGlamPlatesFound} valid Glamour Plates");
+			GuiHelpers.TextTooltip($"{Locale.GetString("config.data.glamourDresser.memoryCount")}{validGlamPlatesFound}  ", $"{Locale.GetString("config.data.glamourDresser.validCount.pre")}{validGlamPlatesFound} {Locale.GetString("config.data.glamourDresser.validCount.post")}");
 			ImGui.SameLine();
 
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, "Refresh Glamour Plate memory for the Sets lookups.\nThis memory is kept after a restart.\n\nRequirements:\n One of these windows must be opened: \"Glamour Plate Creation\" (by the Glamour Dresser) or \"Plate Selection\" (by the Glamour Plate skill)."))
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, Locale.GetString("config.data.sync.tooltip")))
 				GlamourDresser.PopulatePlatesData();
 
 			Components.Equipment.CreateGlamourQuestionPopup();
 
 			ImGui.SameLine();
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, "Dispose of the Glamour Plates memory and remove configurations for ALL characters.")) {
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, Locale.GetString("config.data.dispose.tooltip"))) {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
@@ -501,16 +498,16 @@ namespace Ktisis.Interface.Windows {
 		// References
 
 		public static void DrawReferencesTab(Configuration cfg) {
-			ImGui.TextWrapped(Locale.GetString("config.references_tab.explanation"));
+			ImGui.TextWrapped(Locale.GetString("config.references.explanation"));
 			var alpha = cfg.ReferenceAlpha;
-			if (ImGui.SliderFloat(Locale.GetString("config.references_tab.image_transparency"), ref alpha, 0.0f, 1.0f)) {
+			if (ImGui.SliderFloat(Locale.GetString("config.references.imageAlpha"), ref alpha, 0.0f, 1.0f)) {
 				cfg.ReferenceAlpha = alpha;
 			}
 			var hideDecoration = cfg.ReferenceHideDecoration;
-			if (ImGui.Checkbox(Locale.GetString("config.references_tab.hide_window_decorations"), ref hideDecoration)) {
+			if (ImGui.Checkbox(Locale.GetString("config.references.hideWindowDecoration"), ref hideDecoration)) {
 				cfg.ReferenceHideDecoration = hideDecoration;
 			}
-			ImGui.Text(Locale.GetString("config.references_tab.reference_images"));
+			ImGui.Text(Locale.GetString("config.references.images.title"));
 			foreach (var (key, reference) in cfg.References) {
 				ImGui.PushID(key);
 				bool showing = reference.Showing;
@@ -525,8 +522,8 @@ namespace Ktisis.Interface.Windows {
 				ImGui.SameLine();
 				if (GuiHelpers.IconButton(FontAwesomeIcon.File, ButtonSize)) {
 					KtisisGui.FileDialogManager.OpenFileDialog(
-						Locale.GetString("config.references_tab.add_reference_file"),
-						Locale.GetString("config.references_tab.supported_reference_files") + "{.gif,.jpg,.jpeg,.png}",
+						Locale.GetString("config.references.images.dialog.title"),
+						Locale.GetString("config.references.images.dialog.filter")+ "{.gif,.jpg,.jpeg,.png}",
 						(success, filePath) => {
 							if (success) {
 								TryChangeReference(cfg, key, filePath);
@@ -546,7 +543,7 @@ namespace Ktisis.Interface.Windows {
 				cfg.References[cfg.NextReferenceKey] = new ReferenceInfo { Showing = true };
 			}
 			ImGui.SameLine();
-			ImGui.Text(Locale.GetString("config.references_tab.add_new"));
+			ImGui.Text(Locale.GetString("config.references.images.addText"));
 
 			ImGui.EndTabItem();
 		}

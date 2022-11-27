@@ -144,10 +144,10 @@ namespace Ktisis.Interface.Windows {
 
 			// Race
 
-			var curRace = Locale.GetString($"{custom.Race}");
+			var curRace = Locale.GetString($"race.{custom.Race}");
 			if (ImGui.BeginCombo("Race", curRace)) {
 				foreach (Race race in Enum.GetValues(typeof(Race))) {
-					var raceName = Locale.GetString($"{race}");
+					var raceName = Locale.GetString($"race.{race}");
 					if (ImGui.Selectable(raceName, race == custom.Race)) {
 						custom.Race = race;
 						custom.Tribe = (Tribe)(
@@ -164,11 +164,11 @@ namespace Ktisis.Interface.Windows {
 
 			// Tribe
 
-			var curTribe = Locale.GetString($"{custom.Tribe}");
+			var curTribe = Locale.GetString($"tribe.{custom.Tribe}");
 			if (ImGui.BeginCombo("Tribe", curTribe)) {
 				for (int i = 0; i < 2; i++) {
 					var tribe = (Tribe)(custom.GetRaceTribeIndex() + i);
-					if (ImGui.Selectable(Locale.GetString($"{tribe}"), tribe == custom.Tribe)) {
+					if (ImGui.Selectable(Locale.GetString($"tribe.{tribe}"), tribe == custom.Tribe)) {
 						custom.Tribe = tribe;
 						Apply(custom);
 					}
