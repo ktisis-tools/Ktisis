@@ -75,12 +75,12 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 				ImGui.Separator();
 
-				if (ImGui.BeginTabBar(Locale.GetString("Workspace"))) {
-					if (ImGui.BeginTabItem(Locale.GetString("Actor")))
+				if (ImGui.BeginTabBar(Locale.GetString("workspace.title"))) {
+					if (ImGui.BeginTabItem(Locale.GetString("workspace.actor")))
 						ActorTab(target);
-					/*if (ImGui.BeginTabItem(Locale.GetString("Scene")))
+					/*if (ImGui.BeginTabItem(Locale.GetString("workspace.scene")))
 						SceneTab();*/
-					if (ImGui.BeginTabItem(Locale.GetString("Pose")))
+					if (ImGui.BeginTabItem(Locale.GetString("workspace.pose")))
 						PoseTab(target);
 				}
 			}

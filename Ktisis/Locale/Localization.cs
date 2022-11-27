@@ -28,7 +28,7 @@ namespace Ktisis.Localization {
 		}
 
 		public static string GetBoneName(string handle) {
-			return Ktisis.Configuration.TranslateBones ? GetString(handle) : handle;
+			return Ktisis.Configuration.TranslateBones ? GetString("bone." + handle) : handle;
 		}
 		public static string GetInputPurposeName(Input.Purpose purpose) {
 			string regularPurposeString = $"config.input.keybind.purpose.{purpose}";
