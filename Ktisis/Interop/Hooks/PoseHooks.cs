@@ -10,7 +10,6 @@ using FFXIVClientStructs.Havok;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
-using Dalamud.Logging;
 
 namespace Ktisis.Interop.Hooks {
 	public static class PoseHooks {
@@ -141,16 +140,18 @@ namespace Ktisis.Interop.Hooks {
 			var pose = partial.GetHavokPose(0);
 			if (pose == null) return exec;
 
-			foreach (var obj in Services.ObjectTable) {
-				var actor = (Actor*)obj.Address;
-				if (actor->Model == null || actor->Model->Skeleton != a1) continue;
+			SyncModelSpaceHook.Original(pose);
 
-				if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
-					backup.Apply(a1);
+			if (a2 == 2) {
+				foreach (var obj in Services.ObjectTable) {
+					var actor = (Actor*)obj.Address;
+					if (actor->Model == null || actor->Model->Skeleton != a1) continue;
+
+					if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
+						backup.ApplyToPartial(a1, 0);
+					}
 				}
 			}
-
-			SyncModelSpaceHook.Original(pose);
 
 			return exec;
 		}

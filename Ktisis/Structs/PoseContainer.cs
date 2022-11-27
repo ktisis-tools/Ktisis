@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Interop.Hooks;
+using ImGuizmoNET;
 
 namespace Ktisis.Structs {
 	public class PoseContainer : Dictionary<string, Transform> {
@@ -22,42 +23,70 @@ namespace Ktisis.Structs {
 				if (pose == null) continue;
 
 				var skeleton = pose->Skeleton;
-				for (var i = 1; i < skeleton->Bones.Length; i++) {
+				for (var i = p == 0 ? 1 : 0; i < skeleton->Bones.Length; i++) {
 					if (i == partial.ConnectedBoneIndex)
 						continue; // Unsupported by .pose files :(
 
 					var bone = modelSkeleton->GetBone(p, i);
-
 					var name = bone.HkaBone.Name.String;
-					var transform = bone.AccessModelSpace();
 
-					this[name] = Transform.FromHavok(*transform);
+					var model = bone.AccessModelSpace();
+
+					this[name] = Transform.FromHavok(*model);
 				}
 			}
 		}
 
-		public unsafe void Apply(Skeleton* modelSkeleton) {
+		public unsafe void Apply(Skeleton* modelSkeleton, PoseLoadMode mode = PoseLoadMode.Rotation) {
 			var partialCt = modelSkeleton->PartialSkeletonCount;
-			var partials = modelSkeleton->PartialSkeletons;
-			for (var p = 0; p < partialCt; p++) {
-				var partial = partials[p];
+			for (var p = 0; p < modelSkeleton->PartialSkeletonCount; p++)
+				ApplyToPartial(modelSkeleton, p, mode);
+		}
 
-				var pose = partial.GetHavokPose(0);
-				if (pose == null) continue;
+		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation) {
+			var partial = modelSkeleton->PartialSkeletons[p];
 
-				var skeleton = pose->Skeleton;
-				for (var i = 1; i < skeleton->Bones.Length; i++) {
-					var bone = modelSkeleton->GetBone(p, i);
+			var pose = partial.GetHavokPose(0);
+			if (pose == null) return;
 
-					var name = bone.HkaBone.Name.String;
-					if (TryGetValue(name, out var val)) {
-						var transform = bone.AccessModelSpace();
-						*transform = val.ToHavok();
+			var skeleton = pose->Skeleton;
+			for (var i = p == 0 ? 1 : 0; i < skeleton->Bones.Length; i++) {
+				var bone = modelSkeleton->GetBone(p, i);
+				var name = bone.HkaBone.Name.String;
+
+				if (TryGetValue(name, out var val)) {
+					var model = bone.AccessModelSpace(FFXIVClientStructs.Havok.hkaPose.PropagateOrNot.Propagate);
+
+					var initial = *model;
+					var initialPos = initial.Translation.ToVector3();
+					var initialRot = initial.Rotation.ToQuat();
+
+					PluginLog.Information($"{p},{i} {name} {val.Rotation}");
+
+					if (p == 0 && i == 1) {
+						var pos = val.Position.ToHavok();
+						model->Translation.X = pos.X;
+						model->Translation.Z = pos.Z;
 					}
-				}
 
-				PoseHooks.SyncModelSpaceHook.Original(pose);
+					if (mode.HasFlag(PoseLoadMode.Rotation))
+						model->Rotation = val.Rotation.ToHavok();
+					if (mode.HasFlag(PoseLoadMode.Position))
+						model->Translation = val.Position.ToHavok();
+					if (mode.HasFlag(PoseLoadMode.Scale))
+						model->Scale = val.Scale.ToHavok();
+
+					Overlay.Skeleton.PropagateChildren(bone, model, initialPos, initialRot);
+				}
 			}
 		}
+	}
+
+	[Flags]
+	public enum PoseLoadMode {
+		None = 0,
+		Rotation = 1,
+		Position = 2,
+		Scale = 4
 	}
 }

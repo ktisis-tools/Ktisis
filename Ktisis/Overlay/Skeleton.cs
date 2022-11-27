@@ -169,7 +169,7 @@ namespace Ktisis.Overlay {
 			}
 		}
 
-		private unsafe static void PropagateChildren(Bone parent, hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot) {
+		public unsafe static void PropagateChildren(Bone parent, hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot) {
 			// Bone parenting
 			// Adapted from Anamnesis Studio code shared by Yuki - thank you!
 
