@@ -159,6 +159,7 @@ namespace Ktisis.Interface.Components {
 
 		// Independant from the others
 		public static void DrawPoseSwitch() {
+			ImGui.AlignTextToFramePadding();
 			ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8) + ImGui.GetStyle().ItemSpacing.X + GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X); // Prevents text overlap
 
 			ImGui.BeginDisabled(!Ktisis.IsInGPose);

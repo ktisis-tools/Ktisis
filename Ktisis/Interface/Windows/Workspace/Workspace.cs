@@ -56,7 +56,6 @@ namespace Ktisis.Interface.Windows.Workspace
 			if(Ktisis.Configuration.ModularConfig != null)
 				Modular.Manager.Render();
 
-			var gposeOn = Ktisis.IsInGPose;
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
@@ -68,12 +67,7 @@ namespace Ktisis.Interface.Windows.Workspace
 				ControlButtons.PlaceAndRenderSettings();
 
 				ImGui.BeginGroup();
-				ImGui.AlignTextToFramePadding();
-
-				ImGui.TextColored(
-					gposeOn ? ColGreen : ColRed,
-					gposeOn ? "GPose Enabled" : "GPose Disabled"
-				);
+				DrawGposeIndicator();
 
 				if (PoseHooks.AnamPosingEnabled) {
 					ImGui.TextColored(
@@ -113,6 +107,16 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			ImGui.PopStyleVar();
 			ImGui.End();
+		}
+
+		public static void DrawGposeIndicator() {
+			ImGui.AlignTextToFramePadding();
+
+			var gposeOn = Ktisis.IsInGPose;
+			ImGui.TextColored(
+				gposeOn ? ColGreen : ColRed,
+				gposeOn ? "GPose Enabled" : "GPose Disabled"
+			);
 		}
 
 		// Actor tab (Real)
