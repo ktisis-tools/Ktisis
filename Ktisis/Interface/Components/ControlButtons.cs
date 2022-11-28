@@ -204,5 +204,11 @@ namespace Ktisis.Interface.Components {
 				SiblingLink.RotationMirrorX => "Mirror rotation",
 				_ => "No sibling link"
 			};
+
+		public static void DrawParentingCheckbox() {
+			var parent = Ktisis.Configuration.EnableParenting;
+			if (ImGui.Checkbox("Parenting", ref parent))
+				Ktisis.Configuration.EnableParenting = parent;
+		}
 	}
 }

@@ -178,10 +178,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ControlButtons.DrawExtra();
 
 			// Parenting
-
-			var parent = cfg.EnableParenting;
-			if (ImGui.Checkbox("Parenting", ref parent))
-				cfg.EnableParenting = parent;
+			ControlButtons.DrawParentingCheckbox();
 
 			// Transform table
 			TransformTable(actor);
