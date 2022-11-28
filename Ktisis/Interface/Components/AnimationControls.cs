@@ -10,7 +10,9 @@ namespace Ktisis.Interface.Components {
 	public static class AnimationControls {
 
 
-		public static unsafe void Draw(GameObject? target) {
+		public static unsafe void Draw() {
+			var target = Ktisis.GPoseTarget;
+
 			// Animation control
 			var control = PoseHooks.GetAnimationControl(target);
 			if (PoseHooks.PosingEnabled || !Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null) {
