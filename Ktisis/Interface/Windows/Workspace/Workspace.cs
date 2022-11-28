@@ -88,7 +88,7 @@ namespace Ktisis.Interface.Windows.Workspace
 
 				// Selection info
 				ImGui.Spacing();
-				SelectInfo(target);
+				SelectInfo();
 
 				// Actor control
 
@@ -257,8 +257,9 @@ namespace Ktisis.Interface.Windows.Workspace
 
 		// Selection details
 
-		private unsafe static void SelectInfo(GameObject target) {
-			var actor = (Actor*)target.Address;
+		internal unsafe static void SelectInfo() {
+			var actor = Ktisis.Target;
+			if (actor == null) return;
 
 			var select = Skeleton.BoneSelect;
 			var bone = Skeleton.GetSelectedBone();

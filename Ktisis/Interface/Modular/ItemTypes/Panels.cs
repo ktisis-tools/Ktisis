@@ -19,5 +19,8 @@ namespace Ktisis.Interface.Modular.ItemTypes.Panel {
 	public class GposeTextIndicator : IModularItem {
 		public void Draw() => Workspace.DrawGposeIndicator();
 	}
+	public class SelectInfo : IModularItem {
+		public void Draw() => Workspace.SelectInfo();
+	}
 
 }
