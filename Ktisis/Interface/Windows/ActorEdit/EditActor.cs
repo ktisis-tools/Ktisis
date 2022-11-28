@@ -1,6 +1,8 @@
 using System.Numerics;
 
 using ImGuiNET;
+using Dalamud.Interface;
+using Dalamud.Interface.Components;
 
 using Ktisis.Structs.Actor;
 
@@ -20,7 +22,13 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static void Toggle() => Visible = !Visible;
 
 		// Display
+		public static void DrawButton() {
+			if (ImGuiComponents.IconButton(FontAwesomeIcon.UserEdit))
+				Toggle();
 
+			ImGui.SameLine();
+			ImGui.Text("Edit actor's appearance");
+		}
 		public unsafe static void Draw() {
 			if (!Visible)
 				return;
