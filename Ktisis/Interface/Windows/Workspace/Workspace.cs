@@ -130,12 +130,9 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.Spacing();
 
 			// Customize button
-			if (ImGuiComponents.IconButton(FontAwesomeIcon.UserEdit)) {
-				if (EditActor.Visible)
-					EditActor.Hide();
-				else
-					EditActor.Show();
-			}
+			if (ImGuiComponents.IconButton(FontAwesomeIcon.UserEdit))
+				EditActor.Toggle();
+
 			ImGui.SameLine();
 			ImGui.Text("Edit actor's appearance");
 
