@@ -148,12 +148,8 @@ namespace Ktisis.Interface.Windows.Workspace
 			AnimationControls.Draw(target);
 
 			// Gaze control
-			if (ImGui.CollapsingHeader("Gaze Control")) {
-				if (PoseHooks.PosingEnabled)
-					ImGui.TextWrapped("Gaze controls are unavailable while posing.");
-				else
-					EditGaze.Draw(actor);
-			}
+			if (ImGui.CollapsingHeader("Gaze Control"))
+				EditGaze.DrawWithHint();
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
