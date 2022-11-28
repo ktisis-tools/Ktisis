@@ -186,7 +186,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ControlButtons.DrawParentingCheckbox();
 
 			// Transform table
-			TransformTable(actor);
+			TransformTable();
 
 			ImGui.Spacing();
 
@@ -252,7 +252,9 @@ namespace Ktisis.Interface.Windows.Workspace
 
 		// Transform Table actor and bone names display, actor related extra
 
-		private static unsafe bool TransformTable(Actor* target) {
+		private static unsafe bool TransformTable() {
+			var target = Ktisis.Target;
+			if (target == null) return false;
 			var select = Skeleton.BoneSelect;
 			var bone = Skeleton.GetSelectedBone();
 
