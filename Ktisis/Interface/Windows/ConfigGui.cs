@@ -5,20 +5,21 @@ using System.Numerics;
 using System.Text;
 
 using ImGuiNET;
+
 using Newtonsoft.Json;
 
-using Dalamud.Game.ClientState.Keys;
+using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+using Dalamud.Interface.ImGuiFileDialog;
+using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Util;
-using Ktisis.Localization;
 using Ktisis.Overlay;
+using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
-using Dalamud.Interface.ImGuiFileDialog;
-using Dalamud.Logging;
 
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {

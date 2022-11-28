@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using ImGuizmoNET;
-
 namespace Ktisis.Structs {
+	[Serializable]
 	public class PoseContainer : Dictionary<string, Transform> {
 		// TODO: Make a helper function somewhere for skeleton iteration?
 
@@ -23,7 +20,7 @@ namespace Ktisis.Structs {
 				if (pose == null) continue;
 
 				var skeleton = pose->Skeleton;
-				for (var i = p == 0 ? 1 : 0; i < skeleton->Bones.Length; i++) {
+				for (var i = 0; i < skeleton->Bones.Length; i++) {
 					if (i == partial.ConnectedBoneIndex)
 						continue; // Unsupported by .pose files :(
 
@@ -50,7 +47,7 @@ namespace Ktisis.Structs {
 			if (pose == null) return;
 
 			var skeleton = pose->Skeleton;
-			for (var i = p == 0 ? 1 : 0; i < skeleton->Bones.Length; i++) {
+			for (var i = 0; i < skeleton->Bones.Length; i++) {
 				var bone = modelSkeleton->GetBone(p, i);
 				var name = bone.HkaBone.Name.String;
 
@@ -61,11 +58,10 @@ namespace Ktisis.Structs {
 					var initialPos = initial.Translation.ToVector3();
 					var initialRot = initial.Rotation.ToQuat();
 
-					PluginLog.Information($"{p},{i} {name} {val.Rotation}");
-
-					if (p == 0 && i == 1) {
+					if (p == 0 && i <= 1) {
 						var pos = val.Position.ToHavok();
 						model->Translation.X = pos.X;
+						model->Translation.Y = pos.Y; // unsure about this
 						model->Translation.Z = pos.Z;
 					}
 
