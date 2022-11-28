@@ -209,7 +209,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.EndTabItem();
 		}
 
-		private static void DrawImportExport() {
+		internal static void DrawImportExport() {
 			ImGui.Text("Transforms");
 			var _ = false;
 			ImGui.Checkbox("R", ref _);
@@ -230,7 +230,7 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			ImGui.Spacing();
 		}
-		private unsafe static void DrawAdvanced() {
+		internal unsafe static void DrawAdvanced() {
 			var actor = Ktisis.Target;
 			if (actor->Model == null) return;
 
