@@ -252,7 +252,7 @@ namespace Ktisis.Interface.Windows.Workspace
 
 		// Transform Table actor and bone names display, actor related extra
 
-		private static unsafe bool TransformTable() {
+		internal static unsafe bool TransformTable() {
 			var target = Ktisis.Target;
 			if (target == null) return false;
 			var select = Skeleton.BoneSelect;
