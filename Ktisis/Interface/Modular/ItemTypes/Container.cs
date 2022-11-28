@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using ImGuiNET;
 
-namespace Ktisis.Interface.Modular.ItemTypes.Container {
+namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 	public class Window : IModularItem, IModularContainer {
 		private readonly int windowID;
 
@@ -10,7 +10,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Container {
 		public List<IModularItem> Items { get; }
 		public string Title { get; set; }
 
-		public Window(int windowID, ImGuiWindowFlags drawFlags, string title) : this(windowID, drawFlags, title, new()) {}
+		public Window(int windowID, ImGuiWindowFlags drawFlags, string title) : this(windowID, drawFlags, title, new()) { }
 
 		public Window(int windowID, ImGuiWindowFlags drawFlags, string title, List<IModularItem> items) {
 			this.windowID = windowID;
@@ -18,12 +18,13 @@ namespace Ktisis.Interface.Modular.ItemTypes.Container {
 			this.Items = items;
 			this.Title = title;
 		}
-		
+
 		public void Draw() {
 			if (ImGui.Begin($"{this.Title}##ModularWindow##{this.windowID}", this.DrawFlags)) {
-				foreach (var item in this.Items) {
-					this.DrawItem(item);
-				}
+				if (this.Items != null)
+					foreach (var item in this.Items) {
+						this.DrawItem(item);
+					}
 			}
 			ImGui.End();
 		}
@@ -31,17 +32,20 @@ namespace Ktisis.Interface.Modular.ItemTypes.Container {
 		virtual protected void DrawItem(IModularItem item) {
 			item.Draw();
 		}
-		
+
 	}
-	public class WindowResizable : Window {
+}
+namespace Ktisis.Interface.Modular.ItemTypes.Container {
+
+		public class WindowResizable : BaseContainer.Window {
 		public WindowResizable(int windowID, string title, List<IModularItem> items) : base(windowID, ImGuiWindowFlags.None, title, items) { }
 		public WindowResizable(int windowID, string title) : this(windowID, title, new()) { }
 	}
-	public class WindowAutoResize : Window {
+	public class WindowAutoResize : BaseContainer.Window {
 		public WindowAutoResize(int windowID, string title, List<IModularItem> items) : base(windowID, ImGuiWindowFlags.AlwaysAutoResize, title, items) { }
 		public WindowAutoResize(int windowID, string title) : this(windowID, title, new()) { }
 	}
-	public class WindowBar : Window {
+	public class WindowBar : BaseContainer.Window {
 		public WindowBar(int windowID, string title, List<IModularItem> items) : base(windowID, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize, title, items) { }
 		public WindowBar(int windowID, string title) : this(windowID, title, new()) { }
 		protected override void DrawItem(IModularItem item) {
