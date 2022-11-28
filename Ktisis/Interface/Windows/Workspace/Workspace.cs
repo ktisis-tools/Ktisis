@@ -139,7 +139,8 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.Spacing();
 
 			// Actor list
-			ActorsList.Draw();
+			if (ImGui.CollapsingHeader("Actor List"))
+				ActorsList.Draw();
 
 			// Animation control
 			if (ImGui.CollapsingHeader("Animation Control"))

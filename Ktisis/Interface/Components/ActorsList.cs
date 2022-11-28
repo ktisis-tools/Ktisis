@@ -44,33 +44,32 @@ namespace Ktisis.Interface.Components {
 			SavedObjects.RemoveAll(o => !IsValidActor(o));
 
 			var buttonSize = new Vector2(ImGui.GetContentRegionAvail().X, ControlButtons.ButtonSize.Y);
-			if (ImGui.CollapsingHeader("Actor List")) {
-				long? toRemove = null;
-				foreach (var pointer in SavedObjects) {
-					if (!IsValidActor(pointer)) continue;
-					if (ImGui.Button($"{((Actor*)pointer)->GetNameOrId()}{ExtraInfo(pointer)}##ActorList##{pointer}", buttonSize))
-						Services.Targets->GPoseTarget = (GameObject*)pointer;
-					if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-						toRemove = pointer;
-				}
-				if (toRemove != null) SavedObjects.Remove((long)toRemove);
 
-				if (GuiHelpers.IconButtonTooltip(Dalamud.Interface.FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
-					OpenSelector();
-
-				ImGui.SameLine(ImGui.GetContentRegionAvail().X - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
-				ControlButtons.VerticalAlignTextOnButtonSize();
-
-				// help hover
-				GuiHelpers.Icon(FontAwesomeIcon.InfoCircle, false);
-				if (ImGui.IsItemHovered()) {
-					ImGui.BeginTooltip();
-					ImGui.Text("Right click to remove an Actor from the list");
-					ImGui.EndTooltip();
-				}
-				if (SelectorList != null)
-					DrawListAddActor();
+			long? toRemove = null;
+			foreach (var pointer in SavedObjects) {
+				if (!IsValidActor(pointer)) continue;
+				if (ImGui.Button($"{((Actor*)pointer)->GetNameOrId()}{ExtraInfo(pointer)}##ActorList##{pointer}", buttonSize))
+					Services.Targets->GPoseTarget = (GameObject*)pointer;
+				if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+					toRemove = pointer;
 			}
+			if (toRemove != null) SavedObjects.Remove((long)toRemove);
+
+			if (GuiHelpers.IconButtonTooltip(Dalamud.Interface.FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
+				OpenSelector();
+
+			ImGui.SameLine(ImGui.GetContentRegionAvail().X - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
+			ControlButtons.VerticalAlignTextOnButtonSize();
+
+			// help hover
+			GuiHelpers.Icon(FontAwesomeIcon.InfoCircle, false);
+			if (ImGui.IsItemHovered()) {
+				ImGui.BeginTooltip();
+				ImGui.Text("Right click to remove an Actor from the list");
+				ImGui.EndTooltip();
+			}
+			if (SelectorList != null)
+				DrawListAddActor();
 		}
 
 		private static void OpenSelector() =>
