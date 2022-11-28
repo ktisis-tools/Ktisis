@@ -10,8 +10,8 @@ using Dalamud.Interface.Components;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
-using static Ktisis.Overlay.Skeleton;
 using Ktisis.Interop.Hooks;
+using Ktisis.Structs.Bones;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.Workspace;
 

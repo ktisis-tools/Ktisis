@@ -10,10 +10,10 @@ using Dalamud.Logging;
 using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
-using Ktisis.Localization;
-using Ktisis.Structs.Actor.Equip.SetSources;
 using Ktisis.Interface;
+using Ktisis.Localization;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Actor.Equip.SetSources;
 
 namespace Ktisis {
 	[Serializable]
@@ -101,7 +101,7 @@ namespace Ktisis {
 		public MODE GizmoMode { get; set; } = MODE.LOCAL;
 		public OPERATION GizmoOp { get; set; } = OPERATION.TRANSLATE;
 
-		public Overlay.Skeleton.SiblingLink SiblingLink { get; set; } = Overlay.Skeleton.SiblingLink.None;
+		public SiblingLink SiblingLink { get; set; } = SiblingLink.None;
 
 		public bool AllowAxisFlip { get; set; } = true;
 

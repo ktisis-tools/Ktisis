@@ -39,10 +39,11 @@ namespace Ktisis.Structs {
 
 		public unsafe void Apply(Skeleton* modelSkeleton, PoseLoadMode mode = PoseLoadMode.Rotation) {
 			var partialCt = modelSkeleton->PartialSkeletonCount;
-			ApplyToPartial(modelSkeleton, 0, mode);
+			for (var p = 0; p < partialCt; p++)
+				ApplyToPartial(modelSkeleton, p, mode, false);
 		}
 
-		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation) {
+		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation, bool partialProp = true) {
 			var partial = modelSkeleton->PartialSkeletons[p];
 
 			var pose = partial.GetHavokPose(0);
@@ -60,8 +61,6 @@ namespace Ktisis.Structs {
 					var initialPos = initial.Translation.ToVector3();
 					var initialRot = initial.Rotation.ToQuat();
 
-					var aaa_aaa = false;
-
 					if (p == 0 && bone.ParentId < 1) {
 						var pos = val.Position.ToHavok();
 						model->Translation = pos;
@@ -73,20 +72,18 @@ namespace Ktisis.Structs {
 						// This is extremely hacky due to the requirements of loading poses in LoadSkeletonHook.
 
 						model->Translation = pModel->Translation;
-						Overlay.Skeleton.PropagateChildren(bone, model, initialPos, initialRot);
+						bone.PropagateChildren(model, initialPos, initialRot, false);
 						initialPos = model->Translation.ToVector3();
 					}
 
-					if (!aaa_aaa) {
-						if (mode.HasFlag(PoseLoadMode.Rotation))
-							model->Rotation = val.Rotation.ToHavok();
-						if (mode.HasFlag(PoseLoadMode.Position))
-							model->Translation = val.Position.ToHavok();
-						if (mode.HasFlag(PoseLoadMode.Scale))
-							model->Scale = val.Scale.ToHavok();
+					if (mode.HasFlag(PoseLoadMode.Rotation))
+						model->Rotation = val.Rotation.ToHavok();
+					if (mode.HasFlag(PoseLoadMode.Position))
+						model->Translation = val.Position.ToHavok();
+					if (mode.HasFlag(PoseLoadMode.Scale))
+						model->Scale = val.Scale.ToHavok();
 
-						Overlay.Skeleton.PropagateChildren(bone, model, initialPos, initialRot);
-					}
+					bone.PropagateChildren(model, initialPos, initialRot, false);
 				}
 			}
 		}
