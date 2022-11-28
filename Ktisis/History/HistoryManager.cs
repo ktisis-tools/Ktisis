@@ -9,21 +9,18 @@ using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Events;
 using Ktisis.Overlay;
-using Ktisis.Localization;
-using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Structs.Actor.State;
-using System;
 
 namespace Ktisis.History {
 	public static class HistoryManager {
 		public static List<HistoryItem>? History { get; set; }
-		private static int _currentIdx = 0;
-		private static int _maxIdx = 0;
+		private static int _currentIdx = -1;
+		private static int _maxIdx = -1;
 		private static GizmoState _currentGizmoState;
 		private static TransformTableState _currentTtState;
 		private static int _alternativeTimelinesCreated = 0;
@@ -51,16 +48,19 @@ namespace Ktisis.History {
 				if (input.VirtualKey == VirtualKey.Z) {
 					if (_currentIdx > 1) {
 						_currentIdx--;
-						PluginLog.Verbose($"Current Idx: {_currentIdx}");
 						UpdateSkeleton();
+						PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
+						PrintHistory(_currentIdx - 1);
 						PluginLog.Verbose("CTRL+Z pressed. Undo.");
 					}
 					return true;
-				} else if (input.VirtualKey == VirtualKey.Y) {
+				}
+				else if (input.VirtualKey == VirtualKey.Y) {
 					if (_currentIdx < _maxIdx) {
 						_currentIdx++;
-						PluginLog.Verbose($"Current Idx: {_currentIdx}");
 						UpdateSkeleton();
+						PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
+						PrintHistory(_currentIdx - 1);
 						PluginLog.Verbose("CTRL+Y pressed. Redo.");
 					}
 					return true;
@@ -77,45 +77,46 @@ namespace Ktisis.History {
 			History = new List<HistoryItem>();
 		}
 
+		//TODO: Find a way to know what's the currently modified item to be able to add the correct entry to the history.
 		private unsafe static void OnGizmoChange(GizmoState state) {
 			if (!PoseHooks.PosingEnabled) return;
 			if (History == null) return;
 
-			var bone = Skeleton.GetSelectedBone();
-			if (bone == null) return;
-
 			var newState = state;
-			var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
-			var matrix = Interop.Alloc.GetMatrix(boneTransform);
 
 			if ((newState == GizmoState.EDITING) && (_currentGizmoState == GizmoState.IDLE)) {
 				PluginLog.Verbose("Started Gizmo edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
-				HistoryItem entryToAdd = new ActorBone(matrix, bone);
-				if (!entryToAdd.IsElemInHistory()) AddEntryToHistory(new ActorBone(matrix, bone));
+				UpdateHistory("ActorBone");
 			}
 			if (newState == GizmoState.IDLE && _currentGizmoState == GizmoState.EDITING) {
 				PluginLog.Verbose("Ended Gizmo edit");
-				AddEntryToHistory(new ActorBone(matrix, bone));
+				UpdateHistory("ActorBone");
 			}
 			_currentGizmoState = newState;
 		}
 
+		private static unsafe void UpdateHistory(string entryType) {
+			HistoryItem entryToAdd = HistoryItemFactory.Create(entryType);
+			AddEntryToHistory(entryToAdd);
+		}
+
+		//TODO: Find a way to know what's the currently modified item to be able to add the correct entry to the history.
 		private unsafe static void OnTransformationMatrixChange(TransformTableState state, Matrix4x4 matrix, Bone? bone, Actor* actor) {
 			if (!PoseHooks.PosingEnabled) return;
 			if (History == null) return;
 
 			var newState = state;
+
 			if ((newState == TransformTableState.EDITING) && (_currentTtState == TransformTableState.IDLE)) {
 				PluginLog.Verbose("Started TT edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
-				HistoryItem entryToAdd = new ActorBone(matrix, bone);
-				if (!entryToAdd.IsElemInHistory()) AddEntryToHistory(new ActorBone(matrix, bone));
+				UpdateHistory("ActorBone");
 			}
 
 			if ((newState == TransformTableState.IDLE) && (_currentTtState == TransformTableState.EDITING)) {
 				PluginLog.Verbose("Finished TT edit");
-				AddEntryToHistory(new ActorBone(matrix, bone));
+				UpdateHistory("ActorBone");
 			}
 
 			_currentTtState = newState;
@@ -123,26 +124,24 @@ namespace Ktisis.History {
 
 		// Methods
 
-		private unsafe static void AddEntryToHistory(HistoryItem historyItem) {
+		public unsafe static void AddEntryToHistory(HistoryItem historyItem) {
 			if (History == null) {
 				PluginLog.Warning("Attempted to add entry to uninitialised History list.");
 				return;
 			}
-			if (historyItem == null) {
-				PluginLog.Warning("Attempted to add a null entry to the history list.");
-				return;
+			if (historyItem is DummyItem) {
+				PluginLog.Warning("Added a dummy entry. Is that normal?");
 			}
 
-			HistoryItem? historyToAdd =
+			HistoryItem historyToAdd =
 				historyItem switch {
-					ActorBone actorBone => new ActorBone(actorBone.TransformationMatrix, actorBone.Bone),
-					_ => null,
+					ActorBone actorBone => actorBone,
+					_ => new DummyItem(),
 				};
-			if (historyToAdd == null) return;
-
 			History.Insert(_maxIdx, historyToAdd);
 			_currentIdx++;
 			_maxIdx++;
+			PrintHistory(_currentIdx - 1);
 		}
 
 		private unsafe static void UpdateSkeleton() {
@@ -155,7 +154,7 @@ namespace Ktisis.History {
 			if (History == null) return;
 			var str = "\n";
 			for (int i = 0; i < until; i++) {
-				str += $"{i + 1}: {History[i].DebugPrint()}\n";
+				str += $"{i}: {History[i].DebugPrint()}\n";
 			}
 			PluginLog.Verbose(str);
 		}
@@ -169,16 +168,14 @@ namespace Ktisis.History {
 		}
 
 		private static void createNewTimeline() {
-			var newHistory = History!
-							.Select(e => e.Clone())
-							.ToList()
-							.GetRange(0, _currentIdx);
+			var newHistory = 
+				History!
+				.Select(e => e.Clone())
+				.ToList()
+				.GetRange(0, _currentIdx);
 
 			HistoryItem? currentElem = newHistory[_currentIdx - 1];
 			var isElemInHistory = currentElem.IsElemInHistory();
-
-			//We need to decrement by 1 if there is only one appearance of that elem in the History => It is the idle state.
-			//IMPORTANT: Could this cause an issue? 
 			var offset = isElemInHistory ? 1 : 0;
 
 			var newMaxIdx = _currentIdx - offset;

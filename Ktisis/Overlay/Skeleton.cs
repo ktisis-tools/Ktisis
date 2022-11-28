@@ -157,7 +157,7 @@ namespace Ktisis.Overlay {
 							if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
 								var siblingBone = bone.GetMirrorSibling();
 								if (siblingBone != null)
-									siblingBone.PropagateSibling(transform->Rotation.ToQuat() / initialRot);
+									siblingBone.PropagateSibling(transform->Rotation.ToQuat() / initialRot, Ktisis.Configuration.SiblingLink);
 							}
 						}
 

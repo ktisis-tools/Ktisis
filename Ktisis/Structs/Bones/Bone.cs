@@ -119,13 +119,13 @@ namespace Ktisis.Structs.Bones {
 			}
 		}
 
-		public unsafe void PropagateSibling(Quaternion deltaRot) {
-			if (Ktisis.Configuration.SiblingLink == SiblingLink.None) return;
+		public unsafe void PropagateSibling(Quaternion deltaRot, SiblingLink type) {
+			if (type == SiblingLink.None) return;
 
 			var access = AccessModelSpace(PropagateOrNot.DontPropagate);
 			var offset = access->Translation.ToVector3();
 
-			if (Ktisis.Configuration.SiblingLink == SiblingLink.RotationMirrorX)
+			if (type == SiblingLink.RotationMirrorX)
 				deltaRot = new(-deltaRot.X, deltaRot.Y, deltaRot.Z, -deltaRot.W);
 
 			var matrix = Interop.Alloc.GetMatrix(access);
@@ -136,7 +136,7 @@ namespace Ktisis.Structs.Bones {
 			var initialPos = access->Translation.ToVector3();
 			Interop.Alloc.SetMatrix(access, matrix);
 
-			this.PropagateChildren(access, initialPos, initialRot);
+			PropagateChildren(access, initialPos, initialRot);
 		}
 
 		public bool IsBusted() =>
