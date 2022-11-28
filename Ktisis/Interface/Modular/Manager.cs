@@ -23,25 +23,25 @@ namespace Ktisis.Interface.Modular {
 
 		public static void Init() {
 			Handles.Clear();
-			Config = ListConfigObjectToDelegate(Ktisis.Configuration.ModularConfig)!;
+			Config = ParseConfigList(Ktisis.Configuration.ModularConfig)!;
 		}
 		public static void Dispose() => Config = new();
 		public static void Render() => Config?.ForEach(d => d.Draw());
 
-		private static List<IModularItem>? ListConfigObjectToDelegate(List<ConfigObject>? configObjects) {
+		private static List<IModularItem>? ParseConfigList(List<ConfigObject>? configObjects) {
 			if (configObjects == null) return null;
 
-			List<IModularItem> listDelegateAndInfo = new();
+			List<IModularItem> configList = new();
 			foreach (var o in configObjects) {
-				var delegateAndInfo = ConfigObjectToDelegate(o);
-				if (delegateAndInfo == null) continue;
-				listDelegateAndInfo.Add(delegateAndInfo);
+				var item = ParseConfigItem(o);
+				if (item == null) continue;
+				configList.Add(item);
 			}
-			if (listDelegateAndInfo.Any())
-				return listDelegateAndInfo;
+			if (configList.Any())
+				return configList;
 			return null;
 		}
-		private static IModularItem? ConfigObjectToDelegate(ConfigObject configObject) {
+		private static IModularItem? ParseConfigItem(ConfigObject configObject) {
 
 			// Get the type of desired instance
 			Type? objectType = Available.FirstOrDefault(i => i.Name == configObject.Type);
@@ -61,7 +61,7 @@ namespace Ktisis.Interface.Modular {
 
 			// create possible parameters
 			string handle = $"Window {Handles.Count}##Modular##{Handles.Count}";
-			var items = ListConfigObjectToDelegate(configObject.Items)!;
+			var items = ParseConfigList(configObject.Items)!;
 			Dictionary<int, object[]?> paramSolutions = new() {
 				{0, new object[] { Handles.Count, handle, items }},
 				{1, new object[] { Handles.Count, handle,  }},
@@ -215,11 +215,6 @@ namespace Ktisis.Interface.Modular {
 				ImGui.TreePop();
 			}
 		}
-	}
-
-	public class ContentsInfo {
-		public string Handle = "##modular##handle";
-		public List<(Delegate, ContentsInfo)>? Actions = null;
 	}
 
 	[Serializable]
