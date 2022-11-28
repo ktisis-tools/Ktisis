@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+
+using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Structs {
 	[Serializable]
@@ -28,7 +32,6 @@ namespace Ktisis.Structs {
 					var name = bone.HkaBone.Name.String;
 
 					var model = bone.AccessModelSpace();
-
 					this[name] = Transform.FromHavok(*model);
 				}
 			}
@@ -52,17 +55,16 @@ namespace Ktisis.Structs {
 				var name = bone.HkaBone.Name.String;
 
 				if (TryGetValue(name, out var val)) {
-					var model = bone.AccessModelSpace(FFXIVClientStructs.Havok.hkaPose.PropagateOrNot.Propagate);
+					var model = bone.AccessModelSpace();
 
 					var initial = *model;
 					var initialPos = initial.Translation.ToVector3();
 					var initialRot = initial.Rotation.ToQuat();
 
-					if (p == 0 && i <= 1) {
+					if (p == 0 && bone.ParentId < 1) {
 						var pos = val.Position.ToHavok();
-						model->Translation.X = pos.X;
-						model->Translation.Y = pos.Y; // unsure about this
-						model->Translation.Z = pos.Z;
+						model->Translation = pos;
+						initialRot = val.Rotation; // idk why this hack works but it does
 					}
 
 					if (mode.HasFlag(PoseLoadMode.Rotation))

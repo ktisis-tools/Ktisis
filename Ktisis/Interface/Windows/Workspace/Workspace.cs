@@ -172,8 +172,31 @@ namespace Ktisis.Interface.Windows.Workspace {
 			// Bone tree
 			BoneTree.Draw(actor);
 
+			// Import & Export
+			if (ImGui.CollapsingHeader("Import & Export")) {
+				ImGui.Text("Transforms");
+				var _ = false;
+				ImGui.Checkbox("R", ref _);
+				ImGui.SameLine();
+				ImGui.Checkbox("P", ref _);
+				ImGui.SameLine();
+				ImGui.Checkbox("S", ref _);
+
+				ImGui.Checkbox("Body", ref _);
+				ImGui.SameLine();
+				ImGui.Checkbox("Expression", ref _);
+
+				ImGui.Spacing();
+
+				ImGui.Button("Import");
+				ImGui.SameLine();
+				ImGui.Button("Export");
+
+				ImGui.Spacing();
+			}
+
 			// Advanced
-			if (ImGui.CollapsingHeader("Advanced/Debug")) {
+			if (ImGui.CollapsingHeader("Advanced")) {
 				if (ImGui.Button("Set to Reference Pose")) {
 					if (actor->Model != null && actor->Model->Skeleton != null) {
 						var skele = actor->Model->Skeleton;
@@ -187,7 +210,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 					}
 				}
 
-				if (ImGui.Button("Sync Model Space")) {
+				if (ImGui.Button("Sync Model Space (Debug)")) {
 					if (actor->Model != null && actor->Model->Skeleton != null) {
 						var skele = actor->Model->Skeleton;
 						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
