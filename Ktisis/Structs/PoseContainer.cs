@@ -65,6 +65,10 @@ namespace Ktisis.Structs {
 						var pos = val.Position.ToHavok();
 						model->Translation = pos;
 						initialRot = val.Rotation; // idk why this hack works but it does
+					} else if (p > 0 && i == partial.ConnectedBoneIndex) {
+						var parent = modelSkeleton->GetBone(0, partial.ConnectedParentBoneIndex);
+						*model = parent.Transform;
+						initialRot = model->Rotation.ToQuat();
 					}
 
 					if (mode.HasFlag(PoseLoadMode.Rotation))
