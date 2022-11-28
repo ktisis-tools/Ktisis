@@ -13,5 +13,8 @@ namespace Ktisis.Interface.Modular.ItemTypes.Panel {
 	public class GizmoOperations : IModularItem {
 		public void Draw() => Components.ControlButtons.DrawGizmoOperations();
 	}
+	public class GposeTextIndicator : IModularItem {
+		public void Draw() => Windows.Workspace.Workspace.DrawGposeIndicator();
+	}
 
 }
