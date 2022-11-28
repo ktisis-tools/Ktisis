@@ -1,6 +1,7 @@
 using ImGuiNET;
 
 using Ktisis.Interface.Components;
+using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis.Interface.Modular.ItemTypes.Panel {
@@ -24,6 +25,9 @@ namespace Ktisis.Interface.Modular.ItemTypes.Panel {
 	}
 	public class SelectInfo : IModularItem {
 		public void Draw() => Workspace.SelectInfo();
+	}
+	public class EditActorButton : IModularItem {
+		public void Draw() => EditActor.DrawButton();
 	}
 
 }
