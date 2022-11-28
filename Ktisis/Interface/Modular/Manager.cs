@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata;
 
-using Dalamud.Logging;
 using ImGuiNET;
 
 using Ktisis.Interface.Components;
@@ -20,15 +18,14 @@ namespace Ktisis.Interface.Modular {
 		private static readonly List<Type> AvailablePanel = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Panel").ToList();
 		private static readonly List<Type> Available = AvailableContainers.Concat(AvailableSpliters).Concat(AvailablePanel).ToList();
 
-
 		public static List<string> Handles = new();
 		public static List<IModularItem> Config = new();
 
 		public static void Init() {
 			Handles.Clear();
-			Config = ListConfigObjectToDelegate(Ktisis.Configuration.ModularConfig);
+			Config = ListConfigObjectToDelegate(Ktisis.Configuration.ModularConfig)!;
 		}
-		public static void Dispose() => Config = null;
+		public static void Dispose() => Config = new();
 		public static void Render() => Config?.ForEach(d => d.Draw());
 
 		private static List<IModularItem>? ListConfigObjectToDelegate(List<ConfigObject>? configObjects) {
@@ -46,28 +43,57 @@ namespace Ktisis.Interface.Modular {
 		}
 		private static IModularItem? ConfigObjectToDelegate(ConfigObject configObject) {
 
-			Type? type = Available.FirstOrDefault(i => i.Name == configObject.Type)?.DeclaringType;
-			if (type == null) return null;
+			// Get the type of desired instance
+			Type? objectType = Available.FirstOrDefault(i => i.Name == configObject.Type);
+			if (objectType == null) return null;
 
+			// Get available constructors
+			var constructors = objectType.GetConstructors(BindingFlags.Instance | BindingFlags.Public);
+			if (constructors == null || constructors.Length == 0) return null;
 
+			object? instance = null;
+
+			// if parameterless constructor exists, use it
+			if (constructors.Any(c => c.GetParameters().Length == 0)) {
+				instance = Activator.CreateInstance(objectType);
+				if (instance != null) return (IModularItem)instance;
+			}
+
+			// create possible parameters
 			string handle = $"Window {Handles.Count}##Modular##{Handles.Count}";
-			var param = new object[] {
-				Handles.Count,
-				handle,
-				ListConfigObjectToDelegate(configObject.Items)!
+			var items = ListConfigObjectToDelegate(configObject.Items)!;
+			Dictionary<int, object[]?> paramSolutions = new() {
+				{0, new object[] { Handles.Count, handle, items }},
+				{1, new object[] { Handles.Count, handle,  }},
 			};
 			Handles.Add(handle);
-			var modularObject = Activator.CreateInstance(type, param);
 
-			MethodInfo? mi = type?.GetMethod(configObject.Type, BindingFlags.Public | BindingFlags.Static);
-			if (modularObject != null) {
+			// check if any constructor is compatible with out parameters
+			var compatibleParamIndex = AnyCompatibleConstructors(paramSolutions, constructors);
+			if (compatibleParamIndex != null)
+				if (paramSolutions.TryGetValue((int)compatibleParamIndex, out object[]? parameters)) {
+					instance = Activator.CreateInstance(objectType, parameters);
+					if (instance != null) return (IModularItem)instance;
+				}
 
-	
-
-				if(configObject.Items != null)
-					modularObject = ListConfigObjectToDelegate(configObject.Items);
-
-				return (IModularItem)modularObject;
+			return null;
+		}
+		private static int? AnyCompatibleConstructors(Dictionary<int, object[]?> parametersSolutions, ConstructorInfo[]? constructors) {
+			if (constructors == null) return null;
+			foreach (var ctor in constructors) {
+				int paramMatches = 0;
+				foreach (var solu in parametersSolutions) {
+					int i = 0;
+					paramMatches = 0;
+					foreach (var item in ctor.GetParameters()) {
+						var typeOfParamSolution = solu.Value?[i].GetType();
+						var typeOfConstructor = item.ParameterType;
+						if (typeOfParamSolution == typeOfConstructor) paramMatches++;
+						i++;
+					}
+					if (paramMatches == ctor.GetParameters().Length)
+						return solu.Key;
+				}
 			}
 			return null;
 		}
@@ -106,7 +132,7 @@ namespace Ktisis.Interface.Modular {
 					bool focus = ImGui.IsItemFocused();
 					ImGui.SameLine();
 					ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f);
-					GuiHelpers.TextRight(t.Namespace!.Split('.').Last());
+					GuiHelpers.TextRight(TypeToKind(t));
 					ImGui.PopStyleVar();
 					return (selected, focus);
 				},
@@ -117,12 +143,15 @@ namespace Ktisis.Interface.Modular {
 				"##addpanel_select",
 				"##addpanel_search");
 		}
-		private static bool IsContainer(string handle) => AvailableContainers.Any(a => a.Name == handle);
+		private static string TypeToKind(Type? type) => type!.Namespace!.Split('.').Last();
+		private static bool IsPanel(Type? type) => TypeToKind(type) == "Panel";
+		private static bool IsContainer(Type? type) => TypeToKind(type) == "Container";
+		private static bool IsAvailableContainer(string handle) => AvailableContainers.Any(a => a.Name == handle);
 		private static void Add(string handle) => Add(new ConfigObject(handle));
 		private static void Add(ConfigObject toAdd) {
 			if (Ktisis.Configuration.ModularConfig == null)
 				Ktisis.Configuration.ModularConfig = new();
-			if (IsContainer(toAdd.Type))
+			if (IsAvailableContainer(toAdd.Type))
 				Ktisis.Configuration.ModularConfig.Add(toAdd);
 			else
 				if (Ktisis.Configuration.ModularConfig!.Any()) {
