@@ -189,17 +189,8 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.Spacing();
 
 			// Bone categories
-			if (ImGui.CollapsingHeader("Bone Categories")) {
-
-				if (!Categories.DrawToggleList(cfg)) {
-					ImGui.Text("No bone found.");
-					ImGui.Text("Show Skeleton (");
-					ImGui.SameLine();
-					GuiHelpers.Icon(FontAwesomeIcon.EyeSlash);
-					ImGui.SameLine();
-					ImGui.Text(") to fill this.");
-				}
-			}
+			if (ImGui.CollapsingHeader("Bone Categories"))
+				Categories.DrawToggleListWithHint();
 
 			// Bone tree
 			if (ImGui.CollapsingHeader("Bone List"))

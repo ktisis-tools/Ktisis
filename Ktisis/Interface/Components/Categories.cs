@@ -47,6 +47,17 @@ namespace Ktisis.Interface.Components {
 			});
 		}
 
+
+		public static void DrawToggleListWithHint() {
+			if (!DrawToggleList(Ktisis.Configuration)) {
+				ImGui.Text("No bone found.");
+				ImGui.Text("Show Skeleton (");
+				ImGui.SameLine();
+				GuiHelpers.Icon(FontAwesomeIcon.EyeSlash);
+				ImGui.SameLine();
+				ImGui.Text(") to fill this.");
+			}
+		}
 		public static bool DrawToggleList(Configuration cfg) {
 			if (!DrawList(category => {
 
