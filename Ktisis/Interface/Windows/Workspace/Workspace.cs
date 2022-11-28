@@ -53,8 +53,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			if (!Visible)
 				return;
 
-			if(Ktisis.Configuration.ModularConfig != null)
-				Modular.Manager.Render();
+			DrawExtraWindows();
 
 
 			var size = new Vector2(-1, -1);
@@ -107,6 +106,17 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			ImGui.PopStyleVar();
 			ImGui.End();
+		}
+
+		private static void DrawExtraWindows() {
+
+			// Draw Modular UI
+			if (Ktisis.Configuration.ModularConfig != null)
+				Modular.Manager.Render();
+
+			// Draw Actor list to avoir duplication from double instance in modular UI
+			if (ActorsList.SelectorList != null)
+				ActorsList.DrawListAddActor();
 		}
 
 		public static void DrawGposeIndicator() {

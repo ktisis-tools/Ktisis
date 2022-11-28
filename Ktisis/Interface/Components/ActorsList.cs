@@ -16,7 +16,7 @@ namespace Ktisis.Interface.Components {
 	internal static class ActorsList {
 
 		private static List<long> SavedObjects = new();
-		private static List<DalamudGameObject>? SelectorList = null;
+		internal static List<DalamudGameObject>? SelectorList = null;
 		private static string Search = "";
 		private static readonly HashSet<ObjectKind> WhitelistObjectKinds = new(){
 				ObjectKind.Player,
@@ -68,8 +68,6 @@ namespace Ktisis.Interface.Components {
 				ImGui.Text("Right click to remove an Actor from the list");
 				ImGui.EndTooltip();
 			}
-			if (SelectorList != null)
-				DrawListAddActor();
 		}
 
 		private static void OpenSelector() =>
@@ -93,7 +91,7 @@ namespace Ktisis.Interface.Components {
 
 		private static void CloseSelector() => SelectorList = null;
 
-		private unsafe static void DrawListAddActor() {
+		internal unsafe static void DrawListAddActor() {
 			PopupSelect.HoverPopupWindow(
 				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
 				SelectorList!,
