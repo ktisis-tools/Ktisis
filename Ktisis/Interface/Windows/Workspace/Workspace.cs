@@ -145,7 +145,8 @@ namespace Ktisis.Interface.Windows.Workspace
 			ActorsList.Draw();
 
 			// Animation control
-			AnimationControls.Draw(target);
+			if (ImGui.CollapsingHeader("Animation Control"))
+				AnimationControls.Draw(target);
 
 			// Gaze control
 			if (ImGui.CollapsingHeader("Gaze Control"))

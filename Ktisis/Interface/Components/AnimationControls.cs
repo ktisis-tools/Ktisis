@@ -12,16 +12,13 @@ namespace Ktisis.Interface.Components {
 
 		public static unsafe void Draw(GameObject? target) {
 			// Animation control
-			if (ImGui.CollapsingHeader("Animation Control")) {
-				var control = PoseHooks.GetAnimationControl(target);
-				if (PoseHooks.PosingEnabled || !Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null) {
-					ImGui.Text("Animation Control is available when:");
-					ImGui.BulletText("Game animation is paused");
-					ImGui.BulletText("Posing is off");
-				} else
-					AnimationSeekAndSpeed(control);
-			}
-
+			var control = PoseHooks.GetAnimationControl(target);
+			if (PoseHooks.PosingEnabled || !Ktisis.IsInGPose || PoseHooks.IsGamePlaybackRunning(target) || control == null) {
+				ImGui.Text("Animation Control is available when:");
+				ImGui.BulletText("Game animation is paused");
+				ImGui.BulletText("Posing is off");
+			} else
+				AnimationSeekAndSpeed(control);
 		}
 		public static unsafe void AnimationSeekAndSpeed(hkaDefaultAnimationControl* control) {
 			var duration = control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
