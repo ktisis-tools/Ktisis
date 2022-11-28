@@ -202,7 +202,8 @@ namespace Ktisis.Interface.Windows.Workspace
 			}
 
 			// Bone tree
-			BoneTree.Draw(actor);
+			if (ImGui.CollapsingHeader("Bone List"))
+				BoneTree.Draw(actor);
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
