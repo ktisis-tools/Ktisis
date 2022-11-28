@@ -142,16 +142,14 @@ namespace Ktisis.Interop.Hooks {
 
 			SyncModelSpaceHook.Original(pose);
 
-			//if (a2 == 2) {
-				foreach (var obj in Services.ObjectTable) {
-					var actor = (Actor*)obj.Address;
-					if (actor->Model == null || actor->Model->Skeleton != a1) continue;
+			foreach (var obj in Services.ObjectTable) {
+				var actor = (Actor*)obj.Address;
+				if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
-					if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
-						backup.ApplyToPartial(a1, a2);
-					}
+				if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
+					backup.ApplyToPartial(a1, a2);
 				}
-			//}
+			}
 
 			return exec;
 		}

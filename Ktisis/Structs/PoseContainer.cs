@@ -39,8 +39,7 @@ namespace Ktisis.Structs {
 
 		public unsafe void Apply(Skeleton* modelSkeleton, PoseLoadMode mode = PoseLoadMode.Rotation) {
 			var partialCt = modelSkeleton->PartialSkeletonCount;
-			for (var p = 0; p < modelSkeleton->PartialSkeletonCount; p++)
-				ApplyToPartial(modelSkeleton, p, mode);
+			ApplyToPartial(modelSkeleton, 0, mode);
 		}
 
 		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation) {
@@ -61,24 +60,33 @@ namespace Ktisis.Structs {
 					var initialPos = initial.Translation.ToVector3();
 					var initialRot = initial.Rotation.ToQuat();
 
+					var aaa_aaa = false;
+
 					if (p == 0 && bone.ParentId < 1) {
 						var pos = val.Position.ToHavok();
 						model->Translation = pos;
 						initialRot = val.Rotation; // idk why this hack works but it does
-					} else if (p > 0 && i == partial.ConnectedBoneIndex) {
+					} else if (i == partial.ConnectedBoneIndex) { // Is face, hair, etc
 						var parent = modelSkeleton->GetBone(0, partial.ConnectedParentBoneIndex);
-						*model = parent.Transform;
-						initialRot = model->Rotation.ToQuat();
+						var pModel = parent.AccessModelSpace();
+
+						// This is extremely hacky due to the requirements of loading poses in LoadSkeletonHook.
+
+						model->Translation = pModel->Translation;
+						Overlay.Skeleton.PropagateChildren(bone, model, initialPos, initialRot);
+						initialPos = model->Translation.ToVector3();
 					}
 
-					if (mode.HasFlag(PoseLoadMode.Rotation))
-						model->Rotation = val.Rotation.ToHavok();
-					if (mode.HasFlag(PoseLoadMode.Position))
-						model->Translation = val.Position.ToHavok();
-					if (mode.HasFlag(PoseLoadMode.Scale))
-						model->Scale = val.Scale.ToHavok();
+					if (!aaa_aaa) {
+						if (mode.HasFlag(PoseLoadMode.Rotation))
+							model->Rotation = val.Rotation.ToHavok();
+						if (mode.HasFlag(PoseLoadMode.Position))
+							model->Translation = val.Position.ToHavok();
+						if (mode.HasFlag(PoseLoadMode.Scale))
+							model->Scale = val.Scale.ToHavok();
 
-					Overlay.Skeleton.PropagateChildren(bone, model, initialPos, initialRot);
+						Overlay.Skeleton.PropagateChildren(bone, model, initialPos, initialRot);
+					}
 				}
 			}
 		}

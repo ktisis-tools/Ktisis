@@ -55,14 +55,16 @@ namespace Ktisis.Structs.Bones {
 				result.Add(child);
 			}
 			// Add child bones from connected partials
-			for (var p = 0; p < Skeleton->PartialSkeletonCount; p++) {
-				if (p == Partial) continue;
-				var partial = Skeleton->PartialSkeletons[p];
-				if (partial.ConnectedParentBoneIndex == Index) {
-					var partialRoot = new Bone(Skeleton, p, partial.ConnectedBoneIndex);
-					var children = partialRoot.GetChildren();
-					foreach (var child in children)
-						result.Add(child);
+			if (Partial == 0) {
+				for (var p = 0; p < Skeleton->PartialSkeletonCount; p++) {
+					if (p == Partial) continue;
+					var partial = Skeleton->PartialSkeletons[p];
+					if (partial.ConnectedParentBoneIndex == Index) {
+						var partialRoot = new Bone(Skeleton, p, partial.ConnectedBoneIndex);
+						var children = partialRoot.GetChildren();
+						foreach (var child in children)
+							result.Add(child);
+					}
 				}
 			}
 			return result;
