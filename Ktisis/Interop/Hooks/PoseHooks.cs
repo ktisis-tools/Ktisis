@@ -13,26 +13,26 @@ using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interop.Hooks {
 	public static class PoseHooks {
-		private delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
-		private static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;
+		internal delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
+		internal static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;
 
-		private delegate IntPtr CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
-		private static Hook<CalculateBoneModelSpaceDelegate> CalculateBoneModelSpaceHook = null!;
+		internal delegate IntPtr CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
+		internal static Hook<CalculateBoneModelSpaceDelegate> CalculateBoneModelSpaceHook = null!;
 
 		internal unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
 		internal static Hook<SyncModelSpaceDelegate> SyncModelSpaceHook = null!;
 
-		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
-		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
+		internal unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
+		internal static Hook<LookAtIKDelegate> LookAtIKHook = null!;
 
-		private unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
-		private static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
+		internal unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
+		internal static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
 
-		private unsafe delegate char LoadSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
-		private static Hook<LoadSkeletonDelegate> LoadSkeletonHook = null!;
+		internal unsafe delegate char LoadSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
+		internal static Hook<LoadSkeletonDelegate> LoadSkeletonHook = null!;
 
-		private unsafe delegate IntPtr DisableDrawDelegate(Actor* a1);
-		private static Hook<DisableDrawDelegate> DisableDrawHook = null!;
+		internal unsafe delegate IntPtr DisableDrawDelegate(Actor* a1);
+		internal static Hook<DisableDrawDelegate> DisableDrawHook = null!;
 
 		internal static bool PosingEnabled { get; private set; }
 

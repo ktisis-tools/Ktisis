@@ -172,6 +172,34 @@ namespace Ktisis.Interface.Windows.Workspace {
 			// Bone tree
 			BoneTree.Draw(actor);
 
+			// Advanced
+			if (ImGui.CollapsingHeader("Advanced/Debug")) {
+				if (ImGui.Button("Set to Reference Pose")) {
+					if (actor->Model != null && actor->Model->Skeleton != null) {
+						var skele = actor->Model->Skeleton;
+						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
+							var partial = skele->PartialSkeletons[p];
+							var pose = partial.GetHavokPose(0);
+							if (pose == null) continue;
+							pose->SetToReferencePose();
+							PoseHooks.SyncModelSpaceHook.Original(pose);
+						}
+					}
+				}
+
+				if (ImGui.Button("Sync Model Space")) {
+					if (actor->Model != null && actor->Model->Skeleton != null) {
+						var skele = actor->Model->Skeleton;
+						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
+							var partial = skele->PartialSkeletons[p];
+							var pose = partial.GetHavokPose(0);
+							if (pose == null) continue;
+							PoseHooks.SyncModelSpaceHook.Original(pose);
+						}
+					}
+				}
+			}
+
 			ImGui.EndTabItem();
 		}
 
