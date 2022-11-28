@@ -206,17 +206,36 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
-				ImportExportPose(actor);
+				DrawImportExport();
 
 			// Advanced
-			if (ImGui.CollapsingHeader("Advanced (Debug)")) {
+			if (ImGui.CollapsingHeader("Advanced (Debug)"))
 				DrawAdvanced();
-			}
 
 			ImGui.EndTabItem();
 		}
 
+		private static void DrawImportExport() {
+			ImGui.Text("Transforms");
+			var _ = false;
+			ImGui.Checkbox("R", ref _);
+			ImGui.SameLine();
+			ImGui.Checkbox("P", ref _);
+			ImGui.SameLine();
+			ImGui.Checkbox("S", ref _);
 
+			ImGui.Checkbox("Body", ref _);
+			ImGui.SameLine();
+			ImGui.Checkbox("Expression", ref _);
+
+			ImGui.Spacing();
+
+			ImGui.Button("Import");
+			ImGui.SameLine();
+			ImGui.Button("Export");
+
+			ImGui.Spacing();
+		}
 		private unsafe static void DrawAdvanced() {
 			var actor = Ktisis.Target;
 			if (actor->Model == null) return;
