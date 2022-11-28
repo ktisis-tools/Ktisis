@@ -39,8 +39,8 @@ namespace Ktisis.Util
 			ImGui.PopFont();
 			return accepting;
 		}
-		public static bool TextButtonTooltip(string label, string tooltip) {
-			bool accepting = ImGui.Button(label);
+		public static bool TextButtonTooltip(string label, string tooltip, Vector2 size = default) {
+			bool accepting = ImGui.Button(label, size);
 			Tooltip(tooltip);
 			return accepting;
 		}

@@ -133,6 +133,10 @@ namespace Ktisis.Interface.Windows {
 			var displayMultiplierInputs = cfg.TransformTableDisplayMultiplierInputs;
 			if (ImGui.Checkbox(Locale.GetString("Show_speed_multipler_inputs"), ref displayMultiplierInputs))
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
+			
+			var showToolbar = cfg.ShowToolbar;
+			if (ImGui.Checkbox("Show Experimental Toolbar", ref showToolbar))
+				cfg.ShowToolbar = showToolbar;
 			ImGui.PopItemWidth();
 
 			ImGui.EndTabItem();
