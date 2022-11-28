@@ -29,5 +29,8 @@ namespace Ktisis.Interface.Modular.ItemTypes.Panel {
 	public class EditActorButton : IModularItem {
 		public void Draw() => EditActor.DrawButton();
 	}
+	public class AnimationControls : IModularItem {
+		public void Draw() => Components.AnimationControls.Draw();
+	}
 
 }
