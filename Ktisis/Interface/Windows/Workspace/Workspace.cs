@@ -9,11 +9,11 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Util;
 using Ktisis.Overlay;
 using Ktisis.Localization;
+using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Structs;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class Workspace {

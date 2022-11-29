@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
-
-using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.Havok;
-
-using Ktisis.Structs.Bones;
 
 namespace Ktisis.Structs {
 	[Serializable]
@@ -84,7 +78,7 @@ namespace Ktisis.Structs {
 				}
 			}
 
-			if (partial.ConnectedBoneIndex > -1 && p == 1) {
+			if (partial.ConnectedBoneIndex > -1) {
 				var bone = modelSkeleton->GetBone(p, partial.ConnectedBoneIndex);
 				var parent = modelSkeleton->GetBone(0, partial.ConnectedParentBoneIndex);
 
