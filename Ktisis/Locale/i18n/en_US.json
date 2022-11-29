@@ -27,7 +27,10 @@
 			"general": {
 				"title": "General",
 				"openMethod": {
-					"fieldLabel": "Open Ktisis"
+					"fieldLabel": "Open Ktisis",
+					"Manually": "manually via `/ktisis`",
+					"OnPluginLoad": "when the plugin loads",
+					"OnEnterGpose": "when entering group pose"
 				},
 				"hideCharName": "Hide Character Name",
 				"censorNSFW": "Censor NSFW"
