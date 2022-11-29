@@ -14,10 +14,11 @@ using Ktisis.Interface;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip.SetSources;
-using Ktisis.Structs;
+using Ktisis.Structs.Poses;
 
-namespace Ktisis {
-	[Serializable]
+namespace Ktisis
+{
+    [Serializable]
 	public class Configuration : IPluginConfiguration {
 		public const int CurVersion = 1;
 		public int Version { get; set; } = CurVersion;

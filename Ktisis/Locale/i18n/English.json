@@ -28,7 +28,7 @@
     "config.references_tab.hide_window_decorations": "Hide window decorations",
     "config.references_tab.reference_images": "Reference images",
     "config.references_tab.add_reference_file": "Add reference file",
-    "config.references_tab.supported_reference_files": "Image files{.gif,.jpg,.jpeg,.png}",
+    "config.references_tab.supported_reference_files": "Image files",
     "config.references_tab.add_new": "Add new reference image",
     "Hide_char_name": "Hide character name",
     "Censor_nsfw": "Censor NSFW",

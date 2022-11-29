@@ -1,9 +1,10 @@
 ﻿using System.Numerics;
 
-using Ktisis.Structs;
+using Ktisis.Structs.Poses;
 
-namespace Ktisis.Data.Files {
-	public class PoseFile : JsonFile {
+namespace Ktisis.Data.Files
+{
+    public class PoseFile : JsonFile {
 		public string FileExtension = ".pose";
 		public string TypeName = "Ktisis Pose";
 

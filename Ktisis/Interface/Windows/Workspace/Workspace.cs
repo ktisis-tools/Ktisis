@@ -10,14 +10,15 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Util;
 using Ktisis.Overlay;
 using Ktisis.Localization;
-using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Structs.Poses;
 
-namespace Ktisis.Interface.Windows.Workspace {
-	public static class Workspace {
+namespace Ktisis.Interface.Windows.Workspace
+{
+    public static class Workspace {
 		public static bool Visible = false;
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
@@ -292,8 +293,6 @@ namespace Ktisis.Interface.Windows.Workspace {
 			ImGui.Spacing();
 			ImGui.Text("Transforms");
 
-			var _ = false;
-
 			// Transforms
 
 			var trans = Ktisis.Configuration.PoseTransforms;
@@ -357,6 +356,17 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			if (isUseless) ImGui.BeginDisabled();
 			if (ImGui.Button("Import")) {
+				KtisisGui.FileDialogManager.OpenFileDialog(
+					"Importing Pose",
+					"Pose Files (.pose){.pose}",
+					(success, path) => {
+						if (!success) return;
+
+
+					},
+					1,
+					null
+				);
 			}
 			if (isUseless) ImGui.EndDisabled();
 			ImGui.SameLine();

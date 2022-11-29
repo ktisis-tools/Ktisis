@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Util;
@@ -482,7 +481,7 @@ namespace Ktisis.Interface.Windows {
 				if (GuiHelpers.IconButton(FontAwesomeIcon.File, ButtonSize)) {
 					KtisisGui.FileDialogManager.OpenFileDialog(
 						Locale.GetString("config.references_tab.add_reference_file"),
-						Locale.GetString("config.references_tab.supported_reference_files"),
+						Locale.GetString("config.references_tab.supported_reference_files") + "{.gif,.jpg,.jpeg,.png}",
 						(success, filePath) => {
 							if (success) {
 								TryChangeReference(cfg, key, filePath);
