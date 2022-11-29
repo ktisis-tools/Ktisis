@@ -12,8 +12,7 @@ using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
 
-namespace Ktisis.Interop.Hooks
-{
+namespace Ktisis.Interop.Hooks {
     public static class PoseHooks {
 		internal delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
 		internal static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;
