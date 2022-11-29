@@ -37,7 +37,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 }
 namespace Ktisis.Interface.Modular.ItemTypes.Container {
 
-		public class WindowResizable : BaseContainer.Window {
+	public class WindowResizable : BaseContainer.Window {
 		public WindowResizable(int windowID, string title, List<IModularItem> items) : base(windowID, ImGuiWindowFlags.None, title, items) { }
 		public WindowResizable(int windowID, string title) : this(windowID, title, new()) { }
 	}
