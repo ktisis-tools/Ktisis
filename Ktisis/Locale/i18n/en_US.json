@@ -144,9 +144,7 @@
         "title": "Reference images",
         "dialog": {
           "title": "Add reference file",
-          "__comment": "The previous translation files included the actual technical file filter here as well, which is... dangerous.",
-          "filter": "Image files",
-          
+          "filter": "Image files"
         },
         "addText": "Add new reference image",
         "add": "Add reference file",
@@ -208,7 +206,7 @@
     "Xaela": "Xaela",
     "Helion": "Helion",
     "Rava": "Rava",
-    "Veena": "Veena",
+    "Veena": "Veena"
   },
   
   "race": {
