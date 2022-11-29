@@ -4,6 +4,7 @@ using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
@@ -23,6 +24,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 		public static Vector4 ColRed = new Vector4(255, 0, 0, 255);
 
 		public static TransformTable Transform = new();
+
+		public static FileDialogManager FileDialogManager = new FileDialogManager();
 
 		// Toggle visibility
 
@@ -174,44 +177,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 			BoneTree.Draw(actor);
 
 			// Import & Export
-			if (ImGui.CollapsingHeader("Import & Export")) {
-				ImGui.Spacing();
-				ImGui.Text("Transforms");
-
-				var _ = false;
-
-				var trans = Ktisis.Configuration.PoseTransforms;
-
-				var rot = trans.HasFlag(PoseTransforms.Rotation);
-				ImGui.Checkbox("Rotation", ref rot);
-
-				var pos = trans.HasFlag(PoseTransforms.Position);
-				ImGui.SameLine();
-				ImGui.Checkbox("Position", ref pos);
-
-				var scale = trans.HasFlag(PoseTransforms.Position);
-				ImGui.SameLine();
-				ImGui.Checkbox("Scale", ref scale);
-
-				ImGui.Spacing();
-
-				ImGui.Text("Modes");
-				ImGui.Checkbox("Body", ref _);
-				ImGui.SameLine();
-				ImGui.Checkbox("Expression", ref _);
-				ImGui.SameLine();
-				ImGui.Checkbox("Hair", ref _);
-
-				ImGui.Spacing();
-				ImGui.Separator();
-				ImGui.Spacing();
-
-				ImGui.Button("Import");
-				ImGui.SameLine();
-				ImGui.Button("Export");
-
-				ImGui.Spacing();
-			}
+			if (ImGui.CollapsingHeader("Import & Export"))
+				ImportExport();
 
 			// Advanced
 			if (ImGui.CollapsingHeader("Advanced")) {
@@ -319,6 +286,83 @@ namespace Ktisis.Interface.Windows.Workspace {
 			ImGui.EndGroup();
 
 			ImGui.SameLine(size * 2.5f);
+		}
+
+		private static void ImportExport() {
+			ImGui.Spacing();
+			ImGui.Text("Transforms");
+
+			var _ = false;
+
+			// Transforms
+
+			var trans = Ktisis.Configuration.PoseTransforms;
+
+			var rot = trans.HasFlag(PoseTransforms.Rotation);
+			if (ImGui.Checkbox("Rotation", ref rot))
+				trans = trans.ToggleFlag(PoseTransforms.Rotation);
+
+			var pos = trans.HasFlag(PoseTransforms.Position);
+			var col = pos;
+			ImGui.SameLine();
+			if (col) ImGui.PushStyleColor(ImGuiCol.Text, 0xff00fbff);
+			if (ImGui.Checkbox("Position", ref pos))
+				trans = trans.ToggleFlag(PoseTransforms.Position);
+			if (col) ImGui.PopStyleColor();
+
+			var scale = trans.HasFlag(PoseTransforms.Scale);
+			col = scale;
+			ImGui.SameLine();
+			if (col) ImGui.PushStyleColor(ImGuiCol.Text, 0xff00fbff);
+			if (ImGui.Checkbox("Scale", ref scale))
+				trans = trans.ToggleFlag(PoseTransforms.Scale);
+			if (col) ImGui.PopStyleColor();
+
+			if (trans > PoseTransforms.Rotation) {
+				ImGui.PushStyleColor(ImGuiCol.Text, 0xff00fbff);
+				ImGui.Text("* Importing may have unexpected results.");
+				ImGui.PopStyleColor();
+			}
+
+			Ktisis.Configuration.PoseTransforms = trans;
+
+			ImGui.Spacing();
+			ImGui.Text("Modes");
+
+			// Modes
+
+			var modes = Ktisis.Configuration.PoseMode;
+
+			var body = modes.HasFlag(PoseMode.Body);
+			if (ImGui.Checkbox("Body", ref body))
+				modes = modes.ToggleFlag(PoseMode.Body);
+
+			var face = modes.HasFlag(PoseMode.Face);
+			ImGui.SameLine();
+			if (ImGui.Checkbox("Expression", ref face))
+				modes = modes.ToggleFlag(PoseMode.Face);
+
+			var hair = modes.HasFlag(PoseMode.Hair);
+			ImGui.SameLine();
+			if (ImGui.Checkbox("Hair", ref hair))
+				modes = modes.ToggleFlag(PoseMode.Hair);
+
+			Ktisis.Configuration.PoseMode = modes;
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Spacing();
+
+			var isUseless = trans == 0 || modes == 0;
+
+			if (isUseless) ImGui.BeginDisabled();
+			if (ImGui.Button("Import")) {
+			}
+			if (isUseless) ImGui.EndDisabled();
+			ImGui.SameLine();
+			ImGui.Button("Export");
+
+			ImGui.Spacing();
 		}
 	}
 }

@@ -87,7 +87,7 @@ namespace Ktisis.Structs {
 				var initial = *model;
 				*model = *parent.AccessModelSpace();
 
-				bone.PropagateChildren(model, initial.Translation.ToVector3(), initial.Rotation.ToQuat(), true);
+				bone.PropagateChildren(model, initial.Translation.ToVector3(), initial.Rotation.ToQuat());
 			}
 		}
 	}
@@ -105,6 +105,7 @@ namespace Ktisis.Structs {
 		None = 0,
 		Body = 1,
 		Face = 2,
-		Hair = 4
+		Hair = 4,
+		All = 7
 	}
 }

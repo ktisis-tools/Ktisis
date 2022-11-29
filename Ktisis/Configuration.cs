@@ -122,6 +122,7 @@ namespace Ktisis {
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
 
 		public PoseTransforms PoseTransforms { get; set; } = PoseTransforms.Rotation;
+		public PoseMode PoseMode { get; set; } = PoseMode.All;
 
 		public bool EnableParenting { get; set; } = true;
 

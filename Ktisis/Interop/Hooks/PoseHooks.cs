@@ -140,9 +140,7 @@ namespace Ktisis.Interop.Hooks {
 
 			var partial = a1->PartialSkeletons[a2];
 			var pose = partial.GetHavokPose(0);
-			if (pose == null) {
-				return exec;
-			}
+			if (pose == null) return exec;
 
 			SyncModelSpaceHook.Original(pose);
 
@@ -155,17 +153,16 @@ namespace Ktisis.Interop.Hooks {
 				var initial = *model;
 				*model = *parent.AccessModelSpace();
 
-				bone.PropagateChildren(model, initial.Translation.ToVector3(), model->Rotation.ToQuat(), true);
-				bone.PropagateChildren(model, model->Translation.ToVector3(), initial.Rotation.ToQuat(), true);
+				bone.PropagateChildren(model, initial.Translation.ToVector3(), model->Rotation.ToQuat());
+				bone.PropagateChildren(model, model->Translation.ToVector3(), initial.Rotation.ToQuat());
 			}
 
 			foreach (var obj in Services.ObjectTable) {
 				var actor = (Actor*)obj.Address;
 				if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
-				if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
+				if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup))
 					backup.ApplyToPartial(a1, a2);
-				}
 			}
 
 			return exec;
