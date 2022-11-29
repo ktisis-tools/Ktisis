@@ -19,7 +19,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 			this.Title = title;
 		}
 
-		public void Draw() {
+		virtual public void Draw() {
 			if (ImGui.Begin($"{this.Title}##ModularWindow##{this.windowID}", this.DrawFlags)) {
 				if (this.Items != null)
 					foreach (var item in this.Items) {

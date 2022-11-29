@@ -54,6 +54,7 @@ namespace Ktisis.Interface.Windows.Workspace
 				return;
 
 			DrawExtraWindows();
+			if (Ktisis.Configuration.ModularHideDefaultWorkspace) return;
 
 
 			var size = new Vector2(-1, -1);

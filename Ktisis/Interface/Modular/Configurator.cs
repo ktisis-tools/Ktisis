@@ -21,6 +21,10 @@ namespace Ktisis.Interface.Modular {
 
 				if (GuiHelpers.IconButton(Dalamud.Interface.FontAwesomeIcon.Plus))
 					IsAddPanelOpen = true;
+				ImGui.SameLine();
+				var hideDefaultWindow = Ktisis.Configuration.ModularHideDefaultWorkspace;
+				if (ImGui.Checkbox("Hide Default Window", ref hideDefaultWindow))
+					Ktisis.Configuration.ModularHideDefaultWorkspace = hideDefaultWindow;
 
 				if (ImGui.BeginChildFrame(958, new(ImGui.GetContentRegionAvail().X, ImGui.GetIO().DisplaySize.Y * 0.6f))) {
 					var modularConfig = cfg.ModularConfig;
