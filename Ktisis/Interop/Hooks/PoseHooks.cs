@@ -5,35 +5,32 @@ using Dalamud.Hooking;
 
 using Dalamud.Game.ClientState.Objects.Types;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
-using Dalamud.Logging;
+using Ktisis.Structs.Poses;
 
 namespace Ktisis.Interop.Hooks {
-	public static class PoseHooks {
-		private delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
-		private static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;
+    public static class PoseHooks {
+		internal delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
+		internal static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;
 
-		private delegate IntPtr CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
-		private static Hook<CalculateBoneModelSpaceDelegate> CalculateBoneModelSpaceHook = null!;
+		internal delegate IntPtr CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
+		internal static Hook<CalculateBoneModelSpaceDelegate> CalculateBoneModelSpaceHook = null!;
 
 		internal unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
 		internal static Hook<SyncModelSpaceDelegate> SyncModelSpaceHook = null!;
 
-		private unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
-		private static Hook<LookAtIKDelegate> LookAtIKHook = null!;
+		internal unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
+		internal static Hook<LookAtIKDelegate> LookAtIKHook = null!;
 
-		private unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
-		private static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
+		internal unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
+		internal static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
 
-		private unsafe delegate char LoadSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
-		private static Hook<LoadSkeletonDelegate> LoadSkeletonHook = null!;
-
-		private unsafe delegate IntPtr DisableDrawDelegate(Actor* a1);
-		private static Hook<DisableDrawDelegate> DisableDrawHook = null!;
+		internal unsafe delegate char LoadSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
+		internal static Hook<LoadSkeletonDelegate> LoadSkeletonHook = null!;
 
 		internal static bool PosingEnabled { get; private set; }
 
@@ -55,9 +52,6 @@ namespace Ktisis.Interop.Hooks {
 			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
 			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
 
-			var disableDraw = Services.SigScanner.ScanText("48 89 5C 24 ?? 41 56 48 83 EC 20 48 8B D9 48 8B 0D ?? ?? ?? ??");
-			DisableDrawHook = Hook<DisableDrawDelegate>.FromAddress(disableDraw, DisableDrawDetour);
-
 			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
 			LoadSkeletonHook = Hook<LoadSkeletonDelegate>.FromAddress(loadSkele, LoadSkeletonDetour);
 		}
@@ -69,7 +63,6 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
 			AnimFrozenHook?.Disable();
-			DisableDrawHook?.Disable();
 			LoadSkeletonHook?.Disable();
 			PosingEnabled = false;
 		}
@@ -80,7 +73,6 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
 			AnimFrozenHook?.Enable();
-			DisableDrawHook?.Enable();
 			LoadSkeletonHook?.Enable();
 			PosingEnabled = true;
 		}
@@ -114,26 +106,6 @@ namespace Ktisis.Interop.Hooks {
 			}
 		}
 
-		private static unsafe IntPtr DisableDrawDetour(Actor* a1) {
-			PoseContainer? container = null;
-			if (a1->Model != null) {
-				var isActive = a1->RenderMode == RenderMode.Draw || a1->RenderMode == RenderMode.Unload;
-
-				var skeleton = a1->Model->Skeleton;
-				if (isActive && skeleton != null) {
-					container = new();
-					container.Store(skeleton);
-				}
-			}
-
-			var exec = DisableDrawHook.Original(a1);
-			if (exec == IntPtr.Zero && container != null)
-				PreservedPoses[a1->ObjectID] = container;
-
-			return exec;
-		}
-
-		public static PoseContainer SavedPose = new();
 		private static unsafe char LoadSkeletonDetour(Skeleton* a1, ushort a2, IntPtr a3) {
 			var exec = LoadSkeletonHook.Original(a1, a2, a3);
 
@@ -141,16 +113,46 @@ namespace Ktisis.Interop.Hooks {
 			var pose = partial.GetHavokPose(0);
 			if (pose == null) return exec;
 
+			if (a3 == IntPtr.Zero) {
+				if (a2 == 0) {
+					// TODO: Any way to do this without iterating the object table?
+					foreach (var obj in Services.ObjectTable) {
+						var actor = (Actor*)obj.Address;
+						if (actor->Model == null || actor->Model->Skeleton != a1) continue;
+
+						PoseContainer container = new();
+						container.Store(actor->Model->Skeleton);
+						PreservedPoses[actor->ObjectID] = container;
+					}
+				}
+
+				return exec;
+			}
+
+			SyncModelSpaceHook.Original(pose);
+
+			// Make sure new partials get parented properly
+			if (a2 > 0 && partial.ConnectedBoneIndex > -1) {
+				var bone = a1->GetBone(a2, partial.ConnectedBoneIndex);
+				var parent = a1->GetBone(0, partial.ConnectedParentBoneIndex);
+
+				var model = bone.AccessModelSpace();
+				var initial = *model;
+				*model = *parent.AccessModelSpace();
+
+				bone.PropagateChildren(model, initial.Translation.ToVector3(), model->Rotation.ToQuat());
+				bone.PropagateChildren(model, model->Translation.ToVector3(), initial.Rotation.ToQuat());
+			}
+
 			foreach (var obj in Services.ObjectTable) {
 				var actor = (Actor*)obj.Address;
 				if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
-				if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
-					backup.Apply(a1);
-				}
-			}
+				if (actor->RenderMode == RenderMode.Draw) break;
 
-			SyncModelSpaceHook.Original(pose);
+				if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup))
+					backup.ApplyToPartial(a1, a2, PoseTransforms.Rotation, true);
+			}
 
 			return exec;
 		}
@@ -197,8 +199,6 @@ namespace Ktisis.Interop.Hooks {
 			LookAtIKHook.Dispose();
 			AnimFrozenHook.Disable();
 			AnimFrozenHook.Dispose();
-			DisableDrawHook.Disable();
-			DisableDrawHook.Dispose();
 			LoadSkeletonHook.Disable();
 			LoadSkeletonHook.Dispose();
 		}

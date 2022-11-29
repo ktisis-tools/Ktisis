@@ -27,6 +27,7 @@ namespace Ktisis {
 		public unsafe static GameObject? GPoseTarget
 			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
 		public unsafe static Actor* Target => GPoseTarget != null ? (Actor*)GPoseTarget.Address : null;
+
 		public Ktisis(DalamudPluginInterface pluginInterface) {
 			Services.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();

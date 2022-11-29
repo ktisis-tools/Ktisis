@@ -5,24 +5,23 @@ using System.Numerics;
 using System.Text;
 
 using ImGuiNET;
+
 using Newtonsoft.Json;
 
-using Dalamud.Game.ClientState.Keys;
+using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Util;
-using Ktisis.Localization;
 using Ktisis.Overlay;
+using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
-using Dalamud.Interface.ImGuiFileDialog;
-using Dalamud.Logging;
 
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
-		public static FileDialogManager FileDialogManager = new FileDialogManager();
 		public static bool Visible = false;
 		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.50f);
 
@@ -42,8 +41,6 @@ namespace Ktisis.Interface.Windows {
 		public static void Draw() {
 			if (!Visible)
 				return;
-
-			FileDialogManager.Draw();
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
@@ -482,9 +479,9 @@ namespace Ktisis.Interface.Windows {
 				}
 				ImGui.SameLine();
 				if (GuiHelpers.IconButton(FontAwesomeIcon.File, ButtonSize)) {
-					FileDialogManager.OpenFileDialog(
+					KtisisGui.FileDialogManager.OpenFileDialog(
 						Locale.GetString("config.references_tab.add_reference_file"),
-						Locale.GetString("config.references_tab.supported_reference_files"),
+						Locale.GetString("config.references_tab.supported_reference_files") + "{.gif,.jpg,.jpeg,.png}",
 						(success, filePath) => {
 							if (success) {
 								TryChangeReference(cfg, key, filePath);
