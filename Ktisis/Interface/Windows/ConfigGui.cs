@@ -89,7 +89,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.SetNextItemWidth(GuiHelpers.AvailableWidth(0));
 			if (ImGui.BeginCombo("##OpenKtisisMethod", $"{selectedOpenKtisisMethod}")) {
 				foreach (var openKtisisMethod in Enum.GetValues<OpenKtisisMethod>()) {
-					if (ImGui.Selectable($"{openKtisisMethod}", openKtisisMethod == selectedOpenKtisisMethod))
+					if (ImGui.Selectable(Locale.GetString($"config.interface.general.openMethod.{openKtisisMethod}"), openKtisisMethod == selectedOpenKtisisMethod))
 						cfg.OpenKtisisMethod = openKtisisMethod;
 				}
 				ImGui.SetItemDefaultFocus();
