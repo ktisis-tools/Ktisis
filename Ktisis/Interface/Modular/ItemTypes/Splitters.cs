@@ -7,9 +7,18 @@ using Ktisis.Interface.Components;
 namespace Ktisis.Interface.Modular.ItemTypes {
 
 	public class BaseSplitter : IModularItem, IModularContainer {
+		private readonly int windowID;
 		public List<IModularItem> Items { get; }
+		public string Title { get; set; }
 
-		public BaseSplitter(List<IModularItem> items) => this.Items = items;
+		protected BaseSplitter(List<IModularItem> items) : this(1120, "Window 1120", items) { }
+		protected BaseSplitter(int windowID, string title) : this(windowID, title, new()) { }
+
+		protected BaseSplitter(int windowID, string title, List<IModularItem> items) {
+			this.windowID = windowID;
+			this.Items = items;
+			this.Title = title;
+		}
 
 		virtual public void Draw() {
 			if (this.Items != null)
