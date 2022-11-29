@@ -81,7 +81,6 @@ namespace Ktisis.History {
 			if (History == null) return;
 
 			var newState = state;
-
 			if ((newState == GizmoState.EDITING) && (_currentGizmoState == GizmoState.IDLE)) {
 				PluginLog.Verbose("Started Gizmo edit");
 				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
@@ -146,38 +145,33 @@ namespace Ktisis.History {
 			History![_currentIdx - 1].Update();
 		}
 
-		// Debugging
-
-		private static void PrintHistory(int until) {
-			if (History == null) return;
-			var str = "\n";
-			for (int i = 0; i < until; i++) {
-				str += $"{i}: {History[i].DebugPrint()}\n";
-			}
-			PluginLog.Verbose(str);
-		}
-
 		private static void alternativeTimelineWarning() {
-			if (History is null) return;
-
 			_alternativeTimelinesCreated++;
 			PluginLog.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
 			createNewTimeline();
 		}
 
 		private static void createNewTimeline() {
-			var newHistory =
-				History!
-				.Select(e => e.Clone())
-				.ToList()
-				.GetRange(0, _currentIdx);
+			if (History is null) return;
 
-			HistoryItem? currentElem = newHistory[_currentIdx - 1];
-
+			var newHistory = History.Select(e => e.Clone()).ToList().GetRange(0, _currentIdx);
+			HistoryItem currentElem = newHistory[_currentIdx - 1];
 			var newMaxIdx = _currentIdx;
 			History = newHistory!.GetRange(0, newMaxIdx);
 			_maxIdx = newMaxIdx;
 			_currentIdx = newMaxIdx;
+		}
+
+		// Debugging
+
+		private static void PrintHistory(int until) {
+			if (History == null) return;
+
+			var str = "\n";
+			for (int i = 0; i < until; i++) {
+				str += $"{i}: {History[i].DebugPrint()}\n";
+			}
+			PluginLog.Verbose(str);
 		}
 	}
 }
