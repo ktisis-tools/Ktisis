@@ -55,15 +55,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			}
 		}
 
-		public static PoseContainer _StoredPose = new();
 		public unsafe static void AdvancedEdit() {
 			if (ImGui.Button("Force Redraw"))
 				Target->Redraw();
-
-			if (ImGui.Button("Store Pose"))
-				_StoredPose.Store(Target->Model->Skeleton);
-			if (ImGui.Button("Apply Pose"))
-				_StoredPose.Apply(Target->Model->Skeleton);
 
 			var modelId = Target->ModelId;
 			if (ImGui.InputInt("Model ID", ref modelId)) {

@@ -48,7 +48,7 @@ namespace Ktisis.Structs.Bones {
 			=> model->Position + GetOffset(model) + Vector3.Transform(Transform.Translation.ToVector3() * model->Scale, model->Rotation) * model->Height;
 		private unsafe Vector3 GetOffset(ActorModel* model) => CustomOffset.CalculateWorldOffset(model, this);
 
-		public unsafe List<Bone> GetChildren(bool includePartials = true) {
+		public unsafe List<Bone> GetChildren(bool includePartials = true, bool usePartialRoot = false) {
 			var result = new List<Bone>();
 			// Add child bones from same partial
 			for (var i = Index + 1; i < Pose->Skeleton->ParentIndices.Length; i++) {
@@ -63,19 +63,23 @@ namespace Ktisis.Structs.Bones {
 					var partial = Skeleton->PartialSkeletons[p];
 					if (partial.ConnectedParentBoneIndex == Index) {
 						var partialRoot = new Bone(Skeleton, p, partial.ConnectedBoneIndex);
-						var children = partialRoot.GetChildren();
-						foreach (var child in children)
-							result.Add(child);
+						if (usePartialRoot) {
+							result.Add(partialRoot);
+						} else {
+							var children = partialRoot.GetChildren();
+							foreach (var child in children)
+								result.Add(child);
+						}
 					}
 				}
 			}
 			return result;
 		}
 
-		public List<Bone> GetDescendants(bool includePartials = true) {
-			var list = GetChildren(includePartials);
+		public List<Bone> GetDescendants(bool includePartials = true, bool usePartialRoot = false) {
+			var list = GetChildren(includePartials, usePartialRoot);
 			for (var i = 0; i < list.Count; i++)
-				list.AddRange(list[i].GetChildren(includePartials));
+				list.AddRange(list[i].GetChildren(includePartials, usePartialRoot));
 			return list;
 		}
 
@@ -114,7 +118,7 @@ namespace Ktisis.Structs.Bones {
 			var deltaRot = transform->Rotation.ToQuat() / initialRot;
 			var deltaPos = sourcePos - initialPos;
 
-			var descendants = GetDescendants(includePartials);
+			var descendants = GetDescendants(includePartials, true);
 			foreach (var child in descendants) {
 				var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
 

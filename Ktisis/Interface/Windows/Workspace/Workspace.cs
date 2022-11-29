@@ -13,8 +13,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
-
-using ImGuizmoNET;
+using Ktisis.Structs;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class Workspace {
@@ -134,6 +133,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 		// Pose tab
 
+		public static PoseContainer _TempPose = new();
+
 		private unsafe static void PoseTab(GameObject target) {
 			var cfg = Ktisis.Configuration;
 
@@ -209,6 +210,12 @@ namespace Ktisis.Interface.Windows.Workspace {
 						}
 					}
 				}
+
+				if (ImGui.Button("Store Pose") && actor->Model != null)
+					_TempPose.Store(actor->Model->Skeleton);
+				ImGui.SameLine();
+				if (ImGui.Button("Apply Pose") && actor->Model != null)
+					_TempPose.Apply(actor->Model->Skeleton);
 
 				if (ImGui.Button("Sync Model Space (Debug)")) {
 					if (actor->Model != null && actor->Model->Skeleton != null) {
