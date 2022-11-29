@@ -108,6 +108,7 @@ namespace Ktisis.Interface.Modular {
 		// Below is config rendering logic
 		private static bool IsAddPanelOpen = false;
 		private static string AddPanelSearch = "";
+		private static ConfigObject? MovingObject = null;
 
 		public static void DrawConfigTab(Configuration cfg) {
 			if (ImGui.BeginTabItem("Modular")) {
@@ -221,7 +222,6 @@ namespace Ktisis.Interface.Modular {
 
 			items.ForEach(co => InsertBefore(co.Items, itemtoInsert, itemBefore));
 		}
-		private static ConfigObject? MovingObject = null;
 		private static void MoveSource(ConfigObject source) =>
 			MovingObject = source;
 
