@@ -112,14 +112,14 @@ namespace Ktisis.Interface.Modular {
 		public static void DrawConfigTab(Configuration cfg) {
 			if (ImGui.BeginTabItem("Modular")) {
 
-				if (ImGui.BeginChildFrame(958, new(ImGui.GetContentRegionAvail().X, 300))) {
+				if (GuiHelpers.IconButton(Dalamud.Interface.FontAwesomeIcon.Plus))
+					IsAddPanelOpen = true;
+
+				if (ImGui.BeginChildFrame(958, new(ImGui.GetContentRegionAvail().X, ImGui.GetIO().DisplaySize.Y * 0.6f))) {
 					var modularConfig = cfg.ModularConfig;
 					modularConfig?.ForEach(c => TreeNode(c));
 					ImGui.EndChildFrame();
 				}
-
-				if (GuiHelpers.IconButton(Dalamud.Interface.FontAwesomeIcon.Plus))
-					IsAddPanelOpen = true;
 
 				ImGui.EndTabItem();
 			}
