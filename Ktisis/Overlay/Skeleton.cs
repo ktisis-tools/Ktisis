@@ -4,9 +4,6 @@ using System.Numerics;
 using ImGuiNET;
 using ImGuizmoNET;
 
-using FFXIVClientStructs.Havok;
-using static FFXIVClientStructs.Havok.hkaPose;
-
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;

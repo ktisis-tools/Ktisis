@@ -10,6 +10,8 @@ using FFXIVClientStructs.Havok;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
+using Dalamud.Logging;
+using Lumina.Excel.GeneratedSheets;
 
 namespace Ktisis.Interop.Hooks {
 	public static class PoseHooks {
@@ -138,9 +140,24 @@ namespace Ktisis.Interop.Hooks {
 
 			var partial = a1->PartialSkeletons[a2];
 			var pose = partial.GetHavokPose(0);
-			if (pose == null) return exec;
+			if (pose == null) {
+				return exec;
+			}
 
 			SyncModelSpaceHook.Original(pose);
+
+			// Make sure new partials get parented properly
+			if (a2 > 0 && partial.ConnectedBoneIndex > -1) {
+				var bone = a1->GetBone(a2, partial.ConnectedBoneIndex);
+				var parent = a1->GetBone(0, partial.ConnectedParentBoneIndex);
+
+				var model = bone.AccessModelSpace();
+				var initial = *model;
+				*model = *parent.AccessModelSpace();
+
+				bone.PropagateChildren(model, initial.Translation.ToVector3(), model->Rotation.ToQuat(), true);
+				bone.PropagateChildren(model, model->Translation.ToVector3(), initial.Rotation.ToQuat(), true);
+			}
 
 			foreach (var obj in Services.ObjectTable) {
 				var actor = (Actor*)obj.Address;

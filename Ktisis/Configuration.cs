@@ -14,6 +14,7 @@ using Ktisis.Interface;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip.SetSources;
+using Ktisis.Structs;
 
 namespace Ktisis {
 	[Serializable]
@@ -119,6 +120,8 @@ namespace Ktisis {
 		public bool LinkBoneCategoryColors { get; set; } = false;
 		public Vector4 LinkedBoneCategoryColor { get; set; } = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
+
+		public PoseTransforms PoseTransforms { get; set; } = PoseTransforms.Rotation;
 
 		public bool EnableParenting { get; set; } = true;
 

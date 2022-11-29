@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
@@ -35,19 +36,19 @@ namespace Ktisis.Structs {
 			}
 		}
 
-		public unsafe void Apply(Skeleton* modelSkeleton, PoseLoadMode mode = PoseLoadMode.Rotation) {
+		public unsafe void Apply(Skeleton* modelSkeleton, PoseTransforms trans = PoseTransforms.Rotation) {
 			var partialCt = modelSkeleton->PartialSkeletonCount;
 			for (var p = 0; p < partialCt; p++)
-				ApplyToPartial(modelSkeleton, p, mode);
+				ApplyToPartial(modelSkeleton, p, trans);
 		}
 		
-		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation) {
+		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseTransforms trans = PoseTransforms.Rotation) {
 			var partial = modelSkeleton->PartialSkeletons[p];
 
 			var pose = partial.GetHavokPose(0);
 			if (pose == null) return;
 
-			if (mode != PoseLoadMode.None) {
+			if (trans != PoseTransforms.None) {
 				var skeleton = pose->Skeleton;
 				for (var i = 0; i < skeleton->Bones.Length; i++) {
 					var bone = modelSkeleton->GetBone(p, i);
@@ -66,11 +67,11 @@ namespace Ktisis.Structs {
 							initialRot = val.Rotation; // idk why this hack works but it does
 						}
 
-						if (mode.HasFlag(PoseLoadMode.Rotation))
+						if (trans.HasFlag(PoseTransforms.Rotation))
 							model->Rotation = val.Rotation.ToHavok();
-						if (mode.HasFlag(PoseLoadMode.Position))
+						if (trans.HasFlag(PoseTransforms.Position))
 							model->Translation = val.Position.ToHavok();
-						if (mode.HasFlag(PoseLoadMode.Scale))
+						if (trans.HasFlag(PoseTransforms.Scale))
 							model->Scale = val.Scale.ToHavok();
 
 						bone.PropagateChildren(model, initialPos, initialRot, true);
@@ -92,10 +93,18 @@ namespace Ktisis.Structs {
 	}
 
 	[Flags]
-	public enum PoseLoadMode {
+	public enum PoseTransforms {
 		None = 0,
 		Rotation = 1,
 		Position = 2,
 		Scale = 4
+	}
+
+	[Flags]
+	public enum PoseMode {
+		None = 0,
+		Body = 1,
+		Face = 2,
+		Hair = 4
 	}
 }

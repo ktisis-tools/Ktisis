@@ -175,18 +175,35 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export")) {
+				ImGui.Spacing();
 				ImGui.Text("Transforms");
-				var _ = false;
-				ImGui.Checkbox("R", ref _);
-				ImGui.SameLine();
-				ImGui.Checkbox("P", ref _);
-				ImGui.SameLine();
-				ImGui.Checkbox("S", ref _);
 
+				var _ = false;
+
+				var trans = Ktisis.Configuration.PoseTransforms;
+
+				var rot = trans.HasFlag(PoseTransforms.Rotation);
+				ImGui.Checkbox("Rotation", ref rot);
+
+				var pos = trans.HasFlag(PoseTransforms.Position);
+				ImGui.SameLine();
+				ImGui.Checkbox("Position", ref pos);
+
+				var scale = trans.HasFlag(PoseTransforms.Position);
+				ImGui.SameLine();
+				ImGui.Checkbox("Scale", ref scale);
+
+				ImGui.Spacing();
+
+				ImGui.Text("Modes");
 				ImGui.Checkbox("Body", ref _);
 				ImGui.SameLine();
 				ImGui.Checkbox("Expression", ref _);
+				ImGui.SameLine();
+				ImGui.Checkbox("Hair", ref _);
 
+				ImGui.Spacing();
+				ImGui.Separator();
 				ImGui.Spacing();
 
 				ImGui.Button("Import");
