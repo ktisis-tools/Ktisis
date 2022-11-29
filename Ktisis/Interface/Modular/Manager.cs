@@ -109,6 +109,7 @@ namespace Ktisis.Interface.Modular {
 		private static bool IsAddPanelOpen = false;
 		private static string AddPanelSearch = "";
 		private static ConfigObject? MovingObject = null;
+		private static ConfigObject? SelectedObject = null;
 
 		public static void DrawConfigTab(Configuration cfg) {
 			if (ImGui.BeginTabItem("Modular")) {
@@ -232,13 +233,13 @@ namespace Ktisis.Interface.Modular {
 			MoveAt(movingTaget, target);
 		}
 
-		private unsafe static void TreeNode(ConfigObject cfgObj, bool selected = false) {
+		private unsafe static void TreeNode(ConfigObject cfgObj) {
 
 			bool isLeaf = cfgObj.Items == null || !cfgObj.Items.Any();
 			string handle = cfgObj.Type;
 			string id = cfgObj.GetHashCode().ToString();
 
-			bool open = ImGui.TreeNodeEx(id, ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.DefaultOpen | (selected ? ImGuiTreeNodeFlags.Selected : 0) | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow), handle);
+			bool open = ImGui.TreeNodeEx(id, ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.DefaultOpen | (cfgObj == SelectedObject ? ImGuiTreeNodeFlags.Selected : 0) | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow), handle);
 
 			ImGui.PushID(id);
 			if (ImGui.BeginPopupContextItem()) {
@@ -250,7 +251,7 @@ namespace Ktisis.Interface.Modular {
 			ImGui.PopID();
 
 			if (ImGui.IsItemClicked()) {
-				// Some processing...
+				SelectedObject = cfgObj;
 			}
 			if (ImGui.IsItemClicked() && ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)
 				Delete(cfgObj);
