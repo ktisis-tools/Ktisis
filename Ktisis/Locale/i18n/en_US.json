@@ -178,9 +178,15 @@
   },
   "workspace":{
     "title":"Workspace",
-    "actor":"Actor",
-    "scene":"Scene",
-    "pose":"Pose",
+    "actor": {
+      "title": "Actor"
+    },
+    "scene": {
+      "title": "Scene"
+    },
+    "pose": {
+      "title": "Pose"
+    }
   },
   
   "tribe": {

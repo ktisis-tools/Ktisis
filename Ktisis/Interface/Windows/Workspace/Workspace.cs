@@ -99,11 +99,11 @@ namespace Ktisis.Interface.Windows.Workspace
 				ImGui.Separator();
 
 				if (ImGui.BeginTabBar(Locale.GetString("workspace.title"))) {
-					if (ImGui.BeginTabItem(Locale.GetString("workspace.actor")))
+					if (ImGui.BeginTabItem(Locale.GetString("workspace.actor.title")))
 						ActorTab(target);
-					/*if (ImGui.BeginTabItem(Locale.GetString("workspace.scene")))
+					/*if (ImGui.BeginTabItem(Locale.GetString("workspace.scene.title")))
 						SceneTab();*/
-					if (ImGui.BeginTabItem(Locale.GetString("workspace.pose")))
+					if (ImGui.BeginTabItem(Locale.GetString("workspace.pose.title")))
 						PoseTab(target);
 				}
 			}
