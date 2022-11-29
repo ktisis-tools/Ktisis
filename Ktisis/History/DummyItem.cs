@@ -7,11 +7,6 @@
 			return new DummyItem();
 		}
 
-		public override bool IsElemInHistory() {
-			Dalamud.Logging.PluginLog.Fatal("Attempted to call IsElemInHistory() on a dummy item.");
-			return false;
-		}
-
 		public override void Update() {
 			Dalamud.Logging.PluginLog.Fatal("Attempted to call Update() on a dummy item.");
 			return;

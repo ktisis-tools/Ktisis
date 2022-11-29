@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using Dalamud.Logging;
 using Dalamud.Game.ClientState.Keys;
 
-using static FFXIVClientStructs.Havok.hkaPose;
-
 using Ktisis.Events;
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
@@ -168,17 +166,15 @@ namespace Ktisis.History {
 		}
 
 		private static void createNewTimeline() {
-			var newHistory = 
+			var newHistory =
 				History!
 				.Select(e => e.Clone())
 				.ToList()
 				.GetRange(0, _currentIdx);
 
 			HistoryItem? currentElem = newHistory[_currentIdx - 1];
-			var isElemInHistory = currentElem.IsElemInHistory();
-			var offset = isElemInHistory ? 1 : 0;
 
-			var newMaxIdx = _currentIdx - offset;
+			var newMaxIdx = _currentIdx;
 			History = newHistory!.GetRange(0, newMaxIdx);
 			_maxIdx = newMaxIdx;
 			_currentIdx = newMaxIdx;

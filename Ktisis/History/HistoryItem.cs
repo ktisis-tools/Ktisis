@@ -5,7 +5,6 @@
 		public virtual string DebugPrint() {
 			return "I don't use debug prints and I like to live on the edge.";
 		}
-		public abstract bool IsElemInHistory();
 
 
 

@@ -1,12 +1,8 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Graphics;
-
-using Ktisis.Localization;
+﻿using Ktisis.Localization;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 
 using static FFXIVClientStructs.Havok.hkaPose;
@@ -64,7 +60,7 @@ namespace Ktisis.History {
 					siblingBone.PropagateSibling(boneTransform->Rotation.ToQuat() / initialRot, SiblingLinkType);
 				}
 			}
-			
+
 		}
 
 		public override string DebugPrint() {
@@ -74,21 +70,6 @@ namespace Ktisis.History {
 			str += $"ParentingState: {ParentingState} - SiblingLink: {SiblingLinkType}";
 
 			return str;
-		}
-
-		public override bool IsElemInHistory() {
-			if (HistoryManager.History == null) return false;
-			List<HistoryItem> history = HistoryManager.History;
-			List<ActorBone>? allBones = history.OfType<ActorBone>().ToList();
-			var found = false;
-
-			foreach(ActorBone elem in allBones) {
-				if (elem?.Bone?.UniqueName == Bone?.UniqueName) {
-					found = true;
-					break;
-				}
-			}
-			return found;
 		}
 	}
 }
