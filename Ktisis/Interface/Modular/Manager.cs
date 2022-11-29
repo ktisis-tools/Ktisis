@@ -14,7 +14,7 @@ namespace Ktisis.Interface.Modular {
 		private const string NamespacePrefix = "Ktisis.Interface.Modular.ItemTypes.";
 
 		private static readonly List<Type> AvailableContainers = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Container").ToList();
-		private static readonly List<Type> AvailableSpliters = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Spliter").ToList();
+		private static readonly List<Type> AvailableSpliters = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Splitter").ToList();
 		private static readonly List<Type> AvailablePanel = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Panel").ToList();
 		private static readonly List<Type> Available = AvailableContainers.Concat(AvailableSpliters).Concat(AvailablePanel).ToList();
 
@@ -65,6 +65,7 @@ namespace Ktisis.Interface.Modular {
 			Dictionary<int, object[]?> paramSolutions = new() {
 				{0, new object[] { Handles.Count, handle, items }},
 				{1, new object[] { Handles.Count, handle,  }},
+				{2, new object[] { items }},
 			};
 			Handles.Add(handle);
 
@@ -86,10 +87,12 @@ namespace Ktisis.Interface.Modular {
 					int i = 0;
 					paramMatches = 0;
 					foreach (var item in ctor.GetParameters()) {
-						var typeOfParamSolution = solu.Value?[i].GetType();
-						var typeOfConstructor = item.ParameterType;
-						if (typeOfParamSolution == typeOfConstructor) paramMatches++;
+						var paramSolution = solu.Value!.GetValue(i);
 						i++;
+						if (paramSolution == null) continue;
+
+						if (paramSolution.GetType() == item.ParameterType)
+							paramMatches++;
 					}
 					if (paramMatches == ctor.GetParameters().Length)
 						return solu.Key;
