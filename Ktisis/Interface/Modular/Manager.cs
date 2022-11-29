@@ -82,17 +82,19 @@ namespace Ktisis.Interface.Modular {
 		}
 		private static int? AnyCompatibleConstructors(Dictionary<int, object[]?> parametersSolutions, ConstructorInfo[]? constructors) {
 			if (constructors == null) return null;
-			foreach (var ctor in constructors) {
+			foreach (var solu in parametersSolutions) {
+				if (solu.Value == null) continue;
 				int paramMatches = 0;
-				foreach (var solu in parametersSolutions) {
-					int i = 0;
+				foreach (var ctor in constructors) {
 					paramMatches = 0;
-					foreach (var item in ctor.GetParameters()) {
-						var paramSolution = solu.Value!.GetValue(i);
-						i++;
+					var ctorParameters = ctor.GetParameters();
+					for (int i =0; i < ctorParameters.Length; i++) {
+
+						if (i < 0 || i >= solu.Value.Length) continue;
+						var paramSolution = solu.Value.GetValue(i);
 						if (paramSolution == null) continue;
 
-						if (paramSolution.GetType() == item.ParameterType)
+						if (paramSolution.GetType() == ctorParameters[i].ParameterType)
 							paramMatches++;
 					}
 					if (paramMatches == ctor.GetParameters().Length)
