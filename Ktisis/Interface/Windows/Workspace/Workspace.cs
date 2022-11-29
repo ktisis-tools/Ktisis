@@ -384,10 +384,11 @@ namespace Ktisis.Interface.Windows.Workspace
 										if (!face) continue;
 										break;
 									case 2:
+										// TODO: no point in having this as an option
 										if (!hair) continue;
 										break;
 								}
-								pose.Bones.ApplyToPartial(skeleton, p);
+								pose.Bones.ApplyToPartial(skeleton, p, trans);
 							}
 						}
 					},

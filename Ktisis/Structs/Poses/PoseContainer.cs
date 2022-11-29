@@ -67,8 +67,6 @@ namespace Ktisis.Structs.Poses {
 							initialRot = val.Rotation; // idk why this hack works but it does
 						}
 
-						PluginLog.Information($"{i} {name} {val.Rotation}");
-
 						if (trans.HasFlag(PoseTransforms.Rotation))
 							model->Rotation = val.Rotation.ToHavok();
 						if (trans.HasFlag(PoseTransforms.Position))
