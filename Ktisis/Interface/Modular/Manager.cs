@@ -23,6 +23,7 @@ namespace Ktisis.Interface.Modular {
 
 		public static void Init() {
 			Handles.Clear();
+			MovingObject = null;
 			Config = ParseConfigList(Ktisis.Configuration.ModularConfig)!;
 		}
 		public static void Dispose() => Config = new();
@@ -150,6 +151,8 @@ namespace Ktisis.Interface.Modular {
 		private static bool IsPanel(Type? type) => TypeToKind(type) == "Panel";
 		private static bool IsContainer(Type? type) => TypeToKind(type) == "Container";
 		private static bool IsAvailableContainer(string handle) => AvailableContainers.Any(a => a.Name == handle);
+		private static bool IsAvailablePanel(string? handle) => AvailablePanel.Any(a => a.Name == handle);
+		private static bool IsAvailablePanel(ConfigObject? cfgObj) => IsAvailablePanel(cfgObj!.Type);
 		private static void Add(string handle) => Add(new ConfigObject(handle));
 		private static void Add(ConfigObject toAdd) {
 			if (Ktisis.Configuration.ModularConfig == null)
@@ -167,17 +170,67 @@ namespace Ktisis.Interface.Modular {
 			Init();
 		}
 		private static void Delete(ConfigObject toRemove) {
-			Ktisis.Configuration.ModularConfig?.ForEach(c => DeleteSub(c, toRemove));
-			Ktisis.Configuration.ModularConfig?.Remove(toRemove);
+			DeleteSub(Ktisis.Configuration.ModularConfig, toRemove);
 			Init();
 		}
-		private static void DeleteSub(ConfigObject parent,ConfigObject toRemove) {
-			parent.Items?.Remove(toRemove);
-			parent.Items?.ForEach(cc => DeleteSub(cc, toRemove));
+		private static void DeleteSub(List<ConfigObject> items,ConfigObject toRemove) {
+			//int index = items.IndexOf(toRemove);
+			//if(index != -1)
+			//	for (int i = items.Count - 1; i >= 0; i--)
+			//		if (i == index) items.RemoveAt(i);
+			items.Remove(toRemove);
+			items?.ForEach(cc => {
+				if(cc.Items != null)
+					DeleteSub(cc.Items, toRemove);
+			});
+		}
+		private static void MoveAt(ConfigObject toMove, ConfigObject target) {
+			if (target == null) return;
+
+			if (!IsAvailablePanel(target) && ( target.Items == null || !target.Items.Any())) {
+				// if target is an empty container/splitter
+				// drop it inside
+
+				Delete(toMove);
+
+				// add it in the items of target
+				target.Items ??= new();
+				target.Items.Add(toMove);
+
+			} else {
+				// if it's a panel or a filled container/splitter
+				// drop it above
+
+				Delete(toMove);
+				InsertConfigBefore(toMove, target);
+			}
+			Init();
+		}
+		public static void InsertConfigBefore(ConfigObject itemtoInsert, ConfigObject itemBefore) {
+			InsertBefore(Ktisis.Configuration.ModularConfig, itemtoInsert, itemBefore);
 		}
 
+		private static void InsertBefore(List<ConfigObject>? items, ConfigObject itemtoInsert, ConfigObject itemBefore) {
+			if (items == null || !items.Any()) return;
 
-		private static void TreeNode(ConfigObject cfgObj, bool selected = false) {
+			int index = items.FindIndex(r => r == itemBefore);
+			if (index > -1)
+				items.Insert(index, itemtoInsert);
+
+			items.ForEach(co => InsertBefore(co.Items, itemtoInsert, itemBefore));
+		}
+		private static ConfigObject? MovingObject = null;
+		private static void MoveSource(ConfigObject source) =>
+			MovingObject = source;
+
+		private static void MoveTarget(ConfigObject target) {
+			if(MovingObject == null) return;
+			var movingTaget = MovingObject;
+			MovingObject = null;
+			MoveAt(movingTaget, target);
+		}
+
+		private unsafe static void TreeNode(ConfigObject cfgObj, bool selected = false) {
 
 			bool isLeaf = cfgObj.Items == null || !cfgObj.Items.Any();
 			string handle = cfgObj.Type;
@@ -201,12 +254,24 @@ namespace Ktisis.Interface.Modular {
 				Delete(cfgObj);
 
 			if (ImGui.BeginDragDropTarget()) {
-				// Some processing...
+
+				// highlight target
+				ImGui.AcceptDragDropPayload("_ConfigObject");
+
+				// Small hack to fire MoveTarget() on mouse button release
+				if (MovingObject != null && !ImGui.GetIO().MouseDown[(int)ImGuiMouseButton.Left])
+					MoveTarget(cfgObj);
+
 				ImGui.EndDragDropTarget();
 			}
 
 			if (ImGui.BeginDragDropSource()) {
-				// Some processing...
+				ImGui.SetDragDropPayload("_ConfigObject", IntPtr.Zero, 0);
+
+				// Small hack to set the move source on mouse button hold
+				if(ImGui.GetIO().MouseDownDuration[(int)ImGuiMouseButton.Left] < 0.5f )
+					MoveSource(cfgObj);
+
 				ImGui.EndDragDropSource();
 			}
 
