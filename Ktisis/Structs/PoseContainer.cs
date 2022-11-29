@@ -26,7 +26,7 @@ namespace Ktisis.Structs {
 				var skeleton = pose->Skeleton;
 				for (var i = 0; i < skeleton->Bones.Length; i++) {
 					if (i == partial.ConnectedBoneIndex)
-						continue; // Unsupported by .pose files :(
+						continue; // this would be a mess, unsupported by anam poses anyway
 
 					var bone = modelSkeleton->GetBone(p, i);
 					var name = bone.HkaBone.Name.String;
@@ -43,7 +43,7 @@ namespace Ktisis.Structs {
 				ApplyToPartial(modelSkeleton, p, mode, false);
 		}
 
-		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation, bool partialProp = true) {
+		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation, bool partialProp = false) {
 			var partial = modelSkeleton->PartialSkeletons[p];
 
 			var pose = partial.GetHavokPose(0);
@@ -65,15 +65,6 @@ namespace Ktisis.Structs {
 						var pos = val.Position.ToHavok();
 						model->Translation = pos;
 						initialRot = val.Rotation; // idk why this hack works but it does
-					} else if (i == partial.ConnectedBoneIndex) { // Is face, hair, etc
-						var parent = modelSkeleton->GetBone(0, partial.ConnectedParentBoneIndex);
-						var pModel = parent.AccessModelSpace();
-
-						// This is extremely hacky due to the requirements of loading poses in LoadSkeletonHook.
-
-						model->Translation = pModel->Translation;
-						bone.PropagateChildren(model, initialPos, initialRot, false);
-						initialPos = model->Translation.ToVector3();
 					}
 
 					if (mode.HasFlag(PoseLoadMode.Rotation))
@@ -83,8 +74,19 @@ namespace Ktisis.Structs {
 					if (mode.HasFlag(PoseLoadMode.Scale))
 						model->Scale = val.Scale.ToHavok();
 
-					bone.PropagateChildren(model, initialPos, initialRot, false);
+					bone.PropagateChildren(model, initialPos, initialRot, partialProp);
 				}
+			}
+
+			if (partial.ConnectedBoneIndex > -1) {
+				var bone = modelSkeleton->GetBone(p, partial.ConnectedBoneIndex);
+				var parent = modelSkeleton->GetBone(0, partial.ConnectedParentBoneIndex);
+
+				var model = bone.AccessModelSpace();
+				var initial = *model;
+				*model = *parent.AccessModelSpace();
+
+				bone.PropagateChildren(model, initial.Translation.ToVector3(), initial.Rotation.ToQuat(), partialProp);
 			}
 		}
 	}
