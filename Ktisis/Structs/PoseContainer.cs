@@ -40,10 +40,10 @@ namespace Ktisis.Structs {
 		public unsafe void Apply(Skeleton* modelSkeleton, PoseLoadMode mode = PoseLoadMode.Rotation) {
 			var partialCt = modelSkeleton->PartialSkeletonCount;
 			for (var p = 0; p < partialCt; p++)
-				ApplyToPartial(modelSkeleton, p, mode, false);
+				ApplyToPartial(modelSkeleton, p, mode);
 		}
 
-		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation, bool partialProp = false) {
+		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseLoadMode mode = PoseLoadMode.Rotation) {
 			var partial = modelSkeleton->PartialSkeletons[p];
 
 			var pose = partial.GetHavokPose(0);
@@ -74,7 +74,7 @@ namespace Ktisis.Structs {
 					if (mode.HasFlag(PoseLoadMode.Scale))
 						model->Scale = val.Scale.ToHavok();
 
-					bone.PropagateChildren(model, initialPos, initialRot, partialProp);
+					bone.PropagateChildren(model, initialPos, initialRot, true);
 				}
 			}
 
@@ -86,7 +86,7 @@ namespace Ktisis.Structs {
 				var initial = *model;
 				*model = *parent.AccessModelSpace();
 
-				bone.PropagateChildren(model, initial.Translation.ToVector3(), initial.Rotation.ToQuat(), partialProp);
+				bone.PropagateChildren(model, initial.Translation.ToVector3(), initial.Rotation.ToQuat(), false);
 			}
 		}
 	}
