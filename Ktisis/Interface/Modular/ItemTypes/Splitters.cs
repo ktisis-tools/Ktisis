@@ -49,6 +49,23 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 
 		}
 	}
+
+	public class BorderlessColumns : BaseSplitter {
+		public BorderlessColumns(int windowID, string title, List<IModularItem> items) : base(windowID, title, items) { }
+
+		public override void Draw() {
+			if (this.Items != null) {
+				ImGui.Columns(this.Items.Count, this.Title, false);
+				foreach (var item in this.Items) {
+					this.DrawItem(item);
+					ImGui.NextColumn();
+				}
+				ImGui.Columns();
+			}
+		}
+	}
+
+
 	public class SameLine : BaseSplitter {
 		public SameLine(List<IModularItem> items) : base(items) { }
 
