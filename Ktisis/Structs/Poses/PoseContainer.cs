@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace Ktisis.Structs.Poses {
-	[Serializable]
 	public class PoseContainer : Dictionary<string, Transform> {
 		// TODO: Make a helper function somewhere for skeleton iteration?
 
@@ -65,6 +66,8 @@ namespace Ktisis.Structs.Poses {
 							model->Translation = pos;
 							initialRot = val.Rotation; // idk why this hack works but it does
 						}
+
+						PluginLog.Information($"{i} {name} {val.Rotation}");
 
 						if (trans.HasFlag(PoseTransforms.Rotation))
 							model->Rotation = val.Rotation.ToHavok();
