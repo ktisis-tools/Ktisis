@@ -40,5 +40,17 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 
 		}
 	}
+	public class SameLine : BaseSplitter {
+		public SameLine(List<IModularItem> items) : base(items) { }
+
+		public override void Draw() {
+			if (this.Items != null) {
+				for (int i = 0; i < this.Items.Count; i++) {
+					if (i != 0) ImGui.SameLine();
+					this.DrawItem(this.Items[i]);
+				}
+			}
+		}
+	}
 
 }
