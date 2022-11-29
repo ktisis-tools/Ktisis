@@ -32,5 +32,26 @@ namespace Ktisis.Interface.Modular.ItemTypes.Panel {
 	public class AnimationControls : IModularItem {
 		public void Draw() => Components.AnimationControls.Draw();
 	}
+	public class GazeControl : IModularItem {
+		public void Draw() => EditGaze.DrawWithHint();
+	}
+	public class ParentingCheckbox : IModularItem {
+		public void Draw() => ControlButtons.DrawParentingCheckbox();
+	}
+	public class TransformTable : IModularItem {
+		public void Draw() => Workspace.TransformTable();
+	}
+	public class CategoryVisibility : IModularItem {
+		public void Draw() => Categories.DrawToggleListWithHint();
+	}
+	public class BoneTree : IModularItem {
+		public void Draw() => Components.BoneTree.Draw();
+	}
+	public class ImportExport : IModularItem {
+		public void Draw() => Workspace.DrawImportExport();
+	}
+	public class Advanced : IModularItem {
+		public void Draw() => Workspace.DrawAdvanced();
+	}
 
 }
