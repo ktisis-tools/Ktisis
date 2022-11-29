@@ -11,7 +11,7 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 
 		public BaseSplitter(List<IModularItem> items) => this.Items = items;
 
-		public void Draw() {
+		virtual public void Draw() {
 			if (this.Items != null)
 				foreach (var item in this.Items) {
 					this.DrawItem(item);
@@ -28,7 +28,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 	public class Columns : BaseSplitter {
 		public Columns(List<IModularItem> items) : base(items) { }
 
-		public new void Draw() {
+		public override void Draw() {
 			if (this.Items != null) {
 				ImGui.Columns(this.Items.Count);
 				foreach (var item in this.Items) {
