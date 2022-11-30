@@ -24,6 +24,10 @@ namespace Ktisis.Interface.Modular.ItemTypes.Panel {
 		public ActorList() => this.LocaleHandle = "Actor List";
 		public override void Draw() => ActorsList.Draw();
 	}
+	public class ActorListHorizontal : BasePannel {
+		public ActorListHorizontal() => this.LocaleHandle = "Actor List";
+		public override void Draw() => ActorsList.Draw(true);
+	}
 	public class ControlButtonsExtra : BasePannel {
 		public override void Draw() => ControlButtons.DrawExtra();
 	}
