@@ -77,16 +77,8 @@ namespace Ktisis.Structs.Poses {
 				}
 			}
 
-			if (partial.ConnectedBoneIndex > -1) {
-				var bone = modelSkeleton->GetBone(p, partial.ConnectedBoneIndex);
-				var parent = modelSkeleton->GetBone(0, partial.ConnectedParentBoneIndex);
-
-				var model = bone.AccessModelSpace();
-				var initial = *model;
-				*model = *parent.AccessModelSpace();
-
-				bone.PropagateChildren(model, initial.Translation.ToVector3(), initial.Rotation.ToQuat());
-			}
+			if (p > 0)
+				partial.ParentToRoot(p);
 		}
 	}
 

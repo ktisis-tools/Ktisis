@@ -38,5 +38,24 @@ namespace Ktisis.Structs {
 		// hkaPose
 
 		public unsafe static Bone GetBone(this Skeleton skele, int partial, int bone) => new Bone(&skele, partial, bone);
+
+		// Partial
+
+		public unsafe static void ParentToRoot(this PartialSkeleton partial, int p) {
+			var pose = partial.GetHavokPose(0);
+			if (pose == null) return;
+
+			if (partial.ConnectedBoneIndex > -1) {
+				var bone = partial.Skeleton->GetBone(p, partial.ConnectedBoneIndex);
+				var parent = partial.Skeleton->GetBone(0, partial.ConnectedParentBoneIndex);
+
+				var model = bone.AccessModelSpace();
+				var initial = *model;
+				*model = *parent.AccessModelSpace();
+
+				bone.PropagateChildren(model, initial.Translation.ToVector3(), model->Rotation.ToQuat());
+				bone.PropagateChildren(model, model->Translation.ToVector3(), initial.Rotation.ToQuat());
+			}
+		}
 	}
 }
