@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Ktisis.Interface.Modular {
 
 	public interface IModularItem {
+		public string LocaleName();
 		public void Draw();
 	}
 	public interface IModularContainer : IModularItem {

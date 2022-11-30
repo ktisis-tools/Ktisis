@@ -2,6 +2,8 @@ using System.Collections.Generic;
 
 using ImGuiNET;
 
+using Ktisis.Localization;
+
 namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 	public class Window : IModularItem, IModularContainer {
 		protected readonly int windowID;
@@ -9,6 +11,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 		public ImGuiWindowFlags DrawFlags { get; }
 		public List<IModularItem> Items { get; }
 		public string Title { get; set; }
+		public string LocaleHandle { get; set; }
 
 		public Window(int windowID, ImGuiWindowFlags drawFlags, string title) : this(windowID, drawFlags, title, new()) { }
 
@@ -17,10 +20,12 @@ namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 			this.DrawFlags = drawFlags;
 			this.Items = items;
 			this.Title = title;
+			this.LocaleHandle = "ModularContainer";
 		}
 
+		virtual public string LocaleName() => $"{Locale.GetString(LocaleHandle)} ({windowID})##Modular##Window##{windowID}";
 		virtual public void Draw() {
-			if (ImGui.Begin($"{this.Title}##ModularWindow##{this.windowID}", this.DrawFlags)) {
+			if (ImGui.Begin($"{this.LocaleName()}##ModularWindow##{this.Title}##{this.windowID}", this.DrawFlags)) {
 				if (this.Items != null)
 					foreach (var item in this.Items) {
 						this.DrawItem(item);
@@ -63,7 +68,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Container {
 			ImGui.SetNextWindowSize(new(ImGui.GetIO().DisplaySize.X, -1));
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
-			if (ImGui.Begin($"{this.Title}##ModularWindow##{this.windowID}", this.DrawFlags)) {
+			if (ImGui.Begin($"{this.LocaleName()}##ModularWindow##{this.Title}##{this.windowID}", this.DrawFlags)) {
 				if (this.Items != null)
 					foreach (var item in this.Items) {
 						this.DrawItem(item);

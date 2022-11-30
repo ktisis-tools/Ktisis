@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ImGuiNET;
 
 using Ktisis.Interface.Components;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface.Modular.ItemTypes {
 
@@ -10,6 +11,7 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 		protected readonly int windowID;
 		public List<IModularItem> Items { get; }
 		public string Title { get; set; }
+		public string LocaleHandle { get; set; }
 
 		protected BaseSplitter(List<IModularItem> items) : this(1120, "Window 1120", items) { }
 		protected BaseSplitter(int windowID, string title) : this(windowID, title, new()) { }
@@ -18,8 +20,10 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 			this.windowID = windowID;
 			this.Items = items;
 			this.Title = title;
+			this.LocaleHandle = "modularSplitter";
 		}
 
+		virtual public string LocaleName() => $"{Locale.GetString(LocaleHandle)}##Modular##Splitter##{windowID}";
 		virtual public void Draw() {
 			if (this.Items != null)
 				foreach (var item in this.Items) {
@@ -84,7 +88,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 		public override void Draw() {
 			if (this.Items != null)
 				for (int i = 0; i < this.Items.Count; i++)
-					if(ImGui.CollapsingHeader($"Header {i}##Window##{windowID}"))
+					if (ImGui.CollapsingHeader($"{this.Items[i].LocaleName()}##Window##{windowID}"))
 						this.DrawItem(this.Items[i]);
 		}
 	}
