@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace Ktisis.Structs.Poses {
-	[Serializable]
 	public class PoseContainer : Dictionary<string, Transform> {
 		// TODO: Make a helper function somewhere for skeleton iteration?
 

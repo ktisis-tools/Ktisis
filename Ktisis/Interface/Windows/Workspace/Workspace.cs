@@ -1,3 +1,4 @@
+using System.IO;
 using System.Numerics;
 
 using ImGuiNET;
@@ -15,6 +16,8 @@ using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Structs.Poses;
+using Ktisis.Data.Serialization;
+using Ktisis.Data.Files;
 
 namespace Ktisis.Interface.Windows.Workspace
 {
@@ -179,7 +182,7 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
-				ImportExport();
+				ImportExport(actor);
 
 			// Advanced
 			if (ImGui.CollapsingHeader("Advanced")) {
@@ -289,7 +292,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.SameLine(size * 2.5f);
 		}
 
-		private static void ImportExport() {
+		private unsafe static void ImportExport(Actor* actor) {
 			ImGui.Spacing();
 			ImGui.Text("Transforms");
 
@@ -361,8 +364,33 @@ namespace Ktisis.Interface.Windows.Workspace
 					"Pose Files (.pose){.pose}",
 					(success, path) => {
 						if (!success) return;
+						var content = File.ReadAllText(path[0]);
+						var pose = JsonParser.Deserialize<PoseFile>(content);
+						if (pose == null) return;
 
+						var model = actor->Model;
+						if (model == null) return;
 
+						var skeleton = model->Skeleton;
+						if (skeleton == null) return;
+
+						if (pose.Bones != null) {
+							for (var p = 0; p < skeleton->PartialSkeletonCount; p++) {
+								switch (p) {
+									case 0:
+										if (!body) continue;
+										break;
+									case 1:
+										if (!face) continue;
+										break;
+									case 2:
+										// TODO: no point in having this as an option
+										if (!hair) continue;
+										break;
+								}
+								pose.Bones.ApplyToPartial(skeleton, p, trans);
+							}
+						}
 					},
 					1,
 					null
