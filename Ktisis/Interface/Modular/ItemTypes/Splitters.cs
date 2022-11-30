@@ -7,7 +7,7 @@ using Ktisis.Interface.Components;
 namespace Ktisis.Interface.Modular.ItemTypes {
 
 	public class BaseSplitter : IModularItem, IModularContainer {
-		private readonly int windowID;
+		protected readonly int windowID;
 		public List<IModularItem> Items { get; }
 		public string Title { get; set; }
 
@@ -78,5 +78,14 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 			}
 		}
 	}
+	public class CollapsibleHeader : BaseSplitter {
+		public CollapsibleHeader(int windowID, string title, List<IModularItem> items) : base(windowID, title, items) { }
 
+		public override void Draw() {
+			if (this.Items != null)
+				for (int i = 0; i < this.Items.Count; i++)
+					if(ImGui.CollapsingHeader($"Header {i}##Window##{windowID}"))
+						this.DrawItem(this.Items[i]);
+		}
+	}
 }
