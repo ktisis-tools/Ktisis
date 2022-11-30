@@ -92,4 +92,18 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 						this.DrawItem(this.Items[i]);
 		}
 	}
+	public class Tabs : BaseSplitter {
+		public Tabs(int windowID, string title, List<IModularItem> items) : base(windowID, title, items) { }
+
+		public override void Draw() {
+			if (this.Items != null)
+				if (ImGui.BeginTabBar($"{this.Title}##modular"))
+					for (int i = 0; i < this.Items.Count; i++)
+						if (ImGui.BeginTabItem($"{this.Items[i].LocaleName()}##Modular##{i}##{windowID}")) {
+							this.DrawItem(this.Items[i]);
+							ImGui.EndTabItem();
+						}
+
+		}
+	}
 }
