@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace Ktisis.Structs.Poses {
@@ -105,7 +103,6 @@ namespace Ktisis.Structs.Poses {
 		None = 0,
 		Body = 1,
 		Face = 2,
-		Hair = 4,
-		All = 7
+		All = 3
 	}
 }

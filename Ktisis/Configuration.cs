@@ -20,7 +20,7 @@ namespace Ktisis
 {
     [Serializable]
 	public class Configuration : IPluginConfiguration {
-		public const int CurVersion = 1;
+		public const int CurVersion = 2;
 		public int Version { get; set; } = CurVersion;
 
 		// Interface
@@ -148,6 +148,12 @@ namespace Ktisis
 				if (AutoOpenCtor) OpenKtisisMethod = OpenKtisisMethod.OnPluginLoad;
 
 #pragma warning restore CS0612, CS0618
+
+			if (Version < 2) {
+				if (((int)PoseMode & 4) != 0)
+					PoseMode ^= (PoseMode)4;
+			}
+
 			Version = CurVersion;
 		}
 	}

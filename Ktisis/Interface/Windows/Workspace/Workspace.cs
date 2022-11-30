@@ -18,6 +18,7 @@ using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Structs.Poses;
 using Ktisis.Data.Serialization;
 using Ktisis.Data.Files;
+using Dalamud.Logging;
 
 namespace Ktisis.Interface.Windows.Workspace
 {
@@ -344,11 +345,6 @@ namespace Ktisis.Interface.Windows.Workspace
 			if (ImGui.Checkbox("Expression", ref face))
 				modes = modes.ToggleFlag(PoseMode.Face);
 
-			var hair = modes.HasFlag(PoseMode.Hair);
-			ImGui.SameLine();
-			if (ImGui.Checkbox("Hair", ref hair))
-				modes = modes.ToggleFlag(PoseMode.Hair);
-
 			Ktisis.Configuration.PoseMode = modes;
 
 			ImGui.Spacing();
@@ -382,10 +378,6 @@ namespace Ktisis.Interface.Windows.Workspace
 										break;
 									case 1:
 										if (!face) continue;
-										break;
-									case 2:
-										// TODO: no point in having this as an option
-										if (!hair) continue;
 										break;
 								}
 								pose.Bones.ApplyToPartial(skeleton, p, trans);
