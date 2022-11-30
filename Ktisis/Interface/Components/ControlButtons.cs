@@ -84,17 +84,29 @@ namespace Ktisis.Interface.Components {
 
 			GuiHelpers.Tooltip("Information");
 		}
-		private static void DrawSettings() {
+		internal static void DrawSettings(int flags = 1) {
 			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
 
-			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog, new(ImGui.GetFontSize() * 1.5f)))
+			var isTitleDecoration = (flags & 1) != 0;
+
+			Vector2 buttonSize = ButtonSize;
+			if (isTitleDecoration) {
+				ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
+				ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
+				ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
+				buttonSize = new(ImGui.GetFontSize() * 1.5f);
+			}
+
+			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog, buttonSize))
 				if (ConfigGui.Visible) ConfigGui.Hide();
 				else ConfigGui.Show();
 
-			ImGui.PopStyleColor();
-			ImGui.PopStyleVar(2);
+			if (isTitleDecoration) {
+				ImGui.PopStyleColor();
+				ImGui.PopStyleVar(2);
+			}
 
 			IsSettingsHovered = ImGui.IsItemHovered();
 			IsSettingsActive = ImGui.IsItemActive();

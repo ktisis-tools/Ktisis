@@ -31,6 +31,9 @@ namespace Ktisis.Interface.Modular.ItemTypes.Panel {
 	public class ControlButtonsExtra : BasePannel {
 		public override void Draw() => ControlButtons.DrawExtra();
 	}
+	public class SettingsButton : BasePannel {
+		public override void Draw() => ControlButtons.DrawSettings(0);
+	}
 	public class HandleEmpty : BasePannel {
 		public override void Draw() => ImGui.Text("       ");
 	}
