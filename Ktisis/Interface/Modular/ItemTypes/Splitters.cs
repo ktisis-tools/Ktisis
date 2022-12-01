@@ -52,7 +52,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 		public override void Draw() {
 			if (this.Items != null)
 				for (int i = 0; i < this.Items.Count; i++)
-					if (ImGui.CollapsingHeader($"{this.Items[i].LocaleName()}##Window##{Id}"))
+					if (ImGui.CollapsingHeader(this.Items[i].GetTitle()))
 						this.DrawItem(this.Items[i]);
 		}
 	}
@@ -63,7 +63,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 			if (this.Items != null)
 				if (ImGui.BeginTabBar(GetTitle()))
 					for (int i = 0; i < this.Items.Count; i++)
-						if (ImGui.BeginTabItem($"{this.Items[i].LocaleName()}##Modular##{i}##{Id}")) {
+						if (ImGui.BeginTabItem(this.Items[i].GetTitle())) {
 							this.DrawItem(this.Items[i]);
 							ImGui.EndTabItem();
 						}

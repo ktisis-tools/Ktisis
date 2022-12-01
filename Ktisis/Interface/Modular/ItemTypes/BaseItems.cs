@@ -5,35 +5,50 @@ using ImGuiNET;
 using Ktisis.Localization;
 
 namespace Ktisis.Interface.Modular.ItemTypes {
-	public class BaseContainer : IModularItem, IModularContainer {
-		public List<IModularItem> Items { get; }
+
+	public class BaseItem : IModularItem {
 		public ParamsExtra Extra { get; set; }
 		protected int Id;
 		public string? Title { get; set; }
 		public string LocaleHandle { get; set; }
-		public ImGuiWindowFlags WindowFlags { get; set; }
 
-		public BaseContainer(List<IModularItem> items, ParamsExtra extra) {
-			this.Items = items;
+		public BaseItem(ParamsExtra extra) {
 			this.Extra = extra;
 
 			string? localeHandle = null;
 			Extra.Strings?.TryGetValue("LocaleHandle", out localeHandle);
-			this.LocaleHandle = localeHandle ?? "ModularContainer";
+			this.LocaleHandle = localeHandle ?? "ModularItem";
 
 			if (Extra.Ints.TryGetValue("Id", out int windowId))
 				this.Id = windowId;
 			else
 				this.Id = 1023;
 
+			if (Extra.Strings != null && Extra.Strings.TryGetValue("Title", out string? title))
+				if (title != null)
+					this.Title = title;
+
+		}
+
+		virtual public string LocaleName() => Locale.GetString(this.LocaleHandle);
+		virtual public string GetTitle() => $"{this.Title ?? this.LocaleName()}##Modular##Item##{this.Id}";
+
+		// virtual methods
+		virtual public void Draw() { }
+
+	}
+
+	public class BaseContainer : BaseItem, IModularContainer {
+		public List<IModularItem> Items { get; }
+		public ImGuiWindowFlags WindowFlags { get; set; }
+
+		public BaseContainer(List<IModularItem> items, ParamsExtra extra) : base(extra) {
+			this.Items = items;
+
 			if (Extra.Ints.TryGetValue("WindowFlags", out int drawFlags))
 				this.WindowFlags = (ImGuiWindowFlags)drawFlags;
 			else
 				this.WindowFlags = ImGuiWindowFlags.None;
-
-			if (Extra.Strings != null && Extra.Strings.TryGetValue("Title", out string? title))
-				if (title != null)
-					this.Title = title;
 		}
 		public BaseContainer(List<IModularItem> items, ParamsExtra extra, ImGuiWindowFlags windowFlags) : this(items, extra) {
 			this.AddWindowFlags(windowFlags);
@@ -47,9 +62,7 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 				this.Extra.Ints.Add("WindowFlags", (int)this.WindowFlags);
 		}
 
-		virtual public string LocaleName() => Locale.GetString(this.LocaleHandle);
-		virtual public string GetTitle() => $"{this.Title ?? this.LocaleName()}##Modular##Item##{this.Id}";
-		virtual public void Draw() {
+		override public void Draw() {
 			if (ImGui.Begin(this.GetTitle(), this.WindowFlags)) {
 				if (this.Items != null)
 					foreach (var item in this.Items) {
@@ -59,82 +72,31 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 			ImGui.End();
 		}
 
-		virtual protected void DrawItem(IModularItem item) {
-			item.Draw();
-		}
-
+		virtual protected void DrawItem(IModularItem item) => item.Draw();
 	}
 
-
-	public class BaseSplitter : IModularItem, IModularContainer {
+	public class BaseSplitter : BaseItem, IModularContainer {
 		public List<IModularItem> Items { get; }
-		public ParamsExtra Extra { get; set; }
-		protected int Id;
-		public string? Title { get; set; }
-		public string LocaleHandle { get; set; }
-
-		protected BaseSplitter(List<IModularItem> items, ParamsExtra extra) {
+		protected BaseSplitter(List<IModularItem> items, ParamsExtra extra) : base(extra) {
 			this.Items = items;
-			this.Extra = extra;
-
-			string? localeHandle = null;
-			extra.Strings?.TryGetValue("LocaleHandle", out localeHandle);
-			this.LocaleHandle = localeHandle ?? "ModularSplitter";
-
-
-			if (extra!.Ints!.TryGetValue("Id", out int windowId))
-				this.Id = windowId;
-			else
-				this.Id = 1120;
-
-			if (Extra.Strings != null && Extra.Strings.TryGetValue("Title", out string? title))
-				if (title != null)
-					this.Title = title;
 		}
 
-		virtual public string LocaleName() => Locale.GetString(this.LocaleHandle);
-		virtual public string GetTitle() => $"{this.Title ?? this.LocaleName()}##Modular##Item##{this.Id}";
-		virtual public void Draw() {
+		override public void Draw() {
 			if (this.Items != null)
 				foreach (var item in this.Items) {
 					this.DrawItem(item);
 				}
 		}
 
-		virtual protected void DrawItem(IModularItem item) {
-			item.Draw();
-		}
+		virtual protected void DrawItem(IModularItem item) => item.Draw();
 	}
 
-	public class BasePannel : IModularItem {
-		public ParamsExtra Extra { get; set; }
-		protected int Id;
-		public string? Title { get; set; }
-		public string LocaleHandle { get; set; }
-
-		public BasePannel(ParamsExtra extra, string? localeHandle = null) {
+	public class BasePannel : BaseItem {
+		public BasePannel(ParamsExtra extra, string? localeHandle = null) : base(extra) {
 			this.Extra = extra;
 
-			extra.Strings?.TryGetValue("LocaleHandle", out localeHandle);
-			this.LocaleHandle = localeHandle ?? "ModularPanel";
-
-			if (extra!.Ints!.TryGetValue("Id", out int windowId))
-				this.Id = windowId;
-			else
-				this.Id = 1120;
-
-			if (Extra.Strings != null && Extra.Strings.TryGetValue("Title", out string? title))
-				if (title != null)
-					this.Title = title;
-
+			if (localeHandle != null)
+				this.LocaleHandle = localeHandle;
 		}
-
-		virtual public string LocaleName() => Locale.GetString(this.LocaleHandle);
-		virtual public string GetTitle() => $"{this.Title ?? this.LocaleName()}##Modular##Item##{this.Id}";
-
-		virtual public void Draw() { }
 	}
-
-
-
 }
