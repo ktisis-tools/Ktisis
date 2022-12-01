@@ -5,20 +5,19 @@ using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
-using Ktisis.Localization;
+using Ktisis.Structs;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Poses;
+using Ktisis.Localization;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Structs.Poses;
-using Ktisis.Data.Serialization;
 using Ktisis.Data.Files;
-using Ktisis.Structs;
+using Ktisis.Data.Serialization;
 
 using static Ktisis.Data.Files.AnamCharaFile;
 
