@@ -376,6 +376,15 @@ namespace Ktisis.Interface.Windows {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
+
+			ImGui.Separator();
+			ImGui.Spacing();
+
+			var clipboardExportClearJson = cfg.ClipboardExportClearJson;
+			if (ImGui.Checkbox($"Clipboard exports clear json", ref clipboardExportClearJson)) {
+				cfg.ClipboardExportClearJson = clipboardExportClearJson;
+			}
+
 			ImGui.EndTabItem();
 		}
 

@@ -141,9 +141,10 @@ namespace Ktisis
 
 		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
 
-		// Data memory
+		// Data
 		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
 		public Dictionary<string, Dictionary<string, Vector3>> CustomBoneOffset { get; set; } = new();
+		public bool ClipboardExportClearJson { get; set; } = false;
 
 		// Validate for changes in config versions.
 
