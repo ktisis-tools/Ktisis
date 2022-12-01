@@ -98,255 +98,243 @@ namespace Ktisis.Data.Files {
 		public float? HeightMultiplier { get; set; }
 
 		public void WriteToFile(Actor actor, SaveModes mode) {
-			this.Nickname = actor.Name;
-			this.ModelType = actor.ModelId;
-			this.ObjectKind = (ObjectKind)actor.GameObject.ObjectKind;
+			Nickname = actor.Name;
+			ModelType = actor.ModelId;
+			ObjectKind = (ObjectKind)actor.GameObject.ObjectKind;
 
-			this.SaveMode = mode;
+			SaveMode = mode;
 
-			if (this.IncludeSection(SaveModes.EquipmentWeapons, mode)) {
-				this.MainHand = new WeaponSave(actor.MainHand.Equip);
-				////this.MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
-				////this.MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
+			if (IncludeSection(SaveModes.EquipmentWeapons, mode)) {
+				MainHand = new WeaponSave(actor.MainHand.Equip);
+				////MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
+				////MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
 
-				this.OffHand = new WeaponSave(actor.OffHand.Equip);
-				////this.OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
-				////this.OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
+				OffHand = new WeaponSave(actor.OffHand.Equip);
+				////OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
+				////OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
 			}
 
-			if (this.IncludeSection(SaveModes.EquipmentGear, mode)) {
-				this.HeadGear = new ItemSave(actor.Equipment.Head);
-				this.Body = new ItemSave(actor.Equipment.Chest);
-				this.Hands = new ItemSave(actor.Equipment.Hands);
-				this.Legs = new ItemSave(actor.Equipment.Legs);
-				this.Feet = new ItemSave(actor.Equipment.Feet);
+			if (IncludeSection(SaveModes.EquipmentGear, mode)) {
+				HeadGear = new ItemSave(actor.Equipment.Head);
+				Body = new ItemSave(actor.Equipment.Chest);
+				Hands = new ItemSave(actor.Equipment.Hands);
+				Legs = new ItemSave(actor.Equipment.Legs);
+				Feet = new ItemSave(actor.Equipment.Feet);
 			}
 
-			if (this.IncludeSection(SaveModes.EquipmentAccessories, mode)) {
-				this.Ears = new ItemSave(actor.Equipment.Earring);
-				this.Neck = new ItemSave(actor.Equipment.Necklace);
-				this.Wrists = new ItemSave(actor.Equipment.Bracelet);
-				this.LeftRing = new ItemSave(actor.Equipment.RingLeft);
-				this.RightRing = new ItemSave(actor.Equipment.RingRight);
+			if (IncludeSection(SaveModes.EquipmentAccessories, mode)) {
+				Ears = new ItemSave(actor.Equipment.Earring);
+				Neck = new ItemSave(actor.Equipment.Necklace);
+				Wrists = new ItemSave(actor.Equipment.Bracelet);
+				LeftRing = new ItemSave(actor.Equipment.RingLeft);
+				RightRing = new ItemSave(actor.Equipment.RingRight);
 			}
 
-			if (this.IncludeSection(SaveModes.AppearanceHair, mode)) {
-				this.Hair = actor.Customize.HairStyle;
-				this.EnableHighlights = (actor.Customize.HasHighlights & 0x80) != 0;
-				this.HairTone = actor.Customize.HairColor;
-				this.Highlights = actor.Customize.HairColor2;
-				/*this.HairColor = actor.ModelObject?.ExtendedAppearance?.HairColor;
-				this.HairGloss = actor.ModelObject?.ExtendedAppearance?.HairGloss;
-				this.HairHighlight = actor.ModelObject?.ExtendedAppearance?.HairHighlight;*/
+			if (IncludeSection(SaveModes.AppearanceHair, mode)) {
+				Hair = actor.Customize.HairStyle;
+				EnableHighlights = (actor.Customize.HasHighlights & 0x80) != 0;
+				HairTone = actor.Customize.HairColor;
+				Highlights = actor.Customize.HairColor2;
+				/*HairColor = actor.ModelObject?.ExtendedAppearance?.HairColor;
+				HairGloss = actor.ModelObject?.ExtendedAppearance?.HairGloss;
+				HairHighlight = actor.ModelObject?.ExtendedAppearance?.HairHighlight;*/
 			}
 
-			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode)) {
-				this.Race = (AnamRace)actor.Customize.Race;
-				this.Gender = actor.Customize.Gender;
-				this.Tribe = (AnamTribe)actor.Customize.Tribe;
-				this.Age = actor.Customize.Age;
+			if (IncludeSection(SaveModes.AppearanceFace, mode) || IncludeSection(SaveModes.AppearanceBody, mode)) {
+				Race = (AnamRace)actor.Customize.Race;
+				Gender = actor.Customize.Gender;
+				Tribe = (AnamTribe)actor.Customize.Tribe;
+				Age = actor.Customize.Age;
 			}
 
-			if (this.IncludeSection(SaveModes.AppearanceFace, mode)) {
-				this.Head = actor.Customize.FaceType;
-				this.REyeColor = actor.Customize.EyeColor;
-				this.LimbalEyes = actor.Customize.FaceFeaturesColor;
-				this.FacialFeatures = (AnamFacialFeature)actor.Customize.FaceFeatures;
-				this.Eyebrows = actor.Customize.Eyebrows;
-				this.LEyeColor = actor.Customize.EyeColor2;
-				this.Eyes = actor.Customize.EyeShape;
-				this.Nose = actor.Customize.NoseShape;
-				this.Jaw = actor.Customize.JawShape;
-				this.Mouth = actor.Customize.LipStyle;
-				this.LipsToneFurPattern = actor.Customize.RaceFeatureType;
-				this.FacePaint = (byte)actor.Customize.Facepaint;
-				this.FacePaintColor = actor.Customize.FacepaintColor;
-				/*this.LeftEyeColor = actor.ModelObject?.ExtendedAppearance?.LeftEyeColor;
-				this.RightEyeColor = actor.ModelObject?.ExtendedAppearance?.RightEyeColor;
-				this.LimbalRingColor = actor.ModelObject?.ExtendedAppearance?.LimbalRingColor;
-				this.MouthColor = actor.ModelObject?.ExtendedAppearance?.MouthColor;*/
+			if (IncludeSection(SaveModes.AppearanceFace, mode)) {
+				Head = actor.Customize.FaceType;
+				REyeColor = actor.Customize.EyeColor;
+				LimbalEyes = actor.Customize.FaceFeaturesColor;
+				FacialFeatures = (AnamFacialFeature)actor.Customize.FaceFeatures;
+				Eyebrows = actor.Customize.Eyebrows;
+				LEyeColor = actor.Customize.EyeColor2;
+				Eyes = actor.Customize.EyeShape;
+				Nose = actor.Customize.NoseShape;
+				Jaw = actor.Customize.JawShape;
+				Mouth = actor.Customize.LipStyle;
+				LipsToneFurPattern = actor.Customize.RaceFeatureType;
+				FacePaint = (byte)actor.Customize.Facepaint;
+				FacePaintColor = actor.Customize.FacepaintColor;
+				/*LeftEyeColor = actor.ModelObject?.ExtendedAppearance?.LeftEyeColor;
+				RightEyeColor = actor.ModelObject?.ExtendedAppearance?.RightEyeColor;
+				LimbalRingColor = actor.ModelObject?.ExtendedAppearance?.LimbalRingColor;
+				MouthColor = actor.ModelObject?.ExtendedAppearance?.MouthColor;*/
 			}
 
-			if (this.IncludeSection(SaveModes.AppearanceBody, mode)) {
-				this.Height = actor.Customize.Height;
-				this.Skintone = actor.Customize.SkinColor;
-				this.EarMuscleTailSize = actor.Customize.RaceFeatureSize;
-				this.TailEarsType = actor.Customize.RaceFeatureType;
-				this.Bust = actor.Customize.BustSize;
+			if (IncludeSection(SaveModes.AppearanceBody, mode)) {
+				Height = actor.Customize.Height;
+				Skintone = actor.Customize.SkinColor;
+				EarMuscleTailSize = actor.Customize.RaceFeatureSize;
+				TailEarsType = actor.Customize.RaceFeatureType;
+				Bust = actor.Customize.BustSize;
 
-				unsafe { this.HeightMultiplier = actor.Model->Height; }
-				/*this.SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
-				this.SkinGloss = actor.ModelObject?.ExtendedAppearance?.SkinGloss;
-				this.MuscleTone = actor.ModelObject?.ExtendedAppearance?.MuscleTone;
-				this.BustScale = actor.ModelObject?.Bust?.Scale;
-				this.Transparency = actor.Transparency;*/
+				unsafe { HeightMultiplier = actor.Model->Height; }
+				/*SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
+				SkinGloss = actor.ModelObject?.ExtendedAppearance?.SkinGloss;
+				MuscleTone = actor.ModelObject?.ExtendedAppearance?.MuscleTone;
+				BustScale = actor.ModelObject?.Bust?.Scale;
+				Transparency = actor.Transparency;*/
 			}
 		}
 
-		public unsafe void Apply(Actor* actor, SaveModes mode, bool allowRefresh = true) {
-			if (this.Tribe != null && !Enum.IsDefined((Tribe)this.Tribe))
-				throw new Exception($"Invalid tribe: {this.Tribe} in appearance file");
+		public unsafe void Apply(Actor* actor, SaveModes mode) {
+			if (Tribe != null && !Enum.IsDefined((Tribe)Tribe))
+				throw new Exception($"Invalid tribe: {Tribe} in appearance file");
 
-			if (this.Race != null && !Enum.IsDefined((Race)this.Race))
-				throw new Exception($"Invalid race: {this.Race} in appearance file");
+			if (Race != null && !Enum.IsDefined((Race)Race))
+				throw new Exception($"Invalid race: {Race} in appearance file");
 
-			//if (actor.CanRefresh) {
-				//actor.EnableReading = false;
+			actor->ModelId = ModelType;
 
-				actor->ModelId = this.ModelType;
-				////actor.ObjectKind = this.ObjectKind;
+			if (IncludeSection(SaveModes.EquipmentWeapons, mode)) {
+				MainHand?.Write(actor->MainHand.Equip, true);
+				OffHand?.Write(actor->OffHand.Equip, false);
+			}
 
-				if (this.IncludeSection(SaveModes.EquipmentWeapons, mode)) {
-					this.MainHand?.Write(actor->MainHand.Equip, true);
-					this.OffHand?.Write(actor->OffHand.Equip, false);
-				}
+			if (IncludeSection(SaveModes.EquipmentGear, mode)) {
+				HeadGear?.Write(actor, EquipIndex.Head);
+				Body?.Write(actor, EquipIndex.Chest);
+				Hands?.Write(actor, EquipIndex.Hands);
+				Legs?.Write(actor, EquipIndex.Legs);
+				Feet?.Write(actor, EquipIndex.Feet);
+			}
 
-				if (this.IncludeSection(SaveModes.EquipmentGear, mode)) {
-					this.HeadGear?.Write(actor->Equipment.Head);
-					this.Body?.Write(actor->Equipment.Chest);
-					this.Hands?.Write(actor->Equipment.Hands);
-					this.Legs?.Write(actor->Equipment.Legs);
-					this.Feet?.Write(actor->Equipment.Feet);
-				}
+			if (IncludeSection(SaveModes.EquipmentAccessories, mode)) {
+				Ears?.Write(actor, EquipIndex.Earring);
+				Neck?.Write(actor, EquipIndex.Necklace);
+				Wrists?.Write(actor, EquipIndex.Bracelet);
+				RightRing?.Write(actor, EquipIndex.RingRight);
+				LeftRing?.Write(actor, EquipIndex.RingLeft);
+			}
 
-				if (this.IncludeSection(SaveModes.EquipmentAccessories, mode)) {
-					this.Ears?.Write(actor->Equipment.Earring);
-					this.Neck?.Write(actor->Equipment.Necklace);
-					this.Wrists?.Write(actor->Equipment.Bracelet);
-					this.RightRing?.Write(actor->Equipment.RingRight);
-					this.LeftRing?.Write(actor->Equipment.RingLeft);
-				}
+			var custom = actor->Customize;
 
-				if (this.IncludeSection(SaveModes.AppearanceHair, mode)) {
-					if (this.Hair != null)
-						actor->Customize.HairStyle = (byte)this.Hair;
+			if (IncludeSection(SaveModes.AppearanceHair, mode)) {
+				if (Hair != null)
+				custom.HairStyle = (byte)Hair;
 
-					if (this.EnableHighlights != null)
-						actor->Customize.HasHighlights = (byte)((bool)this.EnableHighlights ? 0x80 : 0);
+				if (EnableHighlights != null)
+					custom.HasHighlights = (byte)((bool)EnableHighlights ? 0x80 : 0);
 
-					if (this.HairTone != null)
-						actor->Customize.HairColor = (byte)this.HairTone;
+				if (HairTone != null)
+					custom.HairColor = (byte)HairTone;
 
-					if (this.Highlights != null)
-						actor->Customize.HairColor2 = (byte)this.Highlights;
-				}
+				if (Highlights != null)
+					custom.HairColor2 = (byte)Highlights;
+			}
 
-				if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode)) {
-					if (this.Race != null)
-						actor->Customize.Race = (Race)this.Race;
+			if (IncludeSection(SaveModes.AppearanceFace, mode) || IncludeSection(SaveModes.AppearanceBody, mode)) {
+				if (Race != null)
+					custom.Race = (Race)Race;
 
-					if (this.Gender != null)
-						actor->Customize.Gender = (Gender)this.Gender;
+				if (Gender != null)
+					custom.Gender = (Gender)Gender;
 
-					if (this.Tribe != null)
-						actor->Customize.Tribe = (Tribe)this.Tribe;
+				if (Tribe != null)
+					custom.Tribe = (Tribe)Tribe;
 
-					if (this.Age != null)
-						actor->Customize.Age = (Age)this.Age;
-				}
+				if (Age != null)
+					custom.Age = (Age)Age;
+			}
 
-				if (this.IncludeSection(SaveModes.AppearanceFace, mode)) {
-					if (this.Head != null)
-						actor->Customize.FaceType = (byte)this.Head;
+			if (IncludeSection(SaveModes.AppearanceFace, mode)) {
+				if (Head != null)
+					custom.FaceType = (byte)Head;
 
-					if (this.REyeColor != null)
-						actor->Customize.EyeColor = (byte)this.REyeColor;
+				if (REyeColor != null)
+					custom.EyeColor = (byte)REyeColor;
 
-					if (this.FacialFeatures != null)
-						actor->Customize.FaceFeatures = (byte)this.FacialFeatures;
+				if (FacialFeatures != null)
+					custom.FaceFeatures = (byte)FacialFeatures;
 
-					if (this.LimbalEyes != null)
-						actor->Customize.FaceFeaturesColor = (byte)this.LimbalEyes;
+				if (LimbalEyes != null)
+					custom.FaceFeaturesColor = (byte)LimbalEyes;
 
-					if (this.Eyebrows != null)
-						actor->Customize.Eyebrows = (byte)this.Eyebrows;
+				if (Eyebrows != null)
+					custom.Eyebrows = (byte)Eyebrows;
 
-					if (this.LEyeColor != null)
-						actor->Customize.EyeColor2 = (byte)this.LEyeColor;
+				if (LEyeColor != null)
+					custom.EyeColor2 = (byte)LEyeColor;
 
-					if (this.Eyes != null)
-						actor->Customize.EyeShape = (byte)this.Eyes;
+				if (Eyes != null)
+					custom.EyeShape = (byte)Eyes;
 
-					if (this.Nose != null)
-						actor->Customize.NoseShape = (byte)this.Nose;
+				if (Nose != null)
+					custom.NoseShape = (byte)Nose;
 
-					if (this.Jaw != null)
-						actor->Customize.JawShape = (byte)this.Jaw;
+				if (Jaw != null)
+					custom.JawShape = (byte)Jaw;
 
-					if (this.Mouth != null)
-						actor->Customize.LipStyle = (byte)this.Mouth;
+				if (Mouth != null)
+					custom.LipStyle = (byte)Mouth;
 
-					if (this.LipsToneFurPattern != null)
-						actor->Customize.LipColor = (byte)this.LipsToneFurPattern;
+				if (LipsToneFurPattern != null)
+					custom.LipColor = (byte)LipsToneFurPattern;
 
-					if (this.FacePaint != null)
-						actor->Customize.Facepaint = (FacialFeature)this.FacePaint;
+				if (FacePaint != null)
+					custom.Facepaint = (FacialFeature)FacePaint;
 
-					if (this.FacePaintColor != null)
-						actor->Customize.FacepaintColor = (byte)this.FacePaintColor;
-				}
+				if (FacePaintColor != null)
+					custom.FacepaintColor = (byte)FacePaintColor;
+			}
 
-				if (this.IncludeSection(SaveModes.AppearanceBody, mode)) {
-					if (this.Height != null)
-						actor->Customize.Height = (byte)this.Height;
+			if (IncludeSection(SaveModes.AppearanceBody, mode)) {
+				if (Height != null)
+					custom.Height = (byte)Height;
 
-					if (this.Skintone != null)
-						actor->Customize.SkinColor = (byte)this.Skintone;
+				if (Skintone != null)
+					custom.SkinColor = (byte)Skintone;
 
-					if (this.EarMuscleTailSize != null)
-						actor->Customize.RaceFeatureSize = (byte)this.EarMuscleTailSize;
+				if (EarMuscleTailSize != null)
+					custom.RaceFeatureSize = (byte)EarMuscleTailSize;
 
-					if (this.TailEarsType != null)
-						actor->Customize.RaceFeatureType = (byte)this.TailEarsType;
+				if (TailEarsType != null)
+					custom.RaceFeatureType = (byte)TailEarsType;
 
-					if (this.Bust != null)
-						actor->Customize.BustSize = (byte)this.Bust;
-				}
+				if (Bust != null)
+					custom.BustSize = (byte)Bust;
+			}
 
-				//if (allowRefresh) {
-					//await actor.RefreshAsync();
-				//}
-
-				// Setting customize values will reset the extended appearance, which me must read.
-				//actor.EnableReading = true;
-				//actor.Tick();
-			//}
+			actor->ApplyCustomize(custom);
 
 			/*if (actor.ModelObject?.ExtendedAppearance != null) {
-				if (this.IncludeSection(SaveModes.AppearanceHair, mode)) {
-					actor.ModelObject.ExtendedAppearance.HairColor = this.HairColor ?? actor.ModelObject.ExtendedAppearance.HairColor;
-					actor.ModelObject.ExtendedAppearance.HairGloss = this.HairGloss ?? actor.ModelObject.ExtendedAppearance.HairGloss;
-					actor.ModelObject.ExtendedAppearance.HairHighlight = this.HairHighlight ?? actor.ModelObject.ExtendedAppearance.HairHighlight;
+				if (IncludeSection(SaveModes.AppearanceHair, mode)) {
+					actor.ModelObject.ExtendedAppearance.HairColor = HairColor ?? actor.ModelObject.ExtendedAppearance.HairColor;
+					actor.ModelObject.ExtendedAppearance.HairGloss = HairGloss ?? actor.ModelObject.ExtendedAppearance.HairGloss;
+					actor.ModelObject.ExtendedAppearance.HairHighlight = HairHighlight ?? actor.ModelObject.ExtendedAppearance.HairHighlight;
 				}
 
-				if (this.IncludeSection(SaveModes.AppearanceFace, mode)) {
-					actor.ModelObject.ExtendedAppearance.LeftEyeColor = this.LeftEyeColor ?? actor.ModelObject.ExtendedAppearance.LeftEyeColor;
-					actor.ModelObject.ExtendedAppearance.RightEyeColor = this.RightEyeColor ?? actor.ModelObject.ExtendedAppearance.RightEyeColor;
-					actor.ModelObject.ExtendedAppearance.LimbalRingColor = this.LimbalRingColor ?? actor.ModelObject.ExtendedAppearance.LimbalRingColor;
-					actor.ModelObject.ExtendedAppearance.MouthColor = this.MouthColor ?? actor.ModelObject.ExtendedAppearance.MouthColor;
+				if (IncludeSection(SaveModes.AppearanceFace, mode)) {
+					actor.ModelObject.ExtendedAppearance.LeftEyeColor = LeftEyeColor ?? actor.ModelObject.ExtendedAppearance.LeftEyeColor;
+					actor.ModelObject.ExtendedAppearance.RightEyeColor = RightEyeColor ?? actor.ModelObject.ExtendedAppearance.RightEyeColor;
+					actor.ModelObject.ExtendedAppearance.LimbalRingColor = LimbalRingColor ?? actor.ModelObject.ExtendedAppearance.LimbalRingColor;
+					actor.ModelObject.ExtendedAppearance.MouthColor = MouthColor ?? actor.ModelObject.ExtendedAppearance.MouthColor;
 				}
 
-				if (this.IncludeSection(SaveModes.AppearanceBody, mode)) {
-					actor.ModelObject.ExtendedAppearance.SkinColor = this.SkinColor ?? actor.ModelObject.ExtendedAppearance.SkinColor;
-					actor.ModelObject.ExtendedAppearance.SkinGloss = this.SkinGloss ?? actor.ModelObject.ExtendedAppearance.SkinGloss;
-					actor.ModelObject.ExtendedAppearance.MuscleTone = this.MuscleTone ?? actor.ModelObject.ExtendedAppearance.MuscleTone;
-					actor.Transparency = this.Transparency ?? actor.Transparency;
+				if (IncludeSection(SaveModes.AppearanceBody, mode)) {
+					actor.ModelObject.ExtendedAppearance.SkinColor = SkinColor ?? actor.ModelObject.ExtendedAppearance.SkinColor;
+					actor.ModelObject.ExtendedAppearance.SkinGloss = SkinGloss ?? actor.ModelObject.ExtendedAppearance.SkinGloss;
+					actor.ModelObject.ExtendedAppearance.MuscleTone = MuscleTone ?? actor.ModelObject.ExtendedAppearance.MuscleTone;
+					actor.Transparency = Transparency ?? actor.Transparency;
 
-					if (this.HeightMultiplier.IsValid())
-						actor.ModelObject.Height = this.HeightMultiplier ?? actor.ModelObject.Height;
+					if (HeightMultiplier.IsValid())
+						actor.ModelObject.Height = HeightMultiplier ?? actor.ModelObject.Height;
 
-					if (actor.ModelObject.Bust?.Scale != null && Vector.IsValid(this.BustScale)) {
-						actor.ModelObject.Bust.Scale = this.BustScale ?? actor.ModelObject.Bust.Scale;
+					if (actor.ModelObject.Bust?.Scale != null && Vector.IsValid(BustScale)) {
+						actor.ModelObject.Bust.Scale = BustScale ?? actor.ModelObject.Bust.Scale;
 					}
 				}
 			}*/
-
-			//actor.AutomaticRefreshEnabled = true;
-			//actor.EnableReading = true;
 		}
 
 		private bool IncludeSection(SaveModes section, SaveModes mode) {
-			return this.SaveMode.HasFlag(section) && mode.HasFlag(section);
+			return SaveMode.HasFlag(section) && mode.HasFlag(section);
 		}
 
 		[Serializable]
@@ -355,10 +343,10 @@ namespace Ktisis.Data.Files {
 			}
 
 			public WeaponSave(WeaponEquip from) {
-				this.ModelSet = from.Set;
-				this.ModelBase = from.Base;
-				this.ModelVariant = from.Variant;
-				this.DyeId = from.Dye;
+				ModelSet = from.Set;
+				ModelBase = from.Base;
+				ModelVariant = from.Variant;
+				DyeId = from.Dye;
 			}
 
 			public Vector3 Color { get; set; }
@@ -369,13 +357,15 @@ namespace Ktisis.Data.Files {
 			public byte DyeId { get; set; }
 
 			public void Write(WeaponEquip vm, bool isMainHand) {
-				vm.Set = this.ModelSet;
+				// TODO
+
+				vm.Set = ModelSet;
 
 				// sanity check values
 				if (vm.Set != 0) {
-					vm.Base = this.ModelBase;
-					vm.Variant = this.ModelVariant;
-					vm.Dye = this.DyeId;
+					vm.Base = ModelBase;
+					vm.Variant = ModelVariant;
+					vm.Dye = DyeId;
 				} else {
 					/*if (isMainHand) {
 						vm.Set = ItemUtility.EmperorsNewFists.ModelSet;
@@ -399,19 +389,22 @@ namespace Ktisis.Data.Files {
 			}
 
 			public ItemSave(ItemEquip from) {
-				this.ModelBase = from.Id;
-				this.ModelVariant = from.Variant;
-				this.DyeId = from.Dye;
+				ModelBase = from.Id;
+				ModelVariant = from.Variant;
+				DyeId = from.Dye;
 			}
 
 			public ushort ModelBase { get; set; }
 			public byte ModelVariant { get; set; }
 			public byte DyeId { get; set; }
 
-			public void Write(ItemEquip vm) {
-				vm.Id = this.ModelBase;
-				vm.Variant = this.ModelVariant;
-				vm.Dye = this.DyeId;
+			public unsafe void Write(Actor* actor, EquipIndex index) {
+				var item = new ItemEquip() {
+					Id = ModelBase,
+					Variant = ModelVariant,
+					Dye = DyeId
+				};
+				actor->Equip(index, item);
 			}
 		}
 

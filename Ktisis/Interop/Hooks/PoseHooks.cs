@@ -135,14 +135,16 @@ namespace Ktisis.Interop.Hooks {
 			if (a2 > 0)
 				partial.ParentToRoot(a2);
 
-			foreach (var obj in Services.ObjectTable) {
-				var actor = (Actor*)obj.Address;
-				if (actor->Model == null || actor->Model->Skeleton != a1) continue;
+			if (a2 < 3) {
+				foreach (var obj in Services.ObjectTable) {
+					var actor = (Actor*)obj.Address;
+					if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
-				if (actor->RenderMode == RenderMode.Draw) break;
+					if (actor->RenderMode == RenderMode.Draw) break;
 
-				if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup))
-					backup.ApplyToPartial(a1, a2, PoseTransforms.Rotation, true);
+					if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup))
+						backup.ApplyToPartial(a1, a2, PoseTransforms.Rotation, true);
+				}
 			}
 
 			return exec;
