@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Globalization;
 
 using Ktisis.Structs.Poses;
 
@@ -12,15 +13,19 @@ namespace Ktisis.Data.Serialization.Converters {
 			var str = reader.GetString() ?? "";
 			var split = str.Split(",");
 			return new Quaternion(
-				float.Parse(split[0]),
-				float.Parse(split[1]),
-				float.Parse(split[2]),
-				float.Parse(split[3])
+				float.Parse(split[0], CultureInfo.InvariantCulture),
+				float.Parse(split[1], CultureInfo.InvariantCulture),
+				float.Parse(split[2], CultureInfo.InvariantCulture),
+				float.Parse(split[3], CultureInfo.InvariantCulture)
 			);
 		}
 
 		public override void Write(Utf8JsonWriter writer, Quaternion value, JsonSerializerOptions options) {
-			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}, {value.W}");
+			writer.WriteStringValue(string.Format(
+				CultureInfo.InvariantCulture,
+				"{0}, {1}, {2}, {3}",
+				value.X, value.Y, value.Z, value.W
+			));
 		}
 	}
 
@@ -29,14 +34,18 @@ namespace Ktisis.Data.Serialization.Converters {
 			var str = reader.GetString() ?? "";
 			var split = str.Split(",");
 			return new Vector3(
-				float.Parse(split[0]),
-				float.Parse(split[1]),
-				float.Parse(split[2])
+				float.Parse(split[0], CultureInfo.InvariantCulture),
+				float.Parse(split[1], CultureInfo.InvariantCulture),
+				float.Parse(split[2], CultureInfo.InvariantCulture)
 			);
 		}
 
 		public override void Write(Utf8JsonWriter writer, Vector3 value, JsonSerializerOptions options) {
-			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}");
+			writer.WriteStringValue(string.Format(
+				CultureInfo.InvariantCulture,
+				"{0}, {1}, {2}",
+				value.X, value.Y, value.Z
+			));
 		}
 	}
 
@@ -45,15 +54,19 @@ namespace Ktisis.Data.Serialization.Converters {
 			var str = reader.GetString() ?? "";
 			var split = str.Split(",");
 			return new Vector4(
-				float.Parse(split[0]),
-				float.Parse(split[1]),
-				float.Parse(split[2]),
-				float.Parse(split[3])
+				float.Parse(split[0], CultureInfo.InvariantCulture),
+				float.Parse(split[1], CultureInfo.InvariantCulture),
+				float.Parse(split[2], CultureInfo.InvariantCulture),
+				float.Parse(split[3], CultureInfo.InvariantCulture)
 			);
 		}
 
 		public override void Write(Utf8JsonWriter writer, Vector4 value, JsonSerializerOptions options) {
-			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}, {value.W}");
+			writer.WriteStringValue(string.Format(
+				CultureInfo.InvariantCulture,
+				"{0}, {1}, {2}, {3}",
+				value.X, value.Y, value.Z, value.W
+			));
 		}
 	}
 

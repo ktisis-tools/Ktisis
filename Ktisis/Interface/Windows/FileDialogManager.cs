@@ -1,135 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using ImGuiNET;
+using System.Reflection;
 
 using Dalamud.Interface;
 using Dalamud.Interface.ImGuiFileDialog;
-using Dalamud.Logging;
 
-namespace Ktisis.Interface.Windows;
+using BaseDialogManager = Dalamud.Interface.ImGuiFileDialog.FileDialogManager;
 
-// Copying this because we need to change stuff and the original class makes everything private :(
-// https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Interface/ImGuiFileDialog/FileDialogManager.cs
+namespace Ktisis.Interface.Windows {
+	public class FileDialogManager {
+	
+		public List<(string Name, string Path, FontAwesomeIcon Icon, int Positon)> CustomSideBarItems => baseInstance.CustomSideBarItems;
 
-public class FileDialogManager {
-#pragma warning disable SA1401
-	public readonly List<(string Name, string Path, FontAwesomeIcon Icon, int Position)> CustomSideBarItems = new();
+		private readonly BaseDialogManager baseInstance = new();
 
-	public ImGuiWindowFlags AddedWindowFlags = ImGuiWindowFlags.None;
-#pragma warning restore SA1401
+		private static readonly FieldInfo baseDialogField = typeof(BaseDialogManager).GetField("dialog", BindingFlags.Instance | BindingFlags.NonPublic)!;
+		private static readonly FieldInfo baseSavedPathField = typeof(BaseDialogManager).GetField("savedPath", BindingFlags.Instance | BindingFlags.NonPublic)!;
+		private bool isClosing = false;
+		private string currentFilter = "";
 
-	private FileDialog? dialog;
-	private Action<bool, string>? callback;
-	private Action<bool, List<string>>? multiCallback;
-	private string savedPath = ".";
+		private FileDialog? dialog => (FileDialog?) baseDialogField.GetValue(baseInstance);
 
-	private string _filter = "";
-
-	public void OpenFolderDialog(string title, Action<bool, string> callback) {
-		SetDialog("OpenFolderDialog", title, string.Empty, savedPath, ".", string.Empty, 1, false, ImGuiFileDialogFlags.SelectOnly, callback);
-	}
-
-	public void OpenFolderDialog(string title, Action<bool, string> callback, string? startPath, bool isModal = false) {
-		SetDialog("OpenFolderDialog", title, string.Empty, startPath ?? savedPath, ".", string.Empty, 1, isModal, ImGuiFileDialogFlags.SelectOnly, callback);
-	}
-
-	public void SaveFolderDialog(string title, string defaultFolderName, Action<bool, string> callback) {
-		SetDialog("SaveFolderDialog", title, string.Empty, savedPath, defaultFolderName, string.Empty, 1, false, ImGuiFileDialogFlags.None, callback);
-	}
-
-	public void SaveFolderDialog(string title, string defaultFolderName, Action<bool, string> callback, string? startPath, bool isModal = false) {
-		SetDialog("SaveFolderDialog", title, string.Empty, startPath ?? savedPath, defaultFolderName, string.Empty, 1, isModal, ImGuiFileDialogFlags.None, callback);
-	}
-
-	public void OpenFileDialog(string title, string filters, Action<bool, string> callback) {
-		SetDialog("OpenFileDialog", title, filters, savedPath, ".", string.Empty, 1, false, ImGuiFileDialogFlags.SelectOnly, callback);
-	}
-
-	public void OpenFileDialog(
-		string title,
-		string filters,
-		Action<bool, List<string>> callback,
-		int selectionCountMax,
-		string? startPath = null,
-		bool isModal = false) {
-		SetDialog("OpenFileDialog", title, filters, startPath ?? savedPath, ".", string.Empty, selectionCountMax, isModal, ImGuiFileDialogFlags.SelectOnly, callback);
-	}
-
-	public void SaveFileDialog(
-		string title,
-		string filters,
-		string defaultFileName,
-		string defaultExtension,
-		Action<bool, string> callback) {
-		SetDialog("SaveFileDialog", title, filters, savedPath, defaultFileName, defaultExtension, 1, false, ImGuiFileDialogFlags.None, callback);
-	}
-
-	public void SaveFileDialog(
-		string title,
-		string filters,
-		string defaultFileName,
-		string defaultExtension,
-		Action<bool, string> callback,
-		string? startPath,
-		bool isModal = false) {
-		SetDialog("SaveFileDialog", title, filters, startPath ?? savedPath, defaultFileName, defaultExtension, 1, isModal, ImGuiFileDialogFlags.None, callback);
-	}
-
-	public void Draw() {
-		if (dialog == null) return;
-		if (dialog.Draw()) {
-			var isOk = dialog.GetIsOk();
-			var results = dialog.GetResults();
-			callback?.Invoke(isOk, results.Count > 0 ? results[0] : string.Empty);
-			multiCallback?.Invoke(isOk, results);
-			savedPath = dialog.GetCurrentPath();
-
-			Reset();
-		}
-	}
-
-	public void Reset() {
-		if (dialog != null && _filter != "") {
-			Ktisis.Configuration.SavedDirPaths[_filter] = savedPath;
-			savedPath = ".";
+		private string savedPath {
+			get => (string) baseSavedPathField.GetValue(baseInstance)!;
+			set => baseSavedPathField.SetValue(baseInstance, value);
 		}
 
-		dialog?.Hide();
-		dialog = null;
-		callback = null;
-		multiCallback = null;
-	}
-
-	private void SetDialog(
-		string id,
-		string title,
-		string filters,
-		string path,
-		string defaultFileName,
-		string defaultExtension,
-		int selectionCountMax,
-		bool isModal,
-		ImGuiFileDialogFlags flags,
-		Delegate callback
-	) {
-		Reset();
-		if (callback is Action<bool, List<string>> multi) {
-			multiCallback = multi;
-		} else {
-			callback = (Action<bool, string>)callback;
+		public void OpenFolderDialog(string title, Action<bool, string> callback) {
+			setupDialog("");
+			baseInstance.OpenFolderDialog(title, (selected, path) => {
+				isClosing = true;
+				callback(selected, path);
+			});
 		}
 
-		_filter = filters;
-		if (path == ".") {
-			if (Ktisis.Configuration.SavedDirPaths.TryGetValue(filters, out var newPath))
-				path = newPath;
+		public void OpenFolderDialog(string title, Action<bool, string> callback, string? startPath, bool isModal = false) {
+			setupDialog("");
+			baseInstance.OpenFolderDialog(title, (selected, path) => {
+				isClosing = true;
+				callback(selected, path);
+			}, startPath, isModal);
 		}
 
-		dialog = new FileDialog(id, title, filters, path, defaultFileName, defaultExtension, selectionCountMax, isModal, flags);
-		dialog.WindowFlags |= AddedWindowFlags;
-		foreach (var (name, location, icon, position) in CustomSideBarItems)
-			dialog.SetQuickAccess(name, location, icon, position);
-		dialog.Show();
+		public void SaveFolderDialog(string title, string defaultFolderName, Action<bool, string> callback) {
+			setupDialog("");
+			baseInstance.SaveFolderDialog(title, defaultFolderName, (selected, path) => {
+				isClosing = true;
+				callback(selected, path);
+			});
+		}
+
+		public void SaveFolderDialog(string title, string defaultFolderName, Action<bool, string> callback, string? startPath, bool isModal = false) {
+			setupDialog("");
+			baseInstance.SaveFolderDialog(title, defaultFolderName, (selected, path) => {
+				isClosing = true;
+				callback(selected, path);
+			}, startPath, isModal);
+		}
+
+		public void OpenFileDialog(string title, string filters, Action<bool, string> callback) {
+			setupDialog(filters);
+			baseInstance.OpenFileDialog(title, filters, (selected, path) => {
+				isClosing = true;
+				callback(selected, path);
+			});
+		}
+
+		public void OpenFileDialog(
+			string title,
+			string filters,
+			Action<bool, List<string>> callback,
+			int selectionCountMax,
+			string? startPath = null,
+			bool isModal = false
+		) {
+			setupDialog(filters);
+			baseInstance.OpenFileDialog(title, filters, (selected, path) => {
+				isClosing = true;
+				callback(selected, path);
+			}, selectionCountMax, startPath, isModal);
+		}
+
+		public void SaveFileDialog(
+			string title,
+			string filters,
+			string defaultFileName,
+			string defaultExtension,
+			Action<bool, string> callback
+		) {
+			setupDialog(filters);
+			baseInstance.SaveFileDialog(title, filters, defaultFileName, defaultExtension, (selected, path) => {
+				isClosing = true;
+				callback(selected, path);
+			});
+		}
+
+		public void SaveFileDialog(
+			string title,
+			string filters,
+			string defaultFileName,
+			string defaultExtension,
+			Action<bool, string> callback,
+			string? startPath,
+			bool isModal = false
+		) {
+			setupDialog(filters);
+			baseInstance.SaveFileDialog(
+				title,
+				filters,
+				defaultFileName,
+				defaultExtension,
+				(selected, path) => {
+					isClosing = true;
+					callback(selected, path);
+				},
+				startPath,
+				isModal
+			);
+		}
+
+		public void Draw() {
+			baseInstance.Draw();
+			if (isClosing) {
+				isClosing = false;
+				if (currentFilter != "") {
+					Ktisis.Configuration.SavedDirPaths[currentFilter] = savedPath;
+					savedPath = ".";
+				}
+			}
+		}
+
+		private void setupDialog(string filters) {
+			currentFilter = filters;
+			if (savedPath == ".") {
+				if (Ktisis.Configuration.SavedDirPaths.TryGetValue(filters, out string? path)) {
+					savedPath = path;
+				}
+			}
+		}
 	}
 }
