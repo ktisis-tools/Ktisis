@@ -9,7 +9,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 		public List<IModularItem> Items { get; }
 		public ParamsExtra Extra { get; set; }
 		protected int Id;
-		public string Title { get; set; }
+		public string? Title { get; set; }
 		public string LocaleHandle { get; set; }
 		public ImGuiWindowFlags WindowFlags { get; set; }
 
@@ -31,9 +31,9 @@ namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 			else
 				this.WindowFlags = ImGuiWindowFlags.None;
 
-			string? title = null;
-			Extra.Strings?.TryGetValue("Title", out title);
-			this.Title = title ?? $"Window {this.Id}";
+			if (Extra.Strings != null && Extra.Strings.TryGetValue("Title", out string? title))
+				if (title != null)
+					this.Title = title;
 		}
 		public Window(List<IModularItem> items, ParamsExtra extra, ImGuiWindowFlags windowFlags) : this(items, extra) {
 			this.AddWindowFlags(windowFlags);
@@ -47,9 +47,10 @@ namespace Ktisis.Interface.Modular.ItemTypes.BaseContainer {
 				this.Extra.Ints.Add("WindowFlags", (int)this.WindowFlags);
 		}
 
-		virtual public string LocaleName() => $"{Locale.GetString(this.LocaleHandle)}##Modular##Window##{this.Title}##{this.Id}";
+		virtual public string LocaleName() => Locale.GetString(this.LocaleHandle);
+		virtual public string GetTitle() => $"{this.Title ?? this.LocaleName()}##Modular##Item##{this.Id}";
 		virtual public void Draw() {
-			if (ImGui.Begin($"{this.LocaleName()}##ModularWindow##{this.Title}##{this.Id}", this.WindowFlags)) {
+			if (ImGui.Begin(this.GetTitle(), this.WindowFlags)) {
 				if (this.Items != null)
 					foreach (var item in this.Items) {
 						this.DrawItem(item);
@@ -88,7 +89,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Container {
 			ImGui.SetNextWindowSize(new(ImGui.GetIO().DisplaySize.X, -1));
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
-			if (ImGui.Begin($"{this.LocaleName()}##ModularWindow##{this.Title}##{this.Id}", this.WindowFlags)) {
+			if (ImGui.Begin(this.GetTitle(), this.WindowFlags)) {
 				if (this.Items != null)
 					foreach (var item in this.Items) {
 						this.DrawItem(item);

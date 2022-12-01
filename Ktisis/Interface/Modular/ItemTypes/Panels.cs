@@ -10,6 +10,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.BasePanel {
 	public class BasePannel : IModularItem {
 		public ParamsExtra Extra { get; set; }
 		protected int Id;
+		public string? Title { get; set; }
 		public string LocaleHandle { get; set; }
 
 		public BasePannel(ParamsExtra extra, string? localeHandle = null) {
@@ -22,9 +23,15 @@ namespace Ktisis.Interface.Modular.ItemTypes.BasePanel {
 				this.Id = windowId;
 			else
 				this.Id = 1120;
+
+			if (Extra.Strings != null && Extra.Strings.TryGetValue("Title", out string? title))
+				if (title != null)
+					this.Title = title;
+
 		}
 
-		virtual public string LocaleName() => $"{Locale.GetString(LocaleHandle)}##Modular##Pannel";
+		virtual public string LocaleName() => Locale.GetString(this.LocaleHandle);
+		virtual public string GetTitle() => $"{this.Title ?? this.LocaleName()}##Modular##Item##{this.Id}";
 
 		virtual public void Draw() { }
 	}

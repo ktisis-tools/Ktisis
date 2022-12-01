@@ -9,7 +9,7 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 		public List<IModularItem> Items { get; }
 		public ParamsExtra Extra { get; set; }
 		protected int Id;
-		public string Title { get; set; }
+		public string? Title { get; set; }
 		public string LocaleHandle { get; set; }
 
 		protected BaseSplitter(List<IModularItem> items, ParamsExtra extra) {
@@ -26,12 +26,13 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 			else
 				this.Id = 1120;
 
-			string? title = null;
-			extra.Strings?.TryGetValue("Title", out title);
-			this.Title = title ?? $"Splitter {this.Id}";
+			if (Extra.Strings != null && Extra.Strings.TryGetValue("Title", out string? title))
+				if (title != null)
+					this.Title = title;
 		}
 
-		virtual public string LocaleName() => $"{Locale.GetString(LocaleHandle)}##Modular##Splitter##{Id}";
+		virtual public string LocaleName() => Locale.GetString(this.LocaleHandle);
+		virtual public string GetTitle() => $"{this.Title ?? this.LocaleName()}##Modular##Item##{this.Id}";
 		virtual public void Draw() {
 			if (this.Items != null)
 				foreach (var item in this.Items) {
@@ -104,7 +105,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 
 		public override void Draw() {
 			if (this.Items != null)
-				if (ImGui.BeginTabBar($"{this.Title}##modular"))
+				if (ImGui.BeginTabBar(GetTitle()))
 					for (int i = 0; i < this.Items.Count; i++)
 						if (ImGui.BeginTabItem($"{this.Items[i].LocaleName()}##Modular##{i}##{Id}")) {
 							this.DrawItem(this.Items[i]);
