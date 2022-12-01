@@ -22,7 +22,7 @@ namespace Ktisis.Data.Serialization.Converters {
 		}
 
 		public override void Write(Utf8JsonWriter writer, Quaternion value, JsonSerializerOptions options) {
-			writer.WriteStringValue(value.ToString());
+			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}, {value.W}");
 		}
 	}
 
@@ -38,7 +38,7 @@ namespace Ktisis.Data.Serialization.Converters {
 		}
 
 		public override void Write(Utf8JsonWriter writer, Vector3 value, JsonSerializerOptions options) {
-			writer.WriteStringValue(value.ToString());
+			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}");
 		}
 	}
 
@@ -72,7 +72,18 @@ namespace Ktisis.Data.Serialization.Converters {
 		}
 
 		public override void Write(Utf8JsonWriter writer, Transform value, JsonSerializerOptions options) {
-			writer.WriteStringValue(value.ToString());
+			writer.WriteStartObject();
+			foreach (var prop in typeof(Transform).GetFields()) {
+				writer.WritePropertyName(prop.Name);
+
+				// did I complain about how bad this is yet?
+				var val = prop.GetValue(value);
+				if (val is Vector3)
+					((Vector3Converter)JsonParser.GetConverter<Vector3>()).Write(writer, (Vector3)val, options);
+				else if (val is Quaternion)
+					((QuaternionConverter)JsonParser.GetConverter<Quaternion>()).Write(writer, (Quaternion)val, options);
+			}
+			writer.WriteEndObject();
 		}
 	}
 }

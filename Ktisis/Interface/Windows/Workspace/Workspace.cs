@@ -3,6 +3,7 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -18,7 +19,6 @@ using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Structs.Poses;
 using Ktisis.Data.Serialization;
 using Ktisis.Data.Files;
-using Dalamud.Logging;
 
 namespace Ktisis.Interface.Windows.Workspace
 {
@@ -360,14 +360,14 @@ namespace Ktisis.Interface.Windows.Workspace
 					"Pose Files (.pose){.pose}",
 					(success, path) => {
 						if (!success) return;
+
 						var content = File.ReadAllText(path[0]);
 						var pose = JsonParser.Deserialize<PoseFile>(content);
 						if (pose == null) return;
 
-						var model = actor->Model;
-						if (model == null) return;
+						if (actor->Model == null) return;
 
-						var skeleton = model->Skeleton;
+						var skeleton = actor->Model->Skeleton;
 						if (skeleton == null) return;
 
 						if (pose.Bones != null) {
@@ -390,7 +390,31 @@ namespace Ktisis.Interface.Windows.Workspace
 			}
 			if (isUseless) ImGui.EndDisabled();
 			ImGui.SameLine();
-			ImGui.Button("Export");
+			if (ImGui.Button("Export")) {
+				KtisisGui.FileDialogManager.SaveFileDialog(
+					"Exporting Pose",
+					"Pose Files (.pose){.pose}",
+					"Untitled.pose",
+					".pose",
+					(success, path) => {
+						if (!success) return;
+
+						var model = actor->Model;
+						if (model == null) return;
+
+						var skeleton = model->Skeleton;
+						if (skeleton == null) return;
+
+						var pose = new PoseFile();
+						pose.Bones = new PoseContainer();
+						pose.Bones.Store(skeleton);
+
+						var json = JsonParser.Serialize(pose);
+						using (var file = new StreamWriter(path))
+							file.Write(json);
+					}
+				);
+			}
 
 			ImGui.Spacing();
 		}

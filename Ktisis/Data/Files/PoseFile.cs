@@ -4,8 +4,8 @@ using Ktisis.Structs.Poses;
 
 namespace Ktisis.Data.Files {
     public class PoseFile : JsonFile {
-		public string FileExtension = ".pose";
-		public string TypeName = "Ktisis Pose";
+		public string FileExtension { get; set; } = ".pose";
+		public string TypeName { get; set; } = "Ktisis Pose";
 
 		public Vector3 Position { get; set; }
 		public Quaternion Rotation { get; set; }
