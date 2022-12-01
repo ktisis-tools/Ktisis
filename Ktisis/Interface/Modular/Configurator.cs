@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Dalamud.Interface;
 using ImGuiNET;
 
 using Ktisis.Interface.Components;
@@ -21,6 +22,16 @@ namespace Ktisis.Interface.Modular {
 
 				if (GuiHelpers.IconButton(Dalamud.Interface.FontAwesomeIcon.Plus))
 					IsAddPanelOpen = true;
+				ImGui.SameLine();
+				if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"Export##Modular"))
+					Misc.ExportClipboard(Ktisis.Configuration.ModularConfig);
+				ImGui.SameLine();
+				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Paste, $"Hold Ctrl and Shift to paste and replace the entire modular configuration.", default, $"Import##Modular")) {
+					var importModular = Misc.ImportClipboard<List<ConfigObject>>();
+					if (importModular != null)
+						Ktisis.Configuration.ModularConfig = importModular;
+				}
+
 				ImGui.SameLine();
 				var hideDefaultWindow = Ktisis.Configuration.ModularHideDefaultWorkspace;
 				if (ImGui.Checkbox("Hide Default Window", ref hideDefaultWindow))
