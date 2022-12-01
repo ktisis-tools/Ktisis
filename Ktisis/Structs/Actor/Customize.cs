@@ -56,8 +56,8 @@ namespace Ktisis.Structs.Actor {
 	}
 
 	public enum Gender : byte {
-		Male,
-		Female
+		Masculine,
+		Feminine
 	}
 
 	public enum Race : byte {

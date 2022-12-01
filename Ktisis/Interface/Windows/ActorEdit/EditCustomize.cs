@@ -149,10 +149,10 @@ namespace Ktisis.Interface.Windows {
 		public static void DrawFundamental(Customize custom) {
 			// Gender
 
-			var isM = custom.Gender == Gender.Male;
+			var isM = custom.Gender == Gender.Masculine;
 
 			if (ImGuiComponents.IconButton(isM ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus)) {
-				custom.Gender = isM ? Gender.Female : Gender.Male;
+				custom.Gender = isM ? Gender.Feminine : Gender.Masculine;
 				Apply(custom);
 			}
 

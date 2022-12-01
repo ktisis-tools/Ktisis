@@ -47,12 +47,12 @@ namespace Ktisis.Data.Files {
 		}
 
 		public static int GetTribeSkinIndex(Tribe tribe, Gender gender) {
-			var genderOffset = gender == Gender.Male ? 0 : 1;
+			var genderOffset = gender == Gender.Masculine ? 0 : 1;
 			return (((int)tribe * 2 + genderOffset) * 5 + 3) * 256;
 		}
 
 		public static int GetTribeHairIndex(Tribe tribe, Gender gender) {
-			var genderOffset = gender == Gender.Male ? 0 : 1;
+			var genderOffset = gender == Gender.Masculine ? 0 : 1;
 			return (((int)tribe * 2 + genderOffset) * 5 + 4) * 256;
 		}
 	}
