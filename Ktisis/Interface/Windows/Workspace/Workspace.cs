@@ -3,7 +3,6 @@ using System.Numerics;
 
 using ImGuiNET;
 
-using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.ImGuiFileDialog;
@@ -19,6 +18,7 @@ using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Structs.Poses;
 using Ktisis.Data.Serialization;
 using Ktisis.Data.Files;
+using Ktisis.Structs;
 
 namespace Ktisis.Interface.Windows.Workspace
 {
@@ -214,9 +214,13 @@ namespace Ktisis.Interface.Windows.Workspace
 							var pose = partial.GetHavokPose(0);
 							if (pose == null) continue;
 							PoseHooks.SyncModelSpaceHook.Original(pose);
+							if (p > 0) partial.ParentToRoot(p);
 						}
 					}
 				}
+
+				if (ImGui.Button("Force Redraw"))
+					actor->Redraw();
 			}
 
 			ImGui.EndTabItem();

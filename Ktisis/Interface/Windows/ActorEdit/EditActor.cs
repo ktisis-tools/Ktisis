@@ -55,9 +55,6 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		}
 
 		public unsafe static void AdvancedEdit() {
-			if (ImGui.Button("Force Redraw"))
-				Target->Redraw();
-
 			var modelId = Target->ModelId;
 			if (ImGui.InputInt("Model ID", ref modelId)) {
 				Target->ModelId = modelId;
