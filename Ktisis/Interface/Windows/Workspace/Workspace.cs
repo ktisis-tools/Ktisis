@@ -186,7 +186,20 @@ namespace Ktisis.Interface.Windows.Workspace
 				ImportExport(actor);
 
 			// Advanced
-			if (ImGui.CollapsingHeader("Advanced")) {
+			if (ImGui.CollapsingHeader("Advanced (Debug)")) {
+				if (ImGui.Button("Reset Current Pose")) {
+					if (actor->Model != null && actor->Model->Skeleton != null) {
+						var skele = actor->Model->Skeleton;
+						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
+							var partial = skele->PartialSkeletons[p];
+							var pose = partial.GetHavokPose(0);
+							if (pose == null) continue;
+							PoseHooks.SyncModelSpaceHook.Original(pose);
+							if (p > 0) partial.ParentToRoot(p);
+						}
+					}
+				}
+
 				if (ImGui.Button("Set to Reference Pose")) {
 					if (actor->Model != null && actor->Model->Skeleton != null) {
 						var skele = actor->Model->Skeleton;
@@ -205,19 +218,6 @@ namespace Ktisis.Interface.Windows.Workspace
 				ImGui.SameLine();
 				if (ImGui.Button("Apply Pose") && actor->Model != null)
 					_TempPose.Apply(actor->Model->Skeleton);
-
-				if (ImGui.Button("Sync Model Space (Debug)")) {
-					if (actor->Model != null && actor->Model->Skeleton != null) {
-						var skele = actor->Model->Skeleton;
-						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
-							var partial = skele->PartialSkeletons[p];
-							var pose = partial.GetHavokPose(0);
-							if (pose == null) continue;
-							PoseHooks.SyncModelSpaceHook.Original(pose);
-							if (p > 0) partial.ParentToRoot(p);
-						}
-					}
-				}
 
 				if (ImGui.Button("Force Redraw"))
 					actor->Redraw();
