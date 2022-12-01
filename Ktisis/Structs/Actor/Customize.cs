@@ -36,6 +36,8 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset((int)CustomizeIndex.SkinColor)] public byte SkinColor;
 		[FieldOffset((int)CustomizeIndex.Tribe)] public Tribe Tribe;
 
+		[FieldOffset(2)] public Age Age;
+
 		public byte GetRaceTribeIndex()
 			=> (byte)((byte)Race * 2 - 1);
 		public uint GetMakeIndex() 
@@ -88,5 +90,11 @@ namespace Ktisis.Structs.Actor {
 		Lost = 14,
 		Rava = 15,
 		Veena = 16
+	}
+
+	public enum Age : byte {
+		Normal = 1,
+		Old = 3,
+		Young = 4
 	}
 }

@@ -55,9 +55,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		}
 
 		public unsafe static void AdvancedEdit() {
-			var modelId = Target->ModelId;
+			var modelId = (int)Target->ModelId;
 			if (ImGui.InputInt("Model ID", ref modelId)) {
-				Target->ModelId = modelId;
+				Target->ModelId = (uint)modelId;
 				Target->Redraw();
 			}
 
