@@ -85,30 +85,10 @@ namespace Ktisis.Interface.Windows {
 
 		// Apply customize
 
+
 		public unsafe static void Apply(Customize custard) {
-			if (Target != null) {
-				var cur = Target->Customize;
-				Target->Customize = custard;
-
-				// Fix UpdateCustomize on Carbuncles & Minions
-				if (Target->Customize.ModelType == 0)
-					Target->Customize.ModelType = 1;
-
-				var faceHack = cur.FaceType != custard.FaceType;
-				if (cur.Race != custard.Race
-					|| cur.Tribe != custard.Tribe // Eye glitch.
-					|| cur.Gender != custard.Gender
-					|| cur.FaceType != custard.FaceType // Eye glitch.
-				) {
-					Target->Redraw(faceHack);
-				} else {
-					var res = Target->UpdateCustomize();
-					if (!res && !IsPosing) {
-						PluginLog.Warning("Failed to update character. Forcing redraw.");
-						Target->Redraw(faceHack);
-					}
-				}
-			}
+			if (Target != null)
+				Target->ApplyCustomize(custard);
 		}
 
 		// Draw window

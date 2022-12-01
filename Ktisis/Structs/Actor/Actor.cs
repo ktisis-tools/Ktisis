@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
 using Ktisis.Data.Excel;
+using Dalamud.Logging;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
@@ -81,6 +82,32 @@ namespace Ktisis.Structs.Actor {
 		public unsafe bool UpdateCustomize() {
 			fixed (Customize* custom = &Customize)
 				return ((Human*)Model)->UpdateDrawData((byte*)custom, true);
+		}
+
+		// Apply new customize
+
+		public unsafe void ApplyCustomize(Customize custom) {
+			var cur = Customize;
+			Customize = custom;
+
+			// Fix UpdateCustomize on Carbuncles & Minions
+			if (Customize.ModelType == 0)
+				Customize.ModelType = 1;
+
+			var faceHack = cur.FaceType != custom.FaceType;
+			if (cur.Race != custom.Race
+				|| cur.Tribe != custom.Tribe // Eye glitch.
+				|| cur.Gender != custom.Gender
+				|| cur.FaceType != custom.FaceType // Eye glitch.
+			) {
+				Redraw(faceHack);
+			} else {
+				var res = UpdateCustomize();
+				if (!res) {
+					PluginLog.Warning("Failed to update character. Forcing redraw.");
+					Redraw(faceHack);
+				}
+			}
 		}
 
 		// Actor redraw
