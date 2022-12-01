@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using ImGuiNET;
-
-using Ktisis.Interface.Components;
-using Ktisis.Util;
+using Newtonsoft.Json;
 
 namespace Ktisis.Interface.Modular {
 	internal class Manager {
@@ -18,19 +15,28 @@ namespace Ktisis.Interface.Modular {
 		internal static readonly List<Type> AvailablePanel = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == NamespacePrefix + "Panel").ToList();
 		internal static readonly List<Type> Available = AvailableContainers.Concat(AvailableSpliters).Concat(AvailablePanel).ToList();
 
-		public static List<string> Handles = new();
+		public static List<int> ItemIds = new();
 		public static List<IModularItem> Config = new();
 
 		public static void Init() {
-			Handles.Clear();
+			ItemIds.Clear();
 			Configurator.MovingObject = null;
 			Config = ParseConfigList(Ktisis.Configuration.ModularConfig)!;
 		}
 		public static void Dispose() => Config = new();
 		public static void Render() => Config?.ForEach(d => d.Draw());
+		public static int GenerateId() {
+			int id = 0;
+			if (ItemIds.Any())
+				id = ItemIds.Max() + 1;
+			ItemIds.Add(id);
+			return id;
+		}
+		public static ParamsExtra GenerateExtra() =>
+			new(new() { { "Id", GenerateId() } });
 
-		private static List<IModularItem>? ParseConfigList(List<ConfigObject>? configObjects) {
-			if (configObjects == null) return null;
+		private static List<IModularItem> ParseConfigList(List<ConfigObject>? configObjects) {
+			if (configObjects == null) return new();
 
 			List<IModularItem> configList = new();
 			foreach (var o in configObjects) {
@@ -40,7 +46,7 @@ namespace Ktisis.Interface.Modular {
 			}
 			if (configList.Any())
 				return configList;
-			return null;
+			return new();
 		}
 		private static IModularItem? ParseConfigItem(ConfigObject configObject) {
 
@@ -54,21 +60,14 @@ namespace Ktisis.Interface.Modular {
 
 			object? instance = null;
 
-			// if parameterless constructor exists, use it
-			if (constructors.Any(c => c.GetParameters().Length == 0)) {
-				instance = Activator.CreateInstance(objectType);
-				if (instance != null) return (IModularItem)instance;
-			}
-
 			// create possible parameters
-			string handle = $"Window {Handles.Count}##Modular##{Handles.Count}";
-			var items = ParseConfigList(configObject.Items)!;
+			var items = ParseConfigList(configObject.Items);
+			ParamsExtra extra = configObject.Extra;
+
 			Dictionary<int, object[]?> paramSolutions = new() {
-				{0, new object[] { Handles.Count, handle, items }},
-				{1, new object[] { Handles.Count, handle,  }},
-				{2, new object[] { items }},
+				{0, new object[] { items, extra } }, // most Container and Splitter
+				{1, new object[] { extra } }, // most Panel
 			};
-			Handles.Add(handle);
 
 			// check if any constructor is compatible with out parameters
 			var compatibleParamIndex = AnyCompatibleConstructors(paramSolutions, constructors);
@@ -77,6 +76,12 @@ namespace Ktisis.Interface.Modular {
 					instance = Activator.CreateInstance(objectType, parameters);
 					if (instance != null) return (IModularItem)instance;
 				}
+
+			// if parameterless constructor exists, use it
+			if (constructors.Any(c => c.GetParameters().Length == 0)) {
+				instance = Activator.CreateInstance(objectType);
+				if (instance != null) return (IModularItem)instance;
+			}
 
 			return null;
 		}
@@ -88,7 +93,7 @@ namespace Ktisis.Interface.Modular {
 				foreach (var ctor in constructors) {
 					paramMatches = 0;
 					var ctorParameters = ctor.GetParameters();
-					for (int i =0; i < ctorParameters.Length; i++) {
+					for (int i = 0; i < ctorParameters.Length; i++) {
 
 						if (i < 0 || i >= solu.Value.Length) continue;
 						var paramSolution = solu.Value.GetValue(i);
@@ -108,11 +113,27 @@ namespace Ktisis.Interface.Modular {
 	[Serializable]
 	public class ConfigObject {
 		public string Type;
+		public ParamsExtra Extra;
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
 		public List<ConfigObject>? Items;
-
-		public ConfigObject(string type, List<ConfigObject>? items = null) {
+		public ConfigObject(string type, ParamsExtra extra, List<ConfigObject>? items = null) {
 			this.Type = type;
+			this.Extra = extra;
 			this.Items = items;
+		}
+	}
+	[Serializable]
+	public class ParamsExtra {
+		public Dictionary<string, int> Ints;
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+		public Dictionary<string, string>? Strings;
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+		public Dictionary<string, bool>? Bools;
+
+		public ParamsExtra(Dictionary<string, int> ints, Dictionary<string, string>? strings = null, Dictionary<string, bool>? bools = null) {
+			this.Strings = strings;
+			this.Ints = ints;
+			this.Bools = bools;
 		}
 	}
 }

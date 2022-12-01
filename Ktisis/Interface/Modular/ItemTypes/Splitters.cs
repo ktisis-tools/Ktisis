@@ -2,28 +2,36 @@ using System.Collections.Generic;
 
 using ImGuiNET;
 
-using Ktisis.Interface.Components;
 using Ktisis.Localization;
 
 namespace Ktisis.Interface.Modular.ItemTypes {
-
 	public class BaseSplitter : IModularItem, IModularContainer {
-		protected readonly int windowID;
 		public List<IModularItem> Items { get; }
+		public ParamsExtra Extra { get; set; }
+		protected int Id;
 		public string Title { get; set; }
 		public string LocaleHandle { get; set; }
 
-		protected BaseSplitter(List<IModularItem> items) : this(1120, "Window 1120", items) { }
-		protected BaseSplitter(int windowID, string title) : this(windowID, title, new()) { }
-
-		protected BaseSplitter(int windowID, string title, List<IModularItem> items) {
-			this.windowID = windowID;
+		protected BaseSplitter(List<IModularItem> items, ParamsExtra extra) {
 			this.Items = items;
-			this.Title = title;
-			this.LocaleHandle = "modularSplitter";
+			this.Extra = extra;
+
+			string? localeHandle = null;
+			extra.Strings?.TryGetValue("LocaleHandle", out localeHandle);
+			this.LocaleHandle = localeHandle ?? "ModularSplitter";
+
+
+			if (extra!.Ints!.TryGetValue("Id", out int windowId))
+				this.Id = windowId;
+			else
+				this.Id = 1120;
+
+			string? title = null;
+			extra.Strings?.TryGetValue("Title", out title);
+			this.Title = title ?? $"Splitter {this.Id}";
 		}
 
-		virtual public string LocaleName() => $"{Locale.GetString(LocaleHandle)}##Modular##Splitter##{windowID}";
+		virtual public string LocaleName() => $"{Locale.GetString(LocaleHandle)}##Modular##Splitter##{Id}";
 		virtual public void Draw() {
 			if (this.Items != null)
 				foreach (var item in this.Items) {
@@ -39,7 +47,7 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 }
 namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 	public class Columns : BaseSplitter {
-		public Columns(List<IModularItem> items) : base(items) { }
+		public Columns(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
 
 		public override void Draw() {
 			if (this.Items != null) {
@@ -50,12 +58,11 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 				}
 				ImGui.Columns();
 			}
-
 		}
 	}
 
 	public class BorderlessColumns : BaseSplitter {
-		public BorderlessColumns(int windowID, string title, List<IModularItem> items) : base(windowID, title, items) { }
+		public BorderlessColumns(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
 
 		public override void Draw() {
 			if (this.Items != null) {
@@ -71,7 +78,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 
 
 	public class SameLine : BaseSplitter {
-		public SameLine(List<IModularItem> items) : base(items) { }
+		public SameLine(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
 
 		public override void Draw() {
 			if (this.Items != null) {
@@ -83,23 +90,23 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 		}
 	}
 	public class CollapsibleHeader : BaseSplitter {
-		public CollapsibleHeader(int windowID, string title, List<IModularItem> items) : base(windowID, title, items) { }
+		public CollapsibleHeader(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
 
 		public override void Draw() {
 			if (this.Items != null)
 				for (int i = 0; i < this.Items.Count; i++)
-					if (ImGui.CollapsingHeader($"{this.Items[i].LocaleName()}##Window##{windowID}"))
+					if (ImGui.CollapsingHeader($"{this.Items[i].LocaleName()}##Window##{Id}"))
 						this.DrawItem(this.Items[i]);
 		}
 	}
 	public class Tabs : BaseSplitter {
-		public Tabs(int windowID, string title, List<IModularItem> items) : base(windowID, title, items) { }
+		public Tabs(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
 
 		public override void Draw() {
 			if (this.Items != null)
 				if (ImGui.BeginTabBar($"{this.Title}##modular"))
 					for (int i = 0; i < this.Items.Count; i++)
-						if (ImGui.BeginTabItem($"{this.Items[i].LocaleName()}##Modular##{i}##{windowID}")) {
+						if (ImGui.BeginTabItem($"{this.Items[i].LocaleName()}##Modular##{i}##{Id}")) {
 							this.DrawItem(this.Items[i]);
 							ImGui.EndTabItem();
 						}

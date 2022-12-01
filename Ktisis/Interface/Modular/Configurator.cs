@@ -77,7 +77,7 @@ namespace Ktisis.Interface.Modular {
 		private static bool IsAvailableContainer(string handle) => Manager.AvailableContainers.Any(a => a.Name == handle);
 		private static bool IsAvailablePanel(string? handle) => Manager.AvailablePanel.Any(a => a.Name == handle);
 		private static bool IsAvailablePanel(ConfigObject? cfgObj) => IsAvailablePanel(cfgObj!.Type);
-		private static void Add(string handle) => Add(new ConfigObject(handle));
+		private static void Add(string handle) => Add(new ConfigObject(handle, Manager.GenerateExtra()));
 		private static void Add(ConfigObject toAdd) {
 			if (Ktisis.Configuration.ModularConfig == null)
 				Ktisis.Configuration.ModularConfig = new();
