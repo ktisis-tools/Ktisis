@@ -28,7 +28,7 @@ namespace Ktisis.Data.Files {
 		}
 
 		public string FileExtension => ".chara";
-		public string TypeName => "Anamnesis Character File";
+		public string TypeName => "Ktisis/Anamnesis Character File";
 
 		public SaveModes SaveMode { get; set; } = SaveModes.All;
 

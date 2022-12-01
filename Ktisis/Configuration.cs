@@ -131,6 +131,8 @@ namespace Ktisis
 
 		public bool LinkedGaze { get; set; } = true;
 
+		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
+
 		// Data memory
 		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
 		public Dictionary<string, Dictionary<string, Vector3>> CustomBoneOffset { get; set; } = new();

@@ -1,7 +1,6 @@
 using System;
 
 using Dalamud.Interface;
-using Dalamud.Interface.ImGuiFileDialog;
 
 using Ktisis.Overlay;
 using Ktisis.Interface.Windows;
