@@ -196,6 +196,8 @@ namespace Ktisis.Interface.Windows {
 						DrawSlider(custom, option);
 						break;
 					default:
+						if (option.Option.Index == CustomizeIndex.EyeColor2)
+							continue;
 						if (option.Option.HasIcon) {
 							i++;
 							if (i % 2 == 0) ImGui.SameLine();
