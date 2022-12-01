@@ -13,10 +13,8 @@ namespace Ktisis.History {
 					item = CreateActorBoneItem();
 					break;
 				default:
-					item = CreateDummyItem();
-					break;
+					throw new System.ArgumentException("You are trying to add an unknown type to the history.", "type");
 			}
-
 			return item;
 		}
 
@@ -29,10 +27,6 @@ namespace Ktisis.History {
 						bone,
 						Ktisis.Configuration.EnableParenting,
 						Ktisis.Configuration.SiblingLink);
-		}
-
-		private static DummyItem CreateDummyItem() {
-			return new DummyItem();
 		}
 	}
 }

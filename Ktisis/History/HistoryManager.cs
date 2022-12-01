@@ -94,8 +94,13 @@ namespace Ktisis.History {
 		}
 
 		private static unsafe void UpdateHistory(string entryType) {
-			HistoryItem entryToAdd = HistoryItemFactory.Create(entryType);
-			AddEntryToHistory(entryToAdd);
+			try {
+				HistoryItem entryToAdd = HistoryItemFactory.Create(entryType);
+				AddEntryToHistory(entryToAdd);
+			} catch (System.ArgumentException e) {
+				PluginLog.Fatal(e.Message);
+				return;
+			}
 		}
 
 		//TODO: Find a way to know what's the currently modified item to be able to add the correct entry to the history.
@@ -123,19 +128,10 @@ namespace Ktisis.History {
 
 		public unsafe static void AddEntryToHistory(HistoryItem historyItem) {
 			if (History == null) {
-				PluginLog.Warning("Attempted to add entry to uninitialised History list.");
+				PluginLog.Warning("Attempted to add an entry to an uninitialised history list.");
 				return;
 			}
-			if (historyItem is DummyItem) {
-				PluginLog.Warning("Added a dummy entry. Is that normal?");
-			}
-
-			HistoryItem historyToAdd =
-				historyItem switch {
-					ActorBone actorBone => actorBone,
-					_ => new DummyItem(),
-				};
-			History.Insert(_maxIdx, historyToAdd);
+			History.Insert(_maxIdx, historyItem);
 			_currentIdx++;
 			_maxIdx++;
 			PrintHistory(_currentIdx - 1);
