@@ -14,8 +14,11 @@ namespace Ktisis.Data.Serialization {
 			Options.ReadCommentHandling = JsonCommentHandling.Skip;
 			Options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 
+			Options.Converters.Add(new JsonStringEnumConverter());
+
 			Options.Converters.Add(new QuaternionConverter());
 			Options.Converters.Add(new Vector3Converter());
+			Options.Converters.Add(new Vector4Converter());
 			Options.Converters.Add(new TransformConverter());
 		}
 

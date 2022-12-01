@@ -3,8 +3,6 @@ using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Dalamud.Logging;
-
 using Ktisis.Structs.Poses;
 
 namespace Ktisis.Data.Serialization.Converters {
@@ -39,6 +37,23 @@ namespace Ktisis.Data.Serialization.Converters {
 
 		public override void Write(Utf8JsonWriter writer, Vector3 value, JsonSerializerOptions options) {
 			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}");
+		}
+	}
+
+	internal class Vector4Converter : JsonConverter<Vector4> {
+		public override Vector4 Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) {
+			var str = reader.GetString() ?? "";
+			var split = str.Split(",");
+			return new Vector4(
+				float.Parse(split[0]),
+				float.Parse(split[1]),
+				float.Parse(split[2]),
+				float.Parse(split[3])
+			);
+		}
+
+		public override void Write(Utf8JsonWriter writer, Vector4 value, JsonSerializerOptions options) {
+			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}, {value.W}");
 		}
 	}
 

@@ -136,6 +136,10 @@ namespace Ktisis.Interface.Windows.Workspace
 					EditGaze.Draw(actor);
 			}
 
+			// Import & Export
+			if (ImGui.CollapsingHeader("Import & Export"))
+				ImportExportChara(actor);
+
 			ImGui.EndTabItem();
 		}
 
@@ -183,7 +187,7 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
-				ImportExport(actor);
+				ImportExportPose(actor);
 
 			// Advanced
 			if (ImGui.CollapsingHeader("Advanced (Debug)")) {
@@ -297,7 +301,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.SameLine(size * 2.5f);
 		}
 
-		private unsafe static void ImportExport(Actor* actor) {
+		private unsafe static void ImportExportPose(Actor* actor) {
 			ImGui.Spacing();
 			ImGui.Text("Transforms");
 
@@ -421,6 +425,53 @@ namespace Ktisis.Interface.Windows.Workspace
 						var json = JsonParser.Serialize(pose);
 						using (var file = new StreamWriter(path))
 							file.Write(json);
+					}
+				);
+			}
+
+			ImGui.Spacing();
+		}
+
+		private unsafe static void ImportExportChara(Actor* actor) {
+
+			// Transforms
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Spacing();
+
+			if (ImGui.Button("Import")) {
+				KtisisGui.FileDialogManager.OpenFileDialog(
+					"Importing Character",
+					"Anamnesis Chara (.chara){.chara}",
+					(success, path) => {
+						if (!success) return;
+
+						var content = File.ReadAllText(path[0]);
+						var chara = JsonParser.Deserialize<AnamCharaFile>(content);
+						if (chara == null) return;
+
+						chara.Apply(actor, AnamCharaFile.SaveModes.All);
+					},
+					1,
+					null
+				);
+			}
+
+			ImGui.SameLine();
+
+			if (ImGui.Button("Export")) {
+				KtisisGui.FileDialogManager.SaveFileDialog(
+					"Exporting Character",
+					"Anamnesis Chara (.chara){.chara}",
+					"Untitled.chara",
+					".chara",
+					(success, path) => {
+						if (!success) return;
+
+						/*var json = JsonParser.Serialize(pose);
+						using (var file = new StreamWriter(path))
+							file.Write(json);*/
 					}
 				);
 			}

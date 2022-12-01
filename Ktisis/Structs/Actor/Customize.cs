@@ -52,7 +52,7 @@ namespace Ktisis.Structs.Actor {
 		Third   = 0x04,
 		Fourth  = 0x08,
 		Fifth   = 0x10,
-		Sitxh   = 0x20,
+		Sixth   = 0x20,
 		Seventh = 0x40,
 		Legacy  = 0x80
 	}
@@ -92,7 +92,7 @@ namespace Ktisis.Structs.Actor {
 		Veena = 16
 	}
 
-	public enum Age : byte {
+public enum Age : byte {
 		Normal = 1,
 		Old = 3,
 		Young = 4

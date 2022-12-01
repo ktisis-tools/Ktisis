@@ -8,15 +8,6 @@ using Ktisis.Structs.Actor;
 
 namespace Ktisis.Data.Files {
 	public class AnamCharaFile {
-		private static Dictionary<string, string> EnumConversions = new() {
-			{ "LegacyTattoo", "Legacy" },
-			{ "Lalafel", "Lalafell" },
-			{ "SeekerOfTheSun", "SunSeeker" },
-			{ "KeeperOfTheMoon", "MoonKeeper" },
-			{ "Helions", "Helion" },
-			{ "TheLost", "Lost" }
-		};
-
 		// https://github.com/imchillin/Anamnesis/blob/master/Anamnesis/Files/CharacterFile.cs
 
 		[Flags]
@@ -47,11 +38,11 @@ namespace Ktisis.Data.Files {
 		public ObjectKind ObjectKind { get; set; } = ObjectKind.None;
 
 		// appearance
-		public Race? Race { get; set; }
+		public AnamRace? Race { get; set; }
 		public Gender? Gender { get; set; }
 		public Age? Age { get; set; }
 		public byte? Height { get; set; }
-		public Tribe? Tribe { get; set; }
+		public AnamTribe? Tribe { get; set; }
 		public byte? Head { get; set; }
 		public byte? Hair { get; set; }
 		public bool? EnableHighlights { get; set; }
@@ -59,7 +50,7 @@ namespace Ktisis.Data.Files {
 		public byte? REyeColor { get; set; }
 		public byte? HairTone { get; set; }
 		public byte? Highlights { get; set; }
-		public FacialFeature? FacialFeatures { get; set; }
+		public AnamFacialFeature? FacialFeatures { get; set; }
 		public byte? LimbalEyes { get; set; } // facial feature color
 		public byte? Eyebrows { get; set; }
 		public byte? LEyeColor { get; set; }
@@ -150,9 +141,9 @@ namespace Ktisis.Data.Files {
 			}
 
 			if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode)) {
-				this.Race = actor.Customize.Race;
+				this.Race = (AnamRace)actor.Customize.Race;
 				this.Gender = actor.Customize.Gender;
-				this.Tribe = actor.Customize.Tribe;
+				this.Tribe = (AnamTribe)actor.Customize.Tribe;
 				this.Age = actor.Customize.Age;
 			}
 
@@ -160,7 +151,7 @@ namespace Ktisis.Data.Files {
 				this.Head = actor.Customize.FaceType;
 				this.REyeColor = actor.Customize.EyeColor;
 				this.LimbalEyes = actor.Customize.FaceFeaturesColor;
-				this.FacialFeatures = (FacialFeature)actor.Customize.FaceFeatures;
+				this.FacialFeatures = (AnamFacialFeature)actor.Customize.FaceFeatures;
 				this.Eyebrows = actor.Customize.Eyebrows;
 				this.LEyeColor = actor.Customize.EyeColor2;
 				this.Eyes = actor.Customize.EyeShape;
@@ -192,7 +183,7 @@ namespace Ktisis.Data.Files {
 			}
 		}
 
-		public void Apply(Actor actor, SaveModes mode, bool allowRefresh = true) {
+		public unsafe void Apply(Actor* actor, SaveModes mode, bool allowRefresh = true) {
 			if (this.Tribe != null && !Enum.IsDefined((Tribe)this.Tribe))
 				throw new Exception($"Invalid tribe: {this.Tribe} in appearance file");
 
@@ -202,114 +193,114 @@ namespace Ktisis.Data.Files {
 			//if (actor.CanRefresh) {
 				//actor.EnableReading = false;
 
-				actor.ModelId = this.ModelType;
+				actor->ModelId = this.ModelType;
 				////actor.ObjectKind = this.ObjectKind;
 
 				if (this.IncludeSection(SaveModes.EquipmentWeapons, mode)) {
-					this.MainHand?.Write(actor.MainHand.Equip, true);
-					this.OffHand?.Write(actor.OffHand.Equip, false);
+					this.MainHand?.Write(actor->MainHand.Equip, true);
+					this.OffHand?.Write(actor->OffHand.Equip, false);
 				}
 
 				if (this.IncludeSection(SaveModes.EquipmentGear, mode)) {
-					this.HeadGear?.Write(actor.Equipment.Head);
-					this.Body?.Write(actor.Equipment.Chest);
-					this.Hands?.Write(actor.Equipment.Hands);
-					this.Legs?.Write(actor.Equipment.Legs);
-					this.Feet?.Write(actor.Equipment.Feet);
+					this.HeadGear?.Write(actor->Equipment.Head);
+					this.Body?.Write(actor->Equipment.Chest);
+					this.Hands?.Write(actor->Equipment.Hands);
+					this.Legs?.Write(actor->Equipment.Legs);
+					this.Feet?.Write(actor->Equipment.Feet);
 				}
 
 				if (this.IncludeSection(SaveModes.EquipmentAccessories, mode)) {
-					this.Ears?.Write(actor.Equipment.Earring);
-					this.Neck?.Write(actor.Equipment.Necklace);
-					this.Wrists?.Write(actor.Equipment.Bracelet);
-					this.RightRing?.Write(actor.Equipment.RingRight);
-					this.LeftRing?.Write(actor.Equipment.RingLeft);
+					this.Ears?.Write(actor->Equipment.Earring);
+					this.Neck?.Write(actor->Equipment.Necklace);
+					this.Wrists?.Write(actor->Equipment.Bracelet);
+					this.RightRing?.Write(actor->Equipment.RingRight);
+					this.LeftRing?.Write(actor->Equipment.RingLeft);
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceHair, mode)) {
 					if (this.Hair != null)
-						actor.Customize.HairStyle = (byte)this.Hair;
+						actor->Customize.HairStyle = (byte)this.Hair;
 
 					if (this.EnableHighlights != null)
-						actor.Customize.HasHighlights = (byte)((bool)this.EnableHighlights ? 0x80 : 0);
+						actor->Customize.HasHighlights = (byte)((bool)this.EnableHighlights ? 0x80 : 0);
 
 					if (this.HairTone != null)
-						actor.Customize.HairColor = (byte)this.HairTone;
+						actor->Customize.HairColor = (byte)this.HairTone;
 
 					if (this.Highlights != null)
-						actor.Customize.HairColor2 = (byte)this.Highlights;
+						actor->Customize.HairColor2 = (byte)this.Highlights;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceFace, mode) || this.IncludeSection(SaveModes.AppearanceBody, mode)) {
 					if (this.Race != null)
-						actor.Customize.Race = (Race)this.Race;
+						actor->Customize.Race = (Race)this.Race;
 
 					if (this.Gender != null)
-						actor.Customize.Gender = (Gender)this.Gender;
+						actor->Customize.Gender = (Gender)this.Gender;
 
 					if (this.Tribe != null)
-						actor.Customize.Tribe = (Tribe)this.Tribe;
+						actor->Customize.Tribe = (Tribe)this.Tribe;
 
 					if (this.Age != null)
-						actor.Customize.Age = (Age)this.Age;
+						actor->Customize.Age = (Age)this.Age;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceFace, mode)) {
 					if (this.Head != null)
-						actor.Customize.FaceType = (byte)this.Head;
+						actor->Customize.FaceType = (byte)this.Head;
 
 					if (this.REyeColor != null)
-						actor.Customize.EyeColor = (byte)this.REyeColor;
+						actor->Customize.EyeColor = (byte)this.REyeColor;
 
 					if (this.FacialFeatures != null)
-						actor.Customize.FaceFeatures = (byte)this.FacialFeatures;
+						actor->Customize.FaceFeatures = (byte)this.FacialFeatures;
 
 					if (this.LimbalEyes != null)
-						actor.Customize.FaceFeaturesColor = (byte)this.LimbalEyes;
+						actor->Customize.FaceFeaturesColor = (byte)this.LimbalEyes;
 
 					if (this.Eyebrows != null)
-						actor.Customize.Eyebrows = (byte)this.Eyebrows;
+						actor->Customize.Eyebrows = (byte)this.Eyebrows;
 
 					if (this.LEyeColor != null)
-						actor.Customize.EyeColor2 = (byte)this.LEyeColor;
+						actor->Customize.EyeColor2 = (byte)this.LEyeColor;
 
 					if (this.Eyes != null)
-						actor.Customize.EyeShape = (byte)this.Eyes;
+						actor->Customize.EyeShape = (byte)this.Eyes;
 
 					if (this.Nose != null)
-						actor.Customize.NoseShape = (byte)this.Nose;
+						actor->Customize.NoseShape = (byte)this.Nose;
 
 					if (this.Jaw != null)
-						actor.Customize.JawShape = (byte)this.Jaw;
+						actor->Customize.JawShape = (byte)this.Jaw;
 
 					if (this.Mouth != null)
-						actor.Customize.LipStyle = (byte)this.Mouth;
+						actor->Customize.LipStyle = (byte)this.Mouth;
 
 					if (this.LipsToneFurPattern != null)
-						actor.Customize.LipColor = (byte)this.LipsToneFurPattern;
+						actor->Customize.LipColor = (byte)this.LipsToneFurPattern;
 
 					if (this.FacePaint != null)
-						actor.Customize.Facepaint = (FacialFeature)this.FacePaint;
+						actor->Customize.Facepaint = (FacialFeature)this.FacePaint;
 
 					if (this.FacePaintColor != null)
-						actor.Customize.FacepaintColor = (byte)this.FacePaintColor;
+						actor->Customize.FacepaintColor = (byte)this.FacePaintColor;
 				}
 
 				if (this.IncludeSection(SaveModes.AppearanceBody, mode)) {
 					if (this.Height != null)
-						actor.Customize.Height = (byte)this.Height;
+						actor->Customize.Height = (byte)this.Height;
 
 					if (this.Skintone != null)
-						actor.Customize.SkinColor = (byte)this.Skintone;
+						actor->Customize.SkinColor = (byte)this.Skintone;
 
 					if (this.EarMuscleTailSize != null)
-						actor.Customize.RaceFeatureSize = (byte)this.EarMuscleTailSize;
+						actor->Customize.RaceFeatureSize = (byte)this.EarMuscleTailSize;
 
 					if (this.TailEarsType != null)
-						actor.Customize.RaceFeatureType = (byte)this.TailEarsType;
+						actor->Customize.RaceFeatureType = (byte)this.TailEarsType;
 
 					if (this.Bust != null)
-						actor.Customize.BustSize = (byte)this.Bust;
+						actor->Customize.BustSize = (byte)this.Bust;
 				}
 
 				//if (allowRefresh) {
@@ -422,6 +413,49 @@ namespace Ktisis.Data.Files {
 				vm.Variant = this.ModelVariant;
 				vm.Dye = this.DyeId;
 			}
+		}
+
+		public enum AnamRace : byte {
+			Hyur = 1,
+			Elezen = 2,
+			Lalafel = 3,
+			Miqote = 4,
+			Roegadyn = 5,
+			AuRa = 6,
+			Hrothgar = 7,
+			Viera = 8
+		}
+
+		public enum AnamTribe : byte {
+			Midlander = 1,
+			Highlander = 2,
+			Wildwood = 3,
+			Duskwight = 4,
+			Plainsfolk = 5,
+			Dunesfolk = 6,
+			SeekerOfTheSun = 7,
+			KeeperOfTheMoon = 8,
+			SeaWolf = 9,
+			Hellsguard = 10,
+			Raen = 11,
+			Xaela = 12,
+			Helions = 13,
+			TheLost = 14,
+			Rava = 15,
+			Veena = 16
+		}
+
+		[Flags]
+		public enum AnamFacialFeature : byte {
+			None = 0,
+			First = 1,
+			Second = 2,
+			Third = 4,
+			Fourth = 8,
+			Fifth = 16,
+			Sixth = 32,
+			Seventh = 64,
+			LegacyTattoo = 128
 		}
 	}
 }
