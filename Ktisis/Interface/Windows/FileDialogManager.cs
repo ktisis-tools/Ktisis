@@ -122,8 +122,11 @@ namespace Ktisis.Interface.Windows {
 		public void Draw() {
 			baseInstance.Draw();
 			if (isClosing) {
-				if (currentFilter != "")
+				isClosing = false;
+				if (currentFilter != "") {
 					Ktisis.Configuration.SavedDirPaths[currentFilter] = savedPath;
+					savedPath = ".";
+				}
 			}
 		}
 
