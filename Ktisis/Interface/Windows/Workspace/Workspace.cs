@@ -380,6 +380,8 @@ namespace Ktisis.Interface.Windows.Workspace
 						var skeleton = actor->Model->Skeleton;
 						if (skeleton == null) return;
 
+						pose.ConvertLegacyBones();
+
 						if (pose.Bones != null) {
 							for (var p = 0; p < skeleton->PartialSkeletonCount; p++) {
 								switch (p) {
