@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Numerics;
-using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 
@@ -23,9 +22,9 @@ namespace Ktisis.Data.Files {
 			AppearanceExtended = 64,
 
 			Equipment = EquipmentGear | EquipmentAccessories,
-			Appearance = AppearanceHair | AppearanceFace | AppearanceBody | AppearanceExtended,
+			Appearance = AppearanceHair | AppearanceFace | AppearanceBody,
 
-			All = EquipmentGear | EquipmentAccessories | EquipmentWeapons | AppearanceHair | AppearanceFace | AppearanceBody | AppearanceExtended,
+			All = EquipmentGear | EquipmentAccessories | EquipmentWeapons | AppearanceHair | AppearanceFace | AppearanceBody
 		}
 
 		public string FileExtension => ".chara";
@@ -158,7 +157,7 @@ namespace Ktisis.Data.Files {
 				Nose = actor.Customize.NoseShape;
 				Jaw = actor.Customize.JawShape;
 				Mouth = actor.Customize.LipStyle;
-				LipsToneFurPattern = actor.Customize.RaceFeatureType;
+				LipsToneFurPattern = actor.Customize.LipColor;
 				FacePaint = (byte)actor.Customize.Facepaint;
 				FacePaintColor = actor.Customize.FacepaintColor;
 				/*LeftEyeColor = actor.ModelObject?.ExtendedAppearance?.LeftEyeColor;
@@ -175,6 +174,7 @@ namespace Ktisis.Data.Files {
 				Bust = actor.Customize.BustSize;
 
 				unsafe { HeightMultiplier = actor.Model->Height; }
+
 				/*SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
 				SkinGloss = actor.ModelObject?.ExtendedAppearance?.SkinGloss;
 				MuscleTone = actor.ModelObject?.ExtendedAppearance?.MuscleTone;

@@ -20,6 +20,8 @@ using Ktisis.Data.Serialization;
 using Ktisis.Data.Files;
 using Ktisis.Structs;
 
+using static Ktisis.Data.Files.AnamCharaFile;
+
 namespace Ktisis.Interface.Windows.Workspace
 {
     public static class Workspace {
@@ -433,12 +435,57 @@ namespace Ktisis.Interface.Windows.Workspace
 		}
 
 		private unsafe static void ImportExportChara(Actor* actor) {
+			var mode = Ktisis.Configuration.CharaMode;
 
-			// Transforms
+			// Equipment
+
+			ImGui.BeginGroup();
+			ImGui.Text("Equipment");
+
+			var gear = mode.HasFlag(SaveModes.EquipmentGear);
+			if (ImGui.Checkbox("Gear", ref gear))
+				mode ^= SaveModes.EquipmentGear;
+
+			var accs = mode.HasFlag(SaveModes.EquipmentAccessories);
+			if (ImGui.Checkbox("Accessories", ref accs))
+				mode ^= SaveModes.EquipmentAccessories;
+
+			var weps = mode.HasFlag(SaveModes.EquipmentWeapons);
+			if (ImGui.Checkbox("Weapons", ref weps))
+				mode ^= SaveModes.EquipmentWeapons;
+
+			ImGui.EndGroup();
+
+			// Appearance
+
+			ImGui.SameLine();
+			ImGui.BeginGroup();
+			ImGui.Text("Appearance");
+
+			var body = mode.HasFlag(SaveModes.AppearanceBody);
+			if (ImGui.Checkbox("Body", ref body))
+				mode ^= SaveModes.AppearanceBody;
+
+			var face = mode.HasFlag(SaveModes.AppearanceFace);
+			if (ImGui.Checkbox("Face", ref face))
+				mode ^= SaveModes.AppearanceFace;
+
+			var hair = mode.HasFlag(SaveModes.AppearanceHair);
+			if (ImGui.Checkbox("Hair", ref hair))
+				mode ^= SaveModes.AppearanceHair;
+
+			ImGui.EndGroup();
+
+			// Import & Export buttons
+
+			Ktisis.Configuration.CharaMode = mode;
 
 			ImGui.Spacing();
 			ImGui.Separator();
 			ImGui.Spacing();
+
+			var isUseless = mode == SaveModes.None;
+			if (isUseless) ImGui.BeginDisabled();
 
 			if (ImGui.Button("Import")) {
 				KtisisGui.FileDialogManager.OpenFileDialog(
@@ -451,7 +498,7 @@ namespace Ktisis.Interface.Windows.Workspace
 						var chara = JsonParser.Deserialize<AnamCharaFile>(content);
 						if (chara == null) return;
 
-						chara.Apply(actor, AnamCharaFile.SaveModes.All);
+						chara.Apply(actor, mode);
 					},
 					1,
 					null
@@ -469,12 +516,17 @@ namespace Ktisis.Interface.Windows.Workspace
 					(success, path) => {
 						if (!success) return;
 
-						/*var json = JsonParser.Serialize(pose);
+						var chara = new AnamCharaFile();
+						chara.WriteToFile(*actor, mode);
+
+						var json = JsonParser.Serialize(chara);
 						using (var file = new StreamWriter(path))
-							file.Write(json);*/
+							file.Write(json);
 					}
 				);
 			}
+
+			if (isUseless) ImGui.EndDisabled();
 
 			ImGui.Spacing();
 		}
