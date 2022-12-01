@@ -1,42 +1,9 @@
 using ImGuiNET;
 
 using Ktisis.Interface.Components;
-using Ktisis.Interface.Modular.ItemTypes.BasePanel;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
-using Ktisis.Localization;
 
-namespace Ktisis.Interface.Modular.ItemTypes.BasePanel {
-	public class BasePannel : IModularItem {
-		public ParamsExtra Extra { get; set; }
-		protected int Id;
-		public string? Title { get; set; }
-		public string LocaleHandle { get; set; }
-
-		public BasePannel(ParamsExtra extra, string? localeHandle = null) {
-			this.Extra = extra;
-
-			extra.Strings?.TryGetValue("LocaleHandle", out localeHandle);
-			this.LocaleHandle = localeHandle ?? "ModularPanel";
-
-			if (extra!.Ints!.TryGetValue("Id", out int windowId))
-				this.Id = windowId;
-			else
-				this.Id = 1120;
-
-			if (Extra.Strings != null && Extra.Strings.TryGetValue("Title", out string? title))
-				if (title != null)
-					this.Title = title;
-
-		}
-
-		virtual public string LocaleName() => Locale.GetString(this.LocaleHandle);
-		virtual public string GetTitle() => $"{this.Title ?? this.LocaleName()}##Modular##Item##{this.Id}";
-
-		virtual public void Draw() { }
-	}
-
-}
 namespace Ktisis.Interface.Modular.ItemTypes.Panel {
 	public class ActorList : BasePannel {
 		public ActorList(ParamsExtra extra) : base(extra, "Actor List") { }
