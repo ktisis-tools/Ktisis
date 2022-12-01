@@ -3,8 +3,6 @@ using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Dalamud.Logging;
-
 using Ktisis.Structs.Poses;
 
 namespace Ktisis.Data.Serialization.Converters {
@@ -22,7 +20,7 @@ namespace Ktisis.Data.Serialization.Converters {
 		}
 
 		public override void Write(Utf8JsonWriter writer, Quaternion value, JsonSerializerOptions options) {
-			writer.WriteStringValue(value.ToString());
+			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}, {value.W}");
 		}
 	}
 
@@ -38,7 +36,24 @@ namespace Ktisis.Data.Serialization.Converters {
 		}
 
 		public override void Write(Utf8JsonWriter writer, Vector3 value, JsonSerializerOptions options) {
-			writer.WriteStringValue(value.ToString());
+			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}");
+		}
+	}
+
+	internal class Vector4Converter : JsonConverter<Vector4> {
+		public override Vector4 Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) {
+			var str = reader.GetString() ?? "";
+			var split = str.Split(",");
+			return new Vector4(
+				float.Parse(split[0]),
+				float.Parse(split[1]),
+				float.Parse(split[2]),
+				float.Parse(split[3])
+			);
+		}
+
+		public override void Write(Utf8JsonWriter writer, Vector4 value, JsonSerializerOptions options) {
+			writer.WriteStringValue($"{value.X}, {value.Y}, {value.Z}, {value.W}");
 		}
 	}
 
@@ -72,7 +87,18 @@ namespace Ktisis.Data.Serialization.Converters {
 		}
 
 		public override void Write(Utf8JsonWriter writer, Transform value, JsonSerializerOptions options) {
-			writer.WriteStringValue(value.ToString());
+			writer.WriteStartObject();
+			foreach (var prop in typeof(Transform).GetFields()) {
+				writer.WritePropertyName(prop.Name);
+
+				// did I complain about how bad this is yet?
+				var val = prop.GetValue(value);
+				if (val is Vector3)
+					((Vector3Converter)JsonParser.GetConverter<Vector3>()).Write(writer, (Vector3)val, options);
+				else if (val is Quaternion)
+					((QuaternionConverter)JsonParser.GetConverter<Quaternion>()).Write(writer, (Quaternion)val, options);
+			}
+			writer.WriteEndObject();
 		}
 	}
 }

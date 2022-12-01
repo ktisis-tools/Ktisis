@@ -132,26 +132,19 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook.Original(pose);
 
 			// Make sure new partials get parented properly
-			if (a2 > 0 && partial.ConnectedBoneIndex > -1) {
-				var bone = a1->GetBone(a2, partial.ConnectedBoneIndex);
-				var parent = a1->GetBone(0, partial.ConnectedParentBoneIndex);
+			if (a2 > 0)
+				partial.ParentToRoot(a2);
 
-				var model = bone.AccessModelSpace();
-				var initial = *model;
-				*model = *parent.AccessModelSpace();
+			if (a2 < 3) {
+				foreach (var obj in Services.ObjectTable) {
+					var actor = (Actor*)obj.Address;
+					if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
-				bone.PropagateChildren(model, initial.Translation.ToVector3(), model->Rotation.ToQuat());
-				bone.PropagateChildren(model, model->Translation.ToVector3(), initial.Rotation.ToQuat());
-			}
+					if (actor->RenderMode == RenderMode.Draw) break;
 
-			foreach (var obj in Services.ObjectTable) {
-				var actor = (Actor*)obj.Address;
-				if (actor->Model == null || actor->Model->Skeleton != a1) continue;
-
-				if (actor->RenderMode == RenderMode.Draw) break;
-
-				if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup))
-					backup.ApplyToPartial(a1, a2, PoseTransforms.Rotation, true);
+					if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup))
+						backup.ApplyToPartial(a1, a2, PoseTransforms.Rotation, true);
+				}
 			}
 
 			return exec;

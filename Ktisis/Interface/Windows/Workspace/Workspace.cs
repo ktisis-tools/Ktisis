@@ -18,6 +18,9 @@ using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Structs.Poses;
 using Ktisis.Data.Serialization;
 using Ktisis.Data.Files;
+using Ktisis.Structs;
+
+using static Ktisis.Data.Files.AnamCharaFile;
 
 namespace Ktisis.Interface.Windows.Workspace
 {
@@ -135,6 +138,10 @@ namespace Ktisis.Interface.Windows.Workspace
 					EditGaze.Draw(actor);
 			}
 
+			// Import & Export
+			if (ImGui.CollapsingHeader("Import & Export"))
+				ImportExportChara(actor);
+
 			ImGui.EndTabItem();
 		}
 
@@ -182,10 +189,23 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
-				ImportExport(actor);
+				ImportExportPose(actor);
 
 			// Advanced
-			if (ImGui.CollapsingHeader("Advanced")) {
+			if (ImGui.CollapsingHeader("Advanced (Debug)")) {
+				if (ImGui.Button("Reset Current Pose")) {
+					if (actor->Model != null && actor->Model->Skeleton != null) {
+						var skele = actor->Model->Skeleton;
+						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
+							var partial = skele->PartialSkeletons[p];
+							var pose = partial.GetHavokPose(0);
+							if (pose == null) continue;
+							PoseHooks.SyncModelSpaceHook.Original(pose);
+							if (p > 0) partial.ParentToRoot(p);
+						}
+					}
+				}
+
 				if (ImGui.Button("Set to Reference Pose")) {
 					if (actor->Model != null && actor->Model->Skeleton != null) {
 						var skele = actor->Model->Skeleton;
@@ -205,17 +225,8 @@ namespace Ktisis.Interface.Windows.Workspace
 				if (ImGui.Button("Apply Pose") && actor->Model != null)
 					_TempPose.Apply(actor->Model->Skeleton);
 
-				if (ImGui.Button("Sync Model Space (Debug)")) {
-					if (actor->Model != null && actor->Model->Skeleton != null) {
-						var skele = actor->Model->Skeleton;
-						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
-							var partial = skele->PartialSkeletons[p];
-							var pose = partial.GetHavokPose(0);
-							if (pose == null) continue;
-							PoseHooks.SyncModelSpaceHook.Original(pose);
-						}
-					}
-				}
+				if (ImGui.Button("Force Redraw"))
+					actor->Redraw();
 			}
 
 			ImGui.EndTabItem();
@@ -292,7 +303,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.SameLine(size * 2.5f);
 		}
 
-		private unsafe static void ImportExport(Actor* actor) {
+		private unsafe static void ImportExportPose(Actor* actor) {
 			ImGui.Spacing();
 			ImGui.Text("Transforms");
 
@@ -344,11 +355,6 @@ namespace Ktisis.Interface.Windows.Workspace
 			if (ImGui.Checkbox("Expression", ref face))
 				modes = modes.ToggleFlag(PoseMode.Face);
 
-			var hair = modes.HasFlag(PoseMode.Hair);
-			ImGui.SameLine();
-			if (ImGui.Checkbox("Hair", ref hair))
-				modes = modes.ToggleFlag(PoseMode.Hair);
-
 			Ktisis.Configuration.PoseMode = modes;
 
 			ImGui.Spacing();
@@ -364,14 +370,14 @@ namespace Ktisis.Interface.Windows.Workspace
 					"Pose Files (.pose){.pose}",
 					(success, path) => {
 						if (!success) return;
+
 						var content = File.ReadAllText(path[0]);
 						var pose = JsonParser.Deserialize<PoseFile>(content);
 						if (pose == null) return;
 
-						var model = actor->Model;
-						if (model == null) return;
+						if (actor->Model == null) return;
 
-						var skeleton = model->Skeleton;
+						var skeleton = actor->Model->Skeleton;
 						if (skeleton == null) return;
 
 						if (pose.Bones != null) {
@@ -382,10 +388,6 @@ namespace Ktisis.Interface.Windows.Workspace
 										break;
 									case 1:
 										if (!face) continue;
-										break;
-									case 2:
-										// TODO: no point in having this as an option
-										if (!hair) continue;
 										break;
 								}
 								pose.Bones.ApplyToPartial(skeleton, p, trans);
@@ -398,7 +400,133 @@ namespace Ktisis.Interface.Windows.Workspace
 			}
 			if (isUseless) ImGui.EndDisabled();
 			ImGui.SameLine();
-			ImGui.Button("Export");
+			if (ImGui.Button("Export")) {
+				KtisisGui.FileDialogManager.SaveFileDialog(
+					"Exporting Pose",
+					"Pose Files (.pose){.pose}",
+					"Untitled.pose",
+					".pose",
+					(success, path) => {
+						if (!success) return;
+
+						var model = actor->Model;
+						if (model == null) return;
+
+						var skeleton = model->Skeleton;
+						if (skeleton == null) return;
+
+						var pose = new PoseFile();
+
+						pose.Position = model->Position;
+						pose.Rotation = model->Rotation;
+						pose.Scale = model->Scale;
+
+						pose.Bones = new PoseContainer();
+						pose.Bones.Store(skeleton);
+
+						var json = JsonParser.Serialize(pose);
+						using (var file = new StreamWriter(path))
+							file.Write(json);
+					}
+				);
+			}
+
+			ImGui.Spacing();
+		}
+
+		private unsafe static void ImportExportChara(Actor* actor) {
+			var mode = Ktisis.Configuration.CharaMode;
+
+			// Equipment
+
+			ImGui.BeginGroup();
+			ImGui.Text("Equipment");
+
+			var gear = mode.HasFlag(SaveModes.EquipmentGear);
+			if (ImGui.Checkbox("Gear", ref gear))
+				mode ^= SaveModes.EquipmentGear;
+
+			var accs = mode.HasFlag(SaveModes.EquipmentAccessories);
+			if (ImGui.Checkbox("Accessories", ref accs))
+				mode ^= SaveModes.EquipmentAccessories;
+
+			var weps = mode.HasFlag(SaveModes.EquipmentWeapons);
+			if (ImGui.Checkbox("Weapons", ref weps))
+				mode ^= SaveModes.EquipmentWeapons;
+
+			ImGui.EndGroup();
+
+			// Appearance
+
+			ImGui.SameLine();
+			ImGui.BeginGroup();
+			ImGui.Text("Appearance");
+
+			var body = mode.HasFlag(SaveModes.AppearanceBody);
+			if (ImGui.Checkbox("Body", ref body))
+				mode ^= SaveModes.AppearanceBody;
+
+			var face = mode.HasFlag(SaveModes.AppearanceFace);
+			if (ImGui.Checkbox("Face", ref face))
+				mode ^= SaveModes.AppearanceFace;
+
+			var hair = mode.HasFlag(SaveModes.AppearanceHair);
+			if (ImGui.Checkbox("Hair", ref hair))
+				mode ^= SaveModes.AppearanceHair;
+
+			ImGui.EndGroup();
+
+			// Import & Export buttons
+
+			Ktisis.Configuration.CharaMode = mode;
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Spacing();
+
+			var isUseless = mode == SaveModes.None;
+			if (isUseless) ImGui.BeginDisabled();
+
+			if (ImGui.Button("Import")) {
+				KtisisGui.FileDialogManager.OpenFileDialog(
+					"Importing Character",
+					"Anamnesis Chara (.chara){.chara}",
+					(success, path) => {
+						if (!success) return;
+
+						var content = File.ReadAllText(path[0]);
+						var chara = JsonParser.Deserialize<AnamCharaFile>(content);
+						if (chara == null) return;
+
+						chara.Apply(actor, mode);
+					},
+					1,
+					null
+				);
+			}
+
+			ImGui.SameLine();
+
+			if (ImGui.Button("Export")) {
+				KtisisGui.FileDialogManager.SaveFileDialog(
+					"Exporting Character",
+					"Anamnesis Chara (.chara){.chara}",
+					"Untitled.chara",
+					".chara",
+					(success, path) => {
+						if (!success) return;
+
+						var chara = new AnamCharaFile();
+						chara.WriteToFile(*actor, mode);
+
+						var json = JsonParser.Serialize(chara);
+						using (var file = new StreamWriter(path))
+							file.Write(json);
+					}
+				);
+			}
+
+			if (isUseless) ImGui.EndDisabled();
 
 			ImGui.Spacing();
 		}
