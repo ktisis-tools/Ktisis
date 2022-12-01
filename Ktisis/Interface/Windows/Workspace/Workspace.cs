@@ -406,6 +406,11 @@ namespace Ktisis.Interface.Windows.Workspace
 						if (skeleton == null) return;
 
 						var pose = new PoseFile();
+
+						pose.Position = model->Position;
+						pose.Rotation = model->Rotation;
+						pose.Scale = model->Scale;
+
 						pose.Bones = new PoseContainer();
 						pose.Bones.Store(skeleton);
 
