@@ -70,4 +70,7 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 
 		}
 	}
+	public class Group : BaseSplitter {
+		public Group(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
+	}
 }
