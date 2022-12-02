@@ -50,8 +50,9 @@ namespace Ktisis.Interface.Components {
 			if (!gizmoActive) ImGui.EndDisabled();
 		}
 
-		// As the settings button is a bit special and should not be as present as others
+		// As these buttons are a bit special and should not be as present as others
 		// we remove the border and change the hover behavior.
+
 		private static void DrawInfo() {
 			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
