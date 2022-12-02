@@ -64,7 +64,7 @@ namespace Ktisis.Interface.Components {
 
 			FetchConfigurations();
 
-			var axisColors = new[] {new Vector4(1, 0, 0, 1), new Vector4(0, 1, 0, 1), new Vector4(0.2f, 0.25f, 1, 1)};
+			var axisColors = new[] {new Vector4(1, 0.328f, 0.211f, 1), new Vector4(0.33f, 0.82f, 0, 1), new Vector4(0, 0.33f, 1, 1)};
 
 			var multiplier = 1f;
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
