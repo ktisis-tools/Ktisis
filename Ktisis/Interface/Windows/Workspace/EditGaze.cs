@@ -11,6 +11,7 @@ using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
 using Ktisis.Util;
+using Dalamud.Logging;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class EditGaze {
@@ -140,7 +141,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 			if (type != GazeControl.All) {
 				// If this gaze type is not being overwritten, copy the vanilla values.
 				var baseGaze = target->Gaze[type];
-				if (baseGaze.Mode != 0 && (!enabled || result))
+				if (baseGaze.Mode != 0 && !enabled && !result)
 					gaze.Pos = baseGaze.Pos;
 			}
 
