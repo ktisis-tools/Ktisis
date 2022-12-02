@@ -130,6 +130,8 @@ namespace Ktisis
 		public bool EnableParenting { get; set; } = true;
 
 		public bool LinkedGaze { get; set; } = true;
+		
+		public bool ShowToolbar { get; set; } = false;
 
 		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
 
