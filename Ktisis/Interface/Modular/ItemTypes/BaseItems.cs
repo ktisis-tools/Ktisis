@@ -98,4 +98,26 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 				this.LocaleHandle = localeHandle;
 		}
 	}
+
+
+
+	/////////////////
+	// Items ideas //
+	/////////////////
+
+	// indicator for bone cat overload (with initials maybe)
+	// individual buttons for siblings and  ControlButton extras
+	// window open/toggle => it would be able to have containers as children
+	// Sameline X space configurable (float)
+
+	///////////////////
+	// Concept ideas //
+	///////////////////
+
+	// configurable small stuff in each panel,
+	//     e.g. with ControlButton.DrawGizmoOperations() without the universal operation
+	// force fix width to prevent align right
+	// improve drag drop
+	// refactor to serialize IModularItem instead of ConfigObject
+
 }
