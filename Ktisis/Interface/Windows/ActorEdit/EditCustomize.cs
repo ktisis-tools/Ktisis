@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
@@ -14,18 +14,18 @@ using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
 
 using Ktisis.Util;
-using Ktisis.GameData;
+using Ktisis.Data;
+using Ktisis.Data.Excel;
+using Ktisis.Data.Files;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
-using Ktisis.GameData.Excel;
-using Ktisis.GameData.Files;
 using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
 		public Menu Option;
 		public CustomizeIndex ColorIndex = 0;
-		public uint[] Colors = new uint[0];
+		public uint[] Colors = Array.Empty<uint>();
 
 		public Dictionary<uint, TextureWrap>? Select = null;
 
@@ -36,7 +36,7 @@ namespace Ktisis.Interface.Windows {
 		public string Name;
 		public CustomizeIndex Index = 0;
 		public CustomizeIndex AltIndex = 0;
-		public uint[] Colors = new uint[0];
+		public uint[] Colors = Array.Empty<uint>();
 		public bool Iterable = true;
 
 		public MenuColor(string name, CustomizeIndex index) {
@@ -85,30 +85,10 @@ namespace Ktisis.Interface.Windows {
 
 		// Apply customize
 
+
 		public unsafe static void Apply(Customize custard) {
-			if (Target != null) {
-				var cur = Target->Customize;
-				Target->Customize = custard;
-
-				// Fix UpdateCustomize on Carbuncles & Minions
-				if (Target->Customize.ModelType == 0)
-					Target->Customize.ModelType = 1;
-
-				var faceHack = cur.FaceType != custard.FaceType;
-				if (cur.Race != custard.Race
-					|| cur.Tribe != custard.Tribe // Eye glitch.
-					|| cur.Gender != custard.Gender
-					|| cur.FaceType != custard.FaceType // Eye glitch.
-				) {
-					if (!IsPosing) Target->Redraw(faceHack);
-				} else {
-					var res = Target->UpdateCustomize();
-					if (!res && !IsPosing) {
-						PluginLog.Warning("Failed to update character. Forcing redraw.");
-						Target->Redraw(faceHack);
-					}
-				}
-			}
+			if (Target != null)
+				Target->ApplyCustomize(custard);
 		}
 
 		// Draw window
@@ -131,9 +111,7 @@ namespace Ktisis.Interface.Windows {
 				FacialFeatureIcons = null;
 			}
 
-			if (IsPosing) ImGui.BeginDisabled();
 			DrawFundamental(custom);
-			if (IsPosing) ImGui.EndDisabled();
 			DrawMenuType(custom, MenuType.Slider);
 			ImGui.Separator();
 			DrawCheckboxes(custom);
@@ -151,10 +129,10 @@ namespace Ktisis.Interface.Windows {
 		public static void DrawFundamental(Customize custom) {
 			// Gender
 
-			var isM = custom.Gender == Gender.Male;
+			var isM = custom.Gender == Gender.Masculine;
 
 			if (ImGuiComponents.IconButton(isM ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus)) {
-				custom.Gender = isM ? Gender.Female : Gender.Male;
+				custom.Gender = isM ? Gender.Feminine : Gender.Masculine;
 				Apply(custom);
 			}
 
@@ -218,6 +196,8 @@ namespace Ktisis.Interface.Windows {
 						DrawSlider(custom, option);
 						break;
 					default:
+						if (option.Option.Index == CustomizeIndex.EyeColor2)
+							continue;
 						if (option.Option.HasIcon) {
 							i++;
 							if (i % 2 == 0) ImGui.SameLine();
@@ -283,10 +263,6 @@ namespace Ktisis.Interface.Windows {
 			var index = (int)opt.Index;
 			var val = (int)custom.Bytes[index];
 
-			var willExplode = (opt.Index == CustomizeIndex.FaceType || opt.Index == CustomizeIndex.HairStyle) && IsPosing;
-
-			if (willExplode) ImGui.BeginDisabled();
-
 			if (opt.HasIcon && option.Select != null) {
 				DrawIconSelector(custom, option, val);
 				ImGui.SameLine();
@@ -304,8 +280,6 @@ namespace Ktisis.Interface.Windows {
 			ImGui.PopItemWidth();
 
 			ImGui.EndGroup();
-
-			if (willExplode) ImGui.EndDisabled();
 		}
 
 		// Icon selector
@@ -326,7 +300,7 @@ namespace Ktisis.Interface.Windows {
 			var index = option.Option.Index;
 			if (click) {
 				Selecting = option.Option.Index;
-				SelectPos = ImGui.GetMousePos();
+				SelectPos = new Vector2(ImGui.GetItemRectMax().X + 5, ImGui.GetItemRectMin().Y);
 				ImGui.SetNextWindowFocus();
 			}
 
@@ -355,7 +329,7 @@ namespace Ktisis.Interface.Windows {
 
 		public unsafe static void DrawColor(Customize custom, MenuColor color) {
 			var colIndex = custom.Bytes[(uint)color.Index];
-			var colRgb = color.Colors[colIndex];
+			var colRgb = colIndex >= color.Colors.Length ? 0 : color.Colors[colIndex];
 
 			CustomizeIndex selecting = 0;
 
@@ -374,7 +348,7 @@ namespace Ktisis.Interface.Windows {
 
 			if (selecting != 0) {
 				Selecting = selecting;
-				SelectPos = ImGui.GetMousePos();
+				SelectPos = new Vector2(ImGui.GetItemRectMax().X + 5, ImGui.GetItemRectMin().Y);
 				ImGui.SetNextWindowFocus();
 			}
 
@@ -384,7 +358,7 @@ namespace Ktisis.Interface.Windows {
 			if (color.AltIndex != 0) name += "s";
 			ImGui.Text(name);
 
-			if ((Selecting == color.Index || Selecting == color.AltIndex) && DrawColorList(color, out byte value)) {
+			if ((Selecting == color.Index || Selecting == color.AltIndex) && DrawColorList(custom, color, out byte value)) {
 				custom.Bytes[(uint)Selecting] = value;
 				Apply(custom);
 			}
@@ -405,7 +379,7 @@ namespace Ktisis.Interface.Windows {
 			return result;
 		}
 
-		public static bool DrawColorList(MenuColor color, out byte value) {
+		public unsafe static bool DrawColorList(Customize custom, MenuColor color, out byte value) {
 			var result = false;
 			value = 0;
 
@@ -415,12 +389,19 @@ namespace Ktisis.Interface.Windows {
 			ImGui.SetNextWindowPos(SelectPos);
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-			if (ImGui.Begin("Icon Select", ImGuiWindowFlags.NoDecoration)) {
+			if (ImGui.Begin("Color Select", ImGuiWindowFlags.NoDecoration)) {
 				if (Selecting != null) {
 					var focus = false;
 
 					//ImGui.BeginListBox("##feature_select", new Vector2(ListIconSize.X * 6 * 1.25f + 30, 200));
 					//focus |= ImGui.IsItemFocused() || ImGui.IsItemActive() || ImGui.IsItemActivated() || ImGui.IsItemHovered();
+
+					var id = (int)custom.Bytes[(int)color.Index];
+					ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+					if (ImGui.InputInt("##colId", ref id)) {
+						custom.Bytes[(int)color.Index] = (byte)id;
+						Apply(custom);
+					}
 
 					ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0,0));
 					ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 0);
@@ -449,6 +430,15 @@ namespace Ktisis.Interface.Windows {
 
 					if (!ImGui.IsWindowFocused() && !focus)
 						Selecting = null;
+				}
+
+				var maxPos = SelectPos + ImGui.GetWindowContentRegionMax();
+				var displaySize = ImGui.GetIO().DisplaySize;
+				if (maxPos.X > displaySize.X || maxPos.Y > displaySize.Y) {
+					SelectPos = new Vector2(
+						Math.Min(SelectPos.X, SelectPos.X - (maxPos.X - displaySize.X)),
+						Math.Min(SelectPos.Y, SelectPos.Y - (maxPos.Y - displaySize.Y))
+					);
 				}
 
 				ImGui.PopStyleVar(1);

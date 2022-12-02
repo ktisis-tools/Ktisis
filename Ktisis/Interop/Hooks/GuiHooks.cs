@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 
 using Dalamud.Hooking;
+using Dalamud.Logging;
+
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interop.Hooks {
@@ -12,19 +14,24 @@ namespace Ktisis.Interop.Hooks {
 
 		internal static string ReplaceTarName = "(Hidden by Ktisis)";
 		internal unsafe static void UpdateTarName(IntPtr a1) {
-			string nameToDisplay = ReplaceTarName;
+			try {
+				string nameToDisplay = ReplaceTarName;
 
-			if (Ktisis.Configuration.DisplayCharName) {
-				var target = Ktisis.GPoseTarget;
-				if (target != null) {
-					var actor = (Actor*)Ktisis.GPoseTarget!.Address;
-					if (actor != null && actor->Model != null && actor->Name != null)
-						nameToDisplay = actor->Name!;
+				if (Ktisis.Configuration.DisplayCharName) {
+					var target = Ktisis.GPoseTarget;
+					if (target != null) {
+						var actor = (Actor*)Ktisis.GPoseTarget!.Address;
+						if (actor != null && actor->Model != null && actor->Name != null)
+							nameToDisplay = actor->Name!;
+					}
 				}
-			}
 
-			for (var i = 0; i < nameToDisplay.Length; i++)
-				*(char*)(a1 + 488 + i) = nameToDisplay[i];
+				for (var i = 0; i < nameToDisplay.Length; i++)
+					*(char*)(a1 + 488 + i) = nameToDisplay[i];
+			} catch (Exception e) {
+				PluginLog.Error(e, "Error in UpdateTarName. Disabling hook.");
+				TarNameHook.Disable();
+			}
 
 			TarNameHook.Original(a1);
 		}

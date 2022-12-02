@@ -1,19 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 
 using ImGuiNET;
+
 using Newtonsoft.Json;
 
-using Dalamud.Game.ClientState.Keys;
+using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Util;
-using Ktisis.Localization;
 using Ktisis.Overlay;
+using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
@@ -21,6 +23,7 @@ using Ktisis.Structs.Actor.Equip.SetSources;
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
 		public static bool Visible = false;
+		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.50f);
 
 		// Toggle visibility
 
@@ -31,6 +34,7 @@ namespace Ktisis.Interface.Windows {
 		public static void Hide() {
 			Visible = false;
 		}
+		public static void Toggle() => Visible = !Visible;
 
 		// Draw
 
@@ -54,6 +58,8 @@ namespace Ktisis.Interface.Windows {
 						DrawGizmoTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Input")))
 						DrawInputTab(cfg);
+					if (ImGui.BeginTabItem(Locale.GetString("References")))
+						DrawReferencesTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Language")))
 						DrawLanguageTab(cfg);
 					if (ImGui.BeginTabItem("Data"))
@@ -73,9 +79,19 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.Text(Locale.GetString("General"));
 
-			var openCtor = cfg.AutoOpenCtor;
-			if (ImGui.Checkbox(Locale.GetString("Open_plugin_load"), ref openCtor))
-				cfg.AutoOpenCtor = openCtor;
+			ImGui.AlignTextToFramePadding();
+			ImGui.Text(Locale.GetString("Open_plugin_load") + " ");
+			ImGui.SameLine();
+			var selectedOpenKtisisMethod = cfg.OpenKtisisMethod;
+			ImGui.SetNextItemWidth(GuiHelpers.AvailableWidth(0));
+			if (ImGui.BeginCombo("##OpenKtisisMethod", $"{selectedOpenKtisisMethod}")) {
+				foreach (var openKtisisMethod in Enum.GetValues<OpenKtisisMethod>()) {
+					if (ImGui.Selectable($"{openKtisisMethod}", openKtisisMethod == selectedOpenKtisisMethod))
+						cfg.OpenKtisisMethod = openKtisisMethod;
+				}
+				ImGui.SetItemDefaultFocus();
+				ImGui.EndCombo();
+			}
 
 			var displayCharName = !cfg.DisplayCharName;
 			if (ImGui.Checkbox(Locale.GetString("Hide_char_name"), ref displayCharName))
@@ -117,6 +133,10 @@ namespace Ktisis.Interface.Windows {
 			var displayMultiplierInputs = cfg.TransformTableDisplayMultiplierInputs;
 			if (ImGui.Checkbox(Locale.GetString("Show_speed_multipler_inputs"), ref displayMultiplierInputs))
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
+			
+			var showToolbar = cfg.ShowToolbar;
+			if (ImGui.Checkbox("Show Experimental Toolbar", ref showToolbar))
+				cfg.ShowToolbar = showToolbar;
 			ImGui.PopItemWidth();
 
 			ImGui.EndTabItem();
@@ -130,6 +150,14 @@ namespace Ktisis.Interface.Windows {
 				var drawLines = cfg.DrawLinesOnSkeleton;
 				if (ImGui.Checkbox(Locale.GetString("Draw_lines_on_skeleton"), ref drawLines))
 					cfg.DrawLinesOnSkeleton = drawLines;
+
+				var drawLinesGizmo = cfg.DrawLinesWithGizmo;
+				if (ImGui.Checkbox(Locale.GetString("Draw_lines_with_gizmo"), ref drawLinesGizmo))
+					cfg.DrawLinesWithGizmo = drawLinesGizmo;
+
+				var drawDotsGizmo = cfg.DrawDotsWithGizmo;
+				if (ImGui.Checkbox(Locale.GetString("Draw_dots_with_gizmo"), ref drawDotsGizmo))
+					cfg.DrawDotsWithGizmo = drawDotsGizmo;
 
 				var dotRadius = cfg.SkeletonDotRadius;
 				if (ImGui.SliderFloat(Locale.GetString("Dot_radius"), ref dotRadius, 0.01F, 15F, "%.1f"))
@@ -201,6 +229,11 @@ namespace Ktisis.Interface.Windows {
 		// Language
 
 		public static void DrawLanguageTab(Configuration cfg) {
+			ImGui.Text("Disclaimer! These settings are currently only in place to test the WIP localization system.");
+			ImGui.Text("Translation strings are not currently supported in most of the UI.");
+
+			ImGui.Spacing();
+
 			var selected = "";
 			foreach (var lang in Locale.Languages) {
 				if (lang == cfg.Localization) {
@@ -427,6 +460,76 @@ namespace Ktisis.Interface.Windows {
 				cfg.CustomBoneOffset = new();
 
 			ImGui.Spacing();
+		}
+
+		// References
+
+		public static void DrawReferencesTab(Configuration cfg) {
+			ImGui.Text(Locale.GetString("config.references_tab.explanation"));
+			var alpha = cfg.ReferenceAlpha;
+			if (ImGui.SliderFloat(Locale.GetString("config.references_tab.image_transparency"), ref alpha, 0.0f, 1.0f)) {
+				cfg.ReferenceAlpha = alpha;
+			}
+			var hideDecoration = cfg.ReferenceHideDecoration;
+			if (ImGui.Checkbox(Locale.GetString("config.references_tab.hide_window_decorations"), ref hideDecoration)) {
+				cfg.ReferenceHideDecoration = hideDecoration;
+			}
+			ImGui.Text(Locale.GetString("config.references_tab.reference_images"));
+			foreach (var (key, reference) in cfg.References) {
+				ImGui.PushID(key);
+				bool showing = reference.Showing;
+				if (ImGui.Checkbox("##Showing", ref showing)) {
+					reference.Showing = showing;
+				}
+				ImGui.SameLine();
+				var buf = new string(reference.Path);
+				if (ImGui.InputText("##Path", ref buf, 255, ImGuiInputTextFlags.EnterReturnsTrue) || ImGui.IsItemDeactivatedAfterEdit()) {
+					TryChangeReference(cfg, key, buf);
+				}
+				ImGui.SameLine();
+				if (GuiHelpers.IconButton(FontAwesomeIcon.File, ButtonSize)) {
+					KtisisGui.FileDialogManager.OpenFileDialog(
+						Locale.GetString("config.references_tab.add_reference_file"),
+						Locale.GetString("config.references_tab.supported_reference_files") + "{.gif,.jpg,.jpeg,.png}",
+						(success, filePath) => {
+							if (success) {
+								TryChangeReference(cfg, key, filePath);
+							}
+						}
+					);
+				}
+				ImGui.SameLine();
+				if (GuiHelpers.IconButton(FontAwesomeIcon.Trash, ButtonSize)) {
+					cfg.References.Remove(key);
+					References.DisposeUnreferencedTextures(cfg);
+				}
+				ImGui.PopID();
+			}
+
+			if (GuiHelpers.IconButton(FontAwesomeIcon.Plus, ButtonSize)) {
+				cfg.References[cfg.NextReferenceKey] = new ReferenceInfo { Showing = true };
+			}
+			ImGui.SameLine();
+			ImGui.Text(Locale.GetString("config.references_tab.add_new"));
+
+			ImGui.EndTabItem();
+		}
+
+		public static bool TryChangeReference(Configuration cfg, int key, string newPath) {
+			try {
+				var texture = Ktisis.UiBuilder.LoadImage(newPath);
+				cfg.References[key] = new ReferenceInfo {
+					Path = newPath,
+					Showing = true,
+				};
+				References.Textures[newPath] = texture;
+				PluginLog.Information("Successfully loaded reference image {0}", newPath);
+				References.DisposeUnreferencedTextures(cfg);
+				return true;
+			} catch (Exception e) {
+				PluginLog.Error(e, "Failed to load reference image {0}", newPath);
+				return false;
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Ktisis.Structs.Input {
 	public unsafe struct InputEvent {

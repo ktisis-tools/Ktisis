@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Lumina.Data;
 using Lumina.Excel;
 
-namespace Ktisis.GameData.Excel {
+namespace Ktisis.Data.Excel {
 	[Sheet("HairMakeType")]
 	public class HairMakeType : ExcelRow {
 		// Properties

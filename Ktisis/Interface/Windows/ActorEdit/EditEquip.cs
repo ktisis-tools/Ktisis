@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
@@ -8,12 +8,12 @@ using ImGuiScene;
 
 using Dalamud.Interface;
 
-using Ktisis.GameData;
-using Ktisis.GameData.Excel;
-using Ktisis.Interface.Components;
+using Ktisis.Util;
+using Ktisis.Data;
+using Ktisis.Data.Excel;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Actor.Equip;
-using Ktisis.Util;
+using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
 	public static class EditEquip {

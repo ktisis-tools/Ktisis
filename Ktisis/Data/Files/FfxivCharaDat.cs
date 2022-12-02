@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 using Ktisis.Structs.Actor;
 
-namespace Ktisis.GameData.Files {
+namespace Ktisis.Data.Files {
 	[StructLayout(LayoutKind.Sequential)]
 	public struct FfxivCharaDat {
 		public uint Magic; // 0x2013FF14

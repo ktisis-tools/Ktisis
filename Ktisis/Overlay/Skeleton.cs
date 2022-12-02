@@ -1,11 +1,8 @@
-﻿using System;
+using System;
 using System.Numerics;
 
 using ImGuiNET;
 using ImGuizmoNET;
-
-using FFXIVClientStructs.Havok;
-using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
@@ -89,7 +86,7 @@ namespace Ktisis.Overlay {
 						continue; // Bone is hidden, move onto the next one.
 
 					// Access bone transform
-					var transform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
+					var transform = bone.AccessModelSpace();
 
 					if (bone.IsBusted())
 						continue; // bone's busted, skip it.
@@ -102,7 +99,7 @@ namespace Ktisis.Overlay {
 					var isVisible = world->WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
-					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton) {
+					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton && !(!Ktisis.Configuration.DrawLinesWithGizmo && OverlayWindow.GizmoOwner != null)) {
 						// TODO: Draw lines for parents of partials.
 
 						var parent = model->Skeleton->GetBone(p, parentId);
@@ -151,7 +148,9 @@ namespace Ktisis.Overlay {
 							Interop.Alloc.SetMatrix(transform, matrix);
 
 							// handles parenting
-							bone.PropagateChildren(transform, initialPos, initialRot);
+
+							if (Ktisis.Configuration.EnableParenting)
+								bone.PropagateChildren(transform, initialPos, initialRot);
 
 							// handles linking
 							if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
@@ -179,11 +178,6 @@ namespace Ktisis.Overlay {
 			if (model == null) return null;
 
 			return model->Skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index);
-		}
-		public enum SiblingLink {
-			None,
-			Rotation,
-			RotationMirrorX,
 		}
 	}
 }

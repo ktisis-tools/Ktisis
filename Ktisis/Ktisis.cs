@@ -1,31 +1,48 @@
-﻿using System;
+using System;
 
 using Dalamud.Plugin;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Interface;
 
 using Ktisis.Interface;
+using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
 using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Actor;
 using Ktisis.History;
+using Ktisis.Events;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
 		public string Name => "Ktisis";
 		public string CommandName = "/ktisis";
 
-		public static Configuration Configuration { get; private set; } = null!;
+		public const string Version = "Alpha v0.2.0";
 
-		public static bool IsInGPose => Services.PluginInterface.UiBuilder.GposeActive;
+		public static Configuration Configuration { get; private set; } = null!;
+		public static UiBuilder UiBuilder { get; private set; } = null!;
+
+		public static bool IsInGPose => Services.PluginInterface.UiBuilder.GposeActive && IsGposeTargetPresent();
+		public unsafe static bool IsGposeTargetPresent() => (IntPtr)Services.Targets->GPoseTarget != IntPtr.Zero;
 
 		public unsafe static GameObject? GPoseTarget
 			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
 		public unsafe static Actor* Target => GPoseTarget != null ? (Actor*)GPoseTarget.Address : null;
+
 		public Ktisis(DalamudPluginInterface pluginInterface) {
 			Services.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+			UiBuilder = pluginInterface.UiBuilder;
+
+			if (Configuration.IsFirstTimeInstall) {
+				Configuration.IsFirstTimeInstall = false;
+				Information.Show();
+			}
+			if (Configuration.LastPluginVer != Version) {
+				Configuration.LastPluginVer = Version;
+			}
 
 			Configuration.Validate();
 
@@ -41,6 +58,8 @@ namespace Ktisis {
 			Interop.Hooks.GuiHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 
+			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.Init()
+
 			Input.Init();
 			ActorStateWatcher.Init();
 
@@ -52,20 +71,21 @@ namespace Ktisis {
 
 			// Overlays & UI
 
-			if (Configuration.AutoOpenCtor)
+			if (Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
 				Workspace.Show();
 
+			pluginInterface.UiBuilder.OpenConfigUi += ConfigGui.Toggle;
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
-
-			// History
-
+      
 			HistoryManager.Init();
+			References.LoadReferences(Configuration);
 		}
 
 		public void Dispose() {
 			Services.CommandManager.RemoveHandler(CommandName);
 			Services.PluginInterface.SavePluginConfig(Configuration);
+			Services.PluginInterface.UiBuilder.OpenConfigUi -= ConfigGui.Toggle;
 
 			Interop.Hooks.ActorHooks.Dispose();
 			Interop.Hooks.ControlHooks.Dispose();
@@ -75,17 +95,38 @@ namespace Ktisis {
 
 			Interop.Alloc.Dispose();
 			ActorStateWatcher.Instance.Dispose();
+			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
-			GameData.Sheets.Cache.Clear();
+			Data.Sheets.Cache.Clear();
+
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
 
 			Input.Dispose();
 			HistoryManager.Dispose();
+
+			foreach (var (_, texture) in References.Textures) {
+				texture.Dispose();
+			}
 		}
 
 		private void OnCommand(string command, string arguments) {
-			Workspace.Show();
+			switch (arguments) {
+				case "about":
+				case "info":
+				case "information":
+					Information.Show();
+					break;
+				case "cfg":
+				case "config":
+				case "configure":
+				case "configuration":
+					ConfigGui.Show();
+					break;
+				default:
+					Workspace.Show();
+					break;
+			}
 		}
 	}
 }

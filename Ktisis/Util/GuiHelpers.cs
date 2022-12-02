@@ -11,6 +11,8 @@ using Dalamud.Interface.Components;
 
 using FFXIVClientStructs.Havok;
 
+using Ktisis.Interface.Components;
+
 namespace Ktisis.Util
 {
 	internal class GuiHelpers {
@@ -37,8 +39,8 @@ namespace Ktisis.Util
 			ImGui.PopFont();
 			return accepting;
 		}
-		public static bool TextButtonTooltip(string label, string tooltip) {
-			bool accepting = ImGui.Button(label);
+		public static bool TextButtonTooltip(string label, string tooltip, Vector2 size = default) {
+			bool accepting = ImGui.Button(label, size);
 			Tooltip(tooltip);
 			return accepting;
 		}
@@ -163,6 +165,38 @@ namespace Ktisis.Util
 				+ 0.1f; // extra safety
 		}
 
+
+		public static float AvailableWidthIconButton(FontAwesomeIcon[] iconsAfter) =>
+			AvailableWidthIcon(iconsAfter)
+				- (ImGui.GetStyle().FramePadding.X * 2 * iconsAfter.Length);
+		public static float AvailableWidthIconButton(FontAwesomeIcon iconAfter) =>
+			AvailableWidthIcon(new FontAwesomeIcon[] { iconAfter });
+		public static float AvailableWidthControlButton(int numberOfButtonsAfter = 1) =>
+			ImGui.GetContentRegionAvail().X
+				- (ControlButtons.ButtonSize.X * numberOfButtonsAfter)
+				- (ImGui.GetStyle().ItemSpacing.X * numberOfButtonsAfter);
+		public static float AvailableWidthIcon(FontAwesomeIcon iconAfter) =>
+			AvailableWidthIcon(new FontAwesomeIcon[] { iconAfter });
+		public static float AvailableWidthIcon(FontAwesomeIcon[] iconsAfter) {
+			float iconsWidth = 0f;
+			foreach (var icon in iconsAfter)
+				iconsWidth += CalcIconSize(icon).X;
+			return ImGui.GetContentRegionAvail().X
+				- iconsWidth
+				- (ImGui.GetStyle().ItemSpacing.X * iconsAfter.Length);
+		}
+		public static float AvailableWidthText(string textAfter) =>
+			 ImGui.GetContentRegionAvail().X
+				- ImGui.CalcTextSize(textAfter).X
+				- ImGui.GetStyle().ItemSpacing.X;
+		public static float AvailableWidth(float sizeOfAllItemsAfter) =>
+			ImGui.GetContentRegionAvail().X - sizeOfAllItemsAfter;
+
+
+		public static void IconRight(FontAwesomeIcon icon, bool enabled = true, Vector4? color = null) {
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + AvailableWidthIcon(icon));
+			Icon(icon, enabled, color);
+		}
 		public static void TextRight(string text, float offset = 0) {
 			offset = ImGui.GetContentRegionAvail().X - offset - ImGui.CalcTextSize(text).X;
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);

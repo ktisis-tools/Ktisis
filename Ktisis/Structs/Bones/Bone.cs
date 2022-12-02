@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Collections.Generic;
 
 using FFXIVClientStructs.Havok;
@@ -8,6 +8,8 @@ using static FFXIVClientStructs.Havok.hkaPose;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using static Ktisis.Overlay.Skeleton;
+
+using ImGuizmoNET;
 
 namespace Ktisis.Structs.Bones {
 	public class Bone {
@@ -40,12 +42,19 @@ namespace Ktisis.Structs.Bones {
 
 		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String);
 
-		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate) => Pose->AccessBoneModelSpace(Index, propagate);
+		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate = PropagateOrNot.DontPropagate) => Pose->AccessBoneModelSpace(Index, propagate);
+		public unsafe hkQsTransformf* AccessLocalSpace() => Pose->AccessBoneLocalSpace(Index);
 
-		public unsafe Vector3 GetWorldPos(ActorModel* model) => model->Position + GetOffset(model) + Transform.Translation.Rotate(model->Rotation) * model->Height * model->Scale;
+		public unsafe Vector3 GetWorldPos(ActorModel* model)
+			=> model->Position + GetOffset(model) + Vector3.Transform(Transform.Translation.ToVector3() * model->Scale, model->Rotation) * model->Height;
 		private unsafe Vector3 GetOffset(ActorModel* model) => CustomOffset.CalculateWorldOffset(model, this);
-		public unsafe List<Bone> GetChildren() {
+
+		public unsafe List<Bone> GetChildren(bool includePartials = true, bool usePartialRoot = false) {
 			var result = new List<Bone>();
+
+			if (Pose == null || Pose->Skeleton == null)
+				return result;
+
 			// Add child bones from same partial
 			for (var i = Index + 1; i < Pose->Skeleton->ParentIndices.Length; i++) {
 				var child = new Bone(Skeleton, Partial, i);
@@ -53,17 +62,30 @@ namespace Ktisis.Structs.Bones {
 				result.Add(child);
 			}
 			// Add child bones from connected partials
-			for (var p = 0; p < Skeleton->PartialSkeletonCount; p++) {
-				if (p == Partial) continue;
-				var partial = Skeleton->PartialSkeletons[p];
-				if (partial.ConnectedParentBoneIndex == Index) {
-					var partialRoot = new Bone(Skeleton, p, partial.ConnectedBoneIndex);
-					var children = partialRoot.GetChildren();
-					foreach (var child in children)
-						result.Add(child);
+			if (includePartials && Partial == 0) {
+				for (var p = 0; p < Skeleton->PartialSkeletonCount; p++) {
+					if (p == Partial) continue;
+					var partial = Skeleton->PartialSkeletons[p];
+					if (partial.ConnectedParentBoneIndex == Index) {
+						var partialRoot = new Bone(Skeleton, p, partial.ConnectedBoneIndex);
+						if (usePartialRoot) {
+							result.Add(partialRoot);
+						} else {
+							var children = partialRoot.GetChildren();
+							foreach (var child in children)
+								result.Add(child);
+						}
+					}
 				}
 			}
 			return result;
+		}
+
+		public List<Bone> GetDescendants(bool includePartials = true, bool usePartialRoot = false) {
+			var list = GetChildren(includePartials, usePartialRoot);
+			for (var i = 0; i < list.Count; i++)
+				list.AddRange(list[i].GetChildren(includePartials, usePartialRoot));
+			return list;
 		}
 
 		public unsafe Bone? GetMirrorSibling() {
@@ -87,25 +109,21 @@ namespace Ktisis.Structs.Bones {
 			return null;
 		}
 
-		public List<Bone> GetDescendants() {
-			var list = GetChildren();
-			for (var i = 0; i < list.Count; i++)
-				list.AddRange(list[i].GetChildren());
-			return list;
-		}
+		public bool IsBusted() =>
+			float.IsNaN(Transform.Translation.X)
+			|| float.IsNaN(Transform.Translation.Y)
+			|| float.IsNaN(Transform.Translation.Z)
+			|| Transform.Rotation.W == 0;
 
-		public unsafe void PropagateChildren(hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot) {
+		public unsafe void PropagateChildren(hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot, bool includePartials = true) {
 			// Bone parenting
 			// Adapted from Anamnesis Studio code shared by Yuki - thank you!
-
-			if (!Ktisis.Configuration.EnableParenting)
-				return;
 
 			var sourcePos = transform->Translation.ToVector3();
 			var deltaRot = transform->Rotation.ToQuat() / initialRot;
 			var deltaPos = sourcePos - initialPos;
 
-			var descendants = GetDescendants();
+			var descendants = GetDescendants(includePartials, true);
 			foreach (var child in descendants) {
 				var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
 
@@ -119,13 +137,13 @@ namespace Ktisis.Structs.Bones {
 			}
 		}
 
-		public unsafe void PropagateSibling(Quaternion deltaRot, SiblingLink type) {
-			if (type == SiblingLink.None) return;
+		public unsafe void PropagateSibling(Quaternion deltaRot, SiblingLink mode = SiblingLink.Rotation) {
+			if (mode == SiblingLink.None) return;
 
 			var access = AccessModelSpace(PropagateOrNot.DontPropagate);
 			var offset = access->Translation.ToVector3();
 
-			if (type == SiblingLink.RotationMirrorX)
+			if (mode == SiblingLink.RotationMirrorX)
 				deltaRot = new(-deltaRot.X, deltaRot.Y, deltaRot.Z, -deltaRot.W);
 
 			var matrix = Interop.Alloc.GetMatrix(access);
@@ -136,13 +154,14 @@ namespace Ktisis.Structs.Bones {
 			var initialPos = access->Translation.ToVector3();
 			Interop.Alloc.SetMatrix(access, matrix);
 
-			PropagateChildren(access, initialPos, initialRot);
+			if (Ktisis.Configuration.EnableParenting)
+				PropagateChildren(access, initialPos, initialRot);
 		}
+	}
 
-		public bool IsBusted() =>
-			float.IsNaN(Transform.Translation.X)
-			|| float.IsNaN(Transform.Translation.Y)
-			|| float.IsNaN(Transform.Translation.Z)
-			|| Transform.Rotation.W == 0;
+	public enum SiblingLink {
+		None,
+		Rotation,
+		RotationMirrorX
 	}
 }

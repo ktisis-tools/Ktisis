@@ -1,18 +1,18 @@
-﻿using Dalamud.Game.ClientState.Keys;
+using System.Numerics;
+
+using Dalamud.Logging;
+using Dalamud.Game.ClientState.Keys;
 
 using FFXIVClientStructs.Havok;
+using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
-﻿using Ktisis.Structs.Actor.State;
+using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
-
-using System.Numerics;
-
-using static FFXIVClientStructs.Havok.hkaPose;
 
 namespace Ktisis.Events {
 	public static class EventManager {
@@ -32,6 +32,7 @@ namespace Ktisis.Events {
 		internal static KeyReleaseEventDelegate? OnKeyReleased;
 
 		public static void FireOnGposeChangeEvent(ActorGposeState state) {
+			PluginLog.Debug($"FireOnGposeChangeEvent {state}");
 			OnGPoseChange?.Invoke(state);
 		}
 

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 
-using Ktisis.GameData.Excel;
+using Ktisis.Data.Excel;
 
 namespace Ktisis.Structs.Actor.Equip.SetSources {
 	public class GearSet {

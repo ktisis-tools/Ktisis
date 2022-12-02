@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using System.Numerics;
 using System.Linq;
+
 using ImGuiNET;
 
 using Dalamud.Interface;
+
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Events;
@@ -12,6 +15,8 @@ using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Util;
 using Ktisis.Structs.Actor;
+
+using ImGuizmoNET;
 
 namespace Ktisis.Interface.Components {
 	// Thanks to Emyka for the original code:
@@ -63,53 +68,53 @@ namespace Ktisis.Interface.Components {
 		public bool DrawTable() {
 			var result = false;
 
+			var iconPosition = FontAwesomeIcon.LocationArrow;
+			var iconRotation = FontAwesomeIcon.Sync;
+			var iconScale = FontAwesomeIcon.ExpandAlt;
+
 			FetchConfigurations();
 
-			var iconPos = FontAwesomeIcon.LocationArrow;
-			var iconRot = FontAwesomeIcon.Sync;
-			var iconSca = FontAwesomeIcon.ExpandAlt;
+			var axisColors = new[] {new Vector4(1, 0.328f, 0.211f, 1), new Vector4(0.33f, 0.82f, 0, 1), new Vector4(0, 0.33f, 1, 1)};
 
 			var multiplier = 1f;
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
 			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
 
- 			// Attempt to find the exact size for any font and font size.
-			float[] sizes = new float[3];
-			sizes[0] = GuiHelpers.CalcIconSize(iconPos).X;
-			sizes[1] = GuiHelpers.CalcIconSize(iconRot).X;
-			sizes[2] = GuiHelpers.CalcIconSize(iconSca).X;
-			var rightOffset = GuiHelpers.GetRightOffset(sizes.Max());
-
-
-			var inputsWidth = ImGui.GetContentRegionAvail().X - rightOffset;
+			var inputsWidth = (ImGui.GetContentRegionAvail().X - ControlButtons.ButtonSize.X - ImGui.GetStyle().ItemSpacing.X * 3.0f) / 3.0f;
 			ImGui.PushItemWidth(inputsWidth);
-			result |= ImGui.DragFloat3("##Position", ref Position, BaseSpeedPos * multiplier,0,0, DigitPrecision);
-			UpdateTransformTableState();
-			ImGui.SameLine();
-			GuiHelpers.IconTooltip(iconPos, "Position", true);
-			result |= ImGui.DragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, 0, 0, DigitPrecision);
-			UpdateTransformTableState();
-			ImGui.SameLine();
-			GuiHelpers.IconTooltip(iconRot, "Rotation", true);
-			result |= ImGui.DragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, 0, 0, DigitPrecision);
-			UpdateTransformTableState();
-			ImGui.SameLine();
-			GuiHelpers.IconTooltip(iconSca, "Scale", true);
-			ImGui.PopItemWidth();
-			IsEditing = result;
-			if (Ktisis.Configuration.TransformTableDisplayMultiplierInputs) {
-				var input2Width = (inputsWidth / 3 * 2) - (ImGui.GetStyle().ItemInnerSpacing.X /3);
 
-				Vector2 mults = new(ModifierMultShift, ModifierMultCtrl);
-				ImGui.PushItemWidth(input2Width);
-				if (ImGui.DragFloat2("##SpeedMult##shiftCtrl", ref mults, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic)) {
-					Ktisis.Configuration.TransformTableModifierMultShift = mults.X;
-					Ktisis.Configuration.TransformTableModifierMultCtrl = mults.Y;
-				}
-				ImGui.PopItemWidth();
-				ImGui.SameLine();
-				GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
+			// Position
+			result |= ColoredDragFloat3("##Position", ref Position, BaseSpeedPos * multiplier, axisColors);
+			ImGui.SameLine();
+			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, iconPosition);
+
+			// Rotation
+			result |= ColoredDragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, axisColors);
+			ImGui.SameLine();
+			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, iconRotation);
+
+			// Scale
+			result |= ColoredDragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, axisColors);
+			ImGui.SameLine();
+			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, iconScale);
+
+			IsEditing = result;
+
+			ImGui.PopItemWidth();
+
+			if (!Ktisis.Configuration.TransformTableDisplayMultiplierInputs)
+				return result;
+			
+			inputsWidth = ImGui.GetContentRegionAvail().X - GuiHelpers.CalcIconSize(FontAwesomeIcon.Running).X - ImGui.GetStyle().ItemSpacing.X;
+			Vector2 mults = new(ModifierMultShift, ModifierMultCtrl);
+			ImGui.PushItemWidth(inputsWidth);
+			if (ImGui.DragFloat2("##SpeedMult##shiftCtrl", ref mults, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic)) {
+				Ktisis.Configuration.TransformTableModifierMultShift = mults.X;
+				Ktisis.Configuration.TransformTableModifierMultCtrl = mults.Y;
 			}
+			ImGui.PopItemWidth();
+			ImGui.SameLine();
+			GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
 
 			return result;
 		}
@@ -125,6 +130,30 @@ namespace Ktisis.Interface.Components {
 			if (ImGui.IsItemDeactivatedAfterEdit()) _state = TransformTableState.IDLE;
 
 			EventManager.FireOnTransformationMatrixChangeEvent(_state);
+		}
+
+		private bool ColoredDragFloat3(string label, ref Vector3 value, float speed, IReadOnlyList<Vector4> colors, float borderSize = 1.0f) {
+			if (colors.Count != 3)
+				return false;
+
+			var result = false;
+
+			result |= ColoredDragFloat(label + "X", ref value.X, speed, colors[0], borderSize);
+			ImGui.SameLine();
+			result |= ColoredDragFloat(label + "Y", ref value.Y, speed, colors[1], borderSize);
+			ImGui.SameLine();
+			result |= ColoredDragFloat(label + "Z", ref value.Z, speed, colors[2], borderSize);
+
+			return result;
+		}
+    
+		private bool ColoredDragFloat(string label, ref float value, float speed, Vector4 color, float borderSize = 1.0f) {
+			ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, borderSize);
+			ImGui.PushStyleColor(ImGuiCol.Border, color);
+			var result = ImGui.DragFloat(label, ref value, speed, 0, 0, DigitPrecision);
+			ImGui.PopStyleColor();
+			ImGui.PopStyleVar();
+			return result;
 		}
 
 		public bool Draw(Bone bone) {

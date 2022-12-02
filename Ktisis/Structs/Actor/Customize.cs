@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -36,6 +36,8 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset((int)CustomizeIndex.SkinColor)] public byte SkinColor;
 		[FieldOffset((int)CustomizeIndex.Tribe)] public Tribe Tribe;
 
+		[FieldOffset(2)] public Age Age;
+
 		public byte GetRaceTribeIndex()
 			=> (byte)((byte)Race * 2 - 1);
 		public uint GetMakeIndex() 
@@ -50,14 +52,14 @@ namespace Ktisis.Structs.Actor {
 		Third   = 0x04,
 		Fourth  = 0x08,
 		Fifth   = 0x10,
-		Sitxh   = 0x20,
+		Sixth   = 0x20,
 		Seventh = 0x40,
 		Legacy  = 0x80
 	}
 
 	public enum Gender : byte {
-		Male,
-		Female
+		Masculine,
+		Feminine
 	}
 
 	public enum Race : byte {
@@ -88,5 +90,11 @@ namespace Ktisis.Structs.Actor {
 		Lost = 14,
 		Rava = 15,
 		Veena = 16
+	}
+
+public enum Age : byte {
+		Normal = 1,
+		Old = 3,
+		Young = 4
 	}
 }

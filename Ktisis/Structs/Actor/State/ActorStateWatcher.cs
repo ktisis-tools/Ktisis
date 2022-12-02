@@ -1,4 +1,4 @@
-﻿using Dalamud.Game;
+using Dalamud.Game;
 using Dalamud.Logging;
 using Ktisis.Events;
 using System;
@@ -30,6 +30,8 @@ namespace Ktisis.Structs.Actor.State {
 
 		public void Dispose() {
 			Services.Framework.Update -= Monitor;
+			if(Ktisis.IsInGPose)
+				EventManager.FireOnGposeChangeEvent(ActorGposeState.OFF); ;
 		}
 
 		public static void Init() {

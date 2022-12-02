@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Collections.Generic;
 
-using Ktisis.GameData;
-using Ktisis.GameData.Excel;
+using Ktisis.Data;
+using Ktisis.Data.Excel;
 
 namespace Ktisis.Structs.Actor.Equip {
-
 	public struct Set {
 		public int ID;
 		public SetSource Source;
@@ -27,11 +24,9 @@ namespace Ktisis.Structs.Actor.Equip {
 		Glamourer,
 	};
 
-
 	// This class is where are made the all the connections between
 	// the selection lists, the data lookup and data storage.
 	public static class Sets {
-
 		internal static IEnumerable<Item> ItemsSheet = Sheets.GetSheet<Item>();
 
 		// Init and Dispose
@@ -41,7 +36,6 @@ namespace Ktisis.Structs.Actor.Equip {
 		public static void Dispose() {
 			SetSources.GlamourDresser.Plates = null;
 		}
-
 
 		// Main methods, called by the Interface EditEquip
 		public static List<Set> FindSets() {
@@ -61,7 +55,6 @@ namespace Ktisis.Structs.Actor.Equip {
 			return items;
 		}
 
-
 		// The methods with a name starting with FindSets (e.g. FindSetsGearSet)
 		// will be called when creating the selectable list.
 		private static List<Set> FindSetsGearSet() => SetSources.GearSet.List().Select((i) => new Set(
@@ -77,8 +70,6 @@ namespace Ktisis.Structs.Actor.Equip {
 		private static List<Set> FindSetsGlamourer() => new();
 		private static List<Set> FindSetsGlamaholic() => new();
 
-
-
 		// The methods with a name starting with GetItems (e.g. GetItemsGearSet)
 		// will be called when selecting an item in the selectable list.
 		// It will retrieve the information on items and dyes
@@ -86,9 +77,6 @@ namespace Ktisis.Structs.Actor.Equip {
 			SetSources.GearSet.GetEquipForSet(set);
 		internal static List<(EquipSlot, object)> GetItemsGlamourDresser(Set set) =>
 			SetSources.GlamourDresser.GetItemsForSet(set);
-
-
-
 
 		// helpers methods, typically used in SetSources namespace
 		internal static object EmptySlot(EquipSlot equipSlot) {
@@ -101,19 +89,20 @@ namespace Ktisis.Structs.Actor.Equip {
 			var id = (item?.Model.Id) ?? 0;
 			var variant = (byte)((item?.Model.Variant) ?? 0);
 
-			if (slot == EquipSlot.MainHand || slot == EquipSlot.OffHand)
+			if (slot == EquipSlot.MainHand || slot == EquipSlot.OffHand) {
 				return new WeaponEquip {
 					Set = id,
 					Base = (item?.Model.Base) ?? 0,
 					Dye = dyeId,
 					Variant = variant,
 				};
-			else
+			} else {
 				return new ItemEquip {
 					Id = id,
 					Variant = variant,
 					Dye = dyeId,
 				};
+			}
 		}
 
 		internal static bool FindAllValidEquip((EquipSlot, object) a) {

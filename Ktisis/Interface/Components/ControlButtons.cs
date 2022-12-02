@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Numerics;
 
@@ -10,8 +10,8 @@ using Dalamud.Interface.Components;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
-using static Ktisis.Overlay.Skeleton;
 using Ktisis.Interop.Hooks;
+using Ktisis.Structs.Bones;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.Workspace;
 
@@ -24,24 +24,7 @@ namespace Ktisis.Interface.Components {
 		// utils
 		public static void VerticalAlignTextOnButtonSize(float percentage = 0.667f) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ButtonSize.Y / 2 - ImGui.GetFontSize() * percentage)); // align text with button size
 
-		public static void Draw() {
-			DrawGizmoOperations();
-
-			DrawExtra();
-			ImGui.SameLine();
-			DrawSettings();
-		}
-
-		private static void DrawGizmoOperations() {
-			ButtonChangeOperation(OPERATION.TRANSLATE, FontAwesomeIcon.LocationArrow);
-			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.ROTATE, FontAwesomeIcon.Sync);
-			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.SCALE, FontAwesomeIcon.ExpandAlt);
-			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.UNIVERSAL, FontAwesomeIcon.DotCircle);
-		}
-		private static void DrawExtra() {
+		public static void DrawExtra() {
 			var gizmode = Ktisis.Configuration.GizmoMode;
 			if (GuiHelpers.IconButtonTooltip(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ButtonSize))
 				Ktisis.Configuration.GizmoMode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
@@ -67,38 +50,82 @@ namespace Ktisis.Interface.Components {
 			if (!gizmoActive) ImGui.EndDisabled();
 		}
 
-		// As the settings button is a bit special and should not be as present as others
+		// As these buttons are a bit special and should not be as present as others
 		// we remove the border and change the hover behavior.
-		private static void DrawSettings() {
-			GuiHelpers.TextRight("", GuiHelpers.GetRightOffset(GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X) + (ImGui.GetStyle().FramePadding.X * 2f));
 
-			ImGui.SameLine();
-			VerticalAlignTextOnButtonSize(0.5f); // align text with button size
-			var buttonColor = !IsSettingsHovered ? ImGuiCol.TextDisabled : (IsSettingsActive ? ImGuiCol.ButtonActive : ImGuiCol.Text);
-			ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)(buttonColor)]);
+		private static void DrawInfo() {
 			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
-			ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0x00000000);
-			ImGui.PushStyleColor(ImGuiCol.ButtonHovered, 0x00000000);
-			ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 0f);
+			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
+			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
 
-			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog))
-				if (ConfigGui.Visible) ConfigGui.Hide();
-				else ConfigGui.Show();
+			if (GuiHelpers.IconButton(FontAwesomeIcon.InfoCircle, new(ImGui.GetFontSize() * 1.5f)))
+				Information.Toggle();
 
-			ImGui.PopStyleColor(4);
-			ImGui.PopStyleVar();
+			ImGui.PopStyleColor();
+			ImGui.PopStyleVar(2);
 
 			IsSettingsHovered = ImGui.IsItemHovered();
 			IsSettingsActive = ImGui.IsItemActive();
 
-			GuiHelpers.Tooltip("Open Settings.");
+			GuiHelpers.Tooltip("Information");
+		}
+		private static void DrawSettings() {
+			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
+			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
+			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
+
+			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog, new(ImGui.GetFontSize() * 1.5f)))
+				if (ConfigGui.Visible) ConfigGui.Hide();
+				else ConfigGui.Show();
+
+			ImGui.PopStyleColor();
+			ImGui.PopStyleVar(2);
+
+			IsSettingsHovered = ImGui.IsItemHovered();
+			IsSettingsActive = ImGui.IsItemActive();
+
+			GuiHelpers.Tooltip("Open Settings");
+		}
+		public static void PlaceAndRenderSettings() {
+
+			var initialPos = ImGui.GetCursorPos();
+			ImGui.PushClipRect(ImGui.GetWindowPos(), ImGui.GetWindowPos() + ImGui.GetWindowSize(), false);
+
+			// A bit complicated formulas to handle any styles values
+			ImGui.SetCursorPosX(initialPos.X + ImGui.GetContentRegionAvail().X - ImGui.GetStyle().FramePadding.X - ImGui.GetFontSize() * (3.5f * 1.5f) - (float)Math.Exp(ImGui.GetFontSize() / 18));
+			ImGui.SetCursorPosY(initialPos.Y - ImGui.GetStyle().FramePadding.Y - (float)Math.Log2(ImGui.GetTextLineHeight()) * 3.5f - ImGui.GetTextLineHeight()*1.05f);
+
+			DrawInfo();
+			ImGui.SameLine();
+			DrawSettings();
+
+			ImGui.PopClipRect();
+			ImGui.SetCursorPos(initialPos);
+
 		}
 
-		private static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
-			var isCurrentOperation = Ktisis.Configuration.GizmoOp == operation;
+		public static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
+			var isCurrentOperation = Ktisis.Configuration.GizmoOp.HasFlag(OPERATION.ROTATE_X) ? (Ktisis.Configuration.GizmoOp | OPERATION.ROTATE).HasFlag(operation) : Ktisis.Configuration.GizmoOp.HasFlag(operation);
 			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+
 			if (GuiHelpers.IconButton(icon, ButtonSize))
-				Ktisis.Configuration.GizmoOp = operation;
+				if (!isCurrentOperation)
+					if (ImGui.GetIO().KeyShift)
+						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.AddFlag(operation);
+					else
+						Ktisis.Configuration.GizmoOp = operation;
+				else
+					if (ImGui.GetIO().KeyCtrl) {
+						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE);
+						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE_X);
+						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE_Y);
+						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE_Z);
+					}
+				else if (ImGui.GetIO().KeyShift)
+					Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.RemoveFlag(operation);
+				else
+					Ktisis.Configuration.GizmoOp = operation;
+			
 			if (isCurrentOperation) ImGui.PopStyleColor();
 
 			string help = "";
@@ -108,16 +135,16 @@ namespace Ktisis.Interface.Components {
 				help += "Change gizmo operation to ";
 
 			if (operation == OPERATION.TRANSLATE) help += "Position";
-			if (operation == OPERATION.ROTATE) help += "Rotation";
-			if (operation == OPERATION.SCALE) help += "Scale";
-			if (operation == OPERATION.UNIVERSAL) help += "Universal";
+			else if (operation == OPERATION.ROTATE) help += "Rotation";
+			else if (operation == OPERATION.SCALE) help += "Scale";
+			else if (operation == OPERATION.UNIVERSAL) help += "Universal";
 
 			GuiHelpers.Tooltip(help + ".");
 		}
 
 		// Independant from the others
 		public static void DrawPoseSwitch() {
-			ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8)); // Prevents text overlap
+			ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8) + ImGui.GetStyle().ItemSpacing.X + GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X); // Prevents text overlap
 
 			ImGui.BeginDisabled(!Ktisis.IsInGPose);
 			var pose = PoseHooks.PosingEnabled;

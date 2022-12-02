@@ -1,4 +1,3 @@
-﻿using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
@@ -140,7 +139,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 			if (type != GazeControl.All) {
 				// If this gaze type is not being overwritten, copy the vanilla values.
 				var baseGaze = target->Gaze[type];
-				if (baseGaze.Mode != 0 && (!enabled || result))
+				if (baseGaze.Mode != 0 && !enabled && !result)
 					gaze.Pos = baseGaze.Pos;
 			}
 

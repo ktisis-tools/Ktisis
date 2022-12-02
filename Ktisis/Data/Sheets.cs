@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Lumina.Excel;
 
-namespace Ktisis.GameData {
+namespace Ktisis.Data {
 	internal class Sheets {
 		// Sheets
 

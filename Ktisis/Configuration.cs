@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
@@ -10,21 +10,29 @@ using Dalamud.Logging;
 using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
-using Ktisis.Localization;
-using Ktisis.Structs.Actor.Equip.SetSources;
 using Ktisis.Interface;
+using Ktisis.Localization;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Actor.Equip.SetSources;
+using Ktisis.Structs.Poses;
+using static Ktisis.Data.Files.AnamCharaFile;
 
-namespace Ktisis {
-	[Serializable]
+namespace Ktisis
+{
+    [Serializable]
 	public class Configuration : IPluginConfiguration {
-		public const int CurVersion = 0;
+		public const int CurVersion = 2;
 		public int Version { get; set; } = CurVersion;
 
-		// Interface
+		public bool IsFirstTimeInstall { get; set; } = true;
+		public string LastPluginVer { get; set; } = "";
 
+		// Interface
+		[Obsolete("Replaced by AutoOpenCtor")]
 		public bool AutoOpen { get; set; } = true;
+		[Obsolete("Replaced by OpenKtisisMethod")]
 		public bool AutoOpenCtor { get; set; } = false;
+		public OpenKtisisMethod OpenKtisisMethod { get; set; } = OpenKtisisMethod.OnEnterGpose;
 
 		public bool DisplayCharName { get; set; } = true;
 		public bool CensorNsfw { get; set; } = true;
@@ -47,8 +55,18 @@ namespace Ktisis {
 		// Overlay
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
+		public bool DrawLinesWithGizmo { get; set; } = true;
+		public bool DrawDotsWithGizmo { get; set; } = true;
+
 		public float SkeletonLineThickness { get; set; } = 2.0F;
 		public float SkeletonDotRadius { get; set; } = 3.0F;
+
+		// References
+		// The reference Key creates a uniqueness constraint for imgui window IDs for each reference.
+		public Dictionary<int, ReferenceInfo> References { get; set; } = new();
+		public float ReferenceAlpha { get; set; } = 1.0f;
+		public bool ReferenceHideDecoration { get; set; } = false;
+		public int NextReferenceKey => References.Count == 0 ? 0 : References.Max(x => x.Key) + 1;
 
 		public Vector4 GetCategoryColor(Bone bone) {
 			if (LinkBoneCategoryColors) return LinkedBoneCategoryColor;
@@ -87,9 +105,9 @@ namespace Ktisis {
 		// Gizmo
 
 		public MODE GizmoMode { get; set; } = MODE.LOCAL;
-		public OPERATION GizmoOp { get; set; } = OPERATION.TRANSLATE;
+		public OPERATION GizmoOp { get; set; } = OPERATION.ROTATE;
 
-		public Overlay.Skeleton.SiblingLink SiblingLink { get; set; } = Overlay.Skeleton.SiblingLink.None;
+		public SiblingLink SiblingLink { get; set; } = SiblingLink.None;
 
 		public bool AllowAxisFlip { get; set; } = true;
 
@@ -108,9 +126,17 @@ namespace Ktisis {
 		public Vector4 LinkedBoneCategoryColor { get; set; } = new(1.0F, 1.0F, 1.0F, 0.5647059F);
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
 
+		public SaveModes CharaMode { get; set; } = SaveModes.All;
+		public PoseMode PoseMode { get; set; } = PoseMode.All;
+		public PoseTransforms PoseTransforms { get; set; } = PoseTransforms.Rotation;
+
 		public bool EnableParenting { get; set; } = true;
 
 		public bool LinkedGaze { get; set; } = true;
+		
+		public bool ShowToolbar { get; set; } = false;
+
+		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
 
 		// Data memory
 		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
@@ -124,9 +150,31 @@ namespace Ktisis {
 
 			PluginLog.Warning($"Updating config to reflect changes between config versions {Version}-{CurVersion}.\nThis is nothing to worry about, but some settings may change or get reset!");
 
-			//switch (Version) {}
+#pragma warning disable CS0612, CS0618
+			// Apply changes from obsolete attributes
+
+			if (Version < 1)
+				if (AutoOpenCtor) OpenKtisisMethod = OpenKtisisMethod.OnPluginLoad;
+
+#pragma warning restore CS0612, CS0618
+
+			if (Version < 2) {
+				if (((int)PoseMode & 4) != 0)
+					PoseMode ^= (PoseMode)4;
+			}
 
 			Version = CurVersion;
 		}
+	}
+	[Serializable]
+	public class ReferenceInfo {
+		public bool Showing { get; set; }
+		public string? Path { get; set; }
+	}
+	[Serializable]
+	public enum OpenKtisisMethod {
+		Manually,
+		OnPluginLoad,
+		OnEnterGpose,
 	}
 }

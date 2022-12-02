@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 
 using Ktisis.Structs.Actor;
 
@@ -22,7 +22,7 @@ namespace Ktisis.Structs.Bones {
 			var gender = actor->Customize.Gender;
 			var race = actor->Customize.Race;
 
-			if (gender == Gender.Male)
+			if (gender == Gender.Masculine)
 				return race switch {
 					Race.Lalafell => BodyType.LalafellMale,
 					Race.Roegadyn or Race.Hrothgar => BodyType.HrothgarRoegadyn,

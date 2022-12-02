@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using System.Collections.Generic;
 
@@ -17,6 +17,9 @@ namespace Ktisis.Overlay {
 
 		public static void Draw() {
 			ClickedItem = null;
+
+			if (OverlayWindow.GizmoOwner != null && !Ktisis.Configuration.DrawDotsWithGizmo)
+				return;
 
 			var draw = ImGui.GetWindowDrawList();
 

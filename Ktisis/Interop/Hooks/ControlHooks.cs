@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Dalamud.Logging;
 using Dalamud.Hooking;
@@ -19,31 +19,35 @@ namespace Ktisis.Interop.Hooks {
 
 			if (!Ktisis.IsInGPose) return;
 
-			if (mouseState != null) {
-				// TODO
-			}
+			try {
+				if (mouseState != null) {
+					// TODO
+				}
 
-			// Process queue
+				// Process queue
 
-			var keys = input->Keyboard->GetQueue();
-			KeyboardState = *keys;
+				var keys = input->Keyboard->GetQueue();
+				KeyboardState = *keys;
 
-			for (var i = 0; i < keyState->QueueCount; i++) {
-				var k = keyState->Queue[i];
+				for (var i = 0; i < keyState->QueueCount; i++) {
+					var k = keyState->Queue[i];
 
-				if (k->Event == KeyEvent.AnyKeyHeld) continue; // dont care didnt ask (use KeyEvent.Held)
-				if (k->Event == KeyEvent.Released) continue; // Allow InputHook2 to take care of release events.
+					if (k->Event == KeyEvent.AnyKeyHeld) continue; // dont care didnt ask (use KeyEvent.Held)
+					if (k->Event == KeyEvent.Released) continue; // Allow InputHook2 to take care of release events.
 
-				if (EventManager.OnKeyPressed != null) {
-					var invokeList = EventManager.OnKeyPressed.GetInvocationList();
-					foreach (var invoke in invokeList) {
-						var res = (bool)invoke.Method.Invoke(invoke.Target, new object[] { *k })!;
-						if (res) {
-							keys->KeyMap[k->KeyCode] = 0;
-							keyState->KeyMap[k->KeyCode] = 0;
+					if (EventManager.OnKeyPressed != null) {
+						var invokeList = EventManager.OnKeyPressed.GetInvocationList();
+						foreach (var invoke in invokeList) {
+							var res = (bool)invoke.Method.Invoke(invoke.Target, new object[] { *k })!;
+							if (res) {
+								keys->KeyMap[k->KeyCode] = 0;
+								keyState->KeyMap[k->KeyCode] = 0;
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				PluginLog.Error(e, "Error in InputDetour.");
 			}
 		}
 
