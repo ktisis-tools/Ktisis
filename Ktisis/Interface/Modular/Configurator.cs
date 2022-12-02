@@ -20,7 +20,7 @@ namespace Ktisis.Interface.Modular {
 		public static void DrawConfigTab(Configuration cfg) {
 			if (ImGui.BeginTabItem("Modular")) {
 
-				if (GuiHelpers.IconButton(Dalamud.Interface.FontAwesomeIcon.Plus))
+				if (GuiHelpers.IconButton(FontAwesomeIcon.Plus))
 					IsAddPanelOpen = true;
 				ImGui.SameLine();
 				if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"Export##Modular"))
