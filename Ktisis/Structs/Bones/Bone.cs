@@ -7,6 +7,7 @@ using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
+using static Ktisis.Overlay.Skeleton;
 
 namespace Ktisis.Structs.Bones {
 	public class Bone {
@@ -91,6 +92,51 @@ namespace Ktisis.Structs.Bones {
 			for (var i = 0; i < list.Count; i++)
 				list.AddRange(list[i].GetChildren());
 			return list;
+		}
+
+		public unsafe void PropagateChildren(hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot) {
+			// Bone parenting
+			// Adapted from Anamnesis Studio code shared by Yuki - thank you!
+
+			if (!Ktisis.Configuration.EnableParenting)
+				return;
+
+			var sourcePos = transform->Translation.ToVector3();
+			var deltaRot = transform->Rotation.ToQuat() / initialRot;
+			var deltaPos = sourcePos - initialPos;
+
+			var descendants = GetDescendants();
+			foreach (var child in descendants) {
+				var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
+
+				var offset = access->Translation.ToVector3() - sourcePos;
+				offset = Vector3.Transform(offset, deltaRot);
+
+				var matrix = Interop.Alloc.GetMatrix(access);
+				matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
+				matrix.Translation = deltaPos + sourcePos + offset;
+				Interop.Alloc.SetMatrix(access, matrix);
+			}
+		}
+
+		public unsafe void PropagateSibling(Quaternion deltaRot, SiblingLink type) {
+			if (type == SiblingLink.None) return;
+
+			var access = AccessModelSpace(PropagateOrNot.DontPropagate);
+			var offset = access->Translation.ToVector3();
+
+			if (type == SiblingLink.RotationMirrorX)
+				deltaRot = new(-deltaRot.X, deltaRot.Y, deltaRot.Z, -deltaRot.W);
+
+			var matrix = Interop.Alloc.GetMatrix(access);
+			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
+			matrix.Translation = offset;
+
+			var initialRot = access->Rotation.ToQuat();
+			var initialPos = access->Translation.ToVector3();
+			Interop.Alloc.SetMatrix(access, matrix);
+
+			PropagateChildren(access, initialPos, initialRot);
 		}
 
 		public bool IsBusted() =>
