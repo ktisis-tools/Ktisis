@@ -93,11 +93,16 @@ namespace Ktisis.Interface.Modular {
 			}
 			Manager.Init();
 		}
+		public static void AddBefore(string handle, ConfigObject itemBefore) =>
+			InsertBefore(Ktisis.Configuration.ModularConfig, new ConfigObject(handle, Manager.GenerateExtra()), itemBefore);
+
 		private static void Delete(ConfigObject toRemove) {
 			DeleteSub(Ktisis.Configuration.ModularConfig, toRemove);
 			Manager.Init();
 		}
 		private static void DeleteSub(List<ConfigObject> items, ConfigObject toRemove) {
+			// TODO: fix error when deleting an object while in iteration of a list of objects
+
 			//int index = items.IndexOf(toRemove);
 			//if(index != -1)
 			//	for (int i = items.Count - 1; i >= 0; i--)
