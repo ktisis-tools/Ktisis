@@ -19,11 +19,13 @@ namespace Ktisis.Interface.Modular {
 		public static List<IModularItem> Config = new();
 
 		public static void Init() {
-			ItemIds.Clear();
 			Configurator.MovingObject = null;
 			Config = ParseConfigList(Ktisis.Configuration.ModularConfig)!;
 		}
-		public static void Dispose() => Config = new();
+		public static void Dispose() {
+			Config = new();
+			ItemIds.Clear();
+		}
 		public static void Render() => Config?.ForEach(d => d.Draw());
 		public static int GenerateId() {
 			int id = 0;
