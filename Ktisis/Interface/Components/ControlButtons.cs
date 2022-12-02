@@ -52,6 +52,22 @@ namespace Ktisis.Interface.Components {
 
 		// As the settings button is a bit special and should not be as present as others
 		// we remove the border and change the hover behavior.
+		private static void DrawInfo() {
+			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
+			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
+			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
+
+			if (GuiHelpers.IconButton(FontAwesomeIcon.InfoCircle, new(ImGui.GetFontSize() * 1.5f)))
+				Information.Toggle();
+
+			ImGui.PopStyleColor();
+			ImGui.PopStyleVar(2);
+
+			IsSettingsHovered = ImGui.IsItemHovered();
+			IsSettingsActive = ImGui.IsItemActive();
+
+			GuiHelpers.Tooltip("Information");
+		}
 		private static void DrawSettings() {
 			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
@@ -67,7 +83,7 @@ namespace Ktisis.Interface.Components {
 			IsSettingsHovered = ImGui.IsItemHovered();
 			IsSettingsActive = ImGui.IsItemActive();
 
-			GuiHelpers.Tooltip("Open Settings.");
+			GuiHelpers.Tooltip("Open Settings");
 		}
 		public static void PlaceAndRenderSettings() {
 
@@ -75,9 +91,11 @@ namespace Ktisis.Interface.Components {
 			ImGui.PushClipRect(ImGui.GetWindowPos(), ImGui.GetWindowPos() + ImGui.GetWindowSize(), false);
 
 			// A bit complicated formulas to handle any styles values
-			ImGui.SetCursorPosX(initialPos.X + ImGui.GetContentRegionAvail().X - ImGui.GetStyle().FramePadding.X - ImGui.GetFontSize() * 3.5f - (float)Math.Exp(ImGui.GetFontSize() / 18));
+			ImGui.SetCursorPosX(initialPos.X + ImGui.GetContentRegionAvail().X - ImGui.GetStyle().FramePadding.X - ImGui.GetFontSize() * (3.5f * 1.5f) - (float)Math.Exp(ImGui.GetFontSize() / 18));
 			ImGui.SetCursorPosY(initialPos.Y - ImGui.GetStyle().FramePadding.Y - (float)Math.Log2(ImGui.GetTextLineHeight()) * 3.5f - ImGui.GetTextLineHeight()*1.05f);
 
+			DrawInfo();
+			ImGui.SameLine();
 			DrawSettings();
 
 			ImGui.PopClipRect();

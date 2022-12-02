@@ -24,6 +24,9 @@ namespace Ktisis
 		public const int CurVersion = 2;
 		public int Version { get; set; } = CurVersion;
 
+		public bool IsFirstTimeInstall { get; set; } = true;
+		public string LastPluginVer { get; set; } = "";
+
 		// Interface
 		[Obsolete("Replaced by AutoOpenCtor")]
 		public bool AutoOpen { get; set; } = true;

@@ -30,6 +30,7 @@ namespace Ktisis.Interface {
 			// GUI
 			Workspace.Draw();
 			ConfigGui.Draw();
+			Information.Draw();
 			EditActor.Draw();
 			References.Draw();
 			ToolbarWindow.Draw();

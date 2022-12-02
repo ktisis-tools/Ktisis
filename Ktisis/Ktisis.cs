@@ -35,6 +35,14 @@ namespace Ktisis {
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 			UiBuilder = pluginInterface.UiBuilder;
 
+			if (Configuration.IsFirstTimeInstall) {
+				Configuration.IsFirstTimeInstall = false;
+				Information.Show();
+			}
+			if (Configuration.LastPluginVer != Version) {
+				Configuration.LastPluginVer = Version;
+			}
+
 			Configuration.Validate();
 
 			// Init interop stuff
@@ -99,7 +107,22 @@ namespace Ktisis {
 		}
 
 		private void OnCommand(string command, string arguments) {
-			Workspace.Show();
+			switch (arguments) {
+				case "about":
+				case "info":
+				case "information":
+					Information.Show();
+					break;
+				case "cfg":
+				case "config":
+				case "configure":
+				case "configuration":
+					ConfigGui.Show();
+					break;
+				default:
+					Workspace.Show();
+					break;
+			}
 		}
 	}
 }
