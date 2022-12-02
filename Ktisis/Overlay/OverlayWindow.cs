@@ -81,8 +81,10 @@ namespace Ktisis.Overlay {
 
 			// Might need a different name for Begin?
 
-			if (IsGizmoVisible)
+			if (IsGizmoVisible) {
+				Gizmo.UpdateGizmoState();
 				Begin();
+			}
 
 			Skeleton.BoneSelect.Active = false;
 			Skeleton.BoneSelect.Update = false;

@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using Dalamud.Game;
-using Dalamud.Game.ClientState.Keys;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using ImGuizmoNET;
 
-using Ktisis.Interface.Components;
+using Dalamud.Game.ClientState.Keys;
+
+using FFXIVClientStructs.FFXIV.Client.UI;
+
+using Ktisis.Events;
 using Ktisis.Overlay;
+using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Input;
+using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface {
-	public sealed class Input : IDisposable {
+	public static class Input {
 		// When adding a new keybind:
 		//  - add the logic in Monitor
 		//      (held/release/changed [+ extra conditions] and what it executes )
@@ -21,40 +25,103 @@ namespace Ktisis.Interface {
 		//  - add the default key in DefaultKeys
 		//  - add translation, handle format: Keyboard_Action_{Purpose}
 
-		public void Monitor(Framework framework) {
-			if (!Ktisis.IsInGPose || IsChatInputActive() || !Ktisis.Configuration.EnableKeybinds) return; // TODO: when implemented move init/dispose to Gpose enter and leave instead of in Ktisis.cs
-			ReadPurposesStates();
-
-			if (!ImGuizmo.IsUsing()) {
-				if (IsPurposeReleased(Purpose.SwitchToTranslate))
-					Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
-				if (IsPurposeReleased(Purpose.SwitchToRotate))
-					Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
-				if (IsPurposeReleased(Purpose.SwitchToScale))
-					Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
-				if (IsPurposeReleased(Purpose.SwitchToUniversal))
-					Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
-				if (IsPurposeReleased(Purpose.ToggleLocalWorld))
-					Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
-				if (IsPurposeReleased(Purpose.ClearCategoryVisibilityOverload))
-					Category.VisibilityOverload.Clear();
-				if (IsPurposeChanged(Purpose.HoldAllCategoryVisibilityOverload))
-					Category.ToggleAllVisibilityOverload();
-
-				foreach ((var p, var c) in PurposesCategoriesHold)
-					if (IsPurposeChanged(p))
-						c.ToggleVisibilityOverload();
-				foreach ((var p, var c) in PurposesCategoriesToggle)
-					if (IsPurposeReleased(p))
-						c.ToggleVisibilityOverload();
+		internal static bool HandleHeldPurposes(VirtualKey key) {
+			foreach ((var p, var c) in PurposesCategoriesHold) {
+				if (IsPurposeUsed(p, key)) {
+					c.ToggleVisibilityOverload();
+					return true;
+				}
 			}
-			if (IsPurposeChanged(Purpose.HoldToHideSkeleton))
-				Skeleton.Toggle();
-			if (IsPurposeHeld(Purpose.CircleThroughSiblingLinkModes))
-				ControlButtons.CircleTroughSiblingLinkModes();
 
-			PrevriousKeyStates = CurrentKeyStates!;
-			CurrentKeyStates = null;
+			var purpose = GetPurposeFromInput(key);
+			switch (purpose) {
+				case Purpose.HoldAllCategoryVisibilityOverload:
+					Category.ToggleAllVisibilityOverload();
+					return true;
+				case Purpose.HoldToHideSkeleton:
+					Skeleton.Toggle();
+					return true;
+			}
+
+			return false;
+		}
+
+		internal static bool OnKeyPressed(QueueItem input) {
+			if (!Ktisis.Configuration.EnableKeybinds || input.Event != KeyEvent.Pressed || IsChatInputActive())
+				return false;
+
+			if (HandleHeldPurposes(input.VirtualKey))
+				return true;
+
+			// Toggled purposes
+			foreach ((var p, var c) in PurposesCategoriesToggle)
+				if (IsPurposeUsed(p, input.VirtualKey))
+					c.ToggleVisibilityOverload();
+
+			// Purposes
+			var purpose = GetPurposeFromInput(input.VirtualKey);
+			if (purpose != null) {
+				var res = true;
+
+				var isUsing = ImGuizmo.IsUsing();
+				switch (purpose) {
+					case Purpose.SwitchToTranslate:
+						if (!isUsing) Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
+						break;
+					case Purpose.SwitchToRotate:
+						if (!isUsing) Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
+						break;
+					case Purpose.SwitchToScale:
+						if (!isUsing) Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
+						break;
+					case Purpose.SwitchToUniversal:
+						if (!isUsing) Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
+						break;
+					case Purpose.ToggleLocalWorld:
+						if (!isUsing) Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+						break;
+					case Purpose.ClearCategoryVisibilityOverload:
+						Category.VisibilityOverload.Clear();
+						break;
+					case Purpose.CircleThroughSiblingLinkModes:
+						ControlButtons.CircleTroughSiblingLinkModes();
+						break;
+					case Purpose.DeselectGizmo:
+						if (OverlayWindow.GizmoOwner == null)
+							res = false;
+						else
+							OverlayWindow.DeselectGizmo();
+						break;
+				}
+
+				return res;
+			}
+
+			return false;
+		}
+
+		internal static void OnKeyReleased(VirtualKey key) => HandleHeldPurposes(key);
+
+		internal static Purpose? GetPurposeFromInput(VirtualKey input) {
+			foreach (Purpose purpose in Purposes) {
+				if (IsPurposeUsed(purpose, input))
+					return purpose;
+			}
+
+			return null;
+		}
+
+		internal static bool IsPurposeUsed(Purpose purpose, VirtualKey input) {
+			var keys = PurposeToVirtualKeys(purpose);
+
+			var match = keys.Count > 0;
+			foreach (var key in keys) {
+				if (!Services.KeyState.IsVirtualKeyValid(key))
+					return false;
+				match &= key == input || ControlHooks.KeyboardState.IsKeyDown(key);
+			}
+
+			return match;
 		}
 
 		[Serializable]
@@ -69,6 +136,7 @@ namespace Ktisis.Interface {
 			ClearCategoryVisibilityOverload,
 			HoldAllCategoryVisibilityOverload,
 			CircleThroughSiblingLinkModes,
+			DeselectGizmo
 		}
 
 		public static readonly Dictionary<Purpose, List<VirtualKey>> DefaultKeys = new(){
@@ -82,31 +150,18 @@ namespace Ktisis.Interface {
 			{Purpose.ClearCategoryVisibilityOverload, new(){VirtualKey.J}},
 			{Purpose.HoldAllCategoryVisibilityOverload, new(){VirtualKey.J, VirtualKey.SHIFT}},
 			{Purpose.CircleThroughSiblingLinkModes, new(){VirtualKey.C}},
+			{Purpose.DeselectGizmo, new(){VirtualKey.ESCAPE}}
 		};
 
-		// Helpers
-		public static bool IsHeld(Purpose purpose) {
-			if (Instance.PrevriousKeyStates.TryGetValue(purpose, out bool shiftPressed))
-				return false;
-			return shiftPressed;
-		}
+		// Init & dispose
 
-		// Thanks to (Edited) for the intgration with the Framework Update <3
-		private static Input? _instance = null;
-		private Input() {
-			Services.Framework.Update += Monitor;
-		}
-		public static Input Instance {
-			get {
-				_instance ??= new Input();
-				return _instance!;
-			}
-		}
 		public static void Init() {
-			var _ = Instance;
+			EventManager.OnKeyPressed += OnKeyPressed;
+			EventManager.OnKeyReleased += OnKeyReleased;
 		}
-		public void Dispose() {
-			Services.Framework.Update -= Monitor;
+		public static void Dispose() {
+			EventManager.OnKeyPressed -= OnKeyPressed;
+			EventManager.OnKeyReleased -= OnKeyReleased;
 		}
 
 		// Below are the methods and variables needed for Monitor to handle inputs
@@ -117,12 +172,13 @@ namespace Ktisis.Interface {
 		public const int FirstCategoryPurposeHold = 1000;
 		public const int FirstCategoryPurposeToggle = 2000;
 
-		private Dictionary<Purpose, bool> PrevriousKeyStates = new();
-		private Dictionary<Purpose, bool>? CurrentKeyStates = new();
+		private static Dictionary<Purpose, bool> PreviousKeyStates = new();
+		private static Dictionary<Purpose, bool>? CurrentKeyStates = new();
 
 		public static IEnumerable<Purpose> Purposes {
 			get => Enum.GetValues<Purpose>().ToImmutableList();
 		}
+
 		public static IEnumerable<Purpose> PurposesWithCategories {
 			get {
 				var purposesWithCategories = Enum.GetValues<Purpose>().ToList();
@@ -146,19 +202,25 @@ namespace Ktisis.Interface {
 				return purposesWithCategories;
 			}
 		}
+
 		private static List<VirtualKey> PurposeToVirtualKeys(Purpose purpose) {
 			if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out List<VirtualKey>? keys)) {
 				if (!DefaultKeys.TryGetValue(purpose, out List<VirtualKey>? defaultKeys))
 					defaultKeys = FallbackKey;
 				keys = defaultKeys;
 			}
-			if(keys == null) return FallbackKey;
+
+			if (keys == null)
+				return FallbackKey;
+
 			foreach (var key in keys)
-				if (!Services.KeyState.IsVirtualKeyValid(key)) return FallbackKey;
+				if (!Services.KeyState.IsVirtualKeyValid(key))
+					return FallbackKey;
 
 			return keys;
 		}
-		private void ReadPurposesStates() {
+
+		private static void ReadPurposesStates() {
 			CurrentKeyStates = PurposesWithCategories.Select(p => {
 				var keys = PurposeToVirtualKeys(p);
 				bool state = true;
@@ -174,29 +236,6 @@ namespace Ktisis.Interface {
 				return (purpose: p, state);
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
-		private unsafe bool IsChatInputActive() => ((UIModule*)Services.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
-
-		// Below are methods to check different kind of key state
-		private bool IsPurposeChanged(Purpose purpose) {
-			var modifierKeys = PurposeToVirtualKeys(Purpose.GlobalModifierKey);
-			if (purpose != Purpose.GlobalModifierKey && modifierKeys != FallbackKey) {
-				foreach (var key in modifierKeys)
-					if(!Services.KeyState[key]) return false;
-			}
-			if (!PrevriousKeyStates.TryGetValue(purpose, out bool previous)) return false;
-			if (CurrentKeyStates == null) return false;
-			if (!CurrentKeyStates.TryGetValue(purpose, out bool current)) return false;
-			return previous != current;
-		}
-		private bool IsPurposeHeld(Purpose purpose) {
-			if (CurrentKeyStates == null) return false;
-			if (!CurrentKeyStates.TryGetValue(purpose, out bool current)) return false;
-			return IsPurposeChanged(purpose) && current;
-		}
-		private bool IsPurposeReleased(Purpose purpose) {
-			if (CurrentKeyStates == null) return false;
-			if (!CurrentKeyStates.TryGetValue(purpose, out bool current)) return false;
-			return IsPurposeChanged(purpose) && !current;
-		}
+		private unsafe static bool IsChatInputActive() => ((UIModule*)Services.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
 	}
 }

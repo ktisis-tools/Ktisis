@@ -8,6 +8,7 @@ using Dalamud.Interface;
 
 using FFXIVClientStructs.Havok;
 
+using Ktisis.Events;
 using Ktisis.Helpers;
 using Ktisis.Overlay;
 using Ktisis.Structs;
@@ -35,6 +36,7 @@ namespace Ktisis.Interface.Components {
 		public Vector3 Rotation;
 		public Vector3 Scale;
 
+		private TransformTableState _state = TransformTableState.IDLE;
 		public void FetchConfigurations() {
 			BaseSpeedPos = Ktisis.Configuration.TransformTableBaseSpeedPos;
 			BaseSpeedRot = Ktisis.Configuration.TransformTableBaseSpeedRot;
@@ -42,6 +44,14 @@ namespace Ktisis.Interface.Components {
 			ModifierMultCtrl = Ktisis.Configuration.TransformTableModifierMultCtrl;
 			ModifierMultShift = Ktisis.Configuration.TransformTableModifierMultShift;
 			DigitPrecision = $"%.{Ktisis.Configuration.TransformTableDigitPrecision}f";
+		}
+
+		public TransformTable Clone() {
+			TransformTable tt = new();
+			tt.Position = Position;
+			tt.Rotation = Rotation;
+			tt.Scale = Scale;
+			return tt;
 		}
 
 
@@ -109,6 +119,19 @@ namespace Ktisis.Interface.Components {
 			return result;
 		}
 
+		private unsafe void UpdateTransformTableState() {
+			if (
+				ImGui.IsItemClicked() &&
+				(ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) || ImGui.IsMouseDown(ImGuiMouseButton.Left))
+			) {
+				_state = TransformTableState.EDITING;
+			}
+
+			if (ImGui.IsItemDeactivatedAfterEdit()) _state = TransformTableState.IDLE;
+
+			EventManager.FireOnTransformationMatrixChangeEvent(_state);
+		}
+
 		private bool ColoredDragFloat3(string label, ref Vector3 value, float speed, IReadOnlyList<Vector4> colors, float borderSize = 1.0f) {
 			if (colors.Count != 3)
 				return false;
@@ -123,6 +146,7 @@ namespace Ktisis.Interface.Components {
 
 			return result;
 		}
+    
 		private bool ColoredDragFloat(string label, ref float value, float speed, Vector4 color, float borderSize = 1.0f) {
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, borderSize);
 			ImGui.PushStyleColor(ImGuiCol.Border, color);
@@ -131,6 +155,7 @@ namespace Ktisis.Interface.Components {
 			ImGui.PopStyleVar();
 			return result;
 		}
+
 		public bool Draw(Bone bone) {
 			var result = false;
 			var gizmo = OverlayWindow.GetGizmo(bone.UniqueName);
