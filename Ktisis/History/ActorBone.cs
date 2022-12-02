@@ -50,15 +50,13 @@ namespace Ktisis.History {
 			var initialPos = boneTransform->Translation.ToVector3();
 			Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);
 
-			Ktisis.Configuration.EnableParenting = ParentingState;
-			bone!.PropagateChildren(boneTransform, initialPos, initialRot);
+			if (ParentingState)
+				bone!.PropagateChildren(boneTransform, initialPos, initialRot);
 
 			if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
 				var siblingBone = bone!.GetMirrorSibling();
-				if (siblingBone != null) {
-					Ktisis.Configuration.SiblingLink = SiblingLinkType;
+				if (siblingBone != null)
 					siblingBone.PropagateSibling(boneTransform->Rotation.ToQuat() / initialRot, SiblingLinkType);
-				}
 			}
 
 		}
