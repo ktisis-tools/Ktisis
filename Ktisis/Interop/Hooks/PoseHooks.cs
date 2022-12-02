@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 
 using Dalamud.Hooking;
-
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.Havok;
@@ -42,6 +41,7 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		internal static bool PosingEnabled { get; private set; }
+		internal static bool AnamPosingEnabled => StaticOffsets.IsAnamPosing;
 
 		internal static Dictionary<uint, PoseContainer> PreservedPoses = new();
 
@@ -63,6 +63,7 @@ namespace Ktisis.Interop.Hooks {
 
 			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
 			LoadSkeletonHook = Hook<LoadSkeletonDelegate>.FromAddress(loadSkele, LoadSkeletonDetour);
+			LoadSkeletonHook.Enable();
 
 			var loadBust = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F6 84 24 ?? ?? ?? ?? ?? 0F 28 74 24 ??");
 			BustHook = Hook<BustDelegate>.FromAddress(loadBust, BustDetour);
@@ -75,7 +76,7 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
 			AnimFrozenHook?.Disable();
-			LoadSkeletonHook?.Disable();
+			//LoadSkeletonHook?.Disable();
 			BustHook?.Disable();
 			PosingEnabled = false;
 		}
@@ -86,7 +87,7 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
 			AnimFrozenHook?.Enable();
-			LoadSkeletonHook?.Enable();
+			//LoadSkeletonHook?.Enable();
 			BustHook?.Enable();
 			PosingEnabled = true;
 		}
@@ -105,23 +106,35 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		private static ulong SetBoneModelSpaceFfxivDetour(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate) {
+			if (AnamPosingEnabled)
+				return SetBoneModelSpaceFfxivHook.Original(partialSkeleton, boneId, transform, enableSecondary, enablePropagate);
+
 			return boneId;
 		}
 
 		private static unsafe IntPtr CalculateBoneModelSpaceDetour(ref hkaPose pose, int boneIdx) {
+			if (AnamPosingEnabled)
+				return CalculateBoneModelSpaceHook.Original(ref pose, boneIdx);
+
 			// This is expected to return the hkQsTransform at the given index in the pose's ModelSpace transform array.
 			return (IntPtr)(pose.ModelPose.Data + boneIdx);
 		}
 
 		private static unsafe void SyncModelSpaceDetour(hkaPose* pose) {
+			var call = AnamPosingEnabled;
+
 			if (!Ktisis.IsInGPose && PosingEnabled) {
 				DisablePosing();
-				SyncModelSpaceHook.Original(pose);
+				call = true;
 			}
+
+			if (call)
+				SyncModelSpaceHook.Original(pose);
 		}
 
 		private static unsafe char LoadSkeletonDetour(Skeleton* a1, ushort a2, IntPtr a3) {
 			var exec = LoadSkeletonHook.Original(a1, a2, a3);
+			if (!PosingEnabled && !AnamPosingEnabled) return exec;
 
 			var partial = a1->PartialSkeletons[a2];
 			var pose = partial.GetHavokPose(0);
@@ -143,7 +156,8 @@ namespace Ktisis.Interop.Hooks {
 				return exec;
 			}
 
-			SyncModelSpaceHook.Original(pose);
+			if (!AnamPosingEnabled)
+				SyncModelSpaceHook.Original(pose);
 
 			// Make sure new partials get parented properly
 			if (a2 > 0)
@@ -156,8 +170,14 @@ namespace Ktisis.Interop.Hooks {
 
 					if (actor->RenderMode == RenderMode.Draw) break;
 
-					if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup))
-						backup.ApplyToPartial(a1, a2, PoseTransforms.Rotation, true);
+					if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
+						var trans = PoseTransforms.Rotation;
+						if (AnamPosingEnabled) {
+							if (StaticOffsets.IsPositionFrozen) trans |= PoseTransforms.Position;
+							if (StaticOffsets.IsScalingFrozen) trans |= PoseTransforms.Scale;
+						}
+						backup.ApplyToPartial(a1, a2, trans, true);
+					}
 				}
 			}
 

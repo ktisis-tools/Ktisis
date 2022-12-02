@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
 using Ktisis.Data.Excel;
-using Dalamud.Logging;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
