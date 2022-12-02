@@ -37,11 +37,15 @@ namespace Ktisis.Interface.Modular {
 				if (ImGui.Checkbox("Hide Default Window", ref hideDefaultWindow))
 					Ktisis.Configuration.ModularHideDefaultWorkspace = hideDefaultWindow;
 
+				ImGui.Columns(2);
 				if (ImGui.BeginChildFrame(958, new(ImGui.GetContentRegionAvail().X, ImGui.GetIO().DisplaySize.Y * 0.6f))) {
 					var modularConfig = cfg.ModularConfig;
 					modularConfig?.ForEach(c => TreeNode(c));
 					ImGui.EndChildFrame();
 				}
+				ImGui.NextColumn();
+				DrawItemDetails(SelectedObject);
+				ImGui.Columns();
 
 				ImGui.EndTabItem();
 			}
@@ -76,6 +80,7 @@ namespace Ktisis.Interface.Modular {
 		private static bool IsContainer(Type? type) => TypeToKind(type) == "Container";
 		private static bool IsAvailableContainer(string handle) => Manager.AvailableContainers.Any(a => a.Name == handle);
 		private static bool IsAvailablePanel(string? handle) => Manager.AvailablePanel.Any(a => a.Name == handle);
+		private static bool IsAvailableContainer(ConfigObject? cfgObj) => IsAvailableContainer(cfgObj!.Type);
 		private static bool IsAvailablePanel(ConfigObject? cfgObj) => IsAvailablePanel(cfgObj!.Type);
 		private static void Add(string handle) => Add(new ConfigObject(handle, Manager.GenerateExtra()));
 		private static void Add(ConfigObject toAdd) {
@@ -211,6 +216,98 @@ namespace Ktisis.Interface.Modular {
 				ImGui.TreePop();
 			}
 
+
+		private static readonly Dictionary<string, Action<ConfigObject, string, int>> KnownInts = new() {
+			{"WindowFlags", DrawFlagSelect<ImGuiWindowFlags> },
+			{"Location", DrawIntInput }
+		};
+		private static readonly Dictionary<string, Action<ConfigObject, string, string>> KnownStrings = new() {
+			{"Title", DrawStringInput }
+		};
+		private static readonly Dictionary<string, Action<ConfigObject, string, bool>> KnownBools = new() {
+		};
+		private static readonly Dictionary<Type, List<int>> WhitelistedFlags = new() {
+			{typeof(ImGuiWindowFlags), new(){
+				(int)ImGuiWindowFlags.None,
+				(int)ImGuiWindowFlags.NoTitleBar,
+				(int)ImGuiWindowFlags.NoResize,
+				(int)ImGuiWindowFlags.NoMove,
+				(int)ImGuiWindowFlags.NoScrollbar,
+				(int)ImGuiWindowFlags.NoCollapse,
+				(int)ImGuiWindowFlags.NoDecoration,
+				(int)ImGuiWindowFlags.AlwaysAutoResize,
+				(int)ImGuiWindowFlags.NoBackground,
+				(int)ImGuiWindowFlags.NoSavedSettings,
+				(int)ImGuiWindowFlags.NoMouseInputs,
+				(int)ImGuiWindowFlags.HorizontalScrollbar,
+				(int)ImGuiWindowFlags.NoFocusOnAppearing,
+				(int)ImGuiWindowFlags.NoBringToFrontOnFocus,
+				(int)ImGuiWindowFlags.AlwaysVerticalScrollbar,
+				(int)ImGuiWindowFlags.AlwaysHorizontalScrollbar,
+				(int)ImGuiWindowFlags.AlwaysUseWindowPadding,
+			} }
+		};
+
+		private static void DrawItemDetails(ConfigObject? cfgObj) {
+			if (cfgObj == null) return;
+			foreach (var KnownInt in KnownInts) {
+				cfgObj.Extra.Ints.TryGetValue(KnownInt.Key, out int value);
+				KnownInt.Value.Invoke(cfgObj, KnownInt.Key, value);
+			}
+			foreach (var KnownString in KnownStrings) {
+				string? value = null;
+				cfgObj.Extra.Strings?.TryGetValue(KnownString.Key, out value);
+				KnownString.Value.Invoke(cfgObj, KnownString.Key, value??"");
+			}
+			foreach (var KnownBool in KnownBools) {
+				bool value = false;
+				cfgObj.Extra.Bools?.TryGetValue(KnownBool.Key, out value);
+				KnownBool.Value.Invoke(cfgObj, KnownBool.Key, value);
+			}
+		}
+		private static void DrawStringInput(ConfigObject cfgObj, string key, string value) {
+			var inputValue = value;
+			if (ImGui.InputText($"{key}##Modular##Details", ref inputValue, 200, ImGuiInputTextFlags.EnterReturnsTrue))
+				cfgObj.Extra.SetString(key, inputValue);
+		}
+		private static void DrawCheckbox(ConfigObject cfgObj, string key, bool value) {
+			var inputValue = value;
+			if (ImGui.Checkbox($"{key}##Modular##Details", ref inputValue))
+				cfgObj.Extra.SetBool(key, inputValue);
+		}
+		private static void DrawIntInput(ConfigObject cfgObj, string key, int value) {
+			if (ImGui.InputInt($"{key}##Modular##Details", ref value))
+				cfgObj.Extra.SetInt(key, value);
+		}
+		private static void DrawFlagSelect<TEnum>(ConfigObject cfgObj, string key, int flagStack) where TEnum : struct, Enum  {
+			if (!IsAvailableContainer(cfgObj)) return;
+			if (!ImGui.CollapsingHeader(key)) return;
+
+			ImGui.TextWrapped(((TEnum)Enum.ToObject(typeof(TEnum), flagStack)).ToString());
+
+			DrawIntInput(cfgObj, key, flagStack);
+			WhitelistedFlags.TryGetValue(typeof(TEnum), out var whitelisted);
+
+			bool active = false;
+			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			if (ImGui.BeginListBox($"##{key}")) {
+
+				foreach (var flag in Enum.GetValues<TEnum>().Cast<int>()) {
+					if (!whitelisted!.Contains(flag)) continue;
+
+					bool hasFlag = (flagStack & flag) != 0;
+					if (ImGui.Selectable($"{(TEnum)Enum.ToObject(typeof(TEnum), flag)}##Modular##Details##{typeof(TEnum).Name}", hasFlag)) {
+						active |= true;
+						if (!hasFlag)
+							flagStack |= flag;
+						else
+							flagStack &= ~flag;
+					}
+				}
+			}
+			ImGui.EndListBox();
+			if(active)
+				cfgObj.Extra.SetInt(key, flagStack);
 		}
 	}
 }

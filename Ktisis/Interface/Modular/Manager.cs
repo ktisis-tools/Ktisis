@@ -137,5 +137,29 @@ namespace Ktisis.Interface.Modular {
 			this.Ints = ints;
 			this.Bools = bools;
 		}
+
+		internal void SetInt(string key, int value) {
+			if (this.Ints.ContainsKey(key))
+				this.Ints[key] = value;
+			else
+				this.Ints.Add(key, value);
+			Manager.Init();
+		}
+		internal void SetString(string key, string value) {
+			if (this.Strings == null) this.Strings = new();
+			if (this.Strings.ContainsKey(key))
+				this.Strings[key] = value;
+			else
+				this.Strings.Add(key, value);
+			Manager.Init();
+		}
+		internal void SetBool(string key, bool value) {
+			if (this.Bools == null) this.Bools = new();
+			if (this.Bools.ContainsKey(key))
+				this.Bools[key] = value;
+			else
+				this.Bools.Add(key, value);
+			Manager.Init();
+		}
 	}
 }
