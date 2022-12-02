@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
+using Dalamud.Logging;
 
 namespace Ktisis.Interop.Hooks {
     public static class PoseHooks {
@@ -136,49 +137,53 @@ namespace Ktisis.Interop.Hooks {
 			var exec = LoadSkeletonHook.Original(a1, a2, a3);
 			if (!PosingEnabled && !AnamPosingEnabled) return exec;
 
-			var partial = a1->PartialSkeletons[a2];
-			var pose = partial.GetHavokPose(0);
-			if (pose == null) return exec;
+			try {
+				var partial = a1->PartialSkeletons[a2];
+				var pose = partial.GetHavokPose(0);
+				if (pose == null) return exec;
 
-			if (a3 == IntPtr.Zero) {
-				if (a2 == 0) {
-					// TODO: Any way to do this without iterating the object table?
+				if (a3 == IntPtr.Zero) {
+					if (a2 == 0) {
+						// TODO: Any way to do this without iterating the object table?
+						foreach (var obj in Services.ObjectTable) {
+							var actor = (Actor*)obj.Address;
+							if (actor->Model == null || actor->Model->Skeleton != a1) continue;
+
+							PoseContainer container = new();
+							container.Store(actor->Model->Skeleton);
+							PreservedPoses[actor->ObjectID] = container;
+						}
+					}
+
+					return exec;
+				}
+
+				if (!AnamPosingEnabled)
+					SyncModelSpaceHook.Original(pose);
+
+				// Make sure new partials get parented properly
+				if (a2 > 0)
+					a1->ParentPartialToRoot(a2);
+
+				if (a2 < 3) {
 					foreach (var obj in Services.ObjectTable) {
 						var actor = (Actor*)obj.Address;
 						if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
-						PoseContainer container = new();
-						container.Store(actor->Model->Skeleton);
-						PreservedPoses[actor->ObjectID] = container;
-					}
-				}
+						if (actor->RenderMode == RenderMode.Draw) break;
 
-				return exec;
-			}
-
-			if (!AnamPosingEnabled)
-				SyncModelSpaceHook.Original(pose);
-
-			// Make sure new partials get parented properly
-			if (a2 > 0)
-				a1->ParentPartialToRoot(a2);
-
-			if (a2 < 3) {
-				foreach (var obj in Services.ObjectTable) {
-					var actor = (Actor*)obj.Address;
-					if (actor->Model == null || actor->Model->Skeleton != a1) continue;
-
-					if (actor->RenderMode == RenderMode.Draw) break;
-
-					if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
-						var trans = PoseTransforms.Rotation;
-						if (AnamPosingEnabled) {
-							if (StaticOffsets.IsPositionFrozen) trans |= PoseTransforms.Position;
-							if (StaticOffsets.IsScalingFrozen) trans |= PoseTransforms.Scale;
+						if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
+							var trans = PoseTransforms.Rotation;
+							if (AnamPosingEnabled) {
+								if (StaticOffsets.IsPositionFrozen) trans |= PoseTransforms.Position;
+								if (StaticOffsets.IsScalingFrozen) trans |= PoseTransforms.Scale;
+							}
+							backup.ApplyToPartial(a1, a2, trans, true);
 						}
-						backup.ApplyToPartial(a1, a2, trans, true);
 					}
 				}
+			} catch (Exception e) {
+				PluginLog.Error(e, "Error in LoadSkeletonDetour.");
 			}
 
 			return exec;
