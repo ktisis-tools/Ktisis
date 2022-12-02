@@ -78,7 +78,7 @@ namespace Ktisis.Structs.Poses {
 			}
 
 			if (p > 0)
-				partial.ParentToRoot(p);
+				modelSkeleton->ParentPartialToRoot(p);
 		}
 	}
 

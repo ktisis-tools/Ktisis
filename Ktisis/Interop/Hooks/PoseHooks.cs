@@ -32,6 +32,15 @@ namespace Ktisis.Interop.Hooks {
 		internal unsafe delegate char LoadSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
 		internal static Hook<LoadSkeletonDelegate> LoadSkeletonHook = null!;
 
+		internal unsafe delegate IntPtr BustDelegate(ActorModel* a1, Breasts* a2);
+		internal static Hook<BustDelegate> BustHook = null!;
+
+		internal unsafe static IntPtr BustDetour(ActorModel* a1, Breasts* a2) {
+			var exec = BustHook.Original(a1, a2);
+			a1->ScaleBust(true);
+			return exec;
+		}
+
 		internal static bool PosingEnabled { get; private set; }
 
 		internal static Dictionary<uint, PoseContainer> PreservedPoses = new();
@@ -54,6 +63,9 @@ namespace Ktisis.Interop.Hooks {
 
 			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
 			LoadSkeletonHook = Hook<LoadSkeletonDelegate>.FromAddress(loadSkele, LoadSkeletonDetour);
+
+			var loadBust = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F6 84 24 ?? ?? ?? ?? ?? 0F 28 74 24 ??");
+			BustHook = Hook<BustDelegate>.FromAddress(loadBust, BustDetour);
 		}
 
 		internal static void DisablePosing() {
@@ -64,6 +76,7 @@ namespace Ktisis.Interop.Hooks {
 			LookAtIKHook?.Disable();
 			AnimFrozenHook?.Disable();
 			LoadSkeletonHook?.Disable();
+			BustHook?.Disable();
 			PosingEnabled = false;
 		}
 
@@ -74,6 +87,7 @@ namespace Ktisis.Interop.Hooks {
 			LookAtIKHook?.Enable();
 			AnimFrozenHook?.Enable();
 			LoadSkeletonHook?.Enable();
+			BustHook?.Enable();
 			PosingEnabled = true;
 		}
 
@@ -133,7 +147,7 @@ namespace Ktisis.Interop.Hooks {
 
 			// Make sure new partials get parented properly
 			if (a2 > 0)
-				partial.ParentToRoot(a2);
+				a1->ParentPartialToRoot(a2);
 
 			if (a2 < 3) {
 				foreach (var obj in Services.ObjectTable) {
@@ -194,6 +208,8 @@ namespace Ktisis.Interop.Hooks {
 			AnimFrozenHook.Dispose();
 			LoadSkeletonHook.Disable();
 			LoadSkeletonHook.Dispose();
+			BustHook.Disable();
+			BustHook.Dispose();
 		}
 	}
 }

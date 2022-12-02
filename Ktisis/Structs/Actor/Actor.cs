@@ -106,6 +106,8 @@ namespace Ktisis.Structs.Actor {
 				if (!res) {
 					PluginLog.Warning("Failed to update character. Forcing redraw.");
 					Redraw(faceHack);
+				} else if (cur.BustSize != custom.BustSize && Model != null) {
+					Model->ScaleBust();
 				}
 			}
 		}
