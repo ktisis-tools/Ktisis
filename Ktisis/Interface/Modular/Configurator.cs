@@ -173,9 +173,7 @@ namespace Ktisis.Interface.Modular {
 
 			ImGui.PushID(id);
 			if (ImGui.BeginPopupContextItem()) {
-				if (GuiHelpers.IconButtonHoldConfirm(Dalamud.Interface.FontAwesomeIcon.Trash, $"Delete {handle}"))
-					Delete(cfgObj);
-				// Some processing...
+				DrawContextMenu(cfgObj);
 				ImGui.EndPopup();
 			}
 			ImGui.PopID();
@@ -216,6 +214,15 @@ namespace Ktisis.Interface.Modular {
 				ImGui.TreePop();
 			}
 
+		}
+		private static void DrawContextMenu(ConfigObject cfgObj) {
+			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Delete {cfgObj.Type}"))
+				Delete(cfgObj);
+
+			//ImGui.SameLine();
+			//if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Plus, $"Add above {cfgObj.Type}"))
+			// TODO open DrawAddPanel and execute AddBefore() on select
+		}
 
 		private static readonly Dictionary<string, Action<ConfigObject, string, int>> KnownInts = new() {
 			{"WindowFlags", DrawFlagSelect<ImGuiWindowFlags> },
