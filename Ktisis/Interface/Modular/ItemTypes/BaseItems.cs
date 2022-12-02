@@ -55,11 +55,10 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 		}
 
 		private void AddWindowFlags(ImGuiWindowFlags windowFlags) {
-			this.WindowFlags |= windowFlags;
-			if (this.Extra.Ints.TryGetValue("WindowFlags", out int _))
-				this.Extra.Ints["WindowFlags"] |= (int)this.WindowFlags;
-			else
+			if (!this.Extra.Ints.ContainsKey("WindowFlags")) {
+				this.WindowFlags |= windowFlags;
 				this.Extra.Ints.Add("WindowFlags", (int)this.WindowFlags);
+			}
 		}
 
 		override public void Draw() {
