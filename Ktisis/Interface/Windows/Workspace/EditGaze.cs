@@ -1,4 +1,3 @@
-using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
@@ -11,7 +10,6 @@ using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
 using Ktisis.Util;
-using Dalamud.Logging;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class EditGaze {
