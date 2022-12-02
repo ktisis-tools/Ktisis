@@ -102,7 +102,7 @@ namespace Ktisis
 		// Gizmo
 
 		public MODE GizmoMode { get; set; } = MODE.LOCAL;
-		public OPERATION GizmoOp { get; set; } = OPERATION.TRANSLATE;
+		public OPERATION GizmoOp { get; set; } = OPERATION.ROTATE;
 
 		public SiblingLink SiblingLink { get; set; } = SiblingLink.None;
 
