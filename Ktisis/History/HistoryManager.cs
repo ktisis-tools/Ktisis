@@ -44,26 +44,33 @@ namespace Ktisis.History {
 		public static bool OnInput(QueueItem input) {
 			if (ControlHooks.KeyboardState!.IsKeyDown(VirtualKey.CONTROL)) {
 				if (input.VirtualKey == VirtualKey.Z) {
-					if (_currentIdx > 1) {
-						_currentIdx--;
-						UpdateSkeleton();
-						PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-						PluginLog.Verbose("CTRL+Z pressed. Undo.");
-					}
+					Undo();
 					return true;
 				}
-				else if (input.VirtualKey == VirtualKey.Y) {
-					if (_currentIdx < _maxIdx) {
-						_currentIdx++;
-						UpdateSkeleton();
-						PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-						PluginLog.Verbose("CTRL+Y pressed. Redo.");
-					}
+				if (input.VirtualKey == VirtualKey.Y) {
+					Redo();
 					return true;
 				}
 			}
-
 			return false;
+		}
+		public static void Redo() {
+			if (_currentIdx >= _maxIdx)
+				return;
+
+			_currentIdx++;
+			UpdateSkeleton();
+			PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
+			PluginLog.Verbose("CTRL+Y pressed. Redo.");
+		}
+		public static void Undo() {
+			if (_currentIdx <= 1)
+				return;
+
+			_currentIdx--;
+			UpdateSkeleton();
+			PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
+			PluginLog.Verbose("CTRL+Z pressed. Undo.");
 		}
 
 		internal static void OnGPoseChange(ActorGposeState _state) {
