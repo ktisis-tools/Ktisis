@@ -22,22 +22,17 @@ namespace Ktisis.Interface.Components {
 		private static bool IsSettingsActive = false;
 
 
-		public static FontAwesomeIcon IconPosition = FontAwesomeIcon.LocationArrow;
-		public static FontAwesomeIcon IconRotation = FontAwesomeIcon.Sync;
-		public static FontAwesomeIcon IconScale = FontAwesomeIcon.ExpandAlt;
-		public static FontAwesomeIcon IconUniversal = FontAwesomeIcon.Circle;
-
 		// utils
 		public static void VerticalAlignTextOnButtonSize(float percentage = 0.667f) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ButtonSize.Y / 2 - ImGui.GetFontSize() * percentage)); // align text with button size
 
 		public static void DrawGizmoOperations() {
-			ButtonChangeOperation(OPERATION.TRANSLATE, IconPosition);
+			ButtonChangeOperation(OPERATION.TRANSLATE, IconsPool.Position);
 			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.ROTATE, IconRotation);
+			ButtonChangeOperation(OPERATION.ROTATE, IconsPool.Rotation);
 			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.SCALE, IconScale);
+			ButtonChangeOperation(OPERATION.SCALE, IconsPool.Scale);
 			ImGui.SameLine();
-			ButtonChangeOperation(OPERATION.UNIVERSAL, IconUniversal);
+			ButtonChangeOperation(OPERATION.UNIVERSAL, IconsPool.Universal);
 		}
 		public static void DrawExtra() {
 			var gizmode = Ktisis.Configuration.GizmoMode;

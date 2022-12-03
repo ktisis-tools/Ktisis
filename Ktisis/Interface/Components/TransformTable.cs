@@ -83,17 +83,17 @@ namespace Ktisis.Interface.Components {
 			// Position
 			result |= ColoredDragFloat3("##Position", ref Position, BaseSpeedPos * multiplier, axisColors);
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, ControlButtons.IconPosition);
+			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, IconsPool.Position);
  
 			// Rotation
 			result |= ColoredDragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, axisColors);
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, ControlButtons.IconRotation);
+			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, IconsPool.Rotation);
  
 			// Scale
 			result |= ColoredDragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, axisColors);
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, ControlButtons.IconScale);
+			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, IconsPool.Scale);
 
 			IsEditing = result;
 
