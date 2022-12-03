@@ -148,6 +148,7 @@ namespace Ktisis.Overlay {
 							Interop.Alloc.SetMatrix(transform, matrix);
 
 							// handles parenting
+
 							if (Ktisis.Configuration.EnableParenting)
 								bone.PropagateChildren(transform, initialPos, initialRot);
 

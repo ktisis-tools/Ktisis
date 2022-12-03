@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
 using Ktisis.Data.Excel;
-using Dalamud.Logging;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
@@ -106,6 +107,8 @@ namespace Ktisis.Structs.Actor {
 				if (!res) {
 					PluginLog.Warning("Failed to update character. Forcing redraw.");
 					Redraw(faceHack);
+				} else if (cur.BustSize != custom.BustSize && Model != null) {
+					Model->ScaleBust();
 				}
 			}
 		}

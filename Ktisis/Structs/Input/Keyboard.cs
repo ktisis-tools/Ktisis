@@ -1,28 +1,30 @@
 using System;
 using System.Runtime.InteropServices;
 
+using Dalamud.Game.ClientState.Keys;
+
 namespace Ktisis.Structs.Input {
 	public unsafe struct KeyboardDevice {
-		public unsafe KeyboardInput* GetQueue() {
+		public unsafe KeyboardState* GetQueue() {
 			fixed (KeyboardDevice* self = &this)
-				return ((delegate* unmanaged<KeyboardDevice*, KeyboardInput*>**)self)[0][4](self);
+				return ((delegate* unmanaged<KeyboardDevice*, KeyboardState*>**)self)[0][4](self);
 		}
 
-		public unsafe KeyboardInput* ClearQueue() {
+		public unsafe KeyboardState* ClearQueue() {
 			fixed (KeyboardDevice* self = &this)
-				return ((delegate* unmanaged<KeyboardDevice*, KeyboardInput*>**)self)[0][5](self);
+				return ((delegate* unmanaged<KeyboardDevice*, KeyboardState*>**)self)[0][5](self);
 		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct KeyboardInput {
+	public unsafe struct KeyboardState {
 		public byte IsKeyPressed;
 		public fixed uint KeyMap[159];
 		public KeyboardQueue Queue;
 		public long QueueCount;
 
-		public bool IsKeyDown(byte code)
-			=> KeyMap[code] == 1;
+		public bool IsKeyDown(VirtualKey key)
+			=> KeyMap[(int)key] == 1;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -42,5 +44,7 @@ namespace Ktisis.Structs.Input {
 		[FieldOffset(0)] public KeyEvent Event;
 		[FieldOffset(1)] public byte KeyCode;
 		[FieldOffset(4)] public byte Unknown;
+
+		public VirtualKey VirtualKey => (VirtualKey)KeyCode;
 	}
 }

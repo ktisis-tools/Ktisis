@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Structs.Bones;
 using Lumina.Excel.GeneratedSheets;
+using System.Runtime.CompilerServices;
 
 namespace Ktisis.Structs {
 	public static class Havok {
@@ -41,7 +42,9 @@ namespace Ktisis.Structs {
 
 		// Partial
 
-		public unsafe static void ParentToRoot(this PartialSkeleton partial, int p) {
+		public unsafe static void ParentPartialToRoot(this Skeleton skeleton, int p) {
+			var partial = skeleton.PartialSkeletons[p];
+
 			var pose = partial.GetHavokPose(0);
 			if (pose == null) return;
 

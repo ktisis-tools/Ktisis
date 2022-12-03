@@ -5,20 +5,18 @@ using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
-using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
-using Ktisis.Localization;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Poses;
+using Ktisis.Localization;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Structs.Poses;
-using Ktisis.Data.Serialization;
 using Ktisis.Data.Files;
-using Ktisis.Structs;
+using Ktisis.Data.Serialization;
 
 using static Ktisis.Data.Files.AnamCharaFile;
 
@@ -26,8 +24,11 @@ namespace Ktisis.Interface.Windows.Workspace
 {
     public static class Workspace {
 		public static bool Visible = false;
+		
+		
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
+		public static Vector4 ColYellow = new Vector4(255, 250, 0, 255);
 		public static Vector4 ColRed = new Vector4(255, 0, 0, 255);
 
 		public static TransformTable Transform = new();
@@ -37,6 +38,8 @@ namespace Ktisis.Interface.Windows.Workspace
 		// Toggle visibility
 
 		public static void Show() => Visible = true;
+		public static void Toggle() => Visible = !Visible;
+		
 		public static void OnEnterGposeToggle(Structs.Actor.State.ActorGposeState gposeState) {
 			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnEnterGpose)
 				Visible = gposeState == Structs.Actor.State.ActorGposeState.ON;
@@ -57,7 +60,7 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
-			if (ImGui.Begin("Ktisis (Alpha)", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize)) {
+			if (ImGui.Begin($"Ktisis ({Ktisis.Version})", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize)) {
 
 				ControlButtons.PlaceAndRenderSettings();
 
@@ -69,6 +72,15 @@ namespace Ktisis.Interface.Windows.Workspace
 					gposeOn ? "GPose Enabled" : "GPose Disabled"
 				);
 
+				if (PoseHooks.AnamPosingEnabled) {
+					ImGui.TextColored(
+						ColYellow,
+						"Anamnesis Enabled"	
+					);
+				}
+
+				ImGui.EndGroup();
+
 				ImGui.SameLine();
 
 				// Pose switch
@@ -78,10 +90,12 @@ namespace Ktisis.Interface.Windows.Workspace
 				if (target == null) return;
 
 				// Selection info
+				ImGui.Spacing();
 				SelectInfo(target);
 
 				// Actor control
 
+				ImGui.Spacing();
 				ImGui.Separator();
 
 				if (ImGui.BeginTabBar(Locale.GetString("Workspace"))) {
@@ -193,31 +207,11 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			// Advanced
 			if (ImGui.CollapsingHeader("Advanced (Debug)")) {
-				if (ImGui.Button("Reset Current Pose")) {
-					if (actor->Model != null && actor->Model->Skeleton != null) {
-						var skele = actor->Model->Skeleton;
-						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
-							var partial = skele->PartialSkeletons[p];
-							var pose = partial.GetHavokPose(0);
-							if (pose == null) continue;
-							PoseHooks.SyncModelSpaceHook.Original(pose);
-							if (p > 0) partial.ParentToRoot(p);
-						}
-					}
-				}
+				if (ImGui.Button("Reset Current Pose") && actor->Model != null)
+					actor->Model->SyncModelSpace();
 
-				if (ImGui.Button("Set to Reference Pose")) {
-					if (actor->Model != null && actor->Model->Skeleton != null) {
-						var skele = actor->Model->Skeleton;
-						for (var p = 0; p < skele->PartialSkeletonCount; p++) {
-							var partial = skele->PartialSkeletons[p];
-							var pose = partial.GetHavokPose(0);
-							if (pose == null) continue;
-							pose->SetToReferencePose();
-							PoseHooks.SyncModelSpaceHook.Original(pose);
-						}
-					}
-				}
+				if (ImGui.Button("Set to Reference Pose") && actor->Model != null)
+					actor->Model->SyncModelSpace(true);
 
 				if (ImGui.Button("Store Pose") && actor->Model != null)
 					_TempPose.Store(actor->Model->Skeleton);
@@ -303,7 +297,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.SameLine(size * 2.5f);
 		}
 
-		private unsafe static void ImportExportPose(Actor* actor) {
+		public unsafe static void ImportExportPose(Actor* actor) {
 			ImGui.Spacing();
 			ImGui.Text("Transforms");
 
@@ -332,9 +326,10 @@ namespace Ktisis.Interface.Windows.Workspace
 			if (col) ImGui.PopStyleColor();
 
 			if (trans > PoseTransforms.Rotation) {
-				ImGui.PushStyleColor(ImGuiCol.Text, 0xff00fbff);
-				ImGui.Text("* Importing may have unexpected results.");
-				ImGui.PopStyleColor();
+				ImGui.TextColored(
+					ColYellow,
+					"* Importing may have unexpected results."
+				);
 			}
 
 			Ktisis.Configuration.PoseTransforms = trans;
@@ -436,7 +431,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.Spacing();
 		}
 
-		private unsafe static void ImportExportChara(Actor* actor) {
+		public unsafe static void ImportExportChara(Actor* actor) {
 			var mode = Ktisis.Configuration.CharaMode;
 
 			// Equipment

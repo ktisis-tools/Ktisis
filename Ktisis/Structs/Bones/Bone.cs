@@ -8,6 +8,7 @@ using static FFXIVClientStructs.Havok.hkaPose;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using static Ktisis.Overlay.Skeleton;
+
 using ImGuizmoNET;
 
 namespace Ktisis.Structs.Bones {
@@ -50,6 +51,10 @@ namespace Ktisis.Structs.Bones {
 
 		public unsafe List<Bone> GetChildren(bool includePartials = true, bool usePartialRoot = false) {
 			var result = new List<Bone>();
+
+			if (Pose == null || Pose->Skeleton == null)
+				return result;
+
 			// Add child bones from same partial
 			for (var i = Index + 1; i < Pose->Skeleton->ParentIndices.Length; i++) {
 				var child = new Bone(Skeleton, Partial, i);

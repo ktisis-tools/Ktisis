@@ -31,7 +31,7 @@ namespace Ktisis.Interface.Components {
 
 			ImGui.SameLine();
 			var showSkeleton = Ktisis.Configuration.ShowSkeleton;
-			if (showSkeleton) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			if (showSkeleton) ImGui.PushStyleColor(ImGuiCol.Text,GuiHelpers.VisibleCheckmarkColor());
 			if (GuiHelpers.IconButton(showSkeleton ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, ButtonSize))
 				Skeleton.Toggle();
 			if (showSkeleton) ImGui.PopStyleColor();
@@ -50,8 +50,25 @@ namespace Ktisis.Interface.Components {
 			if (!gizmoActive) ImGui.EndDisabled();
 		}
 
-		// As the settings button is a bit special and should not be as present as others
+		// As these buttons are a bit special and should not be as present as others
 		// we remove the border and change the hover behavior.
+
+		private static void DrawInfo() {
+			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
+			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
+			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
+
+			if (GuiHelpers.IconButton(FontAwesomeIcon.InfoCircle, new(ImGui.GetFontSize() * 1.5f)))
+				Information.Toggle();
+
+			ImGui.PopStyleColor();
+			ImGui.PopStyleVar(2);
+
+			IsSettingsHovered = ImGui.IsItemHovered();
+			IsSettingsActive = ImGui.IsItemActive();
+
+			GuiHelpers.Tooltip("Information");
+		}
 		private static void DrawSettings() {
 			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
@@ -67,7 +84,7 @@ namespace Ktisis.Interface.Components {
 			IsSettingsHovered = ImGui.IsItemHovered();
 			IsSettingsActive = ImGui.IsItemActive();
 
-			GuiHelpers.Tooltip("Open Settings.");
+			GuiHelpers.Tooltip("Open Settings");
 		}
 		public static void PlaceAndRenderSettings() {
 
@@ -75,9 +92,11 @@ namespace Ktisis.Interface.Components {
 			ImGui.PushClipRect(ImGui.GetWindowPos(), ImGui.GetWindowPos() + ImGui.GetWindowSize(), false);
 
 			// A bit complicated formulas to handle any styles values
-			ImGui.SetCursorPosX(initialPos.X + ImGui.GetContentRegionAvail().X - ImGui.GetStyle().FramePadding.X - ImGui.GetFontSize() * 3.5f - (float)Math.Exp(ImGui.GetFontSize() / 18));
+			ImGui.SetCursorPosX(initialPos.X + ImGui.GetContentRegionAvail().X - ImGui.GetStyle().FramePadding.X - ImGui.GetFontSize() * (3.5f * 1.5f) - (float)Math.Exp(ImGui.GetFontSize() / 18));
 			ImGui.SetCursorPosY(initialPos.Y - ImGui.GetStyle().FramePadding.Y - (float)Math.Log2(ImGui.GetTextLineHeight()) * 3.5f - ImGui.GetTextLineHeight()*1.05f);
 
+			DrawInfo();
+			ImGui.SameLine();
 			DrawSettings();
 
 			ImGui.PopClipRect();
@@ -87,7 +106,7 @@ namespace Ktisis.Interface.Components {
 
 		public static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
 			var isCurrentOperation = Ktisis.Configuration.GizmoOp.HasFlag(OPERATION.ROTATE_X) ? (Ktisis.Configuration.GizmoOp | OPERATION.ROTATE).HasFlag(operation) : Ktisis.Configuration.GizmoOp.HasFlag(operation);
-			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, GuiHelpers.VisibleCheckmarkColor());
 
 			if (GuiHelpers.IconButton(icon, ButtonSize))
 				if (!isCurrentOperation)
@@ -149,7 +168,7 @@ namespace Ktisis.Interface.Components {
 		private static void DrawSiblingLink() {
 			var siblingLink = Ktisis.Configuration.SiblingLink;
 
-			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, GuiHelpers.VisibleCheckmarkColor());
 			if (GuiHelpers.IconButton(SiblingLinkToIcon(siblingLink), ButtonSize))
 				CircleTroughSiblingLinkModes();
 			if (siblingLink != SiblingLink.None) ImGui.PopStyleColor();

@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Numerics;
-
-using ImGuiNET;
+using System.Collections.Generic;
 
 using Ktisis.Structs.Poses;
 

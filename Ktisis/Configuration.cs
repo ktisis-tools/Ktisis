@@ -24,6 +24,9 @@ namespace Ktisis
 		public const int CurVersion = 2;
 		public int Version { get; set; } = CurVersion;
 
+		public bool IsFirstTimeInstall { get; set; } = true;
+		public string LastPluginVer { get; set; } = "";
+
 		// Interface
 		[Obsolete("Replaced by AutoOpenCtor")]
 		public bool AutoOpen { get; set; } = true;
@@ -102,7 +105,7 @@ namespace Ktisis
 		// Gizmo
 
 		public MODE GizmoMode { get; set; } = MODE.LOCAL;
-		public OPERATION GizmoOp { get; set; } = OPERATION.TRANSLATE;
+		public OPERATION GizmoOp { get; set; } = OPERATION.ROTATE;
 
 		public SiblingLink SiblingLink { get; set; } = SiblingLink.None;
 
@@ -130,6 +133,8 @@ namespace Ktisis
 		public bool EnableParenting { get; set; } = true;
 
 		public bool LinkedGaze { get; set; } = true;
+		
+		public bool ShowToolbar { get; set; } = false;
 
 		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
 

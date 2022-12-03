@@ -5,6 +5,7 @@ using Dalamud.Interface;
 using Ktisis.Overlay;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Interface.Windows.Toolbar;
 using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis.Interface {
@@ -29,8 +30,10 @@ namespace Ktisis.Interface {
 			// GUI
 			Workspace.Draw();
 			ConfigGui.Draw();
+			Information.Draw();
 			EditActor.Draw();
 			References.Draw();
+			ToolbarWindow.Draw();
 		}
 	}
 }
