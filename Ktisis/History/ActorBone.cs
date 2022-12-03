@@ -3,6 +3,7 @@ using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 
+using System;
 using System.Numerics;
 
 using static FFXIVClientStructs.Havok.hkaPose;
@@ -61,10 +62,16 @@ namespace Ktisis.History {
 
 		}
 
-		public override string DebugPrint() {
+		public unsafe override string DebugPrint() {
 			var str = "";
-			if (this.Bone is null) str += $"Bone Global";
-			else str += $"Bone {Locale.GetBoneName(Bone.HkaBone.Name.String)}";
+
+			if (Bone == null)
+				str += $"Bone Global";
+			else if ((IntPtr)Bone.Pose == IntPtr.Zero || Bone.Pose->Skeleton == null)
+				str += "<Invalid>";
+			else
+				str += $"Bone {Locale.GetBoneName(Bone.HkaBone.Name.String)}";
+
 			str += $"ParentingState: {ParentingState} - SiblingLink: {SiblingLinkType}";
 
 			return str;
