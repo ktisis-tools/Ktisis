@@ -53,6 +53,7 @@
 			"skeleton": {
 				"header":"Skeleton lines and dots",
 				"drawLines": "Draw lines on skeleton",
+				"__comment": "TODO: These should reflect the actual functionality (draw lines/dots when *gizmo is active*) more clearly.",
 				"drawLineWhenSelecting": "Draw lines when selecting",
 				"drawDotsWhenSelecting": "Draw Dots when selecting",
 				"dotRadius": "Dot Radius",
@@ -161,7 +162,7 @@
 		"data": {
 			"title": "Data",
 			"glamourDresser": {
-				"__comment": "These are currency a little messy... need placeholder system to fix this.",
+				"__comment": "These are currently a little messy... need placeholder system to fix this.",
 				"memoryCount": "Glamour Plates in memory: ",
 				"validCount": {
 					"pre": "Found ",
@@ -221,6 +222,7 @@
 	},
 
 
+	"__comment": "Taken from Anamesis -- thank you!",
 	"bone": {
 		"n_root": "Root",
 		"n_hara": "Abdomen",
