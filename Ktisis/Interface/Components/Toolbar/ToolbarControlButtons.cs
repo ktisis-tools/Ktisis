@@ -43,7 +43,7 @@ namespace Ktisis.Interface.Components.Toolbar {
 			ImGui.SameLine();
 
 			var showSkeleton = Ktisis.Configuration.ShowSkeleton;
-			if (showSkeleton) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			if (showSkeleton) ImGui.PushStyleColor(ImGuiCol.Text, GuiHelpers.VisibleCheckmarkColor());
 			if (GuiHelpers.IconButton(showSkeleton ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, ButtonSize))
 				Skeleton.Toggle();
 			if (showSkeleton) ImGui.PopStyleColor();
@@ -56,7 +56,7 @@ namespace Ktisis.Interface.Components.Toolbar {
 
 		public static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
 			var isCurrentOperation = Ktisis.Configuration.GizmoOp.HasFlag(OPERATION.ROTATE_X) ? (Ktisis.Configuration.GizmoOp | OPERATION.ROTATE).HasFlag(operation) : Ktisis.Configuration.GizmoOp.HasFlag(operation);
-			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, GuiHelpers.VisibleCheckmarkColor());
 
 			if (GuiHelpers.IconButton(icon, ButtonSize))
 				if (!isCurrentOperation)
@@ -98,7 +98,7 @@ namespace Ktisis.Interface.Components.Toolbar {
 		private static void DrawSiblingLink() {
 			var siblingLink = Ktisis.Configuration.SiblingLink;
 
-			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, GuiHelpers.VisibleCheckmarkColor());
 			if (GuiHelpers.IconButton(SiblingLinkToIcon(siblingLink), ButtonSize))
 				CircleTroughSiblingLinkModes();
 			if (siblingLink != SiblingLink.None) ImGui.PopStyleColor();
