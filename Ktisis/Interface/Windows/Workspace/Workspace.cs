@@ -24,6 +24,8 @@ namespace Ktisis.Interface.Windows.Workspace
 {
     public static class Workspace {
 		public static bool Visible = false;
+		
+		
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
 		public static Vector4 ColYellow = new Vector4(255, 250, 0, 255);
@@ -36,6 +38,8 @@ namespace Ktisis.Interface.Windows.Workspace
 		// Toggle visibility
 
 		public static void Show() => Visible = true;
+		public static void Toggle() => Visible = !Visible;
+		
 		public static void OnEnterGposeToggle(Structs.Actor.State.ActorGposeState gposeState) {
 			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnEnterGpose)
 				Visible = gposeState == Structs.Actor.State.ActorGposeState.ON;
@@ -293,7 +297,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.SameLine(size * 2.5f);
 		}
 
-		private unsafe static void ImportExportPose(Actor* actor) {
+		public unsafe static void ImportExportPose(Actor* actor) {
 			ImGui.Spacing();
 			ImGui.Text("Transforms");
 
@@ -427,7 +431,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.Spacing();
 		}
 
-		private unsafe static void ImportExportChara(Actor* actor) {
+		public unsafe static void ImportExportChara(Actor* actor) {
 			var mode = Ktisis.Configuration.CharaMode;
 
 			// Equipment

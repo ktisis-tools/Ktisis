@@ -25,6 +25,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			AdvancedWindow.Draw();
 			TransformWindow.Draw();
 			BonesWindow.Draw();
+			ImportExportWindow.Draw();
 			
 			var cfg = Ktisis.Configuration;
 			var size = new Vector2(-1, -1);
@@ -87,18 +88,20 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			if (ImGui.Checkbox("Parent", ref parent))
 				cfg.EnableParenting = parent;
 
+			ImGui.SameLine(0, ImGui.GetFontSize());
+			
+			if (GuiHelpers.IconButtonTooltip(IconsPool.Import, "Import and Export pose and appearance", ToolbarControlButtons.ButtonSize))
+				ImportExportWindow.Toggle();
+			
 			ImGui.SameLine();
-
-			var offset = ToolbarControlButtons.ButtonSize.X * 2.0f;
-			ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - offset - ImGui.GetStyle().ItemSpacing.X);
-
+			
 			if (GuiHelpers.IconButtonTooltip(IconsPool.More, "Advanced tools window", ToolbarControlButtons.ButtonSize))
 				AdvancedWindow.Toggle();
 
 			ImGui.SameLine();
 
-			if (GuiHelpers.IconButtonTooltip(IconsPool.Settings, "Ktisis settings window", ToolbarControlButtons.ButtonSize))
-				ConfigGui.Toggle();
+			if (GuiHelpers.IconButtonTooltip(IconsPool.Settings, "Ktisis main window", ToolbarControlButtons.ButtonSize))
+				Workspace.Workspace.Toggle();
 			ImGui.End();
 		}
 	}
