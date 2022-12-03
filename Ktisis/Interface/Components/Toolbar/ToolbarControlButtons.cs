@@ -9,6 +9,7 @@ using ImGuiNET;
 
 using ImGuizmoNET;
 
+using Ktisis.History;
 using Ktisis.Interface.Windows.Toolbar;
 using Ktisis.Interop.Hooks;
 using Ktisis.Overlay;
@@ -30,11 +31,20 @@ namespace Ktisis.Interface.Components.Toolbar {
 			ButtonChangeOperation(OPERATION.SCALE, IconsPool.Scale);
 			ImGui.SameLine();
 			VerticalAlignTextOnButtonSize(0.9f);
-			if (GuiHelpers.TextButtonTooltip("+", "Show transform table ")) {
+			if (GuiHelpers.IconButtonTooltip(IconsPool.DownMore, "Show transform table ")) {
 				TransformWindow.Toggle();
 			}
 			ImGui.SameLine(0, ImGui.GetFontSize());
-
+			VerticalAlignTextOnButtonSize(0.9f);
+			if (GuiHelpers.IconButtonTooltip(IconsPool.Undo, "Undo previous action")) {
+				HistoryManager.Undo();
+			}
+			ImGui.SameLine();
+			VerticalAlignTextOnButtonSize(0.9f);
+			if (GuiHelpers.IconButtonTooltip(IconsPool.Redo, "Redo previous action")) {
+				HistoryManager.Redo();
+			}
+			ImGui.SameLine(0, ImGui.GetFontSize());
 			// Extra Options
 			var gizmoMode = Ktisis.Configuration.GizmoMode;
 			if (GuiHelpers.IconButtonTooltip(gizmoMode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ButtonSize))

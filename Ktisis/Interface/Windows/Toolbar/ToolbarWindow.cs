@@ -7,6 +7,7 @@ using ImGuiNET;
 
 using Ktisis.Interface.Components.Toolbar;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Interop.Hooks;
 using Ktisis.Overlay;
 using Ktisis.Util;
 
@@ -25,6 +26,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			AdvancedWindow.Draw();
 			TransformWindow.Draw();
 			BonesWindow.Draw();
+			ImportExportWindow.Draw();
 			
 			var cfg = Ktisis.Configuration;
 			var size = new Vector2(-1, -1);
@@ -40,8 +42,31 @@ namespace Ktisis.Interface.Windows.Toolbar {
 
 			ToolbarControlButtons.DrawPoseSwitch();
 
-			ImGui.SameLine(0, ImGui.GetFontSize());
+			ImGui.SameLine();
 
+			if (PoseHooks.AnamPosingEnabled) {
+				Vector2 cursorScreenPos = ImGui.GetCursorScreenPos();
+				ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
+				var frameHeight = ImGui.GetFrameHeight();
+				var center = new Vector2(cursorScreenPos.X + ImGui.GetFontSize() / 2 + ImGui.GetStyle().ItemSpacing.X / 2, cursorScreenPos.Y + frameHeight / 2);
+				windowDrawList.AddCircleFilled(
+					center,
+					ImGui.GetFontSize()/4,
+					ImGui.GetColorU32(Workspace.Workspace.ColYellow)
+				);
+
+				var mousePos = ImGui.GetMousePos();
+				if (Vector2.Distance(mousePos, center) < ImGui.GetFontSize()/1.2) {
+					ImGui.BeginTooltip();
+					ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+					ImGui.TextUnformatted("Anamnesis Enabled");
+					ImGui.PopTextWrapPos();
+					ImGui.EndTooltip();
+				}
+			}
+			
+			ImGui.SameLine(0, ImGui.GetFontSize() * (PoseHooks.AnamPosingEnabled ? 2 : 1));
+			
 			if (GuiHelpers.IconButtonTooltip(IconsPool.UserEdit, "Edit current Actor"))
 				if (EditActor.Visible) EditActor.Hide();
 				else EditActor.Show();
@@ -87,18 +112,20 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			if (ImGui.Checkbox("Parent", ref parent))
 				cfg.EnableParenting = parent;
 
+			ImGui.SameLine(0, ImGui.GetFontSize());
+			
+			if (GuiHelpers.IconButtonTooltip(IconsPool.Import, "Import and Export pose and appearance", ToolbarControlButtons.ButtonSize))
+				ImportExportWindow.Toggle();
+			
 			ImGui.SameLine();
-
-			var offset = ToolbarControlButtons.ButtonSize.X * 2.0f;
-			ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - offset - ImGui.GetStyle().ItemSpacing.X);
-
+			
 			if (GuiHelpers.IconButtonTooltip(IconsPool.More, "Advanced tools window", ToolbarControlButtons.ButtonSize))
 				AdvancedWindow.Toggle();
 
 			ImGui.SameLine();
 
-			if (GuiHelpers.IconButtonTooltip(IconsPool.Settings, "Ktisis settings window", ToolbarControlButtons.ButtonSize))
-				ConfigGui.Toggle();
+			if (GuiHelpers.IconButtonTooltip(IconsPool.Settings, "Ktisis main window", ToolbarControlButtons.ButtonSize))
+				Workspace.Workspace.Toggle();
 			ImGui.End();
 		}
 	}

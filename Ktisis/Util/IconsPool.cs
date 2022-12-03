@@ -10,5 +10,9 @@ namespace Ktisis.Util {
 		public const FontAwesomeIcon UserEdit = FontAwesomeIcon.UserEdit;
 		public const FontAwesomeIcon BoneList = FontAwesomeIcon.Bone;
 		public const FontAwesomeIcon Deselect = FontAwesomeIcon.CheckSquare;
+		public const FontAwesomeIcon Import = FontAwesomeIcon.FileImport;
+		public const FontAwesomeIcon DownMore = FontAwesomeIcon.CaretDown;
+		public const FontAwesomeIcon Undo = FontAwesomeIcon.Undo;
+		public const FontAwesomeIcon Redo = FontAwesomeIcon.Redo;
 	}
 }
