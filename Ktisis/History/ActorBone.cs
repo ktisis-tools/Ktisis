@@ -61,20 +61,5 @@ namespace Ktisis.History {
 			}
 
 		}
-
-		public unsafe override string DebugPrint() {
-			var str = "";
-
-			if (Bone == null)
-				str += $"Bone Global";
-			else if ((IntPtr)Bone.Pose == IntPtr.Zero || Bone.Pose->Skeleton == null)
-				str += "<Invalid>";
-			else
-				str += $"Bone {Locale.GetBoneName(Bone.HkaBone.Name.String)}";
-
-			str += $"ParentingState: {ParentingState} - SiblingLink: {SiblingLinkType}";
-
-			return str;
-		}
 	}
 }

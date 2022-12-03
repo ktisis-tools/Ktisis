@@ -48,7 +48,6 @@ namespace Ktisis.History {
 						_currentIdx--;
 						UpdateSkeleton();
 						PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-						PrintHistory(_currentIdx - 1);
 						PluginLog.Verbose("CTRL+Z pressed. Undo.");
 					}
 					return true;
@@ -58,7 +57,6 @@ namespace Ktisis.History {
 						_currentIdx++;
 						UpdateSkeleton();
 						PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-						PrintHistory(_currentIdx - 1);
 						PluginLog.Verbose("CTRL+Y pressed. Redo.");
 					}
 					return true;
@@ -95,7 +93,7 @@ namespace Ktisis.History {
 
 		private static unsafe void UpdateHistory(string entryType) {
 			try {
-				HistoryItem entryToAdd = HistoryItemFactory.Create(entryType);
+				var entryToAdd = HistoryItemFactory.Create(entryType);
 				if (entryToAdd != null)
 					AddEntryToHistory(entryToAdd);
 			} catch (System.ArgumentException e) {
@@ -135,7 +133,6 @@ namespace Ktisis.History {
 			History.Insert(_maxIdx, historyItem);
 			_currentIdx++;
 			_maxIdx++;
-			PrintHistory(_currentIdx - 1);
 		}
 
 		private unsafe static void UpdateSkeleton() {
@@ -157,18 +154,6 @@ namespace Ktisis.History {
 			History = newHistory!.GetRange(0, newMaxIdx);
 			_maxIdx = newMaxIdx;
 			_currentIdx = newMaxIdx;
-		}
-
-		// Debugging
-
-		private static void PrintHistory(int until) {
-			if (History == null) return;
-
-			var str = "\n";
-			for (int i = 0; i < until; i++) {
-				str += $"{i}: {History[i].DebugPrint()}\n";
-			}
-			PluginLog.Verbose(str);
 		}
 	}
 }
