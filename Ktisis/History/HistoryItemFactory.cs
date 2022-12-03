@@ -5,8 +5,8 @@ using static FFXIVClientStructs.Havok.hkaPose;
 namespace Ktisis.History {
 	public static class HistoryItemFactory {
 
-		public unsafe static HistoryItem Create(string type) {
-			HistoryItem item;
+		public unsafe static HistoryItem? Create(string type) {
+			HistoryItem? item = null;
 
 			switch (type) {
 				case "ActorBone":
@@ -15,18 +15,22 @@ namespace Ktisis.History {
 				default:
 					throw new System.ArgumentException("You are trying to add an unknown type to the history.", "type");
 			}
+
+
 			return item;
 		}
 
-		private static unsafe ActorBone CreateActorBoneItem() {
+		private static unsafe ActorBone? CreateActorBoneItem() {
 			var bone = Skeleton.GetSelectedBone();
+			if (bone == null) return null;
 			var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
 			var matrix = Interop.Alloc.GetMatrix(boneTransform);
 			return new ActorBone(
-						matrix,
-						bone,
-						Ktisis.Configuration.EnableParenting,
-						Ktisis.Configuration.SiblingLink);
+				matrix,
+				bone,
+				Ktisis.Configuration.EnableParenting,
+				Ktisis.Configuration.SiblingLink
+			);
 		}
 	}
 }

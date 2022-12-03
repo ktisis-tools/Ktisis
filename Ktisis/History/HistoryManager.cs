@@ -96,7 +96,8 @@ namespace Ktisis.History {
 		private static unsafe void UpdateHistory(string entryType) {
 			try {
 				HistoryItem entryToAdd = HistoryItemFactory.Create(entryType);
-				AddEntryToHistory(entryToAdd);
+				if (entryToAdd != null)
+					AddEntryToHistory(entryToAdd);
 			} catch (System.ArgumentException e) {
 				PluginLog.Fatal(e.Message);
 				return;
