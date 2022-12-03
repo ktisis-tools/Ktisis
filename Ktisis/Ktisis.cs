@@ -13,6 +13,7 @@ using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Actor;
 using Ktisis.History;
 using Ktisis.Events;
+using Ktisis.Overlay;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -86,6 +87,8 @@ namespace Ktisis {
 			Services.CommandManager.RemoveHandler(CommandName);
 			Services.PluginInterface.SavePluginConfig(Configuration);
 			Services.PluginInterface.UiBuilder.OpenConfigUi -= ConfigGui.Toggle;
+
+			OverlayWindow.DeselectGizmo();
 
 			Interop.Hooks.ActorHooks.Dispose();
 			Interop.Hooks.ControlHooks.Dispose();
