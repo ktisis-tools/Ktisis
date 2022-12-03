@@ -41,14 +41,14 @@ namespace Ktisis.Interface.Windows.Toolbar {
 
 				if (actor->Model != null) {
 					// Animation Controls
-					AnimationControls.Draw(target);
+					AnimationControls.Draw();
 
 					// Gaze Controls
 					if (ImGui.CollapsingHeader("Gaze Control")) {
 						if (PoseHooks.PosingEnabled)
 							ImGui.TextWrapped("Gaze controls are unavailable while posing.");
 						else
-							EditGaze.Draw(actor);
+							EditGaze.Draw();
 					}
 					
 					// Advanced

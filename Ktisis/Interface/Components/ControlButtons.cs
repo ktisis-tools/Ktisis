@@ -85,10 +85,6 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.Tooltip("Information");
 		}
 		internal static void DrawSettings(int flags = 1) {
-			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
-			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
-			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
-
 			var isTitleDecoration = (flags & 1) != 0;
 
 			Vector2 buttonSize = ButtonSize;

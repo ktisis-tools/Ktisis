@@ -13,23 +13,24 @@ namespace Ktisis.Interface.Components {
 		private static Vector2 _FrameMin;
 		private static Vector2 _FrameMax;
 
-		public static unsafe void Draw(Actor* actor) {
-			if (ImGui.CollapsingHeader("Bone List")) {
-				var lineHeight = ImGui.GetTextLineHeight();
-				if (ImGui.BeginChildFrame(471, new Vector2(-1, lineHeight * 12), ImGuiWindowFlags.HorizontalScrollbar)) {
-					if (actor == null || actor->Model == null || actor->Model->Skeleton == null)
-						return;
+		public static unsafe void Draw() {
+			var actor = Ktisis.Target;
+			if (actor->Model == null) return;
 
-					var body = actor->Model->Skeleton->GetBone(0, 1);
-					if (body != null && body.Pose != null)
-						DrawBoneTreeNode(body);
+			var lineHeight = ImGui.GetTextLineHeight();
+			if (ImGui.BeginChildFrame(471, new Vector2(-1, lineHeight * 12), ImGuiWindowFlags.HorizontalScrollbar)) {
+				if (actor == null || actor->Model == null || actor->Model->Skeleton == null)
+					return;
 
-					ImGui.EndChildFrame();
+				var body = actor->Model->Skeleton->GetBone(0, 1);
+				if (body != null && body.Pose != null)
+					DrawBoneTreeNode(body);
 
-					_FrameMin = ImGui.GetItemRectMin();
-					_FrameMax.X = ImGui.GetItemRectMax().X;
-					_FrameMax.Y = _FrameMin.Y + lineHeight * 11;
-				}
+				ImGui.EndChildFrame();
+
+				_FrameMin = ImGui.GetItemRectMin();
+				_FrameMax.X = ImGui.GetItemRectMax().X;
+				_FrameMax.Y = _FrameMin.Y + lineHeight * 11;
 			}
 		}
 		private unsafe static void DrawBoneTreeNode(Bone bone) {

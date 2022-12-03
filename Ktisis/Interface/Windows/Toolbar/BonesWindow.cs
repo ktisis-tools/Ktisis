@@ -31,8 +31,6 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			if (ImGui.Begin("Bones", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize)) {
 
 				var cfg = Ktisis.Configuration;
-				var target = Ktisis.GPoseTarget;
-				var actor = (Actor*)target!.Address;
 
 				// Bone categories
 				if (!Categories.DrawToggleList(cfg)) {
@@ -45,7 +43,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 				}
 				
 				// Bone tree
-				BoneTree.Draw(actor);
+				BoneTree.Draw();
 			}
 
 			ImGui.PopStyleVar();
