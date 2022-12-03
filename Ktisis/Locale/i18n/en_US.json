@@ -166,14 +166,14 @@
 				"validCount": {
 					"pre": "Found ",
 					"post": "valid Glamour Plates"
-				}
-			},
+				},
 
-			"sync": {
-				"tooltip": "Refresh Glamour Plate memory for the Sets lookups.\nThis memory is kept after a restart.\n\nRequirements:\n One of these windows must be opened: \"Glamour Plate Creation\" (by the Glamour Dresser) or \"Plate Selection\" (by the Glamour Plate skill)."
-			},
-			"dispose": {
-				"tooltip": "Dispose of the Glamour Plates memory and remove configurations for ALL characters."
+				"sync": {
+					"tooltip": "Refresh Glamour Plate memory for the Sets lookups.\nThis memory is kept after a restart.\n\nRequirements:\n One of these windows must be opened: \"Glamour Plate Creation\" (by the Glamour Dresser) or \"Plate Selection\" (by the Glamour Plate skill)."
+				},
+				"dispose": {
+					"tooltip": "Dispose of the Glamour Plates memory and remove configurations for ALL characters."
+				}
 			}
 		}
 	},

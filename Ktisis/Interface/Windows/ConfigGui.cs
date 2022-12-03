@@ -376,13 +376,13 @@ namespace Ktisis.Interface.Windows {
 			GuiHelpers.TextTooltip($"{Locale.GetString("config.data.glamourDresser.memoryCount")}{validGlamPlatesFound}  ", $"{Locale.GetString("config.data.glamourDresser.validCount.pre")}{validGlamPlatesFound} {Locale.GetString("config.data.glamourDresser.validCount.post")}");
 			ImGui.SameLine();
 
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, Locale.GetString("config.data.sync.tooltip")))
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, Locale.GetString("config.data.glamourDresser.sync.tooltip")))
 				GlamourDresser.PopulatePlatesData();
 
 			Components.Equipment.CreateGlamourQuestionPopup();
 
 			ImGui.SameLine();
-			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, Locale.GetString("config.data.dispose.tooltip"))) {
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Trash, Locale.GetString("config.data.glamourDresser.dispose.tooltip"))) {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
