@@ -7,6 +7,7 @@
     <Description>An internal posing tool.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
+    <Configurations>Debug;Release;External</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -22,6 +23,12 @@
 
   <PropertyGroup>
     <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration) == 'External'">
+    <TargetFramework>net6.0</TargetFramework>
+    <DefineConstants>EXTERNAL_BUILD</DefineConstants>
+    <DalamudLibPath>..\..\DalamudLibs\</DalamudLibPath>
   </PropertyGroup>
 
   <ItemGroup>
