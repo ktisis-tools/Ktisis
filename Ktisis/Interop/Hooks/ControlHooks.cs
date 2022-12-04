@@ -11,11 +11,11 @@ namespace Ktisis.Interop.Hooks {
 	internal static class ControlHooks {
 		public static KeyboardState KeyboardState = new();
 
-		internal unsafe delegate void InputDelegate(InputEvent* input, IntPtr a2, IntPtr a3, MouseState* mouseState, KeyboardState* keyState);
+		internal unsafe delegate void InputDelegate(InputEvent* input, int a2, ControllerState* a3, MouseState* mouseState, KeyboardState* keyState);
 		internal static Hook<InputDelegate> InputHook = null!;
 
-		internal unsafe static void InputDetour(InputEvent* input, IntPtr a2, IntPtr a3, MouseState* mouseState, KeyboardState* keyState) {
-			InputHook.Original(input, a2, a3, mouseState, keyState);
+		internal unsafe static void InputDetour(InputEvent* input, int a2, ControllerState* controllerState, MouseState* mouseState, KeyboardState* keyState) {
+			InputHook.Original(input, a2, controllerState, mouseState, keyState);
 
 			if (!Ktisis.IsInGPose) return;
 
@@ -26,7 +26,7 @@ namespace Ktisis.Interop.Hooks {
 
 				// Process queue
 
-				if (input == null || input->Keyboard == null || keyState == null)
+				if (input == null || input->Keyboard == null || keyState == null || controllerState->IsLeftStickUsed() || controllerState->IsRightStickUsed())
 					return;
 
 				var keys = input->Keyboard->GetQueue();
@@ -51,7 +51,8 @@ namespace Ktisis.Interop.Hooks {
 						}
 					}
 				}
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				PluginLog.Error(e, "Error in InputDetour.");
 			}
 		}
