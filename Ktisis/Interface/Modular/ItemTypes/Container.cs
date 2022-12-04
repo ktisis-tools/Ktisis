@@ -5,32 +5,68 @@ using ImGuiNET;
 
 namespace Ktisis.Interface.Modular.ItemTypes.Container {
 
-	public class WindowResizable : BaseContainer {
-		public WindowResizable(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
+	public class Window : BaseContainer {
+		public ImGuiWindowFlags WindowFlags { get; set; }
+		public Window() : base() { }
+
+		private static readonly List<ImGuiWindowFlags> AllowedWindowFlags = new() {
+			ImGuiWindowFlags.None,
+			ImGuiWindowFlags.NoTitleBar,
+			ImGuiWindowFlags.NoResize,
+			ImGuiWindowFlags.NoMove,
+			ImGuiWindowFlags.NoScrollbar,
+			ImGuiWindowFlags.NoCollapse,
+			ImGuiWindowFlags.NoDecoration,
+			ImGuiWindowFlags.AlwaysAutoResize,
+			ImGuiWindowFlags.NoBackground,
+			ImGuiWindowFlags.NoSavedSettings,
+			ImGuiWindowFlags.NoMouseInputs,
+			ImGuiWindowFlags.HorizontalScrollbar,
+			ImGuiWindowFlags.NoFocusOnAppearing,
+			ImGuiWindowFlags.NoBringToFrontOnFocus,
+			ImGuiWindowFlags.AlwaysVerticalScrollbar,
+			ImGuiWindowFlags.AlwaysHorizontalScrollbar,
+			ImGuiWindowFlags.AlwaysUseWindowPadding,
+		};
+
+		public Window(ImGuiWindowFlags windowFlags) : this() {
+			this.WindowFlags = windowFlags;
+		}
+		override public void Draw() {
+			if (ImGui.Begin(this.GetTitle(), this.WindowFlags)) {
+				if (this.Items != null)
+					foreach (var item in this.Items) {
+						this.DrawItem(item);
+					}
+			}
+			ImGui.End();
+		}
+		public override void DrawConfig() {
+			base.DrawConfig();
+			var windowFlags = WindowFlags;
+			Configurator.DrawBitwiseFlagSelect("Window Flags", ref windowFlags, AllowedWindowFlags);
+			WindowFlags = windowFlags;
+		}
 	}
-	public class WindowAutoResize : BaseContainer {
-		public WindowAutoResize(List<IModularItem> items, ParamsExtra extra) : base(items, extra, ImGuiWindowFlags.AlwaysAutoResize) { }
+
+
+	public class ResizableWindow : Window { }
+	public class WindowAutoResize : Window {
+		public WindowAutoResize() : base(ImGuiWindowFlags.AlwaysAutoResize) { }
 	}
-	public class WindowBar : BaseContainer {
-		public WindowBar(List<IModularItem> items, ParamsExtra extra) : base(items, extra, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize) { }
+	public class BarWindow : Window {
+		public BarWindow() : base(ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize) { }
 		protected override void DrawItem(IModularItem item) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (ImGui.GetStyle().ItemSpacing.X * 2));
 			base.DrawItem(item);
 		}
 	}
-	public class TopScreenBar : BaseContainer {
+	public class BorderWindow : Window {
 		enum WindowLocation { Top, Bottom, Left, Right }
 		WindowLocation Location { get; set; } = WindowLocation.Top;
 		float ReverseOffset = -100;
-		public TopScreenBar(List<IModularItem> items, ParamsExtra extra) : base(items, extra, ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.AlwaysAutoResize) {
-			if (this.Extra.Ints.TryGetValue("Location", out int location))
-				this.Extra.Ints["Location"] = location;
-			else
-				this.Extra.Ints.Add("Location", location);
-			this.Location = (WindowLocation)location;
-
-		}
+		public BorderWindow() : base(ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.AlwaysAutoResize) { }
 		public override void Draw() {
 
 			switch (Location) {
@@ -73,5 +109,12 @@ namespace Ktisis.Interface.Modular.ItemTypes.Container {
 			}
 			base.DrawItem(item);
 		}
+		public override void DrawConfig() {
+			base.DrawConfig();
+			var location = Location;
+			Configurator.DrawFlagSelect("Location", ref location);
+			Location = location;
+		}
+
 	}
 }

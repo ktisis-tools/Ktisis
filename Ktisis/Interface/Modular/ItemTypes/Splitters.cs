@@ -4,8 +4,6 @@ using ImGuiNET;
 
 namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 	public class Columns : BaseSplitter {
-		public Columns(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
-
 		public override void Draw() {
 			if (this.Items != null) {
 				ImGui.Columns(this.Items.Count);
@@ -19,8 +17,6 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 	}
 
 	public class BorderlessColumns : BaseSplitter {
-		public BorderlessColumns(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
-
 		public override void Draw() {
 			if (this.Items != null) {
 				ImGui.Columns(this.Items.Count, this.Title, false);
@@ -35,8 +31,6 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 
 
 	public class SameLine : BaseSplitter {
-		public SameLine(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
-
 		public override void Draw() {
 			if (this.Items != null) {
 				for (int i = 0; i < this.Items.Count; i++) {
@@ -47,8 +41,6 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 		}
 	}
 	public class CollapsibleHeader : BaseSplitter {
-		public CollapsibleHeader(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
-
 		public override void Draw() {
 			if (this.Items != null)
 				for (int i = 0; i < this.Items.Count; i++)
@@ -57,8 +49,6 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 		}
 	}
 	public class Tabs : BaseSplitter {
-		public Tabs(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
-
 		public override void Draw() {
 			if (this.Items != null)
 				if (ImGui.BeginTabBar(GetTitle()))
@@ -70,7 +60,6 @@ namespace Ktisis.Interface.Modular.ItemTypes.Splitter {
 
 		}
 	}
-	public class Group : BaseSplitter {
-		public Group(List<IModularItem> items, ParamsExtra extra) : base(items, extra) { }
-	}
+
+	public class Group : BaseSplitter { }
 }
