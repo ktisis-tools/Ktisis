@@ -104,7 +104,7 @@ namespace Ktisis.Interface.Modular {
 			}
 			Manager.Init();
 		}
-		public static void AddBefore(string handle, IModularItem itemBefore) {
+		private static void AddBefore(string handle, IModularItem itemBefore) {
 			var item = Manager.CreateItemFromTypeName(handle);
 			if (item == null) return;
 			InsertBefore(Ktisis.Configuration.ModularConfig, item, itemBefore);
@@ -155,7 +155,7 @@ namespace Ktisis.Interface.Modular {
 			Manager.Init();
 			return isDeleted;
 		}
-		public static void InsertConfigBefore(IModularItem itemtoInsert, IModularItem itemBefore) {
+		private static void InsertConfigBefore(IModularItem itemtoInsert, IModularItem itemBefore) {
 			InsertBefore(Ktisis.Configuration.ModularConfig, itemtoInsert, itemBefore);
 		}
 
