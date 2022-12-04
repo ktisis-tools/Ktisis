@@ -2,6 +2,7 @@
 using System.Linq;
 
 using ImGuiNET;
+using Newtonsoft.Json;
 
 using Ktisis.Localization;
 
@@ -9,7 +10,9 @@ namespace Ktisis.Interface.Modular.ItemTypes {
 
 	public class BaseItem : IModularItem {
 		protected int Id;
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
 		public string? Title { get; set; }
+		[JsonIgnore]
 		public string LocaleHandle { get; set; }
 
 		public BaseItem() {
