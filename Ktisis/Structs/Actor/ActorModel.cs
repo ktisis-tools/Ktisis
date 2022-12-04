@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
@@ -29,8 +28,9 @@ namespace Ktisis.Structs.Actor {
 				var partial = Skeleton->PartialSkeletons[p];
 				var pose = partial.GetHavokPose(0);
 				if (pose == null) continue;
-				if (refPose) pose->SetToReferencePose();
-				PoseHooks.SyncModelSpaceHook.Original(pose);
+
+				pose->SetFromLocalPose(refPose ? pose->Skeleton->ReferencePose : pose->LocalPose);
+
 				if (p > 0) Skeleton->ParentPartialToRoot(p);
 			}
 

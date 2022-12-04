@@ -35,7 +35,7 @@ namespace Ktisis
 		public OpenKtisisMethod OpenKtisisMethod { get; set; } = OpenKtisisMethod.OnEnterGpose;
 
 		public bool DisplayCharName { get; set; } = true;
-		public bool CensorNsfw { get; set; } = true;
+		public bool CensorNsfw { get; set; } = false;
 
 		public bool TransformTableDisplayMultiplierInputs { get; set; } = false;
 		public float TransformTableBaseSpeedPos { get; set; } = 0.0005f;

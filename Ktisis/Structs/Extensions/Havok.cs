@@ -4,8 +4,9 @@ using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Structs.Bones;
+using Dalamud.Logging;
+using ImPlotNET;
 using Lumina.Excel.GeneratedSheets;
-using System.Runtime.CompilerServices;
 
 namespace Ktisis.Structs {
 	public static class Havok {
@@ -38,9 +39,31 @@ namespace Ktisis.Structs {
 
 		// hkaPose
 
-		public unsafe static Bone GetBone(this Skeleton skele, int partial, int bone) => new Bone(&skele, partial, bone);
+		public unsafe static void SetFromLocalPose(this hkaPose pose, hkArray<hkQsTransformf> localPose, bool setScale = false) {
+			for (var i = 1; i < pose.Skeleton->Bones.Length; i++) {
+				var parent = pose.ModelPose[pose.Skeleton->ParentIndices[i]];
 
-		// Partial
+				var local = localPose[i];
+				var model = pose.AccessBoneModelSpace(i, 0);
+
+				model->Translation = (
+					parent.Translation.ToVector3()
+					+ Vector3.Transform(
+						local.Translation.ToVector3(),
+						parent.Rotation.ToQuat()
+					)
+				).ToHavok();
+				model->Rotation = (parent.Rotation.ToQuat() * local.Rotation.ToQuat()).ToHavok();
+				if (setScale) model->Scale = local.Scale;
+			}
+		}
+
+		public static void SetFromLocalPose(this hkaPose pose, bool setScale = false)
+			=> pose.SetFromLocalPose(pose.LocalPose, setScale);
+
+		// Skeleton
+
+		public unsafe static Bone GetBone(this Skeleton skele, int partial, int bone) => new Bone(&skele, partial, bone);
 
 		public unsafe static void ParentPartialToRoot(this Skeleton skeleton, int p) {
 			var partial = skeleton.PartialSkeletons[p];

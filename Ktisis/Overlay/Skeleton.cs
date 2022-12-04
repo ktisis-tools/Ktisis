@@ -26,10 +26,6 @@ namespace Ktisis.Overlay {
 		public static void Toggle() {
 			var visible = !Ktisis.Configuration.ShowSkeleton;
 			Ktisis.Configuration.ShowSkeleton = visible;
-			if (!visible && BoneSelect.Active) {
-				BoneSelect.Active = false;
-				OverlayWindow.DeselectGizmo();
-			}
 		}
 
 		public unsafe static void Draw() {
