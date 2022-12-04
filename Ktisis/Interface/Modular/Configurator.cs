@@ -12,7 +12,8 @@ namespace Ktisis.Interface.Modular {
 	internal class Configurator {
 
 		// Below is config rendering logic
-		private static bool IsAddPanelOpen = false;
+		private enum AddItemListMode { Closed, Last, AboveSelected };
+		private static AddItemListMode IsAddPanelOpen = AddItemListMode.Closed;
 		private static string AddPanelSearch = "";
 		internal static IModularItem? MovingItem = null;
 		private static IModularItem? SelectedItem = null;
@@ -21,7 +22,7 @@ namespace Ktisis.Interface.Modular {
 			if (ImGui.BeginTabItem("Modular")) {
 
 				if (GuiHelpers.IconButton(FontAwesomeIcon.Plus))
-					IsAddPanelOpen = true;
+					IsAddPanelOpen = AddItemListMode.Last;
 				ImGui.SameLine();
 				if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"Export##Modular"))
 					Misc.ExportClipboard(Ktisis.Configuration.ModularConfig);
@@ -53,7 +54,7 @@ namespace Ktisis.Interface.Modular {
 				ImGui.EndTabItem();
 			}
 
-			if (IsAddPanelOpen)
+			if (IsAddPanelOpen != AddItemListMode.Closed)
 				DrawAddPanel();
 		}
 
@@ -71,8 +72,13 @@ namespace Ktisis.Interface.Modular {
 					ImGui.PopStyleVar();
 					return (selected, focus);
 				},
-				(t) => Add(t.Name),
-				() => IsAddPanelOpen = false, // on close
+				(t) => {
+					if (SelectedItem != null && IsAddPanelOpen == AddItemListMode.AboveSelected)
+						AddBefore(t.Name, SelectedItem);
+					else if (IsAddPanelOpen == AddItemListMode.Last)
+						Add(t.Name);
+				},
+				() => IsAddPanelOpen = AddItemListMode.Closed, // on close
 				ref AddPanelSearch,
 				"Add Panel",
 				"##addpanel_select",
@@ -230,13 +236,15 @@ namespace Ktisis.Interface.Modular {
 			return iteratorModified;
 		}
 		private static bool DrawContextMenu(IModularItem item) {
-			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Delete {item.GetType()}"))
+			SelectedItem = item;
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, $"Add above {item.GetType().Name}"))
+				IsAddPanelOpen = AddItemListMode.AboveSelected;
+
+			ImGui.SameLine();
+			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Delete {item.GetType().Name}"))
 				if (Delete(item))
 					return true;
 
-			//ImGui.SameLine();
-			//if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Plus, $"Add above {item.Type}"))
-			// TODO open DrawAddPanel and execute AddBefore() on select
 			return false;
 		}
 		private static void DrawItemDetails(IModularItem? item) {
