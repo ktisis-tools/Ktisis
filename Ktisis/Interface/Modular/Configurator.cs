@@ -25,10 +25,10 @@ namespace Ktisis.Interface.Modular {
 					IsAddPanelOpen = AddItemListMode.Last;
 				ImGui.SameLine();
 				if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"Export##Modular"))
-					Misc.ExportClipboard(Ktisis.Configuration.ModularConfig);
+					JsonHelpers.ExportClipboard(Ktisis.Configuration.ModularConfig);
 				ImGui.SameLine();
 				if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Paste, $"Hold Ctrl and Shift to paste and replace the entire modular configuration.", default, $"Import##Modular")) {
-					var importModular = Misc.ImportClipboard<List<IModularItem>>();
+					var importModular = JsonHelpers.ImportClipboard<List<IModularItem>>();
 					if (importModular != null)
 						Ktisis.Configuration.ModularConfig = importModular;
 				}

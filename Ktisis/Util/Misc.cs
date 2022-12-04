@@ -7,7 +7,7 @@ using ImGuiNET;
 using Newtonsoft.Json;
 
 namespace Ktisis.Util {
-	internal class Misc {
+	internal class JsonHelpers {
 
 
 		public static void ExportClipboard(object? objectToExport) {

@@ -413,10 +413,10 @@ namespace Ktisis.Interface.Windows {
 						cfg.CustomBoneOffset.Remove(bodyType);
 					ImGui.SameLine();
 					if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"export##{bodyType}"))
-						Misc.ExportClipboard(cfg.CustomBoneOffset[bodyType]);
+						JsonHelpers.ExportClipboard(cfg.CustomBoneOffset[bodyType]);
 					ImGui.SameLine();
 					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Paste, $"Hold Ctrl and Shift to paste and replace all {bodyType} bone offsets.", default, $"pasteReplaceAll##{bodyType}")) {
-						var parsedPasteAll = Misc.ImportClipboard<Dictionary<string, Vector3>>();
+						var parsedPasteAll = JsonHelpers.ImportClipboard<Dictionary<string, Vector3>>();
 						if (parsedPasteAll != null)
 							cfg.CustomBoneOffset[bodyType] = parsedPasteAll;
 					}
@@ -444,7 +444,7 @@ namespace Ktisis.Interface.Windows {
 							var isDeletable = ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift;
 							if(isDeletable) ImGui.PushStyleColor(ImGuiCol.HeaderHovered, Workspace.Workspace.ColRed);
 							if (ImGui.Selectable($"{Locale.GetBoneName(boneName)}##{bodyType}##customBoneOffset", false, ImGuiSelectableFlags.SpanAllColumns))
-								Misc.ExportClipboard((boneName, offsets));
+								JsonHelpers.ExportClipboard((boneName, offsets));
 							if (isDeletable) ImGui.PopStyleColor();
 							if (isDeletable && ImGui.IsItemClicked(ImGuiMouseButton.Right))
 								cfg.CustomBoneOffset[bodyType].Remove(boneName);
@@ -457,7 +457,7 @@ namespace Ktisis.Interface.Windows {
 						}
 						ImGui.EndTable();
 						if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus,"Add a line from clipboard.", default, $"{bodyType}##Clipboard##AddLine")) {
-							var parsedPasteLine = Misc.ImportClipboard<(string, Vector3)>();
+							var parsedPasteLine = JsonHelpers.ImportClipboard<(string, Vector3)>();
 							cfg.CustomBoneOffset[bodyType][parsedPasteLine.Item1] = parsedPasteLine.Item2;
 						}
 					}
