@@ -79,7 +79,7 @@ namespace Ktisis.Structs.Poses {
 				}
 			}
 
-			if (p > 0 && !PoseHooks.AnamPosingEnabled)
+			if (p > 0)
 				modelSkeleton->ParentPartialToRoot(p);
 		}
 	}
