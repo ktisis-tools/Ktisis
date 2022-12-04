@@ -26,11 +26,16 @@ namespace Ktisis.Interop.Hooks {
 
 				// Process queue
 
+				if (input == null || input->Keyboard == null || keyState == null)
+					return;
+
 				var keys = input->Keyboard->GetQueue();
+				if (keys == null) return;
 				KeyboardState = *keys;
 
 				for (var i = 0; i < keyState->QueueCount; i++) {
 					var k = keyState->Queue[i];
+					if (k == null) continue;
 
 					if (k->Event == KeyEvent.AnyKeyHeld) continue; // dont care didnt ask (use KeyEvent.Held)
 					if (k->Event == KeyEvent.Released) continue; // Allow InputHook2 to take care of release events.
