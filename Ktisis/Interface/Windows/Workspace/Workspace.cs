@@ -306,14 +306,14 @@ namespace Ktisis.Interface.Windows.Workspace
 			var trans = Ktisis.Configuration.PoseTransforms;
 
 			var rot = trans.HasFlag(PoseTransforms.Rotation);
-			if (ImGui.Checkbox("Rotation", ref rot))
+			if (ImGui.Checkbox("Rotation##ImportExportPose", ref rot))
 				trans = trans.ToggleFlag(PoseTransforms.Rotation);
 
 			var pos = trans.HasFlag(PoseTransforms.Position);
 			var col = pos;
 			ImGui.SameLine();
 			if (col) ImGui.PushStyleColor(ImGuiCol.Text, 0xff00fbff);
-			if (ImGui.Checkbox("Position", ref pos))
+			if (ImGui.Checkbox("Position##ImportExportPose", ref pos))
 				trans = trans.ToggleFlag(PoseTransforms.Position);
 			if (col) ImGui.PopStyleColor();
 
@@ -321,7 +321,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			col = scale;
 			ImGui.SameLine();
 			if (col) ImGui.PushStyleColor(ImGuiCol.Text, 0xff00fbff);
-			if (ImGui.Checkbox("Scale", ref scale))
+			if (ImGui.Checkbox("Scale##ImportExportPose", ref scale))
 				trans = trans.ToggleFlag(PoseTransforms.Scale);
 			if (col) ImGui.PopStyleColor();
 
@@ -342,12 +342,12 @@ namespace Ktisis.Interface.Windows.Workspace
 			var modes = Ktisis.Configuration.PoseMode;
 
 			var body = modes.HasFlag(PoseMode.Body);
-			if (ImGui.Checkbox("Body", ref body))
+			if (ImGui.Checkbox("Body##ImportExportPose", ref body))
 				modes = modes.ToggleFlag(PoseMode.Body);
 
 			var face = modes.HasFlag(PoseMode.Face);
 			ImGui.SameLine();
-			if (ImGui.Checkbox("Expression", ref face))
+			if (ImGui.Checkbox("Expression##ImportExportPose", ref face))
 				modes = modes.ToggleFlag(PoseMode.Face);
 
 			Ktisis.Configuration.PoseMode = modes;
@@ -359,7 +359,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			var isUseless = trans == 0 || modes == 0;
 
 			if (isUseless) ImGui.BeginDisabled();
-			if (ImGui.Button("Import")) {
+			if (ImGui.Button("Import##ImportExportPose")) {
 				KtisisGui.FileDialogManager.OpenFileDialog(
 					"Importing Pose",
 					"Pose Files (.pose){.pose}",
@@ -397,7 +397,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			}
 			if (isUseless) ImGui.EndDisabled();
 			ImGui.SameLine();
-			if (ImGui.Button("Export")) {
+			if (ImGui.Button("Export##ImportExportPose")) {
 				KtisisGui.FileDialogManager.SaveFileDialog(
 					"Exporting Pose",
 					"Pose Files (.pose){.pose}",
@@ -440,15 +440,15 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.Text("Equipment");
 
 			var gear = mode.HasFlag(SaveModes.EquipmentGear);
-			if (ImGui.Checkbox("Gear", ref gear))
+			if (ImGui.Checkbox("Gear##ImportExportChara", ref gear))
 				mode ^= SaveModes.EquipmentGear;
 
 			var accs = mode.HasFlag(SaveModes.EquipmentAccessories);
-			if (ImGui.Checkbox("Accessories", ref accs))
+			if (ImGui.Checkbox("Accessories##ImportExportChara", ref accs))
 				mode ^= SaveModes.EquipmentAccessories;
 
 			var weps = mode.HasFlag(SaveModes.EquipmentWeapons);
-			if (ImGui.Checkbox("Weapons", ref weps))
+			if (ImGui.Checkbox("Weapons##ImportExportChara", ref weps))
 				mode ^= SaveModes.EquipmentWeapons;
 
 			ImGui.EndGroup();
@@ -460,15 +460,15 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.Text("Appearance");
 
 			var body = mode.HasFlag(SaveModes.AppearanceBody);
-			if (ImGui.Checkbox("Body", ref body))
+			if (ImGui.Checkbox("Body##ImportExportChara", ref body))
 				mode ^= SaveModes.AppearanceBody;
 
 			var face = mode.HasFlag(SaveModes.AppearanceFace);
-			if (ImGui.Checkbox("Face", ref face))
+			if (ImGui.Checkbox("Face##ImportExportChara", ref face))
 				mode ^= SaveModes.AppearanceFace;
 
 			var hair = mode.HasFlag(SaveModes.AppearanceHair);
-			if (ImGui.Checkbox("Hair", ref hair))
+			if (ImGui.Checkbox("Hair##ImportExportChara", ref hair))
 				mode ^= SaveModes.AppearanceHair;
 
 			ImGui.EndGroup();
@@ -484,7 +484,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			var isUseless = mode == SaveModes.None;
 			if (isUseless) ImGui.BeginDisabled();
 
-			if (ImGui.Button("Import")) {
+			if (ImGui.Button("Import##ImportExportChara")) {
 				KtisisGui.FileDialogManager.OpenFileDialog(
 					"Importing Character",
 					"Anamnesis Chara (.chara){.chara}",
@@ -504,7 +504,7 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			ImGui.SameLine();
 
-			if (ImGui.Button("Export")) {
+			if (ImGui.Button("Export##ImportExportChara")) {
 				KtisisGui.FileDialogManager.SaveFileDialog(
 					"Exporting Character",
 					"Anamnesis Chara (.chara){.chara}",
