@@ -14,8 +14,8 @@ namespace Ktisis.Interface.Modular {
 		// Below is config rendering logic
 		private static bool IsAddPanelOpen = false;
 		private static string AddPanelSearch = "";
-		internal static IModularItem? MovingObject = null;
-		private static IModularItem? SelectedObject = null;
+		internal static IModularItem? MovingItem = null;
+		private static IModularItem? SelectedItem = null;
 
 		public static void DrawConfigTab(Configuration cfg) {
 			if (ImGui.BeginTabItem("Modular")) {
@@ -44,7 +44,7 @@ namespace Ktisis.Interface.Modular {
 				}
 
 				ImGui.NextColumn();
-				DrawItemDetails(SelectedObject);
+				DrawItemDetails(SelectedItem);
 				ImGui.Columns();
 
 				ImGui.EndTabItem();
@@ -77,9 +77,9 @@ namespace Ktisis.Interface.Modular {
 		}
 		private static string TypeToKind(Type? type) => type!.Namespace!.Split('.').Last();
 		private static void Add(string typeName) {
-			var obj = Manager.CreateItemFromTypeName(typeName);
-			if (obj == null) return;
-			Add(obj);
+			var item = Manager.CreateItemFromTypeName(typeName);
+			if (item == null) return;
+			Add(item);
 		}
 
 
@@ -96,9 +96,9 @@ namespace Ktisis.Interface.Modular {
 			Manager.Init();
 		}
 		public static void AddBefore(string handle, IModularItem itemBefore) {
-			var obj = Manager.CreateItemFromTypeName(handle);
-			if (obj == null) return;
-			InsertBefore(Ktisis.Configuration.ModularConfig, obj, itemBefore);
+			var item = Manager.CreateItemFromTypeName(handle);
+			if (item == null) return;
+			InsertBefore(Ktisis.Configuration.ModularConfig, item, itemBefore);
 		}
 
 		private static void Delete(IModularItem toRemove) {
@@ -157,54 +157,54 @@ namespace Ktisis.Interface.Modular {
 			items.ForEach(co => InsertBefore(co is IModularContainer container ? container.Items : null, itemtoInsert, itemBefore));
 		}
 		private static void MoveSource(IModularItem source) =>
-			MovingObject = source;
+			MovingItem = source;
 
 		private static void MoveTarget(IModularItem target) {
-			if (MovingObject == null) return;
-			var movingTaget = MovingObject;
-			MovingObject = null;
+			if (MovingItem == null) return;
+			var movingTaget = MovingItem;
+			MovingItem = null;
 			MoveAt(movingTaget, target);
 		}
 
-		private unsafe static void TreeNode(IModularItem cfgObj) {
-			bool isLeaf = !(cfgObj is IModularContainer container && container.Items.Any());
+		private unsafe static void TreeNode(IModularItem item) {
+			bool isLeaf = !(item is IModularContainer container && container.Items.Any());
 
-			string handle = cfgObj.GetType().Name;
-			string id = cfgObj.GetHashCode().ToString();
+			string handle = item.GetType().Name;
+			string id = item.GetHashCode().ToString();
 
-			bool open = ImGui.TreeNodeEx(id, ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.DefaultOpen | (cfgObj == SelectedObject ? ImGuiTreeNodeFlags.Selected : 0) | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow), handle);
+			bool open = ImGui.TreeNodeEx(id, ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.DefaultOpen | (item == SelectedItem ? ImGuiTreeNodeFlags.Selected : 0) | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow), handle);
 
 			ImGui.PushID(id);
 			if (ImGui.BeginPopupContextItem()) {
-				DrawContextMenu(cfgObj);
+				DrawContextMenu(item);
 				ImGui.EndPopup();
 			}
 			ImGui.PopID();
 
 			if (ImGui.IsItemClicked()) {
-				SelectedObject = cfgObj;
+				SelectedItem = item;
 			}
 			if (ImGui.IsItemClicked() && ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)
-				Delete(cfgObj);
+				Delete(item);
 
 			if (ImGui.BeginDragDropTarget()) {
 
 				// highlight target
-				ImGui.AcceptDragDropPayload("_ConfigObject");
+				ImGui.AcceptDragDropPayload("_IModularItem");
 
 				// Small hack to fire MoveTarget() on mouse button release
-				if (MovingObject != null && !ImGui.GetIO().MouseDown[(int)ImGuiMouseButton.Left])
-					MoveTarget(cfgObj);
+				if (MovingItem != null && !ImGui.GetIO().MouseDown[(int)ImGuiMouseButton.Left])
+					MoveTarget(item);
 
 				ImGui.EndDragDropTarget();
 			}
 
 			if (ImGui.BeginDragDropSource()) {
-				ImGui.SetDragDropPayload("_ConfigObject", IntPtr.Zero, 0);
+				ImGui.SetDragDropPayload("_IModularItem", IntPtr.Zero, 0);
 
 				// Small hack to set the move source on mouse button hold
 				if (ImGui.GetIO().MouseDownDuration[(int)ImGuiMouseButton.Left] < 0.5f)
-					MoveSource(cfgObj);
+					MoveSource(item);
 
 				ImGui.EndDragDropSource();
 			}
@@ -212,23 +212,23 @@ namespace Ktisis.Interface.Modular {
 			if (open) {
 				// Recursive call...
 				if (!isLeaf)
-					((IModularContainer)cfgObj).Items.ForEach(c => TreeNode(c));
+					((IModularContainer)item).Items.ForEach(c => TreeNode(c));
 
 				ImGui.TreePop();
 			}
 
 		}
-		private static void DrawContextMenu(IModularItem cfgObj) {
-			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Delete {cfgObj.GetType()}"))
-				Delete(cfgObj);
+		private static void DrawContextMenu(IModularItem item) {
+			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Delete {item.GetType()}"))
+				Delete(item);
 
 			//ImGui.SameLine();
-			//if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Plus, $"Add above {cfgObj.Type}"))
+			//if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Plus, $"Add above {item.Type}"))
 			// TODO open DrawAddPanel and execute AddBefore() on select
 		}
-		private static void DrawItemDetails(IModularItem? cfgObj) {
-			if (cfgObj == null) return;
-			cfgObj.DrawConfig();
+		private static void DrawItemDetails(IModularItem? item) {
+			if (item == null) return;
+			item.DrawConfig();
 		}
 
 		internal static bool DrawBitwiseFlagSelect<TEnum>(string label, ref TEnum flagStack) where TEnum : struct, Enum =>

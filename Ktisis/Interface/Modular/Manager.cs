@@ -18,7 +18,7 @@ namespace Ktisis.Interface.Modular {
 		public static List<int> ItemIds = new();
 
 		public static void Init() {
-			Configurator.MovingObject = null;
+			Configurator.MovingItem = null;
 		}
 		public static void Dispose() {
 			ItemIds.Clear();
