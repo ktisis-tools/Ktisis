@@ -387,6 +387,7 @@ namespace Ktisis.Interface.Windows.Workspace
 										if (!face) continue;
 										break;
 								}
+
 								pose.Bones.ApplyToPartial(skeleton, p, trans);
 							}
 						}
