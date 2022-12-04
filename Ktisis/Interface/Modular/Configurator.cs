@@ -39,7 +39,10 @@ namespace Ktisis.Interface.Modular {
 
 				ImGui.Columns(2);
 				if (ImGui.BeginChildFrame(958, new(ImGui.GetContentRegionAvail().X, ImGui.GetIO().DisplaySize.Y * 0.6f))) {
-					cfg.ModularConfig.ForEach(c => TreeNode(c));
+					foreach (var item in cfg.ModularConfig) {
+						if (TreeNode(item))
+							break;
+					}
 					ImGui.EndChildFrame();
 				}
 
@@ -101,15 +104,16 @@ namespace Ktisis.Interface.Modular {
 			InsertBefore(Ktisis.Configuration.ModularConfig, item, itemBefore);
 		}
 
-		private static void Delete(IModularItem toRemove) {
+		private static bool Delete(IModularItem toRemove) {
 			var pair = DeleteSub(Ktisis.Configuration.ModularConfig, toRemove);
 			if (pair != null) {
 				pair.Value.Item1.RemoveAt(pair.Value.Item2);
 				Manager.Init();
+				return true;
 			}
+			return false;
 		}
 		private static (List<IModularItem>,int)? DeleteSub(List<IModularItem> items, IModularItem toRemove) {
-			items.Remove(toRemove);
 			var index = items.IndexOf(toRemove);
 			if (index != -1) return (items, index);
 
@@ -122,14 +126,15 @@ namespace Ktisis.Interface.Modular {
 			}
 			return null;
 		}
-		private static void MoveAt(IModularItem toMove, IModularItem target) {
-			if (target == null) return;
+		private static bool MoveAt(IModularItem toMove, IModularItem target) {
+			if (target == null) return false;
+			var isDeleted = false;
 
 			if (target is IModularContainer container && !container.Items.Any()) {
 				// if target is an empty container/splitter
 				// drop it inside
 
-				Delete(toMove);
+				isDeleted |= Delete(toMove);
 
 				// add it in the items of target
 				((IModularContainer)target).Items.Add(toMove);
@@ -138,10 +143,11 @@ namespace Ktisis.Interface.Modular {
 				// if it's a panel or a filled container/splitter
 				// drop it above
 
-				Delete(toMove);
+				isDeleted |= Delete(toMove);
 				InsertConfigBefore(toMove, target);
 			}
 			Manager.Init();
+			return isDeleted;
 		}
 		public static void InsertConfigBefore(IModularItem itemtoInsert, IModularItem itemBefore) {
 			InsertBefore(Ktisis.Configuration.ModularConfig, itemtoInsert, itemBefore);
@@ -159,24 +165,24 @@ namespace Ktisis.Interface.Modular {
 		private static void MoveSource(IModularItem source) =>
 			MovingItem = source;
 
-		private static void MoveTarget(IModularItem target) {
-			if (MovingItem == null) return;
+		private static bool MoveTarget(IModularItem target) {
+			if (MovingItem == null) return false;
 			var movingTaget = MovingItem;
 			MovingItem = null;
-			MoveAt(movingTaget, target);
+			return MoveAt(movingTaget, target);
 		}
 
-		private unsafe static void TreeNode(IModularItem item) {
+		private unsafe static bool TreeNode(IModularItem item) {
 			bool isLeaf = !(item is IModularContainer container && container.Items.Any());
 
 			string handle = item.GetType().Name;
 			string id = item.GetHashCode().ToString();
 
 			bool open = ImGui.TreeNodeEx(id, ImGuiTreeNodeFlags.FramePadding | ImGuiTreeNodeFlags.DefaultOpen | (item == SelectedItem ? ImGuiTreeNodeFlags.Selected : 0) | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow), handle);
-
+			bool iteratorModified = false;
 			ImGui.PushID(id);
 			if (ImGui.BeginPopupContextItem()) {
-				DrawContextMenu(item);
+				iteratorModified |= DrawContextMenu(item);
 				ImGui.EndPopup();
 			}
 			ImGui.PopID();
@@ -185,7 +191,7 @@ namespace Ktisis.Interface.Modular {
 				SelectedItem = item;
 			}
 			if (ImGui.IsItemClicked() && ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)
-				Delete(item);
+				iteratorModified |= Delete(item);
 
 			if (ImGui.BeginDragDropTarget()) {
 
@@ -194,7 +200,7 @@ namespace Ktisis.Interface.Modular {
 
 				// Small hack to fire MoveTarget() on mouse button release
 				if (MovingItem != null && !ImGui.GetIO().MouseDown[(int)ImGuiMouseButton.Left])
-					MoveTarget(item);
+					iteratorModified |= MoveTarget(item);
 
 				ImGui.EndDragDropTarget();
 			}
@@ -209,22 +215,29 @@ namespace Ktisis.Interface.Modular {
 				ImGui.EndDragDropSource();
 			}
 
+
 			if (open) {
 				// Recursive call...
-				if (!isLeaf)
-					((IModularContainer)item).Items.ForEach(c => TreeNode(c));
+				if (!isLeaf && !iteratorModified)
+					foreach (var child in ((IModularContainer)item).Items) {
+						iteratorModified |= TreeNode(child);
+						if (iteratorModified)
+							break;
+					}
 
 				ImGui.TreePop();
 			}
-
+			return iteratorModified;
 		}
-		private static void DrawContextMenu(IModularItem item) {
+		private static bool DrawContextMenu(IModularItem item) {
 			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Delete {item.GetType()}"))
-				Delete(item);
+				if (Delete(item))
+					return true;
 
 			//ImGui.SameLine();
 			//if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Plus, $"Add above {item.Type}"))
 			// TODO open DrawAddPanel and execute AddBefore() on select
+			return false;
 		}
 		private static void DrawItemDetails(IModularItem? item) {
 			if (item == null) return;
