@@ -11,7 +11,11 @@ namespace Ktisis.Util {
 
 
 		public static void ExportClipboard(object? objectToExport) {
-			var str = JsonConvert.SerializeObject(objectToExport);
+			var str = JsonConvert.SerializeObject(objectToExport, objectToExport?.GetType(),
+				new JsonSerializerSettings {
+					TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+					TypeNameHandling = TypeNameHandling.Objects,
+				});
 			if (!Ktisis.Configuration.ClipboardExportClearJson)
 				str = Convert.ToBase64String(CompressString(str));
 			ImGui.SetClipboardText(str);
