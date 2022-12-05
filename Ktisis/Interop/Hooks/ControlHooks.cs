@@ -9,6 +9,7 @@ using Ktisis.Structs.Input;
 namespace Ktisis.Interop.Hooks {
 	internal static class ControlHooks {
 		public static KeyboardState KeyboardState = new();
+		public static MouseState MouseState = new();
 
 		internal unsafe delegate void InputDelegate(InputEvent* input, IntPtr a2, ControllerState* controllerState, MouseState* mouseState, KeyboardState* keyState);
 		internal static Hook<InputDelegate> InputHook = null!;
@@ -20,7 +21,7 @@ namespace Ktisis.Interop.Hooks {
 
 			try {
 				if (mouseState != null) {
-					// TODO
+					MouseState = *mouseState;
 				}
 
 				// Process queue
