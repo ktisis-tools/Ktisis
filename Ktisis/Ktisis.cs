@@ -118,16 +118,16 @@ namespace Ktisis {
 				case "about":
 				case "info":
 				case "information":
-					Information.Show();
+					Information.Toggle();
 					break;
 				case "cfg":
 				case "config":
 				case "configure":
 				case "configuration":
-					ConfigGui.Show();
+					ConfigGui.Toggle();
 					break;
 				default:
-					Workspace.Show();
+					Workspace.Toggle();
 					break;
 			}
 		}
