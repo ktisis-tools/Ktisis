@@ -112,6 +112,22 @@ namespace Ktisis.Interface {
 			return false;
 		}
 
+		// Mouse input handling
+		internal static bool OnMousePressed(MouseButton button) {
+			return false;
+		}
+		internal static bool OnMouseReleased(MouseButton button) {
+			return false;
+		}
+		internal static bool OnMouseClicked(MouseButton button) {
+			if (button == MouseButton.Left && OverlayWindow.IsGizmoVisible) {
+				OverlayWindow.DeselectGizmo();
+				return true;
+			}
+			return false;
+		}
+
+
 		internal static void OnKeyReleased(VirtualKey key) {
 			if (!Ktisis.Configuration.EnableKeybinds || IsChatInputActive())
 				return;
@@ -140,6 +156,8 @@ namespace Ktisis.Interface {
 
 			return match;
 		}
+
+
 
 		[Serializable]
 		public enum Purpose {
@@ -179,10 +197,16 @@ namespace Ktisis.Interface {
 		public static void Init() {
 			EventManager.OnKeyPressed += OnKeyPressed;
 			EventManager.OnKeyReleased += OnKeyReleased;
+			EventManager.OnMousePressed += OnMousePressed;
+			EventManager.OnMouseReleased += OnMouseReleased;
+			EventManager.OnMouseClicked += OnMouseClicked;
 		}
 		public static void Dispose() {
 			EventManager.OnKeyPressed -= OnKeyPressed;
 			EventManager.OnKeyReleased -= OnKeyReleased;
+			EventManager.OnMousePressed -= OnMousePressed;
+			EventManager.OnMouseReleased -= OnMouseReleased;
+			EventManager.OnMouseClicked -= OnMouseClicked;
 		}
 
 		// Below are the methods and variables needed for Monitor to handle inputs
