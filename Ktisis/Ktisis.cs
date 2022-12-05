@@ -20,7 +20,7 @@ namespace Ktisis {
 		public string Name => "Ktisis";
 		public string CommandName = "/ktisis";
 
-		public const string Version = "Alpha v0.2.0";
+		public const string Version = "Alpha v0.2.1";
 
 		public static Configuration Configuration { get; private set; } = null!;
 		public static UiBuilder UiBuilder { get; private set; } = null!;
