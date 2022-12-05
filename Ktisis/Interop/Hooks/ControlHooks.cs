@@ -11,10 +11,10 @@ namespace Ktisis.Interop.Hooks {
 	internal static class ControlHooks {
 		public static KeyboardState KeyboardState = new();
 
-		internal unsafe delegate void InputDelegate(InputEvent* input, int a2, ControllerState* a3, MouseState* mouseState, KeyboardState* keyState);
+		internal unsafe delegate void InputDelegate(InputEvent* input, IntPtr a2, ControllerState* controllerState, MouseState* mouseState, KeyboardState* keyState);
 		internal static Hook<InputDelegate> InputHook = null!;
 
-		internal unsafe static void InputDetour(InputEvent* input, int a2, ControllerState* controllerState, MouseState* mouseState, KeyboardState* keyState) {
+		internal unsafe static void InputDetour(InputEvent* input, IntPtr a2, ControllerState* controllerState, MouseState* mouseState, KeyboardState* keyState) {
 			InputHook.Original(input, a2, controllerState, mouseState, keyState);
 
 			if (!Ktisis.IsInGPose) return;
@@ -26,20 +26,21 @@ namespace Ktisis.Interop.Hooks {
 
 				// Process queue
 
-				if (input == null || input->Keyboard == null || keyState == null || controllerState->IsLeftStickUsed() || controllerState->IsRightStickUsed())
+				if (input == null || input->Keyboard == null || keyState == null)
 					return;
 
 				var keys = input->Keyboard->GetQueue();
 				if (keys == null) return;
 				KeyboardState = *keys;
 
-				for (var i = 0; i < keyState->QueueCount; i++) {
+				var queueCount = Math.Min(keyState->KeyboardQueueCount, 64);
+				for (var i = 0; i < queueCount; i++) {
 					var k = keyState->Queue[i];
 					if (k == null) continue;
 
 					if (k->Event == KeyEvent.AnyKeyHeld) continue; // dont care didnt ask (use KeyEvent.Held)
 					if (k->Event == KeyEvent.Released) continue; // Allow InputHook2 to take care of release events.
-
+					
 					if (EventManager.OnKeyPressed != null) {
 						var invokeList = EventManager.OnKeyPressed.GetInvocationList();
 						foreach (var invoke in invokeList) {
