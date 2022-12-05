@@ -23,7 +23,7 @@
 		"title": "Ktisis Einstellungen",
 		"general": {
 			"title": "Allgemeines",
-			"openMetho": {
+			"openMethod": {
 				"fieldLabel": "Ktisis öffnet sich",
 				"Manually": "wenn `/ktisis` im Chat eingegeben wird",
 				"OnPluginLoad": "beim Laden des Plugins",
