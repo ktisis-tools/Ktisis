@@ -284,7 +284,10 @@ namespace Ktisis.Interface.Windows {
 			var enableKeybinds = cfg.EnableKeybinds;
 			if(ImGui.Checkbox(Locale.GetString("Enable"), ref enableKeybinds))
 				cfg.EnableKeybinds = enableKeybinds;
-			if (!cfg.EnableKeybinds) return;
+			if (!cfg.EnableKeybinds) {
+				ImGui.EndTabItem();
+				return;
+			}
 
 			// display the currently pressed keys
 			List<VirtualKey> pressDemo = Input.FallbackKey;
