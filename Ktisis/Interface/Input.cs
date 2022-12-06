@@ -121,7 +121,7 @@ namespace Ktisis.Interface {
 		}
 		internal static bool OnMouseClicked(MouseButton button) {
 
-			if (button == MouseButton.Left && OverlayWindow.IsGizmoVisible && !IsMouseOverTarget() && !IsMouseOverWindow()) {
+			if (Ktisis.Configuration.DeselectBoneClickVoid && button == MouseButton.Left && OverlayWindow.IsGizmoVisible && !IsMouseOverTarget() && !IsMouseOverWindow()) {
 				OverlayWindow.DeselectGizmo();
 				return true;
 			}

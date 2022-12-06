@@ -308,6 +308,9 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox(Locale.GetString("Disable_Change_Target_On_Right_Click"), ref disableChangeTargetOnRightClick))
 				cfg.DisableChangeTargetOnRightClick = disableChangeTargetOnRightClick;
 
+			var deselectBoneClickVoid = cfg.DeselectBoneClickVoid;
+			if (ImGui.Checkbox(Locale.GetString("Deselect_Bone_Click_Void"), ref deselectBoneClickVoid))
+				cfg.DeselectBoneClickVoid = deselectBoneClickVoid;
 
 			ImGui.Spacing();
 			ImGui.Text(Locale.GetString("Keyboard_shortcuts"));
