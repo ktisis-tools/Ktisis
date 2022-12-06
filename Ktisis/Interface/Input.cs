@@ -119,10 +119,9 @@ namespace Ktisis.Interface {
 		internal static bool OnMouseReleased(MouseButton button) {
 			return false;
 		}
-		internal unsafe static bool OnMouseClicked(MouseButton button) {
-			bool isOverATarget = (Services.Targets->MouseOverTarget) != null;
+		internal static bool OnMouseClicked(MouseButton button) {
 
-			if (!isOverATarget && button == MouseButton.Left && OverlayWindow.IsGizmoVisible) {
+			if (button == MouseButton.Left && OverlayWindow.IsGizmoVisible && !IsMouseOverTarget() && !IsMouseOverWindow()) {
 				OverlayWindow.DeselectGizmo();
 				return true;
 			}
@@ -284,5 +283,44 @@ namespace Ktisis.Interface {
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
 		private unsafe static bool IsChatInputActive() => ((UIModule*)Services.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
+
+		private static readonly List<string> MouseObstructingAddonNames = new() {
+				{ "CameraSetting"},
+				{ "ChatLog"},
+				{ "ChatLogPanel_0" },
+				{ "ChatLogPanel_1" },
+				{ "ChatLogPanel_2" },
+				{ "ChatLogPanel_3" },
+				{ "GroupPoseGuide" },
+				{ "GroupPoseStamp" },
+				// { "GroupPoseStampImage" }, // this seem to take almost all the screen
+			};
+		private unsafe static bool IsMouseOverWindow() {
+
+			foreach(var addonName in MouseObstructingAddonNames) {
+				var address = Services.GameGui.GetAddonByName(addonName, 1);
+				if (address == IntPtr.Zero) continue;
+
+				var addon = (FFXIVClientStructs.FFXIV.Component.GUI.AtkUnitBase*)address;
+				if (addon == null || !addon->IsVisible) continue;
+
+				var rootNode = addon->RootNode;
+				if (rootNode == null || !rootNode->IsVisible) continue;
+
+				var right = addon->X;
+				var left = addon->X + (addon->RootNode->Width * addon->Scale);
+				var top = addon->Y;
+				var bottom = addon->Y + (addon->RootNode->Height * addon->Scale);
+
+				if (ControlHooks.MouseState.PosX > right
+					&& ControlHooks.MouseState.PosX < left
+					&& ControlHooks.MouseState.PosY > top
+					&& ControlHooks.MouseState.PosY < bottom)
+					return true;
+			}
+			return false;
+		}
+		private unsafe static bool IsMouseOverTarget() =>
+			Services.Targets->MouseOverTarget != null;
 	}
 }
