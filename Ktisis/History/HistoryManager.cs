@@ -17,8 +17,7 @@ using Ktisis.Structs.Actor.State;
 namespace Ktisis.History {
 	public static class HistoryManager {
 		public static List<HistoryItem>? History { get; set; }
-		private static int _currentIdx = -1;
-		private static int _maxIdx = -1;
+		private static int _currentStateIndex;
 		private static GizmoState _currentGizmoState;
 		private static TransformTableState _currentTtState;
 		private static int _alternativeTimelinesCreated = 0;
@@ -42,23 +41,25 @@ namespace Ktisis.History {
 		// Events
 
 		public static bool OnInput(QueueItem input) {
+			if (History == null) return false;
+
 			if (ControlHooks.KeyboardState!.IsKeyDown(VirtualKey.CONTROL)) {
 				if (input.VirtualKey == VirtualKey.Z) {
-					if (_currentIdx > 1) {
-						_currentIdx--;
+					if (_currentStateIndex > 0) {
+						_currentStateIndex--;
 						UpdateSkeleton();
-						PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-						PrintHistory(_currentIdx - 1);
+						PluginLog.Verbose($"Current Idx: {_currentStateIndex}");
+						PrintHistory(_currentStateIndex);
 						PluginLog.Verbose("CTRL+Z pressed. Undo.");
 					}
 					return true;
 				}
 				else if (input.VirtualKey == VirtualKey.Y) {
-					if (_currentIdx < _maxIdx) {
-						_currentIdx++;
+					if (_currentStateIndex < (History.Count - 1)) {
+						_currentStateIndex++;
 						UpdateSkeleton();
-						PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-						PrintHistory(_currentIdx - 1);
+						PluginLog.Verbose($"Current Idx: {_currentStateIndex}");
+						PrintHistory(_currentStateIndex);
 						PluginLog.Verbose("CTRL+Y pressed. Redo.");
 					}
 					return true;
@@ -70,8 +71,7 @@ namespace Ktisis.History {
 
 		internal static void OnGPoseChange(ActorGposeState _state) {
 			PluginLog.Verbose("Clearing previous history...");
-			_currentIdx = 0;
-			_maxIdx = 0;
+			_currentStateIndex = -1;
 			History = new List<HistoryItem>();
 		}
 
@@ -83,7 +83,7 @@ namespace Ktisis.History {
 			var newState = state;
 			if ((newState == GizmoState.EDITING) && (_currentGizmoState == GizmoState.IDLE)) {
 				PluginLog.Verbose("Started Gizmo edit");
-				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
+				if ((History.Count - 1) != _currentStateIndex) createNewTimeline();
 				UpdateHistory("ActorBone");
 			}
 			if (newState == GizmoState.IDLE && _currentGizmoState == GizmoState.EDITING) {
@@ -98,7 +98,7 @@ namespace Ktisis.History {
 				HistoryItem entryToAdd = HistoryItemFactory.Create(entryType);
 				AddEntryToHistory(entryToAdd);
 			} catch (System.ArgumentException e) {
-				PluginLog.Fatal(e.Message);
+				PluginLog.Warning("Error in HistoryManager::UpdateHistory - " + e.Message);
 				return;
 			}
 		}
@@ -112,7 +112,7 @@ namespace Ktisis.History {
 
 			if ((newState == TransformTableState.EDITING) && (_currentTtState == TransformTableState.IDLE)) {
 				PluginLog.Verbose("Started TT edit");
-				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
+				if ((History.Count - 1) != _currentStateIndex) createNewTimeline();
 				UpdateHistory("ActorBone");
 			}
 
@@ -131,40 +131,34 @@ namespace Ktisis.History {
 				PluginLog.Warning("Attempted to add an entry to an uninitialised history list.");
 				return;
 			}
-			History.Insert(_maxIdx, historyItem);
-			_currentIdx++;
-			_maxIdx++;
-			PrintHistory(_currentIdx - 1);
+			History.Add(historyItem);
+			_currentStateIndex++;
 		}
 
 		private unsafe static void UpdateSkeleton() {
-			History![_currentIdx - 1].Update();
+			History![_currentStateIndex].Update();
 		}
 
 		private static void alternativeTimelineWarning() {
 			_alternativeTimelinesCreated++;
 			PluginLog.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
-			createNewTimeline();
 		}
 
 		private static void createNewTimeline() {
 			if (History is null) return;
 
-			var newHistory = History.Select(e => e.Clone()).ToList().GetRange(0, _currentIdx);
-			HistoryItem currentElem = newHistory[_currentIdx - 1];
-			var newMaxIdx = _currentIdx;
-			History = newHistory!.GetRange(0, newMaxIdx);
-			_maxIdx = newMaxIdx;
-			_currentIdx = newMaxIdx;
+			alternativeTimelineWarning();
+			History.RemoveRange(_currentStateIndex, History.Count - _currentStateIndex);
 		}
 
 		// Debugging
 
 		private static void PrintHistory(int until) {
 			if (History == null) return;
+			if (until == -1) return;
 
 			var str = "\n";
-			for (int i = 0; i < until; i++) {
+			for (int i = 0; i <= until; i++) {
 				str += $"{i}: {History[i].DebugPrint()}\n";
 			}
 			PluginLog.Verbose(str);
