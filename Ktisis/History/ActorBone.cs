@@ -1,37 +1,38 @@
-﻿using Ktisis.Localization;
+﻿using System.Numerics;
+
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 
-using System;
-using System.Numerics;
-
 using static FFXIVClientStructs.Havok.hkaPose;
-using static Ktisis.Overlay.Skeleton;
 
 namespace Ktisis.History {
 	public class ActorBone : HistoryItem {
-		public Matrix4x4 TransformationMatrix { get; private set; }
 		public Bone? Bone { get; private set; }
 		public unsafe Actor* Actor { get; private set; }
 		public bool ParentingState { get; private set; }
 		public SiblingLink SiblingLinkType { get; private set; }
 
-		public unsafe ActorBone(Matrix4x4 transformationMatrix, Bone? bone, bool parentingState, SiblingLink siblingLinkType) {
-			this.TransformationMatrix = transformationMatrix;
-			this.Bone = bone;
-			this.Actor = (Actor*)Ktisis.GPoseTarget!.Address;
-			this.ParentingState = parentingState;
-			this.SiblingLinkType = siblingLinkType;
+		public Matrix4x4 StartMatrix { get; set; }
+		public Matrix4x4 EndMatrix { get; set; }
+
+		public unsafe ActorBone(Bone? bone, bool parentingState, SiblingLink siblingLinkType) {
+			Bone = bone;
+			Actor = (Actor*)Ktisis.GPoseTarget!.Address;
+			ParentingState = parentingState;
+			SiblingLinkType = siblingLinkType;
 		}
 
 		public override unsafe HistoryItem Clone() {
-			return new ActorBone(TransformationMatrix, Bone, ParentingState, SiblingLinkType);
+			var b = new ActorBone(Bone, ParentingState, SiblingLinkType);
+			b.StartMatrix = StartMatrix;
+			b.EndMatrix = EndMatrix;
+			return b;
 		}
 
-		public unsafe override void Update() {
+		public unsafe override void Update(bool undo) {
 			var historyToUndo = this;
-			var transformToRollbackTo = historyToUndo.TransformationMatrix;
+			var transformToRollbackTo = undo ? historyToUndo.StartMatrix : historyToUndo.EndMatrix;
 			var historyBone = historyToUndo.Bone!;
 			var isGlobalRotation = historyBone is null;
 			var model = historyToUndo.Actor->Model;
@@ -59,7 +60,19 @@ namespace Ktisis.History {
 				if (siblingBone != null)
 					siblingBone.PropagateSibling(boneTransform->Rotation.ToQuat() / initialRot, SiblingLinkType);
 			}
+		}
 
+		public unsafe bool SetMatrix(bool start = true) {
+			if (Bone == null) return false;
+			var boneTransform = Bone.AccessModelSpace(PropagateOrNot.DontPropagate);
+			var matrix = Interop.Alloc.GetMatrix(boneTransform);
+
+			if (start)
+				StartMatrix = matrix;
+			else
+				EndMatrix = matrix;
+
+			return true;
 		}
 	}
 }

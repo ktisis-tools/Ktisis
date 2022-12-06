@@ -6,13 +6,12 @@ using Dalamud.Game.ClientState.Keys;
 using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
 
-using Ktisis.Interface.Components;
-using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
+using Ktisis.Interface.Components;
 
 namespace Ktisis.Events {
 	public static class EventManager {
@@ -40,8 +39,7 @@ namespace Ktisis.Events {
 			if (OnTransformationMatrixChange == null) return;
 			var bone = Skeleton.GetSelectedBone();
 			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
-			hkQsTransformf* boneTransform =
-				bone is null ? &actor->Model->Transform : bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+			hkQsTransformf* boneTransform = bone is null ? &actor->Model->Transform : bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
 			OnTransformationMatrixChange(
 				state,
 				Interop.Alloc.GetMatrix(boneTransform),
