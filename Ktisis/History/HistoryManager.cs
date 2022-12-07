@@ -23,6 +23,9 @@ namespace Ktisis.History {
 		private static TransformTableState _currentTtState;
 		private static int _alternativeTimelinesCreated = 0;
 
+		public static bool CanRedo => _currentIdx < _maxIdx;
+		public static bool CanUndo => _currentIdx >= 1;
+
 		// Init & Dispose
 
 		public unsafe static void Init() {
@@ -56,7 +59,7 @@ namespace Ktisis.History {
 		}
 
 		public static void Redo() {
-			if (_currentIdx >= _maxIdx)
+			if (!CanRedo)
 				return;
 
 			_currentIdx++;
@@ -64,7 +67,7 @@ namespace Ktisis.History {
 		}
 
 		public static void Undo() {
-			if (_currentIdx < 1)
+			if (!CanUndo)
 				return;
 
 			UpdateSkeleton(true);
