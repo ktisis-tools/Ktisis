@@ -72,7 +72,6 @@ namespace Ktisis.History {
 		internal static void OnGPoseChange(ActorGposeState _state) {
 			Logger.Verbose("Clearing previous history...");
 			_currentIdx = 0;
-			_maxIdx = 0;
 			History = new List<HistoryItem>();
 		}
 
@@ -116,9 +115,8 @@ namespace Ktisis.History {
 				Logger.Warning("Attempted to add an entry to an uninitialised history list.");
 				return;
 			}
-			History.Insert(_maxIdx, historyItem);
+			History.Add(historyItem);
 			_currentIdx++;
-			_maxIdx++;
 		}
 
 		private unsafe static void UpdateSkeleton(bool undo) {
@@ -130,7 +128,7 @@ namespace Ktisis.History {
 
 			Logger.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
 
-			History.RemoveRange(_currentIdx, _maxIdx - _currentIdx);
+			History.RemoveRange(_currentIdx, History.Count - _currentIdx);
 		}
 	}
 }
