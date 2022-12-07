@@ -128,12 +128,7 @@ namespace Ktisis.History {
 
 			Logger.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
 
-			var newHistory = History.Select(e => e.Clone()).ToList().GetRange(0, _currentIdx + 1);
-			HistoryItem currentElem = newHistory[_currentIdx];
-			var newMaxIdx = _currentIdx;
-			History = newHistory!.GetRange(0, newMaxIdx);
-			_maxIdx = newMaxIdx;
-			_currentIdx = newMaxIdx;
+			History.RemoveRange(_currentIdx, _maxIdx - _currentIdx);
 		}
 	}
 }
