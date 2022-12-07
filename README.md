@@ -28,7 +28,7 @@ This will enable you to install community-created plugins.
 5. Open the plugin installer by typing the `/xlplugins` command, search for Ktisis, and click install.
 
 #### Repo URL
-This will be added when Ktisis is available to install.
+`https://raw.githubusercontent.com/ktisis-tools/Ktisis/main/repo.json`
 
 ## Acknowledgements
 
