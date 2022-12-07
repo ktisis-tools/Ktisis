@@ -127,9 +127,9 @@ namespace Ktisis.History {
 		private static void createNewTimeline() {
 			if (History is null) return;
 
-			Logger.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
-
-			History.RemoveRange(_currentStateIndex, History.Count - _currentStateIndex);
+			_alternativeTimelinesCreated++;
+			Logger.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.\n");
+			History.RemoveRange(_currentStateIndex + 1, (History.Count - 1) - _currentStateIndex);
 		}
 	}
 }
