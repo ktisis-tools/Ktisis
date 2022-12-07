@@ -24,7 +24,7 @@ namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
 		public static bool Visible = false;
 		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.50f);
-		private static Vector2 WindowSizeMin = new(ImGui.GetFontSize() * 15, ImGui.GetFontSize() * 20);
+        private static Vector2 WindowSizeMin = new(ImGui.GetFontSize() * 15, ImGui.GetFontSize() * 20);
 		private static Vector2 WindowSizeMax = ImGui.GetIO().DisplaySize * 0.85f;
 
 		// Toggle visibility
@@ -313,7 +313,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Spacing();
 			ImGui.Spacing();
 
-			ImGui.BeginChildFrame(74, new(-1, ImGui.GetFontSize() * 20));
+            ImGui.BeginChildFrame(74, new(-1, -1));
 
 			// key/Action table
 			ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, ImGui.GetStyle().CellPadding * 3);
