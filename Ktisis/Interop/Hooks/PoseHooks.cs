@@ -175,7 +175,7 @@ namespace Ktisis.Interop.Hooks {
 								if (StaticOffsets.IsPositionFrozen) trans |= PoseTransforms.Position;
 								if (StaticOffsets.IsScalingFrozen) trans |= PoseTransforms.Scale;
 							}
-							backup.ApplyToPartial(a1, a2, trans, true);
+							backup.ApplyToPartial(a1, a2, trans, true, !AnamPosingEnabled);
 						}
 					}
 				}
