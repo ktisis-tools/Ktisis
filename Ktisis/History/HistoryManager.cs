@@ -38,6 +38,8 @@ namespace Ktisis.History {
 		// Events
 
 		public static bool OnInput(QueueItem input) {
+			if (History == null) return false;
+
 			if (ControlHooks.KeyboardState!.IsKeyDown(VirtualKey.CONTROL)) {
 				if (input.VirtualKey == VirtualKey.Z) {
 					Undo();
