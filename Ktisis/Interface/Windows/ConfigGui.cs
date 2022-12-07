@@ -313,7 +313,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Spacing();
 			ImGui.Spacing();
 
-			ImGui.BeginChildFrame(74, new(-1, ImGui.GetFontSize() * 20));
+			ImGui.BeginChildFrame(74, new(-1, -1));
 
 			// key/Action table
 			ImGui.PushStyleVar(ImGuiStyleVar.CellPadding, ImGui.GetStyle().CellPadding * 3);
