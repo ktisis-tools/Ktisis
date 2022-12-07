@@ -58,7 +58,7 @@ namespace Ktisis.Interface.Windows {
 				Textures[path] = Ktisis.UiBuilder.LoadImage(path);
 				return true;
 			} catch (Exception e) {
-				PluginLog.Error(e, "Failed to load reference image {0}", path ?? "null");
+				Logger.Error(e, "Failed to load reference image {0}", path ?? "null");
 				return false;
 			}
 		}

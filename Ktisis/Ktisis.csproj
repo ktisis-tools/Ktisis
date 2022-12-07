@@ -7,6 +7,7 @@
     <Description>An internal posing tool.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
+    <Configurations>Debug;Release;External</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -24,6 +25,12 @@
     <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="$(Configuration) == 'External'">
+    <TargetFramework>net6.0</TargetFramework>
+    <DefineConstants>EXTERNAL_BUILD</DefineConstants>
+    <DalamudLibPath>..\..\DalamudLibs\</DalamudLibPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Locale\i18n\English.json" />
     <None Remove="Locale\i18n\German.json" />
@@ -39,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
     <PackageReference Include="DalamudPackager" Version="2.1.6" />
     <Reference Include="FFXIVClientStructs">
       <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>

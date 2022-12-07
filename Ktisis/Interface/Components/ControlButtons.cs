@@ -14,6 +14,7 @@ using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Bones;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.Workspace;
+using Ktisis.History;
 
 namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
@@ -48,6 +49,23 @@ namespace Ktisis.Interface.Components {
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.MinusCircle, "Deselect gizmo", ButtonSize))
 				OverlayWindow.DeselectGizmo();
 			if (!gizmoActive) ImGui.EndDisabled();
+
+			var canUndo = HistoryManager.CanUndo;
+			var canRedo = HistoryManager.CanRedo;
+
+			ImGui.SameLine();
+
+			if (!canUndo) ImGui.BeginDisabled();
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Backward, "Undo", ButtonSize)) 
+				HistoryManager.Undo();
+			if (!canUndo) ImGui.EndDisabled();
+
+			ImGui.SameLine();
+
+			if (!canRedo) ImGui.BeginDisabled();
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Forward, "Redo", ButtonSize))
+				HistoryManager.Redo();
+			if (!canRedo) ImGui.EndDisabled();
 		}
 
 		// As these buttons are a bit special and should not be as present as others

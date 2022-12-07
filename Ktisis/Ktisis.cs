@@ -20,7 +20,7 @@ namespace Ktisis {
 		public string Name => "Ktisis";
 		public string CommandName = "/ktisis";
 
-		public const string Version = "Alpha v0.2.0";
+		public const string Version = "Alpha v0.2.2";
 
 		public static Configuration Configuration { get; private set; } = null!;
 		public static UiBuilder UiBuilder { get; private set; } = null!;
@@ -118,16 +118,16 @@ namespace Ktisis {
 				case "about":
 				case "info":
 				case "information":
-					Information.Show();
+					Information.Toggle();
 					break;
 				case "cfg":
 				case "config":
 				case "configure":
 				case "configuration":
-					ConfigGui.Show();
+					ConfigGui.Toggle();
 					break;
 				default:
-					Workspace.Show();
+					Workspace.Toggle();
 					break;
 			}
 		}

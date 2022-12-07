@@ -7,9 +7,7 @@ using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
-using static Ktisis.Overlay.Skeleton;
-
-using ImGuizmoNET;
+using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Structs.Bones {
 	public class Bone {
@@ -109,11 +107,9 @@ namespace Ktisis.Structs.Bones {
 			return null;
 		}
 
-		public bool IsBusted() =>
-			float.IsNaN(Transform.Translation.X)
-			|| float.IsNaN(Transform.Translation.Y)
-			|| float.IsNaN(Transform.Translation.Z)
-			|| Transform.Rotation.W == 0;
+		public bool IsBusted() => !Transform.Translation.X.IsValid()
+			|| !Transform.Translation.Y.IsValid()
+			|| !Transform.Translation.Z.IsValid();
 
 		public unsafe void PropagateChildren(hkQsTransformf* transform, Vector3 initialPos, Quaternion initialRot, bool includePartials = true) {
 			// Bone parenting

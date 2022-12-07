@@ -49,7 +49,7 @@ namespace Ktisis.Interface.Windows {
 
 				ImGui.PushStyleColor(ImGuiCol.Button, KofiColor);
 				if (ImGui.Button("Support on Ko-fi", ButtonSize))
-					Common.OpenBrowser("https://ko-fi.com/chirpcodes");
+					Common.OpenBrowser("https://ko-fi.com/chirpxiv");
 				ImGui.PopStyleColor();
 
 				if (ImGui.Button("GitHub", ButtonSize))

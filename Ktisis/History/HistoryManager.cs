@@ -2,7 +2,6 @@
 using System.Numerics;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Events;
@@ -13,6 +12,7 @@ using Ktisis.Structs.Input;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Structs.Actor.State;
+using Dalamud.Logging;
 
 namespace Ktisis.History {
 	public static class HistoryManager {
@@ -22,6 +22,9 @@ namespace Ktisis.History {
 		private static GizmoState _currentGizmoState;
 		private static TransformTableState _currentTtState;
 		private static int _alternativeTimelinesCreated = 0;
+
+		public static bool CanRedo => _currentIdx < _maxIdx;
+		public static bool CanUndo => _currentIdx >= 1;
 
 		// Init & Dispose
 
@@ -54,57 +57,59 @@ namespace Ktisis.History {
 			}
 			return false;
 		}
+
 		public static void Redo() {
-			if (_currentIdx >= _maxIdx)
+			if (!CanRedo)
 				return;
 
 			_currentIdx++;
-			UpdateSkeleton();
-			PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-			PluginLog.Verbose("CTRL+Y pressed. Redo.");
+			UpdateSkeleton(false);
 		}
+
 		public static void Undo() {
-			if (_currentIdx <= 1)
+			if (!CanUndo)
 				return;
 
+			UpdateSkeleton(true);
 			_currentIdx--;
-			UpdateSkeleton();
-			PluginLog.Verbose($"Current Idx: {_currentIdx - 1}");
-			PluginLog.Verbose("CTRL+Z pressed. Undo.");
 		}
 
 		internal static void OnGPoseChange(ActorGposeState _state) {
-			PluginLog.Verbose("Clearing previous history...");
+			Logger.Verbose("Clearing previous history...");
 			_currentIdx = 0;
 			_maxIdx = 0;
 			History = new List<HistoryItem>();
 		}
 
 		//TODO: Find a way to know what's the currently modified item to be able to add the correct entry to the history.
+
+		public static ActorBone? CurrentBone = null;
+
 		private unsafe static void OnGizmoChange(GizmoState state) {
 			if (!PoseHooks.PosingEnabled) return;
 			if (History == null) return;
 
 			var newState = state;
+
 			if ((newState == GizmoState.EDITING) && (_currentGizmoState == GizmoState.IDLE)) {
-				PluginLog.Verbose("Started Gizmo edit");
-				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
-				UpdateHistory("ActorBone");
+				if (_maxIdx != _currentIdx) createNewTimeline();
+				UpdateHistory(HistoryItemType.ActorBone);
 			}
+
 			if (newState == GizmoState.IDLE && _currentGizmoState == GizmoState.EDITING) {
-				PluginLog.Verbose("Ended Gizmo edit");
-				UpdateHistory("ActorBone");
+				((ActorBone)History[_currentIdx - 1]).SetMatrix(false);
 			}
+
 			_currentGizmoState = newState;
 		}
 
-		private static unsafe void UpdateHistory(string entryType) {
+		private static unsafe void UpdateHistory(HistoryItemType entryType) {
 			try {
-				var entryToAdd = HistoryItemFactory.Create(entryType);
+				var entryToAdd = HistoryItemFactory.Create(HistoryItemType.ActorBone);
 				if (entryToAdd != null)
 					AddEntryToHistory(entryToAdd);
 			} catch (System.ArgumentException e) {
-				PluginLog.Fatal(e.Message);
+				Logger.Fatal(e.Message);
 				return;
 			}
 		}
@@ -117,14 +122,14 @@ namespace Ktisis.History {
 			var newState = state;
 
 			if ((newState == TransformTableState.EDITING) && (_currentTtState == TransformTableState.IDLE)) {
-				PluginLog.Verbose("Started TT edit");
-				if (_maxIdx != _currentIdx) alternativeTimelineWarning();
-				UpdateHistory("ActorBone");
+				Logger.Verbose("Started TT edit");
+				if (_maxIdx != _currentIdx) createNewTimeline();
+				UpdateHistory(HistoryItemType.ActorBone);
 			}
 
 			if ((newState == TransformTableState.IDLE) && (_currentTtState == TransformTableState.EDITING)) {
-				PluginLog.Verbose("Finished TT edit");
-				UpdateHistory("ActorBone");
+				Logger.Verbose("Finished TT edit");
+				((ActorBone)History[_currentIdx - 1]).SetMatrix(false);
 			}
 
 			_currentTtState = newState;
@@ -134,7 +139,7 @@ namespace Ktisis.History {
 
 		public unsafe static void AddEntryToHistory(HistoryItem historyItem) {
 			if (History == null) {
-				PluginLog.Warning("Attempted to add an entry to an uninitialised history list.");
+				Logger.Warning("Attempted to add an entry to an uninitialised history list.");
 				return;
 			}
 			History.Insert(_maxIdx, historyItem);
@@ -142,21 +147,17 @@ namespace Ktisis.History {
 			_maxIdx++;
 		}
 
-		private unsafe static void UpdateSkeleton() {
-			History![_currentIdx - 1].Update();
-		}
-
-		private static void alternativeTimelineWarning() {
-			_alternativeTimelinesCreated++;
-			PluginLog.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
-			createNewTimeline();
+		private unsafe static void UpdateSkeleton(bool undo) {
+			History![_currentIdx - 1].Update(undo);
 		}
 
 		private static void createNewTimeline() {
 			if (History is null) return;
 
-			var newHistory = History.Select(e => e.Clone()).ToList().GetRange(0, _currentIdx);
-			HistoryItem currentElem = newHistory[_currentIdx - 1];
+			Logger.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
+
+			var newHistory = History.Select(e => e.Clone()).ToList().GetRange(0, _currentIdx + 1);
+			HistoryItem currentElem = newHistory[_currentIdx];
 			var newMaxIdx = _currentIdx;
 			History = newHistory!.GetRange(0, newMaxIdx);
 			_maxIdx = newMaxIdx;

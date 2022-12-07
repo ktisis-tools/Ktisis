@@ -1,15 +1,16 @@
 ﻿using Ktisis.Overlay;
 
-using static FFXIVClientStructs.Havok.hkaPose;
-
 namespace Ktisis.History {
-	public static class HistoryItemFactory {
+	public enum HistoryItemType {
+		ActorBone
+	}
 
-		public unsafe static HistoryItem? Create(string type) {
+	public static class HistoryItemFactory {
+		public unsafe static HistoryItem? Create(HistoryItemType type) {
 			HistoryItem? item = null;
 
 			switch (type) {
-				case "ActorBone":
+				case HistoryItemType.ActorBone:
 					item = CreateActorBoneItem();
 					break;
 				default:
@@ -23,14 +24,14 @@ namespace Ktisis.History {
 		private static unsafe ActorBone? CreateActorBoneItem() {
 			var bone = Skeleton.GetSelectedBone();
 			if (bone == null) return null;
-			var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
-			var matrix = Interop.Alloc.GetMatrix(boneTransform);
-			return new ActorBone(
-				matrix,
+
+			var res = new ActorBone(
 				bone,
 				Ktisis.Configuration.EnableParenting,
 				Ktisis.Configuration.SiblingLink
 			);
+			res.SetMatrix(true);
+			return res;
 		}
 	}
 }

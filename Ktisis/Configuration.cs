@@ -148,7 +148,7 @@ namespace Ktisis
 			if (Version == CurVersion)
 				return;
 
-			PluginLog.Warning($"Updating config to reflect changes between config versions {Version}-{CurVersion}.\nThis is nothing to worry about, but some settings may change or get reset!");
+			Logger.Warning($"Updating config to reflect changes between config versions {Version}-{CurVersion}.\nThis is nothing to worry about, but some settings may change or get reset!");
 
 #pragma warning disable CS0612, CS0618
 			// Apply changes from obsolete attributes

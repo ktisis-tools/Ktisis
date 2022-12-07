@@ -21,7 +21,8 @@ namespace Ktisis.Structs.Input {
 		public byte IsKeyPressed;
 		public fixed uint KeyMap[159];
 		public KeyboardQueue Queue;
-		public long QueueCount;
+		public int KeyboardQueueCount;
+		public int ControllerQueueCount;
 
 		public bool IsKeyDown(VirtualKey key)
 			=> KeyMap[(int)key] == 1;

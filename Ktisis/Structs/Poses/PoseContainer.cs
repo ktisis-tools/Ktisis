@@ -42,7 +42,7 @@ namespace Ktisis.Structs.Poses {
 				ApplyToPartial(modelSkeleton, p, trans);
 		}
 
-		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseTransforms trans = PoseTransforms.Rotation, bool setRootPos = false) {
+		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseTransforms trans = PoseTransforms.Rotation, bool setRootPos = false, bool parentPartial = true) {
 			var partial = modelSkeleton->PartialSkeletons[p];
 
 			var pose = partial.GetHavokPose(0);
@@ -79,7 +79,7 @@ namespace Ktisis.Structs.Poses {
 				}
 			}
 
-			if (p > 0)
+			if (p > 0 && parentPartial)
 				modelSkeleton->ParentPartialToRoot(p);
 		}
 	}
