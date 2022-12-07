@@ -17,8 +17,8 @@ namespace Ktisis.History {
 		private static bool _currentState;
 		private static int _alternativeTimelinesCreated = 0;
 
-		public static bool CanRedo => _currentIdx < _maxIdx;
-		public static bool CanUndo => _currentIdx >= 1;
+		public static bool CanRedo => _currentStateIndex < (History!.Count - 1);
+		public static bool CanUndo => _currentStateIndex >= 0;
 
 		// Init & Dispose
 
