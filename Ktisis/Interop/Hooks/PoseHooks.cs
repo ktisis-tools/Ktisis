@@ -10,7 +10,6 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
-using Dalamud.Logging;
 
 namespace Ktisis.Interop.Hooks {
     public static class PoseHooks {
@@ -29,8 +28,8 @@ namespace Ktisis.Interop.Hooks {
 		internal unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
 		internal static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
 
-		internal unsafe delegate char LoadSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
-		internal static Hook<LoadSkeletonDelegate> LoadSkeletonHook = null!;
+		internal unsafe delegate char SetSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
+		internal static Hook<SetSkeletonDelegate> SetSkeletonHook = null!;
 
 		internal unsafe delegate IntPtr BustDelegate(ActorModel* a1, Breasts* a2);
 		internal static Hook<BustDelegate> BustHook = null!;
@@ -63,8 +62,8 @@ namespace Ktisis.Interop.Hooks {
 			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
 
 			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
-			LoadSkeletonHook = Hook<LoadSkeletonDelegate>.FromAddress(loadSkele, LoadSkeletonDetour);
-			LoadSkeletonHook.Enable();
+			SetSkeletonHook = Hook<SetSkeletonDelegate>.FromAddress(loadSkele, SetSkeletonDetour);
+			SetSkeletonHook.Enable();
 
 			var loadBust = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F6 84 24 ?? ?? ?? ?? ?? 0F 28 74 24 ??");
 			BustHook = Hook<BustDelegate>.FromAddress(loadBust, BustDetour);
@@ -77,7 +76,6 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
 			AnimFrozenHook?.Disable();
-			//LoadSkeletonHook?.Disable();
 			BustHook?.Disable();
 			PosingEnabled = false;
 		}
@@ -88,7 +86,6 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
 			AnimFrozenHook?.Enable();
-			//LoadSkeletonHook?.Enable();
 			BustHook?.Enable();
 			PosingEnabled = true;
 		}
@@ -133,8 +130,8 @@ namespace Ktisis.Interop.Hooks {
 				SyncModelSpaceHook.Original(pose);
 		}
 
-		private static unsafe char LoadSkeletonDetour(Skeleton* a1, ushort a2, IntPtr a3) {
-			var exec = LoadSkeletonHook.Original(a1, a2, a3);
+		private static unsafe char SetSkeletonDetour(Skeleton* a1, ushort a2, IntPtr a3) {
+			var exec = SetSkeletonHook.Original(a1, a2, a3);
 			if (!PosingEnabled && !AnamPosingEnabled) return exec;
 
 			try {
@@ -183,7 +180,7 @@ namespace Ktisis.Interop.Hooks {
 					}
 				}
 			} catch (Exception e) {
-				Logger.Error(e, "Error in LoadSkeletonDetour.");
+				Logger.Error(e, "Error in SetSkeletonDetour.");
 			}
 
 			return exec;
@@ -231,8 +228,8 @@ namespace Ktisis.Interop.Hooks {
 			LookAtIKHook.Dispose();
 			AnimFrozenHook.Disable();
 			AnimFrozenHook.Dispose();
-			LoadSkeletonHook.Disable();
-			LoadSkeletonHook.Dispose();
+			SetSkeletonHook.Disable();
+			SetSkeletonHook.Dispose();
 			BustHook.Disable();
 			BustHook.Dispose();
 		}
