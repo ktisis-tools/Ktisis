@@ -11,8 +11,9 @@ using Ktisis.Structs.Actor.State;
 namespace Ktisis.History {
 	public static class HistoryManager {
 		public static List<HistoryItem>? History { get; set; }
-		private static int _currentIdx = -1;
-		private static int _maxIdx = -1;
+		private static int _currentStateIndex;
+		private static GizmoState _currentGizmoState;
+		private static TransformTableState _currentTtState;
 		private static bool _currentState;
 		private static int _alternativeTimelinesCreated = 0;
 
@@ -57,7 +58,7 @@ namespace Ktisis.History {
 			if (!CanRedo)
 				return;
 
-			_currentIdx++;
+			_currentStateIndex++;
 			UpdateSkeleton(false);
 		}
 
@@ -66,12 +67,12 @@ namespace Ktisis.History {
 				return;
 
 			UpdateSkeleton(true);
-			_currentIdx--;
+			_currentStateIndex--;
 		}
 
 		internal static void OnGPoseChange(ActorGposeState _state) {
 			Logger.Verbose("Clearing previous history...");
-			_currentIdx = 0;
+			_currentStateIndex = -1;
 			History = new List<HistoryItem>();
 		}
 
@@ -116,11 +117,11 @@ namespace Ktisis.History {
 				return;
 			}
 			History.Add(historyItem);
-			_currentIdx++;
+			_currentStateIndex++;
 		}
 
 		private unsafe static void UpdateSkeleton(bool undo) {
-			History![_currentIdx - 1].Update(undo);
+			History![_currentStateIndex].Update(undo);
 		}
 
 		private static void createNewTimeline() {
@@ -128,7 +129,7 @@ namespace Ktisis.History {
 
 			Logger.Verbose($"By changing the past, you've created a different future. You've created {_alternativeTimelinesCreated} different timelines.");
 
-			History.RemoveRange(_currentIdx, History.Count - _currentIdx);
+			History.RemoveRange(_currentStateIndex, History.Count - _currentStateIndex);
 		}
 	}
 }
