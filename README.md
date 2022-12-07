@@ -11,7 +11,24 @@ To see a list of target features as well as their current progress on implementa
 
 Ktisis is still in early development, and any releases that go out will be primarily for alpha testing. This means that some functionality may be buggy or broken, so it's recommended that you save your poses regularly and report any bugs or errors you come across.
 
-Additionally, this tool is not made to be a replacement for Anamnesis. Instead, it's intended to be a new addition to the standard toolkits of posers, and will be best used in conjunction.
+Moreover, there will be many rough edges that may affect user experience, which we will work to improve.
+
+Additionally, this tool is not made to be a replacement for Anamnesis. Instead, it's intended to be a new addition to the standard toolkits of posers, and will best be used in conjunction.
+
+## Installation
+
+Ktisis is written as a Dalamud plugin and as such, requires that you use [FFXIVQuickLauncher](https://github.com/goatcorp/FFXIVQuickLauncher) to start your game.
+<br/>
+This will enable you to install community-created plugins.
+
+1. Type the `/xlsettings` command into your chatbox. This will open your Dalamud Settings.
+2. In the window that opens, navigate to the "Experimental" tab. Scroll down to "Custom Plugin Repositories".
+3. Copy and paste the repo URL (seen below) into the input box, **making sure to press the "+" button to add it.**
+4. Press the "Save and Close" button. This will add Ktisis to Dalamud's list of available plugins.
+5. Open the plugin installer by typing the `/xlplugins` command, search for Ktisis, and click install.
+
+#### Repo URL
+This will be added when Ktisis is available to install.
 
 ## Acknowledgements
 
