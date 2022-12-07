@@ -11,7 +11,7 @@ To see a list of target features as well as their current progress on implementa
 
 Ktisis is still in early development, and any releases that go out will be primarily for alpha testing. This means that some functionality may be buggy or broken, so it's recommended that you save your poses regularly and report any bugs or errors you come across.
 
-Moreover, there will be many rough edges that may affect user experience, which we will work to improve.
+Moreover, there will be many rough edges that may affect user experience, which we will work to improve. We hope to put together some comprehensive usage guides and other resources to help ease the barrier to entry and learning curve involved - if you're interested in helping with this, please reach out!
 
 Additionally, this tool is not made to be a replacement for Anamnesis. Instead, it's intended to be a new addition to the standard toolkits of posers, and will best be used in conjunction.
 
