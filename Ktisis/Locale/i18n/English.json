@@ -46,6 +46,8 @@
     "Draw_dots_with_gizmo": "Draw dots with gizmo active",
     "Dot_radius": "Dot radius",
     "Lines_thickness": "Lines thickness",
+    "Lines_opacity": "Lines opacity",
+    "Lines_opacity_while_using": "Lines opacity while using gizmo",
     "Bone_colors": "Bone colors",
     "Hold_Control_and_Shift_to_erase_colors": "Hold Control and Shift to erase colors.",
     "Unlink_bones_colors": "Unlink bones colors",
