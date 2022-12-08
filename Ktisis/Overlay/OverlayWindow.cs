@@ -46,7 +46,8 @@ namespace Ktisis.Overlay {
 		public static bool IsCursorBusy() =>
 			(GizmoOwner != null && (ImGuizmo.IsUsing() || ImGuizmo.IsOver()))
 			|| ImGui.IsAnyItemActive() || ImGui.IsAnyItemHovered()
-			|| ImGui.IsAnyItemFocused() || ImGui.IsAnyMouseDown();
+			|| ImGui.IsAnyItemFocused() || ImGui.IsAnyMouseDown()
+			|| ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow);
 
 		public static void Begin() {
 			if (HasBegun) return;
