@@ -412,7 +412,7 @@ namespace Ktisis.Interface.Windows {
 						if (i % 8 != 0) ImGui.SameLine();
 
 						var rgba = ImGui.ColorConvertU32ToFloat4(rgb);
-						if (ImGui.ColorButton($"##{color.Name}_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
+						if (ImGui.ColorButton($"{i}##{color.Name}_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
 							result = true;
 							value = (byte)i;
 							ImGui.SetWindowFocus();
