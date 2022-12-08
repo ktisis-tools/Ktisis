@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 
 using Dalamud.Configuration;
+using Dalamud.Utility.Numerics;
 
 using ImGuiNET;
 using ImGuizmoNET;
@@ -91,7 +92,8 @@ namespace Ktisis.Overlay {
 
 					// Get bone color and screen position
 					var boneColRgb = Ktisis.Configuration.GetCategoryColor(bone);
-					if (isUsing) boneColRgb.W = Math.Min(0.15f, boneColRgb.W);
+					if (isUsing) boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacityWhileUsing;
+					else boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacity;
 
 					var boneColor = ImGui.GetColorU32(boneColRgb);
 					var isVisible = world->WorldToScreen(bone.GetWorldPos(model), out var pos2d);

@@ -59,6 +59,8 @@ namespace Ktisis
 		public bool DrawDotsWithGizmo { get; set; } = true;
 
 		public float SkeletonLineThickness { get; set; } = 2.0F;
+		public float SkeletonLineOpacity { get; set; } = 0.95F;
+		public float SkeletonLineOpacityWhileUsing { get; set; } = 0.15F;
 		public float SkeletonDotRadius { get; set; } = 3.0F;
 
 		// References

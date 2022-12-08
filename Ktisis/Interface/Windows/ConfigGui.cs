@@ -169,6 +169,14 @@ namespace Ktisis.Interface.Windows {
 				var lineThickness = cfg.SkeletonLineThickness;
 				if (ImGui.SliderFloat(Locale.GetString("Lines_thickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
 					cfg.SkeletonLineThickness = lineThickness;
+				
+				var lineOpacity = cfg.SkeletonLineOpacity;
+				if (ImGui.SliderFloat(Locale.GetString("Lines_opacity"), ref lineOpacity, 0.01F, 1F, "%.2f"))
+					cfg.SkeletonLineOpacity = lineOpacity;
+				
+				var lineOpacityWhileUsing = cfg.SkeletonLineOpacityWhileUsing;
+				if (ImGui.SliderFloat(Locale.GetString("Lines_opacity_while_using"), ref lineOpacityWhileUsing, 0.01F, 1F, "%.2f"))
+					cfg.SkeletonLineOpacityWhileUsing = lineOpacityWhileUsing;
 			}
 			if (ImGui.CollapsingHeader(Locale.GetString("Bone_colors"), ImGuiTreeNodeFlags.DefaultOpen)) {
 
