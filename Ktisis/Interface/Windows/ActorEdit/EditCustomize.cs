@@ -358,9 +358,12 @@ namespace Ktisis.Interface.Windows {
 			if (color.AltIndex != 0) name += "s";
 			ImGui.Text(name);
 
-			if ((Selecting == color.Index || Selecting == color.AltIndex) && DrawColorList(custom, color, out byte value)) {
-				custom.Bytes[(uint)Selecting] = value;
-				Apply(custom);
+			if (Selecting == color.Index || Selecting == color.AltIndex){
+				byte value = custom.Bytes[(uint)Selecting];
+				if (DrawColorList(custom, color, ref value)) {
+					custom.Bytes[(uint)Selecting] = value;
+					Apply(custom);
+				}
 			}
 
 			ImGui.EndGroup();
@@ -379,9 +382,8 @@ namespace Ktisis.Interface.Windows {
 			return result;
 		}
 
-		public unsafe static bool DrawColorList(Customize custom, MenuColor color, out byte value) {
+		public unsafe static bool DrawColorList(Customize custom, MenuColor color, ref byte value) {
 			var result = false;
-			value = 0;
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
@@ -396,11 +398,11 @@ namespace Ktisis.Interface.Windows {
 					//ImGui.BeginListBox("##feature_select", new Vector2(ListIconSize.X * 6 * 1.25f + 30, 200));
 					//focus |= ImGui.IsItemFocused() || ImGui.IsItemActive() || ImGui.IsItemActivated() || ImGui.IsItemHovered();
 
-					var id = (int)custom.Bytes[(int)color.Index];
+					var id = (int)value;
 					ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 					if (ImGui.InputInt("##colId", ref id)) {
-						custom.Bytes[(int)color.Index] = (byte)id;
-						Apply(custom);
+						value = (byte)id;
+						result |= true;
 					}
 
 					ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0,0));
@@ -413,7 +415,7 @@ namespace Ktisis.Interface.Windows {
 
 						var rgba = ImGui.ColorConvertU32ToFloat4(rgb);
 						if (ImGui.ColorButton($"{i}##{color.Name}_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
-							result = true;
+							result |= true;
 							value = (byte)i;
 							ImGui.SetWindowFocus();
 						}
