@@ -308,6 +308,11 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox(Locale.GetString("Disable_Change_Target_On_Right_Click"), ref disableChangeTargetOnRightClick))
 				cfg.DisableChangeTargetOnRightClick = disableChangeTargetOnRightClick;
 
+			var clickDuration = cfg.ClickDuration;
+			ImGui.SetNextItemWidth(ImGui.GetFontSize() * 4);
+			if (ImGui.DragInt(Locale.GetString("Click_duration"), ref clickDuration,0.1f,10,1500,"%.d ms"))
+				cfg.ClickDuration = clickDuration;
+
 			var deselectBoneClickVoid = cfg.DeselectBoneClickVoid;
 			if (ImGui.Checkbox(Locale.GetString("Deselect_Bone_Click_Void"), ref deselectBoneClickVoid))
 				cfg.DeselectBoneClickVoid = deselectBoneClickVoid;

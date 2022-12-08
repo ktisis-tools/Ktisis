@@ -10,7 +10,6 @@ using Ktisis.Structs.Input;
 
 namespace Ktisis.Interop.Hooks {
 	internal static class ControlHooks {
-		private const long MouseClickLength = 150; // defines the lenght of a mouse click in milliseconds
 
 		public static KeyboardState KeyboardState = new();
 		public static MouseState MouseState = new();
@@ -47,7 +46,7 @@ namespace Ktisis.Interop.Hooks {
 						}
 
 
-						if (EventManager.OnMouseClicked != null && isReleased && timePressedMs > 0 && timePressedMs < 150) {
+						if (EventManager.OnMouseClicked != null && isReleased && timePressedMs > 0 && timePressedMs < Ktisis.Configuration.ClickDuration) {
 							var invokeClickedList = EventManager.OnMouseClicked.GetInvocationList();
 							foreach (var invoke in invokeClickedList) {
 								if ((bool)invoke.Method.Invoke(invoke.Target, new object[] { button })!) {
