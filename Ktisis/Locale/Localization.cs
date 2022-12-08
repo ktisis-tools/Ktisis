@@ -16,6 +16,7 @@ namespace Ktisis.Localization {
 
 		public static List<UserLocale> Languages = new() {
 			UserLocale.English,
+			UserLocale.French,
 			UserLocale.German
 		};
 
