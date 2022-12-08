@@ -312,6 +312,10 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Checkbox(Locale.GetString("Deselect_Bone_Click_Void"), ref deselectBoneClickVoid))
 				cfg.DeselectBoneClickVoid = deselectBoneClickVoid;
 
+			var deselectBoneClickVoidActorPassThrough = cfg.DeselectBoneClickVoidActorPassTrough;
+			if (ImGui.Checkbox(Locale.GetString("Deselect_Bone_Click_Void_Actor_pass_through"), ref deselectBoneClickVoidActorPassThrough))
+				cfg.DeselectBoneClickVoidActorPassTrough = deselectBoneClickVoidActorPassThrough;
+
 			ImGui.Spacing();
 			ImGui.Text(Locale.GetString("Keyboard_shortcuts"));
 			ImGui.Spacing();
