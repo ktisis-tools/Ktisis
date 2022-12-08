@@ -97,7 +97,9 @@ namespace Ktisis.History {
 			}
 
 			if (newState == GizmoState.IDLE && _currentGizmoState == GizmoState.EDITING) {
-				((ActorBone)History[_currentIdx - 1]).SetMatrix(false);
+				var x = _currentIdx - 1;
+				if (x >= 0 && x < History.Count)
+					((ActorBone)History[x]).SetMatrix(false);
 			}
 
 			_currentGizmoState = newState;
