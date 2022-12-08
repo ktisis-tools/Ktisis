@@ -22,9 +22,19 @@ namespace Ktisis.Interface.Components {
 		private static bool IsSettingsHovered = false;
 		private static bool IsSettingsActive = false;
 
+
 		// utils
 		public static void VerticalAlignTextOnButtonSize(float percentage = 0.667f) => ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (ButtonSize.Y / 2 - ImGui.GetFontSize() * percentage)); // align text with button size
 
+		public static void DrawGizmoOperations() {
+			ButtonChangeOperation(OPERATION.TRANSLATE, IconsPool.Position);
+			ImGui.SameLine();
+			ButtonChangeOperation(OPERATION.ROTATE, IconsPool.Rotation);
+			ImGui.SameLine();
+			ButtonChangeOperation(OPERATION.SCALE, IconsPool.Scale);
+			ImGui.SameLine();
+			ButtonChangeOperation(OPERATION.UNIVERSAL, IconsPool.Universal);
+		}
 		public static void DrawExtra() {
 			var gizmode = Ktisis.Configuration.GizmoMode;
 			if (GuiHelpers.IconButtonTooltip(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ButtonSize))
@@ -87,17 +97,25 @@ namespace Ktisis.Interface.Components {
 
 			GuiHelpers.Tooltip("Information");
 		}
-		private static void DrawSettings() {
-			ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
-			ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
-			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
+		internal static void DrawSettings(int flags = 1) {
+			var isTitleDecoration = (flags & 1) != 0;
 
-			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog, new(ImGui.GetFontSize() * 1.5f)))
+			Vector2 buttonSize = ButtonSize;
+			if (isTitleDecoration) {
+				ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
+				ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 200f);
+				ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
+				buttonSize = new(ImGui.GetFontSize() * 1.5f);
+			}
+
+			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog, buttonSize))
 				if (ConfigGui.Visible) ConfigGui.Hide();
 				else ConfigGui.Show();
 
-			ImGui.PopStyleColor();
-			ImGui.PopStyleVar(2);
+			if (isTitleDecoration) {
+				ImGui.PopStyleColor();
+				ImGui.PopStyleVar(2);
+			}
 
 			IsSettingsHovered = ImGui.IsItemHovered();
 			IsSettingsActive = ImGui.IsItemActive();
@@ -162,6 +180,7 @@ namespace Ktisis.Interface.Components {
 
 		// Independant from the others
 		public static void DrawPoseSwitch() {
+			ImGui.AlignTextToFramePadding();
 			ImGui.SetCursorPosX(ImGui.CalcTextSize("GPose Disabled").X + (ImGui.GetFontSize() * 8) + ImGui.GetStyle().ItemSpacing.X + GuiHelpers.CalcIconSize(FontAwesomeIcon.Cog).X); // Prevents text overlap
 
 			ImGui.BeginDisabled(!Ktisis.IsInGPose);
@@ -173,6 +192,7 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.TextRight(label, offsetWidth);
 			if (Ktisis.IsInGPose) ImGui.PopStyleColor();
 			ImGui.SameLine();
+
 
 			if (!Ktisis.IsInGPose)
 				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
@@ -206,5 +226,11 @@ namespace Ktisis.Interface.Components {
 				SiblingLink.RotationMirrorX => "Mirror rotation",
 				_ => "No sibling link"
 			};
+
+		public static void DrawParentingCheckbox() {
+			var parent = Ktisis.Configuration.EnableParenting;
+			if (ImGui.Checkbox("Parenting", ref parent))
+				Ktisis.Configuration.EnableParenting = parent;
+		}
 	}
 }

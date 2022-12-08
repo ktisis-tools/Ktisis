@@ -6,6 +6,7 @@ using ImGuizmoNET;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
+using Ktisis.Interop.Hooks;
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
@@ -23,8 +24,16 @@ namespace Ktisis.Interface.Windows.Workspace {
 		public const uint UsingColor = 0xffde851f;
 
 		// UI Code
+		public unsafe static void DrawWithHint() {
+			if (PoseHooks.PosingEnabled)
+				ImGui.TextWrapped("Gaze controls are unavailable while posing.");
+			else
+				EditGaze.Draw();
+		}
+		public unsafe static void Draw() {
+			var target = Ktisis.Target;
+			if (target == null) return;
 
-		public unsafe static void Draw(Actor* target) {
 			if (ActorControl == null)
 				ActorControl = new();
 

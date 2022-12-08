@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
@@ -11,6 +11,7 @@ using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Interface;
+using Ktisis.Interface.Modular;
 using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip.SetSources;
@@ -34,6 +35,8 @@ namespace Ktisis
 		public bool AutoOpenCtor { get; set; } = false;
 		public OpenKtisisMethod OpenKtisisMethod { get; set; } = OpenKtisisMethod.OnEnterGpose;
 
+		public List<IModularItem> ModularConfig { get; set; } = new();
+		public bool ModularHideDefaultWorkspace { get; set; } = false;
 		public bool DisplayCharName { get; set; } = true;
 		public bool CensorNsfw { get; set; } = false;
 
@@ -140,9 +143,10 @@ namespace Ktisis
 
 		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
 
-		// Data memory
+		// Data
 		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
 		public Dictionary<string, Dictionary<string, Vector3>> CustomBoneOffset { get; set; } = new();
+		public bool ClipboardExportClearJson { get; set; } = false;
 
 		// Validate for changes in config versions.
 

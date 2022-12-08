@@ -107,8 +107,9 @@ namespace Ktisis.Interface.Components {
 				if (ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows) && !ImGui.IsAnyItemActive() && !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
 					ImGui.SetKeyboardFocusHere(flags.HasFlag(HoverPopupWindowFlags.SearchBar) ? -1 : 0); // TODO: verify the keyboarf focus behaviour when searchbar is disabled
 
+				bool isListBoxOpened = false;
 				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList))
-					ImGui.BeginListBox(listLabel, new Vector2(-1, 300));
+					isListBoxOpened = ImGui.BeginListBox(listLabel, new Vector2(-1, 300));
 				// box has began
 
 				if (flags.HasFlag(HoverPopupWindowFlags.Header)) {
@@ -172,7 +173,7 @@ namespace Ktisis.Interface.Components {
 
 
 				// box has ended
-				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList))
+				if (flags.HasFlag(HoverPopupWindowFlags.SelectorList) && isListBoxOpened)
 					ImGui.EndListBox();
 				HoverPopupWindowFocus |= ImGui.IsItemActive();
 

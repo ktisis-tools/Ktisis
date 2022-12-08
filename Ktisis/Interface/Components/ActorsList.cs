@@ -16,7 +16,7 @@ namespace Ktisis.Interface.Components {
 	internal static class ActorsList {
 
 		private static List<long> SavedObjects = new();
-		private static List<DalamudGameObject>? SelectorList = null;
+		internal static List<DalamudGameObject>? SelectorList = null;
 		private static string Search = "";
 		private static readonly HashSet<ObjectKind> WhitelistObjectKinds = new(){
 				ObjectKind.Player,
@@ -32,7 +32,7 @@ namespace Ktisis.Interface.Components {
 
 		// Draw
 
-		public unsafe static void Draw() {
+		public unsafe static void Draw(bool isHorizontal = false) {
 			// Prevent displaying the same target multiple time
 			SavedObjects = SavedObjects.Distinct().ToList();
 
@@ -44,20 +44,26 @@ namespace Ktisis.Interface.Components {
 			SavedObjects.RemoveAll(o => !IsValidActor(o));
 
 			var buttonSize = new Vector2(ImGui.GetContentRegionAvail().X, ControlButtons.ButtonSize.Y);
-			if (ImGui.CollapsingHeader("Actor List")) {
-				long? toRemove = null;
-				foreach (var pointer in SavedObjects) {
-					if (!IsValidActor(pointer)) continue;
-					if (ImGui.Button($"{((Actor*)pointer)->GetNameOrId()}{ExtraInfo(pointer)}##ActorList##{pointer}", buttonSize))
-						Services.Targets->GPoseTarget = (GameObject*)pointer;
-					if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-						toRemove = pointer;
-				}
-				if (toRemove != null) SavedObjects.Remove((long)toRemove);
 
-				if (GuiHelpers.IconButtonTooltip(Dalamud.Interface.FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
-					OpenSelector();
+			long? toRemove = null;
+			foreach (var pointer in SavedObjects) {
+				if (!IsValidActor(pointer)) continue;
 
+				var buttonText = $"{((Actor*)pointer)->GetNameOrId()}{ExtraInfo(pointer)}";
+
+				if (isHorizontal) buttonSize.X = ImGui.CalcTextSize(buttonText).X + ControlButtons.ButtonSize.X;
+				if (ImGui.Button($"{buttonText}##ActorList##{pointer}", buttonSize))
+					Services.Targets->GPoseTarget = (GameObject*)pointer;
+				if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+					toRemove = pointer;
+				if (isHorizontal) ImGui.SameLine();
+			}
+			if (toRemove != null) SavedObjects.Remove((long)toRemove);
+
+			if (GuiHelpers.IconButtonTooltip(Dalamud.Interface.FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
+				OpenSelector();
+
+			if (!isHorizontal) {
 				ImGui.SameLine(ImGui.GetContentRegionAvail().X - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
 				ControlButtons.VerticalAlignTextOnButtonSize();
 
@@ -68,8 +74,6 @@ namespace Ktisis.Interface.Components {
 					ImGui.Text("Right click to remove an Actor from the list");
 					ImGui.EndTooltip();
 				}
-				if (SelectorList != null)
-					DrawListAddActor();
 			}
 		}
 
@@ -94,7 +98,7 @@ namespace Ktisis.Interface.Components {
 
 		private static void CloseSelector() => SelectorList = null;
 
-		private unsafe static void DrawListAddActor() {
+		internal unsafe static void DrawListAddActor() {
 			PopupSelect.HoverPopupWindow(
 				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
 				SelectorList!,

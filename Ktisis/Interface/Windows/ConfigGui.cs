@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 
 using ImGuiNET;
-
-using Newtonsoft.Json;
 
 using Dalamud.Logging;
 using Dalamud.Interface;
@@ -67,6 +64,7 @@ namespace Ktisis.Interface.Windows {
 						DrawLanguageTab(cfg);
 					if (ImGui.BeginTabItem("Data"))
 						DrawDataTab(cfg);
+					Modular.Configurator.DrawConfigTab(cfg);
 
 					ImGui.EndTabBar();
 				}
@@ -389,6 +387,15 @@ namespace Ktisis.Interface.Windows {
 				Sets.Dispose();
 				cfg.GlamourPlateData = null;
 			}
+
+			ImGui.Separator();
+			ImGui.Spacing();
+
+			var clipboardExportClearJson = cfg.ClipboardExportClearJson;
+			if (ImGui.Checkbox($"Clipboard exports clear json", ref clipboardExportClearJson)) {
+				cfg.ClipboardExportClearJson = clipboardExportClearJson;
+			}
+
 			ImGui.EndTabItem();
 		}
 
@@ -420,10 +427,10 @@ namespace Ktisis.Interface.Windows {
 						cfg.CustomBoneOffset.Remove(bodyType);
 					ImGui.SameLine();
 					if (GuiHelpers.IconButton(FontAwesomeIcon.Clipboard, default, $"export##{bodyType}"))
-						ImGui.SetClipboardText(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(cfg.CustomBoneOffset[bodyType]))));
+						JsonHelpers.ExportClipboard(cfg.CustomBoneOffset[bodyType]);
 					ImGui.SameLine();
 					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Paste, $"Hold Ctrl and Shift to paste and replace all {bodyType} bone offsets.", default, $"pasteReplaceAll##{bodyType}")) {
-						var parsedPasteAll = JsonConvert.DeserializeObject<Dictionary<string, Vector3>>(Encoding.UTF8.GetString(Convert.FromBase64String(ImGui.GetClipboardText())));
+						var parsedPasteAll = JsonHelpers.ImportClipboard<Dictionary<string, Vector3>>();
 						if (parsedPasteAll != null)
 							cfg.CustomBoneOffset[bodyType] = parsedPasteAll;
 					}
@@ -451,7 +458,7 @@ namespace Ktisis.Interface.Windows {
 							var isDeletable = ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift;
 							if(isDeletable) ImGui.PushStyleColor(ImGuiCol.HeaderHovered, Workspace.Workspace.ColRed);
 							if (ImGui.Selectable($"{Locale.GetBoneName(boneName)}##{bodyType}##customBoneOffset", false, ImGuiSelectableFlags.SpanAllColumns))
-								ImGui.SetClipboardText(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject((boneName,offsets)))));
+								JsonHelpers.ExportClipboard((boneName, offsets));
 							if (isDeletable) ImGui.PopStyleColor();
 							if (isDeletable && ImGui.IsItemClicked(ImGuiMouseButton.Right))
 								cfg.CustomBoneOffset[bodyType].Remove(boneName);
@@ -464,7 +471,7 @@ namespace Ktisis.Interface.Windows {
 						}
 						ImGui.EndTable();
 						if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus,"Add a line from clipboard.", default, $"{bodyType}##Clipboard##AddLine")) {
-							var parsedPasteLine = JsonConvert.DeserializeObject<(string, Vector3)>(Encoding.UTF8.GetString(Convert.FromBase64String(ImGui.GetClipboardText()))) ;
+							var parsedPasteLine = JsonHelpers.ImportClipboard<(string, Vector3)>();
 							cfg.CustomBoneOffset[bodyType][parsedPasteLine.Item1] = parsedPasteLine.Item2;
 						}
 					}

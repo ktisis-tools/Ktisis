@@ -53,7 +53,9 @@ namespace Ktisis.Interface.Windows.Workspace
 			if (!Visible)
 				return;
 
-			var gposeOn = Ktisis.IsInGPose;
+			DrawExtraWindows();
+			if (Ktisis.Configuration.ModularHideDefaultWorkspace) return;
+
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
@@ -65,12 +67,7 @@ namespace Ktisis.Interface.Windows.Workspace
 				ControlButtons.PlaceAndRenderSettings();
 
 				ImGui.BeginGroup();
-				ImGui.AlignTextToFramePadding();
-
-				ImGui.TextColored(
-					gposeOn ? ColGreen : ColRed,
-					gposeOn ? "GPose Enabled" : "GPose Disabled"
-				);
+				DrawGposeIndicator();
 
 				if (PoseHooks.AnamPosingEnabled) {
 					ImGui.TextColored(
@@ -91,7 +88,7 @@ namespace Ktisis.Interface.Windows.Workspace
 
 				// Selection info
 				ImGui.Spacing();
-				SelectInfo(target);
+				SelectInfo();
 
 				// Actor control
 
@@ -112,6 +109,27 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.End();
 		}
 
+		private static void DrawExtraWindows() {
+
+			// Draw Modular UI
+			if (Ktisis.Configuration.ModularConfig != null)
+				Modular.Manager.Render();
+
+			// Draw Actor list to avoir duplication from double instance in modular UI
+			if (ActorsList.SelectorList != null)
+				ActorsList.DrawListAddActor();
+		}
+
+		public static void DrawGposeIndicator() {
+			ImGui.AlignTextToFramePadding();
+
+			var gposeOn = Ktisis.IsInGPose;
+			ImGui.TextColored(
+				gposeOn ? ColGreen : ColRed,
+				gposeOn ? "GPose Enabled" : "GPose Disabled"
+			);
+		}
+
 		// Actor tab (Real)
 
 		private unsafe static void ActorTab(GameObject target) {
@@ -127,30 +145,21 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.Spacing();
 
 			// Customize button
-			if (ImGuiComponents.IconButton(FontAwesomeIcon.UserEdit)) {
-				if (EditActor.Visible)
-					EditActor.Hide();
-				else
-					EditActor.Show();
-			}
-			ImGui.SameLine();
-			ImGui.Text("Edit actor's appearance");
+			EditActor.DrawButton();
 
 			ImGui.Spacing();
 
 			// Actor list
-			ActorsList.Draw();
+			if (ImGui.CollapsingHeader("Actor List"))
+				ActorsList.Draw();
 
 			// Animation control
-			AnimationControls.Draw(target);
+			if (ImGui.CollapsingHeader("Animation Control"))
+				AnimationControls.Draw();
 
 			// Gaze control
-			if (ImGui.CollapsingHeader("Gaze Control")) {
-				if (PoseHooks.PosingEnabled)
-					ImGui.TextWrapped("Gaze controls are unavailable while posing.");
-				else
-					EditGaze.Draw(actor);
-			}
+			if (ImGui.CollapsingHeader("Gaze Control"))
+				EditGaze.DrawWithHint();
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
@@ -175,60 +184,78 @@ namespace Ktisis.Interface.Windows.Workspace
 			ControlButtons.DrawExtra();
 
 			// Parenting
-
-			var parent = cfg.EnableParenting;
-			if (ImGui.Checkbox("Parenting", ref parent))
-				cfg.EnableParenting = parent;
+			ControlButtons.DrawParentingCheckbox();
 
 			// Transform table
-			TransformTable(actor);
+			TransformTable();
 
 			ImGui.Spacing();
 
 			// Bone categories
-			if (ImGui.CollapsingHeader("Bone Categories")) {
-
-				if (!Categories.DrawToggleList(cfg)) {
-					ImGui.Text("No bone found.");
-					ImGui.Text("Show Skeleton (");
-					ImGui.SameLine();
-					GuiHelpers.Icon(FontAwesomeIcon.EyeSlash);
-					ImGui.SameLine();
-					ImGui.Text(") to fill this.");
-				}
-			}
+			if (ImGui.CollapsingHeader("Bone Categories"))
+				Categories.DrawToggleListWithHint();
 
 			// Bone tree
-			BoneTree.Draw(actor);
+			if (ImGui.CollapsingHeader("Bone List"))
+				BoneTree.Draw();
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
-				ImportExportPose(actor);
+				DrawImportExport();
 
 			// Advanced
-			if (ImGui.CollapsingHeader("Advanced (Debug)")) {
-				if (ImGui.Button("Reset Current Pose") && actor->Model != null)
-					actor->Model->SyncModelSpace();
-
-				if (ImGui.Button("Set to Reference Pose") && actor->Model != null)
-					actor->Model->SyncModelSpace(true);
-
-				if (ImGui.Button("Store Pose") && actor->Model != null)
-					_TempPose.Store(actor->Model->Skeleton);
-				ImGui.SameLine();
-				if (ImGui.Button("Apply Pose") && actor->Model != null)
-					_TempPose.Apply(actor->Model->Skeleton);
-
-				if (ImGui.Button("Force Redraw"))
-					actor->Redraw();
-			}
+			if (ImGui.CollapsingHeader("Advanced (Debug)"))
+				DrawAdvanced();
 
 			ImGui.EndTabItem();
 		}
 
+		internal static void DrawImportExport() {
+			ImGui.Text("Transforms");
+			var _ = false;
+			ImGui.Checkbox("R", ref _);
+			ImGui.SameLine();
+			ImGui.Checkbox("P", ref _);
+			ImGui.SameLine();
+			ImGui.Checkbox("S", ref _);
+
+			ImGui.Checkbox("Body", ref _);
+			ImGui.SameLine();
+			ImGui.Checkbox("Expression", ref _);
+
+			ImGui.Spacing();
+
+			ImGui.Button("Import");
+			ImGui.SameLine();
+			ImGui.Button("Export");
+
+			ImGui.Spacing();
+		}
+		internal unsafe static void DrawAdvanced() {
+			var actor = Ktisis.Target;
+			if (actor->Model == null) return;
+
+			if (ImGui.Button("Reset Current Pose") && actor->Model != null)
+				actor->Model->SyncModelSpace();
+
+			if (ImGui.Button("Set to Reference Pose") && actor->Model != null)
+				actor->Model->SyncModelSpace(true);
+
+			if (ImGui.Button("Store Pose") && actor->Model != null)
+				_TempPose.Store(actor->Model->Skeleton);
+			ImGui.SameLine();
+			if (ImGui.Button("Apply Pose") && actor->Model != null)
+				_TempPose.Apply(actor->Model->Skeleton);
+
+			if (ImGui.Button("Force Redraw"))
+				actor->Redraw();
+		}
+
 		// Transform Table actor and bone names display, actor related extra
 
-		private static unsafe bool TransformTable(Actor* target) {
+		internal static unsafe bool TransformTable() {
+			var target = Ktisis.Target;
+			if (target == null) return false;
 			var select = Skeleton.BoneSelect;
 			var bone = Skeleton.GetSelectedBone();
 
@@ -240,8 +267,9 @@ namespace Ktisis.Interface.Windows.Workspace
 
 		// Selection details
 
-		private unsafe static void SelectInfo(GameObject target) {
-			var actor = (Actor*)target.Address;
+		internal unsafe static void SelectInfo() {
+			var actor = Ktisis.Target;
+			if (actor == null) return;
 
 			var select = Skeleton.BoneSelect;
 			var bone = Skeleton.GetSelectedBone();

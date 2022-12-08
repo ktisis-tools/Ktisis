@@ -5,6 +5,7 @@ namespace Ktisis.Util {
 		public const FontAwesomeIcon Position = FontAwesomeIcon.LocationArrow;
 		public const FontAwesomeIcon Rotation = FontAwesomeIcon.Sync;
 		public const FontAwesomeIcon Scale = FontAwesomeIcon.ExpandAlt;
+		public const FontAwesomeIcon Universal = FontAwesomeIcon.Circle;
 		public const FontAwesomeIcon Settings = FontAwesomeIcon.Cog;
 		public const FontAwesomeIcon More = FontAwesomeIcon.Bars;
 		public const FontAwesomeIcon UserEdit = FontAwesomeIcon.UserEdit;
