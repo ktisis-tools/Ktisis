@@ -119,6 +119,8 @@ namespace Ktisis.Overlay {
 			);
 		}
 
+		}
+
 		public bool Draw() => Manipulate();
 
 		public bool Draw(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
