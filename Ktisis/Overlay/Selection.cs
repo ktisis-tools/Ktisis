@@ -8,6 +8,7 @@ using ImGuizmoNET;
 namespace Ktisis.Overlay {
 	public static class Selection {
 		internal static List<DrawItem> DrawQueue = new();
+		internal static bool Selecting = false;
 
 		public static DrawItem AddItem(string name, Vector2 pos, uint color = 0xffffffff) {
 			var item = new DrawItem(name, pos, color);
@@ -41,10 +42,11 @@ namespace Ktisis.Overlay {
 				draw.AddCircleFilled(dot.Pos, radius, col);
 				if(!isManipulating) draw.AddCircle(dot.Pos, radius, 0xaf000000);
 			}
+			Selecting = hovered.Count > 0;
 
 			// Selection list
 
-			if (hovered.Count > 0 && !isCursorBusy)
+			if (Selecting && !isCursorBusy)
 				DrawList(hovered);
 
 			// Empty draw queue
