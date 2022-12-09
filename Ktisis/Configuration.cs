@@ -46,7 +46,7 @@ namespace Ktisis
 		public int TransformTableDigitPrecision { get; set; } = 3;
 
 		// Input
-		public bool EnableKeybinds { get; set; } = true;
+		public bool EnableKeybinds { get; set; } = false;
 		public Dictionary<Input.Purpose, List<VirtualKey>> KeyBinds { get; set; } = new();
 
 		public bool DisableChangeTargetOnLeftClick { get; set; } = false;
