@@ -48,13 +48,13 @@ namespace Ktisis.Interface.Windows {
 	public static class EditCustomize {
 		// Constants
 
-		public static Vector2 IconSize = new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 48 <= these are the original values by Chirp
-		public static Vector2 ListIconSize = new(3 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 58
-		public static Vector2 ButtonIconSize = IconSize + (ImGui.GetStyle().FramePadding * 2); // originally IconPadding = 8
-		public static Vector2 InputSize = new(8 * ImGui.GetFontSize()); // 120
-		public static Vector2 MiscInputSize = new(16 * ImGui.GetFontSize()); // 250
-		public static Vector2 ColButtonSize = new Vector2(ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y) + (ImGui.GetStyle().FramePadding * 2); // 28
-		public static Vector2 ColButtonSizeSmall = new(ImGui.GetTextLineHeight()); // 20
+		public static Vector2 IconSize => new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 48 <= these are the original values by Chirp
+		public static Vector2 ListIconSize => new(3 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 58
+		public static Vector2 ButtonIconSize => IconSize + (ImGui.GetStyle().FramePadding * 2); // originally IconPadding = 8
+		public static Vector2 InputSize => new(8 * ImGui.GetFontSize()); // 120
+		public static Vector2 MiscInputSize => new(16 * ImGui.GetFontSize()); // 250
+		public static Vector2 ColButtonSize => new Vector2(ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y) + (ImGui.GetStyle().FramePadding * 2); // 28
+		public static Vector2 ColButtonSizeSmall => new(ImGui.GetTextLineHeight()); // 20
 
 		// Properties
 
