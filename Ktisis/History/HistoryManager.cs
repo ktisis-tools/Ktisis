@@ -14,8 +14,6 @@ namespace Ktisis.History {
 		private static int _currentIdx = -1;
 		private static int _maxIdx = -1;
 		private static bool _currentState;
-		//private static GizmoState _currentGizmoState;
-		//private static TransformTableState _currentTtState;
 		private static int _alternativeTimelinesCreated = 0;
 
 		public static bool CanRedo => _currentIdx < _maxIdx;

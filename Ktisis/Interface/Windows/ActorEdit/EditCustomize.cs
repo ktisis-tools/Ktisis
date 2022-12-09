@@ -329,7 +329,7 @@ namespace Ktisis.Interface.Windows {
 
 		public unsafe static void DrawColor(Customize custom, MenuColor color) {
 			var colIndex = custom.Bytes[(uint)color.Index];
-			var colRgb = colIndex >= color.Colors.Length ? 0 : color.Colors[colIndex];
+			var colRgb = colIndex >= color.Colors.Length || colIndex < 0 ? 0 : color.Colors[colIndex];
 
 			CustomizeIndex selecting = 0;
 
@@ -340,7 +340,7 @@ namespace Ktisis.Interface.Windows {
 
 			if (color.AltIndex != 0) {
 				var altIndex = custom.Bytes[(uint)color.AltIndex];
-				var altRgb = color.Colors[altIndex];
+				var altRgb = altIndex >= color.Colors.Length || altIndex < 0 ? 0 : color.Colors[altIndex];
 				ImGui.SameLine();
 				if (DrawColorButton($"{altIndex}##{color.Name}##alt", altRgb))
 					selecting = color.AltIndex;
