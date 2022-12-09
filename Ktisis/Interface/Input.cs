@@ -94,13 +94,13 @@ namespace Ktisis.Interface {
 						break;
 					case Purpose.BoneSelectionUp:
 						if (Selection.Selecting)
-							Selection.ScrollIndex++;
+							Selection.ScrollIndex--;
 						else
 							res = false;
 						break;
 					case Purpose.BoneSelectionDown:
 						if (Selection.Selecting)
-							Selection.ScrollIndex--;
+							Selection.ScrollIndex++;
 						else
 							res = false;
 						break;
