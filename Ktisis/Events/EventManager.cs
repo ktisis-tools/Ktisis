@@ -31,11 +31,7 @@ namespace Ktisis.Events {
 		}
 
 		public static unsafe void FireOnTransformationMatrixChangeEvent(bool state) {
-			if (OnTransformationMatrixChange == null) return;
-			var bone = Skeleton.GetSelectedBone();
-			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
-			hkQsTransformf* boneTransform = bone is null ? &actor->Model->Transform : bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
-			OnTransformationMatrixChange(state);
+			OnTransformationMatrixChange?.Invoke(state);
 		}
 
 		public static unsafe void FireOnGizmoChangeEvent(bool isEditing) {

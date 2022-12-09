@@ -12,8 +12,6 @@ namespace Ktisis.History {
 	public static class HistoryManager {
 		public static List<HistoryItem>? History { get; set; }
 		private static int _currentStateIndex;
-		private static GizmoState _currentGizmoState;
-		private static TransformTableState _currentTtState;
 		private static bool _currentState;
 		private static int _alternativeTimelinesCreated = 0;
 
@@ -85,14 +83,12 @@ namespace Ktisis.History {
 			if (History == null) return;
 
 			if (isEditing && !_currentState) {
-				if (_maxIdx != _currentIdx) createNewTimeline();
+				if ((History.Count - 1) != _currentStateIndex) createNewTimeline();
 				UpdateHistory(HistoryItemType.ActorBone);
 			}
 
 			if (!isEditing && _currentState) {
-				var x = _currentIdx - 1;
-				if (x >= 0 && x < History.Count)
-					((ActorBone)History[x]).SetMatrix(false);
+				((ActorBone)History[_currentStateIndex]).SetMatrix(false);
 			}
 
 			_currentState = isEditing;

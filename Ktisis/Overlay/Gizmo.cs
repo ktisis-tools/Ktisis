@@ -1,6 +1,7 @@
 using System.Numerics;
 
 using ImGuiNET;
+
 using ImGuizmoNET;
 
 using Ktisis.Structs.Extensions;
@@ -42,8 +43,7 @@ namespace Ktisis.Overlay {
 				ref scale.X
 			);
 		}
-		public (Vector3, Vector3, Vector3) Decompose()
-		{
+		public (Vector3, Vector3, Vector3) Decompose() {
 			Vector3 pos = new();
 			Vector3 rot = new();
 			Vector3 scale = new();
@@ -73,16 +73,14 @@ namespace Ktisis.Overlay {
 			ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
 		}
 
-		public void InsertEulerDeltaMatrix(Vector3 posDelta,Vector3 rotDelta,Vector3 scaDelta)
-		{
+		public void InsertEulerDeltaMatrix(Vector3 posDelta, Vector3 rotDelta, Vector3 scaDelta) {
 			EulerDeltaMatrix = new(
 				posDelta.X, posDelta.Y, posDelta.Z,
 				rotDelta.X, rotDelta.Y, rotDelta.Z,
 				scaDelta.X, scaDelta.Y, scaDelta.Z
 			);
 		}
-		internal bool ManipulateEuler()
-		{
+		internal bool ManipulateEuler() {
 			// skip if no delta detected
 			bool isActive = EulerDeltaMatrix != new SharpDX.Matrix3x3();
 			if (!isActive) return false;
@@ -117,8 +115,6 @@ namespace Ktisis.Overlay {
 				ref Matrix.M11,
 				ref Delta.M11
 			);
-		}
-
 		}
 
 		public bool Draw() => Manipulate();

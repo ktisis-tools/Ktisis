@@ -132,13 +132,10 @@ namespace Ktisis.Interface.Components {
 			var result = false;
 
 			result |= ColoredDragFloat(label + "X", ref value.X, speed, colors[0], borderSize);
-			UpdateTransformTableState();
 			ImGui.SameLine();
 			result |= ColoredDragFloat(label + "Y", ref value.Y, speed, colors[1], borderSize);
-			UpdateTransformTableState();
 			ImGui.SameLine();
 			result |= ColoredDragFloat(label + "Z", ref value.Z, speed, colors[2], borderSize);
-			UpdateTransformTableState();
 
 			return result;
 		}
