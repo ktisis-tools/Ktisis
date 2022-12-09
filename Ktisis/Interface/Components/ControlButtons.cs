@@ -93,8 +93,7 @@ namespace Ktisis.Interface.Components {
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetFontSize() * 0.25f));
 
 			if (GuiHelpers.IconButton(FontAwesomeIcon.Cog, new(ImGui.GetFontSize() * 1.5f)))
-				if (ConfigGui.Visible) ConfigGui.Hide();
-				else ConfigGui.Show();
+				ConfigGui.Toggle();
 
 			ImGui.PopStyleColor();
 			ImGui.PopStyleVar(2);

@@ -23,9 +23,9 @@ using Ktisis.Structs.Actor.Equip.SetSources;
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
 		public static bool Visible = false;
-		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.50f);
-		private static Vector2 WindowSizeMin = new(ImGui.GetFontSize() * 15, ImGui.GetFontSize() * 20);
-		private static Vector2 WindowSizeMax = ImGui.GetIO().DisplaySize * 0.85f;
+		public static Vector2 ButtonSize => new Vector2(ImGui.GetFontSize() * 1.50f);
+		private static Vector2 WindowSizeMin => new(ImGui.GetFontSize() * 15, ImGui.GetFontSize() * 20);
+		private static Vector2 WindowSizeMax => ImGui.GetIO().DisplaySize * 0.85f;
 
 		// Toggle visibility
 
@@ -40,9 +40,20 @@ namespace Ktisis.Interface.Windows {
 
 		// Draw
 
+		public static bool _isSaved = true;
+
 		public static void Draw() {
-			if (!Visible)
+			if (!Visible) {
+				if (!_isSaved) {
+					PluginLog.Verbose("Saving config...");
+					Services.PluginInterface.SavePluginConfig(Ktisis.Configuration);
+					_isSaved = true;
+				}
+
 				return;
+			} else if (_isSaved) {
+				_isSaved = false;
+			}
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
