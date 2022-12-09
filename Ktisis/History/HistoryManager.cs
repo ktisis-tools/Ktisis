@@ -86,7 +86,7 @@ namespace Ktisis.History {
 		public static ActorBone? CurrentBone = null;
 
 		private unsafe static void OnGizmoChange(GizmoState state) {
-			if (!PoseHooks.PosingEnabled) return;
+			if (!PoseHooks.PosingEnabled && !PoseHooks.AnamPosingEnabled) return;
 			if (History == null) return;
 
 			var newState = state;
@@ -118,7 +118,7 @@ namespace Ktisis.History {
 
 		//TODO: Find a way to know what's the currently modified item to be able to add the correct entry to the history.
 		private unsafe static void OnTransformationMatrixChange(TransformTableState state, Matrix4x4 matrix, Bone? bone, Actor* actor) {
-			if (!PoseHooks.PosingEnabled) return;
+			if (!PoseHooks.PosingEnabled && !PoseHooks.AnamPosingEnabled) return;
 			if (History == null) return;
 
 			var newState = state;
