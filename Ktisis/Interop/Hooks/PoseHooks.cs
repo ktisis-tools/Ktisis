@@ -28,17 +28,14 @@ namespace Ktisis.Interop.Hooks {
 		internal unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
 		internal static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
 
+		internal unsafe delegate void UpdatePosDelegate(IntPtr a1);
+		internal static Hook<UpdatePosDelegate> UpdatePosHook = null!;
+
 		internal unsafe delegate char SetSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
 		internal static Hook<SetSkeletonDelegate> SetSkeletonHook = null!;
 
 		internal unsafe delegate IntPtr BustDelegate(ActorModel* a1, Breasts* a2);
 		internal static Hook<BustDelegate> BustHook = null!;
-
-		internal unsafe static IntPtr BustDetour(ActorModel* a1, Breasts* a2) {
-			var exec = BustHook.Original(a1, a2);
-			a1->ScaleBust(true);
-			return exec;
-		}
 
 		internal static bool PosingEnabled { get; private set; }
 		internal static bool AnamPosingEnabled => StaticOffsets.IsAnamPosing;
@@ -61,6 +58,9 @@ namespace Ktisis.Interop.Hooks {
 			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
 			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
 
+			var updatePos = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? EB 29 48 8B 5F 08");
+			UpdatePosHook = Hook<UpdatePosDelegate>.FromAddress(updatePos, UpdatePosDetour);
+
 			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
 			SetSkeletonHook = Hook<SetSkeletonDelegate>.FromAddress(loadSkele, SetSkeletonDetour);
 			SetSkeletonHook.Enable();
@@ -75,6 +75,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Disable();
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
+			UpdatePosHook?.Disable();
 			AnimFrozenHook?.Disable();
 			BustHook?.Disable();
 			PosingEnabled = false;
@@ -85,6 +86,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Enable();
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
+			UpdatePosHook?.Enable();
 			AnimFrozenHook?.Enable();
 			BustHook?.Enable();
 			PosingEnabled = true;
@@ -128,6 +130,10 @@ namespace Ktisis.Interop.Hooks {
 
 			if (call)
 				SyncModelSpaceHook.Original(pose);
+		}
+
+		private static unsafe void UpdatePosDetour(IntPtr a1) {
+
 		}
 
 		private static unsafe char SetSkeletonDetour(Skeleton* a1, ushort a2, IntPtr a3) {
@@ -186,6 +192,12 @@ namespace Ktisis.Interop.Hooks {
 			return exec;
 		}
 
+		internal unsafe static IntPtr BustDetour(ActorModel* a1, Breasts* a2) {
+			var exec = BustHook.Original(a1, a2);
+			a1->ScaleBust(true);
+			return exec;
+		}
+
 		public unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {
 			return (byte*)IntPtr.Zero;
 		}
@@ -228,6 +240,8 @@ namespace Ktisis.Interop.Hooks {
 			LookAtIKHook.Dispose();
 			AnimFrozenHook.Disable();
 			AnimFrozenHook.Dispose();
+			UpdatePosHook.Disable();
+			UpdatePosHook.Dispose();
 			SetSkeletonHook.Disable();
 			SetSkeletonHook.Dispose();
 			BustHook.Disable();
