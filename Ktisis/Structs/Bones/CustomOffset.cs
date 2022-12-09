@@ -8,11 +8,14 @@ namespace Ktisis.Structs.Bones {
 		public unsafe static Vector3 GetBoneOffset(Bone bone) {
 			var target = Ktisis.Target; // TODO: Get bone's owner actor instead of target's
 
-			if (!Ktisis.Configuration.CustomBoneOffset.TryGetValue(GetRaceGenderFromActor(target), out var bonesOffsets))
-				return new();
-			if (!bonesOffsets.TryGetValue(bone.HkaBone.Name.String, out Vector3 offset))
-				return new();
-			return offset;
+			if (Ktisis.Configuration.CustomBoneOffset.TryGetValue(GetRaceGenderFromActor(target), out var bonesOffsets))
+				if (bonesOffsets.TryGetValue(bone.HkaBone.Name.String, out Vector3 offset))
+					return offset;
+			if (Defaults.TryGetValue(GetRaceGenderFromActor(target), out var defaultBonesOffsets))
+				if (defaultBonesOffsets.TryGetValue(bone.HkaBone.Name.String, out Vector3 offset))
+					return offset;
+
+			return new();
 		}
 
 		// changed from BodyType to string Race_Gender
