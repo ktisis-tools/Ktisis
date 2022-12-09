@@ -11,9 +11,10 @@ namespace Ktisis.Structs.Bones {
 			if (Ktisis.Configuration.CustomBoneOffset.TryGetValue(GetRaceGenderFromActor(target), out var bonesOffsets))
 				if (bonesOffsets.TryGetValue(bone.HkaBone.Name.String, out Vector3 offset))
 					return offset;
-			if (Defaults.TryGetValue(GetRaceGenderFromActor(target), out var defaultBonesOffsets))
-				if (defaultBonesOffsets.TryGetValue(bone.HkaBone.Name.String, out Vector3 offset))
-					return offset;
+			if(Ktisis.Configuration.BoneOffsetFallbackDefault)
+				if (Defaults.TryGetValue(GetRaceGenderFromActor(target), out var defaultBonesOffsets))
+					if (defaultBonesOffsets.TryGetValue(bone.HkaBone.Name.String, out Vector3 offset))
+						return offset;
 
 			return new();
 		}
