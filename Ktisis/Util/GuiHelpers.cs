@@ -1,15 +1,9 @@
 using System;
-using System.Linq;
 using System.Numerics;
-using System.Collections.Generic;
 
 using ImGuiNET;
-using ImGuizmoNET;
 
 using Dalamud.Interface;
-using Dalamud.Interface.Components;
-
-using FFXIVClientStructs.Havok;
 
 using Ktisis.Interface.Components;
 
@@ -162,7 +156,7 @@ namespace Ktisis.Util
 				windowDrawList.AddRectFilled(cursorScreenPos, new Vector2(cursorScreenPos.X + num, cursorScreenPos.Y + frameHeight), ImGui.GetColorU32((!v) ? new Vector4(0.78f, 0.78f, 0.78f, 0.2f) : new Vector4(0.35f, 0.35f, 0.35f, 1f)), frameHeight * 0.5f);
 			}
 
-			windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (float)(v ? 1 : 0) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(circleColor));
+			windowDrawList.AddCircleFilled(new Vector2(cursorScreenPos.X + num2 + (v ? 1f : 0f) * (num - num2 * 2f), cursorScreenPos.Y + num2), num2 - 1.5f, ImGui.ColorConvertFloat4ToU32(circleColor));
 			return result;
 		}
 
@@ -179,13 +173,13 @@ namespace Ktisis.Util
 			AvailableWidthIcon(iconsAfter)
 				- (ImGui.GetStyle().FramePadding.X * 2 * iconsAfter.Length);
 		public static float AvailableWidthIconButton(FontAwesomeIcon iconAfter) =>
-			AvailableWidthIcon(new FontAwesomeIcon[] { iconAfter });
+			AvailableWidthIcon(new[] { iconAfter });
 		public static float AvailableWidthControlButton(int numberOfButtonsAfter = 1) =>
 			ImGui.GetContentRegionAvail().X
 				- (ControlButtons.ButtonSize.X * numberOfButtonsAfter)
 				- (ImGui.GetStyle().ItemSpacing.X * numberOfButtonsAfter);
 		public static float AvailableWidthIcon(FontAwesomeIcon iconAfter) =>
-			AvailableWidthIcon(new FontAwesomeIcon[] { iconAfter });
+			AvailableWidthIcon(new[] { iconAfter });
 		public static float AvailableWidthIcon(FontAwesomeIcon[] iconsAfter) {
 			float iconsWidth = 0f;
 			foreach (var icon in iconsAfter)

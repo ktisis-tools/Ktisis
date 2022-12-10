@@ -5,9 +5,6 @@ using Dalamud.Interface;
 using ImGuiNET;
 
 using Ktisis.Interface.Components;
-using Ktisis.Interface.Windows.Workspace;
-using Ktisis.Interop.Hooks;
-using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 using Ktisis.Util;
 

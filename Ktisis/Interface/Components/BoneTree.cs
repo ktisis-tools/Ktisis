@@ -32,7 +32,7 @@ namespace Ktisis.Interface.Components {
 				}
 			}
 		}
-		private unsafe static void DrawBoneTreeNode(Bone bone) {
+		private static void DrawBoneTreeNode(Bone bone) {
 			if (bone == null) return;
 
 			var children = bone.GetChildren();

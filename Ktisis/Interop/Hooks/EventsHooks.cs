@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Dalamud.Hooking;
-using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -125,8 +124,8 @@ namespace Ktisis.Interop.Hooks {
 		private readonly Hook<ClickTarget>? leftClickTargetHook;
 
 		public ClickTargetAddon() {
-			rightClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), new ClickTarget(RightClickTargetDetour));
-			leftClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), new ClickTarget(LeftClickTargetDetour));
+			rightClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), RightClickTargetDetour);
+			leftClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), LeftClickTargetDetour);
 		}
 
 		public void Enable() {

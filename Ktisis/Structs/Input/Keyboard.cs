@@ -5,12 +5,12 @@ using Dalamud.Game.ClientState.Keys;
 
 namespace Ktisis.Structs.Input {
 	public unsafe struct KeyboardDevice {
-		public unsafe KeyboardState* GetQueue() {
+		public KeyboardState* GetQueue() {
 			fixed (KeyboardDevice* self = &this)
 				return ((delegate* unmanaged<KeyboardDevice*, KeyboardState*>**)self)[0][4](self);
 		}
 
-		public unsafe KeyboardState* ClearQueue() {
+		public KeyboardState* ClearQueue() {
 			fixed (KeyboardDevice* self = &this)
 				return ((delegate* unmanaged<KeyboardDevice*, KeyboardState*>**)self)[0][5](self);
 		}
@@ -41,7 +41,7 @@ namespace Ktisis.Structs.Input {
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
-	public unsafe struct QueueItem {
+	public struct QueueItem {
 		[FieldOffset(0)] public KeyEvent Event;
 		[FieldOffset(1)] public byte KeyCode;
 		[FieldOffset(4)] public byte Unknown;

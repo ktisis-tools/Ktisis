@@ -217,7 +217,7 @@ namespace Ktisis.Data.Files {
 
 			if (IncludeSection(SaveModes.AppearanceHair, mode)) {
 				if (Hair != null)
-				custom.HairStyle = (byte)Hair;
+					custom.HairStyle = (byte)Hair;
 
 				if (EnableHighlights != null)
 					custom.HasHighlights = (byte)((bool)EnableHighlights ? 0x80 : 0);

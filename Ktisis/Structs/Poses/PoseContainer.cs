@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Interop.Hooks;
-
 namespace Ktisis.Structs.Poses {
 	public class PoseContainer : Dictionary<string, Transform> {
 		// TODO: Make a helper function somewhere for skeleton iteration?

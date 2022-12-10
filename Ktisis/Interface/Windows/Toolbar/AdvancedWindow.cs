@@ -1,16 +1,11 @@
 using System.Numerics;
 
-using Dalamud.Interface;
-
 using ImGuiNET;
 
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.Workspace;
 using Ktisis.Interop.Hooks;
-using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Poses;
-using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.Toolbar {
 	public static class AdvancedWindow {

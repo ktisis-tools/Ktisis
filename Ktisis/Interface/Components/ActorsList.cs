@@ -55,7 +55,7 @@ namespace Ktisis.Interface.Components {
 				}
 				if (toRemove != null) SavedObjects.Remove((long)toRemove);
 
-				if (GuiHelpers.IconButtonTooltip(Dalamud.Interface.FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
+				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
 					OpenSelector();
 
 				ImGui.SameLine(ImGui.GetContentRegionAvail().X - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);

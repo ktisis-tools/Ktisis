@@ -13,7 +13,7 @@ namespace Ktisis.Events {
 		public delegate void GPoseChange(ActorGposeState state);
 		public static GPoseChange? OnGPoseChange = null;
 
-		public unsafe delegate void TransformationMatrixChange(bool state);
+		public delegate void TransformationMatrixChange(bool state);
 		public static TransformationMatrixChange? OnTransformationMatrixChange = null;
 
 		public delegate void GizmoChange(bool isEditing);
@@ -34,11 +34,11 @@ namespace Ktisis.Events {
 			if (OnTransformationMatrixChange == null) return;
 			var bone = Skeleton.GetSelectedBone();
 			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
-			hkQsTransformf* boneTransform = bone is null ? &actor->Model->Transform : bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+			hkQsTransformf* boneTransform = bone is null ? &actor->Model->Transform : bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 			OnTransformationMatrixChange(state);
 		}
 
-		public static unsafe void FireOnGizmoChangeEvent(bool isEditing) {
+		public static void FireOnGizmoChangeEvent(bool isEditing) {
 			OnGizmoChange?.Invoke(isEditing);
 		}
 	}

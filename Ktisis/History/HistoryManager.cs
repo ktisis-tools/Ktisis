@@ -21,14 +21,14 @@ namespace Ktisis.History {
 
 		// Init & Dispose
 
-		public unsafe static void Init() {
+		public static void Init() {
 			EventManager.OnKeyPressed += OnInput;
 			EventManager.OnGPoseChange += OnGPoseChange;
 			EventManager.OnGizmoChange += OnGizmoChange;
 			EventManager.OnTransformationMatrixChange += OnGizmoChange;
 		}
 
-		public unsafe static void Dispose() {
+		public static void Dispose() {
 			EventManager.OnKeyPressed -= OnInput;
 			EventManager.OnGPoseChange -= OnGPoseChange;
 			EventManager.OnGizmoChange -= OnGizmoChange;
@@ -38,7 +38,7 @@ namespace Ktisis.History {
 		// Events
 
 		public static bool OnInput(QueueItem input) {
-			if (ControlHooks.KeyboardState!.IsKeyDown(VirtualKey.CONTROL)) {
+			if (ControlHooks.KeyboardState.IsKeyDown(VirtualKey.CONTROL)) {
 				if (input.VirtualKey == VirtualKey.Z) {
 					Undo();
 					return true;
@@ -78,7 +78,7 @@ namespace Ktisis.History {
 
 		public static ActorBone? CurrentBone = null;
 
-		private unsafe static void OnGizmoChange(bool isEditing) {
+		private static void OnGizmoChange(bool isEditing) {
 			if (!PoseHooks.PosingEnabled && !PoseHooks.AnamPosingEnabled) return;
 			if (History == null) return;
 
@@ -96,7 +96,7 @@ namespace Ktisis.History {
 			_currentState = isEditing;
 		}
 
-		private static unsafe void UpdateHistory(HistoryItemType entryType) {
+		private static void UpdateHistory(HistoryItemType entryType) {
 			try {
 				var entryToAdd = HistoryItemFactory.Create(HistoryItemType.ActorBone);
 				if (entryToAdd != null)
@@ -109,7 +109,7 @@ namespace Ktisis.History {
 
 		// Methods
 
-		public unsafe static void AddEntryToHistory(HistoryItem historyItem) {
+		public static void AddEntryToHistory(HistoryItem historyItem) {
 			if (History == null) {
 				Logger.Warning("Attempted to add an entry to an uninitialised history list.");
 				return;
@@ -119,7 +119,7 @@ namespace Ktisis.History {
 			_maxIdx++;
 		}
 
-		private unsafe static void UpdateSkeleton(bool undo) {
+		private static void UpdateSkeleton(bool undo) {
 			History![_currentIdx - 1].Update(undo);
 		}
 
@@ -131,7 +131,7 @@ namespace Ktisis.History {
 			var newHistory = History.Select(e => e.Clone()).ToList().GetRange(0, _currentIdx + 1);
 			HistoryItem currentElem = newHistory[_currentIdx];
 			var newMaxIdx = _currentIdx;
-			History = newHistory!.GetRange(0, newMaxIdx);
+			History = newHistory.GetRange(0, newMaxIdx);
 			_maxIdx = newMaxIdx;
 			_currentIdx = newMaxIdx;
 		}

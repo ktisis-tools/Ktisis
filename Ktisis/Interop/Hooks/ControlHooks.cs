@@ -1,6 +1,5 @@
 using System;
 
-using Dalamud.Logging;
 using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Keys;
 
@@ -61,10 +60,10 @@ namespace Ktisis.Interop.Hooks {
 		// This function is pretty powerful. We only need it for the release event though; InputHook can't pick it up if an input gets blocked.
 		// That said, this one can't reliably distinguish between a button being pressed or held, or give us the input state, so we need to use both.
 
-		internal unsafe delegate IntPtr InputDelegate2(ulong a1, uint a2, ulong a3, uint a4);
+		internal delegate IntPtr InputDelegate2(ulong a1, uint a2, ulong a3, uint a4);
 		internal static Hook<InputDelegate2> InputHook2 = null!;
 
-		internal unsafe static IntPtr InputDetour2(ulong a1, uint a2, ulong a3, uint a4) {
+		internal static IntPtr InputDetour2(ulong a1, uint a2, ulong a3, uint a4) {
 			var exec = InputHook2.Original(a1, a2, a3, a4);
 
 			if (Ktisis.IsInGPose && a2 == 257) { // Released

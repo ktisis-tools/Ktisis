@@ -8,7 +8,6 @@ using ImGuiScene;
 
 using Lumina.Excel;
 
-using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -310,7 +309,7 @@ namespace Ktisis.Interface.Windows {
 
 		// Color selection
 
-		public unsafe static void DrawColors(Customize custom) {
+		public static void DrawColors(Customize custom) {
 			var colors = MenuColors.OrderBy(c => c.AltIndex);
 
 			var i = 0;
@@ -382,7 +381,7 @@ namespace Ktisis.Interface.Windows {
 			return result;
 		}
 
-		public unsafe static bool DrawColorList(Customize custom, MenuColor color, ref byte value) {
+		public static bool DrawColorList(Customize custom, MenuColor color, ref byte value) {
 			var result = false;
 
 			var size = new Vector2(-1, -1);

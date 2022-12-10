@@ -1,9 +1,6 @@
 using System;
 using System.Numerics;
 
-using Dalamud.Configuration;
-using Dalamud.Utility.Numerics;
-
 using ImGuiNET;
 using ImGuizmoNET;
 

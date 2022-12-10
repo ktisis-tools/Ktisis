@@ -274,7 +274,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ImGui.PopStyleVar();
 		}
 
-		private static unsafe void GameAnimationIndicator() {
+		private static void GameAnimationIndicator() {
 			var target = Ktisis.GPoseTarget;
 			if (target == null) return;
 

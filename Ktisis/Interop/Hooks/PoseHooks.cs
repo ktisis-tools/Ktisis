@@ -28,7 +28,7 @@ namespace Ktisis.Interop.Hooks {
 		internal unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
 		internal static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
 
-		internal unsafe delegate void UpdatePosDelegate(IntPtr a1);
+		internal delegate void UpdatePosDelegate(IntPtr a1);
 		internal static Hook<UpdatePosDelegate> UpdatePosHook = null!;
 
 		internal unsafe delegate char SetSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
@@ -132,7 +132,7 @@ namespace Ktisis.Interop.Hooks {
 				SyncModelSpaceHook.Original(pose);
 		}
 
-		private static unsafe void UpdatePosDetour(IntPtr a1) {
+		private static void UpdatePosDetour(IntPtr a1) {
 
 		}
 

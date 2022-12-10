@@ -4,9 +4,6 @@ using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Structs.Bones;
-using Dalamud.Logging;
-using ImPlotNET;
-using Lumina.Excel.GeneratedSheets;
 
 namespace Ktisis.Structs {
 	public static class Havok {

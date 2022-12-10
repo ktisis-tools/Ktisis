@@ -12,7 +12,7 @@ namespace Ktisis.Structs.Input {
 		public bool IsFocused;
 	}
 
-	public enum MouseButton : int {
+	public enum MouseButton {
 		None = 0,
 		Left = 1,
 		Middle = 2,

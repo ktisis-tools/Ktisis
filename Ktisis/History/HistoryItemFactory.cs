@@ -6,7 +6,7 @@ namespace Ktisis.History {
 	}
 
 	public static class HistoryItemFactory {
-		public unsafe static HistoryItem? Create(HistoryItemType type) {
+		public static HistoryItem? Create(HistoryItemType type) {
 			HistoryItem? item = null;
 
 			switch (type) {
@@ -21,7 +21,7 @@ namespace Ktisis.History {
 			return item;
 		}
 
-		private static unsafe ActorBone? CreateActorBoneItem() {
+		private static ActorBone? CreateActorBoneItem() {
 			var bone = Skeleton.GetSelectedBone();
 			if (bone == null) return null;
 

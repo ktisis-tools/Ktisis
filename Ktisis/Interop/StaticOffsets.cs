@@ -1,5 +1,3 @@
-using Dalamud.Logging;
-
 using System;
 
 namespace Ktisis.Interop {
@@ -16,7 +14,7 @@ namespace Ktisis.Interop {
 		internal unsafe static bool IsRotationFrozen => FreezeRotation != null && *FreezeRotation == 0x90 || *FreezeRotation == 0x00;
 		internal unsafe static bool IsScalingFrozen => FreezeScale != null && *FreezeScale == 0x90 || *FreezeScale == 0x00;
 
-		internal unsafe static bool IsAnamPosing => IsPositionFrozen || IsRotationFrozen || IsScalingFrozen;
+		internal static bool IsAnamPosing => IsPositionFrozen || IsRotationFrozen || IsScalingFrozen;
 
 		// Init
 		internal unsafe static void Init() {

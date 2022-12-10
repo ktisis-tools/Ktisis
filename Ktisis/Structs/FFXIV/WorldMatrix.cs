@@ -3,13 +3,13 @@ using System.Runtime.InteropServices;
 
 namespace Ktisis.Structs.FFXIV {
 	[StructLayout(LayoutKind.Explicit, Size = 0x1FC)]
-	public unsafe partial struct WorldMatrix {
+	public partial struct WorldMatrix {
 		[FieldOffset(0x1B4)] public Matrix4x4 Matrix;
 
 		[FieldOffset(0x1F4)] public float Width;
 		[FieldOffset(0x1F8)] public float Height;
 
-		public unsafe bool WorldToScreen(Vector3 v, out Vector2 pos2d) {
+		public bool WorldToScreen(Vector3 v, out Vector2 pos2d) {
 			var m = Matrix;
 
 			float x = (m.M11 * v.X) + (m.M21 * v.Y) + (m.M31 * v.Z) + m.M41;

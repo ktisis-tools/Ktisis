@@ -57,7 +57,7 @@ namespace Ktisis.Interface.Components {
 		string searchBarHint = "Search...",
 		float minWidth = 400,
 		int columns = 12
-		) => HoverPopupWindow<T>(flags, enumerable, filter, (i) => { }, drawLine, onSelect, onClose, ref inputSearch, windowLabel, listLabel, searchBarLabel, searchBarHint, minWidth, columns);
+		) => HoverPopupWindow(flags, enumerable, filter, (_) => { }, drawLine, onSelect, onClose, ref inputSearch, windowLabel, listLabel, searchBarLabel, searchBarHint, minWidth, columns);
 
 		public static void HoverPopupWindow<T>(
 				HoverPopupWindowFlags flags,

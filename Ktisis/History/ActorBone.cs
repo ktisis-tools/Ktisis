@@ -23,7 +23,7 @@ namespace Ktisis.History {
 			SiblingLinkType = siblingLinkType;
 		}
 
-		public override unsafe HistoryItem Clone() {
+		public override HistoryItem Clone() {
 			var b = new ActorBone(Bone, ParentingState, SiblingLinkType);
 			b.StartMatrix = StartMatrix;
 			b.EndMatrix = EndMatrix;
@@ -33,7 +33,7 @@ namespace Ktisis.History {
 		public unsafe override void Update(bool undo) {
 			var historyToUndo = this;
 			var transformToRollbackTo = undo ? historyToUndo.StartMatrix : historyToUndo.EndMatrix;
-			var historyBone = historyToUndo.Bone!;
+			var historyBone = historyToUndo.Bone;
 			var isGlobalRotation = historyBone is null;
 			var model = historyToUndo.Actor->Model;
 
@@ -43,9 +43,9 @@ namespace Ktisis.History {
 				return;
 			}
 
-			var bone = model->Skeleton->GetBone(historyBone!.Partial, historyBone!.Index);
+			var bone = model->Skeleton->GetBone(historyBone!.Partial, historyBone.Index);
 			var boneName = bone.HkaBone.Name.String;
-			var boneTransform = bone!.AccessModelSpace(PropagateOrNot.DontPropagate);
+			var boneTransform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 
 			// Write our updated matrix to memory.
 			var initialRot = boneTransform->Rotation.ToQuat();
@@ -53,12 +53,11 @@ namespace Ktisis.History {
 			Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);
 
 			if (ParentingState)
-				bone!.PropagateChildren(boneTransform, initialPos, initialRot);
+				bone.PropagateChildren(boneTransform, initialPos, initialRot);
 
 			if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
-				var siblingBone = bone!.GetMirrorSibling();
-				if (siblingBone != null)
-					siblingBone.PropagateSibling(boneTransform->Rotation.ToQuat() / initialRot, SiblingLinkType);
+				var siblingBone = bone.GetMirrorSibling();
+				siblingBone?.PropagateSibling(boneTransform->Rotation.ToQuat() / initialRot, SiblingLinkType);
 			}
 		}
 

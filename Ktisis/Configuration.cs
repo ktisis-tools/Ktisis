@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using ImGuizmoNET;
 
 using Dalamud;
-using Dalamud.Logging;
 using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
