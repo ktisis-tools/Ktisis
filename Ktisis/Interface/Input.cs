@@ -112,7 +112,12 @@ namespace Ktisis.Interface {
 			return false;
 		}
 
-		internal static void OnKeyReleased(VirtualKey key) => HandleHeldPurposes(key);
+		internal static void OnKeyReleased(VirtualKey key) {
+			if (!Ktisis.Configuration.EnableKeybinds || IsChatInputActive())
+				return;
+
+			HandleHeldPurposes(key);
+		}
 
 		internal static Purpose? GetPurposeFromInput(VirtualKey input) {
 			foreach (Purpose purpose in Purposes) {
