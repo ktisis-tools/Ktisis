@@ -10,9 +10,10 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
+using Dalamud.Logging;
 
 namespace Ktisis.Interop.Hooks {
-    public static class PoseHooks {
+	public static class PoseHooks {
 		internal delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
 		internal static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;
 
@@ -28,7 +29,7 @@ namespace Ktisis.Interop.Hooks {
 		internal unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
 		internal static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
 
-		internal delegate void UpdatePosDelegate(IntPtr a1);
+		internal unsafe delegate void UpdatePosDelegate(Actor* a1);
 		internal static Hook<UpdatePosDelegate> UpdatePosHook = null!;
 
 		internal unsafe delegate char SetSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
@@ -132,7 +133,7 @@ namespace Ktisis.Interop.Hooks {
 				SyncModelSpaceHook.Original(pose);
 		}
 
-		private static void UpdatePosDetour(IntPtr a1) {
+		private unsafe static void UpdatePosDetour(Actor* a1) {
 
 		}
 
@@ -174,6 +175,9 @@ namespace Ktisis.Interop.Hooks {
 						if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
 						if (actor->RenderMode == RenderMode.Draw) break;
+
+						if (a2 == 0)
+							UpdatePosHook.Original(actor);
 
 						if (PreservedPoses.TryGetValue(actor->ObjectID, out var backup)) {
 							var trans = PoseTransforms.Rotation;
