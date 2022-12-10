@@ -116,6 +116,8 @@ namespace Ktisis.Interface.Components {
 		// Filters
 
 		private unsafe static bool IsValidActor(long target) {
+			if (target == 0) return false;
+
 			var gameObject = (GameObject*)target;
 			if (gameObject == null) return false;
 
