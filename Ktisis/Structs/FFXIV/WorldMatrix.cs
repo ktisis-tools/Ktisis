@@ -1,3 +1,5 @@
+using Dalamud.Interface;
+
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -12,16 +14,18 @@ namespace Ktisis.Structs.FFXIV {
 		public bool WorldToScreen(Vector3 v, out Vector2 pos2d) {
 			var m = Matrix;
 
+			var windowPos = ImGuiHelpers.MainViewport.Pos;
+
 			float x = (m.M11 * v.X) + (m.M21 * v.Y) + (m.M31 * v.Z) + m.M41;
 			float y = (m.M12 * v.X) + (m.M22 * v.Y) + (m.M32 * v.Z) + m.M42;
 			float w = (m.M14 * v.X) + (m.M24 * v.Y) + (m.M34 * v.Z) + m.M44;
 
-			float camX = Width / 2f;
-			float camY = Height / 2f;
+			float camX = (Width / 2f);
+			float camY = (Height / 2f);
 
 			pos2d = new Vector2(
-				camX + (camX * x / w),
-				camY - (camY * y / w)
+				camX + (camX * x / w) + windowPos.X,
+				camY - (camY * y / w) + windowPos.Y
 			);
 
 			return w > 0.001f;

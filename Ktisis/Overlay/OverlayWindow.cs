@@ -54,6 +54,7 @@ namespace Ktisis.Overlay {
 		public static void Begin() {
 			if (HasBegun) return;
 
+			ImGuiHelpers.ForceNextWindowMainViewport();
 			ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
