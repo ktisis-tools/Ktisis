@@ -48,7 +48,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(32)] public uint Unk5;
 	}
 
-	public enum GazeControl : int {
+	public enum GazeControl {
 		All = -1,
 		Torso = 0,
 		Head = 1,

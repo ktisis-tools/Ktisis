@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
@@ -61,7 +59,7 @@ namespace Ktisis.Structs.Actor {
 
 		// Change equipment - no redraw method
 
-		public unsafe void Equip(EquipIndex index, ItemEquip item) {
+		public void Equip(EquipIndex index, ItemEquip item) {
 			if (Methods.ActorChangeEquip == null) return;
 			Methods.ActorChangeEquip(GetAddress() + 0x6D0, index, item);
 		}
@@ -115,7 +113,7 @@ namespace Ktisis.Structs.Actor {
 
 		// Actor redraw
 
-		public unsafe void Redraw(bool faceHack = false) {
+		public void Redraw(bool faceHack = false) {
 			faceHack &= GameObject.ObjectKind == (byte)ObjectKind.Pc;
 			GameObject.DisableDraw();
 			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.BattleNpc;

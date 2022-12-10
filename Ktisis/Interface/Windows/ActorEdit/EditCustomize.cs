@@ -8,7 +8,6 @@ using ImGuiScene;
 
 using Lumina.Excel;
 
-using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -48,13 +47,13 @@ namespace Ktisis.Interface.Windows {
 	public static class EditCustomize {
 		// Constants
 
-		public static Vector2 IconSize = new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 48 <= these are the original values by Chirp
-		public static Vector2 ListIconSize = new(3 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 58
-		public static Vector2 ButtonIconSize = IconSize + (ImGui.GetStyle().FramePadding * 2); // originally IconPadding = 8
-		public static Vector2 InputSize = new(8 * ImGui.GetFontSize()); // 120
-		public static Vector2 MiscInputSize = new(16 * ImGui.GetFontSize()); // 250
-		public static Vector2 ColButtonSize = new Vector2(ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y) + (ImGui.GetStyle().FramePadding * 2); // 28
-		public static Vector2 ColButtonSizeSmall = new(ImGui.GetTextLineHeight()); // 20
+		public static Vector2 IconSize => new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 48 <= these are the original values by Chirp
+		public static Vector2 ListIconSize => new(3 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y); // 58
+		public static Vector2 ButtonIconSize => IconSize + (ImGui.GetStyle().FramePadding * 2); // originally IconPadding = 8
+		public static Vector2 InputSize => new(8 * ImGui.GetFontSize()); // 120
+		public static Vector2 MiscInputSize => new(16 * ImGui.GetFontSize()); // 250
+		public static Vector2 ColButtonSize => new Vector2(ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y) + (ImGui.GetStyle().FramePadding * 2); // 28
+		public static Vector2 ColButtonSizeSmall => new(ImGui.GetTextLineHeight()); // 20
 
 		// Properties
 
@@ -310,7 +309,7 @@ namespace Ktisis.Interface.Windows {
 
 		// Color selection
 
-		public unsafe static void DrawColors(Customize custom) {
+		public static void DrawColors(Customize custom) {
 			var colors = MenuColors.OrderBy(c => c.AltIndex);
 
 			var i = 0;
@@ -329,7 +328,7 @@ namespace Ktisis.Interface.Windows {
 
 		public unsafe static void DrawColor(Customize custom, MenuColor color) {
 			var colIndex = custom.Bytes[(uint)color.Index];
-			var colRgb = colIndex >= color.Colors.Length ? 0 : color.Colors[colIndex];
+			var colRgb = colIndex >= color.Colors.Length || colIndex < 0 ? 0 : color.Colors[colIndex];
 
 			CustomizeIndex selecting = 0;
 
@@ -340,7 +339,7 @@ namespace Ktisis.Interface.Windows {
 
 			if (color.AltIndex != 0) {
 				var altIndex = custom.Bytes[(uint)color.AltIndex];
-				var altRgb = color.Colors[altIndex];
+				var altRgb = altIndex >= color.Colors.Length || altIndex < 0 ? 0 : color.Colors[altIndex];
 				ImGui.SameLine();
 				if (DrawColorButton($"{altIndex}##{color.Name}##alt", altRgb))
 					selecting = color.AltIndex;
@@ -358,9 +357,12 @@ namespace Ktisis.Interface.Windows {
 			if (color.AltIndex != 0) name += "s";
 			ImGui.Text(name);
 
-			if ((Selecting == color.Index || Selecting == color.AltIndex) && DrawColorList(custom, color, out byte value)) {
-				custom.Bytes[(uint)Selecting] = value;
-				Apply(custom);
+			if (Selecting == color.Index || Selecting == color.AltIndex){
+				byte value = custom.Bytes[(uint)Selecting];
+				if (DrawColorList(custom, color, ref value)) {
+					custom.Bytes[(uint)Selecting] = value;
+					Apply(custom);
+				}
 			}
 
 			ImGui.EndGroup();
@@ -379,9 +381,8 @@ namespace Ktisis.Interface.Windows {
 			return result;
 		}
 
-		public unsafe static bool DrawColorList(Customize custom, MenuColor color, out byte value) {
+		public static bool DrawColorList(Customize custom, MenuColor color, ref byte value) {
 			var result = false;
-			value = 0;
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.Always);
@@ -396,11 +397,11 @@ namespace Ktisis.Interface.Windows {
 					//ImGui.BeginListBox("##feature_select", new Vector2(ListIconSize.X * 6 * 1.25f + 30, 200));
 					//focus |= ImGui.IsItemFocused() || ImGui.IsItemActive() || ImGui.IsItemActivated() || ImGui.IsItemHovered();
 
-					var id = (int)custom.Bytes[(int)color.Index];
+					var id = (int)value;
 					ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 					if (ImGui.InputInt("##colId", ref id)) {
-						custom.Bytes[(int)color.Index] = (byte)id;
-						Apply(custom);
+						value = (byte)id;
+						result |= true;
 					}
 
 					ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0,0));
@@ -412,8 +413,8 @@ namespace Ktisis.Interface.Windows {
 						if (i % 8 != 0) ImGui.SameLine();
 
 						var rgba = ImGui.ColorConvertU32ToFloat4(rgb);
-						if (ImGui.ColorButton($"##{color.Name}_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
-							result = true;
+						if (ImGui.ColorButton($"{i}##{color.Name}_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
+							result |= true;
 							value = (byte)i;
 							ImGui.SetWindowFocus();
 						}

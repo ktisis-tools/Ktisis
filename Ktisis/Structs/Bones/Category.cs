@@ -403,14 +403,14 @@ namespace Ktisis.Structs.Bones {
 				"j_asi_e_l", // ToesLeft
 				"j_asi_e_r", // ToesRight
 			};
-			foreach (string name in new string[] { "ivcs left foot", "ivcs right foot", })
+			foreach (string name in new[] { "ivcs left foot", "ivcs right foot", })
 				if (_Categories.TryGetValue(name, out Category? cat))
 					feetBones = feetBones.Concat(cat.PossibleBones).ToList();
 			CreateCategory("feet", defaultColor, feetBones);
 
 			// hands
 			List<string> handsBones = new();
-			foreach (string name in new string[] { "right hand", "left hand", "ivcs left hand", "ivcs right hand", })
+			foreach (string name in new[] { "right hand", "left hand", "ivcs left hand", "ivcs right hand", })
 				if (_Categories.TryGetValue(name, out Category? cat))
 					handsBones = handsBones.Concat(cat.PossibleBones).ToList();
 			CreateCategory("hands", defaultColor, handsBones);

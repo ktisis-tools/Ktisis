@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using ImGuizmoNET;
 
 using Dalamud;
-using Dalamud.Logging;
 using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
@@ -46,7 +45,7 @@ namespace Ktisis
 		public int TransformTableDigitPrecision { get; set; } = 3;
 
 		// Input
-		public bool EnableKeybinds { get; set; } = true;
+		public bool EnableKeybinds { get; set; } = false;
 		public Dictionary<Input.Purpose, List<VirtualKey>> KeyBinds { get; set; } = new();
 
 		public bool DisableChangeTargetOnLeftClick { get; set; } = false;
@@ -59,6 +58,8 @@ namespace Ktisis
 		public bool DrawDotsWithGizmo { get; set; } = true;
 
 		public float SkeletonLineThickness { get; set; } = 2.0F;
+		public float SkeletonLineOpacity { get; set; } = 0.95F;
+		public float SkeletonLineOpacityWhileUsing { get; set; } = 0.15F;
 		public float SkeletonDotRadius { get; set; } = 3.0F;
 
 		// References

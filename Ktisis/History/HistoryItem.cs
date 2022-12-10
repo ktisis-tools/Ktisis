@@ -1,6 +1,6 @@
 ﻿namespace Ktisis.History {
 	public abstract class HistoryItem {
-		public abstract unsafe HistoryItem Clone();
-		public abstract unsafe void Update(bool undo);
+		public abstract HistoryItem Clone();
+		public abstract void Update(bool undo);
 	}
 }

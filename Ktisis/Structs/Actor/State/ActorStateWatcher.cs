@@ -1,12 +1,6 @@
 using Dalamud.Game;
-using Dalamud.Logging;
 using Ktisis.Events;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Ktisis.Structs.Actor.State {
 	public sealed class ActorStateWatcher : IDisposable {
@@ -31,7 +25,7 @@ namespace Ktisis.Structs.Actor.State {
 		public void Dispose() {
 			Services.Framework.Update -= Monitor;
 			if(Ktisis.IsInGPose)
-				EventManager.FireOnGposeChangeEvent(ActorGposeState.OFF); ;
+				EventManager.FireOnGposeChangeEvent(ActorGposeState.OFF);
 		}
 
 		public static void Init() {

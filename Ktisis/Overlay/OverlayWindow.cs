@@ -1,4 +1,3 @@
-using System;
 using System.Numerics;
 
 using ImGuiNET;
@@ -8,6 +7,7 @@ using Dalamud.Interface;
 
 using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;
+using Ktisis.Events;
 
 namespace Ktisis.Overlay {
 	public static class OverlayWindow {
@@ -26,6 +26,8 @@ namespace Ktisis.Overlay {
 		public static string? GizmoOwner = null;
 
 		public static bool IsGizmoVisible => Gizmo != null && GizmoOwner != null;
+
+		private static bool _IsUsing = false;
 
 		public static bool IsGizmoOwner(string? id) => GizmoOwner == id;
 		public static Gizmo? SetGizmoOwner(string? id) {
@@ -46,11 +48,13 @@ namespace Ktisis.Overlay {
 		public static bool IsCursorBusy() =>
 			(GizmoOwner != null && (ImGuizmo.IsUsing() || ImGuizmo.IsOver()))
 			|| ImGui.IsAnyItemActive() || ImGui.IsAnyItemHovered()
-			|| ImGui.IsAnyItemFocused() || ImGui.IsAnyMouseDown();
+			|| ImGui.IsAnyItemFocused() || ImGui.IsAnyMouseDown()
+			|| ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow);
 
 		public static void Begin() {
 			if (HasBegun) return;
 
+			ImGuiHelpers.ForceNextWindowMainViewport();
 			ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
@@ -79,10 +83,13 @@ namespace Ktisis.Overlay {
 			if (WorldMatrix == null)
 				WorldMatrix = Methods.GetMatrix!();
 
-			// Might need a different name for Begin?
-
 			if (IsGizmoVisible) {
-				Gizmo.UpdateGizmoState();
+				var isUsing = ImGuizmo.IsUsing();
+				if (_IsUsing != isUsing) {
+					_IsUsing = isUsing;
+					EventManager.FireOnGizmoChangeEvent(isUsing);
+				}
+
 				Begin();
 			}
 

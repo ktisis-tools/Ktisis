@@ -7,9 +7,7 @@
         "requested": "[2.1.6, )",
         "resolved": "2.1.6",
         "contentHash": "JGgpGP2FMM5Vt4utyDD+xV2+XXfo3Rb3VgJ4FnvzkWlvn4JG/bBILo6mDubWCPjDGqT0n6dF1JRG0r5ygLv/ng=="
-      }
-    },
-    "net6.0": {
+      },
       "JetBrains.Annotations": {
         "type": "Direct",
         "requested": "[2022.3.1, )",

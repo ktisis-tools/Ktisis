@@ -23,9 +23,9 @@ using Ktisis.Structs.Actor.Equip.SetSources;
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
 		public static bool Visible = false;
-		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.50f);
-		private static Vector2 WindowSizeMin = new(ImGui.GetFontSize() * 15, ImGui.GetFontSize() * 20);
-		private static Vector2 WindowSizeMax = ImGui.GetIO().DisplaySize * 0.85f;
+		public static Vector2 ButtonSize => new Vector2(ImGui.GetFontSize() * 1.50f);
+		private static Vector2 WindowSizeMin => new(ImGui.GetFontSize() * 15, ImGui.GetFontSize() * 20);
+		private static Vector2 WindowSizeMax => ImGui.GetIO().DisplaySize * 0.85f;
 
 		// Toggle visibility
 
@@ -40,9 +40,20 @@ namespace Ktisis.Interface.Windows {
 
 		// Draw
 
+		public static bool _isSaved = true;
+
 		public static void Draw() {
-			if (!Visible)
+			if (!Visible) {
+				if (!_isSaved) {
+					PluginLog.Verbose("Saving config...");
+					Services.PluginInterface.SavePluginConfig(Ktisis.Configuration);
+					_isSaved = true;
+				}
+
 				return;
+			} else if (_isSaved) {
+				_isSaved = false;
+			}
 
 			var size = new Vector2(-1, -1);
 			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
@@ -169,6 +180,14 @@ namespace Ktisis.Interface.Windows {
 				var lineThickness = cfg.SkeletonLineThickness;
 				if (ImGui.SliderFloat(Locale.GetString("Lines_thickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
 					cfg.SkeletonLineThickness = lineThickness;
+				
+				var lineOpacity = cfg.SkeletonLineOpacity;
+				if (ImGui.SliderFloat(Locale.GetString("Lines_opacity"), ref lineOpacity, 0.01F, 1F, "%.2f"))
+					cfg.SkeletonLineOpacity = lineOpacity;
+				
+				var lineOpacityWhileUsing = cfg.SkeletonLineOpacityWhileUsing;
+				if (ImGui.SliderFloat(Locale.GetString("Lines_opacity_while_using"), ref lineOpacityWhileUsing, 0.01F, 1F, "%.2f"))
+					cfg.SkeletonLineOpacityWhileUsing = lineOpacityWhileUsing;
 			}
 			if (ImGui.CollapsingHeader(Locale.GetString("Bone_colors"), ImGuiTreeNodeFlags.DefaultOpen)) {
 
@@ -199,7 +218,7 @@ namespace Ktisis.Interface.Windows {
 
 					ImGui.SameLine();
 					if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Rainbow, Locale.GetString("Hold_Control_and_Shift_to_reset_colors_to_their_default_values"), ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift)) {
-						foreach ((string categoryName, Category category) in Category.Categories) {
+						foreach ((string _, Category category) in Category.Categories) {
 							if (!category.ShouldDisplay && !cfg.BoneCategoryColors.ContainsKey(category.Name))
 								continue;
 							cfg.BoneCategoryColors[category.Name] = category.DefaultColor;

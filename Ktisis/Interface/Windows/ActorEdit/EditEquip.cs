@@ -19,7 +19,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 	public static class EditEquip {
 		// Constants
 
-		public static Vector2 IconSize = new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y);
+		public static Vector2 IconSize => new(2 * ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemSpacing.Y);
 
 		// Properties
 
@@ -49,7 +49,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		// UI Code
 
-		public unsafe static void Draw() {
+		public static void Draw() {
 			if (Items == null)
 				Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
 
@@ -125,7 +125,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.PushItemWidth(120);
 			if (isWeapon) {
 				var equip = (WeaponEquip)equipObj;
-				var val = new int[3] { equip.Set, equip.Base, equip.Variant };
+				var val = new int[] { equip.Set, equip.Base, equip.Variant };
 				if (ImGui.InputInt3($"##{slot}", ref val[0])) {
 					equip.Set = (ushort)val[0];
 					equip.Base = (ushort)val[1];
@@ -134,7 +134,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				}
 			} else {
 				var equip = (ItemEquip)equipObj;
-				var val = new int[2] { equip.Id, equip.Variant };
+				var val = new int[] { equip.Id, equip.Variant };
 				if (ImGui.InputInt2($"##{slot}", ref val[0])) {
 					equip.Id = (ushort)val[0];
 					equip.Variant = (byte)val[1];

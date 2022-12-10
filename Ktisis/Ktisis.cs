@@ -20,7 +20,7 @@ namespace Ktisis {
 		public string Name => "Ktisis";
 		public string CommandName = "/ktisis";
 
-		public const string Version = "Alpha v0.2.2";
+		public static string Version = $"Alpha {GetVersion()}";
 
 		public static Configuration Configuration { get; private set; } = null!;
 		public static UiBuilder UiBuilder { get; private set; } = null!;
@@ -31,6 +31,11 @@ namespace Ktisis {
 		public unsafe static GameObject? GPoseTarget
 			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
 		public unsafe static Actor* Target => GPoseTarget != null ? (Actor*)GPoseTarget.Address : null;
+
+		public static string GetVersion() {
+			var ver = typeof(Ktisis).Assembly.GetName().Version!.ToString();
+			return ver.Substring(0, ver.LastIndexOf("."));
+		}
 
 		public Ktisis(DalamudPluginInterface pluginInterface) {
 			Services.Init(pluginInterface);
@@ -78,7 +83,7 @@ namespace Ktisis {
 			pluginInterface.UiBuilder.OpenConfigUi += ConfigGui.Toggle;
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
-      
+
 			HistoryManager.Init();
 			References.LoadReferences(Configuration);
 		}

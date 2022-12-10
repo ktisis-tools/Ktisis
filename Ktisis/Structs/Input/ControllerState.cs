@@ -1,13 +1,12 @@
 ﻿
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace Ktisis.Structs.Input {
 
 	//WIP: Don't try to use this unless you know what you're doing.
 	[StructLayout(LayoutKind.Sequential)]
-	public unsafe struct ControllerState {
+	public struct ControllerState {
 		public int LeftPad1;
 		public int LeftPad2;
 		public int RightPad1;

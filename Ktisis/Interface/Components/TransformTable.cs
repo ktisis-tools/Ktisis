@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Numerics;
-using System.Linq;
 
 using ImGuiNET;
 
@@ -36,7 +35,6 @@ namespace Ktisis.Interface.Components {
 		public Vector3 Rotation;
 		public Vector3 Scale;
 
-		private TransformTableState _state = TransformTableState.IDLE;
 		public void FetchConfigurations() {
 			BaseSpeedPos = Ktisis.Configuration.TransformTableBaseSpeedPos;
 			BaseSpeedRot = Ktisis.Configuration.TransformTableBaseSpeedRot;
@@ -98,7 +96,14 @@ namespace Ktisis.Interface.Components {
 			ImGui.SameLine();
 			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, iconScale);
 
-			IsEditing = result;
+			var newState = result || (IsEditing && ImGui.IsAnyItemActive());
+
+			if (newState && !IsEditing)
+				EventManager.FireOnTransformationMatrixChangeEvent(true);
+			else if (IsEditing && !newState)
+				EventManager.FireOnTransformationMatrixChangeEvent(false);
+
+			IsEditing = newState;
 
 			ImGui.PopItemWidth();
 
@@ -117,19 +122,6 @@ namespace Ktisis.Interface.Components {
 			GuiHelpers.IconTooltip(FontAwesomeIcon.Running, "Ctrl and Shift speed multipliers");
 
 			return result;
-		}
-
-		private unsafe void UpdateTransformTableState() {
-			if (
-				ImGui.IsItemClicked() &&
-				(ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) || ImGui.IsMouseDown(ImGuiMouseButton.Left))
-			) {
-				_state = TransformTableState.EDITING;
-			}
-
-			if (ImGui.IsItemDeactivatedAfterEdit()) _state = TransformTableState.IDLE;
-
-			EventManager.FireOnTransformationMatrixChangeEvent(_state);
 		}
 
 		private bool ColoredDragFloat3(string label, ref Vector3 value, float speed, IReadOnlyList<Vector4> colors, float borderSize = 1.0f) {
@@ -170,7 +162,6 @@ namespace Ktisis.Interface.Components {
 					result = true;
 				}
 			}
-			IsEditing = result;
 			return result;
 		}
 		public unsafe bool Draw(Actor* target) {

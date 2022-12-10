@@ -92,6 +92,18 @@ namespace Ktisis.Interface {
 						else
 							OverlayWindow.DeselectGizmo();
 						break;
+					case Purpose.BoneSelectionUp:
+						if (Selection.Selecting)
+							Selection.ScrollIndex--;
+						else
+							res = false;
+						break;
+					case Purpose.BoneSelectionDown:
+						if (Selection.Selecting)
+							Selection.ScrollIndex++;
+						else
+							res = false;
+						break;
 				}
 
 				return res;
@@ -136,7 +148,9 @@ namespace Ktisis.Interface {
 			ClearCategoryVisibilityOverload,
 			HoldAllCategoryVisibilityOverload,
 			CircleThroughSiblingLinkModes,
-			DeselectGizmo
+			DeselectGizmo,
+			BoneSelectionUp,
+			BoneSelectionDown,
 		}
 
 		public static readonly Dictionary<Purpose, List<VirtualKey>> DefaultKeys = new(){
@@ -150,7 +164,9 @@ namespace Ktisis.Interface {
 			{Purpose.ClearCategoryVisibilityOverload, new(){VirtualKey.J}},
 			{Purpose.HoldAllCategoryVisibilityOverload, new(){VirtualKey.J, VirtualKey.SHIFT}},
 			{Purpose.CircleThroughSiblingLinkModes, new(){VirtualKey.C}},
-			{Purpose.DeselectGizmo, new(){VirtualKey.ESCAPE}}
+			{Purpose.DeselectGizmo, new(){VirtualKey.ESCAPE}},
+			{Purpose.BoneSelectionUp, new(){VirtualKey.UP}},
+			{Purpose.BoneSelectionDown, new(){VirtualKey.DOWN}},
 		};
 
 		// Init & dispose

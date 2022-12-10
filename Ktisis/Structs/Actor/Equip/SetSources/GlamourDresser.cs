@@ -4,8 +4,6 @@ using System.Linq;
 
 using Newtonsoft.Json;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.FFXIV.Client.Game;
 
 using Ktisis.Data.Excel;
@@ -78,7 +76,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			if (Plates == null) return 0;
 			if (Plates.Length == 0) return 0;
 
-			return Plates.Count((p) => p.IsValid())!;
+			return Plates.Count((p) => p.IsValid());
 		}
 
 		public static void PopulatePlatesData() {

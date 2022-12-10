@@ -20,7 +20,7 @@ namespace Ktisis.Structs.FFXIV {
 		//[FieldOffset(40 + 36)] public IntPtr* PlatesPointer;
 		//[FieldOffset(40 + 36)] public fixed MiragePage Plates[20]; // This would be ideal, TODO: try to find a way to achieve this
 
-		internal static unsafe AgentInterface* MiragePlateAgent() => Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
+		internal static AgentInterface* MiragePlateAgent() => Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
 
 		// this getter exists because we cannot specify a sized array in the variable
 		public MiragePage[] Pages {
@@ -28,7 +28,7 @@ namespace Ktisis.Structs.FFXIV {
 				var totalPages = GlamourDresser._platesNumber + 1; // the currently viewing/editing page is added at the end of the array
 				MiragePage[] pages = new MiragePage[totalPages];
 
-				if (!AgentInterface.IsAgentActive()) return pages; ;
+				if (!AgentInterface.IsAgentActive()) return pages;
 
 				// TODO: find a way to use PlatesPointer instead of calling the agent again
 				var agent = MiragePlateAgent();

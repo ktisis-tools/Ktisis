@@ -1,7 +1,5 @@
 using System.Runtime.InteropServices;
 
-using Ktisis.Data.Excel;
-
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Equipment {
