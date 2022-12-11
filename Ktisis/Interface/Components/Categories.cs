@@ -94,7 +94,7 @@ namespace Ktisis.Interface.Components {
 					foreach (var key in Category.Categories.Keys)
 						cfg.ShowBoneByCategory[key] = false;
 			}
-			ImGui.SameLine(ImGui.GetContentRegionAvail().X - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
+			ImGui.SameLine(ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
 			ControlButtons.VerticalAlignTextOnButtonSize();
 
 			// help hover

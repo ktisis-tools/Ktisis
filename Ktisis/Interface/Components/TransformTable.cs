@@ -78,7 +78,7 @@ namespace Ktisis.Interface.Components {
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
 			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
 
-			var inputsWidth = (ImGui.GetContentRegionAvail().X - ControlButtons.ButtonSize.X - ImGui.GetStyle().ItemSpacing.X * 3.0f) / 3.0f;
+			var inputsWidth = (ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - ControlButtons.ButtonSize.X - ImGui.GetStyle().ItemSpacing.X * 3.0f) / 3.0f;
 			ImGui.PushItemWidth(inputsWidth);
 
 			// Position
@@ -110,7 +110,7 @@ namespace Ktisis.Interface.Components {
 			if (!Ktisis.Configuration.TransformTableDisplayMultiplierInputs)
 				return result;
 			
-			inputsWidth = ImGui.GetContentRegionAvail().X - GuiHelpers.CalcIconSize(FontAwesomeIcon.Running).X - ImGui.GetStyle().ItemSpacing.X;
+			inputsWidth = ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - GuiHelpers.CalcIconSize(FontAwesomeIcon.Running).X - ImGui.GetStyle().ItemSpacing.X;
 			Vector2 mults = new(ModifierMultShift, ModifierMultCtrl);
 			ImGui.PushItemWidth(inputsWidth);
 			if (ImGui.DragFloat2("##SpeedMult##shiftCtrl", ref mults, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic)) {

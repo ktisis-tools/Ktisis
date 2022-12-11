@@ -370,7 +370,7 @@ namespace Ktisis.Interface.Windows {
 					// display the current key (config or default)
 					ImGui.TableNextColumn();
 					var configuredKeysPretty = PrettyKeys(configuredKeys);
-					ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(configuredKeysPretty).X) / 2));
+					ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - ImGui.CalcTextSize(configuredKeysPretty).X) / 2));
 					ImGui.Selectable($"{configuredKeysPretty}##{purpose}", false, ImGuiSelectableFlags.SpanAllColumns);
 					clickRow |= ImGui.IsItemClicked(ImGuiMouseButton.Left) || ImGui.IsItemClicked(ImGuiMouseButton.Right);
 

@@ -165,7 +165,7 @@ namespace Ktisis.Util
 			return calculatedTextSize
 				+ ImGui.GetStyle().ItemSpacing.X
 				//+ ImGui.GetStyle().WindowPadding.X
-				+ 0.1f; // extra safety
+				+ WidthMargin(); // extra safety
 		}
 		public static float WidthMargin() =>
 			Ktisis.Configuration.CustomWidthMarginDebug;
@@ -187,11 +187,13 @@ namespace Ktisis.Util
 			foreach (var icon in iconsAfter)
 				iconsWidth += CalcIconSize(icon).X;
 			return ImGui.GetContentRegionAvail().X
+				- WidthMargin()
 				- iconsWidth
 				- (ImGui.GetStyle().ItemSpacing.X * iconsAfter.Length);
 		}
 		public static float AvailableWidthText(string textAfter) =>
 			 ImGui.GetContentRegionAvail().X
+				- WidthMargin()
 				- ImGui.CalcTextSize(textAfter).X
 				- ImGui.GetStyle().ItemSpacing.X;
 		public static float AvailableWidth(float sizeOfAllItemsAfter) =>
@@ -203,6 +205,7 @@ namespace Ktisis.Util
 			Icon(icon, enabled, color);
 		}
 		public static void TextRight(string text, float offset = 0) {
+			// Careful: use of ImGui.GetContentRegionAvail().X without - WidthMargin()
 			offset = ImGui.GetContentRegionAvail().X - offset - ImGui.CalcTextSize(text).X;
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);
 			ImGui.TextUnformatted(text);

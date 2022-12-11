@@ -30,7 +30,7 @@ namespace Ktisis.Interface.Components {
 			if (control->hkaAnimationControl.LocalTime >= durationLimit)
 				control->hkaAnimationControl.LocalTime = 0f;
 
-			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - GuiHelpers.GetRightOffset(ImGui.CalcTextSize("Speed").X));
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - GuiHelpers.GetRightOffset(ImGui.CalcTextSize("Speed").X));
 			ImGui.SliderFloat("Seek", ref control->hkaAnimationControl.LocalTime, 0, durationLimit);
 			ImGui.SliderFloat("Speed", ref control->PlaybackSpeed, 0f, 0.999f);
 			ImGui.PopItemWidth();
