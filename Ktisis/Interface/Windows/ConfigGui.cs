@@ -157,7 +157,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Text(Locale.GetString("UI Customization (Experimental)"));
 
 			var customWidthMarginDebug = cfg.CustomWidthMarginDebug;
-			if (ImGui.DragFloat(Locale.GetString("Custom width margin (debug)"), ref customWidthMarginDebug))
+			if (ImGui.DragFloat(Locale.GetString("Custom width margin (debug)"), ref customWidthMarginDebug, 0.05f, -10, 50, "%.2f"))
 				cfg.CustomWidthMarginDebug = customWidthMarginDebug;
 
 			ImGui.PopItemWidth();
