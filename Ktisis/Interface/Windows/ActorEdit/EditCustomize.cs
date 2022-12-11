@@ -398,7 +398,7 @@ namespace Ktisis.Interface.Windows {
 					//focus |= ImGui.IsItemFocused() || ImGui.IsItemActive() || ImGui.IsItemActivated() || ImGui.IsItemHovered();
 
 					var id = (int)value;
-					ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+					ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin());
 					if (ImGui.InputInt("##colId", ref id)) {
 						value = (byte)id;
 						result |= true;

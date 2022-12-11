@@ -43,6 +43,7 @@ namespace Ktisis
 		public float TransformTableModifierMultCtrl { get; set; } = 0.1f;
 		public float TransformTableModifierMultShift { get; set; } = 10f;
 		public int TransformTableDigitPrecision { get; set; } = 3;
+		public float CustomWidthMarginDebug { get; set; } = 0.1f;
 
 		// Input
 		public bool EnableKeybinds { get; set; } = false;

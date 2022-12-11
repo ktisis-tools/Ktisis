@@ -151,6 +151,17 @@ namespace Ktisis.Interface.Windows {
 			var showToolbar = cfg.ShowToolbar;
 			if (ImGui.Checkbox("Show Experimental Toolbar", ref showToolbar))
 				cfg.ShowToolbar = showToolbar;
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Text(Locale.GetString("UI Customization (Experimental)"));
+
+			var customWidthMarginDebug = cfg.CustomWidthMarginDebug;
+			if (ImGui.DragFloat("Right margin (debug)", ref customWidthMarginDebug, 0.05f, -10, 50, "%.2f"))
+				cfg.CustomWidthMarginDebug = customWidthMarginDebug;
+			ImGui.SameLine();
+			ImGuiComponents.HelpMarker(Locale.GetString("Right margin for determining window content size (used for right-aligning and width-filling).\nIncrease this value if the UI stretches to the entire screen.\n\nNote: If this value is changed, reporting these info to Ktisis team would greatly help!\n - The edited Right margin value\n - The Dalamud theme preset in use"));
+
 			ImGui.PopItemWidth();
 
 			ImGui.EndTabItem();
@@ -361,7 +372,7 @@ namespace Ktisis.Interface.Windows {
 					// display the current key (config or default)
 					ImGui.TableNextColumn();
 					var configuredKeysPretty = PrettyKeys(configuredKeys);
-					ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(configuredKeysPretty).X) / 2));
+					ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - ImGui.CalcTextSize(configuredKeysPretty).X) / 2));
 					ImGui.Selectable($"{configuredKeysPretty}##{purpose}", false, ImGuiSelectableFlags.SpanAllColumns);
 					clickRow |= ImGui.IsItemClicked(ImGuiMouseButton.Left) || ImGui.IsItemClicked(ImGuiMouseButton.Right);
 

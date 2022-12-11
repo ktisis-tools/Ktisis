@@ -246,7 +246,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			var select = Skeleton.BoneSelect;
 			var bone = Skeleton.GetSelectedBone();
 
-			var frameSize = new Vector2(ImGui.GetContentRegionAvail().X, PanelHeight);
+			var frameSize = new Vector2(ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin(), PanelHeight);
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(ImGui.GetStyle().FramePadding.X, ImGui.GetStyle().FramePadding.Y / 2));
 			if (ImGui.BeginChildFrame(8, frameSize, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar)) {
 				GameAnimationIndicator();

@@ -43,7 +43,7 @@ namespace Ktisis.Interface.Components {
 			// It can be actors turning invalid
 			SavedObjects.RemoveAll(o => !IsValidActor(o));
 
-			var buttonSize = new Vector2(ImGui.GetContentRegionAvail().X, ControlButtons.ButtonSize.Y);
+			var buttonSize = new Vector2(ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin(), ControlButtons.ButtonSize.Y);
 			if (ImGui.CollapsingHeader("Actor List")) {
 				long? toRemove = null;
 				foreach (var pointer in SavedObjects) {
@@ -58,7 +58,7 @@ namespace Ktisis.Interface.Components {
 				if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, "Add Actor", ControlButtons.ButtonSize))
 					OpenSelector();
 
-				ImGui.SameLine(ImGui.GetContentRegionAvail().X - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
+				ImGui.SameLine(ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - (ImGui.GetStyle().ItemSpacing.X) - GuiHelpers.CalcIconSize(FontAwesomeIcon.InfoCircle).X);
 				ControlButtons.VerticalAlignTextOnButtonSize();
 
 				// help hover
