@@ -151,6 +151,15 @@ namespace Ktisis.Interface.Windows {
 			var showToolbar = cfg.ShowToolbar;
 			if (ImGui.Checkbox("Show Experimental Toolbar", ref showToolbar))
 				cfg.ShowToolbar = showToolbar;
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Text(Locale.GetString("UI Customization (Experimental)"));
+
+			var customWidthMarginDebug = cfg.CustomWidthMarginDebug;
+			if (ImGui.DragFloat(Locale.GetString("Custom width margin (debug)"), ref customWidthMarginDebug))
+				cfg.CustomWidthMarginDebug = customWidthMarginDebug;
+
 			ImGui.PopItemWidth();
 
 			ImGui.EndTabItem();

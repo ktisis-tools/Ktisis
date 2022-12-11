@@ -167,6 +167,8 @@ namespace Ktisis.Util
 				//+ ImGui.GetStyle().WindowPadding.X
 				+ 0.1f; // extra safety
 		}
+		public static float WidthMargin() =>
+			Ktisis.Configuration.CustomWidthMarginDebug;
 
 
 		public static float AvailableWidthIconButton(FontAwesomeIcon[] iconsAfter) =>
