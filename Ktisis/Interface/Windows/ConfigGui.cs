@@ -157,8 +157,10 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Text(Locale.GetString("UI Customization (Experimental)"));
 
 			var customWidthMarginDebug = cfg.CustomWidthMarginDebug;
-			if (ImGui.DragFloat(Locale.GetString("Custom width margin (debug)"), ref customWidthMarginDebug, 0.05f, -10, 50, "%.2f"))
+			if (ImGui.DragFloat("Right margin (debug)", ref customWidthMarginDebug, 0.05f, -10, 50, "%.2f"))
 				cfg.CustomWidthMarginDebug = customWidthMarginDebug;
+			ImGui.SameLine();
+			ImGuiComponents.HelpMarker(Locale.GetString("Right margin for determining window content size (used for right-aligning and width-filling).\nIncrease this value if the UI stretches to the entire screen.\n\nNote: If this value is changed, reporting these info to Ktisis team would greatly help!\n - The edited Right margin value\n - The Dalamud theme preset in use"));
 
 			ImGui.PopItemWidth();
 
