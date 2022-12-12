@@ -163,6 +163,13 @@
 			"translateBones": "Translate Bone Names"
 		},
 
+		"offset": {
+			"startHelpText": "Select a Bone to start adjusting its position.",
+			"tips": "Tips:\nClick on a row to copy it into clipboard.\nCtrl + Shift + Right click to remove a row.\nThe plus (+) button will insert a copied row",
+			"addTooltip": "Add a line from clipboard.",
+			"dropTooltip": "Hold Ctrl and Shift to drop ALL bone offsets."
+		},
+
 		"data": {
 			"title": "Data",
 			"glamourDresser": {
