@@ -21,27 +21,31 @@
 	
 	"config": {
 		"title": "Ktisis Einstellungen",
-		"general": {
-			"title": "Allgemeines",
-			"openMethod": {
-				"fieldLabel": "Ktisis öffnet sich",
-				"Manually": "wenn `/ktisis` im Chat eingegeben wird",
-				"OnPluginLoad": "beim Laden des Plugins",
-				"OnEnterGpose": "beim Betreten des Gruppenfotomodus"
+
+		"interface": {
+			"title": "Oberfläche",
+			"general": {
+				"title": "Allgemeines",
+				"openMethod": {
+					"fieldLabel": "Ktisis öffnet sich",
+					"Manually": "wenn `/ktisis` im Chat eingegeben wird",
+					"OnPluginLoad": "beim Laden des Plugins",
+					"OnEnterGpose": "beim Betreten des Gruppenfotomodus"
+				},
+				"hideCharName": "Characternamen verstecken",
+				"__comment": "This might need an actual translation for 'NSFW' -- unsure what to pick here.",
+				"censorNSFW": "NSFW-Inhalte verstecken"
 			},
-			"hideCharName": "Characternamen verstecken",
-			"__comment": "This might need an actual translation for 'NSFW' -- unsure what to pick here.",
-			"censorNSFW": "NSFW-Inhalte verstecken"
-		},
-		"transformTable": {
-			"title": "Transformier-Tabelle",
-			"digitPrecision": "Zahl der Nachkommastellen",
-			"basePositionSpeed": "Positionierungsgeschwindigkeit",
-			"baseRotationSpeed": "Rotationsgeschwindigkeit",
-			"baseScaleSpeed": "Skalierungsgeschwindigkeit",
-			"ctrlSpeedMult": "Strg-Geschwindigkeitsmultiplikator",
-			"shiftSpeedMult": "Umschalt-Geschwindigkeitsmultiplikator",
-			"showSpeedMultiplierInputs": "Zeige Multiplikator-Einstellungen in Tabelle"
+			"transformTable": {
+				"title": "Transformier-Tabelle",
+				"digitPrecision": "Zahl der Nachkommastellen",
+				"basePositionSpeed": "Positionierungsgeschwindigkeit",
+				"baseRotationSpeed": "Rotationsgeschwindigkeit",
+				"baseScaleSpeed": "Skalierungsgeschwindigkeit",
+				"ctrlSpeedMult": "Strg-Geschwindigkeitsmultiplikator",
+				"shiftSpeedMult": "Umschalt-Geschwindigkeitsmultiplikator",
+				"showSpeedMultiplierInputs": "Zeige Multiplikator-Einstellungen in Tabelle"
+			}
 		},
 		
 		"overlay": {
@@ -78,12 +82,13 @@
 			
 			"bonePositions": {
 				"header": "Knochenpositionen bearbeiten"
-			},
-			
-			"gizmo": {
-				"title": "Gizmo",
-				"allowAxisFlip": "Achsen zur Kamera drehen"
 			}
+			
+		},
+		
+		"gizmo": {
+			"title": "Gizmo",
+			"allowAxisFlip": "Achsen zur Kamera drehen"
 		},
 		
 		"input": {
@@ -92,43 +97,45 @@
 				"title": "Ziel-Auswahl",
 				"disableLeftClickTarget": "Ziel-Auswahl mit linker Maustaste verhindern", 
 				"disableRightClickTarget": "Ziel-Auswahl mit rechter Maustaste verhindern" 
+			},
+			"keybind": {
+				"title": "Tastaturkürzel",
+				"enable": "Aktivieren",
+				"assignByKeyPress": {
+					"title": "Einstellen über Tastendruck",
+					"helpText": "Zum Einstellen einer Taste oder Tastenkombination:\n1.1. Taste bzw. Tastenkombination halten.\n2.Gewünschte Aktion anclicken\n\nKeine Taste beim Klicken halten um die Zuweisung aufzuheben."
+				},
+				
+				"keybindTable": {
+					"keys": "Taste(n)",
+					"action": "zugewiesene Aktion"
+				},
+				
+				"purpose": {
+					"generic": {
+						"__comment": [
+							"Okay, this **really** needs the placeholder system. Ideally we'd have \"Kategorie %anme% togglen\" (or \"… umschalten\"), but uh... that ain't happenin'.",
+							"Also the thing these are for really needs a rework."
+						],
+						"toggle": "Toggle",
+						"hold": "Halten",
+						"release": "Solo-Toggle"
+					},
+					"GlobalModifierKey": "Globaler Modifikator",
+					"SwitchToTranslate": "Zu Positionieren wechseln",
+					"SwitchToRotate": "Zu Rotieren wechseln",
+					"SwitchToScale": "Zu Skalierien wechseln",
+					"SwitchToUniversal": "Zur Universalbearbeitung wechseln",
+					"ToggleLocalWorld": "Gizmo zwischen Lokal/Welt umschalten",
+					"HoldToHideSkeleton": "Halten um Skelett zu verstecken",
+					"ClearCategoryVisibilityOverload": "Kategoriesichbarkeits-Überschreibungen löschen",
+					"HoldAllCategoryVisibilityOverload": "Halten um alle Kategorien anzuzeigen",
+					"CircleThroughSiblingLinkModes": "Bearbeitungsmodus für verwandte Knochen wechseln"
+				}
 			}
+			
 		},
 		
-		"keybind": {
-			"title": "Tastaturkürzel",
-			"enable": "Aktivieren",
-			"assignByKeyPress": {
-				"title": "Einstellen über Tastendruck",
-				"helpText": "Zum Einstellen einer Taste oder Tastenkombination:\n1.1. Taste bzw. Tastenkombination halten.\n2.Gewünschte Aktion anclicken\n\nKeine Taste beim Klicken halten um die Zuweisung aufzuheben."
-			},
-			"keybindTable": {
-				"keys": "Taste(n)",
-				"action": "zugewiesene Aktion"
-			},
-			"purpose": {
-				"generic": {
-					"__comment": [
-						"Okay, this **really** needs the placeholder system. Ideally we'd have \"Kategorie %anme% togglen\" (or \"… umschalten\"), but uh... that ain't happenin'.",
-						"Also the thing these are for really needs a rework."
-					],
-					"toggle": "Toggle",
-					"hold": "Halten",
-					"release": "Solo-Toggle"
-				},
-				"GlobalModifierKey": "Globaler Modifikator",
-				"SwitchToTranslate": "Zu Positionieren wechseln",
-				"SwitchToRotate": "Zu Rotieren wechseln",
-				"SwitchToScale": "Zu Skalierien wechseln",
-				"SwitchToUniversal": "Zur Universalbearbeitung wechseln",
-				"ToggleLocalWorld": "Gizmo zwischen Lokal/Welt umschalten",
-				"HoldToHideSkeleton": "Halten um Skelett zu verstecken",
-				"ClearCategoryVisibilityOverload": "Kategoriesichbarkeits-Überschreibungen löschen",
-				"HoldAllCategoryVisibilityOverload": "Halten um alle Kategorien anzuzeigen",
-				"CircleThroughSiblingLinkModes": "Bearbeitungsmodus für verwandte Knochen wechseln"
-			}
-		},
-			
 		"references": {
 			"title": "Referenzen",
 			"__comment": "A bit more here?",
@@ -140,9 +147,9 @@
 				"dialog": {
 					"title": "Referenzbild hinzufügen",
 					"filter": "Bild-Dateien"
-				}
-			},
-			"addText": "Neues Referenzbild hinzufügen"
+				},
+				"addText": "Neues Referenzbild hinzufügen"
+			}
 		},
 		
 		"language": {
