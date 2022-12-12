@@ -157,6 +157,8 @@
 
 		"language": {
 			"title": "Language",
+			"noteWIP": "Disclaimer! These settings are currently only in place to test the WIP localization system.",
+			"contNoteWIP": "Translation strings are not currently supported in most of the UI.",
 			"select": "Language",
 			"translateBones": "Translate Bone Names"
 		},

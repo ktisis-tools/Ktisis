@@ -262,8 +262,8 @@ namespace Ktisis.Interface.Windows {
 		// Language
 
 		public static void DrawLanguageTab(Configuration cfg) {
-			ImGui.Text("Disclaimer! These settings are currently only in place to test the WIP localization system.");
-			ImGui.Text("Translation strings are not currently supported in most of the UI.");
+			ImGui.Text(Locale.GetString("config.language.noteWIP"));
+			ImGui.Text(Locale.GetString("config.language.contNoteWIP"));
 
 			ImGui.Spacing();
 
