@@ -33,8 +33,7 @@
 					"OnEnterGpose": "beim Betreten des Gruppenfotomodus"
 				},
 				"hideCharName": "Characternamen verstecken",
-				"__comment": "This might need an actual translation for 'NSFW' -- unsure what to pick here.",
-				"censorNSFW": "NSFW-Inhalte verstecken"
+				"censorNSFW": "Anstößige Inhalte verstecken"
 			},
 			"transformTable": {
 				"title": "Transformier-Tabelle",
