@@ -116,7 +116,7 @@
 							"Okay, this **really** needs the placeholder system. Ideally we'd have \"Kategorie %anme% togglen\" (or \"… umschalten\"), but uh... that ain't happenin'.",
 							"Also the thing these are for really needs a rework."
 						],
-						"toggle": "Toggle",
+						"toggle": "Umschalten",
 						"hold": "Halten",
 						"release": "Solo-Toggle"
 					},
