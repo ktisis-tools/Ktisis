@@ -138,7 +138,7 @@
 		"references": {
 			"title": "Referenzen",
 			"__comment": "A bit more here?",
-			"explaination": "Zeige Referenzbilder im Overlay.",
+			"explaination": "Zeige ein Referenzbild auf deinem Bildschirm, um dabei zu helfen die Pose exakt zu treffen.",
 			"imageAlpha": "Durchsichtigkeit (bei 0 völlig durchsichtig)",
 			"hideWindowDecoration": "Verstecke Fensterdekoration (z.B. Fenstertitel)",
 			"images": {
