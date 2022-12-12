@@ -377,6 +377,28 @@
 		"oh_n_hara": "Nebenhandwaffe",
 		"j_half_l": "Linke Hälfte",
 		"j_half_r": "Rechte Hälfte"
-	}
+	},
 
+	"boneCategory": {
+		"other": "Andere",
+		"body": "Körper",
+		"head": "Kopf",
+		"hair": "Haare",
+		"clothes": "Klamotten",
+		"weapons": "Waffen",
+		"right hand": "Rechte Hand",
+		"left hand": "Linke Hand",
+		"feet": "Füße",
+		"hands": "Hände",
+		"tail": "Schweif",
+		"ears": "Ohren",
+		"ivcs left hand": "IVCS Linke Hand",
+		"ivcs right hand": "IVCS Rechte Hand",
+		"ivcs left foot": "IVCS Linker Fuß",
+		"ivcs right foot": "IVCS Rechter Fuß",
+		"ivcs body": "IVCS Körper",
+		"ivcs penis": "IVCS Penis",
+		"ivcs vagina": "IVCS Vagina",
+		"ivcs buttocks": "IVCS Gesäß"
+	}
 }
