@@ -1,7 +1,7 @@
 {
 	"$meta": {
 		"displayName": "German",
-		"selfName": "Deutsch", 
+		"selfName": "Deutsch",
 		"maintainers": [
 			"@Fayti1703",
 			"@StoiaCode",
@@ -9,7 +9,7 @@
 			null
 		]
 	},
-	
+
 	"tab": {
 		"general": {
 			"title": "Allgemein"
@@ -18,7 +18,7 @@
 			"title": "Einstellungen"
 		}
 	},
-	
+
 	"config": {
 		"title": "Ktisis Einstellungen",
 
@@ -47,10 +47,10 @@
 				"showSpeedMultiplierInputs": "Zeige Multiplikator-Einstellungen in Tabelle"
 			}
 		},
-		
+
 		"overlay": {
 			"title": "Overlay",
-			
+
 			"skeleton": {
 				"header": "Skelettanzeige",
 				"drawLines": "Zeige Skelettlinien",
@@ -59,7 +59,7 @@
 				"dotRadius": "Radius der Knochenpunkte",
 				"lineThickness": "Dicke der Skelettlinien"
 			},
-			
+
 			"boneColors": {
 				"header": "Knochenfarben",
 				"link": {
@@ -79,24 +79,24 @@
 					"placeholderText": "Kategorien werden hier nach erstmaligem Anzeigen der darin enthaltenen Knochen angezeigt."
 				}
 			},
-			
+
 			"bonePositions": {
 				"header": "Knochenpositionen bearbeiten"
 			}
-			
+
 		},
-		
+
 		"gizmo": {
 			"title": "Gizmo",
 			"allowAxisFlip": "Achsen zur Kamera drehen"
 		},
-		
+
 		"input": {
 			"title": "Eingabe",
 			"selectBehavior": {
 				"title": "Ziel-Auswahl",
-				"disableLeftClickTarget": "Ziel-Auswahl mit linker Maustaste verhindern", 
-				"disableRightClickTarget": "Ziel-Auswahl mit rechter Maustaste verhindern" 
+				"disableLeftClickTarget": "Ziel-Auswahl mit linker Maustaste verhindern",
+				"disableRightClickTarget": "Ziel-Auswahl mit rechter Maustaste verhindern"
 			},
 			"keybind": {
 				"title": "Tastaturkürzel",
@@ -105,12 +105,12 @@
 					"title": "Einstellen über Tastendruck",
 					"helpText": "Zum Einstellen einer Taste oder Tastenkombination:\n1.1. Taste bzw. Tastenkombination halten.\n2.Gewünschte Aktion anclicken\n\nKeine Taste beim Klicken halten um die Zuweisung aufzuheben."
 				},
-				
+
 				"keybindTable": {
 					"keys": "Taste(n)",
 					"action": "zugewiesene Aktion"
 				},
-				
+
 				"purpose": {
 					"generic": {
 						"__comment": [
@@ -133,9 +133,9 @@
 					"CircleThroughSiblingLinkModes": "Bearbeitungsmodus für verwandte Knochen wechseln"
 				}
 			}
-			
+
 		},
-		
+
 		"references": {
 			"title": "Referenzen",
 			"__comment": "A bit more here?",
@@ -151,13 +151,13 @@
 				"addText": "Neues Referenzbild hinzufügen"
 			}
 		},
-		
+
 		"language": {
 			"title": "Spracheinstellungen",
 			"select": "Oberflächensprache",
 			"translateBones": "Knochennamen übersetzen"
 		},
-		
+
 		"data": {
 			"title": "Zusatzdaten",
 			"glamourDresser": {
@@ -166,7 +166,7 @@
 					"pre": "",
 					"post": "valide Projektionsplatten gefunden."
 				},
-				
+
 				"sync": {
 					"__comment": "Replace $$JARGON$$ in here",
 					"tooltip": "Nach neuen Projektionsplatten für Sets suchen.\nDie Ergebnisse werden permantent gespeichert und sind auch nach einem Neustart noch verfügbar.\n\nVorraussetzungen:\nDas $$JARGON$$ Fenster von der Projektionskommode oder $$JARGON$$ Fenster muss offen sein."
@@ -190,7 +190,7 @@
 			"title": "Pose"
 		}
 	},
-	
+
 	"tribe": {
 		"SunSeeker": "Goldtatze",
 		"MoonKeeper": "Mondstreuner",
@@ -209,18 +209,18 @@
 		"Rava": "Rava",
 		"Veena": "Veena"
 	},
-	
+
 	"race": {
 		"AuRa": "Au Ra",
-		"Elezen":"Elezen",
-		"Hrothgar":"Hrothgar",
+		"Elezen": "Elezen",
+		"Hrothgar": "Hrothgar",
 		"Hyur": "Hyuran",
-		"Lalafell":"Lalafell",
+		"Lalafell": "Lalafell",
 		"Miqote": "Miqo'te",
-		"Roegadyn":"Roegadyn",
-		"Viera":"Viera"
+		"Roegadyn": "Roegadyn",
+		"Viera": "Viera"
 	},
-	
+
 	"__comment": "Taken from Anamesis -- thank you!",
 	"bone": {
 		"n_root": "Ganzer Körper",
@@ -379,5 +379,5 @@
 		"j_half_l": "Linke Hälfte",
 		"j_half_r": "Rechte Hälfte"
 	}
-	
+
 }
