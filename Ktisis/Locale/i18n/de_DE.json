@@ -153,6 +153,8 @@
 
 		"language": {
 			"title": "Spracheinstellungen",
+			"noteWIP": "Achtung! Diese Einstellungen sind derzeit nur für das sich in Arbeit befindende Übersetzungssystem.",
+			"contNoteWIP": "Die meisten Oberflächen sind bis jetzt nicht übersetzt!",
 			"select": "Oberflächensprache",
 			"translateBones": "Knochennamen übersetzen"
 		},
