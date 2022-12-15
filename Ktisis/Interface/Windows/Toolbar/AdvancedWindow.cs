@@ -45,20 +45,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 					
 					// Advanced
 					if (ImGui.CollapsingHeader("Advanced (Debug)")) {
-						if (ImGui.Button("Reset Current Pose") && actor->Model != null)
-							actor->Model->SyncModelSpace();
-
-						if (ImGui.Button("Set to Reference Pose") && actor->Model != null)
-							actor->Model->SyncModelSpace(true);
-
-						if (ImGui.Button("Store Pose") && actor->Model != null)
-							Workspace.Workspace._TempPose.Store(actor->Model->Skeleton);
-						ImGui.SameLine();
-						if (ImGui.Button("Apply Pose") && actor->Model != null)
-							Workspace.Workspace._TempPose.Apply(actor->Model->Skeleton);
-
-						if (ImGui.Button("Force Redraw"))
-							actor->Redraw();
+						Workspace.Workspace.DrawAdvancedDebugOptions(actor);
 					}
 				}
 			}
@@ -66,6 +53,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			ImGui.PopStyleVar();
 			ImGui.End();
 		}
+
 	}
 
 }
