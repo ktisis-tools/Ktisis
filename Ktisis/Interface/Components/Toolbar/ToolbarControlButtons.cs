@@ -1,6 +1,5 @@
 
 using Dalamud.Interface;
-using Dalamud.Interface.Components;
 
 using ImGuiNET;
 
@@ -8,8 +7,6 @@ using ImGuizmoNET;
 
 using Ktisis.History;
 using Ktisis.Interface.Windows.Toolbar;
-using Ktisis.Interface.Windows.Workspace;
-using Ktisis.Interop.Hooks;
 using Ktisis.Overlay;
 using Ktisis.Util;
 
@@ -56,15 +53,6 @@ namespace Ktisis.Interface.Components.Toolbar {
 			ImGui.SameLine();
 
 			ControlButtons.DrawSiblingLink();
-		}
-
-		public static void DrawPoseSwitch() {
-			var pose = PoseHooks.PosingEnabled;
-			if (!Ktisis.IsInGPose)
-				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
-			else if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? Workspace.ColGreen : Workspace.ColRed))
-				PoseHooks.TogglePosing();
-			GuiHelpers.Tooltip("Toggle Posing");
 		}
 
 	}

@@ -182,6 +182,15 @@ namespace Ktisis.Interface.Components {
 			ImGui.EndDisabled();
 		}
 
+		public static void DrawSimplePoseSwitch() {
+			var pose = PoseHooks.PosingEnabled;
+			if (!Ktisis.IsInGPose)
+				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
+			else if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? Workspace.ColGreen : Workspace.ColRed))
+				PoseHooks.TogglePosing();
+			GuiHelpers.Tooltip("Toggle Posing");
+		}
+
 		public static void DrawSiblingLink() {
 			var siblingLink = Ktisis.Configuration.SiblingLink;
 

@@ -38,7 +38,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 				return;
 			}
 
-			ToolbarControlButtons.DrawPoseSwitch();
+			ControlButtons.DrawSimplePoseSwitch();
 
 			ImGui.SameLine();
 
