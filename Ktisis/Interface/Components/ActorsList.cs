@@ -75,8 +75,7 @@ namespace Ktisis.Interface.Components {
 
 		public unsafe static void DrawToolbar() {
 			// Prevent displaying the same target multiple time
-			SavedObjects = SavedObjects.Distinct().ToList();
-			SavedObjects.RemoveAll(o => !IsValidActor(o));
+			SavedObjects = SavedObjects.Distinct().Where(IsValidActor).ToList();
 
 			var currentTarget = Ktisis.Target;
 			if (!SavedObjects.Contains((long)currentTarget)) SavedObjects.Add((long)currentTarget);
