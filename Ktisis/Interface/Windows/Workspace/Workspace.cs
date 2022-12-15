@@ -190,11 +190,12 @@ namespace Ktisis.Interface.Windows.Workspace
 
 				if (!Categories.DrawToggleList(cfg)) {
 					ImGui.Text("No bone found.");
-					ImGui.Text("Show Skeleton (");
-					ImGui.SameLine();
-					GuiHelpers.Icon(FontAwesomeIcon.EyeSlash);
-					ImGui.SameLine();
-					ImGui.Text(") to fill this.");
+					//ImGui.Text("Show Skeleton (");
+					//ImGui.SameLine();
+					//GuiHelpers.Icon(FontAwesomeIcon.EyeSlash);
+					//ImGui.SameLine();
+					//ImGui.Text(") to fill this.");
+					GuiHelpers.FormattedString($"Show Skeleton ({FontAwesomeIcon.EyeSlash}) to fill this.");
 				}
 			}
 
