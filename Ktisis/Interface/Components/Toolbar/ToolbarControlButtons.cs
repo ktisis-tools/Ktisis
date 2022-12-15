@@ -11,6 +11,7 @@ using ImGuizmoNET;
 
 using Ktisis.History;
 using Ktisis.Interface.Windows.Toolbar;
+using Ktisis.Interface.Windows.Workspace;
 using Ktisis.Interop.Hooks;
 using Ktisis.Overlay;
 using Ktisis.Structs.Bones;
@@ -100,7 +101,7 @@ namespace Ktisis.Interface.Components.Toolbar {
 			var pose = PoseHooks.PosingEnabled;
 			if (!Ktisis.IsInGPose)
 				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
-			else if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? AdvancedWindow.ColGreen : AdvancedWindow.ColRed))
+			else if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? Workspace.ColGreen : Workspace.ColRed))
 				PoseHooks.TogglePosing();
 			GuiHelpers.Tooltip("Toggle Posing");
 		}
