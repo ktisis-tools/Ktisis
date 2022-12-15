@@ -53,14 +53,13 @@ namespace Ktisis.Interface.Components {
 
 			bool hasChildInQuery = decendents.Any(BoneDoesMatch);
 			bool hasChildSelected = decendents.Any(bone => Skeleton.IsBoneSelected(bone));
-			bool isInQuery = BoneDoesMatch(bone);
 			bool isSelected = Skeleton.IsBoneSelected(bone);
 
 			var flag = ImGuiTreeNodeFlags.SpanFullWidth;
 			flag |= children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
 
 			if (isSelected || hasChildSelected) flag |= ImGuiTreeNodeFlags.Selected;
-			if (SearchText != "" && (isInQuery || hasChildInQuery)) flag |= ImGuiTreeNodeFlags.Bullet;
+			if (SearchText != "" && hasChildInQuery) flag |= ImGuiTreeNodeFlags.Bullet;
 
 			var show = DrawBoneNode(bone, flag, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
 			if (show) {
