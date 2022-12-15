@@ -18,7 +18,7 @@ using Ktisis.History;
 
 namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
-		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.6f) + ImGui.GetStyle().FramePadding;
+		public static Vector2 ButtonSize => new Vector2(ImGui.GetFontSize() * 1.6f) + ImGui.GetStyle().FramePadding;
 		private static bool IsSettingsHovered = false;
 		private static bool IsSettingsActive = false;
 
