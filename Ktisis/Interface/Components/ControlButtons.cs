@@ -182,7 +182,7 @@ namespace Ktisis.Interface.Components {
 			ImGui.EndDisabled();
 		}
 
-		private static void DrawSiblingLink() {
+		public static void DrawSiblingLink() {
 			var siblingLink = Ktisis.Configuration.SiblingLink;
 
 			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, GuiHelpers.VisibleCheckmarkColor());

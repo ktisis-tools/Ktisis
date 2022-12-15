@@ -2,6 +2,7 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Ktisis.Interface.Components;
 using Ktisis.Interface.Components.Toolbar;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interop.Hooks;
@@ -105,23 +106,23 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			ImGui.SameLine(0, ImGui.GetFontSize());
 
 			var parent = cfg.EnableParenting;
-			ToolbarControlButtons.VerticalAlignTextOnButtonSize(0.9f);
+			ControlButtons.VerticalAlignTextOnButtonSize(0.9f);
 			if (ImGui.Checkbox("Parent", ref parent))
 				cfg.EnableParenting = parent;
 
 			ImGui.SameLine(0, ImGui.GetFontSize());
 			
-			if (GuiHelpers.IconButtonTooltip(IconsPool.Import, "Import and Export pose and appearance", ToolbarControlButtons.ButtonSize))
+			if (GuiHelpers.IconButtonTooltip(IconsPool.Import, "Import and Export pose and appearance", ControlButtons.ButtonSize))
 				ImportExportWindow.Toggle();
 			
 			ImGui.SameLine();
 			
-			if (GuiHelpers.IconButtonTooltip(IconsPool.More, "Advanced tools window", ToolbarControlButtons.ButtonSize))
+			if (GuiHelpers.IconButtonTooltip(IconsPool.More, "Advanced tools window", ControlButtons.ButtonSize))
 				AdvancedWindow.Toggle();
 
 			ImGui.SameLine();
 
-			if (GuiHelpers.IconButtonTooltip(IconsPool.Settings, "Ktisis main window", ToolbarControlButtons.ButtonSize))
+			if (GuiHelpers.IconButtonTooltip(IconsPool.Settings, "Ktisis main window", ControlButtons.ButtonSize))
 				Workspace.Workspace.Toggle();
 			ImGui.End();
 		}
