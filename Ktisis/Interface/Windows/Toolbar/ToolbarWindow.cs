@@ -75,7 +75,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 
 			ImGui.SameLine();
 
-			ToolbarActorsList.Draw();
+			ActorsList.DrawToolbar();
 
 			ImGui.SameLine(0, ImGui.GetFontSize());
 
