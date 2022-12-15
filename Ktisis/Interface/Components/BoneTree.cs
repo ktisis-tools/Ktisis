@@ -56,7 +56,8 @@ namespace Ktisis.Interface.Components {
 			bool isInQuery = BoneDoesMatch(bone);
 			bool isSelected = Skeleton.IsBoneSelected(bone);
 
-			var flag = children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
+			var flag = ImGuiTreeNodeFlags.SpanFullWidth;
+			flag |= children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
 
 			if (isSelected || hasChildSelected) flag |= ImGuiTreeNodeFlags.Selected;
 			if (SearchText != "" && (isInQuery || hasChildInQuery)) flag |= ImGuiTreeNodeFlags.Bullet;
