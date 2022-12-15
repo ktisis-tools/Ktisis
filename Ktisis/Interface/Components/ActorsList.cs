@@ -15,9 +15,9 @@ using Ktisis.Util;
 namespace Ktisis.Interface.Components {
 	internal static class ActorsList {
 
-		public static List<long> SavedObjects = new();
-		public static List<DalamudGameObject>? SelectorList = null;
-		public static string Search = "";
+		private static List<long> SavedObjects = new();
+		private static List<DalamudGameObject>? SelectorList = null;
+		private static string Search = "";
 		private static readonly HashSet<ObjectKind> WhitelistObjectKinds = new(){
 				ObjectKind.Player,
 				ObjectKind.BattleNpc,
@@ -105,7 +105,7 @@ namespace Ktisis.Interface.Components {
 				DrawListAddActor();
 		}
 
-		public static void OpenSelector() =>
+		private static void OpenSelector() =>
 			SelectorList = Services.ObjectTable
 			// filter unwanted objects
 			.Where(o =>
@@ -124,9 +124,9 @@ namespace Ktisis.Interface.Components {
 			.OrderBy(a => Distance(a))
 			.ToList();
 
-		public static void CloseSelector() => SelectorList = null;
+		private static void CloseSelector() => SelectorList = null;
 
-		public unsafe static void DrawListAddActor() {
+		private unsafe static void DrawListAddActor() {
 			PopupSelect.HoverPopupWindow(
 				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
 				SelectorList!,
@@ -147,7 +147,7 @@ namespace Ktisis.Interface.Components {
 
 		// Filters
 
-		public unsafe static bool IsValidActor(long target) {
+		private unsafe static bool IsValidActor(long target) {
 			if (target == 0) return false;
 
 			var gameObject = (GameObject*)target;
@@ -163,11 +163,11 @@ namespace Ktisis.Interface.Components {
 
 			return true;
 		}
-		public static bool IsValidActor(DalamudGameObject gameObject) =>
+		private static bool IsValidActor(DalamudGameObject gameObject) =>
 			IsValidActor((long)gameObject.Address);
 		private static bool IsNonNetworkObject(DalamudGameObject gameObject) =>
 			gameObject.ObjectId == DalamudGameObject.InvalidGameObjectId;
-		public static string ExtraInfo(DalamudGameObject gameObject) {
+		private static string ExtraInfo(DalamudGameObject gameObject) {
 			List<string> info = new();
 			if (IsGposeActor(gameObject))
 				info.Add("GPose");
@@ -177,22 +177,22 @@ namespace Ktisis.Interface.Components {
 				info.Add("Player");
 			return info.Any() ? $" ({String.Join(", ", info)})" : "";
 		}
-		public static string ExtraInfo(long gameObjectPointer) =>
+		private static string ExtraInfo(long gameObjectPointer) =>
 			ExtraInfo(Services.ObjectTable.CreateObjectReference((IntPtr)gameObjectPointer)!);
-		public static float Distance(DalamudGameObject gameObject) =>
+		private static float Distance(DalamudGameObject gameObject) =>
 			(float)Math.Sqrt(gameObject.YalmDistanceX * gameObject.YalmDistanceX + gameObject.YalmDistanceZ * gameObject.YalmDistanceZ);
-		public static bool IsYou(DalamudGameObject gameObject) =>
+		private static bool IsYou(DalamudGameObject gameObject) =>
 			GetGposeId(gameObject) == 201;
-		public static bool IsGposeActor(DalamudGameObject gameObject) =>
+		private static bool IsGposeActor(DalamudGameObject gameObject) =>
 			GetGposeId(gameObject) >= 200;
-		public static bool IsGposeSpecialObject(DalamudGameObject gameObject) =>
+		private static bool IsGposeSpecialObject(DalamudGameObject gameObject) =>
 			// this matches the weird object on ObjectID 200
 			GetGposeId(gameObject) == 200;
-		public static bool IsPlayer(DalamudGameObject gameObject) =>
+		private static bool IsPlayer(DalamudGameObject gameObject) =>
 			gameObject.ObjectKind == ObjectKind.Player;
-		public static bool IsPlayerNotGpose(DalamudGameObject gameObject) =>
+		private static bool IsPlayerNotGpose(DalamudGameObject gameObject) =>
 			gameObject.ObjectKind == ObjectKind.Player && GetGposeId(gameObject) < 200;
-		public unsafe static byte GetGposeId(DalamudGameObject gameObject) =>
+		private unsafe static byte GetGposeId(DalamudGameObject gameObject) =>
 			((Actor*)gameObject.Address)->ObjectID;
 
 	}
