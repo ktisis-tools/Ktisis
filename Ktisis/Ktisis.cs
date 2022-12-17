@@ -102,7 +102,7 @@ namespace Ktisis {
 			Interop.Hooks.PoseHooks.Dispose();
 
 			Interop.Alloc.Dispose();
-			ActorStateWatcher.Instance.Dispose();
+			ActorStateWatcher.Dispose();
 			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
 			Data.Sheets.Cache.Clear();
