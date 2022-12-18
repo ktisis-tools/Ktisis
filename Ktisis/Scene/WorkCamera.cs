@@ -10,7 +10,15 @@ namespace Ktisis.Scene {
 	public static class WorkCamera {
 		private static bool _Active = false;
 		public static bool Active => _Active && Ktisis.IsInGPose;
-		public static void Toggle() => _Active = !_Active;
+		public static void Toggle() {
+			_Active = !_Active;
+			if (Active) {
+				// TODO: ClientStructs PR
+				unsafe {
+					Position = *(Vector3*)((IntPtr)Services.Camera->Camera + 0x60);
+				}
+			}
+		}
 
 		public static Vector3 Position = new();
 		public static Vector3 Rotation = new(0f, 0f, 1f);
@@ -38,7 +46,6 @@ namespace Ktisis.Scene {
 
 			var newPos = Position;
 			if (EventManager.IsKeyDown(VirtualKey.W)) { // Forward
-				PluginLog.Information($"{Position} {Rotation}");
 				newPos += new Vector3(
 					-vel * ((float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y)),
 					-vel * (float)Math.Sin(Rotation.Y),

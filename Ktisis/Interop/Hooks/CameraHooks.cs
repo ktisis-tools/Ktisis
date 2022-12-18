@@ -45,13 +45,14 @@ namespace Ktisis.Interop.Hooks {
 
 		internal static IntPtr ProjectionDetour(IntPtr ptr, float a2, float a3, float a4, float a5, float a6, float a7) {
 			var exec = ProjectionHook.Original(ptr, a2, a3, a4, a5, a6, a7);
+
+			if (!WorkCamera.Active)
+				return exec;
+
+			// TODO
+
 			return exec;
 		}
-
-		internal static bool HasCaptured = false;
-		internal static Matrix4x4 Matrix = new();
-
-		internal const float MoveVel = 0.05f;
 
 		internal unsafe static Matrix4x4* ViewMatrixDetour(IntPtr a1) {
 			var exec = ViewHook.Original(a1);
@@ -60,16 +61,8 @@ namespace Ktisis.Interop.Hooks {
 				return exec;
 
 			var tar = ((IntPtr)Services.Camera->Camera) + 0x10;
-			if (a1 == tar && exec != null && exec != (Matrix4x4*)IntPtr.Zero) {
-				if (!HasCaptured) {
-					HasCaptured = true;
-					Matrix = *exec;
-
-					WorkCamera.Position = *(Vector3*)(tar + 0x50);
-				}
-
+			if (a1 == tar && exec != null && exec != (Matrix4x4*)IntPtr.Zero)
 				*exec = WorkCamera.Update();
-			}
 
 			return exec;
 		}
@@ -82,52 +75,18 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		internal static bool OnKeyPressed(QueueItem e) {
-			if (!WorkCamera.Active)
-				return false;
-
-			switch (e.VirtualKey) {
-				case VirtualKey.W:
-				case VirtualKey.A:
-				case VirtualKey.S:
-				case VirtualKey.D:
-				case VirtualKey.SPACE:
-					return true;
+			if (WorkCamera.Active) {
+				switch (e.VirtualKey) {
+					case VirtualKey.W:
+					case VirtualKey.A:
+					case VirtualKey.S:
+					case VirtualKey.D:
+					case VirtualKey.SPACE:
+						return true;
+				}
 			}
 
 			return false;
-		}
-
-		internal static Matrix4x4 CreateViewMatrix(Vector3 pos, Vector3 dir, Vector3 up) {
-			var len = (float)Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y + dir.Z * dir.Z);
-			var f = dir / len;
-
-			var s = new Vector3(
-				up.Y * f.Z - up.Z * f.Y,
-				up.Z * f.X - up.X * f.Z,
-				up.X * f.Y - up.Y * f.X
-			);
-
-			var len2 = (float)Math.Sqrt(s.X * s.X + s.Y * s.Y + s.Z * s.Z);
-			var s_norm = s / len2;
-
-			var u = new Vector3(
-				f.Y * s_norm.Z - f.Z * s_norm.Y,
-				f.Z * s_norm.X - f.X * s_norm.Z,
-				f.X * s_norm.Y - f.Y * s_norm.X
-			);
-
-			var p = new Vector3(
-				-pos.X * s_norm.X - pos.Y * s_norm.Y - pos.Z * s_norm.Z,
-				-pos.X * u.X - pos.Y * u.Y - pos.Z * u.Z,
-				-pos.X * f.X - pos.Y * f.Y - pos.Z * f.Z
-			);
-
-			return new Matrix4x4(
-				s_norm.X, u.X, f.X, 0.0f,
-				s_norm.Y, u.Y, f.Y, 0.0f,
-				s_norm.Z, u.Z, f.Z, 0.0f,
-				p.X, p.Y, p.Z, 1.0f
-			);
 		}
 	}
 }
