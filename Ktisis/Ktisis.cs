@@ -54,20 +54,9 @@ namespace Ktisis {
 
 			// Init interop stuff
 
-			Interop.Alloc.GlobalInit();
-			Interop.Methods.GlobalInit();
-			Interop.StaticOffsets.GlobalInit();
-
-			Interop.Hooks.ActorHooks.GlobalInit();
-			Interop.Hooks.ControlHooks.GlobalInit();
-			Interop.Hooks.EventsHooks.GlobalInit();
-			Interop.Hooks.GuiHooks.GlobalInit();
-			Interop.Hooks.PoseHooks.GlobalInit();
-
 			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.GlobalInit()
 
-			Input.GlobalInit();
-			ActorStateWatcher.GlobalInit();
+			GlobalInit();
 
 			// Register command
 
@@ -84,7 +73,6 @@ namespace Ktisis {
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
 
-			HistoryManager.GlobalInit();
 			References.LoadReferences(Configuration);
 		}
 
@@ -95,13 +83,7 @@ namespace Ktisis {
 
 			OverlayWindow.DeselectGizmo();
 
-			Interop.Hooks.ActorHooks.GlobalDispose();
-			Interop.Hooks.ControlHooks.GlobalDispose();
-			Interop.Hooks.EventsHooks.GlobalDispose();
-			Interop.Hooks.GuiHooks.GlobalDispose();
-			Interop.Hooks.PoseHooks.GlobalDispose();
-
-			Interop.Alloc.GlobalDispose();
+			GlobalDispose();
 			ActorStateWatcher.Instance.Dispose();
 			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
@@ -109,9 +91,6 @@ namespace Ktisis {
 
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
-
-			Input.GlobalDispose();
-			HistoryManager.GlobalDispose();
 
 			foreach (var (_, texture) in References.Textures) {
 				texture.Dispose();
@@ -135,6 +114,35 @@ namespace Ktisis {
 					Workspace.Toggle();
 					break;
 			}
+		}
+
+		private static void GlobalInit() {
+			Interop.Alloc.GlobalInit();
+			Interop.Methods.GlobalInit();
+			Interop.StaticOffsets.GlobalInit();
+
+			Interop.Hooks.ActorHooks.GlobalInit();
+			Interop.Hooks.ControlHooks.GlobalInit();
+			Interop.Hooks.EventsHooks.GlobalInit();
+			Interop.Hooks.GuiHooks.GlobalInit();
+			Interop.Hooks.PoseHooks.GlobalInit();
+
+			Input.GlobalInit();
+			ActorStateWatcher.GlobalInit();
+
+			HistoryManager.GlobalInit();
+		}
+
+		private static void GlobalDispose() {
+			Interop.Hooks.ActorHooks.GlobalDispose();
+			Interop.Hooks.ControlHooks.GlobalDispose();
+			Interop.Hooks.EventsHooks.GlobalDispose();
+			Interop.Hooks.GuiHooks.GlobalDispose();
+			Interop.Hooks.PoseHooks.GlobalDispose();
+
+			Interop.Alloc.GlobalDispose();
+			Input.GlobalDispose();
+			HistoryManager.GlobalDispose();
 		}
 	}
 }
