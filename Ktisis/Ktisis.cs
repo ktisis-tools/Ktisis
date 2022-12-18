@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 using Dalamud.Plugin;
 using Dalamud.Game.Command;
@@ -116,33 +119,31 @@ namespace Ktisis {
 			}
 		}
 
+		private static Stack<MethodInfo> ToGloballyDispose = new();
+
 		private static void GlobalInit() {
-			Interop.Alloc.GlobalInit();
-			Interop.Methods.GlobalInit();
-			Interop.StaticOffsets.GlobalInit();
-
-			Interop.Hooks.ActorHooks.GlobalInit();
-			Interop.Hooks.ControlHooks.GlobalInit();
-			Interop.Hooks.EventsHooks.GlobalInit();
-			Interop.Hooks.GuiHooks.GlobalInit();
-			Interop.Hooks.PoseHooks.GlobalInit();
-
-			Input.GlobalInit();
-			ActorStateWatcher.GlobalInit();
-
-			HistoryManager.GlobalInit();
+			foreach (Type globalStateContainer in
+				typeof(Ktisis).Assembly.GetTypes()
+				.Where(type => type.CustomAttributes
+					.Any(attr => attr.AttributeType == typeof(GlobalStateAttribute))
+				)
+			) {
+				foreach (var method in globalStateContainer.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)) {
+					foreach (var attr in method.CustomAttributes) {
+						if (attr.AttributeType == typeof(GlobalInitAttribute))
+							method.Invoke(null, Array.Empty<object>());
+						else if (attr.AttributeType == typeof(GlobalDisposeAttribute))
+							ToGloballyDispose.Push(method);
+					}
+				}
+			}
+			ToGloballyDispose.TrimExcess();
 		}
 
 		private static void GlobalDispose() {
-			HistoryManager.GlobalDispose();
-			Input.GlobalDispose();
-			Interop.Alloc.GlobalDispose();
-
-			Interop.Hooks.PoseHooks.GlobalDispose();
-			Interop.Hooks.GuiHooks.GlobalDispose();
-			Interop.Hooks.EventsHooks.GlobalDispose();
-			Interop.Hooks.ControlHooks.GlobalDispose();
-			Interop.Hooks.ActorHooks.GlobalDispose();
+			while (ToGloballyDispose.TryPop(out MethodInfo? toDispose)) {
+				toDispose.Invoke(null, Array.Empty<object>());
+			}
 		}
 	}
 }
