@@ -2,7 +2,6 @@
 using System.Numerics;
 
 using Dalamud.Hooking;
-using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Scene;
 using Ktisis.Events;
@@ -29,7 +28,6 @@ namespace Ktisis.Interop.Hooks {
 			ViewHook = Hook<CalculateViewMatrix>.FromAddress(view, ViewMatrixDetour);
 			ViewHook.Enable();
 
-			EventManager.OnKeyPressed += OnKeyPressed;
 			EventManager.OnMouseEvent += OnMouseEvent;
 		}
 
@@ -72,10 +70,6 @@ namespace Ktisis.Interop.Hooks {
 			if (!state->IsFocused || !state->Pressed.HasFlag(MouseButton.Right)) return;
 
 			WorkCamera.MouseDelta += new Vector2(state->DeltaX, state->DeltaY);
-		}
-
-		internal static bool OnKeyPressed(QueueItem e) {
-			return false;
 		}
 	}
 }

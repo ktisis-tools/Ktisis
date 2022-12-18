@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 using ImGuizmoNET;
 
@@ -11,11 +11,9 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 
 using Ktisis.Events;
 using Ktisis.Overlay;
-using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
 using Ktisis.Interface.Components;
-using Ktisis.Scene;
 
 namespace Ktisis.Interface {
 	public static class Input {

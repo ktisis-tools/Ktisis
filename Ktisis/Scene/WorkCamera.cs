@@ -2,7 +2,6 @@
 using System.Numerics;
 
 using Dalamud.Game.ClientState.Keys;
-using Dalamud.Logging;
 
 using Ktisis.Events;
 using Ktisis.Interface;
