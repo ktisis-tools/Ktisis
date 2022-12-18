@@ -135,7 +135,7 @@ namespace Ktisis.Interface {
 			foreach (var key in keys) {
 				if (!Services.KeyState.IsVirtualKeyValid(key))
 					return false;
-				match &= key == input || ControlHooks.KeyboardState.IsKeyDown(key);
+				match &= key == input || EventManager.IsKeyDown(key);
 			}
 
 			return match;

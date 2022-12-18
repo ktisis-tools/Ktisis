@@ -1,3 +1,5 @@
+using System;
+
 namespace Ktisis.Structs.Input {
 	public struct MouseState {
 		public int PosX;
@@ -12,6 +14,7 @@ namespace Ktisis.Structs.Input {
 		public bool IsFocused;
 	}
 
+	[Flags]
 	public enum MouseButton {
 		None = 0,
 		Left = 1,

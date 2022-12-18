@@ -19,13 +19,12 @@ using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
 
 using static Ktisis.Data.Files.AnamCharaFile;
+using Ktisis.Scene;
 
 namespace Ktisis.Interface.Windows.Workspace
 {
     public static class Workspace {
 		public static bool Visible = false;
-		
-		
 
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
 		public static Vector4 ColYellow = new Vector4(255, 250, 0, 255);
@@ -101,10 +100,10 @@ namespace Ktisis.Interface.Windows.Workspace
 				if (ImGui.BeginTabBar(Locale.GetString("Workspace"))) {
 					if (ImGui.BeginTabItem(Locale.GetString("Actor")))
 						ActorTab(target);
-					/*if (ImGui.BeginTabItem(Locale.GetString("Scene")))
-						SceneTab();*/
 					if (ImGui.BeginTabItem(Locale.GetString("Pose")))
 						PoseTab(target);
+					if (ImGui.BeginTabItem(Locale.GetString("Camera")))
+						CameraTab(target);
 				}
 			}
 
@@ -224,6 +223,13 @@ namespace Ktisis.Interface.Windows.Workspace
 			}
 
 			ImGui.EndTabItem();
+		}
+
+		// camera tab. for debugging only
+
+		private static void CameraTab(GameObject target) {
+			if (ImGui.Button("Toggle work camera"))
+				WorkCamera.Toggle();
 		}
 
 		// Transform Table actor and bone names display, actor related extra
