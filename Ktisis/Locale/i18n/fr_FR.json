@@ -5,7 +5,6 @@
 		"__comment": "Using null element to signal 'et al' in the array below. Don't do this for your own localization.",
 		"maintainers": [
 			"@Luna664",
-			null
 		]
 	},
 
@@ -38,9 +37,9 @@
 			"transformTable": {
 				"title": "Table de modification",
 				"digitPrecision": "Précision des chiffres",
-				"basePositionSpeed": "Vitesse de base (Position)",
-				"baseRotationSpeed": "Vitesse de base (Rotation)",
-				"baseScaleSpeed": "Vitesse de base (Mise à l'échelle)",
+				"basePositionSpeed": "Vitesse de position de base",
+				"baseRotationSpeed": "Vitesse de rotation de base",
+				"baseScaleSpeed": "Vitesse de mise à l'échelle de base",
 				"ctrlSpeedMult": "Ctrl Multiplicateur de vitesse",
 				"shiftSpeedMult": "Maj Multiplicateur de vitesse",
 				"showSpeedMultiplierInputs": "Afficher les valeurs du multiplicateur de vitesse"
@@ -53,7 +52,7 @@
 			"skeleton": {
 				"header":"Lignes et points du squelette",
 				"drawLines": "Dessiner des lignes sur le squelette",
-				"__comment": "NOTE : Ceux-la devraient refléter plus clairement la fonctionnalité réelle (dessiner des lignes/points lorsque le *gizmo est actif*)."",
+				"__comment": "NOTE : Ceux-la devraient refléter plus clairement la fonctionnalité réelle (dessiner des lignes/points lorsque le *gizmo est actif*).",
 				"drawLineWhenSelecting": "N'afficher que les lignes lors d'une sélection",
 				"drawDotsWhenSelecting": "N'afficher que les points lors d'une selection",
 				"dotRadius": "Rayon du point",
@@ -170,7 +169,7 @@
 				},
 
 				"sync": {
-					"tooltip": "Rafraîchit la mémoire de la planche mirage pour les recherches de sets. \NCette mémoire est conservée après un redémarrage.\N Conditions requises:\NL'une de ces fenêtres doit être ouverte : \"Création de planche mirage\" (par la Coiffeuse mirage) ou \"Sélection de planche mirage\" (avec la compétence Planche mirage)."
+					"tooltip": "Rafraîchit la mémoire de la planche mirage pour les recherches de sets. \nCette mémoire est conservée après un redémarrage.\n Conditions requises:\nL'une de ces fenêtres doit être ouverte : \"Création de planche mirage\" (par la Coiffeuse mirage) ou \"Sélection de planche mirage\" (avec la compétence Planche mirage)."
 				},
 				"dispose": {
 					"tooltip": "Supprimer la mémoire des planches mirage et supprimer les configurations pour TOUS les personnages."
