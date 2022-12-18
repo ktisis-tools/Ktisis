@@ -76,7 +76,7 @@ namespace Ktisis.Interop.Hooks {
 
 		// Init & dispose
 
-		internal static void Init() {
+		internal static void GlobalInit() {
 			unsafe {
 				var addr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 83 7B 58 00");
 				InputHook = Hook<InputDelegate>.FromAddress(addr, InputDetour);
@@ -88,7 +88,7 @@ namespace Ktisis.Interop.Hooks {
 			}
 		}
 
-		internal static void Dispose() {
+		internal static void GlobalDispose() {
 			InputHook.Disable();
 			InputHook.Dispose();
 

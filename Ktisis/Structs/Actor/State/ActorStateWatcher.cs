@@ -28,7 +28,7 @@ namespace Ktisis.Structs.Actor.State {
 				EventManager.FireOnGposeChangeEvent(ActorGposeState.OFF);
 		}
 
-		public static void Init() {
+		public static void GlobalInit() {
 			_ = Instance;
 		}
 

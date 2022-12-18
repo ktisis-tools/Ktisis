@@ -21,13 +21,13 @@ namespace Ktisis.Interop.Hooks {
 
 		// Init & Dispose
 
-		internal static void Init() {
+		internal static void GlobalInit() {
 			var controlGaze = Services.SigScanner.ScanText("40 53 41 54 41 55 48 81 EC ?? ?? ?? ?? 48 8B D9");
 			ControlGazeHook = Hook<ControlGazeDelegate>.FromAddress(controlGaze, ControlGaze);
 			ControlGazeHook.Enable();
 		}
 
-		internal static void Dispose() {
+		internal static void GlobalDispose() {
 			ControlGazeHook.Disable();
 			ControlGazeHook.Dispose();
 		}

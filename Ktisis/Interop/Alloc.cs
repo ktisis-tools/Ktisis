@@ -21,14 +21,14 @@ namespace Ktisis.Interop {
 		}
 
 		// Init & disspose
-		public unsafe static void Init() {
+		public unsafe static void GlobalInit() {
 			// Allocate space for our matrix to be aligned on a 16-byte boundary.
 			// This is required due to ffxiv's use of the MOVAPS instruction.
 			// Thanks to Fayti1703 for helping with debugging and coming up with this fix.
 			MatrixAlloc = Marshal.AllocHGlobal(sizeof(float) * 16 + 16);
 			Matrix = (Matrix4x4*)(16 * ((long)(MatrixAlloc + 15) / 16));
 		}
-		public static void Dispose() {
+		public static void GlobalDispose() {
 			Marshal.FreeHGlobal(MatrixAlloc);
 		}
 	}

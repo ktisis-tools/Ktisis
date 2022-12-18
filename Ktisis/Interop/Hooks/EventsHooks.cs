@@ -13,7 +13,7 @@ using Ktisis.Structs.Actor.Equip.SetSources;
 
 namespace Ktisis.Interop.Hooks {
 	public class EventsHooks {
-		public static void Init() {
+		public static void GlobalInit() {
 			Services.AddonManager = new AddonManager();
 			Services.ClientState.Login += OnLogin;
 			Services.ClientState.Logout += OnLogout;
@@ -25,7 +25,7 @@ namespace Ktisis.Interop.Hooks {
 			OnLogin(null!, null!);
 		}
 
-		public static void Dispose() {
+		public static void GlobalDispose() {
 			Services.AddonManager.Dispose();
 			Services.ClientState.Logout -= OnLogout;
 			Services.ClientState.Login -= OnLogin;

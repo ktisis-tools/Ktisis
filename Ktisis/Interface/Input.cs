@@ -176,11 +176,11 @@ namespace Ktisis.Interface {
 
 		// Init & dispose
 
-		public static void Init() {
+		public static void GlobalInit() {
 			EventManager.OnKeyPressed += OnKeyPressed;
 			EventManager.OnKeyReleased += OnKeyReleased;
 		}
-		public static void Dispose() {
+		public static void GlobalDispose() {
 			EventManager.OnKeyPressed -= OnKeyPressed;
 			EventManager.OnKeyReleased -= OnKeyReleased;
 		}

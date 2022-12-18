@@ -21,14 +21,14 @@ namespace Ktisis.History {
 
 		// Init & Dispose
 
-		public static void Init() {
+		public static void GlobalInit() {
 			EventManager.OnKeyPressed += OnInput;
 			EventManager.OnGPoseChange += OnGPoseChange;
 			EventManager.OnGizmoChange += OnGizmoChange;
 			EventManager.OnTransformationMatrixChange += OnGizmoChange;
 		}
 
-		public static void Dispose() {
+		public static void GlobalDispose() {
 			EventManager.OnKeyPressed -= OnInput;
 			EventManager.OnGPoseChange -= OnGPoseChange;
 			EventManager.OnGizmoChange -= OnGizmoChange;

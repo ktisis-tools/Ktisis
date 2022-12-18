@@ -54,20 +54,20 @@ namespace Ktisis {
 
 			// Init interop stuff
 
-			Interop.Alloc.Init();
-			Interop.Methods.Init();
-			Interop.StaticOffsets.Init();
+			Interop.Alloc.GlobalInit();
+			Interop.Methods.GlobalInit();
+			Interop.StaticOffsets.GlobalInit();
 
-			Interop.Hooks.ActorHooks.Init();
-			Interop.Hooks.ControlHooks.Init();
-			Interop.Hooks.EventsHooks.Init();
-			Interop.Hooks.GuiHooks.Init();
-			Interop.Hooks.PoseHooks.Init();
+			Interop.Hooks.ActorHooks.GlobalInit();
+			Interop.Hooks.ControlHooks.GlobalInit();
+			Interop.Hooks.EventsHooks.GlobalInit();
+			Interop.Hooks.GuiHooks.GlobalInit();
+			Interop.Hooks.PoseHooks.GlobalInit();
 
-			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.Init()
+			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.GlobalInit()
 
-			Input.Init();
-			ActorStateWatcher.Init();
+			Input.GlobalInit();
+			ActorStateWatcher.GlobalInit();
 
 			// Register command
 
@@ -84,7 +84,7 @@ namespace Ktisis {
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
 
-			HistoryManager.Init();
+			HistoryManager.GlobalInit();
 			References.LoadReferences(Configuration);
 		}
 
@@ -95,13 +95,13 @@ namespace Ktisis {
 
 			OverlayWindow.DeselectGizmo();
 
-			Interop.Hooks.ActorHooks.Dispose();
-			Interop.Hooks.ControlHooks.Dispose();
-			Interop.Hooks.EventsHooks.Dispose();
-			Interop.Hooks.GuiHooks.Dispose();
-			Interop.Hooks.PoseHooks.Dispose();
+			Interop.Hooks.ActorHooks.GlobalDispose();
+			Interop.Hooks.ControlHooks.GlobalDispose();
+			Interop.Hooks.EventsHooks.GlobalDispose();
+			Interop.Hooks.GuiHooks.GlobalDispose();
+			Interop.Hooks.PoseHooks.GlobalDispose();
 
-			Interop.Alloc.Dispose();
+			Interop.Alloc.GlobalDispose();
 			ActorStateWatcher.Instance.Dispose();
 			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
@@ -110,8 +110,8 @@ namespace Ktisis {
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
 
-			Input.Dispose();
-			HistoryManager.Dispose();
+			Input.GlobalDispose();
+			HistoryManager.GlobalDispose();
 
 			foreach (var (_, texture) in References.Textures) {
 				texture.Dispose();
