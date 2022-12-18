@@ -75,17 +75,6 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		internal static bool OnKeyPressed(QueueItem e) {
-			if (WorkCamera.Active) {
-				switch (e.VirtualKey) {
-					case VirtualKey.W:
-					case VirtualKey.A:
-					case VirtualKey.S:
-					case VirtualKey.D:
-					case VirtualKey.SPACE:
-						return true;
-				}
-			}
-
 			return false;
 		}
 	}

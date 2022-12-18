@@ -5,6 +5,7 @@ using Dalamud.Game.ClientState.Keys;
 using Dalamud.Logging;
 
 using Ktisis.Events;
+using Ktisis.Interface;
 
 namespace Ktisis.Scene {
 	public static class WorkCamera {
@@ -45,36 +46,37 @@ namespace Ktisis.Scene {
 				vel /= 5f;
 
 			var newPos = Position;
-			if (EventManager.IsKeyDown(VirtualKey.W)) { // Forward
+			if (Input.IsPurposeUsed(Input.Purpose.CameraForward)) { // Forward
 				newPos += new Vector3(
 					-vel * ((float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y)),
 					-vel * (float)Math.Sin(Rotation.Y),
 					-vel * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y)
 				);
 			}
-			if (EventManager.IsKeyDown(VirtualKey.A)) { // Left
+			if (Input.IsPurposeUsed(Input.Purpose.CameraLeft)) { // Left
 				newPos += new Vector3(
 					-vel * (float)Math.Cos(Rotation.X),
 					0,
 					vel * (float)Math.Sin(Rotation.X)
 				);
 			}
-			if (EventManager.IsKeyDown(VirtualKey.S)) { // Back
+			if (Input.IsPurposeUsed(Input.Purpose.CameraBackward)) { // Back
 				newPos += new Vector3(
 					vel * (float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y),
 					vel * (float)Math.Sin(Rotation.Y),
 					vel * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y)
 				);
 			}
-			if (EventManager.IsKeyDown(VirtualKey.D)) { // Right
+			if (Input.IsPurposeUsed(Input.Purpose.CameraRight)) { // Right
 				newPos += new Vector3(
 					vel * (float)Math.Cos(Rotation.X),
 					0,
 					-vel * (float)Math.Sin(Rotation.X)
 				);
 			}
-			if (EventManager.IsKeyDown(VirtualKey.SPACE))
+			if (Input.IsPurposeUsed(Input.Purpose.CameraUp)) {
 				newPos.Y += vel / 1.25f;
+			}
 
 			Position = newPos;
 			InterpPos = Lerp(0.5f);

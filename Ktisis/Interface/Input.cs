@@ -15,6 +15,7 @@ using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
 using Ktisis.Interface.Components;
+using Ktisis.Scene;
 
 namespace Ktisis.Interface {
 	public static class Input {
@@ -128,7 +129,7 @@ namespace Ktisis.Interface {
 			return null;
 		}
 
-		internal static bool IsPurposeUsed(Purpose purpose, VirtualKey input) {
+		internal static bool IsPurposeUsed(Purpose purpose, VirtualKey input = VirtualKey.NO_KEY) {
 			var keys = PurposeToVirtualKeys(purpose);
 
 			var match = keys.Count > 0;
@@ -156,6 +157,11 @@ namespace Ktisis.Interface {
 			DeselectGizmo,
 			BoneSelectionUp,
 			BoneSelectionDown,
+			CameraForward,
+			CameraBackward,
+			CameraRight,
+			CameraLeft,
+			CameraUp,
 		}
 
 		public static readonly Dictionary<Purpose, List<VirtualKey>> DefaultKeys = new(){
@@ -172,6 +178,11 @@ namespace Ktisis.Interface {
 			{Purpose.DeselectGizmo, new(){VirtualKey.ESCAPE}},
 			{Purpose.BoneSelectionUp, new(){VirtualKey.UP}},
 			{Purpose.BoneSelectionDown, new(){VirtualKey.DOWN}},
+			{Purpose.CameraForward, new(){VirtualKey.W}},
+			{Purpose.CameraBackward, new(){VirtualKey.S}},
+			{Purpose.CameraRight, new(){VirtualKey.D}},
+			{Purpose.CameraLeft, new(){VirtualKey.A}},
+			{Purpose.CameraUp, new(){VirtualKey.SPACE}},
 		};
 
 		// Init & dispose
