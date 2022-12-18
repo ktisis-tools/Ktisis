@@ -2,6 +2,7 @@
 using System.Numerics;
 
 using Dalamud.Game.ClientState.Keys;
+using Dalamud.Logging;
 
 using Ktisis.Events;
 
@@ -37,10 +38,11 @@ namespace Ktisis.Scene {
 
 			var newPos = Position;
 			if (EventManager.IsKeyDown(VirtualKey.W)) { // Forward
+				PluginLog.Information($"{Position} {Rotation}");
 				newPos += new Vector3(
-					-vel * (float)Math.Sin(Rotation.X),
+					-vel * ((float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y)),
 					-vel * (float)Math.Sin(Rotation.Y),
-					-vel * (float)Math.Cos(Rotation.X)
+					-vel * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y)
 				);
 			}
 			if (EventManager.IsKeyDown(VirtualKey.A)) { // Left
@@ -52,9 +54,9 @@ namespace Ktisis.Scene {
 			}
 			if (EventManager.IsKeyDown(VirtualKey.S)) { // Back
 				newPos += new Vector3(
-					vel * (float)Math.Sin(Rotation.X),
+					vel * (float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y),
 					vel * (float)Math.Sin(Rotation.Y),
-					vel * (float)Math.Cos(Rotation.X)
+					vel * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y)
 				);
 			}
 			if (EventManager.IsKeyDown(VirtualKey.D)) { // Right
