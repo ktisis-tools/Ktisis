@@ -134,15 +134,15 @@ namespace Ktisis {
 		}
 
 		private static void GlobalDispose() {
-			Interop.Hooks.ActorHooks.GlobalDispose();
-			Interop.Hooks.ControlHooks.GlobalDispose();
-			Interop.Hooks.EventsHooks.GlobalDispose();
-			Interop.Hooks.GuiHooks.GlobalDispose();
-			Interop.Hooks.PoseHooks.GlobalDispose();
-
-			Interop.Alloc.GlobalDispose();
-			Input.GlobalDispose();
 			HistoryManager.GlobalDispose();
+			Input.GlobalDispose();
+			Interop.Alloc.GlobalDispose();
+
+			Interop.Hooks.PoseHooks.GlobalDispose();
+			Interop.Hooks.GuiHooks.GlobalDispose();
+			Interop.Hooks.EventsHooks.GlobalDispose();
+			Interop.Hooks.ControlHooks.GlobalDispose();
+			Interop.Hooks.ActorHooks.GlobalDispose();
 		}
 	}
 }
