@@ -5,6 +5,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Interop {
+	[GlobalState]
 	internal class Methods {
 		// Make actor look at co-ordinate point
 		// a1 = Actor + 0xC20, a2 = TrackPos*, a3 = bodypart, a4 = ?
@@ -32,6 +33,7 @@ namespace Ktisis.Interop {
 		private static TDelegate Retrieve<TDelegate>(string sig)
 			=> Marshal.GetDelegateForFunctionPointer<TDelegate>(Services.SigScanner.ScanText(sig));
 
+		[GlobalInit]
 		internal static void GlobalInit() {
 			ActorLookAt = Retrieve<LookAtDelegate>("40 53 55 57 41 56 41 57 48 83 EC 70");
 			ActorChangeEquip = Retrieve<ChangeEquipDelegate>("E8 ?? ?? ?? ?? 41 B5 01 FF C6");

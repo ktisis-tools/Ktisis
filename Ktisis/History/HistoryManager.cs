@@ -9,6 +9,7 @@ using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.History {
+	[GlobalState]
 	public static class HistoryManager {
 		public static List<HistoryItem>? History { get; set; }
 		private static int _currentIdx = -1;
@@ -21,6 +22,7 @@ namespace Ktisis.History {
 
 		// Init & Dispose
 
+		[GlobalInit]
 		public static void GlobalInit() {
 			EventManager.OnKeyPressed += OnInput;
 			EventManager.OnGPoseChange += OnGPoseChange;
@@ -28,6 +30,7 @@ namespace Ktisis.History {
 			EventManager.OnTransformationMatrixChange += OnGizmoChange;
 		}
 
+		[GlobalDispose]
 		public static void GlobalDispose() {
 			EventManager.OnKeyPressed -= OnInput;
 			EventManager.OnGPoseChange -= OnGPoseChange;

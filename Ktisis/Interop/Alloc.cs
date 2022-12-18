@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.Havok;
 
 namespace Ktisis.Interop {
+	[GlobalState]
 	internal static class Alloc {
 		// Allocations
 		private static IntPtr MatrixAlloc;
@@ -21,6 +22,7 @@ namespace Ktisis.Interop {
 		}
 
 		// Init & disspose
+		[GlobalInit]
 		public unsafe static void GlobalInit() {
 			// Allocate space for our matrix to be aligned on a 16-byte boundary.
 			// This is required due to ffxiv's use of the MOVAPS instruction.
@@ -28,6 +30,7 @@ namespace Ktisis.Interop {
 			MatrixAlloc = Marshal.AllocHGlobal(sizeof(float) * 16 + 16);
 			Matrix = (Matrix4x4*)(16 * ((long)(MatrixAlloc + 15) / 16));
 		}
+		[GlobalDispose]
 		public static void GlobalDispose() {
 			Marshal.FreeHGlobal(MatrixAlloc);
 		}
