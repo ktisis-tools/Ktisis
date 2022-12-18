@@ -17,6 +17,7 @@ using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
+using Ktisis.Interface.Windows.Toolbar;
 
 using static Ktisis.Data.Files.AnamCharaFile;
 
@@ -207,23 +208,27 @@ namespace Ktisis.Interface.Windows.Workspace
 
 			// Advanced
 			if (ImGui.CollapsingHeader("Advanced (Debug)")) {
-				if (ImGui.Button("Reset Current Pose") && actor->Model != null)
-					actor->Model->SyncModelSpace();
-
-				if (ImGui.Button("Set to Reference Pose") && actor->Model != null)
-					actor->Model->SyncModelSpace(true);
-
-				if (ImGui.Button("Store Pose") && actor->Model != null)
-					_TempPose.Store(actor->Model->Skeleton);
-				ImGui.SameLine();
-				if (ImGui.Button("Apply Pose") && actor->Model != null)
-					_TempPose.Apply(actor->Model->Skeleton);
-
-				if (ImGui.Button("Force Redraw"))
-					actor->Redraw();
+				DrawAdvancedDebugOptions(actor);
 			}
 
 			ImGui.EndTabItem();
+		}
+		
+		public static unsafe void DrawAdvancedDebugOptions(Actor* actor) {
+			if(ImGui.Button("Reset Current Pose") && actor->Model != null)
+				actor->Model->SyncModelSpace();
+
+			if(ImGui.Button("Set to Reference Pose") && actor->Model != null)
+				actor->Model->SyncModelSpace(true);
+
+			if(ImGui.Button("Store Pose") && actor->Model != null)
+				_TempPose.Store(actor->Model->Skeleton);
+			ImGui.SameLine();
+			if(ImGui.Button("Apply Pose") && actor->Model != null)
+				_TempPose.Apply(actor->Model->Skeleton);
+
+			if(ImGui.Button("Force Redraw"))
+				actor->Redraw();
 		}
 
 		// Transform Table actor and bone names display, actor related extra

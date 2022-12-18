@@ -73,6 +73,37 @@ namespace Ktisis.Interface.Components {
 			}
 		}
 
+		public unsafe static void DrawToolbar() {
+			// Prevent displaying the same target multiple time
+			SavedObjects = SavedObjects.Distinct().Where(IsValidActor).ToList();
+
+			var currentTarget = Ktisis.Target;
+			if (!SavedObjects.Contains((long)currentTarget)) SavedObjects.Add((long)currentTarget);
+
+			// Index of Currently selected
+			var selectedIndex = -1;
+			for (var index = 0; index < SavedObjects.Count; index++) {
+				if (SavedObjects[index] != (long)currentTarget)
+					continue;
+				selectedIndex = index;
+				break;
+			}
+
+			var actorNamesList = SavedObjects.Select(pointer => ((Actor*)pointer)->GetNameOrId() + ExtraInfo(pointer)).ToArray();
+			ImGui.Combo("", ref selectedIndex, actorNamesList, actorNamesList.Length);
+			GuiHelpers.Tooltip("Select active Actor");
+			Services.Targets->GPoseTarget = (GameObject*)SavedObjects[selectedIndex];
+			ImGui.SameLine();
+
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, "Add Actor to list."))
+				OpenSelector();
+
+			ImGui.SameLine();
+
+			if (SelectorList != null)
+				DrawListAddActor();
+		}
+
 		private static void OpenSelector() =>
 			SelectorList = Services.ObjectTable
 			// filter unwanted objects

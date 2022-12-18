@@ -18,7 +18,7 @@ using Ktisis.History;
 
 namespace Ktisis.Interface.Components {
 	public static class ControlButtons {
-		public static Vector2 ButtonSize = new Vector2(ImGui.GetFontSize() * 1.6f) + ImGui.GetStyle().FramePadding;
+		public static Vector2 ButtonSize => new Vector2(ImGui.GetFontSize() * 1.6f) + ImGui.GetStyle().FramePadding;
 		private static bool IsSettingsHovered = false;
 		private static bool IsSettingsActive = false;
 
@@ -127,17 +127,9 @@ namespace Ktisis.Interface.Components {
 
 			if (GuiHelpers.IconButton(icon, ButtonSize))
 				if (!isCurrentOperation)
-					if (ImGui.GetIO().KeyShift)
-						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.AddFlag(operation);
-					else
-						Ktisis.Configuration.GizmoOp = operation;
-				else
-					if (ImGui.GetIO().KeyCtrl) {
-						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE);
-						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE_X);
-						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE_Y);
-						Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE_Z);
-					}
+					Ktisis.Configuration.GizmoOp = ImGui.GetIO().KeyShift ? Ktisis.Configuration.GizmoOp.AddFlag(operation) : operation;
+				else if (ImGui.GetIO().KeyCtrl)
+					Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE, OPERATION.ROTATE_X, OPERATION.ROTATE_Y, OPERATION.ROTATE_Z);
 				else if (ImGui.GetIO().KeyShift)
 					Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.RemoveFlag(operation);
 				else
@@ -151,10 +143,13 @@ namespace Ktisis.Interface.Components {
 			else
 				help += "Change gizmo operation to ";
 
-			if (operation == OPERATION.TRANSLATE) help += "Position";
-			else if (operation == OPERATION.ROTATE) help += "Rotation";
-			else if (operation == OPERATION.SCALE) help += "Scale";
-			else if (operation == OPERATION.UNIVERSAL) help += "Universal";
+			help += operation switch {
+				OPERATION.TRANSLATE => "Position",
+				OPERATION.ROTATE => "Rotation",
+				OPERATION.SCALE => "Scale",
+				OPERATION.UNIVERSAL => "Universal",
+				var _ => throw new ArgumentOutOfRangeException(nameof(operation), operation, null)
+			};
 
 			GuiHelpers.Tooltip(help + ".");
 		}
@@ -182,7 +177,16 @@ namespace Ktisis.Interface.Components {
 			ImGui.EndDisabled();
 		}
 
-		private static void DrawSiblingLink() {
+		public static void DrawSimplePoseSwitch() {
+			var pose = PoseHooks.PosingEnabled;
+			if (!Ktisis.IsInGPose)
+				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);
+			else if (GuiHelpers.ToggleButton("Toggle Posing", ref pose, pose ? Workspace.ColGreen : Workspace.ColRed))
+				PoseHooks.TogglePosing();
+			GuiHelpers.Tooltip("Toggle Posing");
+		}
+
+		public static void DrawSiblingLink() {
 			var siblingLink = Ktisis.Configuration.SiblingLink;
 
 			if (siblingLink != SiblingLink.None) ImGui.PushStyleColor(ImGuiCol.Text, GuiHelpers.VisibleCheckmarkColor());
