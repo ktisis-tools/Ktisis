@@ -1,0 +1,407 @@
+{
+	"$meta": {
+		"displayName": "French",
+		"selfName": "Français",
+		"__comment": "Using null element to signal 'et al' in the array below. Don't do this for your own localization.",
+		"maintainers": [
+			"@Luna664",
+			null
+		]
+	},
+
+	"tab": {
+		"general": {
+			"title": "Général"
+		},
+		"settings": {
+			"title": "Paramètres"
+		}
+	},
+
+	"config": {
+
+		"title": "Paramètres de Ktisis",
+
+		"interface": {
+			"title": "Interface",
+			"general": {
+				"title": "Général",
+				"openMethod": {
+					"fieldLabel": "Ouvrir Ktisis",
+					"Manually": "manuellement via `/ktisis`",
+					"OnPluginLoad": "lorsque le plugin se lance",
+					"OnEnterGpose": "lors de la pose en groupe"
+				},
+				"hideCharName": "Cacher le nom du personnage",
+				"censorNSFW": "Cacher le contenu explicite"
+			},
+			"transformTable": {
+				"title": "Table des transformations",
+				"digitPrecision": "Précision des chiffres",
+				"basePositionSpeed": "Vitesse de base (Position)",
+				"baseRotationSpeed": "Vitesse de base (Rotation)",
+				"baseScaleSpeed": "Vitesse de base (Mise à l'échelle)",
+				"ctrlSpeedMult": "Ctrl multiplie la vitesse",
+				"shiftSpeedMult": "Maj multiplie la vitesse",
+				"showSpeedMultiplierInputs": "Afficher les touches du multiplicateur de vitesse"
+			}
+		},
+
+		"overlay": {
+			"title": "Superposition",
+
+			"skeleton": {
+				"header":"Lignes et points du squelette",
+				"drawLines": "Dessiner des lignes sur le squelette",
+				"__comment": "NOTE : Ceux-la devraient refléter plus clairement la fonctionnalité réelle (dessiner des lignes/points lorsque le *gizmo est actif*)."",
+				"drawLineWhenSelecting": "N'afficher que les lignes lors d'une sélection",
+				"drawDotsWhenSelecting": "N'afficher que les points lors d'une selection",
+				"dotRadius": "Rayon du point",
+				"lineThickness": "Épaisseur de la ligne"
+
+			},
+
+			"boneColors": {
+				"header": "Couleurs des os",
+				"link": {
+					"enable": "Lier la couleur des os",
+					"disable": "Délier les couleurs des os"
+				},
+				"erase": {
+					"tooltip": "Maintenez les touches Control et Maj enfoncées pour effacer les couleurs"
+				},
+				"allEdit": {
+					"label": "Couleurs des os"
+				},
+				"categories": {
+					"reset": {
+						"tooltip": "Maintenez les touches Control et Maj enfoncées pour rétablir les valeurs par défaut des couleurs."
+					},
+					"placeholderText": "Les catégories seront ajoutées une fois que les os auront été affichés."
+				}
+			},
+
+			"bonePositions": {
+				"header": "Modifier les positions des os"
+			}
+		},
+
+		"gizmo": {
+			"title": "Gizmo",
+			"allowAxisFlip": "Retourner l'axe pour faire face à la caméra"
+		},
+
+		"input": {
+			"title": "Entrée",
+			"selectBehavior": {
+				"__comment": "La clé ci-dessous n'est pas encore insérée.",
+				"title": "Comportement de la sélection",
+				"disableLeftClickTarget": "Désactiver le changement de cible avec le clic gauche",
+				"disableRightClickTarget": "Désactiver le changement de cible avec le clic droit"
+			},
+
+			"keybind": {
+				"title": "Raccourcis clavier",
+				"enable": "Activer",
+
+				"assignByKeyPress": {
+					"title": "Touches enfoncées",
+					"helpText": "Pour affecter une touche ou une combinaison de touches :\n1. Maintenez la touche ou la combinaison de touches enfoncée\n2. Cliquez sur l'action souhaitée :\n\nNe maintenez aucune touche pour désaffecter la touche."
+				},
+
+				"keybindTable": {
+					"keys": "Touche",
+					"action": "Action"
+				},
+
+				"purpose": {
+					"generic": {
+						"__comment": "Ils sont utilisés pour les raccourcis clavier des catégories. (Ils seront probablement remplacés par un système de caractères génériques à l'avenir).",
+						"toggle": "Basculer",
+						"hold": "Maintenir",
+						"release": "Relâcher",
+						"__comment": "Cette clé n'est (espérons-le) jamais utilisée.",
+						"invalid": "N/A"
+					},
+					"GlobalModifierKey": "Modificateur global",
+					"SwitchToTranslate": "Passer a l'outil de positionnement",
+					"SwitchToRotate": "Passer à l'outil de rotation",
+					"SwitchToScale": "Passer à l'outil d'échelle",
+					"SwitchToUniversal": "Passer à l'outil universel",
+					"ToggleLocalWorld": "Basculer en mode local/monde",
+					"HoldToHideSkeleton": "Maintenir pour cacher le squelette",
+					"ClearCategoryVisibilityOverload": "Effacer la surcharge de visibilité des catégories",
+					"HoldAllCategoryVisibilityOverload": "Maintenir la surcharge de visibilité de toutes les catégories",
+					"CircleThroughSiblingLinkModes": "Parcourir les modes de liaison parents"
+				}
+			}
+		},
+		"references": {
+			"title": "Références",
+			"explanation": "Superposez des images de référence sur votre jeu, pour vous aider à prendre la bonne pose.",
+			"imageAlpha": "Opacité",
+			"hideWindowDecoration": "Cacher la décoration des fenêtres",
+			"images": {
+				"title": "Images de référence",
+				"dialog": {
+					"title": "Ajouter un fichier de référence",
+					"filter": "Fichiers images"
+				},
+				"addText": "Ajouter une nouvelle image de référence",
+				"add": "Ajouter un fichier de référence",
+				"supportedTypes": "Types de fichiers supportés"
+			}
+		},
+
+		"language": {
+			"title": "Langue",
+			"select": "Langue",
+			"translateBones": "Traduire les noms des os"
+		},
+
+		"data": {
+			"title": "Données",
+			"glamourDresser": {
+				"__comment": "Ceux-ci sont actuellement un peu désordonnés... Besoin d'un système de placement pour corriger cela.",
+				"memoryCount": "Planche mirage en mémoire : ",
+				"validCount": {
+					"pre": "Trouvé ",
+					"post": "Planche mirage valides"
+				},
+
+				"sync": {
+					"tooltip": "Rafraîchit la mémoire de la planche mirage pour les recherches de sets. \NCette mémoire est conservée après un redémarrage.\N Conditions requises:\NL'une de ces fenêtres doit être ouverte : \"Création de planche mirage\" (par la Coiffeuse mirage) ou \"Sélection de planche mirage\" (avec la compétence Planche mirage)."
+				},
+				"dispose": {
+					"tooltip": "Supprimer la mémoire des planches mirage et supprimer les configurations pour TOUS les personnages."
+				}
+			}
+		}
+	},
+	"workspace":{
+		"title":"Espace de travail",
+		"actor": {
+			"title": "Acteur"
+		},
+		"scene": {
+			"title": "Scène"
+		},
+		"pose": {
+			"title": "Pose"
+		}
+	},
+
+	"tribe": {
+		"SunSeeker": "Tribu du Soleil",
+		"MoonKeeper": "Tribu de la Lune",
+		"SeaWolf": "Clan de la Mer",
+		"Lost": "Éloigné",
+		"Midlander": "Hyurois",
+		"Highlander": "Hyurgoth",
+		"Wildwood": "Sylvestre",
+		"Duskwight": "Crépusculaire",
+		"Plainsfolk": "Peuple des Plaines",
+		"Dunesfolk": "Peuple des Dunes",
+		"Hellsguard": "Clan du Feu",
+		"Raen": "Raen",
+		"Xaela": "Xaela",
+		"Helion": "Hélion",
+		"Rava": "Rava",
+		"Veena": "Veena"
+	},
+
+	"race": {
+		"AuRa":"Ao'Ra",
+		"Elezen":"Elezen",
+		"Hrothgar":"Hrothgar",
+		"Hyur": "Hyur",
+		"Lalafell":"Lalafell",
+		"Miqote": "Miqo'te",
+		"Roegadyn":"Roegadyn",
+		"Viera":"Viéra"
+	},
+
+
+	"__comment": "Taken from Anamesis -- thank you!",
+	"bone": {
+		"n_root": "Racine",
+		"n_hara": "Abdomen",
+		"n_throw": "Centre",
+		"j_kosi": "Taille",
+		"j_sebo_a": "Lombaires",
+		"j_asi_a_l": "Jambe Gauche",
+		"j_asi_a_r": "Jambe Droite",
+		"j_buki2_kosi_l": "Étui Gauche",
+		"j_buki2_kosi_r": "Étui Droit",
+		"j_buki_kosi_l": "Fourreau Gauche",
+		"j_buki_kosi_r": "Fourreau Droit",
+		"j_sebo_b": "Thorax",
+		"j_sk_b_a_l": "Vêtements arrière A Gauche",
+		"j_sk_b_a_r": "Vêtements arrière A Droit",
+		"j_sk_f_a_l": "Vêtements avant A Gauche",
+		"j_sk_f_a_r": "Vêtements avant A Droit",
+		"j_sk_s_a_l": "Vêtements côté A Gauche",
+		"j_sk_s_a_r": "Vêtements côté A Droit",
+		"j_asi_b_l": "Genoux Gauche",
+		"j_asi_b_r": "Genoux Droit",
+		"j_mune_l": "Sein Gauche",
+		"j_mune_r": "Sein Droit",
+		"j_sebo_c": "Cervicales",
+		"j_sk_b_b_l": "Vêtements arrière B Gauche",
+		"j_sk_b_b_r": "Vêtements arrière B Droit",
+		"j_sk_f_b_l": "Vêtements avant B Gauche",
+		"j_sk_f_b_r": "Vêtements avant B Droit",
+		"j_sk_s_b_l": "Vêtements côté B Gauche",
+		"j_sk_s_b_r": "Vêtements côté B Droit",
+		"j_asi_c_l": "Molet Gauche",
+		"j_asi_c_r": "Molet Droit",
+		"j_buki_sebo_l": "Fourreau Gauche",
+		"j_buki_sebo_r": "Fourreau Droit",
+		"j_kubi": "Cou",
+		"j_sako_l": "Clavicule Gauche",
+		"j_sako_r": "Clavicule Droite",
+		"j_sk_b_c_l": "Vêtements arrière C Gauche",
+		"j_sk_b_c_r": "Vêtements arrière C Droit",
+		"j_sk_f_c_l": "Vêtements avant C Gauche",
+		"j_sk_f_c_r": "Vêtements avant C Droit",
+		"j_sk_s_c_l": "Vêtements côté C Gauche",
+		"j_sk_s_c_r": "Vêtements côté C Droit",
+		"n_hizasoubi_l": "Genouillère Gauche",
+		"n_hizasoubi_r": "Genouillère Droite",
+		"j_asi_d_l": "Pied Gauche",
+		"j_asi_d_r": "Pied Droit",
+		"j_kao": "Tête",
+		"j_ude_a_l": "Bras Gauche",
+		"j_ude_a_r": "Bras Droit",
+		"n_kataarmor_l": "Épaulette Gauche",
+		"n_kataarmor_r": "Épaulette Droite",
+		"j_asi_e_l": "Orteils Gauche",
+		"j_asi_e_r": "Orteils Droit",
+		"j_kami_a": "Cheveu A",
+		"j_kami_f_l": "Cheveu avant Gauche",
+		"j_kami_f_r": "Cheveu avant Droit",
+		"j_mimi_l": "Oreille Gauche",
+		"j_mimi_r": "Oreille Droite",
+		"j_ude_b_l": "Avant bras Gauche",
+		"j_ude_b_r": "Avant bras Droit",
+		"n_hkata_l": "Épaule Gauche",
+		"n_hkata_r": "Épaule Droite",
+		"j_kami_b": "Cheveu B",
+		"j_te_l": "Main Gauche",
+		"j_te_r": "Main Droite",
+		"n_buki_tate_l": "Bouclier Gauche",
+		"n_buki_tate_r": "Bouclier Droit",
+		"n_ear_a_l": "Boucles d'oreilles A Gauche",
+		"n_ear_a_r": "Boucles d'oreilles A Droite",
+		"n_hhiji_l": "Coude Gauche",
+		"n_hhiji_r": "Coude Droit",
+		"n_hijisoubi_l": "Cubitière Gauche",
+		"n_hijisoubi_r": "Cubitière Droit",
+		"n_hte_l": "Poignet Gauche",
+		"n_hte_r": "Poignet Droit",
+		"j_hito_a_l": "Index A Gauche",
+		"j_hito_a_r": "Index A Droit",
+		"j_ko_a_l": "Auriculaire A Gauche",
+		"j_ko_a_r": "Auriculaire A Droit",
+		"j_kusu_a_l": "Annulaire A Gauche",
+		"j_kusu_a_r": "Annulaire A Droit",
+		"j_naka_a_l": "Majeur A Gauche",
+		"j_naka_a_r": "Majeur A Droit",
+		"j_oya_a_l": "Pouce A Gauche",
+		"j_oya_a_r": "Pouce A Droit",
+		"n_buki_l": "Arme Gauche",
+		"n_buki_r": "Arme Droite",
+		"n_ear_b_l": "Boucles d'oreilles B Gauche",
+		"n_ear_b_r": "Boucles d'oreilles B Droite",
+		"j_hito_b_l": "Index B Gauche",
+		"j_hito_b_r": "Index B Droit",
+		"j_ko_b_l": "Auriculaire B Gauche",
+		"j_ko_b_r": "Auriculaire B Droit",
+		"j_kusu_b_l": "Annulaire B Gauche",
+		"j_kusu_b_r": "Annulaire B Droit",
+		"j_naka_b_l": "Majeur B Gauche",
+		"j_naka_b_r": "Majeur B Droit",
+		"j_oya_b_l": "Pouce B Gauche",
+		"j_oya_b_r": "Pouce B Droit",
+		"n_sippo_a": "Queue A",
+		"n_sippo_b": "Queue B",
+		"n_sippo_c": "Queue C",
+		"n_sippo_d": "Queue D",
+		"n_sippo_e": "Queue E",
+		"j_ago": "Machoire",
+		"j_f_dmab_l": "Paupière inférieure Gauche",
+		"j_f_dmab_r": "Paupière inférieure Droite",
+		"j_f_eye_l": "Oeil Gauche",
+		"j_f_eye_r": "Oeil Droit",
+		"j_f_hana": "Nez",
+		"j_f_hoho_l": "Joue Gauche",
+		"j_f_hoho_r": "Joue Droite",
+		"j_f_lip_l": "Lèvre Gauche",
+		"j_f_lip_r": "Lèvre Droite",
+		"j_f_mayu_l": "Sourcil Gauche",
+		"j_f_mayu_r": "Sourcil Droit",
+		"j_f_memoto": "Arcade Centrale",
+		"j_f_miken_l": "Arcade Gauche",
+		"j_f_miken_r": "Arcade Droite",
+		"j_f_ulip_a": "Lèvre supérieure Droite",
+		"j_f_umab_l": "Paupière Gauche",
+		"j_f_umab_r": "Paupière Droite",
+		"j_f_dlip_a": "Lèvre inférieure A",
+		"j_f_ulip_b": "Lèvre supérieure B",
+		"j_f_dlip_b": "Lèvre inférieure B",
+		"j_zera_a_l": "Oreille A Gauche",
+		"j_zera_a_r": "Oreille A Droite",
+		"j_zera_b_l": "Oreille B Gauche",
+		"j_zera_b_r": "Oreille B Droite",
+		"j_zerb_a_l": "Oreille A Gauche",
+		"j_zerb_a_r": "Oreille A Droite",
+		"j_zerb_b_l": "Oreille B Gauche",
+		"j_zerb_b_r": "Oreille B Droite",
+		"j_zerc_a_l": "Oreille A Gauche",
+		"j_zerc_a_r": "Oreille A Droite",
+		"j_zerc_b_l": "Oreille B Gauche",
+		"j_zerc_b_r": "Oreille B Droite",
+		"j_zerd_a_l": "Oreille A Gauche",
+		"j_zerd_a_r": "Oreille A Droite",
+		"j_zerd_b_l": "Oreille B Gauche",
+		"j_zerd_b_r": "Oreille B Droite",
+		"j_f_hige_l": "Moustache Gauche",
+		"j_f_hige_r": "Moustache Droite",
+		"j_f_uago": "Lèvre supérieure A",
+		"j_f_ulip": "Lèvre supérieure B",
+		"n_f_lip_l": "Lèvre Gauche",
+		"n_f_lip_r": "Lèvre Droite",
+		"n_f_ulip_l": "Lèvre supérieure Gauche",
+		"n_f_ulip_r": "Lèvre supérieure Droite",
+		"j_f_dlip": "Lèvre inférieure",
+		"j_ex_met_va": "Visière",
+		"mh_n_hara": "Main Droite",
+		"oh_n_hara": "Main Gauche",
+		"j_half_l": "Côté Gauche",
+		"j_half_r": "Côté Droit",
+	},
+
+	"boneCategory": {
+		"other": "Autre",
+		"body": "Corps",
+		"head": "Tête",
+		"hair": "Cheveux",
+		"clothes": "Vêtements",
+		"weapons": "Armes",
+		"right hand": "Main Droite",
+		"left hand": "Main Gauche",
+		"feet": "Pieds",
+		"hands": "Mains",
+		"tail": "Queue",
+		"ears": "Oreilles",
+		"ivcs left hand": "IVCS Main Gauche",
+		"ivcs right hand": "IVCS Main Droite",
+		"ivcs left foot": "IVCS Pied Gauche",
+		"ivcs right foot": "IVCS Pied Droit",
+		"ivcs body": "IVCS Corps",
+		"ivcs penis": "IVCS Pénis",
+		"ivcs vagina": "IVCS Vagin",
+		"ivcs buttocks": "IVCS Fesses"
+	}
+
+}
