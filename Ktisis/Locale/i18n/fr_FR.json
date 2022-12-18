@@ -36,14 +36,14 @@
 				"censorNSFW": "Cacher le contenu explicite"
 			},
 			"transformTable": {
-				"title": "Table des transformations",
+				"title": "Table de modification",
 				"digitPrecision": "Précision des chiffres",
 				"basePositionSpeed": "Vitesse de base (Position)",
 				"baseRotationSpeed": "Vitesse de base (Rotation)",
 				"baseScaleSpeed": "Vitesse de base (Mise à l'échelle)",
-				"ctrlSpeedMult": "Ctrl multiplie la vitesse",
-				"shiftSpeedMult": "Maj multiplie la vitesse",
-				"showSpeedMultiplierInputs": "Afficher les touches du multiplicateur de vitesse"
+				"ctrlSpeedMult": "Ctrl Multiplicateur de vitesse",
+				"shiftSpeedMult": "Maj Multiplicateur de vitesse",
+				"showSpeedMultiplierInputs": "Afficher les valeurs du multiplicateur de vitesse"
 			}
 		},
 
