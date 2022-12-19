@@ -1,11 +1,10 @@
 using System;
 
 using Dalamud.Plugin;
+using Dalamud.Interface;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface;
 
-using Ktisis.Events;
 using Ktisis.History;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Actor.State;
@@ -63,8 +62,6 @@ namespace Ktisis
 			Interop.Hooks.GuiHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 
-			EventManager.OnGPoseChange += Workspace.OnGPoseChange;
-
 			Input.Init();
 			ActorStateWatcher.Init(); // TODO: Refactor this.
 
@@ -73,11 +70,6 @@ namespace Ktisis
 			Services.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
 				HelpMessage = "/ktisis - Show the Ktisis interface."
 			});
-
-			// Overlays & UI
-
-			if (Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
-				Workspace.Show();
 
 			//pluginInterface.UiBuilder.OpenConfigUi += ConfigGui.Toggle;
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
@@ -102,7 +94,6 @@ namespace Ktisis
 
 			Interop.Alloc.Dispose();
 			ActorStateWatcher.Dispose();
-			// EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
 			Data.Sheets.Cache.Clear();
 
@@ -131,7 +122,7 @@ namespace Ktisis
 					//ConfigGui.Toggle();
 					break;
 				default:
-					Workspace.Toggle();
+					KtisisGui.GetWindow(Workspace.Name)?.Toggle();
 					break;
 			}
 		}
