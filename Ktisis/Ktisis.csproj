@@ -32,11 +32,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data\Schema\BoneCategories.json" />
     <None Remove="Interface\Locale\i18n\English.json" />
     <None Remove="Interface\Locale\i18n\German.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Data\Schema\BoneCategories.json" />
     <EmbeddedResource Include="Interface\Locale\i18n\German.json" />
     <EmbeddedResource Include="Interface\Locale\i18n\English.json" />
   </ItemGroup>
