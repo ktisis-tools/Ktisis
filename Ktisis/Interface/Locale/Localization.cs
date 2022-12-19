@@ -1,9 +1,10 @@
 using System.IO;
-using System.Reflection;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
+using Ktisis.Interface.Library;
 
 namespace Ktisis.Interface.Locale {
 	public static class Locale {
@@ -55,18 +56,8 @@ namespace Ktisis.Interface.Locale {
 			return regularPurposeString;
 		}
 
-		public static Stream GetLocaleFile(UserLocale lang) {
-			var assembly = Assembly.GetExecutingAssembly();
-			string assemblyName = assembly.GetName().Name!;
-
-			var path = $"{assemblyName}.Interface.Locale.i18n.{lang}.json";
-
-			Stream? stream = assembly.GetManifestResourceStream(path);
-			if (stream == null)
-				throw new FileNotFoundException(path);
-
-			return stream;
-		}
+		public static Stream GetLocaleFile(UserLocale lang)
+			=> Common.GetAssemblyFile($"Interface.Locale.i18n.{lang}.json");
 	}
 
 	public enum UserLocale {
