@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using static FFXIVClientStructs.Havok.hkaPose;
+
+using Ktisis.Interface;
+using Ktisis.Interface.Locale;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
-using Ktisis.Interface.Locale;
 
 namespace Ktisis.Structs.Bones
 {
@@ -38,7 +40,9 @@ namespace Ktisis.Structs.Bones
 		public string UniqueId => $"{Partial}_{Index}";
 		public string UniqueName => $"{LocaleName}##{UniqueId}";
 
-		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String);
+		public BoneCategory GetCategory() => BoneCategories.GetBoneCategory(HkaBone.Name.String);
+
+		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String); // TODO: Remove
 
 		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate = PropagateOrNot.DontPropagate) => Pose->AccessBoneModelSpace(Index, propagate);
 		public unsafe hkQsTransformf* AccessLocalSpace() => Pose->AccessBoneLocalSpace(Index);
