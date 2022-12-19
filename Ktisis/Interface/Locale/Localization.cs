@@ -59,7 +59,7 @@ namespace Ktisis.Interface.Locale {
 			var assembly = Assembly.GetExecutingAssembly();
 			string assemblyName = assembly.GetName().Name!;
 
-			var path = $"{assemblyName}.Locale.i18n.{lang}.json";
+			var path = $"{assemblyName}.Interface.Locale.i18n.{lang}.json";
 
 			Stream? stream = assembly.GetManifestResourceStream(path);
 			if (stream == null)

@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Game.ClientState.Objects.Types;
-using Ktisis.Structs.Actor;
+
 using Ktisis.Interop.Hooks;
+using Ktisis.Structs.Actor;
+using Ktisis.Interface.Editor;
 using Ktisis.Interface.Library;
-using Ktisis.Interface.Components.Posing;
 using Ktisis.Interface.Overlay;
+using Ktisis.Interface.Components.Posing;
 
 namespace Ktisis.Interface.Windows
 {
@@ -18,7 +21,19 @@ namespace Ktisis.Interface.Windows
 		public static void Show() => Visible = true;
 		public static void Toggle() => Visible = !Visible;
 
-		internal static void OnGPoseChange(bool state) {
+		public static List<Manipulable> Items = new();
+
+		internal unsafe static void OnGPoseChange(bool state) {
+			if (state) {
+				var tar = Ktisis.GPoseTarget;
+				if (tar != null) {
+					var actor = (Actor*)tar.Address;
+					Items.Add(new ActorObject(actor->ObjectID));
+				}
+			} else {
+				Items.Clear();
+			}
+
 			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnEnterGpose)
 				Visible = state;
 		}
@@ -47,7 +62,9 @@ namespace Ktisis.Interface.Windows
 				DrawSelectState();
 
 				ImGui.Spacing();
-				ImGui.Separator();
+				//ImGui.Separator();
+
+				DrawSceneTree();
 
 				ImGui.End();
 			}
@@ -115,6 +132,20 @@ namespace Ktisis.Interface.Windows
 			ImGui.EndGroup();
 
 			ImGui.SameLine(size * 2.5f);
+		}
+
+		// Draw scene tree
+
+		private static void DrawSceneTree() {
+			if (ImGui.BeginChildFrame(471, new Vector2(-1, -1), ImGuiWindowFlags.HorizontalScrollbar)) {
+				foreach (var item in Items) {
+					item.DrawTreeNode();
+				}
+			}
+		}
+
+		private static void DrawTreeItem() {
+
 		}
 	}
 }
