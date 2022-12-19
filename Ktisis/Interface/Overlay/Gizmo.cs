@@ -1,11 +1,12 @@
 using System.Numerics;
 
 using ImGuiNET;
+
 using ImGuizmoNET;
 
 using Ktisis.Structs.Extensions;
 
-namespace Ktisis.Overlay {
+namespace Ktisis.Interface.Overlay {
 	public class Gizmo {
 		// Instanced properties
 
@@ -13,7 +14,7 @@ namespace Ktisis.Overlay {
 		public OPERATION Operation => Ktisis.Configuration.GizmoOp;
 
 		public Matrix4x4 Matrix = new();
-		public Matrix4x4 Delta = new();
+
 		public SharpDX.Matrix3x3 EulerDeltaMatrix = new(); // for non gizmo manipulation, euler based, which must have an effect on the gizmo
 
 		public OPERATION? ForceOp = null;
@@ -42,23 +43,6 @@ namespace Ktisis.Overlay {
 				ref scale.X
 			);
 		}
-		public (Vector3, Vector3, Vector3) Decompose()
-		{
-			Vector3 pos = new();
-			Vector3 rot = new();
-			Vector3 scale = new();
-			DecomposeMatrix(ref pos, ref rot, ref scale);
-			return (pos, rot, scale);
-		}
-
-		public void DecomposeDelta(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
-			ImGuizmo.DecomposeMatrixToComponents(
-				ref Delta.M11,
-				ref pos.X,
-				ref rot.X,
-				ref scale.X
-			);
-		}
 
 		// Draw
 
@@ -73,16 +57,15 @@ namespace Ktisis.Overlay {
 			ImGuizmo.AllowAxisFlip(Ktisis.Configuration.AllowAxisFlip);
 		}
 
-		public void InsertEulerDeltaMatrix(Vector3 posDelta,Vector3 rotDelta,Vector3 scaDelta)
-		{
+		public void InsertEulerDeltaMatrix(Vector3 posDelta, Vector3 rotDelta, Vector3 scaDelta) {
 			EulerDeltaMatrix = new(
 				posDelta.X, posDelta.Y, posDelta.Z,
 				rotDelta.X, rotDelta.Y, rotDelta.Z,
 				scaDelta.X, scaDelta.Y, scaDelta.Z
 			);
 		}
-		internal bool ManipulateEuler()
-		{
+
+		internal bool ManipulateEuler() {
 			// skip if no delta detected
 			bool isActive = EulerDeltaMatrix != new SharpDX.Matrix3x3();
 			if (!isActive) return false;
@@ -104,6 +87,7 @@ namespace Ktisis.Overlay {
 			EulerDeltaMatrix = new();
 			return true;
 		}
+
 		internal unsafe bool Manipulate() {
 			var camera = Services.Camera->Camera;
 			var view = camera->GetViewMatrix();
@@ -114,8 +98,7 @@ namespace Ktisis.Overlay {
 				ref proj.M11,
 				ForceOp ?? Operation,
 				Mode,
-				ref Matrix.M11,
-				ref Delta.M11
+				ref Matrix.M11
 			);
 		}
 

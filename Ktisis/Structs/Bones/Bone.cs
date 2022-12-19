@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using static FFXIVClientStructs.Havok.hkaPose;
-
-using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
+using Ktisis.Interface.Locale;
 
-namespace Ktisis.Structs.Bones {
-	public class Bone {
+namespace Ktisis.Structs.Bones
+{
+    public class Bone {
 		public int Index;
 		public int Partial;
 		public unsafe hkaPose* Pose;

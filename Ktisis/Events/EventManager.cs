@@ -2,11 +2,9 @@ using Dalamud.Game.ClientState.Keys;
 
 using FFXIVClientStructs.Havok;
 using static FFXIVClientStructs.Havok.hkaPose;
-
-using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Input;
+using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Events {
 	public static class EventManager {

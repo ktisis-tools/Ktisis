@@ -5,18 +5,17 @@ using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 
+using Ktisis.Events;
+using Ktisis.History;
+using Ktisis.Structs.Actor;
+using Ktisis.Structs.Actor.State;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
-using Ktisis.Interface.Windows.ActorEdit;
-using Ktisis.Interface.Windows.Workspace;
-using Ktisis.Structs.Actor.State;
-using Ktisis.Structs.Actor;
-using Ktisis.History;
-using Ktisis.Events;
-using Ktisis.Overlay;
+using Ktisis.Interface.Overlay;
 
-namespace Ktisis {
-	public sealed class Ktisis : IDalamudPlugin {
+namespace Ktisis
+{
+    public sealed class Ktisis : IDalamudPlugin {
 		public string Name => "Ktisis";
 		public string CommandName = "/ktisis";
 
@@ -44,7 +43,7 @@ namespace Ktisis {
 
 			if (Configuration.IsFirstTimeInstall) {
 				Configuration.IsFirstTimeInstall = false;
-				Information.Show();
+				//Information.Show();
 			}
 			if (Configuration.LastPluginVer != Version) {
 				Configuration.LastPluginVer = Version;
@@ -64,10 +63,10 @@ namespace Ktisis {
 			Interop.Hooks.GuiHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 
-			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.Init()
+			EventManager.OnGPoseChange += Workspace.OnGPoseChange;
 
 			Input.Init();
-			ActorStateWatcher.Init();
+			ActorStateWatcher.Init(); // TODO: Refactor this.
 
 			// Register command
 
@@ -80,18 +79,18 @@ namespace Ktisis {
 			if (Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
 				Workspace.Show();
 
-			pluginInterface.UiBuilder.OpenConfigUi += ConfigGui.Toggle;
+			//pluginInterface.UiBuilder.OpenConfigUi += ConfigGui.Toggle;
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
 
 			HistoryManager.Init();
-			References.LoadReferences(Configuration);
+			//References.LoadReferences(Configuration);
 		}
 
 		public void Dispose() {
 			Services.CommandManager.RemoveHandler(CommandName);
 			Services.PluginInterface.SavePluginConfig(Configuration);
-			Services.PluginInterface.UiBuilder.OpenConfigUi -= ConfigGui.Toggle;
+			//Services.PluginInterface.UiBuilder.OpenConfigUi -= ConfigGui.Toggle;
 
 			OverlayWindow.DeselectGizmo();
 
@@ -103,19 +102,19 @@ namespace Ktisis {
 
 			Interop.Alloc.Dispose();
 			ActorStateWatcher.Dispose();
-			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
+			// EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
 			Data.Sheets.Cache.Clear();
 
-			if (EditEquip.Items != null)
-				EditEquip.Items = null;
+			//if (EditEquip.Items != null)
+				//EditEquip.Items = null;
 
 			Input.Dispose();
 			HistoryManager.Dispose();
 
-			foreach (var (_, texture) in References.Textures) {
+			/*foreach (var (_, texture) in References.Textures) {
 				texture.Dispose();
-			}
+			}*/
 		}
 
 		private void OnCommand(string command, string arguments) {
@@ -123,13 +122,13 @@ namespace Ktisis {
 				case "about":
 				case "info":
 				case "information":
-					Information.Toggle();
+					//Information.Toggle();
 					break;
 				case "cfg":
 				case "config":
 				case "configure":
 				case "configuration":
-					ConfigGui.Toggle();
+					//ConfigGui.Toggle();
 					break;
 				default:
 					Workspace.Toggle();

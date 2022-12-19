@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using ImGuiNET;
 using ImGuizmoNET;
 
-namespace Ktisis.Overlay {
+namespace Ktisis.Interface.Overlay {
 	public static class Selection {
 		internal static List<DrawItem> DrawQueue = new();
 		internal static bool Selecting = false;
@@ -40,7 +40,8 @@ namespace Ktisis.Overlay {
 
 				var radius = dot.GetRadius();
 				draw.AddCircleFilled(dot.Pos, radius, col);
-				if(!isManipulating) draw.AddCircle(dot.Pos, radius, 0xaf000000);
+				if (!isManipulating)
+					draw.AddCircle(dot.Pos, radius, 0xaf000000);
 			}
 			Selecting = hovered.Count > 0;
 

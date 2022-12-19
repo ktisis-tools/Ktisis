@@ -32,13 +32,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Locale\i18n\English.json" />
-    <None Remove="Locale\i18n\German.json" />
+    <None Remove="Interface\Locale\i18n\English.json" />
+    <None Remove="Interface\Locale\i18n\German.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Locale\i18n\German.json" />
-    <EmbeddedResource Include="Locale\i18n\English.json" />
+    <EmbeddedResource Include="Interface\Locale\i18n\German.json" />
+    <EmbeddedResource Include="Interface\Locale\i18n\English.json" />
   </ItemGroup>
 
   <ItemGroup>

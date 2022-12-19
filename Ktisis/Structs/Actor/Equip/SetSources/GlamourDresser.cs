@@ -117,8 +117,8 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 
 		internal static void PopupOfferOpenGlamourPlates_open() {
 			// This is a way to actively get the data, with the user's authorization
-			if (GameMain.IsInSanctuary())
-				Interface.Components.Equipment.OpenGlamourQuestionPopup();
+			//if (GameMain.IsInSanctuary())
+				//Interface.Components.Equipment.OpenGlamourQuestionPopup();
 		}
 		public static EquipSlot GlamourPlateSlotToEquipSlot(GlamourPlateSlot slot) => (EquipSlot)((int)slot + ((int)slot > 4 ? 1 : 0));
 

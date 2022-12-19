@@ -9,7 +9,7 @@ using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;
 using Ktisis.Events;
 
-namespace Ktisis.Overlay {
+namespace Ktisis.Interface.Overlay {
 	public static class OverlayWindow {
 		// Rendering
 
@@ -46,7 +46,7 @@ namespace Ktisis.Overlay {
 		}
 
 		public static bool IsCursorBusy() =>
-			(GizmoOwner != null && (ImGuizmo.IsUsing() || ImGuizmo.IsOver()))
+			GizmoOwner != null && (ImGuizmo.IsUsing() || ImGuizmo.IsOver())
 			|| ImGui.IsAnyItemActive() || ImGui.IsAnyItemHovered()
 			|| ImGui.IsAnyItemFocused() || ImGui.IsAnyMouseDown()
 			|| ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow);

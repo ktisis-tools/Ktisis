@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using Ktisis.Interface;
-
-namespace Ktisis.Localization {
+namespace Ktisis.Interface.Locale {
 	public static class Locale {
 		public static UserLocale Loaded = UserLocale.None;
 		public static JObject Strings = new();
@@ -27,7 +25,7 @@ namespace Ktisis.Localization {
 				Loaded = lang;
 
 				try {
-					var file = new StreamReader( GetLocaleFile(lang) );
+					var file = new StreamReader(GetLocaleFile(lang));
 					using (var reader = new JsonTextReader(file))
 						Strings = (JObject)JToken.ReadFrom(reader);
 				} catch {
@@ -41,14 +39,15 @@ namespace Ktisis.Localization {
 		public static string GetBoneName(string handle) {
 			return Ktisis.Configuration.TranslateBones ? GetString(handle) : handle;
 		}
+
 		public static string GetInputPurposeName(Input.Purpose purpose) {
 			string regularPurposeString = $"Keyboard_Action_{purpose}";
-			if(Strings.ContainsKey(regularPurposeString))
+			if (Strings.ContainsKey(regularPurposeString))
 				return GetString(regularPurposeString);
 
 			bool isHold = (int)purpose >= Input.FirstCategoryPurposeHold && (int)purpose < Input.FirstCategoryPurposeToggle;
 			bool isToggle = (int)purpose >= Input.FirstCategoryPurposeToggle;
-			string actionHandle = isHold ? "Input_Generic_Hold" : (isToggle ? "Input_Generic_Toggle" : "Input_Generic_Not_Applicable");
+			string actionHandle = isHold ? "Input_Generic_Hold" : isToggle ? "Input_Generic_Toggle" : "Input_Generic_Not_Applicable";
 
 			if (Input.PurposesCategories.TryGetValue(purpose, out var category))
 				return GetString(actionHandle) + " " + GetString(category.Name);
@@ -57,7 +56,7 @@ namespace Ktisis.Localization {
 		}
 
 		public static Stream GetLocaleFile(UserLocale lang) {
-			Assembly assembly = Assembly.GetExecutingAssembly();
+			var assembly = Assembly.GetExecutingAssembly();
 			string assemblyName = assembly.GetName().Name!;
 
 			var path = $"{assemblyName}.Locale.i18n.{lang}.json";
