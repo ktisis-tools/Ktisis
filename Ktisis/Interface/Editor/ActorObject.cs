@@ -32,9 +32,16 @@ namespace Ktisis.Interface.Editor {
 			ImGui.PushStyleColor(ImGuiCol.Text, RootObjectCol);
 			var expand = Tree.CollapsibleNode(actor->GetNameOrId(), 0, Select);
 			ImGui.PopStyleColor();
+
 			if (expand) {
+				var start = Tree.LineStart();
+
 				DrawBoneTree();
 				ImGui.TreePop();
+
+				var col = RootObjectCol;
+				col.W = 0.75f;
+				Tree.LineEnd(start, col);
 			}
 		}
 		internal override void DrawWorldNode() { }
@@ -72,6 +79,9 @@ namespace Ktisis.Interface.Editor {
 						continue;
 
 					var bone = modelSkele->GetBone(p, i);
+					if (p > 0 && bone.HkaBone.Name.String == "j_ago")
+						continue;
+
 					var cat = bone.GetCategory();
 
 					if (bones.ContainsKey(cat))
@@ -102,6 +112,8 @@ namespace Ktisis.Interface.Editor {
 			ImGui.PopStyleColor();
 
 			if (expand) {
+				var start = Tree.LineStart();
+
 				foreach (var child in category.SubCategories)
 					DrawCategoryNode(bones, child);
 
@@ -110,6 +122,10 @@ namespace Ktisis.Interface.Editor {
 						Tree.LeafNode(bone.LocaleName);
 					}
 				}
+
+				var col = SubCategoryCol;
+				col.W = 0.75f;
+				Tree.LineEnd(start, col);
 
 				ImGui.TreePop();
 			}
