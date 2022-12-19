@@ -5,69 +5,84 @@ using System.Collections.Generic;
 using ImGuiNET;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Windowing;
 using Dalamud.Game.ClientState.Objects.Types;
 
-using Ktisis.Interop.Hooks;
+using Ktisis.Events;
 using Ktisis.Structs.Actor;
+using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Editor;
 using Ktisis.Interface.Library;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Components.Posing;
 
-namespace Ktisis.Interface.Windows
-{
-    public static class Workspace {
-		public static bool Visible = false;
-		public static void Show() => Visible = true;
-		public static void Toggle() => Visible = !Visible;
+namespace Ktisis.Interface.Windows {
+	public class Workspace : Window {
+		public static string Name = $"Ktisis ({Ktisis.Version})##Workspace";
 
 		public static List<Manipulable> Items = new();
 
-		internal unsafe static void OnGPoseChange(bool state) {
+		// Constructor
+
+		public Workspace() : base(
+			Name, ImGuiWindowFlags.None
+		) {
+			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
+				IsOpen = true;
+			else if (Ktisis.IsInGPose)
+				OnGPoseChange(true);
+
+			EventManager.OnGPoseChange += OnGPoseChange;
+		}
+
+		// Listen for GPose event to open/close
+
+		internal void OnGPoseChange(bool state) {
 			if (state) {
-				var tar = Ktisis.GPoseTarget;
-				if (tar != null) {
-					var actor = (Actor*)tar.Address;
-					Items.Add(new ActorObject(actor->ObjectID));
+				unsafe {
+					var tar = Ktisis.GPoseTarget;
+					if (tar != null) {
+						var actor = (Actor*)tar.Address;
+						Items.Add(new ActorObject(actor->ObjectID));
+					}
 				}
 			} else {
 				Items.Clear();
 			}
 
 			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnEnterGpose)
-				Visible = state;
+				IsOpen = state;
 		}
 
-		// Draw main window
+		// Draw window
 
-		public static void Draw() {
-			if (!Visible) return;
+		public override void Draw() {
+			// Set size constraints
 
 			var displaySize = ImGui.GetIO().DisplaySize;
 
-			ImGui.SetNextWindowSizeConstraints(
-				new Vector2(250, 124),
-				new Vector2(displaySize.X * 0.25f, displaySize.Y * 0.75f)
-			);
+			SizeConstraints = new WindowSizeConstraints {
+				MinimumSize = new Vector2(250, 110),
+				MaximumSize = new Vector2(displaySize.X * 0.5f, displaySize.Y * 0.75f)
+			};
 
-			if (ImGui.Begin($"Ktisis ({Ktisis.Version})", ref Visible)) {
-				var gposeOn = Ktisis.IsInGPose;
+			// Interface
 
-				PoseState.DrawPoseState(gposeOn);
-				ImGui.SameLine();
-				PoseState.DrawPoseSwitch(gposeOn);
+			var gposeOn = Ktisis.IsInGPose;
 
-				ImGui.Spacing();
+			PoseState.DrawPoseState(gposeOn);
+			ImGui.SameLine();
+			PoseState.DrawPoseSwitch(gposeOn);
 
-				DrawSelectState();
+			ImGui.Spacing();
 
-				ImGui.Spacing();
-				//ImGui.Separator();
+			DrawSelectState();
 
-				DrawSceneTree();
+			ImGui.Spacing();
 
-				ImGui.End();
-			}
+			DrawSceneTree();
+
+			ImGui.End();
 		}
 
 		// Draw selection state
@@ -142,10 +157,6 @@ namespace Ktisis.Interface.Windows
 					item.DrawTreeNode();
 				}
 			}
-		}
-
-		private static void DrawTreeItem() {
-
 		}
 	}
 }

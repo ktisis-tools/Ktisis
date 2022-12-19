@@ -1,32 +1,17 @@
+using Dalamud.Interface.Windowing;
+
 using Ktisis.Interface.Windows;
-using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Interface {
     public static class KtisisGui {
-		//public static FileDialogManager FileDialogManager = new FileDialogManager();
+		public static WindowSystem Windows = new("Ktisis");
 
 		static KtisisGui() {
-			/*FileDialogManager.CustomSideBarItems.Add((
-				"Anamnesis",
-				Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/Anamnesis",
-				FontAwesomeIcon.None,
-				0
-			));*/
+			Windows.AddWindow(new Workspace());
 		}
 
-		public static void Draw() {
-			//FileDialogManager.Draw();
+		public static void Draw() => Windows.Draw();
 
-			// Overlay
-			OverlayWindow.Draw();
-
-			// GUI
-			Workspace.Draw();
-			//ConfigGui.Draw();
-			//Information.Draw();
-			//EditActor.Draw();
-			//References.Draw();
-			//ToolbarWindow.Draw();
-		}
+		public static Window? GetWindow(string name) => Windows.GetWindow(name);
 	}
 }
