@@ -64,11 +64,11 @@ namespace Ktisis.Structs.Actor {
 			Methods.ActorChangeEquip(GetAddress() + 0x6D0, index, item);
 		}
 		public void Equip(List<(EquipSlot, object)> items) {
-			foreach ((EquipSlot slot, object item) in items)
+			/*foreach ((EquipSlot slot, object item) in items)
 				if (item is ItemEquip equip)
-					Equip(Interface.Windows.ActorEdit.EditEquip.SlotToIndex(slot), equip);
+					Equip(Interface.Windows.ActorEdit.EditEquip.SlotToIndex(slot), equip); // TOOD: Not this.
 				else if (item is WeaponEquip wep)
-					Equip((int)slot, wep);
+					Equip((int)slot, wep);*/
 		}
 
 		public void Equip(int slot, WeaponEquip item) {

@@ -10,11 +10,11 @@ using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Interface;
-using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip.SetSources;
 using Ktisis.Structs.Poses;
 using static Ktisis.Data.Files.AnamCharaFile;
+using Ktisis.Interface.Locale;
 
 namespace Ktisis
 {

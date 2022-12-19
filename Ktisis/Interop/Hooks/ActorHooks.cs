@@ -3,7 +3,6 @@ using System;
 using Dalamud.Hooking;
 
 using Ktisis.Structs.Actor;
-using Ktisis.Interface.Windows.Workspace;
 
 namespace Ktisis.Interop.Hooks {
 	internal static class ActorHooks {
@@ -15,7 +14,7 @@ namespace Ktisis.Interop.Hooks {
 
 		internal unsafe static IntPtr ControlGaze(IntPtr a1) {
 			var actor = (Actor*)(a1 - 0xC10);
-			EditGaze.Apply(actor);
+			//EditGaze.Apply(actor);
 			return ControlGazeHook.Original(a1);
 		}
 

@@ -2,13 +2,14 @@ using System;
 using System.Numerics;
 
 using ImGuiNET;
+
 using ImGuizmoNET;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 
-namespace Ktisis.Overlay {
+namespace Ktisis.Interface.Overlay {
 	public static class Skeleton {
 		// Allow other classes to retrieve the currently selected bone.
 		// OverlayWindow sets Active and Update to false before every Draw call.
@@ -50,7 +51,8 @@ namespace Ktisis.Overlay {
 				if (gizmo != null) {
 					var matrix = Interop.Alloc.GetMatrix(&model->Transform);
 					gizmo.Matrix = matrix;
-					if (gizmo.Draw()) {
+					if (gizmo.Draw())
+					{
 						matrix = gizmo.Matrix;
 						Interop.Alloc.SetMatrix(&model->Transform, matrix);
 					}
@@ -89,8 +91,10 @@ namespace Ktisis.Overlay {
 
 					// Get bone color and screen position
 					var boneColRgb = Ktisis.Configuration.GetCategoryColor(bone);
-					if (isUsing) boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacityWhileUsing;
-					else boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacity;
+					if (isUsing)
+						boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacityWhileUsing;
+					else
+						boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacity;
 
 					var boneColor = ImGui.GetColorU32(boneColRgb);
 					var isVisible = world->WorldToScreen(bone.GetWorldPos(model), out var pos2d);

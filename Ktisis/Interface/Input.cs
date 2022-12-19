@@ -10,14 +10,13 @@ using Dalamud.Game.ClientState.Keys;
 using FFXIVClientStructs.FFXIV.Client.UI;
 
 using Ktisis.Events;
-using Ktisis.Overlay;
 using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
-using Ktisis.Interface.Components;
+using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Interface {
-	public static class Input {
+    public static class Input {
 		// When adding a new keybind:
 		//  - add the logic in Monitor
 		//      (held/release/changed [+ extra conditions] and what it executes )
@@ -84,7 +83,7 @@ namespace Ktisis.Interface {
 						Category.VisibilityOverload.Clear();
 						break;
 					case Purpose.CircleThroughSiblingLinkModes:
-						ControlButtons.CircleTroughSiblingLinkModes();
+						//ControlButtons.CircleTroughSiblingLinkModes();
 						break;
 					case Purpose.DeselectGizmo:
 						if (OverlayWindow.GizmoOwner == null)
