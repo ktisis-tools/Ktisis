@@ -201,11 +201,9 @@ namespace Ktisis.Interface {
 			get => Enum.GetValues<Purpose>().ToImmutableList();
 		}
 
-		public static IEnumerable<Purpose> PurposesWithCategories {
-			get {
-				return Enum.GetValues<Purpose>().Concat(PurposesCategories.Keys).ToList();
-			}
-		}
+		public static IEnumerable<Purpose> PurposesWithCategories =>
+			Enum.GetValues<Purpose>().Concat(PurposesCategories.Keys).ToList();
+
 		public static void GeneratePurposesCategories() {
 
 			int i = FirstCategoryPurposeHold; // start of categories in Purpose enum
