@@ -177,6 +177,7 @@ namespace Ktisis.Interface {
 		// Init & dispose
 
 		public static void Init() {
+			GeneratePurposesCategories();
 			EventManager.OnKeyPressed += OnKeyPressed;
 			EventManager.OnKeyReleased += OnKeyReleased;
 		}
@@ -202,25 +203,23 @@ namespace Ktisis.Interface {
 
 		public static IEnumerable<Purpose> PurposesWithCategories {
 			get {
-				var purposesWithCategories = Enum.GetValues<Purpose>().ToList();
+				return Enum.GetValues<Purpose>().Concat(PurposesCategories.Keys).ToList();
+			}
+		}
+		public static void GeneratePurposesCategories() {
 
-				int i = FirstCategoryPurposeHold; // start of categories in Purpose enum
-				foreach (var category in Category.Categories) {
-					PurposesCategories.TryAdd((Purpose)i, category.Value);
-					PurposesCategoriesHold.TryAdd((Purpose)i, category.Value);
-					purposesWithCategories.Add((Purpose)i);
-					i++;
-				}
+			int i = FirstCategoryPurposeHold; // start of categories in Purpose enum
+			foreach (var category in Category.Categories) {
+				PurposesCategories.TryAdd((Purpose)i, category.Value);
+				PurposesCategoriesHold.TryAdd((Purpose)i, category.Value);
+				i++;
+			}
 
-				i = FirstCategoryPurposeToggle; // start of categories in Purpose enum
-				foreach (var category in Category.Categories) {
-					PurposesCategories.TryAdd((Purpose)i, category.Value);
-					PurposesCategoriesToggle.TryAdd((Purpose)i, category.Value);
-					purposesWithCategories.Add((Purpose)i);
-					i++;
-				}
-
-				return purposesWithCategories;
+			i = FirstCategoryPurposeToggle; // start of categories in Purpose enum
+			foreach (var category in Category.Categories) {
+				PurposesCategories.TryAdd((Purpose)i, category.Value);
+				PurposesCategoriesToggle.TryAdd((Purpose)i, category.Value);
+				i++;
 			}
 		}
 
