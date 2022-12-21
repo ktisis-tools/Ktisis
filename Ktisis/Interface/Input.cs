@@ -204,7 +204,7 @@ namespace Ktisis.Interface {
 		public static IEnumerable<Purpose> PurposesWithCategories =>
 			Enum.GetValues<Purpose>().Concat(PurposesCategories.Keys).ToList();
 
-		public static void GeneratePurposesCategories() {
+		private static void GeneratePurposesCategories() {
 
 			int i = FirstCategoryPurposeHold; // start of categories in Purpose enum
 			foreach (var category in Category.Categories) {
