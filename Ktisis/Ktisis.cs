@@ -122,7 +122,7 @@ namespace Ktisis
 					//ConfigGui.Toggle();
 					break;
 				default:
-					KtisisGui.GetWindow(Workspace.Name)?.Toggle();
+					KtisisGui.GetWindow(Sidebar.Name)?.Toggle();
 					break;
 			}
 		}
