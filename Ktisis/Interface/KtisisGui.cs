@@ -7,7 +7,7 @@ namespace Ktisis.Interface {
 		public static WindowSystem Windows = new("Ktisis");
 
 		static KtisisGui() {
-			Windows.AddWindow(new Workspace());
+			Windows.AddWindow(new Sidebar());
 		}
 
 		public static void Draw() => Windows.Draw();

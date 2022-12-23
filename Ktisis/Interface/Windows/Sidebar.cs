@@ -11,20 +11,20 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Events;
 using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
-using Ktisis.Interface.Editor;
 using Ktisis.Interface.Library;
 using Ktisis.Interface.Overlay;
+using Ktisis.Interface.Workspace;
 using Ktisis.Interface.Components.Posing;
 
 namespace Ktisis.Interface.Windows {
-	public class Workspace : Window {
-		public static string Name = $"Ktisis ({Ktisis.Version})##Workspace";
+	public class Sidebar : Window {
+		public static string Name = $"Ktisis ({Ktisis.Version})##Sidebar";
 
 		public static List<Manipulable> Items = new();
 
 		// Constructor
 
-		public Workspace() : base(
+		public Sidebar() : base(
 			Name, ImGuiWindowFlags.None
 		) {
 			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)

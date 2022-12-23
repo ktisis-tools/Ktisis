@@ -10,7 +10,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using Ktisis.Interface.Library;
 
-namespace Ktisis.Interface.Editor {
+namespace Ktisis.Interface.Workspace {
 	public class ActorObject : Manipulable {
 		// Manipulable
 
