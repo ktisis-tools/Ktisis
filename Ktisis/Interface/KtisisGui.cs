@@ -20,9 +20,12 @@ namespace Ktisis.Interface {
 	}
 
 	public abstract class KtisisWindow : Window {
-		public KtisisWindow(string name, ImGuiWindowFlags flags = ImGuiWindowFlags.None, bool forceMainWindow = false)
-			: base(name, flags, forceMainWindow)
-			=> KtisisGui.Windows.AddWindow(this);
+		public KtisisWindow(string name, ImGuiWindowFlags flags = ImGuiWindowFlags.None, bool forceMainWindow = false) : base(name, flags, forceMainWindow) {
+			var exists = KtisisGui.GetWindow(name);
+			if (exists != null)
+				KtisisGui.Windows.RemoveWindow(exists);
+			KtisisGui.Windows.AddWindow(this);
+		}
 
 		public void Show() => IsOpen = true;
 		public void Close() => IsOpen = false;

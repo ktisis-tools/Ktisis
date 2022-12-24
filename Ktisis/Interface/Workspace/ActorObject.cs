@@ -25,7 +25,7 @@ namespace Ktisis.Interface.Workspace {
 			PluginLog.Information($"Select {Index}");
 		}
 		public override void Context() {
-			var ctx = ContextMenu.Open();
+			var ctx = new ContextMenu();
 
 			ctx.AddSection(new() {
 				{ "Select", Select },
@@ -33,9 +33,9 @@ namespace Ktisis.Interface.Workspace {
 			});
 
 			ctx.AddSection(new() {
-				{ "Appearance Editor", null! },
-				{ "Animation Control", null! },
-				{ "Gaze Control", null! }
+				{ "Open appearance editor", null! },
+				{ "Open animation control", null! },
+				{ "Open gaze control", null! }
 			});
 
 			ctx.Show();
