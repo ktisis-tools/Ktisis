@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
+using System.Xml.Linq;
 
 namespace Ktisis.Interface.Dialog {
 	public class ContextMenu : KtisisWindow {
@@ -21,10 +22,8 @@ namespace Ktisis.Interface.Dialog {
 
 		// ContextMenu
 
-		private const string Name = "##Ktisis_ContextMenu";
-
 		public ContextMenu() : base(
-			Name,
+			"##Ktisis_ContextMenu",
 			ImGuiWindowFlags.NoDecoration
 			^ ImGuiWindowFlags.NoMove
 			^ ImGuiWindowFlags.AlwaysAutoResize
