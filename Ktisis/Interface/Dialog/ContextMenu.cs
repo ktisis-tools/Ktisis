@@ -32,27 +32,19 @@ namespace Ktisis.Interface.Dialog {
 			Items = new();
 		}
 
-		public static ContextMenu Open() {
-			var window = (ContextMenu?)KtisisGui.GetWindow(Name);
-			if (window != null)
-				window.OnClose();
-			return window ?? new();
-		}
-
 		public List<ContextMenuItem> Items;
 
 		public void AddItem(string label, Action? callback) => Items.Add(new ContextMenuItem(label, callback));
-		public void AddSection(Dictionary<string, Action> items) {
+		public void AddSection(Dictionary<string, Action> items, bool separator = true) {
 			var list = new List<ContextMenuItem>();
 			foreach (var (label, callback) in items)
 				list.Add(new ContextMenuItem(label, callback));
-			AddSection(list);
+			AddSection(list, separator);
 		}
 
-		private void AddItem(ContextMenuItem item) => Items.Add(item);
 		private void AddItems(List<ContextMenuItem> items) => Items.AddRange(items);
-		private void AddSection(List<ContextMenuItem> items) {
-			if (Items.Count > 0 && items.Count > 0)
+		private void AddSection(List<ContextMenuItem> items, bool separator = true) {
+			if (separator && Items.Count > 0 && items.Count > 0)
 				items[0].Separator = true;
 			AddItems(items);
 		}
