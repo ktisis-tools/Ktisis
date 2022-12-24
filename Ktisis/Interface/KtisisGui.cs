@@ -1,3 +1,7 @@
+using System;
+
+using ImGuiNET;
+
 using Dalamud.Interface.Windowing;
 
 using Ktisis.Interface.Windows;
@@ -13,5 +17,16 @@ namespace Ktisis.Interface {
 		public static void Draw() => Windows.Draw();
 
 		public static Window? GetWindow(string name) => Windows.GetWindow(name);
+	}
+
+	public abstract class KtisisWindow : Window {
+		public KtisisWindow(string name, ImGuiWindowFlags flags = ImGuiWindowFlags.None, bool forceMainWindow = false)
+			: base(name, flags, forceMainWindow)
+			=> KtisisGui.Windows.AddWindow(this);
+
+		public void Show() => IsOpen = true;
+		public void Close() => IsOpen = false;
+
+		public override void OnClose() => KtisisGui.Windows.RemoveWindow(this);
 	}
 }

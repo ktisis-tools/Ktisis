@@ -9,10 +9,10 @@ namespace Ktisis.Interface.Library {
 	internal static class Tree {
 		// Nodes
 
-		internal static bool CollapsibleNode(string label, ImGuiTreeNodeFlags flag, Action? callback = null) {
-			var expand = ImGui.TreeNodeEx(label, flag);
+		internal static bool CollapsibleNode(string label, ImGuiTreeNodeFlags flags = 0, Action? leftClick = null, Action? rightClick = null) {
+			var expand = ImGui.TreeNodeEx(label, ImGuiTreeNodeFlags.OpenOnArrow ^ flags);
 
-			var rectMin = ImGui.GetItemRectMin() + new System.Numerics.Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
+			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();
 
 			var mousePos = ImGui.GetMousePos();
@@ -23,8 +23,12 @@ namespace Ktisis.Interface.Library {
 			var canClick = mousePos.X > rectMin.X && mousePos.X < rectMax.X
 				&& mousePos.Y > rectMin.Y && mousePos.Y < rectMax.Y;
 
-			if (canClick && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-				callback?.Invoke();
+			if (canClick) {
+				if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+					leftClick?.Invoke();
+				if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+					rightClick?.Invoke();
+			}
 
 			return expand;
 		}

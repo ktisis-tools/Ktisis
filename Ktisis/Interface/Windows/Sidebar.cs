@@ -152,11 +152,9 @@ namespace Ktisis.Interface.Windows {
 		// Draw scene tree
 
 		private static void DrawSceneTree() {
-			if (ImGui.BeginChildFrame(471, new Vector2(-1, -1), ImGuiWindowFlags.HorizontalScrollbar)) {
-				foreach (var item in Items) {
+			if (ImGui.BeginChildFrame(471, new Vector2(-1, -1), ImGuiWindowFlags.HorizontalScrollbar))
+				foreach (var item in Items)
 					item.DrawTreeNode();
-				}
-			}
 		}
 	}
 }
