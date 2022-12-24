@@ -8,6 +8,7 @@ using Dalamud.Logging;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+using Ktisis.Interface.Dialog;
 using Ktisis.Interface.Library;
 
 namespace Ktisis.Interface.Workspace {
@@ -23,14 +24,29 @@ namespace Ktisis.Interface.Workspace {
 		public override void Select() {
 			PluginLog.Information($"Select {Index}");
 		}
-		public override void Options() { }
+		public override void Context() {
+			var ctx = ContextMenu.Open();
+
+			ctx.AddSection(new() {
+				{ "Select", Select },
+				{ "Set nickname...", null! }
+			});
+
+			ctx.AddSection(new() {
+				{ "Appearance Editor", null! },
+				{ "Animation Control", null! },
+				{ "Gaze Control", null! }
+			});
+
+			ctx.Show();
+		}
 
 		internal unsafe override void DrawTreeNode() {
 			var actor = GetActor();
 			if (actor == null) return;
 
 			ImGui.PushStyleColor(ImGuiCol.Text, RootObjectCol);
-			var expand = Tree.CollapsibleNode(actor->GetNameOrId(), 0, Select);
+			var expand = Tree.CollapsibleNode(actor->GetNameOrId(), 0, Select, Context);
 			ImGui.PopStyleColor();
 
 			if (expand) {
