@@ -6,11 +6,13 @@ using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
+using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Events;
 using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
+using Ktisis.Interface.Dialog;
 using Ktisis.Interface.Library;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Workspace;
@@ -80,6 +82,8 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.Spacing();
 
+			ControlButtons();
+
 			DrawSceneTree();
 
 			ImGui.End();
@@ -147,6 +151,50 @@ namespace Ktisis.Interface.Windows {
 			ImGui.EndGroup();
 
 			ImGui.SameLine(size * 2.5f);
+		}
+
+		// Control buttons
+
+		private static void ControlButtons() {
+			ImGui.BeginGroup();
+
+			AddItemButton();
+
+			ImGui.SameLine();
+
+			CameraSelect();
+
+			ImGui.EndGroup();
+		}
+
+		private static void AddItemButton() {
+			if (ImGuiComponents.IconButton(FontAwesomeIcon.Plus)) {
+				var ctx = new ContextMenu();
+
+				ctx.AddSection(new() {
+					{ "Add existing actor...", null! }
+				});
+
+				ctx.AddSection(new() {
+					{ "Create new actor", null! },
+					{ "Create new camera", null! },
+					{ "Create new light source", null! }
+				});
+
+				ctx.Show();
+			}
+		}
+
+		private static void CameraSelect() {
+			if (ImGuiComponents.IconButton(FontAwesomeIcon.Camera)) {
+				// Toggle work camera
+			}
+
+			ImGui.SameLine();
+
+			if (ImGui.BeginCombo("##Ktisis_Cam", "GPose Camera")) {
+				ImGui.EndCombo();
+			}
 		}
 
 		// Draw scene tree
