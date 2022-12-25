@@ -6,7 +6,6 @@ using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
-using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Events;
@@ -23,6 +22,10 @@ namespace Ktisis.Interface.Windows {
 		public static string Name = $"Ktisis ({Ktisis.Version})##Sidebar";
 
 		public static List<Manipulable> Items = new();
+
+		// Constants
+
+		private static Vector2 ControlButtonSize = new Vector2(28, 28);
 
 		// Constructor
 
@@ -64,7 +67,7 @@ namespace Ktisis.Interface.Windows {
 			var displaySize = ImGui.GetIO().DisplaySize;
 
 			SizeConstraints = new WindowSizeConstraints {
-				MinimumSize = new Vector2(250, 110),
+				MinimumSize = new Vector2(270, 110),
 				MaximumSize = new Vector2(displaySize.X * 0.5f, displaySize.Y * 0.75f)
 			};
 
@@ -158,17 +161,29 @@ namespace Ktisis.Interface.Windows {
 		private static void ControlButtons() {
 			ImGui.BeginGroup();
 
+			ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(5, 5));
+
 			AddItemButton();
+
+			ImGui.SameLine();
+
+			OpenEditor();
+
+			ImGui.SameLine();
+
+			OverlayVisibility();
 
 			ImGui.SameLine();
 
 			CameraSelect();
 
+			ImGui.PopStyleVar();
+
 			ImGui.EndGroup();
 		}
 
 		private static void AddItemButton() {
-			if (ImGuiComponents.IconButton(FontAwesomeIcon.Plus)) {
+			if (Buttons.IconButton(FontAwesomeIcon.Plus, ControlButtonSize)) {
 				var ctx = new ContextMenu();
 
 				ctx.AddSection(new() {
@@ -185,16 +200,36 @@ namespace Ktisis.Interface.Windows {
 			}
 		}
 
+		private static void OpenEditor() {
+			if (Buttons.IconButton(FontAwesomeIcon.PencilAlt, ControlButtonSize)) {
+				// TODO
+			}
+		}
+
+		private static void OverlayVisibility() {
+			var visible = Ktisis.Configuration.ShowSkeleton;
+			var tooltip = visible ? "Disable overlay" : "Enable overlay";
+			if (Buttons.IconButtonTooltip(visible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, tooltip, ControlButtonSize))
+				Ktisis.Configuration.ShowSkeleton = !visible;
+		}
+
 		private static void CameraSelect() {
-			if (ImGuiComponents.IconButton(FontAwesomeIcon.Camera)) {
+			var tooltip = false ? "Disable work camera" : "Enable work camera";
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Camera, tooltip, ControlButtonSize)) {
 				// Toggle work camera
 			}
 
 			ImGui.SameLine();
 
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
+
+			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(4, (ControlButtonSize.Y - 17) / 2));
 			if (ImGui.BeginCombo("##Ktisis_Cam", "GPose Camera")) {
 				ImGui.EndCombo();
 			}
+			ImGui.PopStyleVar();
+
+			ImGui.PopItemWidth();
 		}
 
 		// Draw scene tree

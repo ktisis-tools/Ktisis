@@ -11,6 +11,7 @@ using Ktisis.Structs.Actor.State;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
+using ImGuiNET;
 
 namespace Ktisis
 {
