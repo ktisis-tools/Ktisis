@@ -1,9 +1,25 @@
-﻿using System.Numerics;
+﻿using System.Globalization;
+using System.Numerics;
+
+using Dalamud.Interface;
 
 using ImGuiNET;
 
 namespace Ktisis.Interface.Library {
 	internal class Buttons {
+		internal static bool IconButton(FontAwesomeIcon icon, Vector2 size = default, string id = "") {
+			ImGui.PushFont(UiBuilder.IconFont);
+			var clicked = ImGui.Button($"{icon.ToIconString()}##{id}", size);
+			ImGui.PopFont();
+			return clicked;
+		}
+
+		internal static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string id = "") {
+			var clicked = IconButton(icon, size, id);
+			Text.Tooltip(tooltip);
+			return clicked;
+		}
+
 		internal static bool ToggleButton(string id, ref bool v, Vector4 circleColor) {
 			var colors = ImGui.GetStyle().Colors;
 

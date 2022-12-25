@@ -7,5 +7,15 @@ namespace Ktisis.Interface.Library {
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + offset);
 			ImGui.TextUnformatted(text);
 		}
+
+		internal static void Tooltip(string text) {
+			if (!ImGui.IsItemHovered()) return;
+
+			ImGui.BeginTooltip();
+			ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35f);
+			ImGui.TextUnformatted(text);
+			ImGui.PopTextWrapPos();
+			ImGui.EndTooltip();
+		}
 	}
 }
