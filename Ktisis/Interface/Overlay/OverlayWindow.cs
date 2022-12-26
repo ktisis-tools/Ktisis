@@ -6,8 +6,8 @@ using ImGuizmoNET;
 using Dalamud.Interface;
 
 using Ktisis.Interop;
+using Ktisis.Services;
 using Ktisis.Structs.FFXIV;
-using Ktisis.Events;
 
 namespace Ktisis.Interface.Overlay {
 	public static class OverlayWindow {
@@ -87,7 +87,7 @@ namespace Ktisis.Interface.Overlay {
 				var isUsing = ImGuizmo.IsUsing();
 				if (_IsUsing != isUsing) {
 					_IsUsing = isUsing;
-					EventManager.FireOnGizmoChangeEvent(isUsing);
+					EventService.OnGPoseChange!.Invoke(isUsing);
 				}
 
 				Begin();

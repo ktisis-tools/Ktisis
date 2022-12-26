@@ -1,5 +1,3 @@
-using System;
-
 using ImGuiNET;
 
 using Dalamud.Interface.Windowing;
@@ -7,7 +5,7 @@ using Dalamud.Interface.Windowing;
 using Ktisis.Interface.Windows;
 
 namespace Ktisis.Interface {
-    public static class KtisisGui {
+	public static class KtisisGui {
 		public static WindowSystem Windows = new("Ktisis");
 
 		static KtisisGui() {

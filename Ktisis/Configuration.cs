@@ -10,15 +10,14 @@ using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Interface;
-using Ktisis.Structs.Bones;
-using Ktisis.Structs.Actor.Equip.SetSources;
-using Ktisis.Structs.Poses;
-using static Ktisis.Data.Files.AnamCharaFile;
 using Ktisis.Interface.Locale;
+using Ktisis.Structs.Bones;
+using Ktisis.Structs.Poses;
+using Ktisis.Structs.Actor.Equip.SetSources;
+using static Ktisis.Data.Files.AnamCharaFile;
 
-namespace Ktisis
-{
-    [Serializable]
+namespace Ktisis {
+	[Serializable]
 	public class Configuration : IPluginConfiguration {
 		public const int CurVersion = 2;
 		public int Version { get; set; } = CurVersion;

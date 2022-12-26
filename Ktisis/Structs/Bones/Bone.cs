@@ -10,9 +10,8 @@ using Ktisis.Interface.Locale;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
 
-namespace Ktisis.Structs.Bones
-{
-    public class Bone {
+namespace Ktisis.Structs.Bones {
+	public class Bone {
 		public int Index;
 		public int Partial;
 		public unsafe hkaPose* Pose;

@@ -1,3 +1,4 @@
+using Ktisis.Services;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Data.Files {
@@ -5,7 +6,7 @@ namespace Ktisis.Data.Files {
 		public uint[] Colors;
 
 		public HumanCmp() {
-			var file = Services.DataManager.GetFile("chara/xls/charamake/human.cmp")!;
+			var file = DalamudServices.DataManager.GetFile("chara/xls/charamake/human.cmp")!;
 
 			Colors = new uint[file.Data.Length >> 2];
 			for (var i = 0; i < file.Data.Length; i += 4) {

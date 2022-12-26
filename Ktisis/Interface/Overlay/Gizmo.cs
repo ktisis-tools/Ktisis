@@ -4,6 +4,7 @@ using ImGuiNET;
 
 using ImGuizmoNET;
 
+using Ktisis.Services;
 using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Interface.Overlay {
@@ -89,7 +90,7 @@ namespace Ktisis.Interface.Overlay {
 		}
 
 		internal unsafe bool Manipulate() {
-			var camera = Services.Camera->Camera;
+			var camera = DalamudServices.Camera->Camera;
 			var view = camera->GetViewMatrix();
 			var proj = camera->GetProjectionMatrix();
 

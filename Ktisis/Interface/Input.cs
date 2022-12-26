@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 using ImGuizmoNET;
 
@@ -9,7 +9,7 @@ using Dalamud.Game.ClientState.Keys;
 
 using FFXIVClientStructs.FFXIV.Client.UI;
 
-using Ktisis.Events;
+using Ktisis.Services;
 using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Input;
@@ -132,7 +132,7 @@ namespace Ktisis.Interface {
 
 			var match = keys.Count > 0;
 			foreach (var key in keys) {
-				if (!Services.KeyState.IsVirtualKeyValid(key))
+				if (!DalamudServices.KeyState.IsVirtualKeyValid(key))
 					return false;
 				match &= key == input || ControlHooks.KeyboardState.IsKeyDown(key);
 			}
@@ -176,12 +176,12 @@ namespace Ktisis.Interface {
 		// Init & dispose
 
 		public static void Init() {
-			EventManager.OnKeyPressed += OnKeyPressed;
-			EventManager.OnKeyReleased += OnKeyReleased;
+			EventService.OnKeyPressed += OnKeyPressed;
+			EventService.OnKeyReleased += OnKeyReleased;
 		}
 		public static void Dispose() {
-			EventManager.OnKeyPressed -= OnKeyPressed;
-			EventManager.OnKeyReleased -= OnKeyReleased;
+			EventService.OnKeyPressed -= OnKeyPressed;
+			EventService.OnKeyReleased -= OnKeyReleased;
 		}
 
 		// Below are the methods and variables needed for Monitor to handle inputs
@@ -234,7 +234,7 @@ namespace Ktisis.Interface {
 				return FallbackKey;
 
 			foreach (var key in keys)
-				if (!Services.KeyState.IsVirtualKeyValid(key))
+				if (!DalamudServices.KeyState.IsVirtualKeyValid(key))
 					return FallbackKey;
 
 			return keys;
@@ -247,15 +247,15 @@ namespace Ktisis.Interface {
 
 				// check if any other key is pressed, if yes, the state is not true (e.g. to have an action with V, and another with ctrl+V)
 				var allowedKeys = keys.Union(PurposeToVirtualKeys(Purpose.GlobalModifierKey));
-				var otherHeld = Enum.GetValues<VirtualKey>().Any(k => Services.KeyState.IsVirtualKeyValid(k) && !allowedKeys.Any(a => k == a) && Services.KeyState[k]);
+				var otherHeld = Enum.GetValues<VirtualKey>().Any(k => DalamudServices.KeyState.IsVirtualKeyValid(k) && !allowedKeys.Any(a => k == a) && DalamudServices.KeyState[k]);
 
 				if (keys == FallbackKey || otherHeld) state = false;
 				else foreach (var key in keys)
-						state &= Services.KeyState[key];
+						state &= DalamudServices.KeyState[key];
 
 				return (purpose: p, state);
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
-		private unsafe static bool IsChatInputActive() => ((UIModule*)Services.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
+		private unsafe static bool IsChatInputActive() => ((UIModule*)DalamudServices.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
 	}
 }

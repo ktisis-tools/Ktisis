@@ -3,7 +3,7 @@ using System;
 using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Keys;
 
-using Ktisis.Events;
+using Ktisis.Services;
 using Ktisis.Structs.Input;
 
 namespace Ktisis.Interop.Hooks {
@@ -40,8 +40,8 @@ namespace Ktisis.Interop.Hooks {
 					if (k->Event == KeyEvent.AnyKeyHeld) continue; // dont care didnt ask (use KeyEvent.Held)
 					if (k->Event == KeyEvent.Released) continue; // Allow InputHook2 to take care of release events.
 					
-					if (EventManager.OnKeyPressed != null) {
-						var invokeList = EventManager.OnKeyPressed.GetInvocationList();
+					if (EventService.OnKeyPressed != null) {
+						var invokeList = EventService.OnKeyPressed.GetInvocationList();
 						foreach (var invoke in invokeList) {
 							var res = (bool)invoke.Method.Invoke(invoke.Target, new object[] { *k })!;
 							if (res) {
@@ -67,8 +67,8 @@ namespace Ktisis.Interop.Hooks {
 			var exec = InputHook2.Original(a1, a2, a3, a4);
 
 			if (Ktisis.IsInGPose && a2 == 257) { // Released
-				if (EventManager.OnKeyReleased != null)
-					EventManager.OnKeyReleased((VirtualKey)a3);
+				if (EventService.OnKeyReleased != null)
+					EventService.OnKeyReleased((VirtualKey)a3);
 			}
 
 			return exec;
@@ -78,11 +78,11 @@ namespace Ktisis.Interop.Hooks {
 
 		internal static void Init() {
 			unsafe {
-				var addr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 83 7B 58 00");
+				var addr = DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? 83 7B 58 00");
 				InputHook = Hook<InputDelegate>.FromAddress(addr, InputDetour);
 				InputHook.Enable();
 
-				var addr2 = Services.SigScanner.ScanText("48 89 5C 24 ?? 55 56 57 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 40 4D 8B F9");
+				var addr2 = DalamudServices.SigScanner.ScanText("48 89 5C 24 ?? 55 56 57 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 40 4D 8B F9");
 				InputHook2 = Hook<InputDelegate2>.FromAddress(addr2, InputDetour2);
 				InputHook2.Enable();
 			}

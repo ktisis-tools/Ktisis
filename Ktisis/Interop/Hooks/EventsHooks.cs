@@ -8,17 +8,18 @@ using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
+using Ktisis.Services;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
 
 namespace Ktisis.Interop.Hooks {
 	public class EventsHooks {
 		public static void Init() {
-			Services.AddonManager = new AddonManager();
-			Services.ClientState.Login += OnLogin;
-			Services.ClientState.Logout += OnLogout;
+			DalamudServices.AddonManager = new AddonManager();
+			DalamudServices.ClientState.Login += OnLogin;
+			DalamudServices.ClientState.Logout += OnLogout;
 
-			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
+			var MiragePrismMiragePlate = DalamudServices.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent += OnGlamourPlatesReceiveEvent;
 
 			OnGposeEnter(); // TODO: move this call on "enter gpose" event
@@ -26,11 +27,11 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		public static void Dispose() {
-			Services.AddonManager.Dispose();
-			Services.ClientState.Logout -= OnLogout;
-			Services.ClientState.Login -= OnLogin;
+			DalamudServices.AddonManager.Dispose();
+			DalamudServices.ClientState.Logout -= OnLogout;
+			DalamudServices.ClientState.Login -= OnLogin;
 
-			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
+			var MiragePrismMiragePlate = DalamudServices.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent -= OnGlamourPlatesReceiveEvent;
 
 			OnGposeLeave();
@@ -45,11 +46,11 @@ namespace Ktisis.Interop.Hooks {
 			Sets.Dispose();
 		}
 		private static void OnGposeEnter() {
-			var ClickTargetAddon = Services.AddonManager.Get<ClickTargetAddon>();
+			var ClickTargetAddon = DalamudServices.AddonManager.Get<ClickTargetAddon>();
 			ClickTargetAddon.Enable();
 		}
 		private static void OnGposeLeave() {
-			var ClickTargetAddon = Services.AddonManager.Get<ClickTargetAddon>();
+			var ClickTargetAddon = DalamudServices.AddonManager.Get<ClickTargetAddon>();
 			ClickTargetAddon.Dispose();
 		}
 
@@ -125,8 +126,8 @@ namespace Ktisis.Interop.Hooks {
 		private readonly Hook<ClickTarget>? leftClickTargetHook;
 
 		public ClickTargetAddon() {
-			rightClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), RightClickTargetDetour);
-			leftClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), LeftClickTargetDetour);
+			rightClickTargetHook ??= Hook<ClickTarget>.FromAddress(DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), RightClickTargetDetour);
+			leftClickTargetHook ??= Hook<ClickTarget>.FromAddress(DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), LeftClickTargetDetour);
 		}
 
 		public void Enable() {

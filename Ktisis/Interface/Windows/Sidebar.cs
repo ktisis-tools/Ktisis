@@ -8,7 +8,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Game.ClientState.Objects.Types;
 
-using Ktisis.Events;
+using Ktisis.Services;
 using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Dialog;
@@ -32,12 +32,14 @@ namespace Ktisis.Interface.Windows {
 		public Sidebar() : base(
 			Name, ImGuiWindowFlags.None
 		) {
+			RespectCloseHotkey = false;
+
 			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
 				IsOpen = true;
 			else if (Ktisis.IsInGPose)
 				OnGPoseChange(true);
 
-			EventManager.OnGPoseChange += OnGPoseChange;
+			EventService.OnGPoseChange += OnGPoseChange;
 		}
 
 		// Listen for GPose event to open/close

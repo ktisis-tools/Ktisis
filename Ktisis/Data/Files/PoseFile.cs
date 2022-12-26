@@ -1,11 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
 using Ktisis.Structs.Poses;
 
 namespace Ktisis.Data.Files {
-    public class PoseFile : JsonFile {
+	[Serializable]
+	public class PoseFile {
 		public string FileExtension { get; set; } = ".pose";
 		public string TypeName { get; set; } = "Ktisis Pose";
 

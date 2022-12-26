@@ -9,7 +9,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using Ktisis.Structs.Actor.Equip.SetSources;
 
 namespace Ktisis.Structs.FFXIV {
-
 	// Game structs
 	[Agent(AgentId.MiragePrismMiragePlate)]
 	[StructLayout(LayoutKind.Explicit)]

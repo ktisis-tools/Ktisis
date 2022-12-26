@@ -3,7 +3,6 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
-using System.Xml.Linq;
 
 namespace Ktisis.Interface.Dialog {
 	public class ContextMenu : KtisisWindow {

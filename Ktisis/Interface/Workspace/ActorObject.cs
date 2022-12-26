@@ -1,10 +1,10 @@
-﻿using System.Numerics;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using ImGuiNET;
 
 using Dalamud.Logging;
 
+using Ktisis.Services;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
@@ -65,7 +65,7 @@ namespace Ktisis.Interface.Workspace {
 		// Actor
 
 		private unsafe Actor* GetActor()
-			=> (Actor*)Services.ObjectTable.GetObjectAddress(Index);
+			=> (Actor*)DalamudServices.ObjectTable.GetObjectAddress(Index);
 
 		// Skeleton
 
