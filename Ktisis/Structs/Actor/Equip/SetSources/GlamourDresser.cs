@@ -4,13 +4,11 @@ using System.Linq;
 
 using Newtonsoft.Json;
 
-using FFXIVClientStructs.FFXIV.Client.Game;
-
 using Ktisis.Data.Excel;
 using Ktisis.Structs.FFXIV;
+using Ktisis.Services;
 
-namespace Ktisis.Structs.Actor.Equip.SetSources
-{
+namespace Ktisis.Structs.Actor.Equip.SetSources {
 	// This class will handle the interaction between different aspects
 	// of Glamour plates data: hook, storage and lookup
 	public class GlamourDresser
@@ -80,7 +78,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 		}
 
 		public static void PopulatePlatesData() {
-			var local_character_id = Services.ClientState.LocalContentId;
+			var local_character_id = DalamudServices.ClientState.LocalContentId;
 			if (local_character_id == 0) return;
 
 			var platesBefore = Plates;
@@ -95,7 +93,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 				Ktisis.Configuration.GlamourPlateData = new Dictionary<string, GlamourPlate[]?>();
 			if (Ktisis.Configuration.GlamourPlateData == null) return false;
 
-			var character_key = $"FFXIV_CHR{Services.ClientState.LocalContentId:X16}";
+			var character_key = $"FFXIV_CHR{DalamudServices.ClientState.LocalContentId:X16}";
 			Ktisis.Configuration.GlamourPlateData.TryGetValue(character_key, out var platesFromConfig);
 			if (Plates == platesFromConfig) return false;
 
@@ -106,7 +104,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources
 			return true;
 		}
 		public static void LoadGlamourPlatesIntoMemory() {
-			var local_character_id = Services.ClientState.LocalContentId;
+			var local_character_id = DalamudServices.ClientState.LocalContentId;
 			if (local_character_id == 0) return;
 
 			if (Ktisis.Configuration.GlamourPlateData == null) return;

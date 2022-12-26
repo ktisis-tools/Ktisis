@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using ImGuiNET;
 using ImGuizmoNET;
 
+using Ktisis.Services;
+
 namespace Ktisis.Interface.Overlay {
 	public static class Selection {
 		internal static List<DrawItem> DrawQueue = new();
@@ -109,7 +111,7 @@ namespace Ktisis.Interface.Overlay {
 		}
 
 		public unsafe float GetRadius() {
-			var dist = Services.Camera->Camera->InterpDistance;
+			var dist = DalamudServices.Camera->Camera->InterpDistance;
 			return Math.Max(2f, (15f - dist) * (Ktisis.Configuration.SkeletonDotRadius / 7.5f));
 		}
 

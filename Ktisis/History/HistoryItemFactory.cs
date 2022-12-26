@@ -1,8 +1,7 @@
 ﻿using Ktisis.Interface.Overlay;
 
-namespace Ktisis.History
-{
-    public enum HistoryItemType {
+namespace Ktisis.History {
+	public enum HistoryItemType {
 		ActorBone
 	}
 

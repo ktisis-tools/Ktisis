@@ -10,7 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
-using Dalamud.Logging;
+using Ktisis.Services;
 
 namespace Ktisis.Interop.Hooks {
 	public static class PoseHooks {
@@ -44,29 +44,29 @@ namespace Ktisis.Interop.Hooks {
 		internal static Dictionary<uint, PoseContainer> PreservedPoses = new();
 
 		internal static unsafe void Init() {
-			var setBoneModelSpaceFfxiv = Services.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
+			var setBoneModelSpaceFfxiv = DalamudServices.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
 			SetBoneModelSpaceFfxivHook = Hook<SetBoneModelSpaceFfxivDelegate>.FromAddress(setBoneModelSpaceFfxiv, SetBoneModelSpaceFfxivDetour);
 
-			var calculateBoneModelSpace = Services.SigScanner.ScanText("40 53 48 83 EC 10 4C 8B 49 28");
+			var calculateBoneModelSpace = DalamudServices.SigScanner.ScanText("40 53 48 83 EC 10 4C 8B 49 28");
 			CalculateBoneModelSpaceHook = Hook<CalculateBoneModelSpaceDelegate>.FromAddress(calculateBoneModelSpace, CalculateBoneModelSpaceDetour);
 
-			var syncModelSpace = Services.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
+			var syncModelSpace = DalamudServices.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
 			SyncModelSpaceHook = Hook<SyncModelSpaceDelegate>.FromAddress(syncModelSpace, SyncModelSpaceDetour);
 
-			var lookAtIK = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
+			var lookAtIK = DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
 			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
 
-			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
+			var animFrozen = DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
 			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
 
-			var updatePos = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? EB 29 48 8B 5F 08");
+			var updatePos = DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? EB 29 48 8B 5F 08");
 			UpdatePosHook = Hook<UpdatePosDelegate>.FromAddress(updatePos, UpdatePosDetour);
 
-			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
+			var loadSkele = DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
 			SetSkeletonHook = Hook<SetSkeletonDelegate>.FromAddress(loadSkele, SetSkeletonDetour);
 			SetSkeletonHook.Enable();
 
-			var loadBust = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F6 84 24 ?? ?? ?? ?? ?? 0F 28 74 24 ??");
+			var loadBust = DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? F6 84 24 ?? ?? ?? ?? ?? 0F 28 74 24 ??");
 			BustHook = Hook<BustDelegate>.FromAddress(loadBust, BustDetour);
 		}
 
@@ -149,7 +149,7 @@ namespace Ktisis.Interop.Hooks {
 				if (a3 == IntPtr.Zero) {
 					if (a2 == 0) {
 						// TODO: Any way to do this without iterating the object table?
-						foreach (var obj in Services.ObjectTable) {
+						foreach (var obj in DalamudServices.ObjectTable) {
 							var actor = (Actor*)obj.Address;
 							if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
@@ -170,7 +170,7 @@ namespace Ktisis.Interop.Hooks {
 					a1->ParentPartialToRoot(a2);
 
 				if (a2 < 3) {
-					foreach (var obj in Services.ObjectTable) {
+					foreach (var obj in DalamudServices.ObjectTable) {
 						var actor = (Actor*)obj.Address;
 						if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 

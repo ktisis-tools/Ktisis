@@ -1,11 +1,13 @@
 using System;
 using System.Runtime.InteropServices;
 
+using Ktisis.Services;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.FFXIV;
 
-namespace Ktisis.Interop {
-	internal class Methods {
+namespace Ktisis.Interop
+{
+    internal class Methods {
 		// Make actor look at co-ordinate point
 		// a1 = Actor + 0xC20, a2 = TrackPos*, a3 = bodypart, a4 = ?
 
@@ -30,7 +32,7 @@ namespace Ktisis.Interop {
 		// Init & Dispose
 
 		private static TDelegate Retrieve<TDelegate>(string sig)
-			=> Marshal.GetDelegateForFunctionPointer<TDelegate>(Services.SigScanner.ScanText(sig));
+			=> Marshal.GetDelegateForFunctionPointer<TDelegate>(DalamudServices.SigScanner.ScanText(sig));
 
 		internal static void Init() {
 			ActorLookAt = Retrieve<LookAtDelegate>("40 53 55 57 41 56 41 57 48 83 EC 70");

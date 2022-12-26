@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using Ktisis.Services;
+
 using Lumina.Excel;
 
 namespace Ktisis.Data {
@@ -14,7 +16,7 @@ namespace Ktisis.Data {
 			if (Cache.ContainsKey(type))
 				return (ExcelSheet<T>)Cache[type];
 
-			var sheet = Services.DataManager.GetExcelSheet<T>()!;
+			var sheet = DalamudServices.DataManager.GetExcelSheet<T>()!;
 			Cache.Add(type, sheet);
 			return sheet;
 		}

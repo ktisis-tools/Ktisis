@@ -5,6 +5,7 @@ using ImGuiNET;
 
 using ImGuizmoNET;
 
+using Ktisis.Services;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
@@ -105,7 +106,7 @@ namespace Ktisis.Interface.Overlay {
 
 						var parent = model->Skeleton->GetBone(p, parentId);
 						if (Ktisis.Configuration.IsBoneVisible(parent)) {
-							var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Services.Camera->Camera->InterpDistance * 2f);
+							var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / DalamudServices.Camera->Camera->InterpDistance * 2f);
 							isVisible &= world->WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
 							if (isVisible)
 								draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);

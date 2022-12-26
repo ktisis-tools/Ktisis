@@ -11,11 +11,10 @@ using Ktisis.Structs.Actor.State;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
-using ImGuiNET;
+using Ktisis.Services;
 
-namespace Ktisis
-{
-    public sealed class Ktisis : IDalamudPlugin {
+namespace Ktisis {
+	public sealed class Ktisis : IDalamudPlugin {
 		public string Name => "Ktisis";
 		public string CommandName = "/ktisis";
 
@@ -24,11 +23,11 @@ namespace Ktisis
 		public static Configuration Configuration { get; private set; } = null!;
 		public static UiBuilder UiBuilder { get; private set; } = null!;
 
-		public static bool IsInGPose => Services.PluginInterface.UiBuilder.GposeActive && IsGposeTargetPresent();
-		public unsafe static bool IsGposeTargetPresent() => (IntPtr)Services.Targets->GPoseTarget != IntPtr.Zero;
+		public static bool IsInGPose => DalamudServices.PluginInterface.UiBuilder.GposeActive && IsGposeTargetPresent();
+		public unsafe static bool IsGposeTargetPresent() => (IntPtr)DalamudServices.Targets->GPoseTarget != IntPtr.Zero;
 
 		public unsafe static GameObject? GPoseTarget
-			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
+			=> IsInGPose ? DalamudServices.ObjectTable.CreateObjectReference((IntPtr)DalamudServices.Targets->GPoseTarget) : null;
 		public unsafe static Actor* Target => GPoseTarget != null ? (Actor*)GPoseTarget.Address : null;
 
 		public static string GetVersion() {
@@ -37,7 +36,7 @@ namespace Ktisis
 		}
 
 		public Ktisis(DalamudPluginInterface pluginInterface) {
-			Services.Init(pluginInterface);
+			DalamudServices.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 			UiBuilder = pluginInterface.UiBuilder;
 
@@ -68,7 +67,7 @@ namespace Ktisis
 
 			// Register command
 
-			Services.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
+			DalamudServices.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand) {
 				HelpMessage = "/ktisis - Show the Ktisis interface."
 			});
 
@@ -81,8 +80,8 @@ namespace Ktisis
 		}
 
 		public void Dispose() {
-			Services.CommandManager.RemoveHandler(CommandName);
-			Services.PluginInterface.SavePluginConfig(Configuration);
+			DalamudServices.CommandManager.RemoveHandler(CommandName);
+			DalamudServices.PluginInterface.SavePluginConfig(Configuration);
 			//Services.PluginInterface.UiBuilder.OpenConfigUi -= ConfigGui.Toggle;
 
 			OverlayWindow.DeselectGizmo();

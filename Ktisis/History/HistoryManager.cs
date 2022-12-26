@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Keys;
 
-using Ktisis.Events;
+using Ktisis.Services;
 using Ktisis.Structs.Input;
 using Ktisis.Interop.Hooks;
-using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.History {
 	public static class HistoryManager {
@@ -22,17 +21,17 @@ namespace Ktisis.History {
 		// Init & Dispose
 
 		public static void Init() {
-			EventManager.OnKeyPressed += OnInput;
-			EventManager.OnGPoseChange += OnGPoseChange;
-			EventManager.OnGizmoChange += OnGizmoChange;
-			EventManager.OnTransformationMatrixChange += OnGizmoChange;
+			EventService.OnKeyPressed += OnInput;
+			EventService.OnGPoseChange += OnGPoseChange;
+			EventService.OnGizmoChange += OnGizmoChange;
+			EventService.OnTransformationMatrixChange += OnGizmoChange;
 		}
 
 		public static void Dispose() {
-			EventManager.OnKeyPressed -= OnInput;
-			EventManager.OnGPoseChange -= OnGPoseChange;
-			EventManager.OnGizmoChange -= OnGizmoChange;
-			EventManager.OnTransformationMatrixChange -= OnGizmoChange;
+			EventService.OnKeyPressed -= OnInput;
+			EventService.OnGPoseChange -= OnGPoseChange;
+			EventService.OnGizmoChange -= OnGizmoChange;
+			EventService.OnTransformationMatrixChange -= OnGizmoChange;
 		}
 
 		// Events
