@@ -119,7 +119,7 @@ namespace Ktisis {
 			}
 		}
 
-		private static Stack<MethodInfo> ToGloballyDispose = new();
+		private static readonly Stack<MethodInfo> ToGloballyDispose = new();
 
 		private static void GlobalInit() {
 			foreach (Type globalStateContainer in
