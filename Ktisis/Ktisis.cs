@@ -122,12 +122,7 @@ namespace Ktisis {
 		private static readonly Stack<MethodInfo> ToGloballyDispose = new();
 
 		private static void GlobalInit() {
-			foreach (Type globalStateContainer in
-				typeof(Ktisis).Assembly.GetTypes()
-				.Where(type => type.CustomAttributes
-					.Any(attr => attr.AttributeType == typeof(GlobalStateAttribute))
-				)
-			) {
+			foreach (Type globalStateContainer in GetGlobalInitTypes()) {
 				foreach (var method in globalStateContainer.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)) {
 					foreach (var attr in method.CustomAttributes) {
 						if (attr.AttributeType == typeof(GlobalInitAttribute))
@@ -139,6 +134,10 @@ namespace Ktisis {
 			}
 			ToGloballyDispose.TrimExcess();
 		}
+
+		private static IEnumerable<Type> GetGlobalInitTypes() =>
+			typeof(Ktisis).Assembly.GetTypes()
+				.Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(GlobalStateAttribute)));
 
 		private static void GlobalDispose() {
 			while (ToGloballyDispose.TryPop(out MethodInfo? toDispose)) {
