@@ -9,7 +9,6 @@ namespace Ktisis.Interface.Library {
 	internal static class Common {
 		internal static Vector4 ColRed = new Vector4(255, 0, 0, 255);
 		internal static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
-		internal static Vector4 ColBlue = new Vector4(0, 0, 255, 255);
 		internal static Vector4 ColYellow = new Vector4(255, 250, 0, 255);
 
 		// From SimpleTweaks - Thanks Caraxi

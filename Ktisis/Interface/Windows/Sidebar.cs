@@ -202,7 +202,8 @@ namespace Ktisis.Interface.Windows {
 
 		private static void OpenEditor() {
 			if (Buttons.IconButton(FontAwesomeIcon.PencilAlt, ControlButtonSize)) {
-				// TODO
+				var window = new TransformEditor();
+				window.Show();
 			}
 		}
 
