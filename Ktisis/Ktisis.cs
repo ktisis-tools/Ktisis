@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Dalamud.Plugin;
 using Dalamud.Game.Command;
@@ -136,8 +137,15 @@ namespace Ktisis {
 		}
 
 		private static IEnumerable<Type> GetGlobalInitTypes() =>
-			typeof(Ktisis).Assembly.GetTypes()
-				.Where(x => x.CustomAttributes.Any(x => x.AttributeType == typeof(GlobalStateAttribute)));
+			typeof(Ktisis).Assembly.GetTypes().Select(type => (type, globalStateAttr: type.GetCustomAttribute<GlobalStateAttribute>()))
+				.Where(x => x.globalStateAttr != null)
+				.OrderBy(x => (x.type, initAfter: new HashSet<Type>(x.globalStateAttr!.InitAfter)), new DelegateComparer<(Type type, HashSet<Type> initAfter)>((a, b) => {
+					if(a.initAfter.Contains(b.type))
+						return 1;
+					if(b.initAfter.Contains(a.type))
+						return -1;
+					return 0;
+				})).Select(x => x.type);
 
 		private static void GlobalDispose() {
 			while (ToGloballyDispose.TryPop(out MethodInfo? toDispose)) {
@@ -145,4 +153,18 @@ namespace Ktisis {
 			}
 		}
 	}
+
+	public struct DelegateComparer<T> : IComparer<T> {
+
+		public delegate int Comparer(T? x, T? y);
+
+		public Comparer comparer;
+
+		public DelegateComparer(Comparer comparer) {
+			this.comparer = comparer;
+		}
+
+		public int Compare(T? x, T? y) => this.comparer(x, y);
+	}
+
 }
