@@ -66,11 +66,9 @@ namespace Ktisis.Interface.Windows {
 		public override void Draw() {
 			// Set size constraints
 
-			var displaySize = ImGui.GetIO().DisplaySize;
-
 			SizeConstraints = new WindowSizeConstraints {
 				MinimumSize = new Vector2(270, 110),
-				MaximumSize = new Vector2(displaySize.X * 0.5f, displaySize.Y * 0.75f)
+				MaximumSize = ImGui.GetIO().DisplaySize * 0.90f
 			};
 
 			// Interface
