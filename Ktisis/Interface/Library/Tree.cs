@@ -5,7 +5,7 @@ using ImGuiNET;
 
 using Ktisis.Structs.Extensions;
 
-namespace Ktisis.Interface.Library {
+namespace Ktisis.Interface.Widgets {
 	internal static class Tree {
 		// Nodes
 

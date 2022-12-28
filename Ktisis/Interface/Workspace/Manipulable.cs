@@ -11,7 +11,12 @@ namespace Ktisis.Interface.Workspace {
 		public abstract void Select();
 		public abstract void Context();
 
-		internal abstract void DrawWorldNode();
 		internal abstract void DrawTreeNode();
+	}
+
+	public interface Transformable {
+		// TODO: Unified class for transform types?
+		public abstract object? GetTransform();
+		public abstract void SetTransform(object trans);
 	}
 }

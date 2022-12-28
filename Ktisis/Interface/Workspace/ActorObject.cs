@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
 
@@ -8,11 +9,12 @@ using Ktisis.Services;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Poses;
 using Ktisis.Interface.Dialog;
-using Ktisis.Interface.Library;
+using Ktisis.Interface.Widgets;
 
 namespace Ktisis.Interface.Workspace {
-	public class ActorObject : Manipulable {
+	public class ActorObject : Manipulable, Transformable {
 		// Manipulable
 
 		public int Index;
@@ -22,7 +24,12 @@ namespace Ktisis.Interface.Workspace {
 		}
 
 		public override void Select() {
-			PluginLog.Information($"Select {Index}");
+			if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) {
+				PluginLog.Information($"Target {Index}");
+			} else {
+				var ctrl = ImGui.IsKeyDown(ImGuiKey.LeftCtrl);
+				EditorService.Select(this, ctrl);
+			}
 		}
 		public override void Context() {
 			var ctx = new ContextMenu();
@@ -46,7 +53,11 @@ namespace Ktisis.Interface.Workspace {
 			if (actor == null) return;
 
 			ImGui.PushStyleColor(ImGuiCol.Text, RootObjectCol);
-			var expand = Tree.CollapsibleNode(actor->GetNameOrId(), 0, Select, Context);
+			var expand = Tree.CollapsibleNode(
+				actor->GetNameOrId(),
+				EditorService.IsSelected(this) ? ImGuiTreeNodeFlags.Selected : 0,
+				Select, Context
+			);
 			ImGui.PopStyleColor();
 
 			if (expand) {
@@ -55,16 +66,13 @@ namespace Ktisis.Interface.Workspace {
 				DrawBoneTree();
 				ImGui.TreePop();
 
-				var col = RootObjectCol;
-				col.W = 0.75f;
-				Tree.LineEnd(start, col);
+				Tree.LineEnd(start, RootObjectCol);
 			}
 		}
-		internal override void DrawWorldNode() { }
 
 		// Actor
 
-		private unsafe Actor* GetActor()
+		internal unsafe Actor* GetActor()
 			=> (Actor*)DalamudServices.ObjectTable.GetObjectAddress(Index);
 
 		// Skeleton
@@ -139,12 +147,24 @@ namespace Ktisis.Interface.Workspace {
 					}
 				}
 
-				var col = SubCategoryCol;
-				col.W = 0.75f;
-				Tree.LineEnd(start, col);
+				Tree.LineEnd(start, SubCategoryCol);
 
 				ImGui.TreePop();
 			}
+		}
+
+		// Transform
+
+		public unsafe object? GetTransform() {
+			var actor = GetActor();
+			if (actor == null || actor->Model == null) return null;
+			return Transform.FromHavok(actor->Model->Transform);
+		}
+
+		public unsafe void SetTransform(object trans) {
+			var actor = GetActor();
+			if (actor == null || actor->Model == null) return;
+			actor->Model->Transform = ((Transform)trans).ToHavok();
 		}
 	}
 }

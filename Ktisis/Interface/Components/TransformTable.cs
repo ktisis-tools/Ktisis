@@ -1,10 +1,16 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 using ImGuiNET;
-
 using ImGuizmoNET;
 
-using Ktisis.Interface.Library;
+using Dalamud.Logging;
+using Dalamud.Interface;
+
+using Ktisis.Library;
+using Ktisis.Structs.Poses;
+using Ktisis.Structs.Extensions;
+using Ktisis.Interface.Widgets;
 
 namespace Ktisis.Interface.Components {
 	public class TransformTable {
@@ -19,30 +25,51 @@ namespace Ktisis.Interface.Components {
 			Operations = op;
 		}
 
-		public void Draw(Matrix4x4 matrix) {
-			ImGui.PushItemWidth(ImGui.GetFontSize() * 4.5f);
+		public bool Draw(ref Transform trans) {
+			var changed = false;
 
-			var _ = new Vector3();
+			Vector3 position = trans.Position;
+			Vector3 euler = MathLib.ToEuler(trans.Rotation);
+			Vector3 scale = trans.Scale;
 
 			if (Operations.HasFlag(OPERATION.TRANSLATE)) {
-				Draw(ref _, "TTPos", false);
+				if (Draw(ref position, 0.0025f, "Pos")) {
+					changed = true;
+					trans.Position = position;
+				}
+				ImGui.SameLine();
+				Icons.DrawIcon(FontAwesomeIcon.ArrowsAlt);
+				Text.Tooltip("Position");
 			}
 
 			if (Operations.HasFlag(OPERATION.ROTATE)) {
-				Draw(ref _, "TTRot", false);
+				if (Draw(ref euler, 0.5f, "Rotate")) {
+					changed = true;
+					trans.Rotation = MathLib.ToQuaternion(euler);
+				}
+				ImGui.SameLine();
+				Icons.DrawIcon(FontAwesomeIcon.Sync);
+				Text.Tooltip("Rotation");
 			}
 
 			if (Operations.HasFlag(OPERATION.SCALEU)) {
-				Draw(ref _, "TTScale", false);
+				if (Draw(ref scale, 0.0075f, "Scale")) {
+					changed = true;
+					trans.Scale = scale.ClampMin(0.001f);
+				}
+				ImGui.SameLine();
+				Icons.DrawIcon(FontAwesomeIcon.ExpandAlt);
+				Text.Tooltip("Scale");
 			}
 
-			ImGui.PopItemWidth();
+			return changed;
 		}
 
-		public void Draw(ref Vector3 vec, string id = "TT", bool pop = true) {
-			if (pop) ImGui.PushItemWidth(ImGui.GetFontSize() * 4.5f);
-			Numbers.ColoredDragFloat3(id, ref vec, 1f, AxisColors);
-			if (pop) ImGui.PopItemWidth();
+		public bool Draw(ref Vector3 vec, float speed = 0.1f, string id = "") {
+			ImGui.PushItemWidth(ImGui.GetFontSize() * 4.5f);
+			var result = Numbers.ColoredDragFloat3($"TT{id}", ref vec, speed, AxisColors);
+			ImGui.PopItemWidth();
+			return result;
 		}
 	}
 }
