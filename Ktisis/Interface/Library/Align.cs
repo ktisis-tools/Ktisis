@@ -1,6 +1,6 @@
 ﻿using ImGuiNET;
 
-namespace Ktisis.Interface.Library {
+namespace Ktisis.Interface.Widgets {
 	internal class Align {
 		internal static float WidthMargin => Ktisis.Configuration.CustomWidthMarginDebug;
 

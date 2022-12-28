@@ -3,8 +3,10 @@
 using ImGuiNET;
 
 using Dalamud.Interface;
+using Dalamud.Logging;
+using System;
 
-namespace Ktisis.Interface.Library {
+namespace Ktisis.Interface.Widgets {
 	internal class Icons {
 		internal static void DrawIcon(FontAwesomeIcon icon, bool enabled = true, Vector4? color = null) {
 			string iconText = icon.ToIconString() ?? "";

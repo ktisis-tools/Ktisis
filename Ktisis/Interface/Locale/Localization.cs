@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using Ktisis.Interface.Library;
+using Ktisis.Library;
 
 namespace Ktisis.Interface.Locale {
 	public static class Locale {

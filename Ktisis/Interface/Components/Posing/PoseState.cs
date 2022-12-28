@@ -3,7 +3,7 @@
 using Dalamud.Interface.Components;
 
 using Ktisis.Interop.Hooks;
-using Ktisis.Interface.Library;
+using Ktisis.Interface.Widgets;
 
 namespace Ktisis.Interface.Components.Posing {
     internal class PoseState {
@@ -12,12 +12,12 @@ namespace Ktisis.Interface.Components.Posing {
 			ImGui.BeginGroup();
 
 			ImGui.TextColored(
-				gposeOn ? Common.ColGreen : Common.ColRed,
+				gposeOn ? Colors.ColGreen : Colors.ColRed,
 				gposeOn ? "GPose Enabled" : "GPose Disabled"
 			);
 
 			if (PoseHooks.AnamPosingEnabled)
-				ImGui.TextColored(Common.ColYellow, "Anamnesis Enabled");
+				ImGui.TextColored(Colors.ColYellow, "Anamnesis Enabled");
 
 			ImGui.EndGroup();
 		}
@@ -29,7 +29,7 @@ namespace Ktisis.Interface.Components.Posing {
 
 			var enabled = PoseHooks.PosingEnabled;
 
-			if (gposeOn) ImGui.PushStyleColor(ImGuiCol.Text, enabled ? Common.ColGreen : Common.ColRed);
+			if (gposeOn) ImGui.PushStyleColor(ImGuiCol.Text, enabled ? Colors.ColGreen : Colors.ColRed);
 
 			var width = ImGui.GetFrameHeight() * 1.55f;
 			Text.LabelRight(enabled ? "Posing" : "Not Posing", Align.GetRightOffset(width));
@@ -38,7 +38,7 @@ namespace Ktisis.Interface.Components.Posing {
 
 			ImGui.SameLine();
 			if (gposeOn) {
-				if (Buttons.ToggleButton("Toggle Posing", ref enabled, enabled ? Common.ColGreen : Common.ColRed))
+				if (Buttons.ToggleButton("Toggle Posing", ref enabled, enabled ? Colors.ColGreen : Colors.ColRed))
 					PoseHooks.TogglePosing();
 			} else {
 				ImGuiComponents.DisabledToggleButton("Toggle Posing", false);

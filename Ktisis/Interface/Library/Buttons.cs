@@ -4,7 +4,7 @@ using Dalamud.Interface;
 
 using ImGuiNET;
 
-namespace Ktisis.Interface.Library {
+namespace Ktisis.Interface.Widgets {
 	internal class Buttons {
 		internal static bool IconButton(FontAwesomeIcon icon, Vector2 size = default, string id = "") {
 			ImGui.PushFont(UiBuilder.IconFont);

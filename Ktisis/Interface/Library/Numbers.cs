@@ -2,7 +2,7 @@
 
 using ImGuiNET;
 
-namespace Ktisis.Interface.Library {
+namespace Ktisis.Interface.Widgets {
 	internal class Numbers {
 		internal static bool ColoredDragFloat(string label, ref float val, float speed, Vector4 color = default, float borderSize = 1f) {
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, borderSize);

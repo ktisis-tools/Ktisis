@@ -12,7 +12,7 @@ using Ktisis.Services;
 using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Dialog;
-using Ktisis.Interface.Library;
+using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Workspace;
 using Ktisis.Interface.Components.Posing;
@@ -46,13 +46,7 @@ namespace Ktisis.Interface.Windows {
 
 		internal void OnGPoseChange(bool state) {
 			if (state) {
-				unsafe {
-					var tar = Ktisis.GPoseTarget;
-					if (tar != null) {
-						var actor = (Actor*)tar.Address;
-						Items.Add(new ActorObject(actor->ObjectID));
-					}
-				}
+				FindTarget(true);
 			} else {
 				Items.Clear();
 			}
@@ -149,7 +143,7 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Dummy(new Vector2(size, size) / 2);
 
 			Icons.DrawIcon(icon);
-			Common.Tooltip(active ? "Animation playback is active for this target." : "Animation playback is paused for this target.");
+			Text.Tooltip(active ? "Animation playback is active for this target." : "Animation playback is paused for this target.");
 
 			ImGui.EndGroup();
 
@@ -202,8 +196,13 @@ namespace Ktisis.Interface.Windows {
 
 		private static void OpenEditor() {
 			if (Buttons.IconButton(FontAwesomeIcon.PencilAlt, ControlButtonSize)) {
+				if (EditorService.Selection == null) {
+					var tar = FindTarget(true);
+					if (tar != null) tar.Select();
+				}
+
 				var window = new TransformEditor();
-				window.Show();
+				window.ToggleOnOrRemove();
 			}
 		}
 
@@ -236,9 +235,40 @@ namespace Ktisis.Interface.Windows {
 		// Draw scene tree
 
 		private static void DrawSceneTree() {
-			if (ImGui.BeginChildFrame(471, new Vector2(-1, -1), ImGuiWindowFlags.HorizontalScrollbar))
+			if (ImGui.BeginChildFrame(471, new Vector2(-1, -1), ImGuiWindowFlags.HorizontalScrollbar)) {
 				foreach (var item in Items)
 					item.DrawTreeNode();
+
+				ImGui.EndChildFrame();
+
+				if (ImGui.IsItemClicked() && !ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+					EditorService.Selection = null;
+			}
+		}
+
+		// Find target item
+
+		internal unsafe static ActorObject? FindTarget(bool append = false) {
+			var tar = Ktisis.GPoseTarget;
+			if (tar == null) return null;
+
+			var ptr = (Actor*)tar.Address;
+
+			foreach (var item in Items) {
+				if (item is ActorObject actor) {
+					if (actor.GetActor() == ptr)
+						return actor;
+				} else continue;
+			}
+
+			if (append) {
+				var item = EditorService.GetTargetManipulable();
+				if (item == null) return null;
+				Items.Add(item);
+				return item;
+			}
+
+			return null;
 		}
 	}
 }
