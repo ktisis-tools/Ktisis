@@ -37,7 +37,7 @@ namespace Ktisis.Localization {
 
 			reader.Read();
 			if (reader.Reader.TokenType != JsonTokenType.StartObject)
-				throw new Exception($"Locale Data file '{technicalName}' does not contain a top-level object.");
+				throw new Exception($"Locale Data file '{technicalName}.json' does not contain a top-level object.");
 
 			while (reader.Read()) {
 				switch (reader.Reader.TokenType) {
@@ -77,17 +77,17 @@ namespace Ktisis.Localization {
 								break;
 							case "displayName":
 								if(reader.Reader.TokenType != JsonTokenType.String)
-									throw new Exception($"Locale data file '{technicalName}' has an invalid '%.$meta.displayName' value (not a string).");
+									throw new Exception($"Locale data file '{technicalName}.json' has an invalid '%.$meta.displayName' value (not a string).");
 								displayName = reader.Reader.GetString();
 								break;
 							case "selfName":
 								if(reader.Reader.TokenType != JsonTokenType.String)
-									throw new Exception($"Locale data file '{technicalName}' has an invalid '%.$meta.selfName' value (not a string).");
+									throw new Exception($"Locale data file '{technicalName}.json' has an invalid '%.$meta.selfName' value (not a string).");
 								selfName = reader.Reader.GetString();
 								break;
 							case "maintainers":
 								if(reader.Reader.TokenType != JsonTokenType.StartArray)
-									throw new Exception($"Locale data file '{technicalName}' has an invalid '%.$meta.selfName' value (not an array).");
+									throw new Exception($"Locale data file '{technicalName}.json' has an invalid '%.$meta.maintainers' value (not an array).");
 								List<string?> collectMaintainers = new List<string?>();
 								int i = 0;
 								while(reader.Read()) {
@@ -102,7 +102,7 @@ namespace Ktisis.Localization {
 											goto endArray;
 										default:
 											throw new Exception(
-												$"Locale data file '{technicalName}' has an invalid value at '%.$meta.selfName.{i}' (not a string or null).");
+												$"Locale data file '{technicalName}' has an invalid value at '%.$meta.maintainers.{i}' (not a string or null).");
 									}
 
 									i++;
@@ -112,7 +112,7 @@ namespace Ktisis.Localization {
 								maintainers = collectMaintainers.ToArray();
 								break;
 							default:
-								Logger.Warning($"Locale data file '{technicalName} has unknown meta key at '%.$meta.{reader.Reader.GetString()}'");
+								Logger.Warning($"Locale data file '{technicalName}.json' has unknown meta key at '%.$meta.{reader.Reader.GetString()}'");
 								reader.SkipIt();
 								break;
 						}
@@ -125,9 +125,9 @@ namespace Ktisis.Localization {
 
 			done:
 			if(displayName == null)
-				throw new Exception($"Locale data file '{technicalName}' is missing the '%.$meta.displayName' value.");
+				throw new Exception($"Locale data file '{technicalName}.json' is missing the '%.$meta.displayName' value.");
 			if(selfName == null)
-				throw new Exception($"Locale data file '{technicalName}' is missing the '%.$meta.selfName' value.");
+				throw new Exception($"Locale data file '{technicalName}.json' is missing the '%.$meta.selfName' value.");
 			maintainers ??= new string?[] { null };
 
 			return new LocaleMetaData(technicalName, displayName, selfName, maintainers);
@@ -188,9 +188,9 @@ namespace Ktisis.Localization {
 			done:
 			switch(metaCount) {
 				case 0:
-					throw new Exception($"Locale Data file '{technicalName}' is is missing the top-level '$meta' object.");
+					throw new Exception($"Locale Data file '{technicalName}.json' is is missing the top-level '$meta' object.");
 				case > 1:
-					Logger.Warning($"Locale Data file '{technicalName} has {{0}} top-level '$meta' objects.", metaCount);
+					Logger.Warning($"Locale Data file '{technicalName}.json' has {{0}} top-level '$meta' objects?!", metaCount);
 					break;
 			}
 			
