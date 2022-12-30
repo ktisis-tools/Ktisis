@@ -163,13 +163,12 @@
 		"data": {
 			"title": "Data",
 			"glamourDresser": {
-				"__comment": "These are currently a little messy... need placeholder system to fix this.",
-				"memoryCount": "Glamour Plates in memory: ",
-				"validCount": {
-					"pre": "Found ",
-					"post": "valid Glamour Plates"
+				"info": {
+					"__comment": "@chirp/@Emyka: Is this whitespace necessary?",
+					"text": "Glamour Plates in memory: %count%  ",
+					"__comment": "Quantity translations, oh joy!",
+					"tooltip": "Found %count% valid Glamour Plate(s)"
 				},
-
 				"sync": {
 					"tooltip": "Refresh Glamour Plate memory for the Sets lookups.\nThis memory is kept after a restart.\n\nRequirements:\n One of these windows must be opened: \"Glamour Plate Creation\" (by the Glamour Dresser) or \"Plate Selection\" (by the Glamour Plate skill)."
 				},

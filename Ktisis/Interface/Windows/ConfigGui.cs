@@ -395,7 +395,10 @@ namespace Ktisis.Interface.Windows {
 		public static void DrawDataTab(Configuration cfg) {
 			ImGui.Spacing();
 			var validGlamPlatesFound = GlamourDresser.CountValid();
-			GuiHelpers.TextTooltip($"{Locale.GetString("config.data.glamourDresser.memoryCount")}{validGlamPlatesFound}  ", $"{Locale.GetString("config.data.glamourDresser.validCount.pre")}{validGlamPlatesFound} {Locale.GetString("config.data.glamourDresser.validCount.post")}");
+			GuiHelpers.TextTooltip(
+				Locale.Translate("config.data.glamourDresser.info.text", new() { { "count", validGlamPlatesFound.ToString() }, }),
+				Locale.Translate("config.data.glamourDresser.info.tooltip", new() { { "count", validGlamPlatesFound.ToString() } })
+			);
 			ImGui.SameLine();
 
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, Locale.GetString("config.data.glamourDresser.sync.tooltip")))
