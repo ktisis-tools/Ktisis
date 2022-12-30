@@ -162,11 +162,13 @@ namespace Ktisis.Library {
 		}
 
 		private static float NormalizeAngle(float angle) {
-			while (angle > 360)
-				angle -= 360;
+			if (angle > 360)
+				angle = 0 + (angle % 360);
+			else if (angle < 0)
+				angle = 360 - ((360 - angle) % 360);
 
-			while (angle < 0)
-				angle += 360;
+			if (angle == -0)
+				angle = Math.Abs(angle);
 
 			return angle;
 		}
