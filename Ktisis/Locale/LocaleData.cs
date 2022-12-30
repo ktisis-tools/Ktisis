@@ -16,8 +16,10 @@ namespace Ktisis.Localization {
 
 		public string Translate(string key, Dictionary<string, string>? parameters = null) {
 			/* TODO: Implementing some form of fallback system might be good here. */
-			if(!_translationData.TryGetValue(key, out string? translationString))
+			if(!_translationData.TryGetValue(key, out string? translationString)) {
+				Logger.Warning("Unassigned translation key '{0}' for locale '{1}'", key, MetaData.TechnicalName);
 				return key;
+			}
 			return ReplaceParameters(key, translationString, parameters);
 		}
 
