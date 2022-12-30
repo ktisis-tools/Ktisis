@@ -17,8 +17,13 @@ namespace Ktisis.Localization {
 			UserLocale.German
 		};
 
+		[Obsolete("Use `Translate({handle})` instead.")]
 		public static string GetString(string handle) {
-			return Data.Translate(handle);
+			return Translate(handle);
+		}
+
+		public static string Translate(string handle, Dictionary<string, string>? parameters = null) {
+			return Data.Translate(handle, parameters);
 		}
 
 		public static bool HasTranslationFor(string handle) {
