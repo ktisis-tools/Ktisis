@@ -182,6 +182,20 @@ namespace Ktisis.Localization {
 						if (keyStack.TryPop(out string? _)) /* non-top-level object */
 							break;
 						goto done;
+					case JsonTokenType.StartArray:
+						WarnUnsupported(technicalName, "array", currentKey!);
+						reader.SkipIt();
+						break;
+					case JsonTokenType.True:
+					case JsonTokenType.False:
+						WarnUnsupported(technicalName, "boolean", currentKey!);
+						break;
+					case JsonTokenType.Number:
+						WarnUnsupported(technicalName, "number", currentKey!);
+						break;
+					case JsonTokenType.Null:
+						WarnUnsupported(technicalName, "null", currentKey!);
+						break;
 				}
 			}
 			
@@ -197,6 +211,10 @@ namespace Ktisis.Localization {
 			translationData.TrimExcess();
 
 			return new LocaleData(meta!, translationData);
+		}
+
+		private static void WarnUnsupported(string technicalName, string elementType, string currentKey) {
+			Logger.Warning("Locale Data File '{0}.json' has an unsupported {1} at '%.{2}'.", technicalName, elementType, currentKey);
 		}
 		
 	}
