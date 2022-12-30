@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
 using Ktisis.Data.Excel;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
@@ -119,6 +120,14 @@ namespace Ktisis.Structs.Actor {
 			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.BattleNpc;
 			GameObject.EnableDraw();
 			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.Pc;
+		}
+
+		// Wrappers
+
+		public unsafe ActorModel* GetModel() => Model;
+		public unsafe Skeleton* GetSkeleton() {
+			var model = GetModel();
+			return model != null ? model->Skeleton : null;
 		}
 	}
 
