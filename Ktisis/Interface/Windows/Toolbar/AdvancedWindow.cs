@@ -11,6 +11,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 	public static class AdvancedWindow {
 		private static bool Visible = false;
 
+		/* FIXME: This seems unused? */
 		public static TransformTable Transform = new();
 
 		// Toggle visibility
