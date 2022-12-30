@@ -33,8 +33,7 @@ namespace Ktisis {
 		public unsafe static Actor* Target => GPoseTarget != null ? (Actor*)GPoseTarget.Address : null;
 
 		public static string GetVersion() {
-			var ver = typeof(Ktisis).Assembly.GetName().Version!.ToString();
-			return ver.Substring(0, ver.LastIndexOf("."));
+			return typeof(Ktisis).Assembly.GetName().Version!.ToString(fieldCount: 3);
 		}
 
 		public Ktisis(DalamudPluginInterface pluginInterface) {
