@@ -5,6 +5,8 @@ using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
+using Ktisis.Library.Extensions;
+
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct ActorModel {

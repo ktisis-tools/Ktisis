@@ -1,10 +1,10 @@
 ﻿using System.Numerics;
 
-using Ktisis.Structs;
+using static FFXIVClientStructs.Havok.hkaPose;
+
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
-
-using static FFXIVClientStructs.Havok.hkaPose;
+using Ktisis.Library.Extensions;
 
 namespace Ktisis.History {
 	public class ActorBone : HistoryItem {

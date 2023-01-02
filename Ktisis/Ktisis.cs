@@ -75,7 +75,9 @@ namespace Ktisis {
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
 
+			EditorService.Init();
 			HistoryManager.Init();
+
 			//References.LoadReferences(Configuration);
 		}
 
@@ -122,7 +124,7 @@ namespace Ktisis {
 					//ConfigGui.Toggle();
 					break;
 				default:
-					KtisisGui.GetWindow(Sidebar.Name)?.Toggle();
+					KtisisGui.GetWindowOrCreate<Sidebar>().Toggle();
 					break;
 			}
 		}

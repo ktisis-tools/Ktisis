@@ -1,16 +1,14 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 using ImGuiNET;
 using ImGuizmoNET;
 
-using Dalamud.Logging;
 using Dalamud.Interface;
 
-using Ktisis.Library;
 using Ktisis.Structs.Poses;
-using Ktisis.Structs.Extensions;
 using Ktisis.Interface.Widgets;
+using Ktisis.Library;
+using Ktisis.Library.Extensions;
 
 namespace Ktisis.Interface.Components {
 	public class TransformTable {

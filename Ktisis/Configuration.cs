@@ -10,7 +10,7 @@ using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Interface;
-using Ktisis.Interface.Locale;
+using Ktisis.Interface.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Poses;
 using Ktisis.Structs.Actor.Equip.SetSources;

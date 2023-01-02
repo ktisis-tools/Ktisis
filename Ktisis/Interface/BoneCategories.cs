@@ -17,6 +17,8 @@ namespace Ktisis.Interface {
 		public List<BoneCategory> SubCategories = new();
 
 		public BoneCategory? ParentCategory = null;
+
+		internal int Order = 0;
 	}
 
 	public static class BoneCategories {
@@ -60,6 +62,8 @@ namespace Ktisis.Interface {
 		}
 
 		private static void Add(BoneCategory category) {
+			category.Order = Categories.Count;
+
 			Categories.Add(category.Name, category);
 
 			foreach (var bone in category.Bones) {
