@@ -2,10 +2,10 @@
 
 using ImGuiNET;
 
+using Ktisis.Scene;
 using Ktisis.Services;
-using Ktisis.Interface.Components;
-using Ktisis.Interface.Workspace;
 using Ktisis.Structs.Poses;
+using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
 	public class TransformEditor : KtisisWindow {

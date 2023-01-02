@@ -2,6 +2,8 @@
 
 using FFXIVClientStructs.Havok;
 
+using Ktisis.Library.Extensions;
+
 namespace Ktisis.Structs.Poses {
 	public class Transform {
 		public Vector3 Position;

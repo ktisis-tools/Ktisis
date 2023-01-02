@@ -5,7 +5,7 @@ using ImGuiNET;
 using ImGuizmoNET;
 
 using Ktisis.Services;
-using Ktisis.Structs.Extensions;
+using Ktisis.Library.Extensions;
 
 namespace Ktisis.Interface.Overlay {
 	public class Gizmo {

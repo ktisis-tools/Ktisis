@@ -3,6 +3,8 @@ using System.Numerics;
 
 namespace Ktisis.Library {
 	internal static class MathLib {
+		// Degrees <=> Radians
+
 		internal static readonly float Deg2Rad = ((float)Math.PI * 2) / 360;
 		internal static readonly float Rad2Deg = 360 / ((float)Math.PI * 2);
 

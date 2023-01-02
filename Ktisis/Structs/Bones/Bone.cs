@@ -6,11 +6,13 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Interface;
-using Ktisis.Interface.Locale;
+using Ktisis.Interface.Localization;
+using Ktisis.Library.Extensions;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Structs.Bones {
+	// This should only be used as a wrapper for bones that are guaranteed to exist in the current context.
+	// DO NOT USE THIS IN CASES WHERE IT'S POSSIBLE FOR A SKELETON TO CHANGE OR UNLOAD. IT WILL CRASH.
 	public class Bone {
 		public int Index;
 		public int Partial;

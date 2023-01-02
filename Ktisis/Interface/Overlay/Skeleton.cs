@@ -6,9 +6,9 @@ using ImGuiNET;
 using ImGuizmoNET;
 
 using Ktisis.Services;
-using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+using Ktisis.Library.Extensions;
 
 namespace Ktisis.Interface.Overlay {
 	public static class Skeleton {

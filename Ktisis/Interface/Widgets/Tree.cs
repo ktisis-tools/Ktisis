@@ -3,7 +3,7 @@ using System.Numerics;
 
 using ImGuiNET;
 
-using Ktisis.Structs.Extensions;
+using Ktisis.Library.Extensions;
 
 namespace Ktisis.Interface.Widgets {
 	internal static class Tree {
@@ -46,13 +46,13 @@ namespace Ktisis.Interface.Widgets {
 			ImGui.GetItemRectMax().Y
 		);
 
-		internal static void LineEnd(Vector2 start, Vector4 col, float thicc = 1) {
+		internal static void LineEnd(Vector2 start, uint col, float thicc = 1) {
 			var end = ImGui.GetItemRectMax();
 			var draw = ImGui.GetWindowDrawList();
 			draw.AddLine(
 				start,
 				new Vector2(start.X, end.Y),
-				col.ToRgba(),
+				col,
 				thicc
 			);
 		}

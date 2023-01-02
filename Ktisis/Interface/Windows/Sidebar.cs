@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Numerics;
-using System.Collections.Generic;
 
 using ImGuiNET;
 
 using Dalamud.Interface;
-using Dalamud.Interface.Windowing;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Services;
@@ -14,14 +12,11 @@ using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Dialog;
 using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Overlay;
-using Ktisis.Interface.Workspace;
 using Ktisis.Interface.Components.Posing;
 
 namespace Ktisis.Interface.Windows {
-	public class Sidebar : Window {
+	public class Sidebar : KtisisWindow {
 		public static string Name = $"Ktisis ({Ktisis.Version})##Sidebar";
-
-		public static List<Manipulable> Items = new();
 
 		// Constants
 
@@ -33,26 +28,6 @@ namespace Ktisis.Interface.Windows {
 			Name, ImGuiWindowFlags.None
 		) {
 			RespectCloseHotkey = false;
-
-			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
-				IsOpen = true;
-			else if (Ktisis.IsInGPose)
-				OnGPoseChange(true);
-
-			EventService.OnGPoseChange += OnGPoseChange;
-		}
-
-		// Listen for GPose event to open/close
-
-		internal void OnGPoseChange(bool state) {
-			if (state) {
-				FindTarget(true);
-			} else {
-				Items.Clear();
-			}
-
-			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnEnterGpose)
-				IsOpen = state;
 		}
 
 		// Draw window
@@ -197,7 +172,7 @@ namespace Ktisis.Interface.Windows {
 		private static void OpenEditor() {
 			if (Buttons.IconButton(FontAwesomeIcon.PencilAlt, ControlButtonSize)) {
 				if (EditorService.Selection == null) {
-					var tar = FindTarget(true);
+					var tar = EditorService.FindTarget(true);
 					if (tar != null) tar.Select();
 				}
 
@@ -236,7 +211,7 @@ namespace Ktisis.Interface.Windows {
 
 		private static void DrawSceneTree() {
 			if (ImGui.BeginChildFrame(471, new Vector2(-1, -1), ImGuiWindowFlags.HorizontalScrollbar)) {
-				foreach (var item in Items)
+				foreach (var item in EditorService.Items)
 					item.DrawTreeNode();
 
 				ImGui.EndChildFrame();
@@ -244,31 +219,6 @@ namespace Ktisis.Interface.Windows {
 				if (ImGui.IsItemClicked() && !ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
 					EditorService.Selection = null;
 			}
-		}
-
-		// Find target item
-
-		internal unsafe static ActorObject? FindTarget(bool append = false) {
-			var tar = Ktisis.GPoseTarget;
-			if (tar == null) return null;
-
-			var ptr = (Actor*)tar.Address;
-
-			foreach (var item in Items) {
-				if (item is ActorObject actor) {
-					if (actor.GetActor() == ptr)
-						return actor;
-				} else continue;
-			}
-
-			if (append) {
-				var item = EditorService.GetTargetManipulable();
-				if (item == null) return null;
-				Items.Add(item);
-				return item;
-			}
-
-			return null;
 		}
 	}
 }

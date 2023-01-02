@@ -7,10 +7,10 @@ using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Structs;
+using Ktisis.Services;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
-using Ktisis.Services;
+using Ktisis.Library.Extensions;
 
 namespace Ktisis.Interop.Hooks {
 	public static class PoseHooks {

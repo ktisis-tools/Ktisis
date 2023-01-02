@@ -1,6 +1,7 @@
 using System.Numerics;
 
 using Ktisis.Structs.Actor;
+using Ktisis.Library.Extensions;
 
 namespace Ktisis.Structs.Bones {
 	public class CustomOffset {
