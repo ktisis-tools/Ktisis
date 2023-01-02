@@ -4,7 +4,7 @@
 		"selfName": "Français",
 		"__comment": "Using null element to signal 'et al' in the array below. Don't do this for your own localization.",
 		"maintainers": [
-			"@Luna664",
+			"@Luna664"
 		]
 	},
 
@@ -377,7 +377,7 @@
 		"mh_n_hara": "Main Droite",
 		"oh_n_hara": "Main Gauche",
 		"j_half_l": "Côté Gauche",
-		"j_half_r": "Côté Droit",
+		"j_half_r": "Côté Droit"
 	},
 
 	"boneCategory": {
