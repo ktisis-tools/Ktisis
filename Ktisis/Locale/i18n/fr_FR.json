@@ -2,7 +2,6 @@
 	"$meta": {
 		"displayName": "French",
 		"selfName": "Français",
-		"__comment": "Using null element to signal 'et al' in the array below. Don't do this for your own localization.",
 		"maintainers": [
 			"@Luna664"
 		]
