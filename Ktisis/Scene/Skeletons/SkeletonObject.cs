@@ -18,7 +18,10 @@ namespace Ktisis.Scene.Skeletons {
 
 		// Manipulable
 
-		public unsafe override string GetName() => "Skeleton";
+		public override string Name {
+			get => "Skeleton";
+			set { }
+		}
 
 		public override void Context() { }
 
@@ -117,7 +120,7 @@ namespace Ktisis.Scene.Skeletons {
 			}
 
 			if (partials.Count > 0) {
-				PluginLog.Verbose($"Rebuilding SkeletonObject for {Parent?.GetName()} ({string.Join(", ", partials)})");
+				PluginLog.Verbose($"Rebuilding SkeletonObject for {Parent?.Name} ({string.Join(", ", partials)})");
 				UpdateItem(this, ref categories, ref partials);
 			}
 		}

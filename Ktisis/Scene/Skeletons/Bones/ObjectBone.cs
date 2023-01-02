@@ -4,14 +4,14 @@ using Ktisis.Interface.Localization;
 namespace Ktisis.Scene.Skeletons {
 	public class ObjectBone : Manipulable, Transformable {
 		public ObjectBone(Bone bone) {
-			Name = bone.HkaBone.Name.String;
+			BoneName = bone.HkaBone.Name.String;
 			Partial = bone.Partial;
 			Index = bone.Index;
 		}
 
 		// Properties
 
-		private string Name;
+		private string BoneName;
 		internal int Partial;
 		internal int Index;
 
@@ -21,8 +21,10 @@ namespace Ktisis.Scene.Skeletons {
 
 		// Manipulable
 
-		public unsafe override string GetName()
-			=> Locale.GetBoneName(Name);
+		public override string Name {
+			get => Locale.GetBoneName(BoneName);
+			set { }
+		}
 
 		public override void Context() {}
 

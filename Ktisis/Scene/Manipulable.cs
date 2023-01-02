@@ -42,7 +42,7 @@ namespace Ktisis.Scene {
 
 			ImGui.PushStyleColor(ImGuiCol.Text, Color);
 			var expand = Tree.CollapsibleNode(
-				GetName(),
+				Name,
 				flags,
 				Select, Context
 			);
@@ -67,7 +67,7 @@ namespace Ktisis.Scene {
 
 		// Abstract methods
 
-		public abstract string GetName();
+		public abstract string Name { get; set; }
 
 		public abstract void Select();
 		public abstract void Context();

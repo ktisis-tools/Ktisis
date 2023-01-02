@@ -10,7 +10,10 @@ namespace Ktisis.Scene.Skeletons.Bones {
 
 		public override uint Color => 0xFFFF8008;
 
-		public override string GetName() => Category != null ? Category.Name : "INVALID";
+		public override string Name {
+			get => Category != null ? Category.Name : "INVALID";
+			set { }
+		}
 
 		public override void Context() {}
 

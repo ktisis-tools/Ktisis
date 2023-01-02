@@ -16,6 +16,8 @@ namespace Ktisis.Scene.Actors {
 
 		private int Index;
 
+		private string? Nickname;
+
 		public ActorObject(int x) {
 			Index = x;
 			AddChild(new SkeletonObject());
@@ -24,9 +26,13 @@ namespace Ktisis.Scene.Actors {
 		// Manipulable
 
 		public override uint Color => 0xFF6EE266;
-		public unsafe override string GetName() {
-			var actor = GetActor();
-			return actor != null ? actor->GetNameOrId() : "INVALID";
+
+		public unsafe override string Name {
+			get {
+				var actor = GetActor();
+				return actor != null ? actor->GetNameOrId() : "INVALID";
+			}
+			set => Nickname = value;
 		}
 
 		public override void Select() {
