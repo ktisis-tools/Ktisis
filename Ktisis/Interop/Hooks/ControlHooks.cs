@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Keys;
@@ -8,7 +10,11 @@ using Ktisis.Structs.Input;
 
 namespace Ktisis.Interop.Hooks {
 	internal static class ControlHooks {
+
 		public static KeyboardState KeyboardState = new();
+		public static MouseState MouseState = new();
+		private static MouseState LastMouseState = new();
+		private static readonly Dictionary<MouseButton, Stopwatch?> PressingFor = new();
 
 		internal unsafe delegate void InputDelegate(InputEvent* input, IntPtr a2, ControllerState* controllerState, MouseState* mouseState, KeyboardState* keyState);
 		internal static Hook<InputDelegate> InputHook = null!;
@@ -20,7 +26,64 @@ namespace Ktisis.Interop.Hooks {
 
 			try {
 				if (mouseState != null) {
-					// TODO
+					MouseState = *mouseState;
+					foreach (var button in Enum.GetValues<MouseButton>()) {
+
+						if (button == MouseButton.None) continue;
+
+						if (!PressingFor.ContainsKey(button))
+							PressingFor.Add(button, null);
+
+						var buttonPressed = (mouseState->Clicked & button) != 0;
+						if (buttonPressed)
+							PressingFor[button] = Stopwatch.StartNew();
+
+						var isReleased = (LastMouseState.Pressed & button) != 0 && (mouseState->Pressed & button) == 0;
+						long timePressedMs = -1;
+						if (isReleased && PressingFor[button] != null) {
+							timePressedMs = PressingFor[button]!.ElapsedMilliseconds;
+							PressingFor[button] = null;
+						}
+
+
+						if (EventManager.OnMouseClicked != null && isReleased && timePressedMs > 0 && timePressedMs < Ktisis.Configuration.ClickDuration) {
+							var invokeClickedList = EventManager.OnMouseClicked.GetInvocationList();
+							foreach (var invoke in invokeClickedList) {
+								if ((bool)invoke.Method.Invoke(invoke.Target, new object[] { button })!) {
+									mouseState->Clicked &= ~button;
+									MouseState.Clicked &= ~button;
+									LastMouseState.Clicked &= ~button;
+									mouseState->Pressed &= ~button;
+									MouseState.Pressed &= ~button;
+									LastMouseState.Pressed &= ~button;
+								}
+							}
+						}
+
+						isReleased = (LastMouseState.Pressed & button) != 0 && (mouseState->Pressed & button) == 0; // it may have been altered by OnMouseClicked
+						if (EventManager.OnMousePressed != null && isReleased) {
+							var invokePressedList = EventManager.OnMousePressed.GetInvocationList();
+							foreach (var invoke in invokePressedList) {
+								if ((bool)invoke.Method.Invoke(invoke.Target, new object[] { button })!) {
+									// TODO: check if this is enough as Pressed is a constant value
+									mouseState->Pressed &= ~button;
+									MouseState.Pressed &= ~button;
+								}
+							}
+						}
+
+						buttonPressed = (mouseState->Clicked & button) != 0; // it may have been altered by OnMouseClicked
+						if (EventManager.OnMousePressed != null && buttonPressed) {
+							var invokeClickedList = EventManager.OnMousePressed.GetInvocationList();
+							foreach (var invoke in invokeClickedList) {
+								if ((bool)invoke.Method.Invoke(invoke.Target, new object[] { button })!) {
+									mouseState->Clicked &= ~button;
+									MouseState.Clicked &= ~button;
+								}
+							}
+						}
+					}
+					LastMouseState = *mouseState;
 				}
 
 				// Process queue

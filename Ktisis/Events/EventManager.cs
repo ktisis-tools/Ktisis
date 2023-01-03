@@ -25,6 +25,15 @@ namespace Ktisis.Events {
 		internal delegate void KeyReleaseEventDelegate(VirtualKey key);
 		internal static KeyReleaseEventDelegate? OnKeyReleased;
 
+		internal delegate bool MousePressedEventDelegate(MouseButton button);
+		internal static MousePressedEventDelegate? OnMousePressed;
+
+		internal delegate bool MouseReleaseEventDelegate(MouseButton button);
+		internal static MouseReleaseEventDelegate? OnMouseReleased;
+
+		internal delegate bool MouseClickEventDelegate(MouseButton button);
+		internal static MouseClickEventDelegate? OnMouseClicked;
+
 		public static void FireOnGposeChangeEvent(ActorGposeState state) {
 			Logger.Debug($"FireOnGposeChangeEvent {state}");
 			OnGPoseChange?.Invoke(state);

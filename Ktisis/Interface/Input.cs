@@ -112,6 +112,23 @@ namespace Ktisis.Interface {
 			return false;
 		}
 
+		// Mouse input handling
+		internal static bool OnMousePressed(MouseButton button) {
+			return false;
+		}
+		internal static bool OnMouseReleased(MouseButton button) {
+			return false;
+		}
+		internal static bool OnMouseClicked(MouseButton button) {
+
+			if (Ktisis.Configuration.DeselectBoneClickVoid && button == MouseButton.Left && OverlayWindow.IsGizmoVisible && (Ktisis.Configuration.DeselectBoneClickVoidActorPassTrough || !IsMouseOverTarget()) && !IsMouseOverWindow()) {
+				OverlayWindow.DeselectGizmo();
+				return true;
+			}
+			return false;
+		}
+
+
 		internal static void OnKeyReleased(VirtualKey key) {
 			if (!Ktisis.Configuration.EnableKeybinds || IsChatInputActive())
 				return;
@@ -140,6 +157,8 @@ namespace Ktisis.Interface {
 
 			return match;
 		}
+
+
 
 		[Serializable]
 		public enum Purpose {
@@ -179,10 +198,16 @@ namespace Ktisis.Interface {
 		public static void Init() {
 			EventManager.OnKeyPressed += OnKeyPressed;
 			EventManager.OnKeyReleased += OnKeyReleased;
+			EventManager.OnMousePressed += OnMousePressed;
+			EventManager.OnMouseReleased += OnMouseReleased;
+			EventManager.OnMouseClicked += OnMouseClicked;
 		}
 		public static void Dispose() {
 			EventManager.OnKeyPressed -= OnKeyPressed;
 			EventManager.OnKeyReleased -= OnKeyReleased;
+			EventManager.OnMousePressed -= OnMousePressed;
+			EventManager.OnMouseReleased -= OnMouseReleased;
+			EventManager.OnMouseClicked -= OnMouseClicked;
 		}
 
 		// Below are the methods and variables needed for Monitor to handle inputs
@@ -258,5 +283,44 @@ namespace Ktisis.Interface {
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
 		private unsafe static bool IsChatInputActive() => ((UIModule*)Services.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
+
+		private static readonly List<string> MouseObstructingAddonNames = new() {
+				{ "CameraSetting"},
+				{ "ChatLog"},
+				{ "ChatLogPanel_0" },
+				{ "ChatLogPanel_1" },
+				{ "ChatLogPanel_2" },
+				{ "ChatLogPanel_3" },
+				{ "GroupPoseGuide" },
+				{ "GroupPoseStamp" },
+				// { "GroupPoseStampImage" }, // this seem to take almost all the screen
+			};
+		private unsafe static bool IsMouseOverWindow() {
+
+			foreach(var addonName in MouseObstructingAddonNames) {
+				var address = Services.GameGui.GetAddonByName(addonName, 1);
+				if (address == IntPtr.Zero) continue;
+
+				var addon = (FFXIVClientStructs.FFXIV.Component.GUI.AtkUnitBase*)address;
+				if (addon == null || !addon->IsVisible) continue;
+
+				var rootNode = addon->RootNode;
+				if (rootNode == null || !rootNode->IsVisible) continue;
+
+				var right = addon->X;
+				var left = addon->X + (addon->RootNode->Width * addon->Scale);
+				var top = addon->Y;
+				var bottom = addon->Y + (addon->RootNode->Height * addon->Scale);
+
+				if (ControlHooks.MouseState.PosX > right
+					&& ControlHooks.MouseState.PosX < left
+					&& ControlHooks.MouseState.PosY > top
+					&& ControlHooks.MouseState.PosY < bottom)
+					return true;
+			}
+			return false;
+		}
+		private unsafe static bool IsMouseOverTarget() =>
+			Services.Targets->MouseOverTarget != null;
 	}
 }

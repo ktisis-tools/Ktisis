@@ -51,6 +51,9 @@ namespace Ktisis
 
 		public bool DisableChangeTargetOnLeftClick { get; set; } = false;
 		public bool DisableChangeTargetOnRightClick { get; set; } = false;
+		public bool DeselectBoneClickVoid { get; set; } = true;
+		public bool DeselectBoneClickVoidActorPassTrough { get; set; } = true;
+		public int ClickDuration { get; set; } = 100;
 
 		// Overlay
 
