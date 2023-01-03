@@ -138,7 +138,7 @@ namespace Ktisis.Interface {
 				match &= key == input || ControlHooks.KeyboardState.IsKeyDown(key);
 			}
 
-			return match;
+			return match && !ControlHooks.KeyboardState.IsAnyOtherKeyDown(keys);
 		}
 
 		[Serializable]
