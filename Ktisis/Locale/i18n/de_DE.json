@@ -113,7 +113,7 @@
 				"purpose": {
 					"generic": {
 						"__comment": [
-							"Okay, this **really** needs the placeholder system. Ideally we'd have \"Kategorie %anme% togglen\" (or \"… umschalten\"), but uh... that ain't happenin'.",
+							"Okay, this **really** needs the placeholder system. Ideally we'd have \"Kategorie %name% togglen\" (or \"… umschalten\"), but uh... that ain't happenin'.",
 							"Also the thing these are for really needs a rework."
 						],
 						"toggle": "Umschalten",
