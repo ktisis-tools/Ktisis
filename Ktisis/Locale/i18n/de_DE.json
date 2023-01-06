@@ -1,15 +1,15 @@
 {
 	"$meta": {
 		"displayName": "German",
-		"selfName": "Deutsch", 
+		"selfName": "Deutsch",
 		"maintainers": [
 			"@Fayti1703",
-			"@EstoyMejor",
+			"@StoiaCode",
 			"@chirpcodes",
 			null
 		]
 	},
-	
+
 	"tab": {
 		"general": {
 			"title": "Allgemein"
@@ -18,35 +18,38 @@
 			"title": "Einstellungen"
 		}
 	},
-	
+
 	"config": {
 		"title": "Ktisis Einstellungen",
-		"general": {
-			"title": "Allgemeines",
-			"openMethod": {
-				"fieldLabel": "Ktisis öffnet sich",
-				"Manually": "wenn `/ktisis` im Chat eingegeben wird",
-				"OnPluginLoad": "beim Laden des Plugins",
-				"OnEnterGpose": "beim Betreten des Gruppenfotomodus"
+
+		"interface": {
+			"title": "Oberfläche",
+			"general": {
+				"title": "Allgemeines",
+				"openMethod": {
+					"fieldLabel": "Ktisis öffnet sich",
+					"Manually": "wenn `/ktisis` im Chat eingegeben wird",
+					"OnPluginLoad": "beim Laden des Plugins",
+					"OnEnterGpose": "beim Betreten des Gruppenfotomodus"
+				},
+				"hideCharName": "Characternamen verstecken",
+				"censorNSFW": "Anstößige Inhalte verstecken"
 			},
-			"hideCharName": "Characternamen verstecken",
-			"__comment": "This might need an actual translation for 'NSFW' -- unsure what to pick here.",
-			"censorNSFW": "NSFW-Inhalte verstecken"
+			"transformTable": {
+				"title": "Transformier-Tabelle",
+				"digitPrecision": "Zahl der Nachkommastellen",
+				"basePositionSpeed": "Positionierungsgeschwindigkeit",
+				"baseRotationSpeed": "Rotationsgeschwindigkeit",
+				"baseScaleSpeed": "Skalierungsgeschwindigkeit",
+				"ctrlSpeedMult": "Strg-Geschwindigkeitsmultiplikator",
+				"shiftSpeedMult": "Umschalt-Geschwindigkeitsmultiplikator",
+				"showSpeedMultiplierInputs": "Zeige Multiplikator-Einstellungen in Tabelle"
+			}
 		},
-		"transformTable": {
-			"title": "Transformier-Tabelle",
-			"digitPrecision": "Zahl der Nachkommastellen",
-			"basePositionSpeed": "Positionierungsgeschwindigkeit",
-			"baseRotationSpeed": "Rotationsgeschwindigkeit",
-			"baseScaleSpeed": "Skalierungsgeschwindigkeit",
-			"ctrlSpeedMult": "Strg-Geschwindigkeitsmultiplikator",
-			"shiftSpeedMult": "Umschalt-Geschwindigkeitsmultiplikator",
-			"showSpeedMultiplierInputs": "Zeige Multiplikator-Einstellungen in Tabelle"
-		},
-		
+
 		"overlay": {
 			"title": "Overlay",
-			
+
 			"skeleton": {
 				"header": "Skelettanzeige",
 				"drawLines": "Zeige Skelettlinien",
@@ -55,7 +58,7 @@
 				"dotRadius": "Radius der Knochenpunkte",
 				"lineThickness": "Dicke der Skelettlinien"
 			},
-			
+
 			"boneColors": {
 				"header": "Knochenfarben",
 				"link": {
@@ -75,64 +78,67 @@
 					"placeholderText": "Kategorien werden hier nach erstmaligem Anzeigen der darin enthaltenen Knochen angezeigt."
 				}
 			},
-			
+
 			"bonePositions": {
 				"header": "Knochenpositionen bearbeiten"
-			},
-			
-			"gizmo": {
-				"title": "Gizmo",
-				"allowAxisFlip": "Achsen zur Kamera drehen"
 			}
+
 		},
-		
+
+		"gizmo": {
+			"title": "Gizmo",
+			"allowAxisFlip": "Achsen zur Kamera drehen"
+		},
+
 		"input": {
 			"title": "Eingabe",
 			"selectBehavior": {
 				"title": "Ziel-Auswahl",
-				"disableLeftClickTarget": "Ziel-Auswahl mit linker Maustaste verhindern", 
-				"disableRightClickTarget": "Ziel-Auswahl mit rechter Maustaste verhindern" 
-			}
-		},
-		
-		"keybind": {
-			"title": "Tastaturkürzel",
-			"enable": "Aktivieren",
-			"assignByKeyPress": {
-				"title": "Einstellen über Tastendruck",
-				"helpText": "Zum Einstellen einer Taste oder Tastenkombination:\n1.1. Taste bzw. Tastenkombination halten.\n2.Gewünschte Aktion anclicken\n\nKeine Taste beim Klicken halten um die Zuweisung aufzuheben."
+				"disableLeftClickTarget": "Ziel-Auswahl mit linker Maustaste verhindern",
+				"disableRightClickTarget": "Ziel-Auswahl mit rechter Maustaste verhindern"
 			},
-			"keybindTable": {
-				"keys": "Taste(n)",
-				"action": "zugewiesene Aktion"
-			},
-			"purpose": {
-				"generic": {
-					"__comment": [
-						"Okay, this **really** needs the placeholder system. Ideally we'd have \"Kategorie %anme% togglen\" (or \"… umschalten\"), but uh... that ain't happenin'.",
-						"Also the thing these are for really needs a rework."
-					],
-					"toggle": "Toggle",
-					"hold": "Halten",
-					"release": "Solo-Toggle"
+			"keybind": {
+				"title": "Tastaturkürzel",
+				"enable": "Aktivieren",
+				"assignByKeyPress": {
+					"title": "Einstellen über Tastendruck",
+					"helpText": "Zum Einstellen einer Taste oder Tastenkombination:\n1.1. Taste bzw. Tastenkombination halten.\n2.Gewünschte Aktion anclicken\n\nKeine Taste beim Klicken halten um die Zuweisung aufzuheben."
 				},
-				"GlobalModifierKey": "Globaler Modifikator",
-				"SwitchToTranslate": "Zu Positionieren wechseln",
-				"SwitchToRotate": "Zu Rotieren wechseln",
-				"SwitchToScale": "Zu Skalierien wechseln",
-				"SwitchToUniversal": "Zur Universalbearbeitung wechseln",
-				"ToggleLocalWorld": "Gizmo zwischen Lokal/Welt umschalten",
-				"HoldToHideSkeleton": "Halten um Skelett zu verstecken",
-				"ClearCategoryVisibilityOverload": "Kategoriesichbarkeits-Überschreibungen löschen",
-				"HoldAllCategoryVisibilityOverload": "Halten um alle Kategorien anzuzeigen",
-				"CircleThroughSiblingLinkModes": "Bearbeitungsmodus für verwandte Knochen wechseln"
+
+				"keybindTable": {
+					"keys": "Taste(n)",
+					"action": "zugewiesene Aktion"
+				},
+
+				"purpose": {
+					"generic": {
+						"__comment": [
+							"Okay, this **really** needs the placeholder system. Ideally we'd have \"Kategorie %name% togglen\" (or \"… umschalten\"), but uh... that ain't happenin'.",
+							"Also the thing these are for really needs a rework."
+						],
+						"toggle": "Umschalten",
+						"hold": "Halten",
+						"release": "Solo-Toggle"
+					},
+					"GlobalModifierKey": "Globaler Modifikator",
+					"SwitchToTranslate": "Zu Positionieren wechseln",
+					"SwitchToRotate": "Zu Rotieren wechseln",
+					"SwitchToScale": "Zu Skalierien wechseln",
+					"SwitchToUniversal": "Zur Universalbearbeitung wechseln",
+					"ToggleLocalWorld": "Gizmo zwischen Lokal/Welt umschalten",
+					"HoldToHideSkeleton": "Halten um Skelett zu verstecken",
+					"ClearCategoryVisibilityOverload": "Kategoriesichbarkeits-Überschreibungen löschen",
+					"HoldAllCategoryVisibilityOverload": "Halten um alle Kategorien anzuzeigen",
+					"CircleThroughSiblingLinkModes": "Bearbeitungsmodus für verwandte Knochen wechseln"
+				}
 			}
+
 		},
-			
+
 		"references": {
 			"title": "Referenzen",
 			"__comment": "A bit more here?",
-			"explaination": "Zeige Referenzbilder im Overlay.",
+			"explaination": "Zeige ein Referenzbild auf deinem Bildschirm, um dabei zu helfen die Pose exakt zu treffen.",
 			"imageAlpha": "Durchsichtigkeit (bei 0 völlig durchsichtig)",
 			"hideWindowDecoration": "Verstecke Fensterdekoration (z.B. Fenstertitel)",
 			"images": {
@@ -140,17 +146,26 @@
 				"dialog": {
 					"title": "Referenzbild hinzufügen",
 					"filter": "Bild-Dateien"
-				}
-			},
-			"addText": "Neues Referenzbild hinzufügen"
+				},
+				"addText": "Neues Referenzbild hinzufügen"
+			}
 		},
-		
+
 		"language": {
 			"title": "Spracheinstellungen",
+			"noteWIP": "Achtung! Diese Einstellungen sind derzeit nur für das sich in Arbeit befindende Übersetzungssystem.",
+			"contNoteWIP": "Die meisten Oberflächen sind bis jetzt nicht übersetzt!",
 			"select": "Oberflächensprache",
 			"translateBones": "Knochennamen übersetzen"
 		},
-		
+
+		"offset": {
+			"startHelpText": "Select a Bone to start adjusting its position.",
+			"tips": "Tips:\nClick on a row to copy it into clipboard.\nCtrl + Shift + Right click to remove a row.\nThe plus (+) button will insert a copied row",
+			"addTooltip": "Add a line from clipboard.",
+			"dropTooltip": "Hold Ctrl and Shift to drop ALL bone offsets."
+		},
+
 		"data": {
 			"title": "Zusatzdaten",
 			"glamourDresser": {
@@ -159,7 +174,7 @@
 					"pre": "",
 					"post": "valide Projektionsplatten gefunden."
 				},
-				
+
 				"sync": {
 					"__comment": "Replace $$JARGON$$ in here",
 					"tooltip": "Nach neuen Projektionsplatten für Sets suchen.\nDie Ergebnisse werden permantent gespeichert und sind auch nach einem Neustart noch verfügbar.\n\nVorraussetzungen:\nDas $$JARGON$$ Fenster von der Projektionskommode oder $$JARGON$$ Fenster muss offen sein."
@@ -183,12 +198,12 @@
 			"title": "Pose"
 		}
 	},
-	
+
 	"tribe": {
 		"SunSeeker": "Goldtatze",
 		"MoonKeeper": "Mondstreuner",
-		"Lost": "Losgesagter",
 		"SeaWolf": "Seewolf",
+		"Lost": "Losgesagter",
 		"Midlander": "Wiesländer",
 		"Highlander": "Hochländer",
 		"Wildwood": "Erischatten",
@@ -202,18 +217,18 @@
 		"Rava": "Rava",
 		"Veena": "Veena"
 	},
-	
+
 	"race": {
-		"AuRa": "Au Ra",
-		"Elezen":"Elezen",
-		"Hrothgar":"Hrothgar",
+		"AuRa": "Au'Ra",
+		"Elezen": "Elezen",
+		"Hrothgar": "Hrothgar",
 		"Hyur": "Hyuran",
-		"Lalafell":"Lalafell",
+		"Lalafell": "Lalafell",
 		"Miqote": "Miqo'te",
-		"Roegadyn":"Roegadyn",
-		"Viera":"Viera"
+		"Roegadyn": "Roegadyn",
+		"Viera": "Viera"
 	},
-	
+
 	"__comment": "Taken from Anamesis -- thank you!",
 	"bone": {
 		"n_root": "Ganzer Körper",
@@ -371,6 +386,28 @@
 		"oh_n_hara": "Nebenhandwaffe",
 		"j_half_l": "Linke Hälfte",
 		"j_half_r": "Rechte Hälfte"
+	},
+
+	"boneCategory": {
+		"other": "Andere",
+		"body": "Körper",
+		"head": "Kopf",
+		"hair": "Haare",
+		"clothes": "Klamotten",
+		"weapons": "Waffen",
+		"right hand": "Rechte Hand",
+		"left hand": "Linke Hand",
+		"feet": "Füße",
+		"hands": "Hände",
+		"tail": "Schweif",
+		"ears": "Ohren",
+		"ivcs left hand": "IVCS Linke Hand",
+		"ivcs right hand": "IVCS Rechte Hand",
+		"ivcs left foot": "IVCS Linker Fuß",
+		"ivcs right foot": "IVCS Rechter Fuß",
+		"ivcs body": "IVCS Körper",
+		"ivcs penis": "IVCS Penis",
+		"ivcs vagina": "IVCS Vagina",
+		"ivcs buttocks": "IVCS Gesäß"
 	}
-	
 }

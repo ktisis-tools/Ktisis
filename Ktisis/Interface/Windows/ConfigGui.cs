@@ -262,8 +262,8 @@ namespace Ktisis.Interface.Windows {
 		// Language
 
 		public static void DrawLanguageTab(Configuration cfg) {
-			ImGui.Text("Disclaimer! These settings are currently only in place to test the WIP localization system.");
-			ImGui.Text("Translation strings are not currently supported in most of the UI.");
+			ImGui.Text(Locale.GetString("config.language.noteWIP"));
+			ImGui.Text(Locale.GetString("config.language.contNoteWIP"));
 
 			ImGui.Spacing();
 
@@ -430,7 +430,7 @@ namespace Ktisis.Interface.Windows {
 				if (GuiHelpers.DragFloat3FillWidth($"##currentTargetOffset", false, null, ref targetBoneOffset, .00001f, "%.5f"))
 					cfg.CustomBoneOffset[targetBodyType][bone.HkaBone.Name.String] = targetBoneOffset;
 			} else {
-				ImGuiComponents.HelpMarker("Select a Bone to start adjusting its position.");
+				ImGuiComponents.HelpMarker(Locale.GetString("config.offset.startHelpText"));
 			}
 
 			ImGui.Spacing();
@@ -450,10 +450,7 @@ namespace Ktisis.Interface.Windows {
 							cfg.CustomBoneOffset[bodyType] = parsedPasteAll;
 					}
 
-					ImGuiComponents.HelpMarker("Tips:\n" +
-						"Click on a row to copy it into clipboard" +
-						"Ctrl + Shift + Right click to remove a row" +
-						"The plus (+) button will insert a copied row");
+					ImGuiComponents.HelpMarker(Locale.GetString("config.offset.tips"));
 
 
 					if (ImGui.BeginTable("offsetBonesTable", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.BordersInnerH | ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.PadOuterX)) {
@@ -485,14 +482,14 @@ namespace Ktisis.Interface.Windows {
 							ImGui.Text($"{offsets.Z:F6}");
 						}
 						ImGui.EndTable();
-						if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus,"Add a line from clipboard.", default, $"{bodyType}##Clipboard##AddLine")) {
+						if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, Locale.GetString("config.offset.addTooltip"), default, $"{bodyType}##Clipboard##AddLine")) {
 							var parsedPasteLine = JsonConvert.DeserializeObject<(string, Vector3)>(Encoding.UTF8.GetString(Convert.FromBase64String(ImGui.GetClipboardText()))) ;
 							cfg.CustomBoneOffset[bodyType][parsedPasteLine.Item1] = parsedPasteLine.Item2;
 						}
 					}
 				}
 			}
-			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Hold Ctrl and Shift to drop ALL bone offsets.", default, "dropAllOffset"))
+			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, Locale.GetString("config.offset.dropTooltip"), default, "dropAllOffset"))
 				cfg.CustomBoneOffset = new();
 
 			ImGui.Spacing();

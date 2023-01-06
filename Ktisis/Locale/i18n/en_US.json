@@ -51,7 +51,7 @@
 			"title": "Overlay",
 
 			"skeleton": {
-				"header":"Skeleton lines and dots",
+				"header": "Skeleton lines and dots",
 				"drawLines": "Draw lines on skeleton",
 				"__comment": "TODO: These should reflect the actual functionality (draw lines/dots when *gizmo is active*) more clearly.",
 				"drawLineWhenSelecting": "Draw lines when selecting",
@@ -137,6 +137,7 @@
 				}
 			}
 		},
+
 		"references": {
 			"title": "References",
 			"explanation": "Overlay reference images onto your game, helping you to get just the right pose.",
@@ -156,8 +157,17 @@
 
 		"language": {
 			"title": "Language",
+			"noteWIP": "Disclaimer! These settings are currently only in place to test the WIP localization system.",
+			"contNoteWIP": "Translation strings are not currently supported in most of the UI.",
 			"select": "Language",
 			"translateBones": "Translate Bone Names"
+		},
+
+		"offset": {
+			"startHelpText": "Select a Bone to start adjusting its position.",
+			"tips": "Tips:\nClick on a row to copy it into clipboard.\nCtrl + Shift + Right click to remove a row.\nThe plus (+) button will insert a copied row",
+			"addTooltip": "Add a line from clipboard.",
+			"dropTooltip": "Hold Ctrl and Shift to drop ALL bone offsets."
 		},
 
 		"data": {
@@ -178,8 +188,9 @@
 			}
 		}
 	},
-	"workspace":{
-		"title":"Workspace",
+
+	"workspace": {
+		"title": "Workspace",
 		"actor": {
 			"title": "Actor"
 		},
@@ -211,14 +222,14 @@
 	},
 
 	"race": {
-		"AuRa":"Au'Ra",
-		"Elezen":"Elezen",
-		"Hrothgar":"Hrothgar",
+		"AuRa": "Au'Ra",
+		"Elezen": "Elezen",
+		"Hrothgar": "Hrothgar",
 		"Hyur": "Hyur",
-		"Lalafell":"Lalafell",
+		"Lalafell": "Lalafell",
 		"Miqote": "Miqo'te",
-		"Roegadyn":"Roegadyn",
-		"Viera":"Viera"
+		"Roegadyn": "Roegadyn",
+		"Viera": "Viera"
 	},
 
 
