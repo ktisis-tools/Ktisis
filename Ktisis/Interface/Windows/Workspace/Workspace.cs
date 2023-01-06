@@ -152,7 +152,7 @@ namespace Ktisis.Interface.Windows.Workspace
 					EditGaze.Draw(actor);
 			}
 
-            // Status effect control
+			// Status effect control
 			StatusEffectControls.Draw(actor);
 
 			// Import & Export
