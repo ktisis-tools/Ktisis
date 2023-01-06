@@ -6,6 +6,7 @@ using ImGuiNET;
 using Dalamud.Interface;
 
 using Ktisis.Interface.Components;
+using System.Text.RegularExpressions;
 
 namespace Ktisis.Util
 {
@@ -236,6 +237,25 @@ namespace Ktisis.Util
 			if (contrastRatio < 1.0f)
 				return 1.0f / contrastRatio;
 			return contrastRatio;
+		}
+
+		public static void FormattedString(FormattableString @string)
+        {
+			var args = @string.GetArguments();
+			var format = Regex.Split(@string.Format, "{\\d}");
+
+            for (int i = 0; i < args.Length; i++)
+			{
+				ImGui.Text(format[i]);
+				ImGui.SameLine();
+				var arg = args[0];
+				if (arg is FontAwesomeIcon) Icon((FontAwesomeIcon)arg);
+				if (arg is string) ImGui.Text((string)arg);
+				ImGui.SameLine();
+			}
+
+			if (format.Length > 1)
+                ImGui.Text(format[^1]);
 		}
 	}
 }
