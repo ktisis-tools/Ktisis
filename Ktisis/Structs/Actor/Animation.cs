@@ -5,7 +5,7 @@ using Ktisis.Interop;
 using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Structs.Actor {
-	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
+	[StructLayout(LayoutKind.Explicit)]
 	public struct Animation {
 		public const int AnimationSlotCount = 13;
 

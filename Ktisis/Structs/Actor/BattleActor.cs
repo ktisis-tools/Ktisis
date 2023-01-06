@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 namespace Ktisis.Structs.Actor {
-	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
+	[StructLayout(LayoutKind.Explicit)]
 	public struct BattleActor {
 		public readonly static ReadOnlyCollection<ObjectKind> ValidKinds = new List<ObjectKind>() {ObjectKind.Pc, ObjectKind.BattleNpc}.AsReadOnly();
 

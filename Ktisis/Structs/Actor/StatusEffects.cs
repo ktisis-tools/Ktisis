@@ -20,7 +20,7 @@ namespace Ktisis.Structs.Actor {
 
 		public unsafe void RemoveStatusEffect(int statusIndex) {
 			fixed (void* p = &StatusManager) {
-				Methods.StatusDeleteEffect?.Invoke(new IntPtr(p), statusIndex, 0);
+				Methods.StatusRemoveEffect?.Invoke(new IntPtr(p), statusIndex, 0);
 			}
 		}
 
