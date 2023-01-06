@@ -44,11 +44,11 @@ namespace Ktisis.Interface.Windows.Toolbar {
 							EditGaze.Draw(actor);
 					}
 
-                    // Status Effect Controls
-                    StatusEffectControls.Draw(actor);
+					// Status Effect Controls
+					StatusEffectControls.Draw(actor);
 
-                    // Advanced
-                    if (ImGui.CollapsingHeader("Advanced (Debug)")) {
+					// Advanced
+					if (ImGui.CollapsingHeader("Advanced (Debug)")) {
 						Workspace.Workspace.DrawAdvancedDebugOptions(actor);
 					}
 				}

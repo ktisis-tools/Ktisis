@@ -24,21 +24,21 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x818)] public Equipment Equipment;
 		[FieldOffset(0x840)] public Customize Customize;
 
-        [FieldOffset(0x8E0)] public Animation Animation;
+		[FieldOffset(0x8E0)] public Animation Animation;
 
-        [FieldOffset(0xC20)] public ActorGaze Gaze;
+		[FieldOffset(0xC20)] public ActorGaze Gaze;
 
 		[FieldOffset(0x11F4)] public bool IsMotionEnabled;
 
-        [FieldOffset(0x1A68)] public byte TargetObjectID;
+		[FieldOffset(0x1A68)] public byte TargetObjectID;
 		[FieldOffset(0x1A6C)] public byte TargetMode;
 
-        [FieldOffset(0x1AD4)] public ActorModes Mode;
-        [FieldOffset(0x1AD5)] public byte ModeInput;
+		[FieldOffset(0x1AD4)] public ActorModes Mode;
+		[FieldOffset(0x1AD5)] public byte ModeInput;
 
-        public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
+		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
 
-		public string GetNameOr(string fallback) => ((ObjectKind)GameObject.ObjectKind == ObjectKind.Pc && !Ktisis.Configuration.DisplayCharName) || string.IsNullOrEmpty(Name)? fallback : Name;
+		public string GetNameOr(string fallback) => ((ObjectKind)GameObject.ObjectKind == ObjectKind.Pc && !Ktisis.Configuration.DisplayCharName) || string.IsNullOrEmpty(Name) ? fallback : Name;
 		public string GetNameOrId() => GetNameOr("Actor #" + ObjectID);
 
 		public unsafe IntPtr GetAddress() {
@@ -107,12 +107,14 @@ namespace Ktisis.Structs.Actor {
 				|| cur.FaceType != custom.FaceType // Eye glitch.
 			) {
 				Redraw(faceHack);
-			} else {
+			}
+			else {
 				var res = UpdateCustomize();
 				if (!res) {
 					Logger.Warning("Failed to update character. Forcing redraw.");
 					Redraw(faceHack);
-				} else if (cur.BustSize != custom.BustSize && Model != null) {
+				}
+				else if (cur.BustSize != custom.BustSize && Model != null) {
 					Model->ScaleBust();
 				}
 			}
@@ -129,16 +131,14 @@ namespace Ktisis.Structs.Actor {
 		}
 
 		// Change mode
-		public unsafe void SetActorMode(ActorModes mode, byte modeInput)
-		{
+		public unsafe void SetActorMode(ActorModes mode, byte modeInput) {
 			if (Methods.ActorSetMode == null)
 				return;
 
-			fixed (void* p = &this)
-			{
-                Methods.ActorSetMode(new IntPtr(p), mode, modeInput);
-            }
-        }
+			fixed (void* p = &this) {
+				Methods.ActorSetMode(new IntPtr(p), mode, modeInput);
+			}
+		}
 	}
 
 	public enum RenderMode : uint {
@@ -147,15 +147,14 @@ namespace Ktisis.Structs.Actor {
 		Load = 4
 	}
 
-    public enum ActorModes : byte
-    {
-        None = 0,
-        Normal = 1,
-        EmoteLoop = 3,
-        Mounted = 4,
-        AnimLock = 8,
-        Carrying = 9,
-        InPositionLoop = 11,
-        Performance = 16,
-    }
+	public enum ActorModes : byte {
+		None = 0,
+		Normal = 1,
+		EmoteLoop = 3,
+		Mounted = 4,
+		AnimLock = 8,
+		Carrying = 9,
+		InPositionLoop = 11,
+		Performance = 16,
+	}
 }

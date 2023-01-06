@@ -153,7 +153,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			}
 
             // Status effect control
-            StatusEffectControls.Draw(actor);
+			StatusEffectControls.Draw(actor);
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
