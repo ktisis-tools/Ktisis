@@ -34,7 +34,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 
 				if (actor->Model != null) {
 					// Animation Controls
-					AnimationControls.Draw(target);
+					AnimationControls.Draw(actor);
 
 					// Gaze Controls
 					if (ImGui.CollapsingHeader("Gaze Control")) {
@@ -43,9 +43,12 @@ namespace Ktisis.Interface.Windows.Toolbar {
 						else
 							EditGaze.Draw(actor);
 					}
-					
-					// Advanced
-					if (ImGui.CollapsingHeader("Advanced (Debug)")) {
+
+                    // Status Effect Controls
+                    StatusEffectControls.Draw(actor);
+
+                    // Advanced
+                    if (ImGui.CollapsingHeader("Advanced (Debug)")) {
 						Workspace.Workspace.DrawAdvancedDebugOptions(actor);
 					}
 				}

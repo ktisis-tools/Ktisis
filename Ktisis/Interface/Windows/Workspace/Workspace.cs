@@ -17,7 +17,6 @@ using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
-using Ktisis.Interface.Windows.Toolbar;
 
 using static Ktisis.Data.Files.AnamCharaFile;
 
@@ -143,7 +142,7 @@ namespace Ktisis.Interface.Windows.Workspace
 			ActorsList.Draw();
 
 			// Animation control
-			AnimationControls.Draw(target);
+			AnimationControls.Draw(actor);
 
 			// Gaze control
 			if (ImGui.CollapsingHeader("Gaze Control")) {
@@ -152,6 +151,9 @@ namespace Ktisis.Interface.Windows.Workspace
 				else
 					EditGaze.Draw(actor);
 			}
+
+            // Status effect control
+            StatusEffectControls.Draw(actor);
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))

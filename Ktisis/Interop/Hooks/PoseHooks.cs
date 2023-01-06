@@ -217,7 +217,7 @@ namespace Ktisis.Interop.Hooks {
 		public static unsafe bool IsGamePlaybackRunning(GameObject? gPoseTarget) {
 			var animationControl = GetAnimationControl(gPoseTarget);
 			if (animationControl == null) return true;
-			return animationControl->PlaybackSpeed == 1;
+			return animationControl->PlaybackSpeed != 0f;
 		}
 
 		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(GameObject? go) {
