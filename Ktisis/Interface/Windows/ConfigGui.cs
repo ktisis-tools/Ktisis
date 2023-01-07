@@ -495,6 +495,10 @@ namespace Ktisis.Interface.Windows {
 			if (GuiHelpers.IconButtonHoldConfirm(FontAwesomeIcon.Trash, $"Hold Ctrl and Shift to drop ALL bone offsets.", default, "dropAllOffset"))
 				cfg.CustomBoneOffset = new();
 
+			var boneOffsetFallbackDefault = cfg.BoneOffsetFallbackDefault;
+			if (ImGui.Checkbox(Locale.GetString("Use built-in offsets as fallback"), ref boneOffsetFallbackDefault))
+				cfg.BoneOffsetFallbackDefault = boneOffsetFallbackDefault;
+
 			ImGui.Spacing();
 		}
 
