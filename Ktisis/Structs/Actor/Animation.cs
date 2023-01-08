@@ -36,6 +36,10 @@ namespace Ktisis.Structs.Actor {
 			}
 		}
 
+		public unsafe void RefreshAnimation() {
+			AnimationIds[(int)AnimationSlots.Base] = 0; // Forces a refresh of all slots
+		}
+
 		public unsafe void SetSlotSpeed(AnimationSlots slotId, float speed) {
 			fixed (Animation* p = &this) {
 				IntPtr address = new IntPtr(p);

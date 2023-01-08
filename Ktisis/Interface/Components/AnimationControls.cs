@@ -34,6 +34,8 @@ namespace Ktisis.Interface.Components {
 				ImGui.Spacing();
 				DrawBlendSelect(actor);
 				ImGui.Spacing();
+				DrawReset(actor);
+				ImGui.Spacing();
 				DrawSpeedControl(actor);
 			}
 		}
@@ -145,7 +147,17 @@ namespace Ktisis.Interface.Components {
 			}
 
 			ImGui.Spacing();
+		}
 
+		private unsafe static void DrawReset(Actor* actor) {
+			bool isOverridden = actor->Mode == ActorModes.AnimLock;
+			if (!isOverridden) ImGui.BeginDisabled();
+			if (ImGui.Button(("Reset"))) {
+				actor->SetActorMode(ActorModes.Normal, 0);
+				actor->Animation.SetBaseAnimation(0, true);
+				actor->Animation.RefreshAnimation();
+			}
+			if (!isOverridden) ImGui.EndDisabled();
 		}
 
 		private static void OpenBaseSearchSelector() {
