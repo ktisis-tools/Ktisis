@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors>Chirp</Authors>
     <Company>Ktisis Tools</Company>
-    <Version>0.2.3.1</Version>
+    <Version>0.2.4.0</Version>
     <Description>An internal posing tool.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration) == 'External'">
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <DefineConstants>EXTERNAL_BUILD</DefineConstants>
     <DalamudLibPath>..\..\DalamudLibs\</DalamudLibPath>
   </PropertyGroup>
