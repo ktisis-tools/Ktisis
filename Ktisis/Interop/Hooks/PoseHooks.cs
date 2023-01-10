@@ -53,7 +53,7 @@ namespace Ktisis.Interop.Hooks {
 			var syncModelSpace = Services.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
 			SyncModelSpaceHook = Hook<SyncModelSpaceDelegate>.FromAddress(syncModelSpace, SyncModelSpaceDetour);
 
-			var lookAtIK = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 7C 24 ?? ?? 48 8D 4C 24 ??");
+			var lookAtIK = Services.SigScanner.ScanText("48 8B C4 48 89 58 08 48 89 70 10 F3 0F 11 58 ??");
 			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
 
 			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
