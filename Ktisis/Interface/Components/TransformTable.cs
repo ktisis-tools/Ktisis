@@ -23,6 +23,7 @@ namespace Ktisis.Interface.Components {
 
 	public class TransformTable {
 		public bool IsEditing = false;
+		public bool IsActive = false;
 
 		private float BaseSpeedPos;
 		private float BaseSpeedRot;
@@ -81,21 +82,29 @@ namespace Ktisis.Interface.Components {
 			var inputsWidth = (ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - ControlButtons.ButtonSize.X - ImGui.GetStyle().ItemSpacing.X * 3.0f) / 3.0f;
 			ImGui.PushItemWidth(inputsWidth);
 
+			var anyActive = false;
+			bool active;
+
 			// Position
-			result |= ColoredDragFloat3("##Position", ref Position, BaseSpeedPos * multiplier, axisColors);
+			result |= ColoredDragFloat3("##Position", ref Position, BaseSpeedPos * multiplier, axisColors, out active);
+			anyActive |= active;
 			ImGui.SameLine();
 			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, iconPosition);
 
 			// Rotation
-			result |= ColoredDragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, axisColors);
+			result |= ColoredDragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, axisColors, out active);
+			anyActive |= active;
 			ImGui.SameLine();
 			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, iconRotation);
 
 			// Scale
-			result |= ColoredDragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, axisColors);
+			result |= ColoredDragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, axisColors, out active);
+			anyActive |= active;
 			ImGui.SameLine();
 			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, iconScale);
 
+			IsActive = anyActive;
+			/* FIXME: Checking `ImGui.IsAnyItemActive` seems overzealous? Should probably replace with new `anyActive`. */
 			var newState = result || (IsEditing && ImGui.IsAnyItemActive());
 
 			if (newState && !IsEditing)
@@ -124,27 +133,35 @@ namespace Ktisis.Interface.Components {
 			return result;
 		}
 
-		private bool ColoredDragFloat3(string label, ref Vector3 value, float speed, IReadOnlyList<Vector4> colors, float borderSize = 1.0f) {
-			if (colors.Count != 3)
+		private bool ColoredDragFloat3(string label, ref Vector3 value, float speed, IReadOnlyList<Vector4> colors, out bool anyActive, float borderSize = 1.0f) {
+			if (colors.Count != 3) {
+				anyActive = false;
 				return false;
+			}
 
 			var result = false;
+			anyActive = false;
+			var active = false;
 
-			result |= ColoredDragFloat(label + "X", ref value.X, speed, colors[0], borderSize);
+			result |= ColoredDragFloat(label + "X", ref value.X, speed, colors[0], out active, borderSize);
+			anyActive |= active;
 			ImGui.SameLine();
-			result |= ColoredDragFloat(label + "Y", ref value.Y, speed, colors[1], borderSize);
+			result |= ColoredDragFloat(label + "Y", ref value.Y, speed, colors[1], out active, borderSize);
+			anyActive |= active;
 			ImGui.SameLine();
-			result |= ColoredDragFloat(label + "Z", ref value.Z, speed, colors[2], borderSize);
+			result |= ColoredDragFloat(label + "Z", ref value.Z, speed, colors[2], out active, borderSize);
+			anyActive |= active;
 
 			return result;
 		}
-    
-		private bool ColoredDragFloat(string label, ref float value, float speed, Vector4 color, float borderSize = 1.0f) {
+
+		private bool ColoredDragFloat(string label, ref float value, float speed, Vector4 color, out bool active, float borderSize = 1.0f) {
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, borderSize);
 			ImGui.PushStyleColor(ImGuiCol.Border, color);
 			var result = ImGui.DragFloat(label, ref value, speed, 0, 0, DigitPrecision);
 			ImGui.PopStyleColor();
 			ImGui.PopStyleVar();
+			active = ImGui.IsItemActive();
 			return result;
 		}
 
