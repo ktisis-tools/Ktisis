@@ -26,7 +26,7 @@ namespace Ktisis.Structs.Poses {
 						continue; // this would be a mess, unsupported by anam poses anyway
 
 					var bone = modelSkeleton->GetBone(p, i);
-					var name = bone.HkaBone.Name.String;
+					var name = bone.HkaBone.Name.String!;
 
 					var model = bone.AccessModelSpace();
 					this[name] = Transform.FromHavok(*model);
@@ -50,7 +50,7 @@ namespace Ktisis.Structs.Poses {
 				var skeleton = pose->Skeleton;
 				for (var i = 0; i < skeleton->Bones.Length; i++) {
 					var bone = modelSkeleton->GetBone(p, i);
-					var name = bone.HkaBone.Name.String;
+					var name = bone.HkaBone.Name.String ?? "";
 
 					if (TryGetValue(name, out var val)) {
 						var model = bone.AccessModelSpace();

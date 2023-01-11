@@ -33,7 +33,7 @@ namespace Ktisis.Structs.Bones {
 			set => Pose->ModelPose.Data[Index] = value;
 		}
 
-		public string LocaleName => Locale.GetBoneName(HkaBone.Name.String);
+		public string LocaleName => Locale.GetBoneName(HkaBone.Name.String ?? "Unknown");
 
 		public string UniqueId => $"{Partial}_{Index}";
 		public string UniqueName => $"{LocaleName}##{UniqueId}";
@@ -87,7 +87,7 @@ namespace Ktisis.Structs.Bones {
 		}
 
 		public unsafe Bone? GetMirrorSibling() {
-			var name = HkaBone.Name.String;
+			var name = HkaBone.Name.String ?? "";
 			var prefix = name[..^2];
 
 			for (var p = 0; p < Skeleton->PartialSkeletonCount; p++) {
@@ -99,7 +99,7 @@ namespace Ktisis.Structs.Bones {
 				for (var i = 1; i < poseSkeleton->Bones.Length; i++) {
 					var potentialBone = new Bone(Skeleton, p, i);
 					if (potentialBone == null) continue;
-					var pBName = potentialBone.HkaBone.Name.String;
+					var pBName = potentialBone.HkaBone.Name.String ?? "";
 					if (pBName[..^2] == prefix && pBName != name)
 						return potentialBone;
 				}

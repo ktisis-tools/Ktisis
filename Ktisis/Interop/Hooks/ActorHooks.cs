@@ -14,7 +14,7 @@ namespace Ktisis.Interop.Hooks {
 		internal static Hook<ControlGazeDelegate> ControlGazeHook = null!;
 
 		internal unsafe static IntPtr ControlGaze(IntPtr a1) {
-			var actor = (Actor*)(a1 - 0xC10);
+			var actor = (Actor*)(a1 - 0xC30);
 			EditGaze.Apply(actor);
 			return ControlGazeHook.Original(a1);
 		}

@@ -4,7 +4,6 @@ using System.Numerics;
 using ImGuiNET;
 using ImGuizmoNET;
 
-using Ktisis.Interface.Components.Toolbar;
 using Ktisis.Interface.Windows.Toolbar;
 using Ktisis.Interface.Windows.Workspace;
 using Ktisis.Structs;
@@ -76,7 +75,7 @@ namespace Ktisis.Overlay {
 				var skeleton = pose->Skeleton;
 				for (var i = 1; i < skeleton->Bones.Length; i++) {
 					var bone = model->Skeleton->GetBone(p, i);
-					var boneName = bone.HkaBone.Name.String;
+					var boneName = bone.HkaBone.Name.String ?? "";
 					var parentId = bone.ParentId;
 
 					var uniqueName = bone.UniqueName;

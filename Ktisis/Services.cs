@@ -24,7 +24,7 @@ namespace Ktisis {
 
 		internal static Interop.Hooks.AddonManager AddonManager = null!;
 		internal unsafe static TargetSystem* Targets = TargetSystem.Instance();
-		internal unsafe static CameraManager* Camera = CameraManager.Instance();
+		internal unsafe static CameraManager* Camera = CameraManager.Instance;
 
 		public static void Init(DalamudPluginInterface dalamud) {
 			dalamud.Create<Services>();

@@ -14,6 +14,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.History;
 using Ktisis.Events;
 using Ktisis.Overlay;
+using Dalamud.Logging;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {

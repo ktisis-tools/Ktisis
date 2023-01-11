@@ -9,7 +9,7 @@ namespace Ktisis.Structs.Bones {
 
 			if (!Ktisis.Configuration.CustomBoneOffset.TryGetValue(GetRaceGenderFromActor(target), out var bonesOffsets))
 				return new();
-			if (!bonesOffsets.TryGetValue(bone.HkaBone.Name.String, out Vector3 offset))
+			if (!bonesOffsets.TryGetValue(bone.HkaBone.Name.String!, out Vector3 offset))
 				return new();
 			return offset;
 		}

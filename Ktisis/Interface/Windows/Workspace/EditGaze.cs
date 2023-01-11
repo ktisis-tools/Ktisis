@@ -6,10 +6,10 @@ using ImGuizmoNET;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 
+using Ktisis.Util;
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
-using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class EditGaze {

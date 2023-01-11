@@ -44,7 +44,7 @@ namespace Ktisis.History {
 			}
 
 			var bone = model->Skeleton->GetBone(historyBone!.Partial, historyBone.Index);
-			var boneName = bone.HkaBone.Name.String;
+			var boneName = bone.HkaBone.Name.String ?? "";
 			var boneTransform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 
 			// Write our updated matrix to memory.

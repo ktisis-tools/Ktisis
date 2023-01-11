@@ -428,7 +428,7 @@ namespace Ktisis.Interface.Windows {
 					cfg.CustomBoneOffset.Add(targetBodyType,new());
 
 				if (GuiHelpers.DragFloat3FillWidth($"##currentTargetOffset", false, null, ref targetBoneOffset, .00001f, "%.5f"))
-					cfg.CustomBoneOffset[targetBodyType][bone.HkaBone.Name.String] = targetBoneOffset;
+					cfg.CustomBoneOffset[targetBodyType][bone.HkaBone.Name.String!] = targetBoneOffset;
 			} else {
 				ImGuiComponents.HelpMarker("Select a Bone to start adjusting its position.");
 			}

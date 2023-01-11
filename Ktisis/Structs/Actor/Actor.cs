@@ -15,8 +15,8 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x88)] public byte ObjectID;
 
-		[FieldOffset(0xF0)] public unsafe ActorModel* Model;
-		[FieldOffset(0x104)] public RenderMode RenderMode;
+		[FieldOffset(0x100)] public unsafe ActorModel* Model;
+		[FieldOffset(0x114)] public RenderMode RenderMode;
 		[FieldOffset(0x1B4)] public uint ModelId;
 
 		[FieldOffset(0x6E0)] public Weapon MainHand;
@@ -24,10 +24,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x818)] public Equipment Equipment;
 		[FieldOffset(0x840)] public Customize Customize;
 
-		[FieldOffset(0xC20)] public ActorGaze Gaze;
-
-		[FieldOffset(0x1A68)] public byte TargetObjectID;
-		[FieldOffset(0x1A6C)] public byte TargetMode;
+		[FieldOffset(0xC40)] public ActorGaze Gaze; // Update in ActorHooks.cs as well
 
 		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
 
@@ -39,11 +36,6 @@ namespace Ktisis.Structs.Actor {
 		}
 
 		// Targeting
-
-		public unsafe void TargetActor(Actor* actor) {
-			TargetObjectID = actor->ObjectID;
-			TargetMode = 2;
-		}
 
 		public unsafe void LookAt(Gaze* tar, GazeControl bodyPart) {
 			if (Methods.ActorLookAt == null) return;
