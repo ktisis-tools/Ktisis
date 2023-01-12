@@ -7,9 +7,9 @@ using ImGuiNET;
 using Dalamud.Interface;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 using Lumina.Excel.GeneratedSheets;
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Actor;
