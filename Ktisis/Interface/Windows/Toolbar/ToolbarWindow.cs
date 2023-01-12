@@ -8,6 +8,7 @@ using ImGuizmoNET;
 
 using Ktisis.History;
 using Ktisis.Interface.Components;
+using Ktisis.Events;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interop.Hooks;
 using Ktisis.Overlay;
@@ -15,14 +16,30 @@ using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.Toolbar {
 	public static class ToolbarWindow {
-		private static bool Visible = true;
+		internal static bool Visible = false;
 
 		// Toggle visibility
 		public static void Toggle() => Visible = !Visible;
 
+		public static void Init() {
+			EventManager.OnGPoseChange += OnGPoseStateChange;
+		}
+
+		public static void Dispose() {
+			EventManager.OnGPoseChange -= OnGPoseStateChange;
+		}
+
+		public static void OnGPoseStateChange(bool isInGPose) {
+			if (isInGPose) {
+				if (Ktisis.Configuration.ShowToolbar)
+					Visible = true;
+			} else
+				Visible = false;
+		}
+
 		// Draw window
 		public static void Draw() {
-			if (!Visible || !Ktisis.IsInGPose || !Ktisis.Configuration.ShowToolbar)
+			if (!Visible)
 				return;
 			
 			AdvancedWindow.Draw();

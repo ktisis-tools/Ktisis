@@ -3,44 +3,24 @@ using Ktisis.Events;
 using System;
 
 namespace Ktisis.Structs.Actor.State {
-	public sealed class ActorStateWatcher : IDisposable {
+	public static class ActorStateWatcher {
 
-		private static ActorStateWatcher? _instance;
+		private static bool _wasInGPose = false;
 
-		private ActorGposeState _gposeState = ActorGposeState.OFF;
-
-		public static ActorStateWatcher Instance {
-			get {
-				if (_instance == null) {
-					_instance = new ActorStateWatcher();
-				}
-				return _instance;
-			}
-		}
-
-		private ActorStateWatcher() {
-			Services.Framework.Update += Monitor;
-		}
-
-		public void Dispose() {
+		public static void Dispose() {
 			Services.Framework.Update -= Monitor;
 			if(Ktisis.IsInGPose)
-				EventManager.FireOnGposeChangeEvent(ActorGposeState.OFF);
+				EventManager.FireOnGposeChangeEvent(false);
 		}
 
 		public static void Init() {
-			_ = Instance;
+			Services.Framework.Update += Monitor;
 		}
 
-		public void Monitor(Framework framework) {
-			if (_gposeState == ActorGposeState.OFF && Ktisis.IsInGPose) {
-				_gposeState = ActorGposeState.ON;
-				EventManager.FireOnGposeChangeEvent(_gposeState);
-			}
-
-			if (_gposeState == ActorGposeState.ON && !Ktisis.IsInGPose) {
-				_gposeState = ActorGposeState.OFF;
-				EventManager.FireOnGposeChangeEvent(_gposeState);
+		public static void Monitor(Framework framework) {
+			if (_wasInGPose != Ktisis.IsInGPose) {
+				_wasInGPose = Ktisis.IsInGPose;
+				EventManager.FireOnGposeChangeEvent(Ktisis.IsInGPose);
 			}
 		}
 	}

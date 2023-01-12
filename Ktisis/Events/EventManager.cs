@@ -10,7 +10,7 @@ using Ktisis.Structs.Input;
 
 namespace Ktisis.Events {
 	public static class EventManager {
-		public delegate void GPoseChange(ActorGposeState state);
+		public delegate void GPoseChange(bool isInGPose);
 		public static GPoseChange? OnGPoseChange = null;
 
 		public delegate void TransformationMatrixChange(bool state);
@@ -25,9 +25,9 @@ namespace Ktisis.Events {
 		internal delegate void KeyReleaseEventDelegate(VirtualKey key);
 		internal static KeyReleaseEventDelegate? OnKeyReleased;
 
-		public static void FireOnGposeChangeEvent(ActorGposeState state) {
-			Logger.Debug($"FireOnGposeChangeEvent {state}");
-			OnGPoseChange?.Invoke(state);
+		public static void FireOnGposeChangeEvent(bool isInGPose) {
+			Logger.Debug("FireOnGposeChangeEvent {0}", isInGPose ? "ON" : "OFF");
+			OnGPoseChange?.Invoke(isInGPose);
 		}
 
 		public static unsafe void FireOnTransformationMatrixChangeEvent(bool state) {

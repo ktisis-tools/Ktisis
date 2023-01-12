@@ -67,7 +67,7 @@ namespace Ktisis.History {
 			_currentIdx--;
 		}
 
-		internal static void OnGPoseChange(ActorGposeState _state) {
+		internal static void OnGPoseChange(bool isInGpose) {
 			Logger.Verbose("Clearing previous history...");
 			_currentIdx = 0;
 			_maxIdx = 0;
