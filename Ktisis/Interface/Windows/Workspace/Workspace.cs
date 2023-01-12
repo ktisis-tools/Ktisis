@@ -152,6 +152,9 @@ namespace Ktisis.Interface.Windows.Workspace
 				else
 					EditGaze.Draw(actor);
 			}
+			
+			// Status Effect control
+			StatusEffectControls.Draw(actor);
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))

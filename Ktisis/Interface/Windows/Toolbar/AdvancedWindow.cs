@@ -44,6 +44,9 @@ namespace Ktisis.Interface.Windows.Toolbar {
 							EditGaze.Draw(actor);
 					}
 					
+					// Status Effect control
+					StatusEffectControls.Draw(actor);
+					
 					// Advanced
 					if (ImGui.CollapsingHeader("Advanced (Debug)")) {
 						Workspace.Workspace.DrawAdvancedDebugOptions(actor);
