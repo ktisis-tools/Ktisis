@@ -106,6 +106,8 @@ namespace Ktisis.Interface.Windows.Workspace
 						SceneTab();*/
 					if (ImGui.BeginTabItem(Locale.GetString("Pose")))
 						PoseTab(target);
+					if (ImGui.BeginTabItem(Locale.GetString("World")))
+						WorldTab();
 				}
 			}
 
@@ -212,6 +214,11 @@ namespace Ktisis.Interface.Windows.Workspace
 			}
 
 			ImGui.EndTabItem();
+		}
+		
+		private unsafe static void WorldTab() {
+			TimeControls.Draw();
+			WeatherControls.Draw();
 		}
 		
 		public static unsafe void DrawAdvancedDebugOptions(Actor* actor) {
