@@ -26,6 +26,8 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0xC40)] public ActorGaze Gaze; // Update in ActorHooks.cs as well
 
+		[FieldOffset(0x1214)] public bool IsMotionEnabled;
+
 		public unsafe string? Name => Marshal.PtrToStringAnsi((IntPtr)GameObject.GetName());
 
 		public string GetNameOr(string fallback) => ((ObjectKind)GameObject.ObjectKind == ObjectKind.Pc && !Ktisis.Configuration.DisplayCharName) || string.IsNullOrEmpty(Name)? fallback : Name;
