@@ -34,7 +34,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 
 				if (actor->Model != null) {
 					// Animation Controls
-					AnimationControls.Draw(target);
+					AnimationControls.Draw(actor);
 
 					// Gaze Controls
 					if (ImGui.CollapsingHeader("Gaze Control")) {
