@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Dalamud.Plugin;
 using Dalamud.Game.Command;
@@ -54,20 +58,9 @@ namespace Ktisis {
 
 			// Init interop stuff
 
-			Interop.Alloc.Init();
-			Interop.Methods.Init();
-			Interop.StaticOffsets.Init();
+			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.GlobalInit()
 
-			Interop.Hooks.ActorHooks.Init();
-			Interop.Hooks.ControlHooks.Init();
-			Interop.Hooks.EventsHooks.Init();
-			Interop.Hooks.GuiHooks.Init();
-			Interop.Hooks.PoseHooks.Init();
-
-			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.Init()
-
-			Input.Init();
-			ActorStateWatcher.Init();
+			GlobalInit();
 
 			// Register command
 
@@ -84,7 +77,6 @@ namespace Ktisis {
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
 
-			HistoryManager.Init();
 			References.LoadReferences(Configuration);
 		}
 
@@ -95,13 +87,7 @@ namespace Ktisis {
 
 			OverlayWindow.DeselectGizmo();
 
-			Interop.Hooks.ActorHooks.Dispose();
-			Interop.Hooks.ControlHooks.Dispose();
-			Interop.Hooks.EventsHooks.Dispose();
-			Interop.Hooks.GuiHooks.Dispose();
-			Interop.Hooks.PoseHooks.Dispose();
-
-			Interop.Alloc.Dispose();
+			GlobalDispose();
 			ActorStateWatcher.Instance.Dispose();
 			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
@@ -109,9 +95,6 @@ namespace Ktisis {
 
 			if (EditEquip.Items != null)
 				EditEquip.Items = null;
-
-			Input.Dispose();
-			HistoryManager.Dispose();
 
 			foreach (var (_, texture) in References.Textures) {
 				texture.Dispose();
@@ -136,5 +119,52 @@ namespace Ktisis {
 					break;
 			}
 		}
+
+		private static readonly Stack<MethodInfo> ToGloballyDispose = new();
+
+		private static void GlobalInit() {
+			foreach (Type globalStateContainer in GetGlobalInitTypes()) {
+				foreach (var method in globalStateContainer.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)) {
+					foreach (var attr in method.CustomAttributes) {
+						if (attr.AttributeType == typeof(GlobalInitAttribute))
+							method.Invoke(null, Array.Empty<object>());
+						else if (attr.AttributeType == typeof(GlobalDisposeAttribute))
+							ToGloballyDispose.Push(method);
+					}
+				}
+			}
+			ToGloballyDispose.TrimExcess();
+		}
+
+		private static IEnumerable<Type> GetGlobalInitTypes() =>
+			typeof(Ktisis).Assembly.GetTypes().Select(type => (type, globalStateAttr: type.GetCustomAttribute<GlobalStateAttribute>()))
+				.Where(x => x.globalStateAttr != null)
+				.OrderBy(x => (x.type, initAfter: new HashSet<Type>(x.globalStateAttr!.InitAfter)), new DelegateComparer<(Type type, HashSet<Type> initAfter)>((a, b) => {
+					if(a.initAfter.Contains(b.type))
+						return 1;
+					if(b.initAfter.Contains(a.type))
+						return -1;
+					return 0;
+				})).Select(x => x.type);
+
+		private static void GlobalDispose() {
+			while (ToGloballyDispose.TryPop(out MethodInfo? toDispose)) {
+				toDispose.Invoke(null, Array.Empty<object>());
+			}
+		}
 	}
+
+	public struct DelegateComparer<T> : IComparer<T> {
+
+		public delegate int Comparer(T? x, T? y);
+
+		public Comparer comparer;
+
+		public DelegateComparer(Comparer comparer) {
+			this.comparer = comparer;
+		}
+
+		public int Compare(T? x, T? y) => this.comparer(x, y);
+	}
+
 }

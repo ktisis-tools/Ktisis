@@ -3,6 +3,7 @@ using Ktisis.Events;
 using System;
 
 namespace Ktisis.Structs.Actor.State {
+	[GlobalState]
 	public sealed class ActorStateWatcher : IDisposable {
 
 		private static ActorStateWatcher? _instance;
@@ -28,7 +29,8 @@ namespace Ktisis.Structs.Actor.State {
 				EventManager.FireOnGposeChangeEvent(ActorGposeState.OFF);
 		}
 
-		public static void Init() {
+		[GlobalInit]
+		public static void GlobalInit() {
 			_ = Instance;
 		}
 

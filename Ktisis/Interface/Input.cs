@@ -17,6 +17,7 @@ using Ktisis.Structs.Input;
 using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface {
+	[GlobalState]
 	public static class Input {
 		// When adding a new keybind:
 		//  - add the logic in Monitor
@@ -176,11 +177,13 @@ namespace Ktisis.Interface {
 
 		// Init & dispose
 
-		public static void Init() {
+		[GlobalInit]
+		public static void GlobalInit() {
 			EventManager.OnKeyPressed += OnKeyPressed;
 			EventManager.OnKeyReleased += OnKeyReleased;
 		}
-		public static void Dispose() {
+		[GlobalDispose]
+		public static void GlobalDispose() {
 			EventManager.OnKeyPressed -= OnKeyPressed;
 			EventManager.OnKeyReleased -= OnKeyReleased;
 		}
