@@ -24,6 +24,10 @@
   <PropertyGroup>
     <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT' OR '$(CI)' == 'true'">
+    <DalamudLibPath>$(DALAMUD_HOME)/</DalamudLibPath>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration) == 'External'">
     <TargetFramework>net7.0</TargetFramework>
