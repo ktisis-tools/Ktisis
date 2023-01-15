@@ -78,13 +78,13 @@ jobs:
           cd ../
 
           export TAG_NAME=$(echo ${{ github.ref_name }} | sed 's/^v//')
-          export REPO_LOCATION=$(echo ${{ github.server_url }}/${{ github.repository }} | sed  's/\//\\\//g')
+          export REPO_LOCATION=$(echo ${{ github.server_url }}/${{ github.repository }} | sed 's/#/\\#/g')
 
-          sed -i "s/\"AssemblyVersion\": \"[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\"/\"AssemblyVersion\": \"${TAG_NAME}\"/g" repo.json
-          sed -i "s/\"TestingAssemblyVersion\": \"[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\"/\"TestingAssemblyVersion\": \"${TAG_NAME}\"/g" repo.json
-          sed -i "s/\"DownloadLinkInstall\": \"[^\"]*\"/\"DownloadLinkInstall\": \"$REPO_LOCATION\/releases\/download\/${{ github.ref_name }}\/latest.zip\"/g" repo.json
-          sed -i "s/\"DownloadLinkTesting\": \"[^\"]*\"/\"DownloadLinkTesting\": \"$REPO_LOCATION\/releases\/download\/${{ github.ref_name }}\/latest.zip\"/g" repo.json
-          sed -i "s/\"DownloadLinkUpdate\": \"[^\"]*\"/\"DownloadLinkUpdate\": \"$REPO_LOCATION\/releases\/download\/${{ github.ref_name }}\/latest.zip\"/g" repo.json
+          sed -i 's#"AssemblyVersion": "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*"#"AssemblyVersion": "'"$TAG_NAME"'"#g' repo.json
+          sed -i 's#"TestingAssemblyVersion": "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*"#"TestingAssemblyVersion": "'"$TAG_NAME"'"#' repo.json
+          sed -i 's#"DownloadLinkInstall": "[^"]*"#"DownloadLinkInstall": "'"$REPO_LOCATION/releases/download/${{ github.ref_name }}/latest.zip"'#g' repo.json
+          sed -i 's#"DownloadLinkTesting": "[^"]*"#"DownloadLinkTesting": "'"$REPO_LOCATION/releases/download/${{ github.ref_name }}/latest.zip"'#g' repo.json
+          sed -i 's#"DownloadLinkUpdate": "[^"]*"#"DownloadLinkUpdate": "'"$REPO_LOCATION/releases/download/${{ github.ref_name }}/latest.zip"'#g' repo.json
 
           git add repo.json
           git config --local user.name "github-actions[bot]"
