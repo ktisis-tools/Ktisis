@@ -8,7 +8,24 @@ using static FFXIVClientStructs.Havok.hkaPose;
 
 namespace Ktisis.History {
 	public class ActorBone : HistoryItem {
-		public Bone? Bone { get; private set; }
+		private Bone? Bone { get; set; } // This should never have been introduced here.
+
+		public unsafe Bone? GetBone() {
+			// Shit workaround for the shit Bone implementation.
+
+			if (Bone == null) return null;
+
+			if (Actor == null) return null;
+
+			var model = Actor->Model;
+			if (model == null) return null;
+
+			var skele = model->Skeleton;
+			if (skele == null) return null;
+
+			return model->Skeleton->GetBone(Bone.Partial, Bone.Index);
+		}
+
 		public unsafe Actor* Actor { get; private set; }
 		public bool ParentingState { get; private set; }
 		public SiblingLink SiblingLinkType { get; private set; }
@@ -33,17 +50,13 @@ namespace Ktisis.History {
 		public unsafe override void Update(bool undo) {
 			var historyToUndo = this;
 			var transformToRollbackTo = undo ? historyToUndo.StartMatrix : historyToUndo.EndMatrix;
-			var historyBone = historyToUndo.Bone;
-			var isGlobalRotation = historyBone is null;
+			var historyBone = historyToUndo.GetBone();
+			if (historyBone == null) return;
 			var model = historyToUndo.Actor->Model;
 
 			if (model is null) return;
-			if (isGlobalRotation) { //There is no bone if you have a global rotation.
-				Interop.Alloc.SetMatrix(&model->Transform, transformToRollbackTo);
-				return;
-			}
 
-			var bone = model->Skeleton->GetBone(historyBone!.Partial, historyBone.Index);
+			var bone = model->Skeleton->GetBone(historyBone.Partial, historyBone.Index);
 			var boneName = bone.HkaBone.Name.String ?? "";
 			var boneTransform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 
@@ -62,8 +75,10 @@ namespace Ktisis.History {
 		}
 
 		public unsafe bool SetMatrix(bool start = true) {
-			if (Bone == null) return false;
-			var boneTransform = Bone.AccessModelSpace(PropagateOrNot.DontPropagate);
+			var bone = GetBone();
+			if (bone == null) return false;
+
+			var boneTransform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
 			var matrix = Interop.Alloc.GetMatrix(boneTransform);
 
 			if (start)
