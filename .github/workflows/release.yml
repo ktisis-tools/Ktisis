@@ -77,15 +77,15 @@ jobs:
         run: |
           cd ../
 
-          TAG_NAME=$(echo ${{ github.ref_name }} | sed 's/^v//')
-          REPO_LOCATION=$(echo ${{ github.server_url }}/${{ github.repository }} | sed 's/#/\\#/g')
+          release_version=$(echo ${{ github.ref_name }} | sed 's/^v//')
+          repo_url=$(echo ${{ github.server_url }}/${{ github.repository }} | sed 's/#/\\#/g')
 
           sed -i repo.json \
-              -e 's#"AssemblyVersion": "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*"#"AssemblyVersion": "'"$TAG_NAME"'"#g' \
-              -e 's#"TestingAssemblyVersion": "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*"#"TestingAssemblyVersion": "'"$TAG_NAME"'"#' \
-              -e 's#"DownloadLinkInstall": "[^"]*"#"DownloadLinkInstall": "'"$REPO_LOCATION/releases/download/${{ github.ref_name }}/latest.zip"'#g' \
-              -e 's#"DownloadLinkTesting": "[^"]*"#"DownloadLinkTesting": "'"$REPO_LOCATION/releases/download/${{ github.ref_name }}/latest.zip"'#g' \
-              -e 's#"DownloadLinkUpdate": "[^"]*"#"DownloadLinkUpdate": "'"$REPO_LOCATION/releases/download/${{ github.ref_name }}/latest.zip"'#g'
+              -e 's#"AssemblyVersion": "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*"#"AssemblyVersion": "'"$release_version"'"#g' \
+              -e 's#"TestingAssemblyVersion": "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*"#"TestingAssemblyVersion": "'"$release_version"'"#' \
+              -e 's#"DownloadLinkInstall": "[^"]*"#"DownloadLinkInstall": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'#g' \
+              -e 's#"DownloadLinkTesting": "[^"]*"#"DownloadLinkTesting": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'#g' \
+              -e 's#"DownloadLinkUpdate": "[^"]*"#"DownloadLinkUpdate": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'#g'
 
           git add repo.json
           git config --local user.name "github-actions [bot]"
