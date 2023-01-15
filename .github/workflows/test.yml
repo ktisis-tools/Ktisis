@@ -1,0 +1,62 @@
+name: Tests
+
+# If another commit is made to the same pull request, the previous workflow run is cancelled to save resources.
+concurrency:
+      group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+      cancel-in-progress: true
+
+# Only run CI against the main branch or on PRs to the main branch.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [ready_for_review, opened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  Build:
+    if: github.event.pull_request.draft == false # Ignore draft PRs
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Ktisis/
+        shell: bash
+    strategy:
+      matrix:
+        dotnet-version: [7.0.x] # Can add multiple .NET versions here to test against (For example, testing a new version of .NET before it's released)
+        dalamud-version: ["latest"] # Can add multiple Dalamud branches here to test against (For example, testing against Dalamud staging)
+    env:
+      DALAMUD_HOME: /tmp/dalamud
+      IsCI: true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # We don't need the history for testing builds, so we can save some time by not fetching it
+          submodules: true # Grab any submodules that may be required
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Download Dalamud Library
+        run: |
+          wget https://goatcorp.github.io/dalamud-distrib/${{ matrix.dalamud-version }}.zip -O /tmp/dalamud.zip
+          unzip /tmp/dalamud.zip -d /tmp/dalamud
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build plugin in debug mode
+        run: dotnet build -c Debug --no-restore --nologo
+
+      - name: Build plugin in release mode
+        run: dotnet build -c Release --no-restore --nologo
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build Artifacts
+          path: Ktisis/bin/
