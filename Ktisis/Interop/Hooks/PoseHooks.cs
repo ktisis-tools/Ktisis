@@ -222,15 +222,17 @@ namespace Ktisis.Interop.Hooks {
 
 		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(GameObject? go) {
 			if (go == null) return null;
-			var csObject = (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)go.Address;
-			if (csObject->DrawObject == null ||
-				csObject->DrawObject->Skeleton == null ||
-				csObject->DrawObject->Skeleton->PartialSkeletons == null ||
-				csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0) == null ||
-				csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls.Length == 0 ||
-				csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0].Value == null)
+
+			var actor = (Actor*)go.Address;
+			if (actor->Model == null ||
+				actor->Model->Skeleton == null ||
+				actor->Model->Skeleton->PartialSkeletons == null ||
+				actor->Model->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0) == null ||
+				actor->Model->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls.Length == 0 ||
+				actor->Model->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0].Value == null)
 				return null;
-			return csObject->DrawObject->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0];
+
+			return actor->Model->Skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0)->AnimationControls[0];
 		}
 
 		internal static void Dispose() {
