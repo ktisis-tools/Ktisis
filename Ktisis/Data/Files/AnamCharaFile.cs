@@ -97,7 +97,7 @@ namespace Ktisis.Data.Files {
 		public float? HeightMultiplier { get; set; }
 
 		public void WriteToFile(Actor actor, SaveModes mode) {
-			Nickname = actor.Name;
+			Nickname = actor.GetName();
 			ModelType = actor.ModelId;
 			ObjectKind = (ObjectKind)actor.GameObject.ObjectKind;
 
