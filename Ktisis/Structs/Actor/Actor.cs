@@ -27,8 +27,9 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0xC40)] public ActorGaze Gaze; // Update in ActorHooks.cs as well
 
 		public unsafe string? GetName() {
-			var ptr = GameObject.GetName();
-			return ptr == null ? null : Marshal.PtrToStringUTF8((IntPtr)ptr);
+			fixed (byte* ptr = GameObject.Name) {
+				return ptr == null ? null : Marshal.PtrToStringUTF8((IntPtr)ptr);
+			}
 		}
 
 		public string GetNameOr(string fallback) {
