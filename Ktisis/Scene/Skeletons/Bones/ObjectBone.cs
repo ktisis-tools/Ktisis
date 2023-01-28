@@ -4,7 +4,7 @@ using Ktisis.Interface.Localization;
 namespace Ktisis.Scene.Skeletons {
 	public class ObjectBone : Manipulable, Transformable {
 		public ObjectBone(Bone bone) {
-			BoneName = bone.HkaBone.Name.String;
+			BoneName = bone.HkaBone.Name.String ?? "Unknown";
 			Partial = bone.Partial;
 			Index = bone.Index;
 		}

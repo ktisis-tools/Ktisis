@@ -119,7 +119,7 @@ namespace Ktisis.Interface.Overlay {
 						var item = Selection.AddItem(uniqueName, pos2d, boneColor);
 						if (item.IsClicked()) {
 							BoneSelect.Update = true;
-							BoneSelect.Name = boneName;
+							BoneSelect.Name = boneName ?? "Unknown";
 							OverlayWindow.SetGizmoOwner(uniqueName);
 						}
 					}
@@ -155,7 +155,7 @@ namespace Ktisis.Interface.Overlay {
 								bone.PropagateChildren(transform, initialPos, initialRot);
 
 							// handles linking
-							if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
+							if (boneName != null && (boneName.EndsWith("_l") || boneName.EndsWith("_r"))) {
 								var siblingBone = bone.GetMirrorSibling();
 								if (siblingBone != null)
 									siblingBone.PropagateSibling(transform->Rotation.ToQuat() / initialRot, Ktisis.Configuration.SiblingLink);

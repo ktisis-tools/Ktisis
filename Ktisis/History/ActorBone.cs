@@ -55,7 +55,7 @@ namespace Ktisis.History {
 			if (ParentingState)
 				bone.PropagateChildren(boneTransform, initialPos, initialRot);
 
-			if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
+			if (boneName != null && (boneName.EndsWith("_l") || boneName.EndsWith("_r"))) {
 				var siblingBone = bone.GetMirrorSibling();
 				siblingBone?.PropagateSibling(boneTransform->Rotation.ToQuat() / initialRot, SiblingLinkType);
 			}

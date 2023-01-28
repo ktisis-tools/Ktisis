@@ -256,6 +256,6 @@ namespace Ktisis.Interface {
 				return (purpose: p, state);
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
-		private unsafe static bool IsChatInputActive() => ((UIModule*)DalamudServices.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive() == 1;
+		private unsafe static bool IsChatInputActive() => ((UIModule*)DalamudServices.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive();
 	}
 }

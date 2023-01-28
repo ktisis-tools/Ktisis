@@ -16,8 +16,8 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x88)] public byte ObjectID;
 
-		[FieldOffset(0xF0)] public unsafe ActorModel* Model;
-		[FieldOffset(0x104)] public RenderMode RenderMode;
+		[FieldOffset(0x100)] public unsafe ActorModel* Model;
+		[FieldOffset(0x114)] public RenderMode RenderMode;
 		[FieldOffset(0x1B4)] public uint ModelId;
 
 		[FieldOffset(0x6E0)] public Weapon MainHand;

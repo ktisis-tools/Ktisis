@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration) == 'External'">
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <DefineConstants>EXTERNAL_BUILD</DefineConstants>
     <DalamudLibPath>..\..\DalamudLibs\</DalamudLibPath>
   </PropertyGroup>
@@ -49,7 +49,7 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-    <PackageReference Include="DalamudPackager" Version="2.1.6" />
+    <PackageReference Include="DalamudPackager" Version="2.1.10" />
     <Reference Include="FFXIVClientStructs">
       <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
       <Private>false</Private>
@@ -87,5 +87,4 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-
 </Project>

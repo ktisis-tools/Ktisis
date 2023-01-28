@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using ImGuiNET;
 
 using Dalamud.Interface.Windowing;
+using System.Linq;
 
 namespace Ktisis.Interface {
 	public static class KtisisGui {
@@ -14,28 +15,22 @@ namespace Ktisis.Interface {
 
 		// Get window
 
-		private static readonly FieldInfo windowsField = typeof(WindowSystem).GetField("windows", BindingFlags.Instance | BindingFlags.NonPublic)!;
+		private static readonly FieldInfo WindowsField = typeof(WindowSystem).GetField("windows", BindingFlags.Instance | BindingFlags.NonPublic)!;
+		private static List<Window> WindowsList() => (List<Window>?)WindowsField.GetValue(Windows)!;
 
-		public static KtisisWindow? GetWindow<T>() {
-			var v = (List<Window>?)windowsField.GetValue(Windows);
-			if (v != null) {
-				foreach (var w in v) {
-					if (w is T) return w as KtisisWindow;
-				}
-			}
-			return null;
-		}
+		public static KtisisWindow? GetWindow<T>()
+			=> (KtisisWindow?)WindowsList().FirstOrDefault(window => window is T);
+
+		public static KtisisWindow? GetWindow(Type t)
+			=> (KtisisWindow?)WindowsList().FirstOrDefault(window => window.GetType() == t);
 
 		public static KtisisWindow GetWindowOrCreate<T>(object[]? args = null)
 			=> GetWindow<T>() ?? (KtisisWindow)Activator.CreateInstance(typeof(T), args)!;
-
-		public static Window? GetWindowByName(string name)
-			=> Windows.GetWindow(name);
 	}
 
 	public abstract class KtisisWindow : Window {
 		public KtisisWindow(string name, ImGuiWindowFlags flags = ImGuiWindowFlags.None, bool forceMainWindow = false) : base(name, flags, forceMainWindow) {
-			var exists = KtisisGui.GetWindowByName(name);
+			var exists = KtisisGui.GetWindow(this.GetType());
 			if (exists != null) {
 				IsOpen = true;
 				KtisisGui.Windows.RemoveWindow(exists);
