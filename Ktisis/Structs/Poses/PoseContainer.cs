@@ -31,7 +31,7 @@ namespace Ktisis.Structs.Poses {
 					var name = bone.HkaBone.Name.String;
 
 					var model = bone.AccessModelSpace();
-					this[name] = Transform.FromHavok(*model);
+					if (name != null) this[name] = Transform.FromHavok(*model);
 				}
 			}
 		}
@@ -54,7 +54,7 @@ namespace Ktisis.Structs.Poses {
 					var bone = modelSkeleton->GetBone(p, i);
 					var name = bone.HkaBone.Name.String;
 
-					if (TryGetValue(name, out var val)) {
+					if (name != null && TryGetValue(name, out var val)) {
 						var model = bone.AccessModelSpace();
 
 						var initial = *model;

@@ -36,12 +36,12 @@ namespace Ktisis.Structs.Bones {
 			set => Pose->ModelPose.Data[Index] = value;
 		}
 
-		public string LocaleName => Locale.GetBoneName(HkaBone.Name.String);
+		public string LocaleName => Locale.GetBoneName(HkaBone.Name.String ?? "");
 
 		public string UniqueId => $"{Partial}_{Index}";
 		public string UniqueName => $"{LocaleName}##{UniqueId}";
 
-		public BoneCategory GetCategory() => BoneCategories.GetBoneCategory(HkaBone.Name.String);
+		public BoneCategory GetCategory() => BoneCategories.GetBoneCategory(HkaBone.Name.String ?? "");
 
 		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String); // TODO: Remove
 
@@ -93,6 +93,8 @@ namespace Ktisis.Structs.Bones {
 
 		public unsafe Bone? GetMirrorSibling() {
 			var name = HkaBone.Name.String;
+			if (name == null) return null;
+
 			var prefix = name[..^2];
 
 			for (var p = 0; p < Skeleton->PartialSkeletonCount; p++) {
@@ -105,7 +107,7 @@ namespace Ktisis.Structs.Bones {
 					var potentialBone = new Bone(Skeleton, p, i);
 					if (potentialBone == null) continue;
 					var pBName = potentialBone.HkaBone.Name.String;
-					if (pBName[..^2] == prefix && pBName != name)
+					if (pBName != null && pBName[..^2] == prefix && pBName != name)
 						return potentialBone;
 				}
 			}
