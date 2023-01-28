@@ -2,6 +2,7 @@
 
 using static FFXIVClientStructs.Havok.hkaPose;
 
+using Ktisis.Services;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
 using Ktisis.Library.Extensions;
@@ -38,8 +39,8 @@ namespace Ktisis.History {
 			var model = historyToUndo.Actor->Model;
 
 			if (model is null) return;
-			if (isGlobalRotation) { //There is no bone if you have a global rotation.
-				Interop.Alloc.SetMatrix(&model->Transform, transformToRollbackTo);
+			if (isGlobalRotation) { // There is no bone if you have a global rotation.
+				InteropService.SetMatrix(&model->Transform, transformToRollbackTo);
 				return;
 			}
 
@@ -50,7 +51,7 @@ namespace Ktisis.History {
 			// Write our updated matrix to memory.
 			var initialRot = boneTransform->Rotation.ToQuat();
 			var initialPos = boneTransform->Translation.ToVector3();
-			Interop.Alloc.SetMatrix(boneTransform, transformToRollbackTo);
+			InteropService.SetMatrix(boneTransform, transformToRollbackTo);
 
 			if (ParentingState)
 				bone.PropagateChildren(boneTransform, initialPos, initialRot);
@@ -64,7 +65,7 @@ namespace Ktisis.History {
 		public unsafe bool SetMatrix(bool start = true) {
 			if (Bone == null) return false;
 			var boneTransform = Bone.AccessModelSpace(PropagateOrNot.DontPropagate);
-			var matrix = Interop.Alloc.GetMatrix(boneTransform);
+			var matrix = InteropService.GetMatrix(boneTransform);
 
 			if (start)
 				StartMatrix = matrix;
