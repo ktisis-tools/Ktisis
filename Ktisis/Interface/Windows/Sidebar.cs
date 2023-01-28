@@ -50,11 +50,11 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.Spacing();
 
+			ControlButtons();
+
 			DrawSelectState();
 
 			ImGui.Spacing();
-
-			ControlButtons();
 
 			DrawSceneTree();
 
