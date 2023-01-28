@@ -132,19 +132,15 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(5, 5));
 
-			AddItemButton();
-
-			ImGui.SameLine();
-
-			OpenEditor();
-
-			ImGui.SameLine();
-
 			OverlayVisibility();
 
 			ImGui.SameLine();
 
 			CameraSelect();
+
+			ImGui.SameLine();
+
+			ExtrasButton();
 
 			ImGui.PopStyleVar();
 
@@ -196,21 +192,33 @@ namespace Ktisis.Interface.Windows {
 
 			ImGui.SameLine();
 
-			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X);
-
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(4, (ControlButtonSize.Y - 17) / 2));
+			ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ControlButtonSize.X - ImGui.GetStyle().FramePadding.X * 2);
 			if (ImGui.BeginCombo("##Ktisis_Cam", "GPose Camera")) {
 				ImGui.EndCombo();
 			}
-			ImGui.PopStyleVar();
-
 			ImGui.PopItemWidth();
+			ImGui.PopStyleVar();
+		}
+
+		private static void ExtrasButton() {
+			if (Buttons.IconButton(FontAwesomeIcon.EllipsisH, ControlButtonSize)) {
+				var ctx = new ContextMenu();
+
+				ctx.AddSection(new() {
+					{ "Open Settings", null! }
+				});
+
+				ctx.Show();
+			}
 		}
 
 		// Draw scene tree
 
 		private static void DrawSceneTree() {
-			if (ImGui.BeginChildFrame(471, new Vector2(-1, -1), ImGuiWindowFlags.HorizontalScrollbar)) {
+			var avail = ImGui.GetContentRegionAvail().Y - ControlButtonSize.Y - ImGui.GetStyle().FramePadding.Y * 4;
+
+			if (ImGui.BeginChildFrame(471, new Vector2(-1, avail), ImGuiWindowFlags.HorizontalScrollbar)) {
 				foreach (var item in EditorService.Items)
 					item.DrawTreeNode();
 
@@ -219,6 +227,18 @@ namespace Ktisis.Interface.Windows {
 				if (ImGui.IsItemClicked() && !ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
 					EditorService.Selection = null;
 			}
+
+			ImGui.BeginGroup();
+
+			ImGui.Spacing();
+
+			ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(5, 5));
+			AddItemButton();
+			ImGui.SameLine();
+			OpenEditor();
+			ImGui.PopStyleVar();
+
+			ImGui.EndGroup();
 		}
 	}
 }
