@@ -50,12 +50,12 @@ namespace Ktisis.Interface.Overlay {
 				var actorName = actor->GetNameOr("Actor");
 				var gizmo = OverlayWindow.GetGizmo(actorName);
 				if (gizmo != null) {
-					var matrix = Interop.Alloc.GetMatrix(&model->Transform);
+					var matrix = InteropService.GetMatrix(&model->Transform);
 					gizmo.Matrix = matrix;
 					if (gizmo.Draw())
 					{
 						matrix = gizmo.Matrix;
-						Interop.Alloc.SetMatrix(&model->Transform, matrix);
+						InteropService.SetMatrix(&model->Transform, matrix);
 					}
 				} else {
 					world->WorldToScreen(model->Position, out var pos2d);
@@ -127,7 +127,7 @@ namespace Ktisis.Interface.Overlay {
 					// Bone selection & gizmo
 					var gizmo = OverlayWindow.GetGizmo(uniqueName);
 					if (gizmo != null) {
-						var matrix = Interop.Alloc.GetMatrix(transform);
+						var matrix = InteropService.GetMatrix(transform);
 
 						// Apply the root transform of the actor's model.
 						// This is important for the gizmo's orientation to show correctly.
@@ -147,7 +147,7 @@ namespace Ktisis.Interface.Overlay {
 							// Write our updated matrix to memory.
 							var initialRot = transform->Rotation.ToQuat();
 							var initialPos = transform->Translation.ToVector3();
-							Interop.Alloc.SetMatrix(transform, matrix);
+							InteropService.SetMatrix(transform, matrix);
 
 							// handles parenting
 

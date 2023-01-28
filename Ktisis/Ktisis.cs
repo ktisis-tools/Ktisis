@@ -6,12 +6,12 @@ using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.History;
+using Ktisis.Services;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Actor.State;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
-using Ktisis.Services;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -52,7 +52,7 @@ namespace Ktisis {
 
 			// Init interop stuff
 
-			Interop.Alloc.Init();
+			InteropService.Init();
 			Interop.Methods.Init();
 			Interop.StaticOffsets.Init();
 
@@ -94,7 +94,7 @@ namespace Ktisis {
 			Interop.Hooks.GuiHooks.Dispose();
 			Interop.Hooks.PoseHooks.Dispose();
 
-			Interop.Alloc.Dispose();
+			InteropService.Dispose();
 			ActorStateWatcher.Dispose();
 
 			Data.Sheets.Cache.Clear();

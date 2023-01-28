@@ -5,6 +5,7 @@ using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using static FFXIVClientStructs.Havok.hkaPose;
 
+using Ktisis.Services;
 using Ktisis.Interface;
 using Ktisis.Interface.Localization;
 using Ktisis.Library.Extensions;
@@ -133,10 +134,10 @@ namespace Ktisis.Structs.Bones {
 				var offset = access->Translation.ToVector3() - sourcePos;
 				offset = Vector3.Transform(offset, deltaRot);
 
-				var matrix = Interop.Alloc.GetMatrix(access);
+				var matrix = InteropService.GetMatrix(access);
 				matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
 				matrix.Translation = deltaPos + sourcePos + offset;
-				Interop.Alloc.SetMatrix(access, matrix);
+				InteropService.SetMatrix(access, matrix);
 			}
 		}
 
@@ -149,13 +150,13 @@ namespace Ktisis.Structs.Bones {
 			if (mode == SiblingLink.RotationMirrorX)
 				deltaRot = new(-deltaRot.X, deltaRot.Y, deltaRot.Z, -deltaRot.W);
 
-			var matrix = Interop.Alloc.GetMatrix(access);
+			var matrix = InteropService.GetMatrix(access);
 			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
 			matrix.Translation = offset;
 
 			var initialRot = access->Rotation.ToQuat();
 			var initialPos = access->Translation.ToVector3();
-			Interop.Alloc.SetMatrix(access, matrix);
+			InteropService.SetMatrix(access, matrix);
 
 			if (Ktisis.Configuration.EnableParenting)
 				PropagateChildren(access, initialPos, initialRot);
