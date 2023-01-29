@@ -216,7 +216,7 @@ namespace Ktisis.Interface.Windows {
 		// Draw scene tree
 
 		private static void DrawSceneTree() {
-			var avail = ImGui.GetContentRegionAvail().Y - ControlButtonSize.Y - ImGui.GetStyle().FramePadding.Y * 4;
+			var avail = ImGui.GetContentRegionAvail().Y - ControlButtonSize.Y - ImGui.GetStyle().FramePadding.Y * 3;
 
 			if (ImGui.BeginChildFrame(471, new Vector2(-1, avail), ImGuiWindowFlags.HorizontalScrollbar)) {
 				foreach (var item in EditorService.Items)

@@ -5,7 +5,8 @@ using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Interface;
+using Ktisis.Posing;
+using Ktisis.Services;
 using Ktisis.Structs.Bones;
 using Ktisis.Library.Extensions;
 using Ktisis.Scene.Skeletons.Bones;
@@ -65,7 +66,7 @@ namespace Ktisis.Scene.Skeletons {
 					}
 				}
 
-				foreach (var (_, category) in BoneCategories.Categories) {
+				foreach (var (_, category) in CategoryService.Categories) {
 					if (cat != category.ParentCategory)
 						continue;
 

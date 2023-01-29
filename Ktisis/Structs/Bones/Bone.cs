@@ -5,6 +5,7 @@ using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using static FFXIVClientStructs.Havok.hkaPose;
 
+using Ktisis.Posing;
 using Ktisis.Services;
 using Ktisis.Interface;
 using Ktisis.Interface.Localization;
@@ -42,7 +43,7 @@ namespace Ktisis.Structs.Bones {
 		public string UniqueId => $"{Partial}_{Index}";
 		public string UniqueName => $"{LocaleName}##{UniqueId}";
 
-		public BoneCategory GetCategory() => BoneCategories.GetBoneCategory(HkaBone.Name.String ?? "");
+		public BoneCategory GetCategory() => CategoryService.GetBoneCategory(HkaBone.Name.String ?? "");
 
 		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String); // TODO: Remove
 

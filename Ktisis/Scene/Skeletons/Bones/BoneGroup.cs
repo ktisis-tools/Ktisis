@@ -1,4 +1,4 @@
-﻿using Ktisis.Interface;
+﻿using Ktisis.Posing;
 
 namespace Ktisis.Scene.Skeletons.Bones {
 	public class BoneGroup : Manipulable {

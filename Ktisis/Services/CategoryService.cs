@@ -6,42 +6,17 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
 using Ktisis.Library;
+using Ktisis.Posing;
 
-namespace Ktisis.Interface {
-	public class BoneCategory {
-		public string Name = "";
-
-		public bool IsNsfw = false;
-
-		public List<string> Bones = new();
-		public List<BoneCategory> SubCategories = new();
-
-		public BoneCategory? ParentCategory = null;
-
-		internal int Order = 0;
-	}
-
-	public static class BoneCategories {
+namespace Ktisis.Services {
+	public static class CategoryService {
 		public static Dictionary<string, BoneCategory> Categories = new();
 
 		private static Dictionary<string, BoneCategory> BoneCategoryIndex = new();
 
 		private static BoneCategory OTHER_CATEGORY = new() { Name = "Other" };
 
-		public static BoneCategory GetBoneCategory(string bone) {
-			if (bone.StartsWith("j_ex_h")) {
-				var isHair = bone.Length > 6 && bone[6] >= 48 && bone[6] <= 57; // 5th char is numeric
-				if (isHair && Categories.TryGetValue("Hair", out var hair))
-					return hair;
-			}
-
-			if (BoneCategoryIndex.TryGetValue(bone, out var cat))
-				return cat;
-
-			return OTHER_CATEGORY;
-		}
-
-		static BoneCategories() {
+		static CategoryService() {
 			try {
 				var stream = Common.GetAssemblyFile("Data.Schema.BoneCategories.json");
 				var file = new StreamReader(stream);
@@ -59,6 +34,19 @@ namespace Ktisis.Interface {
 			}
 
 			Add(OTHER_CATEGORY);
+		}
+
+		public static BoneCategory GetBoneCategory(string bone) {
+			if (bone.StartsWith("j_ex_h")) {
+				var isHair = bone.Length > 6 && bone[6] >= 48 && bone[6] <= 57; // 5th char is numeric
+				if (isHair && Categories.TryGetValue("Hair", out var hair))
+					return hair;
+			}
+
+			if (BoneCategoryIndex.TryGetValue(bone, out var cat))
+				return cat;
+
+			return OTHER_CATEGORY;
 		}
 
 		private static void Add(BoneCategory category) {
