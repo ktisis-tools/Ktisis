@@ -7,8 +7,6 @@ using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Posing;
 using Ktisis.Services;
-using Ktisis.Interface;
-using Ktisis.Interface.Localization;
 using Ktisis.Library.Extensions;
 using Ktisis.Structs.Actor;
 
@@ -38,7 +36,7 @@ namespace Ktisis.Structs.Bones {
 			set => Pose->ModelPose.Data[Index] = value;
 		}
 
-		public string LocaleName => Locale.GetBoneName(HkaBone.Name.String ?? "");
+		public string LocaleName => LocaleService.GetBoneName(HkaBone.Name.String ?? "");
 
 		public string UniqueId => $"{Partial}_{Index}";
 		public string UniqueName => $"{LocaleName}##{UniqueId}";

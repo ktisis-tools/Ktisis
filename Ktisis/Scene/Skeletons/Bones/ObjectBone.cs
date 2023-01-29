@@ -1,5 +1,5 @@
-﻿using Ktisis.Structs.Bones;
-using Ktisis.Interface.Localization;
+﻿using Ktisis.Services;
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Scene.Skeletons {
 	public class ObjectBone : Manipulable, Transformable {
@@ -22,7 +22,7 @@ namespace Ktisis.Scene.Skeletons {
 		// Manipulable
 
 		public override string Name {
-			get => Locale.GetBoneName(BoneName);
+			get => LocaleService.GetBoneName(BoneName);
 			set { }
 		}
 

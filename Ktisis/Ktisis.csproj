@@ -33,14 +33,14 @@
 
   <ItemGroup>
     <None Remove="Data\Schema\BoneCategories.json" />
-    <None Remove="Interface\Localization\i18n\English.json" />
-    <None Remove="Interface\Localization\i18n\German.json" />
+    <None Remove="Data\Schema\i18n\English.json" />
+    <None Remove="Data\Schema\i18n\German.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Data\Schema\BoneCategories.json" />
-    <EmbeddedResource Include="Interface\Localization\i18n\German.json" />
-    <EmbeddedResource Include="Interface\Localization\i18n\English.json" />
+    <EmbeddedResource Include="Data\Schema\i18n\German.json" />
+    <EmbeddedResource Include="Data\Schema\i18n\English.json" />
   </ItemGroup>
 
   <ItemGroup>

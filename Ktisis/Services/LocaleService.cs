@@ -5,9 +5,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Ktisis.Library;
+using Ktisis.Interface;
 
-namespace Ktisis.Interface.Localization {
-	public static class Locale {
+namespace Ktisis.Services {
+	public static class LocaleService {
 		public static UserLocale Loaded = UserLocale.None;
 		public static JObject Strings = new();
 
@@ -57,7 +58,7 @@ namespace Ktisis.Interface.Localization {
 		}
 
 		public static Stream GetLocaleFile(UserLocale lang)
-			=> Common.GetAssemblyFile($"Interface.Localization.i18n.{lang}.json");
+			=> Common.GetAssemblyFile($"Data.Schema.i18n.{lang}.json");
 	}
 
 	public enum UserLocale {
