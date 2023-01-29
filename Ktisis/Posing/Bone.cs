@@ -5,12 +5,12 @@ using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using static FFXIVClientStructs.Havok.hkaPose;
 
-using Ktisis.Posing;
 using Ktisis.Services;
-using Ktisis.Library.Extensions;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Bones;
+using Ktisis.Library.Extensions;
 
-namespace Ktisis.Structs.Bones {
+namespace Ktisis.Posing {
 	// This should only be used as a wrapper for bones that are guaranteed to exist in the current context.
 	// DO NOT USE THIS IN CASES WHERE IT'S POSSIBLE FOR A SKELETON TO CHANGE OR UNLOAD. IT WILL CRASH.
 	public class Bone {

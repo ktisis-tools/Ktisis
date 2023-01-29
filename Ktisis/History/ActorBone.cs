@@ -3,8 +3,8 @@
 using static FFXIVClientStructs.Havok.hkaPose;
 
 using Ktisis.Services;
+using Ktisis.Posing;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Bones;
 using Ktisis.Library.Extensions;
 
 namespace Ktisis.History {

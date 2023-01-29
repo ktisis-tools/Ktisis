@@ -1,5 +1,5 @@
-﻿using Ktisis.Services;
-using Ktisis.Structs.Bones;
+﻿using Ktisis.Posing;
+using Ktisis.Services;
 
 namespace Ktisis.Scene.Skeletons {
 	public class ObjectBone : Manipulable, Transformable {
