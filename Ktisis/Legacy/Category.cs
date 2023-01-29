@@ -1,9 +1,11 @@
+using System;
+using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace Ktisis.Structs.Bones {
+	[Obsolete("TODO Replace this with BoneCategory!")]
 	public class Category {
 		public string Name { get; set; }
 		public Vector4 DefaultColor { get; set; }

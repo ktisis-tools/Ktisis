@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Library.Extensions;
 
-namespace Ktisis.Structs.Poses {
+namespace Ktisis.Posing {
 	public class PoseContainer : Dictionary<string, Transform> {
 		// TODO: Make a helper function somewhere for skeleton iteration?
 

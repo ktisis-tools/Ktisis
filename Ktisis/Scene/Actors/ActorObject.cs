@@ -4,11 +4,11 @@ using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
+using Ktisis.Posing;
 using Ktisis.Services;
 using Ktisis.Scene.Skeletons;
 using Ktisis.Interface.Dialog;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Poses;
 
 namespace Ktisis.Scene.Actors {
 	public class ActorObject : Manipulable, Transformable, HasSkeleton {

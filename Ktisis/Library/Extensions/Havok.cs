@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Structs.Bones;
-using System.Runtime.CompilerServices;
+using Ktisis.Posing;
 
 namespace Ktisis.Library.Extensions {
 	internal static class Havok {

@@ -5,10 +5,10 @@ using ImGuizmoNET;
 
 using Dalamud.Interface;
 
-using Ktisis.Structs.Poses;
-using Ktisis.Interface.Widgets;
+using Ktisis.Posing;
 using Ktisis.Library;
 using Ktisis.Library.Extensions;
+using Ktisis.Interface.Widgets;
 
 namespace Ktisis.Interface.Components {
 	public class TransformTable {

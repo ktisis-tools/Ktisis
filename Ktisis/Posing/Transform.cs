@@ -4,7 +4,7 @@ using FFXIVClientStructs.Havok;
 
 using Ktisis.Library.Extensions;
 
-namespace Ktisis.Structs.Poses {
+namespace Ktisis.Posing {
 	public class Transform {
 		public Vector3 Position;
 		public Quaternion Rotation;

@@ -3,8 +3,8 @@
 using ImGuiNET;
 
 using Ktisis.Scene;
+using Ktisis.Posing;
 using Ktisis.Services;
-using Ktisis.Structs.Poses;
 using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows {

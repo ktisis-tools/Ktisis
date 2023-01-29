@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using Ktisis.Structs.Poses;
+using Ktisis.Posing;
 
 namespace Ktisis.Data.Files {
 	[Serializable]

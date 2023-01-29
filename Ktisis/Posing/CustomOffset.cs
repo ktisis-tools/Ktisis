@@ -3,7 +3,7 @@ using System.Numerics;
 using Ktisis.Structs.Actor;
 using Ktisis.Library.Extensions;
 
-namespace Ktisis.Structs.Bones {
+namespace Ktisis.Posing {
 	public class CustomOffset {
 		public unsafe static Vector3 GetBoneOffset(Bone bone) {
 			var target = Ktisis.Target; // TODO: Get bone's owner actor instead of target's
@@ -17,9 +17,9 @@ namespace Ktisis.Structs.Bones {
 		}
 
 		// changed from BodyType to string Race_Gender
-		public unsafe static string GetRaceGenderFromActor(Actor.Actor* actor) =>
+		public unsafe static string GetRaceGenderFromActor(Actor* actor) =>
 			$"{actor->Customize.Race}_{actor->Customize.Gender}";
-		public unsafe static BodyType GetBodyTypeFromActor(Actor.Actor* actor) {
+		public unsafe static BodyType GetBodyTypeFromActor(Actor* actor) {
 
 			var gender = actor->Customize.Gender;
 			var race = actor->Customize.Race;
