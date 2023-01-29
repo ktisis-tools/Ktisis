@@ -5,6 +5,8 @@ using Dalamud.Interface;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
 
+using FFXIVClientStructs.FFXIV.Client.UI;
+
 using Ktisis.History;
 using Ktisis.Services;
 using Ktisis.Structs.Actor;
@@ -79,6 +81,11 @@ namespace Ktisis {
 			HistoryManager.Init();
 
 			//References.LoadReferences(Configuration);
+
+			unsafe {
+				var ui = (UIModule*)DalamudServices.GameGui.GetUIModule();
+				ui->ExitGPose();
+			}
 		}
 
 		public void Dispose() {
