@@ -9,11 +9,10 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 
 using Ktisis.History;
 using Ktisis.Services;
-using Ktisis.Structs.Actor;
-using Ktisis.Structs.Actor.State;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -65,7 +64,6 @@ namespace Ktisis {
 			Interop.Hooks.PoseHooks.Init();
 
 			Input.Init();
-			ActorStateWatcher.Init(); // TODO: Refactor this.
 
 			// Register command
 
@@ -102,7 +100,6 @@ namespace Ktisis {
 			Interop.Hooks.PoseHooks.Dispose();
 
 			InteropService.Dispose();
-			ActorStateWatcher.Dispose();
 
 			Data.Sheets.Cache.Clear();
 
