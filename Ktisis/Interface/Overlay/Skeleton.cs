@@ -7,7 +7,6 @@ using ImGuizmoNET;
 
 using Ktisis.Posing;
 using Ktisis.Services;
-using Ktisis.Structs.Actor;
 using Ktisis.Library.Extensions;
 
 namespace Ktisis.Interface.Overlay {
@@ -33,8 +32,9 @@ namespace Ktisis.Interface.Overlay {
 		public unsafe static void Draw() {
 			// Fetch actor, model & skeleton
 
-			if (GPoseService.GPoseTarget == null) return;
-			var actor = (Actor*)GPoseService.GPoseTarget!.Address;
+			var actor = GPoseService.TargetActor;
+			if (actor == null) return;
+
 			var model = actor->Model;
 			if (model == null) return;
 
@@ -173,10 +173,10 @@ namespace Ktisis.Interface.Overlay {
 		public unsafe static Bone? GetSelectedBone() {
 			if (!BoneSelect.Active) return null;
 
-			var target = GPoseService.GPoseTarget;
+			var target = GPoseService.TargetActor;
 			if (target == null) return null;
 
-			var model = ((Actor*)target.Address)->Model;
+			var model = target->Model;
 			if (model == null) return null;
 
 			return model->Skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index);

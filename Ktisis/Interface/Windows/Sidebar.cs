@@ -1,10 +1,8 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 using ImGuiNET;
 
 using Dalamud.Interface;
-using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Services;
 using Ktisis.Structs.Actor;
@@ -64,9 +62,6 @@ namespace Ktisis.Interface.Windows {
 		// Draw selection state
 
 		private unsafe static void DrawSelectState() {
-			var gameObj = GPoseService.GPoseTarget;
-			if (gameObj == null || gameObj.Address == IntPtr.Zero) return;
-
 			var frameSize = new Vector2(
 				ImGui.GetContentRegionAvail().X - Align.WidthMargin,
 				ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y
@@ -77,11 +72,13 @@ namespace Ktisis.Interface.Windows {
 			));
 
 			if (ImGui.BeginChildFrame(8, frameSize, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar)) {
-				var actor = (Actor*)gameObj.Address;
+				var actor = GPoseService.TargetActor;
+				if (actor == null) return;
+
 				var bone = Skeleton.GetSelectedBone();
 				var select = Skeleton.BoneSelect;
 
-				AnimStateIndicator(gameObj);
+				AnimStateIndicator(actor);
 
 				ImGui.BeginGroup();
 
@@ -105,8 +102,8 @@ namespace Ktisis.Interface.Windows {
 			ImGui.PopStyleVar();
 		}
 
-		private unsafe static void AnimStateIndicator(GameObject target) {
-			var active = PoseHooks.IsGamePlaybackRunning(target);
+		private unsafe static void AnimStateIndicator(Actor* actor) {
+			var active = PoseHooks.IsGamePlaybackRunning(actor);
 
 			var icon = active ? FontAwesomeIcon.Play : FontAwesomeIcon.Pause;
 			var size = Icons.CalcIconSize(icon).X;

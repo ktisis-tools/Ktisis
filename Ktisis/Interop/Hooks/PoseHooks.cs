@@ -214,15 +214,15 @@ namespace Ktisis.Interop.Hooks {
 			CalculateBoneModelSpaceHook.Original(ref *bonesPose, index);
 		}
 
-		public static unsafe bool IsGamePlaybackRunning(GameObject? gPoseTarget) {
-			var animationControl = GetAnimationControl(gPoseTarget);
+		public static unsafe bool IsGamePlaybackRunning(Actor* actor) {
+			var animationControl = GetAnimationControl(actor);
 			if (animationControl == null) return true;
 			return animationControl->PlaybackSpeed == 1;
 		}
 
-		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(GameObject? go) {
-			if (go == null) return null;
-			var actor = (Actor*)go.Address;
+		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(Actor* actor) {
+			if (actor == null) return null;
+
 			if (actor->Model == null ||
 				actor->Model->Skeleton == null ||
 				actor->Model->Skeleton->PartialSkeletons == null ||

@@ -3,7 +3,6 @@ using System;
 using Dalamud.Hooking;
 
 using Ktisis.Services;
-using Ktisis.Structs.Actor;
 
 namespace Ktisis.Interop.Hooks {
 	internal class GuiHooks {
@@ -18,12 +17,9 @@ namespace Ktisis.Interop.Hooks {
 				string nameToDisplay = ReplaceTarName;
 
 				if (Ktisis.Configuration.DisplayCharName) {
-					var target = GPoseService.GPoseTarget;
-					if (target != null) {
-						var actor = (Actor*)GPoseService.GPoseTarget!.Address;
-						if (actor != null && actor->Model != null && actor->Name != null)
+					var actor = GPoseService.TargetActor;
+					if (actor != null && actor->Model != null && actor->Name != null)
 							nameToDisplay = actor->Name!;
-					}
 				}
 
 				for (var i = 0; i < nameToDisplay.Length; i++)

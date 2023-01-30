@@ -2,10 +2,8 @@
 
 using Ktisis.Scene;
 using Ktisis.Scene.Actors;
-using Ktisis.Structs.Actor;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
-using Ktisis.Services;
 
 namespace Ktisis.Services {
 	public static class EditorService {
@@ -58,22 +56,19 @@ namespace Ktisis.Services {
 		// Create ActorObject for GPose target
 
 		public unsafe static ActorObject? GetTargetManipulable() {
-			var tar = GPoseService.GPoseTarget;
-			if (tar == null) return null;
+			var actor = GPoseService.TargetActor;
+			if (actor == null) return null;
 
-			var actor = (Actor*)tar.Address;
 			return new ActorObject(actor->ObjectID);
 		}
 
 		internal unsafe static ActorObject? FindTarget(bool append = false) {
-			var tar = GPoseService.GPoseTarget;
+			var tar = GPoseService.TargetActor;
 			if (tar == null) return null;
-
-			var ptr = (Actor*)tar.Address;
 
 			foreach (var item in Items) {
 				if (item is ActorObject actor) {
-					if (actor.GetActor() == ptr)
+					if (actor.GetActor() == tar)
 						return actor;
 				} else continue;
 			}

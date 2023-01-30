@@ -8,18 +8,22 @@ namespace Ktisis.Posing {
 	public class CustomOffset {
 		public unsafe static Vector3 GetBoneOffset(Bone bone) {
 			var target = GPoseService.TargetActor; // TODO: Get bone's owner actor instead of target's
+			if (target == null)
+				return new();
 
 			if (!Ktisis.Configuration.CustomBoneOffset.TryGetValue(GetRaceGenderFromActor(target), out var bonesOffsets))
 				return new();
 
 			if (!bonesOffsets.TryGetValue(bone.HkaBone.Name.String ?? "", out Vector3 offset))
 				return new();
+
 			return offset;
 		}
 
 		// changed from BodyType to string Race_Gender
 		public unsafe static string GetRaceGenderFromActor(Actor* actor) =>
 			$"{actor->Customize.Race}_{actor->Customize.Gender}";
+
 		public unsafe static BodyType GetBodyTypeFromActor(Actor* actor) {
 
 			var gender = actor->Customize.Gender;

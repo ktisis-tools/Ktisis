@@ -19,7 +19,7 @@ namespace Ktisis.History {
 
 		public unsafe ActorBone(Bone? bone, bool parentingState, SiblingLink siblingLinkType) {
 			Bone = bone;
-			Actor = (Actor*)GPoseService.GPoseTarget!.Address;
+			Actor = GPoseService.TargetActor;
 			ParentingState = parentingState;
 			SiblingLinkType = siblingLinkType;
 		}
