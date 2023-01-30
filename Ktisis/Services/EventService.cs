@@ -13,10 +13,23 @@ namespace Ktisis.Services {
 		public delegate void GizmoChange(bool isEditing);
 		public static GizmoChange? OnGizmoChange = null;
 
-		internal delegate bool KeyPressEventDelegate(QueueItem e);
-		internal static KeyPressEventDelegate? OnKeyPressed;
+		internal delegate bool KeyPressEvent(QueueItem e);
+		internal static KeyPressEvent? OnKeyPressed;
 
-		internal delegate void KeyReleaseEventDelegate(VirtualKey key);
-		internal static KeyReleaseEventDelegate? OnKeyReleased;
+		internal delegate void KeyReleaseEvent(VirtualKey key);
+		internal static KeyReleaseEvent? OnKeyReleased;
+
+		internal delegate void FrameworkUpdate();
+		internal static FrameworkUpdate OnFrameworkUpdate = null!;
+
+		internal static void Init()
+			=> DalamudServices.Framework.Update += InvokeFrameworkUpdate;
+
+		internal static void Dispose()
+			=> DalamudServices.Framework.Update -= InvokeFrameworkUpdate;
+
+		private static void InvokeFrameworkUpdate(object _) {
+			OnFrameworkUpdate();
+		}
 	}
 }

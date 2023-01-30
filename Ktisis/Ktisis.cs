@@ -59,6 +59,7 @@ namespace Ktisis {
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
 
+			EventService.Init();
 			EditorService.Init();
 			HistoryManager.Init();
 
@@ -78,6 +79,7 @@ namespace Ktisis {
 			Interop.Hooks.GuiHooks.Dispose();
 			Interop.Hooks.PoseHooks.Dispose();
 
+			EventService.Dispose();
 			InteropService.Dispose();
 
 			Data.Sheets.Cache.Clear();
