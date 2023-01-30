@@ -157,7 +157,7 @@ namespace Ktisis.Interop.Hooks {
 
 
 		private IntPtr ClickEvent(IntPtr a1, byte* actor, byte a3, ClickType clickType) {
-			if (Ktisis.IsInGPose) {
+			if (GPoseService.IsInGPose) {
 				// 1. Prevents target self when clicking somewhere else with left click
 				// 2. Prevent target change with left and right clicks
 				// returning null wasn't enough for 1. so we pass the current target instead

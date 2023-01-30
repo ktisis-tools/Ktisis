@@ -124,7 +124,7 @@ namespace Ktisis.Interop.Hooks {
 		private static unsafe void SyncModelSpaceDetour(hkaPose* pose) {
 			var call = AnamPosingEnabled;
 
-			if (!Ktisis.IsInGPose && PosingEnabled) {
+			if (!GPoseService.IsInGPose && PosingEnabled) {
 				DisablePosing();
 				call = true;
 			}

@@ -1,12 +1,13 @@
 using System.Numerics;
 
+using Ktisis.Services;
 using Ktisis.Structs.Actor;
 using Ktisis.Library.Extensions;
 
 namespace Ktisis.Posing {
 	public class CustomOffset {
 		public unsafe static Vector3 GetBoneOffset(Bone bone) {
-			var target = Ktisis.Target; // TODO: Get bone's owner actor instead of target's
+			var target = GPoseService.TargetActor; // TODO: Get bone's owner actor instead of target's
 
 			if (!Ktisis.Configuration.CustomBoneOffset.TryGetValue(GetRaceGenderFromActor(target), out var bonesOffsets))
 				return new();

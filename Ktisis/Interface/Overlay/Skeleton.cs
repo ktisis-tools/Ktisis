@@ -33,8 +33,8 @@ namespace Ktisis.Interface.Overlay {
 		public unsafe static void Draw() {
 			// Fetch actor, model & skeleton
 
-			if (Ktisis.GPoseTarget == null) return;
-			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
+			if (GPoseService.GPoseTarget == null) return;
+			var actor = (Actor*)GPoseService.GPoseTarget!.Address;
 			var model = actor->Model;
 			if (model == null) return;
 
@@ -173,7 +173,7 @@ namespace Ktisis.Interface.Overlay {
 		public unsafe static Bone? GetSelectedBone() {
 			if (!BoneSelect.Active) return null;
 
-			var target = Ktisis.GPoseTarget;
+			var target = GPoseService.GPoseTarget;
 			if (target == null) return null;
 
 			var model = ((Actor*)target.Address)->Model;

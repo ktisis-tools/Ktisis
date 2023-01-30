@@ -16,7 +16,7 @@ namespace Ktisis.Interop.Hooks {
 		internal unsafe static void InputDetour(InputEvent* input, IntPtr a2, ControllerState* controllerState, MouseState* mouseState, KeyboardState* keyState) {
 			InputHook.Original(input, a2, controllerState, mouseState, keyState);
 
-			if (!Ktisis.IsInGPose) return;
+			if (!GPoseService.IsInGPose) return;
 
 			try {
 				if (mouseState != null) {
@@ -66,7 +66,7 @@ namespace Ktisis.Interop.Hooks {
 		internal static IntPtr InputDetour2(ulong a1, uint a2, ulong a3, uint a4) {
 			var exec = InputHook2.Original(a1, a2, a3, a4);
 
-			if (Ktisis.IsInGPose && a2 == 257) { // Released
+			if (GPoseService.IsInGPose && a2 == 257) { // Released
 				if (EventService.OnKeyReleased != null)
 					EventService.OnKeyReleased((VirtualKey)a3);
 			}

@@ -42,7 +42,7 @@ namespace Ktisis.Interface.Windows {
 
 			// Interface
 
-			var gposeOn = Ktisis.IsInGPose;
+			var gposeOn = GPoseService.IsInGPose;
 
 			PoseState.DrawPoseState(gposeOn);
 			ImGui.SameLine();
@@ -64,7 +64,7 @@ namespace Ktisis.Interface.Windows {
 		// Draw selection state
 
 		private unsafe static void DrawSelectState() {
-			var gameObj = Ktisis.GPoseTarget;
+			var gameObj = GPoseService.GPoseTarget;
 			if (gameObj == null || gameObj.Address == IntPtr.Zero) return;
 
 			var frameSize = new Vector2(

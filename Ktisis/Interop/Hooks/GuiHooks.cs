@@ -18,9 +18,9 @@ namespace Ktisis.Interop.Hooks {
 				string nameToDisplay = ReplaceTarName;
 
 				if (Ktisis.Configuration.DisplayCharName) {
-					var target = Ktisis.GPoseTarget;
+					var target = GPoseService.GPoseTarget;
 					if (target != null) {
-						var actor = (Actor*)Ktisis.GPoseTarget!.Address;
+						var actor = (Actor*)GPoseService.GPoseTarget!.Address;
 						if (actor != null && actor->Model != null && actor->Name != null)
 							nameToDisplay = actor->Name!;
 					}

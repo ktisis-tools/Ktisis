@@ -1,9 +1,6 @@
-using System;
-
 using Dalamud.Plugin;
 using Dalamud.Interface;
 using Dalamud.Game.Command;
-using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.UI;
 
@@ -12,7 +9,6 @@ using Ktisis.Services;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
-using Ktisis.Structs.Actor;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -23,13 +19,6 @@ namespace Ktisis {
 
 		public static Configuration Configuration { get; private set; } = null!;
 		public static UiBuilder UiBuilder { get; private set; } = null!;
-
-		public static bool IsInGPose => DalamudServices.PluginInterface.UiBuilder.GposeActive && IsGposeTargetPresent();
-		public unsafe static bool IsGposeTargetPresent() => (IntPtr)DalamudServices.Targets->GPoseTarget != IntPtr.Zero;
-
-		public unsafe static GameObject? GPoseTarget
-			=> IsInGPose ? DalamudServices.ObjectTable.CreateObjectReference((IntPtr)DalamudServices.Targets->GPoseTarget) : null;
-		public unsafe static Actor* Target => GPoseTarget != null ? (Actor*)GPoseTarget.Address : null;
 
 		public static string GetVersion() {
 			var ver = typeof(Ktisis).Assembly.GetName().Version!.ToString();
@@ -79,11 +68,6 @@ namespace Ktisis {
 			HistoryManager.Init();
 
 			//References.LoadReferences(Configuration);
-
-			unsafe {
-				var ui = (UIModule*)DalamudServices.GameGui.GetUIModule();
-				ui->ExitGPose();
-			}
 		}
 
 		public void Dispose() {
