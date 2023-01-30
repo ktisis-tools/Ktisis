@@ -38,7 +38,7 @@ namespace Ktisis.Services {
 
 		public static BoneCategory GetBoneCategory(string bone) {
 			if (bone.StartsWith("j_ex_h")) {
-				var isHair = bone.Length > 6 && bone[6] >= 48 && bone[6] <= 57; // 5th char is numeric
+				var isHair = bone.Length > 6 && bone[6] >= '0' && bone[6] <= '9'; // 5th char is numeric
 				if (isHair && Categories.TryGetValue("Hair", out var hair))
 					return hair;
 			}
