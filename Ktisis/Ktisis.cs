@@ -1,8 +1,5 @@
 using Dalamud.Plugin;
-using Dalamud.Interface;
 using Dalamud.Game.Command;
-
-using FFXIVClientStructs.FFXIV.Client.UI;
 
 using Ktisis.History;
 using Ktisis.Services;
@@ -18,7 +15,6 @@ namespace Ktisis {
 		public static string Version = $"Alpha {GetVersion()}";
 
 		public static Configuration Configuration { get; private set; } = null!;
-		public static UiBuilder UiBuilder { get; private set; } = null!;
 
 		public static string GetVersion() {
 			var ver = typeof(Ktisis).Assembly.GetName().Version!.ToString();
@@ -28,7 +24,6 @@ namespace Ktisis {
 		public Ktisis(DalamudPluginInterface pluginInterface) {
 			DalamudServices.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-			UiBuilder = pluginInterface.UiBuilder;
 
 			if (Configuration.IsFirstTimeInstall) {
 				Configuration.IsFirstTimeInstall = false;
