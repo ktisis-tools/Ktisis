@@ -62,6 +62,9 @@ namespace Ktisis.Interface.Windows {
 		// Draw selection state
 
 		private unsafe static void DrawSelectState() {
+			var actor = GPoseService.TargetActor;
+			if (actor == null) return;
+
 			var frameSize = new Vector2(
 				ImGui.GetContentRegionAvail().X - Align.WidthMargin,
 				ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y
@@ -72,9 +75,6 @@ namespace Ktisis.Interface.Windows {
 			));
 
 			if (ImGui.BeginChildFrame(8, frameSize, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar)) {
-				var actor = GPoseService.TargetActor;
-				if (actor == null) return;
-
 				var bone = Skeleton.GetSelectedBone();
 				var select = Skeleton.BoneSelect;
 

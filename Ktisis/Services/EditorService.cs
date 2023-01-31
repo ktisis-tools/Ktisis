@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using Ktisis.Scene;
 using Ktisis.Scene.Actors;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
-using Dalamud.Logging;
 
 namespace Ktisis.Services {
 	public static class EditorService {
