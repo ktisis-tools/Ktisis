@@ -4,6 +4,7 @@ using Ktisis.Scene;
 using Ktisis.Scene.Actors;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
+using Dalamud.Logging;
 
 namespace Ktisis.Services {
 	public static class EditorService {
@@ -23,7 +24,17 @@ namespace Ktisis.Services {
 
 		private static void OnGPoseChange(bool state) {
 			if (state) {
-				FindTarget(true);
+				var tar = GPoseService.TargetObject;
+
+				var actors = GPoseService.GetGPoseActors();
+				PluginLog.Verbose($"Adding {actors.Count} actor(s) to editor service");
+				foreach (var actor in actors) {
+					var manip = new ActorObject(actor.ObjectIndex);
+					Items.Add(manip);
+
+					if (tar != null && tar == actor)
+						Select(manip);
+				}
 			} else {
 				Items.Clear();
 			}
