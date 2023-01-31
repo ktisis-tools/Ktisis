@@ -1,7 +1,6 @@
 using Dalamud.Plugin;
 using Dalamud.Game.Command;
 
-using Ktisis.History;
 using Ktisis.Services;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
@@ -61,7 +60,6 @@ namespace Ktisis {
 
 			EventService.Init();
 			EditorService.Init();
-			HistoryManager.Init();
 
 			//References.LoadReferences(Configuration);
 		}
@@ -88,7 +86,6 @@ namespace Ktisis {
 				//EditEquip.Items = null;
 
 			Input.Dispose();
-			HistoryManager.Dispose();
 
 			/*foreach (var (_, texture) in References.Textures) {
 				texture.Dispose();
