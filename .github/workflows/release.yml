@@ -11,13 +11,8 @@ on:
     tags:
       - 'v*'
 
-# So we can use the GitHub API to create releases with the run token.
-permissions:
-  contents: write
-
 jobs:
-  Release:
-    if: github.event.pull_request.draft == false # Ignore draft PRs
+  Build:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -27,6 +22,11 @@ jobs:
       DALAMUD_HOME: /tmp/dalamud
       IsCI: true
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
@@ -53,6 +53,30 @@ jobs:
         run: |
           sha512sum latest.zip >> checksums.sha512
 
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Build Artifacts
+          path: |
+            Ktisis/bin/Release/Ktisis/latest.zip
+            Ktisis/bin/Release/Ktisis/checksums.sha512
+
+  Release:
+    permissions:
+      contents: write
+    needs: Build
+    if: github.event.pull_request.draft == false # Ignore draft PRs
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Ktisis/
+        shell: bash
+    steps:
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: Build Artifacts
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -64,14 +88,6 @@ jobs:
           body_path: .github/release-notices.md # These notes are automatically added to the release body every time.
           generate_release_notes: true # Automatically makes a release body from PRs since the last release.
           fail_on_unmatched_files: true # If the files arent found, fail the workflow and abort the release.
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: Release Artifacts
-          path: |
-            Ktisis/bin/Release/Ktisis/latest.zip
-            Ktisis/bin/Release/Ktisis/checksums.sha512
 
       - name: Update repo.json
         run: |
