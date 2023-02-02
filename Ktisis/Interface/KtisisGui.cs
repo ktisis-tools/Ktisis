@@ -1,17 +1,27 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
 using ImGuiNET;
 
 using Dalamud.Interface.Windowing;
-using System.Linq;
+
+using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Interface {
 	public static class KtisisGui {
+		public static int SequenceId = 0;
+
 		public static WindowSystem Windows = new("Ktisis");
 
-		public static void Draw() => Windows.Draw();
+		public static void Draw() {
+			SequenceId = 0;
+
+			Windows.Draw();
+
+			GuiOverlay.Draw();
+		}
 
 		// Get window
 
@@ -30,7 +40,7 @@ namespace Ktisis.Interface {
 
 	public abstract class KtisisWindow : Window {
 		public KtisisWindow(string name, ImGuiWindowFlags flags = ImGuiWindowFlags.None, bool forceMainWindow = false) : base(name, flags, forceMainWindow) {
-			var exists = KtisisGui.GetWindow(this.GetType());
+			var exists = KtisisGui.GetWindow(GetType());
 			if (exists != null) {
 				IsOpen = true;
 				KtisisGui.Windows.RemoveWindow(exists);

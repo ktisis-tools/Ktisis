@@ -21,7 +21,7 @@ namespace Ktisis.Interface.Overlay {
 		public static void Draw() {
 			ClickedItem = null;
 
-			if (OverlayWindow.GizmoOwner != null && !Ktisis.Configuration.DrawDotsWithGizmo)
+			if (GuiOverlay.GizmoOwner != null && !Ktisis.Configuration.DrawDotsWithGizmo)
 				return;
 
 			var draw = ImGui.GetWindowDrawList();
@@ -31,7 +31,7 @@ namespace Ktisis.Interface.Overlay {
 			// Draw them dots
 
 			var isManipulating = ImGuizmo.IsUsing();
-			var isCursorBusy = OverlayWindow.IsCursorBusy();
+			var isCursorBusy = false; // TODO GuiOverlay.IsCursorBusy();
 
 			foreach (var dot in DrawQueue) {
 				var col = dot.Color;

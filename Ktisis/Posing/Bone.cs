@@ -50,6 +50,7 @@ namespace Ktisis.Posing {
 
 		public unsafe Vector3 GetWorldPos(ActorModel* model)
 			=> model->Position + GetOffset(model) + Vector3.Transform(Transform.Translation.ToVector3() * model->Scale, model->Rotation) * model->Height;
+
 		private unsafe Vector3 GetOffset(ActorModel* model) => CustomOffset.CalculateWorldOffset(model, this);
 
 		public unsafe List<Bone> GetChildren(bool includePartials = true, bool usePartialRoot = false) {
@@ -112,6 +113,16 @@ namespace Ktisis.Posing {
 				}
 			}
 			return null;
+		}
+
+		public unsafe bool IsValid() {
+			if (Skeleton == null) return false;
+			if (Skeleton->PartialSkeletons == null) return false;
+
+			var partial = Skeleton->PartialSkeletons[Partial];
+			if (partial.GetHavokPose(0) == null) return false;
+
+			return !IsBusted();
 		}
 
 		public bool IsBusted() => !Transform.Translation.X.IsValid()

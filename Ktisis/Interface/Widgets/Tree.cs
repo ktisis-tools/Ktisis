@@ -3,8 +3,6 @@ using System.Numerics;
 
 using ImGuiNET;
 
-using Ktisis.Library.Extensions;
-
 namespace Ktisis.Interface.Widgets {
 	internal static class Tree {
 		// Nodes

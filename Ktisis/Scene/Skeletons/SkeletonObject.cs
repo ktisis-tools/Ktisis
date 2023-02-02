@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Dalamud.Logging;
@@ -7,15 +8,20 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Posing;
 using Ktisis.Services;
-using Ktisis.Structs.Bones;
 using Ktisis.Library.Extensions;
 using Ktisis.Scene.Skeletons.Bones;
+using Ktisis.Scene.Interfaces;
+using Ktisis.Structs.Actor;
 
 namespace Ktisis.Scene.Skeletons {
-	public class SkeletonObject : Manipulable {
+	public abstract class SkeletonObject : Manipulable, IHasSkeleton, IVisibilityToggle {
 		// Properties
 
 		public Dictionary<int, IntPtr> Resources = new();
+
+		public Dictionary<(int p, int i), ObjectBone> BoneMap = new();
+
+		public Dictionary<string, bool> VisibilityMap = new();
 
 		// Manipulable
 
@@ -30,23 +36,27 @@ namespace Ktisis.Scene.Skeletons {
 
 		// Skeleton
 
-		private unsafe Skeleton* GetSkeleton() {
-			if (Parent != null && Parent is HasSkeleton parent)
-				return parent.GetSkeleton();
-			return null;
-		}
+		public unsafe abstract Skeleton* GetSkeleton();
+
+		public unsafe abstract ActorModel* GetObject();
+
+		// Visibility
+
+		public bool Visible { get; set; } = false;
 
 		// Update bones
 
 		private void UpdateItem(Manipulable item, ref Dictionary<BoneCategory, List<Bone>> categories, ref List<int> cull) {
 			BoneCategory? cat = null;
 
-			var append = new List<Manipulable>();
+			var append = new List<ObjectBone>();
 			if (item is BoneGroup) {
 				cat = ((BoneGroup)item).Category;
 				if (cat != null && categories.TryGetValue(cat, out var bones)) {
-					foreach (var bone in bones)
-						append.Add(new ObjectBone(bone));
+					foreach (var bone in bones) {
+						var manip = new ObjectBone(this, bone);
+						append.Add(manip);
+					}
 				}
 			}
 
@@ -59,9 +69,16 @@ namespace Ktisis.Scene.Skeletons {
 						if (group.Category!.ParentCategory == cat)
 							groups.Add(group.Category, group);
 					} else if (child is ObjectBone bone) {
+						var exists = append.FirstOrDefault(a => a.Name == bone.Name);
+
 						if (cull.Contains(bone.Partial)) {
-							item.RemoveChild(bone);
-							i--;
+							if (exists != null) {
+								append.Remove(exists);
+							} else {
+								BoneMap.Remove((bone.Partial, bone.Index));
+								item.RemoveChild(bone);
+								i--;
+							}
 						}
 					}
 				}
@@ -72,7 +89,7 @@ namespace Ktisis.Scene.Skeletons {
 
 					BoneGroup? group;
 					if (!groups.TryGetValue(category, out group))
-						group = item.AddChild(new BoneGroup() { Category = category }) as BoneGroup;
+						group = item.AddChild(new BoneGroup(this) { Category = category }) as BoneGroup;
 
 					if (group != null) {
 						UpdateItem(group, ref categories, ref cull);
@@ -82,11 +99,15 @@ namespace Ktisis.Scene.Skeletons {
 				}
 			}
 
-			if (append.Count > 0)
-				item.Children.AddRange(append);
+			foreach (var toAdd in append) {
+				BoneMap[(toAdd.Partial, toAdd.Index)] = toAdd;
+				item.AddChild(toAdd);
+			}
+
+			SortChildren(item);
 		}
 
-		private unsafe void UpdateItems() {
+		internal unsafe void UpdateItems() {
 			var skeleton = GetSkeleton();
 			if (skeleton == null)
 				return;
@@ -121,10 +142,27 @@ namespace Ktisis.Scene.Skeletons {
 			}
 
 			if (partials.Count > 0) {
-				PluginLog.Verbose($"Rebuilding SkeletonObject for {Parent?.Name} ({string.Join(", ", partials)})");
+				PluginLog.Verbose($"Rebuilding SkeletonObject for {Name} ({string.Join(", ", partials)})");
 				UpdateItem(this, ref categories, ref partials);
+				PluginLog.Verbose($"[{Name}] Now tracking {Resources.Count} resource(s), {BoneMap.Count} bone(s)");
 			}
 		}
+
+		private void SortChildren(Manipulable item) {
+			item.Children.Sort((a, b) => {
+				if (a is BoneGroup a1 && b is BoneGroup b1)
+					return (a1.Category?.Order ?? 0) - (b1.Category?.Order ?? 0);
+				else if (a is ObjectBone a2 && b is ObjectBone b2)
+					return a2.Partial == b2.Partial ? a2.Index - b2.Index : a2.Partial - b2.Partial;
+				else
+					return a is BoneGroup ? -1 : 1;
+			});
+		}
+
+		// Transform
+
+		public abstract object? GetTransform();
+		public abstract void SetTransform(object trans);
 
 		// Overrides
 
@@ -132,9 +170,5 @@ namespace Ktisis.Scene.Skeletons {
 			UpdateItems();
 			return true;
 		}
-	}
-
-	public interface HasSkeleton {
-		public unsafe abstract Skeleton* GetSkeleton();
 	}
 }

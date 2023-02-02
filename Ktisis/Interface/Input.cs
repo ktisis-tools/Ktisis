@@ -86,10 +86,10 @@ namespace Ktisis.Interface {
 						//ControlButtons.CircleTroughSiblingLinkModes();
 						break;
 					case Purpose.DeselectGizmo:
-						if (OverlayWindow.GizmoOwner == null)
+						if (GuiOverlay.GizmoOwner == null)
 							res = false;
 						else
-							OverlayWindow.DeselectGizmo();
+							GuiOverlay.DeselectGizmo();
 						break;
 					case Purpose.BoneSelectionUp:
 						if (Selection.Selecting)

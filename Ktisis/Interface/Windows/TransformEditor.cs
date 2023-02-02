@@ -2,9 +2,9 @@
 
 using ImGuiNET;
 
-using Ktisis.Scene;
 using Ktisis.Posing;
 using Ktisis.Services;
+using Ktisis.Scene.Interfaces;
 using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
@@ -17,7 +17,7 @@ namespace Ktisis.Interface.Windows {
 		) { /* heehoo */ }
 
 		public override void Draw() {
-			var select = (Transformable?)EditorService.Selections.Find(i => i is Transformable);
+			var select = (ITransformable?)EditorService.Selections.Find(i => i is ITransformable);
 			if (select == null) {
 				Close();
 				return;

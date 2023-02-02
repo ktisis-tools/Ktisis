@@ -69,7 +69,7 @@ namespace Ktisis {
 			DalamudServices.PluginInterface.SavePluginConfig(Configuration);
 			//Services.PluginInterface.UiBuilder.OpenConfigUi -= ConfigGui.Toggle;
 
-			OverlayWindow.DeselectGizmo();
+			GuiOverlay.DeselectGizmo();
 
 			Interop.Hooks.ActorHooks.Dispose();
 			Interop.Hooks.ControlHooks.Dispose();

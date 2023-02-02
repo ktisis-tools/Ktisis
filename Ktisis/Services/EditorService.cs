@@ -44,6 +44,17 @@ namespace Ktisis.Services {
 				KtisisGui.GetWindowOrCreate<Sidebar>().Show();
 		}
 
+		// Items
+
+		public static List<Manipulable> GetAllItems() {
+			var results = new List<Manipulable>();
+			foreach (var item in Items) {
+				results.Add(item);
+				results.AddRange(item.GetDescendants());
+			}
+			return results;
+		}
+
 		// Item selection
 
 		public static Manipulable? Selection {

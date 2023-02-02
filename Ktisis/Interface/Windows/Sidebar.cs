@@ -9,7 +9,6 @@ using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Dialog;
 using Ktisis.Interface.Widgets;
-using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Components.Posing;
 
 namespace Ktisis.Interface.Windows {
@@ -75,8 +74,8 @@ namespace Ktisis.Interface.Windows {
 			));
 
 			if (ImGui.BeginChildFrame(8, frameSize, ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoScrollbar)) {
-				var bone = Skeleton.GetSelectedBone();
-				var select = Skeleton.BoneSelect;
+				////var bone = Skeleton.GetSelectedBone();
+				////var select = Skeleton.BoneSelect;
 
 				AnimStateIndicator(actor);
 
@@ -91,9 +90,9 @@ namespace Ktisis.Interface.Windows {
 
 				// display selected bone name
 				ImGui.SetCursorPosY(ImGui.GetCursorPosY() - spacing - padding);
-				if (select.Active && bone != null)
+				/*if (select.Active && bone != null)
 					ImGui.Text(bone.LocaleName);
-				else
+				else*/
 					ImGui.TextDisabled("No bone selected");
 
 				ImGui.EndGroup();

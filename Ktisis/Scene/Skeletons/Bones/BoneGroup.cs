@@ -1,10 +1,19 @@
 ﻿using Ktisis.Posing;
+using Ktisis.Scene.Interfaces;
 
 namespace Ktisis.Scene.Skeletons.Bones {
-	public class BoneGroup : Manipulable {
+	public class BoneGroup : Manipulable, IVisibilityToggle {
+		public BoneGroup(SkeletonObject skele) {
+			Skeleton = skele;
+		}
+
 		// BoneGroup
 
+		private SkeletonObject Skeleton;
+
 		public BoneCategory? Category;
+
+		public bool ShouldDraw() => !(Category != null && Category.IsNsfw && Ktisis.Configuration.CensorNsfw);
 
 		// Manipulable
 
@@ -19,11 +28,18 @@ namespace Ktisis.Scene.Skeletons.Bones {
 
 		public override void Select() {}
 
+		// Visibility
+
+		public bool Visible {
+			get => Skeleton.VisibilityMap.TryGetValue(Name, out var value) ? value : false;
+			set => Skeleton.VisibilityMap[Name] = value;
+		}
+
 		// Overrides
 
 		public override unsafe bool PreDraw() {
-			if (Category != null && Category.IsNsfw)
-				return !Ktisis.Configuration.CensorNsfw;
+			if (!ShouldDraw())
+				return false;
 			return true;
 		}
 	}

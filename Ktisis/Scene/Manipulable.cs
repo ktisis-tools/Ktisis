@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System.Numerics;
+using System.Collections.Generic;
+
+using Dalamud.Interface;
 
 using ImGuiNET;
 
 using Ktisis.Services;
 using Ktisis.Interface.Widgets;
+using Ktisis.Scene.Interfaces;
+using Ktisis.Interface;
 
 namespace Ktisis.Scene {
 	public abstract class Manipulable {
@@ -31,8 +36,48 @@ namespace Ktisis.Scene {
 			Children.Remove(item);
 		}
 
+		public List<Manipulable> GetDescendants() {
+			var results = new List<Manipulable>();
+			foreach (var child in Children) {
+				results.Add(child);
+				results.AddRange(child.GetDescendants());
+			}
+			return results;
+		}
+
 		public void DrawTreeNode() {
 			if (!PreDraw()) return;
+
+			if (this is IVisibilityToggle iVis) {
+				var c = ImGui.GetCursorPosX();
+				ImGui.SetCursorPosX(c + ImGui.GetContentRegionAvail().X - UiBuilder.IconFont.FontSize - ImGui.GetStyle().FramePadding.X);
+
+				var rgba = ImGui.ColorConvertU32ToFloat4(Color);
+				rgba.W = iVis.Visible ? 0.85f : 0.35f;
+
+				ImGui.PushStyleColor(ImGuiCol.Text, ImGui.ColorConvertFloat4ToU32(rgba));
+				ImGui.PushStyleColor(ImGuiCol.Button, 0);
+				ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(0, 0));
+
+				ImGui.BeginDisabled(!Ktisis.Configuration.ShowSkeleton);
+				if (Buttons.IconButton(FontAwesomeIcon.Eye, default, $"##Vis_{Name}_{KtisisGui.SequenceId++}")) {
+					iVis.Visible = !iVis.Visible;
+
+					if (!ImGui.IsKeyDown(ImGuiKey.LeftShift)) { // TODO: Config
+						var desc = GetDescendants();
+						foreach (var child in desc)
+							if (child is IVisibilityToggle childVis)
+								childVis.Visible = iVis.Visible;
+					}
+				}
+				ImGui.EndDisabled();
+
+				ImGui.PopStyleColor();
+				ImGui.PopStyleColor();
+				ImGui.PopStyleVar();
+
+				ImGui.SameLine(c);
+			}
 
 			var flags = ImGuiTreeNodeFlags.None;
 			if (EditorService.IsSelected(this))
@@ -41,23 +86,30 @@ namespace Ktisis.Scene {
 				flags ^= ImGuiTreeNodeFlags.Leaf ^ ImGuiTreeNodeFlags.Bullet;
 
 			ImGui.PushStyleColor(ImGuiCol.Text, Color);
+			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(0, 0));
 			var expand = Tree.CollapsibleNode(
 				Name,
-				flags,
+				flags ^ ImGuiTreeNodeFlags.NoTreePushOnOpen,
 				Select, Context
 			);
 			ImGui.PopStyleColor();
+			ImGui.PopStyleVar();
 
 			if (expand) {
+				var indent = ImGui.GetStyle().FramePadding.X + ImGui.GetFontSize() / 2;
+
 				if (Children.Count > 0) {
-					var start = Tree.LineStart();
+					//var start = Tree.LineStart();
+					ImGui.Indent(indent);
 
 					foreach (var child in Children)
 						child.DrawTreeNode();
 
-					Tree.LineEnd(start, Color);
+					ImGui.Unindent(indent);
+
+					//Tree.LineEnd(start, Color);
 				}
-				ImGui.TreePop();
+				//ImGui.TreePop();
 			}
 		}
 
@@ -71,11 +123,5 @@ namespace Ktisis.Scene {
 
 		public abstract void Select();
 		public abstract void Context();
-	}
-
-	public interface Transformable {
-		// TODO: Unified class for transform types?
-		public abstract object? GetTransform();
-		public abstract void SetTransform(object trans);
 	}
 }

@@ -7,11 +7,12 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Posing;
 using Ktisis.Services;
 using Ktisis.Scene.Skeletons;
+using Ktisis.Scene.Interfaces;
 using Ktisis.Interface.Dialog;
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Scene.Actors {
-	public class ActorObject : Manipulable, Transformable, HasSkeleton {
+	public class ActorObject : SkeletonObject, ITransformable, IHasSkeleton {
 		// ActorObject
 
 		private int Index;
@@ -20,7 +21,7 @@ namespace Ktisis.Scene.Actors {
 
 		public ActorObject(int x) {
 			Index = x;
-			AddChild(new SkeletonObject());
+			//AddChild(new SkeletonObject());
 		}
 
 		// Manipulable
@@ -68,20 +69,27 @@ namespace Ktisis.Scene.Actors {
 
 		// SkeletonObject
 
-		public unsafe Skeleton* GetSkeleton() {
+		public unsafe override Skeleton* GetSkeleton() {
 			var actor = GetActor();
 			return actor != null ? actor->GetSkeleton() : null;
 		}
 
 		// Transformable
 
-		public unsafe object? GetTransform() {
+		public unsafe override ActorModel* GetObject() {
+			var actor = GetActor();
+			if (actor == null) return null;
+
+			return actor->Model;
+		}
+
+		public unsafe override object? GetTransform() {
 			var actor = GetActor();
 			if (actor == null || actor->Model == null) return null;
 			return Transform.FromHavok(actor->Model->Transform);
 		}
 
-		public unsafe void SetTransform(object trans) {
+		public unsafe override void SetTransform(object trans) {
 			var actor = GetActor();
 			if (actor == null || actor->Model == null) return;
 			actor->Model->Transform = ((Transform)trans).ToHavok();

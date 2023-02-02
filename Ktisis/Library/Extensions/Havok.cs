@@ -64,7 +64,7 @@ namespace Ktisis.Library.Extensions {
 
 		internal unsafe static PartialSkeleton GetPartial(this Skeleton skele, int p) => skele.PartialSkeletons[p];
 
-		internal unsafe static Bone GetBone(this Skeleton skele, int partial, int bone) => new Bone(&skele, partial, bone);
+		internal unsafe static Bone GetBone(this Skeleton skele, int partial, int bone) => new Bone(&skele, partial, bone); // this probably shouldn't be used like ever?
 
 		internal static IEnumerable<PartialSkeleton> IterateSkeletons(this Skeleton skeleton) {
 			var ct = skeleton.PartialSkeletonCount;
