@@ -1,14 +1,7 @@
 [
 	{
 		"Name": "Body",
-		"Bones": [
-			"n_hara",
-			"j_kosi",
-			"j_sebo_a",
-			"j_sebo_b",
-			"j_sebo_c",
-			"j_kubi"
-		],
+		"Bones": [],
 		"SubCategories": [
 			{
 				"Name": "Head",
@@ -224,13 +217,14 @@
 				]
 			},
 			{
-				"Name": "Tail",
+				"Name": "Spine",
 				"Bones": [
-					"n_sippo_a",
-					"n_sippo_b",
-					"n_sippo_c",
-					"n_sippo_d",
-					"n_sippo_e"
+					"n_hara",
+					"j_kosi",
+					"j_sebo_a",
+					"j_sebo_b",
+					"j_sebo_c",
+					"j_kubi"
 				]
 			},
 			{
@@ -307,6 +301,16 @@
 				]
 			},
 			{
+				"Name": "Tail",
+				"Bones": [
+					"n_sippo_a",
+					"n_sippo_b",
+					"n_sippo_c",
+					"n_sippo_d",
+					"n_sippo_e"
+				]
+			},
+			{
 				"Name": "IVCS Body",
 				"Bones": [
 					"iv_nitoukin_l",
@@ -338,7 +342,7 @@
 				"IsNsfw": true
 			},
 			{
-				"Name": "IVCS Buttocks",
+				"Name": "IVCS Butt",
 				"Bones": [
 					"iv_koumon",
 					"iv_koumon_l",
