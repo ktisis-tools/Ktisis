@@ -125,7 +125,8 @@
 							"j_ude_a_l",
 							"j_ude_b_l",
 							"n_hkata_l",
-							"n_hhiji_l"
+							"n_hhiji_l",
+							"iv_nitoukin_l"
 						],
 						"SubCategories": [
 							{
@@ -165,7 +166,8 @@
 							"j_ude_a_r",
 							"j_ude_b_r",
 							"n_hkata_r",
-							"n_hhiji_r"
+							"n_hhiji_r",
+							"iv_nitoukin_r"
 						],
 						"SubCategories": [
 							{
@@ -308,13 +310,6 @@
 					"n_sippo_c",
 					"n_sippo_d",
 					"n_sippo_e"
-				]
-			},
-			{
-				"Name": "IVCS Body",
-				"Bones": [
-					"iv_nitoukin_l",
-					"iv_nitoukin_r"
 				]
 			},
 			{
