@@ -22,7 +22,8 @@ namespace Ktisis {
 
 		public Ktisis(DalamudPluginInterface pluginInterface) {
 			DalamudServices.Init(pluginInterface);
-			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+
+			Configuration = Configuration.GetConfig(pluginInterface.GetPluginConfig());
 
 			if (Configuration.IsFirstTimeInstall) {
 				Configuration.IsFirstTimeInstall = false;
@@ -31,8 +32,6 @@ namespace Ktisis {
 			if (Configuration.LastPluginVer != Version) {
 				Configuration.LastPluginVer = Version;
 			}
-
-			Configuration.Validate();
 
 			// Init interop stuff
 

@@ -67,7 +67,7 @@ namespace Ktisis.Interface.Overlay {
 		// Draw
 
 		public unsafe static void Draw() {
-			if (!GPoseService.IsInGPose || !Ktisis.Configuration.ShowSkeleton)
+			if (!GPoseService.IsInGPose || !Ktisis.Configuration.ShowOverlay)
 				return;
 
 			var matrix = Methods.GetMatrix();

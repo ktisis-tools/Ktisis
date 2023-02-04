@@ -65,7 +65,7 @@ namespace Ktisis.Interface.Windows {
 			if (actor == null) return;
 
 			var frameSize = new Vector2(
-				ImGui.GetContentRegionAvail().X - Align.WidthMargin,
+				ImGui.GetContentRegionAvail().X,
 				ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y
 			);
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(
@@ -174,10 +174,10 @@ namespace Ktisis.Interface.Windows {
 		}
 
 		private static void OverlayVisibility() {
-			var visible = Ktisis.Configuration.ShowSkeleton;
+			var visible = Ktisis.Configuration.ShowOverlay;
 			var tooltip = visible ? "Disable overlay" : "Enable overlay";
 			if (Buttons.IconButtonTooltip(visible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, tooltip, ControlButtonSize))
-				Ktisis.Configuration.ShowSkeleton = !visible;
+				Ktisis.Configuration.ShowOverlay = !visible;
 		}
 
 		private static void CameraSelect() {

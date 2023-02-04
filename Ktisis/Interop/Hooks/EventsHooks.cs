@@ -162,8 +162,8 @@ namespace Ktisis.Interop.Hooks {
 				// 2. Prevent target change with left and right clicks
 				// returning null wasn't enough for 1. so we pass the current target instead
 
-				var left = Ktisis.Configuration.DisableChangeTargetOnLeftClick && clickType == ClickType.Left;
-				var right = Ktisis.Configuration.DisableChangeTargetOnRightClick && clickType == ClickType.Right;
+				var left = Ktisis.Configuration.AllowTargetOnLeftClick && clickType == ClickType.Left;
+				var right = Ktisis.Configuration.AllowTargetOnRightClick && clickType == ClickType.Right;
 
 				if (left || right)
 					return IntPtr.Zero;

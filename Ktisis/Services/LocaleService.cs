@@ -17,9 +17,7 @@ namespace Ktisis.Services {
 			UserLocale.German
 		};
 
-		public static UserLocale GetCurrent() {
-			return Ktisis.Configuration.Localization;
-		}
+		public static UserLocale GetCurrent() => Ktisis.Configuration.Language;
 
 		public static string GetString(string handle) {
 			var lang = GetCurrent();

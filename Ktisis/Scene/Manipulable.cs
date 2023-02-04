@@ -59,7 +59,7 @@ namespace Ktisis.Scene {
 				ImGui.PushStyleColor(ImGuiCol.Button, 0);
 				ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(0, 0));
 
-				ImGui.BeginDisabled(!Ktisis.Configuration.ShowSkeleton);
+				ImGui.BeginDisabled(!Ktisis.Configuration.ShowOverlay);
 				if (Buttons.IconButton(FontAwesomeIcon.Eye, default, $"##Vis_{Name}_{KtisisGui.SequenceId++}")) {
 					iVis.Visible = !iVis.Visible;
 
@@ -121,7 +121,9 @@ namespace Ktisis.Scene {
 
 		public abstract string Name { get; set; }
 
-		public abstract void Select();
+		public virtual void Select()
+			=> EditorService.Select(this);
+
 		public abstract void Context();
 	}
 }

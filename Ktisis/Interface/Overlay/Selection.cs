@@ -21,7 +21,7 @@ namespace Ktisis.Interface.Overlay {
 		public static void Draw() {
 			ClickedItem = null;
 
-			if (GuiOverlay.GizmoOwner != null && !Ktisis.Configuration.DrawDotsWithGizmo)
+			if (GuiOverlay.GizmoOwner != null)
 				return;
 
 			var draw = ImGui.GetWindowDrawList();

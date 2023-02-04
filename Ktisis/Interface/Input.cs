@@ -224,7 +224,8 @@ namespace Ktisis.Interface {
 		}
 
 		private static List<VirtualKey> PurposeToVirtualKeys(Purpose purpose) {
-			if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out List<VirtualKey>? keys)) {
+			// TODO
+			/*if (!Ktisis.Configuration.KeyBinds.TryGetValue(purpose, out List<VirtualKey>? keys)) {
 				if (!DefaultKeys.TryGetValue(purpose, out List<VirtualKey>? defaultKeys))
 					defaultKeys = FallbackKey;
 				keys = defaultKeys;
@@ -237,7 +238,9 @@ namespace Ktisis.Interface {
 				if (!DalamudServices.KeyState.IsVirtualKeyValid(key))
 					return FallbackKey;
 
-			return keys;
+			return keys;*/
+
+			return new();
 		}
 
 		private static void ReadPurposesStates() {

@@ -9,8 +9,8 @@ using Ktisis.Library.Extensions;
 namespace Ktisis.Interface.Overlay {
 	public static class Skeleton {
 		public static void Toggle() {
-			var visible = !Ktisis.Configuration.ShowSkeleton;
-			Ktisis.Configuration.ShowSkeleton = visible;
+			var visible = !Ktisis.Configuration.ShowOverlay;
+			Ktisis.Configuration.ShowOverlay = visible;
 		}
 
 		public unsafe static void Draw(SkeletonObject skele) {

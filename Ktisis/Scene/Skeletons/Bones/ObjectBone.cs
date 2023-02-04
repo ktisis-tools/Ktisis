@@ -45,8 +45,6 @@ namespace Ktisis.Scene.Skeletons {
 
 		public override void Context() {}
 
-		public override void Select() {}
-
 		// Visibility
 
 		public bool Visible {
