@@ -161,7 +161,7 @@ namespace Ktisis.Scene.Skeletons {
 
 		// Transform
 
-		public abstract Transform GetTransform();
+		public abstract Transform? GetTransform();
 		public abstract void SetTransform(Transform trans);
 
 		// Overrides

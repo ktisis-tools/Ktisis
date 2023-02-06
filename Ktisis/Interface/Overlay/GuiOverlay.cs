@@ -1,15 +1,19 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
 using ImGuizmoNET;
 
+using Dalamud.Logging;
 using Dalamud.Interface;
 
+using Ktisis.Scene;
 using Ktisis.Interop;
 using Ktisis.Services;
-using Ktisis.Scene;
 using Ktisis.Scene.Skeletons;
+using Ktisis.Scene.Interfaces;
+using Lumina.Models.Models;
 
 namespace Ktisis.Interface.Overlay {
 	public static class GuiOverlay {
@@ -80,6 +84,8 @@ namespace Ktisis.Interface.Overlay {
 			if (Selection.DrawQueue.Count > 0)
 				Selection.Draw();
 
+			DrawGizmo();
+
 			End();
 		}
 
@@ -91,6 +97,22 @@ namespace Ktisis.Interface.Overlay {
 
 				DrawItems(item.Children);
 			}
+		}
+
+		private unsafe static void DrawGizmo() {
+			var manip = EditorService.Selections.FirstOrDefault(i => i is IGizmoTransform);
+			if (manip == null) return;
+
+			var transform = (IGizmoTransform)manip;
+
+			var matrix = transform.GetMatrix();
+			if (matrix == null) return;
+
+			var gizmo = SetGizmoOwner(manip.Name)!;
+
+			gizmo.Matrix = (Matrix4x4)matrix;
+			if (gizmo.Draw())
+				transform.SetMatrix(gizmo.Matrix);
 		}
 	}
 }

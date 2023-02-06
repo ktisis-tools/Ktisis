@@ -52,7 +52,9 @@ namespace Ktisis.Interface.Overlay {
 
 				// Create selectable item
 				if (isVisible) {
-					Selection.AddItem(manip.Name, pos2d, 0xFFFFFFFF);
+					var item = Selection.AddItem(manip.Name, pos2d, 0xFFFFFFFF);
+					if (item != null && item.IsClicked())
+						manip.Select();
 				}
 			}
 		}

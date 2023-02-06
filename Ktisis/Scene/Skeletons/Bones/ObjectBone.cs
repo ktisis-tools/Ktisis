@@ -1,13 +1,17 @@
-﻿using Ktisis.Posing;
+﻿using System.Numerics;
+
+using Ktisis.Posing;
 using Ktisis.Services;
 
 using Ktisis.Scene.Interfaces;
 using Ktisis.Scene.Skeletons.Bones;
 using Ktisis.Library.Extensions;
+using Lumina.Models.Models;
+using FFXIVClientStructs.Havok;
 using Dalamud.Logging;
 
 namespace Ktisis.Scene.Skeletons {
-	public class ObjectBone : Manipulable, ITransformable, IVisibilityToggle {
+	public class ObjectBone : Manipulable, IGizmoTransform, IVisibilityToggle {
 		public ObjectBone(SkeletonObject skele, Bone bone) {
 			Skeleton = skele;
 
@@ -87,6 +91,36 @@ namespace Ktisis.Scene.Skeletons {
 				if (sibling != null)
 					sibling.PropagateSibling(transform->Rotation.ToQuat() / initialRot, Ktisis.Configuration.SiblingLink);
 			}
+		}
+
+		public unsafe Matrix4x4? GetMatrix() {
+			var bone = GetBone();
+			if (bone == null) return null;
+
+			var model = Skeleton.GetObject();
+			if (model == null) return null;
+
+			var matrix = InteropService.GetMatrix(bone.AccessModelSpace());
+			matrix.Translation *= model->Height * model->Scale;
+			matrix = Matrix4x4.Transform(matrix, model->Rotation);
+			matrix.Translation += model->Position;
+			return matrix;
+		}
+
+		public unsafe void SetMatrix(Matrix4x4 matrix) {
+			var bone = GetBone();
+			if (bone == null) return;
+
+			var model = Skeleton.GetObject();
+			if (model == null) return;
+
+			matrix.Translation -= model->Position;
+			matrix = Matrix4x4.Transform(matrix, Quaternion.Inverse(model->Rotation));
+			matrix.Translation /= model->Height * model->Scale;
+
+			var trans = new hkQsTransformf();
+			InteropService.SetMatrix(&trans, matrix);
+			SetTransform(Transform.FromHavok(trans));
 		}
 	}
 }
