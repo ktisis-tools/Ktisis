@@ -83,16 +83,16 @@ namespace Ktisis.Scene.Actors {
 			return actor->Model;
 		}
 
-		public unsafe override object? GetTransform() {
+		public unsafe override Transform? GetTransform() {
 			var actor = GetActor();
 			if (actor == null || actor->Model == null) return null;
 			return Transform.FromHavok(actor->Model->Transform);
 		}
 
-		public unsafe override void SetTransform(object trans) {
+		public unsafe override void SetTransform(Transform trans) {
 			var actor = GetActor();
 			if (actor == null || actor->Model == null) return;
-			actor->Model->Transform = ((Transform)trans).ToHavok();
+			actor->Model->Transform = trans.ToHavok();
 		}
 	}
 }

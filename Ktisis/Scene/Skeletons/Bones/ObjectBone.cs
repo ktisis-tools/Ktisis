@@ -3,9 +3,11 @@ using Ktisis.Services;
 
 using Ktisis.Scene.Interfaces;
 using Ktisis.Scene.Skeletons.Bones;
+using Ktisis.Library.Extensions;
+using Dalamud.Logging;
 
 namespace Ktisis.Scene.Skeletons {
-	public class ObjectBone : Manipulable, IVisibilityToggle {
+	public class ObjectBone : Manipulable, ITransformable, IVisibilityToggle {
 		public ObjectBone(SkeletonObject skele, Bone bone) {
 			Skeleton = skele;
 
@@ -26,6 +28,12 @@ namespace Ktisis.Scene.Skeletons {
 		internal string Key => $"{Pair.p},{Pair.i}";
 
 		// Methods
+
+		public unsafe Bone? GetBone() {
+			var skele = Skeleton.GetSkeleton();
+			if (skele == null) return null;
+			return new Bone(skele, Partial, Index);
+		}
 
 		public bool IsBone(Bone bone) => bone.Partial == Partial && bone.Index == Index;
 
@@ -54,8 +62,31 @@ namespace Ktisis.Scene.Skeletons {
 
 		// Transformable
 
-		public object? GetTransform() => null;
+		public Transform? GetTransform() {
+			var bone = GetBone();
+			if (bone == null) return null;
+			return Transform.FromHavok(bone.Transform);
+		}
 
-		public void SetTransform(object trans) { }
+		public unsafe void SetTransform(Transform trans) {
+			var bone = GetBone();
+			if (bone == null) return;
+
+			var transform = bone.AccessModelSpace();
+
+			var initialRot = transform->Rotation.ToQuat();
+			var initialPos = transform->Translation.ToVector3();
+
+			*transform = trans.ToHavok();
+			if (Ktisis.Configuration.EnableParenting)
+				bone.PropagateChildren(transform, initialPos, initialRot);
+
+			var boneName = bone.HkaBone.Name.ToString() ?? "";
+			if (boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
+				var sibling = bone.GetMirrorSibling();
+				if (sibling != null)
+					sibling.PropagateSibling(transform->Rotation.ToQuat() / initialRot, Ktisis.Configuration.SiblingLink);
+			}
+		}
 	}
 }

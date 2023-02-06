@@ -23,13 +23,9 @@ namespace Ktisis.Interface.Windows {
 				return;
 			}
 
-			var transObj = select.GetTransform();
-			if (transObj is Transform trans) {
-				if (Table.Draw(ref trans))
-					select.SetTransform(trans);
-			} else if (transObj is Vector3 vec) {
-				// TODO
-			} else Close();
+			var trans = select.GetTransform();
+			if (trans != null && Table.Draw(ref trans))
+				select.SetTransform(trans);
 		}
 	}
 }
