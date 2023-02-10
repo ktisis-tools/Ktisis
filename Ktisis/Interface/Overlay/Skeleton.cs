@@ -54,7 +54,7 @@ namespace Ktisis.Interface.Overlay {
 				if (isVisible) {
 					var item = Selection.AddItem(manip.Name, pos2d, 0xFFFFFFFF);
 					if (item != null && item.IsClicked())
-						manip.Select();
+						manip.UiSelect();
 				}
 			}
 		}

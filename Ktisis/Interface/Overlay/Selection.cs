@@ -21,7 +21,7 @@ namespace Ktisis.Interface.Overlay {
 		public static void Draw() {
 			ClickedItem = null;
 
-			if (GuiOverlay.GizmoOwner != null)
+			if (GuiOverlay.GizmoOwner != null && !Ktisis.Configuration.DrawDotsWithGizmo)
 				return;
 
 			var draw = ImGui.GetWindowDrawList();
@@ -41,9 +41,10 @@ namespace Ktisis.Interface.Overlay {
 				}
 
 				var radius = dot.GetRadius();
-				draw.AddCircleFilled(dot.Pos, radius, col);
-				if (!isManipulating)
+				if (!isManipulating) {
+					draw.AddCircleFilled(dot.Pos, radius, col);
 					draw.AddCircle(dot.Pos, radius, 0xaf000000);
+				}
 			}
 			Selecting = hovered.Count > 0;
 

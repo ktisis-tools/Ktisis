@@ -90,7 +90,7 @@ namespace Ktisis.Scene {
 			var expand = Tree.CollapsibleNode(
 				Name,
 				flags ^ ImGuiTreeNodeFlags.NoTreePushOnOpen,
-				Select, Context
+				UiSelect, Context
 			);
 			ImGui.PopStyleColor();
 			ImGui.PopStyleVar();
@@ -123,6 +123,12 @@ namespace Ktisis.Scene {
 
 		public virtual void Select()
 			=> EditorService.Select(this);
+
+		public virtual void Select(bool add)
+			=> EditorService.Select(this, add);
+
+		public virtual void UiSelect()
+			=> Select(ImGui.IsKeyDown(ImGuiKey.LeftCtrl));
 
 		public abstract void Context();
 	}
