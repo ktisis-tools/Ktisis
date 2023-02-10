@@ -5,7 +5,7 @@ using Dalamud.Hooking;
 using Ktisis.Services;
 
 namespace Ktisis.Interop.Hooks {
-	internal class GuiHooks {
+	internal class GPoseHooks {
 		// Target name in the GPose window
 
 		internal delegate void TarNameDelegate(IntPtr a1);

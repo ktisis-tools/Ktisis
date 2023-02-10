@@ -42,7 +42,7 @@ namespace Ktisis {
 			Interop.Hooks.ActorHooks.Init();
 			Interop.Hooks.ControlHooks.Init();
 			Interop.Hooks.EventsHooks.Init();
-			Interop.Hooks.GuiHooks.Init();
+			Interop.Hooks.GPoseHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
 
 			Input.Init();
@@ -73,7 +73,7 @@ namespace Ktisis {
 			Interop.Hooks.ActorHooks.Dispose();
 			Interop.Hooks.ControlHooks.Dispose();
 			Interop.Hooks.EventsHooks.Dispose();
-			Interop.Hooks.GuiHooks.Dispose();
+			Interop.Hooks.GPoseHooks.Dispose();
 			Interop.Hooks.PoseHooks.Dispose();
 
 			EventService.Dispose();
