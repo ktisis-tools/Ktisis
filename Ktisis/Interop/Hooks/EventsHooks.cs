@@ -22,7 +22,6 @@ namespace Ktisis.Interop.Hooks {
 			var MiragePrismMiragePlate = DalamudServices.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent += OnGlamourPlatesReceiveEvent;
 
-			OnGposeEnter(); // TODO: move this call on "enter gpose" event
 			OnLogin(null!, null!);
 		}
 
@@ -34,7 +33,6 @@ namespace Ktisis.Interop.Hooks {
 			var MiragePrismMiragePlate = DalamudServices.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent -= OnGlamourPlatesReceiveEvent;
 
-			OnGposeLeave();
 			OnLogout(null!, null!);
 		}
 
@@ -44,14 +42,6 @@ namespace Ktisis.Interop.Hooks {
 		}
 		private static void OnLogout(object? sender, EventArgs e) {
 			Sets.Dispose();
-		}
-		private static void OnGposeEnter() {
-			var ClickTargetAddon = DalamudServices.AddonManager.Get<ClickTargetAddon>();
-			ClickTargetAddon.Enable();
-		}
-		private static void OnGposeLeave() {
-			var ClickTargetAddon = DalamudServices.AddonManager.Get<ClickTargetAddon>();
-			ClickTargetAddon.Dispose();
 		}
 
 		private static unsafe void OnGlamourPlatesReceiveEvent(object? sender, ReceiveEventArgs e) {
@@ -76,7 +66,6 @@ namespace Ktisis.Interop.Hooks {
 		private readonly List<IDisposable> addons = new()
 		{
 			new MiragePrismMiragePlateAddon(),
-			new ClickTargetAddon(),
 		};
 
 		public void Dispose() {
@@ -118,67 +107,7 @@ namespace Ktisis.Interop.Hooks {
 			return receiveEventHook!.Original(agent, rawData, eventArgs, eventArgsCount, sender);
 		}
 	}
-	internal unsafe class ClickTargetAddon : IDisposable {
 
-
-		private delegate IntPtr ClickTarget(IntPtr a1, byte* a2, byte a3);
-		private readonly Hook<ClickTarget>? rightClickTargetHook;
-		private readonly Hook<ClickTarget>? leftClickTargetHook;
-
-		public ClickTargetAddon() {
-			rightClickTargetHook ??= Hook<ClickTarget>.FromAddress(DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), RightClickTargetDetour);
-			leftClickTargetHook ??= Hook<ClickTarget>.FromAddress(DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), LeftClickTargetDetour);
-		}
-
-		public void Enable() {
-			rightClickTargetHook?.Enable();
-			leftClickTargetHook?.Enable();
-		}
-
-		public void Dispose() {
-			// Verify presence of hooks, in case of calls when it's already been disposed
-			if (!(bool)rightClickTargetHook?.IsDisposed!) {
-				if ((bool)rightClickTargetHook?.IsEnabled!)
-					rightClickTargetHook?.Disable();
-				rightClickTargetHook?.Dispose();
-			}
-			if (!(bool)leftClickTargetHook?.IsDisposed!) {
-				if ((bool)leftClickTargetHook?.IsEnabled!)
-					leftClickTargetHook?.Disable();
-				leftClickTargetHook?.Dispose();
-			}
-		}
-
-
-		private IntPtr RightClickTargetDetour(IntPtr a1, byte* a2, byte a3) =>
-			ClickEvent(a1, a2, a3, ClickType.Right);
-		private IntPtr LeftClickTargetDetour(IntPtr a1, byte* a2, byte a3) =>
-			ClickEvent(a1, a2, a3, ClickType.Left);
-
-
-		private IntPtr ClickEvent(IntPtr a1, byte* actor, byte a3, ClickType clickType) {
-			if (GPoseService.IsInGPose) {
-				// 1. Prevents target self when clicking somewhere else with left click
-				// 2. Prevent target change with left and right clicks
-				// returning null wasn't enough for 1. so we pass the current target instead
-
-				var left = Ktisis.Configuration.AllowTargetOnLeftClick && clickType == ClickType.Left;
-				var right = Ktisis.Configuration.AllowTargetOnRightClick && clickType == ClickType.Right;
-
-				if (left || right)
-					return IntPtr.Zero;
-			}
-
-			if (clickType == ClickType.Left) return leftClickTargetHook!.Original(a1, actor, a3);
-			if (clickType == ClickType.Right) return rightClickTargetHook!.Original(a1, actor, a3);
-
-			return IntPtr.Zero;
-		}
-		internal enum ClickType {
-			Left,
-			Right
-		}
-	}
 	internal unsafe class ReceiveEventArgs : EventArgs {
 		public ReceiveEventArgs(AgentInterface* agentInterface, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong senderID) {
 			AgentInterface = agentInterface;

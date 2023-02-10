@@ -1,21 +1,15 @@
 using System;
-using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuizmoNET;
 
-using Dalamud;
 using Dalamud.Configuration;
-using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Posing;
 using Ktisis.Services;
-using Ktisis.Interface;
 using Ktisis.Legacy.Config;
-using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip.SetSources;
-using static Ktisis.Data.Files.AnamCharaFile;
 
 namespace Ktisis {
 	[Serializable]
