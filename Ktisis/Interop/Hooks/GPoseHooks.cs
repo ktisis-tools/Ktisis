@@ -1,11 +1,27 @@
 using System;
 
 using Dalamud.Hooking;
+using Dalamud.Logging;
 
 using Ktisis.Services;
 
 namespace Ktisis.Interop.Hooks {
 	internal class GPoseHooks {
+		// Void click target
+
+		internal delegate void VoidClickDelegate(nint a1);
+		internal static Hook<VoidClickDelegate> VoidClickHook = null!;
+
+		internal static void VoidClickDetour(nint a1) {
+			if (Ktisis.Configuration.DeselectOnVoidClick)
+				EditorService.Selection = null;
+
+			if (GPoseService.IsInGPose && !Ktisis.Configuration.AllowTargetOnLeftClick)
+				return;
+
+			VoidClickHook.Original(a1);
+		}
+
 		// Left click target
 
 		internal delegate ushort LeftClickTarDelegate(nint a1, nint a2);
@@ -13,7 +29,7 @@ namespace Ktisis.Interop.Hooks {
 
 		internal static ushort LeftClickTarDetour(nint a1, nint a2) {
 			if (GPoseService.IsInGPose && !Ktisis.Configuration.AllowTargetOnLeftClick)
-				return 0;
+				a2 = 0;
 			return LeftClickTarHook.Original(a1, a2);
 		}
 
@@ -57,6 +73,10 @@ namespace Ktisis.Interop.Hooks {
 		// Init & dispose
 
 		internal static void Init() {
+			var voidClick = DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 43 18 33 D2");
+			VoidClickHook = Hook<VoidClickDelegate>.FromAddress(voidClick, VoidClickDetour);
+			VoidClickHook.Enable();
+
 			var leftClick = DalamudServices.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B BC 24 ?? ?? ?? ?? 48 8B 9C 24 ?? ?? ?? ?? 4C 8B BC 24 ?? ?? ?? ?? 41 C7 06 ?? ?? ?? ??");
 			LeftClickTarHook = Hook<LeftClickTarDelegate>.FromAddress(leftClick, LeftClickTarDetour);
 			LeftClickTarHook.Enable();
@@ -71,6 +91,9 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		internal static void Dispose() {
+			VoidClickHook.Disable();
+			VoidClickHook.Dispose();
+
 			LeftClickTarHook.Disable();
 			LeftClickTarHook.Dispose();
 

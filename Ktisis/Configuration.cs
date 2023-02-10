@@ -51,6 +51,8 @@ namespace Ktisis {
 		public bool AllowTargetOnLeftClick = true;
 		public bool AllowTargetOnRightClick = true;
 
+		public bool DeselectOnVoidClick = true;
+
 		// UI
 
 		public bool CensorNsfw = false;
