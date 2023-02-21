@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 
 using ImGuiNET;
-using ImGuizmoNET;
+using Ktisis.ImGuizmo;
 
 using Dalamud.Interface;
 
@@ -17,9 +17,9 @@ namespace Ktisis.Interface.Components {
 		public static Vector4 AxisColorZ = new(0, 0.33f, 1, 1);
 		public static Vector4[] AxisColors => new Vector4[3] { AxisColorX, AxisColorY, AxisColorZ };
 
-		public OPERATION Operations = OPERATION.UNIVERSAL;
+		public Operation Operations = Operation.UNIVERSAL;
 
-		public TransformTable(OPERATION op = OPERATION.UNIVERSAL) {
+		public TransformTable(Operation op = Operation.UNIVERSAL) {
 			Operations = op;
 		}
 
@@ -30,7 +30,7 @@ namespace Ktisis.Interface.Components {
 			Vector3 euler = MathLib.ToEuler(trans.Rotation);
 			Vector3 scale = trans.Scale;
 
-			if (Operations.HasFlag(OPERATION.TRANSLATE)) {
+			if (Operations.HasFlag(Operation.TRANSLATE)) {
 				if (Draw(ref position, 0.0025f, "Pos")) {
 					changed = true;
 					trans.Position = position;
@@ -40,7 +40,7 @@ namespace Ktisis.Interface.Components {
 				Text.Tooltip("Position");
 			}
 
-			if (Operations.HasFlag(OPERATION.ROTATE)) {
+			if (Operations.HasFlag(Operation.ROTATE)) {
 				if (Draw(ref euler, 0.5f, "Rotate")) {
 					changed = true;
 					trans.Rotation = MathLib.ToQuaternion(euler);
@@ -50,7 +50,7 @@ namespace Ktisis.Interface.Components {
 				Text.Tooltip("Rotation");
 			}
 
-			if (Operations.HasFlag(OPERATION.SCALEU)) {
+			if (Operations.HasFlag(Operation.SCALE_U)) {
 				if (Draw(ref scale, 0.0075f, "Scale")) {
 					changed = true;
 					trans.Scale = scale.ClampMin(0.001f);

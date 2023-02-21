@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
-using ImGuizmoNET;
+using Ktisis.ImGuizmo;
 
 using Ktisis.Services;
 
@@ -30,7 +30,7 @@ namespace Ktisis.Interface.Overlay {
 
 			// Draw them dots
 
-			var isManipulating = ImGuizmo.IsUsing();
+			var isManipulating = ImGuizmo.ImGuizmo.IsUsing;
 			var isCursorBusy = false; // TODO GuiOverlay.IsCursorBusy();
 
 			foreach (var dot in DrawQueue) {
@@ -64,7 +64,7 @@ namespace Ktisis.Interface.Overlay {
 		public static string? ClickedItem = null;
 
 		public static void DrawList(List<string> items) {
-			if (ImGuizmo.IsUsing())
+			if (ImGuizmo.ImGuizmo.IsUsing)
 				return;
 
 			// Capture mouse input to intercept mouse clicks.

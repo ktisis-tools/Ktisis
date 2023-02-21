@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using System.Collections.Generic;
 
-using ImGuizmoNET;
+using Ktisis.ImGuizmo;
 
 using Dalamud.Configuration;
 
@@ -39,8 +39,8 @@ namespace Ktisis {
 
 		// Gizmo
 
-		public MODE GizmoMode = MODE.LOCAL;
-		public OPERATION GizmoOp = OPERATION.ROTATE;
+		public Mode GizmoMode = Mode.Local;
+		public Operation GizmoOp = Operation.ROTATE;
 
 		public SiblingLink SiblingLink = SiblingLink.None;
 

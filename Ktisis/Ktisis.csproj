@@ -54,6 +54,9 @@
       <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="ImGuizmo.NET">
+      <HintPath>..\libs\ImGuizmo.NET.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
       <Private>false</Private>

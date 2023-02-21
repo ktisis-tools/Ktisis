@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
-using ImGuizmoNET;
+using Ktisis.ImGuizmo;
 
 using Dalamud.Logging;
 using Dalamud.Interface;
@@ -37,8 +37,8 @@ namespace Ktisis.Interface.Overlay {
 			//Skeleton.BoneSelect.Active = false;
 
 			// This is a hack to reset ImGuizmo's mbUsing state.
-			ImGuizmo.Enable(false);
-			ImGuizmo.Enable(true);
+			ImGuizmo.ImGuizmo.Enable = false;
+			ImGuizmo.ImGuizmo.Enable = true;
 		}
 
 		// Begin/End
