@@ -4,6 +4,7 @@ using System.Numerics;
 using ImGuiNET;
 
 using Ktisis.ImGuizmo;
+using GizmoUI = Ktisis.ImGuizmo.Gizmo;
 
 using Ktisis.Services;
 using Ktisis.Library.Extensions;
@@ -26,7 +27,7 @@ namespace Ktisis.Interface.Overlay {
 		// Decompose retrieves values from the matrix.
 
 		public void ComposeMatrix(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
-			Matrix = ImGuizmo.Gizmo.RecomposeMatrixFromComponents(
+			Matrix = GizmoUI.RecomposeMatrixFromComponents(
 				pos,
 				rot,
 				scale
@@ -37,7 +38,7 @@ namespace Ktisis.Interface.Overlay {
 			=> ComposeMatrix(ref pos, ref rot, ref scale);
 
 		public void DecomposeMatrix(ref Vector3 pos, ref Vector3 rot, ref Vector3 scale) {
-			ImGuizmo.Gizmo.DecomposeMatrixToComponents(
+			GizmoUI.DecomposeMatrixToComponents(
 				Matrix,
 				out pos,
 				out rot,
@@ -50,12 +51,12 @@ namespace Ktisis.Interface.Overlay {
 		internal void BeginFrame(Vector2 wp, ImGuiIOPtr io) {
 			ForceOp = null;
 
-			ImGuizmo.Gizmo.BeginFrame();
-			ImGuizmo.Gizmo.DrawList = IntPtr.Zero;
+			GizmoUI.BeginFrame();
+			GizmoUI.DrawList = IntPtr.Zero;
 
-			ImGuizmo.Gizmo.SetDrawRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
+			GizmoUI.SetDrawRect(wp.X, wp.Y, io.DisplaySize.X, io.DisplaySize.Y);
 
-			ImGuizmo.Gizmo.AllowAxisFlip = Ktisis.Configuration.AllowAxisFlip;
+			GizmoUI.AllowAxisFlip = Ktisis.Configuration.AllowAxisFlip;
 		}
 
 		public void InsertEulerDeltaMatrix(Vector3 posDelta, Vector3 rotDelta, Vector3 scaDelta) {
@@ -94,7 +95,7 @@ namespace Ktisis.Interface.Overlay {
 			var view = camera->GetViewMatrix();
 			var proj = camera->GetProjectionMatrix();
 
-			return ImGuizmo.Gizmo.Manipulate(
+			return GizmoUI.Manipulate(
 				view,
 				proj,
 				ForceOp ?? Operation,

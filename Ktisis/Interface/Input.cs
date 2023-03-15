@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 
 using Ktisis.ImGuizmo;
+using GizmoUI = Ktisis.ImGuizmo.Gizmo;
 
 using Dalamud.Game.ClientState.Keys;
 
@@ -62,7 +63,7 @@ namespace Ktisis.Interface {
 			if (purpose != null) {
 				var res = true;
 
-				var isUsing = ImGuizmo.Gizmo.IsUsing;
+				var isUsing = GizmoUI.IsUsing;
 				switch (purpose) {
 					case Purpose.SwitchToTranslate:
 						if (!isUsing) Ktisis.Configuration.GizmoOp = Operation.TRANSLATE;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using ImGuiNET;
 using Ktisis.ImGuizmo;
+using GizmoUI = Ktisis.ImGuizmo.Gizmo;
 
 using Dalamud.Logging;
 using Dalamud.Interface;
@@ -37,8 +38,8 @@ namespace Ktisis.Interface.Overlay {
 			//Skeleton.BoneSelect.Active = false;
 
 			// This is a hack to reset ImGuizmo's mbUsing state.
-			ImGuizmo.Gizmo.Enable = false;
-			ImGuizmo.Gizmo.Enable = true;
+			GizmoUI.Enable = false;
+			GizmoUI.Enable = true;
 		}
 
 		// Begin/End
