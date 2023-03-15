@@ -62,7 +62,7 @@ namespace Ktisis.Interface {
 			if (purpose != null) {
 				var res = true;
 
-				var isUsing = ImGuizmo.ImGuizmo.IsUsing;
+				var isUsing = ImGuizmo.Gizmo.IsUsing;
 				switch (purpose) {
 					case Purpose.SwitchToTranslate:
 						if (!isUsing) Ktisis.Configuration.GizmoOp = Operation.TRANSLATE;

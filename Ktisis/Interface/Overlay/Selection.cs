@@ -30,7 +30,7 @@ namespace Ktisis.Interface.Overlay {
 
 			// Draw them dots
 
-			var isManipulating = ImGuizmo.ImGuizmo.IsUsing;
+			var isManipulating = ImGuizmo.Gizmo.IsUsing;
 			var isCursorBusy = false; // TODO GuiOverlay.IsCursorBusy();
 
 			foreach (var dot in DrawQueue) {
@@ -64,7 +64,7 @@ namespace Ktisis.Interface.Overlay {
 		public static string? ClickedItem = null;
 
 		public static void DrawList(List<string> items) {
-			if (ImGuizmo.ImGuizmo.IsUsing)
+			if (ImGuizmo.Gizmo.IsUsing)
 				return;
 
 			// Capture mouse input to intercept mouse clicks.

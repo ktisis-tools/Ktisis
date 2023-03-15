@@ -37,8 +37,8 @@ namespace Ktisis.Interface.Overlay {
 			//Skeleton.BoneSelect.Active = false;
 
 			// This is a hack to reset ImGuizmo's mbUsing state.
-			ImGuizmo.ImGuizmo.Enable = false;
-			ImGuizmo.ImGuizmo.Enable = true;
+			ImGuizmo.Gizmo.Enable = false;
+			ImGuizmo.Gizmo.Enable = true;
 		}
 
 		// Begin/End
