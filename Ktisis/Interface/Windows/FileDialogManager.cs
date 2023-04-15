@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
+using System.Collections.Generic;
 
 using Dalamud.Interface;
 using Dalamud.Interface.ImGuiFileDialog;
+
+using Ktisis.Helpers;
 
 using BaseDialogManager = Dalamud.Interface.ImGuiFileDialog.FileDialogManager;
 
@@ -26,44 +28,17 @@ namespace Ktisis.Interface.Windows {
 			set => baseSavedPathField.SetValue(baseInstance, value);
 		}
 
-		public void OpenFolderDialog(string title, Action<bool, string> callback) {
-			setupDialog("");
-			baseInstance.OpenFolderDialog(title, (selected, path) => {
-				isClosing = true;
-				callback(selected, path);
-			});
-		}
-
-		public void OpenFolderDialog(string title, Action<bool, string> callback, string? startPath, bool isModal = false) {
-			setupDialog("");
-			baseInstance.OpenFolderDialog(title, (selected, path) => {
-				isClosing = true;
-				callback(selected, path);
-			}, startPath, isModal);
-		}
-
-		public void SaveFolderDialog(string title, string defaultFolderName, Action<bool, string> callback) {
-			setupDialog("");
-			baseInstance.SaveFolderDialog(title, defaultFolderName, (selected, path) => {
-				isClosing = true;
-				callback(selected, path);
-			});
-		}
-
-		public void SaveFolderDialog(string title, string defaultFolderName, Action<bool, string> callback, string? startPath, bool isModal = false) {
-			setupDialog("");
-			baseInstance.SaveFolderDialog(title, defaultFolderName, (selected, path) => {
-				isClosing = true;
-				callback(selected, path);
-			}, startPath, isModal);
-		}
 
 		public void OpenFileDialog(string title, string filters, Action<bool, string> callback) {
 			setupDialog(filters);
-			baseInstance.OpenFileDialog(title, filters, (selected, path) => {
-				isClosing = true;
-				callback(selected, path);
-			});
+			try {
+				baseInstance.OpenFileDialog(title, filters, (selected, path) => {
+					isClosing = true;
+					callback(selected, path);
+				});
+			} catch {
+				savedPath = ".";
+			}
 		}
 
 		public void OpenFileDialog(
@@ -75,10 +50,14 @@ namespace Ktisis.Interface.Windows {
 			bool isModal = false
 		) {
 			setupDialog(filters);
-			baseInstance.OpenFileDialog(title, filters, (selected, path) => {
-				isClosing = true;
-				callback(selected, path);
-			}, selectionCountMax, startPath, isModal);
+			try {
+				baseInstance.OpenFileDialog(title, filters, (selected, path) => {
+					isClosing = true;
+					callback(selected, path);
+				}, selectionCountMax, startPath, isModal);
+			} catch {
+				savedPath = ".";
+			}
 		}
 
 		public void SaveFileDialog(
@@ -89,34 +68,14 @@ namespace Ktisis.Interface.Windows {
 			Action<bool, string> callback
 		) {
 			setupDialog(filters);
-			baseInstance.SaveFileDialog(title, filters, defaultFileName, defaultExtension, (selected, path) => {
-				isClosing = true;
-				callback(selected, path);
-			});
-		}
-
-		public void SaveFileDialog(
-			string title,
-			string filters,
-			string defaultFileName,
-			string defaultExtension,
-			Action<bool, string> callback,
-			string? startPath,
-			bool isModal = false
-		) {
-			setupDialog(filters);
-			baseInstance.SaveFileDialog(
-				title,
-				filters,
-				defaultFileName,
-				defaultExtension,
-				(selected, path) => {
+			try {
+				baseInstance.SaveFileDialog(title, filters, defaultFileName, defaultExtension, (selected, path) => {
 					isClosing = true;
 					callback(selected, path);
-				},
-				startPath,
-				isModal
-			);
+				});
+			} catch {
+				savedPath = ".";
+			}
 		}
 
 		public void Draw() {
@@ -132,11 +91,10 @@ namespace Ktisis.Interface.Windows {
 
 		private void setupDialog(string filters) {
 			currentFilter = filters;
-			if (savedPath == ".") {
-				if (Ktisis.Configuration.SavedDirPaths.TryGetValue(filters, out string? path)) {
-					savedPath = path;
-				}
-			}
+			if (savedPath == ".") return;
+			
+			if (Ktisis.Configuration.SavedDirPaths.TryGetValue(filters, out string? path) && Common.IsPathValid(path))
+				savedPath = path;
 		}
 	}
 }
