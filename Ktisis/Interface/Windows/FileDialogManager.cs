@@ -91,7 +91,7 @@ namespace Ktisis.Interface.Windows {
 
 		private void setupDialog(string filters) {
 			currentFilter = filters;
-			if (savedPath == ".") return;
+			if (savedPath != ".") return;
 			
 			if (Ktisis.Configuration.SavedDirPaths.TryGetValue(filters, out string? path) && Common.IsPathValid(path))
 				savedPath = path;
