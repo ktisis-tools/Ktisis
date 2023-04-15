@@ -193,8 +193,8 @@ namespace Ktisis.Data.Files {
 			actor->ModelId = ModelType;
 
 			if (IncludeSection(SaveModes.EquipmentWeapons, mode)) {
-				MainHand?.Write(actor->MainHand.Equip, true);
-				OffHand?.Write(actor->OffHand.Equip, false);
+				MainHand?.Write(actor, true);
+				OffHand?.Write(actor, false);
 			}
 
 			if (IncludeSection(SaveModes.EquipmentGear, mode)) {
@@ -356,30 +356,18 @@ namespace Ktisis.Data.Files {
 			public ushort ModelVariant { get; set; }
 			public byte DyeId { get; set; }
 
-			public void Write(WeaponEquip vm, bool isMainHand) {
-				// TODO
-
-				vm.Set = ModelSet;
-
-				// sanity check values
-				if (vm.Set != 0) {
-					vm.Base = ModelBase;
-					vm.Variant = ModelVariant;
-					vm.Dye = DyeId;
-				} else {
-					/*if (isMainHand) {
-						vm.Set = ItemUtility.EmperorsNewFists.ModelSet;
-						vm.Base = ItemUtility.EmperorsNewFists.ModelBase;
-						vm.Variant = ItemUtility.EmperorsNewFists.ModelVariant;
-					} else {*/
-						vm.Set = 0;
-						vm.Base = 0;
-						vm.Variant = 0;
-					//}
-
-					vm.Dye = 0;
-					//vm.Dye = ItemUtility.NoneDye.Id;
+			public unsafe void Write(Actor* actor, bool isMainHand) {
+				var wep = new WeaponEquip() {
+					Set = ModelSet
+				};
+				
+				if (wep.Set != 0) {
+					wep.Base = ModelBase;
+					wep.Variant = ModelVariant;
+					wep.Dye = DyeId;
 				}
+
+				actor->Equip(isMainHand ? 0 : 1, wep);
 			}
 		}
 
