@@ -24,6 +24,9 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x818)] public Equipment Equipment;
 		[FieldOffset(0x840)] public Customize Customize;
 
+		[FieldOffset(0x085E)] public bool IsHatHidden;
+		[FieldOffset(0x085F)] public ActorFlags Flags;
+
 		[FieldOffset(0xC40)] public ActorGaze Gaze; // Update in ActorHooks.cs as well
 
 		public unsafe string? GetName() {
@@ -126,5 +129,13 @@ namespace Ktisis.Structs.Actor {
 		Draw = 0,
 		Unload = 2,
 		Load = 4
+	}
+
+	[Flags]
+	public enum ActorFlags : byte {
+		None = 0,
+		WeaponsVisible = 1,
+		WeaponsDrawn = 2,
+		VisorToggle = 8
 	}
 }

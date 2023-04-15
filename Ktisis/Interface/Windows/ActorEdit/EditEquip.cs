@@ -7,6 +7,7 @@ using ImGuiNET;
 using ImGuiScene;
 
 using Dalamud.Interface;
+using Dalamud.Logging;
 
 using Ktisis.Util;
 using Ktisis.Data;
@@ -148,6 +149,24 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (ImGui.ColorButton($"{dye.Name} [{dye.RowId}]##{slot}", dye.ColorVector4, ImGuiColorEditFlags.NoBorder))
 				OpenDyePicker(slot);
 
+			if (equipObj is WeaponEquip) {
+				ImGui.SameLine();
+
+				var wep = slot == EquipSlot.MainHand ? &tar->MainHand : &tar->OffHand;
+				
+				var hidden = (wep->Flags & WeaponFlags.Hidden) != 0;
+				if (DrawVisibilityToggle($"wep_vis_{slot}", hidden))
+					wep->Flags ^= WeaponFlags.Hidden;
+			} else if (slot == EquipSlot.Head) {
+				ImGui.SameLine();
+				
+				var hidden = tar->IsHatHidden;
+				if (DrawVisibilityToggle("head_vis", hidden)) {
+					tar->IsHatHidden ^= true;
+					tar->Equip(SlotToIndex(slot), tar->Equipment.Head);
+				}
+			}
+
 			ImGui.EndGroup();
 
 			if (SlotSelect == slot)
@@ -173,8 +192,22 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static void OpenSetDyePicker() => DrawSetDyeSelection = true;
 		public static void CloseSetDyePicker() => DrawSetDyeSelection = false;
 
+		private static bool DrawVisibilityToggle(string id, bool hidden) {
+			// this is fucking stupid
+			var width = Math.Max(
+				GuiHelpers.CalcIconSize(FontAwesomeIcon.EyeSlash).X,
+				GuiHelpers.CalcIconSize(FontAwesomeIcon.Eye).X
+			) + ImGui.GetStyle().ItemSpacing.X;
 
-		public static void DrawControls() {
+			return GuiHelpers.IconButtonTooltip(
+				hidden ? FontAwesomeIcon.EyeSlash : FontAwesomeIcon.Eye,
+				"Toggle visibility",
+				new Vector2(width, 0),
+				id
+			);
+		}
+
+		public unsafe static void DrawControls() {
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Tshirt, "Look up for a set."))
 				OpenSetSelector();
 			ImGui.SameLine();
