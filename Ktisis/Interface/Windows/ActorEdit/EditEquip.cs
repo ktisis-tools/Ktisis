@@ -7,7 +7,6 @@ using ImGuiNET;
 using ImGuiScene;
 
 using Dalamud.Interface;
-using Dalamud.Logging;
 
 using Ktisis.Util;
 using Ktisis.Data;

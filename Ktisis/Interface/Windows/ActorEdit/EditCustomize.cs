@@ -20,6 +20,8 @@ using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.ActorEdit;
 
+using Lumina.Data.Parsing.Layer;
+
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
 		public Menu Option;
@@ -36,6 +38,7 @@ namespace Ktisis.Interface.Windows {
 		public CustomizeIndex Index = 0;
 		public CustomizeIndex AltIndex = 0;
 		public uint[] Colors = Array.Empty<uint>();
+		public uint[]? AltColors;
 		public bool Iterable = true;
 
 		public MenuColor(string name, CustomizeIndex index) {
@@ -338,8 +341,9 @@ namespace Ktisis.Interface.Windows {
 				selecting = color.Index;
 
 			if (color.AltIndex != 0) {
+				var altColor = color.AltColors ?? color.Colors;
 				var altIndex = custom.Bytes[(uint)color.AltIndex];
-				var altRgb = altIndex >= color.Colors.Length || altIndex < 0 ? 0 : color.Colors[altIndex];
+				var altRgb = altIndex >= color.Colors.Length ? 0 : altColor[altIndex];
 				ImGui.SameLine();
 				if (DrawColorButton($"{altIndex}##{color.Name}##alt", altRgb))
 					selecting = color.AltIndex;
@@ -357,9 +361,10 @@ namespace Ktisis.Interface.Windows {
 			if (color.AltIndex != 0) name += "s";
 			ImGui.Text(name);
 
-			if (Selecting == color.Index || Selecting == color.AltIndex){
+			if (Selecting == color.Index || Selecting == color.AltIndex) {
 				byte value = custom.Bytes[(uint)Selecting];
-				if (DrawColorList(custom, color, ref value)) {
+				var colors = Selecting == color.AltIndex ? (color.AltColors ?? color.Colors) : color.Colors;
+				if (DrawColorList(colors, ref value)) {
 					custom.Bytes[(uint)Selecting] = value;
 					Apply(custom);
 				}
@@ -381,7 +386,7 @@ namespace Ktisis.Interface.Windows {
 			return result;
 		}
 
-		public static bool DrawColorList(Customize custom, MenuColor color, ref byte value) {
+		public static bool DrawColorList(uint[] colors, ref byte value) {
 			var result = false;
 
 			var size = new Vector2(-1, -1);
@@ -406,14 +411,14 @@ namespace Ktisis.Interface.Windows {
 
 					ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0,0));
 					ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 0);
-					for (var i = 0; i < color.Colors.Length; i++) {
-						var rgb = color.Colors[i];
+					for (var i = 0; i < colors.Length; i++) {
+						var rgb = colors[i];
 						if (rgb == 0) continue;
 
 						if (i % 8 != 0) ImGui.SameLine();
 
 						var rgba = ImGui.ColorConvertU32ToFloat4(rgb);
-						if (ImGui.ColorButton($"{i}##{color.Name}_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
+						if (ImGui.ColorButton($"{i}##col_select_{i}", rgba, ImGuiColorEditFlags.NoBorder, ColButtonSizeSmall)) {
 							result |= true;
 							value = (byte)i;
 							ImGui.SetWindowFocus();
@@ -616,6 +621,7 @@ namespace Ktisis.Interface.Windows {
 							case CustomizeIndex.HairColor:
 								menuCol.Colors = HumanCmp.GetHairColors(data.TribeEnum, data.GenderEnum);
 								menuCol.AltIndex = CustomizeIndex.HairColor2;
+								menuCol.AltColors = HumanCmp.GetHairHighlights();
 								break;
 							case CustomizeIndex.LipColor:
 								menuCol.Colors = HumanCmp.GetLipColors();
