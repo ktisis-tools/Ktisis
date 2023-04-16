@@ -128,8 +128,10 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			var item = Equipped[slot];
 			var icon = item.GetIcon() is TextureWrap tex ? tex.ImGuiHandle : 0;
+			ImGui.PushID((int)slot);
 			if (ImGui.ImageButton(icon, IconSize) && SlotSelect == null)
 				OpenSelector(slot);
+			ImGui.PopID();
 
 			if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
 				if (isWeapon)
