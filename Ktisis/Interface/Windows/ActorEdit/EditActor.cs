@@ -34,7 +34,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			// Create window
 
-			if (ImGui.Begin("Appearance", ref Visible,ImGuiWindowFlags.AlwaysAutoResize)) {
+			if (ImGui.Begin("Appearance", ref Visible, ImGuiWindowFlags.AlwaysAutoResize)) {
 				ImGui.BeginGroup();
 				ImGui.AlignTextToFramePadding();
 

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using ImGuiNET;
 using ImGuiScene;
@@ -72,12 +73,15 @@ namespace Ktisis.Interface.Windows {
 		public static int FaceType = -1;
 		public static string FacialFeatureName = "";
 		public static List<TextureWrap>? FacialFeatureIcons = null;
+		private static bool FetchingFeatureIcons = false;
 
 		public static CharaMakeType CharaMakeType = null!;
 
 		public static HumanCmp HumanCmp = new();
 
 		public unsafe static Actor* Target => EditActor.Target;
+
+		private static bool FetchingData = false;
 
 		// Toggle visibility
 
@@ -107,10 +111,17 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			var index = custom.GetMakeIndex();
-			if (index != CustomIndex) {
-				MenuOptions = GetMenuOptions(index, custom);
-				CustomIndex = index;
-				FacialFeatureIcons = null;
+			if (index != CustomIndex && !FetchingData) {
+				FetchingData = true;
+				new Task(() => {
+					try {
+						MenuOptions = GetMenuOptions(index, custom);
+						CustomIndex = index;
+						FacialFeatureIcons = null;
+					} finally {
+						FetchingData = false;
+					}
+				}).Start();
 			}
 
 			DrawFundamental(custom);
@@ -313,6 +324,7 @@ namespace Ktisis.Interface.Windows {
 		// Color selection
 
 		public static void DrawColors(Customize custom) {
+			if (MenuColors.Count == 0) return;
 			var colors = MenuColors.OrderBy(c => c.AltIndex);
 
 			var i = 0;
@@ -457,29 +469,35 @@ namespace Ktisis.Interface.Windows {
 		// Facial feature selector
 
 		public static void DrawFacialFeatures(Customize custom) {
-			if (FacialFeatureIcons == null || custom.FaceType != FaceType) {
-				var features = new List<TextureWrap>();
-				for (var i = 0; i < 7; i++) {
-					var index = custom.FaceType - 1 + (8 * i);
-					if (custom.Race == Race.Hrothgar)
-						index -= 4; // ???
+			if ((FacialFeatureIcons == null || custom.FaceType != FaceType) && !FetchingFeatureIcons) {
+				FetchingFeatureIcons = true;
+				new Task(() => {
+					try {
+						var features = new List<TextureWrap>();
+						for (var i = 0; i < 7; i++) {
+							var index = custom.FaceType - 1 + (8 * i);
+							if (custom.Race == Race.Hrothgar)
+								index -= 4; // ???
 
-					if (CharaMakeType == null)
-						break;
+							if (index < 0 || index >= CharaMakeType.FacialFeatures.Length)
+								index = 8 * i;
 
-					if (index < 0 || index >= CharaMakeType.FacialFeatures.Length)
-						index = 8 * i;
+							var iconId = (uint)CharaMakeType.FacialFeatures[index];
+							if (iconId == 0)
+								iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
 
-					var iconId = (uint)CharaMakeType.FacialFeatures[index];
-					if (iconId == 0)
-						iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
-
-					var icon = Services.DataManager.GetImGuiTextureIcon(iconId);
-					if (icon != null) features.Add(icon);
-				}
-				FacialFeatureIcons = features;
-				FaceType = custom.FaceType;
+							var icon = Services.DataManager.GetImGuiTextureIcon(iconId);
+							if (icon != null) features.Add(icon);
+						}
+						FacialFeatureIcons = features;
+						FaceType = custom.FaceType;
+					} finally {
+						FetchingFeatureIcons = false;
+					}
+				}).Start();
 			}
+			
+			if (FacialFeatureIcons == null) return;
 
 			ImGui.BeginGroup();
 			ImGui.PushItemWidth(InputSize.X - ButtonIconSize.X);
