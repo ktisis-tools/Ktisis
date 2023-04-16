@@ -104,6 +104,16 @@ namespace Ktisis.Structs.Actor {
 			) {
 				Redraw(faceHack);
 			} else {
+				if (Customize.Race == Race.Viera) {
+					// avoid crash when loading invalid ears
+					var ears = Customize.RaceFeatureType;
+					Customize.RaceFeatureType = ears switch {
+						> 4 => 1,
+						0 => 4,
+						_ => ears
+					};
+				}
+
 				var res = UpdateCustomize();
 				if (!res) {
 					Logger.Warning("Failed to update character. Forcing redraw.");

@@ -50,7 +50,7 @@ namespace Ktisis.Structs.Poses {
 				var human = (Human*)owner;
 				isElezen = human->Race == (byte)Race.Elezen;
 			}
-			
+
 			var partial = modelSkeleton->PartialSkeletons[p];
 
 			var pose = partial.GetHavokPose(0);

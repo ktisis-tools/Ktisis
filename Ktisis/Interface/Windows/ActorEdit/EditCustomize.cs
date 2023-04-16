@@ -21,8 +21,6 @@ using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.ActorEdit;
 
-using Lumina.Data.Parsing.Layer;
-
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
 		public Menu Option;
