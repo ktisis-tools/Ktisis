@@ -12,6 +12,7 @@ using Dalamud.Interface;
 using Ktisis.Util;
 using Ktisis.Data;
 using Ktisis.Data.Excel;
+using Ktisis.Helpers.Async;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Interface.Components;
@@ -26,8 +27,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public unsafe static Actor* Target => EditActor.Target;
 
-		public static IEnumerable<Item>? Items;
-		private static bool FetchingItems = false;
+		public static IEnumerable<Item>? Items => ItemData.Get();
 
 		public static Dictionary<EquipSlot, ItemCache> Equipped = new();
 
@@ -41,44 +41,30 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		private static EquipSlot? SlotSelectDye;
 		
-		public static IEnumerable<Dye>? Dyes;
-		public static bool FetchingDyes = false;
+		public static IEnumerable<Dye>? Dyes => DyeData.Get();
 
 		public static Item? FindItem(object item, EquipSlot slot)
 			=> Items?.FirstOrDefault(i => (item is WeaponEquip ? i.IsWeapon() : i.IsEquippable(slot)) && i.IsEquipItem(item), null!);
 
 		public static EquipIndex SlotToIndex(EquipSlot slot) => (EquipIndex)(slot - ((int)slot >= 5 ? 3 : 2));
 
+		// Async
+
+		private readonly static AsyncData<IEnumerable<Item>> ItemData = new(GetItemData);
+		private static IEnumerable<Item> GetItemData(object[] args)
+			=> Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
+
+		private readonly static AsyncData<IEnumerable<Dye>> DyeData = new(GetDyeData);
+		private static IEnumerable<Dye> GetDyeData(object[] args)
+			=> Sheets.GetSheet<Dye>()
+				.Where(i => i.IsValid())
+				.OrderBy(i => i.Shade).ThenBy(i => i.SubOrder);
+		
 		// UI Code
 
 		public static void Draw() {
-			if (Items == null && !FetchingItems) {
-				FetchingItems = true;
-				new Task(() => {
-					try {
-						Items = Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
-					} finally {
-						FetchingItems = false;
-					}
-				}).Start();
-			}
-
-			if (Dyes == null) {
-				if (FetchingDyes) return;
-				
-				FetchingDyes = true;
-				new Task(() => {
-					try {
-						Dyes = Sheets.GetSheet<Dye>()
-							.Where(i => i.IsValid())
-							.OrderBy(i => i.Shade).ThenBy(i => i.SubOrder);
-					}
-					finally {
-						FetchingDyes = false;
-					}
-				}).Start();
-			}
-
+			if (Items == null || Dyes == null) return;
+			
 			DrawControls();
 
 			ImGui.BeginGroup();

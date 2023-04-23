@@ -7,14 +7,12 @@ using Dalamud.Interface;
 
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
-using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interface.Windows.Workspace;
 using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Actor;
 using Ktisis.History;
 using Ktisis.Events;
 using Ktisis.Overlay;
-using Dalamud.Logging;
 
 namespace Ktisis {
 	public sealed class Ktisis : IDalamudPlugin {
@@ -106,9 +104,6 @@ namespace Ktisis {
 			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
 			Data.Sheets.Cache.Clear();
-
-			if (EditEquip.Items != null)
-				EditEquip.Items = null;
 
 			Input.Dispose();
 			HistoryManager.Dispose();

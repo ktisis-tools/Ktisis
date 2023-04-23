@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using ImGuiNET;
 using ImGuiScene;
@@ -17,6 +16,7 @@ using Ktisis.Util;
 using Ktisis.Data;
 using Ktisis.Data.Excel;
 using Ktisis.Data.Files;
+using Ktisis.Helpers.Async;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.ActorEdit;
@@ -71,15 +71,12 @@ namespace Ktisis.Interface.Windows {
 		public static int FaceType = -1;
 		public static string FacialFeatureName = "";
 		public static List<TextureWrap>? FacialFeatureIcons = null;
-		private static bool FetchingFeatureIcons = false;
 
 		public static CharaMakeType CharaMakeType = null!;
 
 		public static HumanCmp HumanCmp = new();
 
 		public unsafe static Actor* Target => EditActor.Target;
-
-		private static bool FetchingData = false;
 
 		// Toggle visibility
 
@@ -88,11 +85,47 @@ namespace Ktisis.Interface.Windows {
 		public static bool IsPosing => Interop.Hooks.PoseHooks.PosingEnabled;
 
 		// Apply customize
-
-
+		
 		public unsafe static void Apply(Customize custard) {
 			if (Target != null)
 				Target->ApplyCustomize(custard);
+		}
+		
+		// Async
+
+		private readonly static AsyncTask GetMakeData = new(InvokeMakeData);
+		private static void InvokeMakeData(object[] args) {
+			if (args[0] is not uint index || args[1] is not Customize custom)
+				return;
+			
+			MenuOptions = GetMenuOptions(index, custom);
+			CustomIndex = index;
+			FacialFeatureIcons = null;
+		}
+
+		private readonly static AsyncTask GetFeatureIcons = new(InvokeFeatureIcons);
+		private static void InvokeFeatureIcons(object[] args) {
+			if (args[0] is not Customize custom)
+				return;
+			
+			var features = new List<TextureWrap>();
+			for (var i = 0; i < 7; i++) {
+				var index = custom.FaceType - 1 + (8 * i);
+				if (custom.Race == Race.Hrothgar)
+					index -= 4; // ???
+
+				if (index < 0 || index >= CharaMakeType.FacialFeatures.Length)
+					index = 8 * i;
+
+				var iconId = (uint)CharaMakeType.FacialFeatures[index];
+				if (iconId == 0)
+					iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
+
+				var icon = Services.DataManager.GetImGuiTextureIcon(iconId);
+				if (icon != null) features.Add(icon);
+			}
+			FacialFeatureIcons = features;
+			FaceType = custom.FaceType;
 		}
 
 		// Draw window
@@ -109,18 +142,8 @@ namespace Ktisis.Interface.Windows {
 			}
 
 			var index = custom.GetMakeIndex();
-			if (index != CustomIndex && !FetchingData) {
-				FetchingData = true;
-				new Task(() => {
-					try {
-						MenuOptions = GetMenuOptions(index, custom);
-						CustomIndex = index;
-						FacialFeatureIcons = null;
-					} finally {
-						FetchingData = false;
-					}
-				}).Start();
-			}
+			if (index != CustomIndex && !GetMakeData.IsRunning)
+				GetMakeData.Run(index, custom);
 
 			DrawFundamental(custom);
 			DrawMenuType(custom, MenuType.Slider);
@@ -467,34 +490,9 @@ namespace Ktisis.Interface.Windows {
 		// Facial feature selector
 
 		public static void DrawFacialFeatures(Customize custom) {
-			if ((FacialFeatureIcons == null || custom.FaceType != FaceType) && !FetchingFeatureIcons) {
-				FetchingFeatureIcons = true;
-				new Task(() => {
-					try {
-						var features = new List<TextureWrap>();
-						for (var i = 0; i < 7; i++) {
-							var index = custom.FaceType - 1 + (8 * i);
-							if (custom.Race == Race.Hrothgar)
-								index -= 4; // ???
+			if ((FacialFeatureIcons == null || custom.FaceType != FaceType) && !GetFeatureIcons.IsRunning)
+				GetFeatureIcons.Run(custom);
 
-							if (index < 0 || index >= CharaMakeType.FacialFeatures.Length)
-								index = 8 * i;
-
-							var iconId = (uint)CharaMakeType.FacialFeatures[index];
-							if (iconId == 0)
-								iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
-
-							var icon = Services.DataManager.GetImGuiTextureIcon(iconId);
-							if (icon != null) features.Add(icon);
-						}
-						FacialFeatureIcons = features;
-						FaceType = custom.FaceType;
-					} finally {
-						FetchingFeatureIcons = false;
-					}
-				}).Start();
-			}
-			
 			if (FacialFeatureIcons == null) return;
 
 			ImGui.BeginGroup();
