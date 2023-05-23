@@ -16,11 +16,10 @@ namespace Ktisis.Structs.Bones {
 
 		// changed from BodyType to string Race_Gender
 		public unsafe static string GetRaceGenderFromActor(Actor.Actor* actor) =>
-			$"{actor->Customize.Race}_{actor->Customize.Gender}";
+			$"{actor->DrawData.Customize.Race}_{actor->DrawData.Customize.Gender}";
 		public unsafe static BodyType GetBodyTypeFromActor(Actor.Actor* actor) {
-
-			var gender = actor->Customize.Gender;
-			var race = actor->Customize.Race;
+			var gender = actor->DrawData.Customize.Gender;
+			var race = actor->DrawData.Customize.Race;
 
 			if (gender == Gender.Masculine)
 				return race switch {

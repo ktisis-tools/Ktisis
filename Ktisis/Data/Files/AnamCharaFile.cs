@@ -104,62 +104,62 @@ namespace Ktisis.Data.Files {
 			SaveMode = mode;
 
 			if (IncludeSection(SaveModes.EquipmentWeapons, mode)) {
-				MainHand = new WeaponSave(actor.MainHand.Equip);
+				MainHand = new WeaponSave(actor.DrawData.MainHand.Equip);
 				////MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
 				////MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
 
-				OffHand = new WeaponSave(actor.OffHand.Equip);
+				OffHand = new WeaponSave(actor.DrawData.OffHand.Equip);
 				////OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
 				////OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
 			}
 
 			if (IncludeSection(SaveModes.EquipmentGear, mode)) {
-				HeadGear = new ItemSave(actor.Equipment.Head);
-				Body = new ItemSave(actor.Equipment.Chest);
-				Hands = new ItemSave(actor.Equipment.Hands);
-				Legs = new ItemSave(actor.Equipment.Legs);
-				Feet = new ItemSave(actor.Equipment.Feet);
+				HeadGear = new ItemSave(actor.DrawData.Equipment.Head);
+				Body = new ItemSave(actor.DrawData.Equipment.Chest);
+				Hands = new ItemSave(actor.DrawData.Equipment.Hands);
+				Legs = new ItemSave(actor.DrawData.Equipment.Legs);
+				Feet = new ItemSave(actor.DrawData.Equipment.Feet);
 			}
 
 			if (IncludeSection(SaveModes.EquipmentAccessories, mode)) {
-				Ears = new ItemSave(actor.Equipment.Earring);
-				Neck = new ItemSave(actor.Equipment.Necklace);
-				Wrists = new ItemSave(actor.Equipment.Bracelet);
-				LeftRing = new ItemSave(actor.Equipment.RingLeft);
-				RightRing = new ItemSave(actor.Equipment.RingRight);
+				Ears = new ItemSave(actor.DrawData.Equipment.Earring);
+				Neck = new ItemSave(actor.DrawData.Equipment.Necklace);
+				Wrists = new ItemSave(actor.DrawData.Equipment.Bracelet);
+				LeftRing = new ItemSave(actor.DrawData.Equipment.RingLeft);
+				RightRing = new ItemSave(actor.DrawData.Equipment.RingRight);
 			}
 
 			if (IncludeSection(SaveModes.AppearanceHair, mode)) {
-				Hair = actor.Customize.HairStyle;
-				EnableHighlights = (actor.Customize.HasHighlights & 0x80) != 0;
-				HairTone = actor.Customize.HairColor;
-				Highlights = actor.Customize.HairColor2;
+				Hair = actor.DrawData.Customize.HairStyle;
+				EnableHighlights = (actor.DrawData.Customize.HasHighlights & 0x80) != 0;
+				HairTone = actor.DrawData.Customize.HairColor;
+				Highlights = actor.DrawData.Customize.HairColor2;
 				/*HairColor = actor.ModelObject?.ExtendedAppearance?.HairColor;
 				HairGloss = actor.ModelObject?.ExtendedAppearance?.HairGloss;
 				HairHighlight = actor.ModelObject?.ExtendedAppearance?.HairHighlight;*/
 			}
 
 			if (IncludeSection(SaveModes.AppearanceFace, mode) || IncludeSection(SaveModes.AppearanceBody, mode)) {
-				Race = (AnamRace)actor.Customize.Race;
-				Gender = actor.Customize.Gender;
-				Tribe = (AnamTribe)actor.Customize.Tribe;
-				Age = actor.Customize.Age;
+				Race = (AnamRace)actor.DrawData.Customize.Race;
+				Gender = actor.DrawData.Customize.Gender;
+				Tribe = (AnamTribe)actor.DrawData.Customize.Tribe;
+				Age = actor.DrawData.Customize.Age;
 			}
 
 			if (IncludeSection(SaveModes.AppearanceFace, mode)) {
-				Head = actor.Customize.FaceType;
-				REyeColor = actor.Customize.EyeColor;
-				LimbalEyes = actor.Customize.FaceFeaturesColor;
-				FacialFeatures = (AnamFacialFeature)actor.Customize.FaceFeatures;
-				Eyebrows = actor.Customize.Eyebrows;
-				LEyeColor = actor.Customize.EyeColor2;
-				Eyes = actor.Customize.EyeShape;
-				Nose = actor.Customize.NoseShape;
-				Jaw = actor.Customize.JawShape;
-				Mouth = actor.Customize.LipStyle;
-				LipsToneFurPattern = actor.Customize.LipColor;
-				FacePaint = (byte)actor.Customize.Facepaint;
-				FacePaintColor = actor.Customize.FacepaintColor;
+				Head = actor.DrawData.Customize.FaceType;
+				REyeColor = actor.DrawData.Customize.EyeColor;
+				LimbalEyes = actor.DrawData.Customize.FaceFeaturesColor;
+				FacialFeatures = (AnamFacialFeature)actor.DrawData.Customize.FaceFeatures;
+				Eyebrows = actor.DrawData.Customize.Eyebrows;
+				LEyeColor = actor.DrawData.Customize.EyeColor2;
+				Eyes = actor.DrawData.Customize.EyeShape;
+				Nose = actor.DrawData.Customize.NoseShape;
+				Jaw = actor.DrawData.Customize.JawShape;
+				Mouth = actor.DrawData.Customize.LipStyle;
+				LipsToneFurPattern = actor.DrawData.Customize.LipColor;
+				FacePaint = (byte)actor.DrawData.Customize.Facepaint;
+				FacePaintColor = actor.DrawData.Customize.FacepaintColor;
 				/*LeftEyeColor = actor.ModelObject?.ExtendedAppearance?.LeftEyeColor;
 				RightEyeColor = actor.ModelObject?.ExtendedAppearance?.RightEyeColor;
 				LimbalRingColor = actor.ModelObject?.ExtendedAppearance?.LimbalRingColor;
@@ -167,11 +167,11 @@ namespace Ktisis.Data.Files {
 			}
 
 			if (IncludeSection(SaveModes.AppearanceBody, mode)) {
-				Height = actor.Customize.Height;
-				Skintone = actor.Customize.SkinColor;
-				EarMuscleTailSize = actor.Customize.RaceFeatureSize;
-				TailEarsType = actor.Customize.RaceFeatureType;
-				Bust = actor.Customize.BustSize;
+				Height = actor.DrawData.Customize.Height;
+				Skintone = actor.DrawData.Customize.SkinColor;
+				EarMuscleTailSize = actor.DrawData.Customize.RaceFeatureSize;
+				TailEarsType = actor.DrawData.Customize.RaceFeatureType;
+				Bust = actor.DrawData.Customize.BustSize;
 
 				unsafe { HeightMultiplier = actor.Model->Height; }
 
@@ -213,7 +213,7 @@ namespace Ktisis.Data.Files {
 				LeftRing?.Write(actor, EquipIndex.RingLeft);
 			}
 
-			var custom = actor->Customize;
+			var custom = actor->DrawData.Customize;
 
 			if (IncludeSection(SaveModes.AppearanceHair, mode)) {
 				if (Hair != null)

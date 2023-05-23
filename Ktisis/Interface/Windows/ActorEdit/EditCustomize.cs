@@ -133,12 +133,12 @@ namespace Ktisis.Interface.Windows {
 		public unsafe static void Draw() {
 			// Customize
 
-			var custom = Target->Customize;
+			var custom = Target->DrawData.Customize;
 
 			if (custom.Race == 0 || custom.Tribe == 0) {
 				custom.Race = Race.Hyur;
 				custom.Tribe = Tribe.Highlander;
-				Target->Customize = custom;
+				Target->DrawData.Customize = custom;
 			}
 
 			var index = custom.GetMakeIndex();

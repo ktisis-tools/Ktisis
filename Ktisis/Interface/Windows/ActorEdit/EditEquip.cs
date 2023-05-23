@@ -91,9 +91,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			object equipObj;
 			if (isWeapon)
-				equipObj = slot == EquipSlot.MainHand ? tar->MainHand.Equip : tar->OffHand.Equip;
+				equipObj = slot == EquipSlot.MainHand ? tar->DrawData.MainHand.Equip : tar->DrawData.OffHand.Equip;
 			else
-				equipObj = (ItemEquip)tar->Equipment.Slots[(int)SlotToIndex(slot)];
+				equipObj = (ItemEquip)tar->DrawData.Equipment.Slots[(int)SlotToIndex(slot)];
 
 			var isEmpty = true;
 			{
@@ -161,7 +161,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (equipObj is WeaponEquip) {
 				ImGui.SameLine();
 
-				var wep = slot == EquipSlot.MainHand ? &tar->MainHand : &tar->OffHand;
+				var wep = slot == EquipSlot.MainHand ? &tar->DrawData.MainHand : &tar->DrawData.OffHand;
 				
 				var hidden = (wep->Flags & WeaponFlags.Hidden) != 0;
 				if (DrawVisibilityToggle($"wep_vis_{slot}", hidden))
@@ -172,7 +172,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				var hidden = tar->IsHatHidden;
 				if (DrawVisibilityToggle("head_vis", hidden)) {
 					tar->IsHatHidden ^= true;
-					tar->Equip(SlotToIndex(slot), tar->Equipment.Head);
+					tar->Equip(SlotToIndex(slot), tar->DrawData.Equipment.Head);
 				}
 			}
 

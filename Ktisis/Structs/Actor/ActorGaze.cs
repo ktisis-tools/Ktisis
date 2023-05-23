@@ -2,50 +2,55 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Ktisis.Structs.Actor {
-	[StructLayout(LayoutKind.Explicit)]
+	[StructLayout(LayoutKind.Sequential)]
 	public struct ActorGaze {
-		[FieldOffset(0x30 + 480 * 0)] public Gaze Torso;
-		[FieldOffset(0x30 + 480 * 1)] public Gaze Head;
-		[FieldOffset(0x30 + 480 * 2)] public Gaze Eyes;
-		[FieldOffset(0x30 + 480 * 3)] public Gaze Other; // Unused? Unsure.
+		public GazeContainer Torso;
+		public GazeContainer Head;
+		public GazeContainer Eyes;
+		public GazeContainer Other; // Unused? Unsure.
 
 		public Gaze this[GazeControl type] {
 			get {
 				switch (type) {
 					case GazeControl.Torso:
-						return Torso;
+						return Torso.Gaze;
 					case GazeControl.Head:
-						return Head;
+						return Head.Gaze;
 					case GazeControl.Eyes:
-						return Eyes;
+						return Eyes.Gaze;
 					default:
-						return Other;
+						return Other.Gaze;
 				}
 			}
 			set {
 				switch (type) {
 					case GazeControl.Torso:
-						Torso = value;
+						Torso.Gaze = value;
 						break;
 					case GazeControl.Head:
-						Head = value;
+						Head.Gaze = value;
 						break;
 					case GazeControl.Eyes:
-						Eyes = value;
+						Eyes.Gaze = value;
 						break;
 					case GazeControl.All:
-						Other = value;
+						Other.Gaze = value;
 						break;
 				}
 			}
 		}
 	}
 
-	[StructLayout(LayoutKind.Explicit, Size = 0x1E0)]
+	[StructLayout(LayoutKind.Explicit, Size = 0x28)]
 	public struct Gaze {
-		[FieldOffset(8)] public GazeMode Mode; // 0 or 3
-		[FieldOffset(16)] public Vector3 Pos;
-		[FieldOffset(32)] public uint Unk5;
+		[FieldOffset(0x08)] public GazeMode Mode; // 0 or 3
+		[FieldOffset(0x10)] public Vector3 Pos;
+		[FieldOffset(0x20)] public uint Unk5;
+	}
+
+	[StructLayout(LayoutKind.Explicit, Size = 0x1E0)]
+	public struct GazeContainer {
+		[FieldOffset(0x30)] public Gaze Gaze;
 	}
 
 	public enum GazeControl {

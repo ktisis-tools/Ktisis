@@ -19,20 +19,17 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x114)] public RenderMode RenderMode;
 		[FieldOffset(0x1B4)] public uint ModelId;
 
-		[FieldOffset(0x6E0)] public Weapon MainHand;
-		[FieldOffset(0x748)] public Weapon OffHand;
-		[FieldOffset(0x818)] public Equipment Equipment;
-		[FieldOffset(0x840)] public Customize Customize;
+		[FieldOffset(0x6E8)] public ActorDrawData DrawData;
 
-		[FieldOffset(0x085E)] public bool IsHatHidden;
-		[FieldOffset(0x085F)] public ActorFlags Flags;
+		[FieldOffset(0x876)] public bool IsHatHidden;
+		[FieldOffset(0x877)] public ActorFlags Flags;
 
-		[FieldOffset(0xC40)] public ActorGaze Gaze; // Update in ActorHooks.cs as well
+		public const int GazeOffset = 0xC60;
+		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
 
 		public unsafe string? GetName() {
-			fixed (byte* ptr = GameObject.Name) {
+			fixed (byte* ptr = GameObject.Name)
 				return ptr == null ? null : Marshal.PtrToStringUTF8((IntPtr)ptr);
-			}
 		}
 
 		public string GetNameOr(string fallback) {
@@ -42,14 +39,11 @@ namespace Ktisis.Structs.Actor {
 
 		public string GetNameOrId() => GetNameOr("Actor #" + ObjectID);
 
-		public unsafe IntPtr GetAddress() {
-			fixed (Actor* self = &this) return (IntPtr)self;
-		}
-
 		// Targeting
 
 		public unsafe void LookAt(Gaze* tar, GazeControl bodyPart) {
 			if (Methods.ActorLookAt == null) return;
+			
 			fixed (ActorGaze* gaze = &Gaze) {
 				Methods.ActorLookAt(
 					gaze,
@@ -62,9 +56,10 @@ namespace Ktisis.Structs.Actor {
 
 		// Change equipment - no redraw method
 
-		public void Equip(EquipIndex index, ItemEquip item) {
+		public unsafe void Equip(EquipIndex index, ItemEquip item) {
 			if (Methods.ActorChangeEquip == null) return;
-			Methods.ActorChangeEquip(GetAddress() + 0x6D0, index, item);
+			fixed (ActorDrawData* ptr = &DrawData)
+				Methods.ActorChangeEquip(ptr, index, item);
 		}
 		public void Equip(List<(EquipSlot, object)> items) {
 			foreach ((EquipSlot slot, object item) in items)
@@ -74,27 +69,28 @@ namespace Ktisis.Structs.Actor {
 					Equip((int)slot, wep);
 		}
 
-		public void Equip(int slot, WeaponEquip item) {
+		public unsafe void Equip(int slot, WeaponEquip item) {
 			if (Methods.ActorChangeWeapon == null) return;
-			Methods.ActorChangeWeapon(GetAddress() + 0x6D0, slot, item, 0, 1, 0, 0);
+			fixed (ActorDrawData* ptr = &DrawData)
+				Methods.ActorChangeWeapon(ptr, slot, item, 0, 1, 0, 0);
 		}
 
 		// Change customize - no redraw method
 
 		public unsafe bool UpdateCustomize() {
-			fixed (Customize* custom = &Customize)
+			fixed (Customize* custom = &DrawData.Customize)
 				return ((Human*)Model)->UpdateDrawData((byte*)custom, true);
 		}
 
 		// Apply new customize
 
 		public unsafe void ApplyCustomize(Customize custom) {
-			var cur = Customize;
-			Customize = custom;
+			var cur = DrawData.Customize;
+			DrawData.Customize = custom;
 
 			// Fix UpdateCustomize on Carbuncles & Minions
-			if (Customize.ModelType == 0)
-				Customize.ModelType = 1;
+			if (DrawData.Customize.ModelType == 0)
+				DrawData.Customize.ModelType = 1;
 
 			var faceHack = cur.FaceType != custom.FaceType;
 			if (cur.Race != custom.Race
@@ -104,10 +100,10 @@ namespace Ktisis.Structs.Actor {
 			) {
 				Redraw(faceHack);
 			} else {
-				if (Customize.Race == Race.Viera) {
+				if (DrawData.Customize.Race == Race.Viera) {
 					// avoid crash when loading invalid ears
-					var ears = Customize.RaceFeatureType;
-					Customize.RaceFeatureType = ears switch {
+					var ears = DrawData.Customize.RaceFeatureType;
+					DrawData.Customize.RaceFeatureType = ears switch {
 						> 4 => 1,
 						0 => 4,
 						_ => ears

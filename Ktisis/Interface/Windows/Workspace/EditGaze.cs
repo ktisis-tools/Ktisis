@@ -39,12 +39,12 @@ namespace Ktisis.Interface.Windows.Workspace {
 			if (ImGuiComponents.IconButton(IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink)) {
 				if (IsLinked) {
 					var move = gaze.Other;
-					if (move.Mode != 0) {
+					if (move.Gaze.Mode != 0) {
 						result = true;
 						gaze.Head = move;
 						gaze.Eyes = move;
 						gaze.Torso = move;
-						gaze.Other.Mode = GazeMode.Disabled;
+						gaze.Other.Gaze.Mode = GazeMode.Disabled;
 					}
 				}
 				IsLinked = !IsLinked;
@@ -55,13 +55,13 @@ namespace Ktisis.Interface.Windows.Workspace {
 			ImGui.Spacing();
 
 			if (IsLinked) {
-				result |= DrawGaze(target, ref gaze.Other, GazeControl.All);
+				result |= DrawGaze(target, ref gaze.Other.Gaze, GazeControl.All);
 			} else {
-				result |= DrawGaze(target, ref gaze.Eyes, GazeControl.Eyes);
+				result |= DrawGaze(target, ref gaze.Eyes.Gaze, GazeControl.Eyes);
 				ImGui.Spacing();
-				result |= DrawGaze(target, ref gaze.Head, GazeControl.Head);
+				result |= DrawGaze(target, ref gaze.Head.Gaze, GazeControl.Head);
 				ImGui.Spacing();
-				result |= DrawGaze(target, ref gaze.Torso, GazeControl.Torso);
+				result |= DrawGaze(target, ref gaze.Torso.Gaze, GazeControl.Torso);
 			}
 
 			if (result)
@@ -173,7 +173,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 								ctrl.Mode = GazeMode.Target;
 							}
-
+							
 							actor->LookAt(&ctrl, type);
 
 							if (type == GazeControl.All)
