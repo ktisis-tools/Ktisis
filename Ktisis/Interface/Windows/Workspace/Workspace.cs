@@ -91,7 +91,8 @@ namespace Ktisis.Interface.Windows.Workspace {
 						SceneTab();*/
 					if (ImGui.BeginTabItem(Locale.GetString("Pose")))
 						PoseTab.Draw(target);
-					
+					if (ImGui.BeginTabItem(Locale.GetString("Camera")))
+						CameraTab.Draw();
 				}
 			}
 
