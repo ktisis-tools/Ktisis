@@ -24,8 +24,11 @@ namespace Ktisis.Structs.Input {
 		public int KeyboardQueueCount;
 		public int ControllerQueueCount;
 
-		public bool IsKeyDown(VirtualKey key)
-			=> KeyMap[(int)key] == 1;
+		public bool IsKeyDown(VirtualKey key, bool consume = false) {
+			var result = KeyMap[(int)key] != 0;
+			if (result && consume) KeyMap[(int)key] = 0;
+			return result;
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

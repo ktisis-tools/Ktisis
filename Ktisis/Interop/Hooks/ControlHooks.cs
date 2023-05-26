@@ -3,6 +3,7 @@ using System;
 using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Keys;
 
+using Ktisis.Camera;
 using Ktisis.Events;
 using Ktisis.Structs.Input;
 
@@ -18,11 +19,11 @@ namespace Ktisis.Interop.Hooks {
 
 			if (!Ktisis.IsInGPose) return;
 
+			if (WorkCamera.Active) {
+				WorkCamera.UpdateControl(mouseState, keyState);
+			}
+			
 			try {
-				if (mouseState != null) {
-					// TODO
-				}
-
 				// Process queue
 
 				if (input == null || input->Keyboard == null || keyState == null)

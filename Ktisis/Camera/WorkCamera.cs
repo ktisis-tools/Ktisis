@@ -3,99 +3,82 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Keys;
 
-using Ktisis.Interop.Hooks;
+using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
+
+using Ktisis.Structs.Input;
 
 namespace Ktisis.Camera {
 	public static class WorkCamera {
-		public static bool Active = false;
+		public static bool Active;
 
-		public static void Toggle() {
-			if (Active)
-				Active = false;
-			else
-				Enable();
+		private static Vector3 Position;
+		private static Vector3 Rotation = new(0f, 0f, 1f);
+		private static Vector3 UpVector = new(0f, 2f, 0f);
+
+		private const float DefaultSpeed = 0.005f;
+		private static float MoveSpeed = DefaultSpeed;
+
+		private static Vector3 Velocity;
+		private static Vector3 InterpPos;
+		private static Vector2 MouseDelta;
+
+		private static DateTime LastTime;
+		
+		public unsafe static void Toggle() {
+			Active = !Active;
+			if (Active) {
+				LastTime = DateTime.Now;
+				Position = Services.Camera->Camera->CameraBase.SceneCamera.Object.Position;
+			}
 		}
 
-		public unsafe static void Enable() {
-			Active = true;
-			Position = Services.Camera->Camera->CameraBase.SceneCamera.Object.Position;
-		}
-
-		public static Vector3 Position = new();
-		public static Vector3 Rotation = new(0f, 0f, 1f);
-		public static Vector3 UpVector = new(0f, 2f, 0f);
-
-		public static float MoveSpeed = 0.005f;
-
-		internal static Vector3 InterpPos = new();
-		internal static Vector2 MouseDelta = new();
-
-		private static DateTime LastTime = DateTime.Now;
-
-		internal static Matrix4x4 Update() {
+		internal static Matrix4x4 Update(float fov = 1) {
 			var now = DateTime.Now;
-			var delta = (now - LastTime).Milliseconds;
+			var delta = (float)(now - LastTime).TotalMilliseconds;
 			LastTime = now;
-
-			// Movement
-
-			var vel = MoveSpeed * delta;
-			if (ControlHooks.KeyboardState.IsKeyDown(VirtualKey.SHIFT))
-				vel *= 5f;
-			else if (ControlHooks.KeyboardState.IsKeyDown(VirtualKey.CONTROL))
-				vel /= 5f;
-
-			var newPos = Position;
-			if (ControlHooks.KeyboardState.IsKeyDown(VirtualKey.W)) { // Forward
-				newPos += new Vector3(
-					-vel * ((float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y)),
-					-vel * (float)Math.Sin(Rotation.Y),
-					-vel * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y)
-				);
-			}
-			if (ControlHooks.KeyboardState.IsKeyDown(VirtualKey.A)) { // Left
-				newPos += new Vector3(
-					-vel * (float)Math.Cos(Rotation.X),
-					0,
-					vel * (float)Math.Sin(Rotation.X)
-				);
-			}
-			if (ControlHooks.KeyboardState.IsKeyDown(VirtualKey.S)) { // Back
-				newPos += new Vector3(
-					vel * (float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y),
-					vel * (float)Math.Sin(Rotation.Y),
-					vel * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y)
-				);
-			}
-			if (ControlHooks.KeyboardState.IsKeyDown(VirtualKey.D)) { // Right
-				newPos += new Vector3(
-					vel * (float)Math.Cos(Rotation.X),
-					0,
-					-vel * (float)Math.Sin(Rotation.X)
-				);
-			}
-			if (ControlHooks.KeyboardState.IsKeyDown(VirtualKey.SPACE))
-				newPos.Y += vel / 1.25f;
-
-			Position = newPos;
-			InterpPos = Lerp(0.5f);
-
-			// Rotation
-
-			var mouseDelta = (MouseDelta / 100f) * (float)(Math.PI / 180) * 7.5f;
-			MouseDelta.X = 0;
-			MouseDelta.Y = 0;
-
-			Rotation.X -= mouseDelta.X;
-			Rotation.Y = Math.Max(Math.Min(Rotation.Y + mouseDelta.Y, 1.57075f), -1.57075f);
+			
+			MouseDelta *= delta * fov;
+			Rotation.X -= MouseDelta.X;
+			Rotation.Y = Math.Max(Math.Min(Rotation.Y + MouseDelta.Y, 1.57075f), -1.57075f);
 			Rotation.Z = Rotation.X;
-
-			// Create view matrix
+			MouseDelta = Vector2.Zero;
+			
+			Position += Velocity * MoveSpeed * fov * delta;
+			InterpPos = Position + (Position - InterpPos) * 0.05f;
 
 			return CreateViewMatrix();
 		}
 
-		internal static Matrix4x4 CreateViewMatrix() {
+		internal unsafe static void UpdateControl(MouseState* mouseState, KeyboardState* keyState) {
+			if (mouseState != null && mouseState->IsButtonHeld(MouseButton.Right)) {
+				MouseDelta.X += ConvertDelta(mouseState->DeltaX);
+				MouseDelta.Y += ConvertDelta(mouseState->DeltaY);
+			}
+
+			MoveSpeed = DefaultSpeed;
+			if (keyState != null) {
+				if (keyState->IsKeyDown(VirtualKey.SHIFT, true))
+					MoveSpeed *= 5f;
+				else if (keyState->IsKeyDown(VirtualKey.CONTROL, true))
+					MoveSpeed /= 5f;
+				
+				var vFwb = 0;
+				if (keyState->IsKeyDown(VirtualKey.W, true)) vFwb -= 1; // Forward
+				if (keyState->IsKeyDown(VirtualKey.S, true)) vFwb += 1; // Back
+				
+				var vLr = 0;
+				if (keyState->IsKeyDown(VirtualKey.A, true)) vLr -= 1; // Left
+				if (keyState->IsKeyDown(VirtualKey.D, true)) vLr += 1; // Right
+
+				Velocity.X = vFwb * (float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y) + (vLr * (float)Math.Cos(Rotation.X));
+				Velocity.Y = vFwb * (float)Math.Sin(Rotation.Y);
+				Velocity.Z = vFwb * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y) + (-vLr * (float)Math.Sin(Rotation.X));
+				
+				if (keyState->IsKeyDown(VirtualKey.SPACE, true)) Velocity.Y += 0.75f;
+			}
+		}
+
+		private static Matrix4x4 CreateViewMatrix() {
 			var pos = InterpPos;
 			var dir = GetLookDir();
 			var up = UpVector;
@@ -132,10 +115,9 @@ namespace Ktisis.Camera {
 			);
 		}
 
-		internal static Vector3 Lerp(float t)
-			=> InterpPos + (Position - InterpPos) * t;
+		private static float ConvertDelta(float delta) => (delta / 100f) * (float)(Math.PI / 180);
 
-		private static Vector3 GetLookDir() => new Vector3(
+		private static Vector3 GetLookDir() => new(
 			(float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y),
 			(float)Math.Sin(Rotation.Y),
 			(float)Math.Cos(Rotation.Z) * (float)Math.Cos(Rotation.Y)

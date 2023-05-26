@@ -2,6 +2,7 @@ using Dalamud.Interface;
 
 using ImGuiNET;
 
+using Ktisis.Camera;
 using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
@@ -29,7 +30,8 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, "Create new camera");
 
 			ImGui.SameLine();
-			GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Camera, "Toggle work camera");
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Camera, "Toggle work camera"))
+				WorkCamera.Toggle();
 		}
 	}
 }
