@@ -15,13 +15,15 @@ namespace Ktisis.Camera {
 		private static Vector3 Rotation = new(0f, 0f, 1f);
 		private static Vector3 UpVector = new(0f, 2f, 0f);
 
-		private const float DefaultSpeed = 0.005f;
+		private const float DefaultSpeed = 0.125f;
 		private static float MoveSpeed = DefaultSpeed;
 
 		private static Vector3 Velocity;
-		private static Vector3 InterpPos;
 		private static Vector2 MouseDelta;
-
+		
+		private static Vector3 InterpPos;
+		private static Vector3 InterpRot;
+		
 		private static DateTime LastTime;
 		
 		public unsafe static void Toggle() {
@@ -37,14 +39,15 @@ namespace Ktisis.Camera {
 			var delta = (float)(now - LastTime).TotalMilliseconds;
 			LastTime = now;
 			
-			MouseDelta *= delta * fov;
+			MouseDelta *= fov;
 			Rotation.X -= MouseDelta.X;
 			Rotation.Y = Math.Max(Math.Min(Rotation.Y + MouseDelta.Y, 1.57075f), -1.57075f);
 			Rotation.Z = Rotation.X;
 			MouseDelta = Vector2.Zero;
+			InterpRot = Rotation + (Rotation - InterpRot) * (1f / delta);
 			
-			Position += Velocity * MoveSpeed * fov * delta;
-			InterpPos = Position + (Position - InterpPos) * 0.05f;
+			Position += Velocity * MoveSpeed * fov;
+			InterpPos = Position + (Position - InterpPos) * (1f / delta);
 
 			return CreateViewMatrix();
 		}
@@ -55,7 +58,7 @@ namespace Ktisis.Camera {
 				var mouseDelta = mouseState->GetDelta(true);
 				rightHeld = mouseState->IsButtonHeld(MouseButton.Right);
 				if (rightHeld)
-					MouseDelta += (mouseDelta / 100f) * (float)(Math.PI / 180f);
+					MouseDelta += (mouseDelta / 5f) * (float)(Math.PI / 180f);
 			}
 
 			MoveSpeed = DefaultSpeed;
@@ -120,9 +123,9 @@ namespace Ktisis.Camera {
 		}
 
 		private static Vector3 GetLookDir() => new(
-			(float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y),
-			(float)Math.Sin(Rotation.Y),
-			(float)Math.Cos(Rotation.Z) * (float)Math.Cos(Rotation.Y)
+			(float)Math.Sin(InterpRot.X) * (float)Math.Cos(InterpRot.Y),
+			(float)Math.Sin(InterpRot.Y),
+			(float)Math.Cos(InterpRot.Z) * (float)Math.Cos(InterpRot.Y)
 		);
 	}
 }
