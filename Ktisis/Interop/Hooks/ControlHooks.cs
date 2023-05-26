@@ -19,11 +19,10 @@ namespace Ktisis.Interop.Hooks {
 
 			if (!Ktisis.IsInGPose) return;
 
-			if (WorkCamera.Active) {
-				WorkCamera.UpdateControl(mouseState, keyState);
-			}
-			
 			try {
+				if (WorkCamera.Active)
+					WorkCamera.UpdateControl(mouseState, keyState);
+
 				// Process queue
 
 				if (input == null || input->Keyboard == null || keyState == null)
