@@ -50,7 +50,8 @@ namespace Ktisis.Camera {
 		}
 
 		internal unsafe static void UpdateControl(MouseState* mouseState, KeyboardState* keyState) {
-			if (mouseState != null && mouseState->IsButtonHeld(MouseButton.Right)) {
+			bool rightHeld = false;
+			if (mouseState != null && (rightHeld = mouseState->IsButtonHeld(MouseButton.Right))) {
 				MouseDelta.X += ConvertDelta(mouseState->DeltaX);
 				MouseDelta.Y += ConvertDelta(mouseState->DeltaY);
 			}
@@ -63,7 +64,8 @@ namespace Ktisis.Camera {
 					MoveSpeed /= 5f;
 				
 				var vFwb = 0;
-				if (keyState->IsKeyDown(VirtualKey.W, true)) vFwb -= 1; // Forward
+				var bothHeld = rightHeld && mouseState->IsButtonHeld(MouseButton.Left);
+				if (keyState->IsKeyDown(VirtualKey.W, true) || bothHeld) vFwb -= 1; // Forward
 				if (keyState->IsKeyDown(VirtualKey.S, true)) vFwb += 1; // Back
 				
 				var vLr = 0;
