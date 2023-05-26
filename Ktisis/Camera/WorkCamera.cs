@@ -51,9 +51,11 @@ namespace Ktisis.Camera {
 
 		internal unsafe static void UpdateControl(MouseState* mouseState, KeyboardState* keyState) {
 			bool rightHeld = false;
-			if (mouseState != null && (rightHeld = mouseState->IsButtonHeld(MouseButton.Right))) {
-				MouseDelta.X += ConvertDelta(mouseState->DeltaX);
-				MouseDelta.Y += ConvertDelta(mouseState->DeltaY);
+			if (mouseState != null) {
+				var mouseDelta = mouseState->GetDelta(true);
+				rightHeld = mouseState->IsButtonHeld(MouseButton.Right);
+				if (rightHeld)
+					MouseDelta += (mouseDelta / 100f) * (float)(Math.PI / 180f);
 			}
 
 			MoveSpeed = DefaultSpeed;
@@ -116,8 +118,6 @@ namespace Ktisis.Camera {
 				p.X, p.Y, p.Z, 1.0f
 			);
 		}
-
-		private static float ConvertDelta(float delta) => (delta / 100f) * (float)(Math.PI / 180);
 
 		private static Vector3 GetLookDir() => new(
 			(float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y),

@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 
 namespace Ktisis.Structs.Input {
 	public struct MouseState {
@@ -14,6 +15,15 @@ namespace Ktisis.Structs.Input {
 		public bool IsFocused;
 		
 		public bool IsButtonHeld(MouseButton button) => (Pressed & button) != 0;
+
+		public Vector2 GetDelta(bool consume = false) {
+			var result = new Vector2(DeltaX, DeltaY);
+			if (consume) {
+				DeltaX = 0;
+				DeltaY = 0;
+			}
+			return result;
+		}
 	}
 
 	[Flags]
