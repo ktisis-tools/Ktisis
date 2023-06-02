@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 using Dalamud.Game.ClientState.Keys;
@@ -26,6 +28,15 @@ namespace Ktisis.Structs.Input {
 
 		public bool IsKeyDown(VirtualKey key)
 			=> KeyMap[(int)key] == 1;
+		public bool IsAnyOtherKeyDown(IEnumerable<VirtualKey> keys) {
+			var keysInt = keys.Select(k=>(int)k);
+
+			if (keys != null)
+				for (int i = 0; i < 159; i++)
+					if (KeyMap[i] == 1 && !keysInt.Contains(i))
+						return true;
+			return false;
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
