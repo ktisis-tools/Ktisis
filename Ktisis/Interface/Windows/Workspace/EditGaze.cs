@@ -165,7 +165,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 						var ctrl = gaze[type];
 						if (ctrl.Mode != 0) {
 							if (ctrl.Mode == GazeMode._KtisisFollowCam_) {
-								var camera = Services.Camera->Camera;
+								var camera = Services.Camera->GetActiveCamera();
 
 								ctrl.Pos = camera->GetCameraPos();
 								gaze[type] = ctrl;

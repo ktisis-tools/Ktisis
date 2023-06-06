@@ -2,7 +2,10 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 
 namespace Ktisis.Interop {
 	internal static class Alloc {
@@ -30,6 +33,23 @@ namespace Ktisis.Interop {
 		}
 		public static void Dispose() {
 			Marshal.FreeHGlobal(MatrixAlloc);
+		}
+	}
+	
+	internal class GameAlloc<T> : IDisposable where T : unmanaged {
+		private bool Disposed;
+
+		internal readonly nint Address;
+		internal unsafe T* Data => (T*)Address;
+	
+		internal unsafe GameAlloc(ulong align = 16)
+			=> Address = (nint)IMemorySpace.GetDefaultSpace()->Malloc<T>(align);
+
+		public unsafe void Dispose() {
+			PluginLog.Debug($"Disposing GameAlloc<{typeof(T)}>");
+			if (Disposed) return;
+			IMemorySpace.Free(Data); // Free our allocated memory.
+			Disposed = true;
 		}
 	}
 }

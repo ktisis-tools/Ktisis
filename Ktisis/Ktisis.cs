@@ -5,6 +5,7 @@ using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 
+using Ktisis.Camera;
 using Ktisis.Interface;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.Workspace;
@@ -61,8 +62,9 @@ namespace Ktisis {
 			Interop.Hooks.EventsHooks.Init();
 			Interop.Hooks.GuiHooks.Init();
 			Interop.Hooks.PoseHooks.Init();
-			Interop.Hooks.CameraHooks.Init();
 
+			CameraService.Init();
+			
 			EventManager.OnGPoseChange += Workspace.OnEnterGposeToggle; // must be placed before ActorStateWatcher.Init()
 
 			Input.Init();
@@ -99,7 +101,8 @@ namespace Ktisis {
 			Interop.Hooks.EventsHooks.Dispose();
 			Interop.Hooks.GuiHooks.Dispose();
 			Interop.Hooks.PoseHooks.Dispose();
-			Interop.Hooks.CameraHooks.Dispose();
+
+			CameraService.Dispose();
 
 			Interop.Alloc.Dispose();
 			ActorStateWatcher.Dispose();
