@@ -20,8 +20,8 @@ namespace Ktisis.Interop.Hooks {
 			if (!Ktisis.IsInGPose) return;
 
 			try {
-				if (WorkCamera.Active)
-					WorkCamera.UpdateControl(mouseState, keyState);
+				if (CameraService.Freecam.Active)
+					CameraService.Freecam.UpdateControl(mouseState, keyState);
 
 				// Process queue
 

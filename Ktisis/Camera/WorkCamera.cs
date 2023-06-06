@@ -3,48 +3,52 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Keys;
 
+using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 
 using Ktisis.Structs.Input;
 
 namespace Ktisis.Camera {
-	public static class WorkCamera {
-		public static bool Active;
+	public class WorkCamera {
+		public bool Active;
 
-		private static Vector3 Position;
-		private static Vector3 Rotation = new(0f, 0f, 1f);
-		private static Vector3 UpVector = new(0f, 2f, 0f);
+		public Vector3 Position;
+		public Vector3 Rotation = new(0f, 0f, 0f);
+		private Vector3 UpVector = new(0f, 1f, 0f);
 
-		private const float DefaultSpeed = 0.125f;
-		private static float MoveSpeed = DefaultSpeed;
+		private const float ClampY = 1.57072f;
+		private const float DefaultSpeed = 0.1f;
+		private float MoveSpeed = DefaultSpeed;
 
-		private static Vector3 Velocity;
-		private static Vector2 MouseDelta;
+		private Vector3 Velocity;
+		private Vector2 MouseDelta;
 		
-		private static Vector3 InterpPos;
-		private static Vector3 InterpRot;
+		internal Vector3 InterpPos;
+		private Vector3 InterpRot;
 		
-		private static DateTime LastTime;
+		private DateTime LastTime;
 		
-		public unsafe static void Toggle() {
-			Active = !Active;
+		public void SetActive(bool active) {
+			Active = active;
 			if (Active) {
 				LastTime = DateTime.Now;
-				Position = Services.Camera->Camera->CameraBase.SceneCamera.Object.Position;
+				InterpPos = Position;
+				InterpRot = Rotation;
 			}
 		}
 
-		internal static Matrix4x4 Update(float fov = 1) {
+		internal Matrix4x4 Update(float fov = 1) {
 			var now = DateTime.Now;
 			var delta = (float)(now - LastTime).TotalMilliseconds;
 			LastTime = now;
 			
 			MouseDelta *= fov;
 			Rotation.X -= MouseDelta.X;
-			Rotation.Y = Math.Max(Math.Min(Rotation.Y + MouseDelta.Y, 1.57075f), -1.57075f);
-			Rotation.Z = Rotation.X;
+			Rotation.Y = Math.Max(Math.Min(Rotation.Y + MouseDelta.Y, ClampY), -ClampY);
+			Rotation.Z = 1;
 			MouseDelta = Vector2.Zero;
 			InterpRot = Rotation + (Rotation - InterpRot) * (1f / delta);
+			InterpRot.Y = Math.Max(Math.Min(InterpRot.Y, ClampY), -ClampY);
 			
 			Position += Velocity * MoveSpeed * fov;
 			InterpPos = Position + (Position - InterpPos) * (1f / delta);
@@ -52,7 +56,7 @@ namespace Ktisis.Camera {
 			return CreateViewMatrix();
 		}
 
-		internal unsafe static void UpdateControl(MouseState* mouseState, KeyboardState* keyState) {
+		internal unsafe void UpdateControl(MouseState* mouseState, KeyboardState* keyState) {
 			bool rightHeld = false;
 			if (mouseState != null) {
 				var mouseDelta = mouseState->GetDelta(true);
@@ -64,9 +68,9 @@ namespace Ktisis.Camera {
 			MoveSpeed = DefaultSpeed;
 			if (keyState != null) {
 				if (keyState->IsKeyDown(VirtualKey.SHIFT, true))
-					MoveSpeed *= 5f;
+					MoveSpeed *= 3f;
 				else if (keyState->IsKeyDown(VirtualKey.CONTROL, true))
-					MoveSpeed /= 5f;
+					MoveSpeed /= 3f;
 				
 				var vFwb = 0;
 				var bothHeld = rightHeld && mouseState->IsButtonHeld(MouseButton.Left);
@@ -85,7 +89,7 @@ namespace Ktisis.Camera {
 			}
 		}
 
-		private static Matrix4x4 CreateViewMatrix() {
+		private Matrix4x4 CreateViewMatrix() {
 			var pos = InterpPos;
 			var dir = GetLookDir();
 			var up = UpVector;
@@ -122,10 +126,10 @@ namespace Ktisis.Camera {
 			);
 		}
 
-		private static Vector3 GetLookDir() => new(
+		internal Vector3 GetLookDir() => new(
 			(float)Math.Sin(InterpRot.X) * (float)Math.Cos(InterpRot.Y),
 			(float)Math.Sin(InterpRot.Y),
-			(float)Math.Cos(InterpRot.Z) * (float)Math.Cos(InterpRot.Y)
+			(float)Math.Cos(InterpRot.X) * (float)Math.Cos(InterpRot.Y)
 		);
 	}
 }

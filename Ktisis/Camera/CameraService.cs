@@ -9,15 +9,20 @@ using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 
 using Ktisis.Events;
 using Ktisis.Interop.Hooks;
+using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Camera {
 	internal static class CameraService {
 		// Camera spawning
 
-		internal static List<KtisisCamera> Cameras = new();
+		private static readonly List<KtisisCamera> Cameras = new();
 
-		internal unsafe static GameCamera* Override = null;
-		
+		internal unsafe static GameCamera* _override;
+		internal unsafe static GameCamera* Override {
+			get => Freecam.Active && GetFreecam() is KtisisCamera freecam ? freecam.GameCamera : _override;
+			set => _override = value;
+		}
+
 		internal unsafe static Dictionary<nint, string> GetCameraList() {
 			var list = new Dictionary<nint, string>();
 			list.Add((nint)Services.Camera->Camera, "Default Camera");
@@ -27,11 +32,51 @@ namespace Ktisis.Camera {
 		}
 
 		internal unsafe static KtisisCamera SpawnCamera() {
-			var camera = KtisisCamera.Spawn(Services.Camera->GetActiveCamera());
+			var active = Services.Camera->GetActiveCamera();
+			
+			var camera = KtisisCamera.Spawn(active);
+			camera.Name = $"Camera #{Cameras.Count + 2}";
 			Cameras.Add(camera);
+
+			var tarLock = GetTargetLock(active);
+			if (tarLock != null)
+				LockTarget(camera.GameCamera, tarLock.ObjectIndex);
+			
 			return camera;
 		}
 		
+		// Freecam
+
+		internal static WorkCamera Freecam = new();
+
+		private static KtisisCamera? GetFreecam()
+			=> Freecam.Active ? Cameras.FirstOrDefault(item => item.IsFreecam) : null;
+
+		internal unsafe static void ToggleFreecam() {
+			var isActive = !Freecam.Active;
+			if (isActive) {
+				var camera = SpawnCamera();
+				camera.Name = "Work Camera";
+				camera.IsFreecam = true;
+				var activeCam = Services.Camera->GetActiveCamera();
+				if (activeCam != null) {
+					Freecam.Position = activeCam->CameraBase.SceneCamera.Object.Position;
+					Freecam.Rotation = activeCam->GetRotation();
+				}
+				SetCamera(camera.GameCamera);
+			} else {
+				var cam = GetFreecam();
+				if (cam != null) {
+					Cameras.Remove(cam);
+					cam.Dispose();
+				}
+				
+				var fallback = _override != null ? _override : Services.Camera->Camera;
+				SetCamera(fallback);
+			}
+			Freecam.SetActive(isActive);
+		}
+
 		// Target locking
 
 		private static Dictionary<nint, ushort> TargetLock = new();
@@ -61,9 +106,9 @@ namespace Ktisis.Camera {
 		}
 
 		private unsafe static void SetCamera(GameCamera* camera) {
+			if (camera == null) return;
 			var mgr = CameraManager.Instance();
 			mgr->CameraArraySpan[0] = &camera->CameraBase.SceneCamera;
-			//CameraHooks.SetCamera(mgr, 0);
 		}
 		
 		// Overrides
@@ -94,6 +139,7 @@ namespace Ktisis.Camera {
 		private static void OnGPoseChange(bool state) {
 			CameraHooks.SetEnabled(state);
 			if (!state) {
+				if (Freecam.Active) ToggleFreecam();
 				TargetLock.Clear();
 				DisposeCameras();
 			}

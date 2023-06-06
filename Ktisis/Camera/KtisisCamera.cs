@@ -8,11 +8,12 @@ using Ktisis.Interop.Hooks;
 namespace Ktisis.Camera {
 	public class KtisisCamera : IDisposable {
 		private readonly GameAlloc<GameCamera> Alloc;
+		
+		public string Name = "New Camera";
+		public bool IsFreecam = false;
 
 		public nint Address => Alloc.Address;
 		public unsafe GameCamera* GameCamera => Alloc.Data;
-
-		public string Name = "New Camera";
 
 		// Constructors
 		

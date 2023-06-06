@@ -27,8 +27,12 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var camSize = GuiHelpers.CalcIconSize(FontAwesomeIcon.Camera);
 
 			var active = Services.Camera->GetActiveCamera();
+			
 			var cameras = CameraService.GetCameraList();
 
+			var freeActive = CameraService.Freecam.Active;
+			ImGui.BeginDisabled(freeActive);
+			
 			var label = cameras.TryGetValue((nint)active, out var item) ? item : $"Unknown: 0x{(nint)active:X}";
 			var comboWidth = avail - (style.ItemSpacing.X * 4) + style.ItemInnerSpacing.X - plusSize.X - camSize.X;
 			ImGui.SetNextItemWidth(comboWidth);
@@ -54,23 +58,30 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 					CameraService.SetOverride(camera.GameCamera);
 				});
 			}
+			
+			ImGui.EndDisabled();
 
 			ImGui.SameLine();
 			var toggleFree = GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Camera, "Toggle work camera");
-			if (toggleFree) WorkCamera.Toggle();
+			if (toggleFree)
+				CameraService.ToggleFreecam();
 		}
 
 		private unsafe static void DrawTargetLock() {
 			var active = Services.Camera->GetActiveCamera();
 
+			var freeActive = CameraService.Freecam.Active;
+			
 			var tarLock = CameraService.GetTargetLock(active) is GameObject actor ? (Actor*)actor.Address : null;
-			var isTarLocked = tarLock != null;
+			var isTarLocked = tarLock != null || freeActive;
 			
 			var target = tarLock != null ? tarLock : Ktisis.Target;
 			if (target == null) return;
 			
+			ImGui.BeginDisabled(freeActive);
+			
 			var icon = isTarLocked ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
-			var tooltip = isTarLocked ? "Unlock camera target" : "Lock camera target";
+			var tooltip = isTarLocked ? "Unlock orbit target" : "Lock orbit target";
 			if (GuiHelpers.IconButtonTooltip(icon, tooltip)) {
 				if (isTarLocked)
 					CameraService.UnlockTarget(active);
@@ -80,7 +91,9 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			
 			ImGui.SameLine();
 			ImGui.BeginDisabled(!isTarLocked);
-			ImGui.Text($"Target: {target->GetNameOrId()}");
+			ImGui.Text(!freeActive ? $"Orbiting: {target->GetNameOrId()}" : "Work camera enabled.");
+			ImGui.EndDisabled();
+			
 			ImGui.EndDisabled();
 		}
 	}

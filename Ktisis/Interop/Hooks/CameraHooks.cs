@@ -1,13 +1,14 @@
+using System;
 using System.Runtime.InteropServices;
 
 using Dalamud.Hooking;
-using Dalamud.Logging;
 using Dalamud.Game.ClientState.Objects.Types;
 
-using Ktisis.Camera;
-
+using FFXIVClientStructs.FFXIV.Common.Math;
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
+
+using Ktisis.Camera;
 
 namespace Ktisis.Interop.Hooks {
 	internal static class CameraHooks {
@@ -39,11 +40,39 @@ namespace Ktisis.Interop.Hooks {
 
 		private delegate nint ControlDelegate(nint a1);
 		private static Hook<ControlDelegate> ControlHook = null!;
-		private static nint ControlDetour(nint a1) {
+		private unsafe static nint ControlDetour(nint a1) {
+			if (CameraService.Freecam.Active) {
+				var active = Services.Camera->GetActiveCamera();
+				if (active != null)
+					active->CameraBase.SceneCamera.Object.Position = CameraService.Freecam.InterpPos;
+				return a1;
+			}
 			StartOverride();
 			var exec = ControlHook.Original(a1);
 			EndOverride();
 			return exec;
+		}
+		
+		// Freecam
+
+		private unsafe delegate Matrix4x4* CalcViewMatrixDelegate(SceneCamera* camera);
+		private static Hook<CalcViewMatrixDelegate> CalcViewMatrixHook = null!;
+		private unsafe static Matrix4x4* CalcViewMatrixDetour(SceneCamera* camera) {
+			if (!CameraService.Freecam.Active)
+				goto retn;
+
+			var active = Services.Camera->GetActiveCamera();
+			if (active != null && camera == &active->CameraBase.SceneCamera) {
+				var tarMatrix = &camera->ViewMatrix;
+				
+				var zoom = *(float*)((nint)active + 0x12C);
+				var matrix = CameraService.Freecam.Update(active->FoV * Math.Abs(1 + zoom));
+				
+				*tarMatrix = matrix;
+				return tarMatrix;
+			}
+			
+			retn: return CalcViewMatrixHook.Original(camera);
 		}
 		
 		// GetActiveCamera
@@ -51,7 +80,8 @@ namespace Ktisis.Interop.Hooks {
 		private unsafe delegate GameCamera* ActiveCamDelegate(nint a1);
 		private static Hook<ActiveCamDelegate> ActiveCamHook = null!;
 		private unsafe static GameCamera* GetActiveCamDetour(nint a1) {
-			if (Ktisis.IsInGPose && CameraService.Override != null) return CameraService.Override;
+			if (Ktisis.IsInGPose && CameraService.Override != null)
+				return CameraService.Override;
 			return ActiveCamHook.Original(a1);
 		}
 
@@ -60,14 +90,13 @@ namespace Ktisis.Interop.Hooks {
 		private delegate char CameraEventDelegate(nint a1, nint a2, int a3);
 		private static Hook<CameraEventDelegate> CameraEventHook = null!;
 		private static char CameraEventDetour(nint a1, nint a2, int a3) {
-			//var ov = a4 == 5 && a5 == 1;
-			PluginLog.Information($"{a1:X} {a2:X} {a3}");
 			var ov = a3 == 5;
 			if (ov) StartOverride();
 			var exec = CameraEventHook.Original(a1, a2, a3);
 			if (ov) EndOverride();
 			return exec;
 		}
+		
 		// Reads camera values for GPose UI.
 
 		private delegate void CameraUiDelegate(nint a1);
@@ -106,6 +135,7 @@ namespace Ktisis.Interop.Hooks {
 			ActiveCamHook.Enable();
 			CameraEventHook.Enable();
 			CameraUiHook.Enable();
+			CalcViewMatrixHook.Enable();
 			Enabled = true;
 		}
 
@@ -115,6 +145,7 @@ namespace Ktisis.Interop.Hooks {
 			ActiveCamHook.Disable();
 			CameraEventHook.Disable();
 			CameraUiHook.Disable();
+			CalcViewMatrixHook.Disable();
 			Enabled = false;
 		}
 
@@ -128,20 +159,23 @@ namespace Ktisis.Interop.Hooks {
 
 			// Hooks
 			
-			var unkAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 83 3D ?? ?? ?? ?? ?? 74 0C");
-			ControlHook = Hook<ControlDelegate>.FromAddress(unkAddr, ControlDetour);
+			var camCtrlAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 83 3D ?? ?? ?? ?? ?? 74 0C");
+			ControlHook = Hook<ControlDelegate>.FromAddress(camCtrlAddr, ControlDetour);
 
 			var actCamAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F7 80");
 			ActiveCamHook = Hook<ActiveCamDelegate>.FromAddress(actCamAddr, GetActiveCamDetour);
 
-			var eventAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 EB 34");
-			CameraEventHook = Hook<CameraEventDelegate>.FromAddress(eventAddr, CameraEventDetour);
+			var camEventAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 EB 34");
+			CameraEventHook = Hook<CameraEventDelegate>.FromAddress(camEventAddr, CameraEventDetour);
 
-			var unk2 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? ?? 74 0D 8B 53 28");
-			CameraUiHook = Hook<CameraUiDelegate>.FromAddress(unk2, CameraUiDetour);
+			var camUiAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? ?? 74 0D 8B 53 28");
+			CameraUiHook = Hook<CameraUiDelegate>.FromAddress(camUiAddr, CameraUiDetour);
 
-			var cameraVf17 = ((nint*)Services.SigScanner.GetStaticAddressFromSig("88 83 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 03 C6 83", 6))[17];
-			TargetHook = Hook<TargetDelegate>.FromAddress(cameraVf17, TargetDetour);
+			var camVf17 = ((nint*)Services.SigScanner.GetStaticAddressFromSig("88 83 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 03 C6 83", 6))[17];
+			TargetHook = Hook<TargetDelegate>.FromAddress(camVf17, TargetDetour);
+
+			var viewMxAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 33 C0 48 89 83 ?? ?? ?? ?? 48 8B 9C 24");
+			CalcViewMatrixHook = Hook<CalcViewMatrixDelegate>.FromAddress(viewMxAddr, CalcViewMatrixDetour);
 		}
 
 		internal static void Dispose() {
@@ -151,7 +185,7 @@ namespace Ktisis.Interop.Hooks {
 			CameraEventHook.Dispose();
 			CameraUiHook.Dispose();
 			TargetHook.Dispose();
-			TargetHook.Dispose();
+			CalcViewMatrixHook.Dispose();
 		}
 	}
 }
