@@ -26,9 +26,9 @@ namespace Ktisis.Interface.Windows.Workspace {
 		public static void Show() => Visible = true;
 		public static void Toggle() => Visible = !Visible;
 		
-		public static void OnEnterGposeToggle(Structs.Actor.State.ActorGposeState gposeState) {
+		public static void OnEnterGposeToggle(bool isInGpose) {
 			if (Ktisis.Configuration.OpenKtisisMethod == OpenKtisisMethod.OnEnterGpose)
-				Visible = gposeState == Structs.Actor.State.ActorGposeState.ON;
+				Visible = isInGpose;
 		}
 
 		public static float PanelHeight => ImGui.GetTextLineHeight() * 2 + ImGui.GetStyle().ItemSpacing.Y + ImGui.GetStyle().FramePadding.Y;
