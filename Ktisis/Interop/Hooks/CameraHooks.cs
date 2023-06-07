@@ -41,15 +41,13 @@ namespace Ktisis.Interop.Hooks {
 		private delegate nint ControlDelegate(nint a1);
 		private static Hook<ControlDelegate> ControlHook = null!;
 		private unsafe static nint ControlDetour(nint a1) {
-			if (CameraService.Freecam.Active) {
-				var active = Services.Camera->GetActiveCamera();
-				if (active != null)
-					active->CameraBase.SceneCamera.Object.Position = CameraService.Freecam.InterpPos;
-				return a1;
-			}
 			StartOverride();
 			var exec = ControlHook.Original(a1);
 			EndOverride();
+			
+			if (CameraService.Freecam.Active)
+				CameraService.Override->CameraBase.SceneCamera.Object.Position = CameraService.Freecam.InterpPos;
+
 			return exec;
 		}
 		
@@ -67,7 +65,7 @@ namespace Ktisis.Interop.Hooks {
 				
 				var zoom = *(float*)((nint)active + 0x12C);
 				var matrix = CameraService.Freecam.Update(active->FoV * Math.Abs(1 + zoom));
-				
+
 				*tarMatrix = matrix;
 				return tarMatrix;
 			}
