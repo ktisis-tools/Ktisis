@@ -10,6 +10,7 @@ using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 
 using Ktisis.Events;
 using Ktisis.Interop.Hooks;
+using Ktisis.Structs.FFXIV;
 using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Camera {
@@ -59,6 +60,7 @@ namespace Ktisis.Camera {
 				var camera = SpawnCamera();
 				camera.Name = "Work Camera";
 				camera.IsFreecam = true;
+				((GPoseCamera*)camera.GameCamera)->FoV = 0;
 				var activeCam = Services.Camera->GetActiveCamera();
 				if (activeCam != null) {
 					Freecam.Position = activeCam->CameraBase.SceneCamera.Object.Position;

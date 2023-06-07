@@ -3,6 +3,8 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Keys;
 
+using Ktisis.Helpers;
+
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 
@@ -24,8 +26,7 @@ namespace Ktisis.Camera {
 		private Vector2 MouseDelta;
 		
 		internal Vector3 InterpPos;
-		private Vector3 InterpRot;
-		
+
 		private DateTime LastTime;
 		
 		public void SetActive(bool active) {
@@ -33,7 +34,6 @@ namespace Ktisis.Camera {
 			if (Active) {
 				LastTime = DateTime.Now;
 				InterpPos = Position;
-				InterpRot = Rotation;
 			}
 		}
 
@@ -41,17 +41,15 @@ namespace Ktisis.Camera {
 			var now = DateTime.Now;
 			var delta = (float)(now - LastTime).TotalMilliseconds;
 			LastTime = now;
-			
-			MouseDelta *= fov;
+
+			MouseDelta = (MouseDelta * fov * 0.215f) * MathHelpers.Deg2Rad;
 			Rotation.X -= MouseDelta.X;
 			Rotation.Y = Math.Max(Math.Min(Rotation.Y + MouseDelta.Y, ClampY), -ClampY);
 			Rotation.Z = 1;
 			MouseDelta = Vector2.Zero;
-			InterpRot = Rotation + (Rotation - InterpRot) * (1f / delta);
-			InterpRot.Y = Math.Max(Math.Min(InterpRot.Y, ClampY), -ClampY);
-			
+
 			Position += Velocity * MoveSpeed * fov;
-			InterpPos = Position + (Position - InterpPos) * (1f / delta);
+			InterpPos = Vector3.Lerp(InterpPos, Position, 1f / (delta / 8));
 
 			return CreateViewMatrix();
 		}
@@ -59,10 +57,10 @@ namespace Ktisis.Camera {
 		internal unsafe void UpdateControl(MouseState* mouseState, KeyboardState* keyState) {
 			bool rightHeld = false;
 			if (mouseState != null) {
-				var mouseDelta = mouseState->GetDelta(true);
+				var mouseDelta = mouseState->GetDelta();
 				rightHeld = mouseState->IsButtonHeld(MouseButton.Right);
 				if (rightHeld)
-					MouseDelta += (mouseDelta / 5f) * (float)(Math.PI / 180f);
+					MouseDelta += mouseDelta;
 			}
 
 			MoveSpeed = DefaultSpeed;
@@ -127,9 +125,9 @@ namespace Ktisis.Camera {
 		}
 
 		internal Vector3 GetLookDir() => new(
-			(float)Math.Sin(InterpRot.X) * (float)Math.Cos(InterpRot.Y),
-			(float)Math.Sin(InterpRot.Y),
-			(float)Math.Cos(InterpRot.X) * (float)Math.Cos(InterpRot.Y)
+			(float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y),
+			(float)Math.Sin(Rotation.Y),
+			(float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y)
 		);
 	}
 }
