@@ -48,7 +48,7 @@ namespace Ktisis.Interop.Hooks {
 
 			try {
 				var active = Services.Camera->GetActiveCamera();
-				var pos = CameraService.GetForcedPos((nint)active);
+				var pos = CameraService.GetForcedPos(active);
 				if (pos != null) {
 					var camera = &active->CameraBase.SceneCamera;
 					var curPos = camera->Object.Position;

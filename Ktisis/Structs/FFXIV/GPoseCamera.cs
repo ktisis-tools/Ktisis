@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-
 using System.Runtime.InteropServices;
 
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;

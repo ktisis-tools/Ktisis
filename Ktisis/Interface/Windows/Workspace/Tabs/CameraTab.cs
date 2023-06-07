@@ -1,3 +1,5 @@
+using System.Numerics;
+
 using ImGuiNET;
 
 using Dalamud.Interface;
@@ -110,23 +112,43 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 			ImGui.Text("Camera position:");
 			
-			var pos = (System.Numerics.Vector3)camObj->Position;
-			var posLock = CameraService.GetPositionLock(addr);
+			var camEdit = CameraService.GetCameraEdit(addr);
+			
+			var pos = (Vector3)camObj->Position;
+			var offset = camEdit?.Offset ?? Vector3.Zero;
+
+			var posLock = camEdit != null ? camEdit.Position : null;
 			var isLocked = posLock != null;
 			
 			var lockIcon = posLock != null ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
 			var lockTooltip = posLock != null ? "Unlock camera position" : "Lock camera position";
 			if (GuiHelpers.IconButtonTooltip(lockIcon, lockTooltip, default, "CamPosLock"))
-				CameraService.SetPositionLock(addr, isLocked ? null : pos);
+				CameraService.SetPositionLock(addr, isLocked ? null : pos - offset);
 
 			ImGui.SameLine();
 
+			var posCursor = ImGui.GetCursorPosX();
 			ImGui.BeginDisabled(!isLocked);
 			ImGui.PushItemWidth(TransformTable.InputsWidth);
 			if (Transform.DrawFloat3("##CamWorldPos", ref pos, 0.005f, out _))
-				CameraService.SetPositionLock(addr, pos);
+				CameraService.SetPositionLock(addr, pos - offset);
 			ImGui.PopItemWidth();
 			ImGui.EndDisabled();
+
+			// hack to align this properly.
+			ImGui.PushStyleColor(ImGuiCol.Button, 0);
+			ImGui.PushStyleColor(ImGuiCol.ButtonHovered, 0);
+			ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0);
+			GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, "Offset from base position");
+			ImGui.PopStyleColor(3);
+
+			ImGui.SameLine();
+
+			ImGui.SetCursorPosX(posCursor);
+			ImGui.PushItemWidth(TransformTable.InputsWidth);
+			if (Transform.DrawFloat3("##CamOffset", ref offset, 0.005f, out _))
+				CameraService.SetOffset(addr, offset != Vector3.Zero ? offset : null);
+			ImGui.PopItemWidth();
 		}
 	}
 }

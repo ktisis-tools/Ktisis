@@ -40,12 +40,8 @@ namespace Ktisis.Camera {
 			Cameras.Add(camera);
 
 			var edit = GetCameraEdit((nint)active);
-			if (edit != null) {
-				CameraEdits.Add(camera.Address, new CameraEdit {
-					Orbit = edit.Orbit,
-					Position = edit.Position
-				});
-			}
+			if (edit != null)
+				CameraEdits.Add(camera.Address, edit.Clone());
 
 			return camera;
 		}
@@ -97,13 +93,24 @@ namespace Ktisis.Camera {
 			}
 			return result;
 		}
-		
+
+		internal unsafe static Vector3? GetForcedPos(GameCamera* addr) {
+			var edit = GetCameraEdit((nint)addr);
+			var pos = Freecam.Active ? Freecam.InterpPos : edit?.Position;
+			if (edit?.Offset != null) {
+				if (pos == null)
+					pos = addr->CameraBase.SceneCamera.Object.Position;
+				pos += edit.Offset;
+			}
+			return pos;
+		}
+
 		// Target lock
 
 		internal static void SetTargetLock(nint addr, ushort? tarId) {
 			var edit = GetCameraEditOrNew(addr);
 			edit.Orbit = tarId;
-			if (tarId == null && edit.Position == null)
+			if (tarId == null && edit.IsEmpty())
 				CameraEdits.Remove(addr);
 			else
 				CameraEdits[addr] = edit;
@@ -122,7 +129,7 @@ namespace Ktisis.Camera {
 		internal static void SetPositionLock(nint addr, Vector3? pos) {
 			var edit = GetCameraEditOrNew(addr);
 			edit.Position = pos;
-			if (pos == null && edit.Orbit == null)
+			if (pos == null && edit.IsEmpty())
 				CameraEdits.Remove(addr);
 			else
 				CameraEdits[addr] = edit;
@@ -134,8 +141,22 @@ namespace Ktisis.Camera {
 			return edit.Position;
 		}
 
-		internal static Vector3? GetForcedPos(nint addr)
-			=> Freecam.Active ? Freecam.InterpPos : GetPositionLock(addr);
+		// Offset
+
+		internal static void SetOffset(nint addr, Vector3? off) {
+			var edit = GetCameraEditOrNew(addr);
+			edit.Offset = off;
+			if (off == null && edit.IsEmpty())
+				CameraEdits.Remove(addr);
+			else
+				CameraEdits[addr] = edit;
+		}
+
+		internal static Vector3? GetOffset(nint addr) {
+			if (!Ktisis.IsInGPose || GetCameraEdit(addr) is not CameraEdit edit)
+				return null;
+			return edit.Offset;
+		}
 		
 		// CameraManager wrappers
 
@@ -197,5 +218,16 @@ namespace Ktisis.Camera {
 	public class CameraEdit {
 		public ushort? Orbit;
 		public Vector3? Position;
+		public Vector3? Offset;
+
+		public bool IsEmpty() => GetType().GetFields()
+			.All(item => item.GetValue(this) == null);
+
+		public CameraEdit Clone() {
+			var result = new CameraEdit();
+			foreach (var field in GetType().GetFields())
+				field.SetValue(result, field.GetValue(this));
+			return result;
+		}
 	}
 }
