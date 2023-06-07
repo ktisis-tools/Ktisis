@@ -119,10 +119,10 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var offset = camEdit?.Offset ?? Vector3.Zero;
 
 			var posLock = camEdit != null ? camEdit.Position : null;
-			var isLocked = posLock != null;
+			var isLocked = posLock != null || CameraService.Freecam.Active;
 			
-			var lockIcon = posLock != null ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
-			var lockTooltip = posLock != null ? "Unlock camera position" : "Lock camera position";
+			var lockIcon = isLocked ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
+			var lockTooltip = isLocked ? "Unlock camera position" : "Lock camera position";
 			if (GuiHelpers.IconButtonTooltip(lockIcon, lockTooltip, default, "CamPosLock"))
 				CameraService.SetPositionLock(addr, isLocked ? null : pos - offset);
 
@@ -130,20 +130,26 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 			var posCursor = ImGui.GetCursorPosX();
 			ImGui.BeginDisabled(!isLocked);
-			//ImGui.PushItemWidth(TransformTable.InputsWidth);
-			if (Transform.ColoredDragFloat3("##CamWorldPos", ref pos, 0.05f))
-				CameraService.SetPositionLock(addr, pos - offset);
-			//ImGui.PopItemWidth();
+			if (Transform.ColoredDragFloat3("##CamWorldPos", ref pos, 0.005f)) {
+				if (CameraService.Freecam.Active) {
+					CameraService.Freecam.Position = pos;
+					CameraService.Freecam.InterpPos = pos;
+				} else {
+					CameraService.SetPositionLock(addr, pos - offset);
+				}
+			}
 			ImGui.EndDisabled();
+			
+			ImGui.BeginDisabled(CameraService.Freecam.Active); // Below controls disabled under freecam.
+			
+			// Camera offset
 			
 			ImGui.Dummy(default);
 			ImGui.SameLine();
 			GuiHelpers.IconTooltip(FontAwesomeIcon.Plus, "Offset from base position");
-
 			ImGui.SameLine();
-
 			ImGui.SetCursorPosX(posCursor);
-			if (Transform.ColoredDragFloat3("##CamOffset", ref offset, 0.05f))
+			if (Transform.ColoredDragFloat3("##CamOffset", ref offset, 0.005f))
 				CameraService.SetOffset(addr, offset != Vector3.Zero ? offset : null);
 
 			// Angle
@@ -153,7 +159,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			
 			PrepareIconTooltip(FontAwesomeIcon.ArrowsSpin, "Camera orbit angle", posCursor);
 			var angle = camera->Angle * MathHelpers.Rad2Deg;
-			if (Transform.DragFloat2("CameraAngle", ref angle, 0.05f))
+			if (Transform.DragFloat2("CameraAngle", ref angle, Ktisis.Configuration.TransformTableBaseSpeedRot))
 				camera->Angle = angle * MathHelpers.Deg2Rad;
 			
 			// Pan
@@ -165,14 +171,18 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			if (Transform.DragFloat2("CameraPan", ref pan, Ktisis.Configuration.TransformTableBaseSpeedRot))
 				camera->Pan = pan * MathHelpers.Deg2Rad;
 
+			ImGui.EndDisabled(); // Above controls disabled under freecam.
+			
 			// other shit
 
 			ImGui.Spacing();
 			ImGui.Spacing();
 
+			ImGui.BeginDisabled(CameraService.Freecam.Active);
 			PrepareIconTooltip(FontAwesomeIcon.CameraRotate, "Camera rotation", posCursor);
 			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 			ImGui.SliderAngle("##CamRotato", ref camera->Rotation, -180, 180, "%.3f", ImGuiSliderFlags.AlwaysClamp);
+			ImGui.EndDisabled();
 
 			PrepareIconTooltip(FontAwesomeIcon.VectorSquare, "Field of View", posCursor);
 			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
