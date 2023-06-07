@@ -60,7 +60,7 @@ namespace Ktisis.Overlay {
 						Interop.Alloc.SetMatrix(&model->Transform, matrix);
 					}
 				} else {
-					world->WorldToScreen(model->Position, out var pos2d);
+					world->WorldToScreenDepth(model->Position, out var pos2d);
 					if (Selection.AddItem(actorName, pos2d).IsClicked())
 						OverlayWindow.SetGizmoOwner(actorName);
 				}
@@ -101,7 +101,7 @@ namespace Ktisis.Overlay {
 
 					var worldPos = bone.GetWorldPos(model);
 					var boneColor = ImGui.GetColorU32(boneColRgb);
-					var isVisible = world->WorldToScreen(bone.GetWorldPos(model), out var pos2d);
+					var isVisible = world->WorldToScreenDepth(bone.GetWorldPos(model), out var pos2d);
 
 					// Draw line to bone parent if any
 					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton && !(!Ktisis.Configuration.DrawLinesWithGizmo && OverlayWindow.GizmoOwner != null)) {
@@ -117,7 +117,7 @@ namespace Ktisis.Overlay {
 							var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / dist * 2f);
 							isVisible &= world->WorldToScreen(pWorldPos, out var parentPos2d);
 							if (isVisible)
-								draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
+								draw.AddLine(new Vector2(pos2d.X, pos2d.Y), parentPos2d, boneColor, lineThickness);
 						}
 					}
 
