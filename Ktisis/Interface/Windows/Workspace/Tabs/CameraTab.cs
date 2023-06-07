@@ -7,6 +7,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Camera;
+using Ktisis.Helpers;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.FFXIV;
 using Ktisis.Interface.Components;
@@ -21,6 +22,8 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			DrawTargetLock();
 			ImGui.Spacing();
 			DrawCameraSelect();
+			ImGui.Spacing();
+			ImGui.Separator();
 			ImGui.Spacing();
 			DrawControls();
 
@@ -108,10 +111,8 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 			var camObj = &camera->GameCamera.CameraBase.SceneCamera.Object;
 
-			ImGui.Spacing();
+			// Camera position
 
-			ImGui.Text("Camera position:");
-			
 			var camEdit = CameraService.GetCameraEdit(addr);
 			
 			var pos = (Vector3)camObj->Position;
@@ -129,26 +130,67 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 			var posCursor = ImGui.GetCursorPosX();
 			ImGui.BeginDisabled(!isLocked);
-			ImGui.PushItemWidth(TransformTable.InputsWidth);
-			if (Transform.DrawFloat3("##CamWorldPos", ref pos, 0.005f, out _))
+			//ImGui.PushItemWidth(TransformTable.InputsWidth);
+			if (Transform.ColoredDragFloat3("##CamWorldPos", ref pos, 0.05f))
 				CameraService.SetPositionLock(addr, pos - offset);
-			ImGui.PopItemWidth();
+			//ImGui.PopItemWidth();
 			ImGui.EndDisabled();
-
-			// hack to align this properly.
-			ImGui.PushStyleColor(ImGuiCol.Button, 0);
-			ImGui.PushStyleColor(ImGuiCol.ButtonHovered, 0);
-			ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0);
-			GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, "Offset from base position");
-			ImGui.PopStyleColor(3);
+			
+			ImGui.Dummy(default);
+			ImGui.SameLine();
+			GuiHelpers.IconTooltip(FontAwesomeIcon.Plus, "Offset from base position");
 
 			ImGui.SameLine();
 
 			ImGui.SetCursorPosX(posCursor);
-			ImGui.PushItemWidth(TransformTable.InputsWidth);
-			if (Transform.DrawFloat3("##CamOffset", ref offset, 0.005f, out _))
+			if (Transform.ColoredDragFloat3("##CamOffset", ref offset, 0.05f))
 				CameraService.SetOffset(addr, offset != Vector3.Zero ? offset : null);
-			ImGui.PopItemWidth();
+
+			// Angle
+
+			ImGui.Spacing();
+			ImGui.Spacing();
+			
+			PrepareIconTooltip(FontAwesomeIcon.ArrowsSpin, "Camera orbit angle", posCursor);
+			var angle = camera->Angle * MathHelpers.Rad2Deg;
+			if (Transform.DragFloat2("CameraAngle", ref angle, 0.05f))
+				camera->Angle = angle * MathHelpers.Deg2Rad;
+			
+			// Pan
+
+			ImGui.Spacing();
+			
+			PrepareIconTooltip(FontAwesomeIcon.ArrowsAlt, "Camera pan", posCursor);
+			var pan = camera->Pan * MathHelpers.Rad2Deg;
+			if (Transform.DragFloat2("CameraPan", ref pan, Ktisis.Configuration.TransformTableBaseSpeedRot))
+				camera->Pan = pan * MathHelpers.Deg2Rad;
+
+			// other shit
+
+			ImGui.Spacing();
+			ImGui.Spacing();
+
+			PrepareIconTooltip(FontAwesomeIcon.CameraRotate, "Camera rotation", posCursor);
+			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			ImGui.SliderAngle("##CamRotato", ref camera->Rotation, -180, 180, "%.3f", ImGuiSliderFlags.AlwaysClamp);
+
+			PrepareIconTooltip(FontAwesomeIcon.VectorSquare, "Field of View", posCursor);
+			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			ImGui.SliderAngle("##CamFoV", ref camera->FoV, -40, 100, "%.3f", ImGuiSliderFlags.AlwaysClamp);
+
+			ImGui.BeginDisabled(isLocked);
+			PrepareIconTooltip(FontAwesomeIcon.Moon, "Camera distance", posCursor);
+			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			ImGui.SliderFloat("##CamDist", ref camera->Distance, 0, camera->DistanceMax);
+			ImGui.EndDisabled();
+		}
+
+		private static void PrepareIconTooltip(FontAwesomeIcon icon, string tooltip, float posCursor) {
+			ImGui.Dummy(default);
+			ImGui.SameLine();
+			GuiHelpers.IconTooltip(icon, tooltip);
+			ImGui.SameLine();
+			ImGui.SetCursorPosX(posCursor);
 		}
 	}
 }

@@ -10,7 +10,8 @@ namespace Ktisis.Structs.FFXIV {
 
 		[FieldOffset(0x010)] public Vector3 Position;
 
-		[FieldOffset(0x114)] public float Zoom;
+		[FieldOffset(0x114)] public float Distance;
+		[FieldOffset(0x11C)] public float DistanceMax;
 		[FieldOffset(0x12C)] public float FoV;
 		[FieldOffset(0x130)] public Vector2 Angle;
 		[FieldOffset(0x150)] public Vector2 Pan;

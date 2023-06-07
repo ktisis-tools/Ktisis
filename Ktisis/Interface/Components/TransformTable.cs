@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -31,13 +32,16 @@ namespace Ktisis.Interface.Components {
 		private float ModifierMultShift;
 		private string DigitPrecision = "%.3f";
 
-		private static Vector4[] AxisColors = new[] {
-			new Vector4(1, 0.328f, 0.211f, 1),
-			new Vector4(0.33f, 0.82f, 0, 1),
-			new Vector4(0, 0.33f, 1, 1)
+		private static Vector4[] AxisColors = {
+			new(1, 0.328f, 0.211f, 1),
+			new (0.33f, 0.82f, 0, 1),
+			new(0, 0.33f, 1, 1)
 		};
-
-		internal static float InputsWidth => (ImGui.GetContentRegionAvail().X - GuiHelpers.WidthMargin() - ImGui.GetStyle().ItemSpacing.X * 2.0f) / 3.0f;
+		private static Vector4[] DefaultColors = { // :(
+			new(0.75f, 0.75f, 0.75f, 1f),
+			new(0.75f, 0.75f, 0.75f, 1f),
+			new(0.75f, 0.75f, 0.75f, 1f)
+		};
 
 		public Vector3 Position;
 		public Vector3 Rotation;
@@ -60,6 +64,8 @@ namespace Ktisis.Interface.Components {
 			return tt;
 		}
 
+		private float CalcItemWidth(int count = 3, float offset = 0)
+			=> (float)Math.Ceiling((ImGui.GetContentRegionAvail().X - offset - ImGui.GetStyle().ItemSpacing.X * (count - 1)) / count);
 
 		// Set stored values.
 
@@ -83,8 +89,8 @@ namespace Ktisis.Interface.Components {
 			var multiplier = 1f;
 			if (ImGui.GetIO().KeyCtrl) multiplier *= ModifierMultCtrl;
 			if (ImGui.GetIO().KeyShift) multiplier *= ModifierMultShift / 10; //divide by 10 cause of the native *10 when holding shift on DragFloat
-
-			ImGui.PushItemWidth(InputsWidth - (ImGui.GetStyle().ItemSpacing.X + ControlButtons.ButtonSize.X) / 3);
+			
+			ImGui.PushItemWidth(CalcItemWidth(3, ControlButtons.ButtonSize.X + ImGui.GetStyle().ItemSpacing.X));
 
 			var anyActive = false;
 			bool active;
@@ -124,7 +130,7 @@ namespace Ktisis.Interface.Components {
 				return result;
 			
 			Vector2 mults = new(ModifierMultShift, ModifierMultCtrl);
-			ImGui.PushItemWidth(InputsWidth);
+			ImGui.PushItemWidth(CalcItemWidth(2));
 			if (ImGui.DragFloat2("##SpeedMult##shiftCtrl", ref mults, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic)) {
 				Ktisis.Configuration.TransformTableModifierMultShift = mults.X;
 				Ktisis.Configuration.TransformTableModifierMultCtrl = mults.Y;
@@ -136,11 +142,29 @@ namespace Ktisis.Interface.Components {
 			return result;
 		}
 
-		public bool DrawFloat3(string label, ref Vector3 value, float speed, out bool anyActive, float borderSize = 1.0f)
-			=> ColoredDragFloat3(label, ref value, speed, AxisColors, out anyActive, borderSize);
+		public bool ColoredDragFloat3(string label, ref Vector3 value, float speed, float borderSize = 1.0f) {
+			ImGui.PushItemWidth(CalcItemWidth(3));
+			var result = ColoredDragFloat3(label, ref value, speed, AxisColors, out _, borderSize);
+			ImGui.PopItemWidth();
+			return result;
+		}
+
+		public bool ColoredDragFloat2(string label, ref Vector2 value, float speed, float borderSize = 1.0f) {
+			ImGui.PushItemWidth(CalcItemWidth(2));
+			var result = ColoredDragFloat2(label, ref value, speed, AxisColors, borderSize);
+			ImGui.PopItemWidth();
+			return result;
+		}
+		
+		public bool DragFloat2(string label, ref Vector2 value, float speed, float borderSize = 1.0f) {
+			ImGui.PushItemWidth(CalcItemWidth(2));
+			var result = ColoredDragFloat2(label, ref value, speed, DefaultColors, borderSize, true);
+			ImGui.PopItemWidth();
+			return result;
+		}
 
 		private bool ColoredDragFloat3(string label, ref Vector3 value, float speed, IReadOnlyList<Vector4> colors, out bool anyActive, float borderSize = 1.0f) {
-			if (colors.Count != 3) {
+			if (colors.Count < 3) {
 				anyActive = false;
 				return false;
 			}
@@ -159,11 +183,24 @@ namespace Ktisis.Interface.Components {
 
 			return result;
 		}
+		
+		private bool ColoredDragFloat2(string id, ref Vector2 value, float speed, IReadOnlyList<Vector4> colors, float borderSize = 1.0f, bool showXY = false) {
+			if (colors.Count < 2) {
+				return false;
+			}
 
-		private bool ColoredDragFloat(string label, ref float value, float speed, Vector4 color, out bool active, float borderSize = 1.0f) {
+			var result = false;
+			result |= ColoredDragFloat($"##{id}_X", ref value.X, speed, colors[0], out _, borderSize, showXY ? "X:  " : "");
+			ImGui.SameLine();
+			result |= ColoredDragFloat($"##{id}_Y", ref value.Y, speed, colors[1], out _, borderSize, showXY ? "Y:  " : "");
+
+			return result;
+		}
+
+		private bool ColoredDragFloat(string label, ref float value, float speed, Vector4 color, out bool active, float borderSize = 1.0f, string prefix = "") {
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, borderSize);
 			ImGui.PushStyleColor(ImGuiCol.Border, color);
-			var result = ImGui.DragFloat(label, ref value, speed, 0, 0, DigitPrecision);
+			var result = ImGui.DragFloat(label, ref value, speed, 0, 0, $"{prefix}{DigitPrecision}");
 			ImGui.PopStyleColor();
 			ImGui.PopStyleVar();
 			active = ImGui.IsItemActive();

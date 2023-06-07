@@ -70,10 +70,12 @@ namespace Ktisis.Util
 			return size;
 		}
 		public static void IconTooltip(FontAwesomeIcon icon, string tooltip, bool enabled = true, Vector4? color = null) {
+			var inner = ImGui.GetStyle().ItemInnerSpacing;
+			var cursorPos = ImGui.GetCursorPos();
+			ImGui.SetCursorPos(new Vector2(cursorPos.X - inner.X, cursorPos.Y + inner.Y / 2));
 			Icon(icon, enabled, color);
 			Tooltip(tooltip);
 		}
-
 
 		public static void Tooltip(string text) {
 			if (ImGui.IsItemHovered()) {

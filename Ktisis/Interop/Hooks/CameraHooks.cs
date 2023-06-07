@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Logging;
+using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
