@@ -1,12 +1,15 @@
 using System;
 using System.Numerics;
 
+using Dalamud.Logging;
+
 using ImGuiNET;
 using ImGuizmoNET;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
+using Ktisis.Structs.Extensions;
 using Ktisis.Interface.Windows.Toolbar;
 using Ktisis.Interface.Windows.Workspace.Tabs;
 
@@ -72,6 +75,8 @@ namespace Ktisis.Overlay {
 				var pose = partial.GetHavokPose(0);
 				if (pose == null) continue;
 
+				var camera = Services.Camera->GetActiveCamera();
+
 				var skeleton = pose->Skeleton;
 				for (var i = 1; i < skeleton->Bones.Length; i++) {
 					var bone = model->Skeleton->GetBone(p, i);
@@ -94,6 +99,7 @@ namespace Ktisis.Overlay {
 					if (isUsing) boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacityWhileUsing;
 					else boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacity;
 
+					var worldPos = bone.GetWorldPos(model);
 					var boneColor = ImGui.GetColorU32(boneColRgb);
 					var isVisible = world->WorldToScreen(bone.GetWorldPos(model), out var pos2d);
 
@@ -103,8 +109,13 @@ namespace Ktisis.Overlay {
 
 						var parent = model->Skeleton->GetBone(p, parentId);
 						if (Ktisis.Configuration.IsBoneVisible(parent)) {
-							var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / Services.Camera->Camera->InterpDistance * 2f);
-							isVisible &= world->WorldToScreen(parent.GetWorldPos(model), out var parentPos2d);
+							var pWorldPos = parent.GetWorldPos(model);
+							var dist = (
+								camera->DistanceFrom(worldPos)
+								+ camera->DistanceFrom(pWorldPos)
+							) / 2;
+							var lineThickness = Math.Max(0.01f, Ktisis.Configuration.SkeletonLineThickness / dist * 2f);
+							isVisible &= world->WorldToScreen(pWorldPos, out var parentPos2d);
 							if (isVisible)
 								draw.AddLine(pos2d, parentPos2d, boneColor, lineThickness);
 						}

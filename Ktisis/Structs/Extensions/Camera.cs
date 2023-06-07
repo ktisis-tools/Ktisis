@@ -28,5 +28,8 @@ namespace Ktisis.Structs.Extensions {
 			vec.Y -= *(float*)(ptr + 0x154);
 			return vec;
 		}
+
+		public static float DistanceFrom(this GameCamera camera, Vector3 vec)
+			=> Vector3.Distance(vec, camera.CameraBase.SceneCamera.Object.Position);
 	}
 }

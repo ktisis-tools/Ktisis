@@ -147,11 +147,11 @@ namespace Ktisis.Camera {
 
 		private unsafe static void DisposeCameras() {
 			PluginLog.Debug("Disposing cameras...");
+			if (Override != null)
+				Reset();
 			foreach (var cam in Cameras)
 				cam.Dispose();
 			Cameras.Clear();
-			if (Override != null)
-				Reset();
 		}
 	}
 }
