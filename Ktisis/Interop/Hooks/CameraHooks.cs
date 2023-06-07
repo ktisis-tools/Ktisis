@@ -1,8 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Hooking;
+using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
@@ -45,16 +46,21 @@ namespace Ktisis.Interop.Hooks {
 			var exec = ControlHook.Original(a1);
 			EndOverride();
 
-			var active = Services.Camera->GetActiveCamera();
-			var pos = CameraService.GetForcedPos((nint)active);
-			if (pos != null) {
-				var camera = &active->CameraBase.SceneCamera;
-				var curPos = camera->Object.Position;
-				
-				var newPos = (Vector3)pos;
-				camera->Object.Position = newPos;
-				camera->LookAtVector += newPos - curPos;
-			}
+			try {
+				var active = Services.Camera->GetActiveCamera();
+				var pos = CameraService.GetForcedPos((nint)active);
+				if (pos != null) {
+					var camera = &active->CameraBase.SceneCamera;
+					var curPos = camera->Object.Position;
+					
+					var newPos = (Vector3)pos;
+					camera->Object.Position = newPos;
+					camera->LookAtVector += newPos - curPos;
+				}
+			} catch (Exception e) {
+				PluginLog.Error(e.ToString());
+				DisableHooks();
+			};
 
 			return exec;
 		}
@@ -67,15 +73,20 @@ namespace Ktisis.Interop.Hooks {
 			if (!CameraService.Freecam.Active)
 				goto retn;
 
-			var active = Services.Camera->GetActiveCamera();
-			if (active != null && camera == &active->CameraBase.SceneCamera) {
-				var tarMatrix = &camera->ViewMatrix;
-				
-				var zoom = *(float*)((nint)active + 0x12C);
-				var matrix = CameraService.Freecam.Update(active->FoV * Math.Abs(1 + zoom));
-
-				*tarMatrix = matrix;
-				return tarMatrix;
+			try {
+				var active = Services.Camera->GetActiveCamera();
+				if (active != null && camera == &active->CameraBase.SceneCamera) {
+					var tarMatrix = &camera->ViewMatrix;
+					
+					var zoom = *(float*)((nint)active + 0x12C);
+					var matrix = CameraService.Freecam.Update(active->FoV * Math.Abs(1 + zoom));
+	
+					*tarMatrix = matrix;
+					return tarMatrix;
+				}
+			} catch (Exception e) {
+				PluginLog.Error(e.ToString());
+				DisableHooks();
 			}
 
 			retn: return CalcViewMatrixHook.Original(camera);
@@ -118,7 +129,7 @@ namespace Ktisis.Interop.Hooks {
 		private unsafe delegate nint TargetDelegate(GameCamera* a1);
 		private static Hook<TargetDelegate> TargetHook = null!;
 		private unsafe static nint TargetDetour(GameCamera* a1) {
-			if (CameraService.GetTargetLock(a1) is GameObject tar)
+			if (CameraService.GetTargetLock((nint)a1) is GameObject tar)
 				return tar.Address;
 			return TargetHook.Original(a1);
 		}

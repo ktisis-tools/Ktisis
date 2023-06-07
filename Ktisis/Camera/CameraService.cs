@@ -1,5 +1,5 @@
-﻿using System.Numerics;
-using System.Linq;
+﻿using System.Linq;
+using System.Numerics;
 using System.Collections.Generic;
 
 using Dalamud.Logging;
@@ -39,10 +39,14 @@ namespace Ktisis.Camera {
 			camera.Name = $"Camera #{Cameras.Count + 2}";
 			Cameras.Add(camera);
 
-			var tarLock = GetTargetLock(active);
-			if (tarLock != null)
-				LockTarget(camera.GameCamera, tarLock.ObjectIndex);
-			
+			var edit = GetCameraEdit((nint)active);
+			if (edit != null) {
+				CameraEdits.Add(camera.Address, new CameraEdit {
+					Orbit = edit.Orbit,
+					Position = edit.Position
+				});
+			}
+
 			return camera;
 		}
 		
@@ -78,59 +82,60 @@ namespace Ktisis.Camera {
 			Freecam.SetActive(isActive);
 		}
 
-		// Target locking
+		// Camera edits
 
-		private static Dictionary<nint, ushort> TargetLock = new();
+		private static Dictionary<nint, CameraEdit> CameraEdits = new();
 
-		internal unsafe static void LockTarget(GameCamera* camera, ushort tarId) {
-			UnlockTarget(camera);
-			TargetLock.Add((nint)camera, tarId);
-		}
+		internal static CameraEdit? GetCameraEdit(nint addr)
+			=> CameraEdits.GetValueOrDefault(addr);
 
-		internal unsafe static void UnlockTarget(GameCamera* camera) {
-			var key = (nint)camera;
-			if (TargetLock.ContainsKey(key))
-				TargetLock.Remove(key);
+		internal static CameraEdit GetCameraEditOrNew(nint addr) {
+			var result = GetCameraEdit(addr);
+			if (result == null) {
+				result = new CameraEdit();
+				CameraEdits.Add(addr, result);
+			}
+			return result;
 		}
 		
-		internal unsafe static GameObject? GetTargetLock(GameCamera* camera) {
-			if (!Ktisis.IsInGPose || !TargetLock.TryGetValue((nint)camera, out var tarId))
-				return null;
-			return Services.ObjectTable.FirstOrDefault(actor => actor.ObjectIndex == tarId);
-		}
+		// Target lock
 
-		// Position locking
-
-		private static Dictionary<nint, Vector3> PositionLock = new();
-
-		internal static void LockPosition(nint key, Vector3 pos) {
-			UnlockPosition(key);
-			PositionLock.Add(key, pos);
-		}
-
-		internal static void UnlockPosition(nint key) {
-			if (PositionLock.ContainsKey(key))
-				PositionLock.Remove(key);
-		}
-
-		internal static Vector3? GetPositionLock(nint key) {
-			if (!Ktisis.IsInGPose || !PositionLock.TryGetValue(key, out var pos))
-				return null;
-			return pos;
-		}
-
-		internal static void SetPosition(nint addr, Vector3 pos) {
-			if (PositionLock.ContainsKey(addr))
-				PositionLock[addr] = pos;
+		internal static void SetTargetLock(nint addr, ushort? tarId) {
+			var edit = GetCameraEditOrNew(addr);
+			edit.Orbit = tarId;
+			if (tarId == null && edit.Position == null)
+				CameraEdits.Remove(addr);
 			else
-				LockPosition(addr, pos);
+				CameraEdits[addr] = edit;
 		}
 
-		internal static Vector3? GetForcedPos(nint camera) {
-			if (Freecam.Active)
-				return Freecam.InterpPos;
-			return GetPositionLock(camera);
+		internal static GameObject? GetTargetLock(nint addr) {
+			if (!Ktisis.IsInGPose || GetCameraEdit(addr) is not CameraEdit edit)
+				return null;
+			return edit.Orbit != null ? Services.ObjectTable.FirstOrDefault(
+				actor => actor.ObjectIndex == edit.Orbit
+			) : null;
 		}
+
+		// Position lock
+
+		internal static void SetPositionLock(nint addr, Vector3? pos) {
+			var edit = GetCameraEditOrNew(addr);
+			edit.Position = pos;
+			if (pos == null && edit.Orbit == null)
+				CameraEdits.Remove(addr);
+			else
+				CameraEdits[addr] = edit;
+		}
+
+		internal static Vector3? GetPositionLock(nint addr) {
+			if (!Ktisis.IsInGPose || GetCameraEdit(addr) is not CameraEdit edit)
+				return null;
+			return edit.Position;
+		}
+
+		internal static Vector3? GetForcedPos(nint addr)
+			=> Freecam.Active ? Freecam.InterpPos : GetPositionLock(addr);
 		
 		// CameraManager wrappers
 
@@ -174,7 +179,7 @@ namespace Ktisis.Camera {
 			CameraHooks.SetEnabled(state);
 			if (!state) {
 				if (Freecam.Active) ToggleFreecam();
-				TargetLock.Clear();
+				CameraEdits.Clear();
 				DisposeCameras();
 			}
 		}
@@ -187,5 +192,10 @@ namespace Ktisis.Camera {
 				cam.Dispose();
 			Cameras.Clear();
 		}
+	}
+
+	public class CameraEdit {
+		public ushort? Orbit;
+		public Vector3? Position;
 	}
 }
