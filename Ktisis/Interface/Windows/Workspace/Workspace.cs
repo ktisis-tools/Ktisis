@@ -46,6 +46,9 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 10));
 
+			var displaySize = ImGui.GetIO().DisplaySize;
+			var maxSize = new Vector2(displaySize.X / 4f, displaySize.Y * 0.9f);
+			ImGui.SetNextWindowSizeConstraints(Vector2.Zero, maxSize);
 			if (ImGui.Begin($"Ktisis ({Ktisis.Version})", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize)) {
 
 				ControlButtons.PlaceAndRenderSettings();

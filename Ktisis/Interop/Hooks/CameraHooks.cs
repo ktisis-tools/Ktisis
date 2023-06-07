@@ -60,7 +60,7 @@ namespace Ktisis.Interop.Hooks {
 			} catch (Exception e) {
 				PluginLog.Error(e.ToString());
 				DisableHooks();
-			};
+			}
 
 			return exec;
 		}

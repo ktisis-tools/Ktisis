@@ -1,20 +1,26 @@
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface;
-
 using ImGuiNET;
+
+using Dalamud.Interface;
+using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Camera;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.FFXIV;
+using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class CameraTab {
+		private static TransformTable Transform = new(); // this needs a rework.
+
 		public static void Draw() {
 			ImGui.Spacing();
 			
 			DrawTargetLock();
 			ImGui.Spacing();
 			DrawCameraSelect();
+			ImGui.Spacing();
+			DrawControls();
 
 			ImGui.EndTabItem();
 		}
@@ -69,10 +75,11 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 		private unsafe static void DrawTargetLock() {
 			var active = Services.Camera->GetActiveCamera();
+			var addr = (nint)active;
 
 			var freeActive = CameraService.Freecam.Active;
 			
-			var tarLock = CameraService.GetTargetLock(active) is GameObject actor ? (Actor*)actor.Address : null;
+			var tarLock = CameraService.GetTargetLock(addr) is GameObject actor ? (Actor*)actor.Address : null;
 			var isTarLocked = tarLock != null || freeActive;
 			
 			var target = tarLock != null ? tarLock : Ktisis.Target;
@@ -82,18 +89,43 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			
 			var icon = isTarLocked ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
 			var tooltip = isTarLocked ? "Unlock orbit target" : "Lock orbit target";
-			if (GuiHelpers.IconButtonTooltip(icon, tooltip)) {
-				if (isTarLocked)
-					CameraService.UnlockTarget(active);
-				else
-					CameraService.LockTarget(active, target->GameObject.ObjectIndex);
-			}
-			
+			if (GuiHelpers.IconButtonTooltip(icon, tooltip, default, "CamOrbitLock"))
+				CameraService.SetTargetLock(addr, isTarLocked ? null : target->GameObject.ObjectIndex);
+
 			ImGui.SameLine();
 			ImGui.BeginDisabled(!isTarLocked);
 			ImGui.Text(!freeActive ? $"Orbiting: {target->GetNameOrId()}" : "Work camera enabled.");
 			ImGui.EndDisabled();
 			
+			ImGui.EndDisabled();
+		}
+
+		private unsafe static void DrawControls() {
+			var camera = (GPoseCamera*)Services.Camera->GetActiveCamera();
+			var addr = (nint)camera;
+
+			var camObj = &camera->GameCamera.CameraBase.SceneCamera.Object;
+
+			ImGui.Spacing();
+
+			ImGui.Text("Camera position:");
+			
+			var pos = (System.Numerics.Vector3)camObj->Position;
+			var posLock = CameraService.GetPositionLock(addr);
+			var isLocked = posLock != null;
+			
+			var lockIcon = posLock != null ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
+			var lockTooltip = posLock != null ? "Unlock camera position" : "Lock camera position";
+			if (GuiHelpers.IconButtonTooltip(lockIcon, lockTooltip, default, "CamPosLock"))
+				CameraService.SetPositionLock(addr, isLocked ? null : pos);
+
+			ImGui.SameLine();
+
+			ImGui.BeginDisabled(!isLocked);
+			ImGui.PushItemWidth(TransformTable.InputsWidth);
+			if (Transform.DrawFloat3("##CamWorldPos", ref pos, 0.005f, out _))
+				CameraService.SetPositionLock(addr, pos);
+			ImGui.PopItemWidth();
 			ImGui.EndDisabled();
 		}
 	}
