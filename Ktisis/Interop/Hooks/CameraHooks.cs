@@ -44,9 +44,17 @@ namespace Ktisis.Interop.Hooks {
 			StartOverride();
 			var exec = ControlHook.Original(a1);
 			EndOverride();
-			
-			if (CameraService.Freecam.Active)
-				CameraService.Override->CameraBase.SceneCamera.Object.Position = CameraService.Freecam.InterpPos;
+
+			var active = Services.Camera->GetActiveCamera();
+			var pos = CameraService.GetForcedPos((nint)active);
+			if (pos != null) {
+				var camera = &active->CameraBase.SceneCamera;
+				var curPos = camera->Object.Position;
+				
+				var newPos = (Vector3)pos;
+				camera->Object.Position = newPos;
+				camera->LookAtVector += newPos - curPos;
+			}
 
 			return exec;
 		}
@@ -69,7 +77,7 @@ namespace Ktisis.Interop.Hooks {
 				*tarMatrix = matrix;
 				return tarMatrix;
 			}
-			
+
 			retn: return CalcViewMatrixHook.Original(camera);
 		}
 		

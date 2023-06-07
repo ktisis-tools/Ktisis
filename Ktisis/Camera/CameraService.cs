@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Numerics;
 using System.Linq;
+using System.Collections.Generic;
 
 using Dalamud.Logging;
 using Dalamud.Game.ClientState.Objects.Types;
@@ -98,6 +99,39 @@ namespace Ktisis.Camera {
 			return Services.ObjectTable.FirstOrDefault(actor => actor.ObjectIndex == tarId);
 		}
 
+		// Position locking
+
+		private static Dictionary<nint, Vector3> PositionLock = new();
+
+		internal static void LockPosition(nint key, Vector3 pos) {
+			UnlockPosition(key);
+			PositionLock.Add(key, pos);
+		}
+
+		internal static void UnlockPosition(nint key) {
+			if (PositionLock.ContainsKey(key))
+				PositionLock.Remove(key);
+		}
+
+		internal static Vector3? GetPositionLock(nint key) {
+			if (!Ktisis.IsInGPose || !PositionLock.TryGetValue(key, out var pos))
+				return null;
+			return pos;
+		}
+
+		internal static void SetPosition(nint addr, Vector3 pos) {
+			if (PositionLock.ContainsKey(addr))
+				PositionLock[addr] = pos;
+			else
+				LockPosition(addr, pos);
+		}
+
+		internal static Vector3? GetForcedPos(nint camera) {
+			if (Freecam.Active)
+				return Freecam.InterpPos;
+			return GetPositionLock(camera);
+		}
+		
 		// CameraManager wrappers
 
 		internal unsafe static void Reset() {
