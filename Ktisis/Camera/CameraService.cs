@@ -16,23 +16,15 @@ using Ktisis.Structs.Extensions;
 namespace Ktisis.Camera {
 	internal static class CameraService {
 		// Camera spawning
-
-		private static readonly List<KtisisCamera> Cameras = new();
-
+		
 		internal unsafe static GameCamera* _override;
 		internal unsafe static GameCamera* Override {
 			get => Freecam.Active && GetFreecam() is KtisisCamera freecam ? freecam.GameCamera : _override;
 			set => _override = value;
 		}
-
-		internal unsafe static Dictionary<nint, string> GetCameraList() {
-			var list = new Dictionary<nint, string>();
-			list.Add((nint)Services.Camera->Camera, "Default Camera");
-			foreach (var camera in Cameras)
-				list.Add(camera.Address, camera.Name);
-			return list;
-		}
-
+		
+		private static readonly List<KtisisCamera> Cameras = new();
+		
 		internal unsafe static KtisisCamera SpawnCamera() {
 			var active = Services.Camera->GetActiveCamera();
 			
@@ -45,6 +37,47 @@ namespace Ktisis.Camera {
 				CameraEdits.Add(camera.Address, edit.Clone());
 
 			return camera;
+		}
+
+		internal static void RemoveCamera(KtisisCamera cam) {
+			Cameras.Remove(cam);
+            CameraEdits.Remove(cam.Address);
+            cam.Dispose();
+		}
+		
+		internal unsafe static Dictionary<nint, string> GetCameraList() {
+			var list = new Dictionary<nint, string>();
+			list.Add((nint)Services.Camera->Camera, "Default Camera");
+			foreach (var camera in Cameras)
+				list.Add(camera.Address, camera.Name);
+			return list;
+		}
+		
+		// Camera edits
+        
+		private static Dictionary<nint, CameraEdit> CameraEdits = new();
+        
+		internal static CameraEdit? GetCameraEdit(nint addr)
+			=> CameraEdits.GetValueOrDefault(addr);
+        
+		internal static CameraEdit GetCameraEditOrNew(nint addr) {
+			var result = GetCameraEdit(addr);
+			if (result == null) {
+				result = new CameraEdit();
+				CameraEdits.Add(addr, result);
+			}
+			return result;
+		}
+        
+		internal unsafe static Vector3? GetForcedPos(GameCamera* addr) {
+			var edit = GetCameraEdit((nint)addr);
+			var pos = Freecam.Active ? Freecam.InterpPos : edit?.Position;
+			if (edit?.Offset != null) {
+				if (pos == null)
+					pos = addr->CameraBase.SceneCamera.Object.Position;
+				pos += edit.Offset;
+			}
+			return pos;
 		}
 		
 		// Freecam
@@ -69,42 +102,13 @@ namespace Ktisis.Camera {
 				SetCamera(camera.GameCamera);
 			} else {
 				var cam = GetFreecam();
-				if (cam != null) {
-					Cameras.Remove(cam);
-					cam.Dispose();
-				}
-				
+				if (cam != null)
+					RemoveCamera(cam);
+
 				var fallback = _override != null ? _override : Services.Camera->Camera;
 				SetCamera(fallback);
 			}
 			Freecam.SetActive(isActive);
-		}
-
-		// Camera edits
-
-		private static Dictionary<nint, CameraEdit> CameraEdits = new();
-
-		internal static CameraEdit? GetCameraEdit(nint addr)
-			=> CameraEdits.GetValueOrDefault(addr);
-
-		internal static CameraEdit GetCameraEditOrNew(nint addr) {
-			var result = GetCameraEdit(addr);
-			if (result == null) {
-				result = new CameraEdit();
-				CameraEdits.Add(addr, result);
-			}
-			return result;
-		}
-
-		internal unsafe static Vector3? GetForcedPos(GameCamera* addr) {
-			var edit = GetCameraEdit((nint)addr);
-			var pos = Freecam.Active ? Freecam.InterpPos : edit?.Position;
-			if (edit?.Offset != null) {
-				if (pos == null)
-					pos = addr->CameraBase.SceneCamera.Object.Position;
-				pos += edit.Offset;
-			}
-			return pos;
 		}
 
 		// Target lock
