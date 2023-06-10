@@ -1,8 +1,6 @@
 using System;
 using System.Numerics;
 
-using Dalamud.Logging;
-
 using ImGuiNET;
 using ImGuizmoNET;
 
@@ -21,12 +19,19 @@ namespace Ktisis.Overlay {
 		public static (
 			bool Active, // A bone is currently selected.
 			bool Update, // Signal to any class that caches transforms, that they need to be updated.
+			nint Child, // Address of child model if the selected bone belongs to it. Spaghetti.
 			int Partial,
 			int Index,
 			string Name
 		) BoneSelect;
 
-		public static bool IsBoneSelected(Bone bone) => BoneSelect.Active && BoneSelect.Partial == bone.Partial && BoneSelect.Index == bone.Index;
+		public static bool IsBoneSelected(Bone bone) {
+			if (!BoneSelect.Active)
+				return false;
+			if (BoneSelect.Child != 0 && BoneSelect.Child != bone.PoseAddress)
+				return false;
+			return BoneSelect.Partial == bone.Partial && BoneSelect.Index == bone.Index;
+		}
 
 		public static void Toggle() {
 			var visible = !Ktisis.Configuration.ShowSkeleton;
@@ -39,18 +44,34 @@ namespace Ktisis.Overlay {
 			var actor = Ktisis.Target;
 			if (actor == null) return;
 
+			// Draw actor root
+
 			DrawActorRoot(actor);
 
+			// Draw model skeleton
+			
 			var model = actor->Model;
 			if (model == null || model->Skeleton == null) return;
 
 			DrawModelSkeleton(model);
+			
+			// Draw children (weapons, props)
+			// This iterates a linked list of child objects.
+
+			var children = model->GetChildren();
+			foreach (var ptr in children)
+				DrawModelSkeleton((ActorModel*)ptr, model);
 		}
 		
-		public unsafe static void DrawModelSkeleton(ActorModel* model) {
+		public unsafe static void DrawModelSkeleton(ActorModel* model, ActorModel* parentModel = null) {
 			// Fetch actor, model & skeleton
 
 			var world = OverlayWindow.WorldMatrix;
+			
+			// Get model attachment
+					
+			var attach = model->Attach;
+			var hasAttach = attach.Count == 1 && attach.Type == 4;
 
 			// ImGui rendering
 
@@ -69,11 +90,7 @@ namespace Ktisis.Overlay {
 
 				var skeleton = pose->Skeleton;
 				for (var i = 1; i < skeleton->Bones.Length; i++) {
-					var bone = model->Skeleton->GetBone(p, i);
-					var boneName = bone.HkaBone.Name.String ?? "";
-					var parentId = bone.ParentId;
-
-					var uniqueName = bone.UniqueName;
+					var bone = model->Skeleton->GetBone(p, i, parentModel != null);
 
 					if (!Ktisis.Configuration.IsBoneVisible(bone))
 						continue; // Bone is hidden, move onto the next one.
@@ -83,23 +100,28 @@ namespace Ktisis.Overlay {
 
 					if (bone.IsBusted())
 						continue; // bone's busted, skip it.
+					
+					var parentId = bone.ParentId;
+					var boneName = bone.HkaBone.Name.String ?? "";
+					var uniqueName = bone.UniqueName;
 
 					// Get bone color and screen position
 					var boneColRgb = Ktisis.Configuration.GetCategoryColor(bone);
 					if (isUsing) boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacityWhileUsing;
 					else boneColRgb.W *= Ktisis.Configuration.SkeletonLineOpacity;
 
-					var worldPos = bone.GetWorldPos(model);
+					var worldPos = bone.GetWorldPos(model, parentModel);
 					var boneColor = ImGui.GetColorU32(boneColRgb);
-					var isVisible = world->WorldToScreenDepth(bone.GetWorldPos(model), out var pos2d);
+					var isVisible = world->WorldToScreenDepth(worldPos, out var pos2d);
 
 					// Draw line to bone parent if any
-					if (parentId > 0 && Ktisis.Configuration.DrawLinesOnSkeleton && !(!Ktisis.Configuration.DrawLinesWithGizmo && OverlayWindow.GizmoOwner != null)) {
+					var minParent = hasAttach ? 1 : 0;
+					if (parentId > minParent && Ktisis.Configuration.DrawLinesOnSkeleton && !(!Ktisis.Configuration.DrawLinesWithGizmo && OverlayWindow.GizmoOwner != null)) {
 						// TODO: Draw lines for parents of partials.
 
 						var parent = model->Skeleton->GetBone(p, parentId);
 						if (Ktisis.Configuration.IsBoneVisible(parent)) {
-							var pWorldPos = parent.GetWorldPos(model);
+							var pWorldPos = parent.GetWorldPos(model, parentModel);
 							var dist = (
 								camera->DistanceFrom(worldPos)
 								+ camera->DistanceFrom(pWorldPos)
@@ -127,9 +149,15 @@ namespace Ktisis.Overlay {
 					if (gizmo != null) {
 						var matrix = Interop.Alloc.GetMatrix(transform);
 
+						var scale = model->Scale * model->Height;
+						if (parentModel != null)
+							scale *= parentModel->Height;
+						if (hasAttach && attach.BoneAttach != null)
+							scale *= attach.BoneAttach->Scale;
+
 						// Apply the root transform of the actor's model.
 						// This is important for the gizmo's orientation to show correctly.
-						matrix.Translation *= model->Height * model->Scale;
+						matrix.Translation *= scale;
 						gizmo.Matrix = Matrix4x4.Transform(matrix, model->Rotation);
 						gizmo.Matrix.Translation += model->Position;
 
@@ -140,7 +168,7 @@ namespace Ktisis.Overlay {
 							// Reverse the previous transform we did.
 							gizmo.Matrix.Translation -= model->Position;
 							matrix = Matrix4x4.Transform(gizmo.Matrix, Quaternion.Inverse(model->Rotation));
-							matrix.Translation /= model->Height * model->Scale;
+							matrix.Translation /= scale;
 
 							// Write our updated matrix to memory.
 							var initialRot = transform->Rotation.ToQuat();
@@ -163,6 +191,7 @@ namespace Ktisis.Overlay {
 						BoneSelect.Active = true;
 						BoneSelect.Partial = p;
 						BoneSelect.Index = i;
+						BoneSelect.Child = parentModel != null ? (nint)model : 0;
 					}
 				}
 			}
@@ -197,7 +226,20 @@ namespace Ktisis.Overlay {
 			var model = ((Actor*)target.Address)->Model;
 			if (model == null) return null;
 
-			return model->Skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index);
+			if (BoneSelect.Child != 0) {
+				var children = model->GetChildren();
+				model = null;
+				foreach (var child in children) {
+					// I need to rewrite this plugin asap.
+					if (child == BoneSelect.Child)
+						model = (ActorModel*)child;
+				}
+				if (model == null) return null;
+			}
+
+			if (model->Skeleton == null) return null;
+
+			return model->Skeleton->GetBone(BoneSelect.Partial, BoneSelect.Index, BoneSelect.Child != 0);
 		}
 	}
 }

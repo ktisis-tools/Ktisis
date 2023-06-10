@@ -60,7 +60,7 @@ namespace Ktisis.Structs {
 
 		// Skeleton
 
-		public unsafe static Bone GetBone(this Skeleton skele, int partial, int bone) => new Bone(&skele, partial, bone);
+		public unsafe static Bone GetBone(this Skeleton skele, int partial, int bone, bool isChild = false) => new Bone(&skele, partial, bone, isChild);
 
 		public unsafe static void ParentPartialToRoot(this Skeleton skeleton, int p) {
 			var partial = skeleton.PartialSkeletons[p];

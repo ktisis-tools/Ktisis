@@ -3,11 +3,10 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Keys;
 
-using Ktisis.Helpers;
-
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 
+using Ktisis.Helpers;
 using Ktisis.Structs.Input;
 
 namespace Ktisis.Camera {

@@ -17,6 +17,7 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x100)] public unsafe ActorModel* Model;
 		[FieldOffset(0x114)] public RenderMode RenderMode;
+		[FieldOffset(0x1B0)] public float ModelScale;
 		[FieldOffset(0x1B4)] public uint ModelId;
 
 		[FieldOffset(0x6E8)] public ActorDrawData DrawData;
