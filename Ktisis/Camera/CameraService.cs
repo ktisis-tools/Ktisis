@@ -25,16 +25,18 @@ namespace Ktisis.Camera {
 		
 		private static readonly List<KtisisCamera> Cameras = new();
 		
-		internal unsafe static KtisisCamera SpawnCamera() {
+		internal unsafe static KtisisCamera SpawnCamera(bool cloneEdits = true) {
 			var active = Services.Camera->GetActiveCamera();
 			
 			var camera = KtisisCamera.Spawn(active);
 			camera.Name = $"Camera #{Cameras.Count + 2}";
 			Cameras.Add(camera);
 
-			var edit = GetCameraEdit((nint)active);
-			if (edit != null)
-				CameraEdits.Add(camera.Address, edit.Clone());
+			if (cloneEdits) {
+				var edit = GetCameraEdit((nint)active);
+				if (edit != null)
+					CameraEdits.Add(camera.Address, edit.Clone());
+			}
 
 			return camera;
 		}
@@ -90,7 +92,7 @@ namespace Ktisis.Camera {
 		internal unsafe static void ToggleFreecam() {
 			var isActive = !Freecam.Active;
 			if (isActive) {
-				var camera = SpawnCamera();
+				var camera = SpawnCamera(false);
 				camera.Name = "Work Camera";
 				camera.IsFreecam = true;
 				((GPoseCamera*)camera.GameCamera)->FoV = 0;
