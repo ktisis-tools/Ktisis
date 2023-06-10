@@ -36,35 +36,25 @@ namespace Ktisis.Overlay {
 		public unsafe static void Draw() {
 			// Fetch actor, model & skeleton
 
-			if (Ktisis.GPoseTarget == null) return;
-			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
+			var actor = Ktisis.Target;
+			if (actor == null) return;
+
+			DrawActorRoot(actor);
+
 			var model = actor->Model;
-			if (model == null) return;
+			if (model == null || model->Skeleton == null) return;
+
+			DrawModelSkeleton(model);
+		}
+		
+		public unsafe static void DrawModelSkeleton(ActorModel* model) {
+			// Fetch actor, model & skeleton
 
 			var world = OverlayWindow.WorldMatrix;
 
 			// ImGui rendering
 
 			var draw = ImGui.GetWindowDrawList();
-
-			// Make selectable model root
-
-			{
-				var actorName = actor->GetNameOr("Actor");
-				var gizmo = OverlayWindow.GetGizmo(actorName);
-				if (gizmo != null) {
-					var matrix = Interop.Alloc.GetMatrix(&model->Transform);
-					gizmo.Matrix = matrix;
-					if (gizmo.Draw()) {
-						matrix = gizmo.Matrix;
-						Interop.Alloc.SetMatrix(&model->Transform, matrix);
-					}
-				} else {
-					world->WorldToScreenDepth(model->Position, out var pos2d);
-					if (Selection.AddItem(actorName, pos2d).IsClicked())
-						OverlayWindow.SetGizmoOwner(actorName);
-				}
-			}
 
 			// Draw skeleton
 
@@ -175,6 +165,26 @@ namespace Ktisis.Overlay {
 						BoneSelect.Index = i;
 					}
 				}
+			}
+		}
+
+		public unsafe static void DrawActorRoot(Actor* actor) {
+			var world = OverlayWindow.WorldMatrix;
+			var model = actor->Model;
+			
+			var actorName = actor->GetNameOr("Actor");
+			var gizmo = OverlayWindow.GetGizmo(actorName);
+			if (gizmo != null) {
+				var matrix = Interop.Alloc.GetMatrix(&model->Transform);
+				gizmo.Matrix = matrix;
+				if (gizmo.Draw()) {
+					matrix = gizmo.Matrix;
+					Interop.Alloc.SetMatrix(&model->Transform, matrix);
+				}
+			} else {
+				world->WorldToScreenDepth(model->Position, out var pos2d);
+				if (Selection.AddItem(actorName, pos2d).IsClicked())
+					OverlayWindow.SetGizmoOwner(actorName);
 			}
 		}
 
