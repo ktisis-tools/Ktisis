@@ -120,11 +120,13 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 			var posLock = camEdit != null ? camEdit.Position : null;
 			var isLocked = posLock != null || CameraService.Freecam.Active;
-			
+
+			ImGui.BeginDisabled(CameraService.Freecam.Active);
 			var lockIcon = isLocked ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
 			var lockTooltip = isLocked ? "Unlock camera position" : "Lock camera position";
 			if (GuiHelpers.IconButtonTooltip(lockIcon, lockTooltip, default, "CamPosLock"))
 				CameraService.SetPositionLock(addr, isLocked ? null : pos - offset);
+			ImGui.EndDisabled();
 
 			ImGui.SameLine();
 
