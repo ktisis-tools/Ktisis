@@ -37,11 +37,6 @@ namespace Ktisis.Structs.Bones {
 			set => Pose->ModelPose.Data[Index] = value;
 		}
 
-		public unsafe hkQsTransformf? GetTransformSafe() {
-			if (Pose == null || Index >= Pose->ModelPose.Length) return null;
-			return Pose->ModelPose.Data[Index];
-		}
-
 		public string LocaleName => Locale.GetBoneName(IsChildModel && Index == 1 ? "Prop" : HkaBone.Name.String ?? "Unknown");
 
 		public string UniqueId => $"{PoseAddress:X}_{Partial}_{Index}";
