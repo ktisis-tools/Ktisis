@@ -4,6 +4,7 @@ using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 
 using Ktisis.Interop;
 using Ktisis.Interop.Hooks;
+using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Camera {
 	public class KtisisCamera : IDisposable {
@@ -26,6 +27,11 @@ namespace Ktisis.Camera {
 				*alloc.Data = *clone;
 			return new KtisisCamera(alloc);
 		}
+		
+		// Helpers
+
+		public unsafe GPoseCamera* AsGPoseCamera()
+			=> (GPoseCamera*)Address;
 		
 		// IDisposable
 

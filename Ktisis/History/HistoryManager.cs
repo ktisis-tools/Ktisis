@@ -93,7 +93,7 @@ namespace Ktisis.History {
 			}
 
 			if (isEditing && !_currentState) {
-				ActiveEdit = (ActorBone?)HistoryItemFactory.Create(HistoryItemType.ActorBone);
+				ActiveEdit = (ActorBone?)HistoryItem.Create(HistoryItemType.ActorBone);
 			}
 
 			if (!isEditing && _currentState && ActiveEdit != null) {

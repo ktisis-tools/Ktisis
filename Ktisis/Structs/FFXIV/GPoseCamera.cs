@@ -6,9 +6,7 @@ using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 namespace Ktisis.Structs.FFXIV {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct GPoseCamera {
-		[FieldOffset(0)] public GameCamera GameCamera;
-
-		[FieldOffset(0x010)] public Vector3 Position;
+		[FieldOffset(0x60)] public Vector3 Position;
 
 		[FieldOffset(0x114)] public float Distance;
 		[FieldOffset(0x11C)] public float DistanceMax;

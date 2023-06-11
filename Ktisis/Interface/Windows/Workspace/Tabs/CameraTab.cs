@@ -8,6 +8,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Ktisis.Util;
 using Ktisis.Camera;
 using Ktisis.Helpers;
+using Ktisis.History;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.FFXIV;
 using Ktisis.Interface.Components;
@@ -67,6 +68,11 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 				Services.Framework.RunOnFrameworkThread(() => {
 					var camera = CameraService.SpawnCamera();
 					CameraService.SetOverride(camera.GameCamera);
+
+					HistoryItem.CreateCamera(CameraEvent.CreateCamera)
+						.SetProperty(camera.Name)
+						.SetStartValue((nint)active)
+						.AddToHistory();
 				});
 			}
 			
@@ -119,14 +125,12 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		private unsafe static void DrawControls() {
 			var camera = (GPoseCamera*)Services.Camera->GetActiveCamera();
 			var addr = (nint)camera;
-
-			var camObj = &camera->GameCamera.CameraBase.SceneCamera.Object;
-
+			
 			// Camera position
 
 			var camEdit = CameraService.GetCameraEdit(addr);
 			
-			var pos = (Vector3)camObj->Position;
+			var pos = camera->Position;
 			var offset = camEdit?.Offset ?? Vector3.Zero;
 
 			var posLock = camEdit != null ? camEdit.Position : null;

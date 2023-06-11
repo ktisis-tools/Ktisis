@@ -47,6 +47,12 @@ namespace Ktisis.Camera {
             cam.Dispose();
 		}
 		
+		internal static KtisisCamera? GetCameraByAddress(nint addr)
+			=> Cameras.FirstOrDefault(cam => cam!.Address == addr, null);
+
+		internal static KtisisCamera? GetCameraByName(string name)
+			=> Cameras.FirstOrDefault(cam => cam!.Name == name, null);
+
 		internal unsafe static Dictionary<nint, string> GetCameraList() {
 			var list = new Dictionary<nint, string>();
 			list.Add((nint)Services.Camera->Camera, "Default Camera");
