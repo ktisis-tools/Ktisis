@@ -70,8 +70,8 @@ namespace Ktisis.Interop.Hooks {
 		private unsafe delegate Matrix4x4* CalcViewMatrixDelegate(SceneCamera* camera);
 		private static Hook<CalcViewMatrixDelegate> CalcViewMatrixHook = null!;
 		private unsafe static Matrix4x4* CalcViewMatrixDetour(SceneCamera* camera) {
-			if (!CameraService.Freecam.Active)
-				goto retn;
+			var freecam = CameraService.GetFreecam();
+			if (freecam == null || freecam.WorkCamera == null) goto retn;
 
 			try {
 				var active = Services.Camera->GetActiveCamera();
@@ -79,7 +79,7 @@ namespace Ktisis.Interop.Hooks {
 					var tarMatrix = &camera->ViewMatrix;
 					
 					var zoom = *(float*)((nint)active + 0x12C);
-					var matrix = CameraService.Freecam.Update(active->FoV * Math.Abs(1 + zoom));
+					var matrix = freecam.WorkCamera.Update(active->FoV * Math.Abs(1 + zoom));
 	
 					*tarMatrix = matrix;
 					return tarMatrix;

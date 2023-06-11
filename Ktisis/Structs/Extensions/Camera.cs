@@ -20,15 +20,6 @@ namespace Ktisis.Structs.Extensions {
 			return *(Vector3*)((IntPtr)camera.CameraBase.SceneCamera.RenderCamera + 144);
 		}
 
-		public unsafe static Vector3 GetRotation(this GameCamera camera) {
-			// TODO clientstructs
-			var ptr = (byte*)&camera;
-			var vec = new Vector3(*(float*)(ptr + 0x130), -*(float*)(ptr + 0x134), *(float*)(ptr + 0x160));
-			vec.X -= *(float*)(ptr + 0x150);
-			vec.Y -= *(float*)(ptr + 0x154);
-			return vec;
-		}
-
 		public static float DistanceFrom(this GameCamera camera, Vector3 vec)
 			=> Vector3.Distance(vec, camera.CameraBase.SceneCamera.Object.Position);
 	}
