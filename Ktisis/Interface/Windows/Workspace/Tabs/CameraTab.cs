@@ -23,19 +23,6 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		private static bool IsTransTable;
 		private static CameraHistory? HistoryRecord;
 
-		private unsafe static object? GetValue(KtisisCamera camera, CameraEvent @event, string name) {
-			if (!camera.IsValid()) return null;
-			
-			object item = @event switch {
-				CameraEvent.CameraValue => *camera.AsGPoseCamera(),
-				CameraEvent.EditValue => camera.CameraEdit,
-				_ => throw new Exception("Bad CameraEvent?")
-			};
-
-			var field = item.GetType().GetFields().FirstOrDefault(f => f?.Name == name, null);
-			return field?.GetValue(item);
-		}
-
 		private static void RecordEdit(CameraEvent @event, string name, bool transTable = false, object? initVal = null) {
 			var isEdited = transTable ? Transform.IsEdited : ImGui.IsItemDeactivatedAfterEdit();
 			var isActive = transTable ? Transform.IsActive : ImGui.IsItemActivated();

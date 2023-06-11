@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Reflection;
 
-using Dalamud.Logging;
-
 using Ktisis.Camera;
 using Ktisis.Structs.FFXIV;
 
