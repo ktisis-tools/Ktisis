@@ -192,7 +192,8 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 						pose.ConvertLegacyBones();
 						
 						// Ensure posing is enabled.
-						PoseHooks.EnablePosing();
+						if (!PoseHooks.PosingEnabled && !PoseHooks.AnamPosingEnabled)
+							PoseHooks.EnablePosing();
 
 						if (pose.Bones != null) {
 							for (var p = 0; p < skeleton->PartialSkeletonCount; p++) {
