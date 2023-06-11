@@ -131,6 +131,7 @@ namespace Ktisis
 		public SaveModes CharaMode { get; set; } = SaveModes.All;
 		public PoseMode PoseMode { get; set; } = PoseMode.BodyFace;
 		public PoseTransforms PoseTransforms { get; set; } = PoseTransforms.Rotation;
+		public bool PositionWeapons { get; set; } = true;
 
 		public bool EnableParenting { get; set; } = true;
 

@@ -38,12 +38,16 @@ namespace Ktisis.Structs.Poses {
 		}
 
 		public unsafe void Apply(Skeleton* modelSkeleton, PoseTransforms trans = PoseTransforms.Rotation) {
+			if (modelSkeleton == null) return;
+			
 			var partialCt = modelSkeleton->PartialSkeletonCount;
 			for (var p = 0; p < partialCt; p++)
 				ApplyToPartial(modelSkeleton, p, trans);
 		}
 
 		public unsafe void ApplyToPartial(Skeleton* modelSkeleton, int p, PoseTransforms trans = PoseTransforms.Rotation, bool setRootPos = false, bool parentPartial = true) {
+			if (modelSkeleton == null) return;
+			
 			var isElezen = false;
 			var owner = modelSkeleton->Owner;
 			if (owner != null && owner->GetModelType() == CharacterBase.ModelType.Human) {

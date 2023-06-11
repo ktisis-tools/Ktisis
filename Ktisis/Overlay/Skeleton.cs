@@ -71,7 +71,7 @@ namespace Ktisis.Overlay {
 			}
 		}
 		
-		public unsafe static void DrawModelSkeleton(ActorModel* model, ActorModel* parentModel = null, List<Category> _setCategory = null) {
+		public unsafe static void DrawModelSkeleton(ActorModel* model, ActorModel* parentModel = null, List<Category>? _setCategory = null) {
 			if (model->Skeleton == null) return;
 			
 			// Fetch actor, model & skeleton
@@ -165,7 +165,7 @@ namespace Ktisis.Overlay {
 						if (parentModel != null)
 							scale *= parentModel->Height;
 						if (hasAttach && attach.BoneAttach != null)
-							scale *= attach.BoneAttach->Scale;
+							scale *= model->GetAttachScale();
 
 						// Apply the root transform of the actor's model.
 						// This is important for the gizmo's orientation to show correctly.

@@ -156,6 +156,13 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			if (ImGui.Checkbox("Weapons##ImportExportPose", ref wep))
 				modes = modes.ToggleFlag(PoseMode.Weapons);
 
+			var posWep = Ktisis.Configuration.PositionWeapons;
+			if (modes.HasFlag(PoseMode.Weapons)) {
+				ImGui.Spacing();
+				if (ImGui.Checkbox("Apply position to weapons##ApplyWepPos", ref posWep))
+					Ktisis.Configuration.PositionWeapons = posWep;
+			}
+
 			Ktisis.Configuration.PoseMode = modes;
 
 			ImGui.Spacing();
@@ -199,19 +206,23 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 						}
 
 						if (modes.HasFlag(PoseMode.Weapons)) {
+							var wepTrans = trans;
+							if (Ktisis.Configuration.PositionWeapons)
+								wepTrans |= PoseTransforms.Position;
+							
 							if (pose.MainHand != null) {
 								var skele = actor->GetWeaponSkeleton(WeaponSlot.MainHand);
-								if (skele != null) pose.MainHand.Apply(skele, trans);
+								if (skele != null) pose.MainHand.Apply(skele, wepTrans);
 							}
 
 							if (pose.OffHand != null) {
 								var skele = actor->GetWeaponSkeleton(WeaponSlot.OffHand);
-								if (skele != null) pose.OffHand.Apply(skele, trans);
+								if (skele != null) pose.OffHand.Apply(skele, wepTrans);
 							}
 
 							if (pose.Prop != null) {
 								var skele = actor->GetWeaponSkeleton(WeaponSlot.Prop);
-								if (skele != null) pose.Prop.Apply(skele, trans);
+								if (skele != null) pose.Prop.Apply(skele, wepTrans);
 							}
 						}
 					},

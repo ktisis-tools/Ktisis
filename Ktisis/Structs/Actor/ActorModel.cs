@@ -79,6 +79,12 @@ namespace Ktisis.Structs.Actor {
 			
 			return result;
 		}
+
+		public unsafe float GetAttachScale() {
+			if (Attach.Count == 1 && Attach.Type == 4)
+				return Attach.BoneAttach->Scale;
+			return 1f;
+		}
 	}
 
 	[StructLayout(LayoutKind.Explicit)]

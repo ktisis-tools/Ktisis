@@ -132,19 +132,23 @@ namespace Ktisis.Structs.Actor {
 		
 		// weapons
 
-		public unsafe Skeleton* GetWeaponSkeleton(WeaponSlot slot) {
+		public unsafe WeaponModel* GetWeaponModel(WeaponSlot slot) {
 			var weapon = slot switch {
 				WeaponSlot.MainHand => DrawData.MainHand,
 				WeaponSlot.OffHand => DrawData.OffHand,
 				WeaponSlot.Prop => DrawData.Prop,
 				_ => throw new Exception("shit's fucked")
 			};
-
+			
 			var model = weapon.Model;
 			if (model == null || (model->Flags & 9) == 0)
 				return null;
+			return model;
+		}
 
-			return weapon.Model->Skeleton;
+		public unsafe Skeleton* GetWeaponSkeleton(WeaponSlot slot) {
+			var model = GetWeaponModel(slot);
+			return model == null ? null : model->Skeleton;
 		}
 	}
 
