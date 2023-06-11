@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
@@ -17,13 +18,11 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x100)] public unsafe ActorModel* Model;
 		[FieldOffset(0x114)] public RenderMode RenderMode;
-		[FieldOffset(0x1B0)] public float ModelScale;
 		[FieldOffset(0x1B4)] public uint ModelId;
 
 		[FieldOffset(0x6E8)] public ActorDrawData DrawData;
 
 		[FieldOffset(0x876)] public bool IsHatHidden;
-		[FieldOffset(0x877)] public ActorFlags Flags;
 
 		public const int GazeOffset = 0xC60;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
@@ -129,6 +128,23 @@ namespace Ktisis.Structs.Actor {
 			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.BattleNpc;
 			GameObject.EnableDraw();
 			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.Pc;
+		}
+		
+		// weapons
+
+		public unsafe Skeleton* GetWeaponSkeleton(WeaponSlot slot) {
+			var weapon = slot switch {
+				WeaponSlot.MainHand => DrawData.MainHand,
+				WeaponSlot.OffHand => DrawData.OffHand,
+				WeaponSlot.Prop => DrawData.Prop,
+				_ => throw new Exception("shit's fucked")
+			};
+
+			var model = weapon.Model;
+			if (model == null || (model->Flags & 9) == 0)
+				return null;
+
+			return weapon.Model->Skeleton;
 		}
 	}
 

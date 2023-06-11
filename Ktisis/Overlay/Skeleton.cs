@@ -85,7 +85,7 @@ namespace Ktisis.Overlay {
 				var partial = model->Skeleton->PartialSkeletons[p];
 				var pose = partial.GetHavokPose(0);
 				if (pose == null) continue;
-
+				
 				var camera = Services.Camera->GetActiveCamera();
 
 				var skeleton = pose->Skeleton;
@@ -230,7 +230,6 @@ namespace Ktisis.Overlay {
 				var children = model->GetChildren();
 				model = null;
 				foreach (var child in children) {
-					// I need to rewrite this plugin asap.
 					if (child == BoneSelect.Child)
 						model = (ActorModel*)child;
 				}

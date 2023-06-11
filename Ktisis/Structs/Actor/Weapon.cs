@@ -28,8 +28,16 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x50)] public Vector3 Position;
 		[FieldOffset(0x60)] public Quaternion Rotation;
 		[FieldOffset(0x70)] public Vector3 Scale;
+		
+		[FieldOffset(0x88)] public byte Flags;
 
 		[FieldOffset(0xA0)] public unsafe Skeleton* Skeleton;
+	}
+
+	public enum WeaponSlot {
+		MainHand = 0,
+		OffHand = 1,
+		Prop = 2
 	}
 
 	[Flags]

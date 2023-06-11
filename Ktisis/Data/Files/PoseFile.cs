@@ -15,6 +15,10 @@ namespace Ktisis.Data.Files {
 
 		public PoseContainer? Bones { get; set; }
 
+		public PoseContainer? MainHand { get; set; }
+		public PoseContainer? OffHand { get; set; }
+		public PoseContainer? Prop { get; set; }
+
 		// Legacy conversion
 
 		public void ConvertLegacyBones() {

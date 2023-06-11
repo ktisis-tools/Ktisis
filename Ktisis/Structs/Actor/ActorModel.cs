@@ -16,12 +16,14 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x060)] public Quaternion Rotation;
 		[FieldOffset(0x070)] public Vector3 Scale;
 
+		[FieldOffset(0x88)] public byte Flags;
+
 		[FieldOffset(0x0A0)] public unsafe Skeleton* Skeleton;
 		
 		[FieldOffset(0x0D0)] public Attach Attach;
-
+		
 		[FieldOffset(0x148)] public unsafe Breasts* Bust;
-
+		
 		[FieldOffset(0x274)] public float Height;
 
 		public unsafe void SyncModelSpace(bool refPose = false) {

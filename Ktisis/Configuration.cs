@@ -20,7 +20,7 @@ namespace Ktisis
 {
     [Serializable]
 	public class Configuration : IPluginConfiguration {
-		public const int CurVersion = 2;
+		public const int CurVersion = 3;
 		public int Version { get; set; } = CurVersion;
 
 		public bool IsFirstTimeInstall { get; set; } = true;
@@ -129,7 +129,7 @@ namespace Ktisis
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
 
 		public SaveModes CharaMode { get; set; } = SaveModes.All;
-		public PoseMode PoseMode { get; set; } = PoseMode.All;
+		public PoseMode PoseMode { get; set; } = PoseMode.BodyFace;
 		public PoseTransforms PoseTransforms { get; set; } = PoseTransforms.Rotation;
 
 		public bool EnableParenting { get; set; } = true;
@@ -163,6 +163,10 @@ namespace Ktisis
 			if (Version < 2) {
 				if (((int)PoseMode & 4) != 0)
 					PoseMode ^= (PoseMode)4;
+			}
+
+			if (Version < 3) {
+				PoseMode ^= PoseMode.Weapons;
 			}
 
 			Version = CurVersion;

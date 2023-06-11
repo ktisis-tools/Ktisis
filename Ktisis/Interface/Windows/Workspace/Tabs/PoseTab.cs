@@ -150,6 +150,11 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			ImGui.SameLine();
 			if (ImGui.Checkbox("Expression##ImportExportPose", ref face))
 				modes = modes.ToggleFlag(PoseMode.Face);
+			
+			var wep = modes.HasFlag(PoseMode.Weapons);
+			ImGui.SameLine();
+			if (ImGui.Checkbox("Weapons##ImportExportPose", ref wep))
+				modes = modes.ToggleFlag(PoseMode.Weapons);
 
 			Ktisis.Configuration.PoseMode = modes;
 
@@ -192,6 +197,23 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 								pose.Bones.ApplyToPartial(skeleton, p, trans);
 							}
 						}
+
+						if (modes.HasFlag(PoseMode.Weapons)) {
+							if (pose.MainHand != null) {
+								var skele = actor->GetWeaponSkeleton(WeaponSlot.MainHand);
+								if (skele != null) pose.MainHand.Apply(skele, trans);
+							}
+
+							if (pose.OffHand != null) {
+								var skele = actor->GetWeaponSkeleton(WeaponSlot.OffHand);
+								if (skele != null) pose.OffHand.Apply(skele, trans);
+							}
+
+							if (pose.Prop != null) {
+								var skele = actor->GetWeaponSkeleton(WeaponSlot.Prop);
+								if (skele != null) pose.Prop.Apply(skele, trans);
+							}
+						}
 					},
 					1,
 					null
@@ -222,6 +244,26 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 						pose.Bones = new PoseContainer();
 						pose.Bones.Store(skeleton);
+
+						if (modes.HasFlag(PoseMode.Weapons)) {
+							var main = actor->GetWeaponSkeleton(WeaponSlot.MainHand);
+							if (main != null) {
+								pose.MainHand = new PoseContainer();
+								pose.MainHand.Store(main);
+							}
+							
+							var off = actor->GetWeaponSkeleton(WeaponSlot.OffHand);
+							if (off != null) {
+								pose.OffHand = new PoseContainer();
+								pose.OffHand.Store(off);
+							}
+							
+							var prop = actor->GetWeaponSkeleton(WeaponSlot.Prop);
+							if (prop != null) {
+								pose.Prop = new PoseContainer();
+								pose.Prop.Store(prop);
+							}
+						}
 
 						var json = JsonParser.Serialize(pose);
 						using (var file = new StreamWriter(path))
