@@ -12,6 +12,7 @@ using Ktisis.Structs.Poses;
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
 using Ktisis.Interface.Components;
+using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class PoseTab {
@@ -189,6 +190,9 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 						if (skeleton == null) return;
 
 						pose.ConvertLegacyBones();
+						
+						// Ensure posing is enabled.
+						PoseHooks.EnablePosing();
 
 						if (pose.Bones != null) {
 							for (var p = 0; p < skeleton->PartialSkeletonCount; p++) {
