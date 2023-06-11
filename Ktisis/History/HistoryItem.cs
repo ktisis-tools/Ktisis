@@ -10,6 +10,8 @@ namespace Ktisis.History {
 		public abstract HistoryItem Clone();
 		public abstract void Update(bool undo);
 
+		public bool IsNoop = false;
+
 		public void AddToHistory() => HistoryManager.AddEntryToHistory(this);
 		
 		// Factory

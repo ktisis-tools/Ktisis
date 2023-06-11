@@ -1,4 +1,10 @@
-﻿using Ktisis.Camera;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+
+using Dalamud.Logging;
+
+using Ktisis.Camera;
 using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.History {
@@ -6,9 +12,10 @@ namespace Ktisis.History {
 		None,
 		CreateCamera,
 		CameraValue,
-		EditValue
+		EditValue,
+		FreecamValue
 	}
-	
+
 	public class CameraHistory : HistoryItem {
 		public CameraEvent Event;
 
@@ -16,7 +23,7 @@ namespace Ktisis.History {
 		public string? Property;
 		public object? StartValue;
 		public object? EndValue;
-		
+
 		// Factory
 
 		public CameraHistory(CameraEvent @event) => Event = @event;
@@ -35,13 +42,23 @@ namespace Ktisis.History {
 			StartValue = val;
 			return this;
 		}
-		
+
 		public CameraHistory SetEndValue(object? val) {
 			EndValue = val;
 			return this;
 		}
-		
-		// HistoryItem
+
+		internal CameraHistory ResolveStartValue(object? setTo = null) {
+			StartValue = setTo ?? GetValue();
+			return this;
+		}
+
+		internal CameraHistory ResolveEndValue(object? setTo = null) {
+			EndValue = setTo ?? GetValue();
+			return this;
+		}
+
+	// HistoryItem
 
 		public override HistoryItem Clone() {
 			var edit = new CameraHistory(Event);
@@ -51,17 +68,59 @@ namespace Ktisis.History {
 			return edit;
 		}
 		
+		// Values
+		
+		private object? GetValue() => GetField()?.GetValue(GetTargetObject());
+		private unsafe void SetValue(object val) {
+			if (!Subject.IsValid()) return;
+			
+			var target = GetTargetObject();
+			GetField()?.SetValue(target, val);
+			if (Event == CameraEvent.CameraValue)
+				*Subject.AsGPoseCamera() = (GPoseCamera)target;
+		}
+
+		private unsafe object GetTargetObject() => Event switch {
+			CameraEvent.CameraValue => *Subject.AsGPoseCamera(),
+			CameraEvent.EditValue => Subject.CameraEdit,
+			CameraEvent.FreecamValue => Subject.WorkCamera!,
+			_ => throw new Exception("Bad CameraEvent?")
+		};
+		
+		private unsafe FieldInfo? GetField() {
+			if (!Subject.IsValid()) return null;
+			return GetTargetObject()
+				.GetType()
+				.GetFields()
+				.FirstOrDefault(f => f?.Name == Property, null);
+		}
+
+		// Handlers
+		
 		public override void Update(bool undo) {
 			switch (Event) {
+				case CameraEvent.FreecamValue:
+					if (!Subject.IsValid() || Subject.WorkCamera == null) {
+						// No op - trigger next undo
+						IsNoop = true;
+						break;
+					}
+					goto vals;
+				case CameraEvent.CameraValue or CameraEvent.EditValue:
+					vals: HandleValues(undo);
+					break;
 				case CameraEvent.CreateCamera:
 					HandleCreate(undo);
 					break;
-				default:
-					break;
 			}
 		}
-		
-		// Handlers
+
+		private unsafe void HandleValues(bool undo) {
+			if (undo)
+				SetValue(StartValue!);
+			else
+				SetValue(EndValue!);
+		}
 
 		private unsafe void HandleCreate(bool undo) { // Camera creation
 			if (undo) {

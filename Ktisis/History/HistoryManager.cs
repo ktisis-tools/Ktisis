@@ -50,19 +50,20 @@ namespace Ktisis.History {
 		}
 
 		public static void Redo() {
-			if (!CanRedo)
+			if (!CanRedo || History == null)
 				return;
 			
 			_currentIdx++;
-			UpdateSkeleton(false);
+			if (UpdateItem(false).IsNoop) Redo();
 		}
 
 		public static void Undo() {
-			if (!CanUndo)
+			if (!CanUndo || History == null)
 				return;
 			
-			UpdateSkeleton(true);
+			var item = UpdateItem(true);
 			_currentIdx--;
+			if (item.IsNoop) Undo();
 		}
 
 		internal static void OnGPoseChange(bool isInGpose) {
@@ -112,8 +113,11 @@ namespace Ktisis.History {
 			
 		}
 
-		private static void UpdateSkeleton(bool undo) {
-			History![_currentIdx].Update(undo);
+		private static HistoryItem UpdateItem(bool undo) {
+			var item = History![_currentIdx];
+			item.IsNoop = false;
+			item.Update(undo);
+			return item;
 		}
 
 		private static void CreateNewTimeline() {

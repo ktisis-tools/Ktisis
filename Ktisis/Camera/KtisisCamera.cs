@@ -82,8 +82,8 @@ namespace Ktisis.Camera {
 		// IDisposable
 
 		public void Dispose() {
-			GC.SuppressFinalize(this);
 			Alloc?.Dispose();
+			WorkCamera = null;
 			_address = 0;
 		}
 	}

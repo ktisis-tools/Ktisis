@@ -1,9 +1,12 @@
+using System;
+using System.Linq;
 using System.Numerics;
 
 using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Logging;
 
 using Ktisis.Util;
 using Ktisis.Camera;
@@ -14,8 +17,66 @@ using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class CameraTab {
-		private static TransformTable Transform = new(); // this needs a rework.
+		// History
+		
+		private static bool IsItemActive;
+		private static bool IsTransTable;
+		private static CameraHistory? HistoryRecord;
 
+		private unsafe static object? GetValue(KtisisCamera camera, CameraEvent @event, string name) {
+			if (!camera.IsValid()) return null;
+			
+			object item = @event switch {
+				CameraEvent.CameraValue => *camera.AsGPoseCamera(),
+				CameraEvent.EditValue => camera.CameraEdit,
+				_ => throw new Exception("Bad CameraEvent?")
+			};
+
+			var field = item.GetType().GetFields().FirstOrDefault(f => f?.Name == name, null);
+			return field?.GetValue(item);
+		}
+
+		private static void RecordEdit(CameraEvent @event, string name, bool transTable = false, object? initVal = null) {
+			var isEdited = transTable ? Transform.IsEdited : ImGui.IsItemDeactivatedAfterEdit();
+			var isActive = transTable ? Transform.IsActive : ImGui.IsItemActivated();
+
+			if (isEdited) {
+				var history = HistoryRecord;
+				HistoryRecord = null;
+				
+				IsItemActive = false;
+				var camera = CameraService.GetActiveCamera();
+				if (camera == null || history == null || history.Property != name) return;
+				
+				history.ResolveEndValue().AddToHistory();
+			} else if (isActive && !IsItemActive) {
+				var camera = CameraService.GetActiveCamera();
+				if (camera == null) return;
+				
+				IsItemActive = true;
+				HistoryRecord = HistoryItem.CreateCamera(@event)
+					.SetSubject(camera)
+					.SetProperty(name)
+					.ResolveStartValue(initVal);
+			}
+		}
+
+		private static void RecordEditImmediate(CameraEvent @event, string name, object? newVal) {
+			var camera = CameraService.GetActiveCamera();
+			if (camera == null) return;
+			
+			HistoryItem.CreateCamera(@event)
+				.SetSubject(camera)
+				.SetProperty(name)
+				.ResolveStartValue()
+				.SetEndValue(newVal)
+				.AddToHistory();
+		}
+
+		// UI Code
+		
+		private static TransformTable Transform = new(); // this needs a rework.
+		
 		public static void Draw() {
 			ImGui.Spacing();
 			
@@ -68,9 +129,10 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 					CameraService.SetOverride(camera);
 
 					// Handle this here for cameras explicitly created by the user.
-					HistoryItem.CreateCamera(CameraEvent.CreateCamera)
+					// Disabling this for now, not sure how good it is for UX.
+					/*HistoryItem.CreateCamera(CameraEvent.CreateCamera)
 						.SetSubject(camera)
-						.AddToHistory();
+						.AddToHistory();*/
 				});
 			}
 			
@@ -98,16 +160,20 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			
 			var icon = isTarLocked ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
 			var tooltip = isTarLocked ? "Unlock orbit target" : "Lock orbit target";
-			if (GuiHelpers.IconButtonTooltip(icon, tooltip, default, "CamOrbitLock"))
-				camera.SetOrbit(isTarLocked ? null : target->GameObject.ObjectIndex);
+			if (GuiHelpers.IconButtonTooltip(icon, tooltip, default, "CamOrbitLock")) {
+				ushort? newVal = isTarLocked ? null : target->GameObject.ObjectIndex;
+				RecordEditImmediate(CameraEvent.EditValue, "Orbit", newVal);
+				camera.SetOrbit(newVal);
+			}
 
 			ImGui.SameLine();
-
+			
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, "Move camera to target model")) {
 				var goPos = target->GameObject.Position;
 				if (target->Model != null) {
 					var doPos = target->Model->Position;
 					var offset = doPos - (Vector3)goPos;
+					RecordEditImmediate(CameraEvent.EditValue, "Offset", offset);
 					camera.SetOffset(offset);
 				}
 			}
@@ -140,8 +206,11 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			ImGui.BeginDisabled(isFreecam);
 			var lockIcon = isLocked ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
 			var lockTooltip = isLocked ? "Unlock camera position" : "Lock camera position";
-			if (GuiHelpers.IconButtonTooltip(lockIcon, lockTooltip, default, "CamPosLock"))
-				camera.SetPositionLock(isLocked ? null : pos - offset);
+			if (GuiHelpers.IconButtonTooltip(lockIcon, lockTooltip, default, "CamPosLock")) {
+				Vector3? newVal = isLocked ? null : pos - offset;
+				RecordEditImmediate(CameraEvent.EditValue, "Position", newVal);
+				camera.SetPositionLock(newVal);
+			}
 			ImGui.EndDisabled();
 
 			ImGui.SameLine();
@@ -156,6 +225,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 					camera.SetPositionLock(pos - offset);
 				}
 			}
+			RecordEdit(isFreecam ? CameraEvent.FreecamValue : CameraEvent.EditValue, "Position", true);
 			ImGui.EndDisabled();
 			
 			ImGui.BeginDisabled(isFreecam); // Below controls disabled under freecam.
@@ -169,6 +239,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			ImGui.SetCursorPosX(posCursor);
 			if (Transform.ColoredDragFloat3("##CamOffset", ref offset, 0.005f))
 				camera.SetOffset(offset != Vector3.Zero ? offset : null);
+			RecordEdit(CameraEvent.EditValue, "Offset", true);
 
 			// Angle
 
@@ -179,7 +250,8 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var angle = gposeCam->Angle * MathHelpers.Rad2Deg;
 			if (Transform.DragFloat2("CameraAngle", ref angle, Ktisis.Configuration.TransformTableBaseSpeedRot))
 				gposeCam->Angle = angle * MathHelpers.Deg2Rad;
-			
+			RecordEdit(CameraEvent.CameraValue, "Angle", true);
+
 			// Pan
 
 			ImGui.Spacing();
@@ -188,6 +260,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var pan = gposeCam->Pan * MathHelpers.Rad2Deg;
 			if (Transform.DragFloat2("CameraPan", ref pan, Ktisis.Configuration.TransformTableBaseSpeedRot))
 				gposeCam->Pan = pan * MathHelpers.Deg2Rad;
+			RecordEdit(CameraEvent.CameraValue, "Pan", true);
 
 			ImGui.EndDisabled(); // Above controls disabled under freecam.
 			
@@ -199,17 +272,23 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			ImGui.BeginDisabled(isFreecam);
 			PrepareIconTooltip(FontAwesomeIcon.CameraRotate, "Camera rotation", posCursor);
 			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			var initRot = gposeCam->Rotation * 1f;
 			ImGui.SliderAngle("##CamRotato", ref gposeCam->Rotation, -180, 180, "%.3f", ImGuiSliderFlags.AlwaysClamp);
+			RecordEdit(CameraEvent.CameraValue, "Rotation", false, initRot);
 			ImGui.EndDisabled();
 
 			PrepareIconTooltip(FontAwesomeIcon.VectorSquare, "Field of View", posCursor);
 			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			var initFov = gposeCam->FoV * 1f;
 			ImGui.SliderAngle("##CamFoV", ref gposeCam->FoV, -40, 100, "%.3f", ImGuiSliderFlags.AlwaysClamp);
+			RecordEdit(CameraEvent.CameraValue, "FoV", false, initFov);
 
 			ImGui.BeginDisabled(isLocked);
 			PrepareIconTooltip(FontAwesomeIcon.Moon, "Camera distance", posCursor);
 			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			var initDist = gposeCam->Distance * 1f;
 			ImGui.SliderFloat("##CamDist", ref gposeCam->Distance, 0, gposeCam->DistanceMax);
+			RecordEdit(CameraEvent.CameraValue, "Distance", false, initDist);
 			ImGui.EndDisabled();
 		}
 

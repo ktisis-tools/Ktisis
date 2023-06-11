@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
 using ImGuizmoNET;
@@ -9,13 +9,13 @@ using Dalamud.Interface;
 
 using FFXIVClientStructs.Havok;
 
+using Ktisis.Util;
 using Ktisis.Events;
 using Ktisis.Helpers;
 using Ktisis.Overlay;
 using Ktisis.Structs;
-using Ktisis.Structs.Bones;
-using Ktisis.Util;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Bones;
 
 namespace Ktisis.Interface.Components {
 	// Thanks to Emyka for the original code:
@@ -24,6 +24,7 @@ namespace Ktisis.Interface.Components {
 	public class TransformTable {
 		public bool IsEditing = false;
 		public bool IsActive = false;
+		public bool IsEdited = false; // auhfghjjfduuhghuughhhj
 
 		private float BaseSpeedPos;
 		private float BaseSpeedRot;
@@ -171,15 +172,22 @@ namespace Ktisis.Interface.Components {
 
 			var result = false;
 			anyActive = false;
+
+			IsEdited = false;
 			
 			result |= ColoredDragFloat(label + "X", ref value.X, speed, colors[0], out var active, borderSize);
 			anyActive |= active;
+			IsEdited |= ImGui.IsItemDeactivatedAfterEdit();
 			ImGui.SameLine();
 			result |= ColoredDragFloat(label + "Y", ref value.Y, speed, colors[1], out active, borderSize);
 			anyActive |= active;
+			IsEdited |= ImGui.IsItemDeactivatedAfterEdit();
 			ImGui.SameLine();
 			result |= ColoredDragFloat(label + "Z", ref value.Z, speed, colors[2], out active, borderSize);
 			anyActive |= active;
+			IsEdited |= ImGui.IsItemDeactivatedAfterEdit();
+
+			IsActive = anyActive;
 
 			return result;
 		}
@@ -189,11 +197,15 @@ namespace Ktisis.Interface.Components {
 				return false;
 			}
 
-			var result = false;
-			result |= ColoredDragFloat($"##{id}_X", ref value.X, speed, colors[0], out _, borderSize, showXY ? "X:  " : "");
-			ImGui.SameLine();
-			result |= ColoredDragFloat($"##{id}_Y", ref value.Y, speed, colors[1], out _, borderSize, showXY ? "Y:  " : "");
+			IsActive = false;
+			IsEdited = false;
 
+			var result = false;
+			result |= ColoredDragFloat($"##{id}_X", ref value.X, speed, colors[0], out var active, borderSize, showXY ? "X:  " : "");
+			IsActive |= active;
+			ImGui.SameLine();
+			result |= ColoredDragFloat($"##{id}_Y", ref value.Y, speed, colors[1], out active, borderSize, showXY ? "Y:  " : "");
+			IsActive |= active;
 			return result;
 		}
 
@@ -201,6 +213,7 @@ namespace Ktisis.Interface.Components {
 			ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, borderSize);
 			ImGui.PushStyleColor(ImGuiCol.Border, color);
 			var result = ImGui.DragFloat(label, ref value, speed, 0, 0, $"{prefix}{DigitPrecision}");
+			IsEdited |= ImGui.IsItemDeactivatedAfterEdit();
 			ImGui.PopStyleColor();
 			ImGui.PopStyleVar();
 			active = ImGui.IsItemActive();
