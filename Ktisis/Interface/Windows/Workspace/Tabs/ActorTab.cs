@@ -1,8 +1,8 @@
 using System.IO;
 
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
+using Dalamud.Game.ClientState.Objects.Types;
 
 using ImGuiNET;
 

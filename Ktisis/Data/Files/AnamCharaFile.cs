@@ -4,9 +4,10 @@ using System.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
 
 using Ktisis.Structs.Actor;
+using Ktisis.Data.Serialization.Converters;
 
 namespace Ktisis.Data.Files {
-	public class AnamCharaFile {
+	public class AnamCharaFile : JsonFile {
 		// https://github.com/imchillin/Anamnesis/blob/master/Anamnesis/Files/CharacterFile.cs
 
 		[Flags]
@@ -27,8 +28,13 @@ namespace Ktisis.Data.Files {
 			All = EquipmentGear | EquipmentAccessories | EquipmentWeapons | AppearanceHair | AppearanceFace | AppearanceBody
 		}
 
-		public string FileExtension => ".chara";
-		public string TypeName => "Ktisis/Anamnesis Character File";
+		public new string FileExtension { get; set; } = ".chara";
+		public new string TypeName { get; set; } = "Ktisis/Anamnesis Character File";
+		
+		public const int CurrentVersion = 1;
+		
+		[DeserializerDefault(1)] // Assume 1 if not present.
+		public new int Version { get; set; } = CurrentVersion;
 
 		public SaveModes SaveMode { get; set; } = SaveModes.All;
 
