@@ -98,6 +98,17 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 				CameraService.SetTargetLock(addr, isTarLocked ? null : target->GameObject.ObjectIndex);
 
 			ImGui.SameLine();
+
+			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, "Move camera to target model")) {
+				var goPos = target->GameObject.Position;
+				if (target->Model != null) {
+					var doPos = target->Model->Position;
+					var offset = doPos - (Vector3)goPos;
+					CameraService.SetOffset(addr, offset);
+				}
+			}
+
+			ImGui.SameLine();
 			ImGui.BeginDisabled(!isTarLocked);
 			ImGui.Text(!freeActive ? $"Orbiting: {target->GetNameOrId()}" : "Work camera enabled.");
 			ImGui.EndDisabled();
