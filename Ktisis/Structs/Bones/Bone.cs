@@ -42,7 +42,9 @@ namespace Ktisis.Structs.Bones {
 		public string UniqueId => $"{PoseAddress:X}_{Partial}_{Index}";
 		public string UniqueName => $"{LocaleName}##{UniqueId}";
 
-		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String);
+		// stupid hack until this gets rewritten
+		internal List<Category>? _setCategory = null;
+		public List<Category> Categories => _setCategory ?? Category.GetForBone(HkaBone.Name.String);
 
 		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate = PropagateOrNot.DontPropagate) => Pose->AccessBoneModelSpace(Index, propagate);
 		public unsafe hkQsTransformf* AccessLocalSpace() => Pose->AccessBoneLocalSpace(Index);

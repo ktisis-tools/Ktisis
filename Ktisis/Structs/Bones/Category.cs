@@ -60,6 +60,9 @@ namespace Ktisis.Structs.Bones {
 			return categories;
 		}
 
+		public static Category? GetByName(string name)
+			=> _Categories.GetValueOrDefault(name, null);
+
 		public static string RemoveSpecialCharacters(string str) {
 			char[] buffer = new char[str.Length];
 			int index = 0;

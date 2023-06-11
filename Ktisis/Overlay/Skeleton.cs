@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 using ImGuiNET;
@@ -58,12 +59,18 @@ namespace Ktisis.Overlay {
 			// Draw children (weapons, props)
 			// This iterates a linked list of child objects.
 
-			var children = model->GetChildren();
-			foreach (var ptr in children)
-				DrawModelSkeleton((ActorModel*)ptr, model);
+			var wepCategory = Category.GetByName("weapons");
+			if (wepCategory != null && Ktisis.Configuration.IsBoneCategoryVisible(wepCategory)) {
+				var setCategory = new List<Category> {wepCategory};
+				var children = model->GetChildren();
+				foreach (var ptr in children)
+					DrawModelSkeleton((ActorModel*)ptr, model, setCategory);
+			}
 		}
 		
-		public unsafe static void DrawModelSkeleton(ActorModel* model, ActorModel* parentModel = null) {
+		public unsafe static void DrawModelSkeleton(ActorModel* model, ActorModel* parentModel = null, List<Category> _setCategory = null) {
+			if (model->Skeleton == null) return;
+			
 			// Fetch actor, model & skeleton
 
 			var world = OverlayWindow.WorldMatrix;
@@ -91,6 +98,7 @@ namespace Ktisis.Overlay {
 				var skeleton = pose->Skeleton;
 				for (var i = 1; i < skeleton->Bones.Length; i++) {
 					var bone = model->Skeleton->GetBone(p, i, parentModel != null);
+					if (_setCategory != null) bone._setCategory = _setCategory;
 
 					if (!Ktisis.Configuration.IsBoneVisible(bone))
 						continue; // Bone is hidden, move onto the next one.
@@ -120,6 +128,7 @@ namespace Ktisis.Overlay {
 						// TODO: Draw lines for parents of partials.
 
 						var parent = model->Skeleton->GetBone(p, parentId);
+						if (_setCategory != null) parent._setCategory = _setCategory;
 						if (Ktisis.Configuration.IsBoneVisible(parent)) {
 							var pWorldPos = parent.GetWorldPos(model, parentModel);
 							var dist = (
