@@ -144,7 +144,7 @@ namespace Ktisis.Overlay {
 
 					// Create selectable item
 					// TODO: Hide when moving gizmo?
-					if (!IsBoneSelected(bone) && !(boneName == "j_ago" && p == 0)) {
+					if (isVisible && !IsBoneSelected(bone) && !(boneName == "j_ago" && p == 0)) {
 						var item = Selection.AddItem(uniqueName, pos2d, boneColor);
 						if (item.IsClicked()) {
 							BoneSelect.Update = true;
@@ -220,8 +220,8 @@ namespace Ktisis.Overlay {
 					Interop.Alloc.SetMatrix(&model->Transform, matrix);
 				}
 			} else {
-				world->WorldToScreenDepth(model->Position, out var pos2d);
-				if (Selection.AddItem(actorName, pos2d).IsClicked())
+				var isVisible = world->WorldToScreenDepth(model->Position, out var pos2d);
+				if (isVisible && Selection.AddItem(actorName, pos2d).IsClicked())
 					OverlayWindow.SetGizmoOwner(actorName);
 			}
 		}
