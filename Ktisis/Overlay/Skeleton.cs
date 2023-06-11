@@ -63,8 +63,11 @@ namespace Ktisis.Overlay {
 			if (wepCategory != null && Ktisis.Configuration.IsBoneCategoryVisible(wepCategory)) {
 				var setCategory = new List<Category> {wepCategory};
 				var children = model->GetChildren();
-				foreach (var ptr in children)
-					DrawModelSkeleton((ActorModel*)ptr, model, setCategory);
+				foreach (var ptr in children) {
+					var child = (ActorModel*)ptr;
+					if ((child->Flags & 9) == 0) continue;
+					DrawModelSkeleton(child, model, setCategory);
+				}
 			}
 		}
 		
