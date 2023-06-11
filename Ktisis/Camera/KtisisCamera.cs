@@ -26,7 +26,7 @@ namespace Ktisis.Camera {
 		
 		private readonly GameAlloc<GameCamera>? Alloc;
 		
-		private nint _address = 0;
+		private nint _address;
 		public nint Address => IsNative ? _address : (Alloc?.Address ?? 0);
 		
 		public unsafe GameCamera* GameCamera => (GameCamera*)Address;
@@ -83,8 +83,8 @@ namespace Ktisis.Camera {
 
 		public void Dispose() {
 			GC.SuppressFinalize(this);
-			
 			Alloc?.Dispose();
+			_address = 0;
 		}
 	}
 	

@@ -1,6 +1,4 @@
-﻿using Dalamud.Logging;
-
-using Ktisis.Camera;
+﻿using Ktisis.Camera;
 using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.History {
@@ -13,15 +11,19 @@ namespace Ktisis.History {
 	
 	public class CameraHistory : HistoryItem {
 		public CameraEvent Event;
-		
+
+		public KtisisCamera Subject;
 		public string? Property;
 		public object? StartValue;
 		public object? EndValue;
 		
 		// Factory
 
-		public CameraHistory(CameraEvent @event) {
-			Event = @event;
+		public CameraHistory(CameraEvent @event) => Event = @event;
+
+		public CameraHistory SetSubject(KtisisCamera subject) {
+			Subject = subject;
+			return this;
 		}
 
 		public CameraHistory SetProperty(string prop) {
@@ -50,7 +52,6 @@ namespace Ktisis.History {
 		}
 		
 		public override void Update(bool undo) {
-			PluginLog.Information($"Attempting remove {Event}");
 			switch (Event) {
 				case CameraEvent.CreateCamera:
 					HandleCreate(undo);
@@ -63,30 +64,31 @@ namespace Ktisis.History {
 		// Handlers
 
 		private unsafe void HandleCreate(bool undo) { // Camera creation
-			if (Property == null) return;
-			
 			if (undo) {
-				var cam = CameraService.GetCameraByName(Property);
-				if (cam == null) return;
-				
-				var ptr = cam.AsGPoseCamera();
+				if (!CameraService.GetCameraList().Contains(Subject))
+					return;
+
+				var ptr = Subject.AsGPoseCamera();
 				if (ptr != null) SetEndValue(*ptr);
 				
-				if (StartValue is nint addr && CameraService.GetCameraByAddress(addr) is KtisisCamera revertTo)
-					CameraService.SetOverride(revertTo.Address);
+				var revertTo = CameraService.GetCameraByAddress(Subject.ClonedFrom);
+				if (revertTo != null)
+					CameraService.SetOverride(revertTo);
 				else
 					CameraService.Reset();
-				
-				CameraService.RemoveCamera(cam);
+
+				CameraService.RemoveCamera(Subject);
 			} else {
 				var cam = CameraService.SpawnCamera();
-				var ptr = cam.AsGPoseCamera();
-				if (ptr != null && EndValue != null)
-					*ptr = (GPoseCamera)EndValue;
-				var active = Services.Camera->GetActiveCamera();
-				if (active != null) SetStartValue((nint)active);
-				CameraService.SetOverride(cam.Address);
-				SetEndValue(null);
+				cam.CameraEdit = Subject.CameraEdit;
+
+				var ptr = cam.AsGPoseCamera(); 
+				if (ptr != null && EndValue is GPoseCamera values)
+					*ptr = values;
+
+				CameraService.SetOverride(cam);
+				
+				SetSubject(cam);
 			}
 		}
 	}

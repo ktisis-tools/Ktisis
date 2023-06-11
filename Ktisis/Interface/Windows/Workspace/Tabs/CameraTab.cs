@@ -69,8 +69,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 					// Handle this here for cameras explicitly created by the user.
 					HistoryItem.CreateCamera(CameraEvent.CreateCamera)
-						.SetSubject(camera.Name)
-						.SetStartValue(camera.Address)
+						.SetSubject(camera)
 						.AddToHistory();
 				});
 			}

@@ -1,22 +1,18 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Keys;
-using Dalamud.Logging;
 
 using Ktisis.Events;
 using Ktisis.Overlay;
 using Ktisis.Structs.Input;
 using Ktisis.Interop.Hooks;
-using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.History {
 	public static class HistoryManager {
 		public static List<HistoryItem>? History { get; set; }
 		private static int _currentIdx = -1;
 		private static bool _currentState;
-		private static int _alternativeTimelinesCreated = 0;
 
 		public static bool CanRedo => History != null && _currentIdx < History.Count - 1;
 		public static bool CanUndo => _currentIdx > -1;
@@ -59,8 +55,6 @@ namespace Ktisis.History {
 			
 			_currentIdx++;
 			UpdateSkeleton(false);
-
-			PluginLog.Information($"Redo: Now on {_currentIdx}");
 		}
 
 		public static void Undo() {
@@ -69,8 +63,6 @@ namespace Ktisis.History {
 			
 			UpdateSkeleton(true);
 			_currentIdx--;
-			
-			PluginLog.Information($"Undo: Now on {_currentIdx}");
 		}
 
 		internal static void OnGPoseChange(bool isInGpose) {
@@ -121,13 +113,12 @@ namespace Ktisis.History {
 		}
 
 		private static void UpdateSkeleton(bool undo) {
-			PluginLog.Information($"{undo} {_currentIdx}");
 			History![_currentIdx].Update(undo);
 		}
 
 		private static void CreateNewTimeline() {
 			if (History is null) return;
-			History = History.GetRange(0, _currentIdx).Select(e => e.Clone()).ToList();
+			History = History.GetRange(0, _currentIdx).ToList();
 		}
 	}
 }

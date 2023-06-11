@@ -40,9 +40,6 @@ namespace Ktisis.Camera {
 		internal static KtisisCamera? GetCameraByAddress(nint addr)
 			=> Cameras.FirstOrDefault(cam => cam?.Address == addr, null);
 
-		internal static KtisisCamera? GetCameraByName(string name)
-			=> Cameras.FirstOrDefault(cam => cam?.Name == name, null);
-		
 		internal static ReadOnlyCollection<KtisisCamera> GetCameraList()
 			=> Cameras.AsReadOnly();
 
@@ -61,7 +58,8 @@ namespace Ktisis.Camera {
 			return camera;
 		}
 
-		internal static void RemoveCamera(KtisisCamera cam) {
+		internal unsafe static void RemoveCamera(KtisisCamera cam) {
+			if (Override == cam.GameCamera) Override = null;
 			Cameras.Remove(cam);
 			cam.Dispose();
 		}
@@ -100,8 +98,7 @@ namespace Ktisis.Camera {
 
 		internal unsafe static void ToggleFreecam() {
 			var active = GetActiveCamera();
-			if (active?.WorkCamera is WorkCamera freecam) {
-				Override = null;
+			if (active?.WorkCamera is WorkCamera) {
 				RemoveCamera(active);
 				if (GetCameraByAddress(active.ClonedFrom) is KtisisCamera clonedFrom && clonedFrom.GameCamera != null)
 					SetOverride(clonedFrom);
@@ -125,9 +122,15 @@ namespace Ktisis.Camera {
 			}
 		}
 
+		private static void CheckFreecam(KtisisCamera? other = null) {
+			if (GetFreecam() is KtisisCamera freecam && freecam != other)
+				RemoveCamera(freecam);
+		}
+
 		// CameraManager wrappers
 
 		internal unsafe static void Reset() {
+			CheckFreecam();
 			Override = null;
 			SetCamera(Services.Camera->Camera);
 		}
@@ -141,6 +144,13 @@ namespace Ktisis.Camera {
 		// Overrides
 		
 		internal unsafe static void SetOverride(KtisisCamera camera) {
+			CheckFreecam(camera);
+			
+			if (camera.IsNative || !camera.IsValid()) {
+				Reset();
+				return;
+			}
+			
 			Override = camera.GameCamera;
 			if (Override != null) SetCamera(Override);
 		}
