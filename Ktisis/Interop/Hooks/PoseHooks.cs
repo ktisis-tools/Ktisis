@@ -10,14 +10,13 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
-using Dalamud.Logging;
 
 namespace Ktisis.Interop.Hooks {
 	public static class PoseHooks {
-		internal delegate ulong SetBoneModelSpaceFfxivDelegate(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate);
+		internal delegate ulong SetBoneModelSpaceFfxivDelegate(nint partialSkeleton, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate);
 		internal static Hook<SetBoneModelSpaceFfxivDelegate> SetBoneModelSpaceFfxivHook = null!;
 
-		internal delegate IntPtr CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
+		internal delegate nint CalculateBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
 		internal static Hook<CalculateBoneModelSpaceDelegate> CalculateBoneModelSpaceHook = null!;
 
 		internal unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
@@ -32,10 +31,10 @@ namespace Ktisis.Interop.Hooks {
 		internal unsafe delegate void UpdatePosDelegate(Actor* a1);
 		internal static Hook<UpdatePosDelegate> UpdatePosHook = null!;
 
-		internal unsafe delegate char SetSkeletonDelegate(Skeleton* a1, ushort a2, IntPtr a3);
+		internal unsafe delegate char SetSkeletonDelegate(Skeleton* a1, ushort a2, nint a3);
 		internal static Hook<SetSkeletonDelegate> SetSkeletonHook = null!;
 
-		internal unsafe delegate IntPtr BustDelegate(ActorModel* a1, Breasts* a2);
+		internal unsafe delegate nint BustDelegate(ActorModel* a1, Breasts* a2);
 		internal static Hook<BustDelegate> BustHook = null!;
 
 		internal static bool PosingEnabled { get; private set; }
@@ -106,19 +105,19 @@ namespace Ktisis.Interop.Hooks {
 			return PosingEnabled;
 		}
 
-		private static ulong SetBoneModelSpaceFfxivDetour(IntPtr partialSkeleton, ushort boneId, IntPtr transform, bool enableSecondary, bool enablePropagate) {
+		private static ulong SetBoneModelSpaceFfxivDetour(nint partialSkeleton, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate) {
 			if (AnamPosingEnabled)
 				return SetBoneModelSpaceFfxivHook.Original(partialSkeleton, boneId, transform, enableSecondary, enablePropagate);
 
 			return boneId;
 		}
 
-		private static unsafe IntPtr CalculateBoneModelSpaceDetour(ref hkaPose pose, int boneIdx) {
+		private static unsafe nint CalculateBoneModelSpaceDetour(ref hkaPose pose, int boneIdx) {
 			if (AnamPosingEnabled)
 				return CalculateBoneModelSpaceHook.Original(ref pose, boneIdx);
 
 			// This is expected to return the hkQsTransform at the given index in the pose's ModelSpace transform array.
-			return (IntPtr)(pose.ModelPose.Data + boneIdx);
+			return (nint)(pose.ModelPose.Data + boneIdx);
 		}
 
 		private static unsafe void SyncModelSpaceDetour(hkaPose* pose) {
@@ -137,7 +136,7 @@ namespace Ktisis.Interop.Hooks {
 
 		}
 
-		private static unsafe char SetSkeletonDetour(Skeleton* a1, ushort a2, IntPtr a3) {
+		private static unsafe char SetSkeletonDetour(Skeleton* a1, ushort a2, nint a3) {
 			var exec = SetSkeletonHook.Original(a1, a2, a3);
 			if (!PosingEnabled && !AnamPosingEnabled) return exec;
 
@@ -146,7 +145,7 @@ namespace Ktisis.Interop.Hooks {
 				var pose = partial.GetHavokPose(0);
 				if (pose == null) return exec;
 
-				if (a3 == IntPtr.Zero) {
+				if (a3 == nint.Zero) {
 					if (a2 == 0) {
 						// TODO: Any way to do this without iterating the object table?
 						foreach (var obj in Services.ObjectTable) {
@@ -196,21 +195,21 @@ namespace Ktisis.Interop.Hooks {
 			return exec;
 		}
 
-		internal unsafe static IntPtr BustDetour(ActorModel* a1, Breasts* a2) {
+		private unsafe static nint BustDetour(ActorModel* a1, Breasts* a2) {
 			var exec = BustHook.Original(a1, a2);
 			a1->ScaleBust(true);
 			return exec;
 		}
 
-		public unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {
-			return (byte*)IntPtr.Zero;
+		private unsafe static byte* LookAtIKDetour(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6) {
+			return (byte*)nint.Zero;
 		}
 
-		public unsafe static byte AnimFrozenDetour(uint* a1, int a2) {
+		private unsafe static byte AnimFrozenDetour(uint* a1, int a2) {
 			return 1;
 		}
 
-		public static unsafe void SyncBone(hkaPose* bonesPose, int index) {
+		private static unsafe void SyncBone(hkaPose* bonesPose, int index) {
 			CalculateBoneModelSpaceHook.Original(ref *bonesPose, index);
 		}
 

@@ -140,6 +140,16 @@ namespace Ktisis
 		public bool ShowToolbar { get; set; } = false;
 
 		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
+		
+		// Camera
+
+		public float FreecamMoveSpeed { get; set; } = 0.1f;
+		
+		public float FreecamShiftMuli { get; set; } = 2.5f;
+		public float FreecamCtrlMuli { get; set; } = 0.25f;
+		public float FreecamUpDownMuli { get; set; } = 1f;
+
+		public float FreecamSensitivity { get; set; } = 0.215f;
 
 		// Data memory
 		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;

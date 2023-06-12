@@ -18,7 +18,7 @@ namespace Ktisis.Camera {
 		private Vector3 UpVector = new(0f, 1f, 0f);
 
 		private const float ClampY = 1.57072f;
-		private const float DefaultSpeed = 0.1f;
+		private static float DefaultSpeed => Ktisis.Configuration.FreecamMoveSpeed;
 		private float MoveSpeed = DefaultSpeed;
 
 		private Vector3 Velocity;
@@ -41,7 +41,7 @@ namespace Ktisis.Camera {
 			var delta = (float)(now - LastTime).TotalMilliseconds;
 			LastTime = now;
 
-			MouseDelta = (MouseDelta * fov * 0.215f) * MathHelpers.Deg2Rad;
+			MouseDelta = (MouseDelta * fov * Ktisis.Configuration.FreecamSensitivity) * MathHelpers.Deg2Rad;
 			Rotation.X -= MouseDelta.X;
 			Rotation.Y = Math.Max(Math.Min(Rotation.Y + MouseDelta.Y, ClampY), -ClampY);
 			Rotation.Z = 1;
@@ -65,9 +65,9 @@ namespace Ktisis.Camera {
 			MoveSpeed = DefaultSpeed;
 			if (keyState != null) {
 				if (keyState->IsKeyDown(VirtualKey.SHIFT, true))
-					MoveSpeed *= 3f;
+					MoveSpeed *= Ktisis.Configuration.FreecamShiftMuli;
 				else if (keyState->IsKeyDown(VirtualKey.CONTROL, true))
-					MoveSpeed /= 3f;
+					MoveSpeed *= Ktisis.Configuration.FreecamCtrlMuli;
 				
 				var vFwb = 0;
 				var bothHeld = rightHeld && mouseState->IsButtonHeld(MouseButton.Left);
@@ -82,7 +82,7 @@ namespace Ktisis.Camera {
 				Velocity.Y = vFwb * (float)Math.Sin(Rotation.Y);
 				Velocity.Z = vFwb * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y) + (-vLr * (float)Math.Sin(Rotation.X));
 				
-				if (keyState->IsKeyDown(VirtualKey.SPACE, true)) Velocity.Y += 0.75f;
+				if (keyState->IsKeyDown(VirtualKey.SPACE, true)) Velocity.Y += Ktisis.Configuration.FreecamUpDownMuli;
 			}
 		}
 

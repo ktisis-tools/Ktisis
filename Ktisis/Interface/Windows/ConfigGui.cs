@@ -72,6 +72,8 @@ namespace Ktisis.Interface.Windows {
 						DrawGizmoTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Input")))
 						DrawInputTab(cfg);
+					if (ImGui.BeginTabItem(Locale.GetString("Camera")))
+						DrawCameraTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("References")))
 						DrawReferencesTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Language")))
@@ -395,6 +397,43 @@ namespace Ktisis.Interface.Windows {
 		}
 		private static string PrettyKeys(List<VirtualKey>  keys) => string.Join(" + ", keys.Select(k => VirtualKeyExtensions.GetFancyName(k)));
 
+		// Camera
+
+		private static void DrawCameraTab(Configuration cfg) {
+			ImGui.Spacing();
+
+			ImGui.Text("Work Camera");
+			ImGui.PushItemWidth(ImGui.GetFontSize() * 4);
+
+			var baseSpeed = cfg.FreecamMoveSpeed;
+			if (ImGui.DragFloat("Base move speed", ref baseSpeed, 0.001f, 0, 1))
+				cfg.FreecamMoveSpeed = baseSpeed;
+
+			var shiftMuli = cfg.FreecamShiftMuli;
+			if (ImGui.DragFloat(Locale.GetString("Shift_speed_multiplier"), ref shiftMuli, 0.001f, 0, 10))
+				cfg.FreecamShiftMuli = shiftMuli;
+			
+			var ctrlMuli = cfg.FreecamCtrlMuli;
+			if (ImGui.DragFloat(Locale.GetString("Ctrl_speed_multiplier"), ref ctrlMuli, 0.001f, 0, 10))
+				cfg.FreecamCtrlMuli = ctrlMuli;
+			
+			var upDownMuli = cfg.FreecamUpDownMuli;
+			if (ImGui.DragFloat("Up/down speed multiplier", ref upDownMuli, 0.001f, 0, 10))
+				cfg.FreecamUpDownMuli = upDownMuli;
+
+			ImGui.Spacing();
+
+			var camSens = cfg.FreecamSensitivity;
+			if (ImGui.DragFloat("Camera sensitivity", ref camSens, 0.001f, 0, 8))
+				cfg.FreecamSensitivity = camSens;
+			
+			ImGui.PopItemWidth();
+			
+			ImGui.EndTabItem();
+		}
+		
+		// Data
+		
 		public static void DrawDataTab(Configuration cfg) {
 			ImGui.Spacing();
 			var validGlamPlatesFound = GlamourDresser.CountValid();
