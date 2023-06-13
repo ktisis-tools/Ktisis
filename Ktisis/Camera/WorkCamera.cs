@@ -42,7 +42,6 @@ namespace Ktisis.Camera {
 			MouseDelta = (MouseDelta * fov * Ktisis.Configuration.FreecamSensitivity) * MathHelpers.Deg2Rad;
 			Rotation.X -= MouseDelta.X;
 			Rotation.Y = Math.Max(Math.Min(Rotation.Y + MouseDelta.Y, ClampY), -ClampY);
-			Rotation.Z = 1;
 			MouseDelta = Vector2.Zero;
 
 			Position += Velocity * MoveSpeed * fov;
@@ -91,6 +90,7 @@ namespace Ktisis.Camera {
 			var pos = InterpPos;
 			var dir = GetLookDir();
 			var up = UpVector;
+			var r = Rotation.Z;
 
 			var f_len = (float)Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y + dir.Z * dir.Z);
 			var f = dir / f_len;
