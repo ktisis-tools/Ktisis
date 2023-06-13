@@ -2,6 +2,7 @@ using System;
 
 using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Keys;
+using Dalamud.Logging;
 
 using Ktisis.Camera;
 using Ktisis.Events;
@@ -10,6 +11,8 @@ using Ktisis.Structs.Input;
 namespace Ktisis.Interop.Hooks {
 	internal static class ControlHooks {
 		public static KeyboardState KeyboardState = new();
+
+		internal static bool KeyboardCaptureAll;
 
 		internal unsafe delegate void InputDelegate(InputEvent* input, IntPtr a2, ControllerState* controllerState, MouseState* mouseState, KeyboardState* keyState);
 		internal static Hook<InputDelegate> InputHook = null!;
@@ -20,17 +23,27 @@ namespace Ktisis.Interop.Hooks {
 			if (!Ktisis.IsInGPose) return;
 
 			try {
+				if (input == null || input->Keyboard == null || keyState == null)
+					return;
+				
+				var keys = input->Keyboard->GetQueue();
+				if (keys == null) return;
+				KeyboardState = *keys;
+
+				if (KeyboardCaptureAll) {
+					for (var i = 0; i < KeyboardState.Length; i++) {
+						keys->KeyMap[i] = 0;
+						keyState->KeyMap[i] = 0;
+					}
+					KeyboardCaptureAll = false;
+				}
+				
+				// Work camera control
+				
 				if (CameraService.GetActiveCamera()?.WorkCamera is WorkCamera freecam)
 					freecam.UpdateControl(mouseState, keyState);
 
 				// Process queue
-
-				if (input == null || input->Keyboard == null || keyState == null)
-					return;
-
-				var keys = input->Keyboard->GetQueue();
-				if (keys == null) return;
-				KeyboardState = *keys;
 
 				var queueCount = Math.Min(keyState->KeyboardQueueCount, 64);
 				for (var i = 0; i < queueCount; i++) {

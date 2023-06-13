@@ -20,7 +20,6 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		// History
 		
 		private static bool IsItemActive;
-		private static bool IsTransTable;
 		private static CameraHistory? HistoryRecord;
 
 		private static void RecordEdit(CameraEvent @event, string name, bool transTable = false, object? initVal = null) {

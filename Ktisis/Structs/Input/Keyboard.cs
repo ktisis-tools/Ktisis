@@ -18,8 +18,10 @@ namespace Ktisis.Structs.Input {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct KeyboardState {
+		public const int Length = 159;
+		
 		public byte IsKeyPressed;
-		public fixed uint KeyMap[159];
+		public fixed uint KeyMap[Length];
 		public KeyboardQueue Queue;
 		public int KeyboardQueueCount;
 		public int ControllerQueueCount;

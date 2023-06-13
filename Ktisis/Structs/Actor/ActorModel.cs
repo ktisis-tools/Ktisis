@@ -26,6 +26,8 @@ namespace Ktisis.Structs.Actor {
 		
 		[FieldOffset(0x274)] public float Height;
 
+		[FieldOffset(0x370)] public nint Sklb;
+
 		public unsafe void SyncModelSpace(bool refPose = false) {
 			if (Skeleton == null) return;
 

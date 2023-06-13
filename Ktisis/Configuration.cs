@@ -151,6 +151,16 @@ namespace Ktisis
 
 		public float FreecamSensitivity { get; set; } = 0.215f;
 
+		public Keybind FreecamForward { get; set; } = new(VirtualKey.W);
+		public Keybind FreecamLeft { get; set; } = new(VirtualKey.A);
+		public Keybind FreecamBack { get; set; } = new(VirtualKey.S);
+		public Keybind FreecamRight { get; set; } = new(VirtualKey.D);
+		public Keybind FreecamUp { get; set; } = new(VirtualKey.SPACE);
+		public Keybind FreecamDown { get; set; } = new(VirtualKey.Q);
+		
+		public Keybind FreecamFast { get; set; } = new(VirtualKey.SHIFT);
+		public Keybind FreecamSlow { get; set; } = new(VirtualKey.CONTROL);
+
 		// Data memory
 		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
 		public Dictionary<string, Dictionary<string, Vector3>> CustomBoneOffset { get; set; } = new();

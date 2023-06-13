@@ -1,8 +1,6 @@
 using System;
 using System.Numerics;
 
-using Dalamud.Game.ClientState.Keys;
-
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 
@@ -64,25 +62,28 @@ namespace Ktisis.Camera {
 
 			MoveSpeed = DefaultSpeed;
 			if (keyState != null) {
-				if (keyState->IsKeyDown(VirtualKey.SHIFT, true))
+				if (Ktisis.Configuration.FreecamFast.IsActive(keyState))
 					MoveSpeed *= Ktisis.Configuration.FreecamShiftMuli;
-				else if (keyState->IsKeyDown(VirtualKey.CONTROL, true))
+				else if (Ktisis.Configuration.FreecamSlow.IsActive(keyState))
 					MoveSpeed *= Ktisis.Configuration.FreecamCtrlMuli;
 				
 				var vFwb = 0;
 				var bothHeld = rightHeld && mouseState->IsButtonHeld(MouseButton.Left);
-				if (keyState->IsKeyDown(VirtualKey.W, true) || bothHeld) vFwb -= 1; // Forward
-				if (keyState->IsKeyDown(VirtualKey.S, true)) vFwb += 1; // Back
+				if (Ktisis.Configuration.FreecamForward.IsActive(keyState) || bothHeld) vFwb -= 1; // Forward
+				if (Ktisis.Configuration.FreecamBack.IsActive(keyState)) vFwb += 1; // Back
 				
 				var vLr = 0;
-				if (keyState->IsKeyDown(VirtualKey.A, true)) vLr -= 1; // Left
-				if (keyState->IsKeyDown(VirtualKey.D, true)) vLr += 1; // Right
+				if (Ktisis.Configuration.FreecamLeft.IsActive(keyState)) vLr -= 1; // Left
+				if (Ktisis.Configuration.FreecamRight.IsActive(keyState)) vLr += 1; // Right
 
 				Velocity.X = vFwb * (float)Math.Sin(Rotation.X) * (float)Math.Cos(Rotation.Y) + (vLr * (float)Math.Cos(Rotation.X));
 				Velocity.Y = vFwb * (float)Math.Sin(Rotation.Y);
 				Velocity.Z = vFwb * (float)Math.Cos(Rotation.X) * (float)Math.Cos(Rotation.Y) + (-vLr * (float)Math.Sin(Rotation.X));
 				
-				if (keyState->IsKeyDown(VirtualKey.SPACE, true)) Velocity.Y += Ktisis.Configuration.FreecamUpDownMuli;
+				if (Ktisis.Configuration.FreecamUp.IsActive(keyState))
+					Velocity.Y += Ktisis.Configuration.FreecamUpDownMuli;
+				else if (Ktisis.Configuration.FreecamDown.IsActive(keyState))
+					Velocity.Y -= Ktisis.Configuration.FreecamUpDownMuli;
 			}
 		}
 

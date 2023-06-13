@@ -171,11 +171,9 @@ namespace Ktisis.Camera {
 		// Events
 
 		private static void OnGPoseChange(bool state) {
+			if (state) PrepareCameraList();
 			CameraHooks.SetEnabled(state);
-			if (state)
-				PrepareCameraList();
-			else
-				DisposeCameras();
+			if (!state) DisposeCameras();
 		}
 
 		private unsafe static void PrepareCameraList() {
