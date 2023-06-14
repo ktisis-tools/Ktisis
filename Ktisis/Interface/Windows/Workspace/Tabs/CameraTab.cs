@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 using ImGuiNET;
@@ -116,6 +117,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 						ImGui.SameLine(inputWidth + spacing);
 						if (GuiHelpers.IconButtonHoldCtrlConfirm(FontAwesomeIcon.Trash, "Delete (Hold Ctrl)")) {
 							CameraService.RemoveCamera(cam);
+							EditingId = null;
 							break;
 						}
 
@@ -306,6 +308,24 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var initDist = gposeCam->Distance * 1f;
 			ImGui.SliderFloat("##CamDist", ref gposeCam->Distance, 0, gposeCam->DistanceMax);
 			RecordEdit(CameraEvent.CameraValue, "Distance", false, initDist);
+			ImGui.EndDisabled();
+			
+			// Delimit & Collision
+
+			ImGui.Spacing();
+			ImGui.BeginDisabled(isFreecam);
+
+			var delimit = gposeCam->DistanceMax > 20;
+			if (ImGui.Checkbox("Delimit camera", ref delimit)) {
+				var max = delimit ? 350 : 20;
+				gposeCam->DistanceMax = max;
+				gposeCam->Distance = Math.Clamp(gposeCam->Distance, 0, max);
+			}
+
+			ImGui.SameLine();
+			
+			ImGui.Checkbox("Disable collision", ref camera.CameraEdit.NoClip);
+			
 			ImGui.EndDisabled();
 		}
 

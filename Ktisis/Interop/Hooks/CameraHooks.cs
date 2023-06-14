@@ -134,6 +134,16 @@ namespace Ktisis.Interop.Hooks {
 			return TargetHook.Original(a1);
 		}
 		
+		// Camera collision
+
+		private unsafe delegate char CameraCollisionDelegate(GameCamera* a1, float* a2, float* a3, float* a4, int a5, int a6, nint a7);
+		private static Hook<CameraCollisionDelegate> CameraCollisionHook = null!;
+		private unsafe static char CameraCollisionDetour(GameCamera* a1, float* a2, float* a3, float* a4, int a5, int a6, nint a7) {
+			if (Ktisis.IsInGPose && CameraService.GetCameraByAddress((nint)a1) is { CameraEdit.NoClip: true })
+				return (char)0;
+			return CameraCollisionHook.Original(a1, a2, a3, a4, a5, a6, a7);
+		}
+		
 		// Enable & disable
 
 		internal static bool Enabled = false;
@@ -153,6 +163,7 @@ namespace Ktisis.Interop.Hooks {
 			CameraEventHook.Enable();
 			CameraUiHook.Enable();
 			CalcViewMatrixHook.Enable();
+			CameraCollisionHook.Enable();
 			Enabled = true;
 		}
 
@@ -163,6 +174,7 @@ namespace Ktisis.Interop.Hooks {
 			CameraEventHook.Disable();
 			CameraUiHook.Disable();
 			CalcViewMatrixHook.Disable();
+			CameraCollisionHook.Disable();
 			Enabled = false;
 		}
 
@@ -193,6 +205,9 @@ namespace Ktisis.Interop.Hooks {
 
 			var viewMxAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 33 C0 48 89 83 ?? ?? ?? ?? 48 8B 9C 24");
 			CalcViewMatrixHook = Hook<CalcViewMatrixDelegate>.FromAddress(viewMxAddr, CalcViewMatrixDetour);
+
+			var collideAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 45 0F 57 FF");
+			CameraCollisionHook = Hook<CameraCollisionDelegate>.FromAddress(collideAddr, CameraCollisionDetour);
 		}
 
 		internal static void Dispose() {
@@ -203,6 +218,7 @@ namespace Ktisis.Interop.Hooks {
 			CameraUiHook.Dispose();
 			TargetHook.Dispose();
 			CalcViewMatrixHook.Dispose();
+			CameraCollisionHook.Dispose();
 		}
 	}
 }

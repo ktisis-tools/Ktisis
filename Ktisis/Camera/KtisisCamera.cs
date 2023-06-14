@@ -92,6 +92,7 @@ namespace Ktisis.Camera {
 		public ushort? Orbit;
 		public Vector3? Position;
 		public Vector3? Offset;
+		public bool NoClip = false;
 
 		public CameraEdit Clone() {
 			var result = new CameraEdit();
