@@ -83,7 +83,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			
 			var avail = ImGui.GetContentRegionAvail().X;
 			var style = ImGui.GetStyle();
-
+			
 			var plusSize = GuiHelpers.CalcIconSize(FontAwesomeIcon.Plus);
 			var camSize = GuiHelpers.CalcIconSize(FontAwesomeIcon.Camera);
 
@@ -92,7 +92,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var isFreecam = camera.WorkCamera != null;
 			ImGui.BeginDisabled(isFreecam);
 			
-			var comboWidth = avail - (style.ItemSpacing.X * 4) + style.ItemInnerSpacing.X - plusSize.X - camSize.X;
+			var comboWidth = avail - style.ItemSpacing.X - (style.FramePadding.X * 4) - plusSize.X - camSize.X - 5;
 			ImGui.SetNextItemWidth(comboWidth);
 			if (ImGui.BeginCombo("##CameraSelect", camera.Name)) {
 				var size = ImGui.GetItemRectSize();
@@ -139,7 +139,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 				EditingId = null;
 			}
 
-			ImGui.SameLine(ImGui.GetCursorPosX() + comboWidth + style.ItemInnerSpacing.X);
+			ImGui.SameLine(ImGui.GetCursorPosX() + comboWidth + 5);
 			var createNew = GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, "Create new camera");
 			if (createNew) {
 				Services.Framework.RunOnFrameworkThread(() => {
