@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 
 using Dalamud.Hooking;
 using Dalamud.Logging;
-using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
@@ -129,16 +128,16 @@ namespace Ktisis.Interop.Hooks {
 		private unsafe delegate nint TargetDelegate(GameCamera* a1);
 		private static Hook<TargetDelegate> TargetHook = null!;
 		private unsafe static nint TargetDetour(GameCamera* a1) {
-			if (CameraService.GetTargetLock((nint)a1) is GameObject tar)
+			if (CameraService.GetTargetLock((nint)a1) is { Address: not 0 } tar)
 				return tar.Address;
 			return TargetHook.Original(a1);
 		}
 		
 		// Camera collision
 
-		private unsafe delegate char CameraCollisionDelegate(GameCamera* a1, float* a2, float* a3, float* a4, int a5, int a6, nint a7);
+		private unsafe delegate char CameraCollisionDelegate(GameCamera* a1, float* a2, float* a3, float* a4, float a5, float a6, int a7);
 		private static Hook<CameraCollisionDelegate> CameraCollisionHook = null!;
-		private unsafe static char CameraCollisionDetour(GameCamera* a1, float* a2, float* a3, float* a4, int a5, int a6, nint a7) {
+		private unsafe static char CameraCollisionDetour(GameCamera* a1, float* a2, float* a3, float* a4, float a5, float a6, int a7) {
 			if (Ktisis.IsInGPose && CameraService.GetCameraByAddress((nint)a1) is { CameraEdit.NoClip: true })
 				return (char)0;
 			return CameraCollisionHook.Original(a1, a2, a3, a4, a5, a6, a7);

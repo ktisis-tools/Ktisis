@@ -18,7 +18,7 @@ namespace Ktisis.Camera {
 	internal static class CameraService {
 		// Camera override
 		
-		internal unsafe static GameCamera* Override;
+		internal unsafe static GameCamera* Override = null;
 		
 		// Camera list
 		
