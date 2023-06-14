@@ -1,12 +1,9 @@
-using System;
-using System.Linq;
 using System.Numerics;
 
 using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Logging;
 
 using Ktisis.Util;
 using Ktisis.Camera;
@@ -62,6 +59,8 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		// UI Code
 		
 		private static TransformTable Transform = new(); // this needs a rework.
+
+		private static int? EditingId;
 		
 		public static void Draw() {
 			ImGui.Spacing();
@@ -95,18 +94,49 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var comboWidth = avail - (style.ItemSpacing.X * 4) + style.ItemInnerSpacing.X - plusSize.X - camSize.X;
 			ImGui.SetNextItemWidth(comboWidth);
 			if (ImGui.BeginCombo("##CameraSelect", camera.Name)) {
-				var id = 0;
+				var size = ImGui.GetItemRectSize();
+				
+				var id = -1;
 				foreach (var cam in cameras) {
-					if (!ImGui.Selectable($"{cam.Name}##CameraSelect_{id}")) continue;
+					id++;
+					
+					if (EditingId == id) {
+						var spacing = ImGui.GetStyle().ItemSpacing.X;
 
-					if (cam.IsNative)
-						CameraService.Reset();
-					else
-						CameraService.SetOverride(cam);
+						var canDelete = cam is { IsNative: false, WorkCamera: null };
+						var buttonWidth = GuiHelpers.CalcIconSize(FontAwesomeIcon.Trash).X;
+						var inputWidth = size.X - spacing * 2 - (canDelete ? buttonWidth + spacing : 0);
+						
+						ImGui.SetNextItemWidth(inputWidth);
+						if (ImGui.InputTextWithHint("##CameraRename", "Camera name...", ref cam.Name, 32, ImGuiInputTextFlags.EnterReturnsTrue))
+							EditingId = null;
+
+						if (!canDelete) goto next;
+						
+						ImGui.SameLine(inputWidth + spacing);
+						if (GuiHelpers.IconButtonHoldCtrlConfirm(FontAwesomeIcon.Trash, "Delete (Hold Ctrl)")) {
+							CameraService.RemoveCamera(cam);
+							break;
+						}
+
+						next: continue;
+					}
+
+					var select = ImGui.Selectable($"{cam.Name}##CameraSelect_{id}");
+					if (select) {
+						if (cam.IsNative)
+							CameraService.Reset();
+						else
+							CameraService.SetOverride(cam);
+					} else if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
+						EditingId = id;
+					}
 				}
 				ImGui.EndCombo();
+			} else if (EditingId != null) {
+				EditingId = null;
 			}
-			
+
 			ImGui.SameLine(ImGui.GetCursorPosX() + comboWidth + style.ItemInnerSpacing.X);
 			var createNew = GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Plus, "Create new camera");
 			if (createNew) {

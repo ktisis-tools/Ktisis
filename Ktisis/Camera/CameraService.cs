@@ -59,7 +59,10 @@ namespace Ktisis.Camera {
 		}
 
 		internal unsafe static void RemoveCamera(KtisisCamera cam) {
-			if (Override == cam.GameCamera) Override = null;
+			if (Override == cam.GameCamera) {
+				Override = null;
+				Reset();
+			}
 			Cameras.Remove(cam);
 			cam.Dispose();
 		}
