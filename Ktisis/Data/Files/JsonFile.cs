@@ -1,15 +1,11 @@
 ﻿using System;
-using System.IO;
 
 namespace Ktisis.Data.Files {
 	[Serializable]
 	public class JsonFile {
-		public void Serialize(Stream stream) {
+		public string FileExtension { get; set; } = ".json";
+		public string TypeName { get; set; } = "Json File";
 
-		}
-
-		public void Deserialize() {
-
-		}
+		public int Version { get; set; } = 1;
 	}
 }

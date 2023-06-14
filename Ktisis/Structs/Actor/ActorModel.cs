@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
@@ -15,11 +16,17 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x060)] public Quaternion Rotation;
 		[FieldOffset(0x070)] public Vector3 Scale;
 
+		[FieldOffset(0x88)] public byte Flags;
+
 		[FieldOffset(0x0A0)] public unsafe Skeleton* Skeleton;
-
+		
+		[FieldOffset(0x0D0)] public Attach Attach;
+		
 		[FieldOffset(0x148)] public unsafe Breasts* Bust;
-
+		
 		[FieldOffset(0x274)] public float Height;
+
+		[FieldOffset(0x370)] public nint Sklb;
 
 		public unsafe void SyncModelSpace(bool refPose = false) {
 			if (Skeleton == null) return;
@@ -55,6 +62,30 @@ namespace Ktisis.Structs.Actor {
 
 			var right = Skeleton->GetBone(0, Bust->RightBoob).AccessModelSpace();
 			right->Scale = Bust->Scale.ToHavok();
+		}
+
+		public unsafe List<nint> GetChildren() {
+			var result = new List<nint>();
+
+			// Iterate linked list of child objects.
+			var childPtr = Object.ChildObject;
+			var child = childPtr;
+			while (child != null) {
+				if (child->GetObjectType() == ObjectType.CharacterBase)
+					result.Add((nint)child);
+
+				child = child->NextSiblingObject;
+				if (child == childPtr)
+					break;
+			}
+			
+			return result;
+		}
+
+		public unsafe float GetAttachScale() {
+			if (Attach.Count == 1 && Attach.Type == 4)
+				return Attach.BoneAttach->Scale;
+			return 1f;
 		}
 	}
 

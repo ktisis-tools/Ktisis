@@ -1,9 +1,7 @@
-using System;
-
 namespace Ktisis.Interop {
 	internal static class StaticOffsets {
 		// Address of loaded FFXIV_CHARA files in memory.
-		internal static IntPtr CharaDatData;
+		internal static nint CharaDatData;
 
 		// If this is NOP'd, Anam posing is enabled.
 		internal unsafe static byte* FreezePosition;
@@ -18,8 +16,8 @@ namespace Ktisis.Interop {
 
 		// Init
 		internal unsafe static void Init() {
-			var qword_14200E548 = *(IntPtr*)Services.SigScanner.GetStaticAddressFromSig("48 8B 05 ?? ?? ?? ?? 48 C7 44 24 24 05 00 00 00 C6 84 24");
-			CharaDatData = *(IntPtr*)(qword_14200E548 + 1392);
+			var datAddr = *(nint*)Services.SigScanner.GetStaticAddressFromSig("48 8B 05 ?? ?? ?? ?? 48 C7 44 24 24 05 00 00 00 C6 84 24");
+			CharaDatData = *(nint*)(datAddr + 1392);
 
 			FreezePosition = (byte*)Services.SigScanner.ScanText("41 0F 29 24 12");
 			FreezeRotation = (byte*)Services.SigScanner.ScanText("41 0F 29 5C 12 10");

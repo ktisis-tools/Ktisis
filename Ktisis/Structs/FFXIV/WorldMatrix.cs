@@ -12,6 +12,12 @@ namespace Ktisis.Structs.FFXIV {
 		[FieldOffset(0x1F8)] public float Height;
 
 		public bool WorldToScreen(Vector3 v, out Vector2 pos2d) {
+			var result = WorldToScreenDepth(v, out Vector3 pos);
+			pos2d = new Vector2(pos.X, pos.Y);
+			return result;
+		}
+
+		public bool WorldToScreenDepth(Vector3 v, out Vector3 pos2d) {
 			var m = Matrix;
 
 			var windowPos = ImGuiHelpers.MainViewport.Pos;
@@ -23,9 +29,10 @@ namespace Ktisis.Structs.FFXIV {
 			float camX = (Width / 2f);
 			float camY = (Height / 2f);
 
-			pos2d = new Vector2(
+			pos2d = new Vector3(
 				camX + (camX * x / w) + windowPos.X,
-				camY - (camY * y / w) + windowPos.Y
+				camY - (camY * y / w) + windowPos.Y,
+				w
 			);
 
 			return w > 0.001f;

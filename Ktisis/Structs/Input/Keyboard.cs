@@ -18,14 +18,19 @@ namespace Ktisis.Structs.Input {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct KeyboardState {
+		public const int Length = 159;
+		
 		public byte IsKeyPressed;
-		public fixed uint KeyMap[159];
+		public fixed uint KeyMap[Length];
 		public KeyboardQueue Queue;
 		public int KeyboardQueueCount;
 		public int ControllerQueueCount;
 
-		public bool IsKeyDown(VirtualKey key)
-			=> KeyMap[(int)key] == 1;
+		public bool IsKeyDown(VirtualKey key, bool consume = false) {
+			var result = KeyMap[(int)key] != 0;
+			if (result && consume) KeyMap[(int)key] = 0;
+			return result;
+		}
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

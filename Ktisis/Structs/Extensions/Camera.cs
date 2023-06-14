@@ -19,5 +19,8 @@ namespace Ktisis.Structs.Extensions {
 			var ptr = (byte*)&camera;
 			return *(Vector3*)((IntPtr)camera.CameraBase.SceneCamera.RenderCamera + 144);
 		}
+
+		public static float DistanceFrom(this GameCamera camera, Vector3 vec)
+			=> Vector3.Distance(vec, camera.CameraBase.SceneCamera.Object.Position);
 	}
 }

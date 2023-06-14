@@ -20,7 +20,7 @@ namespace Ktisis
 {
     [Serializable]
 	public class Configuration : IPluginConfiguration {
-		public const int CurVersion = 2;
+		public const int CurVersion = 3;
 		public int Version { get; set; } = CurVersion;
 
 		public bool IsFirstTimeInstall { get; set; } = true;
@@ -129,8 +129,9 @@ namespace Ktisis
 		public Dictionary<string, Vector4> BoneCategoryColors = new();
 
 		public SaveModes CharaMode { get; set; } = SaveModes.All;
-		public PoseMode PoseMode { get; set; } = PoseMode.All;
+		public PoseMode PoseMode { get; set; } = PoseMode.BodyFace;
 		public PoseTransforms PoseTransforms { get; set; } = PoseTransforms.Rotation;
+		public bool PositionWeapons { get; set; } = true;
 
 		public bool EnableParenting { get; set; } = true;
 
@@ -139,6 +140,26 @@ namespace Ktisis
 		public bool ShowToolbar { get; set; } = false;
 
 		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
+		
+		// Camera
+
+		public float FreecamMoveSpeed { get; set; } = 0.1f;
+		
+		public float FreecamShiftMuli { get; set; } = 2.5f;
+		public float FreecamCtrlMuli { get; set; } = 0.25f;
+		public float FreecamUpDownMuli { get; set; } = 1f;
+
+		public float FreecamSensitivity { get; set; } = 0.215f;
+
+		public Keybind FreecamForward { get; set; } = new(VirtualKey.W);
+		public Keybind FreecamLeft { get; set; } = new(VirtualKey.A);
+		public Keybind FreecamBack { get; set; } = new(VirtualKey.S);
+		public Keybind FreecamRight { get; set; } = new(VirtualKey.D);
+		public Keybind FreecamUp { get; set; } = new(VirtualKey.SPACE);
+		public Keybind FreecamDown { get; set; } = new(VirtualKey.Q);
+		
+		public Keybind FreecamFast { get; set; } = new(VirtualKey.SHIFT);
+		public Keybind FreecamSlow { get; set; } = new(VirtualKey.CONTROL);
 
 		// Data memory
 		public Dictionary<string, GlamourDresser.GlamourPlate[]?>? GlamourPlateData { get; set; } = null;
@@ -163,6 +184,10 @@ namespace Ktisis
 			if (Version < 2) {
 				if (((int)PoseMode & 4) != 0)
 					PoseMode ^= (PoseMode)4;
+			}
+
+			if (Version < 3) {
+				PoseMode ^= PoseMode.Weapons;
 			}
 
 			Version = CurVersion;

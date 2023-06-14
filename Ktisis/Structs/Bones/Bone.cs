@@ -15,8 +15,10 @@ namespace Ktisis.Structs.Bones {
 		public int Partial;
 		public unsafe hkaPose* Pose;
 		public unsafe Skeleton* Skeleton;
+		internal nint PoseAddress;
+		internal bool IsChildModel;
 
-		public unsafe Bone(Skeleton* skeleton, int partialId, int boneId) {
+		public unsafe Bone(Skeleton* skeleton, int partialId, int boneId, bool isChild = false) {
 			Index = boneId;
 			Partial = partialId;
 
@@ -24,6 +26,8 @@ namespace Ktisis.Structs.Bones {
 			var pose = partial.GetHavokPose(0);
 			Pose = pose;
 			Skeleton = skeleton;
+			PoseAddress = (nint)pose;
+			IsChildModel = isChild;
 		}
 
 		public unsafe hkaBone HkaBone => Pose->Skeleton->Bones[Index];
@@ -33,18 +37,35 @@ namespace Ktisis.Structs.Bones {
 			set => Pose->ModelPose.Data[Index] = value;
 		}
 
-		public string LocaleName => Locale.GetBoneName(HkaBone.Name.String ?? "Unknown");
+		public string LocaleName => Locale.GetBoneName(IsChildModel && Index == 1 ? "Prop" : HkaBone.Name.String ?? "Unknown");
 
-		public string UniqueId => $"{Partial}_{Index}";
+		public string UniqueId => $"{PoseAddress:X}_{Partial}_{Index}";
 		public string UniqueName => $"{LocaleName}##{UniqueId}";
 
-		public List<Category> Categories => Category.GetForBone(HkaBone.Name.String);
+		// stupid hack until this gets rewritten
+		internal List<Category>? _setCategory = null;
+		public List<Category> Categories => _setCategory ?? Category.GetForBone(HkaBone.Name.String);
 
 		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate = PropagateOrNot.DontPropagate) => Pose->AccessBoneModelSpace(Index, propagate);
 		public unsafe hkQsTransformf* AccessLocalSpace() => Pose->AccessBoneLocalSpace(Index);
 
-		public unsafe Vector3 GetWorldPos(ActorModel* model)
-			=> model->Position + GetOffset(model) + Vector3.Transform(Transform.Translation.ToVector3() * model->Scale, model->Rotation) * model->Height;
+		public unsafe Vector3 GetWorldPos(ActorModel* model, ActorModel* parent = null) {
+			var pos = model->Position + GetOffset(model);
+			
+			var translate = Vector3.Transform(Transform.Translation.ToVector3() * model->Scale, model->Rotation);
+
+			var scale = model->Height;
+			if (parent != null)
+				scale *= parent->Height;
+			
+			if (model->Attach.Count == 1 && model->Attach.Type == 4) {
+				var boneAttach = model->Attach.BoneAttach;
+				if (boneAttach != null) scale *= boneAttach->Scale;
+			}
+
+			return pos + translate * scale;
+		}
+
 		private unsafe Vector3 GetOffset(ActorModel* model) => CustomOffset.CalculateWorldOffset(model, this);
 
 		public unsafe List<Bone> GetChildren(bool includePartials = true, bool usePartialRoot = false) {
@@ -55,7 +76,7 @@ namespace Ktisis.Structs.Bones {
 
 			// Add child bones from same partial
 			for (var i = Index + 1; i < Pose->Skeleton->ParentIndices.Length; i++) {
-				var child = new Bone(Skeleton, Partial, i);
+				var child = new Bone(Skeleton, Partial, i, IsChildModel);
 				if (child.ParentId != Index) continue;
 				result.Add(child);
 			}
@@ -65,7 +86,7 @@ namespace Ktisis.Structs.Bones {
 					if (p == Partial) continue;
 					var partial = Skeleton->PartialSkeletons[p];
 					if (partial.ConnectedParentBoneIndex == Index) {
-						var partialRoot = new Bone(Skeleton, p, partial.ConnectedBoneIndex);
+						var partialRoot = new Bone(Skeleton, p, partial.ConnectedBoneIndex, IsChildModel);
 						if (usePartialRoot) {
 							result.Add(partialRoot);
 						} else {
@@ -97,7 +118,7 @@ namespace Ktisis.Structs.Bones {
 
 				var poseSkeleton = pose->Skeleton;
 				for (var i = 1; i < poseSkeleton->Bones.Length; i++) {
-					var potentialBone = new Bone(Skeleton, p, i);
+					var potentialBone = new Bone(Skeleton, p, i, IsChildModel);
 					if (potentialBone == null) continue;
 					var pBName = potentialBone.HkaBone.Name.String ?? "";
 					if (pBName[..^2] == prefix && pBName != name)

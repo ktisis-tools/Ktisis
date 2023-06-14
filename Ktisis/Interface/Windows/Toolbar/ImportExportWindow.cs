@@ -25,9 +25,9 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			
 			if (ImGui.Begin("Import / Export", ref Visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize)) {
 				if(ImGui.CollapsingHeader("Actor", ImGuiTreeNodeFlags.DefaultOpen))
-					Workspace.Workspace.ImportExportChara(actor);
+					Workspace.Tabs.ActorTab.ImportExportChara(actor);
 				if(ImGui.CollapsingHeader("Pose", ImGuiTreeNodeFlags.DefaultOpen))
-					Workspace.Workspace.ImportExportPose(actor);
+					Workspace.Tabs.PoseTab.ImportExportPose(actor);
 				ImGui.End();
 			}
 		}

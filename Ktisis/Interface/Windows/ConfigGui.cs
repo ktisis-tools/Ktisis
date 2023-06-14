@@ -19,6 +19,7 @@ using Ktisis.Localization;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
+using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
@@ -72,6 +73,8 @@ namespace Ktisis.Interface.Windows {
 						DrawGizmoTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Input")))
 						DrawInputTab(cfg);
+					if (ImGui.BeginTabItem(Locale.GetString("Camera")))
+						DrawCameraTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("References")))
 						DrawReferencesTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Language")))
@@ -395,6 +398,61 @@ namespace Ktisis.Interface.Windows {
 		}
 		private static string PrettyKeys(List<VirtualKey>  keys) => string.Join(" + ", keys.Select(k => VirtualKeyExtensions.GetFancyName(k)));
 
+		// Camera
+
+		private static void DrawCameraTab(Configuration cfg) {
+			ImGui.Spacing();
+
+			ImGui.Text("Work camera controls");
+			ImGui.PushItemWidth(ImGui.GetFontSize() * 4);
+
+			var baseSpeed = cfg.FreecamMoveSpeed;
+			if (ImGui.DragFloat("Base move speed", ref baseSpeed, 0.001f, 0, 1))
+				cfg.FreecamMoveSpeed = baseSpeed;
+
+			var shiftMuli = cfg.FreecamShiftMuli;
+			if (ImGui.DragFloat("Fast speed multiplier", ref shiftMuli, 0.001f, 0, 10))
+				cfg.FreecamShiftMuli = shiftMuli;
+			
+			var ctrlMuli = cfg.FreecamCtrlMuli;
+			if (ImGui.DragFloat("Slow speed multiplier", ref ctrlMuli, 0.001f, 0, 10))
+				cfg.FreecamCtrlMuli = ctrlMuli;
+			
+			var upDownMuli = cfg.FreecamUpDownMuli;
+			if (ImGui.DragFloat("Up/down speed multiplier", ref upDownMuli, 0.001f, 0, 10))
+				cfg.FreecamUpDownMuli = upDownMuli;
+
+			ImGui.Spacing();
+
+			var camSens = cfg.FreecamSensitivity;
+			if (ImGui.DragFloat("Camera sensitivity", ref camSens, 0.001f, 0, 8))
+				cfg.FreecamSensitivity = camSens;
+
+			ImGui.Spacing();
+			
+			ImGui.PushItemWidth(ImGui.GetFontSize() * 8);
+
+			ImGui.Text("Work camera keybinds");
+
+			KeybindEdit.Draw("Forward##WCForward", cfg.FreecamForward);
+			KeybindEdit.Draw("Left##WCLeft", cfg.FreecamLeft);
+			KeybindEdit.Draw("Back##WCBack", cfg.FreecamBack);
+			KeybindEdit.Draw("Right##WCRight", cfg.FreecamRight);
+			KeybindEdit.Draw("Up##WCUp", cfg.FreecamUp);
+			KeybindEdit.Draw("Down##WCDown", cfg.FreecamDown);
+
+			ImGui.Spacing();
+			
+			KeybindEdit.Draw("Fast speed modifier##WCUp", cfg.FreecamFast);
+			KeybindEdit.Draw("Slow speed modifier##WCUp", cfg.FreecamSlow);
+
+			ImGui.PopItemWidth();
+			
+			ImGui.EndTabItem();
+		}
+
+		// Data
+		
 		public static void DrawDataTab(Configuration cfg) {
 			ImGui.Spacing();
 			var validGlamPlatesFound = GlamourDresser.CountValid();

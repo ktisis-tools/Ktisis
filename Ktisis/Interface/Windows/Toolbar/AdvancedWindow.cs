@@ -2,10 +2,11 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Ktisis.Structs.Actor;
+using Ktisis.Interop.Hooks;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.Workspace;
-using Ktisis.Interop.Hooks;
-using Ktisis.Structs.Actor;
+using Ktisis.Interface.Windows.Workspace.Tabs;
 
 namespace Ktisis.Interface.Windows.Toolbar {
 	public static class AdvancedWindow {
@@ -46,7 +47,7 @@ namespace Ktisis.Interface.Windows.Toolbar {
 					
 					// Advanced
 					if (ImGui.CollapsingHeader("Advanced (Debug)")) {
-						Workspace.Workspace.DrawAdvancedDebugOptions(actor);
+						PoseTab.DrawAdvancedDebugOptions(actor);
 					}
 				}
 			}
@@ -54,7 +55,5 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			ImGui.PopStyleVar();
 			ImGui.End();
 		}
-
 	}
-
 }

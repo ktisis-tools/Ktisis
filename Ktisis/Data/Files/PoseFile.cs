@@ -2,18 +2,28 @@
 using System.Numerics;
 using System.Collections.Generic;
 
+using Ktisis.Data.Serialization.Converters;
 using Ktisis.Structs.Poses;
 
 namespace Ktisis.Data.Files {
-    public class PoseFile : JsonFile {
-		public string FileExtension { get; set; } = ".pose";
-		public string TypeName { get; set; } = "Ktisis Pose";
+	public class PoseFile : JsonFile {
+		public new string FileExtension { get; set; } = ".pose";
+		public new string TypeName { get; set; } = "Ktisis Pose";
+
+		public const int CurrentVersion = 2;
+		
+		[DeserializerDefault(1)] // Assume 1 if not present.
+		public new int Version { get; set; } = CurrentVersion;
 
 		public Vector3 Position { get; set; }
 		public Quaternion Rotation { get; set; }
 		public Vector3 Scale { get; set; }
 
 		public PoseContainer? Bones { get; set; }
+
+		public PoseContainer? MainHand { get; set; }
+		public PoseContainer? OffHand { get; set; }
+		public PoseContainer? Prop { get; set; }
 
 		// Legacy conversion
 

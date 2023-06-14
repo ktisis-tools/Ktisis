@@ -10,7 +10,7 @@ namespace Ktisis.Overlay {
 		internal static List<DrawItem> DrawQueue = new();
 		internal static bool Selecting = false;
 
-		public static DrawItem AddItem(string name, Vector2 pos, uint color = 0xffffffff) {
+		public static DrawItem AddItem(string name, Vector3 pos, uint color = 0xffffffff) {
 			var item = new DrawItem(name, pos, color);
 			DrawQueue.Add(item);
 			return item;
@@ -24,7 +24,7 @@ namespace Ktisis.Overlay {
 
 			var draw = ImGui.GetWindowDrawList();
 
-			var hovered = new List<string>();
+			var hovered = new List<DrawItem>();
 
 			// Draw them dots
 
@@ -35,7 +35,7 @@ namespace Ktisis.Overlay {
 				var col = dot.Color;
 				if (dot.IsHovered() && !isCursorBusy) {
 					col |= 0xff000000;
-					hovered.Add(dot.Name);
+					hovered.Add(dot);
 				}
 
 				var radius = dot.GetRadius();
@@ -57,9 +57,9 @@ namespace Ktisis.Overlay {
 		// Shows when any item is hovered, allows the user to select a specific item when hovering multiple.
 
 		public static int ScrollIndex = 0;
-		public static string? ClickedItem = null;
+		public static DrawItem? ClickedItem = null;
 
-		public static void DrawList(List<string> items) {
+		public static void DrawList(List<DrawItem> items) {
 			if (ImGuizmo.IsUsing())
 				return;
 
@@ -82,12 +82,14 @@ namespace Ktisis.Overlay {
 				else if (ScrollIndex < 0)
 					ScrollIndex = items.Count - 1;
 
+				items.Sort((x, y) => x.Depth < y.Depth ? -1 : 1);
+				
 				for (var i = 0; i < items.Count; i++) {
-					var name = items[i];
+					var item = items[i];
 					var isSelected = i == ScrollIndex;
-					ImGui.Selectable(name, isSelected);
+					ImGui.Selectable(item.Name, isSelected);
 					if (isSelected && mouseDown)
-						ClickedItem = name;
+						ClickedItem = item;
 				}
 
 				ImGui.PopStyleVar(1);
@@ -97,19 +99,20 @@ namespace Ktisis.Overlay {
 	}
 
 	public class DrawItem {
-		public string Name;
-		public Vector2 Pos;
-		public uint Color;
+		public readonly string Name;
+		public readonly Vector2 Pos;
+		public readonly float Depth;
+		public readonly uint Color;
 
-		public DrawItem(string name, Vector2 pos, uint color = 0xffffffff) {
+		public DrawItem(string name, Vector3 pos, uint color = 0xffffffff) {
 			Name = name;
-			Pos = pos;
+			Pos = new Vector2(pos.X, pos.Y);
+			Depth = pos.Z;
 			Color = color;
 		}
 
-		public unsafe float GetRadius() {
-			var dist = Services.Camera->Camera->InterpDistance;
-			return Math.Max(2f, (15f - dist) * (Ktisis.Configuration.SkeletonDotRadius / 7.5f));
+		public float GetRadius() {
+			return Math.Max(2f, (15f - Depth) * (Ktisis.Configuration.SkeletonDotRadius / 7.5f));
 		}
 
 		public bool IsHovered() {
@@ -118,6 +121,6 @@ namespace Ktisis.Overlay {
 			return ImGui.IsMouseHoveringRect(Pos - rect, Pos + rect);
 		}
 
-		public bool IsClicked() => Name == Selection.ClickedItem;
+		public bool IsClicked() => Name == Selection.ClickedItem?.Name;
 	}
 }

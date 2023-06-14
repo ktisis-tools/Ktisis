@@ -19,8 +19,12 @@ namespace Ktisis.Util
 
 			return accepting && isHoldingKey;
 		}
+		
 		public static bool IconButtonHoldConfirm(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string hiddenLabel = "") =>
 			IconButtonHoldConfirm(icon, tooltip, ImGui.GetIO().KeyCtrl && ImGui.GetIO().KeyShift, size, hiddenLabel);
+		
+		public static bool IconButtonHoldCtrlConfirm(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string hiddenLabel = "") =>
+			IconButtonHoldConfirm(icon, tooltip, ImGui.GetIO().KeyCtrl, size, hiddenLabel);
 
 		public static bool IconButtonTooltip(FontAwesomeIcon icon, string tooltip, Vector2 size = default, string hiddenLabel = "") {
 			bool accepting = IconButton(icon, size, hiddenLabel);
@@ -70,10 +74,12 @@ namespace Ktisis.Util
 			return size;
 		}
 		public static void IconTooltip(FontAwesomeIcon icon, string tooltip, bool enabled = true, Vector4? color = null) {
+			var inner = ImGui.GetStyle().ItemInnerSpacing;
+			var cursorPos = ImGui.GetCursorPos();
+			ImGui.SetCursorPos(new Vector2(cursorPos.X - inner.X, cursorPos.Y + inner.Y / 2));
 			Icon(icon, enabled, color);
 			Tooltip(tooltip);
 		}
-
 
 		public static void Tooltip(string text) {
 			if (ImGui.IsItemHovered()) {
