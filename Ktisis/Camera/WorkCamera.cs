@@ -90,7 +90,6 @@ namespace Ktisis.Camera {
 			var pos = InterpPos;
 			var dir = GetLookDir();
 			var up = UpVector;
-			var r = Rotation.Z;
 
 			var f_len = (float)Math.Sqrt(dir.X * dir.X + dir.Y * dir.Y + dir.Z * dir.Z);
 			var f = dir / f_len;

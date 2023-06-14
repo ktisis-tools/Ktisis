@@ -155,7 +155,8 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			ImGui.SameLine();
 			
 			if (GuiHelpers.IconButtonTooltip(FontAwesomeIcon.Sync, "Move camera to target model")) {
-				var goPos = target->GameObject.Position;
+				var camTar = (Actor*)CameraService.GetTargetLock(camera.Address)?.Address;
+				var goPos = camTar != null ? camTar->GameObject.Position : target->GameObject.Position;
 				if (target->Model != null) {
 					var doPos = target->Model->Position;
 					var offset = doPos - (Vector3)goPos;
