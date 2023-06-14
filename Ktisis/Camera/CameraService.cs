@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,6 +12,7 @@ using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 
 using Ktisis.Events;
 using Ktisis.Interop.Hooks;
+using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Camera {
 	internal static class CameraService {
@@ -173,10 +175,18 @@ namespace Ktisis.Camera {
 		
 		// Events
 
-		private static void OnGPoseChange(bool state) {
+		private unsafe static void OnGPoseChange(bool state) {
 			if (state) PrepareCameraList();
 			CameraHooks.SetEnabled(state);
-			if (!state) DisposeCameras();
+			if (!state) {
+				DisposeCameras();
+
+				var active = (GPoseCamera*)Services.Camera->GetActiveCamera();
+				if (active != null) {
+					active->DistanceMax = 20;
+					active->Distance = Math.Clamp(active->Distance, 0, 20);
+				}
+			}
 		}
 
 		private unsafe static void PrepareCameraList() {
