@@ -82,7 +82,8 @@ namespace Ktisis.Overlay {
 				else if (ScrollIndex < 0)
 					ScrollIndex = items.Count - 1;
 
-				items.Sort((x, y) => x.Depth < y.Depth ? -1 : 1);
+				if (Ktisis.Configuration.OrderBoneListByDistance)
+					items.Sort((x, y) => x.Depth < y.Depth ? -1 : 1);
 				
 				for (var i = 0; i < items.Count; i++) {
 					var item = items[i];

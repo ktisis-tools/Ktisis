@@ -173,6 +173,14 @@ namespace Ktisis.Interface.Windows {
 		// Overlay
 
 		public static void DrawOverlayTab(Configuration cfg) {
+			ImGui.Spacing();
+			
+			var order = cfg.OrderBoneListByDistance;
+			if (ImGui.Checkbox("Order bone list by distance from camera", ref order))
+				cfg.OrderBoneListByDistance = order;
+
+			ImGui.Spacing();
+			
 			if (ImGui.CollapsingHeader(Locale.GetString("Skeleton_lines_and_dots"), ImGuiTreeNodeFlags.DefaultOpen)) {
 				ImGui.Separator();
 				var drawLines = cfg.DrawLinesOnSkeleton;
