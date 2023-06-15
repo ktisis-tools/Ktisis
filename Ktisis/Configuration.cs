@@ -54,7 +54,7 @@ namespace Ktisis
 
 		// Overlay
 
-		public bool OrderBoneListByDistance { get; set; } = true;
+		public bool OrderBoneListByDistance { get; set; } = false;
 
 		public bool DrawLinesOnSkeleton { get; set; } = true;
 		public bool DrawLinesWithGizmo { get; set; } = true;
