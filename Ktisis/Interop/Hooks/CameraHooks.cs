@@ -9,6 +9,7 @@ using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 
 using Ktisis.Camera;
+using Ktisis.Structs.FFXIV;
 
 namespace Ktisis.Interop.Hooks {
 	internal static class CameraHooks {
@@ -135,12 +136,16 @@ namespace Ktisis.Interop.Hooks {
 		
 		// Camera collision
 
-		private unsafe delegate char CameraCollisionDelegate(GameCamera* a1, float* a2, float* a3, float* a4, float a5, float a6, int a7);
+		private unsafe delegate nint CameraCollisionDelegate(GPoseCamera* a1, Vector3* a2, Vector3* a3, float a4, nint a5, float a6);
 		private static Hook<CameraCollisionDelegate> CameraCollisionHook = null!;
-		private unsafe static char CameraCollisionDetour(GameCamera* a1, float* a2, float* a3, float* a4, float a5, float a6, int a7) {
-			if (Ktisis.IsInGPose && CameraService.GetCameraByAddress((nint)a1) is { CameraEdit.NoClip: true })
-				return (char)0;
-			return CameraCollisionHook.Original(a1, a2, a3, a4, a5, a6, a7);
+		private unsafe static nint CameraCollisionDetour(GPoseCamera* a1, Vector3* a2, Vector3* a3, float a4, nint a5, float a6) {
+			if (Ktisis.IsInGPose && CameraService.GetCameraByAddress((nint)a1) is {CameraEdit.NoClip: true}) {
+				var max = a4 + 0.001f;
+				a1->DistanceCollide.X = max;
+				a1->DistanceCollide.Y = max;
+				return 0;
+			}
+			return CameraCollisionHook.Original(a1, a2, a3, a4, a5, a6);
 		}
 		
 		// Enable & disable
@@ -205,7 +210,7 @@ namespace Ktisis.Interop.Hooks {
 			var viewMxAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 33 C0 48 89 83 ?? ?? ?? ?? 48 8B 9C 24");
 			CalcViewMatrixHook = Hook<CalcViewMatrixDelegate>.FromAddress(viewMxAddr, CalcViewMatrixDetour);
 
-			var collideAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 45 0F 57 FF");
+			var collideAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 4C 8D 45 C7 89 83");
 			CameraCollisionHook = Hook<CameraCollisionDelegate>.FromAddress(collideAddr, CameraCollisionDetour);
 		}
 

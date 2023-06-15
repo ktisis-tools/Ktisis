@@ -14,6 +14,7 @@ namespace Ktisis.Structs.FFXIV {
 		[FieldOffset(0x130)] public Vector2 Angle;
 		[FieldOffset(0x150)] public Vector2 Pan;
 		[FieldOffset(0x160)] public float Rotation;
+		[FieldOffset(0x208)] public Vector2 DistanceCollide;
 
 		public Vector3 CalcRotation() => new(Angle.X - Pan.X, -Angle.Y - Pan.Y, Rotation);
 	}
