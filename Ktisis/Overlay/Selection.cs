@@ -10,8 +10,8 @@ namespace Ktisis.Overlay {
 		internal static List<DrawItem> DrawQueue = new();
 		internal static bool Selecting = false;
 
-		public static DrawItem AddItem(string name, Vector3 pos, uint color = 0xffffffff) {
-			var item = new DrawItem(name, pos, color);
+		public static DrawItem AddItem(string name, Vector3 pos, uint color = 0xffffffff, int prio = -1) {
+			var item = new DrawItem(name, pos, color, prio);
 			DrawQueue.Add(item);
 			return item;
 		}
@@ -82,9 +82,14 @@ namespace Ktisis.Overlay {
 				else if (ScrollIndex < 0)
 					ScrollIndex = items.Count - 1;
 
-				if (Ktisis.Configuration.OrderBoneListByDistance)
-					items.Sort((x, y) => x.Depth < y.Depth ? -1 : 1);
-				
+				if (Ktisis.Configuration.OrderBoneListByDistance) {
+					items.Sort((x, y) => {
+						if (Math.Abs(x.Depth - y.Depth) < 0.01f)
+							return x.Prio - y.Prio;
+						return x.Depth < y.Depth ? -1 : 1;
+					});
+				}
+
 				for (var i = 0; i < items.Count; i++) {
 					var item = items[i];
 					var isSelected = i == ScrollIndex;
@@ -104,12 +109,14 @@ namespace Ktisis.Overlay {
 		public readonly Vector2 Pos;
 		public readonly float Depth;
 		public readonly uint Color;
-
-		public DrawItem(string name, Vector3 pos, uint color = 0xffffffff) {
+		public readonly int Prio;
+		
+		public DrawItem(string name, Vector3 pos, uint color = 0xffffffff, int prio = 0) {
 			Name = name;
 			Pos = new Vector2(pos.X, pos.Y);
 			Depth = pos.Z;
 			Color = color;
+			Prio = prio;
 		}
 
 		public float GetRadius() {

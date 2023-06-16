@@ -148,7 +148,7 @@ namespace Ktisis.Overlay {
 					// Create selectable item
 					// TODO: Hide when moving gizmo?
 					if (isVisible && !IsBoneSelected(bone) && !(boneName == "j_ago" && p == 0)) {
-						var item = Selection.AddItem(uniqueName, pos2d, boneColor);
+						var item = Selection.AddItem(uniqueName, pos2d, boneColor, bone.Index);
 						if (item.IsClicked()) {
 							BoneSelect.Update = true;
 							BoneSelect.Name = boneName;
