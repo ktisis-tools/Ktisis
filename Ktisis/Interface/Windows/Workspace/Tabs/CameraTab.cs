@@ -95,18 +95,17 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var comboWidth = avail - style.ItemSpacing.X - (style.FramePadding.X * 4) - plusSize.X - camSize.X - 5;
 			ImGui.SetNextItemWidth(comboWidth);
 			if (ImGui.BeginCombo("##CameraSelect", camera.Name)) {
-				var size = ImGui.GetItemRectSize();
-				
 				var id = -1;
 				foreach (var cam in cameras) {
 					id++;
 					
 					if (EditingId == id) {
-						var spacing = ImGui.GetStyle().ItemSpacing.X;
+						var size = ImGui.GetContentRegionAvail();
+						var padding = style.FramePadding.X;
 
 						var canDelete = cam is { IsNative: false, WorkCamera: null };
-						var buttonWidth = GuiHelpers.CalcIconSize(FontAwesomeIcon.Trash).X;
-						var inputWidth = size.X - spacing * 2 - (canDelete ? buttonWidth + spacing : 0);
+						var buttonWidth = GuiHelpers.CalcIconSize(FontAwesomeIcon.Trash).X + padding * 2;
+						var inputWidth = size.X - (canDelete ? buttonWidth + 5 : 0);
 						
 						ImGui.SetNextItemWidth(inputWidth);
 						if (ImGui.InputTextWithHint("##CameraRename", "Camera name...", ref cam.Name, 32, ImGuiInputTextFlags.EnterReturnsTrue))
@@ -114,7 +113,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 						if (!canDelete) goto next;
 						
-						ImGui.SameLine(inputWidth + spacing);
+						ImGui.SameLine(inputWidth + padding + 5);
 						if (GuiHelpers.IconButtonHoldCtrlConfirm(FontAwesomeIcon.Trash, "Delete (Hold Ctrl)")) {
 							CameraService.RemoveCamera(cam);
 							EditingId = null;
