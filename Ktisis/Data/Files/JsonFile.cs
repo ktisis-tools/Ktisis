@@ -6,6 +6,6 @@ namespace Ktisis.Data.Files {
 		public string FileExtension { get; set; } = ".json";
 		public string TypeName { get; set; } = "Json File";
 
-		public int Version { get; set; } = 1;
+		public int FileVersion { get; set; } = 1;
 	}
 }

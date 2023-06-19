@@ -13,7 +13,7 @@ namespace Ktisis.Data.Files {
 		public const int CurrentVersion = 2;
 		
 		[DeserializerDefault(1)] // Assume 1 if not present.
-		public new int Version { get; set; } = CurrentVersion;
+		public new int FileVersion { get; set; } = CurrentVersion;
 
 		public Vector3 Position { get; set; }
 		public Quaternion Rotation { get; set; }

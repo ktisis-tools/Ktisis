@@ -34,7 +34,7 @@ namespace Ktisis.Data.Files {
 		public const int CurrentVersion = 1;
 		
 		[DeserializerDefault(1)] // Assume 1 if not present.
-		public new int Version { get; set; } = CurrentVersion;
+		public new int FileVersion { get; set; } = CurrentVersion;
 
 		public SaveModes SaveMode { get; set; } = SaveModes.All;
 
