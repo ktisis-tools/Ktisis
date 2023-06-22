@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net7.0-windows7.0": {
+      "DalamudPackager": {
+        "type": "Direct",
+        "requested": "[2.1.6, )",
+        "resolved": "2.1.6",
+        "contentHash": "JGgpGP2FMM5Vt4utyDD+xV2+XXfo3Rb3VgJ4FnvzkWlvn4JG/bBILo6mDubWCPjDGqT0n6dF1JRG0r5ygLv/ng=="
+      },
+      "JetBrains.Annotations": {
+        "type": "Direct",
+        "requested": "[2022.3.1, )",
+        "resolved": "2022.3.1",
+        "contentHash": "11nsS3+lFICGkztVs9PP2NRItxf9fF+qD6xEW/T0YGto52zj07wseUeBdMAU1ah9HNVTDZyRC1u4NWdtJScwhw=="
+      }
+    }
+  }
+}
