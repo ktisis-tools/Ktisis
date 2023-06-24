@@ -24,6 +24,7 @@ public class Services : ServiceProvider {
 	[Service(ServiceFlags.Critical)] internal static InteropService Interop = new();
 	[Service] internal static EventRouter Events = new();
 	[Service] internal static GPoseService GPose = new();
+	[Service] internal static ConditionService Conditions = new();
 
 	protected override void OnInitService(Service service) {
 		if (service is IEventClient eventClient)

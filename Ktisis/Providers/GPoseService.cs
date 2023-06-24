@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 using Dalamud.Game;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
@@ -7,6 +9,7 @@ using Ktisis.Core.Singletons;
 using Ktisis.Events;
 using Ktisis.Events.Providers;
 using Ktisis.Events.Attributes;
+using Ktisis.Extensions;
 
 namespace Ktisis.Providers;
 
@@ -27,7 +30,7 @@ public class GPoseService : Service, IEventClient {
 	
 	// Emitters
 
-	[EventEmitter]
+	[EventEmitter, UsedImplicitly]
 	private event GPoseEvent? GPoseEvent;
 
 	// Initialize
@@ -38,12 +41,18 @@ public class GPoseService : Service, IEventClient {
 	
 	// Framework event
 
+	[UsedImplicitly]
 	[Listener<FrameworkEvent>]
 	private void OnFrameworkUpdate(Framework _) {
-		var active = GetActive();
-		if (active == Active) return;
-		Active = active;
-		GPoseEvent?.Invoke(this, Active);
+		var active = false;
+		try {
+			active = GetActive();
+			if (active == Active) return;
+			Services.Conditions[Condition.IsInGPose] = active;
+			GPoseEvent?.InvokeSafely(this, active);
+		} finally {
+			Active = active;
+		}
 	}
 
 	// Disposal
