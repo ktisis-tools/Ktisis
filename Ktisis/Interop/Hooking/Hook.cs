@@ -19,8 +19,16 @@ public class FuncHook<T> : FuncHook where T : Delegate {
 
 	public T Original => Hook.Original;
 
-	public override void Enable() => Hook.Enable();
-	public override void Disable() => Hook.Disable();
+	public override void Enable() {
+		if (Hook.IsEnabled) return;
+		Hook.Enable();
+	}
+	
+	public override void Disable() {
+		if (!Hook.IsEnabled) return;
+		Hook.Disable();
+	}
+	
 	public override void Dispose() {
 		Hook.Disable();
 		Hook.Dispose();
