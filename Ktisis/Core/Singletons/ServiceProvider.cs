@@ -6,9 +6,13 @@ using System.Collections.Generic;
 using Dalamud.Logging;
 using Dalamud.Interface.Internal.Notifications;
 
+using Ktisis.Events;
+
 namespace Ktisis.Core.Singletons;
 
 public class ServiceProvider : Singleton {
+	protected virtual bool _Ready { get; set; }
+
 	// Initialization
 
 	public override void Init() {
@@ -18,12 +22,19 @@ public class ServiceProvider : Singleton {
 		foreach (var (field, attr) in GetServicesFieldsAndAttributes()) {
 			try {
 				PluginLog.Information($"Creating service: {field.FieldType.Name}");
-				if (Activator.CreateInstance(field.FieldType) is not Service service) {
-					PluginLog.Warning("Failed to create service!");
-					continue;
+
+				var instance = field.GetValue(this);
+				if (instance == null) {
+					instance = Activator.CreateInstance(field.FieldType);
+					field.SetValue(this, instance);
 				}
-				field.SetValue(this, service);
-				service.Init();
+
+				if (instance is Service service) {
+					service.Init();
+					OnInitService(service);
+				} else {
+					PluginLog.Warning("Failed to create service!");
+				}
 			} catch (Exception e) {
 				if (attr.Flags.HasFlag(ServiceFlags.Critical)) {
 					PluginLog.Fatal("Critical service failed to start, aborting plugin initialization.");
@@ -43,19 +54,39 @@ public class ServiceProvider : Singleton {
 		}
 	}
 
+	protected virtual void OnInitService(Service service) { }
+
+	// Invoke OnReady
+
+	public override void OnReady() {
+		foreach (var field in GetServiceFields()) {
+			try {
+				if (field.GetValue(this) is Service service)
+					service.OnReady();
+			} catch (Exception e) {
+				PluginLog.Error($"Error occurred in {field.Name}.OnReady:\n{e}");
+			}
+		}
+
+		_Ready = true;
+	}
+
 	// Disposal
 
 	public override void Dispose() {
 		PluginLog.Verbose("Disposing services...");
 		foreach (var field in GetServiceFields()) {
 			try {
-				if (field.GetValue(this) is Service service)
-					service.Dispose();
+				if (field.GetValue(this) is not Service service) continue;
+				service.Dispose();
+				OnDisposeService(service);
 			} catch (Exception e) {
 				PluginLog.Error($"Error while disposing {field.Name}:\n{e}");
 			}
 		}
 	}
+
+	protected virtual void OnDisposeService(Service service) { }
 
 	// Reflection
 
