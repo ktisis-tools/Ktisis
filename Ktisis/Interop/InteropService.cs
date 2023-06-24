@@ -1,4 +1,6 @@
-﻿using Ktisis.Core.Singletons;
+﻿using Dalamud.Logging;
+
+using Ktisis.Core.Singletons;
 using Ktisis.Interop.Hooking;
 using Ktisis.Interop.Modules;
 
@@ -12,11 +14,15 @@ public class InteropService : Service {
 	// Initialization
 	
 	public override void Init() {
+		PluginLog.Information($"InteropService Init");
 		HookManager.Register<PoseHooks>();
 		HookManager.CreateHooks();
 	}
 	
 	// Dispose
 
-	public override void Dispose() => HookManager.Dispose();
+	public override void Dispose() {
+		PluginLog.Information($"InteropService Dispose");
+		HookManager.Dispose();
+	}
 }

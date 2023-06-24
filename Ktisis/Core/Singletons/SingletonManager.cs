@@ -10,12 +10,24 @@ internal class SingletonManager : Singleton {
 
 	private readonly List<Instance> Registered = new();
 
-	// Init & dispose
+	// Handle singleton registration
 
-	public override void Init() {
-		Registered.ForEach(item => item.Init());
+	internal Instance<T> Register<T>() where T : Singleton, new() {
+		var singleton = new Instance<T>();
+		Registered.Add(singleton);
+		return singleton;
 	}
+	
+	// Initialize registered singletons
 
+	public override void Init() => Registered.ForEach(item => item.Init());
+	
+	// Invoke OnReady for initialized singletons
+
+	public override void OnReady() => Registered.ForEach(item => item.OnReady());
+	
+	// Disposal
+	
 	public override void Dispose() {
 		Registered.Reverse();
 		foreach (var item in Registered) {
@@ -25,13 +37,5 @@ internal class SingletonManager : Singleton {
 				PluginLog.Error($"Error while disposing {item.Name}:\n{e}");
 			}
 		}
-	}
-	
-	// Register
-
-	internal Instance<T> Register<T>() where T : Singleton, new() {
-		var singleton = new Instance<T>();
-		Registered.Add(singleton);
-		return singleton;
 	}
 }

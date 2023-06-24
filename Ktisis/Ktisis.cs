@@ -7,6 +7,7 @@ using Dalamud.Interface.Internal.Notifications;
 using Ktisis.Core;
 using Ktisis.Core.Singletons;
 using Ktisis.Interface;
+using Ktisis.Scene;
 
 namespace Ktisis;
 
@@ -17,19 +18,21 @@ public sealed class Ktisis : IDalamudPlugin {
 	
 	// Plugin framework
 
-	private readonly SingletonManager Singleton;
+	private readonly SingletonManager Singletons;
 
 	// Ctor called on plugin load
 	
 	public Ktisis(DalamudPluginInterface plugin) {
 		// Instantiate singleton manager
-		Singleton = new SingletonManager();
+		Singletons = new SingletonManager();
 
-		// Handle plugin initialization, triggering a dispose if it fails.
+		/* Start plugin initialization asynchronously.
+		 * This is generally intended to handle the *creation* of classes in the framework,
+		 * such as registering dependencies, setting up event listeners, etc.
+		 * Activation of these classes should not be done until this is complete! */
 
 		Init(plugin).ContinueWith(task => {
 			if (task.Exception == null) {
-				OnReady();
 				return;
 			}
 
@@ -53,20 +56,18 @@ public sealed class Ktisis : IDalamudPlugin {
 		api.Create<Services>();
 
 		// Register singletons for initialization
-		Singleton.Register<Services>();
-		Singleton.Register<Gui>();
+		Singletons.Register<Services>();
+		Singletons.Register<SceneManager>();
+		Singletons.Register<Gui>();
 
 		// Initialize registered singletons
-		Singleton.Init();
+		Singletons.Init();
+		
+		// Invoke OnReady
+		Singletons.OnReady();
 	}
-	
-	// Code to run once all service initialization is complete
 
-	private void OnReady() {
-		PluginLog.Verbose("Ready");
-	}
-	
 	// Dispose
 
-	public void Dispose() => Singleton.Dispose();
+	public void Dispose() => Singletons.Dispose();
 }

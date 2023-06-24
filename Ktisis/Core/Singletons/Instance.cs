@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Ktisis.Events;
+
 namespace Ktisis.Core.Singletons;
 
 internal class Instance {
@@ -16,17 +18,26 @@ internal class Instance {
 	// Ctor
 
 	protected Instance(Type t) => Type = t;
-
-	// Init & Dispose
 	
+	// Wrappers
+
 	internal void Init() {
 		if (IsInit) return;
 		Singleton?.Init();
+		if (Singleton is IEventClient eventClient)
+			Services.Events.Create(eventClient);
 		IsInit = true;
+	}
+
+	internal void OnReady() {
+		if (!IsInit) return;
+		Singleton?.OnReady();
 	}
 
 	internal void Dispose() {
 		if (IsDisposed) return;
+		if (Singleton is IEventClient eventClient)
+			Services.Events.Remove(eventClient);
 		Singleton?.Dispose();
 		Singleton = null;
 		IsDisposed = true;
