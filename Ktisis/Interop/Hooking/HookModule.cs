@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using Ktisis.Core;
+using Ktisis.Providers;
 
 namespace Ktisis.Interop.Hooking;
 
-public abstract class HookModule : IDisposable {
+internal abstract class HookModule : IDisposable {
 	private readonly List<FuncHook> Hooks = new();
 
-	public abstract void Create();
+	internal Condition Condition;
+	internal HookFlags Flags;
 
-	public void Dispose() => Hooks.ForEach(h => h.Dispose());
+	internal abstract void Create();
 
 	// Hook creation
 
@@ -23,6 +27,27 @@ public abstract class HookModule : IDisposable {
 
 	// Hook helpers
 
-	public void EnableAll() => Hooks.ForEach(h => h.Enable());
-	public void DisableAll() => Hooks.ForEach(h => h.Disable());
+	internal bool Enabled { get; private set; }
+
+	internal bool EnableHooks() {
+		PluginLog.Verbose($"Enabling all hooks for module {GetType().Name}");
+		if (Flags.HasFlag(HookFlags.HardDisable) || Condition != Condition.Any && !Services.Conditions.Check(Condition)) {
+			PluginLog.Warning("Attempted to enable module, but condition checks failed!");
+			return false;
+		}
+		Hooks.ForEach(h => h.Enable());
+		return Enabled = true;
+	}
+
+	internal void DisableHooks() {
+		Hooks.ForEach(h => h.Disable());
+		Enabled = false;
+	}
+
+	// Disposal
+
+	public void Dispose() {
+		Hooks.ForEach(h => h.Dispose());
+		Hooks.Clear();
+	}
 }
