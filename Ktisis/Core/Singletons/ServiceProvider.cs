@@ -21,7 +21,7 @@ public class ServiceProvider : Singleton {
 		var hasError = false;
 		foreach (var (field, attr) in GetServicesFieldsAndAttributes()) {
 			try {
-				PluginLog.Information($"Creating service: {field.FieldType.Name}");
+				PluginLog.Verbose($"Creating service: {field.FieldType.Name}");
 
 				var instance = field.GetValue(this);
 				if (instance == null) {
