@@ -7,14 +7,23 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
+using Ktisis.Util;
+using Dalamud.Interface;
+using System;
 
 namespace Ktisis.Interface.Components {
 	public class BoneTree {
 		private static Vector2 _FrameMin;
 		private static Vector2 _FrameMax;
 
+		private static string SearchText = "";
+
 		public static unsafe void Draw(Actor* actor) {
 			if (ImGui.CollapsingHeader("Bone List")) {
+				GuiHelpers.Icon(FontAwesomeIcon.Search);
+				ImGui.SameLine();
+				ImGui.InputText("##Search", ref SearchText, (uint)(SearchText.Length + 10));
+
 				var lineHeight = ImGui.GetTextLineHeight();
 				if (ImGui.BeginChildFrame(471, new Vector2(-1, lineHeight * 12), ImGuiWindowFlags.HorizontalScrollbar)) {
 					if (actor == null || actor->Model == null || actor->Model->Skeleton == null)
@@ -32,14 +41,25 @@ namespace Ktisis.Interface.Components {
 				}
 			}
 		}
+
+		private static bool BoneDoesMatch(Bone bone) => (new string[] { bone.UniqueName, bone.LocaleName })
+			.Any(name => name.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase));
+
 		private static void DrawBoneTreeNode(Bone bone) {
 			if (bone == null) return;
 
 			var children = bone.GetChildren();
+			var decendents = bone.GetDescendants();
+
+			bool hasChildInQuery = decendents.Any(BoneDoesMatch);
+			bool hasChildSelected = decendents.Any(bone => Skeleton.IsBoneSelected(bone));
+			bool isInQuery = BoneDoesMatch(bone);
+			bool isSelected = Skeleton.IsBoneSelected(bone);
 
 			var flag = children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
-			if (Skeleton.IsBoneSelected(bone))
-				flag |= ImGuiTreeNodeFlags.Selected;
+
+			if (isSelected || hasChildSelected) flag |= ImGuiTreeNodeFlags.Selected;
+			if (SearchText != "" && (isInQuery || hasChildInQuery)) flag |= ImGuiTreeNodeFlags.Bullet;
 
 			var show = DrawBoneNode(bone, flag, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
 			if (show) {
