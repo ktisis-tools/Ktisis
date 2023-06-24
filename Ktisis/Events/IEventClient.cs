@@ -10,6 +10,8 @@ namespace Ktisis.Events;
 public interface IEventClient {
 	private const BindingFlags Binding = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
+	public void OnEventAdded(IEventClient emitter, EventInfo @event) { }
+
 	public EventInfo? GetEmitter(Type type) => GetEmitters()
 		.FirstOrDefault(e => e?.EventHandlerType == type, null);
 

@@ -23,7 +23,7 @@ public class EventRouter : Service {
 
 	private readonly List<IEventClient> Emitters = new();
 
-	private Dictionary<Type, List<Delegate>>? Queue;
+	private Dictionary<Type, List<(IEventClient Client, Delegate Delegate)>>? Queue;
 
 	public void Create<T>(T client) where T : IEventClient {
 		var events = client.GetEmitters();
@@ -32,7 +32,8 @@ public class EventRouter : Service {
 			if (type is null || Queue is null || !Queue.TryGetValue(type, out var queue))
 				continue;
 
-			queue.ForEach(d => @event.GetAddMethod(true)?.Invoke(client, new object?[] { d }));
+			foreach (var item in queue)
+				AddEvent(client, @event, item.Client, item.Delegate);
 
 			Queue.Remove(type);
 			if (Queue.Count == 0)
@@ -58,17 +59,26 @@ public class EventRouter : Service {
 			var type = attr.DelegateType;
 			var @delegate = Delegate.CreateDelegate(type, client, listener);
 			if (emitter is not null && @event is not null) {
-				@event.GetAddMethod(true)?.Invoke(emitter, new object?[] { @delegate });
+				AddEvent(emitter, @event, client, @delegate);
+
 			} else {
+				var queueItem = (client, @delegate);
 				if (Queue is not null && Queue.TryGetValue(type, out var queue)) {
-					queue.Add(@delegate);
+					queue.Add(queueItem);
 				} else {
 					Queue ??= new();
-					Queue.Add(type, new List<Delegate> { @delegate });
+					Queue.Add(type, new() { queueItem });
 				}
 			}
 		}
 	}
+
+	private void AddEvent(IEventClient emitter, EventInfo @event, IEventClient? listener, Delegate @delegate) {
+		@event.GetAddMethod(true)?.Invoke(emitter, new object?[] { @delegate });
+		listener?.OnEventAdded(emitter, @event);
+	}
+
+	// Handler removal
 
 	public void Remove<T>(T client) where T : IEventClient {
 		var listeners = client.GetListeners();
