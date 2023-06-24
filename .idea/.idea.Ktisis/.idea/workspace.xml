@@ -6,7 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Services.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Services.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Events/EventRouter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Events/EventRouter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Events/IEventClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Events/IEventClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/Hook.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Hooking/Hook.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookModule.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Modules/PoseHooks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Modules/PoseHooks.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Providers/GPoseService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Providers/GPoseService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Scene.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Scene.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,12 +30,14 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/24a2576b8cb9426b9dd89b355e234a3e16f000/a2/261acd1b/Hook`1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/aa813094324f408e8047b0dda3853621b1d878/6a/1a1c83e8/TaskStatus.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c5d6a15f5dcf44649a30d8a2bb0a394916ee00/12/b81a55ae/Hook`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c5d6a15f5dcf44649a30d8a2bb0a394916ee00/aa/a176d5ca/SigScanner.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c5d6a15f5dcf44649a30d8a2bb0a394916ee00/fd/8a185cfe/IDalamudHook.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/66f730a458b93149e2583b72762261dc93c54244e38d22b9961aff0cc86254f/RuntimeHandles.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b4cd237362fbc0cf1618fdb03a779a663bb2e67156389b5ec9eb01980cc26/MethodBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b59fa60d15ea79167bca4aee77af3ed6b93648c61b472b7a8381c62977ddfdb/Type.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ae4de3ab824d7c5ae4b82a9f35f8c5171af8e2131b3cebe1e4508fefa3fb8b8f/FlagsAttribute.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Interop/Hooking/HookManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Interop/Hooking/HookModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Interop/Modules/PoseHooks.cs" root0="FORCE_HIGHLIGHTING" />
@@ -73,7 +87,7 @@
       <workItem from="1687429709756" duration="38347000" />
       <workItem from="1687511185449" duration="41233000" />
       <workItem from="1687593264256" duration="1214000" />
-      <workItem from="1687594698535" duration="2624000" />
+      <workItem from="1687594698535" duration="31124000" />
     </task>
     <servers />
   </component>

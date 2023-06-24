@@ -21,6 +21,8 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	private readonly SingletonManager Singletons;
 
+	private Task? InitTask;
+
 	// Ctor called on plugin load
 	
 	public Ktisis(DalamudPluginInterface plugin) {
@@ -32,10 +34,8 @@ public sealed class Ktisis : IDalamudPlugin {
 		 * such as registering dependencies, setting up event listeners, etc.
 		 * Activation of these classes should not be done until this is complete! */
 
-		Init(plugin).ContinueWith(task => {
-			if (task.Exception == null) {
-				return;
-			}
+		InitTask = Init(plugin).ContinueWith(task => {
+			if (task.Exception == null) return;
 
 			PluginLog.Fatal("Ktisis failed to load due to the following error(s):");
 			foreach (var err in task.Exception.InnerExceptions)
@@ -45,6 +45,8 @@ public sealed class Ktisis : IDalamudPlugin {
 				"Ktisis failed to load. Please check your error log for more information.",
 				"Ktisis", NotificationType.Error
 			);
+
+			InitTask = null;
 		});
 	}
 	
@@ -52,7 +54,7 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	private async Task Init(DalamudPluginInterface api) {
 		await Task.Yield();
-
+		
 		var timer = new Stopwatch();
 		timer.Start();
 
@@ -85,5 +87,11 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	// Dispose
 
-	public void Dispose() => Singletons.Dispose();
+	public void Dispose() {
+		if (InitTask?.IsCompleted is false) {
+			PluginLog.Warning("Dispose called while init in progress, waiting for completion...");
+			InitTask?.Wait();
+		}
+		Singletons.Dispose();
+	}
 }
