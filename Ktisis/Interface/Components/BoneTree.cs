@@ -13,6 +13,14 @@ using System;
 
 namespace Ktisis.Interface.Components {
 	public class BoneTree {
+		private enum HighlightCriteria {
+			None = 0,
+			Selected = 1,
+			Queried = 2,
+			ChildSelected = 4,
+			ChildQueried = 16
+		}
+
 		private static Vector2 _FrameMin;
 		private static Vector2 _FrameMax;
 
@@ -42,8 +50,10 @@ namespace Ktisis.Interface.Components {
 			}
 		}
 
-		private static bool BoneDoesMatch(Bone bone) => (new string[] { bone.UniqueName, bone.LocaleName })
-			.Any(name => name.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase));
+		private static bool BoneDoesMatch(Bone bone) => 
+			SearchText != "" && (new [] { bone.UniqueName, bone.LocaleName }).Any(
+				name => name.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)
+			);
 
 		private static void DrawBoneTreeNode(Bone bone) {
 			if (bone == null) return;
@@ -52,30 +62,57 @@ namespace Ktisis.Interface.Components {
 			var decendents = bone.GetDescendants();
 
 			bool hasChildInQuery = decendents.Any(BoneDoesMatch);
-			bool hasChildSelected = decendents.Any(bone => Skeleton.IsBoneSelected(bone));
+			bool hasChildSelected = decendents.Any(Skeleton.IsBoneSelected);
 			bool isSelected = Skeleton.IsBoneSelected(bone);
+			bool isQueried = BoneDoesMatch(bone);
+
+			var criteria = HighlightCriteria.None;
+
+			if (isSelected) criteria ^= HighlightCriteria.Selected;
+			if (isQueried) criteria ^= HighlightCriteria.Queried;
+			if (hasChildSelected) criteria ^= HighlightCriteria.ChildSelected;
+			if (hasChildInQuery) criteria ^= HighlightCriteria.ChildQueried;
 
 			var flag = ImGuiTreeNodeFlags.SpanFullWidth;
 			flag |= children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
 
-			if (isSelected || hasChildSelected) flag |= ImGuiTreeNodeFlags.Selected;
-			if (SearchText != "" && hasChildInQuery) flag |= ImGuiTreeNodeFlags.Bullet;
-
-			var show = DrawBoneNode(bone, flag, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
-			if (show) {
+			var show = DrawBoneNode(bone, flag, criteria, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
+			if (show)
+			{
 				foreach (var child in children)
 					DrawBoneTreeNode(child);
 				ImGui.TreePop();
 			}
 		}
 
-		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, System.Action? executeIfClicked = null) {
+		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, HighlightCriteria criteria, System.Action? executeIfClicked = null) {
 			if (bone == null) return false;
 
-			bool isAncester = bone.GetDescendants().Any(b => b.UniqueId == $"{Skeleton.BoneSelect.Partial}_{Skeleton.BoneSelect.Index}");
-			if (isAncester) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
 			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
-			if (isAncester) ImGui.PopStyleColor();
+
+			if (criteria.HasFlag(HighlightCriteria.ChildSelected))
+			{
+				ImGui.SameLine();
+				GuiHelpers.Icon(FontAwesomeIcon.HatWizard);
+			}
+
+			if (criteria.HasFlag(HighlightCriteria.ChildQueried))
+			{
+				ImGui.SameLine();
+				GuiHelpers.Icon(FontAwesomeIcon.Search);
+			}
+
+			if (criteria.HasFlag(HighlightCriteria.Selected))
+			{
+				ImGui.SameLine();
+				GuiHelpers.Icon(FontAwesomeIcon.WandMagicSparkles);
+			}
+
+			if (criteria.HasFlag(HighlightCriteria.Queried))
+			{
+				ImGui.SameLine();
+				GuiHelpers.Icon(FontAwesomeIcon.SearchLocation);
+			}
 
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();
