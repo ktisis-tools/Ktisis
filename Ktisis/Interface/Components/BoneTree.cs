@@ -90,29 +90,8 @@ namespace Ktisis.Interface.Components {
 
 			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
 
-			if (criteria.HasFlag(HighlightCriteria.ChildSelected))
-			{
-				ImGui.SameLine();
-				GuiHelpers.Icon(FontAwesomeIcon.HatWizard);
-			}
-
-			if (criteria.HasFlag(HighlightCriteria.ChildQueried))
-			{
-				ImGui.SameLine();
-				GuiHelpers.Icon(FontAwesomeIcon.Search);
-			}
-
-			if (criteria.HasFlag(HighlightCriteria.Selected))
-			{
-				ImGui.SameLine();
-				GuiHelpers.Icon(FontAwesomeIcon.WandMagicSparkles);
-			}
-
-			if (criteria.HasFlag(HighlightCriteria.Queried))
-			{
-				ImGui.SameLine();
-				GuiHelpers.Icon(FontAwesomeIcon.SearchLocation);
-			}
+			if (criteria != HighlightCriteria.None)
+				ApplyIcons(criteria);
 
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();
@@ -132,6 +111,22 @@ namespace Ktisis.Interface.Components {
 				executeIfClicked?.Invoke();
 			}
 			return show;
+		}
+
+		private static readonly (HighlightCriteria, FontAwesomeIcon)[] CriteriaIconMap = new [] {
+			(HighlightCriteria.ChildSelected, FontAwesomeIcon.HatWizard),
+			(HighlightCriteria.ChildQueried, FontAwesomeIcon.Search),
+			(HighlightCriteria.Selected, FontAwesomeIcon.WandMagicSparkles),
+			(HighlightCriteria.Queried, FontAwesomeIcon.SearchLocation)
+		};
+
+		private static void ApplyIcons(HighlightCriteria criteria) {
+			foreach (var (flag, icon) in CriteriaIconMap) {
+				if (criteria.HasFlag(flag)) {
+					ImGui.SameLine();
+					GuiHelpers.Icon(icon);
+				}
+			}
 		}
 	}
 }
