@@ -4,7 +4,7 @@ using System.Reflection;
 
 using Ktisis.Core.Singletons;
 using Ktisis.Events.Attributes;
-using Ktisis.Events.Common;
+using Ktisis.Events.Providers;
 
 namespace Ktisis.Events;
 

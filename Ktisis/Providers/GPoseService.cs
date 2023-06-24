@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using Ktisis.Core;
 using Ktisis.Core.Singletons;
 using Ktisis.Events;
-using Ktisis.Events.Common;
+using Ktisis.Events.Providers;
 using Ktisis.Events.Attributes;
 
 namespace Ktisis.Providers;
