@@ -5,25 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Core/Singletons/Service.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Events/Attributes/EventEmitterAttribute.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Events/Attributes/ListenerAttribute.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Events/Common/EventProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Events/Common/FrameworkEventProvider.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Events/EventRouter.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Events/IEventClient.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Providers/GPoseService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Scene.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Services.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Services.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Singletons/Instance.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Singletons/Instance.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Singletons/ServiceProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Singletons/ServiceProvider.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Singletons/Singleton.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Singletons/Singleton.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Singletons/SingletonManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Singletons/SingletonManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,30 +34,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;b83b9080&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.C#&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "v0.3",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -90,6 +74,7 @@
       <workItem from="1687429709756" duration="38347000" />
       <workItem from="1687511185449" duration="41233000" />
       <workItem from="1687593264256" duration="1214000" />
+      <workItem from="1687594698535" duration="1127000" />
     </task>
     <servers />
   </component>

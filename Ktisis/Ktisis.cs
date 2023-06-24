@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 
 using Dalamud.Plugin;
 using Dalamud.Logging;
@@ -52,6 +53,9 @@ public sealed class Ktisis : IDalamudPlugin {
 	private async Task Init(DalamudPluginInterface api) {
 		await Task.Yield();
 
+		var timer = new Stopwatch();
+		timer.Start();
+
 		// Inject dalamud services
 		api.Create<Services>();
 
@@ -62,9 +66,21 @@ public sealed class Ktisis : IDalamudPlugin {
 
 		// Initialize registered singletons
 		Singletons.Init();
+
+		var initTime = timer.Elapsed.TotalMilliseconds;
+		timer.Restart();
 		
 		// Invoke OnReady
 		Singletons.OnReady();
+
+		var readyTime = timer.Elapsed.TotalMilliseconds;
+		timer.Stop();
+
+		PluginLog.Verbose($"Plugin initialization complete.\n" +
+			$" Init:   {initTime:0.00}ms\n" +
+			$"Ready: + {readyTime:0.00}ms\n" +
+			$"Total: = {initTime + readyTime:0.00}ms"
+		);
 	}
 
 	// Dispose

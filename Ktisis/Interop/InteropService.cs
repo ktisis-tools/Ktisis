@@ -14,7 +14,6 @@ public class InteropService : Service {
 	// Initialization
 	
 	public override void Init() {
-		PluginLog.Information($"InteropService Init");
 		HookManager.Register<PoseHooks>();
 		HookManager.CreateHooks();
 	}
@@ -22,7 +21,6 @@ public class InteropService : Service {
 	// Dispose
 
 	public override void Dispose() {
-		PluginLog.Information($"InteropService Dispose");
 		HookManager.Dispose();
 	}
 }
