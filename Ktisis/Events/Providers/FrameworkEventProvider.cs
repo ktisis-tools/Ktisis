@@ -3,7 +3,7 @@ using Dalamud.Game;
 using Ktisis.Core;
 using Ktisis.Events.Attributes;
 
-namespace Ktisis.Events.Common; 
+namespace Ktisis.Events.Providers; 
 
 public delegate void FrameworkEvent(Framework framework);
 

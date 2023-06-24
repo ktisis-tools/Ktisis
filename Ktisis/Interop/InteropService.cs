@@ -1,6 +1,4 @@
-﻿using Dalamud.Logging;
-
-using Ktisis.Core.Singletons;
+﻿using Ktisis.Core.Singletons;
 using Ktisis.Interop.Hooking;
 using Ktisis.Interop.Modules;
 
