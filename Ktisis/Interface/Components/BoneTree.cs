@@ -54,8 +54,6 @@ namespace Ktisis.Interface.Components {
 			|| bone.LocaleName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase);
 
 		private static void DrawBoneTreeNode(Bone bone) {
-			if (bone == null) return;
-
 			var children = bone.GetChildren();
 			var decendents = bone.GetDescendants();
 
@@ -84,8 +82,6 @@ namespace Ktisis.Interface.Components {
 		}
 
 		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, HighlightReason criteria, System.Action? executeIfClicked = null) {
-			if (bone == null) return false;
-
 			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
 
 			if (criteria != HighlightReason.None)
