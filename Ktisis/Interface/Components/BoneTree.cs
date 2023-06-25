@@ -73,8 +73,7 @@ namespace Ktisis.Interface.Components {
 			flag |= children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
 
 			var show = DrawBoneNode(bone, flag, criteria, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
-			if (show)
-			{
+			if (show) {
 				foreach (var child in children)
 					DrawBoneTreeNode(child);
 				ImGui.TreePop();
