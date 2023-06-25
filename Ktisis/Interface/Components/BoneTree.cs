@@ -68,10 +68,10 @@ namespace Ktisis.Interface.Components {
 
 			var criteria = HighlightReason.None;
 
-			if (isSelected) criteria ^= HighlightReason.Selected;
-			if (isQueried) criteria ^= HighlightReason.Queried;
-			if (hasChildSelected) criteria ^= HighlightReason.ChildSelected;
-			if (hasChildInQuery) criteria ^= HighlightReason.ChildQueried;
+			if (isSelected) criteria |= HighlightReason.Selected;
+			if (isQueried) criteria |= HighlightReason.Queried;
+			if (hasChildSelected) criteria |= HighlightReason.ChildSelected;
+			if (hasChildInQuery) criteria |= HighlightReason.ChildQueried;
 
 			var flag = ImGuiTreeNodeFlags.SpanFullWidth;
 			flag |= children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
