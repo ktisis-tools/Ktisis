@@ -50,17 +50,17 @@ namespace Ktisis.Interface.Components {
 			}
 		}
 
-		private static bool BoneDoesMatch(Bone bone) => bone.UniqueName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)
+		private static bool BoneMatchesSearch(Bone bone) => bone.UniqueName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)
 			|| bone.LocaleName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase);
 
 		private static void DrawBoneTreeNode(Bone bone) {
 			var children = bone.GetChildren();
 			var decendents = bone.GetDescendants();
 
-			bool hasChildInQuery = SearchText != "" && decendents.Any(BoneDoesMatch);
+			bool hasChildInQuery = SearchText != "" && decendents.Any(BoneMatchesSearch);
 			bool hasChildSelected = decendents.Any(Skeleton.IsBoneSelected);
 			bool isSelected = Skeleton.IsBoneSelected(bone);
-			bool isQueried = SearchText != "" && BoneDoesMatch(bone);
+			bool isQueried = SearchText != "" && BoneMatchesSearch(bone);
 
 			var criteria = HighlightReason.None;
 
