@@ -13,7 +13,7 @@ using System;
 
 namespace Ktisis.Interface.Components {
 	public class BoneTree {
-		private enum HighlightCriteria {
+		private enum HighlightReason {
 			None = 0,
 			Selected = 1,
 			Queried = 2,
@@ -66,12 +66,12 @@ namespace Ktisis.Interface.Components {
 			bool isSelected = Skeleton.IsBoneSelected(bone);
 			bool isQueried = BoneDoesMatch(bone);
 
-			var criteria = HighlightCriteria.None;
+			var criteria = HighlightReason.None;
 
-			if (isSelected) criteria ^= HighlightCriteria.Selected;
-			if (isQueried) criteria ^= HighlightCriteria.Queried;
-			if (hasChildSelected) criteria ^= HighlightCriteria.ChildSelected;
-			if (hasChildInQuery) criteria ^= HighlightCriteria.ChildQueried;
+			if (isSelected) criteria ^= HighlightReason.Selected;
+			if (isQueried) criteria ^= HighlightReason.Queried;
+			if (hasChildSelected) criteria ^= HighlightReason.ChildSelected;
+			if (hasChildInQuery) criteria ^= HighlightReason.ChildQueried;
 
 			var flag = ImGuiTreeNodeFlags.SpanFullWidth;
 			flag |= children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
@@ -85,12 +85,12 @@ namespace Ktisis.Interface.Components {
 			}
 		}
 
-		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, HighlightCriteria criteria, System.Action? executeIfClicked = null) {
+		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, HighlightReason criteria, System.Action? executeIfClicked = null) {
 			if (bone == null) return false;
 
 			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
 
-			if (criteria != HighlightCriteria.None)
+			if (criteria != HighlightReason.None)
 				ApplyIcons(criteria);
 
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
@@ -113,14 +113,14 @@ namespace Ktisis.Interface.Components {
 			return show;
 		}
 
-		private static readonly (HighlightCriteria, FontAwesomeIcon)[] CriteriaIconMap = new [] {
-			(HighlightCriteria.ChildSelected, FontAwesomeIcon.HatWizard),
-			(HighlightCriteria.ChildQueried, FontAwesomeIcon.Search),
-			(HighlightCriteria.Selected, FontAwesomeIcon.WandMagicSparkles),
-			(HighlightCriteria.Queried, FontAwesomeIcon.SearchLocation)
+		private static readonly (HighlightReason, FontAwesomeIcon)[] CriteriaIconMap = new [] {
+			(HighlightReason.ChildSelected, FontAwesomeIcon.HatWizard),
+			(HighlightReason.ChildQueried, FontAwesomeIcon.Search),
+			(HighlightReason.Selected, FontAwesomeIcon.WandMagicSparkles),
+			(HighlightReason.Queried, FontAwesomeIcon.SearchLocation)
 		};
 
-		private static void ApplyIcons(HighlightCriteria criteria) {
+		private static void ApplyIcons(HighlightReason criteria) {
 			foreach (var (flag, icon) in CriteriaIconMap) {
 				if (criteria.HasFlag(flag)) {
 					ImGui.SameLine();
