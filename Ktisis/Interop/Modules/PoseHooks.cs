@@ -12,8 +12,8 @@ internal class PoseHooks : HookModule {
 		else
 			DisableHooks();
 	}
-	
+
 	// Hooks
-	
+
 	internal override void Create() { }
 }
