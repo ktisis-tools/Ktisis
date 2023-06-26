@@ -18,7 +18,7 @@ namespace Ktisis.Scene;
 public class SceneManager : Singleton, IEventClient {
 	// Scene
 
-	public static Scene? Scene;
+	public Scene? Scene;
 
 	// GPose Event
 
