@@ -36,7 +36,7 @@ namespace Ktisis.Camera {
 
 		internal Matrix4x4 Update(float fov = 1) {
 			var now = DateTime.Now;
-			var delta = (float)(now - LastTime).TotalMilliseconds;
+			var delta = Math.Max((float)(now - LastTime).TotalMilliseconds, 1);
 			LastTime = now;
 
 			MouseDelta = (MouseDelta * fov * Ktisis.Configuration.FreecamSensitivity) * MathHelpers.Deg2Rad;
@@ -45,7 +45,7 @@ namespace Ktisis.Camera {
 			MouseDelta = Vector2.Zero;
 
 			Position += Velocity * MoveSpeed * fov;
-			InterpPos = Vector3.Lerp(InterpPos, Position, 1f / (delta / 8));
+			InterpPos = Vector3.Lerp(InterpPos, Position, 8f / delta);
 
 			return CreateViewMatrix();
 		}
