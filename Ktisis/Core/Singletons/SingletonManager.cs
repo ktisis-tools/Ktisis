@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Dalamud.Logging;
 
@@ -20,11 +21,18 @@ internal class SingletonManager : Singleton {
 
 	// Initialize registered singletons
 
-	public override void Init() => Registered.ForEach(item => item.Init());
+	public override void Init()
+		=> Registered.ForEach(item => item.Init());
 
 	// Invoke OnReady for initialized singletons
 
-	public override void OnReady() => Registered.ForEach(item => item.OnReady());
+	public override void OnReady()
+		=> Registered.ForEach(item => item.OnReady());
+
+	// Access registered singletons
+
+	internal T Get<T>() where T : Singleton
+		=> (T)Registered.First(item => item.Singleton is T).Singleton!;
 
 	// Disposal
 

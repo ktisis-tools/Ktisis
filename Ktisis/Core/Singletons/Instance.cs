@@ -8,7 +8,7 @@ internal class Instance {
 	// Properties
 
 	private readonly Type Type;
-	protected Singleton? Singleton;
+	public Singleton? Singleton { get; protected set; }
 
 	private bool IsInit;
 	private bool IsDisposed;
