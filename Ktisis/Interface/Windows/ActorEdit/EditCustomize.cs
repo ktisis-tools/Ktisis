@@ -72,7 +72,7 @@ namespace Ktisis.Interface.Windows {
 		public static string FacialFeatureName = "";
 		public static List<TextureWrap>? FacialFeatureIcons = null;
 
-		public static CharaMakeType CharaMakeType = null!;
+		public static CharaMakeType? CharaMakeType;
 
 		public static HumanCmp HumanCmp = new();
 
@@ -107,6 +107,8 @@ namespace Ktisis.Interface.Windows {
 		private static void InvokeFeatureIcons(object[] args) {
 			if (args[0] is not Customize custom)
 				return;
+
+			if (CharaMakeType == null) return;
 			
 			var features = new List<TextureWrap>();
 			for (var i = 0; i < 7; i++) {
@@ -665,9 +667,8 @@ namespace Ktisis.Interface.Windows {
 					if (val.HasIcon) {
 						var icons = new Dictionary<uint, TextureWrap>();
 						if (val.IsFeature) {
-							var featMake = CharaMakeType.FeatureMake.Value;
-							if (featMake == null)
-								continue;
+							var featMake = CharaMakeType?.FeatureMake.Value;
+							if (featMake == null) continue;
 
 							List<LazyRow<CharaMakeCustomize>> features;
 							if (val.Index == CustomizeIndex.HairStyle)
