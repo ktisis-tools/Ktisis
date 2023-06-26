@@ -23,10 +23,12 @@ public class GPoseService : Service, IEventClient {
 	public bool Active { get; private set; }
 	
 	// Gets address of GPose target from TargetSystem.
-	private unsafe nint TargetAddress => Target != null ? (nint)Target->GPoseTarget : 0;
+	private unsafe nint TargetAddress
+		=> Target != null ? (nint)Target->GPoseTarget : 0;
 	
 	// Checks current GPose state.
-	private bool GetActive() => Services.PluginInterface.UiBuilder.GposeActive && TargetAddress != 0;
+	private bool GetActive()
+		=> Services.PluginInterface.UiBuilder.GposeActive && TargetAddress != 0;
 	
 	// Emitters
 
