@@ -1,7 +1,6 @@
 ﻿using System;
 
 using Dalamud.Hooking;
-using Dalamud.Logging;
 
 namespace Ktisis.Interop.Hooking;
 
