@@ -25,7 +25,8 @@ public class InteropService : Service, IEventClient {
 
 	// Hook wrappers
 
-	internal T? GetModule<T>() where T : HookModule => HookManager.GetModule<T>();
+	internal T? GetModule<T>() where T : HookModule
+		=> HookManager.GetModule<T>();
 
 	// Events
 
