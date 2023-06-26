@@ -52,5 +52,8 @@
 			<HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
 			<Private>false</Private>
 		</Reference>
+		<Reference Include="ImGuizmo.NET">
+			<HintPath>..\lib\ImGuizmo.NET\ImGuizmo.NET.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 </Project>

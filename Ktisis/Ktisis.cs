@@ -19,16 +19,13 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	// Plugin framework
 
-	private readonly SingletonManager Singletons;
+	internal readonly static SingletonManager Singletons = new();
 
 	private Task? InitTask;
 
 	// Ctor called on plugin load
 
 	public Ktisis(DalamudPluginInterface plugin) {
-		// Instantiate singleton manager
-		Singletons = new SingletonManager();
-
 		/* Start plugin initialization asynchronously.
 		 * This is generally intended to handle the *creation* of classes in the framework,
 		 * such as registering dependencies, setting up event listeners, etc.
