@@ -358,3 +358,6 @@ MigrationBackup/
 # Rider data files
 # (.sln, .csproj and .editorconfig have enough info for a restore for now)
 .idea/
+
+# TODO: CI
+lib/*
