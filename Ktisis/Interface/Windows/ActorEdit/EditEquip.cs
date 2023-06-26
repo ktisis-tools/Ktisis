@@ -2,12 +2,14 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using ImGuiNET;
 using ImGuiScene;
 
 using Dalamud.Interface;
+using Dalamud.Logging;
 
 using Ktisis.Util;
 using Ktisis.Data;
@@ -103,17 +105,13 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 					isEmpty = wep.Set == 0;
 			}
 
-			if (!Equipped.ContainsKey(slot)) {
-				var iCache = new ItemCache { Equip = equipObj };
-				iCache.ResolveItem(slot);
-				Equipped.Add(slot, iCache);
-			} else if (!Equipped[slot].Equip!.Equals(equipObj)) {
-				Equipped[slot].Equip = equipObj;
-				Equipped[slot].ResolveItem(slot);
-			}
+			if (!Equipped.ContainsKey(slot))
+				Equipped.Add(slot, new ItemCache(equipObj, slot));
+			else if (!Equipped[slot].Equip!.Equals(equipObj))
+				Equipped[slot].SetEquip(equipObj, slot);
 
 			var item = Equipped[slot];
-			var icon = item.GetIcon() is TextureWrap tex ? tex.ImGuiHandle : 0;
+			var icon = item.Icon?.ImGuiHandle ?? 0;
 			ImGui.PushID((int)slot);
 			if (ImGui.ImageButton(icon, IconSize) && SlotSelect == null)
 				OpenSelector(slot);
@@ -128,8 +126,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			ImGui.SameLine();
 			ImGui.BeginGroup();
-
-			var name = item.Item == null ? (isEmpty ? "Empty" : "Unknown") : item.Item.Name;
+			
+			var name = item.Item?.Name ?? (isEmpty ? "Empty" : "Unknown");
 			ImGui.Text(name);
 
 			ImGui.PushItemWidth(120);
@@ -415,36 +413,54 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		}
 	}
 
-	public class ItemCache {
+	public class ItemCache : IDisposable {
+		private CancellationTokenSource? _tokenSrc;
+		
+		private ushort? IconId;
+		
 		public object? Equip;
 		public Item? Item;
 		public TextureWrap? Icon;
 
-		private ushort? IconId;
-		private bool FetchingIcon = false;
+		public ItemCache(object? equip, EquipSlot slot)
+			=> SetEquip(equip, slot);
 
-		public void ResolveItem(EquipSlot slot) {
-			if (Equip != null)
-				new Task(() => Item = EditEquip.FindItem(Equip, slot)).Start();
-			else Item = null;
+		public void SetEquip(object? equip, EquipSlot slot) {
+			Equip = equip;
+
+			_tokenSrc?.Cancel();
+			_tokenSrc = new CancellationTokenSource();
+			Resolve(equip, slot, _tokenSrc.Token).ContinueWith(task => {
+				if (task.Exception != null)
+					PluginLog.Error($"Error occurred while resolving item:\n{task.Exception}");
+			}, TaskContinuationOptions.OnlyOnFaulted);
 		}
-		
-		public TextureWrap? GetIcon() {
-			if (Item != null && (Icon == null || IconId != Item.Icon) && !FetchingIcon) {
-				FetchingIcon = true;
-				new Task(() => {
-					try {
-						IconId = Item?.Icon;
-						Icon = Services.DataManager.GetImGuiTextureIcon(IconId ?? (uint)0);
-					} finally {
-						FetchingIcon = false;
-					}
-				}).Start();
-			} else if (Item == null && Icon != null) {
-				Icon = null;
-			}
+
+		private async Task Resolve(object? equip, EquipSlot slot, CancellationToken token) {
+			await Task.Yield();
 			
-			return Icon;
+			var item = equip != null ? EditEquip.FindItem(equip, slot) : null;
+			if (token.IsCancellationRequested) return;
+			Item = item;
+
+			var newIconId = item?.Icon;
+			if (newIconId != IconId) {
+				var newIcon = newIconId is ushort id ? Services.DataManager.GetImGuiTextureIcon(id, true) : null;
+				if (token.IsCancellationRequested) {
+					newIcon?.Dispose();
+					return;
+				}
+				IconId = newIconId;
+				Icon?.Dispose();
+				Icon = newIcon;
+			}
 		}
+
+		public void Dispose() {
+			Icon?.Dispose();
+			Icon = null;
+		}
+
+		~ItemCache() => Dispose();
 	}
 }
