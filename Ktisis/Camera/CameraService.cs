@@ -28,12 +28,10 @@ namespace Ktisis.Camera {
 			var active = Services.Camera->GetActiveCamera();
 
 			var camera = GetCameraByAddress((nint)active);
-			if (camera == null) {
+			if (camera == null && Override != null) {
 				PluginLog.Warning("Lost track of active camera! Attempting to reset.");
-				if (Override != null) {
-					Reset();
-					camera = GetCameraByAddress((nint)Services.Camera->Camera);
-				}
+				Reset();
+				camera = GetCameraByAddress((nint)Services.Camera->Camera);
 			}
 
 			return camera;
