@@ -10,7 +10,7 @@ using Ktisis.Core;
 using Ktisis.Core.Singletons;
 using Ktisis.Events;
 using Ktisis.Events.Attributes;
-using Ktisis.Providers;
+using Ktisis.Core.Providers;
 using Ktisis.Extensions;
 using Ktisis.Interface.Common;
 using Ktisis.Interface.Windows;

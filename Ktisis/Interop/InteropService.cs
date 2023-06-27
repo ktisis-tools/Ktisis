@@ -3,7 +3,7 @@
 using JetBrains.Annotations;
 
 using Ktisis.Events;
-using Ktisis.Providers;
+using Ktisis.Core.Providers;
 using Ktisis.Core.Singletons;
 using Ktisis.Events.Attributes;
 using Ktisis.Interop.Hooking;

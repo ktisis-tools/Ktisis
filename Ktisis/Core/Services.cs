@@ -6,7 +6,7 @@ using Dalamud.Game.Command;
 
 using Ktisis.Events;
 using Ktisis.Interop;
-using Ktisis.Providers;
+using Ktisis.Core.Providers;
 using Ktisis.Core.Singletons;
 
 namespace Ktisis.Core;

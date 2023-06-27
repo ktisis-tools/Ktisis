@@ -11,7 +11,7 @@ using Ktisis.Core;
 using Ktisis.Events;
 using Ktisis.Events.Attributes;
 using Ktisis.Core.Singletons;
-using Ktisis.Providers;
+using Ktisis.Core.Providers;
 
 namespace Ktisis.Scene;
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Dalamud.Logging;
 
 using Ktisis.Core;
-using Ktisis.Providers;
+using Ktisis.Core.Providers;
 
 namespace Ktisis.Interop.Hooking;
 
