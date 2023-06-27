@@ -2,8 +2,7 @@ using System.Numerics;
 
 using ImGuiNET;
 
-using Ktisis.Scene;
-using Ktisis.Interface.Common;
+using Ktisis.Scenes;
 using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows;
@@ -21,7 +20,7 @@ public class Workspace : GuiWindow {
 
 	// Components
 
-	private readonly ObjectList ObjectList = new();
+	private readonly ItemTree ItemTree = new();
 
 	// Draw window contents
 
@@ -36,7 +35,7 @@ public class Workspace : GuiWindow {
 		var scene = Ktisis.Singletons.Get<SceneManager>().Scene;
 		ImGui.BeginDisabled(scene == null);
 
-		ObjectList.Draw();
+		ItemTree.Draw(scene);
 
 		ImGui.EndDisabled();
 	}

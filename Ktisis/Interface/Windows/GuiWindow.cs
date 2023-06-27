@@ -2,7 +2,7 @@ using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
 
-namespace Ktisis.Interface.Common;
+namespace Ktisis.Interface.Windows;
 
 public abstract class GuiWindow : Window {
 	protected readonly Gui Gui;
