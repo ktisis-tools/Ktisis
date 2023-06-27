@@ -10,9 +10,8 @@ using Ktisis.Core;
 using Ktisis.Core.Singletons;
 using Ktisis.Events;
 using Ktisis.Events.Attributes;
-using Ktisis.Providers;
-using Ktisis.Extensions;
-using Ktisis.Interface.Common;
+using Ktisis.Core.Providers;
+using Ktisis.Common.Extensions;
 using Ktisis.Interface.Windows;
 
 namespace Ktisis.Interface; 
@@ -59,6 +58,11 @@ public class Gui : Singleton, IEventClient {
 		else
 			RemoveWindow<Workspace>();
 	}
+	
+	// Helpers
+
+	internal static string GenerateId<T>(T node) where T : notnull
+		=> $"{node.GetType().Name}#{node.GetHashCode():X}";
 	
 	// Dispose
 
