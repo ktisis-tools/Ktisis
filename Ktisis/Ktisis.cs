@@ -8,7 +8,7 @@ using Dalamud.Interface.Internal.Notifications;
 using Ktisis.Core;
 using Ktisis.Core.Singletons;
 using Ktisis.Interface;
-using Ktisis.Scene;
+using Ktisis.Scenes;
 
 namespace Ktisis;
 

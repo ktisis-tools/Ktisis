@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using Ktisis.Providers;
+using Ktisis.Core.Providers;
 
 namespace Ktisis.Interop.Hooking;
 

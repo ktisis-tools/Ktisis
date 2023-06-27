@@ -5,18 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Singletons/Instance.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Singletons/Instance.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Singletons/SingletonManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Singletons/SingletonManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Common/GuiWindow.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/ObjectList.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/Hook.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Modules/PoseHooks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Modules/PoseHooks.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Providers/GPoseService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Providers/GPoseService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +31,7 @@
     <setting file="file://$PROJECT_DIR$/Ktisis/Interop/Hooking/HookManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Interop/Hooking/HookModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Interop/Modules/PoseHooks.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Ktisis/Scenes/Scene.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="2RAAGi0cbEDij9kpendIQzEJMgA" />
   <component name="ProjectViewState">
@@ -87,7 +80,8 @@
       <workItem from="1687593264256" duration="1214000" />
       <workItem from="1687594698535" duration="40782000" />
       <workItem from="1687684765306" duration="11188000" />
-      <workItem from="1687804938771" duration="3680000" />
+      <workItem from="1687804938771" duration="17695000" />
+      <workItem from="1687857764606" duration="2207000" />
     </task>
     <servers />
   </component>
