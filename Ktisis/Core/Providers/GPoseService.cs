@@ -4,14 +4,13 @@ using Dalamud.Game;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
-using Ktisis.Core;
-using Ktisis.Core.Singletons;
 using Ktisis.Events;
 using Ktisis.Events.Providers;
 using Ktisis.Events.Attributes;
-using Ktisis.Extensions;
+using Ktisis.Common.Extensions;
+using Ktisis.Core.Singletons;
 
-namespace Ktisis.Providers;
+namespace Ktisis.Core.Providers;
 
 public delegate void GPoseEvent(GPoseService sender, bool isActive);
 

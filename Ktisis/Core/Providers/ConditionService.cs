@@ -1,15 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 
 using JetBrains.Annotations;
 
 using Ktisis.Events;
 using Ktisis.Events.Attributes;
+using Ktisis.Common.Extensions;
 using Ktisis.Core.Singletons;
-using Ktisis.Extensions;
 
-namespace Ktisis.Providers;
+namespace Ktisis.Core.Providers;
 
 public delegate void ConditionEvent(Condition cond, bool value);
 
