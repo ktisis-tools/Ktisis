@@ -4,7 +4,7 @@ using Dalamud.Game;
 
 using Ktisis.Core;
 using Ktisis.Events.Attributes;
-using Ktisis.Extensions;
+using Ktisis.Common.Extensions;
 
 namespace Ktisis.Events.Providers;
 

@@ -4,11 +4,11 @@ using Dalamud.Game;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Core.Singletons;
 using Ktisis.Events;
 using Ktisis.Events.Providers;
 using Ktisis.Events.Attributes;
-using Ktisis.Extensions;
 
 namespace Ktisis.Core.Providers;
 

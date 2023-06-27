@@ -6,8 +6,8 @@ using JetBrains.Annotations;
 
 using Ktisis.Events;
 using Ktisis.Events.Attributes;
+using Ktisis.Common.Extensions;
 using Ktisis.Core.Singletons;
-using Ktisis.Extensions;
 
 namespace Ktisis.Core.Providers;
 
