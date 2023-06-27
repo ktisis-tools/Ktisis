@@ -2,7 +2,7 @@ using System;
 
 using Dalamud.Logging;
 
-namespace Ktisis.Extensions; 
+namespace Ktisis.Common.Extensions; 
 
 public static class DelegateExtensions {
 	public static void InvokeSafely(this Delegate @delegate, params object?[]? args) {
