@@ -47,7 +47,7 @@ public class WorldObject : SceneObject {
 			var owner = ownedList.FirstOrDefault(x => x!.Address == objectPtr.Address, null);
 			if (owner == null) {
 				owner = FromObject(objectPtr);
-				Children.Add(owner);
+				AddChild(owner);
 			}
 			owner.Update();
 		}

@@ -6,9 +6,10 @@ public class BoneCategory {
 	public readonly string? Name;
 	
 	public bool IsNsfw;
-	public int? SortPriority;
-
+	public bool IsDefault;
+	
 	public string? ParentCategory;
+	public int? SortPriority;
 
 	public readonly List<BoneInfo> Bones = new();
 

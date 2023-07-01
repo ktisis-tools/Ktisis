@@ -51,15 +51,15 @@ public class SchemaReader {
 	private async Task<BoneCategory> RecursiveReadCategory(Categories result, XmlReader reader) {
 		var name = reader.GetAttribute("Id") ?? "Unknown";
 		var category = new BoneCategory(name);
-
-		var isNsfw = reader.GetAttribute("IsNsfw");
-		category.IsNsfw = isNsfw == "true";
-
+		
+		category.IsNsfw = reader.GetAttribute("IsNsfw") == "true";
+		category.IsDefault = reader.GetAttribute("IsDefault") == "true";
+		
+		if (category.IsDefault)
+			result.Default = category;
 		result.AddCategory(category);
-
-		var reading = true;
-		while (reading) {
-			await reader.ReadAsync();
+		
+		while (await reader.ReadAsync()) {
 			switch (reader.NodeType) {
 				case XmlNodeType.Element when reader.Name is CategoryTag:
 					var sub = await RecursiveReadCategory(result, reader);
@@ -80,8 +80,7 @@ public class SchemaReader {
 					
 					continue;
 				case XmlNodeType.EndElement when reader.Name is CategoryTag:
-					reading = false;
-					break;
+					return category;
 				default:
 					continue;
 			}

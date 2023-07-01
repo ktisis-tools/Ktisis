@@ -8,6 +8,7 @@ using Dalamud.Interface.Internal.Notifications;
 using Ktisis.Core;
 using Ktisis.Core.Singletons;
 using Ktisis.Interface;
+using Ktisis.Config;
 using Ktisis.Scenes;
 
 namespace Ktisis;
@@ -21,9 +22,11 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	internal readonly static SingletonManager Singletons = new();
 
-	private Task? InitTask;
+	internal static ConfigFile Config = null!;
 
 	// Ctor called on plugin load
+	
+	private Task? InitTask;
 	
 	public Ktisis(DalamudPluginInterface plugin) {
 		/* Start plugin initialization asynchronously.
@@ -65,20 +68,30 @@ public sealed class Ktisis : IDalamudPlugin {
 
 		// Initialize registered singletons
 		Singletons.Init();
-
+		
 		var initTime = timer.Elapsed.TotalMilliseconds;
+		var total = initTime;
+		timer.Restart();
+
+		// TODO: Config loading
+		Config = await ConfigFile.Load();
+
+		var cfgTime = timer.Elapsed.TotalMilliseconds;
+		total += cfgTime;
 		timer.Restart();
 
 		// Invoke OnReady
 		Singletons.OnReady();
-
-		var readyTime = timer.Elapsed.TotalMilliseconds;
+		
 		timer.Stop();
+		var readyTime = timer.Elapsed.TotalMilliseconds;
+		total += readyTime;
 
 		PluginLog.Verbose($"Plugin initialization complete.\n" +
-			$" Init:   {initTime:0.00}ms\n" +
-			$"Ready: + {readyTime:0.00}ms\n" +
-			$"Total: = {initTime + readyTime:0.00}ms"
+			$"  Init:   {initTime:00.00}ms\n" +
+			$"Config: + {cfgTime:00.00}ms\n" +
+			$" Ready: + {readyTime:00.00}ms\n" +
+			$" Total: = {total:00.00}ms"
 		);
 	}
 
@@ -86,6 +99,7 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	public void Dispose() {
 		if (InitTask?.IsCompleted is false) {
+			// TODO: Potentially a foot gun, implement cancellation tokens at some point
 			PluginLog.Warning("Dispose called while init in progress, waiting for completion...");
 			InitTask?.Wait();
 		}

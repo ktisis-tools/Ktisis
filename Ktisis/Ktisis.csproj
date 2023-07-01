@@ -60,4 +60,9 @@
 	<ItemGroup>
 	  <Folder Include="Common\" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Data\Schema\Categories.xml" />
+	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
+	</ItemGroup>
 </Project>

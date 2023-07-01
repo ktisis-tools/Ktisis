@@ -1,10 +1,11 @@
 ﻿using Dalamud.IoC;
 using Dalamud.Game;
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Command;
+using Dalamud.Game.ClientState.Objects;
 
+using Ktisis.Data;
 using Ktisis.Events;
 using Ktisis.Interop;
 using Ktisis.Core.Providers;
@@ -24,6 +25,8 @@ public class Services : ServiceProvider {
 	[PluginService] internal static DalamudPluginInterface PluginInterface { get; private set; } = null!;
 
 	[Service(ServiceFlags.Critical)] internal static InteropService Interop = new();
+	
+	[Service] internal static DataService Data = new();
 	[Service] internal static EventRouter Events = new();
 	[Service] internal static GPoseService GPose = new();
 	[Service] internal static ConditionService Conditions = new();
