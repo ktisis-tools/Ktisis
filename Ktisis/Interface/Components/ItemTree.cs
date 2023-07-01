@@ -1,5 +1,4 @@
 using System.Numerics;
-using System.Diagnostics;
 using System.Collections.Generic;
 
 using Dalamud.Interface;
@@ -17,7 +16,7 @@ public class ItemTree {
 	// Public draw methods
 
 	public void Draw(Scene? scene) {
-		ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, ImGui.GetFontSize() / 2f);
+		ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, ImGui.GetFontSize());
 
 		var isActive = scene != null;
 		ImGui.BeginDisabled(!isActive);
@@ -47,15 +46,11 @@ public class ItemTree {
 
 	private float MinY;
 	private float MaxY;
-	private float EyeIconSize;
-	private float FramePadding;
 
 	private void PreCalc() {
 		var scroll = ImGui.GetScrollY();
 		MinY = scroll - ImGui.GetFrameHeight();
 		MaxY = FrameHeight + scroll;
-		EyeIconSize = Icons.CalcIconSize(FontAwesomeIcon.Eye).X;
-		FramePadding = ImGui.GetStyle().FramePadding.X;
 	}
 
 	private void DrawTree(List<SceneObject> objects) {
@@ -90,23 +85,30 @@ public class ItemTree {
 	}
 
 	private void DrawLabel(SceneObject item) {
-		ImGui.SameLine();
-		var posX = ImGui.GetCursorPosX();
+		var hasIcon = item.Icon != FontAwesomeIcon.None;
+		var iconPadding = hasIcon ? Icons.CalcIconSize(item.Icon).X / 2 : 0;
+		var iconSpace = hasIcon ? UiBuilder.IconFont.FontSize : 0;
 
-		var avail = ImGui.GetContentRegionAvail().X;
-		var togglePos = posX + avail - EyeIconSize - FramePadding;
+		ImGui.SameLine();
+
+		var cursor = ImGui.GetCursorPosX();
+		ImGui.SetCursorPosX(cursor + (iconSpace / 2) - iconPadding);
 
 		// Icon + Name
 
 		Icons.DrawIcon(item.Icon);
 		ImGui.SameLine();
 
-		var labelAvail = togglePos - ImGui.GetCursorPosX();
+		cursor += ImGui.GetStyle().ItemSpacing.X + iconSpace;
+		ImGui.SetCursorPosX(cursor);
+
+		var labelAvail = ImGui.GetContentRegionAvail().X;
 		ImGui.Text(item.Name.FitToWidth(labelAvail));
 
 		// Visibility Toggle
 		// TODO: Reimplement this later.
-		/*ImGui.PushStyleColor(ImGuiCol.Text, item.Color.SetAlpha(0xE0));
+		/*var togglePos = posX + avail - EyeIconSize - FramePadding;
+		ImGui.PushStyleColor(ImGuiCol.Text, item.Color.SetAlpha(0xE0));
 		ImGui.SameLine(togglePos);
 		Icons.DrawIcon(FontAwesomeIcon.Eye); // TODO: Button
 		ImGui.PopStyleColor();*/

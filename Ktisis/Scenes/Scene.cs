@@ -5,6 +5,7 @@ using Dalamud.Logging;
 
 using Ktisis.Scenes.Objects;
 using Ktisis.Scenes.Objects.Game;
+using Ktisis.Scenes.Objects.World;
 
 namespace Ktisis.Scenes;
 
@@ -22,6 +23,7 @@ public class Scene {
 	// Build initial state for scene
 
 	private void Build() {
+		Children.Add(new World());
 		TryAddActor(GPoseActorIndex, out _);
 	}
 

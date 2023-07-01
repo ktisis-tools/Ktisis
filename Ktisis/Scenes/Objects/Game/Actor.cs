@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 using Dalamud.Interface;
-using Dalamud.Game.ClientState.Objects.Types;
+using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
@@ -23,10 +23,10 @@ public class Actor : SceneObject {
 	public GameObject? GameObject => GetGameObject();
 	private unsafe CSGameObject* CSGameObject => (CSGameObject*)(GameObject?.Address ?? 0);
 
-	// Wrap this actor's model around a WorldObject
+	// Encapsulate this actor's model as a WorldObject
 
-	private WorldObject? WorldObject;
-	public override List<SceneObject>? Children => WorldObject?.Children;
+	private Character? Character;
+	public override List<SceneObject>? Children => Character?.Children;
 
 	// Constructor
 
@@ -44,12 +44,12 @@ public class Actor : SceneObject {
 	internal unsafe override void Update() {
 		var model = GetDrawObject();
 		var addr = (nint)model;
-		if (WorldObject != null) {
-			if (addr != WorldObject.Address)
-				WorldObject.Address = addr;
-			WorldObject.Update();
+		if (Character != null) {
+			if (addr != Character.Address)
+				Character.Address = addr;
+			Character.Update();
 		} else if (model != null)
-			WorldObject = new WorldObject(addr);
+			Character = new Character(addr);
 	}
 
 	// Helpers

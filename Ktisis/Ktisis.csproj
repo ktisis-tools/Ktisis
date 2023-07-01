@@ -56,4 +56,9 @@
 			<HintPath>..\lib\ImGuizmo.NET\ImGuizmo.NET.dll</HintPath>
 		</Reference>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Data\Schema\Categories.xml" />
+	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
+	</ItemGroup>
 </Project>
