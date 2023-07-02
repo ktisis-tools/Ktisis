@@ -6,11 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Schema/Categories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Schema/Categories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/ItemTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/ItemTree.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/Armature.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/Armature.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Scene.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Scene.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/SceneManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Tree/BoneTreeBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Tree/BoneTreeBuilder.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,7 +83,7 @@
       <workItem from="1687940321386" duration="36581000" />
       <workItem from="1688126964591" duration="13275000" />
       <workItem from="1688199084677" duration="29834000" />
-      <workItem from="1688335635519" duration="2894000" />
+      <workItem from="1688335635519" duration="3940000" />
     </task>
     <servers />
   </component>

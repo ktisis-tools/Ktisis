@@ -129,13 +129,16 @@ public class BoneTreeBuilder {
 	// Bone groups
 
 	private void AddGroups(SceneObject item, BoneCategory? parent) {
-		var cats = CategoryMap
+		var cats = CategoryMap?
 			.Where(x => x.Key.ParentCategory == parent?.Name)
 			.ToArray();
 
+		if (cats == null || item.Children == null)
+			return;
+
 		BoneGroup[]? exists = null;
-		if (item.Children?.Count is > 0)
-			exists = item.Children?
+		if (item.Children.Count is > 0)
+			exists = item.Children
 				.Where(x => x is BoneGroup)
 				.Cast<BoneGroup>()
 				.ToArray();
@@ -151,7 +154,7 @@ public class BoneTreeBuilder {
 			AddGroups(group, cat);
 			AddGroupBones(group, pair.Value);
 			if (isNew && group.Children?.Count != 0)
-				item.Children?.Add(group);
+				item.Children.Add(group);
 		}
 		
 		item.SortChildren();
