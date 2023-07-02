@@ -168,7 +168,7 @@ public class BoneTreeBuilder {
 				.ToArray();
 		}
 
-		var basePrio = group.SortPriority + Partial.ConnectedParentBoneIndex;
+		var basePrio = group.SortPriority + Partial.ConnectedParentBoneIndex + 1;
 		foreach (var boneInfo in bones) {
 			var bone = exists?.FirstOrDefault(bone => bone.Name == boneInfo.Name);
 			if (bone != null) {
