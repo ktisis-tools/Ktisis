@@ -48,7 +48,8 @@ public class Armature : SceneObject {
 			if (id == prevId) continue;
 			Partials[p] = id;
 
-			var builder = new BoneTreeBuilder(p, id, partial);
+			var buildCategories = skele->Owner->GetModelType() != CharacterBase.ModelType.Weapon;
+			var builder = new BoneTreeBuilder(p, id, partial, buildCategories);
 			if (id != 0)
 				AddPartial(p, id, builder);
 			if (prevId != 0)

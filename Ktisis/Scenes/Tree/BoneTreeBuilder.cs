@@ -1,7 +1,6 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
-
-using Dalamud.Logging;
 
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
@@ -17,19 +16,29 @@ public class BoneTreeBuilder {
 	private int Index;
 	private uint PartialId;
 	private PartialSkeleton Partial;
-	
-	private readonly Dictionary<BoneCategory, List<BoneData>> Bones;
 
-	public BoneTreeBuilder(int index, uint id, PartialSkeleton partial) {
+	private readonly List<BoneData>? BoneList;
+	private readonly Dictionary<BoneCategory, List<BoneData>>? CategoryMap;
+
+	public BoneTreeBuilder(int index, uint id, PartialSkeleton partial, bool buildCategories = true) {
 		Index = index;
 		PartialId = id;
 		Partial = partial;
-		Bones = BuildBoneList();
+		if (buildCategories)
+			CategoryMap = BuildCategoryMap();
+		else
+			BoneList = BuildBoneList();
 	}
 	
 	// Bone list
+
+	private List<BoneData> BuildBoneList() {
+		var result = new List<BoneData>();
+		ForEachBone(bone => result.Add(bone));
+		return result;
+	}
 	
-	private unsafe Dictionary<BoneCategory, List<BoneData>> BuildBoneList() {
+	private unsafe Dictionary<BoneCategory, List<BoneData>> BuildCategoryMap() {
 		var result = new Dictionary<BoneCategory, List<BoneData>>();
 		
 		var pose = Partial.GetHavokPose(0);
@@ -39,32 +48,15 @@ public class BoneTreeBuilder {
 
 		// Build map of categories to bones
 
-		for (var i = 1; i < skeleton->Bones.Length; i++) {
-			var hkaBone = skeleton->Bones[i];
-
-			// this should never happen unless the user has a really fucked custom skeleton
-			var name = hkaBone.Name.String;
-			if (name == null) continue;
-
-			var info = new BoneData {
-				Name = name,
-				BoneIndex = i,
-				ParentIndex = skeleton->ParentIndices[i],
-				PartialIndex = Index
-			};
-			
-			var cat = Ktisis.Config.Categories?.ResolveBestCategory(skeleton, i);
-			if (cat == null) {
-				// If the default category doesn't exist then something's seriously wrong
-				PluginLog.Warning("Failed to retrieve categories, this may be a sign of corrupt configuration!");
-				break;
-			}
+		ForEachBone(bone => {
+			var cat = Ktisis.Config.Categories?.ResolveBestCategory(skeleton, bone.BoneIndex);
+			if (cat == null) return;
 			
 			if (result.TryGetValue(cat, out var catBones))
-				catBones.Add(info);
+				catBones.Add(bone);
 			else
-				result.Add(cat, new List<BoneData> { info });
-		}
+				result.Add(cat, new List<BoneData> { bone });
+		});
 		
 		// Ensure parents of categories always exist, even if they don't have bones
 
@@ -84,10 +76,41 @@ public class BoneTreeBuilder {
 		return result;
 	}
 
+	private unsafe void ForEachBone(Action<BoneData> callback) {
+		var pose = Partial.GetHavokPose(0);
+		hkaSkeleton* skeleton;
+		if (pose == null || (skeleton = pose->Skeleton) == null)
+			return;
+		
+		for (var i = 1; i < skeleton->Bones.Length; i++) {
+			var hkaBone = skeleton->Bones[i];
+
+			// this should never happen unless the user has a really fucked custom skeleton
+			var name = hkaBone.Name.String;
+			if (name == null) continue;
+
+			if (Index > 0 && name == "j_ago") // :)
+				continue;
+			
+			var info = new BoneData {
+				Name = name,
+				BoneIndex = i,
+				ParentIndex = skeleton->ParentIndices[i],
+				PartialIndex = Index
+			};
+
+			callback.Invoke(info);
+		}
+	}
+
 	// Handle partial add
-	
-	public void Add(SceneObject item)
-		=> AddGroups(item, null);
+
+	public void Add(SceneObject item) {
+		if (CategoryMap != null)
+			AddGroups(item, null);
+		if (BoneList != null)
+			AddGroupBones(item, BoneList);
+	}
 
 	public void Clean(SceneObject item) {
 		if (item is not (Armature or BoneGroup)) return;
@@ -106,7 +129,7 @@ public class BoneTreeBuilder {
 	// Bone groups
 
 	private void AddGroups(SceneObject item, BoneCategory? parent) {
-		var cats = Bones
+		var cats = CategoryMap
 			.Where(x => x.Key.ParentCategory == parent?.Name)
 			.ToArray();
 
@@ -136,7 +159,7 @@ public class BoneTreeBuilder {
 
 	// Group bones
 
-	private void AddGroupBones(BoneGroup group, List<BoneData> bones) {
+	private void AddGroupBones(SceneObject group, List<BoneData> bones) {
 		Bone[]? exists = null;
 		if (group.Children?.Count is > 0) {
 			exists = group.Children?
