@@ -107,9 +107,11 @@ public class ItemTree {
 
 		// Visibility Toggle
 		// TODO: Reimplement this later.
-		/*var togglePos = posX + avail - EyeIconSize - FramePadding;
-		ImGui.PushStyleColor(ImGuiCol.Text, item.Color.SetAlpha(0xE0));
-		ImGui.SameLine(togglePos);
+		/*ImGui.SameLine();
+		var togglePos = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Icons.CalcIconSize(FontAwesomeIcon.Eye).X * 1.25f;
+		ImGui.PushStyleColor(ImGuiCol.Text, item.Color.SetAlpha(0x90));
+		//ImGui.SameLine(togglePos);
+		ImGui.SetCursorPosX(togglePos);
 		Icons.DrawIcon(FontAwesomeIcon.Eye); // TODO: Button
 		ImGui.PopStyleColor();*/
 	}
