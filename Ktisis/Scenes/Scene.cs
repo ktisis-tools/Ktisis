@@ -11,6 +11,7 @@ namespace Ktisis.Scenes;
 
 public class Scene {
 	private const ushort GPoseActorIndex = 201;
+	private const ushort GPoseActorCount = 42;
 
 	// Objects
 
@@ -24,7 +25,8 @@ public class Scene {
 
 	private void Build() {
 		Children.Add(new World());
-		TryAddActor(GPoseActorIndex, out _);
+		for (ushort i = 0; i < GPoseActorCount; i++)
+			TryAddActor((ushort)(GPoseActorIndex + i), out _);
 	}
 
 	// Update state
