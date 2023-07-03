@@ -6,7 +6,7 @@ using ImGuiNET;
 
 namespace Ktisis.Interface.Widgets; 
 
-internal class Icons {
+internal static class Icons {
 	internal static void DrawIcon(FontAwesomeIcon icon, uint? color = null) {
 		var hasColor = color.HasValue;
 		if (hasColor) ImGui.PushStyleColor(ImGuiCol.Button, color!.Value);
