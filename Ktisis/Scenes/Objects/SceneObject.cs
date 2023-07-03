@@ -27,7 +27,7 @@ public abstract class SceneObject : ITreeNode {
 
 	// Object
 
-	public virtual List<SceneObject>? Children { get; init; } = new();
+	public virtual List<SceneObject> Children { get; init; } = new();
 
 	// Constructor
 
@@ -39,14 +39,13 @@ public abstract class SceneObject : ITreeNode {
 	// Children
 
 	public void AddChild(SceneObject child) {
-		if (Children == null) return;
 		child.Parent = this;
 		Children.Add(child);
 	}
 
 	public void RemoveChild(SceneObject child) {
 		child.Parent = null;
-		Children?.Remove(child);
+		Children.Remove(child);
 	}
 
 	public void ParentTo(SceneObject parent) {
@@ -55,10 +54,10 @@ public abstract class SceneObject : ITreeNode {
 	}
 
 	public void SortChildren()
-		=> Children?.Sort((a, b) => a.SortPriority - b.SortPriority);
+		=> Children.Sort((a, b) => a.SortPriority - b.SortPriority);
 
 	// Update
 
 	internal virtual void Update()
-		=> Children?.ForEach(child => child.Update());
+		=> Children.ForEach(child => child.Update());
 }
