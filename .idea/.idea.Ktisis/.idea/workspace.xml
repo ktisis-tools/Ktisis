@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Widgets/Buttons.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/ItemTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/ItemTree.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Widgets/Icons.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Widgets/Icons.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/World/Weapon.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/World/Weapon.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Scene.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Scene.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Game/Actor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Game/Actor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/SceneObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/SceneObject.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +84,7 @@
       <workItem from="1688126964591" duration="13275000" />
       <workItem from="1688199084677" duration="29834000" />
       <workItem from="1688335635519" duration="7796000" />
+      <workItem from="1688372128445" duration="379000" />
     </task>
     <servers />
   </component>

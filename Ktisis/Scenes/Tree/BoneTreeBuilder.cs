@@ -114,14 +114,14 @@ public class BoneTreeBuilder {
 
 	public void Clean(SceneObject item) {
 		if (item is not (Armature or BoneGroup)) return;
-		item.Children?.ForEach(Clean);
-		item.Children?.RemoveAll(IsStale);
+		item.Children.ForEach(Clean);
+		item.Children.RemoveAll(IsStale);
 	}
 	
 	// Whether an item should be deleted
 
 	private bool IsStale(SceneObject item) => item switch {
-		BoneGroup group => group.Children?.Count == 0,
+		BoneGroup group => group.Children.Count == 0,
 		Bone bone when bone.PartialIndex == Index => bone.PartialId != PartialId,
 		_ => false
 	};
@@ -137,7 +137,7 @@ public class BoneTreeBuilder {
 			return;
 
 		BoneGroup[]? exists = null;
-		if (item.Children.Count is > 0)
+		if (item.Children.Count > 0)
 			exists = item.Children
 				.Where(x => x is BoneGroup)
 				.Cast<BoneGroup>()
@@ -153,7 +153,7 @@ public class BoneTreeBuilder {
 			};
 			AddGroups(group, cat);
 			AddGroupBones(group, pair.Value);
-			if (isNew && group.Children?.Count != 0)
+			if (isNew && group.Children.Count != 0)
 				item.Children.Add(group);
 		}
 		
@@ -164,8 +164,8 @@ public class BoneTreeBuilder {
 
 	private void AddGroupBones(SceneObject group, List<BoneData> bones) {
 		Bone[]? exists = null;
-		if (group.Children?.Count is > 0) {
-			exists = group.Children?
+		if (group.Children.Count > 0) {
+			exists = group.Children
 				.Where(x => x is Bone bone && bone.PartialIndex == Index)
 				.Cast<Bone>()
 				.ToArray();
@@ -177,7 +177,7 @@ public class BoneTreeBuilder {
 			if (bone != null) {
 				bone.PartialId = PartialId;
 			} else {
-				group.Children?.Add(new Bone(boneInfo.Name, Index, PartialId) {
+				group.Children.Add(new Bone(boneInfo.Name, Index, PartialId) {
 					SortPriority = basePrio + boneInfo.BoneIndex
 				});
 			}
