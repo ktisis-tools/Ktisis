@@ -1,8 +1,11 @@
 using System.Numerics;
 
+using Dalamud.Interface;
+
 using ImGuiNET;
 
 using Ktisis.Scenes;
+using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows;
@@ -10,7 +13,7 @@ namespace Ktisis.Interface.Windows;
 public class Workspace : GuiWindow {
 	// Constants
 
-	private readonly static Vector2 MinimumSize = new(300, 200);
+	private readonly static Vector2 MinimumSize = new(280, 300);
 
 	// Constructor
 
@@ -35,8 +38,22 @@ public class Workspace : GuiWindow {
 		var scene = Ktisis.Singletons.Get<SceneManager>().Scene;
 		ImGui.BeginDisabled(scene == null);
 
-		ItemTree.Draw(scene);
+		var style = ImGui.GetStyle();
+
+		var bottomHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
+		var treeHeight = ImGui.GetContentRegionAvail().Y - bottomHeight;
+		ItemTree.Draw(scene, treeHeight);
+
+		ImGui.Spacing();
+
+		DrawTreeButtons();
 
 		ImGui.EndDisabled();
+	}
+
+	private void DrawTreeButtons() {
+		Buttons.DrawIconButton(FontAwesomeIcon.Plus);
+		ImGui.SameLine();
+		Buttons.DrawIconButton(FontAwesomeIcon.Filter);
 	}
 }

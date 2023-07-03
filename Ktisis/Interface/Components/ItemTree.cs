@@ -15,12 +15,12 @@ namespace Ktisis.Interface.Components;
 public class ItemTree {
 	// Public draw methods
 
-	public void Draw(Scene? scene) {
+	public void Draw(Scene? scene, float height) {
 		ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, ImGui.GetFontSize());
 
 		var isActive = scene != null;
 		ImGui.BeginDisabled(!isActive);
-		if (DrawFrame()) {
+		if (DrawFrame(height)) {
 			if (isActive)
 				DrawTree(scene!.Children);
 			else
@@ -36,9 +36,8 @@ public class ItemTree {
 
 	private float FrameHeight;
 
-	private bool DrawFrame() {
-		var avail = ImGui.GetContentRegionAvail().Y - ImGui.GetStyle().FramePadding.Y * 2;
-		FrameHeight = avail - 10;
+	private bool DrawFrame(float height) {
+		FrameHeight = height;
 		return ImGui.BeginChildFrame(101, new Vector2(-1, FrameHeight));
 	}
 
