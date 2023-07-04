@@ -52,9 +52,6 @@
 			<HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
 			<Private>false</Private>
 		</Reference>
-		<Reference Include="ImGuizmo.NET">
-			<HintPath>..\lib\ImGuizmo.NET\ImGuizmo.NET.dll</HintPath>
-		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -65,4 +62,12 @@
 	  <None Remove="Data\Schema\Categories.xml" />
 	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET\ImGuizmo.NET.csproj" />
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec ContinueOnError="WarnAndContinue" Command="if $(OS) == Windows_NT (&#xA;copy &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot; /Y&#xA;) else (&#xA;cp &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
+	</Target>
 </Project>

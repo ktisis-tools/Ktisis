@@ -1,6 +1,15 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ktisis", "Ktisis\Ktisis.csproj", "{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ImGuizmo.NET", "ImGuizmo.NET", "{57A4FB4B-6633-42E3-99CE-DC166825FC12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuizmo.NET", "ImGuizmo.NET\ImGuizmo.NET\ImGuizmo.NET.csproj", "{5645FA0C-2EB3-431A-9B7E-82555339DB90}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AC2F29A6-5129-465C-8680-018CCEA3B63A} = {AC2F29A6-5129-465C-8680-018CCEA3B63A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NativeComponents", "ImGuizmo.NET\NativeComponents\NativeComponents.vcxproj", "{AC2F29A6-5129-465C-8680-018CCEA3B63A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -11,5 +20,17 @@ Global
 		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Debug|x64.Build.0 = Debug|x64
 		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Release|x64.ActiveCfg = Release|x64
 		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Release|x64.Build.0 = Release|x64
+		{5645FA0C-2EB3-431A-9B7E-82555339DB90}.Debug|x64.ActiveCfg = Debug|x64
+		{5645FA0C-2EB3-431A-9B7E-82555339DB90}.Debug|x64.Build.0 = Debug|x64
+		{5645FA0C-2EB3-431A-9B7E-82555339DB90}.Release|x64.ActiveCfg = Release|x64
+		{5645FA0C-2EB3-431A-9B7E-82555339DB90}.Release|x64.Build.0 = Release|x64
+		{AC2F29A6-5129-465C-8680-018CCEA3B63A}.Debug|x64.ActiveCfg = Debug|x64
+		{AC2F29A6-5129-465C-8680-018CCEA3B63A}.Debug|x64.Build.0 = Debug|x64
+		{AC2F29A6-5129-465C-8680-018CCEA3B63A}.Release|x64.ActiveCfg = Release|x64
+		{AC2F29A6-5129-465C-8680-018CCEA3B63A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5645FA0C-2EB3-431A-9B7E-82555339DB90} = {57A4FB4B-6633-42E3-99CE-DC166825FC12}
+		{AC2F29A6-5129-465C-8680-018CCEA3B63A} = {57A4FB4B-6633-42E3-99CE-DC166825FC12}
 	EndGlobalSection
 EndGlobal
