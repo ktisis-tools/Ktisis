@@ -8,12 +8,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitmodules" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis.sln" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/packages.lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/packages.lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interop/Native/DllResolver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +126,7 @@
       <workItem from="1688335635519" duration="7796000" />
       <workItem from="1688372128445" duration="379000" />
       <workItem from="1688468168993" duration="210000" />
-      <workItem from="1688468402874" duration="7705000" />
+      <workItem from="1688468402874" duration="8045000" />
     </task>
     <servers />
   </component>
