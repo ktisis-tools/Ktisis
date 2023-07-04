@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using Dalamud.Logging;
 using Dalamud.Interface.Internal.Notifications;
 
-using Ktisis.Events;
-
 namespace Ktisis.Core.Singletons; 
 
 public class ServiceProvider : Singleton {
@@ -49,7 +47,7 @@ public class ServiceProvider : Singleton {
 		if (hasError) {
 			Services.PluginInterface.UiBuilder.AddNotification(
 				"Ktisis failed to load one or more non-critical service.\nPlease see the error log for more information.",
-				"Ktisis", NotificationType.Warning
+				Ktisis.VersionName, NotificationType.Warning, 10000
 			);
 		}
 	}

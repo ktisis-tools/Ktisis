@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using System.Threading.Tasks;
 
 using Dalamud.Plugin;
@@ -17,6 +18,9 @@ public sealed class Ktisis : IDalamudPlugin {
 	// Plugin info
 
 	public string Name => "Ktisis";
+
+	public static string Version = $"v{GetVersion()}";
+	public static string VersionName = $"Ktisis (Alpha {Version})";
 	
 	// Plugin framework
 
@@ -43,7 +47,7 @@ public sealed class Ktisis : IDalamudPlugin {
 			
 			plugin.UiBuilder.AddNotification(
 				"Ktisis failed to load. Please check your error log for more information.",
-				"Ktisis", NotificationType.Error
+				VersionName, NotificationType.Error, 10000
 			);
 
 			InitTask = null;
@@ -87,12 +91,18 @@ public sealed class Ktisis : IDalamudPlugin {
 		var readyTime = timer.Elapsed.TotalMilliseconds;
 		total += readyTime;
 
-		PluginLog.Verbose($"Plugin initialization complete.\n" +
+		PluginLog.Debug($"Plugin initialization complete.\n" +
 			$"  Init:   {initTime:00.00}ms\n" +
 			$"Config: + {cfgTime:00.00}ms\n" +
 			$" Ready: + {readyTime:00.00}ms\n" +
 			$" Total: = {total:00.00}ms"
 		);
+	}
+	
+	// Version info
+
+	public static string GetVersion() {
+		return Assembly.GetCallingAssembly().GetName().Version!.ToString(fieldCount: 3);
 	}
 
 	// Dispose

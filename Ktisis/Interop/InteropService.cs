@@ -21,7 +21,7 @@ public class InteropService : Service, IEventClient {
 	
 	public override void Init() {
 		DllResolver.Init();
-		
+
 		HookManager.Register<PoseHooks>(Condition.IsInGPose, HookFlags.RequireEvent);
 		HookManager.CreateHooks();
 	}

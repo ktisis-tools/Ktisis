@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -14,22 +15,26 @@ namespace Ktisis.Interop.Native;
 internal class DllResolver {
 	private static AssemblyLoadContext? Context;
 
-	private static nint Handle;
+	private readonly static List<nint> Handles = new();
 	
 	internal static void Init() {
+		PluginLog.Debug("Creating DLL resolver for unmanaged DLLs");
+		
 		Context = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());
 		if (Context != null)
 			Context.ResolvingUnmanagedDll += ResolveUnmanaged;
 	}
 
 	internal static void Dispose() {
+		PluginLog.Debug("Disposing DLL resolver for unmanaged DLLs");
+		
 		if (Context != null)
 			Context.ResolvingUnmanagedDll -= ResolveUnmanaged;
 		Context = null;
 
-		if (Handle != nint.Zero)
-			NativeLibrary.Free(Handle);
-		Handle = nint.Zero;
+		if (Handles.Count > 0)
+			Handles.ForEach(FreeHandle);
+		Handles.Clear();
 	}
 
 	private static nint ResolveUnmanaged(Assembly assembly, string library) {
@@ -37,8 +42,20 @@ internal class DllResolver {
 		if (loc == null) return nint.Zero;
 
 		var path = Path.Combine(loc, library);
-		PluginLog.Information($"Resolved native assembly path: {path}");
+		PluginLog.Debug($"Resolving native assembly path: {path}");
 
-		return Handle = NativeLibrary.TryLoad(path, out var handle) ? handle : nint.Zero;
+		if (NativeLibrary.TryLoad(path, out var handle) && handle != nint.Zero) {
+			Handles.Add(handle);
+			PluginLog.Debug($"Success, resolved library handle: {handle:X}");
+		} else {
+			PluginLog.Warning($"Failed to resolve native assembly path: {path}");
+		}
+
+		return handle;
+	}
+	
+	private static void FreeHandle(nint handle) {
+		PluginLog.Debug($"Freeing library handle: {handle:X}");
+		NativeLibrary.Free(handle);
 	}
 }
