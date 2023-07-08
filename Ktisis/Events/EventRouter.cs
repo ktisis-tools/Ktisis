@@ -110,7 +110,8 @@ public class EventRouter : Service {
 
 	// Activate clients on plugin ready
 
-	public override void OnReady() => Providers.ForEach(item => item.Setup());
+	public override void OnReady()
+		=> Providers.ForEach(item => item.Setup());
 
 	// Disposal
 
