@@ -25,10 +25,8 @@ public class Actor : SceneObject {
 
 	// Encapsulate this actor's model as a WorldObject
 
-	private readonly List<SceneObject> _childFallback = new();
-
 	private Character? Character;
-	public override List<SceneObject> Children => Character?.Children ?? _childFallback;
+	public override List<SceneObject> Children => Character?.Children ?? default!;
 
 	// Constructor
 

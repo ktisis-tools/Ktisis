@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 
 using Dalamud.Interface;
+using Dalamud.Logging;
 
 using Ktisis.Interface;
-using Ktisis.Interface.Items;
+using Ktisis.Interface.SceneUi.Logic;
 
 namespace Ktisis.Scenes.Objects; 
 
@@ -18,6 +20,9 @@ public abstract class SceneObject : ITreeNode {
 	
 	// Tree node properties
 	// TODO: This probably doesn't belong here, revisit it later.
+	
+	public bool Hidden { get; protected set; }
+	public bool Disabled { get; protected set; }
 	
 	public string UiId { get; set; }
 	public virtual uint Color { get; init; } = 0xFFFFFFFF;
@@ -49,8 +54,12 @@ public abstract class SceneObject : ITreeNode {
 	}
 
 	public void ParentTo(SceneObject parent) {
-		Parent?.RemoveChild(this);
+		RemoveFromParent();
 		parent.AddChild(this);
+	}
+
+	public void RemoveFromParent() {
+		Parent?.RemoveChild(this);
 	}
 
 	public void SortChildren()
@@ -59,5 +68,13 @@ public abstract class SceneObject : ITreeNode {
 	// Update
 
 	internal virtual void Update()
-		=> Children.ForEach(child => child.Update());
+		=> Children.ForEach(UpdateItem);
+	
+	private void UpdateItem(SceneObject item) {
+		try {
+			item.Update();
+		} catch (Exception e) {
+			PluginLog.Error($"Error while updating object state for '{item.Name}':\n{e}");
+		}
+	}
 }
