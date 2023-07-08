@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 
 using Ktisis.Core.Singletons;
 using Ktisis.Events.Attributes;
-using Ktisis.Events.Providers;
 
 namespace Ktisis.Events;
 
@@ -13,10 +13,11 @@ public class EventRouter : Service {
 
 	private readonly List<EventProvider> Providers = new();
 
-	private void Create<T>() where T : EventProvider, new() {
+	internal T CreateProvider<T>() where T : EventProvider, new() {
 		var provider = new T();
 		Providers.Add(provider);
-		Create(provider);
+		CreateClient(provider);
+		return provider;
 	}
 
 	// Injection handling for emitters
@@ -25,7 +26,7 @@ public class EventRouter : Service {
 
 	private Dictionary<Type, List<(IEventClient Client, Delegate Delegate)>>? Queue;
 
-	public void Create<T>(T client) where T : IEventClient {
+	internal void CreateClient<T>(T client) where T : IEventClient {
 		var events = client.GetEmitters();
 		foreach (var @event in events) {
 			var type = @event.EventHandlerType;
@@ -80,7 +81,13 @@ public class EventRouter : Service {
 
 	// Handler removal
 
-	public void Remove<T>(T client) where T : IEventClient {
+	internal void RemoveProvider<T>(T provider) where T : EventProvider {
+		provider.Dispose();
+		RemoveClient(provider);
+		Providers.Remove(provider);
+	}
+
+	internal void RemoveClient<T>(T client) where T : IEventClient {
 		var listeners = client.GetListeners();
 		foreach (var listener in listeners) {
 			var attr = listener.GetCustomAttribute<ListenerAttribute>();
@@ -104,9 +111,7 @@ public class EventRouter : Service {
 
 	// Initialization handler
 
-	public override void Init() {
-		Create<FrameworkEventProvider>();
-	}
+	public override void Init() { }
 
 	// Activate clients on plugin ready
 
@@ -116,10 +121,8 @@ public class EventRouter : Service {
 	// Disposal
 
 	public override void Dispose() {
-		foreach (var provider in Providers) {
-			provider.Dispose();
-			Remove(provider);
-		}
+		var providers = Providers.ToList();
+		providers.ForEach(RemoveProvider);
 		Providers.Clear();
 	}
 }

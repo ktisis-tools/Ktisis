@@ -25,7 +25,7 @@ internal class Instance {
 		if (IsInit) return;
 		Singleton?.Init();
 		if (Singleton is IEventClient eventClient)
-			Services.Events.Create(eventClient);
+			Services.Events.CreateClient(eventClient);
 		IsInit = true;
 	}
 
@@ -37,7 +37,7 @@ internal class Instance {
 	internal void Dispose() {
 		if (IsDisposed) return;
 		if (Singleton is IEventClient eventClient)
-			Services.Events.Remove(eventClient);
+			Services.Events.RemoveClient(eventClient);
 		Singleton?.Dispose();
 		Singleton = null;
 		IsDisposed = true;

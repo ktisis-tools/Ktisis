@@ -1,6 +1,6 @@
 using System;
 
-namespace Ktisis.Events.Providers;
+namespace Ktisis.Events;
 
 public class EventProvider : IEventClient, IDisposable {
 	public virtual void Setup() { }

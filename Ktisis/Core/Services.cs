@@ -6,9 +6,9 @@ using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects;
 
 using Ktisis.Data;
+using Ktisis.Game;
 using Ktisis.Events;
 using Ktisis.Interop;
-using Ktisis.Posing;
 using Ktisis.Core.Singletons;
 
 namespace Ktisis.Core;
@@ -26,18 +26,18 @@ public class Services : ServiceProvider {
 
 	[Service(ServiceFlags.Critical)] internal static InteropService Interop = new();
 
-	[Service] internal static DataService Data = new();
-	[Service] internal static EventRouter Events = new();
-	[Service] internal static GPoseService GPose = new();
-	[Service] internal static ConditionService Conditions = new();
+	[Service] internal readonly static DataService Data = new();
+	[Service] internal readonly static EventRouter Events = new();
+	[Service] internal readonly static GameService Game = new();
+	[Service] internal readonly static ConditionService Conditions = new();
 
 	protected override void OnInitService(Service service) {
 		if (service is IEventClient eventClient)
-			Events.Create(eventClient);
+			Events.CreateClient(eventClient);
 	}
 
 	protected override void OnDisposeService(Service service) {
 		if (service is IEventClient eventClient)
-			Events.Remove(eventClient);
+			Events.RemoveClient(eventClient);
 	}
 }
