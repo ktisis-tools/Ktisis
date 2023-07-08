@@ -7,10 +7,10 @@ using JetBrains.Annotations;
 
 using Dalamud.Interface.Windowing;
 
+using Ktisis.Posing;
+using Ktisis.Events;
 using Ktisis.Core;
 using Ktisis.Core.Singletons;
-using Ktisis.Core.Providers;
-using Ktisis.Events;
 using Ktisis.Events.Attributes;
 using Ktisis.Common.Extensions;
 using Ktisis.Interface.Overlay;

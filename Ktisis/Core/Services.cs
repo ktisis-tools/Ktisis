@@ -8,7 +8,7 @@ using Dalamud.Game.ClientState.Objects;
 using Ktisis.Data;
 using Ktisis.Events;
 using Ktisis.Interop;
-using Ktisis.Core.Providers;
+using Ktisis.Posing;
 using Ktisis.Core.Singletons;
 
 namespace Ktisis.Core;

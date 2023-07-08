@@ -3,9 +3,8 @@
 using JetBrains.Annotations;
 
 using Ktisis.Events;
-using Ktisis.Core.Providers;
-using Ktisis.Core.Singletons;
 using Ktisis.Events.Attributes;
+using Ktisis.Core.Singletons;
 using Ktisis.Interop.Hooking;
 using Ktisis.Interop.Modules;
 using Ktisis.Interop.Native;
