@@ -9,8 +9,9 @@ using Ktisis.Events.Providers;
 using Ktisis.Events.Attributes;
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Singletons;
+using Ktisis.Core;
 
-namespace Ktisis.Core.Providers;
+namespace Ktisis.Posing;
 
 public delegate void GPoseEvent(GPoseService sender, bool isActive);
 

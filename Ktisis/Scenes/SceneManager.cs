@@ -8,7 +8,7 @@ using Ktisis.Events;
 using Ktisis.Events.Attributes;
 using Ktisis.Events.Providers;
 using Ktisis.Core.Singletons;
-using Ktisis.Core.Providers;
+using Ktisis.Posing;
 
 namespace Ktisis.Scenes; 
 
