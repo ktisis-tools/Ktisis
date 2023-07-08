@@ -3,7 +3,7 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
 
-using Ktisis.Interop.Native;
+using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Scenes.Objects.World;
 
@@ -15,7 +15,9 @@ public class WorldObject : SceneObject {
 
 	// Constructor
 
-	public WorldObject(nint address) => Address = address;
+	protected WorldObject() { }
+
+	protected WorldObject(nint address) => Address = address;
 
 	private unsafe static WorldObject FromObject(Pointer<Object> ptr) {
 		var addr = ptr.Address;
