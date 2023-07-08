@@ -31,8 +31,8 @@ internal class SingletonManager : Singleton {
 	
 	// Access registered singletons
 
-	internal T Get<T>() where T : Singleton
-		=> (T)Registered.First(item => item.Singleton is T).Singleton!;
+	internal T? Get<T>() where T : Singleton
+		=> (T?)Registered.First(item => item.Singleton is T).Singleton;
 	
 	// Disposal
 	

@@ -4,18 +4,17 @@ using Dalamud.Game;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
+using Ktisis.Core;
+using Ktisis.Core.Singletons;
 using Ktisis.Events;
-using Ktisis.Events.Providers;
 using Ktisis.Events.Attributes;
 using Ktisis.Common.Extensions;
-using Ktisis.Core.Singletons;
-using Ktisis.Core;
 
-namespace Ktisis.Posing;
+namespace Ktisis.Game;
 
-public delegate void GPoseEvent(GPoseService sender, bool isActive);
+public delegate void GPoseEvent(GPoseState sender, bool isActive);
 
-public class GPoseService : Service, IEventClient {
+public class GPoseState : Service, IEventClient {
 	// Instance of native TargetSystem singleton
 	private unsafe TargetSystem* Target = null;
 	
