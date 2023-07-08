@@ -9,7 +9,7 @@ using Ktisis.Events.Attributes;
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Singletons;
 
-namespace Ktisis.Core.Providers;
+namespace Ktisis.Events;
 
 public delegate void ConditionEvent(Condition cond, bool value);
 
