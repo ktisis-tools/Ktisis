@@ -9,7 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Scenes.Tree;
 using Ktisis.Scenes.Objects.World;
-using Ktisis.Interface.SceneUi.Logic;
+using Ktisis.Scenes.Objects.Impl;
 
 namespace Ktisis.Scenes.Objects.Models;
 

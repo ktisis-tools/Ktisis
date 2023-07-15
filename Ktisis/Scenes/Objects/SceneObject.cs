@@ -5,7 +5,7 @@ using Dalamud.Interface;
 using Dalamud.Logging;
 
 using Ktisis.Interface;
-using Ktisis.Interface.SceneUi.Logic;
+using Ktisis.Scenes.Objects.Impl;
 
 namespace Ktisis.Scenes.Objects; 
 

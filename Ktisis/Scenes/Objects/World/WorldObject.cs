@@ -5,7 +5,7 @@ using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.M
 
 using Ktisis.Common.Utility;
 using Ktisis.Interop.Unmanaged;
-using Ktisis.Interface.SceneUi.Logic;
+using Ktisis.Scenes.Objects.Impl;
 
 namespace Ktisis.Scenes.Objects.World; 
 

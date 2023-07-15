@@ -1,6 +1,6 @@
 using Dalamud.Interface;
 
-namespace Ktisis.Interface.SceneUi.Logic; 
+namespace Ktisis.Scenes.Objects.Impl; 
 
 // TODO: Revisit this later, it's probably not the greatest way to do this.
 

@@ -1,6 +1,6 @@
 using Ktisis.Common.Utility;
 
-namespace Ktisis.Interface.SceneUi.Logic; 
+namespace Ktisis.Scenes.Objects.Impl; 
 
 public interface ITransform {
 	public Transform? GetTransform();
