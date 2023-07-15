@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 
 using Dalamud.Game;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
@@ -34,6 +35,11 @@ public class GPoseState : IEventClient {
 
 	private bool GetActive()
 		=> Ktisis.PluginApi.UiBuilder.GposeActive && TargetAddress != 0;
+	
+	// APIs
+
+	public GameObject? GetTarget()
+		=> GetActive() ? Services.ObjectTable.CreateObjectReference(TargetAddress) : null;
 	
 	// Constructor
 

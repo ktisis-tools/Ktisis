@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using Dalamud.Interface;
+using Dalamud.Logging;
 
 using ImGuiNET;
 
@@ -34,11 +35,14 @@ public class SceneTree {
 		var isActive = SceneManager?.Scene != null;
 		ImGui.BeginDisabled(!isActive);
 		if (DrawFrame(height)) {
-			if (isActive)
-				DrawSceneRoot();
-			else
-				ImGui.Text("Waiting for scene...");
-			ImGui.EndChildFrame();
+			try {
+				if (isActive)
+					DrawSceneRoot();
+			} catch (Exception e) {
+				PluginLog.Error($"Error while drawing scene tree:\n{e}");
+			} finally {
+				ImGui.EndChildFrame();
+			}
 		}
 		ImGui.EndDisabled();
 		
