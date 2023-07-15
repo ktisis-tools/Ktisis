@@ -7,11 +7,13 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Core;
+using Ktisis.Common.Utility;
 using Ktisis.Scenes.Objects.World;
+using Ktisis.Interface.SceneUi.Logic;
 
 namespace Ktisis.Scenes.Objects.Game;
 
-public class Actor : SceneObject {
+public class Actor : SceneObject, IManipulable {
 	// UI
 
 	public override FontAwesomeIcon Icon { get; init; } = FontAwesomeIcon.Child;
@@ -26,7 +28,7 @@ public class Actor : SceneObject {
 	// Encapsulate this actor's model as a WorldObject
 
 	private Character? Character;
-	public override List<SceneObject> Children => Character?.Children ?? default!;
+	public override List<SceneObject> Children => Character?.Children!;
 
 	// Constructor
 
@@ -47,10 +49,23 @@ public class Actor : SceneObject {
 		if (Character != null) {
 			if (addr != Character.Address)
 				Character.Address = addr;
+			if (Character.Name != Name)
+				Character.Name = Name;
 			Character.Update();
-		} else if (model != null)
-			Character = new Character(addr);
+		} else if (model != null) {
+			Character = new Character(addr) {
+				Name = Name
+			};
+		}
 	}
+
+	// Transform wrapper
+
+	public Transform? GetTransform()
+		=> Character?.GetTransform();
+
+	public void SetTransform(Transform trans)
+		=> Character?.SetTransform(trans);
 
 	// Helpers
 

@@ -1,6 +1,6 @@
 using Dalamud.Interface;
 
-namespace Ktisis.Interface.Items;
+namespace Ktisis.Interface.SceneUi.Logic;
 
 // TODO: Revisit this later, it's probably not the greatest way to do this.
 
@@ -9,4 +9,12 @@ public interface ITreeNode {
 
 	public uint Color { get; protected init; }
 	public FontAwesomeIcon Icon { get; protected init; }
+
+	// Selection
+
+	public void Select();
+
+	public void Unselect();
+
+	public void ToggleSelected();
 }

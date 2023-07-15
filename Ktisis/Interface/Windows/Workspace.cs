@@ -6,7 +6,7 @@ using ImGuiNET;
 
 using Ktisis.Scenes;
 using Ktisis.Interface.Widgets;
-using Ktisis.Interface.Components;
+using Ktisis.Interface.SceneUi;
 
 namespace Ktisis.Interface.Windows;
 
@@ -15,19 +15,29 @@ public class Workspace : GuiWindow {
 
 	private readonly static Vector2 MinimumSize = new(280, 300);
 
+	// Singleton access
+
+	private SceneManager? SceneManager;
+
 	// Constructor
 
 	public Workspace(Gui gui) : base(gui, "Ktisis Workspace") {
+		SceneManager = Ktisis.Singletons.Get<SceneManager>();
 		RespectCloseHotkey = false;
 	}
 
 	// Components
 
-	private readonly ItemTree ItemTree = new();
+	private readonly SceneTree SceneTree = new();
 
 	// Draw window contents
 
 	public override void Draw() {
+		if (SceneManager == null) {
+			DrawError();
+			return;
+		}
+
 		// Set size constrains
 
 		SizeConstraints = new WindowSizeConstraints {
@@ -35,14 +45,14 @@ public class Workspace : GuiWindow {
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.9f
 		};
 
-		var scene = Ktisis.Singletons.Get<SceneManager>().Scene;
+		var scene = SceneManager.Scene;
 		ImGui.BeginDisabled(scene == null);
 
 		var style = ImGui.GetStyle();
 
 		var bottomHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - bottomHeight;
-		ItemTree.Draw(scene, treeHeight);
+		SceneTree.Draw(scene, treeHeight);
 
 		ImGui.Spacing();
 
@@ -55,5 +65,20 @@ public class Workspace : GuiWindow {
 		Buttons.DrawIconButton(FontAwesomeIcon.Plus);
 		ImGui.SameLine();
 		Buttons.DrawIconButton(FontAwesomeIcon.Filter);
+	}
+
+	private void DrawError() {
+		var cursorY = ImGui.GetCursorPosY();
+		ImGui.SetCursorPosY(cursorY + UiBuilder.DefaultFont.FontSize / 2);
+		Icons.DrawIcon(FontAwesomeIcon.Frown);
+		ImGui.SameLine();
+		ImGui.SetCursorPosY(cursorY);
+		ImGui.Text("Scene manager not found!\nKtisis may have experienced an error while loading.");
+		ImGui.Spacing();
+		ImGui.Text("Please forward any error logs to the plugin's developers for debugging.");
+		Flags |= ImGuiWindowFlags.AlwaysAutoResize;
+		SizeConstraints = new WindowSizeConstraints {
+			MinimumSize = new Vector2(-1, -1)
+		};
 	}
 }

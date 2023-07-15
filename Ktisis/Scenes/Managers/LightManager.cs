@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 
 using Ktisis.Core;
+using Ktisis.Scenes.Objects.World;
 using Ktisis.Interop.Structs.Event;
 using Ktisis.Interop.Structs.Objects;
-using Ktisis.Scenes.Objects.World;
 
 namespace Ktisis.Scenes.Managers;
 
@@ -25,7 +25,7 @@ public class LightManager : ManagerBase {
 			if (exists) {
 				if (light == null || prev!.Address != (nint)light) {
 					GPoseLights.Remove(i);
-					prev!.RemoveFromParent();
+					prev!.Remove();
 				} else continue;
 			}
 

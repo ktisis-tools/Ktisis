@@ -11,6 +11,12 @@ public class BoneGroup : SceneObject {
 
 	public readonly BoneCategory? Category;
 
-	public BoneGroup(BoneCategory category)
-		=> Category = category;
+	// BoneGroup
+
+	private readonly Armature Owner;
+
+	public BoneGroup(Armature armature, BoneCategory category) {
+		Owner = armature;
+		Category = category;
+	}
 }

@@ -1,23 +1,23 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Loader;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 using Dalamud.Logging;
 
-namespace Ktisis.Interop.Native;
+namespace Ktisis.Interop.Resolvers;
 
 // Temporary workaround as loading unmanaged DLLs in Dalamud is currently bugged.
 // See the following issue: https://github.com/goatcorp/Dalamud/issues/1238
 // Thanks to Minoost for providing this method.
 
 internal class DllResolver {
-	private static AssemblyLoadContext? Context;
+	private AssemblyLoadContext? Context;
 
-	private readonly static List<nint> Handles = new();
+	private readonly List<nint> Handles = new();
 
-	internal static void Init() {
+	internal void Init() {
 		PluginLog.Debug("Creating DLL resolver for unmanaged DLLs");
 
 		Context = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());
@@ -25,7 +25,7 @@ internal class DllResolver {
 			Context.ResolvingUnmanagedDll += ResolveUnmanaged;
 	}
 
-	internal static void Dispose() {
+	internal void Dispose() {
 		PluginLog.Debug("Disposing DLL resolver for unmanaged DLLs");
 
 		if (Context != null)
@@ -37,7 +37,7 @@ internal class DllResolver {
 		Handles.Clear();
 	}
 
-	private static nint ResolveUnmanaged(Assembly assembly, string library) {
+	private nint ResolveUnmanaged(Assembly assembly, string library) {
 		var loc = Path.GetDirectoryName(assembly.Location);
 		if (loc == null) return nint.Zero;
 
@@ -54,7 +54,7 @@ internal class DllResolver {
 		return handle;
 	}
 
-	private static void FreeHandle(nint handle) {
+	private void FreeHandle(nint handle) {
 		PluginLog.Debug($"Freeing library handle: {handle:X}");
 		NativeLibrary.Free(handle);
 	}

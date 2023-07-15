@@ -1,29 +1,27 @@
-using Dalamud.Game;
-
 using JetBrains.Annotations;
+
+using Dalamud.Game;
 
 using Ktisis.Core;
 using Ktisis.Events;
 using Ktisis.Events.Attributes;
 using Ktisis.Common.Extensions;
 
-namespace Ktisis.Game;
+namespace Ktisis.Game.Engine;
 
 public delegate void FrameworkEvent(Framework framework);
 
-public class XivFramework : EventProvider {
-	// Event provider
-
-	[EventEmitter, UsedImplicitly]
-	private event FrameworkEvent? FrameworkEvent;
-
-	// Provider setup
+internal class XivFramework : EventProvider {
+	// Setup
 
 	public override void Setup() {
 		Services.Framework.Update += OnFrameworkUpdate;
 	}
 
-	// Framework event handler
+	// Framework event provider
+
+	[EventEmitter, UsedImplicitly]
+	private event FrameworkEvent? FrameworkEvent;
 
 	private void OnFrameworkUpdate(Framework framework) {
 		if (!Services.Ready || IsDisposed) return;

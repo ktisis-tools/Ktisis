@@ -21,24 +21,57 @@ public abstract class SceneObject : ITreeNode {
 	// Tree node properties
 	// TODO: This probably doesn't belong here, revisit it later.
 
-	public bool Hidden { get; protected set; }
-	public bool Disabled { get; protected set; }
-
 	public string UiId { get; set; }
 	public virtual uint Color { get; init; } = 0xFFFFFFFF;
 	public virtual FontAwesomeIcon Icon { get; init; } = FontAwesomeIcon.None;
 
-	public int SortPriority { get; init; } = 0;
-
 	// Object
 
 	public virtual List<SceneObject> Children { get; init; } = new();
+
+	public bool Selected;
+	public int SortPriority { get; init; } = 0;
 
 	// Constructor
 
 	protected SceneObject() {
 		Name = GetType().Name;
 		UiId = Gui.GenerateId(this);
+	}
+
+	// Object methods
+
+	internal virtual void Update()
+		=> Children.ForEach(UpdateItem);
+
+	private void UpdateItem(SceneObject item) {
+		try {
+			item.Update();
+		} catch (Exception e) {
+			PluginLog.Error($"Error while updating object state for '{item.Name}':\n{e}");
+		}
+	}
+
+	public void Remove() {
+		Parent?.RemoveChild(this);
+	}
+
+	// Selection
+
+	public virtual void Select() {
+		Selected = true;
+	}
+
+	public virtual void Unselect() {
+		Selected = false;
+	}
+
+	public virtual void SetSelected(bool select) {
+		Selected = select;
+	}
+
+	public void ToggleSelected() {
+		SetSelected(!Selected);
 	}
 
 	// Children
@@ -53,28 +86,11 @@ public abstract class SceneObject : ITreeNode {
 		Children.Remove(child);
 	}
 
-	public void ParentTo(SceneObject parent) {
-		RemoveFromParent();
+	public void AddToParent(SceneObject parent) {
+		Parent?.RemoveChild(this);
 		parent.AddChild(this);
 	}
 
-	public void RemoveFromParent() {
-		Parent?.RemoveChild(this);
-	}
-
-	public void SortChildren()
-		=> Children.Sort((a, b) => a.SortPriority - b.SortPriority);
-
-	// Update
-
-	internal virtual void Update()
-		=> Children.ForEach(UpdateItem);
-
-	private void UpdateItem(SceneObject item) {
-		try {
-			item.Update();
-		} catch (Exception e) {
-			PluginLog.Error($"Error while updating object state for '{item.Name}':\n{e}");
-		}
-	}
+	public void SortChildren() => Children
+		.Sort((a, b) => a.SortPriority - b.SortPriority);
 }

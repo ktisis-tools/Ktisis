@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ktisis.Interop.Native;
+namespace Ktisis.Interop.Unmanaged;
 
 public class PtrArray<T> : List<Pointer<T>> where T : unmanaged {
 	public List<Pointer<T>> Unwrap() => (List<Pointer<T>>)this;

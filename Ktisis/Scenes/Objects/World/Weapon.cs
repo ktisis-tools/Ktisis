@@ -1,14 +1,17 @@
 using Dalamud.Interface;
 
-namespace Ktisis.Scenes.Objects.World;
+using CSWeapon = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Weapon;
 
-// TODO: UX: Consider treating weapons standalone as an armature root?
-// Unless I want to parent objects to weapons. That sounds fun.
+namespace Ktisis.Scenes.Objects.World;
 
 public class Weapon : Character {
 	// Trees
 
 	public override FontAwesomeIcon Icon { get; init; } = FontAwesomeIcon.Magic;
+
+	// Weapon
+
+	private unsafe CSWeapon* Entity => (CSWeapon*)Address;
 
 	// Constructor
 
