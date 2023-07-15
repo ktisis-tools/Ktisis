@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Ktisis.Interface.SceneUi.Logic;
+namespace Ktisis.Scenes.Objects.Impl;
 
 public interface IManipulable : ITransform {
 	public Matrix4x4? ComposeMatrix()

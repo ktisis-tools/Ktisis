@@ -1,5 +1,5 @@
 using Ktisis.Common.Utility;
-using Ktisis.Interface.SceneUi.Logic;
+using Ktisis.Scenes.Objects.Impl;
 using Ktisis.Interop.Structs.Objects;
 
 namespace Ktisis.Scenes.Objects.Models;

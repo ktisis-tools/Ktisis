@@ -62,6 +62,14 @@ public class Scene : SceneObject {
 		return value;
 	}
 
+	// Object access
+
+	internal List<SceneObject> GetAll() {
+		var result = new List<SceneObject>();
+		Iterate(item => result.Add(item));
+		return result;
+	}
+
 	// Selection
 
 	internal int UnselectAll() => Iterate((item, val) => {

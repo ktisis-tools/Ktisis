@@ -97,7 +97,6 @@ internal class GuiOverlay {
 	// Draw frame
 
 	private void DrawFrame() {
-		var drawList = ImGui.GetWindowDrawList();
 		try {
 			SceneRender?.Draw(Gizmo);
 		} catch (Exception e) {

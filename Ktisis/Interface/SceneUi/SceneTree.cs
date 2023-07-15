@@ -11,20 +11,31 @@ using Ktisis.Scenes;
 using Ktisis.Scenes.Objects;
 using Ktisis.Common.Extensions;
 using Ktisis.Interface.Widgets;
+using Ktisis.Scenes.Objects.Impl;
 
 namespace Ktisis.Interface.SceneUi;
 
 public class SceneTree {
-	// Public draw methods
+	// Singleton access
 
-	public void Draw(Scene? scene, float height) {
+	private readonly SceneManager? SceneManager;
+
+	// Constructor
+
+	public SceneTree(SceneManager? scene) {
+		SceneManager = scene;
+	}
+
+	// Exposed draw method
+
+	public void Draw(float height) {
 		ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, ImGui.GetFontSize());
 
-		var isActive = scene != null;
+		var isActive = SceneManager?.Scene != null;
 		ImGui.BeginDisabled(!isActive);
 		if (DrawFrame(height)) {
 			if (isActive)
-				DrawSceneRoot(scene!);
+				DrawSceneRoot();
 			else
 				ImGui.Text("Waiting for scene...");
 			ImGui.EndChildFrame();
@@ -54,28 +65,29 @@ public class SceneTree {
 		MaxY = FrameHeight + scroll;
 	}
 
-	private void DrawSceneRoot(Scene scene) {
-		SelectFlags = SelectEnum.None;
-		if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
-			SelectFlags |= SelectEnum.SelectCtrl;
-		if (ImGui.IsKeyDown(ImGuiKey.ModShift))
-			SelectFlags |= SelectEnum.SelectRange;
+	private void DrawSceneRoot() {
+		if (SceneManager?.Scene is not Scene scene) return;
 
-		SelectTarget = null;
-		SelectStack.Clear();
+		SelectFlags = SelectFlags.Single;
+		if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
+			SelectFlags |= SelectFlags.Multiple;
+		if (ImGui.IsKeyDown(ImGuiKey.ModShift))
+			SelectFlags |= SelectFlags.Range;
+
+		SelectRange.Clear();
 
 		PreCalc();
-		DrawTree(scene, scene.Children);
+		DrawTree(scene.Children);
 	}
 
-	private void DrawTree(Scene scene, List<SceneObject> objects) {
+	private void DrawTree(List<SceneObject> objects) {
 		var spacing = ImGui.GetStyle().ItemSpacing;
 		ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, spacing with { Y = 6f });
-		objects.ForEach(item => DrawNode(scene, item));
+		objects.ForEach(DrawNode);
 		ImGui.PopStyleVar();
 	}
 
-	private void DrawNode(Scene scene, SceneObject item) {
+	private void DrawNode(SceneObject item) {
 		var pos = ImGui.GetCursorPosY();
 		var isVisible = pos > MinY && pos < MaxY;
 
@@ -92,11 +104,12 @@ public class SceneTree {
 
 		var expand = ImGui.TreeNodeEx($"##{item.UiId}", flags);
 
-		HandleRangeSelectMode(scene, item);
+		if (SelectFlags.HasFlag(SelectFlags.Range))
+			CollectRange(item);
 
 		if (isVisible) {
 			ImGui.SameLine();
-			HandleSelect(scene, item);
+			HandleSelect(item);
 			DrawLabel(item);
 			ImGui.PopStyleColor();
 		}
@@ -104,7 +117,7 @@ public class SceneTree {
 		if (!expand) return;
 
 		if (!isLeaf)
-			DrawTree(scene, item.Children);
+			DrawTree(item.Children);
 		ImGui.TreePop();
 	}
 
@@ -130,20 +143,13 @@ public class SceneTree {
 
 	// Selection handling
 
-	[Flags]
-	private enum SelectEnum {
-		None = 0,
-		SelectCtrl = 1,
-		SelectRange = 2
-	}
+	private SelectFlags SelectFlags;
 
-	private readonly List<SceneObject> SelectStack = new();
+	private string? SelectRangeStart;
 
-	private SelectEnum SelectFlags;
-	private string? SelectCursor;
-	private string? SelectTarget;
+	private readonly List<SceneObject> SelectRange = new();
 
-	private void HandleSelect(Scene scene, SceneObject item) {
+	private void HandleSelect(SceneObject item) {
 		var min = ImGui.GetCursorScreenPos();
 		var max = min + ImGui.GetItemRectSize() with {
 			X = ImGui.GetContentRegionAvail().X
@@ -151,51 +157,43 @@ public class SceneTree {
 
 		if (!ImGui.IsMouseHoveringRect(min, max)) return;
 
-		if (SelectCursor != null && SelectFlags.HasFlag(SelectEnum.SelectRange) && ImGui.IsMouseDown(ImGuiMouseButton.Left)) {
-			// Handle item range selection
-			item.Select();
-			if (!SelectFromStack(scene, SelectCursor))
-				SelectTarget = item.UiId;
-		} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
-			// Handle individual item selection
-			if (SelectFlags.HasFlag(SelectEnum.SelectCtrl)) {
-				item.ToggleSelected();
-			} else {
-				var select = item.Selected;
-				var unselectMul = scene.UnselectAll() > 1;
-				item.SetSelected(unselectMul || !select);
-			}
-			SelectCursor = item.Selected ? item.UiId : null;
-		}
+		if (SelectFlags.HasFlag(SelectFlags.Range)
+			? !ImGui.IsMouseDown(ImGuiMouseButton.Left)
+			: !ImGui.IsMouseClicked(ImGuiMouseButton.Left)
+		) return;
+
+		SceneManager!.UserSelect(item, SelectFlags);
+
+		if (!SelectFlags.HasFlag(SelectFlags.Range) || SceneManager.SelectCursor is not string tar)
+			return;
+
+		if (tar != item.UiId && !SelectFromRange(tar))
+			SelectRangeStart = item.UiId;
 	}
 
-	private bool SelectFromStack(Scene scene, string id) {
-		var index = SelectStack.FindIndex(x => x.UiId == id);
+	private void CollectRange(SceneObject item) {
+		if (SceneManager?.SelectCursor == null) return;
+
+		SelectRange.Add(item);
+
+		if (SelectRangeStart == null || item.UiId != SceneManager.SelectCursor)
+			return;
+
+		SelectFromRange(SelectRangeStart);
+		SelectRangeStart = null;
+	}
+
+	private bool SelectFromRange(string id) {
+		var index = SelectRange.FindIndex(x => x.UiId == id);
 		if (index == -1)
 			return false;
 
-		scene.UnselectAll();
+		SceneManager?.Scene?.UnselectAll();
 
-		var range = SelectStack.Take(Range.StartAt(index));
+		var range = SelectRange.Take(Range.StartAt(index));
 		foreach (var tar in range)
-			tar.Select();
+			SceneManager!.AddSelection(tar);
 
 		return true;
-	}
-
-	private void HandleRangeSelectMode(Scene scene, SceneObject item) {
-		if (!SelectFlags.HasFlag(SelectEnum.SelectRange) || SelectCursor == null)
-			return;
-
-		SelectStack.Add(item);
-
-		if (item.UiId != SelectCursor) return;
-
-		if (!item.Selected) {
-			SelectCursor = null;
-		} else if (SelectTarget != null) {
-			SelectFromStack(scene, SelectTarget);
-			SelectTarget = null;
-		}
 	}
 }

@@ -9,7 +9,7 @@ using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 using Ktisis.Core;
 using Ktisis.Common.Utility;
 using Ktisis.Scenes.Objects.World;
-using Ktisis.Interface.SceneUi.Logic;
+using Ktisis.Scenes.Objects.Impl;
 
 namespace Ktisis.Scenes.Objects.Game;
 

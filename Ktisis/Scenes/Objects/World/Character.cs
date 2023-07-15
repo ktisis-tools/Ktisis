@@ -2,7 +2,7 @@ using System.Numerics;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Interface.SceneUi.Logic;
+using Ktisis.Scenes.Objects.Impl;
 using Ktisis.Scenes.Objects.Models;
 
 namespace Ktisis.Scenes.Objects.World;

@@ -17,18 +17,20 @@ public class Workspace : GuiWindow {
 
 	// Singleton access
 
-	private SceneManager? SceneManager;
+	private readonly SceneManager? SceneManager;
 
 	// Constructor
 
 	public Workspace(Gui gui) : base(gui, "Ktisis Workspace") {
 		SceneManager = Ktisis.Singletons.Get<SceneManager>();
+		SceneTree = new SceneTree(SceneManager);
+
 		RespectCloseHotkey = false;
 	}
 
 	// Components
 
-	private readonly SceneTree SceneTree = new();
+	private readonly SceneTree SceneTree;
 
 	// Draw window contents
 
@@ -52,7 +54,7 @@ public class Workspace : GuiWindow {
 
 		var bottomHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - bottomHeight;
-		SceneTree.Draw(scene, treeHeight);
+		SceneTree.Draw(treeHeight);
 
 		ImGui.Spacing();
 
