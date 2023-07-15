@@ -8,16 +8,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Gizmo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Core/Services.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Services.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Core/Singletons/ServiceProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Singletons/ServiceProvider.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Events/ConditionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Events/ConditionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Game/GPoseState.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Game/GameService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Game/GameService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Game/XivFramework.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Items/ITreeNode.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Gizmo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Gizmo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Native/DllResolver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Native/DllResolver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Native/DllResolver.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Native/Pointer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Native/PtrArray.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Managers/ActorManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Managers/ActorManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Managers/LightManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Managers/LightManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Game/Actor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Game/Actor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/Armature.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/Armature.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/Bone.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/Bone.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/BoneGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/BoneGroup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/Models/ModelSlots.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/SceneObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/SceneObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/World/Character.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/World/Character.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/World/Weapon.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/World/Weapon.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Objects/World/WorldObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Objects/World/WorldObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Scene.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Scene.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scenes/Tree/BoneTreeBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scenes/Tree/BoneTreeBuilder.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,6 +51,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/24a2576b8cb9426b9dd89b355e234a3e16f000/a2/261acd1b/Hook`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/aa813094324f408e8047b0dda3853621b1d878/6a/1a1c83e8/TaskStatus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c40487a44ec949aeb102885725ef398bfde10/a6/d2552f76/Object.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c5d6a15f5dcf44649a30d8a2bb0a394916ee00/12/b81a55ae/Hook`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c5d6a15f5dcf44649a30d8a2bb0a394916ee00/aa/a176d5ca/SigScanner.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c5d6a15f5dcf44649a30d8a2bb0a394916ee00/fd/8a185cfe/IDalamudHook.cs" root0="SKIP_HIGHLIGHTING" />
@@ -54,31 +76,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "v0.3",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "SolutionBuilderGeneralOptionsPage",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.3&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="NativeComponents" type="CppProject" factoryName="C++ Project">
       <configuration_1>
@@ -133,7 +155,13 @@
       <workItem from="1688335635519" duration="7796000" />
       <workItem from="1688372128445" duration="379000" />
       <workItem from="1688468168993" duration="210000" />
-      <workItem from="1688468402874" duration="16534000" />
+      <workItem from="1688468402874" duration="25392000" />
+      <workItem from="1688552492984" duration="22584000" />
+      <workItem from="1688804909208" duration="26393000" />
+      <workItem from="1689084055257" duration="5675000" />
+      <workItem from="1689165632055" duration="28087000" />
+      <workItem from="1689344097513" duration="12214000" />
+      <workItem from="1689418770019" duration="9130000" />
     </task>
     <servers />
   </component>

@@ -1,16 +1,19 @@
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using Dalamud.Interface;
+using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Scenes.Tree;
 using Ktisis.Scenes.Objects.World;
+using Ktisis.Interface.SceneUi.Logic;
 
 namespace Ktisis.Scenes.Objects.Models;
 
-public class Armature : SceneObject {
+public class Armature : SceneObject, IOverlay {
 	// Trees
 	
 	public override uint Color { get; init; } = 0xFFFF9F68;
@@ -47,27 +50,39 @@ public class Armature : SceneObject {
 
 			if (id == prevId) continue;
 			Partials[p] = id;
+			
+			PluginLog.Verbose($"Armature of '{Parent?.Name ?? "INVALID"}' detected a change in Skeleton {p} (was {prevId:X}, now {id:X}), rebuilding...");
 
+			var t = new Stopwatch();
+			t.Start();
+			
 			var buildCategories = skele->Owner->GetModelType() != CharacterBase.ModelType.Weapon;
-			var builder = new BoneTreeBuilder(p, id, partial, buildCategories);
+			var builder = new BoneTreeBuilder(this, p, id, partial, buildCategories);
 			if (id != 0)
 				AddPartial(p, id, builder);
 			if (prevId != 0)
 				builder.Clean(this);
+
+			t.Stop();
+			PluginLog.Debug($"Rebuild took {t.ElapsedMilliseconds:0.00}ms");
 		}
 	}
 
 	private void AddPartial(int index, uint id, BoneTreeBuilder builder) {
 		Partials[index] = id;
-		builder.Add(this);
+		builder.AddToArmature(this);
 	}
+	
+	// Overlay
+
+	public bool CanDraw() => Parent?.IsRendering() ?? false;
 
 	// Unmanaged helpers
 	
 	private unsafe CharacterBase* GetParentChara()
 		=> (CharacterBase*)(Parent?.Address ?? 0);
 
-	private unsafe Skeleton* GetSkeleton() {
+	internal unsafe Skeleton* GetSkeleton() {
 		var parent = GetParentChara();
 		return parent != null ? parent->Skeleton : null;
 	}

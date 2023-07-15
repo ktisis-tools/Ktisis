@@ -1,34 +1,33 @@
 using Ktisis.Core;
 using Ktisis.Core.Singletons;
+using Ktisis.Game.Engine;
 
 namespace Ktisis.Game; 
 
 public class GameService : Service {
-	public readonly XivFramework Framework;
+	internal readonly GPoseState GPose;
 	
-	public readonly GPoseState GPoseState;
-	
+	internal readonly XivFramework Framework;
+
 	// Constructor
 
 	public GameService() {
+		GPose = new GPoseState(this);
 		Framework = Services.Events.CreateProvider<XivFramework>();
-		GPoseState = new GPoseState();
 	}
 	
 	// Initialize
 	
 	public override void Init() {
-		GPoseState.Init();
-		
-		Services.Events.CreateClient(GPoseState);
+		Services.Events.CreateClient(GPose);
 	}
 	
 	// Disposal
 
 	public override void Dispose() {
 		Services.Events.RemoveProvider(Framework);
-		Services.Events.RemoveClient(GPoseState);
+		Services.Events.RemoveClient(GPose);
 		
-		GPoseState.Dispose();
+		GPose.Dispose();
 	}
 }

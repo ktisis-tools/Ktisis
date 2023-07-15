@@ -22,7 +22,6 @@ public class Services : ServiceProvider {
 	[PluginService] internal static SigScanner SigScanner { get; private set; } = null!;
 	[PluginService] internal static ObjectTable ObjectTable { get; private set; } = null!;
 	[PluginService] internal static CommandManager CommandManager { get; private set; } = null!;
-	[PluginService] internal static DalamudPluginInterface PluginInterface { get; private set; } = null!;
 
 	[Service(ServiceFlags.Critical)] internal static InteropService Interop = new();
 	

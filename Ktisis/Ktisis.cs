@@ -24,6 +24,8 @@ public sealed class Ktisis : IDalamudPlugin {
 	
 	// Plugin framework
 
+	internal static DalamudPluginInterface PluginApi = null!;
+
 	internal readonly static SingletonManager Singletons = new();
 
 	internal static ConfigFile Config = null!;
@@ -32,23 +34,22 @@ public sealed class Ktisis : IDalamudPlugin {
 	
 	private Task? InitTask;
 	
-	public Ktisis(DalamudPluginInterface plugin) {
+	public Ktisis(DalamudPluginInterface api) {
+		PluginApi = api;
+		
 		/* Start plugin initialization asynchronously.
 		 * This is generally intended to handle the *creation* of classes in the framework,
 		 * such as registering dependencies, setting up event listeners, etc.
 		 * Activation of these classes should not be done until this is complete! */
 
-		InitTask = Init(plugin).ContinueWith(task => {
+		InitTask = Init().ContinueWith(task => {
 			if (task.Exception == null) return;
 
 			PluginLog.Fatal("Ktisis failed to load due to the following error(s):");
 			foreach (var err in task.Exception.InnerExceptions)
 				PluginLog.Error(err.ToString());
 			
-			plugin.UiBuilder.AddNotification(
-				"Ktisis failed to load. Please check your error log for more information.",
-				VersionName, NotificationType.Error, 10000
-			);
+			Notify(NotificationType.Error, "Ktisis failed to load. Please check your error log for more information.");
 
 			InitTask = null;
 		});
@@ -56,14 +57,14 @@ public sealed class Ktisis : IDalamudPlugin {
 	
 	// Initialize singletons & services
 
-	private async Task Init(DalamudPluginInterface api) {
+	private async Task Init() {
 		await Task.Yield();
 		
 		var timer = new Stopwatch();
 		timer.Start();
 
 		// Inject dalamud services
-		api.Create<Services>();
+		PluginApi.Create<Services>();
 
 		// Register singletons for initialization
 		Singletons.Register<Services>();
@@ -103,6 +104,12 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	public static string GetVersion() {
 		return Assembly.GetCallingAssembly().GetName().Version!.ToString(fieldCount: 3);
+	}
+	
+	// Notification helper
+
+	internal static void Notify(NotificationType type, string text, uint timer = 10000) {
+		PluginApi.UiBuilder.AddNotification(text, VersionName, type, timer);
 	}
 
 	// Dispose

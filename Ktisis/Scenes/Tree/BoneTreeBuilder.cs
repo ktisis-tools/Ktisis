@@ -13,17 +13,22 @@ using Ktisis.Scenes.Objects.Models;
 namespace Ktisis.Scenes.Tree; 
 
 public class BoneTreeBuilder {
-	private int Index;
-	private uint PartialId;
-	private PartialSkeleton Partial;
+	private readonly Armature Owner;
+	
+	private readonly int Index;
+	private readonly uint PartialId;
+	private readonly PartialSkeleton Partial;
 
 	private readonly List<BoneData>? BoneList;
 	private readonly Dictionary<BoneCategory, List<BoneData>>? CategoryMap;
 
-	public BoneTreeBuilder(int index, uint id, PartialSkeleton partial, bool buildCategories = true) {
+	public BoneTreeBuilder(Armature armature, int index, uint id, PartialSkeleton partial, bool buildCategories = true) {
+		Owner = armature;
+		
 		Index = index;
 		PartialId = id;
 		Partial = partial;
+		
 		if (buildCategories)
 			CategoryMap = BuildCategoryMap();
 		else
@@ -105,7 +110,7 @@ public class BoneTreeBuilder {
 
 	// Handle partial add
 
-	public void Add(SceneObject item) {
+	public void AddToArmature(SceneObject item) {
 		if (CategoryMap != null)
 			AddGroups(item, null);
 		if (BoneList != null)
@@ -147,7 +152,7 @@ public class BoneTreeBuilder {
 			var cat = pair.Key;
 			var group = exists?.FirstOrDefault(group => group!.Category == cat, null);
 			var isNew = group == null;
-			group ??= new BoneGroup(cat) {
+			group ??= new BoneGroup(Owner, cat) {
 				Name = cat.Name ?? "Unknown",
 				SortPriority = cat.SortPriority ?? -1
 			};
@@ -177,7 +182,7 @@ public class BoneTreeBuilder {
 			if (bone != null) {
 				bone.PartialId = PartialId;
 			} else {
-				group.Children.Add(new Bone(boneInfo.Name, Index, PartialId) {
+				group.Children.Add(new Bone(Owner, boneInfo.Name, Index, PartialId) {
 					SortPriority = basePrio + boneInfo.BoneIndex
 				});
 			}

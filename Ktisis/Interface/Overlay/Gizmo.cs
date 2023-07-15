@@ -1,8 +1,11 @@
 using System;
+using System.Numerics;
 
 using ImGuiNET;
 
 using Dalamud.Logging;
+
+using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Overlay; 
 
@@ -43,5 +46,54 @@ internal class Gizmo {
 		if (!Gizmo.IsInit && !Gizmo.InitLibrary())
 			return null;
 		return new Gizmo();
+	}
+	
+	// Gizmo state
+
+	private bool HasDrawn;
+	private bool HasMoved;
+
+	private Matrix4x4 ViewMatrix = Matrix4x4.Identity;
+	private Matrix4x4 ProjMatrix = Matrix4x4.Identity;
+	private Matrix4x4 DeltaMatrix = Matrix4x4.Identity;
+
+	internal void BeginFrame(Matrix4x4 view, Matrix4x4 proj) {
+		HasDrawn = false;
+		HasMoved = false;
+
+		ViewMatrix = view;
+		ProjMatrix = proj;
+
+		DeltaMatrix = Matrix4x4.Identity;
+
+		ImGuizmo.Gizmo.BeginFrame();
+
+		var ws = ImGui.GetWindowSize();
+		ImGuizmo.Gizmo.SetDrawRect(0, 0, ws.X, ws.Y);
+	}
+
+	internal bool Manipulate(ref Matrix4x4 mx) {
+		if (HasDrawn) {
+			if (HasMoved) {
+				mx *= DeltaMatrix;
+				return true;
+			}
+			return false;
+		}
+		
+		return Draw(ref mx);
+	}
+
+	private bool Draw(ref Matrix4x4 mx) {
+		HasDrawn = true;
+
+		return HasMoved = ImGuizmo.Gizmo.Manipulate(
+			ViewMatrix,
+			ProjMatrix,
+			Operation.UNIVERSAL,
+			Mode.Local,
+			ref mx,
+			out DeltaMatrix
+		);
 	}
 }

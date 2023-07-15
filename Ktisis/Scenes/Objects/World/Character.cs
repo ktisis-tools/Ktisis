@@ -1,10 +1,13 @@
+using System.Numerics;
+
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using Ktisis.Interface.SceneUi.Logic;
 using Ktisis.Scenes.Objects.Models;
 
 namespace Ktisis.Scenes.Objects.World; 
 
-public class Character : WorldObject {
+public class Character : WorldObject, IManipulable {
 	// Character
 
 	private unsafe CharacterBase* Entity => (CharacterBase*)Address;
@@ -12,28 +15,39 @@ public class Character : WorldObject {
 	// Armature & Models
 
 	private Armature? Armature;
-	private ModelSlots? Models;
+	private CharaModels? Models;
 	
 	// Constructor
 
 	public Character(nint address) : base(address) {
 		Armature = new Armature();
-		Armature.ParentTo(this);
+		Armature.AddToParent(this);
 
-		Models = new ModelSlots();
-		Models.ParentTo(this);
+		Models = new CharaModels();
+		Models.AddToParent(this);
 	}
 	
 	// Update armature
 
-	internal unsafe override void Update() {
-		// Don't do anything until the model is fully loaded.
+	internal unsafe bool IsRendering() {
 		var model = this.Entity;
-		if (model == null || model->UnkFlags_02 == 0) return;
+		return model != null && (model->UnkFlags_01 & 2) != 0 && model->UnkFlags_02 != 0;
+	}
+
+	internal override void Update() {
+		// Don't do anything until the model is fully loaded.
+		if (!IsRendering()) return;
 
 		Armature?.Update();
+		Models?.Update();
 		
 		// Update children
 		base.Update();
+	}
+	
+	// hehe
+
+	public Matrix4x4? ComposeMatrix() {
+		return IsRendering() ? GetTransform()?.ComposeMatrix() : null;
 	}
 }

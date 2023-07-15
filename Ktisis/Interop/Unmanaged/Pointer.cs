@@ -1,4 +1,4 @@
-namespace Ktisis.Interop.Native; 
+namespace Ktisis.Interop.Unmanaged; 
 
 public class Pointer<T> where T : unmanaged {
 	public nint Address;

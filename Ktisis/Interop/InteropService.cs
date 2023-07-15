@@ -7,14 +7,18 @@ using Ktisis.Events.Attributes;
 using Ktisis.Core.Singletons;
 using Ktisis.Interop.Hooking;
 using Ktisis.Interop.Modules;
-using Ktisis.Interop.Native;
+using Ktisis.Interop.Resolvers;
 
 namespace Ktisis.Interop; 
 
 public class InteropService : Service, IEventClient {
 	// Hooking
 
+	private readonly DllResolver DllResolver = new();
+
 	private readonly HookManager HookManager = new();
+	
+	internal readonly DelegateResolver Methods = new();
 
 	// Initialization
 	
@@ -45,8 +49,8 @@ public class InteropService : Service, IEventClient {
 	// Dispose
 
 	public override void Dispose() {
-		HookManager.Dispose();
-
 		DllResolver.Dispose();
+		
+		HookManager.Dispose();
 	}
 }

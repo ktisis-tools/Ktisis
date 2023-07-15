@@ -25,7 +25,7 @@ public class ActorManager : ManagerBase {
 
 		if (actor != null && addToScene)
 			Scene.AddChild(actor);
-		
+
 		return actor;
 	}
 }
