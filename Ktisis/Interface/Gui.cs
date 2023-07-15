@@ -1,20 +1,19 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Linq;
 
 using JetBrains.Annotations;
 
 using Dalamud.Interface.Windowing;
 
-using Ktisis.Game;
-using Ktisis.Core;
 using Ktisis.Core.Singletons;
 using Ktisis.Events;
 using Ktisis.Events.Attributes;
 using Ktisis.Common.Extensions;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Windows;
+using Ktisis.Game.Engine;
 
 namespace Ktisis.Interface;
 
@@ -33,13 +32,13 @@ public class Gui : Singleton, IEventClient {
 
 	public override void Init() {
 		Overlay.Init();
-		Services.PluginInterface.UiBuilder.DisableGposeUiHide = true;
+		Ktisis.PluginApi.UiBuilder.DisableGposeUiHide = true;
 	}
 
 	// OnReady
 
 	public override void OnReady() {
-		Services.PluginInterface.UiBuilder.Draw += Draw;
+		Ktisis.PluginApi.UiBuilder.Draw += Draw;
 	}
 
 	// Draw
@@ -64,7 +63,7 @@ public class Gui : Singleton, IEventClient {
 	// Disposal
 
 	public override void Dispose() {
-		Services.PluginInterface.UiBuilder.Draw -= Draw;
+		Ktisis.PluginApi.UiBuilder.Draw -= Draw;
 		Overlay.Dispose();
 	}
 
