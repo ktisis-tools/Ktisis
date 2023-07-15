@@ -26,7 +26,8 @@ public class Gui : Singleton, IEventClient {
 	// Windowing
 
 	private readonly WindowSystem Windows = new("Ktisis");
-	private readonly GuiOverlay Overlay = new();
+
+	internal readonly GuiOverlay Overlay = new();
 
 	// Initialize
 

@@ -22,6 +22,8 @@ internal class GuiOverlay {
 
 	private Gizmo? Gizmo;
 
+	internal bool Visible;
+
 	// Init
 
 	internal void Init() {
@@ -44,7 +46,7 @@ internal class GuiOverlay {
 	internal void Draw() {
 		// TODO: Toggle
 
-		if (!Services.Game.GPose.Active)
+		if (!Services.Game.GPose.Active || !Visible)
 			return;
 
 		try {
