@@ -1,31 +1,31 @@
 using System.Numerics;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
 
-using Ktisis.Core;
-using Ktisis.Scenes;
+using Ktisis.Interface.Components;
 using Ktisis.Interface.Widgets;
-using Ktisis.Interface.SceneUi;
+using Ktisis.Scene;
+using Ktisis.Services;
 
 namespace Ktisis.Interface.Windows; 
 
-public class Workspace : GuiWindow {
-	// Constants
+public class Workspace : Window {
+	// Service
 
-	private readonly static Vector2 MinimumSize = new(280, 300);
+	private readonly PluginGui _gui;
+	private readonly GPoseService _gpose;
+	private readonly SceneManager _sceneMgr;
 	
-	// Singleton access
+	public Workspace(PluginGui _gui, GPoseService _gpose, SceneManager _sceneMgr) : base("Ktisis") {
+		this._gui = _gui;
+		this._gpose = _gpose;
+		this._sceneMgr = _sceneMgr;
 
-	private readonly SceneManager? SceneManager;
-	
-	// Constructor
-	
-	public Workspace(Gui gui) : base(gui, "Ktisis Workspace") {
-		SceneManager = Ktisis.Singletons.Get<SceneManager>();
-		SceneTree = new SceneTree(SceneManager);
-		
+		this.SceneTree = new SceneTree(_sceneMgr);
+        
 		RespectCloseHotkey = false;
 	}
 	
@@ -33,24 +33,23 @@ public class Workspace : GuiWindow {
 
 	private readonly SceneTree SceneTree;
 	
-	// Draw window contents
+	// UI draw
+
+	private readonly static Vector2 MinimumSize = new(280, 300);
 
 	public override void Draw() {
-		if (SceneManager == null) {
-			DrawError();
-			return;
-		}
+		// Set size constraints
 		
-		// Set size constrains
-
 		SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = MinimumSize,
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.9f
 		};
+		
+		// Draw scene
 
-		var scene = SceneManager.Scene;
-		ImGui.BeginDisabled(scene == null);
-
+		var scene = this._sceneMgr.Scene;
+		ImGui.BeginDisabled(scene is null);
+		
 		DrawStateFrame(scene);
 
 		ImGui.Spacing();
@@ -58,7 +57,7 @@ public class Workspace : GuiWindow {
 		var style = ImGui.GetStyle();
 		var bottomHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - bottomHeight;
-		SceneTree.Draw(treeHeight);
+		this.SceneTree.Draw(treeHeight);
 
 		ImGui.Spacing();
 
@@ -66,8 +65,8 @@ public class Workspace : GuiWindow {
 		
 		ImGui.EndDisabled();
 	}
-
-	private void DrawStateFrame(Scene? scene) {
+	
+	private void DrawStateFrame(SceneGraph? scene) {
 		var style = ImGui.GetStyle();
 		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
 		
@@ -84,8 +83,8 @@ public class Workspace : GuiWindow {
 			ImGui.EndChildFrame();
 		}
 	}
-
-	private void DrawStateInfo(Scene scene, float height) {
+	
+	private void DrawStateInfo(SceneGraph scene, float height) {
 		var padding = ImGui.GetStyle().FramePadding.X;
 		
 		// Actor name + selection state
@@ -94,12 +93,13 @@ public class Workspace : GuiWindow {
 
 		ImGui.SetCursorPosX(padding * 2);
 
-		var tar = Services.Game.GPose.GetTarget();
-		ImGui.Text(tar != null ? tar.Name.TextValue : "No target found!");
+		//var tar = Services.Game.GPose.GetTarget();
+		//ImGui.Text(tar != null ? tar.Name.TextValue : "No target found!");
 		
 		ImGui.SetCursorPosX(padding * 2);
 
-		var ct = SceneManager!.SelectOrder.Count;
+		//var ct = SceneManager!.SelectOrder.Count;
+		var ct = 0;
 		if (ct > 0) {
 			ImGui.BeginDisabled();
 			ImGui.Text($"{ct} item{(ct == 1 ? "" : "s")} selected.");
@@ -114,7 +114,7 @@ public class Workspace : GuiWindow {
 
 		ImGui.SameLine();
 		
-		var overlay = Gui.Overlay.Visible;
+		var overlay = this._gui.Overlay.Visible;
 
 		const float ratio = 0.75f;
 		
@@ -122,27 +122,12 @@ public class Workspace : GuiWindow {
 		ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - padding - btnSize.X);
 		ImGui.SetCursorPosY(height * (1 - ratio) / 2);
 		if (Buttons.DrawIconButton(overlay ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, btnSize))
-			Gui.Overlay.Visible = !Gui.Overlay.Visible;
+			this._gui.Overlay.Visible = !overlay;
 	}
 
 	private void DrawTreeButtons() {
 		Buttons.DrawIconButton(FontAwesomeIcon.Plus);
 		ImGui.SameLine();
 		Buttons.DrawIconButton(FontAwesomeIcon.Filter);
-	}
-
-	private void DrawError() {
-		var cursorY = ImGui.GetCursorPosY();
-		ImGui.SetCursorPosY(cursorY + UiBuilder.DefaultFont.FontSize / 2);
-		Icons.DrawIcon(FontAwesomeIcon.Frown);
-		ImGui.SameLine();
-		ImGui.SetCursorPosY(cursorY);
-		ImGui.Text("Scene manager not found!\nKtisis may have experienced an error while loading.");
-		ImGui.Spacing();
-		ImGui.Text("Please forward any error logs to the plugin's developers for debugging.");
-		Flags |= ImGuiWindowFlags.AlwaysAutoResize;
-		SizeConstraints = new WindowSizeConstraints {
-			MinimumSize = new Vector2(-1, -1)
-		};
 	}
 }

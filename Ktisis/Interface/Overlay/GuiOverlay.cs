@@ -1,67 +1,68 @@
 using System;
-using System.Numerics;
+
+using Dalamud.Interface;
+using Dalamud.Logging;
+
+using FFXIVClientStructs.FFXIV.Common.Math;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using ImGuiNET;
 
-using Dalamud.Logging;
-using Dalamud.Interface;
-using Dalamud.Interface.Internal.Notifications;
+using Ktisis.Services;
 
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
+namespace Ktisis.Interface.Overlay;
 
-using Ktisis.Core;
-using Ktisis.Scenes;
-using Ktisis.Interface.SceneUi;
+public delegate void OverlayDraw(GuiOverlay sender);
 
-namespace Ktisis.Interface.Overlay; 
+public class GuiOverlay {
+	// Dependencies
 
-internal class GuiOverlay {
-	// Overlay
-	
-	private SceneRender? SceneRender;
-	
-	private Gizmo? Gizmo;
-
-	internal bool Visible;
-
-	// Init
-
-	internal void Init() {
-		var scene = Ktisis.Singletons.Get<SceneManager>();
-		if (scene != null)
-			SceneRender = new SceneRender(this, scene);
+	private readonly GPoseService _gpose;
 		
-		Gizmo = Gizmo.Create();
-		if (Gizmo == null) {
-			Ktisis.Notify(
-				NotificationType.Warning,
+    // State
+    
+    public bool Visible = true;
+
+	public readonly Gizmo? Gizmo;
+	
+	// Constructor
+
+	public GuiOverlay(GPoseService _gpose, NotifyService _notify) {
+		this._gpose = _gpose;
+		
+		this.Gizmo = Gizmo.Create();
+		if (this.Gizmo == null) {
+			_notify.Warning(
 				"Failed to create gizmo. This may be due to version incompatibilities.\n" +
 				"Please check your error log for more information."
 			);
 		}
 	}
 	
-	// Handle draw event
+	// UI draw
 
-	internal void Draw() {
+	public event OverlayDraw? OnOverlayDraw;
+
+	public void Draw() {
 		// TODO: Toggle
-		
-		if (!Services.Game.GPose.Active || !Visible)
-			return;
-		
+
+		if (!this.Visible || !this._gpose.IsInGPose) return;
+
 		try {
 			if (BeginFrame())
 				BeginGizmo();
-			else 
-				return; // This passes control to the finally block.
-			
-			DrawFrame();
+			else return;
+
+			try {
+				ImGui.Text("hallo");
+				this.OnOverlayDraw?.Invoke(this);
+			} catch (Exception err) {
+				PluginLog.Error($"Error while drawing overlay:\n{err}");
+			}
 		} finally {
 			EndFrame();
 		}
 	}
-	
-	// Begin
 
 	private bool BeginFrame() {
 		const ImGuiWindowFlags flags = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoInputs;
@@ -71,19 +72,17 @@ internal class GuiOverlay {
 		var io = ImGui.GetIO();
 		ImGui.SetNextWindowSize(io.DisplaySize);
 		ImGui.SetNextWindowPos(Vector2.Zero);
-
-		ImGuiHelpers.ForceNextWindowMainViewport();
 		
+		ImGuiHelpers.ForceNextWindowMainViewport();
+
 		return ImGui.Begin("Ktisis Overlay", flags);
 	}
 
 	private unsafe void BeginGizmo() {
-		if (Gizmo is not Gizmo gizmo) return;
-		
-		var camMgr = CameraManager.Instance;
-		if (camMgr == null) return;
+		if (this.Gizmo is null) return;
 
-		var camera = camMgr->GetActiveCamera();
+		var camMgr = CameraManager.Instance;
+		var camera = camMgr != null ? camMgr->GetActiveCamera() : null;
 		if (camera == null) return;
 
 		var render = camera->CameraBase.SceneCamera.RenderCamera;
@@ -92,30 +91,12 @@ internal class GuiOverlay {
 		var proj = render->ProjectionMatrix;
 		var view = camera->CameraBase.SceneCamera.ViewMatrix;
 		view.M44 = 1f;
-
-		gizmo.BeginFrame(view, proj);
+		
+		this.Gizmo.BeginFrame(view, proj);
 	}
-	
-	// Draw frame
-
-	private void DrawFrame() {
-		try {
-			SceneRender?.Draw(Gizmo);
-		} catch (Exception e) {
-			PluginLog.Error($"Error while drawing scene overlay:\n{e}");
-		}
-	}
-
-	// End
 
 	private void EndFrame() {
 		ImGui.End();
 		ImGui.PopStyleVar();
-	}
-	
-	// Dispose
-
-	internal void Dispose() {
-		Gizmo = null;
 	}
 }

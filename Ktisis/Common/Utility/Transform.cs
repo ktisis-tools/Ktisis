@@ -16,21 +16,21 @@ public class Transform {
 	// Constructors
 
 	public Transform() {
-		Position = Vector3.Zero;
-		Rotation = Quaternion.Identity;
-		Scale = Vector3.One;
+		this.Position = Vector3.Zero;
+		this.Rotation = Quaternion.Identity;
+		this.Scale = Vector3.One;
 	}
 
 	public Transform(Vector3 pos, Quaternion rot, Vector3 scale) {
-		Position = pos;
-		Rotation = rot;
-		Scale = scale;
+		this.Position = pos;
+		this.Rotation = rot;
+		this.Scale = scale;
 	}
 
 	public Transform(hkQsTransformf hk) {
-		Position = hk.Translation.ToVector3();
-		Rotation = hk.Rotation.ToQuaternion();
-		Scale = hk.Scale.ToVector3();
+		this.Position = hk.Translation.ToVector3();
+		this.Rotation = hk.Rotation.ToQuaternion();
+		this.Scale = hk.Scale.ToVector3();
 	}
 
 	public Transform(Matrix4x4 mx) {
@@ -40,17 +40,17 @@ public class Transform {
 	// Havok
 
 	public void ApplyTo(ref hkQsTransformf hk) {
-		hk.Translation.SetFrom(Position);
-		hk.Rotation.SetFrom(Rotation);
-		hk.Scale.SetFrom(Scale);
+		hk.Translation.SetFrom(this.Position);
+		hk.Rotation.SetFrom(this.Rotation);
+		hk.Scale.SetFrom(this.Scale);
 	}
 	
 	// Matrix
 
 	public Matrix4x4 ComposeMatrix() {
-		var sclMx = Matrix4x4.CreateScale(Scale);
-		var rotMx = Matrix4x4.CreateFromQuaternion(Rotation);
-		var posMx = Matrix4x4.CreateTranslation(Position);
+		var sclMx = Matrix4x4.CreateScale(this.Scale);
+		var rotMx = Matrix4x4.CreateFromQuaternion(this.Rotation);
+		var posMx = Matrix4x4.CreateTranslation(this.Position);
 		return sclMx * rotMx * posMx;
 	}
 
@@ -62,8 +62,8 @@ public class Transform {
 			out var pos
 		)) return;
 		
-		Position = pos;
-		Rotation = rot;
-		Scale = scl;
+		this.Position = pos;
+		this.Rotation = rot;
+		this.Scale = scl;
 	}
 }

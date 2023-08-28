@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 using Dalamud.Utility;
 
-using Ktisis.Config.Bones;
+using Ktisis.Data.Config.Bones;
 
 namespace Ktisis.Data; 
 
 public class SchemaReader {
 	// Manifest resources
 
-	public Stream GetManifestResource(string path) {
+	private Stream GetManifestResource(string path) {
 		var assembly = Assembly.GetExecutingAssembly();
 		var name = assembly.GetName().Name!;
 		path = $"{name}.{path}";
@@ -29,14 +29,14 @@ public class SchemaReader {
 	
 	private const string BonesTag = "Bones";
 	private const string CategoryTag = "Category";
-
+	
 	private const string CategorySchemaPath = "Data.Schema.Categories.xml";
 
 	public async Task<Categories> ReadBoneCategories() {
 		var result = new Categories();
 		
 		var stream = GetManifestResource(CategorySchemaPath);
-		var settings = new XmlReaderSettings() { Async = true };
+		var settings = new XmlReaderSettings { Async = true };
 
 		using var reader = XmlReader.Create(stream, settings);
 		while (await reader.ReadAsync()) {
@@ -50,11 +50,11 @@ public class SchemaReader {
 
 	private async Task<BoneCategory> RecursiveReadCategory(Categories result, XmlReader reader) {
 		var name = reader.GetAttribute("Id") ?? "Unknown";
-		var category = new BoneCategory(name);
-		
-		category.IsNsfw = reader.GetAttribute("IsNsfw") == "true";
-		category.IsDefault = reader.GetAttribute("IsDefault") == "true";
-		
+		var category = new BoneCategory(name) {
+			IsNsfw = reader.GetAttribute("IsNsfw") == "true",
+			IsDefault = reader.GetAttribute("IsDefault") == "true"
+		};
+
 		if (category.IsDefault)
 			result.Default = category;
 		result.AddCategory(category);

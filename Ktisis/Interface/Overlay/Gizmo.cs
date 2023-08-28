@@ -9,7 +9,7 @@ using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Overlay;
 
-internal class Gizmo {
+public class Gizmo {
 	// Static
 	
 	private const string ImGuiVersion = "1.88";
@@ -64,15 +64,15 @@ internal class Gizmo {
 	private Matrix4x4 DeltaMatrix = Matrix4x4.Identity;
 
 	internal void BeginFrame(Matrix4x4 view, Matrix4x4 proj) {
-		HasDrawn = false;
-		HasMoved = false;
+		this.HasDrawn = false;
+		this.HasMoved = false;
 
-		ViewMatrix = view;
-		ProjMatrix = proj;
+		this.ViewMatrix = view;
+		this.ProjMatrix = proj;
 
-		DeltaMatrix = Matrix4x4.Identity;
+		this.DeltaMatrix = Matrix4x4.Identity;
 
-		SetMatrixCallback = null;
+		this.SetMatrixCallback = null;
 
 		ImGuizmo.Gizmo.BeginFrame();
 
@@ -81,27 +81,27 @@ internal class Gizmo {
 	}
 
 	internal void Manipulate(Matrix4x4 mx, SetMatrixDelegate callback, bool selected) {
-		if (HasDrawn) {
-			if (!HasMoved) return;
+		if (this.HasDrawn) {
+			if (!this.HasMoved) return;
 			callback.Invoke(mx * DeltaMatrix);
 		} else if (selected) {
-			HasDrawn = true;
-			HasMoved = ImGuizmo.Gizmo.Manipulate(
-				ViewMatrix,
-				ProjMatrix,
+			this.HasDrawn = true;
+			this.HasMoved = ImGuizmo.Gizmo.Manipulate(
+				this.ViewMatrix,
+				this.ProjMatrix,
 				Operation.UNIVERSAL,
 				Mode.Local,
 				ref mx,
-				out DeltaMatrix
+				out this.DeltaMatrix
 			);
 
-			if (HasMoved) {
+			if (this.HasMoved) {
 				callback.Invoke(mx);
-				SetMatrixCallback?.Invoke(DeltaMatrix);
+				this.SetMatrixCallback?.Invoke(this.DeltaMatrix);
 			}
-			SetMatrixCallback = null;
+			this.SetMatrixCallback = null;
 		} else {
-			SetMatrixCallback += delta => callback.Invoke(mx * delta);
+			this.SetMatrixCallback += delta => callback.Invoke(mx * delta);
 		}
 	}
 }

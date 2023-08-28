@@ -1,56 +1,25 @@
-﻿using System.Reflection;
+using System;
 
-using JetBrains.Annotations;
-
-using Ktisis.Events;
-using Ktisis.Events.Attributes;
-using Ktisis.Core.Singletons;
-using Ktisis.Interop.Hooking;
-using Ktisis.Interop.Modules;
-using Ktisis.Interop.Resolvers;
+using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Interop; 
 
-public class InteropService : Service, IEventClient {
-	// Hooking
+public class InteropService : IDisposable {
+	// Service
 
-	private readonly DllResolver DllResolver = new();
+	private readonly DllResolver DllResolver;
 
-	private readonly HookManager HookManager = new();
-	
-	internal readonly DelegateResolver Methods = new();
-
-	// Initialization
-	
-	public override void Init() {
-		DllResolver.Init();
-
-		HookManager.Register<PoseHooks>(Condition.IsInGPose, HookFlags.RequireEvent);
-		HookManager.CreateHooks();
+	public InteropService() {
+		this.DllResolver = new DllResolver();
 	}
 	
-	// Hook wrappers
+	// Disposal
 
-	internal T? GetModule<T>() where T : HookModule
-		=> HookManager.GetModule<T>();
+	private bool IsDisposed;
 	
-	// Events
-
-	[UsedImplicitly]
-	[Listener<ConditionEvent>]
-	private void OnConditionUpdate(Condition cond, bool value)
-		=> HookManager.OnConditionUpdate(cond, value);
-
-	public void OnEventAdded(IEventClient emitter, EventInfo @event) {
-		if (@event.EventHandlerType?.Name is nameof(ConditionEvent))
-			HookManager.OnEventAdded();
-	}
-
-	// Dispose
-
-	public override void Dispose() {
-		DllResolver.Dispose();
-		
-		HookManager.Dispose();
+	public void Dispose() {
+		if (this.IsDisposed) return;
+		this.IsDisposed = true;
+		this.DllResolver.Dispose();
 	}
 }
