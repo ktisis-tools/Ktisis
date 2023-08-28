@@ -56,11 +56,18 @@
 
 	<ItemGroup>
 	  <None Remove="Data\Schema\Categories.xml" />
-	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET\ImGuizmo.NET.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Scene\Draw\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

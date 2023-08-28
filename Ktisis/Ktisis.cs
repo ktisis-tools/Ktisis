@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 
 using Dalamud.Plugin;
 using Dalamud.Logging;
-using Dalamud.Interface.Internal.Notifications;
 
 using Ktisis.Core;
-using Ktisis.Core.Singletons;
+using Ktisis.Data;
+using Ktisis.Scene;
+using Ktisis.Services;
 using Ktisis.Interface;
-using Ktisis.Config;
-using Ktisis.Scenes;
+using Ktisis.Interop;
 
 namespace Ktisis;
 
@@ -25,38 +25,39 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	// Plugin framework
 
-	internal static DalamudPluginInterface PluginApi = null!;
+	private Task? InitTask;
 
-	internal readonly static SingletonManager Singletons = new();
-
-	internal static ConfigFile Config = null!;
+	private readonly ServiceManager Services;
 
 	// Ctor called on plugin load
 
-	private Task? InitTask;
-
 	public Ktisis(DalamudPluginInterface api) {
-		PluginApi = api;
+		// Service registration
 
-		/* Start plugin initialization asynchronously.
-		 * This is generally intended to handle the *creation* of classes in the framework,
-		 * such as registering dependencies, setting up event listeners, etc.
-		 * Activation of these classes should not be done until this is complete! */
+		this.Services = new ServiceManager()
+			.AddDalamudServices(api)
+			.AddService<CommandService>()
+			.AddService<DataService>()
+			.AddService<GPoseService>()
+			.AddService<InteropService>()
+			.AddService<NotifyService>()
+			.AddService<PluginGui>()
+			.AddService<SceneManager>();
 
-		InitTask = Init().ContinueWith(task => {
+		this.InitTask = Init().ContinueWith(task => {
+			this.InitTask = null;
 			if (task.Exception == null) return;
 
 			PluginLog.Fatal("Ktisis failed to load due to the following error(s):");
 			foreach (var err in task.Exception.InnerExceptions)
 				PluginLog.Error(err.ToString());
 
-			Notify(NotificationType.Error, "Ktisis failed to load. Please check your error log for more information.");
-
-			InitTask = null;
+			this.Services.GetService<NotifyService>()?
+				.Error("Ktisis failed to load. Please check your error log for more information.");
 		});
 	}
 
-	// Initialize singletons & services
+	// Initialization
 
 	private async Task Init() {
 		await Task.Yield();
@@ -64,41 +65,27 @@ public sealed class Ktisis : IDalamudPlugin {
 		var timer = new Stopwatch();
 		timer.Start();
 
-		// Inject dalamud services
-		PluginApi.Create<Services>();
+		var cfg = this.Services.GetRequiredService<DataService>();
+		await Task.WhenAll(new[] {
+			cfg.LoadConfig(),
+			InitServices()
+		});
 
-		// Register singletons for initialization
-		Singletons.Register<Services>();
-		Singletons.Register<SceneManager>();
-		Singletons.Register<Gui>();
-
-		// Initialize registered singletons
-		Singletons.Init();
-
-		var initTime = timer.Elapsed.TotalMilliseconds;
-		var total = initTime;
+		PluginLog.Debug($"Initialization completed in {timer.Elapsed.TotalMilliseconds:00.00}ms");
 		timer.Restart();
 
-		// TODO: Config loading
-		Config = await ConfigFile.Load();
-
-		var cfgTime = timer.Elapsed.TotalMilliseconds;
-		total += cfgTime;
-		timer.Restart();
-
-		// Invoke OnReady
-		Singletons.OnReady();
+		this.Services.NotifyReady();
 
 		timer.Stop();
-		var readyTime = timer.Elapsed.TotalMilliseconds;
-		total += readyTime;
+		PluginLog.Debug($"Ready notifier completed in {timer.Elapsed.TotalMilliseconds:00.00}ms");
+	}
 
-		PluginLog.Debug($"Plugin initialization complete.\n" +
-			$"	Init:	{initTime:00.00}ms\n" +
-			$"Config: + {cfgTime:00.00}ms\n" +
-			$" Ready: + {readyTime:00.00}ms\n" +
-			$" Total: = {total:00.00}ms"
-		);
+	private async Task InitServices() {
+		await Task.Yield();
+		this.Services.GetRequiredService<InteropService>();
+		this.Services.GetRequiredService<SceneManager>();
+		this.Services.GetRequiredService<CommandService>();
+		this.Services.GetRequiredService<PluginGui>();
 	}
 
 	// Version info
@@ -107,20 +94,10 @@ public sealed class Ktisis : IDalamudPlugin {
 		return Assembly.GetCallingAssembly().GetName().Version!.ToString(fieldCount: 3);
 	}
 
-	// Notification helper
-
-	internal static void Notify(NotificationType type, string text, uint timer = 10000) {
-		PluginApi.UiBuilder.AddNotification(text, VersionName, type, timer);
-	}
-
 	// Dispose
 
 	public void Dispose() {
-		if (InitTask?.IsCompleted is false) {
-			// TODO: Potentially a foot gun, implement cancellation tokens at some point
-			PluginLog.Warning("Dispose called while init in progress, waiting for completion...");
-			InitTask?.Wait();
-		}
-		Singletons.Dispose();
+		this.InitTask?.Wait();
+		this.Services.Dispose();
 	}
 }
