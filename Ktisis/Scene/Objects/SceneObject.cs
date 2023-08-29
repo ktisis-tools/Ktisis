@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Dalamud.Logging;
 
 using Ktisis.Common.Extensions;
+using Ktisis.Data.Config.Display;
 using Ktisis.Scene.Impl;
 
 namespace Ktisis.Scene.Objects;
@@ -25,7 +26,7 @@ public abstract class SceneObject : ITreeNode, IParentable<SceneObject> {
 
 	public string UiId { get; init; }
 
-	public TreeNodeType NodeType { get; init; } = TreeNodeType.None;
+	public virtual ItemType ItemType { get; init; } = ItemType.Default;
 
 	// Object
 

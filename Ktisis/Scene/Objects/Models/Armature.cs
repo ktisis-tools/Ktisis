@@ -6,12 +6,17 @@ using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using Ktisis.Data.Config.Display;
 using Ktisis.Scene.Objects.Render;
 using Ktisis.Scene.Objects.Tree;
 
 namespace Ktisis.Scene.Objects.Models;
 
 public class Armature : ArmatureGroup {
+	// Properties
+
+	public override ItemType ItemType => ItemType.Armature;
+
 	// Bones
 
 	private readonly Dictionary<int, uint> Partials = new();
