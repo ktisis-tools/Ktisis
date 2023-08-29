@@ -1,8 +1,9 @@
-using Ktisis.Data.Config.Display;
+using Dalamud.Utility;
 
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
+using Ktisis.Data.Config.Display;
 using Ktisis.Scene.Objects.Render;
 
 namespace Ktisis.Scene.Objects.Game; 
@@ -10,7 +11,17 @@ namespace Ktisis.Scene.Objects.Game;
 public class Actor : Character {
 	// Properties
 
-	public override string Name => this.GetGameObject()?.Name.TextValue ?? "Unknown Actor";
+	public override string Name {
+		get {
+			var gameObj = this.GetGameObject();
+			if (gameObj is null) return "Unknown";
+
+			var name = gameObj.Name.TextValue;
+			if (name.IsNullOrEmpty())
+				name = $"Actor {gameObj.ObjectIndex}";
+			return name;
+		}
+	}
 
 	public override ItemType ItemType => ItemType.Actor;
 	

@@ -94,13 +94,12 @@ public class Workspace : Window {
 
 		ImGui.SetCursorPosX(padding * 2);
 
-		//var tar = Services.Game.GPose.GetTarget();
-		//ImGui.Text(tar != null ? tar.Name.TextValue : "No target found!");
+		var tar = this._gpose.GetTarget();
+		ImGui.Text(tar is not null ? tar.Name.TextValue : "No target found!");
 		
 		ImGui.SetCursorPosX(padding * 2);
-
-		//var ct = SceneManager!.SelectOrder.Count;
-		var ct = 0;
+        
+		var ct = scene.Select.Count;
 		if (ct > 0) {
 			ImGui.BeginDisabled();
 			ImGui.Text($"{ct} item{(ct == 1 ? "" : "s")} selected.");
@@ -114,14 +113,13 @@ public class Workspace : Window {
 		// Overlay toggle
 
 		ImGui.SameLine();
-		
-		var overlay = this._gui.Overlay.Visible;
 
-		const float ratio = 0.75f;
-		
+		const float ratio = 3/4f;
 		var btnSize = new Vector2(height, height) * ratio;
 		ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - padding - btnSize.X);
 		ImGui.SetCursorPosY(height * (1 - ratio) / 2);
+		
+		var overlay = this._gui.Overlay.Visible;
 		if (Buttons.DrawIconButton(overlay ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, btnSize))
 			this._gui.Overlay.Visible = !overlay;
 	}

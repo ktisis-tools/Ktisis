@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 using Dalamud.Logging;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Data.Config.Display;
-using Ktisis.Scene.Objects.Render;
 using Ktisis.Scene.Objects.Tree;
+using Ktisis.Scene.Objects.Render;
+using Ktisis.Data.Config.Display;
 
 namespace Ktisis.Scene.Objects.Models;
 

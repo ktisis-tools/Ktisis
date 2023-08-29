@@ -4,13 +4,9 @@ using Ktisis.Data.Config;
 namespace Ktisis.Scene; 
 
 public class SceneContext {
-	// Dependencies
-
-	private readonly DataService _data;
-	
-	// Context
-	
 	public readonly SceneGraph Scene;
+	
+	private readonly DataService _data;
 
 	public SceneContext(SceneGraph scene, DataService _data) {
 		this.Scene = scene;

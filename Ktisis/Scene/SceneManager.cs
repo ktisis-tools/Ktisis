@@ -24,9 +24,11 @@ public class SceneManager : IDisposable {
 		_gpose.OnGPoseUpdate += OnGPoseUpdate;
 	}
 	
-	// State
+	// Scene state
 	
 	public SceneGraph? Scene { get; private set; }
+
+	public SelectState? SelectState => this.Scene?.Select;
 	
 	// Events
 
