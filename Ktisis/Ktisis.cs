@@ -36,6 +36,7 @@ public sealed class Ktisis : IDalamudPlugin {
 
 		this.Services = new ServiceManager()
 			.AddDalamudServices(api)
+			.AddService<CameraService>()
 			.AddService<CommandService>()
 			.AddService<DataService>()
 			.AddService<GPoseService>()
