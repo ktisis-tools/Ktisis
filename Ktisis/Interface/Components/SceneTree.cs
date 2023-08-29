@@ -7,12 +7,11 @@ using Dalamud.Logging;
 
 using ImGuiNET;
 
-using Ktisis.Data;
-using Ktisis.Data.Config;
 using Ktisis.Scene;
 using Ktisis.Scene.Objects;
-using Ktisis.Common.Extensions;
+using Ktisis.Data.Config;
 using Ktisis.Data.Config.Display;
+using Ktisis.Common.Extensions;
 using Ktisis.Interface.Widgets;
 
 namespace Ktisis.Interface.Components;
@@ -98,19 +97,16 @@ public class SceneTree {
 		var flags = ImGuiTreeNodeFlags.SpanAvailWidth | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow);
 
 		if (isVisible) {
-			// TODO
-			//if (item.Selected)
-				//flags |= ImGuiTreeNodeFlags.Selected;
+			if (item.Flags.HasFlag(ObjectFlags.Selected))
+				flags |= ImGuiTreeNodeFlags.Selected;
 			ImGui.PushStyleColor(ImGuiCol.Text, display.Color);
 		}
 
 		var expand = ImGui.TreeNodeEx($"##{item.UiId}", flags);
 
-		//if (SelectFlags.HasFlag(SelectFlags.Range))
-			//CollectRange(item);
-
 		if (isVisible) {
 			ImGui.SameLine();
+			HandleClick(item);
 			DrawLabel(item, display);
 			ImGui.PopStyleColor();
 		}
@@ -140,5 +136,21 @@ public class SceneTree {
 
 		var labelAvail = ImGui.GetContentRegionAvail().X;
 		ImGui.Text(item.Name.FitToWidth(labelAvail));
+	}
+
+	private void HandleClick(SceneObject item) {
+		var min = ImGui.GetCursorScreenPos();
+		var max = min + ImGui.GetItemRectSize() with {
+			X = ImGui.GetContentRegionAvail().X
+		};
+
+		var isClick = ImGui.IsMouseHoveringRect(min, max) && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
+		if (!isClick) return;
+
+		var flags = SelectFlags.None;
+		if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
+			flags = SelectFlags.Multiple;
+
+		this._sceneMgr.SelectState?.HandleClick(item, flags);
 	}
 }

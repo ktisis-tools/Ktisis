@@ -1,8 +1,10 @@
 using System;
 
 using Dalamud.Game;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
 using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
@@ -19,10 +21,12 @@ public delegate void GPoseUpdate(bool active);
 public class GPoseService : INotifyReady, IDisposable {
 	// Service
 
+	private readonly IObjectTable _actors;
 	private readonly Framework _framework;
 	private readonly UiBuilder _uiBuilder;
 
-	public GPoseService(Framework _framework, UiBuilder _uiBuilder) {
+	public GPoseService(IObjectTable _actors, Framework _framework, UiBuilder _uiBuilder) {
+		this._actors = _actors;
 		this._framework = _framework;
 		this._uiBuilder = _uiBuilder;
 
@@ -68,10 +72,14 @@ public class GPoseService : INotifyReady, IDisposable {
 
 	// GPose Target
 
-	public unsafe nint GetTargetAddress() {
-		var target = TargetSystem.Instance();
-		return target != null ? (nint)target->GPoseTarget : nint.Zero;
+	public unsafe GameObject? GetTarget() {
+		var tarSys = TargetSystem.Instance();
+		var target = tarSys != null ? tarSys->GPoseTarget : null;
+		return target is not null ? this._actors.CreateObjectReference((nint)target) : null;
 	}
+
+	public nint GetTargetAddress()
+		=> GetTarget()?.Address ?? nint.Zero;
 
 	// Disposal
 

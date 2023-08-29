@@ -3,12 +3,14 @@ using System.Collections.Generic;
 
 using Ktisis.Core;
 using Ktisis.Scene.Impl;
-using Ktisis.Scene.Handlers;
 using Ktisis.Scene.Objects;
+using Ktisis.Scene.Handlers;
+using Ktisis.Common.Extensions;
 
 namespace Ktisis.Scene;
 
-public delegate void SceneEventDelegate(SceneGraph sender);
+public delegate void SceneEventHandler(SceneGraph sender);
+public delegate void SceneObjectEventHandler(SceneGraph sender, SceneObject item);
 
 public class SceneGraph : IParentable<SceneObject> {
 	// Constructor
@@ -17,18 +19,24 @@ public class SceneGraph : IParentable<SceneObject> {
 
 	private readonly SceneContext Context;
 
+	public readonly SelectState Select;
+
 	public SceneGraph(IServiceContainer _services) {
 		this._services = _services;
 
 		this.Context = _services.Inject<SceneContext>(this);
 		this.AddHandler<ActorHandler>()
 			.AddHandler<LightHandler>();
+
+		this.Select = new SelectState(this);
 	}
 
 	// Events
 
-	public event SceneEventDelegate? OnSceneBuild;
-	public event SceneEventDelegate? OnSceneUpdate;
+	public event SceneEventHandler? OnSceneBuild;
+	public event SceneEventHandler? OnSceneUpdate;
+
+	public event SceneObjectEventHandler? OnSceneObjectRemoved;
 
 	// Managers
 
@@ -50,28 +58,31 @@ public class SceneGraph : IParentable<SceneObject> {
 	// Build scene
 
 	public void Build() {
-		this.OnSceneBuild?.Invoke(this);
+		this.OnSceneBuild?.InvokeSafely(this);
 	}
 
 	// Tick update
 
 	public void Update() {
-		this.OnSceneUpdate?.Invoke(this);
+		this.OnSceneUpdate?.InvokeSafely(this);
 		this.Objects.ForEach(obj => obj.Update(this.Context));
 	}
 
-	// Objects
+	// Object management
 
 	private readonly List<SceneObject> Objects = new();
 
-	// Object management
-
-	public void Remove(SceneObject obj) {
-		obj.Flags |= ObjectFlags.Removed;
-		if (obj.Parent is null)
-			this.Objects.Remove(obj);
+	public void Remove(SceneObject item) {
+		item.Flags |= ObjectFlags.Removed;
+		if (item.Parent is null)
+			this.Objects.Remove(item);
 		else
-			obj.SetParent(null);
+			item.SetParent(null);
+
+		foreach (var child in item.GetChildren())
+			Remove(child);
+
+		this.OnSceneObjectRemoved?.InvokeSafely(this, item);
 	}
 
 	// IParentable
@@ -86,5 +97,6 @@ public class SceneGraph : IParentable<SceneObject> {
 		this.Objects.Remove(child);
 	}
 
-	public IReadOnlyList<SceneObject> GetChildren() => this.Objects.AsReadOnly();
+	public IReadOnlyList<SceneObject> GetChildren()
+		=> this.Objects.AsReadOnly();
 }
