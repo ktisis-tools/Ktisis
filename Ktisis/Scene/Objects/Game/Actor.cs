@@ -1,3 +1,5 @@
+using Ktisis.Data.Config.Display;
+
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
@@ -9,6 +11,8 @@ public class Actor : Character {
 	// Properties
 
 	public override string Name => this.GetGameObject()?.Name.TextValue ?? "Unknown Actor";
+
+	public override ItemType ItemType => ItemType.Actor;
 	
 	// Constructor
 	

@@ -5,10 +5,11 @@ using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
 
-using Ktisis.Interface.Components;
-using Ktisis.Interface.Widgets;
+using Ktisis.Data;
 using Ktisis.Scene;
 using Ktisis.Services;
+using Ktisis.Interface.Widgets;
+using Ktisis.Interface.Components;
 
 namespace Ktisis.Interface.Windows; 
 
@@ -19,12 +20,12 @@ public class Workspace : Window {
 	private readonly GPoseService _gpose;
 	private readonly SceneManager _sceneMgr;
 	
-	public Workspace(PluginGui _gui, GPoseService _gpose, SceneManager _sceneMgr) : base("Ktisis") {
+	public Workspace(PluginGui _gui, GPoseService _gpose, SceneManager _sceneMgr, DataService _data) : base("Ktisis") {
 		this._gui = _gui;
 		this._gpose = _gpose;
 		this._sceneMgr = _sceneMgr;
-
-		this.SceneTree = new SceneTree(_sceneMgr);
+        
+		this.SceneTree = new SceneTree(_data.GetConfig(), _sceneMgr);
         
 		RespectCloseHotkey = false;
 	}

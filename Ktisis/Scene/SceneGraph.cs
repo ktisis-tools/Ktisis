@@ -20,7 +20,7 @@ public class SceneGraph : IParentable<SceneObject> {
 	public SceneGraph(IServiceContainer _services) {
 		this._services = _services;
 		
-		this.Context = _services.Inject<SceneContext>(new object[] { this });
+		this.Context = _services.Inject<SceneContext>(this);
 		this.AddHandler<ActorHandler>()
 			.AddHandler<LightHandler>();
 	}
@@ -35,7 +35,7 @@ public class SceneGraph : IParentable<SceneObject> {
 	private readonly Dictionary<Type, object> ObjectHandlers = new();
 
 	private SceneGraph AddHandler<T>() {
-		var inst = this._services.Inject<T>(new object[] { this })!;
+		var inst = this._services.Inject<T>(this)!;
 		this.ObjectHandlers.Add(typeof(T), inst);
 		return this;
 	}

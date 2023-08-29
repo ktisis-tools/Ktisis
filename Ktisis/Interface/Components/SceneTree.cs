@@ -7,9 +7,12 @@ using Dalamud.Logging;
 
 using ImGuiNET;
 
+using Ktisis.Data;
+using Ktisis.Data.Config;
 using Ktisis.Scene;
 using Ktisis.Scene.Objects;
 using Ktisis.Common.Extensions;
+using Ktisis.Data.Config.Display;
 using Ktisis.Interface.Widgets;
 
 namespace Ktisis.Interface.Components; 
@@ -17,9 +20,12 @@ namespace Ktisis.Interface.Components;
 public class SceneTree {
 	// Constructor
 	
+	private readonly ConfigFile _cfg;
+	
 	private readonly SceneManager _sceneMgr;
 
-	public SceneTree(SceneManager _scene) {
+	public SceneTree(ConfigFile _cfg, SceneManager _scene) {
+		this._cfg = _cfg;
 		this._sceneMgr = _scene;
 	}
 	
@@ -84,9 +90,7 @@ public class SceneTree {
 		var pos = ImGui.GetCursorPosY();
 		var isVisible = pos > this.MinY && pos < this.MaxY;
 
-		//var color = item.Color;
-		// TODO
-		var color = 0xFFFFFFFF;
+		var display = this._cfg.GetItemDisplay(item.ItemType);
 
 		var children = item.GetChildren();
 		
@@ -97,7 +101,7 @@ public class SceneTree {
 			// TODO
 			//if (item.Selected)
 				//flags |= ImGuiTreeNodeFlags.Selected;
-			ImGui.PushStyleColor(ImGuiCol.Text, color);
+			ImGui.PushStyleColor(ImGuiCol.Text, display.Color);
 		}
 		
 		var expand = ImGui.TreeNodeEx($"##{item.UiId}", flags);
@@ -107,7 +111,7 @@ public class SceneTree {
 		
 		if (isVisible) {
 			ImGui.SameLine();
-			DrawLabel(item);
+			DrawLabel(item, display);
 			ImGui.PopStyleColor();
 		}
 
@@ -118,20 +122,17 @@ public class SceneTree {
 		ImGui.TreePop();
 	}
 
-	private void DrawLabel(SceneObject item) {
-		// TODO
-		//var hasIcon = item.Icon != FontAwesomeIcon.None;
-		var hasIcon = false;
-		var iconPadding = hasIcon ? Icons.CalcIconSize(FontAwesomeIcon.None).X / 2 : 0;
+	private void DrawLabel(SceneObject item, ItemDisplay display) {
+		var hasIcon = display.Icon != FontAwesomeIcon.None;
+		var iconPadding = hasIcon ? Icons.CalcIconSize(display.Icon).X / 2 : 0;
 		var iconSpace = hasIcon ? UiBuilder.IconFont.FontSize : 0;
 
 		var cursor = ImGui.GetCursorPosX();
 		ImGui.SetCursorPosX(cursor + (iconSpace / 2) - iconPadding);
 
 		// Icon + Name
-
-		// TODO
-		Icons.DrawIcon(FontAwesomeIcon.None);
+        
+		Icons.DrawIcon(display.Icon);
 		ImGui.SameLine();
 
 		cursor += ImGui.GetStyle().ItemSpacing.X + iconSpace;

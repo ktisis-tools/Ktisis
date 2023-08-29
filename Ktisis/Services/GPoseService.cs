@@ -48,7 +48,7 @@ public class GPoseService : INotifyReady, IDisposable {
 		if (this.IsInGPose != active) {
 			this.IsInGPose = active;
 			this.OnGPoseUpdate?.InvokeSafely(active);
-			PluginLog.Verbose($"GPose state changed: {(active ? "ACTIVE" : "INACTIVE")}");
+			PluginLog.Verbose($"GPose state changed: {(active ? "Active" : "Inactive")}");
 		}
 	}
 	

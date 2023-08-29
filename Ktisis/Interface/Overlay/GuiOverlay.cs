@@ -1,33 +1,32 @@
 using System;
 
-using Dalamud.Interface;
 using Dalamud.Logging;
+using Dalamud.Interface;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using ImGuiNET;
 
+using Ktisis.Core;
 using Ktisis.Services;
 
 namespace Ktisis.Interface.Overlay;
-
-public delegate void OverlayDraw(GuiOverlay sender);
 
 public class GuiOverlay {
 	// Dependencies
 
 	private readonly GPoseService _gpose;
 		
-    // State
-    
-    public bool Visible = true;
+	// State
+	
+	public bool Visible = true;
 
 	public readonly Gizmo? Gizmo;
 	
 	// Constructor
 
-	public GuiOverlay(GPoseService _gpose, NotifyService _notify) {
+	public GuiOverlay(IServiceContainer _services, GPoseService _gpose, NotifyService _notify) {
 		this._gpose = _gpose;
 		
 		this.Gizmo = Gizmo.Create();
@@ -37,11 +36,13 @@ public class GuiOverlay {
 				"Please check your error log for more information."
 			);
 		}
+
+		this.SceneDraw = _services.Inject<SceneDraw>(this.Gizmo);
 	}
 	
 	// UI draw
 
-	public event OverlayDraw? OnOverlayDraw;
+	private readonly SceneDraw SceneDraw;
 
 	public void Draw() {
 		// TODO: Toggle
@@ -54,8 +55,7 @@ public class GuiOverlay {
 			else return;
 
 			try {
-				ImGui.Text("hallo");
-				this.OnOverlayDraw?.Invoke(this);
+				this.SceneDraw.Draw(this.Gizmo);
 			} catch (Exception err) {
 				PluginLog.Error($"Error while drawing overlay:\n{err}");
 			}

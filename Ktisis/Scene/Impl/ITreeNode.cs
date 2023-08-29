@@ -1,11 +1,9 @@
-namespace Ktisis.Scene.Impl;
+using Ktisis.Data.Config.Display;
 
-public enum TreeNodeType {
-	None
-}
+namespace Ktisis.Scene.Impl;
 
 public interface ITreeNode {
 	public string UiId { get; init; }
 	
-	public TreeNodeType NodeType { get; init; }
+	public ItemType ItemType { get; init; }
 }
