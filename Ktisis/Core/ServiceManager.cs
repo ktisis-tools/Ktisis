@@ -55,14 +55,14 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 		throw new Exception($"Failed to find suitable constructor for type: {type.Name}");
 	}
 
-	public T Inject<T>(object[]? deps = null) {
+	public T Inject<T>(params object?[] deps) {
 		var inst = (T)FormatterServices.GetUninitializedObject(typeof(T))!;
-		if (!this.Inject(inst, deps ?? Array.Empty<object>()))
+		if (!this.Inject(inst, deps))
 			throw new Exception($"Failed to inject dependencies into instance of '{typeof(T).Name}'.");
 		return inst;
 	}
 
-	public bool Inject<T>(T inst, object[]? deps = null) {
+	public bool Inject<T>(T inst, params object?[] deps) {
 		var ctors = typeof(T).GetConstructors();
 		foreach (var ctor in ctors) {
 			var @params = new List<object>();
@@ -75,7 +75,7 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 				} else if (this.GetService(pType) is object pObj) {
 					@params.Add(pObj);
 				} else {
-					var dep = deps?.FirstOrDefault(dep => dep!.GetType() == pType, null);
+					var dep = deps.FirstOrDefault(dep => dep!.GetType() == pType, null);
 					if (dep is not null) {
 						@params.Add(dep);
 						continue;
