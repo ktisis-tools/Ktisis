@@ -1,22 +1,26 @@
 using System;
+using System.Numerics;
 
 using Dalamud.Logging;
 using Dalamud.Interface;
-
-using FFXIVClientStructs.FFXIV.Common.Math;
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using ImGuiNET;
 
 using Ktisis.Core;
 using Ktisis.Services;
+using Ktisis.Common.Extensions;
 
 namespace Ktisis.Interface.Overlay;
+
+public delegate void OverlayEventHandler(GuiOverlay sender);
 
 public class GuiOverlay {
 	// Dependencies
 
+	private readonly CameraService _camera;
 	private readonly GPoseService _gpose;
+
+	private readonly SceneOverlay SceneOverlay;
 		
 	// State
 	
@@ -26,7 +30,8 @@ public class GuiOverlay {
 	
 	// Constructor
 
-	public GuiOverlay(IServiceContainer _services, GPoseService _gpose, NotifyService _notify) {
+	public GuiOverlay(IServiceContainer _services, CameraService _camera, GPoseService _gpose, NotifyService _notify) {
+		this._camera = _camera;
 		this._gpose = _gpose;
 		
 		this.Gizmo = Gizmo.Create();
@@ -36,13 +41,16 @@ public class GuiOverlay {
 				"Please check your error log for more information."
 			);
 		}
-
-		this.SceneDraw = _services.Inject<SceneDraw>(this.Gizmo);
+		
+		_services.Inject<SceneOverlay>()
+			.SubscribeTo(this);
 	}
 	
-	// UI draw
+	// Events
 
-	private readonly SceneDraw SceneDraw;
+	public OverlayEventHandler? OnOverlayDraw;
+	
+	// UI draw
 
 	public void Draw() {
 		// TODO: Toggle
@@ -55,7 +63,7 @@ public class GuiOverlay {
 			else return;
 
 			try {
-				this.SceneDraw.Draw(this.Gizmo);
+				this.OnOverlayDraw?.InvokeSafely(this);
 			} catch (Exception err) {
 				PluginLog.Error($"Error while drawing overlay:\n{err}");
 			}
@@ -78,24 +86,17 @@ public class GuiOverlay {
 		return ImGui.Begin("Ktisis Overlay", flags);
 	}
 
-	private unsafe void BeginGizmo() {
+	private void BeginGizmo() {
 		if (this.Gizmo is null) return;
 
-		var camMgr = CameraManager.Instance;
-		var camera = camMgr != null ? camMgr->GetActiveCamera() : null;
-		if (camera == null) return;
-
-		var render = camera->CameraBase.SceneCamera.RenderCamera;
-		if (render == null) return;
-
-		var proj = render->ProjectionMatrix;
-		var view = camera->CameraBase.SceneCamera.ViewMatrix;
-		view.M44 = 1f;
-		
-		this.Gizmo.BeginFrame(view, proj);
+		var proj = this._camera.GetProjectionMatrix();
+		var view = this._camera.GetViewMatrix();
+		if (proj is Matrix4x4 projMx && view is Matrix4x4 viewMx)
+			this.Gizmo.BeginFrame(viewMx, projMx);
 	}
 
 	private void EndFrame() {
+		this.Gizmo?.EndFrame();
 		ImGui.End();
 		ImGui.PopStyleVar();
 	}

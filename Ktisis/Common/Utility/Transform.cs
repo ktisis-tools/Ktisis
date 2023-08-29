@@ -66,4 +66,10 @@ public class Transform {
 		this.Rotation = rot;
 		this.Scale = scl;
 	}
+
+	public static Transform FromMatrix(Matrix4x4 mx) {
+		var result = new Transform();
+		result.DecomposeMatrix(mx);
+		return result;
+	}
 }
