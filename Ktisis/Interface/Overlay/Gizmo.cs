@@ -6,8 +6,11 @@ using ImGuiNET;
 using Dalamud.Logging;
 
 using Ktisis.ImGuizmo;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface.Overlay;
+
+public delegate void OnManipulateHandler(Gizmo sender);
 
 public class Gizmo {
 	// Static
@@ -50,9 +53,7 @@ public class Gizmo {
 
 	// Callback handling
 
-	internal delegate void SetMatrixDelegate(Matrix4x4 mx);
-
-	private SetMatrixDelegate? SetMatrixCallback;
+	public event OnManipulateHandler? OnManipulate;
 
 	// Gizmo state
 
@@ -61,7 +62,11 @@ public class Gizmo {
 
 	private Matrix4x4 ViewMatrix = Matrix4x4.Identity;
 	private Matrix4x4 ProjMatrix = Matrix4x4.Identity;
+
+	private Matrix4x4 ResultMatrix = Matrix4x4.Identity;
 	private Matrix4x4 DeltaMatrix = Matrix4x4.Identity;
+
+	// Draw
 
 	internal void BeginFrame(Matrix4x4 view, Matrix4x4 proj) {
 		this.HasDrawn = false;
@@ -70,38 +75,50 @@ public class Gizmo {
 		this.ViewMatrix = view;
 		this.ProjMatrix = proj;
 
-		this.DeltaMatrix = Matrix4x4.Identity;
-
-		this.SetMatrixCallback = null;
-
 		ImGuizmo.Gizmo.BeginFrame();
 
 		var ws = ImGui.GetWindowSize();
 		ImGuizmo.Gizmo.SetDrawRect(0, 0, ws.X, ws.Y);
 	}
 
-	internal void Manipulate(Matrix4x4 mx, SetMatrixDelegate callback, bool selected) {
-		if (this.HasDrawn) {
-			if (!this.HasMoved) return;
-			callback.Invoke(mx * DeltaMatrix);
-		} else if (selected) {
-			this.HasDrawn = true;
-			this.HasMoved = ImGuizmo.Gizmo.Manipulate(
-				this.ViewMatrix,
-				this.ProjMatrix,
-				Operation.UNIVERSAL,
-				Mode.Local,
-				ref mx,
-				out this.DeltaMatrix
-			);
+	internal void Manipulate(Matrix4x4 mx) {
+		if (this.HasDrawn) return;
 
-			if (this.HasMoved) {
-				callback.Invoke(mx);
-				this.SetMatrixCallback?.Invoke(this.DeltaMatrix);
-			}
-			this.SetMatrixCallback = null;
-		} else {
-			this.SetMatrixCallback += delta => callback.Invoke(mx * delta);
-		}
+		this.HasMoved = ImGuizmo.Gizmo.Manipulate(
+			this.ViewMatrix,
+			this.ProjMatrix,
+			Operation.UNIVERSAL,
+			Mode.Local,
+			ref mx,
+			out this.DeltaMatrix
+		);
+
+		this.ResultMatrix = mx;
+		this.HasDrawn = true;
+	}
+
+	internal void EndFrame() {
+		if (!this.HasMoved) return;
+
+		this.OnManipulate?.Invoke(this);
+	}
+
+	// Matrix access
+
+	public Matrix4x4 GetResult() => this.HasMoved ? this.ResultMatrix : Matrix4x4.Identity;
+
+	public Matrix4x4 GetDelta() => this.HasMoved ? this.DeltaMatrix : Matrix4x4.Identity;
+
+	public Matrix4x4 ApplyDelta(Matrix4x4 target, Matrix4x4 delta, Matrix4x4? result = null) {
+		var deltaT = Transform.FromMatrix(delta);
+		result ??= GetResult();
+
+		return Matrix4x4.Multiply(
+			Matrix4x4.Transform(target, deltaT.Rotation),
+			Matrix4x4.CreateTranslation(deltaT.Position) * Matrix4x4.CreateScale(
+				deltaT.Scale,
+				result.Value.Translation
+			)
+		);
 	}
 }

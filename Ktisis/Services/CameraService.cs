@@ -1,3 +1,5 @@
+using System.Numerics;
+
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
@@ -25,5 +27,21 @@ public class CameraService {
 	public unsafe RenderCamera* GetRenderCamera() {
 		var cam = GetSceneCamera();
 		return cam != null ? cam->RenderCamera : null;
+	}
+
+	// Camera matrix access
+
+	public unsafe Matrix4x4? GetProjectionMatrix() {
+		var camera = GetRenderCamera();
+		if (camera == null)
+			return null;
+		return camera->ProjectionMatrix;
+	}
+
+	public unsafe Matrix4x4? GetViewMatrix() {
+		var camera = GetSceneCamera();
+		if (camera == null)
+			return null;
+		return camera->ViewMatrix with { M44 = 1f };
 	}
 }
