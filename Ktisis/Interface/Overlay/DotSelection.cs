@@ -107,9 +107,12 @@ public class DotSelection {
 		drawList.AddCircleFilled(
 			pos2d,
 			radius,
-			isSelect ? 0xAF000000u : (isHover ? 0x9A000000u : 0x7F000000u),
+			isSelect ? 0xAF000000u : (isHover ? 0x9A000000u : 0x70000000u),
 			64
 		);
+		
+		if (isSelect)
+			drawList.AddCircle(pos2d, radius, 0xFF000000, 64, 2f);
 
 		ImGui.SetCursorPos((pos2d - size / 2).AddX(0.75f));
 		Icons.DrawIcon(display.Icon, display.Color);
