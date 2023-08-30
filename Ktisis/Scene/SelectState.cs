@@ -41,7 +41,7 @@ public class SelectState {
 	public void AddItem(SceneObject item) {
 		item.Flags |= ObjectFlags.Selected;
 		this._selected.Remove(item);
-		this._selected.Add(item);
+		this._selected.Insert(0, item);
 	}
 
 	public void RemoveItem(SceneObject item) {
