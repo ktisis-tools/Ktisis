@@ -73,6 +73,16 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
+
+
+
+
+
+
+
+
+
+
 	</ItemGroup>
 
 

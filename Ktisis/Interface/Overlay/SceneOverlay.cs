@@ -2,25 +2,26 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using ImGuiNET;
-
-using Ktisis.Services;
+using Ktisis.Core;
 using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
+using Ktisis.Interface.Helpers;
 
 namespace Ktisis.Interface.Overlay; 
 
 public class SceneOverlay {
 	// Constructor
-
-	private readonly CameraService _camera; // TODO: MOVE THIS
-
+    
 	private readonly SceneManager _scene;
 
-	public SceneOverlay(CameraService _camera, SceneManager _scene) {
-		this._camera = _camera;
+	private readonly DotSelection DotSelection;
+
+	public SceneOverlay(IServiceContainer _services, SceneManager _scene) {
 		this._scene = _scene;
+        
+		this.DotSelection = _services.Inject<DotSelection>();
+		this.DotSelection.OnItemSelected += OnItemSelected;
 	}
 	
 	// Events
@@ -30,15 +31,21 @@ public class SceneOverlay {
 		if (overlay.Gizmo is Gizmo gizmo)
 			gizmo.OnManipulate += OnManipulate;
 	}
+
+	private void OnItemSelected(SceneObject item) {
+		var flags = GuiSelect.GetSelectFlags();
+		this._scene.SelectState?.HandleClick(item, flags);
+	}
 	
 	// Draw UI
 	
 	private void OnOverlayDraw(GuiOverlay _overlay) {
 		var scene = this._scene.Scene;
 		if (scene is null) return;
-		
-		DrawItems(_overlay, scene.GetChildren());
 
+		this.DotSelection.Clear();
+		DrawItems(_overlay, scene.GetChildren());
+		this.DotSelection.DrawHoverWindow();
 		DrawSelected(_overlay);
 	}
 
@@ -48,26 +55,9 @@ public class SceneOverlay {
 	}
 
 	private void DrawItem(GuiOverlay _overlay, SceneObject item) {
-		if (item is IManipulable world)
-			DrawManipulable(_overlay, world);
-	}
-	
-	// IManipulable
-
-	private unsafe void DrawManipulable(GuiOverlay _overlay, IManipulable item) {
-		var trans = item.GetTransform();
-		if (trans is null) return;
-
-		var cam = this._camera.GetSceneCamera();
-		if (cam == null) return;
-		
-		// TEST CODE
-		
-		if (!cam->WorldToScreen(trans.Position, out var pos2d))
-			return;
-		
-		var drawList = ImGui.GetWindowDrawList();
-		drawList.AddCircleFilled(pos2d, 5f, 0xFFFFFFFF);
+		if (item is IManipulable)
+			this.DotSelection.AddItem(item);
+		DrawItems(_overlay, item.GetChildren());
 	}
 	
 	// Gizmo
