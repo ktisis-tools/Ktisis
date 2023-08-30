@@ -9,7 +9,7 @@ namespace Ktisis.Interface.Widgets;
 internal static class Icons {
 	internal static void DrawIcon(FontAwesomeIcon icon, uint? color = null) {
 		var hasColor = color.HasValue;
-		if (hasColor) ImGui.PushStyleColor(ImGuiCol.Button, color!.Value);
+		if (hasColor) ImGui.PushStyleColor(ImGuiCol.Text, color!.Value);
 
 		ImGui.PushFont(UiBuilder.IconFont);
 		ImGui.Text(icon.ToIconString());
