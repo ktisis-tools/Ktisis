@@ -16,13 +16,25 @@ public enum ItemType {
 	Light
 }
 
+public enum DisplayMode {
+	None,
+	Dot,
+	Icon
+}
+
 public class ItemDisplay {
 	public uint Color;
 	public FontAwesomeIcon Icon;
+	public DisplayMode Mode;
 
-	public ItemDisplay(uint color = 0xFFFFFFFF, FontAwesomeIcon icon = FontAwesomeIcon.None) {
+	public ItemDisplay(
+		uint color = 0xFFFFFFFF,
+		FontAwesomeIcon icon = FontAwesomeIcon.None,
+		DisplayMode mode = DisplayMode.Icon
+	) {
 		this.Color = color;
 		this.Icon = icon;
+		this.Mode = mode;
 	}
 
 	// Technically this could be a Dict<Type, _>, but I'm doing this in case we want objects to share an ItemDisplay in future.
@@ -36,7 +48,7 @@ public class ItemDisplay {
 		{ ItemType.Actor,		new(icon: FontAwesomeIcon.Child) },
 		{ ItemType.Armature,	new(color: BoneBlue, icon: FontAwesomeIcon.CircleNodes) },
 		{ ItemType.BoneGroup,	new(color: BoneBlue) },
-		{ ItemType.BoneNode,	new() }, // May deprecate this in future for display of category colors.
+		{ ItemType.BoneNode,	new(mode: DisplayMode.Dot) }, // May deprecate this in future for display of category colors.
 		{ ItemType.Models,		new(color: ModelMint, icon: FontAwesomeIcon.CubesStacked) },
 		{ ItemType.ModelSlot,	new(color: ModelMint) },
 		{ ItemType.Weapon,		new(icon: FontAwesomeIcon.Magic) },

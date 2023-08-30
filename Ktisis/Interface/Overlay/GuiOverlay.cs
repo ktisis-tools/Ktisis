@@ -83,7 +83,9 @@ public class GuiOverlay {
 
 		ImGuiHelpers.ForceNextWindowMainViewport();
 
-		return ImGui.Begin("Ktisis Overlay", flags);
+		var begin = ImGui.Begin("Ktisis Overlay", flags);
+		ImGui.PopStyleVar();
+		return begin;
 	}
 
 	private void BeginGizmo() {
@@ -98,6 +100,5 @@ public class GuiOverlay {
 	private void EndFrame() {
 		this.Gizmo?.EndFrame();
 		ImGui.End();
-		ImGui.PopStyleVar();
 	}
 }
