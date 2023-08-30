@@ -12,6 +12,7 @@ using Ktisis.Scene.Objects;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Display;
 using Ktisis.Common.Extensions;
+using Ktisis.Interface.Helpers;
 using Ktisis.Interface.Widgets;
 
 namespace Ktisis.Interface.Components;
@@ -147,10 +148,7 @@ public class SceneTree {
 		var isClick = ImGui.IsMouseHoveringRect(min, max) && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
 		if (!isClick) return;
 
-		var flags = SelectFlags.None;
-		if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
-			flags = SelectFlags.Multiple;
-
+		var flags = GuiSelect.GetSelectFlags();
 		this._sceneMgr.SelectState?.HandleClick(item, flags);
 	}
 }
