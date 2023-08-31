@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 using Ktisis.Services;
-using Ktisis.Scene.Objects.Render;
+using Ktisis.Scene.Objects.World;
 using Ktisis.Interop.Structs.Event;
 using Ktisis.Interop.Structs.Objects;
 

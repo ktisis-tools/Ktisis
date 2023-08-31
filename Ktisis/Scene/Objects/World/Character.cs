@@ -2,9 +2,9 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Scene.Objects.Models;
 
-namespace Ktisis.Scene.Objects.Render;
+namespace Ktisis.Scene.Objects.World;
 
-public class Character : RenderObject {
+public class Character : WorldObject {
 	// CharacterBase
 
 	private unsafe CharacterBase* CharaBase => (CharacterBase*)this.Address;

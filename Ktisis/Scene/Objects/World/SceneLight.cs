@@ -1,9 +1,9 @@
 using Ktisis.Data.Config.Display;
 using Ktisis.Interop.Structs.Objects;
 
-namespace Ktisis.Scene.Objects.Render;
+namespace Ktisis.Scene.Objects.World;
 
-public class SceneLight : RenderObject {
+public class SceneLight : WorldObject {
 	// Properties
 
 	public override ItemType ItemType => ItemType.Light;

@@ -3,9 +3,9 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Common.Utility;
 
-namespace Ktisis.Scene.Objects.Render;
+namespace Ktisis.Scene.Objects.World;
 
-public class RenderObject : SceneObject, IManipulable {
+public class WorldObject : SceneObject, IManipulable {
 	// Unmanaged
 
 	public nint Address { get; protected set; }
@@ -14,7 +14,7 @@ public class RenderObject : SceneObject, IManipulable {
 
 	// Constructor
 
-	protected RenderObject(nint address)
+	protected WorldObject(nint address)
 		=> this.Address = address;
 
 	// IManipulable
