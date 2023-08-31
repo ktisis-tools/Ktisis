@@ -26,7 +26,8 @@ public class SceneGraph : IParentable<SceneObject> {
 
 		this.Context = _services.Inject<SceneContext>(this);
 		this.AddHandler<ActorHandler>()
-			.AddHandler<LightHandler>();
+			.AddHandler<LightHandler>()
+			.AddHandler<ObjectHandler>();
 
 		this.Select = new SelectState(this);
 	}
@@ -39,6 +40,7 @@ public class SceneGraph : IParentable<SceneObject> {
 	public event SceneObjectEventHandler? OnSceneObjectRemoved;
 
 	// Managers
+	// TODO: Move this to SceneManager?
 
 	private readonly Dictionary<Type, object> ObjectHandlers = new();
 
@@ -48,7 +50,7 @@ public class SceneGraph : IParentable<SceneObject> {
 		return this;
 	}
 
-	private T GetHandler<T>() {
+	public T GetHandler<T>() {
 		this.ObjectHandlers.TryGetValue(typeof(T), out var manager);
 		if (manager is null)
 			throw new Exception($"Failed to retrieve object manager: {typeof(T)}");

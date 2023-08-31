@@ -14,6 +14,10 @@ public class SceneContext {
 		this._data = _data;
 	}
 
+	// Handler access
+
+	public T GetHandler<T>() => this.Scene.GetHandler<T>();
+
 	// Config
 
 	public ConfigFile GetConfig() => this._data.GetConfig();

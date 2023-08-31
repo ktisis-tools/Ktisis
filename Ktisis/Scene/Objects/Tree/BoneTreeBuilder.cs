@@ -35,8 +35,14 @@ public class BoneTreeBuilder {
 
 	// Bone list
 
-	private List<BoneData> BuildBoneList() {
+	private unsafe List<BoneData> BuildBoneList() {
 		var result = new List<BoneData>();
+
+		var skeleton = this.GetSkeleton();
+		if (skeleton != null) {
+			var bones = EnumerateBones(skeleton->Bones, skeleton->ParentIndices);
+			result.AddRange(bones);
+		}
 
 		return result;
 	}
