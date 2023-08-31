@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using System.Collections.Generic;
 
+using Dalamud.Interface;
 using Dalamud.Logging;
 
 using ImGuiNET;
@@ -99,7 +100,7 @@ public class DotSelection {
 
 	private bool DrawIconDot(Vector2 pos2d, ItemDisplay display, bool isSelect = false) {
 		var size = Icons.CalcIconSize(display.Icon);
-		var radius = size.X * 1.10f;
+		var radius = UiBuilder.IconFont.FontSize;
 
 		var isHover = IsHovering(pos2d, radius);
 

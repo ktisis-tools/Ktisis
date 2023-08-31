@@ -44,7 +44,8 @@ public class Armature : ArmatureGroup {
 			var t = new Stopwatch();
 			t.Start();
 
-			var builder = new BoneTreeBuilder(p, id, partial, ctx.GetConfig().Categories);
+			var isWeapon = skele->Owner->GetModelType() == CharacterBase.ModelType.Weapon;
+			var builder = new BoneTreeBuilder(p, id, partial, !isWeapon ? ctx.GetConfig().Categories : null);
 			if (id != 0) {
 				this.Partials[p] = id;
 				builder.AddToArmature(this);
