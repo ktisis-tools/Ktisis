@@ -19,10 +19,10 @@ public class Workspace : Window {
 
 	private readonly PluginGui _gui;
 	private readonly GPoseService _gpose;
-	private readonly PoseService _posing;
+	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
 	
-	public Workspace(PluginGui _gui, GPoseService _gpose, PoseService _posing, SceneManager _sceneMgr, DataService _data) : base("Ktisis") {
+	public Workspace(PluginGui _gui, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr, DataService _data) : base("Ktisis") {
 		this._gui = _gui;
 		this._gpose = _gpose;
 		this._posing = _posing;

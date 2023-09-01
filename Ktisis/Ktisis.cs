@@ -43,7 +43,7 @@ public sealed class Ktisis : IDalamudPlugin {
 			.AddService<InteropService>()
 			.AddService<NotifyService>()
 			.AddService<PluginGui>()
-			.AddService<PoseService>()
+			.AddService<PosingService>()
 			.AddService<SceneManager>();
 
 		this.InitTask = Init().ContinueWith(task => {
@@ -87,7 +87,7 @@ public sealed class Ktisis : IDalamudPlugin {
 	private async Task InitServices() {
 		await Task.Yield();
 		this.Services.GetRequiredService<InteropService>();
-		this.Services.GetRequiredService<PoseService>();
+		this.Services.GetRequiredService<PosingService>();
 		this.Services.GetRequiredService<SceneManager>();
 		this.Services.GetRequiredService<CommandService>();
 		this.Services.GetRequiredService<PluginGui>();
