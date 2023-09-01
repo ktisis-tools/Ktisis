@@ -20,9 +20,13 @@ public class HookManager : IDisposable {
 	
 	private readonly List<IHookWrapper> Registered = new();
 
+	public void Add(IHookWrapper hook)
+		=> this.Registered.Add(hook);
+
 	public void Add<T>(Hook<T> hook) where T : Delegate {
 		var inst = HookWrapper<T>.FromHook(hook);
-		this.Registered.Add(inst);
+		Add(inst);
+		PluginLog.Verbose($"Registered hook '{GetHookName(hook)}' @ 0x{hook.Address:X}");
 	}
 	
 	public Hook<T> AddAddress<T>(nint addr, T detour) where T : Delegate {
@@ -36,6 +40,11 @@ public class HookManager : IDisposable {
 		return AddAddress(addr, detour);
 	}
 	
+	// Helpers
+
+	private static string GetHookName<T>(Hook<T> hook) where T : Delegate
+		=> hook.GetType().GetGenericArguments()[0].Name;
+	
 	// Disposal
 
 	public void Dispose() {
@@ -48,7 +57,7 @@ public class HookManager : IDisposable {
 			if (!hook.IsDisposed)
 				hook.Dispose();
 		} catch (Exception err) {
-			PluginLog.Error($"Failed to dispose hook '{hook.BackendName}':\n{err}");
+			PluginLog.Error($"Failed to dispose hook @ {hook.Address}':\n{err}");
 		}
 	}
 }

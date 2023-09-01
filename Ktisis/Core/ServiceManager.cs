@@ -105,10 +105,18 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 		var outerType = service.GetType();
 		if (outerType.IsGenericType && outerType.GetGenericTypeDefinition() == typeof(Lazy<>)) {
 			PluginLog.Verbose($"Invoking init handler for service: {serviceType.Name}");
-			return outerType
+			
+			var result = outerType
 				.GetProperty("Value")!
 				.GetGetMethod()!
 				.Invoke(service, null);
+
+			if (result is INotifyReady notify && this.IsReady) {
+				PluginLog.Warning($"Ready notifier for service '{serviceType.Name}' was invoked late!");
+				notify.OnReady();
+			}
+
+			return result;
 		}
 
 		return service;
@@ -123,7 +131,12 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 	
 	// Notify ready
 
+	private bool IsReady;
+
 	public void NotifyReady() {
+		if (this.IsReady) return;
+		this.IsReady = true;
+		
 		this.Services.Values
 			.Where(inst => inst is INotifyReady)
 			.Cast<INotifyReady>()

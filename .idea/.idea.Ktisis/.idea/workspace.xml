@@ -8,14 +8,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Handlers/ObjectHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Posing/PoseHooks.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Armature.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Armature.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneTreeBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneTreeBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneGraph.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookContainer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Game/Actor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Game/Actor.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +30,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/9d/f6ca154f/Character.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/c5/cd669948/SignatureAttribute.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/e6/5c4f3b96/IObjectTable.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/a5/94a76c90/Object.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/f4/d5b9c4a9/hkArray`1.cs" root0="SKIP_HIGHLIGHTING" />
@@ -146,7 +150,8 @@
       <workItem from="1693236779820" duration="24655000" />
       <workItem from="1693299029648" duration="31574000" />
       <workItem from="1693404639323" duration="22592000" />
-      <workItem from="1693472450446" duration="6023000" />
+      <workItem from="1693472450446" duration="11480000" />
+      <workItem from="1693580967846" duration="8013000" />
     </task>
     <servers />
   </component>
