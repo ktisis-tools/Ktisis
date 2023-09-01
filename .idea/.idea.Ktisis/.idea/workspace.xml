@@ -9,6 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/Ktisis/Posing/PoseHooks.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Posing/PoseService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" afterDir="false" />
@@ -151,7 +152,7 @@
       <workItem from="1693299029648" duration="31574000" />
       <workItem from="1693404639323" duration="22592000" />
       <workItem from="1693472450446" duration="11480000" />
-      <workItem from="1693580967846" duration="8013000" />
+      <workItem from="1693580967846" duration="8327000" />
     </task>
     <servers />
   </component>
