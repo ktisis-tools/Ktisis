@@ -11,6 +11,7 @@ using Ktisis.Scene;
 using Ktisis.Services;
 using Ktisis.Interface;
 using Ktisis.Interop;
+using Ktisis.Posing;
 
 namespace Ktisis;
 
@@ -43,6 +44,7 @@ public sealed class Ktisis : IDalamudPlugin {
 			.AddService<InteropService>()
 			.AddService<NotifyService>()
 			.AddService<PluginGui>()
+			.AddService<PoseService>()
 			.AddService<SceneManager>();
 
 		this.InitTask = Init().ContinueWith(task => {
@@ -55,6 +57,8 @@ public sealed class Ktisis : IDalamudPlugin {
 
 			this.Services.GetService<NotifyService>()?
 				.Error("Ktisis failed to load. Please check your error log for more information.");
+
+			Dispose();
 		});
 	}
 
@@ -84,6 +88,7 @@ public sealed class Ktisis : IDalamudPlugin {
 	private async Task InitServices() {
 		await Task.Yield();
 		this.Services.GetRequiredService<InteropService>();
+		this.Services.GetRequiredService<PoseService>();
 		this.Services.GetRequiredService<SceneManager>();
 		this.Services.GetRequiredService<CommandService>();
 		this.Services.GetRequiredService<PluginGui>();

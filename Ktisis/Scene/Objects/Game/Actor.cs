@@ -1,6 +1,7 @@
 using Dalamud.Utility;
 
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
+
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Data.Config.Display;
