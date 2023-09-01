@@ -8,22 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Posing/PoseEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Extensions/TransformEx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Extensions/TransformEx.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Utility/Transform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Utility/Transform.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Display/ItemDisplay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Display/ItemDisplay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneOverlay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Unmanaged/Pointer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Unmanaged/Pointer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Posing/Skeleton/BoneData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Posing/Bones/BoneData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Impl/IManipulable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Impl/IManipulable.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Impl/ITransform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Impl/ITransform.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/ArmatureGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/ArmatureGroup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Bone.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Bone.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/SceneObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/SceneObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneTreeBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneTreeBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,7 +145,7 @@
       <workItem from="1693299029648" duration="31574000" />
       <workItem from="1693404639323" duration="22592000" />
       <workItem from="1693472450446" duration="11480000" />
-      <workItem from="1693580967846" duration="27709000" />
+      <workItem from="1693580967846" duration="28183000" />
     </task>
     <servers />
   </component>

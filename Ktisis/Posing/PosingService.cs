@@ -5,7 +5,7 @@ using Ktisis.Services;
 
 namespace Ktisis.Posing; 
 
-public class PosingService : INotifyReady {
+public class PosingService {
 	// Constructor
 
 	private readonly PoseHooks Hooks;
@@ -13,12 +13,6 @@ public class PosingService : INotifyReady {
 	public PosingService(IServiceContainer _services, GPoseService _gpose) {
 		this.Hooks = _services.Inject<PoseHooks>();
 		_gpose.OnGPoseUpdate += OnGPoseUpdate;
-	}
-	
-	// INotifyReady
-
-	public void OnReady() {
-		this.Hooks.Create();
 	}
 	
 	// Posing
