@@ -16,7 +16,9 @@ namespace Ktisis.Posing;
 public class PoseHooks : HookContainer {
 	// Constructor
 
-	public PoseHooks(InteropService _interop) : base(_interop) {}
+	public PoseHooks(InteropService _interop) : base(_interop) {
+		this.Create();
+	}
 
 	// SetBoneModelSpace
 

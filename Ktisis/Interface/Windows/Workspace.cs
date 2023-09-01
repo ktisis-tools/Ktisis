@@ -10,6 +10,7 @@ using Ktisis.Scene;
 using Ktisis.Services;
 using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Components;
+using Ktisis.Posing;
 
 namespace Ktisis.Interface.Windows;
 
@@ -18,11 +19,13 @@ public class Workspace : Window {
 
 	private readonly PluginGui _gui;
 	private readonly GPoseService _gpose;
+	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
 
-	public Workspace(PluginGui _gui, GPoseService _gpose, SceneManager _sceneMgr, DataService _data) : base("Ktisis") {
+	public Workspace(PluginGui _gui, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr, DataService _data) : base("Ktisis") {
 		this._gui = _gui;
 		this._gpose = _gpose;
+		this._posing = _posing;
 		this._sceneMgr = _sceneMgr;
 
 		this.SceneTree = new SceneTree(_data.GetConfig(), _sceneMgr);
@@ -45,6 +48,12 @@ public class Workspace : Window {
 			MinimumSize = MinimumSize,
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.9f
 		};
+
+		// TODO: TEMP
+
+		var isPosing = this._posing.IsActive;
+		if (ImGui.Checkbox("Posing", ref isPosing))
+			this._posing.Toggle();
 
 		// Draw scene
 
