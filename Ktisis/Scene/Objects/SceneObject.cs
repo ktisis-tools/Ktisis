@@ -74,6 +74,8 @@ public abstract class SceneObject : ITreeNode, IParentable<SceneObject> {
 	public int Count => this.Children.Count;
 
 	public void AddChild(SceneObject child) {
+		if (child == this)
+			throw new Exception($"Attempted to parent object '{this.Name}' to self.");
 		child.Parent = this;
 		this.Children.Add(child);
 	}

@@ -1,8 +1,7 @@
-namespace Ktisis.Posing.Skeleton; 
+namespace Ktisis.Posing.Bones; 
 
 public class BoneData {
 	public string Name = "";
-	public string? CategoryName;
 
 	public int BoneIndex;
 	public int ParentIndex;

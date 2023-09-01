@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Posing.Skeleton;
+using Ktisis.Posing.Bones;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Scene.Objects.Models;
 
@@ -61,6 +61,9 @@ public class BoneTreeBuilder {
 		foreach (var bone in EnumerateBones(skeleton->Bones, skeleton->ParentIndices)) {
 			var cat = cats.ResolveBestCategory(skeleton, bone.BoneIndex);
 			if (cat is null) continue;
+			
+			// TODO: Config
+			if (cat.IsNsfw) continue;
 
 			if (result.TryGetValue(cat, out var boneList))
 				boneList.Add(bone);
@@ -132,19 +135,19 @@ public class BoneTreeBuilder {
 		var grpChildren = group.GetChildren();
 		if (grpChildren.Count > 0) {
 			exists = grpChildren
-				.Where(x => x is Bone bone && bone.PartialIndex == this.Index)
+				.Where(x => x is Bone bone && bone.Data.PartialIndex == this.Index)
 				.Cast<Bone>()
 				.ToList();
 		}
 
 		var basePrio = this.Partial.ConnectedBoneIndex + 1;
-		foreach (var boneInfo in bones) {
-			var bone = exists?.Find(bone => bone.Name == boneInfo.Name);
+		foreach (var boneData in bones) {
+			var bone = exists?.Find(bone => bone.Name == boneData.Name);
 			if (bone is not null) {
 				bone.PartialId = this.PartialId;
 			} else {
-				group.AddChild(new Bone(boneInfo.Name, this.PartialId, this.Index) {
-					SortPriority = basePrio + boneInfo.BoneIndex
+				group.AddChild(new Bone(boneData, this.PartialId) {
+					SortPriority = basePrio + boneData.BoneIndex
 				});
 			}
 		}
