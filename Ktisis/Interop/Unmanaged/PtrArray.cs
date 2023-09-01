@@ -15,7 +15,7 @@ public class PtrArray<T> : List<Pointer<T>> where T : unmanaged {
 	}
 
 	public unsafe void Remove(T* ptr)
-		=> this.RemoveAll(item => item.Data == ptr);
+		=> this.RemoveAll(item => item.Equals(ptr));
 
 	// Indexer
 
