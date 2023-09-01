@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Scene.Objects.Tree;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Data.Config.Display;
+using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Scene.Objects.Models;
 
@@ -65,4 +66,6 @@ public class Armature : ArmatureGroup {
 
 	private unsafe Skeleton* Skeleton => this.CharaBase != null ? this.CharaBase->Skeleton : null;
 	private unsafe CharacterBase* CharaBase => (CharacterBase*)(this.ParentChara?.Address ?? nint.Zero);
+
+	public unsafe Pointer<Skeleton> GetSkeleton() => new(this.Skeleton);
 }
