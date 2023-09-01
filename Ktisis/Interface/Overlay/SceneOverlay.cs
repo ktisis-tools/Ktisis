@@ -62,6 +62,9 @@ public class SceneOverlay {
 
 	// Gizmo
 
+	// TODO: Config
+	private TransformFlags Flags = TransformFlags.Propagate;
+
 	private IEnumerable<IManipulable>? GetSelected() => this._scene
 		.SelectState?
 		.GetSelected()
@@ -95,14 +98,14 @@ public class SceneOverlay {
 			if (matrix is null) continue;
 
 			if (isPrimary) {
-				item.SetMatrix(result);
+				item.SetMatrix(result, this.Flags);
 				isPrimary = false;
 			} else {
 				item.SetMatrix(gizmo.ApplyDelta(
 					matrix.Value,
 					delta ??= gizmo.GetDelta(),
 					result
-				));
+				), this.Flags);
 			}
 		}
 	}

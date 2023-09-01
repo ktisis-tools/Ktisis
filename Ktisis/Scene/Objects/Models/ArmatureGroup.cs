@@ -7,7 +7,7 @@ public abstract class ArmatureGroup : ArmatureNode {
 				group.Clean(pIndex, pId);
 				return group.IsStale();
 			case Bone bone:
-				return bone.PartialIndex == pIndex && bone.PartialId != pId;
+				return bone.Data.PartialIndex == pIndex && bone.PartialId != pId;
 			default:
 				return false;
 		}

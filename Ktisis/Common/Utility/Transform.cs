@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.Havok;
+using CSTransform = FFXIVClientStructs.FFXIV.Client.Graphics.Transform;
 
 using Ktisis.Common.Extensions;
 
@@ -33,22 +34,28 @@ public class Transform {
 		this.Scale = hk.Scale.ToVector3();
 	}
 
+	public Transform(CSTransform trans) {
+		this.Position = trans.Position;
+		this.Rotation = trans.Rotation;
+		this.Scale = trans.Scale;
+	}
+
 	public Transform(Matrix4x4 mx) {
 		DecomposeMatrix(mx);
 	}
 
-	// Havok
+	// Havok :3
 
-	public void ApplyTo(ref hkQsTransformf hk) {
-		hk.Translation.SetFrom(this.Position);
-		hk.Rotation.SetFrom(this.Rotation);
-		hk.Scale.SetFrom(this.Scale);
-	}
+	public hkQsTransformf ToHavok() => new hkQsTransformf {
+		Translation = this.Position.ToHavok(),
+		Rotation = this.Rotation.ToHavok(),
+		Scale = this.Scale.ToHavok()
+	};
 
 	// Matrix
 
-	public Matrix4x4 ComposeMatrix() {
-		var sclMx = Matrix4x4.CreateScale(this.Scale);
+	public Matrix4x4 ComposeMatrix(Vector3? center = null) {
+		var sclMx = Matrix4x4.CreateScale(this.Scale, center ?? Vector3.Zero);
 		var rotMx = Matrix4x4.CreateFromQuaternion(this.Rotation);
 		var posMx = Matrix4x4.CreateTranslation(this.Position);
 		return sclMx * rotMx * posMx;

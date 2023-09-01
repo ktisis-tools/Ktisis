@@ -47,7 +47,7 @@ public class ItemDisplay {
 		{ ItemType.Default,		new() },
 		{ ItemType.Actor,		new(icon: FontAwesomeIcon.Child) },
 		{ ItemType.Armature,	new(color: BoneBlue, icon: FontAwesomeIcon.CircleNodes) },
-		{ ItemType.BoneGroup,	new(color: BoneBlue) },
+		{ ItemType.BoneGroup,	new(color: BoneBlue, mode: DisplayMode.None) },
 		{ ItemType.BoneNode,	new(mode: DisplayMode.Dot) }, // May deprecate this in future for display of category colors.
 		{ ItemType.Models,		new(color: ModelMint, icon: FontAwesomeIcon.CubesStacked) },
 		{ ItemType.ModelSlot,	new(color: ModelMint) },

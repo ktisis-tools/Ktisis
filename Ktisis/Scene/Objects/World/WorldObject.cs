@@ -81,7 +81,7 @@ public class WorldObject : SceneObject, IManipulable {
 		);
 	}
 
-	public unsafe void SetTransform(Transform trans) {
+	public unsafe void SetTransform(Transform trans, TransformFlags _flags) {
 		var ptr = this.Object;
 		if (ptr == null) return;
 
