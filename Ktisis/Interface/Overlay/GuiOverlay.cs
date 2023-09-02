@@ -9,6 +9,7 @@ using ImGuiNET;
 using Ktisis.Core;
 using Ktisis.Services;
 using Ktisis.Common.Extensions;
+using Ktisis.Interface.Overlay.Draw;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -20,7 +21,7 @@ public class GuiOverlay {
 	private readonly CameraService _camera;
 	private readonly GPoseService _gpose;
 
-	private readonly SceneOverlay SceneOverlay;
+	private readonly SceneDraw SceneDraw;
 
 	// State
 
@@ -42,7 +43,7 @@ public class GuiOverlay {
 			);
 		}
 
-		_services.Inject<SceneOverlay>()
+		_services.Inject<SceneDraw>()
 			.SubscribeTo(this);
 	}
 

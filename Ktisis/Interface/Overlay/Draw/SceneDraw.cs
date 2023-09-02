@@ -2,23 +2,30 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
+using Ktisis.Common.Utility;
 using Ktisis.Core;
 using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Interface.Helpers;
+using Ktisis.Scene.Objects.Models;
 
-namespace Ktisis.Interface.Overlay;
+namespace Ktisis.Interface.Overlay.Draw;
 
-public class SceneOverlay {
+public class SceneDraw {
 	// Constructor
 
 	private readonly SceneManager _scene;
 
-	private readonly DotSelection DotSelection;
+	public readonly PoseMode PoseMode;
+	public readonly ObjectMode ObjectMode;
 
-	public SceneOverlay(IServiceContainer _services, SceneManager _scene) {
+	public readonly DotSelection DotSelection;
+
+	public SceneDraw(IServiceContainer _services, SceneManager _scene) {
 		this._scene = _scene;
+
+		this.PoseMode = new PoseMode();
 
 		this.DotSelection = _services.Inject<DotSelection>();
 		this.DotSelection.OnItemSelected += OnItemSelected;
@@ -55,8 +62,16 @@ public class SceneOverlay {
 	}
 
 	private void DrawItem(GuiOverlay _overlay, SceneObject item) {
-		if (item is IManipulable)
-			this.DotSelection.AddItem(item);
+		switch (item) {
+			case Armature arm:
+				this.PoseMode.Draw(this, arm);
+				return;
+			case IManipulable world:
+				if (world.GetTransform() is Transform trans)
+					this.DotSelection.AddItem(item, trans.Position);
+				break;
+		}
+
 		DrawItems(_overlay, item.GetChildren());
 	}
 

@@ -12,10 +12,18 @@ public class BoneGroup : ArmatureGroup {
 
 	// Constructor
 
+	private readonly Armature Armature;
+
 	public readonly BoneCategory? Category;
 
-	public BoneGroup(BoneCategory category)
-		=> this.Category = category;
+	public BoneGroup(Armature armature, BoneCategory category) {
+		this.Armature = armature;
+		this.Category = category;
+	}
+
+	// Armature access
+
+	public override Armature GetArmature() => this.Armature;
 
 	// Stale check
 

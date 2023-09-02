@@ -1,153 +1,124 @@
 using System.Numerics;
-using System.Collections.Generic;
 
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Common.Utility;
-using Ktisis.Posing.Bones;
-using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Posing;
 
-public class PoseEditor {
-	// Constructor
+public static class PoseEditor {
+	private const hkaPose.PropagateOrNot DontPropagate = hkaPose.PropagateOrNot.DontPropagate;
 
-	private readonly Pointer<Skeleton> Skeleton;
-	private readonly Pointer<hkaPose> Pose = new();
+	// Conversion
 
-	private int? BoneIndex;
-	private int? PartialIndex;
+	public static Transform ModelToWorld(Transform model, Transform mul)
+		=> new Transform(model.ComposeMatrix() * mul.ComposeMatrix());
 
-	public PoseEditor(Pointer<Skeleton> skeleton) {
-		this.Skeleton = skeleton;
+	public static Transform WorldToModel(Transform world, Transform mul) {
+		Matrix4x4.Invert(mul.ComposeMatrix(), out var invert);
+		return new Transform(world.ComposeMatrix() * invert);
 	}
 
-	// Bone access
+	// Model transform
 
-	public PoseEditor SetBone(BoneData bone) {
-		SetBone(bone.BoneIndex, bone.PartialIndex);
-		return this;
-	}
-
-	private void SetBone(int boneX, int partX) {
-		if (this.PartialIndex != partX)
-			SetPartial(partX);
-		this.BoneIndex = boneX;
-	}
-
-	// PartialSkeleton & hkaPose
-
-	private unsafe void SetPartial(int index) {
-		var partial = GetPartial(index);
-		this.Pose.Data = partial is null ? null : partial.Value.GetHavokPose(0);
-		this.PartialIndex = index;
-	}
-
-	private unsafe PartialSkeleton? GetPartial(int index) {
-		if (this.Skeleton.IsNull)
+	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
+		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return null;
-
-		var partials = this.Skeleton.Data->PartialSkeletons;
-		if (partials == null || partials[index].HavokPoses == null)
-			return null;
-		return partials[index];
+		return new Transform(pose->ModelPose[boneIx]);
 	}
 
-	// Bone transform
-
-	private unsafe hkQsTransformf* AccessModelSpace(int index)
-		=> this.Pose.Data->AccessBoneModelSpace(index, hkaPose.PropagateOrNot.DontPropagate);
-
-	public unsafe Transform? GetTransform() {
-		if (this.BoneIndex is null || this.Pose.IsNull)
-			return null;
-
-		var access = AccessModelSpace(this.BoneIndex.Value);
-		return access == null ? null : new Transform(*access);
-	}
-
-	public unsafe Transform? GetWorldTransform() {
-		var trans = GetTransform();
-		if (trans is null)
-			return null;
-
-		var skele = new Transform(this.Skeleton.Data->Transform);
-		var matrix = trans.ComposeMatrix() * skele.ComposeMatrix();
-		trans.DecomposeMatrix(matrix);
-		return trans;
-	}
-
-	public unsafe void SetWorldTransform(Transform trans) {
-		if (this.BoneIndex is null)
+	public unsafe static void SetModelTransform(hkaPose* pose, int boneIx, Transform trans) {
+		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return;
 
-		var skeleTrans = new Transform(this.Skeleton.Data->Transform);
-		Matrix4x4.Invert(skeleTrans.ComposeMatrix(), out var invert);
+		var access = pose->AccessBoneModelSpace(boneIx, DontPropagate);
+		if (access == null) return;
 
-		var matrix = trans.ComposeMatrix() * invert;
-		trans.DecomposeMatrix(matrix);
-
-		var access = AccessModelSpace(this.BoneIndex.Value);
-		if (access != null)
-			*access = trans.ToHavok();
+		*access = trans.ToHavok();
 	}
 
-	public void Propagate(Transform target, Transform initial)
-		=> Propagate(this.Pose,	 target, initial);
+	// World transform
 
-	private unsafe void Propagate(Pointer<hkaPose> pose, Transform target, Transform initial) {
-		if (this.BoneIndex is null)
+	public unsafe static Transform? GetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx) {
+		var model = GetModelTransform(pose, boneIx);
+		if (model is null || skele == null)
+			return null;
+
+		var skeleTrans = new Transform(skele->Transform);
+		return ModelToWorld(model, skeleTrans);
+	}
+
+	public unsafe static void SetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx, Transform trans) {
+		if (skele == null || pose == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return;
 
-		var hkaSkeleton = pose.Data->Skeleton;
-		if (hkaSkeleton == null)
-			return;
+		var access = pose->AccessBoneModelSpace(boneIx, DontPropagate);
+		if (access == null) return;
 
-		var deltaPos = target.Position - initial.Position;
+		var skeleTrans = new Transform(skele->Transform);
+		*access = WorldToModel(trans, skeleTrans).ToHavok();
+	}
+
+	// Propagation
+
+	public unsafe static void Propagate(Skeleton* skele, int partialIx, int boneIx, Transform target, Transform initial) {
+		var partial = skele->PartialSkeletons[partialIx];
+		var pose = partial.GetHavokPose(0);
+		if (pose == null || pose->Skeleton == null) return;
+
+		// Calculate transform delta & propagate to children
+
+		var sourcePos = target.Position;
+		var deltaPos = sourcePos - initial.Position;
 		var deltaRot = target.Rotation / initial.Rotation;
+		Propagate(pose, boneIx, sourcePos, deltaPos, deltaRot);
 
-		var bones = Recurse(this.BoneIndex.Value);
-		if (this.PartialIndex != 0)
-			return;
+		if (partialIx != 0) return;
 
-		for (var p = 1; p < this.Skeleton.Data->PartialSkeletonCount; p++) {
-			var partial = GetPartial(p);
-			if (partial is null || !bones.Contains(partial.Value.ConnectedParentBoneIndex))
+		// Propagate connected partial skeletons
+
+		var hkaSkele = pose->Skeleton;
+		for (var p = 1; p < skele->PartialSkeletonCount; p++) {
+			var subPartial = skele->PartialSkeletons[p];
+			var subPose = subPartial.GetHavokPose(0);
+			if (subPose == null) continue;
+
+			var rootBone = subPartial.ConnectedBoneIndex;
+			var parentBone = subPartial.ConnectedParentBoneIndex;
+			if (IsBoneDescendantOf(hkaSkele->ParentIndices, parentBone, boneIx))
+				Propagate(subPose, rootBone, sourcePos, deltaPos, deltaRot);
+		}
+	}
+
+	private unsafe static void Propagate(hkaPose* pose, int boneIx, Vector3 sourcePos, Vector3 deltaPos, Quaternion deltaRot) {
+		var hkaSkele = pose->Skeleton;
+		for (var i = boneIx; i < hkaSkele->Bones.Length; i++) {
+			if (hkaSkele->ParentIndices[i] != boneIx)
 				continue;
 
-			var init = this.BoneIndex.Value;
-			try {
-				SetBone(partial.Value.ConnectedBoneIndex, p);
-				Propagate(this.Pose, target, initial);
-			} finally {
-				SetBone(init, 0);
-			}
+			var access = pose->AccessBoneModelSpace(i, DontPropagate);
+
+			var trans = new Transform(*access);
+			var offset = Vector3.Transform(trans.Position - sourcePos, deltaRot);
+			var matrix = trans.ComposeMatrix() * Matrix4x4.CreateFromQuaternion(deltaRot);
+			matrix.Translation = sourcePos + deltaPos + offset;
+			trans.DecomposeMatrix(matrix);
+			*access = trans.ToHavok();
+
+			Propagate(pose, i, sourcePos, deltaPos, deltaRot);
 		}
+	}
 
-		return;
+	// Bone descendants
 
-		List<int> Recurse(int idx, List<int>? desc = null) {
-			desc ??= new List<int>();
-
-			for (var i = 1; i < hkaSkeleton->Bones.Length; i++) {
-				var pIdx = hkaSkeleton->ParentIndices[i];
-				if (pIdx != idx) continue;
-
-				var access = AccessModelSpace(i);
-				var trans = new Transform(*access);
-
-				var offset = Vector3.Transform(trans.Position - target.Position, deltaRot);
-				var matrix = trans.ComposeMatrix() * Matrix4x4.CreateFromQuaternion(deltaRot);
-				matrix.Translation = target.Position + deltaPos + offset;
-				trans.DecomposeMatrix(matrix);
-				*access = trans.ToHavok();
-
-				desc.Add(i);
-				Recurse(i, desc);
-			}
-
-			return desc;
+	private static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
+		var p = indices[bone];
+		while (p != -1) {
+			if (p == parent)
+				return true;
+			p = indices[p];
 		}
+		return false;
 	}
 }
