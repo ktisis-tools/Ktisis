@@ -5,6 +5,12 @@ using Ktisis.Interop.Unmanaged;
 namespace Ktisis.Scene.Objects.Models; 
 
 public abstract class ArmatureNode : SceneObject {
+	// Armature access
+
+	public abstract Armature GetArmature();
+
+	public Pointer<Skeleton> GetSkeleton() => this.GetArmature().GetSkeleton();
+	
 	// Sort priority
 	
 	public int SortPriority;
@@ -17,14 +23,4 @@ public abstract class ArmatureNode : SceneObject {
 			(_, _) => 0
 		});
 	}
-	
-	// Armature access
-
-	public Armature? GetArmature() => this.Parent switch {
-		Armature arm => arm,
-		ArmatureNode node when this != node => node.GetArmature(),
-		_ => null
-	};
-
-	public Pointer<Skeleton>? GetSkeleton() => this.GetArmature()?.GetSkeleton();
 }

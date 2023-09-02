@@ -9,7 +9,6 @@ using ImGuiNET;
 
 using Ktisis.Data;
 using Ktisis.Services;
-using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Common.Extensions;
@@ -37,33 +36,34 @@ public class DotSelection {
 	
 	// Item select dots
 
-	private readonly List<SceneObject> HoverItems = new();
+	private readonly List<DotItem> HoverItems = new();
 
 	public void Clear() => this.HoverItems.Clear();
 
-	public unsafe void AddItem(SceneObject item) {
-		if (item is not IManipulable world)
-			return;
-
+	public unsafe void AddItem(SceneObject item, Vector3 worldPos) {
 		var camera = this._camera.GetSceneCamera();
 		if (camera == null) return;
 
-		var trans = world.GetTransform();
-		if (trans is null || !camera->WorldToScreen(trans.Position, out var pos2d))
+		if (!camera->WorldToScreen(worldPos, out var pos2d))
 			return;
-		
+
+		var dist = Vector3.Distance(camera->Object.Position, worldPos);
+
 		var display = this._data.GetConfig()
 			.GetItemDisplay(item.ItemType);
-		
+
 		var isSelect = item.HasFlag(ObjectFlags.Selected);
-		var hover = display.Mode switch {
+		var isHover = display.Mode switch {
 			DisplayMode.Dot => DrawPrimDot(pos2d, display),
 			DisplayMode.Icon => DrawIconDot(pos2d, display, isSelect),
 			_ => false
 		};
 
-		if (!isSelect && hover)
-			this.HoverItems.Add(item);
+		if (!isSelect && isHover) {
+			var pos = new Vector3(pos2d, dist);
+			var hItem = new DotItem(item, pos);
+			this.HoverItems.Add(hItem);
+		}
 	}
 	
 	// Draw UI dot
@@ -147,27 +147,12 @@ public class DotSelection {
 
 	private unsafe void DrawHoverList() {
         // TODO: Configuration.OrderBoneListByDistance
-		var camera = this._camera.GetSceneCamera();
-		if (camera == null) return;
-		
 		// Sort objects by those closest to the camera.
-
-		var cameraPos = camera->Object.Position;
+        
 		this.HoverItems.Sort((a, b) => {
-			var aT = ((IManipulable)a).GetTransform();
-			var bT = ((IManipulable)b).GetTransform();
-
-			if (aT is not null && bT is not null) {
-				var aDist = Vector3.Distance(aT.Position, cameraPos);
-				var bDist = Vector3.Distance(bT.Position, cameraPos);
-				if (Math.Abs(aDist - bDist) > 0.01f)
-					return aDist < bDist ? -1 : 1;
-			}
-
-			if (a is ArmatureNode aArm && b is ArmatureNode bArm)
-				return aArm.SortPriority - bArm.SortPriority;
-			
-			return 0;
+			if (Math.Abs(a.ScreenPos.Z - b.ScreenPos.Z) > 0.01f)
+				return a.ScreenPos.Z < b.ScreenPos.Z ? -1 : 1;
+			return a.SortPriority - b.SortPriority;
 		});
 		
 		// Handle mouse wheel input and clamp index value
@@ -189,9 +174,27 @@ public class DotSelection {
 			var isSelect = i == this.ScrollIndex;
 			ImGui.Selectable(item.Name, isSelect);
 			if (isSelect && isClick)
-				this.OnItemSelected?.Invoke(item);
+				this.OnItemSelected?.Invoke(item.Item);
 		}
 		
 		ImGui.End();
+	}
+	
+	// SelectItem
+
+	private class DotItem {
+		public readonly SceneObject Item;
+		public readonly Vector3 ScreenPos;
+
+		public readonly int SortPriority;
+
+		public string Name => this.Item.Name;
+
+		public DotItem(SceneObject item, Vector3 screenPos) {
+			this.Item = item;
+			this.ScreenPos = screenPos;
+			if (item is ArmatureNode arm)
+				this.SortPriority = arm.SortPriority;
+		}
 	}
 }

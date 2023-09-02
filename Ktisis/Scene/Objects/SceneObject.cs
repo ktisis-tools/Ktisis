@@ -15,7 +15,8 @@ namespace Ktisis.Scene.Objects;
 public enum ObjectFlags {
 	None = 0,
 	Removed = 1,
-	Selected = 2
+	Selected = 2,
+	Hidden = 4
 }
 
 // Used to define wrappers around objects that may be added to the workspace tree.
@@ -92,4 +93,12 @@ public abstract class SceneObject : ITreeNode, IParentable<SceneObject> {
 
 	public IReadOnlyList<SceneObject> GetChildren()
 		=> this.Children.AsReadOnly();
+
+	public IEnumerable<SceneObject> RecurseChildren() {
+		foreach (var child in GetChildren()) {
+			yield return child;
+			foreach (var reChild in child.RecurseChildren())
+				yield return reChild;
+		}
+	}
 }

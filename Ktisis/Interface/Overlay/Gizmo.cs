@@ -98,9 +98,8 @@ public class Gizmo {
 	}
 
 	internal void EndFrame() {
-		if (!this.HasMoved) return;
-		
-		this.OnManipulate?.Invoke(this);
+		if (this.HasMoved)
+			this.OnManipulate?.Invoke(this);
 	}
 	
 	// Matrix access

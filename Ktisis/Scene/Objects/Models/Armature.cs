@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
 
 using Dalamud.Logging;
 
@@ -21,6 +22,8 @@ public class Armature : ArmatureGroup {
 	// Bones
 
 	private readonly Dictionary<int, uint> Partials = new();
+
+	private readonly Dictionary<(int p, int i), Bone> BoneMap = new();
 	
 	// Update handler
 
@@ -55,17 +58,35 @@ public class Armature : ArmatureGroup {
 			if (prevId != 0)
 				Clean(p, id);
 			
+			BuildMap(p, id);
+			
             t.Stop();
             PluginLog.Debug($"Rebuild took {t.Elapsed.TotalMilliseconds:00.00}ms");
 		}
 	}
 	
+	// Bone mapping
+
+	private void BuildMap(int pIndex, uint pId) {
+		foreach (var key in this.BoneMap.Keys.Where(key => key.p == pIndex))
+			this.BoneMap.Remove(key);
+
+		if (pId == 0) return;
+		
+		foreach (var child in RecurseChildren()) {
+			if (child is Bone bone && bone.PartialId == pId)
+				this.BoneMap.Add((pIndex, bone.Data.BoneIndex), bone);
+		}
+	}
+	
 	// Data access
 
-	private Character? ParentChara => this.Parent as Character;
-	
+    private Character? ParentChara => this.Parent as Character;
 	private unsafe Skeleton* Skeleton => this.CharaBase != null ? this.CharaBase->Skeleton : null;
 	private unsafe CharacterBase* CharaBase => (CharacterBase*)(this.ParentChara?.Address ?? nint.Zero);
 	
-	public unsafe Pointer<Skeleton> GetSkeleton() => new(this.Skeleton);
+	public override Armature GetArmature() => this;
+	public new unsafe Pointer<Skeleton> GetSkeleton() => new(this.Skeleton);
+
+	public IReadOnlyDictionary<(int p, int i), Bone> GetBoneMap() => this.BoneMap.AsReadOnly();
 }

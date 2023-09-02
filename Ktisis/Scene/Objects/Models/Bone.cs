@@ -1,8 +1,12 @@
+using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+
 using Ktisis.Posing;
 using Ktisis.Posing.Bones;
 using Ktisis.Scene.Impl;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Display;
+using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Scene.Objects.Models; 
 
@@ -12,39 +16,55 @@ public class Bone : ArmatureNode, IManipulable {
 	public override ItemType ItemType => ItemType.BoneNode;
 	
 	// Constructor
+
+	private readonly Armature Armature;
     
 	public readonly BoneData Data;
-	
 	public uint PartialId;
 
-	public Bone(BoneData bone, uint pId) {
+	public Bone(Armature armature, BoneData bone, uint pId) {
+		this.Armature = armature;
+        
 		this.Name = bone.Name;
 		this.Data = bone;
 		this.PartialId = pId;
 	}
 	
+	// Armature access
+
+	public override Armature GetArmature() => this.Armature;
+	
 	// IManipulable
 
-	public Transform? GetTransform() {
-		var skeleton = this.GetSkeleton();
-		if (skeleton is null) return null;
+	private unsafe hkaPose* GetPose(Pointer<Skeleton> skeleton) {
+		if (skeleton.IsNullPointer || skeleton.Data->PartialSkeletons == null)
+			return null;
 
-		return new PoseEditor(skeleton)
-			.SetBone(this.Data)
-			.GetWorldTransform();
+		var partial = skeleton.Data->PartialSkeletons[this.Data.PartialIndex];
+		return partial.GetHavokPose(0);
 	}
 
-	public void SetTransform(Transform trans, TransformFlags flags) {
+	public unsafe Transform? GetTransform() {
+		var skeleton = GetSkeleton();
+		var pose = GetPose(skeleton);
+		if (pose == null) return null;
+
+		return PoseEditor.GetWorldTransform(skeleton.Data, pose, this.Data.BoneIndex);
+	}
+
+	public unsafe void SetTransform(Transform trans, TransformFlags flags) {
 		var skeleton = this.GetSkeleton();
-		if (skeleton is null) return;
+		var pose = GetPose(skeleton);
+		if (pose == null) return;
 
-		var editor = new PoseEditor(skeleton)
-			.SetBone(this.Data);
+		var initial = PoseEditor.GetModelTransform(pose, this.Data.BoneIndex);
+		if (initial is null) return;
 
-		var initial = editor.GetTransform();
-		editor.SetWorldTransform(trans);
+		var skeleTrans = new Transform(skeleton.Data->Transform);
+		var modelTrans = PoseEditor.WorldToModel(trans, skeleTrans);
+		PoseEditor.SetModelTransform(pose, this.Data.BoneIndex, modelTrans);
 
-		if (flags.HasFlag(TransformFlags.Propagate) && initial is not null)
-			editor.Propagate(trans, initial);
+		if (flags.HasFlag(TransformFlags.Propagate))
+			PoseEditor.Propagate(skeleton.Data, this.Data.PartialIndex, this.Data.BoneIndex, modelTrans, initial);
 	}
 }

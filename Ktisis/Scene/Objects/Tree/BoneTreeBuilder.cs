@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Posing.Bones;
@@ -10,22 +9,18 @@ using Ktisis.Scene.Objects.Models;
 
 namespace Ktisis.Scene.Objects.Tree; 
 
-public class BoneTreeBuilder {
+public class BoneTreeBuilder : BoneEnumerator {
 	// State
-	
-	private readonly int Index;
+    
 	private readonly uint PartialId;
-	private PartialSkeleton Partial;
 
 	private readonly List<BoneData>? BoneList;
 	private readonly Dictionary<BoneCategory, List<BoneData>>? CategoryMap;
 	
 	// Constructor
 
-	public BoneTreeBuilder(int index, uint pId, PartialSkeleton partial, Categories? _buildCats) {
-		this.Index = index;
+	public BoneTreeBuilder(int index, uint pId, PartialSkeleton partial, Categories? _buildCats) : base(index, partial) {
 		this.PartialId = pId;
-		this.Partial = partial;
 
 		if (_buildCats is not null)
 			this.CategoryMap = BuildCategoryMap(_buildCats);
@@ -40,7 +35,7 @@ public class BoneTreeBuilder {
 
 		var skeleton = this.GetSkeleton();
 		if (skeleton != null) {
-			var bones = EnumerateBones(skeleton->Bones, skeleton->ParentIndices);
+			var bones = EnumerateBones();
 			result.AddRange(bones);
 		}
 		
@@ -58,7 +53,7 @@ public class BoneTreeBuilder {
 		
 		// Build map of categories to bones
 
-		foreach (var bone in EnumerateBones(skeleton->Bones, skeleton->ParentIndices)) {
+		foreach (var bone in EnumerateBones()) {
 			var cat = cats.ResolveBestCategory(skeleton, bone.BoneIndex);
 			if (cat is null) continue;
 			
@@ -114,10 +109,11 @@ public class BoneTreeBuilder {
 				.ToList();
 		}
 
+		var armature = item.GetArmature();
 		foreach (var (cat, list) in cats) {
 			var group = exists?.Find(group => group.Category == cat);
 			var isNew = group is null;
-			group ??= new BoneGroup(cat) {
+			group ??= new BoneGroup(armature, cat) {
 				SortPriority = cat.SortPriority ?? -1
 			};
 			AddGroups(group, cat);
@@ -140,45 +136,19 @@ public class BoneTreeBuilder {
 				.ToList();
 		}
 
+		var armature = group.GetArmature();
 		var basePrio = this.Partial.ConnectedBoneIndex + 1;
 		foreach (var boneData in bones) {
 			var bone = exists?.Find(bone => bone.Name == boneData.Name);
 			if (bone is not null) {
 				bone.PartialId = this.PartialId;
 			} else {
-				group.AddChild(new Bone(boneData, this.PartialId) {
+				group.AddChild(new Bone(armature, boneData, this.PartialId) {
 					SortPriority = basePrio + boneData.BoneIndex
 				});
 			}
 		}
 		
 		group.OrderByPriority();
-	}
-	
-	// Skeleton access
-
-	private unsafe hkaSkeleton* GetSkeleton() {
-		var pose = this.Partial.GetHavokPose(0);
-		return pose != null ? pose->Skeleton : null;
-	}
-
-	private IEnumerable<BoneData> EnumerateBones(hkArray<hkaBone> bones, hkArray<short> parents) {
-		for (var i = 1; i < bones.Length; i++) {
-			var hkaBone = bones[i];
-			
-			// This should never happen unless the user has a really fucked custom skeleton.
-			var name = hkaBone.Name.String;
-			if (name == null) continue;
-
-			if (this.Index > 0 && name == "j_ago") // :)
-				continue;
-
-			yield return new BoneData {
-				Name = name,
-				BoneIndex = i,
-				ParentIndex = parents[i],
-				PartialIndex = this.Index
-			};
-		}
 	}
 }
