@@ -14,6 +14,7 @@ using Ktisis.Data.Config.Display;
 using Ktisis.Common.Extensions;
 using Ktisis.Interface.Helpers;
 using Ktisis.Interface.Widgets;
+using Ktisis.Scene.Impl;
 
 namespace Ktisis.Interface.Components;
 
@@ -75,18 +76,18 @@ public class SceneTree {
 		if (this._sceneMgr.Scene is not SceneGraph scene) return;
 
 		PreCalc();
-		DrawTree(scene.GetChildren());
+		DrawTree(scene, scene.GetChildren());
 	}
 
-	private void DrawTree(IEnumerable<SceneObject> objects) {
+	private void DrawTree(SceneGraph scene, IEnumerable<SceneObject> objects) {
 		var spacing = ImGui.GetStyle().ItemSpacing;
 		ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, spacing with { Y = 6f });
 		foreach (var node in objects)
-			DrawNode(node);
+			DrawNode(scene, node);
 		ImGui.PopStyleVar();
 	}
 
-	private void DrawNode(SceneObject item) {
+	private void DrawNode(SceneGraph scene, SceneObject item) {
 		var pos = ImGui.GetCursorPosY();
 		var isVisible = pos > this.MinY && pos < this.MaxY;
 
@@ -95,60 +96,110 @@ public class SceneTree {
 		var children = item.GetChildren();
 
 		var isLeaf = children.Count == 0;
-		var flags = ImGuiTreeNodeFlags.SpanAvailWidth | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow);
+		var flags = ImGuiTreeNodeFlags.AllowItemOverlap | ImGuiTreeNodeFlags.SpanFullWidth | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow);
 
 		if (isVisible) {
 			if (item.Flags.HasFlag(ObjectFlags.Selected))
 				flags |= ImGuiTreeNodeFlags.Selected;
+			var hover = ImGui.GetColorU32(ImGuiCol.HeaderHovered);
+			ImGui.PushStyleColor(ImGuiCol.HeaderActive, hover);
 			ImGui.PushStyleColor(ImGuiCol.Text, display.Color);
 		}
 
+		var start = ImGui.GetCursorPosX();
 		var expand = ImGui.TreeNodeEx($"##{item.UiId}", flags);
 
 		if (isVisible) {
 			ImGui.SameLine();
-			HandleClick(item);
-			DrawLabel(item, display);
-			ImGui.PopStyleColor();
+			DrawLabel(scene, item, display, isLeaf, start);
+			ImGui.PopStyleColor(2);
 		}
 
 		if (!expand) return;
 
 		if (!isLeaf)
-			DrawTree(children);
+			DrawTree(scene, children);
 		ImGui.TreePop();
 	}
 
-	private void DrawLabel(SceneObject item, ItemDisplay display) {
+	private void DrawLabel(SceneGraph scene, SceneObject item, ItemDisplay display, bool isLeaf, float start) {
 		var hasIcon = display.Icon != FontAwesomeIcon.None;
 		var iconPadding = hasIcon ? Icons.CalcIconSize(display.Icon).X / 2 : 0;
 		var iconSpace = hasIcon ? UiBuilder.IconFont.FontSize : 0;
 
+		var min = ImGui.GetItemRectMin();
+
 		var cursor = ImGui.GetCursorPosX();
 		ImGui.SetCursorPosX(cursor + (iconSpace / 2) - iconPadding);
+
+		// Visibility toggle
+
+		var rightAdjust = 0.0f;
+		if (item is IVisibility vis)
+			rightAdjust = DrawVisibility(scene, vis, display);
 
 		// Icon + Name
 
 		Icons.DrawIcon(display.Icon);
 		ImGui.SameLine();
 
-		cursor += ImGui.GetStyle().ItemSpacing.X + iconSpace;
+		var spacing = ImGui.GetStyle().ItemSpacing.X + iconSpace;
+		cursor += spacing;
 		ImGui.SetCursorPosX(cursor);
 
-		var labelAvail = ImGui.GetContentRegionAvail().X;
+		var labelAvail = ImGui.GetContentRegionAvail().X - rightAdjust;
 		ImGui.Text(item.Name.FitToWidth(labelAvail));
+		HandleClick(scene, item, start, isLeaf, labelAvail + spacing);
 	}
 
-	private void HandleClick(SceneObject item) {
-		var min = ImGui.GetCursorScreenPos();
-		var max = min + ImGui.GetItemRectSize() with {
-			X = ImGui.GetContentRegionAvail().X
+	private float DrawVisibility(SceneGraph scene, IVisibility item, ItemDisplay display) {
+		var mode = scene.Context.EditMode;
+		var isValid = item switch {
+			IPoseObject => mode is EditMode.Pose,
+			_ => mode is EditMode.Object
 		};
 
-		var isClick = ImGui.IsMouseHoveringRect(min, max) && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
-		if (!isClick) return;
+		if (!isValid) return 0.0f;
+
+		var icon = FontAwesomeIcon.Eye;
+		var size = Icons.CalcIconSize(icon);
+		var spacing = ImGui.GetStyle().ItemSpacing.X;
+
+		ImGui.SameLine();
+		ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - size.X - spacing);
+
+		var color = display.Color;
+		ImGui.PushStyleColor(ImGuiCol.Text, item.Visible ? color : color.SetAlpha(0x90));
+		Icons.DrawIcon(icon);
+		ImGui.PopStyleColor();
+
+		if (Buttons.IsClicked())
+			item.ToggleVisible();
+
+		ImGui.SameLine();
+
+		return size.X + spacing * 2;
+	}
+
+	private void HandleClick(SceneGraph scene, SceneObject item, float start, bool isLeaf, float avail) {
+		var size = ImGui.GetItemRectSize();
+		var cursor = ImGui.GetCursorScreenPos()
+			.Sub(ImGui.GetCursorPosX(), ImGui.GetStyle().ItemSpacing.Y + size.Y);
+
+		var nodeSpace = ImGui.GetTreeNodeToLabelSpacing();
+
+		var min_r = cursor with { X = cursor.X + start + nodeSpace };
+		var max_r = size with { X = avail };
+		var isHover = ImGui.IsMouseHoveringRect(min_r, min_r + max_r);
+		if (!isHover) {
+			var max_l = size with { X = start + (isLeaf ? nodeSpace : 0) };
+			isHover |= ImGui.IsMouseHoveringRect(cursor, cursor + max_l);
+		}
+
+		if (!isHover || !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
+			return;
 
 		var flags = GuiSelect.GetSelectFlags();
-		this._sceneMgr.SelectState?.HandleClick(item, flags);
+		scene.Select.HandleClick(item, flags);
 	}
 }
