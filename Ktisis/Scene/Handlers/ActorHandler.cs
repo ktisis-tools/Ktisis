@@ -8,20 +8,22 @@ public class ActorHandler {
 	// Constructor
 	
 	private readonly IObjectTable _actors;
+	
+	private readonly SceneManager Manager;
 
-	private readonly SceneGraph Scene;
-
-	public ActorHandler(SceneGraph scene, IObjectTable _actors) {
+	public ActorHandler(SceneManager manager, IObjectTable _actors) {
 		this._actors = _actors;
-		
-		this.Scene = scene;
-		scene.OnSceneBuild += OnSceneBuild;
+
+		this.Manager = manager;
+		manager.OnSceneChanged += OnSceneChanged;
 	}
 	
 	// Event handlers
 
-	private void OnSceneBuild(SceneGraph _)
-		=> this.AddGPoseActors();
+	private void OnSceneChanged(SceneGraph? scene) {
+		if (scene is not null)
+			this.AddGPoseActors();
+	}
 	
 	// Actors
 	
@@ -42,7 +44,7 @@ public class ActorHandler {
 
 		var actor = new Actor(gameObj);
 		if (addToScene)
-			this.Scene.AddChild(actor);
+			this.Manager.Scene?.AddChild(actor);
 		return actor;
 	}
 }

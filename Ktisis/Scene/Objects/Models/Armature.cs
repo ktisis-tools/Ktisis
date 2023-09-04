@@ -27,7 +27,7 @@ public class Armature : ArmatureGroup {
 	
 	// Update handler
 
-	public unsafe override void Update(SceneContext ctx) {
+	public unsafe override void Update(SceneManager _mgr, SceneContext ctx) {
 		var skele = this.Skeleton;
 		if (skele == null) return;
 
