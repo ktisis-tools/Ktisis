@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 
-namespace Ktisis.Scene;
+namespace Ktisis.Scene.Editing;
 
 public enum SelectFlags {
 	None,
@@ -16,8 +16,8 @@ public class SelectState {
 
 	private readonly List<SceneObject> _selected = new();
 
-	public SelectState(SceneGraph _scene) {
-		_scene.OnSceneObjectRemoved += OnSceneObjectRemoved;
+	public void Attach(SceneGraph scene) {
+		scene.OnSceneObjectRemoved += OnSceneObjectRemoved;
 	}
 
 	// Events
@@ -28,6 +28,8 @@ public class SelectState {
 	// Item access
 
 	public int Count => this._selected.Count;
+
+	public void Clear() => this._selected.Clear();
 
 	public IEnumerable<SceneObject> GetSelected()
 		=> this._selected.AsReadOnly();

@@ -1,19 +1,23 @@
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
+using Ktisis.Scene.Impl;
+using Ktisis.Scene.Editing;
 using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Scene.Objects.Models;
 
-public abstract class ArmatureNode : SceneObject {
-	// Armature access
+public abstract class ArmatureNode : SceneObject, IEditMode, IVisibility, ISortPriority {
+	// IEditMode
 
-	public abstract Armature GetArmature();
+	public EditMode EditMode { get; init; } = EditMode.Pose;
 
-	public Pointer<Skeleton> GetSkeleton() => this.GetArmature().GetSkeleton();
+	// IVisibility
+
+	public bool Visible { get; set; }
 
 	// Sort priority
 
-	public int SortPriority;
+	public int SortPriority { get; set; }
 
 	public void OrderByPriority() {
 		this.Children.Sort((_a, _b) => (_a, _b) switch {
@@ -23,4 +27,11 @@ public abstract class ArmatureNode : SceneObject {
 			(_, _) => 0
 		});
 	}
+
+	// Armature access
+
+	public abstract Armature GetArmature();
+
+	public Pointer<Skeleton> GetSkeleton()
+		=> this.GetArmature().GetSkeleton();
 }

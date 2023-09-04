@@ -3,13 +3,14 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Scene.Impl;
+using Ktisis.Scene.Editing;
+using Ktisis.Scene.Handlers;
 using Ktisis.Common.Utility;
 using Ktisis.Interop.Unmanaged;
-using Ktisis.Scene.Handlers;
 
 namespace Ktisis.Scene.Objects.World;
 
-public class WorldObject : SceneObject, IManipulable {
+public class WorldObject : SceneObject, IManipulable, IEditMode, IVisibility {
 	// Unmanaged
 
 	public nint Address { get; protected set; }
@@ -23,7 +24,7 @@ public class WorldObject : SceneObject, IManipulable {
 
 	// Update handling
 
-	public unsafe override void Update(SceneContext ctx) {
+	public unsafe override void Update(SceneManager manager, SceneContext ctx) {
 		if (this.Object == null) return;
 
 		var ownedList = this.Children
@@ -36,7 +37,7 @@ public class WorldObject : SceneObject, IManipulable {
 			var owner = ownedList.Find(x => x.Address == objectPtr.Address);
 			if (owner is not null) continue;
 
-			var create = ctx.GetHandler<ObjectHandler>()
+			var create = manager.GetHandler<ObjectHandler>()
 				.CreateObject(objectPtr);
 			if (create is not null)
 				AddChild(create);
@@ -45,7 +46,7 @@ public class WorldObject : SceneObject, IManipulable {
 		var addrList = objects.Select(ptr => ptr.Address);
 		this.Children.RemoveAll(x => x is WorldObject obj && !addrList.Contains(obj.Address));
 
-		base.Update(ctx);
+		base.Update(manager, ctx);
 	}
 
 	// Object access
@@ -67,6 +68,12 @@ public class WorldObject : SceneObject, IManipulable {
 
 		return result;
 	}
+
+	// IEditMode
+
+	public bool Visible { get; set; }
+
+	public EditMode EditMode { get; init; } = EditMode.Object;
 
 	// IManipulable
 

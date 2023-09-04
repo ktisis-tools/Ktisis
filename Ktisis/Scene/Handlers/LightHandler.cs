@@ -12,19 +12,29 @@ public class LightHandler {
 
 	private readonly GPoseService _gpose;
 
-	private readonly SceneGraph Scene;
+	private readonly SceneManager Manager;
 
-	public LightHandler(GPoseService _gpose, SceneGraph scene) {
+	public LightHandler(SceneManager manager, GPoseService _gpose) {
 		this._gpose = _gpose;
-		this.Scene = scene;
-		scene.OnSceneUpdate += OnSceneUpdate;
+
+		this.Manager = manager;
+		manager.OnSceneChanged += OnSceneChanged;
+	}
+
+	// Events
+
+	private void OnSceneChanged(SceneGraph? scene) {
+		if (scene is not null)
+			scene.OnSceneUpdate += OnSceneUpdate;
+		else
+			this.GPoseLights.Clear();
 	}
 
 	// Update handler
 
 	private readonly Dictionary<int, SceneLight> GPoseLights = new();
 
-	private unsafe void OnSceneUpdate(SceneGraph scene) {
+	private unsafe void OnSceneUpdate(SceneManager _mgr, SceneGraph scene) {
 		var module = this._gpose.GetEventModule();
 		if (module == null) return;
 
@@ -33,7 +43,7 @@ public class LightHandler {
 
 			if (this.GPoseLights.TryGetValue(i, out var prev)) {
 				if (light.IsNull || prev.Address != light.Address) {
-					this.Scene.Remove(prev);
+					scene.Remove(prev);
 					this.GPoseLights.Remove(i);
 				} else continue;
 			}
@@ -50,7 +60,7 @@ public class LightHandler {
 
 	public unsafe SceneLight AddLight(Light* ptr) {
 		var light = new SceneLight((nint)ptr);
-		this.Scene.AddChild(light);
+		this.Manager.Scene?.AddChild(light);
 		return light;
 	}
 }
