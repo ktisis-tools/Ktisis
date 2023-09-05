@@ -3,12 +3,16 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using Ktisis.Posing;
+using Ktisis.Common.Utility;
+
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
-using Ktisis.Common.Utility;
+using Ktisis.Scene.Editing.Attributes;
+using Ktisis.Interface.Overlay.Render;
 
 namespace Ktisis.Scene.Editing.Modes;
 
+[ObjectMode(EditMode.Pose, Renderer = typeof(PoseRenderer))]
 public class PoseMode : ModeHandler {
 	public PoseMode(SceneManager mgr) : base(mgr) {}
 	

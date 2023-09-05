@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 
 using Ktisis.Common.Utility;
-using Ktisis.Scene.Editing.Modes;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Objects.World;
+using Ktisis.Scene.Editing.Modes;
 
 namespace Ktisis.Scene.Editing;
 
@@ -43,13 +43,8 @@ public class SceneEditor {
 	public EditFlags Flags = EditFlags.Propagate;
 
 	public EditMode CurrentMode = EditMode.Object;
-    
-	public ModeHandler? GetHandler() => this.CurrentMode switch {
-		EditMode.None => null,
-		var key => this.Modes[key]
-	};
 	
-	// Register edit modes
+	// Register mode handlers
 
 	private readonly Dictionary<EditMode, ModeHandler> Modes = new();
 
@@ -58,6 +53,16 @@ public class SceneEditor {
 		this.Modes.Add(id, inst);
 		return this;
 	}
+	
+	// Access mode handlers
+	
+	public ModeHandler? GetHandler() => this.CurrentMode switch {
+		EditMode.None => null,
+		var key => this.Modes[key]
+	};
+
+	public IReadOnlyDictionary<EditMode, ModeHandler> GetHandlers()
+		=> this.Modes.AsReadOnly();
 	
 	// Events
 
