@@ -28,13 +28,13 @@ public class Character : WorldObject {
 		return (ptr->UnkFlags_01 & 2) != 0 && ptr->UnkFlags_02 != 0;
 	}
 
-	public override void Update(SceneManager _mgr, SceneContext _ctx) {
+	public override void Update(SceneGraph scene, SceneContext _ctx) {
 		this.UpdateAddress();
 
 		// Don't do anything until fully loaded.
 		if (!this.IsRendering()) return;
 
-		base.Update(_mgr, _ctx);
+		base.Update(scene, _ctx);
 	}
 
 	// Retrieve address from parent object

@@ -1,6 +1,6 @@
 using ImGuiNET;
 
-using Ktisis.Scene;
+using Ktisis.Scene.Editing;
 
 namespace Ktisis.Interface.Helpers;
 

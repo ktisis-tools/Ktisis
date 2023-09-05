@@ -29,7 +29,7 @@ public class SceneManager : IDisposable {
 		this._framework = _framework;
 		this._gpose = _gpose;
 
-		this.Context = _services.Inject<SceneContext>();
+		this.Context = _services.Inject<SceneContext>(this);
 
 		this.Editor = new SceneEditor(this);
 		this.AddHandler<ActorHandler>()
@@ -41,6 +41,8 @@ public class SceneManager : IDisposable {
 	}
 
 	// Scene state
+
+	public bool IsActive => this.Scene is not null;
 
 	public SceneGraph? Scene { get; private set; }
 
@@ -69,7 +71,7 @@ public class SceneManager : IDisposable {
 		if (this.IsDisposed) return;
 
 		if (this._gpose.IsInGPose)
-			this.Scene?.Update(this);
+			this.Scene?.Update();
 	}
 
 	private void OnGPoseUpdate(bool active) {

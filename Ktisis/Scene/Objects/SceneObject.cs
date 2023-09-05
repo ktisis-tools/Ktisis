@@ -42,7 +42,7 @@ public abstract class SceneObject : ITreeNode, IParentable<SceneObject> {
 
 	// Object methods
 
-	public virtual void Update(SceneManager manager, SceneContext ctx) {
+	public virtual void Update(SceneGraph scene, SceneContext ctx) {
 		if (this.Flags.HasFlag(ObjectFlags.Removed)) {
 			if (this.Parent is not null)
 				this.SetParent(null);
@@ -51,7 +51,7 @@ public abstract class SceneObject : ITreeNode, IParentable<SceneObject> {
 
 		this.Children.ForEach(item => {
 			try {
-				item.Update(manager, ctx);
+				item.Update(scene, ctx);
 			} catch (Exception e) {
 				PluginLog.Error($"Error while updating object state for '{item.Name}':\n{e}");
 			}

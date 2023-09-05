@@ -1,28 +1,63 @@
+using System;
+using System.Collections.Generic;
+
+using Ktisis.Common.Utility;
+using Ktisis.Scene.Editing.Modes;
+using Ktisis.Scene.Objects;
+using Ktisis.Scene.Objects.Models;
+using Ktisis.Scene.Objects.World;
+
 namespace Ktisis.Scene.Editing;
 
+[Flags]
+public enum EditFlags {
+	None = 0,
+	Propagate = 1
+}
+
 public enum EditMode {
-	None,
-	Object,
-	Pose
+	None = 0,
+	Object = 1,
+	Pose = 2
 }
 
 public class SceneEditor {
 	// Constructor
 
-	private readonly SceneManager _manager;
+	private readonly SceneManager Manager;
 
 	public readonly SelectState Selection;
 
-	public SceneEditor(SceneManager _manager) {
-		this._manager = _manager;
+	public SceneEditor(SceneManager manager) {
+		this.Manager = manager;
 		this.Selection = new SelectState();
 
-		_manager.OnSceneChanged += OnSceneChanged;
+		this.AddMode<ObjectMode>(EditMode.Object)
+			.AddMode<PoseMode>(EditMode.Pose);
+
+		manager.OnSceneChanged += OnSceneChanged;
 	}
 
 	// Editor state
 
-	public EditMode CurrentMode;
+	public EditFlags Flags = EditFlags.Propagate;
+
+	public EditMode CurrentMode = EditMode.Object;
+
+	public ModeHandler? GetHandler() => this.CurrentMode switch {
+		EditMode.None => null,
+		var key => this.Modes[key]
+	};
+
+	// Register edit modes
+
+	private readonly Dictionary<EditMode, ModeHandler> Modes = new();
+
+	private SceneEditor AddMode<T>(EditMode id) where T : ModeHandler {
+		var inst = (T)Activator.CreateInstance(typeof(T), this.Manager)!;
+		this.Modes.Add(id, inst);
+		return this;
+	}
 
 	// Events
 
@@ -32,4 +67,19 @@ public class SceneEditor {
 		else
 			this.Selection.Clear();
 	}
+
+	// Objects
+
+	public bool IsItemInfluenced(SceneObject item) {
+		var mode = this.CurrentMode;
+		return item switch {
+			ArmatureNode => mode is EditMode.Pose,
+			WorldObject => mode is EditMode.Object,
+			_ => true
+		};
+	}
+
+	// Transforms
+
+	public Transform? GetTransform() => GetHandler()?.GetTransform();
 }

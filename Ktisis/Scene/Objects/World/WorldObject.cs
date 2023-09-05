@@ -3,14 +3,13 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Scene.Impl;
-using Ktisis.Scene.Editing;
 using Ktisis.Scene.Handlers;
 using Ktisis.Common.Utility;
 using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Scene.Objects.World;
 
-public class WorldObject : SceneObject, IManipulable, IEditMode, IVisibility {
+public class WorldObject : SceneObject, IManipulable, IVisibility {
 	// Unmanaged
 
 	public nint Address { get; protected set; }
@@ -24,7 +23,7 @@ public class WorldObject : SceneObject, IManipulable, IEditMode, IVisibility {
 
 	// Update handling
 
-	public unsafe override void Update(SceneManager manager, SceneContext ctx) {
+	public unsafe override void Update(SceneGraph scene, SceneContext ctx) {
 		if (this.Object == null) return;
 
 		var ownedList = this.Children
@@ -37,7 +36,7 @@ public class WorldObject : SceneObject, IManipulable, IEditMode, IVisibility {
 			var owner = ownedList.Find(x => x.Address == objectPtr.Address);
 			if (owner is not null) continue;
 
-			var create = manager.GetHandler<ObjectHandler>()
+			var create = ctx.GetHandler<ObjectHandler>()
 				.CreateObject(objectPtr);
 			if (create is not null)
 				AddChild(create);
@@ -46,7 +45,7 @@ public class WorldObject : SceneObject, IManipulable, IEditMode, IVisibility {
 		var addrList = objects.Select(ptr => ptr.Address);
 		this.Children.RemoveAll(x => x is WorldObject obj && !addrList.Contains(obj.Address));
 
-		base.Update(manager, ctx);
+		base.Update(scene, ctx);
 	}
 
 	// Object access
@@ -69,11 +68,9 @@ public class WorldObject : SceneObject, IManipulable, IEditMode, IVisibility {
 		return result;
 	}
 
-	// IEditMode
+	// IVisibility
 
 	public bool Visible { get; set; }
-
-	public EditMode EditMode { get; init; } = EditMode.Object;
 
 	// IManipulable
 
@@ -88,7 +85,7 @@ public class WorldObject : SceneObject, IManipulable, IEditMode, IVisibility {
 		);
 	}
 
-	public unsafe void SetTransform(Transform trans, TransformFlags _flags) {
+	public unsafe void SetTransform(Transform trans) {
 		var ptr = this.Object;
 		if (ptr == null) return;
 

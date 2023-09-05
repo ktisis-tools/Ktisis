@@ -1,3 +1,5 @@
+using System.Numerics;
+
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
@@ -34,6 +36,11 @@ public class Bone : ArmatureNode, IManipulable {
 
 	public override Armature GetArmature() => this.Armature;
 
+	// Helpers
+
+	public bool MatchesId(int pId, int bId)
+		=> this.Data.PartialIndex == pId && this.Data.BoneIndex == bId;
+
 	// IManipulable
 
 	private unsafe hkaPose* GetPose(Pointer<Skeleton> skeleton) {
@@ -52,7 +59,7 @@ public class Bone : ArmatureNode, IManipulable {
 		return PoseEditor.GetWorldTransform(skeleton.Data, pose, this.Data.BoneIndex);
 	}
 
-	public unsafe void SetTransform(Transform trans, TransformFlags flags) {
+	public unsafe void SetTransform(Transform trans) {
 		var skeleton = this.GetSkeleton();
 		var pose = GetPose(skeleton);
 		if (pose == null) return;
@@ -63,8 +70,5 @@ public class Bone : ArmatureNode, IManipulable {
 		var skeleTrans = new Transform(skeleton.Data->Transform);
 		var modelTrans = PoseEditor.WorldToModel(trans, skeleTrans);
 		PoseEditor.SetModelTransform(pose, this.Data.BoneIndex, modelTrans);
-
-		if (flags.HasFlag(TransformFlags.Propagate))
-			PoseEditor.Propagate(skeleton.Data, this.Data.PartialIndex, this.Data.BoneIndex, modelTrans, initial);
 	}
 }

@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Collections.Generic;
+
 using Ktisis.Scene.Impl;
 
 namespace Ktisis.Scene.Objects.Models;
@@ -17,30 +20,50 @@ public abstract class ArmatureGroup : ArmatureNode, IVisibility {
 		}
 	});
 
-	public Bone? GetBoneByLowestIndex() {
-		var lowP = 0;
-		var lowIx = 0;
-		Bone? result = null;
+	public List<Bone> GetIndividualBones() {
+		var results = new List<Bone>();
 		foreach (var item in RecurseChildren()) {
-			var bone = item switch {
-				ArmatureGroup group => group.GetBoneByLowestIndex(),
-				Bone _bone => _bone,
-				_ => null
-			};
-
-			if (bone is null) continue;
-
-			var boneIx = bone.Data.BoneIndex;
-			var partIx = bone.Data.PartialIndex;
-			var set = result is null || partIx < lowP || boneIx < lowIx;
-			if (!set) continue;
-
-			lowP = partIx;
-			lowIx = boneIx;
-			result = bone;
+			switch (item) {
+				case ArmatureGroup group:
+					results.AddRange(group.GetIndividualBones());
+					break;
+				case Bone bone:
+					results.Add(bone);
+					break;
+				default:
+					continue;
+			}
 		}
 
-		return result;
+		var armature = GetArmature();
+		results = results.Distinct().ToList();
+		results.RemoveAll(bone => {
+			var boneIx = bone.Data.BoneIndex;
+
+			var partialIx = bone.Data.PartialIndex;
+			var partial = armature.GetPartialCache(partialIx);
+			if (partial is null) return false;
+
+			var parent = partial.GetParentsOf(boneIx)
+				.Any(parentId => results.Any(x => x.MatchesId(partialIx, parentId)));
+
+			if (parent)
+				return true;
+
+			if (partialIx == 0)
+				return false;
+
+			var rootPartial = armature.GetPartialCache(0);
+			if (rootPartial is null)
+				return false;
+
+			var connIx = partial.ConnectedParentBoneIndex;
+			return rootPartial.GetParentsOf(connIx)
+				.Prepend(connIx)
+				.Any(id => results.Any(x => x.MatchesId(0, id)));
+		});
+
+		return results;
 	}
 
 	// IPoseObject

@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -11,6 +12,7 @@ using Ktisis.Services;
 using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Components;
 using Ktisis.Posing;
+using Ktisis.Scene.Editing;
 
 namespace Ktisis.Interface.Windows;
 
@@ -51,14 +53,41 @@ public class Workspace : Window {
 
 		// TODO: TEMP
 
+		var editor = this._sceneMgr.Editor;
+		var scene = this._sceneMgr.Scene;
+		ImGui.BeginDisabled(scene is null);
+
 		var isPosing = this._posing.IsActive;
 		if (ImGui.Checkbox("Posing", ref isPosing))
 			this._posing.Toggle();
 
-		// Draw scene
+		ImGui.Spacing();
 
-		var scene = this._sceneMgr.Scene;
-		ImGui.BeginDisabled(scene is null);
+		var mode = editor.CurrentMode;
+		if (ImGui.BeginCombo("Mode", Enum.GetName(mode))) {
+			foreach (var value in Enum.GetValuesAsUnderlyingType<EditMode>()) {
+				var enumVal = (EditMode)value;
+				if (enumVal == EditMode.None)
+					continue;
+
+				var icon = enumVal switch {
+					EditMode.Object => FontAwesomeIcon.Boxes,
+					EditMode.Pose => FontAwesomeIcon.CircleNodes,
+					_ => FontAwesomeIcon.None
+				};
+
+				// TODO
+				Icons.DrawIcon(icon);
+				ImGui.SameLine();
+				if (ImGui.Selectable(enumVal.ToString()))
+					editor.CurrentMode = enumVal;
+			}
+			ImGui.EndCombo();
+		}
+
+		ImGui.Spacing();
+
+		// Draw scene
 
 		DrawStateFrame(scene);
 
@@ -108,7 +137,7 @@ public class Workspace : Window {
 
 		ImGui.SetCursorPosX(padding * 2);
 
-		var ct = scene.Select.Count;
+		var ct = this._sceneMgr.Editor.Selection.Count;
 		if (ct > 0) {
 			ImGui.BeginDisabled();
 			ImGui.Text($"{ct} item{(ct == 1 ? "" : "s")} selected.");

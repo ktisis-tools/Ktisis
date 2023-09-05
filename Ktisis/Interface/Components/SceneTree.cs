@@ -8,13 +8,16 @@ using Dalamud.Logging;
 using ImGuiNET;
 
 using Ktisis.Scene;
+using Ktisis.Scene.Impl;
+using Ktisis.Scene.Editing;
 using Ktisis.Scene.Objects;
-using Ktisis.Data.Config;
-using Ktisis.Data.Config.Display;
-using Ktisis.Common.Extensions;
+using Ktisis.Scene.Objects.Models;
+using Ktisis.Scene.Objects.World;
 using Ktisis.Interface.Helpers;
 using Ktisis.Interface.Widgets;
-using Ktisis.Scene.Impl;
+using Ktisis.Common.Extensions;
+using Ktisis.Data.Config.Display;
+using Ktisis.Data.Config;
 
 namespace Ktisis.Interface.Components;
 
@@ -127,19 +130,20 @@ public class SceneTree {
 		var iconPadding = hasIcon ? Icons.CalcIconSize(display.Icon).X / 2 : 0;
 		var iconSpace = hasIcon ? UiBuilder.IconFont.FontSize : 0;
 
-		var min = ImGui.GetItemRectMin();
-
 		var cursor = ImGui.GetCursorPosX();
 		ImGui.SetCursorPosX(cursor + (iconSpace / 2) - iconPadding);
 
 		// Visibility toggle
 
 		var rightAdjust = 0.0f;
-		if (item is IVisibility vis)
-			rightAdjust = DrawVisibility(scene, vis, display);
+		if (item is IVisibility vis) {
+			var disabled = !this._sceneMgr.Editor.IsItemInfluenced(item);
+			rightAdjust = DrawVisibility(scene, vis, display, disabled);
+		}
 
 		// Icon + Name
 
+		ImGui.SetCursorPosX(cursor);
 		Icons.DrawIcon(display.Icon);
 		ImGui.SameLine();
 
@@ -152,28 +156,21 @@ public class SceneTree {
 		HandleClick(scene, item, start, isLeaf, labelAvail + spacing);
 	}
 
-	private float DrawVisibility(SceneGraph scene, IVisibility item, ItemDisplay display) {
-		var mode = scene.Context.EditMode;
-		var isValid = item switch {
-			IPoseObject => mode is EditMode.Pose,
-			_ => mode is EditMode.Object
-		};
-
-		if (!isValid) return 0.0f;
-
-		var icon = FontAwesomeIcon.Eye;
+	private float DrawVisibility(SceneGraph scene, IVisibility item, ItemDisplay display, bool disabled = false) {
+		const FontAwesomeIcon icon = FontAwesomeIcon.Eye;
 		var size = Icons.CalcIconSize(icon);
 		var spacing = ImGui.GetStyle().ItemSpacing.X;
 
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - size.X - spacing);
+		var alpha = disabled ? 0x3A : (item.Visible ? 0xFF : 0x90);
 
-		var color = display.Color;
-		ImGui.PushStyleColor(ImGuiCol.Text, item.Visible ? color : color.SetAlpha(0x90));
+		var color = display.Color.SetAlpha((byte)alpha);
+		ImGui.PushStyleColor(ImGuiCol.Text, color);
 		Icons.DrawIcon(icon);
 		ImGui.PopStyleColor();
 
-		if (Buttons.IsClicked())
+		if (!disabled && Buttons.IsClicked())
 			item.ToggleVisible();
 
 		ImGui.SameLine();
@@ -200,6 +197,6 @@ public class SceneTree {
 			return;
 
 		var flags = GuiSelect.GetSelectFlags();
-		scene.Select.HandleClick(item, flags);
+		this._sceneMgr.Editor.Selection.HandleClick(item, flags);
 	}
 }
