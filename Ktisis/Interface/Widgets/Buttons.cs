@@ -13,7 +13,7 @@ internal static class Buttons {
 		var max = ImGui.GetItemRectMax();
 		return ImGui.IsMouseHoveringRect(min, max) && ImGui.IsMouseClicked(ImGuiMouseButton.Left);
 	}
-    
+	
 	internal static bool DrawIconButton(FontAwesomeIcon icon, Vector2? size = null) {
 		var font = UiBuilder.IconFont;
 

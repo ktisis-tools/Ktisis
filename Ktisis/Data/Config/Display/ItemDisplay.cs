@@ -38,7 +38,7 @@ public class ItemDisplay {
 	}
 
 	// Technically this could be a Dict<Type, _>, but I'm doing this in case we want objects to share an ItemDisplay in future.
-    
+	
 	private const uint BoneBlue = 0xFFFF9F68;
 	private const uint ModelMint = 0xFFBAFFB2;
 	

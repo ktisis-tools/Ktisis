@@ -25,7 +25,7 @@ internal class DllResolver : IDisposable {
 		if (this.Context != null)
 			this.Context.ResolvingUnmanagedDll += ResolveUnmanaged;
 	}
-    
+	
 	private nint ResolveUnmanaged(Assembly assembly, string library) {
 		var loc = Path.GetDirectoryName(assembly.Location);
 		if (loc == null) return nint.Zero;

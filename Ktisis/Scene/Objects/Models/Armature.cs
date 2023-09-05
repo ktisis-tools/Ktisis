@@ -35,9 +35,9 @@ public class Armature : ArmatureGroup {
 			var partial = skele->PartialSkeletons[p];
 			var res = partial.SkeletonResourceHandle;
 
-            var id = res != null ? res->ResourceHandle.Id : 0;
-            
-            uint prevId = 0;
+			var id = res != null ? res->ResourceHandle.Id : 0;
+			
+			uint prevId = 0;
 			if (this.Partials.TryGetValue(p, out var cache)) {
 				prevId = cache.Id;
 			} else {
@@ -65,8 +65,8 @@ public class Armature : ArmatureGroup {
 			
 			BuildMap(p, id);
 			
-            t.Stop();
-            PluginLog.Debug($"Rebuild took {t.Elapsed.TotalMilliseconds:00.00}ms");
+			t.Stop();
+			PluginLog.Debug($"Rebuild took {t.Elapsed.TotalMilliseconds:00.00}ms");
 		}
 	}
 	
@@ -86,7 +86,7 @@ public class Armature : ArmatureGroup {
 	
 	// Data access
 
-    private Character? ParentChara => this.Parent as Character;
+	private Character? ParentChara => this.Parent as Character;
 	private unsafe Skeleton* Skeleton => this.CharaBase != null ? this.CharaBase->Skeleton : null;
 	private unsafe CharacterBase* CharaBase => (CharacterBase*)(this.ParentChara?.Address ?? nint.Zero);
 	

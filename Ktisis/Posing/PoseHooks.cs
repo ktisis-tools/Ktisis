@@ -21,11 +21,11 @@ public class PoseHooks : HookContainer {
 	}
 	
 	// SetBoneModelSpace
-    
+	
 	[Signature("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1")]
 	private Hook<SetBoneModelSpaceDelegate> _setBoneModelSpaceHook = null!;
 	private delegate ulong SetBoneModelSpaceDelegate(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate);
-    
+	
 	private ulong SetBoneModelSpace(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate) => boneId;
 	
 	// SyncModelSpace
@@ -37,7 +37,7 @@ public class PoseHooks : HookContainer {
 	private void SyncModelSpace(ref hkaPose pose) { /* do nothing */ }
 
 	// CalcBoneModelSpace
-    
+	
 	[Signature("40 53 48 83 EC 10 4C 8B 49 28")]
 	private Hook<CalcBoneModelSpaceDelegate> _calcBoneModelSpaceHook = null!;
 	private delegate nint CalcBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);

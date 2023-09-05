@@ -157,7 +157,7 @@ public class SceneTree {
 	}
 
 	private float DrawVisibility(SceneGraph scene, IVisibility item, ItemDisplay display, bool disabled = false) {
-        const FontAwesomeIcon icon = FontAwesomeIcon.Eye;
+		const FontAwesomeIcon icon = FontAwesomeIcon.Eye;
 		var size = Icons.CalcIconSize(icon);
 		var spacing = ImGui.GetStyle().ItemSpacing.X;
 
@@ -171,7 +171,7 @@ public class SceneTree {
 		ImGui.PopStyleColor();
 		
 		if (!disabled && Buttons.IsClicked())
-            item.ToggleVisible();
+			item.ToggleVisible();
 		
 		ImGui.SameLine();
 		
@@ -184,7 +184,7 @@ public class SceneTree {
 			.Sub(ImGui.GetCursorPosX(), ImGui.GetStyle().ItemSpacing.Y + size.Y);
 
 		var nodeSpace = ImGui.GetTreeNodeToLabelSpacing();
-        
+		
 		var min_r = cursor with { X = cursor.X + start + nodeSpace };
 		var max_r = size with { X = avail };
 		var isHover = ImGui.IsMouseHoveringRect(min_r, min_r + max_r);

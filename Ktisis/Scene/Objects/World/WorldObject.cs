@@ -64,7 +64,7 @@ public class WorldObject : SceneObject, IManipulable, IVisibility {
 			if (child == ptr->ChildObject)
 				break;
 		}
-        
+		
 		return result;
 	}
 	

@@ -11,9 +11,9 @@ public class SceneContext {
 	private readonly SceneManager Manager;
 
 	public SceneContext(SceneManager manager, DataService _data) {
-        this._data = _data;
-        
-        this.Manager = manager;
+		this._data = _data;
+		
+		this.Manager = manager;
 	}
 	
 	// Scene + handler access

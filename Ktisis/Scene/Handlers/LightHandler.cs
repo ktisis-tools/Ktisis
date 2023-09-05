@@ -15,10 +15,10 @@ public class LightHandler {
 	private readonly SceneManager Manager;
 
 	public LightHandler(SceneManager manager, GPoseService _gpose) {
-        this._gpose = _gpose;
-        
-        this.Manager = manager;
-        manager.OnSceneChanged += OnSceneChanged;
+		this._gpose = _gpose;
+		
+		this.Manager = manager;
+		manager.OnSceneChanged += OnSceneChanged;
 	}
 	
 	// Events
@@ -40,7 +40,7 @@ public class LightHandler {
 
 		for (var i = 0; i < GPoseModule.LightCount; i++) {
 			var light = module->GetLight(i);
-            
+			
 			if (this.GPoseLights.TryGetValue(i, out var prev)) {
 				if (light.IsNullPointer || prev.Address != light.Address) {
 					scene.Remove(prev);

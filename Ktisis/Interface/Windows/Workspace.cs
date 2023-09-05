@@ -29,9 +29,9 @@ public class Workspace : Window {
 		this._gpose = _gpose;
 		this._posing = _posing;
 		this._sceneMgr = _sceneMgr;
-        
+		
 		this.SceneTree = new SceneTree(_data.GetConfig(), _sceneMgr);
-        
+		
 		RespectCloseHotkey = false;
 	}
 	
@@ -136,7 +136,7 @@ public class Workspace : Window {
 		ImGui.Text(tar is not null ? tar.Name.TextValue : "No target found!");
 		
 		ImGui.SetCursorPosX(padding * 2);
-        
+		
 		var ct = this._sceneMgr.Editor.Selection.Count;
 		if (ct > 0) {
 			ImGui.BeginDisabled();

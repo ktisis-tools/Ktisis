@@ -11,7 +11,7 @@ namespace Ktisis.Scene.Objects.Tree;
 
 public class BoneTreeBuilder : BoneEnumerator {
 	// State
-    
+	
 	private readonly uint PartialId;
 
 	private readonly List<BoneData>? BoneList;

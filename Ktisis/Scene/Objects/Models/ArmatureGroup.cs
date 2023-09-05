@@ -35,7 +35,7 @@ public abstract class ArmatureGroup : ArmatureNode, IVisibility {
 			}
 		}
 
-        var armature = GetArmature();
+		var armature = GetArmature();
 		results = results.Distinct().ToList();
 		results.RemoveAll(bone => {
 			var boneIx = bone.Data.BoneIndex;
@@ -53,14 +53,14 @@ public abstract class ArmatureGroup : ArmatureNode, IVisibility {
 			if (partialIx == 0)
 				return false;
 			
-            var rootPartial = armature.GetPartialCache(0);
-            if (rootPartial is null)
-                return false;
+			var rootPartial = armature.GetPartialCache(0);
+			if (rootPartial is null)
+				return false;
 
-            var connIx = partial.ConnectedParentBoneIndex;
-            return rootPartial.GetParentsOf(connIx)
-	            .Prepend(connIx)
-	            .Any(id => results.Any(x => x.MatchesId(0, id)));
+			var connIx = partial.ConnectedParentBoneIndex;
+			return rootPartial.GetParentsOf(connIx)
+				.Prepend(connIx)
+				.Any(id => results.Any(x => x.MatchesId(0, id)));
 		});
 
 		return results;

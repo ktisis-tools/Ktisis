@@ -46,7 +46,7 @@ public class GuiOverlay {
 		this._camera = _camera;
 		this._gpose = _gpose;
 		this._scene = _scene;
-        
+		
 		if (Gizmo.Create() is Gizmo gizmo) {
 			this.Gizmo = gizmo;
 			gizmo.OnManipulate += OnManipulate;

@@ -21,8 +21,9 @@ public sealed class Ktisis : IDalamudPlugin {
 	public string Name => "Ktisis";
 
 	public static string Version = $"v{GetVersion()}";
+
 	public static string VersionName = $"Ktisis (Alpha {Version})";
-	
+
 	// Plugin framework
 
 	private Task? InitTask;
@@ -30,7 +31,7 @@ public sealed class Ktisis : IDalamudPlugin {
 	private readonly ServiceManager Services;
 
 	// Ctor called on plugin load
-	
+
 	public Ktisis(DalamudPluginInterface api) {
 		// Service registration
 
@@ -49,7 +50,7 @@ public sealed class Ktisis : IDalamudPlugin {
 		this.InitTask = Init().ContinueWith(task => {
 			this.InitTask = null;
 			if (task.Exception == null) return;
-			
+
 			PluginLog.Fatal("Ktisis failed to load due to the following error(s):");
 			foreach (var err in task.Exception.InnerExceptions)
 				PluginLog.Error(err.ToString());
@@ -60,7 +61,7 @@ public sealed class Ktisis : IDalamudPlugin {
 			Dispose();
 		});
 	}
-	
+
 	// Initialization
 
 	private async Task Init() {
@@ -68,16 +69,16 @@ public sealed class Ktisis : IDalamudPlugin {
 
 		var timer = new Stopwatch();
 		timer.Start();
-		
+
 		var cfg = this.Services.GetRequiredService<DataService>();
 		await Task.WhenAll(new[] {
 			cfg.LoadConfig(),
 			InitServices()
 		});
-		
+
 		PluginLog.Debug($"Initialization completed in {timer.Elapsed.TotalMilliseconds:00.00}ms");
 		timer.Restart();
-		
+
 		this.Services.NotifyReady();
 
 		timer.Stop();
@@ -92,7 +93,7 @@ public sealed class Ktisis : IDalamudPlugin {
 		this.Services.GetRequiredService<CommandService>();
 		this.Services.GetRequiredService<PluginGui>();
 	}
-	
+
 	// Version info
 
 	public static string GetVersion() {

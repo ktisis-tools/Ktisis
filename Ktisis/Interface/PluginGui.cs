@@ -42,7 +42,7 @@ public class PluginGui : IDisposable {
 	// Overlay
 
 	public readonly GuiOverlay Overlay;
-    
+	
 	// Window state
 
 	private readonly WindowSystem Windows = new("Ktisis");

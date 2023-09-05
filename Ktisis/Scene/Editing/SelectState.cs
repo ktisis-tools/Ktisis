@@ -35,8 +35,8 @@ public class SelectState {
 		=> this._selected.AsReadOnly();
 
 	public IEnumerable<IManipulable> GetManipulable() => GetSelected()
-        .Where(item => item is IManipulable)
-        .Cast<IManipulable>();
+		.Where(item => item is IManipulable)
+		.Cast<IManipulable>();
 	
 	// Item management
 

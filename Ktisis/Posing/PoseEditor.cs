@@ -46,7 +46,7 @@ public static class PoseEditor {
 		=> SetModelTransform(pose, boneIx, new Transform(trans));
 	
 	// World transform
-    
+	
 	public unsafe static Transform? GetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx) {
 		var model = GetModelTransform(pose, boneIx);
 		if (model is null || skele == null)
@@ -127,7 +127,7 @@ public static class PoseEditor {
 		while (p != -1) {
 			if (p == parent)
 				return true;
-            p = indices[p];
+			p = indices[p];
 		}
 		return false;
 	}

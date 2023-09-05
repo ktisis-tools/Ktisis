@@ -61,7 +61,7 @@ public class SelectionGui {
 		var config = this._data.GetConfig();
 		var drawList = ImGui.GetBackgroundDrawList();
 		
-        var isHovering = false;
+		var isHovering = false;
 		foreach (var item in this.Items) {
 			var display = config.GetItemDisplay(item.Item.ItemType);
 			var pos2d = new Vector2(item.ScreenPos.X, item.ScreenPos.Y);
@@ -142,7 +142,7 @@ public class SelectionGui {
 	private bool DrawPrimDot(ImDrawListPtr drawList, Vector2 pos2d, ItemDisplay display, bool isSelect = false) {
 		// TODO
 		var radius = isSelect ? 8f : 7f;
-        
+		
 		drawList.AddCircleFilled(
 			pos2d,
 			radius,
@@ -166,7 +166,7 @@ public class SelectionGui {
 		var radius = UiBuilder.IconFont.FontSize;
 
 		var isHover = IsHovering(pos2d, radius);
-        
+		
 		drawList.AddCircleFilled(
 			pos2d,
 			radius,

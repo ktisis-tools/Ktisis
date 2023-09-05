@@ -15,7 +15,7 @@ public delegate void SceneChangedHandler(SceneGraph? scene);
 
 public class SceneManager : IDisposable {
 	// Service
-    
+	
 	private readonly Framework _framework;
 	private readonly GPoseService _gpose;
 	private readonly IServiceContainer _services;
@@ -91,7 +91,7 @@ public class SceneManager : IDisposable {
 	// Disposal
 
 	private bool IsDisposed;
-    
+	
 	public void Dispose() {
 		if (this.IsDisposed) return;
 		this.IsDisposed = true;

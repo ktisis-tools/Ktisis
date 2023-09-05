@@ -23,7 +23,7 @@ public class PoseRenderer : RendererBase {
 			return;
 		
 		var drawList = ImGui.GetBackgroundDrawList();
-        
+		
 		var partialCt = skeleton.Data->PartialSkeletonCount;
 		for (var p = 0; p < partialCt; p++) {
 			var partial = skeleton.Data->PartialSkeletons[p];
@@ -44,16 +44,16 @@ public class PoseRenderer : RendererBase {
 				
 				// Draw lines to children.
 
-                for (var c = i; c < boneCt; c++) {
-                    if (hkaSkeleton->ParentIndices[c] != i) continue;
+				for (var c = i; c < boneCt; c++) {
+					if (hkaSkeleton->ParentIndices[c] != i) continue;
 
-                    if (armature.GetBoneFromMap(p, c) is not { Visible: true })
-                        continue;
+					if (armature.GetBoneFromMap(p, c) is not { Visible: true })
+						continue;
 
-                    var lineTo = PoseEditor.GetWorldTransform(skeleton.Data, pose, c);
-                    if (lineTo is not null)
-                        overlay.DrawLine(drawList, trans.Position, lineTo.Position);
-                }
+					var lineTo = PoseEditor.GetWorldTransform(skeleton.Data, pose, c);
+					if (lineTo is not null)
+						overlay.DrawLine(drawList, trans.Position, lineTo.Position);
+				}
 			}
 		}
 	}

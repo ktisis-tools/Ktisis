@@ -20,13 +20,13 @@ public class Bone : ArmatureNode, IManipulable {
 	// Constructor
 
 	private readonly Armature Armature;
-    
+	
 	public readonly BoneData Data;
 	public uint PartialId;
 
 	public Bone(Armature armature, BoneData bone, uint pId) {
 		this.Armature = armature;
-        
+		
 		this.Name = bone.Name;
 		this.Data = bone;
 		this.PartialId = pId;
@@ -43,7 +43,7 @@ public class Bone : ArmatureNode, IManipulable {
 	
 	// IManipulable
 
-    private unsafe hkaPose* GetPose(Pointer<Skeleton> skeleton) {
+	private unsafe hkaPose* GetPose(Pointer<Skeleton> skeleton) {
 		if (skeleton.IsNullPointer || skeleton.Data->PartialSkeletons == null)
 			return null;
 

@@ -11,7 +11,7 @@ public delegate void SceneObjectEventHandler(SceneGraph sender, SceneObject item
 
 public class SceneGraph : IParentable<SceneObject> {
 	// Constructor
-    
+	
 	private readonly SceneContext Context;
 
 	public SceneGraph(SceneContext ctx) {
@@ -19,7 +19,7 @@ public class SceneGraph : IParentable<SceneObject> {
 	}
 	
 	// Events
-    
+	
 	public event SceneEventHandler? OnSceneUpdate;
 
 	public event SceneObjectEventHandler? OnSceneObjectRemoved;
@@ -41,7 +41,7 @@ public class SceneGraph : IParentable<SceneObject> {
 			this.Objects.Remove(item);
 		else
 			item.SetParent(null);
-        
+		
 		foreach (var child in item.GetChildren())
 			Remove(child);
 		
