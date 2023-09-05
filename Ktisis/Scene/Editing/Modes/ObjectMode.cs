@@ -1,17 +1,18 @@
 using System.Linq;
-using System.Collections.Generic;
 using System.Numerics;
+using System.Collections.Generic;
 
-using Dalamud.Logging;
-
-using Ktisis.Common.Extensions;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.World;
+using Ktisis.Scene.Editing.Attributes;
+using Ktisis.Interface.Overlay.Render;
+using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 
 namespace Ktisis.Scene.Editing.Modes;
 
+[ObjectMode(EditMode.Object, Renderer = typeof(ObjectRenderer))]
 public class ObjectMode : ModeHandler {
 	public ObjectMode(SceneManager mgr) : base(mgr) {}
 

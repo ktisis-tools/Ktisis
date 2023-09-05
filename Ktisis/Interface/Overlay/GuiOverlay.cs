@@ -8,14 +8,14 @@ using Dalamud.Interface;
 using ImGuiNET;
 
 using Ktisis.Core;
-using Ktisis.Services;
 using Ktisis.Scene;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Editing;
 using Ktisis.Scene.Editing.Modes;
-using Ktisis.Common.Utility;
 using Ktisis.Interface.Helpers;
 using Ktisis.Interface.Overlay.Render;
+using Ktisis.Common.Utility;
+using Ktisis.Services;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -60,19 +60,22 @@ public class GuiOverlay {
 		this.Selection = _services.Inject<SelectionGui>();
 		this.Selection.OnItemSelected += OnItemSelected;
 
-		this.AddRenderer<ObjectRenderer>(EditMode.Object)
-			.AddRenderer<PoseRenderer>(EditMode.Pose);
+		foreach (var (id, handler) in _scene.Editor.GetHandlers()) {
+			if (handler.GetRenderer() is Type type)
+				AddRenderer(id, type);
+		}
 	}
 
-	// Renderers
-	// TODO: Probably best to link these via reflection/attributes.
+	// Object mode renderers
 
 	private readonly Dictionary<EditMode, RendererBase> Renderers = new();
 
-	private GuiOverlay AddRenderer<T>(EditMode id) where T : RendererBase, new() {
-		var item = new T();
-		this.Renderers.Add(id, item);
-		return this;
+	private void AddRenderer(EditMode id, Type type) {
+		if (type.BaseType != typeof(RendererBase))
+			throw new Exception($"Attempted to register invalid type as renderer: {type}");
+
+		var inst = (RendererBase)Activator.CreateInstance(type)!;
+		this.Renderers.Add(id, inst);
 	}
 
 	private RendererBase? GetRenderer(EditMode id) => this.Renderers
