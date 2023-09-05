@@ -6,7 +6,7 @@ using Ktisis.Common.Extensions;
 
 namespace Ktisis.Scene;
 
-public delegate void SceneEventHandler(SceneManager manager, SceneGraph sender);
+public delegate void SceneEventHandler(SceneGraph sender, SceneContext ctx);
 public delegate void SceneObjectEventHandler(SceneGraph sender, SceneObject item);
 
 public class SceneGraph : IParentable<SceneObject> {
@@ -26,9 +26,9 @@ public class SceneGraph : IParentable<SceneObject> {
 	
 	// Tick update
 
-	public void Update(SceneManager manager) {
-		this.OnSceneUpdate?.InvokeSafely(manager, this);
-		this.Objects.ForEach(obj => obj.Update(manager, this.Context));
+	public void Update() {
+		this.OnSceneUpdate?.InvokeSafely(this, this.Context);
+		this.Objects.ForEach(obj => obj.Update(this, this.Context));
 	}
 	
 	// Object management

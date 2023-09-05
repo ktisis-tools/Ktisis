@@ -22,6 +22,8 @@ public static class PoseEditor {
 	
 	// Model transform
 	
+	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
+	
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return null;
@@ -35,8 +37,13 @@ public static class PoseEditor {
 		var access = pose->AccessBoneModelSpace(boneIx, DontPropagate);
 		if (access == null) return;
 
+		trans.Scale = Vector3.Max(trans.Scale, MinScale);
+
 		*access = trans.ToHavok();
 	}
+	
+	public unsafe static void SetModelTransform(Skeleton* skele, hkaPose* pose, int boneIx, Matrix4x4 trans)
+		=> SetModelTransform(pose, boneIx, new Transform(trans));
 	
 	// World transform
     
@@ -45,8 +52,8 @@ public static class PoseEditor {
 		if (model is null || skele == null)
 			return null;
 
-		var skeleTrans = new Transform(skele->Transform);
-		return ModelToWorld(model, skeleTrans);
+		var modelTrans = new Transform(skele->Transform);
+		return ModelToWorld(model, modelTrans);
 	}
 
 	public unsafe static void SetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx, Transform trans) {
@@ -56,9 +63,12 @@ public static class PoseEditor {
 		var access = pose->AccessBoneModelSpace(boneIx, DontPropagate);
 		if (access == null) return;
 		
-		var skeleTrans = new Transform(skele->Transform);
-		*access = WorldToModel(trans, skeleTrans).ToHavok();
+		var modelTrans = new Transform(skele->Transform);
+		*access = WorldToModel(trans, modelTrans).ToHavok();
 	}
+
+	public unsafe static void SetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx, Matrix4x4 trans)
+		=> SetWorldTransform(skele, pose, boneIx, new Transform(trans));
 	
 	// Propagation
 
@@ -112,7 +122,7 @@ public static class PoseEditor {
 	
 	// Bone descendants
 
-	private static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
+	public static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
 		var p = indices[bone];
 		while (p != -1) {
 			if (p == parent)

@@ -3,6 +3,7 @@
 		<Bones>
 			j_kao
 			j_ago
+			j_kubi
 		</Bones>
 		<Category Id="Hair">
 			<Bones>
@@ -96,7 +97,6 @@
 		<Category Id="Arms">
 			<Category Id="LeftArm">
 				<Bones>
-					j_sako_l
 					j_ude_a_l
 					j_ude_b_l
 					n_hkata_l
@@ -130,7 +130,6 @@
 			</Category>
 			<Category Id="RightArm">
 				<Bones>
-					j_sako_r
 					j_ude_a_r
 					j_ude_b_r
 					n_hkata_r
@@ -170,7 +169,8 @@
 				j_sebo_a
 				j_sebo_b
 				j_sebo_c
-				j_kubi
+				j_sako_l
+				j_sako_r
 			</Bones>
 			<Category Id="Breasts">
 				<Bones>
@@ -263,7 +263,7 @@
 				</Bones>
 			</Category>
 		</Category>
-		<Category Id="BottomIvcs">
+		<Category Id="BottomIvcs" IsNsfw="true">
 			<Bones>
 				iv_koumon
 				iv_koumon_l

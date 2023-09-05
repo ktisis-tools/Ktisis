@@ -20,13 +20,13 @@ namespace Ktisis.Interface.Overlay;
 
 public delegate void OnItemSelectedHandler(SceneObject item);
 
-public class ItemSelection {
+public class SelectionGui {
 	// Constructor
 
 	private readonly CameraService _camera;
 	private readonly DataService _data;
 
-	public ItemSelection(CameraService _camera, DataService _data) {
+	public SelectionGui(CameraService _camera, DataService _data) {
 		this._camera = _camera;
 		this._data = _data;
 	}
@@ -49,7 +49,7 @@ public class ItemSelection {
 			return;
 
 		var dist = Vector3.Distance(camera->Object.Position, worldPos);
-		var select = new ItemSelect(item, new Vector3(pos2d, dist));
+		var select = new ItemSelect(item, pos2d, dist);
 		this.Items.Add(select);
 	}
 	
@@ -59,7 +59,7 @@ public class ItemSelection {
 
 	public void Draw() {
 		var config = this._data.GetConfig();
-		var drawList = ImGui.GetWindowDrawList();
+		var drawList = ImGui.GetBackgroundDrawList();
 		
         var isHovering = false;
 		foreach (var item in this.Items) {
@@ -68,7 +68,7 @@ public class ItemSelection {
 			
 			var isSelect = item.Item.IsSelected();
 			item.IsHovered = display.Mode switch {
-				DisplayMode.Dot => DrawPrimDot(drawList, pos2d, display),
+				DisplayMode.Dot => DrawPrimDot(drawList, pos2d, display, isSelect),
 				DisplayMode.Icon => DrawIconDot(drawList, pos2d, display, isSelect),
 				_ => false
 			};
@@ -103,8 +103,8 @@ public class ItemSelection {
 		// Sort objects by those closest to the camera.
 		//  TODO: Configuration.OrderBoneListByDistance
 		list.Sort((a, b) => {
-			if (Math.Abs(a.ScreenPos.Z - b.ScreenPos.Z) > 0.01f)
-				return a.ScreenPos.Z < b.ScreenPos.Z ? -1 : 1;
+			if (Math.Abs(a.Distance - b.Distance) > 0.01f)
+				return a.Distance < b.Distance ? -1 : 1;
 			return a.SortPriority - b.SortPriority;
 		});
 		
@@ -139,23 +139,23 @@ public class ItemSelection {
 		pos2d.Add(radius + HoverPadding)
 	);
 
-	private bool DrawPrimDot(ImDrawListPtr drawList, Vector2 pos2d, ItemDisplay display) {
+	private bool DrawPrimDot(ImDrawListPtr drawList, Vector2 pos2d, ItemDisplay display, bool isSelect = false) {
 		// TODO
-		const float radius = 7f;
+		var radius = isSelect ? 8f : 7f;
         
 		drawList.AddCircleFilled(
 			pos2d,
 			radius,
 			display.Color,
-			64
+			16
 		);
 		
 		drawList.AddCircle(
 			pos2d,
 			radius,
 			0xFF000000,
-			64,
-			1f
+			16,
+			isSelect ? 2.5f : 1f
 		);
 		
 		return IsHovering(pos2d, radius);
@@ -171,11 +171,11 @@ public class ItemSelection {
 			pos2d,
 			radius,
 			isSelect ? 0xAF000000u : (isHover ? 0x9A000000u : 0x70000000u),
-			64
+			16
 		);
 		
 		if (isSelect)
-			drawList.AddCircle(pos2d, radius, 0xFF000000, 64, 2f);
+			drawList.AddCircle(pos2d, radius, 0xFFEFEFEF, 16, 1.5f);
 
 		ImGui.SetCursorPos((pos2d - size / 2).AddX(0.75f));
 		Icons.DrawIcon(display.Icon, display.Color);
@@ -187,16 +187,20 @@ public class ItemSelection {
 
 	private class ItemSelect {
 		public readonly SceneObject Item;
-		public readonly Vector3 ScreenPos;
+		public readonly Vector2 ScreenPos;
+
+		public readonly float Distance;
 		public readonly int SortPriority;
 
 		public string Name => this.Item.Name;
 
 		public bool IsHovered;
 		
-		public ItemSelect(SceneObject item, Vector3 screenPos) {
+		public ItemSelect(SceneObject item, Vector2 screenPos, float dist) {
 			this.Item = item;
 			this.ScreenPos = screenPos;
+
+			this.Distance = dist;
 			if (item is ISortPriority prio)
 				this.SortPriority = prio.SortPriority;
 		}

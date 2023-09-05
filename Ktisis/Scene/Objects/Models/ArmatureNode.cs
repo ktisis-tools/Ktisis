@@ -1,16 +1,11 @@
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Scene.Impl;
-using Ktisis.Scene.Editing;
 using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Scene.Objects.Models; 
 
-public abstract class ArmatureNode : SceneObject, IEditMode, IVisibility, ISortPriority {
-    // IEditMode
-	
-	public EditMode EditMode { get; init; } = EditMode.Pose;
-	
+public abstract class ArmatureNode : SceneObject, IVisibility, ISortPriority {
 	// IVisibility
 	
 	public bool Visible { get; set; }

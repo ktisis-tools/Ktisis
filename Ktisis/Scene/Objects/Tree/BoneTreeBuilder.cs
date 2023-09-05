@@ -34,11 +34,12 @@ public class BoneTreeBuilder : BoneEnumerator {
 		var result = new List<BoneData>();
 
 		var skeleton = this.GetSkeleton();
-		if (skeleton != null) {
-			var bones = EnumerateBones();
-			result.AddRange(bones);
-		}
+		if (skeleton == null)
+			return result;
 		
+		var bones = EnumerateBones();
+		result.AddRange(bones);
+
 		return result;
 	}
 	
@@ -141,12 +142,14 @@ public class BoneTreeBuilder : BoneEnumerator {
 		foreach (var boneData in bones) {
 			var bone = exists?.Find(bone => bone.Name == boneData.Name);
 			if (bone is not null) {
-				bone.PartialId = this.PartialId;
-			} else {
-				group.AddChild(new Bone(armature, boneData, this.PartialId) {
-					SortPriority = basePrio + boneData.BoneIndex
-				});
+				if (this.Index <= bone.Data.PartialIndex)
+					group.RemoveChild(bone);
+				else continue;
 			}
+			
+			group.AddChild(new Bone(armature, boneData, this.PartialId) {
+				SortPriority = basePrio + boneData.BoneIndex
+			});
 		}
 		
 		group.OrderByPriority();

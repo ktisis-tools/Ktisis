@@ -1,16 +1,16 @@
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Linq;
 
 using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Scene.Objects.Tree;
-using Ktisis.Scene.Objects.World;
-using Ktisis.Data.Config.Display;
 using Ktisis.Interop.Unmanaged;
+using Ktisis.Data.Config.Display;
+using Ktisis.Scene.Objects.World;
+using Ktisis.Scene.Objects.Tree;
 
 namespace Ktisis.Scene.Objects.Models;
 
@@ -21,13 +21,13 @@ public class Armature : ArmatureGroup {
 	
 	// Bones
 
-	private readonly Dictionary<int, uint> Partials = new();
+	private readonly Dictionary<int, PartialCache> Partials = new();
 
 	private readonly Dictionary<(int p, int i), Bone> BoneMap = new();
 	
 	// Update handler
 
-	public unsafe override void Update(SceneManager _mgr, SceneContext ctx) {
+	public unsafe override void Update(SceneGraph scene, SceneContext ctx) {
 		var skele = this.Skeleton;
 		if (skele == null) return;
 
@@ -35,10 +35,14 @@ public class Armature : ArmatureGroup {
 			var partial = skele->PartialSkeletons[p];
 			var res = partial.SkeletonResourceHandle;
 
-			var id = res != null ? res->ResourceHandle.Id : 0;
-			if (!this.Partials.TryGetValue(p, out var prevId)) {
-				this.Partials.Add(p, id);
-				prevId = 0;
+            var id = res != null ? res->ResourceHandle.Id : 0;
+            
+            uint prevId = 0;
+			if (this.Partials.TryGetValue(p, out var cache)) {
+				prevId = cache.Id;
+			} else {
+				cache = new PartialCache(id);
+				this.Partials.Add(p, cache);
 			}
 
 			if (id == prevId) continue;
@@ -50,13 +54,14 @@ public class Armature : ArmatureGroup {
 
 			var isWeapon = skele->Owner->GetModelType() == CharacterBase.ModelType.Weapon;
 			var builder = new BoneTreeBuilder(p, id, partial, !isWeapon ? ctx.GetConfig().Categories : null);
-			if (id != 0) {
-				this.Partials[p] = id;
-				builder.AddToArmature(this);
-			}
 			
 			if (prevId != 0)
 				Clean(p, id);
+			
+			if (id != 0) {
+				cache.CopyPartial(id, partial);
+				builder.AddToArmature(this);
+			}
 			
 			BuildMap(p, id);
 			
@@ -74,7 +79,7 @@ public class Armature : ArmatureGroup {
 		if (pId == 0) return;
 		
 		foreach (var child in RecurseChildren()) {
-			if (child is Bone bone && bone.PartialId == pId)
+			if (child is Bone bone && bone.Data.PartialIndex == pIndex)
 				this.BoneMap.Add((pIndex, bone.Data.BoneIndex), bone);
 		}
 	}
@@ -85,8 +90,18 @@ public class Armature : ArmatureGroup {
 	private unsafe Skeleton* Skeleton => this.CharaBase != null ? this.CharaBase->Skeleton : null;
 	private unsafe CharacterBase* CharaBase => (CharacterBase*)(this.ParentChara?.Address ?? nint.Zero);
 	
+	// Armature / Skeleton
+	
 	public override Armature GetArmature() => this;
 	public new unsafe Pointer<Skeleton> GetSkeleton() => new(this.Skeleton);
+	
+	// Bone map
 
-	public IReadOnlyDictionary<(int p, int i), Bone> GetBoneMap() => this.BoneMap.AsReadOnly();
+	public Bone? GetBoneFromMap(int partialIx, int boneIx)
+		=> this.BoneMap!.GetValueOrDefault((partialIx, boneIx), null);
+	
+	// Partial cache
+	
+	public PartialCache? GetPartialCache(int partialIx)
+		=> this.Partials.TryGetValue(partialIx, out var result) ? result : null;
 }

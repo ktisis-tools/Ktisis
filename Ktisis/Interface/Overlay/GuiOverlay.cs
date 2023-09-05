@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using System.Collections.Generic;
 
 using Dalamud.Logging;
 using Dalamud.Interface;
@@ -8,50 +9,90 @@ using ImGuiNET;
 
 using Ktisis.Core;
 using Ktisis.Services;
-using Ktisis.Common.Extensions;
-using Ktisis.Interface.Overlay.Draw;
+using Ktisis.Scene;
+using Ktisis.Scene.Objects;
+using Ktisis.Scene.Editing;
+using Ktisis.Scene.Editing.Modes;
+using Ktisis.Common.Utility;
+using Ktisis.Interface.Helpers;
+using Ktisis.Interface.Overlay.Render;
 
 namespace Ktisis.Interface.Overlay;
-
-public delegate void OverlayEventHandler(GuiOverlay sender);
 
 public class GuiOverlay {
 	// Dependencies
 
 	private readonly CameraService _camera;
 	private readonly GPoseService _gpose;
-
-	private readonly SceneDraw SceneDraw;
+	private readonly SceneManager _scene;
+	
+	private readonly Gizmo? Gizmo;
+	
+	public readonly SelectionGui Selection;
 		
 	// State
 	
 	public bool Visible = true;
-
-	public readonly Gizmo? Gizmo;
 	
 	// Constructor
 
-	public GuiOverlay(IServiceContainer _services, CameraService _camera, GPoseService _gpose, NotifyService _notify) {
+	public GuiOverlay(
+		IServiceContainer _services,
+		CameraService _camera,
+		GPoseService _gpose,
+		SceneManager _scene,
+		NotifyService _notify
+	) {
 		this._camera = _camera;
 		this._gpose = _gpose;
-		
-		this.Gizmo = Gizmo.Create();
-		if (this.Gizmo == null) {
+		this._scene = _scene;
+        
+		if (Gizmo.Create() is Gizmo gizmo) {
+			this.Gizmo = gizmo;
+			gizmo.OnManipulate += OnManipulate;
+		} else {
 			_notify.Warning(
 				"Failed to create gizmo. This may be due to version incompatibilities.\n" +
 				"Please check your error log for more information."
 			);
 		}
+
+		this.Selection = _services.Inject<SelectionGui>();
+		this.Selection.OnItemSelected += OnItemSelected;
 		
-		_services.Inject<SceneDraw>()
-			.SubscribeTo(this);
+		this.AddRenderer<ObjectRenderer>(EditMode.Object)
+			.AddRenderer<PoseRenderer>(EditMode.Pose);
 	}
+	
+	// Renderers
+	// TODO: Probably best to link these via reflection/attributes.
+
+	private readonly Dictionary<EditMode, RendererBase> Renderers = new();
+
+	private GuiOverlay AddRenderer<T>(EditMode id) where T : RendererBase, new() {
+		var item = new T();
+		this.Renderers.Add(id, item);
+		return this;
+	}
+
+	private RendererBase? GetRenderer(EditMode id) => this.Renderers
+		.TryGetValue(id, out var result) ? result : null;
 	
 	// Events
 
-	public OverlayEventHandler? OnOverlayDraw;
+	private void OnItemSelected(SceneObject item) {
+		var flags = GuiSelect.GetSelectFlags();
+		this._scene.Editor.Selection.HandleClick(item, flags);
+	}
+
+	private void OnManipulate(Gizmo gizmo) {
+		if (!this._scene.IsActive) return;
+		
+		this._scene.Editor.GetHandler()
+			?.Manipulate(gizmo.GetResult(), gizmo.GetDelta());
+	}
 	
-	// UI draw
+	// Create overlay window
 
 	public void Draw() {
 		// TODO: Toggle
@@ -64,7 +105,7 @@ public class GuiOverlay {
 			else return;
 
 			try {
-				this.OnOverlayDraw?.InvokeSafely(this);
+				DrawScene();
 			} catch (Exception err) {
 				PluginLog.Error($"Error while drawing overlay:\n{err}");
 			}
@@ -88,6 +129,37 @@ public class GuiOverlay {
 		ImGui.PopStyleVar();
 		return begin;
 	}
+	
+	// Draw scene
+
+	private void DrawScene() {
+		if (!this._scene.IsActive) return;
+
+		var editor = this._scene.Editor;
+		if (editor.GetHandler() is ModeHandler handler)
+			GetRenderer(editor.CurrentMode)?.OnDraw(this, handler);
+
+		this.Selection.Draw();
+		
+		if (editor.GetTransform() is Transform trans) {
+			var matrix = trans.ComposeMatrix();
+			this.Gizmo?.Manipulate(matrix);
+		}
+	}
+	
+	// Draw line
+
+	public unsafe void DrawLine(ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos) {
+		var camera = this._camera.GetSceneCamera();
+		if (camera == null) return;
+
+		if (!camera->WorldToScreen(fromPos, out var fromPos2d)) return;
+		if (!camera->WorldToScreen(toPos, out var toPos2d)) return;
+
+		drawList.AddLine(fromPos2d, toPos2d, 0xFFFFFFFF);
+	}
+	
+	// Gizmo
 
 	private void BeginGizmo() {
 		if (this.Gizmo is null) return;

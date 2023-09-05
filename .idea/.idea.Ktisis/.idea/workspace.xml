@@ -8,23 +8,49 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Draw/ArmatureDraw.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Impl/IHavokBone.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneEnumerator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Common/Extensions/HavokEx.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Common/Extensions/MatrixEx.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/ObjectRenderer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/PoseRenderer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/RendererBase.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/ModeHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/PartialCache.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/DotSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/DotSelection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Extensions/VectorEx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Extensions/VectorEx.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Schema/Categories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Schema/Categories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/SceneTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/SceneTree.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Helpers/GuiSelect.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Helpers/GuiSelect.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Draw/ObjectMode.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Draw/PoseMode.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Draw/SceneDraw.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Gizmo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Gizmo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Draw/SceneDraw.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/ItemSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SelectionGui.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Widgets/Buttons.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Widgets/Buttons.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Posing/PoseEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Posing/PoseEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Impl/IOverlay.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/ModeBase.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/ObjectMode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/ObjectMode.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/PoseMode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/PoseMode.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/SceneEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/SceneEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Handlers/LightHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Handlers/LightHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Impl/IEditMode.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Impl/IHavokBone.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Impl/IManipulable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Impl/IManipulable.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Impl/ITransform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Impl/ITransform.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Armature.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Armature.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/ArmatureGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/ArmatureGroup.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/ArmatureNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/ArmatureNode.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Bone.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Bone.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/BoneGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/BoneGroup.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/SceneObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/SceneObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneTreeBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneTreeBuilder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/World/Character.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/World/Character.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneGraph.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneGraph.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +75,10 @@
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_demo.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_internal.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Ktisis/Interface/Overlay/Modes/IDrawMode.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Ktisis/Interface/Overlay/Modes/ObjectMode.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Ktisis/Interface/Overlay/Modes/PoseMode.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/RendererBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Scene/SceneGraph.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
@@ -162,7 +192,10 @@
       <workItem from="1693404639323" duration="22592000" />
       <workItem from="1693472450446" duration="11480000" />
       <workItem from="1693580967846" duration="28962000" />
-      <workItem from="1693651807578" duration="14666000" />
+      <workItem from="1693651807578" duration="35807000" />
+      <workItem from="1693740357941" duration="19630000" />
+      <workItem from="1693826658046" duration="29919000" />
+      <workItem from="1693908035689" duration="8650000" />
     </task>
     <servers />
   </component>

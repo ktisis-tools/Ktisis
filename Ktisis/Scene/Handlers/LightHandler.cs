@@ -34,7 +34,7 @@ public class LightHandler {
 
 	private readonly Dictionary<int, SceneLight> GPoseLights = new();
 
-	private unsafe void OnSceneUpdate(SceneManager _mgr, SceneGraph scene) {
+	private unsafe void OnSceneUpdate(SceneGraph scene, SceneContext _ctx) {
 		var module = this._gpose.GetEventModule();
 		if (module == null) return;
 

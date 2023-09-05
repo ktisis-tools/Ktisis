@@ -107,17 +107,4 @@ public class Gizmo {
 	public Matrix4x4 GetResult() => this.HasMoved ? this.ResultMatrix : Matrix4x4.Identity;
 
 	public Matrix4x4 GetDelta() => this.HasMoved ? this.DeltaMatrix : Matrix4x4.Identity;
-
-	public Matrix4x4 ApplyDelta(Matrix4x4 target, Matrix4x4 delta, Matrix4x4? result = null) {
-        var deltaT = Transform.FromMatrix(delta);
-        result ??= GetResult();
-		
-		return Matrix4x4.Multiply(
-			Matrix4x4.Transform(target, deltaT.Rotation),
-			Matrix4x4.CreateTranslation(deltaT.Position) * Matrix4x4.CreateScale(
-				deltaT.Scale,
-				result.Value.Translation
-			)
-		);
-	}
 }
