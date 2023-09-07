@@ -58,10 +58,9 @@ public class Armature : ArmatureGroup {
 			if (prevId != 0)
 				Clean(p, id);
 			
-			if (id != 0) {
-				cache.CopyPartial(id, partial);
+			cache.CopyPartial(id, partial);
+			if (id != 0)
 				builder.AddToArmature(this);
-			}
 			
 			BuildMap(p, id);
 			

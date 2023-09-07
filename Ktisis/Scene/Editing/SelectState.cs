@@ -8,7 +8,7 @@ namespace Ktisis.Scene.Editing;
 
 public enum SelectFlags {
 	None,
-	Multiple
+	Ctrl
 }
 
 public class SelectState {
@@ -34,9 +34,9 @@ public class SelectState {
 	public IEnumerable<SceneObject> GetSelected()
 		=> this._selected.AsReadOnly();
 
-	public IEnumerable<IManipulable> GetManipulable() => GetSelected()
-		.Where(item => item is IManipulable)
-		.Cast<IManipulable>();
+	public IEnumerable<ITransform> GetManipulable() => GetSelected()
+		.Where(item => item is ITransform)
+		.Cast<ITransform>();
 	
 	// Item management
 
@@ -63,7 +63,7 @@ public class SelectState {
 		var isMulti = this.Count > 1;
 		
 		// Ctrl modifier
-		if (flags.HasFlag(SelectFlags.Multiple)) {
+		if (flags.HasFlag(SelectFlags.Ctrl)) {
 			RemoveItem(item);
 		} else {
 			RemoveAll();

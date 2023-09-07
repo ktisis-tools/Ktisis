@@ -8,7 +8,6 @@ using Ktisis.Scene.Objects.World;
 using Ktisis.Scene.Editing.Attributes;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Extensions;
-using Ktisis.Common.Utility;
 
 namespace Ktisis.Scene.Editing.Modes;
 
@@ -38,35 +37,23 @@ public class ObjectMode : ModeHandler {
 	
 	// Selection
 	
-	private IEnumerable<IManipulable> GetSelected()
+	private IEnumerable<ITransform> GetSelected()
 		=> this.Manager.Editor.Selection
 			.GetSelected()
 			.Where(item => item is WorldObject)
-			.Cast<IManipulable>();
+			.Cast<ITransform>();
+
+	public override ITransform? GetTransformTarget()
+		=> (WorldObject?)GetSelected().FirstOrDefault();
 	
 	// Object transform
 
-	public override Transform? GetTransform() {
+	public override void Manipulate(ITransform target, Matrix4x4 targetMx, Matrix4x4 deltaMx) {
 		foreach (var item in GetSelected()) {
-			if (item.GetTransform() is Transform trans)
-				return trans;
-		}
-		
-		return null;
-	}
-
-	public override void Manipulate(Matrix4x4 target, Matrix4x4 delta) {
-		var isPrimary = true;
-		foreach (var item in GetSelected()) {
-			var matrix = item.ComposeMatrix();
-			if (matrix is null) continue;
-
-			if (isPrimary) {
-				item.SetMatrix(target);
-				isPrimary = false;
-			} else {
-				item.SetMatrix(matrix.Value.ApplyDelta(delta, target));
-			}
+			if (item == target)
+				item.SetMatrix(targetMx);
+			else if (item.GetMatrix() is Matrix4x4 matrix)
+				item.SetMatrix(matrix.ApplyDelta(deltaMx, targetMx));
 		}
 	}
 }

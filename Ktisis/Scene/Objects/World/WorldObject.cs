@@ -9,7 +9,7 @@ using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Scene.Objects.World; 
 
-public class WorldObject : SceneObject, IManipulable, IVisibility {
+public class WorldObject : SceneObject, ITransform, IVisibility {
 	// Unmanaged
 	
 	public nint Address { get; protected set; }

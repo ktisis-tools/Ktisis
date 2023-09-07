@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Collections.Generic;
 
-using Ktisis.Common.Utility;
+using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Editing.Attributes;
 
@@ -23,10 +23,10 @@ public abstract class ModeHandler {
 	public abstract IEnumerable<SceneObject> GetEnumerator();
 	
 	// Transforms
-	
-	public abstract Transform? GetTransform();
 
-	public abstract void Manipulate(Matrix4x4 matrix, Matrix4x4 delta);
+	public abstract ITransform? GetTransformTarget();
+
+	public abstract void Manipulate(ITransform target, Matrix4x4 matrix, Matrix4x4 delta);
 	
 	// Attribute access
 

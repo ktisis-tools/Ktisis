@@ -8,16 +8,16 @@ using ImGuiNET;
 
 using Ktisis.Data;
 using Ktisis.Scene;
+using Ktisis.Posing;
 using Ktisis.Services;
+using Ktisis.Scene.Editing;
 using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Components;
-using Ktisis.Posing;
-using Ktisis.Scene.Editing;
 
 namespace Ktisis.Interface.Windows; 
 
 public class Workspace : Window {
-	// Service
+	// Constructor
 
 	private readonly PluginGui _gui;
 	private readonly GPoseService _gpose;
@@ -56,6 +56,9 @@ public class Workspace : Window {
 		var editor = this._sceneMgr.Editor;
 		var scene = this._sceneMgr.Scene;
 		ImGui.BeginDisabled(scene is null);
+        
+		DrawWindowButtons();
+		ImGui.SameLine();
 
 		var isPosing = this._posing.IsActive;
 		if (ImGui.Checkbox("Posing", ref isPosing))
@@ -64,6 +67,7 @@ public class Workspace : Window {
 		ImGui.Spacing();
 		
 		var mode = editor.CurrentMode;
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		if (ImGui.BeginCombo("Mode", Enum.GetName(mode))) {
 			foreach (var value in Enum.GetValuesAsUnderlyingType<EditMode>()) {
 				var enumVal = (EditMode)value;
@@ -79,13 +83,17 @@ public class Workspace : Window {
 				// TODO
 				Icons.DrawIcon(icon);
 				ImGui.SameLine();
-				if (ImGui.Selectable(enumVal.ToString()))
+				if (ImGui.Selectable($"{enumVal} Mode"))
 					editor.CurrentMode = enumVal;
 			}
 			ImGui.EndCombo();
 		}
-
+        
 		ImGui.Spacing();
+		
+		// Draw window toggles
+
+		
 		
 		// Draw scene
 		
@@ -103,6 +111,13 @@ public class Workspace : Window {
 		DrawTreeButtons();
 		
 		ImGui.EndDisabled();
+	}
+
+	private void DrawWindowButtons() {
+		var transform = this._gui.GetWindow<TransformWindow>();
+		if (ImGui.Button("Open debug window")) {
+			transform.Toggle();
+		}
 	}
 	
 	private void DrawStateFrame(SceneGraph? scene) {

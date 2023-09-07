@@ -1,18 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 
 using Ktisis.Common.Utility;
+using Ktisis.ImGuizmo;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Scene.Editing.Modes;
+using Ktisis.Scene.Impl;
 
 namespace Ktisis.Scene.Editing;
 
 [Flags]
 public enum EditFlags {
 	None = 0,
-	Propagate = 1
+	Propagate = 1,
+	Mirror = 2
 }
 
 public enum EditMode {
@@ -32,8 +37,8 @@ public class SceneEditor {
 		this.Manager = manager;
 		this.Selection = new SelectState();
 
-		this.AddMode<ObjectMode>(EditMode.Object)
-			.AddMode<PoseMode>(EditMode.Pose);
+		this.AddMode<PoseMode>(EditMode.Pose)
+			.AddMode<ObjectMode>(EditMode.Object);
 		
 		manager.OnSceneChanged += OnSceneChanged;
 	}
@@ -43,6 +48,9 @@ public class SceneEditor {
 	public EditFlags Flags = EditFlags.Propagate;
 
 	public EditMode CurrentMode = EditMode.Object;
+
+	public Mode TransformMode = Mode.Local;
+	public Operation TransformOp = Operation.ROTATE;
 	
 	// Register mode handlers
 
@@ -83,8 +91,15 @@ public class SceneEditor {
 			_ => true
 		};
 	}
-	
-	// Transforms
 
-	public Transform? GetTransform() => GetHandler()?.GetTransform();
+	public ITransform? GetTransformTarget()
+		=> GetHandler()?.GetTransformTarget();
+
+	public Transform? GetTransform()
+		=> GetTransformTarget()?.GetTransform();
+
+	public void Manipulate(ITransform target, Matrix4x4 targetMx, Matrix4x4 deltaMx) {
+		foreach (var (_, handler) in GetHandlers())
+			handler.Manipulate(target, targetMx, deltaMx);
+	}
 }

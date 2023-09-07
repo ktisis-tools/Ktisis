@@ -10,6 +10,12 @@ using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface.Overlay;
 
+public enum GizmoID : int {
+	Default = -1,
+	OverlayMain,
+	TransformEditor
+}
+
 public delegate void OnManipulateHandler(Gizmo sender);
 
 public class Gizmo {
@@ -45,13 +51,25 @@ public class Gizmo {
 		return IsInit = success;
 	}
 
-	internal static Gizmo? Create() {
+	public static Gizmo? Create(GizmoID gizmoId) {
 		if (!Gizmo.IsInit && !Gizmo.InitLibrary())
 			return null;
-		return new Gizmo();
+		return new Gizmo(gizmoId);
 	}
 	
-	// Callback handling
+	// Constructor
+
+	public readonly GizmoID Id;
+
+	public Gizmo(GizmoID gizmoId = GizmoID.Default) {
+		this.Id = gizmoId;
+	}
+	
+	// Properties
+	
+	public float ScaleFactor = 0.1f;
+	
+	// Events
 
 	public event OnManipulateHandler? OnManipulate;
 	
@@ -65,39 +83,57 @@ public class Gizmo {
 
 	private Matrix4x4 ResultMatrix = Matrix4x4.Identity;
 	private Matrix4x4 DeltaMatrix = Matrix4x4.Identity;
+
+	public Mode Mode = Mode.Local;
+	public Operation Operation = Operation.UNIVERSAL;
 	
 	// Draw
 
-	internal void BeginFrame(Matrix4x4 view, Matrix4x4 proj) {
-		this.HasDrawn = false;
-		this.HasMoved = false;
-
+	public void SetMatrix(Matrix4x4 view, Matrix4x4 proj) {
 		this.ViewMatrix = view;
 		this.ProjMatrix = proj;
-
-		ImGuizmo.Gizmo.BeginFrame();
-
-		var ws = ImGui.GetWindowSize();
-		ImGuizmo.Gizmo.SetDrawRect(0, 0, ws.X, ws.Y);
 	}
 
-	internal void Manipulate(Matrix4x4 mx) {
-		if (this.HasDrawn) return;
+	public void BeginFrame(Vector2 pos, Vector2 size) {
+		this.HasDrawn = false;
+		this.HasMoved = false;
 		
-		this.HasMoved = ImGuizmo.Gizmo.Manipulate(
+		ImGuizmo.Gizmo.SetDrawRect(pos.X, pos.Y, size.X, size.Y);
+        
+		ImGuizmo.Gizmo.ID = (int)this.Id;
+		ImGuizmo.Gizmo.GizmoScale = this.ScaleFactor;
+		ImGuizmo.Gizmo.BeginFrame();
+	}
+
+	public unsafe void PushDrawList() {
+		ImGuizmo.Gizmo.DrawList = (nint)ImGui.GetWindowDrawList().NativePtr;
+	}
+
+	public bool ManipulateIm(ref Matrix4x4 mx, out Matrix4x4 delta) {
+		delta = Matrix4x4.Identity;
+		
+		if (this.HasDrawn) return false;
+		
+		var result = ImGuizmo.Gizmo.Manipulate(
 			this.ViewMatrix,
 			this.ProjMatrix,
-			Operation.UNIVERSAL,
-			Mode.Local,
+			this.Operation,
+			this.Mode,
 			ref mx,
-			out this.DeltaMatrix
+			out delta
 		);
 
-		this.ResultMatrix = mx;
 		this.HasDrawn = true;
+
+		return result;
 	}
 
-	internal void EndFrame() {
+	public void Manipulate(Matrix4x4 mx) {
+		this.HasMoved |= ManipulateIm(ref mx, out this.DeltaMatrix);
+		this.ResultMatrix = mx;
+	}
+
+	public void EndFrame() {
 		if (this.HasMoved)
 			this.OnManipulate?.Invoke(this);
 	}
