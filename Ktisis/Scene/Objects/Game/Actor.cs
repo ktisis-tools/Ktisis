@@ -20,6 +20,7 @@ public class Actor : Character {
 			var name = gameObj.Name.TextValue;
 			if (name.IsNullOrEmpty())
 				name = $"Actor {gameObj.ObjectIndex}";
+
 			return name;
 		}
 	}

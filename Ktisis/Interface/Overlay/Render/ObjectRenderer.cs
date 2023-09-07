@@ -1,6 +1,5 @@
 using System.Linq;
 
-using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Scene.Editing.Modes;
 using Ktisis.Common.Utility;
@@ -17,10 +16,9 @@ public class ObjectRenderer : RendererBase {
 	}
 
 	private void DrawItem(GuiOverlay overlay, WorldObject item) {
-		if (!item.Visible || item is not IManipulable world)
-			return;
+		if (!item.Visible) return;
 
-		if (world.GetTransform() is Transform trans)
+		if (item.GetTransform() is Transform trans)
 			overlay.Selection.AddItem(item, trans.Position);
 	}
 }

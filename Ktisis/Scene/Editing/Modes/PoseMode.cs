@@ -66,7 +66,7 @@ public class PoseMode : ModeHandler {
 
 	// Object transform
 
-	private Bone? GetTransformTarget() {
+	public override ITransform? GetTransformTarget() {
 		Bone? target = null;
 
 		foreach (var bone in GetCorrelatingBones()) {
@@ -96,21 +96,18 @@ public class PoseMode : ModeHandler {
 		return target;
 	}
 
-	public override Transform? GetTransform()
-		=> GetTransformTarget()?.GetTransform();
-
 	// Handler for bone manipulation
 
-	public unsafe override void Manipulate(Matrix4x4 matrix, Matrix4x4 deltaMx) {
-		var target = GetTransformTarget();
+	public unsafe override void Manipulate(ITransform target, Matrix4x4 matrix, Matrix4x4 _deltaMx) {
+		if (target is not ArmatureNode) return;
 
 		// Calculate delta transform
 
 		var deltaT = new Transform(matrix);
-		if (target?.GetTransform() is Transform trans) {
+		if (target.GetTransform() is Transform trans) {
 			deltaT.Position -= trans.Position;
 			deltaT.Rotation /= trans.Rotation;
-			deltaT.Scale = new Transform(deltaMx).Scale;
+			deltaT.Scale /= trans.Scale;
 		} else return;
 
 		// Build armature map
@@ -119,6 +116,7 @@ public class PoseMode : ModeHandler {
 		var armatureMap = new Dictionary<Armature, Dictionary<int, List<Bone>>>();
 		foreach (var bone in GetCorrelatingBones()) {
 			var armature = bone.GetArmature();
+			if (armature.Parent == target) continue;
 
 			var dictExists = armatureMap.TryGetValue(armature, out var dict);
 			dict ??= new Dictionary<int, List<Bone>>();
@@ -159,8 +157,12 @@ public class PoseMode : ModeHandler {
 					if (bone == target) {
 						newMx = matrix;
 					} else {
+						var rotate = deltaT.Rotation;
+						if (this.Manager.Editor.Flags.HasFlag(EditFlags.Mirror))
+							rotate = Quaternion.Inverse(rotate);
+
 						var scale = Matrix4x4.CreateScale(initial.Scale * deltaT.Scale);
-						var rot = Matrix4x4.CreateFromQuaternion(initial.Rotation) * Matrix4x4.CreateFromQuaternion(deltaT.Rotation);
+						var rot = Matrix4x4.CreateFromQuaternion(initial.Rotation) * Matrix4x4.CreateFromQuaternion(rotate);
 						var pos = Matrix4x4.CreateTranslation(initial.Position + deltaT.Position);
 						newMx = scale * rot * pos;
 					}

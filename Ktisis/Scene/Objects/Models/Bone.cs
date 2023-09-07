@@ -1,18 +1,16 @@
-using System.Numerics;
-
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Posing;
 using Ktisis.Posing.Bones;
-using Ktisis.Scene.Impl;
-using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Display;
 using Ktisis.Interop.Unmanaged;
+using Ktisis.Common.Utility;
+using Ktisis.Scene.Impl;
 
 namespace Ktisis.Scene.Objects.Models;
 
-public class Bone : ArmatureNode, IManipulable {
+public class Bone : ArmatureNode, ITransformLocal {
 	// Properties
 
 	public override ItemType ItemType => ItemType.BoneNode;
@@ -32,16 +30,9 @@ public class Bone : ArmatureNode, IManipulable {
 		this.PartialId = pId;
 	}
 
-	// Armature access
+	// Skeleton access
 
 	public override Armature GetArmature() => this.Armature;
-
-	// Helpers
-
-	public bool MatchesId(int pId, int bId)
-		=> this.Data.PartialIndex == pId && this.Data.BoneIndex == bId;
-
-	// IManipulable
 
 	private unsafe hkaPose* GetPose(Pointer<Skeleton> skeleton) {
 		if (skeleton.IsNull || skeleton.Data->PartialSkeletons == null)
@@ -51,24 +42,41 @@ public class Bone : ArmatureNode, IManipulable {
 		return partial.GetHavokPose(0);
 	}
 
+	private unsafe hkaPose* GetPose()
+		=> GetPose(GetSkeleton());
+
+	// ITransformLocal
+
+	public unsafe Transform? GetLocalTransform() {
+		var pose = GetPose();
+		if (pose == null) return null;
+		return PoseEditor.GetModelTransform(pose, this.Data.BoneIndex);
+	}
+
+	public unsafe void SetLocalTransform(Transform trans) {
+		var pose = GetPose();
+		if (pose == null) return;
+		PoseEditor.SetModelTransform(pose, this.Data.BoneIndex, trans);
+	}
+
+	// ITransform
+
 	public unsafe Transform? GetTransform() {
 		var skeleton = GetSkeleton();
 		var pose = GetPose(skeleton);
 		if (pose == null) return null;
-
 		return PoseEditor.GetWorldTransform(skeleton.Data, pose, this.Data.BoneIndex);
 	}
 
 	public unsafe void SetTransform(Transform trans) {
-		var skeleton = this.GetSkeleton();
+		var skeleton = GetSkeleton();
 		var pose = GetPose(skeleton);
 		if (pose == null) return;
-
-		var initial = PoseEditor.GetModelTransform(pose, this.Data.BoneIndex);
-		if (initial is null) return;
-
-		var skeleTrans = new Transform(skeleton.Data->Transform);
-		var modelTrans = PoseEditor.WorldToModel(trans, skeleTrans);
-		PoseEditor.SetModelTransform(pose, this.Data.BoneIndex, modelTrans);
+		PoseEditor.SetWorldTransform(skeleton.Data, pose, this.Data.BoneIndex, trans);
 	}
+
+	// Helpers
+
+	public bool MatchesId(int pId, int bId)
+		=> this.Data.PartialIndex == pId && this.Data.BoneIndex == bId;
 }

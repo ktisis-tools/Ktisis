@@ -13,7 +13,7 @@ using Ktisis.Scene.Editing;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Objects.World;
-using Ktisis.Interface.Helpers;
+using Ktisis.Common.Utility;
 using Ktisis.Interface.Widgets;
 using Ktisis.Common.Extensions;
 using Ktisis.Data.Config.Display;
@@ -196,7 +196,7 @@ public class SceneTree {
 		if (!isHover || !ImGui.IsMouseClicked(ImGuiMouseButton.Left))
 			return;
 
-		var flags = GuiSelect.GetSelectFlags();
+		var flags = GuiHelpers.GetSelectFlags();
 		this._sceneMgr.Editor.Selection.HandleClick(item, flags);
 	}
 }

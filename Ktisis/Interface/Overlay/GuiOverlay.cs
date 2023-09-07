@@ -12,10 +12,10 @@ using Ktisis.Scene;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Editing;
 using Ktisis.Scene.Editing.Modes;
-using Ktisis.Interface.Helpers;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Utility;
 using Ktisis.Services;
+using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -47,8 +47,9 @@ public class GuiOverlay {
 		this._gpose = _gpose;
 		this._scene = _scene;
 
-		if (Gizmo.Create() is Gizmo gizmo) {
+		if (Gizmo.Create(GizmoID.OverlayMain) is Gizmo gizmo) {
 			this.Gizmo = gizmo;
+			gizmo.Operation = Operation.ROTATE;
 			gizmo.OnManipulate += OnManipulate;
 		} else {
 			_notify.Warning(
@@ -84,15 +85,18 @@ public class GuiOverlay {
 	// Events
 
 	private void OnItemSelected(SceneObject item) {
-		var flags = GuiSelect.GetSelectFlags();
+		var flags = GuiHelpers.GetSelectFlags();
 		this._scene.Editor.Selection.HandleClick(item, flags);
 	}
 
 	private void OnManipulate(Gizmo gizmo) {
 		if (!this._scene.IsActive) return;
 
-		this._scene.Editor.GetHandler()
-			?.Manipulate(gizmo.GetResult(), gizmo.GetDelta());
+		var target = this._scene.Editor.GetHandler()?
+			.GetTransformTarget();
+
+		if (target is not null)
+			this._scene.Editor.Manipulate(target, gizmo.GetResult(), gizmo.GetDelta());
 	}
 
 	// Create overlay window
@@ -167,10 +171,14 @@ public class GuiOverlay {
 	private void BeginGizmo() {
 		if (this.Gizmo is null) return;
 
-		var proj = this._camera.GetProjectionMatrix();
 		var view = this._camera.GetViewMatrix();
-		if (proj is Matrix4x4 projMx && view is Matrix4x4 viewMx)
-			this.Gizmo.BeginFrame(viewMx, projMx);
+		var proj = this._camera.GetProjectionMatrix();
+		if (view is Matrix4x4 viewMx && proj is Matrix4x4 projMx ) {
+			var size = ImGui.GetIO().DisplaySize;
+			this.Gizmo.SetMatrix(viewMx, projMx);
+			this.Gizmo.BeginFrame(Vector2.Zero, size);
+			this.Gizmo.Mode = this._scene.Editor.TransformMode;
+		}
 	}
 
 	private void EndFrame() {
