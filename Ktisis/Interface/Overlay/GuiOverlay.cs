@@ -178,6 +178,7 @@ public class GuiOverlay {
 			this.Gizmo.SetMatrix(viewMx, projMx);
 			this.Gizmo.BeginFrame(Vector2.Zero, size);
 			this.Gizmo.Mode = this._scene.Editor.TransformMode;
+			this.Gizmo.Operation = this._scene.Editor.TransformOp;
 		}
 	}
 
