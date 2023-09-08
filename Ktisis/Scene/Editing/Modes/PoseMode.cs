@@ -98,15 +98,20 @@ public class PoseMode : ModeHandler {
 
 	// Handler for bone manipulation
 
+	private readonly static Vector3 InverseMax = new(10f, 10f, 10f);
+
 	public unsafe override void Manipulate(ITransform target, Matrix4x4 matrix, Matrix4x4 _deltaMx) {
 		if (target is not ArmatureNode) return;
 
 		// Calculate delta transform
 
 		var deltaT = new Transform(matrix);
+		var mirror = this.Manager.Editor.Flags.HasFlag(EditFlags.Mirror);
 		if (target.GetTransform() is Transform trans) {
-			deltaT.Position -= trans.Position;
-			deltaT.Rotation /= trans.Rotation;
+			var deltaPos = deltaT.Position - trans.Position;
+			var deltaRot = deltaT.Rotation / trans.Rotation;
+			deltaT.Position = mirror ? -deltaPos : deltaPos;
+			deltaT.Rotation = mirror ? Quaternion.Inverse(deltaRot) : deltaRot;
 			deltaT.Scale /= trans.Scale;
 		} else return;
 
@@ -157,12 +162,8 @@ public class PoseMode : ModeHandler {
 					if (bone == target) {
 						newMx = matrix;
 					} else {
-						var rotate = deltaT.Rotation;
-						if (this.Manager.Editor.Flags.HasFlag(EditFlags.Mirror))
-							rotate = Quaternion.Inverse(rotate);
-
-						var scale = Matrix4x4.CreateScale(initial.Scale * deltaT.Scale);
-						var rot = Matrix4x4.CreateFromQuaternion(initial.Rotation) * Matrix4x4.CreateFromQuaternion(rotate);
+						var scale = Matrix4x4.CreateScale(mirror ? Vector3.Min(initial.Scale / deltaT.Scale, InverseMax) : initial.Scale * deltaT.Scale);
+						var rot = Matrix4x4.CreateFromQuaternion(initial.Rotation) * Matrix4x4.CreateFromQuaternion(deltaT.Rotation);
 						var pos = Matrix4x4.CreateTranslation(initial.Position + deltaT.Position);
 						newMx = scale * rot * pos;
 					}
