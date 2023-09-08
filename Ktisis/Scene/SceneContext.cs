@@ -6,12 +6,12 @@ namespace Ktisis.Scene;
 public class SceneContext {
 	// Constructor
 	
-	private readonly DataService _data;
+	private readonly ConfigService _cfg;
 
 	private readonly SceneManager Manager;
 
-	public SceneContext(SceneManager manager, DataService _data) {
-		this._data = _data;
+	public SceneContext(SceneManager manager, ConfigService _cfg) {
+		this._cfg = _cfg;
 		
 		this.Manager = manager;
 	}
@@ -24,5 +24,5 @@ public class SceneContext {
 	
 	// Config
 
-	public ConfigFile GetConfig() => this._data.GetConfig();
+	public ConfigFile GetConfig() => this._cfg.Config;
 }
