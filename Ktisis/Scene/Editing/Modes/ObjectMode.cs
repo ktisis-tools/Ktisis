@@ -49,6 +49,9 @@ public class ObjectMode : ModeHandler {
 	// Object transform
 
 	public override void Manipulate(ITransform target, Matrix4x4 targetMx, Matrix4x4 deltaMx) {
+		if (this.Manager.Editor.Flags.HasFlag(EditFlags.Mirror))
+			Matrix4x4.Invert(deltaMx, out deltaMx);
+		
 		foreach (var item in GetSelected()) {
 			if (item == target)
 				item.SetMatrix(targetMx);
