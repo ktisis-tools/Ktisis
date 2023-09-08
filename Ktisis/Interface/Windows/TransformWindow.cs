@@ -8,34 +8,38 @@ using ImGuiNET;
 using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Editing;
-using Ktisis.Services;
-using Ktisis.Common.Utility;
 using Ktisis.Common.Extensions;
+using Ktisis.Data.Config;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Widgets;
+using Ktisis.Services;
 using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Windows; 
 
 public class TransformWindow : Window {
 	// Constructor
-    
+
+	private readonly ConfigService _cfg;
 	private readonly SceneManager _scene;
 	private readonly CameraService _camera;
 
 	private readonly Gizmo2D? Gizmo;
 	private readonly TransformTable Table;
 	
+	private ConfigFile Config => this._cfg.Config;
 	private SceneEditor Editor => this._scene.Editor;
 
 	public TransformWindow(
+		ConfigService _cfg,
 		SceneManager _scene,
 		CameraService _camera
 	) : base(
 		"Transform Editor",
 		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoResize
 	) {
+		this._cfg = _cfg;
 		this._scene = _scene;
 		this._camera = _camera;
 
@@ -46,14 +50,10 @@ public class TransformWindow : Window {
 		RespectCloseHotkey = false;
 	}
 	
-	// State
-	
-	private bool ShowGizmo = true;
-	
 	// Events
 
 	private void OnClickOperation(Operation op) {
-		this.Editor.TransformOp = op;
+		this.Config.Gizmo_Op = op;
 	}
 	
 	// UI draw
@@ -89,35 +89,36 @@ public class TransformWindow : Window {
 		var iconSize = UiBuilder.IconFont.FontSize * 2;
 		var iconBtnSize =new Vector2(iconSize, iconSize);
 		
-		var mode = this.Editor.TransformMode;
+		var mode = this.Config.Gizmo_Mode;
 		var modeIcon = mode == Mode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home;
 		var modeHint = mode == Mode.World ? "World Transform" : "Local Transform";
 		if (Buttons.DrawIconButtonHint(modeIcon, modeHint, iconBtnSize))
-			this.Editor.TransformMode = mode == Mode.World ? Mode.Local : Mode.World;
+			this.Config.Gizmo_Mode = mode == Mode.World ? Mode.Local : Mode.World;
 		
 		ImGui.SameLine(0, spacing);
 
-		var flags = this.Editor.Flags;
-
+		var flags = this.Config.Editor_Flags;
+		
 		var isMirror = flags.HasFlag(EditFlags.Mirror);
 		var mrIcon = isMirror ? FontAwesomeIcon.ArrowDownUpAcrossLine : FontAwesomeIcon.GripLines;
 		var mrHint = isMirror ? "Mirror Transform" : "Parallel Transform";
 		if (Buttons.DrawIconButtonHint(mrIcon, mrHint, iconBtnSize))
-			this.Editor.Flags ^= EditFlags.Mirror;
+			this.Config.Editor_Flags ^= EditFlags.Mirror;
 
         ImGui.SameLine(0, spacing);
 		var avail = ImGui.GetContentRegionAvail().X;
 		if (avail > iconSize)
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
 
-		var gizmoIcon = this.ShowGizmo ? FontAwesomeIcon.CaretUp : FontAwesomeIcon.CaretDown;
-		var gizmoHint = this.ShowGizmo ? "Hide rotation gizmo" : "Show rotation gizmo";
+		var show = this.Config.Editor_Gizmo;
+		var gizmoIcon = show ? FontAwesomeIcon.CaretUp : FontAwesomeIcon.CaretDown;
+		var gizmoHint = show ? "Hide rotation gizmo" : "Show rotation gizmo";
 		if (Buttons.DrawIconButtonHint(gizmoIcon, gizmoHint, iconBtnSize))
-			this.ShowGizmo = !this.ShowGizmo;
+			this.Config.Editor_Gizmo = !show;
 
 		// Gizmo
 
-		if (this.ShowGizmo) {
+		if (show) {
 			var width = TransformTable.CalcWidth();
 			DrawGizmo(target, width);
 			ImGui.Spacing();
@@ -129,7 +130,7 @@ public class TransformWindow : Window {
 		var local = target as ITransformLocal;
 
 		var trans = local?.GetLocalTransform() ?? target.GetTransform();
-		this.Table.Operation = this.Editor.TransformOp;
+		this.Table.Operation = this.Config.Gizmo_Op;
 		if (trans is not null && this.Table.Draw(ref trans)) {
 			if (local is not null)
 				local.SetLocalTransform(trans);
@@ -155,7 +156,7 @@ public class TransformWindow : Window {
 		var size = new Vector2(width, width);
 
 		this.Gizmo.Begin(size);
-		this.Gizmo.Mode = this.Editor.TransformMode;
+		this.Gizmo.Mode = this.Config.Gizmo_Mode;
 
 		var fov = camera->FoV;
 		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * Gizmo2D.ScaleFactor) / 2.05f, 0xCF202020);

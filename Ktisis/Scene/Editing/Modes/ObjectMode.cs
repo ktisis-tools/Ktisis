@@ -8,12 +8,19 @@ using Ktisis.Scene.Objects.World;
 using Ktisis.Scene.Editing.Attributes;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Extensions;
+using Ktisis.Data.Config;
 
 namespace Ktisis.Scene.Editing.Modes;
 
 [ObjectMode(EditMode.Object, Renderer = typeof(ObjectRenderer))]
 public class ObjectMode : ModeHandler {
-	public ObjectMode(SceneManager mgr) : base(mgr) {}
+	// Constructor
+	
+	private readonly ConfigService _cfg;
+	
+	public ObjectMode(SceneManager mgr, ConfigService _cfg) : base(mgr) {
+		this._cfg = _cfg;
+	}
 	
 	// Object enumeration
 
@@ -49,7 +56,7 @@ public class ObjectMode : ModeHandler {
 	// Object transform
 
 	public override void Manipulate(ITransform target, Matrix4x4 targetMx, Matrix4x4 deltaMx) {
-		if (this.Manager.Editor.Flags.HasFlag(EditFlags.Mirror))
+		if (this._cfg.Config.Editor_Flags.HasFlag(EditFlags.Mirror))
 			Matrix4x4.Invert(deltaMx, out deltaMx);
 		
 		foreach (var item in GetSelected()) {

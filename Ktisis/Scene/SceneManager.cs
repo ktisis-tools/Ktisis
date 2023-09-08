@@ -5,6 +5,7 @@ using Dalamud.Game;
 using Dalamud.Logging;
 
 using Ktisis.Core;
+using Ktisis.Data.Config;
 using Ktisis.Services;
 using Ktisis.Scene.Editing;
 using Ktisis.Scene.Handlers;
@@ -24,14 +25,14 @@ public class SceneManager : IDisposable {
 	
 	public readonly SceneEditor Editor;
 
-	public SceneManager(Framework _framework, GPoseService _gpose, IServiceContainer _services) {
+	public SceneManager(ConfigService _cfg, Framework _framework, GPoseService _gpose, IServiceContainer _services) {
 		this._services = _services;
 		this._framework = _framework;
 		this._gpose = _gpose;
 
 		this.Context = _services.Inject<SceneContext>(this);
 
-		this.Editor = new SceneEditor(this);
+		this.Editor = new SceneEditor(this, _cfg);
 		this.AddHandler<ActorHandler>()
 			.AddHandler<LightHandler>()
 			.AddHandler<ObjectHandler>();

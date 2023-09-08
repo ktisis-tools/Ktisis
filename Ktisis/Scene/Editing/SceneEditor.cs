@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config;
 using Ktisis.ImGuizmo;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
@@ -28,12 +29,16 @@ public enum EditMode {
 
 public class SceneEditor {
 	// Constructor
+
+	private readonly ConfigService _cfg;
 	
 	private readonly SceneManager Manager;
 
 	public readonly SelectState Selection;
 	
-	public SceneEditor(SceneManager manager) {
+	public SceneEditor(SceneManager manager, ConfigService _cfg) {
+		this._cfg = _cfg;
+        
 		this.Manager = manager;
 		this.Selection = new SelectState();
 
@@ -44,20 +49,15 @@ public class SceneEditor {
 	}
 	
 	// Editor state
-	
-	public EditFlags Flags = EditFlags.Propagate;
-
-	public EditMode CurrentMode = EditMode.Object;
-
-	public Mode TransformMode = Mode.Local;
-	public Operation TransformOp = Operation.ROTATE;
+    
+	private EditMode CurrentMode => this._cfg.Config.Editor_Mode;
 	
 	// Register mode handlers
 
 	private readonly Dictionary<EditMode, ModeHandler> Modes = new();
 
 	private SceneEditor AddMode<T>(EditMode id) where T : ModeHandler {
-		var inst = (T)Activator.CreateInstance(typeof(T), this.Manager)!;
+		var inst = (T)Activator.CreateInstance(typeof(T), this.Manager, this._cfg)!;
 		this.Modes.Add(id, inst);
 		return this;
 	}
@@ -84,7 +84,7 @@ public class SceneEditor {
 	// Objects
 
 	public bool IsItemInfluenced(SceneObject item) {
-		var mode = this.CurrentMode;
+		var mode = this._cfg.Config.Editor_Mode;
 		return item switch {
 			ArmatureNode => mode is EditMode.Pose,
 			WorldObject => mode is EditMode.Object,
