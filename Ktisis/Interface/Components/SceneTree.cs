@@ -15,6 +15,9 @@ using Ktisis.Interface.Widgets;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
+using Ktisis.Scene.Editing;
+using Ktisis.Scene.Objects.Models;
+using Ktisis.Scene.Objects.World;
 
 namespace Ktisis.Interface.Components;
 
@@ -118,13 +121,16 @@ public class SceneTree {
 			if (DrawNodeLabel(scene, item, pos, flags, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
-			if (isClick && IsNodeHovered(pos, size, rightAdjust)) {
-				var clickFlags = GuiHelpers.GetSelectFlags();
-				this._sceneMgr.Editor.Selection.HandleClick(item, clickFlags);
-			}
+			if (isClick && IsNodeHovered(pos, size, rightAdjust))
+				ClickItem(item);
 		}
 
 		if (isExpand) IterateTree(scene, children);
+	}
+
+	private void ClickItem(SceneObject item) {
+		var clickFlags = GuiHelpers.GetSelectFlags();
+		this._sceneMgr.Editor.Selection.HandleClick(item, clickFlags);
 	}
 
 	private bool DrawNodeLabel(SceneGraph scene, SceneObject item, Vector2 pos, TreeNodeState state, float rightAdjust = 0.0f) {
@@ -205,7 +211,7 @@ public class SceneTree {
 		var initial = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
 		var cursor = initial;
 
-		if (flags.HasFlag(NodeButtonFlags.Visibility)) {
+		if (flags.HasFlag(NodeButtonFlags.Visibility) && this._cfg.Config.Overlay_Visible) {
 			var iVis = (IVisibility)item;
 			if (DrawButton(ref cursor, FontAwesomeIcon.Eye, iVis.Visible ? 0xFFFFFFFF : 0x90FFFFFF))
 				iVis.ToggleVisible();

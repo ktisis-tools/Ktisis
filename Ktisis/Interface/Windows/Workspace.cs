@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -6,14 +7,13 @@ using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
 
-using Ktisis.Data;
-using Ktisis.Data.Config;
 using Ktisis.Scene;
 using Ktisis.Posing;
 using Ktisis.Services;
-using Ktisis.Scene.Editing;
 using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Components;
+using Ktisis.Data.Config;
+using Ktisis.Scene.Editing;
 
 namespace Ktisis.Interface.Windows;
 
@@ -25,6 +25,8 @@ public class Workspace : Window {
 	private readonly GPoseService _gpose;
 	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
+
+	private ConfigFile Config => this._cfg.Config;
 
 	public Workspace(PluginGui _gui, ConfigService _cfg, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr) : base("Ktisis") {
 		this._gui = _gui;
@@ -42,9 +44,13 @@ public class Workspace : Window {
 
 	private readonly SceneTree SceneTree;
 
-	// UI draw
+	// Constants
 
 	private readonly static Vector2 MinimumSize = new(280, 300);
+
+	private readonly static EditMode[] ModeValues = Enum.GetValues<EditMode>().Skip(1).ToArray();
+
+	// UI draw
 
 	public override void Draw() {
 		// Set size constraints
@@ -54,54 +60,23 @@ public class Workspace : Window {
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.9f
 		};
 
-		// TODO: TEMP
+		// Scene access
 
-		var editor = this._sceneMgr.Editor;
 		var scene = this._sceneMgr.Scene;
 		ImGui.BeginDisabled(scene is null);
 
-		DrawWindowButtons();
-		ImGui.SameLine();
+		// Draw edit state
 
-		var isPosing = this._posing.IsActive;
-		if (ImGui.Checkbox("Posing", ref isPosing))
-			this._posing.Toggle();
-
-		ImGui.Spacing();
-
-		var mode = this._cfg.Config.Editor_Mode;
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-		if (ImGui.BeginCombo("Mode", Enum.GetName(mode))) {
-			foreach (var value in Enum.GetValuesAsUnderlyingType<EditMode>()) {
-				var enumVal = (EditMode)value;
-				if (enumVal == EditMode.None)
-					continue;
-
-				var icon = enumVal switch {
-					EditMode.Object => FontAwesomeIcon.Boxes,
-					EditMode.Pose => FontAwesomeIcon.CircleNodes,
-					_ => FontAwesomeIcon.None
-				};
-
-				// TODO
-				Icons.DrawIcon(icon);
-				ImGui.SameLine();
-				if (ImGui.Selectable($"{enumVal} Mode"))
-					this._cfg.Config.Editor_Mode = enumVal;
-			}
-			ImGui.EndCombo();
-		}
-
-		ImGui.Spacing();
+		DrawEditState();
 
 		// Draw window toggles
 
-
+		DrawWindowButtons();
 
 		// Draw scene
 
+		ImGui.Spacing();
 		DrawStateFrame(scene);
-
 		ImGui.Spacing();
 
 		var style = ImGui.GetStyle();
@@ -116,12 +91,87 @@ public class Workspace : Window {
 		ImGui.EndDisabled();
 	}
 
+	// Edit mode selector
+
+	private void DrawEditState() {
+		var mode = this.Config.Editor_Mode;
+
+		var avail = ImGui.GetContentRegionAvail().X;
+
+		// Pose toggle
+
+		var isPosing = this._posing.IsActive;
+
+		var color = isPosing ? 0xFF3AD86A : 0xFF504EC4;
+		ImGui.PushStyleColor(ImGuiCol.Text, color);
+		ImGui.PushStyleColor(ImGuiCol.Button, isPosing ? 0xFF00FF00 : 0xFF7070C0);
+		if (Buttons.ToggleButton("KtisisPoseToggle", ref isPosing, color))
+			this._posing.Toggle();
+
+		var label = isPosing ? "Posing: On" : "Posing: Off";
+		ImGui.SameLine();
+		ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetFrameHeight() / 2 - ImGui.CalcTextSize(label).Y / 2);
+		ImGui.Text(label);
+
+		if (ImGui.IsItemHovered()) {
+			ImGui.BeginTooltip();
+			ImGui.Text(isPosing ? "Bone manipulation is currently enabled." : "Bone manipulation is currently disabled.");
+			ImGui.EndTooltip();
+		}
+
+		ImGui.PopStyleColor(2);
+
+		// Mode selector
+
+		ImGui.SameLine();
+
+		var spacing = ImGui.GetStyle().ItemSpacing.X;
+
+		var cursor = Math.Max(ImGui.GetCursorPosX(), avail / 2);
+		ImGui.SetCursorPosX(cursor);
+		ImGui.SetNextItemWidth(avail / 2);
+		if (ImGui.BeginCombo("##WsEditMode", "")) {
+			foreach (var value in ModeValues) {
+				if (ImGui.Selectable($"##{value}"))
+					this.Config.Editor_Mode = value;
+				ImGui.SameLine();
+				DrawModeLabel(value);
+			}
+			ImGui.EndCombo();
+		}
+
+		if (ImGui.IsItemHovered()) {
+			ImGui.BeginTooltip();
+			ImGui.Text("Current editing mode");
+			ImGui.EndTooltip();
+		}
+
+		ImGui.SameLine();
+		ImGui.SetCursorPosX(cursor + spacing);
+		DrawModeLabel(mode);
+	}
+
+	private void DrawModeLabel(EditMode mode) {
+		var icon = GetModeIcon(mode);
+		Icons.DrawIcon(icon);
+		ImGui.SameLine(0, ImGui.GetStyle().ItemSpacing.X);
+		ImGui.Text($"{mode} Mode");
+	}
+
+	private FontAwesomeIcon GetModeIcon(EditMode mode) => mode switch {
+		EditMode.Object => FontAwesomeIcon.VectorSquare,
+		EditMode.Pose => FontAwesomeIcon.CircleNodes,
+		_ => FontAwesomeIcon.None
+	};
+
+	// Window toggle buttons
+
 	private void DrawWindowButtons() {
 		var transform = this._gui.GetWindow<TransformWindow>();
-		if (ImGui.Button("Open debug window")) {
-			transform.Toggle();
-		}
+
 	}
+
+	// State frame for actor, select, overlay
 
 	private void DrawStateFrame(SceneGraph? scene) {
 		var style = ImGui.GetStyle();
@@ -176,9 +226,12 @@ public class Workspace : Window {
 		ImGui.SetCursorPosY(height * (1 - ratio) / 2);
 
 		var overlay = this._cfg.Config.Overlay_Visible;
-		if (Buttons.DrawIconButton(overlay ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, btnSize))
+		var btnIcon = overlay ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
+		if (Buttons.DrawIconButtonHint(btnIcon, "Toggle screen overlay", btnSize))
 			this._cfg.Config.Overlay_Visible = !overlay;
 	}
+
+	// Tree buttons
 
 	private void DrawTreeButtons() {
 		Buttons.DrawIconButton(FontAwesomeIcon.Plus);
