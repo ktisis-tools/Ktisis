@@ -3,18 +3,25 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using Ktisis.Posing;
-using Ktisis.Common.Utility;
-
+using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Editing.Attributes;
 using Ktisis.Interface.Overlay.Render;
+using Ktisis.Common.Utility;
+using Ktisis.Data.Config;
 
 namespace Ktisis.Scene.Editing.Modes;
 
 [ObjectMode(EditMode.Pose, Renderer = typeof(PoseRenderer))]
 public class PoseMode : ModeHandler {
-	public PoseMode(SceneManager mgr) : base(mgr) {}
+	// Constructor
+
+	private readonly ConfigService _cfg;
+
+	public PoseMode(SceneManager mgr, ConfigService _cfg) : base(mgr) {
+		this._cfg = _cfg;
+	}
 
 	// Armature enumeration
 
@@ -106,7 +113,7 @@ public class PoseMode : ModeHandler {
 		// Calculate delta transform
 
 		var deltaT = new Transform(matrix);
-		var mirror = this.Manager.Editor.Flags.HasFlag(EditFlags.Mirror);
+		var mirror = this._cfg.Config.Editor_Flags.HasFlag(EditFlags.Mirror);
 		if (target.GetTransform() is Transform trans) {
 			var deltaPos = deltaT.Position - trans.Position;
 			var deltaRot = deltaT.Rotation / trans.Rotation;

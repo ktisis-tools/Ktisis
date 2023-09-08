@@ -21,12 +21,14 @@ public class Workspace : Window {
 	// Constructor
 
 	private readonly PluginGui _gui;
+	private readonly ConfigService _cfg;
 	private readonly GPoseService _gpose;
 	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
 
-	public Workspace(ConfigService _cfg, PluginGui _gui, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr) : base("Ktisis") {
+	public Workspace(PluginGui _gui, ConfigService _cfg, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr) : base("Ktisis") {
 		this._gui = _gui;
+		this._cfg = _cfg;
 		this._gpose = _gpose;
 		this._posing = _posing;
 		this._sceneMgr = _sceneMgr;
@@ -67,7 +69,7 @@ public class Workspace : Window {
 
 		ImGui.Spacing();
 
-		var mode = editor.CurrentMode;
+		var mode = this._cfg.Config.Editor_Mode;
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		if (ImGui.BeginCombo("Mode", Enum.GetName(mode))) {
 			foreach (var value in Enum.GetValuesAsUnderlyingType<EditMode>()) {
@@ -85,7 +87,7 @@ public class Workspace : Window {
 				Icons.DrawIcon(icon);
 				ImGui.SameLine();
 				if (ImGui.Selectable($"{enumVal} Mode"))
-					editor.CurrentMode = enumVal;
+					this._cfg.Config.Editor_Mode = enumVal;
 			}
 			ImGui.EndCombo();
 		}

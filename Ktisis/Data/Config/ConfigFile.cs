@@ -2,6 +2,8 @@ using System.Collections.Generic;
 
 using Dalamud.Configuration;
 
+using Ktisis.ImGuizmo;
+using Ktisis.Scene.Editing;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Display;
 
@@ -13,6 +15,23 @@ public class ConfigFile : IPluginConfiguration {
 	public const int CurrentVersion = 4;
 
 	public int Version { get; set; } = CurrentVersion;
+
+	// Overlay
+
+	public bool Overlay_Gizmo = true;
+	public bool Overlay_Visible = true;
+
+	// Gizmo
+
+	public Mode Gizmo_Mode = Mode.Local;
+	public Operation Gizmo_Op = Operation.ROTATE;
+
+	// Transform Editor
+
+	public bool Editor_Gizmo = true;
+
+	public EditMode Editor_Mode = EditMode.Object;
+	public EditFlags Editor_Flags = EditFlags.Propagate;
 
 	// Item display
 

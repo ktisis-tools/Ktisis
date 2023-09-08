@@ -14,6 +14,7 @@ using Ktisis.Scene.Editing;
 using Ktisis.Scene.Editing.Modes;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config;
 using Ktisis.Services;
 using Ktisis.ImGuizmo;
 
@@ -23,12 +24,15 @@ public class GuiOverlay {
 	// Dependencies
 
 	private readonly CameraService _camera;
+	private readonly ConfigService _cfg;
 	private readonly GPoseService _gpose;
 	private readonly SceneManager _scene;
 
 	private readonly Gizmo? Gizmo;
 
 	public readonly SelectionGui Selection;
+
+	private ConfigFile Config => this._cfg.Config;
 
 	// State
 
@@ -39,11 +43,13 @@ public class GuiOverlay {
 	public GuiOverlay(
 		IServiceContainer _services,
 		CameraService _camera,
+		ConfigService _cfg,
 		GPoseService _gpose,
 		SceneManager _scene,
 		NotifyService _notify
 	) {
 		this._camera = _camera;
+		this._cfg = _cfg;
 		this._gpose = _gpose;
 		this._scene = _scene;
 
@@ -144,7 +150,7 @@ public class GuiOverlay {
 
 		var editor = this._scene.Editor;
 		if (editor.GetHandler() is ModeHandler handler)
-			GetRenderer(editor.CurrentMode)?.OnDraw(this, handler);
+			GetRenderer(this.Config.Editor_Mode)?.OnDraw(this, handler);
 
 		this.Selection.Draw();
 
@@ -177,8 +183,8 @@ public class GuiOverlay {
 			var size = ImGui.GetIO().DisplaySize;
 			this.Gizmo.SetMatrix(viewMx, projMx);
 			this.Gizmo.BeginFrame(Vector2.Zero, size);
-			this.Gizmo.Mode = this._scene.Editor.TransformMode;
-			this.Gizmo.Operation = this._scene.Editor.TransformOp;
+			this.Gizmo.Mode = this.Config.Gizmo_Mode;
+			this.Gizmo.Operation = this.Config.Gizmo_Op;
 		}
 	}
 
