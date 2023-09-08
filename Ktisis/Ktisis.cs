@@ -7,6 +7,7 @@ using Dalamud.Logging;
 
 using Ktisis.Core;
 using Ktisis.Data;
+using Ktisis.Data.Config;
 using Ktisis.Scene;
 using Ktisis.Services;
 using Ktisis.Interface;
@@ -37,6 +38,7 @@ public sealed class Ktisis : IDalamudPlugin {
 
 		this.Services = new ServiceManager()
 			.AddDalamudServices(api)
+			.AddService<ConfigService>()
 			.AddService<CameraService>()
 			.AddService<CommandService>()
 			.AddService<DataService>()
@@ -70,19 +72,31 @@ public sealed class Ktisis : IDalamudPlugin {
 		var timer = new Stopwatch();
 		timer.Start();
 
-		var cfg = this.Services.GetRequiredService<DataService>();
+		var cfg = this.Services.GetRequiredService<ConfigService>();
 		await Task.WhenAll(new[] {
-			cfg.LoadConfig(),
+			LoadConfig(cfg),
 			InitServices()
 		});
 
-		PluginLog.Debug($"Initialization completed in {timer.Elapsed.TotalMilliseconds:00.00}ms");
+		PluginLog.Debug($"Initialization completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 		timer.Restart();
 
 		this.Services.NotifyReady();
 
 		timer.Stop();
-		PluginLog.Debug($"Ready notifier completed in {timer.Elapsed.TotalMilliseconds:00.00}ms");
+		PluginLog.Debug($"Ready notifier completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
+	}
+
+	private async Task LoadConfig(ConfigService cfg) {
+		await Task.Yield();
+
+		var timer = new Stopwatch();
+		timer.Start();
+
+		await cfg.LoadConfig();
+
+		timer.Stop();
+		PluginLog.Debug($"Loaded configuration in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 	}
 
 	private async Task InitServices() {

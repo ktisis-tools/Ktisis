@@ -11,6 +11,7 @@ using ImGuiNET;
 using Ktisis.Data;
 using Ktisis.Data.Config.Display;
 using Ktisis.Common.Extensions;
+using Ktisis.Data.Config;
 using Ktisis.Interface.Widgets;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Impl;
@@ -24,11 +25,11 @@ public class SelectionGui {
 	// Constructor
 
 	private readonly CameraService _camera;
-	private readonly DataService _data;
+	private readonly ConfigService _cfg;
 
-	public SelectionGui(CameraService _camera, DataService _data) {
+	public SelectionGui(CameraService _camera, ConfigService _cfg) {
 		this._camera = _camera;
-		this._data = _data;
+		this._cfg = _cfg;
 	}
 
 	// Events
@@ -58,12 +59,11 @@ public class SelectionGui {
 	private int ScrollIndex;
 
 	public void Draw() {
-		var config = this._data.GetConfig();
 		var drawList = ImGui.GetBackgroundDrawList();
 
 		var isHovering = false;
 		foreach (var item in this.Items) {
-			var display = config.GetItemDisplay(item.Item.ItemType);
+			var display = this._cfg.GetItemDisplay(item.Item.ItemType);
 			var pos2d = new Vector2(item.ScreenPos.X, item.ScreenPos.Y);
 
 			var isSelect = item.Item.IsSelected();

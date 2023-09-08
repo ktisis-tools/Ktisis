@@ -7,6 +7,7 @@ using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
 using Ktisis.Data;
+using Ktisis.Data.Config;
 using Ktisis.Scene;
 using Ktisis.Posing;
 using Ktisis.Services;
@@ -24,13 +25,13 @@ public class Workspace : Window {
 	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
 
-	public Workspace(PluginGui _gui, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr, DataService _data) : base("Ktisis") {
+	public Workspace(ConfigService _cfg, PluginGui _gui, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr) : base("Ktisis") {
 		this._gui = _gui;
 		this._gpose = _gpose;
 		this._posing = _posing;
 		this._sceneMgr = _sceneMgr;
 
-		this.SceneTree = new SceneTree(_data.GetConfig(), _sceneMgr);
+		this.SceneTree = new SceneTree(_cfg, _sceneMgr);
 
 		RespectCloseHotkey = false;
 	}
