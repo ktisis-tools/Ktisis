@@ -156,7 +156,7 @@ public class PoseMode : ModeHandler {
 
 				foreach (var bone in boneList) {
 					var index = bone.Data.BoneIndex;
-					var initial = PoseEditor.GetWorldTransform(skeleton.Data, pose, index);
+					var initial = PoseEdit.GetWorldTransform(skeleton.Data, pose, index);
 					if (initial is null) continue;
 
 					Matrix4x4 newMx;
@@ -169,14 +169,14 @@ public class PoseMode : ModeHandler {
 						newMx = scale * rot * pos;
 					}
 					
-					PoseEditor.SetWorldTransform(skeleton.Data, pose, index, newMx);
+					PoseEdit.SetWorldTransform(skeleton.Data, pose, index, newMx);
 					
 					// TODO: Propagation flags
 					{
-						var initialModel = PoseEditor.WorldToModel(initial, modelTrans);
-						var final = PoseEditor.GetModelTransform(pose, index);
+						var initialModel = PoseEdit.WorldToModel(initial, modelTrans);
+						var final = PoseEdit.GetModelTransform(pose, index);
 						if (final is not null)
-							PoseEditor.Propagate(skeleton.Data, p, index, final, initialModel);
+							PoseEdit.Propagate(skeleton.Data, p, index, final, initialModel);
 					}
 				}
 			}

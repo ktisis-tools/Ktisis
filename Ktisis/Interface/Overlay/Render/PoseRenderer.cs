@@ -37,7 +37,7 @@ public class PoseRenderer : RendererBase {
 				if (armature.GetBoneFromMap(p, i) is not { Visible: true } bone)
 					continue;
 
-				var trans = PoseEditor.GetWorldTransform(skeleton.Data, pose, i);
+				var trans = PoseEdit.GetWorldTransform(skeleton.Data, pose, i);
 				if (trans is null) continue;
 				
 				overlay.Selection.AddItem(bone, trans.Position);
@@ -50,7 +50,7 @@ public class PoseRenderer : RendererBase {
 					if (armature.GetBoneFromMap(p, c) is not { Visible: true })
 						continue;
 
-					var lineTo = PoseEditor.GetWorldTransform(skeleton.Data, pose, c);
+					var lineTo = PoseEdit.GetWorldTransform(skeleton.Data, pose, c);
 					if (lineTo is not null)
 						overlay.DrawLine(drawList, trans.Position, lineTo.Position);
 				}
