@@ -28,4 +28,14 @@ internal static class Buttons {
 
 		return result;
 	}
+
+	internal static bool DrawIconButtonHint(FontAwesomeIcon icon, string hint, Vector2? size = null) {
+		var result = DrawIconButton(icon, size);
+		if (ImGui.IsItemHovered()) {
+			ImGui.BeginTooltip();
+			ImGui.Text(hint);
+			ImGui.EndTooltip();
+		}
+		return result;
+	}
 }

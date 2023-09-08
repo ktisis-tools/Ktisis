@@ -99,7 +99,7 @@ public class SceneTree {
 		var children = item.GetChildren();
 
 		var isLeaf = children.Count == 0;
-		var flags = ImGuiTreeNodeFlags.AllowItemOverlap | ImGuiTreeNodeFlags.SpanFullWidth | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow);
+		var flags = ImGuiTreeNodeFlags.SpanFullWidth | (isLeaf ? ImGuiTreeNodeFlags.Leaf : ImGuiTreeNodeFlags.OpenOnArrow);
 
 		if (isVisible) {
 			if (item.Flags.HasFlag(ObjectFlags.Selected))
@@ -114,7 +114,9 @@ public class SceneTree {
 
 		if (isVisible) {
 			ImGui.SameLine();
+			ImGui.BeginGroup();
 			DrawLabel(scene, item, display, isLeaf, start);
+			ImGui.EndGroup();
 			ImGui.PopStyleColor(2);
 		}
 
@@ -153,6 +155,7 @@ public class SceneTree {
 
 		var labelAvail = ImGui.GetContentRegionAvail().X - rightAdjust;
 		ImGui.Text(item.Name.FitToWidth(labelAvail));
+
 		HandleClick(scene, item, start, isLeaf, labelAvail + spacing);
 	}
 

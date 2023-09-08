@@ -70,31 +70,31 @@ public class TransformTable {
 
 	private bool DrawPosition(ref Vector3 pos) {
 		var result = DrawLinear($"{this.Id}_Pos", ref pos);
-		DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow);
+		DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, "Position");
 		return result;
 	}
 
 	private bool DrawRotate(ref Quaternion rot) {
 		var result = DrawEuler($"{this.Id}_Rotate", ref this.Angles, out var delta);
 		if (result) rot *= delta.EulerAnglesToQuaternion();
-		DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin);
+		DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, "Rotation");
 		return result;
 	}
 
 	private bool DrawScale(ref Vector3 scale) {
 		var result = DrawLinear($"{this.Id}_Scale", ref scale);
-		DrawOperation(ScaleOp, FontAwesomeIcon.Expand);
+		DrawOperation(ScaleOp, FontAwesomeIcon.Expand, "Scale");
 		return result;
 	}
 
-	private void DrawOperation(Operation op, FontAwesomeIcon icon) {
+	private void DrawOperation(Operation op, FontAwesomeIcon icon, string hint) {
 		var spacing = ImGui.GetStyle().ItemSpacing.X;
 		if (this.OnClickOperation != null) {
 			ImGui.SameLine(0, spacing);
 
 			var enable = this.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
 			ImGui.PushStyleColor(ImGuiCol.Text, enable);
-			if (Buttons.DrawIconButton(icon))
+			if (Buttons.DrawIconButtonHint(icon, hint))
 				ChangeOperation(op);
 			ImGui.PopStyleColor();
 		} else {
