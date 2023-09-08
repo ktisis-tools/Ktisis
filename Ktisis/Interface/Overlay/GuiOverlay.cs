@@ -34,10 +34,6 @@ public class GuiOverlay {
 
 	private ConfigFile Config => this._cfg.Config;
 
-	// State
-
-	public bool Visible = true;
-
 	// Constructor
 
 	public GuiOverlay(
@@ -110,7 +106,7 @@ public class GuiOverlay {
 	public void Draw() {
 		// TODO: Toggle
 
-		if (!this.Visible || !this._gpose.IsInGPose) return;
+		if (!this.Config.Overlay_Visible || !this._gpose.IsInGPose) return;
 
 		try {
 			if (BeginFrame())

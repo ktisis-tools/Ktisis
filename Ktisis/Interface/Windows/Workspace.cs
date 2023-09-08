@@ -175,9 +175,9 @@ public class Workspace : Window {
 		ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - padding - btnSize.X);
 		ImGui.SetCursorPosY(height * (1 - ratio) / 2);
 
-		var overlay = this._gui.Overlay.Visible;
+		var overlay = this._cfg.Config.Overlay_Visible;
 		if (Buttons.DrawIconButton(overlay ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash, btnSize))
-			this._gui.Overlay.Visible = !overlay;
+			this._cfg.Config.Overlay_Visible = !overlay;
 	}
 
 	private void DrawTreeButtons() {
