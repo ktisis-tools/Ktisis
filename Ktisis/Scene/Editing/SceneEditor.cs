@@ -33,14 +33,16 @@ public class SceneEditor {
 	private readonly ConfigService _cfg;
 	
 	private readonly SceneManager Manager;
-
 	public readonly SelectState Selection;
+
+	private ConfigFile Config => this._cfg.Config;
 	
 	public SceneEditor(SceneManager manager, ConfigService _cfg) {
 		this._cfg = _cfg;
         
 		this.Manager = manager;
 		this.Selection = new SelectState();
+		this.Selection.OnItemSelected += OnItemSelected;
 
 		this.AddMode<PoseMode>(EditMode.Pose)
 			.AddMode<ObjectMode>(EditMode.Object);
@@ -80,11 +82,22 @@ public class SceneEditor {
 		else
 			this.Selection.Clear();
 	}
+
+	private void OnItemSelected(SelectState state, SceneObject item) {
+		if (state.Count > 1) return;
+		
+		var mode = this.Config.Editor_Mode;
+		this.Config.Editor_Mode = item switch {
+			ArmatureNode => EditMode.Pose,
+			SceneObject => EditMode.Object,
+			_ => mode
+		};
+	}
 	
 	// Objects
 
 	public bool IsItemInfluenced(SceneObject item) {
-		var mode = this._cfg.Config.Editor_Mode;
+		var mode = this.Config.Editor_Mode;
 		return item switch {
 			ArmatureNode => mode is EditMode.Pose,
 			WorldObject => mode is EditMode.Object,

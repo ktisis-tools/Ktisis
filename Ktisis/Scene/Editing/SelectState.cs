@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 
@@ -10,6 +11,8 @@ public enum SelectFlags {
 	None,
 	Ctrl
 }
+
+public delegate void OnItemSelectedHandler(SelectState sender, SceneObject item);
 
 public class SelectState {
 	// Constructor
@@ -21,6 +24,8 @@ public class SelectState {
 	}
 	
 	// Events
+
+	public event OnItemSelectedHandler? OnItemSelected;
 
 	private void OnSceneObjectRemoved(SceneGraph _scene, SceneObject item)
 		=> RemoveItem(item);
@@ -44,6 +49,7 @@ public class SelectState {
 		item.Flags |= ObjectFlags.Selected;
 		this._selected.Remove(item);
 		this._selected.Insert(0, item);
+		this.OnItemSelected?.InvokeSafely(this, item);
 	}
 
 	public void RemoveItem(SceneObject item) {
