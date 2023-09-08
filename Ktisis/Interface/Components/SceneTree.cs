@@ -21,11 +21,11 @@ namespace Ktisis.Interface.Components;
 public class SceneTree {
     // Constructor
 
-	private readonly ConfigFile _cfg;
+	private readonly ConfigService _cfg;
 
 	private readonly SceneManager _sceneMgr;
 
-	public SceneTree(ConfigFile _cfg, SceneManager _sceneMgr) {
+	public SceneTree(ConfigService _cfg, SceneManager _sceneMgr) {
 		this._cfg = _cfg;
 		this._sceneMgr = _sceneMgr;
 	}
@@ -89,7 +89,7 @@ public class SceneTree {
 
 	private void DrawNode(SceneGraph scene, SceneObject item) {
 		var pos = ImGui.GetCursorPos();
-		var isRender = pos.X > this.MinY && pos.X < this.MaxY;
+		var isRender = pos.Y > this.MinY && pos.Y < this.MaxY;
 
 		var id = $"##SceneTree_{item.UiId}";
 
@@ -236,7 +236,7 @@ public class SceneTree {
 
 	private bool IsNodeHovered(Vector2 pos, Vector2 size, float rightAdjust) {
 		var pad = ImGui.GetStyle().ItemSpacing.X;
-		var min = ImGui.GetCursorScreenPos().Add(pad, -size.Y);
+		var min = ImGui.GetWindowPos() + pos.AddX(pad).SubY(ImGui.GetScrollY() + 2);
 		var max = min.Add(size.X - pos.X - pad - rightAdjust, size.Y);
 		return ImGui.IsMouseHoveringRect(min, max);
 	}
