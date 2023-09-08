@@ -46,6 +46,10 @@ public class TransformWindow : Window {
 		RespectCloseHotkey = false;
 	}
 	
+	// State
+	
+	private bool ShowGizmo = true;
+	
 	// Events
 
 	private void OnClickOperation(Operation op) {
@@ -87,23 +91,37 @@ public class TransformWindow : Window {
 		
 		var mode = this.Editor.TransformMode;
 		var modeIcon = mode == Mode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home;
-		if (Buttons.DrawIconButton(modeIcon, iconBtnSize))
+		var modeHint = mode == Mode.World ? "World Transform" : "Local Transform";
+		if (Buttons.DrawIconButtonHint(modeIcon, modeHint, iconBtnSize))
 			this.Editor.TransformMode = mode == Mode.World ? Mode.Local : Mode.World;
 		
 		ImGui.SameLine(0, spacing);
 
 		var flags = this.Editor.Flags;
 
-		var mrIcon = flags.HasFlag(EditFlags.Mirror) ? FontAwesomeIcon.MinusCircle : FontAwesomeIcon.PlusCircle;
-		if (Buttons.DrawIconButton(mrIcon, iconBtnSize))
+		var isMirror = flags.HasFlag(EditFlags.Mirror);
+		var mrIcon = isMirror ? FontAwesomeIcon.ArrowDownUpAcrossLine : FontAwesomeIcon.GripLines;
+		var mrHint = isMirror ? "Mirror Transform" : "Parallel Transform";
+		if (Buttons.DrawIconButtonHint(mrIcon, mrHint, iconBtnSize))
 			this.Editor.Flags ^= EditFlags.Mirror;
 
-		// Gizmo
-        
-		var width = TransformTable.CalcWidth();
-        DrawGizmo(target, width);
+        ImGui.SameLine(0, spacing);
+		var avail = ImGui.GetContentRegionAvail().X;
+		if (avail > iconSize)
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
 
-		GuiHelpers.Spacing(2);
+		var gizmoIcon = this.ShowGizmo ? FontAwesomeIcon.CaretUp : FontAwesomeIcon.CaretDown;
+		var gizmoHint = this.ShowGizmo ? "Hide rotation gizmo" : "Show rotation gizmo";
+		if (Buttons.DrawIconButtonHint(gizmoIcon, gizmoHint, iconBtnSize))
+			this.ShowGizmo = !this.ShowGizmo;
+
+		// Gizmo
+
+		if (this.ShowGizmo) {
+			var width = TransformTable.CalcWidth();
+			DrawGizmo(target, width);
+			ImGui.Spacing();
+		} ImGui.Spacing();
 		
 		// Table
 		// TODO: World/Local switch
