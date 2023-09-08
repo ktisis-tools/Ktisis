@@ -13,14 +13,10 @@
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigFile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigFile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/TransformWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/TransformWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/ObjectMode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/ObjectMode.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/PoseMode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/PoseMode.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/SceneEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/SceneEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +66,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "7704e635",
+    "git-widget-placeholder": "7616597b",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
