@@ -7,7 +7,7 @@ using Ktisis.Common.Utility;
 
 namespace Ktisis.Posing;
 
-public static class PoseEditor {
+public static class PoseEdit {
 	private const hkaPose.PropagateOrNot DontPropagate = hkaPose.PropagateOrNot.DontPropagate;
 
 	// Conversion

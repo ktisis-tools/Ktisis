@@ -50,13 +50,13 @@ public class Bone : ArmatureNode, ITransformLocal {
 	public unsafe Transform? GetLocalTransform() {
 		var pose = GetPose();
 		if (pose == null) return null;
-		return PoseEditor.GetModelTransform(pose, this.Data.BoneIndex);
+		return PoseEdit.GetModelTransform(pose, this.Data.BoneIndex);
 	}
 
 	public unsafe void SetLocalTransform(Transform trans) {
 		var pose = GetPose();
 		if (pose == null) return;
-		PoseEditor.SetModelTransform(pose, this.Data.BoneIndex, trans);
+		PoseEdit.SetModelTransform(pose, this.Data.BoneIndex, trans);
 	}
 
 	// ITransform
@@ -65,14 +65,14 @@ public class Bone : ArmatureNode, ITransformLocal {
 		var skeleton = GetSkeleton();
 		var pose = GetPose(skeleton);
 		if (pose == null) return null;
-		return PoseEditor.GetWorldTransform(skeleton.Data, pose, this.Data.BoneIndex);
+		return PoseEdit.GetWorldTransform(skeleton.Data, pose, this.Data.BoneIndex);
 	}
 
 	public unsafe void SetTransform(Transform trans) {
 		var skeleton = GetSkeleton();
 		var pose = GetPose(skeleton);
 		if (pose == null) return;
-		PoseEditor.SetWorldTransform(skeleton.Data, pose, this.Data.BoneIndex, trans);
+		PoseEdit.SetWorldTransform(skeleton.Data, pose, this.Data.BoneIndex, trans);
 	}
 
 	// Helpers
