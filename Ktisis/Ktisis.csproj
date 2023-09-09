@@ -68,6 +68,7 @@
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
+	  <EmbeddedResource Include="Localization\Data\*.json" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
