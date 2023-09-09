@@ -42,7 +42,7 @@ public class SceneEditor {
 
 		this.Manager = manager;
 		this.Selection = new SelectState();
-		this.Selection.OnItemSelected += OnItemSelected;
+		this.Selection.OnSelectionChanged += OnSelectionChanged;
 
 		this.AddMode<PoseMode>(EditMode.Pose)
 			.AddMode<ObjectMode>(EditMode.Object);
@@ -83,11 +83,11 @@ public class SceneEditor {
 			this.Selection.Clear();
 	}
 
-	private void OnItemSelected(SelectState state, SceneObject item) {
+	private void OnSelectionChanged(SelectState state) {
 		if (state.Count > 1) return;
 
 		var mode = this.Config.Editor_Mode;
-		this.Config.Editor_Mode = item switch {
+		this.Config.Editor_Mode = state.GetSelected().Last() switch {
 			ArmatureNode => EditMode.Pose,
 			SceneObject => EditMode.Object,
 			_ => mode

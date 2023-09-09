@@ -7,6 +7,7 @@ using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Scene;
 using Ktisis.Posing;
 using Ktisis.Services;
@@ -67,15 +68,16 @@ public class Workspace : Window {
 
 		// Draw edit state
 
-		DrawEditState();
+		DrawPoseState();
+		ImGui.Spacing();
 
-		// Draw window toggles
+		// Draw context buttons
 
-		DrawWindowButtons();
+		DrawContextButtons();
+		ImGui.Spacing();
 
 		// Draw scene
 
-		ImGui.Spacing();
 		DrawStateFrame(scene);
 		ImGui.Spacing();
 
@@ -91,16 +93,14 @@ public class Workspace : Window {
 		ImGui.EndDisabled();
 	}
 
-	// Edit mode selector
+	// Pose toggle
 
-	private void DrawEditState() {
-		var mode = this.Config.Editor_Mode;
-
-		var avail = ImGui.GetContentRegionAvail().X;
-
+	private void DrawPoseState() {
 		// Pose toggle
 
 		var isPosing = this._posing.IsActive;
+
+		ImGui.BeginGroup();
 
 		var color = isPosing ? 0xFF3AD86A : 0xFF504EC4;
 		ImGui.PushStyleColor(ImGuiCol.Text, color);
@@ -121,15 +121,45 @@ public class Workspace : Window {
 
 		ImGui.PopStyleColor(2);
 
-		// Mode selector
+		ImGui.EndGroup();
+	}
 
-		ImGui.SameLine();
+	// Context buttons
 
-		var spacing = ImGui.GetStyle().ItemSpacing.X;
+	private void DrawContextButtons() {
+		if (DrawButton(FontAwesomeIcon.ArrowsAlt, "Transform Editor"))
+			this._gui.GetWindow<TransformWindow>().Toggle();
 
-		var cursor = Math.Max(ImGui.GetCursorPosX(), avail / 2);
-		ImGui.SetCursorPosX(cursor);
-		ImGui.SetNextItemWidth(avail / 2);
+		DrawButton(FontAwesomeIcon.Camera, "Camera Editor");
+		DrawButton(FontAwesomeIcon.Sun, "Environment Editor");
+		DrawButton(FontAwesomeIcon.EllipsisH, "Other...");
+
+		var avail = ImGui.GetContentRegionAvail().X;
+		if (avail < 100) ImGui.Dummy(Vector2.Zero);
+
+		DrawModeSelect();
+	}
+
+	private bool DrawButton(FontAwesomeIcon icon, string hint) {
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+		var height = ImGui.GetFrameHeight();
+		var width = Math.Max(height, Icons.CalcIconSize(icon).X);
+		var activate = Buttons.DrawIconButtonHint(icon, hint, new Vector2(width, height));
+		ImGui.SameLine(0, spacing);
+		return activate;
+	}
+
+	// Mode selector
+
+	private void DrawModeSelect() {
+		var style = ImGui.GetStyle();
+
+		ImGui.BeginGroup();
+
+		var avail = ImGui.GetContentRegionAvail().X;
+		var cursor = ImGui.GetCursorPosX();
+
+		ImGui.SetNextItemWidth(avail);
 		if (ImGui.BeginCombo("##WsEditMode", "")) {
 			foreach (var value in ModeValues) {
 				if (ImGui.Selectable($"##{value}"))
@@ -142,13 +172,15 @@ public class Workspace : Window {
 
 		if (ImGui.IsItemHovered()) {
 			ImGui.BeginTooltip();
-			ImGui.Text("Current editing mode");
+			ImGui.Text("Select editing mode");
 			ImGui.EndTooltip();
 		}
 
 		ImGui.SameLine();
-		ImGui.SetCursorPosX(cursor + spacing);
-		DrawModeLabel(mode);
+		ImGui.SetCursorPosX(cursor + style.ItemSpacing.X);
+		DrawModeLabel(this.Config.Editor_Mode);
+
+		ImGui.EndGroup();
 	}
 
 	private void DrawModeLabel(EditMode mode) {
@@ -163,13 +195,6 @@ public class Workspace : Window {
 		EditMode.Pose => FontAwesomeIcon.CircleNodes,
 		_ => FontAwesomeIcon.None
 	};
-
-	// Window toggle buttons
-
-	private void DrawWindowButtons() {
-		var transform = this._gui.GetWindow<TransformWindow>();
-
-	}
 
 	// State frame for actor, select, overlay
 

@@ -29,6 +29,7 @@ public class ConfigFile : IPluginConfiguration {
 	// Transform Editor
 
 	public bool Editor_Gizmo = true;
+	public bool Editor_OpenOnSelect = true;
 
 	public EditMode Editor_Mode = EditMode.Object;
 	public EditFlags Editor_Flags = EditFlags.Propagate;
