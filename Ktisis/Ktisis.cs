@@ -9,6 +9,7 @@ using Dalamud.Logging;
 using Ktisis.Core;
 using Ktisis.Data;
 using Ktisis.Data.Config;
+using Ktisis.Input;
 using Ktisis.Scene;
 using Ktisis.Services;
 using Ktisis.Interface;
@@ -44,6 +45,7 @@ public sealed class Ktisis : IDalamudPlugin {
 			.AddService<CommandService>()
 			.AddService<DataService>()
 			.AddService<GPoseService>()
+			.AddService<InputService>()
 			.AddService<InteropService>()
 			.AddService<NotifyService>()
 			.AddService<PluginGui>()
@@ -104,6 +106,7 @@ public sealed class Ktisis : IDalamudPlugin {
 		await Task.Yield();
 		this.Services.GetRequiredService<InteropService>();
 		this.Services.GetRequiredService<PosingService>();
+		this.Services.GetRequiredService<InputService>();
 		this.Services.GetRequiredService<SceneManager>();
 		this.Services.GetRequiredService<CommandService>();
 		this.Services.GetRequiredService<PluginGui>();
