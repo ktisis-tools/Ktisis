@@ -42,8 +42,9 @@ namespace Ktisis.Localization {
 			while (reader.Read()) {
 				switch (reader.Reader.TokenType) {
 					case JsonTokenType.PropertyName:
-						if (reader.Reader.GetString() == "$meta")
-							goto readMeta;
+						if (reader.Reader.GetString() == "$meta") {
+							return ReadMetaObject(technicalName, ref reader);
+						}
 						reader.SkipIt();
 						break;
 					case JsonTokenType.EndObject:
@@ -53,9 +54,7 @@ namespace Ktisis.Localization {
 						throw new Exception("Should not reach this point.");
 				}
 			}
-
-			readMeta:
-			return ReadMetaObject(technicalName, ref reader);
+			throw new Exception($"Locale Data file '{technicalName}.json' is missing its meta data (top-level '$meta' key not found)");
 		}
 		private static LocaleMetaData ReadMetaObject(string technicalName, ref BlockBufferJsonReader reader) {
 			reader.Read();
