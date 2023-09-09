@@ -59,7 +59,7 @@ namespace Ktisis.Localization {
 		private static LocaleMetaData ReadMetaObject(string technicalName, ref BlockBufferJsonReader reader) {
 			reader.Read();
 			if(reader.Reader.TokenType != JsonTokenType.StartObject)
-				throw new Exception($"Locale Data file '{technicalName}' has a non-object at the top-level '$meta' key.");
+				throw new Exception($"Locale Data file '{technicalName}.json' has a non-object at the top-level '$meta' key.");
 
 			string? displayName = null;
 			string? selfName = null;
