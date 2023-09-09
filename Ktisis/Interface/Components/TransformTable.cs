@@ -50,9 +50,8 @@ public class TransformTable {
 	};
 	
 	public bool Draw(ref Transform trans) {
-		if (ImGui.IsItemActivated()) {
+		if (!ImGui.IsItemActive())
 			this.Angles = trans.Rotation.ToEulerAngles();
-		}
 
 		ImGui.PushItemWidth(CalcTableWidth());
 

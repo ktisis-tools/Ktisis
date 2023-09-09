@@ -9,6 +9,7 @@ using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Editing;
 using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Components;
@@ -58,29 +59,11 @@ public class TransformWindow : Window {
 	
 	// UI draw
 
-	public override void PreOpenCheck() {
-		if (!this._scene.IsActive) {
-			this.Close();
-			return;
-		}
-
-		var target = this.Editor.GetTransformTarget();
-
-		if (target is null)
-			this.IsOpen = false;
-		else
-			this.IsOpen = true;
-	}
-
 	public override void Draw() {
 		if (!this._scene.IsActive) {
 			this.Close();
 			return;
 		}
-
-		var handler = this.Editor.GetHandler();
-		var target = this.Editor.GetTransformTarget();
-		if (handler is null || target is null) return;
 		
 		// Toggles
 
@@ -115,6 +98,11 @@ public class TransformWindow : Window {
 		var gizmoHint = show ? "Hide rotation gizmo" : "Show rotation gizmo";
 		if (Buttons.DrawIconButtonHint(gizmoIcon, gizmoHint, iconBtnSize))
 			this.Config.Editor_Gizmo = !show;
+		
+		// Transforms
+		
+		var target = this.Editor.GetTransformTarget();
+		ImGui.BeginDisabled(target is null);
 
 		// Gizmo
 
@@ -129,28 +117,28 @@ public class TransformWindow : Window {
 
 		var local = target as ITransformLocal;
 
-		var trans = local?.GetLocalTransform() ?? target.GetTransform();
+		var trans = local?.GetLocalTransform() ?? target?.GetTransform() ?? new Transform();
+		
 		this.Table.Operation = this.Config.Gizmo_Op;
-		if (trans is not null && this.Table.Draw(ref trans)) {
+		if (this.Table.Draw(ref trans)) {
 			if (local is not null)
 				local.SetLocalTransform(trans);
 			else
-				target.SetTransform(trans);
+				target?.SetTransform(trans);
 		}
 		
 		// End
 		
-		//ImGui.PopItemWidth();
+		ImGui.EndDisabled();
 	}
 
-	private unsafe void DrawGizmo(ITransform world, float width) {
-		if (this.Gizmo is null || world.GetMatrix() is not Matrix4x4 matrix)
+	private unsafe void DrawGizmo(ITransform? world, float width) {
+		if (this.Gizmo is null)
 			return;
         
 		var camera = this._camera.GetGameCamera();
-		if (camera == null) return;
-
-		var sceneCam = camera->CameraBase.SceneCamera;
+		var cameraFov = camera != null ? camera->FoV : 1f;
+		var cameraPos = camera != null ? (Vector3)camera->CameraBase.SceneCamera.Object.Position : Vector3.Zero;
 
 		var pos = ImGui.GetCursorScreenPos();
 		var size = new Vector2(width, width);
@@ -158,13 +146,14 @@ public class TransformWindow : Window {
 		this.Gizmo.Begin(size);
 		this.Gizmo.Mode = this.Config.Gizmo_Mode;
 
-		var fov = camera->FoV;
-		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * Gizmo2D.ScaleFactor) / 2.05f, 0xCF202020);
+		if (world?.GetMatrix() is Matrix4x4 matrix) {
+			ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * Gizmo2D.ScaleFactor) / 2.05f, 0xCF202020);
 
-		this.Gizmo.SetLookAt(sceneCam.Object.Position, matrix.Translation, fov);
-		if (this.Gizmo.Manipulate(ref matrix, out var delta))
-			this.Editor.Manipulate(world, matrix, delta);
-		
+			this.Gizmo.SetLookAt(cameraPos, matrix.Translation, cameraFov);
+			if (this.Gizmo.Manipulate(ref matrix, out var delta))
+				this.Editor.Manipulate(world, matrix, delta);
+		}
+
 		this.Gizmo.End();
 	}
 }

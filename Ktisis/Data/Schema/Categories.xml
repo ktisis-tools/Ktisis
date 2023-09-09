@@ -4,6 +4,7 @@
 			j_kao
 			j_ago
 			j_kubi
+			j_head
 		</Bones>
 		<Category Id="Hair">
 			<Bones>
@@ -33,6 +34,8 @@
 				j_zerd_a_r
 				j_zerd_b_l
 				j_zerd_b_r
+				j_ear_l
+				j_ear_r
 			</Bones>
 		</Category>
 		<Category Id="Face">
@@ -117,6 +120,7 @@
 						j_oya_b_l
 						j_te_l
 						n_hte_l
+						j_hand_l
 					</Bones>
 					<Category Id="LeftHandIvcs">
 						<Bones>
@@ -150,6 +154,7 @@
 						j_oya_b_r
 						j_te_r
 						n_hte_r
+						j_hand_l
 					</Bones>
 					<Category Id="RightHandIvcs">
 						<Bones>
@@ -196,6 +201,7 @@
 					<Bones>
 						j_asi_d_l
 						j_asi_e_l
+						j_foot_l
 					</Bones>
 					<Category Id="LeftFootIvcs">
 						<Bones>
@@ -223,6 +229,7 @@
 					<Bones>
 						j_asi_d_r
 						j_asi_e_r
+						j_foot_r
 					</Bones>
 					<Category Id="RightFootIvcs">
 						<Bones>

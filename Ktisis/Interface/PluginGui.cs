@@ -1,28 +1,38 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
+using System.Collections.Generic;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
-using Dalamud.Logging;
 
-using Ktisis.Common.Extensions;
 using Ktisis.Core;
+using Ktisis.Services;
+using Ktisis.Scene;
+using Ktisis.Scene.Editing;
+using Ktisis.Scene.Objects;
+using Ktisis.Data.Config;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
-using Ktisis.Services;
+using Ktisis.Common.Extensions;
 
 namespace Ktisis.Interface; 
 
 public class PluginGui : IDisposable {
 	// Service
 
-	private readonly IServiceContainer _services;
+	private readonly ConfigService _cfg;
 	private readonly UiBuilder _uiBuilder;
 	private readonly GPoseService _gpose;
+	private readonly IServiceContainer _services;
 	
-	public PluginGui(IServiceContainer _services, UiBuilder _uiBuilder, GPoseService _gpose) {
+	public PluginGui(
+		ConfigService _cfg,
+		UiBuilder _uiBuilder,
+		GPoseService _gpose,
+		SceneManager _scene,
+		IServiceContainer _services
+	) {
+		this._cfg = _cfg;
 		this._services = _services;
 		this._uiBuilder = _uiBuilder;
 		this._gpose = _gpose;
@@ -34,6 +44,7 @@ public class PluginGui : IDisposable {
 		_uiBuilder.DisableGposeUiHide = true;
 
 		_gpose.OnGPoseUpdate += OnGPoseUpdate;
+		_scene.Editor.Selection.OnSelectionChanged += OnSelectionChanged;
 	}
 	
 	// Reflection cache
@@ -66,19 +77,27 @@ public class PluginGui : IDisposable {
 
 	public void ToggleMainWindow() => this.GetWindow<Workspace>().Toggle();
 	
-	// Draw event
+	// Events
 
 	private void OnDraw() {
 		this.Overlay.Draw();
 		this.Windows.Draw();
 	}
-	
-	// GPose event
 
 	private void OnGPoseUpdate(bool active) {
 		// TODO: Configuration
 		var window = GetWindow<Workspace>();
 		if (active)
+			window.Open();
+		else
+			window.Close();
+	}
+
+	private void OnSelectionChanged(SelectState _state) {
+		if (!this._cfg.Config.Editor_OpenOnSelect) return;
+
+		var window = this.GetWindow<TransformWindow>();
+		if (_state.Count > 0)
 			window.Open();
 		else
 			window.Close();
