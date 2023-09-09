@@ -11,16 +11,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Input/ControlHooks.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Input/InputService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigFile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigFile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Schema/Categories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Schema/Categories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/TransformTable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/TransformTable.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/PluginGui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/PluginGui.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/TransformWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/TransformWindow.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/SceneEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/SceneEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/SelectState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Editing/SelectState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +49,7 @@
     <setting file="file://$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Scene/SceneGraph.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -63,31 +62,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "v0.3",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.editor",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.3&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
-      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
-      "C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="NativeComponents" type="CppProject" factoryName="C++ Project">
       <configuration_1>
@@ -169,12 +168,14 @@
       <workItem from="1693989890855" duration="15487000" />
       <workItem from="1694086257160" duration="39694000" />
       <workItem from="1694174564540" duration="17924000" />
+      <workItem from="1694273461719" duration="7284000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>

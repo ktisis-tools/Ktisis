@@ -9,7 +9,6 @@ using Ktisis.Core;
 using Ktisis.Services;
 using Ktisis.Scene;
 using Ktisis.Scene.Editing;
-using Ktisis.Scene.Objects;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;

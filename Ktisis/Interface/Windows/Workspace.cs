@@ -132,7 +132,7 @@ public class Workspace : Window {
 		
 		DrawButton(FontAwesomeIcon.Camera, "Camera Editor");
 		DrawButton(FontAwesomeIcon.Sun, "Environment Editor");
-		DrawButton(FontAwesomeIcon.EllipsisH, "Other...");
+		DrawButton(FontAwesomeIcon.EllipsisH, "Options");
         
 		var avail = ImGui.GetContentRegionAvail().X;
 		if (avail < 100) ImGui.Dummy(Vector2.Zero);
