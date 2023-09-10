@@ -11,57 +11,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Core/Impl/IServiceInit.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Core/Impl/KtisisServiceAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Localization/Data/en_US.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Utility/GuiHelpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Utility/GuiHelpers.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/INotifyReady.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/IServiceContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/IServiceContainer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigFile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigFile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/ConfigService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/DataService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/DataService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Input/ControlHooks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Input/ControlHooks.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Input/InputService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Input/InputService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/SceneTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/SceneTree.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/TransformTable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/TransformTable.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/ObjectRenderer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/ObjectRenderer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/PoseRenderer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/PoseRenderer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/RendererBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/RendererBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SelectionGui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SelectionGui.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/PluginGui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/PluginGui.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/TransformWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/TransformWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookContainer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Hooking/HookWrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Hooking/Wrappers/HookWrapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/InteropService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Unmanaged/DllResolver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Unmanaged/DllResolver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Posing/PoseHooks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Posing/PoseHooks.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Posing/PosingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Posing/PosingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Attributes/ObjectModeAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/Attributes/ObjectModeAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/ModeHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/Modes/ModeHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/ObjectMode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/Modes/ObjectMode.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/Modes/PoseMode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/Modes/PoseMode.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/SceneEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/SceneEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Editing/SelectState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/SelectState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Handlers/LightHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Handlers/LightHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/CameraService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Services/CameraService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/CommandService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Services/CommandService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/DalamudServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Services/DalamudServices.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/GPoseService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Services/GPoseService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/NotifyService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/Services/NotifyService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JSON File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -101,31 +65,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;v0.3&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.editor&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "v0.3",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.sourceCode.JSON",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
+      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
+      "C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="NativeComponents" type="CppProject" factoryName="C++ Project">
       <configuration_1>
