@@ -14,6 +14,7 @@ using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Components;
 using Ktisis.Data.Config;
 using Ktisis.Editing;
+using Ktisis.Localization;
 using Ktisis.Scene.Objects;
 
 namespace Ktisis.Interface.Windows; 
@@ -23,6 +24,7 @@ public class Workspace : Window {
 
     private readonly PluginGui _gui;
 	private readonly ConfigService _cfg;
+	private readonly LocaleService _locale;
 	private readonly GPoseService _gpose;
 	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
@@ -30,9 +32,19 @@ public class Workspace : Window {
 
 	private ConfigFile Config => this._cfg.Config;
 	
-	public Workspace(PluginGui _gui, ConfigService _cfg, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr, SceneEditor _editor) : base("Ktisis") {
+	public Workspace(
+		PluginGui _gui,
+		ConfigService _cfg,
+		LocaleService _locale,
+		GPoseService _gpose,
+		PosingService _posing,
+		SceneManager _sceneMgr,
+		SceneEditor _editor
+	) : base("Ktisis") {
+		
 		this._gui = _gui;
 		this._cfg = _cfg;
+		this._locale = _locale;
 		this._gpose = _gpose;
 		this._posing = _posing;
 		this._sceneMgr = _sceneMgr;
@@ -115,15 +127,16 @@ public class Workspace : Window {
 		ImGui.PushStyleColor(ImGuiCol.Button, isPosing ? 0xFF00FF00 : 0xFF7070C0);
 		if (Buttons.ToggleButton("KtisisPoseToggle", ref isPosing, color))
 			this._posing.Toggle();
-		
-		var label = isPosing ? "Posing: On" : "Posing: Off";
+
+		var locKey = isPosing ? "enable" : "disable";
+		var label = this._locale.Translate($"workspace.posing.toggle.{locKey}");
 		ImGui.SameLine();
 		ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetFrameHeight() / 2 - ImGui.CalcTextSize(label).Y / 2);
 		ImGui.Text(label);
 		
 		if (ImGui.IsItemHovered()) {
 			ImGui.BeginTooltip();
-			ImGui.Text(isPosing ? "Bone manipulation is currently enabled." : "Bone manipulation is currently disabled.");
+			ImGui.Text(this._locale.Translate($"workspace.posing.hint.{locKey}"));
 			ImGui.EndTooltip();
 		}
 		
@@ -135,12 +148,12 @@ public class Workspace : Window {
 	// Context buttons
 
 	private void DrawContextButtons() {
-        if (DrawButton(FontAwesomeIcon.ArrowsAlt, "Transform Editor"))
+        if (DrawButton(FontAwesomeIcon.ArrowsAlt, this._locale.Translate("transform_edit.title")))
 			this._gui.GetWindow<TransformWindow>().Toggle();
 		
-		DrawButton(FontAwesomeIcon.Camera, "Camera Editor");
-		DrawButton(FontAwesomeIcon.Sun, "Environment Editor");
-		DrawButton(FontAwesomeIcon.EllipsisH, "Options");
+		DrawButton(FontAwesomeIcon.Camera, this._locale.Translate("camera_edit.title"));
+		DrawButton(FontAwesomeIcon.Sun, this._locale.Translate("env_edit.title"));
+		DrawButton(FontAwesomeIcon.EllipsisH, this._locale.Translate("common.options"));
         
 		var avail = ImGui.GetContentRegionAvail().X;
 		if (avail < 100) ImGui.Dummy(Vector2.Zero);
@@ -180,7 +193,7 @@ public class Workspace : Window {
 
 		if (ImGui.IsItemHovered()) {
 			ImGui.BeginTooltip();
-			ImGui.Text("Select editing mode");
+			ImGui.Text(this._locale.Translate("workspace.edit_mode.hint"));
 			ImGui.EndTooltip();
 		}
 		
@@ -195,7 +208,7 @@ public class Workspace : Window {
 		var icon = GetModeIcon(mode);
 		Icons.DrawIcon(icon);
 		ImGui.SameLine(0, ImGui.GetStyle().ItemSpacing.X);
-		ImGui.Text($"{mode} Mode");
+		ImGui.Text(this._locale.Translate($"edit_mode.{mode}"));
 	}
 
 	private FontAwesomeIcon GetModeIcon(EditMode mode) => mode switch {
@@ -218,7 +231,7 @@ public class Workspace : Window {
 			if (scene != null)
 				DrawStateInfo(scene, height);
 			else
-				ImGui.Text("Waiting for scene...");
+				ImGui.Text(this._locale.Translate("workspace.state.dormant"));
 		} finally {
 			ImGui.EndChildFrame();
 		}
@@ -234,17 +247,18 @@ public class Workspace : Window {
 		ImGui.SetCursorPosX(padding * 2);
 
 		var tar = this._gpose.GetTarget();
-		ImGui.Text(tar is not null ? tar.Name.TextValue : "No target found!");
+		ImGui.Text(tar is not null ? tar.Name.TextValue : this._locale.Translate("workspace.state.no_target"));
 		
 		ImGui.SetCursorPosX(padding * 2);
 		
 		var ct = this._editor.Selection.Count;
 		if (ct > 0) {
 			ImGui.BeginDisabled();
-			ImGui.Text($"{ct} item{(ct == 1 ? "" : "s")} selected.");
+			var key = $"workspace.state.select_count.{(ct > 1 ? "plural" : "single")}";
+			ImGui.Text(this._locale.Translate(key, new() { { "count", ct.ToString() } }));
 			ImGui.EndDisabled();
 		} else {
-			ImGui.TextDisabled("No items selected.");
+			ImGui.TextDisabled(this._locale.Translate("workspace.state.select_count.none"));
 		}
 
 		ImGui.EndGroup();
@@ -260,7 +274,7 @@ public class Workspace : Window {
 		
 		var overlay = this._cfg.Config.Overlay_Visible;
 		var btnIcon = overlay ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
-		if (Buttons.DrawIconButtonHint(btnIcon, "Toggle screen overlay", btnSize))
+		if (Buttons.DrawIconButtonHint(btnIcon, this._locale.Translate("workspace.overlay.toggle"), btnSize))
 			this._cfg.Config.Overlay_Visible = !overlay;
 	}
 	

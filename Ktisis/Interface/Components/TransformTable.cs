@@ -9,6 +9,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Common.Extensions;
 using Ktisis.Interface.Widgets;
 using Ktisis.Editing;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components; 
 
@@ -19,8 +20,12 @@ public class TransformTable {
 
 	private readonly string Id;
 
-	public TransformTable(string id) {
+	private readonly LocaleService _locale;
+
+	public TransformTable(string id, LocaleService _locale) {
 		this.Id = id;
+
+		this._locale = _locale;
 	}
 	
 	// State
@@ -69,20 +74,20 @@ public class TransformTable {
 
 	private bool DrawPosition(ref Vector3 pos) {
 		var result = DrawLinear($"{this.Id}_Pos", ref pos);
-		DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, "Position");
+		DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, this._locale.Translate("transform.position"));
 		return result;
 	}
 
 	private bool DrawRotate(ref Quaternion rot) {
 		var result = DrawEuler($"{this.Id}_Rotate", ref this.Angles, out var delta);
 		if (result) rot *= delta.EulerAnglesToQuaternion();
-		DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, "Rotation");
+		DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, this._locale.Translate("transform.rotation"));
 		return result;
 	}
 
 	private bool DrawScale(ref Vector3 scale) {
 		var result = DrawLinear($"{this.Id}_Scale", ref scale);
-		DrawOperation(ScaleOp, FontAwesomeIcon.Expand, "Scale");
+		DrawOperation(ScaleOp, FontAwesomeIcon.Expand, this._locale.Translate("transform.scale"));
 		return result;
 	}
 
