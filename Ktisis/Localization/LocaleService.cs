@@ -1,39 +1,30 @@
-using System;
 using System.Collections.Generic;
+
+using Ktisis.Core.Impl;
 
 namespace Ktisis.Localization;
 
-public static class LocaleService {
-	private static LocaleData Data = null!;
+[KtisisService]
+public class LocaleService {
+	// Fields
+	
+	private LocaleData? Data;
 
-	public static List<UserLocale> Languages = new() {
-		UserLocale.English
-	};
+	private readonly LocaleDataLoader Loader = new();
+	
+	// Localization methods
 
-	public static string Translate(string handle, Dictionary<string, string>? parameters = null) {
-		return Data.Translate(handle, parameters);
+	public string Translate(string handle, Dictionary<string, string>? parameters = null) {
+		return this.Data?.Translate(handle, parameters) ?? handle;
 	}
 
-	public static bool HasTranslationFor(string handle) {
-		return Data.HasTranslationFor(handle);
+	public bool HasTranslationFor(string handle) {
+		return this.Data?.HasTranslationFor(handle) ?? false;
 	}
 
-	/* TODO: Remove this, and instead use the technical name as the identifier */
-	public static void LoadLocale(UserLocale value) {
-		LoadLocale(value switch {
-			UserLocale.English => "en_US",
-			var _ => throw new ArgumentException("Unknown UserLocale", nameof(value))
-		});
-	}
-
-	public static void LoadLocale(string technicalName) {
+	public void LoadLocale(string technicalName) {
 		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-		if (Data == null || Data.MetaData.TechnicalName != technicalName)
-			Data = LocaleDataLoader.LoadData(technicalName);
+		if (this.Data == null || this.Data.MetaData.TechnicalName != technicalName)
+			this.Data = this.Loader.LoadData(technicalName);
 	}
-}
-
-/* TODO: Remove this and instead scan for locale resources in the Assembly */
-public enum UserLocale {
-	English = 0
 }
