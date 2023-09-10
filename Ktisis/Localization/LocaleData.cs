@@ -16,7 +16,8 @@ public class LocaleData {
 	public string Translate(string key, Dictionary<string, string>? parameters = null) {
 		/* TODO: Implementing some form of fallback system might be good here. */
 		if(!this._translationData.TryGetValue(key, out string? translationString)) {
-			Logger.Warning("Unassigned translation key '{0}' for locale '{1}'", key, this.MetaData.TechnicalName);
+			// Disabling this due to per-frame log spam.
+			// Logger.Warning("Unassigned translation key '{0}' for locale '{1}'", key, this.MetaData.TechnicalName);
 			return key;
 		}
 		return ReplaceParameters(key, translationString, parameters);
@@ -51,6 +52,8 @@ public class LocaleData {
 						result.Append(value);
 						key.Clear();
 					}
+					
+					inParameter = false;
 				} else {
 					key.Append(c);
 				}

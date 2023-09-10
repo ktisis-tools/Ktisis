@@ -7,5 +7,68 @@
 			"@chirpxiv",
 			null
 		]
+	},
+	
+	"common": {
+		"options": "Options"
+	},
+	
+	"transform": {
+		"position": "Position",
+		"rotation": "Rotation",
+		"scale": "Scale"
+	},
+	
+	"edit_mode": {
+		"Object": "Object Mode",
+		"Pose": "Pose Mode"
+	},
+	
+	"workspace": {
+		"state": {
+			"dormant": "Waiting for scene...",
+			"no_target": "No target found.",
+			"select_count": {
+				"single": "%count% item selected.",
+				"plural": "%count% items selected.",
+				"none": "No items selected."
+			}
+		},
+		"posing": {
+			"toggle": {
+				"enable": "Posing: On",
+				"disable": "Posing: Off"
+			},
+			"hint": {
+				"enable": "Bone manipulation is currently enabled.",
+				"disable": "Bone manipulation is currently disabled."
+			}
+		},
+		"edit_mode.hint": "Select editing mode",
+		"overlay.toggle": "Toggle screen overlay"
+	},
+	
+	"transform_edit": {
+		"title": "Transform Editor",
+		"mode": {
+			"world": "World Transform",
+			"local": "Local Transform"
+		},
+		"flags": {
+			"parallel": "Parallel Transform",
+			"mirror": "Mirror Transform"
+		},
+		"gizmo": {
+			"show": "Show rotation gizmo",
+			"hide": "Hide rotation gizmo"
+		}
+	},
+	
+	"camera_edit": {
+		"title": "Camera Editor"
+	},
+	
+	"env_edit": {
+		"title": "Environment Editor"
 	}
 }
