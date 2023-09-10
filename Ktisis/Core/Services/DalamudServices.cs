@@ -5,7 +5,7 @@ using Dalamud.Plugin.Services;
 
 using Ktisis.Core;
 
-namespace Ktisis.Services; 
+namespace Ktisis.Core.Services; 
 
 internal class DalamudServices {
 	private readonly DalamudPluginInterface PluginApi;

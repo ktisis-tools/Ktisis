@@ -1,4 +1,3 @@
-using Ktisis.Data;
 using Ktisis.Data.Config;
 
 namespace Ktisis.Scene;

@@ -7,53 +7,38 @@ using Dalamud.Hooking;
 using Dalamud.Logging;
 using Dalamud.Utility.Signatures;
 
+using Ktisis.Interop.Hooking.Wrappers;
+
 namespace Ktisis.Interop.Hooking; 
 
 public abstract class HookContainer {
-	// Constructor
-	
-	private readonly InteropService _interop;
-	
-	public HookContainer(InteropService _interop) {
-		this._interop = _interop;
-	}
-	
 	// Hook creation
 	
-	protected readonly List<IHookWrapper> _hooks = new();
-
-	public void Create() {
-		try {
-			SignatureHelper.Initialise(this);
-		} catch (Exception) {
-			GetHooks().ForEach(hook => hook.Dispose());
-			throw;
-		}
-
-		foreach (var hook in GetHooks()) {
-			this._hooks.Add(hook);
-			this._interop.Hooks.Add(hook);
-		}
-	}
+	private List<IHookWrapper>? _hooks;
 	
 	// Hook access
 
 	public bool Enabled { get; protected set; }
 
 	public void EnableAll() {
+		if (this._hooks == null) return;
 		this.Enabled = true;
-		this._hooks.ForEach(hook => hook.Enable());
+		this._hooks?.ForEach(hook => hook.Enable());
 	}
 
 	public void DisableAll() {
+		if (this._hooks == null) return;
 		this.Enabled = false;
-		this._hooks.ForEach(hook => hook.Disable());
+		this._hooks?.ForEach(hook => hook.Disable());
 	}
 	
 	// Reflection
 
-	private List<IHookWrapper> GetHooks() {
-		var results = new List<IHookWrapper>();
+	internal List<IHookWrapper> GetHooks() {
+		if (this._hooks != null)
+			return this._hooks;
+
+		var hooks = new List<IHookWrapper>();
 		
 		var fields = this.GetType()
 			.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -62,13 +47,13 @@ public abstract class HookContainer {
 		foreach (var field in fields) {
 			try {
 				if (GetHookFromField(field) is IHookWrapper wrapper)
-					results.Add(wrapper);
+					hooks.Add(wrapper);
 			} catch (Exception err) {
 				PluginLog.Error($"Failed to get wrapper for field '{field.Name}':\n{err}");
 			}
 		}
 
-		return results;
+		return this._hooks = hooks;
 	}
 
 	private IHookWrapper? GetHookFromField(FieldInfo field) {

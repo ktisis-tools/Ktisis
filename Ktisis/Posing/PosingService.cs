@@ -1,32 +1,40 @@
 using Dalamud.Logging;
 
-using Ktisis.Core;
-using Ktisis.Services;
+using Ktisis.Interop;
+using Ktisis.Core.Services;
+using Ktisis.Core.Impl;
 
 namespace Ktisis.Posing; 
 
-public class PosingService {
+[KtisisService]
+public class PosingService : IServiceInit {
 	// Constructor
 
-	private readonly PoseHooks Hooks;
+	private readonly InteropService _interop;
 
-	public PosingService(IServiceContainer _services, GPoseService _gpose) {
-		this.Hooks = _services.Inject<PoseHooks>();
+	private PoseHooks? Hooks;
+
+	public PosingService(InteropService _interop, GPoseService _gpose) {
+		this._interop = _interop;
 		_gpose.OnGPoseUpdate += OnGPoseUpdate;
+	}
+	
+	public void PreInit() {
+		this.Hooks = this._interop.Create<PoseHooks>().Result;
 	}
 	
 	// Posing
 
-	public bool IsActive => this.Hooks.Enabled;
+	public bool IsActive => this.Hooks?.Enabled ?? false;
 
 	public void Enable() {
 		PluginLog.Verbose("Enabling posing hooks.");
-		this.Hooks.EnableAll();
+		this.Hooks?.EnableAll();
 	}
 
 	public void Disable() {
 		PluginLog.Verbose("Disabling posing hooks.");
-		this.Hooks.DisableAll();
+		this.Hooks?.DisableAll();
 	}
 
 	public void Toggle() {

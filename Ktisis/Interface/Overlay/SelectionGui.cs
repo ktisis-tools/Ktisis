@@ -8,14 +8,13 @@ using Dalamud.Logging;
 
 using ImGuiNET;
 
-using Ktisis.Data;
 using Ktisis.Data.Config.Display;
 using Ktisis.Common.Extensions;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Widgets;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Impl;
-using Ktisis.Services;
+using Ktisis.Core.Services;
 
 namespace Ktisis.Interface.Overlay;
 

@@ -1,11 +1,12 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using Ktisis.Common.Extensions;
+using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
+using Ktisis.Common.Extensions;
 
-namespace Ktisis.Scene.Editing;
+namespace Ktisis.Editing;
 
 public enum SelectFlags {
 	None,

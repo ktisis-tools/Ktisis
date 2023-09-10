@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 using Dalamud.Logging;
 using Dalamud.Plugin;
 
+using Ktisis.Core.Impl;
+using Ktisis.Core.Services;
 using Ktisis.Data.Config.Display;
-using Ktisis.Services;
 
 namespace Ktisis.Data.Config; 
 
+[KtisisService]
 public class ConfigService {
 	// Service
 	
@@ -35,6 +38,9 @@ public class ConfigService {
 	public async Task LoadConfig() {
 		await Task.Yield();
 
+		var timer = new Stopwatch();
+		timer.Start();
+
 		ConfigFile? cfg = null;
 
 		try {
@@ -58,6 +64,9 @@ public class ConfigService {
 		}
 
 		this.Config = cfg;
+
+		timer.Stop();
+		PluginLog.Debug($"Configuration loaded in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 	}
 
 	public void SaveConfig() {

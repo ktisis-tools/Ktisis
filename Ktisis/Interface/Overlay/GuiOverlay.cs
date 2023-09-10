@@ -7,28 +7,33 @@ using Dalamud.Interface;
 
 using ImGuiNET;
 
-using Ktisis.Core;
 using Ktisis.Scene;
 using Ktisis.Scene.Objects;
-using Ktisis.Scene.Editing;
-using Ktisis.Scene.Editing.Modes;
+using Ktisis.Editing;
+using Ktisis.Editing.Modes;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Utility;
+using Ktisis.Core;
+using Ktisis.Core.Impl;
 using Ktisis.Data.Config;
-using Ktisis.Services;
+using Ktisis.Core.Services;
 using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Overlay;
 
-public class GuiOverlay {
+[KtisisService]
+public class GuiOverlay : IServiceInit {
 	// Dependencies
+
+	private readonly IServiceContainer _services;
 
 	private readonly CameraService _camera;
 	private readonly ConfigService _cfg;
 	private readonly GPoseService _gpose;
 	private readonly SceneManager _scene;
+	private readonly SceneEditor _editor;
 	
-	private readonly Gizmo? Gizmo;
+	private Gizmo? Gizmo;
 	
 	public readonly SelectionGui Selection;
 
@@ -42,28 +47,33 @@ public class GuiOverlay {
 		ConfigService _cfg,
 		GPoseService _gpose,
 		SceneManager _scene,
-		NotifyService _notify
+		SceneEditor _editor
 	) {
+		this._services = _services;
+        
 		this._camera = _camera;
 		this._cfg = _cfg;
 		this._gpose = _gpose;
 		this._scene = _scene;
-		
+		this._editor = _editor;
+
+		this.Selection = new SelectionGui(_camera, _cfg);
+		this.Selection.OnItemSelected += OnItemSelected;
+	}
+
+	public void Initialize() {
 		if (Gizmo.Create(GizmoID.OverlayMain) is Gizmo gizmo) {
 			this.Gizmo = gizmo;
 			gizmo.Operation = Operation.ROTATE;
 			gizmo.OnManipulate += OnManipulate;
 		} else {
-			_notify.Warning(
+			this._services.GetService<NotifyService>()?.Warning(
 				"Failed to create gizmo. This may be due to version incompatibilities.\n" +
 				"Please check your error log for more information."
 			);
 		}
-
-		this.Selection = _services.Inject<SelectionGui>();
-		this.Selection.OnItemSelected += OnItemSelected;
 		
-		foreach (var (id, handler) in _scene.Editor.GetHandlers()) {
+        foreach (var (id, handler) in this._editor.GetHandlers()) {
 			if (handler.GetRenderer() is Type type)
 				AddRenderer(id, type);
 		}
@@ -88,17 +98,17 @@ public class GuiOverlay {
 
 	private void OnItemSelected(SceneObject item) {
 		var flags = GuiHelpers.GetSelectFlags();
-		this._scene.Editor.Selection.HandleClick(item, flags);
+		this._editor.Selection.HandleClick(item, flags);
 	}
 
 	private void OnManipulate(Gizmo gizmo) {
 		if (!this._scene.IsActive) return;
 
-		var target = this._scene.Editor.GetHandler()?
+		var target = this._editor.GetHandler()?
 			.GetTransformTarget();
 
 		if (target is not null)
-			this._scene.Editor.Manipulate(target, gizmo.GetResult(), gizmo.GetDelta());
+			this._editor.Manipulate(target, gizmo.GetResult(), gizmo.GetDelta());
 	}
 	
 	// Create overlay window
@@ -144,7 +154,7 @@ public class GuiOverlay {
 	private void DrawScene() {
 		if (!this._scene.IsActive) return;
 
-		var editor = this._scene.Editor;
+		var editor = this._editor;
 		if (editor.GetHandler() is ModeHandler handler)
 			GetRenderer(this.Config.Editor_Mode)?.OnDraw(this, handler);
 

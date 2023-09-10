@@ -7,14 +7,9 @@ using Dalamud.Plugin;
 using Dalamud.Logging;
 
 using Ktisis.Core;
-using Ktisis.Data;
+using Ktisis.Core.Impl;
 using Ktisis.Data.Config;
-using Ktisis.Input;
-using Ktisis.Scene;
-using Ktisis.Services;
-using Ktisis.Interface;
-using Ktisis.Interop;
-using Ktisis.Posing;
+using Ktisis.Core.Services;
 
 namespace Ktisis;
 
@@ -37,20 +32,8 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	public Ktisis(DalamudPluginInterface api) {
 		// Service registration
-
-		this.Services = new ServiceManager()
-			.AddDalamudServices(api)
-			.AddService<ConfigService>()
-			.AddService<CameraService>()
-			.AddService<CommandService>()
-			.AddService<DataService>()
-			.AddService<GPoseService>()
-			.AddService<InputService>()
-			.AddService<InteropService>()
-			.AddService<NotifyService>()
-			.AddService<PluginGui>()
-			.AddService<PosingService>()
-			.AddService<SceneManager>();
+        
+		this.Services = new ServiceManager().AddDalamudServices(api);
 
 		this.InitTask = Init().ContinueWith(task => {
 			this.InitTask = null;
@@ -75,41 +58,18 @@ public sealed class Ktisis : IDalamudPlugin {
 		var timer = new Stopwatch();
 		timer.Start();
 
-		var cfg = this.Services.GetRequiredService<ConfigService>();
-		await Task.WhenAll(new[] {
-			LoadConfig(cfg),
-			InitServices()
-		});
+		this.Services.AddServices<KtisisServiceAttribute>();
 
-		PluginLog.Debug($"Initialization completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
-		timer.Restart();
-
-		this.Services.NotifyReady();
-
-		timer.Stop();
-		PluginLog.Debug($"Ready notifier completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
-	}
-
-	private async Task LoadConfig(ConfigService cfg) {
-		await Task.Yield();
-
-		var timer = new Stopwatch();
-		timer.Start();
+		var cfg = this.Services.GetRequiredService<ConfigService>(); 
+		await Task.WhenAll(
+			cfg.LoadConfig(),
+			Task.Run(this.Services.PreInit)
+		);
 		
-		await cfg.LoadConfig();
+		this.Services.Initialize();
 
 		timer.Stop();
-		PluginLog.Debug($"Loaded configuration in {timer.Elapsed.TotalMilliseconds:0.000}ms");
-	}
-
-	private async Task InitServices() {
-		await Task.Yield();
-		this.Services.GetRequiredService<InteropService>();
-		this.Services.GetRequiredService<PosingService>();
-		this.Services.GetRequiredService<InputService>();
-		this.Services.GetRequiredService<SceneManager>();
-		this.Services.GetRequiredService<CommandService>();
-		this.Services.GetRequiredService<PluginGui>();
+		PluginLog.Debug($"Plugin startup completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 	}
 
 	// Version info

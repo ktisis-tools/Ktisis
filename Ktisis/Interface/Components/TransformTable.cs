@@ -8,7 +8,7 @@ using Ktisis.ImGuizmo;
 using Ktisis.Common.Utility;
 using Ktisis.Common.Extensions;
 using Ktisis.Interface.Widgets;
-using Ktisis.Scene.Editing;
+using Ktisis.Editing;
 
 namespace Ktisis.Interface.Components; 
 

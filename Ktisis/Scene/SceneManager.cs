@@ -5,16 +5,16 @@ using Dalamud.Game;
 using Dalamud.Logging;
 
 using Ktisis.Core;
-using Ktisis.Data.Config;
-using Ktisis.Services;
-using Ktisis.Scene.Editing;
+using Ktisis.Core.Impl;
+using Ktisis.Core.Services;
 using Ktisis.Scene.Handlers;
 
 namespace Ktisis.Scene;
 
 public delegate void SceneChangedHandler(SceneGraph? scene);
 
-public class SceneManager : IDisposable {
+[KtisisService]
+public class SceneManager : IServiceInit, IDisposable {
 	// Service
 	
 	private readonly Framework _framework;
@@ -22,23 +22,22 @@ public class SceneManager : IDisposable {
 	private readonly IServiceContainer _services;
 
 	private readonly SceneContext Context;
-	
-	public readonly SceneEditor Editor;
 
-	public SceneManager(ConfigService _cfg, Framework _framework, GPoseService _gpose, IServiceContainer _services) {
+	public SceneManager(Framework _framework, GPoseService _gpose, IServiceContainer _services) {
 		this._services = _services;
 		this._framework = _framework;
 		this._gpose = _gpose;
 
 		this.Context = _services.Inject<SceneContext>(this);
-
-		this.Editor = new SceneEditor(this, _cfg);
+		
 		this.AddHandler<ActorHandler>()
 			.AddHandler<LightHandler>()
 			.AddHandler<ObjectHandler>();
-		
-		_framework.Update += OnFrameworkUpdate;
-		_gpose.OnGPoseUpdate += OnGPoseUpdate;
+	}
+
+	public void Initialize() {
+		this._framework.Update += OnFrameworkUpdate;
+		this._gpose.OnGPoseUpdate += OnGPoseUpdate;
 	}
 	
 	// Scene state

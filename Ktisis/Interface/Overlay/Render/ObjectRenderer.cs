@@ -1,7 +1,7 @@
 using System.Linq;
 
 using Ktisis.Scene.Objects.World;
-using Ktisis.Scene.Editing.Modes;
+using Ktisis.Editing.Modes;
 using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface.Overlay.Render; 

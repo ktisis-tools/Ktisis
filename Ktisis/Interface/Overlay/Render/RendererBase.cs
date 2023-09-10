@@ -1,4 +1,4 @@
-using Ktisis.Scene.Editing.Modes;
+using Ktisis.Editing.Modes;
 
 namespace Ktisis.Interface.Overlay.Render;
 

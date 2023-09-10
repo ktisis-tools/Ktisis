@@ -3,19 +3,22 @@ using System.Numerics;
 using System.Reflection;
 using System.Collections.Generic;
 
+using Ktisis.Editing.Attributes;
+using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
-using Ktisis.Scene.Editing.Attributes;
 
-namespace Ktisis.Scene.Editing.Modes;
+namespace Ktisis.Editing.Modes;
 
 public abstract class ModeHandler {
 	// Constructor
 	
 	protected readonly SceneManager Manager;
+	protected readonly SceneEditor Editor;
 
-	public ModeHandler(SceneManager mgr) {
+	protected ModeHandler(SceneManager mgr, SceneEditor editor) {
 		this.Manager = mgr;
+		this.Editor = editor;
 	}
 	
 	// Enumeration
