@@ -17,8 +17,8 @@ internal class DllResolver : IDisposable {
 	private AssemblyLoadContext? Context;
 
 	private readonly List<nint> Handles = new();
-
-	internal DllResolver() {
+	
+	public void Create() {
 		PluginLog.Debug("Creating DLL resolver for unmanaged DLLs");
 
 		this.Context = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());

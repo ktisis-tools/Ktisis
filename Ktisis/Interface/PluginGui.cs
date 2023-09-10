@@ -6,55 +6,59 @@ using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 
 using Ktisis.Core;
-using Ktisis.Services;
-using Ktisis.Scene;
-using Ktisis.Scene.Editing;
+using Ktisis.Core.Services;
+using Ktisis.Editing;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
 using Ktisis.Common.Extensions;
+using Ktisis.Core.Impl;
 
 namespace Ktisis.Interface;
 
-public class PluginGui : IDisposable {
+[KtisisService]
+public class PluginGui : IServiceInit, IDisposable {
 	// Service
-
-	private readonly ConfigService _cfg;
-	private readonly UiBuilder _uiBuilder;
+	
+    private readonly ConfigService _cfg;
 	private readonly GPoseService _gpose;
+	private readonly SceneEditor _editor;
+	private readonly GuiOverlay _overlay;
+	private readonly UiBuilder _uiBuilder;
 	private readonly IServiceContainer _services;
 
 	public PluginGui(
 		ConfigService _cfg,
-		UiBuilder _uiBuilder,
 		GPoseService _gpose,
-		SceneManager _scene,
+		SceneEditor _editor,
+		GuiOverlay _overlay,
+		UiBuilder _uiBuilder,
 		IServiceContainer _services
 	) {
 		this._cfg = _cfg;
-		this._services = _services;
-		this._uiBuilder = _uiBuilder;
 		this._gpose = _gpose;
+		this._editor = _editor;
+		this._overlay = _overlay;
+		this._uiBuilder = _uiBuilder;
+		this._services = _services;
+	}
 
-		this.Overlay = _services.Inject<GuiOverlay>();
+	public void PreInit() {
+        this._gpose.OnGPoseUpdate += OnGPoseUpdate;
 
-		_uiBuilder.Draw += OnDraw;
-		_uiBuilder.OpenConfigUi += ToggleMainWindow;
-		_uiBuilder.DisableGposeUiHide = true;
+		this._editor.Selection.OnSelectionChanged += OnSelectionChanged;
+	}
 
-		_gpose.OnGPoseUpdate += OnGPoseUpdate;
-		_scene.Editor.Selection.OnSelectionChanged += OnSelectionChanged;
+	public void Initialize() {
+		this._uiBuilder.Draw += OnDraw;
+		this._uiBuilder.OpenConfigUi += ToggleMainWindow;
+		this._uiBuilder.DisableGposeUiHide = true;
 	}
 
 	// Reflection cache
 
 	private readonly static FieldInfo WindowsField = typeof(WindowSystem)
 		.GetField("windows", BindingFlags.Instance | BindingFlags.NonPublic)!;
-
-	// Overlay
-
-	public readonly GuiOverlay Overlay;
-
 	// Window state
 
 	private readonly WindowSystem Windows = new("Ktisis");
@@ -79,7 +83,7 @@ public class PluginGui : IDisposable {
 	// Events
 
 	private void OnDraw() {
-		this.Overlay.Draw();
+		this._overlay.Draw();
 		this.Windows.Draw();
 	}
 

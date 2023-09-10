@@ -6,20 +6,21 @@ using Ktisis.Posing;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
-using Ktisis.Scene.Editing.Attributes;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
+using Ktisis.Editing.Attributes;
+using Ktisis.Scene;
 
-namespace Ktisis.Scene.Editing.Modes;
+namespace Ktisis.Editing.Modes;
 
 [ObjectMode(EditMode.Pose, Renderer = typeof(PoseRenderer))]
 public class PoseMode : ModeHandler {
 	// Constructor
 
 	private readonly ConfigService _cfg;
-
-	public PoseMode(SceneManager mgr, ConfigService _cfg) : base(mgr) {
+	
+	public PoseMode(SceneManager mgr, SceneEditor editor, ConfigService _cfg) : base(mgr, editor) {
 		this._cfg = _cfg;
 	}
 
@@ -48,7 +49,7 @@ public class PoseMode : ModeHandler {
 	// Selection
 
 	private IEnumerable<ArmatureNode> GetSelected()
-		=> this.Manager.Editor.Selection
+		=> this.Editor.Selection
 			.GetSelected()
 			.Where(item => item is ArmatureNode)
 			.Cast<ArmatureNode>();

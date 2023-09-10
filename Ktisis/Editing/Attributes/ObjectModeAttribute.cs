@@ -1,6 +1,6 @@
 using System;
 
-namespace Ktisis.Scene.Editing.Attributes;
+namespace Ktisis.Editing.Attributes;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class ObjectModeAttribute : Attribute {

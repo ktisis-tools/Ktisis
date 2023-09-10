@@ -7,14 +7,14 @@ using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
 
-using Ktisis.Common.Extensions;
 using Ktisis.Scene;
 using Ktisis.Posing;
-using Ktisis.Services;
+using Ktisis.Core.Services;
 using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Components;
 using Ktisis.Data.Config;
-using Ktisis.Scene.Editing;
+using Ktisis.Editing;
+using Ktisis.Scene.Objects;
 
 namespace Ktisis.Interface.Windows;
 
@@ -26,18 +26,21 @@ public class Workspace : Window {
 	private readonly GPoseService _gpose;
 	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
+	private readonly SceneEditor _editor;
 
 	private ConfigFile Config => this._cfg.Config;
-
-	public Workspace(PluginGui _gui, ConfigService _cfg, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr) : base("Ktisis") {
+	
+	public Workspace(PluginGui _gui, ConfigService _cfg, GPoseService _gpose, PosingService _posing, SceneManager _sceneMgr, SceneEditor _editor) : base("Ktisis") {
 		this._gui = _gui;
 		this._cfg = _cfg;
 		this._gpose = _gpose;
 		this._posing = _posing;
 		this._sceneMgr = _sceneMgr;
-
+		this._editor = _editor;
+		
 		this.SceneTree = new SceneTree(_cfg, _sceneMgr);
-
+		this.SceneTree.OnItemClicked += OnItemClicked;
+		
 		RespectCloseHotkey = false;
 	}
 
@@ -50,7 +53,12 @@ public class Workspace : Window {
 	private readonly static Vector2 MinimumSize = new(280, 300);
 
 	private readonly static EditMode[] ModeValues = Enum.GetValues<EditMode>().Skip(1).ToArray();
+	
+	// Events
 
+	private void OnItemClicked(SceneObject item, SelectFlags flags)
+		=> this._editor.Selection.HandleClick(item, flags);
+	
 	// UI draw
 
 	public override void Draw() {
@@ -231,6 +239,8 @@ public class Workspace : Window {
 		ImGui.SetCursorPosX(padding * 2);
 
 		var ct = this._sceneMgr.Editor.Selection.Count;
+		
+		var ct = this._editor.Selection.Count;
 		if (ct > 0) {
 			ImGui.BeginDisabled();
 			ImGui.Text($"{ct} item{(ct == 1 ? "" : "s")} selected.");

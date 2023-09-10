@@ -7,10 +7,12 @@ using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
 
 using Ktisis.Interface;
+using Ktisis.Core.Impl;
 
-namespace Ktisis.Services;
+namespace Ktisis.Core.Services; 
 
-public class CommandService : IDisposable {
+[KtisisService]
+public class CommandService : IServiceInit, IDisposable {
 	// Service
 
 	private readonly ICommandManager _cmd;
@@ -19,7 +21,9 @@ public class CommandService : IDisposable {
 	public CommandService(ICommandManager _cmd, PluginGui _gui) {
 		this._cmd = _cmd;
 		this._gui = _gui;
+	}
 
+	public void Initialize() {
 		this.AddHandler("/ktisis", new CommandInfo(OnCommand) {
 			HelpMessage = "Toggle the Ktisis GUI."
 		});
@@ -34,7 +38,7 @@ public class CommandService : IDisposable {
 		if (this._cmd.AddHandler(name, cmd))
 			this.Commands.Add(name, cmd);
 		else
-			throw new Exception($"Failed to register command '{name}'.");
+			PluginLog.Warning("Failed to register command.");
 	}
 
 	// Main command handler

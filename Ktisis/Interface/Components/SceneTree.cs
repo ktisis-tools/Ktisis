@@ -15,11 +15,11 @@ using Ktisis.Interface.Widgets;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
-using Ktisis.Scene.Editing;
-using Ktisis.Scene.Objects.Models;
-using Ktisis.Scene.Objects.World;
+using Ktisis.Editing;
 
 namespace Ktisis.Interface.Components;
+
+public delegate void OnItemClickedHandler(SceneObject item, SelectFlags flags);
 
 public class SceneTree {
 	// Constructor
@@ -32,7 +32,11 @@ public class SceneTree {
 		this._cfg = _cfg;
 		this._sceneMgr = _sceneMgr;
 	}
+	
+	// Events
 
+	public event OnItemClickedHandler? OnItemClicked;
+	
 	// UI draw
 
 	public void Draw(float height) {
@@ -130,7 +134,7 @@ public class SceneTree {
 
 	private void ClickItem(SceneObject item) {
 		var clickFlags = GuiHelpers.GetSelectFlags();
-		this._sceneMgr.Editor.Selection.HandleClick(item, clickFlags);
+		this.OnItemClicked?.Invoke(item, clickFlags);
 	}
 
 	private bool DrawNodeLabel(SceneGraph scene, SceneObject item, Vector2 pos, TreeNodeState state, float rightAdjust = 0.0f) {

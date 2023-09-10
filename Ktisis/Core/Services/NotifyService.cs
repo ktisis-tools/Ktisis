@@ -1,8 +1,11 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Internal.Notifications;
 
-namespace Ktisis.Services;
+using Ktisis.Core.Impl;
 
+namespace Ktisis.Core.Services; 
+
+[KtisisService]
 public class NotifyService {
 	// Service
 

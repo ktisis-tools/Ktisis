@@ -7,5 +7,4 @@ public interface IServiceContainer : IServiceProvider {
 	public T GetRequiredService<T>();
 
 	public T Inject<T>(params object?[] deps);
-	public bool Inject<T>(T inst, params object?[] deps);
 }

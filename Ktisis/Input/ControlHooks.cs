@@ -7,14 +7,6 @@ using Ktisis.Interop.Hooking;
 namespace Ktisis.Input; 
 
 public class ControlHooks : HookContainer {
-	// Constructor
-
-	public ControlHooks(InteropService _interop) : base(_interop) {
-		this.Create();
-		
-		this.InputHook.Enable();
-	}
-
 	// Hooks
 
 	[Signature("48 89 5C 24 ?? 55 56 57 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 40 4D 8B F9")]

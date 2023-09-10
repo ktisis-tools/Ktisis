@@ -7,14 +7,14 @@ using ImGuiNET;
 
 using Ktisis.Scene;
 using Ktisis.Scene.Impl;
-using Ktisis.Scene.Editing;
+using Ktisis.Editing;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Widgets;
-using Ktisis.Services;
+using Ktisis.Core.Services;
 using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Windows;
@@ -24,17 +24,18 @@ public class TransformWindow : Window {
 
 	private readonly ConfigService _cfg;
 	private readonly SceneManager _scene;
+	private readonly SceneEditor _editor;
 	private readonly CameraService _camera;
 
 	private readonly Gizmo2D? Gizmo;
 	private readonly TransformTable Table;
 
 	private ConfigFile Config => this._cfg.Config;
-	private SceneEditor Editor => this._scene.Editor;
 
 	public TransformWindow(
 		ConfigService _cfg,
 		SceneManager _scene,
+		SceneEditor _editor,
 		CameraService _camera
 	) : base(
 		"Transform Editor",
@@ -42,6 +43,7 @@ public class TransformWindow : Window {
 	) {
 		this._cfg = _cfg;
 		this._scene = _scene;
+		this._editor = _editor;
 		this._camera = _camera;
 
 		this.Gizmo = Gizmo2D.Create(GizmoID.TransformEditor);
@@ -100,8 +102,8 @@ public class TransformWindow : Window {
 			this.Config.Editor_Gizmo = !show;
 
 		// Transforms
-
-		var target = this.Editor.GetTransformTarget();
+		
+		var target = this._editor.GetTransformTarget();
 		ImGui.BeginDisabled(target is null);
 
 		// Gizmo
@@ -151,7 +153,7 @@ public class TransformWindow : Window {
 
 			this.Gizmo.SetLookAt(cameraPos, matrix.Translation, cameraFov);
 			if (this.Gizmo.Manipulate(ref matrix, out var delta))
-				this.Editor.Manipulate(world, matrix, delta);
+				this._editor.Manipulate(world, matrix, delta);
 		}
 
 		this.Gizmo.End();

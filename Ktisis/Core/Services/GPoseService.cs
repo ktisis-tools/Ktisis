@@ -10,15 +10,16 @@ using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 
-using Ktisis.Core;
+using Ktisis.Core.Impl;
 using Ktisis.Common.Extensions;
 using Ktisis.Interop.Structs.Event;
 
-namespace Ktisis.Services;
+namespace Ktisis.Core.Services;
 
 public delegate void GPoseUpdate(bool active);
 
-public class GPoseService : INotifyReady, IDisposable {
+[KtisisService]
+public class GPoseService : IServiceInit, IDisposable {
 	// Service
 
 	private readonly IObjectTable _actors;
@@ -29,12 +30,14 @@ public class GPoseService : INotifyReady, IDisposable {
 		this._actors = _actors;
 		this._framework = _framework;
 		this._uiBuilder = _uiBuilder;
-
-		SignatureHelper.Initialise(this);
 	}
 
-	public void OnReady() {
-		this._framework.Update += OnFrameworkEvent;
+	public void PreInit() {
+		SignatureHelper.Initialise(this);
+	}
+	
+    public void Initialize() {
+        this._framework.Update += OnFrameworkEvent;
 	}
 
 	// State

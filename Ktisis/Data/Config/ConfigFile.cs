@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Configuration;
 
 using Ktisis.ImGuizmo;
-using Ktisis.Scene.Editing;
+using Ktisis.Editing;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Display;
 

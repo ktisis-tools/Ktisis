@@ -1,13 +1,21 @@
-using Ktisis.Core;
+using Ktisis.Interop;
+using Ktisis.Core.Impl;
 
 namespace Ktisis.Input; 
 
-public class InputService {
+[KtisisService]
+public class InputService : IServiceInit {
 	// Service
 
-	private readonly ControlHooks ControlHooks;
+	private readonly InteropService _interop;
 
-	public InputService(IServiceContainer _services) {
-		this.ControlHooks = _services.Inject<ControlHooks>();
+	private ControlHooks? ControlHooks;
+
+	public InputService(InteropService _interop) {
+		this._interop = _interop;
+	}
+
+	public void PreInit() {
+		this.ControlHooks = this._interop.Create<ControlHooks>().Result;
 	}
 }

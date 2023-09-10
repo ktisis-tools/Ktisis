@@ -3,7 +3,7 @@ using System.Linq;
 using ImGuiNET;
 
 using Ktisis.Posing;
-using Ktisis.Scene.Editing.Modes;
+using Ktisis.Editing.Modes;
 using Ktisis.Scene.Objects.Models;
 
 namespace Ktisis.Interface.Overlay.Render;

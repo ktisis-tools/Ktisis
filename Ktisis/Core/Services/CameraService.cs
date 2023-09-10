@@ -2,11 +2,15 @@ using System.Numerics;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
+
+using Ktisis.Core.Impl;
+
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 using RenderCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Camera;
 
-namespace Ktisis.Services;
+namespace Ktisis.Core.Services; 
 
+[KtisisService]
 public class CameraService {
 	// Constructor
 

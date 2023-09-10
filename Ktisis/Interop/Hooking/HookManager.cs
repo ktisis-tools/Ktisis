@@ -5,7 +5,9 @@ using Dalamud.Game;
 using Dalamud.Hooking;
 using Dalamud.Logging;
 
-namespace Ktisis.Interop.Hooking;
+using Ktisis.Interop.Hooking.Wrappers;
+
+namespace Ktisis.Interop.Hooking; 
 
 public class HookManager : IDisposable {
 	// Constructor
@@ -20,13 +22,15 @@ public class HookManager : IDisposable {
 
 	private readonly List<IHookWrapper> Registered = new();
 
-	public void Add(IHookWrapper hook)
-		=> this.Registered.Add(hook);
+	public void Add(IHookWrapper hook) {
+		this.Registered.Add(hook);
+		PluginLog.Verbose($"Registered hook: {hook.GetName()} @ 0x{hook.Address:X}");
+	}
 
 	public void Add<T>(Hook<T> hook) where T : Delegate {
 		var inst = HookWrapper<T>.FromHook(hook);
 		Add(inst);
-		PluginLog.Verbose($"Registered hook '{GetHookName(hook)}' @ 0x{hook.Address:X}");
+		PluginLog.Verbose($"Registered hook: {inst.GetName()} @ 0x{hook.Address:X}");
 	}
 
 	public Hook<T> AddAddress<T>(nint addr, T detour) where T : Delegate {
@@ -52,12 +56,14 @@ public class HookManager : IDisposable {
 	}
 
 	private void Dispose(IHookWrapper hook) {
+		var name = hook.GetName();
 		try {
 			hook.Disable();
 			if (!hook.IsDisposed)
 				hook.Dispose();
+			PluginLog.Verbose($"Disposed hook: {name}");
 		} catch (Exception err) {
-			PluginLog.Error($"Failed to dispose hook @ {hook.Address}':\n{err}");
+			PluginLog.Error($"Failed to dispose {name}':\n{err}");
 		}
 	}
 }

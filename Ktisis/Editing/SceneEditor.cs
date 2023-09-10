@@ -1,18 +1,19 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Collections.Generic;
 
-using Ktisis.Common.Utility;
-using Ktisis.Data.Config;
-using Ktisis.ImGuizmo;
+using Ktisis.Scene;
+using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Objects.World;
-using Ktisis.Scene.Editing.Modes;
-using Ktisis.Scene.Impl;
+using Ktisis.Common.Utility;
+using Ktisis.Editing.Modes;
+using Ktisis.Data.Config;
+using Ktisis.Core.Impl;
 
-namespace Ktisis.Scene.Editing;
+namespace Ktisis.Editing;
 
 [Flags]
 public enum EditFlags {
@@ -27,27 +28,28 @@ public enum EditMode {
 	Pose = 2
 }
 
-public class SceneEditor {
+[KtisisService]
+public class SceneEditor : IServiceInit {
 	// Constructor
 
 	private readonly ConfigService _cfg;
-
-	private readonly SceneManager Manager;
+	private readonly SceneManager _scene;
+	
 	public readonly SelectState Selection;
 
 	private ConfigFile Config => this._cfg.Config;
-
-	public SceneEditor(SceneManager manager, ConfigService _cfg) {
+	
+	public SceneEditor(SceneManager _scene, ConfigService _cfg) {
 		this._cfg = _cfg;
-
-		this.Manager = manager;
+		this._scene = _scene;
+		
 		this.Selection = new SelectState();
 		this.Selection.OnSelectionChanged += OnSelectionChanged;
 
 		this.AddMode<PoseMode>(EditMode.Pose)
 			.AddMode<ObjectMode>(EditMode.Object);
-
-		manager.OnSceneChanged += OnSceneChanged;
+		
+		_scene.OnSceneChanged += OnSceneChanged;
 	}
 
 	// Editor state
@@ -59,7 +61,7 @@ public class SceneEditor {
 	private readonly Dictionary<EditMode, ModeHandler> Modes = new();
 
 	private SceneEditor AddMode<T>(EditMode id) where T : ModeHandler {
-		var inst = (T)Activator.CreateInstance(typeof(T), this.Manager, this._cfg)!;
+		var inst = (T)Activator.CreateInstance(typeof(T), this._scene, this, this._cfg)!;
 		this.Modes.Add(id, inst);
 		return this;
 	}
@@ -84,10 +86,10 @@ public class SceneEditor {
 	}
 
 	private void OnSelectionChanged(SelectState state) {
-		if (state.Count > 1) return;
-
+		if (state.Count != 1) return;
+		
 		var mode = this.Config.Editor_Mode;
-		this.Config.Editor_Mode = state.GetSelected().Last() switch {
+		this.Config.Editor_Mode = state.GetSelected().LastOrDefault() switch {
 			ArmatureNode => EditMode.Pose,
 			SceneObject => EditMode.Object,
 			_ => mode

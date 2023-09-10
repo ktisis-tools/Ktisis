@@ -5,20 +5,21 @@ using System.Collections.Generic;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.World;
-using Ktisis.Scene.Editing.Attributes;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Extensions;
 using Ktisis.Data.Config;
+using Ktisis.Editing.Attributes;
+using Ktisis.Scene;
 
-namespace Ktisis.Scene.Editing.Modes;
+namespace Ktisis.Editing.Modes;
 
 [ObjectMode(EditMode.Object, Renderer = typeof(ObjectRenderer))]
 public class ObjectMode : ModeHandler {
 	// Constructor
 
 	private readonly ConfigService _cfg;
-
-	public ObjectMode(SceneManager mgr, ConfigService _cfg) : base(mgr) {
+	
+	public ObjectMode(SceneManager mgr, SceneEditor editor, ConfigService _cfg) : base(mgr, editor) {
 		this._cfg = _cfg;
 	}
 
@@ -45,7 +46,7 @@ public class ObjectMode : ModeHandler {
 	// Selection
 
 	private IEnumerable<ITransform> GetSelected()
-		=> this.Manager.Editor.Selection
+		=> this.Editor.Selection
 			.GetSelected()
 			.Where(item => item is WorldObject)
 			.Cast<ITransform>();
