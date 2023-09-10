@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Ktisis.Localization;
 
-public static class Localization {
+public static class LocaleService {
 	private static LocaleData Data = null!;
 
 	public static List<UserLocale> Languages = new() {
