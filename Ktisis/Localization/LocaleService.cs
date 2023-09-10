@@ -1,16 +1,30 @@
 using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using Ktisis.Core.Impl;
+using Ktisis.Data.Config;
 
 namespace Ktisis.Localization;
 
 [KtisisService]
-public class LocaleService {
-	// Fields
+public class LocaleService : IServiceInit {
+	// Service
+
+	private readonly ConfigService _cfg;
+	
+	private readonly LocaleDataLoader Loader = new();
 	
 	private LocaleData? Data;
 
-	private readonly LocaleDataLoader Loader = new();
+	public LocaleService(ConfigService _cfg) {
+		this._cfg = _cfg;
+	}
+
+	public void Initialize() {
+		// TODO: Listen for locale changes.
+		LoadLocale(this._cfg.Config.LocaleId);
+	}
 	
 	// Localization methods
 
@@ -23,7 +37,7 @@ public class LocaleService {
 	}
 
 	public void LoadLocale(string technicalName) {
-		// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+		PluginLog.Verbose($"Reading localization file for '{technicalName}'");
 		if (this.Data == null || this.Data.MetaData.TechnicalName != technicalName)
 			this.Data = this.Loader.LoadData(technicalName);
 	}
