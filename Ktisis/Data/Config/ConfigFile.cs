@@ -16,6 +16,10 @@ public class ConfigFile : IPluginConfiguration {
 
 	public int Version { get; set; } = CurrentVersion;
 	
+	// Localization
+
+	public string LocaleId = "en_US";
+	
     // Overlay
 
 	public bool Overlay_Gizmo = true;
