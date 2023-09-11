@@ -21,7 +21,9 @@ public class ConfigFile : IPluginConfiguration {
 
 	public string LocaleId = "en_US";
 	
-	// Input
+	// Input#
+
+	public bool Keybinds_Active;
 
 	public Dictionary<string, Keybind> Keybinds = new();
 	

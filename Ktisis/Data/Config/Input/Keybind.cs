@@ -6,7 +6,7 @@ public class Keybind {
 	public VirtualKey? Key;
 	public VirtualKey[] Mod;
 
-	public Keybind(VirtualKey? key, params VirtualKey[] mods) {
+	public Keybind(VirtualKey key = VirtualKey.NO_KEY, params VirtualKey[] mods) {
 		this.Key = key;
 		this.Mod = mods;
 	}

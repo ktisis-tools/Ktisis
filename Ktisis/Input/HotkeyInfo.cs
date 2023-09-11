@@ -2,7 +2,7 @@ using System;
 
 using Ktisis.Data.Config.Input;
 
-namespace Ktisis.Input.Hotkeys; 
+namespace Ktisis.Input; 
 
 public delegate bool HotkeyHandler(string id);
 
@@ -19,7 +19,7 @@ public class HotkeyInfo {
 	public readonly HotkeyFlags Flags;
 	public readonly HotkeyHandler Handler;
 
-	public Keybind Keybind = new(null);
+	public Keybind Keybind = new();
 	
 	public HotkeyInfo(string name, HotkeyHandler handler, HotkeyFlags flags = HotkeyFlags.OnDown) {
 		this.Name = name;

@@ -181,7 +181,7 @@ public class GuiOverlay : IServiceInit {
 	// Gizmo
 
 	private void BeginGizmo() {
-		if (this.Gizmo is null) return;
+		if (this.Gizmo is null || !this._cfg.Config.Overlay_Gizmo) return;
 
 		var view = this._camera.GetViewMatrix();
 		var proj = this._camera.GetProjectionMatrix();
