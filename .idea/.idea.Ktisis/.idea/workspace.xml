@@ -14,10 +14,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Localization/Data/en_US.json" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Localization/Data/en_US.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Armature.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/Armature.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/BoneGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/BoneGroup.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneTreeBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Tree/BoneTreeBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneContext.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -177,7 +174,8 @@
       <workItem from="1694174564540" duration="17924000" />
       <workItem from="1694273461719" duration="20807000" />
       <workItem from="1694336723891" duration="24499000" />
-      <workItem from="1694392341360" duration="2138000" />
+      <workItem from="1694392341360" duration="2511000" />
+      <workItem from="1694431383534" duration="988000" />
     </task>
     <servers />
   </component>
