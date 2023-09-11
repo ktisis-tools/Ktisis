@@ -2,7 +2,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Dalamud.Plugin.Services;
 using Dalamud.Game.ClientState.Keys;
+
+using FFXIVClientStructs.FFXIV.Client.UI;
 
 using Ktisis.Interop;
 using Ktisis.Core.Impl;
@@ -17,18 +20,20 @@ namespace Ktisis.Input;
 public class InputService : IServiceInit {
 	// Service
 
-	private readonly ConfigService _cfg;
 	private readonly InteropService _interop;
-	private readonly GPoseService _gpose;
 	private readonly KeyState _keyState;
+	private readonly GPoseService _gpose;
+	private readonly ConfigService _cfg;
+	private readonly IGameGui _gui;
 
 	private ControlHooks? ControlHooks;
 
-	public InputService(ConfigService _cfg, InteropService _interop, GPoseService _gpose, KeyState _keyState) {
-		this._cfg = _cfg;
+	public InputService(InteropService _interop, KeyState _keyState, GPoseService _gpose, ConfigService _cfg, IGameGui _gui) {
 		this._interop = _interop;
-		this._gpose = _gpose;
 		this._keyState = _keyState;
+		this._gpose = _gpose;
+		this._cfg = _cfg;
+		this._gui = _gui;
 		
 		_gpose.OnGPoseUpdate += OnGPoseUpdate;
 	}
@@ -75,7 +80,8 @@ public class InputService : IServiceInit {
 	}
 
 	private bool OnKeyEvent(VirtualKey key, VirtualKeyState state) {
-		if (!this._gpose.IsInGPose) return false;
+		if (!this._gpose.IsInGPose || IsChatInputActive())
+			return false;
 
 		var flag = state switch {
 			VirtualKeyState.Down => HotkeyFlags.OnDown,
@@ -87,5 +93,15 @@ public class InputService : IServiceInit {
 		return GetActiveHotkeys(key)
 			.Where(hk => hk.Flags.HasFlag(flag))
 			.Aggregate(false, (result, hk) => result | hk.Handler.Invoke(hk.Name));
+	}
+	
+	// Check chat state
+
+	private unsafe bool IsChatInputActive() {
+		var module = (UIModule*)this._gui.GetUIModule();
+		if (module == null) return false;
+
+		var atk = module->GetRaptureAtkModule();
+		return atk != null && atk->AtkModule.IsTextInputActive();
 	}
 }

@@ -16,6 +16,7 @@ internal class DalamudServices {
 	[PluginService] private ISigScanner SigScanner { get; set; } = null!;
 	[PluginService] private Framework Framework { get; set; } = null!;
 	[PluginService] private KeyState KeyState { get; set; } = null!;
+	[PluginService] private IGameGui GameGui { get; set; } = null!;
 
 	internal DalamudServices(DalamudPluginInterface api) {
 		this.PluginApi = api;
@@ -30,5 +31,6 @@ internal class DalamudServices {
 		.AddInstance(this.ObjectTable)
 		.AddInstance(this.SigScanner)
 		.AddInstance(this.Framework)
-		.AddInstance(this.KeyState);
+		.AddInstance(this.KeyState)
+		.AddInstance(this.GameGui);
 }
