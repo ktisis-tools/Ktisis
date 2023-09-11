@@ -16,16 +16,20 @@ public class BoneTreeBuilder : BoneEnumerator {
 
 	private readonly List<BoneData>? BoneList;
 	private readonly Dictionary<BoneCategory, List<BoneData>>? CategoryMap;
+
+	private readonly SceneContext _ctx;
 	
 	// Constructor
 
-	public BoneTreeBuilder(int index, uint pId, PartialSkeleton partial, Categories? _buildCats) : base(index, partial) {
+	public BoneTreeBuilder(int index, uint pId, PartialSkeleton partial, Categories? _buildCats, SceneContext _ctx) : base(index, partial) {
 		this.PartialId = pId;
 
 		if (_buildCats is not null)
 			this.CategoryMap = BuildCategoryMap(_buildCats);
 		else
 			this.BoneList = BuildBoneList();
+
+		this._ctx = _ctx;
 	}
 	
 	// Bone list
@@ -115,6 +119,7 @@ public class BoneTreeBuilder : BoneEnumerator {
 			var group = exists?.Find(group => group.Category == cat);
 			var isNew = group is null;
 			group ??= new BoneGroup(armature, cat) {
+				Name = this._ctx.GetCategoryName(cat),
 				SortPriority = cat.SortPriority ?? -1
 			};
 			AddGroups(group, cat);
@@ -140,7 +145,7 @@ public class BoneTreeBuilder : BoneEnumerator {
 		var armature = group.GetArmature();
 		var basePrio = this.Partial.ConnectedBoneIndex + 1;
 		foreach (var boneData in bones) {
-			var bone = exists?.Find(bone => bone.Name == boneData.Name);
+			var bone = exists?.Find(bone => bone.Data.Name == boneData.Name);
 			if (bone is not null) {
 				if (this.Index <= bone.Data.PartialIndex)
 					group.RemoveChild(bone);
@@ -148,6 +153,7 @@ public class BoneTreeBuilder : BoneEnumerator {
 			}
 			
 			group.AddChild(new Bone(armature, boneData, this.PartialId) {
+				Name = this._ctx.GetBoneName(boneData),
 				SortPriority = basePrio + boneData.BoneIndex
 			});
 		}
