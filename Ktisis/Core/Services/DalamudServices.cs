@@ -1,9 +1,8 @@
 ﻿using Dalamud.IoC;
-using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-
-using Ktisis.Core;
+using Dalamud.Game;
+using Dalamud.Game.ClientState.Keys;
 
 namespace Ktisis.Core.Services; 
 
@@ -16,6 +15,7 @@ internal class DalamudServices {
 	[PluginService] private IObjectTable ObjectTable { get; set; } = null!;
 	[PluginService] private ISigScanner SigScanner { get; set; } = null!;
 	[PluginService] private Framework Framework { get; set; } = null!;
+	[PluginService] private KeyState KeyState { get; set; } = null!;
 
 	internal DalamudServices(DalamudPluginInterface api) {
 		this.PluginApi = api;
@@ -29,5 +29,6 @@ internal class DalamudServices {
 		.AddInstance(this.ClientState)
 		.AddInstance(this.ObjectTable)
 		.AddInstance(this.SigScanner)
-		.AddInstance(this.Framework);
+		.AddInstance(this.Framework)
+		.AddInstance(this.KeyState);
 }

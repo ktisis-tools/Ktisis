@@ -6,6 +6,7 @@ using Ktisis.ImGuizmo;
 using Ktisis.Editing;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Display;
+using Ktisis.Data.Config.Input;
 
 namespace Ktisis.Data.Config;
 
@@ -19,6 +20,10 @@ public class ConfigFile : IPluginConfiguration {
 	// Localization
 
 	public string LocaleId = "en_US";
+	
+	// Input
+
+	public Dictionary<string, Keybind> Keybinds = new();
 	
 	// Overlay
 
