@@ -7,11 +7,13 @@ using Dalamud.Game.ClientState.Keys;
 
 using FFXIVClientStructs.FFXIV.Client.UI;
 
+using Ktisis.Core;
 using Ktisis.Interop;
 using Ktisis.Core.Impl;
 using Ktisis.Core.Services;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Input;
+using Ktisis.Input.Factory;
 using Ktisis.Input.Hotkeys;
 
 namespace Ktisis.Input;
@@ -19,21 +21,32 @@ namespace Ktisis.Input;
 [KtisisService]
 public class InputService : IServiceInit {
 	// Service
-
+    
 	private readonly InteropService _interop;
 	private readonly KeyState _keyState;
 	private readonly GPoseService _gpose;
 	private readonly ConfigService _cfg;
 	private readonly IGameGui _gui;
+	
+	private HotkeyFactory Factory;
 
 	private ControlHooks? ControlHooks;
 
-	public InputService(InteropService _interop, KeyState _keyState, GPoseService _gpose, ConfigService _cfg, IGameGui _gui) {
+	public InputService(
+		IServiceContainer _services,
+		InteropService _interop,
+		KeyState _keyState,
+		GPoseService _gpose,
+		ConfigService _cfg,
+		IGameGui _gui
+	) {
 		this._interop = _interop;
 		this._keyState = _keyState;
 		this._gpose = _gpose;
 		this._cfg = _cfg;
 		this._gui = _gui;
+
+		this.Factory = new HotkeyFactory(this, _services);
 		
 		_gpose.OnGPoseUpdate += OnGPoseUpdate;
 	}
@@ -41,6 +54,10 @@ public class InputService : IServiceInit {
 	public void PreInit() {
 		this.ControlHooks = this._interop.Create<ControlHooks>().Result;
 		this.ControlHooks.OnKeyEvent += OnKeyEvent;
+	}
+
+	public void Initialize() {
+		this.Factory.Create<GizmoHotkeys>();
 	}
 	
 	// Hotkeys
@@ -80,7 +97,7 @@ public class InputService : IServiceInit {
 	}
 
 	private bool OnKeyEvent(VirtualKey key, VirtualKeyState state) {
-		if (!this._gpose.IsInGPose || IsChatInputActive())
+		if (!this._cfg.Config.Keybinds_Active || !this._gpose.IsInGPose || IsChatInputActive())
 			return false;
 
 		var flag = state switch {

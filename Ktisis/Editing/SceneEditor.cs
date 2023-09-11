@@ -51,7 +51,7 @@ public class SceneEditor : IServiceInit {
 		
 		_scene.OnSceneChanged += OnSceneChanged;
 	}
-	
+
 	// Editor state
     
 	private EditMode CurrentMode => this._cfg.Config.Editor_Mode;
