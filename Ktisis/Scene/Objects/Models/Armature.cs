@@ -53,8 +53,8 @@ public class Armature : ArmatureGroup {
 			t.Start();
 
 			var isWeapon = skele->Owner->GetModelType() == CharacterBase.ModelType.Weapon;
-			var builder = new BoneTreeBuilder(p, id, partial, !isWeapon ? ctx.GetConfig().Categories : null);
-
+			var builder = new BoneTreeBuilder(p, id, partial, !isWeapon ? ctx.GetConfig().Categories : null, ctx);
+			
 			if (prevId != 0)
 				Clean(p, id);
 

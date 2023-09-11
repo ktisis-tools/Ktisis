@@ -6,8 +6,6 @@ namespace Ktisis.Scene.Objects.Models;
 public class BoneGroup : ArmatureGroup {
 	// Properties
 
-	public override string Name => this.Category?.Name ?? "Unknown";
-
 	public override ItemType ItemType => ItemType.BoneGroup;
 
 	// Constructor
@@ -17,6 +15,8 @@ public class BoneGroup : ArmatureGroup {
 	public readonly BoneCategory? Category;
 
 	public BoneGroup(Armature armature, BoneCategory category) {
+		this.Name = category.Name ?? "Unknown";
+		
 		this.Armature = armature;
 		this.Category = category;
 	}
