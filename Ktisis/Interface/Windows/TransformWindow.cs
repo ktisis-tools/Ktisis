@@ -65,7 +65,7 @@ public class TransformWindow : Window {
 	
 	// UI draw
 
-	public override void PreDraw() {
+	public override void OnOpen() {
 		this.WindowName = this._locale.Translate("transform_edit.title");
 	}
 

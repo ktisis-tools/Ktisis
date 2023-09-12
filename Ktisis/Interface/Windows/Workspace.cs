@@ -152,7 +152,10 @@ public class Workspace : Window {
 			this._gui.GetWindow<TransformWindow>().Toggle();
 		
 		DrawButton(FontAwesomeIcon.Camera, this._locale.Translate("camera_edit.title"));
-		DrawButton(FontAwesomeIcon.Sun, this._locale.Translate("env_edit.title"));
+		
+		if (DrawButton(FontAwesomeIcon.Sun, this._locale.Translate("env_edit.title")))
+			this._gui.GetWindow<EnvironmentWindow>().Toggle();
+		
 		DrawButton(FontAwesomeIcon.EllipsisH, this._locale.Translate("common.options"));
         
 		var avail = ImGui.GetContentRegionAvail().X;
