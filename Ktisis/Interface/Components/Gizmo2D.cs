@@ -39,6 +39,13 @@ public class Gizmo2D {
 		get => this.Gizmo.Mode;
 		set => this.Gizmo.Mode = value;
 	}
+	
+	// Gizmo events
+
+	public event OnDeactivateHandler? OnDeactivate {
+		add => this.Gizmo.OnDeactivate += value;
+		remove => this.Gizmo.OnDeactivate -= value;
+	}
 
 	// Draw
 
@@ -84,6 +91,7 @@ public class Gizmo2D {
 		=> this.Gizmo.ManipulateIm(ref matrix, out delta);
 
 	public void End() {
+		this.Gizmo.EndFrame();
 		ImGui.End();
 		ImGui.EndChildFrame();
 	}

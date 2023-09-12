@@ -9,17 +9,7 @@ namespace Ktisis.Posing;
 
 public static class PoseEdit {
 	private const hkaPose.PropagateOrNot DontPropagate = hkaPose.PropagateOrNot.DontPropagate;
-
-	// Conversion
-
-	public static Transform ModelToWorld(Transform model, Transform mul)
-		=> new Transform(model.ComposeMatrix() * mul.ComposeMatrix());
-
-	public static Transform WorldToModel(Transform world, Transform mul) {
-		Matrix4x4.Invert(mul.ComposeMatrix(), out var invert);
-		return new Transform(world.ComposeMatrix() * invert);
-	}
-
+	
 	// Model transform
 
 	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
@@ -53,7 +43,7 @@ public static class PoseEdit {
 			return null;
 
 		var modelTrans = new Transform(skele->Transform);
-		return ModelToWorld(model, modelTrans);
+		return model.ModelToWorld(modelTrans);
 	}
 
 	public unsafe static void SetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx, Transform trans) {
@@ -64,7 +54,7 @@ public static class PoseEdit {
 		if (access == null) return;
 
 		var modelTrans = new Transform(skele->Transform);
-		*access = WorldToModel(trans, modelTrans).ToHavok();
+		*access = trans.WorldToModel(modelTrans).ToHavok();
 	}
 
 	public unsafe static void SetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx, Matrix4x4 trans)

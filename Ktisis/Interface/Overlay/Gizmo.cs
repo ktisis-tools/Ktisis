@@ -6,7 +6,6 @@ using ImGuiNET;
 using Dalamud.Logging;
 
 using Ktisis.ImGuizmo;
-using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -17,6 +16,8 @@ public enum GizmoID : int {
 }
 
 public delegate void OnManipulateHandler(Gizmo sender);
+
+public delegate void OnDeactivateHandler(Gizmo sender);
 
 public class Gizmo {
 	// Static
@@ -72,8 +73,12 @@ public class Gizmo {
 	// Events
 
 	public event OnManipulateHandler? OnManipulate;
-
+	public event OnDeactivateHandler? OnDeactivate;
+	
 	// Gizmo state
+
+	private bool IsOtherUsed;
+	private bool IsUsedPrev;
 
 	private bool HasDrawn;
 	private bool HasMoved;
@@ -95,7 +100,7 @@ public class Gizmo {
 	}
 
 	public void BeginFrame(Vector2 pos, Vector2 size) {
-		this.HasDrawn = false;
+        this.HasDrawn = false;
 		this.HasMoved = false;
 
 		ImGuizmo.Gizmo.SetDrawRect(pos.X, pos.Y, size.X, size.Y);
@@ -103,6 +108,8 @@ public class Gizmo {
 		ImGuizmo.Gizmo.ID = (int)this.Id;
 		ImGuizmo.Gizmo.GizmoScale = this.ScaleFactor;
 		ImGuizmo.Gizmo.BeginFrame();
+		
+		this.IsUsedPrev = ImGuizmo.Gizmo.IsUsing;
 	}
 
 	public unsafe void PushDrawList() {
@@ -134,8 +141,12 @@ public class Gizmo {
 	}
 
 	public void EndFrame() {
-		if (this.HasMoved)
+        if (this.HasMoved)
 			this.OnManipulate?.Invoke(this);
+        
+        var isUsed = ImGuizmo.Gizmo.IsUsing;
+		if (!isUsed && this.IsUsedPrev)
+			this.OnDeactivate?.Invoke(this);
 	}
 
 	// Matrix access

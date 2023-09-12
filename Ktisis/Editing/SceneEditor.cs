@@ -12,6 +12,8 @@ using Ktisis.Common.Utility;
 using Ktisis.Editing.Modes;
 using Ktisis.Data.Config;
 using Ktisis.Core.Impl;
+using Ktisis.Editing.History;
+using Ktisis.History;
 
 namespace Ktisis.Editing;
 
@@ -28,6 +30,8 @@ public enum EditMode {
 	Pose = 2
 }
 
+// TODO: Consider splitting this to TransformService?
+
 [KtisisService]
 public class SceneEditor : IServiceInit {
 	// Constructor
@@ -37,9 +41,13 @@ public class SceneEditor : IServiceInit {
 	
 	public readonly SelectState Selection;
 
+	private readonly TransformHistory History;
+
 	private ConfigFile Config => this._cfg.Config;
 	
-	public SceneEditor(SceneManager _scene, ConfigService _cfg) {
+	//private HistoryClient<>
+	
+	public SceneEditor(SceneManager _scene, HistoryService _history, ConfigService _cfg) {
 		this._cfg = _cfg;
 		this._scene = _scene;
 		
@@ -50,6 +58,9 @@ public class SceneEditor : IServiceInit {
 			.AddMode<ObjectMode>(EditMode.Object);
 		
 		_scene.OnSceneChanged += OnSceneChanged;
+
+		this.History = _history.CreateClient<TransformHistory>("SceneEditor_Transform");
+		//this.History = _history.CreateClient<HistoryClient<ObjectActionBase>, ObjectActionBase>("h", (_) => true);
 	}
 
 	// Editor state
@@ -113,8 +124,17 @@ public class SceneEditor : IServiceInit {
 	public Transform? GetTransform()
 		=> GetTransformTarget()?.GetTransform();
 
-	public void Manipulate(ITransform target, Matrix4x4 targetMx, Matrix4x4 deltaMx) {
+	public void Manipulate(ITransform target, Matrix4x4 targetMx) {
+		// TODO: This should pass selected objects into the handler.
+        
+		if (target is SceneObject sceneObj && this.History.UpdateOrBegin(sceneObj, targetMx))
+			this.History.AddSubjects(this.Selection.GetSelected());
+		
 		foreach (var (_, handler) in GetHandlers())
-			handler.Manipulate(target, targetMx, deltaMx);
+			handler.Manipulate(target, targetMx);
+	}
+
+	public void EndTransform() {
+		this.History.End();
 	}
 }
