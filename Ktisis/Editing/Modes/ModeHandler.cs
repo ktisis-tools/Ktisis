@@ -14,9 +14,9 @@ public abstract class ModeHandler {
 	// Constructor
 
 	protected readonly SceneManager Manager;
-	protected readonly SceneEditor Editor;
+	protected readonly EditorService Editor;
 
-	protected ModeHandler(SceneManager mgr, SceneEditor editor) {
+	protected ModeHandler(SceneManager mgr, EditorService editor) {
 		this.Manager = mgr;
 		this.Editor = editor;
 	}

@@ -13,6 +13,7 @@ using Ktisis.Editing.Modes;
 using Ktisis.Data.Config;
 using Ktisis.Core.Impl;
 using Ktisis.Editing.History;
+using Ktisis.Editing.History.Actions;
 using Ktisis.History;
 
 namespace Ktisis.Editing;
@@ -33,7 +34,7 @@ public enum EditMode {
 // TODO: Consider splitting this to TransformService?
 
 [KtisisService]
-public class SceneEditor : IServiceInit {
+public class EditorService : IServiceInit {
 	// Constructor
 
 	private readonly ConfigService _cfg;
@@ -47,7 +48,7 @@ public class SceneEditor : IServiceInit {
 	
 	//private HistoryClient<>
 	
-	public SceneEditor(SceneManager _scene, HistoryService _history, ConfigService _cfg) {
+	public EditorService(SceneManager _scene, HistoryService _history, ConfigService _cfg) {
 		this._cfg = _cfg;
 		this._scene = _scene;
 		
@@ -60,7 +61,7 @@ public class SceneEditor : IServiceInit {
 		_scene.OnSceneChanged += OnSceneChanged;
 
 		this.History = _history.CreateClient<TransformHistory>("SceneEditor_Transform");
-		//this.History = _history.CreateClient<HistoryClient<ObjectActionBase>, ObjectActionBase>("h", (_) => true);
+		this.History.AddHandler(this.OnUndoRedo);
 	}
 
 	// Editor state
@@ -71,7 +72,7 @@ public class SceneEditor : IServiceInit {
 
 	private readonly Dictionary<EditMode, ModeHandler> Modes = new();
 
-	private SceneEditor AddMode<T>(EditMode id) where T : ModeHandler {
+	private EditorService AddMode<T>(EditMode id) where T : ModeHandler {
 		var inst = (T)Activator.CreateInstance(typeof(T), this._scene, this, this._cfg)!;
 		this.Modes.Add(id, inst);
 		return this;
@@ -107,6 +108,28 @@ public class SceneEditor : IServiceInit {
 		};
 	}
 
+	private bool OnUndoRedo(TransformAction action, HistoryMod mod) {
+		if (action.TargetId == null ) return false;
+		
+		if (this._scene.Scene is not SceneGraph scene) return false;
+
+		var target = scene.FindObjectTypeById<ITransform>(action.TargetId);
+		if (target is null) return false;
+
+		switch (mod) {
+			case HistoryMod.Undo when action.Initial != null:
+				Manipulate(target, action.Initial.Value);
+				break;
+			case HistoryMod.Redo when action.Final != null:
+				Manipulate(target, action.Final.Value);
+				break;
+			default:
+				return false;
+		}
+		
+		return true;
+	}
+	
 	// Objects
 
 	public bool IsItemInfluenced(SceneObject item) {

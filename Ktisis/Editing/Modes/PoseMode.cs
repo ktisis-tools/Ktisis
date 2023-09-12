@@ -20,7 +20,7 @@ public class PoseMode : ModeHandler {
 
 	private readonly ConfigService _cfg;
 	
-	public PoseMode(SceneManager mgr, SceneEditor editor, ConfigService _cfg) : base(mgr, editor) {
+	public PoseMode(SceneManager mgr, EditorService editor, ConfigService _cfg) : base(mgr, editor) {
 		this._cfg = _cfg;
 	}
 

@@ -57,7 +57,8 @@ public class InputService : IServiceInit {
 	}
 
 	public void Initialize() {
-		this.Factory.Create<GizmoHotkeys>();
+		this.Factory.Create<GizmoHotkeys>()
+			.Create<HistoryHotkeys>();
 	}
 	
 	// Hotkeys
@@ -77,14 +78,24 @@ public class InputService : IServiceInit {
 		this.Hotkeys.Add(hk.Name, hk);
 	}
 
-	public IEnumerable<HotkeyInfo> GetActiveHotkeys(VirtualKey key) {
+	public HotkeyInfo? GetActiveHotkey(VirtualKey key, HotkeyFlags flag) {
+        HotkeyInfo? result = null;
+		
+		var modMax = 0;
 		foreach (var (_, hk) in this.Hotkeys) {
 			var bind = hk.Keybind;
-			if (bind.Key != key || !bind.Mod.All(mod => this._keyState[mod]))
+			if (bind.Key != key || !hk.Flags.HasFlag(flag) || !bind.Mod.All(mod => this._keyState[mod]))
 				continue;
-			
-			yield return hk;
+
+			var modCt = bind.Mod.Length;
+			if (result != null && modCt < modMax)
+				continue;
+            
+			result = hk;
+			modMax = modCt;
 		}
+
+		return result;
 	}
 	
 	// Events
@@ -106,10 +117,9 @@ public class InputService : IServiceInit {
 			VirtualKeyState.Released => HotkeyFlags.OnRelease,
 			_ => throw new Exception($"Invalid key state encountered ({state})")
 		};
-        
-		return GetActiveHotkeys(key)
-			.Where(hk => hk.Flags.HasFlag(flag))
-			.Aggregate(false, (result, hk) => result | hk.Handler.Invoke(hk.Name));
+
+		var hk = GetActiveHotkey(key, flag);
+		return hk?.Handler.Invoke(hk.Name) ?? false;
 	}
 	
 	// Check chat state
