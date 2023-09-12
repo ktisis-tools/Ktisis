@@ -5,6 +5,7 @@ namespace Ktisis.Localization;
 
 public class LocaleData {
 	private readonly Dictionary<string, string> _translationData;
+	private readonly HashSet<string> warnedKeys = new();
 
 	public LocaleMetaData MetaData { get; }
 
@@ -16,8 +17,8 @@ public class LocaleData {
 	public string Translate(string key, Dictionary<string, string>? parameters = null) {
 		/* TODO: Implementing some form of fallback system might be good here. */
 		if(!this._translationData.TryGetValue(key, out string? translationString)) {
-			// Disabling this due to per-frame log spam.
-			// Logger.Warning("Unassigned translation key '{0}' for locale '{1}'", key, this.MetaData.TechnicalName);
+			if(this.warnedKeys.Add(key))
+				Logger.Warning("Unassigned translation key '{0}' for locale '{1}'", key, this.MetaData.TechnicalName);
 			return key;
 		}
 		return ReplaceParameters(key, translationString, parameters);
