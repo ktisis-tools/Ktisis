@@ -79,4 +79,14 @@ public class Transform {
 		result.DecomposeMatrix(mx);
 		return result;
 	}
+	
+	// Conversion
+	
+	public Transform ModelToWorld(Transform mul)
+		=> new(this.ComposeMatrix() * mul.ComposeMatrix());
+
+	public Transform WorldToModel(Transform mul) {
+		Matrix4x4.Invert(mul.ComposeMatrix(), out var invert);
+		return new Transform(this.ComposeMatrix() * invert);
+	}
 }

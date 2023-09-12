@@ -47,6 +47,11 @@ public class Bone : ArmatureNode, ITransformLocal {
 	
 	// ITransformLocal
 
+	public unsafe Transform? GetModelTransform() {
+		var skeleton = GetSkeleton();
+		return !skeleton.IsNullPointer ? new Transform(skeleton.Data->Transform) : null;
+	}
+
 	public unsafe Transform? GetLocalTransform() {
 		var pose = GetPose();
 		if (pose == null) return null;

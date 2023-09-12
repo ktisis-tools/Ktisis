@@ -56,7 +56,9 @@ public class ObjectMode : ModeHandler {
 	
 	// Object transform
 
-	public override void Manipulate(ITransform target, Matrix4x4 targetMx, Matrix4x4 deltaMx) {
+	public override void Manipulate(ITransform target, Matrix4x4 targetMx) {
+		var deltaMx = Matrix4x4.Identity; // TODO: Calculate delta
+		
 		if (this._cfg.Config.Editor_Flags.HasFlag(EditFlags.Mirror))
 			Matrix4x4.Invert(deltaMx, out deltaMx);
 		

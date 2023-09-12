@@ -40,6 +40,13 @@ public class Gizmo2D {
 		set => this.Gizmo.Mode = value;
 	}
 	
+	// Gizmo events
+
+	public event OnDeactivateHandler? OnDeactivate {
+		add => this.Gizmo.OnDeactivate += value;
+		remove => this.Gizmo.OnDeactivate -= value;
+	}
+
 	// Draw
 
 	private readonly static Matrix4x4 _projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(
@@ -84,6 +91,7 @@ public class Gizmo2D {
 		=> this.Gizmo.ManipulateIm(ref matrix, out delta);
 	
 	public void End() {
+		this.Gizmo.EndFrame();
 		ImGui.End();
 		ImGui.EndChildFrame();
 	}

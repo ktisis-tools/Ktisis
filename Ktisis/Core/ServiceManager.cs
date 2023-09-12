@@ -92,8 +92,8 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 	
 	// Resolve ctor to use
 
-	private ConstructorInfo? GetConstructor(Type type, out object?[] ctorParams, params object?[] deps) {
-		var paramList = new List<object>();
+	private ConstructorInfo? GetConstructor(Type type, out object?[] @params, params object?[] deps) {
+		var paramList = new List<object?>();
 
 		foreach (var ctor in type.GetConstructors()) {
 			paramList.Clear();
@@ -102,25 +102,24 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 			foreach (var param in ctor.GetParameters().Select(p => p.ParameterType)) {
 				var pObj = param switch {
 					_ when param == typeof(IServiceContainer) => this,
-					_ when deps.FirstOrDefault(x => x!.GetType().IsInstanceOfType(param)) is { } res => res,
+					_ when deps.FirstOrDefault(x => x!.GetType() == param) is { } res => res,
 					_ => this.GetService(param)
 				};
 
 				if (pObj != null) {
 					paramList.Add(pObj);
-				}
-				else {
+				} else {
 					valid = false;
 					break;
 				}
 			}
 
 			if (!valid) continue;
-			ctorParams = paramList.ToArray();
+			@params = paramList.ToArray();
 			return ctor;
 		}
 
-		ctorParams = Array.Empty<object>();
+		@params = Array.Empty<object>();
 		return null;
 	}
 	

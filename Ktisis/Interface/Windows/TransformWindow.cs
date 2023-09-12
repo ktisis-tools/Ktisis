@@ -51,6 +51,8 @@ public class TransformWindow : Window {
 		this._camera = _camera;
 
 		this.Gizmo = Gizmo2D.Create(GizmoID.TransformEditor);
+		this.Gizmo.OnDeactivate += OnDeactivate;
+		
 		this.Table = new TransformTable("##Ktisis_TransformTable", _locale);
 		this.Table.OnClickOperation += OnClickOperation;
 		
@@ -59,9 +61,11 @@ public class TransformWindow : Window {
 	
 	// Events
 
-	private void OnClickOperation(Operation op) {
-		this.Config.Gizmo_Op = op;
-	}
+	private void OnClickOperation(Operation op)
+		=> this.Config.Gizmo_Op = op;
+
+	private void OnDeactivate(object _sender)
+		=> this._editor.EndTransform();
 	
 	// UI draw
 
@@ -134,11 +138,17 @@ public class TransformWindow : Window {
 		
 		this.Table.Operation = this.Config.Gizmo_Op;
 		if (this.Table.Draw(ref trans)) {
-			if (local is not null)
-				local.SetLocalTransform(trans);
-			else
-				target?.SetTransform(trans);
+			if (local != null) {
+				if (local.GetModelTransform() is not Transform model) return;
+				trans = trans.ModelToWorld(model);
+			}
+
+			if (target != null)
+				this._editor.Manipulate(target, trans.ComposeMatrix());
 		}
+		
+		if (this.Table.IsDeactivated)
+			this._editor.EndTransform();
 		
 		// End
 		
@@ -163,8 +173,8 @@ public class TransformWindow : Window {
 			ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * Gizmo2D.ScaleFactor) / 2.05f, 0xCF202020);
 
 			this.Gizmo.SetLookAt(cameraPos, matrix.Translation, cameraFov);
-			if (this.Gizmo.Manipulate(ref matrix, out var delta))
-				this._editor.Manipulate(world, matrix, delta);
+			if (this.Gizmo.Manipulate(ref matrix, out _))
+				this._editor.Manipulate(world, matrix);
 		}
 
 		this.Gizmo.End();

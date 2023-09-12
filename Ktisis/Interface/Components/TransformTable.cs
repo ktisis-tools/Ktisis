@@ -32,6 +32,8 @@ public class TransformTable {
     
 	private bool IsUsed;
 	
+	public bool IsDeactivated { get; private set; }
+	
 	private Vector3 Angles;
 	
 	public Operation Operation = Operation.ROTATE;
@@ -55,8 +57,11 @@ public class TransformTable {
 	};
 	
 	public bool Draw(ref Transform trans) {
-		if (!ImGui.IsItemActive())
+		if (!this.IsUsed)
 			this.Angles = trans.Rotation.ToEulerAngles();
+
+		this.IsUsed = false;
+		this.IsDeactivated = false;
 
 		ImGui.PushItemWidth(CalcTableWidth());
 
@@ -146,24 +151,23 @@ public class TransformTable {
 		var result = false;
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		ImGui.PushItemWidth((ImGui.CalcItemWidth() - spacing * 2) / 3);
-		result |= DrawColFloat($"{id}_X", ref vec.X, speed, AxisColors[0]);
+		result |= DrawAxis($"{id}_X", ref vec.X, speed, AxisColors[0]);
 		ImGui.SameLine(0, spacing);
-		result |= DrawColFloat($"{id}_Y", ref vec.Y, speed, AxisColors[1]);
+		result |= DrawAxis($"{id}_Y", ref vec.Y, speed, AxisColors[1]);
 		ImGui.SameLine(0, spacing);
-		result |= DrawColFloat($"{id}_Z", ref vec.Z, speed, AxisColors[2]);
+		result |= DrawAxis($"{id}_Z", ref vec.Z, speed, AxisColors[2]);
 		ImGui.PopItemWidth();
 		return result;
 	}
 
-	private bool DrawColFloat(string id, ref float value, float speed, uint col) {
+	private bool DrawAxis(string id, ref float value, float speed, uint col) {
 		ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, ImGui.GetStyle().FramePadding.Add(0.1f));
 		ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 0.1f);
 		ImGui.PushStyleColor(ImGuiCol.Border, col);
-        
 		var result = ImGui.DragFloat(id, ref value, speed, -360, 360, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
-	
 		ImGui.PopStyleColor();
 		ImGui.PopStyleVar(2);
+		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit();
 		return result;
 	}
 	

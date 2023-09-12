@@ -108,7 +108,7 @@ public class PoseMode : ModeHandler {
 
 	private readonly static Vector3 InverseMax = new(10f, 10f, 10f);
 
-	public unsafe override void Manipulate(ITransform target, Matrix4x4 matrix, Matrix4x4 _deltaMx) {
+	public unsafe override void Manipulate(ITransform target, Matrix4x4 matrix) {
 		if (target is not ArmatureNode) return;
 		
         // Calculate delta transform
@@ -180,7 +180,7 @@ public class PoseMode : ModeHandler {
 					
 					// TODO: Propagation flags
 					{
-						var initialModel = PoseEdit.WorldToModel(initial, modelTrans);
+						var initialModel = initial.WorldToModel(modelTrans);
 						var final = PoseEdit.GetModelTransform(pose, index);
 						if (final is not null)
 							PoseEdit.Propagate(skeleton.Data, p, index, final, initialModel);

@@ -29,7 +29,7 @@ public abstract class ModeHandler {
 
 	public abstract ITransform? GetTransformTarget();
 
-	public abstract void Manipulate(ITransform target, Matrix4x4 matrix, Matrix4x4 delta);
+	public abstract void Manipulate(ITransform target, Matrix4x4 matrix);
 	
 	// Attribute access
 

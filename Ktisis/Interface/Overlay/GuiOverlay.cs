@@ -66,6 +66,7 @@ public class GuiOverlay : IServiceInit {
 			this.Gizmo = gizmo;
 			gizmo.Operation = Operation.ROTATE;
 			gizmo.OnManipulate += OnManipulate;
+			gizmo.OnDeactivate += OnDeactivate;
 		} else {
 			this._services.GetService<NotifyService>()?.Warning(
 				"Failed to create gizmo. This may be due to version incompatibilities.\n" +
@@ -108,8 +109,11 @@ public class GuiOverlay : IServiceInit {
 			.GetTransformTarget();
 
 		if (target is not null)
-			this._editor.Manipulate(target, gizmo.GetResult(), gizmo.GetDelta());
+			this._editor.Manipulate(target, gizmo.GetResult());
 	}
+
+	private void OnDeactivate(Gizmo _gizmo)
+		=> this._editor.EndTransform();
 	
 	// Create overlay window
 
@@ -161,6 +165,7 @@ public class GuiOverlay : IServiceInit {
 		this.Selection.Draw();
 		
 		if (editor.GetTransform() is Transform trans) {
+			// TODO: Snapshot dummy object?
 			var matrix = trans.ComposeMatrix();
 			this.Gizmo?.Manipulate(matrix);
 		}
@@ -185,7 +190,7 @@ public class GuiOverlay : IServiceInit {
 
 		var view = this._camera.GetViewMatrix();
 		var proj = this._camera.GetProjectionMatrix();
-		if (view is Matrix4x4 viewMx && proj is Matrix4x4 projMx ) {
+		if (view is Matrix4x4 viewMx && proj is Matrix4x4 projMx) {
 			var size = ImGui.GetIO().DisplaySize;
 			this.Gizmo.SetMatrix(viewMx, projMx);
 			this.Gizmo.BeginFrame(Vector2.Zero, size);
