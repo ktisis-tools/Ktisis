@@ -48,6 +48,17 @@ public class SceneGraph : IParentable<SceneObject> {
 		this.OnSceneObjectRemoved?.InvokeSafely(this, item);
 	}
 	
+	// Object access
+
+	public T? FindObjectTypeById<T>(string id) where T : class {
+		foreach (var item in this.RecurseChildren()) {
+			if (item is T result && item.UiId == id)
+				return result;
+		}
+
+		return null;
+	}
+	
 	// IParentable
 
 	public int Count => this.Objects.Count;
@@ -62,4 +73,12 @@ public class SceneGraph : IParentable<SceneObject> {
 
 	public IReadOnlyList<SceneObject> GetChildren()
 		=> this.Objects.AsReadOnly();
+	
+	public IEnumerable<SceneObject> RecurseChildren() {
+		foreach (var child in GetChildren()) {
+			yield return child;
+			foreach (var reChild in child.RecurseChildren())
+				yield return reChild;
+		}
+	}
 }

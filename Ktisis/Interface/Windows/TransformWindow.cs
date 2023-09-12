@@ -26,7 +26,7 @@ public class TransformWindow : Window {
 	private readonly ConfigService _cfg;
 	private readonly LocaleService _locale;
 	private readonly SceneManager _scene;
-	private readonly SceneEditor _editor;
+	private readonly EditorService _editor;
 	private readonly CameraService _camera;
 
 	private readonly Gizmo2D? Gizmo;
@@ -38,7 +38,7 @@ public class TransformWindow : Window {
 		ConfigService _cfg,
 		LocaleService _locale,
 		SceneManager _scene,
-		SceneEditor _editor,
+		EditorService _editor,
 		CameraService _camera
 	) : base(
 		"##__TransformEditor__",

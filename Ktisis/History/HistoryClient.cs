@@ -3,7 +3,7 @@ namespace Ktisis.History;
 public interface IHistoryClient {
 	public string HandlerId { get; }
 
-	public void InvokeHandler(HistoryActionBase action, HistoryMod mod);
+	public bool InvokeHandler(HistoryActionBase action, HistoryMod mod);
 }
 
 public delegate bool HandleAction<in T>(T action, HistoryMod mod);
@@ -30,9 +30,10 @@ public abstract class HistoryClient<T> : IHistoryClient where T : HistoryActionB
 	public void AddHandler(HandleAction<T> handler)
 		=> this.Handler += handler;
 	
-	public void InvokeHandler(HistoryActionBase _actionBase, HistoryMod mod) {
-		if (_actionBase is not T action) return;
-		this.Handler?.Invoke(action, mod);
+	public bool InvokeHandler(HistoryActionBase _actionBase, HistoryMod mod) {
+		if (_actionBase is not T action)
+			return false;
+		return this.Handler?.Invoke(action, mod) ?? false;
 	}
 	
 	// Action factory

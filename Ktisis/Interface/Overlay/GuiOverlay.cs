@@ -31,7 +31,7 @@ public class GuiOverlay : IServiceInit {
 	private readonly ConfigService _cfg;
 	private readonly GPoseService _gpose;
 	private readonly SceneManager _scene;
-	private readonly SceneEditor _editor;
+	private readonly EditorService _editor;
 	
 	private Gizmo? Gizmo;
 	
@@ -47,7 +47,7 @@ public class GuiOverlay : IServiceInit {
 		ConfigService _cfg,
 		GPoseService _gpose,
 		SceneManager _scene,
-		SceneEditor _editor
+		EditorService _editor
 	) {
 		this._services = _services;
         

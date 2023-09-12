@@ -11,9 +11,9 @@ public class GizmoHotkeys {
 	// Constructor
 
 	private readonly ConfigService _cfg;
-	private readonly SceneEditor _editor;
+	private readonly EditorService _editor;
 	
-	public GizmoHotkeys(ConfigService _cfg, SceneEditor _editor) {
+	public GizmoHotkeys(ConfigService _cfg, EditorService _editor) {
 		this._cfg = _cfg;
 		this._editor = _editor;
 	}

@@ -28,7 +28,7 @@ public class Workspace : Window {
 	private readonly GPoseService _gpose;
 	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
-	private readonly SceneEditor _editor;
+	private readonly EditorService _editor;
 
 	private ConfigFile Config => this._cfg.Config;
 	
@@ -39,7 +39,7 @@ public class Workspace : Window {
 		GPoseService _gpose,
 		PosingService _posing,
 		SceneManager _sceneMgr,
-		SceneEditor _editor
+		EditorService _editor
 	) : base("Ktisis") {
 		
 		this._gui = _gui;

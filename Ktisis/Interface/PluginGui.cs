@@ -22,7 +22,7 @@ public class PluginGui : IServiceInit, IDisposable {
 	
     private readonly ConfigService _cfg;
 	private readonly GPoseService _gpose;
-	private readonly SceneEditor _editor;
+	private readonly EditorService _editor;
 	private readonly GuiOverlay _overlay;
 	private readonly UiBuilder _uiBuilder;
 	private readonly IServiceContainer _services;
@@ -30,7 +30,7 @@ public class PluginGui : IServiceInit, IDisposable {
 	public PluginGui(
 		ConfigService _cfg,
 		GPoseService _gpose,
-		SceneEditor _editor,
+		EditorService _editor,
 		GuiOverlay _overlay,
 		UiBuilder _uiBuilder,
 		IServiceContainer _services
