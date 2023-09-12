@@ -10,8 +10,10 @@ internal class DalamudServices {
 	private readonly DalamudPluginInterface PluginApi;
 
 	// Using interfaces to future-proof here - the next API bump will require this.
+	[PluginService] private ITextureProvider TextureProvider { get; set; } = null!;
 	[PluginService] private ICommandManager CommandManager { get; set; } = null!;
 	[PluginService] private IClientState ClientState { get; set; } = null!;
+	[PluginService] private IDataManager DataManager { get; set; } = null!;
 	[PluginService] private IObjectTable ObjectTable { get; set; } = null!;
 	[PluginService] private ISigScanner SigScanner { get; set; } = null!;
 	[PluginService] private Framework Framework { get; set; } = null!;
@@ -28,6 +30,8 @@ internal class DalamudServices {
 		.AddInstance(this.PluginApi.UiBuilder)
 		.AddInstance(this.CommandManager)
 		.AddInstance(this.ClientState)
+		.AddInstance(this.DataManager)
+		.AddInstance(this.TextureProvider)
 		.AddInstance(this.ObjectTable)
 		.AddInstance(this.SigScanner)
 		.AddInstance(this.Framework)

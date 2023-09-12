@@ -63,10 +63,10 @@ internal static class Buttons {
 		}
 
 		var color = (hover: ImGui.IsItemHovered(), toggle: v) switch {
-			(false, true) => ToggleBg,
 			(true, true) => ToggleBgHover,
-			(false, false) => colors[(int)ImGuiCol.Button] * 0.6f,
-			(true, false) => colors[(int)ImGuiCol.ButtonActive]
+			(false, true) => ToggleBg,
+			(true, false) => colors[(int)ImGuiCol.ButtonActive],
+			(false, false) => colors[(int)ImGuiCol.Button] * 0.6f
 		};
 
 		var p_max = new Vector2(p.X + width, p.Y + height);

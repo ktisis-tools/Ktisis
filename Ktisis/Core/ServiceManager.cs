@@ -102,7 +102,7 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 			foreach (var param in ctor.GetParameters().Select(p => p.ParameterType)) {
 				var pObj = param switch {
 					_ when param == typeof(IServiceContainer) => this,
-					_ when deps.FirstOrDefault(x => x!.GetType().IsInstanceOfType(param), null) is { } res => res,
+					_ when deps.FirstOrDefault(x => x!.GetType().IsInstanceOfType(param)) is { } res => res,
 					_ => this.GetService(param)
 				};
 
