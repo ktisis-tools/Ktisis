@@ -1,5 +1,3 @@
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-
 using Ktisis.Scene.Impl;
 using Ktisis.Interop.Unmanaged;
 

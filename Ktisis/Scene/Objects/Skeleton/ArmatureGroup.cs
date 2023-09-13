@@ -1,12 +1,13 @@
-using System;
 using System.Linq;
+using System.Numerics;
 using System.Collections.Generic;
 
 using Ktisis.Scene.Impl;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Scene.Objects.Skeleton;
 
-public abstract class ArmatureGroup : ArmatureNode, IVisibility {
+public abstract class ArmatureGroup : ArmatureNode, IDummy, IVisibility {
 	// Armature
 
 	protected void Clean(int pIndex, uint pId) => this.Children.RemoveAll(item => {
@@ -20,6 +21,57 @@ public abstract class ArmatureGroup : ArmatureNode, IVisibility {
 				return false;
 		}
 	});
+	
+	// IDummy
+
+	public Transform Transform { get; set; } = new();
+
+	private Transform MakeTransform() {
+		var transforms = GetIndividualBones()
+			.Select(bone => bone.GetTransform())
+			.Where(trans => trans != null)
+			.Cast<Transform>()
+			.ToList();
+
+		var result = new Transform();
+
+		var count = transforms.Count;
+		if (count == 0) return result;
+
+		Quaternion rot;
+		if (this.GetCommonParent()?.GetTransform() is Transform pTrans) {
+			rot = pTrans.Rotation;
+		} else {
+			var weight = 1f / count;
+			rot = transforms
+				.Select(t => t.Rotation)
+				.Aggregate((a, b) => a * Quaternion.Slerp(Quaternion.Identity, b, weight));
+		}
+		
+		result = transforms.Aggregate(result, (a, b) => {
+			a.Position += b.Position;
+			a.Scale += b.Scale;
+			return a;
+		});
+        
+		result.Position /= count;
+		result.Rotation = Quaternion.Normalize(rot);
+		result.Scale /= count;
+		
+		return result;
+	}
+
+	public void CalcTransform()
+		=> this.Transform = MakeTransform();
+
+	public Transform GetTransform() {
+		var calc = MakeTransform();
+		if (Vector3.Distance(calc.Position, this.Transform.Position) > 0.1f)
+			this.Transform = calc;
+		return this.Transform;
+	}
+	
+	// Bone filtering
 
 	public List<Bone> GetIndividualBones() {
 		var results = new List<Bone>();
@@ -93,7 +145,7 @@ public abstract class ArmatureGroup : ArmatureNode, IVisibility {
 		return null;
 	}
 
-	// IPoseObject
+	// IVisible
 
 	public new bool Visible {
 		get {
