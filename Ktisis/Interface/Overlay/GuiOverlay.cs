@@ -18,6 +18,7 @@ using Ktisis.Core.Impl;
 using Ktisis.Config;
 using Ktisis.Core.Services;
 using Ktisis.ImGuizmo;
+using Ktisis.Scene.Impl;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -32,14 +33,14 @@ public class GuiOverlay : IServiceInit {
 	private readonly GPoseService _gpose;
 	private readonly SceneManager _scene;
 	private readonly EditorService _editor;
-	
-	private Gizmo? Gizmo;
-	
-	public readonly SelectionGui Selection;
 
 	private ConfigFile Config => this._cfg.Config;
 
 	// Constructor
+	
+	private Gizmo? Gizmo;
+	
+	public readonly SelectionGui Selection;
 
 	public GuiOverlay(
 		IServiceContainer _services,
@@ -78,6 +79,8 @@ public class GuiOverlay : IServiceInit {
 			if (handler.GetRenderer() is Type type)
 				AddRenderer(id, type);
 		}
+		
+		this._editor.Selection.OnSelectionChanged += OnSelectionChanged;
 	}
 
 	// Object mode renderers
@@ -94,18 +97,25 @@ public class GuiOverlay : IServiceInit {
 
 	private RendererBase? GetRenderer(EditMode id) => this.Renderers
 		.TryGetValue(id, out var result) ? result : null;
+	
+	// State
 
+	private ITransform? Target;
+	
 	// Events
 
 	private void OnItemSelected(SceneObject item) {
 		var flags = GuiHelpers.GetSelectFlags();
 		this._editor.Selection.HandleClick(item, flags);
 	}
+	
+	private void OnSelectionChanged(SelectState _sender, SceneObject? _item)
+		=> this.Target = this._editor.GetTransformTarget();
 
 	private void OnManipulate(Gizmo gizmo) {
 		if (!this._scene.IsActive) return;
 
-		var target = this._editor.GetTransformTarget();
+		var target = this.Target;
 		if (target is not null)
 			this._editor.Manipulate(target, gizmo.GetResult());
 	}
@@ -161,7 +171,7 @@ public class GuiOverlay : IServiceInit {
 
 		this.Selection.Draw();
 		
-		if (this._editor.GetTransformMatrix() is Matrix4x4 matrix)
+		if (this.Target?.GetMatrix() is Matrix4x4 matrix)
 			this.Gizmo?.Manipulate(matrix);
 	}
 
