@@ -156,17 +156,13 @@ public class GuiOverlay : IServiceInit {
 	private void DrawScene() {
 		if (!this._scene.IsActive) return;
 
-		var editor = this._editor;
-		if (editor.GetHandler() is ModeHandler handler)
+		if (this._editor.GetHandler() is ModeHandler handler)
 			GetRenderer(this.Config.Editor_Mode)?.OnDraw(this, handler);
 
 		this.Selection.Draw();
-
-		if (editor.GetTransform() is Transform trans) {
-			// TODO: Snapshot dummy object?
-			var matrix = trans.ComposeMatrix();
+		
+		if (this._editor.GetTransformMatrix() is Matrix4x4 matrix)
 			this.Gizmo?.Manipulate(matrix);
-		}
 	}
 
 	// Draw line

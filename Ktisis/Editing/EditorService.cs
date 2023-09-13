@@ -109,6 +109,9 @@ public class EditorService : IServiceInit {
 	public Transform? GetTransform()
 		=> GetTransformTarget()?.GetTransform();
 
+	public Matrix4x4? GetTransformMatrix()
+		=> GetTransformTarget()?.GetMatrix();
+
 	public void Manipulate(ITransform target, Matrix4x4 targetMx) {
 		var select = this.Selection.GetSelected().ToList();
 		if (target is SceneObject sceneObj && this.History.UpdateOrBegin(sceneObj, targetMx))
