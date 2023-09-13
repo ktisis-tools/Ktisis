@@ -2,8 +2,9 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
 
 using Ktisis.Interop.Unmanaged;
+using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Objects.World;
-using Weapon = Ktisis.Scene.Objects.World.Weapon;
+using Weapon = Ktisis.Scene.Objects.Models.Weapon;
 
 namespace Ktisis.Scene.Handlers; 
 

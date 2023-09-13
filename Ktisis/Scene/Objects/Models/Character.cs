@@ -1,8 +1,9 @@
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Scene.Objects.Skeleton;
+using Ktisis.Scene.Objects.World;
 
-namespace Ktisis.Scene.Objects.World; 
+namespace Ktisis.Scene.Objects.Models; 
 
 public class Character : WorldObject {
 	// CharacterBase
