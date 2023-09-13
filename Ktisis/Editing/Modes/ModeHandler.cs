@@ -29,7 +29,7 @@ public abstract class ModeHandler {
 
 	public abstract ITransform? GetTransformTarget(IEnumerable<SceneObject> objects);
 
-	public abstract void Manipulate(IEnumerable<SceneObject> objects, ITransform target, Matrix4x4 matrix);
+	public abstract void Manipulate(ITransform target, Matrix4x4 final, Matrix4x4 initial, IEnumerable<SceneObject> objects);
 	
 	// Attribute access
 

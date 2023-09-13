@@ -12,6 +12,8 @@ using Ktisis.Data.Config;
 using Ktisis.Editing.Attributes;
 using Ktisis.Scene;
 
+using Lumina.Excel.GeneratedSheets;
+
 namespace Ktisis.Editing.Modes;
 
 [ObjectMode(EditMode.Pose, Renderer = typeof(PoseRenderer))]
@@ -107,9 +109,12 @@ public class PoseMode : ModeHandler {
 				target = bone;
 		}
 
-		if (target != null && groups.FirstOrDefault(g => target.IsChildOf(g)) is BoneGroup group)
-			return group;
+		if (target == null)
+			return null;
 		
+		var group = groups.FirstOrDefault(g => target.IsChildOf(g));
+		if (group != null) return group;
+
 		return target;
 	}
 	
@@ -117,23 +122,24 @@ public class PoseMode : ModeHandler {
 
 	private readonly static Vector3 InverseMax = new(10f, 10f, 10f);
 
-	public unsafe override void Manipulate(IEnumerable<SceneObject> objects, ITransform target, Matrix4x4 matrix) {
+	public unsafe override void Manipulate(ITransform target, Matrix4x4 final, Matrix4x4 initial, IEnumerable<SceneObject> objects) {
 		if (target is not ArmatureNode) return;
+		
+		var mirror = this._cfg.Config.Editor_Flags.HasFlag(EditFlags.Mirror);
 		
         // Calculate delta transform
 
-		var deltaT = new Transform(matrix);
-		var mirror = this._cfg.Config.Editor_Flags.HasFlag(EditFlags.Mirror);
-		if (target.GetTransform() is Transform trans) {
-            var deltaPos = deltaT.Position - trans.Position;
-			var deltaRot = deltaT.Rotation / trans.Rotation;
-			deltaT.Position = mirror ? -deltaPos : deltaPos;
-			deltaT.Rotation = mirror ? Quaternion.Inverse(deltaRot) : deltaRot;
-			deltaT.Scale /= trans.Scale;
-		} else return;
+		var initialT = new Transform(initial);
+		var finalT = new Transform(final);
+        
+		var deltaT = new Transform(
+			finalT.Position - initialT.Position,
+			Quaternion.Normalize(finalT.Rotation * Quaternion.Inverse(initialT.Rotation)),
+			finalT.Scale / initialT.Scale
+		);
 
 		if (target is IDummy dummy)
-			dummy.SetMatrix(matrix);
+			dummy.SetMatrix(final);
 		
 		// Build armature map
 		// TODO: Cache this by delegating to SelectState events?
@@ -175,16 +181,24 @@ public class PoseMode : ModeHandler {
 
 				foreach (var bone in boneList) {
 					var index = bone.Data.BoneIndex;
-					var initial = PoseEdit.GetWorldTransform(skeleton.Data, pose, index);
-					if (initial is null) continue;
+					var bTrans = PoseEdit.GetWorldTransform(skeleton.Data, pose, index);
+					if (bTrans is null) continue;
+
+					var mirrorBone = mirror;
+					if (mirrorBone && target is ArmatureGroup group)
+						mirrorBone = !bone.IsChildOf(group);
 
 					Matrix4x4 newMx;
 					if (bone == target) {
-						newMx = matrix;
+						newMx = final;
 					} else {
-						var scale = Matrix4x4.CreateScale(mirror ? Vector3.Min(initial.Scale / deltaT.Scale, InverseMax) : initial.Scale * deltaT.Scale);
-						var rot = Matrix4x4.CreateFromQuaternion(initial.Rotation) * Matrix4x4.CreateFromQuaternion(deltaT.Rotation);
-						var pos = Matrix4x4.CreateTranslation(initial.Position + deltaT.Position);
+						var newScale = mirrorBone ? Vector3.Min(bTrans.Scale / deltaT.Scale, InverseMax) : bTrans.Scale * deltaT.Scale;
+						var deltaRot = mirrorBone ? Quaternion.Inverse(deltaT.Rotation) : deltaT.Rotation;
+						var deltaPos = mirrorBone ? -deltaT.Position : deltaT.Position;
+						
+						var scale = Matrix4x4.CreateScale(newScale);
+						var rot = Matrix4x4.CreateFromQuaternion(deltaRot * bTrans.Rotation);
+						var pos = Matrix4x4.CreateTranslation(bTrans.Position + deltaPos);
 						newMx = scale * rot * pos;
 					}
 					
@@ -192,10 +206,10 @@ public class PoseMode : ModeHandler {
 					
 					// TODO: Propagation flags
 					{
-						var initialModel = initial.WorldToModel(modelTrans);
-						var final = PoseEdit.GetModelTransform(pose, index);
-						if (final is not null)
-							PoseEdit.Propagate(skeleton.Data, p, index, final, initialModel);
+						var initialModel = bTrans.WorldToModel(modelTrans);
+						var finalModel = PoseEdit.GetModelTransform(pose, index);
+						if (finalModel is not null)
+							PoseEdit.Propagate(skeleton.Data, p, index, finalModel, initialModel);
 					}
 				}
 			}

@@ -2,6 +2,7 @@ using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
+using Dalamud.Logging;
 
 using ImGuiNET;
 
@@ -17,6 +18,7 @@ using Ktisis.Interface.Widgets;
 using Ktisis.Core.Services;
 using Ktisis.ImGuizmo;
 using Ktisis.Localization;
+using Ktisis.Scene.Objects;
 
 namespace Ktisis.Interface.Windows; 
 
@@ -137,7 +139,7 @@ public class TransformWindow : Window {
 		var trans = local?.GetLocalTransform() ?? target?.GetTransform() ?? new Transform();
 		
 		this.Table.Operation = this.Config.Gizmo_Op;
-		if (this.Table.Draw(ref trans)) {
+		if (this.Table.Draw(trans, out trans)) {
 			if (local != null) {
 				if (local.GetModelTransform() is not Transform model) return;
 				trans = trans.ModelToWorld(model);

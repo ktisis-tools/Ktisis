@@ -41,6 +41,8 @@ public class TransformTable {
 	private const Operation PositionOp = Operation.TRANSLATE;
 	private const Operation RotateOp = Operation.ROTATE;
 	private const Operation ScaleOp = Operation.SCALE | Operation.SCALE_U;
+
+	private Transform Transform = new();
 	
 	// Events
 
@@ -56,22 +58,23 @@ public class TransformTable {
 		0xFFFF5400
 	};
 	
-	public bool Draw(ref Transform trans) {
+	public bool Draw(Transform transIn, out Transform transOut) {
 		if (!this.IsUsed)
-			this.Angles = trans.Rotation.ToEulerAngles();
+			this.Angles = transIn.Rotation.ToEulerAngles();
 
 		this.IsUsed = false;
 		this.IsDeactivated = false;
 
 		ImGui.PushItemWidth(CalcTableWidth());
 
-		DrawPosition(ref trans.Position);
-		DrawRotate(ref trans.Rotation);
-		if (DrawScale(ref trans.Scale))
-			trans.Scale = Vector3.Max(trans.Scale, MinScale);
+		transOut = this.Transform.Set(transIn);
+		DrawPosition(ref transOut.Position);
+		DrawRotate(ref transOut.Rotation);
+		if (DrawScale(ref transOut.Scale))
+			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 		
 		ImGui.PopItemWidth();
-		
+        
 		return this.IsUsed;
 	}
 	

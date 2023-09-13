@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -64,6 +65,32 @@ public abstract class ArmatureGroup : ArmatureNode, IVisibility {
 		});
 
 		return results;
+	}
+
+	protected Bone? GetCommonParent() {
+		var arm = GetArmature();
+		var bones = GetIndividualBones();
+		if (bones.Count == 0) return null;
+
+		var lowP = bones.Select(v => v.Data.PartialIndex).Min();
+		var partial = arm.GetPartialCache(lowP);
+		if (partial == null) return null;
+		
+		var indices = bones.Select(bone => {
+			var p = bone.Data.PartialIndex;
+			var i = bone.Data.BoneIndex;
+			if (p > lowP)
+				i = arm.GetPartialCache(p)?.ConnectedParentBoneIndex ?? -1;
+			return i;
+		}).Where(i => i != -1).ToList();
+
+		foreach (var parent in partial.ParentIds.Reverse()) {
+			var all = indices.All(i => i == parent || partial.IsBoneDescendantOf(i, parent));
+			if (all && arm.GetBoneFromMap(lowP, parent) is Bone result)
+				return result;
+		}
+		
+		return null;
 	}
 
 	// IPoseObject
