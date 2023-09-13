@@ -12,8 +12,8 @@ using Ktisis.Common.Utility;
 using Ktisis.Editing.Modes;
 using Ktisis.Data.Config;
 using Ktisis.Core.Impl;
-using Ktisis.Editing.History;
-using Ktisis.Editing.History.Actions;
+using Ktisis.History.Clients;
+using Ktisis.History.Actions;
 using Ktisis.History;
 
 namespace Ktisis.Editing;
