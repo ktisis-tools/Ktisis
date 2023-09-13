@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 using Dalamud.Configuration;
 
+using Ktisis.Config.Bones;
+using Ktisis.Config.Display;
+using Ktisis.Config.Input;
 using Ktisis.ImGuizmo;
 using Ktisis.Editing;
-using Ktisis.Data.Config.Bones;
-using Ktisis.Data.Config.Display;
-using Ktisis.Data.Config.Input;
 
-namespace Ktisis.Data.Config; 
+namespace Ktisis.Config; 
 
 public class ConfigFile : IPluginConfiguration {
 	// Version
@@ -23,7 +23,7 @@ public class ConfigFile : IPluginConfiguration {
 	
 	// Input#
 
-	public bool Keybinds_Active;
+	public bool Keybinds_Active = true;
 
 	public Dictionary<string, Keybind> Keybinds = new();
 	

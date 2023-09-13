@@ -12,7 +12,7 @@ using Ktisis.Posing;
 using Ktisis.Core.Services;
 using Ktisis.Interface.Widgets;
 using Ktisis.Interface.Components;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Editing;
 using Ktisis.Localization;
 using Ktisis.Scene.Objects;

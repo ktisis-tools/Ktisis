@@ -2,7 +2,7 @@ using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.ImGuizmo;
 using Ktisis.Editing;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Input.Factory;
 
 namespace Ktisis.Input.Hotkeys; 

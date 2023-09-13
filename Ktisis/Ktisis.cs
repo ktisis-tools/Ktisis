@@ -8,7 +8,7 @@ using Dalamud.Logging;
 
 using Ktisis.Core;
 using Ktisis.Core.Impl;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Core.Services;
 
 namespace Ktisis;

@@ -1,4 +1,4 @@
-namespace Ktisis.Data.Config.Bones; 
+namespace Ktisis.Config.Bones; 
 
 public class BoneInfo {
 	public readonly string Name;

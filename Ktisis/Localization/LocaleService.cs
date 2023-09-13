@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Logging;
 
 using Ktisis.Core.Impl;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 
 namespace Ktisis.Localization;
 

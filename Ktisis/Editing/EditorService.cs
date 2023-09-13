@@ -10,7 +10,7 @@ using Ktisis.Scene.Objects.Skeleton;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Common.Utility;
 using Ktisis.Editing.Modes;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Core.Impl;
 using Ktisis.History.Clients;
 using Ktisis.History.Actions;

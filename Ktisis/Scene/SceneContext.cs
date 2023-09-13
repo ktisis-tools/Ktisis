@@ -1,5 +1,5 @@
-using Ktisis.Data.Config;
-using Ktisis.Data.Config.Bones;
+using Ktisis.Config;
+using Ktisis.Config.Bones;
 using Ktisis.Localization;
 using Ktisis.Posing.Bones;
 

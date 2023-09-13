@@ -1,4 +1,4 @@
-using Ktisis.Data.Config.Display;
+using Ktisis.Config.Display;
 using Ktisis.Interop.Structs.Objects;
 
 namespace Ktisis.Scene.Objects.World; 

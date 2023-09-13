@@ -11,7 +11,7 @@ using Ktisis.Scene.Impl;
 using Ktisis.Editing;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Widgets;

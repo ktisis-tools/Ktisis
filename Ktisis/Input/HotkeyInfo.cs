@@ -1,6 +1,6 @@
 using System;
 
-using Ktisis.Data.Config.Input;
+using Ktisis.Config.Input;
 
 namespace Ktisis.Input; 
 

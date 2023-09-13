@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using Dalamud.Interface;
 
-namespace Ktisis.Data.Config.Display;
+namespace Ktisis.Config.Display;
 
 public enum ItemType {
 	Default = 0,

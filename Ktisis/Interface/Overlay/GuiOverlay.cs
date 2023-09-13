@@ -15,7 +15,7 @@ using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Utility;
 using Ktisis.Core;
 using Ktisis.Core.Impl;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Core.Services;
 using Ktisis.ImGuizmo;
 
