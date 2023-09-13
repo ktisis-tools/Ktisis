@@ -5,9 +5,9 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 
 using Ktisis.History;
 using Ktisis.Scene.Objects;
-using Ktisis.Editing.History.Actions;
+using Ktisis.History.Actions;
 
-namespace Ktisis.Editing.History; 
+namespace Ktisis.History.Clients; 
 
 public class TransformHistory : HistoryClient<TransformAction> {
 	public TransformHistory(string id, HistoryService _history) : base(id, _history) {}

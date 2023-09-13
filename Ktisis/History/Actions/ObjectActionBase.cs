@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using Ktisis.History;
 
-namespace Ktisis.Editing.History.Actions; 
+namespace Ktisis.History.Actions; 
 
 public abstract class ObjectActionBase : HistoryActionBase {
     protected ObjectActionBase(string handlerId) : base(handlerId) {}

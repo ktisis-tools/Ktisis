@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Ktisis.Editing.History.Actions; 
+namespace Ktisis.History.Actions; 
 
 public class TransformAction : ObjectActionBase {
 	public TransformAction(string handlerId) : base(handlerId) {}
