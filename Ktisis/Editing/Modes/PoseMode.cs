@@ -2,6 +2,8 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using Ktisis.Posing;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
@@ -22,8 +24,10 @@ public class PoseMode : ModeHandler {
 	
 	public PoseMode(SceneManager mgr, EditorService editor, ConfigService _cfg) : base(mgr, editor) {
 		this._cfg = _cfg;
+		
+		editor.Selection.OnSelectionChanged += BuildArmatureMap;
 	}
-	
+
 	// Armature enumeration
 	
 	public override IEnumerable<SceneObject> GetEnumerator() {
@@ -119,6 +123,8 @@ public class PoseMode : ModeHandler {
 	// Handler for bone manipulation
 
 	private readonly static Vector3 InverseMax = new(10f, 10f, 10f);
+    
+	private readonly Dictionary<Armature, Dictionary<int, List<Bone>>> ArmatureMap = new();
 
 	public unsafe override void Manipulate(ITransform target, Matrix4x4 final, Matrix4x4 initial, IEnumerable<SceneObject> objects) {
 		if (target is not ArmatureNode) return;
@@ -139,29 +145,9 @@ public class PoseMode : ModeHandler {
 		if (target is IDummy dummy)
 			dummy.SetMatrix(final);
 		
-		// Build armature map
-		// TODO: Cache this by delegating to SelectState events?
-		
-		var armatureMap = new Dictionary<Armature, Dictionary<int, List<Bone>>>();
-		foreach (var bone in GetCorrelatingBones(objects)) {
-			var armature = bone.GetArmature();
-			if (armature.Parent == target) continue;
-
-			var dictExists = armatureMap.TryGetValue(armature, out var dict);
-			dict ??= new Dictionary<int, List<Bone>>();
-
-			var partialIx = bone.Data.PartialIndex;
-			var listExists = dict.TryGetValue(partialIx, out var list);
-			list ??= new List<Bone>();
-			list.Add(bone);
-			
-			if (!listExists) dict.Add(partialIx, list);
-			if (!dictExists) armatureMap.Add(armature, dict);
-		}
-		
 		// Carry out transforms
 
-		foreach (var (armature, partialMap) in armatureMap) {
+		foreach (var (armature, partialMap) in this.ArmatureMap) {
 			var skeleton = armature.GetSkeleton();
 			if (skeleton.IsNullPointer || skeleton.Data->PartialSkeletons == null)
 				continue;
@@ -211,6 +197,29 @@ public class PoseMode : ModeHandler {
 					}
 				}
 			}
+		}
+	}
+
+	private void BuildArmatureMap(SelectState sender, SceneObject? item) {
+		var objects = sender.GetSelected().ToList();
+		
+		var target = GetTransformTarget(objects);
+
+		this.ArmatureMap.Clear();
+		foreach (var bone in GetCorrelatingBones(objects)) {
+			var armature = bone.GetArmature();
+			if (armature.Parent == target) continue;
+
+			var dictExists = this.ArmatureMap.TryGetValue(armature, out var dict);
+			dict ??= new Dictionary<int, List<Bone>>();
+
+			var partialIx = bone.Data.PartialIndex;
+			var listExists = dict.TryGetValue(partialIx, out var list);
+			list ??= new List<Bone>();
+			list.Add(bone);
+			
+			if (!listExists) dict.Add(partialIx, list);
+			if (!dictExists) this.ArmatureMap.Add(armature, dict);
 		}
 	}
 }
