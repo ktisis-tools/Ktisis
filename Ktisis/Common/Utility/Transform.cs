@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -43,15 +44,7 @@ public class Transform {
 	public Transform(Matrix4x4 mx) {
 		DecomposeMatrix(mx);
 	}
-
-	// Havok :3
-
-	public hkQsTransformf ToHavok() => new hkQsTransformf {
-		Translation = this.Position.ToHavok(),
-		Rotation = this.Rotation.ToHavok(),
-		Scale = this.Scale.ToHavok()
-	};
-
+	
 	// Matrix
 
 	public Matrix4x4 ComposeMatrix(Vector3? center = null) {
@@ -89,4 +82,21 @@ public class Transform {
 		Matrix4x4.Invert(mul.ComposeMatrix(), out var invert);
 		return new Transform(this.ComposeMatrix() * invert);
 	}
+	
+	// Set
+
+	public Transform Set(Transform t) {
+		this.Position = t.Position;
+		this.Rotation = t.Rotation;
+		this.Scale = t.Scale;
+		return this;
+	}
+	
+	// Havok :3
+
+	public hkQsTransformf ToHavok() => new hkQsTransformf {
+		Translation = this.Position.ToHavok(),
+		Rotation = this.Rotation.ToHavok(),
+		Scale = this.Scale.ToHavok()
+	};
 }

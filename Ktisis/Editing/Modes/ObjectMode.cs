@@ -2,11 +2,14 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Editing.Attributes;
 using Ktisis.Scene;
@@ -44,29 +47,29 @@ public class ObjectMode : ModeHandler {
 	}
 
 	// Selection
-
-	private IEnumerable<ITransform> GetSelected()
-		=> this.Editor.Selection
-			.GetSelected()
-			.Where(item => item is WorldObject)
-			.Cast<ITransform>();
+	
+	private IEnumerable<ITransform> FilterObjects(IEnumerable<SceneObject> objects)
+		=> objects.Where(item => item is WorldObject).Cast<ITransform>();
 
 	public override ITransform? GetTransformTarget(IEnumerable<SceneObject> objects)
 		=> (WorldObject?)objects.FirstOrDefault();
 	
 	// Object transform
 
-	public override void Manipulate(IEnumerable<SceneObject> objects, ITransform target, Matrix4x4 targetMx) {
-		var deltaMx = Matrix4x4.Identity; // TODO: Calculate delta
+	public override void Manipulate(ITransform target, Matrix4x4 final, Matrix4x4 initial, IEnumerable<SceneObject> objects) {
+		Matrix4x4 deltaMx;
+		if (Matrix4x4.Invert(initial, out var initialInverse))
+			deltaMx = initialInverse * final;
+		else return;
 		
 		if (this._cfg.Config.Editor_Flags.HasFlag(EditFlags.Mirror))
 			Matrix4x4.Invert(deltaMx, out deltaMx);
-
-		foreach (var item in GetSelected()) {
+			
+		foreach (var item in FilterObjects(objects)) {
 			if (item == target)
-				item.SetMatrix(targetMx);
+				item.SetMatrix(final);
 			else if (item.GetMatrix() is Matrix4x4 matrix)
-				item.SetMatrix(matrix.ApplyDelta(deltaMx, targetMx));
+				item.SetMatrix(matrix * deltaMx);
 		}
 	}
 }

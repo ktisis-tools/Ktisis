@@ -45,19 +45,31 @@ public class BoneGroup : ArmatureGroup, IDummy {
 			.Cast<Transform>()
 			.ToList();
 
+		var result = new Transform();
+
 		var count = transforms.Count;
-		if (count == 0) return new Transform();
+		if (count == 0) return result;
+
+		Quaternion rot;
+		if (this.GetCommonParent()?.GetTransform() is Transform pTrans) {
+			rot = pTrans.Rotation;
+		} else {
+			var weight = 1f / count;
+			rot = transforms
+				.Select(t => t.Rotation)
+				.Aggregate((a, b) => a * Quaternion.Slerp(Quaternion.Identity, b, weight));
+		}
 		
-		var weight = 1f / count;
-		var result = transforms.Aggregate(new Transform(), (a, b) => {
+		result = transforms.Aggregate(result, (a, b) => {
 			a.Position += b.Position;
-			a.Rotation *= Quaternion.Slerp(Quaternion.Identity, b.Rotation, weight);
 			a.Scale += b.Scale;
 			return a;
 		});
-
-		result.Position /= count;
+        
+        result.Position /= count;
+		result.Rotation = Quaternion.Normalize(rot);
 		result.Scale /= count;
+		
 		return result;
 	}
 

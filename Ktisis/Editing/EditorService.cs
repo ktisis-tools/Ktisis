@@ -110,15 +110,20 @@ public class EditorService : IServiceInit {
 		=> GetTransformTarget()?.GetTransform();
 
 	public void Manipulate(ITransform target, Matrix4x4 targetMx) {
-		// TODO: This should pass selected objects into the handler.
-
 		var select = this.Selection.GetSelected().ToList();
-
 		if (target is SceneObject sceneObj && this.History.UpdateOrBegin(sceneObj, targetMx))
 			this.History.AddSubjects(select);
 
+		Manipulate(select, target, targetMx);
+	}
+
+	private void Manipulate(IEnumerable<SceneObject> _objects, ITransform target, Matrix4x4 targetMx) {
+		var initial = target.GetMatrix();
+		if (initial == null) return;
+		
+		var objects = _objects.ToList();
 		foreach (var (_, handler) in GetHandlers())
-			handler.Manipulate(select, target, targetMx);
+			handler.Manipulate(target, targetMx, initial.Value, objects);
 	}
 
 	public void EndTransform() {
@@ -145,16 +150,28 @@ public class EditorService : IServiceInit {
 		if (action.TargetId == null ) return false;
 		
 		if (this._scene.Scene is not SceneGraph scene) return false;
+		
+		var subjects = new List<SceneObject>();
+		ITransform? target = null;
+		
+		foreach (var item in scene.RecurseChildren()) {
+			if (item is not ITransform transform) continue;
+			
+			if (action.SubjectIds.Contains(item.UiId))
+				subjects.Add(item);
 
-		var target = scene.FindObjectTypeById<ITransform>(action.TargetId);
-		if (target is null) return false;
+			if (item.UiId == action.TargetId)
+				target = transform;
+		}
+
+		if (target == null) return false;
 
 		switch (mod) {
 			case HistoryMod.Undo when action.Initial != null:
-				Manipulate(target, action.Initial.Value);
+				Manipulate(subjects, target, action.Initial.Value);
 				break;
 			case HistoryMod.Redo when action.Final != null:
-				Manipulate(target, action.Final.Value);
+				Manipulate(subjects, target, action.Final.Value);
 				break;
 			default:
 				return false;
