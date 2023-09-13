@@ -52,7 +52,7 @@ public class ObjectMode : ModeHandler {
 		=> objects.Where(item => item is WorldObject).Cast<ITransform>();
 
 	public override ITransform? GetTransformTarget(IEnumerable<SceneObject> objects)
-		=> (WorldObject?)objects.FirstOrDefault();
+		=> (ITransform?)objects.FirstOrDefault(x => x is WorldObject);
 	
 	// Object transform
 

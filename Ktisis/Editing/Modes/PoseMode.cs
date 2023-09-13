@@ -12,8 +12,6 @@ using Ktisis.Data.Config;
 using Ktisis.Editing.Attributes;
 using Ktisis.Scene;
 
-using Lumina.Excel.GeneratedSheets;
-
 namespace Ktisis.Editing.Modes;
 
 [ObjectMode(EditMode.Pose, Renderer = typeof(PoseRenderer))]

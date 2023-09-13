@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
@@ -98,11 +99,11 @@ public class PluginGui : IServiceInit, IDisposable {
 			window.Close();
 	}
 
-	private void OnSelectionChanged(SelectState _state, SceneObject _item) {
+	private void OnSelectionChanged(SelectState _state, SceneObject? _item) {
 		if (!this._cfg.Config.Editor_OpenOnSelect) return;
 
 		var window = this.GetWindow<TransformWindow>();
-		if (_state.Count > 0)
+		if (_state.IsManipulable())
 			window.Open();
 		else
 			window.Close();
