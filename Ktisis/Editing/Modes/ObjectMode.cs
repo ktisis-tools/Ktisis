@@ -51,12 +51,12 @@ public class ObjectMode : ModeHandler {
 			.Where(item => item is WorldObject)
 			.Cast<ITransform>();
 
-	public override ITransform? GetTransformTarget()
-		=> (WorldObject?)GetSelected().FirstOrDefault();
-
+	public override ITransform? GetTransformTarget(IEnumerable<SceneObject> objects)
+		=> (WorldObject?)objects.FirstOrDefault();
+	
 	// Object transform
 
-	public override void Manipulate(ITransform target, Matrix4x4 targetMx) {
+	public override void Manipulate(IEnumerable<SceneObject> objects, ITransform target, Matrix4x4 targetMx) {
 		var deltaMx = Matrix4x4.Identity; // TODO: Calculate delta
 		
 		if (this._cfg.Config.Editor_Flags.HasFlag(EditFlags.Mirror))

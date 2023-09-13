@@ -58,7 +58,7 @@ public class EditorService : IServiceInit {
 		this.AddMode<PoseMode>(EditMode.Pose)
 			.AddMode<ObjectMode>(EditMode.Object);
 		
-		_scene.OnSceneChanged += OnSceneChanged;
+		_scene.OnSceneChanged += this.Selection.Update;
 
 		this.History = _history.CreateClient<TransformHistory>("SceneEditor_Transform");
 		this.History.AddHandler(this.OnUndoRedo);
@@ -87,17 +87,47 @@ public class EditorService : IServiceInit {
 
 	public IReadOnlyDictionary<EditMode, ModeHandler> GetHandlers()
 		=> this.Modes.AsReadOnly();
+	
+	// Objects
 
-	// Events
+	public bool IsItemInfluenced(SceneObject item) {
+		var mode = this.Config.Editor_Mode;
+		return item switch {
+			ArmatureNode => mode is EditMode.Pose,
+			WorldObject => mode is EditMode.Object,
+			_ => true
+		};
+	}
+	
+	// Transforms
 
-	private void OnSceneChanged(SceneGraph? scene) {
-		if (scene is not null)
-			this.Selection.Attach(scene);
-		else
-			this.Selection.Clear();
+	public ITransform? GetTransformTarget() {
+		var select = this.Selection.GetSelected();
+		return GetHandler()?.GetTransformTarget(select);
 	}
 
-	private void OnSelectionChanged(SelectState state) {
+	public Transform? GetTransform()
+		=> GetTransformTarget()?.GetTransform();
+
+	public void Manipulate(ITransform target, Matrix4x4 targetMx) {
+		// TODO: This should pass selected objects into the handler.
+
+		var select = this.Selection.GetSelected().ToList();
+
+		if (target is SceneObject sceneObj && this.History.UpdateOrBegin(sceneObj, targetMx))
+			this.History.AddSubjects(select);
+
+		foreach (var (_, handler) in GetHandlers())
+			handler.Manipulate(select, target, targetMx);
+	}
+
+	public void EndTransform() {
+		this.History.End();
+	}
+	
+	// Events
+
+	private void OnSelectionChanged(SelectState state, SceneObject item) {
 		if (state.Count != 1) return;
 		
 		var mode = this.Config.Editor_Mode;
@@ -106,6 +136,9 @@ public class EditorService : IServiceInit {
 			SceneObject => EditMode.Object,
 			_ => mode
 		};
+
+		if (item is IDummy dummy && GetTransformTarget() == item)
+			dummy.CalcTransform();
 	}
 
 	private bool OnUndoRedo(TransformAction action, HistoryMod mod) {
@@ -128,36 +161,5 @@ public class EditorService : IServiceInit {
 		}
 		
 		return true;
-	}
-	
-	// Objects
-
-	public bool IsItemInfluenced(SceneObject item) {
-		var mode = this.Config.Editor_Mode;
-		return item switch {
-			ArmatureNode => mode is EditMode.Pose,
-			WorldObject => mode is EditMode.Object,
-			_ => true
-		};
-	}
-
-	public ITransform? GetTransformTarget()
-		=> GetHandler()?.GetTransformTarget();
-
-	public Transform? GetTransform()
-		=> GetTransformTarget()?.GetTransform();
-
-	public void Manipulate(ITransform target, Matrix4x4 targetMx) {
-		// TODO: This should pass selected objects into the handler.
-        
-		if (target is SceneObject sceneObj && this.History.UpdateOrBegin(sceneObj, targetMx))
-			this.History.AddSubjects(this.Selection.GetSelected());
-		
-		foreach (var (_, handler) in GetHandlers())
-			handler.Manipulate(target, targetMx);
-	}
-
-	public void EndTransform() {
-		this.History.End();
 	}
 }

@@ -13,15 +13,18 @@ public enum SelectFlags {
 	Ctrl
 }
 
-public delegate void OnSelectionChangedHandler(SelectState sender);
+public delegate void OnSelectionChangedHandler(SelectState sender, SceneObject item);
 
 public class SelectState {
 	// Constructor
 
 	private readonly List<SceneObject> _selected = new();
 
-	public void Attach(SceneGraph scene) {
-		scene.OnSceneObjectRemoved += OnSceneObjectRemoved;
+	public void Update(SceneGraph? scene) {
+		if (scene != null)
+			scene.OnSceneObjectRemoved += OnSceneObjectRemoved;
+		else
+			this.Clear();
 	}
 
 	// Events
@@ -49,7 +52,7 @@ public class SelectState {
 	public void AddItem(SceneObject item) {
 		item.Flags |= ObjectFlags.Selected;
 		this._selected.Remove(item);
-		this._selected.Insert(0, item);
+		this._selected.Add(item);
 	}
 
 	public void RemoveItem(SceneObject item) {
@@ -77,7 +80,7 @@ public class SelectState {
 
 		if (!isSelect || isMulti)
 			AddItem(item);
-
-		this.OnSelectionChanged?.InvokeSafely(this);
+		
+		this.OnSelectionChanged?.InvokeSafely(this, item);
 	}
 }

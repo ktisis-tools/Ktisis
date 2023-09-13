@@ -27,14 +27,14 @@ public abstract class ModeHandler {
 
 	// Transforms
 
-	public abstract ITransform? GetTransformTarget();
+	public abstract ITransform? GetTransformTarget(IEnumerable<SceneObject> objects);
 
-	public abstract void Manipulate(ITransform target, Matrix4x4 matrix);
+	public abstract void Manipulate(IEnumerable<SceneObject> objects, ITransform target, Matrix4x4 matrix);
 	
 	// Attribute access
 
-	public ObjectModeAttribute? GetAttribute()
-		=> this.GetType().GetCustomAttribute<ObjectModeAttribute>();
+	public ObjectModeAttribute? GetAttribute() => this.GetType()
+		.GetCustomAttribute<ObjectModeAttribute>();
 
 	public Type? GetRenderer() => this.GetAttribute()?.Renderer;
 }

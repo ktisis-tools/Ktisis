@@ -13,6 +13,7 @@ using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Impl;
+using Ktisis.Scene.Objects;
 
 namespace Ktisis.Interface;
 
@@ -96,7 +97,7 @@ public class PluginGui : IServiceInit, IDisposable {
 			window.Close();
 	}
 
-	private void OnSelectionChanged(SelectState _state) {
+	private void OnSelectionChanged(SelectState _state, SceneObject _item) {
 		if (!this._cfg.Config.Editor_OpenOnSelect) return;
 
 		var window = this.GetWindow<TransformWindow>();

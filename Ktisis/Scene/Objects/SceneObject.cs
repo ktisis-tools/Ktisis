@@ -100,4 +100,15 @@ public abstract class SceneObject : ITreeNode, IParentable<SceneObject> {
 				yield return reChild;
 		}
 	}
+
+	public bool IsChildOf(SceneObject item) {
+		var parent = this.Parent;
+		var i = 0;
+		while (parent != null && i++ < 60) {
+			if (parent == item)
+				return true;
+			parent = parent.Parent;
+		}
+		return false;
+	}
 }
