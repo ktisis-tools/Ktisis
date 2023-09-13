@@ -57,11 +57,11 @@ public class EditorService : IServiceInit {
 
 		this.AddMode<PoseMode>(EditMode.Pose)
 			.AddMode<ObjectMode>(EditMode.Object);
-		
-		_scene.OnSceneChanged += this.Selection.Update;
 
 		this.History = _history.CreateClient<TransformHistory>("SceneEditor_Transform");
 		this.History.AddHandler(this.OnUndoRedo);
+		
+		_scene.OnSceneChanged += this.Selection.Update;
 	}
 
 	// Editor state
@@ -136,7 +136,7 @@ public class EditorService : IServiceInit {
 	
 	// Events
 
-	private void OnSelectionChanged(SelectState state, SceneObject item) {
+	private void OnSelectionChanged(SelectState state, SceneObject? item) {
 		if (state.Count != 1) return;
 		
 		var mode = this.Config.Editor_Mode;

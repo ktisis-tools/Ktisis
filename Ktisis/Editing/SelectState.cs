@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
-using Ktisis.Common.Extensions;
 
 namespace Ktisis.Editing;
 
@@ -13,7 +12,7 @@ public enum SelectFlags {
 	Ctrl
 }
 
-public delegate void OnSelectionChangedHandler(SelectState sender, SceneObject item);
+public delegate void OnSelectionChangedHandler(SelectState sender, SceneObject? item);
 
 public class SelectState {
 	// Constructor
@@ -31,36 +30,43 @@ public class SelectState {
 
 	public event OnSelectionChangedHandler? OnSelectionChanged;
 
-	private void OnSceneObjectRemoved(SceneGraph _scene, SceneObject item)
-		=> RemoveItem(item);
+	private void InvokeChange(SceneObject? item)
+		=> this.OnSelectionChanged?.Invoke(this, item);
+
+	private void OnSceneObjectRemoved(SceneGraph _scene, SceneObject item) {
+		RemoveItem(item);
+		InvokeChange(item);
+	}
 
 	// Item access
 
 	public int Count => this._selected.Count;
 
-	public void Clear() => this._selected.Clear();
-
 	public IEnumerable<SceneObject> GetSelected()
 		=> this._selected.AsReadOnly();
 
-	public IEnumerable<ITransform> GetManipulable() => GetSelected()
-		.Where(item => item is ITransform)
-		.Cast<ITransform>();
-
+	public bool IsManipulable() => GetSelected()
+		.Any(item => item is ITransform);
+	
 	// Item management
+	
+	private void Clear() {
+		this._selected.Clear();
+		InvokeChange(null);
+	}
 
-	public void AddItem(SceneObject item) {
+	private void AddItem(SceneObject item) {
 		item.Flags |= ObjectFlags.Selected;
 		this._selected.Remove(item);
 		this._selected.Add(item);
 	}
 
-	public void RemoveItem(SceneObject item) {
+	private void RemoveItem(SceneObject item) {
 		item.Flags &= ~ObjectFlags.Selected;
 		this._selected.Remove(item);
 	}
 
-	public void RemoveAll() {
+	private void RemoveAll() {
 		this._selected.ForEach(item => item.Flags &= ~ObjectFlags.Selected);
 		this._selected.Clear();
 	}
@@ -78,9 +84,9 @@ public class SelectState {
 			RemoveAll();
 		}
 
-		if (!isSelect || isMulti)
-			AddItem(item);
+		var add = !isSelect || isMulti;
+		if (add) AddItem(item);
 		
-		this.OnSelectionChanged?.InvokeSafely(this, item);
+		InvokeChange(add ? item : null);
 	}
 }

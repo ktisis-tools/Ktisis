@@ -13,12 +13,15 @@ public class Character : WorldObject {
 	// Armature & Models
 
 	private readonly Armature Armature;
-
+	private readonly CharaModels Models;
+	
 	// Constructor
 
 	public Character(nint address) : base(address) {
 		this.Armature = new Armature();
 		this.AddChild(this.Armature);
+		this.Models = new CharaModels();
+		this.AddChild(this.Models);
 	}
 
 	// Update handler
