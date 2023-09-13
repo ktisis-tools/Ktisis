@@ -24,9 +24,9 @@ public abstract class ArmatureGroup : ArmatureNode, IVisibility {
 		var results = new List<Bone>();
 		foreach (var item in RecurseChildren()) {
 			switch (item) {
-				//case ArmatureGroup group:
-					//results.AddRange(group.GetIndividualBones());
-					//break;
+				case ArmatureGroup group:
+					results.AddRange(group.GetIndividualBones());
+					break;
 				case Bone bone:
 					results.Add(bone);
 					break;

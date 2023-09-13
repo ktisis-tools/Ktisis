@@ -54,9 +54,9 @@ public class PoseMode : ModeHandler {
 			.Where(item => item is ArmatureNode)
 			.Cast<ArmatureNode>();
 
-	private IEnumerable<Bone> GetCorrelatingBones() {
+	private IEnumerable<Bone> GetCorrelatingBones(IEnumerable<SceneObject> objects) {
 		var unique = new HashSet<Bone>();
-		foreach (var node in GetSelected()) {
+		foreach (var node in objects) {
 			switch (node) {
 				case Bone bone:
 					if (unique.Add(bone))
@@ -74,10 +74,16 @@ public class PoseMode : ModeHandler {
 	
 	// Object transform
 
-	public override ITransform? GetTransformTarget() {
+	public override ITransform? GetTransformTarget(IEnumerable<SceneObject> _objects) {
 		Bone? target = null;
+		
+		var objects = _objects.ToList();
 
-		foreach (var bone in GetCorrelatingBones()) {
+		var groups = objects
+			.Where(item => item is BoneGroup)
+			.Cast<BoneGroup>();
+
+		foreach (var bone in GetCorrelatingBones(objects)) {
 			if (target is null) {
 				target = bone;
 				continue;
@@ -101,6 +107,9 @@ public class PoseMode : ModeHandler {
 				target = bone;
 		}
 
+		if (target != null && groups.FirstOrDefault(g => target.IsChildOf(g)) is BoneGroup group)
+			return group;
+		
 		return target;
 	}
 	
@@ -108,7 +117,7 @@ public class PoseMode : ModeHandler {
 
 	private readonly static Vector3 InverseMax = new(10f, 10f, 10f);
 
-	public unsafe override void Manipulate(ITransform target, Matrix4x4 matrix) {
+	public unsafe override void Manipulate(IEnumerable<SceneObject> objects, ITransform target, Matrix4x4 matrix) {
 		if (target is not ArmatureNode) return;
 		
         // Calculate delta transform
@@ -122,12 +131,15 @@ public class PoseMode : ModeHandler {
 			deltaT.Rotation = mirror ? Quaternion.Inverse(deltaRot) : deltaRot;
 			deltaT.Scale /= trans.Scale;
 		} else return;
+
+		if (target is IDummy dummy)
+			dummy.SetMatrix(matrix);
 		
 		// Build armature map
 		// TODO: Cache this by delegating to SelectState events?
 		
 		var armatureMap = new Dictionary<Armature, Dictionary<int, List<Bone>>>();
-		foreach (var bone in GetCorrelatingBones()) {
+		foreach (var bone in GetCorrelatingBones(objects)) {
 			var armature = bone.GetArmature();
 			if (armature.Parent == target) continue;
 

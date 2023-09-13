@@ -105,9 +105,7 @@ public class GuiOverlay : IServiceInit {
 	private void OnManipulate(Gizmo gizmo) {
 		if (!this._scene.IsActive) return;
 
-		var target = this._editor.GetHandler()?
-			.GetTransformTarget();
-
+		var target = this._editor.GetTransformTarget();
 		if (target is not null)
 			this._editor.Manipulate(target, gizmo.GetResult());
 	}

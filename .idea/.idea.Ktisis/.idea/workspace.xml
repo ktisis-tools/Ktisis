@@ -11,7 +11,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Impl/IDummy.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Extensions/QuaternionEx.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editing/EditorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/EditorService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editing/Modes/ModeHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/Modes/ModeHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editing/Modes/ObjectMode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/Modes/ObjectMode.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editing/Modes/PoseMode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/Modes/PoseMode.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editing/SelectState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/SelectState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/GuiOverlay.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/PluginGui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/PluginGui.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/ArmatureGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/ArmatureGroup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/BoneGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Objects/Models/BoneGroup.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,22 +41,29 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/1a/611cec09/DataManager.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/66/a3265672/IDalamudTextureWrap.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/9d/f6ca154f/Character.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/b4/6081e205/Window.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/c5/cd669948/SignatureAttribute.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/e2/631d9a7b/Framework.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/e6/5c4f3b96/IObjectTable.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/fc/58fec9a2/ITextureProvider.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/13/aef3c883/hkQsTransformf.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/19/3388f915/hkaBone.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/33/92bbd05a/EnvManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/3c/9b8fb4c1/Skeleton.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/a5/94a76c90/Object.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/d4/405f6d6c/IMemorySpace.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/e83a291283eb4ff8ad103afbb06d2a77119e10/f4/d5b9c4a9/hkArray`1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ef73a75707aa4b0690f68d5b8bbf87012fa10/aa/2a66eea1/TextureWrap.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7525e7513f9a3abacff71bafa2338060d6e6ca8129bab3e164d4fbdc706ea4f4/WeatherRate.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9530da6fe8534235553c527ba89e2109c787de8d6fc9bd1e4c142d0ee2469/Matrix4x4.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_demo.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_internal.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Ktisis/Editing/History/TransformHistory.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/RendererBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Scene/Impl/ITransformLocal.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" root0="FORCE_HIGHLIGHTING" />
@@ -63,31 +82,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "v0.3",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.keymap",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.3&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache",
-      "C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache",
-      "C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\ch1rp\\AppData\\Roaming\\JetBrains\\Rider2023.2\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\ch1rp\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="NativeComponents" type="CppProject" factoryName="C++ Project">
       <configuration_1>
@@ -172,7 +191,9 @@
       <workItem from="1694273461719" duration="20807000" />
       <workItem from="1694336723891" duration="24499000" />
       <workItem from="1694392341360" duration="2511000" />
-      <workItem from="1694431383534" duration="17525000" />
+      <workItem from="1694431383534" duration="47404000" />
+      <workItem from="1694493354387" duration="41544000" />
+      <workItem from="1694606030290" duration="4258000" />
     </task>
     <servers />
   </component>
