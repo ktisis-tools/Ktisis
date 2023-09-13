@@ -12,7 +12,7 @@ using Ktisis.Data.Config.Display;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Scene.Objects.Tree;
 
-namespace Ktisis.Scene.Objects.Models;
+namespace Ktisis.Scene.Objects.Skeleton;
 
 public class Armature : ArmatureGroup {
 	// Properties
@@ -86,14 +86,14 @@ public class Armature : ArmatureGroup {
 	// Data access
 
 	private Character? ParentChara => this.Parent as Character;
-	private unsafe Skeleton* Skeleton => this.CharaBase != null ? this.CharaBase->Skeleton : null;
+	private unsafe FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton* Skeleton => this.CharaBase != null ? this.CharaBase->Skeleton : null;
 	private unsafe CharacterBase* CharaBase => (CharacterBase*)(this.ParentChara?.Address ?? nint.Zero);
 
 	// Armature / Skeleton
 
 	public override Armature GetArmature() => this;
-	public new unsafe Pointer<Skeleton> GetSkeleton() => new(this.Skeleton);
-
+	public new unsafe Pointer<FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton> GetSkeleton() => new(this.Skeleton);
+	
 	// Bone map
 
 	public Bone? GetBoneFromMap(int partialIx, int boneIx)

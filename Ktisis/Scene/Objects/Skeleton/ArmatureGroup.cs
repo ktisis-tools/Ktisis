@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using Ktisis.Scene.Impl;
 
-namespace Ktisis.Scene.Objects.Models;
+namespace Ktisis.Scene.Objects.Skeleton;
 
 public abstract class ArmatureGroup : ArmatureNode, IVisibility {
 	// Armature

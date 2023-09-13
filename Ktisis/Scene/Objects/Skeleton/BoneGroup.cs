@@ -6,7 +6,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Display;
 
-namespace Ktisis.Scene.Objects.Models;
+namespace Ktisis.Scene.Objects.Skeleton; 
 
 public class BoneGroup : ArmatureGroup, IDummy {
 	// Properties

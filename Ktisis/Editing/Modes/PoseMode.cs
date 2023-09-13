@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Ktisis.Posing;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
-using Ktisis.Scene.Objects.Models;
+using Ktisis.Scene.Objects.Skeleton;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;

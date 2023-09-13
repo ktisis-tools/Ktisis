@@ -71,6 +71,10 @@
 	  <EmbeddedResource Include="Localization\Data\*.json" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Scene\Objects\Models\" />
+	</ItemGroup>
+
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec ContinueOnError="WarnAndContinue" Command="if $(OS) == Windows_NT (&#xA;copy &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot; /Y&#xA;) else (&#xA;cp &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
 	</Target>
