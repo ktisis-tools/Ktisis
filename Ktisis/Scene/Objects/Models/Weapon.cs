@@ -1,6 +1,6 @@
 using Ktisis.Data.Config.Display;
 
-namespace Ktisis.Scene.Objects.World;
+namespace Ktisis.Scene.Objects.Models; 
 
 public class Weapon : Character {
 	// Properties
