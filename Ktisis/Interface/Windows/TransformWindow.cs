@@ -75,12 +75,16 @@ public class TransformWindow : Window {
 	
 	// Events
 
-	private void OnSelectionChanged(SelectState state, SceneObject? item) {
-		if (!this._cfg.Config.Editor_OpenOnSelect) return;
+	private ITransform? Target;
 
-		if (state.IsManipulable()) {
-			this.Open();
-		} else this.Close();
+	private void OnSelectionChanged(SelectState state, SceneObject? item) {
+		this.Target = this._editor.GetTransformTarget();
+
+		if (this._cfg.Config.Editor_OpenOnSelect) {
+			if (state.IsManipulable()) {
+				this.Open();
+			} else this.Close();
+		}
 	}
 	
 	// UI draw
@@ -133,8 +137,8 @@ public class TransformWindow : Window {
 			this.Config.Editor_Gizmo = !show;
 
 		// Transforms
-		
-		var target = this._editor.GetTransformTarget();
+
+		var target = this.Target;
 		ImGui.BeginDisabled(target is null);
 
 		// Gizmo
