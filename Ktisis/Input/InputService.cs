@@ -11,8 +11,8 @@ using Ktisis.Core;
 using Ktisis.Interop;
 using Ktisis.Core.Impl;
 using Ktisis.Core.Services;
-using Ktisis.Data.Config;
-using Ktisis.Data.Config.Input;
+using Ktisis.Config;
+using Ktisis.Config.Input;
 using Ktisis.Input.Factory;
 using Ktisis.Input.Hotkeys;
 

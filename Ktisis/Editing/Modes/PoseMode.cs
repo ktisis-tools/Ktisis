@@ -8,7 +8,7 @@ using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Skeleton;
 using Ktisis.Interface.Overlay.Render;
 using Ktisis.Common.Utility;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Editing.Attributes;
 using Ktisis.Scene;
 

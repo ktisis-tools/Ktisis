@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using FFXIVClientStructs.Havok;
 
-namespace Ktisis.Data.Config.Bones;
+namespace Ktisis.Config.Bones; 
 
 public class Categories {
 	public readonly List<BoneCategory> CategoryList = new();

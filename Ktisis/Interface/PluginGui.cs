@@ -9,7 +9,7 @@ using Dalamud.Interface.Windowing;
 using Ktisis.Core;
 using Ktisis.Core.Services;
 using Ktisis.Editing;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Overlay;
 using Ktisis.Common.Extensions;

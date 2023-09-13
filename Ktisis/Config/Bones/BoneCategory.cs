@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Ktisis.Data.Config.Bones;
+namespace Ktisis.Config.Bones; 
 
 public class BoneCategory {
 	public readonly string? Name;

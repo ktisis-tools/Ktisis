@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 
+using Ktisis.Config.Display;
 using Ktisis.Core.Impl;
 using Ktisis.Core.Services;
-using Ktisis.Data.Config.Display;
+using Ktisis.Data;
 
-namespace Ktisis.Data.Config;
+namespace Ktisis.Config; 
 
 [KtisisService]
 public class ConfigService {

@@ -8,7 +8,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Interop.Unmanaged;
-using Ktisis.Data.Config.Display;
+using Ktisis.Config.Display;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Scene.Objects.Tree;

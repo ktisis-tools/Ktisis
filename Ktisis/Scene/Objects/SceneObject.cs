@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Dalamud.Logging;
 
 using Ktisis.Common.Extensions;
-using Ktisis.Data.Config.Display;
+using Ktisis.Config.Display;
 using Ktisis.Scene.Impl;
 
 namespace Ktisis.Scene.Objects;

@@ -8,9 +8,9 @@ using Dalamud.Logging;
 
 using ImGuiNET;
 
-using Ktisis.Data.Config.Display;
+using Ktisis.Config.Display;
 using Ktisis.Common.Extensions;
-using Ktisis.Data.Config;
+using Ktisis.Config;
 using Ktisis.Interface.Widgets;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Impl;

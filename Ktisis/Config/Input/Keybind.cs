@@ -1,6 +1,6 @@
 using Dalamud.Game.ClientState.Keys;
 
-namespace Ktisis.Data.Config.Input; 
+namespace Ktisis.Config.Input; 
 
 public class Keybind {
 	public VirtualKey? Key;

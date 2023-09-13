@@ -2,7 +2,7 @@ using System;
 
 using Dalamud.Game.ClientState.Keys;
 
-using Ktisis.Data.Config.Input;
+using Ktisis.Config.Input;
 
 namespace Ktisis.Input.Factory; 
 
