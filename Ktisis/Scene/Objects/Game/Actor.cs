@@ -5,12 +5,13 @@ using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Data.Config.Display;
+using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Objects.World;
 
 namespace Ktisis.Scene.Objects.Game;
 
-public class Actor : Character {
+public class Actor : Character, IEditable {
 	// Properties
 
 	public override string Name {
