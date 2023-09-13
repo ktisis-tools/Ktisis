@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -53,11 +54,14 @@ public class TransformWindow : Window {
 		this._camera = _camera;
 
 		this.Gizmo = Gizmo2D.Create(GizmoID.TransformEditor);
-		this.Gizmo.OnDeactivate += OnDeactivate;
+		if (this.Gizmo != null)
+			this.Gizmo.OnDeactivate += OnDeactivate;
 		
 		this.Table = new TransformTable("##Ktisis_TransformTable", _locale);
 		this.Table.OnClickOperation += OnClickOperation;
 
+		this._editor.Selection.OnSelectionChanged += OnSelectionChanged;
+		
 		RespectCloseHotkey = false;
 	}
 
@@ -68,6 +72,16 @@ public class TransformWindow : Window {
 
 	private void OnDeactivate(object _sender)
 		=> this._editor.EndTransform();
+	
+	// Events
+
+	private void OnSelectionChanged(SelectState state, SceneObject? item) {
+		if (!this._cfg.Config.Editor_OpenOnSelect) return;
+
+		if (state.IsManipulable()) {
+			this.Open();
+		} else this.Close();
+	}
 	
 	// UI draw
 
@@ -137,7 +151,7 @@ public class TransformWindow : Window {
 		var local = target as ITransformLocal;
 
 		var trans = local?.GetLocalTransform() ?? target?.GetTransform() ?? new Transform();
-
+        
 		this.Table.Operation = this.Config.Gizmo_Op;
 		if (this.Table.Draw(trans, out trans)) {
 			if (local != null) {

@@ -2,6 +2,8 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
+using Dalamud.Logging;
+
 using Ktisis.Posing;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
@@ -17,15 +19,17 @@ namespace Ktisis.Editing.Modes;
 [ObjectMode(EditMode.Pose, Renderer = typeof(PoseRenderer))]
 public class PoseMode : ModeHandler {
 	// Constructor
-
+	
 	private readonly ConfigService _cfg;
 	
 	public PoseMode(SceneManager mgr, EditorService editor, ConfigService _cfg) : base(mgr, editor) {
 		this._cfg = _cfg;
+		
+		editor.Selection.OnSelectionChanged += BuildArmatureMap;
 	}
 
 	// Armature enumeration
-
+	
 	public override IEnumerable<SceneObject> GetEnumerator() {
 		if (this.Manager.Scene is not SceneGraph scene)
 			yield break;
@@ -40,12 +44,12 @@ public class PoseMode : ModeHandler {
 				yield return armature;
 				continue;
 			}
-
+			
 			foreach (var child in FindArmatures(item.GetChildren()))
 				yield return child;
 		}
 	}
-
+	
 	// Selection
 
 	private IEnumerable<ArmatureNode> GetSelected()
@@ -71,7 +75,7 @@ public class PoseMode : ModeHandler {
 			}
 		}
 	}
-
+	
 	// Object transform
 
 	public override ITransform? GetTransformTarget(IEnumerable<SceneObject> _objects) {
@@ -88,11 +92,11 @@ public class PoseMode : ModeHandler {
 				target = bone;
 				continue;
 			}
-
+			
 			var armature = bone.GetArmature();
 			if (armature != target.GetArmature())
 				continue;
-
+				
 			var partialIx = bone.Data.PartialIndex;
 			var partial = armature.GetPartialCache(partialIx);
 			if (partial is null) continue;
@@ -115,10 +119,12 @@ public class PoseMode : ModeHandler {
 
 		return target;
 	}
-
+	
 	// Handler for bone manipulation
 
 	private readonly static Vector3 InverseMax = new(10f, 10f, 10f);
+    
+	private readonly Dictionary<Armature, Dictionary<int, List<Bone>>> ArmatureMap = new();
 
 	public unsafe override void Manipulate(ITransform target, Matrix4x4 final, Matrix4x4 initial, IEnumerable<SceneObject> objects) {
 		if (target is not ArmatureNode) return;
@@ -139,31 +145,11 @@ public class PoseMode : ModeHandler {
 		if (target is IDummy dummy)
 			dummy.SetMatrix(final);
 		
-		// Build armature map
-		// TODO: Cache this by delegating to SelectState events?
-
-		var armatureMap = new Dictionary<Armature, Dictionary<int, List<Bone>>>();
-		foreach (var bone in GetCorrelatingBones(objects)) {
-			var armature = bone.GetArmature();
-			if (armature.Parent == target) continue;
-
-			var dictExists = armatureMap.TryGetValue(armature, out var dict);
-			dict ??= new Dictionary<int, List<Bone>>();
-
-			var partialIx = bone.Data.PartialIndex;
-			var listExists = dict.TryGetValue(partialIx, out var list);
-			list ??= new List<Bone>();
-			list.Add(bone);
-
-			if (!listExists) dict.Add(partialIx, list);
-			if (!dictExists) armatureMap.Add(armature, dict);
-		}
-
 		// Carry out transforms
 
-		foreach (var (armature, partialMap) in armatureMap) {
+		foreach (var (armature, partialMap) in this.ArmatureMap) {
 			var skeleton = armature.GetSkeleton();
-			if (skeleton.IsNull || skeleton.Data->PartialSkeletons == null)
+			if (skeleton.IsNullPointer || skeleton.Data->PartialSkeletons == null)
 				continue;
 
 			var modelTrans = new Transform(skeleton.Data->Transform);
@@ -172,7 +158,7 @@ public class PoseMode : ModeHandler {
 			for (var p = 0; p < partialCt; p++) {
 				if (!partialMap.TryGetValue(p, out var boneList))
 					continue;
-
+				
 				var partial = skeleton.Data->PartialSkeletons[p];
 				var pose = partial.GetHavokPose(0);
 				if (pose == null) continue;
@@ -199,9 +185,9 @@ public class PoseMode : ModeHandler {
 						var pos = Matrix4x4.CreateTranslation(bTrans.Position + deltaPos);
 						newMx = scale * rot * pos;
 					}
-
+					
 					PoseEdit.SetWorldTransform(skeleton.Data, pose, index, newMx);
-
+					
 					// TODO: Propagation flags
 					{
 						var initialModel = bTrans.WorldToModel(modelTrans);
@@ -211,6 +197,29 @@ public class PoseMode : ModeHandler {
 					}
 				}
 			}
+		}
+	}
+
+	private void BuildArmatureMap(SelectState sender, SceneObject? item) {
+		var objects = sender.GetSelected().ToList();
+		
+		var target = GetTransformTarget(objects);
+
+		this.ArmatureMap.Clear();
+		foreach (var bone in GetCorrelatingBones(objects)) {
+			var armature = bone.GetArmature();
+			if (armature.Parent == target) continue;
+
+			var dictExists = this.ArmatureMap.TryGetValue(armature, out var dict);
+			dict ??= new Dictionary<int, List<Bone>>();
+
+			var partialIx = bone.Data.PartialIndex;
+			var listExists = dict.TryGetValue(partialIx, out var list);
+			list ??= new List<Bone>();
+			list.Add(bone);
+			
+			if (!listExists) dict.Add(partialIx, list);
+			if (!dictExists) this.ArmatureMap.Add(armature, dict);
 		}
 	}
 }
