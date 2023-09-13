@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Posing.Bones;
 using Ktisis.Data.Config.Bones;
-using Ktisis.Scene.Objects.Models;
+using Ktisis.Scene.Objects.Skeleton;
 
 namespace Ktisis.Scene.Objects.Tree; 
 

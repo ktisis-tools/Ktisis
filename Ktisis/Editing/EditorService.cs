@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
-using Ktisis.Scene.Objects.Models;
+using Ktisis.Scene.Objects.Skeleton;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Common.Utility;
 using Ktisis.Editing.Modes;
@@ -100,6 +100,7 @@ public class EditorService : IServiceInit {
 	}
 	
 	// Transforms
+	// TODO: Explicit handling for world/local transforms
 
 	public ITransform? GetTransformTarget() {
 		var select = this.Selection.GetSelected();

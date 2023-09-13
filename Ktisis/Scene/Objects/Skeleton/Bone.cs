@@ -8,7 +8,7 @@ using Ktisis.Interop.Unmanaged;
 using Ktisis.Common.Utility;
 using Ktisis.Scene.Impl;
 
-namespace Ktisis.Scene.Objects.Models; 
+namespace Ktisis.Scene.Objects.Skeleton; 
 
 public class Bone : ArmatureNode, ITransformLocal {
 	// Properties
@@ -34,7 +34,7 @@ public class Bone : ArmatureNode, ITransformLocal {
 
 	public override Armature GetArmature() => this.Armature;
 	
-	private unsafe hkaPose* GetPose(Pointer<Skeleton> skeleton) {
+	private unsafe hkaPose* GetPose(Pointer<FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton> skeleton) {
 		if (skeleton.IsNullPointer || skeleton.Data->PartialSkeletons == null)
 			return null;
 

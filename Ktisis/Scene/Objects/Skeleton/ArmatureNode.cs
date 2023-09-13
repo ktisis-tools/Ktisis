@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Scene.Impl;
 using Ktisis.Interop.Unmanaged;
 
-namespace Ktisis.Scene.Objects.Models; 
+namespace Ktisis.Scene.Objects.Skeleton; 
 
 public abstract class ArmatureNode : SceneObject, IVisibility, ISortPriority {
 	// IVisibility
@@ -27,6 +27,6 @@ public abstract class ArmatureNode : SceneObject, IVisibility, ISortPriority {
 
 	public abstract Armature GetArmature();
 
-	public Pointer<Skeleton> GetSkeleton()
+	public Pointer<FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton> GetSkeleton()
 		=> this.GetArmature().GetSkeleton();
 }

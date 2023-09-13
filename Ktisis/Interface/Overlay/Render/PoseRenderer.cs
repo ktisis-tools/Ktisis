@@ -4,7 +4,7 @@ using ImGuiNET;
 
 using Ktisis.Posing;
 using Ktisis.Editing.Modes;
-using Ktisis.Scene.Objects.Models;
+using Ktisis.Scene.Objects.Skeleton;
 
 namespace Ktisis.Interface.Overlay.Render; 
 

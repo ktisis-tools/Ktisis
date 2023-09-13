@@ -1,6 +1,6 @@
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Scene.Objects.Models;
+using Ktisis.Scene.Objects.Skeleton;
 
 namespace Ktisis.Scene.Objects.World; 
 
