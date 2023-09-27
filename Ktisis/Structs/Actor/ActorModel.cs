@@ -30,7 +30,7 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x370)] public nint Sklb;
 
-		[FieldOffset(0x8F0)] public unsafe fixed uint DemiEquip[5];
+		[FieldOffset(0x8F4)] public unsafe fixed uint DemiEquip[5];
 		[FieldOffset(0x910)] public unsafe fixed uint HumanEquip[10];
 
 		private unsafe CharacterBase* AsCharacter() {
@@ -38,9 +38,9 @@ namespace Ktisis.Structs.Actor {
 				return (CharacterBase*)self;
 		}
 
-		public unsafe ItemEquip GetEquipSlot(EquipIndex slot) => AsCharacter()->GetModelType() switch {
-			ModelType.Human => (ItemEquip)this.HumanEquip[(int)slot],
-			ModelType.DemiHuman => (ItemEquip)this.DemiEquip[(int)slot],
+		public unsafe ItemEquip GetEquipSlot(int slot) => AsCharacter()->GetModelType() switch {
+			ModelType.Human => (ItemEquip)this.HumanEquip[slot],
+			ModelType.DemiHuman => slot < 5 ? (ItemEquip)this.DemiEquip[slot] : default,
 			_ => default
 		};
 
