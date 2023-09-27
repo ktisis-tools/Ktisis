@@ -142,6 +142,7 @@ namespace Ktisis.Interface.Windows {
 					Target->ModelId = 0;
 					Target->Redraw();
 				}
+				ImGui.EndTabItem();
 				return;
 			}
 
