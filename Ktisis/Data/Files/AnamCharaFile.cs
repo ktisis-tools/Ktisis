@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 
+using Ktisis.Data.Excel;
 using Ktisis.Structs.Actor;
 using Ktisis.Data.Serialization.Converters;
 
@@ -110,29 +111,29 @@ namespace Ktisis.Data.Files {
 			SaveMode = mode;
 
 			if (IncludeSection(SaveModes.EquipmentWeapons, mode)) {
-				MainHand = new WeaponSave(actor.DrawData.MainHand.Equip);
+				MainHand = new WeaponSave(actor.GetWeaponEquip(EquipSlot.MainHand));
 				////MainHand.Color = actor.GetValue(Offsets.Main.MainHandColor);
 				////MainHand.Scale = actor.GetValue(Offsets.Main.MainHandScale);
 
-				OffHand = new WeaponSave(actor.DrawData.OffHand.Equip);
+				OffHand = new WeaponSave(actor.GetWeaponEquip(EquipSlot.OffHand));
 				////OffHand.Color = actor.GetValue(Offsets.Main.OffhandColor);
 				////OffHand.Scale = actor.GetValue(Offsets.Main.OffhandScale);
 			}
 
 			if (IncludeSection(SaveModes.EquipmentGear, mode)) {
-				HeadGear = new ItemSave(actor.DrawData.Equipment.Head);
-				Body = new ItemSave(actor.DrawData.Equipment.Chest);
-				Hands = new ItemSave(actor.DrawData.Equipment.Hands);
-				Legs = new ItemSave(actor.DrawData.Equipment.Legs);
-				Feet = new ItemSave(actor.DrawData.Equipment.Feet);
+				HeadGear = GetItemSave(actor, EquipIndex.Head);
+				Body = GetItemSave(actor, EquipIndex.Chest);
+				Hands = GetItemSave(actor, EquipIndex.Hands);
+				Legs = GetItemSave(actor, EquipIndex.Legs);
+				Feet = GetItemSave(actor, EquipIndex.Feet);
 			}
 
 			if (IncludeSection(SaveModes.EquipmentAccessories, mode)) {
-				Ears = new ItemSave(actor.DrawData.Equipment.Earring);
-				Neck = new ItemSave(actor.DrawData.Equipment.Necklace);
-				Wrists = new ItemSave(actor.DrawData.Equipment.Bracelet);
-				LeftRing = new ItemSave(actor.DrawData.Equipment.RingLeft);
-				RightRing = new ItemSave(actor.DrawData.Equipment.RingRight);
+				Ears = GetItemSave(actor, EquipIndex.Earring);
+				Neck = GetItemSave(actor, EquipIndex.Necklace);
+				Wrists = GetItemSave(actor, EquipIndex.Bracelet);
+				LeftRing = GetItemSave(actor, EquipIndex.RingLeft);
+				RightRing = GetItemSave(actor, EquipIndex.RingRight);
 			}
 
 			if (IncludeSection(SaveModes.AppearanceHair, mode)) {
@@ -188,6 +189,9 @@ namespace Ktisis.Data.Files {
 				Transparency = actor.Transparency;*/
 			}
 		}
+
+		private ItemSave GetItemSave(Actor actor, EquipIndex slot)
+			=> new ItemSave(actor.GetEquip(slot));
 
 		public unsafe void Apply(Actor* actor, SaveModes mode) {
 			if (Tribe != null && !Enum.IsDefined((Tribe)Tribe))

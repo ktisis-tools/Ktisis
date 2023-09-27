@@ -2,9 +2,11 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
@@ -27,6 +29,20 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x274)] public float Height;
 
 		[FieldOffset(0x370)] public nint Sklb;
+
+		[FieldOffset(0x8F0)] public unsafe fixed uint DemiEquip[5];
+		[FieldOffset(0x910)] public unsafe fixed uint HumanEquip[10];
+
+		private unsafe CharacterBase* AsCharacter() {
+			fixed (ActorModel* self = &this)
+				return (CharacterBase*)self;
+		}
+
+		public unsafe ItemEquip GetEquipSlot(EquipIndex slot) => AsCharacter()->GetModelType() switch {
+			ModelType.Human => (ItemEquip)this.HumanEquip[(int)slot],
+			ModelType.DemiHuman => (ItemEquip)this.DemiEquip[(int)slot],
+			_ => default
+		};
 
 		public unsafe void SyncModelSpace(bool refPose = false) {
 			if (Skeleton == null) return;

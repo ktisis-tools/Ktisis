@@ -3,7 +3,9 @@ using System.Runtime.InteropServices;
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Equipment {
-		[FieldOffset(0)] public unsafe fixed uint Slots[0x4 * 10];
+		private const int SlotCount = 10;
+		
+		[FieldOffset(0)] public unsafe fixed uint Slots[0x4 * SlotCount];
 
 		[FieldOffset(0x00)] public ItemEquip Head;
 		[FieldOffset(0x04)] public ItemEquip Chest;

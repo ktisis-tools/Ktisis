@@ -56,11 +56,18 @@ namespace Ktisis.Structs.Actor {
 
 		// Change equipment - no redraw method
 
+		public unsafe ItemEquip GetEquip(EquipIndex index)
+			=> this.Model != null ? this.Model->GetEquipSlot(index) : new();
+
+		public WeaponEquip GetWeaponEquip(EquipSlot slot)
+			=> slot == EquipSlot.MainHand ? this.DrawData.MainHand.GetEquip() : this.DrawData.OffHand.GetEquip();
+		
 		public unsafe void Equip(EquipIndex index, ItemEquip item) {
 			if (Methods.ActorChangeEquip == null) return;
 			fixed (ActorDrawData* ptr = &DrawData)
 				Methods.ActorChangeEquip(ptr, index, item);
 		}
+		
 		public void Equip(List<(EquipSlot, object)> items) {
 			foreach ((EquipSlot slot, object item) in items)
 				if (item is ItemEquip equip)

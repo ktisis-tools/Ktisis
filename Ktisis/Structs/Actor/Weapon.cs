@@ -12,6 +12,9 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x08)] public unsafe WeaponModel* Model;
 		[FieldOffset(0x40)] public bool IsSheathed;
 		[FieldOffset(0x5C)] public WeaponFlags Flags;
+
+		public unsafe WeaponEquip GetEquip()
+			=> this.Model != null ? this.Model->Equip : default;
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
@@ -32,6 +35,8 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x88)] public byte Flags;
 
 		[FieldOffset(0xA0)] public unsafe Skeleton* Skeleton;
+
+		[FieldOffset(0x8F0)] public WeaponEquip Equip;
 	}
 
 	public enum WeaponSlot {

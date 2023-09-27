@@ -90,12 +90,12 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public unsafe static void DrawSelector(EquipSlot slot) {
 			var tar = EditActor.Target;
 			var isWeapon = slot == EquipSlot.MainHand || slot == EquipSlot.OffHand;
-
+			
 			object equipObj;
 			if (isWeapon)
-				equipObj = slot == EquipSlot.MainHand ? tar->DrawData.MainHand.Equip : tar->DrawData.OffHand.Equip;
+				equipObj = tar->GetWeaponEquip(slot);
 			else
-				equipObj = (ItemEquip)tar->DrawData.Equipment.Slots[(int)SlotToIndex(slot)];
+				equipObj = tar->GetEquip(SlotToIndex(slot));
 
 			var isEmpty = true;
 			{
@@ -152,8 +152,8 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.PopItemWidth();
 			ImGui.SameLine();
 
-			var dye = Dyes!.FirstOrDefault(i => i.RowId == (isWeapon ? ((WeaponEquip)equipObj).Dye : ((ItemEquip)equipObj).Dye))!;
-			if (ImGui.ColorButton($"{dye.Name} [{dye.RowId}]##{slot}", dye.ColorVector4, ImGuiColorEditFlags.NoBorder))
+			var dye = Dyes!.FirstOrDefault(i => i.RowId == (isWeapon ? ((WeaponEquip)equipObj).Dye : ((ItemEquip)equipObj).Dye));
+			if (ImGui.ColorButton($"{dye?.Name} [{dye?.RowId}]##{slot}", dye?.ColorVector4 ?? default, ImGuiColorEditFlags.NoBorder))
 				OpenDyePicker(slot);
 
 			if (equipObj is WeaponEquip) {
