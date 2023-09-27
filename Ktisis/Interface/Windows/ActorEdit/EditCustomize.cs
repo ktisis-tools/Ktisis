@@ -176,8 +176,7 @@ namespace Ktisis.Interface.Windows {
 			// Gender
 
 			var isM = custom.Gender == Gender.Masculine;
-
-			if (ImGuiComponents.IconButton(isM ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus)) {
+			if (ImGuiComponents.IconButton("##KtisisCustomizeGender", isM ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus)) {
 				custom.Gender = isM ? Gender.Feminine : Gender.Masculine;
 				Apply(custom);
 			}

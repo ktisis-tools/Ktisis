@@ -130,7 +130,8 @@ namespace Ktisis.Structs.Actor {
 			DrawData.Customize = custom;
 			var redraw = !UpdateCustomize()
 				|| faceHack
-				|| cur.Tribe != custom.Tribe;
+				|| cur.Tribe != custom.Tribe
+				|| cur.Gender != custom.Gender;
 
 			if (redraw) {
 				Redraw(faceHack);
