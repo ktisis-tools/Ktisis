@@ -57,15 +57,21 @@ namespace Ktisis.Structs.Actor {
 		// Change equipment - no redraw method
 
 		public unsafe ItemEquip GetEquip(EquipIndex index)
-			=> this.Model != null ? this.Model->GetEquipSlot((int)index) : new();
+			=> this.Model != null ? this.Model->GetEquipSlot((int)index) : default;
+
+		public unsafe Customize GetCustomize()
+			=> this.Model != null ? this.Model->GetCustomize() ?? default : default;
 
 		public WeaponEquip GetWeaponEquip(EquipSlot slot)
 			=> slot == EquipSlot.MainHand ? this.DrawData.MainHand.GetEquip() : this.DrawData.OffHand.GetEquip();
 		
 		public unsafe void Equip(EquipIndex index, ItemEquip item) {
 			if (Methods.ActorChangeEquip == null) return;
-			fixed (ActorDrawData* ptr = &DrawData)
+			
+			fixed (ActorDrawData* ptr = &DrawData) {
+				Methods.ActorChangeEquip(ptr, index, (ItemEquip)0xFFFFFFFF);
 				Methods.ActorChangeEquip(ptr, index, item);
+			}
 		}
 		
 		public void Equip(List<(EquipSlot, object)> items) {
@@ -78,52 +84,54 @@ namespace Ktisis.Structs.Actor {
 
 		public unsafe void Equip(int slot, WeaponEquip item) {
 			if (Methods.ActorChangeWeapon == null) return;
-			fixed (ActorDrawData* ptr = &DrawData)
+			fixed (ActorDrawData* ptr = &DrawData) {
+				Methods.ActorChangeWeapon(ptr, slot, default, 0, 1, 0, 0);
 				Methods.ActorChangeWeapon(ptr, slot, item, 0, 1, 0, 0);
+			}
 		}
 
 		// Change customize - no redraw method
 
 		public unsafe bool UpdateCustomize() {
-			fixed (Customize* custom = &DrawData.Customize)
-				return ((Human*)Model)->UpdateDrawData((byte*)custom, true);
+			if (this.Model == null) return false;
+
+			var human = (Human*)this.Model;
+			var result = human->UpdateDrawData((byte*)&this.Model->Customize, true);
+			fixed (Customize* ptr = &DrawData.Customize)
+				return result | ((Human*)Model)->UpdateDrawData((byte*)ptr, true);
 		}
 
 		// Apply new customize
 
 		public unsafe void ApplyCustomize(Customize custom) {
-			var cur = DrawData.Customize;
-			DrawData.Customize = custom;
+			if (this.ModelId != 0) return;
+			
+			var cur = GetCustomize();
 
 			// Fix UpdateCustomize on Carbuncles & Minions
-			if (DrawData.Customize.ModelType == 0)
-				DrawData.Customize.ModelType = 1;
+			if (custom.ModelType == 0)
+				custom.ModelType = 1;
+			
+			if (custom.Race == Race.Viera) {
+				// avoid crash when loading invalid ears
+				var ears = custom.RaceFeatureType;
+				custom.RaceFeatureType = ears switch {
+					> 4 => 1,
+					0 => 4,
+					_ => ears
+				};
+			}
 
 			var faceHack = cur.FaceType != custom.FaceType;
-			if (cur.Race != custom.Race
-				|| cur.Tribe != custom.Tribe // Eye glitch.
-				|| cur.Gender != custom.Gender
-				|| cur.FaceType != custom.FaceType // Eye glitch.
-			) {
-				Redraw(faceHack);
-			} else {
-				if (DrawData.Customize.Race == Race.Viera) {
-					// avoid crash when loading invalid ears
-					var ears = DrawData.Customize.RaceFeatureType;
-					DrawData.Customize.RaceFeatureType = ears switch {
-						> 4 => 1,
-						0 => 4,
-						_ => ears
-					};
-				}
+			DrawData.Customize = custom;
+			var redraw = !UpdateCustomize()
+				|| faceHack
+				|| cur.Tribe != custom.Tribe;
 
-				var res = UpdateCustomize();
-				if (!res) {
-					Logger.Warning("Failed to update character. Forcing redraw.");
-					Redraw(faceHack);
-				} else if (cur.BustSize != custom.BustSize && Model != null) {
-					Model->ScaleBust();
-				}
+			if (redraw) {
+				Redraw(faceHack);
+			} else if (cur.BustSize != custom.BustSize && Model != null) {
+				Model->ScaleBust();
 			}
 		}
 

@@ -135,12 +135,21 @@ namespace Ktisis.Interface.Windows {
 		public unsafe static void Draw() {
 			// Customize
 
-			var custom = Target->DrawData.Customize;
+			if (Target->ModelId != 0) {
+				ImGui.Text("Target actor must be a human to edit customization data.");
+				ImGui.Spacing();
+				if (ImGui.Button("Turn Human")) {
+					Target->ModelId = 0;
+					Target->Redraw();
+				}
+				return;
+			}
+
+			var custom = Target->GetCustomize();
 
 			if (custom.Race == 0 || custom.Tribe == 0) {
 				custom.Race = Race.Hyur;
 				custom.Tribe = Tribe.Highlander;
-				Target->DrawData.Customize = custom;
 			}
 
 			var index = custom.GetMakeIndex();

@@ -2,7 +2,6 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
@@ -30,6 +29,8 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x370)] public nint Sklb;
 
+		[FieldOffset(0x8F0)] public Customize Customize;
+
 		[FieldOffset(0x8F4)] public unsafe fixed uint DemiEquip[5];
 		[FieldOffset(0x910)] public unsafe fixed uint HumanEquip[10];
 
@@ -37,6 +38,9 @@ namespace Ktisis.Structs.Actor {
 			fixed (ActorModel* self = &this)
 				return (CharacterBase*)self;
 		}
+
+		public unsafe Customize? GetCustomize()
+			=> AsCharacter()->GetModelType() == ModelType.Human ? this.Customize : null;
 
 		public unsafe ItemEquip GetEquipSlot(int slot) => AsCharacter()->GetModelType() switch {
 			ModelType.Human => (ItemEquip)this.HumanEquip[slot],
