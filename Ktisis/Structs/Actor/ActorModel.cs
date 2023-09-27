@@ -39,8 +39,11 @@ namespace Ktisis.Structs.Actor {
 				return (CharacterBase*)self;
 		}
 
+		public unsafe bool IsHuman()
+			=> AsCharacter()->GetModelType() == ModelType.Human;
+
 		public unsafe Customize? GetCustomize()
-			=> AsCharacter()->GetModelType() == ModelType.Human ? this.Customize : null;
+			=> IsHuman() ? this.Customize : null;
 
 		public unsafe ItemEquip GetEquipSlot(int slot) => AsCharacter()->GetModelType() switch {
 			ModelType.Human => (ItemEquip)this.HumanEquip[slot],

@@ -94,9 +94,13 @@ namespace Ktisis.Structs.Actor {
 
 		public unsafe bool UpdateCustomize() {
 			if (this.Model == null) return false;
-
+			
+			var result = false;
+			
 			var human = (Human*)this.Model;
-			var result = human->UpdateDrawData((byte*)&this.Model->Customize, true);
+			if (this.Model->IsHuman())
+				result = human->UpdateDrawData((byte*)&this.Model->Customize, true);
+			
 			fixed (Customize* ptr = &DrawData.Customize)
 				return result | ((Human*)Model)->UpdateDrawData((byte*)ptr, true);
 		}
