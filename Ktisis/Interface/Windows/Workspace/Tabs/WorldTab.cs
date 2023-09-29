@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Dalamud.Interface.Internal;
@@ -45,7 +43,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			TokenSource?.Cancel();
 			TokenSource = source;
 
-			GetZoneWeatherAndIcons(territory, token).ContinueWith(result => {
+			EnvService.GetZoneWeatherAndIcons(territory, token).ContinueWith(result => {
 				if (result.Exception != null) {
 					PluginLog.Error($"Failed to load weather data:\n{result.Exception}");
 					return;
@@ -170,46 +168,21 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		}
 		
 		// Sky
-
-		private static uint CurSky;
-
-		private static readonly object SkyLock = new();
-		private static IDalamudTextureWrap? SkyTex;
-
-		private static void GetSkyImage(uint sky) {
-			if (sky == CurSky) return;
-		
-			CurSky = sky;
-			GetSkyboxTex(CurSky).ContinueWith(result => {
-				if (result.Exception != null) {
-					PluginLog.Error(result.Exception.ToString());
-					return;
-				}
-
-				lock (SkyLock) {
-					SkyTex?.Dispose();
-					SkyTex = result.Result;
-				}
-			});
-		}
 	
 		private static bool DrawSkySelect(ref uint skyId) {
-			GetSkyImage(skyId);
+			EnvService.GetSkyImage(skyId);
 
 			var innerSpace = ImGui.GetStyle().ItemInnerSpacing.Y;
 		
 			var height = ImGui.GetFrameHeight() * 2 + innerSpace;
 			var buttonSize = new Vector2(height, height);
-
-			//var button = false;
-			lock (SkyLock) {
-				if (SkyTex != null)
-					ImGui.Image(SkyTex.ImGuiHandle, buttonSize);
+            
+			lock (EnvService.SkyLock) {
+				if (EnvService.SkyTex != null)
+					ImGui.Image(EnvService.SkyTex.ImGuiHandle, buttonSize);
 			}
 
 			ImGui.SameLine();
-
-			var avail = ImGui.GetContentRegionAvail().X;
 
 			ImGui.SetCursorPosY(ImGui.GetCursorPosY() + innerSpace);
 		
@@ -222,46 +195,6 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			ImGui.EndGroup();
 
 			return changed;
-		}
-		
-		// Data
-		
-		private static async Task<IDalamudTextureWrap?> GetSkyboxTex(uint skyId) {
-			await Task.Yield();
-			PluginLog.Verbose($"Retrieving skybox texture: {skyId:000}");
-			return Services.Textures.GetTextureFromGame($"bgcommon/nature/sky/texture/sky_{skyId:000}.tex");
-		}
-		
-		private static async Task<Dictionary<Weather, IDalamudTextureWrap?>> GetZoneWeatherAndIcons(ushort id, CancellationToken token) {
-			await Task.Yield();
-			
-			PluginLog.Verbose($"Retrieving weather data for territory: {id}");
-		
-			var result = new Dictionary<Weather, IDalamudTextureWrap?>();
-		
-			var territory = Services.DataManager.GetExcelSheet<TerritoryType>()?.GetRow(id);
-			if (territory == null || token.IsCancellationRequested) return result;
-
-			var weatherRate = Services.DataManager.GetExcelSheet<WeatherRate>()?.GetRow(territory.WeatherRate);
-			if (token.IsCancellationRequested) return result;
-			var weatherSheet = Services.DataManager.GetExcelSheet<Weather>();
-			if (weatherRate == null || weatherSheet == null || token.IsCancellationRequested) return result;
-
-			var data = weatherRate.UnkData0.ToList();
-			data.Sort((a, b) => a.Weather - b.Weather);
-		
-			foreach (var rate in data) {
-				if (token.IsCancellationRequested) break;
-				if (rate.Weather <= 0 || rate.Rate == 0) continue;
-			
-				var weather = weatherSheet.GetRow((uint)rate.Weather);
-				if (weather == null) continue;
-			
-				var icon = Services.Textures.GetIcon((uint)weather.Icon);
-				result.TryAdd(weather, icon);
-			}
-		
-			return result;
 		}
 	}
 }
