@@ -7,6 +7,7 @@ using Dalamud.Game.Command;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Game.ClientState.Objects;
+using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
@@ -14,6 +15,7 @@ namespace Ktisis {
 	internal class Services {
 		[PluginService] internal static DalamudPluginInterface PluginInterface { get; private set; } = null!;
 		[PluginService] internal static CommandManager CommandManager { get; private set; } = null!;
+		[PluginService] internal static ITextureProvider Textures { get; private set; } = null!;
 		[PluginService] internal static DataManager DataManager { get; private set; } = null!;
 		[PluginService] internal static ClientState ClientState { get; private set; } = null!;
 		[PluginService] internal static ObjectTable ObjectTable { get; private set; } = null!;
