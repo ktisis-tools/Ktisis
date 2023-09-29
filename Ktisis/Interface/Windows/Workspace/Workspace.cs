@@ -90,12 +90,12 @@ namespace Ktisis.Interface.Windows.Workspace {
 				if (ImGui.BeginTabBar(Locale.GetString("Workspace"))) {
 					if (ImGui.BeginTabItem(Locale.GetString("Actor")))
 						ActorTab.Draw(target);
-					/*if (ImGui.BeginTabItem(Locale.GetString("Scene")))
-						SceneTab();*/
 					if (ImGui.BeginTabItem(Locale.GetString("Pose")))
 						PoseTab.Draw(target);
 					if (ImGui.BeginTabItem(Locale.GetString("Camera")))
 						CameraTab.Draw();
+					if (ImGui.BeginTabItem("World"))
+						WorldTab.Draw();
 				}
 			}
 
