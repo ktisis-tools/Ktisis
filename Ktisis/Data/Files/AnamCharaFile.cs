@@ -366,7 +366,7 @@ namespace Ktisis.Data.Files {
 			public ushort ModelSet { get; set; }
 			public ushort ModelBase { get; set; }
 			public ushort ModelVariant { get; set; }
-			public byte DyeId { get; set; }
+			public ushort DyeId { get; set; }
 
 			public unsafe void Write(Actor* actor, bool isMainHand) {
 				var wep = new WeaponEquip() {

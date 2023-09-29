@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+using Dalamud.Logging;
+
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
@@ -84,9 +86,16 @@ namespace Ktisis.Structs.Actor {
 
 		public unsafe void Equip(int slot, WeaponEquip item) {
 			if (Methods.ActorChangeWeapon == null) return;
+			
 			fixed (ActorDrawData* ptr = &DrawData) {
+				PluginLog.Information($"Setting to {item.Set} {item.Base} {item.Variant} {item.Dye}");
+                
 				Methods.ActorChangeWeapon(ptr, slot, default, 0, 1, 0, 0);
 				Methods.ActorChangeWeapon(ptr, slot, item, 0, 1, 0, 0);
+				if (slot == 0)
+					this.DrawData.MainHand.SetEquip(item);
+				else if (slot == 1)
+					this.DrawData.OffHand.SetEquip(item);
 			}
 		}
 

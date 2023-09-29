@@ -14,7 +14,12 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x5C)] public WeaponFlags Flags;
 
 		public unsafe WeaponEquip GetEquip()
-			=> this.Model != null ? this.Model->Equip : default;
+			=> this.Model != null ? this.Model->Equip : this.Equip;
+
+		public unsafe void SetEquip(WeaponEquip item) {
+			if (this.Model != null)
+				this.Model->Equip = item;
+		}
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
@@ -22,7 +27,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x00)] public ushort Set;
 		[FieldOffset(0x02)] public ushort Base;
 		[FieldOffset(0x04)] public ushort Variant;
-		[FieldOffset(0x06)] public byte Dye;
+		[FieldOffset(0x06)] public ushort Dye;
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
