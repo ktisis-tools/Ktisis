@@ -14,6 +14,7 @@ using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Actor;
 using Ktisis.History;
 using Ktisis.Events;
+using Ktisis.Interface.Windows.Toolbar;
 using Ktisis.Overlay;
 
 namespace Ktisis {
@@ -71,6 +72,7 @@ namespace Ktisis {
 
 			Input.Init();
 			ActorStateWatcher.Init();
+			ToolbarWindow.Init();
 
 			// Register command
 
@@ -115,6 +117,7 @@ namespace Ktisis {
 
 			Input.Dispose();
 			HistoryManager.Dispose();
+			ToolbarWindow.Dispose();
 
 			foreach (var (_, texture) in References.Textures) {
 				texture.Dispose();
@@ -133,6 +136,13 @@ namespace Ktisis {
 				case "configure":
 				case "configuration":
 					ConfigGui.Toggle();
+					break;
+				case "toolbar":
+					if (IsInGPose) {
+						ToolbarWindow.Toggle();
+					} else {
+						/* TODO: Throw a warning up? */
+					}
 					break;
 				default:
 					Workspace.Toggle();

@@ -13,6 +13,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Keys;
 
+using Ktisis.Interface.Windows.Toolbar;
 using Ktisis.Util;
 using Ktisis.Overlay;
 using Ktisis.Localization;
@@ -152,8 +153,10 @@ namespace Ktisis.Interface.Windows {
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
 			
 			var showToolbar = cfg.ShowToolbar;
-			if (ImGui.Checkbox("Show Experimental Toolbar", ref showToolbar))
+			if (ImGui.Checkbox("Show Experimental Toolbar", ref showToolbar)) {
 				cfg.ShowToolbar = showToolbar;
+				ToolbarWindow.Visible = showToolbar;
+			}
 
 			ImGui.Spacing();
 			ImGui.Separator();
