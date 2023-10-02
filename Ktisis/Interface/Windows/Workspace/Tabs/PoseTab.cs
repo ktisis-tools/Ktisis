@@ -11,6 +11,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
+using Ktisis.Helpers;
 using Ktisis.Interface.Components;
 using Ktisis.Interop.Hooks;
 
@@ -177,59 +178,10 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 				KtisisGui.FileDialogManager.OpenFileDialog(
 					"Importing Pose",
 					"Pose Files (.pose){.pose}",
-					(success, path) => {
+					(success, paths) => {
 						if (!success) return;
 
-						var content = File.ReadAllText(path[0]);
-						var pose = JsonParser.Deserialize<PoseFile>(content);
-						if (pose == null) return;
-
-						if (actor->Model == null) return;
-
-						var skeleton = actor->Model->Skeleton;
-						if (skeleton == null) return;
-
-						pose.ConvertLegacyBones();
-						
-						// Ensure posing is enabled.
-						if (!PoseHooks.PosingEnabled && !PoseHooks.AnamPosingEnabled)
-							PoseHooks.EnablePosing();
-
-						if (pose.Bones != null) {
-							for (var p = 0; p < skeleton->PartialSkeletonCount; p++) {
-								switch (p) {
-									case 0:
-										if (!body) continue;
-										break;
-									case 1:
-										if (!face) continue;
-										break;
-								}
-
-								pose.Bones.ApplyToPartial(skeleton, p, trans);
-							}
-						}
-
-						if (modes.HasFlag(PoseMode.Weapons)) {
-							var wepTrans = trans;
-							if (Ktisis.Configuration.PositionWeapons)
-								wepTrans |= PoseTransforms.Position;
-							
-							if (pose.MainHand != null) {
-								var skele = actor->GetWeaponSkeleton(WeaponSlot.MainHand);
-								if (skele != null) pose.MainHand.Apply(skele, wepTrans);
-							}
-
-							if (pose.OffHand != null) {
-								var skele = actor->GetWeaponSkeleton(WeaponSlot.OffHand);
-								if (skele != null) pose.OffHand.Apply(skele, wepTrans);
-							}
-
-							if (pose.Prop != null) {
-								var skele = actor->GetWeaponSkeleton(WeaponSlot.Prop);
-								if (skele != null) pose.Prop.Apply(skele, wepTrans);
-							}
-						}
+						PoseHelpers.ImportPose(actor, paths, Ktisis.Configuration.PoseMode);
 					},
 					1,
 					null
@@ -246,44 +198,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 					(success, path) => {
 						if (!success) return;
 
-						var model = actor->Model;
-						if (model == null) return;
-
-						var skeleton = model->Skeleton;
-						if (skeleton == null) return;
-
-						var pose = new PoseFile();
-
-						pose.Position = model->Position;
-						pose.Rotation = model->Rotation;
-						pose.Scale = model->Scale;
-
-						pose.Bones = new PoseContainer();
-						pose.Bones.Store(skeleton);
-
-						if (modes.HasFlag(PoseMode.Weapons)) {
-							var main = actor->GetWeaponSkeleton(WeaponSlot.MainHand);
-							if (main != null) {
-								pose.MainHand = new PoseContainer();
-								pose.MainHand.Store(main);
-							}
-							
-							var off = actor->GetWeaponSkeleton(WeaponSlot.OffHand);
-							if (off != null) {
-								pose.OffHand = new PoseContainer();
-								pose.OffHand.Store(off);
-							}
-							
-							var prop = actor->GetWeaponSkeleton(WeaponSlot.Prop);
-							if (prop != null) {
-								pose.Prop = new PoseContainer();
-								pose.Prop.Store(prop);
-							}
-						}
-
-						var json = JsonParser.Serialize(pose);
-						using (var file = new StreamWriter(path))
-							file.Write(json);
+						PoseHelpers.ExportPose(actor, path, Ktisis.Configuration.PoseMode);
 					}
 				);
 			}

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 
+using Dalamud.Game.ClientState.JobGauge.Enums;
+
 using ImGuiNET;
 
 using Newtonsoft.Json;
@@ -75,11 +77,13 @@ namespace Ktisis.Interface.Windows {
 						DrawInputTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Camera")))
 						DrawCameraTab(cfg);
-					if (ImGui.BeginTabItem(Locale.GetString("References")))
+                    if (ImGui.BeginTabItem(Locale.GetString("AutoSave")))
+                        DrawAutoSaveTab(cfg);
+                    if (ImGui.BeginTabItem(Locale.GetString("References")))
 						DrawReferencesTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Language")))
 						DrawLanguageTab(cfg);
-					if (ImGui.BeginTabItem("Data"))
+                    if (ImGui.BeginTabItem("Data"))
 						DrawDataTab(cfg);
 
 					ImGui.EndTabBar();
@@ -270,9 +274,36 @@ namespace Ktisis.Interface.Windows {
 			ImGui.EndTabItem();
 		}
 
-		// Language
+        // AutoSave
+        public static void DrawAutoSaveTab(Configuration cfg)
+        {
+            var enableAutoSave = cfg.EnableAutoSave;
+			if (ImGui.Checkbox(Locale.GetString("Enable_auto_save"), ref enableAutoSave))
+				cfg.EnableAutoSave = enableAutoSave;
 
-		public static void DrawLanguageTab(Configuration cfg) {
+			var autoSaveInterval = cfg.AutoSaveInterval;
+			if (ImGui.SliderInt(Locale.GetString("Auto_save_interval"), ref autoSaveInterval, 10, 600))
+				cfg.AutoSaveInterval = autoSaveInterval;
+
+			var autoSaveCount = cfg.AutoSaveCount;
+			if (ImGui.SliderInt(Locale.GetString("Auto_save_count"), ref autoSaveCount, 1, 20))
+				cfg.AutoSaveCount = autoSaveCount;
+
+			var autoSavePath = cfg.AutoSavePath;
+			if (ImGui.InputText(Locale.GetString("Auto_save_path"), ref autoSavePath, 256))
+				cfg.AutoSavePath = autoSavePath;
+
+            var clearOnExit = cfg.ClearAutoSavesOnExit;
+			if (ImGui.Checkbox(Locale.GetString("Clear_auto_saves_on_exit"), ref clearOnExit))
+                cfg.ClearAutoSavesOnExit = clearOnExit;
+
+            ImGui.EndTabItem();
+        }
+
+
+        // Language
+
+        public static void DrawLanguageTab(Configuration cfg) {
 			ImGui.Text("Disclaimer! These settings are currently only in place to test the WIP localization system.");
 			ImGui.Text("Translation strings are not currently supported in most of the UI.");
 
