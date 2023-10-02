@@ -3,114 +3,105 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
-
-using Dalamud.Plugin.Ipc.Exceptions;
-
-using FFXIVClientStructs.FFXIV.Client.UI.Info;
-
 using Ktisis.Helpers;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
 
 namespace Ktisis.Util
 {
-    internal class PoseAutoSave
-    {
-        private Queue<string> prefixes = new();
-        private Timer? _timer = null;
-        private string SaveFolder => Ktisis.Configuration.AutoSavePath;
+	internal class PoseAutoSave
+	{
+		private Queue<string> prefixes = new();
+		private Timer? _timer = null;
+		private string SaveFolder => Ktisis.Configuration.AutoSavePath;
 
-        public void Enable()
-        {
-            if (!Ktisis.Configuration.EnableAutoSave)
-                return;
+		public void Enable()
+		{
+			if (!Ktisis.Configuration.EnableAutoSave)
+				return;
 
-            if (!Directory.Exists(SaveFolder))
-                Directory.CreateDirectory(SaveFolder);
+			if (!Directory.Exists(SaveFolder))
+				Directory.CreateDirectory(SaveFolder);
 
-            _timer = new Timer(TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval));
-            _timer.Elapsed += Save;
-            _timer.AutoReset = true;
+			_timer = new Timer(TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval));
+			_timer.Elapsed += Save;
+			_timer.AutoReset = true;
 
-            _timer.Start();
-            prefixes.Clear();
-        }
+			_timer.Start();
+			prefixes.Clear();
+		}
 
-        public void Disable()
-        {
-            _timer?.Stop();
+		public void Disable()
+		{
+			_timer?.Stop();
 
-            if (!Ktisis.Configuration.ClearAutoSavesOnExit || Ktisis.Configuration.AutoSaveCount <= 0) return;
-            
-            while (prefixes.Count > 0)
-            {
-                DeleteOldest();
-            }
-        }
+			if (!Ktisis.Configuration.ClearAutoSavesOnExit || Ktisis.Configuration.AutoSaveCount <= 0) return;
 
-        private void Save(object? sender, ElapsedEventArgs e)
-        {
-            if (!Ktisis.IsInGPose)
-            {
-                Disable();
-                return;
-            }
+			while (prefixes.Count > 0)
+			{
+				DeleteOldest();
+			}
+		}
 
-            var actors = ActorsList.GetSelectorList();
+		private void Save(object? sender, ElapsedEventArgs e)
+		{
+			if (!Ktisis.IsInGPose)
+			{
+				Disable();
+				return;
+			}
 
-            Dalamud.Logging.PluginLog.LogInformation($"Saving {actors.Count} actors");
+			var actors = ActorsList.GetSelectorList();
 
-            var prefix = $"AutoSave - {DateTime.Now:HH-mm-ss}";
-            var folder = Path.Combine(SaveFolder, prefix);
-            prefixes.Enqueue(prefix);
+			Dalamud.Logging.PluginLog.LogInformation($"Saving {actors.Count} actors");
 
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
+			var prefix = $"AutoSave - {DateTime.Now:HH-mm-ss}";
+			var folder = Path.Combine(SaveFolder, prefix);
+			prefixes.Enqueue(prefix);
 
-            unsafe
-            {
-                foreach (var actorPtr in actors)
-                {
-                    var actor = (Actor*)actorPtr;
-                    var filename = $"{actor->GetNameOrId()}.pose";
-                    Dalamud.Logging.PluginLog.LogInformation($"Saving {filename}");
+			if (!Directory.Exists(folder))
+				Directory.CreateDirectory(folder);
 
-                    var path = Path.Combine(folder, filename);
-                    Dalamud.Logging.PluginLog.LogVerbose($"Saving to {path}");
+			unsafe
+			{
+				foreach (var actorPtr in actors)
+				{
+					var actor = (Actor*)actorPtr;
+					var filename = $"{actor->GetNameOrId()}.pose";
+					Dalamud.Logging.PluginLog.LogInformation($"Saving {filename}");
 
-                    PoseHelpers.ExportPose(actor, path, PoseMode.All);
-                }
+					var path = Path.Combine(folder, filename);
+					Dalamud.Logging.PluginLog.LogVerbose($"Saving to {path}");
 
-            }
+					PoseHelpers.ExportPose(actor, path, PoseMode.All);
+				}
 
-            Dalamud.Logging.PluginLog.LogVerbose($"Prefix count: {prefixes.Count} max: {Ktisis.Configuration.AutoSaveCount}");
+			}
 
-            //Clear old saves
-            while (prefixes.Count > Ktisis.Configuration.AutoSaveCount)
-            {
-                DeleteOldest();
-            } 
+			Dalamud.Logging.PluginLog.LogVerbose($"Prefix count: {prefixes.Count} max: {Ktisis.Configuration.AutoSaveCount}");
 
-            //Dynamically update the interval.
+			//Clear old saves
+			while (prefixes.Count > Ktisis.Configuration.AutoSaveCount)
+			{
+				DeleteOldest();
+			}
 
-            if (_timer != null && Math.Abs(_timer.Interval - TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval).TotalMilliseconds) > 0.01)
-                _timer.Interval = TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval).TotalMilliseconds;
-        }
+			//Dynamically update the interval.
 
-        private void DeleteOldest()
-        {
-            var oldest = prefixes.Dequeue();
-            var folder = Path.Combine(SaveFolder, oldest);
-            if (Directory.Exists(folder))
-            {
-                Dalamud.Logging.PluginLog.LogVerbose($"Deleting {folder}");
-                Directory.Delete(folder, true);
-            }
-        }
-    }
+			if (_timer != null && Math.Abs(_timer.Interval - TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval).TotalMilliseconds) > 0.01)
+				_timer.Interval = TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval).TotalMilliseconds;
+		}
+
+		private void DeleteOldest()
+		{
+			var oldest = prefixes.Dequeue();
+			var folder = Path.Combine(SaveFolder, oldest);
+			if (Directory.Exists(folder))
+			{
+				Dalamud.Logging.PluginLog.LogVerbose($"Deleting {folder}");
+				Directory.Delete(folder, true);
+			}
+		}
+	}
 }

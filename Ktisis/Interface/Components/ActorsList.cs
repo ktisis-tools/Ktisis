@@ -29,10 +29,10 @@ namespace Ktisis.Interface.Components {
 		// TODO to clear the list on gpose leave
 		public static void Clear() => SavedObjects.Clear();
 
-        internal static List<long> GetSelectorList() => SavedObjects;
+		internal static List<long> GetSelectorList() => SavedObjects;
 
 
-        // Draw
+		// Draw
 
 		public unsafe static void Draw() {
 			// Prevent displaying the same target multiple time

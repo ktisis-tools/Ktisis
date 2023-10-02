@@ -70,12 +70,12 @@ namespace Ktisis
 		public bool EnableAutoSave { get; set; } = false;
 		public int AutoSaveInterval { get; set; } = 60;
 		public int AutoSaveCount { get; set; } = 5;
-        public string AutoSavePath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ktisis", "PoseAutoBackup");
-        public bool ClearAutoSavesOnExit { get; set; } = true;
+		public string AutoSavePath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ktisis", "PoseAutoBackup");
+		public bool ClearAutoSavesOnExit { get; set; } = true;
 
-        // References
-        // The reference Key creates a uniqueness constraint for imgui window IDs for each reference.
-        public Dictionary<int, ReferenceInfo> References { get; set; } = new();
+		// References
+		// The reference Key creates a uniqueness constraint for imgui window IDs for each reference.
+		public Dictionary<int, ReferenceInfo> References { get; set; } = new();
 		public float ReferenceAlpha { get; set; } = 1.0f;
 		public bool ReferenceHideDecoration { get; set; } = false;
 		public int NextReferenceKey => References.Count == 0 ? 0 : References.Max(x => x.Key) + 1;
@@ -146,15 +146,15 @@ namespace Ktisis
 		public bool EnableParenting { get; set; } = true;
 
 		public bool LinkedGaze { get; set; } = true;
-		
+
 		public bool ShowToolbar { get; set; } = false;
 
 		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
-		
+
 		// Camera
 
 		public float FreecamMoveSpeed { get; set; } = 0.1f;
-		
+
 		public float FreecamShiftMuli { get; set; } = 2.5f;
 		public float FreecamCtrlMuli { get; set; } = 0.25f;
 		public float FreecamUpDownMuli { get; set; } = 1f;
@@ -167,7 +167,7 @@ namespace Ktisis
 		public Keybind FreecamRight { get; set; } = new(VirtualKey.D);
 		public Keybind FreecamUp { get; set; } = new(VirtualKey.SPACE);
 		public Keybind FreecamDown { get; set; } = new(VirtualKey.Q);
-		
+
 		public Keybind FreecamFast { get; set; } = new(VirtualKey.SHIFT);
 		public Keybind FreecamSlow { get; set; } = new(VirtualKey.CONTROL);
 

@@ -77,13 +77,13 @@ namespace Ktisis.Interface.Windows {
 						DrawInputTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Camera")))
 						DrawCameraTab(cfg);
-                    if (ImGui.BeginTabItem(Locale.GetString("AutoSave")))
-                        DrawAutoSaveTab(cfg);
-                    if (ImGui.BeginTabItem(Locale.GetString("References")))
+					if (ImGui.BeginTabItem(Locale.GetString("AutoSave")))
+						DrawAutoSaveTab(cfg);
+					if (ImGui.BeginTabItem(Locale.GetString("References")))
 						DrawReferencesTab(cfg);
 					if (ImGui.BeginTabItem(Locale.GetString("Language")))
 						DrawLanguageTab(cfg);
-                    if (ImGui.BeginTabItem("Data"))
+					if (ImGui.BeginTabItem("Data"))
 						DrawDataTab(cfg);
 
 					ImGui.EndTabBar();
@@ -154,7 +154,7 @@ namespace Ktisis.Interface.Windows {
 			var displayMultiplierInputs = cfg.TransformTableDisplayMultiplierInputs;
 			if (ImGui.Checkbox(Locale.GetString("Show_speed_multipler_inputs"), ref displayMultiplierInputs))
 				cfg.TransformTableDisplayMultiplierInputs = displayMultiplierInputs;
-			
+
 			var showToolbar = cfg.ShowToolbar;
 			if (ImGui.Checkbox("Show Experimental Toolbar", ref showToolbar))
 				cfg.ShowToolbar = showToolbar;
@@ -178,13 +178,13 @@ namespace Ktisis.Interface.Windows {
 
 		public static void DrawOverlayTab(Configuration cfg) {
 			ImGui.Spacing();
-			
+
 			var order = cfg.OrderBoneListByDistance;
 			if (ImGui.Checkbox("Order bone list by distance from camera", ref order))
 				cfg.OrderBoneListByDistance = order;
 
 			ImGui.Spacing();
-			
+
 			if (ImGui.CollapsingHeader(Locale.GetString("Skeleton_lines_and_dots"), ImGuiTreeNodeFlags.DefaultOpen)) {
 				ImGui.Separator();
 				var drawLines = cfg.DrawLinesOnSkeleton;
@@ -206,11 +206,11 @@ namespace Ktisis.Interface.Windows {
 				var lineThickness = cfg.SkeletonLineThickness;
 				if (ImGui.SliderFloat(Locale.GetString("Lines_thickness"), ref lineThickness, 0.01F, 15F, "%.1f"))
 					cfg.SkeletonLineThickness = lineThickness;
-				
+
 				var lineOpacity = cfg.SkeletonLineOpacity;
 				if (ImGui.SliderFloat(Locale.GetString("Lines_opacity"), ref lineOpacity, 0.01F, 1F, "%.2f"))
 					cfg.SkeletonLineOpacity = lineOpacity;
-				
+
 				var lineOpacityWhileUsing = cfg.SkeletonLineOpacityWhileUsing;
 				if (ImGui.SliderFloat(Locale.GetString("Lines_opacity_while_using"), ref lineOpacityWhileUsing, 0.01F, 1F, "%.2f"))
 					cfg.SkeletonLineOpacityWhileUsing = lineOpacityWhileUsing;
@@ -274,10 +274,10 @@ namespace Ktisis.Interface.Windows {
 			ImGui.EndTabItem();
 		}
 
-        // AutoSave
-        public static void DrawAutoSaveTab(Configuration cfg)
-        {
-            var enableAutoSave = cfg.EnableAutoSave;
+		// AutoSave
+		public static void DrawAutoSaveTab(Configuration cfg)
+		{
+			var enableAutoSave = cfg.EnableAutoSave;
 			if (ImGui.Checkbox(Locale.GetString("Enable_auto_save"), ref enableAutoSave))
 				cfg.EnableAutoSave = enableAutoSave;
 
@@ -293,17 +293,17 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.InputText(Locale.GetString("Auto_save_path"), ref autoSavePath, 256))
 				cfg.AutoSavePath = autoSavePath;
 
-            var clearOnExit = cfg.ClearAutoSavesOnExit;
+			var clearOnExit = cfg.ClearAutoSavesOnExit;
 			if (ImGui.Checkbox(Locale.GetString("Clear_auto_saves_on_exit"), ref clearOnExit))
-                cfg.ClearAutoSavesOnExit = clearOnExit;
+				cfg.ClearAutoSavesOnExit = clearOnExit;
 
-            ImGui.EndTabItem();
-        }
+			ImGui.EndTabItem();
+		}
 
 
-        // Language
+		// Language
 
-        public static void DrawLanguageTab(Configuration cfg) {
+		public static void DrawLanguageTab(Configuration cfg) {
 			ImGui.Text("Disclaimer! These settings are currently only in place to test the WIP localization system.");
 			ImGui.Text("Translation strings are not currently supported in most of the UI.");
 
@@ -452,11 +452,11 @@ namespace Ktisis.Interface.Windows {
 			var shiftMuli = cfg.FreecamShiftMuli;
 			if (ImGui.DragFloat("Fast speed multiplier", ref shiftMuli, 0.001f, 0, 10))
 				cfg.FreecamShiftMuli = shiftMuli;
-			
+
 			var ctrlMuli = cfg.FreecamCtrlMuli;
 			if (ImGui.DragFloat("Slow speed multiplier", ref ctrlMuli, 0.001f, 0, 10))
 				cfg.FreecamCtrlMuli = ctrlMuli;
-			
+
 			var upDownMuli = cfg.FreecamUpDownMuli;
 			if (ImGui.DragFloat("Up/down speed multiplier", ref upDownMuli, 0.001f, 0, 10))
 				cfg.FreecamUpDownMuli = upDownMuli;
@@ -468,7 +468,7 @@ namespace Ktisis.Interface.Windows {
 				cfg.FreecamSensitivity = camSens;
 
 			ImGui.Spacing();
-			
+
 			ImGui.PushItemWidth(ImGui.GetFontSize() * 8);
 
 			ImGui.Text("Work camera keybinds");
@@ -481,17 +481,17 @@ namespace Ktisis.Interface.Windows {
 			KeybindEdit.Draw("Down##WCDown", cfg.FreecamDown);
 
 			ImGui.Spacing();
-			
+
 			KeybindEdit.Draw("Fast speed modifier##WCUp", cfg.FreecamFast);
 			KeybindEdit.Draw("Slow speed modifier##WCUp", cfg.FreecamSlow);
 
 			ImGui.PopItemWidth();
-			
+
 			ImGui.EndTabItem();
 		}
 
 		// Data
-		
+
 		public static void DrawDataTab(Configuration cfg) {
 			ImGui.Spacing();
 			var validGlamPlatesFound = GlamourDresser.CountValid();

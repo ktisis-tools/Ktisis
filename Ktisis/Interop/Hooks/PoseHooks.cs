@@ -83,7 +83,7 @@ namespace Ktisis.Interop.Hooks {
 			BustHook?.Disable();
 			AutoSave?.Disable();
 			PosingEnabled = false;
-        }
+		}
 
 		internal static void EnablePosing() {
 			CalculateBoneModelSpaceHook?.Enable();
