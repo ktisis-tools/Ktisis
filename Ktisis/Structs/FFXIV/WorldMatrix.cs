@@ -3,6 +3,8 @@ using Dalamud.Interface;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
+using Dalamud.Interface.Utility;
+
 namespace Ktisis.Structs.FFXIV {
 	[StructLayout(LayoutKind.Explicit, Size = 0x1FC)]
 	public partial struct WorldMatrix {

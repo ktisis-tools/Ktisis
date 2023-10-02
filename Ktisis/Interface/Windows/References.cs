@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
+using Dalamud.Interface.Internal;
+
 using ImGuiNET;
 using ImGuiScene;
 
 namespace Ktisis.Interface.Windows {
 	internal static class References {
 		/** Maps file paths to loaded textures. */
-		public static Dictionary<string, TextureWrap> Textures = new();
+		public static Dictionary<string, IDalamudTextureWrap> Textures = new();
 
 		// Draw
 

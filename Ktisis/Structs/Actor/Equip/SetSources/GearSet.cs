@@ -17,7 +17,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources {
 			var raptureGearsetModule = RaptureGearsetModule.Instance();
 
 			for (var i = 0; i < _gearSetNumber; i++) {
-				var gearset = raptureGearsetModule->Gearset[i];
+                var gearset = raptureGearsetModule->GetGearset(i);
 				if (gearset->ID != i) break;
 				if (!gearset->Flags.HasFlag(RaptureGearsetModule.GearsetFlag.Exists)) continue;
 				nameList.Add(i, Encoding.UTF8.GetString(gearset->Name, 0x2F));
@@ -28,7 +28,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources {
 
 		public static unsafe List<(EquipSlot, object)> GetEquipForSet(Set set) {
 			List<(EquipSlot, object)> itemsToEquip = new();
-			var gearset = RaptureGearsetModule.Instance()->Gearset[set.ID];
+            var gearset = RaptureGearsetModule.Instance()->GetGearset(set.ID);
 
 			// find inventory containers
 			InventoryType[] inventoryTypes = {
@@ -68,7 +68,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources {
 				(gearset->Ears.ItemID, EquipSlot.Earring),
 				(gearset->Neck.ItemID, EquipSlot.Necklace),
 				(gearset->Wrists.ItemID, EquipSlot.Bracelet),
-				(gearset->RightLeft.ItemID, EquipSlot.RingLeft),
+				(gearset->RingLeft.ItemID, EquipSlot.RingLeft),
 				(gearset->RingRight.ItemID, EquipSlot.RingRight),
 			};
 

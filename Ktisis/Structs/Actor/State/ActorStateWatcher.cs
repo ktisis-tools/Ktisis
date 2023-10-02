@@ -2,6 +2,8 @@ using Dalamud.Game;
 using Ktisis.Events;
 using System;
 
+using Dalamud.Plugin.Services;
+
 namespace Ktisis.Structs.Actor.State {
 	public static class ActorStateWatcher {
 
@@ -17,7 +19,7 @@ namespace Ktisis.Structs.Actor.State {
 			Services.Framework.Update += Monitor;
 		}
 
-		public static void Monitor(Framework framework) {
+		public static void Monitor(IFramework framework) {
 			if (_wasInGPose != Ktisis.IsInGPose) {
 				_wasInGPose = Ktisis.IsInGPose;
 				EventManager.FireOnGposeChangeEvent(Ktisis.IsInGPose);

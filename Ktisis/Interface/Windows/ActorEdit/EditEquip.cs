@@ -9,7 +9,9 @@ using ImGuiNET;
 using ImGuiScene;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Internal;
 using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 
 using Ktisis.Util;
 using Ktisis.Data;
@@ -421,7 +423,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		
 		public object? Equip;
 		public Item? Item;
-		public TextureWrap? Icon;
+		public IDalamudTextureWrap? Icon;
 
 		public ItemCache(object? equip, EquipSlot slot)
 			=> SetEquip(equip, slot);
@@ -446,7 +448,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			var newIconId = item?.Icon;
 			if (newIconId != IconId) {
-				var newIcon = newIconId is ushort id ? Services.DataManager.GetImGuiTextureIcon(id, true) : null;
+				var newIcon = newIconId is ushort id ? Services.Textures.GetIcon(id) : null;
 				if (token.IsCancellationRequested) {
 					newIcon?.Dispose();
 					return;

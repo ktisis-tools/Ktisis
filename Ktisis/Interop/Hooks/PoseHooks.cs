@@ -44,30 +44,30 @@ namespace Ktisis.Interop.Hooks {
 
 		internal static unsafe void Init() {
 			var setBoneModelSpaceFfxiv = Services.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
-			SetBoneModelSpaceFfxivHook = Hook<SetBoneModelSpaceFfxivDelegate>.FromAddress(setBoneModelSpaceFfxiv, SetBoneModelSpaceFfxivDetour);
+			SetBoneModelSpaceFfxivHook = Services.Hooking.HookFromAddress<SetBoneModelSpaceFfxivDelegate>(setBoneModelSpaceFfxiv, SetBoneModelSpaceFfxivDetour);
 
 			var calculateBoneModelSpace = Services.SigScanner.ScanText("40 53 48 83 EC 10 4C 8B 49 28");
-			CalculateBoneModelSpaceHook = Hook<CalculateBoneModelSpaceDelegate>.FromAddress(calculateBoneModelSpace, CalculateBoneModelSpaceDetour);
+			CalculateBoneModelSpaceHook = Services.Hooking.HookFromAddress<CalculateBoneModelSpaceDelegate>(calculateBoneModelSpace, CalculateBoneModelSpaceDetour);
 
 			var syncModelSpace = Services.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
-			SyncModelSpaceHook = Hook<SyncModelSpaceDelegate>.FromAddress(syncModelSpace, SyncModelSpaceDetour);
+			SyncModelSpaceHook = Services.Hooking.HookFromAddress<SyncModelSpaceDelegate>(syncModelSpace, SyncModelSpaceDetour);
 
 			var lookAtIK = Services.SigScanner.ScanText("48 8B C4 48 89 58 08 48 89 70 10 F3 0F 11 58 ??");
-			LookAtIKHook = Hook<LookAtIKDelegate>.FromAddress(lookAtIK, LookAtIKDetour);
-
+            LookAtIKHook = Services.Hooking.HookFromAddress<LookAtIKDelegate>(lookAtIK, LookAtIKDetour);
+            
 			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
-			AnimFrozenHook = Hook<AnimFrozenDelegate>.FromAddress(animFrozen, AnimFrozenDetour);
-
+            AnimFrozenHook = Services.Hooking.HookFromAddress<AnimFrozenDelegate>(animFrozen, AnimFrozenDetour);
+            
 			var updatePos = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? EB 29 48 8B 5F 08");
-			UpdatePosHook = Hook<UpdatePosDelegate>.FromAddress(updatePos, UpdatePosDetour);
+            UpdatePosHook = Services.Hooking.HookFromAddress<UpdatePosDelegate>(updatePos, UpdatePosDetour);
 
 			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
-			SetSkeletonHook = Hook<SetSkeletonDelegate>.FromAddress(loadSkele, SetSkeletonDetour);
-			SetSkeletonHook.Enable();
+			SetSkeletonHook = Services.Hooking.HookFromAddress<SetSkeletonDelegate>(loadSkele, SetSkeletonDetour);
+            SetSkeletonHook.Enable();
 
 			var loadBust = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F6 84 24 ?? ?? ?? ?? ?? 0F 28 74 24 ??");
-			BustHook = Hook<BustDelegate>.FromAddress(loadBust, BustDetour);
-		}
+            BustHook = Services.Hooking.HookFromAddress<BustDelegate>(loadBust, BustDetour);
+        }
 
 		internal static void DisablePosing() {
 			PreservedPoses.Clear();

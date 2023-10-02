@@ -193,26 +193,26 @@ namespace Ktisis.Interop.Hooks {
 			// Hooks
 			
 			var camCtrlAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 83 3D ?? ?? ?? ?? ?? 74 0C");
-			ControlHook = Hook<ControlDelegate>.FromAddress(camCtrlAddr, ControlDetour);
-
+            ControlHook = Services.Hooking.HookFromAddress<ControlDelegate>(camCtrlAddr, ControlDetour);
+            
 			var actCamAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F7 80");
-			ActiveCamHook = Hook<ActiveCamDelegate>.FromAddress(actCamAddr, GetActiveCamDetour);
-
+            ActiveCamHook = Services.Hooking.HookFromAddress<ActiveCamDelegate>(actCamAddr, GetActiveCamDetour);
+            
 			var camEventAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 EB 34");
-			CameraEventHook = Hook<CameraEventDelegate>.FromAddress(camEventAddr, CameraEventDetour);
-
+            CameraEventHook = Services.Hooking.HookFromAddress<CameraEventDelegate>(camEventAddr, CameraEventDetour);
+            
 			var camUiAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 80 BB ?? ?? ?? ?? ?? 74 0D 8B 53 28");
-			CameraUiHook = Hook<CameraUiDelegate>.FromAddress(camUiAddr, CameraUiDetour);
-
+            CameraUiHook = Services.Hooking.HookFromAddress<CameraUiDelegate>(camUiAddr, CameraUiDetour);
+            
 			var camVf17 = ((nint*)Services.SigScanner.GetStaticAddressFromSig("88 83 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 03 C6 83", 6))[17];
-			TargetHook = Hook<TargetDelegate>.FromAddress(camVf17, TargetDetour);
-
+            TargetHook = Services.Hooking.HookFromAddress<TargetDelegate>(camVf17, TargetDetour);
+            
 			var viewMxAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 33 C0 48 89 83 ?? ?? ?? ?? 48 8B 9C 24");
-			CalcViewMatrixHook = Hook<CalcViewMatrixDelegate>.FromAddress(viewMxAddr, CalcViewMatrixDetour);
-
+            CalcViewMatrixHook = Services.Hooking.HookFromAddress<CalcViewMatrixDelegate>(viewMxAddr, CalcViewMatrixDetour);
+            
 			var collideAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 4C 8D 45 C7 89 83");
-			CameraCollisionHook = Hook<CameraCollisionDelegate>.FromAddress(collideAddr, CameraCollisionDetour);
-		}
+            CameraCollisionHook = Services.Hooking.HookFromAddress<CameraCollisionDelegate>(collideAddr, CameraCollisionDetour);
+        }
 
 		internal static void Dispose() {
 			DisableHooks();

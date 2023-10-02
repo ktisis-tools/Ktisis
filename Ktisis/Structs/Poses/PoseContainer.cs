@@ -52,7 +52,7 @@ namespace Ktisis.Structs.Poses {
 			var owner = modelSkeleton->Owner;
 			if (owner != null && owner->GetModelType() == CharacterBase.ModelType.Human) {
 				var human = (Human*)owner;
-				isElezen = human->Race == (byte)Race.Elezen;
+				isElezen = human->Customize.Race == (byte)Race.Elezen;
 			}
 
 			var partial = modelSkeleton->PartialSkeletons[p];
