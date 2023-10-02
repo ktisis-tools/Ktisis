@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors>Chirp</Authors>
     <Company>Ktisis Tools</Company>
-    <Version>0.2.18</Version>
+    <Version>0.2.19</Version>
     <Description>An internal posing tool.</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
@@ -51,7 +51,7 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-    <PackageReference Include="DalamudPackager" Version="2.1.6" />
+    <PackageReference Include="DalamudPackager" Version="2.1.12" />
     <Reference Include="FFXIVClientStructs">
       <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
       <Private>false</Private>

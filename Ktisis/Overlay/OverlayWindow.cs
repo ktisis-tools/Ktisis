@@ -4,6 +4,7 @@ using ImGuiNET;
 using ImGuizmoNET;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 
 using Ktisis.Interop;
 using Ktisis.Structs.FFXIV;

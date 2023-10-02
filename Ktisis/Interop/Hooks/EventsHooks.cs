@@ -22,7 +22,7 @@ namespace Ktisis.Interop.Hooks {
 			MiragePrismMiragePlate.ReceiveEvent += OnGlamourPlatesReceiveEvent;
 
 			OnGposeEnter(); // TODO: move this call on "enter gpose" event
-			OnLogin(null!, null!);
+			OnLogin();
 		}
 
 		public static void Dispose() {
@@ -34,14 +34,14 @@ namespace Ktisis.Interop.Hooks {
 			MiragePrismMiragePlate.ReceiveEvent -= OnGlamourPlatesReceiveEvent;
 
 			OnGposeLeave();
-			OnLogout(null!, null!);
-		}
+            OnLogout();
+        }
 
 		// Various event methods
-		private static void OnLogin(object? sender, EventArgs e) {
+		private static void OnLogin() {
 			Sets.Init();
 		}
-		private static void OnLogout(object? sender, EventArgs e) {
+		private static void OnLogout() {
 			Sets.Dispose();
 		}
 		private static void OnGposeEnter() {
@@ -98,8 +98,8 @@ namespace Ktisis.Interop.Hooks {
 
 		public MiragePrismMiragePlateAddon() {
 			var MiragePrismMiragePlateAgentInterface = Framework.Instance()->UIModule->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
-			receiveEventHook ??= Hook<AgentReceiveEvent>.FromAddress(new IntPtr(MiragePrismMiragePlateAgentInterface->VTable->ReceiveEvent), OnReceiveEvent);
-
+            receiveEventHook ??= Services.Hooking.HookFromAddress<AgentReceiveEvent>(new IntPtr(MiragePrismMiragePlateAgentInterface->VTable->ReceiveEvent), OnReceiveEvent);
+            
 			receiveEventHook?.Enable();
 		}
 
@@ -125,8 +125,8 @@ namespace Ktisis.Interop.Hooks {
 		private readonly Hook<ClickTarget>? leftClickTargetHook;
 
 		public ClickTargetAddon() {
-			rightClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), RightClickTargetDetour);
-			leftClickTargetHook ??= Hook<ClickTarget>.FromAddress(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), LeftClickTargetDetour);
+			rightClickTargetHook ??= Services.Hooking.HookFromAddress<ClickTarget>(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), RightClickTargetDetour);
+            leftClickTargetHook ??= Services.Hooking.HookFromAddress<ClickTarget>(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), LeftClickTargetDetour);
 		}
 
 		public void Enable() {

@@ -92,12 +92,12 @@ namespace Ktisis.Interop.Hooks {
 		internal static void Init() {
 			unsafe {
 				var addr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 83 7B 58 00");
-				InputHook = Hook<InputDelegate>.FromAddress(addr, InputDetour);
-				InputHook.Enable();
+				InputHook = Services.Hooking.HookFromAddress<InputDelegate>(addr, InputDetour);
+                InputHook.Enable();
 
 				var addr2 = Services.SigScanner.ScanText("48 89 5C 24 ?? 55 56 57 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 40 4D 8B F9");
-				InputHook2 = Hook<InputDelegate2>.FromAddress(addr2, InputDetour2);
-				InputHook2.Enable();
+				InputHook2 = Services.Hooking.HookFromAddress<InputDelegate2>(addr2, InputDetour2);
+                InputHook2.Enable();
 			}
 		}
 

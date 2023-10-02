@@ -52,11 +52,11 @@ namespace Ktisis.Interop.Hooks {
 		
 		public unsafe static void Init() {
 			var addr1 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 49 8B 0E 48 8D 93 ?? ?? ?? ??");
-			EnvUpdateHook = Hook<EnvUpdateDelegate>.FromAddress(addr1, EnvUpdateDetour);
-
+            EnvUpdateHook = Services.Hooking.HookFromAddress<EnvUpdateDelegate>(addr1, EnvUpdateDetour);
+            
 			var addr2 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 44 38 7B 2C 74 05 0F 28 DE");
-			SkyTexHook = Hook<SkyTexDelegate>.FromAddress(addr2, SkyTexDetour);
-		}
+            SkyTexHook = Services.Hooking.HookFromAddress<SkyTexDelegate>(addr2, SkyTexDetour);
+        }
 
 		public static void Dispose() {
 			DisableHooks();
