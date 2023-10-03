@@ -20,11 +20,11 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x100)] public unsafe ActorModel* Model;
 		[FieldOffset(0x114)] public RenderMode RenderMode;
-		[FieldOffset(0x1B4)] public uint ModelId;
+		[FieldOffset(0x1AC)] public uint ModelId;
 
-		[FieldOffset(0x6E8)] public ActorDrawData DrawData;
+		[FieldOffset(0x6F8)] public ActorDrawData DrawData;
 
-		[FieldOffset(0x876)] public bool IsHatHidden;
+		[FieldOffset(0x89E)] public bool IsHatHidden;
 
 		public const int GazeOffset = 0xC60;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
