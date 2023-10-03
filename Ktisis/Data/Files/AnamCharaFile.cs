@@ -187,8 +187,8 @@ namespace Ktisis.Data.Files {
 				/*SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
 				SkinGloss = actor.ModelObject?.ExtendedAppearance?.SkinGloss;
 				MuscleTone = actor.ModelObject?.ExtendedAppearance?.MuscleTone;
-				BustScale = actor.ModelObject?.Bust?.Scale;
-				Transparency = actor.Transparency;*/
+				BustScale = actor.ModelObject?.Bust?.Scale;*/
+				Transparency = actor.Transparency;
 			}
 		}
 
@@ -311,6 +311,8 @@ namespace Ktisis.Data.Files {
 
 				if (Bust != null)
 					custom.BustSize = (byte)Bust;
+				
+				actor->Transparency = Transparency ?? 1.0f;
 			}
 
 			actor->ApplyCustomize(custom);
