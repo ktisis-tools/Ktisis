@@ -28,6 +28,8 @@ namespace Ktisis.Structs.Actor {
 
 		public const int GazeOffset = 0xCB0;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
+		
+		[FieldOffset(0x1B2C)] public float Transparency;
 
 		public unsafe string? GetName() {
 			fixed (byte* ptr = GameObject.Name)

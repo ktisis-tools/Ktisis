@@ -60,6 +60,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				Target->ModelId = (uint)modelId;
 				Target->Redraw();
 			}
+			
+			ImGui.Spacing();
+			ImGui.SliderFloat("Opacity", ref Target->Transparency, 0.0f, 1.0f);
 
 			ImGui.EndTabItem();
 		}
