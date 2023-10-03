@@ -23,6 +23,7 @@ jobs:
         working-directory: Ktisis/
         shell: bash
     strategy:
+      fail-fast: false
       matrix:
         dotnet-version: [7.0.x] # Can add multiple .NET versions here to test against (For example, testing a new version of .NET before it's released)
         dalamud-version: ["", "v9", "stg"] # Can add multiple Dalamud branches here to test against - empty string means live latest.
