@@ -11,7 +11,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x00)] public WeaponEquip Equip;
 		[FieldOffset(0x08)] public unsafe WeaponModel* Model;
 		[FieldOffset(0x40)] public bool IsSheathed;
-		[FieldOffset(0x5C)] public WeaponFlags Flags;
+		[FieldOffset(0x60)] public WeaponFlags Flags;
 
 		public unsafe WeaponEquip GetEquip()
 			=> this.Model != null ? this.Model->Equip : this.Equip;
