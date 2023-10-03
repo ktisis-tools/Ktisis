@@ -5,7 +5,6 @@
     <Company>Ktisis Tools</Company>
     <Version>0.2.19</Version>
     <Description>An internal posing tool.</Description>
-    <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
     <Configurations>Debug;Release;External</Configurations>
   </PropertyGroup>

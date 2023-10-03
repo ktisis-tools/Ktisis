@@ -60,8 +60,12 @@ namespace Ktisis.Interop.Hooks {
 
 		public static void Dispose() {
 			DisableHooks();
+			
 			EnvUpdateHook.Dispose();
 			EnvUpdateHook.Dispose();
+			
+			SkyTexHook.Disable();
+			SkyTexHook.Dispose();
 		}
 	}
 }

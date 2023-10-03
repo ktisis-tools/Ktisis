@@ -55,6 +55,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		}
 
 		public unsafe static void AdvancedEdit() {
+            ImGui.Spacing();
 			var modelId = (int)Target->ModelId;
 			if (ImGui.InputInt("Model ID", ref modelId)) {
 				Target->ModelId = (uint)modelId;

@@ -18,10 +18,10 @@ namespace Ktisis.Interop.Hooks {
 			EditGaze.Apply(actor);
 			return ControlGazeHook.Original(a1);
 		}
-
+		
 		// Init & Dispose
 
-		internal unsafe static void Init() {
+		internal static void Init() {
 			var controlGaze = Services.SigScanner.ScanText("40 53 41 54 41 55 48 81 EC ?? ?? ?? ?? 48 8B D9");
 			ControlGazeHook = Services.Hooking.HookFromAddress<ControlGazeDelegate>(controlGaze, ControlGaze);
             ControlGazeHook.Enable();
