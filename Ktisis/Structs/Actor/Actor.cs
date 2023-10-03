@@ -26,7 +26,7 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x89E)] public bool IsHatHidden;
 
-		public const int GazeOffset = 0xC60;
+		public const int GazeOffset = 0xCB0;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
 
 		public unsafe string? GetName() {
