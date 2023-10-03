@@ -54,7 +54,7 @@ namespace Ktisis.Interop.Hooks {
 			var addr1 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 49 8B 0E 48 8D 93 ?? ?? ?? ??");
             EnvUpdateHook = Services.Hooking.HookFromAddress<EnvUpdateDelegate>(addr1, EnvUpdateDetour);
             
-			var addr2 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 44 38 7B 2C 74 05 0F 28 DE");
+			var addr2 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 44 38 63 30 74 05 0F 28 DE");
             SkyTexHook = Services.Hooking.HookFromAddress<SkyTexDelegate>(addr2, SkyTexDetour);
         }
 

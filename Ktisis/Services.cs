@@ -1,12 +1,6 @@
 using Dalamud.IoC;
-using Dalamud.Data;
 using Dalamud.Game;
 using Dalamud.Plugin;
-using Dalamud.Game.Gui;
-using Dalamud.Game.Command;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.ClientState.Keys;
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
