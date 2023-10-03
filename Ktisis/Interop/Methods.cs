@@ -15,7 +15,7 @@ namespace Ktisis.Interop {
 		// Change actor equipment
 		// a1 = Actor + 0x6D0, a2 = EquipIndex, a3 = EquipItem
 
-		internal unsafe delegate void ChangeEquipDelegate(ActorDrawData* writeTo, EquipIndex index, ItemEquip item);
+		internal unsafe delegate void ChangeEquipDelegate(ActorDrawData* writeTo, EquipIndex index, ItemEquip* item, bool force);
 		internal static ChangeEquipDelegate? ActorChangeEquip;
 
 		internal unsafe delegate void ChangeWeaponDelegate(ActorDrawData* writeTo, int slot, WeaponEquip weapon, byte a4, byte a5, byte a6, byte a7); // a4-a7 is always 0,1,0,0.

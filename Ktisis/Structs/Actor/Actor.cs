@@ -71,8 +71,8 @@ namespace Ktisis.Structs.Actor {
 			if (Methods.ActorChangeEquip == null) return;
 			
 			fixed (ActorDrawData* ptr = &DrawData) {
-				Methods.ActorChangeEquip(ptr, index, (ItemEquip)0xFFFFFFFF);
-				Methods.ActorChangeEquip(ptr, index, item);
+				//Methods.ActorChangeEquip(ptr, index, (ItemEquip)0xFFFFFFFF);
+				Methods.ActorChangeEquip(ptr, index, &item, true);
 			}
 		}
 		
