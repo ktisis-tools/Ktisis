@@ -23,9 +23,10 @@ jobs:
         working-directory: Ktisis/
         shell: bash
     strategy:
+      fail-fast: false
       matrix:
         dotnet-version: [7.0.x] # Can add multiple .NET versions here to test against (For example, testing a new version of .NET before it's released)
-        dalamud-version: ["latest"] # Can add multiple Dalamud branches here to test against (For example, testing against Dalamud staging)
+        dalamud-version: ["", "v9", "stg"] # Can add multiple Dalamud branches here to test against - empty string means live latest.
     env:
       DALAMUD_HOME: /tmp/dalamud
       IsCI: true
@@ -43,7 +44,8 @@ jobs:
 
       - name: Download Dalamud Library
         run: |
-          wget https://goatcorp.github.io/dalamud-distrib/${{ matrix.dalamud-version }}.zip -O /tmp/dalamud.zip
+          dalamud_version="${{ matrix.dalamud-version }}"
+          wget https://goatcorp.github.io/dalamud-distrib/${dalamud_version}${dalamud_version:+/}latest.zip -O /tmp/dalamud.zip
           unzip /tmp/dalamud.zip -d /tmp/dalamud
 
       - name: Restore Dependencies
