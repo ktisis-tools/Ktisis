@@ -83,6 +83,7 @@ namespace Ktisis {
 			if (Configuration.OpenKtisisMethod == OpenKtisisMethod.OnPluginLoad)
 				Workspace.Show();
 
+			pluginInterface.UiBuilder.OpenMainUi += Workspace.Toggle;
 			pluginInterface.UiBuilder.OpenConfigUi += ConfigGui.Toggle;
 			pluginInterface.UiBuilder.DisableGposeUiHide = true;
 			pluginInterface.UiBuilder.Draw += KtisisGui.Draw;
@@ -94,6 +95,7 @@ namespace Ktisis {
 		public void Dispose() {
 			Services.CommandManager.RemoveHandler(CommandName);
 			Services.PluginInterface.SavePluginConfig(Configuration);
+			Services.PluginInterface.UiBuilder.OpenMainUi -= Workspace.Toggle;
 			Services.PluginInterface.UiBuilder.OpenConfigUi -= ConfigGui.Toggle;
 
 			OverlayWindow.DeselectGizmo();
