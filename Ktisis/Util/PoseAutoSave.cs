@@ -48,7 +48,7 @@ namespace Ktisis.Util {
 
 			var actors = ActorsList.GetSelectorList();
 
-			Dalamud.Logging.PluginLog.LogInformation($"Saving {actors.Count} actors");
+			Logger.Information($"Saving {actors.Count} actors");
 
 			var prefix = $"AutoSave - {DateTime.Now:HH-mm-ss}";
 			var folder = Path.Combine(SaveFolder, prefix);
@@ -61,16 +61,16 @@ namespace Ktisis.Util {
 				foreach (var actorPtr in actors) {
 					var actor = (Actor*)actorPtr;
 					var filename = $"{actor->GetNameOrId()}.pose";
-					Dalamud.Logging.PluginLog.LogInformation($"Saving {filename}");
+					Logger.Information($"Saving {filename}");
 
 					var path = Path.Combine(folder, filename);
-					Dalamud.Logging.PluginLog.LogVerbose($"Saving to {path}");
+					Logger.Verbose($"Saving to {path}");
 
 					PoseHelpers.ExportPose(actor, path, PoseMode.All);
 				}
 			}
 
-			Dalamud.Logging.PluginLog.LogVerbose($"Prefix count: {prefixes.Count} max: {Ktisis.Configuration.AutoSaveCount}");
+			Logger.Verbose($"Prefix count: {prefixes.Count} max: {Ktisis.Configuration.AutoSaveCount}");
 
 			//Clear old saves
 			while (prefixes.Count > Ktisis.Configuration.AutoSaveCount) {
@@ -87,7 +87,7 @@ namespace Ktisis.Util {
 			var oldest = prefixes.Dequeue();
 			var folder = Path.Combine(SaveFolder, oldest);
 			if (Directory.Exists(folder)) {
-				Dalamud.Logging.PluginLog.LogVerbose($"Deleting {folder}");
+				Logger.Verbose($"Deleting {folder}");
 				Directory.Delete(folder, true);
 			}
 		}
