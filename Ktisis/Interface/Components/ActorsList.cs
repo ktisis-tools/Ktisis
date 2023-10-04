@@ -14,8 +14,7 @@ using Ktisis.Util;
 
 namespace Ktisis.Interface.Components {
 	internal static class ActorsList {
-
-		private static List<long> SavedObjects = new();
+		internal static List<long> SavedObjects = new();
 		private static List<DalamudGameObject>? SelectorList = null;
 		private static string Search = "";
 		private static readonly HashSet<ObjectKind> WhitelistObjectKinds = new(){
@@ -28,9 +27,6 @@ namespace Ktisis.Interface.Components {
 
 		// TODO to clear the list on gpose leave
 		public static void Clear() => SavedObjects.Clear();
-
-		internal static List<long> GetSelectorList() => SavedObjects;
-
 
 		// Draw
 

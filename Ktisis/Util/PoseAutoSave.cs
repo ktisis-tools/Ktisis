@@ -46,7 +46,7 @@ namespace Ktisis.Util {
 				return;
 			}
 
-			var actors = ActorsList.GetSelectorList();
+			var actors = ActorsList.SavedObjects;
 
 			Logger.Information($"Saving {actors.Count} actors");
 
