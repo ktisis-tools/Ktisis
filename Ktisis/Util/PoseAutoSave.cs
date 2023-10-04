@@ -22,7 +22,7 @@ namespace Ktisis.Util {
 				Directory.CreateDirectory(SaveFolder);
 
 			_timer = new Timer(TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval));
-			_timer.Elapsed += Save;
+			_timer.Elapsed += OnElapsed;
 			_timer.AutoReset = true;
 
 			_timer.Start();
@@ -40,7 +40,11 @@ namespace Ktisis.Util {
 			}
 		}
 
-		private void Save(object? sender, ElapsedEventArgs e) {
+		private void OnElapsed(object? sender, ElapsedEventArgs e) {
+			Services.Framework.RunOnFrameworkThread(Save);
+		}
+
+		private void Save() {
 			if (!Ktisis.IsInGPose) {
 				Disable();
 				return;
