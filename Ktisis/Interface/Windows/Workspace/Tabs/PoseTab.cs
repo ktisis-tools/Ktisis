@@ -1,5 +1,3 @@
-using System.IO;
-
 using ImGuiNET;
 
 using Dalamud.Interface;
@@ -7,13 +5,10 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Util;
 using Ktisis.Overlay;
+using Ktisis.Helpers;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
-using Ktisis.Data.Files;
-using Ktisis.Data.Serialization;
-using Ktisis.Helpers;
 using Ktisis.Interface.Components;
-using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class PoseTab {
@@ -178,10 +173,10 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 				KtisisGui.FileDialogManager.OpenFileDialog(
 					"Importing Pose",
 					"Pose Files (.pose){.pose}",
-					(success, paths) => {
+					(success, path) => {
 						if (!success) return;
 
-						PoseHelpers.ImportPose(actor, paths, Ktisis.Configuration.PoseMode);
+						PoseHelpers.ImportPose(actor, path, Ktisis.Configuration.PoseMode);
 					},
 					1,
 					null

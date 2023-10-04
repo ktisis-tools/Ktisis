@@ -20,8 +20,7 @@ namespace Ktisis.Interface {
 				0
 			));
 
-			if (Ktisis.Configuration.EnableAutoSave)
-			{
+			if (Ktisis.Configuration.EnableAutoSave) {
 				FileDialogManager.CustomSideBarItems.Add((
 					"AutoSave",
 					Ktisis.Configuration.AutoSavePath,

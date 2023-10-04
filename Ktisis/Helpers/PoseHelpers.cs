@@ -1,31 +1,22 @@
-﻿using Ktisis.Data.Files;
-using Ktisis.Data.Serialization;
-using Ktisis.Structs.Poses;
-
-using System;
+﻿using System.IO;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+using Ktisis.Data.Files;
+using Ktisis.Data.Serialization;
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Poses;
 using Ktisis.Interop.Hooks;
 
-namespace Ktisis.Helpers
-{
-	internal class PoseHelpers
-	{
-		public unsafe static void ExportPose(Actor* actor, string path, PoseMode modes)
-		{
+namespace Ktisis.Helpers {
+	internal class PoseHelpers {
+		public unsafe static void ExportPose(Actor* actor, string path, PoseMode modes) {
 			var model = actor->Model;
 			if (model == null) return;
 
 			var skeleton = model->Skeleton;
 			if (skeleton == null) return;
 
-			var pose = new PoseFile
-			{
+			var pose = new PoseFile {
 				Position = model->Position,
 				Rotation = model->Rotation,
 				Scale = model->Scale,
@@ -34,25 +25,21 @@ namespace Ktisis.Helpers
 
 			pose.Bones.Store(skeleton);
 
-			if (modes.HasFlag(PoseMode.Weapons))
-			{
+			if (modes.HasFlag(PoseMode.Weapons)) {
 				var main = actor->GetWeaponSkeleton(WeaponSlot.MainHand);
-				if (main != null)
-				{
+				if (main != null) {
 					pose.MainHand = new ();
 					pose.MainHand.Store(main);
 				}
 
 				var off = actor->GetWeaponSkeleton(WeaponSlot.OffHand);
-				if (off != null)
-				{
+				if (off != null) {
 					pose.OffHand = new ();
 					pose.OffHand.Store(off);
 				}
 
 				var prop = actor->GetWeaponSkeleton(WeaponSlot.Prop);
-				if (prop != null)
-				{
+				if (prop != null) {
 					pose.Prop = new ();
 					pose.Prop.Store(prop);
 				}
@@ -64,8 +51,7 @@ namespace Ktisis.Helpers
 			file.Write(json);
 		}
 
-		public unsafe static void ImportPose(Actor* actor, List<string> path, PoseMode modes)
-		{
+		public unsafe static void ImportPose(Actor* actor, List<string> path, PoseMode modes) {
 			var content = File.ReadAllText(path[0]);
 			var pose = JsonParser.Deserialize<PoseFile>(content);
 			if (pose == null) return;
@@ -81,12 +67,9 @@ namespace Ktisis.Helpers
 			if (!PoseHooks.PosingEnabled && !PoseHooks.AnamPosingEnabled)
 				PoseHooks.EnablePosing();
 
-			if (pose.Bones != null)
-			{
-				for (var p = 0; p < skeleton->PartialSkeletonCount; p++)
-				{
-					switch (p)
-					{
+			if (pose.Bones != null) {
+				for (var p = 0; p < skeleton->PartialSkeletonCount; p++) {
+					switch (p) {
 						case 0:
 							if (!modes.HasFlag(PoseMode.Body)) continue;
 							break;
@@ -99,26 +82,22 @@ namespace Ktisis.Helpers
 				}
 			}
 
-			if (modes.HasFlag(PoseMode.Weapons))
-			{
+			if (modes.HasFlag(PoseMode.Weapons)) {
 				var wepTrans = Ktisis.Configuration.PoseTransforms;
 				if (Ktisis.Configuration.PositionWeapons)
 					wepTrans |= PoseTransforms.Position;
 
-				if (pose.MainHand != null)
-				{
+				if (pose.MainHand != null) {
 					var skele = actor->GetWeaponSkeleton(WeaponSlot.MainHand);
 					if (skele != null) pose.MainHand.Apply(skele, wepTrans);
 				}
 
-				if (pose.OffHand != null)
-				{
+				if (pose.OffHand != null) {
 					var skele = actor->GetWeaponSkeleton(WeaponSlot.OffHand);
 					if (skele != null) pose.OffHand.Apply(skele, wepTrans);
 				}
 
-				if (pose.Prop != null)
-				{
+				if (pose.Prop != null) {
 					var skele = actor->GetWeaponSkeleton(WeaponSlot.Prop);
 					if (skele != null) pose.Prop.Apply(skele, wepTrans);
 				}

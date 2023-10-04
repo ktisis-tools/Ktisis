@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
-
-using Dalamud.Game.ClientState.JobGauge.Enums;
+using System.Numerics;
+using System.Collections.Generic;
 
 using ImGuiNET;
 
@@ -275,11 +273,16 @@ namespace Ktisis.Interface.Windows {
 		}
 
 		// AutoSave
-		public static void DrawAutoSaveTab(Configuration cfg)
-		{
+		public static void DrawAutoSaveTab(Configuration cfg) {
 			var enableAutoSave = cfg.EnableAutoSave;
 			if (ImGui.Checkbox(Locale.GetString("Enable_auto_save"), ref enableAutoSave))
 				cfg.EnableAutoSave = enableAutoSave;
+			
+			var clearOnExit = cfg.ClearAutoSavesOnExit;
+			if (ImGui.Checkbox(Locale.GetString("Clear_auto_saves_on_exit"), ref clearOnExit))
+				cfg.ClearAutoSavesOnExit = clearOnExit;
+			
+			ImGui.Spacing();
 
 			var autoSaveInterval = cfg.AutoSaveInterval;
 			if (ImGui.SliderInt(Locale.GetString("Auto_save_interval"), ref autoSaveInterval, 10, 600, "%d s"))
@@ -293,13 +296,8 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.InputText(Locale.GetString("Auto_save_path"), ref autoSavePath, 256))
 				cfg.AutoSavePath = autoSavePath;
 
-			var clearOnExit = cfg.ClearAutoSavesOnExit;
-			if (ImGui.Checkbox(Locale.GetString("Clear_auto_saves_on_exit"), ref clearOnExit))
-				cfg.ClearAutoSavesOnExit = clearOnExit;
-
 			ImGui.EndTabItem();
 		}
-
 
 		// Language
 

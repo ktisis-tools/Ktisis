@@ -1,23 +1,20 @@
-﻿using Ktisis.Interface.Components;
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Timers;
+using System.Collections.Generic;
+
 using Ktisis.Helpers;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
+using Ktisis.Interface.Components;
 
-namespace Ktisis.Util
-{
-	internal class PoseAutoSave
-	{
+namespace Ktisis.Util {
+	internal class PoseAutoSave {
 		private Queue<string> prefixes = new();
 		private Timer? _timer = null;
 		private string SaveFolder => Ktisis.Configuration.AutoSavePath;
 
-		public void Enable()
-		{
+		public void Enable() {
 			if (!Ktisis.Configuration.EnableAutoSave)
 				return;
 
@@ -32,22 +29,19 @@ namespace Ktisis.Util
 			prefixes.Clear();
 		}
 
-		public void Disable()
-		{
+		public void Disable() {
 			_timer?.Stop();
 
-			if (!Ktisis.Configuration.ClearAutoSavesOnExit || Ktisis.Configuration.AutoSaveCount <= 0) return;
+			if (!Ktisis.Configuration.ClearAutoSavesOnExit || Ktisis.Configuration.AutoSaveCount <= 0)
+				return;
 
-			while (prefixes.Count > 0)
-			{
+			while (prefixes.Count > 0) {
 				DeleteOldest();
 			}
 		}
 
-		private void Save(object? sender, ElapsedEventArgs e)
-		{
-			if (!Ktisis.IsInGPose)
-			{
+		private void Save(object? sender, ElapsedEventArgs e) {
+			if (!Ktisis.IsInGPose) {
 				Disable();
 				return;
 			}
@@ -63,10 +57,8 @@ namespace Ktisis.Util
 			if (!Directory.Exists(folder))
 				Directory.CreateDirectory(folder);
 
-			unsafe
-			{
-				foreach (var actorPtr in actors)
-				{
+			unsafe {
+				foreach (var actorPtr in actors) {
 					var actor = (Actor*)actorPtr;
 					var filename = $"{actor->GetNameOrId()}.pose";
 					Dalamud.Logging.PluginLog.LogInformation($"Saving {filename}");
@@ -76,14 +68,12 @@ namespace Ktisis.Util
 
 					PoseHelpers.ExportPose(actor, path, PoseMode.All);
 				}
-
 			}
 
 			Dalamud.Logging.PluginLog.LogVerbose($"Prefix count: {prefixes.Count} max: {Ktisis.Configuration.AutoSaveCount}");
 
 			//Clear old saves
-			while (prefixes.Count > Ktisis.Configuration.AutoSaveCount)
-			{
+			while (prefixes.Count > Ktisis.Configuration.AutoSaveCount) {
 				DeleteOldest();
 			}
 
@@ -93,12 +83,10 @@ namespace Ktisis.Util
 				_timer.Interval = TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval).TotalMilliseconds;
 		}
 
-		private void DeleteOldest()
-		{
+		private void DeleteOldest() {
 			var oldest = prefixes.Dequeue();
 			var folder = Path.Combine(SaveFolder, oldest);
-			if (Directory.Exists(folder))
-			{
+			if (Directory.Exists(folder)) {
 				Dalamud.Logging.PluginLog.LogVerbose($"Deleting {folder}");
 				Directory.Delete(folder, true);
 			}
