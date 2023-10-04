@@ -282,7 +282,7 @@ namespace Ktisis.Interface.Windows {
 				cfg.EnableAutoSave = enableAutoSave;
 
 			var autoSaveInterval = cfg.AutoSaveInterval;
-			if (ImGui.SliderInt(Locale.GetString("Auto_save_interval"), ref autoSaveInterval, 10, 600))
+			if (ImGui.SliderInt(Locale.GetString("Auto_save_interval"), ref autoSaveInterval, 10, 600, "%d s"))
 				cfg.AutoSaveInterval = autoSaveInterval;
 
 			var autoSaveCount = cfg.AutoSaveCount;
