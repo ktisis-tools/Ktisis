@@ -62,6 +62,11 @@
     "Keyboard_shortcuts": "Keyboard Shortcuts",
     "Pressing_keys": "Pressing Keys",
     "Edit_bone_positions": "Edit bone positions",
+    "Enable_auto_save": "Enable auto save",
+    "Auto_save_interval": "Auto Save Interval",
+    "Auto_save_count": "Auto Save Count",
+    "Auto_save_path": "Auto Save Path",
+    "Clear_auto_saves_on_exit":  "Clear auto saves on exit",
     // Display keyboard configs from enum defined in Input.cs
     "Input_Generic_Toggle": "Toggle",
     "Input_Generic_Hold": "Hold",

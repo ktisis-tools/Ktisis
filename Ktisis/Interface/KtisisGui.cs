@@ -19,6 +19,15 @@ namespace Ktisis.Interface {
 				FontAwesomeIcon.None,
 				0
 			));
+
+			if (Ktisis.Configuration.EnableAutoSave) {
+				FileDialogManager.CustomSideBarItems.Add((
+					"AutoSave",
+					Ktisis.Configuration.AutoSavePath,
+					FontAwesomeIcon.Bookmark,
+					-1
+				));
+			}
 		}
 
 		public static void Draw() {

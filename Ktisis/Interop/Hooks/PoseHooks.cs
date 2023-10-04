@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
+using Ktisis.Util;
 
 namespace Ktisis.Interop.Hooks {
 	public static class PoseHooks {
@@ -41,6 +42,8 @@ namespace Ktisis.Interop.Hooks {
 		internal static bool AnamPosingEnabled => StaticOffsets.IsAnamPosing;
 
 		internal static Dictionary<uint, PoseContainer> PreservedPoses = new();
+
+		internal static PoseAutoSave AutoSave = new();
 
 		internal static unsafe void Init() {
 			var setBoneModelSpaceFfxiv = Services.SigScanner.ScanText("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1");
@@ -78,6 +81,7 @@ namespace Ktisis.Interop.Hooks {
 			UpdatePosHook?.Disable();
 			AnimFrozenHook?.Disable();
 			BustHook?.Disable();
+			AutoSave?.Disable();
 			PosingEnabled = false;
 		}
 
@@ -89,6 +93,7 @@ namespace Ktisis.Interop.Hooks {
 			UpdatePosHook?.Enable();
 			AnimFrozenHook?.Enable();
 			BustHook?.Enable();
+			AutoSave?.Enable();
 			PosingEnabled = true;
 		}
 

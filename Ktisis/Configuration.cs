@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
+using System.IO;
 
 using ImGuizmoNET;
 
@@ -64,6 +65,13 @@ namespace Ktisis
 		public float SkeletonLineOpacity { get; set; } = 0.95F;
 		public float SkeletonLineOpacityWhileUsing { get; set; } = 0.15F;
 		public float SkeletonDotRadius { get; set; } = 3.0F;
+
+		//AutoSave
+		public bool EnableAutoSave { get; set; } = false;
+		public int AutoSaveInterval { get; set; } = 60;
+		public int AutoSaveCount { get; set; } = 5;
+		public string AutoSavePath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ktisis", "PoseAutoBackup");
+		public bool ClearAutoSavesOnExit { get; set; } = false;
 
 		// References
 		// The reference Key creates a uniqueness constraint for imgui window IDs for each reference.
@@ -138,15 +146,15 @@ namespace Ktisis
 		public bool EnableParenting { get; set; } = true;
 
 		public bool LinkedGaze { get; set; } = true;
-		
+
 		public bool ShowToolbar { get; set; } = false;
 
 		public Dictionary<string, string> SavedDirPaths { get; set; } = new();
-		
+
 		// Camera
 
 		public float FreecamMoveSpeed { get; set; } = 0.1f;
-		
+
 		public float FreecamShiftMuli { get; set; } = 2.5f;
 		public float FreecamCtrlMuli { get; set; } = 0.25f;
 		public float FreecamUpDownMuli { get; set; } = 1f;
@@ -159,7 +167,7 @@ namespace Ktisis
 		public Keybind FreecamRight { get; set; } = new(VirtualKey.D);
 		public Keybind FreecamUp { get; set; } = new(VirtualKey.SPACE);
 		public Keybind FreecamDown { get; set; } = new(VirtualKey.Q);
-		
+
 		public Keybind FreecamFast { get; set; } = new(VirtualKey.SHIFT);
 		public Keybind FreecamSlow { get; set; } = new(VirtualKey.CONTROL);
 
