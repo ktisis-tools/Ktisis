@@ -30,13 +30,15 @@ namespace Ktisis.Util {
 		}
 
 		public void Disable() {
-			_timer?.Stop();
+			lock (this) {
+				_timer?.Stop();
 
-			if (!Ktisis.Configuration.ClearAutoSavesOnExit || Ktisis.Configuration.AutoSaveCount <= 0)
-				return;
+				if (!Ktisis.Configuration.ClearAutoSavesOnExit || Ktisis.Configuration.AutoSaveCount <= 0)
+					return;
 
-			while (prefixes.Count > 0) {
-				DeleteOldest();
+				while (prefixes.Count > 0) {
+					DeleteOldest();
+				}
 			}
 		}
 
