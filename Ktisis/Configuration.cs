@@ -71,7 +71,7 @@ namespace Ktisis
 		public int AutoSaveInterval { get; set; } = 60;
 		public int AutoSaveCount { get; set; } = 5;
 		public string AutoSavePath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ktisis", "PoseAutoBackup");
-		public bool ClearAutoSavesOnExit { get; set; } = true;
+		public bool ClearAutoSavesOnExit { get; set; } = false;
 
 		// References
 		// The reference Key creates a uniqueness constraint for imgui window IDs for each reference.
