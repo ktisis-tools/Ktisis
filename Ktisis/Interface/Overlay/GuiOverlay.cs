@@ -2,8 +2,7 @@ using System;
 using System.Numerics;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 
 using ImGuiNET;
 
@@ -51,7 +50,7 @@ public class GuiOverlay : IServiceInit {
 		EditorService _editor
 	) {
 		this._services = _services;
-        
+		
 		this._camera = _camera;
 		this._cfg = _cfg;
 		this._gpose = _gpose;
@@ -138,7 +137,7 @@ public class GuiOverlay : IServiceInit {
 			try {
 				DrawScene();
 			} catch (Exception err) {
-				PluginLog.Error($"Error while drawing overlay:\n{err}");
+				Ktisis.Log.Error($"Error while drawing overlay:\n{err}");
 			}
 		} finally {
 			EndFrame();

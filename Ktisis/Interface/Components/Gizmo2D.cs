@@ -75,9 +75,9 @@ public class Gizmo2D {
 
 	public void Begin(Vector2 rectSize) {
 		var rectPos = ImGui.GetCursorScreenPos();
-
+		
 		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize);
-
+		
 		var io = ImGui.GetIO();
 		ImGui.SetNextWindowPos(Vector2.Zero);
 		ImGui.SetNextWindowSize(io.DisplaySize);

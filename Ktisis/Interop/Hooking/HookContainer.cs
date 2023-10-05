@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Collections.Generic;
 
 using Dalamud.Hooking;
-using Dalamud.Logging;
 using Dalamud.Utility.Signatures;
 
 using Ktisis.Interop.Hooking.Wrappers;
@@ -49,7 +48,7 @@ public abstract class HookContainer {
 				if (GetHookFromField(field) is IHookWrapper wrapper)
 					hooks.Add(wrapper);
 			} catch (Exception err) {
-				PluginLog.Error($"Failed to get wrapper for field '{field.Name}':\n{err}");
+				Ktisis.Log.Error($"Failed to get wrapper for field '{field.Name}':\n{err}");
 			}
 		}
 

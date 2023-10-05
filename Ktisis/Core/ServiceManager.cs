@@ -7,7 +7,6 @@ using System.Runtime.Serialization;
 
 using Dalamud;
 using Dalamud.Plugin;
-using Dalamud.Logging;
 
 using Ktisis.Core.Services;
 using Ktisis.Core.Impl;
@@ -23,7 +22,7 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 
 	private ServiceManager AddInstance(Type type, object inst) {
 		this.Services.Add(type, inst);
-		PluginLog.Verbose($"Registered service instance: {type}");
+		Ktisis.Log.Verbose($"Registered service instance: {type}");
 		return this;
 	}
 
@@ -42,7 +41,7 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 			})
 			.ToList()
 			.ForEach(inst => Inject(inst.GetType(), inst));
-        
+		
 		return this;
 	}
 	
@@ -133,7 +132,7 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 			inst.PreInit();
 
 		timer.Stop();
-		PluginLog.Debug($"Pre-init events completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
+		Ktisis.Log.Debug($"Pre-init events completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 	}
 
 	public void Initialize() {
@@ -144,7 +143,7 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 			inst.Initialize();
 
 		timer.Stop();
-		PluginLog.Debug($"Service initialization completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
+		Ktisis.Log.Debug($"Service initialization completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 	}
 
 	// Disposal
@@ -163,7 +162,7 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 		try {
 			service.Dispose();
 		} catch (Exception err) {
-			PluginLog.Error($"Failed to dispose service {service.GetType().Name}:\n{err}");
+			Ktisis.Log.Error($"Failed to dispose service {service.GetType().Name}:\n{err}");
 		}
 	}
 }

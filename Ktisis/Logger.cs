@@ -1,7 +1,5 @@
 using System;
 
-using Dalamud.Logging;
-
 using JetBrains.Annotations;
 
 namespace Ktisis;
@@ -21,7 +19,7 @@ internal static class Logger {
 		if (IsExternal)
 			WriteToConsole(ConsoleColor.DarkRed, format, values);
 		else
-			PluginLog.Fatal(format, values);
+			Ktisis.Log.Fatal(format, values);
 	}
 
 	[StringFormatMethod("format")]
@@ -29,14 +27,14 @@ internal static class Logger {
 		if (IsExternal)
 			WriteToConsole(ConsoleColor.Red, format, values);
 		else
-			PluginLog.Error(format, values);
+			Ktisis.Log.Error(format, values);
 	}
 
 	internal static void Error(Exception ex, string format, params object[] values) {
 		if (IsExternal)
 			WriteToConsole(ConsoleColor.Red, ex, format, values);
 		else
-			PluginLog.Error(ex, format, values);
+			Ktisis.Log.Error(ex, format, values);
 	}
 
 	[StringFormatMethod("format")]
@@ -44,7 +42,7 @@ internal static class Logger {
 		if (IsExternal)
 			WriteToConsole(ConsoleColor.Yellow, format, values);
 		else
-			PluginLog.Warning(format, values);
+			Ktisis.Log.Warning(format, values);
 	}
 
 	[StringFormatMethod("format")]
@@ -52,7 +50,7 @@ internal static class Logger {
 		if (IsExternal)
 			WriteToConsole(ConsoleColor.Cyan, format, values);
 		else
-			PluginLog.Information(format, values);
+			Ktisis.Log.Information(format, values);
 	}
 
 	[StringFormatMethod("format")]
@@ -60,7 +58,7 @@ internal static class Logger {
 		if (IsExternal)
 			WriteToConsole(ConsoleColor.Gray, format, values);
 		else
-			PluginLog.Verbose(format, values);
+			Ktisis.Log.Verbose(format, values);
 	}
 
 	[StringFormatMethod("format")]
@@ -68,7 +66,7 @@ internal static class Logger {
 		if (IsExternal)
 			WriteToConsole(ConsoleColor.Magenta, format, values);
 		else
-			PluginLog.Debug(format, values);
+			Ktisis.Log.Debug(format, values);
 	}
 
 	[StringFormatMethod("format")]

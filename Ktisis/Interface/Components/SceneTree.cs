@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Dalamud.Interface;
-using Dalamud.Logging;
 
 using ImGuiNET;
 
@@ -46,7 +45,7 @@ public class SceneTree {
 			try {
 				DrawSceneRoot(height);
 			} catch (Exception err) {
-				PluginLog.Error($"Error drawing scene tree:\n{err}");
+				Ktisis.Log.Error($"Error drawing scene tree:\n{err}");
 			} finally {
 				ImGui.EndChildFrame();
 			}

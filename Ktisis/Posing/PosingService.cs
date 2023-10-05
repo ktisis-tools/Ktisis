@@ -1,5 +1,3 @@
-using Dalamud.Logging;
-
 using Ktisis.Interop;
 using Ktisis.Core.Services;
 using Ktisis.Core.Impl;
@@ -28,12 +26,12 @@ public class PosingService : IServiceInit {
 	public bool IsActive => this.Hooks?.Enabled ?? false;
 
 	public void Enable() {
-		PluginLog.Verbose("Enabling posing hooks.");
+		Ktisis.Log.Verbose("Enabling posing hooks.");
 		this.Hooks?.EnableAll();
 	}
 
 	public void Disable() {
-		PluginLog.Verbose("Disabling posing hooks.");
+		Ktisis.Log.Verbose("Disabling posing hooks.");
 		this.Hooks?.DisableAll();
 	}
 

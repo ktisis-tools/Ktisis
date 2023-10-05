@@ -9,7 +9,7 @@ public class EnvService : IServiceInit {
 	// Constructor
 
 	private readonly InteropService _interop;
-    
+	
 	private EnvHooks? EnvHooks;
 	
 	public EnvService(InteropService _interop, GPoseService _gpose) {

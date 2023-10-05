@@ -29,7 +29,7 @@ public class TransformTable {
 	}
 
 	// State
-
+	
 	private bool IsUsed;
 	
 	public bool IsDeactivated { get; private set; }
@@ -47,7 +47,7 @@ public class TransformTable {
 	// Events
 
 	public OnClickOperationHandler? OnClickOperation;
-
+	
 	// UI draw
 
 	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
@@ -74,7 +74,7 @@ public class TransformTable {
 			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 		
 		ImGui.PopItemWidth();
-        
+		
 		return this.IsUsed;
 	}
 
@@ -143,7 +143,7 @@ public class TransformTable {
 			delta = result - vec;
 			vec = result.NormalizeAngles();
 		}
-
+		
 		this.IsUsed |= used;
 		return used;
 	}

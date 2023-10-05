@@ -12,7 +12,7 @@ public class HotkeyAttribute : Attribute {
 	
 	public readonly Keybind Keybind;
 	
-    public HotkeyAttribute(
+	public HotkeyAttribute(
 		string name,
 		VirtualKey key = VirtualKey.NO_KEY,
 		HotkeyFlags flags = HotkeyFlags.OnDown,

@@ -65,7 +65,7 @@ public class Bone : ArmatureNode, ITransformLocal {
 	}
 
 	// ITransform
-
+	
 	public unsafe Transform? GetTransform() {
 		var skeleton = GetSkeleton();
 		var pose = GetPose(skeleton);

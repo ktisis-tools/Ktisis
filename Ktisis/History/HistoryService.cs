@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
 using Ktisis.Core;
 using Ktisis.Core.Impl;
 
 namespace Ktisis.History;
 
 public enum HistoryMod {
-    Undo,
+	Undo,
 	Redo
 }
 
@@ -19,7 +17,9 @@ public class HistoryService {
 
 	private readonly IServiceContainer _services;
 
-	public HistoryService(IServiceContainer _services) {
+	public HistoryService(
+		IServiceContainer _services
+	) {
 		this._services = _services;
 	}
 	
@@ -44,7 +44,7 @@ public class HistoryService {
 	public void AddAction(HistoryActionBase action) {
 		var count = this.Timeline.Count;
 		if (this.Cursor < count) {
-			PluginLog.Verbose($"If history must be unwritten, let it be unwritten. ({this.Cursor} <- {count})");
+			Ktisis.Log.Verbose($"If history must be unwritten, let it be unwritten. ({this.Cursor} <- {count})");
 			this.Timeline.RemoveRange(this.Cursor, count - this.Cursor);
 		}
 		
@@ -63,9 +63,9 @@ public class HistoryService {
 			if (this.Clients.GetValueOrDefault(action.HandlerId) is IHistoryClient client)
 				return client.InvokeHandler(action, mod);
 
-			PluginLog.Warning($"Missing handler '{action.HandlerId}' for action '{action}'");
+			Ktisis.Log.Warning($"Missing handler '{action.HandlerId}' for action '{action}'");
 		} catch (Exception err) {
-			PluginLog.Error($"Error invoking history action:\n{err}");
+			Ktisis.Log.Error($"Error invoking history action:\n{err}");
 		}
 		
 		return false;
