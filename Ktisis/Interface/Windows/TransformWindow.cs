@@ -1,9 +1,7 @@
-using System.Diagnostics;
 using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
-using Dalamud.Logging;
 
 using ImGuiNET;
 
@@ -124,7 +122,7 @@ public class TransformWindow : Window {
 		if (Buttons.DrawIconButtonHint(flagIcon, flagHint, iconBtnSize))
 			this.Config.Editor_Flags ^= EditFlags.Mirror;
 
-        ImGui.SameLine(0, spacing);
+		ImGui.SameLine(0, spacing);
 		var avail = ImGui.GetContentRegionAvail().X;
 		if (avail > iconSize)
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
@@ -155,7 +153,7 @@ public class TransformWindow : Window {
 		var local = target as ITransformLocal;
 
 		var trans = local?.GetLocalTransform() ?? target?.GetTransform() ?? new Transform();
-        
+		
 		this.Table.Operation = this.Config.Gizmo_Op;
 		if (this.Table.Draw(trans, out trans)) {
 			if (local != null) {
@@ -178,7 +176,7 @@ public class TransformWindow : Window {
 	private unsafe void DrawGizmo(ITransform? world, float width) {
 		if (this.Gizmo is null)
 			return;
-        
+		
 		var camera = this._camera.GetGameCamera();
 		var cameraFov = camera != null ? camera->FoV : 1f;
 		var cameraPos = camera != null ? (Vector3)camera->CameraBase.SceneCamera.Object.Position : Vector3.Zero;

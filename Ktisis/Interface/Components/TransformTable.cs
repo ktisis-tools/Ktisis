@@ -29,7 +29,7 @@ public class TransformTable {
 	}
 	
 	// State
-    
+	
 	private bool IsUsed;
 	
 	public bool IsDeactivated { get; private set; }
@@ -48,7 +48,7 @@ public class TransformTable {
 
 	public OnClickOperationHandler? OnClickOperation;
 	
-    // UI draw
+	// UI draw
 
 	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
 	
@@ -74,7 +74,7 @@ public class TransformTable {
 			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 		
 		ImGui.PopItemWidth();
-        
+		
 		return this.IsUsed;
 	}
 	
@@ -100,8 +100,8 @@ public class TransformTable {
 	}
 
 	private void DrawOperation(Operation op, FontAwesomeIcon icon, string hint) {
-        var spacing = ImGui.GetStyle().ItemSpacing.X;
-        if (this.OnClickOperation != null) {
+		var spacing = ImGui.GetStyle().ItemSpacing.X;
+		if (this.OnClickOperation != null) {
 			ImGui.SameLine(0, spacing);
 
 			var enable = this.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
@@ -143,7 +143,7 @@ public class TransformTable {
 			delta = result - vec;
 			vec = result.NormalizeAngles();
 		}
-        
+		
 		this.IsUsed |= used;
 		return used;
 	}

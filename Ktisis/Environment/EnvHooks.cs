@@ -37,7 +37,7 @@ public class EnvHooks : HookContainer {
 	}
 	
 	// EnvManager Update
-    
+	
 	[Signature("E8 ?? ?? ?? ?? 49 8B 0E 48 8D 93 ?? ?? ?? ??")]
 	private Hook<EnvUpdateDelegate> EnvUpdateHook = null!;
 	
@@ -45,12 +45,12 @@ public class EnvHooks : HookContainer {
 
 	public unsafe nint EnvUpdateDetour(EnvManager* env, nint a2) {
 		env->DayTimeSeconds = this.Overrides.Props.Time;
-        return this.EnvUpdateHook.Original(env, a2);
+		return this.EnvUpdateHook.Original(env, a2);
 	}
 	
 	// Skybox Update
 
-	[Signature("E8 ?? ?? ?? ?? 0F 28 74 24 ?? C6 43 2C 00")]
+	[Signature("E8 ?? ?? ?? ?? 0F 28 74 24 ?? C6 43 30 00")]
 	private Hook<SkyboxUpdateDelegate> SkyboxUpdateHook = null!;
 
 	private unsafe delegate nint SkyboxUpdateDelegate(EnvManager* env, float a2, float a3);
@@ -62,7 +62,7 @@ public class EnvHooks : HookContainer {
 	
 	// Skybox Texture
 
-	[Signature("E8 ?? ?? ?? ?? 44 38 7B 2C 74 05 0F 28 DE", DetourName = "SkyTexDetour")]
+	[Signature("E8 ?? ?? ?? ?? 44 38 63 30 74 05 0F 28 DE", DetourName = "SkyTexDetour")]
 	private Hook<SkyTexDelegate> SkyTexHook = null!;
 
 	private delegate bool SkyTexDelegate(nint a1, uint a2, float a3, float a4);

@@ -1,11 +1,8 @@
 using System;
 
-using Dalamud.Game;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Interface;
-using Dalamud.Logging;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
+using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
@@ -23,21 +20,28 @@ public class GPoseService : IServiceInit, IDisposable {
 	// Service
 
 	private readonly IObjectTable _actors;
-	private readonly Framework _framework;
-	private readonly UiBuilder _uiBuilder;
+	private readonly IFramework _framework;
+	private readonly IClientState _state;
+	private readonly IGameInteropProvider _interop;
 
-	public GPoseService(IObjectTable _actors, Framework _framework, UiBuilder _uiBuilder) {
+	public GPoseService(
+		IObjectTable _actors,
+		IFramework _framework,
+		IClientState _state,
+		IGameInteropProvider _interop
+	) {
 		this._actors = _actors;
 		this._framework = _framework;
-		this._uiBuilder = _uiBuilder;
+		this._state = _state;
+		this._interop = _interop;
 	}
 
 	public void PreInit() {
-		SignatureHelper.Initialise(this);
+		this._interop.InitializeFromAttributes(this);
 	}
 	
-    public void Initialize() {
-        this._framework.Update += OnFrameworkEvent;
+	public void Initialize() {
+		this._framework.Update += OnFrameworkEvent;
 	}
 	
 	// State
@@ -51,11 +55,11 @@ public class GPoseService : IServiceInit, IDisposable {
 	private void OnFrameworkEvent(object _sender) {
 		if (this.IsDisposed) return;
 
-		var active = this._uiBuilder.GposeActive && GetTargetAddress() != nint.Zero;
+		var active = this._state.IsGPosing && GetTargetAddress() != nint.Zero;
 		if (this.IsInGPose != active) {
 			this.IsInGPose = active;
 			this.OnGPoseUpdate?.InvokeSafely(active);
-			PluginLog.Verbose($"GPose state changed: {(active ? "Active" : "Inactive")}");
+			Ktisis.Log.Verbose($"GPose state changed: {(active ? "Active" : "Inactive")}");
 		}
 	}
 	

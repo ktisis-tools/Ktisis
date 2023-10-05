@@ -3,8 +3,6 @@ using System.Numerics;
 
 using ImGuiNET;
 
-using Dalamud.Logging;
-
 using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Overlay;
@@ -44,10 +42,10 @@ public class Gizmo {
 
 			success = true;
 		} catch (Exception e) {
-			PluginLog.Error($"Failed to initialize gizmo:\n{e}");
+			Ktisis.Log.Error($"Failed to initialize gizmo:\n{e}");
 		}
 		
-		PluginLog.Verbose($"Completed gizmo initialization (success: {success}).");
+		Ktisis.Log.Verbose($"Completed gizmo initialization (success: {success}).");
 
 		return IsInit = success;
 	}
@@ -76,8 +74,7 @@ public class Gizmo {
 	public event OnDeactivateHandler? OnDeactivate;
 	
 	// Gizmo state
-
-	private bool IsOtherUsed;
+	
 	private bool IsUsedPrev;
 
 	private bool HasDrawn;
@@ -100,11 +97,11 @@ public class Gizmo {
 	}
 
 	public void BeginFrame(Vector2 pos, Vector2 size) {
-        this.HasDrawn = false;
+		this.HasDrawn = false;
 		this.HasMoved = false;
 		
 		ImGuizmo.Gizmo.SetDrawRect(pos.X, pos.Y, size.X, size.Y);
-        
+		
 		ImGuizmo.Gizmo.ID = (int)this.Id;
 		ImGuizmo.Gizmo.GizmoScale = this.ScaleFactor;
 		ImGuizmo.Gizmo.BeginFrame();
@@ -141,10 +138,10 @@ public class Gizmo {
 	}
 
 	public void EndFrame() {
-        if (this.HasMoved)
+		if (this.HasMoved)
 			this.OnManipulate?.Invoke(this);
-        
-        var isUsed = ImGuizmo.Gizmo.IsUsing;
+		
+		var isUsed = ImGuizmo.Gizmo.IsUsing;
 		if (!isUsed && this.IsUsedPrev)
 			this.OnDeactivate?.Invoke(this);
 	}

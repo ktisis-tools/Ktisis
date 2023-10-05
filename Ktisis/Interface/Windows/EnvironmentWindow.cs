@@ -3,7 +3,6 @@ using System.Numerics;
 using System.Threading;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Windowing;
 
@@ -58,7 +57,7 @@ public class EnvironmentWindow : Window {
 		this.TokenSource = source;
 		this._data.GetZoneWeatherAndIcons(token).ContinueWith(result => {
 			if (result.Exception != null) {
-				PluginLog.Error($"Failed to load weather data:\n{result.Exception}");
+				Ktisis.Log.Error($"Failed to load weather data:\n{result.Exception}");
 				return;
 			}
 
@@ -79,7 +78,7 @@ public class EnvironmentWindow : Window {
 	private readonly static Vector2 WeatherIconSize = new(28, 28);
 
 	public unsafe override void Draw() {
-        var env = EnvManager.Instance();
+		var env = EnvManager.Instance();
 		var val = this._env.GetOverride();
 		if (env == null || val == null) return;
 
@@ -102,7 +101,7 @@ public class EnvironmentWindow : Window {
 				ImGui.Text("Weather unavailable in this area.");
 			ImGui.EndDisabled();
 		}
-        
+		
 		DrawAdvanced(ref val.Props);
 	}
 	
@@ -115,7 +114,7 @@ public class EnvironmentWindow : Window {
 		var style = ImGui.GetStyle();
 		var padding = style.FramePadding.Y + WeatherIconSize.Y - ImGui.GetFrameHeight();
 		
-        ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, style.FramePadding with { Y = padding });
+		ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, style.FramePadding with { Y = padding });
 		if (ImGui.BeginCombo("Weather", current != 0 ? "##" : "No Weather")) {
 			foreach (var (weatherInfo, icon) in this.Weather) {
 				if (ImGui.Selectable($"##EnvWeather{weatherInfo.RowId}", weatherInfo.RowId == current)) {
@@ -124,7 +123,7 @@ public class EnvironmentWindow : Window {
 				}
 				DrawWeatherLabel(weatherInfo, icon, true);
 			}
-            
+			
 			ImGui.EndCombo();
 		}
 		
@@ -193,7 +192,7 @@ public class EnvironmentWindow : Window {
 		this.CurSky = sky;
 		this._data.GetSkyboxTex(this.CurSky).ContinueWith(result => {
 			if (result.Exception != null) {
-				PluginLog.Error(result.Exception.ToString());
+				Ktisis.Log.Error(result.Exception.ToString());
 				return;
 			}
 

@@ -1,23 +1,22 @@
 ﻿using Dalamud.IoC;
+using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using Dalamud.Game;
-using Dalamud.Game.ClientState.Keys;
 
 namespace Ktisis.Core.Services; 
 
 internal class DalamudServices {
 	private readonly DalamudPluginInterface PluginApi;
 	
-	// Using interfaces to future-proof here - the next API bump will require this.
 	[PluginService] private ITextureProvider TextureProvider { get; set; } = null!;
 	[PluginService] private ICommandManager CommandManager { get; set; } = null!;
+	[PluginService] private IGameInteropProvider Interop { get; set; } = null!;
 	[PluginService] private IClientState ClientState { get; set; } = null!;
 	[PluginService] private IDataManager DataManager { get; set; } = null!;
 	[PluginService] private IObjectTable ObjectTable { get; set; } = null!;
 	[PluginService] private ISigScanner SigScanner { get; set; } = null!;
-	[PluginService] private Framework Framework { get; set; } = null!;
-	[PluginService] private KeyState KeyState { get; set; } = null!;
+	[PluginService] private IFramework Framework { get; set; } = null!;
+	[PluginService] private IKeyState KeyState { get; set; } = null!;
 	[PluginService] private IGameGui GameGui { get; set; } = null!;
 
 	internal DalamudServices(DalamudPluginInterface api) {
@@ -30,6 +29,7 @@ internal class DalamudServices {
 		.AddInstance(this.PluginApi.UiBuilder)
 		.AddInstance(this.CommandManager)
 		.AddInstance(this.ClientState)
+		.AddInstance(this.Interop)
 		.AddInstance(this.DataManager)
 		.AddInstance(this.TextureProvider)
 		.AddInstance(this.ObjectTable)

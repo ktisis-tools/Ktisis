@@ -5,8 +5,6 @@ using System.Runtime.Loader;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
 namespace Ktisis.Interop.Unmanaged; 
 
 // Temporary workaround as loading unmanaged DLLs in Dalamud is currently bugged.
@@ -19,7 +17,7 @@ internal class DllResolver : IDisposable {
 	private readonly List<nint> Handles = new();
 	
 	public void Create() {
-		PluginLog.Debug("Creating DLL resolver for unmanaged DLLs");
+		Ktisis.Log.Debug("Creating DLL resolver for unmanaged DLLs");
 		
 		this.Context = AssemblyLoadContext.GetLoadContext(Assembly.GetExecutingAssembly());
 		if (this.Context != null)
@@ -31,13 +29,13 @@ internal class DllResolver : IDisposable {
 		if (loc == null) return nint.Zero;
 
 		var path = Path.Combine(loc, library);
-		PluginLog.Debug($"Resolving native assembly path: {path}");
+		Ktisis.Log.Debug($"Resolving native assembly path: {path}");
 
 		if (NativeLibrary.TryLoad(path, out var handle) && handle != nint.Zero) {
 			this.Handles.Add(handle);
-			PluginLog.Debug($"Success, resolved library handle: {handle:X}");
+			Ktisis.Log.Debug($"Success, resolved library handle: {handle:X}");
 		} else {
-			PluginLog.Warning($"Failed to resolve native assembly path: {path}");
+			Ktisis.Log.Warning($"Failed to resolve native assembly path: {path}");
 		}
 
 		return handle;
@@ -46,7 +44,7 @@ internal class DllResolver : IDisposable {
 	// Disposal
 	
 	public void Dispose() {
-		PluginLog.Debug("Disposing DLL resolver for unmanaged DLLs");
+		Ktisis.Log.Debug("Disposing DLL resolver for unmanaged DLLs");
 		
 		if (this.Context != null)
 			this.Context.ResolvingUnmanagedDll -= ResolveUnmanaged;
@@ -58,7 +56,7 @@ internal class DllResolver : IDisposable {
 	}
 	
 	private void FreeHandle(nint handle) {
-		PluginLog.Debug($"Freeing library handle: {handle:X}");
+		Ktisis.Log.Debug($"Freeing library handle: {handle:X}");
 		NativeLibrary.Free(handle);
 	}
 }

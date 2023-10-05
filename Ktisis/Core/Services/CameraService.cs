@@ -19,7 +19,7 @@ public class CameraService {
 	// Camera access
 
 	public unsafe Camera* GetGameCamera() {
-		var manager = CameraManager.Instance;
+		var manager = CameraManager.Instance();
 		return manager != null ? manager->GetActiveCamera() : null;
 	}
 

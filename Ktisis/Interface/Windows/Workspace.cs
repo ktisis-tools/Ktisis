@@ -22,7 +22,7 @@ namespace Ktisis.Interface.Windows;
 public class Workspace : Window {
 	// Constructor
 
-    private readonly PluginGui _gui;
+	private readonly PluginGui _gui;
 	private readonly ConfigService _cfg;
 	private readonly LocaleService _locale;
 	private readonly GPoseService _gpose;
@@ -82,7 +82,7 @@ public class Workspace : Window {
 		};
 
 		// Scene access
-        
+		
 		var scene = this._sceneMgr.Scene;
 		ImGui.BeginDisabled(scene is null);
 		
@@ -92,12 +92,12 @@ public class Workspace : Window {
 		ImGui.Spacing();
 		
 		// Draw context buttons
-        
+		
 		DrawContextButtons();
 		ImGui.Spacing();
 		
-        // Draw scene
-        
+		// Draw scene
+		
 		DrawStateFrame(scene);
 		ImGui.Spacing();
 
@@ -148,7 +148,7 @@ public class Workspace : Window {
 	// Context buttons
 
 	private void DrawContextButtons() {
-        if (DrawButton(FontAwesomeIcon.ArrowsAlt, this._locale.Translate("transform_edit.title")))
+		if (DrawButton(FontAwesomeIcon.ArrowsAlt, this._locale.Translate("transform_edit.title")))
 			this._gui.GetWindow<TransformWindow>().Toggle();
 		
 		DrawButton(FontAwesomeIcon.Camera, this._locale.Translate("camera_edit.title"));
@@ -157,7 +157,7 @@ public class Workspace : Window {
 			this._gui.GetWindow<EnvironmentWindow>().Toggle();
 		
 		DrawButton(FontAwesomeIcon.EllipsisH, this._locale.Translate("common.options"));
-        
+		
 		var avail = ImGui.GetContentRegionAvail().X;
 		if (avail < 100) ImGui.Dummy(Vector2.Zero);
 

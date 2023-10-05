@@ -2,17 +2,13 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
+using Ktisis.Config;
+using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.World;
-using Ktisis.Interface.Overlay.Render;
-using Ktisis.Common.Extensions;
-using Ktisis.Common.Utility;
-using Ktisis.Config;
 using Ktisis.Editing.Attributes;
-using Ktisis.Scene;
+using Ktisis.Interface.Overlay.Render;
 
 namespace Ktisis.Editing.Modes;
 

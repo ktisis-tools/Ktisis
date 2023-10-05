@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 using Dalamud.Plugin;
-using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 
 using Ktisis.Core;
 using Ktisis.Core.Impl;
@@ -28,20 +28,28 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	private readonly ServiceManager Services;
 
+	public static IPluginLog Log { get; private set; } = null!;
+
 	// Ctor called on plugin load
 
-	public Ktisis(DalamudPluginInterface api) {
+	public Ktisis(
+		DalamudPluginInterface api,
+		IPluginLog _logger
+	) {
 		// Service registration
-        
-		this.Services = new ServiceManager().AddDalamudServices(api);
+
+		Log = _logger;
+		
+		this.Services = new ServiceManager()
+			.AddDalamudServices(api);
 
 		this.InitTask = Init().ContinueWith(task => {
 			this.InitTask = null;
 			if (task.Exception == null) return;
 
-			PluginLog.Fatal("Ktisis failed to load due to the following error(s):");
+			Ktisis.Log.Fatal("Ktisis failed to load due to the following error(s):");
 			foreach (var err in task.Exception.InnerExceptions)
-				PluginLog.Error(err.ToString());
+				Ktisis.Log.Error(err.ToString());
 
 			this.Services.GetService<NotifyService>()?
 				.Error("Ktisis failed to load. Please check your error log for more information.");
@@ -69,7 +77,7 @@ public sealed class Ktisis : IDalamudPlugin {
 		this.Services.Initialize();
 
 		timer.Stop();
-		PluginLog.Debug($"Plugin startup completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
+		Ktisis.Log.Debug($"Plugin startup completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 	}
 
 	// Version info
@@ -84,9 +92,10 @@ public sealed class Ktisis : IDalamudPlugin {
 		this.InitTask?.Wait();
 
 		try {
-			this.Services.GetService<ConfigService>()?.SaveConfig();
+			var cfg = this.Services.GetService<ConfigService>();
+			cfg?.SaveConfig();
 		} catch (Exception err) {
-			PluginLog.Error($"Error occurred during disposal:\n{err}");
+			Ktisis.Log.Error($"Error occurred during disposal:\n{err}");
 		}
 		
 		this.Services.Dispose();

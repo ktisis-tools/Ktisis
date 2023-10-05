@@ -50,7 +50,7 @@ public class DataService : SchemaReader {
 		await Task.Yield();
 		
 		var result = new Dictionary<Weather, IDalamudTextureWrap?>();
-        
+		
 		var id = this._state.TerritoryType;
 		
 		var territory = this._data.GetExcelSheet<TerritoryType>()?.GetRow(id);
@@ -64,7 +64,7 @@ public class DataService : SchemaReader {
 		var data = weatherRate.UnkData0.ToList();
 		data.Sort((a, b) => a.Weather - b.Weather);
 		
-        foreach (var rate in data) {
+		foreach (var rate in data) {
 			if (token.IsCancellationRequested) break;
 			if (rate.Weather <= 0 || rate.Rate == 0) continue;
 			

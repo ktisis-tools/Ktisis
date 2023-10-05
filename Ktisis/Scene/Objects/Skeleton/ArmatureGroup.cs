@@ -53,7 +53,7 @@ public abstract class ArmatureGroup : ArmatureNode, IDummy, IVisibility {
 			a.Scale += b.Scale;
 			return a;
 		});
-        
+		
 		result.Position /= count;
 		result.Rotation = Quaternion.Normalize(rot);
 		result.Scale /= count;

@@ -4,17 +4,16 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using Dalamud.Interface;
-using Dalamud.Logging;
 
 using ImGuiNET;
 
+using Ktisis.Config;
 using Ktisis.Config.Display;
 using Ktisis.Common.Extensions;
-using Ktisis.Config;
 using Ktisis.Interface.Widgets;
+using Ktisis.Core.Services;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Impl;
-using Ktisis.Core.Services;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -26,7 +25,10 @@ public class SelectionGui {
 	private readonly CameraService _camera;
 	private readonly ConfigService _cfg;
 
-	public SelectionGui(CameraService _camera, ConfigService _cfg) {
+	public SelectionGui(
+		CameraService _camera,
+		ConfigService _cfg
+	) {
 		this._camera = _camera;
 		this._cfg = _cfg;
 	}
@@ -92,7 +94,7 @@ public class SelectionGui {
 			begin = ImGui.Begin("Hover", ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoFocusOnAppearing);
 			if (begin) DrawSelectList(list);
 		} catch (Exception err) {
-			PluginLog.Error($"Error while drawing select list:\n{err}");
+			Ktisis.Log.Error($"Error while drawing select list:\n{err}");
 		} finally {
 			if (begin) ImGui.End();
 		}

@@ -2,16 +2,12 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Interop.Unmanaged;
 using Ktisis.Config.Display;
 using Ktisis.Scene.Objects.Models;
-using Ktisis.Scene.Objects.World;
 using Ktisis.Scene.Objects.Tree;
+using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Scene.Objects.Skeleton;
 
@@ -48,7 +44,7 @@ public class Armature : ArmatureGroup {
 
 			if (id == prevId) continue;
 			
-			PluginLog.Verbose($"Armature of '{this.Parent?.Name ?? "UNKNOWN"}' detected a change in Skeleton #{p} (was {prevId:X}, now {id:X}), rebuilding.");
+			Ktisis.Log.Verbose($"Armature of '{this.Parent?.Name ?? "UNKNOWN"}' detected a change in Skeleton #{p} (was {prevId:X}, now {id:X}), rebuilding.");
 
 			var t = new Stopwatch();
 			t.Start();
@@ -66,7 +62,7 @@ public class Armature : ArmatureGroup {
 			BuildMap(p, id);
 			
 			t.Stop();
-			PluginLog.Debug($"Rebuild took {t.Elapsed.TotalMilliseconds:00.00}ms");
+			Ktisis.Log.Debug($"Rebuild took {t.Elapsed.TotalMilliseconds:00.00}ms");
 		}
 	}
 	

@@ -8,16 +8,20 @@ namespace Ktisis.Scene;
 public class SceneContext {
 	// Constructor
 	
+	private readonly SceneManager Manager;
+	
 	private readonly ConfigService _cfg;
 	private readonly LocaleService _locale;
 
-	private readonly SceneManager Manager;
-
-	public SceneContext(SceneManager manager, ConfigService _cfg, LocaleService _locale) {
+	public SceneContext(
+		SceneManager manager,
+		ConfigService _cfg,
+		LocaleService _locale
+	) {
+		this.Manager = manager;
+		
 		this._cfg = _cfg;
 		this._locale = _locale;
-		
-		this.Manager = manager;
 	}
 	
 	// Scene + handler access

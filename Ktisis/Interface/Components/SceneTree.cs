@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Dalamud.Interface;
-using Dalamud.Logging;
 
 using ImGuiNET;
 
@@ -22,7 +21,7 @@ namespace Ktisis.Interface.Components;
 public delegate void OnItemClickedHandler(SceneObject item, SelectFlags flags);
 
 public class SceneTree {
-    // Constructor
+	// Constructor
 
 	private readonly ConfigService _cfg;
 
@@ -46,7 +45,7 @@ public class SceneTree {
 			try {
 				DrawSceneRoot(height);
 			} catch (Exception err) {
-				PluginLog.Error($"Error drawing scene tree:\n{err}");
+				Ktisis.Log.Error($"Error drawing scene tree:\n{err}");
 			} finally {
 				ImGui.EndChildFrame();
 			}
@@ -105,7 +104,7 @@ public class SceneTree {
 
 		var size = ImGui.GetItemRectSize();
 
-        var imKey = ImGui.GetID(id);
+		var imKey = ImGui.GetID(id);
 		var state = ImGui.GetStateStorage();
 
 		var isExpand = state.GetBool(imKey);
@@ -232,7 +231,7 @@ public class SceneTree {
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {
 		cursor -= Icons.CalcIconSize(icon).X + ImGui.GetStyle().ItemSpacing.X;
-        ImGui.SameLine();
+		ImGui.SameLine();
 		ImGui.SetCursorPosX(cursor);
 		if (color != null)
 			ImGui.PushStyleColor(ImGuiCol.Text, color.Value);

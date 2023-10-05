@@ -65,7 +65,7 @@ public class EditorService : IServiceInit {
 	}
 
 	// Editor state
-    
+	
 	private EditMode CurrentMode => this._cfg.Config.Editor_Mode;
 	
 	// Register mode handlers

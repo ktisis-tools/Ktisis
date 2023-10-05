@@ -21,7 +21,7 @@ namespace Ktisis.Interface;
 [KtisisService]
 public class PluginGui : IServiceInit, IDisposable {
 	// Service
-    
+	
 	private readonly GPoseService _gpose;
 	private readonly GuiOverlay _overlay;
 	private readonly UiBuilder _uiBuilder;
@@ -40,7 +40,7 @@ public class PluginGui : IServiceInit, IDisposable {
 	}
 
 	public void PreInit() {
-        this._gpose.OnGPoseUpdate += OnGPoseUpdate;
+		this._gpose.OnGPoseUpdate += OnGPoseUpdate;
 	}
 
 	public void Initialize() {

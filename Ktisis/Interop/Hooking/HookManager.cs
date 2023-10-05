@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Dalamud.Game;
 using Dalamud.Hooking;
-using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 
 using Ktisis.Interop.Hooking.Wrappers;
 
@@ -13,9 +13,11 @@ public class HookManager : IDisposable {
 	// Constructor
 
 	private readonly ISigScanner _sig;
+	private readonly IGameInteropProvider _interop;
 	
-	public HookManager(ISigScanner _sig) {
+	public HookManager(ISigScanner _sig, IGameInteropProvider _interop) {
 		this._sig = _sig;
+		this._interop = _interop;
 	}
 	
 	// Hook registration & creation
@@ -24,17 +26,17 @@ public class HookManager : IDisposable {
 
 	public void Add(IHookWrapper hook) {
 		this.Registered.Add(hook);
-		PluginLog.Verbose($"Registered hook: {hook.GetName()} @ 0x{hook.Address:X}");
+		Ktisis.Log.Verbose($"Registered hook: {hook.GetName()} @ 0x{hook.Address:X}");
 	}
 
 	public void Add<T>(Hook<T> hook) where T : Delegate {
 		var inst = HookWrapper<T>.FromHook(hook);
 		Add(inst);
-		PluginLog.Verbose($"Registered hook: {inst.GetName()} @ 0x{hook.Address:X}");
+		Ktisis.Log.Verbose($"Registered hook: {inst.GetName()} @ 0x{hook.Address:X}");
 	}
 	
 	public Hook<T> AddAddress<T>(nint addr, T detour) where T : Delegate {
-		var hook = Hook<T>.FromAddress(addr, detour);
+		var hook = this._interop.HookFromAddress(addr, detour);
 		Add(hook);
 		return hook;
 	}
@@ -61,9 +63,9 @@ public class HookManager : IDisposable {
 			hook.Disable();
 			if (!hook.IsDisposed)
 				hook.Dispose();
-			PluginLog.Verbose($"Disposed hook: {name}");
+			Ktisis.Log.Verbose($"Disposed hook: {name}");
 		} catch (Exception err) {
-			PluginLog.Error($"Failed to dispose {name}':\n{err}");
+			Ktisis.Log.Error($"Failed to dispose {name}':\n{err}");
 		}
 	}
 }

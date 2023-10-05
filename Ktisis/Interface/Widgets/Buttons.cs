@@ -62,7 +62,7 @@ internal static class Buttons {
 			v = !v;
 		}
 
-        var color = (hover: ImGui.IsItemHovered(), toggle: v) switch {
+		var color = (hover: ImGui.IsItemHovered(), toggle: v) switch {
 			(true, true) => ToggleBgHover,
 			(false, true) => ToggleBg,
 			(true, false) => colors[(int)ImGuiCol.ButtonActive],

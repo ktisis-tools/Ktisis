@@ -2,17 +2,15 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
-using Ktisis.Posing;
+using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Skeleton;
 using Ktisis.Interface.Overlay.Render;
-using Ktisis.Common.Utility;
-using Ktisis.Config;
 using Ktisis.Editing.Attributes;
-using Ktisis.Scene;
+using Ktisis.Common.Utility;
+using Ktisis.Posing;
+using Ktisis.Config;
 
 namespace Ktisis.Editing.Modes;
 
@@ -123,7 +121,7 @@ public class PoseMode : ModeHandler {
 	// Handler for bone manipulation
 
 	private readonly static Vector3 InverseMax = new(10f, 10f, 10f);
-    
+	
 	private readonly Dictionary<Armature, Dictionary<int, List<Bone>>> ArmatureMap = new();
 
 	public unsafe override void Manipulate(ITransform target, Matrix4x4 final, Matrix4x4 initial, IEnumerable<SceneObject> objects) {
@@ -131,11 +129,11 @@ public class PoseMode : ModeHandler {
 		
 		var mirror = this._cfg.Config.Editor_Flags.HasFlag(EditFlags.Mirror);
 		
-        // Calculate delta transform
+		// Calculate delta transform
 
 		var initialT = new Transform(initial);
 		var finalT = new Transform(final);
-        
+		
 		var deltaT = new Transform(
 			finalT.Position - initialT.Position,
 			Quaternion.Normalize(finalT.Rotation * Quaternion.Inverse(initialT.Rotation)),

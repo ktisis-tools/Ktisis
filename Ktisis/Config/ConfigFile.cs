@@ -27,7 +27,7 @@ public class ConfigFile : IPluginConfiguration {
 
 	public Dictionary<string, Keybind> Keybinds = new();
 	
-    // Overlay
+	// Overlay
 
 	public bool Overlay_Gizmo = true;
 	public bool Overlay_Visible = true;

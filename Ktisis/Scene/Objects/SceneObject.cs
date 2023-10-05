@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
 using Ktisis.Common.Extensions;
 using Ktisis.Config.Display;
 using Ktisis.Scene.Impl;
@@ -53,7 +51,7 @@ public abstract class SceneObject : ITreeNode, IParentable<SceneObject> {
 			try {
 				item.Update(scene, ctx);
 			} catch (Exception e) {
-				PluginLog.Error($"Error while updating object state for '{item.Name}':\n{e}");
+				Ktisis.Log.Error($"Error while updating object state for '{item.Name}':\n{e}");
 			}
 		});
 	}

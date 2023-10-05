@@ -21,9 +21,9 @@ namespace Ktisis.Input;
 [KtisisService]
 public class InputService : IServiceInit {
 	// Service
-    
+	
 	private readonly InteropService _interop;
-	private readonly KeyState _keyState;
+	private readonly IKeyState _keyState;
 	private readonly GPoseService _gpose;
 	private readonly ConfigService _cfg;
 	private readonly IGameGui _gui;
@@ -35,7 +35,7 @@ public class InputService : IServiceInit {
 	public InputService(
 		IServiceContainer _services,
 		InteropService _interop,
-		KeyState _keyState,
+		IKeyState _keyState,
 		GPoseService _gpose,
 		ConfigService _cfg,
 		IGameGui _gui
@@ -79,7 +79,7 @@ public class InputService : IServiceInit {
 	}
 
 	public HotkeyInfo? GetActiveHotkey(VirtualKey key, HotkeyFlags flag) {
-        HotkeyInfo? result = null;
+		HotkeyInfo? result = null;
 		
 		var modMax = 0;
 		foreach (var (_, hk) in this.Hotkeys) {
@@ -90,7 +90,7 @@ public class InputService : IServiceInit {
 			var modCt = bind.Mod.Length;
 			if (result != null && modCt < modMax)
 				continue;
-            
+			
 			result = hk;
 			modMax = modCt;
 		}

@@ -1,7 +1,5 @@
 using System;
 
-using Dalamud.Logging;
-
 namespace Ktisis.Common.Extensions; 
 
 public static class DelegateEx {
@@ -10,7 +8,7 @@ public static class DelegateEx {
 			try {
 				invoke.DynamicInvoke(args);
 			} catch (Exception e) {
-				PluginLog.Error($"Error in invocation of {@delegate.GetType().Name}:\n{e}");
+				Ktisis.Log.Error($"Error in invocation of {@delegate.GetType().Name}:\n{e}");
 			}
 		}
 	}

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-using Dalamud.Game;
-using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 
 using Ktisis.Core;
 using Ktisis.Core.Impl;
@@ -17,13 +16,17 @@ public delegate void SceneChangedHandler(SceneGraph? scene);
 public class SceneManager : IServiceInit, IDisposable {
 	// Service
 	
-	private readonly Framework _framework;
+	private readonly IFramework _framework;
 	private readonly GPoseService _gpose;
 	private readonly IServiceContainer _services;
 
 	private readonly SceneContext Context;
 
-	public SceneManager(Framework _framework, GPoseService _gpose, IServiceContainer _services) {
+	public SceneManager(
+		IFramework _framework,
+		GPoseService _gpose,
+		IServiceContainer _services
+	) {
 		this._services = _services;
 		this._framework = _framework;
 		this._gpose = _gpose;
@@ -78,10 +81,10 @@ public class SceneManager : IServiceInit, IDisposable {
 		if (this.IsDisposed) return;
 		
 		if (active) {
-			PluginLog.Verbose("Entering gpose, setting up scene...");
+			Ktisis.Log.Verbose("Entering gpose, setting up scene...");
 			this.Scene = new SceneGraph(this.Context);
 		} else {
-			PluginLog.Verbose("Leaving gpose, cleaning up scene...");
+			Ktisis.Log.Verbose("Leaving gpose, cleaning up scene...");
 			this.Scene = null;
 		}
 

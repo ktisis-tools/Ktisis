@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 
-using Dalamud.Logging;
-
 using Ktisis.Core.Impl;
 using Ktisis.Config;
 
@@ -17,7 +15,9 @@ public class LocaleService : IServiceInit {
 	
 	private LocaleData? Data;
 
-	public LocaleService(ConfigService _cfg) {
+	public LocaleService(
+		ConfigService _cfg
+	) {
 		this._cfg = _cfg;
 	}
 
@@ -37,7 +37,7 @@ public class LocaleService : IServiceInit {
 	}
 
 	public void LoadLocale(string technicalName) {
-		PluginLog.Verbose($"Reading localization file for '{technicalName}'");
+		Ktisis.Log.Verbose($"Reading localization file for '{technicalName}'");
 		if (this.Data == null || this.Data.MetaData.TechnicalName != technicalName)
 			this.Data = this.Loader.LoadData(technicalName);
 	}

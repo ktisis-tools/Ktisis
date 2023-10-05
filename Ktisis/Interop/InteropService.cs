@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 
 using Dalamud.Game;
-using Dalamud.Utility.Signatures;
+using Dalamud.Plugin.Services;
 
 using Ktisis.Core.Impl;
 using Ktisis.Interop.Hooking;
@@ -14,15 +14,21 @@ namespace Ktisis.Interop;
 public class InteropService : IServiceInit, IDisposable {
 	// Service
 
-	private readonly Framework _frame;
+	private readonly IFramework _frame;
+	private readonly IGameInteropProvider _interop;
 
 	private readonly HookManager Hooks;
 	private readonly DllResolver DllResolver;
 	
-	public InteropService(Framework _frame, ISigScanner _sig) {
+	public InteropService(
+		IFramework _frame,
+		ISigScanner _sig,
+		IGameInteropProvider _interop
+	) {
 		this._frame = _frame;
+		this._interop = _interop;
 		
-        this.Hooks = new HookManager(_sig);
+		this.Hooks = new HookManager(_sig, _interop);
 		this.DllResolver = new DllResolver();
 	}
 
@@ -37,7 +43,7 @@ public class InteropService : IServiceInit, IDisposable {
 		// Not completely sure why.
 		var inst = await this._frame.RunOnFrameworkThread(() => {
 			var inst = new T();
-			SignatureHelper.Initialise(inst);
+			this._interop.InitializeFromAttributes(inst);
 			return inst;
 		});
 
