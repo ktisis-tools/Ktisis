@@ -35,7 +35,7 @@ public class ConfigService {
 
 	public ConfigFile Config { get; private set; } = null!;
 	
-	private async Task<ConfigFile> CreateFromSchema() => new ConfigFile() {
+	private async Task<ConfigFile> CreateFromSchema() => new() {
 		Categories = await this._data.ReadBoneCategories()
 	};
 
