@@ -8,7 +8,7 @@
 		"TestingAssemblyVersion": "0.2.19",
 		"RepoUrl": "https://github.com/ktisis-tools/Ktisis",
 		"ApplicableVersion": "any",
-		"DalamudApiLevel": 8,
+		"DalamudApiLevel": 9,
 		"Tags": [
 			"gpose",
 			"posing",
