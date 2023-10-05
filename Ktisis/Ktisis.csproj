@@ -60,6 +60,7 @@
 	  <ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET\ImGuizmo.NET.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Interface\Localization\Data\en_US.json" />
 		<EmbeddedResource Include="Localization\Data\*.json" />
 	</ItemGroup>
 	<ItemGroup>

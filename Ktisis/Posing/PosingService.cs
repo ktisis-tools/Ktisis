@@ -1,23 +1,30 @@
+using Ktisis.Core;
+using Ktisis.Events;
 using Ktisis.Interop;
-using Ktisis.Core.Services;
-using Ktisis.Core.Impl;
+using Ktisis.Services;
 
 namespace Ktisis.Posing; 
 
-[KtisisService]
-public class PosingService : IServiceInit {
+[DIService]
+public class PosingService {
 	// Constructor
 
 	private readonly InteropService _interop;
 
 	private PoseHooks? Hooks;
 
-	public PosingService(InteropService _interop, GPoseService _gpose) {
+	public PosingService(
+		InteropService _interop,
+		GPoseService _gpose,
+		InitHooksEvent _initHooks
+	) {
 		this._interop = _interop;
 		_gpose.OnGPoseUpdate += OnGPoseUpdate;
+
+		_initHooks.Subscribe(InitHooks);
 	}
 	
-	public void PreInit() {
+	private void InitHooks() {
 		this.Hooks = this._interop.Create<PoseHooks>().Result;
 	}
 	

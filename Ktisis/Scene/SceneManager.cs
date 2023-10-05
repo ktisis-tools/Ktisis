@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using Dalamud.Plugin.Services;
 
 using Ktisis.Core;
-using Ktisis.Core.Impl;
-using Ktisis.Core.Services;
+using Ktisis.Events;
 using Ktisis.Scene.Handlers;
+using Ktisis.Services;
 
 namespace Ktisis.Scene;
 
 public delegate void SceneChangedHandler(SceneGraph? scene);
 
-[KtisisService]
-public class SceneManager : IServiceInit, IDisposable {
+[DIService]
+public class SceneManager : IDisposable {
 	// Service
 	
 	private readonly IFramework _framework;
@@ -25,7 +25,8 @@ public class SceneManager : IServiceInit, IDisposable {
 	public SceneManager(
 		IFramework _framework,
 		GPoseService _gpose,
-		IServiceContainer _services
+		IServiceContainer _services,
+		InitEvent _init
 	) {
 		this._services = _services;
 		this._framework = _framework;
@@ -36,9 +37,11 @@ public class SceneManager : IServiceInit, IDisposable {
 		this.AddHandler<ActorHandler>()
 			.AddHandler<LightHandler>()
 			.AddHandler<ObjectHandler>();
+
+		_init.Subscribe(Initialize);
 	}
 
-	public void Initialize() {
+	private void Initialize() {
 		this._framework.Update += OnFrameworkUpdate;
 		this._gpose.OnGPoseUpdate += OnGPoseUpdate;
 	}

@@ -4,14 +4,15 @@ using System.Threading.Tasks;
 using Dalamud.Game;
 using Dalamud.Plugin.Services;
 
-using Ktisis.Core.Impl;
+using Ktisis.Core;
+using Ktisis.Events;
 using Ktisis.Interop.Hooking;
 using Ktisis.Interop.Unmanaged;
 
 namespace Ktisis.Interop; 
 
-[KtisisService]
-public class InteropService : IServiceInit, IDisposable {
+[DIService]
+public class InteropService : IDisposable {
 	// Service
 
 	private readonly IFramework _frame;
@@ -19,21 +20,29 @@ public class InteropService : IServiceInit, IDisposable {
 
 	private readonly HookManager Hooks;
 	private readonly DllResolver DllResolver;
+
+	private readonly InitHooksEvent _initHooks;
 	
 	public InteropService(
 		IFramework _frame,
 		ISigScanner _sig,
-		IGameInteropProvider _interop
+		IGameInteropProvider _interop,
+		InitHooksEvent _initHooks,
+		InitEvent _init
 	) {
 		this._frame = _frame;
 		this._interop = _interop;
 		
 		this.Hooks = new HookManager(_sig, _interop);
 		this.DllResolver = new DllResolver();
+		this.DllResolver.Create();
+
+		this._initHooks = _initHooks;
+		_init.Subscribe(Initialize);
 	}
 
-	public void PreInit() {
-		this.DllResolver.Create();
+	private void Initialize() {
+		this._initHooks.Invoke();
 	}
 	
 	// Create hook containers

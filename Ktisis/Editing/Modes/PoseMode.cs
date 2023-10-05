@@ -6,11 +6,11 @@ using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.Skeleton;
-using Ktisis.Interface.Overlay.Render;
 using Ktisis.Editing.Attributes;
 using Ktisis.Common.Utility;
 using Ktisis.Posing;
-using Ktisis.Config;
+using Ktisis.Data.Config;
+using Ktisis.Interface.Gui.Overlay.Render;
 
 namespace Ktisis.Editing.Modes;
 

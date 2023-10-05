@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using Dalamud;
 using Dalamud.Plugin;
 
-using Ktisis.Core.Services;
-using Ktisis.Core.Impl;
+using Ktisis.Services;
 
 namespace Ktisis.Core;
 
@@ -82,9 +80,9 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 	
 	// Attribute access
 
-	private KtisisServiceAttribute GetAttribute(object inst) {
+	private DIServiceAttribute GetAttribute(object inst) {
 		var type = inst.GetType();
-		if (type.GetCustomAttribute<KtisisServiceAttribute>() is {} attr)
+		if (type.GetCustomAttribute<DIServiceAttribute>() is {} attr)
 			return attr;
 		throw new Exception($"Object of type '{type.Name}' does not have a service attribute.");
 	}
@@ -120,30 +118,6 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 
 		@params = Array.Empty<object>();
 		return null;
-	}
-	
-	// Initialization
-
-	public void PreInit() {
-		var timer = new Stopwatch();
-		timer.Start();
-		
-		foreach (var inst in this.GetServicesOfType<IServiceInit>())
-			inst.PreInit();
-
-		timer.Stop();
-		Ktisis.Log.Debug($"Pre-init events completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
-	}
-
-	public void Initialize() {
-		var timer = new Stopwatch();
-		timer.Start();
-
-		foreach (var inst in this.GetServicesOfType<IServiceInit>())
-			inst.Initialize();
-
-		timer.Stop();
-		Ktisis.Log.Debug($"Service initialization completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 	}
 	
 	// Disposal

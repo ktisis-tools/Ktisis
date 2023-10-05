@@ -3,9 +3,9 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Posing;
 using Ktisis.Posing.Bones;
-using Ktisis.Config.Display;
 using Ktisis.Interop.Unmanaged;
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Display;
 using Ktisis.Scene.Impl;
 
 namespace Ktisis.Scene.Objects.Skeleton; 

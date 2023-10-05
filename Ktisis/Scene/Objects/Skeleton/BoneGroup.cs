@@ -1,5 +1,5 @@
-using Ktisis.Config.Bones;
-using Ktisis.Config.Display;
+using Ktisis.Data.Config.Bones;
+using Ktisis.Data.Config.Display;
 
 namespace Ktisis.Scene.Objects.Skeleton; 
 

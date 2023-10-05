@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Dalamud.Utility;
 
-using Ktisis.Config.Bones;
+using Ktisis.Data.Config.Bones;
 
 namespace Ktisis.Data; 
 

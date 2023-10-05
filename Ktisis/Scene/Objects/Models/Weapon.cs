@@ -1,4 +1,4 @@
-using Ktisis.Config.Display;
+using Ktisis.Data.Config.Display;
 
 namespace Ktisis.Scene.Objects.Models; 
 
