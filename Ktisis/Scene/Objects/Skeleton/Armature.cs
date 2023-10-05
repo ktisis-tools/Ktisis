@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Config.Display;
+using Ktisis.Data.Config.Display;
 using Ktisis.Scene.Objects.Models;
 using Ktisis.Scene.Objects.Tree;
 using Ktisis.Interop.Unmanaged;

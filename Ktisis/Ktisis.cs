@@ -6,9 +6,9 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 using Ktisis.Core;
-using Ktisis.Core.Impl;
-using Ktisis.Core.Services;
-using Ktisis.Config;
+using Ktisis.Events;
+using Ktisis.Services;
+using Ktisis.Data.Config;
 
 namespace Ktisis;
 
@@ -59,12 +59,15 @@ public sealed class Ktisis : IDalamudPlugin {
 		var timer = new Stopwatch();
 		timer.Start();
 
-		this.Services.AddServices<KtisisServiceAttribute>();
+		this.Services.AddServices<DIEventAttribute>()
+			.AddServices<DIComponentAttribute>()
+			.AddServices<DIServiceAttribute>();
 
-		var cfg = this.Services.GetRequiredService<ConfigService>();
+        var cfg = this.Services.GetRequiredService<ConfigService>();
 		cfg.LoadConfig().Wait();
-		this.Services.PreInit();
-		this.Services.Initialize();
+		
+		var init = this.Services.GetRequiredService<InitEvent>();
+		init.Invoke();
 
 		timer.Stop();
 		Log.Debug($"Plugin startup completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");

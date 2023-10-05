@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using Dalamud.Plugin.Services;
 using Dalamud.Interface.Internal;
 
-using Ktisis.Core.Impl;
+using Ktisis.Core;
 
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets;
 
 namespace Ktisis.Data; 
 
-[KtisisService]
+[DIService]
 public class DataService : SchemaReader {
 	// Constructor
 

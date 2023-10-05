@@ -2,13 +2,13 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using Ktisis.Config;
+using Ktisis.Data.Config;
 using Ktisis.Scene;
 using Ktisis.Scene.Impl;
 using Ktisis.Scene.Objects;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Editing.Attributes;
-using Ktisis.Interface.Overlay.Render;
+using Ktisis.Interface.Gui.Overlay.Render;
 
 namespace Ktisis.Editing.Modes;
 

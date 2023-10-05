@@ -10,11 +10,12 @@ using Ktisis.Scene.Objects.Skeleton;
 using Ktisis.Scene.Objects.World;
 using Ktisis.Common.Utility;
 using Ktisis.Editing.Modes;
-using Ktisis.Config;
-using Ktisis.Core.Impl;
-using Ktisis.History.Clients;
-using Ktisis.History.Actions;
-using Ktisis.History;
+using Ktisis.Core;
+using Ktisis.Data.Config;
+using Ktisis.Editing.History;
+using Ktisis.Editing.History.Actions;
+using Ktisis.Editing.History.Clients;
+using Ktisis.Events;
 
 namespace Ktisis.Editing;
 
@@ -33,24 +34,29 @@ public enum EditMode {
 
 // TODO: Consider splitting this to TransformService?
 
-[KtisisService]
-public class EditorService : IServiceInit {
+[DIService]
+public class EditorService {
 	// Constructor
 
 	private readonly ConfigService _cfg;
 	private readonly SceneManager _scene;
+	private readonly HistoryService _history;
 	
 	public readonly SelectState Selection;
 
-	private readonly TransformHistory History;
+	private TransformHistory History = null!;
 
 	private ConfigFile Config => this._cfg.Config;
 	
-	//private HistoryClient<>
-	
-	public EditorService(SceneManager _scene, HistoryService _history, ConfigService _cfg) {
+	public EditorService(
+		ConfigService _cfg,
+		SceneManager _scene,
+		HistoryService _history,
+		InitEvent _init
+	) {
 		this._cfg = _cfg;
 		this._scene = _scene;
+		this._history = _history;
 		
 		this.Selection = new SelectState();
 		this.Selection.OnSelectionChanged += OnSelectionChanged;
@@ -58,10 +64,14 @@ public class EditorService : IServiceInit {
 		this.AddMode<PoseMode>(EditMode.Pose)
 			.AddMode<ObjectMode>(EditMode.Object);
 
-		this.History = _history.CreateClient<TransformHistory>("SceneEditor_Transform");
+		_init.Subscribe(Initialize);
+	}
+
+	private void Initialize() {
+		this.History = this._history.CreateClient<TransformHistory>("SceneEditor_Transform");
 		this.History.AddHandler(this.OnUndoRedo);
-		
-		_scene.OnSceneChanged += this.Selection.Update;
+        
+		this._scene.OnSceneChanged += this.Selection.Update;
 	}
 
 	// Editor state

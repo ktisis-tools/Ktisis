@@ -63,12 +63,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Scene\Draw\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
-	  <EmbeddedResource Include="Localization\Data\*.json" />
+	  <EmbeddedResource Include="Interface\Localization\Data\*.json" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using Ktisis.Common.Extensions;
-using Ktisis.Config.Display;
+using Ktisis.Data.Config.Display;
 using Ktisis.Scene.Impl;
 
 namespace Ktisis.Scene.Objects;
