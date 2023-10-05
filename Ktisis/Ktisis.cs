@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Threading.Tasks;
 
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 using Ktisis.Core;
 using Ktisis.Core.Impl;
-using Ktisis.Config;
 using Ktisis.Core.Services;
+using Ktisis.Config;
 
 namespace Ktisis;
 
@@ -23,8 +22,6 @@ public sealed class Ktisis : IDalamudPlugin {
 	public static string VersionName = $"Ktisis (Alpha {Version})";
 
 	// Plugin framework
-
-	private Task? InitTask;
 
 	private readonly ServiceManager Services;
 
@@ -43,41 +40,34 @@ public sealed class Ktisis : IDalamudPlugin {
 		this.Services = new ServiceManager()
 			.AddDalamudServices(api);
 
-		this.InitTask = Init().ContinueWith(task => {
-			this.InitTask = null;
-			if (task.Exception == null) return;
-
-			Ktisis.Log.Fatal("Ktisis failed to load due to the following error(s):");
-			foreach (var err in task.Exception.InnerExceptions)
-				Ktisis.Log.Error(err.ToString());
-
+		try {
+			Init();
+		} catch (Exception err) {
+			Log.Fatal("Ktisis failed to load due to the following error, disposing...");
+			Log.Error(err.ToString());
+			
 			this.Services.GetService<NotifyService>()?
 				.Error("Ktisis failed to load. Please check your error log for more information.");
-
+			
 			Dispose();
-		});
+		}
 	}
 
 	// Initialization
 
-	private async Task Init() {
-		await Task.Yield();
-
+	private void Init() {
 		var timer = new Stopwatch();
 		timer.Start();
 
 		this.Services.AddServices<KtisisServiceAttribute>();
 
-		var cfg = this.Services.GetRequiredService<ConfigService>(); 
-		await Task.WhenAll(
-			cfg.LoadConfig(),
-			Task.Run(this.Services.PreInit)
-		);
-		
+		var cfg = this.Services.GetRequiredService<ConfigService>();
+		cfg.LoadConfig().Wait();
+		this.Services.PreInit();
 		this.Services.Initialize();
 
 		timer.Stop();
-		Ktisis.Log.Debug($"Plugin startup completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
+		Log.Debug($"Plugin startup completed in {timer.Elapsed.TotalMilliseconds:0.000}ms");
 	}
 
 	// Version info
@@ -89,13 +79,11 @@ public sealed class Ktisis : IDalamudPlugin {
 	// Dispose
 
 	public void Dispose() {
-		this.InitTask?.Wait();
-
 		try {
 			var cfg = this.Services.GetService<ConfigService>();
 			cfg?.SaveConfig();
 		} catch (Exception err) {
-			Ktisis.Log.Error($"Error occurred during disposal:\n{err}");
+			Log.Error($"Error occurred during disposal:\n{err}");
 		}
 
 		this.Services.Dispose();
