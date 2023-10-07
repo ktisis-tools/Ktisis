@@ -10,7 +10,7 @@ using Ktisis.Interface.Input.Keys;
 namespace Ktisis.Actions.Gizmo; 
 
 [Action("Gizmo_SetScaleMode")]
-public class ModeScaleAction : GizmoOpAction, IKeybind {
+public class ModeScaleAction : ModeActionBase, IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.SCALE;
 	
 	public ModeScaleAction(ConfigService _cfg, EditorService _editor) : base(_cfg, _editor) {}

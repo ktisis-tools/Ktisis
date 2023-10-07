@@ -7,9 +7,12 @@ using Dalamud.Interface.Windowing;
 
 using ImGuiNET;
 
+using Ktisis.Actions.Gizmo;
+using Ktisis.Actions.History;
 using Ktisis.Data.Config;
 using Ktisis.Editing;
 using Ktisis.Interface.Gui.Components;
+using Ktisis.Interface.Gui.Menus;
 using Ktisis.Interface.Gui.Widgets;
 using Ktisis.Interface.Localization;
 using Ktisis.Posing;
@@ -29,6 +32,7 @@ public class Workspace : Window {
 	private readonly PosingService _posing;
 	private readonly SceneManager _sceneMgr;
 	private readonly EditorService _editor;
+	private readonly ActionContextBuilder _ctx;
 
 	private ConfigFile Config => this._cfg.Config;
 	
@@ -39,9 +43,9 @@ public class Workspace : Window {
 		GPoseService _gpose,
 		PosingService _posing,
 		SceneManager _sceneMgr,
-		EditorService _editor
+		EditorService _editor,
+		ActionContextBuilder _ctxMenu
 	) : base("Ktisis") {
-		
 		this._gui = _gui;
 		this._cfg = _cfg;
 		this._locale = _locale;
@@ -49,6 +53,7 @@ public class Workspace : Window {
 		this._posing = _posing;
 		this._sceneMgr = _sceneMgr;
 		this._editor = _editor;
+		this._ctx = _ctxMenu;
 		
 		this.SceneTree = new SceneTree(_cfg, _sceneMgr);
 		this.SceneTree.OnItemClicked += OnItemClicked;

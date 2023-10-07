@@ -5,13 +5,13 @@ using Ktisis.Data.Config;
 
 namespace Ktisis.Actions.Gizmo; 
 
-public abstract class GizmoOpAction : IAction {
+public abstract class ModeActionBase : IAction {
 	protected abstract Operation TargetOp { get; init; }
 
 	private readonly ConfigService _cfg;
 	private readonly EditorService _editor;
 
-	protected GizmoOpAction(ConfigService _cfg, EditorService _editor) {
+	protected ModeActionBase(ConfigService _cfg, EditorService _editor) {
 		this._cfg = _cfg;
 		this._editor = _editor;
 	}

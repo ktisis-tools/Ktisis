@@ -9,7 +9,7 @@ using Ktisis.Interface.Input.Keys;
 namespace Ktisis.Actions.Gizmo; 
 
 [Action("Gizmo_SetRotateMode")]
-public class ModeRotateAction : GizmoOpAction, IKeybind {
+public class ModeRotateAction : ModeActionBase, IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.ROTATE;
 	
 	public ModeRotateAction(ConfigService _cfg, EditorService _editor) : base(_cfg, _editor) {}
