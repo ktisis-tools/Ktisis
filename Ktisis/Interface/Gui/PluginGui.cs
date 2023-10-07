@@ -8,6 +8,7 @@ using Dalamud.Interface.Windowing;
 using Ktisis.Common.Extensions;
 using Ktisis.Core;
 using Ktisis.Events;
+using Ktisis.Interface.Gui.Menus;
 using Ktisis.Interface.Gui.Overlay;
 using Ktisis.Interface.Gui.Windows;
 using Ktisis.Services;
@@ -78,11 +79,21 @@ public class PluginGui : IDisposable {
 
 	public void ToggleMainWindow() => this.GetWindow<Workspace>().Toggle();
 	
+	// Context menu
+
+	private ContextMenu? ContextMenu;
+
+	public ContextMenuFactory BuildContextMenu(string id)
+		=> new(id, result => this.ContextMenu = result);
+		
 	// Events
 
 	private void OnDraw() {
 		this._overlay.Draw();
 		this.Windows.Draw();
+
+		if (this.ContextMenu is ContextMenu ctx && !ctx.Draw())
+			this.ContextMenu = null;
 	}
 
 	private void OnGPoseUpdate(bool active) {
