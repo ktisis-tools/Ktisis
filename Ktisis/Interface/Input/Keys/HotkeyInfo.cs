@@ -2,9 +2,9 @@ using System;
 
 using Ktisis.Data.Config.Input;
 
-namespace Ktisis.Interface.Input; 
+namespace Ktisis.Interface.Input.Keys; 
 
-public delegate bool HotkeyHandler(string id);
+public delegate bool HotkeyHandler();
 
 [Flags]
 public enum HotkeyFlags {

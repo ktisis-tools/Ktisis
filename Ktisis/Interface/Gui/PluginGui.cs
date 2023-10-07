@@ -82,8 +82,8 @@ public class PluginGui : IDisposable {
 
 	private ContextMenu? ContextMenu;
 
-	public ContextMenuFactory BuildContextMenu(string id)
-		=> new(id, result => this.ContextMenu = result);
+	public void SetContextMenu(ContextMenu ctxMenu)
+		=> this.ContextMenu = ctxMenu;
 		
 	// Events
 
