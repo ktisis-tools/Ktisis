@@ -5,6 +5,7 @@ using System.Reflection;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
+using Ktisis.Actions.Impl;
 using Ktisis.Core;
 using Ktisis.Events;
 using Ktisis.Services;
@@ -61,7 +62,9 @@ public sealed class Ktisis : IDalamudPlugin {
 
 		this.Services.AddServices<DIEventAttribute>()
 			.AddServices<DIComponentAttribute>()
-			.AddServices<DIServiceAttribute>();
+			.AddServices<DIServiceAttribute>()
+			.AddServices<ActionAttribute>()
+			.Initialize();
 
         var cfg = this.Services.GetRequiredService<ConfigService>();
 		cfg.LoadConfig().Wait();

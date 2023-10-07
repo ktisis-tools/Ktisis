@@ -9,7 +9,7 @@ using Ktisis.Interface.Input.Keys;
 namespace Ktisis.Actions.Gizmo; 
 
 [Action("Gizmo_SetTranslateMode")]
-public class ModeTranslateAction : GizmoOpAction, IKeybind {
+public class ModeTranslateAction : ModeActionBase, IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.TRANSLATE;
 	
 	public ModeTranslateAction(ConfigService _cfg, EditorService _editor) : base(_cfg, _editor) {}

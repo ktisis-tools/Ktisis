@@ -3,11 +3,11 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-using Ktisis.Actions.Impl;
 using Ktisis.Core;
 using Ktisis.Events;
 using Ktisis.Interface.Input;
 using Ktisis.Interface.Input.Keys;
+using Ktisis.Actions.Impl;
 
 namespace Ktisis.Actions; 
 
@@ -45,19 +45,17 @@ public class ActionService : IDisposable {
 
 		foreach (var (type, attr) in ResolveActions()) {
 			try {
-				CreateAction(type, attr);
+				RegisterAction(type, attr);
 			} catch (Exception err) {
 				Ktisis.Log.Error($"Failed to initialize action '{attr.Name}':\n{err}");
 			}
 		}
 	}
 
-	private void CreateAction(Type type, ActionAttribute attr) {
-		var inst = (IAction)this._services.Create(type);
-
+	private void RegisterAction(Type type, ActionAttribute attr) {
+		var inst = (IAction)this._services.GetService(type)!;
 		if (inst is IKeybind)
 			RegisterActionHotkey(attr.Name, inst);
-		
 		this.Actions.Add(attr.Name, inst);
 	}
 

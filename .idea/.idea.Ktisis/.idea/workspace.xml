@@ -11,34 +11,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/ActionService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/GizmoToggleAction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeActionBase.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeRotateAction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeScaleAction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeTranslateAction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/History/RedoAction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/History/UndoAction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Impl/ActionAttribute.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Impl/IAction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ActionContextBuilder.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Input/Keys/HotkeyFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Input/Keys/IKeybind.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/IServiceContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/IServiceContainer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Input/Keybind.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Input/Keybind.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextMenuFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextMenuFactory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextNodeFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextNodeFactory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/PluginGui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/PluginGui.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/ActionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/ActionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeActionBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeActionBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeRotateAction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeRotateAction.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeScaleAction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeScaleAction.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeTranslateAction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeTranslateAction.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Windows/Workspace.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/Factory/HotkeyAttribute.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/Factory/HotkeyFactory.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/HotkeyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Input/Keys/HotkeyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/Hotkeys/GizmoHotkeys.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/Hotkeys/HistoryHotkeys.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/InputService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Input/InputService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -210,7 +191,7 @@
       <workItem from="1694606030290" duration="27390000" />
       <workItem from="1696529716128" duration="8536000" />
       <workItem from="1696582942390" duration="1788000" />
-      <workItem from="1696685880100" duration="23601000" />
+      <workItem from="1696685880100" duration="26046000" />
     </task>
     <servers />
   </component>
