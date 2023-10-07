@@ -29,17 +29,29 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 		return this;
 	}
 
+	private readonly Dictionary<Type, object> _toInit = new();
+
 	internal ServiceManager AddServices<A>() where A : Attribute {
-		Assembly.GetExecutingAssembly().GetTypes()
-			.Where(type => type.CustomAttributes.Any(x => x.AttributeType == typeof(A)))
-			.Select(type => {
-				var inst = FormatterServices.GetUninitializedObject(type);
-				AddInstance(type, inst);
-				return inst;
-			})
-			.ToList()
-			.ForEach(inst => Inject(inst.GetType(), inst));
+		var types = Assembly.GetExecutingAssembly().GetTypes()
+			.Where(type => type.CustomAttributes.Any(x => x.AttributeType == typeof(A)));
+
+		foreach (var type in types) {
+			var inst = FormatterServices.GetUninitializedObject(type);
+			this._toInit.Add(type, inst);
+			AddInstance(type, inst);
+		}
 		
+		return this;
+	}
+
+	internal ServiceManager Initialize() {
+		try {
+			foreach (var (type, inst) in this._toInit)
+				this.Inject(type, inst);
+		} finally {
+			this._toInit.Clear();
+		}
+
 		return this;
 	}
 	
