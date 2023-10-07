@@ -11,12 +11,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextMenu.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextMenuFactory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/ActionService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/GizmoToggleAction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeActionBase.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeRotateAction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeScaleAction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeTranslateAction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/History/RedoAction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/History/UndoAction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Impl/ActionAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Actions/Impl/IAction.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ActionContextBuilder.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Input/Keys/HotkeyFactory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Input/Keys/IKeybind.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Core/IServiceContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/IServiceContainer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/ServiceManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Input/Keybind.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Input/Keybind.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextMenuFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextMenuFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextNodeFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ContextNodeFactory.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/PluginGui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/PluginGui.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Windows/Workspace.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/Factory/HotkeyAttribute.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/Factory/HotkeyFactory.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/HotkeyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Input/Keys/HotkeyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/Hotkeys/GizmoHotkeys.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/Hotkeys/HistoryHotkeys.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Input/InputService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Input/InputService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +56,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1a58d48ff1d44defa9150e93b802ab8a7880/c1/f85855e5/IServiceProvider.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/1a/611cec09/DataManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/66/a3265672/IDalamudTextureWrap.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/51a0a2661731439c840316222ff09db4185210/9d/f6ca154f/Character.cs" root0="SKIP_HIGHLIGHTING" />
@@ -56,8 +79,6 @@
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_demo.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_internal.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Ktisis/Editing/History/TransformHistory.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Ktisis/Interface/Overlay/Render/RendererBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Scene/Impl/ITransformLocal.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Scene/Objects/World/WorldObject.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Ktisis/Scene/SceneGraph.cs" root0="FORCE_HIGHLIGHTING" />
@@ -189,7 +210,7 @@
       <workItem from="1694606030290" duration="27390000" />
       <workItem from="1696529716128" duration="8536000" />
       <workItem from="1696582942390" duration="1788000" />
-      <workItem from="1696685880100" duration="12596000" />
+      <workItem from="1696685880100" duration="23601000" />
     </task>
     <servers />
   </component>

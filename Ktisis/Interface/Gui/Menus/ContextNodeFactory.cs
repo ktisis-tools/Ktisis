@@ -1,16 +1,27 @@
 using System;
 using System.Collections.Generic;
 
-namespace Ktisis.Interface.Gui.Menus; 
+namespace Ktisis.Interface.Gui.Menus;
 
-public abstract class ContextNodeFactoryBase<T> {
+public interface IContextNodeFactoryBase<out T> {
+	public T AddAction(string name, Action callback);
+	public T AddAction(string name, Action callback, string shortcut);
+
+	public T AddActionGroup(Action<ContextNodeFactory> builder);
+
+	public T AddSubMenu(string name, Action<ContextNodeFactory> builder);
+
+	public T AddSeparator();
+}
+
+public abstract class ContextNodeFactoryBase<T> : IContextNodeFactoryBase<T> {
 	protected readonly List<IContextMenuNode> Nodes = new();
 
 	private IContextMenuNode? LastNode;
 
 	protected abstract T FactoryMethod();
 	
-	private T AddNode(IContextMenuNode node) {
+	protected T AddNode(IContextMenuNode node) {
 		switch (this.LastNode) {
 			case not null when node is ContextMenu.ActionGroup:
 			case ContextMenu.ActionGroup when node is not ContextMenu.Separator:

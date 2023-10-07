@@ -11,8 +11,7 @@ using Ktisis.Core;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Input;
 using Ktisis.Events;
-using Ktisis.Interface.Input.Factory;
-using Ktisis.Interface.Input.Hotkeys;
+using Ktisis.Interface.Input.Keys;
 using Ktisis.Interop;
 using Ktisis.Services;
 
@@ -27,19 +26,15 @@ public class InputService {
 	private readonly GPoseService _gpose;
 	private readonly ConfigService _cfg;
 	private readonly IGameGui _gui;
-	
-	private HotkeyFactory Factory;
 
 	private ControlHooks? ControlHooks;
 
 	public InputService(
-		IServiceContainer _services,
 		InteropService _interop,
 		IKeyState _keyState,
 		GPoseService _gpose,
 		ConfigService _cfg,
 		IGameGui _gui,
-		InitEvent _init,
 		InitHooksEvent _initHooks
 	) {
 		this._interop = _interop;
@@ -47,18 +42,10 @@ public class InputService {
 		this._gpose = _gpose;
 		this._cfg = _cfg;
 		this._gui = _gui;
-
-		this.Factory = new HotkeyFactory(this, _services);
 		
 		_gpose.OnGPoseUpdate += OnGPoseUpdate;
-
-		_init.Subscribe(Initialize);
+        
 		_initHooks.Subscribe(InitHooks);
-	}
-	
-	private void Initialize() {
-		this.Factory.Create<GizmoHotkeys>()
-			.Create<HistoryHotkeys>();
 	}
 
 	private void InitHooks() {
@@ -102,6 +89,9 @@ public class InputService {
 
 		return result;
 	}
+
+	public bool TryGetHotkey(string name, out HotkeyInfo? hotkey)
+		=> this.Hotkeys.TryGetValue(name, out hotkey);
 	
 	// Events
 
@@ -124,7 +114,7 @@ public class InputService {
 		};
 
 		var hk = GetActiveHotkey(key, flag);
-		return hk?.Handler.Invoke(hk.Name) ?? false;
+		return hk?.Handler.Invoke() ?? false;
 	}
 	
 	// Check chat state

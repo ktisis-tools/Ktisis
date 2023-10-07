@@ -63,7 +63,7 @@ internal class ServiceManager : IServiceContainer, IDisposable {
 	
 	// Injection
 
-	private object Create(Type type, params object?[] deps) {
+	public object Create(Type type, params object?[] deps) {
 		if (GetConstructor(type, out var param, deps) is ConstructorInfo ctor)
 			return ctor.Invoke(param);
 		throw new Exception($"Failed to resolve constructor for type '{type.Name}'");
