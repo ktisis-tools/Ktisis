@@ -18,10 +18,10 @@ using Ktisis.Services;
 namespace Ktisis.Interface.Input;
 
 [DIService]
-public class InputService {
+public class InputManager {
 	// Service
 	
-	private readonly InteropService _interop;
+	private readonly InteropManager _interop;
 	private readonly IKeyState _keyState;
 	private readonly GPoseService _gpose;
 	private readonly ConfigService _cfg;
@@ -29,8 +29,8 @@ public class InputService {
 
 	private ControlHooks? ControlHooks;
 
-	public InputService(
-		InteropService _interop,
+	public InputManager(
+		InteropManager _interop,
 		IKeyState _keyState,
 		GPoseService _gpose,
 		ConfigService _cfg,

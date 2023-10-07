@@ -7,7 +7,7 @@ using Ktisis.Events;
 namespace Ktisis.Interface.Localization;
 
 [DIService]
-public class LocaleService {
+public class LocaleManager {
 	// Service
 
 	private readonly ConfigService _cfg;
@@ -16,7 +16,7 @@ public class LocaleService {
 	
 	private LocaleData? Data;
 
-	public LocaleService(
+	public LocaleManager(
 		ConfigService _cfg,
 		InitEvent _init
 	) {

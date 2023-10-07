@@ -8,9 +8,9 @@ namespace Ktisis.Actions.History;
 
 [Action("History_Undo")]
 public class UndoAction : IAction, IKeybind {
-	private readonly HistoryService _history;
+	private readonly HistoryManager _history;
 	
-	public UndoAction(HistoryService _history) {
+	public UndoAction(HistoryManager _history) {
 		this._history = _history;
 	}
 	

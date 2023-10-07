@@ -12,15 +12,15 @@ using Ktisis.Actions.Impl;
 namespace Ktisis.Actions; 
 
 [DIService]
-public class ActionService : IDisposable {
+public class ActionManager : IDisposable {
 	private readonly IServiceContainer _services;
-	private readonly InputService _input;
+	private readonly InputManager _input;
 	
 	private readonly Dictionary<string, IAction> Actions = new();
 	
-	public ActionService(
+	public ActionManager(
 		IServiceContainer _services,
-		InputService _input,
+		InputManager _input,
 		InitEvent _init
 	) {
 		this._services = _services;

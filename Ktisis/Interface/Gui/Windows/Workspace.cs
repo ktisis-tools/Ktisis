@@ -27,11 +27,11 @@ public class Workspace : Window {
 
 	private readonly PluginGui _gui;
 	private readonly ConfigService _cfg;
-	private readonly LocaleService _locale;
+	private readonly LocaleManager _locale;
 	private readonly GPoseService _gpose;
-	private readonly PosingService _posing;
+	private readonly PosingManager _posing;
 	private readonly SceneManager _sceneMgr;
-	private readonly EditorService _editor;
+	private readonly Editor _editor;
 	private readonly ActionContextBuilder _ctx;
 
 	private ConfigFile Config => this._cfg.Config;
@@ -39,11 +39,11 @@ public class Workspace : Window {
 	public Workspace(
 		PluginGui _gui,
 		ConfigService _cfg,
-		LocaleService _locale,
+		LocaleManager _locale,
 		GPoseService _gpose,
-		PosingService _posing,
+		PosingManager _posing,
 		SceneManager _sceneMgr,
-		EditorService _editor,
+		Editor _editor,
 		ActionContextBuilder _ctxMenu
 	) : base("Ktisis") {
 		this._gui = _gui;

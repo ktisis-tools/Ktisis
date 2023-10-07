@@ -18,7 +18,7 @@ public class ObjectMode : ModeHandler {
 	
 	private readonly ConfigService _cfg;
 	
-	public ObjectMode(SceneManager mgr, EditorService editor, ConfigService _cfg) : base(mgr, editor) {
+	public ObjectMode(SceneManager mgr, Editor editor, ConfigService _cfg) : base(mgr, editor) {
 		this._cfg = _cfg;
 	}
 	

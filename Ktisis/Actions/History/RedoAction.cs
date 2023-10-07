@@ -8,9 +8,9 @@ namespace Ktisis.Actions.History;
 
 [Action("History_Redo")]
 public class RedoAction : IAction, IKeybind {
-	private readonly HistoryService _history;
+	private readonly HistoryManager _history;
 	
-	public RedoAction(HistoryService _history) {
+	public RedoAction(HistoryManager _history) {
 		this._history = _history;
 	}
 	

@@ -9,9 +9,9 @@ public abstract class ModeActionBase : IAction {
 	protected abstract Operation TargetOp { get; init; }
 
 	private readonly ConfigService _cfg;
-	private readonly EditorService _editor;
+	private readonly Editor _editor;
 
-	protected ModeActionBase(ConfigService _cfg, EditorService _editor) {
+	protected ModeActionBase(ConfigService _cfg, Editor _editor) {
 		this._cfg = _cfg;
 		this._editor = _editor;
 	}

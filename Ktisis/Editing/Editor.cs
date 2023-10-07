@@ -35,12 +35,12 @@ public enum EditMode {
 // TODO: Consider splitting this to TransformService?
 
 [DIService]
-public class EditorService {
+public class Editor {
 	// Constructor
 
 	private readonly ConfigService _cfg;
 	private readonly SceneManager _scene;
-	private readonly HistoryService _history;
+	private readonly HistoryManager _history;
 	
 	public readonly SelectState Selection;
 
@@ -48,10 +48,10 @@ public class EditorService {
 
 	private ConfigFile Config => this._cfg.Config;
 	
-	public EditorService(
+	public Editor(
 		ConfigService _cfg,
 		SceneManager _scene,
-		HistoryService _history,
+		HistoryManager _history,
 		InitEvent _init
 	) {
 		this._cfg = _cfg;
@@ -82,7 +82,7 @@ public class EditorService {
 
 	private readonly Dictionary<EditMode, ModeHandler> Modes = new();
 
-	private EditorService AddMode<T>(EditMode id) where T : ModeHandler {
+	private Editor AddMode<T>(EditMode id) where T : ModeHandler {
 		var inst = (T)Activator.CreateInstance(typeof(T), this._scene, this, this._cfg)!;
 		this.Modes.Add(id, inst);
 		return this;

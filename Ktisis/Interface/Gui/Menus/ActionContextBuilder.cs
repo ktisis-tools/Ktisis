@@ -10,11 +10,11 @@ namespace Ktisis.Interface.Gui.Menus;
 
 [DIService]
 public class ActionContextBuilder {
-	private readonly ActionService _actions;
-	private readonly InputService _input;
-	private readonly LocaleService _locale;
+	private readonly ActionManager _actions;
+	private readonly InputManager _input;
+	private readonly LocaleManager _locale;
 	
-	public ActionContextBuilder(ActionService _action, InputService _input, LocaleService _locale) {
+	public ActionContextBuilder(ActionManager _action, InputManager _input, LocaleManager _locale) {
 		this._actions = _action;
 		this._input = _input;
 		this._locale = _locale;

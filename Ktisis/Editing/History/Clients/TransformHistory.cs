@@ -9,7 +9,7 @@ using Ktisis.Scene.Objects;
 namespace Ktisis.Editing.History.Clients; 
 
 public class TransformHistory : HistoryClient<TransformAction> {
-	public TransformHistory(string id, HistoryService _history) : base(id, _history) {}
+	public TransformHistory(string id, HistoryManager _history) : base(id, _history) {}
 
 	protected override TransformAction Create() => new(HandlerId);
 

@@ -31,7 +31,7 @@ public class GuiOverlay {
 	private readonly ConfigService _cfg;
 	private readonly GPoseService _gpose;
 	private readonly SceneManager _scene;
-	private readonly EditorService _editor;
+	private readonly Editor _editor;
 
 	private ConfigFile Config => this._cfg.Config;
 	
@@ -47,7 +47,7 @@ public class GuiOverlay {
 		ConfigService _cfg,
 		GPoseService _gpose,
 		SceneManager _scene,
-		EditorService _editor,
+		Editor _editor,
 		InitEvent _init
 	) {
 		this._services = _services;

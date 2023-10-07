@@ -12,7 +12,7 @@ using Ktisis.Interop.Unmanaged;
 namespace Ktisis.Interop; 
 
 [DIService]
-public class InteropService : IDisposable {
+public class InteropManager : IDisposable {
 	// Service
 
 	private readonly IFramework _frame;
@@ -23,7 +23,7 @@ public class InteropService : IDisposable {
 
 	private readonly InitHooksEvent _initHooks;
 	
-	public InteropService(
+	public InteropManager(
 		IFramework _frame,
 		ISigScanner _sig,
 		IGameInteropProvider _interop,

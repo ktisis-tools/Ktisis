@@ -6,15 +6,15 @@ using Ktisis.Services;
 namespace Ktisis.Posing; 
 
 [DIService]
-public class PosingService {
+public class PosingManager {
 	// Constructor
 
-	private readonly InteropService _interop;
+	private readonly InteropManager _interop;
 
 	private PoseHooks? Hooks;
 
-	public PosingService(
-		InteropService _interop,
+	public PosingManager(
+		InteropManager _interop,
 		GPoseService _gpose,
 		InitHooksEvent _initHooks
 	) {

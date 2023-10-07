@@ -20,9 +20,9 @@ public class TransformTable {
 
 	private readonly string Id;
 
-	private readonly LocaleService _locale;
+	private readonly LocaleManager _locale;
 
-	public TransformTable(string id, LocaleService _locale) {
+	public TransformTable(string id, LocaleManager _locale) {
 		this.Id = id;
 
 		this._locale = _locale;
