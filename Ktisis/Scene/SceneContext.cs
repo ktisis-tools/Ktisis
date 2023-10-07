@@ -11,12 +11,12 @@ public class SceneContext {
 	private readonly SceneManager Manager;
 	
 	private readonly ConfigService _cfg;
-	private readonly LocaleService _locale;
+	private readonly LocaleManager _locale;
 
 	public SceneContext(
 		SceneManager manager,
 		ConfigService _cfg,
-		LocaleService _locale
+		LocaleManager _locale
 	) {
 		this.Manager = manager;
 		

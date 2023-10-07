@@ -11,12 +11,12 @@ public enum HistoryMod {
 }
 
 [DIService]
-public class HistoryService {
+public class HistoryManager {
 	// Constructor
 
 	private readonly IServiceContainer _services;
 
-	public HistoryService(
+	public HistoryManager(
 		IServiceContainer _services
 	) {
 		this._services = _services;

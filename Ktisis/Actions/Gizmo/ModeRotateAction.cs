@@ -12,7 +12,7 @@ namespace Ktisis.Actions.Gizmo;
 public class ModeRotateAction : ModeActionBase, IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.ROTATE;
 	
-	public ModeRotateAction(ConfigService _cfg, EditorService _editor) : base(_cfg, _editor) {}
+	public ModeRotateAction(ConfigService _cfg, Editor _editor) : base(_cfg, _editor) {}
 
 	public void BuildKeybind(HotkeyFactory hotkey) {
 		hotkey.SetDefaultKey(VirtualKey.R, VirtualKey.CONTROL);

@@ -9,12 +9,12 @@ namespace Ktisis.Scene.Environment;
 public class EnvService {
 	// Constructor
 
-	private readonly InteropService _interop;
+	private readonly InteropManager _interop;
 	
 	private EnvHooks? EnvHooks;
 	
 	public EnvService(
-		InteropService _interop,
+		InteropManager _interop,
 		GPoseService _gpose,
 		InitHooksEvent _initHooks
 	) {

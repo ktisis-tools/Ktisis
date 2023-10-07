@@ -13,7 +13,7 @@ namespace Ktisis.Actions.Gizmo;
 public class ModeScaleAction : ModeActionBase, IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.SCALE;
 	
-	public ModeScaleAction(ConfigService _cfg, EditorService _editor) : base(_cfg, _editor) {}
+	public ModeScaleAction(ConfigService _cfg, Editor _editor) : base(_cfg, _editor) {}
 
 	public void BuildKeybind(HotkeyFactory hotkey) {
 		hotkey.SetDefaultKey(VirtualKey.S, VirtualKey.CONTROL);

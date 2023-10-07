@@ -12,7 +12,7 @@ namespace Ktisis.Actions.Gizmo;
 public class ModeTranslateAction : ModeActionBase, IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.TRANSLATE;
 	
-	public ModeTranslateAction(ConfigService _cfg, EditorService _editor) : base(_cfg, _editor) {}
+	public ModeTranslateAction(ConfigService _cfg, Editor _editor) : base(_cfg, _editor) {}
 
 	public void BuildKeybind(HotkeyFactory hotkey) {
 		hotkey.SetDefaultKey(VirtualKey.T, VirtualKey.CONTROL);

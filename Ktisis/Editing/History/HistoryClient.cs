@@ -11,13 +11,13 @@ public delegate bool HandleAction<in T>(T action, HistoryMod mod);
 public abstract class HistoryClient<T> : IHistoryClient where T : HistoryActionBase {
 	// Dependency access
 	
-	private readonly HistoryService _history;
+	private readonly HistoryManager _history;
 	
 	// Constructor
 
 	public string HandlerId { get; }
 
-	protected HistoryClient(string id, HistoryService _history) {
+	protected HistoryClient(string id, HistoryManager _history) {
 		this._history = _history;
 		
 		this.HandlerId = id;

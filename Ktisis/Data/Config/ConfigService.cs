@@ -17,12 +17,12 @@ public class ConfigService {
 
 	private readonly DalamudPluginInterface _api;
 	
-	private readonly DataService _data;
+	private readonly PluginData _data;
 	private readonly NotifyService _notify;
 
 	public ConfigService(
 		DalamudPluginInterface _api,
-		DataService _data,
+		PluginData _data,
 		NotifyService _notify
 	) {
 		this._api = _api;

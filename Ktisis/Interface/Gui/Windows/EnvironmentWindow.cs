@@ -22,12 +22,12 @@ using Lumina.Excel.GeneratedSheets;
 namespace Ktisis.Interface.Gui.Windows; 
 
 public class EnvironmentWindow : Window {
-	private readonly DataService _data;
-	private readonly LocaleService _locale;
+	private readonly PluginData _data;
+	private readonly LocaleManager _locale;
 	private readonly GPoseService _gpose;
 	private readonly EnvService _env;
 	
-	public EnvironmentWindow(DataService _data, LocaleService _locale, GPoseService _gpose, EnvService _env) : base(
+	public EnvironmentWindow(PluginData _data, LocaleManager _locale, GPoseService _gpose, EnvService _env) : base(
 		"##__EnvEditor__"
 	) {
 		this._data = _data;

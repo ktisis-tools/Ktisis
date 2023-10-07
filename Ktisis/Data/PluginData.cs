@@ -14,14 +14,14 @@ using Lumina.Excel.GeneratedSheets;
 namespace Ktisis.Data; 
 
 [DIService]
-public class DataService : SchemaReader {
+public class PluginData : SchemaReader {
 	// Constructor
 
 	private readonly IDataManager _data;
 	private readonly ITextureProvider _tex;
 	private readonly IClientState _state;
 
-	public DataService(IDataManager _data, ITextureProvider _tex, IClientState _state) {
+	public PluginData(IDataManager _data, ITextureProvider _tex, IClientState _state) {
 		this._data = _data;
 		this._tex = _tex;
 		this._state = _state;
