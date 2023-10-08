@@ -44,7 +44,8 @@ public class Workspace : Window {
 		PosingManager _posing,
 		SceneManager _sceneMgr,
 		Editor _editor,
-		ActionContextBuilder _ctxMenu
+		ActionContextBuilder _ctxMenu,
+		SceneTree _sceneTree
 	) : base("Ktisis") {
 		this._gui = _gui;
 		this._cfg = _cfg;
@@ -55,8 +56,8 @@ public class Workspace : Window {
 		this._editor = _editor;
 		this._ctx = _ctxMenu;
 		
-		this.SceneTree = new SceneTree(_cfg, _sceneMgr);
-		this.SceneTree.OnItemClicked += OnItemClicked;
+		this.SceneTree = _sceneTree;
+		_sceneTree.OnItemClicked += OnItemClicked;
 		
 		RespectCloseHotkey = false;
 	}
