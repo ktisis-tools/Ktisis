@@ -13,13 +13,11 @@
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/ActionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/ActionService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeActionBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeActionBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeRotateAction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeRotateAction.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeScaleAction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeScaleAction.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeTranslateAction.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Actions/Gizmo/ModeTranslateAction.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editing/SelectState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editing/SelectState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Components/SceneTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Components/SceneTree.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ActionContextBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Menus/ActionContextBuilder.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Gui/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Gui/Windows/Workspace.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Localization/Data/en_US.json" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Localization/Data/en_US.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -191,7 +189,8 @@
       <workItem from="1694606030290" duration="27390000" />
       <workItem from="1696529716128" duration="8536000" />
       <workItem from="1696582942390" duration="1788000" />
-      <workItem from="1696685880100" duration="26046000" />
+      <workItem from="1696685880100" duration="32333000" />
+      <workItem from="1696748622287" duration="956000" />
     </task>
     <servers />
   </component>

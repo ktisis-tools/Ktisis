@@ -9,8 +9,10 @@ using ImGuiNET;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
+using Ktisis.Core;
 using Ktisis.Data.Config;
 using Ktisis.Editing;
+using Ktisis.Interface.Gui.Menus;
 using Ktisis.Interface.Gui.Widgets;
 using Ktisis.Scene;
 using Ktisis.Scene.Impl;
@@ -20,16 +22,25 @@ namespace Ktisis.Interface.Gui.Components;
 
 public delegate void OnItemClickedHandler(SceneObject item, SelectFlags flags);
 
+[DIComponent]
 public class SceneTree {
 	// Constructor
 
 	private readonly ConfigService _cfg;
-
 	private readonly SceneManager _sceneMgr;
+	private readonly ActionContextBuilder _ctx;
+	private readonly PluginGui _gui;
 
-	public SceneTree(ConfigService _cfg, SceneManager _sceneMgr) {
+	public SceneTree(
+		ConfigService _cfg,
+		SceneManager _sceneMgr,
+		ActionContextBuilder _ctx,
+		PluginGui _gui
+	) {
 		this._cfg = _cfg;
 		this._sceneMgr = _sceneMgr;
+		this._ctx = _ctx;
+		this._gui = _gui;
 	}
 	
 	// Events
@@ -124,8 +135,14 @@ public class SceneTree {
 			if (DrawNodeLabel(scene, item, pos, flags, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
-			if (isClick && IsNodeHovered(pos, size, rightAdjust))
-				ClickItem(item);
+			if (IsNodeHovered(pos, size, rightAdjust)) {
+				if (isClick) {
+					ClickItem(item);
+				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
+					var ctx = this._ctx.BuildFromObject(item);
+					this._gui.SetContextMenu(ctx);
+				}
+			}
 		}
 		
 		if (isExpand) IterateTree(scene, children);

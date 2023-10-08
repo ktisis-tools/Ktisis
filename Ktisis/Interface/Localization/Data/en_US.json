@@ -13,6 +13,11 @@
 		"options": "Options"
 	},
 	
+	"context": {
+		"select": "Select",
+		"unselect": "Unselect"
+	},
+	
 	"transform": {
 		"position": "Position",
 		"rotation": "Rotation",
@@ -22,6 +27,23 @@
 	"edit_mode": {
 		"Object": "Object Mode",
 		"Pose": "Pose Mode"
+	},
+	
+	"file": {
+		"import": "Import...",
+		"export": "Export...",
+		"chara": {
+			"name": "Character (.chara)",
+			"ctx_import": "Import appearance...",
+			"ctx_export": "Export appearance..."
+		},
+		"pose": {
+			"name": "Pose File (.pose)",
+			"ctx_import": "Import pose...",
+			"ctx_import.group": "Import group...",
+			"ctx_import.select": "Import selected...",
+			"ctx_export": "Export pose..."
+		}
 	},
 	
 	"workspace": {
@@ -62,6 +84,11 @@
 			"show": "Show rotation gizmo",
 			"hide": "Hide rotation gizmo"
 		}
+	},
+	
+	"chara_edit": {
+		"title": "Appearance Editor",
+		"hint": "Edit appearance"
 	},
 	
 	"camera_edit": {

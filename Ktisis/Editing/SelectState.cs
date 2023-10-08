@@ -61,9 +61,9 @@ public class SelectState {
 		this._selected.Add(item);
 	}
 
-	private void RemoveItem(SceneObject item) {
+	private bool RemoveItem(SceneObject item) {
 		item.Flags &= ~ObjectFlags.Selected;
-		this._selected.Remove(item);
+		return this._selected.Remove(item);
 	}
 
 	private void RemoveAll() {
@@ -72,6 +72,16 @@ public class SelectState {
 	}
 	
 	// Handler
+
+	public void Select(SceneObject item) {
+		AddItem(item);
+		InvokeChange(item);
+	}
+
+	public void Unselect(SceneObject item) {
+		if (RemoveItem(item))
+			InvokeChange(null);
+	}
 
 	public void HandleClick(SceneObject item, SelectFlags flags) {
 		var isSelect = item.IsSelected();
