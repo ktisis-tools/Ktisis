@@ -20,6 +20,7 @@ using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
 using Ktisis.Interface.Components;
+using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Interface.Windows {
 	internal static class ConfigGui {
@@ -275,9 +276,11 @@ namespace Ktisis.Interface.Windows {
 		// AutoSave
 		public static void DrawAutoSaveTab(Configuration cfg) {
 			var enableAutoSave = cfg.EnableAutoSave;
-			if (ImGui.Checkbox(Locale.GetString("Enable_auto_save"), ref enableAutoSave))
+			if (ImGui.Checkbox(Locale.GetString("Enable_auto_save"), ref enableAutoSave)) {
 				cfg.EnableAutoSave = enableAutoSave;
-			
+				PoseHooks.AutoSave.UpdateSettings();
+			}
+
 			var clearOnExit = cfg.ClearAutoSavesOnExit;
 			if (ImGui.Checkbox(Locale.GetString("Clear_auto_saves_on_exit"), ref clearOnExit))
 				cfg.ClearAutoSavesOnExit = clearOnExit;
@@ -285,8 +288,10 @@ namespace Ktisis.Interface.Windows {
 			ImGui.Spacing();
 
 			var autoSaveInterval = cfg.AutoSaveInterval;
-			if (ImGui.SliderInt(Locale.GetString("Auto_save_interval"), ref autoSaveInterval, 10, 600, "%d s"))
+			if (ImGui.SliderInt(Locale.GetString("Auto_save_interval"), ref autoSaveInterval, 10, 600, "%d s")) {
 				cfg.AutoSaveInterval = autoSaveInterval;
+				PoseHooks.AutoSave.UpdateSettings();
+			}
 
 			var autoSaveCount = cfg.AutoSaveCount;
 			if (ImGui.SliderInt(Locale.GetString("Auto_save_count"), ref autoSaveCount, 1, 20))
