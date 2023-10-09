@@ -7,6 +7,7 @@ using Ktisis.Helpers;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
 using Ktisis.Interface.Components;
+using Ktisis.Interop.Hooks;
 
 namespace Ktisis.Util {
 	internal class PoseAutoSave {
@@ -15,7 +16,10 @@ namespace Ktisis.Util {
 		private string SaveFolder => Ktisis.Configuration.AutoSavePath;
 
 		public void Enable() {
-			if (!Directory.Exists(SaveFolder))
+            if (!Ktisis.Configuration.EnableAutoSave)
+                return;
+
+            if (!Directory.Exists(SaveFolder))
 				Directory.CreateDirectory(SaveFolder);
 
 			_timer = new Timer(TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval));
@@ -43,16 +47,26 @@ namespace Ktisis.Util {
 			Services.Framework.RunOnFrameworkThread(Save);
 		}
 
+        internal void UpdateSettings() {
+			var timerEnabled = _timer?.Enabled ?? false;
+			var cfg = Ktisis.Configuration;
+
+            if (!timerEnabled && cfg.EnableAutoSave && PoseHooks.PosingEnabled)
+				Enable();
+			else if (timerEnabled && !cfg.EnableAutoSave && PoseHooks.PosingEnabled)
+				Disable();
+
+            if (_timer is not null && Math.Abs(_timer.Interval - TimeSpan.FromSeconds(cfg.AutoSaveInterval).TotalMilliseconds) > 0.01)
+                _timer.Interval = TimeSpan.FromSeconds(cfg.AutoSaveInterval).TotalMilliseconds;
+        }
+
 		private void Save() {
 			if (!Ktisis.IsInGPose) {
 				Disable();
 				return;
 			}
 
-			if (!Ktisis.Configuration.EnableAutoSave)
-				return;
-
-			var actors = ActorsList.SavedObjects;
+            var actors = ActorsList.SavedObjects;
 
 			Logger.Information($"Saving {actors.Count} actors");
 
@@ -82,12 +96,7 @@ namespace Ktisis.Util {
 			while (prefixes.Count > Ktisis.Configuration.AutoSaveCount) {
 				DeleteOldest();
 			}
-
-			//Dynamically update the interval.
-
-			if (_timer != null && Math.Abs(_timer.Interval - TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval).TotalMilliseconds) > 0.01)
-				_timer.Interval = TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval).TotalMilliseconds;
-		}
+        }
 
 		private void DeleteOldest() {
 			var oldest = prefixes.Dequeue();
