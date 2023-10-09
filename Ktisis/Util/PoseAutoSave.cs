@@ -15,9 +15,6 @@ namespace Ktisis.Util {
 		private string SaveFolder => Ktisis.Configuration.AutoSavePath;
 
 		public void Enable() {
-			if (!Ktisis.Configuration.EnableAutoSave)
-				return;
-
 			if (!Directory.Exists(SaveFolder))
 				Directory.CreateDirectory(SaveFolder);
 
@@ -51,6 +48,9 @@ namespace Ktisis.Util {
 				Disable();
 				return;
 			}
+
+			if (!Ktisis.Configuration.EnableAutoSave)
+				return;
 
 			var actors = ActorsList.SavedObjects;
 
