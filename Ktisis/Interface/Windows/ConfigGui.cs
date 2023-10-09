@@ -289,11 +289,11 @@ namespace Ktisis.Interface.Windows {
 
 			var autoSaveInterval = cfg.AutoSaveInterval;
 			if (ImGui.SliderInt(Locale.GetString("Auto_save_interval"), ref autoSaveInterval, 10, 600, "%d s")) {
-                cfg.AutoSaveInterval = autoSaveInterval;
-                PoseHooks.AutoSave.UpdateSettings();
-            }
+				cfg.AutoSaveInterval = autoSaveInterval;
+				PoseHooks.AutoSave.UpdateSettings();
+			}
 
-            var autoSaveCount = cfg.AutoSaveCount;
+			var autoSaveCount = cfg.AutoSaveCount;
 			if (ImGui.SliderInt(Locale.GetString("Auto_save_count"), ref autoSaveCount, 1, 20))
 				cfg.AutoSaveCount = autoSaveCount;
 

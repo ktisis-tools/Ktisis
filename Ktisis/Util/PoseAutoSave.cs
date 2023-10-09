@@ -16,10 +16,10 @@ namespace Ktisis.Util {
 		private string SaveFolder => Ktisis.Configuration.AutoSavePath;
 
 		public void Enable() {
-            if (!Ktisis.Configuration.EnableAutoSave)
-                return;
+			if (!Ktisis.Configuration.EnableAutoSave)
+				return;
 
-            if (!Directory.Exists(SaveFolder))
+			if (!Directory.Exists(SaveFolder))
 				Directory.CreateDirectory(SaveFolder);
 
 			_timer = new Timer(TimeSpan.FromSeconds(Ktisis.Configuration.AutoSaveInterval));
@@ -47,18 +47,18 @@ namespace Ktisis.Util {
 			Services.Framework.RunOnFrameworkThread(Save);
 		}
 
-        internal void UpdateSettings() {
+		internal void UpdateSettings() {
 			var timerEnabled = _timer?.Enabled ?? false;
 			var cfg = Ktisis.Configuration;
 
-            if (!timerEnabled && cfg.EnableAutoSave && PoseHooks.PosingEnabled)
+			if (!timerEnabled && cfg.EnableAutoSave && PoseHooks.PosingEnabled)
 				Enable();
 			else if (timerEnabled && !cfg.EnableAutoSave && PoseHooks.PosingEnabled)
 				Disable();
 
-            if (_timer is not null && Math.Abs(_timer.Interval - TimeSpan.FromSeconds(cfg.AutoSaveInterval).TotalMilliseconds) > 0.01)
-                _timer.Interval = TimeSpan.FromSeconds(cfg.AutoSaveInterval).TotalMilliseconds;
-        }
+			if (_timer is not null && Math.Abs(_timer.Interval - TimeSpan.FromSeconds(cfg.AutoSaveInterval).TotalMilliseconds) > 0.01)
+				_timer.Interval = TimeSpan.FromSeconds(cfg.AutoSaveInterval).TotalMilliseconds;
+		}
 
 		private void Save() {
 			if (!Ktisis.IsInGPose) {
@@ -66,7 +66,7 @@ namespace Ktisis.Util {
 				return;
 			}
 
-            var actors = ActorsList.SavedObjects;
+			var actors = ActorsList.SavedObjects;
 
 			Logger.Information($"Saving {actors.Count} actors");
 
@@ -96,7 +96,7 @@ namespace Ktisis.Util {
 			while (prefixes.Count > Ktisis.Configuration.AutoSaveCount) {
 				DeleteOldest();
 			}
-        }
+		}
 
 		private void DeleteOldest() {
 			var oldest = prefixes.Dequeue();
