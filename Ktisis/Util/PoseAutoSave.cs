@@ -56,7 +56,7 @@ namespace Ktisis.Util {
 
 			Logger.Information($"Saving {actors.Count} actors");
 
-			var prefix = $"AutoSave - {DateTime.Now:HH-mm-ss}";
+			var prefix = $"AutoSave - {DateTime.Now:yyyy-MM-dd HH-mm-ss}";
 			var folder = Path.Combine(SaveFolder, prefix);
 			prefixes.Enqueue(prefix);
 
