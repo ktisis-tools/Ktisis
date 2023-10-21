@@ -164,6 +164,21 @@ namespace Ktisis.Camera {
 			CameraHooks.Init();
 			EventManager.OnGPoseChange += OnGPoseChange;
 		}
+		
+		internal static void ChangeCameraIndex(int offset) {
+			var camera = GetActiveCamera();
+			if (camera == null) 
+				return;
+				
+			if (GetFreecam() == camera)
+				return;
+
+			var newIndex = (Cameras.FindIndex(tofind => tofind == camera) + offset) % Cameras.Count;
+			if (newIndex < 0) // loop back to start.
+				newIndex = Cameras.Count - 1; 
+				
+			SetOverride(Cameras[newIndex]);
+		}
 
 		internal static void Dispose() {
 			EventManager.OnGPoseChange -= OnGPoseChange;

@@ -9,6 +9,7 @@ using Dalamud.Game.ClientState.Keys;
 
 using FFXIVClientStructs.FFXIV.Client.UI;
 
+using Ktisis.Camera;
 using Ktisis.Events;
 using Ktisis.Overlay;
 using Ktisis.Interop.Hooks;
@@ -41,6 +42,19 @@ namespace Ktisis.Interface {
 				case Purpose.HoldToHideSkeleton:
 					Skeleton.Toggle();
 					return true;
+				case Purpose.NextCamera:
+					CameraService.ChangeCameraIndex(1);
+					break;
+				case Purpose.PreviousCamera:
+					CameraService.ChangeCameraIndex(-1);
+					break;
+				case Purpose.ToggleFreeCam:
+					CameraService.ToggleFreecam();
+					break;
+				case Purpose.NewCamera:
+					var camera = CameraService.SpawnCamera();
+					CameraService.SetOverride(camera);
+					break;
 			}
 
 			return false;
@@ -156,6 +170,10 @@ namespace Ktisis.Interface {
 			DeselectGizmo,
 			BoneSelectionUp,
 			BoneSelectionDown,
+			NextCamera,
+			PreviousCamera,
+			ToggleFreeCam,
+			NewCamera,
 		}
 
 		public static readonly Dictionary<Purpose, List<VirtualKey>> DefaultKeys = new(){
@@ -172,6 +190,8 @@ namespace Ktisis.Interface {
 			{Purpose.DeselectGizmo, new(){VirtualKey.ESCAPE}},
 			{Purpose.BoneSelectionUp, new(){VirtualKey.UP}},
 			{Purpose.BoneSelectionDown, new(){VirtualKey.DOWN}},
+			{Purpose.NextCamera, new(){VirtualKey.OEM_6}},
+			{Purpose.PreviousCamera, new(){VirtualKey.OEM_4}},
 		};
 
 		// Init & dispose
