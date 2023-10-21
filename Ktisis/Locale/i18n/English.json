@@ -82,6 +82,10 @@
     "Keyboard_Action_ClearCategoryVisibilityOverload": "Clear category visibility overload",
     "Keyboard_Action_HoldAllCategoryVisibilityOverload": "Hold all category visibility overload",
     "Keyboard_Action_CircleThroughSiblingLinkModes": "Circle through sibling link modes",
+    "Keyboard_Action_NextCamera": "Next camera",
+    "Keyboard_Action_PreviousCamera": "Previous camera",
+    "Keyboard_Action_ToggleFreeCam": "Toggle free cam",
+    "Keyboard_Action_NewCamera": "New camera",
 
     //// Game Jargon ////
 
