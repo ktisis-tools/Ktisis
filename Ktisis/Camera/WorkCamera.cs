@@ -5,6 +5,7 @@ using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 
 using Ktisis.Helpers;
+using Ktisis.Interface;
 using Ktisis.Structs.Input;
 
 namespace Ktisis.Camera {
@@ -60,7 +61,7 @@ namespace Ktisis.Camera {
 			}
 
 			MoveSpeed = DefaultSpeed;
-			if (keyState != null) {
+			if (keyState != null && !Input.IsChatInputActive()) {
 				if (Ktisis.Configuration.FreecamFast.IsActive(keyState))
 					MoveSpeed *= Ktisis.Configuration.FreecamShiftMuli;
 				else if (Ktisis.Configuration.FreecamSlow.IsActive(keyState))
