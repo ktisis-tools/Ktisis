@@ -318,7 +318,10 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			if (ImGui.Checkbox("Delimit camera", ref delimit)) {
 				var max = delimit ? 350 : 20;
 				gposeCam->DistanceMax = max;
+				gposeCam->DistanceMin = delimit ? 0 : 1.5f;
 				gposeCam->Distance = Math.Clamp(gposeCam->Distance, 0, max);
+				gposeCam->YMin = delimit ? 1.5f : 1.25f;
+				gposeCam->YMax = delimit ? -1.5f : -1.4f;
 			}
 
 			ImGui.SameLine();

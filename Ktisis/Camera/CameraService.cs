@@ -182,6 +182,9 @@ namespace Ktisis.Camera {
 				var active = (GPoseCamera*)Services.Camera->GetActiveCamera();
 				if (active != null) {
 					active->DistanceMax = 20;
+					active->DistanceMin = 1.5f;
+					active->YMax = -1.5f;
+					active->YMin = 1.5f;
 					active->Distance = Math.Clamp(active->Distance, 0, 20);
 				}
 			}
