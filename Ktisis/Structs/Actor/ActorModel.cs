@@ -33,6 +33,10 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x8F4)] public unsafe fixed uint DemiEquip[5];
 		[FieldOffset(0x910)] public unsafe fixed uint HumanEquip[10];
+		
+		[FieldOffset(0x2B0)] public float WeatherWetness;  // Set to 1.0f when raining and not covered or umbrella'd
+		[FieldOffset(0x2B4)] public float SwimmingWetness; // Set to 1.0f when in water
+		[FieldOffset(0x2B8)] public float WetnessDepth;    // Set to ~character height in GPose and higher values when swimming or diving.
 
 		private unsafe CharacterBase* AsCharacter() {
 			fixed (ActorModel* self = &this)
