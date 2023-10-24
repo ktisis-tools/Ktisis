@@ -71,6 +71,7 @@ namespace Ktisis {
 
 			Input.Init();
 			ActorStateWatcher.Init();
+			ActorWetnessOverride.Instance.Init();
 
 			// Register command
 
@@ -111,6 +112,7 @@ namespace Ktisis {
 
 			Interop.Alloc.Dispose();
 			ActorStateWatcher.Dispose();
+			ActorWetnessOverride.Instance.Dispose();
 			EventManager.OnGPoseChange -= Workspace.OnEnterGposeToggle;
 
 			Data.Sheets.Cache.Clear();
