@@ -54,7 +54,7 @@ namespace Ktisis.Helpers {
 
 		public unsafe static void ImportPose(Actor* actor, List<string> path, PoseMode modes) {
 			var content = File.ReadAllText(path[0]);
-			if (path[0].Contains(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
+			if (Path.GetExtension(path[0]).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
 			var pose = JsonParser.Deserialize<PoseFile>(content);
 			if (pose == null) return;
 

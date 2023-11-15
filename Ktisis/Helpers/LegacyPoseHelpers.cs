@@ -5,8 +5,7 @@ using Ktisis.Data.Files;
 
 namespace Ktisis.Helpers {
 	public static class LegacyPoseHelpers {
-		public static string ConvertLegacyPose(string file)
-		{
+		public static string ConvertLegacyPose(string file) {
 			var  result = "{\n";
 			result += "\t\"FileExtension\": \".pose\",\n";
 			result += "\t\"TypeName\": \"Anamnesis Pose\",\n";
@@ -17,8 +16,7 @@ namespace Ktisis.Helpers {
 			
 			var lines = file.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.TrimEntries);
 			
-			for (var i = 7; i < lines.Length - 1; i++)
-			{
+			for (var i = 7; i < lines.Length - 1; i++) {
 				result += ConvertLegacyBone(lines[i]);
 			}
 			
@@ -28,8 +26,7 @@ namespace Ktisis.Helpers {
 			return result;
 		}
 
-		private static string? ConvertLegacyBone(string bone)
-		{
+		private static string? ConvertLegacyBone(string bone) {
 			var boneString = "";
 			var boneName = bone.Split(new char[] {':'}, 2)[0].Replace("\"", "");
 			var boneRotation = bone.Split(new char[] {':'}, 2)[1].Replace("\"", "").Replace(",", "").Replace(" ", "");
@@ -37,8 +34,7 @@ namespace Ktisis.Helpers {
 			if (!PoseFile.LegacyConversions.ContainsKey(boneName) || boneRotation.Contains("null")) return null;
 			
 			var boneRotationValues = new float[4];
-			for (var i = 0; i < 4; i++)
-			{
+			for (var i = 0; i < 4; i++) {
 				var axisValue = Convert.ToInt32(boneRotation.Substring(i * 8, 8), 16);
 				boneRotationValues[i] = BitConverter.ToSingle(BitConverter.GetBytes(axisValue).Reverse().ToArray(), 0);
 			}
