@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
+using Ktisis.Data.Serialization.Converters;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
 using Ktisis.Interop.Hooks;
@@ -53,6 +54,7 @@ namespace Ktisis.Helpers {
 
 		public unsafe static void ImportPose(Actor* actor, List<string> path, PoseMode modes) {
 			var content = File.ReadAllText(path[0]);
+			if (path[0].Contains(".cmp")) content = LegacyPoseConverter.ConvertLegacyPose(content);
 			var pose = JsonParser.Deserialize<PoseFile>(content);
 			if (pose == null) return;
 

@@ -172,7 +172,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			if (ImGui.Button("Import##ImportExportPose")) {
 				KtisisGui.FileDialogManager.OpenFileDialog(
 					"Importing Pose",
-					"Pose Files (.pose){.pose}",
+					"Pose Files{.pose,.cmp}",
 					(success, path) => {
 						if (!success) return;
 
