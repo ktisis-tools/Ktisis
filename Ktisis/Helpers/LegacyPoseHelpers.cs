@@ -3,8 +3,8 @@ using System.Linq;
 
 using Ktisis.Data.Files;
 
-namespace Ktisis.Data.Serialization.Converters {
-	public static class LegacyPoseConverter {
+namespace Ktisis.Helpers {
+	public static class LegacyPoseHelpers {
 		public static string ConvertLegacyPose(string file)
 		{
 			var  result = "{\n";
