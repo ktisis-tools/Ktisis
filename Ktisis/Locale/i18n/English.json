@@ -67,6 +67,10 @@
     "Auto_save_count": "Auto Save Count",
     "Auto_save_path": "Auto Save Path",
     "Clear_auto_saves_on_exit":  "Clear auto saves on exit",
+    "Formatter": "Formatter",
+    "Example_Value": "Example Value",
+    "Example_Folder_Name": "Example Folder Name:",
+    "Auto_save_Folder_Name": "Auto Save Folder Name",
     // Display keyboard configs from enum defined in Input.cs
     "Input_Generic_Toggle": "Toggle",
     "Input_Generic_Hold": "Hold",

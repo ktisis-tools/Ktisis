@@ -13,6 +13,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Keys;
 
+using Ktisis.Helpers;
 using Ktisis.Util;
 using Ktisis.Overlay;
 using Ktisis.Localization;
@@ -300,6 +301,31 @@ namespace Ktisis.Interface.Windows {
 			var autoSavePath = cfg.AutoSavePath;
 			if (ImGui.InputText(Locale.GetString("Auto_save_path"), ref autoSavePath, 256))
 				cfg.AutoSavePath = autoSavePath;
+
+			var autoSaveFormat = cfg.AutoSaveFormat;
+			if (ImGui.InputText(Locale.GetString("Auto_save_Folder_Name"), ref autoSaveFormat, 256))
+				cfg.AutoSaveFormat = autoSaveFormat;
+
+			ImGui.Text(Locale.GetString("Example_Folder_Name"));
+			ImGui.TextUnformatted(PathHelper.Replace(autoSaveFormat));
+			
+			ImGui.Spacing();
+			ImGui.BeginTable("AutoSaveFormatters", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders| ImGuiTableFlags.PadOuterX);
+			
+			ImGui.TableSetupScrollFreeze(0, 1);
+			ImGui.TableSetupColumn(Locale.GetString("Formatter"));
+			ImGui.TableSetupColumn(Locale.GetString("Example_Value"));
+			ImGui.TableHeadersRow();
+
+			foreach ((var replaceKey, var replaceFunc) in PathHelper.Replacers) {
+				ImGui.TableNextRow();
+				ImGui.TableNextColumn();
+				ImGui.TextUnformatted(replaceKey);
+				ImGui.TableNextColumn();
+				ImGui.TextUnformatted(replaceFunc());
+			}
+			
+			ImGui.EndTable();
 
 			ImGui.EndTabItem();
 		}
