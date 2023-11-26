@@ -2,6 +2,7 @@
 using System.IO;
 using System.Timers;
 using System.Collections.Generic;
+using System.Linq;
 
 using Ktisis.Helpers;
 using Ktisis.Structs.Actor;
@@ -33,7 +34,7 @@ namespace Ktisis.Util {
 		public void Disable() {
 			lock (this) {
 				_timer?.Stop();
-
+				
 				if (!Ktisis.Configuration.ClearAutoSavesOnExit || Ktisis.Configuration.AutoSaveCount <= 0)
 					return;
 
@@ -70,7 +71,8 @@ namespace Ktisis.Util {
 
 			Logger.Information($"Saving {actors.Count} actors");
 
-			var prefix = $"AutoSave - {DateTime.Now:yyyy-MM-dd HH-mm-ss}";
+			// var prefix = $"AutoSave - {DateTime.Now:yyyy-MM-dd HH-mm-ss}";
+			var prefix = PathHelper.Replace(Ktisis.Configuration.AutoSaveFormat);
 			var folder = Path.Combine(SaveFolder, prefix);
 			prefixes.Enqueue(prefix);
 
@@ -105,6 +107,37 @@ namespace Ktisis.Util {
 				Logger.Verbose($"Deleting {folder}");
 				Directory.Delete(folder, true);
 			}
+			
+			DeleteEmptyDirs(SaveFolder);
+		}
+		
+		static void DeleteEmptyDirs(string dir)
+		{
+			if (string.IsNullOrEmpty(dir))
+				throw new ArgumentException(
+					"Starting directory is a null reference or an empty string", 
+					nameof(dir));
+
+			try
+			{
+				foreach (var d in Directory.EnumerateDirectories(dir))
+				{
+					DeleteEmptyDirs(d);
+				}
+
+				var entries = Directory.EnumerateFileSystemEntries(dir);
+
+				if (entries.Any())
+					return;
+			
+				try
+				{
+					Directory.Delete(dir);
+				}
+				catch (UnauthorizedAccessException) { }
+				catch (DirectoryNotFoundException) { }
+			}
+			catch (UnauthorizedAccessException) { }
 		}
 	}
 }
