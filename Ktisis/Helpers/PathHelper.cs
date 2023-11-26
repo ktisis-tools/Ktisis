@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
+
+using Dalamud.Logging;
+using Dalamud.Plugin;
 
 using Lumina.Excel.GeneratedSheets;
 
@@ -25,15 +29,37 @@ namespace Ktisis.Helpers
 			{"%Zone%", () => Services.DataManager.GetExcelSheet<TerritoryType>()?.GetRow(Services.ClientState.TerritoryType)?.PlaceName.Value?.Name.ToString() ?? "Unknown"},
 		};
 		
-		internal static string Replace(string path) {
-			if (string.IsNullOrEmpty(path)) return path;
-			if (!path.Contains('%')) return path;
-			
-			foreach ((var key, var value) in Replacers) {
-				path = path.Replace(key, value());
+		internal static string Replace(ReadOnlySpan<char> path) {
+			StringBuilder output = new StringBuilder(path.Length);
+
+			for (var i = 0; i < path.Length; i++) {
+				if (path[i] == '%') {
+					for (var j = i + 1; j < path.Length; j++) {
+						if (path[j] != '%')
+							continue;
+						
+						var key = path[i..(j + 1)].ToString();
+
+						if (Replacers.TryGetValue(key, out var replacer)) {
+							output.Append(replacer());
+							i = j;
+						} else if (key == "%%") {
+							output.Append('%');
+							i = j;
+						} else {
+							output.Append(key);
+							i = j - 1; // -1 so that if there is an invalid replacement key, we might be able to show the rest without any issues.
+						}
+
+						break;
+					}
+				} else {
+					
+					output.Append(path[i]);
+				}
 			}
 
-			return path;
+			return output.ToString();
 		}
 	}
 }
