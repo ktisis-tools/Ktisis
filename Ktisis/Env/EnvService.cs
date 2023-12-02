@@ -15,6 +15,7 @@ namespace Ktisis.Env {
 	public static class EnvService {
 		public static float? TimeOverride;
 		public static uint? SkyOverride;
+		public static bool? FreezeWater;
 		
 		// Init & Dispose
 		
@@ -35,6 +36,7 @@ namespace Ktisis.Env {
 			if (!state) {
 				TimeOverride = null;
 				SkyOverride = null;
+				FreezeWater = null;
 			}
 		}
 		

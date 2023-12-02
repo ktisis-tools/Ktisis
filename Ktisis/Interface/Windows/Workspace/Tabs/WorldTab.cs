@@ -111,6 +111,13 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var skyId = EnvService.SkyOverride ?? env->SkyId;
 			if (DrawSkySelect(ref skyId))
 				EnvService.SkyOverride = skyId;
+			
+			ImGui.Spacing();
+
+			var waterFrozen = EnvService.FreezeWater ?? false;
+			if (ImGui.Checkbox("Freeze Water", ref waterFrozen)) {
+				EnvService.FreezeWater = waterFrozen;
+			}
 		}
 		
 		// Weather

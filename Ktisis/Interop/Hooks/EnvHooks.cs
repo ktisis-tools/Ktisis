@@ -23,6 +23,17 @@ namespace Ktisis.Interop.Hooks {
 				a2 = EnvService.SkyOverride.Value;
 			return SkyTexHook.Original(a1, a2, a3, a4);
 		}
+
+
+		private delegate nint WaterRendererUpdateDelegate(nint a1);
+		private static Hook<WaterRendererUpdateDelegate> WaterRendererUpdateHook = null!;
+		private static nint WaterRendererUpdateDetour(nint a1) {
+			if (Ktisis.IsInGPose && EnvService.FreezeWater == true) {
+				return 0;
+			}
+			return WaterRendererUpdateHook.Original(a1);
+		}
+		
 		
 		// State
 
@@ -40,12 +51,14 @@ namespace Ktisis.Interop.Hooks {
 			Enabled = true;
 			EnvUpdateHook.Enable();
 			SkyTexHook.Enable();
+			WaterRendererUpdateHook.Enable();
 		}
 		
 		private static void DisableHooks() {
 			Enabled = false;
 			EnvUpdateHook.Disable();
 			SkyTexHook.Disable();
+			WaterRendererUpdateHook.Disable();
 		}
 		
 		// Init & Dispose
@@ -56,6 +69,9 @@ namespace Ktisis.Interop.Hooks {
             
 			var addr2 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 44 38 63 30 74 05 0F 28 DE");
             SkyTexHook = Services.Hooking.HookFromAddress<SkyTexDelegate>(addr2, SkyTexDetour);
+			
+			var addr3 = Services.SigScanner.ScanText("48 8B C4 48 89 58 18 57 48 81 EC ?? ?? ?? ?? 0F 29 70 E8 48 8B D9");
+			WaterRendererUpdateHook = Services.Hooking.HookFromAddress<WaterRendererUpdateDelegate>(addr3, WaterRendererUpdateDetour);
         }
 
 		public static void Dispose() {
@@ -66,6 +82,9 @@ namespace Ktisis.Interop.Hooks {
 			
 			SkyTexHook.Disable();
 			SkyTexHook.Dispose();
+			
+			WaterRendererUpdateHook.Disable();
+			WaterRendererUpdateHook.Dispose();
 		}
 	}
 }
