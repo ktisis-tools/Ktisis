@@ -100,7 +100,7 @@ namespace Ktisis.Interface.Components {
 					target->DrawData.Equipment.Slots[i] = value.Slots[i];
 			}
 
-			target->Redraw(true);
+			target->Redraw();
 		}
 		
 		private unsafe bool IsCustomizeValid(Customize custom, Customize current) {

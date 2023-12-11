@@ -145,7 +145,7 @@ namespace Ktisis.Structs.Actor {
 				|| cur.Gender != custom.Gender;
 
 			if (redraw) {
-				Redraw(faceHack);
+				Redraw();
 			} else if (cur.BustSize != custom.BustSize && Model != null) {
 				Model->ScaleBust();
 			}
@@ -153,8 +153,8 @@ namespace Ktisis.Structs.Actor {
 
 		// Actor redraw
 
-		public void Redraw(bool faceHack = false) {
-			faceHack &= GameObject.ObjectKind == (byte)ObjectKind.Pc;
+		public void Redraw() {
+			var faceHack = GameObject.ObjectKind == (byte)ObjectKind.Pc;
 			GameObject.DisableDraw();
 			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.BattleNpc;
 			GameObject.EnableDraw();
