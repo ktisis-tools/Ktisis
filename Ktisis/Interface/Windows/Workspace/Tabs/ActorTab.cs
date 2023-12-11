@@ -174,7 +174,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			if (isUseless) ImGui.EndDisabled();
 
 			ImGui.Spacing();
-			if (ImGui.Button("Revert All"))
+			if (ImGui.Button("Revert Changes"))
 				ActorStateWatcher.RevertToOriginal(actor);
 			
 			_npcImport.Draw(mode);
