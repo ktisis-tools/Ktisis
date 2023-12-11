@@ -1,0 +1,3 @@
+[submodule "GLib"]
+	path = GLib
+	url = git@github.com:ktisis-tools/GLib.git
