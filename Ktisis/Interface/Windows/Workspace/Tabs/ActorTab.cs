@@ -17,7 +17,6 @@ using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
 using Ktisis.Interop;
 using Ktisis.Structs.Actor.State;
-using Ktisis.Util;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class ActorTab {
