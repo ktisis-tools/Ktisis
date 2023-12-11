@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLib", "GLib\GLib.csproj", "{E1AC7402-B475-415A-9283-D23E78730995}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GLib", "GLib\GLib\GLib.csproj", "{2267C775-9220-4EF5-B146-4FBC5B7499D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,12 +24,12 @@ Global
 		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Release|x64.Build.0 = Release|x64
 		{13C812E9-0D42-4B95-8646-40EEBF30636F}.External|x64.ActiveCfg = External|x64
 		{13C812E9-0D42-4B95-8646-40EEBF30636F}.External|x64.Build.0 = External|x64
-		{E1AC7402-B475-415A-9283-D23E78730995}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E1AC7402-B475-415A-9283-D23E78730995}.Debug|x64.Build.0 = Debug|Any CPU
-		{E1AC7402-B475-415A-9283-D23E78730995}.Release|x64.ActiveCfg = Release|Any CPU
-		{E1AC7402-B475-415A-9283-D23E78730995}.Release|x64.Build.0 = Release|Any CPU
-		{E1AC7402-B475-415A-9283-D23E78730995}.External|x64.ActiveCfg = Debug|Any CPU
-		{E1AC7402-B475-415A-9283-D23E78730995}.External|x64.Build.0 = Debug|Any CPU
+		{2267C775-9220-4EF5-B146-4FBC5B7499D8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2267C775-9220-4EF5-B146-4FBC5B7499D8}.Debug|x64.Build.0 = Debug|Any CPU
+		{2267C775-9220-4EF5-B146-4FBC5B7499D8}.Release|x64.ActiveCfg = Release|Any CPU
+		{2267C775-9220-4EF5-B146-4FBC5B7499D8}.Release|x64.Build.0 = Release|Any CPU
+		{2267C775-9220-4EF5-B146-4FBC5B7499D8}.External|x64.ActiveCfg = Debug|Any CPU
+		{2267C775-9220-4EF5-B146-4FBC5B7499D8}.External|x64.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

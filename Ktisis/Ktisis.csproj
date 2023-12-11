@@ -95,6 +95,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GLib\GLib.csproj" />
+    <ProjectReference Include="..\GLib\GLib\GLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
