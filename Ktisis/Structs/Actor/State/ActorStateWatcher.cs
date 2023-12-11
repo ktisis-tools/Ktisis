@@ -23,11 +23,11 @@ namespace Ktisis.Structs.Actor.State {
 			Services.Framework.Update += Monitor;
 		}
 
-		public static void Monitor(IFramework framework) {
+		private static void Monitor(IFramework framework) {
 			if (_wasInGPose != Ktisis.IsInGPose)
 				HandleStateChanged(Ktisis.IsInGPose);
 		}
-
+		
 		private unsafe static void HandleStateChanged(bool state) {
 			_wasInGPose = state;
 			EventManager.FireOnGposeChangeEvent(state);

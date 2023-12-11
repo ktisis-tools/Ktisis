@@ -2,11 +2,14 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using Dalamud.Utility.Numerics;
+
 using ImGuiNET;
 
 using GLib.Popups;
 
 using Ktisis.Data.Npc;
+using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Util;
 
@@ -24,8 +27,32 @@ namespace Ktisis.Interface.Components {
 		
 		// Draw handlers
 
-		private bool DrawItem(INpcBase npc, bool isFocus)
-			=> ImGui.Selectable(npc.Name, isFocus);
+		private bool DrawItem(INpcBase npc, bool isFocus) {
+			var style = ImGui.GetStyle();
+			var fontSize = ImGui.GetFontSize();
+            var result = ImGui.Selectable("##", isFocus, 0, ImGui.GetContentRegionAvail().WithY(fontSize * 2));
+
+            ImGui.SameLine(style.ItemInnerSpacing.X, 0);
+			ImGui.Text(npc.Name);
+			
+			var model = npc.GetModelId();
+			ImGui.SameLine(style.ItemInnerSpacing.X, 0);
+			ImGui.SetCursorPosY(ImGui.GetCursorPosY() + fontSize);
+			if (model == 0) {
+				var custom = npc.GetCustomize();
+				if (custom != null && custom.Value.Tribe != 0) {
+					var value = custom.Value;
+					var sex = value.Gender == Gender.Masculine ? "♂" : "♀";
+					ImGui.TextDisabled($"{sex} {Locale.GetString(value.Tribe.ToString())}");
+				} else {
+					ImGui.TextDisabled("Unknown");
+				}
+			} else {
+				ImGui.TextDisabled($"Model #{model}");
+			}
+			
+			return result;
+		}
 
 		private bool MatchQuery(INpcBase npc, string query)
 			=> npc.Name.Contains(query, StringComparison.OrdinalIgnoreCase);
@@ -64,8 +91,9 @@ namespace Ktisis.Interface.Components {
 			if (!this._popup.IsOpen)
 				return;
 
+			var height = (ImGui.GetFontSize()) * 2;
 			lock (this.NpcList) {
-				if (this._popup.Draw(this.NpcList, out var selected) && selected != null)
+				if (this._popup.Draw(this.NpcList, out var selected, height) && selected != null)
 					OnNpcSelect(selected);
 			}
 		}
