@@ -19,10 +19,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		public unsafe static void Draw(GameObject target) {
 			var cfg = Ktisis.Configuration;
 
-			if (target == null) return;
-
 			var actor = (Actor*)target.Address;
-			if (actor->Model == null) return;
 
 			// Extra Controls
 			ControlButtons.DrawExtra();
@@ -33,26 +30,30 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			if (ImGui.Checkbox("Parenting", ref parent))
 				cfg.EnableParenting = parent;
 
-			// Transform table
-			TransformTable(actor);
+			if (actor->Model != null) {
+				// Transform table
+				TransformTable(actor);
 
-			ImGui.Spacing();
+				ImGui.Spacing();
 
-			// Bone categories
-			if (ImGui.CollapsingHeader("Bone Categories")) {
-
-				if (!Categories.DrawToggleList(cfg)) {
-					ImGui.Text("No bone found.");
-					ImGui.Text("Show Skeleton (");
-					ImGui.SameLine();
-					GuiHelpers.Icon(FontAwesomeIcon.EyeSlash);
-					ImGui.SameLine();
-					ImGui.Text(") to fill this.");
+				// Bone categories
+				if (ImGui.CollapsingHeader("Bone Categories")) {
+					if (!Categories.DrawToggleList(cfg)) {
+						ImGui.Text("No bone found.");
+						ImGui.Text("Show Skeleton (");
+						ImGui.SameLine();
+						GuiHelpers.Icon(FontAwesomeIcon.EyeSlash);
+						ImGui.SameLine();
+						ImGui.Text(") to fill this.");
+					}
 				}
-			}
 
-			// Bone tree
-			BoneTree.Draw(actor);
+				// Bone tree
+				BoneTree.Draw(actor);
+			} else {
+				ImGui.Text("Target actor has no valid skeleton!");
+				ImGui.Spacing();
+			}
 
 			// Import & Export
 			if (ImGui.CollapsingHeader("Import & Export"))
@@ -67,17 +68,17 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		}
 		
 		public static unsafe void DrawAdvancedDebugOptions(Actor* actor) {
-			if(ImGui.Button("Reset Current Pose") && actor->Model != null)
-				actor->Model->SyncModelSpace();
-
-			if(ImGui.Button("Set to Reference Pose") && actor->Model != null)
-				actor->Model->SyncModelSpace(true);
-
-			if(ImGui.Button("Store Pose") && actor->Model != null)
-				_TempPose.Store(actor->Model->Skeleton);
-			ImGui.SameLine();
-			if(ImGui.Button("Apply Pose") && actor->Model != null)
-				_TempPose.Apply(actor->Model->Skeleton);
+			if (actor->Model != null) {
+				if (ImGui.Button("Reset Current Pose"))
+					actor->Model->SyncModelSpace();
+				if (ImGui.Button("Set to Reference Pose"))
+					actor->Model->SyncModelSpace(true);
+				if (ImGui.Button("Store Pose"))
+					_TempPose.Store(actor->Model->Skeleton);
+				ImGui.SameLine();
+				if (ImGui.Button("Apply Pose"))
+					_TempPose.Apply(actor->Model->Skeleton);
+			}
 
 			if(ImGui.Button("Force Redraw"))
 				actor->Redraw();

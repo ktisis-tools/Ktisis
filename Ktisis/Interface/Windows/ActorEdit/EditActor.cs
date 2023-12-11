@@ -66,21 +66,23 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			
 			ImGui.Spacing();
 			ImGui.SliderFloat("Opacity", ref Target->Transparency, 0.0f, 1.0f);
-			
-			if (!ActorWetnessOverride.Instance.WetnessOverrides.TryGetValue((IntPtr)Target, out var wetness))
-				wetness = (Target->Model->WeatherWetness, Target->Model->SwimmingWetness, Target->Model->WetnessDepth);
 
-			if (!ActorWetnessOverride.Instance.WetnessOverridesEnabled.TryGetValue((IntPtr)Target, out var enabled))
-				enabled = false;
+			if (Target->Model != null) {
+				if (!ActorWetnessOverride.Instance.WetnessOverrides.TryGetValue((IntPtr)Target, out var wetness))
+					wetness = (Target->Model->WeatherWetness, Target->Model->SwimmingWetness, Target->Model->WetnessDepth);
 
-			ImGui.Checkbox("Wetness Override Enabled", ref enabled);
-			
-			ImGui.SliderFloat("WeatherWetness",  ref wetness.WeatherWetness, 0.0f, 1.0f);
-			ImGui.SliderFloat("SwimmingWetness", ref wetness.SwimmingWetness, 0.0f, 1.0f);
-			ImGui.SliderFloat("WetnessDepth",    ref wetness.WetnessDepth, 0.0f, 3.0f);
-			
-			ActorWetnessOverride.Instance.WetnessOverrides[(IntPtr)Target] = wetness;
-			ActorWetnessOverride.Instance.WetnessOverridesEnabled[(IntPtr)Target] = enabled;
+				if (!ActorWetnessOverride.Instance.WetnessOverridesEnabled.TryGetValue((IntPtr)Target, out var enabled))
+					enabled = false;
+
+				ImGui.Checkbox("Wetness Override Enabled", ref enabled);
+
+				ImGui.SliderFloat("WeatherWetness", ref wetness.WeatherWetness, 0.0f, 1.0f);
+				ImGui.SliderFloat("SwimmingWetness", ref wetness.SwimmingWetness, 0.0f, 1.0f);
+				ImGui.SliderFloat("WetnessDepth", ref wetness.WetnessDepth, 0.0f, 3.0f);
+
+				ActorWetnessOverride.Instance.WetnessOverrides[(IntPtr)Target] = wetness;
+				ActorWetnessOverride.Instance.WetnessOverridesEnabled[(IntPtr)Target] = enabled;
+			}
 
 			ImGui.EndTabItem();
 		}

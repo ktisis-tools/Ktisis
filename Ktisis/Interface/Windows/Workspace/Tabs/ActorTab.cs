@@ -16,10 +16,8 @@ using Ktisis.Interface.Windows.ActorEdit;
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class ActorTab {
 		public unsafe static void Draw(GameObject target) {
-			var cfg = Ktisis.Configuration;
-
 			var actor = (Actor*)target.Address;
-			if (actor->Model == null) return;
+			if (actor == null) return;
 
 			// Actor details
 

@@ -44,16 +44,14 @@ namespace Ktisis.Overlay {
 
 			var actor = Ktisis.Target;
 			if (actor == null) return;
-
-			// Draw actor root
-
-			DrawActorRoot(actor);
-
-			// Draw model skeleton
 			
 			var model = actor->Model;
 			if (model == null || model->Skeleton == null) return;
+			
+			// Draw actor root
+			DrawActorRoot(actor);
 
+			// Draw model skeleton
 			DrawModelSkeleton(model);
 			
 			// Draw children (weapons, props)
