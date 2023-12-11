@@ -32,5 +32,9 @@ namespace Ktisis.Data.Excel {
 		public Customize? GetCustomize() => this.EventNpc.Value?.GetCustomize();
 
 		public Equipment? GetEquipment() => this.EventNpc.Value?.GetEquipment();
+
+		public WeaponEquip? GetMainHand() => this.EventNpc.Value?.GetMainHand();
+
+		public WeaponEquip? GetOffHand() => this.EventNpc.Value?.GetOffHand();
 	}
 }

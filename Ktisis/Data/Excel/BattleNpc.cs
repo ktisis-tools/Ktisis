@@ -38,6 +38,12 @@ namespace Ktisis.Data.Excel {
 
 		public Equipment? GetEquipment()
 			=> this.NpcEquipment?.Value?.Equipment;
+
+		public WeaponEquip? GetMainHand()
+			=> this.NpcEquipment?.Value?.MainHand;
+
+		public WeaponEquip? GetOffHand()
+			=> this.NpcEquipment?.Value?.OffHand;
 		
 		// Customize Sheet
 		

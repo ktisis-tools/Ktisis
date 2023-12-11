@@ -13,13 +13,14 @@ namespace Ktisis.Structs.Extensions {
 		}
 		
 		public static WeaponEquip ReadWeapon(this RowParser parser, int index) {
-			var quad = parser.ReadColumn<Quad>(index);
+			var data = parser.ReadColumn<ulong>(index);
 			var dye = parser.ReadColumn<byte>(index + 1);
-			
+
+			var quad = (Quad)data;
 			return new WeaponEquip {
-				Set = quad.D,
-				Base = quad.C,
-				Variant = quad.A,
+				Set = quad.A,
+				Base = quad.B,
+				Variant = quad.C,
 				Dye = dye
 			};
 		}

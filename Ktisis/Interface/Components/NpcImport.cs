@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Numerics;
 
 using Dalamud.Utility.Numerics;
+using Dalamud.Game.ClientState.Objects.Enums;
 
 using ImGuiNET;
 
 using GLib.Popups;
 
+using Ktisis.Util;
+using Ktisis.Data.Files;
 using Ktisis.Data.Npc;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
-using Ktisis.Util;
 
 namespace Ktisis.Interface.Components {
 	public class NpcImport {
@@ -88,45 +89,86 @@ namespace Ktisis.Interface.Components {
 		
 		// Draw UI
 
-		public void Draw() {
+		public void Draw(AnamCharaFile.SaveModes mode) {
 			if (!this._popup.IsOpen)
 				return;
 
-			var height = (ImGui.GetFontSize()) * 2;
+			var height = ImGui.GetFontSize() * 2;
 			lock (this.NpcList) {
-				if (this._popup.Draw(this.NpcList, out var selected, height) && selected != null)
-					OnNpcSelect(selected);
+				if (this._popup.Draw(this.NpcList, out var selected, height) && selected != null) {
+					Services.Framework.RunOnFrameworkThread(() => {
+						ApplyNpc(selected, mode);
+					});
+				}
 			}
 		}
 		
 		// Handle NPC select
 
-		private void OnNpcSelect(INpcBase npc) {
-			Services.Framework.RunOnFrameworkThread(() => {
-				ApplyNpc(npc);
-			});
-		}
-
-		private unsafe void ApplyNpc(INpcBase npc) {
+		private unsafe void ApplyNpc(INpcBase npc, AnamCharaFile.SaveModes mode) {
 			var target = Ktisis.Target;
 			if (target == null) return;
 
-			var modelId = npc.GetModelId();
-			if (modelId != ushort.MaxValue)
-				target->ModelId = modelId;
+			var body = mode.HasFlag(AnamCharaFile.SaveModes.AppearanceBody);
+			var face = mode.HasFlag(AnamCharaFile.SaveModes.AppearanceFace);
+			var hair = mode.HasFlag(AnamCharaFile.SaveModes.AppearanceHair);
 
-			var custom = npc.GetCustomize();
-			if (custom != null && IsCustomizeValid(custom.Value, target->DrawData.Customize)) {
-				var value = custom.Value;
-				for (var i = 0; i < Customize.Length; i++)
-					target->DrawData.Customize.Bytes[i] = value.Bytes[i];
+			if (body) {
+				var modelId = npc.GetModelId();
+				if (modelId != ushort.MaxValue)
+					target->ModelId = modelId;
 			}
 
-			var equip = npc.GetEquipment();
-			if (equip != null && IsEquipValid(equip.Value, target->DrawData.Equipment)) {
-				var value = equip.Value;
-				for (var i = 0; i < Structs.Actor.Equipment.SlotCount; i++)
-					target->DrawData.Equipment.Slots[i] = value.Slots[i];
+			if (body || face || hair) {
+				var custom = npc.GetCustomize();
+				if (custom != null && IsCustomizeValid(custom.Value, target->DrawData.Customize)) {
+					var value = custom.Value;
+					for (var i = 0; i < Customize.Length; i++) {
+						var valid = (CustomizeIndex)i switch {
+							CustomizeIndex.FaceType
+								or (>= CustomizeIndex.FaceFeatures and <= CustomizeIndex.LipColor)
+								or CustomizeIndex.Facepaint
+								or CustomizeIndex.FacepaintColor => face,
+							CustomizeIndex.HairStyle
+								or CustomizeIndex.HairColor
+								or CustomizeIndex.HairColor2
+								or CustomizeIndex.HasHighlights => hair,
+							(>= CustomizeIndex.Race and <= CustomizeIndex.Tribe)
+								or (>= CustomizeIndex.RaceFeatureSize and <= CustomizeIndex.BustSize) => face || body,
+							_ => body
+						};
+						if (!valid) continue;
+						target->DrawData.Customize.Bytes[i] = value.Bytes[i];
+					}
+				}
+			}
+
+			var gear = mode.HasFlag(AnamCharaFile.SaveModes.EquipmentGear);
+			var accs = mode.HasFlag(AnamCharaFile.SaveModes.EquipmentAccessories);
+			if (gear || accs) {
+				var equip = npc.GetEquipment();
+				if (equip != null && IsEquipValid(equip.Value, target->DrawData.Equipment)) {
+					var value = equip.Value;
+					for (var i = 0; i < Structs.Actor.Equipment.SlotCount; i++) {
+						var valid = (EquipIndex)i switch {
+							<= EquipIndex.Feet => gear,
+							<= EquipIndex.RingLeft => accs,
+							_ => true
+						};
+						if (!valid) continue;
+						target->DrawData.Equipment.Slots[i] = value.Slots[i];
+					}
+				}
+			}
+            
+			if (mode.HasFlag(AnamCharaFile.SaveModes.EquipmentWeapons)) {
+				var main = npc.GetMainHand();
+				if (main != null)
+					target->DrawData.MainHand.Equip = main.Value;
+
+				var off = npc.GetOffHand();
+				if (off != null)
+					target->DrawData.OffHand.Equip = off.Value;
 			}
 
 			target->Redraw();

@@ -9,5 +9,9 @@ namespace Ktisis.Data.Npc {
 		public Customize? GetCustomize() => null;
 
 		public Equipment? GetEquipment() => null;
+
+		public WeaponEquip? GetMainHand();
+
+		public WeaponEquip? GetOffHand();
 	}
 }

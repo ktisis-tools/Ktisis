@@ -63,5 +63,9 @@ namespace Ktisis.Data.Excel {
 		public Customize? GetCustomize() => this.Customize;
 
 		public Equipment? GetEquipment() => this.Equipment;
+
+		public WeaponEquip? GetMainHand() => this.MainHand;
+
+		public WeaponEquip? GetOffHand() => this.OffHand;
 	}
 }
