@@ -182,7 +182,7 @@ namespace Ktisis.Data.Files {
 				TailEarsType = custom.RaceFeatureType;
 				Bust = custom.BustSize;
 
-				unsafe { HeightMultiplier = actor.Model->Height; }
+				unsafe { HeightMultiplier = actor.Model != null ? actor.Model->Height : 1; }
 
 				/*SkinColor = actor.ModelObject?.ExtendedAppearance?.SkinColor;
 				SkinGloss = actor.ModelObject?.ExtendedAppearance?.SkinGloss;

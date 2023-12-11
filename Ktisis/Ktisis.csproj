@@ -90,10 +90,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Structs\Actor\Data\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\GLib\GLib.csproj" />
     <ProjectReference Include="..\GLib\GLib\GLib.csproj" />
   </ItemGroup>

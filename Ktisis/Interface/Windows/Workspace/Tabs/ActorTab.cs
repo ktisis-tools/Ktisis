@@ -13,6 +13,7 @@ using Ktisis.Interop.Hooks;
 using Ktisis.Structs.Actor;
 using Ktisis.Interface.Components;
 using Ktisis.Interface.Windows.ActorEdit;
+using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class ActorTab {
@@ -152,11 +153,14 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			}
 			
 			ImGui.Spacing();
-
 			if (ImGui.Button("Import NPC"))
 				_npcImport.Open();
 
 			if (isUseless) ImGui.EndDisabled();
+
+			ImGui.Spacing();
+			if (ImGui.Button("Revert"))
+				ActorStateWatcher.RevertToOriginal(actor);
 			
 			_npcImport.Draw();
 		}
