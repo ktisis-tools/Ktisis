@@ -1,4 +1,5 @@
 using System.IO;
+using System.Runtime.CompilerServices;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -15,6 +16,8 @@ using Ktisis.Interface.Windows.ActorEdit;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class ActorTab {
+		private static readonly NpcImport _npcImport = new();
+		
 		public unsafe static void Draw(GameObject target) {
 			var actor = (Actor*)target.Address;
 			if (actor == null) return;
@@ -147,10 +150,15 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 					}
 				);
 			}
+			
+			ImGui.Spacing();
+
+			if (ImGui.Button("Import NPC"))
+				_npcImport.Open();
 
 			if (isUseless) ImGui.EndDisabled();
-
-			ImGui.Spacing();
+			
+			_npcImport.Draw();
 		}
 	}
 }

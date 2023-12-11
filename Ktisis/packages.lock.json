@@ -13,6 +13,9 @@
         "requested": "[2022.3.1, )",
         "resolved": "2022.3.1",
         "contentHash": "11nsS3+lFICGkztVs9PP2NRItxf9fF+qD6xEW/T0YGto52zj07wseUeBdMAU1ah9HNVTDZyRC1u4NWdtJScwhw=="
+      },
+      "glib": {
+        "type": "Project"
       }
     }
   }

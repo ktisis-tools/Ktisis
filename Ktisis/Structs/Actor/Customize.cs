@@ -6,7 +6,9 @@ using Dalamud.Game.ClientState.Objects.Enums;
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x1A)]
 	public unsafe struct Customize {
-		[FieldOffset(0)] public fixed byte Bytes[0x1A];
+		public const int Length = 0x1A;
+        
+		[FieldOffset(0)] public fixed byte Bytes[Customize.Length];
 
 		// this is auto-generated
 		[FieldOffset((int)CustomizeIndex.BustSize)] public byte BustSize;
@@ -42,6 +44,16 @@ namespace Ktisis.Structs.Actor {
 			=> (byte)((byte)Race * 2 - 1);
 		public uint GetMakeIndex() 
 			=> (((uint)Race - 1) * 4) + (((uint)Tribe - GetRaceTribeIndex()) * 2) + (uint)Gender; // Thanks cait
+		
+		public static Customize FromBytes(byte[] bytes) {
+			if (bytes.Length != Customize.Length)
+				throw new Exception($"Unexpected length for customize array: {bytes.Length} != {Customize.Length}");
+			
+			var custom = new Customize();
+			for (var i = 0; i < Customize.Length; i++)
+				custom.Bytes[i] = bytes[i];
+			return custom;
+		}
 	}
 
 	[Flags]

@@ -93,4 +93,13 @@
     <Folder Include="Structs\Actor\Data\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GLib\GLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Data\Library\bnpc-index.json" />
+    <EmbeddedResource Include="Data\Library\bnpc-index.json" />
+  </ItemGroup>
+
 </Project>

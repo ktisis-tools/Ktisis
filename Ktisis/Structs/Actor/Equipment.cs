@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Equipment {
-		private const int SlotCount = 10;
+		public const int SlotCount = 10;
 		
 		[FieldOffset(0)] public unsafe fixed uint Slots[0x4 * SlotCount];
 
@@ -30,6 +30,9 @@ namespace Ktisis.Structs.Actor {
 			Variant = (byte)(num >> 16 & 0xFF),
 			Dye = (byte)(num >> 24)
 		};
+		
+		public static explicit operator uint(ItemEquip equip)
+			=> (uint)(equip.Id | (equip.Variant << 16) | (equip.Dye << 24));
 
 		public bool Equals(ItemEquip other) => Id == other.Id && Variant == other.Variant;
 	}
