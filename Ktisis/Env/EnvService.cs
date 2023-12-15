@@ -7,8 +7,6 @@ using Dalamud.Interface.Internal;
 using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-using FFXIVClientStructs.FFXIV.Client.LayoutEngine;
 
 using Ktisis.Events;
 using Ktisis.Interop.Hooks;
@@ -27,25 +25,6 @@ namespace Ktisis.Env {
 		public static void Init() {
 			EventManager.OnGPoseChange += OnGPoseChange;
 			EnvHooks.Init();
-
-			unsafe {
-				var env = EnvManager.Instance();
-				Logger.Information($"-> {(nint)env:X} {(nint)env->EnvScene:X} {(nint)env->EnvSpace:X}");
-
-				//var con = *(nint*)(Services.SigScanner.Module.BaseAddress + 0x21ABEA0);
-				//PluginLog.Information($"EnvRender: {con:X}");
-				
-				var t = env->EnvScene;
-				for (var i = 0; i < 1; i++) {
-					var s = (EnvSpace*)t->EnvSpaces + i;
-					var addr = (nint)s;
-					Logger.Information($"{(nint)s:X} {(nint)s->EnvLocation:X} {s->DrawObject.Object.Position}");
-					
-				}
-
-				var world = LayoutWorld.Instance();
-				Logger.Information($"World: {(nint)world:X} {(nint)world->ActiveLayout:X}");
-			}
 		}
 
 		public static void Dispose() {
