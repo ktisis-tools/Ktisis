@@ -2,8 +2,8 @@
 using System.Numerics;
 using System.Threading;
 using System.Collections.Generic;
+using System.Linq;
 
-using Dalamud.Interface.Internal;
 using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
@@ -12,8 +12,6 @@ using ImGuiNET;
 
 using Ktisis.Env;
 using Ktisis.Structs.Env;
-
-using Lumina.Excel.GeneratedSheets;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class WorldTab {
@@ -24,7 +22,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		private static CancellationTokenSource? TokenSource;
 
 		private static ushort TerritoryType = ushort.MaxValue;
-		private static Dictionary<Weather, IDalamudTextureWrap?> Weather = new();
+		private static List<WeatherInfo> Weather = new();
 		
 		// UI Draw
 
@@ -43,17 +41,20 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			TokenSource?.Cancel();
 			TokenSource = source;
 
-			EnvService.GetZoneWeatherAndIcons(territory, token).ContinueWith(result => {
+			var weather = EnvService.GetEnvWeatherIds();
+			EnvService.GetWeatherIcons(weather, token).ContinueWith(result => {
 				if (result.Exception != null) {
 					PluginLog.Error($"Failed to load weather data:\n{result.Exception}");
 					return;
 				} else if (result.IsCanceled) return;
 
 				lock (AsyncLock) {
-					Weather = result.Result;
+					Weather = result.Result.Prepend(WeatherInfo.Default).ToList();
 					TokenSource = null;
 				}
 			}, token);
+			
+			Logger.Information($"Weathers: {string.Join(", ", weather)}");
 		}
 		
 		public static void Draw() {
@@ -125,6 +126,8 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		private static readonly Vector2 WeatherIconSize = new(28, 28);
 		
 		private static bool DrawWeatherSelect(int current, out int clickedId) {
+			var currentInfo = Weather.Find(w => w.RowId == current);
+			
 			var click = false;
 			clickedId = 0;
             
@@ -133,34 +136,31 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - style.ItemInnerSpacing.X - LabelMargin);
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, style.FramePadding with { Y = padding });
-			if (ImGui.BeginCombo(WeatherLabel, current != 0 ? "##" : "No Weather")) {
-				foreach (var (weatherInfo, icon) in Weather) {
+			if (ImGui.BeginCombo(WeatherLabel, currentInfo != null ? "##" : "Unknown")) {
+				foreach (var weatherInfo in Weather) {
 					if (ImGui.Selectable($"##EnvWeather{weatherInfo.RowId}", weatherInfo.RowId == current)) {
 						click = true;
 						clickedId = (int)weatherInfo.RowId;
 					}
-					DrawWeatherLabel(weatherInfo, icon, true);
+					DrawWeatherLabel(weatherInfo, true);
 				}
             
 				ImGui.EndCombo();
 			}
-
-			foreach (var (weather, icon) in Weather) {
-				if (weather.RowId != (uint)current) continue;
-				DrawWeatherLabel(weather, icon);
-				break;
-			}
+            
+			if (currentInfo != null)
+				DrawWeatherLabel(currentInfo);
 		
 			ImGui.PopStyleVar();
 
 			return click;
 		}
 
-		private static void DrawWeatherLabel(Weather weather, IDalamudTextureWrap? icon, bool adjustPad = false) {
+		private static void DrawWeatherLabel(WeatherInfo weather, bool adjustPad = false) {
 			var style = ImGui.GetStyle();
 			var height = ImGui.GetFrameHeight();
 		
-			if (icon != null) {
+			if (weather.Icon != null) {
 				ImGui.SameLine(0, 0);
 				ImGui.SetCursorPosX(ImGui.GetCursorStartPos().X + style.ItemInnerSpacing.X);
 
@@ -168,9 +168,10 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 				if (adjustPad) posY -= style.FramePadding.Y;
 				ImGui.SetCursorPosY(posY);
 			
-				ImGui.Image(icon.ImGuiHandle, WeatherIconSize);
+				ImGui.Image(weather.Icon.ImGuiHandle, WeatherIconSize);
 				ImGui.SameLine();
 			}
+            
 			ImGui.Text(weather.Name);
 		}
 		
