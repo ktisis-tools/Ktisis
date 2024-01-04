@@ -1,8 +1,8 @@
 using System;
 
-using Ktisis.Actions;
 using Ktisis.Scene;
 using Ktisis.Data.Config;
+using Ktisis.Editor.Actions;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
@@ -25,7 +25,8 @@ public interface IEditorContext : IDisposable {
 	
 	public IPoseModule PoseModule { get; }
 
-	public void Initialize();
+	public IEditorContext Initialize();
+	
 	public void Update();
 }
 
@@ -41,8 +42,8 @@ public class EditorContext : IEditorContext {
 	public IActionManager Actions { get; }
 	public ISceneManager Scene { get; }
 	public ISelectManager Selection { get; }
-	
 	public ITransformHandler Transform { get; }
+	public IPoseModule PoseModule { get; }
     
 	public EditorContext(
 		IContextMediator mediator,
@@ -50,7 +51,8 @@ public class EditorContext : IEditorContext {
 		IActionManager actions,
 		ISceneManager scene,
 		ISelectManager selection,
-		ITransformHandler transform
+		ITransformHandler transform,
+		IPoseModule poseModule
 	) {
 		this._mediator = mediator;
 		this._scope = scope;
@@ -58,34 +60,29 @@ public class EditorContext : IEditorContext {
 		this.Scene = scene;
 		this.Selection = selection;
 		this.Transform = transform;
+		this.PoseModule = poseModule;
 	}
 	
 	// State
 	
 	private bool IsInit;
 
-	public void Initialize() {
-		this.IsInit = true;
-		this.Scene.Initialize();
-		this.InitPoseModule();
+	public IEditorContext Initialize() {
+		try {
+			this.IsInit = true;
+			this.Scene.Initialize();
+			this.PoseModule.Initialize();
+			this.Actions.Initialize();
+		} catch {
+			this.Dispose();
+			throw;
+		}
+		return this;
 	}
 
 	public void Update() {
 		this.Scene.Update();
 		this.Selection.Update();
-	}
-	
-	// Posing
-
-	public IPoseModule PoseModule { get; private set; } = null!;
-
-	private void InitPoseModule() {
-		try {
-			this.PoseModule = this._scope.Create<PoseHooks>(this);
-			this.PoseModule.Initialize();
-		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to initialize pose hooks:\n{err}");
-		}
 	}
 	
 	// Disposal
