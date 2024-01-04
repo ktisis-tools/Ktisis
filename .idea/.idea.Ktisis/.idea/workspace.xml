@@ -11,26 +11,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Actions/ActionKeybind.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Actions/InputConfig.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Handlers/History/RedoAction.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Handlers/History/UndoAction.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GLib" beforeDir="false" afterPath="$PROJECT_DIR$/GLib" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Configuration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Configuration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/ActionBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/ActionBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/ActionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/ActionManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Handlers/Gizmo/ModeActions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Handlers/Gizmo/ModeActions.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/HistoryManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/HistoryManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/Binds/HotkeyFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/Binds/KeyCombo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/Binds/HotkeyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/Binds/KeybindInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/Binds/IKeybind.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/Binds/IKeybind.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/InputManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/InputManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/InputModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/InputModule.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Types/ActionBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Types/ActionBase.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/DalamudServices.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/DalamudServices.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -249,7 +234,7 @@
       <workItem from="1704106705356" duration="45064000" />
       <workItem from="1704209155349" duration="38671000" />
       <workItem from="1704286496700" duration="53457000" />
-      <workItem from="1704368125069" duration="31530000" />
+      <workItem from="1704368125069" duration="32164000" />
     </task>
     <servers />
   </component>
