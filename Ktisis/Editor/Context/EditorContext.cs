@@ -30,8 +30,8 @@ public interface IEditorContext : IDisposable {
 	
 	public void Update();
 
-	public BaseEditor GetEditor(SceneEntity entity);
-	public T? GetEditor<T>(SceneEntity entity) where T : BaseEditor;
+	public BaseModify GetModify(SceneEntity entity);
+	public T? GetModify<T>(SceneEntity entity) where T : BaseModify;
 }
 
 public class EditorContext : IEditorContext {
@@ -83,8 +83,8 @@ public class EditorContext : IEditorContext {
 	
 	// Wrappers
 
-	public BaseEditor GetEditor(SceneEntity entity) => this.Editor.Get(entity);
-	public T? GetEditor<T>(SceneEntity entity) where T : BaseEditor => this.Editor.Get<T>(entity);
+	public BaseModify GetModify(SceneEntity entity) => this.Editor.Get(entity);
+	public T? GetModify<T>(SceneEntity entity) where T : BaseModify => this.Editor.Get<T>(entity);
 	
 	// Disposal
 

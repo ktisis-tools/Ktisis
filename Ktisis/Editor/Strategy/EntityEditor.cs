@@ -14,9 +14,9 @@ using Ktisis.Scene.Entities.World;
 namespace Ktisis.Editor.Strategy;
 
 public interface IEntityEditor {
-	public BaseEditor Get(SceneEntity entity);
+	public BaseModify Get(SceneEntity entity);
 
-	public T? Get<T>(SceneEntity entity) where T : BaseEditor;
+	public T? Get<T>(SceneEntity entity) where T : BaseModify;
 
 	public void Update();
 }
@@ -24,17 +24,17 @@ public interface IEntityEditor {
 public class EntityEditor : IEntityEditor {
 	private readonly IContextMediator _mediator;
 
-	private readonly Dictionary<SceneEntity, BaseEditor> Map = new();
-
 	public EntityEditor(
 		IContextMediator mediator
 	) {
 		this._mediator = mediator;
 	}
 	
-	public T? Get<T>(SceneEntity entity) where T : BaseEditor => this.Get(entity) as T;
+	private readonly Dictionary<SceneEntity, BaseModify> Map = new();
+	
+	public T? Get<T>(SceneEntity entity) where T : BaseModify => this.Get(entity) as T;
 
-	public BaseEditor Get(SceneEntity entity) {
+	public BaseModify Get(SceneEntity entity) {
 		if (!entity.IsValid)
 			throw new Exception("Attempting to get editor for stale entity.");
 		if (this.Map.TryGetValue(entity, out var editor))
@@ -49,13 +49,13 @@ public class EntityEditor : IEntityEditor {
 			this.Map.Remove(entity);
 	}
 
-	private BaseEditor Create(SceneEntity entity) {
+	private BaseModify Create(SceneEntity entity) {
 		return entity switch {
-			ActorEntity actor => new ActorEditor(actor),
-			BoneNode bone => new BoneEditor(bone), 
-			SkeletonGroup group => new GroupEditor(group),
-			WorldEntity world => new ObjectEditor(world),
-			_ => new BaseEditor()
+			ActorEntity actor => new ActorModify(actor),
+			BoneNode bone => new BoneModify(bone), 
+			SkeletonGroup group => new GroupModify(group),
+			WorldEntity world => new ObjectModify(world),
+			_ => new BaseModify()
 		};
 	}
 }

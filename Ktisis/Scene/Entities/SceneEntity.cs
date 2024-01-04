@@ -15,8 +15,8 @@ public abstract class SceneEntity : IComposite {
 
 	public virtual bool IsValid => this.Scene.IsValid && this.Parent != null;
 
-	public BaseEditor GetEditor() => this.Scene.Context.GetEditor(this);
-	public T? GetEditor<T>() where T : BaseEditor => this.Scene.Context.GetEditor<T>(this);
+	public BaseModify GetModify() => this.Scene.Context.GetModify(this);
+	public T? GetModify<T>() where T : BaseModify => this.Scene.Context.GetModify<T>(this);
 	
 	protected SceneEntity(
 		ISceneManager scene

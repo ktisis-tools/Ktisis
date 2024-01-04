@@ -46,7 +46,7 @@ public class SceneDraw {
 				continue;
 			}
 
-			if (entity.GetEditor() is IVisibility { Visible: true } and ITransform manip) {
+			if (entity.GetModify() is IVisibility { Visible: true } and ITransform manip) {
 				var position = manip.GetTransform()?.Position;
 				if (position != null)
 					frame.AddItem(entity, position.Value);
@@ -73,7 +73,7 @@ public class SceneDraw {
 			var boneCt = hkaSkeleton->Bones.Length;
 			for (var i = 0; i < boneCt; i++) {
 				var node = pose.GetBoneFromMap(index, i);
-				if (node?.GetEditor<BoneEditor>()?.Visible != true)
+				if (node?.GetModify<BoneModify>()?.Visible != true)
 					continue;
 
 				var transform = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, i);
@@ -87,7 +87,7 @@ public class SceneDraw {
 					if (hkaSkeleton->ParentIndices[c] != i) continue;
 
 					var bone = pose.GetBoneFromMap(index, c);
-					if (bone?.GetEditor<BoneEditor>()?.Visible != true)
+					if (bone?.GetModify<BoneModify>()?.Visible != true)
 						continue;
 
 					var lineTo = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, c);

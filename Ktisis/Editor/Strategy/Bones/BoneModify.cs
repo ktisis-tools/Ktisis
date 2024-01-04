@@ -5,12 +5,12 @@ using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Strategy.Bones;
 
-public class BoneEditor : BaseEditor, ITransform, IVisibility {
+public class BoneModify : BaseModify, ITransform, IVisibility {
 	private readonly BoneNode Bone;
 	
 	public bool Visible { get; set; }
 
-	public BoneEditor(
+	public BoneModify(
 		BoneNode bone
 	) {
 		this.Bone = bone;
