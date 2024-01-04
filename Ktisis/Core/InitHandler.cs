@@ -12,14 +12,14 @@ public class InitHandler {
 	private readonly ConfigManager _cfg;
 	private readonly CommandService _cmd;
 	private readonly DllResolver _dll;
-	private readonly SceneEditor _editor;
+	private readonly ContextManager _editor;
 	private readonly GuiManager _gui;
 	
 	public InitHandler(
 		ConfigManager cfg,
 		CommandService cmd,
 		DllResolver dll,
-		SceneEditor editor,
+		ContextManager editor,
 		GuiManager gui
 	) {
 		this._cfg = cfg;

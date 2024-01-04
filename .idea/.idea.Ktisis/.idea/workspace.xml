@@ -12,12 +12,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/ICharacter.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/IEditEntity.cs" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EntityEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Actor/ActorEditWindow.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/Character/Character.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/Character/Customize.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/Character/Equipment.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GLib" beforeDir="false" afterPath="$PROJECT_DIR$/GLib" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
@@ -28,7 +24,7 @@
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/BaseEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/BaseEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/BoneEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/BoneEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/GroupEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/GroupEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Types/IEditEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/IEditEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Types/IEditEntity.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Types/ITransform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/ITransform.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Types/IVisibility.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/IVisibility.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/World/ObjectEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/World/ObjectEditor.cs" afterDir="false" />
@@ -270,7 +266,7 @@
       <workItem from="1704106705356" duration="45064000" />
       <workItem from="1704209155349" duration="38671000" />
       <workItem from="1704286496700" duration="53457000" />
-      <workItem from="1704368125069" duration="41123000" />
+      <workItem from="1704368125069" duration="41498000" />
     </task>
     <servers />
   </component>

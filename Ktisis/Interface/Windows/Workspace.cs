@@ -13,7 +13,7 @@ using Ktisis.Interface.Components.Workspace;
 namespace Ktisis.Interface.Windows; 
 
 public class Workspace : KtisisWindow {
-	private readonly SceneEditor _editor;
+	private readonly ContextManager _editor;
 
 	private readonly ContextButtons _buttons;
 	
@@ -21,7 +21,7 @@ public class Workspace : KtisisWindow {
 	private readonly SceneTree _sceneTree;
 	
 	public Workspace(
-		SceneEditor editor,
+		ContextManager editor,
 		ContextButtons buttons,
 		WorkspaceState state,
 		SceneTree sceneTree
