@@ -1,3 +1,5 @@
+using System.Linq;
+
 using Dalamud.Interface;
 
 using ImGuiNET;
@@ -8,6 +10,8 @@ using Ktisis.Core.Attributes;
 using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Windows;
+using Ktisis.Interface.Windows.Actor;
+using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -34,6 +38,12 @@ public class ContextButtons {
 
 		if (DrawButton(FontAwesomeIcon.Lightbulb, "Lights"))
 			this._gui.GetOrCreate<LightEditor>().Open();
+
+		if (DrawButton(FontAwesomeIcon.WaveSquare, "Actor")) {
+			var window = this._gui.GetOrCreate<ActorEditWindow>(context);
+			window.Target = (ActorEntity)context.Selection.GetSelected().First(sel => sel is ActorEntity);
+			window.Open();
+		}
 
 		if (DrawButton(FontAwesomeIcon.EllipsisH, "Options", true)) { }
 	}

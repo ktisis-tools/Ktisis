@@ -16,7 +16,7 @@ public interface IEditor {
 }
 
 [Singleton]
-public class SceneEditor : IEditor, IDisposable {
+public class ContextManager : IEditor, IDisposable {
 	private readonly ConfigManager _cfg;
 	private readonly ContextBuilder _factory;
 	private readonly GPoseService _gpose;
@@ -27,7 +27,7 @@ public class SceneEditor : IEditor, IDisposable {
 
 	public ISceneManager? Scene => this.Context?.Scene;
 
-	public SceneEditor(
+	public ContextManager(
 		ConfigManager cfg,
 		ContextBuilder factory,
 		GPoseService gpose,
@@ -121,7 +121,7 @@ public class SceneEditor : IEditor, IDisposable {
 	// Mediator
 
 	private class ContextMediator(
-		SceneEditor editor,
+		ContextManager editor,
 		Configuration cfg,
 		LocaleManager locale
 	) : IContextMediator {

@@ -11,12 +11,12 @@ using Ktisis.Scene.Modules;
 namespace Ktisis.Interface.Windows;
 
 public class LightEditor : KtisisWindow {
-	private readonly SceneEditor _editor;
+	private readonly ContextManager _editor;
 
 	private uint Index;
 
 	public LightEditor(
-		SceneEditor editor
+		ContextManager editor
 	) : base("Light Editor") {
 		this._editor = editor;
 	}
