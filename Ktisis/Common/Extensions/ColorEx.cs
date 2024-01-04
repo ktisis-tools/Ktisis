@@ -1,4 +1,4 @@
-namespace Ktisis.Common.Extensions;
+namespace Ktisis.Common.Extensions; 
 
 public static class ColorEx {
 	public static uint SetAlpha(this uint rgba, byte alpha)

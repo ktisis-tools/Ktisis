@@ -1,11 +1,11 @@
-using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.Havok;
-using CSTransform = FFXIVClientStructs.FFXIV.Client.Graphics.Transform;
 
 using Ktisis.Common.Extensions;
+
+using CSTransform = FFXIVClientStructs.FFXIV.Client.Graphics.Transform;
 
 namespace Ktisis.Common.Utility;
 
@@ -14,7 +14,7 @@ public class Transform {
 	[FieldOffset(0x00)] public Vector3 Position;
 	[FieldOffset(0x10)] public Quaternion Rotation;
 	[FieldOffset(0x20)] public Vector3 Scale;
-
+	
 	// Constructors
 
 	public Transform() {
@@ -42,7 +42,7 @@ public class Transform {
 	}
 
 	public Transform(Matrix4x4 mx) {
-		DecomposeMatrix(mx);
+		this.DecomposeMatrix(mx);
 	}
 	
 	// Matrix
@@ -61,7 +61,7 @@ public class Transform {
 			out var rot,
 			out var pos
 		)) return;
-
+		
 		this.Position = pos;
 		this.Rotation = rot;
 		this.Scale = scl;

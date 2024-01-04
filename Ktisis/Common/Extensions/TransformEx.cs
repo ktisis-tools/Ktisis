@@ -6,10 +6,10 @@ namespace Ktisis.Common.Extensions;
 
 public static class TransformEx {
 	// hkVector4f
-
+	
 	public static Vector3 ToVector3(this hkVector4f hkVec)
 		=> new Vector3(hkVec.X, hkVec.Y, hkVec.Z);
-
+	
 	public static hkVector4f ToHavok(this Vector3 vec)
 		=> new hkVector4f { X = vec.X, Y = vec.Y, Z = vec.Z, W = 1 };
 
@@ -19,9 +19,9 @@ public static class TransformEx {
 		hk.Z = vec.Z;
 		hk.W = 1;
 	}
-
+	
 	// hkQuaternionf
-
+	
 	public static Quaternion ToQuaternion(this hkQuaternionf hkQuat)
 		=> new Quaternion(hkQuat.X, hkQuat.Y, hkQuat.Z, hkQuat.W);
 

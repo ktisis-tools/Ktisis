@@ -29,7 +29,7 @@ public static class StringEx {
 			length -= 3;
 			result = result[..length] + new string('.', 3);
 		}
-
+		
 		return result;
 	}
 }

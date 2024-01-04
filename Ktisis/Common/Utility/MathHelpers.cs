@@ -6,12 +6,12 @@ namespace Ktisis.Common.Utility;
 public static class MathHelpers {
 	public readonly static float Deg2Rad = ((float)Math.PI * 2) / 360;
 	public readonly static float Rad2Deg = 360 / ((float)Math.PI * 2);
-
+	
 	// https://github.com/aers/FFXIVClientStructs/blob/ada62e7ae60de220d1f950b03ddb8d66e9e10daf/FFXIVClientStructs/FFXIV/Common/Math/Quaternion.cs
-
+	
 	public static Quaternion EulerAnglesToQuaternion(this Vector3 vec) {
 		var euler = vec.NormalizeAngles() * Deg2Rad;
-
+		
 		var halfX = euler.X * 0.5f;
 		var cX = MathF.Cos(halfX);
 		var sX = MathF.Sin(halfX);
@@ -33,7 +33,7 @@ public static class MathHelpers {
 
 	public static Vector3 ToEulerAngles(this Quaternion q)
 		=> Quaternion.Normalize(q).ToEulerRad() * Rad2Deg;
-
+	
 	private static float NormalizeAngle(float angle) {
 		if (angle > 360f)
 			angle = 0 + (angle % 360);
@@ -47,7 +47,7 @@ public static class MathHelpers {
 		NormalizeAngle(vec.Y),
 		NormalizeAngle(vec.Z)
 	);
-
+	
 	private static Vector3 ToEulerRad(this Quaternion q) {
 		var unit = Quaternion.Dot(q, q);
 		var test = q.X * q.W - q.Y * q.Z;
@@ -97,7 +97,7 @@ public static class MathHelpers {
 		else if (euler.Z > positiveFlip)
 			euler.Z -= t;
 	}
-
+	
 	public static float Lerp(this float a, float b, float t)
 		=> a * (1 - t) + b * t;
 }

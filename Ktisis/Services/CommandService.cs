@@ -1,75 +1,123 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
+using HandlerDelegate = Dalamud.Game.Command.CommandInfo.HandlerDelegate;
 
-using Ktisis.Core;
-using Ktisis.Events;
-using Ktisis.Interface.Gui;
+using Ktisis.Interface;
+using Ktisis.Interface.Windows;
+using Ktisis.Core.Attributes;
 
-namespace Ktisis.Services; 
+namespace Ktisis.Services;
 
-[DIService]
+[Singleton]
 public class CommandService : IDisposable {
-	// Service
-
 	private readonly ICommandManager _cmd;
-	private readonly PluginGui _gui;
+	private readonly GuiManager _gui;
+
+	private readonly HashSet<string> _register = new();
 	
 	public CommandService(
-		ICommandManager _cmd,
-		PluginGui _gui,
-		InitEvent _init
+		ICommandManager cmd,
+		GuiManager gui
 	) {
-		this._cmd = _cmd;
-		this._gui = _gui;
-		
-		_init.Subscribe(Initialize);
+		this._cmd = cmd;
+		this._gui = gui;
+	}
+	
+	// Handler registration
+
+	public void RegisterHandlers() {
+		BuildCommand("/ktisis", OnMainCommand)
+			.SetMessage("Toggle the main Ktisis window.")
+			.Create();
 	}
 
-	private void Initialize() {
-		this.AddHandler("/ktisis", new CommandInfo(OnCommand) {
-			HelpMessage = "Toggle the Ktisis GUI."
-		});
+	private void Add(string name, CommandInfo info) {
+		if (this._register.Add(name))
+			this._cmd.AddHandler(name, info);
 	}
 
-	// State
+	private CommandFactory BuildCommand(string name, HandlerDelegate handler)
+		=> new(this, name, handler);
+	
+	// Command handlers
 
-	private readonly Dictionary<string, CommandInfo> Commands = new();
-
-	private void AddHandler(string name, CommandInfo cmd) {
-		Ktisis.Log.Verbose($"Registering command handler for '{name}'");
-		if (this._cmd.AddHandler(name, cmd))
-			this.Commands.Add(name, cmd);
-		else
-			Ktisis.Log.Warning("Failed to register command.");
+	private void OnMainCommand(string _command, string _arguments) {
+		Ktisis.Log.Info("Main command used");
+		this._gui.GetOrCreate<Workspace>().Toggle();
 	}
-
-	// Main command handler
-
-	private void OnCommand(string _name, string _args) {
-		var split = _args.Split(" ");
-		switch (split[0]) {
-			default:
-				this._gui.ToggleMainWindow();
-				break;
-		}
-	}
-
+	
 	// Disposal
 
 	public void Dispose() {
-		Ktisis.Log.Verbose("Disposing commands...");
-		this.Commands.Keys.ToList().ForEach(RemoveHandler);
-		this.Commands.Clear();
+		foreach (var cmdName in this._register)
+			this._cmd.RemoveHandler(cmdName);
 	}
+	
+	// Factory
 
-	private void RemoveHandler(string name) {
-		if (this._cmd.RemoveHandler(name))
-			Ktisis.Log.Verbose($"Removed command handler for '{name}'.");
-		else
-			Ktisis.Log.Warning($"Failed to remove command handler for '{name}'!");
+	private class CommandFactory {
+		private readonly CommandService _cmd;
+
+		private readonly string Name;
+		private readonly List<string> Alias = new();
+
+		private readonly HandlerDelegate Handler;
+
+		private bool ShowInHelp;
+		private string HelpMessage = string.Empty;
+		
+		public CommandFactory(CommandService _cmd, string name, HandlerDelegate handler) {
+			this._cmd = _cmd;
+			
+			this.Name = name;
+			this.Handler = handler;
+		}
+		
+		// Factory methods
+		
+		public CommandFactory SetMessage(string message) {
+			this.ShowInHelp = true;
+			this.HelpMessage = message;
+			return this;
+		}
+
+		public CommandFactory AddAlias(string alias) {
+			this.Alias.Add(alias);
+			return this;
+		}
+
+		public CommandFactory AddAliases(params string[] aliases) {
+			this.Alias.AddRange(aliases);
+			return this;
+		}
+
+		public void Create() {
+			this._cmd.Add(this.Name, BuildCommandInfo());
+			this.Alias.ForEach(CreateAlias);
+		}
+
+		private void CreateAlias(string alias) {
+			this._cmd.Add(alias, new CommandInfo(this.Handler) {
+				ShowInHelp = false
+			});
+		}
+
+		// CommandInfo
+
+		private CommandInfo BuildCommandInfo() {
+			var message = this.HelpMessage;
+			if (this.HelpMessage != string.Empty && this.Alias.Count > 0) {
+				var padding = new string(' ', this.Name.Length * 2);
+				message += $"\n{padding} (Aliases: {string.Join(", ", this.Alias)})";
+			}
+
+			return new CommandInfo(this.Handler) {
+				ShowInHelp = this.ShowInHelp,
+				HelpMessage = message
+			};
+		}
 	}
 }

@@ -1,15 +1,17 @@
 using System.IO;
-using System.Xml;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using System.Xml;
 
 using Dalamud.Utility;
 
+using Ktisis.Core.Attributes;
 using Ktisis.Data.Config.Bones;
+using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Data;
 
+[Singleton]
 public class SchemaReader {
 	// Manifest resources
 
@@ -21,10 +23,9 @@ public class SchemaReader {
 		var stream = assembly.GetManifestResourceStream(path);
 		if (stream == null)
 			throw new FileNotFoundException(path);
-
 		return stream;
 	}
-
+	
 	// Categories
 
 	private const string BonesTag = "Bones";
@@ -32,52 +33,37 @@ public class SchemaReader {
 
 	private const string CategorySchemaPath = "Data.Schema.Categories.xml";
 
-	public async Task<Categories> ReadBoneCategories() {
-		var result = new Categories();
+	public CategoryConfig ReadCategories() {
+		var categories = new CategoryConfig();
 
-		var stream = GetManifestResource(CategorySchemaPath);
-		var settings = new XmlReaderSettings { Async = true };
+		var stream = this.GetManifestResource(CategorySchemaPath);
 
-		using var reader = XmlReader.Create(stream, settings);
-		while (await reader.ReadAsync()) {
+		using var reader = XmlReader.Create(stream);
+		while (reader.Read()) {
 			if (reader.NodeType != XmlNodeType.Element || reader.Name != CategoryTag)
 				continue;
-			await RecursiveReadCategory(result, reader);
+			this.ReadCategory(reader, categories);
 		}
-
-		return result;
+		
+		return categories;
 	}
 
-	private async Task<BoneCategory> RecursiveReadCategory(Categories result, XmlReader reader) {
+	private BoneCategory ReadCategory(XmlReader reader, CategoryConfig categories) {
 		var name = reader.GetAttribute("Id") ?? "Unknown";
 		var category = new BoneCategory(name) {
 			IsNsfw = reader.GetAttribute("IsNsfw") == "true",
 			IsDefault = reader.GetAttribute("IsDefault") == "true"
 		};
+		
+		categories.AddCategory(category);
 
-		if (category.IsDefault)
-			result.Default = category;
-		result.AddCategory(category);
-
-		while (await reader.ReadAsync()) {
+		while (reader.Read()) {
 			switch (reader.NodeType) {
 				case XmlNodeType.Element when reader.Name is CategoryTag:
-					var sub = await RecursiveReadCategory(result, reader);
-					sub.ParentCategory = category.Name;
+					this.ReadSubCategory(reader, categories, category);
 					continue;
 				case XmlNodeType.Element when reader.Name is BonesTag:
-					await reader.ReadAsync();
-					if (reader.NodeType != XmlNodeType.Text)
-						continue;
-
-					var innerText = await reader.GetValueAsync();
-					var bones = innerText.Split(null)
-						.Select(ln => ln.Trim())
-						.Where(ln => !ln.IsNullOrEmpty());
-
-					foreach (var bone in bones)
-						category.Bones.Add(new BoneInfo(bone));
-
+					this.ReadBone(reader, category);
 					continue;
 				case XmlNodeType.EndElement when reader.Name is CategoryTag:
 					return category;
@@ -87,5 +73,24 @@ public class SchemaReader {
 		}
 
 		return category;
+	}
+
+	private void ReadSubCategory(XmlReader reader, CategoryConfig categories, BoneCategory parent) {
+		var sub = this.ReadCategory(reader, categories);
+		sub.ParentCategory = parent.Name;
+	}
+
+	private void ReadBone(XmlReader reader, BoneCategory category) {
+		reader.Read();
+		if (reader.NodeType != XmlNodeType.Text)
+			return;
+
+		var innerText = reader.Value;
+		var bones = innerText.Split(null)
+			.Select(ln => ln.Trim())
+			.Where(ln => !ln.IsNullOrEmpty());
+		
+		foreach (var bone in bones)
+			category.Bones.Add(new CategoryBone(bone));
 	}
 }
