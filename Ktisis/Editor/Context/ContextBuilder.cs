@@ -1,6 +1,5 @@
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Actions;
-using Ktisis.Editor.Handlers;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
@@ -53,9 +52,5 @@ public class ContextBuilder {
 		}
 
 		return context;
-	}
-
-	private EditHandlers BuildState() {
-		return null!;
 	}
 }
