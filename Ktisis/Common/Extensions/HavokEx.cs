@@ -1,6 +1,6 @@
 using FFXIVClientStructs.Havok;
 
-namespace Ktisis.Common.Extensions; 
+namespace Ktisis.Common.Extensions;
 
 public static class HavokEx {
 	public static T[] Copy<T>(this hkArray<T> array) where T : unmanaged {

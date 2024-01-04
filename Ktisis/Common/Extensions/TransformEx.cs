@@ -2,7 +2,7 @@ using System.Numerics;
 
 using FFXIVClientStructs.Havok;
 
-namespace Ktisis.Common.Extensions; 
+namespace Ktisis.Common.Extensions;
 
 public static class TransformEx {
 	// hkVector4f

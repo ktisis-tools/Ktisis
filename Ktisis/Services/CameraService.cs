@@ -5,18 +5,12 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 using RenderCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Camera;
 
-using Ktisis.Core;
+using Ktisis.Core.Attributes;
 
 namespace Ktisis.Services; 
 
-[DIService]
+[Singleton]
 public class CameraService {
-	// Constructor
-	
-	public CameraService() {}
-
-	// Camera access
-
 	public unsafe Camera* GetGameCamera() {
 		var manager = CameraManager.Instance();
 		return manager != null ? manager->GetActiveCamera() : null;
@@ -31,8 +25,6 @@ public class CameraService {
 		var cam = GetSceneCamera();
 		return cam != null ? cam->RenderCamera : null;
 	}
-	
-	// Camera matrix access
 
 	public unsafe Matrix4x4? GetProjectionMatrix() {
 		var camera = GetRenderCamera();

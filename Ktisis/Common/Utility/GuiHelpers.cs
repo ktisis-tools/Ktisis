@@ -1,20 +1,15 @@
 using ImGuiNET;
 
-using Ktisis.Editing;
+using Ktisis.Editor.Selection;
 
-namespace Ktisis.Common.Utility; 
+namespace Ktisis.Common.Utility;
 
 public static class GuiHelpers {
-	public static void Spacing(int count) {
-		for (var i = 0; i < count; i++)
-			ImGui.Spacing();
-	}
-	
-	public static SelectFlags GetSelectFlags() {
-		var result = SelectFlags.None;
+	public static SelectMode GetSelectMode() {
+		var mode = SelectMode.Default;
 		if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
-			result |= SelectFlags.Ctrl;
+			mode = SelectMode.Multiple;
 		// TODO: Shift
-		return result;
+		return mode;
 	}
 }

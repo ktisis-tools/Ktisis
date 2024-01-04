@@ -1,13 +1,13 @@
-using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.Havok;
-using CSTransform = FFXIVClientStructs.FFXIV.Client.Graphics.Transform;
 
 using Ktisis.Common.Extensions;
 
-namespace Ktisis.Common.Utility; 
+using CSTransform = FFXIVClientStructs.FFXIV.Client.Graphics.Transform;
+
+namespace Ktisis.Common.Utility;
 
 [StructLayout(LayoutKind.Explicit)]
 public class Transform {
@@ -42,7 +42,7 @@ public class Transform {
 	}
 
 	public Transform(Matrix4x4 mx) {
-		DecomposeMatrix(mx);
+		this.DecomposeMatrix(mx);
 	}
 	
 	// Matrix

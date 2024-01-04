@@ -1,42 +1,29 @@
-﻿using Dalamud.Game;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
-using Ktisis.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ktisis.Services; 
 
-internal class DalamudServices {
-	private readonly DalamudPluginInterface PluginApi;
-	
-	[PluginService] private ITextureProvider TextureProvider { get; set; } = null!;
-	[PluginService] private ICommandManager CommandManager { get; set; } = null!;
-	[PluginService] private IGameInteropProvider Interop { get; set; } = null!;
-	[PluginService] private IClientState ClientState { get; set; } = null!;
-	[PluginService] private IDataManager DataManager { get; set; } = null!;
-	[PluginService] private IObjectTable ObjectTable { get; set; } = null!;
-	[PluginService] private ISigScanner SigScanner { get; set; } = null!;
-	[PluginService] private IFramework Framework { get; set; } = null!;
-	[PluginService] private IKeyState KeyState { get; set; } = null!;
-	[PluginService] private IGameGui GameGui { get; set; } = null!;
+// ReSharper disable once ClassNeverInstantiated.Global
+public sealed class DalamudServices {
+	[PluginService] private IClientState _clientState { get; set; } = null!;
+	[PluginService] private ICommandManager _cmd { get; set; } = null!;
+	[PluginService] private IFramework _framework { get; set; } = null!;
+	[PluginService] private IGameGui _gui { get; set; } = null!;
+	[PluginService] private IGameInteropProvider _interop { get; set; } = null!;
+	[PluginService] private IObjectTable _objectTable { get; set; } = null!;
 
-	internal DalamudServices(DalamudPluginInterface api) {
-		this.PluginApi = api;
-		api.Inject(this);
+	public void Add(DalamudPluginInterface dpi, IServiceCollection services) {
+		dpi.Inject(this);
+		services.AddSingleton(dpi)
+			.AddSingleton(dpi.UiBuilder)
+			.AddSingleton(this._clientState)
+			.AddSingleton(this._cmd)
+			.AddSingleton(this._framework)
+			.AddSingleton(this._gui)
+			.AddSingleton(this._interop)
+			.AddSingleton(this._objectTable);
 	}
-
-	internal void AddServices(ServiceManager mgr) => mgr
-		.AddInstance(this.PluginApi)
-		.AddInstance(this.PluginApi.UiBuilder)
-		.AddInstance(this.CommandManager)
-		.AddInstance(this.ClientState)
-		.AddInstance(this.Interop)
-		.AddInstance(this.DataManager)
-		.AddInstance(this.TextureProvider)
-		.AddInstance(this.ObjectTable)
-		.AddInstance(this.SigScanner)
-		.AddInstance(this.Framework)
-		.AddInstance(this.KeyState)
-		.AddInstance(this.GameGui);
 }

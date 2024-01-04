@@ -2,7 +2,7 @@ using System;
 
 using ImGuiNET;
 
-namespace Ktisis.Common.Extensions; 
+namespace Ktisis.Common.Extensions;
 
 public static class StringEx {
 	public static string Truncate(this string str, int len, bool ellipsis = true) {

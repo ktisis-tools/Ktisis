@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Ktisis.Common.Extensions; 
+namespace Ktisis.Common.Extensions;
 
 public static class VectorEx {
 	public static Vector2 Add(this Vector2 vec, float x, float y)

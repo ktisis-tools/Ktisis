@@ -1,3 +1,6 @@
 [submodule "ImGuizmo.NET"]
 	path = ImGuizmo.NET
 	url = git@github.com:ktisis-tools/ImGuizmo.NET.git
+[submodule "GLib"]
+	path = GLib
+	url = git@github.com:ktisis-tools/GLib.git

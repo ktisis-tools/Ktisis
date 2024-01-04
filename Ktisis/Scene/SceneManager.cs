@@ -1,111 +1,129 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
-using Dalamud.Plugin.Services;
-
-using Ktisis.Core;
-using Ktisis.Events;
-using Ktisis.Scene.Handlers;
-using Ktisis.Services;
+using Ktisis.Editor.Context;
+using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities;
+using Ktisis.Scene.Factory;
+using Ktisis.Scene.Modules;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene;
 
-public delegate void SceneChangedHandler(SceneGraph? scene);
-
-[DIService]
-public class SceneManager : IDisposable {
-	// Service
+public interface ISceneManager : IComposite, IDisposable {
+	public bool IsValid { get; }
 	
-	private readonly IFramework _framework;
-	private readonly GPoseService _gpose;
-	private readonly IServiceContainer _services;
+	public IEditorContext Context { get; }
+	
+	public IEntityFactory Factory { get; }
 
-	private readonly SceneContext Context;
+	public T GetModule<T>() where T : SceneModule;
+	
+	public double UpdateTime { get; }
 
+	public void Initialize();
+	public void Update();
+}
+
+public class SceneManager : ISceneManager {
+	private readonly IContextMediator _mediator;
+	private readonly HookScope _scope;
+	
+	private readonly SceneRoot Root;
+	private readonly Dictionary<Type, SceneModule> Modules = new();
+	
+	public IEntityFactory Factory { get; init; }
+	
+	public IEditorContext Context => this._mediator.Context;
+	public bool IsValid => this.Context is { IsValid: true } && !this.IsDisposing;
+	
+	// Construction
+	
 	public SceneManager(
-		IFramework _framework,
-		GPoseService _gpose,
-		IServiceContainer _services,
-		InitEvent _init
+		IContextMediator mediator,
+		HookScope scope
 	) {
-		this._services = _services;
-		this._framework = _framework;
-		this._gpose = _gpose;
-
-		this.Context = _services.Inject<SceneContext>(this);
-		
-		this.AddHandler<ActorHandler>()
-			.AddHandler<LightHandler>()
-			.AddHandler<ObjectHandler>();
-
-		_init.Subscribe(Initialize);
-	}
-
-	private void Initialize() {
-		this._framework.Update += OnFrameworkUpdate;
-		this._gpose.OnGPoseUpdate += OnGPoseUpdate;
+		this._mediator = mediator;
+		this._scope = scope;
+		this.Root = new SceneRoot(this);
+		this.Factory = new EntityFactory(this);
 	}
 	
-	// Scene state
+	// Modules
 
-	public bool IsActive => this.Scene is not null;
-	
-	public SceneGraph? Scene { get; private set; }
-	
-	// Object managers
-	
-	private readonly Dictionary<Type, object> ObjectHandlers = new();
-
-	private SceneManager AddHandler<T>() {
-		var inst = this._services.Inject<T>(this)!;
-		this.ObjectHandlers.Add(typeof(T), inst);
+	public SceneManager AddModule<T>() where T : SceneModule {
+		var module = this._scope.Create<T>(this);
+		this.Modules.Add(typeof(T), module);
 		return this;
 	}
 
-	public T GetHandler<T>() {
-		this.ObjectHandlers.TryGetValue(typeof(T), out var manager);
-		if (manager is null)
-			throw new Exception($"Failed to retrieve object manager: {typeof(T)}");
-		return (T)manager;
+	public T GetModule<T>() where T : SceneModule
+		=> (T)this.Modules[typeof(T)];
+	
+	// Scene setup & events
+
+	public double UpdateTime { get; private set; } = 0.0f;
+
+	public void Initialize() {
+		Ktisis.Log.Info("Initializing scene...");
+
+		var init = this.Modules.Values
+			.Where(module => module.Initialize() && module.IsInit);
+
+		foreach (var module in init) {
+			try {
+				module.Setup();
+			} catch (Exception err) {
+				Ktisis.Log.Error($"Failed to setup module '{module.GetType().Name}':\n{err}");
+			}
+		}
+	}
+
+	public void Update() {
+		if (!this.IsValid) return;
+		var t = new Stopwatch();
+		t.Start();
+		foreach (var module in this.Modules.Values)
+			RunModuleUpdate(module);
+		this.Root.Update();
+		t.Stop();
+		this.UpdateTime = t.Elapsed.TotalMilliseconds;
+	}
+
+	private static void RunModuleUpdate(SceneModule module) {
+		try {
+			module.Update();
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to update module '{module.GetType().Name}':\n{err}");
+		}
 	}
 	
-	// Events
+	// Objects
 
-	public event SceneChangedHandler? OnSceneChanged;
-
-	private void OnFrameworkUpdate(object _sender) {
-		if (this.IsDisposed) return;
-		
-		if (this._gpose.IsInGPose)
-			this.Scene?.Update();
+	public SceneEntity? Parent {
+		get => this.Root.Parent;
+		set => this.Root.Parent = value;
 	}
+	
+	public IEnumerable<SceneEntity> Children => this.Root.Children;
 
-	private void OnGPoseUpdate(bool active) {
-		if (this.IsDisposed) return;
-		
-		if (active) {
-			Ktisis.Log.Verbose("Entering gpose, setting up scene...");
-			this.Scene = new SceneGraph(this.Context);
-		} else {
-			Ktisis.Log.Verbose("Leaving gpose, cleaning up scene...");
-			this.Scene = null;
-		}
+	public bool Add(SceneEntity entity) => this.Root.Add(entity);
+	public bool Remove(SceneEntity entity) => this.Root.Remove(entity);
 
-		this.OnSceneChanged?.Invoke(this.Scene);
-	}
+	public IEnumerable<SceneEntity> Recurse() => this.Root.Recurse();
 	
 	// Disposal
 
-	private bool IsDisposed;
-	
+	private bool IsDisposing;
+    
 	public void Dispose() {
-		if (this.IsDisposed) return;
-		this.IsDisposed = true;
-		
-		this._framework.Update -= OnFrameworkUpdate;
-		this._gpose.OnGPoseUpdate -= OnGPoseUpdate;
-		
-		this.Scene = null;
-		this.ObjectHandlers.Clear();
+		this.IsDisposing = true;
+		foreach (var module in this.Modules.Values)
+			module.Dispose();
+		this.Modules.Clear();
+		this.Root.Clear();
+		GC.SuppressFinalize(this);
 	}
 }
