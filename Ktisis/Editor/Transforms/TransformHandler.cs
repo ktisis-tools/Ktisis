@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 
 using Ktisis.Common.Utility;
@@ -6,7 +5,6 @@ using Ktisis.Editor.Actions;
 using Ktisis.Editor.Actions.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Strategy.Types;
-using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Transforms;
@@ -79,9 +77,6 @@ public class TransformHandler : ITransformHandler {
 		private Transform? Initial;
 		private Transform? Final;
 
-		//private readonly Dictionary<SceneEntity, Transform> Initial = new();
-		//private readonly Dictionary<SceneEntity, Transform> Final = new();
-
 		public TransformMemento(
 			TransformHandler handler,
 			ITransformTarget target
@@ -91,42 +86,23 @@ public class TransformHandler : ITransformHandler {
 		}
 
 		public ITransformMemento Save() {
-			//this.SaveMap(this.Initial);
 			this.Initial = this.Target.GetTransform();
 			return this;
 		}
 
 		public ITransformMemento SetTransform(Transform transform) {
-			this.Final = transform;
 			this.Target.SetTransform(transform);
 			return this;
 		}
 
 		public void Restore() {
 			if (this.Initial != null)
-				this.SetTransform(this.Initial);
+				this.Target.SetTransform(this.Initial);
 		}
 
 		public void Apply() {
 			if (this.Final != null)
-				this.SetTransform(this.Final);
-		}
-
-		private void SaveMap(Dictionary<SceneEntity, Transform> map) {
-			map.Clear();
-			foreach (var entity in this.Target.Targets) {
-				if (!entity.IsValid || entity.Edit() is not ITransform target) continue;
-				var transform = target.GetTransform();
-				if (transform != null)
-					map.Add(entity, transform);
-			}
-		}
-
-		private static void ApplyMap(Dictionary<SceneEntity, Transform> map) {
-			foreach (var (entity, transform) in map) {
-				if (entity.IsValid && entity.Edit() is ITransform target)
-					target.SetTransform(transform);
-			}
+				this.Target.SetTransform(this.Final);
 		}
 
 		private bool IsDispatch;

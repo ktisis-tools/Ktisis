@@ -56,12 +56,15 @@ public class HistoryManager : IHistoryManager {
 
 	public void Undo() {
 		if (!this.CanUndo) return;
+		Ktisis.Log.Info("Undoing");
 		this.Cursor--;
 		this.Timeline[this.Cursor].Restore();
+		
 	}
 
 	public void Redo() {
 		if (!this.CanRedo) return;
+		Ktisis.Log.Info("Redoing");
 		this.Timeline[this.Cursor].Apply();
 		this.Cursor++;
 	}
