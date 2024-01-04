@@ -74,6 +74,11 @@ public class TransformWindow : KtisisWindow {
 			this.Transform ??= this.Handler.Begin(target);
 			target.SetTransform(transform);
 		}
+
+		if (isEnded) {
+			this.Transform?.Dispatch();
+			this.Transform = null;
+		}
 	}
 
 	private bool DrawTransform(ref Transform transform, out bool isEnded, bool disabled) {
@@ -86,10 +91,8 @@ public class TransformWindow : KtisisWindow {
 		}
 
 		var table = this._table.Draw(transform, out var result);
-		if (table) {
-			transform = result;
-			//isEnded |= table.
-		}
+		if (table) transform = result;
+		isEnded |= this._table.IsDeactivated;
 
 		return gizmo || table;
 	}
