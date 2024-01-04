@@ -12,10 +12,10 @@ using Character = Ktisis.Interop.Structs.Character.Character;
 
 namespace Ktisis.Editor.Strategy.Actors;
 
-public class ActorEditor : ObjectEditor, ICharacter {
+public class ActorModify : ObjectModify, ICharacter {
 	protected new ActorEntity Entity { get; }
 
-	public ActorEditor(
+	public ActorModify(
 		ActorEntity entity
 	) : base(entity) {
 		this.Entity = entity;

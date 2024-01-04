@@ -6,8 +6,6 @@ using Ktisis.Data.Config;
 using Ktisis.Services;
 using Ktisis.Editor.Context;
 using Ktisis.Localization;
-using Ktisis.Scene;
-using Ktisis.Scene.Modules;
 
 namespace Ktisis.Editor;
 
@@ -24,8 +22,6 @@ public class ContextManager : IEditor, IDisposable {
 	private readonly EditorUi _ui;
 
 	public IEditorContext? Context => this._context is { IsValid: true } ctx ? ctx : null;
-
-	public ISceneManager? Scene => this.Context?.Scene;
 
 	public ContextManager(
 		ConfigManager cfg,

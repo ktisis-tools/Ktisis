@@ -6,12 +6,12 @@ using Ktisis.Scene.Entities.World;
 
 namespace Ktisis.Editor.Strategy.World;
 
-public class ObjectEditor : BaseEditor, ITransform, IVisibility {
+public class ObjectModify : BaseModify, ITransform, IVisibility {
 	protected WorldEntity Entity { get; }
 	
 	public bool Visible { get; set; }
 	
-	public ObjectEditor(
+	public ObjectModify(
 		WorldEntity entity
 	) {
 		this.Entity = entity;

@@ -6,7 +6,7 @@ using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Strategy.Bones;
 
-public class GroupEditor : BaseEditor, IVisibility {
+public class GroupModify : BaseModify, IVisibility {
 	private readonly SkeletonGroup Group;
 	
 	public bool Visible {
@@ -17,14 +17,14 @@ public class GroupEditor : BaseEditor, IVisibility {
 		}
 	}
 
-	public GroupEditor(
+	public GroupModify(
 		SkeletonGroup group
 	) {
 		this.Group = group;
 	}
 
 	private IEnumerable<IVisibility> RecurseVisible()
-		=> this.Group.Children.Select(child => child.GetEditor())
+		=> this.Group.Children.Select(child => child.GetModify())
 			.Where(child => child is IVisibility)
 			.Cast<IVisibility>();
 }

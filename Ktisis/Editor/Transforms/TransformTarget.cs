@@ -34,7 +34,7 @@ public class TransformTarget : ITransformTarget {
 	}
 	
 	public Common.Utility.Transform? GetTransform() {
-		if (this.Primary?.GetEditor() is ITransform manip)
+		if (this.Primary?.GetModify() is ITransform manip)
 			return manip.GetTransform();
 		return null;
 	}
@@ -54,7 +54,7 @@ public class TransformTarget : ITransformTarget {
 		else return;
 
 		foreach (var entity in this.Targets.Where(tar => tar is { IsValid: true } and not BoneNode)) {
-			if (entity.GetEditor() is not ITransform manip) continue;
+			if (entity.GetModify() is not ITransform manip) continue;
 			
 			var trans = manip.GetTransform();
 			if (trans == null) continue;
