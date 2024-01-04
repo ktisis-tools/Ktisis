@@ -1,4 +1,4 @@
-namespace Ktisis.Editor.Strategy.Types;
+namespace Ktisis.Editor.Strategy.Decor;
 
 public interface IVisibility {
 	public bool Visible { get; set; }

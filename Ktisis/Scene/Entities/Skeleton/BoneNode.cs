@@ -13,8 +13,6 @@ namespace Ktisis.Scene.Entities.Skeleton;
 public class BoneNode : SkeletonNode {
 	public readonly PartialBoneInfo Info;
 	public uint PartialId;
-	
-	new public BoneEditor Edit() => (BoneEditor)this.Strategy;
 
 	public BoneNode(
 		ISceneManager scene,
@@ -22,7 +20,6 @@ public class BoneNode : SkeletonNode {
 		PartialBoneInfo bone,
 		uint partialId
 	) : base(scene) {
-		this.Strategy = new BoneEditor(this);
 		this.Type = EntityType.BoneNode;
 		this.Pose = pose;
 		this.Info = bone;

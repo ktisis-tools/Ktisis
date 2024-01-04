@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Ktisis.Editor.Strategy.Types;
+using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Strategy.Bones;
@@ -24,7 +24,7 @@ public class GroupEditor : BaseEditor, IVisibility {
 	}
 
 	private IEnumerable<IVisibility> RecurseVisible()
-		=> this.Group.Children.Select(child => child.GetEdit())
+		=> this.Group.Children.Select(child => child.GetEditor())
 			.Where(child => child is IVisibility)
 			.Cast<IVisibility>();
 }

@@ -1,13 +1,13 @@
 using System;
 
-using Ktisis.Interop.Structs.Scene;
+using Ktisis.Interop.Structs.Lights;
 using Ktisis.Scene.Entities.World;
 
 namespace Ktisis.Scene.Factory.Builders;
 
 public interface ILightBuilder : IEntityBuilder<LightEntity, ILightBuilder> {
 	public ILightBuilder SetAddress(nint address);
-	public unsafe ILightBuilder SetAddress(Light* pointer);
+	public unsafe ILightBuilder SetAddress(SceneLight* pointer);
 }
 
 public sealed class LightBuilder : EntityBuilderBase<LightEntity, ILightBuilder>, ILightBuilder {
@@ -26,7 +26,7 @@ public sealed class LightBuilder : EntityBuilderBase<LightEntity, ILightBuilder>
 		return this;
 	}
 
-	public unsafe ILightBuilder SetAddress(Light* pointer) {
+	public unsafe ILightBuilder SetAddress(SceneLight* pointer) {
 		this.Address = (nint)pointer;
 		return this;
 	}

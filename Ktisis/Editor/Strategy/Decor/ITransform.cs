@@ -2,7 +2,7 @@ using System.Numerics;
 
 using Ktisis.Common.Utility;
 
-namespace Ktisis.Editor.Strategy.Types;
+namespace Ktisis.Editor.Strategy.Decor;
 
 public interface ITransform {
 	public Transform? GetTransform();

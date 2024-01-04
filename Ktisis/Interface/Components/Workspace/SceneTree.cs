@@ -14,7 +14,7 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
-using Ktisis.Editor.Strategy.Types;
+using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Scene;
 using Ktisis.Scene.Entities;
 
@@ -112,7 +112,7 @@ public class SceneTree {
 				false => TreeNodeFlag.Collapse
 			};
 
-			var rightAdjust = this.DrawButtons(node);
+			var rightAdjust = this.DrawButtons(scene, node);
 			if (this.DrawNodeLabel(scene, node, pos, flag, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
@@ -189,13 +189,11 @@ public class SceneTree {
 	
 	// Buttons
 
-	private float DrawButtons(SceneEntity node) {
+	private float DrawButtons(ISceneManager scene, SceneEntity node) {
 		var initial = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
 		var cursor = initial;
-
-		var strategy = node.GetEdit();
-
-		if (strategy is IVisibility vis) {
+		
+		if (node.GetEditor() is IVisibility vis) {
 			if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, vis.Visible ? 0xEFFFFFFF : 0x80FFFFFF))
 				vis.Toggle();
 		}

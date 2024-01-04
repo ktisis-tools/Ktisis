@@ -6,7 +6,7 @@ using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities.Character;
 
-public abstract class CharaEntity : WorldEntity, ICharacter {
+public abstract class CharaEntity : WorldEntity {
 	private readonly IPoseBuilder _pose;
 
 	protected CharaEntity(

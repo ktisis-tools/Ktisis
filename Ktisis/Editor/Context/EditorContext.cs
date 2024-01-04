@@ -5,9 +5,11 @@ using Ktisis.Data.Config;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
+using Ktisis.Editor.Strategy;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interop.Hooking;
 using Ktisis.Localization;
+using Ktisis.Scene.Entities;
 
 namespace Ktisis.Editor.Context;
 
@@ -19,6 +21,7 @@ public interface IEditorContext : IDisposable {
 	
 	public IActionManager Actions { get; }
 	public ISceneManager Scene { get; }
+	public IEntityEditor Editor { get; }
 	public ISelectManager Selection { get; }
 	public ITransformHandler Transform { get; }
 	public IPoseModule PoseModule { get; }
@@ -26,6 +29,9 @@ public interface IEditorContext : IDisposable {
 	public IEditorContext Initialize();
 	
 	public void Update();
+
+	public BaseEditor GetEditor(SceneEntity entity);
+	public T? GetEditor<T>(SceneEntity entity) where T : BaseEditor;
 }
 
 public class EditorContext : IEditorContext {
@@ -39,6 +45,7 @@ public class EditorContext : IEditorContext {
 	
 	public required IActionManager Actions { get; init; }
 	public required ISceneManager Scene { get; init; }
+	public required IEntityEditor Editor { get; init; }
 	public required ISelectManager Selection { get; init; }
 	public required ITransformHandler Transform { get; init; }
 	public required IPoseModule PoseModule { get; init; }
@@ -71,7 +78,13 @@ public class EditorContext : IEditorContext {
 	public void Update() {
 		this.Scene.Update();
 		this.Selection.Update();
+		this.Editor.Update();
 	}
+	
+	// Wrappers
+
+	public BaseEditor GetEditor(SceneEntity entity) => this.Editor.Get(entity);
+	public T? GetEditor<T>(SceneEntity entity) where T : BaseEditor => this.Editor.Get<T>(entity);
 	
 	// Disposal
 

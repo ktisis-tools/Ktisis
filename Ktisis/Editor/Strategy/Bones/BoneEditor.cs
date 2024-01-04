@@ -1,6 +1,6 @@
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
-using Ktisis.Editor.Strategy.Types;
+using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Strategy.Bones;

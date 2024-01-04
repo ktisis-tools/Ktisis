@@ -1,4 +1,4 @@
-using Ktisis.Editor.Strategy.Types;
+using Ktisis.Editor.Strategy.Decor;
 
 namespace Ktisis.Editor.Strategy;
 
