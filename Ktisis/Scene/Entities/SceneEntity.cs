@@ -15,16 +15,15 @@ public abstract class SceneEntity : IComposite {
 	
 	public string Name { get; set; } = string.Empty;
 	public EntityType Type { get; protected init; }
-
-	// TODO: Remove selection wrappers
-	public IEditEntity Edit() => this.Strategy;
+	
+	public IEditEntity GetEdit() => this.Strategy;
 
 	public virtual bool IsValid => this.Scene.IsValid && this.Parent != null;
 	
 	protected SceneEntity(
 		ISceneManager scene
 	) {
-		this.Strategy = new EditEntity(); // TODO: Move this to builder?
+		this.Strategy = new BaseEditor(); // TODO: Move this to builder?
 		this.Scene = scene;
 	}
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Ktisis.Editor.Strategy;
+using Ktisis.Editor.Strategy.Bones;
 
 namespace Ktisis.Scene.Entities.Skeleton;
 
@@ -9,7 +10,7 @@ public abstract class SkeletonGroup : SkeletonNode {
 	protected SkeletonGroup(
 		ISceneManager scene
 	) : base(scene) {
-		this.Strategy = new EditGroup(this);
+		this.Strategy = new GroupEditor(this);
 	}
 
 	protected void Clean(int pIndex, uint pId) => this.GetChildren().RemoveAll(item => {

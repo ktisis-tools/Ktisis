@@ -4,14 +4,14 @@ using Ktisis.Common.Utility;
 using Ktisis.Editor.Strategy.Types;
 using Ktisis.Scene.Entities.World;
 
-namespace Ktisis.Editor.Strategy;
+namespace Ktisis.Editor.Strategy.World;
 
-public class EditObject : EditEntity, ITransform, IVisibility {
+public class ObjectEditor : BaseEditor, ITransform, IVisibility {
 	protected readonly WorldEntity WorldEntity;
 	
 	public bool Visible { get; set; }
 	
-	public EditObject(
+	public ObjectEditor(
 		WorldEntity entity
 	) {
 		this.WorldEntity = entity;

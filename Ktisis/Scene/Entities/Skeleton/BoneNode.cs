@@ -2,6 +2,7 @@ using FFXIVClientStructs.Havok;
 
 using Ktisis.Editor.Posing.Partials;
 using Ktisis.Editor.Strategy;
+using Ktisis.Editor.Strategy.Bones;
 
 using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
@@ -13,7 +14,7 @@ public class BoneNode : SkeletonNode {
 	public readonly PartialBoneInfo Info;
 	public uint PartialId;
 	
-	new public EditBone Edit() => (EditBone)this.Strategy;
+	new public BoneEditor Edit() => (BoneEditor)this.Strategy;
 
 	public BoneNode(
 		ISceneManager scene,
@@ -21,7 +22,7 @@ public class BoneNode : SkeletonNode {
 		PartialBoneInfo bone,
 		uint partialId
 	) : base(scene) {
-		this.Strategy = new EditBone(this);
+		this.Strategy = new BoneEditor(this);
 		this.Type = EntityType.BoneNode;
 		this.Pose = pose;
 		this.Info = bone;

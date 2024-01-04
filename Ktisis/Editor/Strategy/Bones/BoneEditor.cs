@@ -3,14 +3,14 @@ using Ktisis.Editor.Posing;
 using Ktisis.Editor.Strategy.Types;
 using Ktisis.Scene.Entities.Skeleton;
 
-namespace Ktisis.Editor.Strategy;
+namespace Ktisis.Editor.Strategy.Bones;
 
-public class EditBone : EditEntity, ITransform, IVisibility {
+public class BoneEditor : BaseEditor, ITransform, IVisibility {
 	private readonly BoneNode Bone;
 	
 	public bool Visible { get; set; }
 
-	public EditBone(
+	public BoneEditor(
 		BoneNode bone
 	) {
 		this.Bone = bone;

@@ -1,6 +1,5 @@
 using System.Linq;
 
-using Ktisis.Common.Utility;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Actions.Types;
 using Ktisis.Editor.Selection;
@@ -18,7 +17,7 @@ public interface ITransformHandler {
 public interface ITransformMemento : IMemento {
 	public ITransformMemento Save();
 	
-	public ITransformMemento SetTransform(Transform transform);
+	public ITransformMemento SetTransform(Common.Utility.Transform transform);
 	
 	public void Dispatch();
 }
@@ -45,7 +44,7 @@ public class TransformHandler : ITransformHandler {
 			.Where(entity => entity is { IsValid: true });
 		
 		var selectTargets = TransformResolver.GetCorrelatingBones(selected, true)
-			.Where(entity => entity.Edit() is ITransform)
+			.Where(entity => entity.GetEdit() is ITransform)
 			.ToList();
 
 		if (selectTargets.Count == 0) {
@@ -74,8 +73,8 @@ public class TransformHandler : ITransformHandler {
 
 		private readonly ITransformTarget Target;
 
-		private Transform? Initial;
-		private Transform? Final;
+		private Common.Utility.Transform? Initial;
+		private Common.Utility.Transform? Final;
 
 		public TransformMemento(
 			TransformHandler handler,
@@ -90,7 +89,7 @@ public class TransformHandler : ITransformHandler {
 			return this;
 		}
 
-		public ITransformMemento SetTransform(Transform transform) {
+		public ITransformMemento SetTransform(Common.Utility.Transform transform) {
 			this.Target.SetTransform(transform);
 			return this;
 		}

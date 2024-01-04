@@ -11,10 +11,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Handlers/Actors/ActorHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Handlers/EditorState.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Actor/ActorWindow.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GLib" beforeDir="false" afterPath="$PROJECT_DIR$/GLib" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/EditorContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/EditorContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EditBone.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/BoneEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EditEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/BaseEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EditGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/GroupEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EditObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/World/ObjectEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformTarget.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformTarget.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/SceneEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/SceneEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/SkeletonGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/SkeletonGroup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/World/WorldEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/World/WorldEntity.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -233,7 +247,7 @@
       <workItem from="1704106705356" duration="45064000" />
       <workItem from="1704209155349" duration="38671000" />
       <workItem from="1704286496700" duration="53457000" />
-      <workItem from="1704368125069" duration="32815000" />
+      <workItem from="1704368125069" duration="35097000" />
     </task>
     <servers />
   </component>
