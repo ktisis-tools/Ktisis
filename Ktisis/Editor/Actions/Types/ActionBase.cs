@@ -19,6 +19,8 @@ public abstract class ActionBase {
 	
 	public ActionAttribute GetAttribute() => this.GetType()
 		.GetCustomAttribute<ActionAttribute>()!;
+
+	public virtual bool CanInvoke() => true;
 	
 	public abstract bool Invoke();
 }
