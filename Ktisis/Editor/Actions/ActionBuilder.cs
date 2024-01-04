@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using Dalamud.Plugin.Services;
+
 using Ktisis.Core;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Actions.Input;
@@ -15,19 +17,21 @@ namespace Ktisis.Editor.Actions;
 [Singleton]
 public class ActionBuilder {
 	private readonly DIBuilder _di;
+	private readonly IKeyState _keyState;
 	
 	public ActionBuilder(
-		DIBuilder di
+		DIBuilder di,
+		IKeyState keyState
 	) {
 		this._di = di;
+		this._keyState = keyState;
 	}
 
 	public ActionManager Initialize(
 		IContextMediator mediator,
 		HookScope scope
 	) {
-		var input = new InputManager(mediator, scope);
-		
+		var input = new InputManager(mediator, scope.Create<InputModule>(), this._keyState);
 		var actions = new ActionManager(mediator, input);
 		this.InitActions(actions);
 		return actions;

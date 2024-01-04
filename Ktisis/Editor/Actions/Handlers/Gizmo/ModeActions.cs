@@ -1,3 +1,7 @@
+using Dalamud.Game.ClientState.Keys;
+
+using Ktisis.Data.Config.Actions;
+using Ktisis.Editor.Actions.Input.Binds;
 using Ktisis.Editor.Actions.Types;
 using Ktisis.ImGuizmo;
 
@@ -15,16 +19,40 @@ public abstract class ModeActionBase(IActionManager manager) : ActionBase(manage
 }
 
 [Action("Gizmo_SetTranslateMode")]
-public class ModeTranslateAction(IActionManager manager) : ModeActionBase(manager) {
+public class ModeTranslateAction(IActionManager manager) : ModeActionBase(manager), IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.TRANSLATE;
+	
+	public KeybindInfo Keybind { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.T, VirtualKey.CONTROL)
+		}
+	};
 }
 
 [Action("Gizmo_SetRotateMode")]
-public class ModeRotateAction(IActionManager manager) : ModeActionBase(manager) {
+public class ModeRotateAction(IActionManager manager) : ModeActionBase(manager), IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.ROTATE;
+
+	public KeybindInfo Keybind { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.R, VirtualKey.CONTROL)
+		}
+	};
 }
 
 [Action("Gizmo_SetScaleMode")]
-public class ModeScaleAction(IActionManager manager) : ModeActionBase(manager) {
+public class ModeScaleAction(IActionManager manager) : ModeActionBase(manager), IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.SCALE;
+	
+	public KeybindInfo Keybind { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.S, VirtualKey.CONTROL)
+		}
+	};
 }

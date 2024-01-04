@@ -76,8 +76,11 @@ public class TransformHandler : ITransformHandler {
 
 		private readonly ITransformTarget Target;
 
-		private readonly Dictionary<SceneEntity, Transform> Initial = new();
-		private readonly Dictionary<SceneEntity, Transform> Final = new();
+		private Transform? Initial;
+		private Transform? Final;
+
+		//private readonly Dictionary<SceneEntity, Transform> Initial = new();
+		//private readonly Dictionary<SceneEntity, Transform> Final = new();
 
 		public TransformMemento(
 			TransformHandler handler,
@@ -88,19 +91,26 @@ public class TransformHandler : ITransformHandler {
 		}
 
 		public ITransformMemento Save() {
-			this.SaveMap(this.Initial);
+			//this.SaveMap(this.Initial);
+			this.Initial = this.Target.GetTransform();
 			return this;
 		}
 
 		public ITransformMemento SetTransform(Transform transform) {
+			this.Final = transform;
 			this.Target.SetTransform(transform);
-			this.SaveMap(this.Final);
 			return this;
 		}
 
-		public void Restore() => ApplyMap(this.Initial);
+		public void Restore() {
+			if (this.Initial != null)
+				this.SetTransform(this.Initial);
+		}
 
-		public void Apply() => ApplyMap(this.Final);
+		public void Apply() {
+			if (this.Final != null)
+				this.SetTransform(this.Final);
+		}
 
 		private void SaveMap(Dictionary<SceneEntity, Transform> map) {
 			map.Clear();
@@ -124,6 +134,7 @@ public class TransformHandler : ITransformHandler {
 		public void Dispatch() {
 			if (this.IsDispatch) return;
 			this.IsDispatch = true;
+			this.Final = this.Target.GetTransform();
 			this._handler._action.History.Add(this);
 		}
 	}
