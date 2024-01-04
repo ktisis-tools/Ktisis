@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.Interop;
 
-using Ktisis.Interop.Structs.Scene;
+using Ktisis.Interop.Structs.Lights;
 
-namespace Ktisis.Interop.Structs.Game;
+namespace Ktisis.Interop.Structs.GPose;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct GPoseState {
@@ -15,11 +15,11 @@ public struct GPoseState {
 	
 	// Light access
 	
-	public unsafe Light* GetLight(uint index) => (Light*)this.Lights[index];
+	public unsafe SceneLight* GetLight(uint index) => (SceneLight*)this.Lights[index];
 
-	public unsafe Span<Pointer<Light>> GetLights() {
+	public unsafe Span<Pointer<SceneLight>> GetLights() {
 		fixed (ulong* ptr = this.Lights) {
-			return new Span<Pointer<Light>>(ptr, LightCount);
+			return new Span<Pointer<SceneLight>>(ptr, LightCount);
 		}
 	}
 }

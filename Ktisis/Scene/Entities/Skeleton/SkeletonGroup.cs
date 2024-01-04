@@ -1,18 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Ktisis.Editor.Strategy;
-using Ktisis.Editor.Strategy.Bones;
-
 namespace Ktisis.Scene.Entities.Skeleton;
 
-public abstract class SkeletonGroup : SkeletonNode {
-	protected SkeletonGroup(
-		ISceneManager scene
-	) : base(scene) {
-		this.Strategy = new GroupEditor(this);
-	}
-
+public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene) {
 	protected void Clean(int pIndex, uint pId) => this.GetChildren().RemoveAll(item => {
 		switch (item) {
 			case BoneNodeGroup group:

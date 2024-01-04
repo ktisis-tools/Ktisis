@@ -3,7 +3,7 @@ using System.Linq;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Actions.Types;
 using Ktisis.Editor.Selection;
-using Ktisis.Editor.Strategy.Types;
+using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Transforms;
@@ -44,7 +44,7 @@ public class TransformHandler : ITransformHandler {
 			.Where(entity => entity is { IsValid: true });
 		
 		var selectTargets = TransformResolver.GetCorrelatingBones(selected, true)
-			.Where(entity => entity.GetEdit() is ITransform)
+			.Where(entity => entity.GetEditor() is ITransform)
 			.ToList();
 
 		if (selectTargets.Count == 0) {

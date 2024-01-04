@@ -3,23 +3,12 @@ using System.Linq;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Editor.Strategy;
-using Ktisis.Editor.Strategy.World;
-
 namespace Ktisis.Scene.Entities.World;
 
-public class WorldEntity : SceneEntity {
+public class WorldEntity(ISceneManager scene) : SceneEntity(scene) {
 	public nint Address { get; set; }
 	
 	public override bool IsValid => base.IsValid && this.Address != nint.Zero;
-
-	new public ObjectEditor Edit() => (ObjectEditor)this.Strategy;
-
-	public WorldEntity(
-		ISceneManager scene
-	) : base(scene) {
-		this.Strategy = new ObjectEditor(this);
-	}
 
 	public unsafe Object* GetObject() => (Object*)this.Address;
 

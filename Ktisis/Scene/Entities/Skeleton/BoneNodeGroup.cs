@@ -10,7 +10,6 @@ public class BoneNodeGroup : SkeletonGroup {
 		ISceneManager scene,
 		EntityPose pose
 	) : base(scene) {
-		
 		this.Type = EntityType.BoneGroup;
 		this.Pose = pose;
 	}

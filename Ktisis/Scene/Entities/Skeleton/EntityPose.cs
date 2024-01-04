@@ -23,8 +23,8 @@ public class EntityPose : SkeletonGroup {
 		IPoseBuilder builder
 	) : base(scene) {
 		this._builder = builder;
-		this.Name = "Pose";
 		this.Type = EntityType.Armature;
+		this.Name = "Pose";
 		this.Pose = this;
 	}
 	

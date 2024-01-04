@@ -5,8 +5,8 @@ using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
 using Ktisis.Interop.Hooking;
-using Ktisis.Interop.Structs.Game;
-using Ktisis.Interop.Structs.Scene;
+using Ktisis.Interop.Structs.GPose;
+using Ktisis.Interop.Structs.Lights;
 using Ktisis.Scene.Entities.World;
 
 namespace Ktisis.Scene.Modules;
@@ -72,14 +72,14 @@ public class LightModule : SceneModule {
 		return result;
 	}
 
-	private unsafe void AddLight(Light* light, uint index) {
+	private unsafe void AddLight(SceneLight* light, uint index) {
 		this.Scene.Factory.CreateLight()
 			.SetName($"Camera Light {index + 1}")
 			.SetAddress(light)
 			.Add();
 	}
 
-	private unsafe void RemoveLight(Light* light) {
+	private unsafe void RemoveLight(SceneLight* light) {
 		this.Scene.Children
 			.FirstOrDefault(entity => entity is LightEntity lightEntity && lightEntity.Address == (nint)light)?
 			.Remove();

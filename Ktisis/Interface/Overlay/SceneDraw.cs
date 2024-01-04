@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 
 using ImGuiNET;
@@ -8,7 +7,8 @@ using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
-using Ktisis.Editor.Strategy.Types;
+using Ktisis.Editor.Strategy.Bones;
+using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Services;
@@ -45,8 +45,8 @@ public class SceneDraw {
 				this.DrawSkeleton(frame, pose);
 				continue;
 			}
-			
-			if (entity.GetEdit() is IVisibility { Visible: true } and ITransform manip) {
+
+			if (entity.GetEditor() is IVisibility { Visible: true } and ITransform manip) {
 				var position = manip.GetTransform()?.Position;
 				if (position != null)
 					frame.AddItem(entity, position.Value);
@@ -73,7 +73,8 @@ public class SceneDraw {
 			var boneCt = hkaSkeleton->Bones.Length;
 			for (var i = 0; i < boneCt; i++) {
 				var node = pose.GetBoneFromMap(index, i);
-				if (node?.Edit().Visible != true) continue;
+				if (node?.GetEditor<BoneEditor>()?.Visible != true)
+					continue;
 
 				var transform = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, i);
 				if (transform == null) continue;
@@ -85,7 +86,8 @@ public class SceneDraw {
 				for (var c = i; c < boneCt; c++) {
 					if (hkaSkeleton->ParentIndices[c] != i) continue;
 
-					if (pose.GetBoneFromMap(index, c)?.Edit().Visible != true)
+					var bone = pose.GetBoneFromMap(index, c);
+					if (bone?.GetEditor<BoneEditor>()?.Visible != true)
 						continue;
 
 					var lineTo = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, c);

@@ -1,23 +1,23 @@
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
-using Ktisis.Editor.Strategy.Types;
+using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Scene.Entities.World;
 
 namespace Ktisis.Editor.Strategy.World;
 
 public class ObjectEditor : BaseEditor, ITransform, IVisibility {
-	protected readonly WorldEntity WorldEntity;
+	protected WorldEntity Entity { get; }
 	
 	public bool Visible { get; set; }
 	
 	public ObjectEditor(
 		WorldEntity entity
 	) {
-		this.WorldEntity = entity;
+		this.Entity = entity;
 	}
 
-	private unsafe Object* Object => this.WorldEntity.IsValid ? this.WorldEntity.GetObject() : null;
+	private unsafe Object* Object => this.Entity.IsValid ? this.Entity.GetObject() : null;
 	
 	// Transform
 

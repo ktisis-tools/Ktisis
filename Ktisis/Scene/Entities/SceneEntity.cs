@@ -3,7 +3,6 @@ using System.Linq;
 
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Strategy;
-using Ktisis.Editor.Strategy.Types;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities;
@@ -11,19 +10,17 @@ namespace Ktisis.Scene.Entities;
 public abstract class SceneEntity : IComposite {
 	protected readonly ISceneManager Scene;
 	
-	protected IEditEntity Strategy { get; init; }
-	
 	public string Name { get; set; } = string.Empty;
 	public EntityType Type { get; protected init; }
-	
-	public IEditEntity GetEdit() => this.Strategy;
 
 	public virtual bool IsValid => this.Scene.IsValid && this.Parent != null;
+
+	public BaseEditor GetEditor() => this.Scene.Context.GetEditor(this);
+	public T? GetEditor<T>() where T : BaseEditor => this.Scene.Context.GetEditor<T>(this);
 	
 	protected SceneEntity(
 		ISceneManager scene
 	) {
-		this.Strategy = new BaseEditor(); // TODO: Move this to builder?
 		this.Scene = scene;
 	}
 

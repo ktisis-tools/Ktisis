@@ -11,24 +11,48 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Handlers/Actors/ActorHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Handlers/EditorState.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Actor/ActorWindow.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/ICharacter.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EntityEditor.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditor.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Actor/ActorEditWindow.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/Character/Character.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/Character/Customize.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/Character/Equipment.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GLib" beforeDir="false" afterPath="$PROJECT_DIR$/GLib" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/EditorContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/EditorContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EditBone.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/BoneEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EditEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/BaseEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EditGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/GroupEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/EditObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/World/ObjectEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/EditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/EditorUi.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Actors/ActorEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Actors/ActorEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/BaseEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/BaseEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/BoneEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/BoneEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/GroupEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Bones/GroupEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Types/IEditEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/IEditEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Types/ITransform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/ITransform.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Types/IVisibility.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/Decor/IVisibility.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Strategy/World/ObjectEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Strategy/World/ObjectEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformHandler.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformTarget.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformTarget.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/ContextButtons.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/ContextButtons.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTree.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneDraw.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneDraw.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Actor/ActorWindow.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/LightEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/LightEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Structs/Game/GPoseState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/GPose/GPoseState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Structs/Render/Light.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/Lights/RenderLight.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interop/Structs/Scene/Light.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interop/Structs/Lights/SceneLight.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/SceneEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/SceneEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNodeGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNodeGroup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/EntityPose.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/EntityPose.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/SkeletonGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/SkeletonGroup.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/World/WorldEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/World/WorldEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Factory/Builders/LightBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Factory/Builders/LightBuilder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/LightModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/LightModule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Types/ICharacter.cs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,13 +70,12 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1ddc1083c82549229d360b3946f68e4b167e10/bb/d9e1365e/EquipmentModelId.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/92ec3cc834ef78349ef5c2892165c0effe1c4048aa269ee3f898885366513/Pointer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_demo.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_internal.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Ktisis/Editor/Scene/Entity/SceneEntity.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Ktisis/Editor/Scene/SceneManager.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
@@ -247,7 +270,7 @@
       <workItem from="1704106705356" duration="45064000" />
       <workItem from="1704209155349" duration="38671000" />
       <workItem from="1704286496700" duration="53457000" />
-      <workItem from="1704368125069" duration="35097000" />
+      <workItem from="1704368125069" duration="41123000" />
     </task>
     <servers />
   </component>

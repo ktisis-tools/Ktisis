@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 
-namespace Ktisis.Interop.Structs.Render;
+namespace Ktisis.Interop.Structs.Lights;
 
 [Flags]
 public enum LightFlags : uint {
@@ -23,7 +23,7 @@ public enum LightMode : uint {
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0xA0)]
-public struct Light {
+public struct RenderLight {
 	[FieldOffset(0x18)] public LightFlags Flags;
 	[FieldOffset(0x1C)] public LightType Type;
 	[FieldOffset(0x20)] public unsafe Transform* Transform;
