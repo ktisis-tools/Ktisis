@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Ktisis.Actions;
-using Ktisis.Actions.Types;
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Actions;
+using Ktisis.Editor.Actions.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Strategy.Types;
 using Ktisis.Scene.Entities;

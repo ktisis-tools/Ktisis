@@ -18,7 +18,7 @@ public interface IEditor {
 [Singleton]
 public class SceneEditor : IEditor, IDisposable {
 	private readonly ConfigManager _cfg;
-	private readonly ContextFactory _factory;
+	private readonly ContextBuilder _factory;
 	private readonly GPoseService _gpose;
 	private readonly LocaleManager _locale;
 	private readonly EditorUi _ui;
@@ -29,7 +29,7 @@ public class SceneEditor : IEditor, IDisposable {
 
 	public SceneEditor(
 		ConfigManager cfg,
-		ContextFactory factory,
+		ContextBuilder factory,
 		GPoseService gpose,
 		LocaleManager locale,
 		EditorUi ui
@@ -86,10 +86,7 @@ public class SceneEditor : IEditor, IDisposable {
 
 	private void SetupContext() {
 		var mediator = new ContextMediator(this, this._cfg.Config, this._locale);
-		this._context = this._factory.Build(mediator)
-			.WithModule<ActorModule>()
-			.WithModule<LightModule>()
-			.Initialize();
+		this._context = this._factory.Initialize(mediator);
 	}
 	
 	// Update handler

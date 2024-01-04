@@ -3,7 +3,6 @@ using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.Havok;
 
-using Ktisis.Editor.Context;
 using Ktisis.Interop.Hooking;
 
 namespace Ktisis.Editor.Posing;
@@ -13,16 +12,11 @@ public interface IPoseModule : IHookModule {
 }
 
 public class PoseHooks : HookModule, IPoseModule {
-	private readonly IEditorContext _context;
-	
 	public bool IsEnabled { get; private set; }
 	
 	public PoseHooks(
-		IHookMediator hook,
-		IEditorContext context
-	) : base(hook) {
-		this._context = context;
-	}
+		IHookMediator hook
+	) : base(hook) { }
 	
 	// Module interface
 

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 using GLib.State;
 
-using Ktisis.Actions.Types;
+using Ktisis.Editor.Actions.Types;
 
-namespace Ktisis.Actions;
+namespace Ktisis.Editor.Actions;
 
 public interface IHistoryManager {
 	public int Count { get; }
