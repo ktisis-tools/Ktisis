@@ -1,15 +1,14 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Collections.Generic;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.Havok;
 
+using Ktisis.Editor.Posing;
+using Ktisis.Editor.Strategy.Types;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
-using Ktisis.Editor.Strategy.Types;
-using Ktisis.Common.Utility;
-using Ktisis.Editor.Posing;
 
 namespace Ktisis.Editor.Transforms;
 
@@ -34,13 +33,13 @@ public class TransformTarget : ITransformTarget {
 		this.PoseMap = TransformResolver.BuildPoseMap(primary, targets);
 	}
 	
-	public Transform? GetTransform() {
-		if (this.Primary?.Edit() is ITransform manip)
+	public Common.Utility.Transform? GetTransform() {
+		if (this.Primary?.GetEdit() is ITransform manip)
 			return manip.GetTransform();
 		return null;
 	}
 	
-	public void SetTransform(Transform transform) {
+	public void SetTransform(Common.Utility.Transform transform) {
 		var initial = this.GetTransform();
 		if (initial == null) return;
 
@@ -48,14 +47,14 @@ public class TransformTarget : ITransformTarget {
 		this.TransformSkeletons(transform, initial);
 	}
 
-	private void TransformObjects(Transform transform, Transform initial) {
+	private void TransformObjects(Common.Utility.Transform transform, Common.Utility.Transform initial) {
 		Matrix4x4 deltaMx;
 		if (Matrix4x4.Invert(initial.ComposeMatrix(), out var initialInverse))
 			deltaMx = initialInverse * transform.ComposeMatrix();
 		else return;
 
 		foreach (var entity in this.Targets.Where(tar => tar is { IsValid: true } and not BoneNode)) {
-			if (entity.Edit() is not ITransform manip) continue;
+			if (entity.GetEdit() is not ITransform manip) continue;
 			
 			var trans = manip.GetTransform();
 			if (trans == null) continue;
@@ -69,8 +68,8 @@ public class TransformTarget : ITransformTarget {
 		}
 	}
 
-	private unsafe void TransformSkeletons(Transform transform, Transform initial) {
-		var delta = new Transform(
+	private unsafe void TransformSkeletons(Common.Utility.Transform transform, Common.Utility.Transform initial) {
+		var delta = new Common.Utility.Transform(
 			transform.Position - initial.Position,
 			Quaternion.Normalize(transform.Rotation * Quaternion.Inverse(initial.Rotation)),
 			transform.Scale / initial.Scale
@@ -81,7 +80,7 @@ public class TransformTarget : ITransformTarget {
 			if (skeleton == null || skeleton->PartialSkeletons == null)
 				continue;
 
-			var model = new Transform(skeleton->Transform);
+			var model = new Common.Utility.Transform(skeleton->Transform);
 
 			var partialCt = skeleton->PartialSkeletonCount;
 			for (var pIndex = 0; pIndex < partialCt; pIndex++) {
@@ -98,7 +97,7 @@ public class TransformTarget : ITransformTarget {
 		}
 	}
 
-	private unsafe void TransformBone(Transform transform, Transform delta, Transform model, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
+	private unsafe void TransformBone(Common.Utility.Transform transform, Common.Utility.Transform delta, Common.Utility.Transform model, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
 		var bIndex = bone.Info.BoneIndex;
 		var boneTrans = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, bIndex);
 		if (boneTrans == null) return;
@@ -121,7 +120,7 @@ public class TransformTarget : ITransformTarget {
 		this.PropagateBones(model, boneTrans, skeleton, hkaPose, bone);
 	}
 
-	private unsafe void PropagateBones(Transform model, Transform boneTrans, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
+	private unsafe void PropagateBones(Common.Utility.Transform model, Common.Utility.Transform boneTrans, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
 		var initialModel = boneTrans.WorldToModel(model);
 		var finalModel = HavokPoseUtil.GetModelTransform(hkaPose, bone.Info.BoneIndex);
 		if (finalModel != null)

@@ -1,5 +1,6 @@
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Actions;
+using Ktisis.Editor.Handlers;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
@@ -36,15 +37,13 @@ public class ContextBuilder {
 
 		var poseModule = scope.Create<PoseHooks>();
 
-		var context = new EditorContext(
-			mediator,
-			scope,
-			actions,
-			scene,
-			select,
-			transform,
-			poseModule
-		);
+		var context = new EditorContext(mediator, scope) {
+			Actions = actions,
+			Scene = scene,
+			Selection = select,
+			Transform = transform,
+			PoseModule = poseModule
+		};
 
 		try {
 			mediator.Initialize(context);
@@ -54,5 +53,9 @@ public class ContextBuilder {
 		}
 
 		return context;
+	}
+
+	private EditHandlers BuildState() {
+		return null!;
 	}
 }

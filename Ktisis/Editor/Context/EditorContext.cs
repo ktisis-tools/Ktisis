@@ -20,9 +20,7 @@ public interface IEditorContext : IDisposable {
 	public IActionManager Actions { get; }
 	public ISceneManager Scene { get; }
 	public ISelectManager Selection { get; }
-	
 	public ITransformHandler Transform { get; }
-	
 	public IPoseModule PoseModule { get; }
 
 	public IEditorContext Initialize();
@@ -39,28 +37,18 @@ public class EditorContext : IEditorContext {
 	public Configuration Config => this._mediator.Config;
 	public LocaleManager Locale => this._mediator.Locale;
 	
-	public IActionManager Actions { get; }
-	public ISceneManager Scene { get; }
-	public ISelectManager Selection { get; }
-	public ITransformHandler Transform { get; }
-	public IPoseModule PoseModule { get; }
+	public required IActionManager Actions { get; init; }
+	public required ISceneManager Scene { get; init; }
+	public required ISelectManager Selection { get; init; }
+	public required ITransformHandler Transform { get; init; }
+	public required IPoseModule PoseModule { get; init; }
     
 	public EditorContext(
 		IContextMediator mediator,
-		HookScope scope,
-		IActionManager actions,
-		ISceneManager scene,
-		ISelectManager selection,
-		ITransformHandler transform,
-		IPoseModule poseModule
+		HookScope scope
 	) {
 		this._mediator = mediator;
 		this._scope = scope;
-		this.Actions = actions;
-		this.Scene = scene;
-		this.Selection = selection;
-		this.Transform = transform;
-		this.PoseModule = poseModule;
 	}
 	
 	// State

@@ -46,7 +46,7 @@ public class SceneDraw {
 				continue;
 			}
 			
-			if (entity.Edit() is IVisibility { Visible: true } and ITransform manip) {
+			if (entity.GetEdit() is IVisibility { Visible: true } and ITransform manip) {
 				var position = manip.GetTransform()?.Position;
 				if (position != null)
 					frame.AddItem(entity, position.Value);

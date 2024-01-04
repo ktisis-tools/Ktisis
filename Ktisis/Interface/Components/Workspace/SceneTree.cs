@@ -193,7 +193,7 @@ public class SceneTree {
 		var initial = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
 		var cursor = initial;
 
-		var strategy = node.Edit();
+		var strategy = node.GetEdit();
 
 		if (strategy is IVisibility vis) {
 			if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, vis.Visible ? 0xEFFFFFFF : 0x80FFFFFF))

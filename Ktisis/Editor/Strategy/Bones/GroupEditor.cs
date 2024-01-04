@@ -4,9 +4,9 @@ using System.Linq;
 using Ktisis.Editor.Strategy.Types;
 using Ktisis.Scene.Entities.Skeleton;
 
-namespace Ktisis.Editor.Strategy;
+namespace Ktisis.Editor.Strategy.Bones;
 
-public class EditGroup : EditEntity, IVisibility {
+public class GroupEditor : BaseEditor, IVisibility {
 	private readonly SkeletonGroup Group;
 	
 	public bool Visible {
@@ -17,14 +17,14 @@ public class EditGroup : EditEntity, IVisibility {
 		}
 	}
 
-	public EditGroup(
+	public GroupEditor(
 		SkeletonGroup group
 	) {
 		this.Group = group;
 	}
 
 	private IEnumerable<IVisibility> RecurseVisible()
-		=> this.Group.Children.Select(child => child.Edit())
+		=> this.Group.Children.Select(child => child.GetEdit())
 			.Where(child => child is IVisibility)
 			.Cast<IVisibility>();
 }
