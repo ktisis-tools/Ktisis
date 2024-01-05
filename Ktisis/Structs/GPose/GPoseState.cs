@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.Interop;
 
-using Ktisis.Interop.Structs.Lights;
+using Ktisis.Structs.Lights;
 
-namespace Ktisis.Interop.Structs.GPose;
+namespace Ktisis.Structs.GPose;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct GPoseState {

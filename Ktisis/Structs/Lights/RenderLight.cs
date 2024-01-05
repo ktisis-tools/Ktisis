@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 
-namespace Ktisis.Interop.Structs.Lights;
+namespace Ktisis.Structs.Lights;
 
 [Flags]
 public enum LightFlags : uint {

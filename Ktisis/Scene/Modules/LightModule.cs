@@ -5,9 +5,9 @@ using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
 using Ktisis.Interop.Hooking;
-using Ktisis.Interop.Structs.GPose;
-using Ktisis.Interop.Structs.Lights;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Structs.GPose;
+using Ktisis.Structs.Lights;
 
 namespace Ktisis.Scene.Modules;
 

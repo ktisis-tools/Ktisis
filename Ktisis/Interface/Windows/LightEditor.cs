@@ -5,8 +5,8 @@ using ImGuiNET;
 
 using Ktisis.Editor;
 using Ktisis.Interface.Types;
-using Ktisis.Interop.Structs.Lights;
 using Ktisis.Scene.Modules;
+using Ktisis.Structs.Lights;
 
 namespace Ktisis.Interface.Windows;
 

@@ -15,6 +15,8 @@ public sealed class DalamudServices {
 	[PluginService] private IGameInteropProvider _interop { get; set; } = null!;
 	[PluginService] private IObjectTable _objectTable { get; set; } = null!;
 	[PluginService] private IKeyState _keyState { get; set; } = null!;
+	[PluginService] private IDataManager _data { get; set; } = null!;
+	[PluginService] private ITextureProvider _tex { get; set; } = null!;
 
 	public void Add(DalamudPluginInterface dpi, IServiceCollection services) {
 		dpi.Inject(this);
@@ -26,6 +28,8 @@ public sealed class DalamudServices {
 			.AddSingleton(this._gui)
 			.AddSingleton(this._interop)
 			.AddSingleton(this._objectTable)
-			.AddSingleton(this._keyState);
+			.AddSingleton(this._keyState)
+			.AddSingleton(this._data)
+			.AddSingleton(this._tex);
 	}
 }

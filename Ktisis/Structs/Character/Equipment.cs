@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
-namespace Ktisis.Interop.Structs.Character;
+namespace Ktisis.Structs.Character;
 
 [StructLayout(LayoutKind.Explicit, Size = Size)]
 public struct Equipment {
