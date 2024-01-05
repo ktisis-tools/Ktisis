@@ -6,6 +6,8 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 
+using GLib.Popups;
+using GLib.Popups.Context;
 using GLib.Widgets;
 
 using ImGuiNET;
@@ -23,11 +25,16 @@ namespace Ktisis.Interface.Components.Workspace;
 [Transient]
 public class SceneTree {
 	private readonly ConfigManager _cfg;
+	private readonly EntityMenuBuilder _menu;
 
+	private readonly PopupManager _popup = new();
+	
 	public SceneTree(
-		ConfigManager cfg
+		ConfigManager cfg,
+		EntityMenuBuilder menu
 	) {
 		this._cfg = cfg;
+		this._menu = menu;
 	}
 	
 	// Draw frame
@@ -37,15 +44,15 @@ public class SceneTree {
 		try {
 			var id = ImGui.GetID("SceneTree_Frame");
 			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
-			if (!frame) return;
-			
-			if (scene != null)
+			if (frame && scene != null)
 				this.DrawScene(scene, height);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Error drawing scene tree:\n{err}");
 		} finally {
 			if (frame) ImGui.EndChildFrame();
 		}
+		
+		this._popup.Draw();
 	}
 	
 	// Draw scene entities
@@ -116,12 +123,13 @@ public class SceneTree {
 			if (this.DrawNodeLabel(scene, node, pos, flag, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
-			if (this.IsNodeHovered(pos, size, rightAdjust)) {
+			if (ImGui.IsWindowHovered() && this.IsNodeHovered(pos, size, rightAdjust)) {
 				if (isClick) {
 					var mode = GuiHelpers.GetSelectMode();
 					node.Select(mode);
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
-					// TODO
+					var ctx = this._menu.Build(scene.Context, node).Open();
+					this._popup.Add(ctx);
 				}
 			}
 		}
