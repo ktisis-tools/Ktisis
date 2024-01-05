@@ -1,7 +1,7 @@
 using System;
 
-using Ktisis.Interop.Structs.Lights;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Structs.Lights;
 
 namespace Ktisis.Scene.Factory.Builders;
 

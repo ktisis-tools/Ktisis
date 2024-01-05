@@ -1,5 +1,5 @@
 using Ktisis.Core.Attributes;
-using Ktisis.Interop.Structs.Character;
+using Ktisis.Structs.Character;
 
 namespace Ktisis.Interface.Components.Actors;
 

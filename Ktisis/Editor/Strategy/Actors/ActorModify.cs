@@ -5,10 +5,10 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Editor.Strategy.World;
-using Ktisis.Interop.Structs.Character;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Structs.Character;
 
-using Character = Ktisis.Interop.Structs.Character.Character;
+using Character = Ktisis.Structs.Character.Character;
 
 namespace Ktisis.Editor.Strategy.Actors;
 
@@ -34,5 +34,8 @@ public class ActorModify : ObjectModify, ICharacter {
 		var ptr = Character.From(this.GetCharacter());
 		if (ptr == null) return null;
 		return new Span<EquipmentModelId>(ptr->HumanEquip, 10).ToArray();
+	}
+
+	public unsafe void Redraw() {
 	}
 }

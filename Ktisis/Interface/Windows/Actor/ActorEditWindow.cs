@@ -1,6 +1,8 @@
 using ImGuiNET;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Strategy.Actors;
+using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
 
@@ -8,13 +10,16 @@ namespace Ktisis.Interface.Windows.Actor;
 
 public class ActorEditWindow : KtisisWindow {
 	private readonly IEditorContext _context;
-	
-	public ActorEntity Target { get; set; }
+	private readonly EquipmentEditor _equip;
+
+	public ActorEntity Target { get; set; } = null!;
 	
 	public ActorEditWindow(
-		IEditorContext context
+		IEditorContext context,
+		EquipmentEditor equip
 	) : base("Actor Editor") {
 		this._context = context;
+		this._equip = equip;
 	}
 
 	public override void PreDraw() {
@@ -23,14 +28,16 @@ public class ActorEditWindow : KtisisWindow {
 		this.Close();
 	}
 	
-	public override void Draw() {
-		/*var edit = this.Target.GetEdit();
+	public override unsafe void Draw() {
+		var modify = this.Target.GetModify<ActorModify>();
+		if (modify == null) return;
 
-		var custom = edit.GetCustomize();
-		if (custom != null) {
-			ImGui.Text($"{custom.Value.Race}");
-			ImGui.Text($"{custom.Value.Tribe}");
+		var chara = modify.GetCharacter();
+		if (chara == null) return;
 
-		}*/
+		var equip = modify.GetEquipment();
+		if (equip == null) return;
+
+		this._equip.Draw(chara, equip);
 	}
 }
