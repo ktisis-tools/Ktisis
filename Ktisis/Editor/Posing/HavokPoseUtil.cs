@@ -62,7 +62,7 @@ public static class HavokPoseUtil {
 	
 	// Propagation
 
-	public unsafe static void Propagate(Skeleton* skele, int partialIx, int boneIx, Transform target, Transform initial) {
+	public unsafe static void Propagate(Skeleton* skele, int partialIx, int boneIx, Transform target, Transform initial, bool propagatePartials = true) {
 		var partial = skele->PartialSkeletons[partialIx];
 		var pose = partial.GetHavokPose(0);
 		if (pose == null || pose->Skeleton == null) return;
@@ -74,27 +74,31 @@ public static class HavokPoseUtil {
 		var deltaRot = target.Rotation / initial.Rotation;
 		Propagate(pose, boneIx, sourcePos, deltaPos, deltaRot);
 
-		if (partialIx != 0) return;
+		if (partialIx != 0 || !propagatePartials) return;
 		
 		// Propagate connected partial skeletons
 
 		var hkaSkele = pose->Skeleton;
-		for (var p = 1; p < skele->PartialSkeletonCount; p++) {
+		for (var p = 0; p < skele->PartialSkeletonCount; p++) {
 			var subPartial = skele->PartialSkeletons[p];
 			var subPose = subPartial.GetHavokPose(0);
 			if (subPose == null) continue;
 
 			var rootBone = subPartial.ConnectedBoneIndex;
 			var parentBone = subPartial.ConnectedParentBoneIndex;
-			if (IsBoneDescendantOf(hkaSkele->ParentIndices, parentBone, boneIx))
-				Propagate(subPose, rootBone, sourcePos, deltaPos, deltaRot);
+			if (parentBone != boneIx && !IsBoneDescendantOf(hkaSkele->ParentIndices, parentBone, boneIx))
+				continue;
+			
+			if (boneIx == parentBone)
+				SetModelTransform(subPose, rootBone, target);
+			Propagate(subPose, rootBone, sourcePos, deltaPos, deltaRot);
 		}
 	}
 
 	private unsafe static void Propagate(hkaPose* pose, int boneIx, Vector3 sourcePos, Vector3 deltaPos, Quaternion deltaRot) {
 		var hkaSkele = pose->Skeleton;
 		for (var i = boneIx; i < hkaSkele->Bones.Length; i++) {
-			if (hkaSkele->ParentIndices[i] != boneIx)
+			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx))
 				continue;
 
 			var access = pose->AccessBoneModelSpace(i, DontPropagate);
@@ -105,14 +109,14 @@ public static class HavokPoseUtil {
 			matrix.Translation = sourcePos + deltaPos + offset;
 			trans.DecomposeMatrix(matrix);
 			*access = trans.ToHavok();
-
-			Propagate(pose, i, sourcePos, deltaPos, deltaRot);
 		}
 	}
 	
 	// Bone descendants
 
 	public static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
+		if (parent < 1) return true;
+		
 		var p = indices[bone];
 		while (p != -1) {
 			if (p == parent)
