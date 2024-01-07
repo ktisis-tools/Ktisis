@@ -39,8 +39,6 @@
 		</Category>
 		<Category Id="Face">
 			<Bones>
-				j_f_hana
-				j_f_memoto
 				j_face
 			</Bones>
 			<Category Id="Brow">
@@ -69,6 +67,18 @@
 					</Bones>
 				</Category>
 			</Category>
+			<Category Id="Cheeks">
+				<Bones>
+					j_f_hoho_l
+					j_f_hoho_r
+				</Bones>
+			</Category>
+			<Category Id="Nose">
+				<Bones>
+					j_f_hana
+					j_f_memoto
+				</Bones>
+			</Category>
 			<Category Id="Mouth">
 				<Bones>
 					j_ago
@@ -91,12 +101,6 @@
 						</Bones>
 					</Category>
 				</Category>
-			</Category>
-			<Category Id="Cheeks">
-				<Bones>
-					j_f_hoho_l
-					j_f_hoho_r
-				</Bones>
 			</Category>
 		</Category>
 	</Category>
