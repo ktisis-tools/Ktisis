@@ -2,7 +2,6 @@
 	<Category Id="Head">
 		<Bones>
 			j_kao
-			j_ago
 			j_kubi
 			j_head
 		</Bones>
@@ -40,8 +39,8 @@
 		</Category>
 		<Category Id="Face">
 			<Bones>
-				j_f_memoto
 				j_f_hana
+				j_f_memoto
 				j_face
 			</Bones>
 			<Category Id="Brow">
@@ -74,6 +73,7 @@
 				<Bones>
 					j_f_lip_l
 					j_f_lip_r
+					j_ago
 				</Bones>
 				<Category Id="UpperLip">
 					<Bones>
