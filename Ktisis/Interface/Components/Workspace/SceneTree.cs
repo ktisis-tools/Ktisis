@@ -7,7 +7,6 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 
 using GLib.Popups;
-using GLib.Popups.Context;
 using GLib.Widgets;
 
 using ImGuiNET;
@@ -198,11 +197,12 @@ public class SceneTree {
 	// Buttons
 
 	private float DrawButtons(ISceneManager scene, SceneEntity node) {
+		var isHover = ImGui.IsWindowHovered();
 		var initial = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
 		var cursor = initial;
 		
 		if (node.GetModify() is IVisibility vis) {
-			if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, vis.Visible ? 0xEFFFFFFF : 0x80FFFFFF))
+			if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, vis.Visible ? 0xEFFFFFFF : 0x80FFFFFF) && isHover)
 				vis.Toggle();
 		}
 		

@@ -5,6 +5,8 @@ using System.Linq;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 
+using GLib.Popups;
+
 using Ktisis.Core;
 using Ktisis.Core.Attributes;
 using Ktisis.Interface.Types;
@@ -18,7 +20,9 @@ public class GuiManager : IDisposable {
 	private readonly UiBuilder _uiBuilder;
 
     private readonly List<KtisisWindow> Windows = new();
+	
 	private readonly WindowSystem _ws = new("Ktisis");
+	private readonly PopupManager _popup = new();
 	
 	public GuiManager(
 		DIBuilder di,
@@ -32,7 +36,14 @@ public class GuiManager : IDisposable {
 	// Initialization
 
 	public void Initialize() {
-		this._uiBuilder.Draw += this._ws.Draw;
+		this._uiBuilder.Draw += this.Draw;
+	}
+	
+	// Draw
+
+	private void Draw() {
+		this._ws.Draw();
+		this._popup.Draw();
 	}
 	
 	// Window management
@@ -66,6 +77,22 @@ public class GuiManager : IDisposable {
 	public T GetOrCreate<T>(params object[] parameters) where T : KtisisWindow
 		=> this.Get<T>() ?? this.Create<T>(parameters);
 	
+	// Popups
+
+	public T AddPopup<T>(T popup) where T : class, IPopup {
+		this._popup.Add(popup);
+		return popup;
+	}
+
+	public T AddPopupSingleton<T>(T popup) where T : class, IPopup {
+		if (this.GetPopup<T>() is {} inst)
+			this._popup.Remove(inst);
+		return this.AddPopup(popup);
+	}
+
+	public T? GetPopup<T>() where T : class, IPopup
+		=> this._popup.Get<T>();
+	
 	// Events
 
 	private void OnClose(KtisisWindow window) {
@@ -82,7 +109,7 @@ public class GuiManager : IDisposable {
 	}
 	
 	public void Dispose() {
-		this._uiBuilder.Draw -= this._ws.Draw;
+		this._uiBuilder.Draw -= this.Draw;
 		this.RemoveAll();
 	}
 }
