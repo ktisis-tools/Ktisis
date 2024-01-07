@@ -71,21 +71,25 @@
 			</Category>
 			<Category Id="Mouth">
 				<Bones>
-					j_f_lip_l
-					j_f_lip_r
 					j_ago
 				</Bones>
-				<Category Id="UpperLip">
+				<Category Id="Lips">
 					<Bones>
-						j_f_ulip_a
-						j_f_ulip_b
+						j_f_lip_l
+						j_f_lip_r
 					</Bones>
-				</Category>
-				<Category Id="LowerLip">
-					<Bones>
-						j_f_dlip_a
-						j_f_dlip_b
-					</Bones>
+					<Category Id="UpperLip">
+						<Bones>
+							j_f_ulip_a
+							j_f_ulip_b
+						</Bones>
+					</Category>
+					<Category Id="LowerLip">
+						<Bones>
+							j_f_dlip_a
+							j_f_dlip_b
+						</Bones>
+					</Category>
 				</Category>
 			</Category>
 			<Category Id="Cheeks">
