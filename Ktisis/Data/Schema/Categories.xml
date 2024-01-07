@@ -177,7 +177,7 @@
 				</Category>
 			</Category>
 		</Category>
-		<Category Id="Torso">
+		<Category Id="Spine">
 			<Bones>
 				n_hara
 				j_kosi
