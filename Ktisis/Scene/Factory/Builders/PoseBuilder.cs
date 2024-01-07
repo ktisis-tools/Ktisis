@@ -110,7 +110,7 @@ public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, I
 			foreach (var category in orphans) {
 				var parent = categories.CategoryList
 					.Find(x => x.Name == category.ParentCategory);
-
+				
 				if (parent == null || this.CategoryMap.ContainsKey(parent))
 					continue;
 
@@ -138,6 +138,14 @@ public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, I
 				exists = children.Where(x => x is BoneNodeGroup)
 					.Cast<BoneNodeGroup>()
 					.ToList();
+			}
+
+			if (exists != null) {
+				foreach (var group in exists.Where(
+					group => categories.All(cat => cat.Key.Name != group.Name)
+				)) {
+					this.BindGroups(group, group.Category);
+				}
 			}
 
 			foreach (var (category, list) in categories) {
@@ -181,7 +189,7 @@ public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, I
 					boneInfo,
 					this.PartialId
 				) {
-					Name = this.Locale.GetBoneName(boneInfo),
+					Name = $"{this.Locale.GetBoneName(boneInfo)} ({boneInfo.Name})",
 					SortPriority = basePrio + boneInfo.BoneIndex
 				});
 			}
