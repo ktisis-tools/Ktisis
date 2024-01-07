@@ -15,6 +15,4 @@ public class BoneNodeGroup : SkeletonGroup {
 	}
 
 	public bool IsStale() => !this.IsValid || this.GetChildren().Count == 0;
-
-	
 }

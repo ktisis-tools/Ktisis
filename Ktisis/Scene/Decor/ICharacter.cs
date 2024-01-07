@@ -3,7 +3,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Structs.Character;
 
-namespace Ktisis.Editor.Strategy.Decor;
+namespace Ktisis.Scene.Decor;
 
 public interface ICharacter {
 	public unsafe CharacterBase* GetCharacter();

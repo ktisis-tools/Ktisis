@@ -15,8 +15,8 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
-using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Scene;
+using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 
 namespace Ktisis.Interface.Components.Workspace;
@@ -201,7 +201,7 @@ public class SceneTree {
 		var initial = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
 		var cursor = initial;
 		
-		if (node.GetModify() is IVisibility vis) {
+		if (node is IVisibility vis) {
 			if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, vis.Visible ? 0xEFFFFFFF : 0x80FFFFFF) && isHover)
 				vis.Toggle();
 		}

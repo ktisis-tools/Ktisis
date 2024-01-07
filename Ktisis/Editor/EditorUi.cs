@@ -1,13 +1,10 @@
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
-using Ktisis.Editor.Strategy.Actors;
 using Ktisis.Interface;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Windows;
-using Ktisis.Interface.Windows.Actor;
-using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor;
 

@@ -3,18 +3,25 @@ using System.Linq;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using Ktisis.Common.Utility;
+using Ktisis.Scene.Decor;
+
 namespace Ktisis.Scene.Entities.World;
 
-public class WorldEntity(ISceneManager scene) : SceneEntity(scene) {
+public class WorldEntity(ISceneManager scene) : SceneEntity(scene), ITransform, IVisibility {
 	public nint Address { get; set; }
 	
 	public override bool IsValid => base.IsValid && this.Address != nint.Zero;
-
+	
+	public bool Visible { get; set; }
+	
 	public unsafe Object* GetObject() => (Object*)this.Address;
 
 	public virtual void Setup() {
 		this.Clear();
 	}
+	
+	// Update handler
 
 	public override void Update() {
 		if (!this.IsValid) return;
@@ -52,5 +59,25 @@ public class WorldEntity(ISceneManager scene) : SceneEntity(scene) {
 		this.Scene.Factory.CreateObject()
 			.SetAddress(ptr)
 			.Add(this);
+	}
+	
+	// Transform
+
+	public unsafe Transform? GetTransform() {
+		var ptr = this.GetObject();
+		if (ptr == null) return null;
+		return new Transform(
+			ptr->Position,
+			ptr->Rotation,
+			ptr->Scale
+		);
+	}
+	
+	public unsafe void SetTransform(Transform trans) {
+		var ptr = this.GetObject();
+		if (ptr == null) return;
+		ptr->Position = trans.Position;
+		ptr->Rotation = trans.Rotation;
+		ptr->Scale = trans.Scale;
 	}
 }

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Ktisis.Editor.Selection;
-using Ktisis.Editor.Strategy;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities;
@@ -14,9 +13,6 @@ public abstract class SceneEntity : IComposite {
 	public EntityType Type { get; protected init; }
 
 	public virtual bool IsValid => this.Scene.IsValid && this.Parent != null;
-
-	public BaseModify GetModify() => this.Scene.Context.GetModify(this);
-	public T? GetModify<T>() where T : BaseModify => this.Scene.Context.GetModify<T>(this);
 	
 	protected SceneEntity(
 		ISceneManager scene
