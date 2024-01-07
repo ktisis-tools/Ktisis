@@ -1,9 +1,7 @@
-using ImGuiNET;
-
 using Ktisis.Editor.Context;
-using Ktisis.Editor.Strategy.Actors;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
+using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Windows.Actor;
@@ -29,7 +27,7 @@ public class ActorEditWindow : KtisisWindow {
 	}
 	
 	public override unsafe void Draw() {
-		var modify = this.Target.GetModify<ActorModify>();
+		var modify = this.Target as ICharacter;
 		if (modify == null) return;
 
 		var chara = modify.GetCharacter();

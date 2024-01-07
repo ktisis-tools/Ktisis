@@ -8,9 +8,9 @@ using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
-using Ktisis.Editor.Strategy.Decor;
 using Ktisis.Interface.Windows.Actor;
 using Ktisis.Interface.Windows.Pose;
+using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
@@ -44,7 +44,7 @@ public class EntityMenuBuilder {
 		else
 			cb.Action("Unselect", () => context.Selection.Unselect(entity));
 
-		if (entity.GetModify() is IVisibility vis)
+		if (entity is IVisibility vis)
 			cb.Action("Toggle display", () => vis.Toggle());
 		
 		switch (entity) {

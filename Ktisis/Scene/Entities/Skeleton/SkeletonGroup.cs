@@ -1,9 +1,22 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Ktisis.Scene.Decor;
+
 namespace Ktisis.Scene.Entities.Skeleton;
 
-public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene) {
+public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene), IVisibility {
+	public bool Visible {
+		get => this.RecurseVisible().All(vis => vis.Visible);
+		set {
+			foreach (var child in this.RecurseVisible())
+				child.Visible = value;
+		}
+	}
+	
+	private IEnumerable<IVisibility> RecurseVisible()
+		=> this.Children.Where(child => child is IVisibility).Cast<IVisibility>();
+	
 	protected void Clean(int pIndex, uint pId) => this.GetChildren().RemoveAll(item => {
 		switch (item) {
 			case BoneNodeGroup group:

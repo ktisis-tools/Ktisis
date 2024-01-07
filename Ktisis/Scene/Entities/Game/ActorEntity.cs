@@ -2,7 +2,6 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Editor.Strategy.Actors;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Types;

@@ -6,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Editor.Posing;
-using Ktisis.Editor.Strategy.Decor;
+using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 
@@ -34,8 +34,8 @@ public class TransformTarget : ITransformTarget {
 	}
 	
 	public Common.Utility.Transform? GetTransform() {
-		if (this.Primary?.GetModify() is ITransform manip)
-			return manip.GetTransform();
+		if (this.Primary is ITransform transform)
+			return transform.GetTransform();
 		return null;
 	}
 	
@@ -54,7 +54,7 @@ public class TransformTarget : ITransformTarget {
 		else return;
 
 		foreach (var entity in this.Targets.Where(tar => tar is { IsValid: true } and not BoneNode)) {
-			if (entity.GetModify() is not ITransform manip) continue;
+			if (entity is not ITransform manip) continue;
 			
 			var trans = manip.GetTransform();
 			if (trans == null) continue;
