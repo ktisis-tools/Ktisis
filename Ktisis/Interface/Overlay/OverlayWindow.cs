@@ -63,7 +63,8 @@ public class OverlayWindow : KtisisWindow {
 		t.Start();
 		
 		this._sceneDraw.DrawScene();
-		this.DrawGizmo();
+		if (this._context.Config.Gizmo.Visible)
+			this.DrawGizmo();
 		
 		t.Stop();
 		this.DrawDebug(t);

@@ -1,5 +1,3 @@
-using System.Linq;
-
 using Dalamud.Interface;
 
 using ImGuiNET;
@@ -9,9 +7,6 @@ using GLib.Widgets;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor;
 using Ktisis.Editor.Context;
-using Ktisis.Interface.Windows;
-using Ktisis.Interface.Windows.Actor;
-using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -29,6 +24,8 @@ public class ContextButtons {
 	}
 	
 	public void Draw(IEditorContext context) {
+		// TODO: Cleanup dev code.
+		
 		if (DrawButton(FontAwesomeIcon.ArrowsAlt, "Transform"))
 			this._ui.OpenTransformWindow(context);
 
@@ -36,14 +33,10 @@ public class ContextButtons {
 
 		if (DrawButton(FontAwesomeIcon.Sun, "Env")) { }
 
-		if (DrawButton(FontAwesomeIcon.Lightbulb, "Lights"))
-			this._gui.GetOrCreate<LightEditor>().Open();
-
-		if (DrawButton(FontAwesomeIcon.WaveSquare, "Actor")) {
-			var window = this._gui.GetOrCreate<ActorEditWindow>(context);
-			window.Target = (ActorEntity)context.Selection.GetSelected().First(sel => sel is ActorEntity);
-			window.Open();
-		}
+		var gizmo = context.Config.Gizmo.Visible;
+		var icon = gizmo ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
+		if (DrawButton(icon, "Gizmo"))
+			context.Config.Gizmo.Visible = !gizmo;
 
 		if (DrawButton(FontAwesomeIcon.EllipsisH, "Options", true)) { }
 	}

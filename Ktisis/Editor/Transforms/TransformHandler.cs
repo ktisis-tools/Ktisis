@@ -43,7 +43,7 @@ public class TransformHandler : ITransformHandler {
 		var selected = this._select.GetSelected()
 			.Where(entity => entity is { IsValid: true });
 		
-		var selectTargets = TransformResolver.GetCorrelatingBones(selected, true)
+		var selectTargets = TransformResolver.GetCorrelatingBones(selected, yieldDefault: true)
 			.Where(entity => entity.GetModify() is ITransform)
 			.ToList();
 

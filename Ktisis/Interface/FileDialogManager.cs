@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
 using GLib.Popups.ImFileDialog;
@@ -10,6 +11,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
+using Ktisis.Editor.Posing;
 
 namespace Ktisis.Interface;
 
@@ -19,15 +21,18 @@ public delegate void PoseFileOpenedHandler(string path, PoseFile poseFile);
 public class FileDialogManager {
 	private readonly ConfigManager _cfg;
 	private readonly GuiManager _gui;
+	private readonly IFramework _framework;
 
 	private Configuration Config => this._cfg.Config;
 	
 	public FileDialogManager(
 		ConfigManager cfg,
-		GuiManager gui
+		GuiManager gui,
+		IFramework framework
 	) {
 		this._cfg = cfg;
 		this._gui = gui;
+		this._framework = framework;
 	}
 	
 	// Dialog state
@@ -50,27 +55,58 @@ public class FileDialogManager {
 	public FileDialog OpenPoseFile(
 		PoseFileOpenedHandler handler
 	) {
-		return this.OpenDialog(this._gui.AddPopupSingleton(new FileDialog(
-			"Import Pose",
-			OnConfirm,
-			new FileDialogOptions {
-				Flags = FileDialogFlags.OpenMode,
-				Filters = "Pose Files{.pose}",
-				Extension = ".pose"
-			}
-		)));
+		return this.OpenDialog(
+			this._gui.AddPopupSingleton(new FileDialog(
+				"Open Pose File",
+				OnConfirm,
+				new FileDialogOptions {
+					Flags = FileDialogFlags.OpenMode,
+					Filters = "Pose Files{.pose}",
+					Extension = ".pose"
+				}
+			))
+		);
 		
 		void OnConfirm(FileDialog sender, IEnumerable<string> paths) {
 			var path = paths.FirstOrDefault();
 			if (path.IsNullOrEmpty()) return;
-
 			this.SaveDialogState(sender);
 
-			var poseFile = new JsonFileSerializer()
-				.Deserialize<PoseFile>(File.ReadAllText(path));
-			
-			if (poseFile != null)
-				handler.Invoke(path, poseFile);
+			var content = File.ReadAllText(path);
+			var poseFile = new JsonFileSerializer().Deserialize<PoseFile>(content);
+			if (poseFile == null) return;
+			handler.Invoke(path, poseFile);
+		}
+	}
+
+	public FileDialog ExportPoseFile(
+		EntityPoseConverter pose
+	) {
+		return this.OpenDialog(
+			this._gui.AddPopupSingleton(new FileDialog(
+				"Export Pose File",
+				OnConfirm,
+				new FileDialogOptions {
+					Filters = "Pose Files{.pose}",
+					Extension = ".pose"
+				}
+			))
+		);
+		
+		void OnConfirm(FileDialog sender, IEnumerable<string> paths) {
+			var path = paths.FirstOrDefault();
+			if (path.IsNullOrEmpty()) return;
+			this.SaveDialogState(sender);
+
+			this._framework.RunOnFrameworkThread(pose.Save).ContinueWith(task => {
+				if (task.Exception != null) {
+					Ktisis.Log.Error(task.Exception.ToString());
+					return;
+				}
+
+				var content = new JsonFileSerializer().Serialize(task.Result);
+				File.WriteAllText(path, content);
+			});
 		}
 	}
 }

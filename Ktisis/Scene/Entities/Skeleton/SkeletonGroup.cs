@@ -15,8 +15,26 @@ public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene) {
 				return false;
 		}
 	});
+
+	public IEnumerable<BoneNode> GetAllBones() {
+		var unique = new HashSet<BoneNode>();
+		foreach (var node in this.Children) {
+			switch (node) {
+				case BoneNode bone:
+					if (unique.Add(bone))
+						yield return bone;
+					break;
+				case SkeletonGroup group:
+					foreach (var bone in group.GetAllBones())
+						yield return bone;
+					break;
+				default:
+					continue;
+			}
+		}
+	}
 	
-	public List<BoneNode> GetIndividualBones() {
+	public IEnumerable<BoneNode> GetIndividualBones() {
 		var results = new List<BoneNode>();
 		foreach (var item in this.Recurse()) {
 			switch (item) {
