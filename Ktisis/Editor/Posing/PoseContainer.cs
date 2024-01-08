@@ -138,7 +138,7 @@ public class PoseContainer : Dictionary<string, Transform> {
 
 		var range = Enumerable.Range(partialIndex > 0 ? 1 : 0, skeleton->Bones.Length);
 		foreach (var i in range.Intersect(bones))
-			this.ApplyToBone(modelSkeleton, pose, partialIndex, i, offset, transforms);
+			this.ApplyToBone(modelSkeleton, pose, partialIndex, i, i > 0 ? offset : Quaternion.Identity, transforms);
 	}
 	
 	public unsafe void ApplyToBone(
@@ -157,8 +157,13 @@ public class PoseContainer : Dictionary<string, Transform> {
 		var initial = HavokPoseUtil.GetModelTransform(pose, boneIndex)!;
 
 		var target = new Transform(initial.Position, initial.Rotation, initial.Scale);
+
+		if (transforms.HasFlag(PoseTransforms.Position))
+			target.Position = model.Position;
 		if (transforms.HasFlag(PoseTransforms.Rotation))
 			target.Rotation = offset * model.Rotation;
+		if (transforms.HasFlag(PoseTransforms.Scale))
+			target.Scale = model.Scale;
 		
 		HavokPoseUtil.SetModelTransform(pose, boneIndex, target);
 		HavokPoseUtil.Propagate(modelSkeleton, partialIndex, boneIndex, target, initial);
