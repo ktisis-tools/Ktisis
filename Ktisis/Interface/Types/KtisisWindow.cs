@@ -22,7 +22,7 @@ public abstract class KtisisWindow : Window {
 		ImGuiWindowFlags flags = ImGuiWindowFlags.None,
 		bool forceMainWindow = false
 	) : base(name, flags, forceMainWindow) {
-		
+		this.RespectCloseHotkey = false;
 	}
 
 	public void Open() => this.IsOpen = true;
