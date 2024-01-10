@@ -1,12 +1,15 @@
+using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
+
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
-using Ktisis.Interface;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Windows;
+using Ktisis.Interface.Windows.Environment;
+using Ktisis.Scene.Modules;
 
-namespace Ktisis.Editor;
+namespace Ktisis.Interface;
 
 [Singleton]
 public class EditorUi {
@@ -43,5 +46,11 @@ public class EditorUi {
 	public void OpenTransformWindow(IEditorContext context) {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
 		this._gui.GetOrCreate<TransformWindow>(context, new Gizmo2D(gizmo)).Open();
+	}
+
+	public void OpenEnvironmentWindow(IEditorContext context) {
+		var scene = context.Scene;
+		var module = scene.GetModule<EnvModule>();
+		this._gui.GetOrCreate<EnvEditorWindow>(scene, module).Open();
 	}
 }

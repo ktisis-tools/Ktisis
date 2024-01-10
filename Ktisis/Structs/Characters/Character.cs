@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-namespace Ktisis.Structs.Character;
+namespace Ktisis.Structs.Characters;
 
 // Client::Graphics::Scene::CharacterBase
 

@@ -1,7 +1,7 @@
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Structs.Character;
+using Ktisis.Structs.Characters;
 
 namespace Ktisis.Scene.Decor;
 

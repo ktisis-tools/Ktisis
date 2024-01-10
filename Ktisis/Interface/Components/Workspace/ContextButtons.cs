@@ -31,7 +31,8 @@ public class ContextButtons {
 
 		if (DrawButton(FontAwesomeIcon.Camera, "Camera")) { }
 
-		if (DrawButton(FontAwesomeIcon.Sun, "Env")) { }
+		if (DrawButton(FontAwesomeIcon.Sun, "Env"))
+			this._ui.OpenEnvironmentWindow(context);
 
 		var gizmo = context.Config.Gizmo.Visible;
 		var icon = gizmo ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;

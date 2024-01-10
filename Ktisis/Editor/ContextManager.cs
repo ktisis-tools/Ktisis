@@ -5,6 +5,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Services;
 using Ktisis.Editor.Context;
+using Ktisis.Interface;
 using Ktisis.Localization;
 
 namespace Ktisis.Editor;

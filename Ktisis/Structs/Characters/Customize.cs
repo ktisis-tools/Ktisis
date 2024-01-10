@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 
-namespace Ktisis.Structs.Character;
+namespace Ktisis.Structs.Characters;
 
 [StructLayout(LayoutKind.Explicit, Size = Size)]
 public struct Customize {
