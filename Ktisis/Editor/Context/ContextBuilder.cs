@@ -29,7 +29,8 @@ public class ContextBuilder {
 		
 		var scene = new SceneManager(mediator, scope)
 			.AddModule<ActorModule>()
-			.AddModule<LightModule>();
+			.AddModule<LightModule>()
+			.AddModule<EnvModule>();
 		
 		var select = new SelectManager(mediator);
 		var transform = new TransformHandler(actions, select);

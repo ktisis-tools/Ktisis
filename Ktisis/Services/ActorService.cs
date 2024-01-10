@@ -28,7 +28,7 @@ public class ActorService {
 
 	public IEnumerable<GameObject> GetGPoseActors() {
 		for (var i = GPoseIndex; i < GPoseIndex + GPoseCount; i++) {
-			var actor = GetIndex(i);
+			var actor = this.GetIndex(i);
 			if (actor != null)
 				yield return actor;
 		}

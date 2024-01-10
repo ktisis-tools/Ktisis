@@ -1,3 +1,9 @@
+using System;
+
+using Dalamud.Interface.Utility.Raii;
+
+using ImGuiNET;
+
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
@@ -8,34 +14,54 @@ namespace Ktisis.Interface.Windows.Actor;
 
 public class ActorEditWindow : KtisisWindow {
 	private readonly IEditorContext _context;
+	private readonly CustomizeEditor _custom;
 	private readonly EquipmentEditor _equip;
 
 	public ActorEntity Target { get; set; } = null!;
 	
 	public ActorEditWindow(
 		IEditorContext context,
+		CustomizeEditor custom,
 		EquipmentEditor equip
 	) : base("Actor Editor") {
 		this._context = context;
+		this._custom = custom;
 		this._equip = equip;
 	}
 
 	public override void PreDraw() {
-		if (this._context.IsValid) return;
+		if (this._context.IsValid && this.Target.IsValid) return;
 		Ktisis.Log.Verbose("Context for actor window is stale, closing...");
 		this.Close();
 	}
+
+	// Draw tabs
 	
 	public override unsafe void Draw() {
-		var modify = this.Target as ICharacter;
-		if (modify == null) return;
+		using var _ = ImRaii.TabBar("##ActorEditTabs");
+		this.DrawTab("Appearance", this.DrawCustomize);
+		this.DrawTab("Equipment", this.DrawEquipment);
+	}
 
-		var chara = modify.GetCharacter();
+	private void DrawTab(string name, Action draw) {
+		using var tab = ImRaii.TabItem(name);
+		if (tab.Success) draw.Invoke();
+	}
+	
+	// Customize
+
+	private unsafe void DrawCustomize() {
+		var chara = this.Target.GetCharacter();
 		if (chara == null) return;
 
-		var equip = modify.GetEquipment();
-		if (equip == null) return;
+		var custom = this.Target.GetCustomize();
+		if (custom != null)
+			this._custom.Draw(custom.Value);
+	}
+	
+	// Equipment
 
-		this._equip.Draw(chara, equip);
+	private void DrawEquipment() {
+		ImGui.Text("Equip :3");
 	}
 }
