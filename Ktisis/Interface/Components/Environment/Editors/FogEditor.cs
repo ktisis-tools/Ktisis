@@ -23,7 +23,7 @@ public class FogEditor : EditorBase {
 		ImGui.SliderFloat("Distance", ref state.Fog.Distance, 0.0f, 1000.0f);
 		ImGui.SliderFloat("Thickness", ref state.Fog.Thickness, 0.0f, 100.0f);
 		ImGui.Spacing();
-		ImGui.SliderFloat("Sky Opacity", ref state.Fog.Opacity, 0.0f, 1.0f);
-		ImGui.SliderFloat("Brightness", ref state.Fog.Brightness, 0.0f, 1.0f);
+		ImGui.SliderFloat("Opacity", ref state.Fog.Opacity, 0.0f, 1.0f);
+		ImGui.SliderFloat("Sky Visibility", ref state.Fog.SkyVisibility, 0.0f, 1.0f);
 	}
 }

@@ -11,50 +11,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/ActorEditHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/Editors/EditorBase.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/Editors/FogEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/Editors/LightingEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/Editors/ParticlesEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/Editors/RainEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/Editors/SkyEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/Editors/StarsEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/Editors/WindEditor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/SetTextureSelect.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Environment/WeatherSelect.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Widgets/Environment/DayTimeControls.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Widgets/InputUInt.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Environment/EnvEditorWindow.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/EnvModule.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Services/Environment/WeatherInfo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Services/Environment/WeatherService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/EnvManagerEx.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/EnvSimulator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/EnvState.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/Weather/EnvClouds.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/Weather/EnvDust.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/Weather/EnvFog.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/Weather/EnvLighting.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/Weather/EnvRain.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/Weather/EnvStars.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Env/Weather/EnvWind.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GLib" beforeDir="false" afterPath="$PROJECT_DIR$/GLib" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/ContextManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/ContextManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/EditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/EditorUi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/ContextButtons.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/ContextButtons.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Actor/ActorEditWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Actor/ActorEditWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Ktisis.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Ktisis.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Decor/ICharacter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Decor/ICharacter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/ActorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/ActorService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Character/Character.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/Character.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Character/Customize.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/Customize.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Character/Equipment.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/Equipment.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -280,7 +238,7 @@
       <workItem from="1704706302553" duration="37679000" />
       <workItem from="1704787643135" duration="46893000" />
       <workItem from="1704876963546" duration="8223000" />
-      <workItem from="1704895863886" duration="10253000" />
+      <workItem from="1704895863886" duration="10904000" />
     </task>
     <servers />
   </component>

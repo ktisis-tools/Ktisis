@@ -11,5 +11,5 @@ public struct EnvFog {
 	[FieldOffset(0x18)] public float _unk1;
 	[FieldOffset(0x1C)] public float _unk2;
 	[FieldOffset(0x20)] public float Opacity;
-	[FieldOffset(0x24)] public float Brightness;
+	[FieldOffset(0x24)] public float SkyVisibility;
 }
