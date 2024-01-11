@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
+using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Core.Attributes;
 

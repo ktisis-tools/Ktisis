@@ -5,18 +5,19 @@ using FFXIVClientStructs.Havok;
 
 using Ktisis.Interop.Hooking;
 
-namespace Ktisis.Editor.Posing;
+namespace Ktisis.Scene.Modules;
 
 public interface IPoseModule : IHookModule {
 	public bool IsEnabled { get; }
 }
 
-public class PoseHooks : HookModule, IPoseModule {
+public class PoseModule : SceneModule, IPoseModule {
 	public bool IsEnabled { get; private set; }
 	
-	public PoseHooks(
-		IHookMediator hook
-	) : base(hook) { }
+	public PoseModule(
+		IHookMediator hook,
+		ISceneManager scene
+	) : base(hook, scene) { }
 	
 	// Module interface
 

@@ -1,6 +1,5 @@
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Actions;
-using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interop;
@@ -28,21 +27,16 @@ public class ContextBuilder {
 		var actions = this._actions.Initialize(mediator, scope);
 		
 		var scene = new SceneManager(mediator, scope)
-			.AddModule<ActorModule>()
-			.AddModule<LightModule>()
-			.AddModule<EnvModule>();
+			.SetupModules();
 		
 		var select = new SelectManager(mediator);
 		var transform = new TransformHandler(actions, select);
-
-		var poseModule = scope.Create<PoseHooks>();
 
 		var context = new EditorContext(mediator, scope) {
 			Actions = actions,
 			Scene = scene,
 			Selection = select,
-			Transform = transform,
-			PoseModule = poseModule
+			Transform = transform
 		};
 
 		try {
