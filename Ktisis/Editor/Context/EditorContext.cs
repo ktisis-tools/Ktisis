@@ -8,6 +8,7 @@ using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interop.Hooking;
 using Ktisis.Localization;
+using Ktisis.Scene.Modules;
 
 namespace Ktisis.Editor.Context;
 
@@ -21,7 +22,6 @@ public interface IEditorContext : IDisposable {
 	public ISceneManager Scene { get; }
 	public ISelectManager Selection { get; }
 	public ITransformHandler Transform { get; }
-	public IPoseModule PoseModule { get; }
 
 	public IEditorContext Initialize();
 	
@@ -41,7 +41,6 @@ public class EditorContext : IEditorContext {
 	public required ISceneManager Scene { get; init; }
 	public required ISelectManager Selection { get; init; }
 	public required ITransformHandler Transform { get; init; }
-	public required IPoseModule PoseModule { get; init; }
     
 	public EditorContext(
 		IContextMediator mediator,
@@ -59,7 +58,6 @@ public class EditorContext : IEditorContext {
 		try {
 			this.IsInit = true;
 			this.Scene.Initialize();
-			this.PoseModule.Initialize();
 			this.Actions.Initialize();
 		} catch {
 			this.Dispose();

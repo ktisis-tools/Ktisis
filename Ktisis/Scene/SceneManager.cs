@@ -8,6 +8,7 @@ using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Factory;
 using Ktisis.Scene.Modules;
+using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene;
@@ -20,6 +21,7 @@ public interface ISceneManager : IComposite, IDisposable {
 	public IEntityFactory Factory { get; }
 
 	public T GetModule<T>() where T : SceneModule;
+	public bool TryGetModule<T>(out T? module) where T : SceneModule;
 	
 	public double UpdateTime { get; }
 
@@ -52,15 +54,29 @@ public class SceneManager : ISceneManager {
 	}
 	
 	// Modules
+	
+	public T GetModule<T>() where T : SceneModule
+		=> (T)this.Modules[typeof(T)];
 
-	public SceneManager AddModule<T>() where T : SceneModule {
+	public bool TryGetModule<T>(out T? module) where T : SceneModule {
+		module = null;
+		var result = this.Modules.TryGetValue(typeof(T), out var value);
+		if (result) module = value as T;
+		return result;
+	}
+
+	public SceneManager SetupModules() {
+		return this.AddModule<ActorModule>()
+			.AddModule<EnvModule>()
+			.AddModule<LightModule>()
+			.AddModule<PoseModule>();
+	}
+
+	private SceneManager AddModule<T>() where T : SceneModule {
 		var module = this._scope.Create<T>(this);
 		this.Modules.Add(typeof(T), module);
 		return this;
 	}
-
-	public T GetModule<T>() where T : SceneModule
-		=> (T)this.Modules[typeof(T)];
 	
 	// Scene setup & events
 

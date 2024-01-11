@@ -9,30 +9,30 @@ using Ktisis.Services;
 
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
-namespace Ktisis.Scene.Modules;
+namespace Ktisis.Scene.Modules.Actors;
 
 public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
+	private readonly ActorSpawnManager _spawner;
 	
 	public ActorModule(
 		IHookMediator hook,
 		ISceneManager scene,
-		ActorService actors
+		ActorService actors,
+		ActorSpawnManager spawner
 	) : base(hook, scene) {
 		this._actors = actors;
+		this._spawner = spawner;
 	}
 
 	public override void Setup() {
 		foreach (var actor in this._actors.GetGPoseActors())
 			this.AddActor(actor, false);
 		this.EnableAll();
-
-		Ktisis.Log.Info($"InitActorHook: {this.AddCharacterHook != null}");
+		this._spawner.TryInitialize();
 	}
 	
 	// Hooks
-
-	private const ulong InvalidId = 0xE0000000;
 	
 	[Signature("E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? ??", DetourName = nameof(AddCharacterDetour))]
 	private Hook<AddCharacterDelegate>? AddCharacterHook = null!;
@@ -43,11 +43,7 @@ public class ActorModule : SceneModule {
 		if (!this.CheckValid()) return;
 		
 		try {
-			Ktisis.Log.Debug($"AddCharacter: {gpose:X} {address:X} {id:X}");
-			if (id != InvalidId)
-				this.AddActor(address, true);
-			else
-				Ktisis.Log.Verbose($"Invalid ID for 0x{address:X}, ignoring.");
+			this.AddActor(address, true);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to handle character add for 0x{address:X}:\n{err}");
 		}
@@ -55,10 +51,10 @@ public class ActorModule : SceneModule {
 
 	private void AddActor(nint address, bool addCompanion) {
 		var actor = this._actors.GetAddress(address);
-		if (actor != null)
+		if (actor is { ObjectIndex: not 200 })
 			this.AddActor(actor, addCompanion);
 		else
-			Ktisis.Log.Warning($"Actor address at 0x{address:X} returned null.");
+			Ktisis.Log.Warning($"Actor address at 0x{address:X} is invalid.");
 	}
 
 	private void AddActor(GameObject actor, bool addCompanion) {
@@ -67,7 +63,7 @@ public class ActorModule : SceneModule {
 			if (addCompanion)
 				this.AddCompanion(actor);
 		} else {
-			Ktisis.Log.Warning($"Actor address at 0x{actor.Address:X} is invalid!");
+			Ktisis.Log.Warning($"Actor address at 0x{actor.Address:X} is invalid.");
 		}
 	}
 
@@ -79,5 +75,12 @@ public class ActorModule : SceneModule {
 		if (actor is null or { ObjectIndex: 0 } || !actor.IsValid()) return;
 		
 		this.Scene.Factory.CreateActor(actor).Add();
+	}
+	
+	// Disposal
+
+	public override void Dispose() {
+		base.Dispose();
+		this._spawner.Dispose();
 	}
 }
