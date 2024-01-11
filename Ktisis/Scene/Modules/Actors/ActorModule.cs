@@ -1,10 +1,12 @@
 using System;
+using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Services;
 
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
@@ -32,6 +34,50 @@ public class ActorModule : SceneModule {
 		this._spawner.TryInitialize();
 	}
 	
+	// Spawning
+
+	public async Task<ActorEntity> Spawn() {
+		if (!this._spawner.IsInit)
+			throw new Exception("Actor spawn manager is uninitialized.");
+
+		var address = await this._spawner.CreateActor();
+		var entity = this.AddActor(address, false);
+		if (entity == null) throw new Exception("Failed to create actor entity.");
+		return entity;
+	}
+	
+	// Entities
+
+	private ActorEntity? AddActor(nint address, bool addCompanion) {
+		var actor = this._actors.GetAddress(address);
+		if (actor is { ObjectIndex: not 200 })
+			return this.AddActor(actor, addCompanion);
+		Ktisis.Log.Warning($"Actor address at 0x{address:X} is invalid.");
+		return null;
+	}
+
+	private ActorEntity? AddActor(GameObject actor, bool addCompanion) {
+		if (!actor.IsValid()) {
+			Ktisis.Log.Warning($"Actor address at 0x{actor.Address:X} is invalid.");
+			return null;
+		}
+		
+		var result = this.Scene.Factory.CreateActor(actor).Add();
+		if (addCompanion)
+			this.AddCompanion(actor);
+		return result;
+	}
+
+	private unsafe void AddCompanion(GameObject owner) {
+		var chara = (Character*)owner.Address;
+		if (chara == null || chara->CompanionObject == null) return;
+		
+		var actor = this._actors.GetAddress((nint)chara->CompanionObject);
+		if (actor is null or { ObjectIndex: 0 } || !actor.IsValid()) return;
+		
+		this.Scene.Factory.CreateActor(actor).Add();
+	}
+	
 	// Hooks
 	
 	[Signature("E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? ??", DetourName = nameof(AddCharacterDetour))]
@@ -43,38 +89,11 @@ public class ActorModule : SceneModule {
 		if (!this.CheckValid()) return;
 		
 		try {
-			this.AddActor(address, true);
+			if (id != 0xE0000000)
+				this.AddActor(address, true);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to handle character add for 0x{address:X}:\n{err}");
 		}
-	}
-
-	private void AddActor(nint address, bool addCompanion) {
-		var actor = this._actors.GetAddress(address);
-		if (actor is { ObjectIndex: not 200 })
-			this.AddActor(actor, addCompanion);
-		else
-			Ktisis.Log.Warning($"Actor address at 0x{address:X} is invalid.");
-	}
-
-	private void AddActor(GameObject actor, bool addCompanion) {
-		if (actor.IsValid()) {
-			this.Scene.Factory.CreateActor(actor).Add();
-			if (addCompanion)
-				this.AddCompanion(actor);
-		} else {
-			Ktisis.Log.Warning($"Actor address at 0x{actor.Address:X} is invalid.");
-		}
-	}
-
-	private unsafe void AddCompanion(GameObject owner) {
-		var chara = (Character*)owner.Address;
-		if (chara == null || chara->CompanionObject == null) return;
-		
-		var actor = this._actors.GetAddress((nint)chara->CompanionObject);
-		if (actor is null or { ObjectIndex: 0 } || !actor.IsValid()) return;
-		
-		this.Scene.Factory.CreateActor(actor).Add();
 	}
 	
 	// Disposal

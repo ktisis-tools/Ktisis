@@ -11,19 +11,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorSpawnManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Events/GPoseActorEvent.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTreeButtons.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/CameraModule.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GLib" beforeDir="false" afterPath="$PROJECT_DIR$/GLib" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/EditorContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/EditorContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/PoseHooks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/PoseModule.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/WorkspaceState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/WorkspaceState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTree.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Workspace.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/ActorModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorModule.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/ActorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/ActorService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorModule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorSpawnManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorSpawnManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -250,7 +246,7 @@
       <workItem from="1704787643135" duration="46893000" />
       <workItem from="1704876963546" duration="8223000" />
       <workItem from="1704895863886" duration="32432000" />
-      <workItem from="1704970880734" duration="19703000" />
+      <workItem from="1704970880734" duration="21849000" />
     </task>
     <servers />
   </component>

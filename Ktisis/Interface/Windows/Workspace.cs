@@ -19,17 +19,20 @@ public class Workspace : KtisisWindow {
 	
 	private readonly WorkspaceState _state;
 	private readonly SceneTree _sceneTree;
+	private readonly SceneTreeButtons _sceneButtons;
 	
 	public Workspace(
 		ContextManager editor,
 		ContextButtons buttons,
 		WorkspaceState state,
-		SceneTree sceneTree
+		SceneTree sceneTree,
+		SceneTreeButtons sceneTreeButtons
 	) : base("Ktisis Workspace") {
 		this._editor = editor;
 		this._buttons = buttons;
 		this._state = state;
 		this._sceneTree = sceneTree;
+		this._sceneButtons = sceneTreeButtons;
 	}
 	
 	// Constants
@@ -55,8 +58,8 @@ public class Workspace : KtisisWindow {
 		
 		// Context buttons
 		
-		if (scene?.Context != null)
-			this._buttons.Draw(scene.Context);
+		if (context != null)
+			this._buttons.Draw(context);
 		
 		// Scene
 
@@ -67,6 +70,9 @@ public class Workspace : KtisisWindow {
 		var botHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - botHeight;
 		this._sceneTree.Draw(scene, treeHeight);
+
+		if (scene != null)
+			this._sceneButtons.Draw(scene);
 	}
 }
  

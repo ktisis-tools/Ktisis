@@ -18,6 +18,7 @@ using Ktisis.Data.Config;
 using Ktisis.Scene;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Modules.Actors;
 
 namespace Ktisis.Interface.Components.Workspace;
 

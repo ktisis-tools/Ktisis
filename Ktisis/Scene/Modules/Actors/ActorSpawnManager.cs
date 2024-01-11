@@ -46,16 +46,18 @@ public class ActorSpawnManager : IDisposable {
 	private unsafe delegate nint DispatchEventDelegate(nint handler, GPoseActorEvent* task);
 	
 	// Initialization
+	
+	public bool IsInit { get; private set; }
 
 	public bool TryInitialize() {
 		try {
 			this._interop.InitializeFromAttributes(this);
 			this.Setup();
-			return true;
+			return this.IsInit = true;
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize spawn manager:\n{err}");
 			this.Dispose();
-			return false;
+			return this.IsInit = false;
 		}
 	}
 	
