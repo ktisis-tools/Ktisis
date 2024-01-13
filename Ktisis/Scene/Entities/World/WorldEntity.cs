@@ -73,7 +73,7 @@ public class WorldEntity(ISceneManager scene) : SceneEntity(scene), ITransform, 
 		);
 	}
 	
-	public unsafe void SetTransform(Transform trans) {
+	public unsafe virtual void SetTransform(Transform trans) {
 		var ptr = this.GetObject();
 		if (ptr == null) return;
 		ptr->Position = trans.Position;

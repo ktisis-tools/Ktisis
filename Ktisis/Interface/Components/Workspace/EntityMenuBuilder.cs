@@ -1,14 +1,12 @@
 using System.Linq;
 
-using Dalamud.Plugin.Services;
-
 using GLib.Popups.Context;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
-using Ktisis.Interface.Windows.Actor;
+using Ktisis.Interface.Windows.Editors;
 using Ktisis.Interface.Windows.Pose;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
@@ -22,16 +20,13 @@ namespace Ktisis.Interface.Components.Workspace;
 public class EntityMenuBuilder {
 	private readonly GuiManager _gui;
 	private readonly FileDialogManager _dialog;
-	private readonly IFramework _framework;
 	
 	public EntityMenuBuilder(
 		GuiManager gui,
-		FileDialogManager dialog,
-		IFramework framework
+		FileDialogManager dialog
 	) {
 		this._gui = gui;
 		this._dialog = dialog;
-		this._framework = framework;
 	}
 
 	public ContextMenu Build(IEditorContext context, SceneEntity entity) {
@@ -75,6 +70,11 @@ public class EntityMenuBuilder {
 				break;
 		}
 
+		if (entity is IDeletable deletable) {
+			cb.Separator()
+				.Action("Delete", () => deletable.Delete());
+		}
+
 		return cb.Build($"##EntityContext_{cb.GetHashCode():X}");
 	}
 	
@@ -110,11 +110,14 @@ public class EntityMenuBuilder {
 	private void OpenEditorFor(IEditorContext context, SceneEntity entity) {
 		switch (entity) {
 			case ActorEntity actor:
-				var window = this._gui.GetOrCreate<ActorEditWindow>(context);
-				window.Target = actor;
-				window.Open();
+				var actorWindow = this._gui.GetOrCreate<ActorEditWindow>(context);
+				actorWindow.Target = actor;
+				actorWindow.Open();
 				break;
 			case LightEntity light:
+				var lightWindow = this._gui.GetOrCreate<LightEditWindow>(context);
+				lightWindow.SetTarget(light);
+				lightWindow.Open();
 				break;
 		}
 	}

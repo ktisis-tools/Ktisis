@@ -7,10 +7,9 @@ using ImGuiNET;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
-using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Game;
 
-namespace Ktisis.Interface.Windows.Actor;
+namespace Ktisis.Interface.Windows.Editors;
 
 public class ActorEditWindow : KtisisWindow {
 	private readonly IEditorContext _context;

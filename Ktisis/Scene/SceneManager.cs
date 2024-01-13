@@ -9,6 +9,7 @@ using Ktisis.Scene.Entities;
 using Ktisis.Scene.Factory;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
+using Ktisis.Scene.Modules.Lights;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene;

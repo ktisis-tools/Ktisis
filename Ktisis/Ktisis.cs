@@ -4,12 +4,9 @@ using System.Reflection;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
-
 using Microsoft.Extensions.DependencyInjection;
 
 using Ktisis.Core;
-using Ktisis.Services;
 
 namespace Ktisis;
 
@@ -34,11 +31,6 @@ public sealed class Ktisis : IDalamudPlugin {
 
 		this._services.GetRequiredService<InitHandler>()
 			.Initialize();
-
-		unsafe {
-			var env = EnvManager.Instance();
-			Ktisis.Log.Info($"{(nint)env:X} {(nint)env->EnvScene:X} {(nint)(&env->EnvSimulator):X} {(nint)(&env->EnvState):X}");
-		}
 	}
 
 	// Version info

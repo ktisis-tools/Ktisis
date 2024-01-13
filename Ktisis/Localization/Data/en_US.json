@@ -293,5 +293,18 @@
 		"PenisIvcs": "IVCS Penis",
 		"VaginaIvcs": "IVCS Vagina",
 		"BottomIvcs": "IVCS Bottom"
+	},
+	
+	"lightType": {
+		"Directional": "Directional",
+		"PointLight": "Point Light",
+		"SpotLight": "Spot Light",
+		"AreaLight": "Area Light"
+	},
+	
+	"lightFalloff": {
+		"Linear": "Linear",
+		"Quadratic": "Quadratic",
+		"Cubic": "Cubic"
 	}
 }

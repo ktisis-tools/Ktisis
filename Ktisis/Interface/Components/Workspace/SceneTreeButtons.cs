@@ -5,7 +5,9 @@ using GLib.Widgets;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Scene;
+using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
+using Ktisis.Scene.Modules.Lights;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -27,6 +29,7 @@ public class SceneTreeButtons {
 	private void OpenContextMenu(ISceneManager scene) {
 		var popup = new ContextMenuBuilder()
 			.Action("Create Actor", () => this.CreateActor(scene))
+			.Action("Create Light", () => this.CreateLight(scene))
 			.Build("##SceneObjectContext");
 		
 		this._gui.AddPopup(popup).Open();
@@ -35,8 +38,12 @@ public class SceneTreeButtons {
 	// Handlers
 
 	private void CreateActor(ISceneManager scene) {
-		scene.GetModule<ActorModule>()
-			.Spawn()
+		scene.GetModule<ActorModule>().Spawn()
+			.ConfigureAwait(false);
+	}
+
+	private void CreateLight(ISceneManager scene) {
+		scene.GetModule<LightModule>().Spawn()
 			.ConfigureAwait(false);
 	}
 }

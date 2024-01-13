@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 
 using Dalamud.Hooking;
-using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
@@ -35,20 +34,14 @@ public interface IEnvModule : IHookModule {
 }
 
 public class EnvModule : SceneModule, IEnvModule {
-	private readonly IFramework _framework;
-	
 	public EnvModule(
 		IHookMediator hook,
-		ISceneManager scene,
-		IFramework framework
-	) : base(hook, scene) {
-		this._framework = framework;
-	}
+		ISceneManager scene
+	) : base(hook, scene) { }
 
-	public override bool Initialize() {
-		var result = base.Initialize();
-		if (result) this.EnableAll();
-		return result;
+	protected override bool OnInitialize() {
+		this.EnableAll();
+		return true;
 	}
 	
 	// EnvState
@@ -59,7 +52,6 @@ public class EnvModule : SceneModule, IEnvModule {
 	public int Day { get; set; }
 
 	public byte Weather { get; set; }
-	public float MoonPhase { get; set; }
 	
 	private unsafe void ApplyState(EnvState* dest, EnvState state) {
 		var flags = Enum.GetValues<EnvOverride>()

@@ -71,6 +71,8 @@ public class Workspace : KtisisWindow {
 		var treeHeight = ImGui.GetContentRegionAvail().Y - botHeight;
 		this._sceneTree.Draw(scene, treeHeight);
 
+		ImGui.Spacing();
+		
 		if (scene != null)
 			this._sceneButtons.Draw(scene);
 	}

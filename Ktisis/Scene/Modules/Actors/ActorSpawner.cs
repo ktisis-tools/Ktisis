@@ -12,20 +12,20 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Common.Math;
 
-using Ktisis.Core.Attributes;
+using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Events;
 
 namespace Ktisis.Scene.Modules.Actors;
 
-[Transient]
-public class ActorSpawnManager : IDisposable {
+public class ActorSpawner : HookModule {
 	private readonly IGameInteropProvider _interop;
 	private readonly IFramework _framework;
 	
-	public ActorSpawnManager(
+	public ActorSpawner(
+		IHookMediator hook,
 		IGameInteropProvider interop,
 		IFramework framework
-	) {
+	) : base(hook) {
 		this._interop = interop;
 		this._framework = framework;
 	}
@@ -47,18 +47,17 @@ public class ActorSpawnManager : IDisposable {
 	
 	// Initialization
 	
-	public bool IsInit { get; private set; }
-
-	public bool TryInitialize() {
+	public void TryInitialize() {
 		try {
-			this._interop.InitializeFromAttributes(this);
-			this.Setup();
-			return this.IsInit = true;
+			this.Initialize();
 		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to initialize spawn manager:\n{err}");
-			this.Dispose();
-			return this.IsInit = false;
+			Ktisis.Log.Error($"Failed to initialize light spawner:\n{err}");
 		}
+	}
+
+	protected override bool OnInitialize() {
+		this.Setup();
+		return true;
 	}
 	
 	// Virtual Functions Setup
@@ -121,7 +120,7 @@ public class ActorSpawnManager : IDisposable {
 		if (player == null)
 			throw new Exception("LocalPlayer is null.");
 		
-		// This should get freed by the event manager after handling.
+		// This gets freed by the event manager after handling.
 		var task = (GPoseActorEvent*)IMemorySpace.GetDefaultSpace()->Malloc<GPoseActorEvent>();
 		this._gPoseActorEventCtor(task, player, &player->GameObject.Position, 0x40, 30, 0, uint.MaxValue & ~0x4u & ~0x8000u, true);
 		task->__vfTable = this._hookVfTable;
@@ -153,9 +152,11 @@ public class ActorSpawnManager : IDisposable {
 	
 	// Disposal
 	
-	public unsafe void Dispose() {
+	public unsafe override void Dispose() {
+		base.Dispose();
+		Ktisis.Log.Verbose("Disposing actor spawn manager...");
 		if (this._hookVfTable != null) {
-			Ktisis.Log.Verbose("Freezing hookVfTable from spawn manager");
+			Ktisis.Log.Verbose("Freeing hookVfTable from spawn manager");
 			Marshal.FreeHGlobal((nint)this._hookVfTable);
 			this._hookVfTable = null;
 		}

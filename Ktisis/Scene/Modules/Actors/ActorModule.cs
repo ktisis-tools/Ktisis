@@ -15,16 +15,15 @@ namespace Ktisis.Scene.Modules.Actors;
 
 public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
-	private readonly ActorSpawnManager _spawner;
+	private readonly ActorSpawner _spawner;
 	
 	public ActorModule(
 		IHookMediator hook,
 		ISceneManager scene,
-		ActorService actors,
-		ActorSpawnManager spawner
+		ActorService actors
 	) : base(hook, scene) {
 		this._actors = actors;
-		this._spawner = spawner;
+		this._spawner = hook.Create<ActorSpawner>();
 	}
 
 	public override void Setup() {
@@ -101,5 +100,6 @@ public class ActorModule : SceneModule {
 	public override void Dispose() {
 		base.Dispose();
 		this._spawner.Dispose();
+		GC.SuppressFinalize(this);
 	}
 }

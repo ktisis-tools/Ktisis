@@ -28,7 +28,7 @@ public class ParticlesEditor : EditorBase {
 		using var _ = this.Disable(module);
 
 		ImGui.SliderFloat("Intensity", ref state.Dust.Intensity, 0.0f, 1.0f);
-		ImGui.SliderFloat("Size", ref state.Dust.Size, 0.0f, 10.0f);
+		ImGui.SliderFloat("Size", ref state.Dust.Size, 0.0f, 20.0f);
 		ImGui.SliderFloat("Glow", ref state.Dust.Glow, 0.0f, 10.0f);
 		ImGui.ColorEdit4("Color", ref state.Dust.Color);
 		ImGui.Spacing();
