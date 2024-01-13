@@ -7,7 +7,6 @@ using GLib.Widgets;
 
 using ImGuiNET;
 
-using Ktisis.Core.Attributes;
 using Ktisis.Interface.Components.Environment;
 using Ktisis.Interface.Components.Environment.Editors;
 using Ktisis.Interface.Types;
@@ -16,10 +15,9 @@ using Ktisis.Scene;
 using Ktisis.Scene.Modules;
 using Ktisis.Structs.Env;
 
-namespace Ktisis.Interface.Windows.Environment;
+namespace Ktisis.Interface.Windows.Editors;
 
-[Transient]
-public class EnvEditorWindow : KtisisWindow {
+public class EnvEditWindow : KtisisWindow {
 	private enum EnvEditorTab {
 		None,
 		Sky,
@@ -39,7 +37,7 @@ public class EnvEditorWindow : KtisisWindow {
 	private EnvEditorTab Current = EnvEditorTab.None;
 	private readonly Dictionary<EnvEditorTab, EditorBase> _editors = new();
 	
-	public EnvEditorWindow(
+	public EnvEditWindow(
 		ISceneManager scene,
 		IEnvModule module,
 		WeatherSelect weatherSelect,
@@ -65,7 +63,7 @@ public class EnvEditorWindow : KtisisWindow {
 			.Setup(EnvEditorTab.Wind, wind);
 	}
 
-	private EnvEditorWindow Setup(EnvEditorTab id, EditorBase editor) {
+	private EnvEditWindow Setup(EnvEditorTab id, EditorBase editor) {
 		this._editors.Add(id, editor);
 		return this;
 	}

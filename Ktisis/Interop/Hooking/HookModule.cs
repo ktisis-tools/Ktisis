@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using Dalamud.Hooking;
@@ -62,23 +63,23 @@ public abstract class HookModule : IHookModule {
 	
 	// Hooking
 
-	public virtual bool Initialize() {
+	public bool Initialize() {
 		if (this.IsDisposed)
 			throw new Exception("Attempted to initialize disposed module.");
-		
-		var init = this._init = this._hook.Init(this);
 
-		var hooks = this.GetHookWrappers();
+		var init = this._hook.Init(this);
+
+		var hooks = this.GetHookWrappers().ToList();
 		if (init) {
 			this.Hooks.AddRange(hooks);
-		} else {
-			foreach (var hook in hooks)
-				hook.Dispose();
-			this.IsDisposed = true;
+			init &= this.OnInitialize();
 		}
-		
-		return init;
+
+		if (!init) this.Dispose();
+		return this._init = init;
 	}
+
+	protected virtual bool OnInitialize() => true;
 
 	private IEnumerable<IHookWrapper> GetHookWrappers() {
 		var fields = this.GetType()

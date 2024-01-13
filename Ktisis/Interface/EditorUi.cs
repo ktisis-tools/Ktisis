@@ -6,7 +6,7 @@ using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Windows;
-using Ktisis.Interface.Windows.Environment;
+using Ktisis.Interface.Windows.Editors;
 using Ktisis.Scene.Modules;
 
 namespace Ktisis.Interface;
@@ -51,6 +51,6 @@ public class EditorUi {
 	public void OpenEnvironmentWindow(IEditorContext context) {
 		var scene = context.Scene;
 		var module = scene.GetModule<EnvModule>();
-		this._gui.GetOrCreate<EnvEditorWindow>(scene, module).Open();
+		this._gui.GetOrCreate<EnvEditWindow>(scene, module).Open();
 	}
 }
