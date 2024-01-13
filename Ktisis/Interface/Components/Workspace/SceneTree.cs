@@ -15,23 +15,23 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
+using Ktisis.Interface.Menus;
 using Ktisis.Scene;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
-using Ktisis.Scene.Modules.Actors;
 
 namespace Ktisis.Interface.Components.Workspace;
 
 [Transient]
 public class SceneTree {
 	private readonly ConfigManager _cfg;
-	private readonly EntityMenuBuilder _menu;
+	private readonly EntityMenuFactory _menu;
 
 	private readonly PopupManager _popup = new();
 	
 	public SceneTree(
 		ConfigManager cfg,
-		EntityMenuBuilder menu
+		EntityMenuFactory menu
 	) {
 		this._cfg = cfg;
 		this._menu = menu;
@@ -101,7 +101,7 @@ public class SceneTree {
 		var id = $"##SceneTree_{node.GetHashCode():X}";
 
 		const ImGuiSelectableFlags selectFlags = ImGuiSelectableFlags.AllowItemOverlap | ImGuiSelectableFlags.SpanAllColumns;
-		var isClick = ImGui.Selectable(id, node.IsSelected, selectFlags);
+		ImGui.Selectable(id, node.IsSelected, selectFlags);
 
 		var size = ImGui.GetItemRectSize();
 
@@ -124,7 +124,9 @@ public class SceneTree {
 				state.SetBool(imKey, isExpand = !isExpand);
 
 			if (ImGui.IsWindowHovered() && this.IsNodeHovered(pos, size, rightAdjust)) {
-				if (isClick) {
+				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) {
+					this._menu.OpenEditorFor(scene.Context, node);
+				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
 					var mode = GuiHelpers.GetSelectMode();
 					node.Select(mode);
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {

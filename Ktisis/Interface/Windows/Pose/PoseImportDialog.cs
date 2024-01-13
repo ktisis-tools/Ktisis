@@ -16,7 +16,7 @@ using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Windows.Pose;
 
-public class PoseImportDialog : KtisisWindow {
+public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	private readonly IFramework _framework;
 	private readonly FileDialogManager _dialog;
 	private readonly IEditorContext _context;
@@ -32,6 +32,7 @@ public class PoseImportDialog : KtisisWindow {
 		FileSelect<PoseFile> select
 	) : base(
 		"Import Pose",
+		context,
 		ImGuiWindowFlags.AlwaysAutoResize
 	) {
 		this._framework = framework;
@@ -39,23 +40,6 @@ public class PoseImportDialog : KtisisWindow {
 		this._context = context;
 		this._select = select;
 		select.OpenDialog = this.OnFileDialogOpen;
-	}
-	
-	// State
-
-	private ActorEntity Target { get; set; } = null!;
-	
-	public void SetTarget(ActorEntity actor) {
-		this.Target = actor;
-	}
-	
-	// Events
-
-	public override void PreOpenCheck() {
-		if (!this._context.IsValid || !this.Target.IsValid) {
-			Ktisis.Log.Verbose("State for pose import is stale, closing...");
-			this.Close();
-		}
 	}
 	
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {

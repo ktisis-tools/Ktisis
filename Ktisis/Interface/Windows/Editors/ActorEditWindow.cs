@@ -11,32 +11,22 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Windows.Editors;
 
-public class ActorEditWindow : KtisisWindow {
-	private readonly IEditorContext _context;
+public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	private readonly CustomizeEditor _custom;
 	private readonly EquipmentEditor _equip;
-
-	public ActorEntity Target { get; set; } = null!;
 	
 	public ActorEditWindow(
 		IEditorContext context,
 		CustomizeEditor custom,
 		EquipmentEditor equip
-	) : base("Actor Editor") {
-		this._context = context;
+	) : base("Actor Editor", context) {
 		this._custom = custom;
 		this._equip = equip;
 	}
 
-	public override void PreDraw() {
-		if (this._context.IsValid && this.Target.IsValid) return;
-		Ktisis.Log.Verbose("Context for actor window is stale, closing...");
-		this.Close();
-	}
-
 	// Draw tabs
 	
-	public override unsafe void Draw() {
+	public override void Draw() {
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
 		this.DrawTab("Appearance", this.DrawCustomize);
 		this.DrawTab("Equipment", this.DrawEquipment);
