@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 
+using Dalamud.Interface.Utility.Raii;
+
 using ImGuiNET;
 
 using Ktisis.Editor.Context;
@@ -11,58 +13,41 @@ using Ktisis.Structs.Lights;
 
 namespace Ktisis.Interface.Windows.Editors;
 
-public class LightEditWindow : KtisisWindow {
-	private readonly IEditorContext _context;
+public class LightEditWindow : EntityEditWindow<LightEntity> {
 	private readonly LocaleManager _locale;
 
 	public LightEditWindow(
 		IEditorContext context,
 		LocaleManager locale
-	) : base("Light Editor") {
-		this._context = context;
+	) : base("Light Editor", context) {
 		this._locale = locale;
-	}
-	
-	// State
-
-	private LightEntity? Target { get; set; }
-
-	public void SetTarget(LightEntity light) {
-		this.Target = light;
 	}
 
 	// Draw handlers
-
-	public override void PreOpenCheck() {
-		if (!this._context.IsValid)
-			this.Close();
-	}
 	
 	public override void Draw() {
-		var s = this._context.Selection;
+		var s = this.Context.Selection;
 		if (s.Count == 1) {
 			var p = s.GetSelected().First();
 			if (p is LightEntity l)
 				this.SetTarget(l);
 		}
-		
-		if (this.Target is not { IsValid: true } entity)
-			return;
+
+		var entity = this.Target;
 		
 		ImGui.Text($"{entity.Name}:");
 		ImGui.Spacing();
 
-		if (ImGui.BeginTabBar("##LightEditTabs")) {
-			if (ImGui.BeginTabItem("Light")) {
-				this.DrawLightTab(entity);
-				ImGui.EndTabItem();
-			}
-			if (ImGui.BeginTabItem("Shadows")) {
-				this.DrawShadowsTab(entity);
-				ImGui.EndTabItem();
-			}
-		}
-		//this.DrawEntity(entity);
+		using var _ = ImRaii.TabBar("##LightEditTabs");
+		this.DrawTab("Light", this.DrawLightTab, entity);
+		this.DrawTab("Shadows", this.DrawShadowsTab, entity);
+	}
+	
+	// Tabs
+
+	private void DrawTab(string label, Action<LightEntity> draw, LightEntity entity) {
+		using var _tab = ImRaii.TabItem(label);
+		if (_tab.Success) draw.Invoke(entity);
 	}
 	
 	// Light Tab

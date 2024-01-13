@@ -27,6 +27,12 @@ public class LightEntity : WorldEntity, IDeletable {
 	
 	private LightModule GetModule() => this.Scene.GetModule<LightModule>();
 
+	public unsafe void SetType(LightType type) {
+		var ptr = this.GetObject();
+		if (ptr == null || ptr->RenderLight == null) return;
+		ptr->RenderLight->LightType = type;
+	}
+
 	public override void Update() {
 		if (!this.IsValid) return;
 		
