@@ -11,28 +11,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Camera/Types/WorkCamera.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Camera/RenderCameraEx.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Input/InputDeviceManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Input/KeyEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Input/KeyboardDeviceData.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Input/KeyboardQueue.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Input/MouseDeviceData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Core/ServiceComposer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Core/ServiceComposer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/InputManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/InputManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/InputModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Actions/Input/InputModule.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Camera/CameraManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Camera/CameraManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Camera/CameraModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Camera/CameraModule.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Camera/Types/CameraFlags.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Camera/Types/CameraFlags.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Camera/Types/EditorCamera.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Camera/Types/EditorCamera.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Camera/Types/KtisisCamera.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Camera/Types/KtisisCamera.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/CameraSelector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/CameraSelector.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/CameraWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/CameraWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/Lights/LightSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/Lights/LightSpawner.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Camera.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Camera/GameCameraEx.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -270,7 +250,7 @@
       <workItem from="1705057701354" duration="40337000" />
       <workItem from="1705109797562" duration="1791000" />
       <workItem from="1705148827763" duration="43364000" />
-      <workItem from="1705233950432" duration="23507000" />
+      <workItem from="1705233950432" duration="23830000" />
     </task>
     <servers />
   </component>

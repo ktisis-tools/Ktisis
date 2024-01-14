@@ -57,8 +57,9 @@ public class CameraSelector {
 	private float _lastScroll;
 
 	private void DrawSelector(ICameraManager manager) {
+		using var _disable = ImRaii.Disabled(manager.IsWorkCameraActive);
+        
 		var current = manager.Current;
-
 		var combo = ImGui.BeginCombo("##CameraSelectList", current?.Name ?? "INVALID");
 		if (combo) {
 			// Restore last scroll position
