@@ -106,6 +106,8 @@ public class CameraManager : ICameraManager {
 			throw new Exception("Attempting to set invalid camera as current.");
 		this.Active = camera;
 		this.Module?.ChangeCamera(camera);
+		if (camera != this.WorkCamera)
+			this.IsWorkCameraActive = false;
 	}
 	
 	// Work camera
