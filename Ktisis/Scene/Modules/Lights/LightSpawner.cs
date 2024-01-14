@@ -75,7 +75,7 @@ public class LightSpawner : HookModule {
 			render->Color = new ColorHDR();
 			render->ShadowNear = 0.1f;
 			render->ShadowFar = 15.0f;
-			render->FalloffType = FalloffType.Cubic;
+			render->FalloffType = FalloffType.Quadratic;
 			render->AreaAngle = Vector2.Zero;
 			render->Falloff = 1.1f;
 			render->LightAngle = 45.0f;

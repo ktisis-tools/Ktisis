@@ -68,9 +68,9 @@ public class SceneManager : ISceneManager {
 
 	public SceneManager SetupModules() {
 		return this.AddModule<ActorModule>()
-			.AddModule<EnvModule>()
 			.AddModule<LightModule>()
-			.AddModule<PoseModule>();
+			.AddModule<PoseModule>()
+			.AddModule<EnvModule>();
 	}
 
 	private SceneManager AddModule<T>() where T : SceneModule {
@@ -81,7 +81,7 @@ public class SceneManager : ISceneManager {
 	
 	// Scene setup & events
 
-	public double UpdateTime { get; private set; } = 0.0f;
+	public double UpdateTime { get; private set; }
 
 	public void Initialize() {
 		Ktisis.Log.Info("Initializing scene...");

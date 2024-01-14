@@ -1,6 +1,8 @@
+using System;
 using System.Numerics;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 
 using GLib.Widgets;
 
@@ -15,12 +17,23 @@ using Ktisis.Editor.Selection;
 
 namespace Ktisis.Interface.Components.Transforms;
 
+[Flags]
+public enum TransformTableFlags {
+	None = 0,
+	Position = 1,
+	Rotation = 2,
+	Scale = 4,
+	Operation = 8,
+	UseAvailable = 16,
+	Default = Position | Rotation | Scale | Operation
+}
+
 [Transient]
 public class TransformTable {
 	private readonly ConfigManager _cfg;
 
 	private GizmoConfig GizmoConfig => this._cfg.Config.Gizmo;
-	
+
 	public TransformTable(
 		ConfigManager cfg
 	) {
@@ -51,20 +64,25 @@ public class TransformTable {
 		0xFFFF5400
 	];
 
-	public bool Draw(Transform transIn, out Transform transOut) {
+	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default) {
+		using var _id = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
+		
 		if (!this.IsUsed)
 			this.Angles = transIn.Rotation.ToEulerAngles();
-
 		this.IsUsed = false;
 		this.IsDeactivated = false;
 
 		try {
-			ImGui.PushItemWidth(CalcTableWidth());
-			
+			var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
+			ImGui.PushItemWidth(useAvail ? ImGui.GetContentRegionAvail().X : CalcTableWidth());
+
+			var op = flags.HasFlag(TransformTableFlags.Operation);
 			transOut = this.Transform.Set(transIn);
-			this.DrawPosition(ref transOut.Position);
-			this.DrawRotate(ref transOut.Rotation);
-			if (this.DrawScale(ref transOut.Scale))
+			if (flags.HasFlag(TransformTableFlags.Position))
+				this.DrawPosition(ref transOut.Position, op);
+			if (flags.HasFlag(TransformTableFlags.Rotation))
+				this.DrawRotate(ref transOut.Rotation, op);
+			if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref transOut.Scale, op))
 				transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 		} finally {
 			ImGui.PopItemWidth();
@@ -72,25 +90,40 @@ public class TransformTable {
 
 		return this.IsUsed;
 	}
+
+	public bool DrawPosition(ref Vector3 position, TransformTableFlags flags = TransformTableFlags.Default) {
+		using var _id = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
+		this.IsUsed = false;
+		this.IsDeactivated = false;
+		try {
+			var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
+			ImGui.PushItemWidth(useAvail ? ImGui.GetContentRegionAvail().X : CalcTableWidth());
+			var operation = flags.HasFlag(TransformTableFlags.Operation);
+			this.DrawPosition(ref position, operation);
+		} finally {
+			ImGui.PopItemWidth();
+		}
+		return this.IsUsed;
+	}
 	
 	// Individual transforms
 
-	private bool DrawPosition(ref Vector3 pos) {
+	private bool DrawPosition(ref Vector3 pos, bool op) {
 		var result = DrawLinear("##TransformTable_Pos", ref pos);
-		this.DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, "transform.position");
+		if (op) this.DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, "transform.position");
 		return result;
 	}
 
-	private bool DrawRotate(ref Quaternion rot) {
+	private bool DrawRotate(ref Quaternion rot, bool op) {
 		var result = DrawEuler("##TransformTable_Rotate", ref this.Angles, out var delta);
 		if (result) rot *= delta.EulerAnglesToQuaternion();
-		this.DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, "transform.rotation");
+		if (op) this.DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, "transform.rotation");
 		return result;
 	}
 
-	private bool DrawScale(ref Vector3 scale) {
+	private bool DrawScale(ref Vector3 scale, bool op) {
 		var result = DrawLinear("##TransformTable_Scale", ref scale);
-		this.DrawOperation(ScaleOp, FontAwesomeIcon.Expand, "transform.scale");
+		if (op) this.DrawOperation(ScaleOp, FontAwesomeIcon.Expand, "transform.scale");
 		return result;
 	}
 
@@ -168,9 +201,9 @@ public class TransformTable {
 	}
 	
 	// Space calculations
-	
+
 	private static float CalcTableWidth()
-		=> UiBuilder.DefaultFont.FontSize * 3.65f * 3;
+		=> UiBuilder.DefaultFont.FontSize * 4.00f * 3;
 
 	private static float CalcIconSpacing()
 		=> UiBuilder.IconFont.FontSize + ImGui.GetStyle().ItemSpacing.X * 2;

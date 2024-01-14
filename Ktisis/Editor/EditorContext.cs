@@ -1,32 +1,16 @@
 using System;
 
-using Ktisis.Scene;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Actions;
-using Ktisis.Editor.Posing;
+using Ktisis.Editor.Camera;
+using Ktisis.Editor.Context;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interop.Hooking;
 using Ktisis.Localization;
-using Ktisis.Scene.Modules;
+using Ktisis.Scene;
 
-namespace Ktisis.Editor.Context;
-
-public interface IEditorContext : IDisposable {
-	public bool IsValid { get; }
-	
-	public Configuration Config { get; }
-	public LocaleManager Locale { get; }
-	
-	public IActionManager Actions { get; }
-	public ISceneManager Scene { get; }
-	public ISelectManager Selection { get; }
-	public ITransformHandler Transform { get; }
-
-	public IEditorContext Initialize();
-	
-	public void Update();
-}
+namespace Ktisis.Editor;
 
 public class EditorContext : IEditorContext {
 	private readonly IContextMediator _mediator;
@@ -38,6 +22,7 @@ public class EditorContext : IEditorContext {
 	public LocaleManager Locale => this._mediator.Locale;
 	
 	public required IActionManager Actions { get; init; }
+	public required ICameraManager Cameras { get; init; }
 	public required ISceneManager Scene { get; init; }
 	public required ISelectManager Selection { get; init; }
 	public required ITransformHandler Transform { get; init; }
@@ -58,6 +43,7 @@ public class EditorContext : IEditorContext {
 		try {
 			this.IsInit = true;
 			this.Scene.Initialize();
+			this.Cameras.Initialize();
 			this.Actions.Initialize();
 		} catch {
 			this.Dispose();
@@ -80,6 +66,7 @@ public class EditorContext : IEditorContext {
 		this._mediator.Destroy();
 		this._scope.Dispose();
 		this.Scene.Dispose();
+		this.Cameras.Dispose();
 		GC.SuppressFinalize(this);
 	}
 }

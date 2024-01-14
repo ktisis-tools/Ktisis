@@ -2,6 +2,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Overlay;
@@ -33,7 +34,7 @@ public class EditorUi {
 
 	public void HandleWorkspace(bool state) {
 		if (state && this._cfg.Config.Editor.OpenOnEnterGPose)
-			this._gui.GetOrCreate<Workspace>().Open();
+			this._gui.GetOrCreate<WorkspaceWindow>().Open();
 	}
 
 	public void OpenOverlay(IEditorContext context) {
@@ -52,5 +53,9 @@ public class EditorUi {
 		var scene = context.Scene;
 		var module = scene.GetModule<EnvModule>();
 		this._gui.GetOrCreate<EnvEditWindow>(scene, module).Open();
+	}
+
+	public void OpenCameraWindow(IEditorContext context) {
+		this._gui.GetOrCreate<CameraWindow>(context).Open();
 	}
 }

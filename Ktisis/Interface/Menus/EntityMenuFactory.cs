@@ -1,6 +1,7 @@
 using GLib.Popups.Context;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Interface.Types;

@@ -63,7 +63,7 @@ public abstract class HookModule : IHookModule {
 	
 	// Hooking
 
-	public bool Initialize() {
+	public virtual bool Initialize() {
 		if (this.IsDisposed)
 			throw new Exception("Attempted to initialize disposed module.");
 

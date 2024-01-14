@@ -31,7 +31,7 @@ public class ActionBuilder {
 		IContextMediator mediator,
 		HookScope scope
 	) {
-		var input = new InputManager(mediator, scope.Create<InputModule>(), this._keyState);
+		var input = new InputManager(mediator, scope, this._keyState);
 		var actions = new ActionManager(mediator, input);
 		this.InitActions(actions);
 		return actions;

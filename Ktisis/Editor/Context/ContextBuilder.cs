@@ -1,10 +1,10 @@
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Actions;
+using Ktisis.Editor.Camera;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interop;
 using Ktisis.Scene;
-using Ktisis.Scene.Modules;
 
 namespace Ktisis.Editor.Context;
 
@@ -25,6 +25,8 @@ public class ContextBuilder {
 		var scope = this._interop.CreateScope();
 		
 		var actions = this._actions.Initialize(mediator, scope);
+
+		var cameras = new CameraManager(mediator, scope);
 		
 		var scene = new SceneManager(mediator, scope)
 			.SetupModules();
@@ -34,6 +36,7 @@ public class ContextBuilder {
 
 		var context = new EditorContext(mediator, scope) {
 			Actions = actions,
+			Cameras = cameras,
 			Scene = scene,
 			Selection = select,
 			Transform = transform

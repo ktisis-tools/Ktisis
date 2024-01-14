@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 using Dalamud.Game.ClientState.Keys;
@@ -12,6 +11,7 @@ using Ktisis.Data.Config;
 using Ktisis.Data.Config.Actions;
 using Ktisis.Editor.Actions.Input.Binds;
 using Ktisis.Editor.Context;
+using Ktisis.Interop.Hooking;
 
 namespace Ktisis.Editor.Actions.Input;
 
@@ -25,7 +25,7 @@ public interface IInputManager : IDisposable {
 
 public class InputManager : IInputManager {
 	private readonly IContextMediator _mediator;
-	private readonly InputModule _module;
+	private readonly HookScope _scope;
 	private readonly IKeyState _keyState;
 
 	private Configuration Config => this._mediator.Config;
@@ -34,20 +34,23 @@ public class InputManager : IInputManager {
 	
 	public InputManager(
 		IContextMediator mediator,
-		InputModule module,
+		HookScope scope,
 		IKeyState keyState
 	) {
 		this._mediator = mediator;
-		this._module = module;
+		this._scope = scope;
 		this._keyState = keyState;
 	}
 	
 	// Initialization
 
+	private InputModule? Module { get; set; }
+
 	public void Initialize() {
-		this._module.Initialize();
-		this._module.OnKeyEvent += this.OnKeyEvent;
-		this._module.EnableAll();
+		this.Module = this._scope.Create<InputModule>();
+		this.Module.Initialize();
+		this.Module.OnKeyEvent += this.OnKeyEvent;
+		this.Module.EnableAll();
 	}
 	
 	// Keybinds
@@ -133,9 +136,10 @@ public class InputManager : IInputManager {
 	public void Dispose() {
 		try {
 			this.Keybinds.Clear();
-			this._module.OnKeyEvent -= this.OnKeyEvent;
+			if (this.Module != null)
+				this.Module.OnKeyEvent -= this.OnKeyEvent;
 		} finally {
-			this._module.Dispose();
+			this.Module?.Dispose();
 		}
 		GC.SuppressFinalize(this);
 	}

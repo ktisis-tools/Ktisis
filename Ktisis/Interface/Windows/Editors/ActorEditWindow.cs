@@ -4,6 +4,7 @@ using Dalamud.Interface.Utility.Raii;
 
 using ImGuiNET;
 
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;

@@ -15,7 +15,7 @@ public class WorldEntity(ISceneManager scene) : SceneEntity(scene), ITransform, 
 	
 	public bool Visible { get; set; }
 	
-	public unsafe Object* GetObject() => (Object*)this.Address;
+	public unsafe virtual Object* GetObject() => (Object*)this.Address;
 
 	public virtual void Setup() {
 		this.Clear();

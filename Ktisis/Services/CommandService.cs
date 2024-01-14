@@ -46,7 +46,7 @@ public class CommandService : IDisposable {
 
 	private void OnMainCommand(string _command, string _arguments) {
 		Ktisis.Log.Info("Main command used");
-		this._gui.GetOrCreate<Workspace>().Toggle();
+		this._gui.GetOrCreate<WorkspaceWindow>().Toggle();
 	}
 	
 	// Disposal
