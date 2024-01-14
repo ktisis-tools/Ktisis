@@ -13,11 +13,7 @@ public class KtisisCamera : EditorCamera, IDisposable {
 
 	public KtisisCamera(
 		ICameraManager manager
-	) : base(manager) {
-		
-	}
-
-	// Disposal
+	) : base(manager) { }
 	
 	public void Dispose() {
 		this.Alloc?.Dispose();

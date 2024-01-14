@@ -15,6 +15,9 @@ using SceneCameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera
 
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Interop.Hooking;
+using Ktisis.Structs.Input;
+
+using InputManager = Ktisis.Editor.Actions.Input.InputManager;
 
 namespace Ktisis.Editor.Camera;
 
@@ -76,7 +79,16 @@ public class CameraModule : HookModule {
 			this.CameraUiHook.Disable();
 		}
 
+		if (camera is WorkCamera) {
+			this.CalcViewMatrixHook.Enable();
+			this.UpdateInputHook.Enable();
+		} else {
+			this.CalcViewMatrixHook.Disable();
+			this.UpdateInputHook.Disable();
+		}
+
 		SetSceneCamera(camera);
+		camera.SetActive();
 	}
 	
 	// Orbit target helpers
@@ -113,6 +125,42 @@ public class CameraModule : HookModule {
 		return result;
 	}
 	
+	// Work camera hooks
+
+	[Signature("E8 ?? ?? ?? ?? 33 C0 48 89 83 ?? ?? ?? ?? 48 8B 9C 24", DetourName = nameof(CalcViewMatrixDetour))]
+	private Hook<CalcViewMatrixDelegate> CalcViewMatrixHook = null!;
+	private unsafe delegate Matrix4x4* CalcViewMatrixDelegate(nint camera);
+
+	private unsafe Matrix4x4* CalcViewMatrixDetour(nint camera) {
+		var matrix = this.CalcViewMatrixHook.Original(camera);
+		
+		try {
+			if (this.Manager.Current is WorkCamera freeCam) {
+				freeCam.Update();
+				*matrix = freeCam.CalculateViewMatrix();
+			}
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to handle work camera:\n{err}");
+		}
+		
+		return matrix;
+	}
+
+	[Signature("E8 ?? ?? ?? ?? 83 7B 58 00", DetourName = nameof(UpdateInputDetour))]
+	private Hook<UpdateInputDelegate> UpdateInputHook = null!;
+	private unsafe delegate void UpdateInputDelegate(InputDeviceManager* mgr, nint a2, void* controller, MouseDeviceData* mouseData, KeyboardDeviceData* keyData);
+
+	private unsafe void UpdateInputDetour(InputDeviceManager* mgr, nint a2, void* controller, MouseDeviceData* mouseData, KeyboardDeviceData* keyData) {
+		this.UpdateInputHook.Original(mgr, a2, controller, mouseData, keyData);
+
+		try {
+			if (this.Manager.Current is WorkCamera workCamera && !InputManager.IsChatInputActive())
+				workCamera.UpdateControl(mouseData, keyData);
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to handle work camera input:\n{err}");
+		}
+	}
+	
 	// Collision hook
 
 	[Signature("E8 ?? ?? ?? ?? 4C 8D 45 C7 89 83", DetourName = nameof(CameraCollideDetour))]
@@ -120,7 +168,7 @@ public class CameraModule : HookModule {
 	private unsafe delegate nint CameraCollideDelegate(GameCamera* a1, Vector3* a2, Vector3* a3, float a4, nint a5, float a6);
 
 	private unsafe nint CameraCollideDetour(GameCamera* a1, Vector3* a2, Vector3* a3, float a4, nint a5, float a6) {
-		if (this.Manager.Current is { IsValid: true, IsNoCollide: true } camera && camera.Camera != null) {
+		if (this.Manager.Current is { IsNoCollide: true } camera && camera.Camera != null) {
 			var max = a4 + 0.001f;
 			camera.Camera->DistanceCollide.X = max;
 			camera.Camera->DistanceCollide.Y = max;
@@ -165,7 +213,7 @@ public class CameraModule : HookModule {
 	private delegate nint CameraTargetDelegate(nint a1);
 
 	private nint CameraTargetDetour(nint a1) {
-		if (this.Manager.Current is { IsValid: true, OrbitTarget: ushort id }) {
+		if (this.Manager.Current is { OrbitTarget: ushort id }) {
 			var target = this._objectTable.GetObjectAddress(id);
 			if (target != nint.Zero)
 				return target;
@@ -184,7 +232,7 @@ public class CameraModule : HookModule {
 		if (!this.Manager.IsValid || !condition) return redirect;
 
 		var active = this.Manager.Current;
-		if (active is not { IsValid: true, IsDefault: false } || active.GameCamera == null)
+		if (active is not { IsDefault: false, GameCamera: not null })
 			return redirect;
 
 		redirect.Value = table[index];

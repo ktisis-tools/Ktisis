@@ -46,6 +46,10 @@ public sealed class ServiceComposer {
 					break;
 			}
 		}
+
+		this._services.BuildServiceProvider(new ServiceProviderOptions() {
+
+		});
 		
 		return this;
 	}

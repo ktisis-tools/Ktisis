@@ -43,12 +43,11 @@ public class InputModule : HookModule {
 	
 	// Hooks
 
-	[Signature("48 89 5C 24 ?? 55 56 57 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 40 4D 8B F9", DetourName = nameof(InputDetour))]
-	private Hook<InputDelegate> InputHook = null!;
-	
-	private delegate nint InputDelegate(nint a1, WinMsg a2, nint a3, uint a4);
+	[Signature("48 89 5C 24 ?? 55 56 57 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 40 4D 8B F9", DetourName = nameof(InputNotificationDetour))]
+	private Hook<InputNotificationDelegate> InputNotificationHook = null!;
+	private delegate nint InputNotificationDelegate(nint a1, WinMsg a2, nint a3, uint a4);
 
-	private nint InputDetour(nint hWnd, WinMsg uMsg, nint wParam, uint lParam) {
+	private nint InputNotificationDetour(nint hWnd, WinMsg uMsg, nint wParam, uint lParam) {
 		var key = (VirtualKey)wParam;
 		switch (uMsg) {
 			// https://learn.microsoft.com/en-us/windows/win32/inputdev/wm-keydown
@@ -65,6 +64,6 @@ public class InputModule : HookModule {
 				break;
 		}
 		
-		return this.InputHook.Original(hWnd, uMsg, wParam, lParam);
+		return this.InputNotificationHook.Original(hWnd, uMsg, wParam, lParam);
 	}
 }
