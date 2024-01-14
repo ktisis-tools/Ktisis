@@ -7,6 +7,7 @@ using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interface.Types;

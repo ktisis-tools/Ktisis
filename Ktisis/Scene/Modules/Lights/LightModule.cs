@@ -72,7 +72,6 @@ public class LightModule : SceneModule {
 	public unsafe void UpdateLightObject(LightEntity entity) {
 		if (!this.IsInit || !entity.IsValid) return;
 		var ptr = entity.GetObject();
-		Ktisis.Log.Info("updating culling");
 		if (ptr != null) {
 			this._sceneLightUpdateCulling(ptr);
 			this._sceneLightUpdateMaterials(ptr);

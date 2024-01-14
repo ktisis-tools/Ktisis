@@ -3,19 +3,18 @@ using System.Diagnostics;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
-using Ktisis.Services;
-using Ktisis.Editor.Context;
 using Ktisis.Interface;
 using Ktisis.Localization;
+using Ktisis.Services;
 
-namespace Ktisis.Editor;
+namespace Ktisis.Editor.Context;
 
-public interface IEditor {
+public interface IContextManager {
 	public IEditorContext? Context { get; }
 }
 
 [Singleton]
-public class ContextManager : IEditor, IDisposable {
+public class ContextManager : IContextManager, IDisposable {
 	private readonly ConfigManager _cfg;
 	private readonly ContextBuilder _factory;
 	private readonly GPoseService _gpose;

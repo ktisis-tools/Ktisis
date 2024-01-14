@@ -5,6 +5,7 @@ using ImGuiNET;
 
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Scene.Decor;

@@ -7,6 +7,7 @@ using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interface.Widgets;

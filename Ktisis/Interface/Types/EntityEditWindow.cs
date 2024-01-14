@@ -2,6 +2,7 @@ using System;
 
 using ImGuiNET;
 
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Scene.Entities;
 

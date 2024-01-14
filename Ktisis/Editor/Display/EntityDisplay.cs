@@ -29,6 +29,7 @@ public class EntityDisplay {
 	
 	private const uint BoneBlue = 0xFFFF9F68;
 	private const uint ModelMint = 0xFFBAFFB2;
+	private const uint LightLemon = 0xFF68EDFF;
 	
 	public static Dictionary<EntityType, EntityDisplay> GetDefaults() => new() {
 		{ EntityType.Invalid, new EntityDisplay() },
@@ -39,6 +40,6 @@ public class EntityDisplay {
 		{ EntityType.Models, new EntityDisplay(color: ModelMint, icon: FontAwesomeIcon.CubesStacked) },
 		{ EntityType.ModelSlot, new EntityDisplay(color: ModelMint) },
 		{ EntityType.Weapon, new EntityDisplay(icon: FontAwesomeIcon.Magic) },
-		{ EntityType.Light, new EntityDisplay(color: 0xFF68EDFF, icon: FontAwesomeIcon.Lightbulb) }
+		{ EntityType.Light, new EntityDisplay(color: LightLemon, icon: FontAwesomeIcon.Lightbulb) }
 	};
 }

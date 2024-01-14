@@ -7,6 +7,7 @@ using ImGuiNET;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Interface.Components.Files;

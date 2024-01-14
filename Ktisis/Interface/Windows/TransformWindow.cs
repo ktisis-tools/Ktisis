@@ -9,6 +9,7 @@ using ImGuiNET;
 
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
+using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Transforms;
 using Ktisis.ImGuizmo;

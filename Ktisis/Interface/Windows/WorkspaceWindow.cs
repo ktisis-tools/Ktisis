@@ -5,31 +5,33 @@ using Dalamud.Interface.Utility.Raii;
 
 using ImGuiNET;
 
-using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Components.Workspace;
 
 namespace Ktisis.Interface.Windows; 
 
-public class Workspace : KtisisWindow {
+public class WorkspaceWindow : KtisisWindow {
 	private readonly ContextManager _editor;
 
 	private readonly ContextButtons _buttons;
-	
+
+	private readonly CameraSelector _camera;
 	private readonly WorkspaceState _state;
 	private readonly SceneTree _sceneTree;
 	private readonly SceneTreeButtons _sceneButtons;
 	
-	public Workspace(
+	public WorkspaceWindow(
 		ContextManager editor,
 		ContextButtons buttons,
+		CameraSelector camera,
 		WorkspaceState state,
 		SceneTree sceneTree,
 		SceneTreeButtons sceneTreeButtons
 	) : base("Ktisis Workspace") {
 		this._editor = editor;
 		this._buttons = buttons;
+		this._camera = camera;
 		this._state = state;
 		this._sceneTree = sceneTree;
 		this._sceneButtons = sceneTreeButtons;
@@ -61,11 +63,15 @@ public class Workspace : KtisisWindow {
 		if (context != null)
 			this._buttons.Draw(context);
 		
-		// Scene
+		// Cameras
 
 		ImGui.Spacing();
+		if (context != null)
+			this._camera.Draw(context);
+		
+		// Scene
+		
 		this._state.Draw(context);
-		ImGui.Spacing();
 
 		var botHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - botHeight;
