@@ -12,6 +12,7 @@ using Ktisis.Structs;
 using Ktisis.Structs.Common;
 using Ktisis.Structs.Lights;
 using Ktisis.Interop.Hooking;
+using Ktisis.Structs.Camera;
 
 namespace Ktisis.Scene.Modules.Lights;
 
@@ -59,10 +60,10 @@ public class LightSpawner : HookModule {
 		this._sceneLightInit(light);
 		this._sceneLightSpawn(light);
 
-		var activeCamera = Camera.GetActive();
+		var activeCamera = GameCameraEx.GetActive();
 		if (activeCamera != null) {
 			light->Transform.Position = activeCamera->Position;
-			light->Transform.Rotation = activeCamera->CalcRotation();
+			light->Transform.Rotation = activeCamera->CalcPointDirection();
 		}
 
 		*(ulong*)((nint)light + 56) |= 2u;

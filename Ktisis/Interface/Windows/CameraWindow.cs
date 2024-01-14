@@ -1,5 +1,3 @@
-using System.Numerics;
-
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 
@@ -27,7 +25,9 @@ public class CameraWindow : KtisisWindow {
 		IEditorContext context,
 		TransformTable fixedPos,
 		TransformTable relativePos
-	) : base("Camera Editor") {
+	) : base(
+		"Camera Editor"
+	) {
 		this._context = context;
 		this._fixedPos = fixedPos;
 		this._relativePos = relativePos;
@@ -42,8 +42,9 @@ public class CameraWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
+		this.SizeCondition = ImGuiCond.Always;
 		this.SizeConstraints = new WindowSizeConstraints {
-			MinimumSize = new Vector2(TransformTable.CalcWidth(), 200.0f),
+			MinimumSize = new(TransformTable.CalcWidth(), 300.0f),
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.75f
 		};
 	}
@@ -53,6 +54,7 @@ public class CameraWindow : KtisisWindow {
 		if (camera is not { IsValid: true }) return;
 
 		this.DrawToggles(camera);
+		
 		ImGui.Spacing();
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		ImGui.InputText("##CameraName", ref camera.Name, 64);
@@ -83,6 +85,18 @@ public class CameraWindow : KtisisWindow {
 		var delimit = camera.Flags.HasFlag(CameraFlags.Delimit);
 		if (ImGui.Checkbox("Delimited", ref delimit))
 			camera.SetDelimited(delimit);
+		
+		this.DrawOrthographicToggle(camera);
+	}
+
+	private unsafe void DrawOrthographicToggle(EditorCamera camera) {
+		if (camera.Camera == null || camera.Camera->RenderEx == null)
+			return;
+		
+		ImGui.SameLine();
+		var enabled = camera.IsOrthographic;
+		if (ImGui.Checkbox("Orthographic", ref enabled))
+			camera.SetOrthographic(enabled);
 	}
 	
 	// Orbit target
@@ -95,7 +109,7 @@ public class CameraWindow : KtisisWindow {
 
 		var isFixed = camera.OrbitTarget != null;
 		var lockIcon = isFixed ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
-		if (Buttons.IconButtonTooltip(lockIcon, isFixed ? "Orbit target is locked" : "Orbit target is unlocked"))
+		if (Buttons.IconButtonTooltip(lockIcon, isFixed ? "Unlock orbit target" : "Lock orbit target"))
 			camera.OrbitTarget = isFixed ? null : target.ObjectIndex;
 
 		ImGui.SameLine();
@@ -131,7 +145,7 @@ public class CameraWindow : KtisisWindow {
 			pos -= camera.RelativeOffset;
 		
 		var lockIcon = isFixed ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
-		var lockHint = isFixed ? "Camera position is locked" : "Camera position is unlocked";
+		var lockHint = isFixed ? "Unlock fixed position" : "Lock to fixed position";
 		if (Buttons.IconButtonTooltip(lockIcon, lockHint))
 			camera.FixedPosition = isFixed ? null : pos;
 
@@ -183,21 +197,38 @@ public class CameraWindow : KtisisWindow {
 	private unsafe void DrawSliders(EditorCamera camera) {
 		var ptr = camera.Camera;
 		if (ptr == null) return;
+		
+		this.DrawSliderAngle("##CameraRotate", FontAwesomeIcon.CameraRotate, ref ptr->Rotation, -180.0f, 180.0f, 0.5f);
+		this.DrawSliderAngle("##CameraZoom", FontAwesomeIcon.VectorSquare, ref ptr->Zoom, -40.0f, 100.0f, 0.5f);
+		this.DrawSliderFloat("##CameraDistance", FontAwesomeIcon.Moon, ref ptr->Distance, ptr->DistanceMin, ptr->DistanceMax, 0.05f);
+		if (camera.IsOrthographic)
+			this.DrawSliderFloat("##OrthographicZoom", FontAwesomeIcon.LocationCrosshairs, ref camera.OrthographicZoom, 0.1f, 10.0f, 0.01f);
+	}
 
-		this.DrawIconAlign(FontAwesomeIcon.CameraRotate, out var spacing);
-		ImGui.SameLine(0, spacing);
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-		ImGui.SliderAngle("##CameraRotate", ref ptr->Rotation, -180.0f, 180.0f, "%.3f", ImGuiSliderFlags.AlwaysClamp);
+	private void DrawSliderAngle(string label, FontAwesomeIcon icon, ref float value, float min, float max, float drag) {
+		this.DrawSliderIcon(icon);
+		ImGui.SliderAngle(label, ref value, min, max, "", ImGuiSliderFlags.AlwaysClamp);
+		var deg = value * MathHelpers.Rad2Deg;
+		if (this.DrawSliderDrag(label, ref deg, min, max, drag, true))
+			value = deg * MathHelpers.Deg2Rad;
+	}
 
-		this.DrawIconAlign(FontAwesomeIcon.VectorSquare, out spacing);
-		ImGui.SameLine(0, spacing);
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-		ImGui.SliderAngle("##CameraFoV", ref ptr->FoV, -40.0f, 100.0f, "%.3f", ImGuiSliderFlags.AlwaysClamp);
+	private void DrawSliderFloat(string label, FontAwesomeIcon icon, ref float value, float min, float max, float drag) {
+		this.DrawSliderIcon(icon);
+		ImGui.SliderFloat(label, ref value, min, max, "");
+		this.DrawSliderDrag(label, ref value, min, max, drag, false);
+	}
 
-		this.DrawIconAlign(FontAwesomeIcon.Moon, out  spacing);
+	private void DrawSliderIcon(FontAwesomeIcon icon) {
+		this.DrawIconAlign(icon, out var spacing);
 		ImGui.SameLine(0, spacing);
+		ImGui.SetNextItemWidth(ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - ImGui.GetCursorStartPos().X));
+	}
+	
+	private bool DrawSliderDrag(string label, ref float value, float min, float max, float drag, bool angle) {
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-		ImGui.SliderFloat("##CameraDistance", ref ptr->Distance, 0.0f, ptr->DistanceMax);
+		return ImGui.DragFloat($"{label}##Drag", ref value, drag, min, max, angle ? "%.0f°" : "%.3f");
 	}
 	
 	// Alignment helpers

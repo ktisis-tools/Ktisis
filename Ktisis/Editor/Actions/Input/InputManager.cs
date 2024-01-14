@@ -67,7 +67,7 @@ public class InputManager : IInputManager {
 	// Events
 	
 	private bool OnKeyEvent(VirtualKey key, VirtualKeyState state) {
-		if (/*!this.Config.Keybinds.Enabled || */!this._mediator.IsGPosing || IsChatInputActive())
+		if (!this._mediator.IsGPosing || IsChatInputActive())
 			return false;
 
 		var flag = state switch {
@@ -103,7 +103,7 @@ public class InputManager : IInputManager {
 	
 	// Check chat state
 
-	private static unsafe bool IsChatInputActive() {
+	public unsafe static bool IsChatInputActive() {
 		var module = UIModule.Instance();
 		if (module == null) return false;
 

@@ -5,6 +5,7 @@ using GLib.Widgets;
 
 using ImGuiNET;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Context;
@@ -32,13 +33,22 @@ public class CameraSelector {
 		ImGui.SameLine(0, spacing);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Create new camera"))
 			context.Cameras.Create();
-		
+
 		ImGui.SameLine(0, spacing);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit camera"))
 			this._ui.OpenCameraWindow(context);
 		
 		ImGui.SameLine(0, spacing);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Camera, "Toggle work camera")) { }
+		this.DrawFreecamToggle(context);
+	}
+
+	private void DrawFreecamToggle(IEditorContext context) {
+		var isFreecam = context.Cameras.IsWorkCameraActive;
+		using var _bgCol = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isFreecam);
+		using var _iconCol = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xCF), !isFreecam);
+		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Camera, "Toggle work camera"))
+			context.Cameras.ToggleWorkCameraMode();
 	}
 	
 	// Selector
