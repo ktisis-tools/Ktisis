@@ -95,7 +95,7 @@ public class CameraWindow : KtisisWindow {
 
 		var isFixed = camera.OrbitTarget != null;
 		var lockIcon = isFixed ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
-		if (Buttons.IconButtonTooltip(lockIcon, isFixed ? "Orbit target is locked." : "Orbit target is unlocked."))
+		if (Buttons.IconButtonTooltip(lockIcon, isFixed ? "Orbit target is locked" : "Orbit target is unlocked"))
 			camera.OrbitTarget = isFixed ? null : target.ObjectIndex;
 
 		ImGui.SameLine();
@@ -131,7 +131,7 @@ public class CameraWindow : KtisisWindow {
 			pos -= camera.RelativeOffset;
 		
 		var lockIcon = isFixed ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
-		var lockHint = isFixed ? "Lock camera position" : "Unlock camera position";
+		var lockHint = isFixed ? "Camera position is locked" : "Camera position is unlocked";
 		if (Buttons.IconButtonTooltip(lockIcon, lockHint))
 			camera.FixedPosition = isFixed ? null : pos;
 

@@ -93,16 +93,22 @@ public class CameraManager : ICameraManager {
 		
 		if (camera.Address == nint.Zero)
 			throw new Exception("Failed to allocate camera.");
-		this.CopyOntoCamera(camera);
+		if (!this.CopyOntoCamera(camera))
+			throw new Exception("Failed to setup spawned camera.");
+		
 		this.Cameras.Add(camera);
 		this.SetCurrent(camera);
 		return camera;
 	}
 
-	private unsafe void CopyOntoCamera(EditorCamera camera) {
-		var current = GameCameraManager.Instance()->GetActiveCamera();
-		if (current == null) return;
-		*camera.GameCamera = *current;
+	private unsafe bool CopyOntoCamera(EditorCamera camera) {
+		if (this.Current is not { IsValid: true } active || active == camera)
+			return false;
+		camera.OrbitTarget = active.OrbitTarget;
+		camera.FixedPosition = active.FixedPosition;
+		camera.RelativeOffset = active.RelativeOffset;
+		*camera.GameCamera = *active.GameCamera;
+		return true;
 	}
 
 	private string GetNextAvailableName() {
