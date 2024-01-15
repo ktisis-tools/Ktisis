@@ -29,8 +29,6 @@ public class ContextButtons {
 		if (DrawButton(FontAwesomeIcon.ArrowsAlt, "Transform"))
 			this._ui.OpenTransformWindow(context);
 
-		if (DrawButton(FontAwesomeIcon.Camera, "Camera")) { }
-
 		if (DrawButton(FontAwesomeIcon.Sun, "Env"))
 			this._ui.OpenEnvironmentWindow(context);
 
