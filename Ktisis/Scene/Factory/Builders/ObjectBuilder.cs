@@ -6,6 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 
 using Ktisis.Scene.Entities.Character;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Services;
 
@@ -76,7 +77,8 @@ public sealed class ObjectBuilder : EntityBuilderBase<WorldEntity, IObjectBuilde
 		var result = type switch {
 			CharacterBase.ModelType.Weapon => this.BuildWeapon(),
 			// TODO: Implement generic variant of CharaEntity
-			_ => this.BuildDefault()
+			_ => new CharaEntity(this.Scene, this._pose)
+			//_ => this.BuildDefault()
 		};
 		this.SetFallbackName(type.ToString());
 		return result;

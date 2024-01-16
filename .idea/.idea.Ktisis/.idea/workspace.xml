@@ -11,23 +11,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Decor/IBoneAttach.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Services/ItemService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Services/NamingService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/Attach.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/AttachParam.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/AttachUtil.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneDragDropHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Decor/IAttachTarget.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/ElementParam.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/SkeletonEx.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Utility/Transform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Utility/Transform.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Excel/ItemRow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Excel/ItemSheet.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTree.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTree.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneEntityMenu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneEntityMenu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Decor/IAttachable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Decor/IAttachable.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Factory/Builders/ObjectBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Factory/Builders/ObjectBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Factory/EntityFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Factory/EntityFactory.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Characters/Character.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/CharacterEx.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Characters/Attach.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/Attach.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Characters/AttachParam.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/AttachParam.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -268,7 +266,7 @@
       <workItem from="1705109797562" duration="1791000" />
       <workItem from="1705148827763" duration="43364000" />
       <workItem from="1705233950432" duration="25157000" />
-      <workItem from="1705411277089" duration="12206000" />
+      <workItem from="1705411277089" duration="28219000" />
     </task>
     <servers />
   </component>
