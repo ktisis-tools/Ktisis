@@ -33,7 +33,7 @@ public class EquipmentEditor {
 	// Data
 
 	private bool ItemsFetched;
-	private readonly List<ItemRow> Items = new();
+	private readonly List<ItemSheet> Items = new();
 
 	private void FetchData() {
 		if (this.ItemsFetched) return;
@@ -49,7 +49,7 @@ public class EquipmentEditor {
 		await Task.Yield();
 
 		var items = this._data.Excel
-			.GetSheet<ItemRow>()!
+			.GetSheet<ItemSheet>()!
 			.Where(item => item.IsEquippable());
 
 		foreach (var chunk in items.Chunk(1000)) {
@@ -82,7 +82,7 @@ public class EquipmentEditor {
 		using var _ = ImRaii.Group();
 
 		foreach (var (equip, index) in slots) {
-			ItemRow? item;
+			ItemSheet? item;
 			lock (this.Items) {
 				item = this.Items.FirstOrDefault(
 					row => {

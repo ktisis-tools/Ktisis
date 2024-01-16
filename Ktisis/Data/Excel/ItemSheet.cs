@@ -26,10 +26,13 @@ public class ItemModel(ulong var, bool isWep = false) {
 	public ushort Id = (ushort)var;
 	public ushort Base = (ushort)(isWep ? var >> 16 : 0);
 	public ushort Variant = (ushort)(isWep ? var >> 32 : var >> 16);
+
+	public bool Matches(ushort id, ushort secondId, ushort variant)
+		=> this.Id == id && this.Base == secondId && this.Variant == variant;
 }
 
 [Sheet("Item")]
-public class ItemRow : ExcelRow {
+public class ItemSheet : ExcelRow {
 	public string Name { get; set; } = string.Empty;
 
 	public ushort Icon { get; set; }

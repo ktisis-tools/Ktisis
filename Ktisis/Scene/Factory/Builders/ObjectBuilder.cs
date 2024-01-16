@@ -7,6 +7,7 @@ using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Services;
 
 namespace Ktisis.Scene.Factory.Builders;
 
@@ -17,12 +18,15 @@ public interface IObjectBuilder : IEntityBuilder<WorldEntity, IObjectBuilder> {
 
 public sealed class ObjectBuilder : EntityBuilderBase<WorldEntity, IObjectBuilder>, IObjectBuilder {
 	private readonly IPoseBuilder _pose;
+	private readonly INameResolver _naming;
 
 	public ObjectBuilder(
 		ISceneManager scene,
-		IPoseBuilder pose
+		IPoseBuilder pose,
+		INameResolver naming
 	) : base(scene) {
 		this._pose = pose;
+		this._naming = naming;
 	}
 
 	protected override IObjectBuilder Builder => this;
@@ -69,13 +73,30 @@ public sealed class ObjectBuilder : EntityBuilderBase<WorldEntity, IObjectBuilde
 
 	private WorldEntity BuildCharaBase() {
 		var type = this.GetModelType();
-		this.SetFallbackName(type.ToString());
-		return type switch {
-			CharacterBase.ModelType.Weapon => new WeaponEntity(this.Scene, this._pose),
+		var result = type switch {
+			CharacterBase.ModelType.Weapon => this.BuildWeapon(),
 			// TODO: Implement generic variant of CharaEntity
 			_ => this.BuildDefault()
 		};
+		this.SetFallbackName(type.ToString());
+		return result;
 	}
+	
+	// Weapons
+
+	private WeaponEntity BuildWeapon() {
+		var entity = new WeaponEntity(this.Scene, this._pose);
+		if (this.Name.IsNullOrEmpty() && this.GetWeaponName() is string name)
+			this.Name = name;
+		return entity;
+	}
+
+	private unsafe string? GetWeaponName() {
+		var weapon = (Weapon*)this.Address;
+		return this._naming.GetWeaponName(weapon->ModelSetId, weapon->SecondaryId, weapon->Variant);
+	}
+	
+	// Other
 
 	private WorldEntity BuildDefault() => new(this.Scene);
 }
