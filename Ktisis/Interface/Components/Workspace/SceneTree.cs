@@ -15,6 +15,7 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
+using Ktisis.Editor.Context;
 using Ktisis.Interface.Menus;
 using Ktisis.Scene;
 using Ktisis.Scene.Decor;
@@ -114,13 +115,13 @@ public class SceneTree {
 		
 		if (isRender) {
 			var flag = isExpand switch {
-				_ when children?.Count is null or 0 => TreeNodeFlag.Leaf,
+				_ when children.Count is 0 => TreeNodeFlag.Leaf,
 				true => TreeNodeFlag.Expand,
 				false => TreeNodeFlag.Collapse
 			};
 
 			var rightAdjust = this.DrawButtons(scene, node);
-			if (this.DrawNodeLabel(scene, node, pos, flag, rightAdjust))
+			if (this.DrawNodeLabel(node, pos, flag, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
 			if (ImGui.IsWindowHovered() && this.IsNodeHovered(pos, size, rightAdjust)) {
@@ -136,11 +137,11 @@ public class SceneTree {
 			}
 		}
 
-		if (isExpand && children != null)
+		if (isExpand)
 			this.IterateTree(scene, children);
 	}
 
-	private bool DrawNodeLabel(ISceneManager scene, SceneEntity item, Vector2 pos, TreeNodeFlag flag, float rightAdjust = 0.0f) {
+	private bool DrawNodeLabel(SceneEntity item, Vector2 pos, TreeNodeFlag flag, float rightAdjust = 0.0f) {
 		var display = this._cfg.Config.Editor.GetDisplayForType(item.Type);
         
         // Caret
@@ -203,13 +204,32 @@ public class SceneTree {
 		var isHover = ImGui.IsWindowHovered();
 		var initial = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
 		var cursor = initial;
-		
-		if (node is IVisibility vis) {
-			if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, vis.Visible ? 0xEFFFFFFF : 0x80FFFFFF) && isHover)
-				vis.Toggle();
-		}
+
+		this.DrawVisibilityButton(node, ref cursor, isHover);
+		this.DrawAttachButton(scene.Context, node, ref cursor, isHover);
 		
 		return initial - cursor;
+	}
+
+	private void DrawVisibilityButton(SceneEntity node, ref float cursor, bool isHover) {
+		if (node is not IVisibility vis) return;
+		
+		if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, vis.Visible ? 0xEFFFFFFF : 0x80FFFFFF) && isHover)
+			vis.Toggle();
+	}
+
+	private void DrawAttachButton(IEditorContext context, SceneEntity node, ref float cursor, bool isHover) {
+		if (node is not IAttachable attach || !attach.IsAttached()) return;
+		
+		if (this.DrawButton(ref cursor, FontAwesomeIcon.Link, 0xFFFFFFFF) && isHover)
+			attach.Detach();
+
+		if (!isHover || !ImGui.IsItemHovered()) return;
+
+		var bone = attach.GetParentBone();
+		var name = bone != null ? context.Locale.GetBoneName(bone) : "UNKNOWN";
+		using var _tooltip = ImRaii.Tooltip();
+		ImGui.Text($"Attached to {name}");
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {
