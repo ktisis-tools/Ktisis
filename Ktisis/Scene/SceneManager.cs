@@ -34,10 +34,11 @@ public class SceneManager : ISceneManager {
 	private readonly IContextMediator _mediator;
 	private readonly HookScope _scope;
 	
-	private readonly SceneRoot Root;
 	private readonly Dictionary<Type, SceneModule> Modules = new();
+
+	private SceneRoot Root { get; set; } = null!;
 	
-	public IEntityFactory Factory { get; init; }
+	public IEntityFactory Factory { get; }
 	
 	public IEditorContext Context => this._mediator.Context;
 	public bool IsValid => this.Context is { IsValid: true } && !this.IsDisposing;
@@ -46,12 +47,12 @@ public class SceneManager : ISceneManager {
 	
 	public SceneManager(
 		IContextMediator mediator,
-		HookScope scope
+		HookScope scope,
+		IEntityFactory factory
 	) {
 		this._mediator = mediator;
 		this._scope = scope;
-		this.Root = new SceneRoot(this);
-		this.Factory = new EntityFactory(this);
+		this.Factory = factory;
 	}
 	
 	// Modules
@@ -85,6 +86,8 @@ public class SceneManager : ISceneManager {
 
 	public void Initialize() {
 		Ktisis.Log.Info("Initializing scene...");
+		
+		this.Root = new SceneRoot(this);
 
 		var init = this.Modules.Values
 			.Where(module => module.Initialize() && module.IsInit);
@@ -137,10 +140,15 @@ public class SceneManager : ISceneManager {
     
 	public void Dispose() {
 		this.IsDisposing = true;
-		foreach (var module in this.Modules.Values)
-			module.Dispose();
-		this.Modules.Clear();
-		this.Root.Clear();
+		try {
+			foreach (var module in this.Modules.Values)
+				module.Dispose();
+			this.Modules.Clear();
+			this.Root.Clear();
+			this.Root = null!;
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to dispose scene!\n{err}");
+		}
 		GC.SuppressFinalize(this);
 	}
 }
