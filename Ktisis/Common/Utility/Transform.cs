@@ -94,9 +94,17 @@ public class Transform {
 	
 	// Havok :3
 
-	public hkQsTransformf ToHavok() => new hkQsTransformf {
+	public hkQsTransformf ToHavok() => new() {
 		Translation = this.Position.ToHavok(),
 		Rotation = this.Rotation.ToHavok(),
 		Scale = this.Scale.ToHavok()
+	};
+	
+	// ClientStructs conversion
+
+	public static implicit operator CSTransform(Transform trans) => new() {
+		Position = trans.Position,
+		Rotation = trans.Rotation,
+		Scale = trans.Scale
 	};
 }
