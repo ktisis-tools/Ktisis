@@ -67,6 +67,11 @@ public class SceneEntityMenu(
 				break;
 		}
 
+		if (entity is IAttachable attach && attach.IsAttached()) {
+			cb.Separator()
+				.Action("Detach", () => attach.Detach());
+		}
+
 		if (entity is IDeletable deletable) {
 			cb.Separator()
 				.Action("Delete", () => deletable.Delete());

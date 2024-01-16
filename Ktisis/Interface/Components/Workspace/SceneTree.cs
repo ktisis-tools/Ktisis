@@ -27,15 +27,18 @@ namespace Ktisis.Interface.Components.Workspace;
 public class SceneTree {
 	private readonly ConfigManager _cfg;
 	private readonly EntityMenuFactory _menu;
+	private readonly SceneDragDropHandler _dragDrop;
 
 	private readonly PopupManager _popup = new();
 	
 	public SceneTree(
 		ConfigManager cfg,
-		EntityMenuFactory menu
+		EntityMenuFactory menu,
+		SceneDragDropHandler dragDrop
 	) {
 		this._cfg = cfg;
 		this._menu = menu;
+		this._dragDrop = dragDrop;
 	}
 	
 	// Draw frame
@@ -104,7 +107,11 @@ public class SceneTree {
 		const ImGuiSelectableFlags selectFlags = ImGuiSelectableFlags.AllowItemOverlap | ImGuiSelectableFlags.SpanAllColumns;
 		ImGui.Selectable(id, node.IsSelected, selectFlags);
 
+		var isHover = ImGui.IsWindowHovered();
 		var size = ImGui.GetItemRectSize();
+		
+		// NOTE: This blocks ImGUi.IsWindowHovered for some stupid reason
+		this._dragDrop.Handle(node);
 
 		var imKey = ImGui.GetID(id);
 		var state = ImGui.GetStateStorage();
@@ -120,11 +127,11 @@ public class SceneTree {
 				false => TreeNodeFlag.Collapse
 			};
 
-			var rightAdjust = this.DrawButtons(scene, node);
+			var rightAdjust = this.DrawButtons(scene, node, isHover);
 			if (this.DrawNodeLabel(node, pos, flag, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
-			if (ImGui.IsWindowHovered() && this.IsNodeHovered(pos, size, rightAdjust)) {
+			if (isHover && this.IsNodeHovered(pos, size, rightAdjust)) {
 				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) {
 					this._menu.OpenEditorFor(scene.Context, node);
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
@@ -200,8 +207,7 @@ public class SceneTree {
 	
 	// Buttons
 
-	private float DrawButtons(ISceneManager scene, SceneEntity node) {
-		var isHover = ImGui.IsWindowHovered();
+	private float DrawButtons(ISceneManager scene, SceneEntity node, bool isHover) {
 		var initial = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
 		var cursor = initial;
 

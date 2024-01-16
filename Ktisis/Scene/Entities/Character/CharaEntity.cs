@@ -1,12 +1,11 @@
 using System;
-using System.Numerics;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
-using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Partials;
+using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Builders;
@@ -14,10 +13,10 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.Scene.Entities.Character;
 
-public abstract class CharaEntity : WorldEntity, ICharacter, IAttachable {
+public class CharaEntity : WorldEntity, IAttachable {
 	private readonly IPoseBuilder _pose;
 
-	protected CharaEntity(
+	public CharaEntity(
 		ISceneManager scene,
 		IPoseBuilder pose
 	) : base(scene) {
@@ -65,9 +64,7 @@ public abstract class CharaEntity : WorldEntity, ICharacter, IAttachable {
 		if (chara == null) return null;
 		
 		var attach = &chara->Attach;
-		if (attach->ParentSkeleton == null || attach->ChildSkeleton == null || attach->Param == null)
-			return null;
-		return attach;
+		return attach->Param != null ? attach : null;
 	}
 
 	public unsafe virtual bool IsAttached() {
@@ -79,10 +76,14 @@ public abstract class CharaEntity : WorldEntity, ICharacter, IAttachable {
 		var attach = this.GetAttach();
 		if (attach == null) return null;
 
-		var parentPose = attach->ParentSkeleton->PartialSkeletons[0].GetHavokPose(0);
+		var parentSkele = attach->GetParentSkeleton();
+		if (parentSkele == null || parentSkele->PartialSkeletons == null || parentSkele->PartialSkeletons->HavokPoses == null)
+			return null;
+		
+		var parentPose = parentSkele->PartialSkeletons[0].GetHavokPose(0);
 		if (parentPose == null || parentPose->Skeleton == null) return null;
 
-		var index = attach->Param->ParentBoneId;
+		var index = attach->Param->ParentId;
 		var skeleton = parentPose->Skeleton;
 		return new PartialBoneInfo {
 			Name = skeleton->Bones[index].Name.String ?? string.Empty,
@@ -92,8 +93,9 @@ public abstract class CharaEntity : WorldEntity, ICharacter, IAttachable {
 		};
 	}
 
-	public virtual void Detach() {
-		; // TODO
+	public unsafe virtual void Detach() {
+		var attach = this.GetAttach();
+		if (attach != null) AttachUtil.Detach(attach);
 	}
 	
 	// Transform
@@ -101,30 +103,8 @@ public abstract class CharaEntity : WorldEntity, ICharacter, IAttachable {
 	public unsafe override void SetTransform(Transform trans) {
 		var attach = this.GetAttach();
 		if (attach != null && attach->IsActive())
-			this.SetAttachTransform(attach, trans);
+			AttachUtil.SetTransformRelative(attach, trans, this.GetTransform()!);
 		else
 			base.SetTransform(trans);
-	}
-
-	private unsafe void SetAttachTransform(Attach* attach, Transform target) {
-		var partials = attach->ParentSkeleton->PartialSkeletons;
-		if (partials == null || partials->HavokPoses == null) return;
-
-		var parentPose = partials[0].GetHavokPose(0);
-		if (parentPose == null) return;
-		
-		var parentModel = HavokPoseUtil.GetWorldTransform(
-			attach->ParentSkeleton,
-			parentPose,
-			attach->Param->ParentBoneId
-		)!;
-
-		var source = this.GetTransform()!;
-		var deltaRot = Quaternion.Inverse(parentModel.Rotation);
-		var transform = new Transform(attach->Param->Transform);
-		transform.Position += Vector3.Transform(target.Position - source.Position, deltaRot);
-		transform.Rotation = deltaRot * target.Rotation;
-		transform.Scale += Vector3.Transform(target.Scale - source.Scale, deltaRot);
-		attach->Param->Transform = transform;
 	}
 }
