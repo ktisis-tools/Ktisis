@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Ktisis.Services;
 using Ktisis.Interop.Hooking;
 using Ktisis.Editor.Characters.Data;
+using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters;
 
@@ -30,6 +31,8 @@ public class AppearanceModule : HookModule {
 	
 	// Hooks
 
+	private unsafe GameObject* _prepareCharaFor;
+
 	[Signature("E8 ?? ?? ?? ?? 48 8B 8B ?? ?? ?? ?? 48 85 C9 74 33 45 33 C0", DetourName = nameof(EnableDrawDetour))]
 	private Hook<EnableDrawDelegate> EnableDrawHook = null!;
 	private unsafe delegate nint EnableDrawDelegate(GameObject* gameObject);
@@ -39,42 +42,45 @@ public class AppearanceModule : HookModule {
 		var c1 = ((byte)gameObject->TargetableStatus & 0x80) != 0;
 		var c2 = (gameObject->RenderFlags & 0x2000000) == 0;
 		var isNew = !(c1 && c2);
-		
-		var result = this.EnableDrawHook.Original(gameObject);
-		if (!isNew) return result;
 
+		if (!isNew) return this.EnableDrawHook.Original(gameObject);
+
+		var result = nint.Zero;
 		try {
-			this.UpdateCharacter(gameObject);
+			this._prepareCharaFor = gameObject;
+			result = this.EnableDrawHook.Original(gameObject);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to handle character update:\n{err}");
+		} finally {
+			this._prepareCharaFor = null;
 		}
-		
 		return result;
 	}
 
-	private unsafe void UpdateCharacter(GameObject* gameObject) {
-		if (gameObject == null || gameObject->DrawObject == null) return;
-		
-		if (gameObject->DrawObject->Object.GetObjectType() != ObjectType.CharacterBase) return;
+	[Signature("E8 ?? ?? ?? ?? 48 8B 4E 08 48 8B D0 4C 8B 01", DetourName = nameof(CreateCharacterDetour))]
+	private Hook<CreateCharacterDelegate> CreateCharacterHook = null!;
+	private unsafe delegate CharacterBase* CreateCharacterDelegate(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk);
+	private unsafe CharacterBase* CreateCharacterDetour(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk) {
+		this.HandleCreate(customize, equip);
+		return this.CreateCharacterHook.Original(model, customize, equip, unk);
+	}
 
-		var actor = this._actors.GetAddress((nint)gameObject);
+	private unsafe void HandleCreate(CustomizeContainer* customize, EquipmentContainer* equip) {
+		if (!this.IsValid || this._prepareCharaFor == null) return;
+
+		var actor = this._actors.GetAddress((nint)this._prepareCharaFor);
 		if (actor == null) return;
 
 		var state = this.Manager.GetStateForActor(actor);
-		if (state != null) this.ApplyState((CharacterBase*)gameObject->DrawObject, state);
-	}
-
-	private unsafe void ApplyState(CharacterBase* chara, AppearanceState state) {
-		if (chara->GetModelType() != CharacterBase.ModelType.Human) return;
-
+		if (state == null) return;
+		
 		// TODO: Apply customize
 		
 		// Apply equipment
-		
+
 		foreach (var index in Enum.GetValues<EquipIndex>()) {
 			if (!state.Equipment.IsSet(index)) continue;
-			var model = state.Equipment[index];
-			chara->FlagSlotForUpdate((uint)index, &model);
+			*equip->GetData((uint)index) = state.Equipment[index];
 		}
 	}
 }

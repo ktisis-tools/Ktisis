@@ -55,17 +55,19 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	// Equipment
 
 	private void DrawEquipment() {
-		foreach (var index in Enum.GetValues<EquipIndex>()) {
+		this._equip.Draw(this.Editor, this.Target);
+
+		/*foreach (var index in Enum.GetValues<EquipIndex>()) {
 			var model = this.Editor.GetEquipIndex(this.Target, index);
-			
+
 			ImGui.Text($"{index}: {model.Id}, {model.Variant}");
-			
+
 			var values = new int[] { model.Id, model.Variant };
 			if (ImGui.InputInt2($"{index}", ref values[0])) {
 				model.Id = (ushort)values[0];
 				model.Variant = (byte)values[1];
 				this.Editor.SetEquipIndex(this.Target, index, model);
 			}
-		}
+		}*/
 	}
 }

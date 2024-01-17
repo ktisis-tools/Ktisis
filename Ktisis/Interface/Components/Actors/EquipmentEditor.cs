@@ -14,6 +14,9 @@ using ImGuiNET;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Excel;
+using Ktisis.Editor.Characters;
+using Ktisis.Editor.Characters.Data;
+using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Actors;
 
@@ -61,7 +64,58 @@ public class EquipmentEditor {
 	
 	// Draw
 
-	public unsafe void Draw(CharacterBase* chara, EquipmentModelId[] equipment) {
+	public void Draw(IAppearanceManager editor, ActorEntity actor) {
+		this.FetchData();
+		
+		var avail = ImGui.GetContentRegionAvail();
+		try {
+			ImGui.PushItemWidth(avail.X / 3);
+			var slots = Enum.GetValues<EquipIndex>();
+			this.DrawSlots(editor, actor, slots.Take(5));
+			ImGui.SameLine();
+			this.DrawSlots(editor, actor, slots.Skip(5));
+		} finally {
+			ImGui.PopItemWidth();
+		}
+	}
+
+	private void DrawSlots(IAppearanceManager editor, ActorEntity actor, IEnumerable<EquipIndex> slots) {
+		using var _ = ImRaii.Group();
+		foreach (var index in slots) {
+			var model = editor.GetEquipIndex(actor, index);
+			
+			ItemSheet? item;
+			lock (this.Items) {
+				item = this.Items.FirstOrDefault(
+					row => {
+						return row.IsEquippable(index.ToEquipSlot()) && row.Model.Id == model.Id && row.Model.Variant == model.Variant;
+					}
+				);
+			}
+			
+			if (item != null) {
+				var icon = this._tex.GetIcon(item.Icon);
+				if (icon != null)
+					ImGui.Image(icon.ImGuiHandle, new Vector2(48, 48));
+			} else {
+				ImGui.Text(":3");
+			}
+			
+			ImGui.SameLine();
+
+			using var _group = ImRaii.Group();
+
+			ImGui.Text($"{item?.Name}");
+			var values = new int[] { model.Id, model.Variant };
+			if (ImGui.InputInt2($"##Input{index}", ref values[0])) {
+				model.Id = (ushort)values[0];
+				model.Variant = (byte)values[1];
+				editor.SetEquipIndex(actor, index, model);
+			}
+		}
+	}
+
+	/*public unsafe void Draw(CharacterBase* chara, EquipmentModelId[] equipment) {
 		this.FetchData();
 		
 		var slots = equipment.Select((v, i) => (equip: v, slot: i)).ToList();
@@ -76,7 +130,7 @@ public class EquipmentEditor {
 		} finally {
 			ImGui.PopItemWidth();
 		}
-	}
+	}*/
 
 	private unsafe void DrawSlots(CharacterBase* chara, IEnumerable<(EquipmentModelId, int)> slots) {
 		using var _ = ImRaii.Group();
