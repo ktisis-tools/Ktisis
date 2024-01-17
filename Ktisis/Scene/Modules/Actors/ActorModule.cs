@@ -1,28 +1,40 @@
 using System;
 using System.Threading.Tasks;
 
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
+using Dalamud.Plugin.Services;
+
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
+
+using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
+using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Services;
+using Ktisis.Structs.GPose;
 
-using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
+using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 namespace Ktisis.Scene.Modules.Actors;
 
 public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
+	private readonly GroupPoseModule _gpose;
+	private readonly IFramework _framework;
 	private readonly ActorSpawner _spawner;
 	
 	public ActorModule(
 		IHookMediator hook,
 		ISceneManager scene,
-		ActorService actors
+		ActorService actors,
+		IFramework framework,
+		GroupPoseModule gpose
 	) : base(hook, scene) {
 		this._actors = actors;
+		this._gpose = gpose;
+		this._framework = framework;
 		this._spawner = hook.Create<ActorSpawner>();
 	}
 
@@ -35,6 +47,11 @@ public class ActorModule : SceneModule {
 	
 	// Spawning
 
+	public unsafe bool IsPrimaryActor(ActorEntity actor) {
+		var gpose = this._gpose.GetGPoseState();
+		return gpose != null && (nint)gpose->PrimaryActor == actor.Actor.Address;
+	}
+
 	public async Task<ActorEntity> Spawn() {
 		if (!this._spawner.IsInit)
 			throw new Exception("Actor spawn manager is uninitialized.");
@@ -43,6 +60,27 @@ public class ActorModule : SceneModule {
 		var entity = this.AddActor(address, false);
 		if (entity == null) throw new Exception("Failed to create actor entity.");
 		return entity;
+	}
+	
+	public unsafe void Delete(ActorEntity actor) {
+		if (this.IsPrimaryActor(actor)) {
+			Ktisis.Log.Warning("Refusing to delete primary actor.");
+			return;
+		}
+		
+		var gpose = this._gpose.GetGPoseState();
+		if (gpose == null) return;
+
+		var gameObject = (CSGameObject*)actor.Actor.Address;
+		this._framework.RunOnFrameworkThread(() => {
+			var mgr = ClientObjectManager.Instance();
+			var index = (ushort)mgr->GetIndexByObject(gameObject);
+			this._removeCharacter(gpose, gameObject);
+			if (index != ushort.MaxValue)
+				mgr->DeleteObjectByIndex(index, 1);
+		});
+
+		actor.Remove();
 	}
 	
 	// Entities
@@ -94,6 +132,10 @@ public class ActorModule : SceneModule {
 			Ktisis.Log.Error($"Failed to handle character add for 0x{address:X}:\n{err}");
 		}
 	}
+
+	[Signature("45 33 D2 4C 8D 81 ?? ?? ?? ?? 41 8B C2 4C 8B C9 49 3B 10")]
+	private RemoveCharacterDelegate _removeCharacter = null!;
+	private unsafe delegate nint RemoveCharacterDelegate(GPoseState* gpose, CSGameObject* gameObject);
 	
 	// Disposal
 

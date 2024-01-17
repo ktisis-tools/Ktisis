@@ -2,15 +2,17 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
+using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
 
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 namespace Ktisis.Scene.Entities.Game;
 
-public class ActorEntity : CharaEntity {
+public class ActorEntity : CharaEntity, IDeletable {
 	public readonly GameObject Actor;
 
 	public override bool IsValid => this.Scene.IsValid && this.Actor.IsValid();
@@ -44,10 +46,18 @@ public class ActorEntity : CharaEntity {
 
 	private unsafe CSGameObject* CsGameObject => (CSGameObject*)this.Actor.Address;
 
-	public override unsafe CharacterBase* GetCharacter() {
+	public unsafe override CharacterBase* GetCharacter() {
 		var ptr = this.CsGameObject != null ? this.CsGameObject->DrawObject : null;
 		if (ptr == null || ptr->Object.GetObjectType() != ObjectType.CharacterBase)
 			return null;
 		return (CharacterBase*)ptr;
+	}
+	
+	// Deletable
+
+	public bool Delete() {
+		this.Scene.GetModule<ActorModule>().Delete(this);
+		
+		return false;
 	}
 }
