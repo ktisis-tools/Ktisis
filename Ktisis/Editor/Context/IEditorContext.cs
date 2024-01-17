@@ -3,6 +3,7 @@ using System;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Camera;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Localization;
@@ -17,6 +18,7 @@ public interface IEditorContext : IDisposable {
 	public LocaleManager Locale { get; }
 	
 	public IActionManager Actions { get; }
+	public IAppearanceManager Appearance { get; }
 	public ICameraManager Cameras { get; }
 	public ISceneManager Scene { get; }
 	public ISelectManager Selection { get; }

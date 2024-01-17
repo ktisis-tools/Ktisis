@@ -21,6 +21,7 @@ public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
 	private readonly GroupPoseModule _gpose;
 	private readonly IFramework _framework;
+	
 	private readonly ActorSpawner _spawner;
 	
 	public ActorModule(

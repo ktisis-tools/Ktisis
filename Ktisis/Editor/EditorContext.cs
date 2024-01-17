@@ -3,6 +3,7 @@ using System;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Camera;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
@@ -22,6 +23,7 @@ public class EditorContext : IEditorContext {
 	public LocaleManager Locale => this._mediator.Locale;
 	
 	public required IActionManager Actions { get; init; }
+	public required IAppearanceManager Appearance { get; init; }
 	public required ICameraManager Cameras { get; init; }
 	public required ISceneManager Scene { get; init; }
 	public required ISelectManager Selection { get; init; }
@@ -43,8 +45,9 @@ public class EditorContext : IEditorContext {
 		try {
 			this.IsInit = true;
 			this.Scene.Initialize();
-			this.Cameras.Initialize();
 			this.Actions.Initialize();
+			this.Appearance.Initialize();
+			this.Cameras.Initialize();
 		} catch {
 			this.Dispose();
 			throw;

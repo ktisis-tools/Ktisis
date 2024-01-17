@@ -6,7 +6,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 namespace Ktisis.Structs.Characters;
 
 [StructLayout(LayoutKind.Explicit, Size = Size)]
-public struct Customize {
+public struct CustomizeContainer {
 	public const int Size = 0x1A;
 
 	[FieldOffset(0x00)] public unsafe fixed byte Bytes[Size];

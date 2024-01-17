@@ -12,10 +12,9 @@ public struct CharacterEx {
 
 	[FieldOffset(0x0D0)] public Attach Attach;
 
-	[FieldOffset(0x8F0)] public Customize Customize;
+	[FieldOffset(0x8F0)] public CustomizeContainer Customize;
 
-	[FieldOffset(0x8F4)] public unsafe fixed uint DemiEquip[5];
-	[FieldOffset(0x910)] public unsafe fixed uint HumanEquip[10];
-
-	public unsafe static CharacterEx* From(CharacterBase* cs) => (CharacterEx*)cs;
+	//[FieldOffset(0x8F4)] public unsafe fixed uint DemiEquip[5];
+	//[FieldOffset(0x910)] public unsafe fixed uint HumanEquip[10];
+	[FieldOffset(0x910)] public EquipmentContainer Equipment;
 }

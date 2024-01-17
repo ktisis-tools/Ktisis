@@ -50,11 +50,15 @@ public class CameraManager : ICameraManager {
 	private CameraModule? Module { get; set; }
 
 	public void Initialize() {
-		this.SetupCameras();
-		
-		this.Module = this._scope.Create<CameraModule>(this);
-		if (this.Module.Initialize())
-			this.Module.Setup();
+		Ktisis.Log.Verbose("Initializing camera manager...");
+		try {
+			this.SetupCameras();
+			this.Module = this._scope.Create<CameraModule>(this);
+			if (this.Module.Initialize())
+				this.Module.Setup();
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to initialize camera manager:\n{err}");
+		}
 	}
 	
 	private unsafe void SetupCameras() {
