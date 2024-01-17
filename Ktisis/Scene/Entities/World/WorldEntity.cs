@@ -11,11 +11,11 @@ namespace Ktisis.Scene.Entities.World;
 public class WorldEntity(ISceneManager scene) : SceneEntity(scene), ITransform, IVisibility {
 	public nint Address { get; set; }
 	
-	public override bool IsValid => base.IsValid && this.Address != nint.Zero;
-	
 	public bool Visible { get; set; }
 	
 	public unsafe virtual Object* GetObject() => (Object*)this.Address;
+	
+	public unsafe virtual bool IsObjectValid => this.GetObject() != null;
 
 	public virtual void Setup() {
 		this.Clear();
@@ -24,7 +24,7 @@ public class WorldEntity(ISceneManager scene) : SceneEntity(scene), ITransform, 
 	// Update handler
 
 	public override void Update() {
-		if (!this.IsValid) return;
+		if (!this.IsObjectValid) return;
 		this.UpdateChildren();
 		base.Update();
 	}

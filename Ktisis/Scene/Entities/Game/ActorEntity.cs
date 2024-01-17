@@ -15,7 +15,7 @@ namespace Ktisis.Scene.Entities.Game;
 public class ActorEntity : CharaEntity, IDeletable {
 	public readonly GameObject Actor;
 
-	public override bool IsValid => this.Scene.IsValid && this.Actor.IsValid();
+	public override bool IsValid => base.IsValid && this.Actor.IsValid();
 	
 	public ushort ObjectIndex => this.Actor.ObjectIndex;
 
@@ -31,7 +31,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 	// Update handler
 
 	public override void Update() {
-		if (!this.IsValid) return;
+		if (!this.IsObjectValid) return;
 		this.UpdateChara();
 		base.Update();
 	}
@@ -46,7 +46,11 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 	private unsafe CSGameObject* CsGameObject => (CSGameObject*)this.Actor.Address;
 
+	public unsafe override Object* GetObject()
+		=> this.CsGameObject != null ? &this.CsGameObject->DrawObject->Object : null;
+
 	public unsafe override CharacterBase* GetCharacter() {
+		if (!this.IsObjectValid) return null;
 		var ptr = this.CsGameObject != null ? this.CsGameObject->DrawObject : null;
 		if (ptr == null || ptr->Object.GetObjectType() != ObjectType.CharacterBase)
 			return null;
@@ -57,7 +61,6 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 	public bool Delete() {
 		this.Scene.GetModule<ActorModule>().Delete(this);
-		
 		return false;
 	}
 }

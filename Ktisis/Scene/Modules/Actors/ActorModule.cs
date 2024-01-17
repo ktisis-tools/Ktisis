@@ -72,7 +72,7 @@ public class ActorModule : SceneModule {
 			if (index != ushort.MaxValue)
 				mgr->DeleteObjectByIndex(index, 1);
 		});
-
+		
 		actor.Remove();
 	}
 	
