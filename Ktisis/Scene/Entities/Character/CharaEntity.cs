@@ -1,6 +1,3 @@
-using System;
-
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
@@ -35,7 +32,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 			base.Update();
 	}
 
-	public unsafe bool IsDrawing() {
+	private unsafe bool IsDrawing() {
 		var ptr = this.GetCharacter();
 		if (ptr == null) return false;
 		return (ptr->UnkFlags_01 & 2) != 0 && ptr->UnkFlags_02 != 0;
@@ -43,27 +40,21 @@ public class CharaEntity : WorldEntity, IAttachable {
 	
 	// Character
 	
+	public unsafe CharacterEx* CharacterEx => (CharacterEx*)this.GetCharacter();
+	
 	public unsafe virtual CharacterBase* GetCharacter() => (CharacterBase*)this.GetObject();
 	
-	public unsafe Customize? GetCustomize() {
-		var ptr = this.GetCharacter();
-		if (ptr == null) return null;
-		return CharacterEx.From(ptr)->Customize;
-	}
+	public unsafe CustomizeContainer? GetCustomize()
+		=> this.CharacterEx != null ? this.CharacterEx->Customize : null;
 
-	public unsafe EquipmentModelId[]? GetEquipment() {
-		var ptr = CharacterEx.From(this.GetCharacter());
-		if (ptr == null) return null;
-		return new Span<EquipmentModelId>(ptr->HumanEquip, 10).ToArray();
-	}
+	public unsafe EquipmentContainer? GetEquipment()
+		=> this.CharacterEx != null ? this.CharacterEx->Equipment : null;
 	
 	// BoneAttach
 
 	public unsafe Attach* GetAttach() {
-		var chara = CharacterEx.From(this.GetCharacter());
-		if (chara == null) return null;
-		
-		var attach = &chara->Attach;
+		if (this.CharacterEx == null) return null;
+		var attach = &this.CharacterEx->Attach;
 		return attach->Param != null ? attach : null;
 	}
 

@@ -17,7 +17,6 @@ public enum VirtualKeyState {
 public delegate bool KeyEventHandler(VirtualKey key, VirtualKeyState state);
 
 public class InputModule : HookModule {
-
 	public InputModule(
 		IHookMediator hook
 	) : base(hook) { }

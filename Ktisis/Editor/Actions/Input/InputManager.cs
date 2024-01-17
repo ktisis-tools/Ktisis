@@ -135,11 +135,12 @@ public class InputManager : IInputManager {
 
 	public void Dispose() {
 		try {
+			this.Module?.Dispose();
 			this.Keybinds.Clear();
 			if (this.Module != null)
 				this.Module.OnKeyEvent -= this.OnKeyEvent;
-		} finally {
-			this.Module?.Dispose();
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to dispose input manager:\n{err}");
 		}
 		GC.SuppressFinalize(this);
 	}

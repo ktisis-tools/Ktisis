@@ -2,6 +2,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using Ktisis.Editor.Characters.Data;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
@@ -15,9 +16,9 @@ namespace Ktisis.Scene.Entities.Game;
 public class ActorEntity : CharaEntity, IDeletable {
 	public readonly GameObject Actor;
 
+	public AppearanceState Appearance { get; } = new();
+
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
-	
-	public ushort ObjectIndex => this.Actor.ObjectIndex;
 
 	public ActorEntity(
 		ISceneManager scene,

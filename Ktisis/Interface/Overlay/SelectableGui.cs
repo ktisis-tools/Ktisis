@@ -12,7 +12,7 @@ using ImGuiNET;
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
-using Ktisis.Editor.Display;
+using Ktisis.Data.Config.Entity;
 using Ktisis.Scene.Entities;
 using Ktisis.Services;
 

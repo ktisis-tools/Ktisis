@@ -4,7 +4,8 @@ using Dalamud.Interface.Utility.Raii;
 
 using ImGuiNET;
 
-using Ktisis.Editor;
+using Ktisis.Editor.Characters;
+using Ktisis.Editor.Characters.Data;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
@@ -15,6 +16,8 @@ namespace Ktisis.Interface.Windows.Editors;
 public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	private readonly CustomizeEditor _custom;
 	private readonly EquipmentEditor _equip;
+
+	private IAppearanceManager Editor => this.Context.Appearance;
 	
 	public ActorEditWindow(
 		IEditorContext context,
@@ -52,6 +55,17 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	// Equipment
 
 	private void DrawEquipment() {
-		ImGui.Text("Equip :3");
+		foreach (var index in Enum.GetValues<EquipIndex>()) {
+			var model = this.Editor.GetEquipIndex(this.Target, index);
+			
+			ImGui.Text($"{index}: {model.Id}, {model.Variant}");
+			
+			var values = new int[] { model.Id, model.Variant };
+			if (ImGui.InputInt2($"{index}", ref values[0])) {
+				model.Id = (ushort)values[0];
+				model.Variant = (byte)values[1];
+				this.Editor.SetEquipIndex(this.Target, index, model);
+			}
+		}
 	}
 }

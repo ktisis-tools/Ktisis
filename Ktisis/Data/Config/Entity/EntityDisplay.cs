@@ -4,7 +4,7 @@ using Dalamud.Interface;
 
 using Ktisis.Scene.Types;
 
-namespace Ktisis.Editor.Display;
+namespace Ktisis.Data.Config.Entity;
 
 public enum DisplayMode {
 	None = 0,

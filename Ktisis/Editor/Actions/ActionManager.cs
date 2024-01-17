@@ -51,6 +51,7 @@ public class ActionManager : IActionManager, IDisposable {
 	// Initialization
 
 	public void Initialize() {
+		Ktisis.Log.Verbose("Initializing input manager...");
 		try {
 			this.Input.Initialize();
 		} catch (Exception err) {

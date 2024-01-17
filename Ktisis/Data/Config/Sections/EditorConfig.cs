@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-using Ktisis.Editor.Display;
+using Ktisis.Data.Config.Entity;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Data.Config.Sections;

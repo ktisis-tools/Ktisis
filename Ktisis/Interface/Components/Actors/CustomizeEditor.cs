@@ -22,7 +22,7 @@ public class CustomizeEditor {
 		
 	}
 	
-	public bool Draw(Customize custom) {
+	public bool Draw(CustomizeContainer custom) {
 		try {
 			
 		} finally {
@@ -32,7 +32,7 @@ public class CustomizeEditor {
 		return false;
 	}
 
-	private void DrawFundamentals(Customize custom) {
+	private void DrawFundamentals(CustomizeContainer custom) {
 		var width = (ImGui.GetContentRegionAvail() * 0.35f) with { Y = -1 };
 		using var _frame = ImRaii.Child("##CustomizeFrame", width, true);
 		

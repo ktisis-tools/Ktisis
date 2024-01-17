@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
@@ -5,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Character;
 namespace Ktisis.Structs.Characters;
 
 [StructLayout(LayoutKind.Explicit, Size = Size)]
-public struct Equipment {
+public struct EquipmentContainer {
 	public const int Size = sizeof(uint) * Length;
 	public const int Length = 10;
 
@@ -21,4 +22,22 @@ public struct Equipment {
 	[FieldOffset(0x1C)] public EquipmentModelId Bracelet;
 	[FieldOffset(0x20)] public EquipmentModelId RingRight;
 	[FieldOffset(0x24)] public EquipmentModelId RingLeft;
+
+	public EquipmentModelId this[uint index] {
+		get => this.Get(index);
+		set => this.Set(index, value);
+	}
+
+	private unsafe EquipmentModelId Get(uint index)
+		=> *this.GetData(index);
+
+	private unsafe void Set(uint index, EquipmentModelId equip)
+		=> *this.GetData(index) = equip;
+
+	public unsafe EquipmentModelId* GetData(uint index) {
+		if (index >= Length)
+			throw new IndexOutOfRangeException($"Index {index} is out of range (< {Length}).");
+		fixed (byte* data = this.Bytes)
+			return (EquipmentModelId*)data + index;
+	}
 }
