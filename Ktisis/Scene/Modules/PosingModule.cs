@@ -11,10 +11,10 @@ public interface IPoseModule : IHookModule {
 	public bool IsEnabled { get; }
 }
 
-public class PoseModule : SceneModule, IPoseModule {
+public class PosingModule : SceneModule, IPoseModule {
 	public bool IsEnabled { get; private set; }
 	
-	public PoseModule(
+	public PosingModule(
 		IHookMediator hook,
 		ISceneManager scene
 	) : base(hook, scene) { }

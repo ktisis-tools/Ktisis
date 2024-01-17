@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.Interop;
 
 using Ktisis.Structs.Lights;
@@ -11,7 +12,9 @@ namespace Ktisis.Structs.GPose;
 public struct GPoseState {
 	private const int LightCount = 3;
 	
-	[FieldOffset(0xE0)] public unsafe fixed ulong Lights[LightCount];
+	[FieldOffset(0x0E0)] public unsafe fixed ulong Lights[LightCount];
+	
+	[FieldOffset(0x1E0)] public unsafe GameObject* PrimaryActor;
 	
 	// Light access
 	

@@ -68,16 +68,22 @@ public class SceneManager : ISceneManager {
 	}
 
 	public SceneManager SetupModules() {
-		return this.AddModule<ActorModule>()
-			.AddModule<LightModule>()
-			.AddModule<PoseModule>()
+		var gpose = this.AddModuleAndGet<GroupPoseModule>();
+		return this.AddModule<ActorModule>(gpose)
+			.AddModule<LightModule>(gpose)
+			.AddModule<PosingModule>()
 			.AddModule<EnvModule>();
 	}
 
-	private SceneManager AddModule<T>() where T : SceneModule {
-		var module = this._scope.Create<T>(this);
-		this.Modules.Add(typeof(T), module);
+	private SceneManager AddModule<T>(params object[] param) where T : SceneModule {
+		this.AddModuleAndGet<T>(param);
 		return this;
+	}
+
+	private T AddModuleAndGet<T>(params object[] param) where T : SceneModule {
+		var module = this._scope.Create<T>(param.Prepend(this).ToArray());
+		this.Modules.Add(typeof(T), module);
+		return module;
 	}
 	
 	// Scene setup & events

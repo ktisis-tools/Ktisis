@@ -14,14 +14,17 @@ using Ktisis.Structs.Lights;
 namespace Ktisis.Scene.Modules.Lights;
 
 public class LightModule : SceneModule {
+	private readonly GroupPoseModule _gpose;
 	private readonly IFramework _framework;
 	private readonly LightSpawner _spawner;
 
 	public LightModule(
 		IHookMediator hook,
 		ISceneManager scene,
+		GroupPoseModule gpose,
 		IFramework framework
 	) : base(hook, scene) {
+		this._gpose = gpose;
 		this._framework = framework;
 		this._spawner = hook.Create<LightSpawner>();
 	}
@@ -33,7 +36,7 @@ public class LightModule : SceneModule {
 	}
 
 	private unsafe void BuildLightEntities() {
-		var state = this.GetGPoseState();
+		var state = this._gpose.GetGPoseState();
 		if (state == null) return;
 
 		var lights = state->GetLights();
@@ -80,13 +83,6 @@ public class LightModule : SceneModule {
 	}
 	
 	// Camera light hooks
-	
-	private unsafe GPoseState* GetGPoseState()
-		=> this._getGPoseState != null ? this._getGPoseState() : null;
-
-	[Signature("E8 ?? ?? ?? ?? 0F B7 57 3C")]
-	private GetGPoseStateDelegate? _getGPoseState = null;
-	private unsafe delegate GPoseState* GetGPoseStateDelegate();
 
 	[Signature("48 83 EC 28 4C 8B C1 83 FA 03", DetourName = nameof(ToggleLightDetour))]
 	private Hook<ToggleLightDelegate>? ToggleLightHook = null;
