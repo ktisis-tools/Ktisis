@@ -98,7 +98,7 @@ public class EquipmentEditor {
 				if (icon != null)
 					ImGui.Image(icon.ImGuiHandle, new Vector2(48, 48));
 			} else {
-				ImGui.Text(":3");
+				ImGui.Text("-");
 			}
 			
 			ImGui.SameLine();
@@ -114,23 +114,6 @@ public class EquipmentEditor {
 			}
 		}
 	}
-
-	/*public unsafe void Draw(CharacterBase* chara, EquipmentModelId[] equipment) {
-		this.FetchData();
-		
-		var slots = equipment.Select((v, i) => (equip: v, slot: i)).ToList();
-
-		var avail = ImGui.GetContentRegionAvail();
-		try {
-			ImGui.PushItemWidth(avail.X / 3);
-			this.DrawSlots(chara, slots.Take(5));
-			var max = ImGui.GetItemRectSize().X + ImGui.GetStyle().ItemSpacing.X * 2;
-			ImGui.SameLine(Math.Max(max, avail.X / 2), 0);
-			this.DrawSlots(chara, slots.Skip(5));
-		} finally {
-			ImGui.PopItemWidth();
-		}
-	}*/
 
 	private unsafe void DrawSlots(CharacterBase* chara, IEnumerable<(EquipmentModelId, int)> slots) {
 		using var _ = ImRaii.Group();
