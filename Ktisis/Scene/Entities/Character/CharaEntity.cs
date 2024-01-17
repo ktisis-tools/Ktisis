@@ -103,9 +103,14 @@ public class CharaEntity : WorldEntity, IAttachable {
 
 	public unsafe override void SetTransform(Transform trans) {
 		var attach = this.GetAttach();
-		if (attach != null && attach->IsActive())
-			AttachUtil.SetTransformRelative(attach, trans, this.GetTransform()!);
-		else
+		if (attach != null && attach->IsActive()) {
+			var source = this.GetTransform()!;
+			AttachUtil.SetTransformRelative(attach, trans, source);
+			if (source.Scale == trans.Scale) return;
+			source.Scale = trans.Scale;
+			base.SetTransform(source);
+		} else {
 			base.SetTransform(trans);
+		}
 	}
 }
