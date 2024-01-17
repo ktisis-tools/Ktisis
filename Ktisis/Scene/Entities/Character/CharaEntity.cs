@@ -83,12 +83,13 @@ public class CharaEntity : WorldEntity, IAttachable {
 		var parentPose = parentSkele->PartialSkeletons[0].GetHavokPose(0);
 		if (parentPose == null || parentPose->Skeleton == null) return null;
 
-		var index = attach->Param->ParentId;
+		if (!AttachUtil.TryGetParentBoneIndex(attach, out var parentId)) return null;
+		
 		var skeleton = parentPose->Skeleton;
 		return new PartialBoneInfo {
-			Name = skeleton->Bones[index].Name.String ?? string.Empty,
-			BoneIndex = index,
-			ParentIndex = skeleton->ParentIndices[index],
+			Name = skeleton->Bones[parentId].Name.String ?? string.Empty,
+			BoneIndex = parentId,
+			ParentIndex = skeleton->ParentIndices[parentId],
 			PartialIndex = 0
 		};
 	}

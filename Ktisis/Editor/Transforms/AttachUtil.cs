@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
@@ -25,6 +26,15 @@ public static class AttachUtil {
 			attach->Param->Transform = new Transform();
 	}
 
+	public unsafe static bool TryGetParentBoneIndex(Attach* attach, out ushort index) {
+		index = attach->Param->ParentId;
+		return attach->Type switch {
+			AttachType.BoneIndex => true,
+			AttachType.ElementId => ((SkeletonEx*)attach->GetParentSkeleton())->TryGetBoneIndexForElementId(index, out index),
+			_ => false
+		};
+	}
+	
 	public unsafe static void SetTransformRelative(Attach* attach, Transform target, Transform source) {
 		var pSkele = attach->GetParentSkeleton();
 		if (pSkele == null
@@ -32,21 +42,33 @@ public static class AttachUtil {
 			|| pSkele->PartialSkeletons->HavokPoses == null
 		) return;
 		
-		var parentId = attach->Param->ParentId;
-		if (attach->Type == AttachType.ElementId && !((SkeletonEx*)pSkele)->TryGetBoneIndexForElementId(parentId, out parentId))
-			return;
-		
 		var pPose = pSkele->PartialSkeletons[0].GetHavokPose(0);
 		if (pPose == null) return;
 		
-		var pModel = HavokPoseUtil.GetWorldTransform(pSkele, pPose, parentId)!;
+		if (!TryGetParentBoneIndex(attach, out var parentId)) return;
 		
-		var inverseRot = Quaternion.Inverse(pModel.Rotation);
-		var transform = new Transform(attach->Param->Transform);
-		transform.Position += Vector3.Transform(target.Position - source.Position, inverseRot);
-		transform.Rotation = inverseRot * target.Rotation;
-		transform.Scale += Vector3.Transform(target.Scale - source.Scale, inverseRot);
-		attach->Param->Transform = transform;
+		// Resolve rotation offset from element for fashion accessories
+		var eRotate = Quaternion.Identity;
+		if (attach->Type == AttachType.ElementId) {
+			var ex = (SkeletonEx*)pSkele;
+			for (var x = 0; x < ex->ElementCount; x++) {
+				var element = ex->ElementParam + x;
+				if ((ushort)element->ElementId != attach->Param->ParentId) continue;
+				eRotate = (element->Rotation * MathHelpers.Rad2Deg).EulerAnglesToQuaternion();
+			}
+		}
+		
+		// worldPos = rootPos + ((modelPos + (elementPos + attachPos * elementRot) * modelRot) * rootRot) * rootScale
+		
+		var pModel = HavokPoseUtil.GetModelTransform(pPose, parentId)!;
+		var worldRot = (Quaternion)pSkele->Transform.Rotation * pModel.Rotation * eRotate;
+		var inverseRot = Quaternion.Inverse(worldRot);
+		
+		var offset = new Transform(attach->Param->Transform);
+		offset.Position += Vector3.Transform(target.Position - source.Position, inverseRot);
+		offset.Rotation = inverseRot * target.Rotation;
+		offset.Scale += Vector3.Transform(target.Scale - source.Scale, inverseRot);
+		attach->Param->Transform = offset;
 	}
 
 	public unsafe static void Detach(Attach* attach) {

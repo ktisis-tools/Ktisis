@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Ktisis.Structs.Characters;
@@ -20,4 +21,6 @@ public enum ElementId : uint {
 public struct ElementParam {
 	[FieldOffset(0x00)] public unsafe fixed char NameBytes[28];
 	[FieldOffset(0x20)] public ElementId ElementId;
+	[FieldOffset(0x24)] public Vector3 Position;
+	[FieldOffset(0x30)] public Vector3 Rotation;
 }
