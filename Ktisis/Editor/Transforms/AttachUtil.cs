@@ -2,7 +2,6 @@ using System;
 using System.Numerics;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
@@ -67,7 +66,6 @@ public static class AttachUtil {
 		var offset = new Transform(attach->Param->Transform);
 		offset.Position += Vector3.Transform(target.Position - source.Position, inverseRot);
 		offset.Rotation = inverseRot * target.Rotation;
-		offset.Scale += Vector3.Transform(target.Scale - source.Scale, inverseRot);
 		attach->Param->Transform = offset;
 	}
 
