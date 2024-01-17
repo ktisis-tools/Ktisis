@@ -18,15 +18,19 @@ using Ktisis.Structs.Events;
 namespace Ktisis.Scene.Modules.Actors;
 
 public class ActorSpawner : HookModule {
-	private readonly IGameInteropProvider _interop;
+	private const ushort Start = 200;
+	private const ushort SoftCap = 30;
+	private const ushort HardCap = SoftCap + 8;
+
+	private readonly IObjectTable _objectTable;
 	private readonly IFramework _framework;
 	
 	public ActorSpawner(
 		IHookMediator hook,
-		IGameInteropProvider interop,
+		IObjectTable objectTable,
 		IFramework framework
 	) : base(hook) {
-		this._interop = interop;
+		this._objectTable = objectTable;
 		this._framework = framework;
 	}
 	
@@ -96,17 +100,18 @@ public class ActorSpawner : HookModule {
 		});
 		
 		while (!token.IsCancellationRequested) {
-			if (TryGetCharaAddress((ushort)index, out var result))
-				return result;
+			if (this._objectTable[(int)index] is { } actor)
+				return actor.Address;
 			await Task.Delay(10, CancellationToken.None);
 		}
 		
 		throw new TaskCanceledException($"Actor spawn at index {index} timed out.");
 	}
 
-	private unsafe bool TryDispatch(out uint index) {
-		index = ClientObjectManager.Instance()->CalculateNextAvailableIndex();
-		if (index == uint.MaxValue) return false;
+	private bool TryDispatch(out uint index) {
+		index = this.CalculateNextIndex();
+		if (index == ushort.MaxValue) return false;
+		Ktisis.Log.Info($"Dispatching, expecting spawn on {index}");
 		this.DispatchSpawn();
 		return true;
 	}
@@ -130,13 +135,13 @@ public class ActorSpawner : HookModule {
 
 		this._dispatchEvent(handler, task);
 	}
-	
-	private unsafe static bool TryGetCharaAddress(ushort index, out nint address) {
-		var gameObject = ClientObjectManager.Instance()->GetObjectByIndex(index);
-		address = (nint)gameObject;
-		if (gameObject != null && gameObject->ObjectIndex < 200)
-			throw new Exception($"Index {index} resolved to non-GPose actor.");
-		return address != nint.Zero;
+
+	private ushort CalculateNextIndex() {
+		for (var i = Start; i <= Start + HardCap; i++) {
+			var actor = this._objectTable[i];
+			if (actor == null) return i;
+		}
+		return ushort.MaxValue;
 	}
 	
 	// Finalize hook

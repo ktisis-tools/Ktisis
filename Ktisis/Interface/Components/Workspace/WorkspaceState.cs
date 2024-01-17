@@ -51,7 +51,7 @@ public class WorkspaceState {
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetStyle().ItemSpacing.X);
 		ImGui.SetCursorPosY(cursorY + (avail - ImGui.GetFrameHeight()) / 2);
 		
-		var module = context.Scene.GetModule<PoseModule>();
+		var module = context.Scene.GetModule<PosingModule>();
 		var isPosing = module.IsEnabled;
 		
 		var locKey = isPosing ? "enable" : "disable";
