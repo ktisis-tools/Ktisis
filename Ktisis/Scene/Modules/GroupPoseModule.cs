@@ -1,6 +1,9 @@
 using Dalamud.Utility.Signatures;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
+
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.GPose;
 
 namespace Ktisis.Scene.Modules;
@@ -15,6 +18,16 @@ public class GroupPoseModule : SceneModule {
 
 	public unsafe GPoseState* GetGPoseState()
 		=> this._getGPoseState != null ? this._getGPoseState() : null;
+	
+	public unsafe GameObject* GetPrimaryActor() {
+		var gpose = this.GetGPoseState();
+		return gpose != null ? gpose->PrimaryActor : null;
+	}
+
+	public unsafe bool IsPrimaryActor(ActorEntity actor) {
+		var primary = this.GetPrimaryActor();
+		return (nint)primary == actor.Actor.Address;
+	}
 	
 	// Native
 	
