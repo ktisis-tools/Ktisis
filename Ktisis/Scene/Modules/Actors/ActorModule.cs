@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 using Dalamud.Plugin.Services;
+using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
-
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
@@ -14,8 +14,6 @@ using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Services;
 using Ktisis.Structs.GPose;
-
-using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 namespace Ktisis.Scene.Modules.Actors;
 
@@ -47,11 +45,6 @@ public class ActorModule : SceneModule {
 	
 	// Spawning
 
-	public unsafe bool IsPrimaryActor(ActorEntity actor) {
-		var gpose = this._gpose.GetGPoseState();
-		return gpose != null && (nint)gpose->PrimaryActor == actor.Actor.Address;
-	}
-
 	public async Task<ActorEntity> Spawn() {
 		if (!this._spawner.IsInit)
 			throw new Exception("Actor spawn manager is uninitialized.");
@@ -63,7 +56,7 @@ public class ActorModule : SceneModule {
 	}
 	
 	public unsafe void Delete(ActorEntity actor) {
-		if (this.IsPrimaryActor(actor)) {
+		if (this._gpose.IsPrimaryActor(actor)) {
 			Ktisis.Log.Warning("Refusing to delete primary actor.");
 			return;
 		}
