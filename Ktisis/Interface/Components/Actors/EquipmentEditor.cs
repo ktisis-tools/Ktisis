@@ -188,8 +188,6 @@ public class EquipmentEditor {
 		// Icon
 		
 		this.DrawItemButton(info);
-		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-			info.Unequip();
 		
 		ImGui.SameLine(0, innerSpace);
 		
@@ -230,12 +228,18 @@ public class EquipmentEditor {
 		using var _col = ImRaii.PushColor(ImGuiCol.Button, 0);
 		
 		bool clicked;
-		if (info.Texture != null)
-			clicked = ImGui.ImageButton(info.Texture.ImGuiHandle, ButtonSize);
-		else
-			clicked = ImGui.Button(info.Slot.ToString(), ButtonSize);
+		using (var _ = ImRaii.PushId($"##ItemButton_{info.Slot}")) {
+			if (info.Texture != null)
+				clicked = ImGui.ImageButton(info.Texture.ImGuiHandle, ButtonSize);
+			else
+				clicked = ImGui.Button(info.Slot.ToString(), ButtonSize);
+		}
+
+		if (clicked)
+			this.OpenItemSelectPopup(info.Slot);
 		
-		if (clicked) this.OpenItemSelectPopup(info.Slot);
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			info.Unequip();
 	}
 	
 	// Item select popup
