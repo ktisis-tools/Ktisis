@@ -18,13 +18,19 @@ public enum EquipIndex : uint {
 public static class EquipIndexEx {
 	public static EquipSlot ToEquipSlot(this EquipIndex index) {
 		var value = (int)index;
-		var res = (EquipSlot)(value + (value > 2 ? 3 : 2));
-		return res;
+		return index switch {
+			EquipIndex.RingLeft => EquipSlot.RingLeft,
+			EquipIndex.RingRight => EquipSlot.RingRight,
+			_ => (EquipSlot)(value + (value > 2 ? 3 : 2))
+		};
 	}
 
 	public static EquipIndex ToEquipIndex(this EquipSlot slot) {
 		var value = (int)slot;
-		var res = (EquipIndex)(value - (value >= 5 ? 3 : 2));
-		return res;
+		return slot switch {
+			EquipSlot.RingLeft => EquipIndex.RingLeft,
+			EquipSlot.RingRight => EquipIndex.RingRight,
+			_ => (EquipIndex)(value - (value >= 5 ? 3 : 2))
+		};
 	}
 }
