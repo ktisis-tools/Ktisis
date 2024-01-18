@@ -1,6 +1,9 @@
 using System;
+using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
+
+using ImGuiNET;
 
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;
@@ -11,21 +14,28 @@ using Ktisis.Scene.Entities.Game;
 namespace Ktisis.Interface.Windows.Editors;
 
 public class ActorEditWindow : EntityEditWindow<ActorEntity> {
-	private readonly CustomizeEditor _custom;
-	private readonly EquipmentEditor _equip;
+	private readonly CustomizeEditorUi _custom;
+	private readonly EquipmentEditorUi _equip;
 
 	private IAppearanceManager Editor => this.Context.Appearance;
 	
 	public ActorEditWindow(
 		IEditorContext context,
-		CustomizeEditor custom,
-		EquipmentEditor equip
+		CustomizeEditorUi custom,
+		EquipmentEditorUi equip
 	) : base("Actor Editor", context) {
 		this._custom = custom;
 		this._equip = equip;
 	}
 
 	// Draw tabs
+
+	public override void PreDraw() {
+		this.SizeConstraints = new WindowSizeConstraints {
+			MinimumSize = new Vector2(540, 380),
+			MaximumSize = ImGui.GetIO().DisplaySize * 0.90f
+		};
+	}
 	
 	public override void Draw() {
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
@@ -40,15 +50,13 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	
 	// Customize
 
-	private unsafe void DrawCustomize() {
-		var custom = this.Target.GetCustomize();
-		if (custom != null)
-			this._custom.Draw(custom.Value);
+	private void DrawCustomize() {
+		this._custom.Draw(this.Editor.Customize, this.Target);
 	}
 	
 	// Equipment
 
 	private void DrawEquipment() {
-		this._equip.Draw(this.Editor, this.Target);
+		this._equip.Draw(this.Editor.Equipment, this.Target);
 	}
 }

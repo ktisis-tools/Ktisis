@@ -1,5 +1,6 @@
 using System;
 
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
@@ -79,22 +80,30 @@ public class AppearanceModule : HookModule {
 		if (!this.Manager.TryGetStateForActor(actor, out var entity, out var state))
 			return;
 		
-		// TODO: Apply customize
+		// Apply customize
+
+		for (var i = 0; i < CustomizeContainer.Size; i++) {
+			var index = (CustomizeIndex)i;
+			if (!state.Customize.IsSet(index)) continue;
+			customize->Bytes[i] = state.Customize[index];
+		}
 		
 		// Apply equipment
 
-		foreach (var index in Enum.GetValues<EquipIndex>()) {
+		for (uint i = 0; i < EquipmentContainer.Length; i++) {
+			var index = (EquipIndex)i;
+			
 			// Check hat visibility.
 			if (index == EquipIndex.Head && state.HatVisible == EquipmentToggle.Off) {
-				*equip->GetData((uint)index) = default;
+				*equip->GetData(i) = default;
 				continue;
 			}
 			
 			// Apply saved equipment state.
 			if (!state.Equipment.IsSet(index)) continue;
-			*equip->GetData((uint)index) = state.Equipment[index];
+			*equip->GetData(i) = state.Equipment[index];
 		}
 		
-		this.Manager.ApplyStateFlagsFor(entity);
+		this.Manager.Equipment.ApplyStateFlagsFor(entity);
 	}
 }
