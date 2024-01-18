@@ -7,7 +7,7 @@ namespace Ktisis.Structs.Characters;
 // Client::Graphics::Scene::CharacterBase
 
 [StructLayout(LayoutKind.Explicit, Size = 0x8F0)]
-public struct CharacterEx {
+public struct CharacterBaseEx {
 	[FieldOffset(0x000)] public CharacterBase Base;
 
 	[FieldOffset(0x0D0)] public Attach Attach;

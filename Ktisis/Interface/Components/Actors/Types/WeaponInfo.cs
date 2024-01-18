@@ -1,0 +1,35 @@
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+
+using Ktisis.Data.Excel;
+using Ktisis.Editor.Characters;
+using Ktisis.Editor.Characters.Data;
+using Ktisis.Scene.Entities.Game;
+
+namespace Ktisis.Interface.Components.Actors.Types;
+
+public class WeaponInfo(IAppearanceManager editor, ActorEntity actor) : ItemInfo {
+	public required WeaponIndex Index;
+	public required WeaponModelId Model;
+		
+	public override EquipSlot Slot => this.Index.ToEquipSlot();
+		
+	public override ushort ModelId => this.Model.Id;
+	public override byte StainId => this.Model.Stain;
+
+	public void SetModel(ushort id, ushort second, byte variant)
+		=> editor.SetWeaponIdBaseVariant(actor, this.Index, id, second, variant);
+
+	public override void SetEquipItem(ItemSheet item) {
+		var model = this.Index == WeaponIndex.MainHand ? item.Model : item.SubModel;
+		this.SetModel(model.Id, model.Base, (byte)model.Variant);
+	}
+
+	public override void SetStainId(byte id) => editor.SetWeaponStainId(actor, this.Index, id);
+	public override void Unequip() => this.SetModel(0, 0, 0);
+	
+	public override bool IsCurrent() => editor.GetWeaponIndex(actor, this.Index).Equals(this.Model);
+	
+	public override bool IsItemPredicate(ItemSheet item)
+		=> item.Model.Matches(this.Model.Id, this.Model.Type, this.Model.Variant)
+			|| item.SubModel.Id != 0 && item.SubModel.Matches(this.Model.Id, this.Model.Type, this.Model.Variant);
+}

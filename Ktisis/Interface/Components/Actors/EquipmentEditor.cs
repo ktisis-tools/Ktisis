@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Dalamud.Interface;
-using Dalamud.Interface.Internal;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
 using Lumina.Excel.GeneratedSheets;
 
-using GLib.Popups;
-
 using ImGuiNET;
+
+using GLib.Popups;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
@@ -22,6 +21,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Excel;
 using Ktisis.Editor.Characters;
 using Ktisis.Editor.Characters.Data;
+using Ktisis.Interface.Components.Actors.Types;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Actors;
@@ -54,14 +54,17 @@ public class EquipmentEditor {
 	
 	// Data
 
-	private bool ItemsFetched;
+	private bool _itemsRaii;
+	
 	private readonly List<ItemSheet> Items = new();
 	private readonly List<Stain> Stains = new();
 
-	private void FetchData() {
-		if (this.ItemsFetched) return;
-		this.ItemsFetched = true;
+	private readonly object _equipUpdateLock = new();
+	private readonly Dictionary<EquipSlot, ItemInfo> Equipped = new();
 
+	private void FetchData() {
+		if (this._itemsRaii) return;
+		this._itemsRaii = true;
 		this.LoadItems().ContinueWith(task => {
 			if (task.Exception != null)
 				Ktisis.Log.Error($"Failed to fetch items:\n{task.Exception}");
@@ -80,13 +83,72 @@ public class EquipmentEditor {
 		
 		lock (this.Stains) this.Stains.AddRange(dyes);
 
-		foreach (var chunk in items.Chunk(1000))
+		foreach (var chunk in items.Chunk(1000)) {
 			lock (this.Items) this.Items.AddRange(chunk);
+			lock (this._equipUpdateLock) {
+				foreach (var (_, info) in this.Equipped.Where(pair => pair.Value.Item == null))
+					info.FlagUpdate = true;
+			}
+		}
 	}
+
+	private void UpdateSlot(IAppearanceManager editor, ActorEntity actor, EquipSlot slot) {
+		if (this.Equipped.TryGetValue(slot, out var info) && !info.FlagUpdate && info.IsCurrent()) return;
+		
+		ItemInfo item;
+
+		var isWeapon = slot < EquipSlot.Head;
+		if (isWeapon) {
+			var index = (WeaponIndex)slot;
+			var model = editor.GetWeaponIndex(actor, index);
+			item = new WeaponInfo(editor, actor) {
+				Index = index,
+				Model = model
+			};
+		} else {
+			var index = slot.ToEquipIndex();
+			var model = editor.GetEquipIndex(actor, index);
+			item = new EquipInfo(editor, actor) {
+				Index = index,
+				Model = model
+			};
+		}
+
+		try {
+			lock (this.Items) {
+				item.Item = this.Items
+					.Where(row => isWeapon ? row.IsWeapon() : row.IsEquippable(slot))
+					.FirstOrDefault(item.IsItemPredicate);
+			}
+			item.Texture = item.Item != null ? this._tex.GetIcon(item.Item.Icon) : null;
+			item.Texture ??= this._tex.GetIcon(GetFallbackIcon(slot));
+		} finally {
+			this.Equipped[slot] = item;
+		}
+	}
+	
+	private static uint GetFallbackIcon(EquipSlot slot) => slot switch {
+		EquipSlot.MainHand => 60102,
+		EquipSlot.OffHand => 60110,
+		EquipSlot.Head => 60124,
+		EquipSlot.Chest => 60125,
+		EquipSlot.Hands => 60129,
+		EquipSlot.Legs => 60127,
+		EquipSlot.Feet => 60130,
+		EquipSlot.Necklace => 60132,
+		EquipSlot.Earring => 60133,
+		EquipSlot.Bracelet => 60134,
+		EquipSlot.RingLeft or EquipSlot.RingRight => 60135,
+		_ => 0
+	};
 	
 	// Draw
 
-	private readonly static Vector2 ButtonSize = new(48, 48);
+	private readonly static EquipSlot[] EquipSlots = Enum.GetValues<EquipIndex>()
+		.Select(index => index.ToEquipSlot())
+		.ToArray();
+
+	private readonly static Vector2 ButtonSize = new(42, 42);
 
 	public void Draw(IAppearanceManager editor, ActorEntity actor) {
 		this.FetchData();
@@ -95,118 +157,109 @@ public class EquipmentEditor {
 		var avail = ImGui.GetWindowSize();
 		ImGui.PushItemWidth(avail.X / 2 - style.ItemSpacing.X);
 		try {
-			var slots = Enum.GetValues<EquipIndex>();
-			this.DrawSlots(editor, actor, slots.Take(5));
-			ImGui.SameLine(0, style.ItemSpacing.X);
-			this.DrawSlots(editor, actor, slots.Skip(5));
+			lock (this._equipUpdateLock) {
+				this.DrawItemSlots(editor, actor, EquipSlots.Take(5).Prepend(EquipSlot.MainHand));
+				ImGui.SameLine(0, style.ItemSpacing.X);
+				this.DrawItemSlots(editor, actor, EquipSlots.Skip(5).Prepend(EquipSlot.OffHand));
+			}
 		} finally {
 			ImGui.PopItemWidth();
 		}
 		
-		this.DrawItemSelectPopup(editor, actor);
-		this.DrawDyeSelectPopup(editor, actor);
+		this.DrawItemSelectPopup();
+		this.DrawDyeSelectPopup();
 	}
 	
 	// Draw item slot
 
-	private void DrawSlots(IAppearanceManager editor, ActorEntity actor, IEnumerable<EquipIndex> slots) {
+	private void DrawItemSlots(IAppearanceManager editor, ActorEntity actor, IEnumerable<EquipSlot> slots) {
 		using var _ = ImRaii.Group();
-		foreach (var index in slots)
-			this.DrawSlot(editor, actor, index);
+		foreach (var slot in slots)
+			this.DrawItemSlot(editor, actor, slot);
 	}
 
-	private void DrawSlot(IAppearanceManager editor, ActorEntity actor, EquipIndex index) {
-		var model = editor.GetEquipIndex(actor, index);
-			
-		ItemSheet? item;
-		lock (this.Items) {
-			item = this.Items.Where(row => row.IsEquippable(index.ToEquipSlot()))
-				.FirstOrDefault(row => row.Model.Id == model.Id && row.Model.Variant == model.Variant);
-		}
+	private void DrawItemSlot(IAppearanceManager editor, ActorEntity actor, EquipSlot slot) {
+		this.UpdateSlot(editor, actor, slot);
+		if (!this.Equipped.TryGetValue(slot, out var info)) return;
 
 		var cursorStart = ImGui.GetCursorPosX();
-
 		var innerSpace = ImGui.GetStyle().ItemInnerSpacing.X;
 		
 		// Icon
-
-		this.DrawItemButton(index, item);
+		
+		this.DrawItemButton(info);
 		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-			editor.SetEquipIndexIdVariant(actor, index, 0, 0);
-			
+			info.Unequip();
+		
 		ImGui.SameLine(0, innerSpace);
 		
 		// Name + Model input
 
 		using var _group = ImRaii.Group();
 		
+		PrepareItemLabel(info.Item, info.ModelId, cursorStart, innerSpace);
+
+		if (info is WeaponInfo wep) {
+			var values = new int[] { wep.Model.Id, wep.Model.Type, wep.Model.Variant };
+			if (ImGui.InputInt3($"##Input{slot}", ref values[0]))
+				wep.SetModel((ushort)values[0], (ushort)values[1], (byte)values[2]);
+		} else if (info is EquipInfo equip) {
+			var values = new int[] { equip.Model.Id, equip.Model.Variant };
+			if (ImGui.InputInt2($"##Input{slot}", ref values[0]))
+				equip.SetModel((ushort)values[0], (byte)values[1]);
+		}
+		
+		ImGui.SameLine(0, innerSpace);
+		this.DrawDyeButton(info);
+	}
+
+	private static void PrepareItemLabel(ItemSheet? item, ushort modelId, float cursorStart, float innerSpace) {
 		var labelWidth = ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - cursorStart);
 		ImGui.SetNextItemWidth(labelWidth);
-		ImGui.Text((item?.Name ?? (model.Id == 0 ? "Empty" : "Unknown")).FitToWidth(labelWidth));
+		ImGui.Text((item?.Name ?? (modelId == 0 ? "Empty" : "Unknown")).FitToWidth(labelWidth));
 		
 		ImGui.SetNextItemWidth(Math.Min(
 			UiBuilder.IconFont.FontSize * 4 * 2 + innerSpace,
 			ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - cursorStart) - innerSpace - ImGui.GetFrameHeight()
 		));
-		
-		var values = new int[] { model.Id, model.Variant };
-		if (ImGui.InputInt2($"##Input{index}", ref values[0]))
-			editor.SetEquipIndexIdVariant(actor, index, (ushort)values[0], (byte)values[1]);
-		
-		ImGui.SameLine(0, innerSpace);
-		this.DrawDyeButton(index, model.Stain);
 	}
 	
 	// Draw item selectors
-	
-	private uint GetFallbackIcon(EquipIndex index) => index switch {
-		EquipIndex.Head => 60124,
-		EquipIndex.Chest => 60125,
-		EquipIndex.Hands => 60129,
-		EquipIndex.Legs => 60127,
-		EquipIndex.Feet => 60130,
-		EquipIndex.Necklace => 60132,
-		EquipIndex.Earring => 60133,
-		EquipIndex.Bracelet => 60134,
-		EquipIndex.RingLeft or EquipIndex.RingRight => 60135,
-		_ => 0
-	};
 
-	private void DrawItemButton(EquipIndex index, ItemSheet? item) {
+	private void DrawItemButton(ItemInfo info) {
 		using var _col = ImRaii.PushColor(ImGuiCol.Button, 0);
-
-		IDalamudTextureWrap? icon = null;
-		if (item != null)
-			icon = this._tex.GetIcon(item.Icon);
-		icon ??= this._tex.GetIcon(this.GetFallbackIcon(index));
 		
 		bool clicked;
-		if (icon != null)
-			clicked = ImGui.ImageButton(icon.ImGuiHandle, ButtonSize);
+		if (info.Texture != null)
+			clicked = ImGui.ImageButton(info.Texture.ImGuiHandle, ButtonSize);
 		else
-			clicked = ImGui.Button(index.ToString(), ButtonSize);
+			clicked = ImGui.Button(info.Slot.ToString(), ButtonSize);
 		
-		if (clicked)
-			this.OpenItemSelectPopup(index);
+		if (clicked) this.OpenItemSelectPopup(info.Slot);
 	}
 	
 	// Item select popup
 
-	private EquipIndex ItemSelectIndex = 0;
-
+	private EquipSlot ItemSelectSlot = 0;
 	private List<ItemSheet> ItemSelectList = new();
 
-	private void OpenItemSelectPopup(EquipIndex index) {
-		this.ItemSelectIndex = index;
+	private void OpenItemSelectPopup(EquipSlot slot) {
+		this.ItemSelectSlot = slot;
 		this.ItemSelectList.Clear();
 		lock (this.Items)
-			this.ItemSelectList = this.Items.Where(item => item.IsEquippable(index.ToEquipSlot())).ToList();
+			this.ItemSelectList = this.Items.Where(item => slot < EquipSlot.Head ? item.IsWeapon() : item.IsEquippable(slot)).ToList();
 		this._itemSelectPopup.Open();
 	}
 
-	private void DrawItemSelectPopup(IAppearanceManager editor, ActorEntity actor) {
-		if (this._itemSelectPopup.IsOpen && this._itemSelectPopup.Draw(this.ItemSelectList, out var selected) && selected != null)
-			editor.SetEquipIndexIdVariant(actor, this.ItemSelectIndex, selected.Model.Id, (byte)selected.Model.Variant);
+	private void DrawItemSelectPopup() {
+		if (!this._itemSelectPopup.IsOpen) return;
+
+		if (!this._itemSelectPopup.Draw(this.ItemSelectList, out var selected) || selected == null) return;
+
+		lock (this.Equipped) {
+			if (this.Equipped.TryGetValue(this.ItemSelectSlot, out var info))
+				info.SetEquipItem(selected);
+		}
 	}
 
 	private static bool ItemSelectDrawRow(ItemSheet item, bool isFocus) => ImGui.Selectable(item.Name, isFocus);
@@ -220,20 +273,23 @@ public class EquipmentEditor {
 		return color;
 	}
 
-	private void DrawDyeButton(EquipIndex index, byte stainId) {
+	private void DrawDyeButton(ItemInfo info) {
 		Stain? stain;
 		lock (this.Stains)
-			stain = this.Stains.FirstOrDefault(row => row.RowId == stainId);
+			stain = this.Stains.FirstOrDefault(row => row.RowId == info.StainId);
 
 		var color = CalcStainColor(stain);
 		var colorVec4 = ImGui.ColorConvertU32ToFloat4(color);
-		if (ImGui.ColorButton($"##DyeSelect_{index}", colorVec4, ImGuiColorEditFlags.NoTooltip))
-			this.OpenDyeSelectPopup(index);
+		if (ImGui.ColorButton($"##DyeSelect_{info.Slot}", colorVec4, ImGuiColorEditFlags.NoTooltip))
+			this.OpenDyeSelectPopup(info.Slot);
 
-		if (ImGui.IsItemHovered()) this.DrawDyeTooltip(stain, color, colorVec4);
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			info.SetStainId(0);
+
+		if (ImGui.IsItemHovered()) DrawDyeTooltip(stain, color, colorVec4);
 	}
 
-	private void DrawDyeTooltip(Stain? stain, uint color, Vector4 colorVec4) {
+	private static void DrawDyeTooltip(Stain? stain, uint color, Vector4 colorVec4) {
 		using var _color = ImRaii.PushColor(ImGuiCol.Text, color, (colorVec4.X + colorVec4.Y + colorVec4.Z) / 3 > 0.10f);
 		using var _tooltip = ImRaii.Tooltip();
 		// Text
@@ -248,18 +304,18 @@ public class EquipmentEditor {
 	
 	// Dye select popup
 	
-	private EquipIndex DyeSelectIndex = 0;
+	private EquipSlot DyeSelectSlot = 0;
 
-	private void OpenDyeSelectPopup(EquipIndex index) {
-		this.DyeSelectIndex = index;
+	private void OpenDyeSelectPopup(EquipSlot slot) {
+		this.DyeSelectSlot = slot;
 		this._dyeSelectPopup.Open();
 	}
 
-	private void DrawDyeSelectPopup(IAppearanceManager editor, ActorEntity actor) {
+	private void DrawDyeSelectPopup() {
 		if (!this._dyeSelectPopup.IsOpen) return;
 		lock (this.Stains) {
-			if (this._dyeSelectPopup.Draw(this.Stains, out var selected) && selected != null)
-				editor.SetEquipIndexStainId(actor, this.DyeSelectIndex, (byte)selected.RowId);
+			if (this._dyeSelectPopup.Draw(this.Stains, out var selected) && this.Equipped.TryGetValue(this.DyeSelectSlot, out var info))
+				info.SetStainId((byte)selected!.RowId);
 		}
 	}
 

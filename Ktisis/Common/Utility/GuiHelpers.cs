@@ -35,7 +35,6 @@ public static class GuiHelpers {
 	public static uint CalcBlackWhiteTextColor(uint background) {
 		const uint black = 0xFF000000;
 		const uint white = 0xFFFFFFFF;
-		Ktisis.Log.Info($"{background:X} {CalcContrastRatio(background, white)}");
 		return CalcContrastRatio(background, white) < 2.0f ? black : white;
 	}
 }
