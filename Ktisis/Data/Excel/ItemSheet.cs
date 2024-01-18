@@ -78,7 +78,7 @@ public class ItemSheet : ExcelRow {
 		public override void PopulateData(RowParser parser, GameData gameData, Language language) {
 			base.PopulateData(parser, gameData, language);
 			for (var i = 0; i < 14; i++)
-				this.Slots[i] = parser.ReadColumn<sbyte>(i) == 1;
+				this.Slots[i] = parser.ReadColumn<sbyte>(i) != 0;
 		}
 	}
 }
