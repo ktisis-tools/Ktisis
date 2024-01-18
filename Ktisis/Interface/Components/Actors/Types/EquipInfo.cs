@@ -20,6 +20,13 @@ public class EquipInfo(IAppearanceManager editor, ActorEntity actor) : ItemInfo 
 	public override void SetEquipItem(ItemSheet item) => this.SetModel(item.Model.Id, (byte)item.Model.Variant);
 	public override void SetStainId(byte id) => editor.SetEquipStainId(actor, this.Index, id);
 	public override void Unequip() => this.SetModel(0, 0);
+
+	public override bool IsHideable => this.Slot is EquipSlot.Head;
+	public override bool IsVisible() => this.Slot == EquipSlot.Head && editor.GetHatVisible(actor);
+	public override void SetVisible(bool visible) {
+		if (this.Slot == EquipSlot.Head)
+			editor.SetHatVisible(actor, visible);
+	}
 	
 	public override bool IsCurrent() => editor.GetEquipIndex(actor, this.Index).Equals(this.Model);
 	

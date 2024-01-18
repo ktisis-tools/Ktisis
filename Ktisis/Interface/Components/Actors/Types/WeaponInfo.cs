@@ -26,6 +26,10 @@ public class WeaponInfo(IAppearanceManager editor, ActorEntity actor) : ItemInfo
 
 	public override void SetStainId(byte id) => editor.SetWeaponStainId(actor, this.Index, id);
 	public override void Unequip() => this.SetModel(0, 0, 0);
+
+	public override bool IsHideable => true;
+	public override bool IsVisible() => editor.GetWeaponVisible(actor, this.Index);
+	public override void SetVisible(bool visible) => editor.SetWeaponVisible(actor, this.Index, visible);
 	
 	public override bool IsCurrent() => editor.GetWeaponIndex(actor, this.Index).Equals(this.Model);
 	

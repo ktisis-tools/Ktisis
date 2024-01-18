@@ -61,26 +61,39 @@ public class AppearanceModule : HookModule {
 	private Hook<CreateCharacterDelegate> CreateCharacterHook = null!;
 	private unsafe delegate CharacterBase* CreateCharacterDelegate(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk);
 	private unsafe CharacterBase* CreateCharacterDetour(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk) {
-		this.HandleCreate(customize, equip);
+		try {
+			this.PreHandleCreate(customize, equip);
+		} catch (Exception err) {
+			Ktisis.Log.Info($"Failure on PreHandleCreate:\n{err}");
+		}
 		return this.CreateCharacterHook.Original(model, customize, equip, unk);
 	}
 
-	private unsafe void HandleCreate(CustomizeContainer* customize, EquipmentContainer* equip) {
+	private unsafe void PreHandleCreate(CustomizeContainer* customize, EquipmentContainer* equip) {
 		if (!this.IsValid || this._prepareCharaFor == null) return;
 
 		var actor = this._actors.GetAddress((nint)this._prepareCharaFor);
 		if (actor == null) return;
 
-		var state = this.Manager.GetStateForActor(actor);
-		if (state == null) return;
+		if (!this.Manager.TryGetStateForActor(actor, out var entity, out var state))
+			return;
 		
 		// TODO: Apply customize
 		
 		// Apply equipment
 
 		foreach (var index in Enum.GetValues<EquipIndex>()) {
+			// Check hat visibility.
+			if (index == EquipIndex.Head && state.Equipment.HatVisible == EquipmentVisible.Hidden) {
+				*equip->GetData((uint)index) = default;
+				continue;
+			}
+			
+			// Apply saved equipment state.
 			if (!state.Equipment.IsSet(index)) continue;
 			*equip->GetData((uint)index) = state.Equipment[index];
 		}
+		
+		this.Manager.ApplyStateFlagsFor(entity);
 	}
 }
