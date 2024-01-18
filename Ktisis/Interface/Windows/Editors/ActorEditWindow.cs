@@ -44,9 +44,6 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	// Customize
 
 	private unsafe void DrawCustomize() {
-		var chara = this.Target.GetCharacter();
-		if (chara == null) return;
-
 		var custom = this.Target.GetCustomize();
 		if (custom != null)
 			this._custom.Draw(custom.Value);
