@@ -13,10 +13,10 @@
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Extensions/ColorEx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Extensions/NumericEx.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Utility/GuiHelpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Utility/GuiHelpers.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +46,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8f2dd892d194dcac90e8c5cb41f4a153f0268cb4978f979754c87bfb93e7e/CameraBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/92ec3cc834ef78349ef5c2892165c0effe1c4048aa269ee3f898885366513/Pointer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/cf687bf23fe2591e9ee1259dbf4bb98b554feec26a4fef677bf2ed8867c65/Camera.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ec59a23925cad1f52bf1bf49f188dd9049575ba46d2d8c39392bb436e2ef/Stain.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui_demo.cpp" root0="SKIP_HIGHLIGHTING" />
@@ -258,7 +259,8 @@
       <workItem from="1705148827763" duration="43364000" />
       <workItem from="1705233950432" duration="25157000" />
       <workItem from="1705411277089" duration="40967000" />
-      <workItem from="1705488841303" duration="41156000" />
+      <workItem from="1705488841303" duration="41765000" />
+      <workItem from="1705572155803" duration="7646000" />
     </task>
     <servers />
   </component>
