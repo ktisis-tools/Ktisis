@@ -34,6 +34,8 @@ public class EquipmentEditorUi {
 
 	private readonly PopupList<ItemSheet> _itemSelectPopup;
 	private readonly PopupList<Stain> _dyeSelectPopup;
+
+	public IEquipmentEditor Editor { set; private get; } = null!;
 	
 	public EquipmentEditorUi(
 		IDataManager data,
@@ -93,7 +95,7 @@ public class EquipmentEditorUi {
 		}
 	}
 
-	private void UpdateSlot(IEquipmentEditor editor, ActorEntity actor, EquipSlot slot) {
+	private void UpdateSlot(ActorEntity actor, EquipSlot slot) {
 		if (this.Equipped.TryGetValue(slot, out var info) && !info.FlagUpdate && info.IsCurrent()) return;
 		
 		ItemInfo item;
@@ -101,15 +103,15 @@ public class EquipmentEditorUi {
 		var isWeapon = slot < EquipSlot.Head;
 		if (isWeapon) {
 			var index = (WeaponIndex)slot;
-			var model = editor.GetWeaponIndex(actor, index);
-			item = new WeaponInfo(editor, actor) {
+			var model = this.Editor.GetWeaponIndex(actor, index);
+			item = new WeaponInfo(this.Editor, actor) {
 				Index = index,
 				Model = model
 			};
 		} else {
 			var index = slot.ToEquipIndex();
-			var model = editor.GetEquipIndex(actor, index);
-			item = new EquipInfo(editor, actor) {
+			var model = this.Editor.GetEquipIndex(actor, index);
+			item = new EquipInfo(this.Editor, actor) {
 				Index = index,
 				Model = model
 			};
@@ -151,7 +153,7 @@ public class EquipmentEditorUi {
 
 	private readonly static Vector2 ButtonSize = new(42, 42);
 
-	public void Draw(IEquipmentEditor editor, ActorEntity actor) {
+	public void Draw(ActorEntity actor) {
 		this.FetchData();
 		
 		var style = ImGui.GetStyle();
@@ -159,9 +161,9 @@ public class EquipmentEditorUi {
 		ImGui.PushItemWidth(avail.X / 2 - style.ItemSpacing.X);
 		try {
 			lock (this._equipUpdateLock) {
-				this.DrawItemSlots(editor, actor, EquipSlots.Take(5).Prepend(EquipSlot.MainHand));
+				this.DrawItemSlots(actor, EquipSlots.Take(5).Prepend(EquipSlot.MainHand));
 				ImGui.SameLine(0, style.ItemSpacing.X);
-				this.DrawItemSlots(editor, actor, EquipSlots.Skip(5).Prepend(EquipSlot.OffHand));
+				this.DrawItemSlots(actor, EquipSlots.Skip(5).Prepend(EquipSlot.OffHand));
 			}
 		} finally {
 			ImGui.PopItemWidth();
@@ -173,14 +175,14 @@ public class EquipmentEditorUi {
 	
 	// Draw item slot
 
-	private void DrawItemSlots(IEquipmentEditor editor, ActorEntity actor, IEnumerable<EquipSlot> slots) {
+	private void DrawItemSlots(ActorEntity actor, IEnumerable<EquipSlot> slots) {
 		using var _ = ImRaii.Group();
 		foreach (var slot in slots)
-			this.DrawItemSlot(editor, actor, slot);
+			this.DrawItemSlot(actor, slot);
 	}
 
-	private void DrawItemSlot(IEquipmentEditor editor, ActorEntity actor, EquipSlot slot) {
-		this.UpdateSlot(editor, actor, slot);
+	private void DrawItemSlot(ActorEntity actor, EquipSlot slot) {
+		this.UpdateSlot( actor, slot);
 		if (!this.Equipped.TryGetValue(slot, out var info)) return;
 
 		var cursorStart = ImGui.GetCursorPosX();

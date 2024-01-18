@@ -26,6 +26,8 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	) : base("Actor Editor", context) {
 		this._custom = custom;
 		this._equip = equip;
+		custom.Editor = this.Editor.Customize;
+		equip.Editor = this.Editor.Equipment;
 	}
 
 	// Draw tabs
@@ -51,12 +53,12 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	// Customize
 
 	private void DrawCustomize() {
-		this._custom.Draw(this.Editor.Customize, this.Target);
+		this._custom.Draw(this.Target);
 	}
 	
 	// Equipment
 
 	private void DrawEquipment() {
-		this._equip.Draw(this.Editor.Equipment, this.Target);
+		this._equip.Draw(this.Target);
 	}
 }
