@@ -21,6 +21,7 @@ public interface IAppearanceManager : IDisposable {
 
 	public EquipmentModelId GetEquipIndex(ActorEntity actor, EquipIndex index);
 	public void SetEquipIndex(ActorEntity actor, EquipIndex index, EquipmentModelId model);
+	public void SetEquipIndexIdVariant(ActorEntity actor, EquipIndex index, ushort id, byte variant);
 }
 
 public class AppearanceManager : IAppearanceManager {
@@ -76,6 +77,13 @@ public class AppearanceManager : IAppearanceManager {
 		actor.Appearance.Equipment[index] = model;
 		var chara = actor.GetCharacter();
 		if (chara != null) chara->FlagSlotForUpdate((uint)index, &model);
+	}
+
+	public void SetEquipIndexIdVariant(ActorEntity actor, EquipIndex index, ushort id, byte variant) {
+		var model = this.GetEquipIndex(actor, index);
+		model.Id = id;
+		model.Variant = variant;
+		this.SetEquipIndex(actor, index, model);
 	}
 	
 	// Disposal
