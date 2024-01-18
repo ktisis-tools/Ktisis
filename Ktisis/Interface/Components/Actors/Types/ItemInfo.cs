@@ -19,6 +19,10 @@ public abstract class ItemInfo {
 	public abstract void SetStainId(byte id);
 	public abstract void Unequip();
 	
+	public abstract bool IsHideable { get; }
+	public abstract bool IsVisible();
+	public abstract void SetVisible(bool visible);
+	
 	public abstract bool IsCurrent();
 	public abstract bool IsItemPredicate(ItemSheet item);
 }

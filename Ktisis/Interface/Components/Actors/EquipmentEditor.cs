@@ -14,6 +14,7 @@ using Lumina.Excel.GeneratedSheets;
 using ImGuiNET;
 
 using GLib.Popups;
+using GLib.Widgets;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
@@ -117,7 +118,7 @@ public class EquipmentEditor {
 		try {
 			lock (this.Items) {
 				item.Item = this.Items
-					.Where(row => isWeapon ? row.IsWeapon() : row.IsEquippable(slot))
+					.Where(row => row.IsEquippable(slot))
 					.FirstOrDefault(item.IsItemPredicate);
 			}
 			item.Texture = item.Item != null ? this._tex.GetIcon(item.Item.Icon) : null;
@@ -209,6 +210,18 @@ public class EquipmentEditor {
 		
 		ImGui.SameLine(0, innerSpace);
 		this.DrawDyeButton(info);
+
+		if (info.IsHideable) {
+			using var _id = ImRaii.PushId($"EqSetVisible_{slot}");
+			using var _col0 = ImRaii.PushColor(ImGuiCol.Button, 0);
+			
+			ImGui.SameLine(0, innerSpace);
+
+			var isVisible = info.IsVisible();
+			var icon = isVisible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
+			if (Buttons.IconButton(icon))
+				info.SetVisible(!isVisible);
+		}
 	}
 
 	private static void PrepareItemLabel(ItemSheet? item, ushort modelId, float cursorStart, float innerSpace) {
