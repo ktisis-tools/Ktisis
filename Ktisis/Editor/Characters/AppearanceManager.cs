@@ -21,8 +21,13 @@ public interface IAppearanceManager : IDisposable {
 
 	public EquipmentModelId GetEquipIndex(ActorEntity actor, EquipIndex index);
 	public void SetEquipIndex(ActorEntity actor, EquipIndex index, EquipmentModelId model);
-	public void SetEquipIndexIdVariant(ActorEntity actor, EquipIndex index, ushort id, byte variant);
-	public void SetEquipIndexStainId(ActorEntity actor, EquipIndex index, byte stainId);
+	public void SetEquipIdVariant(ActorEntity actor, EquipIndex index, ushort id, byte variant);
+	public void SetEquipStainId(ActorEntity actor, EquipIndex index, byte stainId);
+
+	public WeaponModelId GetWeaponIndex(ActorEntity actor, WeaponIndex index);
+	public void SetWeaponIndex(ActorEntity actor, WeaponIndex index, WeaponModelId model);
+	public void SetWeaponIdBaseVariant(ActorEntity actor, WeaponIndex index, ushort id, ushort second, byte variant);
+	public void SetWeaponStainId(ActorEntity actor, WeaponIndex index, byte stainId);
 }
 
 public class AppearanceManager : IAppearanceManager {
@@ -70,7 +75,7 @@ public class AppearanceManager : IAppearanceManager {
 		if (!actor.IsValid) return default;
 		if (actor.Appearance.Equipment.IsSet(index))
 			return actor.Appearance.Equipment[index];
-		return actor.CharacterEx != null ? actor.CharacterEx->Equipment[(uint)index] : default;
+		return actor.CharacterBaseEx != null ? actor.CharacterBaseEx->Equipment[(uint)index] : default;
 	}
 	
 	public unsafe void SetEquipIndex(ActorEntity actor, EquipIndex index, EquipmentModelId model) {
@@ -80,17 +85,70 @@ public class AppearanceManager : IAppearanceManager {
 		if (chara != null) chara->FlagSlotForUpdate((uint)index, &model);
 	}
 
-	public void SetEquipIndexIdVariant(ActorEntity actor, EquipIndex index, ushort id, byte variant) {
+	public void SetEquipIdVariant(ActorEntity actor, EquipIndex index, ushort id, byte variant) {
 		var model = this.GetEquipIndex(actor, index);
 		model.Id = id;
 		model.Variant = variant;
 		this.SetEquipIndex(actor, index, model);
 	}
 
-	public void SetEquipIndexStainId(ActorEntity actor, EquipIndex index, byte stainId) {
+	public void SetEquipStainId(ActorEntity actor, EquipIndex index, byte stainId) {
 		var model = this.GetEquipIndex(actor, index);
 		model.Stain = stainId;
 		this.SetEquipIndex(actor, index, model);
+	}
+	
+	// Weapon wrappers
+
+	public unsafe WeaponModelId GetWeaponIndex(ActorEntity actor, WeaponIndex index) {
+		if (!actor.IsValid || actor.Character == null) return default;
+		if (actor.Appearance.Weapons.IsSet(index))
+			return actor.Appearance.Weapons[index];
+		return actor.Character->DrawData.WeaponDataSpan[(int)index].ModelId;
+	}
+
+	public unsafe void SetWeaponIndex(ActorEntity actor, WeaponIndex index, WeaponModelId model) {
+		if (!actor.IsValid) return;
+		actor.Appearance.Weapons[index] = model;
+		var chara = actor.Character;
+		if (chara != null) chara->DrawData.LoadWeapon((DrawDataContainer.WeaponSlot)index, model, 0, 0, 0, 0);
+	}
+
+	public void SetWeaponIdBaseVariant(ActorEntity actor, WeaponIndex index, ushort id, ushort second, byte variant) {
+		var model = this.GetWeaponIndex(actor, index);
+		model.Id = id;
+		model.Type = second;
+		model.Variant = variant;
+		this.SetWeaponIndex(actor, index, model);
+	}
+
+	public void SetWeaponStainId(ActorEntity actor, WeaponIndex index, byte stainId) {
+		var model = this.GetWeaponIndex(actor, index);
+		model.Stain = stainId;
+		this.SetWeaponIndex(actor, index, model);
+	}
+	
+	// Equipment flags
+
+	public unsafe bool GetEquipmentFlag(ActorEntity actor, EquipmentFlag flag) {
+		if (!actor.IsValid || actor.CharacterBaseEx == null) return false;
+		return flag switch {
+			EquipmentFlag.SetVisor => actor.CharacterBaseEx->Base.VisorToggled,
+			_ => false
+		};
+	}
+
+	private unsafe void SetEquipmentFlag(ActorEntity actor, EquipmentFlag flag, bool value) {
+		if (!actor.IsValid || actor.CharacterBaseEx == null) return;
+		var state = actor.Appearance.Equipment;
+		switch (flag) {
+			case EquipmentFlag.SetVisor:
+				state.SetFlagState(flag, value);
+				actor.CharacterBaseEx->Base.VisorToggled = value;
+				break;
+			default:
+				break;
+		}
 	}
 	
 	// Disposal

@@ -1,6 +1,8 @@
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
+using CSCharacter = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
 using Ktisis.Editor.Characters.Data;
 using Ktisis.Scene.Decor;
@@ -8,8 +10,6 @@ using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
-
-using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 namespace Ktisis.Scene.Entities.Game;
 
@@ -43,9 +43,13 @@ public class ActorEntity : CharaEntity, IDeletable {
 			this.Address = address;
 	}
 	
-	// CharacterBase
+	// GameObject
+	
+	public unsafe CSGameObject* CsGameObject => (CSGameObject*)this.Actor.Address;
 
-	private unsafe CSGameObject* CsGameObject => (CSGameObject*)this.Actor.Address;
+	public unsafe CSCharacter* Character => this.CsGameObject != null && this.CsGameObject->IsCharacter() ? (CSCharacter*)this.CsGameObject : null;
+	
+	// CharacterBase
 
 	public unsafe override Object* GetObject()
 		=> this.CsGameObject != null ? &this.CsGameObject->DrawObject->Object : null;

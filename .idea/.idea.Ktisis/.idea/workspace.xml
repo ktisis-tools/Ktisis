@@ -11,12 +11,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipmentFlag.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/WeaponIndex.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/WeaponState.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/ItemInfo.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/WeaponContainer.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Common/Extensions/ColorEx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Extensions/NumericEx.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Common/Utility/GuiHelpers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Common/Utility/GuiHelpers.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Excel/ItemSheet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Excel/ItemSheet.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/AppearanceState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/AppearanceState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipIndex.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipIndex.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipmentState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipmentState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Characters/CharacterEx.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/CharacterBaseEx.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Structs/Characters/EquipmentContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Structs/Characters/EquipmentContainer.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -260,7 +275,7 @@
       <workItem from="1705233950432" duration="25157000" />
       <workItem from="1705411277089" duration="40967000" />
       <workItem from="1705488841303" duration="41765000" />
-      <workItem from="1705572155803" duration="7646000" />
+      <workItem from="1705572155803" duration="21719000" />
     </task>
     <servers />
   </component>

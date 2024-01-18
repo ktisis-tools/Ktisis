@@ -27,6 +27,9 @@ public class ItemModel(ulong var, bool isWep = false) {
 	public ushort Base = (ushort)(isWep ? var >> 16 : 0);
 	public ushort Variant = (ushort)(isWep ? var >> 32 : var >> 16);
 
+	public bool Matches(ushort id, ushort variant)
+		=> this.Id == id && this.Variant == variant;
+
 	public bool Matches(ushort id, ushort secondId, ushort variant)
 		=> this.Id == id && this.Base == secondId && this.Variant == variant;
 }

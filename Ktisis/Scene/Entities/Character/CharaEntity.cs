@@ -40,21 +40,21 @@ public class CharaEntity : WorldEntity, IAttachable {
 	
 	// Character
 	
-	public unsafe CharacterEx* CharacterEx => (CharacterEx*)this.GetCharacter();
+	public unsafe CharacterBaseEx* CharacterBaseEx => (CharacterBaseEx*)this.GetCharacter();
 	
 	public unsafe virtual CharacterBase* GetCharacter() => (CharacterBase*)this.GetObject();
 	
 	public unsafe CustomizeContainer? GetCustomize()
-		=> this.CharacterEx != null ? this.CharacterEx->Customize : null;
+		=> this.CharacterBaseEx != null ? this.CharacterBaseEx->Customize : null;
 
 	public unsafe EquipmentContainer? GetEquipment()
-		=> this.CharacterEx != null ? this.CharacterEx->Equipment : null;
+		=> this.CharacterBaseEx != null ? this.CharacterBaseEx->Equipment : null;
 	
 	// BoneAttach
 
 	public unsafe Attach* GetAttach() {
-		if (this.CharacterEx == null) return null;
-		var attach = &this.CharacterEx->Attach;
+		if (this.CharacterBaseEx == null) return null;
+		var attach = &this.CharacterBaseEx->Attach;
 		return attach->Param != null ? attach : null;
 	}
 

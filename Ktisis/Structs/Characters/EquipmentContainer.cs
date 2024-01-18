@@ -7,8 +7,8 @@ namespace Ktisis.Structs.Characters;
 
 [StructLayout(LayoutKind.Explicit, Size = Size)]
 public struct EquipmentContainer {
-	public const int Size = sizeof(uint) * Length;
 	public const int Length = 10;
+	public const int Size = sizeof(uint) * Length;
 
 	[FieldOffset(0x00)] public unsafe fixed byte Bytes[Size];
 	
