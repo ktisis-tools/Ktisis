@@ -37,6 +37,14 @@ public struct CustomizeContainer {
 	[FieldOffset((int)CustomizeIndex.RaceFeatureType)] public byte RaceFeatureType;
 	[FieldOffset((int)CustomizeIndex.SkinColor)] public byte SkinColor;
 	[FieldOffset((int)CustomizeIndex.Tribe)] public Tribe Tribe;
+
+	public byte this[uint index] {
+		get => this.Get(index);
+		set => this.Set(index, value);
+	}
+
+	private unsafe byte Get(uint index) => this.Bytes[index];
+	private unsafe void Set(uint index, byte value) => this.Bytes[index] = value;
 }
 
 [Flags]

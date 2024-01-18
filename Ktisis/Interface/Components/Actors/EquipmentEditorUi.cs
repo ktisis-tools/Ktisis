@@ -28,14 +28,14 @@ using Ktisis.Scene.Entities.Game;
 namespace Ktisis.Interface.Components.Actors;
 
 [Transient]
-public class EquipmentEditor {
+public class EquipmentEditorUi {
 	private readonly IDataManager _data;
 	private readonly ITextureProvider _tex;
 
 	private readonly PopupList<ItemSheet> _itemSelectPopup;
 	private readonly PopupList<Stain> _dyeSelectPopup;
 	
-	public EquipmentEditor(
+	public EquipmentEditorUi(
 		IDataManager data,
 		ITextureProvider tex
 	) {
@@ -93,7 +93,7 @@ public class EquipmentEditor {
 		}
 	}
 
-	private void UpdateSlot(IAppearanceManager editor, ActorEntity actor, EquipSlot slot) {
+	private void UpdateSlot(IEquipmentEditor editor, ActorEntity actor, EquipSlot slot) {
 		if (this.Equipped.TryGetValue(slot, out var info) && !info.FlagUpdate && info.IsCurrent()) return;
 		
 		ItemInfo item;
@@ -151,7 +151,7 @@ public class EquipmentEditor {
 
 	private readonly static Vector2 ButtonSize = new(42, 42);
 
-	public void Draw(IAppearanceManager editor, ActorEntity actor) {
+	public void Draw(IEquipmentEditor editor, ActorEntity actor) {
 		this.FetchData();
 		
 		var style = ImGui.GetStyle();
@@ -173,13 +173,13 @@ public class EquipmentEditor {
 	
 	// Draw item slot
 
-	private void DrawItemSlots(IAppearanceManager editor, ActorEntity actor, IEnumerable<EquipSlot> slots) {
+	private void DrawItemSlots(IEquipmentEditor editor, ActorEntity actor, IEnumerable<EquipSlot> slots) {
 		using var _ = ImRaii.Group();
 		foreach (var slot in slots)
 			this.DrawItemSlot(editor, actor, slot);
 	}
 
-	private void DrawItemSlot(IAppearanceManager editor, ActorEntity actor, EquipSlot slot) {
+	private void DrawItemSlot(IEquipmentEditor editor, ActorEntity actor, EquipSlot slot) {
 		this.UpdateSlot(editor, actor, slot);
 		if (!this.Equipped.TryGetValue(slot, out var info)) return;
 

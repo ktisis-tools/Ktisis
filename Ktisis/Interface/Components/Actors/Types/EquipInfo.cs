@@ -7,7 +7,7 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Actors.Types;
 
-public class EquipInfo(IAppearanceManager editor, ActorEntity actor) : ItemInfo {
+public class EquipInfo(IEquipmentEditor editor, ActorEntity actor) : ItemInfo {
 	public required EquipIndex Index;
 	public required EquipmentModelId Model;
 

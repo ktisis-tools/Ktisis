@@ -5,8 +5,6 @@ using Ktisis.Structs.Characters;
 namespace Ktisis.Editor.Characters.Data;
 
 public class EquipmentState {
-	// Equipment indices
-	
 	private EquipmentContainer _container = new();
 	private readonly bool[] _state = new bool[EquipmentContainer.Length];
 

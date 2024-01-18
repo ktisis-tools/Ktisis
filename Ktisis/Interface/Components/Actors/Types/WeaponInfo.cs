@@ -7,7 +7,7 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Actors.Types;
 
-public class WeaponInfo(IAppearanceManager editor, ActorEntity actor) : ItemInfo {
+public class WeaponInfo(IEquipmentEditor editor, ActorEntity actor) : ItemInfo {
 	public required WeaponIndex Index;
 	public required WeaponModelId Model;
 		

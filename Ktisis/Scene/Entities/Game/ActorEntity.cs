@@ -61,6 +61,12 @@ public class ActorEntity : CharaEntity, IDeletable {
 			return null;
 		return (CharacterBase*)ptr;
 	}
+
+	public unsafe void Redraw() {
+		if (this.CsGameObject == null) return;
+		this.CsGameObject->DisableDraw();
+		this.CsGameObject->EnableDraw();
+	}
 	
 	// Deletable
 
