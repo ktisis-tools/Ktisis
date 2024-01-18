@@ -8,7 +8,7 @@ public class WeaponState {
 	private WeaponContainer _container = new();
 	private readonly bool[] _state = new bool[WeaponContainer.Length];
 	
-	private readonly EquipmentVisible[] _visible = new EquipmentVisible[WeaponContainer.Length];
+	private readonly EquipmentToggle[] _visible = new EquipmentToggle[WeaponContainer.Length];
 
 	public WeaponModelId this[WeaponIndex index] {
 		get => this._container[(uint)index];
@@ -21,14 +21,14 @@ public class WeaponState {
 	public bool IsSet(WeaponIndex index) => this._state[(uint)index];
 	public void Unset(WeaponIndex index) => this._state[(uint)index] = false;
 
-	public EquipmentVisible GetVisible(WeaponIndex index)
+	public EquipmentToggle GetVisible(WeaponIndex index)
 		=> this._visible[(uint)index];
 
 	public void SetVisible(WeaponIndex index, bool visible)
-		=> this._visible[(uint)index] = visible ? EquipmentVisible.Visible : EquipmentVisible.Hidden;
+		=> this._visible[(uint)index] = visible ? EquipmentToggle.On : EquipmentToggle.Off;
 	
 	public bool CheckVisible(WeaponIndex index, bool visible) {
 		var value = this._visible[(uint)index];
-		return value != EquipmentVisible.None ? value == EquipmentVisible.Visible : visible;
+		return value != EquipmentToggle.None ? value == EquipmentToggle.On : visible;
 	}
 }

@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Ktisis.Services;
 using Ktisis.Interop.Hooking;
 using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.Types;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters;
@@ -84,7 +85,7 @@ public class AppearanceModule : HookModule {
 
 		foreach (var index in Enum.GetValues<EquipIndex>()) {
 			// Check hat visibility.
-			if (index == EquipIndex.Head && state.Equipment.HatVisible == EquipmentVisible.Hidden) {
+			if (index == EquipIndex.Head && state.HatVisible == EquipmentToggle.Off) {
 				*equip->GetData((uint)index) = default;
 				continue;
 			}

@@ -20,9 +20,13 @@ public abstract class ItemInfo {
 	public abstract void Unequip();
 	
 	public abstract bool IsHideable { get; }
-	public abstract bool IsVisible();
+	public abstract bool IsVisible { get; }
 	public abstract void SetVisible(bool visible);
-	
+
+	public virtual bool IsVisor => false;
+	public virtual bool IsVisorToggled => false;
+	public virtual void SetVisorToggled(bool toggle) { }
+
 	public abstract bool IsCurrent();
 	public abstract bool IsItemPredicate(ItemSheet item);
 }

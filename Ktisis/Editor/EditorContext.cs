@@ -3,7 +3,7 @@ using System;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Camera;
-using Ktisis.Editor.Characters;
+using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;

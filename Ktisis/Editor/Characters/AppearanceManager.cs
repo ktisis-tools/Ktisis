@@ -6,40 +6,12 @@ using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters;
-
-public interface IAppearanceManager : IDisposable {
-	public bool IsValid { get; }
-	
-	public void Initialize();
-
-	public bool TryGetStateForActor(GameObject actor, out ActorEntity entity, out AppearanceState state);
-	
-	public void ApplyStateFlagsFor(ActorEntity actor);
-
-	public EquipmentModelId GetEquipIndex(ActorEntity actor, EquipIndex index);
-	public void SetEquipIndex(ActorEntity actor, EquipIndex index, EquipmentModelId model);
-	public void SetEquipIdVariant(ActorEntity actor, EquipIndex index, ushort id, byte variant);
-	public void SetEquipStainId(ActorEntity actor, EquipIndex index, byte stainId);
-
-	public bool GetHatVisible(ActorEntity actor);
-	public void SetHatVisible(ActorEntity actor, bool visible);
-
-	public WeaponModelId GetWeaponIndex(ActorEntity actor, WeaponIndex index);
-	public void SetWeaponIndex(ActorEntity actor, WeaponIndex index, WeaponModelId model);
-	public void SetWeaponIdBaseVariant(ActorEntity actor, WeaponIndex index, ushort id, ushort second, byte variant);
-	public void SetWeaponStainId(ActorEntity actor, WeaponIndex index, byte stainId);
-
-	public bool GetWeaponVisible(ActorEntity actor, WeaponIndex index);
-	public void SetWeaponVisible(ActorEntity actor, WeaponIndex index, bool visible);
-
-	public bool GetEquipmentFlag(ActorEntity actor, EquipmentFlags flag);
-	public void SetEquipmentFlag(ActorEntity actor, EquipmentFlags flag, bool value);
-}
 
 public class AppearanceManager : IAppearanceManager {
 	private readonly IContextMediator _mediator;
@@ -82,6 +54,9 @@ public class AppearanceManager : IAppearanceManager {
 	public void ApplyStateFlagsFor(ActorEntity entity) {
 		this.UpdateWeaponVisibleState(entity, WeaponIndex.MainHand);
 		this.UpdateWeaponVisibleState(entity, WeaponIndex.OffHand);
+		
+		if (entity.Appearance.VisorToggled != EquipmentToggle.None)
+			this.SetVisorToggled(entity, entity.Appearance.VisorToggled == EquipmentToggle.On);
 	}
 	
 	private void SetStateIfNotTracked(ActorEntity actor, EquipIndex index) {
@@ -135,15 +110,28 @@ public class AppearanceManager : IAppearanceManager {
 	
 	// Hat visibility
 
-	public unsafe bool GetHatVisible(ActorEntity actor) => actor.IsValid && actor.Character != null
-		&& actor.Appearance.Equipment.CheckHatVisible(!actor.Character->DrawData.IsHatHidden);
+	public unsafe bool GetHatVisible(ActorEntity actor) => actor.IsValid
+		&& actor.Character != null
+		&& actor.Appearance.CheckHatVisible(!actor.Character->DrawData.IsHatHidden);
 
 	public unsafe void SetHatVisible(ActorEntity actor, bool visible) {
 		if (!actor.IsValid || actor.Character == null) return;
 		this.SetStateIfNotTracked(actor, EquipIndex.Head);
-		actor.Appearance.Equipment.HatVisible = visible ? EquipmentVisible.Visible : EquipmentVisible.Hidden;
+		actor.Appearance.HatVisible = visible ? EquipmentToggle.On : EquipmentToggle.Off;
 		actor.Character->DrawData.HideHeadgear(0, !visible);
 		if (visible) this.ForceUpdateEquipIndex(actor, EquipIndex.Head);
+	}
+	
+	// Visor toggle
+
+	public unsafe bool GetVisorToggled(ActorEntity actor) => actor.IsValid
+		&& actor.Character != null
+		&& actor.Appearance.CheckVisorToggled(actor.Character->DrawData.IsVisorToggled);
+
+	public unsafe void SetVisorToggled(ActorEntity actor, bool toggled) {
+		if (!actor.IsValid || actor.Character == null) return;
+		actor.Appearance.VisorToggled = toggled ? EquipmentToggle.On : EquipmentToggle.Off;
+		actor.Character->DrawData.SetVisor(toggled);
 	}
 	
 	// Weapon wrappers
@@ -198,33 +186,8 @@ public class AppearanceManager : IAppearanceManager {
 
 	private void UpdateWeaponVisibleState(ActorEntity actor, WeaponIndex index) {
 		var state = actor.Appearance.Weapons.GetVisible(index);
-		if (state != EquipmentVisible.None)
-			this.SetWeaponVisible(actor, index, state == EquipmentVisible.Visible);
-	}
-	
-	// Equipment flags
-
-	public unsafe bool GetEquipmentFlag(ActorEntity actor, EquipmentFlags flag) {
-		if (!actor.IsValid || actor.CharacterBaseEx == null) return false;
-		switch (flag) {
-			case EquipmentFlags.SetVisor:
-				return actor.CharacterBaseEx->Base.VisorToggled;
-			default:
-				return false;
-		}
-	}
-
-	public unsafe void SetEquipmentFlag(ActorEntity actor, EquipmentFlags flag, bool value) {
-		if (!actor.IsValid || actor.CharacterBaseEx == null) return;
-		var state = actor.Appearance.Equipment;
-		state.SetFlagState(flag, value);
-		switch (flag) {
-			case EquipmentFlags.SetVisor:
-				actor.CharacterBaseEx->Base.VisorToggled = value;
-				break;
-			default:
-				break;
-		}
+		if (state != EquipmentToggle.None)
+			this.SetWeaponVisible(actor, index, state == EquipmentToggle.On);
 	}
 	
 	// Disposal
