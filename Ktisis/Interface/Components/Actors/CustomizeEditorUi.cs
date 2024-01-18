@@ -10,19 +10,22 @@ namespace Ktisis.Interface.Components.Actors;
 
 [Transient]
 public class CustomizeEditorUi {
+	public ICustomizeEditor Editor { set; private get; } = null!;
+	
 	public CustomizeEditorUi(
 		
 	) {
 		
 	}
 	
-	public void Draw(ICustomizeEditor editor, ActorEntity actor) {
-		this.DrawSlider("boobs", editor, actor, CustomizeIndex.BustSize);
+	public void Draw(ActorEntity actor) {
+		this.DrawSlider("height", actor, CustomizeIndex.Height);
+		this.DrawSlider("boobs", actor, CustomizeIndex.BustSize);
 	}
 
-	private void DrawSlider(string label, ICustomizeEditor editor, ActorEntity actor, CustomizeIndex index) {
-		var intValue = (int)editor.GetCustomization(actor, index);
+	private void DrawSlider(string label, ActorEntity actor, CustomizeIndex index) {
+		var intValue = (int)this.Editor.GetCustomization(actor, index);
 		if (ImGui.SliderInt(label, ref intValue, 0, 100))
-			editor.SetCustomization(actor, index, (byte)intValue);
+			this.Editor.SetCustomization(actor, index, (byte)intValue);
 	}
 }
