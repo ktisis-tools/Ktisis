@@ -11,18 +11,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipmentToggle.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/IAppearanceManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceModule.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipmentFlag.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/AppearanceState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/AppearanceState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipmentFlags.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipmentState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/EquipmentState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/WeaponState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Data/WeaponState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/IEditorContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/IEditorContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/EditorContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/EditorContext.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/ItemInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/ItemInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -267,7 +272,7 @@
       <workItem from="1705233950432" duration="25157000" />
       <workItem from="1705411277089" duration="40967000" />
       <workItem from="1705488841303" duration="41765000" />
-      <workItem from="1705572155803" duration="30216000" />
+      <workItem from="1705572155803" duration="31548000" />
     </task>
     <servers />
   </component>

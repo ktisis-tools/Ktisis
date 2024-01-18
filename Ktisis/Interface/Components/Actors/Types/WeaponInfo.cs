@@ -1,8 +1,8 @@
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Data.Excel;
-using Ktisis.Editor.Characters;
 using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.Types;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Actors.Types;
@@ -28,7 +28,7 @@ public class WeaponInfo(IAppearanceManager editor, ActorEntity actor) : ItemInfo
 	public override void Unequip() => this.SetModel(0, 0, 0);
 
 	public override bool IsHideable => true;
-	public override bool IsVisible() => editor.GetWeaponVisible(actor, this.Index);
+	public override bool IsVisible => editor.GetWeaponVisible(actor, this.Index);
 	public override void SetVisible(bool visible) => editor.SetWeaponVisible(actor, this.Index, visible);
 	
 	public override bool IsCurrent() => editor.GetWeaponIndex(actor, this.Index).Equals(this.Model);

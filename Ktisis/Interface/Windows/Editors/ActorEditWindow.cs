@@ -2,10 +2,7 @@ using System;
 
 using Dalamud.Interface.Utility.Raii;
 
-using ImGuiNET;
-
-using Ktisis.Editor.Characters;
-using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;

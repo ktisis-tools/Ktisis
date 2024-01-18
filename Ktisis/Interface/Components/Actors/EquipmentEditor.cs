@@ -20,8 +20,8 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Excel;
-using Ktisis.Editor.Characters;
 using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.Types;
 using Ktisis.Interface.Components.Actors.Types;
 using Ktisis.Scene.Entities.Game;
 
@@ -217,10 +217,23 @@ public class EquipmentEditor {
 			
 			ImGui.SameLine(0, innerSpace);
 
-			var isVisible = info.IsVisible();
+			var isVisible = info.IsVisible;
 			var icon = isVisible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
-			if (Buttons.IconButton(icon))
+			if (Buttons.IconButtonTooltip(icon, "Toggle item visibility"))
 				info.SetVisible(!isVisible);
+		}
+
+		if (info.IsVisor) {
+			using var _id = ImRaii.PushId($"EqSetToggle_{slot}");
+			using var _col0 = ImRaii.PushColor(ImGuiCol.Button, 0);
+			
+			ImGui.SameLine(0, innerSpace);
+			
+			var isToggled = info.IsVisorToggled;
+			
+			using var _col1 = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.TextDisabled), isToggled);
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Mask, "Toggle visor"))
+				info.SetVisorToggled(!isToggled);
 		}
 	}
 
