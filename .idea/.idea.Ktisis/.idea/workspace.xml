@@ -11,11 +11,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Data/Excel/CharaMakeType.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Data/MakeTypeData.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Data/MakeTypeFeature.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Data/MakeTypeParam.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Data/MakeTypeRace.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditorUi.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Decor/ICharacter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Decor/ICharacter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,13 +46,18 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2bc78ee13d3bf4bce26f1c477ddb5204a88b1fa59177b283015d8f06d2e545f/DrawObject.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3b4450c3a92291de7c2f81fa7e6994ca4b777bda0d145c824969cd196f23b/CharacterBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/522283db83a38770b5281fa7a976e7f8dee86b37aca1a6864c334cba6b1d552/Camera.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/62568b096de9efa232f93fe255bffabe91fe6f0427f620fde825aa65719/CharaMakeType.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/65484295e4853ded854baa17aed029b81a6fbbefe0b0a51315359ea48e7b4c81/Camera.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/67606b57a3728f11c97d569346a55ee049b49c7ad91ea1e61fca97c6b8278e/HairMakeType.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/70d2e13f498b6ea5c2fc5228154e6f5c5115624695ce32e02db8e8ae7c87/Transform.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/843448d066ff4102e75fa64d8f1e0629b999a64184d81c29e5ea645577be214/Object.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/86419f7a62d981b8f2a9bee2f2eb8412fb2c23aff7c3fac4d2d10e0291970/Race.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8f2dd892d194dcac90e8c5cb41f4a153f0268cb4978f979754c87bfb93e7e/CameraBase.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/92ec3cc834ef78349ef5c2892165c0effe1c4048aa269ee3f898885366513/Pointer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/be1b924ad0835c493fe8787a783172f8af1294df7b186db9ff5f113be9d592e1/DrawDataContainer.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/cf687bf23fe2591e9ee1259dbf4bb98b554feec26a4fef677bf2ed8867c65/Camera.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d9ef814db86b8d8bfed29cc9315a9fd86c97187dfec59755597d6b62df1401f/HairMakeType.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/e1a2d66e8fdf8bc9d7ec262ebff05b8bd2704bedba7fedfcc5da46821be67fa2/CharaMakeCustomize.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ec59a23925cad1f52bf1bf49f188dd9049575ba46d2d8c39392bb436e2ef/Stain.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ImGuizmo.NET/NativeComponents/ImGui/imgui.h" root0="SKIP_HIGHLIGHTING" />
@@ -260,7 +272,8 @@
       <workItem from="1705233950432" duration="25157000" />
       <workItem from="1705411277089" duration="40967000" />
       <workItem from="1705488841303" duration="41765000" />
-      <workItem from="1705572155803" duration="37848000" />
+      <workItem from="1705572155803" duration="44776000" />
+      <workItem from="1705658791264" duration="22871000" />
     </task>
     <servers />
   </component>

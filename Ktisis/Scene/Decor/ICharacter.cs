@@ -6,7 +6,4 @@ namespace Ktisis.Scene.Decor;
 
 public interface ICharacter {
 	public unsafe CharacterBase* GetCharacter();
-	
-	public CustomizeContainer? GetCustomize();
-	public EquipmentContainer? GetEquipment();
 }
