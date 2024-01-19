@@ -1,6 +1,6 @@
 using Ktisis.Data.Excel;
 
-namespace Ktisis.Editor.Characters.Data;
+namespace Ktisis.Editor.Characters.State;
 
 public enum EquipIndex : uint {
 	Head,

@@ -1,4 +1,4 @@
-namespace Ktisis.Editor.Characters.Data;
+namespace Ktisis.Editor.Characters.State;
 
 public enum EquipmentToggle {
 	None = 0,

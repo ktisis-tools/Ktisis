@@ -9,7 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Services;
 using Ktisis.Interop.Hooking;
-using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Structs.Characters;
 

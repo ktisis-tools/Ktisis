@@ -1,7 +1,7 @@
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Data.Excel;
-using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Scene.Entities.Game;
 

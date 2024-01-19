@@ -2,7 +2,7 @@ using System;
 
 using Ktisis.Data.Excel;
 
-namespace Ktisis.Editor.Characters.Data;
+namespace Ktisis.Editor.Characters.State;
 
 public enum WeaponIndex : uint {
 	MainHand = 0,
