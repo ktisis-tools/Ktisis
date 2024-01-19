@@ -1,4 +1,4 @@
-namespace Ktisis.Editor.Characters.Data;
+namespace Ktisis.Editor.Characters.State;
 
 public class AppearanceState {
 	public uint ModelId = uint.MaxValue;

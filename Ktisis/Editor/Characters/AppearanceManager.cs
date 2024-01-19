@@ -3,7 +3,7 @@ using System.Linq;
 
 using Dalamud.Game.ClientState.Objects.Types;
 
-using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;

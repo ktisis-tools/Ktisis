@@ -20,7 +20,7 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Excel;
-using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Interface.Components.Actors.Types;
 using Ktisis.Scene.Entities.Game;

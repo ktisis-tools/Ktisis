@@ -53,9 +53,9 @@ public class CustomizeEditorUi {
 		var data = this._makeTypeData.GetData(tribe, gender);
 		if (data == null) return;
 
-		var face = data.GetFeature(CustomizeIndex.FaceType)!;
-		for (var i = 0; i < face.Params.Length; i++) {
-			var icon = this._tex.GetIcon(face.Params[i].Graphic)!;
+		var faceFeat = data.GetFeature(CustomizeIndex.FaceType)!;
+		for (var i = 0; i < faceFeat.Params.Length; i++) {
+			var icon = this._tex.GetIcon(faceFeat.Params[i].Graphic)!;
 			if (i > 0) ImGui.SameLine();
 			ImGui.Image(icon.ImGuiHandle, new Vector2(64, 64));
 		}
@@ -71,11 +71,6 @@ public class CustomizeEditorUi {
 		var intValue = (int)this.Editor.GetCustomization(actor, index);
 		if (ImGui.SliderInt(label, ref intValue, 0, 100))
 			this.Editor.SetCustomization(actor, index, (byte)intValue);
-	}
-
-	private void DrawSliderFeat(string label, CustomizeIndex index, MakeTypeRace data, ActorEntity actor) {
-		if (!data.HasFeature(index)) return;
-		this.DrawSlider(label, index, actor);
 	}
 
 	private void DrawSliderFeat(CustomizeIndex index, MakeTypeRace data, ActorEntity actor) {

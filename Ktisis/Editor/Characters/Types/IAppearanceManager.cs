@@ -2,7 +2,7 @@ using System;
 
 using Dalamud.Game.ClientState.Objects.Types;
 
-using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.State;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters.Types;

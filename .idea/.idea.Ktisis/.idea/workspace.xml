@@ -11,18 +11,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Data/Excel/CharaMakeType.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Data/MakeTypeData.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Data/MakeTypeFeature.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Data/MakeTypeParam.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Data/MakeTypeRace.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Decor/ICharacter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Decor/ICharacter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -273,7 +264,7 @@
       <workItem from="1705411277089" duration="40967000" />
       <workItem from="1705488841303" duration="41765000" />
       <workItem from="1705572155803" duration="44776000" />
-      <workItem from="1705658791264" duration="22871000" />
+      <workItem from="1705658791264" duration="23659000" />
     </task>
     <servers />
   </component>

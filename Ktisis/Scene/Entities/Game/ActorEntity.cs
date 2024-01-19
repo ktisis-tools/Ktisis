@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 using CSCharacter = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
-using Ktisis.Editor.Characters.Data;
+using Ktisis.Editor.Characters.State;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;

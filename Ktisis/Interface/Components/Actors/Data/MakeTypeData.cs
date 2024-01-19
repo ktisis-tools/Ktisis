@@ -81,10 +81,11 @@ public class MakeTypeData {
 
 		var options = row.FacialFeatureOption;
 		for (byte x = 0; x < face.Params.Length; x++) {
+			var id = face.Params[x].Value;
 			var icons = new uint[7];
 			for (var y = 0; y < options.GetLength(1); y++)
 				icons[y] = (uint)options[x, y];
-			data.FaceFeatureIcons[x] = icons;
+			data.FaceFeatureIcons[id] = icons;
 		}
 	}
 	

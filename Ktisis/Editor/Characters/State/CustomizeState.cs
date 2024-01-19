@@ -2,7 +2,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 
 using Ktisis.Structs.Characters;
 
-namespace Ktisis.Editor.Characters.Data;
+namespace Ktisis.Editor.Characters.State;
 
 public class CustomizeState {
 	private CustomizeContainer _container = new();

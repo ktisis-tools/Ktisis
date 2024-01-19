@@ -2,7 +2,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Structs.Characters;
 
-namespace Ktisis.Editor.Characters.Data;
+namespace Ktisis.Editor.Characters.State;
 
 public class EquipmentState {
 	private EquipmentContainer _container = new();
