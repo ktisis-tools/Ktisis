@@ -32,6 +32,10 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 
 	// Draw tabs
 
+	public override void OnOpen() {
+		this._custom.Setup();
+	}
+
 	public override void PreDraw() {
 		this.SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = new Vector2(540, 380),

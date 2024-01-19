@@ -44,12 +44,6 @@ public class CharaEntity : WorldEntity, IAttachable {
 	
 	public unsafe virtual CharacterBase* GetCharacter() => (CharacterBase*)this.GetObject();
 	
-	public unsafe CustomizeContainer? GetCustomize()
-		=> this.CharacterBaseEx != null ? this.CharacterBaseEx->Customize : null;
-
-	public unsafe EquipmentContainer? GetEquipment()
-		=> this.CharacterBaseEx != null ? this.CharacterBaseEx->Equipment : null;
-	
 	// BoneAttach
 
 	public unsafe Attach* GetAttach() {
