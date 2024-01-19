@@ -1,6 +1,6 @@
 using Dalamud.Game.ClientState.Objects.Enums;
 
-namespace Ktisis.Interface.Components.Actors.Data;
+namespace Ktisis.Editor.Characters.Make;
 
 public class MakeTypeFeature {
 	public string Name = string.Empty;

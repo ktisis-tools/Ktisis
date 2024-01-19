@@ -6,8 +6,8 @@ using Dalamud.Plugin.Services;
 using ImGuiNET;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
-using Ktisis.Interface.Components.Actors.Data;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Actors;

@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Plugin.Services;
@@ -8,11 +8,11 @@ using Dalamud.Plugin.Services;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets2;
 
-using Ktisis.Structs.Characters;
 using CharaMakeType = Ktisis.Data.Excel.CharaMakeType;
 using Tribe = Ktisis.Structs.Characters.Tribe;
+using Ktisis.Structs.Characters;
 
-namespace Ktisis.Interface.Components.Actors.Data;
+namespace Ktisis.Editor.Characters.Make;
 
 public class MakeTypeData {
 	private readonly Dictionary<(Tribe, Gender), MakeTypeRace> MakeTypes = new();

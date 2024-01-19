@@ -4,7 +4,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 
 using Ktisis.Structs.Characters;
 
-namespace Ktisis.Interface.Components.Actors.Data;
+namespace Ktisis.Editor.Characters.Make;
 
 public class MakeTypeRace(Tribe tribe, Gender gender) {
 	public Tribe Tribe = tribe;
