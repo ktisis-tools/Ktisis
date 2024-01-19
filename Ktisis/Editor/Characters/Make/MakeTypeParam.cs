@@ -1,4 +1,4 @@
-namespace Ktisis.Interface.Components.Actors.Data;
+namespace Ktisis.Editor.Characters.Make;
 
 public class MakeTypeParam {
 	public byte Value;
