@@ -11,7 +11,6 @@ using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
-using Ktisis.Structs.Characters;
 
 namespace Ktisis.Scene.Entities.Game;
 
@@ -46,16 +45,6 @@ public class ActorEntity : CharaEntity, IDeletable {
 	// Appearance
 	
 	public AppearanceState Appearance { get; } = new();
-
-	public unsafe Tribe GetTribe() {
-		var custom = this.GetCustomize();
-		return custom != null ? (Tribe)custom->Clan : default;
-	}
-
-	public unsafe Gender GetGender() {
-		var custom = this.GetCustomize();
-		return custom != null ? (Gender)custom->Sex : default;
-	}
 
 	private unsafe CustomizeData* GetCustomize() {
 		var human = this.GetHuman();

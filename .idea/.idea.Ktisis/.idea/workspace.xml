@@ -11,9 +11,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Services/CustomizeDiscoveryService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +270,7 @@
       <workItem from="1705411277089" duration="40967000" />
       <workItem from="1705488841303" duration="41765000" />
       <workItem from="1705572155803" duration="44776000" />
-      <workItem from="1705658791264" duration="23659000" />
+      <workItem from="1705658791264" duration="37839000" />
     </task>
     <servers />
   </component>

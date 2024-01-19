@@ -8,9 +8,10 @@ using Dalamud.Plugin.Services;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets2;
 
+using Ktisis.Services;
+using Ktisis.Structs.Characters;
 using CharaMakeType = Ktisis.Data.Excel.CharaMakeType;
 using Tribe = Ktisis.Structs.Characters.Tribe;
-using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters.Make;
 
@@ -23,6 +24,11 @@ public class MakeTypeData {
 		foreach (var row in sheet)
 			this.BuildRowCustomize(row);
 		this.PopulateCustomizeIcons(data);
+	}
+
+	public async Task Build(IDataManager data, CustomizeDiscoveryService discover) {
+		await this.Build(data);
+		this.PopulateDiscoveryData(discover);
 	}
 
 	public MakeTypeRace? GetData(Tribe tribe, Gender gender) {
@@ -117,6 +123,26 @@ public class MakeTypeData {
 				Value = row.FeatureID,
 				Graphic = row.Icon
 			};
+		}
+	}
+	
+	// Discover customize data
+
+	private void PopulateDiscoveryData(CustomizeDiscoveryService discover) {
+		IEnumerable<MakeTypeRace> makeTypes;
+		lock (this.MakeTypes)
+			makeTypes = this.MakeTypes.Values.ToList();
+
+		foreach (var data in makeTypes) {
+			var face = data.GetFeature(CustomizeIndex.FaceType);
+			if (face == null) continue;
+            
+			var dataId = discover.CalcDataIdFor(data.Tribe, data.Gender);
+			var faceIds = discover.GetFaceTypes(dataId)
+				.Except(face.Params.Select(param => param.Value))
+				.Select(id => new MakeTypeParam { Value = id, Graphic = 0 });
+			
+			face.Params = face.Params.Concat(faceIds).ToArray();
 		}
 	}
 }
