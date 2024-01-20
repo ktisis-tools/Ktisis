@@ -46,7 +46,12 @@ public class ItemSheet : ExcelRow {
 	private LazyRow<EquipSlotCategoryRow> EquipSlotCategory { get; set; } = null!;
 
 	public bool IsEquippable() => this.EquipSlotCategory.Row != 0;
-	public bool IsEquippable(EquipSlot slot) => this.IsEquippable() && this.EquipSlotCategory.Value?.IsEquippable(slot) == true;
+	public bool IsEquippable(EquipSlot slot) {
+		var result = this.IsEquippable() && this.EquipSlotCategory.Value?.IsEquippable(slot) == true;
+		if (slot == EquipSlot.MainHand)
+			result |= this.EquipSlotCategory.Value?.IsEquippable(EquipSlot.OffHand) == true;
+		return result;
+	}
 
 	public bool IsWeapon() => this.IsEquippable(EquipSlot.MainHand) || this.IsEquippable(EquipSlot.OffHand);
 

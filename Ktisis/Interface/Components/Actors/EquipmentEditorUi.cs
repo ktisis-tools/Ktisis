@@ -279,7 +279,7 @@ public class EquipmentEditorUi {
 		this.ItemSelectSlot = slot;
 		this.ItemSelectList.Clear();
 		lock (this.Items)
-			this.ItemSelectList = this.Items.Where(item => slot < EquipSlot.Head ? item.IsWeapon() : item.IsEquippable(slot)).ToList();
+			this.ItemSelectList = this.Items.Where(item => item.IsEquippable(slot)).ToList();
 		this._itemSelectPopup.Open();
 	}
 

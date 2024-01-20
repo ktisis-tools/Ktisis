@@ -33,7 +33,7 @@ public class CustomizeDiscoveryService {
 				Race.Miqote => isMasc ? 701 : 801,
 				Race.Roegadyn => isMasc ? 901 : 1001,
 				Race.Lalafell => isMasc ? 1101 : 1201,
-				var race => 1301 + ((int)race - 6) * 400 + (isMasc ? 0 : 100)
+				var race => 1301 + ((int)race - 6) * 200 + (isMasc ? 0 : 100)
 			}
 		};
 		return (ushort)value;
@@ -48,6 +48,25 @@ public class CustomizeDiscoveryService {
 			if (this.IsFaceIdValidFor(dataId, i))
 				yield return (byte)i;
 		}
+	}
+
+	public byte FindBestFaceTypeFor(ushort dataId, byte current) {
+		var isRangeValid = false;
+		for (var i = 0; i < byte.MaxValue; i++) {
+			var valid = this.IsFaceIdValidFor(dataId, i);
+			switch (valid, isRangeValid) {
+				case (true, false):
+					isRangeValid = true;
+					if (i > current)
+						return (byte)i;
+					continue;
+				case (false, true):
+					return (byte)(i - 1);
+				default:
+					continue;
+			}
+		}
+		return current;
 	}
 	
 	// Path resolution

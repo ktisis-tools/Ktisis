@@ -19,16 +19,19 @@ public class AppearanceModule : HookModule {
 	private readonly IAppearanceManager Manager;
 
 	private readonly ActorService _actors;
+	private readonly CustomizeDiscoveryService _discovery;
 
 	private bool IsValid => this.Manager.IsValid;
 
 	public AppearanceModule(
 		IHookMediator hook,
 		IAppearanceManager manager,
-		ActorService actors
+		ActorService actors,
+		CustomizeDiscoveryService discovery
 	) : base(hook) {
 		this.Manager = manager;
 		this._actors = actors;
+		this._discovery = discovery;
 	}
 	
 	// Hooks
@@ -80,12 +83,28 @@ public class AppearanceModule : HookModule {
 		if (!this.Manager.TryGetStateForActor(actor, out var entity, out var state))
 			return;
 		
+		Ktisis.Log.Info($"{actor.Name} => {entity.Name}");
+		
 		// Apply customize
 
 		for (var i = 0; i < CustomizeContainer.Size; i++) {
 			var index = (CustomizeIndex)i;
 			if (!state.Customize.IsSet(index)) continue;
 			customize->Bytes[i] = state.Customize[index];
+		}
+		
+		// Validate face
+		
+		if (state.Customize.IsSet(CustomizeIndex.Tribe) || state.Customize.IsSet(CustomizeIndex.FaceType)) {
+			var dataId = this._discovery.CalcDataIdFor(customize->Tribe, customize->Gender);
+			var isValid = this._discovery.IsFaceIdValidFor(dataId, customize->FaceType);
+			Ktisis.Log.Debug($"Face {customize->FaceType} for {dataId} is valid? {isValid}");
+			if (!isValid) {
+				var newId = this._discovery.FindBestFaceTypeFor(dataId, customize->FaceType);
+				Ktisis.Log.Debug($"\tSetting {newId} as next best face type");
+				state.Customize.SetIfActive(CustomizeIndex.FaceType, newId);
+				customize->FaceType = newId;
+			}
 		}
 		
 		// Apply equipment

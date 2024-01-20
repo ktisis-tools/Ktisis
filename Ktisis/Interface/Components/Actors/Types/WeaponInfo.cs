@@ -20,8 +20,11 @@ public class WeaponInfo(IEquipmentEditor editor, ActorEntity actor) : ItemInfo {
 		=> editor.SetWeaponIdBaseVariant(actor, this.Index, id, second, variant);
 
 	public override void SetEquipItem(ItemSheet item) {
-		var model = this.Index == WeaponIndex.MainHand ? item.Model : item.SubModel;
+		var isMainHand = this.Index == WeaponIndex.MainHand;
+		var model = isMainHand && item.Model.Id != 0 || item.SubModel.Id == 0 ? item.Model : item.SubModel;
 		this.SetModel(model.Id, model.Base, (byte)model.Variant);
+		if (isMainHand && item.SubModel.Id != 0)
+			editor.SetWeaponIdBaseVariant(actor, WeaponIndex.OffHand, item.SubModel.Id, item.SubModel.Base, (byte)item.SubModel.Variant);
 	}
 
 	public override void SetStainId(byte id) => editor.SetWeaponStainId(actor, this.Index, id);
