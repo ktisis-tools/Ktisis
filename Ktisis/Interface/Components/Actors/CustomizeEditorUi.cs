@@ -14,6 +14,7 @@ using ImGuiNET;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
+using Ktisis.Interface.Components.Actors.Popup;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Services;
 using Ktisis.Structs.Characters;
@@ -27,6 +28,8 @@ public class CustomizeEditorUi {
 	private readonly CustomizeDiscoveryService _discovery;
 
 	private readonly MakeTypeData _makeTypeData = new();
+
+	private readonly FeatureSelectPopup _selectPopup;
 	
 	public ICustomizeEditor Editor { set; private get; } = null!;
 	
@@ -38,6 +41,7 @@ public class CustomizeEditorUi {
 		this._data = data;
 		this._tex = tex;
 		this._discovery = discovery;
+		this._selectPopup = new FeatureSelectPopup(tex);
 	}
 	
 	// Setup
@@ -63,6 +67,8 @@ public class CustomizeEditorUi {
 		if (data == null) return;
 
 		this.Draw(actor, data);
+		
+		this._selectPopup.Draw(this.Editor, actor);
 	}
 
 	private void Draw(ActorEntity actor, MakeTypeRace data) {
@@ -208,7 +214,8 @@ public class CustomizeEditorUi {
 		var baseValue = this.Editor.GetCustomization(actor, index);
 
 		var active = feat.Params.FirstOrDefault(param => param.Value == baseValue);
-		this.DrawFeatIconButton($"{baseValue}", active);
+		if (this.DrawFeatIconButton($"{baseValue}", active))
+			this._selectPopup.Open(feat);
 		
 		var btnHeight = ImGui.GetItemRectSize().Y;
 

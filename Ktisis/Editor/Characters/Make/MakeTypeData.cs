@@ -109,8 +109,8 @@ public class MakeTypeData {
 		}
 
 		foreach (var feat in features) {
-			var start = feat.Params[0].Graphic;
-			var count = feat.Index == CustomizeIndex.HairStyle ? 100u : 50u;
+			var start = feat.Params[0].Graphic - 2;
+			var count = feat.Index == CustomizeIndex.HairStyle ? 99u : 49u;
 			feat.Params = BuildParamFromCustomize(custom, start, count).ToArray();
 		}
 	}
@@ -118,7 +118,7 @@ public class MakeTypeData {
 	private static IEnumerable<MakeTypeParam> BuildParamFromCustomize(ExcelSheet<CharaMakeCustomize> custom, uint start, uint count) {
 		for (var i = start; i < start + count; i++) {
 			var row = custom.GetRow(i);
-			if (row == null || row.FeatureID == 0) continue;
+			if (row is null or { FeatureID: 0, Icon: 0 }) continue;
 			yield return new MakeTypeParam {
 				Value = row.FeatureID,
 				Graphic = row.Icon

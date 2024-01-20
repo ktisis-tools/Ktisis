@@ -39,6 +39,10 @@ public class CustomizeEditor : ICustomizeEditor {
 
 		chara->Customize[(uint)index] = value;
 
+		if (index == CustomizeIndex.FaceType) {
+			
+		}
+
 		return true;
 	}
 

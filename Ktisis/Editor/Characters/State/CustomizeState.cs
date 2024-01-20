@@ -16,6 +16,11 @@ public class CustomizeState {
 		}
 	}
 
+	public void SetIfActive(CustomizeIndex index, byte value) {
+		if (this.IsSet(index))
+			this[index] = value;
+	}
+
 	public bool IsSet(CustomizeIndex index) => this._state[(uint)index];
 	public void Unset(CustomizeIndex index) => this._state[(uint)index] = false;
 }
