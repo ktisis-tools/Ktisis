@@ -123,6 +123,6 @@ public class AppearanceModule : HookModule {
 			*equip->GetData(i) = state.Equipment[index];
 		}
 		
-		this.Manager.Equipment.ApplyStateFlagsFor(entity);
+		this.Manager.GetEquipmentEditor(entity).ApplyStateFlags();
 	}
 }

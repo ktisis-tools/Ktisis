@@ -7,32 +7,22 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters.Handlers;
 
-public class CustomizeEditor : ICustomizeEditor {
-	// Data wrappers
-
-	public unsafe ushort GetDataId(ActorEntity actor) {
-		if (!actor.IsValid || actor.GetHuman() == null)
-			return ushort.MaxValue;
-		return actor.GetHuman()->RaceSexId;
-	}
-	
+public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 	// Customize wrappers
 	
-	public unsafe byte GetCustomization(ActorEntity actor, CustomizeIndex index) {
+	public unsafe byte GetCustomization(CustomizeIndex index) {
 		if (!actor.IsValid || actor.CharacterBaseEx == null) return 0;
 		if (actor.Appearance.Customize.IsSet(index))
 			return actor.Appearance.Customize[index];
 		return actor.CharacterBaseEx->Customize[(uint)index];
 	}
 
-	public void SetCustomization(ActorEntity actor, CustomizeIndex index, byte value) {
-		
-		
-		if (SetCustomizeValue(actor, index, value))
-			UpdateCustomizeData(actor, IsRedrawRequired(index));
+	public void SetCustomization(CustomizeIndex index, byte value) {
+		if (this.SetCustomizeValue(index, value))
+			this.UpdateCustomizeData(IsRedrawRequired(index));
 	}
 
-	private unsafe static bool SetCustomizeValue(ActorEntity actor, CustomizeIndex index, byte value) {
+	private unsafe bool SetCustomizeValue(CustomizeIndex index, byte value) {
 		if (!actor.IsValid) return false;
 		actor.Appearance.Customize[index] = value;
 
@@ -44,7 +34,7 @@ public class CustomizeEditor : ICustomizeEditor {
 		return true;
 	}
 
-	private unsafe static void UpdateCustomizeData(ActorEntity actor, bool redraw) {
+	private unsafe void UpdateCustomizeData(bool redraw) {
 		var human = actor.GetHuman();
 		if (human == null) return;
 		
@@ -63,9 +53,9 @@ public class CustomizeEditor : ICustomizeEditor {
 	
 	// Batch setter
 
-	public ICustomizeBatch Prepare() => new CustomizeBatch();
+	public ICustomizeBatch Prepare() => new CustomizeBatch(this);
 
-	private class CustomizeBatch : ICustomizeBatch {
+	private class CustomizeBatch(CustomizeEditor editor) : ICustomizeBatch {
 		private readonly Dictionary<CustomizeIndex, byte> Values = new();
 
 		public ICustomizeBatch SetCustomization(CustomizeIndex index, byte value) {
@@ -73,11 +63,11 @@ public class CustomizeEditor : ICustomizeEditor {
 			return this;
 		}
 		
-		public void Dispatch(ActorEntity actor) {
+		public void Dispatch() {
 			var redraw = false;
 			foreach (var (index, value) in this.Values)
-				redraw |= SetCustomizeValue(actor, index, value) && IsRedrawRequired(index);
-			UpdateCustomizeData(actor, redraw);
+				redraw |= editor.SetCustomizeValue(index, value) && IsRedrawRequired(index);
+			editor.UpdateCustomizeData(redraw);
 		}
 	}
 }
