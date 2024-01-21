@@ -195,6 +195,10 @@ public class CustomizeEditorUi {
 		if (!_frame.Success) return;
 
 		ImGui.Spacing();
+		this.DrawSkinHairColors(data);
+		ImGui.Spacing();
+		this.DrawFacePaintOptions(data);
+		ImGui.Spacing();
 
 		if (ImGui.CollapsingHeader("Primary Features"))
 			this.DrawFeatIconParams(data);
@@ -238,14 +242,6 @@ public class CustomizeEditorUi {
 	];
 
 	private void DrawFeatIconParams(MakeTypeRace data) {
-		ImGui.Spacing();
-		this.DrawSkinHairColors(data);
-		ImGui.Spacing();
-		this.DrawFacePaintOptions(data);
-		ImGui.Spacing();
-		ImGui.Separator();
-		ImGui.Spacing();
-        
 		var style = ImGui.GetStyle();
 		var width = ImGui.GetContentRegionAvail().X / 2 - this.ButtonSize.X - (style.FramePadding.X + style.ItemSpacing.X) * 2;
 		ImGui.PushItemWidth(width);
