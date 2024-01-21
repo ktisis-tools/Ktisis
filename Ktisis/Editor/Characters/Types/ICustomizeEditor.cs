@@ -8,6 +8,11 @@ public interface ICustomizeEditor {
 	public void SetCustomization(CustomizeIndex index, byte value);
 	public byte GetCustomization(CustomizeIndex index);
 
+	public void SetHeterochromia(bool enabled);
+	public bool GetHeterochromia();
+	
+	public void SetEyeColor(byte value);
+	
 	public ICustomizeBatch Prepare();
 }
 

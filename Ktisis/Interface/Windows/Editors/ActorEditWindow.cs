@@ -32,7 +32,10 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 
 	public override void SetTarget(ActorEntity target) {
 		base.SetTarget(target);
-		this._custom.Editor = this.Manager.GetCustomizeEditor(target);
+		
+		var customize = this.Manager.GetCustomizeEditor(target);
+		this._custom.Editor = customize;
+		
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 	}
 

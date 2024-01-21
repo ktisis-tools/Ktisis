@@ -1,5 +1,6 @@
 using System.Numerics;
 
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
@@ -13,14 +14,18 @@ namespace Ktisis.Interface.Components.Actors.Popup;
 
 public class FeatureSelectPopup {
 	private readonly ITextureProvider _tex;
+	
+	private string PopupId => $"##FeatureSelect_{this.GetHashCode():X}";
+	
+	private MakeTypeFeature? Feature;
 
 	public FeatureSelectPopup(ITextureProvider tex) {
 		this._tex = tex;
 	}
 	
-	private string PopupId => $"##FeatureSelect_{this.GetHashCode():X}";
-	
-	private MakeTypeFeature? Feature = null;
+	private const int MaxColumns = 6;
+	private const int MaxRows = 3;
+	private readonly static Vector2 ButtonSize = new(64, 64);
 
 	private bool _isOpening;
 	private bool _isOpen;
@@ -29,10 +34,6 @@ public class FeatureSelectPopup {
 		this.Feature = feature;
 		this._isOpening = true;
 	}
-	
-	private const int MaxColumns = 6;
-	private const int MaxRows = 3;
-	private readonly static Vector2 ButtonSize = new(64, 64);
 
 	public void Draw(ICustomizeEditor editor) {
 		if (this._isOpening) {
@@ -64,6 +65,9 @@ public class FeatureSelectPopup {
 		
 		using var _col = ImRaii.PushColor(ImGuiCol.Button, 0);
 
+		var canFlip = this.Feature.Index == CustomizeIndex.Facepaint;
+		var current = editor.GetCustomization(this.Feature.Index);
+
 		var i = 0;
 		foreach (var param in this.Feature.Params) {
 			if (i++ % MaxColumns != 0 && i > 1) ImGui.SameLine();
@@ -87,7 +91,7 @@ public class FeatureSelectPopup {
 			ImGui.Text(label);
 
 			if (button)
-				editor.SetCustomization(this.Feature.Index, param.Value);
+				editor.SetCustomization(this.Feature.Index, canFlip ? (byte)(param.Value | current & 0x80) : param.Value);
 		}
 	}
 

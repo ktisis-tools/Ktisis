@@ -51,6 +51,38 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 			or CustomizeIndex.FaceType;
 	}
 	
+	// Eye color / heterochromia
+
+	private bool _isHetero;
+	private bool _isHeteroGet;
+	
+	public void SetHeterochromia(bool enabled) {
+		this._isHetero = enabled;
+		this._isHeteroGet = true;
+		if (enabled) return;
+		var col2 = this.GetCustomization(CustomizeIndex.EyeColor2);
+		this.SetCustomization(CustomizeIndex.EyeColor, col2);
+	}
+
+	public bool GetHeterochromia() {
+		var col1 = this.GetCustomization(CustomizeIndex.EyeColor);
+		var col2 = this.GetCustomization(CustomizeIndex.EyeColor2);
+		if (!this._isHeteroGet) {
+			this._isHetero = col1 != col2;
+			this._isHeteroGet = true;
+		} else {
+			this._isHetero |= col1 != col2;
+		}
+		return this._isHetero;
+	}
+
+	public void SetEyeColor(byte value) {
+		var batch = this.Prepare().SetCustomization(CustomizeIndex.EyeColor, value);
+		if (!this.GetHeterochromia())
+			batch.SetCustomization(CustomizeIndex.EyeColor2, value);
+		batch.Dispatch();
+	}
+
 	// Batch setter
 
 	public ICustomizeBatch Prepare() => new CustomizeBatch(this);
