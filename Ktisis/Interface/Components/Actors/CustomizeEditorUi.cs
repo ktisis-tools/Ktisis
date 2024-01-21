@@ -60,6 +60,8 @@ public class CustomizeEditorUi {
 	// Draw
 	
 	public void Draw(ActorEntity actor) {
+		this.ButtonSize = CalcButtonSize();
+		
 		var tribe = (Tribe)this.Editor.GetCustomization(actor, CustomizeIndex.Tribe);
 		var gender = (Gender)this.Editor.GetCustomization(actor, CustomizeIndex.Gender);
 		
@@ -79,9 +81,11 @@ public class CustomizeEditorUi {
 	
 	// Side frame
 
+	private const float SideRatio = 0.35f;
+
 	private void DrawSideFrame(ActorEntity actor, MakeTypeRace data) {
 		var size = ImGui.GetContentRegionAvail();
-		size.X = MathF.Max(size.X * 0.35f, 235.0f);
+		size.X = MathF.Max(size.X * SideRatio, 240.0f);
 		using var _frame = ImRaii.Child("##CustomizeSideFrame", size, true);
 
 		var cX = ImGui.GetCursorPosX();
@@ -98,12 +102,21 @@ public class CustomizeEditorUi {
 
 		ImGui.Spacing();
 		
-		this.DrawFeatParams(CustomizeIndex.Eyebrows, actor, data);
 		this.DrawFeatParams(CustomizeIndex.EyeShape, actor, data);
+		
+		ImGui.Spacing();
+		
+		this.DrawFeatParams(CustomizeIndex.LipStyle, actor, data);
+		
+		ImGui.Spacing();
+		
+		this.DrawFeatParams(CustomizeIndex.Eyebrows, actor, data);
 		this.DrawFeatParams(CustomizeIndex.NoseShape, actor, data);
 		this.DrawFeatParams(CustomizeIndex.JawShape, actor, data);
-		this.DrawFeatParams(CustomizeIndex.LipStyle, actor, data);
 
+		var intValue = (int)this.Editor.GetCustomization(actor, CustomizeIndex.HairColor2);
+		if (ImGui.InputInt("Highlights", ref intValue))
+			this.Editor.SetCustomization(actor, CustomizeIndex.HairColor2, (byte)intValue);
 	}
 	
 	// Body + Tribe selectors
@@ -153,15 +166,6 @@ public class CustomizeEditorUi {
 
 		var isZeroIndex = feat.Params.FirstOrDefault()?.Value == 0;
 
-		/*var space = ImGui.GetStyle().ItemInnerSpacing.X;
-		var width = ImGui.CalcItemWidth() - space;
-
-		ImGui.SetNextItemWidth(width * 0.70f);
-		var result = DrawFeatCombo(feat, current, out var newValue);
-		
-		ImGui.SameLine(0, space);
-
-		ImGui.SetNextItemWidth(width * 0.30f);*/
 		var intValue = (int)current;
 		if (isZeroIndex) intValue++;
 		if (ImGui.InputInt(feat.Name, ref intValue) && intValue >= (isZeroIndex ? 1 : 0)) {
@@ -169,47 +173,69 @@ public class CustomizeEditorUi {
 			this.Editor.SetCustomization(actor, index, (byte)(newValue | (baseValue & 0x80)));
 		}
 	}
-
-	private static bool DrawFeatCombo(MakeTypeFeature feat, byte current, out byte selected) {
-		selected = 0xFF;
-		
-		using var _combo = ImRaii.Combo($"##Combo_{feat.Name}", FormatFeatParam(feat, current));
-		if (!_combo.Success) return false;
-
-		var result = false;
-		foreach (var param in feat.Params) {
-			var select = ImGui.Selectable(FormatFeatParam(feat, param.Value), current == param.Value);
-			selected = param.Value;
-			result |= select;
-		}
-		return result;
-	}
-
-	private static string FormatFeatParam(MakeTypeFeature feat, byte value) {
-		if (feat.Params.FirstOrDefault()?.Value == 0)
-			value++;
-		return $"{feat.Name} #{value}";
-	}
 	
 	// Main frame
 
 	private void DrawMainFrame(ActorEntity actor, MakeTypeRace data) {
 		using var _frame = ImRaii.Child("##CustomizeMainFrame", ImGui.GetContentRegionAvail());
 		if (!_frame.Success) return;
+		
+		if (ImGui.CollapsingHeader("Primary Features"))
+			this.DrawFeatIconParams(actor, data);
 
-		this.DrawFeatIconParams(CustomizeIndex.FaceType, actor, data);
-		this.DrawFeatIconParams(CustomizeIndex.HairStyle, actor, data);
-		this.DrawFeatIconParams(CustomizeIndex.Facepaint, actor, data);
-		this.DrawFeatIconParams(CustomizeIndex.RaceFeatureType, actor, data);
+		var faceFeatLabel = "Facial Features";
+		var faceFeat = data.GetFeature(CustomizeIndex.FaceFeatures);
+		if (faceFeat != null)
+			faceFeatLabel += $" / {faceFeat.Name}";
+		faceFeatLabel += " / Tattoos";
+		
+		if (ImGui.CollapsingHeader(faceFeatLabel))
+			this.DrawFacialFeatures(actor, data);
 	}
 	
 	// Icons
+	
+	private const string LegacyTexPath = "chara/common/texture/decal_equip/_stigma.tex";
 
-	private readonly static Vector2 ButtonSize = new(52, 52);
+	private readonly static Vector2 MaxButtonSize = new(64, 64);
+	
+	private Vector2 ButtonSize = MaxButtonSize;
 
-	private void DrawFeatIconParams(CustomizeIndex index, ActorEntity actor, MakeTypeRace data) {
+	private static Vector2 CalcButtonSize() {
+		var width = ImGui.GetWindowSize().X * (1 - SideRatio);
+		var widthVec2 = new Vector2(width, width);
+		return Vector2.Min(MaxButtonSize, widthVec2 / 8f);
+	}
+	
+	// Icon params
+
+	private readonly static CustomizeIndex[] FeatIconParams = [
+		CustomizeIndex.FaceType,
+		CustomizeIndex.HairStyle,
+		CustomizeIndex.Facepaint,
+		CustomizeIndex.RaceFeatureType
+	];
+
+	private void DrawFeatIconParams(ActorEntity actor, MakeTypeRace data) {
+		var style = ImGui.GetStyle();
+		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2 - this.ButtonSize.X - (style.FramePadding.X + style.ItemSpacing.X) * 2);
+		try {
+			var i = 0;
+			var isSameLine = false;
+			foreach (var feat in FeatIconParams) {
+				if (!this.DrawFeatIconParams(actor, data, feat)) continue;
+				isSameLine = ++i % 2 != 0;
+				if (isSameLine) ImGui.SameLine();
+			}
+			if (isSameLine) ImGui.Dummy(Vector2.Zero);
+		} finally {
+			ImGui.PopItemWidth();
+		}
+	}
+
+	private bool DrawFeatIconParams(ActorEntity actor, MakeTypeRace data, CustomizeIndex index) {
 		var feat = data.GetFeature(index);
-		if (feat == null) return;
+		if (feat == null) return false;
 		
 		var baseValue = this.Editor.GetCustomization(actor, index);
 
@@ -228,10 +254,15 @@ public class CustomizeEditorUi {
 		ImGui.Text(feat.Name);
 
 		var intValue = (int)baseValue;
-		if (ImGui.InputInt($"##Input_{feat.Index}", ref intValue))
-			this.Editor.SetCustomization(actor, index, (byte)intValue);
-	}
+		if (ImGui.InputInt($"##Input_{feat.Index}", ref intValue)) {
+			var valid = index != CustomizeIndex.FaceType || feat.Params.Any(p => p.Value == intValue);
+			if (valid)
+				this.Editor.SetCustomization(actor, index, (byte)intValue);
+		}
 
+		return true;
+	}
+	
 	private bool DrawFeatIconButton(string fallback, MakeTypeParam? param) {
 		using var _col = ImRaii.PushColor(ImGuiCol.Button, 0);
 		
@@ -239,9 +270,66 @@ public class CustomizeEditorUi {
 
 		bool clicked;
 		if (icon != null)
-			clicked = ImGui.ImageButton(icon.ImGuiHandle, ButtonSize);
+			clicked = ImGui.ImageButton(icon.ImGuiHandle, this.ButtonSize);
 		else
-			clicked = ImGui.Button(fallback, ButtonSize + ImGui.GetStyle().FramePadding * 2);
+			clicked = ImGui.Button(fallback, this.ButtonSize + ImGui.GetStyle().FramePadding * 2);
 		return clicked;
+	}
+	
+	// Facial features
+	
+	private void DrawFacialFeatures(ActorEntity actor, MakeTypeRace data) {
+		var current = this.Editor.GetCustomization(actor, CustomizeIndex.FaceFeatures);
+		
+		this.DrawFacialFeaturesGroup(actor, data, current);
+		
+		var style = ImGui.GetStyle();
+		
+		ImGui.SameLine(0, style.ItemInnerSpacing.X);
+		
+		var inputHasRoom =ImGui.GetContentRegionAvail().X > ImGui.GetFrameHeightWithSpacing() * 3;
+		if (inputHasRoom) ImGui.BeginGroup();
+		try {
+			ImGui.Dummy(new Vector2(0, (this.ButtonSize.Y + style.FramePadding.Y * 2 - ImGui.GetFrameHeight()) / 2 - style.ItemSpacing.Y));
+			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - style.ItemInnerSpacing.X * 2);
+			
+			var intValue = (int)current;
+			if (ImGui.InputInt("##FaceFeatureFlags", ref intValue))
+				this.Editor.SetCustomization(actor, CustomizeIndex.FaceFeatures, (byte)intValue);
+		} finally {
+			if (inputHasRoom) ImGui.EndGroup();
+		}
+	}
+
+	private void DrawFacialFeaturesGroup(ActorEntity actor, MakeTypeRace data, byte current) {
+		using var _group = ImRaii.Group();
+		var style = ImGui.GetStyle();
+		
+		var faceId = this.Editor.GetCustomization(actor, CustomizeIndex.FaceType);
+		if (!data.FaceFeatureIcons.TryGetValue(faceId, out var iconIds))
+			iconIds = data.FaceFeatureIcons.Values.FirstOrDefault();
+		iconIds ??= Array.Empty<uint>();
+
+		var icons = iconIds.Select(id => this._tex.GetIcon(id))
+			.Append(this._tex.GetTextureFromGame(LegacyTexPath));
+		
+		var i = 0;
+		foreach (var icon in icons) {
+			if (i++ % 4 != 0)
+				ImGui.SameLine(0, style.ItemInnerSpacing.X);
+
+			var flag = (byte)Math.Pow(2, i - 1);
+			var isActive = (current & flag) != 0;
+
+			using var _col = ImRaii.PushColor(ImGuiCol.Button, isActive ? ImGui.GetColorU32(ImGuiCol.ButtonActive) : 0);
+
+			bool button;
+			if (icon != null)
+				button = ImGui.ImageButton(icon.ImGuiHandle, this.ButtonSize);
+			else
+				button = ImGui.Button($"{i}", this.ButtonSize + style.FramePadding * 2);
+			if (button)
+				this.Editor.SetCustomization(actor, CustomizeIndex.FaceFeatures, (byte)(current ^ flag));
+		}
 	}
 }

@@ -38,7 +38,7 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 
 	public override void PreDraw() {
 		this.SizeConstraints = new WindowSizeConstraints {
-			MinimumSize = new Vector2(540, 380),
+			MinimumSize = new Vector2(560, 380),
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.90f
 		};
 	}

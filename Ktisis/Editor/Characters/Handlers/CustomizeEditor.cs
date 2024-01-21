@@ -26,6 +26,8 @@ public class CustomizeEditor : ICustomizeEditor {
 	}
 
 	public void SetCustomization(ActorEntity actor, CustomizeIndex index, byte value) {
+		
+		
 		if (SetCustomizeValue(actor, index, value))
 			UpdateCustomizeData(actor, IsRedrawRequired(index));
 	}
@@ -38,10 +40,6 @@ public class CustomizeEditor : ICustomizeEditor {
 		if (chara == null) return false;
 
 		chara->Customize[(uint)index] = value;
-
-		if (index == CustomizeIndex.FaceType) {
-			
-		}
 
 		return true;
 	}

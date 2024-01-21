@@ -18,7 +18,24 @@ namespace Ktisis.Editor.Characters.Make;
 public class MakeTypeData {
 	private readonly Dictionary<(Tribe, Gender), MakeTypeRace> MakeTypes = new();
 	
-	public async Task Build(IDataManager data) {
+	public MakeTypeRace? GetData(Tribe tribe, Gender gender) {
+		lock (this.MakeTypes) {
+			return this.MakeTypes.GetValueOrDefault((tribe, gender));
+		}
+	}
+	
+	public async Task Build(
+		IDataManager data,
+		CustomizeDiscoveryService discover
+	) {
+		var colorTask = this.BuildColors(data);
+		var makeTask = this.BuildMakeType(data).ContinueWith(_ => {
+			this.PopulateDiscoveryData(discover);
+		}, TaskContinuationOptions.OnlyOnRanToCompletion);
+		await Task.WhenAll(colorTask, makeTask);
+	}
+	
+	private async Task BuildMakeType(IDataManager data) {
 		await Task.Yield();
 		var sheet = data.GetExcelSheet<CharaMakeType>()!;
 		foreach (var row in sheet)
@@ -26,15 +43,8 @@ public class MakeTypeData {
 		this.PopulateCustomizeIcons(data);
 	}
 
-	public async Task Build(IDataManager data, CustomizeDiscoveryService discover) {
-		await this.Build(data);
-		this.PopulateDiscoveryData(discover);
-	}
-
-	public MakeTypeRace? GetData(Tribe tribe, Gender gender) {
-		lock (this.MakeTypes) {
-			return this.MakeTypes.GetValueOrDefault((tribe, gender));
-		}
+	private async Task BuildColors(IDataManager data) {
+		await Task.Yield();
 	}
 	
 	// Build sheet data
@@ -138,11 +148,14 @@ public class MakeTypeData {
 			if (face == null) continue;
             
 			var dataId = discover.CalcDataIdFor(data.Tribe, data.Gender);
-			var faceIds = discover.GetFaceTypes(dataId)
-				.Except(face.Params.Select(param => param.Value))
-				.Select(id => new MakeTypeParam { Value = id, Graphic = 0 });
 			
-			face.Params = face.Params.Concat(faceIds).ToArray();
+			var faceIds = discover.GetFaceTypes(dataId)
+				.Except(face.Params.Select(param => param.Value));
+			//if (data.Tribe is Tribe.Dunesfolk or Tribe.Hellsguard or Tribe.MoonKeeper)
+				//faceIds = faceIds.Except(face.Params.Select(param => (byte)(param.Value + 100)));
+			face.Params = face.Params.Concat(
+				faceIds.Select(id => new MakeTypeParam { Value = id, Graphic = 0 })
+			).ToArray();
 		}
 	}
 }
