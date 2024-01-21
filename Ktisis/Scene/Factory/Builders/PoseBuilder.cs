@@ -84,7 +84,10 @@ public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, I
 
 			foreach (var bone in this.EnumerateBones()) {
 				var category = categories.ResolveBestCategory(skeleton, bone.BoneIndex);
-				if (category == null) continue;
+				if (category == null) {
+					Ktisis.Log.Warning($"Failed to find category for {bone.Name}! Skipping...");
+					continue;
+				}
 
 				// TODO: Configure this
 				if (category.IsNsfw) continue;
