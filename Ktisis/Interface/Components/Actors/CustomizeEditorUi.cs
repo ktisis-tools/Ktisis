@@ -28,7 +28,8 @@ public class CustomizeEditorUi {
 
 	private readonly MakeTypeData _makeTypeData = new();
 
-	private readonly FeatureSelectPopup _selectPopup;
+	private readonly ParamColorSelectPopup _colorPopup = new();
+	private readonly FeatureSelectPopup _featurePopup;
 	
 	public ICustomizeEditor Editor { set; private get; } = null!;
 	
@@ -40,7 +41,7 @@ public class CustomizeEditorUi {
 		this._data = data;
 		this._tex = tex;
 		this._discovery = discovery;
-		this._selectPopup = new FeatureSelectPopup(tex);
+		this._featurePopup = new FeatureSelectPopup(tex);
 	}
 	
 	// Setup
@@ -68,8 +69,9 @@ public class CustomizeEditorUi {
 		if (data == null) return;
 
 		this.Draw(data);
-		
-		this._selectPopup.Draw(this.Editor);
+
+		this._colorPopup.Draw(this.Editor);
+		this._featurePopup.Draw(this.Editor);
 	}
 
 	private void Draw(MakeTypeRace data) {
@@ -98,24 +100,23 @@ public class CustomizeEditorUi {
 		this.DrawFeatSlider(CustomizeIndex.Height, data);
 		this.DrawFeatSlider(CustomizeIndex.BustSize, data);
 		this.DrawFeatSlider(CustomizeIndex.RaceFeatureSize, data);
-
+		
 		ImGui.Spacing();
 		
 		this.DrawFeatParams(CustomizeIndex.EyeShape, data);
+		this.DrawEyeColorSwitch();
+		this.DrawIrisSizeSwitch();
 		
 		ImGui.Spacing();
 		
 		this.DrawFeatParams(CustomizeIndex.LipStyle, data);
+		this.DrawLipColorSwitch();
 		
-		ImGui.Spacing();
-		
+        ImGui.Spacing();
+        
 		this.DrawFeatParams(CustomizeIndex.Eyebrows, data);
 		this.DrawFeatParams(CustomizeIndex.NoseShape, data);
 		this.DrawFeatParams(CustomizeIndex.JawShape, data);
-
-		var intValue = (int)this.Editor.GetCustomization(CustomizeIndex.HairColor2);
-		if (ImGui.InputInt("Highlights", ref intValue))
-			this.Editor.SetCustomization(CustomizeIndex.HairColor2, (byte)intValue);
 	}
 	
 	// Body + Tribe selectors
@@ -173,24 +174,45 @@ public class CustomizeEditorUi {
 		}
 	}
 	
+	// Iris size
+
+	private void DrawIrisSizeSwitch() {
+		var cursor = ImGui.GetCursorPosX();
+		ImGui.SameLine(0 ,0);
+		using var _group = ImRaii.Group();
+		ImGui.SetCursorPosX(cursor);
+		
+		var eyes = this.Editor.GetCustomization(CustomizeIndex.EyeShape);
+		var isSmall = (eyes & 0x80) != 0;
+		if (ImGui.Checkbox("Small Iris", ref isSmall))
+			this.Editor.SetCustomization(CustomizeIndex.EyeShape, (byte)(eyes ^ 0x80));
+	}
+	
 	// Main frame
 
 	private void DrawMainFrame(MakeTypeRace data) {
 		using var _frame = ImRaii.Child("##CustomizeMainFrame", ImGui.GetContentRegionAvail());
 		if (!_frame.Success) return;
-		
+
+		ImGui.Spacing();
+
 		if (ImGui.CollapsingHeader("Primary Features"))
 			this.DrawFeatIconParams(data);
+		
+		ImGui.Spacing();
 
 		var faceFeatLabel = "Facial Features";
 		var faceFeat = data.GetFeature(CustomizeIndex.FaceFeatures);
-		if (faceFeat != null)
+		if (faceFeat != null && HasUniqueFeature(data.Tribe))
 			faceFeatLabel += $" / {faceFeat.Name}";
 		faceFeatLabel += " / Tattoos";
 		
 		if (ImGui.CollapsingHeader(faceFeatLabel))
 			this.DrawFacialFeatures(data);
 	}
+
+	private static bool HasUniqueFeature(Tribe tribe)
+		=> tribe is Tribe.Wildwood or Tribe.MoonKeeper or Tribe.Raen or Tribe.Xaela;
 	
 	// Icons
 	
@@ -216,8 +238,17 @@ public class CustomizeEditorUi {
 	];
 
 	private void DrawFeatIconParams(MakeTypeRace data) {
+		ImGui.Spacing();
+		this.DrawSkinHairColors(data);
+		ImGui.Spacing();
+		this.DrawFacePaintOptions(data);
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+        
 		var style = ImGui.GetStyle();
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2 - this.ButtonSize.X - (style.FramePadding.X + style.ItemSpacing.X) * 2);
+		var width = ImGui.GetContentRegionAvail().X / 2 - this.ButtonSize.X - (style.FramePadding.X + style.ItemSpacing.X) * 2;
+		ImGui.PushItemWidth(width);
 		try {
 			var i = 0;
 			var isSameLine = false;
@@ -237,10 +268,13 @@ public class CustomizeEditorUi {
 		if (feat == null) return false;
 		
 		var baseValue = this.Editor.GetCustomization(index);
+		
+		var canFlip = index == CustomizeIndex.Facepaint;
+		var value = canFlip ? (byte)(baseValue & ~0x80) : baseValue;
 
-		var active = feat.Params.FirstOrDefault(param => param.Value == baseValue);
-		if (this.DrawFeatIconButton($"{baseValue}", active))
-			this._selectPopup.Open(feat);
+		var active = feat.Params.FirstOrDefault(param => param.Value == value);
+		if (this.DrawFeatIconButton($"{value}", active))
+			this._featurePopup.Open(feat);
 		
 		var btnHeight = ImGui.GetItemRectSize().Y;
 
@@ -252,11 +286,10 @@ public class CustomizeEditorUi {
 		
 		ImGui.Text(feat.Name);
 
-		var intValue = (int)baseValue;
+		var intValue = (int)value;
 		if (ImGui.InputInt($"##Input_{feat.Index}", ref intValue)) {
-			var valid = index != CustomizeIndex.FaceType || feat.Params.Any(p => p.Value == intValue);
-			if (valid)
-				this.Editor.SetCustomization(index, (byte)intValue);
+			var valid = index != CustomizeIndex.FaceType || feat.Params.Any(p => p.Value == value);
+			if (valid) this.Editor.SetCustomization(index, canFlip ? (byte)(intValue | baseValue & 0x80) : (byte)intValue);
 		}
 
 		return true;
@@ -274,33 +307,53 @@ public class CustomizeEditorUi {
 			clicked = ImGui.Button(fallback, this.ButtonSize + ImGui.GetStyle().FramePadding * 2);
 		return clicked;
 	}
+
+	private void DrawFacePaintOptions(MakeTypeRace data) {
+		var cursor = ImGui.GetCursorPosX() + ImGui.GetStyle().FramePadding.X;
+        
+		ImGui.SetCursorPosX(cursor);
+		using var _group = ImRaii.Group();
+		
+		this.DrawFeatColor(CustomizeIndex.FacepaintColor, data);
+
+		ImGui.SameLine(0);
+		
+		var facePaint = this.Editor.GetCustomization(CustomizeIndex.Facepaint);
+		var isFlipped = (facePaint & 0x80) != 0;
+		if (ImGui.Checkbox("Flip Face Paint", ref isFlipped))
+			this.Editor.SetCustomization(CustomizeIndex.Facepaint, (byte)(facePaint ^ 0x80));
+	}
 	
 	// Facial features
 	
 	private void DrawFacialFeatures(MakeTypeRace data) {
+		var style = ImGui.GetStyle();
+        
 		var current = this.Editor.GetCustomization(CustomizeIndex.FaceFeatures);
 		
-		this.DrawFacialFeaturesGroup(data, current);
+		this.DrawFacialFeatureToggles(data, current);
 		
-		var style = ImGui.GetStyle();
+		ImGui.Spacing();
+
+		var space = style.ItemInnerSpacing.X + (this.ButtonSize.X + style.FramePadding.X * 2) * 4;
 		
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + style.FramePadding.X);
+		ImGui.SetNextItemWidth(space / 2);
+		var intValue = (int)current;
+		if (ImGui.InputInt("##FaceFeatureFlags", ref intValue))
+			this.Editor.SetCustomization(CustomizeIndex.FaceFeatures, (byte)intValue);
+		
+		var colorFeat = data.GetFeature(CustomizeIndex.FaceFeaturesColor);
+		if (colorFeat == null) return;
+		
+		var colors = this._makeTypeData.GetColors(CustomizeIndex.FaceFeaturesColor);
+		ImGui.SameLine(0, style.ItemSpacing.X);
+		this.DrawColorButton(CustomizeIndex.FaceFeaturesColor, colors);
 		ImGui.SameLine(0, style.ItemInnerSpacing.X);
-		
-		var inputHasRoom =ImGui.GetContentRegionAvail().X > ImGui.GetFrameHeightWithSpacing() * 3;
-		if (inputHasRoom) ImGui.BeginGroup();
-		try {
-			ImGui.Dummy(new Vector2(0, (this.ButtonSize.Y + style.FramePadding.Y * 2 - ImGui.GetFrameHeight()) / 2 - style.ItemSpacing.Y));
-			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - style.ItemInnerSpacing.X * 2);
-			
-			var intValue = (int)current;
-			if (ImGui.InputInt("##FaceFeatureFlags", ref intValue))
-				this.Editor.SetCustomization(CustomizeIndex.FaceFeatures, (byte)intValue);
-		} finally {
-			if (inputHasRoom) ImGui.EndGroup();
-		}
+		ImGui.Text(colorFeat.Name);
 	}
 
-	private void DrawFacialFeaturesGroup(MakeTypeRace data, byte current) {
+	private void DrawFacialFeatureToggles(MakeTypeRace data, byte current) {
 		using var _group = ImRaii.Group();
 		var style = ImGui.GetStyle();
 		
@@ -333,8 +386,115 @@ public class CustomizeEditorUi {
 	}
 	
 	// Colors
+	
+	private void DrawSkinHairColors(MakeTypeRace data) {
+		var style = ImGui.GetStyle();
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + style.CellPadding.X);
+		using var _group = ImRaii.Group();
+		this.DrawFeatColor(CustomizeIndex.SkinColor, data);
+		ImGui.SameLine();
+		this.DrawFeatColor(CustomizeIndex.HairColor, data);
+		ImGui.SameLine();
+		this.DrawHighlights();
+	}
 
-	private void DrawEyeColorSwitch(MakeTypeRace data) {
+	private void DrawColorButton(CustomizeIndex index, uint[] colors) {
+		var value = this.Editor.GetCustomization(index);
+		if (colors.Length == 0x80)
+			value = (byte)(value & ~0x80);
+
+		var color = value < colors.Length ? colors[value] : 0;
+		var colorVec = ImGui.ColorConvertU32ToFloat4(color);
+		if (ImGui.ColorButton($"{value}##{index}", colorVec))
+				this._colorPopup.Open(index, colors);
+	}
+
+	private void DrawFeatColor(CustomizeIndex index, MakeTypeRace data) {
+		var feat = data.GetFeature(index);
+		if (feat == null) return;
 		
+		using var _group = ImRaii.Group();
+
+		var colors = this._makeTypeData.GetColors(index, data.Tribe, data.Gender);
+		this.DrawColorButton(index, colors);
+		
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		
+		ImGui.Text(feat.Name);
+	}
+
+	private void DrawHighlights() {
+		var style = ImGui.GetStyle();
+
+		using var _group = ImRaii.Group();
+
+		var hasHighlightValue = this.Editor.GetCustomization(CustomizeIndex.HasHighlights);
+		var hasHighlights = (hasHighlightValue & 0x80) != 0;
+		if (ImGui.Checkbox("##HighlightToggle", ref hasHighlights))
+			this.Editor.SetCustomization(CustomizeIndex.HasHighlights, (byte)(hasHighlightValue ^ 0x80));
+		
+		ImGui.SameLine(0, style.ItemInnerSpacing.X);
+        
+		var colors = this._makeTypeData.GetColors(CustomizeIndex.HairColor2);
+		using var _disable = ImRaii.Disabled(!hasHighlights);
+		this.DrawColorButton(CustomizeIndex.HairColor2, colors);
+		ImGui.SameLine(0, style.ItemInnerSpacing.X);
+		ImGui.Text("Highlights");
+	}
+
+	private void DrawEyeColorSwitch() {
+		var colors = this._makeTypeData.GetColors(CustomizeIndex.EyeColor);
+		if (colors.Length == 0) return;
+
+		var isHetero = this.Editor.GetHeterochromia();
+
+		var style = ImGui.GetStyle();
+		var frame = ImGui.GetFrameHeight();
+		var pos = ImGui.GetCursorPosX() + ImGui.CalcItemWidth() - frame * 3 - style.ItemInnerSpacing.X * 2;
+		ImGui.SetCursorPosX(pos);
+		
+		using var _group = ImRaii.Group();
+
+		using (var _ = ImRaii.PushColor(ImGuiCol.Button, 0)) {
+			var icon = isHetero ? FontAwesomeIcon.Unlink : FontAwesomeIcon.Link;
+			if (Buttons.IconButton(icon, new Vector2(frame, frame))) {
+				isHetero = !isHetero;
+				this.Editor.SetHeterochromia(isHetero);
+			}
+		}
+
+		ImGui.SameLine(0, style.ItemInnerSpacing.X);
+		
+		// Swapped when heterochromia is toggled for UX purposes.
+		using (var _ = ImRaii.Disabled(!isHetero))
+			this.DrawColorButton(isHetero ? CustomizeIndex.EyeColor : CustomizeIndex.EyeColor2, colors);
+		ImGui.SameLine(0, style.ItemInnerSpacing.X);
+		this.DrawColorButton(isHetero ? CustomizeIndex.EyeColor2 : CustomizeIndex.EyeColor, colors);
+
+		ImGui.SameLine(0, style.ItemInnerSpacing.X);
+		ImGui.Text("Eye Color");
+	}
+
+	private void DrawLipColorSwitch() {
+		var colors = this._makeTypeData.GetColors(CustomizeIndex.LipColor);
+		if (colors.Length == 0) return;
+		
+		var style = ImGui.GetStyle();
+		var frame = ImGui.GetFrameHeight();
+		var pos = ImGui.GetCursorPosX() + ImGui.CalcItemWidth() - frame * 2 - style.ItemInnerSpacing.X;
+		ImGui.SetCursorPosX(pos);
+
+		var lipType = this.Editor.GetCustomization(CustomizeIndex.LipStyle);
+		var toggled = (lipType & 0x80) != 0;
+		if (ImGui.Checkbox("##ToggleLipColor", ref toggled))
+			this.Editor.SetCustomization(CustomizeIndex.LipStyle, (byte)(lipType ^ 0x80));
+		
+		ImGui.SameLine(0, style.ItemInnerSpacing.X);
+
+		using (var _ = ImRaii.Disabled(!toggled))
+			this.DrawColorButton(CustomizeIndex.LipColor, colors);
+
+		ImGui.SameLine(0, style.ItemInnerSpacing.X);
+		ImGui.Text("Lipstick");
 	}
 }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Plugin.Services;
@@ -20,7 +21,7 @@ namespace Ktisis.Editor.Characters.Make;
 public class MakeTypeData {
 	private readonly Dictionary<(Tribe, Gender), MakeTypeRace> MakeTypes = new();
 
-	public CommonColors Colors = new();
+	private CommonColors Colors = new();
 
 	public MakeTypeRace? GetData(Tribe tribe, Gender gender) {
 		lock (this.MakeTypes) {
@@ -32,19 +33,35 @@ public class MakeTypeData {
 		IDataManager data,
 		CustomizeDiscoveryService discover
 	) {
+		var stop = new Stopwatch();
+		stop.Start();
 		await this.BuildMakeType(data);
+		Ktisis.Log.Debug($"Built MakeType data in {stop.Elapsed.TotalMilliseconds:00.00}ms");
 		await Task.WhenAll(
 			this.PopulateDiscoveryData(discover),
 			this.BuildColors(data)
 		);
+		stop.Stop();
+		Ktisis.Log.Debug($"Total {stop.Elapsed.TotalMilliseconds:00.00}ms");
 	}
 
 	private async Task BuildMakeType(IDataManager data) {
 		await Task.Yield();
+		
+		var stop = new Stopwatch();
+		stop.Start();
+		
 		var sheet = data.GetExcelSheet<CharaMakeType>()!;
 		foreach (var row in sheet)
 			this.BuildRowCustomize(row);
+		
+		Ktisis.Log.Debug($"Built customize data in {stop.Elapsed.TotalMilliseconds:00.00}ms");
+		stop.Restart();
+		
 		this.PopulateCustomizeIcons(data);
+		
+		stop.Stop();
+		Ktisis.Log.Debug($"Populated customize icons in {stop.Elapsed.TotalMilliseconds:00.00}ms");
 	}
 
 	// Color utility
@@ -158,6 +175,9 @@ public class MakeTypeData {
 	private async Task BuildColors(IDataManager dataMgr) {
 		await Task.Yield();
 
+		var stop = new Stopwatch();
+		stop.Start();
+
 		var reader = CharaCmpReader.Open(dataMgr);
 		this.Colors = reader.ReadCommon();
 
@@ -167,12 +187,18 @@ public class MakeTypeData {
 
 		foreach (var data in makeTypes)
 			data.Colors = reader.ReadTribeData(data.Tribe, data.Gender);
+		
+		stop.Stop();
+		Ktisis.Log.Debug($"Built color data in {stop.Elapsed.TotalMilliseconds:00.00}ms");
 	}
 	
 	// Discover customize data
 
 	private async Task PopulateDiscoveryData(CustomizeDiscoveryService discover) {
 		await Task.Yield();
+
+		var stop = new Stopwatch();
+		stop.Start();
 		
 		IEnumerable<MakeTypeRace> makeTypes;
 		lock (this.MakeTypes)
@@ -192,5 +218,8 @@ public class MakeTypeData {
 				faceIds.Select(id => new MakeTypeParam { Value = id, Graphic = 0 })
 			).ToArray();
 		}
+		
+		stop.Stop();
+		Ktisis.Log.Debug($"Populated discovery data in {stop.Elapsed.TotalMilliseconds:00.00}ms");
 	}
 }

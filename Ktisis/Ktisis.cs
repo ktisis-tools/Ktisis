@@ -24,7 +24,7 @@ public sealed class Ktisis : IDalamudPlugin {
 		Log = logger;
 		
 		this._services = new ServiceComposer()
-            .AddFromAttributes()
+			.AddFromAttributes()
 			.AddDalamudServices(dpi)
 			.AddSingleton(logger)
 			.BuildProvider();

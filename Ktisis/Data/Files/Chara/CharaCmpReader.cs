@@ -19,9 +19,11 @@ public class CharaCmpReader(BinaryReader br) {
 		return new CharaCmpReader(reader);
 	}
 	
-	// Features with dark/light toggles use the full block size, everything else uses 192.
+	// Features with alpha toggles use the full block size, everything else uses 192.
 	private const int BlockLength = 256;
 	private const int DataLength = 192;
+	// Since we don't care about the transparent values, only read the ones with full alpha.
+	private const int AlphaLength = 128;
 	
 	// 5 blocks each for colorsets and UI values.
 	private const int CommonBlockCount = 5;
@@ -48,10 +50,12 @@ public class CharaCmpReader(BinaryReader br) {
 		this.SeekNextBlock();
 		var highlightColors = this.ReadArray(DataLength);
 		this.SeekNextBlock();
-		var lipColors = this.ReadArray(BlockLength);
+		var lipColors = this.ReadArray(AlphaLength);
+		this.SeekNextBlock();
 		var raceFeatColors = this.ReadArray(DataLength);
 		this.SeekNextBlock();
-		var facePaintColors = this.ReadArray(BlockLength);
+		var facePaintColors = this.ReadArray(AlphaLength);
+		this.SeekNextBlock();
 
 		return new CommonColors {
 			EyeColors = eyeColors,
