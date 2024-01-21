@@ -9,7 +9,8 @@ namespace Ktisis.Data.Config.Sections;
 
 public class CategoryConfig {
 	public readonly List<BoneCategory> CategoryList = new();
-	public BoneCategory? Default { get; internal set; }
+	
+	public BoneCategory? Default { get; set; }
 
 	public void AddCategory(BoneCategory category) {
 		if (category.IsDefault)
