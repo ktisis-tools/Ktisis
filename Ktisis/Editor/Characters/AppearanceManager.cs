@@ -3,8 +3,8 @@ using System.Linq;
 
 using Dalamud.Game.ClientState.Objects.Types;
 
-using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Handlers;
+using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;
 using Ktisis.Interop.Hooking;
@@ -17,9 +17,6 @@ public class AppearanceManager : IAppearanceManager {
 	private readonly HookScope _scope;
 
 	public bool IsValid => this._mediator.Context.IsValid;
-
-	public ICustomizeEditor Customize { get; } = new CustomizeEditor();
-	public IEquipmentEditor Equipment { get; } = new EquipmentEditor();
     
 	public AppearanceManager(
 		IContextMediator mediator,
@@ -57,6 +54,11 @@ public class AppearanceManager : IAppearanceManager {
 		.Where(entity => entity is ActorEntity { IsValid: true })
 		.Cast<ActorEntity>()
 		.FirstOrDefault(entity => entity.Actor.ObjectIndex == actor.ObjectIndex);
+	
+	// Editors
+
+	public ICustomizeEditor GetCustomizeEditor(ActorEntity actor) => new CustomizeEditor(actor);
+	public IEquipmentEditor GetEquipmentEditor(ActorEntity actor) => new EquipmentEditor(actor);
 	
 	// Disposal
 

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using Lumina.Excel.GeneratedSheets2;
 
 using Ktisis.Services;
 using Ktisis.Structs.Characters;
+using Ktisis.Data.Files.Chara;
 using CharaMakeType = Ktisis.Data.Excel.CharaMakeType;
 using Tribe = Ktisis.Structs.Characters.Tribe;
 
@@ -17,24 +19,26 @@ namespace Ktisis.Editor.Characters.Make;
 
 public class MakeTypeData {
 	private readonly Dictionary<(Tribe, Gender), MakeTypeRace> MakeTypes = new();
-	
+
+	public CommonColors Colors = new();
+
 	public MakeTypeRace? GetData(Tribe tribe, Gender gender) {
 		lock (this.MakeTypes) {
 			return this.MakeTypes.GetValueOrDefault((tribe, gender));
 		}
 	}
-	
+
 	public async Task Build(
 		IDataManager data,
 		CustomizeDiscoveryService discover
 	) {
-		var colorTask = this.BuildColors(data);
-		var makeTask = this.BuildMakeType(data).ContinueWith(_ => {
-			this.PopulateDiscoveryData(discover);
-		}, TaskContinuationOptions.OnlyOnRanToCompletion);
-		await Task.WhenAll(colorTask, makeTask);
+		await this.BuildMakeType(data);
+		await Task.WhenAll(
+			this.PopulateDiscoveryData(discover),
+			this.BuildColors(data)
+		);
 	}
-	
+
 	private async Task BuildMakeType(IDataManager data) {
 		await Task.Yield();
 		var sheet = data.GetExcelSheet<CharaMakeType>()!;
@@ -43,10 +47,23 @@ public class MakeTypeData {
 		this.PopulateCustomizeIcons(data);
 	}
 
-	private async Task BuildColors(IDataManager data) {
-		await Task.Yield();
-	}
-	
+	// Color utility
+
+	public uint[] GetColors(CustomizeIndex index) => index switch {
+		CustomizeIndex.EyeColor or CustomizeIndex.EyeColor2 => this.Colors.EyeColors,
+		CustomizeIndex.HairColor2 => this.Colors.HighlightColors,
+		CustomizeIndex.LipColor => this.Colors.LipColors,
+		CustomizeIndex.FaceFeaturesColor => this.Colors.FaceFeatureColors,
+		CustomizeIndex.FacepaintColor => this.Colors.FacepaintColors,
+		_ => throw new Exception($"Invalid index {index} for color lookup.")
+	};
+
+	public uint[] GetColors(CustomizeIndex index, Tribe tribe, Gender gender) => index switch {
+		CustomizeIndex.SkinColor => this.GetData(tribe, gender)?.Colors.SkinColors ?? [],
+		CustomizeIndex.HairColor => this.GetData(tribe, gender)?.Colors.HairColors ?? [],
+		_ => this.GetColors(index)
+	};
+
 	// Build sheet data
 
 	private void BuildRowCustomize(CharaMakeType row) {
@@ -136,9 +153,27 @@ public class MakeTypeData {
 		}
 	}
 	
+	// Build color data
+	
+	private async Task BuildColors(IDataManager dataMgr) {
+		await Task.Yield();
+
+		var reader = CharaCmpReader.Open(dataMgr);
+		this.Colors = reader.ReadCommon();
+
+		IEnumerable<MakeTypeRace> makeTypes;
+		lock (this.MakeTypes)
+			makeTypes = this.MakeTypes.Values.ToList();
+
+		foreach (var data in makeTypes)
+			data.Colors = reader.ReadTribeData(data.Tribe, data.Gender);
+	}
+	
 	// Discover customize data
 
-	private void PopulateDiscoveryData(CustomizeDiscoveryService discover) {
+	private async Task PopulateDiscoveryData(CustomizeDiscoveryService discover) {
+		await Task.Yield();
+		
 		IEnumerable<MakeTypeRace> makeTypes;
 		lock (this.MakeTypes)
 			makeTypes = this.MakeTypes.Values.ToList();
@@ -151,8 +186,8 @@ public class MakeTypeData {
 			
 			var faceIds = discover.GetFaceTypes(dataId)
 				.Except(face.Params.Select(param => param.Value));
-			//if (data.Tribe is Tribe.Dunesfolk or Tribe.Hellsguard or Tribe.MoonKeeper)
-				//faceIds = faceIds.Except(face.Params.Select(param => (byte)(param.Value + 100)));
+			if (data.Tribe is Tribe.Dunesfolk or Tribe.Hellsguard or Tribe.MoonKeeper)
+				faceIds = faceIds.Except(face.Params.Select(param => (byte)(param.Value + 100)));
 			face.Params = face.Params.Concat(
 				faceIds.Select(id => new MakeTypeParam { Value = id, Graphic = 0 })
 			).ToArray();

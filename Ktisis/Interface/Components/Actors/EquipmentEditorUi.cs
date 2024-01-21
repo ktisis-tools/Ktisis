@@ -23,7 +23,6 @@ using Ktisis.Data.Excel;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Interface.Components.Actors.Types;
-using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Actors;
 
@@ -34,7 +33,7 @@ public class EquipmentEditorUi {
 
 	private readonly PopupList<ItemSheet> _itemSelectPopup;
 	private readonly PopupList<Stain> _dyeSelectPopup;
-
+	
 	public IEquipmentEditor Editor { set; private get; } = null!;
 	
 	public EquipmentEditorUi(
@@ -55,96 +54,6 @@ public class EquipmentEditorUi {
 		).WithSearch(DyeSelectSearchPredicate);
 	}
 	
-	// Data
-
-	private bool _itemsRaii;
-	
-	private readonly List<ItemSheet> Items = new();
-	private readonly List<Stain> Stains = new();
-
-	private readonly object _equipUpdateLock = new();
-	private readonly Dictionary<EquipSlot, ItemInfo> Equipped = new();
-
-	private void FetchData() {
-		if (this._itemsRaii) return;
-		this._itemsRaii = true;
-		this.LoadItems().ContinueWith(task => {
-			if (task.Exception != null)
-				Ktisis.Log.Error($"Failed to fetch items:\n{task.Exception}");
-		});
-	}
-
-	private async Task LoadItems() {
-		await Task.Yield();
-
-		var items = this._data.Excel
-			.GetSheet<ItemSheet>()!
-			.Where(item => item.IsEquippable());
-
-		var dyes = this._data.Excel.GetSheet<Stain>()!
-			.Where(stain => stain.RowId == 0 || !stain.Name.RawString.IsNullOrEmpty());
-		
-		lock (this.Stains) this.Stains.AddRange(dyes);
-
-		foreach (var chunk in items.Chunk(1000)) {
-			lock (this.Items) this.Items.AddRange(chunk);
-			lock (this._equipUpdateLock) {
-				foreach (var (_, info) in this.Equipped.Where(pair => pair.Value.Item == null))
-					info.FlagUpdate = true;
-			}
-		}
-	}
-
-	private void UpdateSlot(ActorEntity actor, EquipSlot slot) {
-		if (this.Equipped.TryGetValue(slot, out var info) && !info.FlagUpdate && info.IsCurrent()) return;
-		
-		ItemInfo item;
-
-		var isWeapon = slot < EquipSlot.Head;
-		if (isWeapon) {
-			var index = (WeaponIndex)slot;
-			var model = this.Editor.GetWeaponIndex(actor, index);
-			item = new WeaponInfo(this.Editor, actor) {
-				Index = index,
-				Model = model
-			};
-		} else {
-			var index = slot.ToEquipIndex();
-			var model = this.Editor.GetEquipIndex(actor, index);
-			item = new EquipInfo(this.Editor, actor) {
-				Index = index,
-				Model = model
-			};
-		}
-
-		try {
-			lock (this.Items) {
-				item.Item = this.Items
-					.Where(row => row.IsEquippable(slot))
-					.FirstOrDefault(item.IsItemPredicate);
-			}
-			item.Texture = item.Item != null ? this._tex.GetIcon(item.Item.Icon) : null;
-			item.Texture ??= this._tex.GetIcon(GetFallbackIcon(slot));
-		} finally {
-			this.Equipped[slot] = item;
-		}
-	}
-	
-	private static uint GetFallbackIcon(EquipSlot slot) => slot switch {
-		EquipSlot.MainHand => 60102,
-		EquipSlot.OffHand => 60110,
-		EquipSlot.Head => 60124,
-		EquipSlot.Chest => 60125,
-		EquipSlot.Hands => 60129,
-		EquipSlot.Legs => 60127,
-		EquipSlot.Feet => 60130,
-		EquipSlot.Necklace => 60132,
-		EquipSlot.Earring => 60133,
-		EquipSlot.Bracelet => 60134,
-		EquipSlot.RingLeft or EquipSlot.RingRight => 60135,
-		_ => 0
-	};
-	
 	// Draw
 
 	private readonly static EquipSlot[] EquipSlots = Enum.GetValues<EquipIndex>()
@@ -152,7 +61,7 @@ public class EquipmentEditorUi {
 		.ToArray();
 
 	private readonly static Vector2 ButtonSize = new(42, 42);
-	public void Draw(ActorEntity actor) {
+	public void Draw() {
 		this.FetchData();
 		
 		var style = ImGui.GetStyle();
@@ -160,9 +69,9 @@ public class EquipmentEditorUi {
 		ImGui.PushItemWidth(avail.X / 2 - style.ItemSpacing.X);
 		try {
 			lock (this._equipUpdateLock) {
-				this.DrawItemSlots(actor, EquipSlots.Take(5).Prepend(EquipSlot.MainHand));
+				this.DrawItemSlots(EquipSlots.Take(5).Prepend(EquipSlot.MainHand));
 				ImGui.SameLine(0, style.ItemSpacing.X);
-				this.DrawItemSlots(actor, EquipSlots.Skip(5).Prepend(EquipSlot.OffHand));
+				this.DrawItemSlots(EquipSlots.Skip(5).Prepend(EquipSlot.OffHand));
 			}
 		} finally {
 			ImGui.PopItemWidth();
@@ -174,14 +83,14 @@ public class EquipmentEditorUi {
 	
 	// Draw item slot
 
-	private void DrawItemSlots(ActorEntity actor, IEnumerable<EquipSlot> slots) {
+	private void DrawItemSlots(IEnumerable<EquipSlot> slots) {
 		using var _ = ImRaii.Group();
 		foreach (var slot in slots)
-			this.DrawItemSlot(actor, slot);
+			this.DrawItemSlot(slot);
 	}
 
-	private void DrawItemSlot(ActorEntity actor, EquipSlot slot) {
-		this.UpdateSlot( actor, slot);
+	private void DrawItemSlot(EquipSlot slot) {
+		this.UpdateSlot(slot);
 		if (!this.Equipped.TryGetValue(slot, out var info)) return;
 
 		var cursorStart = ImGui.GetCursorPosX();
@@ -370,4 +279,94 @@ public class EquipmentEditorUi {
 	
 	private static bool DyeSelectSearchPredicate(Stain stain, string query)
 		=> stain.Name.RawString.Contains(query, StringComparison.OrdinalIgnoreCase);
+	
+	// Data
+
+	private bool _itemsRaii;
+	
+	private readonly List<ItemSheet> Items = new();
+	private readonly List<Stain> Stains = new();
+
+	private readonly object _equipUpdateLock = new();
+	private readonly Dictionary<EquipSlot, ItemInfo> Equipped = new();
+
+	private void FetchData() {
+		if (this._itemsRaii) return;
+		this._itemsRaii = true;
+		this.LoadItems().ContinueWith(task => {
+			if (task.Exception != null)
+				Ktisis.Log.Error($"Failed to fetch items:\n{task.Exception}");
+		});
+	}
+
+	private async Task LoadItems() {
+		await Task.Yield();
+
+		var items = this._data.Excel
+			.GetSheet<ItemSheet>()!
+			.Where(item => item.IsEquippable());
+
+		var dyes = this._data.Excel.GetSheet<Stain>()!
+			.Where(stain => stain.RowId == 0 || !stain.Name.RawString.IsNullOrEmpty());
+		
+		lock (this.Stains) this.Stains.AddRange(dyes);
+
+		foreach (var chunk in items.Chunk(1000)) {
+			lock (this.Items) this.Items.AddRange(chunk);
+			lock (this._equipUpdateLock) {
+				foreach (var (_, info) in this.Equipped.Where(pair => pair.Value.Item == null))
+					info.FlagUpdate = true;
+			}
+		}
+	}
+
+	private void UpdateSlot(EquipSlot slot) {
+		if (this.Equipped.TryGetValue(slot, out var info) && !info.FlagUpdate && info.IsCurrent()) return;
+		
+		ItemInfo item;
+
+		var isWeapon = slot < EquipSlot.Head;
+		if (isWeapon) {
+			var index = (WeaponIndex)slot;
+			var model = this.Editor.GetWeaponIndex(index);
+			item = new WeaponInfo(this.Editor) {
+				Index = index,
+				Model = model
+			};
+		} else {
+			var index = slot.ToEquipIndex();
+			var model = this.Editor.GetEquipIndex(index);
+			item = new EquipInfo(this.Editor) {
+				Index = index,
+				Model = model
+			};
+		}
+
+		try {
+			lock (this.Items) {
+				item.Item = this.Items
+					.Where(row => row.IsEquippable(slot))
+					.FirstOrDefault(item.IsItemPredicate);
+			}
+			item.Texture = item.Item != null ? this._tex.GetIcon(item.Item.Icon) : null;
+			item.Texture ??= this._tex.GetIcon(GetFallbackIcon(slot));
+		} finally {
+			this.Equipped[slot] = item;
+		}
+	}
+	
+	private static uint GetFallbackIcon(EquipSlot slot) => slot switch {
+		EquipSlot.MainHand => 60102,
+		EquipSlot.OffHand => 60110,
+		EquipSlot.Head => 60124,
+		EquipSlot.Chest => 60125,
+		EquipSlot.Hands => 60129,
+		EquipSlot.Legs => 60127,
+		EquipSlot.Feet => 60130,
+		EquipSlot.Necklace => 60132,
+		EquipSlot.Earring => 60133,
+		EquipSlot.Bracelet => 60134,
+		EquipSlot.RingLeft or EquipSlot.RingRight => 60135,
+		_ => 0
+	};
 }

@@ -17,7 +17,7 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	private readonly CustomizeEditorUi _custom;
 	private readonly EquipmentEditorUi _equip;
 
-	private IAppearanceManager Editor => this.Context.Appearance;
+	private IAppearanceManager Manager => this.Context.Appearance;
 	
 	public ActorEditWindow(
 		IEditorContext context,
@@ -26,8 +26,14 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	) : base("Actor Editor", context) {
 		this._custom = custom;
 		this._equip = equip;
-		custom.Editor = this.Editor.Customize;
-		equip.Editor = this.Editor.Equipment;
+	}
+	
+	// Target
+
+	public override void SetTarget(ActorEntity target) {
+		base.SetTarget(target);
+		this._custom.Editor = this.Manager.GetCustomizeEditor(target);
+		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 	}
 
 	// Draw tabs
@@ -45,24 +51,12 @@ public class ActorEditWindow : EntityEditWindow<ActorEntity> {
 	
 	public override void Draw() {
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
-		this.DrawTab("Appearance", this.DrawCustomize);
-		this.DrawTab("Equipment", this.DrawEquipment);
+		DrawTab("Appearance", this._custom.Draw);
+		DrawTab("Equipment", this._equip.Draw);
 	}
 
-	private void DrawTab(string name, Action draw) {
+	private static void DrawTab(string name, Action draw) {
 		using var tab = ImRaii.TabItem(name);
 		if (tab.Success) draw.Invoke();
-	}
-	
-	// Customize
-
-	private void DrawCustomize() {
-		this._custom.Draw(this.Target);
-	}
-	
-	// Equipment
-
-	private void DrawEquipment() {
-		this._equip.Draw(this.Target);
 	}
 }

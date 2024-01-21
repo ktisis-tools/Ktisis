@@ -11,13 +11,12 @@ using GLib.Widgets;
 
 using ImGuiNET;
 
+using Ktisis.Services;
+using Ktisis.Structs.Characters;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Interface.Components.Actors.Popup;
-using Ktisis.Scene.Entities.Game;
-using Ktisis.Services;
-using Ktisis.Structs.Characters;
 
 namespace Ktisis.Interface.Components.Actors;
 
@@ -59,75 +58,75 @@ public class CustomizeEditorUi {
 	
 	// Draw
 	
-	public void Draw(ActorEntity actor) {
+	public void Draw() {
 		this.ButtonSize = CalcButtonSize();
 		
-		var tribe = (Tribe)this.Editor.GetCustomization(actor, CustomizeIndex.Tribe);
-		var gender = (Gender)this.Editor.GetCustomization(actor, CustomizeIndex.Gender);
+		var tribe = (Tribe)this.Editor.GetCustomization(CustomizeIndex.Tribe);
+		var gender = (Gender)this.Editor.GetCustomization(CustomizeIndex.Gender);
 		
 		var data = this._makeTypeData.GetData(tribe, gender);
 		if (data == null) return;
 
-		this.Draw(actor, data);
+		this.Draw(data);
 		
-		this._selectPopup.Draw(this.Editor, actor);
+		this._selectPopup.Draw(this.Editor);
 	}
 
-	private void Draw(ActorEntity actor, MakeTypeRace data) {
-		this.DrawSideFrame(actor, data);
+	private void Draw(MakeTypeRace data) {
+		this.DrawSideFrame(data);
 		ImGui.SameLine();
-		this.DrawMainFrame(actor, data);
+		this.DrawMainFrame(data);
 	}
 	
 	// Side frame
 
 	private const float SideRatio = 0.35f;
 
-	private void DrawSideFrame(ActorEntity actor, MakeTypeRace data) {
+	private void DrawSideFrame(MakeTypeRace data) {
 		var size = ImGui.GetContentRegionAvail();
 		size.X = MathF.Max(size.X * SideRatio, 240.0f);
 		using var _frame = ImRaii.Child("##CustomizeSideFrame", size, true);
 
 		var cX = ImGui.GetCursorPosX();
-		this.DrawBodySelect(actor, data.Gender);
+		this.DrawBodySelect(data.Gender);
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.SetNextItemWidth(ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - cX));
-		this.DrawTribeSelect(actor, data.Tribe);
+		this.DrawTribeSelect(data.Tribe);
 		
 		ImGui.Spacing();
 
-		this.DrawFeatSlider(CustomizeIndex.Height, actor, data);
-		this.DrawFeatSlider(CustomizeIndex.BustSize, actor, data);
-		this.DrawFeatSlider(CustomizeIndex.RaceFeatureSize, actor, data);
+		this.DrawFeatSlider(CustomizeIndex.Height, data);
+		this.DrawFeatSlider(CustomizeIndex.BustSize, data);
+		this.DrawFeatSlider(CustomizeIndex.RaceFeatureSize, data);
 
 		ImGui.Spacing();
 		
-		this.DrawFeatParams(CustomizeIndex.EyeShape, actor, data);
+		this.DrawFeatParams(CustomizeIndex.EyeShape, data);
 		
 		ImGui.Spacing();
 		
-		this.DrawFeatParams(CustomizeIndex.LipStyle, actor, data);
+		this.DrawFeatParams(CustomizeIndex.LipStyle, data);
 		
 		ImGui.Spacing();
 		
-		this.DrawFeatParams(CustomizeIndex.Eyebrows, actor, data);
-		this.DrawFeatParams(CustomizeIndex.NoseShape, actor, data);
-		this.DrawFeatParams(CustomizeIndex.JawShape, actor, data);
+		this.DrawFeatParams(CustomizeIndex.Eyebrows, data);
+		this.DrawFeatParams(CustomizeIndex.NoseShape, data);
+		this.DrawFeatParams(CustomizeIndex.JawShape, data);
 
-		var intValue = (int)this.Editor.GetCustomization(actor, CustomizeIndex.HairColor2);
+		var intValue = (int)this.Editor.GetCustomization(CustomizeIndex.HairColor2);
 		if (ImGui.InputInt("Highlights", ref intValue))
-			this.Editor.SetCustomization(actor, CustomizeIndex.HairColor2, (byte)intValue);
+			this.Editor.SetCustomization(CustomizeIndex.HairColor2, (byte)intValue);
 	}
 	
 	// Body + Tribe selectors
 
-	private void DrawBodySelect(ActorEntity actor, Gender current) {
+	private void DrawBodySelect(Gender current) {
 		var icon = current == Gender.Masculine ? FontAwesomeIcon.Mars : FontAwesomeIcon.Venus;
 		if (Buttons.IconButton(icon))
-			this.Editor.SetCustomization(actor, CustomizeIndex.Gender, (byte)(current == Gender.Feminine ? 0 : 1));
+			this.Editor.SetCustomization(CustomizeIndex.Gender, (byte)(current == Gender.Feminine ? 0 : 1));
 	}
 
-	private void DrawTribeSelect(ActorEntity actor, Tribe current) {
+	private void DrawTribeSelect(Tribe current) {
 		using var _combo = ImRaii.Combo("Body", current.ToString());
 		if (!_combo.Success) return;
 		
@@ -136,32 +135,32 @@ public class CustomizeEditorUi {
 				this.Editor.Prepare()
 					.SetCustomization(CustomizeIndex.Tribe, (byte)tribe)
 					.SetCustomization(CustomizeIndex.Race, (byte)Math.Floor(((decimal)tribe + 1) / 2))
-					.Dispatch(actor);
+					.Dispatch();
 			}
 		}
 	}
 	
 	// Sliders
 
-	private void DrawSlider(string label, CustomizeIndex index, ActorEntity actor) {
-		var intValue = (int)this.Editor.GetCustomization(actor, index);
+	private void DrawSlider(string label, CustomizeIndex index) {
+		var intValue = (int)this.Editor.GetCustomization(index);
 		if (ImGui.SliderInt(label, ref intValue, 0, 100))
-			this.Editor.SetCustomization(actor, index, (byte)intValue);
+			this.Editor.SetCustomization(index, (byte)intValue);
 	}
 
-	private void DrawFeatSlider(CustomizeIndex index, ActorEntity actor, MakeTypeRace data) {
+	private void DrawFeatSlider(CustomizeIndex index, MakeTypeRace data) {
 		var feat = data.GetFeature(index);
 		if (feat == null) return;
-		this.DrawSlider(feat.Name, index, actor);
+		this.DrawSlider(feat.Name, index);
 	}
 	
 	// Params
 
-	private void DrawFeatParams(CustomizeIndex index, ActorEntity actor, MakeTypeRace data) {
+	private void DrawFeatParams(CustomizeIndex index, MakeTypeRace data) {
 		var feat = data.GetFeature(index);
 		if (feat == null) return;
 
-		var baseValue = this.Editor.GetCustomization(actor, index);
+		var baseValue = this.Editor.GetCustomization(index);
 		var current = (byte)(baseValue & ~0x80);
 
 		var isZeroIndex = feat.Params.FirstOrDefault()?.Value == 0;
@@ -170,18 +169,18 @@ public class CustomizeEditorUi {
 		if (isZeroIndex) intValue++;
 		if (ImGui.InputInt(feat.Name, ref intValue) && intValue >= (isZeroIndex ? 1 : 0)) {
 			var newValue = (byte)(isZeroIndex ? --intValue : intValue);
-			this.Editor.SetCustomization(actor, index, (byte)(newValue | (baseValue & 0x80)));
+			this.Editor.SetCustomization(index, (byte)(newValue | (baseValue & 0x80)));
 		}
 	}
 	
 	// Main frame
 
-	private void DrawMainFrame(ActorEntity actor, MakeTypeRace data) {
+	private void DrawMainFrame(MakeTypeRace data) {
 		using var _frame = ImRaii.Child("##CustomizeMainFrame", ImGui.GetContentRegionAvail());
 		if (!_frame.Success) return;
 		
 		if (ImGui.CollapsingHeader("Primary Features"))
-			this.DrawFeatIconParams(actor, data);
+			this.DrawFeatIconParams(data);
 
 		var faceFeatLabel = "Facial Features";
 		var faceFeat = data.GetFeature(CustomizeIndex.FaceFeatures);
@@ -190,7 +189,7 @@ public class CustomizeEditorUi {
 		faceFeatLabel += " / Tattoos";
 		
 		if (ImGui.CollapsingHeader(faceFeatLabel))
-			this.DrawFacialFeatures(actor, data);
+			this.DrawFacialFeatures(data);
 	}
 	
 	// Icons
@@ -216,14 +215,14 @@ public class CustomizeEditorUi {
 		CustomizeIndex.RaceFeatureType
 	];
 
-	private void DrawFeatIconParams(ActorEntity actor, MakeTypeRace data) {
+	private void DrawFeatIconParams(MakeTypeRace data) {
 		var style = ImGui.GetStyle();
 		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X / 2 - this.ButtonSize.X - (style.FramePadding.X + style.ItemSpacing.X) * 2);
 		try {
 			var i = 0;
 			var isSameLine = false;
 			foreach (var feat in FeatIconParams) {
-				if (!this.DrawFeatIconParams(actor, data, feat)) continue;
+				if (!this.DrawFeatIconParams(data, feat)) continue;
 				isSameLine = ++i % 2 != 0;
 				if (isSameLine) ImGui.SameLine();
 			}
@@ -233,11 +232,11 @@ public class CustomizeEditorUi {
 		}
 	}
 
-	private bool DrawFeatIconParams(ActorEntity actor, MakeTypeRace data, CustomizeIndex index) {
+	private bool DrawFeatIconParams(MakeTypeRace data, CustomizeIndex index) {
 		var feat = data.GetFeature(index);
 		if (feat == null) return false;
 		
-		var baseValue = this.Editor.GetCustomization(actor, index);
+		var baseValue = this.Editor.GetCustomization(index);
 
 		var active = feat.Params.FirstOrDefault(param => param.Value == baseValue);
 		if (this.DrawFeatIconButton($"{baseValue}", active))
@@ -257,7 +256,7 @@ public class CustomizeEditorUi {
 		if (ImGui.InputInt($"##Input_{feat.Index}", ref intValue)) {
 			var valid = index != CustomizeIndex.FaceType || feat.Params.Any(p => p.Value == intValue);
 			if (valid)
-				this.Editor.SetCustomization(actor, index, (byte)intValue);
+				this.Editor.SetCustomization(index, (byte)intValue);
 		}
 
 		return true;
@@ -278,10 +277,10 @@ public class CustomizeEditorUi {
 	
 	// Facial features
 	
-	private void DrawFacialFeatures(ActorEntity actor, MakeTypeRace data) {
-		var current = this.Editor.GetCustomization(actor, CustomizeIndex.FaceFeatures);
+	private void DrawFacialFeatures(MakeTypeRace data) {
+		var current = this.Editor.GetCustomization(CustomizeIndex.FaceFeatures);
 		
-		this.DrawFacialFeaturesGroup(actor, data, current);
+		this.DrawFacialFeaturesGroup(data, current);
 		
 		var style = ImGui.GetStyle();
 		
@@ -295,17 +294,17 @@ public class CustomizeEditorUi {
 			
 			var intValue = (int)current;
 			if (ImGui.InputInt("##FaceFeatureFlags", ref intValue))
-				this.Editor.SetCustomization(actor, CustomizeIndex.FaceFeatures, (byte)intValue);
+				this.Editor.SetCustomization(CustomizeIndex.FaceFeatures, (byte)intValue);
 		} finally {
 			if (inputHasRoom) ImGui.EndGroup();
 		}
 	}
 
-	private void DrawFacialFeaturesGroup(ActorEntity actor, MakeTypeRace data, byte current) {
+	private void DrawFacialFeaturesGroup(MakeTypeRace data, byte current) {
 		using var _group = ImRaii.Group();
 		var style = ImGui.GetStyle();
 		
-		var faceId = this.Editor.GetCustomization(actor, CustomizeIndex.FaceType);
+		var faceId = this.Editor.GetCustomization(CustomizeIndex.FaceType);
 		if (!data.FaceFeatureIcons.TryGetValue(faceId, out var iconIds))
 			iconIds = data.FaceFeatureIcons.Values.FirstOrDefault();
 		iconIds ??= Array.Empty<uint>();
@@ -329,7 +328,13 @@ public class CustomizeEditorUi {
 			else
 				button = ImGui.Button($"{i}", this.ButtonSize + style.FramePadding * 2);
 			if (button)
-				this.Editor.SetCustomization(actor, CustomizeIndex.FaceFeatures, (byte)(current ^ flag));
+				this.Editor.SetCustomization(CustomizeIndex.FaceFeatures, (byte)(current ^ flag));
 		}
+	}
+	
+	// Colors
+
+	private void DrawEyeColorSwitch(MakeTypeRace data) {
+		
 	}
 }

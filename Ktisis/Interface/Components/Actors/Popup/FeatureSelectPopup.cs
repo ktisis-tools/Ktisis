@@ -1,6 +1,5 @@
 using System.Numerics;
 
-using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
@@ -9,7 +8,6 @@ using ImGuiNET;
 
 using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
-using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Actors.Popup;
 
@@ -36,7 +34,7 @@ public class FeatureSelectPopup {
 	private const int MaxRows = 3;
 	private readonly static Vector2 ButtonSize = new(64, 64);
 
-	public void Draw(ICustomizeEditor editor, ActorEntity actor) {
+	public void Draw(ICustomizeEditor editor) {
 		if (this._isOpening) {
 			this._isOpening = false;
 			ImGui.OpenPopup(this.PopupId);
@@ -58,10 +56,10 @@ public class FeatureSelectPopup {
 		}
 		this._isOpen = true;
 		
-		this.DrawParams(editor, actor);
+		this.DrawParams(editor);
 	}
 
-	private void DrawParams(ICustomizeEditor editor, ActorEntity actor) {
+	private void DrawParams(ICustomizeEditor editor) {
 		if (this.Feature == null) return;
 		
 		using var _col = ImRaii.PushColor(ImGuiCol.Button, 0);
@@ -89,7 +87,7 @@ public class FeatureSelectPopup {
 			ImGui.Text(label);
 
 			if (button)
-				editor.SetCustomization(actor, this.Feature.Index, param.Value);
+				editor.SetCustomization(this.Feature.Index, param.Value);
 		}
 	}
 

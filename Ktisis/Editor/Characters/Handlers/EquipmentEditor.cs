@@ -6,80 +6,80 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters.Handlers;
 
-public class EquipmentEditor : IEquipmentEditor {
-	public void ApplyStateFlagsFor(ActorEntity entity) {
-		this.UpdateWeaponVisibleState(entity, WeaponIndex.MainHand);
-		this.UpdateWeaponVisibleState(entity, WeaponIndex.OffHand);
+public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
+	public void ApplyStateFlags() {
+		this.UpdateWeaponVisibleState(WeaponIndex.MainHand);
+		this.UpdateWeaponVisibleState(WeaponIndex.OffHand);
 		
-		if (entity.Appearance.VisorToggled != EquipmentToggle.None)
-			this.SetVisorToggled(entity, entity.Appearance.VisorToggled == EquipmentToggle.On);
+		if (actor.Appearance.VisorToggled != EquipmentToggle.None)
+			this.SetVisorToggled(actor.Appearance.VisorToggled == EquipmentToggle.On);
 	}
 	
-	private void SetStateIfNotTracked(ActorEntity actor, EquipIndex index) {
+	private void SetStateIfNotTracked(EquipIndex index) {
 		if (!actor.IsValid || actor.Appearance.Equipment.IsSet(index)) return;
-		actor.Appearance.Equipment[index] = this.GetEquipIndex(actor, index);
+		actor.Appearance.Equipment[index] = this.GetEquipIndex(index);
 	}
 	
 	// Equipment wrappers
 
-	public unsafe EquipmentModelId GetEquipIndex(ActorEntity actor, EquipIndex index) {
+	public unsafe EquipmentModelId GetEquipIndex(EquipIndex index) {
 		if (!actor.IsValid) return default;
 		if (actor.Appearance.Equipment.IsSet(index))
 			return actor.Appearance.Equipment[index];
 		return actor.CharacterBaseEx != null ? actor.CharacterBaseEx->Equipment[(uint)index] : default;
 	}
 	
-	public unsafe void SetEquipIndex(ActorEntity actor, EquipIndex index, EquipmentModelId model) {
+	public unsafe void SetEquipIndex(EquipIndex index, EquipmentModelId model) {
 		if (!actor.IsValid) return;
 		actor.Appearance.Equipment[index] = model;
 		var chara = actor.GetCharacter();
 		if (chara != null) chara->FlagSlotForUpdate((uint)index, &model);
 	}
 
-	public void SetEquipIdVariant(ActorEntity actor, EquipIndex index, ushort id, byte variant) {
-		var model = this.GetEquipIndex(actor, index);
+	public void SetEquipIdVariant(EquipIndex index, ushort id, byte variant) {
+		var model = this.GetEquipIndex(index);
 		model.Id = id;
 		model.Variant = variant;
-		this.SetEquipIndex(actor, index, model);
+		this.SetEquipIndex(index, model);
 	}
 
-	public void SetEquipStainId(ActorEntity actor, EquipIndex index, byte stainId) {
-		var model = this.GetEquipIndex(actor, index);
+	public void SetEquipStainId(EquipIndex index, byte stainId) {
+		var model = this.GetEquipIndex(index);
 		model.Stain = stainId;
-		this.SetEquipIndex(actor, index, model);
+		this.SetEquipIndex(index, model);
 	}
 
-	private unsafe void ForceUpdateEquipIndex(ActorEntity actor, EquipIndex index) {
+	private unsafe void ForceUpdateEquipIndex(EquipIndex index) {
 		if (!actor.IsValid) return;
 		
 		var chara = actor.GetCharacter();
 		if (chara == null) return;
 		
-		var current = this.GetEquipIndex(actor, index);
+		var current = this.GetEquipIndex(index);
 		chara->FlagSlotForUpdate((uint)index, &current);
 	}
 	
 	// Hat visibility
 
-	public unsafe bool GetHatVisible(ActorEntity actor) => actor.IsValid
+	public unsafe bool GetHatVisible() => actor.IsValid
 		&& actor.Character != null
 		&& actor.Appearance.CheckHatVisible(!actor.Character->DrawData.IsHatHidden);
 
-	public unsafe void SetHatVisible(ActorEntity actor, bool visible) {
+	public unsafe void SetHatVisible(bool visible) {
 		if (!actor.IsValid || actor.Character == null) return;
-		this.SetStateIfNotTracked(actor, EquipIndex.Head);
+		this.SetStateIfNotTracked(EquipIndex.Head);
 		actor.Appearance.HatVisible = visible ? EquipmentToggle.On : EquipmentToggle.Off;
 		actor.Character->DrawData.HideHeadgear(0, !visible);
-		if (visible) this.ForceUpdateEquipIndex(actor, EquipIndex.Head);
+		if (visible) this.ForceUpdateEquipIndex(EquipIndex.Head);
 	}
 	
 	// Visor toggle
 
-	public unsafe bool GetVisorToggled(ActorEntity actor) => actor.IsValid
+	public unsafe bool GetVisorToggled() => actor.IsValid
 		&& actor.Character != null
 		&& actor.Appearance.CheckVisorToggled(actor.Character->DrawData.IsVisorToggled);
 
-	public unsafe void SetVisorToggled(ActorEntity actor, bool toggled) {
+	public unsafe void SetVisorToggled(bool toggled) {
 		if (!actor.IsValid || actor.Character == null) return;
 		actor.Appearance.VisorToggled = toggled ? EquipmentToggle.On : EquipmentToggle.Off;
 		actor.Character->DrawData.SetVisor(toggled);
@@ -87,7 +87,7 @@ public class EquipmentEditor : IEquipmentEditor {
 	
 	// Weapon wrappers
 
-	public unsafe WeaponModelId GetWeaponIndex(ActorEntity actor, WeaponIndex index) {
+	public unsafe WeaponModelId GetWeaponIndex(WeaponIndex index) {
 		if (!actor.IsValid) return default;
 		if (actor.Appearance.Weapons.IsSet(index))
 			return actor.Appearance.Weapons[index];
@@ -95,7 +95,7 @@ public class EquipmentEditor : IEquipmentEditor {
 		return data != null ? data->ModelId : default;
 	}
 
-	public unsafe void SetWeaponIndex(ActorEntity actor, WeaponIndex index, WeaponModelId model) {
+	public unsafe void SetWeaponIndex(WeaponIndex index, WeaponModelId model) {
 		if (!actor.IsValid) return;
 		actor.Appearance.Weapons[index] = model;
 		var chara = actor.Character;
@@ -103,18 +103,18 @@ public class EquipmentEditor : IEquipmentEditor {
 			chara->DrawData.LoadWeapon((DrawDataContainer.WeaponSlot)index, model, 0, 0, 0, 0);
 	}
 
-	public void SetWeaponIdBaseVariant(ActorEntity actor, WeaponIndex index, ushort id, ushort second, byte variant) {
-		var model = this.GetWeaponIndex(actor, index);
+	public void SetWeaponIdBaseVariant(WeaponIndex index, ushort id, ushort second, byte variant) {
+		var model = this.GetWeaponIndex(index);
 		model.Id = id;
 		model.Type = second;
 		model.Variant = variant;
-		this.SetWeaponIndex(actor, index, model);
+		this.SetWeaponIndex(index, model);
 	}
 
-	public void SetWeaponStainId(ActorEntity actor, WeaponIndex index, byte stainId) {
-		var model = this.GetWeaponIndex(actor, index);
+	public void SetWeaponStainId(WeaponIndex index, byte stainId) {
+		var model = this.GetWeaponIndex(index);
 		model.Stain = stainId;
-		this.SetWeaponIndex(actor, index, model);
+		this.SetWeaponIndex(index, model);
 	}
 	
 	private unsafe static DrawObjectData* GetWeaponData(ActorEntity actor, WeaponIndex index) {
@@ -124,20 +124,20 @@ public class EquipmentEditor : IEquipmentEditor {
 	
 	// Weapon visible
 
-	public unsafe bool GetWeaponVisible(ActorEntity actor, WeaponIndex index) {
+	public unsafe bool GetWeaponVisible(WeaponIndex index) {
 		var data = GetWeaponData(actor, index);
 		return data != null && actor.Appearance.Weapons.CheckVisible(index, !data->IsHidden);
 	}
 
-	public unsafe void SetWeaponVisible(ActorEntity actor, WeaponIndex index, bool visible) {
+	public unsafe void SetWeaponVisible(WeaponIndex index, bool visible) {
 		actor.Appearance.Weapons.SetVisible(index, visible);
 		var data = GetWeaponData(actor, index);
 		if (data != null) data->IsHidden = !visible;
 	}
 
-	private void UpdateWeaponVisibleState(ActorEntity actor, WeaponIndex index) {
+	private void UpdateWeaponVisibleState(WeaponIndex index) {
 		var state = actor.Appearance.Weapons.GetVisible(index);
 		if (state != EquipmentToggle.None)
-			this.SetWeaponVisible(actor, index, state == EquipmentToggle.On);
+			this.SetWeaponVisible(index, state == EquipmentToggle.On);
 	}
 }

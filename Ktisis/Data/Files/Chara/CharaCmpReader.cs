@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 using Dalamud.Plugin.Services;
@@ -11,7 +12,9 @@ public class CharaCmpReader(BinaryReader br) {
 
 	public static CharaCmpReader Open(IDataManager data) {
 		var file = data.GetFile(HumanCmpPath);
-		var stream = new MemoryStream(file?.Data ?? []);
+		if (file == null)
+			throw new Exception("Failed to open human.cmp");
+		var stream = new MemoryStream(file.Data);
 		var reader = new BinaryReader(stream);
 		return new CharaCmpReader(reader);
 	}
@@ -20,7 +23,7 @@ public class CharaCmpReader(BinaryReader br) {
 	private const int BlockLength = 256;
 	private const int DataLength = 192;
 	
-	// 2 blocks each for colorsets and UI values.
+	// 5 blocks each for colorsets and UI values.
 	private const int CommonBlockCount = 5;
 	private const int CommonBlockSize = CommonBlockCount * 2;
 	
@@ -54,7 +57,7 @@ public class CharaCmpReader(BinaryReader br) {
 			EyeColors = eyeColors,
 			HighlightColors = highlightColors,
 			LipColors = lipColors,
-			RaceFeatureColors = raceFeatColors,
+			FaceFeatureColors = raceFeatColors,
 			FacepaintColors = facePaintColors
 		};
 	}

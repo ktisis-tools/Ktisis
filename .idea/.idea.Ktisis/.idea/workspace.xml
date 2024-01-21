@@ -11,18 +11,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaCmpReader.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaCommonColors.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaTribeColors.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaCmpReader.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaCmpReader.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaCommonColors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CommonColors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaTribeColors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/TribeColors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceModule.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/EquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/EquipmentEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeRace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeRace.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/IAppearanceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/IAppearanceManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/IEquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/IEquipmentEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditorUi.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Popup/FeatureSelectPopup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Popup/FeatureSelectPopup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorEditWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/CustomizeDiscoveryService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/CustomizeDiscoveryService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -275,7 +283,8 @@
       <workItem from="1705572155803" duration="44776000" />
       <workItem from="1705658791264" duration="43119000" />
       <workItem from="1705750990529" duration="26420000" />
-      <workItem from="1705790439276" duration="8609000" />
+      <workItem from="1705790439276" duration="11844000" />
+      <workItem from="1705834104904" duration="2601000" />
     </task>
     <servers />
   </component>
