@@ -152,7 +152,6 @@ public class EquipmentEditorUi {
 		.ToArray();
 
 	private readonly static Vector2 ButtonSize = new(42, 42);
-
 	public void Draw(ActorEntity actor) {
 		this.FetchData();
 		

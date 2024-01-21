@@ -54,6 +54,8 @@ public class CustomizeDiscoveryService {
 		var isRangeValid = false;
 		for (var i = 0; i < byte.MaxValue; i++) {
 			var valid = this.IsFaceIdValidFor(dataId, i);
+			if (!valid && i < 90)
+				valid |= this.IsFaceIdValidFor(dataId, i + 100);
 			switch (valid, isRangeValid) {
 				case (true, false):
 					isRangeValid = true;
