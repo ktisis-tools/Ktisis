@@ -67,7 +67,7 @@ public class InputManager : IInputManager {
 	// Events
 	
 	private bool OnKeyEvent(VirtualKey key, VirtualKeyState state) {
-		if (!this._mediator.IsGPosing || IsChatInputActive())
+		if (!this._mediator.IsGPosing || !this.Config.Keybinds.Enabled || IsChatInputActive())
 			return false;
 
 		var flag = state switch {

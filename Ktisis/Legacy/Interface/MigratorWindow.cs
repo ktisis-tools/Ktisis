@@ -80,12 +80,13 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Text("This is not the full feature set of the final release.");
 		ImGui.Text(
 			"The following will be introduced at a later point during testing:\n" +
-			"	• Animation controls\n" +
+			"	• Everything missing from the current release\n" +
 			"	• Editing spawned weapons and props\n" +
 			"	• Equipment model manipulation\n" +
 			"	• Importing and exporting light presets\n" +
 			"	• Inverse kinematics\n" +
-			"	• Copy & paste"
+			"	• Animation controls\n" +
+			"	• Copy & paste\n"
 		);
 		
 		ImGui.Spacing();
@@ -93,7 +94,7 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Text("Support is planned for edits made to objects, such as appearance changes.");
 		ImGui.Spacing();
 		ImGui.Text("Configuration options for the overlay, keybinds and bone categories will also be implemented during testing.");
-		ImGui.Text("Your configuration will not be carried over into this version.");
+		ImGui.Text("Your current configuration will not be carried over into this version.");
 		
 		ImGui.Spacing();
 		ImGui.Separator();
