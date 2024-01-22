@@ -7,7 +7,6 @@ using ImGuiNET;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
-using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Interface.Components.Files;
@@ -15,21 +14,20 @@ using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 
-namespace Ktisis.Interface.Windows.Pose;
+namespace Ktisis.Interface.Windows.Import;
 
 public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	private readonly IFramework _framework;
 	private readonly FileDialogManager _dialog;
-	private readonly IEditorContext _context;
 
 	private readonly FileSelect<PoseFile> _select;
 
-	private Configuration Config => this._context.Config;
+	private Configuration Config => this.Context.Config;
 
 	public PoseImportDialog(
+		IEditorContext context,
 		IFramework framework,
 		FileDialogManager dialog,
-		IEditorContext context,
 		FileSelect<PoseFile> select
 	) : base(
 		"Import Pose",
@@ -38,7 +36,6 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	) {
 		this._framework = framework;
 		this._dialog = dialog;
-		this._context = context;
 		this._select = select;
 		select.OpenDialog = this.OnFileDialogOpen;
 	}
