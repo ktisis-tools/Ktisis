@@ -1,4 +1,4 @@
-namespace Ktisis.Data.Files.Chara;
+namespace Ktisis.GameData.Chara;
 
 public struct TribeColors {
 	public uint[] SkinColors;

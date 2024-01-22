@@ -7,13 +7,15 @@ using System.Diagnostics;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Plugin.Services;
 
+using Ktisis.GameData.Chara;
+
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets2;
 
 using Ktisis.Services;
 using Ktisis.Structs.Characters;
-using Ktisis.Data.Files.Chara;
-using CharaMakeType = Ktisis.Data.Excel.CharaMakeType;
+
+using CharaMakeType = Ktisis.GameData.Excel.CharaMakeType;
 using Tribe = Ktisis.Structs.Characters.Tribe;
 
 namespace Ktisis.Editor.Characters.Make;

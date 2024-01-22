@@ -5,7 +5,7 @@ using Dalamud.Plugin.Services;
 
 using Ktisis.Structs.Characters;
 
-namespace Ktisis.Data.Files.Chara;
+namespace Ktisis.GameData.Chara;
 
 public class CharaCmpReader(BinaryReader br) {
 	private const string HumanCmpPath = "chara/xls/charamake/human.cmp";

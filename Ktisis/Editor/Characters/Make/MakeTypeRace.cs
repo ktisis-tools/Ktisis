@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 
-using Ktisis.Data.Files.Chara;
+using Ktisis.GameData.Chara;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters.Make;

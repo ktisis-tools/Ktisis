@@ -19,9 +19,9 @@ using GLib.Widgets;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
-using Ktisis.Data.Excel;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
+using Ktisis.GameData.Excel;
 using Ktisis.Interface.Components.Actors.Types;
 
 namespace Ktisis.Interface.Components.Actors;

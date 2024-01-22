@@ -1,9 +1,8 @@
-using Lumina;
 using Lumina.Data;
 using Lumina.Excel;
 using Lumina.Text;
 
-namespace Ktisis.Data.Excel;
+namespace Ktisis.GameData.Excel;
 
 public enum EquipSlot {
 	MainHand,
@@ -55,7 +54,7 @@ public class ItemSheet : ExcelRow {
 
 	public bool IsWeapon() => this.IsEquippable(EquipSlot.MainHand) || this.IsEquippable(EquipSlot.OffHand);
 
-	public override void PopulateData(RowParser parser, GameData gameData, Language language) {
+	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
 		base.PopulateData(parser, gameData, language);
 
 		this.Name = parser.ReadColumn<SeString>(9) ?? string.Empty;
@@ -80,7 +79,7 @@ public class ItemSheet : ExcelRow {
 			_ => this.Slots[(int)slot]
 		};
 
-		public override void PopulateData(RowParser parser, GameData gameData, Language language) {
+		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
 			base.PopulateData(parser, gameData, language);
 			for (var i = 0; i < 14; i++)
 				this.Slots[i] = parser.ReadColumn<sbyte>(i) != 0;

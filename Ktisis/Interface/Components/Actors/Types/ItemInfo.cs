@@ -1,6 +1,6 @@
 using Dalamud.Interface.Internal;
 
-using Ktisis.Data.Excel;
+using Ktisis.GameData.Excel;
 
 namespace Ktisis.Interface.Components.Actors.Types;
 

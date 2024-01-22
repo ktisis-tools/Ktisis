@@ -1,8 +1,8 @@
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
-using Ktisis.Data.Excel;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
+using Ktisis.GameData.Excel;
 
 namespace Ktisis.Interface.Components.Actors.Types;
 
