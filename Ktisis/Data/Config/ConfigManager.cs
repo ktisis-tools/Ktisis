@@ -1,7 +1,10 @@
 using System;
+using System.IO;
 using System.Diagnostics;
 
 using Dalamud.Plugin;
+
+using Newtonsoft.Json;
 
 using Ktisis.Core.Attributes;
 
@@ -11,7 +14,8 @@ namespace Ktisis.Data.Config;
 public class ConfigManager : IDisposable {
 	private readonly DalamudPluginInterface _dpi;
 	private readonly SchemaReader _schema;
-	
+
+	private bool _isLoaded;
 	public Configuration Config { get; private set; } = null!;
 
 	public ConfigManager(
@@ -31,12 +35,8 @@ public class ConfigManager : IDisposable {
 		Configuration? cfg = null;
 
 		try {
-			var cfgBase = this._dpi.GetPluginConfig();
-			cfg = cfgBase?.Version switch {
-				// TODO: Legacy config upgrade
-				not null => cfgBase as Configuration,
-				_ => null
-			};
+			// TODO: Legacy migration
+			cfg = this.OpenConfigFile();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");
 		}
@@ -49,6 +49,7 @@ public class ConfigManager : IDisposable {
 		}
 
 		this.Config = cfg;
+		this._isLoaded = true;
 		
 		timer.Stop();
 		Ktisis.Log.Debug($"Configuration loaded in {timer.Elapsed.TotalMilliseconds:0.00}ms");
@@ -56,10 +57,36 @@ public class ConfigManager : IDisposable {
 
 	public void Save() {
 		try {
-			this._dpi.SavePluginConfig(this.Config);
+			if (this._isLoaded)
+				this.SaveConfigFile();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to save configuration:\n{err}");
 		}
+	}
+	
+	// TEMPORARY: v3 config file
+
+	public bool GetConfigFileExists() {
+		var path = this.GetConfigFilePath();
+		return Path.Exists(path);
+	}
+
+	private Configuration? OpenConfigFile() {
+		var path = this.GetConfigFilePath();
+		if (!Path.Exists(path)) return null;
+
+		var content = File.ReadAllText(path);
+		return JsonConvert.DeserializeObject<Configuration>(content);
+	}
+
+	private void SaveConfigFile() {
+		var path = this.GetConfigFilePath();
+		var content = JsonConvert.SerializeObject(this.Config, Formatting.Indented);
+		File.WriteAllText(path, content);
+	}
+
+	private string GetConfigFilePath() {
+		return Path.Join(this._dpi.GetPluginConfigDirectory(), "KtisisV3.json");
 	}
 	
 	// Create default config

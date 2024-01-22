@@ -9,15 +9,8 @@ namespace Ktisis.Services;
 
 public delegate void GPoseStateHandler(GPoseService sender, bool state);
 
-public interface IGPoseService {
-	public event Action Update;
-	public event GPoseStateHandler StateChanged;
-	
-	public bool IsGPosing { get; }
-}
-
 [Singleton]
-public class GPoseService : IGPoseService, IDisposable {
+public class GPoseService : IDisposable {
 	private readonly IClientState _clientState;
 	private readonly IFramework _framework;
 	
@@ -49,9 +42,15 @@ public class GPoseService : IGPoseService, IDisposable {
 		this._gposeEvent = gposeEvent;
 	}
 
+	private bool _isSubscribed;
+
 	public void Subscribe() {
+		if (this._isSubscribed) return;
 		this._framework.Update += this.OnFrameworkUpdate;
+		this._isSubscribed = true;
 	}
+
+	public void Reset() => this._isActive = false;
 
 	private void OnFrameworkUpdate(IFramework sender) {
 		var state = this.IsGPosing;
@@ -66,5 +65,6 @@ public class GPoseService : IGPoseService, IDisposable {
 
 	public void Dispose() {
 		this._framework.Update -= this.OnFrameworkUpdate;
+		this._isSubscribed = false;
 	}
 }
