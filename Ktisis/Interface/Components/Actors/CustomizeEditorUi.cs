@@ -136,7 +136,7 @@ public class CustomizeEditorUi {
 				this.Editor.Prepare()
 					.SetCustomization(CustomizeIndex.Tribe, (byte)tribe)
 					.SetCustomization(CustomizeIndex.Race, (byte)Math.Floor(((decimal)tribe + 1) / 2))
-					.Dispatch();
+					.Execute();
 			}
 		}
 	}

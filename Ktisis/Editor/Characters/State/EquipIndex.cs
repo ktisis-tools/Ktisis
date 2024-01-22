@@ -1,4 +1,4 @@
-using Ktisis.Data.Excel;
+using Ktisis.GameData.Excel;
 
 namespace Ktisis.Editor.Characters.State;
 

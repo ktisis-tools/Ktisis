@@ -11,8 +11,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/GameData/Excel/CharaMakeType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Excel/CharaMakeType.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Excel/ItemSheet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/GameData/Excel/ItemSheet.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaCmpReader.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/GameData/Chara/CharaCmpReader.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CommonColors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/GameData/Chara/CommonColors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/TribeColors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/GameData/Chara/TribeColors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeRace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeRace.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/State/EquipIndex.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/State/EquipIndex.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/State/WeaponIndex.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/State/WeaponIndex.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditorUi.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/ItemInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/ItemInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Services/ItemService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/ItemService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Services/NamingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/NamingService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,33 +86,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Attach to Process.36964:ffxiv_dx11.executor": "Debug",
-    "C++ Project.NativeComponents.executor": "Debug",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "v0.3",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Attach to Process.36964:ffxiv_dx11.executor&quot;: &quot;Debug&quot;,
+    &quot;C++ Project.NativeComponents.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;v0.3&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.C#&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\chirp\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache",
-      "C:\\Users\\chirp\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache",
-      "C:\\Users\\chirp\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\chirp\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\chirp\\AppData\\Roaming\\JetBrains\\Rider2023.3\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\chirp\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="NativeComponents" type="CppProject" factoryName="C++ Project">
       <configuration_1>
@@ -267,7 +286,8 @@
       <workItem from="1705658791264" duration="43119000" />
       <workItem from="1705750990529" duration="26420000" />
       <workItem from="1705790439276" duration="11844000" />
-      <workItem from="1705834104904" duration="29268000" />
+      <workItem from="1705834104904" duration="31432000" />
+      <workItem from="1705929046693" duration="1435000" />
     </task>
     <servers />
   </component>

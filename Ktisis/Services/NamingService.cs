@@ -4,7 +4,7 @@ using System.Linq;
 using Dalamud.Plugin.Services;
 
 using Ktisis.Core.Attributes;
-using Ktisis.Data.Excel;
+using Ktisis.GameData.Excel;
 
 namespace Ktisis.Services;
 

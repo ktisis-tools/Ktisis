@@ -11,7 +11,8 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 	// Customize wrappers
 	
 	public unsafe byte GetCustomization(CustomizeIndex index) {
-		if (!actor.IsValid || actor.CharacterBaseEx == null) return 0;
+		if (!actor.IsValid || actor.CharacterBaseEx == null)
+			return 0;
 		if (actor.Appearance.Customize.IsSet(index))
 			return actor.Appearance.Customize[index];
 		return actor.CharacterBaseEx->Customize[(uint)index];
@@ -80,7 +81,7 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 		var batch = this.Prepare().SetCustomization(CustomizeIndex.EyeColor, value);
 		if (!this.GetHeterochromia())
 			batch.SetCustomization(CustomizeIndex.EyeColor2, value);
-		batch.Dispatch();
+		batch.Execute();
 	}
 
 	// Batch setter
@@ -95,7 +96,7 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 			return this;
 		}
 		
-		public void Dispatch() {
+		public void Execute() {
 			var redraw = false;
 			foreach (var (index, value) in this.Values)
 				redraw |= editor.SetCustomizeValue(index, value) && IsRedrawRequired(index);
