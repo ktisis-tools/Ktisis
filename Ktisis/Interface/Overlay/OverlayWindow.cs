@@ -59,15 +59,15 @@ public class OverlayWindow : KtisisWindow {
 	// Main draw function
 
 	public override void Draw() {
-		var t = new Stopwatch();
-		t.Start();
+		//var t = new Stopwatch();
+		//t.Start();
 		
 		this._sceneDraw.DrawScene();
 		if (this._context.Config.Gizmo.Visible)
 			this.DrawGizmo();
 		
-		t.Stop();
-		this.DrawDebug(t);
+		//t.Stop();
+		//this.DrawDebug(t);
 	}
 
 	private void DrawGizmo() {

@@ -34,7 +34,7 @@ public class MigratorWindow : KtisisWindow {
 	
 	private const uint ColorYellow = 0xFF00FFFF;
 	
-	private const int WaitTime = 15;
+	private const int WaitTime = 10;
 
 	private bool CanBegin => this._timer.Elapsed.TotalSeconds >= WaitTime || this._elapsed;
 
@@ -92,6 +92,9 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.Text("Undo and redo is currently only implemented for object transforms.");
 		ImGui.Text("Support is planned for edits made to objects, such as appearance changes.");
+		ImGui.Spacing();
+		ImGui.Text("Character appearance edits may also conflict with changes made by Glamourer.");
+		ImGui.Text("I hope to discuss with its developer about implementing an IPC to resolve this.");
 		ImGui.Spacing();
 		ImGui.Text("Configuration options for the overlay, keybinds and bone categories will also be implemented during testing.");
 		ImGui.Text("Your current configuration will not be carried over into this version.");
