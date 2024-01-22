@@ -16,6 +16,8 @@ public interface ICustomizeEditor {
 
 public interface ICustomizeBatch {
 	public ICustomizeBatch SetCustomization(CustomizeIndex index, byte value);
+
+	public ICustomizeBatch SetIfNotNull(CustomizeIndex index, byte? value);
 	
 	public void Execute();
 }

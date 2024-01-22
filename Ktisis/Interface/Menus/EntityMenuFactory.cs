@@ -2,6 +2,7 @@ using GLib.Popups.Context;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Editor;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Interface.Types;
@@ -53,6 +54,9 @@ public class EntityMenuFactory {
 		EntityMenuFactory factory,
 		IEditorContext context
 	) : IEntityMenuMediator {
+		public void ExportChara(EntityCharaConverter converter)
+			=> factory._dialog.ExportCharaFile(converter);
+		
 		public void ExportPose(EntityPoseConverter converter)
 			=> factory._dialog.ExportPoseFile(converter);
 

@@ -11,27 +11,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/GameData/Excel/CharaMakeType.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Data/Files/CharaFile.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/EntityCharaConverter.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Import/CharaImportDialog.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Excel/CharaMakeType.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Excel/ItemSheet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/GameData/Excel/ItemSheet.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CharaCmpReader.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/GameData/Chara/CharaCmpReader.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/CommonColors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/GameData/Chara/CommonColors.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/Chara/TribeColors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/GameData/Chara/TribeColors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/FileConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/FileConfig.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeRace.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Make/MakeTypeRace.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/State/EquipIndex.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/State/EquipIndex.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/State/WeaponIndex.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/State/WeaponIndex.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/EquipmentEditorUi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/EquipInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/ItemInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/ItemInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/Types/WeaponInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/ItemService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/ItemService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Services/NamingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/NamingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/FileDialogManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/FileDialogManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/EntityMenuFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/EntityMenuFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneEntityMenu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneEntityMenu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Pose/PoseImportDialog.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Import/PoseImportDialog.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +42,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1ddc1083c82549229d360b3946f68e4b167e10/bb/d9e1365e/EquipmentModelId.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/29c45bbd4fa74fdcbefcf097e2d9d622179410/51/49659de2/EnvManager.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/6936cbdade1b42929d3daddf0e5cb166195410/90/150f67a7/EquipmentModelId.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/82bf9edf126e4d4288668714e6b49ed71c8c10/a3/43ee6f09/IObjectTable.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2bc78ee13d3bf4bce26f1c477ddb5204a88b1fa59177b283015d8f06d2e545f/DrawObject.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/3b4450c3a92291de7c2f81fa7e6994ca4b777bda0d145c824969cd196f23b/CharacterBase.cs" root0="SKIP_HIGHLIGHTING" />
@@ -102,7 +94,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.C#&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -287,7 +279,8 @@
       <workItem from="1705750990529" duration="26420000" />
       <workItem from="1705790439276" duration="11844000" />
       <workItem from="1705834104904" duration="31432000" />
-      <workItem from="1705929046693" duration="1435000" />
+      <workItem from="1705929046693" duration="8478000" />
+      <workItem from="1705949298091" duration="1558000" />
     </task>
     <servers />
   </component>

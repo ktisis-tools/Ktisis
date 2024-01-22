@@ -3,11 +3,12 @@ using System.Linq;
 using GLib.Popups.Context;
 
 using Ktisis.Editor;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
 using Ktisis.Interface.Types;
-using Ktisis.Interface.Windows.Pose;
+using Ktisis.Interface.Windows.Import;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
@@ -17,6 +18,7 @@ using Ktisis.Scene.Entities.World;
 namespace Ktisis.Interface.Menus;
 
 public interface IEntityMenuMediator {
+	public void ExportChara(EntityCharaConverter converter);
 	public void ExportPose(EntityPoseConverter converter);
 
 	public void OpenEditor<T>(T entity) where T : SceneEntity;
@@ -45,11 +47,11 @@ public class SceneEntityMenu(
 					.Action("Edit appearance", () => mediator.OpenEditor(actor))
 					.Separator()
 					.SubMenu("Import...", sb => {
-						sb.Action("Character (.chara)", () => { })
+						sb.Action("Character (.chara)", this.OpenCharaImport)
 							.Action("Pose file (.pose)", this.OpenPoseImport);
 					})
 					.SubMenu("Export...", sb => {
-						sb.Action("Character (.chara)", () => { })
+						sb.Action("Character (.chara)", this.OpenCharaExport)
 							.Action("Pose file (.pose)", this.OpenPoseExport);
 					});
 				break;
@@ -62,8 +64,8 @@ public class SceneEntityMenu(
 				cb.Separator()
 					.Action("Edit lighting", () => mediator.OpenEditor(light))
 					.Separator()
-					.Action("Import preset", () => { })
-					.Action("Export preset", () => { });
+					.Action("Import preset (TODO)", () => { })
+					.Action("Export preset (TODO)", () => { });
 				break;
 		}
 
@@ -79,6 +81,20 @@ public class SceneEntityMenu(
 
 		return cb.Build($"##EntityContext_{cb.GetHashCode():X}");
 	}
+	
+	// Chara
+
+	private void OpenCharaImport() {
+		if (entity is not ActorEntity actor) return;
+		mediator.OpenEditor<CharaImportDialog, ActorEntity>(actor);
+	}
+
+	private void OpenCharaExport() {
+		if (entity is not ActorEntity actor) return;
+		mediator.ExportChara(new EntityCharaConverter(actor));
+	}
+	
+	// Pose
 	
 	private void OpenPoseImport() {
 		var actor = entity switch {

@@ -11,10 +11,12 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Posing;
 
 namespace Ktisis.Interface;
 
+public delegate void CharaFileOpenedHandler(string path, CharaFile charaFile);
 public delegate void PoseFileOpenedHandler(string path, PoseFile poseFile);
 
 [Singleton]
@@ -50,7 +52,67 @@ public class FileDialogManager {
 		this.Config.File.LastOpenedPaths[dialog.Title] = dialog.ActiveDirectory;
 	}
 	
-	// File type handlers
+	// Chara file handling
+
+	public FileDialog OpenCharaFile(
+		CharaFileOpenedHandler handler
+	) {
+		return this.OpenDialog(
+			this._gui.AddPopupSingleton(new FileDialog(
+				"Open Chara File",
+				OnConfirm,
+				new FileDialogOptions {
+					Flags = FileDialogFlags.OpenMode,
+					Filters = "Character Files{.chara}",
+					Extension = ".chara"
+				}
+			))
+		);
+
+		void OnConfirm(FileDialog sender, IEnumerable<string> paths) {
+			var path = paths.FirstOrDefault();
+			if (path.IsNullOrEmpty()) return;
+			this.SaveDialogState(sender);
+
+			var content = File.ReadAllText(path);
+			var charaFile = new JsonFileSerializer().Deserialize<CharaFile>(content);
+			if (charaFile == null) return;
+			handler.Invoke(path, charaFile);
+		}
+	}
+
+	public FileDialog ExportCharaFile(
+		EntityCharaConverter chara
+	) {
+		return this.OpenDialog(
+			this._gui.AddPopupSingleton(new FileDialog(
+				"Export Chara File",
+				OnConfirm,
+				new FileDialogOptions {
+					Filters = "Character Files{.chara}",
+					Extension = ".chara"
+				}
+			))
+		);
+		
+		void OnConfirm(FileDialog sender, IEnumerable<string> paths) {
+			var path = paths.FirstOrDefault();
+			if (path.IsNullOrEmpty()) return;
+			this.SaveDialogState(sender);
+
+			this._framework.RunOnFrameworkThread(chara.Save).ContinueWith(task => {
+				if (task.Exception != null) {
+					Ktisis.Log.Error(task.Exception.ToString());
+					return;
+				}
+
+				var content = new JsonFileSerializer().Serialize(task.Result);
+				File.WriteAllText(path, content);
+			});
+		}
+	}
+	
+	// Pose file handling
 
 	public FileDialog OpenPoseFile(
 		PoseFileOpenedHandler handler

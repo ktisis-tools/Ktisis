@@ -8,20 +8,43 @@ using Ktisis.Scene.Entities.Game;
 namespace Ktisis.Editor.Characters.Handlers;
 
 public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
-	// Customize wrappers
+	// Customize state wrappers
 	
 	public unsafe byte GetCustomization(CustomizeIndex index) {
-		if (!actor.IsValid || actor.CharacterBaseEx == null)
-			return 0;
-		if (actor.Appearance.Customize.IsSet(index))
-			return actor.Appearance.Customize[index];
-		return actor.CharacterBaseEx->Customize[(uint)index];
+		if (!actor.IsValid) return 0;
+		
+		if (this.TryGetFromState(index, out var value))
+			return value;
+		
+		return actor.CharacterBaseEx != null ? actor.CharacterBaseEx->Customize[(uint)index] : (byte)0;
+	}
+
+	private bool TryGetFromState(CustomizeIndex index, out byte value) {
+		value = 0xFF;
+		if (!actor.Appearance.Customize.IsSet(index))
+			return false;
+		value = actor.Appearance.Customize[index];
+		return true;
 	}
 
 	public void SetCustomization(CustomizeIndex index, byte value) {
 		if (this.SetCustomizeValue(index, value))
 			this.UpdateCustomizeData(IsRedrawRequired(index));
 	}
+	
+	private unsafe bool IsCurrentValue(CustomizeIndex index, byte value) {
+		var result = true;
+
+		var hasState = this.TryGetFromState(index, out var stateVal);
+		if (hasState) result &= value == stateVal;
+		
+		var hasChara = actor.CharacterBaseEx != null;
+		if (hasChara) result &= value == actor.CharacterBaseEx->Customize[(uint)index];
+		
+		return (hasState || hasChara) && result;
+	}
+	
+	// Customize set handlers
 
 	private unsafe bool SetCustomizeValue(CustomizeIndex index, byte value) {
 		if (!actor.IsValid) return false;
@@ -95,11 +118,19 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 			this.Values[index] = value;
 			return this;
 		}
+
+		public ICustomizeBatch SetIfNotNull(CustomizeIndex index, byte? value) {
+			if (value == null) return this;
+			this.SetCustomization(index, value.Value);
+			return this;
+		}
 		
 		public void Execute() {
 			var redraw = false;
-			foreach (var (index, value) in this.Values)
+			foreach (var (index, value) in this.Values) {
+				if (editor.IsCurrentValue(index, value)) continue;
 				redraw |= editor.SetCustomizeValue(index, value) && IsRedrawRequired(index);
+			}
 			editor.UpdateCustomizeData(redraw);
 		}
 	}
