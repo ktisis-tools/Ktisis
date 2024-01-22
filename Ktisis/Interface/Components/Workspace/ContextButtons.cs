@@ -7,6 +7,7 @@ using GLib.Widgets;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor;
 using Ktisis.Editor.Context;
+using Ktisis.Interface.Windows;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -29,15 +30,16 @@ public class ContextButtons {
 		if (DrawButton(FontAwesomeIcon.ArrowsAlt, "Transform"))
 			this._ui.OpenTransformWindow(context);
 
-		if (DrawButton(FontAwesomeIcon.Sun, "Env"))
+		if (DrawButton(FontAwesomeIcon.Sun, "Environment"))
 			this._ui.OpenEnvironmentWindow(context);
 
 		var gizmo = context.Config.Gizmo.Visible;
 		var icon = gizmo ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
-		if (DrawButton(icon, "Gizmo"))
+		if (DrawButton(icon, "Toggle gizmo visibility"))
 			context.Config.Gizmo.Visible = !gizmo;
 
-		if (DrawButton(FontAwesomeIcon.EllipsisH, "Options", true)) { }
+		if (DrawButton(FontAwesomeIcon.Cog, "Settings"))
+			this._gui.GetOrCreate<ConfigWindow>().Open();
 	}
 
 	private static bool DrawButton(FontAwesomeIcon icon, string tooltip, bool final = false) {
