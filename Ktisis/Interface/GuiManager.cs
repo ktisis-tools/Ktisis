@@ -36,6 +36,7 @@ public class GuiManager : IDisposable {
 	// Initialization
 
 	public void Initialize() {
+		this._uiBuilder.DisableGposeUiHide = true;
 		this._uiBuilder.Draw += this.Draw;
 	}
 	
