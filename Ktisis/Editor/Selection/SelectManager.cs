@@ -50,7 +50,10 @@ public class SelectManager : ISelectManager {
 	
 	// Update handler
 
-	public void Update() => this.Selected.RemoveAll(item => !item.IsValid);
+	public void Update() {
+		var remove = this.Selected.RemoveAll(item => !item.IsValid);
+		if (remove > 0) this.InvokeChanged();
+	}
 	
 	// Selection
 
