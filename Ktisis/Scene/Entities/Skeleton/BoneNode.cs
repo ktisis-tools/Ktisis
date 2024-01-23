@@ -1,7 +1,6 @@
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Common.Utility;
-using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Posing.Utility;
 using Ktisis.Editor.Transforms;
@@ -14,7 +13,7 @@ using Ktisis.Scene.Types;
 namespace Ktisis.Scene.Entities.Skeleton;
 
 public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
-	public readonly PartialBoneInfo Info;
+	public PartialBoneInfo Info;
 	public uint PartialId;
 	
 	public bool Visible { get; set; }

@@ -87,6 +87,7 @@ public class OverlayWindow : KtisisWindow {
 		var cfg = this._context.Config.Gizmo;
 		this._gizmo.Mode = cfg.Mode;
 		this._gizmo.Operation = cfg.Operation;
+		this._gizmo.AllowAxisFlip = cfg.AllowAxisFlip;
 
 		var matrix = transform.ComposeMatrix();
 		if (this._gizmo.Manipulate(ref matrix, out _)) {

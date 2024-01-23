@@ -7,4 +7,6 @@ public class GizmoConfig {
 	
 	public Mode Mode = Mode.Local;
 	public Operation Operation = Operation.ROTATE;
+
+	public bool AllowAxisFlip = true;
 }

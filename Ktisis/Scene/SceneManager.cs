@@ -5,6 +5,7 @@ using System.Linq;
 
 using Ktisis.Editor.Context;
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Factory;
 using Ktisis.Scene.Modules;
@@ -28,6 +29,7 @@ public interface ISceneManager : IComposite, IDisposable {
 
 	public void Initialize();
 	public void Update();
+	public void Refresh();
 }
 
 public class SceneManager : ISceneManager {
@@ -123,6 +125,17 @@ public class SceneManager : ISceneManager {
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to update module '{module.GetType().Name}':\n{err}");
 		}
+	}
+	
+	// Refresh
+
+	public void Refresh() {
+		var entities = this.Root.Recurse()
+			.Where(entity => entity is IConfigurable)
+			.Cast<IConfigurable>();
+		
+		foreach (var entity in entities)
+			entity.Refresh();
 	}
 	
 	// Objects
