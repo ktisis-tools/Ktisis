@@ -1,18 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Collections.Generic;
 
 using Dalamud.Utility;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.Havok;
 
-using Ktisis.Common.Utility;
 using Ktisis.Common.Extensions;
-using Ktisis.Editor.Posing.Partials;
+using Ktisis.Common.Utility;
+using Ktisis.Editor.Posing.Types;
+using Ktisis.Editor.Posing.Utility;
 
-namespace Ktisis.Editor.Posing;
+namespace Ktisis.Editor.Posing.Data;
 
 [Flags]
 public enum PoseTransforms {
@@ -104,7 +105,7 @@ public class PoseContainer : Dictionary<string, Transform> {
 		this.ApplyToPartialBones(
 			modelSkeleton,
 			partialIndex,
-			Enumerable.Range(partialIndex > 0 ? 0 : 1, pose->Skeleton->Bones.Length),
+			Enumerable.Range(1, pose->Skeleton->Bones.Length),
 			transforms
 		);
 	}

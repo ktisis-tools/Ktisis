@@ -2,6 +2,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters;
+using Ktisis.Editor.Posing;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interop;
@@ -35,6 +36,8 @@ public class ContextBuilder {
 		var cameras = new CameraManager(mediator, scope);
 		var chara = new CharacterManager(mediator, scope);
 
+		var posing = new PosingManager(mediator, scope);
+
 		var nameResolver = this._naming.GetResolver();
 		var factory = new EntityFactory(mediator, nameResolver);
 		var scene = new SceneManager(mediator, scope, factory)
@@ -47,6 +50,7 @@ public class ContextBuilder {
 			Actions = actions,
 			Cameras = cameras,
 			Characters = chara,
+			Posing = posing,
 			Scene = scene,
 			Selection = select,
 			Transform = transform

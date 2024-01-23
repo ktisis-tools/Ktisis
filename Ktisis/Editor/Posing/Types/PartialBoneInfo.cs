@@ -1,4 +1,4 @@
-namespace Ktisis.Editor.Posing.Partials;
+namespace Ktisis.Editor.Posing.Types;
 
 public class PartialBoneInfo {
 	public string Name = string.Empty;

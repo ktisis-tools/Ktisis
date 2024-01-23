@@ -8,6 +8,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Utility;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;

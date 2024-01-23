@@ -13,6 +13,7 @@ using Ktisis.Data.Files;
 using Ktisis.Data.Json;
 using Ktisis.Editor.Characters;
 using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Data;
 
 namespace Ktisis.Interface;
 
@@ -160,7 +161,7 @@ public class FileDialogManager {
 			if (path.IsNullOrEmpty()) return;
 			this.SaveDialogState(sender);
 
-			this._framework.RunOnFrameworkThread(pose.Save).ContinueWith(task => {
+			this._framework.RunOnFrameworkThread(pose.SaveFile).ContinueWith(task => {
 				if (task.Exception != null) {
 					Ktisis.Log.Error(task.Exception.ToString());
 					return;

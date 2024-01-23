@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Sections;
-using Ktisis.Editor.Posing.Partials;
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities.Skeleton;
 

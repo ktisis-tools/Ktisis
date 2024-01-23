@@ -5,6 +5,7 @@ using Ktisis.Editor.Actions;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interop.Hooking;
@@ -25,6 +26,7 @@ public class EditorContext : IEditorContext {
 	public required IActionManager Actions { get; init; }
 	public required ICharacterState Characters { get; init; }
 	public required ICameraManager Cameras { get; init; }
+	public required IPosingManager Posing { get; init; }
 	public required ISceneManager Scene { get; init; }
 	public required ISelectManager Selection { get; init; }
 	public required ITransformHandler Transform { get; init; }
@@ -48,6 +50,7 @@ public class EditorContext : IEditorContext {
 			this.Actions.Initialize();
 			this.Characters.Initialize();
 			this.Cameras.Initialize();
+			this.Posing.Initialize();
 		} catch {
 			this.Dispose();
 			throw;
@@ -69,6 +72,7 @@ public class EditorContext : IEditorContext {
 		this._mediator.Destroy();
 		this._scope.Dispose();
 		this.Scene.Dispose();
+		this.Posing.Dispose();
 		this.Cameras.Dispose();
 		GC.SuppressFinalize(this);
 	}

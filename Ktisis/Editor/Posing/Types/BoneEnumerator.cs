@@ -5,7 +5,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
-namespace Ktisis.Editor.Posing.Partials;
+namespace Ktisis.Editor.Posing.Types;
 
 public class BoneEnumerator {
 	protected readonly int Index;

@@ -1,8 +1,8 @@
 using System;
 
-using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
+using Dalamud.Game.ClientState.Objects.Enums;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
@@ -82,8 +82,6 @@ public class CharacterModule : HookModule {
 
 		if (!this.Manager.TryGetStateForActor(actor, out var entity, out var state))
 			return;
-		
-		Ktisis.Log.Info($"{actor.Name} => {entity.Name}");
 		
 		// Apply customize
 

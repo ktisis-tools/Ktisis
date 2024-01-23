@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Bones;
-using Ktisis.Editor.Posing.Partials;
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Localization;

@@ -50,7 +50,7 @@ public class CharacterManager : ICharacterState {
 		return _entity != null;
 	}
 	
-	private ActorEntity? GetEntityForActor(GameObject actor) => this._mediator.Context.Scene.Children
+	public ActorEntity? GetEntityForActor(GameObject actor) => this._mediator.Context.Scene.Children
 		.Where(entity => entity is ActorEntity { IsValid: true })
 		.Cast<ActorEntity>()
 		.FirstOrDefault(entity => entity.Actor.ObjectIndex == actor.ObjectIndex);

@@ -13,6 +13,7 @@ public interface ICharacterState : IDisposable {
 	public void Initialize();
 
 	public bool TryGetStateForActor(GameObject actor, out ActorEntity entity, out AppearanceState state);
+	public ActorEntity? GetEntityForActor(GameObject actor);
 
 	public ICustomizeEditor GetCustomizeEditor(ActorEntity actor);
 	public IEquipmentEditor GetEquipmentEditor(ActorEntity actor);

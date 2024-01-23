@@ -5,6 +5,7 @@ using Ktisis.Editor;
 using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Data;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Windows.Editors;
 using Ktisis.Scene.Entities;

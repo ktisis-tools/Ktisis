@@ -1,9 +1,10 @@
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
-using Ktisis.Editor.Posing.Partials;
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Structs.Characters;
@@ -22,9 +23,11 @@ public class CharaEntity : WorldEntity, IAttachable {
 	
 	// Setup & update handling
 
+	public EntityPose? Pose { get; private set; }
+
 	public override void Setup() {
 		base.Setup();
-		this._pose.Add(this);
+		this.Pose = this._pose.Add(this);
 	}
 
 	public override void Update() {

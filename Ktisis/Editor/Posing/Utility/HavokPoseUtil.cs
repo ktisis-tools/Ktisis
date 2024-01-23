@@ -5,14 +5,14 @@ using FFXIVClientStructs.Havok;
 
 using Ktisis.Common.Utility;
 
-namespace Ktisis.Editor.Posing;
+namespace Ktisis.Editor.Posing.Utility;
 
 public static class HavokPoseUtil {
 	private const hkaPose.PropagateOrNot DontPropagate = hkaPose.PropagateOrNot.DontPropagate;
 	
 	// Model transform
 	
-	private static readonly Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
+	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
 	
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)

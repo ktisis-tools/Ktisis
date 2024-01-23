@@ -9,6 +9,7 @@ using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Data;
 using Ktisis.Interface.Components.Files;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
