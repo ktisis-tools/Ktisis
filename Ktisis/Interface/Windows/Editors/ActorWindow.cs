@@ -13,13 +13,13 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Windows.Editors;
 
-public class ActorEditWindow : EntityEditWindow<ActorEntity> {
+public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private readonly CustomizeEditorUi _custom;
 	private readonly EquipmentEditorUi _equip;
 
 	private IAppearanceManager Manager => this.Context.Appearance;
 	
-	public ActorEditWindow(
+	public ActorWindow(
 		IEditorContext context,
 		CustomizeEditorUi custom,
 		EquipmentEditorUi equip
