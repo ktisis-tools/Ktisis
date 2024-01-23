@@ -3,6 +3,7 @@ using System.Linq;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
+using Ktisis.Data.Config;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Posing.Types;
@@ -45,7 +46,8 @@ public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, I
 
 		private readonly Dictionary<BoneCategory, List<PartialBoneInfo>> CategoryMap = new();
 		private readonly List<PartialBoneInfo> BoneList = new();
-		
+
+		private Configuration Config => this._scene.Context.Config;
 		private LocaleManager Locale => this._scene.Context.Locale;
 		
 		public BoneTreeBuilder(
@@ -75,7 +77,7 @@ public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, I
 		public unsafe IBoneTreeBuilder BuildCategoryMap() {
 			this.CategoryMap.Clear();
 
-			var categories = this._scene.Context.Config.Categories;
+			var categories = this.Config.Categories;
             
 			var skeleton = this.GetSkeleton();
 			if (skeleton == null) return this;
@@ -88,9 +90,9 @@ public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, I
 					Ktisis.Log.Warning($"Failed to find category for {bone.Name}! Skipping...");
 					continue;
 				}
-
-				// TODO: Configure this
-				if (category.IsNsfw) continue;
+				
+				if (category.IsNsfw && !this.Config.Categories.ShowNsfwBones)
+					continue;
 
 				if (this.CategoryMap.TryGetValue(category, out var boneList))
 					boneList.Add(bone);
@@ -181,20 +183,23 @@ public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, I
 			foreach (var boneInfo in bones) {
 				var bone = exists?.Find(bone => bone.Info.Name == boneInfo.Name);
 				if (bone != null) {
-					if (this.Index <= bone.Info.PartialIndex)
+					if (this.Index != bone.Info.PartialIndex) {
 						node.Remove(bone);
-					else continue;
+						continue;
+					}
+					bone.Info = boneInfo;
+					bone.PartialId = this.PartialId;
+				} else {
+					node.Add(new BoneNode(
+						this._scene,
+						node.Pose,
+						boneInfo,
+						this.PartialId
+					) {
+						Name = this.Locale.GetBoneName(boneInfo),
+						SortPriority = basePrio + boneInfo.BoneIndex
+					});
 				}
-				
-				node.Add(new BoneNode(
-					this._scene,
-					node.Pose,
-					boneInfo,
-					this.PartialId
-				) {
-					Name = this.Locale.GetBoneName(boneInfo),
-					SortPriority = basePrio + boneInfo.BoneIndex
-				});
 			}
 			
 			node.OrderByPriority();

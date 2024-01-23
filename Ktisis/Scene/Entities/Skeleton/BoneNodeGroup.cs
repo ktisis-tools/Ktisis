@@ -17,7 +17,9 @@ public class BoneNodeGroup : SkeletonGroup, IAttachTarget {
 		this.Pose = pose;
 	}
 
-	public bool IsStale() => !this.IsValid || this.GetChildren().Count == 0;
+	public bool IsStale() => !this.IsValid || this.GetChildren().Count == 0 || this.IsDisabledNsfw();
+
+	private bool IsDisabledNsfw() => this.Category is { IsNsfw: true } && !this.Scene.Context.Config.Categories.ShowNsfwBones;
 	
 	// Attach
 	

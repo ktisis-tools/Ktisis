@@ -16,18 +16,23 @@ public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene), 
 	
 	private IEnumerable<IVisibility> RecurseVisible()
 		=> this.Children.Where(child => child is IVisibility).Cast<IVisibility>();
-	
-	protected void Clean(int pIndex, uint pId) => this.GetChildren().RemoveAll(item => {
-		switch (item) {
-			case BoneNodeGroup group:
-				group.Clean(pIndex, pId);
-				return group.IsStale();
-			case BoneNode bone:
-				return bone.Info.PartialIndex == pIndex && bone.PartialId != pId;
-			default:
-				return false;
-		}
-	});
+
+	protected void Clean(int pIndex, uint pId) {
+		var staleItems = this.GetChildren().Where(item => {
+			switch (item) {
+				case BoneNodeGroup group:
+					group.Clean(pIndex, pId);
+					return group.IsStale();
+				case BoneNode bone:
+					return bone.Info.PartialIndex == pIndex && bone.PartialId != pId;
+				default:
+					return false;
+			}
+		}).ToList();
+
+		foreach (var staleItem in staleItems)
+			staleItem.Remove();
+	}
 
 	public IEnumerable<BoneNode> GetAllBones() {
 		var unique = new HashSet<BoneNode>();

@@ -8,7 +8,7 @@ namespace Ktisis.Data.Config.Sections;
 public class EditorConfig {
 	// Values
 
-	public bool OpenOnEnterGPose = true; // TODO
+	public bool OpenOnEnterGPose = true;
 	
 	public Dictionary<EntityType, EntityDisplay> Display = EntityDisplay.GetDefaults();
 	

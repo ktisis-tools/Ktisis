@@ -19,7 +19,9 @@ public interface IGizmo {
 	
 	public Mode Mode { get; set; }
 	public Operation Operation { get; set; }
-	
+
+	public bool AllowAxisFlip { get; set; }
+
 	public bool IsEnded { get; }
 
 	public void SetMatrix(Matrix4x4 view, Matrix4x4 proj);
@@ -61,6 +63,8 @@ public class Gizmo : IGizmo {
 	public Mode Mode { get; set; } = Mode.Local;
 	public Operation Operation { get; set; } = Operation.UNIVERSAL;
 
+	public bool AllowAxisFlip { get; set; } = true;
+
 	public bool IsEnded { get; private set; } = false;
 	
 	// Draw
@@ -78,6 +82,7 @@ public class Gizmo : IGizmo {
 
 		ImGuizmo.Gizmo.ID = (int)this.Id;
 		ImGuizmo.Gizmo.GizmoScale = this.ScaleFactor;
+		ImGuizmo.Gizmo.AllowAxisFlip = this.AllowAxisFlip;
 		ImGuizmo.Gizmo.BeginFrame();
 
 		this.IsUsedPrev = ImGuizmo.Gizmo.IsUsing;

@@ -2,20 +2,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-
-using Ktisis.Editor.Posing.Types;
-
 using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Types;
+using Ktisis.Scene.Decor;
 
 namespace Ktisis.Scene.Entities.Skeleton;
 
-public class EntityPose : SkeletonGroup {
+public class EntityPose : SkeletonGroup, IConfigurable {
 	private readonly IPoseBuilder _builder;
 	
 	public EntityPose(
@@ -31,14 +31,25 @@ public class EntityPose : SkeletonGroup {
 	// Bones
 
 	private readonly Dictionary<int, PartialSkeletonInfo> Partials = new();
-
 	private readonly Dictionary<(int p, int i), BoneNode> BoneMap = new();
 	
 	// Update handler
 
 	public override void Update() {
-		if (this.IsValid)
-			this.UpdatePose();
+		if (!this.IsValid) return;
+		this.UpdatePose();
+	}
+
+	public unsafe void Refresh() {
+		var skeleton = this.GetSkeleton();
+		if (skeleton == null) return;
+
+		this.Partials.Clear();
+		for (var index = 0; index < skeleton->PartialSkeletonCount; index++) {
+			var partial = skeleton->PartialSkeletons[index];
+			var id = GetPartialId(partial);
+			this.Clean(index, id);
+		}
 	}
 
 	private unsafe void UpdatePose() {
@@ -51,9 +62,7 @@ public class EntityPose : SkeletonGroup {
 
 	private unsafe void UpdatePartial(RenderSkeleton* skeleton, int index) {
 		var partial = skeleton->PartialSkeletons[index];
-		var resource = partial.SkeletonResourceHandle;
-
-		var id = resource != null ? resource->ResourceHandle.Id : 0;
+		var id = GetPartialId(partial);
 
 		uint prevId = 0;
 		if (this.Partials.TryGetValue(index, out var info)) {
@@ -98,6 +107,11 @@ public class EntityPose : SkeletonGroup {
 		foreach (var child in this.Recurse())
 			if (child is BoneNode bone && bone.Info.PartialIndex == index)
 				this.BoneMap.Add((index, bone.Info.BoneIndex), bone);
+	}
+
+	private unsafe static uint GetPartialId(PartialSkeleton partial) {
+		var resource = partial.SkeletonResourceHandle;
+		return resource != null ? resource->ResourceHandle.Id : 0;
 	}
 	
 	// Skeleton access

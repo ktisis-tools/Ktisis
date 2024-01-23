@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -9,7 +8,13 @@ using Ktisis.Data.Config.Bones;
 namespace Ktisis.Data.Config.Sections;
 
 public class CategoryConfig {
+	// Data
+	
 	public readonly List<BoneCategory> CategoryList = new();
+
+	public bool ShowNsfwBones = true;
+    
+	// Default category
 	
 	public BoneCategory? Default { get; set; }
 
