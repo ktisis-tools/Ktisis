@@ -161,6 +161,10 @@ public class PoseContainer : Dictionary<string, Transform> {
 		var target = new Transform(initial.Position, initial.Rotation, initial.Scale);
 
 		var posRoot = partialIndex == 0 && boneIndex == 1 && transforms.HasFlag(PoseTransforms.PositionRoot);
+
+		if (posRoot)
+			initial.Rotation = offset * model.Rotation;
+		
 		if (transforms.HasFlag(PoseTransforms.Position) || posRoot)
 			target.Position = model.Position;
 		if (transforms.HasFlag(PoseTransforms.Rotation))
