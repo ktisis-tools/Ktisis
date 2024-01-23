@@ -11,11 +11,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Structs/Camera/WorldMatrix.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/Data/PoseContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Data/PoseContainer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingModule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneDraw.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneDraw.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SelectableGui.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SelectableGui.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Services/CameraService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/CameraService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -276,7 +277,7 @@
       <workItem from="1705834104904" duration="31432000" />
       <workItem from="1705929046693" duration="8478000" />
       <workItem from="1705949298091" duration="13547000" />
-      <workItem from="1706007764918" duration="27394000" />
+      <workItem from="1706007764918" duration="28536000" />
     </task>
     <servers />
   </component>
