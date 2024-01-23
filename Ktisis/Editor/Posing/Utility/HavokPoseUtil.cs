@@ -89,8 +89,6 @@ public static class HavokPoseUtil {
 			if (parentBone != boneIx && !IsBoneDescendantOf(hkaSkele->ParentIndices, parentBone, boneIx))
 				continue;
 			
-			if (boneIx == parentBone)
-				SetModelTransform(subPose, rootBone, target);
 			Propagate(subPose, rootBone, sourcePos, deltaPos, deltaRot);
 		}
 	}

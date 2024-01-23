@@ -62,7 +62,7 @@ public class PosingManager : IPosingManager {
 		if (!this._savedPoses.TryGetValue(gameObject.ObjectIndex, out var pose))
 			return;
 		
-		pose.ApplyToPartial(skeleton, partialId);
+		pose.ApplyToPartial(skeleton, partialId, PoseTransforms.Rotation | PoseTransforms.PositionRoot);
 	}
 	
 	// Disposal
