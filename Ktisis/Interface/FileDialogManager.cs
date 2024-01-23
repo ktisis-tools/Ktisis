@@ -138,6 +138,7 @@ public class FileDialogManager {
 			var content = File.ReadAllText(path);
 			var poseFile = new JsonFileSerializer().Deserialize<PoseFile>(content);
 			if (poseFile == null) return;
+			poseFile.ConvertLegacyBones();
 			handler.Invoke(path, poseFile);
 		}
 	}
