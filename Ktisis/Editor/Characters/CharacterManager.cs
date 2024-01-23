@@ -12,13 +12,13 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters;
 
-public class AppearanceManager : IAppearanceManager {
+public class CharacterManager : ICharacterState {
 	private readonly IContextMediator _mediator;
 	private readonly HookScope _scope;
 
 	public bool IsValid => this._mediator.Context.IsValid;
     
-	public AppearanceManager(
+	public CharacterManager(
 		IContextMediator mediator,
 		HookScope scope
 	) {
@@ -28,12 +28,12 @@ public class AppearanceManager : IAppearanceManager {
 	
 	// Initialization
 	
-	private AppearanceModule? Module { get; set; }
+	private CharacterModule? Module { get; set; }
 
 	public void Initialize() {
 		Ktisis.Log.Verbose("Initializing appearance module...");
 		try {
-			this.Module = this._scope.Create<AppearanceModule>(this);
+			this.Module = this._scope.Create<CharacterModule>(this);
 			this.Module.Initialize();
 			this.Module.EnableAll();
 		} catch (Exception err) {

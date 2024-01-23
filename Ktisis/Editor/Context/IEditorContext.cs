@@ -18,7 +18,7 @@ public interface IEditorContext : IDisposable {
 	public LocaleManager Locale { get; }
 	
 	public IActionManager Actions { get; }
-	public IAppearanceManager Appearance { get; }
+	public ICharacterState Characters { get; }
 	public ICameraManager Cameras { get; }
 	public ISceneManager Scene { get; }
 	public ISelectManager Selection { get; }
