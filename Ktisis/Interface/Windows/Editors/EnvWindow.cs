@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
@@ -74,6 +75,14 @@ public class EnvWindow : KtisisWindow {
 		if (this._scene.IsValid && this._module.IsInit) return;
 		Ktisis.Log.Verbose("State for env editor is stale, closing...");
 		this.Close();
+	}
+	
+	public override void PreDraw() {
+		base.PreDraw();
+		this.SizeConstraints = new WindowSizeConstraints {
+			MinimumSize = new Vector2(400, 300),
+			MaximumSize = ImGui.GetIO().DisplaySize * 0.90f
+		};
 	}
 
 	public unsafe override void Draw() {
