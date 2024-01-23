@@ -17,7 +17,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private readonly CustomizeEditorUi _custom;
 	private readonly EquipmentEditorUi _equip;
 
-	private IAppearanceManager Manager => this.Context.Appearance;
+	private ICharacterState Manager => this.Context.Characters;
 	
 	public ActorWindow(
 		IEditorContext context,
@@ -46,6 +46,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	}
 
 	public override void PreDraw() {
+		base.PreDraw();
 		this.SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = new Vector2(560, 380),
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.90f

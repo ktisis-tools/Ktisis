@@ -23,7 +23,7 @@ public class EditorContext : IEditorContext {
 	public LocaleManager Locale => this._mediator.Locale;
 	
 	public required IActionManager Actions { get; init; }
-	public required IAppearanceManager Appearance { get; init; }
+	public required ICharacterState Characters { get; init; }
 	public required ICameraManager Cameras { get; init; }
 	public required ISceneManager Scene { get; init; }
 	public required ISelectManager Selection { get; init; }
@@ -46,7 +46,7 @@ public class EditorContext : IEditorContext {
 			this.IsInit = true;
 			this.Scene.Initialize();
 			this.Actions.Initialize();
-			this.Appearance.Initialize();
+			this.Characters.Initialize();
 			this.Cameras.Initialize();
 		} catch {
 			this.Dispose();

@@ -15,17 +15,17 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters;
 
-public class AppearanceModule : HookModule {
-	private readonly IAppearanceManager Manager;
+public class CharacterModule : HookModule {
+	private readonly ICharacterState Manager;
 
 	private readonly ActorService _actors;
 	private readonly CustomizeDiscoveryService _discovery;
 
 	private bool IsValid => this.Manager.IsValid;
 
-	public AppearanceModule(
+	public CharacterModule(
 		IHookMediator hook,
-		IAppearanceManager manager,
+		ICharacterState manager,
 		ActorService actors,
 		CustomizeDiscoveryService discovery
 	) : base(hook) {

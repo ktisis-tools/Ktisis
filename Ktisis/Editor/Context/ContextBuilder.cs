@@ -31,9 +31,9 @@ public class ContextBuilder {
 		var scope = this._interop.CreateScope();
 		
 		var actions = this._actions.Initialize(mediator, scope);
-
-		var appearance = new AppearanceManager(mediator, scope);
+		
 		var cameras = new CameraManager(mediator, scope);
+		var chara = new CharacterManager(mediator, scope);
 
 		var nameResolver = this._naming.GetResolver();
 		var factory = new EntityFactory(mediator, nameResolver);
@@ -45,8 +45,8 @@ public class ContextBuilder {
 
 		var context = new EditorContext(mediator, scope) {
 			Actions = actions,
-			Appearance = appearance,
 			Cameras = cameras,
+			Characters = chara,
 			Scene = scene,
 			Selection = select,
 			Transform = transform
