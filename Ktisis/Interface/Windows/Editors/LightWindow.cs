@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
+using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
 
 using ImGuiNET;
 
-using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Types;
 using Ktisis.Localization;
@@ -25,6 +25,14 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 	}
 
 	// Draw handlers
+	
+	public override void PreDraw() {
+		base.PreDraw();
+		this.SizeConstraints = new WindowSizeConstraints {
+			MinimumSize = new Vector2(400, 300),
+			MaximumSize = ImGui.GetIO().DisplaySize * 0.90f
+		};
+	}
 	
 	public override void Draw() {
 		var s = this.Context.Selection;
