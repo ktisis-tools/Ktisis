@@ -11,22 +11,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Ktisis/Scene/Decor/IConfigurable.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/CategoryConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/CategoryConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/EditorConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/EditorConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/GizmoConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/GizmoConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Selection/SelectManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Selection/SelectManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Gizmo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/Gizmo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/OverlayWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/OverlayWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/ConfigWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/ConfigWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNodeGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNodeGroup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/EntityPose.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/EntityPose.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/SkeletonGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/SkeletonGroup.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Factory/Builders/PoseBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Factory/Builders/PoseBuilder.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/Data/PoseContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Data/PoseContainer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingModule.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -287,7 +276,7 @@
       <workItem from="1705834104904" duration="31432000" />
       <workItem from="1705929046693" duration="8478000" />
       <workItem from="1705949298091" duration="13547000" />
-      <workItem from="1706007764918" duration="12267000" />
+      <workItem from="1706007764918" duration="27394000" />
     </task>
     <servers />
   </component>

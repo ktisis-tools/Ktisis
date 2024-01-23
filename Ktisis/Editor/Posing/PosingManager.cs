@@ -61,7 +61,8 @@ public class PosingManager : IPosingManager {
 	public unsafe void RestorePoseFor(GameObject gameObject, Skeleton* skeleton, ushort partialId) {
 		if (!this._savedPoses.TryGetValue(gameObject.ObjectIndex, out var pose))
 			return;
-		pose.ApplyToPartial(skeleton, partialId, PoseTransforms.Position | PoseTransforms.Rotation | PoseTransforms.Scale);
+		
+		pose.ApplyToPartial(skeleton, partialId);
 	}
 	
 	// Disposal
