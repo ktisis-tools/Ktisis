@@ -2,7 +2,8 @@ using FFXIVClientStructs.Havok;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
-using Ktisis.Editor.Posing.Partials;
+using Ktisis.Editor.Posing.Types;
+using Ktisis.Editor.Posing.Utility;
 using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;
 

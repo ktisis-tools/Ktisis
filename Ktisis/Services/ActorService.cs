@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using Dalamud.Plugin.Services;
 using Dalamud.Game.ClientState.Objects.Types;
 
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
+
 using Ktisis.Core.Attributes;
 
 namespace Ktisis.Services;
@@ -32,5 +36,33 @@ public class ActorService {
 			if (actor != null)
 				yield return actor;
 		}
+	}
+
+	public unsafe GameObject? GetSkeletonOwner(Skeleton* skeleton) {
+		foreach (var actor in this._objectTable) {
+			var csPtr = (CSGameObject*)actor.Address;
+			if (csPtr == null || csPtr->DrawObject == null) continue;
+
+			var drawObject = csPtr->DrawObject;
+			if (drawObject->Object.GetObjectType() != ObjectType.CharacterBase)
+				continue;
+
+			if (this.GetSkeletonFor(actor) == skeleton)
+				return actor;
+		}
+		
+		return null;
+	}
+
+	public unsafe Skeleton* GetSkeletonFor(GameObject gameObject) {
+		var csPtr = (CSGameObject*)gameObject.Address;
+		if (csPtr == null || csPtr->DrawObject == null)
+			return null;
+
+		var drawObject = csPtr->DrawObject;
+		if (drawObject->Object.GetObjectType() != ObjectType.CharacterBase)
+			return null;
+		
+		return ((CharacterBase*)drawObject)->Skeleton;
 	}
 }

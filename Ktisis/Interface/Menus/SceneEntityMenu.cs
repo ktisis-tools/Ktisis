@@ -1,11 +1,8 @@
-using System.Linq;
-
 using GLib.Popups.Context;
 
-using Ktisis.Editor;
 using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context;
-using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Selection;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Windows.Import;
@@ -109,7 +106,7 @@ public class SceneEntityMenu(
 	private void OpenPoseExport() {
 		var pose = entity switch {
 			EntityPose _pose => _pose,
-			ActorEntity _actor => (EntityPose?)_actor.Children.FirstOrDefault(child => child is EntityPose),
+			ActorEntity _actor => _actor.Pose,
 			_ => null
 		};
 		if (pose == null) return;

@@ -1,4 +1,4 @@
-using Ktisis.Editor.Posing.Partials;
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Scene.Decor;

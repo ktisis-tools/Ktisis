@@ -7,12 +7,10 @@ using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 
 using Ktisis.Core.Attributes;
-using Ktisis.Editor;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interface.Widgets;
 using Ktisis.Localization;
-using Ktisis.Scene.Modules;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -51,15 +49,14 @@ public class WorkspaceState {
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetStyle().ItemSpacing.X);
 		ImGui.SetCursorPosY(cursorY + (avail - ImGui.GetFrameHeight()) / 2);
 		
-		var module = context.Scene.GetModule<PosingModule>();
-		var isPosing = module.IsEnabled;
+		var isPosing = context.Posing.IsEnabled;
 		
 		var locKey = isPosing ? "enable" : "disable";
 		
 		var color = isPosing ? 0xFF3AD86A : 0xFF504EC4;
 		using var _button = ImRaii.PushColor(ImGuiCol.Button, isPosing ? 0xFF00FF00 : 0xFF7070C0);
 		if (ToggleButton.Draw("##KtisisPoseToggle", ref isPosing, color))
-			module.SetEnabled(isPosing);
+			context.Posing.SetEnabled(isPosing);
 
 		if (ImGui.IsItemHovered()) {
 			using var _ = ImRaii.Tooltip();

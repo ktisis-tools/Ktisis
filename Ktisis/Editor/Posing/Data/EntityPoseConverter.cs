@@ -2,24 +2,28 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Ktisis.Data.Files;
-using Ktisis.Editor.Posing.Partials;
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 
-namespace Ktisis.Editor.Posing;
+namespace Ktisis.Editor.Posing.Data;
 
 public class EntityPoseConverter(EntityPose target) {
 	// Save pose file
 
-	public unsafe PoseFile Save() {
-		var file = new PoseFile();
-
+	public unsafe PoseContainer Save() {
+		var bones = new PoseContainer();
 		var skeleton = target.GetSkeleton();
-		if (skeleton != null) {
-			file.Bones = new PoseContainer();
-			file.Bones.Store(skeleton);
-		}
-		
+		if (skeleton != null)
+			bones.Store(skeleton);
+		return bones;
+	}
+
+	public PoseFile SaveFile() {
+		var file = new PoseFile {
+			Bones = this.Save()
+		};
+
 		// TODO: Weapons
 
 		return file;

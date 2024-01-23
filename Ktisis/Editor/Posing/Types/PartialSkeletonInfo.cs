@@ -5,7 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Common.Extensions;
 
-namespace Ktisis.Editor.Posing.Partials;
+namespace Ktisis.Editor.Posing.Types;
 
 public class PartialSkeletonInfo {
 	public uint Id;

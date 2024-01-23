@@ -1,6 +1,7 @@
 using System.Numerics;
 
 using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Data;
 
 namespace Ktisis.Data.Files;
 

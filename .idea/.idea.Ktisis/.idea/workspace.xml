@@ -11,14 +11,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingManager.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Types/IPosingManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/CharacterManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/AppearanceModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/CharacterModule.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/IAppearanceManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICharacterState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/FileConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/FileConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Files/PoseFile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Files/PoseFile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/CharacterManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/CharacterManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/CharacterModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/CharacterModule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICharacterState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICharacterState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/ContextBuilder.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Context/IEditorContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Context/IEditorContext.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/EditorContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/EditorContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Editors/ActorWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/EntityPoseConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Data/EntityPoseConverter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/HavokPoseUtil.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Utility/HavokPoseUtil.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/Partials/BoneEnumerator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Types/BoneEnumerator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/Partials/PartialBoneInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Types/PartialBoneInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/Partials/PartialSkeletonInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Types/PartialSkeletonInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Posing/PoseContainer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/Data/PoseContainer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Transforms/AttachUtil.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/AttachUtil.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformTarget.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformTarget.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/WorkspaceState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/WorkspaceState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/FileDialogManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/FileDialogManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/EntityMenuFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/EntityMenuFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneEntityMenu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneEntityMenu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneDraw.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/SceneDraw.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Import/PoseImportDialog.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Import/PoseImportDialog.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Localization/LocaleManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Localization/LocaleManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Decor/IAttachable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Decor/IAttachable.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/BoneNode.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/EntityPose.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Skeleton/EntityPose.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Factory/Builders/PoseBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Factory/Builders/PoseBuilder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Factory/IEntityBuilder.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Factory/IEntityBuilder.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/PosingModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Posing/PosingModule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/SceneManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Services/ActorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/ActorService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -279,7 +307,7 @@
       <workItem from="1705834104904" duration="31432000" />
       <workItem from="1705929046693" duration="8478000" />
       <workItem from="1705949298091" duration="13547000" />
-      <workItem from="1706007764918" duration="315000" />
+      <workItem from="1706007764918" duration="7030000" />
     </task>
     <servers />
   </component>

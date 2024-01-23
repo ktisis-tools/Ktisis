@@ -5,7 +5,7 @@ using System.Linq;
 using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Editor.Posing.Partials;
+using Ktisis.Editor.Posing.Types;
 
 using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
