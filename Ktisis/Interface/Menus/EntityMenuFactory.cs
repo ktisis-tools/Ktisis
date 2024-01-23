@@ -37,8 +37,8 @@ public class EntityMenuFactory {
 
 	public KtisisWindow? OpenEditorFor(IEditorContext context, SceneEntity entity) {
 		return entity switch {
-			ActorEntity actor => this.OpenEditor<ActorEditWindow, ActorEntity>(context, actor),
-			LightEntity light => this.OpenEditor<LightEditWindow, LightEntity>(context, light),
+			ActorEntity actor => this.OpenEditor<ActorWindow, ActorEntity>(context, actor),
+			LightEntity light => this.OpenEditor<LightWindow, LightEntity>(context, light),
 			_ => null
 		};
 	}

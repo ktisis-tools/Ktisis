@@ -14,10 +14,10 @@ using Ktisis.Structs.Lights;
 
 namespace Ktisis.Interface.Windows.Editors;
 
-public class LightEditWindow : EntityEditWindow<LightEntity> {
+public class LightWindow : EntityEditWindow<LightEntity> {
 	private readonly LocaleManager _locale;
 
-	public LightEditWindow(
+	public LightWindow(
 		IEditorContext context,
 		LocaleManager locale
 	) : base("Light Editor", context) {

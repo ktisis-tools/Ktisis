@@ -52,7 +52,7 @@ public class EditorUi {
 	public void OpenEnvironmentWindow(IEditorContext context) {
 		var scene = context.Scene;
 		var module = scene.GetModule<EnvModule>();
-		this._gui.GetOrCreate<EnvEditWindow>(scene, module).Open();
+		this._gui.GetOrCreate<EnvWindow>(scene, module).Open();
 	}
 
 	public void OpenCameraWindow(IEditorContext context) {

@@ -17,7 +17,7 @@ using Ktisis.Structs.Env;
 
 namespace Ktisis.Interface.Windows.Editors;
 
-public class EnvEditWindow : KtisisWindow {
+public class EnvWindow : KtisisWindow {
 	private enum EnvEditorTab {
 		None,
 		Sky,
@@ -37,7 +37,7 @@ public class EnvEditWindow : KtisisWindow {
 	private EnvEditorTab Current = EnvEditorTab.None;
 	private readonly Dictionary<EnvEditorTab, EditorBase> _editors = new();
 	
-	public EnvEditWindow(
+	public EnvWindow(
 		ISceneManager scene,
 		IEnvModule module,
 		WeatherSelect weatherSelect,
@@ -63,7 +63,7 @@ public class EnvEditWindow : KtisisWindow {
 			.Setup(EnvEditorTab.Wind, wind);
 	}
 
-	private EnvEditWindow Setup(EnvEditorTab id, EditorBase editor) {
+	private EnvWindow Setup(EnvEditorTab id, EditorBase editor) {
 		this._editors.Add(id, editor);
 		return this;
 	}
