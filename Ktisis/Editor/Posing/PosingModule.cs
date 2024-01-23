@@ -136,7 +136,7 @@ public class PosingModule : HookModule {
 
 		var actor = this._actors.GetSkeletonOwner(skeleton);
 		if (actor == null) return;
-		Ktisis.Log.Verbose($"Restoring pose for {actor.Name} ({actor.ObjectIndex})");
+		Ktisis.Log.Verbose($"Restoring pose {partialId} for {actor.Name} ({actor.ObjectIndex})");
 		
 		this.Manager.RestorePoseFor(actor, skeleton, partialId);
 	}
