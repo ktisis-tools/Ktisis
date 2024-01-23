@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -55,12 +56,13 @@ public class Transform {
 	}
 
 	public void DecomposeMatrix(Matrix4x4 mx) {
-		if (!Matrix4x4.Decompose(
+		// TODO: Look into why this returns false when an actor is scaled, lol.
+		Matrix4x4.Decompose(
 			mx,
 			out var scl,
 			out var rot,
 			out var pos
-		)) return;
+		);
 		
 		this.Position = pos;
 		this.Rotation = rot;
