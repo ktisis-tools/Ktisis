@@ -213,7 +213,7 @@ public class SelectableGui {
 			var camera = this._camera.GetSceneCamera();
 			if (camera == null) return;
 
-			if (!camera->WorldToScreen(worldPos, out var pos2d))
+			if (!this._camera.WorldToScreen(worldPos, out var pos2d))
 				return;
 
 			var dist = Vector3.Distance(camera->Object.Position, worldPos);

@@ -97,13 +97,9 @@ public class SceneDraw {
 		}
 	}
 	
-	private unsafe void DrawLine(ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos) {
-		var camera = this._camera.GetSceneCamera();
-		if (camera == null) return;
-
-		if (!camera->WorldToScreen(fromPos, out var fromPos2d)) return;
-		if (!camera->WorldToScreen(toPos, out var toPos2d)) return;
-
+	private void DrawLine(ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos) {
+		if (!this._camera.WorldToScreen(fromPos, out var fromPos2d)) return;
+		if (!this._camera.WorldToScreen(toPos, out var toPos2d)) return;
 		drawList.AddLine(fromPos2d, toPos2d, 0xFFFFFFFF);
 	}
 	
