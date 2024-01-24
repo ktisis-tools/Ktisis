@@ -11,7 +11,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
-using Ktisis.Editor.Characters.Import;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Posing.Data;
 
 namespace Ktisis.Interface;

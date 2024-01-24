@@ -1,3 +1,5 @@
+using Ktisis.Scene.Types;
+
 namespace Ktisis.Scene.Entities.Skeleton;
 
 public abstract class SkeletonNode : SceneEntity {

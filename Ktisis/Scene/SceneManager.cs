@@ -7,30 +7,13 @@ using Ktisis.Editor.Context;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
-using Ktisis.Scene.Factory;
+using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Modules.Lights;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene;
-
-public interface ISceneManager : IComposite, IDisposable {
-	public bool IsValid { get; }
-	
-	public IEditorContext Context { get; }
-	
-	public IEntityFactory Factory { get; }
-
-	public T GetModule<T>() where T : SceneModule;
-	public bool TryGetModule<T>(out T? module) where T : SceneModule;
-	
-	public double UpdateTime { get; }
-
-	public void Initialize();
-	public void Update();
-	public void Refresh();
-}
 
 public class SceneManager : ISceneManager {
 	private readonly IContextMediator _mediator;

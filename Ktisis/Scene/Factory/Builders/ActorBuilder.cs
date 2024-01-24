@@ -2,6 +2,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Factory.Types;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Factory.Builders;
 

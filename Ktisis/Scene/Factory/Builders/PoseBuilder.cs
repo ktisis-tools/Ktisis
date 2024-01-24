@@ -10,6 +10,7 @@ using Ktisis.Editor.Posing.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Factory.Types;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Factory.Builders;
 

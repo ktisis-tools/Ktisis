@@ -1,12 +1,10 @@
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Plugin.Services;
 
 using ImGuiNET;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Characters;
-using Ktisis.Editor.Characters.Import;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Files;
 using Ktisis.Interface.Types;
@@ -15,7 +13,6 @@ using Ktisis.Scene.Entities.Game;
 namespace Ktisis.Interface.Windows.Import;
 
 public class CharaImportDialog : EntityEditWindow<ActorEntity> {
-	private readonly CharaImportService _import;
 	private readonly FileDialogManager _dialog;
 	
 	private readonly FileSelect<CharaFile> _select;
@@ -24,7 +21,6 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 
 	public CharaImportDialog(
 		IEditorContext context,
-		CharaImportService import,
 		FileDialogManager dialog,
 		FileSelect<CharaFile> select
 	) : base(
@@ -32,7 +28,6 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 		context,
 		ImGuiWindowFlags.AlwaysAutoResize
 	) {
-		this._import = import;
 		this._dialog = dialog;
 		this._select = select;
 		this._select.OpenDialog += this.OnFileDialogOpen;
@@ -91,6 +86,6 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	private void ApplyCharaFile() {
 		var file = this._select.Selected?.File;
 		if (file != null)
-			this._import.ApplyCharaFile(this.Target, file, this.Config.File.ImportCharaModes);
+			this.Context.Characters.ApplyCharaFile(this.Target, file, this.Config.File.ImportCharaModes);
 	}
 }

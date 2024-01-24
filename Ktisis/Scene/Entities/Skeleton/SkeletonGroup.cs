@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Ktisis.Scene.Decor;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities.Skeleton;
 

@@ -11,6 +11,7 @@ using Ktisis.Editor.Transforms;
 using Ktisis.Interop.Hooking;
 using Ktisis.Localization;
 using Ktisis.Scene;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Editor;
 

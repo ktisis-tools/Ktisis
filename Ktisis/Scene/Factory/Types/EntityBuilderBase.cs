@@ -1,4 +1,5 @@
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Factory.Types;
 

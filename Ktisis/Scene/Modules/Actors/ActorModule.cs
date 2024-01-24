@@ -9,9 +9,6 @@ using Dalamud.Plugin.Services;
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
-
-using Ktisis.Common.Extensions;
-
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
@@ -19,6 +16,8 @@ using Ktisis.Services;
 using Ktisis.Structs.GPose;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Common.Extensions;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Modules.Actors;
 
@@ -142,7 +141,7 @@ public class ActorModule : SceneModule {
 			return null;
 		}
 		
-		var result = this.Scene.Factory.CreateActor(actor).Add();
+		var result = this.Scene.Factory.BuildActor(actor).Add();
 		if (addCompanion)
 			this.AddCompanion(actor);
 		return result;
@@ -155,7 +154,7 @@ public class ActorModule : SceneModule {
 		var actor = this._actors.GetAddress((nint)chara->CompanionObject);
 		if (actor is null or { ObjectIndex: 0 } || !actor.IsValid()) return;
 		
-		this.Scene.Factory.CreateActor(actor).Add();
+		this.Scene.Factory.BuildActor(actor).Add();
 	}
 	
 	// Hooks

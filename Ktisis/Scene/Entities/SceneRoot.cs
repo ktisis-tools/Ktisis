@@ -1,5 +1,7 @@
 using System;
 
+using Ktisis.Scene.Types;
+
 namespace Ktisis.Scene.Entities;
 
 public class SceneRoot(ISceneManager scene) : SceneEntity(scene) {

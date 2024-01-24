@@ -5,6 +5,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
 using Ktisis.Scene.Decor;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities.World;
 
@@ -56,7 +57,7 @@ public class WorldEntity(ISceneManager scene) : SceneEntity(scene), ITransform, 
 
 	private unsafe void CreateObjectEntity(Object* ptr) {
 		Ktisis.Log.Verbose($"Creating object entity for {(nint)ptr:X}");
-		this.Scene.Factory.CreateObject()
+		this.Scene.Factory.BuildObject()
 			.SetAddress(ptr)
 			.Add(this);
 	}
