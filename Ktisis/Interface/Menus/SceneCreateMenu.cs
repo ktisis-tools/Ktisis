@@ -2,14 +2,16 @@ using System.Threading.Tasks;
 
 using GLib.Popups.Context;
 
-using Ktisis.Editor.Characters.Import;
 using Ktisis.Scene;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Modules.Lights;
+using Ktisis.Editor.Characters.Import;
 using Ktisis.Structs.Lights;
 
 namespace Ktisis.Interface.Menus;
+
+// TODO: This needs some serious cleanup
 
 public class SceneCreateMenu(
 	CharaImportService chara,
@@ -21,7 +23,7 @@ public class SceneCreateMenu(
 	private ContextMenu Build() {
 		return new ContextMenuBuilder()
 			.Action("Create new actor", this.CreateActor)
-			.Action("Add overworld actor", () => {})
+			.Action("Add overworld actor", () => chara.OpenOverworldActorsList(scene))
 			.Action("Import actor from file", () => chara.OpenSpawnImport(scene))
 			.Separator()
 			.SubMenu("Create light", sub => {
