@@ -5,13 +5,13 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Data.Files;
-using Ktisis.Scene.Entities.Game;
 using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Characters;
 
-namespace Ktisis.Editor.Characters;
+namespace Ktisis.Editor.Characters.Import;
 
 [Flags]
 public enum SaveModes {
@@ -43,7 +43,7 @@ public class EntityCharaConverter {
 
 	public void Apply(CharaFile file, SaveModes modes = SaveModes.All) {
 		this.ApplyEquipment(file, modes);
-		this.PrepareCustomize(file, modes).Execute();
+		this.PrepareCustomize(file, modes).Apply();
 	}
 
 	public CharaFile Save() {

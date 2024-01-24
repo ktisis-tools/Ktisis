@@ -11,11 +11,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Import/CharaImportService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Transforms/TransformHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Overlay/OverlayWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Overlay/OverlayWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/TransformWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/TransformWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/FileConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Data/Config/Sections/FileConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/EntityCharaConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Import/EntityCharaConverter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Actors/CustomizeEditorUi.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTreeButtons.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Components/Workspace/SceneTreeButtons.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/FileDialogManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/FileDialogManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/EntityMenuFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/EntityMenuFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneCreateMenu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneCreateMenu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneEntityMenu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneEntityMenu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/ConfigWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/ConfigWindow.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Windows/Import/CharaImportDialog.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Windows/Import/CharaImportDialog.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Character/CharaEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -276,7 +288,8 @@
       <workItem from="1705834104904" duration="31432000" />
       <workItem from="1705929046693" duration="8478000" />
       <workItem from="1705949298091" duration="13547000" />
-      <workItem from="1706007764918" duration="40847000" />
+      <workItem from="1706007764918" duration="41223000" />
+      <workItem from="1706097792243" duration="2671000" />
     </task>
     <servers />
   </component>

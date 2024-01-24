@@ -35,7 +35,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 			base.Update();
 	}
 
-	private unsafe bool IsDrawing() {
+	protected unsafe bool IsDrawing() {
 		var ptr = this.GetCharacter();
 		if (ptr == null) return false;
 		return (ptr->UnkFlags_01 & 2) != 0 && ptr->UnkFlags_02 != 0;

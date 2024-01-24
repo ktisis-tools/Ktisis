@@ -104,7 +104,7 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 		var batch = this.Prepare().SetCustomization(CustomizeIndex.EyeColor, value);
 		if (!this.GetHeterochromia())
 			batch.SetCustomization(CustomizeIndex.EyeColor2, value);
-		batch.Execute();
+		batch.Apply();
 	}
 
 	// Batch setter
@@ -125,7 +125,7 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 			return this;
 		}
 		
-		public void Execute() {
+		public void Apply() {
 			var redraw = false;
 			foreach (var (index, value) in this.Values) {
 				if (editor.IsCurrentValue(index, value)) continue;

@@ -19,5 +19,5 @@ public interface ICustomizeBatch {
 
 	public ICustomizeBatch SetIfNotNull(CustomizeIndex index, byte? value);
 	
-	public void Execute();
+	public void Apply();
 }

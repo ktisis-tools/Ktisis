@@ -1,6 +1,7 @@
 using GLib.Popups.Context;
 
 using Ktisis.Editor.Characters;
+using Ktisis.Editor.Characters.Import;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Selection;
