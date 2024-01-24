@@ -1,7 +1,13 @@
+using System.IO;
 using System.Threading.Tasks;
+
+using Dalamud.Utility;
 
 using GLib.Popups.Context;
 
+using Ktisis.Data.Files;
+using Ktisis.Editor.Characters;
+using Ktisis.Editor.Characters.Import;
 using Ktisis.Scene;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules.Actors;
@@ -10,13 +16,17 @@ using Ktisis.Structs.Lights;
 
 namespace Ktisis.Interface.Menus;
 
-public class SceneCreateMenu(ISceneManager scene) {
-	public static ContextMenu Build(ISceneManager scene)
-		=> new SceneCreateMenu(scene).Build();
+public class SceneCreateMenu(
+	CharaImportService chara,
+	ISceneManager scene
+) {
+	public static ContextMenu Build(CharaImportService chara, ISceneManager scene)
+		=> new SceneCreateMenu(chara, scene).Build();
     
 	private ContextMenu Build() {
 		return new ContextMenuBuilder()
-			.Action("Create actor", this.CreateActor)
+			.Action("Create new actor", this.CreateActor)
+			.Action("Import actor from file", this.OpenImportActorDialog)
 			.SubMenu("Create light", sub => {
 				sub.Action("Point", this.CreatePoint)
 					.Action("Spot", this.CreateSpot)
@@ -29,9 +39,29 @@ public class SceneCreateMenu(ISceneManager scene) {
 	// Actors
 	
 	private void CreateActor() {
-		scene.GetModule<ActorModule>().Spawn()
+		scene.GetModule<ActorModule>()
+			.Spawn()
 			.ConfigureAwait(false);
 	}
+
+	private void CreateImportActor(string path, CharaFile file) {
+		if (path.IsNullOrEmpty()) return;
+		
+		scene.GetModule<ActorModule>()
+			.Spawn()
+			.ContinueWith(async task => {
+				var entity = task.Result;
+				entity.Name = Path.GetFileNameWithoutExtension(path);
+				await chara.ApplyCharaFile(entity, file);
+			}, TaskContinuationOptions.OnlyOnRanToCompletion)
+			.ContinueWith(task => {
+				if (task.Exception != null)
+					Ktisis.Log.Error($"Failed to spawn imported actor:\n{task.Exception}");
+			}, TaskContinuationOptions.OnlyOnFaulted);
+	}
+
+	private void OpenImportActorDialog()
+		=> chara.OpenCharaFile(this.CreateImportActor);
 	
 	// Light
 	

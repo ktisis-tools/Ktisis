@@ -81,11 +81,11 @@ public class ActorEntity : CharaEntity, IDeletable {
 	}
 
 	public unsafe void Redraw() {
-		if (this.CsGameObject == null) return;
+		if (this.CsGameObject == null || this.CsGameObject->DrawObject == null) return;
 		this.CsGameObject->DisableDraw();
 		this.CsGameObject->EnableDraw();
 	}
-	
+	 
 	// Deletable
 
 	public bool Delete() {

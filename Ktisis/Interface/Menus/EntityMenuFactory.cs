@@ -3,6 +3,7 @@ using GLib.Popups.Context;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor;
 using Ktisis.Editor.Characters;
+using Ktisis.Editor.Characters.Import;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Data;

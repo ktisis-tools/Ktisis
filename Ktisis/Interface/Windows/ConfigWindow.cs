@@ -52,7 +52,7 @@ public class ConfigWindow : KtisisWindow {
 		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
 		if (ImGui.IsItemHovered()) {
 			using var _tooltip = ImRaii.Tooltip();
-			ImGui.Text("Requires IVCS or another custom skeleton.");
+			ImGui.Text("Requires IVCS or any custom skeleton.");
 		}
 	}
 	
