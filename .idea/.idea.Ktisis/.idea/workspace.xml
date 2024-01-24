@@ -11,9 +11,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Ktisis/Common/Extensions/GameObjectEx.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/Actors/OverworldActorList.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GLib" beforeDir="false" afterPath="$PROJECT_DIR$/GLib" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis.sln.DotSettings" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Import/CharaImportService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Import/CharaImportService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneCreateMenu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneCreateMenu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorModule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Services/ActorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Services/ActorService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -276,7 +283,7 @@
       <workItem from="1705929046693" duration="8478000" />
       <workItem from="1705949298091" duration="13547000" />
       <workItem from="1706007764918" duration="41223000" />
-      <workItem from="1706097792243" duration="9779000" />
+      <workItem from="1706097792243" duration="19253000" />
     </task>
     <servers />
   </component>

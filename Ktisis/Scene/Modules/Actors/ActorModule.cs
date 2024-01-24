@@ -9,6 +9,9 @@ using Dalamud.Plugin.Services;
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+
+using Ktisis.Common.Extensions;
+
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
@@ -23,7 +26,6 @@ public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
 	private readonly GroupPoseModule _gpose;
 	private readonly IFramework _framework;
-	private readonly IObjectTable _objectTable;
 	
 	private readonly ActorSpawner _spawner;
 	
@@ -32,13 +34,11 @@ public class ActorModule : SceneModule {
 		ISceneManager scene,
 		ActorService actors,
 		IFramework framework,
-		IObjectTable objectTable,
 		GroupPoseModule gpose
 	) : base(hook, scene) {
 		this._actors = actors;
 		this._gpose = gpose;
 		this._framework = framework;
-		this._objectTable = objectTable;
 		this._spawner = hook.Create<ActorSpawner>(this);
 	}
 
@@ -61,12 +61,25 @@ public class ActorModule : SceneModule {
 			throw new Exception("Actor spawn manager is uninitialized.");
 
 		var address = await this._spawner.CreateActor(name);
+		return this.AddSpawnedActor(address);
+	}
+
+	public async Task<ActorEntity> AddFromOverworld(GameObject actor) {
+		if (!this._spawner.IsInit)
+			throw new Exception("Actor spawn manager is uninitialized.");
+		var address = await this._spawner.CreateActor(actor.GetNameOrFallback(), actor);
+		return this.AddSpawnedActor(address);
+	}
+
+	private ActorEntity AddSpawnedActor(nint address) {
 		var entity = this.AddActor(address, false);
 		if (entity == null)
 			throw new Exception("Failed to create entity for spawned actor.");
 		entity.IsManaged = true;
 		return entity;
 	}
+	
+	// Deletion
 	
 	public unsafe void Delete(ActorEntity actor) {
 		if (this._gpose.IsPrimaryActor(actor)) {
@@ -95,15 +108,19 @@ public class ActorModule : SceneModule {
 		var csPtr = (CSGameObject*)gameObject.Address;
 		if (csPtr == null) return;
 
-		var dupeCt = 0;
 		var setName = name;
-		for (var i = 0; i < this._objectTable.Length; i++) {
-			var obj = this._objectTable[i];
-			if (obj == null || obj.Name.TextValue != setName) continue;
-			setName = $"{name} ({++dupeCt + 1})";
-			i = 0;
-		}
 		
+		var dupeCt = 0;
+		var isNameDupe = true;
+		while (isNameDupe) {
+			isNameDupe = false;
+			foreach (var actor in this._actors.GetGPoseActors()) {
+				if (actor.GetNameOrFallback() != setName) continue;
+				setName = $"{name} ({++dupeCt + 1})";
+				isNameDupe = true;
+			}
+		}
+
 		var bytes = Encoding.UTF8.GetBytes(setName).Append((byte)0).ToArray();
 		for (var i = 0; i < bytes.Length; i++)
 			csPtr->Name[i] = bytes[i];
