@@ -21,7 +21,7 @@ public class GroupPoseModule : SceneModule {
 	
 	public unsafe GameObject* GetPrimaryActor() {
 		var gpose = this.GetGPoseState();
-		return gpose != null ? gpose->PrimaryActor : null;
+		return gpose != null ? gpose->GPoseTarget : null;
 	}
 
 	public unsafe bool IsPrimaryActor(ActorEntity actor) {
