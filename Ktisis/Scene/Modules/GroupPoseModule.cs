@@ -4,6 +4,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Types;
 using Ktisis.Structs.GPose;
 
 namespace Ktisis.Scene.Modules;

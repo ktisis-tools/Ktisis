@@ -11,7 +11,7 @@ using Ktisis.Editor.Characters.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Characters;
 
-namespace Ktisis.Editor.Characters.Import;
+namespace Ktisis.Editor.Characters;
 
 [Flags]
 public enum SaveModes {

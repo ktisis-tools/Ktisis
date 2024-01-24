@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 
 using Ktisis.Editor.Characters;
-using Ktisis.Editor.Characters.Import;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Data;
 

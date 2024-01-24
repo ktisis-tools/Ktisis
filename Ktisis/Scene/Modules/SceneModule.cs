@@ -1,4 +1,5 @@
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Modules;
 

@@ -2,6 +2,7 @@ using System;
 
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Types;
+using Ktisis.Scene.Types;
 using Ktisis.Structs.Lights;
 
 namespace Ktisis.Scene.Factory.Builders;

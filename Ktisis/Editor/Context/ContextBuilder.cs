@@ -1,3 +1,5 @@
+using Dalamud.Plugin.Services;
+
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Camera;
@@ -14,15 +16,18 @@ namespace Ktisis.Editor.Context;
 
 [Singleton]
 public class ContextBuilder {
+	private readonly IFramework _framework;
 	private readonly InteropService _interop;
 	private readonly ActionBuilder _actions;
 	private readonly NamingService _naming;
 	
 	public ContextBuilder(
+		IFramework framework,
 		InteropService interop,
 		ActionBuilder actions,
 		NamingService naming
 	) {
+		this._framework = framework;
 		this._interop = interop;
 		this._actions = actions;
 		this._naming = naming;
@@ -34,7 +39,7 @@ public class ContextBuilder {
 		var actions = this._actions.Initialize(mediator, scope);
 		
 		var cameras = new CameraManager(mediator, scope);
-		var chara = new CharacterManager(mediator, scope);
+		var chara = new CharacterManager(mediator, scope, this._framework);
 
 		var posing = new PosingManager(mediator, scope);
 

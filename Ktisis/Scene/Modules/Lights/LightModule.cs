@@ -8,6 +8,7 @@ using Dalamud.Utility.Signatures;
 
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Types;
 using Ktisis.Structs.GPose;
 using Ktisis.Structs.Lights;
 
@@ -50,7 +51,7 @@ public class LightModule : SceneModule {
 	// Entities
 
 	private unsafe void AddLight(SceneLight* light, uint index) {
-		this.Scene.Factory.CreateLight()
+		this.Scene.Factory.BuildLight()
 			.SetName($"Camera Light {index + 1}")
 			.SetAddress(light)
 			.Add();
@@ -126,7 +127,7 @@ public class LightModule : SceneModule {
 		var light = this._spawner.Create();
 		if (light == null) return null;
 		return this.Scene.Factory
-			.CreateLight()
+			.BuildLight()
 			.SetName("Light")
 			.SetAddress(light)
 			.Add();

@@ -14,6 +14,7 @@ using Ktisis.Interface.Types;
 using Ktisis.Interface.Widgets.Environment;
 using Ktisis.Scene;
 using Ktisis.Scene.Modules;
+using Ktisis.Scene.Types;
 using Ktisis.Structs.Env;
 
 namespace Ktisis.Interface.Windows.Editors;

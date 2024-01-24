@@ -16,19 +16,21 @@ public delegate void ActorSelectedHandler(GameObject actor);
 
 public class OverworldActorList : IPopup {
 	private readonly ActorService _actors;
-	
 	private readonly PopupList<GameObject> _popup;
 
-	public event ActorSelectedHandler? Selected;
+	private event ActorSelectedHandler Selected;
 
 	public OverworldActorList(
-		ActorService actors
+		ActorService actors,
+		ActorSelectedHandler handler
 	) {
 		this._actors = actors;
 		this._popup = new PopupList<GameObject>(
 			"##OverworldActorList",
 			DrawItem
 		).WithSearch(SearchItemPredicate);
+		
+		this.Selected = handler;
 	}
 	
 	// Popup state
@@ -53,7 +55,7 @@ public class OverworldActorList : IPopup {
 
 		var actors = this._actors.GetOverworldActors().ToList();
 		if (this._popup.Draw(actors, out var selected) && selected?.IsEnabled() == true)
-			this.Selected?.Invoke(selected);
+			this.Selected.Invoke(selected);
 
 		return true;
 	}

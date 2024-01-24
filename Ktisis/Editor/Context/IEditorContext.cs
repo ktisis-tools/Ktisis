@@ -9,6 +9,7 @@ using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Localization;
 using Ktisis.Scene;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Editor.Context;
 

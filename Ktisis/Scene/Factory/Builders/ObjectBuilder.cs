@@ -8,6 +8,7 @@ using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Types;
+using Ktisis.Scene.Types;
 using Ktisis.Services;
 
 namespace Ktisis.Scene.Factory.Builders;

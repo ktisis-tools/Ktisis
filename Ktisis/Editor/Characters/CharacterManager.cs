@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Plugin.Services;
 
+using Ktisis.Data.Files;
 using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
@@ -16,14 +19,18 @@ public class CharacterManager : ICharacterState {
 	private readonly IContextMediator _mediator;
 	private readonly HookScope _scope;
 
+	private readonly IFramework _framework;
+
 	public bool IsValid => this._mediator.Context.IsValid;
     
 	public CharacterManager(
 		IContextMediator mediator,
-		HookScope scope
+		HookScope scope,
+		IFramework framework
 	) {
 		this._mediator = mediator;
 		this._scope = scope;
+		this._framework = framework;
 	}
 	
 	// Initialization
@@ -40,6 +47,11 @@ public class CharacterManager : ICharacterState {
 			Ktisis.Log.Error($"Failed to initialize appearance editor:\n{err}");
 		}
 	}
+	
+	// Editors
+
+	public ICustomizeEditor GetCustomizeEditor(ActorEntity actor) => new CustomizeEditor(actor);
+	public IEquipmentEditor GetEquipmentEditor(ActorEntity actor) => new EquipmentEditor(actor);
 	
 	// Entity wrappers
 	
@@ -62,10 +74,16 @@ public class CharacterManager : ICharacterState {
 		this.GetEquipmentEditor(entity).ApplyStateToGameObject();
 	}
 	
-	// Editors
+	// Imports
 
-	public ICustomizeEditor GetCustomizeEditor(ActorEntity actor) => new CustomizeEditor(actor);
-	public IEquipmentEditor GetEquipmentEditor(ActorEntity actor) => new EquipmentEditor(actor);
+	public Task ApplyCharaFile(ActorEntity actor, CharaFile file, SaveModes modes = SaveModes.All, bool gameState = false) {
+		var loader = new EntityCharaConverter(actor);
+		return this._framework.RunOnFrameworkThread(() => {
+			loader.Apply(file, modes);
+			if (gameState)
+				this.ApplyStateToGameObject(actor);
+		});
+	}
 	
 	// Disposal
 

@@ -18,9 +18,9 @@ public abstract class EntityBuilder<T, TBuilder> : EntityBuilderBase<T, TBuilder
 		ISceneManager scene
 	) : base(scene) { }
 	
-	public T Add() => this.Add(this.Scene);
-	
 	protected abstract T Build();
+	
+	public T Add() => this.Add(this.Scene);
 	
 	public virtual T Add(IComposite parent) {
 		if (!this.Scene.IsValid)

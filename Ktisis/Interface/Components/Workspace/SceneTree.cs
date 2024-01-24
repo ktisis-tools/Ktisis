@@ -20,6 +20,7 @@ using Ktisis.Interface.Menus;
 using Ktisis.Scene;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
 

@@ -7,6 +7,7 @@ using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Types;
 using Ktisis.Structs.Env;
 
 namespace Ktisis.Scene.Modules;
