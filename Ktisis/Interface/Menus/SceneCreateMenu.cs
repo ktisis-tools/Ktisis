@@ -1,11 +1,7 @@
-using System.IO;
 using System.Threading.Tasks;
-
-using Dalamud.Utility;
 
 using GLib.Popups.Context;
 
-using Ktisis.Data.Files;
 using Ktisis.Editor.Characters.Import;
 using Ktisis.Scene;
 using Ktisis.Scene.Entities.World;
@@ -26,7 +22,7 @@ public class SceneCreateMenu(
 		return new ContextMenuBuilder()
 			.Action("Create new actor", this.CreateActor)
 			.Action("Add overworld actor", () => {})
-			.Action("Import actor from file", this.OpenImportActorDialog)
+			.Action("Import actor from file", () => chara.OpenSpawnImport(scene))
 			.Separator()
 			.SubMenu("Create light", sub => {
 				sub.Action("Point", this.CreatePoint)
@@ -44,26 +40,6 @@ public class SceneCreateMenu(
 			.Spawn()
 			.ConfigureAwait(false);
 	}
-
-	private void CreateImportActor(string path, CharaFile file) {
-		if (path.IsNullOrEmpty()) return;
-		
-		var name = Path.GetFileNameWithoutExtension(path);
-		scene.GetModule<ActorModule>()
-			.Spawn(name)
-			.ContinueWith(async task => {
-				var entity = task.Result;
-				await chara.ApplyCharaFile(entity, file);
-				scene.Context.Characters.ApplyStateToGameObject(entity);
-			}, TaskContinuationOptions.OnlyOnRanToCompletion)
-			.ContinueWith(task => {
-				if (task.Exception != null)
-					Ktisis.Log.Error($"Failed to spawn imported actor:\n{task.Exception}");
-			}, TaskContinuationOptions.OnlyOnFaulted);
-	}
-
-	private void OpenImportActorDialog()
-		=> chara.OpenCharaFile(this.CreateImportActor);
 	
 	// Light
 	
