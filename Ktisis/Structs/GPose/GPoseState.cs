@@ -14,7 +14,7 @@ public struct GPoseState {
 	
 	[FieldOffset(0x0E0)] public unsafe fixed ulong Lights[LightCount];
 	
-	[FieldOffset(0x1E0)] public unsafe GameObject* PrimaryActor;
+	[FieldOffset(0x1E0)] public unsafe GameObject* GPoseTarget;
 	
 	// Light access
 	

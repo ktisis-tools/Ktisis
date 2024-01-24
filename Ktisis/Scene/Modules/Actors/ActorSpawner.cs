@@ -91,13 +91,17 @@ public class ActorSpawner : HookModule {
 	
 	// Creation
 
-	public async Task<nint> CreateActor(string name) {
+	public Task<nint> CreateActor(string name) {
 		var localPlayer = this._clientState.LocalPlayer;
-		if (localPlayer == null) return nint.Zero;
-		
+		if (localPlayer == null)
+			throw new Exception("LocalPlayer is invalid!");
+		return this.CreateActor(name, localPlayer);
+	}
+
+	public async Task<nint> CreateActor(string name, GameObject originator) {
 		using var source = new CancellationTokenSource();
 		source.CancelAfter(10_000);
-		return await this.CreateActor(name, localPlayer, source.Token);
+		return await this.CreateActor(name, originator, source.Token);
 	}
 
 	private async Task<nint> CreateActor(
