@@ -19,14 +19,18 @@ public class GroupPoseModule : SceneModule {
 	public unsafe GPoseState* GetGPoseState()
 		=> this._getGPoseState != null ? this._getGPoseState() : null;
 	
-	public unsafe GameObject* GetPrimaryActor() {
+	// This is incorrect!
+	/*public unsafe GameObject* GetPrimaryActor() {
 		var gpose = this.GetGPoseState();
 		return gpose != null ? gpose->GPoseTarget : null;
-	}
+	}*/
 
 	public unsafe bool IsPrimaryActor(ActorEntity actor) {
-		var primary = this.GetPrimaryActor();
-		return (nint)primary == actor.Actor.Address;
+		// TODO: This isn't accurate in cases where a lot of actors are fed into gpose!
+		return actor.Actor.ObjectIndex is 200 or 201;
+		// This is incorrect!
+		/*var primary = this.GetPrimaryActor();
+		return (nint)primary == actor.Actor.Address;*/
 	}
 	
 	// Native
