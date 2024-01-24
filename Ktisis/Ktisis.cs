@@ -11,8 +11,6 @@ using Ktisis.Core;
 namespace Ktisis;
 
 public sealed class Ktisis : IDalamudPlugin {
-	public string Name => "Ktisis v3";
-	
 	public static IPluginLog Log { get; private set; } = null!;
 
 	private readonly ServiceProvider _services;

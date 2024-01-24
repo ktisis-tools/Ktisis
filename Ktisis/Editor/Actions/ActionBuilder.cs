@@ -51,7 +51,7 @@ public class ActionBuilder {
 	private Dictionary<Type, ActionAttribute> ResolveActions() {
 		return Assembly.GetExecutingAssembly()
 			.GetTypes()
-			.Select(type => (type: type, attr: type.GetCustomAttribute<ActionAttribute>()))
+			.Select(type => (type, attr: type.GetCustomAttribute<ActionAttribute>()))
 			.Where(pair => pair.attr != null)
 			.ToDictionary(k => k.type, v => v.attr!);
 	}
