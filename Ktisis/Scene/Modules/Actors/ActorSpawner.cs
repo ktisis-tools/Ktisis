@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
+using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
-using GameObjectManager = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObjectManager;
 
 using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Events;
@@ -22,6 +22,7 @@ public class ActorSpawner : HookModule {
 	private const ushort SoftCap = 30;
 	private const ushort HardCap = SoftCap + 8;
 
+	private readonly IClientState _clientState;
 	private readonly IObjectTable _objectTable;
 	private readonly IFramework _framework;
 
@@ -29,10 +30,12 @@ public class ActorSpawner : HookModule {
 	
 	public ActorSpawner(
 		IHookMediator hook,
+		IClientState clientState,
 		IObjectTable objectTable,
 		IFramework framework,
 		ActorModule module
 	) : base(hook) {
+		this._clientState = clientState;
 		this._objectTable = objectTable;
 		this._framework = framework;
 		this.Module = module;
@@ -89,17 +92,21 @@ public class ActorSpawner : HookModule {
 	// Creation
 
 	public async Task<nint> CreateActor(string name) {
+		var localPlayer = this._clientState.LocalPlayer;
+		if (localPlayer == null) return nint.Zero;
+		
 		using var source = new CancellationTokenSource();
 		source.CancelAfter(10_000);
-		return await this.CreateActor(name, source.Token);
+		return await this.CreateActor(name, localPlayer, source.Token);
 	}
 
 	private async Task<nint> CreateActor(
 		string name,
+		GameObject originator,
 		CancellationToken token
 	) {
 		var index = await this._framework.RunOnFrameworkThread(() => {
-			if (!this.TryDispatch(out var index))
+			if (!this.TryDispatch(originator, out var index))
 				throw new Exception("Object table is full.");
 			return index;
 		});
@@ -115,31 +122,29 @@ public class ActorSpawner : HookModule {
 		throw new TaskCanceledException($"Actor spawn at index {index} timed out.");
 	}
 
-	private bool TryDispatch(out uint index) {
+	private bool TryDispatch(GameObject originator, out uint index) {
 		index = this.CalculateNextIndex();
 		if (index == ushort.MaxValue) return false;
 		Ktisis.Log.Info($"Dispatching, expecting spawn on {index}");
-		this.DispatchSpawn();
+		this.DispatchSpawn(originator);
 		return true;
 	}
 
-	private unsafe void DispatchSpawn() {
+	private unsafe void DispatchSpawn(GameObject originator) {
 		if (this._hookVfTable == null)
 			throw new Exception("Hook vtable is not initialized!");
-
-		// TODO: Resolve LocalPlayer by other means.
-		var player = (Character*)GameObjectManager.Instance()->ObjectList[0];
-		if (player == null)
-			throw new Exception("LocalPlayer is null.");
+		
+		var player = (Character*)originator.Address;
+		if (player == null || !player->GameObject.IsCharacter())
+			throw new Exception($"Originator object '{originator.Name}' ({originator.ObjectIndex}) is invalid.");
 		
 		// This gets freed by the event manager after handling.
 		var task = (GPoseActorEvent*)IMemorySpace.GetDefaultSpace()->Malloc<GPoseActorEvent>();
 		this._gPoseActorEventCtor(task, player, &player->GameObject.Position, 0x40, 30, 0, uint.MaxValue & ~0x4u & ~0x8000u, true);
 		task->__vfTable = this._hookVfTable;
 
-		// TODO: Figure out what this is.
+		// TODO: Map this struct out.
 		var handler = (nint)EventFramework.Instance() + 432 + 152;
-
 		this._dispatchEvent(handler, task);
 	}
 

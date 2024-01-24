@@ -16,6 +16,8 @@ namespace Ktisis.Scene.Entities.Game;
 
 public class ActorEntity : CharaEntity, IDeletable {
 	public readonly GameObject Actor;
+	
+	public bool IsManaged { get; set; }
 
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
 
