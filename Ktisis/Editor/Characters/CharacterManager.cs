@@ -41,6 +41,13 @@ public class CharacterManager : ICharacterState {
 		}
 	}
 	
+	// Entity wrappers
+	
+	public ActorEntity? GetEntityForActor(GameObject actor) => this._mediator.Context.Scene.Children
+		.Where(entity => entity is ActorEntity { IsValid: true })
+		.Cast<ActorEntity>()
+		.FirstOrDefault(entity => entity.Actor.ObjectIndex == actor.ObjectIndex);
+	
 	// State wrappers
 
 	public bool TryGetStateForActor(GameObject actor, out ActorEntity entity, out AppearanceState state) {
@@ -49,11 +56,11 @@ public class CharacterManager : ICharacterState {
 		state = _entity?.Appearance!;
 		return _entity != null;
 	}
-	
-	public ActorEntity? GetEntityForActor(GameObject actor) => this._mediator.Context.Scene.Children
-		.Where(entity => entity is ActorEntity { IsValid: true })
-		.Cast<ActorEntity>()
-		.FirstOrDefault(entity => entity.Actor.ObjectIndex == actor.ObjectIndex);
+
+	public void ApplyStateToGameObject(ActorEntity entity) {
+		this.GetCustomizeEditor(entity).ApplyStateToGameObject();
+		this.GetEquipmentEditor(entity).ApplyStateToGameObject();
+	}
 	
 	// Editors
 

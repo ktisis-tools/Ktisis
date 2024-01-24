@@ -11,6 +11,8 @@ public interface ICustomizeEditor {
 	
 	public void SetEyeColor(byte value);
 	
+	public void ApplyStateToGameObject();
+	
 	public ICustomizeBatch Prepare();
 }
 

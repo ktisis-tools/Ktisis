@@ -25,4 +25,6 @@ public interface IEquipmentEditor {
 
 	public bool GetWeaponVisible(WeaponIndex index);
 	public void SetWeaponVisible(WeaponIndex index, bool visible);
+	
+	public void ApplyStateToGameObject();
 }

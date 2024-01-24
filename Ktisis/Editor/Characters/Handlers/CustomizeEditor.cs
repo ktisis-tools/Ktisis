@@ -4,6 +4,7 @@ using Dalamud.Game.ClientState.Objects.Enums;
 
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters.Handlers;
 
@@ -105,6 +106,16 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 		if (!this.GetHeterochromia())
 			batch.SetCustomization(CustomizeIndex.EyeColor2, value);
 		batch.Apply();
+	}
+	
+	// Set GameObject state (for spawned actors)
+
+	public unsafe void ApplyStateToGameObject() {
+		if (!actor.IsValid || actor.Character == null) return;
+		for (var i = 0; i < CustomizeContainer.Size; i++) {
+			var value = this.GetCustomization((CustomizeIndex)i);
+			actor.Character->DrawData.CustomizeData.Data[i] = value;
+		}
 	}
 
 	// Batch setter
