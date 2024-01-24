@@ -73,7 +73,7 @@ public class TransformWindow : KtisisWindow {
 		var moved = this.DrawTransform(ref transform, out var isEnded, disabled);
 		if (target != null && moved) {
 			this.Transform ??= this.Handler.Begin(target);
-			target.SetTransform(transform);
+			this.Transform.SetTransform(transform);
 		}
 
 		if (isEnded) {

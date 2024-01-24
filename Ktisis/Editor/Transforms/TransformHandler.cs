@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Numerics;
 
+using Ktisis.Common.Utility;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Actions.Types;
 using Ktisis.Editor.Selection;
@@ -17,7 +19,8 @@ public interface ITransformHandler {
 public interface ITransformMemento : IMemento {
 	public ITransformMemento Save();
 	
-	public ITransformMemento SetTransform(Common.Utility.Transform transform);
+	public void SetTransform(Transform transform);
+	public void SetMatrix(Matrix4x4 matrix);
 	
 	public void Dispatch();
 }
@@ -73,8 +76,8 @@ public class TransformHandler : ITransformHandler {
 
 		private readonly ITransformTarget Target;
 
-		private Common.Utility.Transform? Initial;
-		private Common.Utility.Transform? Final;
+		private Transform? Initial;
+		private Transform? Final;
 
 		public TransformMemento(
 			TransformHandler handler,
@@ -89,10 +92,9 @@ public class TransformHandler : ITransformHandler {
 			return this;
 		}
 
-		public ITransformMemento SetTransform(Common.Utility.Transform transform) {
-			this.Target.SetTransform(transform);
-			return this;
-		}
+		public void SetTransform(Transform transform) => this.Target.SetTransform(transform);
+
+		public void SetMatrix(Matrix4x4 matrix) => this.Target.SetMatrix(matrix);
 
 		public void Restore() {
 			if (this.Initial != null)

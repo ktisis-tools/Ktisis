@@ -92,7 +92,7 @@ public class OverlayWindow : KtisisWindow {
 		var matrix = transform.ComposeMatrix();
 		if (this._gizmo.Manipulate(ref matrix, out _)) {
 			this.Transform ??= this.Handler.Begin(target);
-			target.SetMatrix(matrix);
+			this.Transform.SetMatrix(matrix);
 		}
 
 		this._gizmo.EndFrame();
