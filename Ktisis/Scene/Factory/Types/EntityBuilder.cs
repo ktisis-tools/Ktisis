@@ -2,33 +2,26 @@ using System;
 
 using Dalamud.Utility;
 
+using Ktisis.Scene.Types;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.World;
-using Ktisis.Scene.Types;
 
-namespace Ktisis.Scene.Factory;
+namespace Ktisis.Scene.Factory.Types;
 
-public abstract class EntityBuilderBase<T, TBuilder> : IEntityBuilder<T, TBuilder> where T : SceneEntity where TBuilder : IEntityBuilder<T, TBuilder> {
-	protected readonly ISceneManager Scene;
+public interface IEntityBuilder<out T, out TBuilder> : IEntityBuilderBase<T, TBuilder> where T : SceneEntity where TBuilder : IEntityBuilder<T, TBuilder> {
+	public T Add();
+	public T Add(IComposite parent);
+}
 
-	protected string Name { get; set; } = string.Empty;
-	
-	protected EntityBuilderBase(
+public abstract class EntityBuilder<T, TBuilder> : EntityBuilderBase<T, TBuilder> where T : SceneEntity where TBuilder : IEntityBuilder<T, TBuilder> {
+	protected EntityBuilder(
 		ISceneManager scene
-	) {
-		this.Scene = scene;
-	}
-
-	protected abstract TBuilder Builder { get; }
+	) : base(scene) { }
+	
+	public T Add() => this.Add(this.Scene);
 	
 	protected abstract T Build();
-
-	public virtual TBuilder SetName(string name) {
-		this.Name = name;
-		return this.Builder;
-	}
-
-	public T Add() => this.Add(this.Scene);
+	
 	public virtual T Add(IComposite parent) {
 		if (!this.Scene.IsValid)
 			throw new Exception("Attempted to build entity for invalid scene.");
@@ -38,7 +31,7 @@ public abstract class EntityBuilderBase<T, TBuilder> : IEntityBuilder<T, TBuilde
 			worldEntity.Setup();
 		return entity;
 	}
-
+	
 	private T GetResult() {
 		var result = this.Build();
 		if (result.Name.IsNullOrEmpty())

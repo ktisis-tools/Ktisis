@@ -7,10 +7,10 @@ using Ktisis.Services;
 namespace Ktisis.Scene.Factory;
 
 public interface IEntityFactory {
-	public IActorBuilder CreateActor(GameObject actor);
-	public ILightBuilder CreateLight();
-	public IObjectBuilder CreateObject();
-	public IPoseBuilder CreatePose();
+	public IActorBuilder BuildActor(GameObject actor);
+	public ILightBuilder BuildLight();
+	public IObjectBuilder BuildObject();
+	public IPoseBuilder BuildPose();
 }
 
 public class EntityFactory : IEntityFactory {
@@ -26,16 +26,14 @@ public class EntityFactory : IEntityFactory {
 	}
 	
 	private ISceneManager Scene => this._mediator.Context.Scene;
+	
+	// Builders
 
-	public IActorBuilder CreateActor(GameObject actor)
-		=> new ActorBuilder(this.Scene, this.CreatePose(), actor);
+	public IActorBuilder BuildActor(GameObject actor) => new ActorBuilder(this.Scene, this.BuildPose(), actor);
 
-	public ILightBuilder CreateLight()
-		=> new LightBuilder(this.Scene);
+	public ILightBuilder BuildLight() => new LightBuilder(this.Scene);
 
-	public IObjectBuilder CreateObject()
-		=> new ObjectBuilder(this.Scene, this.CreatePose(), this._naming);
+	public IObjectBuilder BuildObject() => new ObjectBuilder(this.Scene, this.BuildPose(), this._naming);
 
-	public IPoseBuilder CreatePose()
-		=> new PoseBuilder(this.Scene);
+	public IPoseBuilder BuildPose() => new PoseBuilder(this.Scene);
 }
