@@ -1,12 +1,13 @@
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Factory.Types;
 
 namespace Ktisis.Scene.Factory.Builders;
 
 public interface IActorBuilder : IEntityBuilder<ActorEntity, IActorBuilder> { }
 
-public sealed class ActorBuilder : EntityBuilderBase<ActorEntity, IActorBuilder>, IActorBuilder {
+public sealed class ActorBuilder : EntityBuilder<ActorEntity, IActorBuilder>, IActorBuilder {
 	private readonly IPoseBuilder _pose;
 	private readonly GameObject _gameObject;
 

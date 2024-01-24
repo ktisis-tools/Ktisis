@@ -9,6 +9,7 @@ using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Factory.Types;
 
 namespace Ktisis.Scene.Factory.Builders;
 
@@ -22,7 +23,7 @@ public interface IBoneTreeBuilder {
 	public void BindTo(EntityPose pose);
 }
 
-public sealed class PoseBuilder : EntityBuilderBase<EntityPose, IPoseBuilder>, IPoseBuilder {
+public sealed class PoseBuilder : EntityBuilder<EntityPose, IPoseBuilder>, IPoseBuilder {
 	public PoseBuilder(
 		ISceneManager scene
 	) : base(scene) {

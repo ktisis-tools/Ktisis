@@ -6,8 +6,8 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 
 using Ktisis.Scene.Entities.Character;
-using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Factory.Types;
 using Ktisis.Services;
 
 namespace Ktisis.Scene.Factory.Builders;
@@ -17,7 +17,7 @@ public interface IObjectBuilder : IEntityBuilder<WorldEntity, IObjectBuilder> {
 	public unsafe IObjectBuilder SetAddress(Object* pointer);
 }
 
-public sealed class ObjectBuilder : EntityBuilderBase<WorldEntity, IObjectBuilder>, IObjectBuilder {
+public sealed class ObjectBuilder : EntityBuilder<WorldEntity, IObjectBuilder>, IObjectBuilder {
 	private readonly IPoseBuilder _pose;
 	private readonly INameResolver _naming;
 

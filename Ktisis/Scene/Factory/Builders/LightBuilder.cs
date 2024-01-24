@@ -1,6 +1,7 @@
 using System;
 
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Factory.Types;
 using Ktisis.Structs.Lights;
 
 namespace Ktisis.Scene.Factory.Builders;
@@ -10,7 +11,7 @@ public interface ILightBuilder : IEntityBuilder<LightEntity, ILightBuilder> {
 	public unsafe ILightBuilder SetAddress(SceneLight* pointer);
 }
 
-public sealed class LightBuilder : EntityBuilderBase<LightEntity, ILightBuilder>, ILightBuilder {
+public sealed class LightBuilder : EntityBuilder<LightEntity, ILightBuilder>, ILightBuilder {
 	private nint Address = nint.Zero;
 
 	public LightBuilder(
