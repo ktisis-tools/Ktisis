@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 using Dalamud.Hooking;
@@ -21,6 +23,7 @@ public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
 	private readonly GroupPoseModule _gpose;
 	private readonly IFramework _framework;
+	private readonly IObjectTable _objectTable;
 	
 	private readonly ActorSpawner _spawner;
 	
@@ -29,12 +32,14 @@ public class ActorModule : SceneModule {
 		ISceneManager scene,
 		ActorService actors,
 		IFramework framework,
+		IObjectTable objectTable,
 		GroupPoseModule gpose
 	) : base(hook, scene) {
 		this._actors = actors;
 		this._gpose = gpose;
 		this._framework = framework;
-		this._spawner = hook.Create<ActorSpawner>();
+		this._objectTable = objectTable;
+		this._spawner = hook.Create<ActorSpawner>(this);
 	}
 
 	public override void Setup() {
@@ -46,13 +51,19 @@ public class ActorModule : SceneModule {
 	
 	// Spawning
 
-	public async Task<ActorEntity> Spawn() {
+	public Task<ActorEntity> Spawn() {
+		var index = this._spawner.CalculateNextIndex();
+		return this.Spawn($"Actor #{index}");
+	}
+
+	public async Task<ActorEntity> Spawn(string name) {
 		if (!this._spawner.IsInit)
 			throw new Exception("Actor spawn manager is uninitialized.");
 
-		var address = await this._spawner.CreateActor();
+		var address = await this._spawner.CreateActor(name);
 		var entity = this.AddActor(address, false);
-		if (entity == null) throw new Exception("Failed to create actor entity.");
+		if (entity == null)
+			throw new Exception("Failed to create entity for spawned actor.");
 		return entity;
 	}
 	
@@ -75,6 +86,26 @@ public class ActorModule : SceneModule {
 		});
 		
 		actor.Remove();
+	}
+	
+	// Actor state
+	
+	public unsafe void SetActorName(GameObject gameObject, string name) {
+		var csPtr = (CSGameObject*)gameObject.Address;
+		if (csPtr == null) return;
+
+		var dupeCt = 0;
+		var setName = name;
+		for (var i = 0; i < this._objectTable.Length; i++) {
+			var obj = this._objectTable[i];
+			if (obj == null || obj.Name.TextValue != setName) continue;
+			setName = $"{name} ({++dupeCt + 1})";
+			i = 0;
+		}
+		
+		var bytes = Encoding.UTF8.GetBytes(setName).Append((byte)0).ToArray();
+		for (var i = 0; i < bytes.Length; i++)
+			csPtr->Name[i] = bytes[i];
 	}
 	
 	// Entities

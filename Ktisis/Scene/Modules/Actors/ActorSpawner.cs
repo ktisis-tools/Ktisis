@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
-using FFXIVClientStructs.FFXIV.Client.Game.Event;
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
-using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Common.Math;
+using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
+using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
+using GameObjectManager = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObjectManager;
 
 using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Events;
@@ -24,14 +24,18 @@ public class ActorSpawner : HookModule {
 
 	private readonly IObjectTable _objectTable;
 	private readonly IFramework _framework;
+
+	private readonly ActorModule Module;
 	
 	public ActorSpawner(
 		IHookMediator hook,
 		IObjectTable objectTable,
-		IFramework framework
+		IFramework framework,
+		ActorModule module
 	) : base(hook) {
 		this._objectTable = objectTable;
 		this._framework = framework;
+		this.Module = module;
 	}
 	
 	// Signatures
@@ -84,13 +88,14 @@ public class ActorSpawner : HookModule {
 	
 	// Creation
 
-	public async Task<nint> CreateActor() {
+	public async Task<nint> CreateActor(string name) {
 		using var source = new CancellationTokenSource();
 		source.CancelAfter(10_000);
-		return await this.CreateActor(source.Token);
+		return await this.CreateActor(name, source.Token);
 	}
 
 	private async Task<nint> CreateActor(
+		string name,
 		CancellationToken token
 	) {
 		var index = await this._framework.RunOnFrameworkThread(() => {
@@ -100,8 +105,10 @@ public class ActorSpawner : HookModule {
 		});
 		
 		while (!token.IsCancellationRequested) {
-			if (this._objectTable[(int)index] is { } actor)
+			if (this._objectTable[(int)index] is { } actor) {
+				this.Module.SetActorName(actor, name);
 				return actor.Address;
+			}
 			await Task.Delay(10, CancellationToken.None);
 		}
 		
@@ -136,7 +143,7 @@ public class ActorSpawner : HookModule {
 		this._dispatchEvent(handler, task);
 	}
 
-	private ushort CalculateNextIndex() {
+	public ushort CalculateNextIndex() {
 		for (var i = Start; i <= Start + HardCap; i++) {
 			var actor = this._objectTable[i];
 			if (actor == null) return i;

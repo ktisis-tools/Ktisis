@@ -1,3 +1,5 @@
+using System;
+
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Editor.Characters.State;
@@ -7,6 +9,8 @@ using Ktisis.Scene.Entities.Game;
 namespace Ktisis.Editor.Characters.Handlers;
 
 public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
+	// State flags
+	
 	public void ApplyStateFlags() {
 		this.UpdateWeaponVisibleState(WeaponIndex.MainHand);
 		this.UpdateWeaponVisibleState(WeaponIndex.OffHand);
@@ -139,5 +143,15 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		var state = actor.Appearance.Weapons.GetVisible(index);
 		if (state != EquipmentToggle.None)
 			this.SetWeaponVisible(index, state == EquipmentToggle.On);
+	}
+	
+	// Set GameObject state (for spawned actors)
+
+	public unsafe void ApplyStateToGameObject() {
+		if (!actor.IsValid || actor.Character == null) return;
+		foreach (var value in Enum.GetValues<EquipIndex>()) {
+			var model = this.GetEquipIndex(value);
+			actor.Character->DrawData.LoadEquipment((DrawDataContainer.EquipmentSlot)value, &model, true);
+		}
 	}
 }

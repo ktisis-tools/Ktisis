@@ -6,7 +6,6 @@ using Dalamud.Utility;
 using GLib.Popups.Context;
 
 using Ktisis.Data.Files;
-using Ktisis.Editor.Characters;
 using Ktisis.Editor.Characters.Import;
 using Ktisis.Scene;
 using Ktisis.Scene.Entities.World;
@@ -26,7 +25,9 @@ public class SceneCreateMenu(
 	private ContextMenu Build() {
 		return new ContextMenuBuilder()
 			.Action("Create new actor", this.CreateActor)
+			.Action("Add overworld actor", () => {})
 			.Action("Import actor from file", this.OpenImportActorDialog)
+			.Separator()
 			.SubMenu("Create light", sub => {
 				sub.Action("Point", this.CreatePoint)
 					.Action("Spot", this.CreateSpot)
@@ -47,12 +48,13 @@ public class SceneCreateMenu(
 	private void CreateImportActor(string path, CharaFile file) {
 		if (path.IsNullOrEmpty()) return;
 		
+		var name = Path.GetFileNameWithoutExtension(path);
 		scene.GetModule<ActorModule>()
-			.Spawn()
+			.Spawn(name)
 			.ContinueWith(async task => {
 				var entity = task.Result;
-				entity.Name = Path.GetFileNameWithoutExtension(path);
 				await chara.ApplyCharaFile(entity, file);
+				scene.Context.Characters.ApplyStateToGameObject(entity);
 			}, TaskContinuationOptions.OnlyOnRanToCompletion)
 			.ContinueWith(task => {
 				if (task.Exception != null)
