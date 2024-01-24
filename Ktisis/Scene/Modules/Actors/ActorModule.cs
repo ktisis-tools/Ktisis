@@ -12,10 +12,10 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
-using Ktisis.Interop.Hooking;
-using Ktisis.Scene.Entities.Game;
 using Ktisis.Services;
 using Ktisis.Structs.GPose;
+using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Scene.Modules.Actors;
 
@@ -64,6 +64,7 @@ public class ActorModule : SceneModule {
 		var entity = this.AddActor(address, false);
 		if (entity == null)
 			throw new Exception("Failed to create entity for spawned actor.");
+		entity.IsManaged = true;
 		return entity;
 	}
 	

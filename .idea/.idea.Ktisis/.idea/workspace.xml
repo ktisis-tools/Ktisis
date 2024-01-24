@@ -13,13 +13,7 @@
     <list default="true" id="d5aeeee5-9afd-4519-aef8-961e16ac995e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Ktisis/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ImGuizmo.NET" beforeDir="false" afterPath="$PROJECT_DIR$/ImGuizmo.NET" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/CharacterManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/CharacterManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/CustomizeEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/EquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Handlers/EquipmentEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICharacterState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICharacterState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/ICustomizeEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/IEquipmentEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Editor/Characters/Types/IEquipmentEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneCreateMenu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Interface/Menus/SceneCreateMenu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Entities/Game/ActorEntity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorModule.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Ktisis/Scene/Modules/Actors/ActorSpawner.cs" afterDir="false" />
     </list>
@@ -284,7 +278,7 @@
       <workItem from="1705929046693" duration="8478000" />
       <workItem from="1705949298091" duration="13547000" />
       <workItem from="1706007764918" duration="41223000" />
-      <workItem from="1706097792243" duration="5346000" />
+      <workItem from="1706097792243" duration="8121000" />
     </task>
     <servers />
   </component>
