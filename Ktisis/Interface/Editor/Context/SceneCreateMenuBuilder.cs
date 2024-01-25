@@ -31,14 +31,26 @@ public class SceneCreateMenuBuilder {
 			.Group(this.BuildLightGroup)
 			.Build($"##SceneCreateMenu_{this.GetHashCode():X}");
 	}
-	
-	// Actors
 
 	private void BuildActorGroup(ContextMenuBuilder sub) {
 		sub.Action("Create new actor", () => this.Factory.CreateActor().Spawn())
 			.Action("Add overworld actor", this._editor.OpenOverworldActorList)
 			.Action("Import actor from file", this.ImportCharaFromFile);
 	}
+	
+	private void BuildLightGroup(ContextMenuBuilder sub)
+		=> sub.SubMenu("Create new light", this.BuildLightMenu);
+	
+	private void BuildLightMenu(ContextMenuBuilder sub) {
+		sub.Action("Point", () => SpawnLight(LightType.PointLight))
+			.Action("Spot", () => SpawnLight(LightType.SpotLight))
+			.Action("Area", () => SpawnLight(LightType.AreaLight))
+			.Action("Sun", () => SpawnLight(LightType.Directional));
+		
+		void SpawnLight(LightType type) => this.Factory.CreateLight(type).Spawn();
+	}
+	
+	// Actor handling
 
 	private void ImportCharaFromFile() {
 		this._editor.OpenCharaFile((path, file) => {
@@ -48,19 +60,5 @@ public class SceneCreateMenuBuilder {
 				.SetName(name)
 				.Spawn();
 		});
-	}
-	
-	// Lights
-
-	private void BuildLightGroup(ContextMenuBuilder sub)
-		=> sub.SubMenu("Create new light", this.BuildLightMenu);
-
-	private void BuildLightMenu(ContextMenuBuilder sub) {
-		sub.Action("Point", () => this.Factory.CreateLight().Spawn())
-			.Action("Spot", () => SpawnLight(LightType.SpotLight))
-			.Action("Area", () => SpawnLight(LightType.AreaLight))
-			.Action("Sun", () => SpawnLight(LightType.Directional));
-		
-		void SpawnLight(LightType type) => this.Factory.CreateLight(type).Spawn();
 	}
 }

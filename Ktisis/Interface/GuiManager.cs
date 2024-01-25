@@ -10,7 +10,6 @@ using GLib.Popups;
 using Ktisis.Core;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
-using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Types;
 
 namespace Ktisis.Interface; 
@@ -18,7 +17,6 @@ namespace Ktisis.Interface;
 [Singleton]
 public class GuiManager : IDisposable {
 	private readonly DIBuilder _di;
-	private readonly GizmoManager _gizmo;
 	private readonly UiBuilder _uiBuilder;
 	
 	private readonly WindowSystem _ws = new("Ktisis");
@@ -31,11 +29,9 @@ public class GuiManager : IDisposable {
 	public GuiManager(
 		ConfigManager cfg,
 		DIBuilder di,
-		GizmoManager gizmo,
 		UiBuilder uiBuilder
 	) {
 		this._di = di;
-		this._gizmo = gizmo;
 		this._uiBuilder = uiBuilder;
 		this.FileDialogs = new FileDialogManager(this, cfg);
 	}
@@ -45,7 +41,6 @@ public class GuiManager : IDisposable {
 	public void Initialize() {
 		this._uiBuilder.DisableGposeUiHide = true;
 		this._uiBuilder.Draw += this.Draw;
-		this._gizmo.Initialize();
 	}
 	
 	// Draw

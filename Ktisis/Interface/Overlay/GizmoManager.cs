@@ -2,11 +2,8 @@ using System;
 
 using ImGuiNET;
 
-using Ktisis.Core.Attributes;
-
 namespace Ktisis.Interface.Overlay;
 
-[Singleton]
 public class GizmoManager {
 	// Initialization
 	
@@ -39,5 +36,11 @@ public class GizmoManager {
 
 		Ktisis.Log.Verbose($"Completed gizmo init (success: {success})");
 		this.IsInit = success;
+	}
+
+	public Gizmo Create(GizmoId id) {
+		if (!this.IsInit)
+			throw new Exception("Can't create gizmo as ImGuizmo is not initialized.");
+		return new Gizmo(id);
 	}
 }

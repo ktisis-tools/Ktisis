@@ -23,6 +23,8 @@ public class EditorInterface : IEditorInterface {
 	private readonly IContextMediator _mediator;
 	private readonly GuiManager _gui;
 
+	private readonly GizmoManager _gizmo = new();
+
 	private IEditorContext Context => this._mediator.Context;
 	
 	public EditorInterface(
@@ -36,10 +38,14 @@ public class EditorInterface : IEditorInterface {
 	// Scene ready
 
 	public void Prepare() {
-		var gizmo = new Gizmo(GizmoId.OverlayMain);
-		this._gui.GetOrCreate<OverlayWindow>(this.Context, gizmo).Open();
 		if (this.Context.Config.Editor.OpenOnEnterGPose)
 			this._gui.GetOrCreate<WorkspaceWindow>(this.Context).Open();
+
+		this._gizmo.Initialize();
+		this._gui.GetOrCreate<OverlayWindow>(
+			this.Context,
+			this._gizmo.Create(GizmoId.OverlayMain)
+		).Open();
 	}
 	
 	// Window wrappers
@@ -57,7 +63,7 @@ public class EditorInterface : IEditorInterface {
 	}
 
 	public void OpenTransformWindow() {
-		var gizmo = new Gizmo(GizmoId.TransformEditor);
+		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
 		this._gui.GetOrCreate<TransformWindow>(this.Context, new Gizmo2D(gizmo)).Open();
 	}
 	
