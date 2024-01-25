@@ -12,7 +12,6 @@ using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.Editors;
-using Ktisis.Interface.Windows.Menus;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.World;
@@ -80,13 +79,9 @@ public class EditorInterface : IEditorInterface {
 		this._gui.AddPopup(menu.Create()).Open();
 	}
 
-	public void OpenAssignCollection(ActorEntity entity) {
-		this._gui.CreatePopup<ActorCollectionPopup>(this.Context, entity).Open();
-	}
+	public void OpenAssignCollection(ActorEntity entity) => this._gui.CreatePopup<ActorCollectionPopup>(this.Context, entity).Open();
 
-	public void OpenOverworldActorList() {
-		this._gui.GetOrCreate<OverworldActorWindow>(this.Context).Open();
-	}
+	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this.Context).Open();
 	
 	// Entity windows
 

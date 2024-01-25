@@ -34,8 +34,8 @@ public class SceneCreateMenuBuilder {
 
 	private void BuildActorGroup(ContextMenuBuilder sub) {
 		sub.Action("Create new actor", () => this.Factory.CreateActor().Spawn())
-			.Action("Add overworld actor", this._editor.OpenOverworldActorList)
-			.Action("Import actor from file", this.ImportCharaFromFile);
+			.Action("Import actor from file", this.ImportCharaFromFile)
+			.Action("Add overworld actor", this._editor.OpenOverworldActorList);
 	}
 	
 	private void BuildLightGroup(ContextMenuBuilder sub)

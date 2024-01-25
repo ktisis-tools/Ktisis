@@ -66,7 +66,7 @@ public class ActorModule : SceneModule {
 		var address = await this._spawner.CreateActor(localPlayer);
 		var entity = this.AddSpawnedActor(address);
 		this.SetActorName(entity.Actor, name);
-		this.SetActorWorld(entity.Actor, (ushort)localPlayer.CurrentWorld.Id);
+		entity.Actor.SetWorld((ushort)localPlayer.CurrentWorld.Id);
 		return entity;
 	}
 
@@ -74,7 +74,9 @@ public class ActorModule : SceneModule {
 		if (!this._spawner.IsInit)
 			throw new Exception("Actor spawn manager is uninitialized.");
 		var address = await this._spawner.CreateActor(actor);
-		return this.AddSpawnedActor(address);
+		var entity = this.AddSpawnedActor(address);
+		entity.Actor.SetTargetable(true);
+		return entity;
 	}
 
 	private ActorEntity AddSpawnedActor(nint address) {
@@ -132,12 +134,7 @@ public class ActorModule : SceneModule {
 			gameObjectPtr->Name[i] = bytes[i];
 	}
 
-	private unsafe void SetActorWorld(GameObject gameObject, ushort world) {
-		var charaPtr = (Character*)gameObject.Address;
-		if (charaPtr == null || !charaPtr->GameObject.IsCharacter()) return;
-		charaPtr->CurrentWorld = world;
-		charaPtr->HomeWorld = world;
-	}
+	
 	
 	// Entities
 
