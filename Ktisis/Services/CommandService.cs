@@ -29,7 +29,7 @@ public class CommandService : IDisposable {
 	// Handler registration
 
 	public void RegisterHandlers() {
-		BuildCommand("/ktisis", OnMainCommand)
+		this.BuildCommand("/ktisis", OnMainCommand)
 			.SetMessage("Toggle the main Ktisis window.")
 			.Create();
 	}
@@ -44,9 +44,9 @@ public class CommandService : IDisposable {
 	
 	// Command handlers
 
-	private void OnMainCommand(string _command, string _arguments) {
+	private void OnMainCommand(string command, string arguments) {
 		Ktisis.Log.Info("Main command used");
-		this._gui.GetOrCreate<WorkspaceWindow>().Toggle();
+		//this._gui.GetOrCreate<WorkspaceWindow>().Toggle();
 	}
 	
 	// Disposal

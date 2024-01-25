@@ -6,58 +6,44 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 
-using GLib.Popups;
 using GLib.Widgets;
 
 using ImGuiNET;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
-using Ktisis.Core.Attributes;
-using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
-using Ktisis.Interface.Menus;
-using Ktisis.Scene;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
-using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
 
-[Transient]
 public class SceneTree {
-	private readonly ConfigManager _cfg;
-	private readonly EntityMenuFactory _menu;
+	private readonly IEditorContext _context;
+	
 	private readonly SceneDragDropHandler _dragDrop;
-
-	private readonly PopupManager _popup = new();
 	
 	public SceneTree(
-		ConfigManager cfg,
-		EntityMenuFactory menu,
-		SceneDragDropHandler dragDrop
+		IEditorContext context
 	) {
-		this._cfg = cfg;
-		this._menu = menu;
-		this._dragDrop = dragDrop;
+		this._context = context;
+		this._dragDrop = new SceneDragDropHandler(context);
 	}
 	
 	// Draw frame
     
-	public void Draw(ISceneManager? scene, float height) {
+	public void Draw(float height) {
 		var frame = false;
 		try {
 			var id = ImGui.GetID("SceneTree_Frame");
 			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
-			if (frame && scene != null)
-				this.DrawScene(scene, height);
+			if (!frame) return;
+			this.DrawScene(height);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Error drawing scene tree:\n{err}");
 		} finally {
 			if (frame) ImGui.EndChildFrame();
 		}
-		
-		this._popup.Draw();
 	}
 	
 	// Draw scene entities
@@ -73,19 +59,19 @@ public class SceneTree {
 		this.MaxY = height + scroll;
 	}
 
-	private void DrawScene(ISceneManager scene, float height) {
+	private void DrawScene(float height) {
 		this.PreCalc(height);
 
 		var spacing = ImGui.GetStyle().ItemSpacing;
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, spacing with { Y = 5.0f });
-		this.IterateTree(scene, scene.Children);
+		this.IterateTree(this._context.Scene.Children);
 	}
 
-	private void IterateTree(ISceneManager scene, IEnumerable<SceneEntity> entities) {
+	private void IterateTree(IEnumerable<SceneEntity> entities) {
 		try {
 			ImGui.TreePush();
 			foreach (var item in entities)
-				this.DrawNode(scene, item);
+				this.DrawNode(item);
 		} finally {
 			ImGui.TreePop();
 		}
@@ -99,7 +85,7 @@ public class SceneTree {
 		Collapse
 	}
 
-	private void DrawNode(ISceneManager scene, SceneEntity node) {
+	private void DrawNode(SceneEntity node) {
 		var pos = ImGui.GetCursorPos();
 		var isRender = pos.Y > this.MinY && pos.Y < this.MaxY;
 
@@ -128,29 +114,27 @@ public class SceneTree {
 				false => TreeNodeFlag.Collapse
 			};
 
-			var rightAdjust = this.DrawButtons(scene, node, isHover);
+			var rightAdjust = this.DrawButtons(node, isHover);
 			if (this.DrawNodeLabel(node, pos, flag, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
 			if (isHover && this.IsNodeHovered(pos, size, rightAdjust)) {
 				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) {
-					this._menu.OpenEditorFor(scene.Context, node);
+					this._context.Interface.OpenEditorFor(node);
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
 					var mode = GuiHelpers.GetSelectMode();
 					node.Select(mode);
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
-					var ctx = this._menu.Build(scene.Context, node).Open();
-					this._popup.Add(ctx);
+					this._context.Interface.OpenSceneEntityMenu(node);
 				}
 			}
 		}
 
-		if (isExpand)
-			this.IterateTree(scene, children);
+		if (isExpand) this.IterateTree(children);
 	}
 
 	private bool DrawNodeLabel(SceneEntity item, Vector2 pos, TreeNodeFlag flag, float rightAdjust = 0.0f) {
-		var display = this._cfg.Config.Editor.GetDisplayForType(item.Type);
+		var display = this._context.Config.Editor.GetDisplayForType(item.Type);
         
         // Caret
 
@@ -208,12 +192,12 @@ public class SceneTree {
 	
 	// Buttons
 
-	private float DrawButtons(ISceneManager scene, SceneEntity node, bool isHover) {
+	private float DrawButtons(SceneEntity node, bool isHover) {
 		var initial = ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X;
 		var cursor = initial;
 
 		this.DrawVisibilityButton(node, ref cursor, isHover);
-		this.DrawAttachButton(scene.Context, node, ref cursor, isHover);
+		this.DrawAttachButton(this._context, node, ref cursor, isHover);
 		
 		return initial - cursor;
 	}
@@ -235,7 +219,7 @@ public class SceneTree {
 
 		var bone = attach.GetParentBone();
 		var name = bone != null ? context.Locale.GetBoneName(bone) : "UNKNOWN";
-		using var _tooltip = ImRaii.Tooltip();
+		using var _ = ImRaii.Tooltip();
 		ImGui.Text($"Attached to {name}");
 	}
 

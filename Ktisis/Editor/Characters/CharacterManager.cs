@@ -18,7 +18,6 @@ namespace Ktisis.Editor.Characters;
 public class CharacterManager : ICharacterState {
 	private readonly IContextMediator _mediator;
 	private readonly HookScope _scope;
-
 	private readonly IFramework _framework;
 
 	public bool IsValid => this._mediator.Context.IsValid;
@@ -83,6 +82,12 @@ public class CharacterManager : ICharacterState {
 			if (gameState)
 				this.ApplyStateToGameObject(actor);
 		});
+	}
+
+	public Task<CharaFile> SaveCharaFile(ActorEntity actor) {
+		return this._framework.RunOnFrameworkThread(
+			() => new EntityCharaConverter(actor).Save()
+		);
 	}
 	
 	// Disposal

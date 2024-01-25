@@ -7,6 +7,9 @@ using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
+using Ktisis.Interface;
+using Ktisis.Interface.Editor;
+using Ktisis.Interface.Editor.Types;
 using Ktisis.Localization;
 using Ktisis.Scene;
 using Ktisis.Scene.Types;
@@ -22,6 +25,7 @@ public interface IEditorContext : IDisposable {
 	public IActionManager Actions { get; }
 	public ICharacterState Characters { get; }
 	public ICameraManager Cameras { get; }
+	public IEditorInterface Interface { get; }
 	public IPosingManager Posing { get; }
 	public ISceneManager Scene { get; }
 	public ISelectManager Selection { get; }

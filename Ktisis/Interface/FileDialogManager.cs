@@ -1,175 +1,102 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Linq;
 
-using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
 using GLib.Popups.ImFileDialog;
 
-using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
-using Ktisis.Editor.Characters;
-using Ktisis.Editor.Posing.Data;
 
 namespace Ktisis.Interface;
 
-public delegate void CharaFileOpenedHandler(string path, CharaFile charaFile);
-public delegate void PoseFileOpenedHandler(string path, PoseFile poseFile);
-
-[Singleton]
 public class FileDialogManager {
-	private readonly ConfigManager _cfg;
 	private readonly GuiManager _gui;
-	private readonly IFramework _framework;
+	private readonly ConfigManager _cfg;
 
-	private Configuration Config => this._cfg.Config;
+	private readonly JsonFileSerializer _serializer = new();
 	
 	public FileDialogManager(
-		ConfigManager cfg,
 		GuiManager gui,
-		IFramework framework
+		ConfigManager cfg
 	) {
-		this._cfg = cfg;
 		this._gui = gui;
-		this._framework = framework;
+		this._cfg = cfg;
 	}
 	
 	// Dialog state
 
 	private T OpenDialog<T>(T dialog) where T : FileDialog {
-		if (this.Config.File.LastOpenedPaths.TryGetValue(dialog.Title, out var path))
+		if (this._cfg.Config.File.LastOpenedPaths.TryGetValue(dialog.Title, out var path))
 			dialog.Open(path);
 		else
 			dialog.Open();
+		this._gui.AddPopupSingleton(dialog);
 		return dialog;
 	}
 	
 	private void SaveDialogState(FileDialog dialog) {
 		if (dialog.ActiveDirectory == null) return;
-		this.Config.File.LastOpenedPaths[dialog.Title] = dialog.ActiveDirectory;
+		this._cfg.Config.File.LastOpenedPaths[dialog.Title] = dialog.ActiveDirectory;
 	}
 	
-	// Chara file handling
+	// File handling
 
-	public FileDialog OpenCharaFile(
-		CharaFileOpenedHandler handler
+	public FileDialog OpenFile(
+		string name,
+		Action<string> handler,
+		FileDialogOptions? options = null
 	) {
-		return this.OpenDialog(
-			this._gui.AddPopupSingleton(new FileDialog(
-				"Open Chara File",
-				OnConfirm,
-				new FileDialogOptions {
-					Flags = FileDialogFlags.OpenMode,
-					Filters = "Character Files{.chara}",
-					Extension = ".chara"
-				}
-			))
-		);
+		options ??= new FileDialogOptions();
 
-		void OnConfirm(FileDialog sender, IEnumerable<string> paths) {
+		var dialog = new FileDialog(name, (sender, paths) => {
+			this.SaveDialogState(sender);
 			var path = paths.FirstOrDefault();
 			if (path.IsNullOrEmpty()) return;
-			this.SaveDialogState(sender);
+			handler.Invoke(path);
+		}, options with { Flags = FileDialogFlags.OpenMode });
+		
+		return this.OpenDialog(dialog);
+	}
 
+	public FileDialog OpenFile<T>(
+		string name,
+		Action<string, T> handler,
+		FileDialogOptions? options = null
+	) where T : JsonFile {
+		return this.OpenFile(name, path => {
 			var content = File.ReadAllText(path);
-			var charaFile = new JsonFileSerializer().Deserialize<CharaFile>(content);
-			if (charaFile == null) return;
-			handler.Invoke(path, charaFile);
-		}
+			var file = this._serializer.Deserialize<T>(content);
+			if (file != null) handler.Invoke(path, file);
+		}, options);
 	}
 
-	public FileDialog ExportCharaFile(
-		EntityCharaConverter chara
+	public FileDialog SaveFile(
+		string name,
+		string content,
+		FileDialogOptions? options = null
 	) {
-		return this.OpenDialog(
-			this._gui.AddPopupSingleton(new FileDialog(
-				"Export Chara File",
-				OnConfirm,
-				new FileDialogOptions {
-					Filters = "Character Files{.chara}",
-					Extension = ".chara"
-				}
-			))
-		);
-		
-		void OnConfirm(FileDialog sender, IEnumerable<string> paths) {
+		options ??= new FileDialogOptions();
+
+		var dialog = new FileDialog(name, (sender, paths) => {
+			this.SaveDialogState(sender);
 			var path = paths.FirstOrDefault();
 			if (path.IsNullOrEmpty()) return;
-			this.SaveDialogState(sender);
+			
+			File.WriteAllText(path, content);
+		}, options);
 
-			this._framework.RunOnFrameworkThread(chara.Save).ContinueWith(task => {
-				if (task.Exception != null) {
-					Ktisis.Log.Error(task.Exception.ToString());
-					return;
-				}
-
-				var content = new JsonFileSerializer().Serialize(task.Result);
-				File.WriteAllText(path, content);
-			});
-		}
-	}
-	
-	// Pose file handling
-
-	public FileDialog OpenPoseFile(
-		PoseFileOpenedHandler handler
-	) {
-		return this.OpenDialog(
-			this._gui.AddPopupSingleton(new FileDialog(
-				"Open Pose File",
-				OnConfirm,
-				new FileDialogOptions {
-					Flags = FileDialogFlags.OpenMode,
-					Filters = "Pose Files{.pose}",
-					Extension = ".pose"
-				}
-			))
-		);
-		
-		void OnConfirm(FileDialog sender, IEnumerable<string> paths) {
-			var path = paths.FirstOrDefault();
-			if (path.IsNullOrEmpty()) return;
-			this.SaveDialogState(sender);
-
-			var content = File.ReadAllText(path);
-			var poseFile = new JsonFileSerializer().Deserialize<PoseFile>(content);
-			if (poseFile == null) return;
-			poseFile.ConvertLegacyBones();
-			handler.Invoke(path, poseFile);
-		}
+		return this.OpenDialog(dialog);
 	}
 
-	public FileDialog ExportPoseFile(
-		EntityPoseConverter pose
-	) {
-		return this.OpenDialog(
-			this._gui.AddPopupSingleton(new FileDialog(
-				"Export Pose File",
-				OnConfirm,
-				new FileDialogOptions {
-					Filters = "Pose Files{.pose}",
-					Extension = ".pose"
-				}
-			))
-		);
-		
-		void OnConfirm(FileDialog sender, IEnumerable<string> paths) {
-			var path = paths.FirstOrDefault();
-			if (path.IsNullOrEmpty()) return;
-			this.SaveDialogState(sender);
-
-			this._framework.RunOnFrameworkThread(pose.SaveFile).ContinueWith(task => {
-				if (task.Exception != null) {
-					Ktisis.Log.Error(task.Exception.ToString());
-					return;
-				}
-
-				var content = new JsonFileSerializer().Serialize(task.Result);
-				File.WriteAllText(path, content);
-			});
-		}
+	public FileDialog SaveFile<T>(
+		string name,
+		T file,
+		FileDialogOptions? options = null
+	) where T : JsonFile {
+		var content = this._serializer.Serialize(file);
+		return this.SaveFile(name, content, options);
 	}
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -6,7 +7,6 @@ using Dalamud.Interface.Utility.Raii;
 
 using ImGuiNET;
 
-using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interface.Widgets;
@@ -14,17 +14,18 @@ using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components.Workspace;
 
-[Transient]
 public class WorkspaceState {
-	private readonly LocaleManager _locale;
+	private readonly IEditorContext _context;
+
+	private LocaleManager Locale => this._context.Locale;
 	
 	public WorkspaceState(
-		LocaleManager locale
+		IEditorContext context
 	) {
-		this._locale = locale;
+		this._context = context;
 	}
 
-	public void Draw(IEditorContext? context) {
+	public void Draw() {
 		var style = ImGui.GetStyle();
 		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
 
@@ -33,34 +34,30 @@ public class WorkspaceState {
 			var id = ImGui.GetID("SceneState_Frame");
 			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
 			if (!frame) return;
-			
-			if (context != null)
-				this.DrawContext(context);
-			else
-				ImGui.Text("Inactive.");
+			this.DrawContext();
 		} finally {
 			if (frame) ImGui.EndChildFrame();
 		}
 	}
 
-	private void DrawContext(IEditorContext context) {
+	private void DrawContext() {
 		var cursorY = ImGui.GetCursorPosY();
 		var avail = ImGui.GetContentRegionAvail().Y;
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetStyle().ItemSpacing.X);
 		ImGui.SetCursorPosY(cursorY + (avail - ImGui.GetFrameHeight()) / 2);
 		
-		var isPosing = context.Posing.IsEnabled;
+		var isPosing = this._context.Posing.IsEnabled;
 		
 		var locKey = isPosing ? "enable" : "disable";
 		
 		var color = isPosing ? 0xFF3AD86A : 0xFF504EC4;
 		using var _button = ImRaii.PushColor(ImGuiCol.Button, isPosing ? 0xFF00FF00 : 0xFF7070C0);
 		if (ToggleButton.Draw("##KtisisPoseToggle", ref isPosing, color))
-			context.Posing.SetEnabled(isPosing);
+			this._context.Posing.SetEnabled(isPosing);
 
 		if (ImGui.IsItemHovered()) {
 			using var _ = ImRaii.Tooltip();
-			ImGui.Text(this._locale.Translate($"workspace.posing.hint.{locKey}"));
+			ImGui.Text(this.Locale.Translate($"workspace.posing.hint.{locKey}"));
 		}
 
 		ImGui.SameLine();
@@ -72,10 +69,10 @@ public class WorkspaceState {
 		
 		using (var _space = ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, Vector2.Zero)) {
 			using (var _text = ImRaii.PushColor(ImGuiCol.Text, color))
-				ImGui.Text(this._locale.Translate($"workspace.posing.toggle.{locKey}"));
+				ImGui.Text(this.Locale.Translate($"workspace.posing.toggle.{locKey}"));
 			
 			using (var _text = ImRaii.PushColor(ImGuiCol.Text, 0xDFFFFFFF))
-				this.DrawTargetLabel(context.Transform);
+				this.DrawTargetLabel(this._context.Transform);
 		}
 		
 		ImGui.EndGroup();
@@ -84,7 +81,7 @@ public class WorkspaceState {
 	private void DrawTargetLabel(ITransformHandler transform) {
 		var target = transform.Target;
 		if (target == null) {
-			ImGui.TextDisabled(this._locale.Translate("workspace.state.select_count.none"));
+			ImGui.TextDisabled(this.Locale.Translate("workspace.state.select_count.none"));
 			return;
 		}
 
@@ -99,9 +96,9 @@ public class WorkspaceState {
 		count--;
 		
 		var key = $"workspace.state.select_count.{(count > 1 ? "plural" : "single")}";
-		ImGui.Text(this._locale.Translate(
+		ImGui.Text(this.Locale.Translate(
 			key,
-			new() {
+			new Dictionary<string, string> {
 				{ "count", count.ToString() },
 				{ "target", target.Primary?.Name ?? "INVALID" }
 			}

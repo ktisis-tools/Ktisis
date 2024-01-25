@@ -8,9 +8,11 @@ using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
+using Ktisis.Interface;
+using Ktisis.Interface.Editor;
+using Ktisis.Interface.Editor.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Localization;
-using Ktisis.Scene;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Editor;
@@ -25,8 +27,9 @@ public class EditorContext : IEditorContext {
 	public LocaleManager Locale => this._mediator.Locale;
 	
 	public required IActionManager Actions { get; init; }
-	public required ICharacterState Characters { get; init; }
 	public required ICameraManager Cameras { get; init; }
+	public required ICharacterState Characters { get; init; }
+	public required IEditorInterface Interface { get; init; }
 	public required IPosingManager Posing { get; init; }
 	public required ISceneManager Scene { get; init; }
 	public required ISelectManager Selection { get; init; }
@@ -40,7 +43,7 @@ public class EditorContext : IEditorContext {
 		this._scope = scope;
 	}
 	
-	// State
+	// Initialization
 	
 	private bool IsInit;
 
@@ -56,8 +59,17 @@ public class EditorContext : IEditorContext {
 			this.Dispose();
 			throw;
 		}
+
+		try {
+			this.Interface.Prepare();
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Error preparing interface:\n{err}");
+		}
+		
 		return this;
 	}
+	
+	// Update handler
 
 	public void Update() {
 		this.Scene.Update();

@@ -6,49 +6,49 @@ using GLib.Widgets;
 using ImGuiNET;
 
 using Ktisis.Common.Extensions;
-using Ktisis.Core.Attributes;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Context;
 
 namespace Ktisis.Interface.Components.Workspace;
 
-[Transient]
 public class CameraSelector {
-	private readonly EditorUi _ui;
+	private readonly IEditorContext _context;
+
+	private ICameraManager Cameras => this._context.Cameras;
 	
 	public CameraSelector(
-		EditorUi ui
+		IEditorContext context
 	) {
-		this._ui = ui;
+		this._context = context;
 	}
 
-	public void Draw(IEditorContext context) {
-		using var _id = ImRaii.PushId("##CameraSelect");
+	public void Draw() {
+		using var _ = ImRaii.PushId("##CameraSelect");
 		
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - (Buttons.CalcSize() + spacing) * 3);
-		this.DrawSelector(context.Cameras);
+		this.DrawSelector();
 		
 		ImGui.SameLine(0, spacing);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Create new camera"))
-			context.Cameras.Create();
+			this.Cameras.Create();
 
 		ImGui.SameLine(0, spacing);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit camera"))
-			this._ui.OpenCameraWindow(context);
+			this._context.Interface.OpenCameraWindow();
 		
 		ImGui.SameLine(0, spacing);
-		this.DrawFreecamToggle(context);
+		this.DrawFreecamToggle();
 	}
 
-	private void DrawFreecamToggle(IEditorContext context) {
-		var isFreecam = context.Cameras.IsWorkCameraActive;
+	private void DrawFreecamToggle() {
+		var isFreecam = this.Cameras.IsWorkCameraActive;
 		using var _bgCol = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isFreecam);
 		using var _iconCol = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xCF), !isFreecam);
 		
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Camera, "Toggle work camera"))
-			context.Cameras.ToggleWorkCameraMode();
+			this.Cameras.ToggleWorkCameraMode();
 	}
 	
 	// Selector
@@ -56,19 +56,19 @@ public class CameraSelector {
 	private bool _isOpen;
 	private float _lastScroll;
 
-	private void DrawSelector(ICameraManager manager) {
-		using var _disable = ImRaii.Disabled(manager.IsWorkCameraActive);
+	private void DrawSelector() {
+		using var _ = ImRaii.Disabled(this.Cameras.IsWorkCameraActive);
         
-		var current = manager.Current;
+		var current = this.Cameras.Current;
 		var combo = ImGui.BeginCombo("##CameraSelectList", current?.Name ?? "INVALID");
 		if (combo) {
 			// Restore last scroll position
 			if (!this._isOpen && this._lastScroll > 0.0f)
 				ImGui.SetScrollY(this._lastScroll);
 			// Display cameras
-			foreach (var camera in manager.GetCameras()) {
+			foreach (var camera in this.Cameras.GetCameras()) {
 				if (ImGui.Selectable(camera.Name, camera == current))
-					manager.SetCurrent(camera);
+					this.Cameras.SetCurrent(camera);
 			}
 			// Save last scroll position
 			this._lastScroll = ImGui.GetScrollY();

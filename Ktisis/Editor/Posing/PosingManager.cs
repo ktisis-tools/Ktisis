@@ -1,29 +1,36 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
+using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Posing;
 
 public class PosingManager : IPosingManager {
 	private readonly IContextMediator _mediator;
 	private readonly HookScope _scope;
+	private readonly IFramework _framework;
 
 	public bool IsValid => this._mediator.IsGPosing;
 
 	public PosingManager(
 		IContextMediator mediator,
-		HookScope scope
+		HookScope scope,
+		IFramework framework
 	) {
 		this._mediator = mediator;
 		this._scope = scope;
+		this._framework = framework;
 	}
 	
 	// Initialization
@@ -64,6 +71,29 @@ public class PosingManager : IPosingManager {
 		
 		pose.ApplyToPartial(skeleton, partialId, PoseTransforms.Rotation | PoseTransforms.PositionRoot);
 	}
+	
+	// Pose files
+
+	public Task ApplyPoseFile(
+		EntityPose pose,
+		PoseFile file,
+		PoseTransforms transforms = PoseTransforms.Rotation,
+		bool selectedBones = false
+	) {
+		return this._framework.RunOnFrameworkThread(() => {
+			if (file.Bones == null) return;
+			
+			var converter = new EntityPoseConverter(pose);
+			if (selectedBones)
+				converter.LoadSelectedBones(file.Bones, transforms);
+			else
+				converter.Load(file.Bones, transforms);
+		});
+	}
+
+	public Task<PoseFile> SavePoseFile(EntityPose pose) => this._framework.RunOnFrameworkThread(
+		() => new EntityPoseConverter(pose).SaveFile()
+	);
 	
 	// Disposal
 

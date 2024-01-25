@@ -15,6 +15,8 @@ public class GizmoManager {
 	private bool IsInit;
 
 	public unsafe void Initialize() {
+		if (this.IsInit) return;
+		
 		var success = false;
 
 		try {
@@ -37,11 +39,5 @@ public class GizmoManager {
 
 		Ktisis.Log.Verbose($"Completed gizmo init (success: {success})");
 		this.IsInit = success;
-	}
-	
-	// Gizmo creation
-
-	public Gizmo Create(GizmoId id) {
-		return new Gizmo(id);
 	}
 }

@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
-using Ktisis.Interface;
 using Ktisis.Localization;
 using Ktisis.Services;
 
@@ -19,7 +18,6 @@ public class ContextManager : IContextManager, IDisposable {
 	private readonly ContextBuilder _factory;
 	private readonly GPoseService _gpose;
 	private readonly LocaleManager _locale;
-	private readonly EditorUi _ui;
 
 	public IEditorContext? Context => this._context is { IsValid: true } ctx ? ctx : null;
 
@@ -27,18 +25,15 @@ public class ContextManager : IContextManager, IDisposable {
 		ConfigManager cfg,
 		ContextBuilder factory,
 		GPoseService gpose,
-		LocaleManager locale,
-		EditorUi ui
+		LocaleManager locale
 	) {
 		this._cfg = cfg;
 		this._factory = factory;
 		this._gpose = gpose;
 		this._locale = locale;
-		this._ui = ui;
 	}
 
 	public void Initialize() {
-		this._ui.Initialize();
 		this._locale.Initialize();
 		this._gpose.StateChanged += this.OnStateChanged;
 		this._gpose.Subscribe();
@@ -50,7 +45,6 @@ public class ContextManager : IContextManager, IDisposable {
 		if (this.IsDisposing) return;
 		this.Destroy();
 		if (state) this.Setup();
-		this._ui.HandleWorkspace(state);
 	}
 	
 	// Initialization
@@ -69,8 +63,6 @@ public class ContextManager : IContextManager, IDisposable {
 		try {
 			this._gpose.Update += this.Update;
 			this.SetupContext();
-			if (this._context != null)
-				this._ui.OpenOverlay(this._context);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize editor context:\n{err}");
 			this.Destroy();
@@ -81,7 +73,7 @@ public class ContextManager : IContextManager, IDisposable {
 	}
 
 	private void SetupContext() {
-		var mediator = new ContextMediator(this, this._cfg.Config, this._locale);
+		var mediator = new ContextMediator(this);
 		this._context = this._factory.Initialize(mediator);
 	}
 	
@@ -117,14 +109,12 @@ public class ContextManager : IContextManager, IDisposable {
 	// Mediator
 
 	private class ContextMediator(
-		ContextManager editor,
-		Configuration cfg,
-		LocaleManager locale
+		ContextManager editor
 	) : IContextMediator {
 		public IEditorContext Context { get; private set; } = null!;
 		
-		public Configuration Config { get; } = cfg;
-		public LocaleManager Locale { get; } = locale;
+		public Configuration Config { get; } = editor._cfg.Config;
+		public LocaleManager Locale { get; } = editor._locale;
 
 		public bool IsGPosing => editor._gpose.IsGPosing;
 

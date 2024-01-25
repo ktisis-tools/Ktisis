@@ -13,7 +13,7 @@ using Ktisis.Scene.Entities.Game;
 namespace Ktisis.Interface.Windows.Import;
 
 public class CharaImportDialog : EntityEditWindow<ActorEntity> {
-	private readonly FileDialogManager _dialog;
+	private readonly IEditorContext _context;
 	
 	private readonly FileSelect<CharaFile> _select;
 
@@ -21,20 +21,19 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 
 	public CharaImportDialog(
 		IEditorContext context,
-		FileDialogManager dialog,
 		FileSelect<CharaFile> select
 	) : base(
 		"Import Appearance",
 		context,
 		ImGuiWindowFlags.AlwaysAutoResize
 	) {
-		this._dialog = dialog;
+		this._context = context;
 		this._select = select;
-		this._select.OpenDialog += this.OnFileDialogOpen;
+		this._select.OpenDialog = this.OnFileDialogOpen;
 	}
 	
 	private void OnFileDialogOpen(FileSelect<CharaFile> sender) {
-		this._dialog.OpenCharaFile(sender.SetFile);
+		this._context.Interface.OpenCharaFile(sender.SetFile);
 	}
 	
 	public override void Draw() {
@@ -47,7 +46,7 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	}
 
 	private void DrawCharaApplication() {
-		using var _disable = ImRaii.Disabled(!this._select.IsFileOpened);
+		using var _ = ImRaii.Disabled(!this._select.IsFileOpened);
 		
 		this.DrawModesSelect();
 		ImGui.Spacing();
@@ -85,7 +84,7 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 
 	private void ApplyCharaFile() {
 		var file = this._select.Selected?.File;
-		if (file != null)
-			this.Context.Characters.ApplyCharaFile(this.Target, file, this.Config.File.ImportCharaModes);
+		if (file == null) return;
+		this.Context.Characters.ApplyCharaFile(this.Target, file, this.Config.File.ImportCharaModes);
 	}
 }

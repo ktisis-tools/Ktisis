@@ -24,4 +24,5 @@ public interface ICharacterState : IDisposable {
 	public void ApplyStateToGameObject(ActorEntity entity);
 
 	public Task ApplyCharaFile(ActorEntity actor, CharaFile file, SaveModes modes = SaveModes.All, bool gameState = false);
+	public Task<CharaFile> SaveCharaFile(ActorEntity actor);
 }

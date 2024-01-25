@@ -33,8 +33,8 @@ public abstract class SceneEntity : IComposite {
 	
 	public bool IsSelected => this.Selection.IsSelected(this);
 
-	public void Select(SelectMode mode = SelectMode.Default)
-		=> this.Selection.Select(this, mode);
+	public void Select(SelectMode mode = SelectMode.Default) => this.Selection.Select(this, mode);
+	public void Unselect() => this.Selection.Unselect(this);
 	
 	// IComposite
 	

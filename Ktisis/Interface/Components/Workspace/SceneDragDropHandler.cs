@@ -5,21 +5,22 @@ using GLib.Widgets;
 
 using ImGuiNET;
 
-using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
+using Ktisis.Editor.Context;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 
 namespace Ktisis.Interface.Components.Workspace;
 
-[Transient]
 public class SceneDragDropHandler {
-	private readonly ConfigManager _cfg;
+	private readonly IEditorContext _context;
 
+	private Configuration Config => this._context.Config;
+	
 	public SceneDragDropHandler(
-		ConfigManager cfg
+		IEditorContext context
 	) {
-		this._cfg = cfg;
+		this._context = context;
 	}
 	
 	// Handling
@@ -42,7 +43,7 @@ public class SceneDragDropHandler {
 
 		this.Source = entity;
 
-		var display = this._cfg.Config.Editor.GetDisplayForType(entity.Type);
+		var display = this.Config.Editor.GetDisplayForType(entity.Type);
 		using var _color = ImRaii.PushColor(ImGuiCol.Text, display.Color);
 
 		var icon = display.Icon;

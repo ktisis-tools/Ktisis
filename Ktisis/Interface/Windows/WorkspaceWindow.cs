@@ -1,86 +1,108 @@
 using System.Numerics;
 
 using Dalamud.Interface;
-using Dalamud.Interface.Utility.Raii;
+
+using GLib.Widgets;
 
 using ImGuiNET;
 
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Components.Workspace;
+using Ktisis.Interface.Editor;
+using Ktisis.Interface.Editor.Types;
 
 namespace Ktisis.Interface.Windows; 
 
 public class WorkspaceWindow : KtisisWindow {
-	private readonly ContextManager _editor;
+	private readonly IEditorContext _context;
 
-	private readonly ContextButtons _buttons;
-
-	private readonly CameraSelector _camera;
+	private readonly CameraSelector _cameras;
 	private readonly WorkspaceState _state;
 	private readonly SceneTree _sceneTree;
-	private readonly SceneTreeButtons _sceneButtons;
+
+	private IEditorInterface Interface => this._context.Interface;
 	
 	public WorkspaceWindow(
-		ContextManager editor,
-		ContextButtons buttons,
-		CameraSelector camera,
-		WorkspaceState state,
-		SceneTree sceneTree,
-		SceneTreeButtons sceneTreeButtons
+		IEditorContext context
 	) : base("Ktisis Workspace") {
-		this._editor = editor;
-		this._buttons = buttons;
-		this._camera = camera;
-		this._state = state;
-		this._sceneTree = sceneTree;
-		this._sceneButtons = sceneTreeButtons;
+		this._context = context;
+		this._cameras = new CameraSelector(context);
+		this._state = new WorkspaceState(context);
+		this._sceneTree = new SceneTree(context);
 	}
 	
 	// Constants
 	
-	private static readonly Vector2 MinimumSize = new(280, 300);
+	private readonly static Vector2 MinimumSize = new(280, 300);
 	
-	// Draw handler
+	// Pre-draw handlers
 
-	public override void Draw() {
+	public override void PreOpenCheck() {
+		if (this._context.IsValid) return;
+		Ktisis.Log.Verbose("Context for workspace window is stale, closing...");
+		this.Close();
+	}
+	
+	public override void PreDraw() {
 		this.SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = MinimumSize,
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.9f
 		};
-		
-		this.Draw(this._editor.Context);
 	}
+	
+	// Draw handler
 
-	private void Draw(IEditorContext? context) {
-		var scene = context?.Scene;
-		using var _disable = ImRaii.Disabled(context == null);
-
+	public override void Draw() {
 		var style = ImGui.GetStyle();
 		
 		// Context buttons
 		
-		if (context != null)
-			this._buttons.Draw(context);
-		
-		// Cameras
-
+		this.DrawContextButtons();
 		ImGui.Spacing();
-		if (context != null)
-			this._camera.Draw(context);
-		
-		// Scene
-		
-		this._state.Draw(context);
+		this._cameras.Draw();
+		this._state.Draw();
 
 		var botHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - botHeight;
-		this._sceneTree.Draw(scene, treeHeight);
+		this._sceneTree.Draw(treeHeight);
 
 		ImGui.Spacing();
 		
-		if (scene != null)
-			this._sceneButtons.Draw(scene);
+		this.DrawSceneTreeButtons();
+	}
+	
+	// Context buttons
+
+	private void DrawContextButtons() {
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsAlt, "Transform Editor"))
+			this.Interface.OpenTransformWindow();
+
+		ImGui.SameLine(0, spacing);
+		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sun, "Environment Editor"))
+			this.Interface.OpenEnvironmentWindow();
+
+		ImGui.SameLine(0, spacing);
+
+		var gizmo = this._context.Config.Gizmo.Visible;
+		var icon = gizmo ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
+		if (Buttons.IconButtonTooltip(icon, "Toggle gizmo visibility"))
+			this._context.Config.Gizmo.Visible = !gizmo;
+
+		ImGui.SameLine(0, spacing);
+		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cog, "Settings"))
+			this.Interface.OpenConfigWindow();
+	}
+	
+	// Scene tree buttons
+
+	private void DrawSceneTreeButtons() {
+		if (Buttons.IconButton(FontAwesomeIcon.Plus))
+			this.Interface.OpenSceneCreateMenu();
 	}
 }
  
