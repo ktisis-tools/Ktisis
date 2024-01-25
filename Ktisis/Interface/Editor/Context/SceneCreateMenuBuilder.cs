@@ -27,6 +27,7 @@ public class SceneCreateMenuBuilder {
 	public ContextMenu Create() {
 		return new ContextMenuBuilder()
 			.Group(this.BuildActorGroup)
+			.Separator()
 			.Group(this.BuildLightGroup)
 			.Build($"##SceneCreateMenu_{this.GetHashCode():X}");
 	}
@@ -51,9 +52,8 @@ public class SceneCreateMenuBuilder {
 	
 	// Lights
 
-	private void BuildLightGroup(ContextMenuBuilder sub) {
-		sub.SubMenu("Create new light", this.BuildLightMenu);
-	}
+	private void BuildLightGroup(ContextMenuBuilder sub)
+		=> sub.SubMenu("Create new light", this.BuildLightMenu);
 
 	private void BuildLightMenu(ContextMenuBuilder sub) {
 		sub.Action("Point", () => this.Factory.CreateLight().Spawn())
