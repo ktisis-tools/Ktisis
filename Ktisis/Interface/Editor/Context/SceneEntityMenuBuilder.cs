@@ -76,6 +76,7 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
+			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Action("Edit appearance", this.OpenEditor)
 			.Separator()
 			.SubMenu("Import...", sub => {
@@ -86,6 +87,12 @@ public class SceneEntityMenuBuilder {
 				sub.Action("Character (.chara)", () => this.ExportChara(actor))
 					.Action("Pose file (.pose)", () => this.ExportPose(actor.Pose));
 			});
+	}
+
+	private void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
+		if (!this._context.Ipc.IsPenumbraActive) return;
+		
+		menu.Action("Assign collection", () => this._editor.OpenAssignCollection(actor));
 	}
 
 	private void ImportChara(ActorEntity actor) => this._editor.OpenEditor<CharaImportDialog, ActorEntity>(actor);

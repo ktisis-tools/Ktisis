@@ -21,24 +21,17 @@ public class ActorSpawner : HookModule {
 	private const ushort Start = 200;
 	private const ushort SoftCap = 30;
 	private const ushort HardCap = SoftCap + 8;
-
-	private readonly IClientState _clientState;
+	
 	private readonly IObjectTable _objectTable;
 	private readonly IFramework _framework;
-
-	private readonly ActorModule Module;
 	
 	public ActorSpawner(
 		IHookMediator hook,
-		IClientState clientState,
 		IObjectTable objectTable,
-		IFramework framework,
-		ActorModule module
+		IFramework framework
 	) : base(hook) {
-		this._clientState = clientState;
 		this._objectTable = objectTable;
 		this._framework = framework;
-		this.Module = module;
 	}
 	
 	// Signatures
@@ -62,7 +55,7 @@ public class ActorSpawner : HookModule {
 		try {
 			this.Initialize();
 		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to initialize light spawner:\n{err}");
+			Ktisis.Log.Error($"Failed to initialize actor spawner:\n{err}");
 		}
 	}
 
@@ -91,56 +84,46 @@ public class ActorSpawner : HookModule {
 	
 	// Creation
 
-	public Task<nint> CreateActor(string name) {
-		var localPlayer = this._clientState.LocalPlayer;
-		if (localPlayer == null)
-			throw new Exception("LocalPlayer is invalid!");
-		return this.CreateActor(name, localPlayer);
-	}
-
-	public async Task<nint> CreateActor(string name, GameObject originator) {
+	public async Task<nint> CreateActor(GameObject original) {
 		using var source = new CancellationTokenSource();
 		source.CancelAfter(10_000);
-		return await this.CreateActor(name, originator, source.Token);
+		return await this.CreateActor(original, source.Token);
 	}
 
 	private async Task<nint> CreateActor(
-		string name,
-		GameObject originator,
+		GameObject original,
 		CancellationToken token
 	) {
 		var index = await this._framework.RunOnFrameworkThread(() => {
-			if (!this.TryDispatch(originator, out var index))
+			if (!this.TryDispatch(original, out var index))
 				throw new Exception("Object table is full.");
 			return index;
 		});
 		
 		while (!token.IsCancellationRequested) {
-			if (this._objectTable[(int)index] is { } actor) {
-				this.Module.SetActorName(actor, name);
+			if (this._objectTable[(int)index] is { } actor)
 				return actor.Address;
-			}
 			await Task.Delay(10, CancellationToken.None);
 		}
 		
 		throw new TaskCanceledException($"Actor spawn at index {index} timed out.");
 	}
 
-	private bool TryDispatch(GameObject originator, out uint index) {
+	private bool TryDispatch(GameObject original, out uint index) {
 		index = this.CalculateNextIndex();
 		if (index == ushort.MaxValue) return false;
 		Ktisis.Log.Info($"Dispatching, expecting spawn on {index}");
-		this.DispatchSpawn(originator);
+		this.DispatchSpawn(original);
 		return true;
 	}
 
-	private unsafe void DispatchSpawn(GameObject originator) {
+	private unsafe void DispatchSpawn(GameObject original) {
 		if (this._hookVfTable == null)
 			throw new Exception("Hook vtable is not initialized!");
 		
-		var player = (Character*)originator.Address;
+		var player = (Character*)original.Address;
 		if (player == null || !player->GameObject.IsCharacter())
-			throw new Exception($"Originator object '{originator.Name}' ({originator.ObjectIndex}) is invalid.");
+			throw new Exception($"Original object '{original.Name}' ({original.ObjectIndex}) is invalid.");
 		
 		// This gets freed by the event manager after handling.
 		var task = (GPoseActorEvent*)IMemorySpace.GetDefaultSpace()->Malloc<GPoseActorEvent>();
@@ -165,9 +148,10 @@ public class ActorSpawner : HookModule {
 	private unsafe delegate void FinalizeDelegate(GPoseActorEvent* a1, nint a2, nint a3);
 	private static FinalizeDelegate _finalizeOriginal = null!;
 	private unsafe static void FinalizeHook(GPoseActorEvent* self, nint a2, nint a3) {
-		// This only prevents the new actor from being confused with the player.
+		// This prevents the new actor from being confused with the player.
 		if (self->Character != null)
 			self->EntityID = 0xE0000000;
+
 		_finalizeOriginal.Invoke(self, a2, a3);
 	}
 	

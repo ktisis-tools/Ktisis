@@ -113,7 +113,7 @@ public class PosingModule : HookModule {
 	}
 
 	private unsafe void HandlePreservePose(GameObject* chara) {
-		if (!this.Manager.IsValid) return;
+		if (!this.Manager.IsValid || !this.IsEnabled) return;
 		
 		var actor = this._actors.GetAddress((nint)chara);
 		if (actor == null) return;
@@ -126,7 +126,7 @@ public class PosingModule : HookModule {
 	}
 
 	private unsafe void HandleRestorePose(Skeleton* skeleton, ushort partialId) {
-		if (!this.Manager.IsValid || skeleton->PartialSkeletons == null) return;
+		if (!this.Manager.IsValid || !this.IsEnabled || skeleton->PartialSkeletons == null) return;
 
 		var partial = skeleton->PartialSkeletons[partialId];
 		var pose = partial.GetHavokPose(0);

@@ -101,12 +101,11 @@ public class PoseContainer : Dictionary<string, Transform> {
 		var partial = modelSkeleton->PartialSkeletons[partialIndex];
 		var pose = partial.GetHavokPose(0);
 		if (pose == null || pose->Skeleton == null) return;
-
-		var start = partialIndex > 0 ? 0 : 1;
+		
 		this.ApplyToPartialBones(
 			modelSkeleton,
 			partialIndex,
-			Enumerable.Range(start, pose->Skeleton->Bones.Length - start),
+			Enumerable.Range(1, pose->Skeleton->Bones.Length - 1),
 			transforms
 		);
 	}

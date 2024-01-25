@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
+using Ktisis.Interop.Ipc;
 using Ktisis.Localization;
 using Ktisis.Services;
 
@@ -18,6 +19,7 @@ public class ContextManager : IContextManager, IDisposable {
 	private readonly ContextBuilder _factory;
 	private readonly GPoseService _gpose;
 	private readonly LocaleManager _locale;
+	private readonly IpcManager _ipc;
 
 	public IEditorContext? Context => this._context is { IsValid: true } ctx ? ctx : null;
 
@@ -25,12 +27,14 @@ public class ContextManager : IContextManager, IDisposable {
 		ConfigManager cfg,
 		ContextBuilder factory,
 		GPoseService gpose,
-		LocaleManager locale
+		LocaleManager locale,
+		IpcManager ipc
 	) {
 		this._cfg = cfg;
 		this._factory = factory;
 		this._gpose = gpose;
 		this._locale = locale;
+		this._ipc = ipc;
 	}
 
 	public void Initialize() {
@@ -115,6 +119,7 @@ public class ContextManager : IContextManager, IDisposable {
 		
 		public Configuration Config { get; } = editor._cfg.Config;
 		public LocaleManager Locale { get; } = editor._locale;
+		public IpcManager Ipc { get; } = editor._ipc;
 
 		public bool IsGPosing => editor._gpose.IsGPosing;
 

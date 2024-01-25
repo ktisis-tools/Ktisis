@@ -10,6 +10,7 @@ using Ktisis.Editor.Transforms;
 using Ktisis.Interface;
 using Ktisis.Interface.Editor;
 using Ktisis.Interface.Editor.Types;
+using Ktisis.Interop.Ipc;
 using Ktisis.Localization;
 using Ktisis.Scene;
 using Ktisis.Scene.Types;
@@ -21,6 +22,7 @@ public interface IEditorContext : IDisposable {
 	
 	public Configuration Config { get; }
 	public LocaleManager Locale { get; }
+	public IpcManager Ipc { get; }
 	
 	public IActionManager Actions { get; }
 	public ICharacterState Characters { get; }

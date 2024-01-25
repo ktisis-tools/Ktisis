@@ -1,4 +1,5 @@
 using Ktisis.Data.Config;
+using Ktisis.Interop.Ipc;
 using Ktisis.Localization;
 
 namespace Ktisis.Editor.Context;
@@ -8,6 +9,7 @@ public interface IContextMediator {
 	
 	public Configuration Config { get; }
 	public LocaleManager Locale { get; }
+	public IpcManager Ipc { get; }
 	
 	public bool IsGPosing { get; }
 

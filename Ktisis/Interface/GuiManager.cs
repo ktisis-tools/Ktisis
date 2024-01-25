@@ -78,6 +78,9 @@ public class GuiManager : IDisposable {
 	public T Create<T>(params object[] parameters) where T : KtisisWindow
 		=> this.Add(this._di.Create<T>(parameters));
 
+	public T CreatePopup<T>(params object[] parameters) where T : class, IPopup
+		=> this.AddPopupSingleton(this._di.Create<T>(parameters));
+
 	public T GetOrCreate<T>(params object[] parameters) where T : KtisisWindow
 		=> this.Get<T>() ?? this.Create<T>(parameters);
 	

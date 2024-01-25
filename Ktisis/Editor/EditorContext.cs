@@ -12,6 +12,7 @@ using Ktisis.Interface;
 using Ktisis.Interface.Editor;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Interop.Hooking;
+using Ktisis.Interop.Ipc;
 using Ktisis.Localization;
 using Ktisis.Scene.Types;
 
@@ -25,6 +26,7 @@ public class EditorContext : IEditorContext {
 
 	public Configuration Config => this._mediator.Config;
 	public LocaleManager Locale => this._mediator.Locale;
+	public IpcManager Ipc => this._mediator.Ipc;
 	
 	public required IActionManager Actions { get; init; }
 	public required ICameraManager Cameras { get; init; }

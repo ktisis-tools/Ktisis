@@ -44,6 +44,7 @@ public class ContextBuilder {
 		var actions = this._actions.Initialize(mediator, scope);
 		
 		var cameras = new CameraManager(mediator, scope);
+		
 		var chara = new CharacterManager(mediator, scope, this._framework);
 		
 		var ui = new EditorInterface(mediator, this._gui);

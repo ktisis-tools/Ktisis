@@ -67,7 +67,8 @@ public class CharacterModule : HookModule {
 	private unsafe delegate CharacterBase* CreateCharacterDelegate(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk);
 	private unsafe CharacterBase* CreateCharacterDetour(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk) {
 		try {
-			this.PreHandleCreate(customize, equip);
+			if (model == 0 && customize != null && equip != null)
+				this.PreHandleCreate(customize, equip);
 		} catch (Exception err) {
 			Ktisis.Log.Info($"Failure on PreHandleCreate:\n{err}");
 		}

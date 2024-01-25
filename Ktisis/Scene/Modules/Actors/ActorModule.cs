@@ -23,8 +23,9 @@ namespace Ktisis.Scene.Modules.Actors;
 
 public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
-	private readonly GroupPoseModule _gpose;
+	private readonly IClientState _clientState;
 	private readonly IFramework _framework;
+	private readonly GroupPoseModule _gpose;
 	
 	private readonly ActorSpawner _spawner;
 	
@@ -32,13 +33,15 @@ public class ActorModule : SceneModule {
 		IHookMediator hook,
 		ISceneManager scene,
 		ActorService actors,
+		IClientState clientState,
 		IFramework framework,
 		GroupPoseModule gpose
 	) : base(hook, scene) {
 		this._actors = actors;
-		this._gpose = gpose;
+		this._clientState = clientState;
 		this._framework = framework;
-		this._spawner = hook.Create<ActorSpawner>(this);
+		this._gpose = gpose;
+		this._spawner = hook.Create<ActorSpawner>();
 	}
 
 	public override void Setup() {
@@ -56,17 +59,21 @@ public class ActorModule : SceneModule {
 	}
 
 	public async Task<ActorEntity> Spawn(string name) {
-		if (!this._spawner.IsInit)
-			throw new Exception("Actor spawn manager is uninitialized.");
-
-		var address = await this._spawner.CreateActor(name);
-		return this.AddSpawnedActor(address);
+		var localPlayer = this._clientState.LocalPlayer;
+		if (localPlayer == null)
+			throw new Exception("Local player not found.");
+		
+		var address = await this._spawner.CreateActor(localPlayer);
+		var entity = this.AddSpawnedActor(address);
+		this.SetActorName(entity.Actor, name);
+		this.SetActorWorld(entity.Actor, (ushort)localPlayer.CurrentWorld.Id);
+		return entity;
 	}
 
 	public async Task<ActorEntity> AddFromOverworld(GameObject actor) {
 		if (!this._spawner.IsInit)
 			throw new Exception("Actor spawn manager is uninitialized.");
-		var address = await this._spawner.CreateActor(actor.GetNameOrFallback(), actor);
+		var address = await this._spawner.CreateActor(actor);
 		return this.AddSpawnedActor(address);
 	}
 
@@ -104,8 +111,8 @@ public class ActorModule : SceneModule {
 	// Actor state
 	
 	public unsafe void SetActorName(GameObject gameObject, string name) {
-		var csPtr = (CSGameObject*)gameObject.Address;
-		if (csPtr == null) return;
+		var gameObjectPtr = (CSGameObject*)gameObject.Address;
+		if (gameObjectPtr == null) return;
 
 		var setName = name;
 		
@@ -115,14 +122,21 @@ public class ActorModule : SceneModule {
 			isNameDupe = false;
 			foreach (var actor in this._actors.GetGPoseActors()) {
 				if (actor.GetNameOrFallback() != setName) continue;
-				setName = $"{name} ({++dupeCt + 1})";
+				setName = $"{name} {++dupeCt + 1}";
 				isNameDupe = true;
 			}
 		}
 
 		var bytes = Encoding.UTF8.GetBytes(setName).Append((byte)0).ToArray();
 		for (var i = 0; i < bytes.Length; i++)
-			csPtr->Name[i] = bytes[i];
+			gameObjectPtr->Name[i] = bytes[i];
+	}
+
+	private unsafe void SetActorWorld(GameObject gameObject, ushort world) {
+		var charaPtr = (Character*)gameObject.Address;
+		if (charaPtr == null || !charaPtr->GameObject.IsCharacter()) return;
+		charaPtr->CurrentWorld = world;
+		charaPtr->HomeWorld = world;
 	}
 	
 	// Entities

@@ -6,6 +6,7 @@ using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Editor.Context;
+using Ktisis.Interface.Editor.Popup;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Types;
@@ -77,6 +78,10 @@ public class EditorInterface : IEditorInterface {
 	public void OpenSceneEntityMenu(SceneEntity entity) {
 		var menu = new SceneEntityMenuBuilder(this, this.Context, entity);
 		this._gui.AddPopup(menu.Create()).Open();
+	}
+
+	public void OpenAssignCollection(ActorEntity entity) {
+		this._gui.CreatePopup<ActorCollectionPopup>(this.Context, entity).Open();
 	}
 
 	public void OpenOverworldActorList() {
