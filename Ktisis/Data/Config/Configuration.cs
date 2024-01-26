@@ -18,4 +18,5 @@ public class Configuration : IPluginConfiguration {
 	public GizmoConfig Gizmo = new();
 	public InputConfig Keybinds = new();
 	public LocaleConfig Locale = new();
+	public OverlayConfig Overlay = new();
 }
