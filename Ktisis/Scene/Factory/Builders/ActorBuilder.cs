@@ -1,5 +1,6 @@
 using Dalamud.Game.ClientState.Objects.Types;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Types;
@@ -17,7 +18,7 @@ public sealed class ActorBuilder : EntityBuilder<ActorEntity, IActorBuilder>, IA
 		IPoseBuilder pose,
 		GameObject gameObject
 	) : base(scene) {
-		this.Name = gameObject.Name.TextValue;
+		this.Name = gameObject.GetNameOrFallback();
 		this._pose = pose;
 		this._gameObject = gameObject;
 	}
