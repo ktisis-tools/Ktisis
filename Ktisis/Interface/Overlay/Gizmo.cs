@@ -2,6 +2,7 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Ktisis.Data.Config.Sections;
 using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Overlay;
@@ -35,11 +36,15 @@ public interface IGizmo {
 }
 
 public class Gizmo : IGizmo {
+	private readonly GizmoConfig _cfg;
+	
 	public GizmoId Id { get; }
 	
 	public Gizmo(
+		GizmoConfig cfg,
 		GizmoId id
 	) {
+		this._cfg = cfg;
 		this.Id = id;
 	}
 	
@@ -83,6 +88,7 @@ public class Gizmo : IGizmo {
 		ImGuizmo.Gizmo.ID = (int)this.Id;
 		ImGuizmo.Gizmo.GizmoScale = this.ScaleFactor;
 		ImGuizmo.Gizmo.AllowAxisFlip = this.AllowAxisFlip;
+		ImGuizmo.Gizmo.Style = this._cfg.Style;
 		ImGuizmo.Gizmo.BeginFrame();
 
 		this.IsUsedPrev = ImGuizmo.Gizmo.IsUsing;

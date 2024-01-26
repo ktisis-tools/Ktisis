@@ -23,7 +23,7 @@ public class EditorInterface : IEditorInterface {
 	private readonly IContextMediator _mediator;
 	private readonly GuiManager _gui;
 
-	private readonly GizmoManager _gizmo = new();
+	private readonly GizmoManager _gizmo;
 
 	private IEditorContext Context => this._mediator.Context;
 	
@@ -33,6 +33,7 @@ public class EditorInterface : IEditorInterface {
 	) {
 		this._mediator = mediator;
 		this._gui = gui;
+		this._gizmo = new(mediator.Config);
 	}
 	
 	// Scene ready

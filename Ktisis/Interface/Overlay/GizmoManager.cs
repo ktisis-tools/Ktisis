@@ -2,9 +2,19 @@ using System;
 
 using ImGuiNET;
 
+using Ktisis.Data.Config;
+
 namespace Ktisis.Interface.Overlay;
 
 public class GizmoManager {
+	private readonly Configuration _cfg;
+
+	public GizmoManager(
+		Configuration cfg
+	) {
+		this._cfg = cfg;
+	}
+	
 	// Initialization
 	
 	private const string ImGuiVersion = "1.88";
@@ -41,6 +51,6 @@ public class GizmoManager {
 	public Gizmo Create(GizmoId id) {
 		if (!this.IsInit)
 			throw new Exception("Can't create gizmo as ImGuizmo is not initialized.");
-		return new Gizmo(id);
+		return new Gizmo(this._cfg.Gizmo, id);
 	}
 }
