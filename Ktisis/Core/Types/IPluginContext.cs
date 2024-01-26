@@ -8,7 +8,7 @@ using Ktisis.Services.Plugin;
 namespace Ktisis.Core.Types;
 
 public interface IPluginContext {
-	public ActionsService Actions { get; }
+	public ActionService Actions { get; }
 	public ConfigManager Config { get; }
 	public GuiManager Gui { get; }
 	public IpcManager Ipc { get; }

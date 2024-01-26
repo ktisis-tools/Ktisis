@@ -13,8 +13,7 @@ public abstract class ActionBase {
 	
 	public string GetName() => this.GetAttribute().Name;
 	
-	public ActionAttribute GetAttribute() => this.GetType()
-		.GetCustomAttribute<ActionAttribute>()!;
+	public ActionAttribute GetAttribute() => this.GetType().GetCustomAttribute<ActionAttribute>()!;
 
 	public virtual bool CanInvoke() => true;
 	

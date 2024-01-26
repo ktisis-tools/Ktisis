@@ -19,7 +19,7 @@ public class PluginContext : IPluginContext {
 	private readonly ContextManager _context;
 	private readonly LegacyMigrator _legacy;
 	
-	public ActionsService Actions { get; }
+	public ActionService Actions { get; }
 	public ConfigManager Config { get; }
 	public GuiManager Gui { get; }
 	public IpcManager Ipc { get; }
@@ -27,7 +27,7 @@ public class PluginContext : IPluginContext {
 	public IEditorContext? Editor => this._context.Current;
 	
 	public PluginContext(
-		ActionsService actions,
+		ActionService actions,
 		ConfigManager cfg,
 		CommandService cmd,
 		DllResolver dll,

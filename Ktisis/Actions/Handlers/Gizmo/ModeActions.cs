@@ -8,7 +8,7 @@ using Ktisis.ImGuizmo;
 
 namespace Ktisis.Actions.Handlers.Gizmo;
 
-public abstract class ModeActionBase(IPluginContext ctx) : ActionBase(ctx) {
+public abstract class ModeActionBase(IPluginContext ctx) : KeyAction(ctx) {
 	protected abstract Operation TargetOp { get; init; }
 
 	public override bool Invoke() {
@@ -20,10 +20,10 @@ public abstract class ModeActionBase(IPluginContext ctx) : ActionBase(ctx) {
 }
 
 [Action("Gizmo_SetTranslateMode")]
-public class ModeTranslateAction(IPluginContext ctx) : ModeActionBase(ctx), IKeybind {
+public class ModeTranslateAction(IPluginContext ctx) : ModeActionBase(ctx) {
 	protected override Operation TargetOp { get; init; } = Operation.TRANSLATE;
 	
-	public KeybindInfo Keybind { get; } = new() {
+	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
@@ -33,10 +33,10 @@ public class ModeTranslateAction(IPluginContext ctx) : ModeActionBase(ctx), IKey
 }
 
 [Action("Gizmo_SetRotateMode")]
-public class ModeRotateAction(IPluginContext ctx) : ModeActionBase(ctx), IKeybind {
+public class ModeRotateAction(IPluginContext ctx) : ModeActionBase(ctx) {
 	protected override Operation TargetOp { get; init; } = Operation.ROTATE;
 
-	public KeybindInfo Keybind { get; } = new() {
+	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
@@ -46,10 +46,10 @@ public class ModeRotateAction(IPluginContext ctx) : ModeActionBase(ctx), IKeybin
 }
 
 [Action("Gizmo_SetScaleMode")]
-public class ModeScaleAction(IPluginContext ctx) : ModeActionBase(ctx), IKeybind {
+public class ModeScaleAction(IPluginContext ctx) : ModeActionBase(ctx) {
 	protected override Operation TargetOp { get; init; } = Operation.SCALE;
 	
-	public KeybindInfo Keybind { get; } = new() {
+	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,

@@ -87,7 +87,7 @@ public class InputManager : IInputManager {
 		var modMax = 0;
 		foreach (var info in this.Keybinds) {
 			var bind = info.Keybind.Combo;
-			if (bind == null || !info.Trigger.HasFlag(trigger) || bind.Key != key || !bind.Modifiers.All(mod => this._keyState[mod]))
+			if (!info.Trigger.HasFlag(trigger) || bind.Key != key || !bind.Modifiers.All(mod => this._keyState[mod]))
 				continue;
 
 			var modCt = bind.Modifiers.Length;

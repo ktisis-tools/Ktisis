@@ -4,5 +4,5 @@ namespace Ktisis.Data.Config.Actions;
 
 public class ActionKeybind {
 	public bool Enabled = true;
-	public KeyCombo? Combo = null;
+	public KeyCombo Combo = new();
 }

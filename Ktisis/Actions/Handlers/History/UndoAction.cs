@@ -8,8 +8,8 @@ using Ktisis.Data.Config.Actions;
 namespace Ktisis.Actions.Handlers.History;
 
 [Action("History_Undo")]
-public class UndoAction(IPluginContext ctx) : ActionBase(ctx), IKeybind {
-	public KeybindInfo Keybind { get; } = new() {
+public class UndoAction(IPluginContext ctx) : KeyAction(ctx) {
+	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,

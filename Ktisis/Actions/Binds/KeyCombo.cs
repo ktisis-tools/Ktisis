@@ -18,4 +18,8 @@ public class KeyCombo {
 			.Select(key => key.GetFancyName());
 		return string.Join(" + ", keys);
 	}
+
+	public void AddModifier(VirtualKey key) {
+		this.Modifiers = this.Modifiers.Append(key).ToArray();
+	}
 }

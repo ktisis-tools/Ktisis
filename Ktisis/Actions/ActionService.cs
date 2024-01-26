@@ -3,18 +3,18 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
-using Ktisis.Actions.Types;
 using Ktisis.Core;
-using Ktisis.Core.Attributes;
 using Ktisis.Core.Types;
+using Ktisis.Core.Attributes;
+using Ktisis.Actions.Types;
 
 namespace Ktisis.Actions;
 
 [Singleton]
-public class ActionsService {
+public class ActionService {
 	private readonly DIBuilder _di;
 
-	public ActionsService(
+	public ActionService(
 		DIBuilder di
 	) {
 		this._di = di;
@@ -47,8 +47,14 @@ public class ActionsService {
 		action = result!;
 		return result != null;
 	}
+	
+	// Enumerators
 
 	public IEnumerable<ActionBase> GetAll() => this.Actions.Values;
+
+	public IEnumerable<KeyAction> GetBindable() => this.GetAll()
+		.Where(action => action is KeyAction)
+		.Cast<KeyAction>();
 	
 	// Type resolver
 	

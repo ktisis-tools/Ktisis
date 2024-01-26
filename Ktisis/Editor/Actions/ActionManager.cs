@@ -1,6 +1,5 @@
 using System;
 
-using Ktisis.Actions.Binds;
 using Ktisis.Actions.Types;
 using Ktisis.Editor.Actions.Input;
 using Ktisis.Editor.Context.Types;
@@ -42,19 +41,14 @@ public class ActionManager : IActionManager, IDisposable {
 	}
 
 	private void RegisterKeybinds() {
-		var actions = this._ctx.Plugin.Actions.GetAll();
-		foreach (var action in actions) {
-			if (action is IKeybind bind)
-				this.RegisterKeybind(action, bind);
-		}
+		var actions = this._ctx.Plugin.Actions.GetBindable();
+		foreach (var action in actions)
+			this.RegisterKeybind(action);
 	}
 
-	private void RegisterKeybind(ActionBase action, IKeybind bind) {
-		var info = bind.Keybind;
-		if (info == null) return;
-		
-		var keybind = this._ctx.Config.Keybinds.GetOrSetDefault(action.GetName(), info.Default);
-		this.Input.Register(keybind, action.Invoke, info.Trigger);
+	private void RegisterKeybind(KeyAction action) {
+		var keybind = action.GetKeybind();
+		this.Input.Register(keybind, action.Invoke, action.BindInfo.Trigger);
 	}
 	
 	// Disposal

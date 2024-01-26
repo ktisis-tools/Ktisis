@@ -5,11 +5,11 @@ using Ktisis.Actions.Types;
 using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
 
-namespace Ktisis.Editor.Actions.Handlers.Select;
+namespace Ktisis.Actions.Handlers.Select;
 
 [Action("Select_None")]
-public class DeselectAction(IPluginContext ctx) : ActionBase(ctx), IKeybind {
-	public KeybindInfo Keybind { get; } = new() {
+public class DeselectAction(IPluginContext ctx) : KeyAction(ctx) {
+	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
