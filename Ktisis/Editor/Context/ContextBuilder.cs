@@ -57,7 +57,7 @@ public class ContextBuilder {
 			.SetupModules();
 		
 		var select = new SelectManager(mediator);
-		var transform = new TransformHandler(actions, select);
+		var transform = new TransformHandler(mediator, actions, select);
 
 		var context = new EditorContext(mediator, scope) {
 			Actions = actions,

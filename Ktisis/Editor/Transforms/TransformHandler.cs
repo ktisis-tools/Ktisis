@@ -4,6 +4,7 @@ using System.Numerics;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Actions.Types;
+using Ktisis.Editor.Context;
 using Ktisis.Editor.Selection;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Skeleton;
@@ -26,17 +27,24 @@ public interface ITransformMemento : IMemento {
 }
 
 public class TransformHandler : ITransformHandler {
+	private readonly IContextMediator _mediator;
 	private readonly IActionManager _action;
 	private readonly ISelectManager _select;
 
 	public TransformHandler(
+		IContextMediator mediator,
 		IActionManager action,
 		ISelectManager select
 	) {
+		this._mediator = mediator;
 		this._action = action;
 		this._select = select;
 		select.Changed += this.OnSelectionChanged;
 	}
+	
+	// Options
+
+	public bool IsMirrored => this._mediator.Config.Gizmo.MirrorRotation;
 	
 	// Transform target
 	
@@ -59,7 +67,7 @@ public class TransformHandler : ITransformHandler {
 		if (target is BoneNode)
 			target = TransformResolver.GetPoseTarget(selectTargets);
 
-		this.Target = new TransformTarget(target, selectTargets);
+		this.Target = new TransformTarget(this, target, selectTargets);
 	}
 	
 	// Transformation

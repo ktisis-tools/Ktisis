@@ -111,8 +111,15 @@ public class TransformWindow : KtisisWindow {
 			this.Config.Gizmo.Mode = mode == Mode.World ? Mode.Local : Mode.World;
 
 		ImGui.SameLine(0, spacing);
+
+		var isMirror = this.Config.Gizmo.MirrorRotation;
+		var flagIcon = isMirror ? FontAwesomeIcon.ArrowDownUpAcrossLine : FontAwesomeIcon.GripLines;
+		var flagKey = isMirror ? "mirror" : "parallel";
+		var flagHint = $"transform_edit.flags.{flagKey}";
+		if (Buttons.IconButtonTooltip(flagIcon, flagHint, iconBtnSize))
+			this.Config.Gizmo.MirrorRotation ^= true;
 		
-		// TODO Flags
+		ImGui.SameLine(0, spacing);
 
 		var avail = ImGui.GetContentRegionAvail().X;
 		if (avail > iconSize)

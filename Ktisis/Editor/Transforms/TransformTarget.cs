@@ -19,15 +19,19 @@ public interface ITransformTarget : ITransform {
 }
 
 public class TransformTarget : ITransformTarget {
+	private readonly TransformHandler _handler;
+	
 	public SceneEntity? Primary { get; }
 	public IEnumerable<SceneEntity> Targets { get; }
 
 	private readonly Dictionary<EntityPose, Dictionary<int, List<BoneNode>>> PoseMap;
 
 	public TransformTarget(
+		TransformHandler handler,
 		SceneEntity? primary,
 		IEnumerable<SceneEntity> targets
 	) {
+		this._handler = handler;
 		targets = targets.ToList();
 		this.Primary = primary;
 		this.Targets = targets;
@@ -53,6 +57,9 @@ public class TransformTarget : ITransformTarget {
 		if (Matrix4x4.Invert(initial.ComposeMatrix(), out var initialInverse))
 			deltaMx = initialInverse * transform.ComposeMatrix();
 		else return;
+
+		if (this._handler.IsMirrored)
+			Matrix4x4.Invert(deltaMx, out deltaMx);
 
 		foreach (var entity in this.Targets.Where(tar => tar is { IsValid: true } and not BoneNode)) {
 			if (entity is not ITransform manip) continue;
@@ -103,16 +110,28 @@ public class TransformTarget : ITransformTarget {
 		var boneTrans = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, bIndex);
 		if (boneTrans == null) return;
 
+		var mirror = this._handler.IsMirrored;
+		if (mirror && this.Primary is BoneNodeGroup group)
+			mirror &= !bone.IsChildOf(group);
+
 		Matrix4x4 newMx;
 		if (bone == this.Primary) {
 			newMx = transform.ComposeMatrix();
 		} else {
 			var newScale = boneTrans.Scale * delta.Scale;
-			var deltaRot = delta.Rotation;
-			var deltaPos = delta.Position;
+			Quaternion deltaRot;
+			Vector3 deltaPos;
+			
+			if (mirror) {
+				deltaRot = Quaternion.Inverse(delta.Rotation);
+				deltaPos = -delta.Position;
+			} else {
+				deltaRot = delta.Rotation;
+				deltaPos = delta.Position;
+			}
 
 			var scale = Matrix4x4.CreateScale(newScale);
-			var rot = Matrix4x4.CreateFromQuaternion(boneTrans.Rotation * deltaRot);
+			var rot = Matrix4x4.CreateFromQuaternion(deltaRot * boneTrans.Rotation);
 			var pos = Matrix4x4.CreateTranslation(boneTrans.Position + deltaPos);
 			newMx = scale * rot * pos;
 		}
