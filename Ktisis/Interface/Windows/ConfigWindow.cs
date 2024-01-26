@@ -94,6 +94,7 @@ public class ConfigWindow : KtisisWindow {
 
 	private void DrawInputTab() {
 		ImGui.Checkbox("Enable keybinds", ref this.Config.Keybinds.Enabled);
+		if (!this.Config.Keybinds.Enabled) return;
 		ImGui.Spacing();
 		this._keybinds.Draw();
 	}
