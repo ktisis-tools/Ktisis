@@ -17,7 +17,11 @@
 		"Gizmo_Toggle": "Toggle gizmo visibility",
 		"Gizmo_SetTranslateMode": "Switch to position mode",
 		"Gizmo_SetRotateMode": "Switch to rotate mode",
-		"Gizmo_SetScaleMode": "Switch to scale mode"
+		"Gizmo_SetScaleMode": "Switch to scale mode",
+		"Gizmo_SetUniversalMode": "Switch to universal mode",
+		"Camera_SetNext": "Switch to next camera",
+		"Camera_SetPrevious": "Switch to previous camera",
+		"Camera_Work_Toggle": "Toggle work camera"
 	},
 	
 	"common": {
