@@ -13,6 +13,7 @@ using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets2;
 
 using Ktisis.Services;
+using Ktisis.Services.Data;
 using Ktisis.Structs.Characters;
 
 using CharaMakeType = Ktisis.GameData.Excel.CharaMakeType;
@@ -33,7 +34,7 @@ public class MakeTypeData {
 
 	public async Task Build(
 		IDataManager data,
-		CustomizeDiscoveryService discover
+		CustomizeService discover
 	) {
 		var stop = new Stopwatch();
 		stop.Start();
@@ -196,7 +197,7 @@ public class MakeTypeData {
 	
 	// Discover customize data
 
-	private async Task PopulateDiscoveryData(CustomizeDiscoveryService discover) {
+	private async Task PopulateDiscoveryData(CustomizeService discover) {
 		await Task.Yield();
 
 		var stop = new Stopwatch();

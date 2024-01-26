@@ -10,6 +10,7 @@ using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Types;
 using Ktisis.Services;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Scene.Factory.Builders;
 

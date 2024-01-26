@@ -17,6 +17,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Interface.Components.Actors.Popup;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Interface.Components.Actors;
 
@@ -24,7 +25,7 @@ namespace Ktisis.Interface.Components.Actors;
 public class CustomizeEditorUi {
 	private readonly IDataManager _data;
 	private readonly ITextureProvider _tex;
-	private readonly CustomizeDiscoveryService _discovery;
+	private readonly CustomizeService _discovery;
 
 	private readonly MakeTypeData _makeTypeData = new();
 
@@ -36,7 +37,7 @@ public class CustomizeEditorUi {
 	public CustomizeEditorUi(
 		IDataManager data,
 		ITextureProvider tex,
-		CustomizeDiscoveryService discovery
+		CustomizeService discovery
 	) {
 		this._data = data;
 		this._tex = tex;

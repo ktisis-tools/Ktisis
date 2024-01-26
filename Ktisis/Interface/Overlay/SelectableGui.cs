@@ -15,6 +15,7 @@ using Ktisis.Data.Config;
 using Ktisis.Data.Config.Entity;
 using Ktisis.Scene.Entities;
 using Ktisis.Services;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Overlay;
 

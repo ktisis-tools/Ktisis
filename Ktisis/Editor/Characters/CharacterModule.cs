@@ -11,6 +11,8 @@ using Ktisis.Services;
 using Ktisis.Interop.Hooking;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
+using Ktisis.Services.Data;
+using Ktisis.Services.Game;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters;
@@ -19,7 +21,7 @@ public class CharacterModule : HookModule {
 	private readonly ICharacterState Manager;
 
 	private readonly ActorService _actors;
-	private readonly CustomizeDiscoveryService _discovery;
+	private readonly CustomizeService _discovery;
 
 	private bool IsValid => this.Manager.IsValid;
 
@@ -27,7 +29,7 @@ public class CharacterModule : HookModule {
 		IHookMediator hook,
 		ICharacterState manager,
 		ActorService actors,
-		CustomizeDiscoveryService discovery
+		CustomizeService discovery
 	) : base(hook) {
 		this.Manager = manager;
 		this._actors = actors;

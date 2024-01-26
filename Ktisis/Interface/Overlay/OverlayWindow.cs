@@ -11,6 +11,7 @@ using Ktisis.Editor.Context;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Services;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Overlay;
 

@@ -6,7 +6,7 @@ using Dalamud.Plugin.Services;
 using Ktisis.Core.Attributes;
 using Ktisis.GameData.Excel;
 
-namespace Ktisis.Services;
+namespace Ktisis.Services.Data;
 
 public interface INameResolver {
 	public string? GetWeaponName(ushort id, ushort secondId, ushort variant);

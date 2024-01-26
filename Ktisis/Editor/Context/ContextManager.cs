@@ -6,6 +6,7 @@ using Ktisis.Data.Config;
 using Ktisis.Interop.Ipc;
 using Ktisis.Localization;
 using Ktisis.Services;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Context;
 

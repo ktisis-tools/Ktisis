@@ -6,16 +6,16 @@ using Dalamud.Plugin.Services;
 using Ktisis.Core.Attributes;
 using Ktisis.Structs.Characters;
 
-namespace Ktisis.Services;
+namespace Ktisis.Services.Data;
 
 // Path resolvers copied from my original implementation for Xande:
 // https://github.com/xivdev/Xande/pull/3
 
 [Singleton]
-public class CustomizeDiscoveryService {
+public class CustomizeService {
 	private readonly IDataManager _data;
 	
-	public CustomizeDiscoveryService(
+	public CustomizeService(
 		IDataManager data
 	) {
 		this._data = data;

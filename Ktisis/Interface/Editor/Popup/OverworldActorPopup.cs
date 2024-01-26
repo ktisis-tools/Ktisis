@@ -11,6 +11,7 @@ using Ktisis.Editor.Context;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Services;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Editor.Popup;
 

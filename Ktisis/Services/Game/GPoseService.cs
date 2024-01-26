@@ -5,7 +5,7 @@ using Dalamud.Plugin.Services;
 using Ktisis.Core.Attributes;
 using Ktisis.Events;
 
-namespace Ktisis.Services;
+namespace Ktisis.Services.Game;
 
 public delegate void GPoseStateHandler(GPoseService sender, bool state);
 

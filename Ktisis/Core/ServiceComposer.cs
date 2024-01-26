@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Ktisis.Services;
 using Ktisis.Core.Attributes;
+using Ktisis.Services.Plugin;
 
 namespace Ktisis.Core; 
 

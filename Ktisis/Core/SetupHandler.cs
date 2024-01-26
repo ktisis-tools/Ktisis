@@ -5,6 +5,8 @@ using Ktisis.Interface;
 using Ktisis.Interop;
 using Ktisis.Legacy;
 using Ktisis.Services;
+using Ktisis.Services.Dalamud;
+using Ktisis.Services.Plugin;
 
 namespace Ktisis.Core;
 

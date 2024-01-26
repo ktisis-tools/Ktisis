@@ -16,6 +16,7 @@ using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Services;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Windows;
 

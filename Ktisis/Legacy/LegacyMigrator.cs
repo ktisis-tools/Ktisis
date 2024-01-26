@@ -4,6 +4,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Interface;
 using Ktisis.Legacy.Interface;
 using Ktisis.Services;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Legacy;
 

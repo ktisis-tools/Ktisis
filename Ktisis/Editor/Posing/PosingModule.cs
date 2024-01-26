@@ -10,6 +10,7 @@ using FFXIVClientStructs.Havok;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Services;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Posing;
 

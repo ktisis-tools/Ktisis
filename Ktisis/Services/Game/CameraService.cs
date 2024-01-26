@@ -6,13 +6,14 @@ using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
-using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
-using RenderCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Camera;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Structs.Camera;
 
-namespace Ktisis.Services; 
+using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
+using RenderCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Camera;
+
+namespace Ktisis.Services.Game; 
 
 [Singleton]
 public class CameraService {

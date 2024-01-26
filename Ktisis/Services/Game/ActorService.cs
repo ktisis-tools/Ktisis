@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 
-using Dalamud.Plugin.Services;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+
+using Ktisis.Common.Extensions;
+using Ktisis.Core.Attributes;
+
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
-using Ktisis.Core.Attributes;
-using Ktisis.Common.Extensions;
-
-namespace Ktisis.Services;
+namespace Ktisis.Services.Game;
 
 [Singleton]
 public class ActorService {

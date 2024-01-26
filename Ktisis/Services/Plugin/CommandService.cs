@@ -5,11 +5,10 @@ using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
 using HandlerDelegate = Dalamud.Game.Command.CommandInfo.HandlerDelegate;
 
-using Ktisis.Interface;
-using Ktisis.Interface.Windows;
 using Ktisis.Core.Attributes;
+using Ktisis.Interface;
 
-namespace Ktisis.Services;
+namespace Ktisis.Services.Plugin;
 
 [Singleton]
 public class CommandService : IDisposable {
@@ -29,7 +28,7 @@ public class CommandService : IDisposable {
 	// Handler registration
 
 	public void RegisterHandlers() {
-		this.BuildCommand("/ktisis", OnMainCommand)
+		this.BuildCommand("/ktisis", this.OnMainCommand)
 			.SetMessage("Toggle the main Ktisis window.")
 			.Create();
 	}
@@ -69,9 +68,12 @@ public class CommandService : IDisposable {
 		private bool ShowInHelp;
 		private string HelpMessage = string.Empty;
 		
-		public CommandFactory(CommandService _cmd, string name, HandlerDelegate handler) {
-			this._cmd = _cmd;
-			
+		public CommandFactory(
+			CommandService cmd,
+			string name,
+			HandlerDelegate handler
+		) {
+			this._cmd = cmd;
 			this.Name = name;
 			this.Handler = handler;
 		}
@@ -95,8 +97,8 @@ public class CommandService : IDisposable {
 		}
 
 		public void Create() {
-			this._cmd.Add(this.Name, BuildCommandInfo());
-			this.Alias.ForEach(CreateAlias);
+			this._cmd.Add(this.Name, this.BuildCommandInfo());
+			this.Alias.ForEach(this.CreateAlias);
 		}
 
 		private void CreateAlias(string alias) {

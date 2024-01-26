@@ -6,6 +6,7 @@ using Ktisis.Scene.Factory.Creators;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Types;
 using Ktisis.Services;
+using Ktisis.Services.Data;
 using Ktisis.Structs.Lights;
 
 namespace Ktisis.Scene.Factory;

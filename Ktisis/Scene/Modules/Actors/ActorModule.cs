@@ -18,6 +18,7 @@ using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Common.Extensions;
 using Ktisis.Scene.Types;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Scene.Modules.Actors;
 

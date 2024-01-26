@@ -13,6 +13,7 @@ using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Services;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Overlay;
 
