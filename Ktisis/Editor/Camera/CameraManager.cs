@@ -22,6 +22,8 @@ public interface ICameraManager : IDisposable {
 	public IEnumerable<EditorCamera> GetCameras();
 
 	public void SetCurrent(EditorCamera camera);
+	public void SetNext();
+	public void SetPrevious();
 	
 	public bool IsWorkCameraActive { get; }
 	public void SetWorkCameraMode(bool enabled);
@@ -109,10 +111,27 @@ public class CameraManager : ICameraManager {
 	public void SetCurrent(EditorCamera camera) {
 		if (!camera.IsValid)
 			throw new Exception("Attempting to set invalid camera as current.");
+		
+		if (this.Active == camera) return;
+		
 		this.Active = camera;
 		this.Module?.ChangeCamera(camera);
 		if (camera != this.WorkCamera)
 			this.IsWorkCameraActive = false;
+	}
+
+	public void SetNext() {
+		if (this.Current == null || !this.CameraList.Contains(this.Current)) return;
+		var next = (this.CameraList.IndexOf(this.Current) + 1) % this.CameraList.Count;
+		this.SetCurrent(this.CameraList[next]);
+	}
+
+	public void SetPrevious() {
+		if (this.Current == null || !this.CameraList.Contains(this.Current)) return;
+		var index = this.CameraList.IndexOf(this.Current);
+		var prev = (index > 0 ? index : this.CameraList.Count) - 1;
+		if (prev < this.CameraList.Count)
+			this.SetCurrent(this.CameraList[prev]);
 	}
 	
 	// Work camera

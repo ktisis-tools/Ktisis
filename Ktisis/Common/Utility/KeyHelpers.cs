@@ -18,9 +18,13 @@ public static class KeyHelpers {
 		if (io.KeyAlt) yield return VirtualKey.MENU;
 		
 		for (var i = 0; i < io.KeysDown.Count; i++) {
-			if (!io.KeysDown[i]) continue; // 135 = F24
+			if (!io.KeysDown[i]) continue;
+			
 			var key = ImGuiHelpers.ImGuiKeyToVirtualKey((ImGuiKey)i);
-			if (key != VirtualKey.NO_KEY && key <= VirtualKey.F24)
+			if (key is >= VirtualKey.LCONTROL and <= VirtualKey.RMENU)
+				continue;
+			
+			if (key != VirtualKey.NO_KEY)
 				yield return key;
 		}
 	}
