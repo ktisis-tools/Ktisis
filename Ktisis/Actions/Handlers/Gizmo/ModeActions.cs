@@ -57,3 +57,16 @@ public class ModeScaleAction(IPluginContext ctx) : ModeActionBase(ctx) {
 		}
 	};
 }
+
+[Action("Gizmo_SetUniversalMode")]
+public class ModeUniversalAction(IPluginContext ctx) : ModeActionBase(ctx) {
+	protected override Operation TargetOp { get; init; } = Operation.UNIVERSAL;
+	
+	public override KeybindInfo BindInfo { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.U, VirtualKey.CONTROL)
+		}
+	};
+}
