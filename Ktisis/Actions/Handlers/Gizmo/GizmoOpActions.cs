@@ -8,7 +8,7 @@ using Ktisis.ImGuizmo;
 
 namespace Ktisis.Actions.Handlers.Gizmo;
 
-public abstract class ModeActionBase(IPluginContext ctx) : KeyAction(ctx) {
+public abstract class GizmoOpAction(IPluginContext ctx) : KeyAction(ctx) {
 	protected abstract Operation TargetOp { get; init; }
 
 	public override bool Invoke() {
@@ -20,7 +20,7 @@ public abstract class ModeActionBase(IPluginContext ctx) : KeyAction(ctx) {
 }
 
 [Action("Gizmo_SetTranslateMode")]
-public class ModeTranslateAction(IPluginContext ctx) : ModeActionBase(ctx) {
+public class OpTranslateAction(IPluginContext ctx) : GizmoOpAction(ctx) {
 	protected override Operation TargetOp { get; init; } = Operation.TRANSLATE;
 	
 	public override KeybindInfo BindInfo { get; } = new() {
@@ -33,7 +33,7 @@ public class ModeTranslateAction(IPluginContext ctx) : ModeActionBase(ctx) {
 }
 
 [Action("Gizmo_SetRotateMode")]
-public class ModeRotateAction(IPluginContext ctx) : ModeActionBase(ctx) {
+public class OpRotateAction(IPluginContext ctx) : GizmoOpAction(ctx) {
 	protected override Operation TargetOp { get; init; } = Operation.ROTATE;
 
 	public override KeybindInfo BindInfo { get; } = new() {
@@ -46,7 +46,7 @@ public class ModeRotateAction(IPluginContext ctx) : ModeActionBase(ctx) {
 }
 
 [Action("Gizmo_SetScaleMode")]
-public class ModeScaleAction(IPluginContext ctx) : ModeActionBase(ctx) {
+public class OpScaleAction(IPluginContext ctx) : GizmoOpAction(ctx) {
 	protected override Operation TargetOp { get; init; } = Operation.SCALE;
 	
 	public override KeybindInfo BindInfo { get; } = new() {
@@ -59,7 +59,7 @@ public class ModeScaleAction(IPluginContext ctx) : ModeActionBase(ctx) {
 }
 
 [Action("Gizmo_SetUniversalMode")]
-public class ModeUniversalAction(IPluginContext ctx) : ModeActionBase(ctx) {
+public class OpUniversalAction(IPluginContext ctx) : GizmoOpAction(ctx) {
 	protected override Operation TargetOp { get; init; } = Operation.UNIVERSAL;
 	
 	public override KeybindInfo BindInfo { get; } = new() {
