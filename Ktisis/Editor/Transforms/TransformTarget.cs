@@ -5,11 +5,11 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
-using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Utility;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Editor.Transforms;
 
@@ -34,13 +34,13 @@ public class TransformTarget : ITransformTarget {
 		this.PoseMap = TransformResolver.BuildPoseMap(primary, targets);
 	}
 	
-	public Common.Utility.Transform? GetTransform() {
+	public Transform? GetTransform() {
 		if (this.Primary is ITransform transform)
 			return transform.GetTransform();
 		return null;
 	}
 	
-	public void SetTransform(Common.Utility.Transform transform) {
+	public void SetTransform(Transform transform) {
 		var initial = this.GetTransform();
 		if (initial == null) return;
 
@@ -48,7 +48,7 @@ public class TransformTarget : ITransformTarget {
 		this.TransformSkeletons(transform, initial);
 	}
 
-	private void TransformObjects(Common.Utility.Transform transform, Common.Utility.Transform initial) {
+	private void TransformObjects(Transform transform, Transform initial) {
 		Matrix4x4 deltaMx;
 		if (Matrix4x4.Invert(initial.ComposeMatrix(), out var initialInverse))
 			deltaMx = initialInverse * transform.ComposeMatrix();
@@ -69,8 +69,8 @@ public class TransformTarget : ITransformTarget {
 		}
 	}
 
-	private unsafe void TransformSkeletons(Common.Utility.Transform transform, Common.Utility.Transform initial) {
-		var delta = new Common.Utility.Transform(
+	private unsafe void TransformSkeletons(Transform transform, Transform initial) {
+		var delta = new Transform(
 			transform.Position - initial.Position,
 			Quaternion.Normalize(transform.Rotation * Quaternion.Inverse(initial.Rotation)),
 			transform.Scale / initial.Scale
@@ -81,7 +81,7 @@ public class TransformTarget : ITransformTarget {
 			if (skeleton == null || skeleton->PartialSkeletons == null)
 				continue;
 
-			var model = new Common.Utility.Transform(skeleton->Transform);
+			var model = new Transform(skeleton->Transform);
 
 			var partialCt = skeleton->PartialSkeletonCount;
 			for (var pIndex = 0; pIndex < partialCt; pIndex++) {
@@ -98,7 +98,7 @@ public class TransformTarget : ITransformTarget {
 		}
 	}
 
-	private unsafe void TransformBone(Common.Utility.Transform transform, Common.Utility.Transform delta, Common.Utility.Transform model, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
+	private unsafe void TransformBone(Transform transform, Transform delta, Transform model, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
 		var bIndex = bone.Info.BoneIndex;
 		var boneTrans = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, bIndex);
 		if (boneTrans == null) return;
@@ -112,16 +112,16 @@ public class TransformTarget : ITransformTarget {
 			var deltaPos = delta.Position;
 
 			var scale = Matrix4x4.CreateScale(newScale);
-			var rot = Matrix4x4.CreateFromQuaternion(deltaRot * boneTrans.Rotation);
+			var rot = Matrix4x4.CreateFromQuaternion(boneTrans.Rotation * deltaRot);
 			var pos = Matrix4x4.CreateTranslation(boneTrans.Position + deltaPos);
 			newMx = scale * rot * pos;
 		}
-
+		
 		HavokPoseUtil.SetWorldTransform(skeleton, hkaPose, bIndex, newMx);
 		this.PropagateBones(model, boneTrans, skeleton, hkaPose, bone);
 	}
 
-	private unsafe void PropagateBones(Common.Utility.Transform model, Common.Utility.Transform boneTrans, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
+	private unsafe void PropagateBones(Transform model, Transform boneTrans, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
 		var initialModel = boneTrans.WorldToModel(model);
 		var finalModel = HavokPoseUtil.GetModelTransform(hkaPose, bone.Info.BoneIndex);
 		if (finalModel != null)

@@ -2,10 +2,9 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.Havok;
+using CSTransform = FFXIVClientStructs.FFXIV.Client.Graphics.Transform;
 
 using Ktisis.Common.Extensions;
-
-using CSTransform = FFXIVClientStructs.FFXIV.Client.Graphics.Transform;
 
 namespace Ktisis.Common.Utility;
 
