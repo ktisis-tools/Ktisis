@@ -15,6 +15,7 @@
 		"History_Undo": "Undo action",
 		"History_Redo": "Redo action",
 		"Gizmo_Toggle": "Toggle gizmo visibility",
+		"Gizmo_ToggleMode": "Toggle world/local modes",
 		"Gizmo_SetTranslateMode": "Switch to position mode",
 		"Gizmo_SetRotateMode": "Switch to rotate mode",
 		"Gizmo_SetScaleMode": "Switch to scale mode",
