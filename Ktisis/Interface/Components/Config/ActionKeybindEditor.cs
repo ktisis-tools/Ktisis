@@ -80,6 +80,8 @@ public class ActionKeybindEditor {
 	}
 
 	private void DrawKeybind(ActionKeybind keybind) {
+		using var _ = ImRaii.PushId($"Keybind_{keybind.GetHashCode():X}");
+		
 		using var round = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 0.0f);
 
 		var isActive = this.Editing == keybind;
