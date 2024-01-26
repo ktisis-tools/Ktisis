@@ -139,6 +139,12 @@ public class ActionKeybindEditor {
 				this.SetEditing(null);
 				return;
 			}
+
+			if (key == VirtualKey.BACK) {
+				this.KeyCombo = null;
+				this.SetEditing(null);
+				return;
+			}
 			
 			if (this.KeyCombo.Key == VirtualKey.NO_KEY) {
 				this.KeyCombo.Key = key;
