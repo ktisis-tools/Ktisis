@@ -13,21 +13,22 @@ using ImGuiNET;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 
 namespace Ktisis.Interface.Components.Workspace;
 
 public class SceneTree {
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 	
 	private readonly SceneDragDropHandler _dragDrop;
 	
 	public SceneTree(
-		IEditorContext context
+		IEditorContext ctx
 	) {
-		this._context = context;
-		this._dragDrop = new SceneDragDropHandler(context);
+		this._ctx = ctx;
+		this._dragDrop = new SceneDragDropHandler(ctx);
 	}
 	
 	// Draw frame
@@ -64,7 +65,7 @@ public class SceneTree {
 
 		var spacing = ImGui.GetStyle().ItemSpacing;
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, spacing with { Y = 5.0f });
-		this.IterateTree(this._context.Scene.Children);
+		this.IterateTree(this._ctx.Scene.Children);
 	}
 
 	private void IterateTree(IEnumerable<SceneEntity> entities) {
@@ -120,12 +121,12 @@ public class SceneTree {
 
 			if (isHover && this.IsNodeHovered(pos, size, rightAdjust)) {
 				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) {
-					this._context.Interface.OpenEditorFor(node);
+					this._ctx.Interface.OpenEditorFor(node);
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
 					var mode = GuiHelpers.GetSelectMode();
 					node.Select(mode);
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
-					this._context.Interface.OpenSceneEntityMenu(node);
+					this._ctx.Interface.OpenSceneEntityMenu(node);
 				}
 			}
 		}
@@ -134,7 +135,7 @@ public class SceneTree {
 	}
 
 	private bool DrawNodeLabel(SceneEntity item, Vector2 pos, TreeNodeFlag flag, float rightAdjust = 0.0f) {
-		var display = this._context.Config.Editor.GetDisplayForType(item.Type);
+		var display = this._ctx.Config.Editor.GetDisplayForType(item.Type);
         
         // Caret
 
@@ -197,7 +198,7 @@ public class SceneTree {
 		var cursor = initial;
 
 		this.DrawVisibilityButton(node, ref cursor, isHover);
-		this.DrawAttachButton(this._context, node, ref cursor, isHover);
+		this.DrawAttachButton(node, ref cursor, isHover);
 		
 		return initial - cursor;
 	}
@@ -209,7 +210,7 @@ public class SceneTree {
 			vis.Toggle();
 	}
 
-	private void DrawAttachButton(IEditorContext context, SceneEntity node, ref float cursor, bool isHover) {
+	private void DrawAttachButton(SceneEntity node, ref float cursor, bool isHover) {
 		if (node is not IAttachable attach || !attach.IsAttached()) return;
 		
 		if (this.DrawButton(ref cursor, FontAwesomeIcon.Link, 0xFFFFFFFF) && isHover)
@@ -218,7 +219,7 @@ public class SceneTree {
 		if (!isHover || !ImGui.IsItemHovered()) return;
 
 		var bone = attach.GetParentBone();
-		var name = bone != null ? context.Locale.GetBoneName(bone) : "UNKNOWN";
+		var name = bone != null ? this._ctx.Locale.GetBoneName(bone) : "UNKNOWN";
 		using var _ = ImRaii.Tooltip();
 		ImGui.Text($"Attached to {name}");
 	}

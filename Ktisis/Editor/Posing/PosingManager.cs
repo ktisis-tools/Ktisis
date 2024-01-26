@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
@@ -17,18 +18,18 @@ using Ktisis.Scene.Entities.Skeleton;
 namespace Ktisis.Editor.Posing;
 
 public class PosingManager : IPosingManager {
-	private readonly IContextMediator _mediator;
+	private readonly IEditorContext _context;
 	private readonly HookScope _scope;
 	private readonly IFramework _framework;
 
-	public bool IsValid => this._mediator.IsGPosing;
+	public bool IsValid => this._context.IsGPosing;
 
 	public PosingManager(
-		IContextMediator mediator,
+		IEditorContext context,
 		HookScope scope,
 		IFramework framework
 	) {
-		this._mediator = mediator;
+		this._context = context;
 		this._scope = scope;
 		this._framework = framework;
 	}

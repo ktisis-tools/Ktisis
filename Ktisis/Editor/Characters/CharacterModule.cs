@@ -18,7 +18,7 @@ using Ktisis.Structs.Characters;
 namespace Ktisis.Editor.Characters;
 
 public class CharacterModule : HookModule {
-	private readonly ICharacterState Manager;
+	private readonly ICharacterManager Manager;
 
 	private readonly ActorService _actors;
 	private readonly CustomizeService _discovery;
@@ -27,7 +27,7 @@ public class CharacterModule : HookModule {
 
 	public CharacterModule(
 		IHookMediator hook,
-		ICharacterState manager,
+		ICharacterManager manager,
 		ActorService actors,
 		CustomizeService discovery
 	) : base(hook) {

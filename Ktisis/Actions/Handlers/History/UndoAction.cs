@@ -1,13 +1,14 @@
 using Dalamud.Game.ClientState.Keys;
 
+using Ktisis.Actions.Binds;
+using Ktisis.Actions.Types;
+using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
-using Ktisis.Editor.Actions.Input.Binds;
-using Ktisis.Editor.Actions.Types;
 
-namespace Ktisis.Editor.Actions.Handlers.History;
+namespace Ktisis.Actions.Handlers.History;
 
 [Action("History_Undo")]
-public class UndoAction(IActionManager manager) : ActionBase(manager), IKeybind {
+public class UndoAction(IPluginContext ctx) : ActionBase(ctx), IKeybind {
 	public KeybindInfo Keybind { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
@@ -15,14 +16,12 @@ public class UndoAction(IActionManager manager) : ActionBase(manager), IKeybind 
 			Combo = new KeyCombo(VirtualKey.Z, VirtualKey.CONTROL)
 		}
 	};
-	
-	private IHistoryManager History => this.Manager.History;
 
-	public override bool CanInvoke() => this.History.CanUndo;
+	public override bool CanInvoke() => this.Context.Editor is { Actions.History.CanUndo: true };
 	
 	public override bool Invoke() {
 		if (!this.CanInvoke()) return false;
-		this.History.Undo();
+		this.Context.Editor!.Actions.History.Undo();
 		return true;
 	}
 }

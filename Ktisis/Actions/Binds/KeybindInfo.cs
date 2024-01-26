@@ -2,7 +2,7 @@ using System;
 
 using Ktisis.Data.Config.Actions;
 
-namespace Ktisis.Editor.Actions.Input.Binds;
+namespace Ktisis.Actions.Binds;
 
 [Flags]
 public enum KeybindTrigger {

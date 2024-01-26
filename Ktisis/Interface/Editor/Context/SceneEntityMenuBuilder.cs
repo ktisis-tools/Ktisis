@@ -1,6 +1,7 @@
 ﻿using GLib.Popups.Context;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Interface.Windows.Import;
@@ -13,18 +14,16 @@ using Ktisis.Scene.Entities.World;
 namespace Ktisis.Interface.Editor.Context;
 
 public class SceneEntityMenuBuilder {
-	private readonly IEditorInterface _editor;
-	private readonly IEditorContext _context;
-	
+	private readonly IEditorContext _ctx;
 	private readonly SceneEntity _entity;
 
+	private IEditorInterface Ui => this._ctx.Interface;
+
 	public SceneEntityMenuBuilder(
-		IEditorInterface editor,
-		IEditorContext context,
+		IEditorContext ctx,
 		SceneEntity entity
 	) {
-		this._editor = editor;
-		this._context = context;
+		this._ctx = ctx;
 		this._entity = entity;
 	}
 
@@ -70,7 +69,7 @@ public class SceneEntityMenuBuilder {
 		}
 	}
 
-	private void OpenEditor() => this._editor.OpenEditorFor(this._entity);
+	private void OpenEditor() => this.Ui.OpenEditorFor(this._entity);
 	
 	// Actors
 
@@ -90,17 +89,17 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
-		if (!this._context.Ipc.IsPenumbraActive) return;
+		if (!this._ctx.Plugin.Ipc.IsPenumbraActive) return;
 		
-		menu.Action("Assign collection", () => this._editor.OpenAssignCollection(actor));
+		menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
 	}
 
-	private void ImportChara(ActorEntity actor) => this._editor.OpenEditor<CharaImportDialog, ActorEntity>(actor);
-	private void ImportPose(ActorEntity pose) => this._editor.OpenEditor<PoseImportDialog, ActorEntity>(pose);
+	private void ImportChara(ActorEntity actor) => this.Ui.OpenEditor<CharaImportDialog, ActorEntity>(actor);
+	private void ImportPose(ActorEntity pose) => this.Ui.OpenEditor<PoseImportDialog, ActorEntity>(pose);
 
 	private async void ExportChara(ActorEntity actor) {
-		var file = await this._context.Characters.SaveCharaFile(actor);
-		this._editor.ExportCharaFile(file);
+		var file = await this._ctx.Characters.SaveCharaFile(actor);
+		this.Ui.ExportCharaFile(file);
 	}
 	
 	// Poses
@@ -118,8 +117,8 @@ public class SceneEntityMenuBuilder {
 	
 	private async void ExportPose(EntityPose? pose) {
 		if (pose == null) return;
-		var file = await this._context.Posing.SavePoseFile(pose);
-		this._editor.ExportPoseFile(file);
+		var file = await this._ctx.Posing.SavePoseFile(pose);
+		this.Ui.ExportPoseFile(file);
 	}
 	
 	// Lights

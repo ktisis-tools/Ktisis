@@ -4,24 +4,21 @@ using GLib.Popups.Context;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context;
-using Ktisis.Interface.Editor.Types;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Structs.Lights;
 
 namespace Ktisis.Interface.Editor.Context;
 
 public class SceneCreateMenuBuilder {
-	private readonly IEditorInterface _editor;
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 
-	private IEntityFactory Factory => this._context.Scene.Factory;
+	private IEntityFactory Factory => this._ctx.Scene.Factory;
 
 	public SceneCreateMenuBuilder(
-		IEditorInterface editor,
-		IEditorContext context
+		IEditorContext ctx
 	) {
-		this._editor = editor;
-		this._context = context;
+		this._ctx = ctx;
 	}
 
 	public ContextMenu Create() {
@@ -35,7 +32,7 @@ public class SceneCreateMenuBuilder {
 	private void BuildActorGroup(ContextMenuBuilder sub) {
 		sub.Action("Create new actor", () => this.Factory.CreateActor().Spawn())
 			.Action("Import actor from file", this.ImportCharaFromFile)
-			.Action("Add overworld actor", this._editor.OpenOverworldActorList);
+			.Action("Add overworld actor", this._ctx.Interface.OpenOverworldActorList);
 	}
 	
 	private void BuildLightGroup(ContextMenuBuilder sub)
@@ -53,7 +50,7 @@ public class SceneCreateMenuBuilder {
 	// Actor handling
 
 	private void ImportCharaFromFile() {
-		this._editor.OpenCharaFile((path, file) => {
+		this._ctx.Interface.OpenCharaFile((path, file) => {
 			var name = Path.GetFileNameWithoutExtension(path).Truncate(32);
 			this.Factory.CreateActor()
 				.WithAppearance(file)

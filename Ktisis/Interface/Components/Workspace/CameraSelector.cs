@@ -8,18 +8,19 @@ using ImGuiNET;
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
 
 public class CameraSelector {
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 
-	private ICameraManager Cameras => this._context.Cameras;
+	private ICameraManager Cameras => this._ctx.Cameras;
 	
 	public CameraSelector(
-		IEditorContext context
+		IEditorContext ctx
 	) {
-		this._context = context;
+		this._ctx = ctx;
 	}
 
 	public void Draw() {
@@ -36,7 +37,7 @@ public class CameraSelector {
 
 		ImGui.SameLine(0, spacing);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit camera"))
-			this._context.Interface.OpenCameraWindow();
+			this._ctx.Interface.OpenCameraWindow();
 		
 		ImGui.SameLine(0, spacing);
 		this.DrawFreecamToggle();
@@ -44,8 +45,8 @@ public class CameraSelector {
 
 	private void DrawFreecamToggle() {
 		var isFreecam = this.Cameras.IsWorkCameraActive;
-		using var _bgCol = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isFreecam);
-		using var _iconCol = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xCF), !isFreecam);
+		using var bgCol = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isFreecam);
+		using var iconCol = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xCF), !isFreecam);
 		
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Camera, "Toggle work camera"))
 			this.Cameras.ToggleWorkCameraMode();

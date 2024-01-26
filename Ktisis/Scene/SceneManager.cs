@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
@@ -15,99 +16,51 @@ using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene;
 
-public class SceneManager : ISceneManager {
-	private readonly IContextMediator _mediator;
-	private readonly HookScope _scope;
+public class SceneManager : SceneModuleContainer, ISceneManager {
+	public bool IsValid => this.Context.IsValid && !this.IsDisposing;
 	
-	private readonly Dictionary<Type, SceneModule> Modules = new();
-
-	private SceneRoot Root { get; set; } = null!;
-	
+	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
-	
-	public IEditorContext Context => this._mediator.Context;
-	public bool IsValid => this.Context is { IsValid: true } && !this.IsDisposing;
-	
-	// Construction
+
+	private readonly SceneRoot Root;
 	
 	public SceneManager(
-		IContextMediator mediator,
+		IEditorContext context,
 		HookScope scope,
 		IEntityFactory factory
-	) {
-		this._mediator = mediator;
-		this._scope = scope;
+	) : base(scope) {
+		this.Context = context;
 		this.Factory = factory;
+		this.Root = new SceneRoot(this);
 	}
 	
-	// Modules
-	
-	public T GetModule<T>() where T : SceneModule
-		=> (T)this.Modules[typeof(T)];
-
-	public bool TryGetModule<T>(out T? module) where T : SceneModule {
-		module = null;
-		var result = this.Modules.TryGetValue(typeof(T), out var value);
-		if (result) module = value as T;
-		return result;
-	}
-
-	public SceneManager SetupModules() {
-		var gpose = this.AddModuleAndGet<GroupPoseModule>();
-		return this.AddModule<ActorModule>(gpose)
-			.AddModule<LightModule>(gpose)
-			.AddModule<EnvModule>();
-	}
-
-	private SceneManager AddModule<T>(params object[] param) where T : SceneModule {
-		this.AddModuleAndGet<T>(param);
-		return this;
-	}
-
-	private T AddModuleAndGet<T>(params object[] param) where T : SceneModule {
-		var module = this._scope.Create<T>(param.Prepend(this).ToArray());
-		this.Modules.Add(typeof(T), module);
-		return module;
-	}
-	
-	// Scene setup & events
-
-	public double UpdateTime { get; private set; }
+	// Initialization
 
 	public void Initialize() {
 		Ktisis.Log.Info("Initializing scene...");
-		
-		this.Root = new SceneRoot(this);
-
-		var init = this.Modules.Values
-			.Where(module => module.Initialize() && module.IsInit);
-
-		foreach (var module in init) {
-			try {
-				module.Setup();
-			} catch (Exception err) {
-				Ktisis.Log.Error($"Failed to setup module '{module.GetType().Name}':\n{err}");
-			}
-		}
+		this.SetupModules();
 	}
+	
+	private void SetupModules() {
+		var gpose = this.AddModule<GroupPoseModule>();
+		this.AddModule<ActorModule>(gpose);
+		this.AddModule<LightModule>(gpose);
+		this.AddModule<EnvModule>();
+		this.InitializeModules();
+	}
+	
+	// Update handler
+	
+	public double UpdateTime { get; private set; }
 
 	public void Update() {
 		if (!this.IsValid) return;
 		var t = new Stopwatch();
 		t.Start();
-		foreach (var module in this.Modules.Values)
-			RunModuleUpdate(module);
+		this.UpdateModules();
 		this.Root.Update();
 		t.Stop();
 		this.UpdateTime = t.Elapsed.TotalMilliseconds;
-	}
-
-	private static void RunModuleUpdate(SceneModule module) {
-		try {
-			module.Update();
-		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to update module '{module.GetType().Name}':\n{err}");
-		}
 	}
 	
 	// Refresh
@@ -142,11 +95,8 @@ public class SceneManager : ISceneManager {
 	public void Dispose() {
 		this.IsDisposing = true;
 		try {
-			foreach (var module in this.Modules.Values)
-				module.Dispose();
-			this.Modules.Clear();
 			this.Root.Clear();
-			this.Root = null!;
+			this.DisposeModules();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to dispose scene!\n{err}");
 		}

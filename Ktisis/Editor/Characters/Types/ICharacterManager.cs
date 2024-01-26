@@ -9,7 +9,7 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters.Types;
 
-public interface ICharacterState : IDisposable {
+public interface ICharacterManager : IDisposable {
 	public bool IsValid { get; }
 	
 	public void Initialize();

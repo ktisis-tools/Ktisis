@@ -7,29 +7,29 @@ using GLib.Widgets;
 using ImGuiNET;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Components.Workspace;
-using Ktisis.Interface.Editor;
 using Ktisis.Interface.Editor.Types;
 
 namespace Ktisis.Interface.Windows; 
 
 public class WorkspaceWindow : KtisisWindow {
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 
 	private readonly CameraSelector _cameras;
-	private readonly WorkspaceState _state;
+	private readonly WorkspaceState _workspace;
 	private readonly SceneTree _sceneTree;
 
-	private IEditorInterface Interface => this._context.Interface;
+	private IEditorInterface Interface => this._ctx.Interface;
 	
 	public WorkspaceWindow(
-		IEditorContext context
+		IEditorContext ctx
 	) : base("Ktisis Workspace") {
-		this._context = context;
-		this._cameras = new CameraSelector(context);
-		this._state = new WorkspaceState(context);
-		this._sceneTree = new SceneTree(context);
+		this._ctx = ctx;
+		this._cameras = new CameraSelector(ctx);
+		this._workspace = new WorkspaceState(ctx);
+		this._sceneTree = new SceneTree(ctx);
 	}
 	
 	// Constants
@@ -39,7 +39,7 @@ public class WorkspaceWindow : KtisisWindow {
 	// Pre-draw handlers
 
 	public override void PreOpenCheck() {
-		if (this._context.IsValid) return;
+		if (this._ctx.IsValid) return;
 		Ktisis.Log.Verbose("Context for workspace window is stale, closing...");
 		this.Close();
 	}
@@ -61,7 +61,7 @@ public class WorkspaceWindow : KtisisWindow {
 		this.DrawContextButtons();
 		ImGui.Spacing();
 		this._cameras.Draw();
-		this._state.Draw();
+		this._workspace.Draw();
 
 		var botHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - botHeight;
@@ -87,10 +87,10 @@ public class WorkspaceWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 
-		var gizmo = this._context.Config.Gizmo.Visible;
+		var gizmo = this._ctx.Config.Gizmo.Visible;
 		var icon = gizmo ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
 		if (Buttons.IconButtonTooltip(icon, "Toggle gizmo visibility"))
-			this._context.Config.Gizmo.Visible = !gizmo;
+			this._ctx.Config.Gizmo.Visible = !gizmo;
 
 		ImGui.SameLine(0, spacing);
 		

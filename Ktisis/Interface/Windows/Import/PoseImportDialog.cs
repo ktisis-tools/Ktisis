@@ -7,6 +7,7 @@ using ImGuiNET;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Interface.Components.Files;
 using Ktisis.Interface.Types;
@@ -16,27 +17,25 @@ using Ktisis.Scene.Entities.Skeleton;
 namespace Ktisis.Interface.Windows.Import;
 
 public class PoseImportDialog : EntityEditWindow<ActorEntity> {
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 
 	private readonly FileSelect<PoseFile> _select;
 
-	private Configuration Config => this.Context.Config;
-
 	public PoseImportDialog(
-		IEditorContext context,
+		IEditorContext ctx,
 		FileSelect<PoseFile> select
 	) : base(
 		"Import Pose",
-		context,
+		ctx,
 		ImGuiWindowFlags.AlwaysAutoResize
 	) {
-		this._context = context;
+		this._ctx = ctx;
 		this._select = select;
 		select.OpenDialog = this.OnFileDialogOpen;
 	}
 	
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {
-		this._context.Interface.OpenPoseFile(sender.SetFile);
+		this._ctx.Interface.OpenPoseFile(sender.SetFile);
 	}
 
 	// Draw UI
@@ -74,28 +73,28 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	private void DrawTransformSelect() {
 		ImGui.Text("Transforms:");
 
-		var trans = this.Config.File.ImportPoseTransforms;
+		var trans = this._ctx.Config.File.ImportPoseTransforms;
 
 		var rotation = trans.HasFlag(PoseTransforms.Rotation);
 		if (ImGui.Checkbox("Rotation##PoseImportRot", ref rotation))
-			this.Config.File.ImportPoseTransforms ^= PoseTransforms.Rotation;
+			this._ctx.Config.File.ImportPoseTransforms ^= PoseTransforms.Rotation;
 		
 		ImGui.SameLine();
 
 		var position = trans.HasFlag(PoseTransforms.Position);
 		if (ImGui.Checkbox("Position##PoseImportPos", ref position))
-			this.Config.File.ImportPoseTransforms ^= PoseTransforms.Position;
+			this._ctx.Config.File.ImportPoseTransforms ^= PoseTransforms.Position;
 		
 		ImGui.SameLine();
 
 		var scale = trans.HasFlag(PoseTransforms.Scale);
 		if (ImGui.Checkbox("Scale##PoseImportScale", ref scale))
-			this.Config.File.ImportPoseTransforms ^= PoseTransforms.Scale;
+			this._ctx.Config.File.ImportPoseTransforms ^= PoseTransforms.Scale;
 	}
 
 	private void DrawApplyModes(bool isSelectBones) {
 		using var _ = ImRaii.Disabled(!isSelectBones);
-		ImGui.Checkbox("Apply selected bones", ref this.Config.File.ImportPoseSelectedBones);
+		ImGui.Checkbox("Apply selected bones", ref this._ctx.Config.File.ImportPoseSelectedBones);
 	}
 	
 	// Apply pose
@@ -107,8 +106,8 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		var pose = this.Target.Pose;
 		if (pose == null) return;
 
-		var transforms = this.Config.File.ImportPoseTransforms;
-		var selectedBones = isSelectBones && this.Config.File.ImportPoseSelectedBones;
-		this._context.Posing.ApplyPoseFile(pose, file, transforms, selectedBones);
+		var transforms = this._ctx.Config.File.ImportPoseTransforms;
+		var selectedBones = isSelectBones && this._ctx.Config.File.ImportPoseSelectedBones;
+		this._ctx.Posing.ApplyPoseFile(pose, file, transforms, selectedBones);
 	}
 }

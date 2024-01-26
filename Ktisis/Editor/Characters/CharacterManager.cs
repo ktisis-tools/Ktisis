@@ -10,24 +10,25 @@ using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters;
 
-public class CharacterManager : ICharacterState {
-	private readonly IContextMediator _mediator;
+public class CharacterManager : ICharacterManager {
+	private readonly IEditorContext _context;
 	private readonly HookScope _scope;
 	private readonly IFramework _framework;
 
-	public bool IsValid => this._mediator.Context.IsValid;
+	public bool IsValid => this._context.IsValid;
     
 	public CharacterManager(
-		IContextMediator mediator,
+		IEditorContext context,
 		HookScope scope,
 		IFramework framework
 	) {
-		this._mediator = mediator;
+		this._context = context;
 		this._scope = scope;
 		this._framework = framework;
 	}
@@ -54,7 +55,7 @@ public class CharacterManager : ICharacterState {
 	
 	// Entity wrappers
 	
-	public ActorEntity? GetEntityForActor(GameObject actor) => this._mediator.Context.Scene.Children
+	public ActorEntity? GetEntityForActor(GameObject actor) => this._context.Scene.Children
 		.Where(entity => entity is ActorEntity { IsValid: true })
 		.Cast<ActorEntity>()
 		.FirstOrDefault(entity => entity.Actor.ObjectIndex == actor.ObjectIndex);

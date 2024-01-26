@@ -13,7 +13,7 @@ public interface INameResolver {
 }
 
 [Singleton]
-public class NamingService {
+public class NamingService : INameResolver {
 	private readonly IDataManager _data;
 	
 	public NamingService(
@@ -22,20 +22,16 @@ public class NamingService {
 		this._data = data;
 	}
 
-	public INameResolver GetResolver() => new NameResolver(this);
-
+	public string? GetWeaponName(ushort id, ushort secondId, ushort variant) {
+		if (id == 0) return null;
+		return this.GetWeapons().FirstOrDefault(wep => {
+			if (wep.Model.Matches(id, secondId, variant))
+				return true;
+			return wep.SubModel.Id != 0 && wep.SubModel.Matches(id, secondId, variant);
+		})?.Name;
+	}
+	
 	private IEnumerable<ItemSheet> GetWeapons() => this._data
 		.GetExcelSheet<ItemSheet>()!
 		.Where(item => item.IsWeapon());
-	
-	private class NameResolver(NamingService service) : INameResolver {
-		public string? GetWeaponName(ushort id, ushort secondId, ushort variant) {
-			if (id == 0) return null;
-			return service.GetWeapons().FirstOrDefault(wep => {
-				if (wep.Model.Matches(id, secondId, variant))
-					return true;
-				return wep.SubModel.Id != 0 && wep.SubModel.Matches(id, secondId, variant);
-			})?.Name;
-		}
-	}
 }

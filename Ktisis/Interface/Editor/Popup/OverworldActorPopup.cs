@@ -8,24 +8,24 @@ using GLib.Lists;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Modules.Actors;
-using Ktisis.Services;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Editor.Popup;
 
 public class OverworldActorPopup : KtisisPopup {
 	private readonly ActorService _actors;
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 	private readonly ListBox<GameObject> _list;
 
 	public OverworldActorPopup(
 		ActorService actors,
-		IEditorContext context
+		IEditorContext ctx
 	) : base("##OverworldActorPopup") {
 		this._actors = actors;
-		this._context = context;
+		this._ctx = ctx;
 		this._list = new ListBox<GameObject>(
 			"##OverworldActorList",
 			DrawActorName
@@ -33,7 +33,7 @@ public class OverworldActorPopup : KtisisPopup {
 	}
 
 	protected override void OnDraw() {
-		if (!this._context.IsValid) {
+		if (!this._ctx.IsValid) {
 			this.Close();
 			return;
 		}
@@ -44,7 +44,7 @@ public class OverworldActorPopup : KtisisPopup {
 	}
 	
 	private async void AddActor(GameObject actor) {
-		var module = this._context.Scene.GetModule<ActorModule>();
+		var module = this._ctx.Scene.GetModule<ActorModule>();
 		await module.AddFromOverworld(actor);
 	}
 	

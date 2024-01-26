@@ -2,10 +2,10 @@ using Dalamud.Interface.Utility.Raii;
 
 using ImGuiNET;
 
-using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Files;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
@@ -13,27 +13,25 @@ using Ktisis.Scene.Entities.Game;
 namespace Ktisis.Interface.Windows.Import;
 
 public class CharaImportDialog : EntityEditWindow<ActorEntity> {
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 	
 	private readonly FileSelect<CharaFile> _select;
 
-	private Configuration Config => this.Context.Config;
-
 	public CharaImportDialog(
-		IEditorContext context,
+		IEditorContext ctx,
 		FileSelect<CharaFile> select
 	) : base(
 		"Import Appearance",
-		context,
+		ctx,
 		ImGuiWindowFlags.AlwaysAutoResize
 	) {
-		this._context = context;
+		this._ctx = ctx;
 		this._select = select;
 		this._select.OpenDialog = this.OnFileDialogOpen;
 	}
 	
 	private void OnFileDialogOpen(FileSelect<CharaFile> sender) {
-		this._context.Interface.OpenCharaFile(sender.SetFile);
+		this._ctx.Interface.OpenCharaFile(sender.SetFile);
 	}
 	
 	public override void Draw() {
@@ -75,9 +73,9 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	}
 
 	private void DrawModeSwitch(string label, SaveModes mode) {
-		var enabled = this.Config.File.ImportCharaModes.HasFlag(mode);
+		var enabled = this._ctx.Config.File.ImportCharaModes.HasFlag(mode);
 		if (ImGui.Checkbox($"{label}##CharaImportDialog_{mode}", ref enabled))
-			this.Config.File.ImportCharaModes ^= mode;
+			this._ctx.Config.File.ImportCharaModes ^= mode;
 	}
 	
 	// Apply chara
@@ -85,6 +83,6 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	private void ApplyCharaFile() {
 		var file = this._select.Selected?.File;
 		if (file == null) return;
-		this.Context.Characters.ApplyCharaFile(this.Target, file, this.Config.File.ImportCharaModes);
+		this.Context.Characters.ApplyCharaFile(this.Target, file, this._ctx.Config.File.ImportCharaModes);
 	}
 }

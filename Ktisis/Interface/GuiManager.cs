@@ -11,6 +11,7 @@ using Ktisis.Core;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Types;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface; 
 
@@ -24,15 +25,18 @@ public class GuiManager : IDisposable {
 	
 	private readonly List<KtisisWindow> Windows = new();
 
+	public readonly LocaleManager Locale;
 	public readonly FileDialogManager FileDialogs;
 	
 	public GuiManager(
 		ConfigManager cfg,
 		DIBuilder di,
-		UiBuilder uiBuilder
+		UiBuilder uiBuilder,
+		LocaleManager locale
 	) {
 		this._di = di;
 		this._uiBuilder = uiBuilder;
+		this.Locale = locale;
 		this.FileDialogs = new FileDialogManager(this, cfg);
 	}
 	

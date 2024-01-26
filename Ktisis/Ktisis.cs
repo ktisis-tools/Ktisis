@@ -27,7 +27,7 @@ public sealed class Ktisis : IDalamudPlugin {
 			.AddSingleton(logger)
 			.BuildProvider();
 
-		this._services.GetRequiredService<SetupHandler>()
+		this._services.GetRequiredService<PluginContext>()
 			.Initialize();
 	}
 

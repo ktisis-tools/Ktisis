@@ -29,7 +29,7 @@ public class FileDialogManager {
 	// Dialog state
 
 	private T OpenDialog<T>(T dialog) where T : FileDialog {
-		if (this._cfg.Config.File.LastOpenedPaths.TryGetValue(dialog.Title, out var path))
+		if (this._cfg.File.File.LastOpenedPaths.TryGetValue(dialog.Title, out var path))
 			dialog.Open(path);
 		else
 			dialog.Open();
@@ -39,7 +39,7 @@ public class FileDialogManager {
 	
 	private void SaveDialogState(FileDialog dialog) {
 		if (dialog.ActiveDirectory == null) return;
-		this._cfg.Config.File.LastOpenedPaths[dialog.Title] = dialog.ActiveDirectory;
+		this._cfg.File.File.LastOpenedPaths[dialog.Title] = dialog.ActiveDirectory;
 	}
 	
 	// File handling

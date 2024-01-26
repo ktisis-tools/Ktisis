@@ -1,47 +1,38 @@
 using System;
 
-using Ktisis.Data.Config;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters.Types;
-using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
-using Ktisis.Interface;
-using Ktisis.Interface.Editor;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Interop.Hooking;
-using Ktisis.Interop.Ipc;
-using Ktisis.Localization;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Editor;
 
-public class EditorContext : IEditorContext {
-	private readonly IContextMediator _mediator;
+public class EditorState : IDisposable {
+	private readonly IEditorContext _context;
 	private readonly HookScope _scope;
 	
-	public bool IsValid => this.IsInit && this._mediator.IsGPosing && !this.IsDisposing;
-
-	public Configuration Config => this._mediator.Config;
-	public LocaleManager Locale => this._mediator.Locale;
-	public IpcManager Ipc => this._mediator.Ipc;
+	public bool IsValid => this.IsInit && this._context.IsGPosing && !this.IsDisposing;
 	
 	public required IActionManager Actions { get; init; }
 	public required ICameraManager Cameras { get; init; }
-	public required ICharacterState Characters { get; init; }
+	public required ICharacterManager Characters { get; init; }
 	public required IEditorInterface Interface { get; init; }
 	public required IPosingManager Posing { get; init; }
 	public required ISceneManager Scene { get; init; }
 	public required ISelectManager Selection { get; init; }
 	public required ITransformHandler Transform { get; init; }
     
-	public EditorContext(
-		IContextMediator mediator,
+	public EditorState(
+		IEditorContext context,
 		HookScope scope
 	) {
-		this._mediator = mediator;
+		this._context = context;
 		this._scope = scope;
 	}
 	
@@ -49,7 +40,7 @@ public class EditorContext : IEditorContext {
 	
 	private bool IsInit;
 
-	public IEditorContext Initialize() {
+	public void Initialize() {
 		try {
 			this.IsInit = true;
 			this.Scene.Initialize();
@@ -67,8 +58,6 @@ public class EditorContext : IEditorContext {
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Error preparing interface:\n{err}");
 		}
-		
-		return this;
 	}
 	
 	// Update handler
@@ -84,7 +73,6 @@ public class EditorContext : IEditorContext {
 
 	public void Dispose() {
 		this.IsDisposing = true;
-		this._mediator.Destroy();
 		this._scope.Dispose();
 		this.Scene.Dispose();
 		this.Posing.Dispose();

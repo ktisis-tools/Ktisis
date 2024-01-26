@@ -7,20 +7,19 @@ using ImGuiNET;
 
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 
 namespace Ktisis.Interface.Components.Workspace;
 
 public class SceneDragDropHandler {
-	private readonly IEditorContext _context;
-
-	private Configuration Config => this._context.Config;
+	private readonly IEditorContext _ctx;
 	
 	public SceneDragDropHandler(
-		IEditorContext context
+		IEditorContext ctx
 	) {
-		this._context = context;
+		this._ctx = ctx;
 	}
 	
 	// Handling
@@ -36,15 +35,15 @@ public class SceneDragDropHandler {
 	}
 
 	private void HandleSource(SceneEntity entity) {
-		using var _src = ImRaii.DragDropSource(ImGuiDragDropFlags.SourceNoDisableHover);
-		if (!_src.Success) return;
+		using var src = ImRaii.DragDropSource(ImGuiDragDropFlags.SourceNoDisableHover);
+		if (!src.Success) return;
 		
 		ImGui.SetDragDropPayload(PayloadId, nint.Zero, 0);
 
 		this.Source = entity;
 
-		var display = this.Config.Editor.GetDisplayForType(entity.Type);
-		using var _color = ImRaii.PushColor(ImGuiCol.Text, display.Color);
+		var display = this._ctx.Config.Editor.GetDisplayForType(entity.Type);
+		using var color = ImRaii.PushColor(ImGuiCol.Text, display.Color);
 
 		var icon = display.Icon;
 		if (icon != FontAwesomeIcon.None) {
@@ -55,8 +54,8 @@ public class SceneDragDropHandler {
 	}
 
 	private unsafe void HandleTarget(SceneEntity entity) {
-		using var _tar = ImRaii.DragDropTarget();
-		if (!_tar.Success) return;
+		using var tar = ImRaii.DragDropTarget();
+		if (!tar.Success) return;
 
 		var pl = ImGui.AcceptDragDropPayload(PayloadId);		
 		if (pl.NativePtr != null && this.Source is SceneEntity source)

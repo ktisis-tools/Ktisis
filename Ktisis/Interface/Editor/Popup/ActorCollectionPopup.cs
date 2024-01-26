@@ -5,6 +5,7 @@ using GLib.Lists;
 using ImGuiNET;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Interop.Ipc;
 using Ktisis.Scene.Entities.Game;
@@ -12,25 +13,25 @@ using Ktisis.Scene.Entities.Game;
 namespace Ktisis.Interface.Editor.Popup;
 
 public class ActorCollectionPopup : KtisisPopup {
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 	private readonly ActorEntity _entity;
 	private readonly PenumbraIpcProvider _ipc;
 	private readonly ListBox<string> _list;
 	
 	public ActorCollectionPopup(
-		IEditorContext context,
+		IEditorContext ctx,
 		ActorEntity entity
 	) : base("##ActorCollectionPopup") {
-		this._context = context;
+		this._ctx = ctx;
 		this._entity = entity;
-		this._ipc = context.Ipc.GetPenumbraIpc();
+		this._ipc = ctx.Plugin.Ipc.GetPenumbraIpc();
 		this._list = new ListBox<string>("##CollectionList", this.DrawItem);
 	}
 
 	private string _current = string.Empty;
 
 	protected override void OnDraw() {
-		if (!this._entity.IsValid || !this._context.Ipc.IsPenumbraActive) {
+		if (!this._entity.IsValid || !this._ctx.Plugin.Ipc.IsPenumbraActive) {
 			this.Close();
 			return;
 		}

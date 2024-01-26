@@ -1,25 +1,26 @@
 using Dalamud.Game.ClientState.Keys;
 
+using Ktisis.Actions.Binds;
+using Ktisis.Actions.Types;
+using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
-using Ktisis.Editor.Actions.Input.Binds;
-using Ktisis.Editor.Actions.Types;
 using Ktisis.ImGuizmo;
 
-namespace Ktisis.Editor.Actions.Handlers.Gizmo;
+namespace Ktisis.Actions.Handlers.Gizmo;
 
-public abstract class ModeActionBase(IActionManager manager) : ActionBase(manager) {
+public abstract class ModeActionBase(IPluginContext ctx) : ActionBase(ctx) {
 	protected abstract Operation TargetOp { get; init; }
 
 	public override bool Invoke() {
-		if (this.Context.Selection.Count == 0)
+		if (this.Context.Editor == null || this.Context.Editor.Selection.Count == 0)
 			return false;
-		this.Context.Config.Gizmo.Operation = this.TargetOp;
+		this.Context.Config.File.Gizmo.Operation = this.TargetOp;
 		return true;
 	}
 }
 
 [Action("Gizmo_SetTranslateMode")]
-public class ModeTranslateAction(IActionManager manager) : ModeActionBase(manager), IKeybind {
+public class ModeTranslateAction(IPluginContext ctx) : ModeActionBase(ctx), IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.TRANSLATE;
 	
 	public KeybindInfo Keybind { get; } = new() {
@@ -32,7 +33,7 @@ public class ModeTranslateAction(IActionManager manager) : ModeActionBase(manage
 }
 
 [Action("Gizmo_SetRotateMode")]
-public class ModeRotateAction(IActionManager manager) : ModeActionBase(manager), IKeybind {
+public class ModeRotateAction(IPluginContext ctx) : ModeActionBase(ctx), IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.ROTATE;
 
 	public KeybindInfo Keybind { get; } = new() {
@@ -45,7 +46,7 @@ public class ModeRotateAction(IActionManager manager) : ModeActionBase(manager),
 }
 
 [Action("Gizmo_SetScaleMode")]
-public class ModeScaleAction(IActionManager manager) : ModeActionBase(manager), IKeybind {
+public class ModeScaleAction(IPluginContext ctx) : ModeActionBase(ctx), IKeybind {
 	protected override Operation TargetOp { get; init; } = Operation.SCALE;
 	
 	public KeybindInfo Keybind { get; } = new() {

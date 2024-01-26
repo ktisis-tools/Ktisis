@@ -4,7 +4,6 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Editor.Posing.Types;
-using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Localization;
 
@@ -26,7 +25,7 @@ public class LocaleManager {
 
 	public void Initialize() {
 		// TODO: Listen for locale changes.
-		this.LoadLocale(this._cfg.Config.Locale.LocaleId);
+		this.LoadLocale(this._cfg.File.Locale.LocaleId);
 	}
 	
 	// Localization methods

@@ -9,6 +9,7 @@ using GameCameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraMan
 using Ktisis.Interop.Hooking;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Camera.Types;
+using Ktisis.Editor.Context.Types;
 
 namespace Ktisis.Editor.Camera;
 
@@ -32,16 +33,16 @@ public interface ICameraManager : IDisposable {
 }
 
 public class CameraManager : ICameraManager {
-	private readonly IContextMediator _mediator;
+	private readonly IEditorContext _context;
 	private readonly HookScope _scope;
 
-	public bool IsValid => this._mediator.Context.IsValid;
+	public bool IsValid => this._context.IsValid;
 	
 	public CameraManager(
-		IContextMediator mediator,
+		IEditorContext context,
 		HookScope scope
 	) {
-		this._mediator = mediator;
+		this._context = context;
 		this._scope = scope;
 	}
 	

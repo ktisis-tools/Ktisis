@@ -1,30 +1,29 @@
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Factory.Creators;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Types;
-using Ktisis.Services;
 using Ktisis.Services.Data;
 using Ktisis.Structs.Lights;
 
 namespace Ktisis.Scene.Factory;
 
 public class EntityFactory : IEntityFactory {
-	private readonly IContextMediator _mediator;
+	private readonly IEditorContext _ctx;
 	private readonly INameResolver _naming;
+
+	private ISceneManager Scene => this._ctx.Scene;
 	
 	public EntityFactory(
-		IContextMediator mediator,
+		IEditorContext ctx,
 		INameResolver naming
 	) {
-		this._mediator = mediator;
+		this._ctx = ctx;
 		this._naming = naming;
 	}
-
-	private IEditorContext Context => this._mediator.Context;
-	private ISceneManager Scene => this.Context.Scene;
 	
 	// Builders
 
@@ -38,7 +37,7 @@ public class EntityFactory : IEntityFactory {
 	
 	// Creators
 
-	public IActorCreator CreateActor() => new ActorCreator(this.Context);
+	public IActorCreator CreateActor() => new ActorCreator(this.Scene);
 
 	public ILightCreator CreateLight() => new LightCreator(this.Scene);
 

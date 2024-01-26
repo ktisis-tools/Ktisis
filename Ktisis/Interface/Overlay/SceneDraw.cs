@@ -5,14 +5,11 @@ using ImGuiNET;
 
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
-using Ktisis.Editor;
-using Ktisis.Editor.Context;
-using Ktisis.Editor.Posing;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Utility;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
-using Ktisis.Services;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Overlay;
@@ -22,7 +19,7 @@ public class SceneDraw {
 	private readonly CameraService _camera;
 	private readonly SelectableGui _select;
 	
-	private IEditorContext _context = null!;
+	private IEditorContext _ctx = null!;
 
 	public SceneDraw(
 		CameraService camera,
@@ -32,12 +29,11 @@ public class SceneDraw {
 		this._select = select;
 	}
 
-	public void SetContext(IEditorContext context)
-		=> this._context = context;
+	public void SetContext(IEditorContext ctx) => this._ctx = ctx;
 	
 	public void DrawScene() {
 		var frame = this._select.BeginFrame();
-		this.DrawEntities(frame, this._context.Scene.Children);
+		this.DrawEntities(frame, this._ctx.Scene.Children);
 		this.DrawSelect(frame);
 	}
 	
@@ -108,6 +104,6 @@ public class SceneDraw {
 		var result = this._select.Draw(frame, out var clicked);
 		if (!result || clicked == null) return;
 		var mode = GuiHelpers.GetSelectMode();
-		this._context.Selection.Select(clicked, mode);
+		this._ctx.Selection.Select(clicked, mode);
 	}
 }

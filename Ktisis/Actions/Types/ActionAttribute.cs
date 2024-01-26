@@ -1,6 +1,6 @@
 using System;
 
-namespace Ktisis.Editor.Actions.Types;
+namespace Ktisis.Actions.Types;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class ActionAttribute : Attribute {

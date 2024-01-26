@@ -7,6 +7,7 @@ using ImGuiNET;
 
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
@@ -17,13 +18,13 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private readonly CustomizeEditorUi _custom;
 	private readonly EquipmentEditorUi _equip;
 
-	private ICharacterState Manager => this.Context.Characters;
+	private ICharacterManager Manager => this.Context.Characters;
 	
 	public ActorWindow(
-		IEditorContext context,
+		IEditorContext ctx,
 		CustomizeEditorUi custom,
 		EquipmentEditorUi equip
-	) : base("Actor Editor", context) {
+	) : base("Actor Editor", ctx) {
 		this._custom = custom;
 		this._equip = equip;
 	}

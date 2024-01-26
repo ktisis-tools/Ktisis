@@ -3,14 +3,11 @@ using System.Linq;
 
 using ImGuiNET;
 
-using Dalamud.Plugin.Services;
-
 using FFXIVClientStructs.FFXIV.Common.Math;
 
-using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interface.Types;
-using Ktisis.Services;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Overlay;
@@ -19,35 +16,28 @@ public class OverlayWindow : KtisisWindow {
 	private const ImGuiWindowFlags WindowFlags = ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBackground
 		| ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoBringToFrontOnFocus;
 	
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 	private readonly IGizmo _gizmo;
-	
-	private readonly SceneDraw _sceneDraw;
-	
-	private readonly IGameGui _gui;
 	private readonly CameraService _camera;
-
-	private ITransformHandler Handler => this._context.Transform;
+	private readonly SceneDraw _sceneDraw;
 
 	public OverlayWindow(
-		IEditorContext context,
+		IEditorContext ctx,
 		IGizmo gizmo,
-		SceneDraw draw,
-		IGameGui gui,
-		CameraService camera
+		CameraService camera,
+		SceneDraw draw
 	) : base("##KtisisOverlay", WindowFlags) {
-		this._context = context;
+		this._ctx = ctx;
 		this._gizmo = gizmo;
-		this._sceneDraw = draw;
-		this._gui = gui;
 		this._camera = camera;
-		this._sceneDraw.SetContext(context);
+		this._sceneDraw = draw;
+		this._sceneDraw.SetContext(ctx);
 	}
 	
 	private ITransformMemento? Transform;
 
 	public override void PreOpenCheck() {
-		if (this._context.IsValid) return;
+		if (this._ctx.IsValid) return;
 		Ktisis.Log.Verbose("Context for overlay window is stale, closing...");
 		this.Close();
 	}
@@ -64,7 +54,7 @@ public class OverlayWindow : KtisisWindow {
 		//t.Start();
 		
 		this._sceneDraw.DrawScene();
-		if (this._context.Config.Gizmo.Visible)
+		if (this._ctx.Config.Gizmo.Visible)
 			this.DrawGizmo();
 		
 		//t.Stop();
@@ -72,7 +62,7 @@ public class OverlayWindow : KtisisWindow {
 	}
 
 	private void DrawGizmo() {
-		var target = this.Handler.Target;
+		var target = this._ctx.Transform.Target;
 		var transform = target?.GetTransform();
 		if (target == null || transform == null) return;
 		
@@ -85,14 +75,14 @@ public class OverlayWindow : KtisisWindow {
 		this._gizmo.SetMatrix(view.Value, proj.Value);
 		this._gizmo.BeginFrame(Vector2.Zero, size);
 
-		var cfg = this._context.Config.Gizmo;
+		var cfg = this._ctx.Config.Gizmo;
 		this._gizmo.Mode = cfg.Mode;
 		this._gizmo.Operation = cfg.Operation;
 		this._gizmo.AllowAxisFlip = cfg.AllowAxisFlip;
 
 		var matrix = transform.ComposeMatrix();
 		if (this._gizmo.Manipulate(ref matrix, out _)) {
-			this.Transform ??= this.Handler.Begin(target);
+			this.Transform ??= this._ctx.Transform.Begin(target);
 			this.Transform.SetMatrix(matrix);
 		}
 
@@ -107,13 +97,13 @@ public class OverlayWindow : KtisisWindow {
 		ImGui.SetCursorPosY(ImGui.GetStyle().WindowPadding.Y);
 		for (var i = 0; i < 5; i++)
 			ImGui.Spacing();
-		ImGui.Text($"Context: {this._context.GetHashCode():X} ({this._context.IsValid})");
-		ImGui.Text($"Scene: {this._context.Scene.GetHashCode():X} {this._context.Scene.UpdateTime:00.00}ms");
+		ImGui.Text($"Context: {this._ctx.GetHashCode():X} ({this._ctx.IsValid})");
+		ImGui.Text($"Scene: {this._ctx.Scene.GetHashCode():X} {this._ctx.Scene.UpdateTime:00.00}ms");
 		ImGui.Text($"Overlay: {this.GetHashCode()} {t.Elapsed.TotalMilliseconds:00.00}ms");
 		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.Gizmo.IsUsing})");
-		var target = this._context.Transform.Target;
+		var target = this._ctx.Transform.Target;
 		ImGui.Text($"Target: {target?.GetHashCode() ?? 0:X7} {target?.GetType().Name ?? "NULL"} ({target?.Targets?.Count() ?? 0}, {target?.Primary?.Name ?? "NULL"})");
-		var history = this._context.Actions.History;
+		var history = this._ctx.Actions.History;
 		ImGui.Text($"History: {history.Count} ({history.CanUndo}, {history.CanRedo})");
 	}
 }

@@ -4,6 +4,7 @@ using ImGuiNET;
 
 using Ktisis.Editor;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Entities;
 
 namespace Ktisis.Interface.Types;
@@ -19,10 +20,10 @@ public abstract class EntityEditWindow<T> : KtisisWindow where T : SceneEntity {
 
 	protected EntityEditWindow(
 		string name,
-		IEditorContext context,
+		IEditorContext ctx,
 		ImGuiWindowFlags flags = ImGuiWindowFlags.None
 	) : base(name, flags) {
-		this.Context = context;
+		this.Context = ctx;
 	}
 
 	public virtual void SetTarget(T target) {

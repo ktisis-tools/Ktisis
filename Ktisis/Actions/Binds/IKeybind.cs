@@ -1,4 +1,4 @@
-namespace Ktisis.Editor.Actions.Input.Binds;
+namespace Ktisis.Actions.Binds;
 
 public interface IKeybind {
 	public KeybindInfo? Keybind { get; }

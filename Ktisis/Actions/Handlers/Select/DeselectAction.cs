@@ -1,16 +1,14 @@
 using Dalamud.Game.ClientState.Keys;
 
+using Ktisis.Actions.Binds;
+using Ktisis.Actions.Types;
+using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
-using Ktisis.Editor.Actions.Input.Binds;
-using Ktisis.Editor.Actions.Types;
-using Ktisis.Editor.Selection;
 
 namespace Ktisis.Editor.Actions.Handlers.Select;
 
 [Action("Select_None")]
-public class DeselectAction(IActionManager manager) : ActionBase(manager), IKeybind {
-	private ISelectManager Selection => this.Manager.Context.Selection;
-	
+public class DeselectAction(IPluginContext ctx) : ActionBase(ctx), IKeybind {
 	public KeybindInfo Keybind { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
@@ -19,11 +17,11 @@ public class DeselectAction(IActionManager manager) : ActionBase(manager), IKeyb
 		}
 	};
 
-	public override bool CanInvoke() => this.Selection.Count > 0;
+	public override bool CanInvoke() => this.Context.Editor is { Selection.Count: > 0 };
 	
 	public override bool Invoke() {
 		if (!this.CanInvoke()) return false;
-		this.Selection.Clear();
+		this.Context.Editor!.Selection.Clear();
 		return true;
 	}
 }

@@ -16,7 +16,7 @@ public class ConfigManager : IDisposable {
 	private readonly SchemaReader _schema;
 
 	private bool _isLoaded;
-	public Configuration Config { get; private set; } = null!;
+	public Configuration File { get; private set; } = null!;
 
 	public ConfigManager(
 		DalamudPluginInterface dpi,
@@ -48,7 +48,7 @@ public class ConfigManager : IDisposable {
 			throw;
 		}
 
-		this.Config = cfg;
+		this.File = cfg;
 		this._isLoaded = true;
 		
 		timer.Stop();
@@ -75,14 +75,14 @@ public class ConfigManager : IDisposable {
 		var path = this.GetConfigFilePath();
 		if (!Path.Exists(path)) return null;
 
-		var content = File.ReadAllText(path);
+		var content = System.IO.File.ReadAllText(path);
 		return JsonConvert.DeserializeObject<Configuration>(content);
 	}
 
 	private void SaveConfigFile() {
 		var path = this.GetConfigFilePath();
-		var content = JsonConvert.SerializeObject(this.Config, Formatting.Indented);
-		File.WriteAllText(path, content);
+		var content = JsonConvert.SerializeObject(this.File, Formatting.Indented);
+		System.IO.File.WriteAllText(path, content);
 	}
 
 	private string GetConfigFilePath() {

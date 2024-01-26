@@ -32,7 +32,7 @@ public enum TransformTableFlags {
 public class TransformTable {
 	private readonly ConfigManager _cfg;
 
-	private GizmoConfig GizmoConfig => this._cfg.Config.Gizmo;
+	private GizmoConfig GizmoConfig => this._cfg.File.Gizmo;
 
 	public TransformTable(
 		ConfigManager cfg

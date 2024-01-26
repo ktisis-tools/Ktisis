@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Ktisis.Editor.Actions.Types;
+using Ktisis.Actions.Types;
 
 namespace Ktisis.Editor.Actions;
 

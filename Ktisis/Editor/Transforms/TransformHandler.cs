@@ -1,10 +1,11 @@
 using System.Linq;
 using System.Numerics;
 
+using Ktisis.Actions.Types;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Actions;
-using Ktisis.Editor.Actions.Types;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Skeleton;
@@ -27,16 +28,16 @@ public interface ITransformMemento : IMemento {
 }
 
 public class TransformHandler : ITransformHandler {
-	private readonly IContextMediator _mediator;
+	private readonly IEditorContext _context;
 	private readonly IActionManager _action;
 	private readonly ISelectManager _select;
 
 	public TransformHandler(
-		IContextMediator mediator,
+		IEditorContext context,
 		IActionManager action,
 		ISelectManager select
 	) {
-		this._mediator = mediator;
+		this._context = context;
 		this._action = action;
 		this._select = select;
 		select.Changed += this.OnSelectionChanged;
@@ -44,7 +45,7 @@ public class TransformHandler : ITransformHandler {
 	
 	// Options
 
-	public bool IsMirrored => this._mediator.Config.Gizmo.MirrorRotation;
+	public bool IsMirrored => this._context.Config.Gizmo.MirrorRotation;
 	
 	// Transform target
 	

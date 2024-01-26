@@ -2,90 +2,76 @@ using System;
 using System.Diagnostics;
 
 using Ktisis.Core.Attributes;
-using Ktisis.Data.Config;
-using Ktisis.Interop.Ipc;
-using Ktisis.Localization;
-using Ktisis.Services;
+using Ktisis.Core.Types;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Context;
 
-public interface IContextManager {
-	public IEditorContext? Context { get; }
-}
-
 [Singleton]
-public class ContextManager : IContextManager, IDisposable {
-	private readonly ConfigManager _cfg;
-	private readonly ContextBuilder _factory;
+public class ContextManager : IDisposable {
 	private readonly GPoseService _gpose;
-	private readonly LocaleManager _locale;
-	private readonly IpcManager _ipc;
-
-	public IEditorContext? Context => this._context is { IsValid: true } ctx ? ctx : null;
-
+	private readonly ContextBuilder _builder;
+	
+	public IEditorContext? Current => this._context is { IsValid: true } ctx ? ctx : null;
+	
 	public ContextManager(
-		ConfigManager cfg,
-		ContextBuilder factory,
 		GPoseService gpose,
-		LocaleManager locale,
-		IpcManager ipc
+		ContextBuilder builder
 	) {
-		this._cfg = cfg;
-		this._factory = factory;
 		this._gpose = gpose;
-		this._locale = locale;
-		this._ipc = ipc;
+		this._builder = builder;
 	}
 
-	public void Initialize() {
-		this._locale.Initialize();
-		this._gpose.StateChanged += this.OnStateChanged;
+	private bool _isInit;
+	private IPluginContext? _plugin;
+	private IEditorContext? _context;
+
+	public void Initialize(IPluginContext context) {
+		if (this._isInit)
+			throw new Exception("Attempted double initialization of ContextManager.");
+		this._isInit = true;
+		this._plugin = context;
+		this._gpose.StateChanged += this.OnGPoseEvent;
 		this._gpose.Subscribe();
 	}
 	
-	// Events
+	// Handlers
 
-	private void OnStateChanged(object sender, bool state) {
-		if (this.IsDisposing) return;
+	private void OnGPoseEvent(object sender, bool active) {
+		if (!this._isInit) return;
 		this.Destroy();
-		if (state) this.Setup();
+		if (active) this.SetupEditor();
 	}
 	
-	// Initialization
-	
-	private IEditorContext? _context;
+	// Context setup
 
-	private void Setup() {
-		if (this.IsDisposing)
-			throw new Exception("Attempted to initialize context while disposed.");
+	private void SetupEditor() {
+		if (!this._isInit || this._plugin == null)
+			throw new Exception("Attempted to setup uninitialized context.");
 		
-		Ktisis.Log.Verbose("Initializing new editor context...");
+		Ktisis.Log.Verbose("Creating new editor context...");
 
 		var t = new Stopwatch();
 		t.Start();
 
 		try {
+			this._context = this._builder.Create(this._plugin);
+			this._context.Initialize();
 			this._gpose.Update += this.Update;
-			this.SetupContext();
 		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to initialize editor context:\n{err}");
+			Ktisis.Log.Error($"failed to initialize editor state:\n{err}");
 			this.Destroy();
 		}
 		
 		t.Stop();
 		Ktisis.Log.Debug($"Editor context initialized in {t.Elapsed.TotalMilliseconds:00.00}ms");
 	}
-
-	private void SetupContext() {
-		var mediator = new ContextMediator(this);
-		this._context = this._factory.Initialize(mediator);
-	}
 	
 	// Update handler
 
 	private void Update() {
-		if (this.IsDisposing) return;
+		if (!this._isInit) return;
 		switch (this._context) {
 			case { IsValid: true } context:
 				context.Update();
@@ -98,47 +84,24 @@ public class ContextManager : IContextManager, IDisposable {
 		}
 	}
 	
-	// Destruction handler
+	// Destruction
 
 	private void Destroy() {
 		try {
 			this._context?.Dispose();
-			this._context = null;
 		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to destroy context:\n{err}");
+			Ktisis.Log.Error($"Failed to destroy editor state:\n{err}");
 		} finally {
-			this._gpose.Update -= this.Update;
+			this._context = null;
 		}
-	}
-	
-	// Mediator
-
-	private class ContextMediator(
-		ContextManager editor
-	) : IContextMediator {
-		public IEditorContext Context { get; private set; } = null!;
-		
-		public Configuration Config { get; } = editor._cfg.Config;
-		public LocaleManager Locale { get; } = editor._locale;
-		public IpcManager Ipc { get; } = editor._ipc;
-
-		public bool IsGPosing => editor._gpose.IsGPosing;
-
-		public void Initialize(IEditorContext context) {
-			this.Context = context;
-			this.Context.Initialize();
-		}
-
-		public void Destroy() => this.Context = null!;
+		this._gpose.Update -= this.Update;
 	}
 	
 	// Disposal
 
-	private bool IsDisposing;
-
 	public void Dispose() {
-		this.IsDisposing = true;
+		this._isInit = false;
 		this.Destroy();
-		this._gpose.StateChanged -= this.OnStateChanged;
+		this._gpose.StateChanged -= this.OnGPoseEvent;
 	}
 }

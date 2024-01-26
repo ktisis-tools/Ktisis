@@ -7,10 +7,10 @@ using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.UI;
 
+using Ktisis.Actions.Binds;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Actions;
-using Ktisis.Editor.Actions.Input.Binds;
-using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 
 namespace Ktisis.Editor.Actions.Input;
@@ -24,20 +24,20 @@ public interface IInputManager : IDisposable {
 }
 
 public class InputManager : IInputManager {
-	private readonly IContextMediator _mediator;
+	private readonly IEditorContext _context;
 	private readonly HookScope _scope;
 	private readonly IKeyState _keyState;
 
-	private Configuration Config => this._mediator.Config;
+	private Configuration Config => this._context.Config;
 	
 	private readonly List<KeybindRegister> Keybinds = new();
 	
 	public InputManager(
-		IContextMediator mediator,
+		IEditorContext context,
 		HookScope scope,
 		IKeyState keyState
 	) {
-		this._mediator = mediator;
+		this._context = context;
 		this._scope = scope;
 		this._keyState = keyState;
 	}
@@ -67,7 +67,7 @@ public class InputManager : IInputManager {
 	// Events
 	
 	private bool OnKeyEvent(VirtualKey key, VirtualKeyState state) {
-		if (!this._mediator.IsGPosing || !this.Config.Keybinds.Enabled || IsChatInputActive())
+		if (!this._context.IsGPosing || !this.Config.Keybinds.Enabled || IsChatInputActive())
 			return false;
 
 		var flag = state switch {

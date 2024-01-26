@@ -1,4 +1,4 @@
-namespace Ktisis.Editor.Actions.Types;
+namespace Ktisis.Actions.Types;
 
 public interface IMemento {
 	public void Restore();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Events;
 using Ktisis.Scene.Entities;
 
@@ -32,7 +33,7 @@ public interface ISelectManager {
 }
 
 public class SelectManager : ISelectManager {
-	private readonly IContextMediator _mediator;
+	private readonly IEditorContext _context;
 
 	private readonly Event<Action<ISelectManager>> _changed = new();
 	public event SelectChangedHandler Changed {
@@ -43,9 +44,9 @@ public class SelectManager : ISelectManager {
 	private readonly List<SceneEntity> Selected = new();
 	
 	public SelectManager(
-		IContextMediator mediator
+		IEditorContext context
 	) {
-		this._mediator = mediator;
+		this._context = context;
 	}
 	
 	// Update handler

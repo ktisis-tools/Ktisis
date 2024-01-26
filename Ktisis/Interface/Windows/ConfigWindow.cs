@@ -19,7 +19,7 @@ public class ConfigWindow : KtisisWindow {
 	private readonly ConfigManager _cfg;
 	private readonly ContextManager _context;
 
-	private Configuration Config => this._cfg.Config;
+	private Configuration Config => this._cfg.File;
 
 	public ConfigWindow(
 		ConfigManager cfg,
@@ -176,6 +176,6 @@ public class ConfigWindow : KtisisWindow {
 	public override void OnClose() {
 		base.OnClose();
 		this._cfg.Save();
-		this._context.Context?.Scene.Refresh();
+		this._context.Current?.Scene.Refresh();
 	}
 }

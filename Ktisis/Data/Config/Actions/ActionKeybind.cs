@@ -1,4 +1,4 @@
-using Ktisis.Editor.Actions.Input.Binds;
+using Ktisis.Actions.Binds;
 
 namespace Ktisis.Data.Config.Actions;
 

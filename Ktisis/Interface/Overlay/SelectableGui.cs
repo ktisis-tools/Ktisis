@@ -41,7 +41,7 @@ public class SelectableGui {
 	private readonly CameraService _camera;
 	private readonly ConfigManager _cfg;
 
-	private Configuration Config => this._cfg.Config;
+	private Configuration Config => this._cfg.File;
 	
 	public SelectableGui(
 		CameraService camera,

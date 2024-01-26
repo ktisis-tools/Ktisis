@@ -2,7 +2,7 @@ using System.Linq;
 
 using Dalamud.Game.ClientState.Keys;
 
-namespace Ktisis.Editor.Actions.Input.Binds;
+namespace Ktisis.Actions.Binds;
 
 public class KeyCombo {
 	public VirtualKey Key;

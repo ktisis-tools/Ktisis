@@ -1,20 +1,16 @@
 using System.Reflection;
 
-using Ktisis.Editor.Context;
+using Ktisis.Core.Types;
 
-namespace Ktisis.Editor.Actions.Types;
+namespace Ktisis.Actions.Types;
 
 public abstract class ActionBase {
-	protected IActionManager Manager;
-
-	protected IEditorContext Context => this.Manager.Context;
+	protected IPluginContext Context { get; }
 	
-	protected ActionBase(
-		IActionManager manager
-	) {
-		this.Manager = manager;
+	protected ActionBase(IPluginContext ctx) {
+		this.Context = ctx;
 	}
-
+	
 	public string GetName() => this.GetAttribute().Name;
 	
 	public ActionAttribute GetAttribute() => this.GetType()

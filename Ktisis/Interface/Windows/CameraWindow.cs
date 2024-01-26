@@ -10,25 +10,26 @@ using ImGuiNET;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 
 namespace Ktisis.Interface.Windows;
 
 public class CameraWindow : KtisisWindow {
-	private readonly IEditorContext _context;
+	private readonly IEditorContext _ctx;
 
 	private readonly TransformTable _fixedPos;
 	private readonly TransformTable _relativePos;
 	
 	public CameraWindow(
-		IEditorContext context,
+		IEditorContext ctx,
 		TransformTable fixedPos,
 		TransformTable relativePos
 	) : base(
 		"Camera Editor"
 	) {
-		this._context = context;
+		this._ctx = ctx;
 		this._fixedPos = fixedPos;
 		this._relativePos = relativePos;
 	}
@@ -36,7 +37,7 @@ public class CameraWindow : KtisisWindow {
 	private const TransformTableFlags TransformFlags = TransformTableFlags.Default | TransformTableFlags.UseAvailable & ~TransformTableFlags.Operation;
 
 	public override void PreOpenCheck() {
-		if (this._context is { IsValid: true, Cameras.Current: not null }) return;
+		if (this._ctx is { IsValid: true, Cameras.Current: not null }) return;
 		Ktisis.Log.Verbose("State for camera window is stale, closing.");
 		this.Close();
 	}
@@ -50,7 +51,7 @@ public class CameraWindow : KtisisWindow {
 	}
 	
 	public override void Draw() {
-		var camera = this._context.Cameras.Current;
+		var camera = this._ctx.Cameras.Current;
 		if (camera is not { IsValid: true }) return;
 
 		this.DrawToggles(camera);
@@ -102,9 +103,9 @@ public class CameraWindow : KtisisWindow {
 	// Orbit target
 
 	private unsafe void DrawOrbitTarget(EditorCamera camera) {
-		using var _id = ImRaii.PushId("CameraOrbitTarget");
+		using var _ = ImRaii.PushId("CameraOrbitTarget");
 		
-		var target = this._context.Cameras.ResolveOrbitTarget(camera);
+		var target = this._ctx.Cameras.ResolveOrbitTarget(camera);
 		if (target == null) return;
 
 		var isFixed = camera.OrbitTarget != null;
@@ -133,7 +134,7 @@ public class CameraWindow : KtisisWindow {
 	// Positioning
 
 	private void DrawFixedPosition(EditorCamera camera) {
-		using var _id = ImRaii.PushId("CameraFixedPosition");
+		using var _ = ImRaii.PushId("CameraFixedPosition");
 		
 		var posVec = camera.GetPosition();
 		if (posVec == null) return;
@@ -151,7 +152,7 @@ public class CameraWindow : KtisisWindow {
 
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
-		using var _disable = ImRaii.Disabled(!isFixed);
+		using var disable = ImRaii.Disabled(!isFixed);
 		if (this._fixedPos.DrawPosition(ref pos, TransformFlags))
 			camera.FixedPosition = pos;
 	}

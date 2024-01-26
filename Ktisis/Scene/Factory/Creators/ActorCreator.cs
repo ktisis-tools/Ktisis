@@ -4,10 +4,10 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Utility;
 
 using Ktisis.Data.Files;
-using Ktisis.Editor.Context;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Modules.Actors;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Factory.Creators;
 
@@ -17,16 +17,12 @@ public interface IActorCreator : IEntityCreator<ActorEntity, IActorCreator> {
 }
 
 public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IActorCreator {
-	private readonly IEditorContext Context;
-	
 	private GameObject? Originator;
 	private CharaFile? Appearance;
 
 	public ActorCreator(
-		IEditorContext context
-	) : base(context.Scene) {
-		this.Context = context;
-	}
+		ISceneManager scene
+	) : base(scene) { }
 	
 	protected override IActorCreator Builder => this;
 	
@@ -55,7 +51,7 @@ public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IA
 		}
 
 		if (this.Appearance != null)
-			await this.Context.Characters.ApplyCharaFile(entity, this.Appearance, gameState: true);
+			await this.Scene.Context.Characters.ApplyCharaFile(entity, this.Appearance, gameState: true);
 
 		return entity;
 	}

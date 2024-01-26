@@ -1,6 +1,7 @@
 using System;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Modules;
 
@@ -10,7 +11,6 @@ public interface ISceneManager : IComposite, IDisposable {
 	public bool IsValid { get; }
 	
 	public IEditorContext Context { get; }
-	
 	public IEntityFactory Factory { get; }
 
 	public T GetModule<T>() where T : SceneModule;

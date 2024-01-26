@@ -7,6 +7,7 @@ using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities.World;
@@ -18,9 +19,9 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 	private readonly LocaleManager _locale;
 
 	public LightWindow(
-		IEditorContext context,
+		IEditorContext ctx,
 		LocaleManager locale
-	) : base("Light Editor", context) {
+	) : base("Light Editor", ctx) {
 		this._locale = locale;
 	}
 
