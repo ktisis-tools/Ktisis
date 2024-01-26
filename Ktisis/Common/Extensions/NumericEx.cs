@@ -1,6 +1,9 @@
 namespace Ktisis.Common.Extensions; 
 
 public static class NumericEx {
+	public static byte GetAlpha(this uint rgba)
+		=> (byte)(rgba & 0xFF000000);
+	
 	public static uint SetAlpha(this uint rgba, byte alpha)
 		=> rgba & 0x00FFFFFF | (uint)(alpha << 24);
 

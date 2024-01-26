@@ -5,9 +5,10 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 
+using GLib.Widgets;
+
 using ImGuiNET;
 
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interface.Widgets;
@@ -33,6 +34,7 @@ public class WorkspaceState {
 			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
 			if (!frame) return;
 			this.DrawContext();
+			this.DrawOverlayToggle();
 		} finally {
 			if (frame) ImGui.EndChildFrame();
 		}
@@ -101,5 +103,24 @@ public class WorkspaceState {
 				{ "target", target.Primary?.Name ?? "INVALID" }
 			}
 		));
+	}
+
+	private void DrawOverlayToggle() {
+		using var _ = ImRaii.PushId("##OverlayToggleButton");
+		using var bgCol = ImRaii.PushColor(ImGuiCol.Button, 0);
+		
+		ImGui.SameLine();
+
+		var isActive = this._ctx.Config.Overlay.Visible;
+		using var color = ImRaii.PushColor(ImGuiCol.Text, isActive ? 0xEFFFFFFF : 0x80FFFFFF);
+
+		var icon = isActive ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
+		var label = this._ctx.Locale.Translate("actions.Overlay_Toggle");
+		
+		var avail = ImGui.GetContentRegionAvail();
+		var height = avail.Y - ImGui.GetCursorPosY() / 2;
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail.X - height);
+		if (Buttons.IconButtonTooltip(icon, label, new Vector2(height, height)))
+			this._ctx.Config.Overlay.Visible = !isActive;
 	}
 }

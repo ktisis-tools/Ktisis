@@ -205,8 +205,15 @@ public class SceneTree {
 
 	private void DrawVisibilityButton(SceneEntity node, ref float cursor, bool isHover) {
 		if (node is not IVisibility vis) return;
+
+		var isActive = this._ctx.Config.Overlay.Visible;
 		
-		if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, vis.Visible ? 0xEFFFFFFF : 0x80FFFFFF) && isHover)
+		var isVisible = vis.Visible;
+		var color = isVisible ? 0xEFFFFFFF : 0x80FFFFFF;
+		if (!isActive)
+			color = color.SetAlpha((byte)(isVisible ? 0x60 : 0x30));
+		
+		if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, color) && isHover)
 			vis.Toggle();
 	}
 

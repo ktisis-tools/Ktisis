@@ -11,6 +11,7 @@
 	
 	"actions": {
 		"Select_None": "Cancel selection",
+		"Overlay_Toggle": "Toggle overlay visibility",
 		"History_Undo": "Undo action",
 		"History_Redo": "Redo action",
 		"Gizmo_Toggle": "Toggle gizmo visibility",

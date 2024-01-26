@@ -105,15 +105,24 @@ public class TransformWindow : KtisisWindow {
 		var mode = this._ctx.Config.Gizmo.Mode;
 		var modeIcon = mode == Mode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home;
 		var modeKey = mode == Mode.World ? "world" : "local";
-		if (Buttons.IconButtonTooltip(modeIcon, modeKey, iconBtnSize))
+		var modeHint = this._ctx.Locale.Translate($"transform_edit.mode.{modeKey}");
+		if (Buttons.IconButtonTooltip(modeIcon, modeHint, iconBtnSize))
 			this._ctx.Config.Gizmo.Mode = mode == Mode.World ? Mode.Local : Mode.World;
+		
+		ImGui.SameLine(0, spacing);
+
+		var visible = this._ctx.Config.Gizmo.Visible;
+		var visIcon = visible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
+		var visHint = this._ctx.Locale.Translate("actions.Gizmo_Toggle");
+		if (Buttons.IconButtonTooltip(visIcon, visHint, iconBtnSize))
+			this._ctx.Config.Gizmo.Visible = !visible;
 
 		ImGui.SameLine(0, spacing);
 
 		var isMirror = this._ctx.Config.Gizmo.MirrorRotation;
 		var flagIcon = isMirror ? FontAwesomeIcon.ArrowDownUpAcrossLine : FontAwesomeIcon.GripLines;
 		var flagKey = isMirror ? "mirror" : "parallel";
-		var flagHint = $"transform_edit.flags.{flagKey}";
+		var flagHint = this._ctx.Locale.Translate($"transform_edit.flags.{flagKey}");
 		if (Buttons.IconButtonTooltip(flagIcon, flagHint, iconBtnSize))
 			this._ctx.Config.Gizmo.MirrorRotation ^= true;
 		
@@ -123,12 +132,12 @@ public class TransformWindow : KtisisWindow {
 		if (avail > iconSize)
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
 
-		var show = this._ctx.Config.Editor.TransformHide;
-		var gizmoIcon = show ? FontAwesomeIcon.CaretUp : FontAwesomeIcon.CaretDown;
-		var gizmoKey = show ? "hide" : "show";
-		// TODO hint
-		if (Buttons.IconButtonTooltip(gizmoIcon, gizmoKey, iconBtnSize))
-			this._ctx.Config.Editor.TransformHide = !show;
+		var hide = this._ctx.Config.Editor.TransformHide;
+		var gizmoIcon = hide ? FontAwesomeIcon.CaretUp : FontAwesomeIcon.CaretDown;
+		var gizmoKey = hide ? "show" : "hide";
+		var gizmoHint = this._ctx.Locale.Translate($"transform_edit.gizmo.{gizmoKey}");
+		if (Buttons.IconButtonTooltip(gizmoIcon, gizmoHint, iconBtnSize))
+			this._ctx.Config.Editor.TransformHide = !hide;
 	}
 
 	private unsafe bool DrawGizmo(ref Transform transform, float width, bool disabled) {

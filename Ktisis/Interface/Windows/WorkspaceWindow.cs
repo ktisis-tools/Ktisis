@@ -86,13 +86,6 @@ public class WorkspaceWindow : KtisisWindow {
 			this.Interface.OpenEnvironmentWindow();
 
 		ImGui.SameLine(0, spacing);
-
-		var gizmo = this._ctx.Config.Gizmo.Visible;
-		var icon = gizmo ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
-		if (Buttons.IconButtonTooltip(icon, "Toggle gizmo visibility"))
-			this._ctx.Config.Gizmo.Visible = !gizmo;
-
-		ImGui.SameLine(0, spacing);
 		
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cog, "Settings"))
 			this.Interface.OpenConfigWindow();

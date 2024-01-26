@@ -50,6 +50,8 @@ public class OverlayWindow : KtisisWindow {
 	// Main draw function
 
 	public override void Draw() {
+		if (!this._ctx.Config.Overlay.Visible) return;
+		
 		//var t = new Stopwatch();
 		//t.Start();
 		
