@@ -102,7 +102,9 @@ public class ActionKeybindEditor {
 			this.SetEditing(keybind);
 		}
 
-		if (this.Editing != null && this.Editing != keybind && ImGui.IsItemFocused())
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			keybind.Combo = new KeyCombo();
+		else if (this.Editing != null && this.Editing != keybind && ImGui.IsItemFocused())
 			this.SetEditing(null);
 	}
 	
