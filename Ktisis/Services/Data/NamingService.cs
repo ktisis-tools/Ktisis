@@ -21,6 +21,8 @@ public class NamingService : INameResolver {
 	) {
 		this._data = data;
 	}
+	
+	// Weapons
 
 	public string? GetWeaponName(ushort id, ushort secondId, ushort variant) {
 		if (id == 0) return null;

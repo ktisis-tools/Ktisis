@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Dalamud.Hooking;
@@ -12,11 +10,11 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
-using Ktisis.Services;
 using Ktisis.Structs.GPose;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 using Ktisis.Scene.Types;
 using Ktisis.Services.Game;
 
@@ -54,19 +52,14 @@ public class ActorModule : SceneModule {
 	
 	// Spawning
 
-	public Task<ActorEntity> Spawn() {
-		var index = this._spawner.CalculateNextIndex();
-		return this.Spawn($"Actor #{index}");
-	}
-
-	public async Task<ActorEntity> Spawn(string name) {
+	public async Task<ActorEntity> Spawn() {
 		var localPlayer = this._clientState.LocalPlayer;
 		if (localPlayer == null)
 			throw new Exception("Local player not found.");
 		
 		var address = await this._spawner.CreateActor(localPlayer);
 		var entity = this.AddSpawnedActor(address);
-		this.SetActorName(entity.Actor, name);
+		entity.Actor.SetName(PlayerNameUtil.CalcActorName(entity.Actor.ObjectIndex));
 		entity.Actor.SetWorld((ushort)localPlayer.CurrentWorld.Id);
 		this.ReassignParentIndex(entity.Actor);
 		return entity;
@@ -74,7 +67,7 @@ public class ActorModule : SceneModule {
 
 	public async Task<ActorEntity> AddFromOverworld(GameObject actor) {
 		if (!this._spawner.IsInit)
-			throw new Exception("Actor spawn manager is uninitialized.");
+			throw new Exception("Actor spawner is uninitialized.");
 		var address = await this._spawner.CreateActor(actor);
 		var entity = this.AddSpawnedActor(address);
 		entity.Actor.SetTargetable(true);
@@ -112,29 +105,7 @@ public class ActorModule : SceneModule {
 		actor.Remove();
 	}
 	
-	// Actor state
-	
-	public unsafe void SetActorName(GameObject gameObject, string name) {
-		var gameObjectPtr = (CSGameObject*)gameObject.Address;
-		if (gameObjectPtr == null) return;
-
-		var setName = name;
-		
-		var dupeCt = 0;
-		var isNameDupe = true;
-		while (isNameDupe) {
-			isNameDupe = false;
-			foreach (var actor in this._actors.GetGPoseActors()) {
-				if (actor.GetNameOrFallback() != setName) continue;
-				setName = $"{name} {++dupeCt + 1}";
-				isNameDupe = true;
-			}
-		}
-
-		var bytes = Encoding.UTF8.GetBytes(setName).Append((byte)0).ToArray();
-		for (var i = 0; i < bytes.Length; i++)
-			gameObjectPtr->Name[i] = bytes[i];
-	}
+	// Spawned actor state
 
 	private void ReassignParentIndex(GameObject gameObject) {
 		var ipcMgr = this.Scene.Context.Plugin.Ipc;
@@ -142,7 +113,7 @@ public class ActorModule : SceneModule {
 
 		var ipc = ipcMgr.GetPenumbraIpc();
 		ipc.SetAssignedParentIndex(gameObject, gameObject.ObjectIndex);
-	}	
+	}
 	
 	// Entities
 

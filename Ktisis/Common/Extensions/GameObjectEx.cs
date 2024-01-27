@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Text;
+
 using Dalamud.Utility;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
@@ -25,6 +28,15 @@ public static class GameObjectEx {
 		if (charaPtr == null || !charaPtr->GameObject.IsCharacter()) return;
 		charaPtr->CurrentWorld = world;
 		charaPtr->HomeWorld = world;
+	}
+	
+	public unsafe static void SetName(this GameObject gameObject, string name) {
+		var gameObjectPtr = (CSGameObject*)gameObject.Address;
+		if (gameObjectPtr == null) return;
+
+		var bytes = Encoding.UTF8.GetBytes(name).Append((byte)0).ToArray();
+		for (var i = 0; i < bytes.Length; i++)
+			gameObjectPtr->Name[i] = bytes[i];
 	}
 	
 	public unsafe static void SetTargetable(this GameObject gameObject, bool targetable) {

@@ -44,11 +44,8 @@ public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IA
 			entity = await module.AddFromOverworld(this.Originator);
 		else
 			entity = await module.Spawn();
-
-		if (!this.Name.IsNullOrEmpty()) {
-			module.SetActorName(entity.Actor, this.Name);
-			entity.Name = entity.Actor.Name.TextValue;
-		}
+		
+		entity.Name = this.Name.IsNullOrEmpty() ? $"Actor #{entity.Actor.ObjectIndex}" : this.Name;
 
 		if (this.Appearance != null)
 			await this.Scene.Context.Characters.ApplyCharaFile(entity, this.Appearance, gameState: true);
