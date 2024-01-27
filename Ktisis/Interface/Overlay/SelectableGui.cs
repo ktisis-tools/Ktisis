@@ -60,6 +60,9 @@ public class SelectableGui {
 
 	public bool Draw(ISelectableFrame frame, out SceneEntity? clicked) {
 		clicked = null;
+
+		if (!this.Config.Overlay.DrawDotsGizmo && ImGuizmo.Gizmo.IsUsing)
+			return false;
 		
 		var drawList = ImGui.GetWindowDrawList();
 
