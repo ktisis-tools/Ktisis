@@ -98,7 +98,7 @@ public static class HavokPoseUtil {
 
 	private unsafe static void Propagate(hkaPose* pose, int boneIx, Vector3 sourcePos, Vector3 deltaPos, Quaternion deltaRot) {
 		var hkaSkele = pose->Skeleton;
-		for (var i = boneIx + 1; i < hkaSkele->Bones.Length; i++) {
+		for (var i = boneIx; i < hkaSkele->Bones.Length; i++) {
 			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx))
 				continue;
 			
