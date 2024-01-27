@@ -97,6 +97,6 @@ public class GizmoStyleEditor {
 		
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.SetNextItemWidth(ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - cX));
-		ImGui.DragFloat(label, ref value);
+		ImGui.DragFloat(label, ref value, 0.01f);
 	}
 }

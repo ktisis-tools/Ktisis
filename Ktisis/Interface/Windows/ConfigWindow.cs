@@ -92,8 +92,8 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Checkbox("Draw lines on skeleton while using gizmo", ref this.Config.Overlay.DrawLinesGizmo);
 		ImGui.Checkbox("Draw dots while using gizmo", ref this.Config.Overlay.DrawDotsGizmo);
 		ImGui.Spacing();
-		ImGui.DragFloat("Dot radius", ref this.Config.Overlay.DotRadius);
-		ImGui.DragFloat("Line thickness", ref this.Config.Overlay.LineThickness);
+		ImGui.DragFloat("Dot radius", ref this.Config.Overlay.DotRadius, 0.1f);
+		ImGui.DragFloat("Line thickness", ref this.Config.Overlay.LineThickness, 0.1f);
 		ImGui.Spacing();
 		ImGui.SliderFloat("Line opacity", ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
 		ImGui.SliderFloat("Line opacity while using gizmo", ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);

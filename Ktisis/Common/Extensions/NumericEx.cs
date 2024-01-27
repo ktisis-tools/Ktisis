@@ -1,3 +1,5 @@
+using System;
+
 namespace Ktisis.Common.Extensions; 
 
 public static class NumericEx {
@@ -5,7 +7,7 @@ public static class NumericEx {
 	
 	public static uint SetAlpha(this uint rgba, byte alpha) => rgba & 0x00FFFFFF | (uint)(alpha << 24);
 
-	public static uint SetAlpha(this uint rgba, float alpha) => rgba.SetAlpha((byte)(alpha * 255));
+	public static uint SetAlpha(this uint rgba, float alpha) => rgba.SetAlpha((byte)Math.Floor(alpha * 255));
 
 	public static uint FlipEndian(this uint value) {
 		return (value & 0xFF000000) >> 24
