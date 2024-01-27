@@ -68,6 +68,7 @@ public class ActorModule : SceneModule {
 		var entity = this.AddSpawnedActor(address);
 		this.SetActorName(entity.Actor, name);
 		entity.Actor.SetWorld((ushort)localPlayer.CurrentWorld.Id);
+		this.ReassignParentIndex(entity.Actor);
 		return entity;
 	}
 
@@ -135,7 +136,13 @@ public class ActorModule : SceneModule {
 			gameObjectPtr->Name[i] = bytes[i];
 	}
 
-	
+	private void ReassignParentIndex(GameObject gameObject) {
+		var ipcMgr = this.Scene.Context.Plugin.Ipc;
+		if (!ipcMgr.IsPenumbraActive) return;
+
+		var ipc = ipcMgr.GetPenumbraIpc();
+		ipc.SetAssignedParentIndex(gameObject, gameObject.ObjectIndex);
+	}	
 	
 	// Entities
 
