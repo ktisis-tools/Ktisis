@@ -9,6 +9,8 @@ using Ktisis.Scene.Entities.Skeleton;
 namespace Ktisis.Editor.Posing.Data;
 
 public class EntityPoseConverter(EntityPose target) {
+	public bool IsPoseValid => target.IsValid;
+	
 	// Save pose file
 
 	public unsafe PoseContainer Save() {
@@ -66,6 +68,17 @@ public class EntityPoseConverter(EntityPose target) {
 	) {
 		var selected = this.GetSelectedBones();
 		this.LoadBones(pose, selected, transforms);
+	}
+	
+	// Filter container
+
+	public PoseContainer FilterSelectedBones(PoseContainer pose) {
+		var result = new PoseContainer();
+		foreach (var bone in this.GetSelectedBones()) {
+			if (pose.TryGetValue(bone.Name, out var value))
+				result[bone.Name] = value;
+		}
+		return result;
 	}
 	
 	// Iterate bones

@@ -7,8 +7,8 @@ using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
+using Ktisis.Actions.Types;
 using Ktisis.Data.Files;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
@@ -85,16 +85,41 @@ public class PosingManager : IPosingManager {
 			if (file.Bones == null) return;
 			
 			var converter = new EntityPoseConverter(pose);
+			var initial = converter.Save();
+			
 			if (selectedBones)
 				converter.LoadSelectedBones(file.Bones, transforms);
 			else
 				converter.Load(file.Bones, transforms);
+
+			var final = converter.Save();
+			this._context.Actions.History.Add(new PoseMemento(converter) {
+				Transforms = transforms,
+				Initial = selectedBones ? converter.FilterSelectedBones(initial) : initial,
+				Final = selectedBones ? converter.FilterSelectedBones(final) : final
+			});
 		});
 	}
 
 	public Task<PoseFile> SavePoseFile(EntityPose pose) => this._framework.RunOnFrameworkThread(
 		() => new EntityPoseConverter(pose).SaveFile()
 	);
+
+	private class PoseMemento(EntityPoseConverter converter) : IMemento {
+		public required PoseTransforms Transforms { get; init; }
+		public required PoseContainer Initial { get; init; }
+		public required PoseContainer Final { get; init; }
+		
+		public void Restore() {
+			if (!converter.IsPoseValid) return;
+			converter.Load(this.Initial, this.Transforms);
+		}
+		
+		public void Apply() {
+			if (!converter.IsPoseValid) return;
+			converter.Load(this.Final, this.Transforms);
+		}
+	}
 	
 	// Disposal
 
