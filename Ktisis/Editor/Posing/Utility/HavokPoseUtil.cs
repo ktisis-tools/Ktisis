@@ -3,6 +3,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Interop;
 
@@ -14,7 +15,7 @@ public static class HavokPoseUtil {
 	private readonly static Alloc<Matrix4x4> Matrix = new(16);
 
 	private unsafe static Matrix4x4 GetMatrix(hkQsTransformf* transform) {
-		transform->get4x4ColumnMajor(&Matrix.Data->M11);
+		transform->get4x4ColumnMajor((float*)Matrix.Address);
 		return *Matrix.Data;
 	}
 
@@ -30,15 +31,14 @@ public static class HavokPoseUtil {
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return null;
-		return new Transform(pose->ModelPose[boneIx]);
+		return new Transform(*pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate));
 	}
 
 	public unsafe static void SetModelTransform(hkaPose* pose, int boneIx, Transform trans) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return;
-
-		trans.Scale = Vector3.Max(trans.Scale, MinScale);
-		pose->ModelPose[boneIx] = trans.ToHavok();
+		
+		*pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate) = trans.ToHavok();
 	}
 	
 	// World transform
@@ -57,7 +57,7 @@ public static class HavokPoseUtil {
 			return;
 		
 		var modelTrans = new Transform(skele->Transform);
-		pose->ModelPose[boneIx] = trans.WorldToModel(modelTrans).ToHavok();
+		*pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate) = trans.WorldToModel(modelTrans).ToHavok();
 	}
 
 	public unsafe static void SetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx, Matrix4x4 trans)
@@ -82,7 +82,7 @@ public static class HavokPoseUtil {
 		// Propagate connected partial skeletons
 
 		var hkaSkele = pose->Skeleton;
-		for (var p = 1; p < skele->PartialSkeletonCount; p++) {
+		for (var p = 0; p < skele->PartialSkeletonCount; p++) {
 			var subPartial = skele->PartialSkeletons[p];
 			var subPose = subPartial.GetHavokPose(0);
 			if (subPose == null) continue;
@@ -98,16 +98,17 @@ public static class HavokPoseUtil {
 
 	private unsafe static void Propagate(hkaPose* pose, int boneIx, Vector3 sourcePos, Vector3 deltaPos, Quaternion deltaRot) {
 		var hkaSkele = pose->Skeleton;
-		for (var i = boneIx; i < hkaSkele->Bones.Length; i++) {
+		for (var i = boneIx + 1; i < hkaSkele->Bones.Length; i++) {
 			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx))
 				continue;
-
-			var data = &pose->ModelPose.Data[i];
-			var trans = new Transform(*data);
-			var offset = Vector3.Transform(trans.Position - sourcePos, deltaRot);
-			var matrix = GetMatrix(data) * Matrix4x4.CreateFromQuaternion(deltaRot);
+			
+			var access = pose->AccessBoneModelSpace(i, hkaPose.PropagateOrNot.DontPropagate);
+			var offset = access->Translation.ToVector3() - sourcePos;
+			offset = Vector3.Transform(offset, deltaRot);
+			var matrix = GetMatrix(access);
+			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
 			matrix.Translation = deltaPos + sourcePos + offset;
-			SetMatrix(&pose->ModelPose.Data[i], matrix);
+			SetMatrix(access, matrix);
 		}
 	}
 	
