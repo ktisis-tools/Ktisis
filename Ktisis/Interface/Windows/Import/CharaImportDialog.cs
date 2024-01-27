@@ -4,7 +4,6 @@ using ImGuiNET;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Characters;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Files;
 using Ktisis.Interface.Types;

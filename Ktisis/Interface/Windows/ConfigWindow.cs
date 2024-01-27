@@ -48,6 +48,7 @@ public class ConfigWindow : KtisisWindow {
 		if (!tabs.Success) return;
 		DrawTab("Categories", this.DrawCategoriesTab);
 		DrawTab("Gizmo", this.DrawGizmoTab);
+		DrawTab("Overlay", this.DrawOverlayTab);
 		DrawTab("Workspace", this.DrawWorkspaceTab);
 		DrawTab("Input", this.DrawInputTab);
 	}
@@ -82,6 +83,20 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Text("Style:");
 		ImGui.Spacing();
 		this._gizmoStyle.Draw();
+	}
+	
+	// Overlay
+
+	private void DrawOverlayTab() {
+		ImGui.Checkbox("Draw lines on skeleton", ref this.Config.Overlay.DrawLines);
+		ImGui.Checkbox("Draw lines on skeleton while using gizmo", ref this.Config.Overlay.DrawLinesGizmo);
+		ImGui.Checkbox("Draw dots while using gizmo", ref this.Config.Overlay.DrawDotsGizmo);
+		ImGui.Spacing();
+		ImGui.DragFloat("Dot radius", ref this.Config.Overlay.DotRadius);
+		ImGui.DragFloat("Line thickness", ref this.Config.Overlay.LineThickness);
+		ImGui.Spacing();
+		ImGui.SliderFloat("Line opacity", ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
+		ImGui.SliderFloat("Line opacity while using gizmo", ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
 	}
 	
 	// Workspace

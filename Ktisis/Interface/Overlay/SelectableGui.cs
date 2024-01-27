@@ -14,7 +14,6 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Entity;
 using Ktisis.Scene.Entities;
-using Ktisis.Services;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Overlay;
@@ -143,8 +142,8 @@ public class SelectableGui {
 	// Draw UI dots
 
 	private bool DrawPrimDot(ImDrawListPtr drawList, Vector2 pos2d, EntityDisplay display, bool isSelect = false) {
-		// TODO: I forgot
-		var radius = isSelect ? 8.0f : 7.0f;
+		var radius = this.Config.Overlay.DotRadius;
+		if (isSelect) radius += 1.0f;
 		
 		drawList.AddCircleFilled(
 			pos2d,

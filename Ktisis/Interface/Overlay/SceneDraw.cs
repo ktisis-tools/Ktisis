@@ -3,8 +3,10 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
+using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Utility;
 using Ktisis.Scene.Decor;
@@ -20,6 +22,8 @@ public class SceneDraw {
 	private readonly SelectableGui _select;
 	
 	private IEditorContext _ctx = null!;
+
+	private OverlayConfig Config => this._ctx.Config.Overlay;
 
 	public SceneDraw(
 		CameraService camera,
@@ -80,6 +84,9 @@ public class SceneDraw {
 				
 				// Draw lines to children.
 
+				if (!this.Config.DrawLines) continue;
+				if (!this.Config.DrawLinesGizmo && ImGuizmo.Gizmo.IsUsing) continue;
+
 				for (var c = i; c < boneCt; c++) {
 					if (hkaSkeleton->ParentIndices[c] != i) continue;
 
@@ -97,7 +104,9 @@ public class SceneDraw {
 	private void DrawLine(ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos) {
 		if (!this._camera.WorldToScreen(fromPos, out var fromPos2d)) return;
 		if (!this._camera.WorldToScreen(toPos, out var toPos2d)) return;
-		drawList.AddLine(fromPos2d, toPos2d, 0xFFFFFFFF);
+
+		var opacity = ImGuizmo.Gizmo.IsUsing ? this.Config.LineOpacityUsing : this.Config.LineOpacity;
+		drawList.AddLine(fromPos2d, toPos2d, 0xFFFFFFFF.SetAlpha(opacity), this.Config.LineThickness);
 	}
 	
 	private void DrawSelect(ISelectableFrame frame) {
