@@ -11,6 +11,7 @@ using Ktisis.Core;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Types;
+using Ktisis.Interface.Windows;
 using Ktisis.Localization;
 
 namespace Ktisis.Interface; 
@@ -45,6 +46,7 @@ public class GuiManager : IDisposable {
 	public void Initialize() {
 		this._uiBuilder.DisableGposeUiHide = true;
 		this._uiBuilder.Draw += this.Draw;
+		this._uiBuilder.OpenConfigUi += this.OnOpenConfigUi;
 	}
 	
 	// Draw
@@ -110,6 +112,8 @@ public class GuiManager : IDisposable {
 		Ktisis.Log.Verbose($"Window {window.GetType().Name} ('{window.WindowName}') closed, removing...");
 		this.Remove(window);
 	}
+
+	private void OnOpenConfigUi() => this.GetOrCreate<ConfigWindow>().Toggle();
 	
 	// Disposal
 
@@ -121,6 +125,7 @@ public class GuiManager : IDisposable {
 	
 	public void Dispose() {
 		this._uiBuilder.Draw -= this.Draw;
+		this._uiBuilder.OpenConfigUi -= this.OnOpenConfigUi;
 		this.RemoveAll();
 	}
 }
