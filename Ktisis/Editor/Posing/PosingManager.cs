@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
@@ -91,12 +92,12 @@ public class PosingManager : IPosingManager {
 				converter.LoadSelectedBones(file.Bones, transforms);
 			else
 				converter.Load(file.Bones, transforms);
-
-			var final = converter.Save();
+			
 			this._context.Actions.History.Add(new PoseMemento(converter) {
 				Transforms = transforms,
+				Bones = selectedBones ? converter.GetSelectedBones().ToList() : null,
 				Initial = selectedBones ? converter.FilterSelectedBones(initial) : initial,
-				Final = selectedBones ? converter.FilterSelectedBones(final) : final
+				Final = selectedBones ? converter.FilterSelectedBones(file.Bones) : file.Bones
 			});
 		});
 	}
@@ -107,17 +108,22 @@ public class PosingManager : IPosingManager {
 
 	private class PoseMemento(EntityPoseConverter converter) : IMemento {
 		public required PoseTransforms Transforms { get; init; }
+		public required List<PartialBoneInfo>? Bones { get; init; }
 		public required PoseContainer Initial { get; init; }
 		public required PoseContainer Final { get; init; }
 		
-		public void Restore() {
-			if (!converter.IsPoseValid) return;
-			converter.Load(this.Initial, this.Transforms);
-		}
+		public void Restore() => this.Apply(this.Initial);
 		
-		public void Apply() {
+		public void Apply() => this.Apply(this.Final);
+
+		private void Apply(PoseContainer pose) {
 			if (!converter.IsPoseValid) return;
-			converter.Load(this.Final, this.Transforms);
+			if (this.Bones != null) {
+				var bones = converter.IntersectBonesByName(this.Bones);
+				converter.LoadBones(pose, bones, this.Transforms);
+			} else {
+				converter.Load(pose, this.Transforms);
+			}
 		}
 	}
 	

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Dalamud.Utility;
+
 using Ktisis.Data.Files;
 using Ktisis.Editor.Posing.Types;
-using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Posing.Data;
@@ -72,34 +73,73 @@ public class EntityPoseConverter(EntityPose target) {
 	
 	// Filter container
 
-	public PoseContainer FilterSelectedBones(PoseContainer pose) {
+	public unsafe PoseContainer FilterSelectedBones(PoseContainer pose) {
 		var result = new PoseContainer();
-		foreach (var bone in this.GetSelectedBones()) {
+
+		var bones = this.GetSelectedBones().ToList();
+		foreach (var bone in bones) {
 			if (pose.TryGetValue(bone.Name, out var value))
 				result[bone.Name] = value;
 		}
+
+		if (bones.All(bone => bone.PartialIndex == 0))
+			return result;
+
+		var skeleton = target.GetSkeleton();
+		if (skeleton == null || skeleton->PartialSkeletons == null)
+			return result;
+
+		for (var p = 1; p < skeleton->PartialSkeletonCount; p++) {
+			var partial = skeleton->PartialSkeletons[p];
+			var subPose = partial.GetHavokPose(0);
+			if (subPose == null || subPose->Skeleton == null) continue;
+
+			var root = subPose->Skeleton->Bones[partial.ConnectedBoneIndex].Name.String;
+			if (root.IsNullOrEmpty() || result.ContainsKey(root)) continue;
+
+			if (!pose.TryGetValue(root, out var value)) continue;
+			Ktisis.Log.Info($"Setting parent {value} for partial {p}");
+			result[root] = value;
+		}
+		
 		return result;
+	}
+	
+	// Pose mapping
+
+	public IEnumerable<PartialBoneInfo> IntersectBonesByName(
+		IEnumerable<PartialBoneInfo> second
+	) {
+		return this.GetBones().IntersectBy(
+			second.Select(bone => bone.Name),
+			bone => bone.Name
+		);
 	}
 	
 	// Iterate bones
 
-	public IEnumerable<PartialBoneInfo> GetBones()
-		=> this.GetBones(target.Children);
+	private unsafe IEnumerable<PartialBoneInfo> GetBones() {
+		var skeleton = target.GetSkeleton();
+		if (skeleton == null || skeleton->PartialSkeletons == null)
+			return [];
 
-	private IEnumerable<PartialBoneInfo> GetBones(IEnumerable<SceneEntity> entities) {
-		foreach (var entity in entities) {
-			switch (entity) {
-				case BoneNode bone:
-					yield return bone.Info;
-					continue;
-				case BoneNodeGroup group:
-					foreach (var bone in this.GetBones(group.Children))
-						yield return bone;
-					continue;
-				default:
-					continue;
-			}
-		}
+		List<PartialBoneInfo> result = [];
+		result.AddRange(this.GetPartialBones(0));
+		for (var p = 0; p < skeleton->PartialSkeletonCount; p++)
+			result.AddRange(this.GetPartialBones(p));
+		return result;
+	}
+
+	private unsafe IEnumerable<PartialBoneInfo> GetPartialBones(int index) {
+		var skeleton = target.GetSkeleton();
+		if (skeleton == null || skeleton->PartialSkeletons == null)
+			return [];
+
+		var partial = skeleton->PartialSkeletons[index];
+		if (partial.HavokPoses == null || partial.HavokPoses[0] == 0)
+			return [];
+		
+		return new BoneEnumerator(index, partial).EnumerateBones();
 	}
 	
 	// Iterate selected bones

@@ -36,6 +36,8 @@ public enum PoseMode {
 
 [Serializable]
 public class PoseContainer : Dictionary<string, Transform> {
+	internal Dictionary<string, Transform> Parents = new();
+	
 	public unsafe void Store(
 		Skeleton* modelSkeleton
 	) {
@@ -135,6 +137,8 @@ public class PoseContainer : Dictionary<string, Transform> {
 			var parentName = skeleton->Bones[rootIx].Name.String;
 			if (!parentName.IsNullOrEmpty() && this.TryGetValue(parentName, out var parent))
 				offset = rotation / parent.Rotation / delta;
+			else
+				Ktisis.Log.Warning($"Failed to find parent bone '{parentName}' for partial {partialIndex}!");
 		}
 		
 		var range = Enumerable.Range(1, skeleton->Bones.Length - 1);
