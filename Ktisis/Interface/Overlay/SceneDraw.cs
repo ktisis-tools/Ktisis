@@ -62,7 +62,7 @@ public class SceneDraw {
 		var skeleton = pose.GetSkeleton();
 		if (skeleton == null || skeleton->PartialSkeletons == null) return;
 
-		var drawList = ImGui.GetBackgroundDrawList();
+		var drawList = ImGui.GetWindowDrawList();
 
 		var partialCt = skeleton->PartialSkeletonCount;
 		for (var index = 0; index < partialCt; index++) {

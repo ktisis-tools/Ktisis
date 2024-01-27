@@ -61,7 +61,7 @@ public class SelectableGui {
 	public bool Draw(ISelectableFrame frame, out SceneEntity? clicked) {
 		clicked = null;
 		
-		var drawList = ImGui.GetBackgroundDrawList();
+		var drawList = ImGui.GetWindowDrawList();
 
 		var items = frame.GetItems().ToList();
 
