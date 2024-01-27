@@ -6,6 +6,7 @@ using Dalamud.Plugin.Services;
 using HandlerDelegate = Dalamud.Game.Command.CommandInfo.HandlerDelegate;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Editor.Context;
 using Ktisis.Interface;
 
 namespace Ktisis.Services.Plugin;
@@ -13,15 +14,21 @@ namespace Ktisis.Services.Plugin;
 [Singleton]
 public class CommandService : IDisposable {
 	private readonly ICommandManager _cmd;
+	private readonly IChatGui _chat;
+	private readonly ContextManager _ctx;
 	private readonly GuiManager _gui;
 
 	private readonly HashSet<string> _register = new();
 	
 	public CommandService(
 		ICommandManager cmd,
+		IChatGui chat,
+		ContextManager ctx,
 		GuiManager gui
 	) {
 		this._cmd = cmd;
+		this._chat = chat;
+		this._ctx = ctx;
 		this._gui = gui;
 	}
 	
@@ -45,7 +52,14 @@ public class CommandService : IDisposable {
 
 	private void OnMainCommand(string command, string arguments) {
 		Ktisis.Log.Info("Main command used");
-		//this._gui.GetOrCreate<WorkspaceWindow>().Toggle();
+
+		var ctx = this._ctx.Current;
+		if (ctx == null) {
+			this._chat.PrintError("Cannot open Ktisis workspace outside of GPose.");
+			return;
+		}
+
+		ctx.Interface.ToggleWorkspaceWindow();
 	}
 	
 	// Disposal

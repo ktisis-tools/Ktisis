@@ -51,6 +51,8 @@ public class EditorInterface : IEditorInterface {
 	// Window wrappers
 
 	public void OpenConfigWindow() => this._gui.GetOrCreate<ConfigWindow>().Open();
+
+	public void ToggleWorkspaceWindow() => this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Toggle();
 	
 	// Editor windows
 	

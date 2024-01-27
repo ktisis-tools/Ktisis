@@ -9,6 +9,7 @@ namespace Ktisis.Services.Plugin;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public sealed class DalamudServices {
+	[PluginService] private IChatGui ChatGui { get; set; } = null!;
 	[PluginService] private IClientState ClientState { get; set; } = null!;
 	[PluginService] private ICommandManager Cmd { get; set; } = null!;
 	[PluginService] private IFramework Framework { get; set; } = null!;
@@ -33,6 +34,7 @@ public sealed class DalamudServices {
 			.AddSingleton(this.KeyState)
 			.AddSingleton(this.Data)
 			.AddSingleton(this.Tex)
-			.AddSingleton(this.SigScanner);
+			.AddSingleton(this.SigScanner)
+			.AddSingleton(this.ChatGui);
 	}
 }

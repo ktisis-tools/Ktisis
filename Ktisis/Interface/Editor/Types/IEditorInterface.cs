@@ -12,6 +12,7 @@ public interface IEditorInterface {
 	public void Prepare();
 	
 	public void OpenConfigWindow();
+	public void ToggleWorkspaceWindow();
 
 	public void OpenCameraWindow();
 	public void OpenEnvironmentWindow();
