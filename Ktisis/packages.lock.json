@@ -25,9 +25,9 @@
       },
       "Penumbra.Api": {
         "type": "Direct",
-        "requested": "[1.0.13, )",
-        "resolved": "1.0.13",
-        "contentHash": "dEbT29wMRLgH0hHEMBVMdqGUgdeP94jhirpM/N+Km91vlogWTIcnVx4IADFsV0fUBEgiwe6gzYxsPqlE70uHWw=="
+        "requested": "[1.0.14, )",
+        "resolved": "1.0.14",
+        "contentHash": "KqUuD4d30uhczvfH2YtcbwBxGnovBQAIudZ99eRxK0NeHwnQ3vdKe2BO2gZ2ZzT3JV6lu0NvosXXqqcQ0ZtqLw=="
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "Transitive",

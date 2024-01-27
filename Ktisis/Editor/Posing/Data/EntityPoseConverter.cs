@@ -98,7 +98,6 @@ public class EntityPoseConverter(EntityPose target) {
 			if (root.IsNullOrEmpty() || result.ContainsKey(root)) continue;
 
 			if (!pose.TryGetValue(root, out var value)) continue;
-			Ktisis.Log.Info($"Setting parent {value} for partial {p}");
 			result[root] = value;
 		}
 		

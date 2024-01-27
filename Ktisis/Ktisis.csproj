@@ -29,7 +29,7 @@
 		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
 		<PackageReference Include="DalamudPackager" Version="2.1.12" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-		<PackageReference Include="Penumbra.Api" Version="1.0.13" />
+		<PackageReference Include="Penumbra.Api" Version="1.0.14" />
 		<Reference Include="FFXIVClientStructs">
 			<HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
 			<Private>false</Private>
