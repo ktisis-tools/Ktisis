@@ -91,13 +91,12 @@ public static class HavokPosing {
 			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx))
 				continue;
 			
-			var access = pose->AccessBoneModelSpace(i, hkaPose.PropagateOrNot.DontPropagate);
-			var offset = access->Translation.ToVector3() - sourcePos;
+			var matrix = GetMatrix(pose, i);
+			var offset = matrix.Translation - sourcePos;
 			offset = Vector3.Transform(offset, deltaRot);
-			var matrix = GetMatrix(access);
 			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
 			matrix.Translation = deltaPos + sourcePos + offset;
-			SetMatrix(access, matrix);
+			SetMatrix(pose, i, matrix);
 		}
 	}
 	
