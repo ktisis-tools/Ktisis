@@ -8,7 +8,6 @@ using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context.Types;
-using Ktisis.Editor.Posing.Utility;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
@@ -77,7 +76,7 @@ public class SceneDraw {
 				var node = pose.GetBoneFromMap(index, i);
 				if (node?.Visible != true) continue;
 
-				var transform = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, i);
+				var transform = node.GetTransform();
 				if (transform == null) continue;
 				
 				frame.AddItem(node, transform.Position);
@@ -93,7 +92,7 @@ public class SceneDraw {
 					var bone = pose.GetBoneFromMap(index, c);
 					if (bone?.Visible != true) continue;
 
-					var lineTo = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, c);
+					var lineTo = bone.GetTransform();
 					if (lineTo != null)
 						this.DrawLine(drawList, transform.Position, lineTo.Position);
 				}

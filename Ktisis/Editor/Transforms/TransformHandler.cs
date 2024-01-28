@@ -4,7 +4,6 @@ using System.Numerics;
 using Ktisis.Actions.Types;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Actions;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Scene.Decor;

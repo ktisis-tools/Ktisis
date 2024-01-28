@@ -1,3 +1,5 @@
+using System.Numerics;
+
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Common.Utility;
@@ -37,17 +39,37 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 	
 	// Transform
 
-	public unsafe Transform? GetTransform() {
-		var skeleton = this.GetSkeleton();
-		var pose = skeleton != null ? this.GetPose() : null;
-		return pose != null ? HavokPoseUtil.GetWorldTransform(skeleton, pose, this.Info.BoneIndex) : null;
+	public Transform? GetTransform() {
+		if (this.GetMatrix() is Matrix4x4 mx)
+			return new Transform(mx);
+		return null;
 	}
 
-	public unsafe void SetTransform(Transform transform) {
+	public void SetTransform(Transform transform) => this.SetMatrix(transform.ComposeMatrix());
+	
+	public unsafe Matrix4x4? GetMatrix() {
+		var skeleton = this.GetSkeleton();
+		var pose = skeleton != null ? this.GetPose() : null;
+		if (pose == null) return null;
+
+		var model = new Transform(skeleton->Transform);
+		var matrix = HavokPoseUtil.GetMatrix(pose, this.Info.BoneIndex);
+		matrix.Translation *= model.Scale;
+		matrix = Matrix4x4.Transform(matrix, model.Rotation);
+		matrix.Translation += model.Position;
+		return matrix;
+	}
+
+	public unsafe void SetMatrix(Matrix4x4 matrix) {
 		var skeleton = this.GetSkeleton();
 		var pose = skeleton != null ? this.GetPose() : null;
 		if (pose == null) return;
-		HavokPoseUtil.SetWorldTransform(skeleton, pose, this.Info.BoneIndex, transform);
+
+		var model = new Transform(skeleton->Transform);
+		matrix.Translation -= model.Position;
+		matrix = Matrix4x4.Transform(matrix, Quaternion.Inverse(model.Rotation));
+		matrix.Translation /= model.Scale;
+		HavokPoseUtil.SetMatrix(pose, this.Info.BoneIndex, matrix);
 	}
 	
 	// Attach

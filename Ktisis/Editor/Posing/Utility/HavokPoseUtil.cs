@@ -23,45 +23,34 @@ public static class HavokPoseUtil {
 		*Matrix.Data = matrix;
 		trans->set((hkMatrix4f*)Matrix.Address);
 	}
+
+	public unsafe static Matrix4x4 GetMatrix(hkaPose* pose, int boneIndex) {
+		var access = pose->AccessBoneModelSpace(boneIndex, hkaPose.PropagateOrNot.DontPropagate);
+		return GetMatrix(access);
+	}
+
+	public unsafe static void SetMatrix(hkaPose* pose, int boneIndex, Matrix4x4 matrix) {
+		var access = pose->AccessBoneModelSpace(boneIndex, hkaPose.PropagateOrNot.DontPropagate);
+		SetMatrix(access, matrix);
+	}
 	
 	// Model transform
-	
-	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
 	
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return null;
-		return new Transform(*pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate));
+
+		var access = pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate);
+		return new Transform(GetMatrix(access));
 	}
 
 	public unsafe static void SetModelTransform(hkaPose* pose, int boneIx, Transform trans) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return;
-		
-		*pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate) = trans.ToHavok();
-	}
-	
-	// World transform
-	
-	public unsafe static Transform? GetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx) {
-		var model = GetModelTransform(pose, boneIx);
-		if (model is null || skele == null)
-			return null;
 
-		var modelTrans = new Transform(skele->Transform);
-		return model.ModelToWorld(modelTrans);
+		var access = pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate);
+		SetMatrix(access, trans.ComposeMatrix());
 	}
-
-	public unsafe static void SetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx, Transform trans) {
-		if (skele == null || pose == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
-			return;
-		
-		var modelTrans = new Transform(skele->Transform);
-		*pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate) = trans.WorldToModel(modelTrans).ToHavok();
-	}
-
-	public unsafe static void SetWorldTransform(Skeleton* skele, hkaPose* pose, int boneIx, Matrix4x4 trans)
-		=> SetWorldTransform(skele, pose, boneIx, new Transform(trans));
 	
 	// Propagation
 
@@ -114,7 +103,7 @@ public static class HavokPoseUtil {
 	
 	// Bone descendants
 
-	public static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
+	private static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
 		if (parent < 1) return true;
 		
 		var p = indices[bone];

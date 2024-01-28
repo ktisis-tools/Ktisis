@@ -29,6 +29,7 @@ public class Transform {
 	}
 
 	public Transform(hkQsTransformf hk) {
+		Ktisis.Log.Info($"{hk.Translation.X} {hk.Translation.Y} {hk.Translation.Z} {hk.Translation.W}");
 		this.Position = hk.Translation.ToVector3();
 		this.Rotation = hk.Rotation.ToQuaternion();
 		this.Scale = hk.Scale.ToVector3();
@@ -46,8 +47,8 @@ public class Transform {
 	
 	// Matrix
 
-	public Matrix4x4 ComposeMatrix(Vector3? center = null) {
-		var sclMx = Matrix4x4.CreateScale(this.Scale, center ?? Vector3.Zero);
+	public Matrix4x4 ComposeMatrix() {
+		var sclMx = Matrix4x4.CreateScale(this.Scale);
 		var rotMx = Matrix4x4.CreateFromQuaternion(this.Rotation);
 		var posMx = Matrix4x4.CreateTranslation(this.Position);
 		return sclMx * rotMx * posMx;
@@ -66,22 +67,6 @@ public class Transform {
 		this.Rotation = rot;
 		this.Scale = scl;
 	}
-
-	public static Transform FromMatrix(Matrix4x4 mx) {
-		var result = new Transform();
-		result.DecomposeMatrix(mx);
-		return result;
-	}
-	
-	// Conversion
-	
-	public Transform ModelToWorld(Transform mul)
-		=> new(this.ComposeMatrix() * mul.ComposeMatrix());
-
-	public Transform WorldToModel(Transform mul) {
-		Matrix4x4.Invert(mul.ComposeMatrix(), out var invert);
-		return new Transform(this.ComposeMatrix() * invert);
-	}
 	
 	// Set
 
@@ -91,14 +76,6 @@ public class Transform {
 		this.Scale = t.Scale;
 		return this;
 	}
-	
-	// Havok :3
-
-	public hkQsTransformf ToHavok() => new() {
-		Translation = this.Position.ToHavok(),
-		Rotation = this.Rotation.ToHavok(),
-		Scale = this.Scale.ToHavok()
-	};
 	
 	// ClientStructs conversion
 

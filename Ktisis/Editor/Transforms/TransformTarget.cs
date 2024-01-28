@@ -79,7 +79,7 @@ public class TransformTarget : ITransformTarget {
 	private unsafe void TransformSkeletons(Transform transform, Transform initial) {
 		var delta = new Transform(
 			transform.Position - initial.Position,
-			Quaternion.Normalize(transform.Rotation * Quaternion.Inverse(initial.Rotation)),
+			transform.Rotation / initial.Rotation,
 			transform.Scale / initial.Scale
 		);
 		
@@ -87,8 +87,6 @@ public class TransformTarget : ITransformTarget {
 			var skeleton = pose.GetSkeleton();
 			if (skeleton == null || skeleton->PartialSkeletons == null)
 				continue;
-
-			var model = new Transform(skeleton->Transform);
 
 			var partialCt = skeleton->PartialSkeletonCount;
 			for (var pIndex = 0; pIndex < partialCt; pIndex++) {
@@ -100,14 +98,14 @@ public class TransformTarget : ITransformTarget {
 				if (hkaPose == null) continue;
 
 				foreach (var bone in boneList.Where(bone => bone.IsValid))
-					this.TransformBone(transform, delta, model, skeleton, hkaPose, bone);
+					this.TransformBone(transform, delta, skeleton, hkaPose, bone);
 			}
 		}
 	}
 
-	private unsafe void TransformBone(Transform transform, Transform delta, Transform model, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
+	private unsafe void TransformBone(Transform transform, Transform delta, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
 		var bIndex = bone.Info.BoneIndex;
-		var boneTrans = HavokPoseUtil.GetWorldTransform(skeleton, hkaPose, bIndex);
+		var boneTrans = bone.GetTransform();
 		if (boneTrans == null) return;
 
 		var mirror = this._handler.IsMirrored;
@@ -136,14 +134,10 @@ public class TransformTarget : ITransformTarget {
 			newMx = scale * rot * pos;
 		}
 		
-		HavokPoseUtil.SetWorldTransform(skeleton, hkaPose, bIndex, newMx);
-		this.PropagateBones(model, boneTrans, skeleton, hkaPose, bone);
-	}
+		var initial = HavokPoseUtil.GetModelTransform(hkaPose, bIndex)!;
+		bone.SetMatrix(newMx);
 
-	private unsafe void PropagateBones(Transform model, Transform boneTrans, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
-		var initialModel = boneTrans.WorldToModel(model);
-		var finalModel = HavokPoseUtil.GetModelTransform(hkaPose, bone.Info.BoneIndex);
-		if (finalModel != null)
-			HavokPoseUtil.Propagate(skeleton, bone.Info.PartialIndex, bone.Info.BoneIndex, finalModel, initialModel);
+		var final = HavokPoseUtil.GetModelTransform(hkaPose, bIndex)!;
+		HavokPoseUtil.Propagate(skeleton, bone.Info.PartialIndex, bone.Info.BoneIndex, final, initial);
 	}
 }
