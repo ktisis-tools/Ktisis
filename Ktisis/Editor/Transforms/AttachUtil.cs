@@ -5,7 +5,6 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
-using Ktisis.Editor.Posing.Utility;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Transforms;
@@ -60,7 +59,7 @@ public static class AttachUtil {
 		
 		// worldPos = rootPos + ((modelPos + (elementPos + attachPos * elementRot) * modelRot) * rootRot) * rootScale
 		
-		var pModel = HavokPoseUtil.GetModelTransform(pPose, parentId)!;
+		var pModel = HavokPosing.GetModelTransform(pPose, parentId)!;
 		var worldRot = (Quaternion)pSkele->Transform.Rotation * pModel.Rotation * eRotate;
 		var inverseRot = Quaternion.Inverse(worldRot);
 		

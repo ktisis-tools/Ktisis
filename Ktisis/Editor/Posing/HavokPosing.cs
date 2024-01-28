@@ -7,9 +7,9 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Interop;
 
-namespace Ktisis.Editor.Posing.Utility;
+namespace Ktisis.Editor.Posing;
 
-public static class HavokPoseUtil {
+public static class HavokPosing {
 	// Matrix wrappers
 	
 	private readonly static Alloc<Matrix4x4> Matrix = new(16);

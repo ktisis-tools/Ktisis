@@ -11,7 +11,6 @@ using FFXIVClientStructs.Havok;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing.Types;
-using Ktisis.Editor.Posing.Utility;
 
 namespace Ktisis.Editor.Posing.Data;
 
@@ -159,7 +158,7 @@ public class PoseContainer : Dictionary<string, Transform> {
 
 		if (!this.TryGetValue(name, out var model)) return;
 		
-		var initial = HavokPoseUtil.GetModelTransform(pose, boneIndex)!;
+		var initial = HavokPosing.GetModelTransform(pose, boneIndex)!;
 
 		var target = new Transform(initial.Position, initial.Rotation, initial.Scale);
 
@@ -175,8 +174,8 @@ public class PoseContainer : Dictionary<string, Transform> {
 		if (transforms.HasFlag(PoseTransforms.Scale))
 			target.Scale = model.Scale;
 		
-		HavokPoseUtil.SetModelTransform(pose, boneIndex, target);
-		HavokPoseUtil.Propagate(modelSkeleton, partialIndex, boneIndex, target, initial);
+		HavokPosing.SetModelTransform(pose, boneIndex, target);
+		HavokPosing.Propagate(modelSkeleton, partialIndex, boneIndex, target, initial);
 	}
 
 	private unsafe Quaternion ParentSkeleton(
@@ -191,18 +190,18 @@ public class PoseContainer : Dictionary<string, Transform> {
 		var rootPose = rootPartial.GetHavokPose(0);
 		if (rootPose == null) return Quaternion.Identity;
 
-		var initial = HavokPoseUtil.GetModelTransform(pose, partial.ConnectedBoneIndex)!;
-		var target = HavokPoseUtil.GetModelTransform(rootPose, partial.ConnectedParentBoneIndex)!;
+		var initial = HavokPosing.GetModelTransform(pose, partial.ConnectedBoneIndex)!;
+		var target = HavokPosing.GetModelTransform(rootPose, partial.ConnectedParentBoneIndex)!;
 		
 		var deltaRot = target.Rotation / initial.Rotation;
 
 		var step1 = new Transform(target.Position, initial.Rotation, initial.Scale);
-		HavokPoseUtil.SetModelTransform(pose, partial.ConnectedBoneIndex, step1);
-		HavokPoseUtil.Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step1, initial);
+		HavokPosing.SetModelTransform(pose, partial.ConnectedBoneIndex, step1);
+		HavokPosing.Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step1, initial);
 
 		var step2 = new Transform(target.Position, deltaRot * initial.Rotation, target.Scale);
-		HavokPoseUtil.SetModelTransform(pose, partial.ConnectedBoneIndex, step2);
-		HavokPoseUtil.Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step2, step1);
+		HavokPosing.SetModelTransform(pose, partial.ConnectedBoneIndex, step2);
+		HavokPosing.Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step2, step1);
 		
 		return deltaRot;
 	}

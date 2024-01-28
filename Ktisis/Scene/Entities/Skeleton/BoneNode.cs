@@ -3,8 +3,8 @@ using System.Numerics;
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Types;
-using Ktisis.Editor.Posing.Utility;
 using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;
 
@@ -53,7 +53,7 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 		if (pose == null) return null;
 
 		var model = new Transform(skeleton->Transform);
-		var matrix = HavokPoseUtil.GetMatrix(pose, this.Info.BoneIndex);
+		var matrix = HavokPosing.GetMatrix(pose, this.Info.BoneIndex);
 		matrix.Translation *= model.Scale;
 		matrix = Matrix4x4.Transform(matrix, model.Rotation);
 		matrix.Translation += model.Position;
@@ -69,7 +69,7 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 		matrix.Translation -= model.Position;
 		matrix = Matrix4x4.Transform(matrix, Quaternion.Inverse(model.Rotation));
 		matrix.Translation /= model.Scale;
-		HavokPoseUtil.SetMatrix(pose, this.Info.BoneIndex, matrix);
+		HavokPosing.SetMatrix(pose, this.Info.BoneIndex, matrix);
 	}
 	
 	// Attach

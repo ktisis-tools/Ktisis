@@ -5,11 +5,11 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
-using Ktisis.Editor.Posing.Utility;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Posing;
 
 namespace Ktisis.Editor.Transforms;
 
@@ -134,10 +134,10 @@ public class TransformTarget : ITransformTarget {
 			newMx = scale * rot * pos;
 		}
 		
-		var initial = HavokPoseUtil.GetModelTransform(hkaPose, bIndex)!;
+		var initial = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
 		bone.SetMatrix(newMx);
 
-		var final = HavokPoseUtil.GetModelTransform(hkaPose, bIndex)!;
-		HavokPoseUtil.Propagate(skeleton, bone.Info.PartialIndex, bone.Info.BoneIndex, final, initial);
+		var final = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
+		HavokPosing.Propagate(skeleton, bone.Info.PartialIndex, bone.Info.BoneIndex, final, initial);
 	}
 }
