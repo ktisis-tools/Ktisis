@@ -37,6 +37,9 @@ public class ConfigManager : IDisposable {
 		try {
 			// TODO: Legacy migration
 			cfg = this.OpenConfigFile();
+
+			if (cfg is { Version: < 6 })
+				cfg.Categories = this._schema.ReadCategories();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");
 		}

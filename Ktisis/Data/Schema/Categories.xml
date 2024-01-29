@@ -116,6 +116,13 @@
 					iv_nitoukin_l
 				</Bones>
 				<Category Id="LeftHand">
+					<TwoJointsIK>
+						<FirstBone>j_ude_a_l</FirstBone>
+						<FirstTwist>n_hkata_l</FirstTwist>
+						<SecondBone>j_ude_b_l</SecondBone>
+						<SecondTwist>j_hhiji_l</SecondTwist>
+						<EndBone>j_te_l</EndBone>
+					</TwoJointsIK>
 					<Bones>
 						j_hito_a_l
 						j_ko_a_l
@@ -151,6 +158,13 @@
 					iv_nitoukin_r
 				</Bones>
 				<Category Id="RightHand">
+					<TwoJointsIK>
+						<FirstBone>j_ude_a_r</FirstBone>
+						<FirstTwist>n_hkata_r</FirstTwist>
+						<SecondBone>j_ude_b_r</SecondBone>
+						<SecondTwist>j_hhiji_r</SecondTwist>
+						<EndBone>j_te_r</EndBone>
+					</TwoJointsIK>
 					<Bones>
 						j_hito_a_r
 						j_ko_a_r

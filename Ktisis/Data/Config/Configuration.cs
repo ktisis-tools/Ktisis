@@ -9,7 +9,7 @@ namespace Ktisis.Data.Config;
 
 [Serializable]
 public class Configuration : IPluginConfiguration {
-	public const int CurrentVersion = 5;
+	public const int CurrentVersion = 6;
 	public int Version { get; set; } = CurrentVersion;
 
 	public CategoryConfig Categories = new();

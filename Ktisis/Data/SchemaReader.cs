@@ -30,8 +30,11 @@ public class SchemaReader {
 
 	private const string BonesTag = "Bones";
 	private const string CategoryTag = "Category";
+	private const string TwoJointsIkTag = "TwoJointsIK";
 
 	private const string CategorySchemaPath = "Data.Schema.Categories.xml";
+	
+	// Categories
 
 	public CategoryConfig ReadCategories() {
 		var categories = new CategoryConfig();
@@ -65,6 +68,9 @@ public class SchemaReader {
 				case XmlNodeType.Element when reader.Name is BonesTag:
 					this.ReadBone(reader, category);
 					continue;
+				case XmlNodeType.Element when reader.Name is TwoJointsIkTag:
+					category.TwoJointsGroup = this.ReadTwoJointsIkGroup(reader);
+					continue;
 				case XmlNodeType.EndElement when reader.Name is CategoryTag:
 					return category;
 				default:
@@ -74,11 +80,15 @@ public class SchemaReader {
 
 		return category;
 	}
+	
+	// Recurse subcategories
 
 	private void ReadSubCategory(XmlReader reader, CategoryConfig categories, BoneCategory parent) {
 		var sub = this.ReadCategory(reader, categories);
 		sub.ParentCategory = parent.Name;
 	}
+	
+	// Individual bone names
 
 	private void ReadBone(XmlReader reader, BoneCategory category) {
 		reader.Read();
@@ -92,5 +102,43 @@ public class SchemaReader {
 		
 		foreach (var bone in bones)
 			category.Bones.Add(new CategoryBone(bone));
+	}
+	
+	// IK groups
+
+	private TwoJointsIkGroup ReadTwoJointsIkGroup(XmlReader reader) {
+		var group = new TwoJointsIkGroup();
+		
+		while (reader.Read()) {
+			if (reader is { NodeType: XmlNodeType.EndElement, Name: TwoJointsIkTag })
+				break;
+
+			if (reader.NodeType != XmlNodeType.Element)
+				continue;
+
+			var name = reader.Name;
+			while (reader.Read() && reader.NodeType != XmlNodeType.Text) { }
+
+			var value = reader.Value.Trim();
+			switch (name) {
+				case "FirstBone":
+					group.FirstBone = value;
+					break;
+				case "FirstTwist":
+					group.FirstTwist = value;
+					break;
+				case "SecondBone":
+					group.SecondBone = value;
+					break;
+				case "SecondTwist":
+					group.SecondTwist = value;
+					break;
+				case "EndBone":
+					group.EndBone = value;
+					break;
+			}
+		}
+		
+		return group;
 	}
 }

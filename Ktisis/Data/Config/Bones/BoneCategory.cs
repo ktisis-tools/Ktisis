@@ -12,4 +12,6 @@ public class BoneCategory(string name) {
 	public int? SortPriority;
 
 	public readonly List<CategoryBone> Bones = new();
+	
+	public TwoJointsIkGroup? TwoJointsGroup;
 }
