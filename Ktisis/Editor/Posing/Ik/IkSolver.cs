@@ -110,7 +110,8 @@ public class IkSolver(IkModule module) : IDisposable {
 
 		var start = this.IkSetup->m_firstJointIdx;
 		for (var i = 1; i < this.Pose->Skeleton->Bones.Length; i++) {
-			if (i != start && !HavokPosing.IsBoneDescendantOf(pose->Skeleton->ParentIndices, start, i)) continue;
+			if (i != start && !HavokPosing.IsBoneDescendantOf(pose->Skeleton->ParentIndices, start, i))
+				continue;
 			*this.Pose->AccessBoneModelSpace(i, hkaPose.PropagateOrNot.Propagate) = pose->ModelPose[i];
 		}
 	}
@@ -130,10 +131,10 @@ public class IkSolver(IkModule module) : IDisposable {
 		var end = this.IkSetup->m_endBoneIdx;
 		
 		for (var i = start; i < pose->Skeleton->Bones.Length; i++) {
-			var apply = i == start || HavokPosing.IsBoneDescendantOf(pose->Skeleton->ParentIndices, i, start);
+			var apply = i == start || HavokPosing.IsBoneDescendantOf(parents, i, start);
 			if (!apply) continue;
 			
-			var relative = HavokPosing.IsBoneDescendantOf(pose->Skeleton->ParentIndices, i, end);
+			var relative = HavokPosing.IsBoneDescendantOf(parents, i, end);
 			if (relative) {
 				var parentId = parents[i];
 				var transform = HavokPosing.GetModelTransform(pose, parentId)!;
@@ -142,7 +143,6 @@ public class IkSolver(IkModule module) : IDisposable {
 				transform.Rotation *= local.Rotation;
 				transform.Scale *= local.Scale;
 				HavokPosing.SetModelTransform(pose, i, transform);
-				
 				continue;
 			}
 			

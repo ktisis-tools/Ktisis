@@ -6,7 +6,7 @@ using FFXIVClientStructs.Havok;
 using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Havok;
 
-namespace Ktisis.Editor.Posing;
+namespace Ktisis.Editor.Posing.Ik;
 
 public sealed class IkModule : HookModule {
 	private readonly PosingManager Manager;

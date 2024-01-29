@@ -12,6 +12,7 @@ using Ktisis.Actions.Types;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
+using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Skeleton;
