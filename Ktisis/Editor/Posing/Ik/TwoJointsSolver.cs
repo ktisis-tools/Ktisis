@@ -8,7 +8,7 @@ using Ktisis.Structs.Havok;
 
 namespace Ktisis.Editor.Posing.Ik;
 
-public class IkSolver(IkModule module) : IDisposable {
+public class TwoJointsSolver(IkModule module) : IDisposable {
 	private readonly Alloc<hkaPose> AllocPose = new(16);
 	private readonly Alloc<TwoJointsIkSetup> AllocIkSetup = new(16);
 
