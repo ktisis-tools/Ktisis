@@ -1,6 +1,6 @@
 ﻿namespace Ktisis.Data.Config.Bones;
 
-public class TwoJointsIkGroup {
+public class TwoJointsGroupParams {
 	public string? FirstBone;
 	public string? FirstTwist;
 	public string? SecondBone;

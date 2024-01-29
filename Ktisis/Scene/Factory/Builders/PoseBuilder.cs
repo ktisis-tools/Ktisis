@@ -198,7 +198,7 @@ public sealed class PoseBuilder : EntityBuilder<EntityPose, IPoseBuilder>, IPose
 						boneInfo,
 						this.PartialId
 					) {
-						Name = $"{this.Locale.GetBoneName(boneInfo)} {boneInfo.Name}",
+						Name = this.Locale.GetBoneName(boneInfo),
 						SortPriority = basePrio + boneInfo.BoneIndex
 					});
 				}

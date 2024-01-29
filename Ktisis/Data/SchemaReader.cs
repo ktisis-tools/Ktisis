@@ -106,8 +106,8 @@ public class SchemaReader {
 	
 	// IK groups
 
-	private TwoJointsIkGroup ReadTwoJointsIkGroup(XmlReader reader) {
-		var group = new TwoJointsIkGroup();
+	private TwoJointsGroupParams ReadTwoJointsIkGroup(XmlReader reader) {
+		var group = new TwoJointsGroupParams();
 		
 		while (reader.Read()) {
 			if (reader is { NodeType: XmlNodeType.EndElement, Name: TwoJointsIkTag })

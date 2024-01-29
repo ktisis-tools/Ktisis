@@ -13,5 +13,5 @@ public class BoneCategory(string name) {
 
 	public readonly List<CategoryBone> Bones = new();
 	
-	public TwoJointsIkGroup? TwoJointsGroup;
+	public TwoJointsGroupParams? TwoJointsGroup;
 }
