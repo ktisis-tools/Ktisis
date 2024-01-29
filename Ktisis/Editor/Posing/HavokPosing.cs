@@ -3,7 +3,6 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
-using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Interop;
 
@@ -14,24 +13,22 @@ public static class HavokPosing {
 	
 	private readonly static Alloc<Matrix4x4> Matrix = new(16);
 
-	private unsafe static Matrix4x4 GetMatrix(hkQsTransformf* transform) {
+	public unsafe static Matrix4x4 GetMatrix(hkQsTransformf* transform) {
 		transform->get4x4ColumnMajor((float*)Matrix.Address);
 		return *Matrix.Data;
 	}
+	
+	public unsafe static Matrix4x4 GetMatrix(hkaPose* pose, int boneIndex) {
+		return GetMatrix(pose->ModelPose.Data + boneIndex);
+	}
 
-	private unsafe static void SetMatrix(hkQsTransformf* trans, Matrix4x4 matrix) {
+	public unsafe static void SetMatrix(hkQsTransformf* trans, Matrix4x4 matrix) {
 		*Matrix.Data = matrix;
 		trans->set((hkMatrix4f*)Matrix.Address);
 	}
 
-	public unsafe static Matrix4x4 GetMatrix(hkaPose* pose, int boneIndex) {
-		var access = pose->AccessBoneModelSpace(boneIndex, hkaPose.PropagateOrNot.DontPropagate);
-		return GetMatrix(access);
-	}
-
 	public unsafe static void SetMatrix(hkaPose* pose, int boneIndex, Matrix4x4 matrix) {
-		var access = pose->AccessBoneModelSpace(boneIndex, hkaPose.PropagateOrNot.DontPropagate);
-		SetMatrix(access, matrix);
+		SetMatrix(pose->ModelPose.Data + boneIndex, matrix);
 	}
 	
 	// Model transform
@@ -39,17 +36,19 @@ public static class HavokPosing {
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return null;
-
-		var access = pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate);
-		return new Transform(GetMatrix(access));
+		return new Transform(GetMatrix(pose->ModelPose.Data + boneIx));
 	}
 
 	public unsafe static void SetModelTransform(hkaPose* pose, int boneIx, Transform trans) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return;
+		SetMatrix(pose->ModelPose.Data + boneIx, trans.ComposeMatrix());
+	}
 
-		var access = pose->AccessBoneModelSpace(boneIx, hkaPose.PropagateOrNot.DontPropagate);
-		SetMatrix(access, trans.ComposeMatrix());
+	public unsafe static Transform? GetLocalTransform(hkaPose* pose, int boneIx) {
+		if (pose == null || pose->LocalPose.Data == null || boneIx < 0 || boneIx > pose->LocalPose.Length)
+			return null;
+		return new Transform(GetMatrix(pose->LocalPose.Data + boneIx));
 	}
 	
 	// Propagation
@@ -102,7 +101,7 @@ public static class HavokPosing {
 	
 	// Bone descendants
 
-	private static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
+	public static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
 		if (parent < 1) return true;
 		
 		var p = indices[bone];

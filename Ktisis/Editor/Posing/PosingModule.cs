@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
@@ -9,23 +9,33 @@ using FFXIVClientStructs.Havok;
 
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
-using Ktisis.Services;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Posing;
 
-public class PosingModule : HookModule {
+public sealed class PosingModule : HookModule {
 	private readonly IPosingManager Manager;
+	private readonly IkModule _ik;
 	
 	private readonly ActorService _actors;
 
 	public PosingModule(
 		IHookMediator hook,
+		IkModule ik,
 		IPosingManager manager,
 		ActorService actors
 	) : base(hook) {
 		this.Manager = manager;
+		this._ik = ik;
 		this._actors = actors;
+	}
+	
+	// Initialization
+
+	public override bool Initialize() {
+		var result = base.Initialize();
+		if (result) result &= this._ik.Initialize();
+		return result;
 	}
 	
 	// Module interface
@@ -50,7 +60,7 @@ public class PosingModule : HookModule {
 	[Signature("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1", DetourName = nameof(SetBoneModelSpace))]
 	public Hook<SetBoneModelSpaceDelegate> _setBoneModelSpaceHook = null!;
 	public delegate ulong SetBoneModelSpaceDelegate(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate);
-	
+
 	private ulong SetBoneModelSpace(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate) => boneId;
 	
 	// SyncModelSpace
@@ -59,15 +69,24 @@ public class PosingModule : HookModule {
 	public Hook<SyncModelSpaceDelegate> _syncModelSpaceHook = null!;
 	public unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
 
-	private unsafe void SyncModelSpace(hkaPose* pose) { /* do nothing */ }
-
+	private unsafe void SyncModelSpace(hkaPose* pose) {
+		if (this._ik.IsSolving)
+			this._syncModelSpaceHook.Original(pose);
+		
+		// do nothing
+	}
+	
 	// CalcBoneModelSpace
 	
 	[Signature("40 53 48 83 EC 10 4C 8B 49 28", DetourName = nameof(CalcBoneModelSpace))]
 	public Hook<CalcBoneModelSpaceDelegate> _calcBoneModelSpaceHook = null!;
 	public delegate nint CalcBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
-	
-	private unsafe nint CalcBoneModelSpace(ref hkaPose pose, int boneIdx) => (nint)(pose.ModelPose.Data + boneIdx);
+
+	private unsafe nint CalcBoneModelSpace(ref hkaPose pose, int boneIdx) {
+		if (this._ik.IsSolving)
+			return this._calcBoneModelSpaceHook.Original(ref pose, boneIdx);
+		return (nint)(pose.ModelPose.Data + boneIdx);
+	}
 	
 	// LookAtIK
 
@@ -140,5 +159,15 @@ public class PosingModule : HookModule {
 		Ktisis.Log.Verbose($"Restoring pose {partialId} for {actor.Name} ({actor.ObjectIndex})");
 		
 		this.Manager.RestorePoseFor(actor, skeleton, partialId);
+	}
+	
+	// Disposal
+
+	public override void Dispose() {
+		try {
+			this._ik.Dispose();
+		} finally {
+			base.Dispose();
+		}
 	}
 }

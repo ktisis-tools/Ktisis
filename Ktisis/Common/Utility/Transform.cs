@@ -29,7 +29,6 @@ public class Transform {
 	}
 
 	public Transform(hkQsTransformf hk) {
-		Ktisis.Log.Info($"{hk.Translation.X} {hk.Translation.Y} {hk.Translation.Z} {hk.Translation.W}");
 		this.Position = hk.Translation.ToVector3();
 		this.Rotation = hk.Rotation.ToQuaternion();
 		this.Scale = hk.Scale.ToVector3();
