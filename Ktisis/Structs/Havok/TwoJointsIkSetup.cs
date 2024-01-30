@@ -53,8 +53,8 @@ public struct TwoJointsIkSetup {
 	[FieldOffset(112)] public Quaternion m_endBoneRotationOffsetLS;
 	
 	/// Set to true if the position of the end effector is to be solved for
-	[FieldOffset(128)] public byte m_enforceEndPosition;
+	[FieldOffset(128)] public bool m_enforceEndPosition;
 
 	/// Set to true if the rotation of the end effector is to be solved for
-	[FieldOffset(129)] public byte m_enforceEndRotation;
+	[FieldOffset(129)] public bool m_enforceEndRotation;
 }

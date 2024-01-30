@@ -105,32 +105,35 @@ public class IkController : IIkController {
 
 	private unsafe void SolveGroup(hkaPose* pose, TwoJointsGroup group, bool frozen = false) {
 		var ik = this._twoJoints.IkSetup;
+		
 		ik->m_firstJointIdx = group.FirstBoneIndex;
 		ik->m_firstJointTwistIdx = group.FirstTwistIndex;
 		ik->m_secondJointIdx = group.SecondBoneIndex;
 		ik->m_secondJointTwistIdx = group.SecondTwistIndex;
 		ik->m_endBoneIdx = group.EndBoneIndex;
 
-		Vector3 targetPos;
-		Quaternion targetRot;
+		ik->m_firstJointIkGain = group.FirstBoneGain;
+		ik->m_secondJointIkGain = group.SecondBoneGain;
+		ik->m_endJointIkGain = group.EndBoneGain;
 
-		switch (group.Mode) {
-			case TwoJointsMode.Fixed:
-				targetPos = group.TargetPosition;
-				targetRot = group.TargetRotation;
-				break;
-			case TwoJointsMode.Relative:
-				var target = HavokPosing.GetModelTransform(pose, group.EndBoneIndex);
-				if (target == null) return;
-				targetPos = target.Position;
-				targetRot = target.Rotation;
-				break;
-			default:
-				return;
-		}
+		ik->m_enforceEndPosition = group.EnforcePosition;
+		ik->m_enforceEndRotation = group.EnforceRotation;
+
+		ik->m_hingeAxisLS = new Vector4(group.HingeAxis, 1.0f);
+		ik->m_cosineMinHingeAngle = group.MinHingeAngle;
+		ik->m_cosineMaxHingeAngle = group.MaxHingeAngle;
 		
-		ik->m_endTargetMS = new Vector4(targetPos, 0.0f);
-		ik->m_endTargetRotationMS = targetRot;
+		var target = HavokPosing.GetModelTransform(pose, group.EndBoneIndex);
+		if (target == null) return;
+
+		var isRelative = group.Mode == TwoJointsMode.Relative;
+		if (isRelative || !group.EnforcePosition)
+			group.TargetPosition = target.Position;
+		if (isRelative || !group.EnforceRotation)
+			group.TargetRotation = target.Rotation;
+		
+		ik->m_endTargetMS = new Vector4(group.TargetPosition, 0.0f);
+		ik->m_endTargetRotationMS = group.TargetRotation;
 
 		this._twoJoints.Solve(pose, frozen);
 	}

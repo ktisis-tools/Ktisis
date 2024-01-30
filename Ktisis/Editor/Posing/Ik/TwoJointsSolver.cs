@@ -38,8 +38,8 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 			m_endTargetRotationMS = Quaternion.Identity,
 			m_endBoneOffsetLS = Vector4.Zero,
 			m_endBoneRotationOffsetLS = Quaternion.Identity,
-			m_enforceEndPosition = 1,
-			m_enforceEndRotation = 0
+			m_enforceEndPosition = true,
+			m_enforceEndRotation = false
 		};
 	}
 
@@ -143,21 +143,22 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 			if (!apply) continue;
 			
 			var relative = HavokPosing.IsBoneDescendantOf(parents, i, end);
-			if (relative) {
-				var parentId = parents[i];
-				var transform = HavokPosing.GetModelTransform(pose, parentId)!;
-				var local = HavokPosing.GetLocalTransform(this.Pose, i)!;
-				transform.Position += Vector3.Transform(local.Position, transform.Rotation);
-				transform.Rotation *= local.Rotation;
-				transform.Scale *= local.Scale;
-				HavokPosing.SetModelTransform(pose, i, transform);
+			if (!relative) {
+				var target = pose->ModelPose.Data + i;
+				var solved = this.Pose->ModelPose[i];
+				target->Translation = solved.Translation;
+				target->Rotation = solved.Rotation;
 				continue;
 			}
-
-			var target = pose->ModelPose.Data + i;
-			var solved = this.Pose->ModelPose[i];
-			target->Translation = solved.Translation;
-			target->Rotation = solved.Rotation;
+			
+			var parentId = parents[i];
+			var local = HavokPosing.GetLocalTransform(this.Pose, i)!;
+			var transform = HavokPosing.GetModelTransform(pose, parentId)!;
+			
+			transform.Position += Vector3.Transform(local.Position, transform.Rotation);
+			transform.Rotation *= local.Rotation; 
+			transform.Scale *= local.Scale;
+			HavokPosing.SetModelTransform(pose, i, transform);
 		}
 	}
 	

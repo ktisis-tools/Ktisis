@@ -8,16 +8,13 @@ using GLib.Widgets;
 using ImGuiNET;
 
 using Ktisis.Common.Utility;
-using Ktisis.Data.Config;
-using Ktisis.Editor;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Transforms;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Decor;
-using Ktisis.Services;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Windows;
@@ -79,7 +76,7 @@ public class TransformWindow : KtisisWindow {
 			this.Transform = null;
 		}
 
-		if (target?.Primary is INodeIk ik)
+		if (target?.Primary is ITwoJointsNode ik)
 			this.DrawIk(ik);
 	}
 	
@@ -184,12 +181,64 @@ public class TransformWindow : KtisisWindow {
 	
 	// IK Setup
 
-	private void DrawIk(INodeIk ik) {
-		if (!ImGui.CollapsingHeader("Inverse Kinematics"))
-			return;
+	private void DrawIk(ITwoJointsNode ik) {
+		ImGui.Spacing();
+		if (!ImGui.CollapsingHeader("Inverse Kinematics")) return;
+		ImGui.Spacing();
 
 		var enable = ik.IsEnabled;
-		if (ImGui.Checkbox("Enable", ref enable))
+		if (ImGui.Checkbox("Enable IK constraints", ref enable))
 			ik.Toggle();
+
+		if (!enable) return;
+		
+		ImGui.Spacing();
+		ImGui.Checkbox("Enforce end rotation", ref ik.Group.EnforceRotation);
+		ImGui.Spacing();
+		
+		ImGui.Text("Transform mode:");
+		DrawMode("Fixed target", TwoJointsMode.Fixed, ik.Group);
+		DrawMode("Bone relative", TwoJointsMode.Relative, ik.Group);
+		
+		ImGui.Spacing();
+
+		if (Buttons.IconButton(FontAwesomeIcon.EllipsisH))
+			ImGui.OpenPopup("##IkAdvancedCfg");
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.Text("Advanced parameters");
+
+		if (ImGui.IsPopupOpen("##IkAdvancedCfg"))
+			this.DrawIkAdvanced(ik);
+	}
+
+	private void DrawIkAdvanced(ITwoJointsNode ik) {
+		using var popup = ImRaii.Popup("##IkAdvancedCfg");
+		if (!popup.Success) return;
+		
+		ImGui.Spacing();
+
+		ImGui.Text("Gain:");
+		ImGui.Spacing();
+		ImGui.SliderFloat("Shoulder##FirstWeight", ref ik.Group.FirstBoneGain, 0.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat("Elbow##SecondWeight", ref ik.Group.SecondBoneGain, 0.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat("Hand##HandWeight", ref ik.Group.EndBoneGain, 0.0f, 1.0f, "%.2f");
+		
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+		
+		ImGui.Text("Hinges:");
+		ImGui.Spacing();
+		ImGui.SliderFloat("Minimum", ref ik.Group.MinHingeAngle, -1.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat("Maximum", ref ik.Group.MaxHingeAngle, -1.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat3("Axis", ref ik.Group.HingeAxis, -1.0f, 1.0f, "%.2f");
+		
+		ImGui.Spacing();
+	}
+
+	private static void DrawMode(string label, TwoJointsMode mode, TwoJointsGroup group) {
+		var value = group.Mode == mode;
+		if (ImGui.RadioButton(label, value))
+			group.Mode = mode;
 	}
 }

@@ -12,4 +12,6 @@ public static class TransformEx {
 	// hkQuaternionf
 	
 	public static Quaternion ToQuaternion(this hkQuaternionf hkQuat) => new(hkQuat.X, hkQuat.Y, hkQuat.Z, hkQuat.W);
+
+	public static hkQuaternionf ToHavok(this Quaternion quat) => new() { X = quat.X, Y = quat.Y, Z = quat.Z, W = quat.W };
 }

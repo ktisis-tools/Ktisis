@@ -8,12 +8,11 @@ using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities.Skeleton;
 
-public class BoneNodeIk : BoneNode, INodeIk {
-	public readonly TwoJointsGroup Group;
-	
+public class BoneNodeIk : BoneNode, ITwoJointsNode {
 	public bool IsEnabled => this.Group.IsEnabled;
-
 	private bool IsFixed => this.IsEnabled && this.Group.Mode == TwoJointsMode.Fixed;
+	
+	public TwoJointsGroup Group { get; }
 
 	public BoneNodeIk(
 		ISceneManager scene,
@@ -71,17 +70,35 @@ public class BoneNodeIk : BoneNode, INodeIk {
 		var skeleton = this.Pose.GetSkeleton();
 		if (skeleton == null) return;
 		
-		var model = new Transform(skeleton->Transform);
-		this.Group.TargetPosition = Vector3.Transform(
-			transform.Position - model.Position,
-			Quaternion.Inverse(model.Rotation)
-		) / model.Scale;
-
 		var world = this.CalcTransformWorld();
-		if (world != null && !world.Scale.Equals(transform.Scale)) {
-			world.Scale = transform.Scale;
-			this.SetTransformWorld(world);
+		if (world == null) return;
+		
+		var setWorld = false;
+		var model = new Transform(skeleton->Transform);
+
+		if (this.Group.EnforcePosition) {
+			this.Group.TargetPosition = Vector3.Transform(
+				transform.Position - model.Position,
+				Quaternion.Inverse(model.Rotation)
+			) / model.Scale;
+		} else {
+			world.Position = transform.Position;
+			setWorld = true;
 		}
+
+		if (this.Group.EnforceRotation) {
+			this.Group.TargetRotation = Quaternion.Inverse(model.Rotation) * transform.Rotation;
+		} else {
+			world.Rotation = transform.Rotation;
+			setWorld = true;
+		}
+		
+		if (!world.Scale.Equals(transform.Scale)) {
+			world.Scale = transform.Scale;
+			setWorld = true;
+		}
+		
+		if (setWorld) this.SetTransformWorld(world);
 	}
 
 	public override Matrix4x4? GetMatrix()
