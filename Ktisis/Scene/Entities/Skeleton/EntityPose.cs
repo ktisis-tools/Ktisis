@@ -18,7 +18,7 @@ using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities.Skeleton;
 
-public class EntityPose : SkeletonGroup, IConfigurable {
+public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	private readonly IPoseBuilder _builder;
 	
 	public readonly IIkController IkController;
@@ -50,7 +50,6 @@ public class EntityPose : SkeletonGroup, IConfigurable {
 
 	public unsafe void Refresh() {
 		var skeleton = this.GetSkeleton();
-		this.IkController.Update(skeleton);
 		if (skeleton == null) return;
 
 		this.Partials.Clear();
@@ -63,7 +62,6 @@ public class EntityPose : SkeletonGroup, IConfigurable {
 
 	private unsafe void UpdatePose() {
 		var skeleton = this.GetSkeleton();
-		this.IkController.Update(skeleton);
 		if (skeleton == null) return;
 		
 		for (var index = 0; index < skeleton->PartialSkeletonCount; index++)
@@ -141,7 +139,7 @@ public class EntityPose : SkeletonGroup, IConfigurable {
 	public BoneNode? GetBoneFromMap(int partialIx, int boneIx)
 		=> this.BoneMap.GetValueOrDefault((partialIx, boneIx));
 
-	public PartialSkeletonInfo? GetPartial(int index)
+	public PartialSkeletonInfo? GetPartialInfo(int index)
 		=> this.Partials.GetValueOrDefault(index);
 	
 	// Remove handlers

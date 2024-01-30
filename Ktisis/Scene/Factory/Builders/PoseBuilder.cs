@@ -35,7 +35,9 @@ public sealed class PoseBuilder : EntityBuilder<EntityPose, IPoseBuilder>, IPose
 
 	protected override EntityPose Build() {
 		var ik = this.Scene.Context.Posing.CreateIkController();
-		return new EntityPose(this.Scene, this, ik);
+		var pose = new EntityPose(this.Scene, this, ik);
+		ik.Setup(pose);
+		return pose;
 	}
 
 	public IBoneTreeBuilder BuildBoneTree(int index, uint partialId, PartialSkeleton partial) {

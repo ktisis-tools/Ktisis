@@ -74,7 +74,7 @@ public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene), 
 			var boneIx = bone.Info.BoneIndex;
 
 			var partialIx = bone.Info.PartialIndex;
-			var partial = pose.GetPartial(partialIx);
+			var partial = pose.GetPartialInfo(partialIx);
 			if (partial == null) return false;
 
 			var parent = partial
@@ -84,7 +84,7 @@ public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene), 
 			if (parent) return true;
 			if (partialIx == 0) return false;
 
-			var rootPartial = pose.GetPartial(0);
+			var rootPartial = pose.GetPartialInfo(0);
 			if (rootPartial == null) return false;
 
 			var connIx = partial.ConnectedParentBoneIndex;

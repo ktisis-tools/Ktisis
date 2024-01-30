@@ -21,6 +21,8 @@ public static class HavokPosing {
 	}
 	
 	public unsafe static Matrix4x4 GetMatrix(hkaPose* pose, int boneIndex) {
+		if (pose == null || pose->ModelPose.Data == null)
+			return Matrix4x4.Identity;
 		return GetMatrix(pose->ModelPose.Data + boneIndex);
 	}
 

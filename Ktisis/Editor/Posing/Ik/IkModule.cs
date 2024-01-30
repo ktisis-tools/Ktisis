@@ -35,7 +35,6 @@ public sealed class IkModule : HookModule {
 
 	public IIkController CreateController() {
 		var controller = new IkController(this);
-		controller.Setup();
 		lock (this.Controllers)
 			this.Controllers.Add(controller);
 		return controller;

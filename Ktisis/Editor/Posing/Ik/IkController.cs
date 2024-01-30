@@ -3,15 +3,15 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Data.Config.Bones;
+using Ktisis.Scene.Decor;
 
 namespace Ktisis.Editor.Posing.Ik;
 
 public interface IIkController {
-	public unsafe void Update(Skeleton* skeleton);
+	public void Setup(ISkeleton skeleton);
 
 	public bool TrySetupGroup(string name, TwoJointsGroupParams param, out TwoJointsGroup? group);
 
@@ -23,20 +23,19 @@ public interface IIkController {
 public class IkController : IIkController {
 	private readonly IkModule _module;
 	private readonly TwoJointsSolver _twoJoints;
-	
-	private unsafe Skeleton* Skeleton;
 
-	public IkController(IkModule module) {
+	private ISkeleton? Skeleton;
+
+	public IkController(
+		IkModule module
+	) {
 		this._module = module;
 		this._twoJoints = new TwoJointsSolver(module);
 	}
 
-	public void Setup() {
-		this._twoJoints.Setup();
-	}
-
-	public unsafe void Update(Skeleton* skeleton) {
+	public void Setup(ISkeleton skeleton) {
 		this.Skeleton = skeleton;
+		this._twoJoints.Setup();
 	}
 	
 	// Groups
@@ -47,12 +46,19 @@ public class IkController : IIkController {
 		group = null;
 		
 		Ktisis.Log.Verbose($"Setting up IK group: {name}");
+
+		if (this.Skeleton == null) return false;
+
+		var skeleton = this.Skeleton.GetSkeleton();
+		if (skeleton == null) return false;
 		
-		var partial = this.Skeleton->PartialSkeletons[0];
-		if (partial.SkeletonResourceHandle == null) return false;
+		var partial = skeleton->PartialSkeletons[0];
+		if (partial.SkeletonResourceHandle == null || partial.HavokPoses == null)
+			return false;
 		
-		var pose = partial.HavokPoses != null ? partial.GetHavokPose(0) : null;
-		if (pose == null || pose->Skeleton == null) return false;
+		var pose = partial.GetHavokPose(0);
+		if (pose == null || pose->Skeleton == null)
+			return false;
 
 		if (!this.Groups.TryGetValue(name, out group))
 			group = new TwoJointsGroup();
@@ -81,13 +87,17 @@ public class IkController : IIkController {
 	// Solvers
 
 	public unsafe void Solve(bool frozen = false) {
-		if (this.Skeleton == null || this.Skeleton->PartialSkeletons == null)
+		if (this.Skeleton == null) return;
+
+		var skeleton = this.Skeleton.GetSkeleton();
+		if (skeleton == null || skeleton->PartialSkeletons == null)
 			return;
 
-		var partial = this.Skeleton->PartialSkeletons[0];
-		if (partial.SkeletonResourceHandle == null) return;
+		var partial = skeleton->PartialSkeletons[0];
+		if (partial.HavokPoses == null || partial.SkeletonResourceHandle == null)
+			return;
 		
-		var pose = partial.HavokPoses != null ? partial.GetHavokPose(0) : null;
+		var pose = partial.GetHavokPose(0);
 		if (pose == null || pose->Skeleton == null) return;
 		
 		var id = partial.SkeletonResourceHandle->ResourceHandle.Id;

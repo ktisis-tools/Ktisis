@@ -25,12 +25,12 @@ public static class TransformResolver {
 				continue;
 
 			var partialIx = bone.Info.PartialIndex;
-			var partial = pose.GetPartial(partialIx);
+			var partial = pose.GetPartialInfo(partialIx);
 			if (partial == null) continue;
 
 			int? potentialParent = (partialIx, target.Info.PartialIndex) switch {
 				var (p, t) when p == t => target.Info.BoneIndex,
-				var (p, t) when p < t => pose.GetPartial(t)?.ConnectedParentBoneIndex,
+				var (p, t) when p < t => pose.GetPartialInfo(t)?.ConnectedParentBoneIndex,
 				_ => null
 			};
 
