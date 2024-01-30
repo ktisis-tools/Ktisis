@@ -43,11 +43,11 @@ public class EditorState : IDisposable {
 	public void Initialize() {
 		try {
 			this.IsInit = true;
-			this.Scene.Initialize();
 			this.Actions.Initialize();
 			this.Characters.Initialize();
 			this.Cameras.Initialize();
 			this.Posing.Initialize();
+			this.Scene.Initialize();
 		} catch {
 			this.Dispose();
 			throw;

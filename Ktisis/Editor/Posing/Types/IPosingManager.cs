@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Posing.Data;
+using Ktisis.Editor.Posing.Ik;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Posing.Types;
@@ -18,6 +19,8 @@ public interface IPosingManager : IDisposable {
 
 	public bool IsEnabled { get; }
 	public void SetEnabled(bool enable);
+
+	public IIkController CreateIkController();
 
 	public unsafe void PreservePoseFor(GameObject gameObject, Skeleton* skeleton);
 	public unsafe void RestorePoseFor(GameObject gameObject, Skeleton* skeleton, ushort partialId);

@@ -34,7 +34,8 @@ public sealed class PoseBuilder : EntityBuilder<EntityPose, IPoseBuilder>, IPose
 	protected override IPoseBuilder Builder => this;
 
 	protected override EntityPose Build() {
-		return new EntityPose(this.Scene, this);
+		var ik = this.Scene.Context.Posing.CreateIkController();
+		return new EntityPose(this.Scene, this, ik);
 	}
 
 	public IBoneTreeBuilder BuildBoneTree(int index, uint partialId, PartialSkeleton partial) {
@@ -192,19 +193,23 @@ public sealed class PoseBuilder : EntityBuilder<EntityPose, IPoseBuilder>, IPose
 					bone.Info = boneInfo;
 					bone.PartialId = this.PartialId;
 				} else {
-					node.Add(new BoneNode(
-						this._scene,
-						node.Pose,
-						boneInfo,
-						this.PartialId
-					) {
-						Name = this.Locale.GetBoneName(boneInfo),
-						SortPriority = basePrio + boneInfo.BoneIndex
-					});
+					var boneNode = this.CreateBoneNode(node, boneInfo);
+					boneNode.Name = this.Locale.GetBoneName(boneInfo);
+					boneNode.SortPriority = basePrio + boneInfo.BoneIndex;
+					node.Add(boneNode);
 				}
 			}
 			
 			node.OrderByPriority();
+		}
+
+		private BoneNode CreateBoneNode(SkeletonNode parent, PartialBoneInfo boneInfo) {
+			if (parent is BoneNodeGroup { Category: { Name: var name, TwoJointsGroup: {} param } } && param.EndBone.Contains(boneInfo.Name)) {
+				if (parent.Pose.IkController.TrySetupGroup(name, param, out var group))
+					return new BoneNodeIk(this._scene, parent.Pose, boneInfo, this.PartialId, group!);
+				Ktisis.Log.Warning($"Failed to setup bone group for {name}");
+			}
+			return new BoneNode(this._scene, parent.Pose, boneInfo, this.PartialId);
 		}
 	}
 }

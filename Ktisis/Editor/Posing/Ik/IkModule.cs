@@ -1,4 +1,7 @@
-﻿using Dalamud.Hooking;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.Havok;
@@ -26,6 +29,23 @@ public sealed class IkModule : HookModule {
 		return init;
 	}
 	
+	// Controllers
+
+	private readonly List<IIkController> Controllers = new();
+
+	public IIkController CreateController() {
+		var controller = new IkController(this);
+		controller.Setup();
+		lock (this.Controllers)
+			this.Controllers.Add(controller);
+		return controller;
+	}
+
+	public bool RemoveController(IIkController controller) {
+		lock (this.Controllers)
+			return this.Controllers.Remove(controller);
+	}
+	
 	// Methods
 
 	[Signature("E8 ?? ?? ?? ?? 0F 28 55 10")]
@@ -48,10 +68,20 @@ public sealed class IkModule : HookModule {
 	}
 	
 	// Solving
-	
-	public bool IsSolving { get; private set; }
 
 	private void UpdateIkPoses() {
-		// TODO: Get IK solvers from pose manager
+		if (!this.Manager.IsValid) return;
+
+		IEnumerable<IIkController> controllers;
+		lock (this.Controllers)
+			controllers = this.Controllers.ToList();
+
+		try {
+			this.Manager.IsSolvingIk = true;
+			foreach (var controller in controllers)
+				controller.Solve(this.Manager.IsEnabled);
+		} finally {
+			this.Manager.IsSolvingIk = false;
+		}
 	}
 }

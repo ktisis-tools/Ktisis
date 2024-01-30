@@ -1,5 +1,7 @@
 using System.Numerics;
 
+using Dalamud.Utility;
+
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
@@ -97,6 +99,21 @@ public static class HavokPosing {
 			matrix.Translation = deltaPos + sourcePos + offset;
 			SetMatrix(pose, i, matrix);
 		}
+	}
+	
+	// Lookup
+
+	public unsafe static short TryGetBoneNameIndex(hkaPose* pose, string? name) {
+		if (pose == null || pose->Skeleton == null || name.IsNullOrEmpty())
+			return -1;
+
+		var bones = pose->Skeleton->Bones;
+		for (short i = 0; i < bones.Length; i++) {
+			if (bones[i].Name.String == name)
+				return i;
+		}
+		
+		return -1;
 	}
 	
 	// Bone descendants

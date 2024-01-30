@@ -2,27 +2,35 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+
+using Ktisis.Editor.Posing.Ik;
+
 using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 using Ktisis.Editor.Posing.Types;
+using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Types;
-using Ktisis.Scene.Decor;
 
 namespace Ktisis.Scene.Entities.Skeleton;
 
 public class EntityPose : SkeletonGroup, IConfigurable {
 	private readonly IPoseBuilder _builder;
 	
+	public readonly IIkController IkController;
+	
 	public EntityPose(
 		ISceneManager scene,
-		IPoseBuilder builder
+		IPoseBuilder builder,
+		IIkController ik
 	) : base(scene) {
 		this._builder = builder;
+		this.IkController = ik;
+		
 		this.Type = EntityType.Armature;
 		this.Name = "Pose";
 		this.Pose = this;
@@ -42,6 +50,7 @@ public class EntityPose : SkeletonGroup, IConfigurable {
 
 	public unsafe void Refresh() {
 		var skeleton = this.GetSkeleton();
+		this.IkController.Update(skeleton);
 		if (skeleton == null) return;
 
 		this.Partials.Clear();
@@ -54,8 +63,9 @@ public class EntityPose : SkeletonGroup, IConfigurable {
 
 	private unsafe void UpdatePose() {
 		var skeleton = this.GetSkeleton();
+		this.IkController.Update(skeleton);
 		if (skeleton == null) return;
-
+		
 		for (var index = 0; index < skeleton->PartialSkeletonCount; index++)
 			this.UpdatePartial(skeleton, index);
 	}
@@ -133,4 +143,14 @@ public class EntityPose : SkeletonGroup, IConfigurable {
 
 	public PartialSkeletonInfo? GetPartial(int index)
 		=> this.Partials.GetValueOrDefault(index);
+	
+	// Remove handlers
+
+	public override void Remove() {
+		try {
+			this.IkController.Destroy();
+		} finally {
+			base.Remove();
+		}
+	}
 }

@@ -7,36 +7,23 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
-using Ktisis.Editor.Posing.Ik;
-using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Posing;
 
 public sealed class PosingModule : HookModule {
-	private readonly IPosingManager Manager;
-	private readonly IkModule _ik;
+	private readonly PosingManager Manager;
 	
 	private readonly ActorService _actors;
 
 	public PosingModule(
 		IHookMediator hook,
-		IkModule ik,
-		IPosingManager manager,
+		PosingManager manager,
 		ActorService actors
 	) : base(hook) {
 		this.Manager = manager;
-		this._ik = ik;
 		this._actors = actors;
-	}
-	
-	// Initialization
-
-	public override bool Initialize() {
-		var result = base.Initialize();
-		if (result) result &= this._ik.Initialize();
-		return result;
 	}
 	
 	// Module interface
@@ -71,7 +58,7 @@ public sealed class PosingModule : HookModule {
 	public unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
 
 	private unsafe void SyncModelSpace(hkaPose* pose) {
-		if (this._ik.IsSolving)
+		if (this.Manager.IsSolvingIk)
 			this._syncModelSpaceHook.Original(pose);
 		
 		// do nothing
@@ -84,7 +71,7 @@ public sealed class PosingModule : HookModule {
 	public delegate nint CalcBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
 
 	private unsafe nint CalcBoneModelSpace(ref hkaPose pose, int boneIdx) {
-		if (this._ik.IsSolving)
+		if (this.Manager.IsSolvingIk)
 			return this._calcBoneModelSpaceHook.Original(ref pose, boneIdx);
 		return (nint)(pose.ModelPose.Data + boneIdx);
 	}
@@ -160,15 +147,5 @@ public sealed class PosingModule : HookModule {
 		Ktisis.Log.Verbose($"Restoring pose {partialId} for {actor.Name} ({actor.ObjectIndex})");
 		
 		this.Manager.RestorePoseFor(actor, skeleton, partialId);
-	}
-	
-	// Disposal
-
-	public override void Dispose() {
-		try {
-			this._ik.Dispose();
-		} finally {
-			base.Dispose();
-		}
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -119,24 +120,16 @@ public class SchemaReader {
 			var name = reader.Name;
 			while (reader.Read() && reader.NodeType != XmlNodeType.Text) { }
 
-			var value = reader.Value.Trim();
-			switch (name) {
-				case "FirstBone":
-					group.FirstBone = value;
-					break;
-				case "FirstTwist":
-					group.FirstTwist = value;
-					break;
-				case "SecondBone":
-					group.SecondBone = value;
-					break;
-				case "SecondTwist":
-					group.SecondTwist = value;
-					break;
-				case "EndBone":
-					group.EndBone = value;
-					break;
-			}
+			var list = name switch {
+				"FirstBone" => group.FirstBone,
+				"FirstTwist" => group.FirstTwist,
+				"SecondBone" => group.SecondBone,
+				"SecondTwist" => group.SecondTwist,
+				"EndBone" => group.EndBone,
+				_ => throw new Exception($"Encountered invalid IK bone parameter: {name}")
+			};
+
+			list.Add(reader.Value);
 		}
 		
 		return group;

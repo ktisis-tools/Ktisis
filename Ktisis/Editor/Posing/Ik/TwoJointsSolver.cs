@@ -13,7 +13,8 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 	private readonly Alloc<TwoJointsIkSetup> AllocIkSetup = new(16);
 
 	private unsafe hkaPose* Pose => this.AllocPose.Data;
-	private unsafe TwoJointsIkSetup* IkSetup => this.AllocIkSetup.Data;
+	
+	public unsafe TwoJointsIkSetup* IkSetup => this.AllocIkSetup.Data;
 	
 	// Setup parameters
 
@@ -79,35 +80,42 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 	
 	// Solving
 
-	public unsafe bool Solve(hkaPose* pose, bool hooksEnabled = false) {
-		if (pose->Skeleton == null)
+	public unsafe bool Begin(hkaPose* pose, bool frozen = false) {
+		if (pose == null || pose->Skeleton == null)
 			return false;
 		
 		if (!this.IsInitialized || this.Pose->Skeleton != pose->Skeleton)
 			this.Initialize(pose);
-
-		if (hooksEnabled)
-			this.SyncLocal(pose);
-		else
-			this.Pose->SetPoseLocalSpace(&pose->LocalPose);
 		
-		this.Pose->SyncModelSpace();
+		if (!frozen) {
+			this.Pose->SetPoseLocalSpace(&pose->LocalPose);
+			this.Pose->SyncModelSpace();
+		}
 
+		return true;
+	}
+
+	public unsafe bool Solve(hkaPose* pose, bool frozen = false) {
+		if (frozen) {
+			this.Pose->SetToReferencePose();
+			this.Pose->SyncModelSpace();
+			this.SyncLocal(pose);
+		}
+		
 		byte result = 0;
 		module.SolveIk(&result, this.IkSetup, this.Pose);
-
-		if (hooksEnabled)
+		
+		if (result == 0) return false;
+		
+		if (frozen)
 			this.SyncModel(pose);
 		else
 			pose->SetPoseModelSpace(this.Pose->AccessSyncedPoseModelSpace());
-		
-		return result != 0;
+
+		return true;
 	}
 
 	private unsafe void SyncLocal(hkaPose* pose) {
-		this.Pose->SetToReferencePose();
-		this.Pose->SyncModelSpace();
-
 		var start = this.IkSetup->m_firstJointIdx;
 		for (var i = 1; i < this.Pose->Skeleton->Bones.Length; i++) {
 			if (i != start && !HavokPosing.IsBoneDescendantOf(pose->Skeleton->ParentIndices, start, i))
@@ -118,7 +126,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 
 	private unsafe void SyncModel(hkaPose* pose) {
 		this.Pose->SyncModelSpace();
-
+		
 		var parents = pose->Skeleton->ParentIndices;
 		hkaSkeletonUtils.transformModelPoseToLocalPose(
 			pose->Skeleton->Bones.Length,
@@ -130,7 +138,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		var start = this.IkSetup->m_firstJointIdx;
 		var end = this.IkSetup->m_endBoneIdx;
 		
-		for (var i = start; i < pose->Skeleton->Bones.Length; i++) {
+		for (var i = 1; i < pose->Skeleton->Bones.Length; i++) {
 			var apply = i == start || HavokPosing.IsBoneDescendantOf(parents, i, start);
 			if (!apply) continue;
 			
@@ -145,14 +153,20 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 				HavokPosing.SetModelTransform(pose, i, transform);
 				continue;
 			}
-			
-			pose->ModelPose[i] = this.Pose->ModelPose[i];
+
+			var target = pose->ModelPose.Data + i;
+			var solved = this.Pose->ModelPose[i];
+			target->Translation = solved.Translation;
+			target->Rotation = solved.Rotation;
 		}
 	}
 	
 	// Disposal
 	
+	public bool IsDisposed { get; private set; }
+	
 	public void Dispose() {
+		this.IsDisposed = true;
 		this.AllocPose.Dispose();
 		this.AllocIkSetup.Dispose();
 		GC.SuppressFinalize(this);

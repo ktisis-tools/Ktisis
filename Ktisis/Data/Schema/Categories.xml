@@ -120,8 +120,9 @@
 						<FirstBone>j_ude_a_l</FirstBone>
 						<FirstTwist>n_hkata_l</FirstTwist>
 						<SecondBone>j_ude_b_l</SecondBone>
-						<SecondTwist>j_hhiji_l</SecondTwist>
+						<SecondTwist>n_hhiji_l</SecondTwist>
 						<EndBone>j_te_l</EndBone>
+						<EndBone>j_hand_l</EndBone>
 					</TwoJointsIK>
 					<Bones>
 						j_hito_a_l
@@ -162,8 +163,9 @@
 						<FirstBone>j_ude_a_r</FirstBone>
 						<FirstTwist>n_hkata_r</FirstTwist>
 						<SecondBone>j_ude_b_r</SecondBone>
-						<SecondTwist>j_hhiji_r</SecondTwist>
+						<SecondTwist>n_hhiji_r</SecondTwist>
 						<EndBone>j_te_r</EndBone>
+						<EndBone>j_hand_r</EndBone>
 					</TwoJointsIK>
 					<Bones>
 						j_hito_a_r
@@ -178,7 +180,7 @@
 						j_oya_b_r
 						j_te_r
 						n_hte_r
-						j_hand_l
+						j_hand_r
 					</Bones>
 					<Category Id="RightHandIvcs">
 						<Bones>

@@ -38,13 +38,17 @@ public class PosingManager : IPosingManager {
 	
 	// Initialization
 	
+	public bool IsSolvingIk { get; set; }
+	
 	private PosingModule? PoseModule { get; set; }
+	private IkModule? IkModule { get; set; }
 
 	public void Initialize() {
 		try {
-			var ik = this._scope.Create<IkModule>(this);
-			this.PoseModule = this._scope.Create<PosingModule>(this, ik);
+			this.PoseModule = this._scope.Create<PosingModule>(this);
 			this.PoseModule.Initialize();
+			this.IkModule = this._scope.Create<IkModule>(this);
+			this.IkModule.Initialize();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize posing manager:\n{err}");
 		}
@@ -58,6 +62,8 @@ public class PosingManager : IPosingManager {
 		if (enable && !this.IsValid) return;
 		this.PoseModule?.SetEnabled(enable);
 	}
+
+	public IIkController CreateIkController() => this.IkModule!.CreateController();
 	
 	// Pose preservation
 
@@ -135,6 +141,8 @@ public class PosingManager : IPosingManager {
 		try {
 			this.PoseModule?.Dispose();
 			this.PoseModule = null;
+			this.IkModule?.Dispose();
+			this.IkModule = null;
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to dispose posing manager:\n{err}");
 		}

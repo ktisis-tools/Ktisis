@@ -76,7 +76,7 @@ public class SceneDraw {
 				var node = pose.GetBoneFromMap(index, i);
 				if (node?.Visible != true) continue;
 
-				var transform = node.GetTransform();
+				var transform = node.CalcTransformWorld();
 				if (transform == null) continue;
 				
 				frame.AddItem(node, transform.Position);
@@ -92,7 +92,7 @@ public class SceneDraw {
 					var bone = pose.GetBoneFromMap(index, c);
 					if (bone?.Visible != true) continue;
 
-					var lineTo = bone.GetTransform();
+					var lineTo = bone.CalcTransformWorld();
 					if (lineTo != null)
 						this.DrawLine(drawList, transform.Position, lineTo.Position);
 				}

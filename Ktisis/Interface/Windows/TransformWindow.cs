@@ -16,6 +16,7 @@ using Ktisis.Editor.Transforms;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
+using Ktisis.Scene.Decor;
 using Ktisis.Services;
 using Ktisis.Services.Game;
 
@@ -73,12 +74,16 @@ public class TransformWindow : KtisisWindow {
 			this.Transform ??= this._ctx.Transform.Begin(target);
 			this.Transform.SetTransform(transform);
 		}
-
 		if (isEnded) {
 			this.Transform?.Dispatch();
 			this.Transform = null;
 		}
+
+		if (target?.Primary is INodeIk ik)
+			this.DrawIk(ik);
 	}
+	
+	// Transform table
 
 	private bool DrawTransform(ref Transform transform, out bool isEnded, bool disabled) {
 		isEnded = false;
@@ -95,6 +100,8 @@ public class TransformWindow : KtisisWindow {
 
 		return gizmo || table;
 	}
+	
+	// Toggle options
 
 	private void DrawToggles() {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
@@ -139,6 +146,8 @@ public class TransformWindow : KtisisWindow {
 		if (Buttons.IconButtonTooltip(gizmoIcon, gizmoHint, iconBtnSize))
 			this._ctx.Config.Editor.TransformHide = !hide;
 	}
+	
+	// Gizmo
 
 	private unsafe bool DrawGizmo(ref Transform transform, float width, bool disabled) {
 		var pos = ImGui.GetCursorScreenPos();
@@ -171,5 +180,16 @@ public class TransformWindow : KtisisWindow {
 
 	private void DrawGizmoCircle(Vector2 pos, Vector2 size, float width) {
 		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * Gizmo2D.ScaleFactor) / 2.05f, 0xCF202020);
+	}
+	
+	// IK Setup
+
+	private void DrawIk(INodeIk ik) {
+		if (!ImGui.CollapsingHeader("Inverse Kinematics"))
+			return;
+
+		var enable = ik.IsEnabled;
+		if (ImGui.Checkbox("Enable", ref enable))
+			ik.Toggle();
 	}
 }

@@ -37,30 +37,26 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 
 	public bool MatchesId(int pId, int bId) => this.Info.PartialIndex == pId && this.Info.BoneIndex == bId;
 	
-	// Transform
+	// Bone transforms
 
-	public Transform? GetTransform() {
-		if (this.GetMatrix() is Matrix4x4 mx)
-			return new Transform(mx);
-		return null;
+	protected unsafe Matrix4x4? GetMatrixModel() {
+		var pose = this.GetPose();
+		return pose != null ? HavokPosing.GetMatrix(pose, this.Info.BoneIndex) : null;
 	}
 
-	public void SetTransform(Transform transform) => this.SetMatrix(transform.ComposeMatrix());
-	
-	public unsafe Matrix4x4? GetMatrix() {
+	protected unsafe Matrix4x4? CalcMatrixWorld() {
 		var skeleton = this.GetSkeleton();
-		var pose = skeleton != null ? this.GetPose() : null;
-		if (pose == null) return null;
+		if (skeleton == null || this.GetMatrixModel() is not Matrix4x4 matrix)
+			return null;
 
 		var model = new Transform(skeleton->Transform);
-		var matrix = HavokPosing.GetMatrix(pose, this.Info.BoneIndex);
 		matrix.Translation *= model.Scale;
 		matrix = Matrix4x4.Transform(matrix, model.Rotation);
 		matrix.Translation += model.Position;
 		return matrix;
 	}
 
-	public unsafe void SetMatrix(Matrix4x4 matrix) {
+	protected unsafe void SetMatrixWorld(Matrix4x4 matrix) {
 		var skeleton = this.GetSkeleton();
 		var pose = skeleton != null ? this.GetPose() : null;
 		if (pose == null) return;
@@ -71,6 +67,27 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 		matrix.Translation /= model.Scale;
 		HavokPosing.SetMatrix(pose, this.Info.BoneIndex, matrix);
 	}
+
+	protected void SetTransformWorld(Transform transform)
+		=> this.SetMatrixWorld(transform.ComposeMatrix());
+	
+	public Transform? CalcTransformWorld() {
+		var matrix = this.CalcMatrixWorld();
+		return matrix != null ? new Transform(matrix.Value) : null;
+	}
+
+	public Transform? GetTransformModel() {
+		var matrix = this.GetMatrixModel();
+		return matrix != null ? new Transform(matrix.Value) : null;
+	}
+	
+	// ITransform
+
+	public virtual Transform? GetTransform() => this.CalcTransformWorld();
+	public virtual void SetTransform(Transform transform) => this.SetTransformWorld(transform);
+
+	public virtual Matrix4x4? GetMatrix() => this.CalcMatrixWorld();
+	public virtual void SetMatrix(Matrix4x4 matrix) => this.SetMatrixWorld(matrix);
 	
 	// Attach
 
