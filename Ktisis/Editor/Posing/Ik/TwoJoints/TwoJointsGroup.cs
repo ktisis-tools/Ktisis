@@ -1,14 +1,17 @@
 ﻿using System.Numerics;
 
-namespace Ktisis.Editor.Posing.Ik;
+using Ktisis.Editor.Posing.Ik.Types;
+
+namespace Ktisis.Editor.Posing.Ik.TwoJoints;
 
 public enum TwoJointsMode {
 	Fixed,
 	Relative
 }
 
-public record TwoJointsGroup {
-	public bool IsEnabled;
+public record TwoJointsGroup : IIkGroup {
+	public bool IsEnabled { get; set; }
+	public uint SkeletonId { get; set; }
 	
 	public TwoJointsMode Mode = TwoJointsMode.Fixed;
 	
@@ -31,6 +34,4 @@ public record TwoJointsGroup {
 
 	public bool EnforceRotation = true;
 	public Quaternion TargetRotation = Quaternion.Identity;
-	
-	public uint SkeletonId;
 }

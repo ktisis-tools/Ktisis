@@ -6,9 +6,12 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Sections;
+using Ktisis.Editor.Posing.Ik.Ccd;
+using Ktisis.Editor.Posing.Ik.TwoJoints;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Entities.Skeleton.Constraints;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Types;
 
@@ -161,11 +164,12 @@ public sealed class PoseBuilder : EntityBuilder<EntityPose, IPoseBuilder>, IPose
 			foreach (var (category, list) in categories) {
 				var group = exists?.Find(group => group.Category == category);
 				var isNew = group == null;
-				group ??= new BoneNodeGroup(this._scene, node.Pose) {
-					Name = this.Locale.GetCategoryName(category),
-					Category = category,
-					SortPriority = category.SortPriority ?? -1
-				};
+
+				group ??= this.CreateGroupNode(node.Pose, category);
+				group.Name = this.Locale.GetCategoryName(category);
+				group.Category = category;
+				group.SortPriority = category.SortPriority ?? -1;
+				
 				this.BindGroups(group, category);
 				this.BindBones(group, list);
 				if (isNew && group.Children.Any())
@@ -205,13 +209,27 @@ public sealed class PoseBuilder : EntityBuilder<EntityPose, IPoseBuilder>, IPose
 			node.OrderByPriority();
 		}
 
-		private BoneNode CreateBoneNode(SkeletonNode parent, PartialBoneInfo boneInfo) {
-			if (parent is BoneNodeGroup { Category: { Name: var name, TwoJointsGroup: {} param } } && param.EndBone.Contains(boneInfo.Name)) {
-				if (parent.Pose.IkController.TrySetupGroup(name, param, out var group))
-					return new BoneNodeIk(this._scene, parent.Pose, boneInfo, this.PartialId, group!);
-				Ktisis.Log.Warning($"Failed to setup bone group for {name}");
+		private BoneNodeGroup CreateGroupNode(EntityPose pose, BoneCategory category) {
+			var name = category.Name;
+			switch (category) {
+				case { TwoJointsGroup: {} param } when pose.IkController.TrySetupGroup(name, param, out var group):
+					return new IkNodeGroup<TwoJointsGroup>(this._scene, pose, group!);
+				case { CcdGroup: {} param } when pose.IkController.TrySetupGroup(name, param, out var group):
+					return new IkNodeGroup<CcdGroup>(this._scene, pose, group!);
+				default:
+					return new BoneNodeGroup(this._scene, pose);
 			}
-			return new BoneNode(this._scene, parent.Pose, boneInfo, this.PartialId);
+		}
+
+		private BoneNode CreateBoneNode(SkeletonNode parent, PartialBoneInfo boneInfo) {
+			switch (parent) {
+				case IkNodeGroup<TwoJointsGroup> tjNode when tjNode.Group.EndBoneIndex == boneInfo.BoneIndex:
+					return new TwoJointEndNode(this._scene, parent.Pose, boneInfo, this.PartialId, tjNode.Group);
+				case IkNodeGroup<CcdGroup> ccdNode when ccdNode.Group.EndBoneIndex == boneInfo.BoneIndex:
+					return new CcdEndNode(this._scene, parent.Pose, boneInfo, this.PartialId, ccdNode.Group);
+				default:
+					return new BoneNode(this._scene, parent.Pose, boneInfo, this.PartialId);
+			}
 		}
 	}
 }

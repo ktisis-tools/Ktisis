@@ -32,6 +32,7 @@ public class SchemaReader {
 	private const string BonesTag = "Bones";
 	private const string CategoryTag = "Category";
 	private const string TwoJointsIkTag = "TwoJointsIK";
+	private const string CcdIkTag = "CcdIK";
 
 	private const string CategorySchemaPath = "Data.Schema.Categories.xml";
 	
@@ -72,6 +73,9 @@ public class SchemaReader {
 				case XmlNodeType.Element when reader.Name is TwoJointsIkTag:
 					category.TwoJointsGroup = this.ReadTwoJointsIkGroup(reader);
 					continue;
+				case XmlNodeType.Element when reader.Name is CcdIkTag:
+					category.CcdGroup = this.ReadCcdIkGroup(reader);
+					continue;
 				case XmlNodeType.EndElement when reader.Name is CategoryTag:
 					return category;
 				default:
@@ -99,10 +103,10 @@ public class SchemaReader {
 		var innerText = reader.Value;
 		var bones = innerText.Split(null)
 			.Select(ln => ln.Trim())
-			.Where(ln => !ln.IsNullOrEmpty());
+			.Where(ln => !ln.IsNullOrEmpty())
+			.Select(bone => new CategoryBone(bone));
 		
-		foreach (var bone in bones)
-			category.Bones.Add(new CategoryBone(bone));
+		category.Bones.AddRange(bones);
 	}
 	
 	// IK groups
@@ -124,13 +128,40 @@ public class SchemaReader {
 				continue;
 			
 			var name = reader.Name;
-			while (reader.Read() && reader.NodeType != XmlNodeType.Text) { }
+			reader.Read();
+			if (reader.NodeType != XmlNodeType.Text) continue;
 
 			var list = name switch {
 				"FirstBone" => group.FirstBone,
 				"FirstTwist" => group.FirstTwist,
 				"SecondBone" => group.SecondBone,
 				"SecondTwist" => group.SecondTwist,
+				"EndBone" => group.EndBone,
+				_ => throw new Exception($"Encountered invalid IK bone parameter: {name}")
+			};
+
+			list.Add(reader.Value);
+		}
+		
+		return group;
+	}
+
+	private CcdGroupParams ReadCcdIkGroup(XmlReader reader) {
+		var group = new CcdGroupParams();
+		
+		while (reader.Read()) {
+			if (reader is { NodeType: XmlNodeType.EndElement, Name: CcdIkTag })
+				break;
+
+			if (reader.NodeType != XmlNodeType.Element)
+				continue;
+			
+			var name = reader.Name;
+			reader.Read();
+			if (reader.NodeType != XmlNodeType.Text) continue;
+
+			var list = name switch {
+				"StartBone" => group.StartBone,
 				"EndBone" => group.EndBone,
 				_ => throw new Exception($"Encountered invalid IK bone parameter: {name}")
 			};

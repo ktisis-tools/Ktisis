@@ -14,4 +14,5 @@ public class BoneCategory(string name) {
 	public readonly List<CategoryBone> Bones = new();
 	
 	public TwoJointsGroupParams? TwoJointsGroup;
+	public CcdGroupParams? CcdGroup;
 }

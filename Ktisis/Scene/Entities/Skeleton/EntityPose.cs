@@ -125,7 +125,9 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	// Skeleton access
 
 	public unsafe RenderSkeleton* GetSkeleton() {
-		var character = this.Parent is CharaEntity parent ? parent.GetCharacter() : null;
+		if (this.Parent is not CharaEntity parent || !parent.IsDrawing())
+			return null;
+		var character = parent.GetCharacter();
 		return character != null ? character->Skeleton : null;
 	}
 

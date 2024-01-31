@@ -6,6 +6,7 @@ namespace Ktisis.Structs.Havok;
 
 [StructLayout(LayoutKind.Explicit)]
 public struct CcdIkSolver {
+	[FieldOffset(0)] public unsafe nint** _vfTable;
 	[FieldOffset(0)] public hkReferencedObject hkRefObject;
 	
 	// The number of iterations of the IK solver

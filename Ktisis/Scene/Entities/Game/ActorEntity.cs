@@ -65,7 +65,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 	// CharacterBase
 
 	public unsafe override Object* GetObject()
-		=> this.CsGameObject != null ? &this.CsGameObject->DrawObject->Object : null;
+		=> this.CsGameObject != null ? (Object*)this.CsGameObject->DrawObject : null;
 
 	public unsafe override CharacterBase* GetCharacter() {
 		if (!this.IsObjectValid) return null;

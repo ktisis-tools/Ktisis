@@ -288,6 +288,10 @@
 		</Category>
 		<Category Id="GenitalsIvcs" IsNsfw="true">
 			<Category Id="PenisIvcs" IsNsfw="true">
+				<CcdIK>
+					<StartBone>iv_ochinko_a</StartBone>
+					<EndBone>iv_ochinko_f</EndBone>
+				</CcdIK>
 				<Bones>
 					iv_kougan_l
 					iv_kougan_r
@@ -321,6 +325,11 @@
 		</Category>
 	</Category>
 	<Category Id="Tail">
+		<CcdIK>
+			<StartBone>n_sippo_a</StartBone>
+			<EndBone>n_sippo_e</EndBone>
+			<EndBone>j_tail</EndBone>
+		</CcdIK>
 		<Bones>
 			n_sippo_a
 			n_sippo_b

@@ -9,12 +9,12 @@ using ImGuiNET;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Context.Types;
-using Ktisis.Editor.Posing.Ik;
+using Ktisis.Editor.Posing.Ik.TwoJoints;
 using Ktisis.Editor.Transforms;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
-using Ktisis.Scene.Decor;
+using Ktisis.Scene.Decor.Ik;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Windows;
@@ -76,7 +76,7 @@ public class TransformWindow : KtisisWindow {
 			this.Transform = null;
 		}
 
-		if (target?.Primary is ITwoJointsNode ik)
+		if (target?.Primary is IIkNode ik)
 			this.DrawIk(ik);
 	}
 	
@@ -180,8 +180,9 @@ public class TransformWindow : KtisisWindow {
 	}
 	
 	// IK Setup
+	// TODO: Clean this up!
 
-	private void DrawIk(ITwoJointsNode ik) {
+	private void DrawIk(IIkNode ik) {
 		ImGui.Spacing();
 		if (!ImGui.CollapsingHeader("Inverse Kinematics")) return;
 		ImGui.Spacing();
@@ -190,15 +191,16 @@ public class TransformWindow : KtisisWindow {
 		if (ImGui.Checkbox("Enable IK constraints", ref enable))
 			ik.Toggle();
 
-		if (!enable) return;
-		
-		ImGui.Spacing();
-		ImGui.Checkbox("Enforce end rotation", ref ik.Group.EnforceRotation);
-		ImGui.Spacing();
-		
-		ImGui.Text("Transform mode:");
-		DrawMode("Fixed target", TwoJointsMode.Fixed, ik.Group);
-		DrawMode("Bone relative", TwoJointsMode.Relative, ik.Group);
+		if (!ik.IsEnabled) return;
+
+		switch (ik) {
+			case ITwoJointsNode node:
+				this.DrawTwoJoints(node);
+				break;
+			case ICcdNode node:
+				this.DrawCcd(node);
+				break;
+		}
 		
 		ImGui.Spacing();
 
@@ -206,12 +208,43 @@ public class TransformWindow : KtisisWindow {
 			ImGui.OpenPopup("##IkAdvancedCfg");
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.Text("Advanced parameters");
+	}
+	
+	// CCD
 
+	private void DrawCcd(ICcdNode ik) {
 		if (ImGui.IsPopupOpen("##IkAdvancedCfg"))
-			this.DrawIkAdvanced(ik);
+			this.DrawCcdAdvanced(ik);
 	}
 
-	private void DrawIkAdvanced(ITwoJointsNode ik) {
+	private void DrawCcdAdvanced(ICcdNode ik) {
+		using var popup = ImRaii.Popup("##IkAdvancedCfg");
+		if (!popup.Success) return;
+		
+		ImGui.Spacing();
+		
+		ImGui.SliderFloat("Gain", ref ik.Group.Gain, 0.0f, 1.0f, "%.2f");
+		ImGui.SliderInt("Iterations", ref ik.Group.Iterations, 0, 60);
+		
+		ImGui.Spacing();
+	}
+	
+	// Two Joints
+
+	private void DrawTwoJoints(ITwoJointsNode ik) {
+		ImGui.Spacing();
+		ImGui.Checkbox("Enforce end rotation", ref ik.Group.EnforceRotation);
+		ImGui.Spacing();
+		
+		ImGui.Text("Transform mode:");
+		DrawMode("Fixed target", TwoJointsMode.Fixed, ik.Group);
+		DrawMode("Bone relative", TwoJointsMode.Relative, ik.Group);
+
+		if (ImGui.IsPopupOpen("##IkAdvancedCfg"))
+			this.DrawTwoJointsAdvanced(ik);
+	}
+
+	private void DrawTwoJointsAdvanced(ITwoJointsNode ik) {
 		using var popup = ImRaii.Popup("##IkAdvancedCfg");
 		if (!popup.Success) return;
 		

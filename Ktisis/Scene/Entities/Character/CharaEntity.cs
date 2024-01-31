@@ -36,10 +36,10 @@ public class CharaEntity : WorldEntity, IAttachable {
 			base.Update();
 	}
 
-	protected unsafe bool IsDrawing() {
+	public unsafe bool IsDrawing() {
 		var ptr = this.GetCharacter();
 		if (ptr == null) return false;
-		return (ptr->UnkFlags_01 & 2) != 0 && ptr->UnkFlags_02 != 0;
+		return ptr->UnkFlags_02 != 0;
 	}
 	
 	// Character

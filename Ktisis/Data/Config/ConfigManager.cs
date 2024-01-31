@@ -38,8 +38,8 @@ public class ConfigManager : IDisposable {
 			// TODO: Legacy migration
 			cfg = this.OpenConfigFile();
 
-			if (cfg is { Version: < 7 }) {
-				cfg.Version = 7;
+			if (cfg is { Version: < 8 }) {
+				cfg.Version = 8;
 				cfg.Categories = this._schema.ReadCategories();
 			}
 		} catch (Exception err) {
