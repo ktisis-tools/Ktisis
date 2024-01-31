@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 using Dalamud.Hooking;
@@ -99,11 +98,7 @@ public sealed class IkModule : HookModule {
 	private void UpdateAnimationDetour(nint a1) {
 		this.UpdateAnimationHook.Original(a1);
 		try {
-			var t = new Stopwatch();
-			t.Start();
 			this.UpdateIkPoses();
-			t.Stop();
-			//Ktisis.Log.Info($"IK latency: {t.Elapsed.TotalMilliseconds:00.00}ms");
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to update IK poses:\n{err}");
 		}
