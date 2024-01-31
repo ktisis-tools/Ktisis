@@ -116,7 +116,7 @@
 					iv_nitoukin_l
 				</Bones>
 				<Category Id="LeftHand">
-					<TwoJointsIK>
+					<TwoJointsIK Type="Arm">
 						<FirstBone>j_ude_a_l</FirstBone>
 						<FirstTwist>n_hkata_l</FirstTwist>
 						<SecondBone>j_ude_b_l</SecondBone>
@@ -159,7 +159,7 @@
 					iv_nitoukin_r
 				</Bones>
 				<Category Id="RightHand">
-					<TwoJointsIK>
+					<TwoJointsIK Type="Arm">
 						<FirstBone>j_ude_a_r</FirstBone>
 						<FirstTwist>n_hkata_r</FirstTwist>
 						<SecondBone>j_ude_b_r</SecondBone>
@@ -222,6 +222,13 @@
 					j_asi_c_l
 				</Bones>
 				<Category Id="LeftFoot">
+					<TwoJointsIK Type="Leg">
+						<FirstBone>j_asi_a_l</FirstBone>
+						<SecondBone>j_asi_b_l</SecondBone>
+						<SecondTwist>j_asi_c_l</SecondTwist>
+						<EndBone>j_asi_d_l</EndBone>
+						<EndBone>j_foot_l</EndBone>
+					</TwoJointsIK>
 					<Bones>
 						j_asi_d_l
 						j_asi_e_l
@@ -250,6 +257,13 @@
 					j_asi_c_r
 				</Bones>
 				<Category Id="RightFoot">
+					<TwoJointsIK Type="Leg">
+						<FirstBone>j_asi_a_r</FirstBone>
+						<SecondBone>j_asi_b_r</SecondBone>
+						<SecondTwist>j_asi_c_r</SecondTwist>
+						<EndBone>j_asi_d_r</EndBone>
+						<EndBone>j_foot_r</EndBone>
+					</TwoJointsIK>
 					<Bones>
 						j_asi_d_r
 						j_asi_e_r

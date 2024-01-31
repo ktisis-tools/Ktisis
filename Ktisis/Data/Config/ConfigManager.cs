@@ -38,8 +38,10 @@ public class ConfigManager : IDisposable {
 			// TODO: Legacy migration
 			cfg = this.OpenConfigFile();
 
-			if (cfg is { Version: < 6 })
+			if (cfg is { Version: < 7 }) {
+				cfg.Version = 7;
 				cfg.Categories = this._schema.ReadCategories();
+			}
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");
 		}
@@ -75,6 +77,8 @@ public class ConfigManager : IDisposable {
 	}
 
 	private Configuration? OpenConfigFile() {
+		Ktisis.Log.Verbose("Loading configuration...");
+		
 		var path = this.GetConfigFilePath();
 		if (!Path.Exists(path)) return null;
 
@@ -83,6 +87,8 @@ public class ConfigManager : IDisposable {
 	}
 
 	private void SaveConfigFile() {
+		Ktisis.Log.Verbose("Saving configuration...");
+		
 		var path = this.GetConfigFilePath();
 		var content = JsonConvert.SerializeObject(this.File, Formatting.Indented);
 		System.IO.File.WriteAllText(path, content);
@@ -102,5 +108,8 @@ public class ConfigManager : IDisposable {
 	
 	// IDisposable
 
-	public void Dispose() => this.Save();
+	public void Dispose() {
+		this.Save();
+		GC.SuppressFinalize(this);
+	}
 }

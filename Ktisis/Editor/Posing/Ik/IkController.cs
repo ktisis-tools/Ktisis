@@ -60,8 +60,11 @@ public class IkController : IIkController {
 		if (pose == null || pose->Skeleton == null)
 			return false;
 
-		if (!this.Groups.TryGetValue(name, out group))
-			group = new TwoJointsGroup();
+		if (!this.Groups.TryGetValue(name, out group)) {
+			group = new TwoJointsGroup {
+				HingeAxis = param.Type == TwoJointsType.Leg ? -Vector3.UnitZ : Vector3.UnitZ
+			};
+		}
 
 		var first = TryResolveBone(pose, param.FirstBone);
 		var second = TryResolveBone(pose, param.SecondBone);
@@ -73,6 +76,8 @@ public class IkController : IIkController {
 		group.SecondBoneIndex = second;
 		group.SecondTwistIndex = TryResolveBone(pose, param.SecondTwist);
 		group.EndBoneIndex = last;
+		
+		Ktisis.Log.Verbose($"Resolved bones: {first} {second} {last} ({group.FirstTwistIndex}, {group.SecondTwistIndex})");
 		
 		group.SkeletonId = partial.SkeletonResourceHandle->ResourceHandle.Id;
 
