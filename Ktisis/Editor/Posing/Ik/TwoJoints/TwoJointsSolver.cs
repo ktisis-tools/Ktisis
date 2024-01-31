@@ -49,18 +49,19 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		if (frozen) {
 			poseIn->SetToReferencePose();
 			poseIn->SyncModelSpace();
-			this.SyncLocal(poseIn, poseOut);
+			this.UpdateModelSpace(poseIn, poseOut);
 		}
 		
 		byte result = 0;
 		module.SolveTwoJoints(&result, this.IkSetup, poseIn);
 		
 		if (result == 0) return false;
-		
+
+		poseIn->SyncModelSpace();
 		if (frozen)
-			this.SyncModel(poseIn, poseOut);
+			this.ApplyStaticModelSpace(poseIn, poseOut);
 		else
-			poseOut->SetPoseModelSpace(poseIn->AccessSyncedPoseModelSpace());
+			this.ApplyDynamicModelSpace(poseIn, poseOut);
 
 		return true;
 	}
@@ -102,7 +103,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		return this.Solve(poseIn, poseOut, frozen);
 	}
 
-	private unsafe void SyncLocal(hkaPose* poseIn, hkaPose* poseOut) {
+	private unsafe void UpdateModelSpace(hkaPose* poseIn, hkaPose* poseOut) {
 		var start = this.IkSetup->m_firstJointIdx;
 		for (var i = 1; i < poseIn->Skeleton->Bones.Length; i++) {
 			if (i != start && !HavokPosing.IsBoneDescendantOf(poseOut->Skeleton->ParentIndices, start, i))
@@ -111,10 +112,14 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		}
 	}
 
-	private unsafe void SyncModel(hkaPose* poseIn, hkaPose* poseOut) {
-		poseIn->SyncModelSpace();
-		
+	private unsafe void ApplyStaticModelSpace(hkaPose* poseIn, hkaPose* poseOut) {
 		var parents = poseOut->Skeleton->ParentIndices;
+		hkaSkeletonUtils.transformModelPoseToLocalPose(
+			poseOut->Skeleton->Bones.Length,
+			parents.Data,
+			poseOut->ModelPose.Data,
+			poseIn->LocalPose.Data
+		);
 		
 		var start = this.IkSetup->m_firstJointIdx;
 		var end = this.IkSetup->m_endBoneIdx;
@@ -140,6 +145,17 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 			transform.Rotation *= local.Rotation; 
 			transform.Scale *= local.Scale;
 			HavokPosing.SetModelTransform(poseOut, i, transform);
+		}
+	}
+
+	private unsafe void ApplyDynamicModelSpace(hkaPose* poseIn, hkaPose* poseOut) {
+		var parents = poseOut->Skeleton->ParentIndices;
+		var start = this.IkSetup->m_firstJointIdx;
+		
+		for (var i = 1; i < poseOut->Skeleton->Bones.Length; i++) {
+			var apply = i == start || HavokPosing.IsBoneDescendantOf(parents, i, start);
+			if (!apply) continue;
+			*poseOut->AccessBoneModelSpace(i, hkaPose.PropagateOrNot.Propagate) = poseIn->ModelPose[i];
 		}
 	}
 	
