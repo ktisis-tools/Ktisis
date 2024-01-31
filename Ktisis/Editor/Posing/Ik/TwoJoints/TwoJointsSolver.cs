@@ -49,7 +49,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		if (frozen) {
 			poseIn->SetToReferencePose();
 			poseIn->SyncModelSpace();
-			this.UpdateModelSpace(poseIn, poseOut);
+			this.UpdateModelPose(poseIn, poseOut);
 		}
 		
 		byte result = 0;
@@ -59,9 +59,9 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 
 		poseIn->SyncModelSpace();
 		if (frozen)
-			this.ApplyStaticModelSpace(poseIn, poseOut);
+			this.ApplyModelPoseStatic(poseIn, poseOut);
 		else
-			this.ApplyDynamicModelSpace(poseIn, poseOut);
+			this.ApplyModelPoseDynamic(poseIn, poseOut);
 
 		return true;
 	}
@@ -103,7 +103,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		return this.Solve(poseIn, poseOut, frozen);
 	}
 
-	private unsafe void UpdateModelSpace(hkaPose* poseIn, hkaPose* poseOut) {
+	private unsafe void UpdateModelPose(hkaPose* poseIn, hkaPose* poseOut) {
 		var start = this.IkSetup->m_firstJointIdx;
 		for (var i = 1; i < poseIn->Skeleton->Bones.Length; i++) {
 			if (i != start && !HavokPosing.IsBoneDescendantOf(poseOut->Skeleton->ParentIndices, start, i))
@@ -112,7 +112,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		}
 	}
 
-	private unsafe void ApplyStaticModelSpace(hkaPose* poseIn, hkaPose* poseOut) {
+	private unsafe void ApplyModelPoseStatic(hkaPose* poseIn, hkaPose* poseOut) {
 		var parents = poseOut->Skeleton->ParentIndices;
 		hkaSkeletonUtils.transformModelPoseToLocalPose(
 			poseOut->Skeleton->Bones.Length,
@@ -148,13 +148,13 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		}
 	}
 
-	private unsafe void ApplyDynamicModelSpace(hkaPose* poseIn, hkaPose* poseOut) {
+	private unsafe void ApplyModelPoseDynamic(hkaPose* poseIn, hkaPose* poseOut) {
 		var parents = poseOut->Skeleton->ParentIndices;
 		var start = this.IkSetup->m_firstJointIdx;
 		
 		for (var i = 1; i < poseOut->Skeleton->Bones.Length; i++) {
-			var apply = i == start || HavokPosing.IsBoneDescendantOf(parents, i, start);
-			if (!apply) continue;
+			if (i != start && !HavokPosing.IsBoneDescendantOf(parents, i, start))
+				continue;
 			*poseOut->AccessBoneModelSpace(i, hkaPose.PropagateOrNot.Propagate) = poseIn->ModelPose[i];
 		}
 	}
