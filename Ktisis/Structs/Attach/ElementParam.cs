@@ -1,7 +1,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace Ktisis.Structs.Characters;
+namespace Ktisis.Structs.Attach;
 
 public enum ElementId : uint {
 	RightShoulder = 0x06,

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-namespace Ktisis.Structs.Characters;
+namespace Ktisis.Structs.Attach;
 
 public enum AttachType : uint {
 	None = 0,

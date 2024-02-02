@@ -5,6 +5,8 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
+using Ktisis.Structs.Animation;
+using Ktisis.Structs.Attach;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Transforms;

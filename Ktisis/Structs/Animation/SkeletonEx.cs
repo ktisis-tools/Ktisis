@@ -1,10 +1,11 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-namespace Ktisis.Structs.Characters;
+using Ktisis.Structs.Attach;
+
+namespace Ktisis.Structs.Animation;
 
 [StructLayout(LayoutKind.Explicit, Size = 0x100)]
 public struct SkeletonEx {

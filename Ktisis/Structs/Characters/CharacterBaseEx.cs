@@ -10,7 +10,7 @@ namespace Ktisis.Structs.Characters;
 public struct CharacterBaseEx {
 	[FieldOffset(0x000)] public CharacterBase Base;
 
-	[FieldOffset(0x0D0)] public Attach Attach;
+	[FieldOffset(0x0D0)] public Attach.Attach Attach;
 
 	[FieldOffset(0x8F0)] public CustomizeContainer Customize;
 
