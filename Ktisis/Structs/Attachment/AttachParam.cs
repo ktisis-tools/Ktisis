@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 
-namespace Ktisis.Structs.Attach;
+namespace Ktisis.Structs.Attachment;
 
 [StructLayout(LayoutKind.Explicit, Size = 0x40)]
 public struct AttachParam {

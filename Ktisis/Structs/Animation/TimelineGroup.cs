@@ -6,7 +6,7 @@ namespace Ktisis.Structs.Animation;
 
 [StructLayout(LayoutKind.Explicit, Size = 0xA78)]
 public struct TimelineGroup {
-	[FieldOffset(0x00)] public unsafe nint** __vfTable;
+	[FieldOffset(0x00)] public unsafe nint* __vfTable;
 	
 	[FieldOffset(0x018)] public unsafe SchedulerTimeline* SchedulerTimeline;
 	[FieldOffset(0x020)] public unsafe void* Controller;

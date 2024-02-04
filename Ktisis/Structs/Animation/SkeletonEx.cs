@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
-using Ktisis.Structs.Attach;
+using Ktisis.Structs.Attachment;
 
 namespace Ktisis.Structs.Animation;
 

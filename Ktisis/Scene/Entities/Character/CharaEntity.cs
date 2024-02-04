@@ -8,7 +8,7 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Types;
-using Ktisis.Structs.Attach;
+using Ktisis.Structs.Attachment;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Scene.Entities.Character;

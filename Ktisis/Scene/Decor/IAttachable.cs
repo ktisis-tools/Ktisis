@@ -1,5 +1,5 @@
 using Ktisis.Editor.Posing.Types;
-using Ktisis.Structs.Attach;
+using Ktisis.Structs.Attachment;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Scene.Decor;
