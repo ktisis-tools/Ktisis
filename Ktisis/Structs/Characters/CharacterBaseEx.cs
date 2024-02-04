@@ -2,6 +2,8 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using Ktisis.Structs.Attachment;
+
 namespace Ktisis.Structs.Characters;
 
 // Client::Graphics::Scene::CharacterBase
@@ -10,7 +12,7 @@ namespace Ktisis.Structs.Characters;
 public struct CharacterBaseEx {
 	[FieldOffset(0x000)] public CharacterBase Base;
 
-	[FieldOffset(0x0D0)] public Attachment.Attach Attach;
+	[FieldOffset(0x0D0)] public Attach Attach;
 
 	[FieldOffset(0x8F0)] public CustomizeContainer Customize;
 

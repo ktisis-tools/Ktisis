@@ -7,5 +7,5 @@ public struct VfxResourceHandle {
 	[FieldOffset(0)] public ulong Value;
 	
 	[FieldOffset(0)] public uint Id;
-	[FieldOffset(2)] public uint Index;
+	[FieldOffset(4)] public uint Index;
 }
