@@ -63,22 +63,10 @@ public class ActorService {
 			if (drawObject->Object.GetObjectType() != ObjectType.CharacterBase)
 				continue;
 
-			if (this.GetSkeletonFor(actor) == skeleton)
+			if (actor.GetSkeleton() == skeleton)
 				return actor;
 		}
 		
 		return null;
-	}
-
-	public unsafe Skeleton* GetSkeletonFor(GameObject gameObject) {
-		var csPtr = (CSGameObject*)gameObject.Address;
-		if (csPtr == null || csPtr->DrawObject == null)
-			return null;
-
-		var drawObject = csPtr->DrawObject;
-		if (drawObject->Object.GetObjectType() != ObjectType.CharacterBase)
-			return null;
-		
-		return ((CharacterBase*)drawObject)->Skeleton;
 	}
 }

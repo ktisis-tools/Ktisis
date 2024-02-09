@@ -7,6 +7,8 @@ using Dalamud.Plugin.Services;
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
@@ -46,8 +48,28 @@ public class ActorModule : SceneModule {
 	public override void Setup() {
 		foreach (var actor in this._actors.GetGPoseActors())
 			this.AddActor(actor, false);
+		
+		this.Subscribe();
+		
 		this.EnableAll();
 		this._spawner.TryInitialize();
+	}
+	
+	// Events
+
+	private unsafe void Subscribe() {
+		this.Scene.Context.Characters.OnDisableDraw += this.OnDisableDraw;
+	}
+
+	private unsafe void OnDisableDraw(GameObject gameObject, DrawObject* drawObject) {
+		if (!this.IsInit || !this.Scene.IsValid) return;
+
+		var entity = this.Scene.GetEntityForActor(gameObject);
+		if (entity == null) return;
+		
+		entity.Address = nint.Zero;
+		
+		Ktisis.Log.Debug($"Invalidated object address for entity '{entity.Name}' ({gameObject.ObjectIndex})");
 	}
 	
 	// Spawning

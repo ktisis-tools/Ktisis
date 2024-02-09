@@ -1,5 +1,9 @@
 ﻿namespace Ktisis.Editor.Posing.Attachment;
 
-public class AttachManager {
+public interface IAttachManager {
+	
+}
+
+public class AttachManager : IAttachManager {
 	
 }

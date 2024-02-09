@@ -1,7 +1,9 @@
 using System;
 
-using Ktisis.Editor.Context;
+using Dalamud.Game.ClientState.Objects.Types;
+
 using Ktisis.Editor.Context.Types;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Modules;
 
@@ -21,4 +23,6 @@ public interface ISceneManager : IComposite, IDisposable {
 	public void Initialize();
 	public void Update();
 	public void Refresh();
+
+	public ActorEntity? GetEntityForActor(GameObject actor);
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
@@ -9,7 +8,6 @@ using Ktisis.Data.Files;
 using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
@@ -22,7 +20,9 @@ public class CharacterManager : ICharacterManager {
 	private readonly IFramework _framework;
 
 	public bool IsValid => this._context.IsValid;
-    
+	
+	public event DisableDrawHandler? OnDisableDraw;
+
 	public CharacterManager(
 		IEditorContext context,
 		HookScope scope,
@@ -41,11 +41,16 @@ public class CharacterManager : ICharacterManager {
 		Ktisis.Log.Verbose("Initializing appearance module...");
 		try {
 			this.Module = this._scope.Create<CharacterModule>(this);
+			this.Subscribe();
 			this.Module.Initialize();
 			this.Module.EnableAll();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize appearance editor:\n{err}");
 		}
+	}
+
+	private unsafe void Subscribe() {
+		this.Module!.OnDisableDraw += (gameObj, drawObj) => this.OnDisableDraw?.Invoke(gameObj, drawObj);
 	}
 	
 	// Editors
@@ -53,17 +58,10 @@ public class CharacterManager : ICharacterManager {
 	public ICustomizeEditor GetCustomizeEditor(ActorEntity actor) => new CustomizeEditor(actor);
 	public IEquipmentEditor GetEquipmentEditor(ActorEntity actor) => new EquipmentEditor(actor);
 	
-	// Entity wrappers
-	
-	public ActorEntity? GetEntityForActor(GameObject actor) => this._context.Scene.Children
-		.Where(entity => entity is ActorEntity { IsValid: true })
-		.Cast<ActorEntity>()
-		.FirstOrDefault(entity => entity.Actor.ObjectIndex == actor.ObjectIndex);
-	
 	// State wrappers
 
 	public bool TryGetStateForActor(GameObject actor, out ActorEntity entity, out AppearanceState state) {
-		var needle = this.GetEntityForActor(actor);
+		var needle = this._context.Scene.GetEntityForActor(actor);
 		entity = needle!;
 		state = needle?.Appearance!;
 		return needle != null;

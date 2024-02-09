@@ -8,6 +8,7 @@ using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
 using Ktisis.Interface.Editor;
@@ -52,13 +53,14 @@ public class ContextBuilder {
 		var actions = new ActionManager(context, input);
 		var factory = new EntityFactory(context, this._naming);
 		var select = new SelectManager(context);
+		var attach = new AttachManager();
 
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
 			Cameras = new CameraManager(context, scope),
 			Characters = new CharacterManager(context, scope, this._framework),
 			Interface = new EditorInterface(context, state.Gui),
-			Posing = new PosingManager(context, scope, this._framework),
+			Posing = new PosingManager(context, scope, this._framework, attach),
 			Scene = new SceneManager(context, scope, factory),
 			Selection = select,
 			Transform = new TransformHandler(context, actions, select)

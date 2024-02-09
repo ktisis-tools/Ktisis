@@ -7,7 +7,6 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Services;
 using Ktisis.Interop.Hooking;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
@@ -25,6 +24,8 @@ public class CharacterModule : HookModule {
 
 	private bool IsValid => this.Manager.IsValid;
 
+	public event DisableDrawHandler? OnDisableDraw;
+
 	public CharacterModule(
 		IHookMediator hook,
 		ICharacterManager manager,
@@ -39,6 +40,29 @@ public class CharacterModule : HookModule {
 	// Hooks
 
 	private unsafe GameObject* _prepareCharaFor;
+	
+	// DisableDraw
+	
+	[Signature("E9 ?? ?? ?? ?? 48 83 C4 20 5B C3 CC CC CC 48 8B 41 48", DetourName = nameof(DisableDrawDetour))]
+	private Hook<DisableDrawDelegate> DisableDrawHook = null!;
+	private unsafe delegate nint DisableDrawDelegate(GameObject* chara);
+	private unsafe nint DisableDrawDetour(GameObject* chara) {
+		try {
+			if (chara->DrawObject != null)
+				this.HandleDisableDraw(chara);
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to handle disable draw:\n{err}");
+		}
+		return this.DisableDrawHook.Original(chara);
+	}
+
+	private unsafe void HandleDisableDraw(GameObject* chara) {
+		var actor = this._actors.GetAddress((nint)chara);
+		if (actor != null)
+			this.OnDisableDraw?.Invoke(actor, chara->DrawObject);
+	}
+	
+	// EnableDraw
 
 	[Signature("E8 ?? ?? ?? ?? 48 8B 8B ?? ?? ?? ?? 48 85 C9 74 33 45 33 C0", DetourName = nameof(EnableDrawDetour))]
 	private Hook<EnableDrawDelegate> EnableDrawHook = null!;
@@ -63,6 +87,8 @@ public class CharacterModule : HookModule {
 		}
 		return result;
 	}
+	
+	// CreateCharacter
 
 	[Signature("E8 ?? ?? ?? ?? 48 8B 4E 08 48 8B D0 4C 8B 01", DetourName = nameof(CreateCharacterDetour))]
 	private Hook<CreateCharacterDelegate> CreateCharacterHook = null!;

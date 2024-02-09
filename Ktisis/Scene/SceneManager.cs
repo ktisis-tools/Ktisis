@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Ktisis.Editor.Context;
+using Dalamud.Game.ClientState.Objects.Types;
+
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
@@ -87,6 +89,13 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	public bool Remove(SceneEntity entity) => this.Root.Remove(entity);
 
 	public IEnumerable<SceneEntity> Recurse() => this.Root.Recurse();
+	
+	// Utility
+	
+	public ActorEntity? GetEntityForActor(GameObject actor) => this.Children
+		.Where(entity => entity is ActorEntity { IsValid: true })
+		.Cast<ActorEntity>()
+		.FirstOrDefault(entity => entity.Actor.ObjectIndex == actor.ObjectIndex);
 	
 	// Disposal
 

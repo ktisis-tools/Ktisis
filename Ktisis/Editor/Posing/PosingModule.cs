@@ -1,9 +1,9 @@
 ﻿using System;
 
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
@@ -12,10 +12,13 @@ using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Posing;
 
+public unsafe delegate void SkeletonInitHandler(GameObject owner, Skeleton* skeleton, ushort partialId);
+
 public sealed class PosingModule : HookModule {
 	private readonly PosingManager Manager;
-	
 	private readonly ActorService _actors;
+
+	public event SkeletonInitHandler? OnSkeletonInit;
 
 	public PosingModule(
 		IHookMediator hook,
@@ -94,46 +97,20 @@ public sealed class PosingModule : HookModule {
 	
 	// Pose preservation handlers
 
-	[Signature("E9 ?? ?? ?? ?? 48 83 C4 20 5B C3 CC CC CC 48 8B 41 48", DetourName = nameof(DisableDrawDetour))]
-	private Hook<DisableDrawDelegate> DisableDrawHook = null!;
-	private unsafe delegate nint DisableDrawDelegate(GameObject* chara);
-	private unsafe nint DisableDrawDetour(GameObject* chara) {
-		try {
-			if (chara->DrawObject != null)
-				this.HandlePreservePose(chara);
-		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to handle disable draw:\n{err}");
-		}
-		return this.DisableDrawHook.Original(chara);
-	}
-
 	[Signature("E8 ?? ?? ?? ?? 48 C1 E5 08", DetourName = nameof(SetSkeletonDetour))]
 	private Hook<SetSkeletonDelegate> SetSkeletonHook = null!;
 	private unsafe delegate byte SetSkeletonDelegate(Skeleton* skeleton, ushort partialId, nint a3);
 	private unsafe byte SetSkeletonDetour(Skeleton* skeleton, ushort partialId, nint a3) {
 		var result = this.SetSkeletonHook.Original(skeleton, partialId, a3);
 		try {
-			this.HandleRestorePose(skeleton, partialId);
+			this.HandleRestoreState(skeleton, partialId);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to handle SetSkeleton:\n{err}");
 		}
 		return result;
 	}
 
-	private unsafe void HandlePreservePose(GameObject* chara) {
-		if (!this.Manager.IsValid || !this.IsEnabled) return;
-		
-		var actor = this._actors.GetAddress((nint)chara);
-		if (actor == null) return;
-
-		var skeleton = this._actors.GetSkeletonFor(actor);
-		if (skeleton == null) return;
-		Ktisis.Log.Verbose($"Preserving pose for {actor.Name} ({actor.ObjectIndex})");
-		
-		this.Manager.PreservePoseFor(actor, skeleton);
-	}
-
-	private unsafe void HandleRestorePose(Skeleton* skeleton, ushort partialId) {
+	private unsafe void HandleRestoreState(Skeleton* skeleton, ushort partialId) {
 		if (!this.Manager.IsValid || !this.IsEnabled || skeleton->PartialSkeletons == null) return;
 
 		var partial = skeleton->PartialSkeletons[partialId];
@@ -144,8 +121,8 @@ public sealed class PosingModule : HookModule {
 
 		var actor = this._actors.GetSkeletonOwner(skeleton);
 		if (actor == null) return;
-		Ktisis.Log.Verbose($"Restoring pose {partialId} for {actor.Name} ({actor.ObjectIndex})");
+		Ktisis.Log.Verbose($"Restoring partial {partialId} for {actor.Name} ({actor.ObjectIndex})");
 		
-		this.Manager.RestorePoseFor(actor, skeleton, partialId);
+		this.OnSkeletonInit?.Invoke(actor, skeleton, partialId);
 	}
 }
