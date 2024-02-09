@@ -69,7 +69,8 @@ public class ConfigWindow : KtisisWindow {
 	// Categories
 
 	private void DrawCategoriesTab() {
-		ImGui.Checkbox("Display NSFW categories", ref this.Config.Categories.ShowNsfwBones);
+		if (ImGui.Checkbox("Display NSFW categories", ref this.Config.Categories.ShowNsfwBones))
+			this._context.Current?.Scene.Refresh();
 		ImGui.SameLine();
 		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
 		if (ImGui.IsItemHovered()) {
@@ -128,6 +129,5 @@ public class ConfigWindow : KtisisWindow {
 	public override void OnClose() {
 		base.OnClose();
 		this._cfg.Save();
-		this._context.Current?.Scene.Refresh();
 	}
 }
