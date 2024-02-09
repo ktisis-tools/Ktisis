@@ -71,6 +71,20 @@ public class EntityPoseConverter(EntityPose target) {
 		this.LoadBones(pose, selected, transforms);
 	}
 	
+	public unsafe void LoadReferencePose() {
+		var skeleton = target.GetSkeleton();
+		if (skeleton == null) return;
+
+		for (var p = 0; p < skeleton->PartialSkeletonCount; p++) {
+			var partial = skeleton->PartialSkeletons[p];
+			var pose = partial.GetHavokPose(0);
+			if (pose == null) continue;
+
+			pose->SetToReferencePose();
+			HavokPosing.SyncModelSpace(skeleton, p);
+		}
+	}
+	
 	// Filter container
 
 	public unsafe PoseContainer FilterSelectedBones(PoseContainer pose) {
