@@ -10,13 +10,9 @@ using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
+using Ktisis.Editor.Transforms.Types;
 
 namespace Ktisis.Editor.Transforms;
-
-public interface ITransformTarget : ITransform {
-	public SceneEntity? Primary { get; }
-	public IEnumerable<SceneEntity> Targets { get; }
-}
 
 public class TransformTarget : ITransformTarget {
 	private readonly TransformHandler _handler;

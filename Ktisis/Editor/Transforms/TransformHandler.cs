@@ -1,30 +1,15 @@
 using System.Linq;
 using System.Numerics;
 
-using Ktisis.Actions.Types;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
+using Ktisis.Editor.Transforms.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Transforms;
-
-public interface ITransformHandler {
-	public ITransformTarget? Target { get; }
-	
-	public ITransformMemento Begin(ITransformTarget target);
-}
-
-public interface ITransformMemento : IMemento {
-	public ITransformMemento Save();
-	
-	public void SetTransform(Transform transform);
-	public void SetMatrix(Matrix4x4 matrix);
-	
-	public void Dispatch();
-}
 
 public class TransformHandler : ITransformHandler {
 	private readonly IEditorContext _context;

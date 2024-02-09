@@ -11,6 +11,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Ik.TwoJoints;
 using Ktisis.Editor.Transforms;
+using Ktisis.Editor.Transforms.Types;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;

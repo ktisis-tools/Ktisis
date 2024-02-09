@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms;
+using Ktisis.Editor.Transforms.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 

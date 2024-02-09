@@ -11,6 +11,7 @@ using ImGuiNET;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms;
+using Ktisis.Editor.Transforms.Types;
 using Ktisis.Interface.Widgets;
 
 namespace Ktisis.Interface.Components.Workspace;

@@ -8,6 +8,7 @@ using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
+using Ktisis.Editor.Transforms.Types;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Types;
