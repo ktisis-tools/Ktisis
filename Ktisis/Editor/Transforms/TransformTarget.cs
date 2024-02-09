@@ -131,6 +131,8 @@ public class TransformTarget : ITransformTarget {
 		var initial = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
 		bone.SetMatrix(newMx);
 
+		if (!this.Setup.ParentBones) return;
+
 		var final = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
 		HavokPosing.Propagate(skeleton, bone.Info.PartialIndex, bone.Info.BoneIndex, final, initial);
 	}

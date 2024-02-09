@@ -11,6 +11,7 @@ public class GizmoConfig {
 	public Operation Operation = Operation.ROTATE;
 
 	public bool MirrorRotation = false;
+	public bool ParentBones = true;
 	
 	public bool AllowAxisFlip = true;
 

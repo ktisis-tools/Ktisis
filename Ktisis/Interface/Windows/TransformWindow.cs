@@ -8,14 +8,15 @@ using GLib.Widgets;
 using ImGuiNET;
 
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Ik.TwoJoints;
-using Ktisis.Editor.Transforms;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Decor.Ik;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Windows;
@@ -77,8 +78,11 @@ public class TransformWindow : KtisisWindow {
 			this.Transform = null;
 		}
 
+		if (target?.Primary is SkeletonNode)
+			this.DrawBoneTransformSetup();
+
 		if (target?.Primary is IIkNode ik)
-			this.DrawIk(ik);
+			this.DrawIkSetup(ik);
 	}
 	
 	// Transform table
@@ -180,10 +184,21 @@ public class TransformWindow : KtisisWindow {
 		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * Gizmo2D.ScaleFactor) / 2.05f, 0xCF202020);
 	}
 	
+	// Transform setup
+
+	private void DrawBoneTransformSetup() {
+		ImGui.Spacing();
+		if (!ImGui.CollapsingHeader("Bone Transforms")) return;
+		ImGui.Spacing();
+		
+		var cfg = this._ctx.Config.Gizmo;
+		ImGui.Checkbox("Bone parenting", ref cfg.ParentBones);
+	}
+	
 	// IK Setup
 	// TODO: Clean this up!
 
-	private void DrawIk(IIkNode ik) {
+	private void DrawIkSetup(IIkNode ik) {
 		ImGui.Spacing();
 		if (!ImGui.CollapsingHeader("Inverse Kinematics")) return;
 		ImGui.Spacing();
