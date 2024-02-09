@@ -110,8 +110,8 @@ public class TransformTarget : ITransformTarget {
 		if (boneTrans == null) return;
 
 		var mirror = this.Setup.MirrorRotation;
-		if (mirror && this.Primary is BoneNodeGroup group)
-			mirror &= !bone.IsChildOf(group);
+		if (mirror && this.Primary is BoneNode pNode)
+			mirror &= !bone.IsBoneDescendantOf(pNode);
 
 		Matrix4x4 newMx;
 		if (bone == this.Primary) {
@@ -122,7 +122,7 @@ public class TransformTarget : ITransformTarget {
 			Vector3 deltaPos;
 			
 			if (mirror) {
-				deltaRot = Quaternion.Inverse(delta.Rotation);
+				deltaRot = Quaternion.Conjugate(delta.Rotation);
 				deltaPos = -delta.Position;
 			} else {
 				deltaRot = delta.Rotation;

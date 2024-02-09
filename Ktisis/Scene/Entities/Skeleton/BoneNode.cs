@@ -81,6 +81,60 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 		return matrix != null ? new Transform(matrix.Value) : null;
 	}
 	
+	// Bone chain
+
+	public unsafe bool IsBoneChildOf(BoneNode node) {
+		if (this.Pose != node.Pose)
+			return false;
+
+		var skele = this.GetSkeleton();
+		if (skele == null || skele->PartialSkeletons == null) return false;
+
+		if (this.Info.PartialIndex == node.Info.PartialIndex)
+			return this.Info.ParentIndex == node.Info.BoneIndex;
+		
+		if (node.Info.PartialIndex != 0) return false;
+		
+		var partial = skele->PartialSkeletons[this.Info.PartialIndex];
+		return this.Info.BoneIndex == partial.ConnectedBoneIndex && node.Info.BoneIndex == partial.ConnectedParentBoneIndex;
+	}
+
+	public unsafe bool IsBoneDescendantOf(BoneNode node) {
+		if (this.Pose != node.Pose)
+			return false;
+
+		var skele = this.GetSkeleton();
+		if (skele == null || skele->PartialSkeletons == null) return false;
+
+		var partial = skele->PartialSkeletons[this.Info.PartialIndex];
+		hkaPose* pose;
+		int boneId;
+		int parentId;
+
+		switch (this.Info.PartialIndex, node.Info.PartialIndex) {
+			case var (a, b) when a == b:
+				pose = partial.GetHavokPose(0);
+				boneId = this.Info.BoneIndex;
+				parentId = node.Info.BoneIndex;
+				break;
+			case (not 0, 0):
+				var rootPartial = skele->PartialSkeletons[0];
+				pose = rootPartial.GetHavokPose(0);
+				boneId = partial.ConnectedParentBoneIndex;
+				parentId = node.Info.BoneIndex;
+				if (boneId == parentId) return true;
+				break;
+			default:
+				return false;
+		}
+		
+		return pose != null && pose->Skeleton != null && HavokPosing.IsBoneDescendantOf(
+			pose->Skeleton->ParentIndices,
+			boneId,
+			parentId
+		);
+	}
+	
 	// ITransform
 
 	public virtual Transform? GetTransform() => this.CalcTransformWorld();
