@@ -10,7 +10,9 @@ internal static class HkaEulerAngles {
 	internal const float Rad2Deg = 360 / (MathF.PI * 2);
 
 	// Quaternion <=> Euler
+	
 	// https://github.com/lmcintyre/fbx2havok/blob/master/Core/EulerAngles.h
+	// Graphics Gems 4 - III.5. - Euler Angle Conversion (Ken Shoemake, 1993)
 
 	private enum Axis : int { X, Y, Z, W }
 

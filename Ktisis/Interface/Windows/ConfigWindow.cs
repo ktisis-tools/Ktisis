@@ -19,6 +19,7 @@ public class ConfigWindow : KtisisWindow {
 	private readonly ContextManager _context;
 
 	private readonly ActionKeybindEditor _keybinds;
+	private readonly BoneCategoryEditor _boneCategories;
 	private readonly GizmoStyleEditor _gizmoStyle;
 
 	private Configuration Config => this._cfg.File;
@@ -27,11 +28,13 @@ public class ConfigWindow : KtisisWindow {
 		ConfigManager cfg,
 		ContextManager context,
 		ActionKeybindEditor keybinds,
+		BoneCategoryEditor boneCategories,
 		GizmoStyleEditor gizmoStyle
 	) : base("Ktisis Settings") {
 		this._cfg = cfg;
 		this._context = context;
 		this._keybinds = keybinds;
+		this._boneCategories = boneCategories;
 		this._gizmoStyle = gizmoStyle;
 	}
 	
@@ -39,6 +42,7 @@ public class ConfigWindow : KtisisWindow {
 
 	public override void OnOpen() {
 		this._keybinds.Setup();
+		this._boneCategories.Setup();
 	}
 	
 	// Draw
@@ -65,13 +69,18 @@ public class ConfigWindow : KtisisWindow {
 	// Categories
 
 	private void DrawCategoriesTab() {
-		ImGui.Checkbox("Display NSFW bones", ref this.Config.Categories.ShowNsfwBones);
+		ImGui.Checkbox("Display NSFW categories", ref this.Config.Categories.ShowNsfwBones);
 		ImGui.SameLine();
 		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
 		if (ImGui.IsItemHovered()) {
 			using var _ = ImRaii.Tooltip();
 			ImGui.Text("Requires IVCS or any custom skeleton.");
 		}
+		
+		ImGui.Spacing();
+		ImGui.Text("Categories:");
+		ImGui.Spacing();
+		this._boneCategories.Draw();
 	}
 	
 	// Gizmo

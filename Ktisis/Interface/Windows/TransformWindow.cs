@@ -62,7 +62,6 @@ public class TransformWindow : KtisisWindow {
 		this.DrawToggles();
 
 		var target = this._ctx.Transform.Target;
-		
 		var transform = target?.GetTransform() ?? new Transform();
 
 		var disabled = target == null;

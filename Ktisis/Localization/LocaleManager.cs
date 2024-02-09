@@ -45,10 +45,12 @@ public class LocaleManager {
 	}
 	
 	// Helpers
+	
+	public string GetBoneName(PartialBoneInfo bone) => this.GetBoneName(bone.Name);
 
-	public string GetBoneName(PartialBoneInfo bone) {
-		var key = $"bone.{bone.Name}";
-		return this.HasTranslationFor(key) ? this.Translate(key) : bone.Name;
+	public string GetBoneName(string name) {
+		var key = $"bone.{name}";
+		return this.HasTranslationFor(key) ? this.Translate(key) : name;
 	}
 
 	public string GetCategoryName(BoneCategory category) {
