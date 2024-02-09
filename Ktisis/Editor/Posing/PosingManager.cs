@@ -82,6 +82,25 @@ public class PosingManager : IPosingManager {
 		pose.ApplyToPartial(skeleton, partialId, PoseTransforms.Rotation | PoseTransforms.PositionRoot);
 	}
 	
+	// Reference pose
+	
+	public Task ApplyReferencePose(
+		EntityPose pose
+	) {
+		return this._framework.RunOnFrameworkThread(() => {
+			var converter = new EntityPoseConverter(pose);
+			var initial = converter.Save();
+			converter.LoadReferencePose();
+			var final = converter.Save();
+			this._context.Actions.History.Add(new PoseMemento(converter) {
+				Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
+				Bones = null,
+				Initial = initial,
+				Final = final
+			});
+		});
+	}
+	
 	// Pose files
 
 	public Task ApplyPoseFile(
