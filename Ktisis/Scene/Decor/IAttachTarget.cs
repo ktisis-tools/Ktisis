@@ -1,5 +1,5 @@
 namespace Ktisis.Scene.Decor;
 
 public interface IAttachTarget {
-	public void AcceptAttach(IAttachable child);
+	public bool TryAcceptAttach(IAttachable child);
 }

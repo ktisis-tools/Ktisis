@@ -47,7 +47,7 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildEntityBaseBottom(ContextMenuBuilder menu) {
 		if (this._entity is IAttachable attach && attach.IsAttached())
-			menu.Separator().Action("Detach", attach.Detach);
+			menu.Separator().Action("Detach", () => this._ctx.Posing.Attachments.Detach(attach));
 
 		if (this._entity is IDeletable deletable)
 			menu.Separator().Action("Delete", () => deletable.Delete());

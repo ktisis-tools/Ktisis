@@ -6,7 +6,6 @@ using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.Types;
-using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;
 
 using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
@@ -146,17 +145,19 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 	
 	// Attach
 
-	public unsafe void AcceptAttach(IAttachable child) {
-		if (this.Info.PartialIndex > 0) return;
+	public unsafe bool TryAcceptAttach(IAttachable child) {
+		if (this.Info.PartialIndex > 0) return false;
 		
 		var attach = child.GetAttach();
 		var chara = child.GetCharacter();
-		if (attach == null || chara == null) return;
+		if (attach == null || chara == null) return false;
 
 		var parentSkeleton = this.GetSkeleton();
 		var childSkeleton = chara->Skeleton;
-		if (parentSkeleton == null || childSkeleton == null) return;
+		if (parentSkeleton == null || childSkeleton == null) return false;
 
 		AttachUtility.SetBoneAttachment(parentSkeleton, childSkeleton, attach, (ushort)this.Info.BoneIndex);
+
+		return true;
 	}
 }

@@ -5,9 +5,8 @@ using GLib.Widgets;
 
 using ImGuiNET;
 
-using Ktisis.Data.Config;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 
@@ -15,6 +14,8 @@ namespace Ktisis.Interface.Components.Workspace;
 
 public class SceneDragDropHandler {
 	private readonly IEditorContext _ctx;
+
+	private IAttachManager Manager => this._ctx.Posing.Attachments;
 	
 	public SceneDragDropHandler(
 		IEditorContext ctx
@@ -65,10 +66,7 @@ public class SceneDragDropHandler {
 	private unsafe void HandlePayload(SceneEntity target, SceneEntity source) {
 		Ktisis.Log.Info($"{target.Name} accepting payload from {source.Name}");
 
-		if (target is IAttachTarget tar && source is IAttachable attach) {
-			tar.AcceptAttach(attach);
-			var p = attach.GetAttach();
-			Ktisis.Log.Info($"{p != null}");
-		}
+		if (target is IAttachTarget tar && source is IAttachable attach)
+			this.Manager.Attach(attach, tar);
 	}
 }

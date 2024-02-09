@@ -78,8 +78,10 @@ public class PosingManager : IPosingManager {
 		Ktisis.Log.Verbose($"Preserving state for {gameObject.Name} ({gameObject.ObjectIndex})");
 		
 		var skeleton = gameObject.GetSkeleton();
-		if (skeleton != null)
-			this.PreservePoseFor(gameObject.ObjectIndex, skeleton);
+		if (skeleton == null) return;
+
+		this.Attachments.Invalidate(skeleton);
+		this.PreservePoseFor(gameObject.ObjectIndex, skeleton);
 	}
 	
 	// Module wrappers
@@ -163,6 +165,7 @@ public class PosingManager : IPosingManager {
 			this.PoseModule = null;
 			this.IkModule?.Dispose();
 			this.IkModule = null;
+			this.Attachments.Dispose();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to dispose posing manager:\n{err}");
 		}

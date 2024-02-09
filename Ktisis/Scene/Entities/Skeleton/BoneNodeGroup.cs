@@ -23,10 +23,10 @@ public class BoneNodeGroup : SkeletonGroup, IAttachTarget {
 	
 	// Attach
 	
-	public void AcceptAttach(IAttachable child) {
+	public bool TryAcceptAttach(IAttachable child) {
 		var target = this.GetIndividualBones()
 			.Where(bone => bone.Info.PartialIndex == 0)
 			.MinBy(bone => bone.Info.BoneIndex);
-		target?.AcceptAttach(child);
+		return target?.TryAcceptAttach(child) ?? false;
 	}
 }

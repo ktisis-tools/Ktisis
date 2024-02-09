@@ -198,7 +198,8 @@ public class SceneTree {
 		var cursor = initial;
 
 		this.DrawVisibilityButton(node, ref cursor, isHover);
-		this.DrawAttachButton(node, ref cursor, isHover);
+		if (node is IAttachable attach)
+			this.DrawAttachButton(attach, ref cursor, isHover);
 		
 		return initial - cursor;
 	}
@@ -217,11 +218,11 @@ public class SceneTree {
 			vis.Toggle();
 	}
 
-	private void DrawAttachButton(SceneEntity node, ref float cursor, bool isHover) {
-		if (node is not IAttachable attach || !attach.IsAttached()) return;
+	private void DrawAttachButton(IAttachable attach, ref float cursor, bool isHover) {
+		if (!attach.IsAttached()) return;
 		
 		if (this.DrawButton(ref cursor, FontAwesomeIcon.Link, 0xFFFFFFFF) && isHover)
-			attach.Detach();
+			this._ctx.Posing.Attachments.Detach(attach);
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
 
