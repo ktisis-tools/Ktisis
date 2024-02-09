@@ -44,9 +44,11 @@ public class TransformTable {
 
 	private bool IsUsed;
 	
+	public bool IsActive { get; private set; }
 	public bool IsDeactivated { get; private set; }
 
-	private Vector3 Angles;
+	private Vector3 Angles = Vector3.Zero;
+	private Quaternion Value = Quaternion.Identity;
 
 	private const Operation PositionOp = Operation.TRANSLATE;
 	private const Operation RotateOp = Operation.ROTATE;
@@ -56,7 +58,7 @@ public class TransformTable {
 	
 	// Draw UI
 
-	private static readonly Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
+	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
 
 	private static uint[] AxisColors = [
 		0xFF3553FF,
@@ -65,11 +67,15 @@ public class TransformTable {
 	];
 
 	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default) {
-		using var _id = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
+		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
+
+		if (!this.IsActive && !transIn.Rotation.Equals(this.Value)) {
+			this.Angles = HkaEulerAngles.ToEuler(transIn.Rotation);
+			this.Value = transIn.Rotation;
+		}
 		
-		if (!this.IsUsed)
-			this.Angles = transIn.Rotation.ToEulerAngles();
 		this.IsUsed = false;
+		this.IsActive = false;
 		this.IsDeactivated = false;
 
 		try {
@@ -92,7 +98,7 @@ public class TransformTable {
 	}
 
 	public bool DrawPosition(ref Vector3 position, TransformTableFlags flags = TransformTableFlags.Default) {
-		using var _id = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
+		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
 		this.IsUsed = false;
 		this.IsDeactivated = false;
 		try {
@@ -115,8 +121,11 @@ public class TransformTable {
 	}
 
 	private bool DrawRotate(ref Quaternion rot, bool op) {
-		var result = DrawEuler("##TransformTable_Rotate", ref this.Angles, out var delta);
-		if (result) rot *= delta.EulerAnglesToQuaternion();
+		var result = DrawEuler("##TransformTable_Rotate", ref this.Angles);
+		if (result) {
+			rot = HkaEulerAngles.ToQuaternion(this.Angles);
+			this.Value = rot;
+		}
 		if (op) this.DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, "transform.rotation");
 		return result;
 	}
@@ -160,16 +169,9 @@ public class TransformTable {
 		return used;
 	}
 
-	private bool DrawEuler(string id, ref Vector3 vec, out Vector3 delta) {
-		var result = vec;
-		delta = Vector3.Zero;
-		
-		var used = DrawXYZ(id, ref result, 0.2f);
-		if (used) {
-			delta = result - vec;
-			vec = result.NormalizeAngles();
-		}
-		
+	private bool DrawEuler(string id, ref Vector3 vec) {
+		var used = DrawXYZ(id, ref vec, 0.2f);
+		if (used) vec = vec.NormalizeAngles();
 		this.IsUsed |= used;
 		return used;
 	}
@@ -193,9 +195,10 @@ public class TransformTable {
 		ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, ImGui.GetStyle().FramePadding + new Vector2(0.1f, 0.1f));
 		ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 0.1f);
 		ImGui.PushStyleColor(ImGuiCol.Border, col);
-		var result = ImGui.DragFloat(id, ref value, speed, -360, 360, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
+		var result = ImGui.DragFloat(id, ref value, speed, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
 		ImGui.PopStyleColor();
 		ImGui.PopStyleVar(2);
+		this.IsActive |= ImGui.IsItemActive();
 		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit();
 		return result;
 	}

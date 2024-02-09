@@ -8,7 +8,6 @@ using GLib.Widgets;
 using ImGuiNET;
 
 using Ktisis.Common.Utility;
-using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Ik.TwoJoints;
 using Ktisis.Editor.Transforms.Types;
@@ -63,6 +62,7 @@ public class TransformWindow : KtisisWindow {
 		this.DrawToggles();
 
 		var target = this._ctx.Transform.Target;
+		
 		var transform = target?.GetTransform() ?? new Transform();
 
 		var disabled = target == null;

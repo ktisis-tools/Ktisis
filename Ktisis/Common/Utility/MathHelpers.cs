@@ -30,9 +30,6 @@ public static class MathHelpers {
 
 		return qZ * qY * qX;
 	}
-
-	public static Vector3 ToEulerAngles(this Quaternion q)
-		=> Quaternion.Normalize(q).ToEulerRad() * Rad2Deg;
 	
 	private static float NormalizeAngle(float angle) {
 		if (angle > 360f)
@@ -47,57 +44,4 @@ public static class MathHelpers {
 		NormalizeAngle(vec.Y),
 		NormalizeAngle(vec.Z)
 	);
-	
-	private static Vector3 ToEulerRad(this Quaternion q) {
-		var unit = Quaternion.Dot(q, q);
-		var test = q.X * q.W - q.Y * q.Z;
-		Vector3 v;
-
-		if (test > 0.4995f * unit) {
-			v.Y = 2.0f * MathF.Atan2(q.Y, q.X);
-			v.X = MathF.PI / 2.0f;
-			v.Z = 0.0f;
-			MakePositive(ref v);
-			return v;
-		}
-
-		if (test < -0.4995f * unit) {
-			v.Y = -2.0f * MathF.Atan2(q.Y, q.X);
-			v.X = -MathF.PI / 2.0f;
-			v.Z = 0.0f;
-			MakePositive(ref v);
-			return v;
-		}
-
-		var tmp = new Quaternion(q.W, q.Z, q.X, q.Y);
-		v.Y = MathF.Atan2(2.0f * tmp.X * tmp.W + 2.0f * tmp.Y * tmp.Z, 1.0f - 2.0f * (tmp.Z * tmp.Z + tmp.W * tmp.W));
-		v.X = MathF.Asin(2.0f * (tmp.X * tmp.Z - tmp.W * tmp.Y));
-		v.Z = MathF.Atan2(2.0f * tmp.X * tmp.Y + 2.0f * tmp.Z * tmp.W, 1.0f - 2.0f * (tmp.Y * tmp.Y + tmp.Z * tmp.Z));
-		MakePositive(ref v);
-		return v;
-	}
-
-	private static void MakePositive(ref Vector3 euler) {
-		const float t = MathF.PI * 2.0f;
-		const float negativeFlip = -0.0001f;
-		const float positiveFlip = t - 0.0001f;
-
-		if (euler.X < negativeFlip)
-			euler.X += t;
-		else if (euler.X > positiveFlip)
-			euler.X -= t;
-
-		if (euler.Y < negativeFlip)
-			euler.Y += t;
-		else if (euler.Y > positiveFlip)
-			euler.Y -= t;
-
-		if (euler.Z < negativeFlip)
-			euler.Z += t;
-		else if (euler.Z > positiveFlip)
-			euler.Z -= t;
-	}
-	
-	public static float Lerp(this float a, float b, float t)
-		=> a * (1 - t) + b * t;
 }
