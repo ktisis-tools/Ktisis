@@ -12,7 +12,7 @@ public enum DisplayMode {
 	Icon
 }
 
-public class EntityDisplay {
+public record EntityDisplay {
 	public uint Color;
 	public FontAwesomeIcon Icon;
 	public DisplayMode Mode;

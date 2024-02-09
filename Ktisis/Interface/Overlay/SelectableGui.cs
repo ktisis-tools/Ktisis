@@ -70,7 +70,7 @@ public class SelectableGui {
 
 		var isHovering = false;
 		foreach (var item in items) {
-			var display = this.Config.Editor.GetDisplayForType(item.Entity.Type);
+			var display = this.Config.GetEntityDisplay(item.Entity);
 
 			var isSelect = item.Entity.IsSelected;
 			item.IsHovered = display.Mode switch {

@@ -42,8 +42,8 @@ public class SceneDragDropHandler {
 		ImGui.SetDragDropPayload(PayloadId, nint.Zero, 0);
 
 		this.Source = entity;
-
-		var display = this._ctx.Config.Editor.GetDisplayForType(entity.Type);
+		
+		var display = this._ctx.Config.GetEntityDisplay(entity);
 		using var color = ImRaii.PushColor(ImGuiCol.Text, display.Color);
 
 		var icon = display.Icon;

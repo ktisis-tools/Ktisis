@@ -135,7 +135,7 @@ public class SceneTree {
 	}
 
 	private bool DrawNodeLabel(SceneEntity item, Vector2 pos, TreeNodeFlag flag, float rightAdjust = 0.0f) {
-		var display = this._ctx.Config.Editor.GetDisplayForType(item.Type);
+		var display = this._ctx.Config.GetEntityDisplay(item);
         
         // Caret
 
