@@ -7,11 +7,10 @@ using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
 using Ktisis.Structs.Animation;
 using Ktisis.Structs.Attachment;
-using Ktisis.Structs.Characters;
 
-namespace Ktisis.Editor.Transforms;
+namespace Ktisis.Editor.Attachment;
 
-public static class AttachUtil {
+public static class AttachUtility {
 	public unsafe static void SetBoneAttachment(Skeleton* parent, Skeleton* child, Attach* attach, ushort parentBoneId, ushort childBoneId = 0) {
 		if (parent == child)
 			throw new Exception("Attempting to parent attachment point to itself.");

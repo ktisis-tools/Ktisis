@@ -1,6 +1,7 @@
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Attachment;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;
@@ -73,7 +74,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 		var parentPose = parentSkele->PartialSkeletons[0].GetHavokPose(0);
 		if (parentPose == null || parentPose->Skeleton == null) return null;
 
-		if (!AttachUtil.TryGetParentBoneIndex(attach, out var parentId)) return null;
+		if (!AttachUtility.TryGetParentBoneIndex(attach, out var parentId)) return null;
 		
 		var skeleton = parentPose->Skeleton;
 		return new PartialBoneInfo {
@@ -86,7 +87,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 
 	public unsafe virtual void Detach() {
 		var attach = this.GetAttach();
-		if (attach != null) AttachUtil.Detach(attach);
+		if (attach != null) AttachUtility.Detach(attach);
 	}
 	
 	// Transform
@@ -95,7 +96,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 		var attach = this.GetAttach();
 		if (attach != null && attach->IsActive()) {
 			var source = this.GetTransform()!;
-			AttachUtil.SetTransformRelative(attach, trans, source);
+			AttachUtility.SetTransformRelative(attach, trans, source);
 			if (source.Scale == trans.Scale) return;
 			source.Scale = trans.Scale;
 			base.SetTransform(source);
