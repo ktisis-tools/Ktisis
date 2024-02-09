@@ -103,6 +103,36 @@ public static class HavokPosing {
 		}
 	}
 	
+	// Parenting
+	
+	public unsafe static Quaternion ParentSkeleton(
+		Skeleton* modelSkeleton,
+		int partialIndex
+	) {
+		var partial = modelSkeleton->PartialSkeletons[partialIndex];
+		var pose = partial.GetHavokPose(0);
+		if (pose == null) return Quaternion.Identity;
+		
+		var rootPartial = modelSkeleton->PartialSkeletons[0];
+		var rootPose = rootPartial.GetHavokPose(0);
+		if (rootPose == null) return Quaternion.Identity;
+
+		var initial = GetModelTransform(pose, partial.ConnectedBoneIndex)!;
+		var target = GetModelTransform(rootPose, partial.ConnectedParentBoneIndex)!;
+		
+		var deltaRot = target.Rotation / initial.Rotation;
+
+		var step1 = new Transform(target.Position, initial.Rotation, initial.Scale);
+		SetModelTransform(pose, partial.ConnectedBoneIndex, step1);
+		Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step1, initial);
+
+		var step2 = new Transform(target.Position, deltaRot * initial.Rotation, target.Scale);
+		SetModelTransform(pose, partial.ConnectedBoneIndex, step2);
+		Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step2, step1);
+		
+		return deltaRot;
+	}
+	
 	// Lookup
 
 	public unsafe static short TryGetBoneNameIndex(hkaPose* pose, string? name) {

@@ -128,7 +128,7 @@ public class PoseContainer : Dictionary<string, Transform> {
 		// Parent root of partial skeleton & calculate rotation delta
 		var offset = Quaternion.Identity;
 		if (partialIndex > 0) {
-			var delta = this.ParentSkeleton(modelSkeleton, partialIndex);
+			var delta = HavokPosing.ParentSkeleton(modelSkeleton, partialIndex);
 			
 			var rootIx = partial.ConnectedBoneIndex;
 			var rotation = pose->ModelPose[rootIx].Rotation.ToQuaternion();
@@ -176,33 +176,5 @@ public class PoseContainer : Dictionary<string, Transform> {
 		
 		HavokPosing.SetModelTransform(pose, boneIndex, target);
 		HavokPosing.Propagate(modelSkeleton, partialIndex, boneIndex, target, initial);
-	}
-
-	private unsafe Quaternion ParentSkeleton(
-		Skeleton* modelSkeleton,
-		int partialIndex
-	) {
-		var partial = modelSkeleton->PartialSkeletons[partialIndex];
-		var pose = partial.GetHavokPose(0);
-		if (pose == null) return Quaternion.Identity;
-		
-		var rootPartial = modelSkeleton->PartialSkeletons[0];
-		var rootPose = rootPartial.GetHavokPose(0);
-		if (rootPose == null) return Quaternion.Identity;
-
-		var initial = HavokPosing.GetModelTransform(pose, partial.ConnectedBoneIndex)!;
-		var target = HavokPosing.GetModelTransform(rootPose, partial.ConnectedParentBoneIndex)!;
-		
-		var deltaRot = target.Rotation / initial.Rotation;
-
-		var step1 = new Transform(target.Position, initial.Rotation, initial.Scale);
-		HavokPosing.SetModelTransform(pose, partial.ConnectedBoneIndex, step1);
-		HavokPosing.Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step1, initial);
-
-		var step2 = new Transform(target.Position, deltaRot * initial.Rotation, target.Scale);
-		HavokPosing.SetModelTransform(pose, partial.ConnectedBoneIndex, step2);
-		HavokPosing.Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step2, step1);
-		
-		return deltaRot;
 	}
 }
