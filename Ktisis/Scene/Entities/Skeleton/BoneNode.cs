@@ -3,8 +3,8 @@ using System.Numerics;
 using FFXIVClientStructs.Havok;
 
 using Ktisis.Common.Utility;
-using Ktisis.Editor.Attachment;
 using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;

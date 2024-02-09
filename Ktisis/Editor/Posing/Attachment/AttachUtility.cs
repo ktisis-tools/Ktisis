@@ -4,11 +4,10 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Common.Utility;
-using Ktisis.Editor.Posing;
 using Ktisis.Structs.Animation;
 using Ktisis.Structs.Attachment;
 
-namespace Ktisis.Editor.Attachment;
+namespace Ktisis.Editor.Posing.Attachment;
 
 public static class AttachUtility {
 	public unsafe static void SetBoneAttachment(Skeleton* parent, Skeleton* child, Attach* attach, ushort parentBoneId, ushort childBoneId = 0) {
