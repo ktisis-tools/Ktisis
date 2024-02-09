@@ -107,7 +107,9 @@ public class SceneEntityMenuBuilder {
 	private void BuildPoseMenu(ContextMenuBuilder menu, EntityPose pose) {
 		menu.Separator()
 			.Action("Import pose", () => this.ImportPose(pose))
-			.Action("Export pose", () => this.ExportPose(pose));
+			.Action("Export pose", () => this.ExportPose(pose))
+			.Separator()
+			.Action("Set to reference pose", () => this._ctx.Posing.ApplyReferencePose(pose));
 	}
 
 	private void ImportPose(EntityPose pose) {

@@ -84,9 +84,7 @@ public class PosingManager : IPosingManager {
 	
 	// Reference pose
 	
-	public Task ApplyReferencePose(
-		EntityPose pose
-	) {
+	public Task ApplyReferencePose(EntityPose pose) {
 		return this._framework.RunOnFrameworkThread(() => {
 			var converter = new EntityPoseConverter(pose);
 			var initial = converter.Save();

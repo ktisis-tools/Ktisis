@@ -25,6 +25,8 @@ public interface IPosingManager : IDisposable {
 	public unsafe void PreservePoseFor(GameObject gameObject, Skeleton* skeleton);
 	public unsafe void RestorePoseFor(GameObject gameObject, Skeleton* skeleton, ushort partialId);
 
+	public Task ApplyReferencePose(EntityPose pose);
+
 	public Task ApplyPoseFile(EntityPose pose, PoseFile file, PoseTransforms transforms = PoseTransforms.Rotation, bool selectedBones = false);
 	public Task<PoseFile> SavePoseFile(EntityPose pose);
 }
