@@ -54,7 +54,7 @@ public class MigratorWindow : KtisisWindow {
 		
 		Icons.DrawIcon(FontAwesomeIcon.ExclamationCircle);
 		ImGui.SameLine();
-		ImGui.Text("You are about to install a development version of Ktisis.");
+		ImGui.Text("You have installed a development version of Ktisis.");
 		
 		ImGui.Spacing();
 		
@@ -84,7 +84,6 @@ public class MigratorWindow : KtisisWindow {
 			"	• Editing spawned weapons and props\n" +
 			"	• Equipment model manipulation\n" +
 			"	• Importing and exporting light presets\n" +
-			"	• Inverse kinematics\n" +
 			"	• Animation controls\n" +
 			"	• Copy & paste\n"
 		);
@@ -96,7 +95,7 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Text("Character appearance edits may also conflict with changes made by Glamourer.");
 		ImGui.Text("I hope to discuss with its developer about implementing an IPC to resolve this.");
 		ImGui.Spacing();
-		ImGui.Text("Configuration options for the overlay, keybinds and bone categories will also be implemented during testing.");
+		ImGui.Text("Many configuration options will also be missing, which will be added during the testing period.");
 		ImGui.Text("Your current configuration will not be carried over into this version.");
 		
 		ImGui.Spacing();
