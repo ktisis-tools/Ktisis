@@ -193,6 +193,8 @@ public class TransformWindow : KtisisWindow {
 		
 		var cfg = this._ctx.Config.Gizmo;
 		ImGui.Checkbox("Bone parenting", ref cfg.ParentBones);
+		ImGui.Spacing();
+		ImGui.Checkbox("Relative rotation", ref cfg.RelativeBones);
 	}
 	
 	// IK Setup

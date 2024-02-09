@@ -92,12 +92,19 @@ public class TransformTarget : ITransformTarget {
 				if (hkaPose == null) continue;
 
 				foreach (var bone in boneList.Where(bone => bone.IsValid))
-					this.TransformBone(transform, delta, skeleton, hkaPose, bone);
+					this.TransformBone(transform, initial, delta, skeleton, hkaPose, bone);
 			}
 		}
 	}
 
-	private unsafe void TransformBone(Transform transform, Transform delta, Skeleton* skeleton, hkaPose* hkaPose, BoneNode bone) {
+	private unsafe void TransformBone(
+		Transform transform,
+		Transform initial,
+		Transform delta,
+		Skeleton* skeleton,
+		hkaPose* hkaPose,
+		BoneNode bone
+	) {
 		var bIndex = bone.Info.BoneIndex;
 		var boneTrans = bone.GetTransform();
 		if (boneTrans == null) return;
@@ -122,18 +129,26 @@ public class TransformTarget : ITransformTarget {
 				deltaPos = delta.Position;
 			}
 
+			Quaternion rotation;
+			if (this.Setup.RelativeBones) {
+				var linkDelta = boneTrans.Rotation / initial.Rotation;
+				rotation = linkDelta * deltaRot * initial.Rotation;
+			} else {
+				rotation = deltaRot * boneTrans.Rotation;
+			}
+
 			var scale = Matrix4x4.CreateScale(newScale);
-			var rot = Matrix4x4.CreateFromQuaternion(deltaRot * boneTrans.Rotation);
+			var rot = Matrix4x4.CreateFromQuaternion(rotation);
 			var pos = Matrix4x4.CreateTranslation(boneTrans.Position + deltaPos);
 			newMx = scale * rot * pos;
 		}
 		
-		var initial = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
+		var bInitial = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
 		bone.SetMatrix(newMx);
 
 		if (!this.Setup.ParentBones) return;
 
 		var final = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
-		HavokPosing.Propagate(skeleton, bone.Info.PartialIndex, bone.Info.BoneIndex, final, initial);
+		HavokPosing.Propagate(skeleton, bone.Info.PartialIndex, bone.Info.BoneIndex, final, bInitial);
 	}
 }
