@@ -122,8 +122,12 @@ public class EditorInterface : IEditorInterface {
 	public void OpenCharaFile(Action<string, CharaFile> handler)
 		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions);
 
-	public void OpenPoseFile(Action<string, PoseFile> handler)
-		=> this._gui.FileDialogs.OpenFile("Open Pose File", handler, PoseFileOptions);
+	public void OpenPoseFile(Action<string, PoseFile> handler) {
+		this._gui.FileDialogs.OpenFile<PoseFile>("Open Pose File", (path, file) => {
+			file.ConvertLegacyBones();
+			handler.Invoke(path, file);
+		}, PoseFileOptions);
+	}
 
 	public void ExportCharaFile(CharaFile file)
 		=> this._gui.FileDialogs.SaveFile("Export Chara File", file, CharaFileOptions);
