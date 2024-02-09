@@ -133,6 +133,31 @@ public static class HavokPosing {
 		return deltaRot;
 	}
 	
+	// Base havok utilities
+
+	public unsafe static void SyncModelSpace(Skeleton* skeleton, int partialIndex) {
+		if (skeleton == null || skeleton->PartialSkeletons == null) return;
+
+		var partial = skeleton->PartialSkeletons[partialIndex];
+		var pose = partial.GetHavokPose(0);
+		if (pose == null || pose->Skeleton == null) return;
+		
+		for (var i = 1; i < pose->Skeleton->Bones.Length; i++) {
+			var parent = GetModelTransform(pose, pose->Skeleton->ParentIndices[i]);
+			if (parent == null) continue;
+
+			var local = GetLocalTransform(pose, i)!;
+			var model = GetModelTransform(pose, i)!;
+
+			model.Position = parent.Position + Vector3.Transform(local.Position, parent.Rotation);
+			model.Rotation = parent.Rotation * local.Rotation;
+			SetModelTransform(pose, i, model);
+		}
+		
+		if (partialIndex > 0)
+			ParentSkeleton(skeleton, partialIndex);
+	}
+	
 	// Lookup
 
 	public unsafe static short TryGetBoneNameIndex(hkaPose* pose, string? name) {
