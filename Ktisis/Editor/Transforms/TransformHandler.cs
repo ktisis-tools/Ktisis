@@ -27,10 +27,6 @@ public class TransformHandler : ITransformHandler {
 		select.Changed += this.OnSelectionChanged;
 	}
 	
-	// Options
-
-	public bool IsMirrored => this._context.Config.Gizmo.MirrorRotation;
-	
 	// Transform target
 	
 	public ITransformTarget? Target { get; private set; }
@@ -51,13 +47,14 @@ public class TransformHandler : ITransformHandler {
 		var target = selectTargets.FirstOrDefault();
 		if (target is BoneNode)
 			target = TransformResolver.GetPoseTarget(selectTargets);
-
-		this.Target = new TransformTarget(this, target, selectTargets);
+		
+		this.Target = new TransformTarget(target, selectTargets);
 	}
 	
 	// Transformation
 
 	public ITransformMemento Begin(ITransformTarget target) {
+		target.Setup.Configure(this._context.Config.Gizmo);
 		return new TransformMemento(
 			this,
 			target
@@ -68,6 +65,8 @@ public class TransformHandler : ITransformHandler {
 		private readonly TransformHandler _handler;
 
 		private readonly ITransformTarget Target;
+
+		private TransformSetup Setup = new();
 
 		private Transform? Initial;
 		private Transform? Final;
@@ -82,6 +81,7 @@ public class TransformHandler : ITransformHandler {
 
 		public ITransformMemento Save() {
 			this.Initial = this.Target.GetTransform();
+			this.Setup = this.Target.Setup with {};
 			return this;
 		}
 
@@ -91,12 +91,17 @@ public class TransformHandler : ITransformHandler {
 
 		public void Restore() {
 			if (this.Initial != null)
-				this.Target.SetTransform(this.Initial);
+				this.ApplyState(this.Initial);
 		}
 
 		public void Apply() {
 			if (this.Final != null)
-				this.Target.SetTransform(this.Final);
+				this.ApplyState(this.Final);
+		}
+
+		private void ApplyState(Transform transform) {
+			this.Target.Setup = this.Setup with {};
+			this.Target.SetTransform(transform);
 		}
 
 		private bool IsDispatch;

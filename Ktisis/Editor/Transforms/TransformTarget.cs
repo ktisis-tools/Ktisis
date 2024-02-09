@@ -15,19 +15,17 @@ using Ktisis.Editor.Transforms.Types;
 namespace Ktisis.Editor.Transforms;
 
 public class TransformTarget : ITransformTarget {
-	private readonly TransformHandler _handler;
-	
 	public SceneEntity? Primary { get; }
 	public IEnumerable<SceneEntity> Targets { get; }
+
+	public TransformSetup Setup { get; set; } = new();
 
 	private readonly Dictionary<EntityPose, Dictionary<int, List<BoneNode>>> PoseMap;
 
 	public TransformTarget(
-		TransformHandler handler,
 		SceneEntity? primary,
 		IEnumerable<SceneEntity> targets
 	) {
-		this._handler = handler;
 		targets = targets.ToList();
 		this.Primary = primary;
 		this.Targets = targets;
@@ -54,7 +52,7 @@ public class TransformTarget : ITransformTarget {
 			deltaMx = initialInverse * transform.ComposeMatrix();
 		else return;
 
-		if (this._handler.IsMirrored)
+		if (this.Setup.MirrorRotation)
 			Matrix4x4.Invert(deltaMx, out deltaMx);
 
 		foreach (var entity in this.Targets.Where(tar => tar is { IsValid: true } and not BoneNode)) {
@@ -104,7 +102,7 @@ public class TransformTarget : ITransformTarget {
 		var boneTrans = bone.GetTransform();
 		if (boneTrans == null) return;
 
-		var mirror = this._handler.IsMirrored;
+		var mirror = this.Setup.MirrorRotation;
 		if (mirror && this.Primary is BoneNodeGroup group)
 			mirror &= !bone.IsChildOf(group);
 
