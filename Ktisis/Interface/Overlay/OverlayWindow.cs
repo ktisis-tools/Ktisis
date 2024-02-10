@@ -56,23 +56,26 @@ public class OverlayWindow : KtisisWindow {
 		//var t = new Stopwatch();
 		//t.Start();
 		
-		this._sceneDraw.DrawScene();
-		if (this._ctx.Config.Gizmo.Visible)
-			this.DrawGizmo();
+		var gizmo = this.DrawGizmo();
+		this._sceneDraw.DrawScene(gizmo: gizmo);
 		
 		//t.Stop();
 		//this.DrawDebug(t);
 	}
 
-	private void DrawGizmo() {
+	private bool DrawGizmo() {
+		if (!this._ctx.Config.Gizmo.Visible)
+			return false;
+		
 		var target = this._ctx.Transform.Target;
 		var transform = target?.GetTransform();
-		if (target == null || transform == null) return;
+		if (target == null || transform == null)
+			return false;
 		
 		var view = this._camera.GetViewMatrix();
 		var proj = this._camera.GetProjectionMatrix();
 		if (view == null || proj == null || this.Size == null)
-			return;
+			return false;
 
 		var size = this.Size.Value;
 		this._gizmo.SetMatrix(view.Value, proj.Value);
@@ -94,6 +97,8 @@ public class OverlayWindow : KtisisWindow {
 			this.Transform?.Dispatch();
 			this.Transform = null;
 		}
+
+		return true;
 	}
 
 	private void DrawDebug(Stopwatch t) {

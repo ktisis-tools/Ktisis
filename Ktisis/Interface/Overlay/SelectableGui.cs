@@ -58,7 +58,11 @@ public class SelectableGui {
 
 	private int ScrollIndex;
 
-	public bool Draw(ISelectableFrame frame, out SceneEntity? clicked) {
+	public bool Draw(
+		ISelectableFrame frame,
+		out SceneEntity? clicked,
+		bool gizmo
+	) {
 		clicked = null;
 
 		if (!this.Config.Overlay.DrawDotsGizmo && ImGuizmo.Gizmo.IsUsing)
@@ -84,12 +88,16 @@ public class SelectableGui {
 
 		if (!isHovering) return false;
 		items.RemoveAll(item => !item.IsHovered);
-		return this.DrawSelectWindow(items, out clicked);
+		return this.DrawSelectWindow(items, out clicked, gizmo);
 	}
 
-	private bool DrawSelectWindow(IReadOnlyList<IItemSelect> items, out SceneEntity? clicked) {
+	private bool DrawSelectWindow(
+		IReadOnlyList<IItemSelect> items,
+		out SceneEntity? clicked,
+		bool gizmo
+	) {
 		clicked = null;
-		if (ImGuizmo.Gizmo.IsUsing || ImGuizmo.Gizmo.IsOver || items.Count == 0)
+		if (items.Count == 0 || (gizmo && (ImGuizmo.Gizmo.IsUsing || ImGuizmo.Gizmo.IsOver)))
 			return false;
 
 		var begin = false;

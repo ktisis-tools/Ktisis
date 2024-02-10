@@ -34,10 +34,10 @@ public class SceneDraw {
 
 	public void SetContext(IEditorContext ctx) => this._ctx = ctx;
 	
-	public void DrawScene() {
+	public void DrawScene(bool gizmo = false) {
 		var frame = this._select.BeginFrame();
 		this.DrawEntities(frame, this._ctx.Scene.Children);
-		this.DrawSelect(frame);
+		this.DrawSelect(frame, gizmo);
 	}
 	
 	private void DrawEntities(ISelectableFrame frame, IEnumerable<SceneEntity> entities) {
@@ -108,8 +108,8 @@ public class SceneDraw {
 		drawList.AddLine(fromPos2d, toPos2d, 0xFFFFFFFF.SetAlpha(opacity), this.Config.LineThickness);
 	}
 	
-	private void DrawSelect(ISelectableFrame frame) {
-		var result = this._select.Draw(frame, out var clicked);
+	private void DrawSelect(ISelectableFrame frame, bool gizmo) {
+		var result = this._select.Draw(frame, out var clicked, gizmo);
 		if (!result || clicked == null) return;
 		var mode = GuiHelpers.GetSelectMode();
 		this._ctx.Selection.Select(clicked, mode);

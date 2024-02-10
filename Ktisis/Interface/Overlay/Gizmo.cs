@@ -55,22 +55,17 @@ public class Gizmo : IGizmo {
 	// State
 
 	private bool IsUsedPrev;
-
 	private bool HasDrawn;
-	private bool HasMoved;
 
 	private Matrix4x4 ViewMatrix = Matrix4x4.Identity;
 	private Matrix4x4 ProjMatrix = Matrix4x4.Identity;
-
-	private Matrix4x4 ResultMatrix = Matrix4x4.Identity;
-	private Matrix4x4 DeltaMatrix = Matrix4x4.Identity;
 
 	public Mode Mode { get; set; } = Mode.Local;
 	public Operation Operation { get; set; } = Operation.UNIVERSAL;
 
 	public bool AllowAxisFlip { get; set; } = true;
 
-	public bool IsEnded { get; private set; } = false;
+	public bool IsEnded { get; private set; }
 	
 	// Draw
 
@@ -81,7 +76,6 @@ public class Gizmo : IGizmo {
 
 	public void BeginFrame(Vector2 pos, Vector2 size) {
 		this.HasDrawn = false;
-		this.HasMoved = false;
 
 		ImGuizmo.Gizmo.SetDrawRect(pos.X, pos.Y, size.X, size.Y);
 
@@ -113,7 +107,7 @@ public class Gizmo : IGizmo {
 		);
 
 		this.HasDrawn = true;
-		return this.HasMoved = result;
+		return result;
 	}
 
 	public void EndFrame() {
