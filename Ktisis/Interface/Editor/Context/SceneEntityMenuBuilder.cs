@@ -1,5 +1,6 @@
 ﻿using GLib.Popups.Context;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
@@ -75,6 +76,8 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
+			.Action("Target", actor.Actor.SetGPoseTarget)
+			.Separator()
 			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Action("Edit appearance", this.OpenEditor)
 			.Separator()

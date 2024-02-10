@@ -4,6 +4,7 @@ using System.Text;
 using Dalamud.Utility;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
@@ -62,5 +63,14 @@ public static class GameObjectEx {
 			charaPtr->TargetableStatus |= ObjectTargetableFlags.IsTargetable;
 		else
 			charaPtr->TargetableStatus &= ~ObjectTargetableFlags.IsTargetable;
+	}
+
+	public unsafe static void SetGPoseTarget(this GameObject gameObject) {
+		if (!gameObject.IsValid()) return;
+
+		var target = TargetSystem.Instance();
+		if (target == null || target->GPoseTarget == null) return;
+
+		target->GPoseTarget = (CSGameObject*)gameObject.Address;
 	}
 }
