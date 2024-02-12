@@ -10,6 +10,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Structs.Characters;
 
 namespace Ktisis.Interface.Windows.Editors;
 
@@ -71,7 +72,50 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		ImGui.Spacing();
 		
 		var modelId = (int)this._editCustom.GetModelId();
-		if (ImGui.InputInt("Model ID", ref modelId))
+		if (ImGui.InputInt("Misc", ref modelId))
 			this._editCustom.SetModelId((uint)modelId);
+		
+		ImGui.Spacing();
+		ImGui.Spacing();
+
+		this.DrawWetness();
+	}
+	
+	// Wetness
+
+	private void DrawWetness() {
+		var isWetActive = this.Target.Appearance.Wetness != null;
+		if (ImGui.Checkbox("Wetness Override", ref isWetActive))
+			this.ToggleWetness();
+
+		var wetness = this.GetWetness();
+		if (wetness == null) return;
+		
+		using var _ = ImRaii.Disabled(!isWetActive);
+		ImGui.Spacing();
+
+		var changed = false;
+		var values = (WetnessState)wetness;
+		changed |= ImGui.SliderFloat("Weather Wetness", ref values.WeatherWetness, 0.0f, 1.0f);
+		changed |= ImGui.SliderFloat("Swimming Wetness", ref values.SwimmingWetness, 0.0f, 1.0f);
+		changed |= ImGui.SliderFloat("Wetness Depth", ref values.WetnessDepth, 0.0f, 3.0f);
+		if (changed) this.Target.Appearance.Wetness = values;
+	}
+
+	private unsafe WetnessState? GetWetness() {
+		if (this.Target.Appearance.Wetness is {} value)
+			return value;
+		var chara = this.Target.CharacterBaseEx;
+		return chara != null ? chara->Wetness : null;
+	}
+
+	private unsafe void ToggleWetness() {
+		var state = this.Target.Appearance;
+		if (state.Wetness != null) {
+			state.Wetness = null;
+		} else {
+			var chara = this.Target.CharacterBaseEx;
+			state.Wetness = chara != null ? chara->Wetness : null;
+		}
 	}
 }

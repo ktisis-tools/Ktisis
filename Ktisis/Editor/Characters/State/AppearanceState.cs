@@ -1,3 +1,5 @@
+using Ktisis.Structs.Characters;
+
 namespace Ktisis.Editor.Characters.State;
 
 public class AppearanceState {
@@ -18,4 +20,8 @@ public class AppearanceState {
 
 	public EquipmentToggle VisorToggled { get; set; } = EquipmentToggle.None;
 	public bool CheckVisorToggled(bool toggled) => this.VisorToggled != EquipmentToggle.None ? this.VisorToggled == EquipmentToggle.On : toggled;
+	
+	// Miscellaneous
+
+	public WetnessState? Wetness { get; set; }
 }

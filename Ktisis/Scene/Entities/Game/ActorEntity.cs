@@ -39,9 +39,14 @@ public class ActorEntity : CharaEntity, IDeletable {
 	}
 
 	private unsafe void UpdateChara() {
-		var address = (nint)this.GetCharacter();
+		var chara = this.CharacterBaseEx;
+		
+		var address = (nint)chara;
 		if (this.Address != address)
 			this.Address = address;
+
+		if (chara != null && this.Appearance.Wetness is { } wetness)
+			chara->Wetness = wetness;
 	}
 	
 	// Appearance
