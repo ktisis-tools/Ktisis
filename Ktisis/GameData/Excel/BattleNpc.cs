@@ -1,16 +1,17 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
-using Ktisis.Common.Extensions;
-using Ktisis.Structs.Characters;
-
 using Lumina.Data;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets2;
 
+using Ktisis.Common.Extensions;
+using Ktisis.GameData.Excel.Types;
+using Ktisis.Structs.Characters;
+
 namespace Ktisis.GameData.Excel;
 
 [Sheet("BNpcBase", columnHash: 0xe136dda3)]
-public class BattleNpc : ExcelRow {
+public class BattleNpc : ExcelRow, INpcBase {
 	public float Scale { get; set; }
 	
 	private LazyRow<ModelChara> ModelChara { get; set; } = null!;

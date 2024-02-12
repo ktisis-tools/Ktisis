@@ -1,10 +1,9 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
-using Ktisis.Common.Extensions;
-
 using Lumina.Data;
 using Lumina.Excel;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.GameData.Excel;
