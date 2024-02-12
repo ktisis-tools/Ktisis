@@ -71,6 +71,10 @@ public class CharaFile : JsonFile {
 	public ItemSave? LeftRing { get; set; }
 	public ItemSave? RightRing { get; set; }
 	
+	public Vector3? BustScale { get; set; }
+	public float? Transparency { get; set; }
+	public float? HeightMultiplier { get; set; }
+	
 	// Weapon data
 	
 	[Serializable]

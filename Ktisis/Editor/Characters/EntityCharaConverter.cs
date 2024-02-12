@@ -9,6 +9,7 @@ using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Structs.Actors;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters;
@@ -29,27 +30,29 @@ public enum SaveModes {
 }
 
 public class EntityCharaConverter {
-	private readonly string Name;
+	private readonly ActorEntity _entity;
 	private readonly ICustomizeEditor _custom;
 	private readonly IEquipmentEditor _equip;
 	
 	public EntityCharaConverter(
-		ActorEntity actor
+		ActorEntity entity
 	) {
-		this.Name = actor.Name;
-		this._custom = new CustomizeEditor(actor);
-		this._equip = new EquipmentEditor(actor);
+		this._entity = entity;
+		this._custom = new CustomizeEditor(entity);
+		this._equip = new EquipmentEditor(entity);
 	}
 
 	public void Apply(CharaFile file, SaveModes modes = SaveModes.All) {
 		this.ApplyEquipment(file, modes);
 		this.PrepareCustomize(file, modes).Apply();
+		this.ApplyMisc(file);
 	}
 
 	public CharaFile Save() {
-		var file = new CharaFile { Nickname = this.Name };
+		var file = new CharaFile { Nickname = this._entity.Name };
 		this.WriteCustomize(file);
 		this.WriteEquipment(file);
+		this.WriteMisc(file);
 		return file;
 	}
 	
@@ -178,6 +181,16 @@ public class EntityCharaConverter {
 		};
 	}
 	
+	// Misc loading
+
+	private unsafe void ApplyMisc(CharaFile file) {
+		var chara = this._entity.Character;
+		if (chara == null) return;
+
+		if (file.Transparency is float opacity)
+			((CharacterEx*)chara)->Opacity = opacity;
+	}
+	
 	// Customize saving
 
 	private void WriteCustomize(CharaFile file) {
@@ -239,5 +252,15 @@ public class EntityCharaConverter {
 	private CharaFile.ItemSave SaveItem(EquipIndex index) {
 		var model = this._equip.GetEquipIndex(index);
 		return new CharaFile.ItemSave(model);
+	}
+	
+	// Misc saving
+
+	private unsafe void WriteMisc(CharaFile file) {
+		var chara = this._entity.Character;
+		if (chara == null) return;
+		
+		file.Transparency = ((CharacterEx*)chara)->Opacity;
+		file.HeightMultiplier = chara->GameObject.Height;
 	}
 }

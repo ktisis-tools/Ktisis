@@ -10,6 +10,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Structs.Actors;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Interface.Windows.Editors;
@@ -58,7 +59,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
 		DrawTab("Appearance", this._custom.Draw);
 		DrawTab("Equipment", this._equip.Draw);
-		DrawTab("Advanced", this.DrawAdvanced);
+		DrawTab("Advanced", this.DrawMisc);
 	}
 
 	private static void DrawTab(string name, Action draw) {
@@ -68,12 +69,18 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	
 	// Advanced tab
 
-	private void DrawAdvanced() {
+	private unsafe void DrawMisc() {
 		ImGui.Spacing();
 		
 		var modelId = (int)this._editCustom.GetModelId();
-		if (ImGui.InputInt("Misc", ref modelId))
+		if (ImGui.InputInt("Model ID", ref modelId))
 			this._editCustom.SetModelId((uint)modelId);
+
+		var chara = (CharacterEx*)this.Target.Character;
+		if (chara != null) {
+			ImGui.Spacing();
+			ImGui.SliderFloat("Opacity", ref chara->Opacity, 0.0f, 1.0f);
+		}
 		
 		ImGui.Spacing();
 		ImGui.Spacing();
