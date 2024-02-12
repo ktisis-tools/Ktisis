@@ -5,6 +5,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Interop;
 
@@ -94,12 +95,11 @@ public static class HavokPosing {
 			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx))
 				continue;
 			
-			var matrix = GetMatrix(pose, i);
-			var offset = matrix.Translation - sourcePos;
-			offset = Vector3.Transform(offset, deltaRot);
-			matrix *= Matrix4x4.CreateFromQuaternion(deltaRot);
-			matrix.Translation = deltaPos + sourcePos + offset;
-			SetMatrix(pose, i, matrix);
+			var trans = GetModelTransform(pose, i)!;
+			var scm = Matrix4x4.CreateScale(trans.Scale);
+			var rtm = Matrix4x4.CreateFromQuaternion(deltaRot * trans.Rotation);
+			var trm = Matrix4x4.CreateTranslation(deltaPos + sourcePos + Vector3.Transform(trans.Position - sourcePos, deltaRot));
+			SetMatrix(pose, i, scm * rtm * trm);
 		}
 	}
 	
