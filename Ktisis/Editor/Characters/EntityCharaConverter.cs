@@ -97,7 +97,8 @@ public class EntityCharaConverter {
 				.SetIfNotNull(CustomizeIndex.SkinColor, file.Skintone)
 				.SetIfNotNull(CustomizeIndex.RaceFeatureSize, file.EarMuscleTailSize)
 				.SetIfNotNull(CustomizeIndex.RaceFeatureType, file.TailEarsType)
-				.SetIfNotNull(CustomizeIndex.BustSize, file.Bust);
+				.SetIfNotNull(CustomizeIndex.BustSize, file.Bust)
+				.SetModelId(file.ModelType);
 		}
 		
 		return batch;
@@ -180,6 +181,8 @@ public class EntityCharaConverter {
 	// Customize saving
 
 	private void WriteCustomize(CharaFile file) {
+		file.ModelType = this._custom.GetModelId();
+		
 		file.Hair = this._custom.GetCustomization(CustomizeIndex.HairStyle);
 		file.HairTone = this._custom.GetCustomization(CustomizeIndex.HairColor);
 		file.Highlights = this._custom.GetCustomization(CustomizeIndex.HairColor2);

@@ -1,11 +1,13 @@
 namespace Ktisis.Editor.Characters.State;
 
 public class AppearanceState {
-	public uint ModelId = uint.MaxValue;
-
 	public readonly CustomizeState Customize = new();
 	public readonly EquipmentState Equipment = new();
 	public readonly WeaponState Weapons = new();
+	
+	// Model ID
+
+	public uint? ModelId { get; set; }
 	
 	// Hat visibility
 

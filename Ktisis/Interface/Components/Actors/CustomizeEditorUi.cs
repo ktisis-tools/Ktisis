@@ -11,7 +11,6 @@ using GLib.Widgets;
 
 using ImGuiNET;
 
-using Ktisis.Services;
 using Ktisis.Structs.Characters;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Characters.Make;

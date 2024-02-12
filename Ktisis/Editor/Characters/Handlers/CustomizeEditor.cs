@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Objects.Enums;
+
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Scene.Entities.Game;
@@ -61,12 +64,9 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 
 	private unsafe void UpdateCustomizeData(bool redraw) {
 		var human = actor.GetHuman();
-		if (human == null) return;
-		
-		if (!redraw)
+		if (!redraw && human != null)
 			redraw = !human->UpdateDrawData((byte*)&human->Customize, true);
-		if (redraw)
-			actor.Redraw();
+		if (redraw) actor.Redraw();
 	}
 
 	private static bool IsRedrawRequired(CustomizeIndex index) {
@@ -108,6 +108,31 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 		batch.Apply();
 	}
 	
+	// Model ID
+
+	public unsafe uint GetModelId() {
+		if (!actor.IsValid)
+			throw new Exception($"Actor entity '{actor.Name}' is invalid.");
+		return actor.Appearance.ModelId ?? GetGameModel(actor.Character);
+	}
+
+	public void SetModelId(uint id, bool redraw = true) {
+		if (!actor.IsValid)
+			throw new Exception($"Actor entity '{actor.Name}' is invalid.");
+		redraw &= this.ModelIdDiffers(id);
+		actor.Appearance.ModelId = id;
+		if (redraw) actor.Redraw();
+	}
+
+	private unsafe bool ModelIdDiffers(uint id)
+		=> id != (actor.Appearance.ModelId ?? GetGameModel(actor.Character));
+	
+	private unsafe static uint GetGameModel(Character* chara) {
+		if (chara == null)
+			throw new Exception("Character is null.");
+		return (uint)chara->CharacterData.ModelCharaId;
+	}
+	
 	// Set GameObject state (for spawned actors)
 
 	public unsafe void ApplyStateToGameObject() {
@@ -124,6 +149,7 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 
 	private class CustomizeBatch(CustomizeEditor editor) : ICustomizeBatch {
 		private readonly Dictionary<CustomizeIndex, byte> Values = new();
+		private uint? ModelId;
 
 		public ICustomizeBatch SetCustomization(CustomizeIndex index, byte value) {
 			this.Values[index] = value;
@@ -135,12 +161,21 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 			this.SetCustomization(index, value.Value);
 			return this;
 		}
+
+		public ICustomizeBatch SetModelId(uint id) {
+			this.ModelId = id;
+			return this;
+		}
 		
 		public void Apply() {
 			var redraw = false;
 			foreach (var (index, value) in this.Values) {
 				if (editor.IsCurrentValue(index, value)) continue;
 				redraw |= editor.SetCustomizeValue(index, value) && IsRedrawRequired(index);
+			}
+			if (this.ModelId != null) {
+				redraw = editor.ModelIdDiffers(this.ModelId.Value);
+				editor.SetModelId(this.ModelId.Value, false);
 			}
 			editor.UpdateCustomizeData(redraw);
 		}

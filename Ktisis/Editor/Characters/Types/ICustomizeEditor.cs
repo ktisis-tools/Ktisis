@@ -10,16 +10,11 @@ public interface ICustomizeEditor {
 	public bool GetHeterochromia();
 	
 	public void SetEyeColor(byte value);
+
+	public uint GetModelId();
+	public void SetModelId(uint id, bool redraw = true);
 	
 	public void ApplyStateToGameObject();
 	
 	public ICustomizeBatch Prepare();
-}
-
-public interface ICustomizeBatch {
-	public ICustomizeBatch SetCustomization(CustomizeIndex index, byte value);
-
-	public ICustomizeBatch SetIfNotNull(CustomizeIndex index, byte? value);
-	
-	public void Apply();
 }

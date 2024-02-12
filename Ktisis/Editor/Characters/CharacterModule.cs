@@ -95,15 +95,15 @@ public class CharacterModule : HookModule {
 	private unsafe delegate CharacterBase* CreateCharacterDelegate(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk);
 	private unsafe CharacterBase* CreateCharacterDetour(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk) {
 		try {
-			if (model == 0 && customize != null && equip != null)
-				this.PreHandleCreate(customize, equip);
+			if (customize != null && equip != null)
+				this.PreHandleCreate(ref model, customize, equip);
 		} catch (Exception err) {
 			Ktisis.Log.Info($"Failure on PreHandleCreate:\n{err}");
 		}
 		return this.CreateCharacterHook.Original(model, customize, equip, unk);
 	}
 
-	private unsafe void PreHandleCreate(CustomizeContainer* customize, EquipmentContainer* equip) {
+	private unsafe void PreHandleCreate(ref uint model, CustomizeContainer* customize, EquipmentContainer* equip) {
 		if (!this.IsValid || this._prepareCharaFor == null) return;
 
 		var actor = this._actors.GetAddress((nint)this._prepareCharaFor);
@@ -111,6 +111,11 @@ public class CharacterModule : HookModule {
 
 		if (!this.Manager.TryGetStateForActor(actor, out var entity, out var state))
 			return;
+		
+		// Model ID
+
+		if (state.ModelId != null)
+			model = state.ModelId.Value;
 		
 		// Apply customize
 

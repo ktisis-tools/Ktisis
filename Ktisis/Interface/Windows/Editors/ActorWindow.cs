@@ -6,7 +6,6 @@ using Dalamud.Interface.Utility.Raii;
 using ImGuiNET;
 
 using Ktisis.Editor.Characters.Types;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Actors;
 using Ktisis.Interface.Types;
@@ -31,12 +30,12 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	
 	// Target
 
+	private ICustomizeEditor _editCustom = null!;
+
 	public override void SetTarget(ActorEntity target) {
 		base.SetTarget(target);
 		
-		var customize = this.Manager.GetCustomizeEditor(target);
-		this._custom.Editor = customize;
-		
+		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 	}
 
@@ -58,10 +57,21 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
 		DrawTab("Appearance", this._custom.Draw);
 		DrawTab("Equipment", this._equip.Draw);
+		DrawTab("Advanced", this.DrawAdvanced);
 	}
 
 	private static void DrawTab(string name, Action draw) {
 		using var tab = ImRaii.TabItem(name);
 		if (tab.Success) draw.Invoke();
+	}
+	
+	// Advanced tab
+
+	private void DrawAdvanced() {
+		ImGui.Spacing();
+		
+		var modelId = (int)this._editCustom.GetModelId();
+		if (ImGui.InputInt("Model ID", ref modelId))
+			this._editCustom.SetModelId((uint)modelId);
 	}
 }
