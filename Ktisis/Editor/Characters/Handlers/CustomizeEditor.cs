@@ -174,7 +174,7 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 				redraw |= editor.SetCustomizeValue(index, value) && IsRedrawRequired(index);
 			}
 			if (this.ModelId != null) {
-				redraw = editor.ModelIdDiffers(this.ModelId.Value);
+				redraw |= editor.ModelIdDiffers(this.ModelId.Value);
 				editor.SetModelId(this.ModelId.Value, false);
 			}
 			editor.UpdateCustomizeData(redraw);
