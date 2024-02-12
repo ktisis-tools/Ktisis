@@ -68,9 +68,14 @@
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Localization\Data\*.json" />
+		<None Remove="Data\Library\bnpc-index.json" />
+		<EmbeddedResource Include="Data\Library\bnpc-index.json" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Data\Schema\Categories.xml" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Data\Library\" />
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec ContinueOnError="WarnAndContinue" Command="if $(OS) == Windows_NT (&#xA;copy &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot; /Y&#xA;) else (&#xA;cp &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
