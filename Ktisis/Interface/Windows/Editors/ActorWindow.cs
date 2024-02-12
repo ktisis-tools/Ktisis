@@ -7,7 +7,7 @@ using ImGuiNET;
 
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context.Types;
-using Ktisis.Interface.Components.Actors;
+using Ktisis.Interface.Components.Chara;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
@@ -16,18 +16,21 @@ using Ktisis.Structs.Characters;
 namespace Ktisis.Interface.Windows.Editors;
 
 public class ActorWindow : EntityEditWindow<ActorEntity> {
-	private readonly CustomizeEditorUi _custom;
-	private readonly EquipmentEditorUi _equip;
+	private readonly CustomizeEditorTab _custom;
+	private readonly EquipmentEditorTab _equip;
+	private readonly AnimationEditorTab _anim;
 
 	private ICharacterManager Manager => this.Context.Characters;
 	
 	public ActorWindow(
 		IEditorContext ctx,
-		CustomizeEditorUi custom,
-		EquipmentEditorUi equip
+		CustomizeEditorTab custom,
+		EquipmentEditorTab equip,
+		AnimationEditorTab anim
 	) : base("Actor Editor", ctx) {
 		this._custom = custom;
 		this._equip = equip;
+		this._anim = anim;
 	}
 	
 	// Target
@@ -39,6 +42,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
+		this._anim.Target = target;
 	}
 
 	// Draw tabs
@@ -59,7 +63,8 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
 		DrawTab("Appearance", this._custom.Draw);
 		DrawTab("Equipment", this._equip.Draw);
-		DrawTab("Advanced", this.DrawMisc);
+		DrawTab("Animation", this._anim.Draw);
+		DrawTab("Misc", this.DrawMisc);
 	}
 
 	private static void DrawTab(string name, Action draw) {

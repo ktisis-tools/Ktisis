@@ -9,6 +9,7 @@ using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context.Types;
+using Ktisis.GameData.Excel.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 
@@ -78,8 +79,7 @@ public class CharacterManager : ICharacterManager {
 		var loader = new EntityCharaConverter(actor);
 		return this._framework.RunOnFrameworkThread(() => {
 			loader.Apply(file, modes);
-			if (gameState)
-				this.ApplyStateToGameObject(actor);
+			if (gameState) this.ApplyStateToGameObject(actor);
 		});
 	}
 
@@ -87,6 +87,14 @@ public class CharacterManager : ICharacterManager {
 		return this._framework.RunOnFrameworkThread(
 			() => new EntityCharaConverter(actor).Save()
 		);
+	}
+
+	public Task ApplyNpc(ActorEntity actor, INpcBase npc, SaveModes modes = SaveModes.All, bool gameState = false) {
+		var loader = new EntityCharaConverter(actor);
+		return this._framework.RunOnFrameworkThread(() => {
+			loader.Apply(npc, modes);
+			if (gameState) this.ApplyStateToGameObject(actor);
+		});
 	}
 	
 	// Disposal

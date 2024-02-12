@@ -4,7 +4,7 @@ using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.GameData.Excel;
 
-namespace Ktisis.Interface.Components.Actors.Types;
+namespace Ktisis.Interface.Components.Chara.Types;
 
 public class EquipInfo(IEquipmentEditor editor) : ItemInfo {
 	public required EquipIndex Index;

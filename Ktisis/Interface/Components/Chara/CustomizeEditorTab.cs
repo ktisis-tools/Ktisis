@@ -15,13 +15,13 @@ using Ktisis.Structs.Characters;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
-using Ktisis.Interface.Components.Actors.Popup;
+using Ktisis.Interface.Components.Chara.Popup;
 using Ktisis.Services.Data;
 
-namespace Ktisis.Interface.Components.Actors;
+namespace Ktisis.Interface.Components.Chara;
 
 [Transient]
-public class CustomizeEditorUi {
+public class CustomizeEditorTab {
 	private readonly IDataManager _data;
 	private readonly ITextureProvider _tex;
 	private readonly CustomizeService _discovery;
@@ -33,7 +33,7 @@ public class CustomizeEditorUi {
 	
 	public ICustomizeEditor Editor { set; private get; } = null!;
 	
-	public CustomizeEditorUi(
+	public CustomizeEditorTab(
 		IDataManager data,
 		ITextureProvider tex,
 		CustomizeService discovery

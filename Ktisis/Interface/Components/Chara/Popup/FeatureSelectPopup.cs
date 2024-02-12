@@ -10,7 +10,7 @@ using ImGuiNET;
 using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
 
-namespace Ktisis.Interface.Components.Actors.Popup;
+namespace Ktisis.Interface.Components.Chara.Popup;
 
 public class FeatureSelectPopup {
 	private readonly ITextureProvider _tex;

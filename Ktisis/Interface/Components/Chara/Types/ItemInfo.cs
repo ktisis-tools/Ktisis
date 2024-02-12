@@ -2,7 +2,7 @@ using Dalamud.Interface.Internal;
 
 using Ktisis.GameData.Excel;
 
-namespace Ktisis.Interface.Components.Actors.Types;
+namespace Ktisis.Interface.Components.Chara.Types;
 
 public abstract class ItemInfo {
 	public bool FlagUpdate { get; set; }

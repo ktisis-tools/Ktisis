@@ -76,8 +76,19 @@ public class EntityCharaConverter {
 		var modesHair = modes.HasFlag(SaveModes.AppearanceHair);
 		if (!modesFace && !modesBody && !modesHair) return batch;
 
+		if (modesBody && npc.GetModelId() is var modelId && modelId != ushort.MaxValue)
+			batch.SetModelId(modelId);
+
 		var custom = npc.GetCustomize();
 		if (custom == null) return batch;
+
+		var isInvalid = true;
+		for (uint i = 0; i < CustomizeContainer.Size; i++) {
+			isInvalid &= custom.Value[i] == 0;
+			if (!isInvalid) break;
+		}
+
+		if (isInvalid) return batch;
 
 		foreach (var index in Enum.GetValues<CustomizeIndex>()) {
 			var apply = index switch {
@@ -165,6 +176,14 @@ public class EntityCharaConverter {
 
 		var equip = npc.GetEquipment();
 		if (equip == null) return;
+
+		var isInvalid = true;
+		for (uint i = 0; i < EquipmentContainer.Length; i++) {
+			isInvalid &= equip.Value[i].Value == 0;
+			if (!isInvalid) break;
+		}
+
+		if (isInvalid) return;
 		
 		foreach (var index in Enum.GetValues<EquipIndex>()) {
 			if (index <= EquipIndex.Feet && !equipGear) continue;

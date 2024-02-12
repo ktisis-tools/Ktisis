@@ -16,7 +16,7 @@ public static class RowParserEx {
 	}
 	
 	public static WeaponModelId ReadWeapon(this RowParser parser, int index) {
-		var quad = parser.ReadStructure<Quad>(index);
+		var quad = (Quad)parser.ReadColumn<ulong>(index);
 		var dye = parser.ReadColumn<byte>(index + 1);
 		return new WeaponModelId {
 			Id = quad.A,

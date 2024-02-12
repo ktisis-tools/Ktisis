@@ -9,7 +9,7 @@ using ImGuiNET;
 
 using Ktisis.Editor.Characters.Types;
 
-namespace Ktisis.Interface.Components.Actors.Popup;
+namespace Ktisis.Interface.Components.Chara.Popup;
 
 public class ParamColorSelectPopup {
 	private string PopupId => $"##ColorSelect_{this.GetHashCode():X}";

@@ -29,7 +29,7 @@ public class ResidentNpc : ENpcResident, INpcBase {
 	
 	public uint HashId { get; set; }
 
-	public ushort GetModelId() => this.EventNpc.Value?.GetModelId() ?? 0;
+	public ushort GetModelId() => this.EventNpc.Value?.GetModelId() ?? ushort.MaxValue;
 
 	public CustomizeContainer? GetCustomize() => this.EventNpc.Value?.GetCustomize();
 	public EquipmentContainer? GetEquipment() => this.EventNpc.Value?.GetEquipment();

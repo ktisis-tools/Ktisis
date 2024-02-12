@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Characters.State;
+using Ktisis.GameData.Excel.Types;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters.Types;
@@ -29,4 +30,6 @@ public interface ICharacterManager : IDisposable {
 
 	public Task ApplyCharaFile(ActorEntity actor, CharaFile file, SaveModes modes = SaveModes.All, bool gameState = false);
 	public Task<CharaFile> SaveCharaFile(ActorEntity actor);
+
+	public Task ApplyNpc(ActorEntity actor, INpcBase npc, SaveModes modes = SaveModes.All, bool gameState = false);
 }

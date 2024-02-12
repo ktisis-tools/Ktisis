@@ -10,6 +10,7 @@ public class FileConfig {
 	public Dictionary<string, string> LastOpenedPaths = new();
 	
 	public SaveModes ImportCharaModes = SaveModes.All;
+	public bool ImportNpcApplyOnSelect = false;
 	
 	public bool ImportPoseSelectedBones = false;
 	public PoseTransforms ImportPoseTransforms = PoseTransforms.Rotation;

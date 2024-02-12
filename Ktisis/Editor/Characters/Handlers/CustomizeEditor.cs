@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Dalamud.Game.ClientState.Objects.Enums;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Scene.Entities.Game;
@@ -54,19 +55,23 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 		if (!actor.IsValid) return false;
 		actor.Appearance.Customize[index] = value;
 
-		var chara = actor.CharacterBaseEx;
+		var chara = actor.GetCharacter();
 		if (chara == null) return false;
 
-		chara->Customize[(uint)index] = value;
+		if (chara->GetModelType() == CharacterBase.ModelType.Human) {
+			var human = (Human*)chara;
+			human->Customize.Data[(int)index] = value;
+			return true;
+		}
 
-		return true;
+		return false;
 	}
 
 	private unsafe void UpdateCustomizeData(bool redraw) {
 		var human = actor.GetHuman();
 		if (!redraw && human != null)
 			redraw = !human->UpdateDrawData((byte*)&human->Customize, true);
-		if (redraw) actor.Redraw();
+		if (redraw) actor.Redraw(); 
 	}
 
 	private static bool IsRedrawRequired(CustomizeIndex index) {

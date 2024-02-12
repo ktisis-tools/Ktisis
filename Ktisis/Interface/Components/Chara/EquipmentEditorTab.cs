@@ -22,12 +22,12 @@ using Ktisis.Core.Attributes;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.GameData.Excel;
-using Ktisis.Interface.Components.Actors.Types;
+using Ktisis.Interface.Components.Chara.Types;
 
-namespace Ktisis.Interface.Components.Actors;
+namespace Ktisis.Interface.Components.Chara;
 
 [Transient]
-public class EquipmentEditorUi {
+public class EquipmentEditorTab {
 	private readonly IDataManager _data;
 	private readonly ITextureProvider _tex;
 
@@ -36,7 +36,7 @@ public class EquipmentEditorUi {
 	
 	public IEquipmentEditor Editor { set; private get; } = null!;
 	
-	public EquipmentEditorUi(
+	public EquipmentEditorTab(
 		IDataManager data,
 		ITextureProvider tex
 	) {
