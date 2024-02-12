@@ -8,6 +8,7 @@ using Ktisis.Data.Files;
 using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
+using Ktisis.GameData.Excel.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
 using Ktisis.Structs.Characters;
@@ -41,6 +42,8 @@ public class EntityCharaConverter {
 		this._custom = new CustomizeEditor(entity);
 		this._equip = new EquipmentEditor(entity);
 	}
+	
+	// CharaFile
 
 	public void Apply(CharaFile file, SaveModes modes = SaveModes.All) {
 		this.ApplyEquipment(file, modes);
@@ -56,7 +59,46 @@ public class EntityCharaConverter {
 		return file;
 	}
 	
+	// INpcBase
+
+	public void Apply(INpcBase npc, SaveModes modes = SaveModes.All) {
+		this.ApplyEquipment(npc, modes);
+		this.PrepareCustomize(npc, modes).Apply();
+	}
+	
 	// Customize loading
+
+	private ICustomizeBatch PrepareCustomize(INpcBase npc, SaveModes modes = SaveModes.All) {
+		var batch = this._custom.Prepare();
+		
+		var modesFace = modes.HasFlag(SaveModes.AppearanceFace);
+		var modesBody = modes.HasFlag(SaveModes.AppearanceBody);
+		var modesHair = modes.HasFlag(SaveModes.AppearanceHair);
+		if (!modesFace && !modesBody && !modesHair) return batch;
+
+		var custom = npc.GetCustomize();
+		if (custom == null) return batch;
+
+		foreach (var index in Enum.GetValues<CustomizeIndex>()) {
+			var apply = index switch {
+				CustomizeIndex.FaceType
+					or (>= CustomizeIndex.FaceFeatures and <= CustomizeIndex.LipColor)
+					or CustomizeIndex.Facepaint
+					or CustomizeIndex.FacepaintColor => modesFace,
+				CustomizeIndex.HairStyle
+					or CustomizeIndex.HairColor
+					or CustomizeIndex.HairColor2
+					or CustomizeIndex.HasHighlights => modesHair,
+				(>= CustomizeIndex.Race and <= CustomizeIndex.Tribe)
+					or (>= CustomizeIndex.RaceFeatureSize and <= CustomizeIndex.BustSize) => modesFace || modesBody,
+				_ => modesBody
+			};
+
+			if (apply) batch.SetCustomization(index, custom.Value[(uint)index]);
+		}
+		
+		return batch;
+	}
 
 	private ICustomizeBatch PrepareCustomize(CharaFile file, SaveModes modes = SaveModes.All) {
 		var batch = this._custom.Prepare();
@@ -108,27 +150,44 @@ public class EntityCharaConverter {
 	}
 	
 	// Equipment loading
+
+	private void ApplyEquipment(INpcBase npc, SaveModes modes = SaveModes.All) {
+		if (modes.HasFlag(SaveModes.EquipmentWeapons)) {
+			if (npc.GetMainHand() is {} main)
+				this._equip.SetWeaponIndex(WeaponIndex.MainHand, main);
+			if (npc.GetOffHand() is {} off)
+				this._equip.SetWeaponIndex(WeaponIndex.OffHand, off);
+		}
+		
+		var equipGear = modes.HasFlag(SaveModes.EquipmentGear);
+		var equipAcc = modes.HasFlag(SaveModes.EquipmentAccessories);
+		if (!equipGear && !equipAcc) return;
+
+		var equip = npc.GetEquipment();
+		if (equip == null) return;
+		
+		foreach (var index in Enum.GetValues<EquipIndex>()) {
+			if (index <= EquipIndex.Feet && !equipGear) continue;
+			if (index >= EquipIndex.Earring && !equipAcc) break;
+			this._equip.SetEquipIndex(index, equip.Value[(uint)index]);
+		}
+	}
 	
-	public void ApplyEquipment(CharaFile file, SaveModes modes = SaveModes.All) {
+	private void ApplyEquipment(CharaFile file, SaveModes modes = SaveModes.All) {
 		if (modes.HasFlag(SaveModes.EquipmentWeapons)) {
 			this.SetWeaponIndex(file, WeaponIndex.MainHand)
 				.SetWeaponIndex(file, WeaponIndex.OffHand);
 		}
 
-		if (modes.HasFlag(SaveModes.EquipmentGear)) {
-			this.SetEquipIndex(file, EquipIndex.Head)
-				.SetEquipIndex(file, EquipIndex.Chest)
-				.SetEquipIndex(file, EquipIndex.Hands)
-				.SetEquipIndex(file, EquipIndex.Legs)
-				.SetEquipIndex(file, EquipIndex.Feet);
-		}
-
-		if (modes.HasFlag(SaveModes.EquipmentAccessories)) {
-			this.SetEquipIndex(file, EquipIndex.Earring)
-				.SetEquipIndex(file, EquipIndex.Necklace)
-				.SetEquipIndex(file, EquipIndex.Bracelet)
-				.SetEquipIndex(file, EquipIndex.RingLeft)
-				.SetEquipIndex(file, EquipIndex.RingRight);
+		var equipGear = modes.HasFlag(SaveModes.EquipmentGear);
+		var equipAcc = modes.HasFlag(SaveModes.EquipmentAccessories);
+		if (!equipGear && !equipAcc) return;
+		
+		foreach (var index in Enum.GetValues<EquipIndex>()) {
+			if (index <= EquipIndex.Feet && !equipGear) continue;
+			if (index >= EquipIndex.Earring && !equipAcc) break;
+			if (GetEquipModelId(file, index) is {} model)
+				this._equip.SetEquipIndex(index, model);
 		}
 	}
 
@@ -148,13 +207,6 @@ public class EntityCharaConverter {
 			Stain = (byte)save.DyeId
 		});
 		
-		return this;
-	}
-
-	private EntityCharaConverter SetEquipIndex(CharaFile file, EquipIndex index) {
-		var model = GetEquipModelId(file, index);
-		if (model != null)
-			this._equip.SetEquipIndex(index, model.Value);
 		return this;
 	}
 
