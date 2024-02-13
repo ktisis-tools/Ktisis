@@ -4,8 +4,8 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Interop.Hooking;
 using Ktisis.Services.Game;
@@ -94,6 +94,14 @@ public sealed class PosingModule : HookModule {
 	private delegate byte AnimFrozenDelegate(nint a1, int a2);
 
 	private byte AnimFrozen(nint a1, int a2) => 1;
+	
+	// UpdatePpos
+
+	[Signature("E8 ?? ?? ?? ?? EB 29 48 8B 5F 08", DetourName = nameof(UpdatePosDetour))]
+	private Hook<UpdatePosDelegate> UpdatePosHook = null!;
+	private delegate void UpdatePosDelegate(nint gameObject);
+
+	private void UpdatePosDetour(nint gameObject) { }
 	
 	// Pose preservation handlers
 
