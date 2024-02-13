@@ -93,19 +93,21 @@ public class SceneDraw {
 					if (bone?.Visible != true) continue;
 
 					var lineTo = bone.CalcTransformWorld();
-					if (lineTo != null)
-						this.DrawLine(drawList, transform.Position, lineTo.Position);
+					if (lineTo == null) continue;
+
+					var display = this._ctx.Config.GetEntityDisplay(node);
+					this.DrawLine(drawList, transform.Position, lineTo.Position, display.Color);
 				}
 			}
 		}
 	}
 	
-	private void DrawLine(ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos) {
+	private void DrawLine(ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos, uint color) {
 		if (!this._camera.WorldToScreen(fromPos, out var fromPos2d)) return;
 		if (!this._camera.WorldToScreen(toPos, out var toPos2d)) return;
 
 		var opacity = ImGuizmo.Gizmo.IsUsing ? this.Config.LineOpacityUsing : this.Config.LineOpacity;
-		drawList.AddLine(fromPos2d, toPos2d, 0xFFFFFFFF.SetAlpha(opacity), this.Config.LineThickness);
+		drawList.AddLine(fromPos2d, toPos2d, color.SetAlpha(opacity), this.Config.LineThickness);
 	}
 	
 	private void DrawSelect(ISelectableFrame frame, bool gizmo) {
