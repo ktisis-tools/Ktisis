@@ -35,8 +35,6 @@ public enum PoseMode {
 
 [Serializable]
 public class PoseContainer : Dictionary<string, Transform> {
-	internal Dictionary<string, Transform> Parents = new();
-	
 	public unsafe void Store(
 		Skeleton* modelSkeleton
 	) {
