@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Attachment;
@@ -18,6 +19,7 @@ using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Posing;
 
@@ -97,17 +99,28 @@ public class PosingManager : IPosingManager {
 	
 	// Skeleton state
 
-	private readonly Dictionary<ushort, PoseContainer> _savedPoses = new();
+	private readonly Dictionary<ushort, PoseState> _savedPoses = new();
 
 	private unsafe void PreservePoseFor(ushort objectIndex, Skeleton* skeleton) {
+		var trans = skeleton->Owner != null ? ((CharacterBaseEx*)skeleton->Owner)->Transform : skeleton->Transform;
 		var pose = new PoseContainer();
 		pose.Store(skeleton);
-		this._savedPoses[objectIndex] = pose;
+		this._savedPoses[objectIndex] = new PoseState {
+			Pose = pose,
+			Transform = new Transform(trans)
+		};
 	}
 
 	private unsafe void RestorePoseFor(ushort objectIndex, Skeleton* skeleton, ushort partialId) {
-		if (!this._savedPoses.TryGetValue(objectIndex, out var pose)) return;
-		pose.ApplyToPartial(skeleton, partialId, PoseTransforms.Rotation | PoseTransforms.PositionRoot);
+		if (!this._savedPoses.TryGetValue(objectIndex, out var state)) return;
+		state.Pose.ApplyToPartial(skeleton, partialId, PoseTransforms.Rotation | PoseTransforms.PositionRoot);
+		if (partialId == 0 && skeleton->Owner != null)
+			((CharacterBaseEx*)skeleton->Owner)->Transform = state.Transform;
+	}
+
+	private record PoseState {
+		public required Transform Transform;
+		public required PoseContainer Pose;
 	}
 	
 	// Pose loading & saving
