@@ -1,6 +1,7 @@
 using System.Numerics;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 
 using GLib.Widgets;
 
@@ -89,6 +90,19 @@ public class WorkspaceWindow : KtisisWindow {
 		
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cog, "Settings"))
 			this.Interface.OpenConfigWindow();
+
+		ImGui.SameLine(0, spacing);
+		ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - Buttons.CalcSize() * 2 - spacing);
+		
+		using (var _ = ImRaii.Disabled(!this._ctx.Actions.History.CanUndo))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepBackward, "Undo"))
+				this._ctx.Actions.History.Undo();
+		
+		ImGui.SameLine(0, spacing);
+		
+		using (var _ = ImRaii.Disabled(!this._ctx.Actions.History.CanRedo))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepForward, "Redo"))
+				this._ctx.Actions.History.Redo();
 	}
 	
 	// Scene tree buttons

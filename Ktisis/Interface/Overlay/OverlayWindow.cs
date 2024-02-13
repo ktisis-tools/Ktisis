@@ -6,7 +6,6 @@ using ImGuiNET;
 using FFXIVClientStructs.FFXIV.Common.Math;
 
 using Ktisis.Editor.Context.Types;
-using Ktisis.Editor.Transforms;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
@@ -33,6 +32,7 @@ public class OverlayWindow : KtisisWindow {
 		this._camera = camera;
 		this._sceneDraw = draw;
 		this._sceneDraw.SetContext(ctx);
+		this.PositionCondition = ImGuiCond.Always;
 	}
 	
 	private ITransformMemento? Transform;
