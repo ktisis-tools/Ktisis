@@ -50,6 +50,8 @@ public class SceneEntityMenuBuilder {
 		if (this._entity is IAttachable attach && attach.IsAttached())
 			menu.Separator().Action("Detach", () => this._ctx.Posing.Attachments.Detach(attach));
 
+		menu.Separator().Action("Rename", () => this.Ui.OpenRenameEntity(this._entity));
+
 		if (this._entity is IDeletable deletable)
 			menu.Separator().Action("Delete", () => deletable.Delete());
 	}

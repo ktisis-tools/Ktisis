@@ -23,6 +23,8 @@ public interface IEditorInterface {
 
 	public void OpenAssignCollection(ActorEntity entity);
 	public void OpenOverworldActorList();
+
+	public void OpenRenameEntity(SceneEntity entity);
 	
 	public void OpenActorEditor(ActorEntity actor);
 	public void OpenLightEditor(LightEntity light);

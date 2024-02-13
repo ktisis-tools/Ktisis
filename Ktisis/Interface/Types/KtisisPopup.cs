@@ -8,15 +8,18 @@ using ImGuiNET;
 
 namespace Ktisis.Interface.Types;
 
-public abstract class KtisisPopup(string id) : IPopup {
+public abstract class KtisisPopup(
+	string id,
+	ImGuiWindowFlags flags = ImGuiWindowFlags.None
+) : IPopup {
 	private bool _isOpen;
 	private bool _isOpening;
 	private bool _isClosing;
 
 	public bool IsOpen => this._isOpen || this._isOpening;
 
-	public virtual void Open() => this._isOpening = true;
-	public virtual void Close() => this._isClosing = true;
+	public void Open() => this._isOpening = true;
+	public void Close() => this._isClosing = true;
 	
 	public bool Draw() {
 		if (this._isOpening) {
@@ -27,7 +30,7 @@ public abstract class KtisisPopup(string id) : IPopup {
 		this._isOpen = ImGui.IsPopupOpen(id) && !this._isClosing;
 		if (!this._isOpen) return false;
 
-		using var popup = ImRaii.Popup(id);
+		using var popup = ImRaii.Popup(id, flags);
 		if (!popup.Success) return false;
 		
 		try {

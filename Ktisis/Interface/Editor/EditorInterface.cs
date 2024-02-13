@@ -86,6 +86,8 @@ public class EditorInterface : IEditorInterface {
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
 	
 	// Entity windows
+	
+	public void OpenRenameEntity(SceneEntity entity) => this._gui.CreatePopup<EntityRenameModal>(entity).Open();
 
 	public void OpenActorEditor(ActorEntity actor) => this.OpenEditor<ActorWindow, ActorEntity>(actor);
 	public void OpenLightEditor(LightEntity light) => this.OpenEditor<LightWindow, LightEntity>(light);
