@@ -8,7 +8,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
@@ -19,6 +18,11 @@ public static class GameObjectEx {
 	public static string GetNameOrFallback(this GameObject gameObject) {
 		var name = gameObject.Name.TextValue;
 		return !name.IsNullOrEmpty() ? name : $"Actor #{gameObject.ObjectIndex}";
+	}
+
+	public unsafe static DrawObject* GetDrawObject(this GameObject gameObject) {
+		var csPtr = (CSGameObject*)gameObject.Address;
+		return csPtr != null ? csPtr->DrawObject : null;
 	}
 
 	public unsafe static Skeleton* GetSkeleton(this GameObject gameObject) {

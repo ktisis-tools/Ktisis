@@ -7,7 +7,7 @@ using Ktisis.Scene.Entities;
 
 namespace Ktisis.Interface.Editor.Popup;
 
-public class EntityRenameModal(SceneEntity entity) : KtisisPopup("AAAAHHH##EntityRename", ImGuiWindowFlags.Modal) {
+public class EntityRenameModal(SceneEntity entity) : KtisisPopup("##EntityRename", ImGuiWindowFlags.Modal) {
 	private bool _isFirstDraw = true;
 	
 	private string Name = entity.Name;

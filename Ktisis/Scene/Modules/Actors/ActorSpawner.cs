@@ -135,7 +135,7 @@ public class ActorSpawner : HookModule {
 		this._dispatchEvent(handler, task);
 	}
 
-	public ushort CalculateNextIndex() {
+	private ushort CalculateNextIndex() {
 		for (var i = Start; i <= Start + HardCap; i++) {
 			var actor = this._objectTable[i];
 			if (actor == null) return i;
@@ -151,7 +151,6 @@ public class ActorSpawner : HookModule {
 		// This prevents the new actor from being confused with the player.
 		if (self->Character != null)
 			self->EntityID = 0xE0000000;
-
 		_finalizeOriginal.Invoke(self, a2, a3);
 	}
 	

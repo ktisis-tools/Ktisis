@@ -98,7 +98,7 @@ public sealed class PosingModule : HookModule {
 	// UpdatePpos
 
 	[Signature("E8 ?? ?? ?? ?? EB 29 48 8B 5F 08", DetourName = nameof(UpdatePosDetour))]
-	private Hook<UpdatePosDelegate> UpdatePosHook = null!;
+	private Hook<UpdatePosDelegate> _updatePosHook = null!;
 	private delegate void UpdatePosDelegate(nint gameObject);
 
 	private void UpdatePosDetour(nint gameObject) { }
@@ -120,7 +120,7 @@ public sealed class PosingModule : HookModule {
 
 	private unsafe void HandleRestoreState(Skeleton* skeleton, ushort partialId) {
 		if (!this.Manager.IsValid || !this.IsEnabled || skeleton->PartialSkeletons == null) return;
-
+		
 		var partial = skeleton->PartialSkeletons[partialId];
 		var pose = partial.GetHavokPose(0);
 		if (pose == null) return;
@@ -131,6 +131,8 @@ public sealed class PosingModule : HookModule {
 		if (actor == null) return;
 		Ktisis.Log.Verbose($"Restoring partial {partialId} for {actor.Name} ({actor.ObjectIndex})");
 		
+		if (partialId == 0)
+			this._updatePosHook.Original(actor.Address);
 		this.OnSkeletonInit?.Invoke(actor, skeleton, partialId);
 	}
 }

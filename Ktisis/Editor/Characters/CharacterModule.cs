@@ -98,7 +98,7 @@ public class CharacterModule : HookModule {
 			if (customize != null && equip != null)
 				this.PreHandleCreate(ref model, customize, equip);
 		} catch (Exception err) {
-			Ktisis.Log.Info($"Failure on PreHandleCreate:\n{err}");
+			Ktisis.Log.Error($"Failure on PreHandleCreate:\n{err}");
 		}
 		return this.CreateCharacterHook.Original(model, customize, equip, unk);
 	}
