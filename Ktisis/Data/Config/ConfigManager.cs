@@ -7,6 +7,7 @@ using Dalamud.Plugin;
 using Newtonsoft.Json;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Data.Config;
 
@@ -101,8 +102,16 @@ public class ConfigManager : IDisposable {
 	// Create default config
 
 	private Configuration CreateDefault() {
+		var autoSavePath = Path.Combine(
+			Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+			"Ktisis", "PoseAutoBackup"
+		);
+		
 		return new Configuration {
-			Categories = this._schema.ReadCategories()
+			Categories = this._schema.ReadCategories(),
+			AutoSave = new AutoSaveConfig {
+				FilePath = autoSavePath
+			}
 		};
 	}
 	

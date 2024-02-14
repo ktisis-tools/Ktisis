@@ -54,6 +54,7 @@ public class ConfigWindow : KtisisWindow {
 		DrawTab("Gizmo", this.DrawGizmoTab);
 		DrawTab("Overlay", this.DrawOverlayTab);
 		DrawTab("Workspace", this.DrawWorkspaceTab);
+		DrawTab("AutoSave", this.DrawAutoSaveTab);
 		DrawTab("Input", this.DrawInputTab);
 	}
 	
@@ -122,6 +123,23 @@ public class ConfigWindow : KtisisWindow {
 		if (!this.Config.Keybinds.Enabled) return;
 		ImGui.Spacing();
 		this._keybinds.Draw();
+	}
+	
+	
+	// AutoSave
+
+	private void DrawAutoSaveTab() {
+		var cfg = this.Config.AutoSave;
+
+		ImGui.Checkbox("Enable auto saves", ref cfg.Enabled);
+		ImGui.Checkbox("Clear auto saves on exit", ref cfg.ClearOnExit);
+		
+		ImGui.Spacing();
+
+		ImGui.SliderInt("Save interval", ref cfg.Interval, 10, 600, "%d s");
+		ImGui.SliderInt("Save count", ref cfg.Count, 1, 20);
+		ImGui.InputText("Save path", ref cfg.FilePath, 256);
+		ImGui.InputText("Folder name", ref cfg.FolderFormat, 256);
 	}
 	
 	// Close handler

@@ -22,6 +22,7 @@ public class Configuration : IPluginConfiguration {
 	public InputConfig Keybinds = new();
 	public LocaleConfig Locale = new();
 	public OverlayConfig Overlay = new();
+	public AutoSaveConfig AutoSave = new();
 
 	public EntityDisplay GetEntityDisplay(SceneEntity entity) {
 		var display = this.Editor.GetDisplayForType(entity.Type);
