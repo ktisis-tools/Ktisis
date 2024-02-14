@@ -11,6 +11,8 @@ using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Data.Config;
 
+public delegate void OnConfigSaved(Configuration cfg);
+
 [Singleton]
 public class ConfigManager : IDisposable {
 	private readonly DalamudPluginInterface _dpi;
@@ -18,6 +20,8 @@ public class ConfigManager : IDisposable {
 
 	private bool _isLoaded;
 	public Configuration File { get; private set; } = null!;
+
+	public event OnConfigSaved? OnSaved;
 
 	public ConfigManager(
 		DalamudPluginInterface dpi,
@@ -62,9 +66,12 @@ public class ConfigManager : IDisposable {
 	}
 
 	public void Save() {
+		if (!this._isLoaded) return;
+		
 		try {
-			if (this._isLoaded)
-				this.SaveConfigFile();
+			this.SaveConfigFile();
+			if (!this._isDisposing)
+				this.OnSaved?.Invoke(this.File);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to save configuration:\n{err}");
 		}
@@ -117,7 +124,10 @@ public class ConfigManager : IDisposable {
 	
 	// IDisposable
 
+	private bool _isDisposing;
+
 	public void Dispose() {
+		this._isDisposing = true;
 		this.Save();
 		GC.SuppressFinalize(this);
 	}
