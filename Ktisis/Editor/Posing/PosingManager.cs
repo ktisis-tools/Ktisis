@@ -14,6 +14,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Attachment;
+using Ktisis.Editor.Posing.AutoSave;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
@@ -28,20 +29,24 @@ public class PosingManager : IPosingManager {
 	private readonly HookScope _scope;
 	private readonly IFramework _framework;
 
-	public bool IsValid => this._context.IsGPosing;
+	public bool IsValid => this._context.IsValid;
 	
 	public IAttachManager Attachments { get; }
+
+	private readonly PoseAutoSave AutoSave;
 
 	public PosingManager(
 		IEditorContext context,
 		HookScope scope,
 		IFramework framework,
-		IAttachManager attach
+		IAttachManager attach,
+		PoseAutoSave autoSave
 	) {
 		this._context = context;
 		this._scope = scope;
 		this._framework = framework;
 		this.Attachments = attach;
+		this.AutoSave = autoSave;
 	}
 	
 	// Initialization
@@ -59,6 +64,8 @@ public class PosingManager : IPosingManager {
 			this.IkModule = this._scope.Create<IkModule>(this);
 			this.IkModule.Initialize();
 			
+			this.AutoSave.Initialize(this._context.Config);
+			
 			this.Subscribe();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize posing manager:\n{err}");
@@ -70,6 +77,7 @@ public class PosingManager : IPosingManager {
 	private unsafe void Subscribe() {
 		this.PoseModule!.OnSkeletonInit += this.OnSkeletonInit;
 		this._context.Characters.OnDisableDraw += this.OnDisableDraw;
+		this._context.Plugin.Config.OnSaved += this.AutoSave.Configure;
 	}
 
 	private unsafe void OnSkeletonInit(GameObject gameObject, Skeleton* skeleton, ushort partialId) {
@@ -176,9 +184,14 @@ public class PosingManager : IPosingManager {
 		try {
 			this.PoseModule?.Dispose();
 			this.PoseModule = null;
+			
 			this.IkModule?.Dispose();
 			this.IkModule = null;
+			
 			this.Attachments.Dispose();
+			
+			this._context.Plugin.Config.OnSaved -= this.AutoSave.Configure;
+			this.AutoSave.Dispose();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to dispose posing manager:\n{err}");
 		}

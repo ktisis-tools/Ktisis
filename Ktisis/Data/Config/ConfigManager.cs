@@ -109,16 +109,8 @@ public class ConfigManager : IDisposable {
 	// Create default config
 
 	private Configuration CreateDefault() {
-		var autoSavePath = Path.Combine(
-			Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-			"Ktisis", "PoseAutoBackup"
-		);
-		
 		return new Configuration {
-			Categories = this._schema.ReadCategories(),
-			AutoSave = new AutoSaveConfig {
-				FilePath = autoSavePath
-			}
+			Categories = this._schema.ReadCategories()
 		};
 	}
 	
