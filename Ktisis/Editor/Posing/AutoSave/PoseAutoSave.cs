@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Timers;
 
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
@@ -26,6 +28,7 @@ public class PoseAutoSave : IDisposable {
 	private ISceneManager Scene => this._ctx.Scene;
 
 	private readonly Timer _timer = new();
+	private readonly Queue<string> _prefixes = new();
 	
 	private AutoSaveConfig _cfg = null!;
 	
@@ -64,6 +67,7 @@ public class PoseAutoSave : IDisposable {
 	private void Save() {
 		var prefix = this._format.Replace(this._cfg.FolderFormat);
 		var folder = Path.Combine(this._cfg.FilePath, prefix);
+		this._prefixes.Enqueue(prefix);
 
 		if (!Directory.Exists(folder))
 			Directory.CreateDirectory(folder);
@@ -92,12 +96,55 @@ public class PoseAutoSave : IDisposable {
 			var file = new EntityPoseConverter(chara.Pose).SaveFile();
 			File.WriteAllText(path, serializer.Serialize(file));
 		}
+		
+		Ktisis.Log.Verbose($"Prefix count: {this._prefixes.Count} max: {this._cfg.Count}");
+		while (this._prefixes.Count > this._cfg.Count)
+			this.DeleteOldest();
+	}
+
+	private void DeleteOldest() {
+		var oldest = this._prefixes.Dequeue();
+		var folder = Path.Combine(this._cfg.FilePath, oldest);
+		if (Directory.Exists(folder)) {
+			Ktisis.Log.Verbose($"Deleting {folder}");
+			Directory.Delete(folder, true);
+		}
+		DeleteEmptyDirs(this._cfg.FilePath);
+	}
+
+	private static void DeleteEmptyDirs(string dir) {
+		if (dir.IsNullOrEmpty())
+			throw new ArgumentException("Starting directory is a null reference or empty string", nameof(dir));
+
+		try {
+			foreach (var subDir in Directory.EnumerateDirectories(dir))
+				DeleteEmptyDirs(subDir);
+
+			var entries = Directory.EnumerateFileSystemEntries(dir);
+			if (entries.Any()) return;
+
+			try {
+				Directory.Delete(dir);
+			} catch (DirectoryNotFoundException) { }
+		} catch (UnauthorizedAccessException err) {
+			Ktisis.Log.Error(err.ToString());
+		}
+	}
+
+	private void Clear() {
+		try {
+			while (this._cfg.ClearOnExit && this._prefixes.Count > 0)
+				this.DeleteOldest();
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to clear auto saves:\n{err}");
+		}
 	}
 
 	public void Dispose() {
 		this._timer.Elapsed -= this.OnElapsed;
 		this._timer.Stop();
 		this._timer.Dispose();
+		this.Clear();
 		GC.SuppressFinalize(this);
 	}
 }

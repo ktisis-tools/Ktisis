@@ -144,6 +144,9 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.SliderInt("Save interval", ref cfg.Interval, 10, 600, "%d s");
 		ImGui.SliderInt("Save count", ref cfg.Count, 1, 20);
+		
+		ImGui.Spacing();
+		
 		ImGui.InputText("Save path", ref cfg.FilePath, 256);
 		ImGui.InputText("Folder name", ref cfg.FolderFormat, 256);
 		
