@@ -13,12 +13,14 @@ using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Types;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Editor.Posing.AutoSave;
 
 public class PoseAutoSave : IDisposable {
 	private readonly IEditorContext _ctx;
 	private readonly IFramework _framework;
+	private readonly FormatService _format;
 	
 	private IPosingManager Posing => this._ctx.Posing;
 	private ISceneManager Scene => this._ctx.Scene;
@@ -29,10 +31,12 @@ public class PoseAutoSave : IDisposable {
 	
 	public PoseAutoSave(
 		IEditorContext ctx,
-		IFramework framework
+		IFramework framework,
+		FormatService format
 	) {
 		this._ctx = ctx;
 		this._framework = framework;
+		this._format = format;
 	}
 
 	public void Initialize(Configuration cfg) {
@@ -58,7 +62,7 @@ public class PoseAutoSave : IDisposable {
 	}
 
 	private void Save() {
-		var prefix = this._cfg.FolderFormat;
+		var prefix = this._format.Replace(this._cfg.FolderFormat);
 		var folder = Path.Combine(this._cfg.FilePath, prefix);
 
 		if (!Directory.Exists(folder))
@@ -68,6 +72,11 @@ public class PoseAutoSave : IDisposable {
 			.Where(entity => entity is CharaEntity)
 			.Cast<CharaEntity>()
 			.ToList();
+
+		if (entities.Count == 0) {
+			Ktisis.Log.Warning("No valid entities, skipping auto save.");
+			return;
+		}
 		
 		Ktisis.Log.Info($"Auto saving poses for {entities.Count} character(s)");
 		

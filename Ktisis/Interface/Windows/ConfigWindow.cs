@@ -1,6 +1,7 @@
 using System;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 
 using GLib.Widgets;
@@ -11,12 +12,15 @@ using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Config;
 using Ktisis.Interface.Types;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Interface.Windows;
 
 public class ConfigWindow : KtisisWindow {
 	private readonly ConfigManager _cfg;
 	private readonly ContextManager _context;
+	
+	private readonly FormatService _format;
 
 	private readonly ActionKeybindEditor _keybinds;
 	private readonly BoneCategoryEditor _boneCategories;
@@ -27,12 +31,14 @@ public class ConfigWindow : KtisisWindow {
 	public ConfigWindow(
 		ConfigManager cfg,
 		ContextManager context,
+		FormatService format,
 		ActionKeybindEditor keybinds,
 		BoneCategoryEditor boneCategories,
 		GizmoStyleEditor gizmoStyle
 	) : base("Ktisis Settings") {
 		this._cfg = cfg;
 		this._context = context;
+		this._format = format;
 		this._keybinds = keybinds;
 		this._boneCategories = boneCategories;
 		this._gizmoStyle = gizmoStyle;
@@ -140,6 +146,31 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.SliderInt("Save count", ref cfg.Count, 1, 20);
 		ImGui.InputText("Save path", ref cfg.FilePath, 256);
 		ImGui.InputText("Folder name", ref cfg.FolderFormat, 256);
+		
+		using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.TextDisabled)))
+			ImGui.TextUnformatted($"Example folder name: {this._format.Replace(cfg.FolderFormat)}");
+		
+		ImGui.Spacing();
+
+		this.DrawAutoSaveFormatting();
+	}
+
+	private void DrawAutoSaveFormatting() {
+		using var table = ImRaii.Table($"##AutoSaveFormatters", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.PadOuterX);
+		if (!table.Success) return;
+
+		ImGui.TableSetupScrollFreeze(0, 1);
+		ImGui.TableSetupColumn("Formatter");
+		ImGui.TableSetupColumn("Example Value");
+		ImGui.TableHeadersRow();
+
+		foreach (var (key, text) in this._format.GetReplacements()) {
+			ImGui.TableNextRow();
+			ImGui.TableNextColumn();
+			ImGui.TextUnformatted(key);
+			ImGui.TableNextColumn();
+			ImGui.TextUnformatted(text);
+		}
 	}
 	
 	// Close handler

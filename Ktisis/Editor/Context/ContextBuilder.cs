@@ -28,19 +28,22 @@ public class ContextBuilder {
 	private readonly IFramework _framework;
 	private readonly IKeyState _keyState;
 	private readonly NamingService _naming;
+	private readonly FormatService _format;
 	
 	public ContextBuilder(
 		GPoseService gpose,
 		InteropService interop,
 		IFramework framework,
 		IKeyState keyState,
-		NamingService naming
+		NamingService naming,
+		FormatService format
 	) {
 		this._gpose = gpose;
 		this._interop = interop;
 		this._framework = framework;
 		this._keyState = keyState;
 		this._naming = naming;
+		this._format = format;
 	}
 
 	public IEditorContext Create(
@@ -55,7 +58,7 @@ public class ContextBuilder {
 		var factory = new EntityFactory(context, this._naming);
 		var select = new SelectManager(context);
 		var attach = new AttachManager();
-		var autoSave = new PoseAutoSave(context, this._framework);
+		var autoSave = new PoseAutoSave(context, this._framework, this._format);
 
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
