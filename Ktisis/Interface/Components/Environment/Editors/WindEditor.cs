@@ -20,7 +20,7 @@ public class WindEditor : EditorBase {
 		
 		this.DrawAngle("Direction", ref state.Wind.Direction, 0.0f, 360.0f);
 		this.DrawAngle("Angle", ref state.Wind.Angle, 0.0f, 180.0f);
-		ImGui.SliderFloat("Speed", ref state.Wind.Speed, 0.0f, 1.5f);
+		ImGui.SliderFloat("Speed", ref state.Wind.Speed, 0.01f, 1.5f);
 	}
 
 	private void DrawAngle(string label, ref float angle, float min, float max) {
