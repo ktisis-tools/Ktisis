@@ -158,7 +158,49 @@
 	},
 
 	"config": {
-		"title": "Settings"
+		"title": "Ktisis Settings",
+		"categories": {
+			"title": "Categories",
+			"allow_nsfw": "Display NSFW categories",
+			"hint_nsfw": "Requires IVCS or any custom skeleton",
+			"header": "Categories:"
+		},
+		"gizmo": {
+			"title": "Gizmo",
+			"flip": "Flip axis to face camera",
+			"header": "Style:"
+		},
+		"overlay": {
+			"title": "Overlay",
+			"lines": {
+				"draw": "Draw lines on skeleton",
+				"draw_gizmo": "Draw lines on skeleton while using gizmo",
+				"thickness": "Line thickness",
+				"opacity": "Line opacity",
+				"opacity_gizmo": "Line opacity while using gizmo"
+			},
+			"dots": {
+				"draw_gizmo": "Draw dots while using gizmo",
+				"radius": "Dot radius"
+			}
+		},
+		"workspace": {
+			"title": "Workspace",
+			"init": "Open on entering GPose"
+		},
+		"input": {
+			"title": "Input",
+			"enable": "Enable keybinds"
+		},
+		"autosave": {
+			"title": "AutoSave",
+			"enable": "Enable auto saves",
+			"clear": "Clear auto saves on exit",
+			"interval": "Save interval",
+			"count": "Save count",
+			"path": "Save path",
+			"dir": "Folder name"
+		}
 	},
 
 	"bone": {
