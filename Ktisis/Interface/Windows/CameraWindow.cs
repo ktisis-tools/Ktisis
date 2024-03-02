@@ -1,5 +1,6 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Utility;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
@@ -173,9 +174,9 @@ public class CameraWindow : KtisisWindow {
 	private unsafe void DrawAnglePan(EditorCamera camera) {
 		var ptr = camera.Camera;
 		if (ptr == null) return;
-		
+
 		// Camera angle
-		var angleHint = this._ctx.Locale.Translate("camera_edit.angle.hint")
+		var angleHint = this._ctx.Locale.Translate("camera_edit.angle.hint");
 		this.DrawIconAlign(FontAwesomeIcon.ArrowsSpin, out var spacing, angleHint);
 		ImGui.SameLine(0, spacing);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
@@ -208,19 +209,20 @@ public class CameraWindow : KtisisWindow {
 	private unsafe void DrawSliders(EditorCamera camera) {
 		var ptr = camera.Camera;
 		if (ptr == null) return;
-		
-		var rotateHint = this._ctx.Locale.Translate("camera_edit.sliders.hint.rotation")
-		var zoomHint = this._ctx.Locale.Translate("camera_edit.sliders.hint.zoom")
-		var distanceHint = this._ctx.Locale.Translate("camera_edit.sliders.hint.distance")
+
+		var rotateHint = this._ctx.Locale.Translate("camera_edit.sliders.hint.rotation");
+		var zoomHint = this._ctx.Locale.Translate("camera_edit.sliders.hint.zoom");
+		var distanceHint = this._ctx.Locale.Translate("camera_edit.sliders.hint.distance");
 		this.DrawSliderAngle("##CameraRotate", FontAwesomeIcon.CameraRotate, ref ptr->Rotation, -180.0f, 180.0f, 0.5f, rotateHint);
 		this.DrawSliderAngle("##CameraZoom", FontAwesomeIcon.VectorSquare, ref ptr->Zoom, -40.0f, 100.0f, 0.5f, zoomHint);
 		this.DrawSliderFloat("##CameraDistance", FontAwesomeIcon.Moon, ref ptr->Distance, ptr->DistanceMin, ptr->DistanceMax, 0.05f, distanceHint);
-		if (camera.IsOrthographic)
-			var orthoHint = this._ctx.Locale.Translate("camera_edit.sliders.hint.ortho_zoom")
+		if (camera.IsOrthographic) {
+			var orthoHint = this._ctx.Locale.Translate("camera_edit.sliders.hint.ortho_zoom");
 			this.DrawSliderFloat("##OrthographicZoom", FontAwesomeIcon.LocationCrosshairs, ref camera.OrthographicZoom, 0.1f, 10.0f, 0.01f, orthoHint);
+		}
 	}
 
-	private void DrawSliderAngle(string label, FontAwesomeIcon icon, ref float value, float min, float max, float drag, string? hint = null) {
+	private void DrawSliderAngle(string label, FontAwesomeIcon icon, ref float value, float min, float max, float drag, string hint = "") {
 		this.DrawSliderIcon(icon, hint);
 		ImGui.SliderAngle(label, ref value, min, max, "", ImGuiSliderFlags.AlwaysClamp);
 		var deg = value * MathHelpers.Rad2Deg;
@@ -228,13 +230,13 @@ public class CameraWindow : KtisisWindow {
 			value = deg * MathHelpers.Deg2Rad;
 	}
 
-	private void DrawSliderFloat(string label, FontAwesomeIcon icon, ref float value, float min, float max, float drag, string? hint = null) {
+	private void DrawSliderFloat(string label, FontAwesomeIcon icon, ref float value, float min, float max, float drag, string hint = "") {
 		this.DrawSliderIcon(icon, hint);
 		ImGui.SliderFloat(label, ref value, min, max, "");
 		this.DrawSliderDrag(label, ref value, min, max, drag, false);
 	}
 
-	private void DrawSliderIcon(FontAwesomeIcon icon, string? hint = null) {
+	private void DrawSliderIcon(FontAwesomeIcon icon, string hint = "") {
 		this.DrawIconAlign(icon, out var spacing, hint);
 		ImGui.SameLine(0, spacing);
 		ImGui.SetNextItemWidth(ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - ImGui.GetCursorStartPos().X));
@@ -248,13 +250,13 @@ public class CameraWindow : KtisisWindow {
 	
 	// Alignment helpers
 
-	private void DrawIconAlign(FontAwesomeIcon icon, out float spacing, string? hint = null) {
+	private void DrawIconAlign(FontAwesomeIcon icon, out float spacing, string hint = "") {
 		var padding = ImGui.GetStyle().CellPadding.X;
 		var iconSpace = (UiBuilder.IconFont.FontSize - Icons.CalcIconSize(icon).X) / 2;
-		var has_hint = hint.HasValue;
+
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + padding + iconSpace);
 		Icons.DrawIcon(icon);
-		if (has_hint) && (ImGui.IsItemHovered()) {
+		if (!string.IsNullOrEmpty(hint) && ImGui.IsItemHovered()) {
 			using var _ = ImRaii.Tooltip();
 			ImGui.Text(hint);
 		}
