@@ -58,6 +58,7 @@
 	},
 	
 	"workspace": {
+		"title": "Ktisis Workspace",
 		"state": {
 			"dormant": "Waiting for scene...",
 			"select_count": {
@@ -154,6 +155,10 @@
 	
 	"env_edit": {
 		"title": "Environment Editor"
+	},
+
+	"config": {
+		"title": "Settings"
 	},
 
 	"bone": {
