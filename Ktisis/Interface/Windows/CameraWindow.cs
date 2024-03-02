@@ -181,13 +181,9 @@ public class CameraWindow : KtisisWindow {
 		ImGui.SameLine(0, spacing);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 
-		// smooth out motion while dragging angle sliders
 		var angleDeg = ptr->Angle * MathHelpers.Rad2Deg;
-		if (ImGui.DragFloat2("##CameraAngle", ref angleDeg, 0.25f)) {
-			angleDeg.X %= 360.0f;
-			angleDeg.Y %= 360.0f;
+		if (ImGui.DragFloat2("##CameraAngle", ref angleDeg, 0.25f))
 			ptr->Angle = angleDeg * MathHelpers.Deg2Rad;
-		}
 
 		// Camera pan
 		
