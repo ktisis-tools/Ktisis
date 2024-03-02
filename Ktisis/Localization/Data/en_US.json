@@ -102,7 +102,27 @@
 	},
 	
 	"camera_edit": {
-		"title": "Camera Editor"
+		"title": "Camera Editor",
+		"sliders.hint": {
+			"rotation": "Camera rotation",
+			"zoom": "Camera zoom",
+			"distance": "Camera distance",
+			"ortho_zoom": "Orthographic camera zoom"
+		},
+		"position.hint": {
+			"lock": "Lock to fixed position",
+			"unlock": "Unlock fixed position"
+		},
+		"orbit.hint": {
+			"lock": "Lock orbit target",
+			"unlock": "Unlock orbit target"
+		},
+		"offset.hint": {
+			"to_target": "Offset camera to target model",
+			"from_base": "Offset from base position"
+		},
+		"pan.hint": "Camera pan",
+		"angle.hint": "Camera orbit angle"
 	},
 	
 	"env_edit": {
