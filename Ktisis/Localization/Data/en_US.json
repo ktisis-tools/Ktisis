@@ -93,6 +93,28 @@
 		"gizmo": {
 			"show": "Show rotation gizmo",
 			"hide": "Hide rotation gizmo"
+		},
+		"transforms": {
+			"title": "Bone Transforms",
+			"parenting": "Bone parenting",
+			"relative": "Relative rotation"
+		},
+		"ik": {
+			"title": "Inverse Kinematics",
+			"enable": "Enable IK constraints",
+			"advanced": "Advanced parameters",
+			"ccd": {
+				"gain": "Gain",
+				"iterations": "Iterations"
+			},
+			"two_joints": {
+				"enforce": "Enforce end rotation",
+				"mode": "Transform mode:",
+				"fixed": "Fixed target",
+				"relative": "Bone relative",
+				"gain": "Gain:",
+				"hinges": "Hinges:"
+			}
 		}
 	},
 	
@@ -108,26 +130,26 @@
 			"delimit": "Delimited",
 			"ortho": "Orthographic"
 		},
-		"sliders.hint": {
+		"sliders": {
 			"rotation": "Camera rotation",
 			"zoom": "Camera zoom",
 			"distance": "Camera distance",
 			"ortho_zoom": "Orthographic camera zoom"
 		},
-		"position.hint": {
+		"position": {
 			"lock": "Lock to fixed position",
 			"unlock": "Unlock fixed position"
 		},
-		"orbit.hint": {
+		"orbit": {
 			"lock": "Lock orbit target",
 			"unlock": "Unlock orbit target"
 		},
-		"offset.hint": {
+		"offset": {
 			"to_target": "Offset camera to target model",
 			"from_base": "Offset from base position"
 		},
-		"pan.hint": "Camera pan",
-		"angle.hint": "Camera orbit angle"
+		"pan": "Camera pan",
+		"angle": "Camera orbit angle"
 	},
 	
 	"env_edit": {

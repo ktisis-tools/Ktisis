@@ -187,13 +187,13 @@ public class TransformWindow : KtisisWindow {
 
 	private void DrawBoneTransformSetup() {
 		ImGui.Spacing();
-		if (!ImGui.CollapsingHeader("Bone Transforms")) return;
+		if (!ImGui.CollapsingHeader(this._ctx.Locale.Translate($"transform_edit.transforms.title"))) return;
 		ImGui.Spacing();
 		
 		var cfg = this._ctx.Config.Gizmo;
-		ImGui.Checkbox("Bone parenting", ref cfg.ParentBones);
+		ImGui.Checkbox(this._ctx.Locale.Translate($"transform_edit.transforms.parenting"), ref cfg.ParentBones);
 		ImGui.Spacing();
-		ImGui.Checkbox("Relative rotation", ref cfg.RelativeBones);
+		ImGui.Checkbox(this._ctx.Locale.Translate($"transform_edit.transforms.relative"), ref cfg.RelativeBones);
 	}
 	
 	// IK Setup
@@ -201,11 +201,11 @@ public class TransformWindow : KtisisWindow {
 
 	private void DrawIkSetup(IIkNode ik) {
 		ImGui.Spacing();
-		if (!ImGui.CollapsingHeader("Inverse Kinematics")) return;
+		if (!ImGui.CollapsingHeader(this._ctx.Locale.Translate($"transform_edit.ik.title"))) return;
 		ImGui.Spacing();
 
 		var enable = ik.IsEnabled;
-		if (ImGui.Checkbox("Enable IK constraints", ref enable))
+		if (ImGui.Checkbox(this._ctx.Locale.Translate($"transform_edit.ik.enable"), ref enable))
 			ik.Toggle();
 
 		if (!ik.IsEnabled) return;
@@ -224,7 +224,7 @@ public class TransformWindow : KtisisWindow {
 		if (Buttons.IconButton(FontAwesomeIcon.EllipsisH))
 			ImGui.OpenPopup("##IkAdvancedCfg");
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		ImGui.Text("Advanced parameters");
+		ImGui.Text(this._ctx.Locale.Translate($"transform_edit.ik.advanced"));
 	}
 	
 	// CCD
@@ -240,8 +240,8 @@ public class TransformWindow : KtisisWindow {
 		
 		ImGui.Spacing();
 		
-		ImGui.SliderFloat("Gain", ref ik.Group.Gain, 0.0f, 1.0f, "%.2f");
-		ImGui.SliderInt("Iterations", ref ik.Group.Iterations, 0, 60);
+		ImGui.SliderFloat(this._ctx.Locale.Translate($"transform_edit.ik.ccd.gain"), ref ik.Group.Gain, 0.0f, 1.0f, "%.2f");
+		ImGui.SliderInt(this._ctx.Locale.Translate($"transform_edit.ik.ccd.iterations"), ref ik.Group.Iterations, 0, 60);
 		
 		ImGui.Spacing();
 	}
@@ -250,12 +250,12 @@ public class TransformWindow : KtisisWindow {
 
 	private void DrawTwoJoints(ITwoJointsNode ik) {
 		ImGui.Spacing();
-		ImGui.Checkbox("Enforce end rotation", ref ik.Group.EnforceRotation);
+		ImGui.Checkbox(this._ctx.Locale.Translate($"transform_edit.ik.two_joints.enforce"), ref ik.Group.EnforceRotation);
 		ImGui.Spacing();
 		
-		ImGui.Text("Transform mode:");
-		DrawMode("Fixed target", TwoJointsMode.Fixed, ik.Group);
-		DrawMode("Bone relative", TwoJointsMode.Relative, ik.Group);
+		ImGui.Text(this._ctx.Locale.Translate($"transform_edit.ik.two_joints.mode"));
+		DrawMode(this._ctx.Locale.Translate($"transform_edit.ik.two_joints.fixed"), TwoJointsMode.Fixed, ik.Group);
+		DrawMode(this._ctx.Locale.Translate($"transform_edit.ik.two_joints.relative"), TwoJointsMode.Relative, ik.Group);
 
 		if (ImGui.IsPopupOpen("##IkAdvancedCfg"))
 			this.DrawTwoJointsAdvanced(ik);
@@ -267,7 +267,7 @@ public class TransformWindow : KtisisWindow {
 		
 		ImGui.Spacing();
 
-		ImGui.Text("Gain:");
+		ImGui.Text(this._ctx.Locale.Translate($"transform_edit.ik.two_joints.gain"));
 		ImGui.Spacing();
 		ImGui.SliderFloat("Shoulder##FirstWeight", ref ik.Group.FirstBoneGain, 0.0f, 1.0f, "%.2f");
 		ImGui.SliderFloat("Elbow##SecondWeight", ref ik.Group.SecondBoneGain, 0.0f, 1.0f, "%.2f");
@@ -277,7 +277,7 @@ public class TransformWindow : KtisisWindow {
 		ImGui.Separator();
 		ImGui.Spacing();
 		
-		ImGui.Text("Hinges:");
+		ImGui.Text(this._ctx.Locale.Translate($"transform_edit.ik.two_joints.hinges"));
 		ImGui.Spacing();
 		ImGui.SliderFloat("Minimum", ref ik.Group.MinHingeAngle, -1.0f, 1.0f, "%.2f");
 		ImGui.SliderFloat("Maximum", ref ik.Group.MaxHingeAngle, -1.0f, 1.0f, "%.2f");
