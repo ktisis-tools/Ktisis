@@ -103,6 +103,11 @@
 	
 	"camera_edit": {
 		"title": "Camera Editor",
+		"toggles": {
+			"collide": "Collision",
+			"delimit": "Delimited",
+			"ortho": "Orthographic"
+		},
 		"sliders.hint": {
 			"rotation": "Camera rotation",
 			"zoom": "Camera zoom",

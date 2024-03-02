@@ -78,13 +78,13 @@ public class CameraWindow : KtisisWindow {
 
 	private void DrawToggles(EditorCamera camera) {
 		var collide = !camera.Flags.HasFlag(CameraFlags.NoCollide);
-		if (ImGui.Checkbox("Collision", ref collide))
+		if (ImGui.Checkbox(this._ctx.Locale.Translate("camera_edit.toggles.collide"), ref collide))
 			camera.Flags ^= CameraFlags.NoCollide;
 		
 		ImGui.SameLine();
 		
 		var delimit = camera.Flags.HasFlag(CameraFlags.Delimit);
-		if (ImGui.Checkbox("Delimited", ref delimit))
+		if (ImGui.Checkbox(this._ctx.Locale.Translate("camera_edit.toggles.delimit"), ref delimit))
 			camera.SetDelimited(delimit);
 		
 		this.DrawOrthographicToggle(camera);
@@ -96,7 +96,7 @@ public class CameraWindow : KtisisWindow {
 		
 		ImGui.SameLine();
 		var enabled = camera.IsOrthographic;
-		if (ImGui.Checkbox("Orthographic", ref enabled))
+		if (ImGui.Checkbox(this._ctx.Locale.Translate("camera_edit.toggles.ortho"), ref enabled))
 			camera.SetOrthographic(enabled);
 	}
 	
