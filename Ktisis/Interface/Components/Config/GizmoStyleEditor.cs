@@ -39,7 +39,7 @@ public class GizmoStyleEditor {
 			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_x"), ref style.ColorDirectionX, defaults.ColorDirectionX);
 			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_y"), ref style.ColorDirectionY, defaults.ColorDirectionY);
 			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_z"), ref style.ColorDirectionZ, defaults.ColorDirectionZ);
-			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.selected"), ref style.ColorSelection, defaults.ColorSelection);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.active"), ref style.ColorSelection, defaults.ColorSelection);
 			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.title"), ref style.ColorInactive, defaults.ColorInactive);
 		}
 
