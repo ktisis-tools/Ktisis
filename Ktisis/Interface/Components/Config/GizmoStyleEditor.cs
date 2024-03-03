@@ -10,6 +10,7 @@ using ImGuiNET;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components.Config;
 
