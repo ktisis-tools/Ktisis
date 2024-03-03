@@ -78,17 +78,17 @@ public class WorkspaceWindow : KtisisWindow {
 	private void DrawContextButtons() {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsAlt, this._ctx.Locale.Translate("camera_edit.transform_edit.title")))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsAlt, this._ctx.Locale.Translate("transform_edit.title")))
 			this.Interface.OpenTransformWindow();
 
 		ImGui.SameLine(0, spacing);
 		
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sun, this._ctx.Locale.Translate("camera_edit.env_edit.title")))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sun, this._ctx.Locale.Translate("env_edit.title")))
 			this.Interface.OpenEnvironmentWindow();
 
 		ImGui.SameLine(0, spacing);
 		
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cog, this._ctx.Locale.Translate("camera_edit.config.title")))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cog, this._ctx.Locale.Translate("config.title")))
 			this.Interface.OpenConfigWindow();
 
 		ImGui.SameLine(0, spacing);

@@ -22,9 +22,11 @@ public class GizmoStyleEditor {
 	private Configuration Config => this._cfg.File;
 	
 	public GizmoStyleEditor(
-		ConfigManager cfg
+		ConfigManager cfg,
+		LocaleManager locale
 	) {
 		this._cfg = cfg;
+		this._locale = locale;
 	}
 	
 	public void Draw() {
