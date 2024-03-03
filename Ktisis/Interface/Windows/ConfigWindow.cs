@@ -110,7 +110,7 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Checkbox(this._ctx.Locale.Translate("config.overlay.dots.draw_gizmo"), ref this.Config.Overlay.DrawDotsGizmo);
 		ImGui.Spacing();
 		ImGui.DragFloat(this._ctx.Locale.Translate("config.overlay.dots.radius"), ref this.Config.Overlay.DotRadius, 0.1f);
-		ImGui.DragFloat(this._ctx.Locale.Translate("config.overlay.lines.thickness"), ref this.Config.Overlay.LineThickness, 0.1f);
+		ImGui.DragFloat(this._ctx.Locale.Translate("config.overlay.lines.thick"), ref this.Config.Overlay.LineThickness, 0.1f);
 		ImGui.Spacing();
 		ImGui.SliderFloat(this._ctx.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
 		ImGui.SliderFloat(this._ctx.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);

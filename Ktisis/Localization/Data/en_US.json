@@ -163,19 +163,67 @@
 			"title": "Categories",
 			"allow_nsfw": "Display NSFW categories",
 			"hint_nsfw": "Requires IVCS or any custom skeleton",
-			"header": "Categories:"
+			"header": "Categories:",
+			"editor": {
+				"color_header": "Colors:",
+				"group_color": "Group Color",
+				"bone_color": "Bone Color",
+				"subcategories": "Apply to subcategories",
+				"link_colors": "Link group & bone colors"
+			}
 		},
 		"gizmo": {
 			"title": "Gizmo",
 			"flip": "Flip axis to face camera",
-			"header": "Style:"
+			"header": "Style:",
+			"editor": {
+				"general": {
+					"title": "General",
+					"dir_x": "Direction X",
+					"dir_y": "Direction Y",
+					"dir_z": "Direction Z",
+					"active": "Selected Color",
+					"inactive": "Inactive Color"
+				},
+				"position": {
+					"title": "Position",
+					"line_thick": "Line Thickness",
+					"line_color": "Line Color",
+					"axis_thick": "Hatched Axis Thickness",
+					"axis_color": "Hatched Axis Color",
+					"circle_size": "Center Circle Size",
+					"arrow_size": "Arrow Size",
+					"plane_x": "Plane X",
+					"plane_y": "Plane Y",
+					"plane_z": "Plane Z"
+				},
+				"rotation": {
+					"title": "Rotation",
+					"inner_thick": "Inner Line Thickness",
+					"outer_thick": "Outer Line Thickness",
+					"border_color": "Activated Border Color",
+					"fill_color": "Activated Fill Color"
+				},
+				"scale": {
+					"title": "Scale",
+					"line_thick": "Line Thickness",
+					"line_color": "Activated Line Color",
+					"circle_size": "Circle Size"
+				},
+				"text": {
+					"title": "Text",
+					"color": "Text Color",
+					"shadow_color": "Shadow Color"
+				},
+				"undo": "Reset to default"
+			}
 		},
 		"overlay": {
 			"title": "Overlay",
 			"lines": {
 				"draw": "Draw lines on skeleton",
 				"draw_gizmo": "Draw lines on skeleton while using gizmo",
-				"thickness": "Line thickness",
+				"thick": "Line thickness",
 				"opacity": "Line opacity",
 				"opacity_gizmo": "Line opacity while using gizmo"
 			},
