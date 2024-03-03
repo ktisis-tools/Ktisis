@@ -13,6 +13,7 @@ using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Config;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Data;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface.Windows;
 
@@ -25,6 +26,7 @@ public class ConfigWindow : KtisisWindow {
 	private readonly ActionKeybindEditor _keybinds;
 	private readonly BoneCategoryEditor _boneCategories;
 	private readonly GizmoStyleEditor _gizmoStyle;
+	public readonly LocaleManager Locale;
 
 	private Configuration Config => this._cfg.File;
 
@@ -34,7 +36,8 @@ public class ConfigWindow : KtisisWindow {
 		FormatService format,
 		ActionKeybindEditor keybinds,
 		BoneCategoryEditor boneCategories,
-		GizmoStyleEditor gizmoStyle
+		GizmoStyleEditor gizmoStyle,
+		LocaleManager locale
 	) : base("Ktisis Settings") {
 		this._cfg = cfg;
 		this._context = context;
@@ -42,6 +45,7 @@ public class ConfigWindow : KtisisWindow {
 		this._keybinds = keybinds;
 		this._boneCategories = boneCategories;
 		this._gizmoStyle = gizmoStyle;
+		this.Locale = locale;
 	}
 	
 	// Open
@@ -56,13 +60,12 @@ public class ConfigWindow : KtisisWindow {
 	public override void Draw() {
 		using var tabs = ImRaii.TabBar("##ConfigTabs");
 		if (!tabs.Success) return;
-		//??? : how to access locale in Draw(), null reference when opening outside gpose
-		DrawTab("Categories", this.DrawCategoriesTab);
-		DrawTab("Gizmo", this.DrawGizmoTab);
-		DrawTab("Overlay", this.DrawOverlayTab);
-		DrawTab("Workspace", this.DrawWorkspaceTab);
-		DrawTab("AutoSave", this.DrawAutoSaveTab);
-		DrawTab("Input", this.DrawInputTab);
+		DrawTab(this.Locale.Translate("config.categories.title"), this.DrawCategoriesTab);
+		DrawTab(this.Locale.Translate("config.gizmo.title"), this.DrawGizmoTab);
+		DrawTab(this.Locale.Translate("config.overlay.title"), this.DrawOverlayTab);
+		DrawTab(this.Locale.Translate("config.workspace.title"), this.DrawWorkspaceTab);
+		DrawTab(this.Locale.Translate("config.autosave.title"), this.DrawAutoSaveTab);
+		DrawTab(this.Locale.Translate("config.input.title"), this.DrawInputTab);
 	}
 	
 	// Tabs
@@ -77,17 +80,17 @@ public class ConfigWindow : KtisisWindow {
 	// Categories
 
 	private void DrawCategoriesTab() {
-		if (ImGui.Checkbox(this._context.Current.Locale.Translate("config.categories.allow_nsfw"), ref this.Config.Categories.ShowNsfwBones))
+		if (ImGui.Checkbox(this.Locale.Translate("config.categories.allow_nsfw"), ref this.Config.Categories.ShowNsfwBones))
 			this._context.Current?.Scene.Refresh();
 		ImGui.SameLine();
 		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
 		if (ImGui.IsItemHovered()) {
 			using var _ = ImRaii.Tooltip();
-			ImGui.Text(this._context.Current.Locale.Translate("config.categories.hint_nsfw"));
+			ImGui.Text(this.Locale.Translate("config.categories.hint_nsfw"));
 		}
 		
 		ImGui.Spacing();
-		ImGui.Text(this._context.Current.Locale.Translate("config.categories.header"));
+		ImGui.Text(this.Locale.Translate("config.categories.header"));
 		ImGui.Spacing();
 		this._boneCategories.Draw();
 	}
@@ -95,10 +98,10 @@ public class ConfigWindow : KtisisWindow {
 	// Gizmo
 
 	private void DrawGizmoTab() {
-		ImGui.Checkbox(this._context.Current.Locale.Translate("config.gizmo.flip"), ref this.Config.Gizmo.AllowAxisFlip);
+		ImGui.Checkbox(this.Locale.Translate("config.gizmo.flip"), ref this.Config.Gizmo.AllowAxisFlip);
 		
 		ImGui.Spacing();
-		ImGui.Text(this._context.Current.Locale.Translate("config.gizmo.header"));
+		ImGui.Text(this.Locale.Translate("config.gizmo.header"));
 		ImGui.Spacing();
 		this._gizmoStyle.Draw();
 	}
@@ -106,27 +109,27 @@ public class ConfigWindow : KtisisWindow {
 	// Overlay
 
 	private void DrawOverlayTab() {
-		ImGui.Checkbox(this._context.Current.Locale.Translate("config.overlay.lines.draw"), ref this.Config.Overlay.DrawLines);
-		ImGui.Checkbox(this._context.Current.Locale.Translate("config.overlay.lines.draw_gizmo"), ref this.Config.Overlay.DrawLinesGizmo);
-		ImGui.Checkbox(this._context.Current.Locale.Translate("config.overlay.dots.draw_gizmo"), ref this.Config.Overlay.DrawDotsGizmo);
+		ImGui.Checkbox(this.Locale.Translate("config.overlay.lines.draw"), ref this.Config.Overlay.DrawLines);
+		ImGui.Checkbox(this.Locale.Translate("config.overlay.lines.draw_gizmo"), ref this.Config.Overlay.DrawLinesGizmo);
+		ImGui.Checkbox(this.Locale.Translate("config.overlay.dots.draw_gizmo"), ref this.Config.Overlay.DrawDotsGizmo);
 		ImGui.Spacing();
-		ImGui.DragFloat(this._context.Current.Locale.Translate("config.overlay.dots.radius"), ref this.Config.Overlay.DotRadius, 0.1f);
-		ImGui.DragFloat(this._context.Current.Locale.Translate("config.overlay.lines.thick"), ref this.Config.Overlay.LineThickness, 0.1f);
+		ImGui.DragFloat(this.Locale.Translate("config.overlay.dots.radius"), ref this.Config.Overlay.DotRadius, 0.1f);
+		ImGui.DragFloat(this.Locale.Translate("config.overlay.lines.thick"), ref this.Config.Overlay.LineThickness, 0.1f);
 		ImGui.Spacing();
-		ImGui.SliderFloat(this._context.Current.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
-		ImGui.SliderFloat(this._context.Current.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
+		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
+		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
 	}
 	
 	// Workspace
 	
 	private void DrawWorkspaceTab() {
-		ImGui.Checkbox(this._context.Current.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
 	}
 	
 	// Input
 
 	private void DrawInputTab() {
-		ImGui.Checkbox(this._context.Current.Locale.Translate("config.input.enable"), ref this.Config.Keybinds.Enabled);
+		ImGui.Checkbox(this.Locale.Translate("config.input.enable"), ref this.Config.Keybinds.Enabled);
 		if (!this.Config.Keybinds.Enabled) return;
 		ImGui.Spacing();
 		this._keybinds.Draw();
@@ -138,18 +141,18 @@ public class ConfigWindow : KtisisWindow {
 	private void DrawAutoSaveTab() {
 		var cfg = this.Config.AutoSave;
 
-		ImGui.Checkbox(this._context.Current.Locale.Translate("config.autosave.enable"), ref cfg.Enabled);
-		ImGui.Checkbox(this._context.Current.Locale.Translate("config.autosave.clear"), ref cfg.ClearOnExit);
+		ImGui.Checkbox(this.Locale.Translate("config.autosave.enable"), ref cfg.Enabled);
+		ImGui.Checkbox(this.Locale.Translate("config.autosave.clear"), ref cfg.ClearOnExit);
 		
 		ImGui.Spacing();
 
-		ImGui.SliderInt(this._context.Current.Locale.Translate("config.autosave.interval"), ref cfg.Interval, 10, 600, "%d s");
-		ImGui.SliderInt(this._context.Current.Locale.Translate("config.autosave.count"), ref cfg.Count, 1, 20);
+		ImGui.SliderInt(this.Locale.Translate("config.autosave.interval"), ref cfg.Interval, 10, 600, "%d s");
+		ImGui.SliderInt(this.Locale.Translate("config.autosave.count"), ref cfg.Count, 1, 20);
 		
 		ImGui.Spacing();
 		
-		ImGui.InputText(this._context.Current.Locale.Translate("config.autosave.path"), ref cfg.FilePath, 256);
-		ImGui.InputText(this._context.Current.Locale.Translate("config.autosave.dir"), ref cfg.FolderFormat, 256);
+		ImGui.InputText(this.Locale.Translate("config.autosave.path"), ref cfg.FilePath, 256);
+		ImGui.InputText(this.Locale.Translate("config.autosave.dir"), ref cfg.FolderFormat, 256);
 		
 		using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.TextDisabled)))
 			ImGui.TextUnformatted($"Example folder name: {this._format.Replace(cfg.FolderFormat)}");
