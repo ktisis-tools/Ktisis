@@ -56,12 +56,13 @@ public class ConfigWindow : KtisisWindow {
 	public override void Draw() {
 		using var tabs = ImRaii.TabBar("##ConfigTabs");
 		if (!tabs.Success) return;
-		DrawTab(this._context.Current.Locale.Translate("config.categories.title"), this.DrawCategoriesTab);
-		DrawTab(this._context.Current.Locale.Translate("config.gizmo.title"), this.DrawGizmoTab);
-		DrawTab(this._context.Current.Locale.Translate("config.overlay.title"), this.DrawOverlayTab);
-		DrawTab(this._context.Current.Locale.Translate("config.workspace.title"), this.DrawWorkspaceTab);
-		DrawTab(this._context.Current.Locale.Translate("config.autosave.title"), this.DrawAutoSaveTab);
-		DrawTab(this._context.Current.Locale.Translate("config.input.title"), this.DrawInputTab);
+		//??? : how to access locale in Draw(), null reference when opening outside gpose
+		DrawTab("Categories", this.DrawCategoriesTab);
+		DrawTab("Gizmo", this.DrawGizmoTab);
+		DrawTab("Overlay", this.DrawOverlayTab);
+		DrawTab("Workspace", this.DrawWorkspaceTab);
+		DrawTab("AutoSave", this.DrawAutoSaveTab);
+		DrawTab("Input", this.DrawInputTab);
 	}
 	
 	// Tabs
