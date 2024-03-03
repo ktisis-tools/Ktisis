@@ -125,7 +125,7 @@ public class BoneCategoryEditor {
 		if (this.Selected == null) return;
 
 		ImGui.Spacing();
-		ImGui.Text("Colors:");
+		ImGui.Text(this._ctx.Locale.Translate("config.categories.editor.color_header"));
 		ImGui.Spacing();
 
 		this.DrawCategoryColors(this.Selected);
@@ -141,10 +141,10 @@ public class BoneCategoryEditor {
 
 		var changed = false;
 		if (category.LinkedColors) {
-			changed = DrawColorEdit("Group Color", ref category.GroupColor);
+			changed = DrawColorEdit(this._ctx.Locale.Translate("config.categories.editor.group_color"), ref category.GroupColor);
 		} else {
-			changed |= DrawColorEdit("Group Color", ref category.GroupColor);
-			changed |= DrawColorEdit("Bone Color", ref category.BoneColor);
+			changed |= DrawColorEdit(this._ctx.Locale.Translate("config.categories.editor.group_color"), ref category.GroupColor);
+			changed |= DrawColorEdit(this._ctx.Locale.Translate("config.categories.editor.bone_color"), ref category.BoneColor);
 		}
 
 		if (changed && this.ColorSub)
@@ -164,8 +164,8 @@ public class BoneCategoryEditor {
 	}
 
 	private void DrawSwitches(BoneCategory category) {
-		ImGui.Checkbox("Apply to subcategories", ref this.ColorSub);
-		ImGui.Checkbox("Link group & bone colors", ref category.LinkedColors);
+		ImGui.Checkbox(this._ctx.Locale.Translate("config.categories.editor.subcategories"), ref this.ColorSub);
+		ImGui.Checkbox(this._ctx.Locale.Translate("config.categories.editor.link_colors"), ref category.LinkedColors);
 	}
 
 	private static bool DrawColorEdit(string label, ref uint color) {
