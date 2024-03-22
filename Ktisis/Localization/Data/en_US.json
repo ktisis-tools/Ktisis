@@ -58,6 +58,7 @@
 	},
 	
 	"workspace": {
+		"title": "Ktisis Workspace",
 		"state": {
 			"dormant": "Waiting for scene...",
 			"select_count": {
@@ -93,6 +94,28 @@
 		"gizmo": {
 			"show": "Show rotation gizmo",
 			"hide": "Hide rotation gizmo"
+		},
+		"transforms": {
+			"title": "Bone Transforms",
+			"parenting": "Bone parenting",
+			"relative": "Relative rotation"
+		},
+		"ik": {
+			"title": "Inverse Kinematics",
+			"enable": "Enable IK constraints",
+			"advanced": "Advanced parameters",
+			"ccd": {
+				"gain": "Gain",
+				"iterations": "Iterations"
+			},
+			"two_joints": {
+				"enforce": "Enforce end rotation",
+				"mode": "Transform mode:",
+				"fixed": "Fixed target",
+				"relative": "Bone relative",
+				"gain": "Gain:",
+				"hinges": "Hinges:"
+			}
 		}
 	},
 	
@@ -102,11 +125,130 @@
 	},
 	
 	"camera_edit": {
-		"title": "Camera Editor"
+		"title": "Camera Editor",
+		"toggles": {
+			"collide": "Collision",
+			"delimit": "Delimited",
+			"ortho": "Orthographic"
+		},
+		"sliders": {
+			"rotation": "Camera rotation",
+			"zoom": "Camera zoom",
+			"distance": "Camera distance",
+			"ortho_zoom": "Orthographic camera zoom"
+		},
+		"position": {
+			"lock": "Lock to fixed position",
+			"unlock": "Unlock fixed position"
+		},
+		"orbit": {
+			"lock": "Lock orbit target",
+			"unlock": "Unlock orbit target"
+		},
+		"offset": {
+			"to_target": "Offset camera to target model",
+			"from_base": "Offset from base position"
+		},
+		"pan": "Camera pan",
+		"angle": "Camera orbit angle"
 	},
 	
 	"env_edit": {
 		"title": "Environment Editor"
+	},
+
+	"config": {
+		"title": "Ktisis Settings",
+		"categories": {
+			"title": "Categories",
+			"allow_nsfw": "Display NSFW categories",
+			"hint_nsfw": "Requires IVCS or any custom skeleton",
+			"header": "Categories:",
+			"editor": {
+				"color_header": "Colors:",
+				"group_color": "Group Color",
+				"bone_color": "Bone Color",
+				"subcategories": "Apply to subcategories",
+				"link_colors": "Link group & bone colors"
+			}
+		},
+		"gizmo": {
+			"title": "Gizmo",
+			"flip": "Flip axis to face camera",
+			"header": "Style:",
+			"editor": {
+				"general": {
+					"title": "General",
+					"dir_x": "Direction X",
+					"dir_y": "Direction Y",
+					"dir_z": "Direction Z",
+					"active": "Selected Color",
+					"inactive": "Inactive Color"
+				},
+				"position": {
+					"title": "Position",
+					"line_thick": "Line Thickness",
+					"line_color": "Line Color",
+					"axis_thick": "Hatched Axis Thickness",
+					"axis_color": "Hatched Axis Color",
+					"circle_size": "Center Circle Size",
+					"arrow_size": "Arrow Size",
+					"plane_x": "Plane X",
+					"plane_y": "Plane Y",
+					"plane_z": "Plane Z"
+				},
+				"rotation": {
+					"title": "Rotation",
+					"inner_thick": "Inner Line Thickness",
+					"outer_thick": "Outer Line Thickness",
+					"border_color": "Activated Border Color",
+					"fill_color": "Activated Fill Color"
+				},
+				"scale": {
+					"title": "Scale",
+					"line_thick": "Line Thickness",
+					"line_color": "Activated Line Color",
+					"circle_size": "Circle Size"
+				},
+				"text": {
+					"title": "Text",
+					"color": "Text Color",
+					"shadow_color": "Shadow Color"
+				},
+				"undo": "Reset to default"
+			}
+		},
+		"overlay": {
+			"title": "Overlay",
+			"lines": {
+				"draw": "Draw lines on skeleton",
+				"draw_gizmo": "Draw lines on skeleton while using gizmo",
+				"thick": "Line thickness",
+				"opacity": "Line opacity",
+				"opacity_gizmo": "Line opacity while using gizmo"
+			},
+			"dots": {
+				"draw_gizmo": "Draw dots while using gizmo",
+				"radius": "Dot radius"
+			}
+		},
+		"workspace": {
+			"title": "Workspace",
+			"init": "Open on entering GPose"
+		},
+		"input": {
+			"title": "Input",
+			"enable": "Enable keybinds"
+		},
+		"autosave": {
+			"title": "AutoSave",
+			"enable": "Enable auto saves",
+			"clear": "Clear auto saves on exit",
+			"interval": "Save interval",
+			"count": "Save count",
+			"path": "Save path",
+			"dir": "Folder name"
+		}
 	},
 
 	"bone": {

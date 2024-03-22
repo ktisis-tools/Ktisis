@@ -78,30 +78,30 @@ public class WorkspaceWindow : KtisisWindow {
 	private void DrawContextButtons() {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsAlt, "Transform Editor"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsAlt, this._ctx.Locale.Translate("transform_edit.title")))
 			this.Interface.OpenTransformWindow();
 
 		ImGui.SameLine(0, spacing);
 		
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sun, "Environment Editor"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sun, this._ctx.Locale.Translate("env_edit.title")))
 			this.Interface.OpenEnvironmentWindow();
 
 		ImGui.SameLine(0, spacing);
 		
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cog, "Settings"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cog, this._ctx.Locale.Translate("config.title")))
 			this.Interface.OpenConfigWindow();
 
 		ImGui.SameLine(0, spacing);
 		ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - Buttons.CalcSize() * 2 - spacing);
 		
 		using (var _ = ImRaii.Disabled(!this._ctx.Actions.History.CanUndo))
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepBackward, "Undo"))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepBackward, this._ctx.Locale.Translate("actions.History_Undo")))
 				this._ctx.Actions.History.Undo();
 		
 		ImGui.SameLine(0, spacing);
 		
 		using (var _ = ImRaii.Disabled(!this._ctx.Actions.History.CanRedo))
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepForward, "Redo"))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepForward, this._ctx.Locale.Translate("actions.History_Redo")))
 				this._ctx.Actions.History.Redo();
 	}
 	

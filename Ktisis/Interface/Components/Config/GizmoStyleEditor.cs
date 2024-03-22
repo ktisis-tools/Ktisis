@@ -10,19 +10,23 @@ using ImGuiNET;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components.Config;
 
 [Transient]
 public class GizmoStyleEditor {
 	private readonly ConfigManager _cfg;
+	private readonly LocaleManager _locale;
 
 	private Configuration Config => this._cfg.File;
 	
 	public GizmoStyleEditor(
-		ConfigManager cfg
+		ConfigManager cfg,
+		LocaleManager locale
 	) {
 		this._cfg = cfg;
+		this._locale = locale;
 	}
 	
 	public void Draw() {
@@ -31,42 +35,106 @@ public class GizmoStyleEditor {
 		
 		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), true);
 
-		if (ImGui.CollapsingHeader("General")) {
-			DrawStyleColor("Direction X", ref style.ColorDirectionX, defaults.ColorDirectionX);
-			DrawStyleColor("Direction Y", ref style.ColorDirectionY, defaults.ColorDirectionY);
-			DrawStyleColor("Direction Z", ref style.ColorDirectionZ, defaults.ColorDirectionZ);
-			DrawStyleColor("Selected Color", ref style.ColorSelection, defaults.ColorSelection);
-			DrawStyleColor("Inactive Color", ref style.ColorInactive, defaults.ColorInactive);
+		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.general.title"))) {
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_x"), ref style.ColorDirectionX, defaults.ColorDirectionX);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_y"), ref style.ColorDirectionY, defaults.ColorDirectionY);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_z"), ref style.ColorDirectionZ, defaults.ColorDirectionZ);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.active"), ref style.ColorSelection, defaults.ColorSelection);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.inactive"), ref style.ColorInactive, defaults.ColorInactive);
 		}
 
-		if (ImGui.CollapsingHeader("Position")) {
-			DrawStyleFloat("Line Thickness##PosThickness", ref style.TranslationLineThickness, defaults.TranslationLineThickness);
-			DrawStyleFloat("Arrow Size##PosArrowSize", ref style.TranslationLineArrowSize, defaults.TranslationLineArrowSize);
-			DrawStyleFloat("Hatched Axis Thickness", ref style.HatchedAxisLineThickness, defaults.HatchedAxisLineThickness);
-			DrawStyleFloat("Center Circle Size##PosCircleSize", ref style.CenterCircleSize, defaults.CenterCircleSize);
-			DrawStyleColor("Plane X##PosPlaneColorX", ref style.ColorPlaneX, defaults.ColorPlaneX);
-			DrawStyleColor("Plane Y##PosPlaneColorY", ref style.ColorPlaneY, defaults.ColorPlaneY);
-			DrawStyleColor("Plane Z##PosPlaneColorZ", ref style.ColorPlaneZ, defaults.ColorPlaneZ);
-			DrawStyleColor("Line Color##PosLineColor", ref style.ColorTranslationLine, defaults.ColorTranslationLine);
-			DrawStyleColor("Hatched Axis Color", ref style.ColorHatchedAxisLines, defaults.ColorHatchedAxisLines);
+		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.position.title"))) {
+			DrawStyleFloat(
+				$"{this._locale.Translate("config.gizmo.editor.position.line_thick")}##PosThickness",
+				ref style.TranslationLineThickness,
+				defaults.TranslationLineThickness
+			);
+			DrawStyleFloat(
+				$"{this._locale.Translate("config.gizmo.editor.position.arrow_size")}##PosArrowSize",
+				ref style.TranslationLineArrowSize,
+				defaults.TranslationLineArrowSize
+			);
+			DrawStyleFloat(
+				this._locale.Translate("config.gizmo.editor.position.axis_thick"),
+				ref style.HatchedAxisLineThickness,
+				defaults.HatchedAxisLineThickness
+			);
+			DrawStyleFloat(
+				$"{this._locale.Translate("config.gizmo.editor.position.circle_size")}##PosCircleSize",
+				ref style.CenterCircleSize,
+				defaults.CenterCircleSize
+			);
+			DrawStyleColor(
+				$"{this._locale.Translate("config.gizmo.editor.position.plane_x")}##PosPlaneColorX",
+				ref style.ColorPlaneX,
+				defaults.ColorPlaneX
+			);
+			DrawStyleColor(
+				$"{this._locale.Translate("config.gizmo.editor.position.plane_y")}##PosPlaneColorY",
+				ref style.ColorPlaneY,
+				defaults.ColorPlaneY
+			);
+			DrawStyleColor(
+				$"{this._locale.Translate("config.gizmo.editor.position.plane_z")}##PosPlaneColorZ",
+				ref style.ColorPlaneZ,
+				defaults.ColorPlaneZ
+			);
+			DrawStyleColor(
+				$"{this._locale.Translate("config.gizmo.editor.position.line_color")}##PosLineColor",
+				ref style.ColorTranslationLine,
+				defaults.ColorTranslationLine
+			);
+			DrawStyleColor(
+				this._locale.Translate("config.gizmo.editor.position.axis_color"),
+				ref style.ColorHatchedAxisLines,
+				defaults.ColorHatchedAxisLines
+			);
 		}
 
-		if (ImGui.CollapsingHeader("Rotation")) {
-			DrawStyleFloat("Inner Line Thickness##RotateThickness", ref style.RotationLineThickness, defaults.RotationLineThickness);
-			DrawStyleFloat("Outer Line Thickness##RotateThicknessOuter", ref style.RotationOuterLineThickness, defaults.RotationOuterLineThickness);
-			DrawStyleColor("Activated Border Color##RotateUsingBorder", ref style.ColorRotationUsingBorder, defaults.ColorRotationUsingBorder);
-			DrawStyleColor("Activated Fill Color##RotateUsingFill", ref style.ColorRotationUsingFill, defaults.ColorRotationUsingFill);
+		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.rotation.title"))) {
+			DrawStyleFloat(
+				$"{this._locale.Translate("config.gizmo.editor.rotation.inner_thick")}##RotateThickness",
+				ref style.RotationLineThickness,
+				defaults.RotationLineThickness
+			);
+			DrawStyleFloat(
+				$"{this._locale.Translate("config.gizmo.editor.rotation.outer_thick")}##RotateThicknessOuter",
+				ref style.RotationOuterLineThickness,
+				defaults.RotationOuterLineThickness
+			);
+			DrawStyleColor(
+				$"{this._locale.Translate("config.gizmo.editor.rotation.border_color")}##RotateUsingBorder",
+				ref style.ColorRotationUsingBorder,
+				defaults.ColorRotationUsingBorder
+			);
+			DrawStyleColor(
+				$"{this._locale.Translate("config.gizmo.editor.rotation.fill_color")}##RotateUsingFill",
+				ref style.ColorRotationUsingFill,
+				defaults.ColorRotationUsingFill
+			);
 		}
 
-		if (ImGui.CollapsingHeader("Scale")) {
-			DrawStyleFloat("Line Thickness##ScaleThickness", ref style.ScaleLineThickness, defaults.ScaleLineThickness);
-			DrawStyleFloat("Circle Size##ScaleSize", ref style.ScaleLineCircleSize, defaults.ScaleLineCircleSize);
-			DrawStyleColor("Activated Line Color##ScaleColor", ref style.ColorScaleLine, defaults.ColorScaleLine);
+		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.scale.title"))) {
+			DrawStyleFloat(
+				$"{this._locale.Translate("config.gizmo.editor.scale.line_thick")}##ScaleThickness",
+				ref style.ScaleLineThickness,
+				defaults.ScaleLineThickness
+			);
+			DrawStyleFloat(
+				$"{this._locale.Translate("config.gizmo.editor.scale.circle_size")}##ScaleSize",
+				ref style.ScaleLineCircleSize,
+				defaults.ScaleLineCircleSize
+			);
+			DrawStyleColor(
+				$"{this._locale.Translate("config.gizmo.editor.scale.line_color")}##ScaleColor",
+				ref style.ColorScaleLine,
+				defaults.ColorScaleLine
+			);
 		}
 
-		if (ImGui.CollapsingHeader("Text")) {
-			DrawStyleColor("Text Color", ref style.ColorText, defaults.ColorText);
-			DrawStyleColor("Shadow Color", ref style.ColorTextShadow, defaults.ColorTextShadow);
+		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.text.title"))) {
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.text.color"), ref style.ColorText, defaults.ColorText);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.text.shadow_color"), ref style.ColorTextShadow, defaults.ColorTextShadow);
 		}
 
 		this.Config.Gizmo.Style = style;
