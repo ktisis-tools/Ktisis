@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Platforms>x64</Platforms>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration) == 'External'">
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <DefineConstants>EXTERNAL_BUILD</DefineConstants>
     <DalamudLibPath>..\..\DalamudLibs\</DalamudLibPath>
   </PropertyGroup>
@@ -90,7 +90,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GLib\GLib.csproj" />
     <ProjectReference Include="..\GLib\GLib\GLib.csproj" />
   </ItemGroup>
 
