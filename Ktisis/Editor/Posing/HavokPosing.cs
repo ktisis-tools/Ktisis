@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Collections.Generic;
 
 using Dalamud.Utility;
 
@@ -80,23 +81,37 @@ public static class HavokPosing {
 		for (var p = 0; p < skele->PartialSkeletonCount; p++) {
 			var subPartial = skele->PartialSkeletons[p];
 			var subPose = subPartial.GetHavokPose(0);
+			var subSkele = subPose->Skeleton;
 			if (subPose == null) continue;
 
-			var rootBone = subPartial.ConnectedBoneIndex;
-			var parentBone = subPartial.ConnectedParentBoneIndex;
-			if (parentBone != boneIx && !IsBoneDescendantOf(hkaSkele->ParentIndices, parentBone, boneIx))
-				continue;
-			
-			Propagate(subPose, rootBone, sourcePos, deltaPos, deltaRot);
+			if (!IsMultiRootSkeleton(subSkele->ParentIndices)) {
+				// propagate normally if this is a single-binding partial (i.e. hair, face to j_kao)
+				var rootBone = subPartial.ConnectedBoneIndex;
+				var parentBone = subPartial.ConnectedParentBoneIndex;
+				if (parentBone != boneIx && !IsBoneDescendantOf(hkaSkele->ParentIndices, parentBone, boneIx)) continue;
+				Propagate(subPose, rootBone, sourcePos, deltaPos, deltaRot);
+			} else {
+				// propagate against each root in a multi-root partial (i.e. j_ex_top_a_l to j_ude_a_l && j_ex_top_a_r to j_ude_a_r)
+				var multi_roots = GetMultiRoots(subSkele->ParentIndices);
+				foreach(int root_idx in multi_roots) {
+					var parent_root_idx = TryGetBoneNameIndex(pose, subSkele->Bones[root_idx].Name.String);
+
+					// account for either:
+					// 1. boneIx being posed refers to the same bone as a root_idx
+					// 2. boneIx being posed is the parent of a root_idx within the parent skeleton
+					bool manipulated_bone_is_multi_root = hkaSkele->Bones[boneIx].Name.String == subSkele->Bones[root_idx].Name.String;
+					bool manipulated_bone_is_parent = parent_root_idx != -1 ? IsBoneDescendantOf(hkaSkele->ParentIndices, parent_root_idx, boneIx) : false;
+					if (manipulated_bone_is_multi_root || manipulated_bone_is_parent) Propagate(subPose, root_idx, sourcePos, deltaPos, deltaRot);
+				}
+			}
 		}
 	}
 
 	private unsafe static void Propagate(hkaPose* pose, int boneIx, Vector3 sourcePos, Vector3 deltaPos, Quaternion deltaRot) {
 		var hkaSkele = pose->Skeleton;
 		for (var i = boneIx; i < hkaSkele->Bones.Length; i++) {
-			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx))
-				continue;
-			
+			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx)) continue;
+
 			var trans = GetModelTransform(pose, i)!;
 			var scm = Matrix4x4.CreateScale(trans.Scale);
 			var rtm = Matrix4x4.CreateFromQuaternion(deltaRot * trans.Rotation);
@@ -178,7 +193,9 @@ public static class HavokPosing {
 	// Bone descendants
 
 	public static bool IsBoneDescendantOf(hkArray<short> indices, int bone, int parent) {
-		if (parent < 1) return true;
+		// only shortcut out of descendant evaluation if this is a single-root skeleton,
+		// and parent is the 0 index
+		if (!IsMultiRootSkeleton(indices) && parent < 1) return true;
 		
 		var p = indices[bone];
 		while (p != -1) {
@@ -187,5 +204,19 @@ public static class HavokPosing {
 			p = indices[p];
 		}
 		return false;
+	}
+
+	// Helpers for multi-binding partials
+	public static bool IsMultiRootSkeleton(hkArray<short> indices) {
+		if (GetMultiRoots(indices).Count > 1) return true;
+		return false;
+	}
+
+	public static List<int> GetMultiRoots(hkArray<short> indices) {
+		List<int> parent_indices = new();
+		for(var p = 0; p < indices.Length; p++) {
+			if (indices[p] == -1) parent_indices.Add(p);
+		}
+		return parent_indices;
 	}
 }
