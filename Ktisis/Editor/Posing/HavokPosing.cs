@@ -78,10 +78,12 @@ public static class HavokPosing {
 		var hkaSkele = pose->Skeleton;
 		for (var p = 0; p < skele->PartialSkeletonCount; p++) {
 			var subPartial = skele->PartialSkeletons[p];
+			if (subPartial.HavokPoses == null) continue;
+
 			var subPose = subPartial.GetHavokPose(0);
-			var subSkele = subPose->Skeleton;
 			if (subPose == null) continue;
 
+			var subSkele = subPose->Skeleton;
 			if (!IsMultiRootSkeleton(subSkele->ParentIndices)) {
 				// propagate normally if this is a single-binding partial (i.e. hair, face to j_kao)
 				var rootBone = subPartial.ConnectedBoneIndex;
