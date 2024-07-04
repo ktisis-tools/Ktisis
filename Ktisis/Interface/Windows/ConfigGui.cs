@@ -679,7 +679,7 @@ namespace Ktisis.Interface.Windows {
 
 		public static bool TryChangeReference(Configuration cfg, int key, string newPath) {
 			try {
-				var texture = Services.Textures.GetFromFile(newPath).GetWrapOrEmpty();
+				var texture = Services.Textures.GetFromFile(newPath);
 				cfg.References[key] = new ReferenceInfo {
 					Path = newPath,
 					Showing = true,

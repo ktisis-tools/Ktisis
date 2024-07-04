@@ -125,10 +125,6 @@ namespace Ktisis {
 
 			Input.Dispose();
 			HistoryManager.Dispose();
-
-			foreach (var (_, texture) in References.Textures) {
-				texture.Dispose();
-			}
 		}
 
 		private void OnCommand(string command, string arguments) {

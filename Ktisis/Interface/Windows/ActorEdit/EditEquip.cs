@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using ImGuiNET;
 
 using Dalamud.Interface;
-using Dalamud.Interface.Textures.TextureWraps;
+using Dalamud.Interface.Textures;
 
 using Ktisis.Util;
 using Ktisis.Data;
@@ -110,7 +110,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				Equipped[slot].SetEquip(equipObj, slot);
 
 			var item = Equipped[slot];
-			var icon = item.Icon?.ImGuiHandle ?? 0;
+			var icon = item.Icon?.GetWrapOrEmpty().ImGuiHandle ?? 0;
 			ImGui.PushID((int)slot);
 			if (ImGui.ImageButton(icon, IconSize) && SlotSelect == null)
 				OpenSelector(slot);
@@ -420,7 +420,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		
 		public object? Equip;
 		public Item? Item;
-		public IDalamudTextureWrap? Icon;
+		public ISharedImmediateTexture? Icon;
 
 		public ItemCache(object? equip, EquipSlot slot)
 			=> SetEquip(equip, slot);
@@ -445,19 +445,15 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			var newIconId = item?.Icon;
 			if (newIconId != IconId) {
-				var newIcon = newIconId is int id ? Services.Textures.GetFromGameIcon(id).GetWrapOrEmpty() : null;
-				if (token.IsCancellationRequested) {
-					newIcon?.Dispose();
+				var newIcon = newIconId is int id ? Services.Textures.GetFromGameIcon(id) : null;
+				if (token.IsCancellationRequested)
 					return;
-				}
 				IconId = newIconId;
-				Icon?.Dispose();
 				Icon = newIcon;
 			}
 		}
 
 		public void Dispose() {
-			Icon?.Dispose();
 			Icon = null;
 		}
 

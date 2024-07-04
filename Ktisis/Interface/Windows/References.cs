@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
 
 using ImGuiNET;
@@ -10,7 +11,7 @@ using ImGuiNET;
 namespace Ktisis.Interface.Windows {
 	internal static class References {
 		/** Maps file paths to loaded textures. */
-		public static Dictionary<string, IDalamudTextureWrap> Textures = new();
+		public static Dictionary<string, ISharedImmediateTexture> Textures = new();
 
 		// Draw
 
@@ -24,8 +25,10 @@ namespace Ktisis.Interface.Windows {
 		public static void DrawReferenceWindow(Configuration cfg, int key, ReferenceInfo reference) {
 			if (!reference.Showing) return;
 			if (reference.Path is not string path) return;
-			if (!Textures.TryGetValue(path, out var texture))
+			if (!Textures.TryGetValue(path, out var sharedTex))
 				return;
+
+			var texture = sharedTex.GetWrapOrEmpty();
 
 			var size = new Vector2(texture.Width, texture.Height);
 			ImGui.SetNextWindowSize(size, ImGuiCond.FirstUseEver);
@@ -54,7 +57,7 @@ namespace Ktisis.Interface.Windows {
 			var path = reference.Value.Path;
 			try {
 				if (path == null) return false;
-				Textures[path] = Services.Textures.GetFromFile(path).GetWrapOrEmpty();
+				Textures[path] = Services.Textures.GetFromFile(path);
 				return true;
 			} catch (Exception e) {
 				Logger.Error(e, "Failed to load reference image {0}", path ?? "null");
@@ -67,7 +70,6 @@ namespace Ktisis.Interface.Windows {
 			var paths = cfg.References.Values.Select(x => x.Path ?? "");
 			var unloadPaths = loadedPaths.Except(paths);
 			foreach (var path in unloadPaths) {
-				Textures[path].Dispose();
 				Textures.Remove(path);
 			}
 		}
