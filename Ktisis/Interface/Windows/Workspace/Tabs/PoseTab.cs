@@ -16,7 +16,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		
 		public static PoseContainer _TempPose = new();
 		
-		public unsafe static void Draw(GameObject target) {
+		public unsafe static void Draw(IGameObject target) {
 			var cfg = Ktisis.Configuration;
 
 			var actor = (Actor*)target.Address;

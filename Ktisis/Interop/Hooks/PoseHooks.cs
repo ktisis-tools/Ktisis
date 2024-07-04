@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Objects.Types;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
@@ -218,13 +219,13 @@ namespace Ktisis.Interop.Hooks {
 			CalculateBoneModelSpaceHook.Original(ref *bonesPose, index);
 		}
 
-		public static unsafe bool IsGamePlaybackRunning(GameObject? gPoseTarget) {
+		public static unsafe bool IsGamePlaybackRunning(IGameObject? gPoseTarget) {
 			var animationControl = GetAnimationControl(gPoseTarget);
 			if (animationControl == null) return true;
 			return animationControl->PlaybackSpeed == 1;
 		}
 
-		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(GameObject? go) {
+		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(IGameObject? go) {
 			if (go == null) return null;
 
 			var actor = (Actor*)go.Address;

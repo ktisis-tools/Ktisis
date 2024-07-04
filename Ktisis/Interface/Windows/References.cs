@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
-using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 
 using ImGuiNET;
-using ImGuiScene;
 
 namespace Ktisis.Interface.Windows {
 	internal static class References {
@@ -55,7 +54,7 @@ namespace Ktisis.Interface.Windows {
 			var path = reference.Value.Path;
 			try {
 				if (path == null) return false;
-				Textures[path] = Ktisis.UiBuilder.LoadImage(path);
+				Textures[path] = Services.Textures.GetFromFile(path).GetWrapOrEmpty();
 				return true;
 			} catch (Exception e) {
 				Logger.Error(e, "Failed to load reference image {0}", path ?? "null");

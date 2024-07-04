@@ -6,12 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using ImGuiNET;
-using ImGuiScene;
 
 using Dalamud.Interface;
-using Dalamud.Interface.Internal;
-using Dalamud.Logging;
-using Dalamud.Plugin.Services;
+using Dalamud.Interface.Textures.TextureWraps;
 
 using Ktisis.Util;
 using Ktisis.Data;
@@ -419,7 +416,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 	public class ItemCache : IDisposable {
 		private CancellationTokenSource? _tokenSrc;
 		
-		private ushort? IconId;
+		private int? IconId;
 		
 		public object? Equip;
 		public Item? Item;
@@ -435,7 +432,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			_tokenSrc = new CancellationTokenSource();
 			Resolve(equip, slot, _tokenSrc.Token).ContinueWith(task => {
 				if (task.Exception != null)
-					PluginLog.Error($"Error occurred while resolving item:\n{task.Exception}");
+					Ktisis.Log.Error($"Error occurred while resolving item:\n{task.Exception}");
 			}, TaskContinuationOptions.OnlyOnFaulted);
 		}
 
@@ -448,7 +445,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			var newIconId = item?.Icon;
 			if (newIconId != IconId) {
-				var newIcon = newIconId is ushort id ? Services.Textures.GetIcon(id) : null;
+				var newIcon = newIconId is int id ? Services.Textures.GetFromGameIcon(id).GetWrapOrEmpty() : null;
 				if (token.IsCancellationRequested) {
 					newIcon?.Dispose();
 					return;

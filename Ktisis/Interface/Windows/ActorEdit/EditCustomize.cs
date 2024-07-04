@@ -4,14 +4,13 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
-using ImGuiScene;
 
 using Lumina.Excel;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 
 using Ktisis.Util;
 using Ktisis.Data;
@@ -124,7 +123,7 @@ namespace Ktisis.Interface.Windows {
 				if (iconId == 0)
 					iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
 
-                var icon = Services.Textures.GetIcon(iconId);
+                var icon = Services.Textures.GetFromGameIcon(iconId).GetWrapOrDefault();
 				if (icon != null) features.Add(icon);
 			}
 			FacialFeatureIcons = features;
@@ -691,12 +690,12 @@ namespace Ktisis.Interface.Windows {
 								var feat = feature.Value;
 								if (feat == null || feat.FeatureId == 0) break;
 
-								var icon = Services.Textures.GetIcon(feat.Icon);
+								var icon = Services.Textures.GetFromGameIcon(feat.Icon).GetWrapOrEmpty();
 								if (icon != null) icons.Add(feat.FeatureId, icon);
 							}
 						} else {
 							for (var x = 0; x < val.Count; x++) {
-								var icon = Services.Textures.GetIcon(val.Params[x]);
+								var icon = Services.Textures.GetFromGameIcon(val.Params[x]).GetWrapOrEmpty();
 								if (icon != null) icons.Add(val.Graphics[x], icon);
 							}
 						}

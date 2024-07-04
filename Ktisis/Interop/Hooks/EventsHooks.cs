@@ -98,7 +98,7 @@ namespace Ktisis.Interop.Hooks {
 
 		public MiragePrismMiragePlateAddon() {
 			var MiragePrismMiragePlateAgentInterface = Framework.Instance()->UIModule->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
-            receiveEventHook ??= Services.Hooking.HookFromAddress<AgentReceiveEvent>(new IntPtr(MiragePrismMiragePlateAgentInterface->VTable->ReceiveEvent), OnReceiveEvent);
+            receiveEventHook ??= Services.Hooking.HookFromAddress<AgentReceiveEvent>(new IntPtr(MiragePrismMiragePlateAgentInterface->VirtualTable->ReceiveEvent), OnReceiveEvent);
             
 			receiveEventHook?.Enable();
 		}

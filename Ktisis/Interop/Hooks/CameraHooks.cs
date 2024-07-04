@@ -58,7 +58,7 @@ namespace Ktisis.Interop.Hooks {
 					camera->LookAtVector += newPos - curPos;
 				}
 			} catch (Exception e) {
-				PluginLog.Error(e.ToString());
+				Ktisis.Log.Error(e.ToString());
 				DisableHooks();
 			}
 
@@ -85,7 +85,7 @@ namespace Ktisis.Interop.Hooks {
 					return tarMatrix;
 				}
 			} catch (Exception e) {
-				PluginLog.Error(e.ToString());
+				Ktisis.Log.Error(e.ToString());
 				DisableHooks();
 			}
 

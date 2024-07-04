@@ -71,7 +71,7 @@ namespace Ktisis.Util {
 			));
 
 			timer.Stop();
-			PluginLog.Information($"NPC list retrieved in {timer.Elapsed.TotalMilliseconds:0.00}ms");
+			Logger.Information($"NPC list retrieved in {timer.Elapsed.TotalMilliseconds:0.00}ms");
 
 			return list;
 		}

@@ -44,7 +44,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var weather = EnvService.GetEnvWeatherIds();
 			EnvService.GetWeatherIcons(weather, token).ContinueWith(result => {
 				if (result.Exception != null) {
-					PluginLog.Error($"Failed to load weather data:\n{result.Exception}");
+					Ktisis.Log.Error($"Failed to load weather data:\n{result.Exception}");
 					return;
 				} else if (result.IsCanceled) return;
 

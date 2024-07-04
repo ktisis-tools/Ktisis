@@ -4,7 +4,6 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-using Dalamud.Logging;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
@@ -29,7 +28,7 @@ namespace Ktisis.Camera {
 
 			var camera = GetCameraByAddress((nint)active);
 			if (camera == null && Override != null) {
-				PluginLog.Warning("Lost track of active camera! Attempting to reset.");
+				Ktisis.Log.Warning("Lost track of active camera! Attempting to reset.");
 				Reset();
 				camera = GetCameraByAddress((nint)Services.Camera->Camera);
 			}
@@ -83,7 +82,7 @@ namespace Ktisis.Camera {
 			return pos;
 		}
 		
-		internal static GameObject? GetTargetLock(nint addr) {
+		internal static IGameObject? GetTargetLock(nint addr) {
 			if (!Ktisis.IsInGPose || GetCameraByAddress(addr) is not KtisisCamera camera)
 				return null;
 
@@ -141,7 +140,7 @@ namespace Ktisis.Camera {
 		private unsafe static void SetCamera(GameCamera* camera) {
 			if (camera == null) return;
 			var mgr = CameraManager.Instance();
-			mgr->CameraArraySpan[0] = &camera->CameraBase.SceneCamera;
+			mgr->Cameras[0] = &camera->CameraBase.SceneCamera;
 		}
 		
 		// Overrides
@@ -217,7 +216,7 @@ namespace Ktisis.Camera {
 		}
 
 		private unsafe static void DisposeCameras() {
-			PluginLog.Debug("Disposing cameras...");
+			Ktisis.Log.Debug("Disposing cameras...");
 			if (Override != null)
 				Reset();
 			foreach (var cam in Cameras)

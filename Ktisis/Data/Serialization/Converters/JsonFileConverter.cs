@@ -3,8 +3,6 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using Dalamud.Logging;
-
 using Ktisis.Data.Files;
 
 namespace Ktisis.Data.Serialization.Converters {
@@ -27,7 +25,7 @@ namespace Ktisis.Data.Serialization.Converters {
 					var value = jsonValue.Deserialize(prop.PropertyType, options);
 					if (value != null) prop.SetValue(result, value);
 				} catch {
-					PluginLog.Warning($"Failed to parse {prop.PropertyType.Name} value '{prop.Name}' (received {jsonValue.ValueKind} instead)");
+					Ktisis.Log.Warning($"Failed to parse {prop.PropertyType.Name} value '{prop.Name}' (received {jsonValue.ValueKind} instead)");
 				}
 			}
 

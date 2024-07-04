@@ -1,11 +1,10 @@
 using Dalamud.Game.ClientState.Keys;
 
-using FFXIVClientStructs.Havok;
-using static FFXIVClientStructs.Havok.hkaPose;
+using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
-using Ktisis.Structs.Actor.State;
 using Ktisis.Structs.Input;
 
 namespace Ktisis.Events {
@@ -34,7 +33,7 @@ namespace Ktisis.Events {
 			if (OnTransformationMatrixChange == null) return;
 			var bone = Skeleton.GetSelectedBone();
 			var actor = (Actor*)Ktisis.GPoseTarget!.Address;
-			hkQsTransformf* boneTransform = bone is null ? &actor->Model->Transform : bone.AccessModelSpace(PropagateOrNot.DontPropagate);
+			hkQsTransformf* boneTransform = bone is null ? &actor->Model->Transform : bone.AccessModelSpace(hkaPose.PropagateOrNot.DontPropagate);
 			OnTransformationMatrixChange(state);
 		}
 

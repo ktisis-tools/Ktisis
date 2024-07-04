@@ -7,7 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 namespace Ktisis {
 	internal class Services {
-		[PluginService] internal static DalamudPluginInterface PluginInterface { get; private set; } = null!;
+		[PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
 		[PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
 		[PluginService] internal static ITextureProvider Textures { get; private set; } = null!;
 		[PluginService] internal static IDataManager DataManager { get; private set; } = null!;
@@ -23,7 +23,7 @@ namespace Ktisis {
 		internal unsafe static TargetSystem* Targets = TargetSystem.Instance();
 		internal unsafe static CameraManager* Camera = CameraManager.Instance();
 
-		public static void Init(DalamudPluginInterface dalamud) {
+		public static void Init(IDalamudPluginInterface dalamud) {
 			dalamud.Create<Services>();
 		}
 	}

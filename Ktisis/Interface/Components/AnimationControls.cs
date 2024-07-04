@@ -1,7 +1,7 @@
 using ImGuiNET;
 
 using Dalamud.Game.ClientState.Objects.Types;
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
 
 using Ktisis.Interop.Hooks;
 using Ktisis.Util;
@@ -10,7 +10,7 @@ namespace Ktisis.Interface.Components {
 	public static class AnimationControls {
 
 
-		public static unsafe void Draw(GameObject? target) {
+		public static unsafe void Draw(IGameObject? target) {
 			// Animation control
 			if (ImGui.CollapsingHeader("Animation Control")) {
 				var control = PoseHooks.GetAnimationControl(target);

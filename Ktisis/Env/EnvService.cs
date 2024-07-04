@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Dalamud.Interface.Internal;
-using Dalamud.Logging;
+using Dalamud.Interface.Textures.TextureWraps;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 
@@ -56,7 +55,7 @@ namespace Ktisis.Env {
 			CurSky = sky;
 			GetSkyboxTex(CurSky).ContinueWith(result => {
 				if (result.Exception != null) {
-					PluginLog.Error(result.Exception.ToString());
+					Ktisis.Log.Error(result.Exception.ToString());
 					return;
 				}
 
@@ -69,8 +68,8 @@ namespace Ktisis.Env {
 		
 		private static async Task<IDalamudTextureWrap?> GetSkyboxTex(uint skyId) {
 			await Task.Yield();
-			PluginLog.Verbose($"Retrieving skybox texture: {skyId:000}");
-			return Services.Textures.GetTextureFromGame($"bgcommon/nature/sky/texture/sky_{skyId:000}.tex");
+			Ktisis.Log.Verbose($"Retrieving skybox texture: {skyId:000}");
+			return Services.Textures.GetFromGame($"bgcommon/nature/sky/texture/sky_{skyId:000}.tex").GetWrapOrEmpty();
 		}
 		
 		public unsafe static byte[] GetEnvWeatherIds() {
@@ -96,7 +95,7 @@ namespace Ktisis.Env {
 				var weather = weatherSheet.GetRow(id);
 				if (weather == null) continue;
 
-				var icon = Services.Textures.GetIcon((uint)weather.Icon);
+				var icon = Services.Textures.GetFromGameIcon((uint)weather.Icon).GetWrapOrEmpty();
 				var info = new WeatherInfo(weather, icon);
 				result.Add(info);
 			}

@@ -22,7 +22,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class ActorTab {
 		private static readonly NpcImport _npcImport = new();
 		
-		public unsafe static void Draw(GameObject target) {
+		public unsafe static void Draw(IGameObject target) {
 			var actor = (Actor*)target.Address;
 			if (actor == null) return;
 

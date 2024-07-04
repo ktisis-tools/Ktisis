@@ -1,10 +1,10 @@
 ﻿using System.Numerics;
 
+using FFXIVClientStructs.Havok.Animation.Rig;
+
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Bones;
-
-using static FFXIVClientStructs.Havok.hkaPose;
 
 namespace Ktisis.History {
 	public class ActorBone : HistoryItem {
@@ -58,7 +58,7 @@ namespace Ktisis.History {
 
 			var bone = model->Skeleton->GetBone(historyBone.Partial, historyBone.Index);
 			var boneName = bone.HkaBone.Name.String ?? "";
-			var boneTransform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
+			var boneTransform = bone.AccessModelSpace(hkaPose.PropagateOrNot.DontPropagate);
 
 			// Write our updated matrix to memory.
 			var initialRot = boneTransform->Rotation.ToQuat();
@@ -78,7 +78,7 @@ namespace Ktisis.History {
 			var bone = GetBone();
 			if (bone == null) return false;
 
-			var boneTransform = bone.AccessModelSpace(PropagateOrNot.DontPropagate);
+			var boneTransform = bone.AccessModelSpace(hkaPose.PropagateOrNot.DontPropagate);
 			var matrix = Interop.Alloc.GetMatrix(boneTransform);
 
 			if (start)

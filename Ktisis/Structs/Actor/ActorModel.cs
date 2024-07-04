@@ -2,9 +2,10 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
+
 using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
 
 namespace Ktisis.Structs.Actor {

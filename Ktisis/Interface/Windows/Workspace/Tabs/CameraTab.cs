@@ -167,7 +167,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 
 			var isFreecam = camera.WorkCamera != null;
 			
-			var tarLock = camera.GetOrbitTarget() is GameObject actor ? (Actor*)actor.Address : null;
+			var tarLock = camera.GetOrbitTarget() is IGameObject actor ? (Actor*)actor.Address : null;
 			var isTarLocked = tarLock != null || isFreecam;
 			
 			var target = tarLock != null ? tarLock : Ktisis.Target;
