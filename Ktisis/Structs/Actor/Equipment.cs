@@ -19,20 +19,22 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x24)] public ItemEquip RingLeft;
 	}
 
-	[StructLayout(LayoutKind.Explicit, Size = 0x4)]
+	[StructLayout(LayoutKind.Explicit, Size = 0x8)]
 	public struct ItemEquip {
 		[FieldOffset(0)] public ushort Id;
 		[FieldOffset(2)] public byte Variant;
 		[FieldOffset(3)] public byte Dye;
+		[FieldOffset(4)] public byte Dye2;
 
-		public static explicit operator ItemEquip(uint num) => new() {
+		public static explicit operator ItemEquip(ulong num) => new() {
 			Id = (ushort)(num & 0xFFFF),
 			Variant = (byte)(num >> 16 & 0xFF),
-			Dye = (byte)(num >> 24)
+			Dye = (byte)(num >> 24),
+			Dye2 = (byte)(num >> 32)
 		};
 		
-		public static explicit operator uint(ItemEquip equip)
-			=> (uint)(equip.Id | (equip.Variant << 16) | (equip.Dye << 24));
+		public static explicit operator ulong(ItemEquip equip)
+			=> (uint)(equip.Id | (equip.Variant << 16) | (equip.Dye << 24)) | ((ulong)equip.Dye2 << 32);
 
 		public bool Equals(ItemEquip other) => Id == other.Id && Variant == other.Variant;
 	}

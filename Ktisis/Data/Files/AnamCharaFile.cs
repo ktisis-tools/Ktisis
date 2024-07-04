@@ -378,7 +378,7 @@ namespace Ktisis.Data.Files {
 				if (wep.Set != 0) {
 					wep.Base = ModelBase;
 					wep.Variant = ModelVariant;
-					wep.Dye = DyeId;
+					wep.Dye = (byte)DyeId;
 				}
 
 				actor->Equip(isMainHand ? 0 : 1, wep);

@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
 using Ktisis.Data.Excel;
-using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
@@ -23,14 +20,14 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x114)] public RenderMode RenderMode;
 		[FieldOffset(0x1AC)] public uint ModelId;
 
-		[FieldOffset(0x6F8)] public ActorDrawData DrawData;
+		[FieldOffset(0x708)] public ActorDrawData DrawData;
 
 		[FieldOffset(0x89E)] public bool IsHatHidden;
 
-		public const int GazeOffset = 0xCB0;
+		public const int GazeOffset = 0xD00;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
 		
-		[FieldOffset(0x1B2C)] public float Transparency;
+		[FieldOffset(0x21C8)] public float Transparency;
 
 		public unsafe string? GetName() {
 			fixed (byte* ptr = GameObject.Name)

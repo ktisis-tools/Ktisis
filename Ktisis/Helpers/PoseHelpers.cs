@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
-using Ktisis.Data.Serialization.Converters;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
 using Ktisis.Interop.Hooks;
