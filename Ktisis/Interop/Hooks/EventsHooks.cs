@@ -131,11 +131,13 @@ namespace Ktisis.Interop.Hooks {
 		}
 
 		public void Enable() {
-			rightClickTargetHook?.Enable();
-			leftClickTargetHook?.Enable();
+			//rightClickTargetHook?.Enable();
+			//leftClickTargetHook?.Enable();
 		}
 
 		public void Dispose() {
+			return;
+			
 			// Verify presence of hooks, in case of calls when it's already been disposed
 			if (!(bool)rightClickTargetHook?.IsDisposed!) {
 				if ((bool)rightClickTargetHook?.IsEnabled!)

@@ -159,7 +159,7 @@ namespace Ktisis.Interop.Hooks {
 							if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
 							PoseContainer container = new();
-							container.Store(actor->Model->Skeleton);
+							container.Store((FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton*)actor->Model->Skeleton);
 							PreservedPoses[actor->ObjectID] = container;
 						}
 					}
