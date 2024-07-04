@@ -43,10 +43,5 @@ namespace Ktisis.Data.Files {
 			fixed (byte* ptr = NoteChars)
 				return Marshal.PtrToStringAnsi((IntPtr)ptr) ?? "";
 		}
-
-		public unsafe static FfxivCharaDat GetFromSlot(int slot) {
-			var addr = Interop.StaticOffsets.CharaDatData + 8 + 0x140*slot;
-			return *(FfxivCharaDat*)addr;
-		}
 	}
 }

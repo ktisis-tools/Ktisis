@@ -64,13 +64,13 @@ namespace Ktisis.Interop.Hooks {
 		// Init & Dispose
 		
 		public unsafe static void Init() {
-			var addr1 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 49 8B 0E 48 8D 93 ?? ?? ?? ??");
+			var addr1 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 41 0F 28 CA");
             EnvUpdateHook = Services.Hooking.HookFromAddress<EnvUpdateDelegate>(addr1, EnvUpdateDetour);
             
-			var addr2 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 44 38 63 30 74 05 0F 28 DE");
+			var addr2 = Services.SigScanner.ScanText("48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 81 EC ?? ?? ?? ?? 0F 29 74 24 ?? 48 8B D9");
             SkyTexHook = Services.Hooking.HookFromAddress<SkyTexDelegate>(addr2, SkyTexDetour);
 			
-			var addr3 = Services.SigScanner.ScanText("48 8B C4 48 89 58 18 57 48 81 EC ?? ?? ?? ?? 0F 29 70 E8 48 8B D9");
+			var addr3 = Services.SigScanner.ScanText("48 8B C4 48 89 58 18 57 48 81 EC ?? ?? ?? ?? 0F B6 B9 ?? ?? ?? ??");
 			WaterRendererUpdateHook = Services.Hooking.HookFromAddress<WaterRendererUpdateDelegate>(addr3, WaterRendererUpdateDetour);
         }
 
