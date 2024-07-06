@@ -9,7 +9,7 @@ namespace Ktisis.Structs.Extensions {
 			var cam = camera.CameraBase.SceneCamera.RenderCamera;
 			var proj = cam->ProjectionMatrix;
 			var clip = cam->FarPlane / (cam->FarPlane - cam->NearPlane);
-			proj.M43 = -(clip * cam->NearPlane);
+			//proj.M43 = -(clip * cam->NearPlane);
 			proj.M33 = -clip;
 			return proj;
 		}
