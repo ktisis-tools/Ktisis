@@ -19,6 +19,8 @@ using Ktisis.Structs.Actor.Equip;
 using Ktisis.Interface.Components;
 using Ktisis.Structs.Actor.Types;
 
+using Lumina.Excel;
+
 namespace Ktisis.Interface.Windows.ActorEdit {
 	public static class EditEquip {
 		// Constants
@@ -31,15 +33,19 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		public static IEnumerable<Item>? Items => ItemData.Get();
 
+		public static ExcelSheet<Glasses>? Glasses;
+
 		public static Dictionary<EquipSlot, ItemCache> Equipped = new();
 
 		public static EquipSlot? SlotSelect;
 		public static IEnumerable<Item>? SlotItems;
+		private static string GlassesSearch = "";
 		private static string ItemSearch = "";
 		private static string SetSearch = "";
 		private static string DyeSearch = "";
 		private static bool DrawSetSelection = false;
 		private static bool DrawSetDyeSelection = false;
+		private static bool DrawGlassesSelection = false;
 
 		private static EquipSlot? SlotSelectDye;
 		private static int SelectDyeIndex;
@@ -69,6 +75,11 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (Items == null || Dyes == null) return;
 			
 			DrawControls();
+			
+			ImGui.Spacing();
+			DrawFaceWear();
+			ImGui.Spacing();
+			ImGui.Spacing();
 
 			ImGui.BeginGroup();
 			for (var i = 2; i < 13; i++) {
@@ -84,8 +95,24 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				DrawSelector(slot);
 			}
 			ImGui.EndGroup();
-
+			
 			ImGui.EndTabItem();
+		}
+
+		public unsafe static void DrawFaceWear() {
+			Glasses ??= Services.DataManager.GetExcelSheet<Glasses>()!;
+			
+			var glassesId = EditActor.Target->DrawData.Glasses;
+			var glasses = Glasses.GetRow(glassesId);
+			var name = glasses?.Name ?? "None";
+			if (ImGui.BeginCombo("Glasses", name)) {
+				DrawGlassesSelection = true;
+				ImGui.CloseCurrentPopup();
+				ImGui.EndCombo();
+			}
+
+			if (DrawGlassesSelection)
+				DrawGlassesSelector();
 		}
 
 		public unsafe static void DrawSelector(EquipSlot slot) {
@@ -292,6 +319,28 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				"Item Select",
 				"##equip_items",
 				"##equip_search"
+			);
+		}
+
+		private unsafe static void DrawGlassesSelector() {
+			if (Glasses == null) return;
+			
+			PopupSelect.HoverPopupWindow(
+				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
+				Glasses,
+				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
+				(i, a) => (  // draw Line
+						ImGui.Selectable(i.Name, a),
+						ImGui.IsItemFocused()
+					),
+				(i) => { // on Select
+					Target->SetGlasses((ushort)i.RowId);
+				},
+				() => DrawGlassesSelection = false,
+				ref GlassesSearch,
+				"Glasses Select",
+				"##glasses_list",
+				"##glasses_search"
 			);
 		}
 

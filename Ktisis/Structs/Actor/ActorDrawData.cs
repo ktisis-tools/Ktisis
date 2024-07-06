@@ -9,5 +9,7 @@ namespace Ktisis.Structs.Actor {
 		
 		[FieldOffset(0x160)] public Equipment Equipment;
 		[FieldOffset(0x188)] public Customize Customize;
+
+		[FieldOffset(0x1D0)] public ushort Glasses;
 	}
 }

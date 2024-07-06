@@ -86,6 +86,8 @@ namespace Ktisis.Data.Files {
 		public ItemSave? Wrists { get; set; }
 		public ItemSave? LeftRing { get; set; }
 		public ItemSave? RightRing { get; set; }
+		
+		public ushort? Glasses { get; set; }
 
 		// extended appearance
 		// NOTE: extended weapon values are stored in the WeaponSave
@@ -128,6 +130,7 @@ namespace Ktisis.Data.Files {
 				Hands = GetItemSave(actor, EquipIndex.Hands);
 				Legs = GetItemSave(actor, EquipIndex.Legs);
 				Feet = GetItemSave(actor, EquipIndex.Feet);
+				Glasses = actor.DrawData.Glasses;
 			}
 
 			if (IncludeSection(SaveModes.EquipmentAccessories, mode)) {
@@ -215,6 +218,7 @@ namespace Ktisis.Data.Files {
 				Hands?.Write(actor, EquipIndex.Hands);
 				Legs?.Write(actor, EquipIndex.Legs);
 				Feet?.Write(actor, EquipIndex.Feet);
+				if (Glasses != null) actor->SetGlasses(Glasses.Value);
 			}
 
 			if (IncludeSection(SaveModes.EquipmentAccessories, mode)) {

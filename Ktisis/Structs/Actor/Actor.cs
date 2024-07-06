@@ -99,6 +99,13 @@ namespace Ktisis.Structs.Actor {
 			}
 		}
 
+		public unsafe void SetGlasses(ushort id) {
+			if (Methods.ChangeGlasses == null) return;
+			
+			fixed (ActorDrawData* ptr = &DrawData)
+				Methods.ChangeGlasses(ptr, 0, id);
+		}
+
 		// Change customize - no redraw method
 
 		public unsafe bool UpdateCustomize() {
