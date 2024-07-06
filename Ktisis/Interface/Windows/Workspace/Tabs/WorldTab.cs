@@ -4,8 +4,6 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 
 using ImGuiNET;
@@ -159,18 +157,16 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		private static void DrawWeatherLabel(WeatherInfo weather, bool adjustPad = false) {
 			var style = ImGui.GetStyle();
 			var height = ImGui.GetFrameHeight();
-		
-			//if (weather.Icon != null) {
-				ImGui.SameLine(0, 0);
-				ImGui.SetCursorPosX(ImGui.GetCursorStartPos().X + style.ItemInnerSpacing.X);
-
-				var posY = ImGui.GetCursorPos().Y + height / 2 - WeatherIconSize.Y / 2;
-				if (adjustPad) posY -= style.FramePadding.Y;
-				ImGui.SetCursorPosY(posY);
 			
-				ImGui.Image(weather.Icon?.GetWrapOrEmpty().ImGuiHandle ?? 0, WeatherIconSize);
-				ImGui.SameLine();
-			//}
+			ImGui.SameLine(0, 0);
+			ImGui.SetCursorPosX(ImGui.GetCursorStartPos().X + style.ItemInnerSpacing.X);
+
+			var posY = ImGui.GetCursorPos().Y + height / 2 - WeatherIconSize.Y / 2;
+			if (adjustPad) posY -= style.FramePadding.Y;
+			ImGui.SetCursorPosY(posY);
+			
+			ImGui.Image(weather.Icon?.GetWrapOrEmpty().ImGuiHandle ?? 0, WeatherIconSize);
+			ImGui.SameLine();
             
 			ImGui.Text(weather.Name);
 		}
