@@ -8,9 +8,13 @@ namespace Ktisis.Structs.Extensions {
 		public unsafe static Matrix4x4 GetProjectionMatrix(this GameCamera camera) {
 			var cam = camera.CameraBase.SceneCamera.RenderCamera;
 			var proj = cam->ProjectionMatrix;
-			var clip = cam->FarPlane / (cam->FarPlane - cam->NearPlane);
-			//proj.M43 = -(clip * cam->NearPlane);
-			proj.M33 = -clip;
+
+			var far = cam->FarPlane;
+			var near = cam->NearPlane;
+			var clip = far / (far - near);
+			proj.M43 = -(clip * near);
+			proj.M33 = -((far + near) / (far - near));
+			
 			return proj;
 		}
 		public unsafe static Matrix4x4 GetViewMatrix(this GameCamera camera) {
