@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Dalamud.Interface.Textures.TextureWraps;
+using Dalamud.Interface.Textures;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 
@@ -47,7 +47,7 @@ namespace Ktisis.Env {
 		private static uint CurSky = uint.MaxValue;
 
 		public static readonly object SkyLock = new();
-		public static IDalamudTextureWrap? SkyTex;
+		public static ISharedImmediateTexture? SkyTex;
 		
 		public static void GetSkyImage(uint sky) {
 			if (sky == CurSky) return;
@@ -60,16 +60,15 @@ namespace Ktisis.Env {
 				}
 
 				lock (SkyLock) {
-					SkyTex?.Dispose();
 					SkyTex = result.Result;
 				}
 			});
 		}
 		
-		private static async Task<IDalamudTextureWrap?> GetSkyboxTex(uint skyId) {
+		private static async Task<ISharedImmediateTexture> GetSkyboxTex(uint skyId) {
 			await Task.Yield();
 			Ktisis.Log.Verbose($"Retrieving skybox texture: {skyId:000}");
-			return Services.Textures.GetFromGame($"bgcommon/nature/sky/texture/sky_{skyId:000}.tex").GetWrapOrEmpty();
+			return Services.Textures.GetFromGame($"bgcommon/nature/sky/texture/sky_{skyId:000}.tex");
 		}
 		
 		public unsafe static byte[] GetEnvWeatherIds() {
@@ -91,11 +90,13 @@ namespace Ktisis.Env {
 
 			foreach (var id in weathers) {
 				if (token.IsCancellationRequested) break;
+
+				if (id == 0) continue;
 				
 				var weather = weatherSheet.GetRow(id);
 				if (weather == null) continue;
 
-				var icon = Services.Textures.GetFromGameIcon((uint)weather.Icon).GetWrapOrEmpty();
+				var icon = Services.Textures.GetFromGameIcon((uint)weather.Icon);
 				var info = new WeatherInfo(weather, icon);
 				result.Add(info);
 			}

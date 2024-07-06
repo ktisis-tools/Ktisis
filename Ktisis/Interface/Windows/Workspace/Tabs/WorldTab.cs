@@ -138,7 +138,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, style.FramePadding with { Y = padding });
 			if (ImGui.BeginCombo(WeatherLabel, currentInfo != null ? "##" : "Unknown")) {
 				foreach (var weatherInfo in Weather) {
-					if (ImGui.Selectable($"##EnvWeather{weatherInfo.RowId}", weatherInfo.RowId == current)) {
+					if (ImGui.Selectable($"##EnvWeather{weatherInfo.RowId}", weatherInfo.RowId == current, ImGuiSelectableFlags.DontClosePopups)) {
 						click = true;
 						clickedId = (int)weatherInfo.RowId;
 					}
@@ -160,7 +160,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			var style = ImGui.GetStyle();
 			var height = ImGui.GetFrameHeight();
 		
-			if (weather.Icon != null) {
+			//if (weather.Icon != null) {
 				ImGui.SameLine(0, 0);
 				ImGui.SetCursorPosX(ImGui.GetCursorStartPos().X + style.ItemInnerSpacing.X);
 
@@ -168,9 +168,9 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 				if (adjustPad) posY -= style.FramePadding.Y;
 				ImGui.SetCursorPosY(posY);
 			
-				ImGui.Image(weather.Icon.ImGuiHandle, WeatherIconSize);
+				ImGui.Image(weather.Icon?.GetWrapOrEmpty().ImGuiHandle ?? 0, WeatherIconSize);
 				ImGui.SameLine();
-			}
+			//}
             
 			ImGui.Text(weather.Name);
 		}
@@ -187,7 +187,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
             
 			lock (EnvService.SkyLock) {
 				if (EnvService.SkyTex != null)
-					ImGui.Image(EnvService.SkyTex.ImGuiHandle, buttonSize);
+					ImGui.Image(EnvService.SkyTex.GetWrapOrEmpty().ImGuiHandle, buttonSize);
 			}
 
 			ImGui.SameLine();
