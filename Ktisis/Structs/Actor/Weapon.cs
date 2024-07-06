@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
+using Ktisis.Structs.Actor.Types;
+
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Weapon {
@@ -23,7 +25,7 @@ namespace Ktisis.Structs.Actor {
 	}
 
 	[StructLayout(LayoutKind.Explicit)]
-	public struct WeaponEquip {
+	public struct WeaponEquip : IEquipItem {
 		[FieldOffset(0x00)] public ushort Set;
 		[FieldOffset(0x02)] public ushort Base;
 		[FieldOffset(0x04)] public ushort Variant;
@@ -31,6 +33,24 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x07)] public byte Dye2;
 
 		[FieldOffset(0x00)] public ulong Value;
+
+		public byte GetDye(int index) {
+			return index switch {
+				1 => this.Dye2,
+				_ => this.Dye
+			};
+		}
+
+		public void SetDye(int index, byte value) {
+			switch (index) {
+				case 0:
+					this.Dye = value;
+					break;
+				case 1:
+					this.Dye2 = value;
+					break;
+			}
+		}
 	}
 
 	[StructLayout(LayoutKind.Explicit)]

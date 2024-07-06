@@ -1,5 +1,7 @@
 using System.Runtime.InteropServices;
 
+using Ktisis.Structs.Actor.Types;
+
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit)]
 	public struct Equipment {
@@ -20,7 +22,7 @@ namespace Ktisis.Structs.Actor {
 	}
 
 	[StructLayout(LayoutKind.Explicit, Size = 0x8)]
-	public struct ItemEquip {
+	public struct ItemEquip : IEquipItem {
 		[FieldOffset(0)] public ushort Id;
 		[FieldOffset(2)] public byte Variant;
 		[FieldOffset(3)] public byte Dye;
@@ -37,6 +39,24 @@ namespace Ktisis.Structs.Actor {
 			=> (uint)(equip.Id | (equip.Variant << 16) | (equip.Dye << 24)) | ((ulong)equip.Dye2 << 32);
 
 		public bool Equals(ItemEquip other) => Id == other.Id && Variant == other.Variant;
+
+		public byte GetDye(int index) {
+			return index switch {
+				1 => this.Dye2,
+				_ => this.Dye
+			};
+		}
+		
+		public void SetDye(int index, byte value) {
+			switch (index) {
+				case 0:
+					this.Dye = value;
+					break;
+				case 1:
+					this.Dye2 = value;
+					break;
+			}
+		}
 	}
 
 	public enum EquipIndex : uint {

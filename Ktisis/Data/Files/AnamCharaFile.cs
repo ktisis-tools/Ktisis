@@ -361,6 +361,7 @@ namespace Ktisis.Data.Files {
 				ModelBase = from.Base;
 				ModelVariant = from.Variant;
 				DyeId = from.Dye;
+				DyeId2 = from.Dye2;
 			}
 
 			public Vector3 Color { get; set; }
@@ -368,7 +369,8 @@ namespace Ktisis.Data.Files {
 			public ushort ModelSet { get; set; }
 			public ushort ModelBase { get; set; }
 			public ushort ModelVariant { get; set; }
-			public ushort DyeId { get; set; }
+			public byte DyeId { get; set; }
+			public byte DyeId2 { get; set; }
 
 			public unsafe void Write(Actor* actor, bool isMainHand) {
 				var wep = new WeaponEquip() {
@@ -378,7 +380,8 @@ namespace Ktisis.Data.Files {
 				if (wep.Set != 0) {
 					wep.Base = ModelBase;
 					wep.Variant = ModelVariant;
-					wep.Dye = (byte)DyeId;
+					wep.Dye = DyeId;
+					wep.Dye2 = DyeId2;
 				}
 
 				actor->Equip(isMainHand ? 0 : 1, wep);
@@ -394,17 +397,20 @@ namespace Ktisis.Data.Files {
 				ModelBase = from.Id;
 				ModelVariant = from.Variant;
 				DyeId = from.Dye;
+				DyeId2 = from.Dye2;
 			}
 
 			public ushort ModelBase { get; set; }
 			public byte ModelVariant { get; set; }
 			public byte DyeId { get; set; }
+			public byte DyeId2 { get; set; }
 
 			public unsafe void Write(Actor* actor, EquipIndex index) {
 				var item = new ItemEquip() {
 					Id = ModelBase,
 					Variant = ModelVariant,
-					Dye = DyeId
+					Dye = DyeId,
+					Dye2 = DyeId2
 				};
 				actor->Equip(index, item);
 			}

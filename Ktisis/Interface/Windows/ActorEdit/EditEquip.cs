@@ -17,6 +17,7 @@ using Ktisis.Helpers.Async;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Interface.Components;
+using Ktisis.Structs.Actor.Types;
 
 namespace Ktisis.Interface.Windows.ActorEdit {
 	public static class EditEquip {
@@ -41,6 +42,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		private static bool DrawSetDyeSelection = false;
 
 		private static EquipSlot? SlotSelectDye;
+		private static int SelectDyeIndex;
 		
 		public static IEnumerable<Dye>? Dyes => DyeData.Get();
 
@@ -152,9 +154,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			ImGui.PopItemWidth();
 			ImGui.SameLine();
 
-			var dye = Dyes!.FirstOrDefault(i => i.RowId == (isWeapon ? ((WeaponEquip)equipObj).Dye : ((ItemEquip)equipObj).Dye));
-			if (ImGui.ColorButton($"{dye?.Name} [{dye?.RowId}]##{slot}", dye?.ColorVector4 ?? default, ImGuiColorEditFlags.NoBorder))
-				OpenDyePicker(slot);
+			DrawDyeButton((IEquipItem)equipObj, slot, 0);
+			ImGui.SameLine();
+			DrawDyeButton((IEquipItem)equipObj, slot, 1);
 
 			if (equipObj is WeaponEquip) {
 				ImGui.SameLine();
@@ -179,7 +181,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			if (SlotSelect == slot)
 				DrawSelectorList(slot, equipObj);
 			if (SlotSelectDye == slot)
-				DrawDyePicker(slot, equipObj);
+				DrawDyePicker(slot, equipObj, SelectDyeIndex);
 		}
 
 		public static void OpenSelector(EquipSlot slot) {
@@ -191,7 +193,26 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			SlotItems = null;
 		}
 
-		public static void OpenDyePicker(EquipSlot slot) =>	SlotSelectDye = slot;
+		private static void DrawDyeButton(IEquipItem item, EquipSlot slot, int index) {
+			var dye = Dyes!.FirstOrDefault(i => i.RowId == item.GetDye(index));
+			if (ImGui.ColorButton($"{dye?.Name} [{dye?.RowId}]##{slot}_{index}", dye?.ColorVector4 ?? default, ImGuiColorEditFlags.NoBorder))
+				OpenDyePicker(slot, index);
+			if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+				SetDye(item, slot, index, 0);
+		}
+
+		private unsafe static void SetDye(IEquipItem item, EquipSlot slot, int index, byte value) {
+			item.SetDye(index, value);
+			if (item is WeaponEquip wepEquip)
+				Target->Equip((int)slot, wepEquip);
+			else if (item is ItemEquip itemEquip)
+				Target->Equip(SlotToIndex(slot), itemEquip);
+		}
+
+		public static void OpenDyePicker(EquipSlot slot, int index) {
+			SlotSelectDye = slot;
+			SelectDyeIndex = index;
+		}
 		public static void CloseDyePicker() =>	SlotSelectDye = null;
 
 		public static void OpenSetSelector() => DrawSetSelection = true;
@@ -307,7 +328,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		private static int DyeLastSubOrder = -1;
 		private const int DyePickerWidth = 485;
-		public static unsafe void DrawDyePicker(EquipSlot slot, object equipObj)
+		public static unsafe void DrawDyePicker(EquipSlot slot, object equipObj, int index)
 		{
 			PopupSelect.HoverPopupWindow(
 				PopupSelect.HoverPopupWindowFlags.SearchBar
@@ -318,13 +339,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				DrawDyePickerHeader,
 				DrawDyePickerItem,
 				(i) => { // on Select
-					if (equipObj is WeaponEquip wep) {
-						wep.Dye = (byte)i.RowId;
-						Target->Equip((int)slot, wep);
-					} else if (equipObj is ItemEquip item) {
-						item.Dye = (byte)i.RowId;
-						Target->Equip(SlotToIndex(slot), item);
-					}
+					SetDye((IEquipItem)equipObj, slot, index, (byte)i.RowId);
 				},
 				CloseDyePicker, // on close
 				ref DyeSearch,
