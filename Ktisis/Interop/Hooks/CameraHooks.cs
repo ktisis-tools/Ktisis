@@ -6,6 +6,7 @@ using Dalamud.Hooking;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
+using RenderCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Camera;
 
 using Ktisis.Camera;
 using Ktisis.Structs.FFXIV;
@@ -77,11 +78,17 @@ namespace Ktisis.Interop.Hooks {
 		
 		// Freecam
 
+		private unsafe delegate Matrix4x4* LoadMatrixDelegate(RenderCamera* camera, Matrix4x4* matrix, int a3, int a4);
+		private static LoadMatrixDelegate LoadMatrix = null!;
+
 		private unsafe delegate Matrix4x4* CalcViewMatrixDelegate(SceneCamera* camera);
 		private static Hook<CalcViewMatrixDelegate> CalcViewMatrixHook = null!;
 		private unsafe static Matrix4x4* CalcViewMatrixDetour(SceneCamera* camera) {
+			var exec = CalcViewMatrixHook.Original(camera);
+			
 			var freecam = CameraService.GetFreecam();
-			if (freecam == null || freecam.WorkCamera == null) goto retn;
+			if (freecam == null || freecam.WorkCamera == null)
+				return exec;
 
 			try {
 				var active = Services.Camera->GetActiveCamera();
@@ -92,14 +99,14 @@ namespace Ktisis.Interop.Hooks {
 					var matrix = freecam.WorkCamera.Update(active->FoV * Math.Abs(1 + zoom));
 	
 					*tarMatrix = matrix;
-					return tarMatrix;
+					LoadMatrix(camera->RenderCamera, tarMatrix, 0, 0);
 				}
 			} catch (Exception e) {
 				Ktisis.Log.Error(e.ToString());
 				DisableHooks();
 			}
 
-			retn: return CalcViewMatrixHook.Original(camera);
+			return exec;
 		}
 		
 		// GetActiveCamera
@@ -224,6 +231,9 @@ namespace Ktisis.Interop.Hooks {
             
 			var viewMxAddr = Services.SigScanner.ScanText("48 89 5C 24 ?? 57 48 81 EC ?? ?? ?? ?? F6 81 ?? ?? ?? ?? ?? 48 8B D9 48 89 B4 24 ?? ?? ?? ??");
             CalcViewMatrixHook = Services.Hooking.HookFromAddress<CalcViewMatrixDelegate>(viewMxAddr, CalcViewMatrixDetour);
+
+			var loadMxAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 17 48 8D 4D E0");
+			LoadMatrix = Marshal.GetDelegateForFunctionPointer<LoadMatrixDelegate>(loadMxAddr);
             
 			var collideAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 4C 8B AC 24 ?? ?? ?? ?? 32 DB");
             CameraCollisionHook = Services.Hooking.HookFromAddress<CameraCollisionDelegate>(collideAddr, CameraCollisionDetour);
@@ -232,6 +242,7 @@ namespace Ktisis.Interop.Hooks {
 		internal static void Dispose() {
 			DisableHooks();
 			ControlHook.Dispose();
+			PreUpdateHook.Dispose();
 			ActiveCamHook.Dispose();
 			CameraEventHook.Dispose();
 			CameraUiHook.Dispose();
