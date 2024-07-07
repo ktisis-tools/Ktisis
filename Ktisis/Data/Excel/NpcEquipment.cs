@@ -17,8 +17,8 @@ namespace Ktisis.Data.Excel {
 			base.PopulateData(parser, gameData, language);
 
 			this.MainHand = parser.ReadWeapon(0);
-			this.OffHand = parser.ReadWeapon(2);
-			this.Equipment = parser.ReadEquipment(4);
+			this.OffHand = parser.ReadWeapon(3);
+			this.Equipment = parser.ReadEquipment(6);
 		}
 	}
 }
