@@ -34,8 +34,8 @@ namespace Ktisis.Data.Excel {
 			var equipRow = parser.ReadColumn<ushort>(63);
 
 			this.MainHand = parser.ReadWeapon(65);
-			this.OffHand = parser.ReadWeapon(67);
-            this.Equipment = parser.ReadEquipment(69);
+			this.OffHand = parser.ReadWeapon(68);
+            this.Equipment = parser.ReadEquipment(71);
 
 			// what the fuck?
 			var equip = equipRow is not (0 or 175) ? new LazyRow<NpcEquipment>(gameData, equipRow, language) : null;

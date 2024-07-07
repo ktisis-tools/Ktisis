@@ -7,18 +7,18 @@ namespace Ktisis.Structs.Actor {
 	public struct Equipment {
 		public const int SlotCount = 10;
 		
-		[FieldOffset(0)] public unsafe fixed uint Slots[0x4 * SlotCount];
+		[FieldOffset(0)] public unsafe fixed ulong Slots[0x4 * SlotCount];
 
 		[FieldOffset(0x00)] public ItemEquip Head;
-		[FieldOffset(0x04)] public ItemEquip Chest;
-		[FieldOffset(0x08)] public ItemEquip Hands;
-		[FieldOffset(0x0C)] public ItemEquip Legs;
-		[FieldOffset(0x10)] public ItemEquip Feet;
-		[FieldOffset(0x14)] public ItemEquip Earring;
-		[FieldOffset(0x18)] public ItemEquip Necklace;
-		[FieldOffset(0x1C)] public ItemEquip Bracelet;
-		[FieldOffset(0x20)] public ItemEquip RingRight;
-		[FieldOffset(0x24)] public ItemEquip RingLeft;
+		[FieldOffset(0x08)] public ItemEquip Chest;
+		[FieldOffset(0x10)] public ItemEquip Hands;
+		[FieldOffset(0x18)] public ItemEquip Legs;
+		[FieldOffset(0x20)] public ItemEquip Feet;
+		[FieldOffset(0x28)] public ItemEquip Earring;
+		[FieldOffset(0x30)] public ItemEquip Necklace;
+		[FieldOffset(0x38)] public ItemEquip Bracelet;
+		[FieldOffset(0x40)] public ItemEquip RingRight;
+		[FieldOffset(0x48)] public ItemEquip RingLeft;
 	}
 
 	[StructLayout(LayoutKind.Explicit, Size = 0x8)]
