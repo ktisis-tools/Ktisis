@@ -22,7 +22,7 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x708)] public ActorDrawData DrawData;
 
-		[FieldOffset(0x89E)] public bool IsHatHidden;
+		[FieldOffset(0x8D6)] public bool IsHatHidden;
 
 		public const int GazeOffset = 0xD00;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
@@ -58,8 +58,11 @@ namespace Ktisis.Structs.Actor {
 
 		// Change equipment - no redraw method
 
-		public unsafe ItemEquip GetEquip(EquipIndex index)
-			=> this.Model != null ? this.Model->GetEquipSlot((int)index) : default;
+		public unsafe ItemEquip GetEquip(EquipIndex index) {
+			if (index == EquipIndex.Head && this.IsHatHidden)
+				return this.DrawData.Equipment.Head;
+			return this.Model != null ? this.Model->GetEquipSlot((int)index) : default;
+		}
 
 		public unsafe Customize GetCustomize()
 			=> this.Model != null ? this.Model->GetCustomize() ?? default : default;
