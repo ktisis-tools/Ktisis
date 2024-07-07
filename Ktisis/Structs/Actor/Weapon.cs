@@ -24,7 +24,7 @@ namespace Ktisis.Structs.Actor {
 		}
 	}
 
-	[StructLayout(LayoutKind.Explicit)]
+	[StructLayout(LayoutKind.Explicit, Size = 0x8)]
 	public struct WeaponEquip : IEquipItem {
 		[FieldOffset(0x00)] public ushort Set;
 		[FieldOffset(0x02)] public ushort Base;
