@@ -2,7 +2,6 @@ using System;
 using System.Runtime.InteropServices;
 
 using Dalamud.Hooking;
-using Dalamud.Logging;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
@@ -39,9 +38,9 @@ namespace Ktisis.Interop.Hooks {
 
 		// Camera control
 
-		private delegate nint ControlDelegate(nint a1);
+		private delegate bool ControlDelegate(nint a1);
 		private static Hook<ControlDelegate> ControlHook = null!;
-		private unsafe static nint ControlDetour(nint a1) {
+		private unsafe static bool ControlDetour(nint a1) {
 			StartOverride();
 			var exec = ControlHook.Original(a1);
 			EndOverride();
@@ -62,6 +61,17 @@ namespace Ktisis.Interop.Hooks {
 				DisableHooks();
 			}
 
+			return exec;
+		}
+		
+		// Pre-update
+
+		private delegate nint PreUpdateDelegate(nint a1);
+		private static Hook<PreUpdateDelegate> PreUpdateHook = null!;
+		private unsafe static nint PreUpdateDetour(nint a1) {
+			StartOverride();
+			var exec = PreUpdateHook.Original(a1);
+			EndOverride();
 			return exec;
 		}
 		
@@ -163,6 +173,7 @@ namespace Ktisis.Interop.Hooks {
 		private static void EnableHooks() {
 			TargetHook.Enable();
 			ControlHook.Enable();
+			PreUpdateHook.Enable();
 			ActiveCamHook.Enable();
 			CameraEventHook.Enable();
 			CameraUiHook.Enable();
@@ -174,6 +185,7 @@ namespace Ktisis.Interop.Hooks {
 		private static void DisableHooks() {
 			TargetHook.Disable();
 			ControlHook.Disable();
+			PreUpdateHook.Disable();
 			ActiveCamHook.Disable();
 			CameraEventHook.Disable();
 			CameraUiHook.Disable();
@@ -194,8 +206,11 @@ namespace Ktisis.Interop.Hooks {
 			
 			var camCtrlAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 83 3D ?? ?? ?? ?? ?? 74 0C");
             ControlHook = Services.Hooking.HookFromAddress<ControlDelegate>(camCtrlAddr, ControlDetour);
+
+			var preUpdateAddr = Services.SigScanner.ScanText("48 83 EC 28 8B 41 48");
+			PreUpdateHook = Services.Hooking.HookFromAddress<PreUpdateDelegate>(preUpdateAddr, PreUpdateDetour);
             
-			var actCamAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F7 80");
+			var actCamAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 41 0F B6 DF");
             ActiveCamHook = Services.Hooking.HookFromAddress<ActiveCamDelegate>(actCamAddr, GetActiveCamDetour);
             
 			var camEventAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F8 EB 34");
