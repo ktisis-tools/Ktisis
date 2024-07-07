@@ -105,7 +105,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 		
 		// Selection details
 
-		private unsafe static void SelectInfo(GameObject target) {
+		private unsafe static void SelectInfo(IGameObject target) {
 			var actor = (Actor*)target.Address;
 
 			var select = Skeleton.BoneSelect;

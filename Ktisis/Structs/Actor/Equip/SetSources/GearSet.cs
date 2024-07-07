@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Text;
 using System.Collections.Generic;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -18,9 +17,9 @@ namespace Ktisis.Structs.Actor.Equip.SetSources {
 
 			for (var i = 0; i < _gearSetNumber; i++) {
                 var gearset = raptureGearsetModule->GetGearset(i);
-				if (gearset->ID != i) break;
+				if (gearset->Id != i) break;
 				if (!gearset->Flags.HasFlag(RaptureGearsetModule.GearsetFlag.Exists)) continue;
-				nameList.Add(i, Encoding.UTF8.GetString(gearset->Name, 0x2F));
+				nameList.Add(i, gearset->NameString);
 			}
 
 			return nameList;
@@ -58,18 +57,18 @@ namespace Ktisis.Structs.Actor.Equip.SetSources {
 
 			// get item IDs from gearset
 			List<(uint, EquipSlot)> itemsToRemodel = new() {
-				(gearset->MainHand.ItemID, EquipSlot.MainHand),
-				(gearset->OffHand.ItemID, EquipSlot.OffHand),
-				(gearset->Head.ItemID, EquipSlot.Head),
-				(gearset->Body.ItemID, EquipSlot.Chest),
-				(gearset->Hands.ItemID, EquipSlot.Hands),
-				(gearset->Legs.ItemID, EquipSlot.Legs),
-				(gearset->Feet.ItemID, EquipSlot.Feet),
-				(gearset->Ears.ItemID, EquipSlot.Earring),
-				(gearset->Neck.ItemID, EquipSlot.Necklace),
-				(gearset->Wrists.ItemID, EquipSlot.Bracelet),
-				(gearset->RingLeft.ItemID, EquipSlot.RingLeft),
-				(gearset->RingRight.ItemID, EquipSlot.RingRight),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.MainHand).ItemId, EquipSlot.MainHand),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.OffHand).ItemId, EquipSlot.OffHand),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.Head).ItemId, EquipSlot.Head),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.Body).ItemId, EquipSlot.Chest),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.Hands).ItemId, EquipSlot.Hands),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.Legs).ItemId, EquipSlot.Legs),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.Feet).ItemId, EquipSlot.Feet),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.Ears).ItemId, EquipSlot.Earring),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.Neck).ItemId, EquipSlot.Necklace),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.Wrists).ItemId, EquipSlot.Bracelet),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.RingLeft).ItemId, EquipSlot.RingLeft),
+				(gearset->GetItem(RaptureGearsetModule.GearsetItemIndex.RingRight).ItemId, EquipSlot.RingRight),
 			};
 
 
@@ -84,12 +83,12 @@ namespace Ktisis.Structs.Actor.Equip.SetSources {
 				InventoryItem? invItem = null;
 
 				// get the inventory item by the gearset item id
-				var invItems = inventoryItems.Where(i => i.ItemID == id);
-				if (!invItems.Any()) invItems = inventoryItems.Where(i => i.ItemID == uint.Parse(id.ToString()[2..])); // not sure why, sometimes item IDs have numbers prepended to them (mostly "10")
+				var invItems = inventoryItems.Where(i => i.ItemId == id);
+				if (!invItems.Any()) invItems = inventoryItems.Where(i => i.ItemId == uint.Parse(id.ToString()[2..])); // not sure why, sometimes item IDs have numbers prepended to them (mostly "10")
 				if (invItems.Any()) invItem = invItems.First();
 
 				// get the Item that contains the model Id
-				var items = Sets.ItemsSheet.Where(i => i.RowId == (invItem?.GlamourID == 0 ? invItem?.ItemID : invItem?.GlamourID));
+				var items = Sets.ItemsSheet.Where(i => i.RowId == (invItem?.GlamourId == 0 ? invItem?.ItemId : invItem?.GlamourId));
 				if (items.Any()) item = items.First();
 
 				if (item == null) {
@@ -98,7 +97,7 @@ namespace Ktisis.Structs.Actor.Equip.SetSources {
 					continue;
 				}
 
-				byte dye = (invItem?.Stain) ?? default;
+				byte dye = (invItem?.GetStain(0)) ?? default;
 				itemsToEquip.Add((slot, Sets.ItemToEquipObject(item, dye, slot)));
 			}
 

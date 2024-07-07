@@ -126,49 +126,90 @@ namespace Ktisis.Structs.Bones {
 				"n_hkata_l", // ShoulderLeft
 				"n_hkata_r", // ShoulderRight
 				"n_hhiji_l", // ElbowLeft
-				"n_hhiji_r"  // ElbowRight
-			});
-			CreateCategory("head", new Vector4(0.0F, 1.0F, 0.0F, 0.5647059F), new List<string> {
+				"n_hhiji_r",  // ElbowRight
 				"j_kao", // RootHead
-				"j_ago", // Jaw
-				"j_f_dmab_l", // EyelidLowerLeft
-				"j_f_dmab_r", // EyelidLowerRight
+				"j_ago" // Jaw
+			});
+
+			CreateCategory("eyes", new Vector4(0.0F, 1.0F, 0.0F, 0.5647059F), new List<string>() {
 				"j_f_eye_l", // EyeLeft
 				"j_f_eye_r", // EyeRight
-				"j_f_hana", // Nose
-				"j_f_hoho_l", // CheekLeft
-				"j_f_hoho_r", // CheekRight
-				"j_f_lip_l", // LipsLeft
-				"j_f_lip_r", // LipsRight
+				"j_f_mab_l",
+				"j_f_eyepuru_l",
+				"j_f_mabdn_01_l",
+				"j_f_mabup_01_l",
+				"j_f_mabdn_02out_l",
+				"j_f_mabdn_03in_l",
+				"j_f_mabup_02out_l",
+				"j_f_mabup_03in_l",
+				"j_f_mab_r",
+				"j_f_eyepuru_r",
+				"j_f_mabdn_01_r",
+				"j_f_mabup_01_r",
+				"j_f_mabdn_02out_r",
+				"j_f_mabdn_03in_r",
+				"j_f_mabup_02out_r",
+				"j_f_mabup_03in_r",
+				"j_f_mmayu_l",
+				"j_f_miken_01_l",
+				"j_f_miken_02_l",
+				"j_f_mmayu_r",
+				"j_f_miken_01_r",
+				"j_f_miken_02_r",
 				"j_f_mayu_l", // EyebrowLeft
 				"j_f_mayu_r", // EyebrowRight
-				"j_f_memoto", // Bridge
-				"j_f_miken_l", // BrowLeft
-				"j_f_miken_r", // BrowRight
-				"j_f_ulip_a", // LipUpperA
-				"j_f_umab_l", // EyelidUpperLeft
-				"j_f_umab_r", // EyelidUpperRight
-				"j_f_dlip_a", // LipLowerA
-				"j_f_ulip_b", // LipUpperB
-				"j_f_dlip_b", // LipLowerB
-				// Hrothgar Faces
-				"j_f_hige_l", // HrothWhiskersLeft
-				"j_f_hige_r", // HrothWhiskersRight
-				//"j_f_mayu_l",  // HrothEyebrowLeft
-				//"j_f_mayu_r",  // HrothEyebrowRight
-				//"j_f_memoto",  // HrothBridge
-				//"j_f_miken_l", // HrothBrowLeft
-				//"j_f_miken_r", // HrothBrowRight
-				"j_f_uago", // HrothJawUpper
-				"j_f_ulip", // HrothLipUpper
-				//"j_f_umab_l",  // HrothEyelidUpperLeft
-				//"j_f_umab_r",  // HrothEyelidUpperRight
-				"n_f_lip_l", // HrothLipsLeft
-				"n_f_lip_r", // HrothLipsRight
-				"n_f_ulip_l", // HrothLipUpperLeft
-				"n_f_ulip_r", // HrothLipUpperRight
-				"j_f_dlip", // HrothLipLower
 			});
+			
+			CreateCategory("mouth", new Vector4(0.0F, 1.0F, 0.0F, 0.5647059F), new List<string>() {
+				"j_f_ago",
+				"j_f_dago",
+				"j_f_hagukiup",
+				"j_f_hagukidn",
+				"j_f_bero_01",
+				"j_f_bero_02",
+				"j_f_bero_03",
+				"j_f_lip_l", // LipsLeft
+				"j_f_lip_r", // LipsRight
+				"j_f_dmlip_01_l",
+				"j_f_dmlip_02_l",
+				"j_f_umlip_01_l",
+				"j_f_umlip_02_l",
+				"j_f_dmlip_01_r",
+				"j_f_dmlip_02_r",
+				"j_f_umlip_01_r",
+				"j_f_umlip_02_r",
+				"j_f_dlip_01_l",
+				"j_f_dlip_02_l",
+				"j_f_ulip_01_l",
+				"j_f_ulip_02_l",
+				"j_f_dlip_01_r",
+				"j_f_dlip_02_r",
+				"j_f_ulip_01_r",
+				"j_f_ulip_02_r",
+				"j_f_uslip_l",
+				"j_f_dslip_l",
+				"j_f_uslip_r",
+				"j_f_dslip_r"
+			});
+
+			CreateCategory("face", new Vector4(0.0F, 1.0F, 0.0F, 0.5647059F), new List<string>() {
+				"j_f_face",
+				"j_f_hana", // Nose
+				"j_f_hana_l",
+				"j_f_hana_r",
+				"j_f_uhana",
+				"j_f_hoho_l", // CheekLeft
+				"j_f_hoho_r", // CheekRight
+				"j_f_dhoho_l",
+				"j_f_dhoho_r",
+				"j_f_shoho_l",
+				"j_f_shoho_r",
+				"j_f_dmemoto_l",
+				"j_f_dmemoto_r",
+				"j_f_dmiken_l",
+				"j_f_dmiken_r"
+			});
+			
 			CreateCategory("hair", new Vector4(0.0F, 0.0F, 1.0F, 0.5647059F), new List<string> {
 				"j_kami_a", // HairA
 				"j_kami_f_l", // HairFrontLeft

@@ -6,12 +6,19 @@ using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 namespace Ktisis.Structs.Extensions {
 	public static class Camera {
 		public unsafe static Matrix4x4 GetProjectionMatrix(this GameCamera camera) {
-			var ptr = (byte*)&camera;
-			return *(Matrix4x4*)((IntPtr)camera.CameraBase.SceneCamera.RenderCamera + 80);
+			var cam = camera.CameraBase.SceneCamera.RenderCamera;
+			var proj = cam->ProjectionMatrix;
+
+			var far = cam->FarPlane;
+			var near = cam->NearPlane;
+			var clip = far / (far - near);
+			proj.M43 = -(clip * near);
+			proj.M33 = -((far + near) / (far - near));
+			
+			return proj;
 		}
 		public unsafe static Matrix4x4 GetViewMatrix(this GameCamera camera) {
-			var ptr = (byte*)&camera;
-			var view = *(Matrix4x4*)(ptr + 0xB0);
+			var view = camera.CameraBase.SceneCamera.ViewMatrix;
 			view.M44 = 1;
 			return view;
 		}

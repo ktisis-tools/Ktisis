@@ -2,9 +2,10 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using FFXIVClientStructs.Havok;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
+
 using ModelType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CharacterBase.ModelType;
 
 namespace Ktisis.Structs.Actor {
@@ -25,18 +26,18 @@ namespace Ktisis.Structs.Actor {
 		
 		[FieldOffset(0x148)] public unsafe Breasts* Bust;
 		
-		[FieldOffset(0x274)] public float Height;
+		[FieldOffset(0x2A4)] public float Height;
 
 		[FieldOffset(0x370)] public nint Sklb;
 
-		[FieldOffset(0x8F0)] public Customize Customize;
+		[FieldOffset(0x9D0)] public Customize Customize;
 
-		[FieldOffset(0x8F4)] public unsafe fixed uint DemiEquip[5];
-		[FieldOffset(0x910)] public unsafe fixed uint HumanEquip[10];
+		[FieldOffset(0x9D8)] public unsafe fixed ulong DemiEquip[5];
+		[FieldOffset(0x9F0)] public unsafe fixed ulong HumanEquip[11];
 		
-		[FieldOffset(0x2B0)] public float WeatherWetness;  // Set to 1.0f when raining and not covered or umbrella'd
-		[FieldOffset(0x2B4)] public float SwimmingWetness; // Set to 1.0f when in water
-		[FieldOffset(0x2B8)] public float WetnessDepth;    // Set to ~character height in GPose and higher values when swimming or diving.
+		[FieldOffset(0x2E0)] public float WeatherWetness;  // Set to 1.0f when raining and not covered or umbrella'd
+		[FieldOffset(0x2E4)] public float SwimmingWetness; // Set to 1.0f when in water
+		[FieldOffset(0x2E8)] public float WetnessDepth;    // Set to ~character height in GPose and higher values when swimming or diving.
 
 		private unsafe CharacterBase* AsCharacter() {
 			fixed (ActorModel* self = &this)

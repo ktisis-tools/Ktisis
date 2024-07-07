@@ -22,7 +22,7 @@ namespace Ktisis.Interop.Hooks {
 		// Init & Dispose
 
 		internal static void Init() {
-			var controlGaze = Services.SigScanner.ScanText("40 53 41 54 41 55 48 81 EC ?? ?? ?? ?? 48 8B D9");
+			var controlGaze = Services.SigScanner.ScanText("40 57 41 54 41 56 48 81 EC ?? ?? ?? ?? 48 8B F9");
 			ControlGazeHook = Services.Hooking.HookFromAddress<ControlGazeDelegate>(controlGaze, ControlGaze);
             ControlGazeHook.Enable();
 		}

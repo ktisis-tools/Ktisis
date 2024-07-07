@@ -4,6 +4,7 @@ using Dalamud.Plugin;
 using Dalamud.Game.Command;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface;
+using Dalamud.Plugin.Services;
 
 using Ktisis.Camera;
 using Ktisis.Env;
@@ -24,12 +25,13 @@ namespace Ktisis {
 		public static string Version = $"Alpha {GetVersion()}";
 
 		public static Configuration Configuration { get; private set; } = null!;
-		public static UiBuilder UiBuilder { get; private set; } = null!;
+		public static IUiBuilder UiBuilder { get; private set; } = null!;
+		public static IPluginLog Log { get; private set; } = null!;
 
 		public static bool IsInGPose => Services.ClientState.IsGPosing && IsGposeTargetPresent();
 		public unsafe static bool IsGposeTargetPresent() => (IntPtr)Services.Targets->GPoseTarget != IntPtr.Zero;
 
-		public unsafe static GameObject? GPoseTarget
+		public unsafe static IGameObject? GPoseTarget
 			=> IsInGPose ? Services.ObjectTable.CreateObjectReference((IntPtr)Services.Targets->GPoseTarget) : null;
 		public unsafe static Actor* Target => GPoseTarget != null ? (Actor*)GPoseTarget.Address : null;
 
@@ -37,10 +39,14 @@ namespace Ktisis {
 			return typeof(Ktisis).Assembly.GetName().Version!.ToString(fieldCount: 3);
 		}
 
-		public Ktisis(DalamudPluginInterface pluginInterface) {
+		public Ktisis(
+			IDalamudPluginInterface pluginInterface,
+			IPluginLog log
+		) {
 			Services.Init(pluginInterface);
 			Configuration = pluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 			UiBuilder = pluginInterface.UiBuilder;
+			Log = log;
 
 			if (Configuration.IsFirstTimeInstall) {
 				Configuration.IsFirstTimeInstall = false;
@@ -119,10 +125,6 @@ namespace Ktisis {
 
 			Input.Dispose();
 			HistoryManager.Dispose();
-
-			foreach (var (_, texture) in References.Textures) {
-				texture.Dispose();
-			}
 		}
 
 		private void OnCommand(string command, string arguments) {

@@ -21,6 +21,9 @@ namespace Ktisis.Interop {
 		internal unsafe delegate void ChangeWeaponDelegate(ActorDrawData* writeTo, int slot, WeaponEquip weapon, byte a4, byte a5, byte a6, byte a7); // a4-a7 is always 0,1,0,0.
 		internal static ChangeWeaponDelegate? ActorChangeWeapon;
 
+		internal unsafe delegate void ChangeGlassesDelegate(ActorDrawData* writeTo, int slot, ushort id);
+		internal static ChangeGlassesDelegate? ChangeGlasses;
+
 		// Get world matrix
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -33,9 +36,10 @@ namespace Ktisis.Interop {
 			=> Marshal.GetDelegateForFunctionPointer<TDelegate>(Services.SigScanner.ScanText(sig));
 
 		internal static void Init() {
-			ActorLookAt = Retrieve<LookAtDelegate>("40 53 55 57 41 56 41 57 48 83 EC 70");
-			ActorChangeEquip = Retrieve<ChangeEquipDelegate>("E8 ?? ?? ?? ?? 41 B5 01 FF C6");
-			ActorChangeWeapon = Retrieve<ChangeWeaponDelegate>("E8 ?? ?? ?? ?? 80 7F 25 00");
+			ActorLookAt = Retrieve<LookAtDelegate>("E8 ?? ?? ?? ?? 8B D3 8B CB");
+			ActorChangeEquip = Retrieve<ChangeEquipDelegate>("E8 ?? ?? ?? ?? B1 01 41 FF C6");
+			ActorChangeWeapon = Retrieve<ChangeWeaponDelegate>("E8 ?? ?? ?? ?? 4C 8B 45 7F");
+			ChangeGlasses = Retrieve<ChangeGlassesDelegate>("E8 ?? ?? ?? ?? EB 50 44 8B 03");
 			GetMatrix = Retrieve<GetMatrixDelegate>("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? 48 89 4c 24 ?? 4C 8D 4D ?? 4C 8D 44 24 ??");
 		}
 	}

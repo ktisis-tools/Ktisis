@@ -37,7 +37,7 @@ namespace Ktisis.Data.Excel {
 	[Sheet("Item")]
 	public class Item : ExcelRow {
 		public string Name { get; set; } = "";
-		public ushort Icon { get; set; }
+		public int Icon { get; set; }
 
 		public LazyRow<EquipSlotCategory> EquipSlotCategory { get; set; } = null!;
 

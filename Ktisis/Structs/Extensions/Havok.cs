@@ -1,7 +1,11 @@
 using System.Numerics;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Container.Array;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
+using FFXIVClientStructs.Havok.Common.Base.Math.Quaternion;
+using FFXIVClientStructs.Havok.Common.Base.Math.Vector;
 
 using Ktisis.Structs.Bones;
 

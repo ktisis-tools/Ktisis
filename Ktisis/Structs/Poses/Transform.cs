@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
 namespace Ktisis.Structs.Poses {
 	public class Transform {

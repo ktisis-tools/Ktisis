@@ -72,7 +72,7 @@ namespace Ktisis.Camera {
 		public void SetPositionLock(Vector3? pos) => CameraEdit.Position = pos;
 		public void SetOffset(Vector3? off) => CameraEdit.Offset = off;
 		
-		internal GameObject? GetOrbitTarget() {
+		internal IGameObject? GetOrbitTarget() {
 			if (!Ktisis.IsInGPose) return null;
 			return CameraEdit.Orbit != null ? Services.ObjectTable.FirstOrDefault(
 				actor => actor.ObjectIndex == CameraEdit.Orbit

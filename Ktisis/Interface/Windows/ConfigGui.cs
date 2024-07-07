@@ -48,7 +48,7 @@ namespace Ktisis.Interface.Windows {
 		public static void Draw() {
 			if (!Visible) {
 				if (!_isSaved) {
-					PluginLog.Verbose("Saving config...");
+					Ktisis.Log.Verbose("Saving config...");
 					Services.PluginInterface.SavePluginConfig(Ktisis.Configuration);
 					_isSaved = true;
 				}
@@ -679,7 +679,7 @@ namespace Ktisis.Interface.Windows {
 
 		public static bool TryChangeReference(Configuration cfg, int key, string newPath) {
 			try {
-				var texture = Ktisis.UiBuilder.LoadImage(newPath);
+				var texture = Services.Textures.GetFromFile(newPath);
 				cfg.References[key] = new ReferenceInfo {
 					Path = newPath,
 					Showing = true,

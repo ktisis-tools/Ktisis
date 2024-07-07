@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using Dalamud.Logging;
-
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Interop;
 using Ktisis.Data.Excel;
-using Ktisis.Structs.Actor.State;
 
 namespace Ktisis.Structs.Actor {
 	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
@@ -23,14 +20,14 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x114)] public RenderMode RenderMode;
 		[FieldOffset(0x1AC)] public uint ModelId;
 
-		[FieldOffset(0x6F8)] public ActorDrawData DrawData;
+		[FieldOffset(0x708)] public ActorDrawData DrawData;
 
-		[FieldOffset(0x89E)] public bool IsHatHidden;
+		[FieldOffset(0x8D6)] public bool IsHatHidden;
 
-		public const int GazeOffset = 0xCB0;
+		public const int GazeOffset = 0xD00;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
 		
-		[FieldOffset(0x1B2C)] public float Transparency;
+		[FieldOffset(0x21C8)] public float Transparency;
 
 		public unsafe string? GetName() {
 			fixed (byte* ptr = GameObject.Name)
@@ -61,8 +58,11 @@ namespace Ktisis.Structs.Actor {
 
 		// Change equipment - no redraw method
 
-		public unsafe ItemEquip GetEquip(EquipIndex index)
-			=> this.Model != null ? this.Model->GetEquipSlot((int)index) : default;
+		public unsafe ItemEquip GetEquip(EquipIndex index) {
+			if (index == EquipIndex.Head && this.IsHatHidden)
+				return this.DrawData.Equipment.Head;
+			return this.Model != null ? this.Model->GetEquipSlot((int)index) : default;
+		}
 
 		public unsafe Customize GetCustomize()
 			=> this.Model != null ? this.Model->GetCustomize() ?? default : default;
@@ -91,7 +91,7 @@ namespace Ktisis.Structs.Actor {
 			if (Methods.ActorChangeWeapon == null) return;
 			
 			fixed (ActorDrawData* ptr = &DrawData) {
-				PluginLog.Information($"Setting to {item.Set} {item.Base} {item.Variant} {item.Dye}");
+				Logger.Information($"Setting to {item.Set} {item.Base} {item.Variant} {item.Dye}");
                 
 				Methods.ActorChangeWeapon(ptr, slot, default, 0, 1, 0, 0);
 				Methods.ActorChangeWeapon(ptr, slot, item, 0, 1, 0, 0);
@@ -100,6 +100,13 @@ namespace Ktisis.Structs.Actor {
 				else if (slot == 1)
 					this.DrawData.OffHand.SetEquip(item);
 			}
+		}
+
+		public unsafe void SetGlasses(ushort id) {
+			if (Methods.ChangeGlasses == null) return;
+			
+			fixed (ActorDrawData* ptr = &DrawData)
+				Methods.ChangeGlasses(ptr, 0, id);
 		}
 
 		// Change customize - no redraw method
@@ -155,11 +162,11 @@ namespace Ktisis.Structs.Actor {
 		// Actor redraw
 
 		public void Redraw() {
-			var faceHack = GameObject.ObjectKind == (byte)ObjectKind.Pc;
+			var faceHack = GameObject.ObjectKind == ObjectKind.Pc;
 			GameObject.DisableDraw();
-			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.BattleNpc;
+			if (faceHack) GameObject.ObjectKind = ObjectKind.BattleNpc;
 			GameObject.EnableDraw();
-			if (faceHack) GameObject.ObjectKind = (byte)ObjectKind.Pc;
+			if (faceHack) GameObject.ObjectKind = ObjectKind.Pc;
 		}
 		
 		// weapons

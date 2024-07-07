@@ -97,6 +97,8 @@ namespace Ktisis.Overlay {
 				var camera = Services.Camera->GetActiveCamera();
 
 				var skeleton = pose->Skeleton;
+				if (skeleton == null) continue;
+				
 				for (var i = 1; i < skeleton->Bones.Length; i++) {
 					var bone = model->Skeleton->GetBone(p, i, parentModel != null);
 					if (_setCategory != null) bone._setCategory = _setCategory;

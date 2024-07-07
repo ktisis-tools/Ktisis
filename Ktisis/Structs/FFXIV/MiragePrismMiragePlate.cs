@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using FFXIVClientStructs.Attributes;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using Ktisis.Structs.Actor.Equip.SetSources;
 
@@ -20,7 +19,7 @@ namespace Ktisis.Structs.FFXIV {
 		//[FieldOffset(40 + 36)] public IntPtr* PlatesPointer;
 		//[FieldOffset(40 + 36)] public fixed MiragePage Plates[20]; // This would be ideal, TODO: try to find a way to achieve this
 
-		internal static AgentInterface* MiragePlateAgent() => Framework.Instance()->GetUiModule()->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
+		internal static AgentInterface* MiragePlateAgent() => Framework.Instance()->GetUIModule()->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
 
 		// this getter exists because we cannot specify a sized array in the variable
 		public MiragePage[] Pages {

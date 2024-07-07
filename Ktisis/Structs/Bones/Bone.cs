@@ -1,9 +1,9 @@
 using System.Numerics;
 using System.Collections.Generic;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using static FFXIVClientStructs.Havok.hkaPose;
+using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
@@ -46,7 +46,7 @@ namespace Ktisis.Structs.Bones {
 		internal List<Category>? _setCategory = null;
 		public List<Category> Categories => _setCategory ?? Category.GetForBone(HkaBone.Name.String);
 
-		public unsafe hkQsTransformf* AccessModelSpace(PropagateOrNot propagate = PropagateOrNot.DontPropagate) => Pose->AccessBoneModelSpace(Index, propagate);
+		public unsafe hkQsTransformf* AccessModelSpace(hkaPose.PropagateOrNot propagate = hkaPose.PropagateOrNot.DontPropagate) => Pose->AccessBoneModelSpace(Index, propagate);
 		public unsafe hkQsTransformf* AccessLocalSpace() => Pose->AccessBoneLocalSpace(Index);
 
 		public unsafe Vector3 GetWorldPos(ActorModel* model, ActorModel* parent = null) {
@@ -142,7 +142,7 @@ namespace Ktisis.Structs.Bones {
 
 			var descendants = GetDescendants(includePartials, true);
 			foreach (var child in descendants) {
-				var access = child.AccessModelSpace(PropagateOrNot.DontPropagate);
+				var access = child.AccessModelSpace(hkaPose.PropagateOrNot.DontPropagate);
 
 				var offset = access->Translation.ToVector3() - sourcePos;
 				offset = Vector3.Transform(offset, deltaRot);
@@ -157,7 +157,7 @@ namespace Ktisis.Structs.Bones {
 		public unsafe void PropagateSibling(Quaternion deltaRot, SiblingLink mode = SiblingLink.Rotation) {
 			if (mode == SiblingLink.None) return;
 
-			var access = AccessModelSpace(PropagateOrNot.DontPropagate);
+			var access = AccessModelSpace(hkaPose.PropagateOrNot.DontPropagate);
 			var offset = access->Translation.ToVector3();
 
 			if (mode == SiblingLink.RotationMirrorX)

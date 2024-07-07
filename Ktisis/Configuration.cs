@@ -8,6 +8,7 @@ using ImGuizmoNET;
 
 using Dalamud;
 using Dalamud.Configuration;
+using Dalamud.Game;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Interface;

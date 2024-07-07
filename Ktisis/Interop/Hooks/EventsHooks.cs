@@ -4,10 +4,12 @@ using System.Linq;
 
 using Dalamud.Hooking;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
+using Ktisis.Events;
 using Ktisis.Structs.Actor.Equip;
 using Ktisis.Structs.Actor.Equip.SetSources;
 
@@ -20,8 +22,9 @@ namespace Ktisis.Interop.Hooks {
 
 			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent += OnGlamourPlatesReceiveEvent;
-
-			OnGposeEnter(); // TODO: move this call on "enter gpose" event
+			
+			EventManager.OnGPoseChange += OnGposeChange;
+			
 			OnLogin();
 		}
 
@@ -33,7 +36,8 @@ namespace Ktisis.Interop.Hooks {
 			var MiragePrismMiragePlate = Services.AddonManager.Get<MiragePrismMiragePlateAddon>();
 			MiragePrismMiragePlate.ReceiveEvent -= OnGlamourPlatesReceiveEvent;
 
-			OnGposeLeave();
+			EventManager.OnGPoseChange -= OnGposeChange;
+			
             OnLogout();
         }
 
@@ -44,13 +48,20 @@ namespace Ktisis.Interop.Hooks {
 		private static void OnLogout() {
 			Sets.Dispose();
 		}
+
+		private static void OnGposeChange(bool state) {
+			if (state)
+				OnGposeEnter();
+			else
+				OnGposeLeave();
+		}
 		private static void OnGposeEnter() {
 			var ClickTargetAddon = Services.AddonManager.Get<ClickTargetAddon>();
 			ClickTargetAddon.Enable();
 		}
 		private static void OnGposeLeave() {
 			var ClickTargetAddon = Services.AddonManager.Get<ClickTargetAddon>();
-			ClickTargetAddon.Dispose();
+			ClickTargetAddon.Disable();
 		}
 
 		private static unsafe void OnGlamourPlatesReceiveEvent(object? sender, ReceiveEventArgs e) {
@@ -98,7 +109,7 @@ namespace Ktisis.Interop.Hooks {
 
 		public MiragePrismMiragePlateAddon() {
 			var MiragePrismMiragePlateAgentInterface = Framework.Instance()->UIModule->GetAgentModule()->GetAgentByInternalId(AgentId.MiragePrismMiragePlate);
-            receiveEventHook ??= Services.Hooking.HookFromAddress<AgentReceiveEvent>(new IntPtr(MiragePrismMiragePlateAgentInterface->VTable->ReceiveEvent), OnReceiveEvent);
+            receiveEventHook ??= Services.Hooking.HookFromAddress<AgentReceiveEvent>(new IntPtr(MiragePrismMiragePlateAgentInterface->VirtualTable->ReceiveEvent), OnReceiveEvent);
             
 			receiveEventHook?.Enable();
 		}
@@ -118,65 +129,42 @@ namespace Ktisis.Interop.Hooks {
 		}
 	}
 	internal unsafe class ClickTargetAddon : IDisposable {
-
-
-		private delegate IntPtr ClickTarget(IntPtr a1, byte* a2, byte a3);
-		private readonly Hook<ClickTarget>? rightClickTargetHook;
-		private readonly Hook<ClickTarget>? leftClickTargetHook;
+		private delegate nint ProcessMouseStateDelegate(TargetSystem* targets, nint a2, nint a3);
+		private readonly Hook<ProcessMouseStateDelegate>? ProcessMouseStateHook;
 
 		public ClickTargetAddon() {
-			rightClickTargetHook ??= Services.Hooking.HookFromAddress<ClickTarget>(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B CE E8 ?? ?? ?? ?? 48 85 C0 74 1B"), RightClickTargetDetour);
-            leftClickTargetHook ??= Services.Hooking.HookFromAddress<ClickTarget>(Services.SigScanner.ScanText("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 16"), LeftClickTargetDetour);
+			var addr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 4C 8B BC 24 ?? ?? ?? ?? 4C 8B B4 24 ?? ?? ?? ?? 48 8B B4 24 ?? ?? ?? ?? 48 8B 9C 24 ?? ?? ?? ??");
+			ProcessMouseStateHook = Services.Hooking.HookFromAddress<ProcessMouseStateDelegate>(addr, ProcessMouseStateDetour);
+		}
+
+		private nint ProcessMouseStateDetour(TargetSystem* targets, nint a2, nint a3) {
+			var prev = targets->GPoseTarget;
+			var exec = ProcessMouseStateHook!.Original(targets, a2, a3);
+
+			if (Ktisis.IsInGPose && targets->GPoseTarget != prev) {
+				var left = Ktisis.Configuration.DisableChangeTargetOnLeftClick && exec == 0;
+				var right = !left && Ktisis.Configuration.DisableChangeTargetOnRightClick && exec == 0x10;
+				if (left || right) targets->GPoseTarget = prev;
+			}
+			
+			return exec;
 		}
 
 		public void Enable() {
-			rightClickTargetHook?.Enable();
-			leftClickTargetHook?.Enable();
+			ProcessMouseStateHook?.Enable();
+		}
+
+		public void Disable() {
+			ProcessMouseStateHook?.Disable();
 		}
 
 		public void Dispose() {
-			// Verify presence of hooks, in case of calls when it's already been disposed
-			if (!(bool)rightClickTargetHook?.IsDisposed!) {
-				if ((bool)rightClickTargetHook?.IsEnabled!)
-					rightClickTargetHook?.Disable();
-				rightClickTargetHook?.Dispose();
-			}
-			if (!(bool)leftClickTargetHook?.IsDisposed!) {
-				if ((bool)leftClickTargetHook?.IsEnabled!)
-					leftClickTargetHook?.Disable();
-				leftClickTargetHook?.Dispose();
+			if (ProcessMouseStateHook?.IsDisposed == false) {
+				ProcessMouseStateHook?.Disable();
+				ProcessMouseStateHook?.Dispose();
 			}
 		}
 
-
-		private IntPtr RightClickTargetDetour(IntPtr a1, byte* a2, byte a3) =>
-			ClickEvent(a1, a2, a3, ClickType.Right);
-		private IntPtr LeftClickTargetDetour(IntPtr a1, byte* a2, byte a3) =>
-			ClickEvent(a1, a2, a3, ClickType.Left);
-
-
-		private IntPtr ClickEvent(IntPtr a1, byte* actor, byte a3, ClickType clickType) {
-			if (Ktisis.IsInGPose) {
-				// 1. Prevents target self when clicking somewhere else with left click
-				// 2. Prevent target change with left and right clicks
-				// returning null wasn't enough for 1. so we pass the current target instead
-
-				var left = Ktisis.Configuration.DisableChangeTargetOnLeftClick && clickType == ClickType.Left;
-				var right = Ktisis.Configuration.DisableChangeTargetOnRightClick && clickType == ClickType.Right;
-
-				if (left || right)
-					return IntPtr.Zero;
-			}
-
-			if (clickType == ClickType.Left) return leftClickTargetHook!.Original(a1, actor, a3);
-			if (clickType == ClickType.Right) return rightClickTargetHook!.Original(a1, actor, a3);
-
-			return IntPtr.Zero;
-		}
-		internal enum ClickType {
-			Left,
-			Right
-		}
 	}
 	internal unsafe class ReceiveEventArgs : EventArgs {
 		public ReceiveEventArgs(AgentInterface* agentInterface, void* rawData, AtkValue* eventArgs, uint eventArgsCount, ulong senderID) {

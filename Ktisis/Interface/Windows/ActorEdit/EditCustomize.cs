@@ -4,14 +4,13 @@ using System.Numerics;
 using System.Collections.Generic;
 
 using ImGuiNET;
-using ImGuiScene;
 
 using Lumina.Excel;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
-using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures;
 
 using Ktisis.Util;
 using Ktisis.Data;
@@ -28,7 +27,7 @@ namespace Ktisis.Interface.Windows {
 		public CustomizeIndex ColorIndex = 0;
 		public uint[] Colors = Array.Empty<uint>();
 
-		public Dictionary<uint, IDalamudTextureWrap>? Select = null;
+		public Dictionary<uint, ISharedImmediateTexture>? Select = null;
 
 		public MenuOption(Menu option) => Option = option;
 	}
@@ -71,7 +70,7 @@ namespace Ktisis.Interface.Windows {
 
 		public static int FaceType = -1;
 		public static string FacialFeatureName = "";
-		public static List<IDalamudTextureWrap>? FacialFeatureIcons = null;
+		public static List<ISharedImmediateTexture>? FacialFeatureIcons = null;
 
 		public static CharaMakeType? CharaMakeType;
 
@@ -103,15 +102,11 @@ namespace Ktisis.Interface.Windows {
 			CustomIndex = index;
 			FacialFeatureIcons = null;
 		}
-
-		private readonly static AsyncTask GetFeatureIcons = new(InvokeFeatureIcons);
-		private static void InvokeFeatureIcons(object[] args) {
-			if (args[0] is not Customize custom)
-				return;
-
+		
+		private static void GetFeatureIcons(Customize custom) {
 			if (CharaMakeType == null) return;
 			
-			var features = new List<IDalamudTextureWrap>();
+			var features = new List<ISharedImmediateTexture>();
 			for (var i = 0; i < 7; i++) {
 				var index = custom.FaceType - 1 + (8 * i);
 				if (custom.Race == Race.Hrothgar)
@@ -124,7 +119,7 @@ namespace Ktisis.Interface.Windows {
 				if (iconId == 0)
 					iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
 
-                var icon = Services.Textures.GetIcon(iconId);
+                var icon = Services.Textures.GetFromGameIcon(iconId);
 				if (icon != null) features.Add(icon);
 			}
 			FacialFeatureIcons = features;
@@ -339,7 +334,7 @@ namespace Ktisis.Interface.Windows {
 
 			bool click;
 			if (sel!.ContainsKey(val))
-				click = ImGui.ImageButton(sel[val].ImGuiHandle, IconSize);
+				click = ImGui.ImageButton(sel[val].GetWrapOrEmpty().ImGuiHandle, IconSize);
 			else
 				click = ImGui.Button($"{val}", ButtonIconSize);
 
@@ -502,8 +497,8 @@ namespace Ktisis.Interface.Windows {
 		// Facial feature selector
 
 		public static void DrawFacialFeatures(Customize custom) {
-			if ((FacialFeatureIcons == null || custom.FaceType != FaceType) && !GetFeatureIcons.IsRunning)
-				GetFeatureIcons.Run(custom);
+			if ((FacialFeatureIcons == null || custom.FaceType != FaceType))
+				GetFeatureIcons(custom);
 
 			if (FacialFeatureIcons == null) return;
 
@@ -524,7 +519,7 @@ namespace Ktisis.Interface.Windows {
 				if (i == 7) // Legacy tattoo
 					button |= ImGui.Button("Legacy\nTattoo", ButtonIconSize);
 				else
-					button |= ImGui.ImageButton(FacialFeatureIcons[i].ImGuiHandle, IconSize);
+					button |= ImGui.ImageButton(FacialFeatureIcons[i].GetWrapOrEmpty().ImGuiHandle, IconSize);
 				ImGui.PopStyleColor();
 
 				if (button) {
@@ -579,7 +574,7 @@ namespace Ktisis.Interface.Windows {
 					foreach (var (val, icon) in option.Select!) {
 						if (icon == null) continue;
 
-						if (ImGui.ImageButton(icon.ImGuiHandle, ListIconSize)) {
+						if (ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ListIconSize)) {
 							custom.Bytes[(uint)opt.Index] = (byte)val;
 							Apply(custom);
 						}
@@ -675,7 +670,7 @@ namespace Ktisis.Interface.Windows {
 					var opt = new MenuOption(val);
 
 					if (val.HasIcon) {
-						var icons = new Dictionary<uint, IDalamudTextureWrap>();
+						var icons = new Dictionary<uint, ISharedImmediateTexture>();
 						if (val.IsFeature) {
 							var featMake = CharaMakeType?.FeatureMake.Value;
 							if (featMake == null) continue;
@@ -691,12 +686,12 @@ namespace Ktisis.Interface.Windows {
 								var feat = feature.Value;
 								if (feat == null || feat.FeatureId == 0) break;
 
-								var icon = Services.Textures.GetIcon(feat.Icon);
+								var icon = Services.Textures.GetFromGameIcon(feat.Icon);
 								if (icon != null) icons.Add(feat.FeatureId, icon);
 							}
 						} else {
 							for (var x = 0; x < val.Count; x++) {
-								var icon = Services.Textures.GetIcon(val.Params[x]);
+								var icon = Services.Textures.GetFromGameIcon(val.Params[x]);
 								if (icon != null) icons.Add(val.Graphics[x], icon);
 							}
 						}

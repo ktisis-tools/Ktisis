@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.Internal;
+﻿using Dalamud.Interface.Textures;
 using Dalamud.Utility;
 
 using Lumina.Excel.GeneratedSheets;
@@ -7,14 +7,13 @@ namespace Ktisis.Env {
 	public class WeatherInfo {
 		public readonly string Name;
 		public readonly uint RowId;
-		public readonly IDalamudTextureWrap? Icon;
+		public readonly ISharedImmediateTexture? Icon;
 
 		public WeatherInfo(string name) {
 			this.Name = name;
-			this.Icon = new NullTexture();
 		}
 		
-		public WeatherInfo(Weather weather, IDalamudTextureWrap? icon) {
+		public WeatherInfo(Weather weather, ISharedImmediateTexture? icon) {
 			var name = weather.Name?.RawString;
 			if (name.IsNullOrEmpty())
 				name = $"Weather #{weather.RowId}";
@@ -25,13 +24,5 @@ namespace Ktisis.Env {
 		}
 
 		public static WeatherInfo Default => new("None");
-
-		private class NullTexture : IDalamudTextureWrap {
-			public nint ImGuiHandle { get; } = nint.Zero;
-			public int Width { get; } = 0;
-			public int Height { get; } = 0;
-			
-			public void Dispose() { }
-		}
 	}
 }

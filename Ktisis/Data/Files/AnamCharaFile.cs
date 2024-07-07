@@ -86,6 +86,8 @@ namespace Ktisis.Data.Files {
 		public ItemSave? Wrists { get; set; }
 		public ItemSave? LeftRing { get; set; }
 		public ItemSave? RightRing { get; set; }
+		
+		public ushort? Glasses { get; set; }
 
 		// extended appearance
 		// NOTE: extended weapon values are stored in the WeaponSave
@@ -128,6 +130,7 @@ namespace Ktisis.Data.Files {
 				Hands = GetItemSave(actor, EquipIndex.Hands);
 				Legs = GetItemSave(actor, EquipIndex.Legs);
 				Feet = GetItemSave(actor, EquipIndex.Feet);
+				Glasses = actor.DrawData.Glasses;
 			}
 
 			if (IncludeSection(SaveModes.EquipmentAccessories, mode)) {
@@ -215,6 +218,7 @@ namespace Ktisis.Data.Files {
 				Hands?.Write(actor, EquipIndex.Hands);
 				Legs?.Write(actor, EquipIndex.Legs);
 				Feet?.Write(actor, EquipIndex.Feet);
+				if (Glasses != null) actor->SetGlasses(Glasses.Value);
 			}
 
 			if (IncludeSection(SaveModes.EquipmentAccessories, mode)) {
@@ -361,6 +365,7 @@ namespace Ktisis.Data.Files {
 				ModelBase = from.Base;
 				ModelVariant = from.Variant;
 				DyeId = from.Dye;
+				DyeId2 = from.Dye2;
 			}
 
 			public Vector3 Color { get; set; }
@@ -368,7 +373,8 @@ namespace Ktisis.Data.Files {
 			public ushort ModelSet { get; set; }
 			public ushort ModelBase { get; set; }
 			public ushort ModelVariant { get; set; }
-			public ushort DyeId { get; set; }
+			public byte DyeId { get; set; }
+			public byte DyeId2 { get; set; }
 
 			public unsafe void Write(Actor* actor, bool isMainHand) {
 				var wep = new WeaponEquip() {
@@ -379,6 +385,7 @@ namespace Ktisis.Data.Files {
 					wep.Base = ModelBase;
 					wep.Variant = ModelVariant;
 					wep.Dye = DyeId;
+					wep.Dye2 = DyeId2;
 				}
 
 				actor->Equip(isMainHand ? 0 : 1, wep);
@@ -394,17 +401,20 @@ namespace Ktisis.Data.Files {
 				ModelBase = from.Id;
 				ModelVariant = from.Variant;
 				DyeId = from.Dye;
+				DyeId2 = from.Dye2;
 			}
 
 			public ushort ModelBase { get; set; }
 			public byte ModelVariant { get; set; }
 			public byte DyeId { get; set; }
+			public byte DyeId2 { get; set; }
 
 			public unsafe void Write(Actor* actor, EquipIndex index) {
 				var item = new ItemEquip() {
 					Id = ModelBase,
 					Variant = ModelVariant,
-					Dye = DyeId
+					Dye = DyeId,
+					Dye2 = DyeId2
 				};
 				actor->Equip(index, item);
 			}

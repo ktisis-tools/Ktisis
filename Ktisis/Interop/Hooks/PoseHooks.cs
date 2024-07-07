@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Objects.Types;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;
@@ -25,6 +26,9 @@ namespace Ktisis.Interop.Hooks {
 
 		internal unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
 		internal static Hook<LookAtIKDelegate> LookAtIKHook = null!;
+		
+		internal delegate nint KineDriverDelegate(nint a1, nint a2);
+		internal static Hook<KineDriverDelegate> KineDriverHook = null!;
 
 		internal unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
 		internal static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
@@ -34,7 +38,7 @@ namespace Ktisis.Interop.Hooks {
 
 		internal unsafe delegate char SetSkeletonDelegate(Skeleton* a1, ushort a2, nint a3);
 		internal static Hook<SetSkeletonDelegate> SetSkeletonHook = null!;
-
+		
 		internal unsafe delegate nint BustDelegate(ActorModel* a1, Breasts* a2);
 		internal static Hook<BustDelegate> BustHook = null!;
 
@@ -55,20 +59,23 @@ namespace Ktisis.Interop.Hooks {
 			var syncModelSpace = Services.SigScanner.ScanText("48 83 EC 18 80 79 38 00");
 			SyncModelSpaceHook = Services.Hooking.HookFromAddress<SyncModelSpaceDelegate>(syncModelSpace, SyncModelSpaceDetour);
 
-			var lookAtIK = Services.SigScanner.ScanText("48 8B C4 48 89 58 08 48 89 70 10 F3 0F 11 58 ??");
+			var lookAtIK = Services.SigScanner.ScanText("48 8B C4 48 89 58 08 48 89 70 10 F3 0F 11 58");
 			LookAtIKHook = Services.Hooking.HookFromAddress<LookAtIKDelegate>(lookAtIK, LookAtIKDetour);
+
+			var kineDrive = Services.SigScanner.ScanText("48 8B C4 55 57 48 83 EC 58");
+			KineDriverHook = Services.Hooking.HookFromAddress<KineDriverDelegate>(kineDrive, KineDriverDetour);
 			
-			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E");
+			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F8 84 C0 74 12");
 			AnimFrozenHook = Services.Hooking.HookFromAddress<AnimFrozenDelegate>(animFrozen, AnimFrozenDetour);
 			
-			var updatePos = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? EB 29 48 8B 5F 08");
+			var updatePos = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 84 DB 74 45");
 			UpdatePosHook = Services.Hooking.HookFromAddress<UpdatePosDelegate>(updatePos, UpdatePosDetour);
 
 			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");
 			SetSkeletonHook = Services.Hooking.HookFromAddress<SetSkeletonDelegate>(loadSkele, SetSkeletonDetour);
 			SetSkeletonHook.Enable();
 
-			var loadBust = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? F6 84 24 ?? ?? ?? ?? ?? 0F 28 74 24 ??");
+			var loadBust = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F 28 7C 24 ?? 0F 28 74 24 ?? 4C 8B 74 24 ??");
 			BustHook = Services.Hooking.HookFromAddress<BustDelegate>(loadBust, BustDetour);
 		}
 
@@ -78,6 +85,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Disable();
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
+			KineDriverHook.Disable();
 			UpdatePosHook?.Disable();
 			AnimFrozenHook?.Disable();
 			BustHook?.Disable();
@@ -90,6 +98,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Enable();
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
+			KineDriverHook.Enable();
 			UpdatePosHook?.Enable();
 			AnimFrozenHook?.Enable();
 			BustHook?.Enable();
@@ -158,7 +167,7 @@ namespace Ktisis.Interop.Hooks {
 							if (actor->Model == null || actor->Model->Skeleton != a1) continue;
 
 							PoseContainer container = new();
-							container.Store(actor->Model->Skeleton);
+							container.Store((FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton*)actor->Model->Skeleton);
 							PreservedPoses[actor->ObjectID] = container;
 						}
 					}
@@ -210,6 +219,10 @@ namespace Ktisis.Interop.Hooks {
 			return (byte*)nint.Zero;
 		}
 
+		private static nint KineDriverDetour(nint a1, nint a2) {
+			return nint.Zero;
+		}
+
 		private unsafe static byte AnimFrozenDetour(uint* a1, int a2) {
 			return 1;
 		}
@@ -218,13 +231,13 @@ namespace Ktisis.Interop.Hooks {
 			CalculateBoneModelSpaceHook.Original(ref *bonesPose, index);
 		}
 
-		public static unsafe bool IsGamePlaybackRunning(GameObject? gPoseTarget) {
+		public static unsafe bool IsGamePlaybackRunning(IGameObject? gPoseTarget) {
 			var animationControl = GetAnimationControl(gPoseTarget);
 			if (animationControl == null) return true;
 			return animationControl->PlaybackSpeed == 1;
 		}
 
-		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(GameObject? go) {
+		public static unsafe hkaDefaultAnimationControl* GetAnimationControl(IGameObject? go) {
 			if (go == null) return null;
 
 			var actor = (Actor*)go.Address;
@@ -248,6 +261,8 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook.Dispose();
 			LookAtIKHook.Disable();
 			LookAtIKHook.Dispose();
+			KineDriverHook.Disable();
+			KineDriverHook.Dispose();
 			AnimFrozenHook.Disable();
 			AnimFrozenHook.Dispose();
 			UpdatePosHook.Disable();
