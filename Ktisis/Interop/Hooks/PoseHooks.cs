@@ -26,6 +26,9 @@ namespace Ktisis.Interop.Hooks {
 
 		internal unsafe delegate byte* LookAtIKDelegate(byte* a1, long* a2, long* a3, float a4, long* a5, long* a6);
 		internal static Hook<LookAtIKDelegate> LookAtIKHook = null!;
+		
+		internal delegate nint KineDriverDelegate(nint a1, nint a2);
+		internal static Hook<KineDriverDelegate> KineDriverHook = null!;
 
 		internal unsafe delegate byte AnimFrozenDelegate(uint* a1, int a2);
 		internal static Hook<AnimFrozenDelegate> AnimFrozenHook = null!;
@@ -35,7 +38,7 @@ namespace Ktisis.Interop.Hooks {
 
 		internal unsafe delegate char SetSkeletonDelegate(Skeleton* a1, ushort a2, nint a3);
 		internal static Hook<SetSkeletonDelegate> SetSkeletonHook = null!;
-
+		
 		internal unsafe delegate nint BustDelegate(ActorModel* a1, Breasts* a2);
 		internal static Hook<BustDelegate> BustHook = null!;
 
@@ -58,6 +61,9 @@ namespace Ktisis.Interop.Hooks {
 
 			var lookAtIK = Services.SigScanner.ScanText("48 8B C4 48 89 58 08 48 89 70 10 F3 0F 11 58");
 			LookAtIKHook = Services.Hooking.HookFromAddress<LookAtIKDelegate>(lookAtIK, LookAtIKDetour);
+
+			var kineDrive = Services.SigScanner.ScanText("48 8B C4 55 57 48 83 EC 58");
+			KineDriverHook = Services.Hooking.HookFromAddress<KineDriverDelegate>(kineDrive, KineDriverDetour);
 			
 			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F8 84 C0 74 12");
 			AnimFrozenHook = Services.Hooking.HookFromAddress<AnimFrozenDelegate>(animFrozen, AnimFrozenDetour);
@@ -79,6 +85,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Disable();
 			SyncModelSpaceHook?.Disable();
 			LookAtIKHook?.Disable();
+			KineDriverHook.Disable();
 			UpdatePosHook?.Disable();
 			AnimFrozenHook?.Disable();
 			BustHook?.Disable();
@@ -91,6 +98,7 @@ namespace Ktisis.Interop.Hooks {
 			SetBoneModelSpaceFfxivHook?.Enable();
 			SyncModelSpaceHook?.Enable();
 			LookAtIKHook?.Enable();
+			KineDriverHook.Enable();
 			UpdatePosHook?.Enable();
 			AnimFrozenHook?.Enable();
 			BustHook?.Enable();
@@ -211,6 +219,10 @@ namespace Ktisis.Interop.Hooks {
 			return (byte*)nint.Zero;
 		}
 
+		private static nint KineDriverDetour(nint a1, nint a2) {
+			return nint.Zero;
+		}
+
 		private unsafe static byte AnimFrozenDetour(uint* a1, int a2) {
 			return 1;
 		}
@@ -249,6 +261,8 @@ namespace Ktisis.Interop.Hooks {
 			SyncModelSpaceHook.Dispose();
 			LookAtIKHook.Disable();
 			LookAtIKHook.Dispose();
+			KineDriverHook.Disable();
+			KineDriverHook.Dispose();
 			AnimFrozenHook.Disable();
 			AnimFrozenHook.Dispose();
 			UpdatePosHook.Disable();
