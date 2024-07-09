@@ -6,12 +6,11 @@ using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
+using RenderCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Camera;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Structs.Camera;
-
-using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
-using RenderCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Camera;
 
 namespace Ktisis.Services.Game; 
 
@@ -48,7 +47,16 @@ public class CameraService {
 		var camera = this.GetRenderCamera();
 		if (camera == null)
 			return null;
-		return camera->ProjectionMatrix;
+		
+		var p = camera->ProjectionMatrix;
+		
+		var far = camera->FarPlane;
+		var near = camera->NearPlane;
+		var clip = far / (far - near);
+		p.M33 = -((far + near) / (far - near));
+		p.M43 = -(clip * near);
+			
+		return p;
 	}
 
 	public unsafe Matrix4x4? GetViewMatrix() {
