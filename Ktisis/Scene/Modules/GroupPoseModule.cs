@@ -36,7 +36,7 @@ public class GroupPoseModule : SceneModule {
 	
 	// Native
 	
-	[Signature("E8 ?? ?? ?? ?? 0F B7 57 3C")]
+	[Signature("E8 ?? ?? ?? ?? 0F B7 56 3C")]
 	private GetGPoseStateDelegate? _getGPoseState = null;
 	private unsafe delegate GPoseState* GetGPoseStateDelegate();
 }
