@@ -38,7 +38,7 @@ public class ActorSpawner : HookModule {
 
 	private const int VfSize = 9;
 
-	[Signature("48 8D 05 ?? ?? ?? ?? 48 89 01 45 33 D2 C7 41 ?? ?? ?? ?? ??", ScanType = ScanType.StaticAddress, Fallibility = Fallibility.Fallible)]
+	[Signature("48 8D 05 ?? ?? ?? ?? 48 89 03 E8 ?? ?? ?? ?? 8B 44 24 58 33 C9", ScanType = ScanType.StaticAddress)]
 	private unsafe nint* _eventVfTable = null;
 
 	[Signature("E8 ?? ?? ?? ?? 48 8D 8B ?? ?? ?? ?? 48 8B D0 E8 ?? ?? ?? ?? EB 67")]
@@ -101,8 +101,16 @@ public class ActorSpawner : HookModule {
 		});
 		
 		while (!token.IsCancellationRequested) {
-			if (this._objectTable[(int)index] is { } actor)
-				return actor.Address;
+			var result = await this._framework.RunOnFrameworkThread(
+				() => {
+					var actor = this._objectTable[(int)index];
+					return actor != null && actor.IsValid() ? actor.Address : nint.Zero;
+				}
+			);
+
+			if (result != nint.Zero)
+				return result;
+			
 			await Task.Delay(10, CancellationToken.None);
 		}
 		
