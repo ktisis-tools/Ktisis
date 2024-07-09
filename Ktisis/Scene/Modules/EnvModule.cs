@@ -109,7 +109,7 @@ public class EnvModule : SceneModule, IEnvModule {
 		return exec;
 	}
 
-	[Signature("E8 ?? ?? ?? ?? 49 8B 0E 48 8D 93 ?? ?? ?? ??", DetourName = nameof(EnvUpdateDetour))]
+	[Signature("E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 41 0F 28 CA", DetourName = nameof(EnvUpdateDetour))]
 	private Hook<EnvManagerUpdateDelegate> EnvUpdateHook = null!;
 	private unsafe nint EnvUpdateDetour(EnvManagerEx* env, float a2, float a3) {
 		if (this.Scene.IsValid && this.Override.HasFlag(EnvOverride.TimeWeather)) {
