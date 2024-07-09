@@ -43,7 +43,7 @@ public class CharacterModule : HookModule {
 	
 	// DisableDraw
 	
-	[Signature("E9 ?? ?? ?? ?? 48 83 C4 20 5B C3 CC CC CC 48 8B 41 48", DetourName = nameof(DisableDrawDetour))]
+	[Signature("40 53 48 83 EC 20 80 B9 ?? ?? ?? ?? ?? 48 8B D9 0F 8D ?? ?? ?? ??", DetourName = nameof(DisableDrawDetour))]
 	private Hook<DisableDrawDelegate> DisableDrawHook = null!;
 	private unsafe delegate nint DisableDrawDelegate(GameObject* chara);
 	private unsafe nint DisableDrawDetour(GameObject* chara) {

@@ -4,6 +4,7 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 
@@ -293,8 +294,10 @@ public class CustomizeEditorTab {
 	
 	private bool DrawFeatIconButton(string fallback, MakeTypeParam? param) {
 		using var _col = ImRaii.PushColor(ImGuiCol.Button, 0);
-		
-		var icon = param != null ? this._tex.GetFromGameIcon(param.Graphic) : null;
+
+		ISharedImmediateTexture? icon = null;
+		if (param != null)
+			this._tex.TryGetFromGameIcon(param.Graphic, out icon);
 
 		bool clicked;
 		if (icon != null)
