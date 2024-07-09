@@ -171,12 +171,12 @@ public class ActorModule : SceneModule {
 	
 	// Hooks
 	
-	[Signature("E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? ??", DetourName = nameof(AddCharacterDetour))]
+	[Signature("40 56 57 48 83 EC 38 48 89 5C 24 ??", DetourName = nameof(AddCharacterDetour))]
 	private Hook<AddCharacterDelegate>? AddCharacterHook = null!;
-	private delegate void AddCharacterDelegate(nint a1, nint a2, ulong a3);
+	private delegate void AddCharacterDelegate(nint a1, nint a2, ulong a3, nint a4);
 
-	private void AddCharacterDetour(nint gpose, nint address, ulong id) {
-		this.AddCharacterHook!.Original(gpose, address, id);
+	private void AddCharacterDetour(nint gpose, nint address, ulong id, nint a4) {
+		this.AddCharacterHook!.Original(gpose, address, id, a4);
 		if (!this.CheckValid()) return;
 		
 		try {
