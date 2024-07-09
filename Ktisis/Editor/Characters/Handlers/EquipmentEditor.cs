@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
@@ -32,12 +33,21 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 			return actor.Appearance.Equipment[index];
 		return actor.CharacterBaseEx != null ? actor.CharacterBaseEx->Equipment[(uint)index] : default;
 	}
+
+	private delegate bool FlagSlotDelegate(nint a1, uint a2, nint a3);
 	
 	public unsafe void SetEquipIndex(EquipIndex index, EquipmentModelId model) {
 		if (!actor.IsValid) return;
 		actor.Appearance.Equipment[index] = model;
 		var chara = actor.GetCharacter();
-		if (chara != null) chara->FlagSlotForUpdate((uint)index, &model);
+		Ktisis.Log.Info($"Chara: {(nint)chara:X}, flagging {index}; {model.Id:X} {model.Variant:X} {model.Value:X}");
+		if (chara != null) {
+			// TODO: Fix after CS#1027 gets merged.
+			Marshal.GetDelegateForFunctionPointer<FlagSlotDelegate>(
+				((nint*)chara->VirtualTable)[69]
+			)((nint)chara, (uint)index, (nint)(&model));
+			//chara->FlagSlotForUpdate((uint)index, &model);
+		}
 	}
 
 	public void SetEquipIdVariant(EquipIndex index, ushort id, byte variant) {
