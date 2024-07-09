@@ -87,17 +87,27 @@ public sealed class PosingModule : HookModule {
 
 	private nint LookAtIK(nint a1, nint a2, nint a3, float a4, nint a5, nint a6) => nint.Zero;
 	
+	// KineDriver
+
+	[Signature("48 8B C4 55 57 48 83 EC 58", DetourName = nameof(KineDriverDetour))]
+	private Hook<KineDriverDelegate> _kineDriverHook = null!;
+	private delegate nint KineDriverDelegate(nint a1, nint a2);
+
+	private nint KineDriverDetour(nint a1, nint a2) {
+		return nint.Zero;
+	}
+	
 	// AnimFrozen
 
-	[Signature("E8 ?? ?? ?? ?? 0F B6 F0 84 C0 74 0E", DetourName = nameof(AnimFrozen))]
+	[Signature("E8 ?? ?? ?? ?? 0F B6 F8 84 C0 74 12", DetourName = nameof(AnimFrozen))]
 	private Hook<AnimFrozenDelegate> _animFrozenHook = null!;
 	private delegate byte AnimFrozenDelegate(nint a1, int a2);
 
 	private byte AnimFrozen(nint a1, int a2) => 1;
 	
-	// UpdatePpos
+	// UpdatePos
 
-	[Signature("E8 ?? ?? ?? ?? EB 29 48 8B 5F 08", DetourName = nameof(UpdatePosDetour))]
+	[Signature("E8 ?? ?? ?? ?? 84 DB 74 45", DetourName = nameof(UpdatePosDetour))]
 	private Hook<UpdatePosDelegate> _updatePosHook = null!;
 	private delegate void UpdatePosDelegate(nint gameObject);
 
