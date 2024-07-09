@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Interop;
 using Ktisis.Structs.Havok;

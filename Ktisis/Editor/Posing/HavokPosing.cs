@@ -2,10 +2,12 @@ using System.Numerics;
 
 using Dalamud.Utility;
 
+using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Container.Array;
+using FFXIVClientStructs.Havok.Common.Base.Math.Matrix;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.Havok;
 
-using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Interop;
 

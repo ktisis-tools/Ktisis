@@ -1,10 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using GLib.Lists;
 
 using ImGuiNET;
 
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Interop.Ipc;
@@ -16,7 +17,7 @@ public class ActorCollectionPopup : KtisisPopup {
 	private readonly IEditorContext _ctx;
 	private readonly ActorEntity _entity;
 	private readonly PenumbraIpcProvider _ipc;
-	private readonly ListBox<string> _list;
+	private readonly ListBox<KeyValuePair<Guid, string>> _list;
 	
 	public ActorCollectionPopup(
 		IEditorContext ctx,
@@ -25,10 +26,10 @@ public class ActorCollectionPopup : KtisisPopup {
 		this._ctx = ctx;
 		this._entity = entity;
 		this._ipc = ctx.Plugin.Ipc.GetPenumbraIpc();
-		this._list = new ListBox<string>("##CollectionList", this.DrawItem);
+		this._list = new ListBox<KeyValuePair<Guid, string>>("##CollectionList", this.DrawItem);
 	}
 
-	private string _current = string.Empty;
+	private (Guid Id, string Name) _current = (Guid.Empty, string.Empty);
 
 	protected override void OnDraw() {
 		if (!this._entity.IsValid || !this._ctx.Plugin.Ipc.IsPenumbraActive) {
@@ -42,10 +43,10 @@ public class ActorCollectionPopup : KtisisPopup {
 
 		var list = this._ipc.GetCollections().ToList();
 		if (this._list.Draw(list, out var selected)) {
-			if (this._ipc.SetCollectionForObject(this._entity.Actor, selected!))
+			if (this._ipc.SetCollectionForObject(this._entity.Actor, selected.Key))
 				this._entity.Redraw();
 		}
 	}
 
-	private bool DrawItem(string name, bool _) => ImGui.Selectable(name, name == this._current);
+	private bool DrawItem(KeyValuePair<Guid, string> item, bool _) => ImGui.Selectable(item.Value, item.Key == this._current.Id);
 }

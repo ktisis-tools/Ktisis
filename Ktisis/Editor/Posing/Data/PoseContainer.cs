@@ -6,7 +6,7 @@ using System.Numerics;
 using Dalamud.Utility;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;

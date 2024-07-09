@@ -6,7 +6,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 
@@ -36,7 +36,8 @@ public class SetTextureSelect {
 		var result = false;
 		
 		var path = resolve.Invoke(value);
-		if (this.DrawButton(value, this._texture.GetTextureFromGame(path), ButtonSize))
+		var img = this._texture.GetFromGame(path);
+		if (this.DrawButton(value, img, ButtonSize))
 			this.OpenPopup(name, resolve);
 		result |= this.DrawPopup(name, ref value);
 
@@ -54,14 +55,14 @@ public class SetTextureSelect {
 	private readonly static Vector2 ButtonSize = new(48, 48);
 	private readonly static Vector2 OptionSize = new(64, 64);
 
-	private bool DrawButton(uint value, IDalamudTextureWrap? image, Vector2 size) {
+	private bool DrawButton(uint value, ISharedImmediateTexture? image, Vector2 size) {
 		using var _col0 = ImRaii.PushColor(ImGuiCol.Button, 0);
 		using var _col1 = ImRaii.PushColor(ImGuiCol.ButtonHovered, 0x6C3A3A3A);
 		using var _col2 = ImRaii.PushColor(ImGuiCol.ButtonActive, 0x9C3A3A3A);
 		using var _pad = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
 		if (image == null)
 			return ImGui.Button($"{value:D3}", size);
-		return ImGui.ImageButton(image.ImGuiHandle, size);
+		return ImGui.ImageButton(image.GetWrapOrEmpty().ImGuiHandle, size);
 	}
 	
 	// Popup
@@ -135,7 +136,7 @@ public class SetTextureSelect {
 				.Select(i => (uint)i)
 				.Select(i => {
 					var path = resolve.Invoke(i);
-					var icon = tex.GetTextureFromGame(path);
+					var icon = tex.GetFromGame(path);
 					if (icon == null && i > 0) return null;
 					return new Option {
 						Value = i,
@@ -183,6 +184,6 @@ public class SetTextureSelect {
 
 	private class Option {
 		public required uint Value;
-		public required IDalamudTextureWrap? Texture;
+		public required ISharedImmediateTexture? Texture;
 	}
 }

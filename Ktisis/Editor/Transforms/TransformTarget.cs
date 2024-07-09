@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;

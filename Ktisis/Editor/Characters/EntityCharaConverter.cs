@@ -223,7 +223,8 @@ public class EntityCharaConverter {
 			Id = save.ModelSet,
 			Type = save.ModelBase,
 			Variant = save.ModelVariant,
-			Stain = (byte)save.DyeId
+			Stain0 = (byte)save.DyeId,
+			Stain1 = (byte)save.DyeId2
 		});
 		
 		return this;
@@ -248,7 +249,8 @@ public class EntityCharaConverter {
 		return new EquipmentModelId {
 			Id = save.ModelBase,
 			Variant = save.ModelVariant,
-			Stain = save.DyeId
+			Stain0 = save.DyeId,
+			Stain1 = save.DyeId2
 		};
 	}
 	

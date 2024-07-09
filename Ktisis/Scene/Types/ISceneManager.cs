@@ -24,5 +24,5 @@ public interface ISceneManager : IComposite, IDisposable {
 	public void Update();
 	public void Refresh();
 
-	public ActorEntity? GetEntityForActor(GameObject actor);
+	public ActorEntity? GetEntityForActor(IGameObject actor);
 }

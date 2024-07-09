@@ -7,7 +7,6 @@ using Dalamud.Plugin;
 using Newtonsoft.Json;
 
 using Ktisis.Core.Attributes;
-using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Data.Config;
 
@@ -15,7 +14,7 @@ public delegate void OnConfigSaved(Configuration cfg);
 
 [Singleton]
 public class ConfigManager : IDisposable {
-	private readonly DalamudPluginInterface _dpi;
+	private readonly IDalamudPluginInterface _dpi;
 	private readonly SchemaReader _schema;
 
 	private bool _isLoaded;
@@ -24,7 +23,7 @@ public class ConfigManager : IDisposable {
 	public event OnConfigSaved? OnSaved;
 
 	public ConfigManager(
-		DalamudPluginInterface dpi,
+		IDalamudPluginInterface dpi,
 		SchemaReader schema
 	) {
 		this._dpi = dpi;

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Dalamud.Utility;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Container.Array;
 
 namespace Ktisis.Editor.Posing.Types;
 

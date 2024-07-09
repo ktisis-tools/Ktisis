@@ -1,4 +1,4 @@
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Common.Base.Container.Array;
 
 namespace Ktisis.Common.Extensions;
 

@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Data.Config.Bones;
 

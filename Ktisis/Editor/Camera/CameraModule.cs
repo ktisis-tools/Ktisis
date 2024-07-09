@@ -8,7 +8,6 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
-
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using GameCameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraManager;
 using SceneCameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CameraManager;
@@ -16,7 +15,6 @@ using SceneCameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Input;
-
 using InputManager = Ktisis.Editor.Actions.Input.InputManager;
 
 namespace Ktisis.Editor.Camera;
@@ -93,7 +91,7 @@ public class CameraModule : HookModule {
 	
 	// Orbit target helpers
 
-	public unsafe GameObject? ResolveOrbitTarget(EditorCamera camera) {
+	public unsafe IGameObject? ResolveOrbitTarget(EditorCamera camera) {
 		if (camera.OrbitTarget != null) {
 			var target = this._objectTable[camera.OrbitTarget.Value];
 			if (target != null) return target;
@@ -255,13 +253,13 @@ public class CameraModule : HookModule {
 	
 	private unsafe static void SetSceneCamera(EditorCamera camera) {
 		var mgr = SceneCameraManager.Instance();
-		mgr->CameraArraySpan[mgr->CameraIndex] = &camera.GameCamera->CameraBase.SceneCamera;
+		mgr->Cameras[mgr->CameraIndex] = &camera.GameCamera->CameraBase.SceneCamera;
 	}
 
 	private unsafe static void ResetSceneCamera() {
 		var mgr = SceneCameraManager.Instance();
 		var active = GameCameraManager.Instance()->GetActiveCamera();
-		mgr->CameraArraySpan[mgr->CameraIndex] = &active->CameraBase.SceneCamera;
+		mgr->Cameras[mgr->CameraIndex] = &active->CameraBase.SceneCamera;
 	}
 	
 	// Disposal

@@ -61,7 +61,7 @@ public class CharacterManager : ICharacterManager {
 	
 	// State wrappers
 
-	public bool TryGetStateForActor(GameObject actor, out ActorEntity entity, out AppearanceState state) {
+	public bool TryGetStateForActor(IGameObject actor, out ActorEntity entity, out AppearanceState state) {
 		var needle = this._context.Scene.GetEntityForActor(actor);
 		entity = needle!;
 		state = needle?.Appearance!;

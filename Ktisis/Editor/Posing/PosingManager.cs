@@ -80,11 +80,11 @@ public class PosingManager : IPosingManager {
 		this._context.Plugin.Config.OnSaved += this.AutoSave.Configure;
 	}
 
-	private unsafe void OnSkeletonInit(GameObject gameObject, Skeleton* skeleton, ushort partialId) {
+	private unsafe void OnSkeletonInit(IGameObject gameObject, Skeleton* skeleton, ushort partialId) {
 		this.RestorePoseFor(gameObject.ObjectIndex, skeleton, partialId);
 	}
 
-	private unsafe void OnDisableDraw(GameObject gameObject, DrawObject* drawObject) {
+	private unsafe void OnDisableDraw(IGameObject gameObject, DrawObject* drawObject) {
 		Ktisis.Log.Verbose($"Preserving state for {gameObject.Name} ({gameObject.ObjectIndex})");
 		
 		var skeleton = gameObject.GetSkeleton();

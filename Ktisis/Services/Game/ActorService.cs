@@ -28,15 +28,15 @@ public class ActorService {
 	
 	// Object table wrappers
 
-	public GameObject? GetIndex(int index)
+	public IGameObject? GetIndex(int index)
 		=> this._objectTable[index];
 	
-	public GameObject? GetAddress(nint address)
+	public IGameObject? GetAddress(nint address)
 		=> this._objectTable.CreateObjectReference(address);
 	
 	// Actor enumerators
 
-	public IEnumerable<GameObject> GetGPoseActors() {
+	public IEnumerable<IGameObject> GetGPoseActors() {
 		for (var i = GPoseIndex; i < GPoseIndex + GPoseCount; i++) {
 			var actor = this.GetIndex(i);
 			if (actor != null)
@@ -44,7 +44,7 @@ public class ActorService {
 		}
 	}
 
-	public IEnumerable<GameObject> GetOverworldActors() {
+	public IEnumerable<IGameObject> GetOverworldActors() {
 		for (var i = 0; i < GPoseIndex - 1; i++) {
 			var actor = this.GetIndex(i);
 			if (actor != null && actor.IsEnabled())
@@ -54,7 +54,7 @@ public class ActorService {
 	
 	// Skeleton wrappers
 
-	public unsafe GameObject? GetSkeletonOwner(Skeleton* skeleton) {
+	public unsafe IGameObject? GetSkeletonOwner(Skeleton* skeleton) {
 		foreach (var actor in this._objectTable) {
 			var csPtr = (CSGameObject*)actor.Address;
 			if (csPtr == null || csPtr->DrawObject == null) continue;

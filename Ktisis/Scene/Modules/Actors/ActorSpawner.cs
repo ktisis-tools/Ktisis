@@ -84,14 +84,14 @@ public class ActorSpawner : HookModule {
 	
 	// Creation
 
-	public async Task<nint> CreateActor(GameObject original) {
+	public async Task<nint> CreateActor(IGameObject original) {
 		using var source = new CancellationTokenSource();
 		source.CancelAfter(10_000);
 		return await this.CreateActor(original, source.Token);
 	}
 
 	private async Task<nint> CreateActor(
-		GameObject original,
+		IGameObject original,
 		CancellationToken token
 	) {
 		var index = await this._framework.RunOnFrameworkThread(() => {
@@ -109,7 +109,7 @@ public class ActorSpawner : HookModule {
 		throw new TaskCanceledException($"Actor spawn at index {index} timed out.");
 	}
 
-	private bool TryDispatch(GameObject original, out uint index) {
+	private bool TryDispatch(IGameObject original, out uint index) {
 		index = this.CalculateNextIndex();
 		if (index == ushort.MaxValue) return false;
 		Ktisis.Log.Info($"Dispatching, expecting spawn on {index}");
@@ -117,7 +117,7 @@ public class ActorSpawner : HookModule {
 		return true;
 	}
 
-	private unsafe void DispatchSpawn(GameObject original) {
+	private unsafe void DispatchSpawn(IGameObject original) {
 		if (this._hookVfTable == null)
 			throw new Exception("Hook vtable is not initialized!");
 		

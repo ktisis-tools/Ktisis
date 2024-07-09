@@ -5,7 +5,9 @@ using System.Linq;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Container.Array;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
 using Ktisis.Editor.Posing.Ik.Ccd;
 using Ktisis.Editor.Posing.Ik.TwoJoints;

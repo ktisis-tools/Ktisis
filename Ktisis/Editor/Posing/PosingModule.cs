@@ -4,15 +4,15 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Interop.Hooking;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Posing;
 
-public unsafe delegate void SkeletonInitHandler(GameObject owner, Skeleton* skeleton, ushort partialId);
+public unsafe delegate void SkeletonInitHandler(IGameObject owner, Skeleton* skeleton, ushort partialId);
 
 public sealed class PosingModule : HookModule {
 	private readonly PosingManager Manager;

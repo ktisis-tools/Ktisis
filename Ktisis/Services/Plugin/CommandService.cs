@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Dalamud.Game.Command;
 using Dalamud.Plugin.Services;
-using HandlerDelegate = Dalamud.Game.Command.CommandInfo.HandlerDelegate;
+using HandlerDelegate = Dalamud.Game.Command.IReadOnlyCommandInfo.HandlerDelegate;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context;

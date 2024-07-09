@@ -75,14 +75,14 @@ public class FeatureSelectPopup {
 			using var _group = ImRaii.Group();
 			using var _id = ImRaii.PushId($"##Feature_{param.Value}_{i}");
 			
-			var icon = param.Graphic != 0 ? this._tex.GetIcon(param.Graphic) : null;
-			icon ??= this._tex.GetIcon(61583);
+			var icon = param.Graphic != 0 ? this._tex.GetFromGameIcon(param.Graphic) : null;
+			icon ??= this._tex.GetFromGameIcon(61583);
 
 			var totalSize = ButtonSize + ImGui.GetStyle().FramePadding * 2;
 			
 			bool button;
 			if (icon != null)
-				button = ImGui.ImageButton(icon.ImGuiHandle, ButtonSize);
+				button = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ButtonSize);
 			else
 				button = ImGui.Button($"{param.Value}", totalSize);
 			

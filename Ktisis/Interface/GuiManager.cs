@@ -19,7 +19,7 @@ namespace Ktisis.Interface;
 [Singleton]
 public class GuiManager : IDisposable {
 	private readonly DIBuilder _di;
-	private readonly UiBuilder _uiBuilder;
+	private readonly IUiBuilder _uiBuilder;
 	
 	private readonly WindowSystem _ws = new("Ktisis");
 	private readonly PopupManager _popup = new();
@@ -32,7 +32,7 @@ public class GuiManager : IDisposable {
 	public GuiManager(
 		ConfigManager cfg,
 		DIBuilder di,
-		UiBuilder uiBuilder,
+		IUiBuilder uiBuilder,
 		LocaleManager locale
 	) {
 		this._di = di;

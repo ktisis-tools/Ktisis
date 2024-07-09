@@ -19,7 +19,7 @@ public sealed class ServiceComposer {
 		return this;
 	}
 
-	public ServiceComposer AddDalamudServices(DalamudPluginInterface dpi) {
+	public ServiceComposer AddDalamudServices(IDalamudPluginInterface dpi) {
 		var inst = dpi.Create<DalamudServices>()!;
 		inst.Add(dpi, this._services);
 		return this;

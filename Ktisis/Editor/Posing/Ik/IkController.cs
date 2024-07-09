@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Data.Config.Bones;

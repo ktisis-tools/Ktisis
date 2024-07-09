@@ -13,10 +13,10 @@ namespace Ktisis.Interop;
 
 [Singleton]
 public class DllResolver : IDisposable {
-	private readonly DalamudPluginInterface _dpi;
+	private readonly IDalamudPluginInterface _dpi;
 
 	public DllResolver(
-		DalamudPluginInterface dpi
+		IDalamudPluginInterface dpi
 	) {
 		this._dpi = dpi;
 	}

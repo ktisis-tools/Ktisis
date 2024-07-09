@@ -1,4 +1,5 @@
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures;
 
 using Ktisis.GameData.Excel;
 
@@ -8,15 +9,17 @@ public abstract class ItemInfo {
 	public bool FlagUpdate { get; set; }
 
 	public ItemSheet? Item { get; set; }
-	public IDalamudTextureWrap? Texture { get; set; }
+	public ISharedImmediateTexture? Texture { get; set; }
 		
 	public abstract EquipSlot Slot { get; }
 		
 	public abstract ushort ModelId { get; }
 	public abstract byte StainId { get; }
+	public abstract byte StainId2 { get; }
 
 	public abstract void SetEquipItem(ItemSheet item);
 	public abstract void SetStainId(byte id);
+	public abstract void SetStainId2(byte id);
 	public abstract void Unequip();
 	
 	public abstract bool IsHideable { get; }

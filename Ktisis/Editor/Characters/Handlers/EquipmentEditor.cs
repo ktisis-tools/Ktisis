@@ -49,7 +49,13 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 
 	public void SetEquipStainId(EquipIndex index, byte stainId) {
 		var model = this.GetEquipIndex(index);
-		model.Stain = stainId;
+		model.Stain0 = stainId;
+		this.SetEquipIndex(index, model);
+	}
+	
+	public void SetEquipStainId2(EquipIndex index, byte stainId) {
+		var model = this.GetEquipIndex(index);
+		model.Stain1 = stainId;
 		this.SetEquipIndex(index, model);
 	}
 
@@ -117,13 +123,20 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 
 	public void SetWeaponStainId(WeaponIndex index, byte stainId) {
 		var model = this.GetWeaponIndex(index);
-		model.Stain = stainId;
+		model.Stain0 = stainId;
+		this.SetWeaponIndex(index, model);
+	}
+	
+	public void SetWeaponStainId2(WeaponIndex index, byte stainId) {
+		var model = this.GetWeaponIndex(index);
+		model.Stain1 = stainId;
 		this.SetWeaponIndex(index, model);
 	}
 	
 	private unsafe static DrawObjectData* GetWeaponData(ActorEntity actor, WeaponIndex index) {
 		if (!actor.IsValid || actor.Character == null) return null;
-		return (DrawObjectData*)actor.Character->DrawData.WeaponData + (uint)index;
+		fixed (DrawObjectData* ptr = &actor.Character->DrawData.WeaponData[(int)index])
+			return ptr;
 	}
 	
 	// Weapon visible

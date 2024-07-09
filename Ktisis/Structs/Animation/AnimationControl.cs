@@ -1,9 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics;
-using FFXIVClientStructs.Havok;
-using FFXIVClientStructs.Interop;
+
 using FFXIVClientStructs.STD;
+using FFXIVClientStructs.Interop;
+using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
 
 namespace Ktisis.Structs.Animation;
 

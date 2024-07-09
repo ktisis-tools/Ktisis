@@ -8,10 +8,10 @@ namespace Ktisis.Interop.Ipc;
 
 [Singleton]
 public class IpcManager {
-	private readonly DalamudPluginInterface _dpi;
+	private readonly IDalamudPluginInterface _dpi;
 
 	public IpcManager(
-		DalamudPluginInterface dpi
+		IDalamudPluginInterface dpi
 	) {
 		this._dpi = dpi;
 	}

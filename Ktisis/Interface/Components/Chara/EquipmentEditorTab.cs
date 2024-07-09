@@ -166,7 +166,7 @@ public class EquipmentEditorTab {
 		bool clicked;
 		using (var _ = ImRaii.PushId($"##ItemButton_{info.Slot}")) {
 			if (info.Texture != null)
-				clicked = ImGui.ImageButton(info.Texture.ImGuiHandle, ButtonSize);
+				clicked = ImGui.ImageButton(info.Texture.GetWrapOrEmpty().ImGuiHandle, ButtonSize);
 			else
 				clicked = ImGui.Button(info.Slot.ToString(), ButtonSize);
 		}
@@ -348,8 +348,8 @@ public class EquipmentEditorTab {
 					.Where(row => row.IsEquippable(slot))
 					.FirstOrDefault(item.IsItemPredicate);
 			}
-			item.Texture = item.Item != null ? this._tex.GetIcon(item.Item.Icon) : null;
-			item.Texture ??= this._tex.GetIcon(GetFallbackIcon(slot));
+			item.Texture = item.Item != null ? this._tex.GetFromGameIcon((uint)item.Item.Icon) : null;
+			item.Texture ??= this._tex.GetFromGameIcon(GetFallbackIcon(slot));
 		} finally {
 			this.Equipped[slot] = item;
 		}

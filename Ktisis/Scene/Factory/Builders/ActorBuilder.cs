@@ -11,12 +11,12 @@ public interface IActorBuilder : IEntityBuilder<ActorEntity, IActorBuilder> { }
 
 public sealed class ActorBuilder : EntityBuilder<ActorEntity, IActorBuilder>, IActorBuilder {
 	private readonly IPoseBuilder _pose;
-	private readonly GameObject _gameObject;
+	private readonly IGameObject _gameObject;
 
 	public ActorBuilder(
 		ISceneManager scene,
 		IPoseBuilder pose,
-		GameObject gameObject
+		IGameObject gameObject
 	) : base(scene) {
 		this.Name = gameObject.GetNameOrFallback();
 		this._pose = pose;
