@@ -65,11 +65,11 @@ public class LightModule : SceneModule {
 	
 	// Update wrappers
 	
-	[Signature("40 53 48 83 EC 40 48 8B 99 ?? ?? ?? ??")]
+	[Signature("48 89 5C 24 ?? 57 48 83 EC 40 48 8B B9 ?? ?? ?? ??")]
 	private SceneLightUpdateCullingDelegate _sceneLightUpdateCulling = null!;
 	private unsafe delegate void SceneLightUpdateCullingDelegate(SceneLight* self);
 	
-	[Signature("40 53 48 83 EC 20 F6 81 ?? ?? ?? ?? ?? 48 8B D9 75 44 80 89 ?? ?? ?? ?? ?? B2 05")]
+	[Signature("40 53 48 83 EC 20 0F B6 81 ?? ?? ?? ?? 48 8B D9 A8 04 75 45 0C 04 B2 05")]
 	private SceneLightUpdateMaterialsDelegate _sceneLightUpdateMaterials = null!;
 	private unsafe delegate void SceneLightUpdateMaterialsDelegate(SceneLight* self);
 
