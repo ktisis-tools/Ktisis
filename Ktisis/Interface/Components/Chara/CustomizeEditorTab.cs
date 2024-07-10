@@ -405,7 +405,7 @@ public class CustomizeEditorTab {
 		var color = value < colors.Length ? colors[value] : 0;
 		var colorVec = ImGui.ColorConvertU32ToFloat4(color);
 		if (ImGui.ColorButton($"{value}##{index}", colorVec))
-				this._colorPopup.Open(index, colors);
+			this._colorPopup.Open(index, colors);
 	}
 
 	private void DrawFeatColor(CustomizeIndex index, MakeTypeRace data) {
