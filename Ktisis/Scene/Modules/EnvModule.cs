@@ -94,10 +94,10 @@ public class EnvModule : SceneModule, IEnvModule {
 	private unsafe delegate nint EnvManagerUpdateDelegate(EnvManagerEx* env, float a2, float a3);
 	private delegate void UpdateTimeDelegate(nint a1);
 
-	[Signature("E8 ?? ?? ?? ?? 49 3B F5")]
+	[Signature("E8 ?? ?? ?? ?? 49 3B F5 75 0D")]
 	private EnvStateCopyDelegate EnvStateCopy = null!;
 
-	[Signature("E8 ?? ?? ?? ?? 49 3B F5", DetourName = nameof(EnvStateCopyDetour))]
+	[Signature("E8 ?? ?? ?? ?? 49 3B F5 75 0D", DetourName = nameof(EnvStateCopyDetour))]
 	private Hook<EnvStateCopyDelegate> EnvStateCopyHook = null!;
 	private unsafe nint EnvStateCopyDetour(EnvState* dest, EnvState* src) {
 		EnvState? original = null;
