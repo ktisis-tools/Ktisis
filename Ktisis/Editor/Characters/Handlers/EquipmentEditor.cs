@@ -102,8 +102,9 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		return actor.Character != null ? actor.Character->DrawData.GlassesIds[index] : (ushort)0;
 	}
 
-	public void SetGlassesId(int index, ushort id) {
-		// TODO: CS bump required
+	public unsafe void SetGlassesId(int index, ushort id) {
+		if (actor.IsValid && actor.Character != null)
+			actor.Character->DrawData.SetGlasses(index, id);
 	}
 	
 	// Weapon wrappers

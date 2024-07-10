@@ -323,7 +323,8 @@ public class EquipmentEditorTab {
 		ImGui.SetNextItemWidth(CalcItemWidth(cursorStart) + (ImGui.GetFrameHeight() + ImGui.GetStyle().ItemInnerSpacing.X) * 2);
 
 		var intGlassesId = (int)glassesId;
-		ImGui.InputInt($"##Glasses_{index}", ref intGlassesId);
+		if (ImGui.InputInt($"##Glasses_{index}", ref intGlassesId))
+			this.Editor.SetGlassesId(index, (ushort)intGlassesId);
 	}
 
 	private void DrawGlassesButton(int index, Glasses? glasses) {
@@ -333,6 +334,9 @@ public class EquipmentEditorTab {
 		var icon = this._tex.GetFromGameIcon(iconId);
 		if (ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ButtonSize))
 			this.OpenGlassesSelectPopup(index);
+		
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			this.Editor.SetGlassesId(index, 0);
 	}
 	
 	private static bool GlassesSelectSearchPredicate(Glasses glasses, string query)
