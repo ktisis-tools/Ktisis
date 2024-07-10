@@ -44,7 +44,7 @@ public class ConfigManager : IDisposable {
 			cfg = this.OpenConfigFile();
 
 			if (cfg is { Version: < 9 }) {
-				cfg.Version = 8;
+				cfg.Version = 9;
 				this.MigrateSchema(cfg);
 			}
 		} catch (Exception err) {
