@@ -8,20 +8,20 @@ namespace Ktisis.Structs.Characters;
 [StructLayout(LayoutKind.Explicit, Size = Size)]
 public struct EquipmentContainer {
 	public const int Length = 10;
-	public const int Size = sizeof(uint) * Length;
+	public const int Size = sizeof(ulong) * Length;
 
 	[FieldOffset(0x00)] public unsafe fixed byte Bytes[Size];
 	
 	[FieldOffset(0x00)] public EquipmentModelId Head;
-	[FieldOffset(0x04)] public EquipmentModelId Chest;
-	[FieldOffset(0x08)] public EquipmentModelId Hands;
-	[FieldOffset(0x0C)] public EquipmentModelId Legs;
-	[FieldOffset(0x10)] public EquipmentModelId Feet;
-	[FieldOffset(0x14)] public EquipmentModelId Earring;
-	[FieldOffset(0x18)] public EquipmentModelId Necklace;
-	[FieldOffset(0x1C)] public EquipmentModelId Bracelet;
-	[FieldOffset(0x20)] public EquipmentModelId RingRight;
-	[FieldOffset(0x24)] public EquipmentModelId RingLeft;
+	[FieldOffset(0x08)] public EquipmentModelId Chest;
+	[FieldOffset(0x10)] public EquipmentModelId Hands;
+	[FieldOffset(0x18)] public EquipmentModelId Legs;
+	[FieldOffset(0x20)] public EquipmentModelId Feet;
+	[FieldOffset(0x28)] public EquipmentModelId Earring;
+	[FieldOffset(0x30)] public EquipmentModelId Necklace;
+	[FieldOffset(0x38)] public EquipmentModelId Bracelet;
+	[FieldOffset(0x40)] public EquipmentModelId RingRight;
+	[FieldOffset(0x48)] public EquipmentModelId RingLeft;
 
 	public EquipmentModelId this[uint index] {
 		get => this.Get(index);

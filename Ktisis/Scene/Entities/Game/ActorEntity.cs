@@ -15,7 +15,7 @@ using Ktisis.Scene.Types;
 namespace Ktisis.Scene.Entities.Game;
 
 public class ActorEntity : CharaEntity, IDeletable {
-	public readonly GameObject Actor;
+	public readonly IGameObject Actor;
 	
 	public bool IsManaged { get; set; }
 
@@ -24,7 +24,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 	public ActorEntity(
 		ISceneManager scene,
 		IPoseBuilder pose,
-		GameObject actor
+		IGameObject actor
 	) : base(scene, pose) {
 		this.Type = EntityType.Actor;
 		this.Actor = actor;

@@ -40,66 +40,163 @@
 		<Category Id="Face">
 			<Bones>
 				j_face
+				j_f_face
 			</Bones>
 			<Category Id="Brow">
-				<Bones>
-					j_f_miken_l
-					j_f_miken_r
-				</Bones>
-				<Category Id="Eyebrows">
+				<Category Id="LeftBrow">
 					<Bones>
+						j_f_miken_l
 						j_f_mayu_l
+						j_f_mmayu_l
+						j_f_miken_01_l
+						j_f_miken_02_l
+					</Bones>
+				</Category>
+				<Category Id="RightBrow">
+					<Bones>
+						j_f_miken_r
 						j_f_mayu_r
+						j_f_mmayu_r
+						j_f_miken_01_r
+						j_f_miken_02_r
 					</Bones>
 				</Category>
 			</Category>
 			<Category Id="Eyes">
 				<Bones>
-					j_f_eye_l
-					j_f_eye_r
+					j_f_eyeprm_01_l
+					j_f_eyeprm_01_r
+					j_f_eyeprmroll_l
+					j_f_eyeprmroll_r
+					j_f_eyeprm_02_l
+					j_f_eyeprm_02_r
+					j_f_irisprm_l
+					j_f_irisprm_r
+					j_f_noanim_eyesize_l
+					j_f_noanim_eyesize_r
 				</Bones>
-				<Category Id="Eyelids">
+				<Category Id="LeftEye">
 					<Bones>
-						j_f_dmab_l
-						j_f_dmab_r
-						j_f_umab_l
-						j_f_umab_r
+						j_f_eye_l
+						j_f_eyepuru_l
+						j_f_mab_l
 					</Bones>
+					<Category Id="LeftEyelid">
+						<Bones>
+							j_f_umab_l
+							j_f_dmab_l
+							j_f_mabup_01_l
+							j_f_mabdn_01_l
+							j_f_mabup_02out_l
+							j_f_mabdn_02out_l
+							j_f_mabup_03in_l
+							j_f_mabdn_03in_l
+						</Bones>
+					</Category>
 				</Category>
-			</Category>
-			<Category Id="Cheeks">
-				<Bones>
-					j_f_hoho_l
-					j_f_hoho_r
-				</Bones>
+				<Category Id="RightEye">
+					<Bones>
+						j_f_eye_r
+						j_f_eyepuru_r
+						j_f_mab_r
+					</Bones>
+					<Category Id="RightEyelid">
+						<Bones>
+							j_f_umab_r
+							j_f_dmab_r
+							j_f_mabup_01_r
+							j_f_mabdn_01_r
+							j_f_mabup_02out_r
+							j_f_mabdn_02out_r
+							j_f_mabup_03in_r
+							j_f_mabdn_03in_r
+						</Bones>
+					</Category>
+				</Category>
 			</Category>
 			<Category Id="Nose">
 				<Bones>
 					j_f_hana
 					j_f_memoto
+					j_f_uhana
+					j_f_hana_l
+					j_f_hana_r
 				</Bones>
+			</Category>
+			<Category Id="Cheeks">
+				<Category Id="LeftCheek">
+					<Bones>
+						j_f_hoho_l
+						j_f_dhoho_l
+						j_f_shoho_l
+						j_f_dmemoto_l
+					</Bones>
+				</Category>
+				<Category Id="RightCheek">
+					<Bones>
+						j_f_hoho_r
+						j_f_dhoho_r
+						j_f_shoho_r
+						j_f_dmemoto_r
+					</Bones>
+				</Category>
 			</Category>
 			<Category Id="Mouth">
 				<Bones>
 					j_ago
+					j_f_lip_l
+					j_f_lip_r
 				</Bones>
-				<Category Id="Lips">
+				<Category Id="UpperMouth">
 					<Bones>
-						j_f_lip_l
-						j_f_lip_r
+						j_f_hagukiup
 					</Bones>
 					<Category Id="UpperLip">
 						<Bones>
 							j_f_ulip_a
 							j_f_ulip_b
+							j_f_ulip_01_l
+							j_f_ulip_02_l
+							j_f_ulip_01_r
+							j_f_ulip_02_r
+							j_f_umlip_01_l
+							j_f_umlip_02_l
+							j_f_umlip_01_r
+							j_f_umlip_02_r
+							j_f_uslip_l
+							j_f_uslip_r
 						</Bones>
 					</Category>
+				</Category>
+				<Category Id="LowerMouth">
+					<Bones>
+						j_f_ago
+						j_f_dago
+						j_f_hagukidn
+					</Bones>
 					<Category Id="LowerLip">
 						<Bones>
 							j_f_dlip_a
 							j_f_dlip_b
+							j_f_dlip_01_l
+							j_f_dlip_02_l
+							j_f_dlip_01_r
+							j_f_dlip_02_r
+							j_f_dmlip_01_l
+							j_f_dmlip_02_l
+							j_f_dmlip_01_r
+							j_f_dmlip_02_r
+							j_f_dslip_l
+							j_f_dslip_r
 						</Bones>
 					</Category>
+				</Category>
+				<Category Id="Tongue">
+					<Bones>
+						j_f_bero_01
+						j_f_bero_02
+						j_f_bero_03
+					</Bones>
 				</Category>
 			</Category>
 		</Category>

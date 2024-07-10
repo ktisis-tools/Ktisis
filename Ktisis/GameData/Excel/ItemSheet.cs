@@ -18,7 +18,8 @@ public enum EquipSlot {
 	Bracelet,
 	RingLeft,
 	RingRight,
-	SoulCrystal
+	SoulCrystal,
+	Glasses
 }
 
 public class ItemModel(ulong var, bool isWep = false) {
@@ -33,7 +34,7 @@ public class ItemModel(ulong var, bool isWep = false) {
 		=> this.Id == id && this.Base == secondId && this.Variant == variant;
 }
 
-[Sheet("Item")]
+[Sheet("Item", columnHash: 0xe9a33c9d)]
 public class ItemSheet : ExcelRow {
 	public string Name { get; set; } = string.Empty;
 

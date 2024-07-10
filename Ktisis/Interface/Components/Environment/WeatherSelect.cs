@@ -79,7 +79,7 @@ public class WeatherSelect {
 			if (adjustPad) posY -= style.FramePadding.Y;
 			ImGui.SetCursorPosY(posY);
 			
-			ImGui.Image(weather.Icon.ImGuiHandle, WeatherIconSize);
+			ImGui.Image(weather.Icon.GetWrapOrEmpty().ImGuiHandle, WeatherIconSize);
 			ImGui.SameLine();
 		}
 

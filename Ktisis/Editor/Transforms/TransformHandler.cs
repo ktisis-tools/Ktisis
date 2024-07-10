@@ -45,7 +45,7 @@ public class TransformHandler : ITransformHandler {
 		}
 
 		var target = selectTargets.FirstOrDefault();
-		if (target is BoneNode)
+		if (target is SkeletonNode)
 			target = TransformResolver.GetPoseTarget(selectTargets);
 		
 		this.Target = new TransformTarget(target, selectTargets);

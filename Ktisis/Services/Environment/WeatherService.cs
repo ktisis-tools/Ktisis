@@ -44,7 +44,7 @@ public class WeatherService {
 			var weather = weatherSheet.GetRow(id);
 			if (weather == null) continue;
 
-			var icon = this._texture.GetIcon((uint)weather.Icon);
+			var icon = this._texture.GetFromGameIcon((uint)weather.Icon);
 			var info = new WeatherInfo(weather, icon);
 			results.Add(info);
 		}
@@ -58,7 +58,7 @@ public class WeatherService {
 		var env = EnvManagerEx.Instance();
 		var scene = env != null ? env->_base.EnvScene : null;
 		if (scene == null) return Array.Empty<byte>();
-		return scene->WeatherIdsSpan
+		return scene->WeatherIds
 			.TrimEnd((byte)0)
 			.ToArray();
 	}

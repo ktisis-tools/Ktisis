@@ -1,15 +1,13 @@
 using System.Numerics;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
+using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
-
-using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
-
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities.Skeleton;

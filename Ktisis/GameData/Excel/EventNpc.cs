@@ -10,7 +10,7 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.GameData.Excel;
 
-[Sheet("ENpcBase", columnHash: 0x927347d8)]
+[Sheet("ENpcBase", columnHash: 0x464052cd)]
 public class EventNpc : ExcelRow, INpcBase {
 	public LazyRow<ModelChara> ModelChara { get; private set; } = null!;
 
@@ -25,12 +25,13 @@ public class EventNpc : ExcelRow, INpcBase {
 		this.Name = $"E:{this.RowId:D7}";
 		
 		this.ModelChara = new LazyRow<ModelChara>(gameData, parser.ReadColumn<ushort>(35), language);
+		this.Customize = parser.ReadCustomize(36);
 
 		var equipRow = parser.ReadColumn<ushort>(63);
 		
 		this.MainHand = parser.ReadWeapon(65);
-		this.OffHand = parser.ReadWeapon(67);
-		var equip = this.Equipment = parser.ReadEquipment(69);
+		this.OffHand = parser.ReadWeapon(68);
+		var equip = this.Equipment = parser.ReadEquipment(71);
 		
 		// what the fuck?
 		

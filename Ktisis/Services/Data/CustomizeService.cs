@@ -39,7 +39,7 @@ public class CustomizeService {
 		return (ushort)value;
 	}
 	
-	// Discovery methods
+	// Face discovery methods
 
 	public bool IsFaceIdValidFor(ushort dataId, int faceId) => this._data.FileExists(ResolveFacePath(dataId, faceId));
 
@@ -71,11 +71,28 @@ public class CustomizeService {
 		return current;
 	}
 	
+	// Hair discovery methods
+	
+	public bool IsHairIdValidFor(ushort dataId, int hairId) => this._data.FileExists(ResolveHairPath(dataId, hairId));
+
+	public IEnumerable<byte> GetHairTypes(ushort dataId) {
+		for (var i = 0; i <= byte.MaxValue; i++) {
+			if (this.IsHairIdValidFor(dataId, i))
+				yield return (byte)i;
+		}
+	}
+	
 	// Path resolution
 
 	private static string ResolveFacePath(ushort dataId, int faceId) => string.Format(
 		"chara/human/c{0:D4}/obj/face/f{1:D4}/model/c{0:D4}f{1:D4}_fac.mdl",
 		dataId,
 		faceId
+	);
+	
+	private static string ResolveHairPath(ushort dataId, int hairId) => string.Format(
+		"chara/human/c{0:D4}/obj/hair/h{1:D4}/model/c{0:D4}h{1:D4}_hir.mdl",
+		dataId,
+		hairId
 	);
 }

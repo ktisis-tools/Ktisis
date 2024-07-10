@@ -8,15 +8,15 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
-
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
+using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 using GameCameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraManager;
 using SceneCameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CameraManager;
 
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Interop.Hooking;
+using Ktisis.Structs.Camera;
 using Ktisis.Structs.Input;
-
 using InputManager = Ktisis.Editor.Actions.Input.InputManager;
 
 namespace Ktisis.Editor.Camera;
@@ -73,10 +73,12 @@ public class CameraModule : HookModule {
 			this.ActiveCameraHook.Enable();
 			this.CameraEventHook.Enable();
 			this.CameraUiHook.Enable();
+			this.CameraPreUpdateHook.Enable();
 		} else {
 			this.ActiveCameraHook.Disable();
 			this.CameraEventHook.Disable();
 			this.CameraUiHook.Disable();
+			this.CameraPreUpdateHook.Disable();
 		}
 
 		if (camera is WorkCamera) {
@@ -93,7 +95,7 @@ public class CameraModule : HookModule {
 	
 	// Orbit target helpers
 
-	public unsafe GameObject? ResolveOrbitTarget(EditorCamera camera) {
+	public unsafe IGameObject? ResolveOrbitTarget(EditorCamera camera) {
 		if (camera.OrbitTarget != null) {
 			var target = this._objectTable[camera.OrbitTarget.Value];
 			if (target != null) return target;
@@ -102,6 +104,12 @@ public class CameraModule : HookModule {
 		var address = (nint)TargetSystem.Instance()->GPoseTarget;
 		return this._objectTable.CreateObjectReference(address);
 	}
+	
+	// Camera methods
+
+	[Signature("E8 ?? ?? ?? ?? 48 8B 17 48 8D 4D E0")]
+	private LoadMatrixDelegate _loadMatrix = null!;
+	private unsafe delegate Matrix4x4* LoadMatrixDelegate(RenderCameraEx* camera, Matrix4x4* matrix, int a3, int a4);
 	
 	// Camera control hooks
 
@@ -125,25 +133,37 @@ public class CameraModule : HookModule {
 		return result;
 	}
 	
+	[Signature("48 83 EC 28 8B 41 48", DetourName = nameof(CameraPreUpdateDetour))]
+	private Hook<CameraPreUpdateDelegate> CameraPreUpdateHook = null!;
+	private delegate nint CameraPreUpdateDelegate(nint a1);
+	
+	private nint CameraPreUpdateDetour(nint a1) {
+		using var _ = this.Redirect();
+		var result = this.CameraPreUpdateHook.Original(a1);
+		return result;
+	}
+	
 	// Work camera hooks
 
-	[Signature("E8 ?? ?? ?? ?? 33 C0 48 89 83 ?? ?? ?? ?? 48 8B 9C 24", DetourName = nameof(CalcViewMatrixDetour))]
+	[Signature("48 89 5C 24 ?? 57 48 81 EC ?? ?? ?? ?? F6 81 ?? ?? ?? ?? ?? 48 8B D9 48 89 B4 24 ?? ?? ?? ??", DetourName = nameof(CalcViewMatrixDetour))]
 	private Hook<CalcViewMatrixDelegate> CalcViewMatrixHook = null!;
-	private unsafe delegate Matrix4x4* CalcViewMatrixDelegate(nint camera);
+	private unsafe delegate nint CalcViewMatrixDelegate(SceneCamera* camera);
 
-	private unsafe Matrix4x4* CalcViewMatrixDetour(nint camera) {
-		var matrix = this.CalcViewMatrixHook.Original(camera);
+	private unsafe nint CalcViewMatrixDetour(SceneCamera* camera) {
+		var result = this.CalcViewMatrixHook.Original(camera);
 		
 		try {
 			if (this.Manager.Current is WorkCamera freeCam) {
 				freeCam.Update();
+				var matrix = (Matrix4x4*)&camera->ViewMatrix;
 				*matrix = freeCam.CalculateViewMatrix();
+				this._loadMatrix(freeCam.Camera->RenderEx, matrix, 0, 0);
 			}
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to handle work camera:\n{err}");
 		}
 		
-		return matrix;
+		return result;
 	}
 
 	[Signature("E8 ?? ?? ?? ?? 83 7B 58 00", DetourName = nameof(UpdateInputDetour))]
@@ -163,7 +183,7 @@ public class CameraModule : HookModule {
 	
 	// Collision hook
 
-	[Signature("E8 ?? ?? ?? ?? 4C 8D 45 C7 89 83", DetourName = nameof(CameraCollideDetour))]
+	[Signature("E8 ?? ?? ?? ?? 4C 8B AC 24 ?? ?? ?? ?? 32 DB", DetourName = nameof(CameraCollideDetour))]
 	private Hook<CameraCollideDelegate> CameraCollideHook = null!;
 	private unsafe delegate nint CameraCollideDelegate(GameCamera* a1, Vector3* a2, Vector3* a3, float a4, nint a5, float a6);
 
@@ -179,7 +199,7 @@ public class CameraModule : HookModule {
 	
 	// Camera redirect hooks
 
-	[Signature("E8 ?? ?? ?? ?? F7 80", DetourName = nameof(ActiveCameraDetour))]
+	[Signature("E8 ?? ?? ?? ?? 41 0F B6 DF", DetourName = nameof(ActiveCameraDetour))]
 	private Hook<ActiveCameraDelegate> ActiveCameraHook = null!;
 	private unsafe delegate GameCamera* ActiveCameraDelegate(nint a1);
 	
@@ -189,7 +209,7 @@ public class CameraModule : HookModule {
 		return this.ActiveCameraHook.Original(a1);
 	}
 
-	[Signature("E8 ?? ?? ?? ?? 0F B6 F0 EB 34", DetourName = nameof(CameraEventDetour))]
+	[Signature("E8 ?? ?? ?? ?? 0F B6 F8 EB 34", DetourName = nameof(CameraEventDetour))]
 	private Hook<CameraEventDelegate> CameraEventHook = null!;
 	private delegate char CameraEventDelegate(nint a1, nint a2, int a3);
 	
@@ -255,13 +275,13 @@ public class CameraModule : HookModule {
 	
 	private unsafe static void SetSceneCamera(EditorCamera camera) {
 		var mgr = SceneCameraManager.Instance();
-		mgr->CameraArraySpan[mgr->CameraIndex] = &camera.GameCamera->CameraBase.SceneCamera;
+		mgr->Cameras[mgr->CameraIndex] = &camera.GameCamera->CameraBase.SceneCamera;
 	}
 
 	private unsafe static void ResetSceneCamera() {
 		var mgr = SceneCameraManager.Instance();
 		var active = GameCameraManager.Instance()->GetActiveCamera();
-		mgr->CameraArraySpan[mgr->CameraIndex] = &active->CameraBase.SceneCamera;
+		mgr->Cameras[mgr->CameraIndex] = &active->CameraBase.SceneCamera;
 	}
 	
 	// Disposal

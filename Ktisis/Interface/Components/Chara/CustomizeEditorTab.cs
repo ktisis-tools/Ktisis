@@ -4,6 +4,7 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 
@@ -293,12 +294,14 @@ public class CustomizeEditorTab {
 	
 	private bool DrawFeatIconButton(string fallback, MakeTypeParam? param) {
 		using var _col = ImRaii.PushColor(ImGuiCol.Button, 0);
-		
-		var icon = param != null ? this._tex.GetIcon(param.Graphic) : null;
+
+		ISharedImmediateTexture? icon = null;
+		if (param != null && param.Graphic != 0)
+			this._tex.TryGetFromGameIcon(param.Graphic, out icon);
 
 		bool clicked;
 		if (icon != null)
-			clicked = ImGui.ImageButton(icon.ImGuiHandle, this.ButtonSize);
+			clicked = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, this.ButtonSize);
 		else
 			clicked = ImGui.Button(fallback, this.ButtonSize + ImGui.GetStyle().FramePadding * 2);
 		return clicked;
@@ -358,8 +361,8 @@ public class CustomizeEditorTab {
 			iconIds = data.FaceFeatureIcons.Values.FirstOrDefault();
 		iconIds ??= Array.Empty<uint>();
 
-		var icons = iconIds.Select(id => this._tex.GetIcon(id))
-			.Append(this._tex.GetTextureFromGame(LegacyTexPath));
+		var icons = iconIds.Select(id => this._tex.GetFromGameIcon(id))
+			.Append(this._tex.GetFromGame(LegacyTexPath));
 		
 		var i = 0;
 		foreach (var icon in icons) {
@@ -373,7 +376,7 @@ public class CustomizeEditorTab {
 
 			bool button;
 			if (icon != null)
-				button = ImGui.ImageButton(icon.ImGuiHandle, this.ButtonSize);
+				button = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, this.ButtonSize);
 			else
 				button = ImGui.Button($"{i}", this.ButtonSize + style.FramePadding * 2);
 			if (button)
@@ -402,7 +405,7 @@ public class CustomizeEditorTab {
 		var color = value < colors.Length ? colors[value] : 0;
 		var colorVec = ImGui.ColorConvertU32ToFloat4(color);
 		if (ImGui.ColorButton($"{value}##{index}", colorVec))
-				this._colorPopup.Open(index, colors);
+			this._colorPopup.Open(index, colors);
 	}
 
 	private void DrawFeatColor(CustomizeIndex index, MakeTypeRace data) {

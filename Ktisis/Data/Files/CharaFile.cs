@@ -85,7 +85,8 @@ public class CharaFile : JsonFile {
 			this.ModelSet = from.Id;
 			this.ModelBase = from.Type;
 			this.ModelVariant = from.Variant;
-			this.DyeId = from.Stain;
+			this.DyeId = from.Stain0;
+			this.DyeId2 = from.Stain1;
 		}
 
 		public Vector3 Color { get; set; }
@@ -94,6 +95,7 @@ public class CharaFile : JsonFile {
 		public ushort ModelBase { get; set; }
 		public ushort ModelVariant { get; set; }
 		public ushort DyeId { get; set; }
+		public ushort DyeId2 { get; set; }
 	}
 	
 	// Item data
@@ -105,12 +107,14 @@ public class CharaFile : JsonFile {
 		public ItemSave(EquipmentModelId from) {
 			this.ModelBase = from.Id;
 			this.ModelVariant = from.Variant;
-			this.DyeId = from.Stain;
+			this.DyeId = from.Stain0;
+			this.DyeId2 = from.Stain1;
 		}
 
 		public ushort ModelBase { get; set; }
 		public byte ModelVariant { get; set; }
 		public byte DyeId { get; set; }
+		public byte DyeId2 { get; set; }
 	}
 	
 	// Enums, required due to the way this was serialized.

@@ -13,7 +13,7 @@ public class WeaponInfo(IEquipmentEditor editor) : ItemInfo {
 	public override EquipSlot Slot => this.Index.ToEquipSlot();
 		
 	public override ushort ModelId => this.Model.Id;
-	public override byte StainId => this.Model.Stain;
+	public override byte[] StainIds => [ this.Model.Stain0, this.Model.Stain1 ];
 
 	public void SetModel(ushort id, ushort second, byte variant)
 		=> editor.SetWeaponIdBaseVariant(this.Index, id, second, variant);
@@ -26,7 +26,7 @@ public class WeaponInfo(IEquipmentEditor editor) : ItemInfo {
 			editor.SetWeaponIdBaseVariant(WeaponIndex.OffHand, item.SubModel.Id, item.SubModel.Base, (byte)item.SubModel.Variant);
 	}
 
-	public override void SetStainId(byte id) => editor.SetWeaponStainId(this.Index, id);
+	public override void SetStainId(byte id, int index = 0) => editor.SetWeaponStainId(this.Index, id, index);
 	public override void Unequip() => this.SetModel(0, 0, 0);
 
 	public override bool IsHideable => true;

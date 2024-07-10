@@ -12,7 +12,6 @@ using Ktisis.GameData.Chara;
 using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets2;
 
-using Ktisis.Services;
 using Ktisis.Services.Data;
 using Ktisis.Structs.Characters;
 
@@ -208,21 +207,32 @@ public class MakeTypeData {
 			makeTypes = this.MakeTypes.Values.ToList();
 
 		foreach (var data in makeTypes) {
-			var face = data.GetFeature(CustomizeIndex.FaceType);
-			if (face == null) continue;
-            
 			var dataId = discover.CalcDataIdFor(data.Tribe, data.Gender);
 			
-			var faceIds = discover.GetFaceTypes(dataId)
-				.Except(face.Params.Select(param => param.Value));
-			if (data.Tribe is Tribe.Dunesfolk or Tribe.Hellsguard or Tribe.MoonKeeper)
-				faceIds = faceIds.Except(face.Params.Select(param => (byte)(param.Value + 100)));
-			face.Params = face.Params.Concat(
-				faceIds.Select(id => new MakeTypeParam { Value = id, Graphic = 0 })
-			).ToArray();
+			var face = data.GetFeature(CustomizeIndex.FaceType);
+			if (face != null) {
+				var faceIds = discover.GetFaceTypes(dataId)
+					.Except(face.Params.Select(param => param.Value));
+				if (data.Tribe is Tribe.Dunesfolk or Tribe.Hellsguard or Tribe.MoonKeeper)
+					faceIds = faceIds.Except(face.Params.Select(param => (byte)(param.Value + 100)));
+				ConcatFeatIds(face, faceIds);
+			}
+
+			var hair = data.GetFeature(CustomizeIndex.HairStyle);
+			if (hair != null) {
+				var hairIds = discover.GetHairTypes(dataId)
+					.Except(hair.Params.Select(param => param.Value));
+				ConcatFeatIds(hair, hairIds);
+			}
 		}
 		
 		stop.Stop();
 		Ktisis.Log.Debug($"Populated discovery data in {stop.Elapsed.TotalMilliseconds:00.00}ms");
+	}
+
+	private static void ConcatFeatIds(MakeTypeFeature feat, IEnumerable<byte> ids) {
+		feat.Params = feat.Params.Concat(
+			ids.Select(id => new MakeTypeParam { Value = id, Graphic = 0 })
+		).ToArray();
 	}
 }

@@ -7,7 +7,7 @@ using Ktisis.Scene.Factory.Creators;
 namespace Ktisis.Scene.Factory.Types;
 
 public interface IEntityFactory {
-	public IActorBuilder BuildActor(GameObject actor);
+	public IActorBuilder BuildActor(IGameObject actor);
 	public ILightBuilder BuildLight();
 	public IObjectBuilder BuildObject();
 	public IPoseBuilder BuildPose();

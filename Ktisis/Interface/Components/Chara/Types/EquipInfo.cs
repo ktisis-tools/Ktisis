@@ -13,11 +13,11 @@ public class EquipInfo(IEquipmentEditor editor) : ItemInfo {
 	public override EquipSlot Slot => this.Index.ToEquipSlot();
 
 	public override ushort ModelId => this.Model.Id;
-	public override byte StainId => this.Model.Stain;
+	public override byte[] StainIds => [ this.Model.Stain0, this.Model.Stain1 ];
 
 	public void SetModel(ushort id, byte variant) => editor.SetEquipIdVariant(this.Index, id, variant);
 	public override void SetEquipItem(ItemSheet item) => this.SetModel(item.Model.Id, (byte)item.Model.Variant);
-	public override void SetStainId(byte id) => editor.SetEquipStainId(this.Index, id);
+	public override void SetStainId(byte id, int index = 0) => editor.SetEquipStainId(this.Index, id, index);
 	public override void Unequip() => this.SetModel(0, 0);
 
 	public override bool IsHideable => this.Slot is EquipSlot.Head;

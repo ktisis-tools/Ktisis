@@ -1,6 +1,7 @@
 using System.Numerics;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Common.Base.Math.Quaternion;
+using FFXIVClientStructs.Havok.Common.Base.Math.Vector;
 
 using Ktisis.Common.Utility;
 

@@ -2,6 +2,7 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 
@@ -74,21 +75,23 @@ public class FeatureSelectPopup {
 
 			using var _group = ImRaii.Group();
 			using var _id = ImRaii.PushId($"##Feature_{param.Value}_{i}");
-			
-			var icon = param.Graphic != 0 ? this._tex.GetIcon(param.Graphic) : null;
-			icon ??= this._tex.GetIcon(61583);
+
+			ISharedImmediateTexture? icon = null;
+			if (param.Graphic != 0)
+				this._tex.TryGetFromGameIcon(param.Graphic, out icon);
 
 			var totalSize = ButtonSize + ImGui.GetStyle().FramePadding * 2;
 			
 			bool button;
-			if (icon != null)
-				button = ImGui.ImageButton(icon.ImGuiHandle, ButtonSize);
-			else
+			if (icon != null) {
+				button = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ButtonSize);
+				
+				var label = param.Value.ToString();
+				ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (totalSize.X - ImGui.CalcTextSize(label).X) / 2);
+				ImGui.Text(label);
+			} else {
 				button = ImGui.Button($"{param.Value}", totalSize);
-			
-			var label = param.Value.ToString();
-			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (totalSize.X - ImGui.CalcTextSize(label).X) / 2);
-			ImGui.Text(label);
+			}
 
 			if (button)
 				editor.SetCustomization(this.Feature.Index, canFlip ? (byte)(param.Value | current & 0x80) : param.Value);

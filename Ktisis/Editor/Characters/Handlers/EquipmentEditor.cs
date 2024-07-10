@@ -47,9 +47,16 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		this.SetEquipIndex(index, model);
 	}
 
-	public void SetEquipStainId(EquipIndex index, byte stainId) {
+	public void SetEquipStainId(EquipIndex index, byte stainId, int dyeIndex = 0) {
 		var model = this.GetEquipIndex(index);
-		model.Stain = stainId;
+		switch (dyeIndex) {
+			case 1:
+				model.Stain1 = stainId;
+				break;
+			default:
+				model.Stain0 = stainId;
+				break;
+		}
 		this.SetEquipIndex(index, model);
 	}
 
@@ -89,6 +96,17 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		actor.Character->DrawData.SetVisor(toggled);
 	}
 	
+	// Glasses
+
+	public unsafe ushort GetGlassesId(int index) {
+		return actor.Character != null ? actor.Character->DrawData.GlassesIds[index] : (ushort)0;
+	}
+
+	public unsafe void SetGlassesId(int index, ushort id) {
+		if (actor.IsValid && actor.Character != null)
+			actor.Character->DrawData.SetGlasses(index, id);
+	}
+	
 	// Weapon wrappers
 
 	public unsafe WeaponModelId GetWeaponIndex(WeaponIndex index) {
@@ -115,15 +133,23 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		this.SetWeaponIndex(index, model);
 	}
 
-	public void SetWeaponStainId(WeaponIndex index, byte stainId) {
+	public void SetWeaponStainId(WeaponIndex index, byte stainId, int dyeIndex = 0) {
 		var model = this.GetWeaponIndex(index);
-		model.Stain = stainId;
+		switch (dyeIndex) {
+			case 1:
+				model.Stain1 = stainId;
+				break;
+			default:
+				model.Stain0 = stainId;
+				break;
+		}
 		this.SetWeaponIndex(index, model);
 	}
 	
 	private unsafe static DrawObjectData* GetWeaponData(ActorEntity actor, WeaponIndex index) {
 		if (!actor.IsValid || actor.Character == null) return null;
-		return (DrawObjectData*)actor.Character->DrawData.WeaponData + (uint)index;
+		fixed (DrawObjectData* ptr = &actor.Character->DrawData.WeaponData[(int)index])
+			return ptr;
 	}
 	
 	// Weapon visible

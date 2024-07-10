@@ -92,7 +92,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	
 	// Utility
 	
-	public ActorEntity? GetEntityForActor(GameObject actor) => this.Children.ToList()
+	public ActorEntity? GetEntityForActor(IGameObject actor) => this.Children.ToList()
 		.Where(entity => entity is ActorEntity { IsValid: true })
 		.Cast<ActorEntity>()
 		.FirstOrDefault(entity => entity.Actor.ObjectIndex == actor.ObjectIndex);

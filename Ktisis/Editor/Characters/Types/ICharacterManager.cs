@@ -12,7 +12,7 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Characters.Types;
 
-public unsafe delegate void DisableDrawHandler(GameObject gameObject, DrawObject* drawObject);
+public unsafe delegate void DisableDrawHandler(IGameObject gameObject, DrawObject* drawObject);
 
 public interface ICharacterManager : IDisposable {
 	public bool IsValid { get; }
@@ -24,7 +24,7 @@ public interface ICharacterManager : IDisposable {
 	public ICustomizeEditor GetCustomizeEditor(ActorEntity actor);
 	public IEquipmentEditor GetEquipmentEditor(ActorEntity actor);
 
-	public bool TryGetStateForActor(GameObject actor, out ActorEntity entity, out AppearanceState state);
+	public bool TryGetStateForActor(IGameObject actor, out ActorEntity entity, out AppearanceState state);
 
 	public void ApplyStateToGameObject(ActorEntity entity);
 

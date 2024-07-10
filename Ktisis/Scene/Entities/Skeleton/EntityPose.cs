@@ -2,14 +2,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using FFXIVClientStructs.Havok;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-
-using Ktisis.Editor.Posing.Ik;
-
+using FFXIVClientStructs.Havok.Animation.Rig;
 using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
+using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;

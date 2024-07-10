@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Common.Base.Object;
 
 namespace Ktisis.Structs.Havok;
 

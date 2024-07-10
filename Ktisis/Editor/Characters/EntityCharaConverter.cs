@@ -5,7 +5,6 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Data.Files;
-using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.GameData.Excel.Types;
@@ -36,11 +35,13 @@ public class EntityCharaConverter {
 	private readonly IEquipmentEditor _equip;
 	
 	public EntityCharaConverter(
-		ActorEntity entity
+		ActorEntity entity,
+		ICustomizeEditor custom,
+		IEquipmentEditor equip
 	) {
 		this._entity = entity;
-		this._custom = new CustomizeEditor(entity);
-		this._equip = new EquipmentEditor(entity);
+		this._custom = custom;
+		this._equip = equip;
 	}
 	
 	// CharaFile
@@ -223,7 +224,8 @@ public class EntityCharaConverter {
 			Id = save.ModelSet,
 			Type = save.ModelBase,
 			Variant = save.ModelVariant,
-			Stain = (byte)save.DyeId
+			Stain0 = (byte)save.DyeId,
+			Stain1 = (byte)save.DyeId2
 		});
 		
 		return this;
@@ -248,7 +250,8 @@ public class EntityCharaConverter {
 		return new EquipmentModelId {
 			Id = save.ModelBase,
 			Variant = save.ModelVariant,
-			Stain = save.DyeId
+			Stain0 = save.DyeId,
+			Stain1 = save.DyeId2
 		};
 	}
 	

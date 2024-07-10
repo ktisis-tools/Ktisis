@@ -1,6 +1,5 @@
 using Dalamud.Game.ClientState.Objects.Types;
 
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Factory.Creators;
@@ -27,7 +26,7 @@ public class EntityFactory : IEntityFactory {
 	
 	// Builders
 
-	public IActorBuilder BuildActor(GameObject actor) => new ActorBuilder(this.Scene, this.BuildPose(), actor);
+	public IActorBuilder BuildActor(IGameObject actor) => new ActorBuilder(this.Scene, this.BuildPose(), actor);
 
 	public ILightBuilder BuildLight() => new LightBuilder(this.Scene);
 

@@ -17,7 +17,7 @@ public sealed class Ktisis : IDalamudPlugin {
 
 	public Ktisis(
 		IPluginLog logger,
-		DalamudPluginInterface dpi
+		IDalamudPluginInterface dpi
 	) {
 		Log = logger;
 		

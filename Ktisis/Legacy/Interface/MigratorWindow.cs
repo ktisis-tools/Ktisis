@@ -15,11 +15,11 @@ using Ktisis.Interface.Types;
 namespace Ktisis.Legacy.Interface;
 
 public class MigratorWindow : KtisisWindow {
-	private readonly DalamudPluginInterface _dpi;
+	private readonly IDalamudPluginInterface _dpi;
 	private readonly LegacyMigrator _migrator;
 
 	public MigratorWindow(
-		DalamudPluginInterface dpi,
+		IDalamudPluginInterface dpi,
 		LegacyMigrator migrator
 	) : base(
 		"Ktisis Development Preview",

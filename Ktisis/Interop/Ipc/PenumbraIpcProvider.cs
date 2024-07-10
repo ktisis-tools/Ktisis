@@ -1,42 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
 
 using Penumbra.Api.Enums;
-using Penumbra.Api.Helpers;
-using PenumbraIpc = Penumbra.Api.Ipc;
+using Penumbra.Api.IpcSubscribers;
 
 namespace Ktisis.Interop.Ipc;
 
 public class PenumbraIpcProvider {
-	private readonly FuncSubscriber<IList<string>> _getCollections;
-	private readonly FuncSubscriber<int, (bool, bool, string)> _getCollectionForObject;
-	private readonly FuncSubscriber<int, string, bool, bool, (PenumbraApiEc, string)> _setCollectionForObject;
-	private readonly FuncSubscriber<int, int> _getCutsceneParentIndex;
-	private readonly FuncSubscriber<int, int, PenumbraApiEc> _setCutsceneParentIndex;
+	private readonly GetCollections _getCollections;
+	private readonly GetCollectionForObject _getCollectionForObject;
+	private readonly SetCollectionForObject _setCollectionForObject;
+	private readonly GetCutsceneParentIndex _getCutsceneParentIndex;
+	private readonly SetCutsceneParentIndex _setCutsceneParentIndex;
     
 	public PenumbraIpcProvider(
-		DalamudPluginInterface dpi
+		IDalamudPluginInterface dpi
 	) {
-		this._getCollections = PenumbraIpc.GetCollections.Subscriber(dpi);
-		this._getCollectionForObject = PenumbraIpc.GetCollectionForObject.Subscriber(dpi);
-		this._setCollectionForObject = PenumbraIpc.SetCollectionForObject.Subscriber(dpi);
-		this._getCutsceneParentIndex = PenumbraIpc.GetCutsceneParentIndex.Subscriber(dpi);
-		this._setCutsceneParentIndex = PenumbraIpc.SetCutsceneParentIndex.Subscriber(dpi);
+		this._getCollections = new GetCollections(dpi);
+		this._getCollectionForObject = new GetCollectionForObject(dpi);
+		this._setCollectionForObject = new SetCollectionForObject(dpi);
+		this._getCutsceneParentIndex = new GetCutsceneParentIndex(dpi);
+		this._setCutsceneParentIndex = new SetCutsceneParentIndex(dpi);
 	}
 
-	public IEnumerable<string> GetCollections() => this._getCollections.Invoke();
+	public Dictionary<Guid, string> GetCollections() => this._getCollections.Invoke();
 
-	public string GetCollectionForObject(GameObject gameObject) {
+	public (Guid Id, string Name) GetCollectionForObject(IGameObject gameObject) {
 		var (valid, set, collection) = this._getCollectionForObject.Invoke(gameObject.ObjectIndex);
 		return collection;
 	}
 
-	public bool SetCollectionForObject(GameObject gameObject, string name) {
-		Ktisis.Log.Verbose($"Setting collection for '{gameObject.Name}' ({gameObject.ObjectIndex}) to '{name}'");
+	public bool SetCollectionForObject(IGameObject gameObject, Guid id) {
+		Ktisis.Log.Verbose($"Setting collection for '{gameObject.Name}' ({gameObject.ObjectIndex}) to '{id}'");
 		
-		var (result, prev) = this._setCollectionForObject.Invoke(gameObject.ObjectIndex, name, true, true);
+		var (result, prev) = this._setCollectionForObject.Invoke(gameObject.ObjectIndex, id, true, true);
 		
 		var success = result == PenumbraApiEc.Success;
 		if (!success)
@@ -44,11 +44,11 @@ public class PenumbraIpcProvider {
 		return success;
 	}
 
-	public int GetAssignedParentIndex(GameObject gameObject) {
+	public int GetAssignedParentIndex(IGameObject gameObject) {
 		return this._getCutsceneParentIndex.Invoke(gameObject.ObjectIndex);
 	}
 
-	public bool SetAssignedParentIndex(GameObject gameObject, int index) {
+	public bool SetAssignedParentIndex(IGameObject gameObject, int index) {
 		Ktisis.Log.Verbose($"Setting assigned parent for '{gameObject.Name}' ({gameObject.ObjectIndex}) to {index}");
 		
 		var result = this._setCutsceneParentIndex.Invoke(gameObject.ObjectIndex, index);
@@ -59,3 +59,4 @@ public class PenumbraIpcProvider {
 		return success;
 	}
 }
+

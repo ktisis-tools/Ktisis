@@ -7,7 +7,6 @@ using Dalamud.Game.ClientState.Objects.Types;
 using GameCameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraManager;
 
 using Ktisis.Interop.Hooking;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 
@@ -31,7 +30,7 @@ public interface ICameraManager : IDisposable {
 
 	public KtisisCamera Create(CameraFlags flags = CameraFlags.None);
 
-	public GameObject? ResolveOrbitTarget(EditorCamera camera);
+	public IGameObject? ResolveOrbitTarget(EditorCamera camera);
 }
 
 public class CameraManager : ICameraManager {
@@ -205,7 +204,7 @@ public class CameraManager : ICameraManager {
 	
 	// Camera helpers
 
-	public GameObject? ResolveOrbitTarget(EditorCamera camera)
+	public IGameObject? ResolveOrbitTarget(EditorCamera camera)
 		=> this.Module?.ResolveOrbitTarget(camera);
 	
 	// Disposal

@@ -1,14 +1,13 @@
 using System;
 using System.Threading.Tasks;
 
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 using Dalamud.Plugin.Services;
-using GameObject = Dalamud.Game.ClientState.Objects.Types.GameObject;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
@@ -61,7 +60,7 @@ public class ActorModule : SceneModule {
 		this.Scene.Context.Characters.OnDisableDraw += this.OnDisableDraw;
 	}
 
-	private unsafe void OnDisableDraw(GameObject gameObject, DrawObject* drawObject) {
+	private unsafe void OnDisableDraw(IGameObject gameObject, DrawObject* drawObject) {
 		if (!this.IsInit || !this.Scene.IsValid) return;
 
 		var entity = this.Scene.GetEntityForActor(gameObject);
@@ -87,7 +86,7 @@ public class ActorModule : SceneModule {
 		return entity;
 	}
 
-	public async Task<ActorEntity> AddFromOverworld(GameObject actor) {
+	public async Task<ActorEntity> AddFromOverworld(IGameObject actor) {
 		if (!this._spawner.IsInit)
 			throw new Exception("Actor spawner is uninitialized.");
 		var address = await this._spawner.CreateActor(actor);
@@ -129,7 +128,7 @@ public class ActorModule : SceneModule {
 	
 	// Spawned actor state
 
-	private void ReassignParentIndex(GameObject gameObject) {
+	private void ReassignParentIndex(IGameObject gameObject) {
 		var ipcMgr = this.Scene.Context.Plugin.Ipc;
 		if (!ipcMgr.IsPenumbraActive) return;
 
@@ -147,7 +146,7 @@ public class ActorModule : SceneModule {
 		return null;
 	}
 
-	private ActorEntity? AddActor(GameObject actor, bool addCompanion) {
+	private ActorEntity? AddActor(IGameObject actor, bool addCompanion) {
 		if (!actor.IsValid()) {
 			Ktisis.Log.Warning($"Actor address at 0x{actor.Address:X} is invalid.");
 			return null;
@@ -159,7 +158,7 @@ public class ActorModule : SceneModule {
 		return result;
 	}
 
-	private unsafe void AddCompanion(GameObject owner) {
+	private unsafe void AddCompanion(IGameObject owner) {
 		var chara = (Character*)owner.Address;
 		if (chara == null || chara->CompanionObject == null) return;
 		
@@ -171,12 +170,12 @@ public class ActorModule : SceneModule {
 	
 	// Hooks
 	
-	[Signature("E8 ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 BE ?? ?? ?? ?? ??", DetourName = nameof(AddCharacterDetour))]
+	[Signature("40 56 57 48 83 EC 38 48 89 5C 24 ??", DetourName = nameof(AddCharacterDetour))]
 	private Hook<AddCharacterDelegate>? AddCharacterHook = null!;
-	private delegate void AddCharacterDelegate(nint a1, nint a2, ulong a3);
+	private delegate void AddCharacterDelegate(nint a1, nint a2, ulong a3, nint a4);
 
-	private void AddCharacterDetour(nint gpose, nint address, ulong id) {
-		this.AddCharacterHook!.Original(gpose, address, id);
+	private void AddCharacterDetour(nint gpose, nint address, ulong id, nint a4) {
+		this.AddCharacterHook!.Original(gpose, address, id, a4);
 		if (!this.CheckValid()) return;
 		
 		try {

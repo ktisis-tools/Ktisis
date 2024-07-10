@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Numerics;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Container.Array;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Interop;

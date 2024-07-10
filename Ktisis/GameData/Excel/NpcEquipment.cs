@@ -8,7 +8,7 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.GameData.Excel;
 
-[Sheet("NpcEquip", columnHash: 0xe91c87ba)]
+[Sheet("NpcEquip", columnHash: 0x4004f596)]
 public class NpcEquipment : ExcelRow {
 	public WeaponModelId MainHand { get; private set; }
 	public WeaponModelId OffHand { get; private set; }
@@ -19,7 +19,7 @@ public class NpcEquipment : ExcelRow {
 		base.PopulateData(parser, gameData, language);
 
 		this.MainHand = parser.ReadWeapon(0);
-		this.OffHand = parser.ReadWeapon(2);
-		this.Equipment = parser.ReadEquipment(4);
+		this.OffHand = parser.ReadWeapon(3);
+		this.Equipment = parser.ReadEquipment(6);
 	}
 }

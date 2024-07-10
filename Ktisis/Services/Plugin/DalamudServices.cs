@@ -21,7 +21,7 @@ public sealed class DalamudServices {
 	[PluginService] private ITextureProvider Tex { get; set; } = null!;
 	[PluginService] private ISigScanner SigScanner { get; set; } = null!;
 
-	public void Add(DalamudPluginInterface dpi, IServiceCollection services) {
+	public void Add(IDalamudPluginInterface dpi, IServiceCollection services) {
 		dpi.Inject(this);
 		services.AddSingleton(dpi)
 			.AddSingleton(dpi.UiBuilder)

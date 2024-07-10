@@ -5,7 +5,9 @@ using System.Linq;
 using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Container.Array;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
 using Ktisis.Editor.Posing.Ik.Ccd;
 using Ktisis.Editor.Posing.Ik.TwoJoints;
@@ -72,7 +74,7 @@ public sealed class IkModule : HookModule {
 	
 	// Virtual Tables
 
-	[Signature("E8 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 C7 43 ?? ?? ?? ?? ??", ScanType = ScanType.StaticAddress)]
+	[Signature("E8 ?? ?? ?? ?? 48 C7 43 ?? ?? ?? ?? ?? 0F 57 C0", ScanType = ScanType.StaticAddress)]
 	private unsafe nint** CcdVfTable = null;
 	
 	// Methods
@@ -81,7 +83,7 @@ public sealed class IkModule : HookModule {
 	public SolveTwoJointsDelegate SolveTwoJoints = null!;
 	public unsafe delegate nint SolveTwoJointsDelegate(byte* result, TwoJointsIkSetup* setup, hkaPose* pose);
 
-	[Signature("E8 ?? ?? ?? ?? 8B 45 EF 48 8B 75 F7")]
+	[Signature("E8 ?? ?? ?? ?? 8B 45 EF 48 8B 7D F7")]
 	public SolveCcdDelegate SolveCcd = null!;
 	public unsafe delegate nint SolveCcdDelegate(CcdIkSolver* solver, byte* result, hkArray<CcdIkConstraint>* constraints, hkaPose* hkaPose);
 

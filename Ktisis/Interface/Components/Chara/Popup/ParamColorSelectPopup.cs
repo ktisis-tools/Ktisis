@@ -61,7 +61,7 @@ public class ParamColorSelectPopup {
 
 	private void DrawColorInput(ICustomizeEditor editor, byte current) {
 		ImGui.SetNextItemWidth(ImGui.GetFrameHeight() * 8);
-		var intValue = current & ~0x80;
+		var intValue = current & (this.IsAlpha ? ~0x80 : 0xFF);
 		if (ImGui.InputInt($"##Input_{this.Index}", ref intValue))
 			this.SetColor(editor, current, (byte)intValue);
 	}

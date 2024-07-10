@@ -7,6 +7,6 @@ public static class GameVersion {
 
 	public unsafe static string GetCurrent() {
 		var framework = Framework.Instance();
-		return framework != null ? framework->GameVersion.Base : string.Empty;
+		return framework != null ? framework->GameVersionString : string.Empty;
 	}
 }

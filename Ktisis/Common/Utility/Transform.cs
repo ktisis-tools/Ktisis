@@ -1,7 +1,7 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-using FFXIVClientStructs.Havok;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 using CSTransform = FFXIVClientStructs.FFXIV.Client.Graphics.Transform;
 
 using Ktisis.Common.Extensions;

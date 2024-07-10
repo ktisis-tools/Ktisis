@@ -40,6 +40,10 @@ public class CharaCmpReader(BinaryReader br) {
 	// Skips to values intended for display in UI.
 	private const int CommonSeekTo = sizeof(uint) * BlockLength * CommonBlockCount;
 	private const int TribesSeekTo = sizeof(uint) * BlockLength * (CommonBlockSize + TribeBlockSkipCount);
+
+	// Special customize colors added for Dawntrail NPCs.
+	// Extended hair colors not applicable to hrothgar.
+	private const uint ExtendedDataLength = 208;
 	
 	// Read common data
 	
@@ -48,11 +52,11 @@ public class CharaCmpReader(BinaryReader br) {
 
 		var eyeColors = this.ReadArray(DataLength);
 		this.SeekNextBlock();
-		var highlightColors = this.ReadArray(DataLength);
+		var highlightColors = this.ReadArray(ExtendedDataLength);
 		this.SeekNextBlock();
 		var lipColors = this.ReadArray(AlphaLength);
 		this.SeekNextBlock();
-		var raceFeatColors = this.ReadArray(DataLength);
+		var raceFeatColors = this.ReadArray(ExtendedDataLength);
 		this.SeekNextBlock();
 		var facePaintColors = this.ReadArray(AlphaLength);
 		this.SeekNextBlock();
@@ -73,7 +77,9 @@ public class CharaCmpReader(BinaryReader br) {
 
 		var skinColors = this.ReadArray(DataLength);
 		this.SeekNextBlock();
-		var hairColors = this.ReadArray(DataLength);
+
+		var isHairExtended = tribe is not (Tribe.Lost or Tribe.Helion);
+		var hairColors = this.ReadArray(isHairExtended ? ExtendedDataLength : DataLength);
 
 		return new TribeColors {
 			SkinColors = skinColors,
