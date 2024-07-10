@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Linq;
 
 using Dalamud.Plugin;
 
@@ -42,9 +43,9 @@ public class ConfigManager : IDisposable {
 			// TODO: Legacy migration
 			cfg = this.OpenConfigFile();
 
-			if (cfg is { Version: < 8 }) {
+			if (cfg is { Version: < 9 }) {
 				cfg.Version = 8;
-				cfg.Categories = this._schema.ReadCategories();
+				this.MigrateSchema(cfg);
 			}
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");
@@ -74,6 +75,22 @@ public class ConfigManager : IDisposable {
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to save configuration:\n{err}");
 		}
+	}
+	
+	// Schema migration
+
+	private void MigrateSchema(Configuration cfg) {
+		var categories = this._schema.ReadCategories();
+		
+		foreach (var cat in categories.CategoryList) {
+			var prev = cfg.Categories.GetByName(cat.Name);
+			if (prev == null) continue;
+			cat.BoneColor = prev.BoneColor;
+			cat.GroupColor = prev.GroupColor;
+			cat.LinkedColors = prev.LinkedColors;
+		}
+
+		cfg.Categories = categories;
 	}
 	
 	// TEMPORARY: v3 config file
