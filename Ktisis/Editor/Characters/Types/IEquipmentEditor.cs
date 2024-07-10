@@ -10,8 +10,7 @@ public interface IEquipmentEditor {
 	public EquipmentModelId GetEquipIndex(EquipIndex index);
 	public void SetEquipIndex(EquipIndex index, EquipmentModelId model);
 	public void SetEquipIdVariant(EquipIndex index, ushort id, byte variant);
-	public void SetEquipStainId(EquipIndex index, byte stainId);
-	public void SetEquipStainId2(EquipIndex index, byte stainId);
+	public void SetEquipStainId(EquipIndex index, byte stainId, int dyeIndex = 0);
 
 	public bool GetHatVisible();
 	public void SetHatVisible(bool visible);
@@ -22,8 +21,7 @@ public interface IEquipmentEditor {
 	public WeaponModelId GetWeaponIndex(WeaponIndex index);
 	public void SetWeaponIndex(WeaponIndex index, WeaponModelId model);
 	public void SetWeaponIdBaseVariant(WeaponIndex index, ushort id, ushort second, byte variant);
-	public void SetWeaponStainId(WeaponIndex index, byte stainId);
-	public void SetWeaponStainId2(WeaponIndex index, byte stainId);
+	public void SetWeaponStainId(WeaponIndex index, byte stainId, int dyeIndex = 0);
 
 	public bool GetWeaponVisible(WeaponIndex index);
 	public void SetWeaponVisible(WeaponIndex index, bool visible);

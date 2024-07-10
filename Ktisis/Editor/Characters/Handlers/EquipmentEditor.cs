@@ -56,15 +56,16 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		this.SetEquipIndex(index, model);
 	}
 
-	public void SetEquipStainId(EquipIndex index, byte stainId) {
+	public void SetEquipStainId(EquipIndex index, byte stainId, int dyeIndex = 0) {
 		var model = this.GetEquipIndex(index);
-		model.Stain0 = stainId;
-		this.SetEquipIndex(index, model);
-	}
-	
-	public void SetEquipStainId2(EquipIndex index, byte stainId) {
-		var model = this.GetEquipIndex(index);
-		model.Stain1 = stainId;
+		switch (dyeIndex) {
+			case 1:
+				model.Stain1 = stainId;
+				break;
+			default:
+				model.Stain0 = stainId;
+				break;
+		}
 		this.SetEquipIndex(index, model);
 	}
 
@@ -130,9 +131,16 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		this.SetWeaponIndex(index, model);
 	}
 
-	public void SetWeaponStainId(WeaponIndex index, byte stainId) {
+	public void SetWeaponStainId(WeaponIndex index, byte stainId, int dyeIndex = 0) {
 		var model = this.GetWeaponIndex(index);
-		model.Stain0 = stainId;
+		switch (dyeIndex) {
+			case 1:
+				model.Stain1 = stainId;
+				break;
+			default:
+				model.Stain0 = stainId;
+				break;
+		}
 		this.SetWeaponIndex(index, model);
 	}
 	

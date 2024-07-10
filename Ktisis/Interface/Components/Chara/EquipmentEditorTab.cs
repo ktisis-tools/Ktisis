@@ -119,7 +119,9 @@ public class EquipmentEditorTab {
 		}
 		
 		ImGui.SameLine(0, innerSpace);
-		this.DrawDyeButton(info);
+		this.DrawDyeButton(info, 0);
+		ImGui.SameLine(0, innerSpace);
+		this.DrawDyeButton(info, 1);
 
 		if (info.IsHideable) {
 			using var _id = ImRaii.PushId($"EqSetVisible_{slot}");
@@ -213,18 +215,18 @@ public class EquipmentEditorTab {
 		return color;
 	}
 
-	private void DrawDyeButton(ItemInfo info) {
+	private void DrawDyeButton(ItemInfo info, int index) {
 		Stain? stain;
 		lock (this.Stains)
-			stain = this.Stains.FirstOrDefault(row => row.RowId == info.StainId);
+			stain = this.Stains.FirstOrDefault(row => row.RowId == info.StainIds[index]);
 
 		var color = CalcStainColor(stain);
 		var colorVec4 = ImGui.ColorConvertU32ToFloat4(color);
-		if (ImGui.ColorButton($"##DyeSelect_{info.Slot}", colorVec4, ImGuiColorEditFlags.NoTooltip))
-			this.OpenDyeSelectPopup(info.Slot);
+		if (ImGui.ColorButton($"##DyeSelect_{info.Slot}_{index}", colorVec4, ImGuiColorEditFlags.NoTooltip))
+			this.OpenDyeSelectPopup(info.Slot, index);
 
 		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-			info.SetStainId(0);
+			info.SetStainId(0, index);
 
 		if (ImGui.IsItemHovered()) DrawDyeTooltip(stain, color, colorVec4);
 	}
@@ -245,17 +247,21 @@ public class EquipmentEditorTab {
 	// Dye select popup
 	
 	private EquipSlot DyeSelectSlot = 0;
+	private int DyeSelectIndex = 0;
 
-	private void OpenDyeSelectPopup(EquipSlot slot) {
+	private void OpenDyeSelectPopup(EquipSlot slot, int index) {
 		this.DyeSelectSlot = slot;
+		this.DyeSelectIndex = index;
 		this._dyeSelectPopup.Open();
 	}
 
 	private void DrawDyeSelectPopup() {
 		if (!this._dyeSelectPopup.IsOpen) return;
 		lock (this.Stains) {
-			if (this._dyeSelectPopup.Draw(this.Stains, out var selected) && this.Equipped.TryGetValue(this.DyeSelectSlot, out var info))
-				info.SetStainId((byte)selected!.RowId);
+			if (
+				this._dyeSelectPopup.Draw(this.Stains, out var selected)
+				&& this.Equipped.TryGetValue(this.DyeSelectSlot, out var info)
+			) info.SetStainId((byte)selected!.RowId, this.DyeSelectIndex);
 		}
 	}
 

@@ -14,12 +14,10 @@ public abstract class ItemInfo {
 	public abstract EquipSlot Slot { get; }
 		
 	public abstract ushort ModelId { get; }
-	public abstract byte StainId { get; }
-	public abstract byte StainId2 { get; }
+	public abstract byte[] StainIds { get; }
 
 	public abstract void SetEquipItem(ItemSheet item);
-	public abstract void SetStainId(byte id);
-	public abstract void SetStainId2(byte id);
+	public abstract void SetStainId(byte id, int index = 0);
 	public abstract void Unequip();
 	
 	public abstract bool IsHideable { get; }
