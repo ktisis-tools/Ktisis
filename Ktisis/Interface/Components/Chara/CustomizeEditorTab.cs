@@ -296,7 +296,7 @@ public class CustomizeEditorTab {
 		using var _col = ImRaii.PushColor(ImGuiCol.Button, 0);
 
 		ISharedImmediateTexture? icon = null;
-		if (param != null)
+		if (param != null && param.Graphic != 0)
 			this._tex.TryGetFromGameIcon(param.Graphic, out icon);
 
 		bool clicked;

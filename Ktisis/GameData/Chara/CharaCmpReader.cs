@@ -41,7 +41,8 @@ public class CharaCmpReader(BinaryReader br) {
 	private const int CommonSeekTo = sizeof(uint) * BlockLength * CommonBlockCount;
 	private const int TribesSeekTo = sizeof(uint) * BlockLength * (CommonBlockSize + TribeBlockSkipCount);
 
-	// Special hair colors added for Dawntrail NPCs. Applicable to everyone except hrothgar.
+	// Special customize colors added for Dawntrail NPCs.
+	// Extended hair colors not applicable to hrothgar.
 	private const uint ExtendedDataLength = 208;
 	
 	// Read common data
