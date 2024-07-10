@@ -9,7 +9,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
-using Lumina.Excel.GeneratedSheets;
+using Stain = Lumina.Excel.GeneratedSheets.Stain;
 
 using ImGuiNET;
 
@@ -33,6 +33,7 @@ public class EquipmentEditorTab {
 
 	private readonly PopupList<ItemSheet> _itemSelectPopup;
 	private readonly PopupList<Stain> _dyeSelectPopup;
+	private readonly PopupList<Glasses> _glassesSelectPopup;
 	
 	public IEquipmentEditor Editor { set; private get; } = null!;
 	
@@ -52,6 +53,11 @@ public class EquipmentEditorTab {
 			"##DyeSelectPopup",
 			DyeSelectDrawRow
 		).WithSearch(DyeSelectSearchPredicate);
+
+		this._glassesSelectPopup = new PopupList<Glasses>(
+			"##GlassesSelectPopup",
+			GlassesSelectDrawRow
+		).WithSearch(GlassesSelectSearchPredicate);
 	}
 	
 	// Draw
@@ -61,6 +67,7 @@ public class EquipmentEditorTab {
 		.ToArray();
 
 	private readonly static Vector2 ButtonSize = new(42, 42);
+	
 	public void Draw() {
 		this.FetchData();
 		
@@ -77,8 +84,15 @@ public class EquipmentEditorTab {
 			ImGui.PopItemWidth();
 		}
 		
+		this.DrawGlassesSelect();
+		
+		this.DrawPopups();
+	}
+
+	private void DrawPopups() {
 		this.DrawItemSelectPopup();
 		this.DrawDyeSelectPopup();
+		this.DrawGlassesSelectPopup();
 	}
 	
 	// Draw item slot
@@ -154,10 +168,7 @@ public class EquipmentEditorTab {
 		ImGui.SetNextItemWidth(labelWidth);
 		ImGui.Text((item?.Name ?? (modelId == 0 ? "Empty" : "Unknown")).FitToWidth(labelWidth));
 		
-		ImGui.SetNextItemWidth(Math.Min(
-			UiBuilder.IconFont.FontSize * 4 * 2 + innerSpace,
-			ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - cursorStart) - innerSpace - ImGui.GetFrameHeight()
-		));
+		ImGui.SetNextItemWidth(CalcItemWidth(cursorStart));
 	}
 	
 	// Draw item selectors
@@ -286,12 +297,74 @@ public class EquipmentEditorTab {
 	private static bool DyeSelectSearchPredicate(Stain stain, string query)
 		=> stain.Name.RawString.Contains(query, StringComparison.OrdinalIgnoreCase);
 	
+	// Draw glasses slots
+
+	private void DrawGlassesSelect(int index = 0) {
+		// Fetch glasses data
+		
+		var glassesId = this.Editor.GetGlassesId(index);
+		
+		Glasses? glasses;
+		lock (this.Glasses)
+			glasses = this.Glasses.FirstOrDefault(x => x.RowId == glassesId);
+		
+		// Draw button
+
+		var cursorStart = ImGui.GetCursorPosX();
+		this.DrawGlassesButton(index, glasses);
+		
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		
+		// Draw name + ID input
+		
+		using var _ = ImRaii.Group();
+		
+		ImGui.Text(!(glasses?.Name.IsNullOrEmpty() ?? true) ? glasses!.Name : "None");
+		ImGui.SetNextItemWidth(CalcItemWidth(cursorStart) + (ImGui.GetFrameHeight() + ImGui.GetStyle().ItemInnerSpacing.X) * 2);
+
+		var intGlassesId = (int)glassesId;
+		ImGui.InputInt($"##Glasses_{index}", ref intGlassesId);
+	}
+
+	private void DrawGlassesButton(int index, Glasses? glasses) {
+		using var _ = ImRaii.PushColor(ImGuiCol.Button, 0);
+
+		var iconId = glasses?.Icon is not null and not 0 ? glasses.Icon : GetFallbackIcon(EquipSlot.Glasses); 
+		var icon = this._tex.GetFromGameIcon(iconId);
+		if (ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ButtonSize))
+			this.OpenGlassesSelectPopup(index);
+	}
+	
+	private static bool GlassesSelectSearchPredicate(Glasses glasses, string query)
+		=> glasses.Name.Contains(query, StringComparison.OrdinalIgnoreCase);
+	
+	// Glasses select popup
+
+	private int GlassesSelectIndex = 0;
+	
+	private void OpenGlassesSelectPopup(int index) {
+		this.GlassesSelectIndex = index;
+		this._glassesSelectPopup.Open();
+	}
+
+	private void DrawGlassesSelectPopup() {
+		if (!this._glassesSelectPopup.IsOpen) return;
+		lock (this.Glasses) {
+			if (this._glassesSelectPopup.Draw(this.Glasses, out var selected) && selected != null)
+				this.Editor.SetGlassesId(this.GlassesSelectIndex, (ushort)selected.RowId);
+		}
+	}
+	
+	private static bool GlassesSelectDrawRow(Glasses glasses, bool isFocus)
+		=> ImGui.Selectable(!glasses.Name.IsNullOrEmpty() ? glasses.Name : "None", isFocus);
+	
 	// Data
 
 	private bool _itemsRaii;
 	
 	private readonly List<ItemSheet> Items = new();
 	private readonly List<Stain> Stains = new();
+	private readonly List<Glasses> Glasses = new();
 
 	private readonly object _equipUpdateLock = new();
 	private readonly Dictionary<EquipSlot, ItemInfo> Equipped = new();
@@ -307,15 +380,19 @@ public class EquipmentEditorTab {
 
 	private async Task LoadItems() {
 		await Task.Yield();
-
-		var items = this._data.Excel
-			.GetSheet<ItemSheet>()!
-			.Where(item => item.IsEquippable());
+		
+		// Dyes
 
 		var dyes = this._data.Excel.GetSheet<Stain>()!
 			.Where(stain => stain.RowId == 0 || !stain.Name.RawString.IsNullOrEmpty());
 		
 		lock (this.Stains) this.Stains.AddRange(dyes);
+		
+		// Items
+		
+		var items = this._data.Excel
+			.GetSheet<ItemSheet>()!
+			.Where(item => item.IsEquippable());
 
 		foreach (var chunk in items.Chunk(1000)) {
 			lock (this.Items) this.Items.AddRange(chunk);
@@ -324,6 +401,11 @@ public class EquipmentEditorTab {
 					info.FlagUpdate = true;
 			}
 		}
+		
+		// Glasses
+
+		var glasses = this._data.Excel.GetSheet<Glasses>()!;
+		lock (this.Glasses) this.Glasses.AddRange(glasses);
 	}
 
 	private void UpdateSlot(EquipSlot slot) {
@@ -361,6 +443,16 @@ public class EquipmentEditorTab {
 		}
 	}
 	
+	// Utility
+
+	private static float CalcItemWidth(float cursorStart) {
+		var innerSpace = ImGui.GetStyle().ItemInnerSpacing.X;
+		return Math.Min(
+			UiBuilder.IconFont.FontSize * 4 * 2 + innerSpace,
+			ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - cursorStart) - innerSpace - ImGui.GetFrameHeight()
+		);
+	}
+	
 	private static uint GetFallbackIcon(EquipSlot slot) => slot switch {
 		EquipSlot.MainHand => 60102,
 		EquipSlot.OffHand => 60110,
@@ -373,6 +465,7 @@ public class EquipmentEditorTab {
 		EquipSlot.Earring => 60133,
 		EquipSlot.Bracelet => 60134,
 		EquipSlot.RingLeft or EquipSlot.RingRight => 60135,
+		EquipSlot.Glasses => 60189,
 		_ => 0
 	};
 }

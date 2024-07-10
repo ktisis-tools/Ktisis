@@ -18,6 +18,9 @@ public interface IEquipmentEditor {
 	public bool GetVisorToggled();
 	public void SetVisorToggled(bool toggled);
 
+	public ushort GetGlassesId(int index = 0);
+	public void SetGlassesId(int index, ushort id);
+
 	public WeaponModelId GetWeaponIndex(WeaponIndex index);
 	public void SetWeaponIndex(WeaponIndex index, WeaponModelId model);
 	public void SetWeaponIdBaseVariant(WeaponIndex index, ushort id, ushort second, byte variant);

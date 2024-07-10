@@ -96,6 +96,16 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		actor.Character->DrawData.SetVisor(toggled);
 	}
 	
+	// Glasses
+
+	public unsafe ushort GetGlassesId(int index) {
+		return actor.Character != null ? actor.Character->DrawData.GlassesIds[index] : (ushort)0;
+	}
+
+	public void SetGlassesId(int index, ushort id) {
+		// TODO: CS bump required
+	}
+	
 	// Weapon wrappers
 
 	public unsafe WeaponModelId GetWeaponIndex(WeaponIndex index) {

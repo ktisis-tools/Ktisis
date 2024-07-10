@@ -18,7 +18,8 @@ public enum EquipSlot {
 	Bracelet,
 	RingLeft,
 	RingRight,
-	SoulCrystal
+	SoulCrystal,
+	Glasses
 }
 
 public class ItemModel(ulong var, bool isWep = false) {
