@@ -92,8 +92,6 @@ public class WorkCamera : KtisisCamera {
 		
 		var fov = Math.Abs(this.Camera->RenderEx->FoV);
 		
-		Ktisis.Log.Info($"{this.MouseDelta} {this.MoveSpeed} {fov} {(nint)this.Camera->RenderEx:X}");
-		
 		this.MouseDelta = this.MouseDelta * fov * 0.0175f * 0.20f; // TODO: FreecamSensitivity
 		this.Rotation.X -= this.MouseDelta.X;
 		this.Rotation.Y = Math.Clamp(this.Rotation.Y + this.MouseDelta.Y, -ClampY, ClampY);
