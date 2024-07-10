@@ -70,9 +70,9 @@ public class WorkCamera : KtisisCamera {
 		if (IsKeyDown(keyData, VirtualKey.A)) vLr -= 1; // Left
 		if (IsKeyDown(keyData, VirtualKey.D)) vLr += 1; // Right
 
-		this.Velocity.X = vFwb * MathF.Sin(this.Rotation.X) * MathF.Cos(this.Rotation.Y) + vLr * MathF.Cos(this.Rotation.X);
+		this.Velocity.X = vFwb * MathF.Sin(this.Rotation.X) * MathF.Cos(this.Rotation.Y) + (vLr * MathF.Cos(this.Rotation.X));
 		this.Velocity.Y = vFwb * MathF.Sin(this.Rotation.Y);
-		this.Velocity.Z = vFwb * MathF.Cos(this.Rotation.X) * MathF.Cos(this.Rotation.Y) + -vLr * MathF.Sin(this.Rotation.X);
+		this.Velocity.Z = vFwb * MathF.Cos(this.Rotation.X) * MathF.Cos(this.Rotation.Y) + (-vLr * MathF.Sin(this.Rotation.X));
 
 		if (IsKeyDown(keyData, VirtualKey.SPACE))
 			this.Velocity.Y += 1.0f; // FreecamUpDownMulti
@@ -89,15 +89,17 @@ public class WorkCamera : KtisisCamera {
 		var now = DateTime.Now;
 		var delta = Math.Max((float)(now - this.LastTime).TotalMilliseconds, 1.0f);
 		this.LastTime = now;
-
-		var render = this.Camera->RenderEx;
 		
-		this.MouseDelta = this.MouseDelta * render->FoV * 0.0175f * 0.20f; // TODO: FreecamSensitivity
+		var fov = Math.Abs(this.Camera->RenderEx->FoV);
+		
+		Ktisis.Log.Info($"{this.MouseDelta} {this.MoveSpeed} {fov} {(nint)this.Camera->RenderEx:X}");
+		
+		this.MouseDelta = this.MouseDelta * fov * 0.0175f * 0.20f; // TODO: FreecamSensitivity
 		this.Rotation.X -= this.MouseDelta.X;
 		this.Rotation.Y = Math.Clamp(this.Rotation.Y + this.MouseDelta.Y, -ClampY, ClampY);
 		this.MouseDelta = Vector2.Zero;
 		
-		this.Position += this.Velocity * this.MoveSpeed * render->FoV * 0.2f;
+		this.Position += this.Velocity * this.MoveSpeed * fov * 0.2f;
 		this.InterpPos = Vector3.Lerp(this.InterpPos, this.Position, MathF.Pow(0.5f, delta * 0.05f));
 	}
 

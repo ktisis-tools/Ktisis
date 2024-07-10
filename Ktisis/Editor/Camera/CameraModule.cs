@@ -9,6 +9,7 @@ using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
+using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 using GameCameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraManager;
 using SceneCameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.CameraManager;
 
@@ -146,14 +147,15 @@ public class CameraModule : HookModule {
 
 	[Signature("48 89 5C 24 ?? 57 48 81 EC ?? ?? ?? ?? F6 81 ?? ?? ?? ?? ?? 48 8B D9 48 89 B4 24 ?? ?? ?? ??", DetourName = nameof(CalcViewMatrixDetour))]
 	private Hook<CalcViewMatrixDelegate> CalcViewMatrixHook = null!;
-	private unsafe delegate Matrix4x4* CalcViewMatrixDelegate(nint camera);
+	private unsafe delegate nint CalcViewMatrixDelegate(SceneCamera* camera);
 
-	private unsafe Matrix4x4* CalcViewMatrixDetour(nint camera) {
-		var matrix = this.CalcViewMatrixHook.Original(camera);
+	private unsafe nint CalcViewMatrixDetour(SceneCamera* camera) {
+		var result = this.CalcViewMatrixHook.Original(camera);
 		
 		try {
 			if (this.Manager.Current is WorkCamera freeCam) {
 				freeCam.Update();
+				var matrix = (Matrix4x4*)&camera->ViewMatrix;
 				*matrix = freeCam.CalculateViewMatrix();
 				this._loadMatrix(freeCam.Camera->RenderEx, matrix, 0, 0);
 			}
@@ -161,7 +163,7 @@ public class CameraModule : HookModule {
 			Ktisis.Log.Error($"Failed to handle work camera:\n{err}");
 		}
 		
-		return matrix;
+		return result;
 	}
 
 	[Signature("E8 ?? ?? ?? ?? 83 7B 58 00", DetourName = nameof(UpdateInputDetour))]
