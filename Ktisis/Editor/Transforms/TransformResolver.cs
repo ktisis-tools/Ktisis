@@ -33,9 +33,14 @@ public static class TransformResolver {
 				var (p, t) when p < t => pose.GetPartialInfo(t)?.ConnectedParentBoneIndex,
 				_ => null
 			};
-
-			if (potentialParent != null && partial.IsBoneDescendantOf(potentialParent.Value, bone.Info.BoneIndex))
+			
+			if (
+				potentialParent != null
+				&& (partial.IsBoneDescendantOf(potentialParent.Value, bone.Info.BoneIndex)
+				|| (target.Info.ParentIndex == bone.Info.ParentIndex && bone.Info.BoneIndex < target.Info.BoneIndex))
+			) {
 				target = bone;
+			}
 		}
 
 		return target;
