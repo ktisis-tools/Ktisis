@@ -9,6 +9,7 @@
 		"RepoUrl": "https://github.com/ktisis-tools/Ktisis",
 		"ApplicableVersion": "any",
 		"DalamudApiLevel": 10,
+		"TestingDalamudApiLevel": 10,
 		"Tags": [
 			"gpose",
 			"posing",
