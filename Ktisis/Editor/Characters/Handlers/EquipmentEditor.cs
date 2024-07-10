@@ -145,12 +145,6 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		this.SetWeaponIndex(index, model);
 	}
 	
-	public void SetWeaponStainId2(WeaponIndex index, byte stainId) {
-		var model = this.GetWeaponIndex(index);
-		model.Stain1 = stainId;
-		this.SetWeaponIndex(index, model);
-	}
-	
 	private unsafe static DrawObjectData* GetWeaponData(ActorEntity actor, WeaponIndex index) {
 		if (!actor.IsValid || actor.Character == null) return null;
 		fixed (DrawObjectData* ptr = &actor.Character->DrawData.WeaponData[(int)index])

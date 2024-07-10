@@ -59,6 +59,12 @@ public class CharacterManager : ICharacterManager {
 	public ICustomizeEditor GetCustomizeEditor(ActorEntity actor) => new CustomizeEditor(actor);
 	public IEquipmentEditor GetEquipmentEditor(ActorEntity actor) => new EquipmentEditor(actor);
 	
+	private EntityCharaConverter BuildEntityConverter(ActorEntity actor) {
+		var custom = this.GetCustomizeEditor(actor);
+		var equip = this.GetEquipmentEditor(actor);
+		return new EntityCharaConverter(actor, custom, equip);
+	}
+	
 	// State wrappers
 
 	public bool TryGetStateForActor(IGameObject actor, out ActorEntity entity, out AppearanceState state) {
@@ -76,7 +82,7 @@ public class CharacterManager : ICharacterManager {
 	// Imports
 
 	public Task ApplyCharaFile(ActorEntity actor, CharaFile file, SaveModes modes = SaveModes.All, bool gameState = false) {
-		var loader = new EntityCharaConverter(actor);
+		var loader = this.BuildEntityConverter(actor);
 		return this._framework.RunOnFrameworkThread(() => {
 			loader.Apply(file, modes);
 			if (gameState) this.ApplyStateToGameObject(actor);
@@ -85,12 +91,12 @@ public class CharacterManager : ICharacterManager {
 
 	public Task<CharaFile> SaveCharaFile(ActorEntity actor) {
 		return this._framework.RunOnFrameworkThread(
-			() => new EntityCharaConverter(actor).Save()
+			() => this.BuildEntityConverter(actor).Save()
 		);
 	}
 
 	public Task ApplyNpc(ActorEntity actor, INpcBase npc, SaveModes modes = SaveModes.All, bool gameState = false) {
-		var loader = new EntityCharaConverter(actor);
+		var loader = this.BuildEntityConverter(actor);
 		return this._framework.RunOnFrameworkThread(() => {
 			loader.Apply(npc, modes);
 			if (gameState) this.ApplyStateToGameObject(actor);

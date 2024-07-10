@@ -5,7 +5,6 @@ using Dalamud.Game.ClientState.Objects.Enums;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
 using Ktisis.Data.Files;
-using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.GameData.Excel.Types;
@@ -36,11 +35,13 @@ public class EntityCharaConverter {
 	private readonly IEquipmentEditor _equip;
 	
 	public EntityCharaConverter(
-		ActorEntity entity
+		ActorEntity entity,
+		ICustomizeEditor custom,
+		IEquipmentEditor equip
 	) {
 		this._entity = entity;
-		this._custom = new CustomizeEditor(entity);
-		this._equip = new EquipmentEditor(entity);
+		this._custom = custom;
+		this._equip = equip;
 	}
 	
 	// CharaFile
