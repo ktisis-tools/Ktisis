@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 

@@ -10,7 +10,7 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.GameData.Excel;
 
-[Sheet("BNpcBase", columnHash: 0xe136dda3)]
+[Sheet("BNpcBase", columnHash: 0x86278126)]
 public class BattleNpc : ExcelRow, INpcBase {
 	public float Scale { get; set; }
 	

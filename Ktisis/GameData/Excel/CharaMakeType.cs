@@ -10,7 +10,7 @@ namespace Ktisis.GameData.Excel;
 // Temporarily forking CharaMakeType while FacialFeatureOption is bugged -
 // It gets parsed as an int[8] rather than an int[8,7]. I've reached out to perchbird about this issue.
 
-[Sheet( "CharaMakeType", columnHash: 0x80d7db6d )]
+[Sheet( "CharaMakeType", columnHash: 0x80d7db6d)]
 public partial class CharaMakeType : ExcelRow
 {
     public struct CharaMakeStructStruct
