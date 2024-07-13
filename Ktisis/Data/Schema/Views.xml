@@ -1,0 +1,28 @@
+﻿<Views>
+	<View name="Body">
+		<Image file="ahmi.png"/>
+		<Bone label="Head" name="j_kao" x="0.5" y="0.1"/>
+		<Bone label="Neck" name="j_kubi" x="0.5" y="0.165"/>
+		<Bone label="Cervical" name="j_sebo_c" x="0.5" y="0.2125"/>
+		<Bone label="Left Breast" name="j_mune_l" x="0.574" y="0.26"/>
+		<Bone label="Right Breast" name="j_mune_r" x="0.425" y="0.26"/>
+		<Bone label="Thoracic" name="j_sebo_b" x="0.5" y="0.325"/>
+		<Bone label="Abdomen" name="n_hara" x="0.5" y="0.4"/>
+		<Bone label="Left Leg" name="j_asi_l" x="0.574" y="0.475"/>
+		<Bone label="Right Leg" name="j_asi_a_r" x="0.425" y="0.475"/>
+		<Bone label="Left Knee" name="j_asi_b_l" x="0.574" y="0.65"/>
+		<Bone label="Right Knee" name="j_asi_b_r" x="0.425" y="0.65"/>
+		<Bone label="Left Calf" name="j_asi_c_l" x="0.6" y="0.72"/>
+		<Bone label="Right Calf" name="j_asi_c_r" x="0.4" y="0.72"/>
+		<Bone label="Left Foot" name="j_asi_d_l" x="0.6125" y="0.9"/>
+		<Bone label="Right Foot" name="j_asi_d_r" x="0.3875" y="0.9"/>
+		<Bone label="Left Toes" name="j_asi_e_l" x="0.6125" y="0.965"/>
+		<Bone label="Right Toes" name="j_asi_e_r" x="0.3875" y="0.965"/>
+		<Bone label="Left Arm" name="j_ude_a_l" x="0.675" y="0.2125"/>
+		<Bone label="Right Arm" name="j_ude_a_r" x="0.325" y="0.2125"/>
+		<Bone label="Left Forearm" name="j_ude_b_l" x="0.775" y="0.325"/>
+		<Bone label="Right Forearm" name="j_ude_b_r" x="0.225" y="0.325"/>
+		<Bone label="Left Hand" name="j_te_l" x="0.9" y="0.47"/>
+		<Bone label="Right Hand" name="j_te_r" x="0.1" y="0.47"/>
+	</View>
+</Views>
