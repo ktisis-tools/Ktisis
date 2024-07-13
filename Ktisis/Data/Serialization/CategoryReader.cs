@@ -1,59 +1,35 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Xml;
 
 using Dalamud.Utility;
 
-using Ktisis.Core.Attributes;
 using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Sections;
 
-namespace Ktisis.Data;
+namespace Ktisis.Data.Serialization;
 
-[Singleton]
-public class SchemaReader {
-	// Manifest resources
-
-	private Stream GetManifestResource(string path) {
-		var assembly = Assembly.GetExecutingAssembly();
-		var name = assembly.GetName().Name!;
-		path = $"{name}.{path}";
-
-		var stream = assembly.GetManifestResourceStream(path);
-		if (stream == null)
-			throw new FileNotFoundException(path);
-		return stream;
-	}
-	
-	// Categories
-
+public static class CategoryReader {
 	private const string BonesTag = "Bones";
 	private const string CategoryTag = "Category";
 	private const string TwoJointsIkTag = "TwoJointsIK";
 	private const string CcdIkTag = "CcdIK";
-
-	private const string CategorySchemaPath = "Data.Schema.Categories.xml";
 	
-	// Categories
-
-	public CategoryConfig ReadCategories() {
+	public static CategoryConfig ReadStream(Stream stream) {
 		var categories = new CategoryConfig();
-
-		var stream = this.GetManifestResource(CategorySchemaPath);
-
+		
 		using var reader = XmlReader.Create(stream);
 		while (reader.Read()) {
 			if (reader.NodeType != XmlNodeType.Element || reader.Name != CategoryTag)
 				continue;
-			this.ReadCategory(reader, categories);
+			ReadCategory(reader, categories);
 		}
 		
 		return categories;
 	}
-
-	private BoneCategory ReadCategory(XmlReader reader, CategoryConfig categories) {
+	
+	private static BoneCategory ReadCategory(XmlReader reader, CategoryConfig categories) {
 		var name = reader.GetAttribute("Id") ?? "Unknown";
 		var category = new BoneCategory(name) {
 			IsNsfw = reader.GetAttribute("IsNsfw") == "true",
@@ -65,16 +41,17 @@ public class SchemaReader {
 		while (reader.Read()) {
 			switch (reader.NodeType) {
 				case XmlNodeType.Element when reader.Name is CategoryTag:
-					this.ReadSubCategory(reader, categories, category);
+					var sub = ReadCategory(reader, categories);
+					sub.ParentCategory = category.Name;
 					continue;
 				case XmlNodeType.Element when reader.Name is BonesTag:
-					this.ReadBone(reader, category);
+					ReadBone(reader, category);
 					continue;
 				case XmlNodeType.Element when reader.Name is TwoJointsIkTag:
-					category.TwoJointsGroup = this.ReadTwoJointsIkGroup(reader);
+					category.TwoJointsGroup = ReadTwoJointsIkGroup(reader);
 					continue;
 				case XmlNodeType.Element when reader.Name is CcdIkTag:
-					category.CcdGroup = this.ReadCcdIkGroup(reader);
+					category.CcdGroup = ReadCcdIkGroup(reader);
 					continue;
 				case XmlNodeType.EndElement when reader.Name is CategoryTag:
 					return category;
@@ -86,16 +63,9 @@ public class SchemaReader {
 		return category;
 	}
 	
-	// Recurse subcategories
-
-	private void ReadSubCategory(XmlReader reader, CategoryConfig categories, BoneCategory parent) {
-		var sub = this.ReadCategory(reader, categories);
-		sub.ParentCategory = parent.Name;
-	}
-	
 	// Individual bone names
 
-	private void ReadBone(XmlReader reader, BoneCategory category) {
+	private static void ReadBone(XmlReader reader, BoneCategory category) {
 		reader.Read();
 		if (reader.NodeType != XmlNodeType.Text)
 			return;
@@ -111,7 +81,7 @@ public class SchemaReader {
 	
 	// IK groups
 
-	private TwoJointsGroupParams ReadTwoJointsIkGroup(XmlReader reader) {
+	private static TwoJointsGroupParams ReadTwoJointsIkGroup(XmlReader reader) {
 		var group = new TwoJointsGroupParams {
 			Type = reader.GetAttribute("Type") switch {
 				"Arm" => TwoJointsType.Arm,
@@ -146,7 +116,7 @@ public class SchemaReader {
 		return group;
 	}
 
-	private CcdGroupParams ReadCcdIkGroup(XmlReader reader) {
+	private static CcdGroupParams ReadCcdIkGroup(XmlReader reader) {
 		var group = new CcdGroupParams();
 		
 		while (reader.Read()) {

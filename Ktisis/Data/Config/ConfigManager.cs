@@ -1,13 +1,13 @@
 using System;
 using System.IO;
 using System.Diagnostics;
-using System.Linq;
 
 using Dalamud.Plugin;
 
 using Newtonsoft.Json;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Data.Serialization;
 
 namespace Ktisis.Data.Config;
 
@@ -16,7 +16,6 @@ public delegate void OnConfigSaved(Configuration cfg);
 [Singleton]
 public class ConfigManager : IDisposable {
 	private readonly IDalamudPluginInterface _dpi;
-	private readonly SchemaReader _schema;
 
 	private bool _isLoaded;
 	public Configuration File { get; private set; } = null!;
@@ -24,11 +23,9 @@ public class ConfigManager : IDisposable {
 	public event OnConfigSaved? OnSaved;
 
 	public ConfigManager(
-		IDalamudPluginInterface dpi,
-		SchemaReader schema
+		IDalamudPluginInterface dpi
 	) {
 		this._dpi = dpi;
-		this._schema = schema;
 	}
 	
 	// Load & Save
@@ -80,7 +77,7 @@ public class ConfigManager : IDisposable {
 	// Schema migration
 
 	private void MigrateSchema(Configuration cfg) {
-		var categories = this._schema.ReadCategories();
+		var categories = SchemaReader.ReadCategories();
 		
 		foreach (var cat in categories.CategoryList) {
 			var prev = cfg.Categories.GetByName(cat.Name);
@@ -126,7 +123,7 @@ public class ConfigManager : IDisposable {
 
 	private Configuration CreateDefault() {
 		return new Configuration {
-			Categories = this._schema.ReadCategories()
+			Categories = SchemaReader.ReadCategories()
 		};
 	}
 	
