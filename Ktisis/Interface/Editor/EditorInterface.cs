@@ -3,7 +3,6 @@ using System;
 using GLib.Popups.ImFileDialog;
 
 using Ktisis.Data.Files;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Editor.Context;
@@ -68,6 +67,8 @@ public class EditorInterface : IEditorInterface {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
 		this._gui.GetOrCreate<TransformWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
 	}
+
+	public void OpenPosingWindow() => this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Open();
 	
 	// Context menus
 

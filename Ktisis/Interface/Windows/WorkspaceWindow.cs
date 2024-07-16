@@ -7,7 +7,6 @@ using GLib.Widgets;
 
 using ImGuiNET;
 
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Components.Workspace;
@@ -90,6 +89,11 @@ public class WorkspaceWindow : KtisisWindow {
 		
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cog, this._ctx.Locale.Translate("config.title")))
 			this.Interface.OpenConfigWindow();
+
+		ImGui.SameLine(0, spacing);
+		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Portrait, "Pose View"))
+			this.Interface.OpenPosingWindow();
 
 		ImGui.SameLine(0, spacing);
 		ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - Buttons.CalcSize() * 2 - spacing);

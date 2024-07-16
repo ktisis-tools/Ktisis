@@ -70,6 +70,22 @@
 		<EmbeddedResource Include="Localization\Data\*.json" />
 		<None Remove="Data\Library\bnpc-index.json" />
 		<EmbeddedResource Include="Data\Library\bnpc-index.json" />
+		<None Remove="Data\Schema\Views.xml" />
+		<EmbeddedResource Include="Data\Schema\Views.xml" />
+		<None Remove="Data\Images\ahmi.png" />
+		<EmbeddedResource Include="Data\Images\ahmi.png" />
+		<None Remove="Data\Images\ahmi_face.png" />
+		<EmbeddedResource Include="Data\Images\ahmi_face.png" />
+		<None Remove="Data\Images\lips.png" />
+		<EmbeddedResource Include="Data\Images\lips.png" />
+		<None Remove="Data\Images\mouth.png" />
+		<EmbeddedResource Include="Data\Images\mouth.png" />
+		<None Remove="Data\Images\hands.png" />
+		<EmbeddedResource Include="Data\Images\hands.png" />
+		<None Remove="Data\Images\tail.png" />
+		<EmbeddedResource Include="Data\Images\tail.png" />
+		<None Remove="Data\Images\armor.png" />
+		<EmbeddedResource Include="Data\Images\armor.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Data\Schema\Categories.xml" />

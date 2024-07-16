@@ -19,6 +19,7 @@ namespace Ktisis.Editor.Posing.Ik;
 public interface IIkController {
 	public void Setup(ISkeleton skeleton);
 
+	public IEnumerable<(string name, IIkGroup group)> GetGroups();
 	public bool TrySetupGroup(string name, CcdGroupParams param, out CcdGroup? group);
 	public bool TrySetupGroup(string name, TwoJointsGroupParams param, out TwoJointsGroup? group);
 
@@ -125,6 +126,9 @@ public class IkController : IIkController {
 	// Groups
 	
 	private readonly Dictionary<string, IIkGroup> Groups = new();
+
+	public IEnumerable<(string name, IIkGroup group)> GetGroups()
+		=> this.Groups.Select(pair => (pair.Key, pair.Value));
 
 	public unsafe bool TrySetupGroup(string name, CcdGroupParams param, out CcdGroup? group) {
 		group = null;

@@ -1,14 +1,18 @@
-﻿<Views>
+﻿<!--
+	This file was generated automatically.
+	https://github.com/ktisis-tools/pose2d
+-->
+<Views>
 	<View name="Body">
 		<Image file="ahmi.png"/>
 		<Bone label="Head" name="j_kao" x="0.5" y="0.1"/>
 		<Bone label="Neck" name="j_kubi" x="0.5" y="0.165"/>
-		<Bone label="Cervical" name="j_sebo_c" x="0.5" y="0.2125"/>
-		<Bone label="Left Breast" name="j_mune_l" x="0.574" y="0.26"/>
-		<Bone label="Right Breast" name="j_mune_r" x="0.425" y="0.26"/>
+		<Bone label="Cervical" name="j_sebo_c" x="0.5" y="0.215"/>
+		<Bone label="Left Breast" name="j_mune_l" x="0.574" y="0.265"/>
+		<Bone label="Right Breast" name="j_mune_r" x="0.425" y="0.265"/>
 		<Bone label="Thoracic" name="j_sebo_b" x="0.5" y="0.325"/>
 		<Bone label="Abdomen" name="n_hara" x="0.5" y="0.4"/>
-		<Bone label="Left Leg" name="j_asi_l" x="0.574" y="0.475"/>
+		<Bone label="Left Leg" name="j_asi_a_l" x="0.574" y="0.475"/>
 		<Bone label="Right Leg" name="j_asi_a_r" x="0.425" y="0.475"/>
 		<Bone label="Left Knee" name="j_asi_b_l" x="0.574" y="0.65"/>
 		<Bone label="Right Knee" name="j_asi_b_r" x="0.425" y="0.65"/>
@@ -18,11 +22,165 @@
 		<Bone label="Right Foot" name="j_asi_d_r" x="0.3875" y="0.9"/>
 		<Bone label="Left Toes" name="j_asi_e_l" x="0.6125" y="0.965"/>
 		<Bone label="Right Toes" name="j_asi_e_r" x="0.3875" y="0.965"/>
-		<Bone label="Left Arm" name="j_ude_a_l" x="0.675" y="0.2125"/>
-		<Bone label="Right Arm" name="j_ude_a_r" x="0.325" y="0.2125"/>
+		<Bone label="Left Arm" name="j_ude_a_l" x="0.685" y="0.22"/>
+		<Bone label="Right Arm" name="j_ude_a_r" x="0.315" y="0.22"/>
 		<Bone label="Left Forearm" name="j_ude_b_l" x="0.775" y="0.325"/>
 		<Bone label="Right Forearm" name="j_ude_b_r" x="0.225" y="0.325"/>
 		<Bone label="Left Hand" name="j_te_l" x="0.9" y="0.47"/>
 		<Bone label="Right Hand" name="j_te_r" x="0.1" y="0.47"/>
+		<Bone label="Left Clavicle" name="j_sako_l" x="0.585" y="0.195"/>
+		<Bone label="Right Clavicle" name="j_sako_r" x="0.415" y="0.195"/>
+		<Bone label="Left Ear" name="j_mimi_l" x="0.63" y="0.025"/>
+		<Bone label="Right Ear" name="j_mimi_r" x="0.37" y="0.025"/>
+		<Bone label="Left Elbow" name="n_hhiji_l" x="0.865" y="0.3"/>
+		<Bone label="Right Elbow" name="n_hhiji_r" x="0.135" y="0.3"/>
+		<Bone label="Left Shoulder" name="n_hkata_l" x="0.775" y="0.195"/>
+		<Bone label="Right Shoulder" name="n_hkata_r" x="0.225" y="0.195"/>
+	</View>
+	<View name="Face">
+		<Image file="ahmi_face.png"/>
+		<Bone label="Bridge" name="j_f_uhana" x="0.5" y="0.45"/>
+		<Bone label="NostrilLeft" name="j_f_hana_l" x="0.55" y="0.61"/>
+		<Bone label="NostrilRight" name="j_f_hana_r" x="0.44" y="0.61"/>
+		<Bone label="IrisLeft" name="j_f_eyepuru_l" x="0.745" y="0.35"/>
+		<Bone label="IrisRight" name="j_f_eyepuru_r" x="0.245" y="0.35"/>
+		<Bone label="EyelidLowerLeft" name="j_f_mabdn_01_l" x="0.745" y="0.45"/>
+		<Bone label="EyelidLowerOuterLeft" name="j_f_mabdn_02out_l" x="0.875" y="0.4"/>
+		<Bone label="EyelidLowerInnerLeft" name="j_f_mabdn_03in_l" x="0.61" y="0.425"/>
+		<Bone label="EyelidUpperInnerLeft" name="j_f_mabup_03in_l" x="0.61" y="0.375"/>
+		<Bone label="EyelidUpperOuterLeft" name="j_f_mabup_02out_l" x="0.875" y="0.3"/>
+		<Bone label="EyelidUpperLeft" name="j_f_mabup_01_l" x="0.745" y="0.29"/>
+		<Bone label="EyelidLowerRight" name="j_f_mabdn_01_r" x="0.255" y="0.45"/>
+		<Bone label="EyelidLowerOuterRight" name="j_f_mabdn_02out_r" x="0.125" y="0.4"/>
+		<Bone label="EyelidLowerInnerRight" name="j_f_mabdn_03in_r" x="0.38" y="0.425"/>
+		<Bone label="EyelidUpperInnerRight" name="j_f_mabup_03in_r" x="0.38" y="0.375"/>
+		<Bone label="EyelidUpperOuterRight" name="j_f_mabup_02out_r" x="0.125" y="0.3"/>
+		<Bone label="EyelidUpperRight" name="j_f_mabup_01_r" x="0.245" y="0.29"/>
+		<Bone label="BrowRidgeLeftB" name="j_f_miken_02_l" x="0.6" y="0.275"/>
+		<Bone label="BrowRidgeLeftA" name="j_f_miken_01_l" x="0.65" y="0.25"/>
+		<Bone label="EyebrowLeftB" name="j_f_mmayu_l" x="0.765" y="0.215"/>
+		<Bone label="EyebrowLeftA" name="j_f_mayu_l" x="0.825" y="0.24"/>
+		<Bone label="BrowRidgeRightB" name="j_f_miken_02_r" x="0.4" y="0.275"/>
+		<Bone label="BrowRidgeRightA" name="j_f_miken_01_r" x="0.35" y="0.25"/>
+		<Bone label="EyebrowRightB" name="j_f_mmayu_r" x="0.235" y="0.215"/>
+		<Bone label="EyebrowRightA" name="j_f_mayu_r" x="0.175" y="0.24"/>
+		<Bone label="LeftCheekInner" name="j_f_dmemoto_l" x="0.65" y="0.55"/>
+		<Bone label="LeftCheek" name="j_f_hoho_l" x="0.85" y="0.51"/>
+		<Bone label="LeftCheekOuter" name="j_f_dhoho_l" x="0.85" y="0.61"/>
+		<Bone label="LeftCheekMiddle" name="j_f_shoho_l" x="0.75" y="0.65"/>
+		<Bone label="RightCheekInner" name="j_f_dmemoto_r" x="0.35" y="0.55"/>
+		<Bone label="RightCheek" name="j_f_hoho_r" x="0.15" y="0.51"/>
+		<Bone label="RightCheekOuter" name="j_f_dhoho_r" x="0.15" y="0.61"/>
+		<Bone label="RightCheekMiddle" name="j_f_shoho_r" x="0.25" y="0.65"/>
+		<Bone label="GlabellaLeft" name="j_f_dmiken_l" x="0.54" y="0.35"/>
+		<Bone label="GlabellaRight" name="j_f_dmiken_r" x="0.46" y="0.35"/>
+		<Bone label="Jaw" name="j_f_ago" x="0.5" y="0.85"/>
+		<Bone label="JawLower" name="j_f_dago" x="0.5" y="0.9"/>
+	</View>
+	<View name="Lips">
+		<Image file="lips.png"/>
+		<Bone label="LipUpperLeftCorner" name="j_f_uslip_l" x="0.9" y="0.325"/>
+		<Bone label="LipLowerLeftCorner" name="j_f_dslip_l" x="0.9" y="0.525"/>
+		<Bone label="LipUpperLeftA" name="j_f_umlip_01_l" x="0.775" y="0.15"/>
+		<Bone label="LipUpperLeftB" name="j_f_umlip_02_l" x="0.775" y="0.325"/>
+		<Bone label="LipLowerLeftB" name="j_f_dmlip_02_l" x="0.775" y="0.525"/>
+		<Bone label="LipLowerLeftA" name="j_f_dmlip_01_l" x="0.775" y="0.7"/>
+		<Bone label="LipUpperLeftCenterA" name="j_f_ulip_01_l" x="0.6" y="0.1"/>
+		<Bone label="LipUpperLeftCenterB" name="j_f_ulip_02_l" x="0.6" y="0.3"/>
+		<Bone label="LipLowerLeftCenterB" name="j_f_dlip_02_l" x="0.6" y="0.55"/>
+		<Bone label="LipLowerLeftCenterA" name="j_f_dlip_01_l" x="0.6" y="0.75"/>
+		<Bone label="LipUpperRightCenterA" name="j_f_ulip_01_r" x="0.4" y="0.1"/>
+		<Bone label="LipUpperRightCenterB" name="j_f_ulip_02_r" x="0.4" y="0.3"/>
+		<Bone label="LipLowerRightCenterB" name="j_f_dlip_02_r" x="0.4" y="0.55"/>
+		<Bone label="LipLowerRightCenterA" name="j_f_dlip_01_r" x="0.4" y="0.75"/>
+		<Bone label="LipUpperRightA" name="j_f_umlip_01_r" x="0.25" y="0.15"/>
+		<Bone label="LipUpperRightB" name="j_f_umlip_02_r" x="0.25" y="0.325"/>
+		<Bone label="LipLowerRightB" name="j_f_dmlip_02_r" x="0.25" y="0.525"/>
+		<Bone label="LipLowerRightA" name="j_f_dmlip_01_r" x="0.25" y="0.7"/>
+		<Bone label="LipUpperRightCorner" name="j_f_uslip_r" x="0.1" y="0.325"/>
+		<Bone label="LipLowerRightCorner" name="j_f_dslip_r" x="0.1" y="0.525"/>
+	</View>
+	<View name="Mouth">
+		<Image file="mouth.png"/>
+		<Bone label="TeethUpper" name="j_f_hagukiup" x="0.47" y="0.4"/>
+		<Bone label="TeethLower" name="j_f_hagukidn" x="0.5" y="0.65"/>
+		<Bone label="TongueC" name="j_f_bero_03" x="0.6" y="0.525"/>
+		<Bone label="TongueB" name="j_f_bero_02" x="0.725" y="0.56"/>
+		<Bone label="TongueA" name="j_f_bero_01" x="0.85" y="0.65"/>
+	</View>
+	<View name="Hands">
+		<Image file="hands.png"/>
+		<Bone label="LeftWrist" name="n_hte_l" x="0.665" y="0.925"/>
+		<Bone label="LeftHand" name="j_te_l" x="0.68" y="0.8"/>
+		<Bone label="LeftThumbA" name="j_oya_a_l" x="0.83" y="0.725"/>
+		<Bone label="LeftThumbB" name="j_oya_b_l" x="0.88" y="0.6"/>
+		<Bone label="LeftIndexA" name="j_hito_a_l" x="0.805" y="0.425"/>
+		<Bone label="LeftIndexB" name="j_hito_b_l" x="0.815" y="0.25"/>
+		<Bone label="LeftMiddleA" name="j_naka_a_l" x="0.72" y="0.4"/>
+		<Bone label="LeftMiddleB" name="j_naka_b_l" x="0.72" y="0.23"/>
+		<Bone label="LeftRingA" name="j_kusu_a_l" x="0.635" y="0.4"/>
+		<Bone label="LeftRingB" name="j_kusu_b_l" x="0.635" y="0.23"/>
+		<Bone label="LeftPinkyA" name="j_ko_a_l" x="0.535" y="0.425"/>
+		<Bone label="LeftPinkyB" name="j_ko_b_l" x="0.55" y="0.25"/>
+		<Bone label="RightWrist" name="n_hte_r" x="0.335" y="0.925"/>
+		<Bone label="RightHand" name="j_te_r" x="0.32" y="0.8"/>
+		<Bone label="RightThumbA" name="j_oya_a_r" x="0.18" y="0.725"/>
+		<Bone label="RightThumbB" name="j_oya_b_r" x="0.12" y="0.6"/>
+		<Bone label="RightIndexA" name="j_hito_a_r" x="0.175" y="0.425"/>
+		<Bone label="RightIndexB" name="j_hito_b_r" x="0.17" y="0.23"/>
+		<Bone label="RightMiddleA" name="j_naka_a_r" x="0.265" y="0.425"/>
+		<Bone label="RightMiddleB" name="j_naka_b_r" x="0.265" y="0.23"/>
+		<Bone label="RightRingA" name="j_kusu_a_r" x="0.355" y="0.425"/>
+		<Bone label="RightRingB" name="j_kusu_b_r" x="0.345" y="0.23"/>
+		<Bone label="RightPinkyA" name="j_ko_a_r" x="0.435" y="0.425"/>
+		<Bone label="RightPinkyB" name="j_ko_b_r" x="0.435" y="0.25"/>
+	</View>
+	<View name="Tail">
+		<Image file="tail.png"/>
+		<Bone label="TailA" name="n_sippo_a" x="0.08" y="0.1"/>
+		<Bone label="TailB" name="n_sippo_b" x="0.264" y="0.34"/>
+		<Bone label="TailC" name="n_sippo_c" x="0.4" y="0.625"/>
+		<Bone label="TailD" name="n_sippo_d" x="0.58" y="0.85"/>
+		<Bone label="TailE" name="n_sippo_e" x="0.85" y="0.88"/>
+	</View>
+	<View name="Armor">
+		<Image file="armor.png"/>
+		<Bone label="ClothRightSideA" name="j_sk_s_a_r" x="0.35" y="0.4"/>
+		<Bone label="ClothRightSideB" name="j_sk_s_b_r" x="0.3" y="0.5"/>
+		<Bone label="ClothRightSideC" name="j_sk_s_c_r" x="0.25" y="0.64"/>
+		<Bone label="ClothRightFrontA" name="j_sk_f_a_r" x="0.425" y="0.41"/>
+		<Bone label="ClothRightFrontB" name="j_sk_f_b_r" x="0.375" y="0.51"/>
+		<Bone label="ClothRightFrontC" name="j_sk_f_c_r" x="0.355" y="0.64"/>
+		<Bone label="ClothRightBackA" name="j_sk_b_a_r" x="0.465" y="0.445"/>
+		<Bone label="ClothRightBackB" name="j_sk_b_b_r" x="0.465" y="0.52"/>
+		<Bone label="ClothRightBackC" name="j_sk_b_c_r" x="0.465" y="0.6"/>
+		<Bone label="ClothLeftBackA" name="j_sk_b_a_l" x="0.535" y="0.445"/>
+		<Bone label="ClothLeftBackB" name="j_sk_b_b_l" x="0.535" y="0.52"/>
+		<Bone label="ClothLeftBackC" name="j_sk_b_c_l" x="0.535" y="0.6"/>
+		<Bone label="ClothLeftFrontA" name="j_sk_f_a_l" x="0.575" y="0.41"/>
+		<Bone label="ClothLeftFrontB" name="j_sk_f_b_l" x="0.625" y="0.51"/>
+		<Bone label="ClothLeftFrontC" name="j_sk_f_c_l" x="0.645" y="0.64"/>
+		<Bone label="ClothLeftSideA" name="j_sk_s_a_l" x="0.65" y="0.4"/>
+		<Bone label="ClothLeftSideB" name="j_sk_s_b_l" x="0.7" y="0.5"/>
+		<Bone label="ClothLeftSideC" name="j_sk_s_c_l" x="0.75" y="0.64"/>
+		<Bone label="PoleynRight" name="n_hizasoubi_r" x="0.4" y="0.7"/>
+		<Bone label="PoleynLeft" name="n_hizasoubi_l" x="0.6" y="0.7"/>
+		<Bone label="SheatheRight" name="j_buki_kosi_r" x="0.4" y="0.35"/>
+		<Bone label="SheatheLeft" name="j_buki_kosi_l" x="0.6" y="0.35"/>
+		<Bone label="HolsterRight" name="j_buki2_kosi_r" x="0.325" y="0.325"/>
+		<Bone label="HolsterLeft" name="j_buki2_kosi_l" x="0.675" y="0.325"/>
+		<Bone label="ScabbardRight" name="j_buki_sebo_r" x="0.4" y="0.225"/>
+		<Bone label="ScabbardLeft" name="j_buki_sebo_l" x="0.6" y="0.225"/>
+		<Bone label="PauldronRight" name="n_kataarmor_r" x="0.275" y="0.2"/>
+		<Bone label="PauldronLeft" name="n_kataarmor_l" x="0.725" y="0.2"/>
+		<Bone label="CouterRight" name="n_hijisoubi_r" x="0.2" y="0.35"/>
+		<Bone label="CouterLeft" name="n_hijisoubi_l" x="0.8" y="0.35"/>
+		<Bone label="ShieldRight" name="n_buki_tate_r" x="0.1" y="0.35"/>
+		<Bone label="ShieldLeft" name="n_buki_tate_l" x="0.9" y="0.35"/>
+		<Bone label="EarringRightA" name="n_ear_a_r" x="0.35" y="0.03"/>
+		<Bone label="EarringRightB" name="n_ear_b_r" x="0.35" y="0.06"/>
+		<Bone label="EarringLeftA" name="n_ear_a_l" x="0.65" y="0.03"/>
+		<Bone label="EarringLeftB" name="n_ear_b_l" x="0.65" y="0.06"/>
+		<Bone label="Ribbon" name="j_ex_met_a" x="0.5" y="0.02"/>
 	</View>
 </Views>

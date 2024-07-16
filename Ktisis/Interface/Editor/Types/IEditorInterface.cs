@@ -17,6 +17,7 @@ public interface IEditorInterface {
 	public void OpenCameraWindow();
 	public void OpenEnvironmentWindow();
 	public void OpenTransformWindow();
+	public void OpenPosingWindow();
 
 	public void OpenSceneCreateMenu();
 	public void OpenSceneEntityMenu(SceneEntity entity);

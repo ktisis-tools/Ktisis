@@ -139,6 +139,9 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	public BoneNode? GetBoneFromMap(int partialIx, int boneIx)
 		=> this.BoneMap.GetValueOrDefault((partialIx, boneIx));
 
+	public BoneNode? FindBoneByName(string name)
+		=> this.BoneMap.Values.FirstOrDefault(bone => bone.Info.Name == name);
+
 	public PartialSkeletonInfo? GetPartialInfo(int index)
 		=> this.Partials.GetValueOrDefault(index);
 	
