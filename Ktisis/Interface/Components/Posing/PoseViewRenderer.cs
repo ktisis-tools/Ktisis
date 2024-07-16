@@ -9,7 +9,9 @@ using Dalamud.Plugin.Services;
 
 using ImGuiNET;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Interface.Components.Posing.Types;
 using Ktisis.Scene.Entities.Skeleton;
@@ -17,13 +19,16 @@ using Ktisis.Scene.Entities.Skeleton;
 namespace Ktisis.Interface.Components.Posing;
 
 public class PoseViewRenderer {
+	private readonly Configuration _cfg;
 	private readonly ITextureProvider _tex;
 
 	private readonly Dictionary<string, ISharedImmediateTexture> Textures = new();
 
 	public PoseViewRenderer(
+		Configuration cfg,
 		ITextureProvider tex
 	) {
+		this._cfg = cfg;
 		this._tex = tex;
 	}
 
@@ -101,8 +106,13 @@ public class PoseViewRenderer {
 					var radiusVec = new Vector2(radius, radius);
 					
 					var isHover = isViewHover && hovered == null && ImGui.IsMouseHoveringRect(pos - radiusVec, pos + radiusVec);
-					draw.AddCircleFilled(pos, radius, (isHover || bone.IsSelected) ? 0xFFFFFFFF : 0x70DFDFDF, 64);
-					draw.AddCircle(pos, radius, 0xFF000000, 64, isHover ? 2.5f : 2f);
+
+					var boneColor = this._render._cfg.GetEntityDisplay(bone).Color;
+					if (!isHover && !bone.IsSelected) boneColor = boneColor.SetAlpha(0x64);
+					
+					draw.AddCircleFilled(pos, radius, boneColor, 64);
+					draw.AddCircle(pos, radius, 0xFF000000, 64, isHover ? 2.0f : 1.5f);
+					
 					if (isHover) hovered = bone;
 				}
 			}

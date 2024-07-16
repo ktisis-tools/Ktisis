@@ -40,7 +40,7 @@ public class PosingWindow : KtisisWindow {
 	) {
 		this._ctx = ctx;
 		this._locale = locale;
-		this._render = new PoseViewRenderer(tex);
+		this._render = new PoseViewRenderer(ctx.Config, tex);
 	}
 
 	public override void OnOpen() {
