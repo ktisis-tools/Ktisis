@@ -19,13 +19,13 @@ public struct WorldMatrix {
 		var y = (m.M12 * v.X) + (m.M22 * v.Y) + (m.M32 * v.Z) + m.M42;
 		var w = (m.M14 * v.X) + (m.M24 * v.Y) + (m.M34 * v.Z) + m.M44;
 
-		var camX = (this.Width / 2f);
-		var camY = (this.Height / 2f);
-
-		var windowPos = ImGuiHelpers.MainViewport.Pos;
+		var view = ImGuiHelpers.MainViewport;
+		
+		var camX = (view.Size.X / 2f);
+		var camY = (view.Size.Y / 2f);
 		screenPos = new Vector3(
-			camX + (camX * x / w) + windowPos.X,
-			camY - (camY * y / w) + windowPos.Y,
+			camX + (camX * x / w) + view.Pos.X,
+			camY - (camY * y / w) + view.Pos.Y,
 			w
 		);
 
