@@ -13,6 +13,7 @@ public struct AnimationTimeline {
 	[FieldOffset(0x0FC)] public unsafe fixed ushort CurrentTimelineIds[14];
 	[FieldOffset(0x118)] public unsafe fixed ushort PreviousTimelineIds[14];
 	[FieldOffset(0x154)] public unsafe fixed float TimelineSpeeds[14];
+
 	[FieldOffset(0x18C)] public unsafe fixed float TimelineWeights[14];
 
 	public unsafe SchedulerTimeline* GetSchedulerTimeline(int slot) {
