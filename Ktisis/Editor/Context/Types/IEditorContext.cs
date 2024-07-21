@@ -3,11 +3,11 @@ using System;
 using Ktisis.Core.Types;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Actions;
+using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
-using Ktisis.Editor.Transforms;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Localization;
@@ -26,6 +26,7 @@ public interface IEditorContext : IDisposable {
 	public LocaleManager Locale { get; }
 	
 	public IActionManager Actions { get; }
+	public IAnimationManager Animation { get; }
 	public ICharacterManager Characters { get; }
 	public ICameraManager Cameras { get; }
 	public IEditorInterface Interface { get; }

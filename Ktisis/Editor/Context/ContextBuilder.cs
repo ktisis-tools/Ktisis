@@ -4,6 +4,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Core.Types;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Actions.Input;
+using Ktisis.Editor.Animation;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context.Types;
@@ -62,6 +63,7 @@ public class ContextBuilder {
 
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
+			Animation = new AnimationManager(context, scope, this._framework),
 			Cameras = new CameraManager(context, scope),
 			Characters = new CharacterManager(context, scope, this._framework),
 			Interface = new EditorInterface(context, state.Gui),

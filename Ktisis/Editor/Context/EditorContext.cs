@@ -3,6 +3,7 @@
 using Ktisis.Core.Types;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Actions;
+using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context.Types;
@@ -63,6 +64,7 @@ public class EditorContext : IEditorContext {
 	// State wrappers
 	
 	public IActionManager Actions => this.State.Actions;
+	public IAnimationManager Animation => this.State.Animation;
 	public ICharacterManager Characters => this.State.Characters;
 	public ICameraManager Cameras => this.State.Cameras;
 	public IEditorInterface Interface => this.State.Interface;

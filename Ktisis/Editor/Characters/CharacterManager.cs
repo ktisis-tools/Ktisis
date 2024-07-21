@@ -37,16 +37,18 @@ public class CharacterManager : ICharacterManager {
 	// Initialization
 	
 	private CharacterModule? Module { get; set; }
-
+	
 	public void Initialize() {
-		Ktisis.Log.Verbose("Initializing appearance module...");
+		Ktisis.Log.Verbose("Initializing character manager...");
+		
 		try {
 			this.Module = this._scope.Create<CharacterModule>(this);
 			this.Subscribe();
 			this.Module.Initialize();
 			this.Module.EnableAll();
+			
 		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to initialize appearance editor:\n{err}");
+			Ktisis.Log.Error($"Failed to initialize character module:\n{err}");
 		}
 	}
 

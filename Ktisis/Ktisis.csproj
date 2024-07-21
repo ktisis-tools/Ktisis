@@ -92,6 +92,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Data\Library\" />
+	  <Folder Include="Editor\Characters\Animation\" />
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec ContinueOnError="WarnAndContinue" Command="if $(OS) == Windows_NT (&#xA;copy &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot; /Y&#xA;) else (&#xA;cp &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
