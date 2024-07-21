@@ -23,12 +23,12 @@ public class AnimationModule : HookModule {
 			PoseModeEnum.Sleeping => EmoteModeEnum.Sleeping,
 			_ => EmoteModeEnum.Normal
 		};
-
-		var isOffset = emoteMode == EmoteModeEnum.SitChair;
 		
 		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
 		if (chara == null) return;
-
+		
+		var isOffset = emoteMode == EmoteModeEnum.SitChair;
+		
 		Vector3 offset;
 		Vector3 offsetCam;
 		if (isOffset) {
@@ -38,7 +38,7 @@ public class AnimationModule : HookModule {
 			offset = Vector3.Zero;
 			offsetCam = Vector3.Zero;
 		}
-			
+		
 		var prev = chara->EmoteController.Pose;
 		if (pose == 0xFF) pose = prev != 0xFF ? prev : byte.MinValue;
 
@@ -50,20 +50,12 @@ public class AnimationModule : HookModule {
 		if (isOffset) {
 			chara->EmoteController.IsDrawObjectOffset = false;
 			this.EmoteControllerUpdateDrawOffset(&chara->EmoteController);
-			chara->Character.SetDrawOffset(offset.X, offset.Y, offset.Z);
+			chara->DrawObjectOffset = offset;
 			chara->CameraOffsetSmooth = offsetCam;
 		}
 	}
 	
 	// Timelines
-	
-	[Signature("E8 ?? ?? ?? ?? 4C 8B BC 24 ?? ?? ?? ?? 4C 8D 9C 24 ?? ?? ?? ?? 49 8B 5B 40")]
-	public SetTimelineIdDelegate SetTimelineId = null!;
-	public unsafe delegate bool SetTimelineIdDelegate(AnimationTimeline* a1, ushort a2, nint a3);
-	
-	[Signature("E8 ?? ?? ?? ?? EB 48 48 8B 45 08")]
-	public SchedulerActionDelegate SchedulerAction = null!;
-	public unsafe delegate bool SchedulerActionDelegate(AnimationContainer* a1, nint a2, ushort a3, nint a4);
 
 	[Signature("E8 ?? ?? ?? ?? 88 45 68")]
 	public PlayEmoteDelegate PlayEmote = null!;
@@ -80,4 +72,8 @@ public class AnimationModule : HookModule {
 	[Signature("E8 ?? ?? ?? ?? 80 7B 17 01")]
 	private CancelTimelineDelegate CancelTimeline = null!;
 	private unsafe delegate nint CancelTimelineDelegate(AnimationContainer* a1, nint a2, nint a3);
+
+	[Signature("E8 ?? ?? ?? ?? 66 89 2F")]
+	public PlayActionTimelineDelegate PlayActionTimeline = null!;
+	public unsafe delegate bool PlayActionTimelineDelegate(AnimationContainer* a1, ushort id, nint option, bool a4);
 }

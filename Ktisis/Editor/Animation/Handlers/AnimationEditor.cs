@@ -34,9 +34,14 @@ public class AnimationEditor(
 			pose = 0;
 			return false;
 		}
-		mode = chara->EmoteController.Mode switch {
-			PoseModeEnum.None => PoseModeEnum.Idle,
-			var value => value
+		mode = chara->EmoteMode switch {
+			EmoteModeEnum.SitGround => PoseModeEnum.SitGround,
+			EmoteModeEnum.SitChair => PoseModeEnum.SitChair,
+			EmoteModeEnum.Sleeping => PoseModeEnum.Sleeping,
+			_ => chara->EmoteController.Mode switch {
+				PoseModeEnum.None => PoseModeEnum.Idle,
+				var value => value
+			}
 		};
 		pose = chara->EmoteController.Pose;
 		return true;
@@ -45,7 +50,7 @@ public class AnimationEditor(
 	public int GetPoseCount(PoseModeEnum poseMode) {
 		return poseMode switch {
 			PoseModeEnum.Idle or PoseModeEnum.None => this.IsWeaponDrawn ? 2 : IdlePoses.Count,
-			_ => StancePoses.GetValueOrDefault(poseMode, 0)
+			_ => StancePoses.GetValueOrDefault(poseMode, 1)
 		};
 	}
 
@@ -74,13 +79,7 @@ public class AnimationEditor(
 	
 	// Timelines
 	
-	public void SetTimelineId(ushort id) {
-		if (id == 0) {
-			Ktisis.Log.Warning($"Attempted to set timeline ID to {id}!");
-			return;
-		}
-		mgr.SetTimelineId(actor, id);
-	}
+	public void SetTimelineId(ushort id) => mgr.SetTimelineId(actor, id);
 	
 	// Weapons
 

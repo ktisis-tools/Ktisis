@@ -56,26 +56,16 @@ public class AnimationManager : IAnimationManager {
 	// Wrappers
 
 	public unsafe bool SetTimelineId(ActorEntity actor, ushort id) {
-		var timeline = this.GetTimeline(actor);
-
-		if (id == 0) {
-			var chara = (CharacterEx*)actor.Character;
-			this.Module!.SchedulerAction(&chara->Animation, 0x1865, 0x1866, (nint)0xDA082FD870);
-			return true;
-		}
-		
-		return timeline != null
+		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
+		return chara != null
 			&& this.Module != null
-			&& this.Module.SetTimelineId(timeline, id, nint.Zero);
+			&& this.Module.PlayActionTimeline(&chara->Animation, id, nint.Zero, false);
 	}
 
 	public unsafe bool PlayEmote(ActorEntity actor, uint id) {
 		var chara = (CharacterEx*)actor.Character;
-		return chara != null && this.Module!.PlayEmote(&chara->EmoteController, (nint)id, 0, 0);
-	}
-
-	private unsafe AnimationTimeline* GetTimeline(ActorEntity actor) {
-		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
-		return chara != null ? &chara->Animation.Timeline : null;
+		if (chara == null) return false;
+		chara->EmoteController.IsForceDefaultPose = false;
+		return this.Module!.PlayEmote(&chara->EmoteController, (nint)id, 0, 0);
 	}
 }

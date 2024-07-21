@@ -16,6 +16,8 @@ public struct AnimationTimeline {
 
 	[FieldOffset(0x18C)] public unsafe fixed float TimelineWeights[14];
 
+	[FieldOffset(0x2D0)] public ushort ActionTimelineId;
+
 	public unsafe SchedulerTimeline* GetSchedulerTimeline(int slot) {
 		var value = this.SchedulerTimelines[slot];
 		if (this.SchedulerTimelines[slot] == 0)

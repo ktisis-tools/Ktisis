@@ -51,6 +51,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 
 	public override void OnOpen() {
 		this._custom.Setup();
+		this._anim.Setup();
 	}
 
 	public override void PreDraw() {

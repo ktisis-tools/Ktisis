@@ -11,16 +11,10 @@ public enum PoseModeEnum : byte {
 	Sleeping = 4
 }
 
-public enum EmoteModeEnum : uint {
-	Normal = 0,
-	SitGround = 1,
-	SitChair = 2,
-	Sleeping = 3
-}
-
 [StructLayout(LayoutKind.Explicit)]
 public struct EmoteController {
 	[FieldOffset(0x20)] public PoseModeEnum Mode;
 	[FieldOffset(0x21)] public byte Pose;
+	[FieldOffset(0x35)] public bool IsForceDefaultPose;
 	[FieldOffset(0x37)] public bool IsDrawObjectOffset;
 }

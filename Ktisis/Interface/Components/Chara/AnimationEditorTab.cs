@@ -1,16 +1,19 @@
-﻿using Dalamud.Plugin.Services;
+﻿using System;
+using System.Numerics;
 
-using GLib.Lists;
+using Dalamud.Interface.Utility.Raii;
+using Dalamud.Plugin.Services;
 
-using Lumina.Excel;
+using GLib.Popups;
+using GLib.Popups.Decorators;
 
 using ImGuiNET;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
+using Ktisis.Editor.Animation.Game;
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Structs.Actors;
-
-using Lumina.Excel.GeneratedSheets2;
 
 namespace Ktisis.Interface.Components.Chara;
 
@@ -21,23 +24,44 @@ public class AnimationEditorTab {
 	];
 
 	private readonly IDataManager _data;
-
-	private readonly ListBox<Emote> _emoteList;
+	private readonly ITextureProvider _tex;
 	
-	private ExcelSheet<Emote>? Emotes;
+	private readonly GameAnimationData _animations = new();
+
+	private readonly AnimationFilter _animFilter = new();
+	private readonly PopupList<GameAnimation> _animList;
 	
 	public IAnimationEditor Editor { set; private get; } = null!;
 
 	public AnimationEditorTab(
-		IDataManager data
+		IDataManager data,
+		ITextureProvider tex
 	) {
 		this._data = data;
+		this._tex = tex;
 
-		this._emoteList = new ListBox<Emote>(
-			"Emotes",
-			DrawEmote
-		);
+		this._animList = new PopupList<GameAnimation>("##AnimEmoteList", this.DrawEmote)
+			.WithSearch(EmoteSearchPredicate)
+			.WithFilter(this._animFilter);
 	}
+	
+	// Setup
+
+	private bool _isSetup;
+	
+	public void Setup() {
+		if (this._isSetup) return;
+		this._isSetup = true;
+
+		this._animations.Build(this._data).ContinueWith(task => {
+			if (task.Exception != null)
+				Ktisis.Log.Error($"Failed to fetch animations:\n{task.Exception}");
+		});
+	}
+	
+	// Draw
+
+	private static float CalcItemHeight() => (ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y) * 2;
 
 	private ushort Id;
 	
@@ -50,10 +74,11 @@ public class AnimationEditorTab {
 		if (ImGui.Button("Play"))
 			this.Editor.SetTimelineId(this.Id);
 
-		this.Emotes ??= this._data.GetExcelSheet<Emote>()!;
-
-		if (this._emoteList.Draw(this.Emotes, (int)this.Emotes.RowCount, out var emote))
-			this.Editor.PlayEmote(emote!);
+		if (ImGui.Button("Emote"))
+			this._animList.Open();
+		
+		if (this._animList.Draw(this._animations.GetAll(), this._animations.Count, out var anim, CalcItemHeight()))
+			anim!.Apply(this.Editor);
 
 		ImGui.Spacing();
 
@@ -78,7 +103,74 @@ public class AnimationEditorTab {
 		if (ImGui.Button(isWepDrawn ? "Sheathe Weapon" : "Draw Weapon"))
 			this.Editor.ToggleWeapon();
 	}
+	
+	// Emote popup
 
-	private static bool DrawEmote(Emote emote, bool isFocus)
-		=> ImGui.Selectable($"{emote.RowId} {emote.Name}", isFocus);
+	private bool DrawEmote(GameAnimation emote, bool isFocus) {
+		var height = CalcItemHeight();
+		var space = ImGui.GetStyle().ItemInnerSpacing.X;
+		
+		var cursor = ImGui.GetCursorPosX();
+		ImGui.SetCursorPosX(cursor + ImGui.GetFrameHeight());
+		
+		var result = ImGui.Button(string.Empty, new Vector2(ImGui.GetContentRegionAvail().X, height));
+		
+		ImGui.SameLine(cursor, height + space);
+		ImGui.Text(emote.Name);
+		
+		ImGui.SameLine(cursor, height + space);
+		ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetTextLineHeight());
+		using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xAF)))
+			ImGui.Text($"{emote.Slot}");
+		
+		ImGui.SameLine(cursor);
+
+		var size = new Vector2(height, height);
+		if (emote.Icon != 0 && this._tex.TryGetFromGameIcon((uint)emote.Icon, out var icon)) {
+			ImGui.Image(icon.GetWrapOrEmpty().ImGuiHandle, size);
+		} else {
+			ImGui.Dummy(size);
+		}
+		
+		return result;
+	}
+
+	private static bool EmoteSearchPredicate(GameAnimation emote, string query)
+		=> emote.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase);
+
+	private class AnimationFilter : IFilterProvider<GameAnimation> {
+		private enum AnimType {
+			Action,
+			Emote,
+			Expression
+		}
+
+		private AnimType Type = AnimType.Action;
+		
+		public bool DrawOptions() {
+			var update = false;
+			var isFirst = true;
+			foreach (var value in Enum.GetValues<AnimType>()) {
+				if (isFirst)
+					isFirst = false;
+				else
+					ImGui.SameLine();
+				
+				if (ImGui.RadioButton($"{value}", this.Type == value)) {
+					this.Type = value;
+					update = true;
+				}
+			}
+			ImGui.Spacing();
+			return update;
+		}
+		
+		public bool Filter(GameAnimation item) {
+			return item switch {
+				ActionAnimation => this.Type == AnimType.Action,
+				EmoteAnimation emote => this.Type == (emote.IsExpression ? AnimType.Expression: AnimType.Emote),
+				_ => false
+			};
+		}
+	}
 }

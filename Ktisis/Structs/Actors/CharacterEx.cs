@@ -12,6 +12,13 @@ public enum CombatFlags : byte {
 	WeaponDrawn = 0x40
 }
 
+public enum EmoteModeEnum : uint {
+	Normal = 0,
+	SitGround = 1,
+	SitChair = 2,
+	Sleeping = 3
+}
+
 [StructLayout(LayoutKind.Explicit, Size = 0x1BD0)]
 public struct CharacterEx {
 	[FieldOffset(0)] public Character Character;
@@ -31,5 +38,5 @@ public struct CharacterEx {
 	[FieldOffset(0x21C8)] public float Opacity;
 
 	[FieldOffset(0x226C)] public byte Mode;
-	[FieldOffset(0x226D)] public byte EmoteMode;
+	[FieldOffset(0x226D)] public EmoteModeEnum EmoteMode;
 }

@@ -11,5 +11,6 @@ public interface IAnimationManager {
 	public void SetPose(ActorEntity actor, PoseModeEnum poseMode, byte pose = 0xFF);
 
 	public bool SetTimelineId(ActorEntity actor, ushort id);
+	
 	public bool PlayEmote(ActorEntity actor, uint id);
 }
