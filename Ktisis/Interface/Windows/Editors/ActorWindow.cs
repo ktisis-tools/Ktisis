@@ -5,6 +5,7 @@ using Dalamud.Interface.Utility.Raii;
 
 using ImGuiNET;
 
+using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Chara;
@@ -20,6 +21,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private readonly EquipmentEditorTab _equip;
 	private readonly AnimationEditorTab _anim;
 
+	private IAnimationManager Animation => this.Context.Animation;
 	private ICharacterManager Manager => this.Context.Characters;
 	
 	public ActorWindow(
@@ -42,7 +44,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
-		this._anim.Target = target;
+		this._anim.Editor = this.Animation.GetAnimationEditor(target);
 	}
 
 	// Draw tabs
