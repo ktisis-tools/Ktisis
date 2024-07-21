@@ -5,8 +5,6 @@ namespace Ktisis.Editor.Animation.Types;
 
 public interface IAnimationManager {
 	public void Initialize();
-	
-	public AnimationModule __module__ { get; }
 
 	public IAnimationEditor GetAnimationEditor(ActorEntity actor);
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Numerics;
 
 using Dalamud.Plugin.Services;
 
@@ -30,7 +29,6 @@ public class AnimationManager : IAnimationManager {
 	// Initialization
 	
 	private AnimationModule? Module { get; set; }
-	public AnimationModule __module__ => this.Module!;
 	
 	public void Initialize() {
 		Ktisis.Log.Verbose("Initializing character manager...");

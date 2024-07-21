@@ -12,7 +12,6 @@ using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Services.Data;
 using Ktisis.Services.Game;
-using Ktisis.Structs.Actors;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters;
@@ -157,38 +156,5 @@ public class CharacterModule : HookModule {
 		}
 		
 		this.Manager.GetEquipmentEditor(entity).ApplyStateFlags();
-	}
-	
-	[Signature("E8 ?? ?? ?? ?? 4C 8B BC 24 ?? ?? ?? ?? 4C 8D 9C 24 ?? ?? ?? ?? 49 8B 5B 40", DetourName = nameof(SetTimelineIdDetour))]
-	public Hook<SetTimelineIdDelegate> SetTimelineId = null!;
-	public unsafe delegate bool SetTimelineIdDelegate(AnimationTimeline* a1, ushort a2, nint a3);
-	public unsafe bool SetTimelineIdDetour(AnimationTimeline* a1, ushort a2, nint a3) {
-		if (((CharacterEx*)((nint)a1 - 0x9B0 - 0x10))->Character.ObjectIndex == 201) {
-			//if (a2 == 3) return false;
-		}
-		var exec = this.SetTimelineId.Original(a1, a2, a3);
-		//if (((CharacterEx*)((nint)a1 - 0x9B0 - 0x10))->Character.ObjectIndex == 201) {
-			Ktisis.Log.Info($"TId {(nint)a1:X} {a2:X} {a3:X} => {exec}");
-		//}
-		return exec;
-	}
-
-	[Signature("E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 44 38 75 7F", DetourName = nameof(SchedulerActionDetour))]
-	private Hook<SchedulerActionDelegate> SchedulerAction = null!;
-	private unsafe delegate nint SchedulerActionDelegate(nint a1, ushort a2, uint a3, nint a4, nint a5);
-	private unsafe nint SchedulerActionDetour(nint a1, ushort a2, uint a3, nint a4, nint a5) {
-		var exec = this.SchedulerAction.Original(a1, a2, a3, a4, a5);
-		if (a2 != 3) Ktisis.Log.Info($"Act {a1:X} {a2:X} {a3:X} {a4:X} {a5:X} => {exec:X}");
-		return exec;
-	}
-
-	[Signature("E8 ?? ?? ?? ?? 88 45 68", DetourName = nameof(UnkEmote0Detour))]
-	private Hook<UnkEmote0> UnkEmote0Hook = null!;
-	private unsafe delegate bool UnkEmote0(nint a1, nint a2, nint a3, nint a4);
-	private unsafe bool UnkEmote0Detour(nint a1, nint a2, nint a3, nint a4) {
-		if (a2 == 0xF) a2 = 126;
-		var exec = this.UnkEmote0Hook.Original(a1, a2, a3, a4);
-		Ktisis.Log.Info($"{a1:X} {a2:X} {a3:X} {a4:X} => {exec}");
-		return exec;
 	}
 }

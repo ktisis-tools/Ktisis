@@ -70,14 +70,14 @@ public class AnimationModule : HookModule {
 	public unsafe delegate bool PlayEmoteDelegate(EmoteController* controller, nint id, nint option, nint chair);
 
 	[Signature("E8 ?? ?? ?? ?? F6 46 10 01")]
-	public SetEmoteModeDelegate SetEmoteMode = null!;
-	public unsafe delegate bool SetEmoteModeDelegate(EmoteController* a1, EmoteModeEnum mode);
+	private SetEmoteModeDelegate SetEmoteMode = null!;
+	private unsafe delegate bool SetEmoteModeDelegate(EmoteController* a1, EmoteModeEnum mode);
 
 	[Signature("E8 ?? ?? ?? ?? 0F BE 53 20")]
-	public EmoteControllerUpdateDrawOffsetDelegate EmoteControllerUpdateDrawOffset = null!;
-	public unsafe delegate nint EmoteControllerUpdateDrawOffsetDelegate(EmoteController* a1);
+	private EmoteControllerUpdateDrawOffsetDelegate EmoteControllerUpdateDrawOffset = null!;
+	private unsafe delegate nint EmoteControllerUpdateDrawOffsetDelegate(EmoteController* a1);
 
 	[Signature("E8 ?? ?? ?? ?? 80 7B 17 01")]
-	public CancelTimelineDelegate CancelTimeline = null!;
-	public unsafe delegate nint CancelTimelineDelegate(AnimationContainer* a1, nint a2, nint a3);
+	private CancelTimelineDelegate CancelTimeline = null!;
+	private unsafe delegate nint CancelTimelineDelegate(AnimationContainer* a1, nint a2, nint a3);
 }
