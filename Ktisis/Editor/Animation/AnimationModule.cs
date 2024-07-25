@@ -72,8 +72,8 @@ public class AnimationModule : HookModule {
 	[Signature("E8 ?? ?? ?? ?? 80 7B 17 01")]
 	private CancelTimelineDelegate CancelTimeline = null!;
 	private unsafe delegate nint CancelTimelineDelegate(AnimationContainer* a1, nint a2, nint a3);
-
-	[Signature("E8 ?? ?? ?? ?? 66 89 2F")]
-	public PlayActionTimelineDelegate PlayActionTimeline = null!;
-	public unsafe delegate bool PlayActionTimelineDelegate(AnimationContainer* a1, ushort id, nint option, bool a4);
+	
+	[Signature("E8 ?? ?? ?? ?? 4C 8B BC 24 ?? ?? ?? ?? 4C 8D 9C 24 ?? ?? ?? ?? 49 8B 5B 40")]
+	public SetTimelineIdDelegate SetTimelineId = null!;
+	public unsafe delegate bool SetTimelineIdDelegate(AnimationTimeline* a1, ushort a2, nint a3);
 }

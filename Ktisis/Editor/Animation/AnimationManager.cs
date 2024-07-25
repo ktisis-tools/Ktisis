@@ -90,6 +90,6 @@ public class AnimationManager : IAnimationManager {
 		}
 
 		return this.Module != null
-			&& this.Module.PlayActionTimeline(&chara->Animation, (ushort)id, nint.Zero, false);
+			&& this.Module.SetTimelineId(&chara->Animation.Timeline, (ushort)id, nint.Zero);
 	}
 }
