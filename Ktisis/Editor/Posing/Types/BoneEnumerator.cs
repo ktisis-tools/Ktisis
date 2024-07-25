@@ -39,7 +39,7 @@ public class BoneEnumerator {
 			var name = hkaBone.Name.String;
 			if (name.IsNullOrEmpty()) continue;
 
-			if (this.Index == 0 && name == "j_ago") continue; // :)
+			if (name == "j_ago") continue; // :)
 
 			yield return new PartialBoneInfo {
 				Name = name,
