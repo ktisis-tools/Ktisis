@@ -1,6 +1,5 @@
-﻿using Ktisis.Structs.Actors;
-
-using Lumina.Excel.GeneratedSheets2;
+﻿using Ktisis.Editor.Animation.Game;
+using Ktisis.Structs.Actors;
 
 namespace Ktisis.Editor.Animation.Types;
 
@@ -9,10 +8,11 @@ public interface IAnimationEditor {
 	public int GetPoseCount(PoseModeEnum poseMode);
 	public void SetPose(PoseModeEnum poseMode, byte pose = 0xFF);
 
-	public void PlayEmote(Emote emote);
-	public bool PlayEmote(uint id);
+	public void PlayAnimation(GameAnimation animation, bool playStart = true);
 	
-	public void SetTimelineId(ushort id);
+	public void PlayTimeline(uint id);
+	public AnimationTimeline GetTimeline();
+	public void SetForceTimeline(ushort id);
 
 	public bool IsWeaponDrawn { get; }
 	public void ToggleWeapon();

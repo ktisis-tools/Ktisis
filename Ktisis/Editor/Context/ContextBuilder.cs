@@ -27,6 +27,7 @@ public class ContextBuilder {
 	private readonly GPoseService _gpose;
 	private readonly InteropService _interop;
 	private readonly IFramework _framework;
+	private readonly IDataManager _data;
 	private readonly IKeyState _keyState;
 	private readonly NamingService _naming;
 	private readonly FormatService _format;
@@ -35,6 +36,7 @@ public class ContextBuilder {
 		GPoseService gpose,
 		InteropService interop,
 		IFramework framework,
+		IDataManager data,
 		IKeyState keyState,
 		NamingService naming,
 		FormatService format
@@ -42,6 +44,7 @@ public class ContextBuilder {
 		this._gpose = gpose;
 		this._interop = interop;
 		this._framework = framework;
+		this._data = data;
 		this._keyState = keyState;
 		this._naming = naming;
 		this._format = format;
@@ -63,7 +66,7 @@ public class ContextBuilder {
 
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
-			Animation = new AnimationManager(context, scope, this._framework),
+			Animation = new AnimationManager(context, scope, this._data, this._framework),
 			Cameras = new CameraManager(context, scope),
 			Characters = new CharacterManager(context, scope, this._framework),
 			Interface = new EditorInterface(context, state.Gui),

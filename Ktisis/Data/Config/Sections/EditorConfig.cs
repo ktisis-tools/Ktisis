@@ -16,6 +16,11 @@ public class EditorConfig {
 
 	public bool TransformHide = false;
 	
+	// Animation Tab
+
+	public bool PlayEmoteStart = true;
+	public bool ForceLoop = false;
+	
 	// Helpers
 
 	public EntityDisplay GetDisplayForType(EntityType type)

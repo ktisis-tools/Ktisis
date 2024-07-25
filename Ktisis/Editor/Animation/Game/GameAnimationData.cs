@@ -5,12 +5,15 @@ using System.Linq;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
+using Lumina.Excel;
 using Lumina.Excel.GeneratedSheets2;
 
 namespace Ktisis.Editor.Animation.Game;
 
-public class GameAnimationData {
+public class GameAnimationData(IDataManager data) {
 	private readonly List<GameAnimation> Animations = new();
+
+	private ExcelSheet<ActionTimeline>? Timelines;
 
 	public int Count {
 		get {
@@ -25,15 +28,17 @@ public class GameAnimationData {
 		}
 	}
 	
-	public async Task Build(
-		IDataManager data
-	) {
+	public async Task Build() {
 		await Task.Yield();
-		this.FetchEmotes(data);
-		this.FetchActions(data);
+		this.FetchEmotes();
+		this.FetchActions();
+		this.FetchTimelines();
 	}
 
-	private void FetchEmotes(IDataManager data) {
+	public ActionTimeline? GetTimelineById(uint id)
+		=> this.Timelines?.GetRow(id);
+
+	private void FetchEmotes() {
 		var emotes = data.GetExcelSheet<Emote>()!
 			.Where(emote => !emote.Name.RawString.IsNullOrEmpty())
 			.SelectMany(MapEmotes)
@@ -52,7 +57,7 @@ public class GameAnimationData {
 		}
 	}
 
-	private void FetchActions(IDataManager data) {
+	private void FetchActions() {
 		var actions = data.GetExcelSheet<Action>()!
 			.Where(action => !action.Name.RawString.IsNullOrEmpty())
 			.DistinctBy(action => (action.Name.RawString, action.Icon, action.AnimationStart.Row))
@@ -63,7 +68,15 @@ public class GameAnimationData {
 		}
 	}
 
-	private async Task FetchTimelines(IDataManager data) {
-		await Task.Yield();
+	private void FetchTimelines() {
+		this.Timelines ??= data.GetExcelSheet<ActionTimeline>()!;
+		
+		var timelines = this.Timelines
+			.Where(timeline => !timeline.Key.RawString.IsNullOrEmpty())
+			.Select(timeline => new TimelineAnimation(timeline));
+
+		lock (this.Animations) {
+			this.Animations.AddRange(timelines);
+		}
 	}
 }

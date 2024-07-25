@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 
+using Ktisis.Editor.Animation.Game;
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
-
-using Lumina.Excel.GeneratedSheets2;
 
 namespace Ktisis.Editor.Animation.Handlers;
 
@@ -24,6 +23,10 @@ public class AnimationEditor(
 	private const ushort SheatheWeaponId = 2;
 	
 	private const uint BattlePose = 93;
+	
+	// Character
+
+	private unsafe CharacterEx* GetChara() => actor.IsValid ? (CharacterEx*)actor.Character : null;
 	
 	// Poses
 
@@ -61,41 +64,58 @@ public class AnimationEditor(
 			return;
 		
 		if (pose == 0)
-			this.SetTimelineId(IdlePose);
+			mgr.PlayTimeline(actor, IdlePose);
 		else if (this.IsWeaponDrawn)
-			this.PlayEmote(BattlePose);
+			mgr.PlayEmote(actor, BattlePose);
 		else if (pose < IdlePoses.Count && IdlePoses[pose] is var eId and not 0)
-			this.PlayEmote(eId);
+			mgr.PlayEmote(actor, eId);
 	}
 	
-	// Emotes
+	// Animations
 
-	public void PlayEmote(Emote emote) {
-		if (!this.PlayEmote(emote.RowId))
-			this.SetTimelineId((ushort)emote.ActionTimeline[0].Row);
+	public void PlayAnimation(GameAnimation animation, bool playStart = true) {
+		switch (animation) {
+			case EmoteAnimation { Index: 0 } emote when playStart:
+				if (mgr.PlayEmote(actor, emote.EmoteId))
+					break;
+				goto default;
+			default:
+				mgr.PlayTimeline(actor, animation.TimelineId);
+				break;
+		}
 	}
-
-	public bool PlayEmote(uint id) => mgr.PlayEmote(actor, id);
 	
 	// Timelines
 	
-	public void SetTimelineId(ushort id) => mgr.SetTimelineId(actor, id);
+	public void PlayTimeline(uint id) => mgr.PlayTimeline(actor, id);
+
+	public unsafe AnimationTimeline GetTimeline() {
+		var chara = this.GetChara();
+		return chara != null ? chara->Animation.Timeline : default;
+	}
+
+	public unsafe void SetForceTimeline(ushort id) {
+		var chara = this.GetChara();
+		if (chara == null) return;
+
+		chara->Animation.Timeline.ActionTimelineId = id;
+	}
 	
 	// Weapons
 
 	public unsafe bool IsWeaponDrawn {
 		get {
-			var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
+			var chara = this.GetChara();
 			return chara != null && IsWeaponDrawnFor(chara);
 		}
 	}
 
 	public unsafe void ToggleWeapon() {
-		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
+		var chara = this.GetChara();
 		if (chara == null) return;
 
 		var isDrawn = IsWeaponDrawnFor(chara);
-		this.SetTimelineId(isDrawn ? SheatheWeaponId : DrawWeaponId);
+		this.PlayTimeline(isDrawn ? SheatheWeaponId : DrawWeaponId);
 		chara->CombatFlags ^= CombatFlags.WeaponDrawn;
 	}
 
