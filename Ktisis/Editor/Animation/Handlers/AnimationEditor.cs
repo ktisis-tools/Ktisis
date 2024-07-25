@@ -21,7 +21,8 @@ public class AnimationEditor(
 	private const ushort IdlePose = 3;
 	private const ushort DrawWeaponId = 1;
 	private const ushort SheatheWeaponId = 2;
-	
+
+	private const uint BattleIdle = 34;
 	private const uint BattlePose = 93;
 	
 	// Character
@@ -64,7 +65,7 @@ public class AnimationEditor(
 			return;
 		
 		if (pose == 0)
-			mgr.PlayTimeline(actor, IdlePose);
+			mgr.PlayTimeline(actor, this.IsWeaponDrawn ? BattleIdle : IdlePose);
 		else if (this.IsWeaponDrawn)
 			mgr.PlayEmote(actor, BattlePose);
 		else if (pose < IdlePoses.Count && IdlePoses[pose] is var eId and not 0)
