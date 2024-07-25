@@ -86,6 +86,8 @@
 		<EmbeddedResource Include="Data\Images\tail.png" />
 		<None Remove="Data\Images\armor.png" />
 		<EmbeddedResource Include="Data\Images\armor.png" />
+		<None Remove="Data\Images\ears.png" />
+		<EmbeddedResource Include="Data\Images\ears.png" />
 	</ItemGroup>
 	<ItemGroup>
 	  <EmbeddedResource Include="Data\Schema\Categories.xml" />

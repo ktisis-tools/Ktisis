@@ -183,4 +183,11 @@
 		<Bone label="EarringLeftB" name="n_ear_b_l" x="0.65" y="0.06"/>
 		<Bone label="Ribbon" name="j_ex_met_a" x="0.5" y="0.02"/>
 	</View>
+	<View name="Ears">
+		<Image file="ears.png"/>
+		<Bone label="LeftEar1A" name="j_zer$I_a_l" x="0.7" y="0.885"/>
+		<Bone label="LeftEar1B" name="j_zer$I_b_l" x="0.825" y="0.45"/>
+		<Bone label="RightEar1A" name="j_zer$I_a_r" x="0.3" y="0.885"/>
+		<Bone label="RightEar1B" name="j_zer$I_b_r" x="0.175" y="0.45"/>
+	</View>
 </Views>
