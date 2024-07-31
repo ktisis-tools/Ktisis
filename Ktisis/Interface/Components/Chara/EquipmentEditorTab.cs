@@ -34,8 +34,17 @@ public class EquipmentEditorTab {
 	private readonly PopupList<ItemSheet> _itemSelectPopup;
 	private readonly PopupList<Stain> _dyeSelectPopup;
 	private readonly PopupList<Glasses> _glassesSelectPopup;
-	
-	public IEquipmentEditor Editor { set; private get; } = null!;
+
+
+	private IEquipmentEditor _editor;
+
+	public IEquipmentEditor Editor {
+		private get => this._editor;
+		set {
+			this._editor = value;
+			this.InvalidateCache();
+		}
+	}
 	
 	public EquipmentEditorTab(
 		IDataManager data,
@@ -445,6 +454,11 @@ public class EquipmentEditorTab {
 		} finally {
 			this.Equipped[slot] = item;
 		}
+	}
+
+	private void InvalidateCache() {
+		lock (this.Equipped)
+			this.Equipped.Clear();
 	}
 	
 	// Utility
