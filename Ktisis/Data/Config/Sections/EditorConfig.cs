@@ -19,7 +19,7 @@ public class EditorConfig {
 	// Animation Tab
 
 	public bool PlayEmoteStart = true;
-	public bool ForceLoop = false;
+	public bool ForceLoop = true;
 	
 	// Helpers
 
