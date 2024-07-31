@@ -17,6 +17,9 @@ using Ktisis.Editor.Camera.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Camera;
 using Ktisis.Structs.Input;
+
+using Lumina.Excel.GeneratedSheets;
+
 using InputManager = Ktisis.Editor.Actions.Input.InputManager;
 
 namespace Ktisis.Editor.Camera;
@@ -49,8 +52,10 @@ public class CameraModule : HookModule {
 	}
 	
 	private unsafe void InitVfHook() {
-		if (!this._sigScanner.TryGetStaticAddressFromSig("88 83 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 03 C6 83", out var address, 6))
+		if (!this._sigScanner.TryGetStaticAddressFromSig("48 8D 05 ?? ?? ?? ?? C7 83 ?? ?? ?? ?? ?? ?? ?? ?? 48 89 03 33 C0 89 83 ?? ?? ?? ??", out var address)) {
+			Ktisis.Log.Warning($"Failed to find signature for CameraTarget hook!");
 			return;
+		}
 		var vf = (nint*)address;
 		this.CameraTargetHook = this._interop.HookFromAddress<CameraTargetDelegate>(vf[17], this.CameraTargetDetour);
 	}
