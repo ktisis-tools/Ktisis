@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface.Textures;
 using Dalamud.Plugin.Services;
 
@@ -14,6 +15,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Interface.Components.Posing.Types;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Components.Posing;
@@ -34,6 +36,35 @@ public class PoseViewRenderer {
 
 	public IViewFrame StartFrame() {
 		return new ViewFrame(this);
+	}
+	
+	// Features
+	
+	public void CheckFeatures(EntityPose pose, out bool hasTail, out bool isBunny) {
+		hasTail = pose.FindBoneByName("n_sippo_a") != null;
+		isBunny = pose.FindBoneByName("j_zera_a_l") != null;
+	}
+
+	public unsafe IDictionary<string, string> BuildEarTemplate(ActorEntity actor) {
+		const byte VieraId = 8;
+		
+		var template = new Dictionary<string, string>();
+
+		var isViera = actor.Appearance.Customize.IsSet(CustomizeIndex.Race)
+			&& actor.Appearance.Customize[CustomizeIndex.Race] == VieraId;
+
+		var chara = actor.GetHuman();
+		if (chara != null) isViera = chara->Customize.Race == VieraId;
+
+		if (isViera) {
+			var earId = actor.Appearance.Customize.IsSet(CustomizeIndex.RaceFeatureType)
+				? actor.Appearance.Customize[CustomizeIndex.RaceFeatureType]
+				: (chara != null ? chara->Customize.TailShape : 0);
+			
+			template.Add("$I", ((char)(96 + earId)).ToString());
+		}
+		
+		return template;
 	}
 	
 	// Images
@@ -62,7 +93,12 @@ public class PoseViewRenderer {
 			this._render = render;
 		}
 		
-		public void DrawView(PoseViewEntry entry, float width = 1.0f, float height = 1.0f) {
+		public void DrawView(
+			PoseViewEntry entry,
+			float width = 1.0f,
+			float height = 1.0f,
+			IDictionary<string, string>? templates = null
+		) {
 			var file = entry.Images.First();
 			var img = this._render.GetTexture(file).GetWrapOrDefault();
 			if (img == null) return;
@@ -82,7 +118,8 @@ public class PoseViewRenderer {
 			this.Views.Add(new ViewData {
 				Entry = entry,
 				ScreenPos = min,
-				Size = size
+				Size = size,
+				Templates = templates
 			});
 		}
 
@@ -96,13 +133,19 @@ public class PoseViewRenderer {
 				var isViewHover = isWinHover && ImGui.IsMouseHoveringRect(view.ScreenPos, view.ScreenPos + view.Size);
 				
 				foreach (var boneInfo in view.Entry.Bones) {
-					var bone = pose.FindBoneByName(boneInfo.Name);
+					var name = boneInfo.Name;
+					if (view.Templates != null) {
+						foreach (var (key, value) in view.Templates)
+							name = name.Replace(key, value);
+					}
+					
+					var bone = pose.FindBoneByName(name);
 					if (bone == null) continue;
 					
 					var offset = view.Size * boneInfo.Position;
 					var pos = view.ScreenPos + offset;
 					
-					var radius = MathF.Min(9.0f, view.Size.X * 0.04f);
+					var radius = MathF.Max(MathF.Min(9.0f, view.Size.X * 0.04f), 6.0f);
 					var radiusVec = new Vector2(radius, radius);
 					
 					var isHover = isViewHover && hovered == null && ImGui.IsMouseHoveringRect(pos - radiusVec, pos + radiusVec);
@@ -138,5 +181,6 @@ public class PoseViewRenderer {
 		public required PoseViewEntry Entry;
 		public required Vector2 ScreenPos;
 		public required Vector2 Size;
+		public IDictionary<string, string>? Templates;
 	}
 }

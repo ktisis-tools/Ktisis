@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -117,8 +118,27 @@ public class PosingWindow : KtisisWindow {
 				ImGui.SameLine();
 				using (var _group = ImRaii.Group()) {
 					this.DrawView(frame, "Hands", 0.30f, 0.60f);
+					
 					ImGui.Spacing();
-					this.DrawView(frame, "Tail", 0.30f, 0.40f);
+					
+					var hasTail = false;
+					var isBunny = false;
+					if (target.Pose != null)
+						this._render.CheckFeatures(target.Pose, out hasTail, out isBunny);
+					var earTemplate = this._render.BuildEarTemplate(target);
+					
+					var width = (hasTail, isBunny) switch {
+						(true, true) => 0.15f,
+						(true, false) or (false, true) => 0.30f,
+						_ => 0.00f
+					};
+
+					if (hasTail) {
+						this.DrawView(frame, "Tail", width, 0.40f);
+						if (isBunny) ImGui.SameLine();
+					}
+					
+					if (isBunny) this.DrawView(frame, "Ears", width, 0.40f, earTemplate);
 				}
 				break;
 			default:
@@ -135,12 +155,18 @@ public class PosingWindow : KtisisWindow {
 			frame.DrawBones(target.Pose);
 	}
 
-	private void DrawView(IViewFrame frame, string name, float width = 1.0f, float height = 1.0f) {
+	private void DrawView(
+		IViewFrame frame,
+		string name,
+		float width = 1.0f,
+		float height = 1.0f,
+		IDictionary<string, string>? template = null
+	) {
 		if (this.Schema == null) return;
 
 		if (!this.Schema.Views.TryGetValue(name, out var view))
 			return;
 
-		frame.DrawView(view, width, height);
+		frame.DrawView(view, width, height, template);
 	}
 }
