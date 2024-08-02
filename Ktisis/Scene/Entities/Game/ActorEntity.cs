@@ -1,3 +1,4 @@
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
@@ -59,6 +60,23 @@ public class ActorEntity : CharaEntity, IDeletable {
 		var chara = this.Character;
 		if (chara != null) return &chara->DrawData.CustomizeData;
 		return null;
+	}
+
+	public unsafe byte GetCustomizeValue(CustomizeIndex index) {
+		if (this.Appearance.Customize.IsSet(index))
+			return this.Appearance.Customize[index];
+
+		var chara = this.GetHuman();
+		return chara != null ? chara->Customize[(byte)index] : (byte)0;
+	}
+
+	public bool TryGetVieraEarId(out byte id) {
+		if (this.GetCustomizeValue(CustomizeIndex.Race) != 8) {
+			id = 0;
+			return false;
+		}
+		id = this.GetCustomizeValue(CustomizeIndex.RaceFeatureType);
+		return true;
 	}
 	
 	// GameObject

@@ -120,6 +120,13 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		return resource != null ? resource->ResourceHandle.Id : 0;
 	}
 	
+	// Human features
+	
+	public void CheckFeatures(out bool hasTail, out bool isBunny) {
+		hasTail = this.FindBoneByName("n_sippo_a") != null;
+		isBunny = this.FindBoneByName("j_zera_a_l") != null;
+	}
+	
 	// Skeleton access
 
 	public unsafe RenderSkeleton* GetSkeleton() {

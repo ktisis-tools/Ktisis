@@ -123,9 +123,9 @@ public class PosingWindow : KtisisWindow {
 					
 					var hasTail = false;
 					var isBunny = false;
-					if (target.Pose != null)
-						this._render.CheckFeatures(target.Pose, out hasTail, out isBunny);
-					var earTemplate = this._render.BuildEarTemplate(target);
+					target.Pose?.CheckFeatures(out hasTail, out isBunny);
+					
+					var template = this._render.BuildTemplate(target);
 					
 					var width = (hasTail, isBunny) switch {
 						(true, true) => 0.15f,
@@ -138,7 +138,7 @@ public class PosingWindow : KtisisWindow {
 						if (isBunny) ImGui.SameLine();
 					}
 					
-					if (isBunny) this.DrawView(frame, "Ears", width, 0.40f, earTemplate);
+					if (isBunny) this.DrawView(frame, "Ears", width, 0.40f, template);
 				}
 				break;
 			default:

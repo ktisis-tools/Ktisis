@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 
-using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Interface.Textures;
 using Dalamud.Plugin.Services;
 
@@ -39,30 +38,12 @@ public class PoseViewRenderer {
 	}
 	
 	// Features
-	
-	public void CheckFeatures(EntityPose pose, out bool hasTail, out bool isBunny) {
-		hasTail = pose.FindBoneByName("n_sippo_a") != null;
-		isBunny = pose.FindBoneByName("j_zera_a_l") != null;
-	}
 
-	public unsafe IDictionary<string, string> BuildEarTemplate(ActorEntity actor) {
-		const byte VieraId = 8;
-		
+	public IDictionary<string, string> BuildTemplate(ActorEntity actor) {
 		var template = new Dictionary<string, string>();
-
-		var isViera = actor.Appearance.Customize.IsSet(CustomizeIndex.Race)
-			&& actor.Appearance.Customize[CustomizeIndex.Race] == VieraId;
-
-		var chara = actor.GetHuman();
-		if (chara != null) isViera = chara->Customize.Race == VieraId;
-
-		if (isViera) {
-			var earId = actor.Appearance.Customize.IsSet(CustomizeIndex.RaceFeatureType)
-				? actor.Appearance.Customize[CustomizeIndex.RaceFeatureType]
-				: (chara != null ? chara->Customize.TailShape : 0);
-			
+		
+		if (actor.TryGetVieraEarId(out var earId))
 			template.Add("$I", ((char)(96 + earId)).ToString());
-		}
 		
 		return template;
 	}
