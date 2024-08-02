@@ -1,11 +1,9 @@
 ﻿using GLib.Popups.Context;
 
 using Ktisis.Common.Extensions;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Interface.Editor.Types;
-using Ktisis.Interface.Windows.Import;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
@@ -85,7 +83,7 @@ public class SceneEntityMenuBuilder {
 			.Separator()
 			.SubMenu("Import...", sub => {
 				sub.Action("Character (.chara)", () => this.ImportChara(actor))
-					.Action("Pose file (.pose)", () => this.ImportPose(actor));
+					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
 			})
 			.SubMenu("Export...", sub => {
 				sub.Action("Character (.chara)", () => this.ExportChara(actor))
@@ -99,8 +97,7 @@ public class SceneEntityMenuBuilder {
 		menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
 	}
 
-	private void ImportChara(ActorEntity actor) => this.Ui.OpenEditor<CharaImportDialog, ActorEntity>(actor);
-	private void ImportPose(ActorEntity pose) => this.Ui.OpenEditor<PoseImportDialog, ActorEntity>(pose);
+	private void ImportChara(ActorEntity actor) => this.Ui.OpenPoseImport(actor);
 
 	private async void ExportChara(ActorEntity actor) {
 		var file = await this._ctx.Characters.SaveCharaFile(actor);
@@ -119,13 +116,12 @@ public class SceneEntityMenuBuilder {
 
 	private void ImportPose(EntityPose pose) {
 		if (pose.Parent is ActorEntity actor)
-			this.ImportPose(actor);
+			this.Ui.OpenPoseImport(actor);
 	}
 	
 	private async void ExportPose(EntityPose? pose) {
 		if (pose == null) return;
-		var file = await this._ctx.Posing.SavePoseFile(pose);
-		this.Ui.ExportPoseFile(file);
+		await this.Ui.OpenPoseExport(pose);
 	}
 	
 	// Lights

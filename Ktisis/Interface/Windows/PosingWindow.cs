@@ -8,12 +8,14 @@ using Dalamud.Plugin.Services;
 
 using ImGuiNET;
 
+using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Data.Serialization;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Posing;
 using Ktisis.Interface.Components.Posing.Types;
 using Ktisis.Interface.Types;
+using Ktisis.Interface.Windows.Import;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities.Game;
 
@@ -87,15 +89,17 @@ public class PosingWindow : KtisisWindow {
 		this.DrawView(target, viewRegion);
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(width);
-		this.DrawSideMenu();
+		this.DrawSideMenu(target);
 	}
 	
 	// Side
 
-	private void DrawSideMenu() {
+	private void DrawSideMenu(ActorEntity target) {
 		using var _ = ImRaii.Group();
 		
 		this.DrawViewSelect();
+		for (var i = 0; i < 3; i++) ImGui.Spacing();
+		this.DrawImportExport(target);
 	}
 
 	private void DrawViewSelect() {
@@ -107,6 +111,16 @@ public class PosingWindow : KtisisWindow {
 			if (ImGui.RadioButton(value.ToString(), this.View == value))
 				this.View = value;
 		}
+	}
+
+	private void DrawImportExport(ActorEntity target) {
+		if (target.Pose == null) return;
+
+		if (ImGui.Button("Import"))
+			this._ctx.Interface.OpenPoseImport(target);
+
+		if (ImGui.Button("Export"))
+			this._ctx.Interface.OpenPoseExport(target.Pose);
 	}
 	
 	// View rendering

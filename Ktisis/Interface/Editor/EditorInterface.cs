@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GLib.Popups.ImFileDialog;
 
@@ -12,8 +13,10 @@ using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Windows;
 using Ktisis.Interface.Windows.Editors;
+using Ktisis.Interface.Windows.Import;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 
@@ -108,6 +111,15 @@ public class EditorInterface : IEditorInterface {
 				this.OpenLightEditor(light);
 				break;
 		}
+	}
+	
+	// import/export wrappers
+
+	public void OpenPoseImport(ActorEntity actor) => this.OpenEditor<PoseImportDialog, ActorEntity>(actor);
+
+	public async Task OpenPoseExport(EntityPose pose) {
+		var file = await this._ctx.Posing.SavePoseFile(pose);
+		this.ExportPoseFile(file);
 	}
 	
 	// Import/export dialogs

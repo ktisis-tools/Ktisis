@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Ktisis.Data.Files;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 
 namespace Ktisis.Interface.Editor.Types;
@@ -33,6 +35,9 @@ public interface IEditorInterface {
 	public void OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity;
 	
 	public void OpenEditorFor(SceneEntity entity);
+
+	public void OpenPoseImport(ActorEntity actor);
+	public Task OpenPoseExport(EntityPose pose);
 
 	public void OpenCharaFile(Action<string, CharaFile> handler);
 	public void OpenPoseFile(Action<string, PoseFile> handler);
