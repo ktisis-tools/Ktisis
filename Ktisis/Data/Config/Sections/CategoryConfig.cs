@@ -13,12 +13,14 @@ public class CategoryConfig {
 	public readonly List<BoneCategory> CategoryList = new();
 
 	public bool ShowNsfwBones = true;
+	public bool ShowAllVieraEars = false;
     
 	// Default category
 	
 	public BoneCategory? Default { get; set; }
 
 	public void AddCategory(BoneCategory category) {
+		Ktisis.Log.Debug($"Registering category: {category.Name}");
 		if (category.IsDefault)
 			this.Default = category;
 		category.SortPriority ??= this.CategoryList.Count;

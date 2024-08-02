@@ -39,9 +39,9 @@ public class ConfigManager : IDisposable {
 		try {
 			// TODO: Legacy migration
 			cfg = this.OpenConfigFile();
-
-			if (cfg is { Version: < 9 }) {
-				cfg.Version = 9;
+			
+			if (cfg is { Version: < 10 }) {
+				cfg.Version = 10;
 				this.MigrateSchema(cfg);
 			}
 		} catch (Exception err) {
@@ -77,6 +77,8 @@ public class ConfigManager : IDisposable {
 	// Schema migration
 
 	private void MigrateSchema(Configuration cfg) {
+		Ktisis.Log.Debug("Updating category schema.");
+		
 		var categories = SchemaReader.ReadCategories();
 		
 		foreach (var cat in categories.CategoryList) {
