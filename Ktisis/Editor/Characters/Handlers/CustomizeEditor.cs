@@ -53,10 +53,14 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 
 	private unsafe bool SetCustomizeValue(CustomizeIndex index, byte value) {
 		if (!actor.IsValid) return false;
-		actor.Appearance.Customize[index] = value;
 
-		if (index == CustomizeIndex.RaceFeatureType && actor.IsViera())
+		var isEarChange = index == CustomizeIndex.RaceFeatureType && actor.IsViera();
+		if (isEarChange) {
+			if (value > 4) value = (byte)(value == byte.MaxValue ? 4 : 1);
 			actor.Pose?.Refresh();
+		}
+		
+		actor.Appearance.Customize[index] = value;
 		
 		var chara = actor.GetCharacter();
 		if (chara == null) return false;
