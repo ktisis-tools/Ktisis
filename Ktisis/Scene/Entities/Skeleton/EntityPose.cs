@@ -127,26 +127,32 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	// Filtering
 
 	private void FilterTree() {
-		if (this.Scene.Context.Config.Categories.ShowAllVieraEars)
-			return;
-		
-		if (
-			this.Parent is not ActorEntity actor
-			|| !actor.TryGetEarIdAsChar(out var earId)
-		) return;
-
-		var remove = this.Recurse()
-			.Where(entity => IsInvalidEarBone(entity, earId))
+		var bones = this.Recurse()
+			.Where(entity => entity is BoneNode)
+			.Cast<BoneNode>()
 			.ToList();
 
+		var remove = Enumerable.Empty<BoneNode>();
+		
+		// Jaw bones
+		if (bones.Any(bone => bone.Info.Name == "j_f_ago")) {
+			var oldJaw = bones.Where(bone => bone.Info.Name == "j_ago");
+			remove = remove.Concat(oldJaw);
+		}
+		
+		// Viera ears
+		if (
+			!this.Scene.Context.Config.Categories.ShowAllVieraEars
+			&& this.Parent is ActorEntity actor
+			&& actor.TryGetEarIdAsChar(out var earId)
+		) {
+			var invalid = bones.Where(bone => bone.IsVieraEarBone() && bone.Info.Name[5] != earId);
+			remove = remove.Concat(invalid);
+		}
+
+		// Remove all filtered bones
 		foreach (var bone in remove)
 			bone.Remove();
-	}
-
-	private static bool IsInvalidEarBone(SceneEntity entity, char earId) {
-		if (entity is not BoneNode bone || !bone.IsVieraEarBone())
-			return false;
-		return bone.Info.Name[5] != earId;
 	}
 	
 	// Human features

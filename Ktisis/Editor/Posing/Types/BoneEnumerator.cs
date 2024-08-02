@@ -39,7 +39,7 @@ public class BoneEnumerator {
 			var name = hkaBone.Name.String;
 			if (name.IsNullOrEmpty()) continue;
 
-			if (name == "j_ago") continue; // :)
+			if (this.Index == 0 && name == "j_ago") continue; // :)
 
 			if (parents[i] == -1) continue; // handle multi-root partials; should we instead filter out any bones from bones with -1?
 
