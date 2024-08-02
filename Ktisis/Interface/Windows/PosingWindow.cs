@@ -47,6 +47,12 @@ public class PosingWindow : KtisisWindow {
 	public override void OnOpen() {
 		this.Schema = SchemaReader.ReadPoseView();
 	}
+	
+	public override void PreOpenCheck() {
+		if (this._ctx.IsValid) return;
+		Ktisis.Log.Verbose("Context for posing window is stale, closing...");
+		this.Close();
+	}
 
 	public override void PreDraw() {
 		this.SizeConstraints = new WindowSizeConstraints {
