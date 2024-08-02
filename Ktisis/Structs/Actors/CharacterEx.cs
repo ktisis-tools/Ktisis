@@ -41,4 +41,6 @@ public struct CharacterEx {
 
 	[FieldOffset(0x226C)] public byte Mode;
 	[FieldOffset(0x226D)] public EmoteModeEnum EmoteMode;
+
+	public bool IsGPose => this.Character.ObjectIndex is >= 201 and <= 243;
 }

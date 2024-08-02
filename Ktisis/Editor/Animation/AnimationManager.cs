@@ -52,12 +52,8 @@ public class AnimationManager : IAnimationManager {
 		this.Timelines = this._data.GetExcelSheet<ActionTimeline>();
 	}
 	
-	// Editors
-
-	public IAnimationEditor GetAnimationEditor(ActorEntity actor) => new AnimationEditor(this, actor);
+	// Controls
 	
-	// Speed control
-
 	public bool SpeedControlEnabled {
 		get => this.Module?.SpeedControlEnabled ?? false;
 		set {
@@ -66,12 +62,17 @@ public class AnimationManager : IAnimationManager {
 		}
 	}
 
-	public unsafe void SetTimelineSpeed(ActorEntity actor, uint slot, float speed) {
-		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
-		if (chara == null) return;
-
-		this.Module?.SetTimelineSpeed(&chara->Animation.Timeline, slot, speed);
+	public bool PositionLockEnabled {
+		get => this.Module?.PositionLockEnabled ?? false;
+		set {
+			if (this.Module != null)
+				this.Module.PositionLockEnabled = value;
+		}
 	}
+	
+	// Editors
+
+	public IAnimationEditor GetAnimationEditor(ActorEntity actor) => new AnimationEditor(this, actor);
 	
 	// Pose control
 
@@ -109,5 +110,12 @@ public class AnimationManager : IAnimationManager {
 
 		return this.Module != null
 			&& this.Module.SetTimelineId(&chara->Animation.Timeline, (ushort)id, nint.Zero);
+	}
+	
+	public unsafe void SetTimelineSpeed(ActorEntity actor, uint slot, float speed) {
+		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
+		if (chara == null) return;
+
+		this.Module?.SetTimelineSpeed(&chara->Animation.Timeline, slot, speed);
 	}
 }

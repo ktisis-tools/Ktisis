@@ -29,14 +29,17 @@ public class AnimationEditor(
 
 	private unsafe CharacterEx* GetChara() => actor.IsValid ? (CharacterEx*)actor.Character : null;
 	
-	// Speed control
+	// Controls
 
 	public bool SpeedControlEnabled {
 		get => mgr.SpeedControlEnabled;
 		set => mgr.SpeedControlEnabled = value;
 	}
 
-	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);
+	public bool PositionLockEnabled {
+		get => mgr.PositionLockEnabled;
+		set => mgr.PositionLockEnabled = value;
+	}
 	
 	// Poses
 
@@ -108,6 +111,8 @@ public class AnimationEditor(
 
 		chara->Animation.Timeline.ActionTimelineId = id;
 	}
+	
+	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);
 	
 	// Weapons
 

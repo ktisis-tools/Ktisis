@@ -14,9 +14,10 @@ public class AnimationModule : HookModule {
 		IHookMediator hook
 	) : base(hook) { }
 	
-	// Speed control
-	
 	public bool SpeedControlEnabled { get; set; }
+	public bool PositionLockEnabled { get; set; }
+	
+	// Speed control
 
 	public unsafe void SetTimelineSpeed(AnimationTimeline* timeline, uint slot, float speed)
 		=> this.SetTimelineSpeedHook?.Original(timeline, slot, speed);
@@ -30,11 +31,23 @@ public class AnimationModule : HookModule {
 
 		if (this.SpeedControlEnabled) {
 			var chara = (CharacterEx*)((nint)timeline - offset);
-			if (chara->Character.ObjectIndex is >= 201 and <= 243)
-				return;
+			if (chara->IsGPose) return;
 		}
 
 		this.SetTimelineSpeedHook!.Original(timeline, slot, speed);
+	}
+	
+	// Position lock
+	
+	[Signature("E8 ?? ?? ?? ?? 84 DB 74 45", DetourName = nameof(UpdatePosDetour))]
+	private Hook<UpdatePosDelegate> UpdatePosHook = null!;
+	private unsafe delegate void UpdatePosDelegate(CharacterEx* chara);
+
+	private unsafe void UpdatePosDetour(CharacterEx* chara) {
+		if (this.PositionLockEnabled && chara->IsGPose)
+			return;
+		
+		this.UpdatePosHook.Original(chara);
 	}
 	
 	// Poses

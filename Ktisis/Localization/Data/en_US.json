@@ -25,6 +25,10 @@
 		"Camera_Work_Toggle": "Toggle work camera"
 	},
 	
+	"actors": {
+		"pos_lock": "Freeze positions"
+	},
+	
 	"common": {
 		"options": "Options"
 	},
@@ -83,6 +87,9 @@
 	
 	"transform_edit": {
 		"title": "Transform Editor",
+		"actors": {
+			"title": "Actors"
+		},
 		"mode": {
 			"world": "World Transform",
 			"local": "Local Transform"

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -15,6 +16,7 @@ using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Decor.Ik;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Services.Game;
 
@@ -76,6 +78,9 @@ public class TransformWindow : KtisisWindow {
 			this.Transform?.Dispatch();
 			this.Transform = null;
 		}
+		
+		if (target?.Targets.Any(tar => tar is ActorEntity) ?? false)
+			this.DrawActorControls();
 
 		if (target?.Primary is SkeletonNode)
 			this.DrawBoneTransformSetup();
@@ -194,6 +199,20 @@ public class TransformWindow : KtisisWindow {
 		ImGui.Checkbox(this._ctx.Locale.Translate($"transform_edit.transforms.parenting"), ref cfg.ParentBones);
 		ImGui.Spacing();
 		ImGui.Checkbox(this._ctx.Locale.Translate($"transform_edit.transforms.relative"), ref cfg.RelativeBones);
+	}
+	
+	// Actor controls
+
+	private void DrawActorControls() {
+		ImGui.Spacing();
+		if (!ImGui.CollapsingHeader(this._ctx.Locale.Translate("transform_edit.actors.title"))) return;
+		ImGui.Spacing();
+
+		var posLock = this._ctx.Animation.PositionLockEnabled;
+		if (ImGui.Checkbox(this._ctx.Locale.Translate("actors.pos_lock"), ref posLock))
+			this._ctx.Animation.PositionLockEnabled = posLock;
+		
+		ImGui.Spacing();
 	}
 	
 	// IK Setup

@@ -5,7 +5,7 @@ namespace Ktisis.Editor.Animation.Types;
 
 public interface IAnimationEditor {
 	public bool SpeedControlEnabled { get; set; }
-	public void SetTimelineSpeed(uint slot, float speed);
+	public bool PositionLockEnabled { get; set; }
 	
 	public bool TryGetModeAndPose(out PoseModeEnum mode, out int pose);
 	public int GetPoseCount(PoseModeEnum poseMode);
@@ -16,6 +16,7 @@ public interface IAnimationEditor {
 	public void PlayTimeline(uint id);
 	public AnimationTimeline GetTimeline();
 	public void SetForceTimeline(ushort id);
+	public void SetTimelineSpeed(uint slot, float speed);
 
 	public bool IsWeaponDrawn { get; }
 	public void ToggleWeapon();

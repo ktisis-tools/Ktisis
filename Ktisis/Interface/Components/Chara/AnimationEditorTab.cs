@@ -166,6 +166,10 @@ public class AnimationEditorTab {
 		var isWeaponDrawn = this.Editor.IsWeaponDrawn;
 		if (ImGui.Checkbox("Weapon drawn", ref isWeaponDrawn))
 			this.Editor.ToggleWeapon();
+
+		var posLock = this.Editor.PositionLockEnabled;
+		if (ImGui.Checkbox("Freeze positions", ref posLock))
+			this.Editor.PositionLockEnabled = posLock;
 	}
 
 	private unsafe void DrawTimelines() {

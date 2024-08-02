@@ -5,14 +5,15 @@ namespace Ktisis.Editor.Animation.Types;
 
 public interface IAnimationManager {
 	public void Initialize();
+	
+	public bool SpeedControlEnabled { get; set; }
+	public bool PositionLockEnabled { get; set; }
 
 	public IAnimationEditor GetAnimationEditor(ActorEntity actor);
-
-	public bool SpeedControlEnabled { get; set; }
-	public void SetTimelineSpeed(ActorEntity actor, uint slot, float speed);
 
 	public void SetPose(ActorEntity actor, PoseModeEnum poseMode, byte pose = 0xFF);
 	
 	public bool PlayEmote(ActorEntity actor, uint id);
 	public bool PlayTimeline(ActorEntity actor, uint id);
+	public void SetTimelineSpeed(ActorEntity actor, uint slot, float speed);
 }
