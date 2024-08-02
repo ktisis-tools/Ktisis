@@ -55,6 +55,9 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 		if (!actor.IsValid) return false;
 		actor.Appearance.Customize[index] = value;
 
+		if (index == CustomizeIndex.RaceFeatureType && actor.IsViera())
+			actor.Pose?.Refresh();
+		
 		var chara = actor.GetCharacter();
 		if (chara == null) return false;
 

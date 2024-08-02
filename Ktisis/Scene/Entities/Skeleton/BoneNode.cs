@@ -133,6 +133,12 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 		);
 	}
 	
+	// Viera ear handling
+
+	public bool IsVieraEarBone() => this.Info.Name.Length >= 7
+		&& this.Info.Name.StartsWith("j_zer")
+		&& this.Info.Name[6] == '_';
+	
 	// ITransform
 
 	public virtual Transform? GetTransform() => this.CalcTransformWorld();

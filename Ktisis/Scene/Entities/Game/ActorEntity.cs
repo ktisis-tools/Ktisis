@@ -69,14 +69,24 @@ public class ActorEntity : CharaEntity, IDeletable {
 		var chara = this.GetHuman();
 		return chara != null ? chara->Customize[(byte)index] : (byte)0;
 	}
+	
+	// Viera ear handling
 
-	public bool TryGetVieraEarId(out byte id) {
-		if (this.GetCustomizeValue(CustomizeIndex.Race) != 8) {
+	public bool IsViera() => this.GetCustomizeValue(CustomizeIndex.Race) == 8;
+
+	public bool TryGetEarId(out byte id) {
+		if (!this.IsViera()) {
 			id = 0;
 			return false;
 		}
 		id = this.GetCustomizeValue(CustomizeIndex.RaceFeatureType);
 		return true;
+	}
+	
+	public bool TryGetEarIdAsChar(out char id) {
+		var result = this.TryGetEarId(out var num);
+		id = ((char)(96 + num));
+		return result;
 	}
 	
 	// GameObject

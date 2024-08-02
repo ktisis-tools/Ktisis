@@ -67,6 +67,15 @@ public class ConfigWindow : KtisisWindow {
 		DrawTab(this.Locale.Translate("config.autosave.title"), this.DrawAutoSaveTab);
 		DrawTab(this.Locale.Translate("config.input.title"), this.DrawInputTab);
 	}
+
+	private void DrawHint(string localeHandle) {
+		ImGui.SameLine();
+		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
+		if (ImGui.IsItemHovered()) {
+			using var _ = ImRaii.Tooltip();
+			ImGui.Text(this.Locale.Translate(localeHandle));
+		}
+	}
 	
 	// Tabs
 
@@ -80,14 +89,12 @@ public class ConfigWindow : KtisisWindow {
 	// Categories
 
 	private void DrawCategoriesTab() {
-		if (ImGui.Checkbox(this.Locale.Translate("config.categories.allow_nsfw"), ref this.Config.Categories.ShowNsfwBones))
-			this._context.Current?.Scene.Refresh();
-		ImGui.SameLine();
-		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
-		if (ImGui.IsItemHovered()) {
-			using var _ = ImRaii.Tooltip();
-			ImGui.Text(this.Locale.Translate("config.categories.hint_nsfw"));
-		}
+		var refresh = false;
+		refresh |= ImGui.Checkbox(this.Locale.Translate("config.categories.allow_nsfw"), ref this.Config.Categories.ShowNsfwBones);
+		this.DrawHint("config.categories.hint_nsfw");
+		refresh |= ImGui.Checkbox(this.Locale.Translate("config.categories.show_all_viera_ears"), ref this.Config.Categories.ShowAllVieraEars);
+		this.DrawHint("config.categories.hint_viera_ears");
+		if (refresh) this.RefreshScene();
 		
 		ImGui.Spacing();
 		ImGui.Text(this.Locale.Translate("config.categories.header"));
@@ -180,7 +187,9 @@ public class ConfigWindow : KtisisWindow {
 		}
 	}
 	
-	// Close handler
+	// Handlers
+	
+	private void RefreshScene() => this._context.Current?.Scene.Refresh();
 
 	public override void OnClose() {
 		base.OnClose();

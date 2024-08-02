@@ -42,8 +42,8 @@ public class PoseViewRenderer {
 	public IDictionary<string, string> BuildTemplate(ActorEntity actor) {
 		var template = new Dictionary<string, string>();
 		
-		if (actor.TryGetVieraEarId(out var earId))
-			template.Add("$I", ((char)(96 + earId)).ToString());
+		if (actor.TryGetEarIdAsChar(out var earId))
+			template.Add("$I", earId.ToString());
 		
 		return template;
 	}

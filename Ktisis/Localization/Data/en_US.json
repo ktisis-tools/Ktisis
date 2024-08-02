@@ -163,6 +163,8 @@
 			"title": "Categories",
 			"allow_nsfw": "Display NSFW categories",
 			"hint_nsfw": "Requires IVCS or any custom skeleton",
+			"show_all_viera_ears": "Show unused ear bones",
+			"hint_viera_ears": "Show bones for all viera ears, including those for other ear options.",
 			"header": "Categories:",
 			"editor": {
 				"color_header": "Colors:",

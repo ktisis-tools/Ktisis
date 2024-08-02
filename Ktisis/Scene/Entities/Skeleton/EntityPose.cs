@@ -11,6 +11,7 @@ using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Types;
 
@@ -47,10 +48,11 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	}
 
 	public unsafe void Refresh() {
+		this.Partials.Clear();
+		
 		var skeleton = this.GetSkeleton();
 		if (skeleton == null) return;
-
-		this.Partials.Clear();
+		
 		for (var index = 0; index < skeleton->PartialSkeletonCount; index++) {
 			var partial = skeleton->PartialSkeletons[index];
 			var id = GetPartialId(partial);
@@ -86,18 +88,18 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		t.Start();
 		
 		var builder = this._builder.BuildBoneTree(index, id, partial);
+		
 		var isWeapon = skeleton->Owner->GetModelType() == CharacterBase.ModelType.Weapon;
 		if (!isWeapon)
 			builder.BuildCategoryMap();
 		else
 			builder.BuildBoneList();
 		
-		if (prevId != 0)
-			this.Clean(index, id);
+		if (prevId != 0) this.Clean(index, id);
 
 		info.CopyPartial(id, partial);
-		if (id != 0)
-			builder.BindTo(this);
+		if (id != 0) builder.BindTo(this);
+		this.FilterTree();
 
 		this.BuildBoneMap(index, id);
 		
@@ -110,9 +112,11 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 			this.BoneMap.Remove(key);
 
 		if (id == 0) return;
-		foreach (var child in this.Recurse())
+		
+		foreach (var child in this.Recurse()) {
 			if (child is BoneNode bone && bone.Info.PartialIndex == index)
-				this.BoneMap.Add((index, bone.Info.BoneIndex), bone);
+				this.BoneMap[(index, bone.Info.BoneIndex)] = bone;
+		}
 	}
 
 	private unsafe static uint GetPartialId(PartialSkeleton partial) {
@@ -120,11 +124,39 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		return resource != null ? resource->ResourceHandle.Id : 0;
 	}
 	
+	// Filtering
+
+	private void FilterTree() {
+		if (this.Scene.Context.Config.Categories.ShowAllVieraEars)
+			return;
+		
+		if (
+			this.Parent is not ActorEntity actor
+			|| !actor.TryGetEarIdAsChar(out var earId)
+		) return;
+
+		var remove = this.Recurse()
+			.Where(entity => IsInvalidEarBone(entity, earId))
+			.ToList();
+
+		foreach (var bone in remove)
+			bone.Remove();
+	}
+
+	private static bool IsInvalidEarBone(SceneEntity entity, char earId) {
+		if (entity is not BoneNode bone || !bone.IsVieraEarBone())
+			return false;
+		return bone.Info.Name[5] != earId;
+	}
+	
 	// Human features
+
+	private bool HasTail() => this.FindBoneByName("n_sippo_a") != null;
+	private bool HasEars() => this.FindBoneByName("j_zera_a_l") != null;
 	
 	public void CheckFeatures(out bool hasTail, out bool isBunny) {
-		hasTail = this.FindBoneByName("n_sippo_a") != null;
-		isBunny = this.FindBoneByName("j_zera_a_l") != null;
+		hasTail = this.HasTail();
+		isBunny = this.HasEars();
 	}
 	
 	// Skeleton access
