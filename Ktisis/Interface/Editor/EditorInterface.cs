@@ -115,6 +115,13 @@ public class EditorInterface : IEditorInterface {
 	
 	// import/export wrappers
 
+	public void OpenCharaImport(ActorEntity actor) => this.OpenEditor<CharaImportDialog, ActorEntity>(actor);
+
+	public async Task OpenCharaExport(ActorEntity actor) {
+		var file = await this._ctx.Characters.SaveCharaFile(actor);
+		this.ExportCharaFile(file);
+	}
+
 	public void OpenPoseImport(ActorEntity actor) => this.OpenEditor<PoseImportDialog, ActorEntity>(actor);
 
 	public async Task OpenPoseExport(EntityPose pose) {

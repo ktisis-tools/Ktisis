@@ -82,11 +82,11 @@ public class SceneEntityMenuBuilder {
 			.Action("Edit appearance", this.OpenEditor)
 			.Separator()
 			.SubMenu("Import...", sub => {
-				sub.Action("Character (.chara)", () => this.ImportChara(actor))
+				sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
 			})
 			.SubMenu("Export...", sub => {
-				sub.Action("Character (.chara)", () => this.ExportChara(actor))
+				sub.Action("Character (.chara)", () => this.Ui.OpenCharaExport(actor))
 					.Action("Pose file (.pose)", () => this.ExportPose(actor.Pose));
 			});
 	}
@@ -95,13 +95,6 @@ public class SceneEntityMenuBuilder {
 		if (!this._ctx.Plugin.Ipc.IsPenumbraActive) return;
 		
 		menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
-	}
-
-	private void ImportChara(ActorEntity actor) => this.Ui.OpenPoseImport(actor);
-
-	private async void ExportChara(ActorEntity actor) {
-		var file = await this._ctx.Characters.SaveCharaFile(actor);
-		this.Ui.ExportCharaFile(file);
 	}
 	
 	// Poses

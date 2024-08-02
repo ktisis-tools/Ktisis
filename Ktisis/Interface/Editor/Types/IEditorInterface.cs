@@ -36,6 +36,8 @@ public interface IEditorInterface {
 	
 	public void OpenEditorFor(SceneEntity entity);
 
+	public void OpenCharaImport(ActorEntity actor);
+	public Task OpenCharaExport(ActorEntity actor);
 	public void OpenPoseImport(ActorEntity actor);
 	public Task OpenPoseExport(EntityPose pose);
 
