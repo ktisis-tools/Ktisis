@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 
+using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 
 using Ktisis.Interop.Hooking;
@@ -12,6 +13,29 @@ public class AnimationModule : HookModule {
 	public AnimationModule(
 		IHookMediator hook
 	) : base(hook) { }
+	
+	// Speed control
+	
+	public bool SpeedControlEnabled { get; set; }
+
+	public unsafe void SetTimelineSpeed(AnimationTimeline* timeline, uint slot, float speed)
+		=> this.SetTimelineSpeedHook?.Original(timeline, slot, speed);
+
+	[Signature("83 FA 0E 73 22", DetourName = nameof(SetTimelineSpeedDetour))]
+	private Hook<SetTimelineSpeedDelegate>? SetTimelineSpeedHook = null;
+	private unsafe delegate void SetTimelineSpeedDelegate(AnimationTimeline* timeline, uint slot, float speed);
+
+	private unsafe void SetTimelineSpeedDetour(AnimationTimeline* timeline, uint slot, float speed) {
+		const int offset = CharacterEx.AnimationOffset + AnimationContainer.TimelineOffset;
+
+		if (this.SpeedControlEnabled) {
+			var chara = (CharacterEx*)((nint)timeline - offset);
+			if (chara->Character.ObjectIndex is >= 201 and <= 243)
+				return;
+		}
+
+		this.SetTimelineSpeedHook!.Original(timeline, slot, speed);
+	}
 	
 	// Poses
 

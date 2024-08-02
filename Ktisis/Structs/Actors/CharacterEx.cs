@@ -21,6 +21,8 @@ public enum EmoteModeEnum : uint {
 
 [StructLayout(LayoutKind.Explicit, Size = 0x1BD0)]
 public struct CharacterEx {
+	public const int AnimationOffset = 0x9B0;
+	
 	[FieldOffset(0)] public Character Character;
 
 	[FieldOffset(0xE0)] public Vector3 DrawObjectOffset;
@@ -31,7 +33,7 @@ public struct CharacterEx {
 	[FieldOffset(0x640)] public unsafe nint* _emoteControllerVf;
 	[FieldOffset(0x640)] public EmoteController EmoteController;
 	
-	[FieldOffset(0x09B0)] public AnimationContainer Animation;
+	[FieldOffset(AnimationOffset)] public AnimationContainer Animation;
 	
 	[FieldOffset(0x0CF2)] public CombatFlags CombatFlags;
 

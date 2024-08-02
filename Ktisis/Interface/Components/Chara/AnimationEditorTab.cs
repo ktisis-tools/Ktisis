@@ -99,7 +99,6 @@ public class AnimationEditorTab {
 		}
 		ImGui.SameLine(0, 0);
 		using (var _ = ImRaii.Child("##tlFrame", avail with { X = avail.X * 0.65f })) {
-			ImGui.Text("Timelines");
 			this.DrawTimelines();
 		}
 
@@ -170,6 +169,14 @@ public class AnimationEditorTab {
 	}
 
 	private unsafe void DrawTimelines() {
+		var speedCtrl = this.Editor.SpeedControlEnabled;
+		if (ImGui.Checkbox("Enable speed control", ref speedCtrl))
+			this.Editor.SpeedControlEnabled = speedCtrl;
+		
+		ImGui.Spacing();
+
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+		
 		var animTimeline = this.Editor.GetTimeline();
 		
 		foreach (var slot in Enum.GetValues<TimelineSlot>()) {
@@ -180,7 +187,7 @@ public class AnimationEditorTab {
 			if (Buttons.IconButton(FontAwesomeIcon.EllipsisH, new Vector2(ImGui.GetFrameHeight(), ImGui.GetFrameHeight())))
 				this.OpenAnimationPopup(slot);
 			
-			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.SameLine(0, spacing);
 
 			var id = animTimeline.TimelineIds[index];
 			var timeline = this._animData.GetTimelineById(id);
@@ -190,8 +197,9 @@ public class AnimationEditorTab {
 			var intId = (int)id;
 			ImGui.InputInt($"##id{index}", ref intId, 0, 0, ImGuiInputTextFlags.ReadOnly);
 
-			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-			ImGui.SetNextItemWidth(ImGui.CalcItemWidth() - ImGui.GetFrameHeight() - 40);
+			ImGui.SameLine(0, spacing);
+			var widthR = ImGui.CalcItemWidth() - ImGui.GetFrameHeight() - 40;
+			ImGui.SetNextItemWidth(widthR);
 			
 			var key = timeline?.Key?.RawString ?? string.Empty;
 			using (var _disable = ImRaii.Disabled(key.IsNullOrEmpty()))
@@ -199,6 +207,16 @@ public class AnimationEditorTab {
 			
 			ImGui.SameLine(0, 0);
 			ImGui.LabelText("{0}", $"{slot}");
+
+			using (var _disable = ImRaii.Disabled(!speedCtrl)) {
+				var speed = animTimeline.TimelineSpeeds[index];
+				ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
+				var changed = ImGui.InputFloat($"##speed_l{index}", ref speed);
+				ImGui.SameLine(0, spacing);
+				ImGui.SetNextItemWidth(widthR);
+				changed |= ImGui.SliderFloat($"##speed_r{index}", ref speed, 0.0f, 2.0f, "");
+				if (changed) this.Editor.SetTimelineSpeed((uint)index, speed);
+			}
 			
 			ImGui.Spacing();
 		}

@@ -29,6 +29,15 @@ public class AnimationEditor(
 
 	private unsafe CharacterEx* GetChara() => actor.IsValid ? (CharacterEx*)actor.Character : null;
 	
+	// Speed control
+
+	public bool SpeedControlEnabled {
+		get => mgr.SpeedControlEnabled;
+		set => mgr.SpeedControlEnabled = value;
+	}
+
+	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);
+	
 	// Poses
 
 	public unsafe bool TryGetModeAndPose(out PoseModeEnum mode, out int pose) {
@@ -85,8 +94,6 @@ public class AnimationEditor(
 				break;
 		}
 	}
-	
-	// Timelines
 	
 	public void PlayTimeline(uint id) => mgr.PlayTimeline(actor, id);
 

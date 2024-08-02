@@ -44,6 +44,7 @@ public class AnimationManager : IAnimationManager {
 		try {
 			this.Module = this._scope.Create<AnimationModule>();
 			this.Module.Initialize();
+			this.Module.EnableAll();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize animation module:\n{err}");
 		}
@@ -55,6 +56,23 @@ public class AnimationManager : IAnimationManager {
 
 	public IAnimationEditor GetAnimationEditor(ActorEntity actor) => new AnimationEditor(this, actor);
 	
+	// Speed control
+
+	public bool SpeedControlEnabled {
+		get => this.Module?.SpeedControlEnabled ?? false;
+		set {
+			if (this.Module != null)
+				this.Module.SpeedControlEnabled = value;
+		}
+	}
+
+	public unsafe void SetTimelineSpeed(ActorEntity actor, uint slot, float speed) {
+		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
+		if (chara == null) return;
+
+		this.Module?.SetTimelineSpeed(&chara->Animation.Timeline, slot, speed);
+	}
+	
 	// Pose control
 
 	public void SetPose(ActorEntity actor, PoseModeEnum poseMode, byte pose = byte.MaxValue) {
@@ -63,7 +81,7 @@ public class AnimationManager : IAnimationManager {
 		});
 	}
 	
-	// Wrappers
+	// Animation & timeline wrappers
 
 	public unsafe bool PlayEmote(ActorEntity actor, uint id) {
 		var chara = (CharacterEx*)actor.Character;

@@ -4,6 +4,9 @@ using Ktisis.Structs.Actors;
 namespace Ktisis.Editor.Animation.Types;
 
 public interface IAnimationEditor {
+	public bool SpeedControlEnabled { get; set; }
+	public void SetTimelineSpeed(uint slot, float speed);
+	
 	public bool TryGetModeAndPose(out PoseModeEnum mode, out int pose);
 	public int GetPoseCount(PoseModeEnum poseMode);
 	public void SetPose(PoseModeEnum poseMode, byte pose = 0xFF);

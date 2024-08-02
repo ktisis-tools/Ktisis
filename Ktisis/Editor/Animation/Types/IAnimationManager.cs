@@ -8,6 +8,9 @@ public interface IAnimationManager {
 
 	public IAnimationEditor GetAnimationEditor(ActorEntity actor);
 
+	public bool SpeedControlEnabled { get; set; }
+	public void SetTimelineSpeed(ActorEntity actor, uint slot, float speed);
+
 	public void SetPose(ActorEntity actor, PoseModeEnum poseMode, byte pose = 0xFF);
 	
 	public bool PlayEmote(ActorEntity actor, uint id);
