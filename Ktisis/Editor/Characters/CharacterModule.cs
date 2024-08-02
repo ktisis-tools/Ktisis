@@ -12,6 +12,7 @@ using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Services.Data;
 using Ktisis.Services.Game;
+using Ktisis.Structs.Actors;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters;
@@ -124,6 +125,12 @@ public class CharacterModule : HookModule {
 			if (!state.Customize.IsSet(index)) continue;
 			customize->Bytes[i] = state.Customize[index];
 		}
+		
+		// Validate animation
+
+		var chara = (CharacterEx*)this._prepareCharaFor;
+		if (chara->Mode == 3 && chara->EmoteMode == 0)
+			chara->Mode = 1;
 		
 		// Validate face
 		
