@@ -241,6 +241,9 @@
 				"radius": "Dot radius"
 			}
 		},
+		"references": {
+			"draw_title": "Draw title for reference images"
+		},
 		"workspace": {
 			"title": "Workspace",
 			"init": "Open on entering GPose"

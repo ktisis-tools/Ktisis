@@ -6,35 +6,43 @@ using Dalamud.Plugin.Services;
 using ImGuiNET;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Data.Config;
 using Ktisis.Scene.Entities.Utility;
 
 namespace Ktisis.Interface.Overlay;
 
 [Transient]
 public class RefOverlay {
+	private readonly ConfigManager _cfg;
 	private readonly ITextureProvider _tex;
 	
 	public RefOverlay(
+		ConfigManager cfg,
 		ITextureProvider tex
 	) {
+		this._cfg = cfg;
 		this._tex = tex;
 	}
 	
-	public void DrawInstance(ReferenceImage image) {
+	public void DrawInstance(
+		ReferenceImage image
+	) {
 		var open = image.Visible;
 		if (!open) return;
 		
 		var texture = this._tex.GetFromFile(image.Data.FilePath);
 		if (!texture.TryGetWrap(out var wrap, out var err)) return;
 		
+		var title = this._cfg.File.Overlay.DrawReferenceTitle;
+		
 		ImGui.SetNextWindowSize(wrap.Size, ImGuiCond.FirstUseEver);
-		HandleImageAspectRatio(wrap.Size);
+		HandleImageAspectRatio(wrap.Size, title);
 
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 
 		var id = $"{image.Name}##{image.Data.Id}";
-		
-		const ImGuiWindowFlags flags = ImGuiWindowFlags.NoBackground;
+		var flags = ImGuiWindowFlags.NoBackground;
+		if (!title) flags |= ImGuiWindowFlags.NoTitleBar;
 		if (!ImGui.Begin(id, ref open, flags)) return;
 		
 		try {
@@ -71,7 +79,7 @@ public class RefOverlay {
 
 	private static CallbackData _data = new();
 
-	private unsafe static void HandleImageAspectRatio(Vector2 size) {
+	private unsafe static void HandleImageAspectRatio(Vector2 size, bool title) {
 		if (size.X == 0.0f || size.Y == 0.0f) return;
 		
 		var ratio = size.X / size.Y;
@@ -81,7 +89,7 @@ public class RefOverlay {
 		var min = size * 0.10f;
 
 		_data.Ratio = ratio;
-		_data.Height = ImGui.GetFrameHeight();
+		_data.Height = title ? ImGui.GetFrameHeight() : 0.0f;
 
 		fixed (CallbackData* ptr = &_data) {
 			ImGui.SetNextWindowSizeConstraints(min, max, SetSizeCallback, (nint)ptr);
