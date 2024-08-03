@@ -2,28 +2,33 @@ using System;
 using System.IO;
 using System.Linq;
 
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
 using GLib.Popups.ImFileDialog;
 
+using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
 
 namespace Ktisis.Interface;
 
+[Transient]
 public class FileDialogManager {
-	private readonly GuiManager _gui;
 	private readonly ConfigManager _cfg;
+	private readonly ITextureProvider _tex;
 
 	private readonly JsonFileSerializer _serializer = new();
+
+	public event Action<FileDialog>? OnOpenDialog;
 	
 	public FileDialogManager(
-		GuiManager gui,
-		ConfigManager cfg
+		ConfigManager cfg,
+		ITextureProvider tex
 	) {
-		this._gui = gui;
 		this._cfg = cfg;
+		this._tex = tex;
 	}
 	
 	// Dialog state
@@ -33,7 +38,7 @@ public class FileDialogManager {
 			dialog.Open(path);
 		else
 			dialog.Open();
-		this._gui.AddPopupSingleton(dialog);
+		this.OnOpenDialog?.Invoke(dialog);
 		return dialog;
 	}
 	

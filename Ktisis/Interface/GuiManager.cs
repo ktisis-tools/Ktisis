@@ -6,10 +6,10 @@ using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 
 using GLib.Popups;
+using GLib.Popups.ImFileDialog;
 
 using Ktisis.Core;
 using Ktisis.Core.Attributes;
-using Ktisis.Data.Config;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Windows;
 using Ktisis.Localization;
@@ -30,15 +30,15 @@ public class GuiManager : IDisposable {
 	public readonly FileDialogManager FileDialogs;
 	
 	public GuiManager(
-		ConfigManager cfg,
 		DIBuilder di,
 		IUiBuilder uiBuilder,
-		LocaleManager locale
+		LocaleManager locale,
+		FileDialogManager dialogs
 	) {
 		this._di = di;
 		this._uiBuilder = uiBuilder;
 		this.Locale = locale;
-		this.FileDialogs = new FileDialogManager(this, cfg);
+		this.FileDialogs = dialogs;
 	}
 	
 	// Initialization
@@ -47,6 +47,7 @@ public class GuiManager : IDisposable {
 		this._uiBuilder.DisableGposeUiHide = true;
 		this._uiBuilder.Draw += this.Draw;
 		this._uiBuilder.OpenConfigUi += this.OnOpenConfigUi;
+		this.FileDialogs.OnOpenDialog += this.OnOpenDialog;
 	}
 	
 	// Draw
@@ -114,6 +115,15 @@ public class GuiManager : IDisposable {
 	}
 
 	private void OnOpenConfigUi() => this.GetOrCreate<ConfigWindow>().Toggle();
+
+	private void OnOpenDialog(FileDialog dialog) {
+		foreach (var open in this._popup.GetAll<FileDialog>()) {
+			if (open.Title == dialog.Title)
+				open.Close();
+		}
+
+		this.AddPopup(dialog);
+	}
 	
 	// Disposal
 
