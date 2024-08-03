@@ -40,6 +40,7 @@ public record EntityDisplay {
 		{ EntityType.Models, new EntityDisplay(color: ModelMint, icon: FontAwesomeIcon.CubesStacked) },
 		{ EntityType.ModelSlot, new EntityDisplay(color: ModelMint) },
 		{ EntityType.Weapon, new EntityDisplay(icon: FontAwesomeIcon.Magic) },
-		{ EntityType.Light, new EntityDisplay(color: LightLemon, icon: FontAwesomeIcon.Lightbulb) }
+		{ EntityType.Light, new EntityDisplay(color: LightLemon, icon: FontAwesomeIcon.Lightbulb) },
+		{ EntityType.RefImage, new EntityDisplay(icon: FontAwesomeIcon.Image) }
 	};
 }

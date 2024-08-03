@@ -15,4 +15,5 @@ public interface IEntityFactory {
 	public IActorCreator CreateActor();
 	public ILightCreator CreateLight();
 	public ILightCreator CreateLight(LightType type);
+	public IRefImageBuilder BuildRefImage();
 }

@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 
-using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
 using GLib.Popups.ImFileDialog;
@@ -11,13 +10,14 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
+using Ktisis.Services.Meta;
 
 namespace Ktisis.Interface;
 
-[Transient]
+[Singleton]
 public class FileDialogManager {
 	private readonly ConfigManager _cfg;
-	private readonly ITextureProvider _tex;
+	private readonly ImageDataProvider _img;
 
 	private readonly JsonFileSerializer _serializer = new();
 
@@ -25,11 +25,15 @@ public class FileDialogManager {
 	
 	public FileDialogManager(
 		ConfigManager cfg,
-		ITextureProvider tex
+		ImageDataProvider img
 	) {
 		this._cfg = cfg;
-		this._tex = tex;
+		this._img = img;
 	}
+	
+	// Initialization
+
+	public void Initialize() => this._img.Initialize();
 	
 	// Dialog state
 
@@ -103,5 +107,25 @@ public class FileDialogManager {
 	) where T : JsonFile {
 		var content = this._serializer.Serialize(file);
 		return this.SaveFile(name, content, options);
+	}
+		
+	// Image handling
+
+	private readonly FileDialogOptions ImageOptions = new() {
+		Flags = FileDialogFlags.OpenMode,
+		Filters = "Images{.png,.jpg,.jpeg}"
+	};
+
+	public FileDialog OpenImage(
+		string name,
+		Action<string> handler
+	) {
+		var dialog = new FileDialog(name, (sender, paths) => {
+			foreach (var path in paths)
+				handler.Invoke(path);
+		}, this.ImageOptions);
+		
+		this._img.BindMetadata(dialog);
+		return this.OpenDialog(dialog);
 	}
 }

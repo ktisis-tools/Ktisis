@@ -9,5 +9,6 @@ public enum EntityType {
 	Models,
 	ModelSlot,
 	Weapon,
-	Light
+	Light,
+	RefImage
 }

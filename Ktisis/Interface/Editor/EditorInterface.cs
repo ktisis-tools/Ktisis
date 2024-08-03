@@ -151,6 +151,10 @@ public class EditorInterface : IEditorInterface {
 		}, PoseFileOptions);
 	}
 
+	public void OpenReferenceImages(Action<string> handler) {
+		this._gui.FileDialogs.OpenImage("image", handler);
+	}
+
 	public void ExportCharaFile(CharaFile file)
 		=> this._gui.FileDialogs.SaveFile("Export Chara File", file, CharaFileOptions);
 	

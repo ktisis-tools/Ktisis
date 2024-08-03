@@ -43,6 +43,8 @@ public interface IEditorInterface {
 
 	public void OpenCharaFile(Action<string, CharaFile> handler);
 	public void OpenPoseFile(Action<string, PoseFile> handler);
+
+	public void OpenReferenceImages(Action<string> handler);
 	
 	public void ExportCharaFile(CharaFile file);
 	public void ExportPoseFile(PoseFile file);

@@ -11,6 +11,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Entities.Utility;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Overlay;
@@ -19,6 +20,7 @@ namespace Ktisis.Interface.Overlay;
 public class SceneDraw {
 	private readonly CameraService _camera;
 	private readonly SelectableGui _select;
+	private readonly RefOverlay _refs;
 	
 	private IEditorContext _ctx = null!;
 
@@ -26,36 +28,43 @@ public class SceneDraw {
 
 	public SceneDraw(
 		CameraService camera,
-		SelectableGui select
+		SelectableGui select,
+		RefOverlay refs
 	) {
 		this._camera = camera;
 		this._select = select;
+		this._refs = refs;
 	}
 
 	public void SetContext(IEditorContext ctx) => this._ctx = ctx;
 	
-	public void DrawScene(bool gizmo = false, bool gizmo_isEnded = false) {
+	public void DrawScene(bool gizmo = false, bool gizmoIsEnded = false) {
 		var frame = this._select.BeginFrame();
 		this.DrawEntities(frame, this._ctx.Scene.Children);
-		this.DrawSelect(frame, gizmo, gizmo_isEnded);
+		this.DrawSelect(frame, gizmo, gizmoIsEnded);
 	}
 	
 	private void DrawEntities(ISelectableFrame frame, IEnumerable<SceneEntity> entities) {
 		foreach (var entity in entities) {
-			if (entity is EntityPose pose) {
-				this.DrawSkeleton(frame, pose);
-				continue;
-			}
-
-			if (entity is IVisibility { Visible: true } and ITransform manip) {
-				var position = manip.GetTransform()?.Position;
-				if (position != null)
-					frame.AddItem(entity, position.Value);
+			switch (entity) {
+				case EntityPose pose:
+					this.DrawSkeleton(frame, pose);
+					continue;
+				case IVisibility { Visible: true } and ITransform manip:
+					var position = manip.GetTransform()?.Position;
+					if (position != null)
+						frame.AddItem(entity, position.Value);
+					break;
+				case ReferenceImage image:
+					this._refs.DrawInstance(image);
+					continue;
 			}
 
 			this.DrawEntities(frame, entity.Children);
 		}
 	}
+	
+	// Skeletons
 
 	private unsafe void DrawSkeleton(ISelectableFrame frame, EntityPose pose) {
 		var skeleton = pose.GetSkeleton();
@@ -110,10 +119,10 @@ public class SceneDraw {
 		drawList.AddLine(fromPos2d, toPos2d, color.SetAlpha(opacity), this.Config.LineThickness);
 	}
 	
-	private void DrawSelect(ISelectableFrame frame, bool gizmo, bool gizmo_isEnded) {
+	private void DrawSelect(ISelectableFrame frame, bool gizmo, bool gizmoIsEnded) {
 		var result = this._select.Draw(frame, out var clicked, gizmo);
 		if (!result || clicked == null) return;
-		if (gizmo && gizmo_isEnded) return;
+		if (gizmo && gizmoIsEnded) return;
 		var mode = GuiHelpers.GetSelectMode();
 		this._ctx.Selection.Select(clicked, mode);
 	}

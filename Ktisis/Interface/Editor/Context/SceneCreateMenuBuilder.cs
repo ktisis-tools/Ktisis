@@ -26,6 +26,8 @@ public class SceneCreateMenuBuilder {
 			.Group(this.BuildActorGroup)
 			.Separator()
 			.Group(this.BuildLightGroup)
+			.Separator()
+			.Group(this.BuildUtilityGroup)
 			.Build($"##SceneCreateMenu_{this.GetHashCode():X}");
 	}
 
@@ -46,6 +48,10 @@ public class SceneCreateMenuBuilder {
 		
 		void SpawnLight(LightType type) => this.Factory.CreateLight(type).Spawn();
 	}
+
+	private void BuildUtilityGroup(ContextMenuBuilder sub) {
+		sub.Action("Add reference image", this.OpenReferenceImage);
+	}
 	
 	// Actor handling
 
@@ -56,6 +62,16 @@ public class SceneCreateMenuBuilder {
 				.WithAppearance(file)
 				.SetName(name)
 				.Spawn();
+		});
+	}
+	
+	// Reference image loading
+
+	private void OpenReferenceImage() {
+		this._ctx.Interface.OpenReferenceImages(path => {
+			this.Factory.BuildRefImage()
+				.SetPath(path)
+				.Add();
 		});
 	}
 }
