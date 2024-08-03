@@ -158,7 +158,14 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	// Human features
 
 	private bool HasTail() => this.FindBoneByName("n_sippo_a") != null;
-	private bool HasEars() => this.FindBoneByName("j_zera_a_l") != null;
+	private bool HasEars() {
+		return (
+			this.FindBoneByName("j_zera_a_l") != null
+			|| this.FindBoneByName("j_zerb_a_l") != null
+			|| this.FindBoneByName("j_zerc_a_l") != null
+			|| this.FindBoneByName("j_zerd_a_l") != null
+		);
+	}
 	
 	public void CheckFeatures(out bool hasTail, out bool isBunny) {
 		hasTail = this.HasTail();
