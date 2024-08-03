@@ -71,7 +71,8 @@ public class SceneCreateMenuBuilder {
 		this._ctx.Interface.OpenReferenceImages(path => {
 			this.Factory.BuildRefImage()
 				.SetPath(path)
-				.Add();
+				.Add()
+				.Save();
 		});
 	}
 }

@@ -49,6 +49,15 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		this.AddModule<LightModule>(gpose);
 		this.AddModule<EnvModule>();
 		this.InitializeModules();
+		this.SetupSavedState();
+	}
+
+	private void SetupSavedState() {
+		foreach (var setup in this.Context.Config.Editor.ReferenceImages) {
+			this.Factory.BuildRefImage()
+				.FromData(setup)
+				.Add();
+		}
 	}
 	
 	// Update handler

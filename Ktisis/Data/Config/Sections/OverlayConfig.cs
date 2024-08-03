@@ -1,4 +1,8 @@
-﻿namespace Ktisis.Data.Config.Sections;
+﻿using System.Collections.Generic;
+
+using Ktisis.Scene.Entities.Utility;
+
+namespace Ktisis.Data.Config.Sections;
 
 public class OverlayConfig {
 	public bool Visible = true;
@@ -11,4 +15,6 @@ public class OverlayConfig {
 	public float LineThickness = 2.0f;
 	public float LineOpacity = 0.95f;
 	public float LineOpacityUsing = 0.15f;
+	
+	public bool ShowReferenceTitle = true;
 }

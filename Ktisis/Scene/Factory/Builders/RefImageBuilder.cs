@@ -9,11 +9,13 @@ using Ktisis.Scene.Types;
 namespace Ktisis.Scene.Factory.Builders;
 
 public interface IRefImageBuilder : IEntityBuilder<ReferenceImage, IRefImageBuilder> {
+	public IRefImageBuilder FromData(ReferenceImage.SetupData data);
 	public IRefImageBuilder SetPath(string path);
 }
 
 public sealed class RefImageBuilder : EntityBuilder<ReferenceImage, IRefImageBuilder>, IRefImageBuilder {
-	private string FilePath = string.Empty;
+	private ReferenceImage.SetupData Data = new();
+	
 	private bool Visible = true;
 	
 	public RefImageBuilder(
@@ -22,8 +24,13 @@ public sealed class RefImageBuilder : EntityBuilder<ReferenceImage, IRefImageBui
 
 	protected override IRefImageBuilder Builder => this;
 
+	public IRefImageBuilder FromData(ReferenceImage.SetupData data) {
+		this.Data = data;
+		return this;
+	}
+
 	public IRefImageBuilder SetPath(string path) {
-		this.FilePath = path;
+		this.Data.FilePath = path;
 		return this;
 	}
 
@@ -34,11 +41,10 @@ public sealed class RefImageBuilder : EntityBuilder<ReferenceImage, IRefImageBui
 
 	protected override ReferenceImage Build() {
 		if (this.Name.IsNullOrEmpty())
-			this.Name = Path.GetFileName(this.FilePath);
+			this.Name = Path.GetFileName(this.Data.FilePath);
 		
-		return new ReferenceImage(this.Scene) {
+		return new ReferenceImage(this.Scene, this.Data) {
 			Name = this.Name,
-			FilePath = this.FilePath,
 			Visible = this.Visible
 		};
 	}
