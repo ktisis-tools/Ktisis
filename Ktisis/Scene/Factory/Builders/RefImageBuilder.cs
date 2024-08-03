@@ -16,8 +16,6 @@ public interface IRefImageBuilder : IEntityBuilder<ReferenceImage, IRefImageBuil
 public sealed class RefImageBuilder : EntityBuilder<ReferenceImage, IRefImageBuilder>, IRefImageBuilder {
 	private ReferenceImage.SetupData Data = new();
 	
-	private bool Visible = true;
-	
 	public RefImageBuilder(
 		ISceneManager scene
 	) : base(scene) { }
@@ -34,18 +32,12 @@ public sealed class RefImageBuilder : EntityBuilder<ReferenceImage, IRefImageBui
 		return this;
 	}
 
-	public IRefImageBuilder SetVisible(bool visible) {
-		this.Visible = visible;
-		return this;
-	}
-
 	protected override ReferenceImage Build() {
 		if (this.Name.IsNullOrEmpty())
 			this.Name = Path.GetFileName(this.Data.FilePath);
 		
 		return new ReferenceImage(this.Scene, this.Data) {
-			Name = this.Name,
-			Visible = this.Visible
+			Name = this.Name
 		};
 	}
 }

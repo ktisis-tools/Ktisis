@@ -7,8 +7,11 @@ namespace Ktisis.Scene.Entities.Utility;
 public class ReferenceImage : SceneEntity, IVisibility, IDeletable {
 	public record SetupData {
 		public string Id = string.Empty;
+		
 		public string FilePath = string.Empty;
 		public float Opacity = 1.0f;
+		
+		public bool Visible = true;
 	}
 
 	public readonly SetupData Data;
@@ -22,8 +25,11 @@ public class ReferenceImage : SceneEntity, IVisibility, IDeletable {
 		this.Data = data;
 		this.Type = EntityType.RefImage;
 	}
-	
-	public bool Visible { get; set; }
+
+	public bool Visible {
+		get => this.Data.Visible;
+		set => this.Data.Visible = value;
+	}
 
 	public void Save() {
 		var list = this.Config.Editor.ReferenceImages;
