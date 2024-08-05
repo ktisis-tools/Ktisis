@@ -93,8 +93,12 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	}
 
 	private void DrawApplyModes(bool isSelectBones) {
-		using var _ = ImRaii.Disabled(!isSelectBones);
-		ImGui.Checkbox("Apply selected bones", ref this._ctx.Config.File.ImportPoseSelectedBones);
+		using (ImRaii.Disabled(!isSelectBones))
+			ImGui.Checkbox("Apply selected bones", ref this._ctx.Config.File.ImportPoseSelectedBones);
+
+		var hasPosition = this._ctx.Config.File.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
+		using (ImRaii.Disabled(!isSelectBones || !this._ctx.Config.File.ImportPoseSelectedBones || !hasPosition))
+			ImGui.Checkbox("Anchor group positions", ref this._ctx.Config.File.AnchorPoseSelectedBones);
 	}
 	
 	// Apply pose
@@ -108,6 +112,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 
 		var transforms = this._ctx.Config.File.ImportPoseTransforms;
 		var selectedBones = isSelectBones && this._ctx.Config.File.ImportPoseSelectedBones;
-		this._ctx.Posing.ApplyPoseFile(pose, file, transforms, selectedBones);
+		var anchorGroups = this._ctx.Config.File.AnchorPoseSelectedBones;
+		this._ctx.Posing.ApplyPoseFile(pose, file, transforms, selectedBones, anchorGroups);
 	}
 }

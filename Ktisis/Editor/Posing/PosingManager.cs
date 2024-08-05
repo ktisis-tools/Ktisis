@@ -9,6 +9,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using Ktisis.Actions.Types;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
@@ -152,25 +153,42 @@ public class PosingManager : IPosingManager {
 		EntityPose pose,
 		PoseFile file,
 		PoseTransforms transforms = PoseTransforms.Rotation,
-		bool selectedBones = false
+		bool selectedBones = false,
+		bool anchorGroups = false
 	) {
 		return this._framework.RunOnFrameworkThread(() => {
 			if (file.Bones == null) return;
 			
 			var converter = new EntityPoseConverter(pose);
 			var initial = converter.Save();
-			
+
+			var mementos = new List<IMemento>();
+
 			if (selectedBones)
 				converter.LoadSelectedBones(file.Bones, transforms);
 			else
 				converter.Load(file.Bones, transforms);
-			
-			this._context.Actions.History.Add(new PoseMemento(converter) {
+
+			mementos.Add(new PoseMemento(converter) {
 				Transforms = transforms,
 				Bones = selectedBones ? converter.GetSelectedBones().ToList() : null,
 				Initial = selectedBones ? converter.FilterSelectedBones(initial) : initial,
 				Final = selectedBones ? converter.FilterSelectedBones(file.Bones) : file.Bones
 			});
+
+			if (selectedBones && anchorGroups && transforms.HasFlag(PoseTransforms.Position)) {
+				var restored = converter.GetSelectedBones(false);
+				converter.LoadBones(initial, restored, PoseTransforms.Position);
+
+				mementos.Add(new PoseMemento(converter) {
+					Transforms = PoseTransforms.Position,
+					Bones = restored.ToList(),
+					Initial = converter.FilterSelectedBones(file.Bones, false),
+					Final = converter.FilterSelectedBones(initial, false)
+				});
+			}
+
+			this._context.Actions.History.Add(new MultipleMemento(mementos));
 		});
 	}
 
