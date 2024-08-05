@@ -87,10 +87,10 @@ public class EntityPoseConverter(EntityPose target) {
 	
 	// Filter container
 
-	public unsafe PoseContainer FilterSelectedBones(PoseContainer pose) {
+	public unsafe PoseContainer FilterSelectedBones(PoseContainer pose, bool all = true) {
 		var result = new PoseContainer();
 
-		var bones = this.GetSelectedBones().ToList();
+		var bones = this.GetSelectedBones(all).ToList();
 		foreach (var bone in bones) {
 			if (pose.TryGetValue(bone.Name, out var value))
 				result[bone.Name] = value;
@@ -157,22 +157,22 @@ public class EntityPoseConverter(EntityPose target) {
 	
 	// Iterate selected bones
 
-	public IEnumerable<PartialBoneInfo> GetSelectedBones() {
+	public IEnumerable<PartialBoneInfo> GetSelectedBones(bool all = true) {
 		var selected = target.Recurse()
 			.Prepend(target)
 			.Where(entity => entity is SkeletonNode { IsSelected: true })
 			.Cast<SkeletonNode>();
-		return this.GetBoneSelectionFrom(selected).Distinct();
+		return this.GetBoneSelectionFrom(selected, all).Distinct();
 	}
 
-	private IEnumerable<PartialBoneInfo> GetBoneSelectionFrom(IEnumerable<SkeletonNode> nodes) {
+	private IEnumerable<PartialBoneInfo> GetBoneSelectionFrom(IEnumerable<SkeletonNode> nodes, bool all = true) {
 		foreach (var node in nodes) {
 			switch (node) {
 				case BoneNode bone:
 					yield return bone.Info;
 					continue;
 				case SkeletonGroup group:
-					foreach (var bone in this.GetBoneSelectionFrom(group.GetAllBones()))
+					foreach (var bone in this.GetBoneSelectionFrom(all ? group.GetAllBones() : group.GetIndividualBones()))
 						yield return bone;
 					continue;
 				default:
