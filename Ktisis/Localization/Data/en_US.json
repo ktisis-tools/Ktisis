@@ -541,7 +541,19 @@
 		"GenitalsIvcs": "IVCS Genitals",
 		"PenisIvcs": "IVCS Penis",
 		"VaginaIvcs": "IVCS Vagina",
-		"BottomIvcs": "IVCS Bottom"
+		"BottomIvcs": "IVCS Bottom",
+		
+		"SkelomaeWings": "Skelomae Wings",
+		"SkelomaeWingsLeft": "Left Skelomae Wing",
+		"SkelomaeWingsRight": "Right Skelomae Wing",
+		"SkelomaeCreatures": "Skelomae Creatures",
+		"SkelomaeCreaturesLamia": "Lamia",
+		"SkelomaeCreaturesGenetals": "Genetals",
+		"SkelomaeCreaturesCentaur": "Centaur",
+		"SkelomaeCreaturesCentaurBody": "Centaur Body",
+		"SkelomaeCreaturesCentaurBodyFrontLegs": "Front Legs",
+		"SkelomaeCreaturesCentaurBodyBackLegs": "Back Legs",
+		"SkelomaeCreaturesCentaurTail": "Tail"
 	},
 	
 	"lightType": {

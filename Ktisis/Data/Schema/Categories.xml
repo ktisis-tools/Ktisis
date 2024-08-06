@@ -304,6 +304,26 @@
 				j_sebo_b
 				j_sebo_c
 			</Bones>
+			<Category Id="SkelomaeWings">
+				<Category Id="SkelomaeWingsLeft">
+					<Bones>
+						mkl_wingbase_l
+						mkl_wingarm_a_l
+						mkl_wingarm_b_l
+						mkl_wingarm_c_l
+						mkl_wingarm_d_l
+					</Bones>
+				</Category>
+				<Category Id="SkelomaeWingsRight">
+					<Bones>
+						mkl_wingbase_r
+						mkl_wingarm_a_r
+						mkl_wingarm_b_r
+						mkl_wingarm_c_r
+						mkl_wingarm_d_r
+					</Bones>
+				</Category>
+			</Category>
 			<Category Id="Breasts">
 				<Bones>
 					j_mune_l
@@ -314,6 +334,85 @@
 						iv_c_mune_l
 						iv_c_mune_r
 					</Bones>
+				</Category>
+			</Category>
+			<Category Id="SkelomaeCreatures">
+				<Category Id="SkelomaeCreaturesLamia">
+					<Category Id="SkelomaeCreaturesGenetals" IsNsfw="true">
+						<Bones>
+							lamia_clucoa_l
+							lamia_clucoa_r
+						</Bones>
+					</Category>
+					<Bones>
+						lamia_a
+						lamia_b
+						lamia_c
+						lamia_d
+						lamia_e
+						lamia_f
+						lamia_g
+						lamia_h
+						lamia_i
+						lamia_j
+						lamia_k
+						lamia_l
+						lamia_m
+						lamia_n
+						lamia_o
+						lamia_p
+						lamia_q
+						lamia_r
+						lamia_s
+						lamia_t
+						lamia_u
+					</Bones>
+				</Category>
+				<Category Id="SkelomaeCreaturesCentaur">
+					<Category Id="SkelomaeCreaturesCentaurBody">
+						<Bones>
+							rf_centaur_body
+							rf_centaur_hip
+							rf_centaur_shoulder_f_l
+							rf_centaur_shoulder_f_r
+						</Bones>
+					</Category>
+					<Category Id="SkelomaeCreaturesCentaurTail">
+						<Bones>
+							rf_centaur_tail_a
+							rf_centaur_tail_b
+							rf_centaur_tail_c
+							rf_centaur_tail_d
+						</Bones>
+					</Category>
+					<Category Id="SkelomaeCreaturesCentaurBodyFrontLegs">
+						<Bones>
+							rf_centaur_farm_a_l
+							rf_centaur_farm_b_l
+							rf_centaur_farm_c_l
+							rf_centaur_farm_d_l
+							rf_centaur_farm_e_l
+							rf_centaur_farm_a_r
+							rf_centaur_farm_b_r
+							rf_centaur_farm_c_r
+							rf_centaur_farm_d_r
+							rf_centaur_farm_e_r
+						</Bones>
+					</Category>
+					<Category Id="SkelomaeCreaturesCentaurBodyBackLegs">
+						<Bones>
+							rf_centaur_bleg_a_l
+							rf_centaur_bleg_b_l
+							rf_centaur_bleg_c_l
+							rf_centaur_bleg_d_l
+							rf_centaur_bleg_e_l
+							rf_centaur_bleg_a_r
+							rf_centaur_bleg_b_r
+							rf_centaur_bleg_c_r
+							rf_centaur_bleg_d_r
+							rf_centaur_bleg_e_r
+						</Bones>
+					</Category>
 				</Category>
 			</Category>
 		</Category>
