@@ -36,9 +36,6 @@ public static class CategoryReader {
 			IsDefault = reader.GetAttribute("IsDefault") == "true"
 		};
 		
-		Ktisis.Log.Debug($"Reading category: {category.Name}");
-		Ktisis.Log.Debug($"Category: {category.Name}, IsDefault: {category.IsDefault}, IsNsfw: {category.IsNsfw}");
-		
 		categories.AddCategory(category);
 
 		while (reader.Read()) {
