@@ -210,10 +210,11 @@ public class MakeTypeData {
 			var dataId = discover.CalcDataIdFor(data.Tribe, data.Gender);
 			
 			var face = data.GetFeature(CustomizeIndex.FaceType);
+			// TODO cleanup highlander face selections
 			if (face != null) {
 				var faceIds = discover.GetFaceTypes(dataId)
 					.Except(face.Params.Select(param => param.Value));
-				if (data.Tribe is Tribe.Dunesfolk or Tribe.Hellsguard or Tribe.MoonKeeper)
+				if (data.Tribe is Tribe.Dunesfolk or Tribe.Hellsguard or Tribe.MoonKeeper or Tribe.Duskwight)
 					faceIds = faceIds.Except(face.Params.Select(param => (byte)(param.Value + 100)));
 				ConcatFeatIds(face, faceIds);
 			}

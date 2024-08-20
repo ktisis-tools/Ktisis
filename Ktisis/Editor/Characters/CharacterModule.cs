@@ -141,9 +141,16 @@ public class CharacterModule : HookModule {
 		if (state.Customize.IsSet(CustomizeIndex.Tribe) || state.Customize.IsSet(CustomizeIndex.FaceType)) {
 			var dataId = this._discovery.CalcDataIdFor(customize->Tribe, customize->Gender);
 			var isValid = this._discovery.IsFaceIdValidFor(dataId, customize->FaceType);
+
 			Ktisis.Log.Debug($"Face {customize->FaceType} for {dataId} is valid? {isValid}");
 			if (!isValid) {
-				var newId = this._discovery.FindBestFaceTypeFor(dataId, customize->FaceType);
+				// highlander patch
+				var newId = customize->FaceType;
+				if (customize->Tribe == Tribe.Highlander && newId < 101) {
+					newId += 100;
+				} else {
+					newId = this._discovery.FindBestFaceTypeFor(dataId, customize->FaceType);
+				}
 				Ktisis.Log.Debug($"\tSetting {newId} as next best face type");
 				state.Customize.SetIfActive(CustomizeIndex.FaceType, newId);
 				customize->FaceType = newId;
