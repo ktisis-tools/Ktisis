@@ -50,7 +50,8 @@ public class LocaleManager {
 
 	public string GetBoneName(string name) {
 		var key = $"bone.{name}";
-		return this.HasTranslationFor(key) ? this.Translate(key) : name;
+		var friendly_bone_names = this._cfg.File.Categories.ShowFriendlyBoneNames;
+		return friendly_bone_names && this.HasTranslationFor(key) ? this.Translate(key) : name;
 	}
 
 	public string GetCategoryName(BoneCategory category) {

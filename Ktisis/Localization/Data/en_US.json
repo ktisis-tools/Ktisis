@@ -172,6 +172,8 @@
 			"hint_nsfw": "Requires IVCS or any custom skeleton",
 			"show_all_viera_ears": "Show unused ear bones",
 			"hint_viera_ears": "Show bones for all viera ears, including those for other ear options.",
+			"show_friendly_bone_names": "Display friendly bone names",
+			"hint_friendly_bones": "Use localized names for bones where available, rather than SE defaults.",
 			"header": "Categories:",
 			"editor": {
 				"color_header": "Colors:",
