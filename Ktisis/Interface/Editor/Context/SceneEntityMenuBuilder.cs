@@ -92,9 +92,10 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
-		if (!this._ctx.Plugin.Ipc.IsPenumbraActive) return;
-		
-		menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
+		if (this._ctx.Plugin.Ipc.IsPenumbraActive)
+			menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
+		if (this._ctx.Plugin.Ipc.IsCustomizeActive)
+			menu.Action("Assign C+ profile", () => this.Ui.OpenAssignCProfile(actor));
 	}
 	
 	// Poses

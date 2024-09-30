@@ -25,6 +25,7 @@ public interface IEditorInterface {
 	public void OpenSceneEntityMenu(SceneEntity entity);
 
 	public void OpenAssignCollection(ActorEntity entity);
+	public void OpenAssignCProfile(ActorEntity entity);
 	public void OpenOverworldActorList();
 
 	public void OpenRenameEntity(SceneEntity entity);

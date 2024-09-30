@@ -34,6 +34,7 @@ public class ActorCollectionPopup : KtisisPopup {
 	protected override void OnDraw() {
 		if (!this._entity.IsValid || !this._ctx.Plugin.Ipc.IsPenumbraActive) {
 			this.Close();
+			Ktisis.Log.Info("Stale, closing.");
 			return;
 		}
 
