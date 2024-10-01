@@ -209,6 +209,9 @@ public class EntityCharaConverter {
 			if (GetEquipModelId(file, index) is {} model)
 				this._equip.SetEquipIndex(index, model);
 		}
+
+		file.Glasses ??= new CharaFile.GlassesSave();
+		this._equip.SetGlassesId(0, file.Glasses.GlassesId);
 	}
 
 	private EntityCharaConverter SetWeaponIndex(CharaFile file, WeaponIndex index) {
@@ -316,6 +319,7 @@ public class EntityCharaConverter {
 		file.Wrists = this.SaveItem(EquipIndex.Bracelet);
 		file.LeftRing = this.SaveItem(EquipIndex.RingLeft);
 		file.RightRing = this.SaveItem(EquipIndex.RingRight);
+		file.Glasses = this.SaveGlasses();
 	}
 
 	private CharaFile.WeaponSave SaveWeapon(WeaponIndex index) {
@@ -326,6 +330,11 @@ public class EntityCharaConverter {
 	private CharaFile.ItemSave SaveItem(EquipIndex index) {
 		var model = this._equip.GetEquipIndex(index);
 		return new CharaFile.ItemSave(model);
+	}
+
+	private CharaFile.GlassesSave SaveGlasses() {
+		var id = this._equip.GetGlassesId();
+		return new CharaFile.GlassesSave(id);
 	}
 	
 	// Misc saving
