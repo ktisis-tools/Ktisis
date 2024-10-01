@@ -63,11 +63,23 @@ public class PoseContainer : Dictionary<string, Transform> {
 
 	public unsafe void Apply(
 		Skeleton* modelSkeleton,
+		PoseMode modes = PoseMode.All,
 		PoseTransforms transforms = PoseTransforms.Rotation
 	) {
 		if (modelSkeleton == null) return;
-		for (var p = 0; p < modelSkeleton->PartialSkeletonCount; p++)
+		for (var p = 0; p < modelSkeleton->PartialSkeletonCount; p++) {
+			switch (p) {
+				case 1 or 2:
+					if (!modes.HasFlag(PoseMode.Face))
+						continue;
+					break;
+				default:
+					if (!modes.HasFlag(PoseMode.Body))
+						continue;
+					break;
+			}
 			this.ApplyToPartial(modelSkeleton, p, transforms);
+		}
 	}
 
 	public unsafe void ApplyToBones(

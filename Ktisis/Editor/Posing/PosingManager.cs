@@ -141,6 +141,7 @@ public class PosingManager : IPosingManager {
 			converter.LoadReferencePose();
 			var final = converter.Save();
 			this._context.Actions.History.Add(new PoseMemento(converter) {
+				Modes = PoseMode.All,
 				Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
 				Bones = null,
 				Initial = initial,
@@ -152,6 +153,7 @@ public class PosingManager : IPosingManager {
 	public Task ApplyPoseFile(
 		EntityPose pose,
 		PoseFile file,
+		PoseMode modes = PoseMode.All,
 		PoseTransforms transforms = PoseTransforms.Rotation,
 		bool selectedBones = false,
 		bool anchorGroups = false
@@ -167,9 +169,10 @@ public class PosingManager : IPosingManager {
 			if (selectedBones)
 				converter.LoadSelectedBones(file.Bones, transforms);
 			else
-				converter.Load(file.Bones, transforms);
+				converter.Load(file.Bones, modes, transforms);
 
 			mementos.Add(new PoseMemento(converter) {
+				Modes = modes,
 				Transforms = transforms,
 				Bones = selectedBones ? converter.GetSelectedBones().ToList() : null,
 				Initial = selectedBones ? converter.FilterSelectedBones(initial) : initial,
@@ -181,6 +184,7 @@ public class PosingManager : IPosingManager {
 				converter.LoadBones(initial, restored, PoseTransforms.Position);
 
 				mementos.Add(new PoseMemento(converter) {
+					Modes = modes,
 					Transforms = PoseTransforms.Position,
 					Bones = restored,
 					Initial = converter.FilterSelectedBones(file.Bones, false),

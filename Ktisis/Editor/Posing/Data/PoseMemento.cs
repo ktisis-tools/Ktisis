@@ -6,6 +6,7 @@ using Ktisis.Editor.Posing.Types;
 namespace Ktisis.Editor.Posing.Data;
 
 public class PoseMemento(EntityPoseConverter converter) : IMemento {
+	public required PoseMode Modes { get; init; }
 	public required PoseTransforms Transforms { get; init; }
 	public required List<PartialBoneInfo>? Bones { get; init; }
 	public required PoseContainer Initial { get; init; }
@@ -21,7 +22,7 @@ public class PoseMemento(EntityPoseConverter converter) : IMemento {
 			var bones = converter.IntersectBonesByName(this.Bones);
 			converter.LoadBones(pose, bones, this.Transforms);
 		} else {
-			converter.Load(pose, this.Transforms);
+			converter.Load(pose, this.Modes, this.Transforms);
 		}
 	}
 }

@@ -36,11 +36,12 @@ public class EntityPoseConverter(EntityPose target) {
 
 	public unsafe void Load(
 		PoseContainer pose,
+		PoseMode mode,
 		PoseTransforms transforms
 	) {
 		var skeleton = target.GetSkeleton();
 		if (skeleton == null) return;
-		pose.Apply(skeleton, transforms);
+		pose.Apply(skeleton, mode, transforms);
 	}
 
 	public unsafe void LoadPartial(
