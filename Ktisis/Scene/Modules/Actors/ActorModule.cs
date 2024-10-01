@@ -1,4 +1,5 @@
 using System;
+`using System.Linq;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
@@ -152,7 +153,7 @@ public class ActorModule : SceneModule {
 		return null;
 	}
 
-	internal ActorEntity? AddActor(IGameObject actor, bool addCompanion) {
+	private ActorEntity? AddActor(IGameObject actor, bool addCompanion) {
 		if (!actor.IsValid()) {
 			Ktisis.Log.Warning($"Actor address at 0x{actor.Address:X} is invalid.");
 			return null;
@@ -172,6 +173,31 @@ public class ActorModule : SceneModule {
 		if (actor is null or { ObjectIndex: 0 } || !actor.IsValid()) return;
 		
 		this.Scene.Factory.BuildActor(actor).Add();
+	}
+	
+	public void RefreshGPoseActors() {
+		var current = this.Scene.Children
+			.Where(entity => entity is ActorEntity)
+			.Cast<ActorEntity>()
+			.ToList();
+
+		foreach (var actor in current) {
+			if (!actor.IsValid) continue;
+
+			var entityForActor = this.Scene.GetEntityForActor(actor.Actor);
+			if (entityForActor == null) continue;
+
+			unsafe {
+				if (entityForActor.Character != null) continue;
+			}
+
+			this.Delete(entityForActor);
+		}
+
+		foreach (var actor in this._actors.GetGPoseActors()) {
+			if (this.Scene.GetEntityForActor(actor) is not null) continue;
+			this.AddActor(actor, false);
+		}
 	}
 	
 	// Hooks

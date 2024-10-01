@@ -31,7 +31,6 @@ public class ContextBuilder {
 	private readonly IKeyState _keyState;
 	private readonly NamingService _naming;
 	private readonly FormatService _format;
-	private readonly ActorService _actorService;
 
 	public ContextBuilder(
 		GPoseService gpose,
@@ -40,8 +39,7 @@ public class ContextBuilder {
 		IDataManager data,
 		IKeyState keyState,
 		NamingService naming,
-		FormatService format,
-		ActorService actorService
+		FormatService format
 	) {
 		this._gpose = gpose;
 		this._interop = interop;
@@ -50,7 +48,6 @@ public class ContextBuilder {
 		this._keyState = keyState;
 		this._naming = naming;
 		this._format = format;
-		this._actorService = actorService;
 	}
 
 	public IEditorContext Create(
@@ -72,7 +69,7 @@ public class ContextBuilder {
 			Animation = new AnimationManager(context, scope, this._data, this._framework),
 			Cameras = new CameraManager(context, scope),
 			Characters = new CharacterManager(context, scope, this._framework),
-			Interface = new EditorInterface(context, state.Gui, this._actorService),
+			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
 			Scene = new SceneManager(context, scope, factory),
 			Selection = select,
