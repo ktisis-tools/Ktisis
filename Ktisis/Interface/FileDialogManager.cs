@@ -5,6 +5,7 @@ using System.Linq;
 using Dalamud.Utility;
 
 using GLib.Popups.ImFileDialog;
+using GLib.Popups.ImFileDialog.Data;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
@@ -59,6 +60,7 @@ public class FileDialogManager {
 		FileDialogOptions? options = null
 	) {
 		options ??= new FileDialogOptions();
+		this.PopulateOptions(options);
 
 		var dialog = new FileDialog(name, (sender, paths) => {
 			this.SaveDialogState(sender);
@@ -88,6 +90,7 @@ public class FileDialogManager {
 		FileDialogOptions? options = null
 	) {
 		options ??= new FileDialogOptions();
+		this.PopulateOptions(options);
 
 		var dialog = new FileDialog(name, (sender, paths) => {
 			this.SaveDialogState(sender);
@@ -127,5 +130,22 @@ public class FileDialogManager {
 		
 		this._img.BindMetadata(dialog);
 		return this.OpenDialog(dialog);
+	}
+	
+	// Options
+
+	private FileDialogLocation? AutoSaveLoc;
+
+	private void PopulateOptions(FileDialogOptions options) {
+		var savePath = this._cfg.File.AutoSave.FilePath;
+		if (this.AutoSaveLoc == null)
+			this.AutoSaveLoc = new FileDialogLocation("AutoSave", savePath);
+		else if (this.AutoSaveLoc.FullPath != savePath)
+			this.AutoSaveLoc.FullPath = savePath;
+		
+		if (!options.Locations.Contains(this.AutoSaveLoc)) {
+			options.Locations.Add(this.AutoSaveLoc);
+			Ktisis.Log.Info($"Added autosave: {savePath}");
+		}
 	}
 }
