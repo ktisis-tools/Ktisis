@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using GLib.Popups.ImFileDialog;
@@ -19,21 +20,26 @@ using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
+using Ktisis.Scene.Modules.Actors;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Editor;
 
 public class EditorInterface : IEditorInterface {
 	private readonly IEditorContext _ctx;
 	private readonly GuiManager _gui;
+	private readonly ActorService _actors;
 
 	private readonly GizmoManager _gizmo;
 	
 	public EditorInterface(
 		IEditorContext ctx,
-		GuiManager gui
+		GuiManager gui,
+		ActorService actors
 	) {
 		this._ctx = ctx;
 		this._gui = gui;
+		this._actors = actors;
 		this._gizmo = new(ctx.Config);
 	}
 	
@@ -90,6 +96,35 @@ public class EditorInterface : IEditorInterface {
 	public void OpenAssignCProfile(ActorEntity entity) => this._gui.CreatePopup<ActorCProfilePopup>(this._ctx, entity).Open();
 
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
+	
+	public void RefreshGposeActors() {
+		var scene = this._ctx.Scene;
+		var module = scene.GetModule<ActorModule>();
+
+		var current = 	_ctx.Scene.Children
+			.Where(entity => entity is ActorEntity)
+			.Cast<ActorEntity>()
+			.ToList();
+
+		foreach (var actor in current) {
+			if (!actor.IsValid) continue;
+
+			var entityForActor = scene.GetEntityForActor(actor.Actor);
+			if (entityForActor == null) continue;
+
+			unsafe {
+				if ((IntPtr) entityForActor.Character != IntPtr.Zero) continue;
+			}
+			
+			module.Delete(entityForActor);
+		}
+		
+		foreach (var actor in this._actors.GetGPoseActors()) {
+			if (scene.GetEntityForActor(actor) is not null) continue;
+			
+			module.AddActor(actor, false);
+		}
+	}
 	
 	// Entity windows
 	

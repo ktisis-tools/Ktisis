@@ -152,7 +152,7 @@ public class ActorModule : SceneModule {
 		return null;
 	}
 
-	private ActorEntity? AddActor(IGameObject actor, bool addCompanion) {
+	internal ActorEntity? AddActor(IGameObject actor, bool addCompanion) {
 		if (!actor.IsValid()) {
 			Ktisis.Log.Warning($"Actor address at 0x{actor.Address:X} is invalid.");
 			return null;

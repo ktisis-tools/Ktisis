@@ -114,6 +114,9 @@ public class WorkspaceWindow : KtisisWindow {
 	private void DrawSceneTreeButtons() {
 		if (Buttons.IconButton(FontAwesomeIcon.Plus))
 			this.Interface.OpenSceneCreateMenu();
+		ImGui.SameLine();
+		if (Buttons.IconButton(FontAwesomeIcon.Sync))
+			this.Interface.RefreshGposeActors();
 	}
 }
  
