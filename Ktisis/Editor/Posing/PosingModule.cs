@@ -49,7 +49,7 @@ public sealed class PosingModule : HookModule {
 	// SetBoneModelSpace
 	
 	[Signature("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1", DetourName = nameof(SetBoneModelSpace))]
-	public Hook<SetBoneModelSpaceDelegate> _setBoneModelSpaceHook = null!;
+	private Hook<SetBoneModelSpaceDelegate> _setBoneModelSpaceHook = null!;
 	public delegate ulong SetBoneModelSpaceDelegate(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate);
 
 	private ulong SetBoneModelSpace(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate) => boneId;
@@ -57,7 +57,7 @@ public sealed class PosingModule : HookModule {
 	// SyncModelSpace
 
 	[Signature("48 83 EC 18 80 79 38 00", DetourName = nameof(SyncModelSpace))]
-	public Hook<SyncModelSpaceDelegate> _syncModelSpaceHook = null!;
+	private Hook<SyncModelSpaceDelegate> _syncModelSpaceHook = null!;
 	public unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
 
 	private unsafe void SyncModelSpace(hkaPose* pose) {
@@ -70,7 +70,7 @@ public sealed class PosingModule : HookModule {
 	// CalcBoneModelSpace
 	
 	[Signature("40 53 48 83 EC 10 4C 8B 49 28", DetourName = nameof(CalcBoneModelSpace))]
-	public Hook<CalcBoneModelSpaceDelegate> _calcBoneModelSpaceHook = null!;
+	private Hook<CalcBoneModelSpaceDelegate> _calcBoneModelSpaceHook = null!;
 	public delegate nint CalcBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
 
 	private unsafe nint CalcBoneModelSpace(ref hkaPose pose, int boneIdx) {
@@ -116,10 +116,10 @@ public sealed class PosingModule : HookModule {
 	// Pose preservation handlers
 
 	[Signature("E8 ?? ?? ?? ?? 48 C1 E5 08", DetourName = nameof(SetSkeletonDetour))]
-	private Hook<SetSkeletonDelegate> SetSkeletonHook = null!;
+	private Hook<SetSkeletonDelegate> _setSkeletonHook = null!;
 	private unsafe delegate byte SetSkeletonDelegate(Skeleton* skeleton, ushort partialId, nint a3);
 	private unsafe byte SetSkeletonDetour(Skeleton* skeleton, ushort partialId, nint a3) {
-		var result = this.SetSkeletonHook.Original(skeleton, partialId, a3);
+		var result = this._setSkeletonHook.Original(skeleton, partialId, a3);
 		try {
 			this.HandleRestoreState(skeleton, partialId);
 		} catch (Exception err) {

@@ -1,8 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
+
+using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Characters.Handlers;
@@ -53,7 +58,29 @@ public class CharacterManager : ICharacterManager {
 	}
 
 	private unsafe void Subscribe() {
-		this.Module!.OnDisableDraw += (gameObj, drawObj) => this.OnDisableDraw?.Invoke(gameObj, drawObj);
+		this.Module!.OnDisableDraw += this.HandleDisableDraw;
+		this.Module!.OnEnableDraw += this.HandleEnableDraw;
+	}
+	
+	// Event handlers
+
+	private readonly Dictionary<ushort, Transform> _savedTransforms = new();
+
+	private unsafe void HandleDisableDraw(IGameObject gameObj, DrawObject* drawObj) {
+		this.OnDisableDraw?.Invoke(gameObj, drawObj);
+		if (drawObj != null)
+			this._savedTransforms[gameObj.ObjectIndex] = *(Transform*)&drawObj->Position;
+	}
+
+	private unsafe void HandleEnableDraw(CSGameObject* gameObj) {
+		var index = gameObj->ObjectIndex;
+		if (!this._savedTransforms.TryGetValue(index, out var transform))
+			return;
+
+		if (gameObj->DrawObject != null)
+			*(Transform*)&gameObj->DrawObject->Position = transform;
+
+		this._savedTransforms.Remove(index);
 	}
 	
 	// Editors

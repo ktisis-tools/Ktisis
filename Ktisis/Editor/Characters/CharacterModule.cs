@@ -17,6 +17,8 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.Editor.Characters;
 
+public unsafe delegate void EnableDrawHandler(GameObject* gameObject);
+
 public class CharacterModule : HookModule {
 	private readonly ICharacterManager Manager;
 
@@ -26,6 +28,7 @@ public class CharacterModule : HookModule {
 	private bool IsValid => this.Manager.IsValid;
 
 	public event DisableDrawHandler? OnDisableDraw;
+	public event EnableDrawHandler? OnEnableDraw;
 
 	public CharacterModule(
 		IHookMediator hook,
@@ -81,6 +84,7 @@ public class CharacterModule : HookModule {
 		try {
 			this._prepareCharaFor = gameObject;
 			result = this.EnableDrawHook.Original(gameObject);
+			this.OnEnableDraw?.Invoke(gameObject);
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to handle character update:\n{err}");
 		} finally {

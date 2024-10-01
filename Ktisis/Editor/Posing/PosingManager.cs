@@ -114,20 +114,16 @@ public class PosingManager : IPosingManager {
 		var pose = new PoseContainer();
 		pose.Store(skeleton);
 		this._savedPoses[objectIndex] = new PoseState {
-			Pose = pose,
-			Transform = new Transform(trans)
+			Pose = pose
 		};
 	}
 
 	private unsafe void RestorePoseFor(ushort objectIndex, Skeleton* skeleton, ushort partialId) {
 		if (!this._savedPoses.TryGetValue(objectIndex, out var state)) return;
 		state.Pose.ApplyToPartial(skeleton, partialId, PoseTransforms.Rotation | PoseTransforms.PositionRoot);
-		if (partialId == 0 && skeleton->Owner != null)
-			((CharacterBaseEx*)skeleton->Owner)->Transform = state.Transform;
 	}
 
 	private record PoseState {
-		public required Transform Transform;
 		public required PoseContainer Pose;
 	}
 	
