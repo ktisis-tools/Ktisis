@@ -130,10 +130,16 @@ public class ActorModule : SceneModule {
 
 	private void ReassignParentIndex(IGameObject gameObject) {
 		var ipcMgr = this.Scene.Context.Plugin.Ipc;
-		if (!ipcMgr.IsPenumbraActive) return;
-
-		var ipc = ipcMgr.GetPenumbraIpc();
-		ipc.SetAssignedParentIndex(gameObject, gameObject.ObjectIndex);
+		if (ipcMgr.IsPenumbraActive) {
+			var penumbra = ipcMgr.GetPenumbraIpc();
+			penumbra.SetAssignedParentIndex(gameObject, gameObject.ObjectIndex);
+		}
+		if (ipcMgr.IsCustomizeActive) {
+			var customize = ipcMgr.GetCustomizeIpc();
+			
+			if (customize.IsCompatible())
+				customize.SetCutsceneParentIndex(gameObject.ObjectIndex, gameObject.ObjectIndex);
+		}
 	}
 	
 	// Entities
