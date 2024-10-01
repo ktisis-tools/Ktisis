@@ -258,6 +258,7 @@
 			"title": "AutoSave",
 			"enable": "Enable auto saves",
 			"clear": "Clear auto saves on exit",
+			"disconnect": "Always save on server disconnect",
 			"interval": "Save interval",
 			"count": "Save count",
 			"path": "Save path",

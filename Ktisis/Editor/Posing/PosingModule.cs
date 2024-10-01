@@ -19,6 +19,7 @@ public sealed class PosingModule : HookModule {
 	private readonly ActorService _actors;
 
 	public event SkeletonInitHandler? OnSkeletonInit;
+	public event Action? OnDisconnect;
 
 	public PosingModule(
 		IHookMediator hook,
@@ -50,7 +51,7 @@ public sealed class PosingModule : HookModule {
 	
 	[Signature("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1", DetourName = nameof(SetBoneModelSpace))]
 	private Hook<SetBoneModelSpaceDelegate> _setBoneModelSpaceHook = null!;
-	public delegate ulong SetBoneModelSpaceDelegate(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate);
+	private delegate ulong SetBoneModelSpaceDelegate(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate);
 
 	private ulong SetBoneModelSpace(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate) => boneId;
 	
@@ -58,7 +59,7 @@ public sealed class PosingModule : HookModule {
 
 	[Signature("48 83 EC 18 80 79 38 00", DetourName = nameof(SyncModelSpace))]
 	private Hook<SyncModelSpaceDelegate> _syncModelSpaceHook = null!;
-	public unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
+	private unsafe delegate void SyncModelSpaceDelegate(hkaPose* pose);
 
 	private unsafe void SyncModelSpace(hkaPose* pose) {
 		if (this.Manager.IsSolvingIk)
@@ -71,7 +72,7 @@ public sealed class PosingModule : HookModule {
 	
 	[Signature("40 53 48 83 EC 10 4C 8B 49 28", DetourName = nameof(CalcBoneModelSpace))]
 	private Hook<CalcBoneModelSpaceDelegate> _calcBoneModelSpaceHook = null!;
-	public delegate nint CalcBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
+	private delegate nint CalcBoneModelSpaceDelegate(ref hkaPose pose, int boneIdx);
 
 	private unsafe nint CalcBoneModelSpace(ref hkaPose pose, int boneIdx) {
 		if (this.Manager.IsSolvingIk)
@@ -144,5 +145,18 @@ public sealed class PosingModule : HookModule {
 		if (partialId == 0)
 			this._updatePosHook.Original(actor.Address);
 		this.OnSkeletonInit?.Invoke(actor, skeleton, partialId);
+	}
+
+	[Signature("E8 ?? ?? ?? ?? 84 C0 0F 44 FE", DetourName = nameof(DisconnectDetour))]
+	private Hook<DisconnectDelegate> _disconnectHook = null!;
+	private delegate nint DisconnectDelegate(nint a1);
+
+	private nint DisconnectDetour(nint a1) {
+		try {
+			this.OnDisconnect?.Invoke();
+		} catch (Exception err) {
+			Ktisis.Log.Error(err.ToString());
+		}
+		return this._disconnectHook.Original(a1);
 	}
 }

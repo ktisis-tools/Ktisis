@@ -153,6 +153,7 @@ public class ConfigWindow : KtisisWindow {
 		var cfg = this.Config.AutoSave;
 
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.enable"), ref cfg.Enabled);
+		ImGui.Checkbox(this.Locale.Translate("config.autosave.disconnect"), ref cfg.OnDisconnect);
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.clear"), ref cfg.ClearOnExit);
 		
 		ImGui.Spacing();

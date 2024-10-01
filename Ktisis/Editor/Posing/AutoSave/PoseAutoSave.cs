@@ -64,7 +64,7 @@ public class PoseAutoSave : IDisposable {
 			this._framework.RunOnFrameworkThread(this.Save);
 	}
 
-	private void Save() {
+	public void Save() {
 		var prefix = this._format.Replace(this._cfg.FolderFormat);
 		var folder = Path.Combine(this._cfg.FilePath, prefix);
 		this._prefixes.Enqueue(prefix);
