@@ -260,6 +260,7 @@
 			"title": "AutoSave",
 			"enable": "Enable auto saves",
 			"clear": "Clear auto saves on exit",
+			"ondisable": "Always save on disabling posing mode",
 			"disconnect": "Always save on server disconnect",
 			"interval": "Save interval",
 			"count": "Save count",
