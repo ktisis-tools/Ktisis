@@ -49,17 +49,31 @@ public class WorkspaceState {
 		
 		var isPosing = this._ctx.Posing.IsEnabled;
 		
-		var locKey = isPosing ? "enable" : "disable";
+		var shiftHeld = ImGui.IsKeyDown(ImGuiKey.ModShift);
+		var shouldBlock = this._ctx.Config.Editor.ConfirmExit && isPosing && !shiftHeld;
+
+		var locKey = (isPosing, shouldBlock) switch {
+			(true, false) => "enable",
+			(true, true) => "enable-blocked",
+			(false, _) => "disable",
+		};
+		
+		if (shouldBlock)
+			ImGui.BeginDisabled();
 		
 		var color = isPosing ? 0xFF3AD86A : 0xFF504EC4;
 		using var button = ImRaii.PushColor(ImGuiCol.Button, isPosing ? 0xFF00FF00 : 0xFF7070C0);
 		if (ToggleButton.Draw("##KtisisPoseToggle", ref isPosing, color))
 			this._ctx.Posing.SetEnabled(isPosing);
 
-		if (ImGui.IsItemHovered()) {
+		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+			Ktisis.Log.Verbose($"Hovering over toggle button: {locKey}");
 			using var _ = ImRaii.Tooltip();
 			ImGui.Text(this._ctx.Locale.Translate($"workspace.posing.hint.{locKey}"));
 		}
+		
+		if (shouldBlock)
+			ImGui.EndDisabled();
 
 		ImGui.SameLine();
 

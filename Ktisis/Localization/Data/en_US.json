@@ -74,10 +74,12 @@
 		"posing": {
 			"toggle": {
 				"enable": "Posing Enabled",
+				"enable-blocked": "Posing Enabled, hold SHIFT & click to disable.",
 				"disable": "Posing Disabled"
 			},
 			"hint": {
 				"enable": "Bone manipulation is currently enabled.",
+				"enable-blocked": "To disable, hold SHIFT.",
 				"disable": "Bone manipulation is currently disabled."
 			}
 		},
@@ -259,6 +261,7 @@
 			"title": "AutoSave",
 			"enable": "Enable auto saves",
 			"clear": "Clear auto saves on exit",
+			"ondisable": "Always save on disabling posing mode",
 			"disconnect": "Always save on server disconnect",
 			"interval": "Save interval",
 			"count": "Save count",
