@@ -1,12 +1,19 @@
-﻿using System;
+﻿global using IPCProfileDataTuple = (
+	System.Guid UniqueId,
+	string Name,
+	string VirtualPath,
+	System.Collections.Generic.List<(string Name, ushort WorldId, byte CharacterType, ushort CharacterSubType)> Characters,
+	int Priority,
+	bool IsEnabled
+);
+
+using System;
 using System.Collections.Generic;
 
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 
 namespace Ktisis.Interop.Ipc;
-
-using IPCProfileDataTuple = (Guid UniqueId, string Name, string VirtualPath, string CharacterName, bool IsEnabled);
 
 public class CustomizeIpcProvider {
 	private readonly ICallGateSubscriber<(int, int)> _getApiVersion;

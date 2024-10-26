@@ -13,8 +13,6 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Editor.Popup;
 
-using IPCProfileDataTuple = (Guid UniqueId, string Name, string VirtualPath, string CharacterName, bool IsEnabled);
-
 public class ActorCProfilePopup : KtisisPopup {
 	private readonly IEditorContext _ctx;
 	private readonly ActorEntity _entity;
