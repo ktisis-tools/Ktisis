@@ -1,14 +1,19 @@
 using System.Numerics;
 
+using Dalamud.Utility;
+
 using ImGuiNET;
 
-using Lumina.Data;
+using Ktisis.Structs.Extensions;
+
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace Ktisis.Data.Excel {
 	[Sheet("Stain")]
-	public class Dye : ExcelRow {
+	public struct Dye(uint row) : IExcelRow<Dye> {
+		public uint RowId => row;
+		
 		public string Name { get; set; } = "";
 		public uint Color { get; set; }
 		public byte Shade { get; set; }
@@ -16,7 +21,7 @@ namespace Ktisis.Data.Excel {
 		public bool IsMetallic { get; set; }
 		public bool UnknownBool { get; set; }
 
-		public LazyRow<Stain> Stain { get; set; } = null!;
+		public RowRef<Stain> Stain { get; set; }
 
 		public bool IsValid() => Shade != 0;
 		public Vector4 ColorVector4
@@ -26,18 +31,16 @@ namespace Ktisis.Data.Excel {
 				return new Vector4(c.Z, c.Y, c.X, c.W);
 			}
 		}
-
-		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
-
-			Name = parser.ReadColumn<string>(3)!;
-			Color = parser.ReadColumn<uint>(0);
-			Shade = parser.ReadColumn<byte>(1);
-			SubOrder = parser.ReadColumn<byte>(2);
-			IsMetallic = parser.ReadColumn<bool>(4);
-
-			if (Name == "")
-				Name = "Undyed"; // TODO: translation
+		
+		public static Dye Create(ExcelPage page, uint offset, uint row) {
+			var name = page.ReadColumn<string>(3);
+			return new Dye(row) {
+				Name = !name.IsNullOrEmpty() ? name : "Undyed", // TODO: translation
+				Color = page.ReadColumn<uint>(0),
+				Shade = page.ReadColumn<byte>(1),
+				SubOrder = page.ReadColumn<byte>(2),
+				IsMetallic = page.ReadColumn<bool>(4)
+			};
 		}
 	}
 }

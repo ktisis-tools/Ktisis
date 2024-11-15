@@ -38,14 +38,14 @@ namespace Ktisis.Interop.Hooks {
 
 			EventManager.OnGPoseChange -= OnGposeChange;
 			
-            OnLogout();
+            OnLogout(0, 0);
         }
 
 		// Various event methods
 		private static void OnLogin() {
 			Sets.Init();
 		}
-		private static void OnLogout() {
+		private static void OnLogout(int type, int code) {
 			Sets.Dispose();
 		}
 

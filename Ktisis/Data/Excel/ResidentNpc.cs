@@ -1,7 +1,4 @@
-﻿using Lumina;
-using Lumina.Data;
-using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
+﻿using Lumina.Excel;
 
 using Ktisis.Data.Npc;
 using Ktisis.Structs.Actor;
@@ -9,16 +6,23 @@ using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Data.Excel {
 	[Sheet("ENpcResident", columnHash: 0xf74fa88c)]
-	public class ResidentNpc : ENpcResident, INpcBase {
+	public struct ResidentNpc(uint row) : IExcelRow<ResidentNpc>, INpcBase {
 		// Excel
+
+		public uint RowId => row;
 		
-		public LazyRow<EventNpc> EventNpc { get; set; }
-
-		public override void PopulateData(RowParser parser, GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
-
-			this.Name = this.Singular.FormatName(this.Article) ?? $"E:{this.RowId:D7}";
-			this.EventNpc = new LazyRow<EventNpc>(gameData, this.RowId, language);
+		public byte Map { get; set; }
+		
+		public RowRef<EventNpc> EventNpc { get; set; }
+		
+		public static ResidentNpc Create(ExcelPage page, uint offset, uint row) {
+			var singular = page.ReadColumn<string>(0);
+			var article = page.ReadColumn<sbyte>(7);
+			return new ResidentNpc(row) {
+				Name = singular.FormatName(article) ?? $"E:{row:D7}",
+				EventNpc = new RowRef<EventNpc>(page.Module, row, page.Language),
+				Map = page.ReadColumn<byte>(9)
+			};
 		}
 		
 		// INpcBase
@@ -27,14 +31,14 @@ namespace Ktisis.Data.Excel {
 
 		public uint HashId { get; set; }
 
-		public ushort GetModelId() => this.EventNpc.Value?.GetModelId() ?? 0;
+		public ushort GetModelId() => this.EventNpc.Value.GetModelId();
 		
-		public Customize? GetCustomize() => this.EventNpc.Value?.GetCustomize();
+		public Customize? GetCustomize() => this.EventNpc.Value.GetCustomize();
 
-		public Equipment? GetEquipment() => this.EventNpc.Value?.GetEquipment();
+		public Equipment? GetEquipment() => this.EventNpc.Value.GetEquipment();
 
-		public WeaponEquip? GetMainHand() => this.EventNpc.Value?.GetMainHand();
+		public WeaponEquip? GetMainHand() => this.EventNpc.Value.GetMainHand();
 
-		public WeaponEquip? GetOffHand() => this.EventNpc.Value?.GetOffHand();
+		public WeaponEquip? GetOffHand() => this.EventNpc.Value.GetOffHand();
 	}
 }

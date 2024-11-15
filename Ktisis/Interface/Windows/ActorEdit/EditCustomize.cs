@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 using ImGuiNET;
 
-using Lumina.Excel;
-
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -20,6 +18,8 @@ using Ktisis.Helpers.Async;
 using Ktisis.Localization;
 using Ktisis.Structs.Actor;
 using Ktisis.Interface.Windows.ActorEdit;
+
+using Lumina.Excel;
 
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
@@ -72,7 +72,7 @@ namespace Ktisis.Interface.Windows {
 		public static string FacialFeatureName = "";
 		public static List<ISharedImmediateTexture>? FacialFeatureIcons = null;
 
-		public static CharaMakeType? CharaMakeType;
+		public static CharaMakeType? CharaMakeData;
 
 		public static HumanCmp HumanCmp = new();
 
@@ -104,7 +104,9 @@ namespace Ktisis.Interface.Windows {
 		}
 		
 		private static void GetFeatureIcons(Customize custom) {
-			if (CharaMakeType == null) return;
+			if (CharaMakeData == null) return;
+
+			var data = CharaMakeData.Value;
 			
 			var features = new List<ISharedImmediateTexture>();
 			for (var i = 0; i < 7; i++) {
@@ -112,12 +114,12 @@ namespace Ktisis.Interface.Windows {
 				if (custom.Race == Race.Hrothgar)
 					index -= 4; // ???
 
-				if (index < 0 || index >= CharaMakeType.FacialFeatures.Length)
+				if (index < 0 || index >= data.FacialFeatures.Length)
 					index = 8 * i;
 
-				var iconId = (uint)CharaMakeType.FacialFeatures[index];
+				var iconId = (uint)data.FacialFeatures[index];
 				if (iconId == 0)
-					iconId = (uint)CharaMakeType.FacialFeatures[8 * i];
+					iconId = (uint)data.FacialFeatures[8 * i];
 
                 var icon = Services.Textures.GetFromGameIcon(iconId);
 				if (icon != null) features.Add(icon);
@@ -606,100 +608,98 @@ namespace Ktisis.Interface.Windows {
 
 		public static Dictionary<MenuType, List<MenuOption>> GetMenuOptions(uint index, Customize custom) {
 			var options = new Dictionary<MenuType, List<MenuOption>>();
-
-			var data = CharaMakeType;
-			if (data == null || data.RowId != index) {
-				CharaMakeType = Sheets.GetSheet<CharaMakeType>().GetRow(index)!;
+			
+			if (CharaMakeData == null || CharaMakeData.Value.RowId != index) {
+				CharaMakeData = Sheets.GetSheet<CharaMakeType>().GetRow(index);
 				MenuColors.Clear();
-				data = CharaMakeType;
 			}
+			
+			var data = CharaMakeData!.Value;
+			
+			for (int i = 0; i < CharaMakeType.MenuCt; i++) {
+				var val = data.Menus[i];
 
-			if (data != null) {
-				for (int i = 0; i < CharaMakeType.MenuCt; i++) {
-					var val = data.Menus[i];
+				if (val.Index == 0)
+					break;
 
-					if (val.Index == 0)
-						break;
+				var type = val.Type;
+				if (type == MenuType.Unknown1)
+					type = MenuType.Color;
 
-					var type = val.Type;
-					if (type == MenuType.Unknown1)
-						type = MenuType.Color;
-
-					if (type == MenuType.Color) { // I gave up on making this work procedurally
-						var menuCol = new MenuColor(val.Name, val.Index);
-						switch (val.Index) {
-							case CustomizeIndex.EyeColor:
-								menuCol.Colors = HumanCmp.GetEyeColors();
-								menuCol.AltIndex = CustomizeIndex.EyeColor2;
-								break;
-							case CustomizeIndex.FaceFeaturesColor:
-								menuCol.Colors = HumanCmp.GetEyeColors();
-								menuCol.Iterable = false;
-								break;
-							case CustomizeIndex.FacepaintColor:
-								menuCol.Colors = HumanCmp.GetFacepaintColors();
-								break;
-							case CustomizeIndex.HairColor:
-								menuCol.Colors = HumanCmp.GetHairColors(data.TribeEnum, data.GenderEnum);
-								menuCol.AltIndex = CustomizeIndex.HairColor2;
-								menuCol.AltColors = HumanCmp.GetHairHighlights();
-								break;
-							case CustomizeIndex.LipColor:
-								menuCol.Colors = HumanCmp.GetLipColors();
-								break;
-							case CustomizeIndex.SkinColor:
-								menuCol.Colors = HumanCmp.GetSkinColors(data.TribeEnum, data.GenderEnum);
-								break;
-							default:
-								Logger.Warning($"Color not implemented: {val.Index}");
-								break;
-						}
-						MenuColors.Add(menuCol);
-						continue;
+				if (type == MenuType.Color) { // I gave up on making this work procedurally
+					var menuCol = new MenuColor(val.Name, val.Index);
+					switch (val.Index) {
+						case CustomizeIndex.EyeColor:
+							menuCol.Colors = HumanCmp.GetEyeColors();
+							menuCol.AltIndex = CustomizeIndex.EyeColor2;
+							break;
+						case CustomizeIndex.FaceFeaturesColor:
+							menuCol.Colors = HumanCmp.GetEyeColors();
+							menuCol.Iterable = false;
+							break;
+						case CustomizeIndex.FacepaintColor:
+							menuCol.Colors = HumanCmp.GetFacepaintColors();
+							break;
+						case CustomizeIndex.HairColor:
+							menuCol.Colors = HumanCmp.GetHairColors(data.TribeEnum, data.GenderEnum);
+							menuCol.AltIndex = CustomizeIndex.HairColor2;
+							menuCol.AltColors = HumanCmp.GetHairHighlights();
+							break;
+						case CustomizeIndex.LipColor:
+							menuCol.Colors = HumanCmp.GetLipColors();
+							break;
+						case CustomizeIndex.SkinColor:
+							menuCol.Colors = HumanCmp.GetSkinColors(data.TribeEnum, data.GenderEnum);
+							break;
+						default:
+							Logger.Warning($"Color not implemented: {val.Index}");
+							break;
 					}
-
-					if (type == MenuType.SelectMulti) {
-						if (val.Index == CustomizeIndex.FaceFeatures)
-							FacialFeatureName = val.Name;
-						continue;
-					}
-
-					if (!options.ContainsKey(type))
-						options[type] = new();
-
-					var opt = new MenuOption(val);
-
-					if (val.HasIcon) {
-						var icons = new Dictionary<uint, ISharedImmediateTexture>();
-						if (val.IsFeature) {
-							var featMake = CharaMakeType?.FeatureMake.Value;
-							if (featMake == null) continue;
-
-							List<LazyRow<CharaMakeCustomize>> features;
-							if (val.Index == CustomizeIndex.HairStyle)
-								features = featMake.HairStyles;
-							else if (val.Index == CustomizeIndex.Facepaint)
-								features = featMake.Facepaints;
-							else continue;
-
-							foreach (var feature in features) {
-								var feat = feature.Value;
-								if (feat == null || feat.FeatureId == 0) break;
-
-								var icon = Services.Textures.GetFromGameIcon(feat.Icon);
-								if (icon != null) icons.Add(feat.FeatureId, icon);
-							}
-						} else {
-							for (var x = 0; x < val.Count; x++) {
-								var icon = Services.Textures.GetFromGameIcon(val.Params[x]);
-								if (icon != null) icons.Add(val.Graphics[x], icon);
-							}
-						}
-						opt.Select = icons;
-					}
-
-					options[type].Add(opt);
+					MenuColors.Add(menuCol);
+					continue;
 				}
+
+				if (type == MenuType.SelectMulti) {
+					if (val.Index == CustomizeIndex.FaceFeatures)
+						FacialFeatureName = val.Name;
+					continue;
+				}
+
+				if (!options.ContainsKey(type))
+					options[type] = new();
+
+				var opt = new MenuOption(val);
+
+				if (val.HasIcon) {
+					var icons = new Dictionary<uint, ISharedImmediateTexture>();
+					if (val.IsFeature) {
+						var featMake = CharaMakeData?.FeatureMake.Value;
+						if (featMake == null) continue;
+
+						List<RowRef<CharaMakeCustomize>> features;
+						if (val.Index == CustomizeIndex.HairStyle)
+							features = featMake.Value.HairStyles;
+						else if (val.Index == CustomizeIndex.Facepaint)
+							features = featMake.Value.Facepaints;
+						else continue;
+
+						foreach (var feature in features) {
+							var feat = feature.Value;
+							if (feat.FeatureId == 0) break;
+
+							var icon = Services.Textures.GetFromGameIcon(feat.Icon);
+							if (icon != null) icons.Add(feat.FeatureId, icon);
+						}
+					} else {
+						for (var x = 0; x < val.Count; x++) {
+							var icon = Services.Textures.GetFromGameIcon(val.Params[x]);
+							if (icon != null) icons.Add(val.Graphics[x], icon);
+						}
+					}
+					opt.Select = icons;
+				}
+
+				options[type].Add(opt);
 			}
 
 			return options;

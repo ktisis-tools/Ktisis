@@ -1,11 +1,15 @@
 using System.Collections.Generic;
+using System.Linq;
 
-using Lumina.Data;
+using Ktisis.Structs.Extensions;
+
 using Lumina.Excel;
 
 namespace Ktisis.Data.Excel {
 	[Sheet("HairMakeType")]
-	public class HairMakeType : ExcelRow {
+	public struct HairMakeType(uint row) : IExcelRow<HairMakeType> {
+		public uint RowId => row;
+		
 		// Properties
 
 		public const uint HairLength = 100;
@@ -14,22 +18,25 @@ namespace Ktisis.Data.Excel {
 		public uint HairStartIndex { get; set; } // 66
 		public uint FacepaintStartIndex { get; set; } // 82
 
-		public List<LazyRow<CharaMakeCustomize>> HairStyles { get; set; } = new();
-		public List<LazyRow<CharaMakeCustomize>> Facepaints { get; set; } = new();
+		public List<RowRef<CharaMakeCustomize>> HairStyles { get; set; }
+		public List<RowRef<CharaMakeCustomize>> Facepaints { get; set; }
 
 		// Build sheet
 
-		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
+		static HairMakeType IExcelRow<HairMakeType>.Create(ExcelPage page, uint offset, uint row) {
+			var hairStartIndex = page.ReadColumn<uint>(66);
+			var facePaintStartIndex = page.ReadColumn<uint>(82);
+			return new HairMakeType(row) {
+				HairStartIndex = hairStartIndex,
+				FacepaintStartIndex = facePaintStartIndex,
+				HairStyles = GetRange(page, hairStartIndex, HairLength).ToList(),
+				Facepaints = GetRange(page, facePaintStartIndex, FacepaintLength).ToList()
+			};
+		}
 
-			HairStartIndex = parser.ReadColumn<uint>(66);
-			FacepaintStartIndex = parser.ReadColumn<uint>(82);
-
-			for (var i = HairStartIndex; i < HairStartIndex + HairLength; i++)
-				HairStyles.Add(new LazyRow<CharaMakeCustomize>(gameData, i, language));
-
-			for (var i = FacepaintStartIndex; i < FacepaintStartIndex + FacepaintLength; i++)
-				Facepaints.Add(new LazyRow<CharaMakeCustomize>(gameData, i, language));
+		private static IEnumerable<RowRef<CharaMakeCustomize>> GetRange(ExcelPage page, uint start, uint length) {
+			for (var i = start; i < start + length; i++)
+				yield return page.ReadRowRef<CharaMakeCustomize>((int)i);
 		}
 	}
 }

@@ -5,14 +5,14 @@ using Ktisis.Structs.Actor;
 
 namespace Ktisis.Structs.Extensions {
 	public static class RowParserExtensions {
-		public static Customize ReadCustomize(this RowParser parser, int index) {
+		public static Customize ReadCustomize(this ExcelPage parser, int index) {
 			var result = new byte[Customize.Length];
 			for (var i = 0; i < Customize.Length; i++)
 				result[i] = parser.ReadColumn<byte>(index + i);
 			return Customize.FromBytes(result);
 		}
 		
-		public static WeaponEquip ReadWeapon(this RowParser parser, int index) {
+		public static WeaponEquip ReadWeapon(this ExcelPage parser, int index) {
 			var data = parser.ReadColumn<ulong>(index);
 			var dye = parser.ReadColumn<byte>(index + 1);
 			var dye2 = parser.ReadColumn<byte>(index + 2);
@@ -27,7 +27,7 @@ namespace Ktisis.Structs.Extensions {
 			};
 		}
 
-		public static ItemEquip ReadItem(this RowParser parser, int index) {
+		public static ItemEquip ReadItem(this ExcelPage parser, int index) {
 			var model = parser.ReadColumn<uint>(index);
 			var dye = parser.ReadColumn<byte>(index + 1);
 			var dye2 = parser.ReadColumn<byte>(index + 2);
@@ -40,7 +40,7 @@ namespace Ktisis.Structs.Extensions {
 			};
 		}
 
-		public unsafe static Equipment ReadEquipment(this RowParser parser, int index) {
+		public unsafe static Equipment ReadEquipment(this ExcelPage parser, int index) {
 			var result = new Equipment();
 			for (var i = 0; i < Equipment.SlotCount; i++)
 				result.Slots[i] = (ulong)parser.ReadItem(index + i * 3 + (i > 0 ? 1 : 0));

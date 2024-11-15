@@ -1,8 +1,10 @@
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
 
 using Dalamud.Game.ClientState.Objects.Enums;
+
+using Ktisis.Structs.Extensions;
+
+using Lumina.Excel.Sheets;
 
 using RaceEnum = Ktisis.Structs.Actor.Race;
 using TribeEnum = Ktisis.Structs.Actor.Tribe;
@@ -29,78 +31,82 @@ namespace Ktisis.Data.Excel {
 		public uint[] Params;
 		public byte[] Graphics;
 
-		public LazyRow<CharaMakeCustomize>[] Features;
+		public RowRef<CharaMakeCustomize>[] Features;
 
 		public bool HasIcon => Type == MenuType.Select;
 		public bool IsFeature => HasIcon && Graphics[0] == 0;
 	}
 
 	[Sheet("CharaMakeType")]
-	public class CharaMakeType : ExcelRow {
+	public struct CharaMakeType(uint row) : IExcelRow<CharaMakeType> {
 		// Consts
 
 		public const int MenuCt = 28;
 		public const int VoiceCt = 12;
 		public const int GraphicCt = 10;
+		public const int FacialFeaturesCt = 7 * 8;
 
 		// Properties
 
-		public LazyRow<Race> Race { get; set; } = null!;
-		public LazyRow<Tribe> Tribe { get; set; } = null!;
+		public uint RowId => row;
+
+		public RowRef<Race> Race { get; set; }
+		public RowRef<Tribe> Tribe { get; set; }
 		public sbyte Gender { get; set; }
 
-		public Menu[] Menus { get; set; } = new Menu[MenuCt];
-		public byte[] Voices { get; set; } = new byte[VoiceCt];
-		public int[] FacialFeatures { get; set; } = new int[7 * 8];
+		public Menu[] Menus { get; set; }
+		public byte[] Voices { get; set; }
+		public int[] FacialFeatures { get; set; }
 
-		public LazyRow<HairMakeType> FeatureMake { get; set; } = null!;
+		public RowRef<HairMakeType> FeatureMake { get; set; }
 
-		public RaceEnum RaceEnum => (RaceEnum)Race.Row;
-		public TribeEnum TribeEnum => (TribeEnum)Tribe.Row;
+		public RaceEnum RaceEnum => (RaceEnum)Race.RowId;
+		public TribeEnum TribeEnum => (TribeEnum)Tribe.RowId;
 		public Gender GenderEnum => (Gender)Gender;
+		
+		public static CharaMakeType Create(ExcelPage page, uint offset, uint row) {
+			var features = new int[FacialFeaturesCt];
+			for (var i = 0; i < FacialFeaturesCt; i++)
+				features[i] = page.ReadColumn<int>(3291 + i);
 
-		// Build sheet
-
-		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
-
-			Race = new LazyRow<Race>(gameData, parser.ReadColumn<int>(0), language);
-			Tribe = new LazyRow<Tribe>(gameData, parser.ReadColumn<int>(1), language);
-			Gender = parser.ReadColumn<sbyte>(2);
-
-			FeatureMake = new LazyRow<HairMakeType>(gameData, RowId, language);
-
-			for (var i = 0; i < 7 * 8; i++)
-				FacialFeatures[i] = parser.ReadColumn<int>(3291 + i);
-
+			var menus = new Menu[MenuCt];
 			for (var i = 0; i < MenuCt; i++) {
-				var ct = parser.ReadColumn<byte>(3 + 3 * MenuCt + i);
+				var ct = page.ReadColumn<byte>(3 + 3 * MenuCt + i);
 				var menu = new Menu() {
-					Name = new LazyRow<Lobby>(gameData, parser.ReadColumn<uint>(3 + i), language).Value!.Text,
-					Default = parser.ReadColumn<byte>(3 + 1 * MenuCt + i),
-					Type = (MenuType)parser.ReadColumn<byte>(3 + 2 * MenuCt + i),
+					Name = page.ReadRowRef<Lobby>(3 + i).Value.Text.ExtractText(),
+					Default = page.ReadColumn<byte>(3 + 1 * MenuCt + i),
+					Type = (MenuType)page.ReadColumn<byte>(3 + 2 * MenuCt + i),
 					Count = ct,
-					Index = (CustomizeIndex)parser.ReadColumn<uint>(3 + 6 * MenuCt + i),
+					Index = (CustomizeIndex)page.ReadColumn<uint>(3 + 6 * MenuCt + i),
 					Params = new uint[ct],
 					Graphics = new byte[GraphicCt]
 				};
 
 				if (menu.HasIcon || menu.Type == MenuType.List) {
 					for (var p = 0; p < ct; p++)
-						menu.Params[p] = parser.ReadColumn<uint>(3 + (7 + p) * MenuCt + i);
+						menu.Params[p] = page.ReadColumn<uint>(3 + (7 + p) * MenuCt + i);
 					for (var g = 0; g < GraphicCt; g++)
-						menu.Graphics[g] = parser.ReadColumn<byte>(3 + (107 + g) * MenuCt + i);
+						menu.Graphics[g] = page.ReadColumn<byte>(3 + (107 + g) * MenuCt + i);
 				}
-
+				
 				if (menu.IsFeature) {
-					var feats = new LazyRow<CharaMakeCustomize>[ct];
+					var feats = new RowRef<CharaMakeCustomize>[ct];
 					for (var x = 0; x < ct; x++)
-						feats[x] = new LazyRow<CharaMakeCustomize>(gameData, menu.Params[x]);
+						feats[x] = new RowRef<CharaMakeCustomize>(page.Module, menu.Params[x], page.Language);
 					menu.Features = feats;
 				}
 
-				Menus[i] = menu;
+				menus[i] = menu;
 			}
+			
+			return new CharaMakeType(row) {
+				Race = page.ReadRowRef<Race>(0),
+				Tribe = page.ReadRowRef<Tribe>(1),
+				Gender = page.ReadColumn<sbyte>(2),
+				FeatureMake = page.ReadRowRef<HairMakeType>((int)row),
+				FacialFeatures = features,
+				Menus = menus
+			};
 		}
 	}
 }

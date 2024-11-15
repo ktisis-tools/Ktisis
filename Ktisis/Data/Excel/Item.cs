@@ -1,8 +1,11 @@
-using Lumina.Data;
+using System.Collections.Generic;
+using System.Linq;
+
 using Lumina.Text;
 using Lumina.Excel;
 
 using Ktisis.Structs.Actor;
+using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Data.Excel {
 	public enum EquipSlot {
@@ -35,11 +38,13 @@ namespace Ktisis.Data.Excel {
 	}
 
 	[Sheet("Item")]
-	public class Item : ExcelRow {
+	public struct Item : IExcelRow<Item> {
+		public uint RowId { get; }
+		
 		public string Name { get; set; } = "";
 		public int Icon { get; set; }
 
-		public LazyRow<EquipSlotCategory> EquipSlotCategory { get; set; } = null!;
+		public RowRef<EquipSlotCategory> EquipSlotCategory { get; set; }
 
 		public ItemModel Model { get; set; } = null!;
 		public ItemModel SubModel { get; set; } = null!;
@@ -49,20 +54,20 @@ namespace Ktisis.Data.Excel {
 
 		public bool IsWeapon() => IsEquippable(EquipSlot.MainHand) || IsEquippable(EquipSlot.OffHand);
 
-		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
+		public Item(uint row, ExcelPage page) {
+			this.RowId = row;
+			
+			this.Name = page.ReadColumn<SeString>(9) ?? "";
+			this.Icon = page.ReadColumn<ushort>(10);
 
-			Name = parser.ReadColumn<SeString>(9) ?? "";
-			Icon = parser.ReadColumn<ushort>(10);
+			this.EquipSlotCategory = page.ReadRowRef<EquipSlotCategory>(17);
 
-			EquipSlotCategory = new LazyRow<EquipSlotCategory>(gameData, parser.ReadColumn<byte>(17), language);
-
-			var isWep = IsWeapon();
-			var model = parser.ReadColumn<ulong>(47);
-			var subModel = parser.ReadColumn<ulong>(48);
-			Model = new ItemModel(model, isWep);
-			SubModel = new ItemModel(subModel, isWep);
+			var isWep = this.IsWeapon();
+			this.Model = new ItemModel(page.ReadColumn<ulong>(47), isWep);
+			this.SubModel = new ItemModel(page.ReadColumn<ulong>(48), isWep);
 		}
+
+		public static Item Create(ExcelPage page, uint offset, uint row) => new(row, page);
 
 		public bool IsEquipItem(object equip) {
 			if (equip is WeaponEquip wep) {
@@ -78,16 +83,22 @@ namespace Ktisis.Data.Excel {
 	}
 
 	[Sheet("EquipSlotCategory")]
-	public class EquipSlotCategory : ExcelRow {
+	public struct EquipSlotCategory(uint row) : IExcelRow<EquipSlotCategory> {
+		public uint RowId => row;
+		
 		public sbyte[] Slots { get; set; } = new sbyte[14];
 
 		public bool IsEquippable(EquipSlot slot) => Slots[(int)slot] == 1 || (slot == EquipSlot.MainHand && Slots[1] == 1) || (slot == EquipSlot.OffHand && Slots[0] == 1);
 
-		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
+		public static EquipSlotCategory Create(ExcelPage page, uint offset, uint row) {
+			return new EquipSlotCategory(row) {
+				Slots = ReadSlots(page).ToArray()
+			};
+		}
 
+		private static IEnumerable<sbyte> ReadSlots(ExcelPage page) {
 			for (var i = 0; i < 14; i++)
-				Slots[i] = parser.ReadColumn<sbyte>(i);
+				yield return page.ReadColumn<sbyte>(i);
 		}
 	}
 }

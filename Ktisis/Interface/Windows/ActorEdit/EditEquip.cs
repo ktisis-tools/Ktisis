@@ -53,7 +53,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		public static IEnumerable<Dye>? Dyes => DyeData.Get();
 
 		public static Item? FindItem(object item, EquipSlot slot)
-			=> Items?.FirstOrDefault(i => (item is WeaponEquip ? i.IsWeapon() : i.IsEquippable(slot)) && i.IsEquipItem(item), null!);
+			=> Items?.FirstOrDefault(i => (item is WeaponEquip ? i.IsWeapon() : i.IsEquippable(slot)) && i.IsEquipItem(item));
 
 		public static EquipIndex SlotToIndex(EquipSlot slot) => (EquipIndex)(slot - ((int)slot >= 5 ? 3 : 2));
 
@@ -104,7 +104,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			
 			var glassesId = EditActor.Target->DrawData.Glasses;
 			var glasses = Glasses.GetRow(glassesId);
-			var name = glasses?.Name ?? "None";
+			var name = glasses.Name;
 			if (ImGui.BeginCombo("Glasses", name)) {
 				DrawGlassesSelection = true;
 				ImGui.CloseCurrentPopup();
@@ -222,7 +222,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		private static void DrawDyeButton(IEquipItem item, EquipSlot slot, int index) {
 			var dye = Dyes!.FirstOrDefault(i => i.RowId == item.GetDye(index));
-			if (ImGui.ColorButton($"{dye?.Name} [{dye?.RowId}]##{slot}_{index}", dye?.ColorVector4 ?? default, ImGuiColorEditFlags.NoBorder))
+			if (ImGui.ColorButton($"{dye.Name} [{dye.RowId}]##{slot}_{index}", dye.ColorVector4, ImGuiColorEditFlags.NoBorder))
 				OpenDyePicker(slot, index);
 			if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
 				SetDye(item, slot, index, 0);
@@ -433,7 +433,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				12 // number of columns
 			);
 		}
-		private static (bool, bool) DrawDyePickerItem(dynamic i, bool isActive)
+		private static (bool, bool) DrawDyePickerItem(Dye i, bool isActive)
 		{
 			bool isThisRealNewLine = PopupSelect.HoverPopupWindowIndexKey % PopupSelect.HoverPopupWindowColumns == 0;
 			bool isThisANewShade = i.SubOrder == 1;
@@ -464,7 +464,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			return (selecting, ImGui.IsItemFocused());
 		}
-		private static void DrawDyePickerHeader(dynamic i)
+		private static void DrawDyePickerHeader(Dye i)
 		{
 			// TODO: configuration to not show this
 			var textSize = ImGui.CalcTextSize(i.Name);

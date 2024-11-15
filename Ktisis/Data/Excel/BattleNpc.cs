@@ -1,7 +1,5 @@
-﻿using Lumina;
-using Lumina.Data;
-using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets;
+﻿using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 using Ktisis.Data.Npc;
 using Ktisis.Structs.Actor;
@@ -9,21 +7,23 @@ using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Data.Excel {
 	[Sheet("BNpcBase", columnHash: 0xe136dda3)]
-	public class BattleNpc : ExcelRow, INpcBase {
+	public struct BattleNpc(uint row) : IExcelRow<BattleNpc>, INpcBase {
 		// Excel
+
+		public uint RowId => row;
         
 		public float Scale { get; set; }
-		public LazyRow<ModelChara> ModelChara { get; set; } = null!;
-		private LazyRow<BNpcCustomizeSheet> CustomizeSheet { get; set; } = null!;
-		private LazyRow<NpcEquipment> NpcEquipment { get; set; } = null!;
-
-		public override void PopulateData(RowParser parser, GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
-            
-			this.Scale = parser.ReadColumn<float>(4);
-			this.ModelChara = new LazyRow<ModelChara>(gameData, parser.ReadColumn<ushort>(5), language);
-			this.CustomizeSheet = new LazyRow<BNpcCustomizeSheet>(gameData, parser.ReadColumn<ushort>(6), language);
-			this.NpcEquipment = new LazyRow<NpcEquipment>(gameData, parser.ReadColumn<ushort>(7), language);
+		public RowRef<ModelChara> ModelChara { get; set; }
+		private RowRef<BNpcCustomizeSheet> CustomizeSheet { get; set; }
+		private RowRef<NpcEquipment> NpcEquipment { get; set; }
+		
+		public static BattleNpc Create(ExcelPage page, uint offset, uint row) {
+			return new BattleNpc(row) {
+				Scale = page.ReadColumn<float>(4),
+				ModelChara = page.ReadRowRef<ModelChara>(5),
+				CustomizeSheet = page.ReadRowRef<BNpcCustomizeSheet>(6),
+				NpcEquipment = page.ReadRowRef<NpcEquipment>(7)
+			};
 		}
 		
 		// INpcBase
@@ -31,30 +31,32 @@ namespace Ktisis.Data.Excel {
 		public string Name { get; set; } = string.Empty;
 
 		public ushort GetModelId()
-			=> (ushort)this.ModelChara.Row;
+			=> (ushort)this.ModelChara.RowId;
 		
 		public Customize? GetCustomize()
-			=> this.CustomizeSheet.Row != 0 ? this.CustomizeSheet.Value?.Customize : null;
+			=> this.CustomizeSheet.RowId != 0 ? this.CustomizeSheet.Value.Customize : null;
 
 		public Equipment? GetEquipment()
-			=> this.NpcEquipment?.Value?.Equipment;
+			=> this.NpcEquipment.Value.Equipment;
 
 		public WeaponEquip? GetMainHand()
-			=> this.NpcEquipment?.Value?.MainHand;
+			=> this.NpcEquipment.Value.MainHand;
 
 		public WeaponEquip? GetOffHand()
-			=> this.NpcEquipment?.Value?.OffHand;
+			=> this.NpcEquipment.Value.OffHand;
 		
 		// Customize Sheet
 		
 		[Sheet("BNpcCustomize", columnHash: 0x18f060d4)]
-		private class BNpcCustomizeSheet : ExcelRow {
+		private struct BNpcCustomizeSheet(uint row) : IExcelRow<BNpcCustomizeSheet> {
+			public uint RowId => row;
+			
 			public Customize Customize { get; set; }
 			
-			public override void PopulateData(RowParser parser, GameData gameData, Language language) {
-				base.PopulateData(parser, gameData, language);
-                
-				this.Customize = parser.ReadCustomize(0);
+			public static BNpcCustomizeSheet Create(ExcelPage page, uint offset, uint row) {
+				return new BNpcCustomizeSheet(row) {
+					Customize = page.ReadCustomize(0)
+				};
 			}
 		}
 	}
