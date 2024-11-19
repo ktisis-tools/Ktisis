@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +19,7 @@ namespace Ktisis.Helpers
             var ret = new List<string>();
             try
             {
-                var fType = AppDomain.CurrentDomain.GetAssemblies().First(x => x.GetName().Name == "System.Windows.Forms");
+                var fType = Assembly.Load("System.Windows.Forms");
                 var clipboard = fType.GetType("System.Windows.Forms.Clipboard");
                 if((bool?)clipboard?.GetMethod("ContainsFileDropList")?.Invoke(null, []) == true)
                 {
