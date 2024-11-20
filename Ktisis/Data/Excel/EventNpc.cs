@@ -6,7 +6,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Data.Excel {
-	[Sheet("ENpcBase", columnHash: 0x927347d8)]
+	[Sheet("ENpcBase", columnHash: 0x464052CD)]
 	public struct EventNpc : IExcelRow<EventNpc>, INpcBase {
 		// Excel
 		
@@ -41,7 +41,7 @@ namespace Ktisis.Data.Excel {
 			
 			if (equipRow is 0 or 175) return;
 			
-			var equip = page.ReadRowRef<NpcEquipment>(equipRow, offset);
+			var equip = new RowRef<NpcEquipment>(page.Module, equipRow, page.Language);
 			this.Equipment = EquipOverride(this.Equipment, equip.Value.Equipment);
 		}
 

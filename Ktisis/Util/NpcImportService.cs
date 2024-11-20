@@ -87,7 +87,7 @@ namespace Ktisis.Util {
 			var nameIndexDict = await nameIndexTask;
 			return npcSheet.Skip(1).Select(row => {
 				string? name = null;
-				if (nameIndexDict.TryGetValue(row.RowId.ToString(), out var nameIndex)) {
+				if (nameIndexDict.TryGetValue(row.RowId.ToString(), out var nameIndex) && namesSheet.HasRow(nameIndex)) {
 					var nameRow = namesSheet.GetRow(nameIndex);
 					name = nameRow.Singular.ExtractText().FormatName(nameRow.Article);
 				}
