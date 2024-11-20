@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors>Chirp</Authors>
     <Company>Ktisis Tools</Company>
-    <Version>0.2.24</Version>
+    <Version>0.2.27</Version>
     <Description>An internal posing tool.</Description>
     <PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
     <Configurations>Debug;Release;External</Configurations>
