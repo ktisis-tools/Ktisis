@@ -12,8 +12,11 @@ namespace Ktisis.Interop.Hooks {
 
 		private static Hook<EnvUpdateDelegate> EnvUpdateHook = null!;
 		private unsafe static nint EnvUpdateDetour(EnvManagerEx* env, nint a2) {
-			if (Ktisis.IsInGPose && EnvService.TimeOverride != null)
+			Ktisis.Log.Info($"{(nint)env:X} {Ktisis.IsInGPose} {EnvService.TimeOverride}");
+			if (Ktisis.IsInGPose && EnvService.TimeOverride != null) {
+				Ktisis.Log.Info($"{env->Time}");
 				env->Time = EnvService.TimeOverride.Value;
+			}
 
 			return EnvUpdateHook.Original(env, a2);
 		}
@@ -67,7 +70,7 @@ namespace Ktisis.Interop.Hooks {
 		// Init & Dispose
 		
 		public unsafe static void Init() {
-			var addr1 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 41 0F 28 CA");
+			var addr1 = Services.SigScanner.ScanText("40 53 48 83 EC 30 48 8B 05 ?? ?? ?? ?? 48 8B D9 0F 29 74 24 ??");
             EnvUpdateHook = Services.Hooking.HookFromAddress<EnvUpdateDelegate>(addr1, EnvUpdateDetour);
             
 			var addr2 = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 49 3B F5 75 0D");

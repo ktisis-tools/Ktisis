@@ -34,6 +34,7 @@ namespace Ktisis.Env {
 		// Events
 		
 		private static void OnGPoseChange(bool state) {
+			Ktisis.Log.Info($"Setting env hooks: {state}");
 			EnvHooks.SetEnabled(state);
 			if (!state) {
 				TimeOverride = null;
