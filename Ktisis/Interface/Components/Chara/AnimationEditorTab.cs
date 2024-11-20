@@ -205,7 +205,7 @@ public class AnimationEditorTab {
 			var widthR = ImGui.CalcItemWidth() - ImGui.GetFrameHeight() - 40;
 			ImGui.SetNextItemWidth(widthR);
 			
-			var key = timeline?.Key?.RawString ?? string.Empty;
+			var key = timeline?.Key.ExtractText() ?? string.Empty;
 			using (var _disable = ImRaii.Disabled(key.IsNullOrEmpty()))
 				ImGui.InputText($"##s{index}", ref key, 256, ImGuiInputTextFlags.ReadOnly);
 			

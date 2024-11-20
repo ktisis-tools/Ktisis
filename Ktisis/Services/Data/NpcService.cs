@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 using Dalamud.Plugin.Services;
 
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 using Ktisis.Core.Attributes;
 using Ktisis.GameData.Excel;
@@ -61,24 +61,24 @@ public class NpcService {
 
 		var nameIndexTask = GetNameIndex();
 
-		var npcSheet = this._data.GetExcelSheet<BattleNpc>()!;
-		var namesSheet = this._data.GetExcelSheet<BNpcName>()!;
+		var npcSheet = this._data.GetExcelSheet<BattleNpc>();
+		var namesSheet = this._data.GetExcelSheet<BNpcName>();
 
 		var nameIndexDict = await nameIndexTask;
 		return npcSheet.Skip(1).Select(row => {
 			string? name = null;
-			if (nameIndexDict.TryGetValue(row.RowId.ToString(), out var nameIndex)) {
+			if (nameIndexDict.TryGetValue(row.RowId.ToString(), out var nameIndex) && namesSheet.HasRow(nameIndex)) {
 				var nameRow = namesSheet.GetRow(nameIndex);
-				name = nameRow?.Singular?.FormatName(nameRow.Article);
+				name = nameRow.Singular.ExtractText().FormatName(nameRow.Article);
 			}
 			row.Name = name ?? $"B:{row.RowId:D7}";
 			return row;
-		});
+		}).Cast<INpcBase>();
 	}
 
 	private async Task<IEnumerable<INpcBase>> GetResidentNpcs() {
 		await Task.Yield();
-		return this._data.GetExcelSheet<ResidentNpc>()!.Where(npc => npc.Map != 0);
+		return this._data.GetExcelSheet<ResidentNpc>().Where(npc => npc.Map != 0).Cast<INpcBase>();
 	}
 	
 	// Gubal BNPC index

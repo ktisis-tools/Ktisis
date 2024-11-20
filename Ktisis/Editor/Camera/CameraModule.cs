@@ -18,8 +18,6 @@ using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Camera;
 using Ktisis.Structs.Input;
 
-using Lumina.Excel.GeneratedSheets;
-
 using InputManager = Ktisis.Editor.Actions.Input.InputManager;
 
 namespace Ktisis.Editor.Camera;

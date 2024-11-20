@@ -82,7 +82,7 @@ public class ActorModule : SceneModule {
 		var address = await this._spawner.CreateActor(localPlayer);
 		var entity = this.AddSpawnedActor(address);
 		entity.Actor.SetName(PlayerNameUtil.CalcActorName(entity.Actor.ObjectIndex));
-		entity.Actor.SetWorld((ushort)localPlayer.CurrentWorld.Id);
+		entity.Actor.SetWorld((ushort)localPlayer.CurrentWorld.RowId);
 		this.ReassignParentIndex(entity.Actor);
 		return entity;
 	}

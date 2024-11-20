@@ -1,7 +1,7 @@
 using Dalamud.Interface.Textures;
 using Dalamud.Utility;
 
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace Ktisis.Services.Environment;
 
@@ -11,7 +11,7 @@ public class WeatherInfo {
 	public readonly ISharedImmediateTexture? Icon;
 
 	public WeatherInfo(Weather row, ISharedImmediateTexture? icon) {
-		var name = row.Name?.RawString;
+		var name = row.Name.ExtractText();
 		if (name.IsNullOrEmpty())
 			name = $"Weather #{row.RowId}";
 		this.Name = name;

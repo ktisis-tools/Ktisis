@@ -1,8 +1,6 @@
 ﻿using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
-using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets2;
 
 using Ktisis.Common.Extensions;
 using Ktisis.GameData.Excel.Types;
@@ -11,16 +9,20 @@ using Ktisis.Structs.Characters;
 namespace Ktisis.GameData.Excel;
 
 [Sheet("ENpcResident", columnHash: 0xf74fa88c)]
-public class ResidentNpc : ENpcResident, INpcBase {
-	// Excel
+public struct ResidentNpc(uint row) : IExcelRow<ResidentNpc>, INpcBase {
+	public uint RowId { get; } = row;
 
-	private LazyRow<EventNpc> EventNpc { get; set; } = null!;
+	public byte Map { get; init; }
+	private RowRef<EventNpc> EventNpc { get; init; }
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-		base.PopulateData(parser, gameData, language);
-
-		this.Name = this.Singular.FormatName(this.Article) ?? $"E:{this.RowId:D7}";
-		this.EventNpc = new LazyRow<EventNpc>(gameData, this.RowId, language);
+	static ResidentNpc IExcelRow<ResidentNpc>.Create(ExcelPage page, uint offset, uint row) {
+		var singular = page.ReadColumn<string>(0, offset);
+		var article = page.ReadColumn<sbyte>(7, offset);
+		return new ResidentNpc(row) {
+			Name = singular.FormatName(article) ?? $"E:{row:D7}",
+			Map = page.ReadColumn<byte>(9, offset),
+			EventNpc = new RowRef<EventNpc>(page.Module, row, page.Language)
+		};
 	}
 	
 	// INpcBase
@@ -29,11 +31,11 @@ public class ResidentNpc : ENpcResident, INpcBase {
 	
 	public uint HashId { get; set; }
 
-	public ushort GetModelId() => this.EventNpc.Value?.GetModelId() ?? ushort.MaxValue;
+	public ushort GetModelId() => this.EventNpc.IsValid ? this.EventNpc.Value.GetModelId() : ushort.MaxValue;
 
-	public CustomizeContainer? GetCustomize() => this.EventNpc.Value?.GetCustomize();
-	public EquipmentContainer? GetEquipment() => this.EventNpc.Value?.GetEquipment();
+	public CustomizeContainer? GetCustomize() => this.EventNpc.IsValid ? this.EventNpc.Value.GetCustomize() : null;
+	public EquipmentContainer? GetEquipment() => this.EventNpc.IsValid ? this.EventNpc.Value.GetEquipment() : null;
 
-	public WeaponModelId? GetMainHand() => this.EventNpc.Value?.GetMainHand();
-	public WeaponModelId? GetOffHand() => this.EventNpc.Value?.GetOffHand();
+	public WeaponModelId? GetMainHand() => this.EventNpc.IsValid ? this.EventNpc.Value.GetMainHand() : null;
+	public WeaponModelId? GetOffHand() => this.EventNpc.IsValid ? this.EventNpc.Value.GetOffHand() : null;
 }
