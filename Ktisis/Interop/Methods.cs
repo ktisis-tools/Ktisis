@@ -36,7 +36,7 @@ namespace Ktisis.Interop {
 			=> Marshal.GetDelegateForFunctionPointer<TDelegate>(Services.SigScanner.ScanText(sig));
 
 		internal static void Init() {
-			ActorLookAt = Retrieve<LookAtDelegate>("E8 ?? ?? ?? ?? 8B D3 8B CB");
+			ActorLookAt = Retrieve<LookAtDelegate>("E8 ?? ?? ?? ?? 8B D6 48 8B CF E8 ?? ?? ?? ?? EB 2A");
 			ActorChangeEquip = Retrieve<ChangeEquipDelegate>("E8 ?? ?? ?? ?? B1 01 41 FF C6");
 			ActorChangeWeapon = Retrieve<ChangeWeaponDelegate>("E8 ?? ?? ?? ?? 4C 8B 45 7F");
 			ChangeGlasses = Retrieve<ChangeGlassesDelegate>("E8 ?? ?? ?? ?? EB 50 44 8B 03");
