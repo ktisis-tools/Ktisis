@@ -35,7 +35,6 @@ public class EquipmentEditorTab {
 	private readonly PopupList<Stain> _dyeSelectPopup;
 	private readonly PopupList<Glasses> _glassesSelectPopup;
 
-
 	private IEquipmentEditor _editor;
 
 	public IEquipmentEditor Editor {
@@ -236,9 +235,13 @@ public class EquipmentEditorTab {
 	}
 
 	private void DrawDyeButton(ItemInfo info, int index) {
-		Stain? stain;
-		lock (this.Stains)
-			stain = this.Stains.FirstOrDefault(row => row.RowId == info.StainIds[index]);
+		Stain? stain = null;
+		foreach (var row in this.Stains) {
+			if (row.RowId != info.StainIds[index])
+				continue;
+			lock (this.Stains)
+				stain = row;
+		}
 
 		var color = CalcStainColor(stain);
 		var colorVec4 = ImGui.ColorConvertU32ToFloat4(color);
@@ -281,7 +284,7 @@ public class EquipmentEditorTab {
 			if (
 				this._dyeSelectPopup.Draw(this.Stains, out var selected)
 				&& this.Equipped.TryGetValue(this.DyeSelectSlot, out var info)
-			) info.SetStainId((byte)selected!.RowId, this.DyeSelectIndex);
+			) info.SetStainId((byte)selected.RowId, this.DyeSelectIndex);
 		}
 	}
 
@@ -410,14 +413,17 @@ public class EquipmentEditorTab {
 		foreach (var chunk in items.Chunk(1000)) {
 			lock (this.Items) this.Items.AddRange(chunk);
 			lock (this._equipUpdateLock) {
-				foreach (var (_, info) in this.Equipped.Where(pair => pair.Value.Item == null))
+				foreach (var (slot, info) in this.Equipped.Where(pair => pair.Value.Item == null)) {
+					if (!chunk.Any(item => item.IsEquippable(slot) && info.IsItemPredicate(item)))
+						continue;
 					info.FlagUpdate = true;
+				}
 			}
 		}
 		
 		// Glasses
 
-		var glasses = this._data.Excel.GetSheet<Glasses>()!;
+		var glasses = this._data.Excel.GetSheet<Glasses>();
 		lock (this.Glasses) this.Glasses.AddRange(glasses);
 	}
 
@@ -445,9 +451,11 @@ public class EquipmentEditorTab {
 
 		try {
 			lock (this.Items) {
-				item.Item = this.Items
-					.Where(row => row.IsEquippable(slot))
-					.FirstOrDefault(item.IsItemPredicate);
+				foreach (var row in this.Items) {
+					if (!row.IsEquippable(slot) || !item.IsItemPredicate(row)) continue;
+					item.Item = row;
+					break;
+				}
 			}
 			item.Texture = item.Item != null ? this._tex.GetFromGameIcon((uint)item.Item.Value.Icon) : null;
 			item.Texture ??= this._tex.GetFromGameIcon(GetFallbackIcon(slot));

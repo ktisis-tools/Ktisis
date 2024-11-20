@@ -361,7 +361,8 @@ public class CustomizeEditorTab {
 			iconIds = data.FaceFeatureIcons.Values.FirstOrDefault();
 		iconIds ??= Array.Empty<uint>();
 
-		var icons = iconIds.Select(id => this._tex.GetFromGameIcon(id))
+		var icons = iconIds
+			.Select(id => this._tex.GetFromGameIcon(id))
 			.Append(this._tex.GetFromGame(LegacyTexPath));
 		
 		var i = 0;

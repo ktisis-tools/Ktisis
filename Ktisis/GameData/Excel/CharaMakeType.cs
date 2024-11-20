@@ -19,7 +19,7 @@ public partial struct CharaMakeType(uint row) : IExcelRow<CharaMakeType> {
 	public uint RowId { get; } = row;
 
 	public struct CharaMakeStructStruct {
-    	public RowRef< Lobby > Menu { get; internal set; }
+    	public RowRef<Lobby> Menu { get; internal set; }
     	public uint SubMenuMask { get; internal set; }
     	public uint Customize { get; internal set; }
     	public uint[] SubMenuParam { get; internal set; }
@@ -43,8 +43,8 @@ public partial struct CharaMakeType(uint row) : IExcelRow<CharaMakeType> {
     public byte[] VoiceStruct { get; private set; }
     public int[,] FacialFeatureOption { get; private set; }
     public EquipmentStruct[] Equipment { get; private set; }
-    public RowRef< Race > Race { get; private set; }
-    public RowRef< Tribe > Tribe { get; private set; }
+    public RowRef<Race> Race { get; private set; }
+    public RowRef<Tribe> Tribe { get; private set; }
     public sbyte Gender { get; private set; }
 
 	static CharaMakeType IExcelRow<CharaMakeType>.Create(ExcelPage page, uint offset, uint row) {
@@ -55,35 +55,35 @@ public partial struct CharaMakeType(uint row) : IExcelRow<CharaMakeType> {
 			charaMakeStruct[i].Customize = page.ReadUInt32(offset + (ushort)(i * 428 + 8));
 			charaMakeStruct[i].SubMenuParam = new uint[100];
 			for (int SubMenuParamIndexer = 0; SubMenuParamIndexer < 100; SubMenuParamIndexer++)
-				charaMakeStruct[i].SubMenuParam[SubMenuParamIndexer] = page.ReadUInt32((ushort)(offset + i * 428 + 12 + SubMenuParamIndexer * 4));
+				charaMakeStruct[i].SubMenuParam[SubMenuParamIndexer] = page.ReadUInt32(offset + (ushort)(i * 428 + 12 + SubMenuParamIndexer * 4));
 			charaMakeStruct[i].InitVal = page.ReadUInt8(offset + (ushort)(i * 428 + 412));
 			charaMakeStruct[i].SubMenuType = page.ReadUInt8(offset + (ushort)(i * 428 + 413));
 			charaMakeStruct[i].SubMenuNum = page.ReadUInt8(offset + (ushort)(i * 428 + 414));
 			charaMakeStruct[i].LookAt = page.ReadUInt8(offset + (ushort)(i * 428 + 415));
 			charaMakeStruct[i].SubMenuGraphic = new byte[10];
 			for (int SubMenuGraphicIndexer = 0; SubMenuGraphicIndexer < 10; SubMenuGraphicIndexer++)
-				charaMakeStruct[i].SubMenuGraphic[SubMenuGraphicIndexer] = page.ReadUInt8((ushort)(offset + i * 428 + 416 + SubMenuGraphicIndexer * 1));
+				charaMakeStruct[i].SubMenuGraphic[SubMenuGraphicIndexer] = page.ReadUInt8(offset + (ushort)(i * 428 + 416 + SubMenuGraphicIndexer * 1));
 		}
 
 		var voiceStruct = new byte[12];
 		for (var i = 0; i < 12; i++)
-			voiceStruct[i] = page.ReadUInt8((ushort)(offset + 11984 + i * 1));
+			voiceStruct[i] = page.ReadUInt8(offset + (ushort)(11984 + i * 1));
 
 		var facialFeatureOption = new int[8,7];
 		for (var x = 0; x < 8; x++) {
 			for (var y = 0; y < 7; y++)
-				facialFeatureOption[x, y] = page.ReadUInt8( (ushort)(offset + 11996 + x * 28 + y * 4));
+				facialFeatureOption[x, y] = page.ReadInt32( offset + (ushort)(11996 + x * 28 + y * 4));
 		}
 
 		var equipment = new EquipmentStruct[3];
 		for (var i = 0; i < 3; i++) {
-			equipment[i].Helmet = page.ReadUInt64((ushort)(offset + i * 56 + 12224));
-			equipment[i].Top = page.ReadUInt64((ushort)(offset + i * 56 + 12232));
-			equipment[i].Gloves = page.ReadUInt64((ushort)(offset + i * 56 + 12240));
-			equipment[i].Legs = page.ReadUInt64((ushort)(offset + i * 56 + 12248));
-			equipment[i].Shoes = page.ReadUInt64((ushort)(offset + i * 56 + 12256));
-			equipment[i].Weapon = page.ReadUInt64((ushort)(offset + i * 56 + 12264));
-			equipment[i].SubWeapon = page.ReadUInt64((ushort)(offset + i * 56 + 12272));
+			equipment[i].Helmet = page.ReadUInt64(offset + (ushort)(i * 56 + 12224));
+			equipment[i].Top = page.ReadUInt64(offset + (ushort)(i * 56 + 12232));
+			equipment[i].Gloves = page.ReadUInt64(offset + (ushort)(i * 56 + 12240));
+			equipment[i].Legs = page.ReadUInt64(offset + (ushort)(i * 56 + 12248));
+			equipment[i].Shoes = page.ReadUInt64(offset + (ushort)(i * 56 + 12256));
+			equipment[i].Weapon = page.ReadUInt64(offset + (ushort)(i * 56 + 12264));
+			equipment[i].SubWeapon = page.ReadUInt64(offset + (ushort)(i * 56 + 12272));
 		}
 		
 		return new CharaMakeType(row) {
