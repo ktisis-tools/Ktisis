@@ -217,7 +217,7 @@ namespace Ktisis.Interop.Hooks {
 			var preUpdateAddr = Services.SigScanner.ScanText("48 83 EC 28 8B 41 48");
 			PreUpdateHook = Services.Hooking.HookFromAddress<PreUpdateDelegate>(preUpdateAddr, PreUpdateDetour);
             
-			var actCamAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 41 0F B6 DF");
+			var actCamAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 45 32 FF 40 32 F6");
             ActiveCamHook = Services.Hooking.HookFromAddress<ActiveCamDelegate>(actCamAddr, GetActiveCamDetour);
             
 			var camEventAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F8 EB 34");
