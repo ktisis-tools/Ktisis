@@ -30,17 +30,17 @@ public struct CharacterEx {
 	[FieldOffset(0x130)] public Vector3 CameraOffsetSmooth;
 	[FieldOffset(0x180)] public Vector3 CameraOffset;
 
-	[FieldOffset(0x640)] public unsafe nint* _emoteControllerVf;
-	[FieldOffset(0x640)] public EmoteController EmoteController;
+	[FieldOffset(0x620)] public unsafe nint* _emoteControllerVf;
+	[FieldOffset(0x620)] public EmoteController EmoteController;
 	
 	[FieldOffset(AnimationOffset)] public AnimationContainer Animation;
 	
 	[FieldOffset(0x0CF2)] public CombatFlags CombatFlags;
 
-	[FieldOffset(0x21C8)] public float Opacity;
+	[FieldOffset(0x2268)] public float Opacity;
 
-	[FieldOffset(0x226C)] public byte Mode;
-	[FieldOffset(0x226D)] public EmoteModeEnum EmoteMode;
+	[FieldOffset(0x22DC)] public byte Mode;
+	[FieldOffset(0x22DD)] public EmoteModeEnum EmoteMode;
 
 	public bool IsGPose => this.Character.ObjectIndex is >= 201 and <= 243;
 }
