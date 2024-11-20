@@ -6,9 +6,9 @@
 	"InternalName": "Ktisis",
 	"RepoUrl": "https://github.com/ktisis-tools/Ktisis",
 	"IconUrl": "https://github.com/ktisis-tools/Ktisis/raw/main/icon.png",
-	"AssemblyVersion": "0.3.3",
+	"AssemblyVersion": "0.3.4",
 	"ApplicableVersion": "any",
-	"DalamudApiLevel": 10,
+	"DalamudApiLevel": 11,
 	"Tags": [
 		"gpose",
 		"posing"
