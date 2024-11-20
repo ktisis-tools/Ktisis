@@ -24,8 +24,8 @@ namespace Ktisis.Data.Excel {
 		// Build sheet
 
 		static HairMakeType IExcelRow<HairMakeType>.Create(ExcelPage page, uint offset, uint row) {
-			var hairStartIndex = page.ReadColumn<uint>(66);
-			var facePaintStartIndex = page.ReadColumn<uint>(82);
+			var hairStartIndex = page.ReadColumn<uint>(66, offset);
+			var facePaintStartIndex = page.ReadColumn<uint>(82, offset);
 			return new HairMakeType(row) {
 				HairStartIndex = hairStartIndex,
 				FacepaintStartIndex = facePaintStartIndex,
@@ -36,7 +36,7 @@ namespace Ktisis.Data.Excel {
 
 		private static IEnumerable<RowRef<CharaMakeCustomize>> GetRange(ExcelPage page, uint start, uint length) {
 			for (var i = start; i < start + length; i++)
-				yield return page.ReadRowRef<CharaMakeCustomize>((int)i);
+				yield return new RowRef<CharaMakeCustomize>(page.Module, i, page.Language);
 		}
 	}
 }

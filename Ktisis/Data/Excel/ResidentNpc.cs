@@ -16,12 +16,12 @@ namespace Ktisis.Data.Excel {
 		public RowRef<EventNpc> EventNpc { get; set; }
 		
 		public static ResidentNpc Create(ExcelPage page, uint offset, uint row) {
-			var singular = page.ReadColumn<string>(0);
-			var article = page.ReadColumn<sbyte>(7);
+			var singular = page.ReadColumn<string>(0, offset);
+			var article = page.ReadColumn<sbyte>(7, offset);
 			return new ResidentNpc(row) {
 				Name = singular.FormatName(article) ?? $"E:{row:D7}",
 				EventNpc = new RowRef<EventNpc>(page.Module, row, page.Language),
-				Map = page.ReadColumn<byte>(9)
+				Map = page.ReadColumn<byte>(9, offset)
 			};
 		}
 		

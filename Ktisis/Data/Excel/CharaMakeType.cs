@@ -67,26 +67,27 @@ namespace Ktisis.Data.Excel {
 		public static CharaMakeType Create(ExcelPage page, uint offset, uint row) {
 			var features = new int[FacialFeaturesCt];
 			for (var i = 0; i < FacialFeaturesCt; i++)
-				features[i] = page.ReadColumn<int>(3291 + i);
+				features[i] = page.ReadColumn<int>(3291 + i, offset);
 
 			var menus = new Menu[MenuCt];
 			for (var i = 0; i < MenuCt; i++) {
-				var ct = page.ReadColumn<byte>(3 + 3 * MenuCt + i);
+				var ct = page.ReadColumn<byte>(3 + 3 * MenuCt + i, offset);
+				var lobby = page.ReadRowRef<Lobby>(3 + i, offset);
 				var menu = new Menu() {
-					Name = page.ReadRowRef<Lobby>(3 + i).Value.Text.ExtractText(),
-					Default = page.ReadColumn<byte>(3 + 1 * MenuCt + i),
-					Type = (MenuType)page.ReadColumn<byte>(3 + 2 * MenuCt + i),
+					Name = lobby.IsValid ? lobby.Value.Text.ExtractText() : string.Empty,
+					Default = page.ReadColumn<byte>(3 + 1 * MenuCt + i, offset),
+					Type = (MenuType)page.ReadColumn<byte>(3 + 2 * MenuCt + i, offset),
 					Count = ct,
-					Index = (CustomizeIndex)page.ReadColumn<uint>(3 + 6 * MenuCt + i),
+					Index = (CustomizeIndex)page.ReadColumn<uint>(3 + 6 * MenuCt + i, offset),
 					Params = new uint[ct],
 					Graphics = new byte[GraphicCt]
 				};
 
 				if (menu.HasIcon || menu.Type == MenuType.List) {
 					for (var p = 0; p < ct; p++)
-						menu.Params[p] = page.ReadColumn<uint>(3 + (7 + p) * MenuCt + i);
+						menu.Params[p] = page.ReadColumn<uint>(3 + (7 + p) * MenuCt + i, offset);
 					for (var g = 0; g < GraphicCt; g++)
-						menu.Graphics[g] = page.ReadColumn<byte>(3 + (107 + g) * MenuCt + i);
+						menu.Graphics[g] = page.ReadColumn<byte>(3 + (107 + g) * MenuCt + i, offset);
 				}
 				
 				if (menu.IsFeature) {
@@ -100,10 +101,10 @@ namespace Ktisis.Data.Excel {
 			}
 			
 			return new CharaMakeType(row) {
-				Race = page.ReadRowRef<Race>(0),
-				Tribe = page.ReadRowRef<Tribe>(1),
-				Gender = page.ReadColumn<sbyte>(2),
-				FeatureMake = page.ReadRowRef<HairMakeType>((int)row),
+				Race = page.ReadRowRef<Race>(0, offset),
+				Tribe = page.ReadRowRef<Tribe>(1, offset),
+				Gender = page.ReadColumn<sbyte>(2, offset),
+				FeatureMake = new RowRef<HairMakeType>(page.Module, row, page.Language),
 				FacialFeatures = features,
 				Menus = menus
 			};

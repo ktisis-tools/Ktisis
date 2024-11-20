@@ -14,7 +14,7 @@ namespace Ktisis.Data.Excel {
 	public struct Dye(uint row) : IExcelRow<Dye> {
 		public uint RowId => row;
 		
-		public string Name { get; set; } = "";
+		public string Name { get; set; }
 		public uint Color { get; set; }
 		public byte Shade { get; set; }
 		public byte SubOrder { get; set; }
@@ -33,13 +33,13 @@ namespace Ktisis.Data.Excel {
 		}
 		
 		public static Dye Create(ExcelPage page, uint offset, uint row) {
-			var name = page.ReadColumn<string>(3);
+			var name = page.ReadColumn<string>(3, offset);
 			return new Dye(row) {
 				Name = !name.IsNullOrEmpty() ? name : "Undyed", // TODO: translation
-				Color = page.ReadColumn<uint>(0),
-				Shade = page.ReadColumn<byte>(1),
-				SubOrder = page.ReadColumn<byte>(2),
-				IsMetallic = page.ReadColumn<bool>(4)
+				Color = page.ReadColumn<uint>(0, offset),
+				Shade = page.ReadColumn<byte>(1, offset),
+				SubOrder = page.ReadColumn<byte>(2, offset),
+				IsMetallic = page.ReadColumn<bool>(5, offset)
 			};
 		}
 	}

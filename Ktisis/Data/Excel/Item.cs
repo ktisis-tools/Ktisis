@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Lumina.Text;
 using Lumina.Excel;
 
 using Ktisis.Structs.Actor;
@@ -49,25 +48,25 @@ namespace Ktisis.Data.Excel {
 		public ItemModel Model { get; set; } = null!;
 		public ItemModel SubModel { get; set; } = null!;
 
-		public bool IsEquippable() => EquipSlotCategory.Value!.RowId != 0;
-		public bool IsEquippable(EquipSlot slot) => IsEquippable() && EquipSlotCategory.Value!.IsEquippable(slot);
+		public bool IsEquippable() => EquipSlotCategory.IsValid && EquipSlotCategory.RowId != 0;
+		public bool IsEquippable(EquipSlot slot) => IsEquippable() && EquipSlotCategory.Value.IsEquippable(slot);
 
 		public bool IsWeapon() => IsEquippable(EquipSlot.MainHand) || IsEquippable(EquipSlot.OffHand);
 
-		public Item(uint row, ExcelPage page) {
+		public Item(uint row, ExcelPage page, uint offset) {
 			this.RowId = row;
 			
-			this.Name = page.ReadColumn<SeString>(9) ?? "";
-			this.Icon = page.ReadColumn<ushort>(10);
+			this.Name = page.ReadColumn<string>(9, offset);
+			this.Icon = page.ReadColumn<ushort>(10, offset);
 
-			this.EquipSlotCategory = page.ReadRowRef<EquipSlotCategory>(17);
+			this.EquipSlotCategory = page.ReadRowRef<EquipSlotCategory>(17, offset);
 
 			var isWep = this.IsWeapon();
-			this.Model = new ItemModel(page.ReadColumn<ulong>(47), isWep);
-			this.SubModel = new ItemModel(page.ReadColumn<ulong>(48), isWep);
+			this.Model = new ItemModel(page.ReadColumn<ulong>(47, offset), isWep);
+			this.SubModel = new ItemModel(page.ReadColumn<ulong>(48, offset), isWep);
 		}
 
-		public static Item Create(ExcelPage page, uint offset, uint row) => new(row, page);
+		public static Item Create(ExcelPage page, uint offset, uint row) => new(row, page, offset);
 
 		public bool IsEquipItem(object equip) {
 			if (equip is WeaponEquip wep) {
@@ -92,13 +91,13 @@ namespace Ktisis.Data.Excel {
 
 		public static EquipSlotCategory Create(ExcelPage page, uint offset, uint row) {
 			return new EquipSlotCategory(row) {
-				Slots = ReadSlots(page).ToArray()
+				Slots = ReadSlots(page, offset).ToArray()
 			};
 		}
 
-		private static IEnumerable<sbyte> ReadSlots(ExcelPage page) {
+		private static IEnumerable<sbyte> ReadSlots(ExcelPage page, uint offset) {
 			for (var i = 0; i < 14; i++)
-				yield return page.ReadColumn<sbyte>(i);
+				yield return page.ReadColumn<sbyte>(i, offset);
 		}
 	}
 }

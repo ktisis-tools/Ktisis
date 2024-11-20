@@ -26,22 +26,22 @@ namespace Ktisis.Data.Excel {
 
 			this.Name = $"E:{this.RowId:D7}";
 
-			this.EventHandler = page.ReadColumn<ushort>(0);
+			this.EventHandler = page.ReadColumn<ushort>(0, offset);
 
-			this.ModelChara = page.ReadRowRef<ModelChara>(35);
-			this.Customize = page.ReadCustomize(36);
+			this.ModelChara = page.ReadRowRef<ModelChara>(35, offset);
+			this.Customize = page.ReadCustomize(36, offset);
 
-			var equipRow = page.ReadColumn<ushort>(63);
+			var equipRow = page.ReadColumn<ushort>(63, offset);
 
-			this.MainHand = page.ReadWeapon(65);
-			this.OffHand = page.ReadWeapon(68);
-			this.Equipment = page.ReadEquipment(71);
+			this.MainHand = page.ReadWeapon(65, offset);
+			this.OffHand = page.ReadWeapon(68, offset);
+			this.Equipment = page.ReadEquipment(71, offset);
 			
 			// what the fuck?
 			
 			if (equipRow is 0 or 175) return;
 			
-			var equip = page.ReadRowRef<NpcEquipment>(equipRow);
+			var equip = page.ReadRowRef<NpcEquipment>(equipRow, offset);
 			this.Equipment = EquipOverride(this.Equipment, equip.Value.Equipment);
 		}
 

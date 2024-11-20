@@ -61,13 +61,14 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 		private readonly static AsyncData<IEnumerable<Item>> ItemData = new(GetItemData);
 		private static IEnumerable<Item> GetItemData(object[] args)
-			=> Sheets.GetSheet<Item>().Where(i => i.IsEquippable());
+			=> Sheets.GetSheet<Item>().Where(i => i.IsEquippable()).ToList();
 
 		private readonly static AsyncData<IEnumerable<Dye>> DyeData = new(GetDyeData);
 		private static IEnumerable<Dye> GetDyeData(object[] args)
 			=> Sheets.GetSheet<Dye>()
 				.Where(i => i.IsValid())
-				.OrderBy(i => i.Shade).ThenBy(i => i.SubOrder);
+				.OrderBy(i => i.Shade).ThenBy(i => i.SubOrder)
+				.ToList();
 		
 		// UI Code
 
@@ -464,8 +465,9 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 
 			return (selecting, ImGui.IsItemFocused());
 		}
-		private static void DrawDyePickerHeader(Dye i)
+		private static void DrawDyePickerHeader(object obj)
 		{
+			var i = (Dye)obj;
 			// TODO: configuration to not show this
 			var textSize = ImGui.CalcTextSize(i.Name);
 			float dyeShowcaseWidth = (DyePickerWidth - textSize.X - (ImGui.GetStyle().ItemSpacing.X * 2)) / 2;

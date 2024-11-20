@@ -15,9 +15,9 @@ namespace Ktisis.Data.Excel {
 		
 		public static NpcEquipment Create(ExcelPage page, uint offset, uint row) {
 			return new NpcEquipment(row) {
-				MainHand = page.ReadWeapon(0),
-				OffHand = page.ReadWeapon(3),
-				Equipment = page.ReadEquipment(6)
+				MainHand = page.ReadWeapon(0, offset),
+				OffHand = page.ReadWeapon(3, offset),
+				Equipment = page.ReadEquipment(6, offset)
 			};
 		}
 	}

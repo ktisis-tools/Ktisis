@@ -687,13 +687,17 @@ namespace Ktisis.Interface.Windows {
 							var feat = feature.Value;
 							if (feat.FeatureId == 0) break;
 
-							var icon = Services.Textures.GetFromGameIcon(feat.Icon);
-							if (icon != null) icons.Add(feat.FeatureId, icon);
+							if (!Services.Textures.TryGetFromGameIcon(feat.Icon, out var icon))
+								continue;
+
+							icons.Add(feat.FeatureId, icon);
 						}
 					} else {
 						for (var x = 0; x < val.Count; x++) {
-							var icon = Services.Textures.GetFromGameIcon(val.Params[x]);
-							if (icon != null) icons.Add(val.Graphics[x], icon);
+							if (!Services.Textures.TryGetFromGameIcon(val.Params[x], out var icon))
+								continue;
+							
+							icons.Add(val.Graphics[x], icon);
 						}
 					}
 					opt.Select = icons;

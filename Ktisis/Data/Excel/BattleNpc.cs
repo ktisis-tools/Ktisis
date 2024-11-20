@@ -19,10 +19,10 @@ namespace Ktisis.Data.Excel {
 		
 		public static BattleNpc Create(ExcelPage page, uint offset, uint row) {
 			return new BattleNpc(row) {
-				Scale = page.ReadColumn<float>(4),
-				ModelChara = page.ReadRowRef<ModelChara>(5),
-				CustomizeSheet = page.ReadRowRef<BNpcCustomizeSheet>(6),
-				NpcEquipment = page.ReadRowRef<NpcEquipment>(7)
+				Scale = page.ReadColumn<float>(4, offset),
+				ModelChara = page.ReadRowRef<ModelChara>(5, offset),
+				CustomizeSheet = page.ReadRowRef<BNpcCustomizeSheet>(6, offset),
+				NpcEquipment = page.ReadRowRef<NpcEquipment>(7, offset)
 			};
 		}
 		
@@ -55,7 +55,7 @@ namespace Ktisis.Data.Excel {
 			
 			public static BNpcCustomizeSheet Create(ExcelPage page, uint offset, uint row) {
 				return new BNpcCustomizeSheet(row) {
-					Customize = page.ReadCustomize(0)
+					Customize = page.ReadCustomize(0, offset)
 				};
 			}
 		}

@@ -19,12 +19,12 @@ namespace Ktisis.Data.Excel {
 
 		static CharaMakeCustomize IExcelRow<CharaMakeCustomize>.Create(ExcelPage page, uint offset, uint row) {
 			return new CharaMakeCustomize(row) {
-				FeatureId = page.ReadColumn<byte>(0),
-				Icon = page.ReadColumn<uint>(1),
-				Data = page.ReadColumn<ushort>(2),
-				IsPurchasable = page.ReadColumn<bool>(3),
-				Hint = page.ReadRowRef<Lobby>(4),
-				FaceType = page.ReadColumn<byte>(6)
+				FeatureId = page.ReadColumn<byte>(0, offset),
+				Icon = page.ReadColumn<uint>(1, offset),
+				Data = page.ReadColumn<ushort>(2, offset),
+				IsPurchasable = page.ReadColumn<bool>(3, offset),
+				Hint = page.ReadRowRef<Lobby>(4, offset),
+				FaceType = page.ReadColumn<byte>(6, offset)
 			};
 		}
 	}

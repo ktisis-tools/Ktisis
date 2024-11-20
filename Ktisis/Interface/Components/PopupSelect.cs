@@ -26,7 +26,7 @@ namespace Ktisis.Interface.Components {
 		public static int HoverPopupWindowColumns = 1;
 		private static Action? PreviousOnClose;
 		public static int HoverPopupWindowIndexKey = 0;
-		public static dynamic? HoverPopupWindowItemForHeader = null;
+		public static object? HoverPopupWindowItemForHeader = null;
 
 		[Flags]
 		public enum HoverPopupWindowFlags {
@@ -63,7 +63,7 @@ namespace Ktisis.Interface.Components {
 				HoverPopupWindowFlags flags,
 				IEnumerable<T> enumerable,
 				Func<IEnumerable<T>, string, IEnumerable<T>> filter,
-				Action<T> header,
+				Action<object> header,
 				Func<T, bool, (bool, bool)> drawBeforeLine, // Parameters: T item, bool isActive. Returns bool isSelected, bool Focus.
 				Action<T> onSelect,
 				Action onClose,
