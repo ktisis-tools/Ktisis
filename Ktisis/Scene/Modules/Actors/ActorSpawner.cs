@@ -45,7 +45,7 @@ public class ActorSpawner : HookModule {
 	private GPoseActorEventCtorDelegate _gPoseActorEventCtor = null!;
 	private unsafe delegate nint GPoseActorEventCtorDelegate(GPoseActorEvent* self, Character* target, Vector3* position, uint a4, int a5, int a6, uint a7, bool a8);
 
-	[Signature("E8 ?? ?? ?? ?? 0F 28 74 24 ?? B0 01 48 8B 74 24 ??")]
+	[Signature("48 89 5C 24 ?? 48 89 54 24 ?? 57 48 83 EC 20 48 8B 02")]
 	private DispatchEventDelegate _dispatchEvent = null!;
 	private unsafe delegate nint DispatchEventDelegate(nint handler, GPoseActorEvent* task);
 	

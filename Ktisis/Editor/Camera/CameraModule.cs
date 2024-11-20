@@ -202,7 +202,7 @@ public class CameraModule : HookModule {
 	
 	// Camera redirect hooks
 
-	[Signature("E8 ?? ?? ?? ?? 41 0F B6 DF", DetourName = nameof(ActiveCameraDetour))]
+	[Signature("E8 ?? ?? ?? ?? 45 32 FF 40 32 F6", DetourName = nameof(ActiveCameraDetour))]
 	private Hook<ActiveCameraDelegate> ActiveCameraHook = null!;
 	private unsafe delegate GameCamera* ActiveCameraDelegate(nint a1);
 	
