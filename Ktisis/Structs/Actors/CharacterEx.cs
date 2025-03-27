@@ -19,28 +19,28 @@ public enum EmoteModeEnum : uint {
 	Sleeping = 3
 }
 
-[StructLayout(LayoutKind.Explicit, Size = 0x1BD0)]
+[StructLayout(LayoutKind.Explicit, Size = 0x22E0)]
 public struct CharacterEx {
-	public const int AnimationOffset = 0x9B0;
+	public const int AnimationOffset = 0x9A0;
 	
 	[FieldOffset(0)] public Character Character;
 
 	[FieldOffset(0xE0)] public Vector3 DrawObjectOffset;
 
-	[FieldOffset(0x130)] public Vector3 CameraOffsetSmooth;
-	[FieldOffset(0x180)] public Vector3 CameraOffset;
+	[FieldOffset(0x120)] public Vector3 CameraOffsetSmooth;
+	[FieldOffset(0x170)] public Vector3 CameraOffset;
 
-	[FieldOffset(0x620)] public unsafe nint* _emoteControllerVf;
-	[FieldOffset(0x620)] public EmoteController EmoteController;
+	[FieldOffset(0x610)] public unsafe nint* _emoteControllerVf;
+	[FieldOffset(0x610)] public EmoteController EmoteController;
+	
+	[FieldOffset(0x0CE2)] public CombatFlags CombatFlags;
 	
 	[FieldOffset(AnimationOffset)] public AnimationContainer Animation;
-	
-	[FieldOffset(0x0CF2)] public CombatFlags CombatFlags;
 
-	[FieldOffset(0x2268)] public float Opacity;
+	[FieldOffset(0x2258)] public float Opacity;
 
-	[FieldOffset(0x22DC)] public byte Mode;
-	[FieldOffset(0x22DD)] public EmoteModeEnum EmoteMode;
+	[FieldOffset(0x22CC)] public byte Mode;
+	[FieldOffset(0x22CD)] public EmoteModeEnum EmoteMode;
 
 	public bool IsGPose => this.Character.ObjectIndex is >= 201 and <= 243;
 }

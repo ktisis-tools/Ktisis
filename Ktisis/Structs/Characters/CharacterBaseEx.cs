@@ -19,9 +19,9 @@ public struct CharacterBaseEx {
 
 	[FieldOffset(0x2E0)] public WetnessState Wetness;
 
-	[FieldOffset(0xA10)] public CustomizeContainer Customize;
+	[FieldOffset(0xA20)] public CustomizeContainer Customize;
 
 	//[FieldOffset(0x8F4)] public unsafe fixed uint DemiEquip[5];
 	//[FieldOffset(0x910)] public unsafe fixed uint HumanEquip[10];
-	[FieldOffset(0xA30)] public EquipmentContainer Equipment;
+	[FieldOffset(0xA40)] public EquipmentContainer Equipment;
 }
