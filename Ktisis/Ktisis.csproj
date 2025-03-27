@@ -55,7 +55,7 @@
       <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="FFXIVClientStructs">
+    <Reference Include="InteropGenerator.Runtime">
       <HintPath>$(DalamudLibPath)InteropGenerator.Runtime.dll</HintPath>
       <Private>false</Private>
     </Reference>
