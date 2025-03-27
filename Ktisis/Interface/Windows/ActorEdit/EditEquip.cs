@@ -9,6 +9,7 @@ using ImGuiNET;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Textures;
+using Dalamud.Utility;
 
 using Ktisis.Util;
 using Ktisis.Data;
@@ -101,7 +102,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 		}
 
 		public unsafe static void DrawFaceWear() {
-			Glasses ??= Services.DataManager.GetExcelSheet<Glasses>()!;
+			Glasses ??= Services.DataManager.GetExcelSheet<Glasses>();
 			
 			var glassesId = EditActor.Target->DrawData.Glasses;
 			var glasses = Glasses.GetRow(glassesId);
@@ -328,7 +329,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			
 			PopupSelect.HoverPopupWindow(
 				PopupSelect.HoverPopupWindowFlags.SelectorList | PopupSelect.HoverPopupWindowFlags.SearchBar,
-				Glasses,
+				Glasses.Where(x => x.RowId == 0 || !x.Name.IsNullOrEmpty()),
 				(e, input) => e.Where(i => i.Name.Contains(input, StringComparison.OrdinalIgnoreCase)),
 				(i, a) => (  // draw Line
 						ImGui.Selectable(i.Name, a),

@@ -13,9 +13,8 @@ namespace Ktisis.Data.Excel {
 		public string Name { get; set; } = string.Empty;
 
 		static Glasses IExcelRow<Glasses>.Create(ExcelPage page, uint offset, uint row) {
-			var name = page.ReadColumn<string>(13, offset);
 			return new Glasses(page, offset, row) {
-				Name = !name.IsNullOrEmpty() ? name : "None"
+				Name = row != 0 ? page.ReadColumn<string>(13, offset) : "None"
 			};
 		}
 	}
