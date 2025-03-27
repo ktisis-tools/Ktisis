@@ -6,7 +6,7 @@ using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Data.Excel {
-	[Sheet("BNpcBase", columnHash: 0xB8CBAD27)]
+	[Sheet("BNpcBase", columnHash: 0xD5D82616)]
 	public struct BattleNpc(uint row) : IExcelRow<BattleNpc>, INpcBase {
 		// Excel
 
