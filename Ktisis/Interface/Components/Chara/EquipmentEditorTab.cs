@@ -331,7 +331,7 @@ public class EquipmentEditorTab {
 		
 		using var _ = ImRaii.Group();
 		
-		ImGui.Text(!(glasses?.Name.IsNullOrEmpty() ?? true) ? glasses.Value.Name : "None");
+		ImGui.Text(glasses?.RowId is not 0 ? glasses!.Value.Name : "None");
 		ImGui.SetNextItemWidth(CalcItemWidth(cursorStart) + (ImGui.GetFrameHeight() + ImGui.GetStyle().ItemInnerSpacing.X) * 2);
 
 		var intGlassesId = (int)glassesId;
@@ -423,7 +423,8 @@ public class EquipmentEditorTab {
 		
 		// Glasses
 
-		var glasses = this._data.Excel.GetSheet<Glasses>();
+		var glasses = this._data.Excel.GetSheet<Glasses>()
+			.Where(x => x.RowId == 0 || !x.Name.IsNullOrEmpty());
 		lock (this.Glasses) this.Glasses.AddRange(glasses);
 	}
 
