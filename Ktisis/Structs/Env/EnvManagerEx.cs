@@ -10,7 +10,7 @@ public struct EnvManagerEx {
 	
 	[FieldOffset(0x058)] public EnvState EnvState;
 
-	[FieldOffset(0x410)] public EnvSimulator EnvSimulator;
+	[FieldOffset(0x4E0)] public EnvSimulator EnvSimulator;
 
 	public unsafe static EnvManagerEx* Instance() => (EnvManagerEx*)EnvManager.Instance();
 }
