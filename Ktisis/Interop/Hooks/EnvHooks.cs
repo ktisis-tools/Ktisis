@@ -12,9 +12,7 @@ namespace Ktisis.Interop.Hooks {
 
 		private static Hook<EnvUpdateDelegate> EnvUpdateHook = null!;
 		private unsafe static nint EnvUpdateDetour(EnvManagerEx* env, nint a2) {
-			Ktisis.Log.Info($"{(nint)env:X} {Ktisis.IsInGPose} {EnvService.TimeOverride}");
 			if (Ktisis.IsInGPose && EnvService.TimeOverride != null) {
-				Ktisis.Log.Info($"{env->Time}");
 				env->Time = EnvService.TimeOverride.Value;
 			}
 
