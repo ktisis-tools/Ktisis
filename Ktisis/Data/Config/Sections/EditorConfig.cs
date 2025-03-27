@@ -10,6 +10,7 @@ public class EditorConfig {
 	// Values
 
 	public bool OpenOnEnterGPose = true;
+	public bool ConfirmExit = false;
 	
 	public Dictionary<EntityType, EntityDisplay> Display = EntityDisplay.GetDefaults();
 	
@@ -25,7 +26,7 @@ public class EditorConfig {
 
 	public bool PlayEmoteStart = true;
 	public bool ForceLoop = true;
-	
+
 	// Helpers
 
 	public EntityDisplay GetDisplayForType(EntityType type)
