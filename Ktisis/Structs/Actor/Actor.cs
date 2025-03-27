@@ -16,19 +16,19 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0x88)] public byte ObjectID;
 
-		[FieldOffset(0x100)] public unsafe ActorModel* Model;
-		[FieldOffset(0x114)] public RenderMode RenderMode;
+		[FieldOffset(0xF0)] public unsafe ActorModel* Model;
+		[FieldOffset(0x104)] public RenderMode RenderMode;
 		
-		[FieldOffset(0x6E8)] public ActorDrawData DrawData;
+		[FieldOffset(0x6D8)] public ActorDrawData DrawData;
 
-		[FieldOffset(0x8D6)] public bool IsHatHidden;
+		[FieldOffset(0x8C6)] public bool IsHatHidden;
 
-		public const int GazeOffset = 0xD00;
+		public const int GazeOffset = 0xCF0;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
 		
-		[FieldOffset(0x1AB8)] public uint ModelId;
+		[FieldOffset(0x1AA8)] public uint ModelId;
 		
-		[FieldOffset(0x226C)] public float Transparency;
+		[FieldOffset(0x225C)] public float Transparency;
 
 		public unsafe string? GetName() {
 			fixed (byte* ptr = GameObject.Name)

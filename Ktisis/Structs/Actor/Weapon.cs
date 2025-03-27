@@ -64,7 +64,7 @@ namespace Ktisis.Structs.Actor {
 
 		[FieldOffset(0xA0)] public unsafe Skeleton* Skeleton;
 
-		[FieldOffset(0x9D0)] public WeaponEquip Equip;
+		[FieldOffset(0xA20)] public WeaponEquip Equip;
 	}
 
 	public enum WeaponSlot {
