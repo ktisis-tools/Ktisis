@@ -3,14 +3,13 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.Types;
-using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Types;
-using Ktisis.Structs.Attachment;
 using Ktisis.Structs.Characters;
+using Attach = Ktisis.Structs.Attachment.Attach;
 
 namespace Ktisis.Scene.Entities.Character;
 
