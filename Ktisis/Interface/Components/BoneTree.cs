@@ -7,14 +7,31 @@ using Ktisis.Overlay;
 using Ktisis.Structs;
 using Ktisis.Structs.Bones;
 using Ktisis.Structs.Actor;
+using Ktisis.Util;
+using Dalamud.Interface;
+using System;
 
 namespace Ktisis.Interface.Components {
 	public class BoneTree {
+		private enum HighlightReason {
+			None = 0,
+			Selected = 1,
+			Queried = 2,
+			ChildSelected = 4,
+			ChildQueried = 16
+		}
+
 		private static Vector2 _FrameMin;
 		private static Vector2 _FrameMax;
 
+		private static string SearchText = "";
+
 		public static unsafe void Draw(Actor* actor) {
 			if (ImGui.CollapsingHeader("Bone List")) {
+				GuiHelpers.Icon(FontAwesomeIcon.Search);
+				ImGui.SameLine();
+				ImGui.InputText("##Search", ref SearchText, (uint)(SearchText.Length + 10));
+
 				var lineHeight = ImGui.GetTextLineHeight();
 				if (ImGui.BeginChildFrame(471, new Vector2(-1, lineHeight * 12), ImGuiWindowFlags.HorizontalScrollbar)) {
 					if (actor == null || actor->Model == null || actor->Model->Skeleton == null)
@@ -32,16 +49,30 @@ namespace Ktisis.Interface.Components {
 				}
 			}
 		}
+
+		private static bool BoneMatchesSearch(Bone bone) => bone.UniqueName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase)
+			|| bone.LocaleName.Contains(SearchText, StringComparison.CurrentCultureIgnoreCase);
+
 		private static void DrawBoneTreeNode(Bone bone) {
-			if (bone == null) return;
-
 			var children = bone.GetChildren();
+			var decendents = bone.GetDescendants();
 
-			var flag = children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
-			if (Skeleton.IsBoneSelected(bone))
-				flag |= ImGuiTreeNodeFlags.Selected;
+			bool hasChildInQuery = SearchText != "" && decendents.Any(BoneMatchesSearch);
+			bool hasChildSelected = decendents.Any(Skeleton.IsBoneSelected);
+			bool isSelected = Skeleton.IsBoneSelected(bone);
+			bool isQueried = SearchText != "" && BoneMatchesSearch(bone);
 
-			var show = DrawBoneNode(bone, flag, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
+			var criteria = HighlightReason.None;
+
+			if (isSelected) criteria |= HighlightReason.Selected;
+			if (isQueried) criteria |= HighlightReason.Queried;
+			if (hasChildSelected) criteria |= HighlightReason.ChildSelected;
+			if (hasChildInQuery) criteria |= HighlightReason.ChildQueried;
+
+			var flag = ImGuiTreeNodeFlags.SpanFullWidth;
+			flag |= children.Count > 0 ? ImGuiTreeNodeFlags.OpenOnArrow : ImGuiTreeNodeFlags.Leaf;
+
+			var show = DrawBoneNode(bone, flag, criteria, () => OverlayWindow.SetGizmoOwner(bone.UniqueName));
 			if (show) {
 				foreach (var child in children)
 					DrawBoneTreeNode(child);
@@ -49,13 +80,11 @@ namespace Ktisis.Interface.Components {
 			}
 		}
 
-		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, System.Action? executeIfClicked = null) {
-			if (bone == null) return false;
-
-			bool isAncester = bone.GetDescendants().Any(b => b.UniqueId == $"{Skeleton.BoneSelect.Partial}_{Skeleton.BoneSelect.Index}");
-			if (isAncester) ImGui.PushStyleColor(ImGuiCol.Text, ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark]);
+		private static bool DrawBoneNode(Bone bone, ImGuiTreeNodeFlags flag, HighlightReason criteria, System.Action? executeIfClicked = null) {
 			bool show = ImGui.TreeNodeEx(bone.UniqueId, flag, bone.LocaleName);
-			if (isAncester) ImGui.PopStyleColor();
+
+			if (criteria != HighlightReason.None)
+				ApplyIcons(criteria);
 
 			var rectMin = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), 0);
 			var rectMax = ImGui.GetItemRectMax();
@@ -75,6 +104,22 @@ namespace Ktisis.Interface.Components {
 				executeIfClicked?.Invoke();
 			}
 			return show;
+		}
+
+		private static readonly (HighlightReason, FontAwesomeIcon)[] CriteriaIconMap = new [] {
+			(HighlightReason.ChildSelected, FontAwesomeIcon.HatWizard),
+			(HighlightReason.ChildQueried, FontAwesomeIcon.Search),
+			(HighlightReason.Selected, FontAwesomeIcon.WandMagicSparkles),
+			(HighlightReason.Queried, FontAwesomeIcon.SearchLocation)
+		};
+
+		private static void ApplyIcons(HighlightReason criteria) {
+			foreach (var (flag, icon) in CriteriaIconMap) {
+				if (criteria.HasFlag(flag)) {
+					ImGui.SameLine();
+					GuiHelpers.Icon(icon);
+				}
+			}
 		}
 	}
 }
