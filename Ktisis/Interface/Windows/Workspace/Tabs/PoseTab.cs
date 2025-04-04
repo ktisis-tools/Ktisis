@@ -9,6 +9,9 @@ using Ktisis.Helpers;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Poses;
 using Ktisis.Interface.Components;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace Ktisis.Interface.Windows.Workspace.Tabs {
 	public static class PoseTab {
@@ -183,7 +186,21 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 					null
 				);
 			}
-			if (isUseless) ImGui.EndDisabled();
+		ImGui.SameLine();
+
+    if(ImGui.Button("Paste##ImportExportPose"))
+    {
+				var files = WinformsUtils.ReadClipboardFiles().Where(x => x.EndsWith(".pose", StringComparison.OrdinalIgnoreCase) || x.EndsWith(".cmp", StringComparison.OrdinalIgnoreCase));
+				if(files.Any())
+				{
+            PoseHelpers.ImportPose(actor, [..files], Ktisis.Configuration.PoseMode);
+        }
+				else
+				{
+						//display error maybe?
+				}
+    }
+    if (isUseless) ImGui.EndDisabled();
 			ImGui.SameLine();
 			if (ImGui.Button("Export##ImportExportPose")) {
 				KtisisGui.FileDialogManager.SaveFileDialog(
