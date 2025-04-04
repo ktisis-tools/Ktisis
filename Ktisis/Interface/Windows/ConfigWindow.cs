@@ -135,6 +135,7 @@ public class ConfigWindow : KtisisWindow {
 	
 	private void DrawWorkspaceTab() {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirm_exit"), ref this.Config.Editor.ConfirmExit);
 	}
 	
 	// Input
@@ -154,6 +155,7 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.enable"), ref cfg.Enabled);
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.disconnect"), ref cfg.OnDisconnect);
+		ImGui.Checkbox(this.Locale.Translate("config.autosave.ondisable"), ref cfg.OnDisable);
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.clear"), ref cfg.ClearOnExit);
 		
 		ImGui.Spacing();
