@@ -43,9 +43,10 @@ public class RefOverlay {
 		var id = $"{image.Name}##{image.Data.Id}";
 		var flags = ImGuiWindowFlags.NoBackground;
 		if (!title) flags |= ImGuiWindowFlags.NoTitleBar;
-		if (!ImGui.Begin(id, ref open, flags)) return;
 		
 		try {
+			if (!ImGui.Begin(id, ref open, flags)) return;
+			
 			var avail = ImGui.GetContentRegionAvail();
 			var tintColor = Vector4.One with { W = image.Data.Opacity };
 			ImGui.Image(wrap.Handle, avail, Vector2.Zero, Vector2.One, tintColor);
