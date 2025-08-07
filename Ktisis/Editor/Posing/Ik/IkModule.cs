@@ -74,7 +74,7 @@ public sealed class IkModule : HookModule {
 	
 	// Virtual Tables
 
-	[Signature("E8 ?? ?? ?? ?? 48 C7 43 ?? ?? ?? ?? ?? 0F 57 C0", ScanType = ScanType.StaticAddress)]
+	[Signature("E8 ?? ?? ?? ?? 48 8D 43 20", ScanType = ScanType.StaticAddress)]
 	private unsafe nint** CcdVfTable = null;
 	
 	// Methods
@@ -93,7 +93,7 @@ public sealed class IkModule : HookModule {
 	
 	// Hooks
 
-	[Signature("48 89 5C 24 ?? 57 48 83 EC 30 F3 0F 10 81 ?? ?? ?? ?? 48 8B FA", DetourName = nameof(UpdateAnimationDetour))]
+	[Signature("48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 30 F3 0F 10 81 ?? ?? ?? ?? 48 8B FA", DetourName = nameof(UpdateAnimationDetour))]
 	private Hook<UpdateAnimationDelegate> UpdateAnimationHook = null!;
 	private delegate void UpdateAnimationDelegate(nint a1);
 

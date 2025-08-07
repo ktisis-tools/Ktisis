@@ -186,7 +186,7 @@ public class CameraModule : HookModule {
 	
 	// Collision hook
 
-	[Signature("E8 ?? ?? ?? ?? 4C 8B AC 24 ?? ?? ?? ?? 32 DB", DetourName = nameof(CameraCollideDetour))]
+	[Signature("E8 ?? ?? ?? ?? 4C 8D 45 97 89 83 ?? ?? ?? ??", DetourName = nameof(CameraCollideDetour))]
 	private Hook<CameraCollideDelegate> CameraCollideHook = null!;
 	private unsafe delegate nint CameraCollideDelegate(GameCamera* a1, Vector3* a2, Vector3* a3, float a4, nint a5, float a6);
 

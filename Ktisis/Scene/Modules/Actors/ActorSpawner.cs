@@ -38,10 +38,10 @@ public class ActorSpawner : HookModule {
 
 	private const int VfSize = 9;
 
-	[Signature("48 8D 05 ?? ?? ?? ?? 48 89 03 E8 ?? ?? ?? ?? 8B 44 24 58 33 C9", ScanType = ScanType.StaticAddress)]
+	[Signature("48 8D 05 ?? ?? ?? ?? 48 89 4A 20", ScanType = ScanType.StaticAddress)]
 	private unsafe nint* _eventVfTable = null;
 
-	[Signature("E8 ?? ?? ?? ?? 48 8D 8B ?? ?? ?? ?? 48 8B D0 E8 ?? ?? ?? ?? EB 67")]
+	[Signature("80 61 0C FC 48 8D 05 ?? ?? ?? ?? 4C 8B C9")]
 	private GPoseActorEventCtorDelegate _gPoseActorEventCtor = null!;
 	private unsafe delegate nint GPoseActorEventCtorDelegate(GPoseActorEvent* self, Character* target, Vector3* position, uint a4, int a5, int a6, uint a7, bool a8);
 

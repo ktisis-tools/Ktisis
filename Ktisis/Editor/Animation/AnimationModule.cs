@@ -39,7 +39,7 @@ public class AnimationModule : HookModule {
 	
 	// Position lock
 	
-	[Signature("E8 ?? ?? ?? ?? 84 DB 74 45", DetourName = nameof(UpdatePosDetour))]
+	[Signature("E8 ?? ?? ?? ?? 84 DB 74 3A", DetourName = nameof(UpdatePosDetour))]
 	private Hook<UpdatePosDelegate> UpdatePosHook = null!;
 	private unsafe delegate void UpdatePosDelegate(CharacterEx* chara);
 
