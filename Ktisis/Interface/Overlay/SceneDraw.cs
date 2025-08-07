@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;

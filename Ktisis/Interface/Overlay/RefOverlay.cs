@@ -3,7 +3,7 @@
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
@@ -48,7 +48,7 @@ public class RefOverlay {
 		try {
 			var avail = ImGui.GetContentRegionAvail();
 			var tintColor = Vector4.One with { W = image.Data.Opacity };
-			ImGui.Image(wrap.ImGuiHandle, avail, Vector2.Zero, Vector2.One, tintColor);
+			ImGui.Image(wrap.Handle, avail, Vector2.Zero, Vector2.One, tintColor);
 			this.HandlePopup(id, avail, image);
 		} finally {
 			ImGui.End();
@@ -92,7 +92,7 @@ public class RefOverlay {
 		_data.Height = title ? ImGui.GetFrameHeight() : 0.0f;
 
 		fixed (CallbackData* ptr = &_data) {
-			ImGui.SetNextWindowSizeConstraints(min, max, SetSizeCallback, (nint)ptr);
+			ImGui.SetNextWindowSizeConstraints(min, max, SetSizeCallback, ptr);
 		}
 	}
 

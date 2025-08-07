@@ -2,8 +2,7 @@ using System;
 using System.Linq;
 
 using Dalamud.Utility;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace Ktisis.Common.Extensions;
 

@@ -7,7 +7,7 @@ using Dalamud.Interface;
 
 using GLib.Widgets;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;

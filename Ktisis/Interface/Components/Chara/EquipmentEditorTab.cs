@@ -8,10 +8,9 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using Dalamud.Bindings.ImGui;
 
 using Stain = Lumina.Excel.Sheets.Stain;
-
-using ImGuiNET;
 
 using GLib.Popups;
 using GLib.Widgets;
@@ -132,11 +131,11 @@ public class EquipmentEditorTab {
 
 		if (info is WeaponInfo wep) {
 			var values = new int[] { wep.Model.Id, wep.Model.Type, wep.Model.Variant };
-			if (ImGui.InputInt3($"##Input{slot}", ref values[0]))
+			if (ImGui.InputInt($"##Input{slot}", values))
 				wep.SetModel((ushort)values[0], (ushort)values[1], (byte)values[2]);
 		} else if (info is EquipInfo equip) {
 			var values = new int[] { equip.Model.Id, equip.Model.Variant };
-			if (ImGui.InputInt2($"##Input{slot}", ref values[0]))
+			if (ImGui.InputInt($"##Input{slot}", values))
 				equip.SetModel((ushort)values[0], (byte)values[1]);
 		}
 		
@@ -187,7 +186,7 @@ public class EquipmentEditorTab {
 		bool clicked;
 		using (var _ = ImRaii.PushId($"##ItemButton_{info.Slot}")) {
 			if (info.Texture != null)
-				clicked = ImGui.ImageButton(info.Texture.GetWrapOrEmpty().ImGuiHandle, ButtonSize);
+				clicked = ImGui.ImageButton(info.Texture.GetWrapOrEmpty().Handle, ButtonSize);
 			else
 				clicked = ImGui.Button(info.Slot.ToString(), ButtonSize);
 		}
@@ -344,7 +343,7 @@ public class EquipmentEditorTab {
 
 		var iconId = glasses?.Icon is not null and not 0 ? glasses.Value.Icon : GetFallbackIcon(EquipSlot.Glasses); 
 		var icon = this._tex.GetFromGameIcon(iconId);
-		if (ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ButtonSize))
+		if (ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, ButtonSize))
 			this.OpenGlassesSelectPopup(index);
 		
 		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))

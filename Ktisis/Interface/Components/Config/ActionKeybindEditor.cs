@@ -4,8 +4,7 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface.Utility.Raii;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Actions;
 using Ktisis.Actions.Binds;

@@ -5,8 +5,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
@@ -84,7 +83,7 @@ public class FeatureSelectPopup {
 			
 			bool button;
 			if (icon != null) {
-				button = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ButtonSize);
+				button = ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, ButtonSize);
 				
 				var label = param.Value.ToString();
 				ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (totalSize.X - ImGui.CalcTextSize(label).X) / 2);

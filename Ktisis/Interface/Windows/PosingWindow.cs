@@ -5,8 +5,7 @@ using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Pose2D;

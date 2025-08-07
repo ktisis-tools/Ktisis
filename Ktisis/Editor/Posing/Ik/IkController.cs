@@ -84,13 +84,13 @@ public class IkController : IIkController {
 			return;
 
 		var partial = skeleton->PartialSkeletons[0];
-		if (partial.HavokPoses == null || partial.SkeletonResourceHandle == null)
+		if (partial.HavokPoses.IsEmpty || partial.SkeletonResourceHandle == null)
 			return;
 		
 		var pose = partial.GetHavokPose(0);
 		if (pose == null || pose->Skeleton == null) return;
 		
-		var id = partial.SkeletonResourceHandle->ResourceHandle.Id;
+		var id = partial.SkeletonResourceHandle->Id;
 		
 		var groups = this.Groups.Values
 			.Where(group => group.IsEnabled && group.SkeletonId == id)
@@ -154,7 +154,7 @@ public class IkController : IIkController {
 		
 		Ktisis.Log.Verbose($"Resolved bones: {start} {end}");
 
-		group.SkeletonId = data.Partial.SkeletonResourceHandle->ResourceHandle.Id;
+		group.SkeletonId = data.Partial.SkeletonResourceHandle->Id;
 
 		this.Groups[name] = group;
 		return true;
@@ -187,7 +187,7 @@ public class IkController : IIkController {
 		
 		Ktisis.Log.Verbose($"Resolved bones: {first} {second} {last} ({group.FirstTwistIndex}, {group.SecondTwistIndex})");
 		
-		group.SkeletonId = data.Partial.SkeletonResourceHandle->ResourceHandle.Id;
+		group.SkeletonId = data.Partial.SkeletonResourceHandle->Id;
 
 		this.Groups[name] = group;
 		return true;

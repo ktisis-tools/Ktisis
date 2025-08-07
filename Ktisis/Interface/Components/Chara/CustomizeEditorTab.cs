@@ -7,10 +7,9 @@ using Dalamud.Interface;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
-
-using ImGuiNET;
 
 using Ktisis.Structs.Characters;
 using Ktisis.Core.Attributes;
@@ -301,7 +300,7 @@ public class CustomizeEditorTab {
 
 		bool clicked;
 		if (icon != null)
-			clicked = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, this.ButtonSize);
+			clicked = ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, this.ButtonSize);
 		else
 			clicked = ImGui.Button(fallback, this.ButtonSize + ImGui.GetStyle().FramePadding * 2);
 		return clicked;
@@ -377,7 +376,7 @@ public class CustomizeEditorTab {
 
 			bool button;
 			if (icon != null)
-				button = ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, this.ButtonSize);
+				button = ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, this.ButtonSize);
 			else
 				button = ImGui.Button($"{i}", this.ButtonSize + style.FramePadding * 2);
 			if (button)

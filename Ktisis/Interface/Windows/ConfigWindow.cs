@@ -3,10 +3,9 @@ using System;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
-
-using ImGuiNET;
 
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context;

@@ -1,8 +1,7 @@
 using System;
 
 using Dalamud.Interface.Utility.Raii;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Characters;

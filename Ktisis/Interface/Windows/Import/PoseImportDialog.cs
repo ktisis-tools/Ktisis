@@ -1,8 +1,7 @@
 using System.Linq;
 
 using Dalamud.Interface.Utility.Raii;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;

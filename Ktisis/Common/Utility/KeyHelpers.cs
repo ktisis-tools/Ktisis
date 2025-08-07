@@ -2,8 +2,7 @@
 
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface.Utility;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace Ktisis.Common.Utility;
 
@@ -17,7 +16,7 @@ public static class KeyHelpers {
 		if (io.KeyShift) yield return VirtualKey.SHIFT;
 		if (io.KeyAlt) yield return VirtualKey.MENU;
 		
-		for (var i = 0; i < io.KeysDown.Count; i++) {
+		for (var i = 0; i < io.KeysDown.Length; i++) {
 			if (!io.KeysDown[i]) continue;
 			
 			var key = ImGuiHelpers.ImGuiKeyToVirtualKey((ImGuiKey)i);

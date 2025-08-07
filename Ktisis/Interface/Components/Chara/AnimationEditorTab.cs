@@ -3,14 +3,13 @@ using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
 using GLib.Popups;
 using GLib.Popups.Decorators;
 using GLib.Widgets;
-
-using ImGuiNET;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
@@ -199,7 +198,7 @@ public class AnimationEditorTab {
 			ImGui.SetNextItemWidth(40);
 			
 			var intId = (int)id;
-			ImGui.InputInt($"##id{index}", ref intId, 0, 0, ImGuiInputTextFlags.ReadOnly);
+			ImGui.InputInt($"##id{index}", ref intId, 0, 0, flags: ImGuiInputTextFlags.ReadOnly);
 
 			ImGui.SameLine(0, spacing);
 			var widthR = ImGui.CalcItemWidth() - ImGui.GetFrameHeight() - 40;
@@ -246,7 +245,7 @@ public class AnimationEditorTab {
 
 		var size = new Vector2(height, height);
 		if (anim.Icon != 0 && this._tex.TryGetFromGameIcon((uint)anim.Icon, out var icon)) {
-			ImGui.Image(icon.GetWrapOrEmpty().ImGuiHandle, size);
+			ImGui.Image(icon.GetWrapOrEmpty().Handle, size);
 		} else {
 			ImGui.Dummy(size);
 		}

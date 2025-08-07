@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 

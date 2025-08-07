@@ -121,7 +121,7 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 
 	private unsafe static uint GetPartialId(PartialSkeleton partial) {
 		var resource = partial.SkeletonResourceHandle;
-		return resource != null ? resource->ResourceHandle.Id : 0;
+		return resource != null ? resource->Id : 0;
 	}
 	
 	// Filtering

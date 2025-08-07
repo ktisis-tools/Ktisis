@@ -2,7 +2,7 @@
 
 using Dalamud.Game.ClientState.Objects.Types;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Lists;
 
