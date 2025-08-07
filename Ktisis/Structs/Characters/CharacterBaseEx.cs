@@ -15,7 +15,7 @@ public struct CharacterBaseEx {
 
 	[FieldOffset(0x050)] public Transform Transform;
 
-	[FieldOffset(0x0D0)] public Attach Attach;
+	[FieldOffset(0x0D8)] public Attach Attach;
 
 	[FieldOffset(0x2E0)] public WetnessState Wetness;
 
