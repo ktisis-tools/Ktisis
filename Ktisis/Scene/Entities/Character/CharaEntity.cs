@@ -40,7 +40,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 	public unsafe bool IsDrawing() {
 		var ptr = this.GetCharacter();
 		if (ptr == null) return false;
-		return ptr->UnkFlags_02 != 0;
+		return ((ulong)ptr->StateFlags & 0x00_00_00_FF_00) != 0;
 	}
 	
 	// Character

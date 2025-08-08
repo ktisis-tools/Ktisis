@@ -178,7 +178,7 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		if (this.Parent is not CharaEntity parent || !parent.IsDrawing())
 			return null;
 		var character = parent.GetCharacter();
-		return character != null ? character->Skeleton : null;
+		return character != null ? character->Skeleton : null; 
 	}
 
 	public unsafe hkaPose* GetPose(int index) {
