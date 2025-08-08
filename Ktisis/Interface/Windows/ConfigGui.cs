@@ -4,14 +4,13 @@ using System.Text;
 using System.Numerics;
 using System.Collections.Generic;
 
-using ImGuiNET;
-
 using Newtonsoft.Json;
 
 using Dalamud.Logging;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Keys;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Helpers;
 using Ktisis.Util;

@@ -7,9 +7,9 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x080)] public Weapon OffHand;
 		[FieldOffset(0x0F0)] public Weapon Prop;
 		
-		[FieldOffset(0x160)] public Equipment Equipment;
-		[FieldOffset(0x1B0)] public Customize Customize;
+		[FieldOffset(0x1D0)] public Equipment Equipment;
+		[FieldOffset(0x220)] public Customize Customize;
 
-		[FieldOffset(0x1D0)] public ushort Glasses;
+		[FieldOffset(0x240)] public ushort Glasses;
 	}
 }

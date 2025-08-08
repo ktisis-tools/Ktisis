@@ -3,8 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using ImGuiNET;
-
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -336,7 +335,7 @@ namespace Ktisis.Interface.Windows {
 
 			bool click;
 			if (sel!.ContainsKey(val))
-				click = ImGui.ImageButton(sel[val].GetWrapOrEmpty().ImGuiHandle, IconSize);
+				click = ImGui.ImageButton(sel[val].GetWrapOrEmpty().Handle, IconSize);
 			else
 				click = ImGui.Button($"{val}", ButtonIconSize);
 
@@ -521,7 +520,7 @@ namespace Ktisis.Interface.Windows {
 				if (i == 7) // Legacy tattoo
 					button |= ImGui.Button("Legacy\nTattoo", ButtonIconSize);
 				else
-					button |= ImGui.ImageButton(FacialFeatureIcons[i].GetWrapOrEmpty().ImGuiHandle, IconSize);
+					button |= ImGui.ImageButton(FacialFeatureIcons[i].GetWrapOrEmpty().Handle, IconSize);
 				ImGui.PopStyleColor();
 
 				if (button) {
@@ -576,7 +575,7 @@ namespace Ktisis.Interface.Windows {
 					foreach (var (val, icon) in option.Select!) {
 						if (icon == null) continue;
 
-						if (ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ListIconSize)) {
+						if (ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, ListIconSize)) {
 							custom.Bytes[(uint)opt.Index] = (byte)val;
 							Apply(custom);
 						}

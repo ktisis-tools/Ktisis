@@ -40,7 +40,7 @@ namespace Ktisis.Interop.Hooks {
 		// Init & dispose
 
 		internal static void Init() {
-			var tarName = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 49 8D 8F ?? ?? ?? ?? 48 83 C4 20");
+			var tarName = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8D 8D ?? ?? ?? ?? 48 83 C4 28");
 			TarNameHook = Services.Hooking.HookFromAddress<TarNameDelegate>(tarName, UpdateTarName);
             TarNameHook.Enable();
 		}

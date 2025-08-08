@@ -43,7 +43,7 @@ namespace Ktisis.Structs.Extensions {
 		public unsafe static Equipment ReadEquipment(this ExcelPage parser, int index, uint offset) {
 			var result = new Equipment();
 			for (var i = 0; i < Equipment.SlotCount; i++)
-				result.Slots[i] = (ulong)parser.ReadItem(index + i * 3 + (i > 0 ? 1 : 0), offset);
+				result.Slots[i] = (ulong)parser.ReadItem(index + i * 3 + (i > 0 ? 2 : 0), offset);
 			return result;
 		}
 	}

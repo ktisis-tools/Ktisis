@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using ImGuiNET;
-
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Textures;
 using Dalamud.Utility;
@@ -141,7 +140,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				Equipped[slot].SetEquip(equipObj, slot);
 
 			var item = Equipped[slot];
-			var icon = item.Icon?.GetWrapOrEmpty().ImGuiHandle ?? 0;
+			var icon = item.Icon?.GetWrapOrEmpty().Handle ?? 0;
 			ImGui.PushID((int)slot);
 			if (ImGui.ImageButton(icon, IconSize) && SlotSelect == null)
 				OpenSelector(slot);
@@ -165,7 +164,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 				var equip = (WeaponEquip)equipObj;
 				//PluginLog.Information($"{equip.Set} {equip.Base} {equip.Variant}");
 				var val = new int[] { equip.Set, equip.Base, equip.Variant };
-				if (ImGui.InputInt3($"##KtisisWep_{slot}", ref val[0])) {
+				if (ImGui.InputInt($"##KtisisWep_{slot}", val)) {
 					equip.Set = (ushort)val[0];
 					equip.Base = (ushort)val[1];
 					equip.Variant = (ushort)val[2];
@@ -174,7 +173,7 @@ namespace Ktisis.Interface.Windows.ActorEdit {
 			} else {
 				var equip = (ItemEquip)equipObj;
 				var val = new int[] { equip.Id, equip.Variant };
-				if (ImGui.InputInt2($"##{slot}", ref val[0])) {
+				if (ImGui.InputInt($"##{slot}", val)) {
 					equip.Id = (ushort)val[0];
 					equip.Variant = (byte)val[1];
 					tar->Equip(SlotToIndex(slot), equip);

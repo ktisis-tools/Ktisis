@@ -2,8 +2,8 @@ using System;
 using System.Numerics;
 using System.Collections.Generic;
 
-using ImGuiNET;
-using ImGuizmoNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Dalamud.Interface;
 
@@ -101,19 +101,19 @@ namespace Ktisis.Interface.Components {
 			result |= ColoredDragFloat3("##Position", ref Position, BaseSpeedPos * multiplier, AxisColors, out active);
 			anyActive |= active;
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, iconPosition);
+			ControlButtons.ButtonChangeOperation(ImGuizmoOperation.Translate, iconPosition);
 
 			// Rotation
 			result |= ColoredDragFloat3("##Rotation", ref Rotation, BaseSpeedRot * multiplier, AxisColors, out active);
 			anyActive |= active;
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, iconRotation);
+			ControlButtons.ButtonChangeOperation(ImGuizmoOperation.Rotate, iconRotation);
 
 			// Scale
 			result |= ColoredDragFloat3("##Scale", ref Scale, BaseSpeedSca * multiplier, AxisColors, out active);
 			anyActive |= active;
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, iconScale);
+			ControlButtons.ButtonChangeOperation(ImGuizmoOperation.Scale, iconScale);
 
 			IsActive = anyActive;
 			/* FIXME: Checking `ImGui.IsAnyItemActive` seems overzealous? Should probably replace with new `anyActive`. */
@@ -133,7 +133,7 @@ namespace Ktisis.Interface.Components {
 			
 			Vector2 mults = new(ModifierMultShift, ModifierMultCtrl);
 			ImGui.PushItemWidth(CalcItemWidth(2));
-			if (ImGui.DragFloat2("##SpeedMult##shiftCtrl", ref mults, 1f, 0.00001f, 10000f, null, ImGuiSliderFlags.Logarithmic)) {
+			if (ImGui.DragFloat2("##SpeedMult##shiftCtrl", ref mults, 1f, 0.00001f, 10000f, flags: ImGuiSliderFlags.Logarithmic)) {
 				Ktisis.Configuration.TransformTableModifierMultShift = mults.X;
 				Ktisis.Configuration.TransformTableModifierMultCtrl = mults.Y;
 			}

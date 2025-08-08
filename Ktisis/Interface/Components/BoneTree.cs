@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Numerics;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Overlay;
 using Ktisis.Structs;

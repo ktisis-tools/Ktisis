@@ -6,7 +6,7 @@ using System.Linq;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Environment;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Env;
 using Ktisis.Structs.Env;
@@ -165,7 +165,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 			if (adjustPad) posY -= style.FramePadding.Y;
 			ImGui.SetCursorPosY(posY);
 			
-			ImGui.Image(weather.Icon?.GetWrapOrEmpty().ImGuiHandle ?? 0, WeatherIconSize);
+			ImGui.Image(weather.Icon?.GetWrapOrEmpty().Handle ?? 0, WeatherIconSize);
 			ImGui.SameLine();
             
 			ImGui.Text(weather.Name);
@@ -183,7 +183,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
             
 			lock (EnvService.SkyLock) {
 				if (EnvService.SkyTex != null)
-					ImGui.Image(EnvService.SkyTex.GetWrapOrEmpty().ImGuiHandle, buttonSize);
+					ImGui.Image(EnvService.SkyTex.GetWrapOrEmpty().Handle, buttonSize);
 			}
 
 			ImGui.SameLine();

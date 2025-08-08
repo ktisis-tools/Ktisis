@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Collections.Generic;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace Ktisis.Interface.Components {
 	public static class PopupSelect {

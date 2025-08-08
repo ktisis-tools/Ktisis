@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
-using ImGuiNET;
-using ImGuizmoNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -13,7 +13,7 @@ using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Interface.Windows.Workspace {
 	public static class EditGaze {
-		public static Dictionary<byte, ActorGaze>? ActorControl = null; // ObjectID : ActorGaze
+		public static Dictionary<ushort, ActorGaze>? ActorControl = null; // ObjectID : ActorGaze
 
 		public static bool IsLinked {
 			get => Ktisis.Configuration.LinkedGaze;
@@ -115,7 +115,7 @@ namespace Ktisis.Interface.Windows.Workspace {
 
 			if (gizmo != null) {
 				if (enabled) {
-					gizmo.ForceOp = OPERATION.TRANSLATE;
+					gizmo.ForceOp = ImGuizmoOperation.Translate;
 					result |= gizmo.Draw(ref gaze.Pos);
 				} else {
 					OverlayWindow.DeselectGizmo();

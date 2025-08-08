@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors>Chirp</Authors>
     <Company>Ktisis Tools</Company>
-    <Version>0.2.28</Version>
+    <Version>0.2.29</Version>
     <Description>An internal posing tool.</Description>
     <PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
     <Configurations>Debug;Release;External</Configurations>
@@ -67,8 +67,16 @@
       <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="ImGui.NET">
-      <HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
+    <Reference Include="Dalamud.Bindings.ImGui">
+      <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImGui.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Dalamud.Bindings.ImGuizmo">
+      <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImGuizmo.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Dalamud.Bindings.ImPlot">
+      <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImPlot.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="ImGuiScene">

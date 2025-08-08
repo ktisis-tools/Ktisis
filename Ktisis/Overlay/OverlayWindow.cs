@@ -1,7 +1,7 @@
 using System.Numerics;
 
-using ImGuiNET;
-using ImGuizmoNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;

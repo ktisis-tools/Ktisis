@@ -1,7 +1,7 @@
 using System.Numerics;
 
-using ImGuiNET;
-using ImGuizmoNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Ktisis.Structs.Extensions;
 
@@ -9,14 +9,14 @@ namespace Ktisis.Overlay {
 	public class Gizmo {
 		// Instanced properties
 
-		public MODE Mode => Ktisis.Configuration.GizmoMode;
-		public OPERATION Operation => Ktisis.Configuration.GizmoOp;
+		public ImGuizmoMode Mode => Ktisis.Configuration.GizmoMode;
+		public ImGuizmoOperation Operation => Ktisis.Configuration.GizmoOp;
 
 		public Matrix4x4 Matrix = new();
 		public Matrix4x4 Delta = new();
 		public SharpDX.Matrix3x3 EulerDeltaMatrix = new(); // for non gizmo manipulation, euler based, which must have an effect on the gizmo
 
-		public OPERATION? ForceOp = null;
+		public ImGuizmoOperation? ForceOp = null;
 
 		// Compose & Decompose
 		// Compose updates the matrix using given values.

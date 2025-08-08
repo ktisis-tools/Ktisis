@@ -1,7 +1,6 @@
-using ImGuiNET;
-
 using Dalamud.Interface;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Util;
 using Ktisis.Overlay;

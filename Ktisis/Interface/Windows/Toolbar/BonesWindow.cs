@@ -1,8 +1,7 @@
 using System.Numerics;
 
 using Dalamud.Interface;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Interface.Components;
 using Ktisis.Structs.Actor;

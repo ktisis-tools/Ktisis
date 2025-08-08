@@ -206,7 +206,7 @@ namespace Ktisis.Interop.Hooks {
 		internal unsafe static void Init() {
 			// Native methods
 			
-			var ctorAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 89 B3 ?? ?? ?? ??");
+			var ctorAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? EB 03 48 8B C6 45 33 C0 48 89 07");
 			GameCamera_Ctor = Marshal.GetDelegateForFunctionPointer<GameCamera_Ctor_Delegate>(ctorAddr);
 
 			// Hooks
@@ -235,7 +235,7 @@ namespace Ktisis.Interop.Hooks {
 			var loadMxAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 17 48 8D 4D E0");
 			LoadMatrix = Marshal.GetDelegateForFunctionPointer<LoadMatrixDelegate>(loadMxAddr);
             
-			var collideAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 4C 8B AC 24 ?? ?? ?? ?? 32 DB");
+			var collideAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 4C 8D 45 97 89 83 ?? ?? ?? ??");
             CameraCollisionHook = Services.Hooking.HookFromAddress<CameraCollisionDelegate>(collideAddr, CameraCollisionDetour);
         }
 
