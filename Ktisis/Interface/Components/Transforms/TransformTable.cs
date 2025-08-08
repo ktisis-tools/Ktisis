@@ -7,12 +7,12 @@ using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
 
-using Ktisis.ImGuizmo;
-using Ktisis.Core.Attributes;
 using Ktisis.Common.Utility;
+using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Selection;
+using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Components.Transforms;
 
@@ -79,7 +79,7 @@ public class TransformTable {
 
 		try {
 			var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
-			ImGui.PushItemWidth(useAvail ? ImGui.GetContentRegionAvail().X : CalcTableWidth());
+			ImGui.PushItemWidth(useAvail ? CalcTableAvail() : CalcTableWidth());
 
 			var op = flags.HasFlag(TransformTableFlags.Operation);
 			transOut = this.Transform.Set(transIn);
@@ -114,13 +114,13 @@ public class TransformTable {
 	// Individual transforms
 
 	private bool DrawPosition(ref Vector3 pos, bool op) {
-		var result = DrawLinear("##TransformTable_Pos", ref pos);
+		var result = this.DrawLinear("##TransformTable_Pos", ref pos);
 		if (op) this.DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, "transform.position");
 		return result;
 	}
 
 	private bool DrawRotate(ref Quaternion rot, bool op) {
-		var result = DrawEuler("##TransformTable_Rotate", ref this.Angles);
+		var result = this.DrawEuler("##TransformTable_Rotate", ref this.Angles);
 		if (result) {
 			rot = HkaEulerAngles.ToQuaternion(this.Angles);
 			this.Value = rot;
@@ -130,27 +130,20 @@ public class TransformTable {
 	}
 
 	private bool DrawScale(ref Vector3 scale, bool op) {
-		var result = DrawLinear("##TransformTable_Scale", ref scale);
+		var result = this.DrawLinear("##TransformTable_Scale", ref scale);
 		if (op) this.DrawOperation(ScaleOp, FontAwesomeIcon.Expand, "transform.scale");
 		return result;
 	}
 
 	private void DrawOperation(Operation op, FontAwesomeIcon icon, string hint) {
 		var spacing = ImGui.GetStyle().ItemSpacing.X;
-		//if (this.OnClickOperation != null) {
-			ImGui.SameLine(0, spacing);
+		ImGui.SameLine(0, spacing);
 
-			var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
-			ImGui.PushStyleColor(ImGuiCol.Text, enable);
-			if (Buttons.IconButtonTooltip(icon, hint))
-				this.ChangeOperation(op);
-			ImGui.PopStyleColor();
-		/*} else {
-			var space = UiBuilder.IconFont.FontSize;
-			var size = Icons.CalcIconSize(icon).X;
-			ImGui.SameLine(0, spacing + (size) - (space / 2));
-			Icons.DrawIcon(icon);
-		}*/
+		var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
+		ImGui.PushStyleColor(ImGuiCol.Text, enable);
+		if (Buttons.IconButtonTooltip(icon, hint))
+			this.ChangeOperation(op);
+		ImGui.PopStyleColor();
 	}
 
 	private void ChangeOperation(Operation op) {
@@ -169,7 +162,7 @@ public class TransformTable {
 	}
 
 	private bool DrawEuler(string id, ref Vector3 vec) {
-		var used = DrawXYZ(id, ref vec, 0.2f);
+		var used = this.DrawXYZ(id, ref vec, 0.2f);
 		if (used) vec = vec.NormalizeAngles();
 		this.IsUsed |= used;
 		return used;
@@ -204,12 +197,15 @@ public class TransformTable {
 	
 	// Space calculations
 
+	private static float CalcTableAvail()
+		=> ImGui.GetContentRegionAvail().X - CalcIconSpacing();
+
 	private static float CalcTableWidth()
 		=> UiBuilder.DefaultFont.FontSize * 4.00f * 3;
 
 	private static float CalcIconSpacing()
 		=> UiBuilder.IconFont.FontSize + ImGui.GetStyle().ItemSpacing.X * 2;
-
+	
 	public static float CalcWidth()
 		=> CalcTableWidth() + CalcIconSpacing();
 }
