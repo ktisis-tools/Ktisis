@@ -1,6 +1,8 @@
+using System;
 using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
 
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Overlay;
@@ -30,23 +32,11 @@ public class Gizmo2D {
 	public bool IsEnded => this.Gizmo.IsEnded;
 
 	// Draw
-
-	private static readonly Matrix4x4 ProjectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(
-		fieldOfView: 0.01745f,
-		aspectRatio: 1f, // 1:1
-		nearPlaneDistance: 0.1f,
-		farPlaneDistance: 100.0f
-	);
-
-	public void SetLookAt(Vector3 cameraPos, Vector3 targetPos) {
-		var viewMatrix = Matrix4x4.CreateLookAt(cameraPos, targetPos, Vector3.UnitY);
-		this.Gizmo.SetMatrix(viewMatrix, ProjectionMatrix);
-	}
 	
-	public void SetLookAt(Vector3 cameraPos, Vector3 targetPos, float fov) {
+	public void SetLookAt(Vector3 cameraPos, Vector3 targetPos, float fov, float aspect = 1.0f) {
 		var projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(
 			fieldOfView: fov,
-			aspectRatio: 1f, // 1:1
+			aspectRatio: 1.0f,
 			nearPlaneDistance: 0.1f,
 			farPlaneDistance: 100.0f
 		);
@@ -56,17 +46,30 @@ public class Gizmo2D {
 	}
 
 	public void Begin(Vector2 rectSize) {
-		var rectPos = ImGui.GetCursorScreenPos();
+		using var _ = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
 		
 		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize);
+
+		var cursorPos = ImGui.GetCursorScreenPos();
+		var innerSize = ImGui.GetContentRegionAvail();
 		
+		// Hack: This uses the full display region due to constraints where the mouse must be within the frame.
 		var io = ImGui.GetIO();
 		ImGui.SetNextWindowPos(Vector2.Zero);
 		ImGui.SetNextWindowSize(io.DisplaySize);
-		ImGui.Begin("##Gizmo2D", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove);
-
-		this.Gizmo.BeginFrame(rectPos, rectSize);
+		ImGui.Begin("##Gizmo2D", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
+		
+		var minDim = Math.Min(innerSize.X, innerSize.Y);
+		var drawSize = new Vector2(minDim, minDim);
+		var drawPos = cursorPos + (innerSize - drawSize) / 2;
+		
+		this.Gizmo.BeginFrame(drawPos, drawSize);
 		this.Gizmo.PushDrawList();
+		DrawGizmoCircle(drawPos, drawSize, drawSize.X);
+	}
+	
+	private static void DrawGizmoCircle(Vector2 pos, Vector2 size, float width) {
+		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * ScaleFactor) / 2.05f, 0xCF202020);
 	}
 
 	public bool Manipulate(ref Matrix4x4 matrix, out Matrix4x4 delta)

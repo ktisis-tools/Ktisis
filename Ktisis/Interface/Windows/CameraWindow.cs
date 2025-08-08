@@ -10,6 +10,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Interface.Components.Objects;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 

@@ -6,6 +6,7 @@ using GLib.Popups.ImFileDialog;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Interface.Components.Objects;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Editor.Context;
 using Ktisis.Interface.Editor.Popup;

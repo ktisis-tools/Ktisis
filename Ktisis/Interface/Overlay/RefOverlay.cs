@@ -40,7 +40,7 @@ public class RefOverlay {
 
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 
-		var id = $"{image.Name}##{image.Data.Id}";
+		var id = $"{image.Name}###{image.Data.Id}";
 		var flags = ImGuiWindowFlags.NoBackground;
 		if (!title) flags |= ImGuiWindowFlags.NoTitleBar;
 		

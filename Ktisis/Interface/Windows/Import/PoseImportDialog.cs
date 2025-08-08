@@ -30,7 +30,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	) {
 		this._ctx = ctx;
 		this._select = select;
-		select.OpenDialog = this.OnFileDialogOpen;
+		select.OnOpenDialog = this.OnFileDialogOpen;
 	}
 	
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {

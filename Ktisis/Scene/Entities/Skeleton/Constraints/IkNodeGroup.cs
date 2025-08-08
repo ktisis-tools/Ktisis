@@ -5,7 +5,7 @@ using Ktisis.Scene.Types;
 namespace Ktisis.Scene.Entities.Skeleton.Constraints;
 
 public abstract class IkNodeGroupBase : BoneNodeGroup, IIkNode {
-	private readonly IIkGroup Group;
+	public readonly IIkGroup Group;
 
 	protected IkNodeGroupBase(
 		ISceneManager scene,
