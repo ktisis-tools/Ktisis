@@ -38,7 +38,7 @@ public static class AttachUtility {
 		var pSkele = attach->GetParentSkeleton();
 		if (pSkele == null
 			|| pSkele->PartialSkeletons == null
-			|| pSkele->PartialSkeletons->HavokPoses == null
+			|| pSkele->PartialSkeletons->HavokPoses.IsEmpty
 		) return;
 		
 		var pPose = pSkele->PartialSkeletons[0].GetHavokPose(0);

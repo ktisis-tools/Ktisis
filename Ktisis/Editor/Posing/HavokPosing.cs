@@ -80,7 +80,7 @@ public static class HavokPosing {
 		var hkaSkele = pose->Skeleton;
 		for (var p = 0; p < skele->PartialSkeletonCount; p++) {
 			var subPartial = skele->PartialSkeletons[p];
-			if (subPartial.HavokPoses == null) continue;
+			if (subPartial.HavokPoses.IsEmpty) continue;
 
 			var subPose = subPartial.GetHavokPose(0);
 			if (subPose == null) continue;

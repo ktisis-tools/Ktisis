@@ -67,7 +67,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 		if (attach == null) return null;
 
 		var parentSkele = attach->GetParentSkeleton();
-		if (parentSkele == null || parentSkele->PartialSkeletons == null || parentSkele->PartialSkeletons->HavokPoses == null)
+		if (parentSkele == null || parentSkele->PartialSkeletons == null || parentSkele->PartialSkeletons->HavokPoses.IsEmpty)
 			return null;
 		
 		var parentPose = parentSkele->PartialSkeletons[0].GetHavokPose(0);
