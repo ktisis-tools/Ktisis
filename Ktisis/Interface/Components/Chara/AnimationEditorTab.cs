@@ -154,7 +154,7 @@ public class AnimationEditorTab {
 		
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X * 2);
 		
-		if (ImGui.InputInt("##Pose", ref pose)) {
+		if (ImGui.InputInt("##Pose", ref pose, 1)) {
 			var count = this.Editor.GetPoseCount(mode);
 			pose = pose < 0 ? count - 1 : pose % count;
 			this.Editor.SetPose(mode, (byte)pose);
