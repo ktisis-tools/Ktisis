@@ -9,7 +9,7 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.GameData.Excel;
 
-[Sheet("ENpcBase", columnHash: 0x464052cd)]
+[Sheet("ENpcBase", columnHash: 0x5ba9e1a6)]
 public struct EventNpc(uint row) : IExcelRow<EventNpc>, INpcBase {
 	public uint RowId { get; } = row;
 

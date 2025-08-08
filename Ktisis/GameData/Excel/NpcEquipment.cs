@@ -7,7 +7,7 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.GameData.Excel;
 
-[Sheet("NpcEquip", columnHash: 0x4004f596)]
+[Sheet("NpcEquip", columnHash: 0x7eaeb95c)]
 public struct NpcEquipment(uint row) : IExcelRow<NpcEquipment> {
 	public uint RowId { get; } = row;
 

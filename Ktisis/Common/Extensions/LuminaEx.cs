@@ -85,7 +85,7 @@ public static class LuminaEx {
 	public static EquipmentContainer ReadEquipment(this ExcelPage parser, int index, uint offset) {
 		var result = new EquipmentContainer();
 		for (var i = 0; i < EquipmentContainer.Length; i++)
-			result[(uint)i] = parser.ReadEquipItem(index + i * 3 + (i > 0 ? 1 : 0), offset);
+			result[(uint)i] = parser.ReadEquipItem(index + i * 3 + (i > 0 ? 2 : 0), offset);
 		return result;
 	}
 }
