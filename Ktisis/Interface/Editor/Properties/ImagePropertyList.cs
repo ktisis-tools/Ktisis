@@ -25,13 +25,15 @@ public class ImagePropertyList : ObjectPropertyList {
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
 		if (entity is not ReferenceImage img)
 			return;
-		
+
 		builder.AddHeader("Reference Image", () => this.DrawImageTab(img));
 	}
 
 	private void DrawImageTab(ReferenceImage img) {
 		const ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.ReadOnly;
-		
+
+		ImGui.Checkbox("Enabled", ref img.Data.Visible);
+
 		var path = Path.GetFileName(img.Data.FilePath);
 		ImGui.InputText("##RefImgPath", ref path, flags: inputFlags);
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
