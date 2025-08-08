@@ -26,14 +26,11 @@ public class TransformWindow : KtisisWindow {
 	private readonly Gizmo2D _gizmo;
 
 	private readonly TransformTable _table;
-	
-	private readonly CameraService _camera;
 
 	public TransformWindow(
 		IEditorContext ctx,
 		Gizmo2D gizmo,
-		TransformTable table,
-		CameraService camera
+		TransformTable table
 	) : base(
 		"Transform Editor",
 		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoResize
@@ -41,7 +38,6 @@ public class TransformWindow : KtisisWindow {
 		this._ctx = ctx;
 		this._gizmo = gizmo;
 		this._table = table;
-		this._camera = camera;
 	}
 	
 	private ITransformMemento? Transform;
@@ -167,7 +163,7 @@ public class TransformWindow : KtisisWindow {
 			return false;
 		}
 		
-		var camera = this._camera.GetGameCamera();
+		var camera = CameraService.GetGameCamera();
 		var cameraFov = camera != null ? camera->FoV : 1.0f;
 		var cameraPos = camera != null ? (Vector3)camera->CameraBase.SceneCamera.Object.Position : Vector3.Zero;
 		

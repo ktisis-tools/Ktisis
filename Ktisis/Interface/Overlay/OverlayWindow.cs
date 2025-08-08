@@ -18,18 +18,15 @@ public class OverlayWindow : KtisisWindow {
 	
 	private readonly IEditorContext _ctx;
 	private readonly IGizmo _gizmo;
-	private readonly CameraService _camera;
 	private readonly SceneDraw _sceneDraw;
 
 	public OverlayWindow(
 		IEditorContext ctx,
 		IGizmo gizmo,
-		CameraService camera,
 		SceneDraw draw
 	) : base("##KtisisOverlay", WindowFlags) {
 		this._ctx = ctx;
 		this._gizmo = gizmo;
-		this._camera = camera;
 		this._sceneDraw = draw;
 		this._sceneDraw.SetContext(ctx);
 		this.PositionCondition = ImGuiCond.Always;
@@ -72,8 +69,8 @@ public class OverlayWindow : KtisisWindow {
 		if (target == null || transform == null)
 			return false;
 		
-		var view = this._camera.GetViewMatrix();
-		var proj = this._camera.GetProjectionMatrix();
+		var view = CameraService.GetViewMatrix();
+		var proj = CameraService.GetProjectionMatrix();
 		if (view == null || proj == null || this.Size == null)
 			return false;
 

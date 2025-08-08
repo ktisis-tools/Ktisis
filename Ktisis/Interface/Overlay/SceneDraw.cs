@@ -3,6 +3,8 @@ using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
 
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
@@ -18,7 +20,6 @@ namespace Ktisis.Interface.Overlay;
 
 [Transient]
 public class SceneDraw {
-	private readonly CameraService _camera;
 	private readonly SelectableGui _select;
 	private readonly RefOverlay _refs;
 	
@@ -27,11 +28,9 @@ public class SceneDraw {
 	private OverlayConfig Config => this._ctx.Config.Overlay;
 
 	public SceneDraw(
-		CameraService camera,
 		SelectableGui select,
 		RefOverlay refs
 	) {
-		this._camera = camera;
 		this._select = select;
 		this._refs = refs;
 	}
@@ -70,6 +69,9 @@ public class SceneDraw {
 		var skeleton = pose.GetSkeleton();
 		if (skeleton == null || skeleton->PartialSkeletons == null) return;
 
+		var camera = CameraService.GetSceneCamera();
+		if (camera == null) return;
+
 		var drawList = ImGui.GetWindowDrawList();
 
 		var partialCt = skeleton->PartialSkeletonCount;
@@ -105,15 +107,15 @@ public class SceneDraw {
 					if (lineTo == null) continue;
 
 					var display = this._ctx.Config.GetEntityDisplay(node);
-					this.DrawLine(drawList, transform.Position, lineTo.Position, display.Color);
+					this.DrawLine(camera, drawList, transform.Position, lineTo.Position, display.Color);
 				}
 			}
 		}
 	}
 	
-	private void DrawLine(ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos, uint color) {
-		if (!this._camera.WorldToScreen(fromPos, out var fromPos2d)) return;
-		if (!this._camera.WorldToScreen(toPos, out var toPos2d)) return;
+	private unsafe void DrawLine(Camera* camera, ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos, uint color) {
+		if (!CameraService.WorldToScreen(camera, fromPos, out var fromPos2d)) return;
+		if (!CameraService.WorldToScreen(camera, toPos, out var toPos2d)) return;
 
 		var opacity = ImGuizmo.Gizmo.IsUsing ? this.Config.LineOpacityUsing : this.Config.LineOpacity;
 		drawList.AddLine(fromPos2d, toPos2d, color.SetAlpha(opacity), this.Config.LineThickness);
