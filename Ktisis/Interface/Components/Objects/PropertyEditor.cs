@@ -31,6 +31,7 @@ public class PropertyEditor {
 
 	public void Prepare(IEditorContext ctx) {
 		this.Create<ActorPropertyList>(ctx)
+			.Create<BasePropertyList>()
 			.Create<PosePropertyList>(ctx)
 			.Create<LightPropertyList>()
 			.Create<ImagePropertyList>(ctx)
@@ -69,11 +70,11 @@ public class PropertyEditor {
 		
 		public void Clear() => this._headers.Clear();
 
-		public void AddHeader(string name, Action callback, int priority = -1) {
+		public void AddHeader(string name, Action callback, int priority = int.MinValue) {
 			this._headers.Add(new PropertyHeader {
 				Name = name,
 				Callback = callback,
-				Priority = priority == -1 ? this._headers.Count : priority
+				Priority = priority == int.MinValue ? this._headers.Count : priority
 			});
 		}
 

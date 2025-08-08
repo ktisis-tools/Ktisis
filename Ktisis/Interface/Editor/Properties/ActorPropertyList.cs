@@ -24,8 +24,6 @@ public class ActorPropertyList : ObjectPropertyList {
 		this._locale = locale;
 	}
 	
-	// Events
-	
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
 		if (
 			entity switch {
@@ -44,8 +42,6 @@ public class ActorPropertyList : ObjectPropertyList {
 
 	private void DrawActorTab(ActorEntity actor) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-
-		ImGui.Spacing();
 		
 		// Position lock
 		
