@@ -108,6 +108,9 @@ public class OverlayWindow : KtisisWindow {
 	}
 
 	private bool HandleShiftRaycast(ref Matrix4x4 matrix) {
+		if (!this._ctx.Config.Gizmo.AllowRaySnap)
+			return false;
+		
 		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || ImGuizmo.Gizmo.CurrentOperation != Operation.TRANSLATE)
 			return false;
 

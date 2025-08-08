@@ -187,6 +187,7 @@
 		"gizmo": {
 			"title": "Gizmo",
 			"flip": "Flip axis to face camera",
+			"raySnap": "Hold shift to ray snap objects",
 			"header": "Style:",
 			"editor": {
 				"general": {
