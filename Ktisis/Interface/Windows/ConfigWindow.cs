@@ -137,6 +137,10 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
 		
 		ImGui.Spacing();
+		
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.editOnSelect"), ref this.Config.Editor.ToggleEditorOnSelect);
+		
+		ImGui.Spacing();
 
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyWindows"), ref this.Config.Editor.UseLegacyWindowBehavior);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyPoseTabs"), ref this.Config.Editor.UseLegacyPoseViewTabs);

@@ -11,6 +11,8 @@ public class EditorConfig {
 
 	public bool OpenOnEnterGPose = true;
 
+	public bool ToggleEditorOnSelect = true;
+
 	public bool UseLegacyWindowBehavior = false;
 	public bool UseLegacyPoseViewTabs = false;
 	public bool UseLegacyLightEditor = false;

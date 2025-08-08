@@ -21,7 +21,6 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
-using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Editor;
 
@@ -46,11 +45,26 @@ public class EditorInterface : IEditorInterface {
 		if (this._ctx.Config.Editor.OpenOnEnterGPose)
 			this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Open();
 
+		this._ctx.Selection.Changed += this.OnSelectChanged;
+
 		this._gizmo.Initialize();
 		this._gui.GetOrCreate<OverlayWindow>(
 			this._ctx,
 			this._gizmo.Create(GizmoId.OverlayMain)
 		).Open();
+	}
+
+	private void OnSelectChanged(ISelectManager sender) {
+		if (!this._ctx.Config.Editor.ToggleEditorOnSelect) return;
+
+		var open = sender.Count > 0;
+		
+		var editor = this._gui.Get<ObjectWindow>();
+		if (editor == null) {
+			if (open) this.OpenObjectEditor();
+			return;
+		}
+		editor.IsOpen = open;
 	}
 	
 	// Window wrappers
