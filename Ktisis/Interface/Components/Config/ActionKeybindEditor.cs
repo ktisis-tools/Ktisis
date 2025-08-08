@@ -133,9 +133,20 @@ public class ActionKeybindEditor {
 
 		this.KeyCombo ??= new KeyCombo();
 
-		var keys = KeyHelpers.GetKeysDown().Except(this.KeysHandled).ToList();
-		this.KeysHandled.AddRange(keys);
-		foreach (var key in keys) {
+		var keys = KeyHelpers.GetKeysDown().ToList();
+		var pressed = keys.Except(this.KeysHandled).ToList();
+
+		// Finish editing when the primary key is released
+
+		if (this.KeyCombo.Key != VirtualKey.NO_KEY && !keys.Contains(this.KeyCombo.Key)) {
+			this.SetEditing(null);
+			return;
+		}
+
+		// Handle newly pressed keys
+
+		this.KeysHandled.AddRange(pressed);
+		foreach (var key in pressed) {
 			if (key == VirtualKey.RETURN) {
 				this.SetEditing(null);
 				return;
@@ -157,8 +168,9 @@ public class ActionKeybindEditor {
 				this.KeyCombo.AddModifier(prev);
 			}
 		}
-		
-		var text = this.KeyCombo.GetShortcutString();
+
+		var textCombo = this.KeysHandled.Count > 0 ? this.KeyCombo : keybind.Combo;
+		var text = textCombo.GetShortcutString();
 		ImGui.InputText("##EditKeybind", ref text, 256, ImGuiInputTextFlags.ReadOnly & ~ImGuiInputTextFlags.AutoSelectAll);
 		ImGui.SetKeyboardFocusHere(-1);
 	}

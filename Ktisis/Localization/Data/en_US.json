@@ -253,7 +253,8 @@
 		},
 		"input": {
 			"title": "Input",
-			"enable": "Enable keybinds"
+			"enable": "Enable keybinds",
+			"help": "Click keybinds to modify them. Right click to clear."
 		},
 		"autosave": {
 			"title": "AutoSave",

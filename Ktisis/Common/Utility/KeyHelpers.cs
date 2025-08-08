@@ -20,7 +20,7 @@ public static class KeyHelpers {
 			if (!io.KeysDown[i]) continue;
 			
 			var key = ImGuiHelpers.ImGuiKeyToVirtualKey((ImGuiKey)i);
-			if (key is >= VirtualKey.LCONTROL and <= VirtualKey.RMENU)
+			if (key is >= VirtualKey.LSHIFT and <= VirtualKey.RMENU)
 				continue;
 			
 			if (key != VirtualKey.NO_KEY)
