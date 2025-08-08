@@ -4,8 +4,8 @@
 		"Name": "Ktisis",
 		"InternalName": "Ktisis",
 		"Description": "A robust posing tool for creating screenshots in GPose.",
-		"AssemblyVersion": "0.2.28",
-		"TestingAssemblyVersion": "0.3.6",
+		"AssemblyVersion": "0.2.29",
+		"TestingAssemblyVersion": "0.2.29",
 		"RepoUrl": "https://github.com/ktisis-tools/Ktisis",
 		"ApplicableVersion": "any",
 		"DalamudApiLevel": 12,
@@ -16,8 +16,8 @@
 			"ktisis"
 		],
 		"IconUrl": "https://github.com/ktisis-tools/Ktisis/raw/main/icon.png",
-		"DownloadLinkInstall": "https://github.com/ktisis-tools/Ktisis/releases/download/v0.2.28/latest.zip",
-		"DownloadLinkTesting": "https://repo.ktisis.tools/pubtest/v0.3.6.zip",
-		"DownloadLinkUpdate": "https://github.com/ktisis-tools/Ktisis/releases/download/v0.2.28/latest.zip"
+		"DownloadLinkInstall": "https://github.com/ktisis-tools/Ktisis/releases/download/v0.2.29/latest.zip",
+		"DownloadLinkTesting": "https://github.com/ktisis-tools/Ktisis/releases/download/v0.2.29/latest.zip",
+		"DownloadLinkUpdate": "https://github.com/ktisis-tools/Ktisis/releases/download/v0.2.29/latest.zip"
 	}
 ]
