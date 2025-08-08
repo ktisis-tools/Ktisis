@@ -111,7 +111,7 @@ public class OverlayWindow : KtisisWindow {
 		if (!this._ctx.Config.Gizmo.AllowRaySnap)
 			return false;
 		
-		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || ImGuizmo.Gizmo.CurrentOperation != Operation.TRANSLATE)
+		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGuizmo.Gizmo.IsUsing || ImGuizmo.Gizmo.CurrentOperation != Operation.TRANSLATE)
 			return false;
 
 		if (!this._gui.ScreenToWorld(ImGui.GetMousePos(), out var hitPos))
