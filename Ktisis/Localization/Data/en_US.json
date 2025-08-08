@@ -87,7 +87,7 @@
 	},
 	
 	"transform_edit": {
-		"title": "Transform Editor",
+		"title": "Object Editor",
 		"actors": {
 			"title": "Actors"
 		},
@@ -163,6 +163,10 @@
 	
 	"env_edit": {
 		"title": "Environment Editor"
+	},
+	
+	"pose_view": {
+		"title": "Pose View"
 	},
 
 	"config": {
