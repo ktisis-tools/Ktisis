@@ -44,7 +44,7 @@ namespace Ktisis.Interface.Windows {
 
 				ImGui.PushStyleColor(ImGuiCol.Button, DiscordColor);
 				if (ImGui.Button("Join us on Discord", ButtonSize))
-					Common.OpenBrowser("https://discord.gg/ktisis");
+					Common.OpenBrowser("https://discord.gg/kUG3W8B8Ny");
 				ImGui.PopStyleColor();
 
 				ImGui.PushStyleColor(ImGuiCol.Button, KofiColor);
