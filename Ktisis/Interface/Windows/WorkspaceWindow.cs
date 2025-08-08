@@ -77,7 +77,7 @@ public class WorkspaceWindow : KtisisWindow {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsAlt, this._ctx.Locale.Translate("transform_edit.title")))
-			this.Interface.OpenTransformWindow();
+			this.Interface.OpenObjectEditor();
 
 		ImGui.SameLine(0, spacing);
 		

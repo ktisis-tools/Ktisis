@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
@@ -16,6 +17,8 @@ using Ktisis.Structs.Characters;
 namespace Ktisis.Interface.Windows.Editors;
 
 public class ActorWindow : EntityEditWindow<ActorEntity> {
+	private const string WindowId = "KtisisActorEditor";
+	
 	private readonly CustomizeEditorTab _custom;
 	private readonly EquipmentEditorTab _equip;
 	private readonly AnimationEditorTab _anim;
@@ -28,7 +31,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		CustomizeEditorTab custom,
 		EquipmentEditorTab equip,
 		AnimationEditorTab anim
-	) : base("Actor Editor", ctx) {
+	) : base($"Actor Editor###{WindowId}", ctx) {
 		this._custom = custom;
 		this._equip = equip;
 		this._anim = anim;
@@ -39,11 +42,23 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private ICustomizeEditor _editCustom = null!;
 
 	public override void SetTarget(ActorEntity target) {
+		this.WindowName = $"{target.Name}###{WindowId}";
+		
 		base.SetTarget(target);
 		
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 		this._anim.Editor = this.Animation.GetAnimationEditor(target);
+	}
+
+	private void UpdateTarget() {
+		if (this.Context.Config.Editor.UseLegacyWindowBehavior) return;
+
+		var target = (ActorEntity?)this.Context.Selection.GetSelected()
+			.FirstOrDefault(entity => entity is ActorEntity);
+
+		if (target != null && this.Target != target)
+			this.SetTarget(target);
 	}
 
 	// Draw tabs
@@ -62,6 +77,8 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	}
 	
 	public override void Draw() {
+		this.UpdateTarget();
+		
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
 		DrawTab("Appearance", this._custom.Draw);
 		DrawTab("Equipment", this._equip.Draw);

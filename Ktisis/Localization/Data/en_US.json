@@ -250,7 +250,10 @@
 		},
 		"workspace": {
 			"title": "Workspace",
-			"init": "Open on entering GPose"
+			"init": "Open workspace when entering GPose",
+			"legacyWindows": "Prefer legacy window behavior",
+			"legacyPoseTabs": "Prefer legacy pose view tabs",
+			"legacyLightEditor": "Prefer legacy light editor"
 		},
 		"input": {
 			"title": "Input",

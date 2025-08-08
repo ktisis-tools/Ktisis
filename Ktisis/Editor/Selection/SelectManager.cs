@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Events;
 using Ktisis.Scene.Entities;
@@ -10,7 +10,8 @@ namespace Ktisis.Editor.Selection;
 
 public enum SelectMode {
 	Default,
-	Multiple
+	Multiple,
+	Force
 }
 
 public delegate void SelectChangedHandler(ISelectManager sender);
@@ -23,6 +24,8 @@ public interface ISelectManager {
 	public int Count { get; }
 	
 	public IEnumerable<SceneEntity> GetSelected();
+
+	public SceneEntity? GetFirstSelected();
 
 	public bool IsSelected(SceneEntity entity);
 
@@ -62,6 +65,8 @@ public class SelectManager : ISelectManager {
 	
 	public IEnumerable<SceneEntity> GetSelected() => this.Selected.AsReadOnly();
 
+	public SceneEntity? GetFirstSelected() => this.Selected.FirstOrDefault();
+
 	public bool IsSelected(SceneEntity entity)
 		=> this.Selected.Contains(entity);
 
@@ -72,6 +77,15 @@ public class SelectManager : ISelectManager {
 	}
 
 	public void Select(SceneEntity entity, SelectMode mode) {
+		if (mode == SelectMode.Force) {
+			if (this.IsSelected(entity) && this.Count == 1)
+				return;
+			this.Selected.Clear();
+			this.Selected.Add(entity);
+			this.InvokeChanged();
+			return;
+		}
+		
 		var isSelect = this.IsSelected(entity);
 		var isMulti = this.Count > 1;
 		var modeMulti = mode == SelectMode.Multiple;

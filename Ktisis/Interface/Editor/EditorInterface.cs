@@ -1,12 +1,11 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 using GLib.Popups.ImFileDialog;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
-using Ktisis.Interface.Components.Objects;
+using Ktisis.Editor.Selection;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Editor.Context;
 using Ktisis.Interface.Editor.Popup;
@@ -70,9 +69,14 @@ public class EditorInterface : IEditorInterface {
 		this._gui.GetOrCreate<EnvWindow>(scene, module).Open();
 	}
 
-	public void OpenTransformWindow() {
+	public void OpenObjectEditor() {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
-		this._gui.GetOrCreate<TransformWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
+		this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
+	}
+
+	public void OpenObjectEditor(SceneEntity entity) {
+		entity.Select(SelectMode.Force);
+		this.OpenObjectEditor();
 	}
 
 	public void OpenPosingWindow() => this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Open();
@@ -101,8 +105,19 @@ public class EditorInterface : IEditorInterface {
 	
 	public void OpenRenameEntity(SceneEntity entity) => this._gui.CreatePopup<EntityRenameModal>(entity).Open();
 
-	public void OpenActorEditor(ActorEntity actor) => this.OpenEditor<ActorWindow, ActorEntity>(actor);
-	public void OpenLightEditor(LightEntity light) => this.OpenEditor<LightWindow, LightEntity>(light);
+	public void OpenActorEditor(ActorEntity actor) {
+		if (!this._ctx.Config.Editor.UseLegacyWindowBehavior)
+			actor.Select(SelectMode.Force);
+		this.OpenEditor<ActorWindow, ActorEntity>(actor);
+	}
+	
+	public void OpenLightEditor(LightEntity light) {
+		if (this._ctx.Config.Editor.UseLegacyLightEditor) {
+			this.OpenEditor<LightWindow, LightEntity>(light);
+			return;
+		}
+		this.OpenObjectEditor(light);
+	}
 
 	public void OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);

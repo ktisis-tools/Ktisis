@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -18,14 +17,14 @@ using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Windows;
 
-public class TransformWindow : KtisisWindow {
+public class ObjectWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
 	private readonly Gizmo2D _gizmo;
 
 	private readonly TransformTable _table;
 	private readonly PropertyEditor _propEditor;
 
-	public TransformWindow(
+	public ObjectWindow(
 		IEditorContext ctx,
 		Gizmo2D gizmo,
 		TransformTable table,
@@ -88,14 +87,8 @@ public class TransformWindow : KtisisWindow {
 	// Property editor: Object specific
 
 	private void DrawProperties(ITransformTarget? target) {
-		var selected = target switch {
-			{ Primary: { } entity } => entity,
-			_ when this._ctx.Selection.Count > 0 => this._ctx.Selection.GetSelected().First(),
-			_ => null
-		};
-		
-		if (selected != null)
-			this._propEditor.Draw(selected);
+		var selected = this._ctx.Selection.GetFirstSelected() ?? target?.Primary;
+		if (selected != null) this._propEditor.Draw(selected);
 	}
 	
 	// Transform table

@@ -1,13 +1,9 @@
-﻿using System.Numerics;
-
-using Dalamud.Interface;
+﻿using Dalamud.Interface;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Utility.Raii;
 
 using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
-using Ktisis.Interface.Components.Chara;
 using Ktisis.Interface.Editor.Properties.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities;
@@ -22,8 +18,7 @@ public class ActorPropertyList : ObjectPropertyList {
 	
 	public ActorPropertyList(
 		IEditorContext ctx,
-		LocaleManager locale,
-		CharaImportUI import
+		LocaleManager locale
 	) {
 		this._ctx = ctx;
 		this._locale = locale;

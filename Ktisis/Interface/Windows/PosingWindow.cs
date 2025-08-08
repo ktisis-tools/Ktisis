@@ -7,26 +7,28 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Bindings.ImGui;
 
-using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Data.Serialization;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Posing;
 using Ktisis.Interface.Components.Posing.Types;
 using Ktisis.Interface.Types;
-using Ktisis.Interface.Windows.Import;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Windows;
 
 public class PosingWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
 	private readonly LocaleManager _locale;
+	private readonly GPoseService _gpose;
 	private readonly PoseViewRenderer _render;
 
-	private PoseViewSchema? Schema;
-	private ViewEnum View = ViewEnum.Body;
+	private PoseViewSchema? _schema;
+	private ViewEnum _view = ViewEnum.Body;
+
+	private ActorEntity? _target;
 
 	private enum ViewEnum {
 		Body,
@@ -36,17 +38,19 @@ public class PosingWindow : KtisisWindow {
 	public PosingWindow(
 		IEditorContext ctx,
 		ITextureProvider tex,
-		LocaleManager locale
+		LocaleManager locale,
+		GPoseService gpose
 	) : base(
 		"Pose View"
 	) {
 		this._ctx = ctx;
 		this._locale = locale;
+		this._gpose = gpose;
 		this._render = new PoseViewRenderer(ctx.Config, tex);
 	}
 
 	public override void OnOpen() {
-		this.Schema = SchemaReader.ReadPoseView();
+		this._schema = SchemaReader.ReadPoseView();
 	}
 	
 	public override void PreOpenCheck() {
@@ -62,12 +66,41 @@ public class PosingWindow : KtisisWindow {
 	}
 
 	public override void Draw() {
-		using var _ = ImRaii.TabBar("##pose_tabs");
+		if (this._ctx.Config.Editor.UseLegacyPoseViewTabs) {
+			this.DrawLegacyTabs();
+			return;
+		}
 
-		var actors = this._ctx.Scene.Children
+		if (this._ctx.Config.Editor.UseLegacyWindowBehavior) {
+			this.DrawLegacyTarget();
+			return;
+		}
+
+		var selected = (ActorEntity?)this._ctx.Selection.GetSelected()
+			.FirstOrDefault(entity => entity is ActorEntity);
+
+		if (selected != null && this._target != selected)
+			this._target = selected;
+
+		if (this._target is not { IsValid: true }) {
+			ImGui.Text("Select an actor to start editing its pose.");
+			return;
+		}
+		
+		this.DrawWindow(this._target);
+	}
+
+	private IEnumerable<ActorEntity> GetValidTargets() {
+		return this._ctx.Scene.Children
 			.Where(entity => entity is ActorEntity)
 			.Cast<ActorEntity>();
+	}
 
+	private void DrawLegacyTabs() {
+		using var _ = ImRaii.TabBar("##pose_tabs");
+		
+		var actors = this.GetValidTargets();
+			
 		foreach (var actor in actors) {
 			using var tab = ImRaii.TabItem(actor.Name);
 			if (!tab.Success) continue;
@@ -76,6 +109,27 @@ public class PosingWindow : KtisisWindow {
 			
 			this.DrawWindow(actor);
 		}
+	}
+	
+	private void DrawLegacyTarget() {
+		var tarIndex = this._gpose.GPoseTarget?.ObjectIndex;
+		if ((this._target == null || this._target.Actor.ObjectIndex != tarIndex) && tarIndex != null) {
+			var actors = this.GetValidTargets();
+			
+			var targeted = actors.FirstOrDefault(actor => {
+				return actor.Actor.ObjectIndex == tarIndex;
+			});
+
+			if (targeted != null)
+				this._target = targeted;
+		}
+
+		if (this._target is not { IsValid: true }) {
+			Ktisis.Log.Info("Targeted actor has no skeleton or is invalid.");
+			return;
+		}
+		
+		this.DrawWindow(this._target);
 	}
 
 	private void DrawWindow(ActorEntity target) {
@@ -107,8 +161,8 @@ public class PosingWindow : KtisisWindow {
 		ImGui.Text("View:");
 		
 		foreach (var value in Enum.GetValues<ViewEnum>()) {
-			if (ImGui.RadioButton(value.ToString(), this.View == value))
-				this.View = value;
+			if (ImGui.RadioButton(value.ToString(), this._view == value))
+				this._view = value;
 		}
 	}
 
@@ -129,13 +183,13 @@ public class PosingWindow : KtisisWindow {
 
 		var frame = this._render.StartFrame();
 		
-		switch (this.View) {
+		switch (this._view) {
 			case ViewEnum.Body:
 				this.DrawView(frame, "Body", 0.35f);
 				ImGui.SameLine();
 				this.DrawView(frame, "Armor", 0.35f);
 				ImGui.SameLine();
-				using (var _group = ImRaii.Group()) {
+				using (ImRaii.Group()) {
 					this.DrawView(frame, "Hands", 0.30f, 0.60f);
 					
 					ImGui.Spacing();
@@ -163,7 +217,7 @@ public class PosingWindow : KtisisWindow {
 			default:
 				this.DrawView(frame, "Face", 0.65f);
 				ImGui.SameLine();
-				using (var _group = ImRaii.Group()) {
+				using (ImRaii.Group()) {
 					this.DrawView(frame, "Lips", 0.35f, 0.50f);
 					this.DrawView(frame, "Mouth", 0.35f, 0.50f);
 				}
@@ -181,9 +235,9 @@ public class PosingWindow : KtisisWindow {
 		float height = 1.0f,
 		IDictionary<string, string>? template = null
 	) {
-		if (this.Schema == null) return;
+		if (this._schema == null) return;
 
-		if (!this.Schema.Views.TryGetValue(name, out var view))
+		if (!this._schema.Views.TryGetValue(name, out var view))
 			return;
 
 		frame.DrawView(view, width, height, template);

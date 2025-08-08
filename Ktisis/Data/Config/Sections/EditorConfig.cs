@@ -7,9 +7,13 @@ using Ktisis.Scene.Types;
 namespace Ktisis.Data.Config.Sections;
 
 public class EditorConfig {
-	// Values
+	// Workspace
 
 	public bool OpenOnEnterGPose = true;
+
+	public bool UseLegacyWindowBehavior = false;
+	public bool UseLegacyPoseViewTabs = false;
+	public bool UseLegacyLightEditor = false;
 	
 	public Dictionary<EntityType, EntityDisplay> Display = EntityDisplay.GetDefaults();
 	
