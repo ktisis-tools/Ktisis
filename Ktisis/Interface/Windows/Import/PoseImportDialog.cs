@@ -40,6 +40,8 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	// Draw UI
 
 	public override void Draw() {
+		this.UpdateTarget();
+		
 		ImGui.Text($"Importing pose for {this.Target.Name}");
 		ImGui.Spacing();
 		

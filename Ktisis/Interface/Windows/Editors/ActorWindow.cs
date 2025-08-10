@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
@@ -49,16 +48,6 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 		this._anim.Editor = this.Animation.GetAnimationEditor(target);
-	}
-
-	private void UpdateTarget() {
-		if (this.Context.Config.Editor.UseLegacyWindowBehavior) return;
-
-		var target = (ActorEntity?)this.Context.Selection.GetSelected()
-			.FirstOrDefault(entity => entity is ActorEntity);
-
-		if (target != null && this.Target != target)
-			this.SetTarget(target);
 	}
 
 	// Draw tabs

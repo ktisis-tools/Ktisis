@@ -1,11 +1,8 @@
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 
-using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Chara;
-using Ktisis.Interface.Components.Chara.Select;
-using Ktisis.Interface.Components.Files;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
 
@@ -13,15 +10,11 @@ namespace Ktisis.Interface.Windows.Import;
 
 public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	private readonly IEditorContext _ctx;
-
-	private readonly NpcSelect _npcs;
-	private readonly FileSelect<CharaFile> _select;
+	
 	private readonly CharaImportUI _import;
 
 	public CharaImportDialog(
 		IEditorContext ctx,
-		NpcSelect npcs,
-		FileSelect<CharaFile> select,
 		CharaImportUI import
 	) : base(
 		"Import Appearance",
@@ -45,6 +38,8 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	// Draw UI
 	
 	public override void Draw() {
+		this.UpdateTarget();
+		
 		ImGui.Text($"Importing appearance for {this.Target.Name}");
 		ImGui.Spacing();
 		

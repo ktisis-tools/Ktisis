@@ -35,6 +35,8 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 	}
 	
 	public override void Draw() {
+		this.UpdateTarget();
+		
 		var s = this.Context.Selection;
 		if (s.Count == 1) {
 			var p = s.GetSelected().First();
