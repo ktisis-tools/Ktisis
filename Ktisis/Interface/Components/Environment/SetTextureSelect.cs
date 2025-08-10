@@ -32,6 +32,8 @@ public class SetTextureSelect {
 		ref uint value,
 		ResolvePathHandler resolve
 	) {
+		using var _id = ImRaii.PushId($"##TexSelect_{name}");
+		
 		var result = false;
 		
 		var path = resolve.Invoke(value);
