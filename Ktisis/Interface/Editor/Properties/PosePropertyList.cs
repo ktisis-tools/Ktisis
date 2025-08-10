@@ -40,14 +40,28 @@ public class PosePropertyList : ObjectPropertyList {
 		if (!TryGetEntityPose(entity, out var pose))
 			return;
 		
-		//builder.AddHeader("Pose", () => this.DrawPoseTab(pose), priority: 1);
+		builder.AddHeader("Pose", () => this.DrawPoseTab(pose), priority: 1);
 		if (pose.IkController.GroupCount > 0)
 			builder.AddHeader("Inverse Kinematics", () => this.DrawConstraintsTab(pose), priority: 2);
 	}
 
-	/*private void DrawPoseTab(EntityPose pose) {
+	private void DrawPoseTab(EntityPose pose) {
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		
-	}*/
+		// Parenting toggle
+		ImGui.Checkbox(this._locale.Translate("transform_edit.transforms.parenting"), ref this._ctx.Config.Gizmo.ParentBones);
+		
+		// Import/export
+		
+		if (pose.Parent is not ActorEntity actor) return;
+		ImGui.Spacing();
+		
+		if (ImGui.Button("Import"))
+			this._ctx.Interface.OpenPoseImport(actor);
+		ImGui.SameLine(0, spacing);
+		if (ImGui.Button("Export"))
+			this._ctx.Interface.OpenPoseExport(pose);
+	}
 	
 	// Inverse Kinematics
 

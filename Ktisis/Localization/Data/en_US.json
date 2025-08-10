@@ -105,7 +105,7 @@
 		},
 		"transforms": {
 			"title": "Bone Transforms",
-			"parenting": "Bone parenting",
+			"parenting": "Enable bone parenting",
 			"relative": "Relative rotation"
 		},
 		"ik": {
