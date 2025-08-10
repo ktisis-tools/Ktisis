@@ -168,7 +168,7 @@ public class CustomizeEditorTab {
 
 		var intValue = (int)current;
 		if (isZeroIndex) intValue++;
-		if (ImGui.InputInt(feat.Name, ref intValue) && intValue >= (isZeroIndex ? 1 : 0)) {
+		if (ImGui.InputInt(feat.Name, ref intValue, 1) && intValue >= (isZeroIndex ? 1 : 0)) {
 			var newValue = (byte)(isZeroIndex ? --intValue : intValue);
 			this.Editor.SetCustomization(index, (byte)(newValue | (baseValue & 0x80)));
 		}
@@ -283,7 +283,7 @@ public class CustomizeEditorTab {
 		ImGui.Text(feat.Name);
 
 		var intValue = (int)value;
-		if (ImGui.InputInt($"##Input_{feat.Index}", ref intValue)) {
+		if (ImGui.InputInt($"##Input_{feat.Index}", ref intValue, 1)) {
 			var valid = index != CustomizeIndex.FaceType || feat.Params.Any(p => p.Value == value);
 			if (valid) this.Editor.SetCustomization(index, canFlip ? (byte)(intValue | baseValue & 0x80) : (byte)intValue);
 		}
@@ -338,7 +338,7 @@ public class CustomizeEditorTab {
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + style.FramePadding.X);
 		ImGui.SetNextItemWidth(space / 2);
 		var intValue = (int)current;
-		if (ImGui.InputInt("##FaceFeatureFlags", ref intValue))
+		if (ImGui.InputInt("##FaceFeatureFlags", ref intValue, 1))
 			this.Editor.SetCustomization(CustomizeIndex.FaceFeatures, (byte)intValue);
 		
 		var colorFeat = data.GetFeature(CustomizeIndex.FaceFeaturesColor);

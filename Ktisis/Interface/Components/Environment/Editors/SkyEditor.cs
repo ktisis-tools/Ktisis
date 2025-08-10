@@ -30,7 +30,7 @@ public class SkyEditor : EditorBase {
 
 	public override void Draw(IEnvModule module, ref EnvState state) {
 		this.DrawToggleCheckbox("Edit skybox", EnvOverride.SkyId, module);
-        using (var _skyId = ImRaii.Disabled(!module.Override.HasFlag(EnvOverride.SkyId)))
+        using (ImRaii.Disabled(!module.Override.HasFlag(EnvOverride.SkyId)))
 			this._texSky.Draw("Sky Texture", ref state.SkyId, id => $"bgcommon/nature/sky/texture/sky_{id:D3}.tex");
 		
 		ImGui.Spacing();
