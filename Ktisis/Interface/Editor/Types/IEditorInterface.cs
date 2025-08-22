@@ -46,6 +46,7 @@ public interface IEditorInterface {
 
 	public void OpenCharaFile(Action<string, CharaFile> handler);
 	public void OpenPoseFile(Action<string, PoseFile> handler);
+	public void OpenMcdfFile(Action<string> handler);
 
 	public void OpenReferenceImages(Action<string> handler);
 	

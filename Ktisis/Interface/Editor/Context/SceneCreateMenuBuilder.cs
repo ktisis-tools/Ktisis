@@ -3,7 +3,6 @@
 using GLib.Popups.Context;
 
 using Ktisis.Common.Extensions;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Structs.Lights;

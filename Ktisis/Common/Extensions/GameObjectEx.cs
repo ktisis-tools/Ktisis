@@ -36,6 +36,13 @@ public static class GameObjectEx {
 		return ((CharacterBase*)drawObject)->Skeleton;
 	}
 
+	public unsafe static bool IsDrawing(this IGameObject gameObject) {
+		var csActor = (CSGameObject*)gameObject.Address;
+		if (csActor == null) return false;
+		Ktisis.Log.Info($"RenderFlags: {csActor->RenderFlags:X}");
+		return csActor->RenderFlags == 0x00;
+	}
+
 	public unsafe static bool IsEnabled(this IGameObject gameObject) {
 		var csActor = (CSGameObject*)gameObject.Address;
 		if (csActor == null) return false;
@@ -75,5 +82,12 @@ public static class GameObjectEx {
 		if (target == null || target->GPoseTarget == null) return;
 
 		target->GPoseTarget = (CSGameObject*)gameObject.Address;
+	}
+
+	public unsafe static void Redraw(this IGameObject gameObject) {
+		var csPtr = (CSGameObject*)gameObject.Address;
+		if (csPtr == null) return;
+		csPtr->DisableDraw();
+		csPtr->EnableDraw();
 	}
 }

@@ -3,6 +3,9 @@ using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+
+using Ktisis.Common.Extensions;
+
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 using CSCharacter = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
@@ -115,11 +118,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 		return null;
 	}
 
-	public unsafe void Redraw() {
-		if (this.CsGameObject == null || this.CsGameObject->DrawObject == null) return;
-		this.CsGameObject->DisableDraw();
-		this.CsGameObject->EnableDraw();
-	}
+	public void Redraw() => this.Actor.Redraw();
 	 
 	// Deletable
 

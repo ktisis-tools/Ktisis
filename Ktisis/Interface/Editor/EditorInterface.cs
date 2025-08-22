@@ -177,6 +177,11 @@ public class EditorInterface : IEditorInterface {
 		Filters = "Pose Files{.pose}",
 		Extension = ".pose"
 	};
+
+	private readonly static FileDialogOptions McdfFileOptions = new() {
+		Filters = "MCDF Files{.mcdf}",
+		Extension = ".mcdf"
+	};
 	
 	public void OpenCharaFile(Action<string, CharaFile> handler)
 		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions);
@@ -186,6 +191,10 @@ public class EditorInterface : IEditorInterface {
 			file.ConvertLegacyBones();
 			handler.Invoke(path, file);
 		}, PoseFileOptions);
+	}
+	
+	public void OpenMcdfFile(Action<string> handler) {
+		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions);
 	}
 
 	public void OpenReferenceImages(Action<string> handler) {

@@ -82,8 +82,14 @@ public class SceneEntityMenuBuilder {
 			.Action("Edit appearance", this.OpenEditor)
 			.Separator()
 			.SubMenu("Import...", sub => {
-				sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
+				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
+				
+				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive) {
+					builder.Action("Mare data (.mcdf)", () => {
+						this.Ui.OpenMcdfFile(path => this.ImportMcdf(actor, path));
+					});
+				}
 			})
 			.SubMenu("Export...", sub => {
 				sub.Action("Character (.chara)", () => this.Ui.OpenCharaExport(actor))
@@ -96,6 +102,10 @@ public class SceneEntityMenuBuilder {
 			menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
 		if (this._ctx.Plugin.Ipc.IsCustomizeActive)
 			menu.Action("Assign C+ profile", () => this.Ui.OpenAssignCProfile(actor));
+	}
+
+	private void ImportMcdf(ActorEntity actor, string path) {
+		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, actor.Actor);
 	}
 	
 	// Poses

@@ -8,11 +8,26 @@
         "resolved": "2.1.13",
         "contentHash": "rMN1omGe8536f4xLMvx9NwfvpAc9YFFfeXJ1t4P4PE6Gu8WCIoFliR1sh07hM+bfODmesk/dvMbji7vNI+B/pQ=="
       },
+      "Glamourer.Api": {
+        "type": "Direct",
+        "requested": "[2.6.0, )",
+        "resolved": "2.6.0",
+        "contentHash": "zysCZgNBRm3k3qvibyw/31MmEckX0Uh0ZsT+Sax3ZHnYIRELr9Qhbz3cjJz7u0RHGIrNJiRpktu/LxgHEqDItw=="
+      },
       "JetBrains.Annotations": {
         "type": "Direct",
         "requested": "[2022.3.1, )",
         "resolved": "2022.3.1",
         "contentHash": "11nsS3+lFICGkztVs9PP2NRItxf9fF+qD6xEW/T0YGto52zj07wseUeBdMAU1ah9HNVTDZyRC1u4NWdtJScwhw=="
+      },
+      "K4os.Compression.LZ4.Legacy": {
+        "type": "Direct",
+        "requested": "[1.3.8, )",
+        "resolved": "1.3.8",
+        "contentHash": "+82CK5zXbGjMnVLm2JJpsSAz3+4CRcMmxUDOmehUh1bDjrmpnc5VHxB14hiV1lXtqe53lNI+O76BQvgWhgI66g==",
+        "dependencies": {
+          "K4os.Compression.LZ4": "1.3.8"
+        }
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Direct",
@@ -25,9 +40,14 @@
       },
       "Penumbra.Api": {
         "type": "Direct",
-        "requested": "[5.2.0, )",
-        "resolved": "5.2.0",
-        "contentHash": "fi36rbPTR76MTtC++0dMXmycidpGnMU2OGt+Wf/ckaEs5qmWJbIW9RE8O+rCOEFhtmzWcXIjKAMYJSSyb9nU8g=="
+        "requested": "[5.10.0, )",
+        "resolved": "5.10.0",
+        "contentHash": "ZRIIXQCluNlLoI4I4gNYuYXqb7p48OR1P2/LcL27owToR/A/IG0mH8Ks2HguB/Kjq4RpCinaVkyufpGxGspbTA=="
+      },
+      "K4os.Compression.LZ4": {
+        "type": "Transitive",
+        "resolved": "1.3.8",
+        "contentHash": "LhwlPa7c1zs1OV2XadMtAWdImjLIsqFJPoRcIWAadSRn0Ri1DepK65UbWLPmt4riLqx2d40xjXRk0ogpqNtK7g=="
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "Transitive",
