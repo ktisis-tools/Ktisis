@@ -63,7 +63,7 @@ public sealed class McdfManager : IDisposable {
 		this.ApplyCustomizeData(actor, data);
 		
 		Ktisis.Log.Debug("Cleaning up extracted files");
-		foreach (var file in extracted.Keys)
+		foreach (var file in extracted.Values)
 			File.Delete(file);
 	}
 
