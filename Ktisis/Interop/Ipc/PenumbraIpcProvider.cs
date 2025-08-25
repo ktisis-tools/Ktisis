@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Ipc;
 
 using Penumbra.Api.Enums;
 using Penumbra.Api.IpcSubscribers;
@@ -16,7 +17,7 @@ public class PenumbraIpcProvider {
 	private readonly GetCutsceneParentIndex _getCutsceneParentIndex;
 	private readonly SetCutsceneParentIndex _setCutsceneParentIndex;
 	private readonly AssignTemporaryCollection _assignTemporaryCollection;
-	private readonly CreateTemporaryCollection _createTemporaryCollection;
+	private readonly ICallGateSubscriber<string, string, (PenumbraApiEc, Guid Guid)> _createTemporaryCollection;
 	private readonly DeleteTemporaryCollection _deleteTemporaryCollection;
 	private readonly AddTemporaryMod _addTemporaryMod;
 	private readonly RemoveTemporaryMod _removeTemporaryMod;
@@ -31,7 +32,8 @@ public class PenumbraIpcProvider {
 		this._getCutsceneParentIndex = new GetCutsceneParentIndex(dpi);
 		this._setCutsceneParentIndex = new SetCutsceneParentIndex(dpi);
 		this._assignTemporaryCollection = new AssignTemporaryCollection(dpi);
-		this._createTemporaryCollection = new CreateTemporaryCollection(dpi);
+		//this._createTemporaryCollection = new CreateTemporaryCollection(dpi);
+		this._createTemporaryCollection = dpi.GetIpcSubscriber<string, string, (PenumbraApiEc, Guid Guid)>("Penumbra.CreateTemporaryCollection.V6");
 		this._deleteTemporaryCollection = new DeleteTemporaryCollection(dpi);
 		this._addTemporaryMod = new AddTemporaryMod(dpi);
 		this._removeTemporaryMod = new RemoveTemporaryMod(dpi);
@@ -65,7 +67,7 @@ public class PenumbraIpcProvider {
 	}
 
 	public Guid CreateTemporaryCollection(string name) {
-		return this._createTemporaryCollection.Invoke(name);
+		return this._createTemporaryCollection.InvokeFunc("Ktisis", name).Guid;
 	}
 
 	public void DeleteTemporaryCollection(Guid collectionId) {
