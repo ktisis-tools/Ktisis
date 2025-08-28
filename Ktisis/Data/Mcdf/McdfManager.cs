@@ -20,7 +20,7 @@ namespace Ktisis.Data.Mcdf;
 public sealed class McdfManager : IDisposable {
 	private readonly IFramework _framework;
 	private readonly IpcManager _ipc;
-	private List<IGameObject> actors;
+	private List<IGameObject> actors = [];
 	
 
 	public McdfManager(
@@ -29,7 +29,6 @@ public sealed class McdfManager : IDisposable {
 	) {
 		this._framework = framework;
 		this._ipc = ipc;
-		this.actors = new();
 	}
 	
 	// MCDF loading
@@ -69,7 +68,7 @@ public sealed class McdfManager : IDisposable {
 			File.Delete(file);
 
 		// add actor to applied list
-		this.actors.add(actor);
+		this.actors.Add(actor);
 	}
 
 	private void ApplyCustomizeData(IGameObject actor, McdfData data) {
