@@ -20,6 +20,7 @@ namespace Ktisis.Data.Mcdf;
 public sealed class McdfManager : IDisposable {
 	private readonly IFramework _framework;
 	private readonly IpcManager _ipc;
+	private List<IGameObject> actors;
 	
 
 	public McdfManager(
@@ -28,6 +29,7 @@ public sealed class McdfManager : IDisposable {
 	) {
 		this._framework = framework;
 		this._ipc = ipc;
+		this.actors = new();
 	}
 	
 	// MCDF loading
@@ -65,6 +67,9 @@ public sealed class McdfManager : IDisposable {
 		Ktisis.Log.Debug("Cleaning up extracted files");
 		foreach (var file in extracted.Values)
 			File.Delete(file);
+
+		// add actor to applied list
+		this.actors.add(actor);
 	}
 
 	private void ApplyCustomizeData(IGameObject actor, McdfData data) {
@@ -79,11 +84,25 @@ public sealed class McdfManager : IDisposable {
 		ipc.SetTemporaryProfile(actor.ObjectIndex, jsonData);
 	}
 
+	private void RevertCustomizeData(IGameObject actor) {
+		if (!this._ipc.IsCustomizeActive) return;
+
+		var ipc = this._ipc.GetCustomizeIpc();
+		ipc.DeleteTemporaryProfile(actor.ObjectIndex);
+	}
+
 	private void ApplyGlamourerData(IGameObject actor, McdfData data) {
 		if (!this._ipc.IsGlamourerActive) return;
 		
 		var ipc = this._ipc.GetGlamourerIpc();
 		ipc.ApplyState(data.GlamourerData, actor.ObjectIndex);
+	}
+
+	private void RevertGlamourerData(IGameObject actor) {
+		if (!this._ipc.IsGlamourerActive) return;
+
+		var ipc = this._ipc.GetGlamourerIpc();
+		ipc.RevertState(actor.ObjectIndex);
 	}
 
 	private Guid? ApplyPenumbraMods(IGameObject actor, McdfData data, Dictionary<string, string> files) {
@@ -125,6 +144,13 @@ public sealed class McdfManager : IDisposable {
 	
 	public void Dispose() {
 		Ktisis.Log.Info("Disposing MCDF manager.");
+
+		// cleanup all touched actors
+		foreach (var actor in this.actors) {
+			Ktisis.Log.Info($"IPC - reverting actor '{actor.Name}' ...");
+			this.RevertGlamourerData(actor);
+			this.RevertCustomizeData(actor);
+		}
 
 		var temp = GetTempPath(create: false);
 		if (Directory.Exists(temp))
