@@ -1,13 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
-
 using Dalamud.Utility.Signatures;
 using Dalamud.Hooking;
-using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using Ktisis.Editor.Context.Types;
