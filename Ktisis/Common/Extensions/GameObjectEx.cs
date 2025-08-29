@@ -21,16 +21,21 @@ using Ktisis.Actions.Types;
 namespace Ktisis.Common.Extensions;
 
 public static class GameObjectEx {
+	public unsafe static bool IsPcCharacter(this IGameObject gameObject) {
+		var csPtr = (CSGameObject*)gameObject.Address;
+		return csPtr != null && csPtr->GetObjectKind() == ObjectKind.Pc;
+	}
+
 	public unsafe static string GetNameOrFallback(this IGameObject gameObject, bool incognito = false) {
 		// accepts Config.Editor.IncognitoPlayerNames to force censoring to Actor #XXX (if the actor is a PC)
 
-		var csPtr = (CSGameObject*)gameObject.Address;
-		var name = gameObject.Name.TextValue;
-
+		bool isPc = IsPcCharacter(gameObject);
 		// force the fallback text if we're incognito and looking at a PC
-		if (incognito && csPtr != null && csPtr->GetObjectKind() == ObjectKind.Pc) {
+		if (incognito && isPc) {
 			return $"Actor #{gameObject.ObjectIndex}";
 		}
+
+		var name = gameObject.Name.TextValue;
 		return !name.IsNullOrEmpty() ? name : $"Actor #{gameObject.ObjectIndex}";
 	}
 

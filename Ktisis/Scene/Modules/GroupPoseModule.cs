@@ -1,23 +1,35 @@
+using System.Collections.Generic;
+using System.Linq;
+
 using Dalamud.Utility.Signatures;
 using Dalamud.Hooking;
+using Dalamud.Game;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.GPose;
+using Ktisis.Common.Extensions;
 
 namespace Ktisis.Scene.Modules;
 
 public class GroupPoseModule : SceneModule {
 	private string NameToDisplay => "(Hidden by Ktisis)";
+	private readonly IObjectTable _objectTable;
 
 	public GroupPoseModule(
 		IHookMediator hook,
-		ISceneManager scene
-	) : base(hook, scene) { }
+		ISceneManager scene,
+		IObjectTable objectTable
+	) : base(hook, scene) {
+		_objectTable = objectTable;
+	}
 
 	public override void Setup() {
 		this.EnableAll();
@@ -41,6 +53,11 @@ public class GroupPoseModule : SceneModule {
 		/*var primary = this.GetPrimaryActor();
 		return (nint)primary == actor.Actor.Address;*/
 	}
+
+	private unsafe IGameObject? GetGposeTarget() {
+		var address = (nint)TargetSystem.Instance()->GPoseTarget;
+		return this._objectTable.CreateObjectReference(address);
+	}
 	
 	// Native
 	
@@ -52,10 +69,13 @@ public class GroupPoseModule : SceneModule {
 	private Hook<UpdateGposeTarNameDelegate>? UpdateGposeTarNameHook = null;
 	private unsafe delegate void UpdateGposeTarNameDelegate(nint a1);
 	private unsafe void UpdateGposeTarNameDetour(nint a1) {
+		// TODO: runs every frame, can be optimized?
 		if (this.Scene.Context.Config.Editor.IncognitoPlayerNames) {
-			// TODO: restrict renaming only to targeted _players_, not all actors
-			for (var i = 0; i < this.NameToDisplay.Length; i++)
-				*(char*)(a1 + 488 + i) = this.NameToDisplay[i];
+			var targeted = this.GetGposeTarget();
+			if (targeted != null && targeted.IsPcCharacter()) {
+				for (var i = 0; i < this.NameToDisplay.Length; i++)
+					*(char*)(a1 + 488 + i) = this.NameToDisplay[i];
+			}
 		}
 
 		this.UpdateGposeTarNameHook!.Original(a1);
