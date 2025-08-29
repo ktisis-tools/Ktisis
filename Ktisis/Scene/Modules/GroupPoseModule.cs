@@ -12,14 +12,12 @@ using Ktisis.Structs.GPose;
 namespace Ktisis.Scene.Modules;
 
 public class GroupPoseModule : SceneModule {
-	private readonly IEditorContext _ctx;
+	private string NameToDisplay => "(Hidden by Ktisis)";
+
 	public GroupPoseModule(
 		IHookMediator hook,
-		ISceneManager scene,
-		IEditorContext ctx
-	) : base(hook, scene) {
-		this._ctx = ctx;
-	 }
+		ISceneManager scene
+	) : base(hook, scene) { }
 
 	public override void Setup() {
 		this.EnableAll();
@@ -54,11 +52,10 @@ public class GroupPoseModule : SceneModule {
 	private Hook<UpdateGposeTarNameDelegate>? UpdateGposeTarNameHook = null;
 	private unsafe delegate void UpdateGposeTarNameDelegate(nint a1);
 	private unsafe void UpdateGposeTarNameDetour(nint a1) {
-		if (this._ctx.Config.Editor.IncognitoPlayerNames) {
-			// TODO: restrict renaming only to targeted _players_, not any actors
-			string nameToDisplay = "(Hidden by Ktisis)";
-			for (var i = 0; i < nameToDisplay.Length; i++)
-				*(char*)(a1 + 488 + i) = nameToDisplay[i];
+		if (this.Scene.Context.Config.Editor.IncognitoPlayerNames) {
+			// TODO: restrict renaming only to targeted _players_, not all actors
+			for (var i = 0; i < this.NameToDisplay.Length; i++)
+				*(char*)(a1 + 488 + i) = this.NameToDisplay[i];
 		}
 
 		this.UpdateGposeTarNameHook!.Original(a1);
