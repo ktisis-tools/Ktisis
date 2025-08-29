@@ -13,22 +13,37 @@ using Ktisis.Common.Extensions;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Interop.Ipc;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Data.Mcdf;
 
 [Singleton]
 public sealed class McdfManager : IDisposable {
+	private readonly GPoseService _gpose;
 	private readonly IFramework _framework;
 	private readonly IpcManager _ipc;
 	private List<IGameObject> actors = [];
 	
 
 	public McdfManager(
+		GPoseService gpose,
 		IFramework framework,
 		IpcManager ipc
 	) {
+		this._gpose = gpose;
 		this._framework = framework;
 		this._ipc = ipc;
+
+		this.Initialize();
+	}
+
+	public void Initialize() {
+		this._gpose.StateChanged += this.OnGPoseEvent;
+		this._gpose.Subscribe();
+	}
+
+	private void OnGPoseEvent(object sender, bool active) {
+		if (!active) this.Revert();
 	}
 	
 	// MCDF loading
@@ -83,11 +98,11 @@ public sealed class McdfManager : IDisposable {
 		ipc.SetTemporaryProfile(actor.ObjectIndex, jsonData);
 	}
 
-	private void RevertCustomizeData(IGameObject actor) {
+	private void RevertCustomizeData(ushort index) {
 		if (!this._ipc.IsCustomizeActive) return;
 
 		var ipc = this._ipc.GetCustomizeIpc();
-		ipc.DeleteTemporaryProfile(actor.ObjectIndex);
+		ipc.DeleteTemporaryProfile(index);
 	}
 
 	private void ApplyGlamourerData(IGameObject actor, McdfData data) {
@@ -97,11 +112,11 @@ public sealed class McdfManager : IDisposable {
 		ipc.ApplyState(data.GlamourerData, actor.ObjectIndex);
 	}
 
-	private void RevertGlamourerData(IGameObject actor) {
+	private void RevertGlamourerData(int index) {
 		if (!this._ipc.IsGlamourerActive) return;
 
 		var ipc = this._ipc.GetGlamourerIpc();
-		ipc.RevertState(actor.ObjectIndex);
+		ipc.RevertState(index);
 	}
 
 	private Guid? ApplyPenumbraMods(IGameObject actor, McdfData data, Dictionary<string, string> files) {
@@ -138,21 +153,33 @@ public sealed class McdfManager : IDisposable {
 		return path;
 	}
 	
-	
-	// IDisposable
-	
-	public void Dispose() {
-		Ktisis.Log.Info("Disposing MCDF manager.");
-
+	private void Revert() {
 		// cleanup all touched actors
 		foreach (var actor in this.actors) {
+			// if player was touched (201 entity in gpose), also trigger revert on them outside gpose
+			if (actor.ObjectIndex == 201) {
+				Ktisis.Log.Info($"IPC - reverting player ...");
+				this.RevertGlamourerData(0);
+				this.RevertCustomizeData(0);
+			}
 			Ktisis.Log.Info($"IPC - reverting actor '{actor.Name}' ...");
-			this.RevertGlamourerData(actor);
-			this.RevertCustomizeData(actor);
+			this.RevertGlamourerData(actor.ObjectIndex);
+			this.RevertCustomizeData(actor.ObjectIndex);
 		}
+
+		// empty actor list for next session
+		this.actors = [];
+	}
+
+	// IDisposable
+
+	public void Dispose() {
+		Ktisis.Log.Info("Disposing MCDF manager.");
 
 		var temp = GetTempPath(create: false);
 		if (Directory.Exists(temp))
 			Directory.Delete(temp, true);
+
+		this._gpose.StateChanged -= this.OnGPoseEvent;
 	}
 }
