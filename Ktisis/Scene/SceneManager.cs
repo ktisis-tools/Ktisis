@@ -44,7 +44,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	}
 	
 	private void SetupModules() {
-		var gpose = this.AddModule<GroupPoseModule>();
+		var gpose = this.AddModule<GroupPoseModule>(this.Context);
 		this.AddModule<ActorModule>(gpose);
 		this.AddModule<LightModule>(gpose);
 		this.AddModule<EnvModule>();
