@@ -74,7 +74,7 @@ public class SceneEntityMenuBuilder {
 	
 	// Actors
 
-	private void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
+	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
 			.Separator()
@@ -85,7 +85,7 @@ public class SceneEntityMenuBuilder {
 				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
 				
-				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive) {
+				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
 					builder.Action("Mare data (.mcdf)", () => {
 						this.Ui.OpenMcdfFile(path => this.ImportMcdf(actor, path));
 					});

@@ -22,7 +22,7 @@ public sealed class McdfManager : IDisposable {
 	private readonly GPoseService _gpose;
 	private readonly IFramework _framework;
 	private readonly IpcManager _ipc;
-	private List<IGameObject> actors = [];
+	private HashSet<IGameObject> actors;
 	
 
 	public McdfManager(
@@ -31,19 +31,17 @@ public sealed class McdfManager : IDisposable {
 		IpcManager ipc
 	) {
 		this._gpose = gpose;
+		this._gpose.StateChanged += this.OnGPoseEvent;
+		this._gpose.Subscribe();
+
 		this._framework = framework;
 		this._ipc = ipc;
 
-		this.Initialize();
-	}
-
-	public void Initialize() {
-		this._gpose.StateChanged += this.OnGPoseEvent;
-		this._gpose.Subscribe();
+		this.actors = new HashSet<IGameObject>();
 	}
 
 	private void OnGPoseEvent(object sender, bool active) {
-		if (!active) this.Revert();
+		if (!active) this.RevertAll();
 	}
 	
 	// MCDF loading
@@ -69,6 +67,13 @@ public sealed class McdfManager : IDisposable {
 			files[entry.GamePath] = entry.FilePath;
 		
 		Ktisis.Log.Debug("Applying MCDF data");
+		// add actor to applied list - if already there, revert them before applying mcdf
+		if (!this.actors.Add(actor)) {
+			Ktisis.Log.Debug($"Actor {actor.ObjectIndex} was applied this session, reverting and redrawing...");
+			this.Revert(actor);
+			await this.RedrawAndWait(actor);
+		}
+
 		var collectionId = this.ApplyPenumbraMods(actor, data, files);
 		this.ApplyGlamourerData(actor, data);
 		await this.RedrawAndWait(actor);
@@ -81,9 +86,6 @@ public sealed class McdfManager : IDisposable {
 		Ktisis.Log.Debug("Cleaning up extracted files");
 		foreach (var file in extracted.Values)
 			File.Delete(file);
-
-		// add actor to applied list
-		this.actors.Add(actor);
 	}
 
 	private void ApplyCustomizeData(IGameObject actor, McdfData data) {
@@ -98,13 +100,6 @@ public sealed class McdfManager : IDisposable {
 		ipc.SetTemporaryProfile(actor.ObjectIndex, jsonData);
 	}
 
-	private void RevertCustomizeData(ushort index) {
-		if (!this._ipc.IsCustomizeActive) return;
-
-		var ipc = this._ipc.GetCustomizeIpc();
-		ipc.DeleteTemporaryProfile(index);
-	}
-
 	private void ApplyGlamourerData(IGameObject actor, McdfData data) {
 		if (!this._ipc.IsGlamourerActive) return;
 		
@@ -112,11 +107,18 @@ public sealed class McdfManager : IDisposable {
 		ipc.ApplyState(data.GlamourerData, actor.ObjectIndex);
 	}
 
-	private void RevertGlamourerData(int index) {
+	private void RevertGlamourerData(string playerName) {
 		if (!this._ipc.IsGlamourerActive) return;
 
 		var ipc = this._ipc.GetGlamourerIpc();
-		ipc.RevertState(index);
+		ipc.RevertStateName(playerName);
+	}
+
+	private void RevertCustomizeData(ushort index) {
+		if (!this._ipc.IsCustomizeActive) return;
+
+		var ipc = this._ipc.GetCustomizeIpc();
+		ipc.DeleteTemporaryProfile(index);
 	}
 
 	private Guid? ApplyPenumbraMods(IGameObject actor, McdfData data, Dictionary<string, string> files) {
@@ -152,23 +154,22 @@ public sealed class McdfManager : IDisposable {
 		if (create && !Directory.Exists(path)) Directory.CreateDirectory(path);
 		return path;
 	}
-	
-	private void Revert() {
+
+	private void Revert(IGameObject actor) {
+		Ktisis.Log.Info($"IPC - reverting Actor '{actor.ObjectIndex}' ...");
+		this.RevertGlamourerData(actor.Name.TextValue);
+		this.RevertCustomizeData(actor.ObjectIndex);
+	}
+
+	private void RevertAll() {
 		// cleanup all touched actors
 		foreach (var actor in this.actors) {
-			// if player was touched (201 entity in gpose), also trigger revert on them outside gpose
-			if (actor.ObjectIndex == 201) {
-				Ktisis.Log.Info($"IPC - reverting player ...");
-				this.RevertGlamourerData(0);
-				this.RevertCustomizeData(0);
-			}
-			Ktisis.Log.Info($"IPC - reverting actor '{actor.Name}' ...");
-			this.RevertGlamourerData(actor.ObjectIndex);
-			this.RevertCustomizeData(actor.ObjectIndex);
+			this.Revert(actor);
 		}
 
 		// empty actor list for next session
-		this.actors = [];
+		this.actors.Clear();
+		this.actors.TrimExcess();
 	}
 
 	// IDisposable
