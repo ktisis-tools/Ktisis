@@ -11,11 +11,26 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
+using Ktisis.Editor.Context.Types;
+using Ktisis.Actions.Attributes;
+using Ktisis.Core;
+using Ktisis.Core.Types;
+using Ktisis.Core.Attributes;
+using Ktisis.Actions.Types;
+
 namespace Ktisis.Common.Extensions;
 
 public static class GameObjectEx {
-	public static string GetNameOrFallback(this IGameObject gameObject) {
+	public unsafe static string GetNameOrFallback(this IGameObject gameObject, bool incognito = false) {
+		// accepts Config.Editor.IncognitoPlayerNames to force censoring to Actor #XXX (if the actor is a PC)
+
+		var csPtr = (CSGameObject*)gameObject.Address;
 		var name = gameObject.Name.TextValue;
+
+		// force the fallback text if we're incognito and looking at a PC
+		if (incognito && csPtr != null && csPtr->GetObjectKind() == ObjectKind.Pc) {
+			return $"Actor #{gameObject.ObjectIndex}";
+		}
 		return !name.IsNullOrEmpty() ? name : $"Actor #{gameObject.ObjectIndex}";
 	}
 

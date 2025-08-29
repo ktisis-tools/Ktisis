@@ -18,7 +18,7 @@ public sealed class ActorBuilder : EntityBuilder<ActorEntity, IActorBuilder>, IA
 		IPoseBuilder pose,
 		IGameObject gameObject
 	) : base(scene) {
-		this.Name = gameObject.GetNameOrFallback();
+		this.Name = gameObject.GetNameOrFallback(scene.Context.Config.Editor.IncognitoPlayerNames);
 		this._pose = pose;
 		this._gameObject = gameObject;
 	}
