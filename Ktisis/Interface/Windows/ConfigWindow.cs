@@ -135,6 +135,7 @@ public class ConfigWindow : KtisisWindow {
 	
 	private void DrawWorkspaceTab() {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.initPosLock"), ref this.Config.Editor.InitPosLock);
 		
 		ImGui.Spacing();
 		
