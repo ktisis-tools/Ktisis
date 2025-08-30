@@ -258,7 +258,14 @@
 			"editOnSelect": "Toggle object editor when selecting",
 			"legacyWindows": "Prefer legacy window behavior",
 			"legacyPoseTabs": "Prefer legacy pose view tabs",
-			"legacyLightEditor": "Prefer legacy light editor"
+			"legacyLightEditor": "Prefer legacy light editor",
+			"workcam": {
+				"speed": "Work camera speed",
+				"fastMulti": "Work camera fast-multiplier",
+				"slowMulti": "Work camera slow-multiplier",
+				"vertMulti": "Work camera up/down speed multiplier",
+				"sens": "Work camera mouse sensitivity"
+			}
 		},
 		"input": {
 			"title": "Input",

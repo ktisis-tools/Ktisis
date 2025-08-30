@@ -4,10 +4,12 @@ using System.Numerics;
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Structs.Input;
+using Ktisis.Editor.Context.Types;
 
 namespace Ktisis.Editor.Camera.Types;
 
 public class WorkCamera : KtisisCamera {
+	private readonly IEditorContext _ctx;
 	private readonly static Vector3 UpVector = Vector3.UnitY;
 	private const float ClampY = 1.57072f;
 
@@ -16,7 +18,7 @@ public class WorkCamera : KtisisCamera {
 
 	private float MoveSpeed;
 	
-	private float DefaultSpeed => 1f; // TODO: Config
+	private float DefaultSpeed => this._ctx.Config.Editor.WorkcamMoveSpeed;
 
 	private Vector3 Velocity;
 	private Vector2 MouseDelta;
@@ -25,8 +27,11 @@ public class WorkCamera : KtisisCamera {
 	private DateTime LastTime;
 	
 	public WorkCamera(
-		ICameraManager manager
-	) : base(manager) { }
+		ICameraManager manager,
+		IEditorContext context
+	) : base(manager) {
+		this._ctx = context;
+	}
 	
 	// Setup
 
@@ -57,9 +62,9 @@ public class WorkCamera : KtisisCamera {
 	private unsafe void UpdateKeyboard(KeyboardDeviceData* keyData, bool leftHeld, bool rightHeld) {
 		this.MoveSpeed = this.DefaultSpeed;
 		if (keyData->IsKeyDown(VirtualKey.SHIFT)) // FreecamFast
-			this.MoveSpeed *= 5.0f; // FreecamShiftMulti
-		else if (keyData->IsKeyDown(VirtualKey.CONTROL))
-			this.MoveSpeed *= 0.25f; // FreecamCtrlMulti
+			this.MoveSpeed *= this._ctx.Config.Editor.WorkcamFastMulti; // FreecamShiftMulti
+		else if (keyData->IsKeyDown(VirtualKey.CONTROL)) // FreecamSlow
+			this.MoveSpeed *= this._ctx.Config.Editor.WorkcamSlowMulti; // FreecamCtrlMulti
 
 		var vFwb = 0;
 		var bothHeld = leftHeld && rightHeld;
@@ -75,9 +80,9 @@ public class WorkCamera : KtisisCamera {
 		this.Velocity.Z = vFwb * MathF.Cos(this.Rotation.X) * MathF.Cos(this.Rotation.Y) + (-vLr * MathF.Sin(this.Rotation.X));
 
 		if (IsKeyDown(keyData, VirtualKey.SPACE))
-			this.Velocity.Y += 1.0f; // FreecamUpDownMulti
+			this.Velocity.Y += this._ctx.Config.Editor.WorkcamVertMulti; // FreecamUpDownMulti
 		if (IsKeyDown(keyData, VirtualKey.Q))
-			this.Velocity.Y -= 1.0f;
+			this.Velocity.Y -= this._ctx.Config.Editor.WorkcamVertMulti;
 	}
 
 	private unsafe static bool IsKeyDown(KeyboardDeviceData* keyData, VirtualKey key)
@@ -92,12 +97,12 @@ public class WorkCamera : KtisisCamera {
 		
 		var fov = Math.Abs(this.Camera->RenderEx->FoV);
 		
-		this.MouseDelta = this.MouseDelta * fov * 0.0175f * 0.20f; // TODO: FreecamSensitivity
+		this.MouseDelta = this.MouseDelta * fov * this._ctx.Config.Editor.WorkcamSens * 0.0175f; // FreecamSensitivity * dampening
 		this.Rotation.X -= this.MouseDelta.X;
 		this.Rotation.Y = Math.Clamp(this.Rotation.Y + this.MouseDelta.Y, -ClampY, ClampY);
 		this.MouseDelta = Vector2.Zero;
 		
-		this.Position += this.Velocity * this.MoveSpeed * fov * 0.2f;
+		this.Position += this.Velocity * this.MoveSpeed * fov;
 		this.InterpPos = Vector3.Lerp(this.InterpPos, this.Position, MathF.Pow(0.5f, delta * 0.05f));
 	}
 
