@@ -2,9 +2,9 @@ using System;
 using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility.Raii;
 
-using Ktisis.ImGuizmo;
 using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Interface.Components.Transforms;
@@ -18,13 +18,13 @@ public class Gizmo2D {
 
 	public Gizmo2D(IGizmo gizmo) {
 		this.Gizmo = gizmo;
-		this.Gizmo.Operation = Operation.ROTATE;
+		this.Gizmo.Operation = ImGuizmoOperation.Rotate;
 		this.Gizmo.ScaleFactor = ScaleFactor;
 	}
 	
 	// Gizmo state
 
-	public Mode Mode {
+	public ImGuizmoMode Mode {
 		get => this.Gizmo.Mode;
 		set => this.Gizmo.Mode = value;
 	}
@@ -72,8 +72,8 @@ public class Gizmo2D {
 		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * ScaleFactor) / 2.05f, 0xCF202020);
 	}
 
-	public bool Manipulate(ref Matrix4x4 matrix, out Matrix4x4 delta)
-		=> this.Gizmo.Manipulate(ref matrix, out delta);
+	public bool Manipulate(ref Matrix4x4 matrix, ref Matrix4x4 delta)
+		=> this.Gizmo.Manipulate(ref matrix, ref delta);
 	
 	public void End() {
 		this.Gizmo.EndFrame();
