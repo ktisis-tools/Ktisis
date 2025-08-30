@@ -11,18 +11,13 @@ namespace Ktisis.Actions.Handlers.Camera;
 [Action("Camera_Work_Fast")]
 public class WorkcamFastAction(IPluginContext ctx) : KeyAction(ctx) {
 	public override KeybindInfo BindInfo { get; } = new() {
-		Trigger = KeybindTrigger.OnDown,
+		Trigger = KeybindTrigger.OnHeld,
 		Default = new ActionKeybind {
 			Enabled = true,
 			Combo = new KeyCombo(VirtualKey.SHIFT)
 		}
 	};
-
-	public override bool CanInvoke() => this.Context.Editor != null;
 	
-	public override bool Invoke() {
-		if (!this.CanInvoke()) return false;
-		this.Context.Editor!.Cameras.ToggleWorkCameraMode();
-		return true;
-	}
+    // stub action used purely for bindable referencing in WorkCamera.cs; should not override native inputs
+	public override bool Invoke() => false;
 }

@@ -17,12 +17,7 @@ public class WorkcamBackAction(IPluginContext ctx) : KeyAction(ctx) {
 			Combo = new KeyCombo(VirtualKey.S)
 		}
 	};
-
-	public override bool CanInvoke() => this.Context.Editor != null;
 	
-	public override bool Invoke() {
-		if (!this.CanInvoke()) return false;
-		this.Context.Editor!.Cameras.ToggleWorkCameraMode();
-		return true;
-	}
+    // stub action used purely for bindable referencing in WorkCamera.cs; should not override native inputs
+	public override bool Invoke() => false;
 }

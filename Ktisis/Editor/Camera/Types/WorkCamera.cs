@@ -61,27 +61,27 @@ public class WorkCamera : KtisisCamera {
 
 	private unsafe void UpdateKeyboard(KeyboardDeviceData* keyData, bool leftHeld, bool rightHeld) {
 		this.MoveSpeed = this.DefaultSpeed;
-		if (keyData->IsKeyDown(VirtualKey.SHIFT)) // FreecamFast
+		if (keyData->IsKeyDown(this._ctx.Config.Keybinds.Keybinds["Camera_Work_Fast"].Combo.Key)) // FreecamFast
 			this.MoveSpeed *= this._ctx.Config.Editor.WorkcamFastMulti; // FreecamShiftMulti
-		else if (keyData->IsKeyDown(VirtualKey.CONTROL)) // FreecamSlow
+		else if (keyData->IsKeyDown(this._ctx.Config.Keybinds.Keybinds["Camera_Work_Slow"].Combo.Key)) // FreecamSlow
 			this.MoveSpeed *= this._ctx.Config.Editor.WorkcamSlowMulti; // FreecamCtrlMulti
 
 		var vFwb = 0;
 		var bothHeld = leftHeld && rightHeld;
-		if (IsKeyDown(keyData, VirtualKey.W) || bothHeld) vFwb -= 1; // Forward
-		if (IsKeyDown(keyData, VirtualKey.S)) vFwb += 1; // Back
+		if (IsKeyDown(keyData, this._ctx.Config.Keybinds.Keybinds["Camera_Work_Forward"].Combo.Key) || bothHeld) vFwb -= 1; // Forward
+		if (IsKeyDown(keyData, this._ctx.Config.Keybinds.Keybinds["Camera_Work_Back"].Combo.Key)) vFwb += 1; // Back
 
 		var vLr = 0;
-		if (IsKeyDown(keyData, VirtualKey.A)) vLr -= 1; // Left
-		if (IsKeyDown(keyData, VirtualKey.D)) vLr += 1; // Right
+		if (IsKeyDown(keyData, this._ctx.Config.Keybinds.Keybinds["Camera_Work_Left"].Combo.Key)) vLr -= 1; // Left
+		if (IsKeyDown(keyData, this._ctx.Config.Keybinds.Keybinds["Camera_Work_Right"].Combo.Key)) vLr += 1; // Right
 
 		this.Velocity.X = vFwb * MathF.Sin(this.Rotation.X) * MathF.Cos(this.Rotation.Y) + (vLr * MathF.Cos(this.Rotation.X));
 		this.Velocity.Y = vFwb * MathF.Sin(this.Rotation.Y);
 		this.Velocity.Z = vFwb * MathF.Cos(this.Rotation.X) * MathF.Cos(this.Rotation.Y) + (-vLr * MathF.Sin(this.Rotation.X));
 
-		if (IsKeyDown(keyData, VirtualKey.SPACE))
+		if (IsKeyDown(keyData, this._ctx.Config.Keybinds.Keybinds["Camera_Work_Up"].Combo.Key))
 			this.Velocity.Y += this._ctx.Config.Editor.WorkcamVertMulti; // FreecamUpDownMulti
-		if (IsKeyDown(keyData, VirtualKey.Q))
+		if (IsKeyDown(keyData, this._ctx.Config.Keybinds.Keybinds["Camera_Work_Down"].Combo.Key))
 			this.Velocity.Y -= this._ctx.Config.Editor.WorkcamVertMulti;
 	}
 
