@@ -22,7 +22,15 @@
 		"Gizmo_SetUniversalMode": "Switch to universal mode",
 		"Camera_SetNext": "Switch to next camera",
 		"Camera_SetPrevious": "Switch to previous camera",
-		"Camera_Work_Toggle": "Toggle work camera"
+		"Camera_Work_Toggle": "Toggle work camera",
+		"Camera_Work_Forward": "Work camera forward",
+		"Camera_Work_Left": "Work camera left",
+		"Camera_Work_Back": "Work camera backward",
+		"Camera_Work_Right": "Work camera right",
+		"Camera_Work_Up": "Work camera up",
+		"Camera_Work_Down": "Work camera down",
+		"Camera_Work_Fast": "Work camera fast-speed modifier",
+		"Camera_Work_Slow": "Work camera slow-speed modifier"
 	},
 	
 	"actors": {
