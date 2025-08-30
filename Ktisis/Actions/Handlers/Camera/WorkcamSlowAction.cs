@@ -14,7 +14,7 @@ public class WorkcamSlowAction(IPluginContext ctx) : KeyAction(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.NO_KEY)
+			Combo = new KeyCombo(VirtualKey.CONTROL)
 		}
 	};
 
