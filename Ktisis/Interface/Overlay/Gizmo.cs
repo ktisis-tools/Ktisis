@@ -76,18 +76,14 @@ public class Gizmo : IGizmo {
 
 	public void BeginFrame(Vector2 pos, Vector2 size) {
 		this.HasDrawn = false;
-
-		// ImGuizmo.SetDrawRect(pos.X, pos.Y, size.X, size.Y);
-		// ImGui.SetRect
+		
 		ImGuizmo.SetRect(pos.X, pos.Y, size.X, size.Y);
 		
 		ImGuizmo.SetID((int) this.Id);
 		ImGuizmo.SetGizmoSizeClipSpace(this.ScaleFactor);
 		ImGuizmo.AllowAxisFlip(this.AllowAxisFlip);
-		ImGuizmo.BeginFrame();
-
-		
 		// ImGuizmo.Gizmo.Style = this._cfg.Style;
+		ImGuizmo.BeginFrame();
 
 		this.IsUsedPrev = ImGuizmo.IsUsing();
 	}
@@ -116,5 +112,6 @@ public class Gizmo : IGizmo {
 
 	public void EndFrame() {
 		this.IsEnded = !ImGuizmo.IsUsing() && this.IsUsedPrev;
+		ImGuizmo.SetGizmoSizeClipSpace(0.1f); //Reset back to original gizmo size.
 	}
 }
