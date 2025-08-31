@@ -144,12 +144,12 @@ public class ActorEntity : CharaEntity, IDeletable {
 		}
 	}
 	
-	public bool TogglePreset(string presetName) {
+	public bool TogglePreset(string presetName, bool? state = null) {
 		//check if key exists
 		if (!this.Scene.Context.Config.Presets.Presets.TryGetValue(presetName, out var preset))
 			return false;
 
-		var op = !this.EnabledPresets.Contains(presetName);
+		var op = state ?? !this.EnabledPresets.Contains(presetName);
 		
 		this.ToggleView(preset, op);
 
@@ -186,7 +186,12 @@ public class ActorEntity : CharaEntity, IDeletable {
 			return false;
 		}
 
-		this.Scene.Context.Config.Presets.Presets[presetName] = this.GetEnabledBones();
+		var bones = this.GetEnabledBones();
+		if (bones.IsEmpty) {
+			return false;
+		}
+		
+		this.Scene.Context.Config.Presets.Presets[presetName] = bones;
 		this.EnabledPresets.Add(presetName);
 		return true;
 	}
