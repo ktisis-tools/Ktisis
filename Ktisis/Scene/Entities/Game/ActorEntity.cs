@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 
@@ -24,6 +27,8 @@ public class ActorEntity : CharaEntity, IDeletable {
 	public bool IsManaged { get; set; }
 
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
+
+	private HashSet<string> EnabledPresets { get; } = new ();
 
 	public ActorEntity(
 		ISceneManager scene,
@@ -125,5 +130,41 @@ public class ActorEntity : CharaEntity, IDeletable {
 	public bool Delete() {
 		this.Scene.GetModule<ActorModule>().Delete(this);
 		return false;
+	}
+	
+	//Presets
+	public IEnumerable<(string name, bool isEnabled)> GetPresets() {
+		var presets = this.Scene.Context.Config.Presets.Presets.Keys;
+
+		foreach (var preset in presets) {
+			yield return (preset, this.EnabledPresets.Contains(preset));
+		}
+	}
+	
+	public bool TogglePreset(string presetName) {
+		//check if key exists
+		if (!this.Scene.Context.Config.Presets.Presets.TryGetValue(presetName, out var preset))
+			return false;
+
+		var op = !this.EnabledPresets.Contains(presetName);
+		
+		this.ToggleView(preset, op);
+
+		if (op) {
+			this.EnabledPresets.Add(presetName);
+		} else {
+			this.EnabledPresets.Remove(presetName);
+		}
+		
+		return true;
+	}
+
+	public bool SavePreset(string presetName) {
+		if (this.Scene.Context.Config.Presets.Presets.ContainsKey(presetName)) {
+			return false;
+		}
+
+		this.Scene.Context.Config.Presets.Presets[presetName] = this.GetEnabledBones();
+		return true;
 	}
 }

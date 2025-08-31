@@ -274,6 +274,10 @@
 			"count": "Save count",
 			"path": "Save path",
 			"dir": "Folder name"
+		},
+		"presets": {
+			"title": "Presets",
+			"delete": "Hold shift to delete"
 		}
 	},
 

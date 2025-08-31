@@ -1,9 +1,14 @@
-﻿using GLib.Popups.Context;
+﻿using System;
+using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
+
+using GLib.Popups.Context;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Interface.Editor.Types;
+using Ktisis.Interface.Nodes;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
@@ -35,13 +40,27 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void BuildEntityBaseTop(ContextMenuBuilder menu) {
+	#if DEBUG
+		var root = this._entity.Root;
+		menu.Action($"{root.Name} ({root.Type}) {root.GetType()}", () => this._entity.Root.Select(SelectMode.Force));
+	#endif
 		if (!this._entity.IsSelected)
 			menu.Action("Select", () => this._entity.Select(SelectMode.Multiple));
 		else
 			menu.Action("Unselect", this._entity.Unselect);
-		
+
 		if (this._entity is IVisibility vis)
 			menu.Action("Toggle display", () => vis.Toggle());
+
+		if (this._entity.Root is ActorEntity actorEntity)
+			menu.SubMenu("Presets...", sub => {
+				foreach (var (name, isEnabled) in actorEntity.GetPresets()) {
+					sub.CheckableAction(name, isEnabled, () => actorEntity.TogglePreset(name));
+				}
+
+				sub.Separator()
+					.Action("Save New", () => this.Ui.OpenSavePreset(actorEntity));
+			});
 	}
 
 	private void BuildEntityBaseBottom(ContextMenuBuilder menu) {
