@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -18,6 +19,8 @@ using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
+
+using Lumina.Excel.Sheets;
 
 namespace Ktisis.Scene.Entities.Game;
 
@@ -155,8 +158,27 @@ public class ActorEntity : CharaEntity, IDeletable {
 		} else {
 			this.EnabledPresets.Remove(presetName);
 		}
+
+		EnsurePresetVisibility();
 		
 		return true;
+	}
+
+	private void EnsurePresetVisibility() {
+		var bones = new HashSet<string>(128);
+		foreach (var presetName in EnabledPresets) {
+			if (!this.Scene.Context.Config.Presets.Presets.TryGetValue(presetName, out var preset)) {
+				EnabledPresets.Remove(presetName);
+				continue;
+			}
+
+
+			foreach (var bone in preset) {
+				bones.Add(bone);
+			}
+		}
+		
+		this.ToggleView(bones.ToImmutableHashSet(), true);
 	}
 
 	public bool SavePreset(string presetName) {
@@ -165,6 +187,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 		}
 
 		this.Scene.Context.Config.Presets.Presets[presetName] = this.GetEnabledBones();
+		this.EnabledPresets.Add(presetName);
 		return true;
 	}
 }

@@ -40,7 +40,7 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void BuildEntityBaseTop(ContextMenuBuilder menu) {
-	#if DEBUG
+	#if DEBUG && false
 		var root = this._entity.Root;
 		menu.Action($"{root.Name} ({root.Type}) {root.GetType()}", () => this._entity.Root.Select(SelectMode.Force));
 	#endif
