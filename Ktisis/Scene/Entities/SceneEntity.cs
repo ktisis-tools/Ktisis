@@ -96,27 +96,23 @@ public abstract class SceneEntity : IComposite {
 	}
 	
 	//Presetting
-	public void ToggleView(ImmutableHashSet<string> names, bool newState) {
-		
+	protected void ToggleView(ImmutableHashSet<string> names, bool newState) {
 		if (this is BoneNode node && names.Contains(node.Info.Name)) {
 			node.Visible = newState;
 			((IVisibility) node).Toggle();
 		}
-		//recursively search children for name.
 	
 		foreach (var sceneEntity in this.Recurse()) {
-			
 			if (sceneEntity is not BoneNode n)
 				continue;
 			
-			Ktisis.Log.Debug("Checking if {0} is in {1}", n.Info.Name, names.Contains(n.Info.Name));
 			if (names.Contains(n.Info.Name)) {
 				n.Visible = newState;
 			}
 		}
 	}
 
-	public ImmutableHashSet<string> GetEnabledBones() {
+	protected ImmutableHashSet<string> GetEnabledBones() {
 		HashSet<string> bones = new(128);
 
 		foreach (var sceneEntity in this.Recurse()) {

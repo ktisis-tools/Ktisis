@@ -2,11 +2,12 @@
 using Dalamud.Interface.Utility.Raii;
 
 using Ktisis.Interface.Types;
+using Ktisis.Localization;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Editor.Popup;
 
-public class PresetSaveModal(ActorEntity entity)  : KtisisPopup("##PresetSave", ImGuiWindowFlags.Modal) {
+public class PresetSaveModal(ActorEntity entity, LocaleManager locale)  : KtisisPopup("##PresetSave", ImGuiWindowFlags.Modal) {
 	private bool _isFirstDraw = true;
 	
 	private string Name = "";
@@ -28,11 +29,11 @@ public class PresetSaveModal(ActorEntity entity)  : KtisisPopup("##PresetSave", 
 		ImGui.Spacing();
 		
 		using (var _ = ImRaii.Disabled(!isValid))
-			if (ImGui.Button("Confirm"))
+			if (ImGui.Button(locale.Translate("preset_edit.add.save")))
 				this.Confirm();
 		
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (ImGui.Button("Cancel"))
+		if (ImGui.Button(locale.Translate("preset_edit.add.cancel")))
 			this.Close();
 	}
 

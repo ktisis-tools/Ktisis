@@ -132,7 +132,8 @@
 		"add": {
 			"title": "Add new preset",
 			"label": "Preset Name",
-			"save": "Save"
+			"save": "Save",
+			"cancel": "Cancel"
 		}
 	},
 	
@@ -286,7 +287,9 @@
 		},
 		"presets": {
 			"title": "Presets",
-			"delete": "Hold shift to delete"
+			"delete_tooltip": "Hold shift to delete",
+			"delete": "Delete",
+			"rename": "Rename"
 		}
 	},
 

@@ -84,14 +84,14 @@ public class PresetEditor {
 		if (isValid && ImGui.IsKeyPressed(ImGuiKey.Enter) && ImGui.IsItemDeactivated()) Rename();
 		
 		ImGui.SameLine();
-		if (ImGui.Button("Rename")) Rename();
+		if (ImGui.Button(this._locale.Translate("config.presets.rename"))) Rename();
 
 		using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift))) {
-			if (ImGui.Button("Delete")) Delete();
+			if (ImGui.Button(this._locale.Translate("config.presets.delete"))) Delete();
 			
 			if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
 				using var _ = ImRaii.Tooltip();
-				ImGui.Text(this._locale.Translate("config.presets.delete"));
+				ImGui.Text(this._locale.Translate("config.presets.delete_tooltip"));
 			}
 		}
 	}
