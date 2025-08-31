@@ -5,17 +5,18 @@ using Dalamud.Interface.Utility.Raii;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
+using Ktisis.Localization;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Editor.Properties;
 
-public class PresetPropertyList(IEditorContext ctx) : ObjectPropertyList {
+public class PresetPropertyList(IEditorContext ctx, LocaleManager locale) : ObjectPropertyList {
 
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
 		if (entity.Root is not ActorEntity actor) return;
 		
-		builder.AddHeader("Presets", () => DrawPresets(actor), priority: 100);
+		builder.AddHeader(locale.Translate("preset_edit.title"), () => DrawPresets(actor), priority: 100);
 	}
 
 	private string _name = ""; 
@@ -33,8 +34,8 @@ public class PresetPropertyList(IEditorContext ctx) : ObjectPropertyList {
 		}
 		
 		ImGui.Separator();
-		
-		ImGui.InputText("Preset Name", ref _name);
+		ImGui.Text(locale.Translate("preset_edit.add.title"));
+		ImGui.InputText(locale.Translate("preset_edit.add.label"), ref _name);
 		var isValid = _name.Length > 0 && !ctx.Config.Presets.Presets.ContainsKey(_name);
 
 		if (isValid && ImGui.IsKeyPressed(ImGuiKey.Enter) && ImGui.IsItemDeactivated()) {
@@ -42,7 +43,7 @@ public class PresetPropertyList(IEditorContext ctx) : ObjectPropertyList {
 		}
 
 		using (var _ = ImRaii.Disabled(!isValid)) {
-			if (ImGui.Button("Save")) {
+			if (ImGui.Button(locale.Translate("preset_edit.add.save"))) {
 				SavePreset(actor);
 			}
 		}

@@ -127,6 +127,15 @@
 		}
 	},
 	
+	"preset_edit": {
+		"title": "Presets",
+		"add": {
+			"title": "Add new preset",
+			"label": "Preset Name",
+			"save": "Save"
+		}
+	},
+	
 	"chara_edit": {
 		"title": "Appearance Editor",
 		"hint": "Edit appearance"
