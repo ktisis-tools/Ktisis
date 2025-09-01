@@ -15,6 +15,7 @@ using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
+using Ktisis.Structs.Actors;
 
 namespace Ktisis.Scene.Entities.Game;
 
@@ -24,6 +25,8 @@ public class ActorEntity : CharaEntity, IDeletable {
 	public bool IsManaged { get; set; }
 
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
+
+	public ActorGaze Gaze;
 
 	public ActorEntity(
 		ISceneManager scene,
