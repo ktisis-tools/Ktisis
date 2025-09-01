@@ -18,6 +18,8 @@ public class EditorConfig {
 	public bool UseLegacyLightEditor = false;
 	
 	public Dictionary<EntityType, EntityDisplay> Display = EntityDisplay.GetDefaults();
+
+	public bool LinkedGaze = false;
 	
 	// Reference images
 	
