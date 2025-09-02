@@ -127,8 +127,10 @@ public class ActorPropertyList : ObjectPropertyList {
 			result |= DrawGaze(actor, ref gaze.Torso.Gaze, GazeControl.Torso);
 		}
 
-		if (result)
+		if (result) {
+			Ktisis.Log.Info($"assigning gaze {gaze} to actor {actor}; current gaze {actor.Gaze}");
 			actor.Gaze = gaze;
+		}
 
 		return;
 	}
@@ -142,6 +144,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		var actorCharacter = (CharacterEx*)actor.Character;
 
 		if (ImGui.Checkbox($"{type}", ref enabled)) {
+			Ktisis.Log.Info($"gaze enabled on actor {actor} for type {type}; pos = {gaze.Pos}");
 			result = true;
 			gaze.Mode = enabled ? GazeMode.Target : GazeMode.Disabled;
 		}
@@ -160,13 +163,16 @@ public class ActorPropertyList : ObjectPropertyList {
 		// }
 
 		// positions
+		// if we're not controlling via Enabled and the character already has a base gaze (via gpose controls), write those
 		if (type != GazeControl.All) {
 			var baseGaze = actorCharacter->Gaze[type];
 			if (baseGaze.Mode != 0 && !enabled && !result)
+				Ktisis.Log.Info($"assigning basegaze pos {baseGaze.Pos} to gaze {gaze} for type {type}");
 				gaze.Pos = baseGaze.Pos;
 		}
 
-		GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
+		result |= GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
+		Ktisis.Log.Info($"done with drawgaze for type {type}, pos = {gaze.Pos}");
 
 		return result;
 	}
