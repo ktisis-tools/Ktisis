@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 
 using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
@@ -137,6 +139,8 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (!GazeTables.ContainsKey(type))
 			GazeTables.Add(type, new TransformTable(this._cfg));
 
+		var style = ImGui.GetStyle();
+		var spacing = style.ItemInnerSpacing.X;
 		var result = false;
 		var enabled = gaze.Mode != 0;
 		var actorCharacter = (CharacterEx*)actor.Character;
@@ -146,18 +150,26 @@ public class ActorPropertyList : ObjectPropertyList {
 			gaze.Mode = enabled ? GazeMode.Target : GazeMode.Disabled;
 		}
 
-		// TODO: gizmo
+		// calc button space for camera and gizmo buttons
+		var btnSpace = Icons.CalcIconSize(FontAwesomeIcon.Eye).X
+			+ Icons.CalcIconSize(FontAwesomeIcon.LocationArrow).X
+			+ spacing * 3;
+		ImGui.SameLine(0, spacing);
+		ImGui.SameLine(0, ImGui.GetContentRegionAvail().X - btnSpace);
 
-		// TODO: camera tracking
-		// var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		// ImGui.SameLine(0, spacing);
-		// var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
-		// var icon = isTracking ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
-		// if (Buttons.IconButton(icon)) {
-		// 	result = true;
-		// 	enabled = true;
-		// 	gaze.Mode = isTracking ? GazeMode.Target : GazeMode._KtisisFollowCam_;
-		// }
+		// camera tracking - when pressed, toggle enabled and change gaze mode to KtisisFollowCam (or revert to Target mode)
+		var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Eye, "Camera Tracking", Vector2.Zero)) {}
+		}
+		ImGui.SameLine(0, spacing);
+
+		// gizmo
+		var isGizmo = false;
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isGizmo)) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {}
+		}
+
 
 		// positions
 		// if we're not controlling via Enabled and the character already has a base gaze (via gpose controls), write those
