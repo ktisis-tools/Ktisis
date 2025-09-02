@@ -139,6 +139,8 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (!GazeTables.ContainsKey(type))
 			GazeTables.Add(type, new TransformTable(this._cfg));
 
+		using var _ = ImRaii.PushId($"Gaze_{type}");
+
 		var style = ImGui.GetStyle();
 		var spacing = style.ItemInnerSpacing.X;
 		var result = false;
