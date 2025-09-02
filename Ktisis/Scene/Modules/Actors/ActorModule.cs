@@ -223,13 +223,17 @@ public class ActorModule : SceneModule {
 	private RemoveCharacterDelegate _removeCharacter = null!;
 	private unsafe delegate nint RemoveCharacterDelegate(GPoseState* gpose, CSGameObject* gameObject);
 
+	[Signature("E8 ?? ?? ?? ?? 8B D6 48 8B CF E8 ?? ?? ?? ?? EB 2A")]
+	private ActorLookAtDelegate _actorLookAt = null!;
+	private unsafe delegate char ActorLookAtDelegate(ActorGaze* writeTo, Gaze* readFrom, GazeControl bodyPart, IntPtr unk4);
+
 	[Signature("E8 ?? ?? ?? ?? 48 83 C3 08 48 83 EF 01 75 CF", DetourName = nameof(ControlGazeDetour))]
 	private Hook <ControlGazeDelegate>? ControlGazeHook = null!;
 	private delegate void ControlGazeDelegate(nint a1);
 	private unsafe void ControlGazeDetour(nint a1) {
 		if (!this.CheckValid()) {
 			// skip everything if the detour is invalid
-			this.ControlGazeHook.Original(a1);
+			this.ControlGazeHook!.Original(a1);
 			return;
 		}
 
@@ -247,13 +251,40 @@ public class ActorModule : SceneModule {
 			if (actor.Actor.Address != a1 - CharacterEx.GazeOffset) continue;
 
 			// get a characterEx we can work with from the gaze being detoured
-			// overwrite gaze at a1 with stored gaze
 			var detourCharacterEx = (CharacterEx*)(a1 - CharacterEx.GazeOffset);
-			// detourCharacterEx->Gaze = actor.Gaze!;
-			detourCharacterEx->Gaze = (ActorGaze)actor.Gaze;
+			// get the ktisis-made ActorGaze on matched ActorEntity
+			var gaze = (ActorGaze)actor.Gaze;
+			// overwrite gaze at a1 with stored gaze for each gazetype on ActorEntity
+			for (var i = -1; i < 3; i++) {
+				var type = (GazeControl)i;
+				var ctrl = gaze[type];
+				if (ctrl.Mode != 0) {
+					if (ctrl.Mode == GazeMode._KtisisFollowCam_) {
+						// todo follow camera
+
+						// var camera = Services.Camera->GetActiveCamera();
+
+						// ctrl.Pos = camera->GetCameraPos();
+						// gaze[type] = ctrl;
+						// ActorControl[id] = gaze;
+
+						// ctrl.Mode = GazeMode.Target;
+						continue;
+					}
+
+					this._actorLookAt(&detourCharacterEx->Gaze, &ctrl, type, IntPtr.Zero);
+					// actor->LookAt(&ctrl, type);
+
+					if (type == GazeControl.All)
+						break;
+				}
+			}
+
+			// causes a crash! probably dumping badly-formed data onto the pointer
+			// detourCharacterEx->Gaze = (ActorGaze)actor.Gaze;
 		}
 
-		this.ControlGazeHook.Original(a1);
+		this.ControlGazeHook!.Original(a1);
 	}
 
 	

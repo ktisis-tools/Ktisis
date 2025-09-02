@@ -22,7 +22,7 @@ public class ActorPropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
 	private readonly ConfigManager _cfg;
 	private readonly LocaleManager _locale;
-	private static Dictionary<GazeControl, TransformTable> GazeTables;
+	private static Dictionary<GazeControl, TransformTable>? GazeTables;
 
 	private bool IsLinked {
 		get => this._ctx.Config.Editor.LinkedGaze;
@@ -91,8 +91,9 @@ public class ActorPropertyList : ObjectPropertyList {
 	private void DrawGazeTab(ActorEntity actor) {
 		if (GazeTables == null)
 			GazeTables = new();
-		// var gaze = actor.Gaze;
-		var gaze = new ActorGaze();
+
+		// work from existing gaze on ActorEntity or make a new one if its our first touch w them
+		var gaze = actor.Gaze != null ? (ActorGaze)actor.Gaze : new ActorGaze();
 
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		var result = false;
