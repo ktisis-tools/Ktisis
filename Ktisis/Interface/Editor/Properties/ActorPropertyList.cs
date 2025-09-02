@@ -144,6 +144,8 @@ public class ActorPropertyList : ObjectPropertyList {
 		var result = false;
 		var enabled = gaze.Mode != 0;
 		var actorCharacter = (CharacterEx*)actor.Character;
+		var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
+		var isGizmo = false;
 
 		if (ImGui.Checkbox($"{type}", ref enabled)) {
 			result = true;
@@ -158,16 +160,16 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, ImGui.GetContentRegionAvail().X - btnSpace);
 
 		// camera tracking - when pressed, toggle enabled and change gaze mode to KtisisFollowCam (or revert to Target mode)
-		var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
-		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Eye, "Camera Tracking", Vector2.Zero)) {}
+		// using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Eye, "Camera Tracking", Vector2.Zero)) {
+			Ktisis.Log.Info("click!");
 		}
 		ImGui.SameLine(0, spacing);
 
 		// gizmo
-		var isGizmo = false;
-		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isGizmo)) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {}
+		// using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isGizmo)) {
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {
+			Ktisis.Log.Info("click 2!");
 		}
 
 

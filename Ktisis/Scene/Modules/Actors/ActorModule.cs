@@ -20,6 +20,7 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Scene.Types;
 using Ktisis.Services.Game;
+using Ktisis.Structs.Camera;
 
 namespace Ktisis.Scene.Modules.Actors;
 
@@ -260,16 +261,12 @@ public class ActorModule : SceneModule {
 				var ctrl = gaze[type];
 				if (ctrl.Mode != 0) {
 					if (ctrl.Mode == GazeMode._KtisisFollowCam_) {
-						// todo follow camera
-
-						// var camera = Services.Camera->GetActiveCamera();
-
-						// ctrl.Pos = camera->GetCameraPos();
-						// gaze[type] = ctrl;
-						// ActorControl[id] = gaze;
-
-						// ctrl.Mode = GazeMode.Target;
-						continue;
+						var camera = GameCameraEx.GetActive();
+						if (camera != null) {
+							ctrl.Pos = camera->Position;
+							gaze[type] = ctrl;
+						}
+						ctrl.Mode = GazeMode.Target;
 					}
 
 					this._actorLookAt(&detourCharacterEx->Gaze, &ctrl, type, IntPtr.Zero);
