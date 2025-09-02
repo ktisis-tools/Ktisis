@@ -1,10 +1,15 @@
-﻿using Dalamud.Interface;
+﻿using System.Collections.Generic;
+
+using Dalamud.Interface;
 using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
 
+using Ktisis.Data.Config;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
+using Ktisis.Interface.Components.Transforms;
+using Ktisis.Editor.Transforms.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
@@ -15,7 +20,9 @@ namespace Ktisis.Interface.Editor.Properties;
 
 public class ActorPropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
+	private readonly ConfigManager _cfg;
 	private readonly LocaleManager _locale;
+	private static Dictionary<GazeControl, TransformTable> GazeTables;
 
 	private bool IsLinked {
 		get => this._ctx.Config.Editor.LinkedGaze;
@@ -24,9 +31,11 @@ public class ActorPropertyList : ObjectPropertyList {
 	
 	public ActorPropertyList(
 		IEditorContext ctx,
+		ConfigManager cfg,
 		LocaleManager locale
 	) {
 		this._ctx = ctx;
+		this._cfg = cfg;
 		this._locale = locale;
 	}
 	
@@ -80,6 +89,8 @@ public class ActorPropertyList : ObjectPropertyList {
 	// TODO: only draw if posing is not enabled
 
 	private void DrawGazeTab(ActorEntity actor) {
+		if (GazeTables == null)
+			GazeTables = new();
 		var gaze = actor.Gaze;
 
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
@@ -121,9 +132,10 @@ public class ActorPropertyList : ObjectPropertyList {
 	}
 
 	private unsafe bool DrawGaze(ActorEntity actor, ref Gaze gaze, GazeControl type) {
-		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+		if (!GazeTables.ContainsKey(type))
+			GazeTables.Add(type, new TransformTable(this._cfg));
+
 		var result = false;
-		var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
 		var enabled = gaze.Mode != 0;
 		var actorCharacter = (CharacterEx*)actor.Character;
 
@@ -134,14 +146,16 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		// TODO: gizmo
 
-		// camera tracking
-		ImGui.SameLine(0, spacing);
-		var icon = isTracking ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
-		if (Buttons.IconButton(icon)) {
-			result = true;
-			enabled = true;
-			gaze.Mode = isTracking ? GazeMode.Target : GazeMode._KtisisFollowCam_;
-		}
+		// TODO: camera tracking
+		// var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+		// ImGui.SameLine(0, spacing);
+		// var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
+		// var icon = isTracking ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
+		// if (Buttons.IconButton(icon)) {
+		// 	result = true;
+		// 	enabled = true;
+		// 	gaze.Mode = isTracking ? GazeMode.Target : GazeMode._KtisisFollowCam_;
+		// }
 
 		// positions
 		if (type != GazeControl.All) {
@@ -150,9 +164,7 @@ public class ActorPropertyList : ObjectPropertyList {
 				gaze.Pos = baseGaze.Pos;
 		}
 
-		ImGui.PushItemWidth(ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X);
-		result |= ImGui.DragFloat3($"##{type}", ref gaze.Pos, 0.005f);
-		ImGui.PopItemWidth();
+		GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
 
 		return result;
 	}
