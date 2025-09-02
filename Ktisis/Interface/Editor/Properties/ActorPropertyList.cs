@@ -91,7 +91,8 @@ public class ActorPropertyList : ObjectPropertyList {
 	private void DrawGazeTab(ActorEntity actor) {
 		if (GazeTables == null)
 			GazeTables = new();
-		var gaze = actor.Gaze;
+		// var gaze = actor.Gaze;
+		var gaze = new ActorGaze();
 
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		var result = false;

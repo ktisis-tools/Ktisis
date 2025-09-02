@@ -26,7 +26,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
 
-	public ActorGaze Gaze;
+	public ActorGaze? Gaze;
 
 	public ActorEntity(
 		ISceneManager scene,
