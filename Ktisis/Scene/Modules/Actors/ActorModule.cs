@@ -221,6 +221,14 @@ public class ActorModule : SceneModule {
 	[Signature("45 33 D2 4C 8D 81 ?? ?? ?? ?? 41 8B C2 4C 8B C9 49 3B 10")]
 	private RemoveCharacterDelegate _removeCharacter = null!;
 	private unsafe delegate nint RemoveCharacterDelegate(GPoseState* gpose, CSGameObject* gameObject);
+
+	[Signature("E8 ?? ?? ?? ?? 48 83 C3 08 48 83 EF 01 75 CF", DetourName = nameof(ControlGazeDetour))]
+	private Hook <ControlGazeDelegate>? ControlGazeHook = null!;
+	private delegate void ControlGazeDelegate(nint a1);
+	private void ControlGazeDetour(nint a1) {
+		
+	}
+
 	
 	// Disposal
 
