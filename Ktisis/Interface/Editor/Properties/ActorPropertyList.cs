@@ -90,36 +90,39 @@ public class ActorPropertyList : ObjectPropertyList {
 	// Gaze tab
 	// TODO: only draw if posing is not enabled
 
-	private void DrawGazeTab(ActorEntity actor) {
+	private unsafe void DrawGazeTab(ActorEntity actor) {
 		if (GazeTables == null)
 			GazeTables = new();
 
 		// work from existing gaze on ActorEntity or make a new one if its our first touch w them
 		var gaze = actor.Gaze != null ? (ActorGaze)actor.Gaze : new ActorGaze();
+		// if human actor, enable link/unlinked controls
+		bool isHuman = actor.GetHuman() != null;
 
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		var result = false;
 
-		var icon = IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink;
-		if (Buttons.IconButton(icon)) {
-			if (IsLinked) {
-				var move = gaze.Other;
-				if (move.Gaze.Mode != 0) {
-					result = true;
-					gaze.Head = move;
-					gaze.Eyes = move;
-					gaze.Torso = move;
-					gaze.Other.Gaze.Mode = GazeMode.Disabled;
+		if (isHuman) {
+			var icon = IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink;
+			if (Buttons.IconButton(icon)) {
+				if (IsLinked) {
+					var move = gaze.Other;
+					if (move.Gaze.Mode != 0) {
+						result = true;
+						gaze.Head = move;
+						gaze.Eyes = move;
+						gaze.Torso = move;
+						gaze.Other.Gaze.Mode = GazeMode.Disabled;
+					}
 				}
+				IsLinked = !IsLinked;
 			}
-			IsLinked = !IsLinked;
+			ImGui.SameLine(0, spacing);
+			ImGui.Text(IsLinked ? "Linked" : "Unlinked");
+			ImGui.Spacing();
 		}
-		ImGui.SameLine(0, spacing);
-		ImGui.Text(IsLinked ? "Linked" : "Unlinked");
 
-		ImGui.Spacing();
-
-		if (IsLinked)
+		if (IsLinked || !isHuman)
 			result |= DrawGaze(actor, ref gaze.Other.Gaze, GazeControl.All);
 		else {
 			result |= DrawGaze(actor, ref gaze.Eyes.Gaze, GazeControl.Eyes);
