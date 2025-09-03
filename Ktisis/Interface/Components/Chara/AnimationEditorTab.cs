@@ -228,10 +228,10 @@ public class AnimationEditorTab {
 			if (!key.IsNullOrEmpty() && index < 3) {
 				var defaultControl = this.Editor.GetDefaultControlForIndex(index);
 				var scrubDuration = defaultControl->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
+				var localTime = defaultControl->hkaAnimationControl.LocalTime;
 
 				// only allow input when speed is 0
 				using (var _disable = ImRaii.Disabled(!speedCtrl || speed != 0.0f)) {
-					var localTime = defaultControl->hkaAnimationControl.LocalTime;
 					ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
 					var changed = ImGui.InputFloat($"##scrub_l{index}", ref localTime, flags: ImGuiInputTextFlags.ReadOnly);
 					ImGui.SameLine(0, spacing);
