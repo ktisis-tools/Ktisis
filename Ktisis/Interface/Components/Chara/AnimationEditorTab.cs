@@ -230,13 +230,13 @@ public class AnimationEditorTab {
 				var scrubDuration = defaultControl->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
 
 				// only allow input when speed is 0
-				using (var _disable = ImRaii.Disabled(speed != 0.0f)) {
+				using (var _disable = ImRaii.Disabled(!speedCtrl || speed != 0.0f)) {
 					var localTime = defaultControl->hkaAnimationControl.LocalTime;
 					ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
-					var changed = ImGui.InputFloat($"##scrub_l{index}", ref localTime);
+					var changed = ImGui.InputFloat($"##scrub_l{index}", ref localTime, flags: ImGuiInputTextFlags.ReadOnly);
 					ImGui.SameLine(0, spacing);
 					ImGui.SetNextItemWidth(widthR);
-					changed |= ImGui.SliderFloat($"##scrub_r{index}", ref localTime, 0f, scrubDuration);
+					changed |= ImGui.SliderFloat($"##scrub_r{index}", ref localTime, 0f, scrubDuration, flags: ImGuiSliderFlags.AlwaysClamp);
 					if (changed) defaultControl->hkaAnimationControl.LocalTime = localTime;
 				}
 			}
