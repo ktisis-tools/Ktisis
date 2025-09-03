@@ -35,6 +35,10 @@ public struct ActorGaze {
                     Eyes.Gaze = value;
                     break;
                 case GazeControl.All:
+                    // if we ever assign to all, we assign to all
+                    Torso.Gaze = value;
+                    Head.Gaze = value;
+                    Eyes.Gaze = value;
                     Other.Gaze = value;
                     break;
             }

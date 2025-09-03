@@ -147,7 +147,17 @@ public class ActorPropertyList : ObjectPropertyList {
 		var enabled = gaze.Mode != 0;
 		var actorCharacter = (CharacterEx*)actor.Character;
 		var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
-		var isGizmo = false;
+
+		if (type != GazeControl.All || !enabled) {
+			// if we're changing individual gazes (or viewing All w/o activation), set each to the basegaze for that type
+			// for all when not enabled, this will zero it out
+			var baseGaze = actorCharacter->Gaze[type];
+			gaze.Pos = baseGaze.Pos;
+		} else {
+			// if we're changing ALL gazes and enabled, load in any as theyre all equal to gaze.Pos for the transformtable
+			var baseGaze = actorCharacter->Gaze[GazeControl.Torso];
+			gaze.Pos = baseGaze.Pos;
+		}
 
 		if (ImGui.Checkbox($"{type}", ref enabled)) {
 			result = true;
@@ -162,25 +172,23 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, ImGui.GetContentRegionAvail().X - btnSpace);
 
 		// camera tracking - when pressed, toggle enabled and change gaze mode to KtisisFollowCam (or revert to Target mode)
-		// using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Eye, "Camera Tracking", Vector2.Zero)) {
-			Ktisis.Log.Info("click!");
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Eye, "Camera Tracking", Vector2.Zero)) {
+				Ktisis.Log.Info("click!");
+				result = true;
+				enabled = true;
+				gaze.Mode = isTracking ? GazeMode.Target : GazeMode._KtisisFollowCam_;
+			}
 		}
 		ImGui.SameLine(0, spacing);
 
 		// gizmo
-		// using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isGizmo)) {
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {
-			Ktisis.Log.Info("click 2!");
-		}
-
-
-		// positions
-		// if we're not controlling via Enabled and the character already has a base gaze (via gpose controls), write those
-		if (type != GazeControl.All) {
-			var baseGaze = actorCharacter->Gaze[type];
-			if (baseGaze.Mode != 0 && !enabled && !result)
-				gaze.Pos = baseGaze.Pos;
+		using (var _disable = ImRaii.Disabled(isTracking)) {
+			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {
+					Ktisis.Log.Info("click 2!");
+				}
+			}
 		}
 
 		result |= GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
