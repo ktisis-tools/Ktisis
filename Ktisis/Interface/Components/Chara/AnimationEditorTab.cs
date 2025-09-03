@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -263,7 +264,7 @@ public class AnimationEditorTab {
 	private static bool AnimSearchPredicate(GameAnimation anim, string query)
 		=> anim.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase);
 
-	private class AnimationFilter : IFilterProvider<GameAnimation> {
+private class AnimationFilter : IFilterProvider<GameAnimation> {
 		private enum AnimType {
 			Action,
 			Emote,
@@ -280,8 +281,16 @@ public class AnimationEditorTab {
 			var update = false;
 			
 			var values = Enum.GetValues<AnimType>();
+			var excludes = this.GetExcludes();
 			for (var i = 0; i < values.Length; i++) {
-				if ((i % 3) != 0) ImGui.SameLine();
+				// if we got an excludes list, skip any radio buttons irrelevant to the picked timeline slot
+				// if a now-hidden radio button was selected, default back to RawTimeline (always visible)
+				if (excludes.Contains(i)) {
+					if (this.Type == values[i])
+						this.Type = AnimType.RawTimeline;
+					continue;
+				}
+				if (excludes.Count > 0 || (i % 3) != 0) ImGui.SameLine();
 
 				var value = values[i];
 				if (ImGui.RadioButton($"{value}", this.Type == value)) {
@@ -301,6 +310,22 @@ public class AnimationEditorTab {
 				TimelineAnimation => this.Type == AnimType.RawTimeline,
 				_ => false
 			};
+		}
+
+		private List<int> GetExcludes() {
+			// conditionally exclude radio buttons based on availability for selected slotfilter
+			if (!this.SlotFilterActive) return new List<int>();
+
+			if (this.Slot == TimelineSlot.FullBody || this.Slot == TimelineSlot.UpperBody)
+				return new List<int> {(int)AnimType.Expression};
+			else if (this.Slot == TimelineSlot.Expression)
+				return new List<int> {(int)AnimType.Action, (int)AnimType.Emote};
+			else if (this.Slot == TimelineSlot.Additive)
+				return new List<int> {(int)AnimType.Action, (int)AnimType.Expression};
+			else if (this.Slot == TimelineSlot.Lips)
+				return new List<int> {(int)AnimType.Action, (int)AnimType.Emote, (int)AnimType.Expression};
+
+			return new List<int>();
 		}
 	}
 	
