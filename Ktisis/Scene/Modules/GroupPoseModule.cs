@@ -64,7 +64,11 @@ public class GroupPoseModule : SceneModule {
 	private Hook<UpdateGposeTarNameDelegate>? UpdateGposeTarNameHook = null;
 	private unsafe delegate void UpdateGposeTarNameDelegate(nint a1);
 	private unsafe void UpdateGposeTarNameDetour(nint a1) {
-		// TODO: runs every frame, can be optimized?
+		if (!this.CheckValid()) {
+			this.UpdateGposeTarNameHook!.Original(a1);
+			return;
+		}
+
 		if (this.Scene.Context.Config.Editor.IncognitoPlayerNames) {
 			var targeted = this.GetGposeTarget();
 			if (targeted != null && targeted.IsPcCharacter()) {

@@ -26,10 +26,14 @@ public static class GameObjectEx {
 		return csPtr != null && csPtr->GetObjectKind() == ObjectKind.Pc;
 	}
 
-	public unsafe static string GetNameOrFallback(this IGameObject gameObject, bool incognito = false) {
-		// accepts Config.Editor.IncognitoPlayerNames to force censoring to Actor #XXX (if the actor is a PC)
+	public unsafe static string GetNameOrFallback(this IGameObject gameObject, IEditorContext ctx, bool? forceIncognito = null) {
+		// forceIncognito: if null, use Config.Editor.IncognitoPlayerNames
+		// 	if true, return censored Actor #
+		// 	if false, return realname or fallback
 
+		bool incognito = forceIncognito ?? ctx.Config.Editor.IncognitoPlayerNames;
 		bool isPc = IsPcCharacter(gameObject);
+
 		// force the fallback text if we're incognito and looking at a PC
 		if (incognito && isPc) {
 			return $"Actor #{gameObject.ObjectIndex}";

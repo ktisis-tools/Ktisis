@@ -47,7 +47,6 @@ public class OverworldActorPopup : KtisisPopup {
 		await module.AddFromOverworld(actor);
 	}
 	
-	// TODO: runs every frame the popup is open
 	private bool DrawActorName(IGameObject actor, bool isFocus)
-		=> ImGui.Selectable(actor.GetNameOrFallback(this._ctx.Config.Editor.IncognitoPlayerNames), isFocus);
+		=> ImGui.Selectable(actor.GetNameOrFallback(this._ctx), isFocus);
 }
