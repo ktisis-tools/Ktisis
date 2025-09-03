@@ -78,8 +78,8 @@ public class SceneEntityMenuBuilder {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
 			.Separator()
-			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Action("Edit appearance", this.OpenEditor)
+			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Separator()
 			.SubMenu("Import...", sub => {
 				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
