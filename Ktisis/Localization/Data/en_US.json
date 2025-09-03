@@ -568,7 +568,11 @@
 		"SkelomaeCreaturesCentaurBody": "Centaur Body",
 		"SkelomaeCreaturesCentaurBodyFrontLegs": "Front Legs",
 		"SkelomaeCreaturesCentaurBodyBackLegs": "Back Legs",
-		"SkelomaeCreaturesCentaurTail": "Tail"
+		"SkelomaeCreaturesCentaurTail": "Tail",
+      
+		"CustomArms": "Custom Skeleton Arms",
+		"CustomAbdomen": "Custom Skeleton Abdomen",
+		"CustomLegs": "Custom Skeleton Legs"
 	},
 	
 	"lightType": {
