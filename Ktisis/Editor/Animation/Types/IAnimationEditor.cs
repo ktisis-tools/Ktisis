@@ -1,6 +1,8 @@
 ﻿using Ktisis.Editor.Animation.Game;
 using Ktisis.Structs.Actors;
 
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
+
 namespace Ktisis.Editor.Animation.Types;
 
 public interface IAnimationEditor {
@@ -17,6 +19,7 @@ public interface IAnimationEditor {
 	public AnimationTimeline GetTimeline();
 	public void SetForceTimeline(ushort id);
 	public void SetTimelineSpeed(uint slot, float speed);
+	public unsafe hkaDefaultAnimationControl* GetDefaultControlForIndex(int animationIndex);
 
 	public bool IsWeaponDrawn { get; }
 	public void ToggleWeapon();

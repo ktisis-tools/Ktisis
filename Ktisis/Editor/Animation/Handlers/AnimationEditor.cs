@@ -1,9 +1,16 @@
 ﻿using System.Collections.Generic;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Editor.Animation.Game;
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
+
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 namespace Ktisis.Editor.Animation.Handlers;
 
@@ -113,6 +120,28 @@ public class AnimationEditor(
 	}
 	
 	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);
+
+	public unsafe hkaDefaultAnimationControl* GetDefaultControlForIndex(int animationIndex) {
+		// hacky reimplement of GetAnimationControl's clientstructs hka traversal
+		// todo: either refactor or find a neater way to get the scrub values
+		var gameObject = actor.Actor;
+
+		var skeleton = gameObject.GetSkeleton();
+		if (skeleton == null) return null;
+
+		var partial = skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0);
+		if (partial == null) return null;
+		if (partial->AnimationControls.Length == 0) return null;
+		if (partial->AnimationControls[animationIndex].Value == null) return null;
+
+		// validate defaultControl has appropriate binding and animation to ensure we can fetch a duration
+		var defaultControl = partial->AnimationControls[animationIndex].Value;
+		if (defaultControl->hkaAnimationControl.Binding.ptr == null) return null;
+		if (defaultControl->hkaAnimationControl.Binding.ptr->Animation.ptr == null) return null;
+
+		return defaultControl;
+	}
+
 	
 	// Weapons
 

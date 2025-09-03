@@ -12,6 +12,8 @@ using GLib.Popups;
 using GLib.Popups.Decorators;
 using GLib.Widgets;
 
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
+
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
@@ -212,14 +214,31 @@ public class AnimationEditorTab {
 			ImGui.SameLine(0, 0);
 			ImGui.LabelText("{0}", $"{slot}");
 
+			var speed = animTimeline.TimelineSpeeds[index];
 			using (var _disable = ImRaii.Disabled(!speedCtrl)) {
-				var speed = animTimeline.TimelineSpeeds[index];
 				ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
 				var changed = ImGui.InputFloat($"##speed_l{index}", ref speed);
 				ImGui.SameLine(0, spacing);
 				ImGui.SetNextItemWidth(widthR);
 				changed |= ImGui.SliderFloat($"##speed_r{index}", ref speed, 0.0f, 2.0f, "");
 				if (changed) this.Editor.SetTimelineSpeed((uint)index, speed);
+			}
+
+			// draw sliders for fullbody, upperbody, and expressions when playing
+			if (!key.IsNullOrEmpty() && index < 3) {
+				var defaultControl = this.Editor.GetDefaultControlForIndex(index);
+				var scrubDuration = defaultControl->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration;
+
+				// only allow input when speed is 0
+				using (var _disable = ImRaii.Disabled(speed != 0.0f)) {
+					var localTime = defaultControl->hkaAnimationControl.LocalTime;
+					ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
+					var changed = ImGui.InputFloat($"##scrub_l{index}", ref localTime);
+					ImGui.SameLine(0, spacing);
+					ImGui.SetNextItemWidth(widthR);
+					changed |= ImGui.SliderFloat($"##scrub_r{index}", ref localTime, 0f, scrubDuration);
+					if (changed) defaultControl->hkaAnimationControl.LocalTime = localTime;
+				}
 			}
 			
 			ImGui.Spacing();
