@@ -150,6 +150,8 @@ public class ConfigWindow : KtisisWindow {
 	// Input
 
 	private void DrawInputTab() {
+		ImGui.Checkbox(this.Locale.Translate("config.input.blockLeft"), ref this.Config.Keybinds.BlockTargetLeftClick);
+		ImGui.Checkbox(this.Locale.Translate("config.input.blockRight"), ref this.Config.Keybinds.BlockTargetRightClick);
 		ImGui.Checkbox(this.Locale.Translate("config.input.enable"), ref this.Config.Keybinds.Enabled);
 		if (!this.Config.Keybinds.Enabled) return;
 		ImGui.Text(this.Locale.Translate("config.input.help"));

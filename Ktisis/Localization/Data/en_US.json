@@ -263,7 +263,9 @@
 		"input": {
 			"title": "Input",
 			"enable": "Enable keybinds",
-			"help": "Click keybinds to modify them. Right click to clear."
+			"help": "Click keybinds to modify them. Right click to clear.",
+			"blockLeft": "Disable change target on left click",
+			"blockRight": "Disable change target on right click"
 		},
 		"autosave": {
 			"title": "AutoSave",
