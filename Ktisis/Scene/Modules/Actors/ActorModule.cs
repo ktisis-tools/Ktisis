@@ -266,17 +266,14 @@ public class ActorModule : SceneModule {
 					}
 
 					this._actorLookAt(&detourCharacterEx->Gaze, &ctrl, type, IntPtr.Zero);
-					// actor->LookAt(&ctrl, type);
 
 					if (type == GazeControl.All)
 						break;
 				}
 			}
-
-			// causes a crash! probably dumping badly-formed data onto the pointer
-			// detourCharacterEx->Gaze = (ActorGaze)actor.Gaze;
 		}
 
+		// call original after we've made our modifications
 		this.ControlGazeHook!.Original(a1);
 	}
 

@@ -88,7 +88,6 @@ public class ActorPropertyList : ObjectPropertyList {
 	}
 	
 	// Gaze tab
-	// TODO: only draw if posing is not enabled
 
 	private unsafe void DrawGazeTab(ActorEntity actor) {
 		if (GazeTables == null)
@@ -102,38 +101,40 @@ public class ActorPropertyList : ObjectPropertyList {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		var result = false;
 
-		if (isHuman) {
-			var icon = IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink;
-			if (Buttons.IconButton(icon)) {
-				if (IsLinked) {
-					var move = gaze.Other;
-					if (move.Gaze.Mode != 0) {
-						result = true;
-						gaze.Head = move;
-						gaze.Eyes = move;
-						gaze.Torso = move;
-						gaze.Other.Gaze.Mode = GazeMode.Disabled;
+		using (var _disable = ImRaii.Disabled(this._ctx.Posing.IsEnabled)) {
+			if (isHuman) {
+				var icon = IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink;
+				if (Buttons.IconButton(icon)) {
+					if (IsLinked) {
+						var move = gaze.Other;
+						if (move.Gaze.Mode != 0) {
+							result = true;
+							gaze.Head = move;
+							gaze.Eyes = move;
+							gaze.Torso = move;
+							gaze.Other.Gaze.Mode = GazeMode.Disabled;
+						}
 					}
+					IsLinked = !IsLinked;
 				}
-				IsLinked = !IsLinked;
+				ImGui.SameLine(0, spacing);
+				ImGui.Text(IsLinked ? "Linked" : "Unlinked");
+				ImGui.Spacing();
 			}
-			ImGui.SameLine(0, spacing);
-			ImGui.Text(IsLinked ? "Linked" : "Unlinked");
-			ImGui.Spacing();
-		}
 
-		if (IsLinked || !isHuman)
-			result |= DrawGaze(actor, ref gaze.Other.Gaze, GazeControl.All);
-		else {
-			result |= DrawGaze(actor, ref gaze.Eyes.Gaze, GazeControl.Eyes);
-			ImGui.Spacing();
-			result |= DrawGaze(actor, ref gaze.Head.Gaze, GazeControl.Head);
-			ImGui.Spacing();
-			result |= DrawGaze(actor, ref gaze.Torso.Gaze, GazeControl.Torso);
-		}
+			if (IsLinked || !isHuman)
+				result |= DrawGaze(actor, ref gaze.Other.Gaze, GazeControl.All);
+			else {
+				result |= DrawGaze(actor, ref gaze.Eyes.Gaze, GazeControl.Eyes);
+				ImGui.Spacing();
+				result |= DrawGaze(actor, ref gaze.Head.Gaze, GazeControl.Head);
+				ImGui.Spacing();
+				result |= DrawGaze(actor, ref gaze.Torso.Gaze, GazeControl.Torso);
+			}
 
-		if (result)
-			actor.Gaze = gaze;
+			if (result)
+				actor.Gaze = gaze;
+		}
 
 		return;
 	}
@@ -143,9 +144,8 @@ public class ActorPropertyList : ObjectPropertyList {
 			GazeTables.Add(type, new TransformTable(this._cfg));
 
 		using var _ = ImRaii.PushId($"Gaze_{type}");
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
-		var style = ImGui.GetStyle();
-		var spacing = style.ItemInnerSpacing.X;
 		var result = false;
 		var enabled = gaze.Mode != 0;
 		var actorCharacter = (CharacterEx*)actor.Character;
@@ -188,11 +188,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		// 	or, possible to create a dummy scene object (GazeTarget?) to hijack overlay gizmo?
 		using (var _disable = ImRaii.Disabled()) {
 			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
-				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking [TODO]", Vector2.Zero)) {
-					// result = true;
-					// enabled = true;
-					// gaze.Mode = GazeMode.Target;
-				}
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking [TODO]", Vector2.Zero)) {}
 			}
 		}
 
