@@ -232,11 +232,7 @@ public class ActorModule : SceneModule {
 	private Hook <ControlGazeDelegate>? ControlGazeHook = null!;
 	private delegate void ControlGazeDelegate(nint a1);
 	private unsafe void ControlGazeDetour(nint a1) {
-		if (!this.CheckValid()) {
-			// skip everything if the detour is invalid
-			this.ControlGazeHook!.Original(a1);
-			return;
-		}
+		if (!this.CheckValid()) return;
 
 		// check current scene ActorEntities
 		var current = this.Scene.Children
