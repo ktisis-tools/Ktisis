@@ -185,7 +185,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		// 	or, possible to create a dummy scene object (GazeTarget?) to hijack overlay gizmo?
 		using (var _disable = ImRaii.Disabled()) {
 			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
-				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking [TODO]", Vector2.Zero)) {
 					// result = true;
 					// enabled = true;
 					// gaze.Mode = GazeMode.Target;
