@@ -155,7 +155,7 @@ public sealed class McdfManager : IDisposable {
 		return path;
 	}
 
-	private void Revert(IGameObject actor) {
+	public void Revert(IGameObject actor) {
 		Ktisis.Log.Info($"IPC - reverting Actor '{actor.ObjectIndex}' ...");
 		this.RevertGlamourerData(actor.Name.TextValue);
 		this.RevertCustomizeData(actor.ObjectIndex);
