@@ -174,7 +174,6 @@ public class ActorPropertyList : ObjectPropertyList {
 		// camera tracking - when pressed, toggle enabled and change gaze mode to KtisisFollowCam (or revert to Target mode)
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Eye, "Camera Tracking", Vector2.Zero)) {
-				Ktisis.Log.Info("click!");
 				result = true;
 				enabled = true;
 				gaze.Mode = isTracking ? GazeMode.Target : GazeMode._KtisisFollowCam_;
@@ -182,11 +181,14 @@ public class ActorPropertyList : ObjectPropertyList {
 		}
 		ImGui.SameLine(0, spacing);
 
-		// gizmo
-		using (var _disable = ImRaii.Disabled(isTracking)) {
+		// TODO: gizmo, needs work to generate a new one w/o using ObjectWindow/OverlayWindow
+		// 	or, possible to create a dummy scene object (GazeTarget?) to hijack overlay gizmo?
+		using (var _disable = ImRaii.Disabled()) {
 			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
 				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {
-					Ktisis.Log.Info("click 2!");
+					// result = true;
+					// enabled = true;
+					// gaze.Mode = GazeMode.Target;
 				}
 			}
 		}
