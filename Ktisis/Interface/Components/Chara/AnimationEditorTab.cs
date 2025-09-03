@@ -283,7 +283,7 @@ public class AnimationEditorTab {
 	private static bool AnimSearchPredicate(GameAnimation anim, string query)
 		=> anim.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase);
 
-private class AnimationFilter : IFilterProvider<GameAnimation> {
+	private class AnimationFilter : IFilterProvider<GameAnimation> {
 		private enum AnimType {
 			Action,
 			Emote,
