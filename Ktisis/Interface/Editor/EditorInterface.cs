@@ -99,9 +99,9 @@ public class EditorInterface : IEditorInterface {
 	public void OpenObjectEditor() {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
 		if (this._ctx.Config.Editor.ToggleOpenWindows)
-			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo)).Toggle();
+			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo), this._gui).Toggle();
 		else
-			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
+			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo), this._gui).Open();
 	}
 
 	public void OpenObjectEditor(SceneEntity entity) {

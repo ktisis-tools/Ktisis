@@ -20,6 +20,7 @@ namespace Ktisis.Interface.Windows;
 public class ObjectWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
 	private readonly Gizmo2D _gizmo;
+	private readonly GuiManager _gui;
 
 	private readonly TransformTable _table;
 	private readonly PropertyEditor _propEditor;
@@ -28,6 +29,7 @@ public class ObjectWindow : KtisisWindow {
 	public ObjectWindow(
 		IEditorContext ctx,
 		Gizmo2D gizmo,
+		GuiManager gui,
 		TransformTable table,
 		PropertyEditor propEditor
 	) : base(
@@ -35,6 +37,7 @@ public class ObjectWindow : KtisisWindow {
 	) {
 		this._ctx = ctx;
 		this._gizmo = gizmo;
+		this._gui = gui;
 		this._table = table;
 		this._propEditor = propEditor;
 	}
@@ -42,7 +45,7 @@ public class ObjectWindow : KtisisWindow {
 	private ITransformMemento? Transform;
 
 	public override void OnCreate() {
-		this._propEditor.Prepare(this._ctx);
+		this._propEditor.Prepare(this._ctx, this._gui);
 	}
 
 	public override void PreOpenCheck() {

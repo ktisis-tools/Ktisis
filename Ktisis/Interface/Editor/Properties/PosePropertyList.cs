@@ -13,6 +13,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Ik.TwoJoints;
 using Ktisis.Editor.Posing.Ik.Types;
 using Ktisis.Interface.Editor.Properties.Types;
+using Ktisis.Interface.Windows.Import;
 using Ktisis.Localization;
 using Ktisis.Scene.Decor.Ik;
 using Ktisis.Scene.Entities;
@@ -24,12 +25,15 @@ namespace Ktisis.Interface.Editor.Properties;
 
 public class PosePropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
+	private readonly GuiManager _gui;
 	private readonly LocaleManager _locale;
 	
 	public PosePropertyList(
 		IEditorContext ctx,
+		GuiManager gui,
 		LocaleManager locale
 	) {
+		this._gui = gui;
 		this._ctx = ctx;
 		this._locale = locale;
 	}
@@ -51,16 +55,22 @@ public class PosePropertyList : ObjectPropertyList {
 		// Parenting toggle
 		ImGui.Checkbox(this._locale.Translate("transform_edit.transforms.parenting"), ref this._ctx.Config.Gizmo.ParentBones);
 		
-		// Import/export
-		
-		if (pose.Parent is not ActorEntity actor) return;
+		// Import/export when ActorEntity is being drawn for
+		var actor = pose.Parent;
+		if (actor is not ActorEntity) return;
 		ImGui.Spacing();
 		
-		if (ImGui.Button("Import"))
-			this._ctx.Interface.OpenPoseImport(actor);
-		ImGui.SameLine(0, spacing);
+		// if (ImGui.Button("Import"))
+		// 	this._ctx.Interface.OpenPoseImport(actor);
+		// ImGui.SameLine(0, spacing);
 		if (ImGui.Button("Export"))
 			this._ctx.Interface.OpenPoseExport(pose);
+		ImGui.Spacing();
+
+		// pose import dialog
+		var embedEditor = this._gui.GetOrCreate<PoseImportDialog>(this._ctx);
+		embedEditor.SetTarget((ActorEntity)actor);
+		embedEditor.DrawEmbed();
 	}
 	
 	// Inverse Kinematics
