@@ -255,6 +255,7 @@
 		"workspace": {
 			"title": "Workspace",
 			"init": "Open workspace when entering GPose",
+			"toggleOpenWindows": "UI buttons toggle windows open & closed",
 			"editOnSelect": "Toggle object editor when selecting",
 			"legacyWindows": "Prefer legacy window behavior",
 			"legacyPoseTabs": "Prefer legacy pose view tabs",

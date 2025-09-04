@@ -69,23 +69,39 @@ public class EditorInterface : IEditorInterface {
 	
 	// Window wrappers
 
-	public void OpenConfigWindow() => this._gui.GetOrCreate<ConfigWindow>().Open();
+	public void OpenConfigWindow() {
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<ConfigWindow>().Toggle();
+		else
+			this._gui.GetOrCreate<ConfigWindow>().Open();
+	}
 
 	public void ToggleWorkspaceWindow() => this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Toggle();
 	
 	// Editor windows
 	
-	public void OpenCameraWindow() => this._gui.GetOrCreate<CameraWindow>(this._ctx).Open();
+	public void OpenCameraWindow() {
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<CameraWindow>(this._ctx).Toggle();
+		else
+			this._gui.GetOrCreate<CameraWindow>(this._ctx).Open();
+	}
 	
 	public void OpenEnvironmentWindow() {
 		var scene = this._ctx.Scene;
 		var module = scene.GetModule<EnvModule>();
-		this._gui.GetOrCreate<EnvWindow>(scene, module).Open();
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<EnvWindow>(scene, module).Toggle();
+		else
+			this._gui.GetOrCreate<EnvWindow>(scene, module).Open();
 	}
 
 	public void OpenObjectEditor() {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
-		this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo)).Toggle();
+		else
+			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
 	}
 
 	public void OpenObjectEditor(SceneEntity entity) {
@@ -93,7 +109,12 @@ public class EditorInterface : IEditorInterface {
 		this.OpenObjectEditor();
 	}
 
-	public void OpenPosingWindow() => this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Open();
+	public void OpenPosingWindow() {
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Toggle();
+		else
+			this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Open();
+	}
 	
 	// Context menus
 
