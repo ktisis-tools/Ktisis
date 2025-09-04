@@ -41,7 +41,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private ICustomizeEditor _editCustom = null!;
 
 	public override void SetTarget(ActorEntity target) {
-		this.WindowName = $"{target.Name}###{WindowId}";
+		this.WindowName = $"Actor Editor - {target.Name}###{WindowId}";
 		
 		base.SetTarget(target);
 		
