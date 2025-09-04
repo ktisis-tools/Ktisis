@@ -23,6 +23,8 @@ namespace Ktisis.Editor.Characters;
 
 public class CharacterManager : ICharacterManager {
 	private readonly IEditorContext _context;
+	private readonly IClientState _clientState;
+	// todo: cleaner way of getting iclientstate? currently pulled from public gpose var
 	private readonly HookScope _scope;
 	private readonly IFramework _framework;
 
@@ -34,11 +36,13 @@ public class CharacterManager : ICharacterManager {
 
 	public CharacterManager(
 		IEditorContext context,
+		IClientState clientState,
 		HookScope scope,
 		IFramework framework,
 		McdfManager mcdf
 	) {
 		this._context = context;
+		this._clientState = clientState;
 		this._scope = scope;
 		this._framework = framework;
 		this.Mcdf = mcdf;
@@ -79,13 +83,30 @@ public class CharacterManager : ICharacterManager {
 
 	private unsafe void HandleEnableDraw(CSGameObject* gameObj) {
 		var index = gameObj->ObjectIndex;
-		if (!this._savedTransforms.TryGetValue(index, out var transform))
-			return;
+		if (this._savedTransforms.TryGetValue(index, out var transform)) {
+			// if this is a redraw of an obj we've seen before, set its saved position
+			if (gameObj->DrawObject != null)
+				*(Transform*)&gameObj->DrawObject->Position = transform;
 
-		if (gameObj->DrawObject != null)
-			*(Transform*)&gameObj->DrawObject->Position = transform;
+			this._savedTransforms.Remove(index);
+		} else if (this._context.Animation.PositionLockEnabled) {
+			// if this is an initial draw of an obj and positions are locked for animations,
+			// 	send to a probably-nice scene coord instead of 0,0,0
+			if (gameObj->DrawObject != null) {
+				var position = this.GetLocalPlayerPosition();
+				if (position != null) {
+					Ktisis.Log.Verbose($"HandleEnableDraw - position lock is enabled, moving new actor {index} to scene origin");
+					*(Transform*)&gameObj->DrawObject->Position = *position;
+				}
+			}
+		}
+	}
 
-		this._savedTransforms.Remove(index);
+	private unsafe Transform* GetLocalPlayerPosition() {
+		var localPlayer = (CSGameObject*)this._clientState.LocalPlayer.Address;
+		if (localPlayer != null && localPlayer->DrawObject != null)
+			return (Transform*)&localPlayer->DrawObject->Position;
+		return null;
 	}
 	
 	// Editors
