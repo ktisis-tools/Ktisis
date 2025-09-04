@@ -42,7 +42,11 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 		
 		ImGui.Text($"Importing appearance for {this.Target.Name}");
 		ImGui.Spacing();
-		
+
+		this.DrawEmbed();
+	}
+
+	public void DrawEmbed() {
 		this._import.DrawLoadMethods();
 		ImGui.Spacing();
 		this._import.DrawImport();

@@ -5,6 +5,7 @@ using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
+using Ktisis.Interface.Windows.Import;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
@@ -14,13 +15,16 @@ namespace Ktisis.Interface.Editor.Properties;
 
 public class ActorPropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
+	private readonly GuiManager _gui;
 	private readonly LocaleManager _locale;
 	
 	public ActorPropertyList(
 		IEditorContext ctx,
+		GuiManager gui,
 		LocaleManager locale
 	) {
 		this._ctx = ctx;
+		this._gui = gui;
 		this._locale = locale;
 	}
 	
@@ -62,11 +66,18 @@ public class ActorPropertyList : ObjectPropertyList {
 		
 		// Import/export
 
-		if (ImGui.Button("Import"))
-			this._ctx.Interface.OpenCharaImport(actor);
-		ImGui.SameLine(0, spacing);
+		// if (ImGui.Button("Import"))
+		// 	this._ctx.Interface.OpenCharaImport(actor);
+		// ImGui.SameLine(0, spacing);
 		if (ImGui.Button("Export"))
 			this._ctx.Interface.OpenCharaExport(actor);
+		ImGui.Spacing();
+
+		var embedEditor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);
+		// if (!embedEditor.IsOpen)
+		// 	embedEditor.OnOpen();
+		embedEditor.SetTarget(actor);
+		embedEditor.DrawEmbed();
 	}
 	
 	// Gaze tab
