@@ -25,6 +25,8 @@ public static class GameObjectEx {
 	}
 
 	public unsafe static Skeleton* GetSkeleton(this IGameObject gameObject) {
+		if (!gameObject.IsValid()) return null;
+
 		var csPtr = (CSGameObject*)gameObject.Address;
 		if (csPtr == null || csPtr->DrawObject == null)
 			return null;
