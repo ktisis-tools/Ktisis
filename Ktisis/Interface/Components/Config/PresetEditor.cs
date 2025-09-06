@@ -110,5 +110,6 @@ public class PresetEditor {
 		if (Selected is null) return;
 		
 		Config.Presets.Remove(Selected);
+		Selected = null;
 	}
 }
