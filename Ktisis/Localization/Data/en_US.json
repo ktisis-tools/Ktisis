@@ -257,6 +257,7 @@
 			"init": "Open workspace when entering GPose",
 			"editOnSelect": "Toggle object editor when selecting",
 			"incognitoPlayerNames": "Hide player names while in GPose (incognito mode)",
+			"hintIncognito": "Requires re-entering gpose to refresh actor list names",
 			"legacyWindows": "Prefer legacy window behavior",
 			"legacyPoseTabs": "Prefer legacy pose view tabs",
 			"legacyLightEditor": "Prefer legacy light editor"
