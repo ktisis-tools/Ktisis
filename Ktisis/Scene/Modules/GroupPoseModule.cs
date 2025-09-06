@@ -15,7 +15,6 @@ using Ktisis.Common.Extensions;
 namespace Ktisis.Scene.Modules;
 
 public class GroupPoseModule : SceneModule {
-	private string NameToDisplay => "(Hidden by Ktisis)";
 	private readonly IObjectTable _objectTable;
 
 	public GroupPoseModule(
@@ -69,12 +68,11 @@ public class GroupPoseModule : SceneModule {
 			return;
 		}
 
-		if (this.Scene.Context.Config.Editor.IncognitoPlayerNames) {
-			var targeted = this.GetGposeTarget();
-			if (targeted != null && targeted.IsPcCharacter()) {
-				for (var i = 0; i < this.NameToDisplay.Length; i++)
-					*(char*)(a1 + 488 + i) = this.NameToDisplay[i];
-			}
+		var targeted = this.GetGposeTarget();
+		if (targeted != null && targeted.IsPcCharacter()) {
+			var name = targeted.GetNameOrFallback(this.Scene.Context);
+			for (var i = 0; i < name.Length; i++)
+				*(char*)(a1 + 488 + i) = name[i];
 		}
 
 		this.UpdateGposeTarNameHook!.Original(a1);
