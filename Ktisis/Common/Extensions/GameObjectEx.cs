@@ -41,7 +41,7 @@ public static class GameObjectEx {
 	public unsafe static bool IsDrawing(this IGameObject gameObject) {
 		var csActor = (CSGameObject*)gameObject.Address;
 		if (csActor == null) return false;
-		Ktisis.Log.Info($"RenderFlags: {csActor->RenderFlags:X}");
+		// Ktisis.Log.Info($"RenderFlags: {csActor->RenderFlags:X}");
 		return csActor->RenderFlags == 0x00;
 	}
 
