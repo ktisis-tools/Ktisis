@@ -5,7 +5,9 @@ using Dalamud.Interface.Utility.Raii;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
+using Ktisis.Interface.Widgets;
 using Ktisis.Localization;
+using Ktisis.Scene;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 
@@ -25,11 +27,10 @@ public class PresetPropertyList(IEditorContext ctx, LocaleManager locale) : Obje
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
 		foreach (var (name, currentState) in actor.GetPresets()) {
-			var enabled = currentState;
-			ImGui.Checkbox(name, ref enabled);
-
-			if (enabled != currentState) {
-				actor.TogglePreset(name, enabled); 
+			var enabled = (byte)currentState;
+			
+			if (ImGui.CheckboxFlags(name, ref enabled, (byte) (PresetState.Enabled))) {
+				actor.TogglePreset(name, (PresetState) enabled == PresetState.Enabled); 
 			}
 		}
 		

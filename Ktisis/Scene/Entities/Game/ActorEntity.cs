@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -15,13 +14,13 @@ using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 using CSCharacter = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
 using Ktisis.Editor.Characters.State;
+using Ktisis.Interface.Widgets;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
-
-using Lumina.Excel.Sheets;
 
 namespace Ktisis.Scene.Entities.Game;
 
@@ -32,7 +31,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
 
-	private HashSet<string> EnabledPresets { get; } = new ();
+	private readonly Dictionary<string, PresetState> _presetStates = new();
 
 	public ActorEntity(
 		ISceneManager scene,
@@ -137,11 +136,12 @@ public class ActorEntity : CharaEntity, IDeletable {
 	}
 	
 	//Presets
-	public IEnumerable<(string name, bool isEnabled)> GetPresets() {
+	public IEnumerable<(string name, PresetState isEnabled)> GetPresets() {
 		var presets = this.Scene.Context.Config.Presets.Presets.Keys;
 
-		foreach (var preset in presets) {
-			yield return (preset, this.EnabledPresets.Contains(preset));
+		foreach (var preset in presets)
+		{
+			yield return (preset, this._presetStates.GetValueOrDefault(preset, PresetState.Disabled));
 		}
 	}
 	
@@ -150,26 +150,28 @@ public class ActorEntity : CharaEntity, IDeletable {
 		if (!this.Scene.Context.Config.Presets.Presets.TryGetValue(presetName, out var preset))
 			return false;
 
-		var op = state ?? !this.EnabledPresets.Contains(presetName);
+		var op = state ?? this._presetStates.GetValueOrDefault(presetName, PresetState.Disabled) == PresetState.Disabled;
 		
 		this.ToggleView(preset, op);
 
-		if (op) {
-			this.EnabledPresets.Add(presetName);
+		if (op)
+		{
+			this._presetStates[presetName] = PresetState.Enabled;
 		} else {
-			this.EnabledPresets.Remove(presetName);
+			this._presetStates.Remove(presetName);
 		}
 
 		EnsurePresetVisibility();
+		CheckImplicitlyEnabled();
 		
 		return true;
 	}
 
 	private void EnsurePresetVisibility() {
 		var bones = new HashSet<string>(128);
-		foreach (var presetName in EnabledPresets) {
+		foreach (var presetName in _presetStates.Where(s => s.Value == PresetState.Enabled).Select(s => s.Key)) {
 			if (!this.Scene.Context.Config.Presets.Presets.TryGetValue(presetName, out var preset)) {
-				EnabledPresets.Remove(presetName);
+				_presetStates.Remove(presetName);
 				continue;
 			}
 
@@ -194,7 +196,35 @@ public class ActorEntity : CharaEntity, IDeletable {
 		}
 		
 		this.Scene.Context.Config.Presets.Presets[presetName] = bones;
-		this.EnabledPresets.Add(presetName);
+		this._presetStates[presetName] = PresetState.Enabled;
 		return true;
+	}
+
+	private void CheckImplicitlyEnabled()
+	{
+		var notEnabled = this.Scene.Context.Config.Presets.Presets.Where(kvp => this._presetStates.GetValueOrDefault(kvp.Key, PresetState.Disabled) != PresetState.Enabled).ToDictionary();
+		
+		Ktisis.Log.Debug("Non enabled presets: {0}", string.Join(", ", notEnabled.Keys));
+		var allBones = this.Recurse().OfType<BoneNode>().ToList()!;
+		
+		foreach (var (preset, boneList) in notEnabled) {
+			var currentState = this._presetStates.GetValueOrDefault(preset, PresetState.Disabled);
+			var bonesThatExist = allBones.Where(s => boneList.Contains(s.Info.Name)).ToImmutableList();
+
+			Ktisis.Log.Debug("Checking preset {0}", preset);
+			Ktisis.Log.Debug("Bones that exist: {0}", string.Join(", ", bonesThatExist.Select(s => s.Name)));
+			if (bonesThatExist.IsEmpty)
+				continue;
+
+			if (bonesThatExist.All(s => s.Visible)) {
+				Ktisis.Log.Debug("Preset {0} is implicitly enabled", preset);
+				_presetStates[preset] = PresetState.Implicit;
+			}
+
+			if (currentState == PresetState.Implicit && !bonesThatExist.All(s => s.Visible)) {
+				Ktisis.Log.Debug("Preset {0} is implicitly disabled", preset);
+				this._presetStates.Remove(preset);
+			}
+		}
 	}
 }
