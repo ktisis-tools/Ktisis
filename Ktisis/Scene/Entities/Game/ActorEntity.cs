@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -188,6 +189,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 		var bones = this.GetEnabledBones();
 		if (bones.IsEmpty) {
+			Ktisis.Log.Warning("No bones selected.");
 			return false;
 		}
 		
