@@ -102,12 +102,9 @@ public abstract class SceneEntity : IComposite {
 			((IVisibility) node).Toggle();
 		}
 	
-		foreach (var sceneEntity in this.Recurse()) {
-			if (sceneEntity is not BoneNode n)
-				continue;
-			
-			if (names.Contains(n.Info.Name)) {
-				n.Visible = newState;
+		foreach (var bone in this.Recurse().OfType<BoneNode>()) {
+			if (names.Contains(bone.Info.Name)) {
+				bone.Visible = newState;
 			}
 		}
 	}
@@ -115,12 +112,9 @@ public abstract class SceneEntity : IComposite {
 	protected ImmutableHashSet<string> GetEnabledBones() {
 		HashSet<string> bones = new(128);
 
-		foreach (var sceneEntity in this.Recurse()) {
-			if (sceneEntity is not BoneNode b) 
-				continue;
-			
-			if (b.Visible)
-				bones.Add(b.Info.Name);
+		foreach (var bone in this.Recurse().OfType<BoneNode>()) {
+			if (bone.Visible)
+				bones.Add(bone.Info.Name);
 		}
 		
 		return bones.ToImmutableHashSet();
