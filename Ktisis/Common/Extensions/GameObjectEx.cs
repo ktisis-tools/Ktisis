@@ -11,10 +11,34 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
+using Ktisis.Editor.Context.Types;
+using Ktisis.Actions.Attributes;
+using Ktisis.Core;
+using Ktisis.Core.Types;
+using Ktisis.Core.Attributes;
+using Ktisis.Actions.Types;
+
 namespace Ktisis.Common.Extensions;
 
 public static class GameObjectEx {
-	public static string GetNameOrFallback(this IGameObject gameObject) {
+	public unsafe static bool IsPcCharacter(this IGameObject gameObject) {
+		var csPtr = (CSGameObject*)gameObject.Address;
+		return csPtr != null && csPtr->GetObjectKind() == ObjectKind.Pc;
+	}
+
+	public unsafe static string GetNameOrFallback(this IGameObject gameObject, IEditorContext ctx, bool? forceIncognito = null) {
+		// forceIncognito: if null, use Config.Editor.IncognitoPlayerNames
+		// 	if true, return censored Actor #
+		// 	if false, return realname or fallback
+
+		bool incognito = forceIncognito ?? ctx.Config.Editor.IncognitoPlayerNames;
+		bool isPc = IsPcCharacter(gameObject);
+
+		// force the fallback text if we're incognito and looking at a PC
+		if (incognito && isPc) {
+			return $"Actor #{gameObject.ObjectIndex}";
+		}
+
 		var name = gameObject.Name.TextValue;
 		return !name.IsNullOrEmpty() ? name : $"Actor #{gameObject.ObjectIndex}";
 	}
@@ -25,6 +49,8 @@ public static class GameObjectEx {
 	}
 
 	public unsafe static Skeleton* GetSkeleton(this IGameObject gameObject) {
+		if (!gameObject.IsValid()) return null;
+
 		var csPtr = (CSGameObject*)gameObject.Address;
 		if (csPtr == null || csPtr->DrawObject == null)
 			return null;
@@ -39,7 +65,7 @@ public static class GameObjectEx {
 	public unsafe static bool IsDrawing(this IGameObject gameObject) {
 		var csActor = (CSGameObject*)gameObject.Address;
 		if (csActor == null) return false;
-		Ktisis.Log.Info($"RenderFlags: {csActor->RenderFlags:X}");
+		// Ktisis.Log.Info($"RenderFlags: {csActor->RenderFlags:X}");
 		return csActor->RenderFlags == 0x00;
 	}
 

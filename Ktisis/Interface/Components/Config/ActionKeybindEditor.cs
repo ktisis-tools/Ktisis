@@ -48,6 +48,7 @@ public class ActionKeybindEditor {
 	private readonly static Vector2 CellPadding = new(8, 8);
 
 	public void Draw() {
+		// TODO: allow sorting that isnt alphabetical
 		using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), false);
 		if (!frame.Success) return;
