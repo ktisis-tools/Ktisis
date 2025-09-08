@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Core.Attributes;
 
@@ -33,6 +32,8 @@ public class SetTextureSelect {
 		ref uint value,
 		ResolvePathHandler resolve
 	) {
+		using var _id = ImRaii.PushId($"##TexSelect_{name}");
+		
 		var result = false;
 		
 		var path = resolve.Invoke(value);
@@ -62,7 +63,7 @@ public class SetTextureSelect {
 		using var _pad = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
 		if (image == null)
 			return ImGui.Button($"{value:D3}", size);
-		return ImGui.ImageButton(image.GetWrapOrEmpty().ImGuiHandle, size);
+		return ImGui.ImageButton(image.GetWrapOrEmpty().Handle, size);
 	}
 	
 	// Popup

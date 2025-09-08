@@ -74,16 +74,22 @@ public class SceneEntityMenuBuilder {
 	
 	// Actors
 
-	private void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
+	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
 			.Separator()
-			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Action("Edit appearance", this.OpenEditor)
+			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Separator()
 			.SubMenu("Import...", sub => {
-				sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
+				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
+				
+				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
+					builder.Action("Mare data (.mcdf)", () => {
+						this.Ui.OpenMcdfFile(path => this.ImportMcdf(actor, path));
+					});
+				}
 			})
 			.SubMenu("Export...", sub => {
 				sub.Action("Character (.chara)", () => this.Ui.OpenCharaExport(actor))
@@ -91,11 +97,17 @@ public class SceneEntityMenuBuilder {
 			});
 	}
 
-	private void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
+	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		if (this._ctx.Plugin.Ipc.IsPenumbraActive)
 			menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
 		if (this._ctx.Plugin.Ipc.IsCustomizeActive)
 			menu.Action("Assign C+ profile", () => this.Ui.OpenAssignCProfile(actor));
+		if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null)
+			menu.Action("Revert IPC data", () => this._ctx.Characters.Mcdf.Revert(actor.Actor));
+	}
+
+	private void ImportMcdf(ActorEntity actor, string path) {
+		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, actor.Actor);
 	}
 	
 	// Poses

@@ -10,7 +10,7 @@ using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
 
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 namespace Ktisis.Editor.Animation;
 
@@ -101,7 +101,7 @@ public class AnimationManager : IAnimationManager {
 		
 		chara->Animation.Timeline.ActionTimelineId = 0;
 
-		if (timeline.Pause) {
+		if (timeline.Value.Pause) {
 			chara->Mode = 3;
 			chara->EmoteMode = 0;
 		} else if (chara->Mode == 3 && chara->EmoteMode == 0) {

@@ -5,10 +5,9 @@ using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
-
-using ImGuiNET;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
@@ -70,7 +69,7 @@ public class SceneTree {
 
 	private void IterateTree(IEnumerable<SceneEntity> entities) {
 		try {
-			ImGui.TreePush();
+			ImGui.TreePush(nint.Zero);
 			foreach (var item in entities)
 				this.DrawNode(item);
 		} finally {
@@ -164,7 +163,7 @@ public class SceneTree {
 			_ => FontAwesomeIcon.None
 		};
 		
-		using (var _ = ImRaii.PushColor(ImGuiCol.Text, color.SetAlpha(0xCF)))
+		using (ImRaii.PushColor(ImGuiCol.Text, color.SetAlpha(0xCF)))
 			Icons.DrawIcon(caretIcon);
 
 		ImGui.SameLine();

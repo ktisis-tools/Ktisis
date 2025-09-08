@@ -7,7 +7,7 @@ using Dalamud.Interface;
 
 using GLib.Widgets;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
@@ -37,21 +37,18 @@ public interface IItemSelect {
 
 [Transient]
 public class SelectableGui {
-	private readonly CameraService _camera;
 	private readonly ConfigManager _cfg;
 
 	private Configuration Config => this._cfg.File;
 	
 	public SelectableGui(
-		CameraService camera,
 		ConfigManager cfg
 	) {
-		this._camera = camera;
 		this._cfg = cfg;
 	}
     
 	public ISelectableFrame BeginFrame() {
-		return new SelectableFrame(this._camera);
+		return new SelectableFrame();
 	}
 	
 	// Draw frame
@@ -208,24 +205,15 @@ public class SelectableGui {
 	// Frame context
 	
 	private class SelectableFrame : ISelectableFrame {
-		private readonly CameraService _camera;
-
 		private readonly List<ItemSelect> Items = new();
-		
-		public SelectableFrame(
-			CameraService camera
-		) {
-			this._camera = camera;
-		}
 
 		public IEnumerable<IItemSelect> GetItems() => this.Items.AsReadOnly();
 		
 		public unsafe void AddItem(SceneEntity entity, Vector3 worldPos) {
-			var camera = this._camera.GetSceneCamera();
+			var camera = CameraService.GetSceneCamera();
 			if (camera == null) return;
 
-			if (!this._camera.WorldToScreen(worldPos, out var pos2d))
-				return;
+			if (!CameraService.WorldToScreen(camera, worldPos, out var pos2d)) return;
 
 			var dist = Vector3.Distance(camera->Object.Position, worldPos);
 			var select = new ItemSelect(entity, pos2d, dist);

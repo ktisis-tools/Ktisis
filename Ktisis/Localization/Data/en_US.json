@@ -22,11 +22,20 @@
 		"Gizmo_SetUniversalMode": "Switch to universal mode",
 		"Camera_SetNext": "Switch to next camera",
 		"Camera_SetPrevious": "Switch to previous camera",
-		"Camera_Work_Toggle": "Toggle work camera"
+		"Camera_Work_Toggle": "Toggle work camera",
+		"Camera_Work_Forward": "Work camera forward",
+		"Camera_Work_Left": "Work camera left",
+		"Camera_Work_Back": "Work camera backward",
+		"Camera_Work_Right": "Work camera right",
+		"Camera_Work_Up": "Work camera up",
+		"Camera_Work_Down": "Work camera down",
+		"Camera_Work_Fast": "Work camera fast-speed modifier",
+		"Camera_Work_Slow": "Work camera slow-speed modifier",
+		"Gizmo_MirrorRotation": "Toggle mirror and parallel rotation modes"
 	},
 	
 	"actors": {
-		"pos_lock": "Freeze positions"
+		"pos_lock": "Freeze actor positions"
 	},
 	
 	"common": {
@@ -83,12 +92,13 @@
 				"disable": "Bone manipulation is currently disabled."
 			}
 		},
+		"refresh_actors": "Refresh scene actors",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.toggle": "Toggle screen overlay"
 	},
 	
 	"transform_edit": {
-		"title": "Transform Editor",
+		"title": "Object Editor",
 		"actors": {
 			"title": "Actors"
 		},
@@ -106,7 +116,7 @@
 		},
 		"transforms": {
 			"title": "Bone Transforms",
-			"parenting": "Bone parenting",
+			"parenting": "Enable bone parenting",
 			"relative": "Relative rotation"
 		},
 		"ik": {
@@ -165,6 +175,10 @@
 	"env_edit": {
 		"title": "Environment Editor"
 	},
+	
+	"pose_view": {
+		"title": "Pose View"
+	},
 
 	"config": {
 		"title": "Ktisis Settings",
@@ -188,6 +202,7 @@
 		"gizmo": {
 			"title": "Gizmo",
 			"flip": "Flip axis to face camera",
+			"raySnap": "Hold shift to ray snap objects",
 			"header": "Style:",
 			"editor": {
 				"general": {
@@ -250,11 +265,25 @@
 		},
 		"workspace": {
 			"title": "Workspace",
-			"init": "Open on entering GPose"
+			"init": "Open workspace when entering GPose",
+			"editOnSelect": "Toggle object editor when selecting",
+			"incognitoPlayerNames": "Hide player names while in GPose (incognito mode)",
+			"hintIncognito": "Requires re-entering gpose to refresh actor list names",
+			"legacyWindows": "Prefer legacy window behavior",
+			"legacyPoseTabs": "Prefer legacy pose view tabs",
+			"legacyLightEditor": "Prefer legacy light editor",
+			"workcam": {
+				"speed": "Work camera speed",
+				"fastMulti": "Work camera fast-multiplier",
+				"slowMulti": "Work camera slow-multiplier",
+				"vertMulti": "Work camera up/down speed multiplier",
+				"sens": "Work camera mouse sensitivity"
+			}
 		},
 		"input": {
 			"title": "Input",
-			"enable": "Enable keybinds"
+			"enable": "Enable keybinds",
+			"help": "Click keybinds to modify them. Right click to clear."
 		},
 		"autosave": {
 			"title": "AutoSave",

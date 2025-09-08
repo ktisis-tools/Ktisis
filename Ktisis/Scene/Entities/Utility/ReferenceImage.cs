@@ -1,4 +1,6 @@
-﻿using Ktisis.Data.Config;
+﻿using System.IO;
+
+using Ktisis.Data.Config;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;
 
@@ -41,5 +43,12 @@ public class ReferenceImage : SceneEntity, IVisibility, IDeletable {
 		this.Config.Editor.ReferenceImages.Remove(this.Data);
 		this.Remove();
 		return true;
+	}
+
+	public void SetFilePath(string newPath) {
+		var oldPath = this.Data.FilePath;
+		this.Data.FilePath = newPath;
+		if (this.Name == Path.GetFileName(oldPath))
+			this.Name = Path.GetFileName(newPath);
 	}
 }

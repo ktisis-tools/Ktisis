@@ -1,9 +1,10 @@
+using System;
+
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
-
-using ImGuiNET;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Attachment;
@@ -39,7 +40,7 @@ public class SceneDragDropHandler {
 		using var src = ImRaii.DragDropSource(ImGuiDragDropFlags.SourceNoDisableHover);
 		if (!src.Success) return;
 		
-		ImGui.SetDragDropPayload(PayloadId, nint.Zero, 0);
+		ImGui.SetDragDropPayload(PayloadId, ReadOnlySpan<byte>.Empty, 0);
 
 		this.Source = entity;
 		
@@ -59,7 +60,7 @@ public class SceneDragDropHandler {
 		if (!tar.Success) return;
 
 		var pl = ImGui.AcceptDragDropPayload(PayloadId);		
-		if (pl.NativePtr != null && this.Source is SceneEntity source)
+		if (pl.Handle != null && this.Source is SceneEntity source)
 			this.HandlePayload(entity, source);
 	}
 

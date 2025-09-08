@@ -18,7 +18,7 @@ public interface IEditorInterface {
 
 	public void OpenCameraWindow();
 	public void OpenEnvironmentWindow();
-	public void OpenTransformWindow();
+	public void OpenObjectEditor();
 	public void OpenPosingWindow();
 
 	public void OpenSceneCreateMenu();
@@ -27,6 +27,8 @@ public interface IEditorInterface {
 	public void OpenAssignCollection(ActorEntity entity);
 	public void OpenAssignCProfile(ActorEntity entity);
 	public void OpenOverworldActorList();
+	
+	public void RefreshGposeActors();
 
 	public void OpenRenameEntity(SceneEntity entity);
 	
@@ -44,6 +46,7 @@ public interface IEditorInterface {
 
 	public void OpenCharaFile(Action<string, CharaFile> handler);
 	public void OpenPoseFile(Action<string, PoseFile> handler);
+	public void OpenMcdfFile(Action<string> handler);
 
 	public void OpenReferenceImages(Action<string> handler);
 	

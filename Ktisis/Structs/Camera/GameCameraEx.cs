@@ -15,16 +15,16 @@ public struct GameCameraEx {
 	
 	[FieldOffset(0x060)] public Vector3 Position;
 
-	[FieldOffset(0x114)] public float Distance;
-	[FieldOffset(0x118)] public float DistanceMin;
-	[FieldOffset(0x11C)] public float DistanceMax;
-	[FieldOffset(0x12C)] public float Zoom;
-	[FieldOffset(0x130)] public Vector2 Angle;
-	[FieldOffset(0x14C)] public float YMin;
-	[FieldOffset(0x148)] public float YMax;
-	[FieldOffset(0x150)] public Vector2 Pan;
-	[FieldOffset(0x160)] public float Rotation;
-	[FieldOffset(0x208)] public Vector2 DistanceCollide;
+	[FieldOffset(0x124)] public float Distance;
+	[FieldOffset(0x128)] public float DistanceMin;
+	[FieldOffset(0x12C)] public float DistanceMax;
+	[FieldOffset(0x13C)] public float Zoom;
+	[FieldOffset(0x140)] public Vector2 Angle;
+	[FieldOffset(0x15C)] public float YMin;
+	[FieldOffset(0x158)] public float YMax;
+	[FieldOffset(0x160)] public Vector2 Pan;
+	[FieldOffset(0x170)] public float Rotation;
+	[FieldOffset(0x218)] public Vector2 DistanceCollide;
 
 	public Quaternion CalcPointDirection() {
 		return (new Vector3(

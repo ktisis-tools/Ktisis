@@ -5,6 +5,7 @@ using GLib.Popups.ImFileDialog;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Selection;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Editor.Context;
 using Ktisis.Interface.Editor.Popup;
@@ -19,6 +20,7 @@ using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
+using Ktisis.Scene.Modules.Actors;
 
 namespace Ktisis.Interface.Editor;
 
@@ -43,11 +45,26 @@ public class EditorInterface : IEditorInterface {
 		if (this._ctx.Config.Editor.OpenOnEnterGPose)
 			this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Open();
 
+		this._ctx.Selection.Changed += this.OnSelectChanged;
+
 		this._gizmo.Initialize();
 		this._gui.GetOrCreate<OverlayWindow>(
 			this._ctx,
 			this._gizmo.Create(GizmoId.OverlayMain)
 		).Open();
+	}
+
+	private void OnSelectChanged(ISelectManager sender) {
+		if (!this._ctx.Config.Editor.ToggleEditorOnSelect) return;
+
+		var open = sender.Count > 0;
+		
+		var editor = this._gui.Get<ObjectWindow>();
+		if (editor == null) {
+			if (open) this.OpenObjectEditor();
+			return;
+		}
+		editor.IsOpen = open;
 	}
 	
 	// Window wrappers
@@ -66,9 +83,14 @@ public class EditorInterface : IEditorInterface {
 		this._gui.GetOrCreate<EnvWindow>(scene, module).Open();
 	}
 
-	public void OpenTransformWindow() {
+	public void OpenObjectEditor() {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
-		this._gui.GetOrCreate<TransformWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
+		this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
+	}
+
+	public void OpenObjectEditor(SceneEntity entity) {
+		entity.Select(SelectMode.Force);
+		this.OpenObjectEditor();
 	}
 
 	public void OpenPosingWindow() => this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Open();
@@ -91,12 +113,25 @@ public class EditorInterface : IEditorInterface {
 
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
 	
+	public void RefreshGposeActors() => this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
+
 	// Entity windows
 	
 	public void OpenRenameEntity(SceneEntity entity) => this._gui.CreatePopup<EntityRenameModal>(entity).Open();
 
-	public void OpenActorEditor(ActorEntity actor) => this.OpenEditor<ActorWindow, ActorEntity>(actor);
-	public void OpenLightEditor(LightEntity light) => this.OpenEditor<LightWindow, LightEntity>(light);
+	public void OpenActorEditor(ActorEntity actor) {
+		if (!this._ctx.Config.Editor.UseLegacyWindowBehavior)
+			actor.Select(SelectMode.Force);
+		this.OpenEditor<ActorWindow, ActorEntity>(actor);
+	}
+	
+	public void OpenLightEditor(LightEntity light) {
+		if (this._ctx.Config.Editor.UseLegacyLightEditor) {
+			this.OpenEditor<LightWindow, LightEntity>(light);
+			return;
+		}
+		this.OpenObjectEditor(light);
+	}
 
 	public void OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);
@@ -142,6 +177,11 @@ public class EditorInterface : IEditorInterface {
 		Filters = "Pose Files{.pose}",
 		Extension = ".pose"
 	};
+
+	private readonly static FileDialogOptions McdfFileOptions = new() {
+		Filters = "MCDF Files{.mcdf}",
+		Extension = ".mcdf"
+	};
 	
 	public void OpenCharaFile(Action<string, CharaFile> handler)
 		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions);
@@ -151,6 +191,10 @@ public class EditorInterface : IEditorInterface {
 			file.ConvertLegacyBones();
 			handler.Invoke(path, file);
 		}, PoseFileOptions);
+	}
+	
+	public void OpenMcdfFile(Action<string> handler) {
+		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions);
 	}
 
 	public void OpenReferenceImages(Action<string> handler) {

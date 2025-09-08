@@ -1,16 +1,16 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 using GLib.Widgets;
 
-using ImGuiNET;
-
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Interface.Components.Objects;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 

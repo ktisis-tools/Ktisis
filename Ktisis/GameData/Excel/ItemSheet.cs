@@ -1,6 +1,6 @@
-using Lumina.Data;
+using Ktisis.Common.Extensions;
+
 using Lumina.Excel;
-using Lumina.Text;
 
 namespace Ktisis.GameData.Excel;
 
@@ -35,43 +35,49 @@ public class ItemModel(ulong var, bool isWep = false) {
 }
 
 [Sheet("Item", columnHash: 0xe9a33c9d)]
-public class ItemSheet : ExcelRow {
-	public string Name { get; set; } = string.Empty;
+public struct ItemSheet : IExcelRow<ItemSheet> {
+	public uint RowId { get; }
 
-	public ushort Icon { get; set; }
+	public string Name { get; }
 
-	public ItemModel Model { get; set; } = null!;
-	public ItemModel SubModel { get; set; } = null!;
+	public ushort Icon { get; }
 
-	private LazyRow<EquipSlotCategoryRow> EquipSlotCategory { get; set; } = null!;
+	public ItemModel Model { get; }
+	public ItemModel SubModel { get; }
 
-	public bool IsEquippable() => this.EquipSlotCategory.Row != 0;
+	private RowRef<EquipSlotCategoryRow> EquipSlotCategory { get; }
+
+	public bool IsEquippable() => this.EquipSlotCategory.IsValid && this.EquipSlotCategory.RowId != 0;
 	public bool IsEquippable(EquipSlot slot) {
-		var result = this.IsEquippable() && this.EquipSlotCategory.Value?.IsEquippable(slot) == true;
+		var result = this.IsEquippable() && this.EquipSlotCategory.Value.IsEquippable(slot);
 		if (slot == EquipSlot.MainHand)
-			result |= this.EquipSlotCategory.Value?.IsEquippable(EquipSlot.OffHand) == true;
+			result |= this.EquipSlotCategory.Value.IsEquippable(EquipSlot.OffHand);
 		return result;
 	}
 
 	public bool IsWeapon() => this.IsEquippable(EquipSlot.MainHand) || this.IsEquippable(EquipSlot.OffHand);
 
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-		base.PopulateData(parser, gameData, language);
+	public ItemSheet(ExcelPage page, uint offset, uint row) {
+		this.RowId = row;
 
-		this.Name = parser.ReadColumn<SeString>(9) ?? string.Empty;
-		this.Icon = parser.ReadColumn<ushort>(10);
-
-		this.EquipSlotCategory = new LazyRow<EquipSlotCategoryRow>(gameData, parser.ReadColumn<byte>(17), language);
+		this.Name = page.ReadColumn<string>(9, offset);
+		this.Icon = page.ReadColumn<ushort>(10, offset);
+		
+		this.EquipSlotCategory = page.ReadRowRef<EquipSlotCategoryRow>(17, offset);
 
 		var isWep = this.IsWeapon();
-		this.Model = new ItemModel(parser.ReadColumn<ulong>(47), isWep);
-		this.SubModel = new ItemModel(parser.ReadColumn<ulong>(48), isWep);
+		this.Model = new ItemModel(page.ReadColumn<ulong>(47, offset), isWep);
+		this.SubModel = new ItemModel(page.ReadColumn<ulong>(48, offset), isWep);
 	}
+
+	static ItemSheet IExcelRow<ItemSheet>.Create(ExcelPage page, uint offset, uint row) => new(page, offset, row);
 	
 	// Equip slots
 
 	[Sheet("EquipSlotCategory")]
-	private class EquipSlotCategoryRow : ExcelRow {
+	private struct EquipSlotCategoryRow(uint row) : IExcelRow<EquipSlotCategoryRow> {
+		public uint RowId { get; } = row;
+
 		private bool[] Slots { get; set; } = new bool[14];
 
 		public bool IsEquippable(EquipSlot slot) => slot switch {
@@ -80,10 +86,13 @@ public class ItemSheet : ExcelRow {
 			_ => this.Slots[(int)slot]
 		};
 
-		public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-			base.PopulateData(parser, gameData, language);
+		static EquipSlotCategoryRow IExcelRow<EquipSlotCategoryRow>.Create(ExcelPage page, uint offset, uint row) {
+			var slots = new bool[14];
 			for (var i = 0; i < 14; i++)
-				this.Slots[i] = parser.ReadColumn<sbyte>(i) != 0;
+				slots[i] = page.ReadColumn<sbyte>(i, offset) != 0;
+			return new EquipSlotCategoryRow(row) {
+				Slots = slots
+			};
 		}
 	}
 }

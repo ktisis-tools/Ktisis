@@ -1,10 +1,9 @@
 ﻿using System;
 
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Popups;
-
-using ImGuiNET;
 
 namespace Ktisis.Interface.Types;
 

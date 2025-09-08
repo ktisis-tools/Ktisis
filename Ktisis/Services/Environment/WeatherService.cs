@@ -8,7 +8,7 @@ using Dalamud.Plugin.Services;
 using Ktisis.Core.Attributes;
 using Ktisis.Structs.Env;
 
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace Ktisis.Services.Environment;
 
@@ -36,14 +36,13 @@ public class WeatherService {
 		var weathers = this._framework.RunOnFrameworkThread(this.GetEnvWeatherIds);
 
 		var weatherSheet = this._data.GetExcelSheet<Weather>();
-		if (weatherSheet == null) return results;
 		
 		foreach (var id in await weathers) {
 			if (token.IsCancellationRequested) break;
 
-			var weather = weatherSheet.GetRow(id);
-			if (weather == null) continue;
+			if (!weatherSheet.HasRow(id)) continue;
 
+			var weather = weatherSheet.GetRow(id);
 			var icon = this._texture.GetFromGameIcon((uint)weather.Icon);
 			var info = new WeatherInfo(weather, icon);
 			results.Add(info);

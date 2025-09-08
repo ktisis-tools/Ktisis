@@ -18,8 +18,6 @@ using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Camera;
 using Ktisis.Structs.Input;
 
-using Lumina.Excel.GeneratedSheets;
-
 using InputManager = Ktisis.Editor.Actions.Input.InputManager;
 
 namespace Ktisis.Editor.Camera;
@@ -52,8 +50,8 @@ public class CameraModule : HookModule {
 	}
 	
 	private unsafe void InitVfHook() {
-		if (!this._sigScanner.TryGetStaticAddressFromSig("48 8D 05 ?? ?? ?? ?? C7 83 ?? ?? ?? ?? ?? ?? ?? ?? 48 89 03 33 C0 89 83 ?? ?? ?? ??", out var address)) {
-			Ktisis.Log.Warning($"Failed to find signature for CameraTarget hook!");
+		if (!this._sigScanner.TryGetStaticAddressFromSig("48 8D 05 ?? ?? ?? ?? C7 83 ?? ?? ?? ?? ?? ?? ?? ?? 48 89 03 0F 57 C0 33 C0 48 C7 83 ?? ?? ?? ?? ?? ?? ?? ??", out var address)) {
+			Ktisis.Log.Warning("Failed to find signature for CameraTarget hook!");
 			return;
 		}
 		var vf = (nint*)address;
@@ -188,7 +186,7 @@ public class CameraModule : HookModule {
 	
 	// Collision hook
 
-	[Signature("E8 ?? ?? ?? ?? 4C 8B AC 24 ?? ?? ?? ?? 32 DB", DetourName = nameof(CameraCollideDetour))]
+	[Signature("E8 ?? ?? ?? ?? 4C 8D 45 97 89 83 ?? ?? ?? ??", DetourName = nameof(CameraCollideDetour))]
 	private Hook<CameraCollideDelegate> CameraCollideHook = null!;
 	private unsafe delegate nint CameraCollideDelegate(GameCamera* a1, Vector3* a2, Vector3* a3, float a4, nint a5, float a6);
 
@@ -204,7 +202,7 @@ public class CameraModule : HookModule {
 	
 	// Camera redirect hooks
 
-	[Signature("E8 ?? ?? ?? ?? 41 0F B6 DF", DetourName = nameof(ActiveCameraDetour))]
+	[Signature("E8 ?? ?? ?? ?? 45 32 FF 40 32 F6", DetourName = nameof(ActiveCameraDetour))]
 	private Hook<ActiveCameraDelegate> ActiveCameraHook = null!;
 	private unsafe delegate GameCamera* ActiveCameraDelegate(nint a1);
 	

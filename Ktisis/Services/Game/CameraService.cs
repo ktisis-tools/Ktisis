@@ -1,50 +1,34 @@
 using System.Numerics;
-using System.Runtime.InteropServices;
 
-using Dalamud.Plugin.Services;
-using Dalamud.Utility.Signatures;
+using Dalamud.Interface.Utility;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 using RenderCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Camera;
 
-using Ktisis.Core.Attributes;
-using Ktisis.Structs.Camera;
-
 namespace Ktisis.Services.Game; 
 
-[Singleton]
-public class CameraService {
-	private readonly IGameGui _gui;
-	
-	public CameraService(
-		IGameGui gui,
-		IGameInteropProvider interop
-	) {
-		this._gui = gui;
-		interop.InitializeFromAttributes(this);
-	}
-	
-	// Camera matrices
+public static class CameraService {
+	// Camera access
     
-	public unsafe Camera* GetGameCamera() {
+	public unsafe static Camera* GetGameCamera() {
 		var manager = CameraManager.Instance();
 		return manager != null ? manager->GetActiveCamera() : null;
 	}
 
-	public unsafe SceneCamera* GetSceneCamera() {
-		var cam = this.GetGameCamera();
+	public unsafe static SceneCamera* GetSceneCamera() {
+		var cam = GetGameCamera();
 		return cam != null ? &cam->CameraBase.SceneCamera : null;
 	}
 
-	public unsafe RenderCamera* GetRenderCamera() {
-		var cam = this.GetSceneCamera();
+	public unsafe static RenderCamera* GetRenderCamera() {
+		var cam = GetSceneCamera();
 		return cam != null ? cam->RenderCamera : null;
 	}
 
-	public unsafe Matrix4x4? GetProjectionMatrix() {
-		var camera = this.GetRenderCamera();
+	public unsafe static Matrix4x4? GetProjectionMatrix() {
+		var camera = GetRenderCamera();
 		if (camera == null)
 			return null;
 		
@@ -59,27 +43,39 @@ public class CameraService {
 		return p;
 	}
 
-	public unsafe Matrix4x4? GetViewMatrix() {
-		var camera = this.GetSceneCamera();
-		if (camera == null)
-			return null;
+	public unsafe static Matrix4x4? GetViewMatrix() {
+		var camera = GetSceneCamera();
+		if (camera == null) return null;
 		return camera->ViewMatrix with { M44 = 1f };
 	}
 	
-	// World matrix
+	// World to screen conversion
 
-	public unsafe bool WorldToScreen(Vector3 worldPos, out Vector2 screenPos) {
-		var matrix = this.GetMatrix != null ? this.GetMatrix() : null;
-		if (matrix == null)
-			return this._gui.WorldToScreen(worldPos, out screenPos);
-		var result = matrix->WorldToScreenDepth(worldPos, out var pos2d);
+	public unsafe static bool WorldToScreen(SceneCamera* camera, Vector3 worldPos, out Vector2 screenPos) {
+		var viewMatrix = camera->ViewMatrix;
+		if (camera->RenderCamera->IsOrtho)
+			viewMatrix = viewMatrix with { M44 = 1f };
+		var matrix = viewMatrix * camera->RenderCamera->ProjectionMatrix;
+		var result = WorldToScreenDepth(matrix, worldPos, out var pos2d);
 		screenPos = new Vector2(pos2d.X, pos2d.Y);
 		return result;
 	}
-
-	[Signature("E8 ?? ?? ?? ?? 48 8D 4C 24 ?? 48 89 4c 24 ?? 4C 8D 4D ?? 4C 8D 44 24 ??")]
-	private GetMatrixDelegate? GetMatrix = null;
 	
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-	private unsafe delegate WorldMatrix* GetMatrixDelegate();
+	private static bool WorldToScreenDepth(Matrix4x4 m, Vector3 v, out Vector3 screenPos) {
+		var x = (m.M11 * v.X) + (m.M21 * v.Y) + (m.M31 * v.Z) + m.M41;
+		var y = (m.M12 * v.X) + (m.M22 * v.Y) + (m.M32 * v.Z) + m.M42;
+		var w = (m.M14 * v.X) + (m.M24 * v.Y) + (m.M34 * v.Z) + m.M44;
+
+		var view = ImGuiHelpers.MainViewport;
+		
+		var camX = (view.Size.X / 2f);
+		var camY = (view.Size.Y / 2f);
+		screenPos = new Vector3(
+			camX + (camX * x / w) + view.Pos.X,
+			camY - (camY * y / w) + view.Pos.Y,
+			w
+		);
+
+		return w > 0.001f;
+	}
 }

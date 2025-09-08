@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
@@ -81,7 +82,7 @@ public class ActorModule : SceneModule {
 		var address = await this._spawner.CreateActor(localPlayer);
 		var entity = this.AddSpawnedActor(address);
 		entity.Actor.SetName(PlayerNameUtil.CalcActorName(entity.Actor.ObjectIndex));
-		entity.Actor.SetWorld((ushort)localPlayer.CurrentWorld.Id);
+		entity.Actor.SetWorld((ushort)localPlayer.CurrentWorld.RowId);
 		this.ReassignParentIndex(entity.Actor);
 		return entity;
 	}
@@ -172,6 +173,31 @@ public class ActorModule : SceneModule {
 		if (actor is null or { ObjectIndex: 0 } || !actor.IsValid()) return;
 		
 		this.Scene.Factory.BuildActor(actor).Add();
+	}
+	
+	public void RefreshGPoseActors() {
+		var current = this.Scene.Children
+			.Where(entity => entity is ActorEntity)
+			.Cast<ActorEntity>()
+			.ToList();
+
+		foreach (var actor in current) {
+			if (!actor.IsValid) continue;
+
+			var entityForActor = this.Scene.GetEntityForActor(actor.Actor);
+			if (entityForActor == null) continue;
+
+			unsafe {
+				if (entityForActor.Character != null) continue;
+			}
+
+			this.Delete(entityForActor);
+		}
+
+		foreach (var actor in this._actors.GetGPoseActors()) {
+			if (this.Scene.GetEntityForActor(actor) is not null) continue;
+			this.AddActor(actor, false);
+		}
 	}
 	
 	// Hooks

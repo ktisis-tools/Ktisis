@@ -3,8 +3,7 @@ using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
@@ -36,6 +35,8 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 	}
 	
 	public override void Draw() {
+		this.UpdateTarget();
+		
 		var s = this.Context.Selection;
 		if (s.Count == 1) {
 			var p = s.GetSelected().First();
@@ -121,7 +122,7 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 		ImGui.Spacing();
 		
 		var color = light->Color.RGB;
-		if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.HDR | ImGuiColorEditFlags.Uint8))
+		if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Hdr | ImGuiColorEditFlags.Uint8))
 			light->Color.RGB = color;
 		ImGui.DragFloat("Intensity", ref light->Color.Intensity, 0.01f, 0.0f, 100.0f);
 		if (ImGui.DragFloat("Range##LightRange", ref light->Range, 0.1f, 0, 999))

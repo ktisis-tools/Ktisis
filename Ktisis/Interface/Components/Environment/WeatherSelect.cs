@@ -4,8 +4,7 @@ using System.Threading;
 
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Services.Environment;
@@ -79,7 +78,7 @@ public class WeatherSelect {
 			if (adjustPad) posY -= style.FramePadding.Y;
 			ImGui.SetCursorPosY(posY);
 			
-			ImGui.Image(weather.Icon.GetWrapOrEmpty().ImGuiHandle, WeatherIconSize);
+			ImGui.Image(weather.Icon.GetWrapOrEmpty().Handle, WeatherIconSize);
 			ImGui.SameLine();
 		}
 

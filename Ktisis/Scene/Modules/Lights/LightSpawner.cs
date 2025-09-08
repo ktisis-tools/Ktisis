@@ -92,7 +92,7 @@ public class LightSpawner : HookModule {
 	// Destruction
 	
 	private unsafe delegate void CleanupRenderDelegate(SceneLight* light);
-	private unsafe delegate void DestructorDelegate(SceneLight* light);
+	private unsafe delegate void DestructorDelegate(SceneLight* light, bool a2);
 
 	public unsafe void Destroy(SceneLight* light) {
 		this._created.Remove((nint)light);
@@ -112,7 +112,7 @@ public class LightSpawner : HookModule {
 
 	private unsafe void InvokeDtor(SceneLight* light) {
 		GetVirtualFunc<CleanupRenderDelegate>(light, 1)(light);
-		GetVirtualFunc<DestructorDelegate>(light, 0)(light);
+		GetVirtualFunc<DestructorDelegate>(light, 0)(light, false);
 	}
 	
 	// Marshalling

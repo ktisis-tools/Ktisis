@@ -76,7 +76,7 @@ public class CameraManager : ICameraManager {
 	}
 
 	private void SetupWorkCamera() {
-		this.WorkCamera ??= new WorkCamera(this) { Name = "Work Camera" };
+		this.WorkCamera ??= new WorkCamera(this, this._context) { Name = "Work Camera" };
 		if (!this.CopyOntoCamera(this.WorkCamera))
 			throw new Exception("Failed to setup work camera.");
 	}

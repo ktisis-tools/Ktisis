@@ -8,9 +8,9 @@ namespace Ktisis.Structs.Camera;
 public struct RenderCameraEx {
 	[FieldOffset(0x00)] public RenderCamera RenderCamera;
 	
-	[FieldOffset(0x1E8)] public float FoV;
-	[FieldOffset(0x1EC)] public float AspectRatio;
+	[FieldOffset(0x1EC)] public float FoV;
+	[FieldOffset(0x1F0)] public float AspectRatio;
 
-	[FieldOffset(0x1F8)] public float OrthographicZoom;
-	[FieldOffset(0x1FC)] public bool OrthographicEnabled;
+	[FieldOffset(0x1FC)] public float OrthographicZoom;
+	[FieldOffset(0x200)] public bool OrthographicEnabled;
 }

@@ -1,17 +1,20 @@
-﻿using Lumina.Data;
+﻿using Ktisis.Common.Extensions;
+
 using Lumina.Excel;
 
 namespace Ktisis.GameData.Excel;
 
 [Sheet("Glasses", columnHash: 0x2faac2c1)]
-public class Glasses : ExcelRow {
+public struct Glasses(uint row) : IExcelRow<Glasses> {
+	public uint RowId { get; } = row;
+
 	public string Name { get; set; } = string.Empty;
 	public uint Icon { get; set; }
-	
-	public override void PopulateData(RowParser parser, Lumina.GameData gameData, Language language) {
-		base.PopulateData(parser, gameData, language);
 
-		this.Icon = (uint)parser.ReadColumn<int>(2);
-		this.Name = parser.ReadColumn<string>(13) ?? string.Empty;
+	static Glasses IExcelRow<Glasses>.Create(ExcelPage page, uint offset, uint row) {
+		return new Glasses(row) {
+			Name = page.ReadColumn<string>(13, offset),
+			Icon = (uint)page.ReadColumn<int>(2, offset)
+		};
 	}
 }

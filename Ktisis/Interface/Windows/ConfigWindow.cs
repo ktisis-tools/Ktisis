@@ -3,10 +3,9 @@ using System;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
-
-using ImGuiNET;
 
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
@@ -108,6 +107,7 @@ public class ConfigWindow : KtisisWindow {
 
 	private void DrawGizmoTab() {
 		ImGui.Checkbox(this.Locale.Translate("config.gizmo.flip"), ref this.Config.Gizmo.AllowAxisFlip);
+		ImGui.Checkbox(this.Locale.Translate("config.gizmo.raySnap"), ref this.Config.Gizmo.AllowRaySnap);
 		
 		ImGui.Spacing();
 		ImGui.Text(this.Locale.Translate("config.gizmo.header"));
@@ -136,6 +136,29 @@ public class ConfigWindow : KtisisWindow {
 	private void DrawWorkspaceTab() {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirm_exit"), ref this.Config.Editor.ConfirmExit);
+		
+		ImGui.Spacing();
+		
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.editOnSelect"), ref this.Config.Editor.ToggleEditorOnSelect);
+		
+		ImGui.Spacing();
+
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.incognitoPlayerNames"), ref this.Config.Editor.IncognitoPlayerNames);
+		this.DrawHint("config.workspace.hintIncognito");
+
+		ImGui.Spacing();
+
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyWindows"), ref this.Config.Editor.UseLegacyWindowBehavior);
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyPoseTabs"), ref this.Config.Editor.UseLegacyPoseViewTabs);
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyLightEditor"), ref this.Config.Editor.UseLegacyLightEditor);
+		
+		ImGui.Spacing();
+
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.speed"), ref this.Config.Editor.WorkcamMoveSpeed, 0.001f, 0.0f, 100.0f);
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.fastMulti"), ref this.Config.Editor.WorkcamFastMulti, 0.001f, 0.0f, 100.0f);
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.slowMulti"), ref this.Config.Editor.WorkcamSlowMulti, 0.001f, 0.0f, 100.0f);
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.vertMulti"), ref this.Config.Editor.WorkcamVertMulti, 0.001f, 0.0f, 100.0f);
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.sens"), ref this.Config.Editor.WorkcamSens, 0.001f, 0.0f, 100.0f);
 	}
 	
 	// Input
@@ -143,7 +166,7 @@ public class ConfigWindow : KtisisWindow {
 	private void DrawInputTab() {
 		ImGui.Checkbox(this.Locale.Translate("config.input.enable"), ref this.Config.Keybinds.Enabled);
 		if (!this.Config.Keybinds.Enabled) return;
-		ImGui.Spacing();
+		ImGui.Text(this.Locale.Translate("config.input.help"));
 		this._keybinds.Draw();
 	}
 	

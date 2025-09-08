@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Data.Files;
+using Ktisis.Data.Mcdf;
 using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
@@ -27,16 +28,20 @@ public class CharacterManager : ICharacterManager {
 
 	public bool IsValid => this._context.IsValid;
 	
+	public McdfManager Mcdf { get; }
+	
 	public event DisableDrawHandler? OnDisableDraw;
 
 	public CharacterManager(
 		IEditorContext context,
 		HookScope scope,
-		IFramework framework
+		IFramework framework,
+		McdfManager mcdf
 	) {
 		this._context = context;
 		this._scope = scope;
 		this._framework = framework;
+		this.Mcdf = mcdf;
 	}
 	
 	// Initialization

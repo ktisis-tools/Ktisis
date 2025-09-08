@@ -70,6 +70,7 @@ public class CharaFile : JsonFile {
 	public ItemSave? Wrists { get; set; }
 	public ItemSave? LeftRing { get; set; }
 	public ItemSave? RightRing { get; set; }
+	public GlassesSave? Glasses { get; set; }
 	
 	public Vector3? BustScale { get; set; }
 	public float? Transparency { get; set; }
@@ -115,6 +116,17 @@ public class CharaFile : JsonFile {
 		public byte ModelVariant { get; set; }
 		public byte DyeId { get; set; }
 		public byte DyeId2 { get; set; }
+	}
+
+	[Serializable]
+	public class GlassesSave {
+		public GlassesSave() { }
+
+		public GlassesSave(ushort id) {
+			this.GlassesId = id;
+		}
+		
+		public ushort GlassesId { get; set; }
 	}
 	
 	// Enums, required due to the way this was serialized.

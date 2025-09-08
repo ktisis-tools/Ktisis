@@ -2,6 +2,7 @@ using Dalamud.Plugin.Services;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Core.Types;
+using Ktisis.Data.Mcdf;
 using Ktisis.Editor.Actions;
 using Ktisis.Editor.Actions.Input;
 using Ktisis.Editor.Animation;
@@ -31,7 +32,8 @@ public class ContextBuilder {
 	private readonly IKeyState _keyState;
 	private readonly NamingService _naming;
 	private readonly FormatService _format;
-	
+	private readonly McdfManager _mcdf;
+
 	public ContextBuilder(
 		GPoseService gpose,
 		InteropService interop,
@@ -39,7 +41,8 @@ public class ContextBuilder {
 		IDataManager data,
 		IKeyState keyState,
 		NamingService naming,
-		FormatService format
+		FormatService format,
+		McdfManager mcdf
 	) {
 		this._gpose = gpose;
 		this._interop = interop;
@@ -48,6 +51,7 @@ public class ContextBuilder {
 		this._keyState = keyState;
 		this._naming = naming;
 		this._format = format;
+		this._mcdf = mcdf;
 	}
 
 	public IEditorContext Create(
@@ -68,7 +72,7 @@ public class ContextBuilder {
 			Actions = actions,
 			Animation = new AnimationManager(context, scope, this._data, this._framework),
 			Cameras = new CameraManager(context, scope),
-			Characters = new CharacterManager(context, scope, this._framework),
+			Characters = new CharacterManager(context, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
 			Scene = new SceneManager(context, scope, factory),
