@@ -27,3 +27,23 @@ public class GizmoModeAction(IPluginContext ctx) : KeyAction(ctx) {
 		return true;
 	}
 }
+
+[Action("Gizmo_MirrorRotation")]
+public class MirrorRotationActon(IPluginContext ctx) : GizmoModeAction(ctx)
+{
+	public override KeybindInfo BindInfo { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = false,
+			Combo = new KeyCombo(),
+		}
+	};
+
+	public override bool Invoke() {
+		if (this.Context.Editor == null || this.Context.Editor.Selection.Count == 0)
+			return false;
+
+		this.Context.Editor.Config.Gizmo.MirrorRotation ^= true;
+		return true;
+	}
+}
