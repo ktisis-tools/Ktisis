@@ -187,7 +187,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		// TODO: gizmo, needs work to generate a new one w/o using ObjectWindow/OverlayWindow
 		// 	or, possible to create a dummy scene object (GazeTarget?) to hijack overlay gizmo?
 		using (ImRaii.Disabled()) {
-			using var _ = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking);
+			using var __ = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking);
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking [TODO]", Vector2.Zero)) {}
 		}
 

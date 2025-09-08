@@ -236,8 +236,7 @@ public class ActorModule : SceneModule {
 
 		// check current scene ActorEntities
 		var current = this.Scene.Children
-			.Where(entity => entity is ActorEntity)
-			.Cast<ActorEntity>()
+			.OfType<ActorEntity>()
 			.ToList();
 
 		foreach (ActorEntity actor in current) {
