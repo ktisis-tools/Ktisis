@@ -5,4 +5,11 @@ public interface IIkNode {
 	
 	public void Enable();
 	public void Disable();
+
+	public virtual void Toggle() {
+		if (this.IsEnabled)
+			this.Disable();
+		else
+			this.Enable();
+	}
 }

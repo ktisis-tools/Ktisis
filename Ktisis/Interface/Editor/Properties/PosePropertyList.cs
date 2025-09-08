@@ -77,7 +77,7 @@ public class PosePropertyList : ObjectPropertyList {
 			
 			var enabled = group.IsEnabled;
 			if (ImGui.Checkbox(" " + this._locale.Translate($"boneCategory.{name}"), ref enabled))
-				node.Toggle();
+				group.IsEnabled = enabled;
 
 			var btnSpace = Icons.CalcIconSize(FontAwesomeIcon.HandPointer).X
 				+ Icons.CalcIconSize(FontAwesomeIcon.EllipsisH).X
