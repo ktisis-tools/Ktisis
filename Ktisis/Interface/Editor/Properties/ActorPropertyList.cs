@@ -101,7 +101,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		var result = false;
 
-		using (var _disable = ImRaii.Disabled(this._ctx.Posing.IsEnabled)) {
+		using (ImRaii.Disabled(this._ctx.Posing.IsEnabled)) {
 			if (isHuman) {
 				var icon = IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink;
 				if (Buttons.IconButton(icon)) {
@@ -186,10 +186,9 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		// TODO: gizmo, needs work to generate a new one w/o using ObjectWindow/OverlayWindow
 		// 	or, possible to create a dummy scene object (GazeTarget?) to hijack overlay gizmo?
-		using (var _disable = ImRaii.Disabled()) {
-			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
-				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking [TODO]", Vector2.Zero)) {}
-			}
+		using (ImRaii.Disabled()) {
+			using var _ = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking);
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking [TODO]", Vector2.Zero)) {}
 		}
 
 		result |= GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
