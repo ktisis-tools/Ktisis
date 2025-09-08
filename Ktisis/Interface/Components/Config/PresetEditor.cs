@@ -108,7 +108,8 @@ public class PresetEditor {
 
 	private void Delete() {
 		if (Selected is null) return;
-		
+
+		PresetConfig.PresetRemovedEvent?.Invoke(Selected);
 		Config.Presets.Remove(Selected);
 		Selected = null;
 	}
