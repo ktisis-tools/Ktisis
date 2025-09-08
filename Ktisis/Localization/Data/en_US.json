@@ -22,7 +22,8 @@
 		"Gizmo_SetUniversalMode": "Switch to universal mode",
 		"Camera_SetNext": "Switch to next camera",
 		"Camera_SetPrevious": "Switch to previous camera",
-		"Camera_Work_Toggle": "Toggle work camera"
+		"Camera_Work_Toggle": "Toggle work camera",
+		"Gizmo_MirrorRotation": "Toggle mirror and parallel rotation modes"
 	},
 	
 	"actors": {
