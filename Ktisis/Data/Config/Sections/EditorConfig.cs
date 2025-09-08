@@ -18,6 +18,13 @@ public class EditorConfig {
 	public bool UseLegacyWindowBehavior = false;
 	public bool UseLegacyPoseViewTabs = false;
 	public bool UseLegacyLightEditor = false;
+
+	// work camera config
+	public float WorkcamMoveSpeed = 0.1f;
+	public float WorkcamFastMulti = 2.5f;
+	public float WorkcamSlowMulti = 0.25f;
+	public float WorkcamVertMulti = 1f;
+	public float WorkcamSens = 0.215f;
 	
 	public Dictionary<EntityType, EntityDisplay> Display = EntityDisplay.GetDefaults();
 	

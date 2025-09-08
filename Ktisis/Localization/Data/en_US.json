@@ -23,6 +23,14 @@
 		"Camera_SetNext": "Switch to next camera",
 		"Camera_SetPrevious": "Switch to previous camera",
 		"Camera_Work_Toggle": "Toggle work camera",
+		"Camera_Work_Forward": "Work camera forward",
+		"Camera_Work_Left": "Work camera left",
+		"Camera_Work_Back": "Work camera backward",
+		"Camera_Work_Right": "Work camera right",
+		"Camera_Work_Up": "Work camera up",
+		"Camera_Work_Down": "Work camera down",
+		"Camera_Work_Fast": "Work camera fast-speed modifier",
+		"Camera_Work_Slow": "Work camera slow-speed modifier",
 		"Gizmo_MirrorRotation": "Toggle mirror and parallel rotation modes"
 	},
 	
@@ -261,7 +269,14 @@
 			"hintIncognito": "Requires re-entering gpose to refresh actor list names",
 			"legacyWindows": "Prefer legacy window behavior",
 			"legacyPoseTabs": "Prefer legacy pose view tabs",
-			"legacyLightEditor": "Prefer legacy light editor"
+			"legacyLightEditor": "Prefer legacy light editor",
+			"workcam": {
+				"speed": "Work camera speed",
+				"fastMulti": "Work camera fast-multiplier",
+				"slowMulti": "Work camera slow-multiplier",
+				"vertMulti": "Work camera up/down speed multiplier",
+				"sens": "Work camera mouse sensitivity"
+			}
 		},
 		"input": {
 			"title": "Input",

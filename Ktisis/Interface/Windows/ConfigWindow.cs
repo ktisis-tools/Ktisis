@@ -150,6 +150,14 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyWindows"), ref this.Config.Editor.UseLegacyWindowBehavior);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyPoseTabs"), ref this.Config.Editor.UseLegacyPoseViewTabs);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyLightEditor"), ref this.Config.Editor.UseLegacyLightEditor);
+		
+		ImGui.Spacing();
+
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.speed"), ref this.Config.Editor.WorkcamMoveSpeed, 0.001f, 0.0f, 100.0f);
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.fastMulti"), ref this.Config.Editor.WorkcamFastMulti, 0.001f, 0.0f, 100.0f);
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.slowMulti"), ref this.Config.Editor.WorkcamSlowMulti, 0.001f, 0.0f, 100.0f);
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.vertMulti"), ref this.Config.Editor.WorkcamVertMulti, 0.001f, 0.0f, 100.0f);
+		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.sens"), ref this.Config.Editor.WorkcamSens, 0.001f, 0.0f, 100.0f);
 	}
 	
 	// Input
