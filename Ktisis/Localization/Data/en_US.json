@@ -30,7 +30,8 @@
 		"Camera_Work_Up": "Work camera up",
 		"Camera_Work_Down": "Work camera down",
 		"Camera_Work_Fast": "Work camera fast-speed modifier",
-		"Camera_Work_Slow": "Work camera slow-speed modifier"
+		"Camera_Work_Slow": "Work camera slow-speed modifier",
+		"Gizmo_MirrorRotation": "Toggle mirror and parallel rotation modes"
 	},
 	
 	"actors": {
@@ -264,6 +265,8 @@
 			"title": "Workspace",
 			"init": "Open workspace when entering GPose",
 			"editOnSelect": "Toggle object editor when selecting",
+			"incognitoPlayerNames": "Hide player names while in GPose (incognito mode)",
+			"hintIncognito": "Requires re-entering gpose to refresh actor list names",
 			"legacyWindows": "Prefer legacy window behavior",
 			"legacyPoseTabs": "Prefer legacy pose view tabs",
 			"legacyLightEditor": "Prefer legacy light editor",
