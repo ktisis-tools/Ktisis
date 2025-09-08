@@ -13,6 +13,7 @@ using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Selection;
 using Ktisis.ImGuizmo;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components.Transforms;
 
@@ -30,13 +31,16 @@ public enum TransformTableFlags {
 [Transient]
 public class TransformTable {
 	private readonly ConfigManager _cfg;
+	private readonly LocaleManager _locale;
 
 	private GizmoConfig GizmoConfig => this._cfg.File.Gizmo;
 
 	public TransformTable(
-		ConfigManager cfg
+		ConfigManager cfg,
+		LocaleManager locale
 	) {
 		this._cfg = cfg;
+		this._locale = locale;
 	}
 	
 	// State
@@ -115,7 +119,7 @@ public class TransformTable {
 
 	private bool DrawPosition(ref Vector3 pos, bool op) {
 		var result = this.DrawLinear("##TransformTable_Pos", ref pos);
-		if (op) this.DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, "transform.position");
+		if (op) this.DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, this._locale.Translate("transform.position"));
 		return result;
 	}
 
@@ -125,13 +129,13 @@ public class TransformTable {
 			rot = HkaEulerAngles.ToQuaternion(this.Angles);
 			this.Value = rot;
 		}
-		if (op) this.DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, "transform.rotation");
+		if (op) this.DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, this._locale.Translate("transform.rotation"));
 		return result;
 	}
 
 	private bool DrawScale(ref Vector3 scale, bool op) {
 		var result = this.DrawLinear("##TransformTable_Scale", ref scale);
-		if (op) this.DrawOperation(ScaleOp, FontAwesomeIcon.Expand, "transform.scale");
+		if (op) this.DrawOperation(ScaleOp, FontAwesomeIcon.Expand, this._locale.Translate("transform.scale"));
 		return result;
 	}
 
