@@ -2,7 +2,7 @@ using System;
 
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Structs.Env;
 

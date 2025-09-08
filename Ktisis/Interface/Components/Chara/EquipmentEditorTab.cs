@@ -8,10 +8,9 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
+using Dalamud.Bindings.ImGui;
 
-using Stain = Lumina.Excel.GeneratedSheets.Stain;
-
-using ImGuiNET;
+using Stain = Lumina.Excel.Sheets.Stain;
 
 using GLib.Popups;
 using GLib.Widgets;
@@ -34,7 +33,6 @@ public class EquipmentEditorTab {
 	private readonly PopupList<ItemSheet> _itemSelectPopup;
 	private readonly PopupList<Stain> _dyeSelectPopup;
 	private readonly PopupList<Glasses> _glassesSelectPopup;
-
 
 	private IEquipmentEditor _editor;
 
@@ -133,11 +131,11 @@ public class EquipmentEditorTab {
 
 		if (info is WeaponInfo wep) {
 			var values = new int[] { wep.Model.Id, wep.Model.Type, wep.Model.Variant };
-			if (ImGui.InputInt3($"##Input{slot}", ref values[0]))
+			if (ImGui.InputInt($"##Input{slot}", values))
 				wep.SetModel((ushort)values[0], (ushort)values[1], (byte)values[2]);
 		} else if (info is EquipInfo equip) {
 			var values = new int[] { equip.Model.Id, equip.Model.Variant };
-			if (ImGui.InputInt2($"##Input{slot}", ref values[0]))
+			if (ImGui.InputInt($"##Input{slot}", values))
 				equip.SetModel((ushort)values[0], (byte)values[1]);
 		}
 		
@@ -188,7 +186,7 @@ public class EquipmentEditorTab {
 		bool clicked;
 		using (var _ = ImRaii.PushId($"##ItemButton_{info.Slot}")) {
 			if (info.Texture != null)
-				clicked = ImGui.ImageButton(info.Texture.GetWrapOrEmpty().ImGuiHandle, ButtonSize);
+				clicked = ImGui.ImageButton(info.Texture.GetWrapOrEmpty().Handle, ButtonSize);
 			else
 				clicked = ImGui.Button(info.Slot.ToString(), ButtonSize);
 		}
@@ -216,8 +214,8 @@ public class EquipmentEditorTab {
 	private void DrawItemSelectPopup() {
 		if (!this._itemSelectPopup.IsOpen) return;
 
-		if (!this._itemSelectPopup.Draw(this.ItemSelectList, out var selected) || selected == null) return;
-
+		if (!this._itemSelectPopup.Draw(this.ItemSelectList, out var selected)) return;
+		
 		lock (this.Equipped) {
 			if (this.Equipped.TryGetValue(this.ItemSelectSlot, out var info))
 				info.SetEquipItem(selected);
@@ -231,14 +229,18 @@ public class EquipmentEditorTab {
 
 	private static uint CalcStainColor(Stain? stain) {
 		var color = 0xFF000000u;
-		if (stain != null) color |= (stain.Color << 8).FlipEndian();
+		if (stain != null) color |= (stain.Value.Color << 8).FlipEndian();
 		return color;
 	}
 
 	private void DrawDyeButton(ItemInfo info, int index) {
-		Stain? stain;
-		lock (this.Stains)
-			stain = this.Stains.FirstOrDefault(row => row.RowId == info.StainIds[index]);
+		Stain? stain = null;
+		foreach (var row in this.Stains) {
+			if (row.RowId != info.StainIds[index])
+				continue;
+			lock (this.Stains)
+				stain = row;
+		}
 
 		var color = CalcStainColor(stain);
 		var colorVec4 = ImGui.ColorConvertU32ToFloat4(color);
@@ -255,7 +257,7 @@ public class EquipmentEditorTab {
 		using var _color = ImRaii.PushColor(ImGuiCol.Text, color, (colorVec4.X + colorVec4.Y + colorVec4.Z) / 3 > 0.10f);
 		using var _tooltip = ImRaii.Tooltip();
 		// Text
-		var name = stain?.Name?.RawString;
+		var name = stain?.Name.ExtractText();
 		ImGui.Text(!name.IsNullOrEmpty() ? name : "No dye set.");
 		// RGB Hex
 		var col = stain?.Color ?? 0;
@@ -281,7 +283,7 @@ public class EquipmentEditorTab {
 			if (
 				this._dyeSelectPopup.Draw(this.Stains, out var selected)
 				&& this.Equipped.TryGetValue(this.DyeSelectSlot, out var info)
-			) info.SetStainId((byte)selected!.RowId, this.DyeSelectIndex);
+			) info.SetStainId((byte)selected.RowId, this.DyeSelectIndex);
 		}
 	}
 
@@ -299,12 +301,12 @@ public class EquipmentEditorTab {
 		using var _textCol = ImRaii.PushColor(ImGuiCol.Text, GuiHelpers.CalcBlackWhiteTextColor(color));
 		using var _activeCol = ImRaii.PushColor(ImGuiCol.HeaderActive, color);
 		using var _hoverCol = ImRaii.PushColor(ImGuiCol.HeaderHovered, color);
-		var name = stain.RowId == 0 ? "None" : stain.Name;
+		var name = stain.RowId == 0 ? "None" : stain.Name.ExtractText();
 		return ImGui.Selectable(name, isFocus);
 	}
 	
 	private static bool DyeSelectSearchPredicate(Stain stain, string query)
-		=> stain.Name.RawString.Contains(query, StringComparison.OrdinalIgnoreCase);
+		=> stain.Name.ExtractText().Contains(query, StringComparison.OrdinalIgnoreCase);
 	
 	// Draw glasses slots
 
@@ -328,7 +330,7 @@ public class EquipmentEditorTab {
 		
 		using var _ = ImRaii.Group();
 		
-		ImGui.Text(!(glasses?.Name.IsNullOrEmpty() ?? true) ? glasses!.Name : "None");
+		ImGui.Text(glasses?.RowId is not 0 ? glasses!.Value.Name : "None");
 		ImGui.SetNextItemWidth(CalcItemWidth(cursorStart) + (ImGui.GetFrameHeight() + ImGui.GetStyle().ItemInnerSpacing.X) * 2);
 
 		var intGlassesId = (int)glassesId;
@@ -339,9 +341,9 @@ public class EquipmentEditorTab {
 	private void DrawGlassesButton(int index, Glasses? glasses) {
 		using var _ = ImRaii.PushColor(ImGuiCol.Button, 0);
 
-		var iconId = glasses?.Icon is not null and not 0 ? glasses.Icon : GetFallbackIcon(EquipSlot.Glasses); 
+		var iconId = glasses?.Icon is not null and not 0 ? glasses.Value.Icon : GetFallbackIcon(EquipSlot.Glasses); 
 		var icon = this._tex.GetFromGameIcon(iconId);
-		if (ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, ButtonSize))
+		if (ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, ButtonSize))
 			this.OpenGlassesSelectPopup(index);
 		
 		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
@@ -363,7 +365,7 @@ public class EquipmentEditorTab {
 	private void DrawGlassesSelectPopup() {
 		if (!this._glassesSelectPopup.IsOpen) return;
 		lock (this.Glasses) {
-			if (this._glassesSelectPopup.Draw(this.Glasses, out var selected) && selected != null)
+			if (this._glassesSelectPopup.Draw(this.Glasses, out var selected))
 				this.Editor.SetGlassesId(this.GlassesSelectIndex, (ushort)selected.RowId);
 		}
 	}
@@ -397,7 +399,7 @@ public class EquipmentEditorTab {
 		// Dyes
 
 		var dyes = this._data.Excel.GetSheet<Stain>()!
-			.Where(stain => stain.RowId == 0 || !stain.Name.RawString.IsNullOrEmpty());
+			.Where(stain => stain.RowId == 0 || !stain.Name.IsEmpty);
 		
 		lock (this.Stains) this.Stains.AddRange(dyes);
 		
@@ -410,14 +412,18 @@ public class EquipmentEditorTab {
 		foreach (var chunk in items.Chunk(1000)) {
 			lock (this.Items) this.Items.AddRange(chunk);
 			lock (this._equipUpdateLock) {
-				foreach (var (_, info) in this.Equipped.Where(pair => pair.Value.Item == null))
+				foreach (var (slot, info) in this.Equipped.Where(pair => pair.Value.Item == null)) {
+					if (!chunk.Any(item => item.IsEquippable(slot) && info.IsItemPredicate(item)))
+						continue;
 					info.FlagUpdate = true;
+				}
 			}
 		}
 		
 		// Glasses
 
-		var glasses = this._data.Excel.GetSheet<Glasses>()!;
+		var glasses = this._data.Excel.GetSheet<Glasses>()
+			.Where(x => x.RowId == 0 || !x.Name.IsNullOrEmpty());
 		lock (this.Glasses) this.Glasses.AddRange(glasses);
 	}
 
@@ -445,11 +451,13 @@ public class EquipmentEditorTab {
 
 		try {
 			lock (this.Items) {
-				item.Item = this.Items
-					.Where(row => row.IsEquippable(slot))
-					.FirstOrDefault(item.IsItemPredicate);
+				foreach (var row in this.Items) {
+					if (!row.IsEquippable(slot) || !item.IsItemPredicate(row)) continue;
+					item.Item = row;
+					break;
+				}
 			}
-			item.Texture = item.Item != null ? this._tex.GetFromGameIcon((uint)item.Item.Icon) : null;
+			item.Texture = item.Item != null ? this._tex.GetFromGameIcon((uint)item.Item.Value.Icon) : null;
 			item.Texture ??= this._tex.GetFromGameIcon(GetFallbackIcon(slot));
 		} finally {
 			this.Equipped[slot] = item;

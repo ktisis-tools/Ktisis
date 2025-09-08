@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Data.Config.Sections;
 using Ktisis.ImGuizmo;
@@ -89,7 +89,7 @@ public class Gizmo : IGizmo {
 	}
 
 	public unsafe void PushDrawList() {
-		ImGuizmo.Gizmo.DrawList = (nint)ImGui.GetWindowDrawList().NativePtr;
+		ImGuizmo.Gizmo.DrawList = (nint)ImGui.GetWindowDrawList().Handle;
 	}
 
 	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {

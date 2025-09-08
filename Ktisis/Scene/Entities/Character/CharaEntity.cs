@@ -3,14 +3,13 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.Types;
-using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Types;
-using Ktisis.Structs.Attachment;
 using Ktisis.Structs.Characters;
+using Attach = Ktisis.Structs.Attachment.Attach;
 
 namespace Ktisis.Scene.Entities.Character;
 
@@ -41,7 +40,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 	public unsafe bool IsDrawing() {
 		var ptr = this.GetCharacter();
 		if (ptr == null) return false;
-		return ptr->UnkFlags_02 != 0;
+		return ((ulong)ptr->StateFlags & 0x00_00_00_FF_00) != 0;
 	}
 	
 	// Character
@@ -68,7 +67,7 @@ public class CharaEntity : WorldEntity, IAttachable {
 		if (attach == null) return null;
 
 		var parentSkele = attach->GetParentSkeleton();
-		if (parentSkele == null || parentSkele->PartialSkeletons == null || parentSkele->PartialSkeletons->HavokPoses == null)
+		if (parentSkele == null || parentSkele->PartialSkeletons == null || parentSkele->PartialSkeletons->HavokPoses.IsEmpty)
 			return null;
 		
 		var parentPose = parentSkele->PartialSkeletons[0].GetHavokPose(0);

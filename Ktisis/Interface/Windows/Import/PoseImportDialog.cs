@@ -1,8 +1,7 @@
 using System.Linq;
 
 using Dalamud.Interface.Utility.Raii;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
@@ -31,7 +30,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	) {
 		this._ctx = ctx;
 		this._select = select;
-		select.OpenDialog = this.OnFileDialogOpen;
+		select.OnOpenDialog = this.OnFileDialogOpen;
 	}
 	
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {
@@ -41,6 +40,8 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	// Draw UI
 
 	public override void Draw() {
+		this.UpdateTarget();
+		
 		ImGui.Text($"Importing pose for {this.Target.Name}");
 		ImGui.Spacing();
 		

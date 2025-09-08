@@ -1,6 +1,5 @@
 using Dalamud.Interface.Utility.Raii;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Scene.Modules;

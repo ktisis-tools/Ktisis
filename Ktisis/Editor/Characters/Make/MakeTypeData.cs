@@ -10,11 +10,10 @@ using Dalamud.Plugin.Services;
 using Ktisis.GameData.Chara;
 
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 using Ktisis.Services.Data;
 using Ktisis.Structs.Characters;
-
 using CharaMakeType = Ktisis.GameData.Excel.CharaMakeType;
 using Tribe = Ktisis.Structs.Characters.Tribe;
 
@@ -53,7 +52,7 @@ public class MakeTypeData {
 		var stop = new Stopwatch();
 		stop.Start();
 		
-		var sheet = data.GetExcelSheet<CharaMakeType>()!;
+		var sheet = data.GetExcelSheet<CharaMakeType>();
 		foreach (var row in sheet)
 			this.BuildRowCustomize(row);
 		
@@ -86,7 +85,7 @@ public class MakeTypeData {
 	// Build sheet data
 
 	private void BuildRowCustomize(CharaMakeType row) {
-		var tribe = (Tribe)row.Tribe.Row;
+		var tribe = (Tribe)row.Tribe.RowId;
 		var gender = (Gender)row.Gender;
 
 		var data = new MakeTypeRace(tribe, gender);
@@ -101,7 +100,7 @@ public class MakeTypeData {
 			var isCustomize = makeStruct is { SubMenuType: 1, SubMenuNum: > 10 };
 			var paramData = BuildParamData(index, makeStruct, isCustomize);
 			data.Customize[index] = new MakeTypeFeature {
-				Name = makeStruct.Menu.Value?.Text ?? string.Empty,
+				Name = makeStruct.Menu.IsValid ? makeStruct.Menu.Value.Text.ExtractText() : string.Empty,
 				Index = index,
 				Params = paramData.ToArray(),
 				IsCustomize = isCustomize,
@@ -144,7 +143,7 @@ public class MakeTypeData {
 	// Populate customize data
 
 	private void PopulateCustomizeIcons(IDataManager data) {
-		var custom = data.GetExcelSheet<CharaMakeCustomize>()!;
+		var custom = data.GetExcelSheet<CharaMakeCustomize>();
 
 		IEnumerable<MakeTypeFeature> features;
 		lock (this.MakeTypes) {
@@ -163,8 +162,11 @@ public class MakeTypeData {
 
 	private static IEnumerable<MakeTypeParam> BuildParamFromCustomize(ExcelSheet<CharaMakeCustomize> custom, uint start, uint count) {
 		for (var i = start; i < start + count; i++) {
+			if (!custom.HasRow(i)) continue;
+			
 			var row = custom.GetRow(i);
-			if (row is null or { FeatureID: 0, Icon: 0 }) continue;
+			if (row is { FeatureID: 0, Icon: 0 }) continue;
+			
 			yield return new MakeTypeParam {
 				Value = row.FeatureID,
 				Graphic = row.Icon

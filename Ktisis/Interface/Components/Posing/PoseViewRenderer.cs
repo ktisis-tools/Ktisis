@@ -6,8 +6,7 @@ using System.Reflection;
 
 using Dalamud.Interface.Textures;
 using Dalamud.Plugin.Services;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
@@ -94,7 +93,7 @@ public class PoseViewRenderer {
 			);
 			var size = img.Size * scale;
 
-			ImGui.Image(img.ImGuiHandle, size);
+			ImGui.Image(img.Handle, size);
 			
 			this.Views.Add(new ViewData {
 				Entry = entry,

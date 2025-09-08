@@ -1,9 +1,8 @@
 using System;
+using System.Linq;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
-using Ktisis.Editor;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Entities;
 
@@ -25,16 +24,26 @@ public abstract class EntityEditWindow<T> : KtisisWindow where T : SceneEntity {
 	) : base(name, flags) {
 		this.Context = ctx;
 	}
+	
+	public override void PreDraw() {
+		if (this.Context.IsValid && this._target is { IsValid: true }) return;
+		Ktisis.Log.Verbose($"State for {this.GetType().Name} is stale, closing...");
+		this.Close();
+	}
 
 	public virtual void SetTarget(T target) {
 		if (!target.IsValid)
 			throw new Exception("Attempted to set invalid target.");
 		this.Target = target;
 	}
-	
-	public override void PreDraw() {
-		if (this.Context.IsValid && this._target is { IsValid: true }) return;
-		Ktisis.Log.Verbose($"State for {this.GetType().Name} is stale, closing...");
-		this.Close();
+
+	protected void UpdateTarget() {
+		if (this.Context.Config.Editor.UseLegacyWindowBehavior) return;
+
+		var target = (T?)this.Context.Selection.GetSelected()
+			.FirstOrDefault(entity => entity is T);
+
+		if (target != null && this.Target != target)
+			this.SetTarget(target);
 	}
 }

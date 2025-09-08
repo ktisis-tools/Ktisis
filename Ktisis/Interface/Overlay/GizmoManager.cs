@@ -1,6 +1,6 @@
 using System;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Data.Config;
 
@@ -31,13 +31,13 @@ public class GizmoManager {
 			if (imVer != ImGuiVersion)
 				throw new Exception($"ImGui version mismatch! Expected {ImGuiVersion}, got {imVer ?? "NULL"} instead.");
 			
-			var alloc = nint.Zero;
-			var free = nint.Zero;
+			var alloc = (delegate*<nuint, void*, void*>)null;
+			var free = (delegate*<void*, void*, void>)null;
 			var userData = (void*)null;
-			ImGui.GetAllocatorFunctions(ref alloc, ref free, ref userData);
+			ImGui.GetAllocatorFunctions(&alloc, &free, &userData);
 			
 			var imCtx = ImGui.GetCurrentContext();
-			ImGuizmo.Gizmo.Initialize(imCtx, alloc, free, (nint)userData);
+			ImGuizmo.Gizmo.Initialize((nint)imCtx.Handle, (nint)alloc, (nint)free, (nint)userData);
 
 			success = true;
 		} catch (Exception err) {

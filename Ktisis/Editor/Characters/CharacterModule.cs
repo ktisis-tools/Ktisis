@@ -47,7 +47,7 @@ public class CharacterModule : HookModule {
 	
 	// DisableDraw
 	
-	[Signature("40 53 48 83 EC 20 80 B9 ?? ?? ?? ?? ?? 48 8B D9 0F 8D ?? ?? ?? ??", DetourName = nameof(DisableDrawDetour))]
+	[Signature("40 53 48 83 EC 20 80 B9 ?? ?? ?? ?? ?? 48 8B D9 7D 6E", DetourName = nameof(DisableDrawDetour))]
 	private Hook<DisableDrawDelegate> DisableDrawHook = null!;
 	private unsafe delegate nint DisableDrawDelegate(GameObject* chara);
 	private unsafe nint DisableDrawDetour(GameObject* chara) {
@@ -95,7 +95,7 @@ public class CharacterModule : HookModule {
 	
 	// CreateCharacter
 
-	[Signature("E8 ?? ?? ?? ?? 48 8B 4E 08 48 8B D0 4C 8B 01", DetourName = nameof(CreateCharacterDetour))]
+	[Signature("E8 ?? ?? ?? ?? 48 8B 4F 08 48 8B D0 4C 8B 01", DetourName = nameof(CreateCharacterDetour))]
 	private Hook<CreateCharacterDelegate> CreateCharacterHook = null!;
 	private unsafe delegate CharacterBase* CreateCharacterDelegate(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk);
 	private unsafe CharacterBase* CreateCharacterDetour(uint model, CustomizeContainer* customize, EquipmentContainer* equip, byte unk) {

@@ -142,7 +142,7 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 	private unsafe static uint GetGameModel(Character* chara) {
 		if (chara == null)
 			throw new Exception("Character is null.");
-		return (uint)chara->CharacterData.ModelCharaId;
+		return (uint)chara->ModelContainer.ModelCharaId;
 	}
 	
 	// Set GameObject state (for spawned actors)

@@ -13,8 +13,9 @@ public class GizmoConfig {
 	public bool MirrorRotation = false;
 	public bool ParentBones = true;
 	public bool RelativeBones = true;
-	
+
 	public bool AllowAxisFlip = true;
+	public bool AllowRaySnap = true;
 
 	public Style Style = DefaultStyle;
 

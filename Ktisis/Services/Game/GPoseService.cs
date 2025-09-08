@@ -1,5 +1,7 @@
 using System;
 
+using Dalamud.Game.ClientState.Objects;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
 using Ktisis.Core.Attributes;
@@ -13,6 +15,7 @@ public delegate void GPoseStateHandler(GPoseService sender, bool state);
 public class GPoseService : IDisposable {
 	private readonly IClientState _clientState;
 	private readonly IFramework _framework;
+	private readonly ITargetManager _targets;
 	
 	private readonly Event<Action> _updateEvent;
 	public event Action Update {
@@ -29,15 +32,19 @@ public class GPoseService : IDisposable {
 	private bool _isActive;
 
 	public bool IsGPosing => this._clientState.IsGPosing;
+
+	public IGameObject? GPoseTarget => this._targets.GPoseTarget;
 	
 	public GPoseService(
 		IClientState clientState,
 		IFramework framework,
+		ITargetManager targets,
 		Event<Action> updateEvent,
 		Event<Action<GPoseService, bool>> gposeEvent
 	) {
 		this._clientState = clientState;
 		this._framework = framework;
+		this._targets = targets;
 		this._updateEvent = updateEvent;
 		this._gposeEvent = gposeEvent;
 	}

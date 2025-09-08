@@ -1,9 +1,13 @@
 // ReSharper disable all
 #pragma warning disable CS8618
 
+using System.Collections.Generic;
+
+using Ktisis.Common.Extensions;
+
 using Lumina.Data;
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 namespace Ktisis.GameData.Excel;
 
@@ -11,11 +15,11 @@ namespace Ktisis.GameData.Excel;
 // It gets parsed as an int[8] rather than an int[8,7]. I've reached out to perchbird about this issue.
 
 [Sheet( "CharaMakeType", columnHash: 0x80d7db6d)]
-public partial class CharaMakeType : ExcelRow
-{
-    public struct CharaMakeStructStruct
-    {
-    	public LazyRow< Lobby > Menu { get; internal set; }
+public partial struct CharaMakeType(uint row) : IExcelRow<CharaMakeType> {
+	public uint RowId { get; } = row;
+
+	public struct CharaMakeStructStruct {
+    	public RowRef<Lobby> Menu { get; internal set; }
     	public uint SubMenuMask { get; internal set; }
     	public uint Customize { get; internal set; }
     	public uint[] SubMenuParam { get; internal set; }
@@ -25,8 +29,7 @@ public partial class CharaMakeType : ExcelRow
     	public byte LookAt { get; internal set; }
     	public byte[] SubMenuGraphic { get; internal set; }
     }
-    public struct EquipmentStruct
-    {
+    public struct EquipmentStruct {
     	public ulong Helmet { get; internal set; }
     	public ulong Top { get; internal set; }
     	public ulong Gloves { get; internal set; }
@@ -40,53 +43,57 @@ public partial class CharaMakeType : ExcelRow
     public byte[] VoiceStruct { get; private set; }
     public int[,] FacialFeatureOption { get; private set; }
     public EquipmentStruct[] Equipment { get; private set; }
-    public LazyRow< Race > Race { get; private set; }
-    public LazyRow< Tribe > Tribe { get; private set; }
+    public RowRef<Race> Race { get; private set; }
+    public RowRef<Tribe> Tribe { get; private set; }
     public sbyte Gender { get; private set; }
-    
-    public override void PopulateData( RowParser parser, Lumina.GameData gameData, Language language )
-    {
-        base.PopulateData( parser, gameData, language );
 
-        this.CharaMakeStruct = new CharaMakeStructStruct[28];
-        for (int i = 0; i < 28; i++)
-        {
-        	this.CharaMakeStruct[i].Menu = new LazyRow< Lobby >( gameData, parser.ReadOffset< uint >( (ushort) (i * 428 + 0) ), language );
-        	this.CharaMakeStruct[i].SubMenuMask = parser.ReadOffset< uint >( (ushort) (i * 428 + 4));
-        	this.CharaMakeStruct[i].Customize = parser.ReadOffset< uint >( (ushort) (i * 428 + 8));
-        	this.CharaMakeStruct[i].SubMenuParam = new uint[100];
-        	for (int SubMenuParamIndexer = 0; SubMenuParamIndexer < 100; SubMenuParamIndexer++)
-        		this.CharaMakeStruct[i].SubMenuParam[SubMenuParamIndexer] = parser.ReadOffset< uint >( (ushort) ( i * 428 + 12 + SubMenuParamIndexer * 4 ) );
-        	this.CharaMakeStruct[i].InitVal = parser.ReadOffset< byte >( (ushort) (i * 428 + 412));
-        	this.CharaMakeStruct[i].SubMenuType = parser.ReadOffset< byte >( (ushort) (i * 428 + 413));
-        	this.CharaMakeStruct[i].SubMenuNum = parser.ReadOffset< byte >( (ushort) (i * 428 + 414));
-        	this.CharaMakeStruct[i].LookAt = parser.ReadOffset< byte >( (ushort) (i * 428 + 415));
-        	this.CharaMakeStruct[i].SubMenuGraphic = new byte[10];
-        	for (int SubMenuGraphicIndexer = 0; SubMenuGraphicIndexer < 10; SubMenuGraphicIndexer++)
-        		this.CharaMakeStruct[i].SubMenuGraphic[SubMenuGraphicIndexer] = parser.ReadOffset< byte >( (ushort) ( i * 428 + 416 + SubMenuGraphicIndexer * 1 ) );
-        }
-        this.VoiceStruct = new byte[12];
-        for (int i = 0; i < 12; i++)
-        	this.VoiceStruct[i] = parser.ReadOffset< byte >( 11984 + i * 1 );
-        this.FacialFeatureOption = new int[8,7];
-		for (int x = 0; x < 8; x++)
-		{
-			for (int y = 0; y < 7; y++)
-				this.FacialFeatureOption[x, y] = parser.ReadOffset<int>( 11996 + x * 28 + y * 4 );
+	static CharaMakeType IExcelRow<CharaMakeType>.Create(ExcelPage page, uint offset, uint row) {
+		var charaMakeStruct = new CharaMakeStructStruct[28];
+		for (var i = 0; i < 28; i++) {
+			charaMakeStruct[i].Menu = new RowRef<Lobby>(page.Module, page.ReadUInt32(offset + (ushort)(i * 428 + 0)), page.Language);
+			charaMakeStruct[i].SubMenuMask = page.ReadUInt32(offset + (ushort)(i * 428 + 4));
+			charaMakeStruct[i].Customize = page.ReadUInt32(offset + (ushort)(i * 428 + 8));
+			charaMakeStruct[i].SubMenuParam = new uint[100];
+			for (int SubMenuParamIndexer = 0; SubMenuParamIndexer < 100; SubMenuParamIndexer++)
+				charaMakeStruct[i].SubMenuParam[SubMenuParamIndexer] = page.ReadUInt32(offset + (ushort)(i * 428 + 12 + SubMenuParamIndexer * 4));
+			charaMakeStruct[i].InitVal = page.ReadUInt8(offset + (ushort)(i * 428 + 412));
+			charaMakeStruct[i].SubMenuType = page.ReadUInt8(offset + (ushort)(i * 428 + 413));
+			charaMakeStruct[i].SubMenuNum = page.ReadUInt8(offset + (ushort)(i * 428 + 414));
+			charaMakeStruct[i].LookAt = page.ReadUInt8(offset + (ushort)(i * 428 + 415));
+			charaMakeStruct[i].SubMenuGraphic = new byte[10];
+			for (int SubMenuGraphicIndexer = 0; SubMenuGraphicIndexer < 10; SubMenuGraphicIndexer++)
+				charaMakeStruct[i].SubMenuGraphic[SubMenuGraphicIndexer] = page.ReadUInt8(offset + (ushort)(i * 428 + 416 + SubMenuGraphicIndexer * 1));
 		}
-        this.Equipment = new EquipmentStruct[3];
-        for (int i = 0; i < 3; i++)
-        {
-        	this.Equipment[i].Helmet = parser.ReadOffset< ulong >( (ushort) (i * 56 + 12224));
-        	this.Equipment[i].Top = parser.ReadOffset< ulong >( (ushort) (i * 56 + 12232));
-        	this.Equipment[i].Gloves = parser.ReadOffset< ulong >( (ushort) (i * 56 + 12240));
-        	this.Equipment[i].Legs = parser.ReadOffset< ulong >( (ushort) (i * 56 + 12248));
-        	this.Equipment[i].Shoes = parser.ReadOffset< ulong >( (ushort) (i * 56 + 12256));
-        	this.Equipment[i].Weapon = parser.ReadOffset< ulong >( (ushort) (i * 56 + 12264));
-        	this.Equipment[i].SubWeapon = parser.ReadOffset< ulong >( (ushort) (i * 56 + 12272));
-        }
-        this.Race = new LazyRow< Race >( gameData, parser.ReadOffset< int >( 12392 ), language );
-        this.Tribe = new LazyRow< Tribe >( gameData, parser.ReadOffset< int >( 12396 ), language );
-        this.Gender = parser.ReadOffset< sbyte >( 12400 );
-    }
+
+		var voiceStruct = new byte[12];
+		for (var i = 0; i < 12; i++)
+			voiceStruct[i] = page.ReadUInt8(offset + (ushort)(11984 + i * 1));
+
+		var facialFeatureOption = new int[8,7];
+		for (var x = 0; x < 8; x++) {
+			for (var y = 0; y < 7; y++)
+				facialFeatureOption[x, y] = page.ReadInt32( offset + (ushort)(11996 + x * 28 + y * 4));
+		}
+
+		var equipment = new EquipmentStruct[3];
+		for (var i = 0; i < 3; i++) {
+			equipment[i].Helmet = page.ReadUInt64(offset + (ushort)(i * 56 + 12224));
+			equipment[i].Top = page.ReadUInt64(offset + (ushort)(i * 56 + 12232));
+			equipment[i].Gloves = page.ReadUInt64(offset + (ushort)(i * 56 + 12240));
+			equipment[i].Legs = page.ReadUInt64(offset + (ushort)(i * 56 + 12248));
+			equipment[i].Shoes = page.ReadUInt64(offset + (ushort)(i * 56 + 12256));
+			equipment[i].Weapon = page.ReadUInt64(offset + (ushort)(i * 56 + 12264));
+			equipment[i].SubWeapon = page.ReadUInt64(offset + (ushort)(i * 56 + 12272));
+		}
+		
+		return new CharaMakeType(row) {
+			CharaMakeStruct = charaMakeStruct,
+			VoiceStruct = voiceStruct,
+			FacialFeatureOption = facialFeatureOption,
+			Equipment = equipment,
+			Race = page.ReadRowRef<Race>(0, offset),
+			Tribe = page.ReadRowRef<Tribe>(1, offset),
+			Gender = page.ReadColumn<sbyte>(2, offset)
+		};
+	}
 }

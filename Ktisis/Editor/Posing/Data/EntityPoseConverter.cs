@@ -150,7 +150,7 @@ public class EntityPoseConverter(EntityPose target) {
 			return [];
 
 		var partial = skeleton->PartialSkeletons[index];
-		if (partial.HavokPoses == null || partial.HavokPoses[0] == 0)
+		if (partial.HavokPoses.IsEmpty || partial.HavokPoses[0] == 0)
 			return [];
 		
 		return new BoneEnumerator(index, partial).EnumerateBones();

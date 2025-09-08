@@ -6,6 +6,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Data.Files;
+using Ktisis.Data.Mcdf;
 using Ktisis.Editor.Characters.State;
 using Ktisis.GameData.Excel.Types;
 using Ktisis.Scene.Entities.Game;
@@ -16,6 +17,8 @@ public unsafe delegate void DisableDrawHandler(IGameObject gameObject, DrawObjec
 
 public interface ICharacterManager : IDisposable {
 	public bool IsValid { get; }
+	
+	public McdfManager Mcdf { get; }
 
 	public event DisableDrawHandler? OnDisableDraw;
 	

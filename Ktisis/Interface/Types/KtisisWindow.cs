@@ -1,8 +1,7 @@
 using System;
 
 using Dalamud.Interface.Windowing;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Events;
 
@@ -35,6 +34,8 @@ public abstract class KtisisWindow : Window {
 			this.IsOpen = false;
 		}
 	}
+
+	public virtual void OnCreate() { }
 
 	public override void OnClose() {
 		this._closedEvent.Invoke(this);

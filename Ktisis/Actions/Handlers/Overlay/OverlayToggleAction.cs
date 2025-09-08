@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Keys;
 
+using Ktisis.Actions.Attributes;
 using Ktisis.Actions.Binds;
 using Ktisis.Actions.Types;
 using Ktisis.Core.Types;

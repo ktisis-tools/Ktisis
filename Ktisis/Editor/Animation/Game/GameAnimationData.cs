@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Dalamud.Plugin.Services;
-using Dalamud.Utility;
 
 using Lumina.Excel;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 namespace Ktisis.Editor.Animation.Game;
 
@@ -40,7 +39,7 @@ public class GameAnimationData(IDataManager data) {
 
 	private void FetchEmotes() {
 		var emotes = data.GetExcelSheet<Emote>()!
-			.Where(emote => !emote.Name.RawString.IsNullOrEmpty())
+			.Where(emote => !emote.Name.IsEmpty)
 			.SelectMany(MapEmotes)
 			.DistinctBy(emote => (emote.Name, emote.Slot));
 
@@ -49,9 +48,9 @@ public class GameAnimationData(IDataManager data) {
 		}
 
 		IEnumerable<EmoteAnimation> MapEmotes(Emote emote) {
-			for (var i = 0; i < emote.ActionTimeline.Length; i++) {
+			for (var i = 0; i < emote.ActionTimeline.Count; i++) {
 				var timeline = emote.ActionTimeline[i];
-				if (timeline is { Row: not 0 })
+				if (timeline is { IsValid: true, RowId: not 0 })
 					yield return new EmoteAnimation(emote, i);
 			}
 		}
@@ -59,8 +58,8 @@ public class GameAnimationData(IDataManager data) {
 
 	private void FetchActions() {
 		var actions = data.GetExcelSheet<Action>()!
-			.Where(action => !action.Name.RawString.IsNullOrEmpty())
-			.DistinctBy(action => (action.Name.RawString, action.Icon, action.AnimationStart.Row))
+			.Where(action => !action.Name.IsEmpty)
+			.DistinctBy(action => (action.Name.ExtractText(), action.Icon, action.AnimationStart.RowId))
 			.Select(action => new ActionAnimation(action));
 
 		lock (this.Animations) {
@@ -72,7 +71,7 @@ public class GameAnimationData(IDataManager data) {
 		this.Timelines ??= data.GetExcelSheet<ActionTimeline>()!;
 		
 		var timelines = this.Timelines
-			.Where(timeline => !timeline.Key.RawString.IsNullOrEmpty())
+			.Where(timeline => !timeline.Key.IsEmpty)
 			.Select(timeline => new TimelineAnimation(timeline));
 
 		lock (this.Animations) {

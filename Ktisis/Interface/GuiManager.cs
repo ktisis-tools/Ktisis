@@ -24,7 +24,7 @@ public class GuiManager : IDisposable {
 	private readonly WindowSystem _ws = new("Ktisis");
 	private readonly PopupManager _popup = new();
 	
-	private readonly List<KtisisWindow> Windows = new();
+	private readonly List<KtisisWindow> _windows = new();
 
 	public readonly LocaleManager Locale;
 	public readonly FileDialogManager FileDialogs;
@@ -62,17 +62,17 @@ public class GuiManager : IDisposable {
 	
 	public T Add<T>(T inst) where T : KtisisWindow {
 		this._ws.AddWindow(inst);
-		this.Windows.Add(inst);
+		this._windows.Add(inst);
 		inst.Closed += this.OnClose;
 		Ktisis.Log.Verbose($"Added window: {inst.GetType().Name} ('{inst.WindowName}')");
 		return inst;
 	}
 
 	public T? Get<T>() where T : KtisisWindow
-		=> (T?)this.Windows.Find(win => win is T);
+		=> (T?)this._windows.Find(win => win is T);
 
 	public bool Remove(KtisisWindow inst) {
-		var result = this.Windows.Remove(inst);
+		var result = this._windows.Remove(inst);
 		if (result) {
 			this._ws.RemoveWindow(inst);
 			inst.Closed -= this.OnClose;
@@ -82,9 +82,12 @@ public class GuiManager : IDisposable {
 		}
 		return result;
 	}
-	
-	public T Create<T>(params object[] parameters) where T : KtisisWindow
-		=> this.Add(this._di.Create<T>(parameters));
+
+	public T Create<T>(params object[] parameters) where T : KtisisWindow {
+		var inst = this._di.Create<T>(parameters);
+		inst.OnCreate();
+		return this.Add(inst);
+	}
 
 	public T CreatePopup<T>(params object[] parameters) where T : class, IPopup
 		=> this.AddPopupSingleton(this._di.Create<T>(parameters));
@@ -129,9 +132,9 @@ public class GuiManager : IDisposable {
 	// Disposal
 
 	private void RemoveAll() {
-		foreach (var window in this.Windows.ToList())
+		foreach (var window in this._windows.ToList())
 			this.Remove(window);
-		this.Windows.Clear();
+		this._windows.Clear();
 	}
 	
 	public void Dispose() {

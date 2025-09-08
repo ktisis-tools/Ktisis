@@ -22,7 +22,7 @@ public class SkeletonPoseData {
 			return null;
 
 		var partial = skeleton->PartialSkeletons[partialIndex];
-		if (partial.HavokPoses == null || partial.SkeletonResourceHandle == null)
+		if (partial.HavokPoses.IsEmpty || partial.SkeletonResourceHandle == null)
 			return null;
 		
 		var pose = partial.GetHavokPose(poseIndex);

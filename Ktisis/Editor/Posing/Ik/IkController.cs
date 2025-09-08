@@ -19,11 +19,14 @@ namespace Ktisis.Editor.Posing.Ik;
 public interface IIkController {
 	public void Setup(ISkeleton skeleton);
 
+	public int GroupCount { get; }
 	public IEnumerable<(string name, IIkGroup group)> GetGroups();
 	public bool TrySetupGroup(string name, CcdGroupParams param, out CcdGroup? group);
 	public bool TrySetupGroup(string name, TwoJointsGroupParams param, out TwoJointsGroup? group);
 
 	public void Solve(bool frozen = false);
+
+	public bool IsEnabled();
 	
 	public void Destroy();
 }
@@ -84,13 +87,13 @@ public class IkController : IIkController {
 			return;
 
 		var partial = skeleton->PartialSkeletons[0];
-		if (partial.HavokPoses == null || partial.SkeletonResourceHandle == null)
+		if (partial.HavokPoses.IsEmpty || partial.SkeletonResourceHandle == null)
 			return;
 		
 		var pose = partial.GetHavokPose(0);
 		if (pose == null || pose->Skeleton == null) return;
 		
-		var id = partial.SkeletonResourceHandle->ResourceHandle.Id;
+		var id = partial.SkeletonResourceHandle->Id;
 		
 		var groups = this.Groups.Values
 			.Where(group => group.IsEnabled && group.SkeletonId == id)
@@ -127,6 +130,8 @@ public class IkController : IIkController {
 	
 	private readonly Dictionary<string, IIkGroup> Groups = new();
 
+	public int GroupCount => this.Groups.Count;
+
 	public IEnumerable<(string name, IIkGroup group)> GetGroups()
 		=> this.Groups.Select(pair => (pair.Key, pair.Value));
 
@@ -154,7 +159,7 @@ public class IkController : IIkController {
 		
 		Ktisis.Log.Verbose($"Resolved bones: {start} {end}");
 
-		group.SkeletonId = data.Partial.SkeletonResourceHandle->ResourceHandle.Id;
+		group.SkeletonId = data.Partial.SkeletonResourceHandle->Id;
 
 		this.Groups[name] = group;
 		return true;
@@ -187,10 +192,15 @@ public class IkController : IIkController {
 		
 		Ktisis.Log.Verbose($"Resolved bones: {first} {second} {last} ({group.FirstTwistIndex}, {group.SecondTwistIndex})");
 		
-		group.SkeletonId = data.Partial.SkeletonResourceHandle->ResourceHandle.Id;
+		group.SkeletonId = data.Partial.SkeletonResourceHandle->Id;
 
 		this.Groups[name] = group;
 		return true;
+	}
+
+	// Validation
+	public bool IsEnabled() {
+		return this.Groups.Values.Any(group => group.IsEnabled);
 	}
 
 	// Disposal

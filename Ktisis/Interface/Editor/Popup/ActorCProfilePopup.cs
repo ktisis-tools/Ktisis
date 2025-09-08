@@ -4,7 +4,7 @@ using System.Linq;
 
 using GLib.Lists;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
@@ -12,8 +12,6 @@ using Ktisis.Interop.Ipc;
 using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Editor.Popup;
-
-using IPCProfileDataTuple = (Guid UniqueId, string Name, string VirtualPath, string CharacterName, bool IsEnabled);
 
 public class ActorCProfilePopup : KtisisPopup {
 	private readonly IEditorContext _ctx;

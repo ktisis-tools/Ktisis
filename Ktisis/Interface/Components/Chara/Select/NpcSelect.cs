@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 
 using Dalamud.Utility.Numerics;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Popups;
-
-using ImGuiNET;
 
 using Ktisis.Core.Attributes;
 using Ktisis.GameData.Excel.Types;

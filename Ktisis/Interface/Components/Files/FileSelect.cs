@@ -2,10 +2,9 @@ using System.IO;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
-
-using ImGuiNET;
 
 using Ktisis.Core.Attributes;
 
@@ -15,7 +14,7 @@ namespace Ktisis.Interface.Components.Files;
 public class FileSelect<T> where T : notnull {
 	// Events
 
-	public OpenDialogHandler? OpenDialog;
+	public OpenDialogHandler? OnOpenDialog;
 	public delegate void OpenDialogHandler(FileSelect<T> sender);
 	
 	// State
@@ -44,7 +43,7 @@ public class FileSelect<T> where T : notnull {
 		ImGui.SameLine();
 
 		if (Buttons.IconButton(FontAwesomeIcon.FileImport))
-			this.OpenDialog?.Invoke(this);
+			this.OnOpenDialog?.Invoke(this);
 
 		using (var _ = ImRaii.Disabled(!this.IsFileOpened)) {
 			ImGui.SameLine();

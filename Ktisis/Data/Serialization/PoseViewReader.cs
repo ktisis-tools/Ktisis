@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Numerics;
 using System.Xml;
 
@@ -38,9 +39,9 @@ public static class PoseViewReader {
 					if (file != null) view.Images.Add(file);
 					continue;
 				case XmlNodeType.Element when reader.Name is BoneTag:
-					if (!float.TryParse(reader.GetAttribute("x"), out var x))
+					if (!float.TryParse(reader.GetAttribute("x"), CultureInfo.InvariantCulture, out var x))
 						x = 0.0f;
-					if (!float.TryParse(reader.GetAttribute("y"), out var y))
+					if (!float.TryParse(reader.GetAttribute("y"), CultureInfo.InvariantCulture, out var y))
 						y = 0.0f;
 					var bone = new PoseViewBone {
 						Label = reader.GetAttribute("label") ?? string.Empty,

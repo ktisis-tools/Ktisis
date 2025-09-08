@@ -1,4 +1,5 @@
 using Dalamud.Game;
+using Dalamud.Game.ClientState.Objects;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -20,6 +21,7 @@ public sealed class DalamudServices {
 	[PluginService] private IDataManager Data { get; set; } = null!;
 	[PluginService] private ITextureProvider Tex { get; set; } = null!;
 	[PluginService] private ISigScanner SigScanner { get; set; } = null!;
+	[PluginService] private ITargetManager TargetManager { get; set; } = null!;
 
 	public void Add(IDalamudPluginInterface dpi, IServiceCollection services) {
 		dpi.Inject(this);
@@ -35,6 +37,7 @@ public sealed class DalamudServices {
 			.AddSingleton(this.Data)
 			.AddSingleton(this.Tex)
 			.AddSingleton(this.SigScanner)
-			.AddSingleton(this.ChatGui);
+			.AddSingleton(this.ChatGui)
+			.AddSingleton(this.TargetManager);
 	}
 }

@@ -4,8 +4,7 @@ using System.Numerics;
 
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface.Utility.Raii;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Actions;
 using Ktisis.Actions.Binds;
@@ -49,6 +48,7 @@ public class ActionKeybindEditor {
 	private readonly static Vector2 CellPadding = new(8, 8);
 
 	public void Draw() {
+		// TODO: allow sorting that isnt alphabetical
 		using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), false);
 		if (!frame.Success) return;
@@ -134,9 +134,20 @@ public class ActionKeybindEditor {
 
 		this.KeyCombo ??= new KeyCombo();
 
-		var keys = KeyHelpers.GetKeysDown().Except(this.KeysHandled).ToList();
-		this.KeysHandled.AddRange(keys);
-		foreach (var key in keys) {
+		var keys = KeyHelpers.GetKeysDown().ToList();
+		var pressed = keys.Except(this.KeysHandled).ToList();
+
+		// Finish editing when the primary key is released
+
+		if (this.KeyCombo.Key != VirtualKey.NO_KEY && !keys.Contains(this.KeyCombo.Key)) {
+			this.SetEditing(null);
+			return;
+		}
+
+		// Handle newly pressed keys
+
+		this.KeysHandled.AddRange(pressed);
+		foreach (var key in pressed) {
 			if (key == VirtualKey.RETURN) {
 				this.SetEditing(null);
 				return;
@@ -158,8 +169,9 @@ public class ActionKeybindEditor {
 				this.KeyCombo.AddModifier(prev);
 			}
 		}
-		
-		var text = this.KeyCombo.GetShortcutString();
+
+		var textCombo = this.KeysHandled.Count > 0 ? this.KeyCombo : keybind.Combo;
+		var text = textCombo.GetShortcutString();
 		ImGui.InputText("##EditKeybind", ref text, 256, ImGuiInputTextFlags.ReadOnly & ~ImGuiInputTextFlags.AutoSelectAll);
 		ImGui.SetKeyboardFocusHere(-1);
 	}

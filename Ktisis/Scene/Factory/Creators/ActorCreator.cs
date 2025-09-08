@@ -38,6 +38,11 @@ public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IA
 		if (this.Appearance != null)
 			await this.Scene.Context.Characters.ApplyCharaFile(entity, this.Appearance, gameState: true);
 
+		// create and destroy a dummy to force GameData.ObjectManager updates to cutsceneparentindex associations
+		// TODO: less hacky
+		var entity2 = await module.Spawn();
+		module.Delete(entity2);
+
 		return entity;
 	}
 }

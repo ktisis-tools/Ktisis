@@ -108,7 +108,7 @@ public sealed class PosingModule : HookModule {
 	
 	// UpdatePos
 
-	[Signature("E8 ?? ?? ?? ?? 84 DB 74 45", DetourName = nameof(UpdatePosDetour))]
+	[Signature("E8 ?? ?? ?? ?? 84 DB 74 3A", DetourName = nameof(UpdatePosDetour))]
 	private Hook<UpdatePosDelegate> _updatePosHook = null!;
 	private delegate void UpdatePosDelegate(nint gameObject);
 
