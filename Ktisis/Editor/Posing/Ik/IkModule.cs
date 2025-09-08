@@ -99,6 +99,9 @@ public sealed class IkModule : HookModule {
 
 	private void UpdateAnimationDetour(nint a1) {
 		this.UpdateAnimationHook.Original(a1);
+		// prevent re-evaluating ik if manager is still busy
+		if (this.Manager.IsSolvingIk) return;
+
 		try {
 			this.UpdateIkPoses();
 		} catch (Exception err) {
@@ -112,8 +115,9 @@ public sealed class IkModule : HookModule {
 		if (!this.Manager.IsValid) return;
 
 		IEnumerable<IIkController> controllers;
+		// get clean list of controllers where IK is on
 		lock (this.Controllers)
-			controllers = this.Controllers.ToList();
+			controllers = this.Controllers.Where(controller => controller.IsEnabled()).ToList();
 
 		try {
 			this.Manager.IsSolvingIk = true;

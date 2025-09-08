@@ -66,6 +66,8 @@ public class SceneDraw {
 	// Skeletons
 
 	private unsafe void DrawSkeleton(ISelectableFrame frame, EntityPose pose) {
+		if (!pose.ShouldDraw()) return;
+
 		var skeleton = pose.GetSkeleton();
 		if (skeleton == null || skeleton->PartialSkeletons == null) return;
 

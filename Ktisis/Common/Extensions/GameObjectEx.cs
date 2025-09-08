@@ -49,6 +49,8 @@ public static class GameObjectEx {
 	}
 
 	public unsafe static Skeleton* GetSkeleton(this IGameObject gameObject) {
+		if (!gameObject.IsValid()) return null;
+
 		var csPtr = (CSGameObject*)gameObject.Address;
 		if (csPtr == null || csPtr->DrawObject == null)
 			return null;
@@ -63,7 +65,7 @@ public static class GameObjectEx {
 	public unsafe static bool IsDrawing(this IGameObject gameObject) {
 		var csActor = (CSGameObject*)gameObject.Address;
 		if (csActor == null) return false;
-		Ktisis.Log.Info($"RenderFlags: {csActor->RenderFlags:X}");
+		// Ktisis.Log.Info($"RenderFlags: {csActor->RenderFlags:X}");
 		return csActor->RenderFlags == 0x00;
 	}
 
