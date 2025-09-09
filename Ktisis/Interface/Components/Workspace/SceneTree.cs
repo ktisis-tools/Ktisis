@@ -15,6 +15,7 @@ using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -110,6 +111,7 @@ public class SceneTree {
 		if (isRender) {
 			var flag = isExpand switch {
 				_ when children.Count is 0 => TreeNodeFlag.Leaf,
+				_ when node is EntityPose => TreeNodeFlag.Leaf,
 				true => TreeNodeFlag.Expand,
 				false => TreeNodeFlag.Collapse
 			};
@@ -130,24 +132,26 @@ public class SceneTree {
 			}
 		}
 
-		if (isExpand) this.IterateTree(children);
+		if (isExpand || node is EntityPose) this.IterateTree(children);
 	}
 
 	private bool DrawNodeLabel(SceneEntity item, Vector2 pos, TreeNodeFlag flag, float rightAdjust = 0.0f) {
 		var display = this._ctx.Config.GetEntityDisplay(item);
-        
+
         // Caret
 
+		var expand = false;
 		var style = ImGui.GetStyle();
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(pos.X - style.ItemSpacing.X);
-		var expand = this.DrawNodeCaret(display.Color, flag);
-		
+		if(!(item is EntityPose))
+			expand = this.DrawNodeCaret(display.Color, flag);
+
 		// Icon + Label
 
 		using var _ = ImRaii.PushColor(ImGuiCol.Text, display.Color);
 		this.DrawNodeIcon(display.Icon);
-			
+
 		var avail = ImGui.GetContentRegionAvail().X;
 		ImGui.Text(item.Name.FitToWidth(avail - rightAdjust));
 
