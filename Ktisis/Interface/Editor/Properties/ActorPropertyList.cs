@@ -61,7 +61,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (Buttons.IconButton(FontAwesomeIcon.Edit))
 			this._ctx.Interface.OpenActorEditor(actor);
 		ImGui.SameLine(0, spacing);
-		ImGui.Text("Edit actor appearance");
+		ImGui.Text("Actor Editor");
 		
 		ImGui.Spacing();
 		
@@ -70,7 +70,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		// if (ImGui.Button("Import"))
 		// 	this._ctx.Interface.OpenCharaImport(actor);
 		// ImGui.SameLine(0, spacing);
-		if (ImGui.Button("Export"))
+		if (ImGui.Button("Export Chara"))
 			this._ctx.Interface.OpenCharaExport(actor);
 
 		ImGui.Spacing();

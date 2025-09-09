@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility.Numerics;
 using Dalamud.Bindings.ImGui;
 
+using GLib.Widgets;
 using GLib.Popups;
 
 using Ktisis.Core.Attributes;
@@ -78,6 +81,12 @@ public class NpcSelect {
 				break;
 			default:
 				throw new InvalidEnumArgumentException($"Invalid value: {this._npcLoadState}");
+		}
+
+		using (var _ = ImRaii.Disabled(this.Selected == null)) {
+			ImGui.SameLine();
+			if (Buttons.IconButton(FontAwesomeIcon.UndoAlt))
+				this.Selected = null;
 		}
 	}
 

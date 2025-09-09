@@ -63,8 +63,15 @@ public class PosePropertyList : ObjectPropertyList {
 		// if (ImGui.Button("Import"))
 		// 	this._ctx.Interface.OpenPoseImport(actor);
 		// ImGui.SameLine(0, spacing);
-		if (ImGui.Button("Export"))
+		if (ImGui.Button("Export Pose"))
 			this._ctx.Interface.OpenPoseExport(pose);
+		ImGui.Spacing();
+		ImGui.Button("Set Reference Pose");
+		ImGui.SameLine(0, spacing);
+		ImGui.Button("Stash Pose");
+		ImGui.SameLine(0, spacing);
+		using (ImRaii.Disabled())
+			ImGui.Button("Apply Pose");
 
 		ImGui.Spacing();
 		ImGui.Separator();
