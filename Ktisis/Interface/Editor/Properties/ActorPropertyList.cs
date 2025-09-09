@@ -74,8 +74,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.Spacing();
 
 		var embedEditor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);
-		// if (!embedEditor.IsOpen)
-		// 	embedEditor.OnOpen();
+		embedEditor.OnOpen();
 		embedEditor.SetTarget(actor);
 		embedEditor.DrawEmbed();
 	}
