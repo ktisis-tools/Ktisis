@@ -31,6 +31,8 @@ public class PosingManager : IPosingManager {
 	public bool IsValid => this._context.IsValid;
 
 	public PoseMemento? StashedPose { get; set; } = null;
+	public DateTime? StashedAt { get; set; } = null;
+	public string? StashedFrom { get; set; } = null;
 	
 	public IAttachManager Attachments { get; }
 
@@ -213,9 +215,11 @@ public class PosingManager : IPosingManager {
 				Modes = modes,
 				Transforms = transforms,
 				Bones = null,
-				Initial = container,
+				Initial = container, // todo: does initial state matter for the stash save?
 				Final = container
 			};
+			this.StashedAt = DateTime.Now;
+			this.StashedFrom = pose.Parent.Name;
 		});
 	}
 	public Task ApplyStashedPose(EntityPose pose) {

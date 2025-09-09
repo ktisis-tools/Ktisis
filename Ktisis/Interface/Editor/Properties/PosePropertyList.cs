@@ -66,15 +66,26 @@ public class PosePropertyList : ObjectPropertyList {
 		if (ImGui.Button("Export Pose"))
 			this._ctx.Interface.OpenPoseExport(pose);
 		ImGui.Spacing();
+
 		if (ImGui.Button("Set to Reference Pose"))
 			await this._ctx.Posing.ApplyReferencePose(pose);
 		ImGui.SameLine(0, spacing);
+
 		if (ImGui.Button("Stash Pose"))
 			await this._ctx.Posing.StashPose(pose);
 		ImGui.SameLine(0, spacing);
-		using (ImRaii.Disabled(this._ctx.Posing.StashedPose == null))
+
+		// todo: GLib.ButtonTooltip? currently only have a helper for IconButtonTooltip
+		var _hint = "";
+		using (var _disabled = ImRaii.Disabled(this._ctx.Posing.StashedPose == null)) {
+			_hint = _disabled ? "" : $"Pose stashed at {this._ctx.Posing.StashedAt} from Actor {this._ctx.Posing.StashedFrom}";
 			if(ImGui.Button("Apply Pose"))
 				await this._ctx.Posing.ApplyStashedPose(pose);
+		}
+		if (ImGui.IsItemHovered()) {
+			using (ImRaii.Tooltip())
+				ImGui.Text(_hint);
+		}
 
 		ImGui.Spacing();
 		ImGui.Separator();

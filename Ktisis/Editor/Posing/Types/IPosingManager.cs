@@ -19,6 +19,8 @@ public interface IPosingManager : IDisposable {
 	public IAttachManager Attachments { get; }
 
 	public PoseMemento? StashedPose { get; set; }
+	public DateTime? StashedAt { get; set; }
+	public string? StashedFrom { get; set; }
 	
 	public void Initialize();
 
