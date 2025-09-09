@@ -72,6 +72,11 @@ public class ActorPropertyList : ObjectPropertyList {
 		// ImGui.SameLine(0, spacing);
 		if (ImGui.Button("Export"))
 			this._ctx.Interface.OpenCharaExport(actor);
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+		ImGui.Text("Import actor appearance...");
 		ImGui.Spacing();
 
 		var embedEditor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);

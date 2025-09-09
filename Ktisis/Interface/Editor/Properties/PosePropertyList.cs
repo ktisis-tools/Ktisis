@@ -65,6 +65,11 @@ public class PosePropertyList : ObjectPropertyList {
 		// ImGui.SameLine(0, spacing);
 		if (ImGui.Button("Export"))
 			this._ctx.Interface.OpenPoseExport(pose);
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+		ImGui.Text($"Import pose file...");
 		ImGui.Spacing();
 
 		// pose import dialog
