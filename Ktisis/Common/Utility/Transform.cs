@@ -83,4 +83,9 @@ public class Transform {
 		Rotation = trans.Rotation,
 		Scale = trans.Scale
 	};
+
+	public bool Equals(Transform trans) =>
+		this.Position.Equals(trans.Position)
+		&& this.Rotation.Equals(trans.Rotation)
+		&& this.Scale.Equals(trans.Scale);
 }
