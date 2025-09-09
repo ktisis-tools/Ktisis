@@ -17,6 +17,8 @@ public interface IPosingManager : IDisposable {
 	public bool IsValid { get; }
 	
 	public IAttachManager Attachments { get; }
+
+	public PoseMemento? StashedPose { get; set; }
 	
 	public void Initialize();
 
@@ -29,4 +31,7 @@ public interface IPosingManager : IDisposable {
 
 	public Task ApplyPoseFile(EntityPose pose, PoseFile file, PoseMode modes = PoseMode.All, PoseTransforms transforms = PoseTransforms.Rotation, bool selectedBones = false, bool anchorGroups = false);
 	public Task<PoseFile> SavePoseFile(EntityPose pose);
+
+	public Task StashPose(EntityPose pose);
+	public Task ApplyStashedPose(EntityPose pose);
 }

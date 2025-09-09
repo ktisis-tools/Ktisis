@@ -49,7 +49,7 @@ public class PosePropertyList : ObjectPropertyList {
 			builder.AddHeader("Inverse Kinematics", () => this.DrawConstraintsTab(pose), priority: 2);
 	}
 
-	private void DrawPoseTab(EntityPose pose) {
+	private async void DrawPoseTab(EntityPose pose) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		
 		// Parenting toggle
@@ -66,12 +66,15 @@ public class PosePropertyList : ObjectPropertyList {
 		if (ImGui.Button("Export Pose"))
 			this._ctx.Interface.OpenPoseExport(pose);
 		ImGui.Spacing();
-		ImGui.Button("Set Reference Pose");
+		if (ImGui.Button("Set to Reference Pose"))
+			await this._ctx.Posing.ApplyReferencePose(pose);
 		ImGui.SameLine(0, spacing);
-		ImGui.Button("Stash Pose");
+		if (ImGui.Button("Stash Pose"))
+			await this._ctx.Posing.StashPose(pose);
 		ImGui.SameLine(0, spacing);
-		using (ImRaii.Disabled())
-			ImGui.Button("Apply Pose");
+		using (ImRaii.Disabled(this._ctx.Posing.StashedPose == null))
+			if(ImGui.Button("Apply Pose"))
+				await this._ctx.Posing.ApplyStashedPose(pose);
 
 		ImGui.Spacing();
 		ImGui.Separator();

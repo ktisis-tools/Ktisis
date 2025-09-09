@@ -146,9 +146,9 @@ public class CharaImportUI {
 			this.DrawModeSwitch("Face", SaveModes.AppearanceFace);
 			ImGui.SameLine();
 			this.DrawModeSwitch("Hair", SaveModes.AppearanceHair);
-			
+
 			ImGui.Spacing();
-			
+
 			ImGui.Text("Equipment");
 			this.DrawModeSwitch("Gear", SaveModes.EquipmentGear);
 			ImGui.SameLine();
