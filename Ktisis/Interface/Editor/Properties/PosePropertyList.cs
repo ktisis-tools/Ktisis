@@ -188,6 +188,7 @@ public class PosePropertyList : ObjectPropertyList {
 	private static bool TryGetEntityPose(SceneEntity entity, [NotNullWhen(true)] out EntityPose? result) {
 		result = entity switch {
 			ActorEntity actor => actor.Pose,
+			BoneNodeGroup group => group.Pose,
 			BoneNode node => node.Pose,
 			EntityPose pose => pose,
 			_ => null

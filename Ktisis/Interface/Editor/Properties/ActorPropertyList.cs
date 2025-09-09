@@ -32,6 +32,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (
 			entity switch {
 				BoneNode node => node.Pose.Parent,
+				BoneNodeGroup group => group.Pose.Parent,
 				EntityPose pose => pose.Parent,
 				_ => entity
 			} is not ActorEntity actor
