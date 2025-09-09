@@ -15,6 +15,7 @@ using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Components.Workspace;
@@ -203,6 +204,8 @@ public class SceneTree {
 		this.DrawVisibilityButton(node, ref cursor, isHover);
 		if (node is IAttachable attach)
 			this.DrawAttachButton(attach, ref cursor, isHover);
+		if (node is ActorEntity actor)
+			this.DrawHideButton(actor, ref cursor, isHover);
 		
 		return initial - cursor;
 	}
@@ -233,6 +236,12 @@ public class SceneTree {
 		var name = bone != null ? this._ctx.Locale.GetBoneName(bone) : "UNKNOWN";
 		using var _ = ImRaii.Tooltip();
 		ImGui.Text($"Attached to {name}");
+	}
+
+	private void DrawHideButton(ActorEntity actor, ref float cursor, bool isHover) {
+		var color = actor.IsHidden ? 0xEFFFFFFF : 0x80FFFFFF;
+		if (this.DrawButton(ref cursor, FontAwesomeIcon.UserNinja, color) && isHover)
+			actor.IsHidden = !actor.IsHidden;
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {

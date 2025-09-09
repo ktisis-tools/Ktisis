@@ -15,6 +15,7 @@ using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
+using Ktisis.Structs.Actors;
 
 namespace Ktisis.Scene.Entities.Game;
 
@@ -22,6 +23,20 @@ public class ActorEntity : CharaEntity, IDeletable {
 	public readonly IGameObject Actor;
 	
 	public bool IsManaged { get; set; }
+	public unsafe bool IsHidden {
+		get {
+			var chara = (CharacterEx*)this.Character;
+			return chara != null && chara->Opacity == 0.0f;
+		}
+		set {
+			var chara = (CharacterEx*)this.Character;
+			if (chara != null)
+				if (chara->Opacity != 0.0f)
+					chara->Opacity = 0.0f;
+				else
+					chara->Opacity = 1.0f;
+		}
+	}
 
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
 
