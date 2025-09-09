@@ -21,6 +21,7 @@ public class CharaImportUI {
 	
 	private readonly NpcSelect _npcs;
 	private readonly FileSelect<CharaFile> _select;
+	private bool _isInit = false;
 
 	public CharaImportUI(
 		NpcSelect npcs,
@@ -35,7 +36,9 @@ public class CharaImportUI {
 	// Initialization
 
 	public void Initialize() {
-		this._npcs.Fetch();
+		if(!this._isInit)
+			this._npcs.Fetch();
+		this._isInit = true;
 	}
 	
 	// Events

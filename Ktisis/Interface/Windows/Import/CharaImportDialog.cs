@@ -47,6 +47,7 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	}
 
 	public void DrawEmbed() {
+		this.OnOpen();
 		this._import.DrawLoadMethods();
 		ImGui.Spacing();
 		this._import.DrawImport();
