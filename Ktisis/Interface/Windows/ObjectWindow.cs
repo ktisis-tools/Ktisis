@@ -168,7 +168,6 @@ public class ObjectWindow : KtisisWindow {
 		if (selectionCount != 0 && selected != null && selected is BoneNode bNode) {
 			var siblingNode = bNode.Pose.TryResolveSibling(bNode);
 			var siblingAvailable = siblingNode != null;
-			var siblingIcon = siblingAvailable ? (selectionCount == 1 ? FontAwesomeIcon.Users : FontAwesomeIcon.UsersSlash) : FontAwesomeIcon.UsersSlash;
 			var siblingKey = siblingAvailable ? (selectionCount == 1 ? "available" : "multiple") : "unavailable";
 			var siblingHint = this._ctx.Locale.Translate(
 				$"transform_edit.sibling.{siblingKey}",
@@ -178,7 +177,7 @@ public class ObjectWindow : KtisisWindow {
 			);
 
 			using (ImRaii.Disabled(!siblingAvailable || selectionCount != 1)) // disable if current bone has no sibling or if multiple selections
-				if (Buttons.IconButtonTooltip(siblingIcon, siblingHint, iconBtnSize))
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
 					this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
 
 			ImGui.SameLine(0, spacing);
