@@ -49,6 +49,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	}
 
 	public void DrawEmbed() {
+		this.PreDraw();
 		this._select.Draw();
 		
 		ImGui.Spacing();

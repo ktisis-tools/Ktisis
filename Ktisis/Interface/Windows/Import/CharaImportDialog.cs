@@ -26,12 +26,6 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 		this._import.Context = ctx;
 		this._import.OnNpcSelected += this.OnNpcSelected;
 	}
-
-	public override void PreDraw() {
-		if (this._ctx.IsValid) return;
-		Ktisis.Log.Verbose($"State for {this.GetType().Name} is stale, closing...");
-		this.Close();
-	}
 	
 	// Events
 
