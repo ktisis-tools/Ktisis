@@ -77,6 +77,7 @@ public class SceneEntityMenuBuilder {
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
+			.Action($"{(actor.IsHidden ? "Unhide" : "Hide")} Actor", actor.ToggleHidden)
 			.Separator()
 			.Action("Edit appearance", this.OpenEditor)
 			.Group(sub => this.BuildActorIpcMenu(sub, actor))

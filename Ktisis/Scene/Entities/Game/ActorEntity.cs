@@ -134,6 +134,8 @@ public class ActorEntity : CharaEntity, IDeletable {
 	}
 
 	public void Redraw() => this.Actor.Redraw();
+
+	public void ToggleHidden() => this.IsHidden = !this.IsHidden;
 	 
 	// Deletable
 
