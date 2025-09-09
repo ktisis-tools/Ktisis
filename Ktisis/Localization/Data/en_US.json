@@ -108,6 +108,11 @@
 			"parallel": "Parallel Transform",
 			"mirror": "Mirror Transform"
 		},
+		"sibling": {
+			"available": "Multi-select sibling bone: %bone%",
+			"unavailable": "Bone %bone% has no sibling",
+			"multiple": "Multi-select sibling bone: %bone%\nCan only select sibling when 1 bone is selected!"
+		},
 		"gizmo": {
 			"show": "Show rotation gizmo",
 			"hide": "Hide rotation gizmo"

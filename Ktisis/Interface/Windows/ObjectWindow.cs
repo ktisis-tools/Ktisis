@@ -1,4 +1,6 @@
 using System.Numerics;
+using System.Collections.Generic;
+using System.Linq;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
@@ -9,11 +11,14 @@ using GLib.Widgets;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms.Types;
+using Ktisis.Editor.Selection;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Objects;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
+using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Windows;
 
@@ -62,9 +67,9 @@ public class ObjectWindow : KtisisWindow {
 	}
 
 	public override void Draw() {
-		this.DrawToggles();
-		
 		var target = this._ctx.Transform.Target;
+		this.DrawToggles(target);
+
 		this.DrawTransform(target);
 		this.DrawProperties(target);
 	}
@@ -122,7 +127,7 @@ public class ObjectWindow : KtisisWindow {
 	
 	// Toggle options
 
-	private void DrawToggles() {
+	private void DrawToggles(ITransformTarget? target) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
 		var iconSize = UiBuilder.IconFont.FontSize * 2;
@@ -153,6 +158,31 @@ public class ObjectWindow : KtisisWindow {
 			this._ctx.Config.Gizmo.MirrorRotation ^= true;
 		
 		ImGui.SameLine(0, spacing);
+
+		// Sibling Link selector
+		// if we have a selection & target's primary entity is a bone node, draw the button
+		// if we have >1 bonenodes selected or no sibling, disable the button
+		// if we have 1 bonenode selected that has a sibling, enable the button
+		var selected = target?.Primary;
+		var selectionCount = target?.Targets.Count();
+		if (selectionCount != 0 && selected != null && selected is BoneNode bNode) {
+			var siblingNode = bNode.Pose.TryResolveSibling(bNode);
+			var siblingAvailable = siblingNode != null;
+			var siblingIcon = siblingAvailable ? (selectionCount == 1 ? FontAwesomeIcon.Users : FontAwesomeIcon.UsersSlash) : FontAwesomeIcon.UsersSlash;
+			var siblingKey = siblingAvailable ? (selectionCount == 1 ? "available" : "multiple") : "unavailable";
+			var siblingHint = this._ctx.Locale.Translate(
+				$"transform_edit.sibling.{siblingKey}",
+				new Dictionary<string, string> {
+					{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
+				}
+			);
+
+			using (ImRaii.Disabled(!siblingAvailable || selectionCount != 1)) // disable if current bone has no sibling or if multiple selections
+				if (Buttons.IconButtonTooltip(siblingIcon, siblingHint, iconBtnSize))
+					this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
+
+			ImGui.SameLine(0, spacing);
+		}
 
 		var avail = ImGui.GetContentRegionAvail().X;
 		if (avail > iconSize)

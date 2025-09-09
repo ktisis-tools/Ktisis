@@ -201,6 +201,14 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	public BoneNode? FindBoneByName(string name)
 		=> this.BoneMap.Values.FirstOrDefault(bone => bone.Info.Name == name);
 
+	public BoneNode? TryResolveSibling(BoneNode bone) {
+		var name = bone.Info.Name;
+		if (!name.EndsWith("_l") && !name.EndsWith("_r")) return null;
+
+		var prefix = name[..^2];
+		return this.BoneMap.Values.FirstOrDefault(potentialBone => potentialBone.Info.Name[..^2] == prefix && potentialBone.Info.Name != name);
+	}
+
 	public PartialSkeletonInfo? GetPartialInfo(int index)
 		=> this.Partials.GetValueOrDefault(index);
 
