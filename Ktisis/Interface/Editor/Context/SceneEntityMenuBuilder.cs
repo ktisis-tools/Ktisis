@@ -1,9 +1,16 @@
-﻿using GLib.Popups.Context;
+﻿using System;
+using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
+using Dalamud.Bindings.ImGui;
+using GLib.Popups.Context;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Interface.Editor.Types;
+using Ktisis.Interface.Nodes;
+using Ktisis.Interface.Widgets;
+using Ktisis.Scene;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
@@ -39,9 +46,19 @@ public class SceneEntityMenuBuilder {
 			menu.Action("Select", () => this._entity.Select(SelectMode.Multiple));
 		else
 			menu.Action("Unselect", this._entity.Unselect);
-		
+
 		if (this._entity is IVisibility vis)
 			menu.Action("Toggle display", () => vis.Toggle());
+
+		if (this._entity.Root is ActorEntity actorEntity)
+			menu.SubMenu("Presets...", sub => {
+				foreach (var (name, isEnabled) in actorEntity.GetPresets()) {
+					sub.CheckableAction(name, isEnabled != PresetState.Disabled, () => actorEntity.TogglePreset(name));
+				}
+
+				sub.Separator()
+					.Action("Save New", () => this.Ui.OpenSavePreset(actorEntity));
+			});
 	}
 
 	private void BuildEntityBaseBottom(ContextMenuBuilder menu) {
@@ -74,18 +91,18 @@ public class SceneEntityMenuBuilder {
 	
 	// Actors
 
-	private void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
+	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
 			.Separator()
-			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Action("Edit appearance", this.OpenEditor)
+			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Separator()
 			.SubMenu("Import...", sub => {
 				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
 				
-				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive) {
+				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
 					builder.Action("Mare data (.mcdf)", () => {
 						this.Ui.OpenMcdfFile(path => this.ImportMcdf(actor, path));
 					});
@@ -97,11 +114,13 @@ public class SceneEntityMenuBuilder {
 			});
 	}
 
-	private void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
+	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		if (this._ctx.Plugin.Ipc.IsPenumbraActive)
 			menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
 		if (this._ctx.Plugin.Ipc.IsCustomizeActive)
 			menu.Action("Assign C+ profile", () => this.Ui.OpenAssignCProfile(actor));
+		if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null)
+			menu.Action("Revert IPC data", () => this._ctx.Characters.Mcdf.Revert(actor.Actor));
 	}
 
 	private void ImportMcdf(ActorEntity actor, string path) {

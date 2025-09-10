@@ -25,6 +25,8 @@ public interface IIkController {
 	public bool TrySetupGroup(string name, TwoJointsGroupParams param, out TwoJointsGroup? group);
 
 	public void Solve(bool frozen = false);
+
+	public bool IsEnabled();
 	
 	public void Destroy();
 }
@@ -194,6 +196,11 @@ public class IkController : IIkController {
 
 		this.Groups[name] = group;
 		return true;
+	}
+
+	// Validation
+	public bool IsEnabled() {
+		return this.Groups.Values.Any(group => group.IsEnabled);
 	}
 
 	// Disposal
