@@ -49,6 +49,7 @@ public class ConfigManager : IDisposable {
 			if (cfg is { Version: < 11 }) {
 				cfg.Version = 11;
 				this.GenerateDefaultPresets(cfg);
+				this.MigrateSchema(cfg);
 			}
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");

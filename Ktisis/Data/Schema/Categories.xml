@@ -237,6 +237,12 @@
 	</Category>
 	<Category Id="Body">
 		<Category Id="Arms">
+            <Category Id="CustomArms">
+                <Bones>
+                    iv_nitoukin_r
+                    iv_nitoukin_l
+                </Bones>
+            </Category>
 			<Category Id="LeftArm">
 				<Bones>
 					j_sako_l
@@ -370,6 +376,8 @@
 					<Bones>
 						iv_c_mune_l
 						iv_c_mune_r
+                        iv_kyokin_phys_l
+                        iv_kyokin_phys_r
 					</Bones>
 				</Category>
 			</Category>
@@ -452,8 +460,24 @@
 					</Category>
 				</Category>
 			</Category>
+            <Category Id="CustomAbdomen">
+                <Bones>
+                    iv_fukubu_phys
+					ya_fukubu_phys
+                    iv_fukubu_phys_l
+                    iv_fukubu_phys_r
+                </Bones>
+            </Category>
 		</Category>
 		<Category Id="Legs">
+            <Category id="CustomLegs">
+                <Bones>
+                    iv_daitai_phys_l
+                    iv_daitai_phys_r
+                    ya_daitai_phys_l
+                    ya_daitai_phys_r
+                </Bones>
+            </Category>
 			<Category Id="LeftLeg">
 				<Bones>
 					j_asi_a_l
@@ -548,6 +572,12 @@
 					iv_ochinko_f
 					j_penis
 					j_balls
+                    iv_funyachin_phy_a
+                    iv_funyachin_phy_b
+                    iv_funyachin_phy_c
+                    iv_funyachin_phy_d
+                    iv_kintama_phys_l
+                    iv_kintama_phys_r
 				</Bones>
 				<Preset Name="Body (Custom)" />
 			</Category>
@@ -568,6 +598,8 @@
 				iv_koumon_r
 				iv_shiri_l
 				iv_shiri_r
+                ya_shiri_phys_l
+                ya_shiri_phys_r
 			</Bones>
 			<Preset Name="Body (Custom)" />
 		</Category>
