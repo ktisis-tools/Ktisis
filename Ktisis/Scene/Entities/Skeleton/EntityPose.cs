@@ -205,7 +205,7 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		=> this.Partials.GetValueOrDefault(index);
 
 	public bool ShouldDraw() {
-		return this.RecurseVisible().Any(vis => vis.Visible);
+		return this.Recurse().OfType<IVisibility>().Any(vis => vis.Visible);
 	}
 	// Remove handlers
 

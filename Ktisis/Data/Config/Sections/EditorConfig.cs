@@ -10,6 +10,7 @@ public class EditorConfig {
 	// Workspace
 
 	public bool OpenOnEnterGPose = true;
+	public bool ConfirmExit = false;
 
 	public bool ToggleEditorOnSelect = true;
 
@@ -27,6 +28,8 @@ public class EditorConfig {
 	public float WorkcamSens = 0.215f;
 	
 	public Dictionary<EntityType, EntityDisplay> Display = EntityDisplay.GetDefaults();
+
+	public bool LinkedGaze = false;
 	
 	// Reference images
 	
@@ -40,7 +43,7 @@ public class EditorConfig {
 
 	public bool PlayEmoteStart = true;
 	public bool ForceLoop = true;
-	
+
 	// Helpers
 
 	public EntityDisplay GetDisplayForType(EntityType type)

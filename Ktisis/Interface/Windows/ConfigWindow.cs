@@ -1,9 +1,12 @@
 using System;
+using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+
+using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using GLib.Widgets;
 
@@ -25,6 +28,7 @@ public class ConfigWindow : KtisisWindow {
 	private readonly ActionKeybindEditor _keybinds;
 	private readonly BoneCategoryEditor _boneCategories;
 	private readonly GizmoStyleEditor _gizmoStyle;
+	private readonly PresetEditor _presetEditor;
 	public readonly LocaleManager Locale;
 
 	private Configuration Config => this._cfg.File;
@@ -36,6 +40,7 @@ public class ConfigWindow : KtisisWindow {
 		ActionKeybindEditor keybinds,
 		BoneCategoryEditor boneCategories,
 		GizmoStyleEditor gizmoStyle,
+		PresetEditor presetEditor,
 		LocaleManager locale
 	) : base("Ktisis Settings") {
 		this._cfg = cfg;
@@ -44,6 +49,7 @@ public class ConfigWindow : KtisisWindow {
 		this._keybinds = keybinds;
 		this._boneCategories = boneCategories;
 		this._gizmoStyle = gizmoStyle;
+		this._presetEditor = presetEditor;
 		this.Locale = locale;
 	}
 	
@@ -52,6 +58,7 @@ public class ConfigWindow : KtisisWindow {
 	public override void OnOpen() {
 		this._keybinds.Setup();
 		this._boneCategories.Setup();
+		this._presetEditor.Setup();
 	}
 	
 	// Draw
@@ -65,6 +72,7 @@ public class ConfigWindow : KtisisWindow {
 		DrawTab(this.Locale.Translate("config.workspace.title"), this.DrawWorkspaceTab);
 		DrawTab(this.Locale.Translate("config.autosave.title"), this.DrawAutoSaveTab);
 		DrawTab(this.Locale.Translate("config.input.title"), this.DrawInputTab);
+		DrawTab(this.Locale.Translate("config.presets.title"), this.DrawPresetsTab);
 	}
 
 	private void DrawHint(string localeHandle) {
@@ -135,6 +143,7 @@ public class ConfigWindow : KtisisWindow {
 	
 	private void DrawWorkspaceTab() {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirm_exit"), ref this.Config.Editor.ConfirmExit);
 		
 		ImGui.Spacing();
 		
@@ -177,6 +186,7 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.enable"), ref cfg.Enabled);
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.disconnect"), ref cfg.OnDisconnect);
+		ImGui.Checkbox(this.Locale.Translate("config.autosave.ondisable"), ref cfg.OnDisable);
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.clear"), ref cfg.ClearOnExit);
 		
 		ImGui.Spacing();
@@ -213,6 +223,19 @@ public class ConfigWindow : KtisisWindow {
 			ImGui.TableNextColumn();
 			ImGui.TextUnformatted(text);
 		}
+	}
+	
+	//Presets
+
+	public void DrawPresetsTab() {
+		var cfg = this.Config.Presets;
+
+		this._presetEditor.Draw();
+		
+		var style = ImGui.GetStyle();
+		var dummy = ImGui.GetContentRegionAvail() with { X = 0.0f };
+		dummy.Y -= style.ItemSpacing.Y + style.CellPadding.Y;
+		ImGui.Dummy(dummy);
 	}
 	
 	// Handlers
