@@ -282,6 +282,7 @@
 			"legacyWindows": "Prefer legacy window behavior",
 			"legacyPoseTabs": "Prefer legacy pose view tabs",
 			"legacyLightEditor": "Prefer legacy light editor",
+			"confirmExit": "Ensure shift has to be held to exit posing mode",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
