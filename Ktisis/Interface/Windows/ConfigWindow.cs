@@ -142,6 +142,7 @@ public class ConfigWindow : KtisisWindow {
 	// Workspace
 	
 	private void DrawWorkspaceTab() {
+		var refreshNames = false;
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirm_exit"), ref this.Config.Editor.ConfirmExit);
 		
@@ -151,7 +152,7 @@ public class ConfigWindow : KtisisWindow {
 		
 		ImGui.Spacing();
 
-		ImGui.Checkbox(this.Locale.Translate("config.workspace.incognitoPlayerNames"), ref this.Config.Editor.IncognitoPlayerNames);
+		refreshNames |= ImGui.Checkbox(this.Locale.Translate("config.workspace.incognitoPlayerNames"), ref this.Config.Editor.IncognitoPlayerNames);
 		this.DrawHint("config.workspace.hintIncognito");
 
 		ImGui.Spacing();
@@ -167,6 +168,8 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.slowMulti"), ref this.Config.Editor.WorkcamSlowMulti, 0.001f, 0.0f, 100.0f);
 		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.vertMulti"), ref this.Config.Editor.WorkcamVertMulti, 0.001f, 0.0f, 100.0f);
 		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.sens"), ref this.Config.Editor.WorkcamSens, 0.001f, 0.0f, 100.0f);
+
+		if (refreshNames) this.RefreshNames();
 	}
 	
 	// Input
@@ -241,6 +244,8 @@ public class ConfigWindow : KtisisWindow {
 	// Handlers
 	
 	private void RefreshScene() => this._context.Current?.Scene.Refresh();
+
+	private void RefreshNames() => this._context.Current?.Scene.RefreshActorNames();
 
 	public override void OnClose() {
 		base.OnClose();

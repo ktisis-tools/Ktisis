@@ -72,6 +72,8 @@ public class ActorEntity : CharaEntity, IDeletable {
 			chara->Wetness = wetness;
 	}
 
+	public void RefreshName() => this.Name = this.Actor.GetNameOrFallback(this.Scene.Context);
+
 	// Appearance
 
 	public AppearanceState Appearance { get; } = new();
