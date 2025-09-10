@@ -54,14 +54,20 @@ public class PoseAutoSave : IDisposable {
 			this._timer.Enabled = this._cfg.Enabled;
 	}
 
-	private void OnElapsed(object? sender, ElapsedEventArgs e) {
+	private async void OnElapsed(object? sender, ElapsedEventArgs e) {
 		if (!this.Posing.IsValid) {
 			this._timer.Stop();
 			return;
 		}
 
-		if (this._cfg.Enabled && this.Posing.IsEnabled)
-			this._framework.RunOnFrameworkThread(this.Save);
+		if (!this._cfg.Enabled || !this.Posing.IsEnabled)
+			return;
+		
+		try {
+			await this._framework.RunOnFrameworkThread(this.Save);
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Failed to save poses:\n{err}");
+		}
 	}
 
 	public void Save() {
@@ -88,9 +94,10 @@ public class PoseAutoSave : IDisposable {
 			if (chara.Pose == null) continue;
 
 			var dupeCt = 1;
-			var path = Path.Combine(folder, $"{chara.Name}.pose");
+			var name = this._format.StripInvalidChars(chara.Name);
+			var path = Path.Combine(folder, $"{name}.pose");
 			while (Path.Exists(path))
-				path = Path.Combine(folder, $"{chara.Name} ({++dupeCt}).pose");
+				path = Path.Combine(folder, $"{name} ({++dupeCt}).pose");
 
 			var serializer = new JsonFileSerializer();
 			var file = new EntityPoseConverter(chara.Pose).SaveFile();
