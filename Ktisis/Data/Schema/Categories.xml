@@ -463,6 +463,7 @@
             <Category Id="CustomAbdomen">
                 <Bones>
                     iv_fukubu_phys
+					ya_fukubu_phys
                     iv_fukubu_phys_l
                     iv_fukubu_phys_r
                 </Bones>
@@ -473,8 +474,8 @@
                 <Bones>
                     iv_daitai_phys_l
                     iv_daitai_phys_r
-                    yab_daitai_phys_l
-                    yab_daitai_phys_r
+                    ya_daitai_phys_l
+                    ya_daitai_phys_r
                 </Bones>
             </Category>
 			<Category Id="LeftLeg">
@@ -597,8 +598,8 @@
 				iv_koumon_r
 				iv_shiri_l
 				iv_shiri_r
-                yab_shiri_phys_l
-                yab_shiri_phys_r
+                ya_shiri_phys_l
+                ya_shiri_phys_r
 			</Bones>
 			<Preset Name="Body (Custom)" />
 		</Category>
