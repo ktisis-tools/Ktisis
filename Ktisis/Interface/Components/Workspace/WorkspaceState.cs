@@ -66,7 +66,6 @@ public class WorkspaceState {
 			this._ctx.Posing.SetEnabled(isPosing);
 
 		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
-			Ktisis.Log.Verbose($"Hovering over toggle button: {locKey}");
 			using var _ = ImRaii.Tooltip();
 			ImGui.Text(this._ctx.Locale.Translate($"workspace.posing.hint.{locKey}"));
 		}
