@@ -21,6 +21,7 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
+using Ktisis.Structs.Actors;
 using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Scene.Entities.Game;
@@ -32,7 +33,10 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
 
+	public ActorGaze? Gaze;
+
 	private readonly Dictionary<string, PresetState> _presetStates = new();
+ 
 
 	public ActorEntity(
 		ISceneManager scene,

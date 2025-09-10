@@ -27,6 +27,8 @@ public class EditorConfig {
 	public float WorkcamSens = 0.215f;
 	
 	public Dictionary<EntityType, EntityDisplay> Display = EntityDisplay.GetDefaults();
+
+	public bool LinkedGaze = false;
 	
 	// Reference images
 	
