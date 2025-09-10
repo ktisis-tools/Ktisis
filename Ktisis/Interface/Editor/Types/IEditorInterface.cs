@@ -31,6 +31,8 @@ public interface IEditorInterface {
 	public void RefreshGposeActors();
 
 	public void OpenRenameEntity(SceneEntity entity);
+	public void OpenSavePreset(ActorEntity actorEntity);
+	
 	
 	public void OpenActorEditor(ActorEntity actor);
 	public void OpenLightEditor(LightEntity light);

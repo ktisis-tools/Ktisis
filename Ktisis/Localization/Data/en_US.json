@@ -136,6 +136,16 @@
 		}
 	},
 	
+	"preset_edit": {
+		"title": "Presets",
+		"add": {
+			"title": "Add new preset",
+			"label": "Preset Name",
+			"save": "Save",
+			"cancel": "Cancel"
+		}
+	},
+	
 	"chara_edit": {
 		"title": "Appearance Editor",
 		"hint": "Edit appearance"
@@ -292,6 +302,12 @@
 			"count": "Save count",
 			"path": "Save path",
 			"dir": "Folder name"
+		},
+		"presets": {
+			"title": "Presets",
+			"delete_tooltip": "Hold shift to delete",
+			"delete": "Delete",
+			"rename": "Rename"
 		}
 	},
 

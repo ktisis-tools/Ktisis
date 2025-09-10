@@ -1,7 +1,12 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+
 using Ktisis.Editor.Selection;
+using Ktisis.Scene.Decor;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities;
@@ -13,6 +18,7 @@ public abstract class SceneEntity : IComposite {
 	public EntityType Type { get; protected init; }
 
 	public virtual bool IsValid => this.Scene.IsValid && this.Parent != null;
+	public SceneEntity Root => this.Parent is null or { Type: EntityType.Invalid } ? this : this.Parent.Root;
 	
 	protected SceneEntity(
 		ISceneManager scene
@@ -87,5 +93,30 @@ public abstract class SceneEntity : IComposite {
 			parent = parent.Parent;
 		}
 		return false;
+	}
+	
+	//Presetting
+	protected void ToggleView(ImmutableHashSet<string> names, bool newState) {
+		if (this is BoneNode node && names.Contains(node.Info.Name)) {
+			node.Visible = newState;
+			((IVisibility) node).Toggle();
+		}
+	
+		foreach (var bone in this.Recurse().OfType<BoneNode>()) {
+			if (names.Contains(bone.Info.Name)) {
+				bone.Visible = newState;
+			}
+		}
+	}
+
+	protected ImmutableHashSet<string> GetEnabledBones() {
+		HashSet<string> bones = new(128);
+
+		foreach (var bone in this.Recurse().OfType<BoneNode>()) {
+			if (bone.Visible)
+				bones.Add(bone.Info.Name);
+		}
+		
+		return bones.ToImmutableHashSet();
 	}
 }

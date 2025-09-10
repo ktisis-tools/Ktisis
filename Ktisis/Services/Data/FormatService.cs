@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using Dalamud.Plugin.Services;
@@ -53,22 +54,26 @@ public class FormatService {
 	};
 
 	private string GetPlayerName() {
-		return this._client.LocalPlayer?.Name.ToString() ?? "Unknown";
+		return this.StripInvalidChars(this._client.LocalPlayer?.Name.ToString() ?? "Unknown");
 	}
 
 	private string GetCurrentWorld() {
-		return this._client.LocalPlayer?.CurrentWorld.Value.Name.ToString() ?? "Unknown";
+		return this.StripInvalidChars(this._client.LocalPlayer?.CurrentWorld.Value.Name.ToString() ?? "Unknown");
 	}
 	
 	private string GetHomeWorld() {
-		return this._client.LocalPlayer?.HomeWorld.Value.Name.ToString() ?? "Unknown";
+		return this.StripInvalidChars(this._client.LocalPlayer?.HomeWorld.Value.Name.ToString() ?? "Unknown");
 	}
 
 	private string GetZone() {
 		var rowId = this._client.TerritoryType;
 		var sheet = this._data.GetExcelSheet<TerritoryType>();
 		if (sheet.HasRow(rowId) && sheet.GetRow(rowId).PlaceName is { IsValid: true } placeName)
-			return placeName.Value.Name.ExtractText();
+			return this.StripInvalidChars(placeName.Value.Name.ExtractText());
 		return "Unknown";
+	}
+  
+	public string StripInvalidChars(string str) {
+		return Path.GetInvalidFileNameChars().Aggregate(str, (current, c) => current.Replace(c, '_'));
 	}
 }
