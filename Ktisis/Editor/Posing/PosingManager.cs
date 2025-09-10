@@ -106,6 +106,12 @@ public class PosingManager : IPosingManager {
 
 	public void SetEnabled(bool enable) {
 		if (enable && !this.IsValid) return;
+
+		if (!enable && this._context.Config.AutoSave.OnDisable) {
+			Ktisis.Log.Verbose("Posing disabled, triggering pose save.");
+			this.AutoSave.Save();
+		}
+		
 		this.PoseModule?.SetEnabled(enable);
 	}
 

@@ -10,6 +10,7 @@ public class EditorConfig {
 	// Workspace
 
 	public bool OpenOnEnterGPose = true;
+	public bool ConfirmExit = false;
 
 	public bool ToggleEditorOnSelect = true;
 
@@ -42,7 +43,7 @@ public class EditorConfig {
 
 	public bool PlayEmoteStart = true;
 	public bool ForceLoop = true;
-	
+
 	// Helpers
 
 	public EntityDisplay GetDisplayForType(EntityType type)
