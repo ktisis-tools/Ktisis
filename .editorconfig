@@ -1,9 +1,4 @@
 
-[*.cs]
-indent_style = tab
-indent_size = tab
-tab_width = 4
-
 [*]
 
 # Microsoft .NET properties
@@ -71,3 +66,14 @@ resharper_wrap_before_primary_constructor_declaration_rpar = true
 resharper_wrap_chained_binary_patterns = chop_if_long
 resharper_wrap_list_pattern = chop_always
 resharper_wrap_object_and_collection_initializer_style = chop_always
+
+
+[*.cs]
+indent_style = tab
+indent_size = tab
+tab_width = 4
+
+[*.json]
+indent_style = tab
+indent_size = tab
+tab_width = 4
