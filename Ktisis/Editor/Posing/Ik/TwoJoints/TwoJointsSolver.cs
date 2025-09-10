@@ -141,8 +141,13 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 			}
 
 			// only update child bone transforms (ex fingers, toes) if there's been a change since last frame!
+			// only works consistently with end rotation enforced
 			// TODO: just fix the local->model math below; this is a bandaid over IK bone drift
-			if (this.LastPoseInModel != null && this.LastPoseInModel.Equals(poseInModel)) continue;
+			if (
+				this.LastPoseInModel != null
+				&& this.IkSetup->m_enforceEndRotation
+				&& this.LastPoseInModel.Equals(poseInModel)
+			) continue;
 
 			var parentId = parents[i];
 			var local = HavokPosing.GetLocalTransform(poseIn, i)!;
