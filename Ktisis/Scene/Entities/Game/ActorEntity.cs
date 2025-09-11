@@ -36,6 +36,13 @@ public class ActorEntity : CharaEntity, IDeletable {
 	public ActorGaze? Gaze;
 
 	private readonly Dictionary<string, PresetState> _presetStates = new();
+
+	private string Anonymized;
+	private string RealName;
+	public override string Name {
+		get { return this.Scene.Context.Config.Editor.IncognitoPlayerNames ? this.Anonymized : this.RealName; }
+		set { this.RealName = value; }
+	}
  
 
 	public ActorEntity(
@@ -45,6 +52,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 	) : base(scene, pose) {
 		this.Type = EntityType.Actor;
 		this.Actor = actor;
+		this.Anonymized = actor.GetNameOrFallback(this.Scene.Context, true);
 		PresetConfig.PresetRemovedEvent += RemovePreset;
 	}
 

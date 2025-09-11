@@ -14,7 +14,7 @@ namespace Ktisis.Scene.Entities;
 public abstract class SceneEntity : IComposite {
 	protected readonly ISceneManager Scene;
 	
-	public string Name { get; set; } = string.Empty;
+	public virtual string Name { get; set; } = string.Empty;
 	public EntityType Type { get; protected init; }
 
 	public virtual bool IsValid => this.Scene.IsValid && this.Parent != null;
