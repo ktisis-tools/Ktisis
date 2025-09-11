@@ -34,6 +34,13 @@ public abstract class IkEndNode : BoneNode, IIkNode {
 	}
 	
 	public virtual void Disable() => this.Parent?.Disable();
+
+	public virtual void Toggle() {
+		if (this.IsEnabled)
+			this.Disable();
+		else
+			this.Enable();
+	}
 	
 	// Target transform
 	
