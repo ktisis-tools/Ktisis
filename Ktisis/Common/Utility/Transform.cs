@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -9,7 +10,7 @@ using Ktisis.Common.Extensions;
 namespace Ktisis.Common.Utility;
 
 [StructLayout(LayoutKind.Explicit)]
-public class Transform {
+public class Transform : IEquatable<Transform> {
 	[FieldOffset(0x00)] public Vector3 Position;
 	[FieldOffset(0x10)] public Quaternion Rotation;
 	[FieldOffset(0x20)] public Vector3 Scale;
@@ -84,8 +85,9 @@ public class Transform {
 		Scale = trans.Scale
 	};
 
-	public bool Equals(Transform trans) =>
-		this.Position.Equals(trans.Position)
+	public bool Equals(Transform? trans) =>
+		trans != null
+		&& this.Position.Equals(trans.Position)
 		&& this.Rotation.Equals(trans.Rotation)
 		&& this.Scale.Equals(trans.Scale);
 }
