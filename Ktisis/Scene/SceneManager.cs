@@ -84,12 +84,6 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		foreach (var entity in entities)
 			entity.Refresh();
 	}
-
-	public void RefreshActorNames() {
-		var actors = this.Root.Recurse().OfType<ActorEntity>();
-		foreach (var actor in actors)
-			actor.RefreshName();
-	}
 	
 	// Objects
 

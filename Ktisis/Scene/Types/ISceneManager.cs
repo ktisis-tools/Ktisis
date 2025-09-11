@@ -23,7 +23,6 @@ public interface ISceneManager : IComposite, IDisposable {
 	public void Initialize();
 	public void Update();
 	public void Refresh();
-	public void RefreshActorNames();
 
 	public ActorEntity? GetEntityForActor(IGameObject actor);
 }
