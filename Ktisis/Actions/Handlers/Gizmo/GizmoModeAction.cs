@@ -1,11 +1,11 @@
-﻿using Dalamud.Game.ClientState.Keys;
+﻿using Dalamud.Bindings.ImGuizmo;
+using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Actions.Attributes;
 using Ktisis.Actions.Binds;
 using Ktisis.Actions.Types;
 using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
-using Ktisis.ImGuizmo;
 
 namespace Ktisis.Actions.Handlers.Gizmo;
 
@@ -23,7 +23,7 @@ public class GizmoModeAction(IPluginContext ctx) : KeyAction(ctx) {
 		if (this.Context.Editor == null || this.Context.Editor.Selection.Count == 0)
 			return false;
 		// ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
-		this.Context.Config.File.Gizmo.Mode ^= Mode.World;
+		this.Context.Config.File.Gizmo.Mode ^= ImGuizmoMode.World;
 		return true;
 	}
 }

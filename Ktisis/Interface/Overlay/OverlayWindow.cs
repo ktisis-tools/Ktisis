@@ -3,13 +3,13 @@ using System.Linq;
 using Matrix4x4 = System.Numerics.Matrix4x4;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Common.Math;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms.Types;
-using Ktisis.ImGuizmo;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 
@@ -91,7 +91,8 @@ public class OverlayWindow : KtisisWindow {
 		this._gizmo.AllowAxisFlip = cfg.AllowAxisFlip;
 
 		var matrix = transform.ComposeMatrix();
-		var isManipulate = this._gizmo.Manipulate(ref matrix, out _);
+		var delta = new Matrix4x4();
+		var isManipulate = this._gizmo.Manipulate(ref matrix, ref delta);
 		var isRaySnap = this.HandleShiftRaycast(ref matrix);
 		if (isManipulate || isRaySnap) {
 			this.Transform ??= this._ctx.Transform.Begin(target);
@@ -111,7 +112,7 @@ public class OverlayWindow : KtisisWindow {
 		if (!this._ctx.Config.Gizmo.AllowRaySnap)
 			return false;
 		
-		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGuizmo.Gizmo.IsUsing || ImGuizmo.Gizmo.CurrentOperation != Operation.TRANSLATE)
+		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGuizmo.IsUsing() || this._gizmo.Operation != ImGuizmoOperation.Translate)
 			return false;
 
 		if (!this._gui.ScreenToWorld(ImGui.GetMousePos(), out var hitPos))
@@ -128,7 +129,7 @@ public class OverlayWindow : KtisisWindow {
 		ImGui.Text($"Context: {this._ctx.GetHashCode():X} ({this._ctx.IsValid})");
 		ImGui.Text($"Scene: {this._ctx.Scene.GetHashCode():X} {this._ctx.Scene.UpdateTime:00.00}ms");
 		ImGui.Text($"Overlay: {this.GetHashCode()} {t.Elapsed.TotalMilliseconds:00.00}ms");
-		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.Gizmo.IsUsing})");
+		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.IsUsing()})");
 		var target = this._ctx.Transform.Target;
 		ImGui.Text($"Target: {target?.GetHashCode() ?? 0:X7} {target?.GetType().Name ?? "NULL"} ({target?.Targets?.Count() ?? 0}, {target?.Primary?.Name ?? "NULL"})");
 		var history = this._ctx.Actions.History;

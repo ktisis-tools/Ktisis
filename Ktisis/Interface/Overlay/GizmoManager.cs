@@ -1,6 +1,8 @@
 using System;
+using System.Runtime.InteropServices;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Ktisis.Data.Config;
 
@@ -31,14 +33,27 @@ public class GizmoManager {
 			if (imVer != ImGuiVersion)
 				throw new Exception($"ImGui version mismatch! Expected {ImGuiVersion}, got {imVer ?? "NULL"} instead.");
 			
-			var alloc = (delegate*<nuint, void*, void*>)null;
-			var free = (delegate*<void*, void*, void>)null;
-			var userData = (void*)null;
-			ImGui.GetAllocatorFunctions(&alloc, &free, &userData);
+			delegate*<nuint, void*, void*>  allocTmp = null;
+			delegate*<void*, void*, void> freeTmp =null;
+			void* userData = null;
+			ImGui.GetAllocatorFunctions(&allocTmp, &freeTmp, &userData);
 			
 			var imCtx = ImGui.GetCurrentContext();
-			ImGuizmo.Gizmo.Initialize((nint)imCtx.Handle, (nint)alloc, (nint)free, (nint)userData);
+			// ImGuizmo.Initialize((nint)imCtx.Handle, (nint)alloc, (nint)free, (nint)userData);
+			
+			delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc =
+				(delegate* unmanaged[Cdecl]<nuint, void*, void*>)allocTmp;
 
+			delegate* unmanaged[Cdecl]<void*, void*, void> free =
+				(delegate* unmanaged[Cdecl]<void*, void*, void>)freeTmp;
+			
+			ImGuizmo.SetImGuiContext(imCtx.Handle);
+			var allocDel = Marshal.GetDelegateForFunctionPointer<ImGuiMemAllocFunc>((nint)alloc);
+			var freeDel  = Marshal.GetDelegateForFunctionPointer<ImGuiMemFreeFunc>((nint)free);
+			
+			ImGui.SetAllocatorFunctions(allocDel, freeDel, userData);
+			
+			
 			success = true;
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize gizmo:\n{err}");

@@ -8,6 +8,7 @@ using Dalamud.Interface;
 using GLib.Widgets;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
@@ -62,7 +63,7 @@ public class SelectableGui {
 	) {
 		clicked = null;
 
-		if (!this.Config.Overlay.DrawDotsGizmo && ImGuizmo.Gizmo.IsUsing)
+		if (!this.Config.Overlay.DrawDotsGizmo && ImGuizmo.IsUsing())
 			return false;
 		
 		var drawList = ImGui.GetWindowDrawList();
@@ -94,7 +95,7 @@ public class SelectableGui {
 		bool gizmo
 	) {
 		clicked = null;
-		if (items.Count == 0 || (gizmo && (ImGuizmo.Gizmo.IsUsing || ImGuizmo.Gizmo.IsOver)))
+		if (items.Count == 0 || (gizmo && (ImGuizmo.IsUsing() || ImGuizmo.IsOver())))
 			return false;
 
 		var begin = false;
