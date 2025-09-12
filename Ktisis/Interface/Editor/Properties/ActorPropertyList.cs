@@ -157,7 +157,7 @@ public class ActorPropertyList : ObjectPropertyList {
 
 	private unsafe bool DrawGaze(ActorEntity actor, ref Gaze gaze, GazeControl type) {
 		if (!GazeTables.ContainsKey(type))
-			GazeTables.Add(type, new TransformTable(this._cfg));
+			GazeTables.Add(type, new TransformTable(this._cfg, this._locale));
 
 		using var _ = ImRaii.PushId($"Gaze_{type}");
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
