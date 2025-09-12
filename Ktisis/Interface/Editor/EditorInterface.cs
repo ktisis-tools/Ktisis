@@ -155,7 +155,8 @@ public class EditorInterface : IEditorInterface {
 	// Entity windows
 	
 	public void OpenRenameEntity(SceneEntity entity) => this._gui.CreatePopup<EntityRenameModal>(entity).Open();
-
+	public void OpenSavePreset(ActorEntity entity) => this._gui.CreatePopup<PresetSaveModal>(entity).Open();
+	
 	public void OpenActorEditor(ActorEntity actor) {
 		if (!this._ctx.Config.Editor.UseLegacyWindowBehavior)
 			actor.Select(SelectMode.Force);

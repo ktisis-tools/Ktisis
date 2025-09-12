@@ -19,4 +19,6 @@ public class BoneCategory(string name) {
 	
 	public TwoJointsGroupParams? TwoJointsGroup;
 	public CcdGroupParams? CcdGroup;
+
+	public List<string> Presets = new();
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
@@ -15,6 +16,7 @@ public static class CategoryReader {
 	private const string CategoryTag = "Category";
 	private const string TwoJointsIkTag = "TwoJointsIK";
 	private const string CcdIkTag = "CcdIK";
+	private const string PresetTag = "Preset";
 	
 	public static CategoryConfig ReadStream(Stream stream) {
 		var categories = new CategoryConfig();
@@ -52,6 +54,9 @@ public static class CategoryReader {
 					continue;
 				case XmlNodeType.Element when reader.Name is CcdIkTag:
 					category.CcdGroup = ReadCcdIkGroup(reader);
+					continue;
+				case XmlNodeType.Element when reader.Name is PresetTag:
+					category.Presets.Add(ReadPresetTag(reader));
 					continue;
 				case XmlNodeType.EndElement when reader.Name is CategoryTag:
 					return category;
@@ -141,4 +146,10 @@ public static class CategoryReader {
 		
 		return group;
 	}
+	
+	// Presets
+
+	private static string ReadPresetTag(XmlReader reader) 
+		=> reader.GetAttribute("Name") 
+			?? throw new InvalidDataException("Invalid name given to preset, please raise to the developers.");
 }

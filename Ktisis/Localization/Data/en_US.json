@@ -83,10 +83,12 @@
 		"posing": {
 			"toggle": {
 				"enable": "Posing Enabled",
+				"enable-blocked": "Posing Enabled, hold SHIFT & click to disable.",
 				"disable": "Posing Disabled"
 			},
 			"hint": {
 				"enable": "Bone manipulation is currently enabled.",
+				"enable-blocked": "To disable, hold SHIFT.",
 				"disable": "Bone manipulation is currently disabled."
 			}
 		},
@@ -138,6 +140,16 @@
 				"gain": "Gain:",
 				"hinges": "Hinges:"
 			}
+		}
+	},
+	
+	"preset_edit": {
+		"title": "Presets",
+		"add": {
+			"title": "Add new preset",
+			"label": "Preset Name",
+			"save": "Save",
+			"cancel": "Cancel"
 		}
 	},
 	
@@ -271,11 +283,12 @@
 			"init": "Open workspace when entering GPose",
 			"toggleOpenWindows": "UI buttons toggle windows open & closed",
 			"editOnSelect": "Toggle object editor when selecting",
-			"incognitoPlayerNames": "Hide player names while in GPose (incognito mode)",
-			"hintIncognito": "Requires re-entering gpose to refresh actor list names",
+			"incognitoPlayerNames": "Incognito Mode",
+			"hintIncognito": "Censors all player names from actor list and GPose window",
 			"legacyWindows": "Prefer legacy window behavior",
 			"legacyPoseTabs": "Prefer legacy pose view tabs",
 			"legacyLightEditor": "Prefer legacy light editor",
+			"confirmExit": "Ensure shift has to be held to exit posing mode",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
@@ -293,11 +306,18 @@
 			"title": "AutoSave",
 			"enable": "Enable auto saves",
 			"clear": "Clear auto saves on exit",
+			"ondisable": "Always save on disabling posing mode",
 			"disconnect": "Always save on server disconnect",
 			"interval": "Save interval",
 			"count": "Save count",
 			"path": "Save path",
 			"dir": "Folder name"
+		},
+		"presets": {
+			"title": "Presets",
+			"delete_tooltip": "Hold shift to delete",
+			"delete": "Delete",
+			"rename": "Rename"
 		}
 	},
 
@@ -591,7 +611,11 @@
 		"SkelomaeCreaturesCentaurBody": "Centaur Body",
 		"SkelomaeCreaturesCentaurBodyFrontLegs": "Front Legs",
 		"SkelomaeCreaturesCentaurBodyBackLegs": "Back Legs",
-		"SkelomaeCreaturesCentaurTail": "Tail"
+		"SkelomaeCreaturesCentaurTail": "Tail",
+      
+		"CustomArms": "Custom Skeleton Arms",
+		"CustomAbdomen": "Custom Skeleton Abdomen",
+		"CustomLegs": "Custom Skeleton Legs"
 	},
 	
 	"lightType": {

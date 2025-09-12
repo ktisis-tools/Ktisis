@@ -22,6 +22,7 @@ public enum EmoteModeEnum : uint {
 [StructLayout(LayoutKind.Explicit, Size = 0x22E0)]
 public struct CharacterEx {
 	public const int AnimationOffset = 0xA20;
+	public const int GazeOffset = 0xD70;
 	
 	[FieldOffset(0)] public Character Character;
 
@@ -36,6 +37,8 @@ public struct CharacterEx {
 	[FieldOffset(0x0CE2)] public CombatFlags CombatFlags;
 	
 	[FieldOffset(AnimationOffset)] public AnimationContainer Animation;
+
+	[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
 
 	[FieldOffset(0x22D8)] public float Opacity;
 
