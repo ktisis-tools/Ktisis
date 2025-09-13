@@ -26,13 +26,19 @@ public class PresetPropertyList(IEditorContext ctx, LocaleManager locale) : Obje
 	private void DrawPresets(ActorEntity actor) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
+		ImGui.Columns(2);
+
 		foreach (var (name, currentState) in actor.GetPresets()) {
 			var enabled = (byte)currentState;
 			
 			if (ImGui.CheckboxFlags(name, ref enabled, (byte) (PresetState.Enabled))) {
 				actor.TogglePreset(name, (PresetState) enabled == PresetState.Enabled); 
 			}
+			
+			ImGui.NextColumn();
 		}
+
+		ImGui.Columns();
 		
 		ImGui.Separator();
 		ImGui.Text(locale.Translate("preset_edit.add.title"));
