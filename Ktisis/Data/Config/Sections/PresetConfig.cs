@@ -9,9 +9,9 @@ public class PresetConfig {
 	internal static PresetRemoved? PresetRemovedEvent;
 
 	public SortedDictionary<string, ImmutableHashSet<string>> Presets = new ();
-	public List<string> DefaultPresets = new List<string>();
+	public HashSet<string> DefaultPresets = new ();
 
 	public bool PresetIsDefault(string name) {
-		return this.DefaultPresets.FirstOrDefault(x => x == name) != null;
+		return this.DefaultPresets.Contains(name);
 	}
 }
