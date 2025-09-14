@@ -13,6 +13,11 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Chara;
 
+public enum LoadMethod {
+	File,
+	Npc
+}
+
 [Transient]
 public class CharaImportUI {
 	public IEditorContext Context { set; private get; } = null!;
@@ -50,13 +55,8 @@ public class CharaImportUI {
 	}
 	
 	// State
-	
-	private enum LoadMethod {
-		File,
-		Npc
-	}
 
-	private LoadMethod _method = LoadMethod.File;
+	public LoadMethod _method = LoadMethod.File;
 	
 	public bool HasSelection => this._method switch {
 		LoadMethod.File => this._select.IsFileOpened,

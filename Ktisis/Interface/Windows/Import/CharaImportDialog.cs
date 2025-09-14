@@ -15,6 +15,7 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 
 	public CharaImportDialog(
 		IEditorContext ctx,
+		bool toNpc,
 		CharaImportUI import
 	) : base(
 		"Import Appearance",
@@ -25,6 +26,8 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 		this._import = import;
 		this._import.Context = ctx;
 		this._import.OnNpcSelected += this.OnNpcSelected;
+		if (toNpc)
+			this._import._method = LoadMethod.Npc;
 	}
 	
 	// Events

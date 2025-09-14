@@ -153,7 +153,11 @@ public class EditorInterface : IEditorInterface {
 	
 	// import/export wrappers
 
-	public void OpenCharaImport(ActorEntity actor) => this.OpenEditor<CharaImportDialog, ActorEntity>(actor);
+	public void OpenCharaImport(ActorEntity actor, bool toNpc = false) {
+		var editor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx, toNpc);
+		editor.SetTarget(actor);
+		editor.Open();
+	}
 
 	public async Task OpenCharaExport(ActorEntity actor) {
 		var file = await this._ctx.Characters.SaveCharaFile(actor);
