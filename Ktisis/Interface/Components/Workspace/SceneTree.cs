@@ -236,6 +236,7 @@ public class SceneTree {
 		var name = bone != null ? this._ctx.Locale.GetBoneName(bone) : "UNKNOWN";
 		using var _ = ImRaii.Tooltip();
 		ImGui.Text($"Attached to {name}");
+		ImGui.Text($"Click to reset attachment\nClick+Drag to set new attachment");
 	}
 
 	private void DrawHideButton(ActorEntity actor, ref float cursor, bool isHover) {
