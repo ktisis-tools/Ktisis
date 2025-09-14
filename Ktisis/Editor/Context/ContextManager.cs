@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 
+using Dalamud.Plugin.Services;
+
 using Ktisis.Core.Attributes;
 using Ktisis.Core.Types;
 using Ktisis.Editor.Context.Types;
@@ -12,15 +14,18 @@ namespace Ktisis.Editor.Context;
 public class ContextManager : IDisposable {
 	private readonly GPoseService _gpose;
 	private readonly ContextBuilder _builder;
+	private readonly IFramework _framework;
 	
 	public IEditorContext? Current => this._context is { IsValid: true } ctx ? ctx : null;
 	
 	public ContextManager(
 		GPoseService gpose,
-		ContextBuilder builder
+		ContextBuilder builder,
+		IFramework framework
 	) {
 		this._gpose = gpose;
 		this._builder = builder;
+		this._framework = framework;
 	}
 
 	private bool _isInit;
@@ -34,6 +39,9 @@ public class ContextManager : IDisposable {
 		this._plugin = context;
 		this._gpose.StateChanged += this.OnGPoseEvent;
 		this._gpose.Subscribe();
+		
+		if (this._gpose.IsGPosing && this._plugin.Config.File.Editor.OpenOnEnterGPose)
+			this._framework.RunOnTick(() => this.OnGPoseEvent(this, true));
 	}
 	
 	// Handlers
