@@ -174,7 +174,13 @@ public class EditorInterface : IEditorInterface {
 	public void OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);
 		editor.SetTarget(entity);
-		editor.Open();
+
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			editor.Toggle();
+		else {
+			editor.Open();
+			ImGui.SetWindowFocus(editor.WindowName);
+		}
 	}
     
 	public void OpenEditorFor(SceneEntity entity) {
