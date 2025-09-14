@@ -239,9 +239,13 @@ public class SceneTree {
 	}
 
 	private void DrawHideButton(ActorEntity actor, ref float cursor, bool isHover) {
-		var color = actor.IsHidden ? 0xEFFFFFFF : 0x80FFFFFF;
-		if (this.DrawButton(ref cursor, FontAwesomeIcon.UserNinja, color) && isHover)
+		var color = actor.IsHidden ? 0x80FFFFFF : 0xEFFFFFFF;
+		if (this.DrawButton(ref cursor, FontAwesomeIcon.IdBadge, color) && isHover)
 			actor.IsHidden = !actor.IsHidden;
+
+		if (!isHover || !ImGui.IsItemHovered()) return;
+		using var _ = ImRaii.Tooltip();
+		ImGui.Text(actor.IsHidden ? "Unhide Actor" : "Hide Actor");
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {

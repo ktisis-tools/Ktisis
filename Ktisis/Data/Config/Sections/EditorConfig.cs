@@ -10,7 +10,7 @@ public class EditorConfig {
 	// Workspace
 
 	public bool OpenOnEnterGPose = true;
-	public bool ToggleOpenWindows = false;
+	public bool ToggleOpenWindows = true;
 	public bool ConfirmExit = false;
 
 	public bool ToggleEditorOnSelect = true;
