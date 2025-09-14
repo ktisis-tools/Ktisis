@@ -67,8 +67,12 @@ public class SceneEntityMenuBuilder {
 
 		menu.Separator().Action("Rename", () => this.Ui.OpenRenameEntity(this._entity));
 
-		if (this._entity is IDeletable deletable)
-			menu.Separator().Action("Delete", () => deletable.Delete());
+		if (this._entity is IDeletable deletable) {
+			menu.Separator();
+			if (this._entity is ActorEntity actor)
+				menu.Action("Duplicate", () => this.DuplicateActor(actor));
+			menu.Action("Delete", () => deletable.Delete());
+		}
 	}
 	
 	// Entity types
@@ -125,6 +129,14 @@ public class SceneEntityMenuBuilder {
 
 	private void ImportMcdf(ActorEntity actor, string path) {
 		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, actor.Actor);
+	}
+
+	private async void DuplicateActor(ActorEntity actor) {
+		// pack actor into a temp charafile to apply to new actor after creation
+		var file = await this._ctx.Characters.SaveCharaFile(actor);
+		this._ctx.Scene.Factory.CreateActor()
+			.WithAppearance(file)
+			.Spawn();
 	}
 	
 	// Poses
