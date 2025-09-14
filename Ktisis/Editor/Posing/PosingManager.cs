@@ -211,6 +211,7 @@ public class PosingManager : IPosingManager {
 	);
 
 	public Task StashPose(EntityPose pose) {
+		// todo: modes/transforms choices? could skip face or positions to allow better luck when transferring cross-races/genders
 		return this._framework.RunOnFrameworkThread(() => {
 			var modes = PoseMode.All;
 			var transforms = PoseTransforms.Position | PoseTransforms.Rotation;
