@@ -36,6 +36,7 @@ public class PresetEditor {
 
 	private string? Selected = null;
 	private string PresetName = null;
+	private bool IsDefault = false;
 	
 	public void Draw() {
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(10, 10));
@@ -72,6 +73,7 @@ public class PresetEditor {
 			
 			this.Selected = this.Selected != name ? name : null;
 			this.PresetName = name;
+			this.IsDefault = Config.PresetIsDefault(name);
 		}
 	}
 
@@ -85,6 +87,14 @@ public class PresetEditor {
 		
 		ImGui.SameLine();
 		if (ImGui.Button(this._locale.Translate("config.presets.rename"))) Rename();
+
+		ImGui.Spacing();
+		if (ImGui.Checkbox($"GPose Default", ref this.IsDefault)) {
+			if (IsDefault)
+				Config.DefaultPresets.Add(Selected);
+			else
+				Config.DefaultPresets.Remove(Selected);
+		}
 
 		using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift))) {
 			if (ImGui.Button(this._locale.Translate("config.presets.delete"))) Delete();
@@ -102,7 +112,10 @@ public class PresetEditor {
 
 		var preset = Config.Presets[Selected];
 		Config.Presets[PresetName] = preset;
+		if (IsDefault)
+			Config.DefaultPresets.Add(PresetName);
 		Config.Presets.Remove(Selected);
+		Config.DefaultPresets.Remove(Selected);
 		Selected = PresetName;
 	}
 
@@ -111,6 +124,7 @@ public class PresetEditor {
 
 		PresetConfig.PresetRemovedEvent?.Invoke(Selected);
 		Config.Presets.Remove(Selected);
+		Config.DefaultPresets.Remove(Selected);
 		Selected = null;
 	}
 }
