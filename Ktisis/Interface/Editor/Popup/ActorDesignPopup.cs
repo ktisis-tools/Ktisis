@@ -29,6 +29,7 @@ public class ActorDesignPopup : KtisisPopup {
 		this._list = new ListBox<KeyValuePair<Guid, string>>("##DesignList", this.DrawItem);
 	}
 
+    // todo: even possible to keep a current record of applied design? glamourer ipc doesnt surface
 	private (Guid Id, string Name) _current = (Guid.Empty, string.Empty);
 
 	protected override void OnDraw() {

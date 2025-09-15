@@ -115,14 +115,16 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
-		if (this._ctx.Plugin.Ipc.IsPenumbraActive)
-			menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
-		if (this._ctx.Plugin.Ipc.IsGlamourerActive)
-			menu.Action("Apply design", () => this.Ui.OpenApplyDesign(actor));
-		if (this._ctx.Plugin.Ipc.IsCustomizeActive)
-			menu.Action("Assign C+ profile", () => this.Ui.OpenAssignCProfile(actor));
-		if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null)
-			menu.Action("Revert IPC data", () => this._ctx.Characters.Mcdf.Revert(actor.Actor));
+		menu.SubMenu("IPC appearance", sub => {
+			if (this._ctx.Plugin.Ipc.IsPenumbraActive)
+				sub.Action("Penumbra: Assign collection", () => this.Ui.OpenAssignCollection(actor));
+			if (this._ctx.Plugin.Ipc.IsGlamourerActive)
+				sub.Action("Glamourer: Apply design", () => this.Ui.OpenApplyDesign(actor));
+			if (this._ctx.Plugin.Ipc.IsCustomizeActive)
+				sub.Action("Customize: Assign profile", () => this.Ui.OpenAssignCProfile(actor));
+			if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null)
+				sub.Action("Revert all IPC data", () => this._ctx.Characters.Mcdf.Revert(actor.Actor));
+		});
 	}
 
 	private void ImportMcdf(ActorEntity actor, string path) {

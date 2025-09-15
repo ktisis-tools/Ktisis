@@ -107,11 +107,11 @@ public sealed class McdfManager : IDisposable {
 		ipc.ApplyState(data.GlamourerData, actor.ObjectIndex);
 	}
 
-	private void RevertGlamourerData(string playerName) {
+	private void RevertGlamourerData(IGameObject actor) {
 		if (!this._ipc.IsGlamourerActive) return;
 
 		var ipc = this._ipc.GetGlamourerIpc();
-		ipc.RevertStateName(playerName);
+		ipc.RevertObject(actor);
 	}
 
 	private void RevertCustomizeData(ushort index) {
@@ -157,7 +157,7 @@ public sealed class McdfManager : IDisposable {
 
 	public void Revert(IGameObject actor) {
 		Ktisis.Log.Info($"IPC - reverting Actor '{actor.ObjectIndex}' ...");
-		this.RevertGlamourerData(actor.Name.TextValue);
+		this.RevertGlamourerData(actor);
 		this.RevertCustomizeData(actor.ObjectIndex);
 	}
 

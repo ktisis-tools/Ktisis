@@ -36,12 +36,23 @@ public class GlamourerIpcProvider {
 	public bool ApplyDesignToObject(IGameObject gameObject, Guid designId) {
 		Ktisis.Log.Verbose($"Setting design for '{gameObject.Name}' ({gameObject.ObjectIndex}) to '{designId}'");
 
-		var result = this._applyDesign.Invoke(designId, gameObject.ObjectIndex);
+		var result = this._applyDesign.Invoke(designId, gameObject.ObjectIndex, 0);
 		var success = result == GlamourerApiEc.Success;
 		if (!success)
 			Ktisis.Log.Warning($"Glamourer design application failed with return code: {result}");
 
 		return success;
+	}
+
+	public bool RevertObject(IGameObject gameObject) {
+		Ktisis.Log.Verbose($"Reverting state for '{gameObject.Name}' ({gameObject.ObjectIndex})");
+		var result = this._revertStateName.Invoke(gameObject.Name.TextValue);
+		if (result != GlamourerApiEc.Success) {
+			Ktisis.Log.Warning($"Glamourer revert failed with return code: {result}, trying by index...");
+			result = this._revertState.Invoke(gameObject.ObjectIndex);
+		}
+
+		return result == GlamourerApiEc.Success;
 	}
 
 	public void ApplyState(string state, int index) {
