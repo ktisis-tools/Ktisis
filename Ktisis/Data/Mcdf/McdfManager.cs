@@ -89,10 +89,14 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private void ApplyCustomizeData(IGameObject actor, McdfData data) {
-		if (!this._ipc.IsCustomizeActive) return;
+		var rawData = data.CustomizePlusData;
+		if (!this._ipc.IsCustomizeActive) {
+			if (!rawData.IsNullOrEmpty())
+				Ktisis.WarningNotification("MCDF has Customize+ data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return;
+		}
 		
 		var ipc = this._ipc.GetCustomizeIpc();
-		var rawData = data.CustomizePlusData;
 		var jsonData = !rawData.IsNullOrEmpty()
 			? Encoding.UTF8.GetString(Convert.FromBase64String(rawData))
 			: "{}";
@@ -101,10 +105,31 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private void ApplyGlamourerData(IGameObject actor, McdfData data) {
-		if (!this._ipc.IsGlamourerActive) return;
+		var glamData = data.GlamourerData;
+		if (!this._ipc.IsGlamourerActive) {
+			if (!glamData.IsNullOrEmpty())
+				Ktisis.WarningNotification("MCDF has Glamourer data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return;
+		}
 		
 		var ipc = this._ipc.GetGlamourerIpc();
-		ipc.ApplyState(data.GlamourerData, actor.ObjectIndex);
+		ipc.ApplyState(glamData, actor.ObjectIndex);
+	}
+
+	private Guid? ApplyPenumbraMods(IGameObject actor, McdfData data, Dictionary<string, string> files) {
+		if (!this._ipc.IsPenumbraActive) {
+			if (files.Count != 0)
+				Ktisis.WarningNotification("MCDF has Penumbra data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return null;
+		}
+		
+		var ipc = this._ipc.GetPenumbraIpc();
+		var collectionId = ipc.CreateTemporaryCollection($"KtisisMCDF_{actor.ObjectIndex}");
+		ipc.AssignTemporaryCollection(collectionId, actor.ObjectIndex);
+		var id = Guid.NewGuid();
+		ipc.AssignTemporaryMods(id, collectionId, files);
+		ipc.AssignManipulationData(id, collectionId, data.ManipulationData);
+		return collectionId;
 	}
 
 	private void RevertGlamourerData(IGameObject actor) {
@@ -119,18 +144,6 @@ public sealed class McdfManager : IDisposable {
 
 		var ipc = this._ipc.GetCustomizeIpc();
 		ipc.DeleteTemporaryProfile(index);
-	}
-
-	private Guid? ApplyPenumbraMods(IGameObject actor, McdfData data, Dictionary<string, string> files) {
-		if (!this._ipc.IsPenumbraActive) return null;
-		
-		var ipc = this._ipc.GetPenumbraIpc();
-		var collectionId = ipc.CreateTemporaryCollection($"KtisisMCDF_{actor.ObjectIndex}");
-		ipc.AssignTemporaryCollection(collectionId, actor.ObjectIndex);
-		var id = Guid.NewGuid();
-		ipc.AssignTemporaryMods(id, collectionId, files);
-		ipc.AssignManipulationData(id, collectionId, data.ManipulationData);
-		return collectionId;
 	}
 
 	private async Task RedrawAndWait(IGameObject actor) {
