@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Ipc;
 
 using Glamourer.Api.Enums;
 using Glamourer.Api.IpcSubscribers;
@@ -30,10 +33,10 @@ public class GlamourerIpcProvider {
 
 	public Dictionary<Guid, string> GetDesignList() => this._getDesignList.Invoke();
 
-	public void ApplyDesignToObject(IGameObject gameObject, Guid designId) {
+	public bool ApplyDesignToObject(IGameObject gameObject, Guid designId) {
 		Ktisis.Log.Verbose($"Setting design for '{gameObject.Name}' ({gameObject.ObjectIndex}) to '{designId}'");
 
-		var (result, prev) = this._applyDesign.Invoke(designId, index);
+		var result = this._applyDesign.Invoke(designId, gameObject.ObjectIndex);
 		var success = result == GlamourerApiEc.Success;
 		if (!success)
 			Ktisis.Log.Warning($"Glamourer design application failed with return code: {result}");

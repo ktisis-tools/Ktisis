@@ -117,6 +117,8 @@ public class SceneEntityMenuBuilder {
 	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		if (this._ctx.Plugin.Ipc.IsPenumbraActive)
 			menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
+		if (this._ctx.Plugin.Ipc.IsGlamourerActive)
+			menu.Action("Apply design", () => this.Ui.OpenApplyDesign(actor));
 		if (this._ctx.Plugin.Ipc.IsCustomizeActive)
 			menu.Action("Assign C+ profile", () => this.Ui.OpenAssignCProfile(actor));
 		if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null)

@@ -109,6 +109,8 @@ public class EditorInterface : IEditorInterface {
 
 	public void OpenAssignCollection(ActorEntity entity) => this._gui.CreatePopup<ActorCollectionPopup>(this._ctx, entity).Open();
 
+	public void OpenApplyDesign(ActorEntity entity) => this._gui.CreatePopup<ActorDesignPopup>(this._ctx, entity).Open();
+
 	public void OpenAssignCProfile(ActorEntity entity) => this._gui.CreatePopup<ActorCProfilePopup>(this._ctx, entity).Open();
 
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
