@@ -14,6 +14,7 @@ public class EditorConfig {
 	public bool ConfirmExit = false;
 
 	public bool ToggleEditorOnSelect = true;
+	public bool CloseEditorOnDeselect = false;
 
 	public bool IncognitoPlayerNames = false;
 

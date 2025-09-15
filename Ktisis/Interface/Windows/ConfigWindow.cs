@@ -149,6 +149,11 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 		
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.editOnSelect"), ref this.Config.Editor.ToggleEditorOnSelect);
+		if (this.Config.Editor.ToggleEditorOnSelect) {
+			ImGui.NewLine();
+			ImGui.SameLine(0, ImGui.GetStyle().ItemSpacing.X * 2);
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.closeOnDeselect"), ref this.Config.Editor.CloseEditorOnDeselect);
+		}
 		
 		ImGui.Spacing();
 

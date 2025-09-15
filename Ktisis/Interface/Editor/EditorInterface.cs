@@ -65,6 +65,8 @@ public class EditorInterface : IEditorInterface {
 			if (open) this.OpenObjectEditor();
 			return;
 		}
+
+		if (!this._ctx.Config.Editor.CloseEditorOnDeselect) return;
 		editor.IsOpen = open;
 	}
 	

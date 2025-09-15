@@ -283,6 +283,7 @@
 			"init": "Open workspace when entering GPose",
 			"toggleOpenWindows": "UI buttons toggle windows open & closed",
 			"editOnSelect": "Toggle object editor when selecting",
+			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",
 			"hintIncognito": "Censors all player names from actor list and GPose window",
 			"legacyWindows": "Prefer legacy window behavior",
