@@ -43,6 +43,7 @@ public sealed class Ktisis : IDalamudPlugin {
 	}
 
 	// Notification defs (todo: load from util file?)
+	// cred: vfxeditor notification implementation https://github.com/0ceal0t/Dalamud-VFXEditor/blob/main/VFXEditor/Dalamud.cs#L33
 	public static void WarningNotification(string content) => Notification.AddNotification(new() {
 		Content = content,
 		Title = "[Warning] Ktisis",
