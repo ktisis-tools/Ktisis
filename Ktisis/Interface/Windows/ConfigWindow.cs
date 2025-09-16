@@ -306,7 +306,7 @@ public class ConfigWindow : KtisisWindow {
 		_ = ImRaii.PushId($"poseview_{loc}");
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
 			this.SetPoseViewImage(path => cfg.EarsPath = path);
-		this.DrawPoseViewPath(ref cfg.EarsPath,loc);
+		this.DrawPoseViewPath(ref cfg.EarsPath, loc);
 	}
 
 	// Handlers
