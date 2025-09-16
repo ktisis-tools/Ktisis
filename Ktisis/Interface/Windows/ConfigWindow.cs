@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using GLib.Widgets;
 
+using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Config;
@@ -21,6 +22,7 @@ namespace Ktisis.Interface.Windows;
 
 public class ConfigWindow : KtisisWindow {
 	private readonly ConfigManager _cfg;
+	private readonly GuiManager _gui;
 	private readonly ContextManager _context;
 	
 	private readonly FormatService _format;
@@ -33,6 +35,8 @@ public class ConfigWindow : KtisisWindow {
 
 	private Configuration Config => this._cfg.File;
 
+	const ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.ReadOnly;
+
 	public ConfigWindow(
 		ConfigManager cfg,
 		ContextManager context,
@@ -41,7 +45,8 @@ public class ConfigWindow : KtisisWindow {
 		BoneCategoryEditor boneCategories,
 		GizmoStyleEditor gizmoStyle,
 		PresetEditor presetEditor,
-		LocaleManager locale
+		LocaleManager locale,
+		GuiManager gui
 	) : base("Ktisis Settings") {
 		this._cfg = cfg;
 		this._context = context;
@@ -51,6 +56,7 @@ public class ConfigWindow : KtisisWindow {
 		this._gizmoStyle = gizmoStyle;
 		this._presetEditor = presetEditor;
 		this.Locale = locale;
+		this._gui = gui;
 	}
 	
 	// Open
@@ -73,6 +79,7 @@ public class ConfigWindow : KtisisWindow {
 		DrawTab(this.Locale.Translate("config.autosave.title"), this.DrawAutoSaveTab);
 		DrawTab(this.Locale.Translate("config.input.title"), this.DrawInputTab);
 		DrawTab(this.Locale.Translate("config.presets.title"), this.DrawPresetsTab);
+		DrawTab(this.Locale.Translate("config.poseview.title"), this.DrawPoseViewTab);
 	}
 
 	private void DrawHint(string localeHandle) {
@@ -237,10 +244,92 @@ public class ConfigWindow : KtisisWindow {
 		dummy.Y -= style.ItemSpacing.Y + style.CellPadding.Y;
 		ImGui.Dummy(dummy);
 	}
-	
+
+	public void DrawPoseViewTab() {
+		var cfg = this.Config.PoseView;
+
+		ImGui.Text(this.Locale.Translate("config.poseview.description"));
+
+		// draw link to templates folder in git
+		ImGui.AlignTextToFramePadding();
+		ImGui.Text(this.Locale.Translate("config.poseview.linkout.description"));
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		if (ImGui.Button(this.Locale.Translate("config.poseview.linkout.button")))
+			GuiHelpers.OpenBrowser(this.Locale.Translate("config.poseview.linkout.link"));
+
+		// draw file selectors
+		ImGui.Spacing();
+
+		var loc = this.Locale.Translate("config.poseview.body");
+		var _ = ImRaii.PushId($"poseview_{loc}");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+			this.SetPoseViewImage(path => cfg.BodyPath = path);
+		this.DrawPoseViewPath(ref cfg.BodyPath, loc);
+
+		loc = this.Locale.Translate("config.poseview.armor");
+		_ = ImRaii.PushId($"poseview_{loc}");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+			this.SetPoseViewImage(path => cfg.ArmorPath = path);
+		this.DrawPoseViewPath(ref cfg.ArmorPath, loc);
+
+		loc = this.Locale.Translate("config.poseview.face");
+		_ = ImRaii.PushId($"poseview_{loc}");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+			this.SetPoseViewImage(path => cfg.FacePath = path);
+		this.DrawPoseViewPath(ref cfg.FacePath, loc);
+
+		loc = this.Locale.Translate("config.poseview.lips");
+		_ = ImRaii.PushId($"poseview_{loc}");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+			this.SetPoseViewImage(path => cfg.LipsPath = path);
+		this.DrawPoseViewPath(ref cfg.LipsPath, loc);
+
+		loc = this.Locale.Translate("config.poseview.mouth");
+		_ = ImRaii.PushId($"poseview_{loc}");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+			this.SetPoseViewImage(path => cfg.MouthPath = path);
+		this.DrawPoseViewPath(ref cfg.MouthPath, loc);
+
+		loc = this.Locale.Translate("config.poseview.hands");
+		_ = ImRaii.PushId($"poseview_{loc}");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+			this.SetPoseViewImage(path => cfg.HandsPath = path);
+		this.DrawPoseViewPath(ref cfg.HandsPath, loc);
+
+		loc = this.Locale.Translate("config.poseview.tail");
+		_ = ImRaii.PushId($"poseview_{loc}");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+			this.SetPoseViewImage(path => cfg.TailPath = path);
+		this.DrawPoseViewPath(ref cfg.TailPath, loc);
+
+		loc = this.Locale.Translate("config.poseview.ears");
+		_ = ImRaii.PushId($"poseview_{loc}");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+			this.SetPoseViewImage(path => cfg.EarsPath = path);
+		this.DrawPoseViewPath(ref cfg.EarsPath,loc);
+	}
+
 	// Handlers
-	
+
 	private void RefreshScene() => this._context.Current?.Scene.Refresh();
+
+	private void DrawPoseViewPath(ref string configPath, string locale) {
+		// draw remainder content after button and file dialog
+		// note: filedialog has to be outside of child method due to ref nonsense
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+
+		ImGui.SameLine(0, spacing);
+		ImGui.InputText(locale, ref configPath, flags: inputFlags);
+		ImGui.SameLine(0, spacing);
+		using (ImRaii.Disabled(string.IsNullOrEmpty(configPath))) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Undo, "Reset"))
+				configPath = null;
+		}
+	}
+
+	private void SetPoseViewImage(Action<string> handler) {
+		this._gui.FileDialogs.OpenImage("image", handler);
+	}
 
 	public override void OnClose() {
 		base.OnClose();

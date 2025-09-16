@@ -312,6 +312,23 @@
 			"delete_tooltip": "Hold shift to delete",
 			"delete": "Delete",
 			"rename": "Rename"
+		},
+		"poseview": {
+			"title": "Pose View",
+			"description": "Select your own images to use in the Pose View interface below.",
+			"body": "Body",
+			"armor": "Armor (Clothing)",
+			"ears": "Ears (Viera)",
+			"face": "Face",
+			"hands": "Hands",
+			"lips": "Lips",
+			"mouth": "Mouth",
+			"tail": "Tail",
+			"linkout": {
+				"description": "Download template images here:",
+				"button": "GitHub",
+				"link": "https://google.com/"
+			}
 		}
 	},
 
