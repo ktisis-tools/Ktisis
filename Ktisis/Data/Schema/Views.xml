@@ -36,8 +36,6 @@
 		<Bone label="Right Elbow" name="n_hhiji_r" x="0.135" y="0.3"/>
 		<Bone label="Left Shoulder" name="n_hkata_l" x="0.775" y="0.195"/>
 		<Bone label="Right Shoulder" name="n_hkata_r" x="0.225" y="0.195"/>
-		<Bone label="Waist" name="j_kosi" x="0.575" y="0.4"/>
-		<Bone label="Lumbar" name="j_sebo_a" x="0.425" y="0.4"/>
 	</View>
 	<View name="Face">
 		<Image file="face.png"/>
