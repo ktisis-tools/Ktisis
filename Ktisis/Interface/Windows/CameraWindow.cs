@@ -6,6 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 using GLib.Widgets;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context;
@@ -118,7 +119,7 @@ public class CameraWindow : KtisisWindow {
 
 		ImGui.SameLine();
 
-		var text = $"Orbiting: {target.Name.TextValue}";
+		var text = $"Orbiting: {target.GetNameOrFallback(this._ctx)}";
 		if (isFixed)
 			ImGui.Text(text);
 		else
