@@ -309,6 +309,8 @@
 		},
 		"presets": {
 			"title": "Presets",
+			"description": "View and edit your defined presets below.",
+			"defaults": "Right click any preset to mark it as Default. Default presets will be initially enabled for any GPose actors.",
 			"delete_tooltip": "Hold shift to delete",
 			"delete": "Delete",
 			"rename": "Rename"

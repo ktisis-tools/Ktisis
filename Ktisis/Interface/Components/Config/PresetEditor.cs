@@ -41,6 +41,10 @@ public class PresetEditor {
 	private bool IsDefault = false;
 	
 	public void Draw() {
+		ImGui.Text(this._locale.Translate("config.presets.description"));
+		ImGui.Text(this._locale.Translate("config.presets.defaults"));
+		ImGui.Spacing();
+
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(10, 10));
 		using var table = ImRaii.Table("##PresetsTable", 2, ImGuiTableFlags.Resizable);
 		
@@ -71,15 +75,20 @@ public class PresetEditor {
 			using var c = ImRaii.PushColor(ImGuiCol.Text, isDefault ? ColorYellow : ImGui.GetColorU32(ImGuiCol.Text));
 			using var node = ImRaii.TreeNode(name, flags);
 			
-			if (!ImGui.IsItemClicked())
-				continue;
-
-			if (!(ImGui.GetItemRectMin().X + ImGui.GetTreeNodeToLabelSpacing() < ImGui.GetMousePos().X))
-				continue;
-			
-			this.Selected = this.Selected != name ? name : null;
-			this.PresetName = name;
-			this.IsDefault = isDefault;
+			if (ImGui.IsItemClicked(ImGuiMouseButton.Left)) {
+				this.Selected = this.Selected != name ? name : null;
+				this.PresetName = name;
+				this.IsDefault = isDefault;
+			} else if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
+				if (isDefault) {
+					Config.DefaultPresets.Remove(name);
+					this.IsDefault = false;
+				}
+				else {
+					Config.DefaultPresets.Add(name);
+					this.IsDefault = true;
+				}
+			}
 		}
 	}
 
@@ -93,14 +102,6 @@ public class PresetEditor {
 		
 		ImGui.SameLine();
 		if (ImGui.Button(this._locale.Translate("config.presets.rename"))) Rename();
-
-		ImGui.Spacing();
-		if (ImGui.Checkbox($"GPose Default", ref this.IsDefault)) {
-			if (IsDefault)
-				Config.DefaultPresets.Add(Selected);
-			else
-				Config.DefaultPresets.Remove(Selected);
-		}
 
 		using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift))) {
 			if (ImGui.Button(this._locale.Translate("config.presets.delete"))) Delete();
