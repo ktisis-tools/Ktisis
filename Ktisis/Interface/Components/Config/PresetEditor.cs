@@ -21,6 +21,8 @@ public class PresetEditor {
 	private readonly LocaleManager _locale;
 
 	private PresetConfig Config => this._cfg.File.Presets;
+
+	private const uint ColorYellow = 0xFF00FFFF;
 	
 	public PresetEditor(
 		ConfigManager cfg,
@@ -57,12 +59,16 @@ public class PresetEditor {
 		
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, UiBuilder.DefaultFont.FontSize);
 		foreach (var (name, bones) in Config.Presets) {
-			var flags = ImGuiTreeNodeFlags.Leaf;
+			var flags = ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanAvailWidth;
+			var isDefault = Config.PresetIsDefault(name);
 
-			if (Selected == name) {
+			if (isDefault)
+				flags |= ImGuiTreeNodeFlags.Bullet;
+
+			if (Selected == name)
 				flags |= ImGuiTreeNodeFlags.Selected;
-			}
-			
+
+			using var c = ImRaii.PushColor(ImGuiCol.Text, isDefault ? ColorYellow : ImGui.GetColorU32(ImGuiCol.Text));
 			using var node = ImRaii.TreeNode(name, flags);
 			
 			if (!ImGui.IsItemClicked())
@@ -73,7 +79,7 @@ public class PresetEditor {
 			
 			this.Selected = this.Selected != name ? name : null;
 			this.PresetName = name;
-			this.IsDefault = Config.PresetIsDefault(name);
+			this.IsDefault = isDefault;
 		}
 	}
 
