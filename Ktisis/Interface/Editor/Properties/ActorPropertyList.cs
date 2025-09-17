@@ -179,6 +179,9 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		if (ImGui.Checkbox($"{type}", ref enabled)) {
 			result = true;
+			// if enabling via checkbox, set the position to a lerp instead of world origin
+			if (enabled)
+				gaze.Pos = GetCameraLerpFor(actor);
 			gaze.Mode = enabled ? GazeMode.Target : GazeMode.Disabled;
 		}
 
