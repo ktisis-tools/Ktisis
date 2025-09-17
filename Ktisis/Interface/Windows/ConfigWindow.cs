@@ -319,12 +319,12 @@ public class ConfigWindow : KtisisWindow {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
 		ImGui.SameLine(0, spacing);
-		ImGui.InputText(locale, ref configPath, flags: inputFlags);
-		ImGui.SameLine(0, spacing);
 		using (ImRaii.Disabled(string.IsNullOrEmpty(configPath))) {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Undo, "Reset"))
 				configPath = null;
 		}
+		ImGui.SameLine(0, spacing);
+		ImGui.InputText(locale, ref configPath, flags: inputFlags);
 	}
 
 	private void SetPoseViewImage(Action<string> handler) {
