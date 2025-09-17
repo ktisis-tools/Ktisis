@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Linq;
 using Matrix4x4 = System.Numerics.Matrix4x4;
+using Vector3 = System.Numerics.Vector3;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Plugin.Services;
@@ -12,6 +13,7 @@ using Ktisis.Editor.Transforms.Types;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -23,17 +25,20 @@ public class OverlayWindow : KtisisWindow {
 	
 	private readonly IEditorContext _ctx;
 	private readonly IGizmo _gizmo;
+	private readonly IGizmo _gizmoGaze;
 	private readonly SceneDraw _sceneDraw;
 
 	public OverlayWindow(
 		IGameGui gui,
 		IEditorContext ctx,
 		IGizmo gizmo,
+		IGizmo gizmoGaze,
 		SceneDraw draw
 	) : base("##KtisisOverlay", WindowFlags) {
 		this._gui = gui;
 		this._ctx = ctx;
 		this._gizmo = gizmo;
+		this._gizmoGaze = gizmoGaze;
 		this._sceneDraw = draw;
 		this._sceneDraw.SetContext(ctx);
 		this.PositionCondition = ImGuiCond.Always;
@@ -57,14 +62,14 @@ public class OverlayWindow : KtisisWindow {
 	public override void Draw() {
 		if (!this._ctx.Config.Overlay.Visible) return;
 		
-		//var t = new Stopwatch();
-		//t.Start();
+		// var t = new Stopwatch();
+		// t.Start();
 		
 		var gizmo = this.DrawGizmo();
 		this._sceneDraw.DrawScene(gizmo: gizmo, gizmoIsEnded: this._gizmo.IsEnded);
 		
-		//t.Stop();
-		//this.DrawDebug(t);
+		// t.Stop();
+		// this.DrawDebug(t);
 	}
 
 	private bool DrawGizmo() {
@@ -107,6 +112,39 @@ public class OverlayWindow : KtisisWindow {
 		return true;
 	}
 
+	public bool DrawGazeGizmo(ref Vector3 pos) {
+		// todo: wack
+		// todo: prevent shift raycasting when manipulating a gazegizmo
+		if (!this._ctx.Config.Overlay.Visible) return false;
+
+		var view = CameraService.GetViewMatrix();
+		var proj = CameraService.GetProjectionMatrix();
+		if (view == null || proj == null || this.Size == null)
+			return false;
+
+		// create transform target off of provided gaze position, empty rot and scale
+		var transform = new Transform(ref pos);
+		var matrix = transform.ComposeMatrix();
+
+		var cfg = this._ctx.Config.Gizmo;
+		this._gizmoGaze.Mode = Mode.World;
+		this._gizmoGaze.Operation = Operation.TRANSLATE;
+		this._gizmoGaze.AllowAxisFlip = cfg.AllowAxisFlip;
+		this._gizmoGaze.ScaleFactor = 0.075f;
+
+		var size = this.Size.Value;
+		this._gizmoGaze.SetMatrix(view.Value, proj.Value);
+
+		// manipulate ref position with gaze gizmo
+		this._gizmoGaze.BeginFrame(Vector2.Zero, size);
+		var isManipulate = this._gizmoGaze.Manipulate(ref matrix, out _);
+		transform.DecomposeMatrix(matrix);
+		pos = transform.Position;
+		this._gizmoGaze.EndFrame();
+
+		return isManipulate;
+	}
+
 	private bool HandleShiftRaycast(ref Matrix4x4 matrix) {
 		if (!this._ctx.Config.Gizmo.AllowRaySnap)
 			return false;
@@ -129,6 +167,7 @@ public class OverlayWindow : KtisisWindow {
 		ImGui.Text($"Scene: {this._ctx.Scene.GetHashCode():X} {this._ctx.Scene.UpdateTime:00.00}ms");
 		ImGui.Text($"Overlay: {this.GetHashCode()} {t.Elapsed.TotalMilliseconds:00.00}ms");
 		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.Gizmo.IsUsing})");
+		ImGui.Text($"Gaze Gizmo?: {this._gizmoGaze.GetHashCode():X} {this._gizmoGaze.Id} ({this._gizmoGaze.Operation}, {ImGuizmo.Gizmo.IsUsing})");
 		var target = this._ctx.Transform.Target;
 		ImGui.Text($"Target: {target?.GetHashCode() ?? 0:X7} {target?.GetType().Name ?? "NULL"} ({target?.Targets?.Count() ?? 0}, {target?.Primary?.Name ?? "NULL"})");
 		var history = this._ctx.Actions.History;

@@ -50,7 +50,8 @@ public class EditorInterface : IEditorInterface {
 		this._gizmo.Initialize();
 		this._gui.GetOrCreate<OverlayWindow>(
 			this._ctx,
-			this._gizmo.Create(GizmoId.OverlayMain)
+			this._gizmo.Create(GizmoId.OverlayMain),
+			this._gizmo.Create(GizmoId.GazeTarget)
 		).Open();
 	}
 
