@@ -8,6 +8,7 @@ using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
 
+using Ktisis.Structs.Camera;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
@@ -208,9 +209,12 @@ public class ActorPropertyList : ObjectPropertyList {
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), IsGizmo[type])) {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {
 				result = true;
-				if (isTracking || !enabled) {
+				if (isTracking)
+					gaze.Mode = GazeMode.Target;
+				if (!enabled) {
 					gaze.Mode = GazeMode.Target;
 					enabled = true;
+					gaze.Pos = GetCameraLerpFor(actor);
 				}
 
 				// toggle this specific gizmotype
@@ -236,5 +240,10 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (IsGizmo == null) return;
 		foreach (var key in IsGizmo.Keys)
 			IsGizmo[key] = false;
+	}
+
+	private unsafe Vector3 GetCameraLerpFor(ActorEntity actor) {
+		var camera = GameCameraEx.GetActive();
+		return camera != null ? Vector3.Lerp(actor.CsGameObject->Position, camera->Position, 0.5f) : actor.CsGameObject->Position;
 	}
 }
