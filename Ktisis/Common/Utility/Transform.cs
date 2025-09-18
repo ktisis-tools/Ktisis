@@ -45,7 +45,7 @@ public class Transform : IEquatable<Transform> {
 		this.DecomposeMatrix(mx);
 	}
 
-	public Transform(ref Vector3 pos) {
+	public Transform(Vector3 pos) {
 		this.Position = pos;
 		this.Rotation = Quaternion.Identity;
 		this.Scale = Vector3.One;

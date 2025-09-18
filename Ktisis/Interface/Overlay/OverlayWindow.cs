@@ -26,6 +26,8 @@ public class OverlayWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
 	private readonly IGizmo _gizmo;
 	private readonly IGizmo _gizmoGaze;
+	public Vector3? GazeTarget;
+	public bool GazeManipulated = false;
 	private readonly SceneDraw _sceneDraw;
 
 	public OverlayWindow(
@@ -64,10 +66,16 @@ public class OverlayWindow : KtisisWindow {
 		
 		// var t = new Stopwatch();
 		// t.Start();
-		
-		var gizmo = this.DrawGizmo();
-		this._sceneDraw.DrawScene(gizmo: gizmo, gizmoIsEnded: this._gizmo.IsEnded);
-		
+		var gizmoDrawn = false;
+
+		if (this.GazeTarget != null)
+			this.GazeManipulated = this.DrawGazeGizmo();
+		else {
+			this.GazeManipulated = false;
+			gizmoDrawn = this.DrawGizmo();
+		}
+		this._sceneDraw.DrawScene(gizmo: gizmoDrawn, gizmoIsEnded: this._gizmo.IsEnded);
+
 		// t.Stop();
 		// this.DrawDebug(t);
 	}
@@ -112,10 +120,11 @@ public class OverlayWindow : KtisisWindow {
 		return true;
 	}
 
-	public bool DrawGazeGizmo(ref Vector3 pos) {
+	private bool DrawGazeGizmo() {
 		// todo: wack
 		// todo: prevent shift raycasting when manipulating a gazegizmo
 		if (!this._ctx.Config.Overlay.Visible) return false;
+		if (this.GazeTarget == null) return false;
 
 		var view = CameraService.GetViewMatrix();
 		var proj = CameraService.GetProjectionMatrix();
@@ -123,7 +132,7 @@ public class OverlayWindow : KtisisWindow {
 			return false;
 
 		// create transform target off of provided gaze position, empty rot and scale
-		var transform = new Transform(ref pos);
+		var transform = new Transform((Vector3)this.GazeTarget);
 		var matrix = transform.ComposeMatrix();
 
 		var cfg = this._ctx.Config.Gizmo;
@@ -139,7 +148,7 @@ public class OverlayWindow : KtisisWindow {
 		this._gizmoGaze.BeginFrame(Vector2.Zero, size);
 		var isManipulate = this._gizmoGaze.Manipulate(ref matrix, out _);
 		transform.DecomposeMatrix(matrix);
-		pos = transform.Position;
+		this.GazeTarget = transform.Position;
 		this._gizmoGaze.EndFrame();
 
 		return isManipulate;

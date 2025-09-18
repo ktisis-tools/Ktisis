@@ -146,10 +146,14 @@ public class ActorPropertyList : ObjectPropertyList {
 				result |= DrawGaze(actor, ref gaze.Torso.Gaze, GazeControl.Torso, anyGizmo);
 			}
 
+			if (!anyGizmo || this._ctx.Posing.IsEnabled) {
+				var overlay = this._gui.Get<OverlayWindow>();
+				overlay.GazeTarget = null;
+			}
+
 			if (result)
 				actor.Gaze = gaze;
 		}
-
 		return;
 	}
 
@@ -202,7 +206,6 @@ public class ActorPropertyList : ObjectPropertyList {
 		}
 		ImGui.SameLine(0, spacing);
 
-		// TODO: this is a wack calling pattern
 		// gizmo tracking - when pressed,
 		// 	- toggle enabled
 		// 	- take over from any followcam
@@ -222,10 +225,18 @@ public class ActorPropertyList : ObjectPropertyList {
 			}
 		}
 
-		if (enabled && isGizmo && !this._ctx.Posing.IsEnabled)
-			result |= this._gui.Get<OverlayWindow>().DrawGazeGizmo(ref gaze.Pos);
+		var overlay = this._gui.Get<OverlayWindow>();
+		if (enabled && isGizmo && !this._ctx.Posing.IsEnabled) {
+			if (overlay.GazeTarget == null) {
+				overlay.GazeTarget = gaze.Pos;
+			}
+			else if (overlay.GazeManipulated) {
+				gaze.Pos = (Vector3)overlay.GazeTarget;
+				result = true;
+			}
+		}
 
-		using (ImRaii.Disabled(!enabled))
+		using (ImRaii.Disabled(!enabled || isTracking || isGizmo))
 			result |= GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
 
 		return result;
