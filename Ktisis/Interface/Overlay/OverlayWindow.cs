@@ -121,8 +121,7 @@ public class OverlayWindow : KtisisWindow {
 	}
 
 	private bool DrawGazeGizmo() {
-		// todo: wack
-		// todo: prevent shift raycasting when manipulating a gazegizmo
+		// todo: kinda wack
 		if (!this._ctx.Config.Overlay.Visible) return false;
 		if (this.GazeTarget == null) return false;
 
@@ -131,7 +130,7 @@ public class OverlayWindow : KtisisWindow {
 		if (view == null || proj == null || this.Size == null)
 			return false;
 
-		// create transform target off of provided gaze position, empty rot and scale
+		// create transform target off position from ActorPropertyList if provided
 		var transform = new Transform((Vector3)this.GazeTarget);
 		var matrix = transform.ComposeMatrix();
 
@@ -144,7 +143,7 @@ public class OverlayWindow : KtisisWindow {
 		var size = this.Size.Value;
 		this._gizmoGaze.SetMatrix(view.Value, proj.Value);
 
-		// manipulate ref position with gaze gizmo
+		// set target to decomposed position for ActorPropertyList to consume
 		this._gizmoGaze.BeginFrame(Vector2.Zero, size);
 		var isManipulate = this._gizmoGaze.Manipulate(ref matrix, out _);
 		transform.DecomposeMatrix(matrix);
