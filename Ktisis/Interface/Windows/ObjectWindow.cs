@@ -181,8 +181,10 @@ public class ObjectWindow : KtisisWindow {
 			cameraPos = freeCam.Position;
 		} else {
 			var camera = CameraService.GetGameCamera();
-			cameraFov = camera != null ? camera->FoV : 1.0f;
-			cameraPos = camera != null ? (Vector3)camera->CameraBase.SceneCamera.Object.Position : Vector3.Zero;
+			if (camera != null) {
+				cameraFov = camera->FoV;
+				cameraPos = camera->CameraBase.SceneCamera.Object.Position;
+			}
 		}
 		
 		var matrix = transform.ComposeMatrix();
