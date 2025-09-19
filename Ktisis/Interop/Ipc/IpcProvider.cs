@@ -13,21 +13,21 @@ namespace Ktisis.Interop.Ipc;
 [Singleton]
 public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 {
+    private ICallGateProvider<(int, int)> IpcVersion { get; } = dpi.GetIpcProvider<(int, int)>("Ktisis.ApiVersion");
     private ICallGateProvider<bool> IpcRefreshActions { get; } = dpi.GetIpcProvider<bool>("Ktisis.RefreshActors");
     private ICallGateProvider<bool> IpcIsPosing { get; } = dpi.GetIpcProvider<bool>("Ktisis.IsPosing");
     private ICallGateProvider<IGameObject, string, Task<bool>> IpcLoadPose { get; } = dpi.GetIpcProvider<IGameObject, string, Task<bool>>("Ktisis.LoadPose");
     private ICallGateProvider<IGameObject, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<IGameObject, Task<string?>>("Ktisis.SavePose");
    
+    private (int, int) GetVersion() => (1, 0);
+
     private bool RefreshActors()
     {
         ctxManager.Current?.Scene.GetModule<ActorModule>().RefreshGPoseActors();
         return true;
     }
 
-    private bool IsActive()
-    {
-        return ctxManager.Current?.Posing.IsEnabled ?? false;
-    }
+    private bool IsActive() => ctxManager.Current?.Posing.IsEnabled ?? false;
 
     private async Task<bool> LoadPose(IGameObject gameObject, string json)
     {
@@ -59,6 +59,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
     public void RegisterIpc()
     {
+        IpcVersion.RegisterFunc(GetVersion);
         IpcRefreshActions.RegisterFunc(RefreshActors);
         IpcIsPosing.RegisterFunc(IsActive);
         IpcLoadPose.RegisterFunc(LoadPose);
