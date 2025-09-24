@@ -71,5 +71,6 @@ public enum GazeMode : uint {
     Rotate = 2,
     Target = 3,
 
-    _KtisisFollowCam_ = 9
+    _KtisisFollowCam_ = 9,
+    _KtisisFollowGizmo_ = 10
 }

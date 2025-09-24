@@ -256,6 +256,7 @@ public class ActorModule : SceneModule {
 				var type = (GazeControl)i;
 				var ctrl = gaze[type];
 				if (ctrl.Mode != 0) {
+					// un-set fake followcam mode and modify position
 					if (ctrl.Mode == GazeMode._KtisisFollowCam_) {
 						if (this.Scene.Context.Cameras.IsWorkCameraActive) {
 							var freeCam = (WorkCamera)this.Scene.Context.Cameras.Current;
@@ -270,6 +271,10 @@ public class ActorModule : SceneModule {
 						}
 						ctrl.Mode = GazeMode.Target;
 					}
+
+					// un-set fake gizmo mode w/o modifications
+					if (ctrl.Mode == GazeMode._KtisisFollowGizmo_)
+						ctrl.Mode = GazeMode.Target;
 
 					this._actorLookAt(&detourCharacterEx->Gaze, &ctrl, type, IntPtr.Zero);
 
