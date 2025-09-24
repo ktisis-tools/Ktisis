@@ -282,6 +282,7 @@
 			"title": "Workspace",
 			"init": "Open workspace when entering GPose",
 			"toggleOpenWindows": "UI buttons toggle windows open & closed",
+			"initPosLock": "Freeze actor positions when entering GPose",
 			"editOnSelect": "Toggle object editor when selecting",
 			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",
@@ -301,7 +302,9 @@
 		"input": {
 			"title": "Input",
 			"enable": "Enable keybinds",
-			"help": "Click keybinds to modify them. Right click to clear."
+			"help": "Click keybinds to modify them. Right click to clear.",
+			"blockLeft": "Disable change target on left click",
+			"blockRight": "Disable change target on right click"
 		},
 		"autosave": {
 			"title": "AutoSave",
@@ -316,9 +319,28 @@
 		},
 		"presets": {
 			"title": "Presets",
+			"description": "View and edit your defined presets below.",
+			"defaults": "Right click any preset to mark it as Default. Default presets will be initially enabled for any GPose actors.",
 			"delete_tooltip": "Hold shift to delete",
 			"delete": "Delete",
 			"rename": "Rename"
+		},
+		"poseview": {
+			"title": "Pose View",
+			"description": "Select your own images to use in the Pose View interface below.",
+			"body": "Body",
+			"armor": "Armor (Clothing)",
+			"ears": "Ears (Viera)",
+			"face": "Face",
+			"hands": "Hands",
+			"lips": "Lips",
+			"mouth": "Mouth",
+			"tail": "Tail",
+			"linkout": {
+				"description": "Download template images here:",
+				"button": "GitHub",
+				"link": "https://github.com/ktisis-tools/Ktisis/tree/v0.3/main/Ktisis/Data/Images/Templates"
+			}
 		}
 	},
 

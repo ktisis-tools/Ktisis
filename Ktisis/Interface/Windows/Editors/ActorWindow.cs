@@ -12,6 +12,8 @@ using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
 using Ktisis.Structs.Characters;
+using Ktisis.Interface.Components.Chara.Select;
+using Ktisis.GameData.Excel.Types;
 
 namespace Ktisis.Interface.Windows.Editors;
 
@@ -24,16 +26,21 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 
 	private IAnimationManager Animation => this.Context.Animation;
 	private ICharacterManager Manager => this.Context.Characters;
+
+	private readonly NpcSelect _npcs;
 	
 	public ActorWindow(
 		IEditorContext ctx,
 		CustomizeEditorTab custom,
 		EquipmentEditorTab equip,
-		AnimationEditorTab anim
+		AnimationEditorTab anim,
+		NpcSelect npcs
 	) : base($"Actor Editor###{WindowId}", ctx) {
 		this._custom = custom;
 		this._equip = equip;
 		this._anim = anim;
+		this._npcs = npcs;
+		this._npcs.OnSelected += this.OnNpcSelect;
 	}
 	
 	// Target
@@ -55,6 +62,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	public override void OnOpen() {
 		this._custom.Setup();
 		this._anim.Setup();
+		this._npcs.FetchMonsters();
 	}
 
 	public override void PreDraw() {
@@ -83,11 +91,15 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	// Advanced tab
 
 	private unsafe void DrawMisc() {
+		var space = ImGui.GetStyle().ItemInnerSpacing.X;
 		ImGui.Spacing();
 		
 		var modelId = (int)this._editCustom.GetModelId();
 		if (ImGui.InputInt("Model ID", ref modelId))
 			this._editCustom.SetModelId((uint)modelId);
+
+		ImGui.SameLine(0, space);
+		this._npcs.DrawSearchIcon();
 
 		var chara = (CharacterEx*)this.Target.Character;
 		if (chara != null) {
@@ -138,4 +150,6 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 			state.Wetness = chara != null ? chara->Wetness : null;
 		}
 	}
+
+	private void OnNpcSelect(INpcBase npc) => this._editCustom.SetModelId((uint)npc.GetModelId());
 }

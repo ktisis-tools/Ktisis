@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
+using System.Linq;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
@@ -7,6 +8,7 @@ using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
 
+using Ktisis.Structs.Camera;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
@@ -18,6 +20,8 @@ using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Structs.Actors;
+using Ktisis.Interface.Overlay;
+using Ktisis.Interface;
 
 namespace Ktisis.Interface.Editor.Properties;
 
@@ -25,6 +29,7 @@ public class ActorPropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
 	private readonly GuiManager _gui;
 	private readonly ConfigManager _cfg;
+	private readonly GuiManager _gui;
 	private readonly LocaleManager _locale;
 	private static Dictionary<GazeControl, TransformTable>? GazeTables;
 
@@ -37,12 +42,14 @@ public class ActorPropertyList : ObjectPropertyList {
 		IEditorContext ctx,
 		GuiManager gui,
 		ConfigManager cfg,
-		LocaleManager locale
+		LocaleManager locale,
+		GuiManager gui
 	) {
 		this._ctx = ctx;
 		this._gui = gui;
 		this._cfg = cfg;
 		this._locale = locale;
+		this._gui = gui;
 	}
 	
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
@@ -121,6 +128,8 @@ public class ActorPropertyList : ObjectPropertyList {
 					if (IsLinked) {
 						var move = gaze.Other;
 						if (move.Gaze.Mode != 0) {
+							move.Gaze.Mode = GazeMode.Target;
+
 							result = true;
 							gaze.Head = move;
 							gaze.Eyes = move;
@@ -135,24 +144,33 @@ public class ActorPropertyList : ObjectPropertyList {
 				ImGui.Spacing();
 			}
 
+			var anyGizmo = gaze.Other.Gaze.Mode == GazeMode._KtisisFollowGizmo_
+				|| gaze.Eyes.Gaze.Mode == GazeMode._KtisisFollowGizmo_
+				|| gaze.Head.Gaze.Mode == GazeMode._KtisisFollowGizmo_
+				|| gaze.Torso.Gaze.Mode == GazeMode._KtisisFollowGizmo_;
+
 			if (IsLinked || !isHuman)
-				result |= DrawGaze(actor, ref gaze.Other.Gaze, GazeControl.All);
+				result |= DrawGaze(actor, ref gaze.Other.Gaze, GazeControl.All, anyGizmo);
 			else {
-				result |= DrawGaze(actor, ref gaze.Eyes.Gaze, GazeControl.Eyes);
+				result |= DrawGaze(actor, ref gaze.Eyes.Gaze, GazeControl.Eyes, anyGizmo);
 				ImGui.Spacing();
-				result |= DrawGaze(actor, ref gaze.Head.Gaze, GazeControl.Head);
+				result |= DrawGaze(actor, ref gaze.Head.Gaze, GazeControl.Head, anyGizmo);
 				ImGui.Spacing();
-				result |= DrawGaze(actor, ref gaze.Torso.Gaze, GazeControl.Torso);
+				result |= DrawGaze(actor, ref gaze.Torso.Gaze, GazeControl.Torso, anyGizmo);
+			}
+
+			if (!anyGizmo || this._ctx.Posing.IsEnabled) {
+				var overlay = this._gui.Get<OverlayWindow>();
+				overlay.GazeTarget = null;
 			}
 
 			if (result)
 				actor.Gaze = gaze;
 		}
-
 		return;
 	}
 
-	private unsafe bool DrawGaze(ActorEntity actor, ref Gaze gaze, GazeControl type) {
+	private unsafe bool DrawGaze(ActorEntity actor, ref Gaze gaze, GazeControl type, bool anyGizmo) {
 		if (!GazeTables.ContainsKey(type))
 			GazeTables.Add(type, new TransformTable(this._cfg, this._locale));
 
@@ -163,6 +181,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		var enabled = gaze.Mode != 0;
 		var actorCharacter = (CharacterEx*)actor.Character;
 		var isTracking = gaze.Mode == GazeMode._KtisisFollowCam_;
+		var isGizmo = gaze.Mode == GazeMode._KtisisFollowGizmo_;
 
 		if (type != GazeControl.All || !enabled) {
 			// if we're changing individual gazes (or viewing All w/o activation), set each to the basegaze for that type
@@ -177,6 +196,9 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		if (ImGui.Checkbox($"{type}", ref enabled)) {
 			result = true;
+			// if enabling via checkbox, set the position to a lerp instead of world origin
+			if (enabled)
+				gaze.Pos = GetCameraLerpFor(actor);
 			gaze.Mode = enabled ? GazeMode.Target : GazeMode.Disabled;
 		}
 
@@ -197,15 +219,44 @@ public class ActorPropertyList : ObjectPropertyList {
 		}
 		ImGui.SameLine(0, spacing);
 
-		// TODO: gizmo, needs work to generate a new one w/o using ObjectWindow/OverlayWindow
-		// 	or, possible to create a dummy scene object (GazeTarget?) to hijack overlay gizmo?
-		using (ImRaii.Disabled()) {
-			using var __ = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking);
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking [TODO]", Vector2.Zero)) {}
+		// gizmo tracking - when pressed,
+		// 	- toggle enabled
+		// 	- take over from any followcam
+		// 	- prevent any other gizmo gazing
+		// 	- draw a translate gizmo at the targeted gaze position
+		using (ImRaii.Disabled(anyGizmo && !isGizmo)) {
+			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isGizmo)) {
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {
+					// if this wasnt enabled, set the gaze target to a friendly lerp
+					if (!enabled)
+						gaze.Pos = GetCameraLerpFor(actor);
+
+					result = true;
+					enabled = true;
+					gaze.Mode = isGizmo ? GazeMode.Target : GazeMode._KtisisFollowGizmo_;
+				}
+			}
 		}
 
-		result |= GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
+		var overlay = this._gui.Get<OverlayWindow>();
+		if (enabled && isGizmo && !this._ctx.Posing.IsEnabled) {
+			if (overlay.GazeTarget == null) {
+				overlay.GazeTarget = gaze.Pos;
+			}
+			else if (overlay.GazeManipulated) {
+				gaze.Pos = (Vector3)overlay.GazeTarget;
+				result = true;
+			}
+		}
+
+		using (ImRaii.Disabled(!enabled || isTracking || isGizmo))
+			result |= GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
 
 		return result;
+	}
+
+	private unsafe Vector3 GetCameraLerpFor(ActorEntity actor) {
+		var camera = GameCameraEx.GetActive();
+		return camera != null ? Vector3.Lerp(actor.CsGameObject->Position, camera->Position, 0.5f) : actor.CsGameObject->Position;
 	}
 }

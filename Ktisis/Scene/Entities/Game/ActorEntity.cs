@@ -30,6 +30,7 @@ public class ActorEntity : CharaEntity, IDeletable {
 	public readonly IGameObject Actor;
 
 	public bool IsManaged { get; set; }
+
 	public unsafe bool IsHidden {
 		get {
 			var chara = (CharacterEx*)this.Character;
@@ -44,6 +45,8 @@ public class ActorEntity : CharaEntity, IDeletable {
 					chara->Opacity = 1.0f;
 		}
 	}
+
+	private bool DefaultsInitialized = false;
 
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
 
@@ -81,6 +84,10 @@ public class ActorEntity : CharaEntity, IDeletable {
 		if (!this.IsObjectValid) return;
 		this.UpdateChara();
 		base.Update();
+
+		// after we're drawing, run the default presetter once
+		if (!this.DefaultsInitialized)
+			this.SetDefaultPresets();
 	}
 
 	private unsafe void UpdateChara() {
@@ -201,6 +208,19 @@ public class ActorEntity : CharaEntity, IDeletable {
 		CheckImplicitlyEnabled();
 
 		return true;
+	}
+
+	private void SetDefaultPresets() {
+		var allBones = this.Recurse().OfType<BoneNode>().ToList()!;
+		if (!allBones.Any())
+			return;
+
+		var presets = this.Scene.Context.Config.Presets.DefaultPresets;
+		foreach (var preset in presets) {
+			Ktisis.Log.Debug($"toggling default preset {preset}");
+			this.TogglePreset(preset, true);
+		}
+		this.DefaultsInitialized = true;
 	}
 
 	private void EnsurePresetVisibility() {

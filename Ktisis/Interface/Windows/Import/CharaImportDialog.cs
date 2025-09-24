@@ -28,6 +28,10 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	}
 	
 	// Events
+
+	public void SetMethod(LoadMethod method) {
+		this._import.Method = method;
+	}
 	
 	private void OnNpcSelected(CharaImportUI sender) => sender.ApplyTo(this.Target);
 	

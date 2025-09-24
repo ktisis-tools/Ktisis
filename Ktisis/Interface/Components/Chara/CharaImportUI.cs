@@ -14,6 +14,11 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Components.Chara;
 
+public enum LoadMethod {
+	File,
+	Npc
+}
+
 [Transient]
 public class CharaImportUI {
 	public IEditorContext Context { set; private get; } = null!;
@@ -46,15 +51,10 @@ public class CharaImportUI {
 	}
 	
 	// State
-	
-	private enum LoadMethod {
-		File,
-		Npc
-	}
 
-	private LoadMethod _method = LoadMethod.File;
+	public LoadMethod Method { get; set; } = LoadMethod.File;
 	
-	public bool HasSelection => this._method switch {
+	public bool HasSelection => this.Method switch {
 		LoadMethod.File => this._select.IsFileOpened,
 		LoadMethod.Npc => this._npcs.Selected != null,
 		_ => false
@@ -69,7 +69,7 @@ public class CharaImportUI {
 	// Apply selection
 
 	public void ApplyTo(ActorEntity actor) {
-		switch (this._method) {
+		switch (this.Method) {
 			case LoadMethod.File:
 				this.ApplyCharaFile(actor);
 				break;
@@ -77,7 +77,7 @@ public class CharaImportUI {
 				this.ApplyNpc(actor);
 				break;
 			default:
-				throw new ArgumentOutOfRangeException(this._method.ToString());
+				throw new ArgumentOutOfRangeException(this.Method.ToString());
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class CharaImportUI {
 	// Importing
 
 	public void DrawImport() {
-		switch (this._method) {
+		switch (this.Method) {
 			case LoadMethod.File:
 				this._select.Draw();
 				break;
@@ -106,12 +106,8 @@ public class CharaImportUI {
 				ImGui.Checkbox("Apply on selection", ref this.Context.Config.File.ImportNpcApplyOnSelect);
 				break;
 			default:
-				throw new ArgumentOutOfRangeException(this._method.ToString());
+				throw new ArgumentOutOfRangeException(this.Method.ToString());
 		}
-	}
-
-	public void DrawSimpleImport() {
-		
 	}
 	
 	public void DrawLoadMethods(float cursorY = -1.0f) {
@@ -124,8 +120,8 @@ public class CharaImportUI {
 	}
 	
 	private void DrawMethodRadio(string label, LoadMethod method) {
-		if (ImGui.RadioButton(label, this._method == method))
-			this._method = method;
+		if (ImGui.RadioButton(label, this.Method == method))
+			this.Method = method;
 	}
 	
 	// Mode selection
