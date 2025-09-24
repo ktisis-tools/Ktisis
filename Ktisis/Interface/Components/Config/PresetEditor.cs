@@ -21,6 +21,8 @@ public class PresetEditor {
 	private readonly LocaleManager _locale;
 
 	private PresetConfig Config => this._cfg.File.Presets;
+
+	private const uint ColorYellow = 0xFF00FFFF;
 	
 	public PresetEditor(
 		ConfigManager cfg,
@@ -36,8 +38,13 @@ public class PresetEditor {
 
 	private string? Selected = null;
 	private string PresetName = null;
+	private bool IsDefault = false;
 	
 	public void Draw() {
+		ImGui.Text(this._locale.Translate("config.presets.description"));
+		ImGui.Text(this._locale.Translate("config.presets.defaults"));
+		ImGui.Spacing();
+
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(10, 10));
 		using var table = ImRaii.Table("##PresetsTable", 2, ImGuiTableFlags.Resizable);
 		
@@ -56,22 +63,32 @@ public class PresetEditor {
 		
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, UiBuilder.DefaultFont.FontSize);
 		foreach (var (name, bones) in Config.Presets) {
-			var flags = ImGuiTreeNodeFlags.Leaf;
+			var flags = ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanAvailWidth;
+			var isDefault = Config.PresetIsDefault(name);
 
-			if (Selected == name) {
+			if (isDefault)
+				flags |= ImGuiTreeNodeFlags.Bullet;
+
+			if (Selected == name)
 				flags |= ImGuiTreeNodeFlags.Selected;
-			}
-			
+
+			using var c = ImRaii.PushColor(ImGuiCol.Text, isDefault ? ColorYellow : ImGui.GetColorU32(ImGuiCol.Text));
 			using var node = ImRaii.TreeNode(name, flags);
 			
-			if (!ImGui.IsItemClicked())
-				continue;
-
-			if (!(ImGui.GetItemRectMin().X + ImGui.GetTreeNodeToLabelSpacing() < ImGui.GetMousePos().X))
-				continue;
-			
-			this.Selected = this.Selected != name ? name : null;
-			this.PresetName = name;
+			if (ImGui.IsItemClicked(ImGuiMouseButton.Left)) {
+				this.Selected = this.Selected != name ? name : null;
+				this.PresetName = name;
+				this.IsDefault = isDefault;
+			} else if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
+				if (isDefault) {
+					Config.DefaultPresets.Remove(name);
+					this.IsDefault = false;
+				}
+				else {
+					Config.DefaultPresets.Add(name);
+					this.IsDefault = true;
+				}
+			}
 		}
 	}
 
@@ -102,7 +119,10 @@ public class PresetEditor {
 
 		var preset = Config.Presets[Selected];
 		Config.Presets[PresetName] = preset;
+		if (IsDefault)
+			Config.DefaultPresets.Add(PresetName);
 		Config.Presets.Remove(Selected);
+		Config.DefaultPresets.Remove(Selected);
 		Selected = PresetName;
 	}
 
@@ -111,6 +131,7 @@ public class PresetEditor {
 
 		PresetConfig.PresetRemovedEvent?.Invoke(Selected);
 		Config.Presets.Remove(Selected);
+		Config.DefaultPresets.Remove(Selected);
 		Selected = null;
 	}
 }
