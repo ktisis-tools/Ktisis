@@ -276,6 +276,7 @@
 		"workspace": {
 			"title": "Workspace",
 			"init": "Open workspace when entering GPose",
+			"initPosLock": "Freeze actor positions when entering GPose",
 			"editOnSelect": "Toggle object editor when selecting",
 			"incognitoPlayerNames": "Incognito Mode",
 			"hintIncognito": "Censors all player names from actor list and GPose window",
