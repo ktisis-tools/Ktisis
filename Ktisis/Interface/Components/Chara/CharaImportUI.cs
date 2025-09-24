@@ -27,7 +27,6 @@ public class CharaImportUI {
 	
 	private readonly NpcSelect _npcs;
 	private readonly FileSelect<CharaFile> _select;
-	private bool _isInit = false;
 
 	public CharaImportUI(
 		NpcSelect npcs,

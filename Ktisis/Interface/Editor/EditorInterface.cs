@@ -202,10 +202,11 @@ public class EditorInterface : IEditorInterface {
 	
 	// import/export wrappers
 
-	public void OpenCharaImport(ActorEntity actor) {
+	public void OpenCharaImport(ActorEntity actor, bool openNpc = false) {
 		var editor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);
 		editor.SetTarget(actor);
-		editor.SetMethod(LoadMethod.Npc);
+		if (openNpc)
+			editor.SetMethod(LoadMethod.Npc);
 		editor.Open();
 	}
 
