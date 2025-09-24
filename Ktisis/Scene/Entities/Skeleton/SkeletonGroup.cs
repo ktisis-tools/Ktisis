@@ -15,7 +15,7 @@ public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene), 
 		}
 	}
 	
-	private IEnumerable<IVisibility> RecurseVisible()
+	protected IEnumerable<IVisibility> RecurseVisible()
 		=> this.Children.Where(child => child is IVisibility).Cast<IVisibility>();
 
 	protected void Clean(int pIndex, uint pId) {

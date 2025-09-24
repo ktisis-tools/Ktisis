@@ -12,6 +12,8 @@
 				j_kami_f_l
 				j_kami_f_r
 			</Bones>
+			<Preset Name="Head" />
+			<Preset Name="Hair" />
 		</Category>
 		<Category Id="Ears">
 			<Category Id="LeftEar">
@@ -27,6 +29,7 @@
 					j_zerd_b_l
 					j_ear_l
 				</Bones>
+				<Preset Name="Head"/>
 			</Category>
 			<Category Id="RightEar">
 				<Bones>
@@ -41,7 +44,9 @@
 					j_zerd_b_r
 					j_ear_r
 				</Bones>
+				<Preset Name="Head"/>
 			</Category>
+			<Preset Name="Head"/>
 		</Category>
 		<Category Id="Face">
 			<Bones>
@@ -57,6 +62,7 @@
 						j_f_miken_01_l
 						j_f_miken_02_l
 					</Bones>
+					<Preset Name="Face"/>
 				</Category>
 				<Category Id="RightBrow">
 					<Bones>
@@ -66,6 +72,7 @@
 						j_f_miken_01_r
 						j_f_miken_02_r
 					</Bones>
+					<Preset Name="Face"/>
 				</Category>
 			</Category>
 			<Category Id="Eyes">
@@ -81,12 +88,16 @@
 					j_f_noanim_eyesize_l
 					j_f_noanim_eyesize_r
 				</Bones>
+				<Preset Name="Face"/>
+				<Preset Name="Eyes"/>
 				<Category Id="LeftEye">
 					<Bones>
 						j_f_eye_l
 						j_f_eyepuru_l
 						j_f_mab_l
 					</Bones>
+					<Preset Name="Face"/>
+					<Preset Name="Eyes"/>
 					<Category Id="LeftEyelid">
 						<Bones>
 							j_f_umab_l
@@ -98,6 +109,8 @@
 							j_f_mabup_03in_l
 							j_f_mabdn_03in_l
 						</Bones>
+						<Preset Name="Face"/>
+						<Preset Name="Eyes"/>
 					</Category>
 				</Category>
 				<Category Id="RightEye">
@@ -106,6 +119,8 @@
 						j_f_eyepuru_r
 						j_f_mab_r
 					</Bones>
+					<Preset Name="Face"/>
+					<Preset Name="Eyes"/>
 					<Category Id="RightEyelid">
 						<Bones>
 							j_f_umab_r
@@ -117,6 +132,8 @@
 							j_f_mabup_03in_r
 							j_f_mabdn_03in_r
 						</Bones>
+						<Preset Name="Face"/>
+						<Preset Name="Eyes"/>
 					</Category>
 				</Category>
 			</Category>
@@ -128,6 +145,7 @@
 					j_f_hana_l
 					j_f_hana_r
 				</Bones>
+				<Preset Name="Face"/>
 			</Category>
 			<Category Id="Cheeks">
 				<Category Id="LeftCheek">
@@ -137,6 +155,7 @@
 						j_f_shoho_l
 						j_f_dmemoto_l
 					</Bones>
+					<Preset Name="Face"/>
 				</Category>
 				<Category Id="RightCheek">
 					<Bones>
@@ -145,6 +164,7 @@
 						j_f_shoho_r
 						j_f_dmemoto_r
 					</Bones>
+					<Preset Name="Face"/>
 				</Category>
 			</Category>
 			<Category Id="Mouth">
@@ -153,10 +173,12 @@
 					j_f_lip_l
 					j_f_lip_r
 				</Bones>
+				<Preset Name="Face"/>
 				<Category Id="UpperMouth">
 					<Bones>
 						j_f_hagukiup
 					</Bones>
+					<Preset Name="Face"/>
 					<Category Id="UpperLip">
 						<Bones>
 							j_f_ulip_a
@@ -172,6 +194,7 @@
 							j_f_uslip_l
 							j_f_uslip_r
 						</Bones>
+						<Preset Name="Face"/>
 					</Category>
 				</Category>
 				<Category Id="LowerMouth">
@@ -180,6 +203,7 @@
 						j_f_dago
 						j_f_hagukidn
 					</Bones>
+					<Preset Name="Face"/>
 					<Category Id="LowerLip">
 						<Bones>
 							j_f_dlip_a
@@ -195,6 +219,7 @@
 							j_f_dslip_l
 							j_f_dslip_r
 						</Bones>
+						<Preset Name="Face"/>
 					</Category>
 				</Category>
 				<Category Id="Tongue">
@@ -203,12 +228,21 @@
 						j_f_bero_02
 						j_f_bero_03
 					</Bones>
+					<Preset Name="Face"/>
 				</Category>
 			</Category>
 		</Category>
+		<Preset Name="Head" />
+		<Preset Name="Face" />
 	</Category>
 	<Category Id="Body">
 		<Category Id="Arms">
+            <Category Id="CustomArms">
+                <Bones>
+                    iv_nitoukin_r
+                    iv_nitoukin_l
+                </Bones>
+            </Category>
 			<Category Id="LeftArm">
 				<Bones>
 					j_sako_l
@@ -218,6 +252,7 @@
 					n_hhiji_l
 					iv_nitoukin_l
 				</Bones>
+				<Preset Name="Arms" />
 				<Category Id="LeftHand">
 					<TwoJointsIK Type="Arm">
 						<FirstBone>j_ude_a_l</FirstBone>
@@ -242,6 +277,7 @@
 						n_hte_l
 						j_hand_l
 					</Bones>
+					<Preset Name="Hands" /> 
 					<Category Id="LeftHandIvcs">
 						<Bones>
 							iv_ko_c_l
@@ -249,6 +285,7 @@
 							iv_naka_c_l
 							iv_hito_c_l
 						</Bones>
+						<Preset Name="Hands (Custom)" />
 					</Category>
 				</Category>
 			</Category>
@@ -261,6 +298,7 @@
 					n_hhiji_r
 					iv_nitoukin_r
 				</Bones>
+				<Preset Name="Arms" />
 				<Category Id="RightHand">
 					<TwoJointsIK Type="Arm">
 						<FirstBone>j_ude_a_r</FirstBone>
@@ -285,6 +323,7 @@
 						n_hte_r
 						j_hand_r
 					</Bones>
+					<Preset Name="Hands"/>
 					<Category Id="RightHandIvcs">
 						<Bones>
 							iv_ko_c_r
@@ -292,6 +331,7 @@
 							iv_naka_c_r
 							iv_hito_c_r
 						</Bones>
+						<Preset Name="Hands (Custom)" />
 					</Category>
 				</Category>
 			</Category>
@@ -304,6 +344,7 @@
 				j_sebo_b
 				j_sebo_c
 			</Bones>
+			<Preset Name="Body"/>
 			<Category Id="SkelomaeWings">
 				<Category Id="SkelomaeWingsLeft">
 					<Bones>
@@ -325,14 +366,18 @@
 				</Category>
 			</Category>
 			<Category Id="Breasts">
+				<Preset Name="Body"/>
 				<Bones>
 					j_mune_l
 					j_mune_r
 				</Bones>
 				<Category Id="BreastsIvcs">
+					<Preset Name="Body (Custom)" />
 					<Bones>
 						iv_c_mune_l
 						iv_c_mune_r
+                        iv_kyokin_phys_l
+                        iv_kyokin_phys_r
 					</Bones>
 				</Category>
 			</Category>
@@ -415,14 +460,31 @@
 					</Category>
 				</Category>
 			</Category>
+            <Category Id="CustomAbdomen">
+                <Bones>
+                    iv_fukubu_phys
+					ya_fukubu_phys
+                    iv_fukubu_phys_l
+                    iv_fukubu_phys_r
+                </Bones>
+            </Category>
 		</Category>
 		<Category Id="Legs">
+            <Category id="CustomLegs">
+                <Bones>
+                    iv_daitai_phys_l
+                    iv_daitai_phys_r
+                    ya_daitai_phys_l
+                    ya_daitai_phys_r
+                </Bones>
+            </Category>
 			<Category Id="LeftLeg">
 				<Bones>
 					j_asi_a_l
 					j_asi_b_l
 					j_asi_c_l
 				</Bones>
+				<Preset Name="Body" />
 				<Category Id="LeftFoot">
 					<TwoJointsIK Type="Leg">
 						<FirstBone>j_asi_a_l</FirstBone>
@@ -436,6 +498,7 @@
 						j_asi_e_l
 						j_foot_l
 					</Bones>
+					<Preset Name="Feet"/>
 					<Category Id="LeftFootIvcs">
 						<Bones>
 							iv_asi_oya_a_l
@@ -449,6 +512,7 @@
 							iv_asi_ko_a_l
 							iv_asi_ko_b_l
 						</Bones>
+						<Preset Name="Feet (Custom)" />
 					</Category>
 				</Category>
 			</Category>
@@ -458,6 +522,7 @@
 					j_asi_b_r
 					j_asi_c_r
 				</Bones>
+				<Preset Name="Body" />
 				<Category Id="RightFoot">
 					<TwoJointsIK Type="Leg">
 						<FirstBone>j_asi_a_r</FirstBone>
@@ -471,6 +536,7 @@
 						j_asi_e_r
 						j_foot_r
 					</Bones>
+					<Preset Name="Feet" />
 					<Category Id="RightFootIvcs">
 						<Bones>
 							iv_asi_oya_a_r
@@ -484,6 +550,7 @@
 							iv_asi_ko_a_r
 							iv_asi_ko_b_r
 						</Bones>
+						<Preset Name="Feet (Custom)" />
 					</Category>
 				</Category>
 			</Category>
@@ -505,7 +572,14 @@
 					iv_ochinko_f
 					j_penis
 					j_balls
+                    iv_funyachin_phy_a
+                    iv_funyachin_phy_b
+                    iv_funyachin_phy_c
+                    iv_funyachin_phy_d
+                    iv_kintama_phys_l
+                    iv_kintama_phys_r
 				</Bones>
+				<Preset Name="Body (Custom)" />
 			</Category>
 			<Category Id="VaginaIvcs" IsNsfw="true">
 				<Bones>
@@ -514,6 +588,7 @@
 					iv_inshin_l
 					iv_inshin_r
 				</Bones>
+				<Preset Name="Body (Custom)" />
 			</Category>
 		</Category>
 		<Category Id="BottomIvcs" IsNsfw="true">
@@ -523,7 +598,10 @@
 				iv_koumon_r
 				iv_shiri_l
 				iv_shiri_r
+                ya_shiri_phys_l
+                ya_shiri_phys_r
 			</Bones>
+			<Preset Name="Body (Custom)" />
 		</Category>
 	</Category>
 	<Category Id="Tail">
@@ -540,6 +618,8 @@
 			n_sippo_e
 			j_tail
 		</Bones>
+		<Preset Name="Tail" />
+		<Preset Name="Body" />
 	</Category>
 	<Category Id="Clothing">
 		<Bones>
@@ -560,6 +640,7 @@
 			j_ex_met_va
 			j_ex_met_vb
 		</Bones>
+		<Preset Name="Clothing"/>
 		<Category Id="Cloth">
 			<Bones>
 				j_sk_b_b_l
@@ -581,6 +662,7 @@
 				j_sk_s_c_l
 				j_sk_s_c_r
 			</Bones>
+			<Preset Name="Clothing"/>
 		</Category>
 		<Category Id="Earring">
 			<Bones>
@@ -589,6 +671,8 @@
 				n_ear_b_l
 				n_ear_b_r
 			</Bones>
+			<Preset Name="Clothing"/>
+			<Preset Name="Earrings"/>
 		</Category>
 	</Category>
 	<Category Id="Weapons">
@@ -604,6 +688,7 @@
 			n_buki_tate_l
 			n_buki_tate_r
 		</Bones>
+		<Preset Name="Weapons" />
 	</Category>
 	<Category Id="Other" IsDefault="true">
 	</Category>
