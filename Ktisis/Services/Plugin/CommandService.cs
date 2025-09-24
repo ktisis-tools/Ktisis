@@ -38,6 +38,9 @@ public class CommandService : IDisposable {
 		this.BuildCommand("/ktisis", this.OnMainCommand)
 			.SetMessage("Toggle the main Ktisis window.")
 			.Create();
+		this.BuildCommand("/ktdebug", this.OnDebugCommand)
+			.SetMessage("Toggle the main Ktisis window.")
+			.Create();
 	}
 
 	private void Add(string name, CommandInfo info) {
@@ -60,6 +63,16 @@ public class CommandService : IDisposable {
 		}
 
 		ctx.Interface.ToggleWorkspaceWindow();
+	}
+
+	private void OnDebugCommand(string command, string arguments) {
+		Ktisis.Log.Info("Debug command used");
+		var ctx = this._ctx.Current;
+		if (ctx == null) {
+			this._chat.PrintError("Cannot open Ktisis debugging outside of GPose.");
+			return;
+		}
+		ctx.Interface.ToggleDebugWindow();
 	}
 	
 	// Disposal
