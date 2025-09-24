@@ -21,6 +21,7 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
+using Ktisis.Interface.Components.Chara;
 
 namespace Ktisis.Interface.Editor;
 
@@ -153,9 +154,10 @@ public class EditorInterface : IEditorInterface {
 	
 	// import/export wrappers
 
-	public void OpenCharaImport(ActorEntity actor, bool toNpc = false) {
-		var editor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx, toNpc);
+	public void OpenCharaImport(ActorEntity actor) {
+		var editor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);
 		editor.SetTarget(actor);
+		editor.SetMethod(LoadMethod.Npc);
 		editor.Open();
 	}
 

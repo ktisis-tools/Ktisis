@@ -104,7 +104,7 @@ public class SceneEntityMenuBuilder {
 			.Separator()
 			.SubMenu("Import...", sub => {
 				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
-					.Action("NPC", () => this.Ui.OpenCharaImport(actor, true))
+					.Action("NPC", () => this.Ui.OpenCharaImport(actor))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
 				
 				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
