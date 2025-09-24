@@ -52,6 +52,7 @@ public class NpcSelect {
 
 	private NpcLoadState _npcLoadState = NpcLoadState.Waiting;
 	private readonly List<INpcBase> _npcList = new();
+	private List<INpcBase> _monsterList = new();
 
 	public void Fetch() {
 		if (this._npcLoadState == NpcLoadState.Success) return;
@@ -64,6 +65,8 @@ public class NpcSelect {
 
 			this._npcList.Clear();
 			this._npcList.AddRange(task.Result);
+			this._monsterList.Clear();
+			this._monsterList.AddRange(task.Result.Where(entry => entry.GetModelId() != 0));
 			this._npcLoadState = NpcLoadState.Success;
 		});
 	}
@@ -120,7 +123,7 @@ public class NpcSelect {
 					this._popup.Open();
 
 				var height = ImGui.GetFontSize() * 2;
-				if (this._popup.Draw(this._npcList, out var npc, height) && npc != null)
+				if (this._popup.Draw(this._monsterList, out var npc, height) && npc != null)
 					this.Select(npc);
 				break;
 			default:
