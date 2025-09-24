@@ -7,6 +7,7 @@ using Dalamud.Bindings.ImGui;
 using GLib.Widgets;
 
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.ImGuizmo;
@@ -171,10 +172,20 @@ public class ObjectWindow : KtisisWindow {
 			this._gizmo.End();
 			return false;
 		}
-		
-		var camera = CameraService.GetGameCamera();
-		var cameraFov = camera != null ? camera->FoV : 1.0f;
-		var cameraPos = camera != null ? (Vector3)camera->CameraBase.SceneCamera.Object.Position : Vector3.Zero;
+
+		var cameraFov = 1.0f;
+		var cameraPos = Vector3.Zero;
+		if (this._ctx.Cameras.IsWorkCameraActive) {
+			var freeCam = (WorkCamera)this._ctx.Cameras.Current;
+			cameraFov = freeCam.Camera->RenderEx->FoV;
+			cameraPos = freeCam.Position;
+		} else {
+			var camera = CameraService.GetGameCamera();
+			if (camera != null) {
+				cameraFov = camera->FoV;
+				cameraPos = camera->CameraBase.SceneCamera.Object.Position;
+			}
+		}
 		
 		var matrix = transform.ComposeMatrix();
 		this._gizmo.SetLookAt(cameraPos, matrix.Translation, cameraFov, (size.X - ImGui.GetStyle().WindowPadding.X * 2) / (size.Y - ImGui.GetStyle().WindowPadding.Y * 2));

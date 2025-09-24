@@ -21,6 +21,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Scene.Types;
 using Ktisis.Services.Game;
 using Ktisis.Structs.Camera;
+using Ktisis.Editor.Camera.Types;
 
 namespace Ktisis.Scene.Modules.Actors;
 
@@ -256,10 +257,16 @@ public class ActorModule : SceneModule {
 				var ctrl = gaze[type];
 				if (ctrl.Mode != 0) {
 					if (ctrl.Mode == GazeMode._KtisisFollowCam_) {
-						var camera = GameCameraEx.GetActive();
-						if (camera != null) {
-							ctrl.Pos = camera->Position;
+						if (this.Scene.Context.Cameras.IsWorkCameraActive) {
+							var freeCam = (WorkCamera)this.Scene.Context.Cameras.Current;
+							ctrl.Pos = freeCam.Position;
 							gaze[type] = ctrl;
+						} else {
+							var camera = GameCameraEx.GetActive();
+							if (camera != null) {
+								ctrl.Pos = camera->Position;
+								gaze[type] = ctrl;
+							}
 						}
 						ctrl.Mode = GazeMode.Target;
 					}

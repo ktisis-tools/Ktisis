@@ -27,7 +27,7 @@ public class LightModule : SceneModule {
 	) : base(hook, scene) {
 		this._gpose = gpose;
 		this._framework = framework;
-		this._spawner = hook.Create<LightSpawner>();
+		this._spawner = hook.Create<LightSpawner>(scene.Context);
 	}
 
 	public override void Setup() {
