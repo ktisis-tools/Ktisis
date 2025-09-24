@@ -98,13 +98,14 @@ public class SceneEntityMenuBuilder {
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
+			.Action($"{(actor.IsHidden ? "Unhide" : "Hide")} Actor", actor.ToggleHidden)
 			.Separator()
 			.Action("Edit appearance", this.OpenEditor)
 			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Separator()
 			.SubMenu("Import...", sub => {
 				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
-					.Action("NPC", () => this.Ui.OpenCharaImport(actor))
+					.Action("NPC", () => this.Ui.OpenCharaImport(actor, true))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
 				
 				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {

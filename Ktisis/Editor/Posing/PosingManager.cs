@@ -29,6 +29,10 @@ public class PosingManager : IPosingManager {
 	private readonly IFramework _framework;
 
 	public bool IsValid => this._context.IsValid;
+
+	public PoseMemento? StashedPose { get; set; } = null;
+	public DateTime? StashedAt { get; set; } = null;
+	public string? StashedFrom { get; set; } = null;
 	
 	public IAttachManager Attachments { get; }
 
@@ -205,6 +209,46 @@ public class PosingManager : IPosingManager {
 	public Task<PoseFile> SavePoseFile(EntityPose pose) => this._framework.RunOnFrameworkThread(
 		() => new EntityPoseConverter(pose).SaveFile()
 	);
+
+	public Task StashPose(EntityPose pose) {
+		// todo: modes/transforms choices? could skip face or positions to allow better luck when transferring cross-races/genders
+		return this._framework.RunOnFrameworkThread(() => {
+			var modes = PoseMode.All;
+			var transforms = PoseTransforms.Position | PoseTransforms.Rotation;
+
+			var converter = new EntityPoseConverter(pose);
+			var container = converter.Save();
+			this.StashedPose = new PoseMemento(converter) {
+				Modes = modes,
+				Transforms = transforms,
+				Bones = null,
+				Initial = container, // todo: does initial state matter for the stash save?
+				Final = container
+			};
+			this.StashedAt = DateTime.Now;
+			this.StashedFrom = pose.Parent.Name;
+		});
+	}
+
+	public Task ApplyStashedPose(EntityPose pose) {
+		return this._framework.RunOnFrameworkThread(() => {
+			if (this.StashedPose == null) return;
+
+			var converter = new EntityPoseConverter(pose);
+			var initial = converter.Save();
+			converter.Load(this.StashedPose.Final, this.StashedPose.Modes, this.StashedPose.Transforms);
+
+			this._context.Actions.History.Add(new PoseMemento(converter) {
+				Modes = this.StashedPose.Modes,
+				Transforms = this.StashedPose.Transforms,
+				Bones = this.StashedPose.Bones,
+				Initial = initial,
+				Final = this.StashedPose.Final,
+			});
+
+			this.StashedPose = null;
+		});
+	}
 	
 	// Disposal
 

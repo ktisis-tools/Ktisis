@@ -48,7 +48,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private ICustomizeEditor _editCustom = null!;
 
 	public override void SetTarget(ActorEntity target) {
-		this.WindowName = $"{target.Name}###{WindowId}";
+		this.WindowName = $"Actor Editor - {target.Name}###{WindowId}";
 		
 		base.SetTarget(target);
 		
@@ -62,7 +62,6 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	public override void OnOpen() {
 		this._custom.Setup();
 		this._anim.Setup();
-		this._npcs.FetchMonsters();
 	}
 
 	public override void PreDraw() {

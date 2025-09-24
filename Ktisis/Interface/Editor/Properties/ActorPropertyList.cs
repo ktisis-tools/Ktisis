@@ -12,6 +12,7 @@ using Ktisis.Structs.Camera;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
+using Ktisis.Interface.Windows.Import;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.Localization;
@@ -26,8 +27,8 @@ namespace Ktisis.Interface.Editor.Properties;
 
 public class ActorPropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
-	private readonly ConfigManager _cfg;
 	private readonly GuiManager _gui;
+	private readonly ConfigManager _cfg;
 	private readonly LocaleManager _locale;
 	private static Dictionary<GazeControl, TransformTable>? GazeTables;
 
@@ -38,20 +39,21 @@ public class ActorPropertyList : ObjectPropertyList {
 	
 	public ActorPropertyList(
 		IEditorContext ctx,
+		GuiManager gui,
 		ConfigManager cfg,
-		LocaleManager locale,
-		GuiManager gui
+		LocaleManager locale
 	) {
 		this._ctx = ctx;
+		this._gui = gui;
 		this._cfg = cfg;
 		this._locale = locale;
-		this._gui = gui;
 	}
 	
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
 		if (
 			entity switch {
 				BoneNode node => node.Pose.Parent,
+				BoneNodeGroup group => group.Pose.Parent,
 				EntityPose pose => pose.Parent,
 				_ => entity
 			} is not ActorEntity actor
@@ -81,17 +83,25 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (Buttons.IconButton(FontAwesomeIcon.Edit))
 			this._ctx.Interface.OpenActorEditor(actor);
 		ImGui.SameLine(0, spacing);
-		ImGui.Text("Edit actor appearance");
+		ImGui.Text("Actor Editor");
 		
 		ImGui.Spacing();
 		
 		// Import/export
 
-		if (ImGui.Button("Import"))
-			this._ctx.Interface.OpenCharaImport(actor);
-		ImGui.SameLine(0, spacing);
-		if (ImGui.Button("Export"))
+		if (ImGui.Button("Export Chara"))
 			this._ctx.Interface.OpenCharaExport(actor);
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+		ImGui.Text("Import actor appearance...");
+		ImGui.Spacing();
+
+		var embedEditor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);
+		embedEditor.OnOpen();
+		embedEditor.SetTarget(actor);
+		embedEditor.DrawEmbed();
 	}
 	
 	// Gaze tab
@@ -159,7 +169,7 @@ public class ActorPropertyList : ObjectPropertyList {
 
 	private unsafe bool DrawGaze(ActorEntity actor, ref Gaze gaze, GazeControl type, bool anyGizmo) {
 		if (!GazeTables.ContainsKey(type))
-			GazeTables.Add(type, new TransformTable(this._cfg));
+			GazeTables.Add(type, new TransformTable(this._cfg, this._locale));
 
 		using var _ = ImRaii.PushId($"Gaze_{type}");
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;

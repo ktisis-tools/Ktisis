@@ -29,10 +29,6 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	
 	// Events
 
-	public override void OnOpen() {
-		this._import.Initialize();
-	}
-
 	public void SetMethod(LoadMethod method) {
 		this._import.Method = method;
 	}
@@ -46,7 +42,12 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 		
 		ImGui.Text($"Importing appearance for {this.Target.Name}");
 		ImGui.Spacing();
-		
+
+		this.DrawEmbed();
+	}
+
+	public void DrawEmbed() {
+		this.PreDraw();
 		this._import.DrawLoadMethods();
 		ImGui.Spacing();
 		this._import.DrawImport();

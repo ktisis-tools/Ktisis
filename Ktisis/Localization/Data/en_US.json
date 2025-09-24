@@ -110,6 +110,11 @@
 			"parallel": "Parallel Transform",
 			"mirror": "Mirror Transform"
 		},
+		"sibling": {
+			"available": "Multi-select sibling bone: %bone%",
+			"unavailable": "Bone %bone% has no sibling",
+			"multiple": "Multi-select sibling bone: %bone%\nCan only select sibling when 1 bone is selected!"
+		},
 		"gizmo": {
 			"show": "Show rotation gizmo",
 			"hide": "Hide rotation gizmo"
@@ -276,8 +281,10 @@
 		"workspace": {
 			"title": "Workspace",
 			"init": "Open workspace when entering GPose",
+			"toggleOpenWindows": "UI buttons toggle windows open & closed",
 			"initPosLock": "Freeze actor positions when entering GPose",
 			"editOnSelect": "Toggle object editor when selecting",
+			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",
 			"hintIncognito": "Censors all player names from actor list and GPose window",
 			"legacyWindows": "Prefer legacy window behavior",

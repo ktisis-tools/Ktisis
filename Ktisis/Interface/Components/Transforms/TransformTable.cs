@@ -13,6 +13,7 @@ using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Selection;
 using Ktisis.ImGuizmo;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components.Transforms;
 
@@ -30,13 +31,16 @@ public enum TransformTableFlags {
 [Transient]
 public class TransformTable {
 	private readonly ConfigManager _cfg;
+	private readonly LocaleManager _locale;
 
 	private GizmoConfig GizmoConfig => this._cfg.File.Gizmo;
 
 	public TransformTable(
-		ConfigManager cfg
+		ConfigManager cfg,
+		LocaleManager locale
 	) {
 		this._cfg = cfg;
+		this._locale = locale;
 	}
 	
 	// State
@@ -141,7 +145,7 @@ public class TransformTable {
 
 		var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
 		ImGui.PushStyleColor(ImGuiCol.Text, enable);
-		if (Buttons.IconButtonTooltip(icon, hint))
+		if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
 			this.ChangeOperation(op);
 		ImGui.PopStyleColor();
 	}

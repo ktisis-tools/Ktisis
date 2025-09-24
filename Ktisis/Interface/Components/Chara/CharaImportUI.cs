@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 
 using Ktisis.Core.Attributes;
@@ -37,12 +38,6 @@ public class CharaImportUI {
 		this._select.OnOpenDialog += this.OnFileDialogOpen;
 	}
 	
-	// Initialization
-
-	public void Initialize() {
-		this._npcs.Fetch();
-	}
-	
 	// Events
 
 	private void OnNpcSelect(INpcBase _) {
@@ -61,6 +56,12 @@ public class CharaImportUI {
 	public bool HasSelection => this.Method switch {
 		LoadMethod.File => this._select.IsFileOpened,
 		LoadMethod.Npc => this._npcs.Selected != null,
+		_ => false
+	};
+
+	private bool DisableModes => this.Method switch {
+		LoadMethod.File => !this.HasSelection,
+		LoadMethod.Npc => !this.HasSelection && !this.Context.Config.File.ImportNpcApplyOnSelect,
 		_ => false
 	};
 	
@@ -125,15 +126,16 @@ public class CharaImportUI {
 	// Mode selection
 	
 	public void DrawModesSelect() {
+		using var _ = ImRaii.Disabled(this.DisableModes);
 		ImGui.Text("Appearance");
 		this.DrawModeSwitch("Body", SaveModes.AppearanceBody);
 		ImGui.SameLine();
 		this.DrawModeSwitch("Face", SaveModes.AppearanceFace);
 		ImGui.SameLine();
 		this.DrawModeSwitch("Hair", SaveModes.AppearanceHair);
-		
+
 		ImGui.Spacing();
-		
+
 		ImGui.Text("Equipment");
 		this.DrawModeSwitch("Gear", SaveModes.EquipmentGear);
 		ImGui.SameLine();
