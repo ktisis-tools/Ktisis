@@ -60,7 +60,7 @@ public class CharaImportUI {
 		_ => false
 	};
 
-	private bool DisableModes => this._method switch {
+	private bool DisableModes => this.Method switch {
 		LoadMethod.File => !this.HasSelection,
 		LoadMethod.Npc => !this.HasSelection && !this.Context.Config.File.ImportNpcApplyOnSelect,
 		_ => false

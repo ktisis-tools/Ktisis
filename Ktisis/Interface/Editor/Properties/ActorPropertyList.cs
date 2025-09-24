@@ -29,7 +29,6 @@ public class ActorPropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
 	private readonly GuiManager _gui;
 	private readonly ConfigManager _cfg;
-	private readonly GuiManager _gui;
 	private readonly LocaleManager _locale;
 	private static Dictionary<GazeControl, TransformTable>? GazeTables;
 
@@ -42,14 +41,12 @@ public class ActorPropertyList : ObjectPropertyList {
 		IEditorContext ctx,
 		GuiManager gui,
 		ConfigManager cfg,
-		LocaleManager locale,
-		GuiManager gui
+		LocaleManager locale
 	) {
 		this._ctx = ctx;
 		this._gui = gui;
 		this._cfg = cfg;
 		this._locale = locale;
-		this._gui = gui;
 	}
 	
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
