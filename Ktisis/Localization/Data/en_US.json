@@ -332,7 +332,7 @@
 			"linkout": {
 				"description": "Download template images here:",
 				"button": "GitHub",
-				"link": "https://github.com/sleepybnuuy/ktisis-testing/tree/v0.3/custom-paperdolls/Ktisis/Data/Images/Templates"
+				"link": "https://github.com/ktisis-tools/Ktisis/tree/v0.3/main/Ktisis/Data/Images/Templates"
 			}
 		}
 	},
