@@ -49,10 +49,20 @@ public class PoseViewRenderer {
 	
 	// Images
 	
-	private ISharedImmediateTexture GetTexture(string file) {
+	private ISharedImmediateTexture GetTexture(string file, PoseViewEntry entry) {
+		// if we already stored a texture for the requested file, use it
 		if (this.Textures.TryGetValue(file, out var texture))
 			return texture;
-		
+
+		// if user configured their own texture for this PoseViewEntry, add and use it
+		var customPath = this._cfg.PoseView.CustomPathFor(entry.Name);
+		if (!string.IsNullOrEmpty(customPath)) {
+			texture = this._tex.GetFromFile(customPath);
+			this.Textures.Add(file, texture);
+			return texture;
+		}
+
+		// pull default texture from /Data/
 		var assembly = Assembly.GetExecutingAssembly();
 		var name = assembly.GetName().Name!;
 		texture = this._tex.GetFromManifestResource(assembly, $"{name}.Data.Images.{file}");
@@ -80,7 +90,7 @@ public class PoseViewRenderer {
 			IDictionary<string, string>? templates = null
 		) {
 			var file = entry.Images.First();
-			var img = this._render.GetTexture(file).GetWrapOrDefault();
+			var img = this._render.GetTexture(file, entry).GetWrapOrDefault();
 			if (img == null) return;
 
 			var avail = ImGui.GetWindowContentRegionMax();

@@ -4,7 +4,7 @@
 -->
 <Views>
 	<View name="Body">
-		<Image file="body.png"/>
+		<Image file="ahmi.png"/>
 		<Bone label="Head" name="j_kao" x="0.5" y="0.1"/>
 		<Bone label="Neck" name="j_kubi" x="0.5" y="0.165"/>
 		<Bone label="Cervical" name="j_sebo_c" x="0.5" y="0.215"/>
@@ -36,11 +36,9 @@
 		<Bone label="Right Elbow" name="n_hhiji_r" x="0.135" y="0.3"/>
 		<Bone label="Left Shoulder" name="n_hkata_l" x="0.775" y="0.195"/>
 		<Bone label="Right Shoulder" name="n_hkata_r" x="0.225" y="0.195"/>
-		<Bone label="Waist" name="j_kosi" x="0.575" y="0.4"/>
-		<Bone label="Lumbar" name="j_sebo_a" x="0.425" y="0.4"/>
 	</View>
 	<View name="Face">
-		<Image file="face.png"/>
+		<Image file="ahmi_face.png"/>
 		<Bone label="Bridge" name="j_f_uhana" x="0.5" y="0.45"/>
 		<Bone label="NostrilLeft" name="j_f_hana_l" x="0.55" y="0.61"/>
 		<Bone label="NostrilRight" name="j_f_hana_r" x="0.44" y="0.61"/>
