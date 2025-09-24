@@ -229,6 +229,7 @@ public class PosingManager : IPosingManager {
 			this.StashedFrom = pose.Parent.Name;
 		});
 	}
+
 	public Task ApplyStashedPose(EntityPose pose) {
 		return this._framework.RunOnFrameworkThread(() => {
 			if (this.StashedPose == null) return;

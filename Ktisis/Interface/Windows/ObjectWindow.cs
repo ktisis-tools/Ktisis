@@ -176,9 +176,9 @@ public class ObjectWindow : KtisisWindow {
 				}
 			);
 
-			using (ImRaii.Disabled(!siblingAvailable || selectionCount != 1)) // disable if current bone has no sibling or if multiple selections
-				if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
-					this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
+			using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
+				this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
 
 			ImGui.SameLine(0, spacing);
 		}

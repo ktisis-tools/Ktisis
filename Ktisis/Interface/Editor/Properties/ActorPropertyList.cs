@@ -85,9 +85,6 @@ public class ActorPropertyList : ObjectPropertyList {
 		
 		// Import/export
 
-		// if (ImGui.Button("Import"))
-		// 	this._ctx.Interface.OpenCharaImport(actor);
-		// ImGui.SameLine(0, spacing);
 		if (ImGui.Button("Export Chara"))
 			this._ctx.Interface.OpenCharaExport(actor);
 

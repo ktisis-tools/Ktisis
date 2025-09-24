@@ -139,23 +139,22 @@ public class CharaImportUI {
 	// Mode selection
 	
 	public void DrawModesSelect() {
-		using (ImRaii.Disabled(this.DisableModes)) {
-			ImGui.Text("Appearance");
-			this.DrawModeSwitch("Body", SaveModes.AppearanceBody);
-			ImGui.SameLine();
-			this.DrawModeSwitch("Face", SaveModes.AppearanceFace);
-			ImGui.SameLine();
-			this.DrawModeSwitch("Hair", SaveModes.AppearanceHair);
+		var _ = ImRaii.Disabled(this.DisableModes);
+		ImGui.Text("Appearance");
+		this.DrawModeSwitch("Body", SaveModes.AppearanceBody);
+		ImGui.SameLine();
+		this.DrawModeSwitch("Face", SaveModes.AppearanceFace);
+		ImGui.SameLine();
+		this.DrawModeSwitch("Hair", SaveModes.AppearanceHair);
 
-			ImGui.Spacing();
+		ImGui.Spacing();
 
-			ImGui.Text("Equipment");
-			this.DrawModeSwitch("Gear", SaveModes.EquipmentGear);
-			ImGui.SameLine();
-			this.DrawModeSwitch("Accessories", SaveModes.EquipmentAccessories);
-			ImGui.SameLine();
-			this.DrawModeSwitch("Weapons", SaveModes.EquipmentWeapons);
-		}
+		ImGui.Text("Equipment");
+		this.DrawModeSwitch("Gear", SaveModes.EquipmentGear);
+		ImGui.SameLine();
+		this.DrawModeSwitch("Accessories", SaveModes.EquipmentAccessories);
+		ImGui.SameLine();
+		this.DrawModeSwitch("Weapons", SaveModes.EquipmentWeapons);
 	}
 	
 	private void DrawModeSwitch(string label, SaveModes mode) {

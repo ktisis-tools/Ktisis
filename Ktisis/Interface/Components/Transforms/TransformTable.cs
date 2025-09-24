@@ -119,7 +119,7 @@ public class TransformTable {
 
 	private bool DrawPosition(ref Vector3 pos, bool op) {
 		var result = this.DrawLinear("##TransformTable_Pos", ref pos);
-		if (op) this.DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, this._locale.Translate("transform.position"));
+		if (op) this.DrawOperation(PositionOp, FontAwesomeIcon.LocationArrow, "transform.position");
 		return result;
 	}
 
@@ -129,13 +129,13 @@ public class TransformTable {
 			rot = HkaEulerAngles.ToQuaternion(this.Angles);
 			this.Value = rot;
 		}
-		if (op) this.DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, this._locale.Translate("transform.rotation"));
+		if (op) this.DrawOperation(RotateOp, FontAwesomeIcon.ArrowsSpin, "transform.rotation");
 		return result;
 	}
 
 	private bool DrawScale(ref Vector3 scale, bool op) {
 		var result = this.DrawLinear("##TransformTable_Scale", ref scale);
-		if (op) this.DrawOperation(ScaleOp, FontAwesomeIcon.Expand, this._locale.Translate("transform.scale"));
+		if (op) this.DrawOperation(ScaleOp, FontAwesomeIcon.Expand, "transform.scale");
 		return result;
 	}
 
@@ -145,7 +145,7 @@ public class TransformTable {
 
 		var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
 		ImGui.PushStyleColor(ImGuiCol.Text, enable);
-		if (Buttons.IconButtonTooltip(icon, hint))
+		if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
 			this.ChangeOperation(op);
 		ImGui.PopStyleColor();
 	}

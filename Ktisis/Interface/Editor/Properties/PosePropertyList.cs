@@ -59,10 +59,7 @@ public class PosePropertyList : ObjectPropertyList {
 		var actor = pose.Parent;
 		if (actor is not ActorEntity) return;
 		ImGui.Spacing();
-		
-		// if (ImGui.Button("Import"))
-		// 	this._ctx.Interface.OpenPoseImport(actor);
-		// ImGui.SameLine(0, spacing);
+
 		if (ImGui.Button("Export Pose"))
 			this._ctx.Interface.OpenPoseExport(pose);
 		ImGui.Spacing();
@@ -79,7 +76,7 @@ public class PosePropertyList : ObjectPropertyList {
 		var _hint = "";
 		using (var _disabled = ImRaii.Disabled(this._ctx.Posing.StashedPose == null)) {
 			_hint = _disabled ? "" : $"Pose stashed at {this._ctx.Posing.StashedAt} from Actor {this._ctx.Posing.StashedFrom}";
-			if(ImGui.Button("Apply Pose"))
+			if (ImGui.Button("Apply Pose"))
 				await this._ctx.Posing.ApplyStashedPose(pose);
 		}
 		if (ImGui.IsItemHovered()) {

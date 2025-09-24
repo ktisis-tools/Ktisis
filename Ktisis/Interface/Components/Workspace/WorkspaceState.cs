@@ -118,10 +118,12 @@ public class WorkspaceState {
 		));
 
 		var targets = transform.Target!.Targets.Where(tar => tar.Name != name).ToList();
-		if (ImGui.IsItemHovered())
-			using (ImRaii.Tooltip())
-				for (int i = 0; i < count; i++)
-					ImGui.Text($"{targets[i].Name}");
+		if (ImGui.IsItemHovered()) {
+			using var _ = ImRaii.Tooltip();
+
+			for (int i = 0; i < count; i++)
+				ImGui.Text($"{targets[i].Name}");
+		}
 	}
 
 	private void DrawOverlayToggle() {

@@ -145,7 +145,7 @@ public class SceneTree {
 		var style = ImGui.GetStyle();
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(pos.X - style.ItemSpacing.X);
-		if(!(item is EntityPose))
+		if (item is not EntityPose)
 			expand = this.DrawNodeCaret(display.Color, flag);
 
 		// Icon + Label
