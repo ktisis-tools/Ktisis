@@ -27,6 +27,8 @@ public class MigratorWindow : KtisisWindow {
 	) {
 		this._dpi = dpi;
 		this._migrator = migrator;
+		this.ShowCloseButton = false;
+		this.RespectCloseHotkey = false;
 	}
 	
 	private readonly Stopwatch _timer = new();
@@ -109,11 +111,6 @@ public class MigratorWindow : KtisisWindow {
 				this.Close();
 			}
 		}
-		
-		ImGui.SameLine();
-		
-		if (ImGui.Button("Close"))
-			this.Close();
 		
 		ImGui.Spacing();
 	}
