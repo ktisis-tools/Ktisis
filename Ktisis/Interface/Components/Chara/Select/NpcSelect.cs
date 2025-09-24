@@ -38,6 +38,7 @@ public class NpcSelect {
 		this._npc = npc;
 		this._locale = locale;
 		this._popup = new PopupList<INpcBase>("##NpcImportPopup", this.DrawItem).WithSearch(MatchQuery);
+		this.Fetch();
 	}
 	
 	// Data

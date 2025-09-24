@@ -28,10 +28,6 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	}
 	
 	// Events
-
-	public override void OnOpen() {
-		this._import.Initialize();
-	}
 	
 	private void OnNpcSelected(CharaImportUI sender) => sender.ApplyTo(this.Target);
 	

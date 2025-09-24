@@ -34,14 +34,6 @@ public class CharaImportUI {
 		this._select.OnOpenDialog += this.OnFileDialogOpen;
 	}
 	
-	// Initialization
-
-	public void Initialize() {
-		if(!this._isInit)
-			this._npcs.Fetch();
-		this._isInit = true;
-	}
-	
 	// Events
 
 	private void OnNpcSelect(INpcBase _) {
@@ -139,7 +131,7 @@ public class CharaImportUI {
 	// Mode selection
 	
 	public void DrawModesSelect() {
-		var _ = ImRaii.Disabled(this.DisableModes);
+		using var _ = ImRaii.Disabled(this.DisableModes);
 		ImGui.Text("Appearance");
 		this.DrawModeSwitch("Body", SaveModes.AppearanceBody);
 		ImGui.SameLine();
