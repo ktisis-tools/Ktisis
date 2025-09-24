@@ -32,6 +32,10 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	public override void OnOpen() {
 		this._import.Initialize();
 	}
+
+	public void SetMethod(LoadMethod method) {
+		this._import.Method = method;
+	}
 	
 	private void OnNpcSelected(CharaImportUI sender) => sender.ApplyTo(this.Target);
 	
