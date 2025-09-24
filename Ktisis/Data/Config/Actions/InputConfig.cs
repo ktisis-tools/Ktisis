@@ -3,6 +3,8 @@ using System.Collections.Generic;
 namespace Ktisis.Data.Config.Actions;
 
 public class InputConfig {
+	public bool BlockTargetLeftClick;
+	public bool BlockTargetRightClick;
 	public bool Enabled;
 
 	public Dictionary<string, ActionKeybind> Keybinds = new();
