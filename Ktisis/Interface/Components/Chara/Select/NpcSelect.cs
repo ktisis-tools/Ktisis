@@ -66,22 +66,9 @@ public class NpcSelect {
 			this._npcList.Clear();
 			this._npcList.AddRange(task.Result);
 			this._monsterList.Clear();
-			this._monsterList.AddRange(task.Result.Where(entry => entry.GetModelId() != 0));
-			this._npcLoadState = NpcLoadState.Success;
-		});
-	}
-
-	public void FetchMonsters() {
-		if (this._npcLoadState == NpcLoadState.Success) return;
-		this._npc.GetNpcList().ContinueWith(task => {
-			if (task.Exception != null) {
-				Ktisis.Log.Error($"Failed to fetch NPC list:\n{task.Exception}");
-				this._npcLoadState = NpcLoadState.Failed;
-				return;
-			}
-
-			this._npcList.Clear();
-			this._npcList.AddRange(task.Result.Where(entry => entry.GetModelId() != 0));
+			// todo: handle submodel IDs?
+			// todo: remove invalid/dupe entries
+			this._monsterList.AddRange(task.Result.Where(entry => entry.GetModelId() != 0).OrderBy(entry => entry.GetModelId()));
 			this._npcLoadState = NpcLoadState.Success;
 		});
 	}
