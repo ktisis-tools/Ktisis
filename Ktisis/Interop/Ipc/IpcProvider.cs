@@ -16,8 +16,8 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     private ICallGateProvider<(int, int)> IpcVersion { get; } = dpi.GetIpcProvider<(int, int)>("Ktisis.ApiVersion");
     private ICallGateProvider<bool> IpcRefreshActions { get; } = dpi.GetIpcProvider<bool>("Ktisis.RefreshActors");
     private ICallGateProvider<bool> IpcIsPosing { get; } = dpi.GetIpcProvider<bool>("Ktisis.IsPosing");
-    private ICallGateProvider<IGameObject, string, Task<bool>> IpcLoadPose { get; } = dpi.GetIpcProvider<IGameObject, string, Task<bool>>("Ktisis.LoadPose");
-    private ICallGateProvider<IGameObject, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<IGameObject, Task<string?>>("Ktisis.SavePose");
+    private ICallGateProvider<uint, string, Task<bool>> IpcLoadPose { get; } = dpi.GetIpcProvider<uint, string, Task<bool>>("Ktisis.LoadPose");
+    private ICallGateProvider<uint, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<uint, Task<string?>>("Ktisis.SavePose");
    
     private (int, int) GetVersion() => (1, 0);
 
@@ -29,13 +29,13 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
     private bool IsActive() => ctxManager.Current?.Posing.IsEnabled ?? false;
 
-    private async Task<bool> LoadPose(IGameObject gameObject, string json)
+    private async Task<bool> LoadPose(uint index, string json)
     {
         if (ctxManager.Current is null)
             return false;
 
         var file = JsonConvert.DeserializeObject<PoseFile>(json);
-        var actor = ctxManager.Current.Scene.GetEntityForActor(gameObject);
+        var actor = ctxManager.Current.Scene.GetEntityForIndex(index);
 
         if (actor is null || file is null)
             return false;
@@ -44,12 +44,12 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         return true;
     }
 
-    private async Task<string?> SavePose(IGameObject gameObject)
+    private async Task<string?> SavePose(uint index)
     {
         if (ctxManager.Current is null)
             return null;
 
-        var actor = ctxManager.Current.Scene.GetEntityForActor(gameObject);
+        var actor = ctxManager.Current.Scene.GetEntityForIndex(index);
         if (actor?.Pose is null)
             return null;
 

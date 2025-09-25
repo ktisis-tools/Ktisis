@@ -21,15 +21,17 @@ using Ktisis.Interface.Types;
 using Ktisis.Services.Data;
 using Ktisis.Localization;
 using Ktisis.Interop.Ipc;
+using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Interface.Windows;
 
 public class DebugWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
+	private readonly GuiManager _gui;
 
     // tester inputs
     private int _gameObjectId;
-    private string _poseJson;
+    private bool _hasClip = false;
 
     // tester outputs
     private (int, int)? _apiVersion = null;
@@ -40,23 +42,25 @@ public class DebugWindow : KtisisWindow {
     private readonly ICallGateSubscriber<(int, int)> _ktisisApiVersion;
     private readonly ICallGateSubscriber<bool> _ktisisRefreshActors;
     private readonly ICallGateSubscriber<bool> _ktisisIsPosing;
-    private readonly ICallGateSubscriber<IGameObject, string, Task<bool>> _ktisisLoadPose;
-    private readonly ICallGateSubscriber<IGameObject, Task<string?>> _ktisisSavePose;
+    private readonly ICallGateSubscriber<uint, string, Task<bool>> _ktisisLoadPose;
+    private readonly ICallGateSubscriber<uint, Task<string?>> _ktisisSavePose;
 
 	public DebugWindow(
 		IEditorContext ctx,
+        GuiManager gui,
 		IDalamudPluginInterface dpi
     ) : base(
         "Debug Window"
     ) {
         this._ctx = ctx;
+        this._gui = gui;
 
         // create our IPC subs from DPI
         this._ktisisApiVersion = dpi.GetIpcSubscriber<(int, int)>("Ktisis.ApiVersion");
         this._ktisisRefreshActors = dpi.GetIpcSubscriber<bool>("Ktisis.RefreshActors");
         this._ktisisIsPosing = dpi.GetIpcSubscriber<bool>("Ktisis.IsPosing");
-        this._ktisisLoadPose = dpi.GetIpcSubscriber<IGameObject, string, Task<bool>>("Ktisis.LoadPose");
-        this._ktisisSavePose = dpi.GetIpcSubscriber<IGameObject, Task<string?>>("Ktisis.SavePose");
+        this._ktisisLoadPose = dpi.GetIpcSubscriber<uint, string, Task<bool>>("Ktisis.LoadPose");
+        this._ktisisSavePose = dpi.GetIpcSubscriber<uint, Task<string?>>("Ktisis.SavePose");
     }
 
 	public override void Draw() {
@@ -69,6 +73,7 @@ public class DebugWindow : KtisisWindow {
 		if (!tabs.Success) return;
 		DrawTab("IPC Provider", this.DrawProviderTab);
 		DrawTab("IPC Manager", this.DrawManagerTab);
+        DrawTab("Diagnostics", this.DrawDiagnosticsTab);
     }
 	private static void DrawTab(string name, Action handler) {
 		using var tab = ImRaii.TabItem(name);
@@ -77,13 +82,13 @@ public class DebugWindow : KtisisWindow {
 		handler.Invoke();
 	}
 
-	private void DrawProviderTab() {
+	private async void DrawProviderTab() {
         ImGui.InputInt("GameObject Index", ref _gameObjectId);
-        ImGui.InputText("Pose JSON", ref _poseJson);
+        ImGui.Text($"Clipboard Pose Data: {_hasClip}");
         ImGui.Spacing();
 
         ImGui.Text("Ktisis.ApiVersion");
-        if(ImGui.Button("GET"))
+        if (ImGui.Button("GET##ApiVersion"))
             _apiVersion = this._ktisisApiVersion.InvokeFunc();
         ImGui.SameLine();
         using (ImRaii.Disabled(_apiVersion == null))
@@ -91,11 +96,12 @@ public class DebugWindow : KtisisWindow {
         ImGui.Spacing();
 
         ImGui.Text("Ktisis.RefreshActors");
-        if(ImGui.Button("APPLY")) {}
+        if (ImGui.Button("APPLY##RefreshActors"))
+            this._ktisisRefreshActors.InvokeFunc();
         ImGui.Spacing();
 
         ImGui.Text("Ktisis.IsPosing");
-        if(ImGui.Button("GET"))
+        if (ImGui.Button("GET##IsPosing"))
             _isPosing = this._ktisisIsPosing.InvokeFunc();
         ImGui.SameLine();
         using (ImRaii.Disabled(_isPosing == null))
@@ -103,18 +109,56 @@ public class DebugWindow : KtisisWindow {
         ImGui.Spacing();
 
         ImGui.Text("Ktisis.LoadPose");
-        using (ImRaii.Disabled(_gameObjectId < 1 || string.IsNullOrEmpty(_poseJson)))
-            if(ImGui.Button("APPLY")) {} // this._ktisisLoadPose.InvokeFunc();
+        using (ImRaii.Disabled(_gameObjectId < 1 || !_hasClip))
+            if (ImGui.Button("APPLY (Clipboard)##LoadPose")) {
+                _hasClip = CheckClipboard();
+                if (_hasClip) {
+                    var applied = await this._ktisisLoadPose.InvokeFunc((uint)_gameObjectId, ImGui.GetClipboardText());
+                    if (applied)
+                        Ktisis.Log.Debug($"[DEBUG] Loaded clipboard pose to actor {_gameObjectId}");
+                    else
+                        Ktisis.Log.Warning($"[DEBUG] Failed clipboard pose application to actor {_gameObjectId}");
+                }
+                else
+                    Ktisis.Log.Warning("[DEBUG] Clipboard has invalid pose data, cannot apply");
+            }
         ImGui.Spacing();
 
+        // todo: popup bubble with the json output ala glamourer IPC tester
         ImGui.Text("Ktisis.SavePose");
-        using (ImRaii.Disabled(_gameObjectId == null))
-            if(ImGui.Button("GET")) {}
-        // clipboard? popup?
+        using (ImRaii.Disabled(_gameObjectId < 1))
+            if (ImGui.Button("GET (Clipboard)##SavePose")) {
+                var clip = await this._ktisisSavePose.InvokeFunc((uint)_gameObjectId);
+                ImGui.SetClipboardText(clip);
+                _hasClip = true;
+                Ktisis.Log.Debug($"[DEBUG] Exported pose to clipboard from actor {_gameObjectId}: {clip}");
+            }
         ImGui.Spacing();
     }
 
     private void DrawManagerTab() {
         ImGui.Text("TODO");
+    }
+
+    private void DrawDiagnosticsTab() {
+        // existing debug text from overlay
+        var overlay = this._gui.Get<OverlayWindow>();
+        overlay.DrawDebug(null);
+
+        // todo: scenetree / actors and entities details
+    }
+
+    private bool CheckClipboard() {
+        var text = ImGui.GetClipboardText();
+        if (text != null) {
+            try {
+                var file = JsonConvert.DeserializeObject<PoseFile>(text);
+                if (file != null)
+                    return true;
+            } catch {
+                return false;
+            }
+        }
+        return false;
     }
 }
