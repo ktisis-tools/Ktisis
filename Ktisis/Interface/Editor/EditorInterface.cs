@@ -223,10 +223,6 @@ public class EditorInterface : IEditorInterface {
 		this.ExportPoseFile(file);
 	}
 
-	public void OpenLightFromFile(LightEntity light) {
-		// todo
-	}
-
 	public async Task OpenLightExport(LightEntity light) {
 		var file = await this._ctx.Scene.SaveLightFile(light);
 		this.ExportLightFile(file);
@@ -267,6 +263,9 @@ public class EditorInterface : IEditorInterface {
 	public void OpenMcdfFile(Action<string> handler) {
 		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions);
 	}
+
+	public void OpenLightFile(Action<string, LightFile> handler)
+		=> this._gui.FileDialogs.OpenFile("Open Light File", handler, LightFileOptions);
 
 	public void OpenReferenceImages(Action<string> handler) {
 		this._gui.FileDialogs.OpenImage("image", handler);

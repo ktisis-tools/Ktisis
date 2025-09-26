@@ -4,6 +4,7 @@ using System.Runtime.InteropServices.JavaScript;
 using Dalamud.Bindings.ImGui;
 using GLib.Popups.Context;
 
+using Ktisis.Data.Files;
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
@@ -171,7 +172,11 @@ public class SceneEntityMenuBuilder {
 		menu.Separator()
 			.Action("Edit lighting", this.OpenEditor)
 			.Separator()
-			.Action("Import preset", () => this.Ui.OpenLightFromFile(light))
+			.Action("Import preset", () => this.Ui.OpenLightFile((path, file) => this.ImportLight(light, file)))
 			.Action("Export preset", () => this.Ui.OpenLightExport(light));
+	}
+
+	private async void ImportLight(LightEntity light, LightFile file) {
+		await this._ctx.Scene.ApplyLightFile(light, file);
 	}
 }
