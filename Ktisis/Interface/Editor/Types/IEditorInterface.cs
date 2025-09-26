@@ -7,6 +7,8 @@ using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
+using Ktitis.Editor.Camera;
+using Ktisis.Editor.Camera.Types;
 
 namespace Ktisis.Interface.Editor.Types;
 
@@ -48,11 +50,13 @@ public interface IEditorInterface {
 	public void OpenPoseImport(ActorEntity actor);
 	public Task OpenPoseExport(EntityPose pose);
 	public Task OpenLightExport(LightEntity light);
+	public Task OpenCameraExport(EditorCamera camera);
 
 	public void OpenCharaFile(Action<string, CharaFile> handler);
 	public void OpenPoseFile(Action<string, PoseFile> handler);
 	public void OpenMcdfFile(Action<string> handler);
 	public void OpenLightFile(Action<string, LightFile> handler);
+	public void OpenCameraFile(Action<string, CameraFile> handler);
 
 	public void OpenReferenceImages(Action<string> handler);
 	

@@ -67,6 +67,9 @@ public class CameraWindow : KtisisWindow {
 			ImGui.InputText("##CameraName", ref camera.Name, 64);
 
 			ImGui.Spacing();
+			this.DrawIOButtons(camera);
+
+			ImGui.Spacing();
 			ImGui.Separator();
 			ImGui.Spacing();
 
@@ -225,6 +228,16 @@ public class CameraWindow : KtisisWindow {
 		if (camera.IsOrthographic) {
 			var orthoHint = this._ctx.Locale.Translate("camera_edit.sliders.ortho_zoom");
 			this.DrawSliderFloat("##OrthographicZoom", FontAwesomeIcon.LocationCrosshairs, ref camera.OrthographicZoom, 0.1f, 10.0f, 0.01f, orthoHint);
+		}
+	}
+
+	private unsafe void DrawIOButtons(EditorCamera camera) {
+		if (ImGui.Button("Import Settings")) {
+			this._ctx.Interface.OpenCameraFile((path, file) => this._ctx.Cameras.ApplyCameraFile(camera, file));
+		}
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		if (ImGui.Button("Export Settings")) {
+			this._ctx.Interface.OpenCameraExport(camera);
 		}
 	}
 
