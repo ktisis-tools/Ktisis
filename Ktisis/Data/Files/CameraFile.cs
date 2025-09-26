@@ -13,6 +13,7 @@ public class CameraFile : JsonFile {
 	public const int CurrentVersion = 1;
 	public new int FileVersion { get; set; } = CurrentVersion;
 
+	public string? Nickname { get; set; } = null;
     public bool IsNoCollide { get; set; } = false;
     public bool IsOrthographic { get; set; } = false;
     public bool IsDelimited { get; set; } = false;
@@ -20,10 +21,10 @@ public class CameraFile : JsonFile {
     public Vector3 RelativeOffset { get; set; } = Vector3.Zero;
     public Vector2 Angle { get; set; } = Vector2.Zero;
     public Vector2 Pan { get; set; } = Vector2.Zero;
-    public float Rotation { get; set; } = 0;
-    public float Zoom { get; set; } = 0;
-    public float Distance { get; set; } = 0;
-    public float DistanceMin { get; set; } = 0;
-    public float DistanceMax { get; set; } = 0;
-    public float OrthographicZoom { get; set; } = 0;
+    public float Rotation { get; set; } = 0.0f;
+    public float Zoom { get; set; } = 0.0f;
+    public float Distance { get; set; } = 0.0f;
+    public float DistanceMin { get; set; } = 0.0f;
+    public float DistanceMax { get; set; } = 0.0f;
+    public float OrthographicZoom { get; set; } = 0.0f;
 }
