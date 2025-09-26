@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility.Numerics;
 using Dalamud.Bindings.ImGui;
 
+using GLib.Widgets;
 using GLib.Popups;
 
 using Ktisis.Core.Attributes;
@@ -35,6 +39,7 @@ public class NpcSelect {
 		this._npc = npc;
 		this._locale = locale;
 		this._popup = new PopupList<INpcBase>("##NpcImportPopup", this.DrawItem).WithSearch(MatchQuery);
+		this.Fetch();
 	}
 	
 	// Data
@@ -47,6 +52,7 @@ public class NpcSelect {
 
 	private NpcLoadState _npcLoadState = NpcLoadState.Waiting;
 	private readonly List<INpcBase> _npcList = new();
+	private List<INpcBase> _monsterList = new();
 
 	public void Fetch() {
 		if (this._npcLoadState == NpcLoadState.Success) return;
@@ -59,6 +65,23 @@ public class NpcSelect {
 
 			this._npcList.Clear();
 			this._npcList.AddRange(task.Result);
+			this._monsterList.Clear();
+			this._monsterList.AddRange(task.Result.Where(entry => entry.GetModelId() != 0));
+			this._npcLoadState = NpcLoadState.Success;
+		});
+	}
+
+	public void FetchMonsters() {
+		if (this._npcLoadState == NpcLoadState.Success) return;
+		this._npc.GetNpcList().ContinueWith(task => {
+			if (task.Exception != null) {
+				Ktisis.Log.Error($"Failed to fetch NPC list:\n{task.Exception}");
+				this._npcLoadState = NpcLoadState.Failed;
+				return;
+			}
+
+			this._npcList.Clear();
+			this._npcList.AddRange(task.Result.Where(entry => entry.GetModelId() != 0));
 			this._npcLoadState = NpcLoadState.Success;
 		});
 	}
@@ -75,6 +98,33 @@ public class NpcSelect {
 				break;
 			case NpcLoadState.Success:
 				this.DrawSelect();
+				break;
+			default:
+				throw new InvalidEnumArgumentException($"Invalid value: {this._npcLoadState}");
+		}
+
+		using (var _ = ImRaii.Disabled(this.Selected == null)) {
+			ImGui.SameLine();
+			if (Buttons.IconButton(FontAwesomeIcon.UndoAlt))
+				this.Selected = null;
+		}
+	}
+
+	public void DrawSearchIcon() {
+		switch (this._npcLoadState) {
+			case NpcLoadState.Waiting:
+				ImGui.Text("Loading NPCs...");
+				break;
+			case NpcLoadState.Failed:
+				ImGui.Text("Failed to load NPCs.\nCheck your error log for more information.");
+				break;
+			case NpcLoadState.Success:
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.Search, "Browse NPCs..."))
+					this._popup.Open();
+
+				var height = ImGui.GetFontSize() * 2;
+				if (this._popup.Draw(this._monsterList, out var npc, height) && npc != null)
+					this.Select(npc);
 				break;
 			default:
 				throw new InvalidEnumArgumentException($"Invalid value: {this._npcLoadState}");

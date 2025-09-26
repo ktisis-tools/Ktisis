@@ -13,7 +13,7 @@ public delegate void GPoseStateHandler(GPoseService sender, bool state);
 
 [Singleton]
 public class GPoseService : IDisposable {
-	private readonly IClientState _clientState;
+	public readonly IClientState _clientState;
 	private readonly IFramework _framework;
 	private readonly ITargetManager _targets;
 	

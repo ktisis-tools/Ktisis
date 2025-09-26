@@ -67,8 +67,12 @@ public class SceneEntityMenuBuilder {
 
 		menu.Separator().Action("Rename", () => this.Ui.OpenRenameEntity(this._entity));
 
-		if (this._entity is IDeletable deletable)
-			menu.Separator().Action("Delete", () => deletable.Delete());
+		if (this._entity is IDeletable deletable) {
+			menu.Separator();
+			if (this._entity is ActorEntity actor)
+				menu.Action("Duplicate", () => this.DuplicateActor(actor));
+			menu.Action("Delete", () => deletable.Delete());
+		}
 	}
 	
 	// Entity types
@@ -94,12 +98,14 @@ public class SceneEntityMenuBuilder {
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
+			.Action($"{(actor.IsHidden ? "Unhide" : "Hide")} Actor", actor.ToggleHidden)
 			.Separator()
 			.Action("Edit appearance", this.OpenEditor)
 			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Separator()
 			.SubMenu("Import...", sub => {
 				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
+					.Action("NPC", () => this.Ui.OpenCharaImport(actor, true))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
 				
 				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
@@ -115,16 +121,28 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
-		if (this._ctx.Plugin.Ipc.IsPenumbraActive)
-			menu.Action("Assign collection", () => this.Ui.OpenAssignCollection(actor));
-		if (this._ctx.Plugin.Ipc.IsCustomizeActive)
-			menu.Action("Assign C+ profile", () => this.Ui.OpenAssignCProfile(actor));
-		if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null)
-			menu.Action("Revert IPC data", () => this._ctx.Characters.Mcdf.Revert(actor.Actor));
+		menu.SubMenu("IPC appearance", sub => {
+			if (this._ctx.Plugin.Ipc.IsPenumbraActive)
+				sub.Action("Penumbra: Assign collection", () => this.Ui.OpenAssignCollection(actor));
+			if (this._ctx.Plugin.Ipc.IsGlamourerActive)
+				sub.Action("Glamourer: Apply design", () => this.Ui.OpenApplyDesign(actor));
+			if (this._ctx.Plugin.Ipc.IsCustomizeActive)
+				sub.Action("Customize: Assign profile", () => this.Ui.OpenAssignCProfile(actor));
+			if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null)
+				sub.Action("Revert all IPC data", () => this._ctx.Characters.Mcdf.Revert(actor.Actor));
+		});
 	}
 
 	private void ImportMcdf(ActorEntity actor, string path) {
 		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, actor.Actor);
+	}
+
+	private async void DuplicateActor(ActorEntity actor) {
+		// pack actor into a temp charafile to apply to new actor after creation
+		var file = await this._ctx.Characters.SaveCharaFile(actor);
+		this._ctx.Scene.Factory.CreateActor()
+			.WithAppearance(file)
+			.Spawn();
 	}
 	
 	// Poses

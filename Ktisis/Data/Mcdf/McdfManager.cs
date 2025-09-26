@@ -89,10 +89,14 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private void ApplyCustomizeData(IGameObject actor, McdfData data) {
-		if (!this._ipc.IsCustomizeActive) return;
+		var rawData = data.CustomizePlusData;
+		if (!this._ipc.IsCustomizeActive) {
+			if (!rawData.IsNullOrEmpty())
+				Ktisis.WarningNotification("MCDF has Customize+ data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return;
+		}
 		
 		var ipc = this._ipc.GetCustomizeIpc();
-		var rawData = data.CustomizePlusData;
 		var jsonData = !rawData.IsNullOrEmpty()
 			? Encoding.UTF8.GetString(Convert.FromBase64String(rawData))
 			: "{}";
@@ -101,28 +105,23 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private void ApplyGlamourerData(IGameObject actor, McdfData data) {
-		if (!this._ipc.IsGlamourerActive) return;
+		var glamData = data.GlamourerData;
+		if (!this._ipc.IsGlamourerActive) {
+			if (!glamData.IsNullOrEmpty())
+				Ktisis.WarningNotification("MCDF has Glamourer data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return;
+		}
 		
 		var ipc = this._ipc.GetGlamourerIpc();
-		ipc.ApplyState(data.GlamourerData, actor.ObjectIndex);
-	}
-
-	private void RevertGlamourerData(string playerName) {
-		if (!this._ipc.IsGlamourerActive) return;
-
-		var ipc = this._ipc.GetGlamourerIpc();
-		ipc.RevertStateName(playerName);
-	}
-
-	private void RevertCustomizeData(ushort index) {
-		if (!this._ipc.IsCustomizeActive) return;
-
-		var ipc = this._ipc.GetCustomizeIpc();
-		ipc.DeleteTemporaryProfile(index);
+		ipc.ApplyState(glamData, actor.ObjectIndex);
 	}
 
 	private Guid? ApplyPenumbraMods(IGameObject actor, McdfData data, Dictionary<string, string> files) {
-		if (!this._ipc.IsPenumbraActive) return null;
+		if (!this._ipc.IsPenumbraActive) {
+			if (files.Count != 0)
+				Ktisis.WarningNotification("MCDF has Penumbra data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return null;
+		}
 		
 		var ipc = this._ipc.GetPenumbraIpc();
 		var collectionId = ipc.CreateTemporaryCollection($"KtisisMCDF_{actor.ObjectIndex}");
@@ -131,6 +130,20 @@ public sealed class McdfManager : IDisposable {
 		ipc.AssignTemporaryMods(id, collectionId, files);
 		ipc.AssignManipulationData(id, collectionId, data.ManipulationData);
 		return collectionId;
+	}
+
+	private void RevertGlamourerData(IGameObject actor) {
+		if (!this._ipc.IsGlamourerActive) return;
+
+		var ipc = this._ipc.GetGlamourerIpc();
+		ipc.RevertObject(actor);
+	}
+
+	private void RevertCustomizeData(ushort index) {
+		if (!this._ipc.IsCustomizeActive) return;
+
+		var ipc = this._ipc.GetCustomizeIpc();
+		ipc.DeleteTemporaryProfile(index);
 	}
 
 	private async Task RedrawAndWait(IGameObject actor) {
@@ -157,7 +170,7 @@ public sealed class McdfManager : IDisposable {
 
 	public void Revert(IGameObject actor) {
 		Ktisis.Log.Info($"IPC - reverting Actor '{actor.ObjectIndex}' ...");
-		this.RevertGlamourerData(actor.Name.TextValue);
+		this.RevertGlamourerData(actor);
 		this.RevertCustomizeData(actor.ObjectIndex);
 	}
 

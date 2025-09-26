@@ -26,6 +26,7 @@ public interface IEditorInterface {
 	public void OpenSceneEntityMenu(SceneEntity entity);
 
 	public void OpenAssignCollection(ActorEntity entity);
+	public void OpenApplyDesign(ActorEntity entity);
 	public void OpenAssignCProfile(ActorEntity entity);
 	public void OpenOverworldActorList();
 	
@@ -42,7 +43,7 @@ public interface IEditorInterface {
 	
 	public void OpenEditorFor(SceneEntity entity);
 
-	public void OpenCharaImport(ActorEntity actor);
+	public void OpenCharaImport(ActorEntity actor, bool openNpc = false);
 	public Task OpenCharaExport(ActorEntity actor);
 	public void OpenPoseImport(ActorEntity actor);
 	public Task OpenPoseExport(EntityPose pose);

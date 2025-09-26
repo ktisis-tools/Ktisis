@@ -4,7 +4,10 @@ using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 using Dalamud.Game.ClientState.Keys;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Control;
+
 using Ktisis.Interop.Hooking;
+using Ktisis.Editor.Context.Types;
 
 namespace Ktisis.Editor.Actions.Input;
 
@@ -17,9 +20,13 @@ public enum VirtualKeyState {
 public delegate bool KeyEventHandler(VirtualKey key, VirtualKeyState state);
 
 public class InputModule : HookModule {
+	private IEditorContext _context;
 	public InputModule(
-		IHookMediator hook
-	) : base(hook) { }
+		IHookMediator hook,
+		IEditorContext context
+	) : base(hook) {
+		this._context = context;
+	}
 	
 	// Events
 
@@ -64,5 +71,24 @@ public class InputModule : HookModule {
 		}
 		
 		return this.InputNotificationHook.Original(hWnd, uMsg, wParam, lParam);
+	}
+
+	[Signature("E8 ?? ?? ?? ?? 4C 8B BC 24 ?? ?? ?? ?? 4C 8B B4 24 ?? ?? ?? ?? 48 8B B4 24 ?? ?? ?? ?? 48 8B 9C 24 ?? ?? ?? ??", DetourName = nameof(ProcessMouseStateDetour))]
+	private Hook<ProcessMouseStateDelegate> ProcessMouseStateHook = null!;
+	private unsafe delegate nint ProcessMouseStateDelegate(TargetSystem* targets, nint a2, nint a3);
+
+	private unsafe nint ProcessMouseStateDetour(TargetSystem* targets, nint a2, nint a3) {
+		var prev = targets->GPoseTarget;
+		nint exec = this.ProcessMouseStateHook!.Original(targets, a2, a3);
+
+		if (targets->GPoseTarget != prev) {
+			var leftBlocked = this._context.Config.Keybinds.BlockTargetLeftClick && exec == 0;
+			var rightBlocked = !leftBlocked && this._context.Config.Keybinds.BlockTargetRightClick && exec == 0x10;
+
+			// if config determined we should block either from a left click or right click, revert the targeting done in exec
+			if (leftBlocked || rightBlocked) targets->GPoseTarget = prev;
+		}
+
+		return exec;
 	}
 }

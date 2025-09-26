@@ -1,4 +1,6 @@
 using System.Numerics;
+using System.Collections.Generic;
+using System.Linq;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
@@ -7,33 +9,41 @@ using Dalamud.Bindings.ImGui;
 using GLib.Widgets;
 
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms.Types;
+using Ktisis.Editor.Selection;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Objects;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
+using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Windows;
 
 public class ObjectWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
 	private readonly Gizmo2D _gizmo;
+	private readonly GuiManager _gui;
 
 	private readonly TransformTable _table;
 	private readonly PropertyEditor _propEditor;
+	private const string WindowId = "KtisisObjectEditor";
 
 	public ObjectWindow(
 		IEditorContext ctx,
 		Gizmo2D gizmo,
+		GuiManager gui,
 		TransformTable table,
 		PropertyEditor propEditor
 	) : base(
-		"Object Editor"
+		$"Object Editor###{WindowId}"
 	) {
 		this._ctx = ctx;
 		this._gizmo = gizmo;
+		this._gui = gui;
 		this._table = table;
 		this._propEditor = propEditor;
 	}
@@ -41,7 +51,7 @@ public class ObjectWindow : KtisisWindow {
 	private ITransformMemento? Transform;
 
 	public override void OnCreate() {
-		this._propEditor.Prepare(this._ctx);
+		this._propEditor.Prepare(this._ctx, this._gui);
 	}
 
 	public override void PreOpenCheck() {
@@ -58,9 +68,9 @@ public class ObjectWindow : KtisisWindow {
 	}
 
 	public override void Draw() {
-		this.DrawToggles();
-		
 		var target = this._ctx.Transform.Target;
+		this.DrawToggles(target);
+
 		this.DrawTransform(target);
 		this.DrawProperties(target);
 	}
@@ -88,7 +98,10 @@ public class ObjectWindow : KtisisWindow {
 
 	private void DrawProperties(ITransformTarget? target) {
 		var selected = this._ctx.Selection.GetFirstSelected() ?? target?.Primary;
-		if (selected != null) this._propEditor.Draw(selected);
+		if (selected != null) {
+			this.WindowName = $"Object Editor - {selected.Name}###{WindowId}";
+			this._propEditor.Draw(selected);
+		}
 	}
 	
 	// Transform table
@@ -115,7 +128,7 @@ public class ObjectWindow : KtisisWindow {
 	
 	// Toggle options
 
-	private void DrawToggles() {
+	private void DrawToggles(ITransformTarget? target) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
 		var iconSize = UiBuilder.IconFont.FontSize * 2;
@@ -147,6 +160,30 @@ public class ObjectWindow : KtisisWindow {
 		
 		ImGui.SameLine(0, spacing);
 
+		// Sibling Link selector
+		// if we have a selection & target's primary entity is a bone node, draw the button
+		// if we have >1 bonenodes selected or no sibling, disable the button
+		// if we have 1 bonenode selected that has a sibling, enable the button
+		var selected = target?.Primary;
+		var selectionCount = target?.Targets.Count();
+		if (selectionCount != 0 && selected != null && selected is BoneNode bNode) {
+			var siblingNode = bNode.Pose.TryResolveSibling(bNode);
+			var siblingAvailable = siblingNode != null;
+			var siblingKey = siblingAvailable ? (selectionCount == 1 ? "available" : "multiple") : "unavailable";
+			var siblingHint = this._ctx.Locale.Translate(
+				$"transform_edit.sibling.{siblingKey}",
+				new Dictionary<string, string> {
+					{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
+				}
+			);
+
+			using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
+				this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
+
+			ImGui.SameLine(0, spacing);
+		}
+
 		var avail = ImGui.GetContentRegionAvail().X;
 		if (avail > iconSize)
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
@@ -171,10 +208,20 @@ public class ObjectWindow : KtisisWindow {
 			this._gizmo.End();
 			return false;
 		}
-		
-		var camera = CameraService.GetGameCamera();
-		var cameraFov = camera != null ? camera->FoV : 1.0f;
-		var cameraPos = camera != null ? (Vector3)camera->CameraBase.SceneCamera.Object.Position : Vector3.Zero;
+
+		var cameraFov = 1.0f;
+		var cameraPos = Vector3.Zero;
+		if (this._ctx.Cameras.IsWorkCameraActive) {
+			var freeCam = (WorkCamera)this._ctx.Cameras.Current;
+			cameraFov = freeCam.Camera->RenderEx->FoV;
+			cameraPos = freeCam.Position;
+		} else {
+			var camera = CameraService.GetGameCamera();
+			if (camera != null) {
+				cameraFov = camera->FoV;
+				cameraPos = camera->CameraBase.SceneCamera.Object.Position;
+			}
+		}
 		
 		var matrix = transform.ComposeMatrix();
 		this._gizmo.SetLookAt(cameraPos, matrix.Translation, cameraFov, (size.X - ImGui.GetStyle().WindowPadding.X * 2) / (size.Y - ImGui.GetStyle().WindowPadding.Y * 2));

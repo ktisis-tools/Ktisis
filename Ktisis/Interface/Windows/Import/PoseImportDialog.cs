@@ -44,7 +44,12 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		
 		ImGui.Text($"Importing pose for {this.Target.Name}");
 		ImGui.Spacing();
-		
+
+		this.DrawEmbed();
+	}
+
+	public void DrawEmbed() {
+		this.PreDraw();
 		this._select.Draw();
 		
 		ImGui.Spacing();

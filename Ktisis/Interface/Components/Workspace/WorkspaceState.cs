@@ -116,6 +116,14 @@ public class WorkspaceState {
 				{ "target", target.Primary?.Name ?? "INVALID" }
 			}
 		));
+
+		var targets = transform.Target!.Targets.Where(tar => tar.Name != name).ToList();
+		if (ImGui.IsItemHovered()) {
+			using var _ = ImRaii.Tooltip();
+
+			for (int i = 0; i < count; i++)
+				ImGui.Text($"{targets[i].Name}");
+		}
 	}
 
 	private void DrawOverlayToggle() {

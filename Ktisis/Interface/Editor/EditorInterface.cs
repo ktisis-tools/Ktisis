@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
+using Dalamud.Bindings.ImGui;
 using GLib.Popups.ImFileDialog;
 
 using Ktisis.Data.Files;
@@ -21,6 +22,7 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
+using Ktisis.Interface.Components.Chara;
 
 namespace Ktisis.Interface.Editor;
 
@@ -50,7 +52,8 @@ public class EditorInterface : IEditorInterface {
 		this._gizmo.Initialize();
 		this._gui.GetOrCreate<OverlayWindow>(
 			this._ctx,
-			this._gizmo.Create(GizmoId.OverlayMain)
+			this._gizmo.Create(GizmoId.OverlayMain),
+			this._gizmo.Create(GizmoId.GazeTarget)
 		).Open();
 	}
 
@@ -64,29 +67,59 @@ public class EditorInterface : IEditorInterface {
 			if (open) this.OpenObjectEditor();
 			return;
 		}
+
+		if (!this._ctx.Config.Editor.CloseEditorOnDeselect) return;
 		editor.IsOpen = open;
 	}
 	
 	// Window wrappers
 
-	public void OpenConfigWindow() => this._gui.GetOrCreate<ConfigWindow>().Open();
+	public void OpenConfigWindow() {
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<ConfigWindow>().Toggle();
+		else {
+			var _win = this._gui.GetOrCreate<ConfigWindow>();
+			_win.Open();
+			ImGui.SetWindowFocus(_win.WindowName);
+		}
+	}
 
 	public void ToggleWorkspaceWindow() => this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Toggle();
 	public void ToggleDebugWindow() => this._gui.GetOrCreate<DebugWindow>(this._ctx).Toggle();
 	
 	// Editor windows
 	
-	public void OpenCameraWindow() => this._gui.GetOrCreate<CameraWindow>(this._ctx).Open();
+	public void OpenCameraWindow() {
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<CameraWindow>(this._ctx).Toggle();
+		else {
+			var _win = this._gui.GetOrCreate<CameraWindow>(this._ctx);
+			_win.Open();
+			ImGui.SetWindowFocus(_win.WindowName);
+		}
+	}
 	
 	public void OpenEnvironmentWindow() {
 		var scene = this._ctx.Scene;
 		var module = scene.GetModule<EnvModule>();
-		this._gui.GetOrCreate<EnvWindow>(scene, module).Open();
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<EnvWindow>(scene, module).Toggle();
+		else {
+			var _win = this._gui.GetOrCreate<EnvWindow>(scene, module);
+			_win.Open();
+			ImGui.SetWindowFocus(_win.WindowName);
+		}
 	}
 
 	public void OpenObjectEditor() {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
-		this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo)).Open();
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo), this._gui).Toggle();
+		else {
+			var _win = this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(gizmo), this._gui);
+			_win.Open();
+			ImGui.SetWindowFocus(_win.WindowName);
+		}
 	}
 
 	public void OpenObjectEditor(SceneEntity entity) {
@@ -94,7 +127,15 @@ public class EditorInterface : IEditorInterface {
 		this.OpenObjectEditor();
 	}
 
-	public void OpenPosingWindow() => this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Open();
+	public void OpenPosingWindow() {
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Toggle();
+		else {
+			var _win = this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale);
+			_win.Open();
+			ImGui.SetWindowFocus(_win.WindowName);
+		}
+	}
 	
 	// Context menus
 
@@ -109,6 +150,8 @@ public class EditorInterface : IEditorInterface {
 	}
 
 	public void OpenAssignCollection(ActorEntity entity) => this._gui.CreatePopup<ActorCollectionPopup>(this._ctx, entity).Open();
+
+	public void OpenApplyDesign(ActorEntity entity) => this._gui.CreatePopup<ActorDesignPopup>(this._ctx, entity).Open();
 
 	public void OpenAssignCProfile(ActorEntity entity) => this._gui.CreatePopup<ActorCProfilePopup>(this._ctx, entity).Open();
 
@@ -138,7 +181,13 @@ public class EditorInterface : IEditorInterface {
 	public void OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);
 		editor.SetTarget(entity);
-		editor.Open();
+
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			editor.Toggle();
+		else {
+			editor.Open();
+			ImGui.SetWindowFocus(editor.WindowName);
+		}
 	}
     
 	public void OpenEditorFor(SceneEntity entity) {
@@ -154,7 +203,13 @@ public class EditorInterface : IEditorInterface {
 	
 	// import/export wrappers
 
-	public void OpenCharaImport(ActorEntity actor) => this.OpenEditor<CharaImportDialog, ActorEntity>(actor);
+	public void OpenCharaImport(ActorEntity actor, bool openNpc = false) {
+		var editor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);
+		editor.SetTarget(actor);
+		if (openNpc)
+			editor.SetMethod(LoadMethod.Npc);
+		editor.Open();
+	}
 
 	public async Task OpenCharaExport(ActorEntity actor) {
 		var file = await this._ctx.Characters.SaveCharaFile(actor);
