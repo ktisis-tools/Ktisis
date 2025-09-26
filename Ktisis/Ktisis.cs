@@ -8,6 +8,7 @@ using Dalamud.Interface.ImGuiNotification;
 using Microsoft.Extensions.DependencyInjection;
 
 using Ktisis.Core;
+using Ktisis.Interop.Ipc;
 
 namespace Ktisis;
 
@@ -34,6 +35,7 @@ public sealed class Ktisis : IDalamudPlugin {
 
 		this._services.GetRequiredService<PluginContext>()
 			.Initialize();
+		this._services.GetRequiredService<IpcProvider>().RegisterIpc();
 	}
 
 	// Version info
