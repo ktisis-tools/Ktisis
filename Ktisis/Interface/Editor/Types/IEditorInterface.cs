@@ -47,6 +47,8 @@ public interface IEditorInterface {
 	public Task OpenCharaExport(ActorEntity actor);
 	public void OpenPoseImport(ActorEntity actor);
 	public Task OpenPoseExport(EntityPose pose);
+	public void OpenLightFromFile(LightEntity light);
+	public Task OpenLightExport(LightEntity light);
 
 	public void OpenCharaFile(Action<string, CharaFile> handler);
 	public void OpenPoseFile(Action<string, PoseFile> handler);

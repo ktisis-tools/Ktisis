@@ -1,9 +1,7 @@
 using System;
 
-using Dalamud.Game.ClientState.Objects.Enums;
-
-using Ktisis.Data.Files;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Data.Files;
 
 namespace Ktisis.Editor.Lights;
 

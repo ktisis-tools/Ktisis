@@ -222,6 +222,15 @@ public class EditorInterface : IEditorInterface {
 		var file = await this._ctx.Posing.SavePoseFile(pose);
 		this.ExportPoseFile(file);
 	}
+
+	public void OpenLightFromFile(LightEntity light) {
+		// todo
+	}
+
+	public async Task OpenLightExport(LightEntity light) {
+		var file = await this._ctx.Scene.SaveLightFile(light);
+		this.ExportLightFile(file);
+	}
 	
 	// Import/export dialogs
 	
@@ -233,6 +242,11 @@ public class EditorInterface : IEditorInterface {
 	private readonly static FileDialogOptions PoseFileOptions = new() {
 		Filters = "Pose Files{.pose}",
 		Extension = ".pose"
+	};
+
+	private readonly static FileDialogOptions LightFileOptions = new() {
+		Filters = "Light Files{.ktlight}",
+		Extension = ".ktlight"
 	};
 
 	private readonly static FileDialogOptions McdfFileOptions = new() {
@@ -263,4 +277,7 @@ public class EditorInterface : IEditorInterface {
 	
 	public void ExportPoseFile(PoseFile file)
 		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, PoseFileOptions);
+
+	public void ExportLightFile(LightFile file)
+		=> this._gui.FileDialogs.SaveFile("Export Light File", file, LightFileOptions);
 }

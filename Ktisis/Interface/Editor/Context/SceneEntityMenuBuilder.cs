@@ -171,7 +171,7 @@ public class SceneEntityMenuBuilder {
 		menu.Separator()
 			.Action("Edit lighting", this.OpenEditor)
 			.Separator()
-			.Action("Import preset (TODO)", () => { })
-			.Action("Export preset (TODO)", () => { });
+			.Action("Import preset", () => this.Ui.OpenLightFromFile(light))
+			.Action("Export preset", () => this.Ui.OpenLightExport(light));
 	}
 }

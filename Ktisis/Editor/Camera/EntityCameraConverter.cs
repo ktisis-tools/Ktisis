@@ -1,7 +1,5 @@
 using System;
 
-using Dalamud.Game.ClientState.Objects.Enums;
-
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Data.Files;
 
@@ -44,6 +42,7 @@ public class EntityCameraConverter {
 
     private unsafe void Write(CameraFile file) {
 		var ptr = this._camera.Camera;
+		if (ptr == null) return;
 
         file.IsNoCollide = this._camera.IsNoCollide;
         file.IsOrthographic = this._camera.IsOrthographic;

@@ -18,7 +18,7 @@ public class LightFile : JsonFile {
 	public string? Nickname { get; set; } = null;
 	public LightFlags Flags { get; set; }
 	public LightType LightType { get; set; }
-	public unsafe Transform* Transform { get; set; } = null;
+	public unsafe Transform? Transform { get; set; } = null;
 	public ColorHDR Color { get; set; } = new ColorHDR();
 	public float ShadowNear { get; set; } = 0.0f;
 	public float ShadowFar { get; set; } = 0.0f;
