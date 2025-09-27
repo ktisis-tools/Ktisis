@@ -61,7 +61,7 @@ public class TransformTable {
 	
 	// Draw UI
 
-	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
+	private readonly static Vector3 MinScale = new(0.001f, 0.001f, 0.001f);
 
 	private static uint[] AxisColors = [
 		0xFF3553FF,
