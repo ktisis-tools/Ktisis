@@ -62,6 +62,7 @@ jobs:
           generateReleaseNotes: true
           updateOnlyUnreleased: false
           makeLatest: false
+          prerelease: ${{ github.event.release.prerelease }} # Keep the prerelease status the same as the tag
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -84,7 +85,6 @@ jobs:
           sed -i repo.json -E \
               -e 's#"TestingAssemblyVersion": "([0-9]*\.){2,3}[0-9]*"#"TestingAssemblyVersion": "'"$release_version"'"#' \
               -e 's#"DownloadLinkTesting": "[^"]*"#"DownloadLinkTesting": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g' \
-              -e 's#"DownloadLinkUpdate": "[^"]*"#"DownloadLinkUpdate": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g'
 
           git add repo.json
           git commit -m "Update repo.json for ${{ github.ref_name }}"
