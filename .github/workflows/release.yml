@@ -66,7 +66,7 @@ jobs:
           fail_on_unmatched_files: true # If the files arent found, fail the workflow and abort the release.
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Release Artifacts
           path: |
