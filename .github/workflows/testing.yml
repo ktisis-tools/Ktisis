@@ -74,6 +74,7 @@ jobs:
             Ktisis/bin/Release/Ktisis/checksums.sha512
 
       - name: Update repo.json
+        working-directory: .
         run: |
           git config --local user.name "github-actions [bot]"
           git config --local user.email "github-actions@users.noreply.github.com"
