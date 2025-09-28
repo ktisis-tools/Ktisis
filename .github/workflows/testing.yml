@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   Release:
-    if: github.event.release.prerelease == false #only run on pre-release tags.
+    if: github.event.release.prerelease == true #only run on pre-release tags.
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -82,9 +82,7 @@ jobs:
           repo_url=$(echo ${{ github.server_url }}/${{ github.repository }} | sed 's/#/\\#/g')
 
           sed -i repo.json -E \
-              -e 's#"AssemblyVersion": "([0-9]*\.){2,3}[0-9]*"#"AssemblyVersion": "'"$release_version"'"#g' \
               -e 's#"TestingAssemblyVersion": "([0-9]*\.){2,3}[0-9]*"#"TestingAssemblyVersion": "'"$release_version"'"#' \
-              -e 's#"DownloadLinkInstall": "[^"]*"#"DownloadLinkInstall": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g' \
               -e 's#"DownloadLinkTesting": "[^"]*"#"DownloadLinkTesting": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g' \
               -e 's#"DownloadLinkUpdate": "[^"]*"#"DownloadLinkUpdate": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g'
 
