@@ -1,4 +1,4 @@
-name: Release
+name: Testing
 
 # Add a concurrency group incase a tag is created, deleted, and then recreated while a release is in progress.
 concurrency:
@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 jobs:
-  Release:
+  Testing:
     if: github.event.release.prerelease == true #only run on pre-release tags.
     runs-on: ubuntu-latest
     defaults:
