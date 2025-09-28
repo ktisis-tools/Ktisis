@@ -75,7 +75,9 @@ jobs:
 
       - name: Update repo.json
         run: |
-          cd ../
+          git config --local user.name "github-actions [bot]"
+          git config --local user.email "github-actions@users.noreply.github.com"
+          git fetch origin master && git checkout master
 
           release_version=$(echo ${{ github.ref_name }} | sed 's/^v//')
           repo_url=$(echo ${{ github.server_url }}/${{ github.repository }} | sed 's/#/\\#/g')
@@ -88,8 +90,6 @@ jobs:
               -e 's#"DownloadLinkUpdate": "[^"]*"#"DownloadLinkUpdate": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g'
 
           git add repo.json
-          git config --local user.name "github-actions [bot]"
-          git config --local user.email "github-actions@users.noreply.github.com"
           git commit -m "Update repo.json for ${{ github.ref_name }}"
           
           git push origin HEAD:main
