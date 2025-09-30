@@ -10,10 +10,11 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms.Types;
-using Ktisis.ImGuizmo;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 using Ktisis.Common.Utility;
+
+using Hexa.NET.ImGuizmo;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -135,8 +136,8 @@ public class OverlayWindow : KtisisWindow {
 		var matrix = transform.ComposeMatrix();
 
 		var cfg = this._ctx.Config.Gizmo;
-		this._gizmoGaze.Mode = Mode.World;
-		this._gizmoGaze.Operation = Operation.TRANSLATE;
+		this._gizmoGaze.Mode = ImGuizmoMode.World;
+		this._gizmoGaze.Operation = ImGuizmoOperation.Translate;
 		this._gizmoGaze.AllowAxisFlip = cfg.AllowAxisFlip;
 		this._gizmoGaze.ScaleFactor = 0.075f;
 
@@ -157,7 +158,7 @@ public class OverlayWindow : KtisisWindow {
 		if (!this._ctx.Config.Gizmo.AllowRaySnap)
 			return false;
 		
-		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGuizmo.Gizmo.IsUsing || ImGuizmo.Gizmo.CurrentOperation != Operation.TRANSLATE)
+		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGuizmo.IsUsing() || this._gizmo.Operation != ImGuizmoOperation.Translate)
 			return false;
 
 		if (!this._gui.ScreenToWorld(ImGui.GetMousePos(), out var hitPos))
@@ -179,8 +180,8 @@ public class OverlayWindow : KtisisWindow {
 		ImGui.Text($"Scene: {this._ctx.Scene.GetHashCode():X} {this._ctx.Scene.UpdateTime:00.00}ms");
 		if (t != null)
 			ImGui.Text($"Overlay: {this.GetHashCode()} {t.Elapsed.TotalMilliseconds:00.00}ms");
-		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.Gizmo.IsUsing})");
-		ImGui.Text($"Gaze Gizmo?: {this._gizmoGaze.GetHashCode():X} {this._gizmoGaze.Id} ({this._gizmoGaze.Operation}, {ImGuizmo.Gizmo.IsUsing})");
+		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.IsUsing()})");
+		ImGui.Text($"Gaze Gizmo?: {this._gizmoGaze.GetHashCode():X} {this._gizmoGaze.Id} ({this._gizmoGaze.Operation}, {ImGuizmo.IsUsing()})");
 		var target = this._ctx.Transform.Target;
 		ImGui.Text($"Target: {target?.GetHashCode() ?? 0:X7} {target?.GetType().Name ?? "NULL"} ({target?.Targets?.Count() ?? 0}, {target?.Primary?.Name ?? "NULL"})");
 		var history = this._ctx.Actions.History;

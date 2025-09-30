@@ -1,14 +1,15 @@
+using System;
 using System.Numerics;
 
-using Ktisis.ImGuizmo;
+using Hexa.NET.ImGuizmo;
 
 namespace Ktisis.Data.Config.Sections;
 
 public class GizmoConfig {
 	public bool Visible = true;
 	
-	public Mode Mode = Mode.Local;
-	public Operation Operation = Operation.ROTATE;
+	public ImGuizmoMode Mode = ImGuizmoMode.Local;
+	public ImGuizmoOperation Operation = ImGuizmoOperation.Rotate;
 
 	public bool MirrorRotation = false;
 	public bool ParentBones = true;
@@ -17,9 +18,9 @@ public class GizmoConfig {
 	public bool AllowAxisFlip = true;
 	public bool AllowRaySnap = true;
 
-	public Style Style = DefaultStyle;
+	public GizmoStyle Style = DefaultStyle;
 
-	public readonly static Style DefaultStyle = new() {
+	public static readonly GizmoStyle DefaultStyle = new() {
 		TranslationLineThickness = 3.0f,
 		TranslationLineArrowSize = 6.0f,
 		RotationLineThickness = 2.0f,
@@ -45,4 +46,61 @@ public class GizmoConfig {
 		ColorText = new Vector4(1.000f, 1.000f, 1.000f, 1.000f),
 		ColorTextShadow = new Vector4(0.000f, 0.000f, 0.000f, 1.000f)
 	};
+	
+	public struct GizmoStyle {
+		public float TranslationLineThickness;
+		public float TranslationLineArrowSize;
+		public float RotationLineThickness;
+		public float RotationOuterLineThickness;
+		public float ScaleLineThickness;
+		public float ScaleLineCircleSize;
+		public float HatchedAxisLineThickness;
+		public float CenterCircleSize;
+
+		public Vector4 ColorDirectionX;
+		public Vector4 ColorDirectionY;
+		public Vector4 ColorDirectionZ;
+		public Vector4 ColorPlaneX;
+		public Vector4 ColorPlaneY;
+		public Vector4 ColorPlaneZ;
+		public Vector4 ColorSelection;
+		public Vector4 ColorInactive;
+		public Vector4 ColorTranslationLine;
+		public Vector4 ColorScaleLine;
+		public Vector4 ColorRotationUsingBorder;
+		public Vector4 ColorRotationUsingFill;
+		public Vector4 ColorHatchedAxisLines;
+		public Vector4 ColorText;
+		public Vector4 ColorTextShadow;
+
+		public unsafe void ApplyStyle()
+		{
+			var style = ImGuizmo.GetStyle().Handle;
+			style->TranslationLineThickness = this.TranslationLineThickness;
+			style->TranslationLineArrowSize = this.TranslationLineArrowSize;
+			style->RotationLineThickness = this.RotationLineThickness;
+			style->RotationOuterLineThickness = this.RotationOuterLineThickness;
+			style->ScaleLineThickness = this.ScaleLineThickness;
+			style->ScaleLineCircleSize = this.ScaleLineCircleSize;
+			style->HatchedAxisLineThickness = this.HatchedAxisLineThickness;
+			style->CenterCircleSize = this.CenterCircleSize;
+			
+			style->Colors_0 = this.ColorDirectionX;
+			style->Colors_1 = this.ColorDirectionY;
+			style->Colors_2 = this.ColorDirectionZ;
+			style->Colors_3 = this.ColorPlaneX;
+			style->Colors_4 = this.ColorPlaneY;
+			style->Colors_5 = this.ColorPlaneZ;
+			style->Colors_6 = this.ColorSelection;
+			style->Colors_7 = this.ColorInactive;
+			style->Colors_8 = this.ColorTranslationLine;
+			style->Colors_9 = this.ColorScaleLine;
+			style->Colors_10 = this.ColorRotationUsingBorder;
+			style->Colors_11 = this.ColorRotationUsingFill;
+			style->Colors_12 = this.ColorHatchedAxisLines;
+			style->Colors_13 = this.ColorText;
+			style->Colors_14 = this.ColorTextShadow;
+		}
+	}
+
 }

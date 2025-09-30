@@ -27,6 +27,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Glamourer.Api" Version="2.6.0" />
+		<PackageReference Include="Hexa.NET.ImGuizmo" Version="2.2.8.4" />
 		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
 		<PackageReference Include="DalamudPackager" Version="2.1.13" />
 		<PackageReference Include="K4os.Compression.LZ4.Legacy" Version="1.3.8" />
@@ -74,7 +75,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\GLib\GLib\GLib.csproj" />
-	  <ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET\ImGuizmo.NET.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Localization\Data\*.json" />

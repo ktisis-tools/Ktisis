@@ -14,6 +14,16 @@
         "resolved": "2.6.0",
         "contentHash": "zysCZgNBRm3k3qvibyw/31MmEckX0Uh0ZsT+Sax3ZHnYIRELr9Qhbz3cjJz7u0RHGIrNJiRpktu/LxgHEqDItw=="
       },
+      "Hexa.NET.ImGuizmo": {
+        "type": "Direct",
+        "requested": "[2.2.8.4, )",
+        "resolved": "2.2.8.4",
+        "contentHash": "+2rJcgxWXVPnscoUrA/vw/cZlh1t4iv8t9OhjwNbz1seRaaf5bQQ70R9M2bnfwnOUaAKpJ1TawN6vOQwqfWTCQ==",
+        "dependencies": {
+          "Hexa.NET.ImGui": "2.2.8.4",
+          "HexaGen.Runtime": "1.1.21"
+        }
+      },
       "JetBrains.Annotations": {
         "type": "Direct",
         "requested": "[2022.3.1, )",
@@ -43,6 +53,19 @@
         "requested": "[5.10.0, )",
         "resolved": "5.10.0",
         "contentHash": "ZRIIXQCluNlLoI4I4gNYuYXqb7p48OR1P2/LcL27owToR/A/IG0mH8Ks2HguB/Kjq4RpCinaVkyufpGxGspbTA=="
+      },
+      "Hexa.NET.ImGui": {
+        "type": "Transitive",
+        "resolved": "2.2.8.4",
+        "contentHash": "lf/+aGeQyYyOTFzEswXIBhb/zYHEypeAiwW332CMHKUBDXXiZks3rXAeLSlXJLfP/avgePkBEnPEzkTXSCwW6A==",
+        "dependencies": {
+          "HexaGen.Runtime": "1.1.21"
+        }
+      },
+      "HexaGen.Runtime": {
+        "type": "Transitive",
+        "resolved": "1.1.21",
+        "contentHash": "fxSBIroVyuU1CQUSKsE3IZNOW8FlI58zuU1kIG5ZvDH0jtQq5yTPEvPMoNyMB5PrhzYH/taTMqd85VtxcZPD8g=="
       },
       "K4os.Compression.LZ4": {
         "type": "Transitive",

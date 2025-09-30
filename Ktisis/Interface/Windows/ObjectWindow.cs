@@ -13,13 +13,14 @@ using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.Editor.Selection;
-using Ktisis.ImGuizmo;
 using Ktisis.Interface.Components.Objects;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
+
+using Hexa.NET.ImGuizmo;
 
 namespace Ktisis.Interface.Windows;
 
@@ -135,11 +136,11 @@ public class ObjectWindow : KtisisWindow {
 		var iconBtnSize = new Vector2(iconSize, iconSize);
 
 		var mode = this._ctx.Config.Gizmo.Mode;
-		var modeIcon = mode == Mode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home;
-		var modeKey = mode == Mode.World ? "world" : "local";
+		var modeIcon = mode == ImGuizmoMode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home;
+		var modeKey = mode == ImGuizmoMode.World ? "world" : "local";
 		var modeHint = this._ctx.Locale.Translate($"transform_edit.mode.{modeKey}");
 		if (Buttons.IconButtonTooltip(modeIcon, modeHint, iconBtnSize))
-			this._ctx.Config.Gizmo.Mode = mode == Mode.World ? Mode.Local : Mode.World;
+			this._ctx.Config.Gizmo.Mode = mode == ImGuizmoMode.World ? ImGuizmoMode.Local : ImGuizmoMode.World;
 		
 		ImGui.SameLine(0, spacing);
 
