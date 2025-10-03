@@ -286,6 +286,8 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 	// Gaze
 	public unsafe void SetActorGazeTarget(ActorEntity? otherActor) {
+		if (otherActor == null || otherActor.CsGameObject == null) return;
+
 		var targetId = otherActor.CsGameObject->GetGameObjectId();
 		// for PCs, set hard target and for non-PCs, bail if they have no gaze
 		if (this.Actor.IsPcCharacter()) {

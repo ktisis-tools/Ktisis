@@ -18,6 +18,7 @@ namespace Ktisis.Interface.Editor.Popup;
 public class ActorGazeTargetPopup : KtisisPopup {
 	private readonly IEditorContext _ctx;
 	private readonly ListBox<ActorEntity> _list;
+	private uint ForActorGazeTarget;
     private ActorEntity ForActor;
 
 	public ActorGazeTargetPopup(
@@ -26,6 +27,7 @@ public class ActorGazeTargetPopup : KtisisPopup {
 	) : base("##ActorGazeTargetPopup") {
 		this._ctx = ctx;
         this.ForActor = actor;
+		this.ForActorGazeTarget = actor.GetActorGazeTarget();
 		this._list = new ListBox<ActorEntity>(
 			"##ActorGazeTargetList",
 			DrawActorName
@@ -49,6 +51,6 @@ public class ActorGazeTargetPopup : KtisisPopup {
 	}
 
 
-	private bool DrawActorName(ActorEntity actor, bool isFocus)
-		=> ImGui.Selectable(actor.Name, isFocus);
+	private bool DrawActorName(ActorEntity actor, bool _)
+		=> ImGui.Selectable(actor.Name, actor.Actor.ObjectIndex == ForActorGazeTarget);
 }
