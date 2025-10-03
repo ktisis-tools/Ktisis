@@ -234,19 +234,19 @@ public class AnimationEditorTab {
 				ImGui.LabelText("{0}", "Playback Speed");
 
 			if (ScrubSlots.Contains(slot) && !key.IsNullOrEmpty()) {
-				// draw active sliders for fullbody/upperbody/expressions if they have animations
-				var duration = this.Editor.GetHkaDuration(index) ?? 0.0f;
-				var localTime = this.Editor.GetHkaLocalTime(index) ?? 0.0f;
+				// draw active sliders for fullbody/upperbody if they have animations
+				var control = this.Editor.GetHkaControl(index); // fetch hkaDefaultControl once per draw and reuse
+				var duration = this.Editor.GetHkaDuration(control) ?? 0.0f;
+				var localTime = this.Editor.GetHkaLocalTime(control) ?? 0.0f;
 
 				ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
-				ImGui.InputFloat($"##scrub_l{index}", ref localTime, flags: ImGuiInputTextFlags.ReadOnly);
+				var changed = ImGui.InputFloat($"##scrub_l{index}", ref localTime, flags: ImGuiInputTextFlags.EnterReturnsTrue);
 				ImGui.SameLine(0, spacing);
 				ImGui.SetNextItemWidth(widthR);
-				var changed = ImGui.SliderFloat($"##scrub_r{index}", ref localTime, 0f, duration, flags: ImGuiSliderFlags.AlwaysClamp);
-				if (changed) this.Editor.SetHkaLocalTime(index, localTime);
+				changed |= ImGui.SliderFloat($"##scrub_r{index}", ref localTime, 0.0f, duration, flags: ImGuiSliderFlags.NoInput);
+				if (changed) this.Editor.SetHkaLocalTime(control, Math.Clamp(localTime, 0.0f, duration));
 			} else if (ScrubSlots.Contains(slot)) {
-				// draw disabled dummy sliders for fullbody/upperbody/expressions if not animating
-				// this keeps the window from jittering sliders on and off
+				// draw disabled dummy sliders for fullbody/upperbody if not animating
 				using var _disable = ImRaii.Disabled();
 				var dummy = 0.0f;
 				ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);

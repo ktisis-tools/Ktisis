@@ -124,41 +124,17 @@ public class AnimationEditor(
 
 	// animation scrubbing helpers
 
-	private unsafe hkaDefaultAnimationControl* GetDefaultControlForIndex(int animationIndex) {
-		// hacky reimplement of GetAnimationControl's clientstructs hka traversal
-		// todo: either refactor or find a neater way to get the scrub & duration values
-		var gameObject = actor.Actor;
+	public unsafe hkaDefaultAnimationControl* GetHkaControl(int index) =>
+		actor.Actor.GetDefaultControlForIndex(index);
 
-		var skeleton = gameObject.GetSkeleton();
-		if (skeleton == null) return null;
+	public unsafe float? GetHkaDuration(hkaDefaultAnimationControl* control) =>
+		control != null ? control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration : null;
 
-		var partial = skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0);
-		if (partial == null) return null;
-		if (partial->AnimationControls.Length == 0) return null;
-		// if (animationIndex >= partial->AnimationControls.Length) return null;
-		if (partial->AnimationControls[animationIndex].Value == null) return null;
+	public unsafe float? GetHkaLocalTime(hkaDefaultAnimationControl* control) =>
+		control != null ? control->hkaAnimationControl.LocalTime : null;
 
-		// validate defaultControl has appropriate binding and animation to ensure we can fetch a duration
-		var defaultControl = partial->AnimationControls[animationIndex].Value;
-		if (defaultControl->hkaAnimationControl.Binding.ptr == null) return null;
-		if (defaultControl->hkaAnimationControl.Binding.ptr->Animation.ptr == null) return null;
-
-		return defaultControl;
-	}
-
-	public unsafe float? GetHkaDuration(int animationIndex) {
-		var control = this.GetDefaultControlForIndex(animationIndex);
-		return control != null ? control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration : null;
-	}
-	public unsafe float? GetHkaLocalTime(int animationIndex) {
-		var control = this.GetDefaultControlForIndex(animationIndex);
-		return control != null ? control->hkaAnimationControl.LocalTime : null;
-	}
-	public unsafe void SetHkaLocalTime(int animationIndex, float time) {
-		var control = this.GetDefaultControlForIndex(animationIndex);
+	public unsafe void SetHkaLocalTime(hkaDefaultAnimationControl* control, float time) =>
 		control->hkaAnimationControl.LocalTime = time;
-	}
-
 	
 	// Weapons
 

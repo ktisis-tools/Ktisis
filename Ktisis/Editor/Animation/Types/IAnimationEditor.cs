@@ -20,9 +20,10 @@ public interface IAnimationEditor {
 	public void SetForceTimeline(ushort id);
 	public void SetTimelineSpeed(uint slot, float speed);
 	public void ResetTimelineSpeeds();
-	public unsafe float? GetHkaDuration(int animationIndex);
-	public unsafe float? GetHkaLocalTime(int animationIndex);
-	public unsafe void SetHkaLocalTime(int animationIndex, float time);
+	public unsafe hkaDefaultAnimationControl* GetHkaControl(int index);
+	public unsafe float? GetHkaDuration(hkaDefaultAnimationControl* control);
+	public unsafe float? GetHkaLocalTime(hkaDefaultAnimationControl* control);
+	public unsafe void SetHkaLocalTime(hkaDefaultAnimationControl* control, float time);
 
 	public bool IsWeaponDrawn { get; }
 	public void ToggleWeapon();
