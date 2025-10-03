@@ -81,10 +81,8 @@ public class EquipmentEditorTab {
 		var style = ImGui.GetStyle();
 		var avail = ImGui.GetWindowSize();
 
-		using (ImRaii.ItemWidth(avail.X / 2 - style.ItemSpacing.X))
-		{
-			lock (this._equipUpdateLock)
-			{
+		using (ImRaii.ItemWidth(avail.X / 2 - style.ItemSpacing.X)) {
+			lock (this._equipUpdateLock) {
 				this.DrawItemSlots(EquipSlots.Take(5).Prepend(EquipSlot.MainHand));
 				ImGui.SameLine(0, style.ItemSpacing.X);
 				this.DrawItemSlots(EquipSlots.Skip(5).Prepend(EquipSlot.OffHand));

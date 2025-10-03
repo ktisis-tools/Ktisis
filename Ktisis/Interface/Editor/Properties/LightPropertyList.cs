@@ -53,8 +53,7 @@ public class LightPropertyList : ObjectPropertyList {
 			case LightType.AreaLight:
 				var angleSpace = ImGui.GetStyle().ItemInnerSpacing.X;
 				var angleWidth = ImGui.CalcItemWidth() / 2 - angleSpace;
-				using (var _ = ImRaii.ItemWidth(angleWidth))
-				{
+				using (var _ = ImRaii.ItemWidth(angleWidth)) {
 					ImGui.SliderAngle("##AngleX", ref light->AreaAngle.X, -90, 90);
 					ImGui.SameLine(0, angleSpace);
 					ImGui.SliderAngle("Light Angle##AngleY", ref light->AreaAngle.Y, -90, 90);
