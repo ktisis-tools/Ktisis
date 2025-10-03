@@ -72,7 +72,7 @@ public class ContextBuilder {
 			Actions = actions,
 			Animation = new AnimationManager(context, scope, this._data, this._framework),
 			Cameras = new CameraManager(context, scope),
-			Characters = new CharacterManager(context, scope, this._framework, this._mcdf),
+			Characters = new CharacterManager(context, this._gpose._clientState, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
 			Scene = new SceneManager(context, scope, factory),

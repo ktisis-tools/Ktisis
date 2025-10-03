@@ -15,6 +15,8 @@ using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -110,6 +112,7 @@ public class SceneTree {
 		if (isRender) {
 			var flag = isExpand switch {
 				_ when children.Count is 0 => TreeNodeFlag.Leaf,
+				_ when node is EntityPose => TreeNodeFlag.Leaf,
 				true => TreeNodeFlag.Expand,
 				false => TreeNodeFlag.Collapse
 			};
@@ -130,24 +133,26 @@ public class SceneTree {
 			}
 		}
 
-		if (isExpand) this.IterateTree(children);
+		if (isExpand || node is EntityPose) this.IterateTree(children);
 	}
 
 	private bool DrawNodeLabel(SceneEntity item, Vector2 pos, TreeNodeFlag flag, float rightAdjust = 0.0f) {
 		var display = this._ctx.Config.GetEntityDisplay(item);
-        
+
         // Caret
 
+		var expand = false;
 		var style = ImGui.GetStyle();
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(pos.X - style.ItemSpacing.X);
-		var expand = this.DrawNodeCaret(display.Color, flag);
-		
+		if (item is not EntityPose)
+			expand = this.DrawNodeCaret(display.Color, flag);
+
 		// Icon + Label
 
 		using var _ = ImRaii.PushColor(ImGuiCol.Text, display.Color);
 		this.DrawNodeIcon(display.Icon);
-			
+
 		var avail = ImGui.GetContentRegionAvail().X;
 		ImGui.Text(item.Name.FitToWidth(avail - rightAdjust));
 
@@ -199,6 +204,8 @@ public class SceneTree {
 		this.DrawVisibilityButton(node, ref cursor, isHover);
 		if (node is IAttachable attach)
 			this.DrawAttachButton(attach, ref cursor, isHover);
+		if (node is ActorEntity actor)
+			this.DrawHideButton(actor, ref cursor, isHover);
 		
 		return initial - cursor;
 	}
@@ -229,6 +236,17 @@ public class SceneTree {
 		var name = bone != null ? this._ctx.Locale.GetBoneName(bone) : "UNKNOWN";
 		using var _ = ImRaii.Tooltip();
 		ImGui.Text($"Attached to {name}");
+		ImGui.Text($"Click to reset attachment\nClick+Drag to set new attachment");
+	}
+
+	private void DrawHideButton(ActorEntity actor, ref float cursor, bool isHover) {
+		var color = actor.IsHidden ? 0x80FFFFFF : 0xEFFFFFFF;
+		if (this.DrawButton(ref cursor, FontAwesomeIcon.IdBadge, color) && isHover)
+			actor.IsHidden = !actor.IsHidden;
+
+		if (!isHover || !ImGui.IsItemHovered()) return;
+		using var _ = ImRaii.Tooltip();
+		ImGui.Text(actor.IsHidden ? "Unhide Actor" : "Hide Actor");
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {

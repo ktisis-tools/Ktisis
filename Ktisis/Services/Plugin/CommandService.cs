@@ -59,6 +59,12 @@ public class CommandService : IDisposable {
 			return;
 		}
 
+		if (arguments.Contains("debug")) {
+			Ktisis.Log.Info("Debug argument provided");
+			ctx.Interface.ToggleDebugWindow();
+			return;
+		}
+
 		ctx.Interface.ToggleWorkspaceWindow();
 	}
 	

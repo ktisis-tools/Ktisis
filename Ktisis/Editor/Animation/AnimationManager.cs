@@ -50,6 +50,7 @@ public class AnimationManager : IAnimationManager {
 		}
 		
 		this.Timelines = this._data.GetExcelSheet<ActionTimeline>();
+		this.Module.PositionLockEnabled = this._ctx.Config.Editor.InitPosLock;
 	}
 	
 	// Controls

@@ -18,7 +18,8 @@ public sealed class ActorBuilder : EntityBuilder<ActorEntity, IActorBuilder>, IA
 		IPoseBuilder pose,
 		IGameObject gameObject
 	) : base(scene) {
-		this.Name = gameObject.GetNameOrFallback();
+		// load ActorEntity with realname, allow it to display either real or fake based on config
+		this.Name = gameObject.GetNameOrFallback(scene.Context, false);
 		this._pose = pose;
 		this._gameObject = gameObject;
 	}

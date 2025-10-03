@@ -76,7 +76,7 @@ public class CameraManager : ICameraManager {
 	}
 
 	private void SetupWorkCamera() {
-		this.WorkCamera ??= new WorkCamera(this) { Name = "Work Camera" };
+		this.WorkCamera ??= new WorkCamera(this, this._context) { Name = "Work Camera" };
 		if (!this.CopyOntoCamera(this.WorkCamera))
 			throw new Exception("Failed to setup work camera.");
 	}
@@ -182,8 +182,10 @@ public class CameraManager : ICameraManager {
 		camera.RelativeOffset = active.RelativeOffset;
 		*camera.GameCamera = *active.GameCamera;
 
-		if (camera is WorkCamera freeCam)
+		if (camera is WorkCamera freeCam) {
 			freeCam.SetInitialPosition(active.GetPosition()!.Value, active.Camera->CalcRotation());
+			freeCam.Camera->Zoom = 0.0f; // new behavior, should this be a config toggle?
+		}
 		else
 			camera.Flags = active.Flags & ~CameraFlags.DefaultCamera;
 

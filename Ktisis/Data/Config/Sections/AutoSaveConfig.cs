@@ -14,4 +14,5 @@ public class AutoSaveConfig {
 	public string FolderFormat = "AutoSave - %Date% %Time%";
 	public bool ClearOnExit = false;
 	public bool OnDisconnect = true;
+	public bool OnDisable = true;
 }

@@ -13,21 +13,35 @@ using Ktisis.Common.Extensions;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Interop.Ipc;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Data.Mcdf;
 
 [Singleton]
 public sealed class McdfManager : IDisposable {
+	private readonly GPoseService _gpose;
 	private readonly IFramework _framework;
 	private readonly IpcManager _ipc;
+	private HashSet<IGameObject> actors;
 	
 
 	public McdfManager(
+		GPoseService gpose,
 		IFramework framework,
 		IpcManager ipc
 	) {
+		this._gpose = gpose;
+		this._gpose.StateChanged += this.OnGPoseEvent;
+		this._gpose.Subscribe();
+
 		this._framework = framework;
 		this._ipc = ipc;
+
+		this.actors = new HashSet<IGameObject>();
+	}
+
+	private void OnGPoseEvent(object sender, bool active) {
+		if (!active) this.RevertAll();
 	}
 	
 	// MCDF loading
@@ -53,6 +67,13 @@ public sealed class McdfManager : IDisposable {
 			files[entry.GamePath] = entry.FilePath;
 		
 		Ktisis.Log.Debug("Applying MCDF data");
+		// add actor to applied list - if already there, revert them before applying mcdf
+		if (!this.actors.Add(actor)) {
+			Ktisis.Log.Debug($"Actor {actor.ObjectIndex} was applied this session, reverting and redrawing...");
+			this.Revert(actor);
+			await this.RedrawAndWait(actor);
+		}
+
 		var collectionId = this.ApplyPenumbraMods(actor, data, files);
 		this.ApplyGlamourerData(actor, data);
 		await this.RedrawAndWait(actor);
@@ -68,10 +89,14 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private void ApplyCustomizeData(IGameObject actor, McdfData data) {
-		if (!this._ipc.IsCustomizeActive) return;
+		var rawData = data.CustomizePlusData;
+		if (!this._ipc.IsCustomizeActive) {
+			if (!rawData.IsNullOrEmpty())
+				Ktisis.WarningNotification("MCDF has Customize+ data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return;
+		}
 		
 		var ipc = this._ipc.GetCustomizeIpc();
-		var rawData = data.CustomizePlusData;
 		var jsonData = !rawData.IsNullOrEmpty()
 			? Encoding.UTF8.GetString(Convert.FromBase64String(rawData))
 			: "{}";
@@ -80,14 +105,23 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private void ApplyGlamourerData(IGameObject actor, McdfData data) {
-		if (!this._ipc.IsGlamourerActive) return;
+		var glamData = data.GlamourerData;
+		if (!this._ipc.IsGlamourerActive) {
+			if (!glamData.IsNullOrEmpty())
+				Ktisis.WarningNotification("MCDF has Glamourer data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return;
+		}
 		
 		var ipc = this._ipc.GetGlamourerIpc();
-		ipc.ApplyState(data.GlamourerData, actor.ObjectIndex);
+		ipc.ApplyState(glamData, actor.ObjectIndex);
 	}
 
 	private Guid? ApplyPenumbraMods(IGameObject actor, McdfData data, Dictionary<string, string> files) {
-		if (!this._ipc.IsPenumbraActive) return null;
+		if (!this._ipc.IsPenumbraActive) {
+			if (files.Count != 0)
+				Ktisis.WarningNotification("MCDF has Penumbra data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
+			return null;
+		}
 		
 		var ipc = this._ipc.GetPenumbraIpc();
 		var collectionId = ipc.CreateTemporaryCollection($"KtisisMCDF_{actor.ObjectIndex}");
@@ -96,6 +130,20 @@ public sealed class McdfManager : IDisposable {
 		ipc.AssignTemporaryMods(id, collectionId, files);
 		ipc.AssignManipulationData(id, collectionId, data.ManipulationData);
 		return collectionId;
+	}
+
+	private void RevertGlamourerData(IGameObject actor) {
+		if (!this._ipc.IsGlamourerActive) return;
+
+		var ipc = this._ipc.GetGlamourerIpc();
+		ipc.RevertObject(actor);
+	}
+
+	private void RevertCustomizeData(ushort index) {
+		if (!this._ipc.IsCustomizeActive) return;
+
+		var ipc = this._ipc.GetCustomizeIpc();
+		ipc.DeleteTemporaryProfile(index);
 	}
 
 	private async Task RedrawAndWait(IGameObject actor) {
@@ -119,15 +167,33 @@ public sealed class McdfManager : IDisposable {
 		if (create && !Directory.Exists(path)) Directory.CreateDirectory(path);
 		return path;
 	}
-	
-	
+
+	public void Revert(IGameObject actor) {
+		Ktisis.Log.Info($"IPC - reverting Actor '{actor.ObjectIndex}' ...");
+		this.RevertGlamourerData(actor);
+		this.RevertCustomizeData(actor.ObjectIndex);
+	}
+
+	private void RevertAll() {
+		// cleanup all touched actors
+		foreach (var actor in this.actors) {
+			this.Revert(actor);
+		}
+
+		// empty actor list for next session
+		this.actors.Clear();
+		this.actors.TrimExcess();
+	}
+
 	// IDisposable
-	
+
 	public void Dispose() {
 		Ktisis.Log.Info("Disposing MCDF manager.");
 
 		var temp = GetTempPath(create: false);
 		if (Directory.Exists(temp))
 			Directory.Delete(temp, true);
+
+		this._gpose.StateChanged -= this.OnGPoseEvent;
 	}
 }

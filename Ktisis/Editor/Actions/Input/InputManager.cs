@@ -47,7 +47,7 @@ public class InputManager : IInputManager {
 	private InputModule? Module { get; set; }
 
 	public void Initialize() {
-		this.Module = this._scope.Create<InputModule>();
+		this.Module = this._scope.Create<InputModule>(_context);
 		this.Module.Initialize();
 		this.Module.OnKeyEvent += this.OnKeyEvent;
 		this.Module.EnableAll();
