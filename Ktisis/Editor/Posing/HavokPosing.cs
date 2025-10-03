@@ -115,11 +115,18 @@ public static class HavokPosing {
 			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx)) continue;
 
 			var trans = GetModelTransform(pose, i)!;
-			var scm = Matrix4x4.CreateScale(trans.Scale);
+			var scm = Matrix4x4.CreateScale(ClampVector3(trans.Scale));
 			var rtm = Matrix4x4.CreateFromQuaternion(deltaRot * trans.Rotation);
 			var trm = Matrix4x4.CreateTranslation(deltaPos + sourcePos + Vector3.Transform(trans.Position - sourcePos, deltaRot));
 			SetMatrix(pose, i, scm * rtm * trm);
 		}
+	}
+	private static Vector3 ClampVector3(Vector3 vector) {
+		// use to restrict 0-scaled bones from c+
+		var x = (vector.X < 0.001f && vector.X > -0.001f) ? 0.001f : vector.X;
+		var y = (vector.Y < 0.001f && vector.Y > -0.001f) ? 0.001f : vector.Y;
+		var z = (vector.Z < 0.001f && vector.Z > -0.001f) ? 0.001f : vector.Z;
+		return new Vector3(x, y, z);
 	}
 	
 	// Parenting
