@@ -77,7 +77,7 @@ public class OverlayWindow : KtisisWindow {
 		this._sceneDraw.DrawScene(gizmo: gizmoDrawn, gizmoIsEnded: this._gizmo.IsEnded);
 
 		// t.Stop();
-		// this.DrawDebug(t);
+		// this.DrawDebugOverlay(t);
 	}
 
 	private bool DrawGizmo() {
@@ -167,13 +167,18 @@ public class OverlayWindow : KtisisWindow {
 		return true;
 	}
 
-	private void DrawDebug(Stopwatch t) {
+	private void DrawDebugOverlay(Stopwatch? t) {
 		ImGui.SetCursorPosY(ImGui.GetStyle().WindowPadding.Y);
 		for (var i = 0; i < 5; i++)
 			ImGui.Spacing();
+		DrawDebug(t);
+	}
+
+	public void DrawDebug(Stopwatch? t) {
 		ImGui.Text($"Context: {this._ctx.GetHashCode():X} ({this._ctx.IsValid})");
 		ImGui.Text($"Scene: {this._ctx.Scene.GetHashCode():X} {this._ctx.Scene.UpdateTime:00.00}ms");
-		ImGui.Text($"Overlay: {this.GetHashCode()} {t.Elapsed.TotalMilliseconds:00.00}ms");
+		if (t != null)
+			ImGui.Text($"Overlay: {this.GetHashCode()} {t.Elapsed.TotalMilliseconds:00.00}ms");
 		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.Gizmo.IsUsing})");
 		ImGui.Text($"Gaze Gizmo?: {this._gizmoGaze.GetHashCode():X} {this._gizmoGaze.Id} ({this._gizmoGaze.Operation}, {ImGuizmo.Gizmo.IsUsing})");
 		var target = this._ctx.Transform.Target;

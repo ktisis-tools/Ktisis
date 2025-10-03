@@ -85,6 +85,7 @@ public class EditorInterface : IEditorInterface {
 	}
 
 	public void ToggleWorkspaceWindow() => this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Toggle();
+	public void ToggleDebugWindow() => this._gui.GetOrCreate<DebugWindow>(this._ctx).Toggle();
 	
 	// Editor windows
 	

@@ -94,8 +94,12 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		ImGui.Spacing();
 		
 		var modelId = (int)this._editCustom.GetModelId();
-		if (ImGui.InputInt("Model ID", ref modelId))
+		if (ImGui.InputInt("Model ID", ref modelId, flags: ImGuiInputTextFlags.EnterReturnsTrue))
 			this._editCustom.SetModelId((uint)modelId);
+		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+			using var _ = ImRaii.Tooltip();
+			ImGui.Text("Press enter to submit");
+		}
 
 		ImGui.SameLine(0, space);
 		this._npcs.DrawSearchIcon();
