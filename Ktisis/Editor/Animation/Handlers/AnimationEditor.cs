@@ -120,10 +120,13 @@ public class AnimationEditor(
 	}
 	
 	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);
+	public void ResetTimelineSpeeds() => mgr.ResetTimelineSpeeds(actor);
 
-	public unsafe hkaDefaultAnimationControl* GetDefaultControlForIndex(int animationIndex) {
+	// animation scrubbing helpers
+
+	private unsafe hkaDefaultAnimationControl* GetDefaultControlForIndex(int animationIndex) {
 		// hacky reimplement of GetAnimationControl's clientstructs hka traversal
-		// todo: either refactor or find a neater way to get the scrub values
+		// todo: either refactor or find a neater way to get the scrub & duration values
 		var gameObject = actor.Actor;
 
 		var skeleton = gameObject.GetSkeleton();
@@ -132,6 +135,7 @@ public class AnimationEditor(
 		var partial = skeleton->PartialSkeletons->GetHavokAnimatedSkeleton(0);
 		if (partial == null) return null;
 		if (partial->AnimationControls.Length == 0) return null;
+		// if (animationIndex >= partial->AnimationControls.Length) return null;
 		if (partial->AnimationControls[animationIndex].Value == null) return null;
 
 		// validate defaultControl has appropriate binding and animation to ensure we can fetch a duration
@@ -140,6 +144,19 @@ public class AnimationEditor(
 		if (defaultControl->hkaAnimationControl.Binding.ptr->Animation.ptr == null) return null;
 
 		return defaultControl;
+	}
+
+	public unsafe float? GetHkaDuration(int animationIndex) {
+		var control = this.GetDefaultControlForIndex(animationIndex);
+		return control != null ? control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration : null;
+	}
+	public unsafe float? GetHkaLocalTime(int animationIndex) {
+		var control = this.GetDefaultControlForIndex(animationIndex);
+		return control != null ? control->hkaAnimationControl.LocalTime : null;
+	}
+	public unsafe void SetHkaLocalTime(int animationIndex, float time) {
+		var control = this.GetDefaultControlForIndex(animationIndex);
+		control->hkaAnimationControl.LocalTime = time;
 	}
 
 	
