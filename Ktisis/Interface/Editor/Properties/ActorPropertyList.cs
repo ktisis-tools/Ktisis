@@ -263,10 +263,9 @@ public class ActorPropertyList : ObjectPropertyList {
 		var targetId = actor.GetActorGazeTarget();
 		if (!actor.Actor.IsPcCharacter() && targetId == 0) return;
 
-		// 1. select button to choose entities in scene to set to target (or null target)
+		// 1. select button to choose entities in scene to set to target
 		// 2. show current target if one is set
-		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-
+		// todo: can you unset targets?
 		// button
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Users, "Select target actor"))
 			this._gui.CreatePopup<ActorGazeTargetPopup>(this._ctx, actor).Open();
@@ -284,7 +283,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		var hasTarget = targetId != 0;
 		var label = hasTarget ? $"Targeting: {(targetEntity != null ? targetEntity.Name : $"Unknown ({targetId})")}" : "No Target";
 		using (ImRaii.Disabled(!hasTarget)) {
-			ImGui.SameLine(0, spacing);
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 			ImGui.Text(label);
 		}
 
