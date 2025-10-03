@@ -31,7 +31,7 @@ public class DllResolver : IDisposable {
 		if (this.Context != null)
 			this.Context.ResolvingUnmanagedDll += this.ResolveUnmanaged;
 	}
-
+	
 	private nint ResolveUnmanaged(Assembly assembly, string library) {
 		var loc = Path.GetDirectoryName(this._dpi.AssemblyLocation.FullName);
 		if (loc == null) {
@@ -39,18 +39,32 @@ public class DllResolver : IDisposable {
 			return nint.Zero;
 		}
 
-		var path = Path.Combine(loc, library);
-		Ktisis.Log.Debug($"Resolving native assembly path: {path}");
-
-		if (NativeLibrary.TryLoad(path, out var handle) && handle != nint.Zero) {
-			this.Handles.Add(handle);
-			Ktisis.Log.Debug($"Success, resolved library handle: {handle:X}");
-		} else {
-			Ktisis.Log.Warning($"Failed to resolve native assembly path: {path}");
+		// Try with .dll extension if not present
+		if (!library.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) {
+			library += ".dll";
 		}
 
-		return handle;
+		var path = Path.Combine(loc, library);
+		Ktisis.Log.Debug($"Resolving native assembly path: {path}");
+		Ktisis.Log.Debug($"File exists: {File.Exists(path)}");
+
+		try {
+			// Use Load instead of TryLoad to get exception details
+			var handle = NativeLibrary.Load(path);
+			this.Handles.Add(handle);
+			Ktisis.Log.Debug($"Success, resolved library handle: {handle:X}");
+			return handle;
+		} catch (DllNotFoundException ex) {
+			Ktisis.Log.Error( ex, $"DLL not found: {path}");
+		} catch (BadImageFormatException ex) {
+			Ktisis.Log.Error(ex, $"Bad image format (wrong architecture or corrupted): {path}");
+		} catch (Exception ex) {
+			Ktisis.Log.Error(ex, $"Failed to load native library: {path}");
+		}
+
+		return nint.Zero;
 	}
+	
 
 	public void Dispose() {
 		Ktisis.Log.Debug("Disposing DLL resolver for unmanaged libraries");
