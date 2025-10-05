@@ -16,7 +16,7 @@ public class SiblingSelectAction(IPluginContext ctx) : KeyAction(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.OEM_102) // backslash
+			Combo = new KeyCombo(VirtualKey.OEM_5) // backslash
 		}
 	};
 

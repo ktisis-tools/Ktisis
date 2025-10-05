@@ -35,8 +35,8 @@ public class ParallelAction(IPluginContext ctx) : GizmoModeAction(ctx)
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
-			Enabled = false,
-			Combo = new KeyCombo(VirtualKey.Z, VirtualKey.MENU),
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.OEM_COMMA, VirtualKey.CONTROL),
 		}
 	};
 
@@ -55,8 +55,8 @@ public class InverseAction(IPluginContext ctx) : GizmoModeAction(ctx)
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
-			Enabled = false,
-			Combo = new KeyCombo(VirtualKey.X, VirtualKey.MENU),
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.OEM_PERIOD, VirtualKey.CONTROL),
 		}
 	};
 
@@ -75,8 +75,8 @@ public class ReflectAction(IPluginContext ctx) : GizmoModeAction(ctx)
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
-			Enabled = false,
-			Combo = new KeyCombo(VirtualKey.C, VirtualKey.MENU),
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.OEM_2, VirtualKey.CONTROL),
 		}
 	};
 
