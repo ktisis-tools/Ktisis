@@ -6,6 +6,7 @@ using Ktisis.Actions.Types;
 using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
 using Ktisis.ImGuizmo;
+using Ktisis.Editor.Transforms;
 
 namespace Ktisis.Actions.Handlers.Gizmo;
 
@@ -28,22 +29,62 @@ public class GizmoModeAction(IPluginContext ctx) : KeyAction(ctx) {
 	}
 }
 
-[Action("Gizmo_MirrorRotation")]
-public class MirrorRotationActon(IPluginContext ctx) : GizmoModeAction(ctx)
+[Action("Gizmo_Parallel")]
+public class ParallelAction(IPluginContext ctx) : GizmoModeAction(ctx)
 {
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = false,
-			Combo = new KeyCombo(),
+			Combo = new KeyCombo(VirtualKey.Z, VirtualKey.MENU),
 		}
 	};
 
 	public override bool Invoke() {
-		if (this.Context.Editor == null || this.Context.Editor.Selection.Count == 0)
+		if (this.Context.Editor == null)
 			return false;
 
-		this.Context.Editor.Config.Gizmo.MirrorRotation ^= true;
+		this.Context.Editor.Config.Gizmo.MirrorRotation = MirrorMode.Parallel;
+		return true;
+	}
+}
+
+[Action("Gizmo_Inverse")]
+public class InverseAction(IPluginContext ctx) : GizmoModeAction(ctx)
+{
+	public override KeybindInfo BindInfo { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = false,
+			Combo = new KeyCombo(VirtualKey.X, VirtualKey.MENU),
+		}
+	};
+
+	public override bool Invoke() {
+		if (this.Context.Editor == null)
+			return false;
+
+		this.Context.Editor.Config.Gizmo.MirrorRotation = MirrorMode.Inverse;
+		return true;
+	}
+}
+
+[Action("Gizmo_Reflect")]
+public class ReflectAction(IPluginContext ctx) : GizmoModeAction(ctx)
+{
+	public override KeybindInfo BindInfo { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = false,
+			Combo = new KeyCombo(VirtualKey.C, VirtualKey.MENU),
+		}
+	};
+
+	public override bool Invoke() {
+		if (this.Context.Editor == null)
+			return false;
+
+		this.Context.Editor.Config.Gizmo.MirrorRotation = MirrorMode.Reflect;
 		return true;
 	}
 }

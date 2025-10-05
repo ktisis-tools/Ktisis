@@ -20,6 +20,7 @@ using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Editor.Transforms;
 
 namespace Ktisis.Interface.Windows;
 
@@ -151,12 +152,20 @@ public class ObjectWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 
-		var isMirror = this._ctx.Config.Gizmo.MirrorRotation;
-		var flagIcon = isMirror ? FontAwesomeIcon.ArrowDownUpAcrossLine : FontAwesomeIcon.GripLines;
-		var flagKey = isMirror ? "mirror" : "parallel";
+		var mirrorState = this._ctx.Config.Gizmo.MirrorRotation;
+		var flagIcon = FontAwesomeIcon.GripLines;
+		var flagKey = "parallel";
+		if (mirrorState == MirrorMode.Inverse) {
+			flagIcon = FontAwesomeIcon.ArrowDownUpAcrossLine;
+			flagKey = "inverse";
+		}
+		else if (mirrorState == MirrorMode.Reflect) {
+			flagIcon = FontAwesomeIcon.ArrowsLeftRightToLine;
+			flagKey = "reflect";
+		}
 		var flagHint = this._ctx.Locale.Translate($"transform_edit.flags.{flagKey}");
 		if (Buttons.IconButtonTooltip(flagIcon, flagHint, iconBtnSize))
-			this._ctx.Config.Gizmo.MirrorRotation ^= true;
+			// this._ctx.Config.Gizmo.MirrorRotation ^= true;
 		
 		ImGui.SameLine(0, spacing);
 

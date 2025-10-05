@@ -52,8 +52,22 @@ public class TransformTarget : ITransformTarget {
 			deltaMx = initialInverse * transform.ComposeMatrix();
 		else return;
 
-		if (this.Setup.MirrorRotation)
-			Matrix4x4.Invert(deltaMx, out deltaMx);
+		switch (this.Setup.MirrorRotation) {
+			case MirrorMode.Inverse:
+				Matrix4x4.Invert(deltaMx, out deltaMx);
+				break;
+			case MirrorMode.Reflect:
+				Quaternion refRot = new Quaternion(
+					-transform.Rotation.X,
+					transform.Rotation.Y,
+					transform.Rotation.Z,
+					-transform.Rotation.W
+				);
+				deltaMx *= Matrix4x4.CreateFromQuaternion(refRot);
+				break;
+			case MirrorMode.Parallel:
+				break;
+		}
 
 		foreach (var entity in this.Targets.Where(tar => tar is { IsValid: true } and not BoneNode)) {
 			if (entity is not ITransform manip) continue;
@@ -109,7 +123,7 @@ public class TransformTarget : ITransformTarget {
 		var boneTrans = bone.GetTransform();
 		if (boneTrans == null) return;
 
-		var mirror = this.Setup.MirrorRotation;
+		var mirror = this.Setup.MirrorRotation == MirrorMode.Inverse;
 		if (mirror && this.Primary is BoneNode pNode)
 			mirror &= !bone.IsBoneDescendantOf(pNode);
 

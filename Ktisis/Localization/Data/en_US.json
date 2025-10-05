@@ -31,7 +31,7 @@
 		"Camera_Work_Down": "Work camera down",
 		"Camera_Work_Fast": "Work camera fast-speed modifier",
 		"Camera_Work_Slow": "Work camera slow-speed modifier",
-		"Gizmo_MirrorRotation": "Toggle mirror and parallel rotation modes"
+		"Gizmo_MirrorRotation": "Toggle rotation modes"
 	},
 	
 	"actors": {
@@ -108,7 +108,8 @@
 		},
 		"flags": {
 			"parallel": "Parallel Transform",
-			"mirror": "Mirror Transform"
+			"inverse": "Inverse Transform",
+			"reflect": "Mirror Transform"
 		},
 		"sibling": {
 			"available": "Multi-select sibling bone: %bone%",

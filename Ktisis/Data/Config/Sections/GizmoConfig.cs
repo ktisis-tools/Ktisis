@@ -1,6 +1,7 @@
 using System.Numerics;
 
 using Ktisis.ImGuizmo;
+using Ktisis.Editor.Transforms;
 
 namespace Ktisis.Data.Config.Sections;
 
@@ -10,7 +11,7 @@ public class GizmoConfig {
 	public Mode Mode = Mode.Local;
 	public Operation Operation = Operation.ROTATE;
 
-	public bool MirrorRotation = false;
+	public MirrorMode MirrorRotation = MirrorMode.Parallel;
 	public bool ParentBones = true;
 	public bool RelativeBones = true;
 
