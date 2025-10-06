@@ -1,18 +1,14 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Plugin.Services;
 
 using GameCameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraManager;
 
 using Ktisis.Interop.Hooking;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
-using Ktisis.Data.Files;
-using Ktitis.Editor.Camera;
 
 namespace Ktisis.Editor.Camera;
 
@@ -35,26 +31,19 @@ public interface ICameraManager : IDisposable {
 	public KtisisCamera Create(CameraFlags flags = CameraFlags.None);
 
 	public IGameObject? ResolveOrbitTarget(EditorCamera camera);
-
-	public Task ApplyCameraFile(EditorCamera camera, CameraFile file);
-	public Task<CameraFile> SaveCameraFile(EditorCamera camera);
-
 }
 
 public class CameraManager : ICameraManager {
 	private readonly IEditorContext _context;
 	private readonly HookScope _scope;
-	private readonly IFramework _framework;
 
 	public bool IsValid => this._context.IsValid;
 	
 	public CameraManager(
 		IEditorContext context,
-		IFramework framework,
 		HookScope scope
 	) {
 		this._context = context;
-		this._framework = framework;
 		this._scope = scope;
 	}
 	
@@ -213,16 +202,6 @@ public class CameraManager : ICameraManager {
 			return name;
 		}
 		return "New Camera";
-	}
-
-	public Task ApplyCameraFile(EditorCamera camera, CameraFile file) {
-		var converter = new EntityCameraConverter(camera);
-		return this._framework.RunOnFrameworkThread(() => converter.Apply(file));
-	}
-
-	public Task<CameraFile> SaveCameraFile(EditorCamera camera) {
-		var converter = new EntityCameraConverter(camera);
-		return this._framework.RunOnFrameworkThread(() => converter.Save());
 	}
 	
 	// Camera helpers

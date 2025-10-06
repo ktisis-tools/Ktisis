@@ -71,7 +71,7 @@ public class ContextBuilder {
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
 			Animation = new AnimationManager(context, scope, this._data, this._framework),
-			Cameras = new CameraManager(context, this._framework, scope),
+			Cameras = new CameraManager(context, scope),
 			Characters = new CharacterManager(context, this._gpose._clientState, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),

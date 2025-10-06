@@ -229,11 +229,6 @@ public class EditorInterface : IEditorInterface {
 		var file = await this._ctx.Scene.SaveLightFile(light);
 		this.ExportLightFile(file);
 	}
-
-	public async Task OpenCameraExport(EditorCamera camera) {
-		var file = await this._ctx.Cameras.SaveCameraFile(camera);
-		this.ExportCameraFile(file);
-	}
 	
 	// Import/export dialogs
 	
@@ -250,11 +245,6 @@ public class EditorInterface : IEditorInterface {
 	private readonly static FileDialogOptions LightFileOptions = new() {
 		Filters = "Light Files{.ktlight}",
 		Extension = ".ktlight"
-	};
-
-	private readonly static FileDialogOptions CameraFileOptions = new() {
-		Filters = "Camera Files{.ktcamera}",
-		Extension = ".ktcamera"
 	};
 
 	private readonly static FileDialogOptions McdfFileOptions = new() {
@@ -278,8 +268,6 @@ public class EditorInterface : IEditorInterface {
 
 	public void OpenLightFile(Action<string, LightFile> handler)
 		=> this._gui.FileDialogs.OpenFile("Open Light File", handler, LightFileOptions);
-	public void OpenCameraFile(Action<string, CameraFile> handler)
-		=> this._gui.FileDialogs.OpenFile("Open Camera File", handler, CameraFileOptions);
 
 	public void OpenReferenceImages(Action<string> handler) {
 		this._gui.FileDialogs.OpenImage("image", handler);
@@ -293,6 +281,4 @@ public class EditorInterface : IEditorInterface {
 
 	public void ExportLightFile(LightFile file)
 		=> this._gui.FileDialogs.SaveFile("Export Light File", file, LightFileOptions);
-	public void ExportCameraFile(CameraFile file)
-		=> this._gui.FileDialogs.SaveFile("Export Camera File", file, CameraFileOptions);
 }
