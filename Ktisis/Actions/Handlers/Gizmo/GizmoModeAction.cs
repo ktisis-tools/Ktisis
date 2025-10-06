@@ -29,14 +29,14 @@ public class GizmoModeAction(IPluginContext ctx) : KeyAction(ctx) {
 	}
 }
 
-[Action("Gizmo_Parallel")]
-public class ParallelAction(IPluginContext ctx) : GizmoModeAction(ctx)
+[Action("Gizmo_CycleMirror")]
+public class CycleMirrorAction(IPluginContext ctx) : GizmoModeAction(ctx)
 {
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
-			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.OEM_COMMA, VirtualKey.CONTROL),
+			Enabled = false,
+			Combo = new KeyCombo(),
 		}
 	};
 
@@ -44,47 +44,7 @@ public class ParallelAction(IPluginContext ctx) : GizmoModeAction(ctx)
 		if (this.Context.Editor == null)
 			return false;
 
-		this.Context.Editor.Config.Gizmo.MirrorRotation = MirrorMode.Parallel;
-		return true;
-	}
-}
-
-[Action("Gizmo_Inverse")]
-public class InverseAction(IPluginContext ctx) : GizmoModeAction(ctx)
-{
-	public override KeybindInfo BindInfo { get; } = new() {
-		Trigger = KeybindTrigger.OnDown,
-		Default = new ActionKeybind {
-			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.OEM_PERIOD, VirtualKey.CONTROL),
-		}
-	};
-
-	public override bool Invoke() {
-		if (this.Context.Editor == null)
-			return false;
-
-		this.Context.Editor.Config.Gizmo.MirrorRotation = MirrorMode.Inverse;
-		return true;
-	}
-}
-
-[Action("Gizmo_Reflect")]
-public class ReflectAction(IPluginContext ctx) : GizmoModeAction(ctx)
-{
-	public override KeybindInfo BindInfo { get; } = new() {
-		Trigger = KeybindTrigger.OnDown,
-		Default = new ActionKeybind {
-			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.OEM_2, VirtualKey.CONTROL),
-		}
-	};
-
-	public override bool Invoke() {
-		if (this.Context.Editor == null)
-			return false;
-
-		this.Context.Editor.Config.Gizmo.MirrorRotation = MirrorMode.Reflect;
+		this.Context.Editor.Config.Gizmo.SetNextMirrorRotation();
 		return true;
 	}
 }
