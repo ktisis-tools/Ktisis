@@ -43,9 +43,18 @@ public class SceneCreateMenuBuilder {
 		sub.Action("Point", () => SpawnLight(LightType.PointLight))
 			.Action("Spot", () => SpawnLight(LightType.SpotLight))
 			.Action("Area", () => SpawnLight(LightType.AreaLight))
-			.Action("Sun", () => SpawnLight(LightType.Directional));
+			.Action("Sun (Directional)", () => SpawnLight(LightType.Directional))
+			.Action("From file... (.ktlight)", () => this.ImportLightFromFile());
 		
 		void SpawnLight(LightType type) => this.Factory.CreateLight(type).Spawn();
+	}
+
+	private async void ImportLightFromFile() {
+		this._ctx.Interface.OpenLightFile(async (path, file) => {
+			var name = Path.GetFileNameWithoutExtension(path).Truncate(32);
+			var newLight = await this.Factory.CreateLight(file.LightType).Spawn();
+			await this._ctx.Scene.ApplyLightFile(newLight, file);
+		});
 	}
 
 	private void BuildUtilityGroup(ContextMenuBuilder sub) {
