@@ -57,6 +57,7 @@ public class TransformTarget : ITransformTarget {
 				Matrix4x4.Invert(deltaMx, out deltaMx);
 				break;
 			case MirrorMode.Reflect:
+				// todo: fix mirror reflect X
 				Quaternion refRot = new Quaternion(
 					-transform.Rotation.X,
 					transform.Rotation.Y,
@@ -123,7 +124,8 @@ public class TransformTarget : ITransformTarget {
 		var boneTrans = bone.GetTransform();
 		if (boneTrans == null) return;
 
-		var mirror = this.Setup.MirrorRotation == MirrorMode.Inverse;
+		// todo: fix mirror reflect X
+		var mirror = this.Setup.MirrorRotation == MirrorMode.Inverse || this.Setup.MirrorRotation == MirrorMode.Reflect;
 		if (mirror && this.Primary is BoneNode pNode)
 			mirror &= !bone.IsBoneDescendantOf(pNode);
 
