@@ -52,7 +52,7 @@ public class SceneCreateMenuBuilder {
 	private async void ImportLightFromFile() {
 		this._ctx.Interface.OpenLightFile(async (path, file) => {
 			var name = Path.GetFileNameWithoutExtension(path).Truncate(32);
-			var newLight = await this.Factory.CreateLight(file.LightType).Spawn();
+			var newLight = await this.Factory.CreateLight().Spawn();
 			await this._ctx.Scene.ApplyLightFile(newLight, file);
 		});
 	}
