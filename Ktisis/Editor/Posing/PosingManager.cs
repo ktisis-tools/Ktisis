@@ -89,7 +89,7 @@ public class PosingManager : IPosingManager {
 	}
 
 	private void OnDisconnect() {
-		if (!this._context.Config.AutoSave.OnDisconnect) return;
+		if (!this._context.Config.AutoSave.Enabled || !this._context.Config.AutoSave.OnDisconnect) return;
 		Ktisis.Log.Verbose("Disconnected, triggering pose save.");
 		this.AutoSave.Save();
 	}
@@ -111,7 +111,7 @@ public class PosingManager : IPosingManager {
 	public void SetEnabled(bool enable) {
 		if (enable && !this.IsValid) return;
 
-		if (!enable && this._context.Config.AutoSave.OnDisable) {
+		if (!enable && this._context.Config.AutoSave.Enabled && this._context.Config.AutoSave.OnDisable) {
 			Ktisis.Log.Verbose("Posing disabled, triggering pose save.");
 			try {
 				this.AutoSave.Save();
