@@ -23,8 +23,6 @@ using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Interface.Components.Chara;
-using Ktitis.Editor.Camera;
-using Ktisis.Editor.Camera.Types;
 
 namespace Ktisis.Interface.Editor;
 
