@@ -29,8 +29,8 @@ public class GizmoModeAction(IPluginContext ctx) : KeyAction(ctx) {
 	}
 }
 
-[Action("Gizmo_CycleMirror")]
-public class CycleMirrorAction(IPluginContext ctx) : GizmoModeAction(ctx)
+[Action("Gizmo_MirrorRotation")]
+public class MirrorRotationAction(IPluginContext ctx) : GizmoModeAction(ctx)
 {
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,

@@ -31,7 +31,7 @@
 		"Camera_Work_Down": "Work camera down",
 		"Camera_Work_Fast": "Work camera fast-speed modifier",
 		"Camera_Work_Slow": "Work camera slow-speed modifier",
-		"Gizmo_MirrorRotation": "Toggle rotation modes"
+		"Gizmo_MirrorRotation": "Cycle rotation modes"
 	},
 	
 	"actors": {
