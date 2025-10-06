@@ -19,7 +19,8 @@ public class LightFile : JsonFile {
 	public LightFlags Flags { get; set; }
 	public LightType LightType { get; set; }
 	public unsafe Transform? Transform { get; set; } = null;
-	public ColorHDR Color { get; set; } = new ColorHDR();
+	public Vector3 RGB { get; set; }
+	public float Intensity { get; set; }
 	public float ShadowNear { get; set; } = 0.0f;
 	public float ShadowFar { get; set; } = 0.0f;
 	public FalloffType FalloffType { get; set; }

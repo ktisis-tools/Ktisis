@@ -16,11 +16,13 @@ public class EntityLightConverter {
 		if (light == null) return;
 
         this._light.Flags |= LightEntityFlags.Update;
+        this._light.Name = file.Nickname;
 
         light->Flags = file.Flags;
         light->LightType = file.LightType;
-        // light->Transform = file.Transform;
-        light->Color = file.Color;
+        // light->Transform = file.Transform; TODO
+        light->Color.RGB = file.RGB;
+        light->Color.Intensity = file.Intensity;
         light->ShadowNear = file.ShadowNear;
         light->ShadowFar = file.ShadowFar;
         light->FalloffType = file.FalloffType;
@@ -46,7 +48,8 @@ public class EntityLightConverter {
         file.Flags = light->Flags;
         file.LightType = light->LightType;
         // file.Transform = light->Transform; TODO: local and world transform saving - scenelight vs renderlight transform?
-        file.Color = light->Color;
+        file.RGB = light->Color.RGB;
+        file.Intensity = light->Color.Intensity;
         file.ShadowNear = light->ShadowNear;
         file.ShadowFar = light->ShadowFar;
         file.FalloffType = light->FalloffType;
