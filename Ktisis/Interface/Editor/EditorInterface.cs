@@ -271,12 +271,18 @@ public class EditorInterface : IEditorInterface {
 		this._gui.FileDialogs.OpenImage("image", handler);
 	}
 
-	public void ExportCharaFile(CharaFile file)
-		=> this._gui.FileDialogs.SaveFile("Export Chara File", file, CharaFileOptions);
+	public void ExportCharaFile(CharaFile file) {
+		var options = CharaFileOptions;
+		options.DefaultFileName = file.Nickname;
+		this._gui.FileDialogs.SaveFile("Export Chara File", file, options);
+	}
 	
 	public void ExportPoseFile(PoseFile file)
 		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, PoseFileOptions);
 
-	public void ExportLightFile(LightFile file)
-		=> this._gui.FileDialogs.SaveFile("Export Light File", file, LightFileOptions);
+	public void ExportLightFile(LightFile file) {
+		var options = LightFileOptions;
+		options.DefaultFileName = file.Nickname;
+		this._gui.FileDialogs.SaveFile("Export Light File", file, options);
+	}
 }
