@@ -92,7 +92,7 @@
 				"disable": "Bone manipulation is currently disabled."
 			}
 		},
-		"refresh_actors": "Refresh scene actors",
+		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.toggle": "Toggle screen overlay"
 	},

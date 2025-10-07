@@ -30,7 +30,7 @@ public interface IEditorInterface {
 	public void OpenAssignCProfile(ActorEntity entity);
 	public void OpenOverworldActorList();
 	
-	public void RefreshGposeActors();
+	public void RefreshSceneEntities();
 
 	public void OpenRenameEntity(SceneEntity entity);
 	public void OpenSavePreset(ActorEntity actorEntity);

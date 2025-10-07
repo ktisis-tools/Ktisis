@@ -23,6 +23,7 @@ using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Interface.Components.Chara;
+using Ktisis.Scene.Modules.Lights;
 
 namespace Ktisis.Interface.Editor;
 
@@ -157,7 +158,10 @@ public class EditorInterface : IEditorInterface {
 
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
 	
-	public void RefreshGposeActors() => this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
+	public void RefreshSceneEntities() {
+		this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
+		this._ctx.Scene.GetModule<LightModule>().RefreshLightEntities();
+	}
 
 	// Entity windows
 	
