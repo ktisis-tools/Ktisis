@@ -118,4 +118,3 @@ public class WorkspaceWindow : KtisisWindow {
 			this.Interface.RefreshSceneEntities();
 	}
 }
- 
