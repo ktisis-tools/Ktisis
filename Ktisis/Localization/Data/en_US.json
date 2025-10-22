@@ -642,7 +642,7 @@
 	},
 	
 	"lightType": {
-		"Directional": "Directional",
+		"Directional": "Sun Light (Directional)",
 		"PointLight": "Point Light",
 		"SpotLight": "Spot Light",
 		"AreaLight": "Area Light"
