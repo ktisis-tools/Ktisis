@@ -15,13 +15,17 @@ using Ktisis.Data.Config;
 using Ktisis.Data.Config.Entity;
 using Ktisis.Scene.Entities;
 using Ktisis.Services.Game;
+using Ktisis.Scene.Entities.World;
+using Ktisis.Structs.Lights;
+using Ktisis.Editor.Context.Types;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface.Overlay;
 
 public interface ISelectableFrame {
 	public IEnumerable<IItemSelect> GetItems();
 	
-	public void AddItem(SceneEntity entity, Vector3 worldPos);
+	public void AddItem(SceneEntity entity, Vector3 worldPos, IEditorContext ctx);
 }
 
 public interface IItemSelect {
@@ -209,7 +213,7 @@ public class SelectableGui {
 
 		public IEnumerable<IItemSelect> GetItems() => this.Items.AsReadOnly();
 		
-		public unsafe void AddItem(SceneEntity entity, Vector3 worldPos) {
+		public unsafe void AddItem(SceneEntity entity, Vector3 worldPos, IEditorContext ctx) {
 			var camera = CameraService.GetSceneCamera();
 			if (camera == null) return;
 
@@ -218,6 +222,29 @@ public class SelectableGui {
 			var dist = Vector3.Distance(camera->Object.Position, worldPos);
 			var select = new ItemSelect(entity, pos2d, dist);
 			this.Items.Add(select);
+
+			// render a short ray in the facing-direction for LightEntities
+			// s/o Meddle https://github.com/PassiveModding/Meddle/blob/main/Meddle/Meddle.Plugin/UI/Layout/Overlay.cs#L221
+			if (entity is LightEntity light) {
+				var ptr = light.GetObject();
+				if (ptr == null || ptr->RenderLight == null) return;
+				if (ptr->RenderLight->LightType == LightType.PointLight) return;
+
+				var range = Math.Min(ptr->RenderLight->Range, 1);
+				var rot = light.GetTransform()?.Rotation;
+				if (rot == null) return;
+				// account for renderlight projection offset
+				if (ptr->RenderLight->LightType == LightType.AreaLight)
+					rot *= (new Vector3(ptr->RenderLight->AreaAngle.X, ptr->RenderLight->AreaAngle.Y, 0) * MathHelpers.Rad2Deg).EulerAnglesToQuaternion();
+
+				var dir = Vector3.Transform(new Vector3(0, 0, range), (Quaternion)rot);
+				if (!CameraService.WorldToScreen(camera, worldPos + dir, out var endPos2d)) return;
+
+				var opacity = ImGuizmo.Gizmo.IsUsing ? ctx.Config.Overlay.LineOpacityUsing : ctx.Config.Overlay.LineOpacity;
+				var drawList = ImGui.GetWindowDrawList();
+				var display = ctx.Config.GetEntityDisplay(light);
+				drawList.AddLine(pos2d, endPos2d, display.Color.SetAlpha(opacity), ctx.Config.Overlay.LineThickness);
+            }
 		}
 	}
 	
