@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
-using Dalamud.Plugin.Ipc;
 
 using Glamourer.Api.Enums;
 using Glamourer.Api.IpcSubscribers;
@@ -19,6 +19,7 @@ public class GlamourerIpcProvider {
 	private readonly UnlockState _unlockState;
 	private readonly UnlockStateName _unlockStateName;
 	private readonly UnlockAll _unlockAll;
+	private readonly DeletePlayerState _deleteState;
 	private readonly uint Key = 0x0001F407;
 	
 	public GlamourerIpcProvider(
@@ -32,6 +33,7 @@ public class GlamourerIpcProvider {
 		this._unlockState = new UnlockState(dpi);
 		this._unlockStateName = new UnlockStateName(dpi);
 		this._unlockAll = new UnlockAll(dpi);
+		this._deleteState = new DeletePlayerState(dpi);
 	}
 
 	public Dictionary<Guid, string> GetDesignList() => this._getDesignList.Invoke();
@@ -49,17 +51,31 @@ public class GlamourerIpcProvider {
 	public bool RevertObject(IGameObject gameObject) {
 		Ktisis.Log.Debug($"Reverting state for '{gameObject.Name}' ({gameObject.ObjectIndex})");
 
-		// unlock object before reverting so we never relock it when we revert it
-		this.UnlockObject(gameObject);
-
 		var result = this.RevertStateName(gameObject.Name.TextValue);
 		if (result != GlamourerApiEc.Success) {
 			Ktisis.Log.Warning($"Glamourer revert failed with return code: {result}, trying by index...");
 			result = this.RevertState(gameObject.ObjectIndex);
 		}
 
+		// unlock object after reverting
+		this.UnlockObject(gameObject);
+
 		return result == GlamourerApiEc.Success;
 	}
+
+	public bool DeleteState(IGameObject gameObject, IPlayerCharacter? localPlayer) {
+		if (localPlayer == null) return false;
+
+		Ktisis.Log.Debug($"Deleting state for '{gameObject.Name}' ({gameObject.ObjectIndex})");
+
+		var result = this._deleteState.Invoke(gameObject.Name.TextValue, (ushort)localPlayer.CurrentWorld.RowId, Key);
+		if (result != GlamourerApiEc.Success) {
+			this.UnlockObject(gameObject); // only unlock if we failed to fully wipe it
+			Ktisis.Log.Warning($"Glamourer delete failed with return code: {result}!");
+		}
+
+		return result == GlamourerApiEc.Success;
+    }
 
 	public void ApplyState(string state, int index) {
 		this._applyState.Invoke(state, index, Key);
@@ -68,15 +84,16 @@ public class GlamourerIpcProvider {
 	public void Unlock() => this._unlockAll.Invoke(Key);
 
 	private void UnlockObject(IGameObject gameObject) {
-        var res = this._unlockState.Invoke(gameObject.ObjectIndex, Key);
-		if (res != GlamourerApiEc.Success) this._unlockStateName.Invoke(gameObject.Name.TextValue, Key);
+		Ktisis.Log.Debug($"Unlocking for '{gameObject.Name}' ({gameObject.ObjectIndex})");
+        var res = this._unlockStateName.Invoke(gameObject.Name.TextValue, Key);
+		if (res != GlamourerApiEc.Success) this._unlockState.Invoke(gameObject.ObjectIndex, Key);
     }
 
 	private GlamourerApiEc RevertState(int index) {
-		return this._revertState.Invoke(index);
+		return this._revertState.Invoke(index, Key, ApplyFlagEx.StateDefault);
 	}
 
 	private GlamourerApiEc RevertStateName(string playerName) {
-		return this._revertStateName.Invoke(playerName);
+		return this._revertStateName.Invoke(playerName, Key, ApplyFlagEx.StateDefault);
 	}
 }
