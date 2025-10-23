@@ -132,11 +132,11 @@ public sealed class McdfManager : IDisposable {
 		return collectionId;
 	}
 
-	private void RevertGlamourerData(IGameObject actor) {
+	private async void RevertGlamourerData(IGameObject actor) {
 		if (!this._ipc.IsGlamourerActive) return;
 
 		var ipc = this._ipc.GetGlamourerIpc();
-		ipc.RevertObject(actor);
+		await this._framework.RunOnTick(() => ipc.RevertObject(actor));
 	}
 
 	private void RevertCustomizeData(ushort index) {
@@ -172,6 +172,7 @@ public sealed class McdfManager : IDisposable {
 		Ktisis.Log.Info($"IPC - reverting Actor '{actor.ObjectIndex}' ...");
 		this.RevertGlamourerData(actor);
 		this.RevertCustomizeData(actor.ObjectIndex);
+		this.actors.Remove(actor);
 	}
 
 	private void RevertAll() {
@@ -183,6 +184,10 @@ public sealed class McdfManager : IDisposable {
 		// empty actor list for next session
 		this.actors.Clear();
 		this.actors.TrimExcess();
+
+		// free up glam locks just in case
+		if (!this._ipc.IsGlamourerActive) return;
+		this._framework.RunOnTick(() => this._ipc.GetGlamourerIpc().Unlock());
 	}
 
 	// IDisposable
