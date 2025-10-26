@@ -93,7 +93,7 @@
 			}
 		},
 		"create": "Create new...",
-		"refresh_actors": "Refresh scene actors",
+		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.toggle": "Toggle screen overlay"
 	},
@@ -643,7 +643,7 @@
 	},
 	
 	"lightType": {
-		"Directional": "Directional",
+		"Directional": "Sun Light (Directional)",
 		"PointLight": "Point Light",
 		"SpotLight": "Spot Light",
 		"AreaLight": "Area Light"

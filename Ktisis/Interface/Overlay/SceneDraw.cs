@@ -52,7 +52,7 @@ public class SceneDraw {
 				case IVisibility { Visible: true } and ITransform manip:
 					var position = manip.GetTransform()?.Position;
 					if (position != null)
-						frame.AddItem(entity, position.Value);
+						frame.AddItem(entity, position.Value, this._ctx);
 					break;
 				case ReferenceImage image:
 					this._refs.DrawInstance(image);
@@ -92,7 +92,7 @@ public class SceneDraw {
 				var transform = node.CalcTransformWorld();
 				if (transform == null) continue;
 				
-				frame.AddItem(node, transform.Position);
+				frame.AddItem(node, transform.Position, this._ctx);
 				
 				// Draw lines to children.
 
