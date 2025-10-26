@@ -119,4 +119,12 @@ public class AnimationManager : IAnimationManager {
 
 		this.Module?.SetTimelineSpeed(&chara->Animation.Timeline, slot, speed);
 	}
+
+	public unsafe void ResetTimelineSpeeds(ActorEntity actor) {
+		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
+		if (chara == null) return;
+
+		foreach (var slot in Enum.GetValues<TimelineSlot>())
+			this.Module?.SetTimelineSpeed(&chara->Animation.Timeline, (uint)slot, 1.0f);
+	}
 }
