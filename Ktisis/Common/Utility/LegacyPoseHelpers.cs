@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 using Ktisis.Data.Files;
 
@@ -38,7 +37,10 @@ public static class LegacyPoseHelpers {
         var boneRotationValues = new float[4];
         for (var i = 0; i < 4; i++) {
             var axisValue = Convert.ToInt32(boneRotation.Substring(i * 8, 8), 16);
-            boneRotationValues[i] = BitConverter.ToSingle(BitConverter.GetBytes(axisValue).Reverse().ToArray(), 0);
+			var bytes = BitConverter.GetBytes(axisValue);
+			bytes.Reverse();
+
+			boneRotationValues[i] = BitConverter.ToSingle(bytes, 0);
         }
 
         boneString += "\t\t\"" + boneName + "\": {\n";
