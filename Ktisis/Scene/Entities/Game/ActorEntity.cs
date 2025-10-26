@@ -283,4 +283,53 @@ public class ActorEntity : CharaEntity, IDeletable {
 			}
 		}
 	}
+
+	// Gaze
+	public unsafe void SetActorGazeTarget(ActorEntity? otherActor) {
+		if (otherActor == null || otherActor.CsGameObject == null) return;
+
+		var targetId = otherActor.CsGameObject->GetGameObjectId();
+		// for PCs, set hard target and for non-PCs, bail if they have no gaze
+		if (this.Actor.IsPcCharacter()) {
+			this.Character->SetTargetId(targetId);
+			this.Character->SetSoftTargetId(targetId);
+			return;
+		} else if (this.GetActorGazeTarget() == 0)
+			return;
+
+		// for a non-pc with a gaze already, overwrite gaze target where it exists
+		var chara = (CharacterEx*)this.Character;
+		if (chara == null) return;
+
+		if (this.Gaze == null) this.Gaze = chara->Gaze;
+		var gaze = (ActorGaze)this.Gaze;
+
+		for (var i = 0; i < 3; i++) {
+			var type = (GazeControl)i;
+			var ctrl = gaze[type];
+			if (ctrl.TargetId.Type > 0 && ctrl.TargetId.ObjectId > 0) {
+				ctrl.TargetId = targetId;
+				gaze[type] = ctrl;
+			}
+		}
+		this.Gaze = gaze;
+	}
+
+	public unsafe uint GetActorGazeTarget() {
+		var chara = this.IsValid ? (CharacterEx*)this.Character : null;
+		if (chara == null) return 0;
+
+		for (var i = 0; i < 3; i++) {
+			var type = (GazeControl)i;
+			var baseGaze = chara->Gaze[type];
+			if (baseGaze.Mode == GazeMode.Object
+				&& baseGaze.TargetId.Type > 0
+				&& baseGaze.TargetId.ObjectId >= 201
+				&& baseGaze.TargetId.ObjectId <= 243
+			)
+				return baseGaze.TargetId.ObjectId;
+		}
+
+		return 0;
+	}
 }
