@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -24,6 +25,11 @@ namespace Ktisis.Interface.Components.Chara;
 public class AnimationEditorTab {
 	private readonly static PoseModeEnum[] Modes = [
 		PoseModeEnum.Idle, PoseModeEnum.SitGround, PoseModeEnum.SitChair, PoseModeEnum.Sleeping
+	];
+
+	// todo: fix additive and lips (pull from different partial skeleton? wrong timeline indexes?)
+	private readonly static List<TimelineSlot> ScrubSlots = [
+		TimelineSlot.FullBody, TimelineSlot.UpperBody
 	];
 
 	private readonly ConfigManager _cfg;
@@ -173,8 +179,11 @@ public class AnimationEditorTab {
 
 	private unsafe void DrawTimelines() {
 		var speedCtrl = this.Editor.SpeedControlEnabled;
-		if (ImGui.Checkbox("Enable speed control", ref speedCtrl))
+		if (ImGui.Checkbox("Enable speed control", ref speedCtrl)) {
+			if (!speedCtrl)
+				this.Editor.ResetTimelineSpeeds();
 			this.Editor.SpeedControlEnabled = speedCtrl;
+		}
 		
 		ImGui.Spacing();
 
@@ -211,8 +220,8 @@ public class AnimationEditorTab {
 			ImGui.SameLine(0, 0);
 			ImGui.LabelText("{0}", $"{slot}");
 
+			var speed = animTimeline.TimelineSpeeds[index];
 			using (var _disable = ImRaii.Disabled(!speedCtrl)) {
-				var speed = animTimeline.TimelineSpeeds[index];
 				ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
 				var changed = ImGui.InputFloat($"##speed_l{index}", ref speed);
 				ImGui.SameLine(0, spacing);
@@ -220,7 +229,40 @@ public class AnimationEditorTab {
 				changed |= ImGui.SliderFloat($"##speed_r{index}", ref speed, 0.0f, 2.0f, "");
 				if (changed) this.Editor.SetTimelineSpeed((uint)index, speed);
 			}
-			
+			ImGui.SameLine(0, 0);
+			using (var _disable = ImRaii.Disabled(!speedCtrl))
+				ImGui.LabelText("{0}", "Playback Speed");
+
+			if (ScrubSlots.Contains(slot) && !key.IsNullOrEmpty()) {
+				// draw active sliders for fullbody/upperbody if they have animations
+				var control = this.Editor.GetHkaControl(index); // fetch hkaDefaultControl once per draw and reuse
+				var duration = this.Editor.GetHkaDuration(control) ?? 0.0f;
+				var localTime = this.Editor.GetHkaLocalTime(control) ?? 0.0f;
+
+				ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
+				var changed = ImGui.InputFloat($"##scrub_l{index}", ref localTime, flags: ImGuiInputTextFlags.EnterReturnsTrue);
+				ImGui.SameLine(0, spacing);
+				ImGui.SetNextItemWidth(widthR);
+				changed |= ImGui.SliderFloat($"##scrub_r{index}", ref localTime, 0.0f, duration, flags: ImGuiSliderFlags.NoInput);
+				if (changed) this.Editor.SetHkaLocalTime(control, Math.Clamp(localTime, 0.0f, duration));
+			} else if (ScrubSlots.Contains(slot)) {
+				// draw disabled dummy sliders for fullbody/upperbody if not animating
+				using var _disable = ImRaii.Disabled();
+				var dummy = 0.0f;
+				ImGui.SetNextItemWidth(ImGui.GetFrameHeight() + spacing + 40);
+				ImGui.InputFloat($"##scrub_l{index}", ref dummy);
+				ImGui.SameLine(0, spacing);
+				ImGui.SetNextItemWidth(widthR);
+				ImGui.SliderFloat($"##scrub_r{index}", ref dummy, 0f, 1f);
+			}
+			ImGui.SameLine(0, 0);
+			using (var _disable = ImRaii.Disabled(ScrubSlots.Contains(slot) && key.IsNullOrEmpty()))
+				ImGui.LabelText("{0}", "Scrub");
+
+			ImGui.Spacing();
+			if (slot == TimelineSlot.Lips) continue;
+
+			ImGui.Separator();
 			ImGui.Spacing();
 		}
 	}
@@ -280,8 +322,15 @@ public class AnimationEditorTab {
 			var update = false;
 			
 			var values = Enum.GetValues<AnimType>();
+			var excludes = this.GetExcludes();
 			for (var i = 0; i < values.Length; i++) {
-				if ((i % 3) != 0) ImGui.SameLine();
+				// if we got an excludes list, skip any radio buttons irrelevant to the picked timeline slot
+				if (excludes.Contains(i)) {
+					if (this.Type == values[i])
+						this.Type = this.BestDefaultTypeForExcludes(excludes);
+					continue;
+				}
+				if (excludes.Count > 0 || (i % 3) != 0) ImGui.SameLine();
 
 				var value = values[i];
 				if (ImGui.RadioButton($"{value}", this.Type == value)) {
@@ -301,6 +350,33 @@ public class AnimationEditorTab {
 				TimelineAnimation => this.Type == AnimType.RawTimeline,
 				_ => false
 			};
+		}
+
+		private List<int> GetExcludes() {
+			// conditionally exclude radio buttons based on availability for selected slotfilter
+			if (!this.SlotFilterActive) return new List<int>();
+
+			if (this.Slot == TimelineSlot.FullBody || this.Slot == TimelineSlot.UpperBody)
+				return new List<int> {(int)AnimType.Expression};
+			else if (this.Slot == TimelineSlot.Expression)
+				return new List<int> {(int)AnimType.Action, (int)AnimType.Emote};
+			else if (this.Slot == TimelineSlot.Additive)
+				return new List<int> {(int)AnimType.Action, (int)AnimType.Expression};
+			else if (this.Slot == TimelineSlot.Lips)
+				return new List<int> {(int)AnimType.Action, (int)AnimType.Emote, (int)AnimType.Expression};
+
+			return new List<int>();
+		}
+
+		private AnimType BestDefaultTypeForExcludes(List<int> excludes) {
+			// if we have to exclude buttons, return a new default in order of usefulness
+			if (!excludes.Contains((int)AnimType.Emote))
+				return AnimType.Emote;
+			else if (!excludes.Contains((int)AnimType.Action))
+				return AnimType.Action;
+			else if (!excludes.Contains((int)AnimType.Expression))
+				return AnimType.Expression;
+			return AnimType.RawTimeline;
 		}
 	}
 	

@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 
 using Dalamud.Interface;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
+
 using GLib.Widgets;
 
 using Ktisis.Interface.Editor.Properties.Types;
@@ -61,13 +63,14 @@ public class LightPropertyList : ObjectPropertyList {
 			case LightType.AreaLight:
 				var angleSpace = ImGui.GetStyle().ItemInnerSpacing.X;
 				var angleWidth = ImGui.CalcItemWidth() / 2 - angleSpace;
-				ImGui.PushItemWidth(angleWidth);
-				ImGui.SliderAngle("##AngleX", ref light->AreaAngle.X, -90, 90);
-				ImGui.SameLine(0, angleSpace);
-				ImGui.SliderAngle("Light Angle##AngleY", ref light->AreaAngle.Y, -90, 90);
-				ImGui.PopItemWidth();
+				using (var _ = ImRaii.ItemWidth(angleWidth)) {
+					ImGui.SliderAngle("##AngleX", ref light->AreaAngle.X, -90, 90);
+					ImGui.SameLine(0, angleSpace);
+					ImGui.SliderAngle("Light Angle##AngleY", ref light->AreaAngle.Y, -90, 90);
+				}
 				ImGui.SliderFloat("Falloff Angle##LightAngle", ref light->FalloffAngle, 0.0f, 180.0f, "%0.0f deg");
 				break;
+			
 		}
 		
 		ImGui.Spacing();
