@@ -172,6 +172,10 @@ public class PoseContainer : Dictionary<string, Transform> {
 
 		var target = new Transform(initial.Position, initial.Rotation, initial.Scale);
 
+		// sanitize posroot (e.g. n_hara) rotation from file - this fixes weird quaternion propagation bugs
+		if (partialIndex == 0 && boneIndex == 1)
+			model.Rotation = Quaternion.Identity;
+
 		var posRoot = partialIndex == 0 && boneIndex == 1 && transforms.HasFlag(PoseTransforms.PositionRoot);
 
 		if (posRoot)

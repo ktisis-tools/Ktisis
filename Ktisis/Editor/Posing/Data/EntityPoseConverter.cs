@@ -118,6 +118,18 @@ public class EntityPoseConverter(EntityPose target) {
 		
 		return result;
 	}
+
+	public unsafe PoseContainer FilterExcludeBones(PoseContainer pose, string[] excludes) {
+		var result = new PoseContainer();
+
+		var bones = this.GetBones().ToList();
+		foreach (var bone in bones) {
+			if (!excludes.Contains(bone.Name) && pose.TryGetValue(bone.Name, out var value))
+				result[bone.Name] = value;
+		}
+
+		return result;
+    }
 	
 	// Pose mapping
 
