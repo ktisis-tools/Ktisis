@@ -230,9 +230,13 @@ public class EditorInterface : IEditorInterface {
 		Extension = ".chara"
 	};
 
-	private readonly static FileDialogOptions PoseFileOptions = new() {
-		Filters = "Pose Files{.pose}",
+	private readonly static FileDialogOptions ExportPoseFileOptions = new() {
+		Filters = "Pose Files{.pose,.cmp}",
 		Extension = ".pose"
+	};
+
+	private readonly static FileDialogOptions ImportPoseFileOptions = new() {
+		Filters = "Pose Files{.pose,.cmp}"
 	};
 
 	private readonly static FileDialogOptions McdfFileOptions = new() {
@@ -247,7 +251,7 @@ public class EditorInterface : IEditorInterface {
 		this._gui.FileDialogs.OpenFile<PoseFile>("Open Pose File", (path, file) => {
 			file.ConvertLegacyBones();
 			handler.Invoke(path, file);
-		}, PoseFileOptions);
+		}, ImportPoseFileOptions);
 	}
 	
 	public void OpenMcdfFile(Action<string> handler) {
@@ -262,5 +266,5 @@ public class EditorInterface : IEditorInterface {
 		=> this._gui.FileDialogs.SaveFile("Export Chara File", file, CharaFileOptions);
 	
 	public void ExportPoseFile(PoseFile file)
-		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, PoseFileOptions);
+		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, ExportPoseFileOptions);
 }

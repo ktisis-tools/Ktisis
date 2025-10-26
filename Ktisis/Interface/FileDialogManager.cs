@@ -12,6 +12,7 @@ using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
 using Ktisis.Services.Meta;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface;
 
@@ -79,6 +80,7 @@ public class FileDialogManager {
 	) where T : JsonFile {
 		return this.OpenFile(name, path => {
 			var content = File.ReadAllText(path);
+			if (Path.GetExtension(path).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
 			var file = this._serializer.Deserialize<T>(content);
 			if (file != null) handler.Invoke(path, file);
 		}, options);
