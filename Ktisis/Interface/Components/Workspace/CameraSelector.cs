@@ -38,14 +38,11 @@ public class CameraSelector {
 			this.Cameras.Create();
 
 		ImGui.SameLine(0, spacing);
-		if (ImGui.IsKeyDown(ImGuiKey.ModShift)) {
-			using (ImRaii.Disabled(this.Cameras.GetCameras().Count() < 2 || this.Cameras.Current is EditorCamera { IsDefault: true }))
-				if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, "Delete camera"))
-					this.Cameras.DeleteCurrent();
-		} else {
+		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || this.Cameras.Current is EditorCamera { IsDefault: true }) {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit camera"))
 				this._ctx.Interface.OpenCameraWindow();
-		}
+		} else if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, "Delete camera"))
+			this.Cameras.DeleteCurrent();
 
 		ImGui.SameLine(0, spacing);
 		this.DrawFreecamToggle();
