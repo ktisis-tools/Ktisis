@@ -1,5 +1,3 @@
-using System.Linq;
-
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
@@ -8,8 +6,6 @@ using GLib.Widgets;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Camera;
-using Ktisis.Editor.Camera.Types;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
