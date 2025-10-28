@@ -1,3 +1,5 @@
+using System.Linq;
+
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
@@ -6,6 +8,7 @@ using GLib.Widgets;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Camera;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 
@@ -35,9 +38,15 @@ public class CameraSelector {
 			this.Cameras.Create();
 
 		ImGui.SameLine(0, spacing);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit camera"))
-			this._ctx.Interface.OpenCameraWindow();
-		
+		if (ImGui.IsKeyDown(ImGuiKey.ModShift)) {
+			using (ImRaii.Disabled(this.Cameras.GetCameras().Count() < 2 || this.Cameras.Current is EditorCamera { IsDefault: true }))
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, "Delete camera"))
+					this.Cameras.DeleteCurrent();
+		} else {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit camera"))
+				this._ctx.Interface.OpenCameraWindow();
+		}
+
 		ImGui.SameLine(0, spacing);
 		this.DrawFreecamToggle();
 	}
