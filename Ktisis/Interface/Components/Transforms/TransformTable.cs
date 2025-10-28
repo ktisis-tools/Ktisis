@@ -69,6 +69,9 @@ public class TransformTable {
 		0xFFFF5400
 	];
 
+	private readonly static float[] Steps = [0.1f, 0.01f, 1f];
+	private readonly static float[] EulerSteps = [1f, 0.1f, 10f];
+
 	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default) {
 		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
 
@@ -162,7 +165,7 @@ public class TransformTable {
 	}
 
 	private bool DrawEuler(string id, ref Vector3 vec) {
-		var used = this.DrawXYZ(id, ref vec, 0.2f);
+		var used = this.DrawXYZ(id, ref vec, 0.2f, true);
 		if (used) vec = vec.NormalizeAngles();
 		this.IsUsed |= used;
 		return used;
@@ -170,25 +173,40 @@ public class TransformTable {
 	
 	// Individual components
 
-	private bool DrawXYZ(string id, ref Vector3 vec, float speed) {
+	private bool DrawXYZ(string id, ref Vector3 vec, float speed, bool isEuler = false) {
 		var result = false;
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		using var _ = ImRaii.ItemWidth((ImGui.CalcItemWidth() - spacing * 2) / 3);
 		
-		result |= this.DrawAxis($"{id}_X", ref vec.X, speed, AxisColors[0]);
+		result |= this.DrawAxis($"{id}_X", ref vec.X, speed, AxisColors[0], isEuler);
 		ImGui.SameLine(0, spacing);
-		result |= this.DrawAxis($"{id}_Y", ref vec.Y, speed, AxisColors[1]);
+		result |= this.DrawAxis($"{id}_Y", ref vec.Y, speed, AxisColors[1], isEuler);
 		ImGui.SameLine(0, spacing);
-		result |= this.DrawAxis($"{id}_Z", ref vec.Z, speed, AxisColors[2]);
+		result |= this.DrawAxis($"{id}_Z", ref vec.Z, speed, AxisColors[2], isEuler);
 		return result;
 	}
 
-	private bool DrawAxis(string id, ref float value, float speed, uint col) {
+	private bool DrawAxis(string id, ref float value, float speed, uint col, bool isEuler) {
 		bool result;
 		using (ImRaii.PushStyle(ImGuiStyleVar.FramePadding, ImGui.GetStyle().FramePadding + new Vector2(0.1f, 0.1f))) {
 			using var _ = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0.1f);
 			using var __ = ImRaii.PushColor(ImGuiCol.Border, col);
 			result = ImGui.DragFloat(id, ref value, speed, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
+			if (ImGui.IsItemHovered()) {
+				ImGuiP.SetItemUsingMouseWheel();
+				var mw = (int)ImGui.GetIO().MouseWheel;
+				if (mw != 0) {
+					var steps = isEuler ? EulerSteps : Steps;
+					var step = steps[0];
+					if (ImGui.IsKeyDown(ImGuiKey.ModShift))
+						step = steps[2];
+					else if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
+						step = steps[1];
+
+					value += mw * step;
+					result = true;
+				}
+			}
 		}
 	
 		this.IsActive |= ImGui.IsItemActive();
