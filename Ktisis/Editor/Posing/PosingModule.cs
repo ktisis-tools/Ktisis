@@ -67,6 +67,9 @@ public sealed class PosingModule : HookModule {
 		
 		// do nothing
 	}
+
+	// call externally to overwrite with unfrozen model pose
+	public unsafe void ForceSyncModelSpace(hkaPose* pose) => this._syncModelSpaceHook.Original(pose);
 	
 	// CalcBoneModelSpace
 	

@@ -19,6 +19,7 @@ using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Posing;
@@ -136,6 +137,16 @@ public class PosingManager : IPosingManager {
 		}
 		
 		this.PoseModule?.SetEnabled(enable);
+	}
+
+	public unsafe void SyncFaceModelSpace(ActorEntity actor) {
+		// todo: can this be a memento? requires unsafe async fuckery
+		var cBase = actor.GetCharacter();
+		var skeleton = cBase->Skeleton;
+		var pose = skeleton->PartialSkeletons[1].GetHavokPose(0);
+		// run on tick, then run on a delayed tick
+		this._framework.RunOnTick(() => this.PoseModule?.ForceSyncModelSpace(pose));
+		this._framework.RunOnTick(() => this.PoseModule?.ForceSyncModelSpace(pose), delayTicks:1);
 	}
 
 	public IIkController CreateIkController() => this.IkModule!.CreateController();

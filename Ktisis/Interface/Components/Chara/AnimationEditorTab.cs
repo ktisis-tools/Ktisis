@@ -88,11 +88,19 @@ public class AnimationEditorTab {
 	// Animation selector
 	
 	private uint TimelineId;
+	private GameAnimation? PoseExpression;
 
 	private static float CalcItemHeight() => (ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y) * 2;
 
 	private void DrawAnimation() {
 		ImGui.Spacing();
+		// when in posemode, draw the pose expression selector
+		if (this.Editor.Posing) {
+			this.DrawPoseExpression();
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Spacing();
+		}
 		
 		var avail = ImGui.GetContentRegionAvail();
 		using (var _ = ImRaii.Child("##animFrame", avail with { X = avail.X * 0.35f })) {
@@ -115,6 +123,8 @@ public class AnimationEditorTab {
 		if (this._animList.Draw(this._animData.GetAll(), this._animData.Count, out var anim, CalcItemHeight())) {
 			if (!this._animFilter.SlotFilterActive)
 				this.TimelineId = anim!.TimelineId;
+			if (anim is not null && anim.Slot == TimelineSlot.Expression)
+				this.PoseExpression = anim;
 			this.Editor.PlayAnimation(anim!, this.PlayEmoteStart);
 		}
 	}
@@ -175,6 +185,42 @@ public class AnimationEditorTab {
 		var posLock = this.Editor.PositionLockEnabled;
 		if (ImGui.Checkbox("Freeze positions", ref posLock))
 			this.Editor.PositionLockEnabled = posLock;
+	}
+
+	private void DrawPoseExpression() {
+		using var _id = ImRaii.PushId($"pose_exp");
+		var space = ImGui.GetStyle().ItemInnerSpacing.X;
+		var height = CalcItemHeight();
+		ImGui.Text("Pose Expression");
+
+		using (ImRaii.PushColor(ImGuiCol.Text, 0xFF00D8FF))
+			ImGui.Text("⚠ Posing is currently enabled!");
+		ImGui.Text("WARNING: This is an experimental feature! It will overwrite any current face pose,\nand may deform ears or other face parts.");
+
+		if (Buttons.IconButton(FontAwesomeIcon.Search))
+			this.OpenAnimationPopup(TimelineSlot.Expression);
+
+		ImGui.SameLine(0, space);
+		var applyWidth = ImGui.CalcTextSize("Apply").X + (ImGui.GetStyle().FramePadding.X * 2);
+		using (ImRaii.Disabled(this.PoseExpression is null))
+			if (ImGui.Button("Apply", new Vector2(applyWidth, Buttons.CalcSize())))
+				this.Editor.DoPoseExpression(this.PoseExpression!.TimelineId);
+
+		ImGui.SameLine(0, space);
+		var size = new Vector2(Buttons.CalcSize(), Buttons.CalcSize());
+		if (this.PoseExpression is { } anim) {
+			if (anim.Icon != 0 && this._tex.TryGetFromGameIcon((uint)anim.Icon, out var icon))
+				ImGui.Image(icon.GetWrapOrEmpty().Handle, size);
+			else
+				ImGui.Dummy(size);
+
+			ImGui.SameLine(0, space);
+			ImGui.Text(anim.Name);
+		} else {
+			ImGui.Dummy(size);
+			ImGui.SameLine(0, space);
+			ImGui.Text("No Selection");
+		}
 	}
 
 	private unsafe void DrawTimelines() {

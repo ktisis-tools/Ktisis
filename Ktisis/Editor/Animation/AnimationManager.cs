@@ -73,7 +73,7 @@ public class AnimationManager : IAnimationManager {
 	
 	// Editors
 
-	public IAnimationEditor GetAnimationEditor(ActorEntity actor) => new AnimationEditor(this, actor);
+	public IAnimationEditor GetAnimationEditor(ActorEntity actor) => new AnimationEditor(this, _ctx, actor);
 	
 	// Pose control
 
