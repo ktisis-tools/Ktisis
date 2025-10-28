@@ -38,7 +38,7 @@ public class CameraSelector {
 			this.Cameras.Create();
 
 		ImGui.SameLine(0, spacing);
-		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || this.Cameras.Current is EditorCamera { IsDefault: true }) {
+		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || this.Cameras.Current is { IsDefault: true }) {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit camera"))
 				this._ctx.Interface.OpenCameraWindow();
 		} else if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, "Delete camera"))
