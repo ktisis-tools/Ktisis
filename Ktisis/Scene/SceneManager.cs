@@ -116,6 +116,12 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		.Cast<ActorEntity>()
 		.FirstOrDefault(entity => entity.Actor.ObjectIndex == objectIndex);
 
+	public ActorEntity GetFirstActor() => this.Children
+		.Where(entity => entity is ActorEntity { IsValid: true })
+		.Cast<ActorEntity>()
+		.OrderBy(entity => entity.Actor.ObjectIndex)
+		.First();
+
 	// Lights Utility (todo: should these live here longterm?)
 
 	public Task ApplyLightFile(LightEntity light, LightFile file) {

@@ -155,8 +155,8 @@
 	},
 	
 	"chara_edit": {
-		"title": "Appearance Editor",
-		"hint": "Edit appearance"
+		"title": "Actor Editor",
+		"hint": "Edit appearance & animations"
 	},
 	
 	"camera_edit": {

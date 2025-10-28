@@ -30,6 +30,7 @@ public interface ISceneManager : IComposite, IDisposable {
 
 	public ActorEntity? GetEntityForActor(IGameObject actor);
 	public ActorEntity? GetEntityForIndex(uint objectIndex);
+	public ActorEntity GetFirstActor();
 	public Task ApplyLightFile(LightEntity light, LightFile file);
 	public Task<LightFile> SaveLightFile(LightEntity light);
 }
