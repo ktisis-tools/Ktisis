@@ -31,6 +31,7 @@ public class ConfigWindow : KtisisWindow {
 	private readonly BoneCategoryEditor _boneCategories;
 	private readonly GizmoStyleEditor _gizmoStyle;
 	private readonly PresetEditor _presetEditor;
+	private readonly OffsetEditor _offsetEditor;
 	public readonly LocaleManager Locale;
 
 	private Configuration Config => this._cfg.File;
@@ -45,6 +46,7 @@ public class ConfigWindow : KtisisWindow {
 		BoneCategoryEditor boneCategories,
 		GizmoStyleEditor gizmoStyle,
 		PresetEditor presetEditor,
+		OffsetEditor offsetEditor,
 		LocaleManager locale,
 		GuiManager gui
 	) : base("Ktisis Settings") {
@@ -55,6 +57,7 @@ public class ConfigWindow : KtisisWindow {
 		this._boneCategories = boneCategories;
 		this._gizmoStyle = gizmoStyle;
 		this._presetEditor = presetEditor;
+		this._offsetEditor = offsetEditor;
 		this.Locale = locale;
 		this._gui = gui;
 	}
@@ -65,6 +68,7 @@ public class ConfigWindow : KtisisWindow {
 		this._keybinds.Setup();
 		this._boneCategories.Setup();
 		this._presetEditor.Setup();
+		this._offsetEditor.Setup();
 	}
 	
 	// Draw
@@ -80,6 +84,7 @@ public class ConfigWindow : KtisisWindow {
 		DrawTab(this.Locale.Translate("config.input.title"), this.DrawInputTab);
 		DrawTab(this.Locale.Translate("config.presets.title"), this.DrawPresetsTab);
 		DrawTab(this.Locale.Translate("config.poseview.title"), this.DrawPoseViewTab);
+		DrawTab("Bone Offsets", this.DrawOffsetsTab);
 	}
 
 	private void DrawHint(string localeHandle) {
@@ -256,6 +261,16 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Dummy(dummy);
 	}
 
+	public void DrawOffsetsTab() {
+		var cfg = this.Config.Offsets;
+		this._offsetEditor.Draw();
+
+		var style = ImGui.GetStyle();
+		var dummy = ImGui.GetContentRegionAvail() with { X = 0.0f };
+		dummy.Y -= style.ItemSpacing.Y + style.CellPadding.Y;
+		ImGui.Dummy(dummy);
+	}
+
 	public void DrawPoseViewTab() {
 		var cfg = this.Config.PoseView;
 
@@ -272,52 +287,60 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 
 		var loc = this.Locale.Translate("config.poseview.body");
-		var _ = ImRaii.PushId($"poseview_{loc}");
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
-			this.SetPoseViewImage(path => cfg.BodyPath = path);
-		this.DrawPoseViewPath(ref cfg.BodyPath, loc);
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.BodyPath = path);
+			this.DrawPoseViewPath(ref cfg.BodyPath, loc);
+		}
 
 		loc = this.Locale.Translate("config.poseview.armor");
-		_ = ImRaii.PushId($"poseview_{loc}");
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
-			this.SetPoseViewImage(path => cfg.ArmorPath = path);
-		this.DrawPoseViewPath(ref cfg.ArmorPath, loc);
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.ArmorPath = path);
+			this.DrawPoseViewPath(ref cfg.ArmorPath, loc);
+		}
 
 		loc = this.Locale.Translate("config.poseview.face");
-		_ = ImRaii.PushId($"poseview_{loc}");
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
-			this.SetPoseViewImage(path => cfg.FacePath = path);
-		this.DrawPoseViewPath(ref cfg.FacePath, loc);
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.FacePath = path);
+			this.DrawPoseViewPath(ref cfg.FacePath, loc);
+		}
 
 		loc = this.Locale.Translate("config.poseview.lips");
-		_ = ImRaii.PushId($"poseview_{loc}");
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
-			this.SetPoseViewImage(path => cfg.LipsPath = path);
-		this.DrawPoseViewPath(ref cfg.LipsPath, loc);
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.LipsPath = path);
+			this.DrawPoseViewPath(ref cfg.LipsPath, loc);
+		}
 
 		loc = this.Locale.Translate("config.poseview.mouth");
-		_ = ImRaii.PushId($"poseview_{loc}");
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
-			this.SetPoseViewImage(path => cfg.MouthPath = path);
-		this.DrawPoseViewPath(ref cfg.MouthPath, loc);
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.MouthPath = path);
+			this.DrawPoseViewPath(ref cfg.MouthPath, loc);
+		}
 
 		loc = this.Locale.Translate("config.poseview.hands");
-		_ = ImRaii.PushId($"poseview_{loc}");
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
-			this.SetPoseViewImage(path => cfg.HandsPath = path);
-		this.DrawPoseViewPath(ref cfg.HandsPath, loc);
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.HandsPath = path);
+			this.DrawPoseViewPath(ref cfg.HandsPath, loc);
+		}
 
 		loc = this.Locale.Translate("config.poseview.tail");
-		_ = ImRaii.PushId($"poseview_{loc}");
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
-			this.SetPoseViewImage(path => cfg.TailPath = path);
-		this.DrawPoseViewPath(ref cfg.TailPath, loc);
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.TailPath = path);
+			this.DrawPoseViewPath(ref cfg.TailPath, loc);
+		}
 
 		loc = this.Locale.Translate("config.poseview.ears");
-		_ = ImRaii.PushId($"poseview_{loc}");
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
-			this.SetPoseViewImage(path => cfg.EarsPath = path);
-		this.DrawPoseViewPath(ref cfg.EarsPath, loc);
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.EarsPath = path);
+			this.DrawPoseViewPath(ref cfg.EarsPath, loc);
+		}
 	}
 
 	// Handlers
