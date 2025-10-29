@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -23,6 +24,8 @@ using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Actors;
 using Ktisis.Data.Config.Sections;
+
+using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 
 namespace Ktisis.Scene.Entities.Game;
 
@@ -119,6 +122,11 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 		var chara = this.GetHuman();
 		return chara != null ? chara->Customize[(byte)index] : (byte)0;
+	}
+
+	public unsafe string? GetRaceSexId() {
+		var human = this.GetHuman();
+		return human != null ? Convert.ToString((int)human->RaceSexId) : null;
 	}
 
 	// Viera ear handling

@@ -68,10 +68,18 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 
 	protected void SetTransformWorld(Transform transform)
 		=> this.SetMatrixWorld(transform.ComposeMatrix());
-	
+
 	public Transform? CalcTransformWorld() {
 		var matrix = this.CalcMatrixWorld();
-		return matrix != null ? new Transform(matrix.Value) : null;
+		if (matrix is null) return null;
+		var transform = new Transform(matrix.Value);
+
+		// VBO: apply per-bone here by adding to position component when available
+		var offset = this.Scene.Context.Config.Offsets.GetOffset(this);
+		if (offset is not null)
+			transform.Position += (Vector3)offset;
+
+		return transform;
 	}
 
 	public Transform? GetTransformModel() {
