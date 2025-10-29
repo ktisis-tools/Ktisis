@@ -89,7 +89,7 @@ public class SceneDraw {
 				var node = pose.GetBoneFromMap(index, i);
 				if (node?.Visible != true) continue;
 
-				var transform = node.CalcTransformWorld();
+				var transform = node.CalcTransformOverlay();
 				if (transform == null) continue;
 				
 				frame.AddItem(node, transform.Position, this._ctx);
@@ -105,7 +105,7 @@ public class SceneDraw {
 					var bone = pose.GetBoneFromMap(index, c);
 					if (bone?.Visible != true) continue;
 
-					var lineTo = bone.CalcTransformWorld();
+					var lineTo = bone.CalcTransformOverlay();
 					if (lineTo == null) continue;
 
 					var display = this._ctx.Config.GetEntityDisplay(node);

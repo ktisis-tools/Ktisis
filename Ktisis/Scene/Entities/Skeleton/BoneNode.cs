@@ -71,6 +71,11 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 
 	public Transform? CalcTransformWorld() {
 		var matrix = this.CalcMatrixWorld();
+		return matrix != null ? new Transform(matrix.Value) : null;
+	}
+
+	public Transform? CalcTransformOverlay() {
+		var matrix = this.CalcMatrixWorld();
 		if (matrix is null) return null;
 		var transform = new Transform(matrix.Value);
 
