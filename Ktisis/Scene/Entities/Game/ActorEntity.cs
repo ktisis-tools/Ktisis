@@ -11,11 +11,11 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Extensions;
 
+using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 using CSCharacter = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
 using Ktisis.Editor.Characters.State;
-using Ktisis.Interface.Widgets;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.Skeleton;
@@ -24,8 +24,6 @@ using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Actors;
 using Ktisis.Data.Config.Sections;
-
-using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 
 namespace Ktisis.Scene.Entities.Game;
 
