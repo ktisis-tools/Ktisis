@@ -342,6 +342,12 @@
 				"button": "GitHub",
 				"link": "https://github.com/ktisis-tools/Ktisis/tree/v0.3/main/Ktisis/Data/Images/Templates"
 			}
+		},
+		"offsets": {
+			"race_sex": {
+				"101": "Midlander Male",
+				"1701": "Viera Male"
+			}
 		}
 	},
 
