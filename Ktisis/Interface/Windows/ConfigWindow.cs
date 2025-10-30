@@ -84,7 +84,7 @@ public class ConfigWindow : KtisisWindow {
 		DrawTab(this.Locale.Translate("config.input.title"), this.DrawInputTab);
 		DrawTab(this.Locale.Translate("config.presets.title"), this.DrawPresetsTab);
 		DrawTab(this.Locale.Translate("config.poseview.title"), this.DrawPoseViewTab);
-		DrawTab("Bone Offsets", this.DrawOffsetsTab);
+		DrawTab(this.Locale.Translate("config.offsets.title"), this.DrawOffsetsTab);
 	}
 
 	private void DrawHint(string localeHandle) {

@@ -344,9 +344,38 @@
 			}
 		},
 		"offsets": {
+			"title": "Bone Offsets",
+			"description": "Import and edit Visual Bone Offsets",
+			"help": "By setting a translation for a bone below, its clickable node on Ktisis' overlay will be offset by those values.",
+			"ui": {
+				"copy_all": "Copy All to Clipboard",
+				"load_all": "Load All from Clipboard",
+				"load_all_warning": "Warning: This will replace ALL your current offsets.\nHold CTRL+Shift to confirm.",
+				"add_bone": "Add offset",
+				"load_legacy": "Load Legacy Offsets",
+				"copy_bone": "Copy offset values",
+				"load_bone": "Paste offset values",
+				"clear_bone": "Shift+click to clear bone offset"
+			},
 			"race_sex": {
 				"101": "Midlander Male",
-				"1701": "Viera Male"
+				"201": "Midlander Female",
+				"301": "Highlander Male",
+				"401": "Highlander Female",
+				"501": "Elezen Male",
+				"601": "Elezen Female",
+				"701": "Miqote Male",
+				"801": "Miqote Female",
+				"901": "Roegadyn Male",
+				"1001": "Roegadyn Female",
+				"1101": "Lalafell Male",
+				"1201": "Lalafell Female",
+				"1301": "Au Ra Male",
+				"1401": "Au Ra Female",
+				"1501": "Hrothgar Male",
+				"1601": "Hrothgar Female",
+				"1701": "Viera Male",
+				"1801": "Viera Female"
 			}
 		}
 	},

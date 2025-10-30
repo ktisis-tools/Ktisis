@@ -79,21 +79,21 @@ public class OffsetEditor {
 	public void Draw() {
 		this.UpdateContext(); // refresh context to make sure we dont explode when out of gpose
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		ImGui.Text("This is a test window for offset editing!");
-		ImGui.Text("Select and add a bone to get started!");
+		ImGui.Text(this._locale.Translate("config.offsets.description"));
+		ImGui.Text(this._locale.Translate("config.offsets.help"));
 		ImGui.Spacing();
 
-		if (ImGui.Button("Copy All to Clipboard"))
+		if (ImGui.Button(this._locale.Translate("config.offsets.ui.copy_all")))
 			this.Config.SaveToClipboard();
 		ImGui.SameLine(0, spacing);
 
 		using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGui.IsKeyDown(ImGuiKey.ModCtrl))) {
-			if (ImGui.Button("Load All from Clipboard"))
+			if (ImGui.Button(this._locale.Translate("config.offsets.ui.load_all")))
 				this.Config.LoadFromClipboard();
 
 			if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
 				using var _ = ImRaii.Tooltip();
-				ImGui.Text("Warning: This will replace ALL your current offsets.\nHold CTRL+Shift to confirm.");
+				ImGui.Text(this._locale.Translate("config.offsets.ui.load_all_warning"));
 			}
 		}
 		ImGui.Spacing();
@@ -133,7 +133,7 @@ public class OffsetEditor {
 			raceSex is null
 			|| infoName is null
 			|| (this.Config.BoneOffsets.ContainsKey(raceSex) && this.Config.BoneOffsets[raceSex].ContainsKey(infoName))
-		)) if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Add bone to offsets"))
+		)) if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, this._locale.Translate("config.offsets.ui.add_bone")))
 				this.Config.UpsertOffset(raceSex!, infoName!, new Vector3());
 
 		ImGui.SameLine(0, spacing);
@@ -165,12 +165,13 @@ public class OffsetEditor {
 		ImGui.Text($"Skeleton: {this._locale.Translate($"config.offsets.race_sex.{this.SelectedRaceSexId}")}");
 
 		// todo: remove with v0.3 release
+		var label = this._locale.Translate("config.offsets.ui.load_legacy");
 		var buttonPadding = ImGui.GetStyle().FramePadding.X * 2;
-		var textSize = ImGui.CalcTextSize("Load Legacy Offsets").X;
+		var textSize = ImGui.CalcTextSize(label).X;
 		// nudge to the edge with respect to legacy button size + spacing + trash button size
 		ImGui.SameLine(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - buttonPadding - textSize - spacing - Buttons.CalcSize());
 		using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGui.IsKeyDown(ImGuiKey.ModCtrl))) {
-			if (ImGui.Button("Load Legacy Offsets"))
+			if (ImGui.Button(label))
 				this.Config.LoadLegacyFromClipboard(this.SelectedRaceSexId);
 
 			if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
@@ -218,17 +219,17 @@ public class OffsetEditor {
 		// buttons - wrap with old padding to handle the nested raii padding push
 		using (ImRaii.PushStyle(ImGuiStyleVar.CellPadding, padding)) {
 			ImGui.TableNextColumn();
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Copy, "Copy offset values"))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Copy, this._locale.Translate("config.offsets.ui.copy_bone")))
 				ImGui.SetClipboardText(Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(vec))));
 			ImGui.SameLine(0, spacing);
 
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Paste, "Paste offset values"))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Paste, this._locale.Translate("config.offsets.ui.load_bone")))
 				if (this.LoadClipboardVector(ref vec))
 					result = true;
 			ImGui.SameLine(0, spacing);
 
 			using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift)))
-				if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, "Shift+click to delete bone offset")) {
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, this._locale.Translate("config.offsets.ui.clear_bone"))) {
 					this.Config.RemoveOffset(this.SelectedRaceSexId!, bone);
 					return false;
 				}
