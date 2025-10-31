@@ -69,8 +69,8 @@ public class TransformTable {
 		0xFFFF5400
 	];
 
-	private readonly static float[] Steps = [0.1f, 0.01f, 1f];
-	private readonly static float[] EulerSteps = [1f, 0.1f, 10f];
+	private readonly static float FastStep = 10f;
+	private readonly static float SlowStep = 0.1f;
 
 	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default) {
 		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
@@ -196,12 +196,11 @@ public class TransformTable {
 				ImGuiP.SetItemUsingMouseWheel();
 				var mw = (int)ImGui.GetIO().MouseWheel;
 				if (mw != 0) {
-					var steps = isEuler ? EulerSteps : Steps;
-					var step = steps[0];
+					var step = speed *= 10f; // scale steps by 1 place since its kinda slow by default
 					if (ImGui.IsKeyDown(ImGuiKey.ModShift))
-						step = steps[2];
+						step *= FastStep;
 					else if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
-						step = steps[1];
+						step *= SlowStep;
 
 					value += mw * step;
 					result = true;
