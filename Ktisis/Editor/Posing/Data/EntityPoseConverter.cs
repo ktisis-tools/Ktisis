@@ -156,7 +156,7 @@ public class EntityPoseConverter(EntityPose target) {
 		return result;
 	}
 
-	public unsafe IEnumerable<PartialBoneInfo> GetPartialBones(int index) {
+	private unsafe IEnumerable<PartialBoneInfo> GetPartialBones(int index) {
 		var skeleton = target.GetSkeleton();
 		if (skeleton == null || skeleton->PartialSkeletons == null)
 			return [];
