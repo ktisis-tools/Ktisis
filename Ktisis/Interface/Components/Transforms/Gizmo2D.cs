@@ -47,6 +47,7 @@ public class Gizmo2D {
 
 	public void Begin(Vector2 rectSize) {
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
+		using var _border = ImRaii.PushStyle(ImGuiStyleVar.ChildBorderSize, 0f);
 		
 		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize);
 
