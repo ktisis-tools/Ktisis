@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Dalamud.Bindings.ImGui;
@@ -169,8 +170,10 @@ public class EditorInterface : IEditorInterface {
 	public void OpenSavePreset(ActorEntity entity) => this._gui.CreatePopup<PresetSaveModal>(entity).Open();
 	
 	public void OpenActorEditor(ActorEntity actor) {
-		if (!this._ctx.Config.Editor.UseLegacyWindowBehavior)
+		if (!this._ctx.Config.Editor.UseLegacyWindowBehavior && this._ctx.Selection.Count > 0 && !this._ctx.Selection.GetSelected().Any(ent => ent.Equals(actor))) {
+			Ktisis.Log.Debug($"ouchie! opening editor");
 			actor.Select(SelectMode.Force);
+		}
 		this.OpenEditor<ActorWindow, ActorEntity>(actor);
 	}
 	

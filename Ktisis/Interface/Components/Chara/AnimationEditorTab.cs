@@ -17,6 +17,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Animation.Game;
 using Ktisis.Editor.Animation.Types;
+using Ktisis.Localization;
 using Ktisis.Structs.Actors;
 
 namespace Ktisis.Interface.Components.Chara;
@@ -34,6 +35,7 @@ public class AnimationEditorTab {
 
 	private readonly ConfigManager _cfg;
 	private readonly ITextureProvider _tex;
+	private readonly LocaleManager _locale;
 	
 	private readonly GameAnimationData _animData;
 
@@ -46,9 +48,11 @@ public class AnimationEditorTab {
 	public AnimationEditorTab(
 		ConfigManager cfg,
 		IDataManager data,
+		LocaleManager locale,
 		ITextureProvider tex
 	) {
 		this._cfg = cfg;
+		this._locale = locale;
 		this._tex = tex;
 
 		this._animData = new GameAnimationData(data);
@@ -104,10 +108,10 @@ public class AnimationEditorTab {
 		
 		var avail = ImGui.GetContentRegionAvail();
 		using (var _ = ImRaii.Child("##animFrame", avail with { X = avail.X * 0.35f })) {
-			ImGui.Text("Animation");
+			ImGui.Text(this._locale.Translate("chara_edit.animation.controls.animationSelect"));
 			this.DrawEmote();
 			ImGui.Spacing();
-			ImGui.Text("Idle Pose");
+			ImGui.Text(this._locale.Translate("chara_edit.animation.controls.idleSelect"));
 			this.DrawPose();
 		}
 		ImGui.SameLine(0, 0);
@@ -141,17 +145,17 @@ public class AnimationEditorTab {
 		if (ImGui.InputInt("##emote", ref intId))
 			this.TimelineId = (uint)intId;
 
-		if (ImGui.Button("Play"))
+		if (ImGui.Button(this._locale.Translate("chara_edit.animation.controls.play")))
 			this.PlayTimeline((uint)intId);
 		ImGui.SameLine(0, space);
-		if (ImGui.Button("Reset"))
+		if (ImGui.Button(this._locale.Translate("chara_edit.animation.controls.reset")))
 			this.ResetTimeline();
 		ImGui.SameLine(0, space);
-		ImGui.Checkbox("Loop", ref this.ForceLoop);
+		ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.loop"), ref this.ForceLoop);
 		
 		ImGui.Spacing();
 		
-		ImGui.Checkbox("Play emote start", ref this.PlayEmoteStart);
+		ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.playStart"), ref this.PlayEmoteStart);
 	}
 
 	private void DrawPose() {
@@ -179,11 +183,11 @@ public class AnimationEditorTab {
 		ImGui.Spacing();
 
 		var isWeaponDrawn = this.Editor.IsWeaponDrawn;
-		if (ImGui.Checkbox("Weapon drawn", ref isWeaponDrawn))
+		if (ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.weapon"), ref isWeaponDrawn))
 			this.Editor.ToggleWeapon();
 
 		var posLock = this.Editor.PositionLockEnabled;
-		if (ImGui.Checkbox("Freeze positions", ref posLock))
+		if (ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.posLock"), ref posLock))
 			this.Editor.PositionLockEnabled = posLock;
 	}
 
@@ -191,11 +195,11 @@ public class AnimationEditorTab {
 		using var _id = ImRaii.PushId($"pose_exp");
 		var space = ImGui.GetStyle().ItemInnerSpacing.X;
 		var height = CalcItemHeight();
-		ImGui.Text("Pose Expression");
+		ImGui.Text(this._locale.Translate("chara_edit.animation.poseExpression.title"));
 
 		using (ImRaii.PushColor(ImGuiCol.Text, 0xFF00D8FF))
-			ImGui.Text("⚠ Posing is currently enabled!");
-		ImGui.Text("WARNING: This is an experimental feature! It will overwrite any current face pose,\nand may deform ears or other face parts.");
+			ImGui.Text(this._locale.Translate("chara_edit.animation.poseExpression.warning"));
+		ImGui.TextWrapped(this._locale.Translate("chara_edit.animation.poseExpression.header"));
 
 		if (Buttons.IconButton(FontAwesomeIcon.Search))
 			this.OpenAnimationPopup(TimelineSlot.Expression);
@@ -225,7 +229,7 @@ public class AnimationEditorTab {
 
 	private unsafe void DrawTimelines() {
 		var speedCtrl = this.Editor.SpeedControlEnabled;
-		if (ImGui.Checkbox("Enable speed control", ref speedCtrl)) {
+		if (ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.enableSpeed"), ref speedCtrl)) {
 			if (!speedCtrl)
 				this.Editor.ResetTimelineSpeeds();
 			this.Editor.SpeedControlEnabled = speedCtrl;
@@ -277,7 +281,7 @@ public class AnimationEditorTab {
 			}
 			ImGui.SameLine(0, 0);
 			using (var _disable = ImRaii.Disabled(!speedCtrl))
-				ImGui.LabelText("{0}", "Playback Speed");
+				ImGui.LabelText("{0}", this._locale.Translate("chara_edit.animation.controls.speedSlider"));
 
 			if (ScrubSlots.Contains(slot) && !key.IsNullOrEmpty()) {
 				// draw active sliders for fullbody/upperbody if they have animations
@@ -303,7 +307,7 @@ public class AnimationEditorTab {
 			}
 			ImGui.SameLine(0, 0);
 			using (var _disable = ImRaii.Disabled(ScrubSlots.Contains(slot) && key.IsNullOrEmpty()))
-				ImGui.LabelText("{0}", "Scrub");
+				ImGui.LabelText("{0}", this._locale.Translate("chara_edit.animation.controls.scrub"));
 
 			ImGui.Spacing();
 			if (slot == TimelineSlot.Lips) continue;

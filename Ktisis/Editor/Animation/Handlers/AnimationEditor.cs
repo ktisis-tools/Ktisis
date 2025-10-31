@@ -127,10 +127,10 @@ public class AnimationEditor(
 	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);
 	public void ResetTimelineSpeeds() => mgr.ResetTimelineSpeeds(actor);
 
-	public void DoPoseExpression(uint id) {
+	public async void DoPoseExpression(uint id) {
 		// play face expression & proc model sync to propagate to frozen expression
 		mgr.PlayTimeline(actor, id);
-		ctx.Posing.SyncFaceModelSpace(actor);
+		await ctx.Posing.SyncFaceModelSpace(actor);
 	}
 
 	// animation scrubbing helpers

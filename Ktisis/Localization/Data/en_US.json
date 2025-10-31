@@ -156,7 +156,27 @@
 	
 	"chara_edit": {
 		"title": "Actor Editor",
-		"hint": "Edit appearance & animations"
+		"hint": "Edit appearance & animations",
+		"animation": {
+			"controls": {
+				"animationSelect": "Animation",
+				"idleSelect": "Idle Pose",
+				"play": "Play",
+				"reset": "Reset",
+				"loop": "Loop",
+				"playStart": "Play emote start",
+				"weapon": "Weapon drawn",
+				"posLock": "Freeze positions",
+				"enableSpeed": "Enable speed control",
+				"speedSlider": "Playback Speed",
+				"scrub": "Scrub"
+			},
+			"poseExpression": {
+				"title": "Pose Expression",
+				"warning": "⚠ Posing is currently enabled!",
+				"header": "WARNING: This is an experimental feature! It will overwrite any current face pose, and may deform ears or other face parts. However, you can still undo any changes made."
+			}
+		}
 	},
 	
 	"camera_edit": {

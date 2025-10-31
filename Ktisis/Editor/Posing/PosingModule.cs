@@ -8,6 +8,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Posing;
@@ -68,8 +69,13 @@ public sealed class PosingModule : HookModule {
 		// do nothing
 	}
 
-	// call externally to overwrite with unfrozen model pose
-	public unsafe void ForceSyncModelSpace(hkaPose* pose) => this._syncModelSpaceHook.Original(pose);
+	// call externally to overwrite posed face with unfrozen model pose
+	public unsafe void SyncFaceModelSpace(ActorEntity actor) {
+		var cBase = actor.GetCharacter();
+		var skeleton = cBase->Skeleton;
+		var pose = skeleton->PartialSkeletons[1].GetHavokPose(0);
+		this._syncModelSpaceHook.Original(pose);
+	}
 	
 	// CalcBoneModelSpace
 	

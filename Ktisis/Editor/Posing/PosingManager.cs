@@ -139,14 +139,27 @@ public class PosingManager : IPosingManager {
 		this.PoseModule?.SetEnabled(enable);
 	}
 
-	public unsafe void SyncFaceModelSpace(ActorEntity actor) {
-		// todo: can this be a memento? requires unsafe async fuckery
-		var cBase = actor.GetCharacter();
-		var skeleton = cBase->Skeleton;
-		var pose = skeleton->PartialSkeletons[1].GetHavokPose(0);
-		// run on tick, then run on a delayed tick
-		this._framework.RunOnTick(() => this.PoseModule?.ForceSyncModelSpace(pose));
-		this._framework.RunOnTick(() => this.PoseModule?.ForceSyncModelSpace(pose), delayTicks:1);
+	public Task SyncFaceModelSpace(ActorEntity actor) {
+		return this._framework.RunOnTick(async () => {
+			if (actor.Pose is not { } pose) return;
+			// set up memento state
+			var converter = new EntityPoseConverter(pose);
+			var initial = converter.Save();
+
+			// await a face sync 2x to proc all changes
+			await this._framework.RunOnTick(() => this.PoseModule?.SyncFaceModelSpace(actor));
+			await this._framework.RunOnTick(() => this.PoseModule?.SyncFaceModelSpace(actor));
+
+			// finalize memento
+			var final = converter.Save();
+			this._context.Actions.History.Add(new PoseMemento(converter) {
+				Modes = PoseMode.All,
+				Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
+				Bones = null,
+				Initial = initial,
+				Final = final
+			});
+		});
 	}
 
 	public IIkController CreateIkController() => this.IkModule!.CreateController();

@@ -23,7 +23,7 @@ public interface IPosingManager : IDisposable {
 
 	public bool IsEnabled { get; }
 	public void SetEnabled(bool enable);
-	public void SyncFaceModelSpace(ActorEntity actor);
+	public Task SyncFaceModelSpace(ActorEntity actor);
 
 	public IIkController CreateIkController();
 
