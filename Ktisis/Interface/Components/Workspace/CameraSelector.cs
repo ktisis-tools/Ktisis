@@ -6,6 +6,7 @@ using GLib.Widgets;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Camera;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
@@ -34,7 +35,7 @@ public class CameraSelector {
 			this.Cameras.Create();
 
 		ImGui.SameLine(0, spacing);
-		var cantDelete = this.Cameras.Current is { IsDefault: true };
+		var cantDelete = this.Cameras.Current is { IsDefault: true } or WorkCamera;
 		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || cantDelete) {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, $"Edit camera{(cantDelete ? "" : " (or hold Shift to delete)")}"))
 				this._ctx.Interface.OpenCameraWindow();
