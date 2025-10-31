@@ -94,7 +94,6 @@ public class TransformTable {
 		if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref transOut.Scale, op))
 			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 
-
 		return this.IsUsed;
 	}
 
@@ -108,6 +107,7 @@ public class TransformTable {
 
 		var operation = flags.HasFlag(TransformTableFlags.Operation);
 		this.DrawPosition(ref position, operation);
+
 		return this.IsUsed;
 	}
 	
@@ -192,7 +192,7 @@ public class TransformTable {
 		}
 	
 		this.IsActive |= ImGui.IsItemActive();
-		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit();
+		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | !ImGui.IsWindowFocused();
 		return result;
 	}
 	
