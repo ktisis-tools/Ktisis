@@ -34,8 +34,9 @@ public class CameraSelector {
 			this.Cameras.Create();
 
 		ImGui.SameLine(0, spacing);
-		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || this.Cameras.Current is { IsDefault: true }) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, "Edit camera"))
+		var cantDelete = this.Cameras.Current is { IsDefault: true };
+		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || cantDelete) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, $"Edit camera{(cantDelete ? "" : " (or hold Shift to delete)")}"))
 				this._ctx.Interface.OpenCameraWindow();
 		} else if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, "Delete camera"))
 			this.Cameras.DeleteCurrent();
