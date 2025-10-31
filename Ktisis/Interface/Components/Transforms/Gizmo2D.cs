@@ -53,10 +53,6 @@ public class Gizmo2D {
 		var cursorPos = ImGui.GetCursorScreenPos();
 		var innerSize = ImGui.GetContentRegionAvail();
 		
-		// Hack: This uses the full display region due to constraints where the mouse must be within the frame.
-		var io = ImGui.GetIO();
-		ImGui.SetNextWindowPos(Vector2.Zero);
-		ImGui.SetNextWindowSize(io.DisplaySize);
 		ImGui.Begin("##Gizmo2D", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 		
 		var minDim = Math.Min(innerSize.X, innerSize.Y);
