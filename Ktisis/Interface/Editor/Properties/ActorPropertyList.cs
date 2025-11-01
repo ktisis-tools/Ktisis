@@ -8,6 +8,8 @@ using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
 
+using Ktisis.Common.Extensions;
+
 using Ktisis.Structs.Camera;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context.Types;
@@ -22,6 +24,7 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Structs.Actors;
 using Ktisis.Interface.Overlay;
 using Ktisis.Interface;
+using Ktisis.Interface.Editor.Popup;
 
 namespace Ktisis.Interface.Editor.Properties;
 
@@ -119,6 +122,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		var result = false;
 
 		using (ImRaii.Disabled(this._ctx.Posing.IsEnabled)) {
+			DrawActorTargeting(actor);
 			if (isHuman) {
 				var icon = IsLinked ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink;
 				if (Buttons.IconButton(icon)) {
@@ -250,6 +254,40 @@ public class ActorPropertyList : ObjectPropertyList {
 			result |= GazeTables[type].DrawPosition(ref gaze.Pos, TransformTableFlags.UseAvailable);
 
 		return result;
+	}
+
+	private unsafe void DrawActorTargeting(ActorEntity actor) {
+		// skip button+label if:
+			// actor is not PC (since we cant force a new target on non-pcs yet)
+			// AND actor is not PC with no known target
+		var targetId = actor.GetActorGazeTarget();
+		if (!actor.Actor.IsPcCharacter() && targetId == 0) return;
+
+		// 1. select button to choose entities in scene to set to target
+		// 2. show current target if one is set
+		// todo: can you unset targets?
+		// button
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Users, "Select target actor"))
+			this._gui.CreatePopup<ActorGazeTargetPopup>(this._ctx, actor).Open();
+
+		// label
+		ActorEntity? targetEntity = null;
+		var currentActors = this._ctx.Scene.Children
+			.OfType<ActorEntity>()
+			.ToList();
+		foreach (ActorEntity ent in currentActors)
+			if (ent.Actor.ObjectIndex == targetId)
+				targetEntity = ent;
+
+		ImGui.AlignTextToFramePadding();
+		var hasTarget = targetId != 0;
+		var label = hasTarget ? $"Targeting: {(targetEntity != null ? targetEntity.Name : $"Unknown ({targetId})")}" : "No Target";
+		using (ImRaii.Disabled(!hasTarget)) {
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.Text(label);
+		}
+
+		return;
 	}
 
 	private unsafe Vector3 GetCameraLerpFor(ActorEntity actor) {

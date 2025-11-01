@@ -201,9 +201,11 @@ public class ConfigWindow : KtisisWindow {
 		var cfg = this.Config.AutoSave;
 
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.enable"), ref cfg.Enabled);
-		ImGui.Checkbox(this.Locale.Translate("config.autosave.disconnect"), ref cfg.OnDisconnect);
-		ImGui.Checkbox(this.Locale.Translate("config.autosave.ondisable"), ref cfg.OnDisable);
-		ImGui.Checkbox(this.Locale.Translate("config.autosave.clear"), ref cfg.ClearOnExit);
+		using (var _ = ImRaii.Disabled(!cfg.Enabled)) {
+			ImGui.Checkbox(this.Locale.Translate("config.autosave.disconnect"), ref cfg.OnDisconnect);
+			ImGui.Checkbox(this.Locale.Translate("config.autosave.ondisable"), ref cfg.OnDisable);
+			ImGui.Checkbox(this.Locale.Translate("config.autosave.clear"), ref cfg.ClearOnExit);
+		}
 		
 		ImGui.Spacing();
 

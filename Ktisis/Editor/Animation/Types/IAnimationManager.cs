@@ -16,4 +16,5 @@ public interface IAnimationManager {
 	public bool PlayEmote(ActorEntity actor, uint id);
 	public bool PlayTimeline(ActorEntity actor, uint id);
 	public void SetTimelineSpeed(ActorEntity actor, uint slot, float speed);
+	public unsafe void ResetTimelineSpeeds(ActorEntity actor);
 }

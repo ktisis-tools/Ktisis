@@ -38,6 +38,21 @@ public class PosingManager : IPosingManager {
 
 	private readonly PoseAutoSave AutoSave;
 
+	// todo: separate concerns, move this
+	private string[] ExcludeEars = [
+		"j_mimi_l", "j_mimi_r",
+		"n_ear_a_l", "n_ear_a_r",
+		"n_ear_b_l", "n_ear_b_r",
+		"j_zera_a_l", "j_zera_b_l",
+		"j_zera_a_r", "j_zera_b_r",
+		"j_zerb_a_l", "j_zerb_b_l",
+		"j_zerb_a_r", "j_zerb_b_r",
+		"j_zerc_a_l", "j_zerc_b_l",
+		"j_zerc_a_r", "j_zerc_b_r",
+		"j_zerd_a_l", "j_zerd_b_l",
+		"j_zerd_a_r", "j_zerd_b_r"
+	];
+
 	public PosingManager(
 		IEditorContext context,
 		HookScope scope,
@@ -89,7 +104,7 @@ public class PosingManager : IPosingManager {
 	}
 
 	private void OnDisconnect() {
-		if (!this._context.Config.AutoSave.OnDisconnect) return;
+		if (!this._context.Config.AutoSave.Enabled || !this._context.Config.AutoSave.OnDisconnect) return;
 		Ktisis.Log.Verbose("Disconnected, triggering pose save.");
 		this.AutoSave.Save();
 	}
@@ -111,9 +126,13 @@ public class PosingManager : IPosingManager {
 	public void SetEnabled(bool enable) {
 		if (enable && !this.IsValid) return;
 
-		if (!enable && this._context.Config.AutoSave.OnDisable) {
+		if (!enable && this._context.Config.AutoSave.Enabled && this._context.Config.AutoSave.OnDisable) {
 			Ktisis.Log.Verbose("Posing disabled, triggering pose save.");
-			this.AutoSave.Save();
+			try {
+				this.AutoSave.Save();
+			} catch (Exception err) {
+				Ktisis.Log.Error(err.ToString());
+			}
 		}
 		
 		this.PoseModule?.SetEnabled(enable);
@@ -166,27 +185,32 @@ public class PosingManager : IPosingManager {
 		PoseMode modes = PoseMode.All,
 		PoseTransforms transforms = PoseTransforms.Rotation,
 		bool selectedBones = false,
-		bool anchorGroups = false
+		bool anchorGroups = false,
+		bool excludeEars = false
 	) {
 		return this._framework.RunOnFrameworkThread(() => {
 			if (file.Bones == null) return;
-			
+
+			var container = file.Bones;
 			var converter = new EntityPoseConverter(pose);
 			var initial = converter.Save();
 
 			var mementos = new List<IMemento>();
 
+			if (excludeEars)
+				container = converter.FilterExcludeBones(container, ExcludeEars);
+
 			if (selectedBones)
-				converter.LoadSelectedBones(file.Bones, transforms);
+				converter.LoadSelectedBones(container, transforms);
 			else
-				converter.Load(file.Bones, modes, transforms);
+				converter.Load(container, modes, transforms);
 
 			mementos.Add(new PoseMemento(converter) {
 				Modes = modes,
 				Transforms = transforms,
 				Bones = selectedBones ? converter.GetSelectedBones().ToList() : null,
 				Initial = selectedBones ? converter.FilterSelectedBones(initial) : initial,
-				Final = selectedBones ? converter.FilterSelectedBones(file.Bones) : file.Bones
+				Final = selectedBones ? converter.FilterSelectedBones(container) : container
 			});
 
 			if (selectedBones && anchorGroups && transforms.HasFlag(PoseTransforms.Position)) {
@@ -197,7 +221,7 @@ public class PosingManager : IPosingManager {
 					Modes = modes,
 					Transforms = PoseTransforms.Position,
 					Bones = restored,
-					Initial = converter.FilterSelectedBones(file.Bones, false),
+					Initial = converter.FilterSelectedBones(container, false),
 					Final = converter.FilterSelectedBones(initial, false)
 				});
 			}

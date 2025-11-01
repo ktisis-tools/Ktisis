@@ -33,6 +33,7 @@ public class EditorCamera {
 	public bool IsDefault => this.Flags.HasFlag(CameraFlags.DefaultCamera);
 	public bool IsNoCollide => this.Flags.HasFlag(CameraFlags.NoCollide);
 	public bool IsOrthographic => this.Flags.HasFlag(CameraFlags.Orthographic);
+	public bool IsDelimited => this.Flags.HasFlag(CameraFlags.Delimit);
 	
 	public unsafe GameCamera* GameCamera => (GameCamera*)this.Address;
 	public unsafe GameCameraEx* Camera => (GameCameraEx*)this.Address;

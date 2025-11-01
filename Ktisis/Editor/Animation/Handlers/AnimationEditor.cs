@@ -1,9 +1,16 @@
 ﻿using System.Collections.Generic;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Editor.Animation.Game;
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
+
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 namespace Ktisis.Editor.Animation.Handlers;
 
@@ -113,6 +120,21 @@ public class AnimationEditor(
 	}
 	
 	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);
+	public void ResetTimelineSpeeds() => mgr.ResetTimelineSpeeds(actor);
+
+	// animation scrubbing helpers
+
+	public unsafe hkaDefaultAnimationControl* GetHkaControl(int index) =>
+		actor.Actor.GetDefaultControlForIndex(index);
+
+	public unsafe float? GetHkaDuration(hkaDefaultAnimationControl* control) =>
+		control != null ? control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration : null;
+
+	public unsafe float? GetHkaLocalTime(hkaDefaultAnimationControl* control) =>
+		control != null ? control->hkaAnimationControl.LocalTime : null;
+
+	public unsafe void SetHkaLocalTime(hkaDefaultAnimationControl* control, float time) =>
+		control->hkaAnimationControl.LocalTime = time;
 	
 	// Weapons
 
