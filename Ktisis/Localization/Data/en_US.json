@@ -11,6 +11,7 @@
 	
 	"actions": {
 		"Select_None": "Cancel selection",
+		"Select_Sibling": "Sibling select",
 		"Overlay_Toggle": "Toggle overlay visibility",
 		"History_Undo": "Undo action",
 		"History_Redo": "Redo action",

@@ -1,3 +1,5 @@
+using System.Linq;
+
 using Dalamud.Game.ClientState.Keys;
 
 using Ktisis.Actions.Attributes;
@@ -7,6 +9,7 @@ using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Editor.Selection;
+using Ktisis.Editor.Transforms.Types;
 
 namespace Ktisis.Actions.Handlers.Select;
 
@@ -20,20 +23,21 @@ public class SiblingSelectAction(IPluginContext ctx) : KeyAction(ctx) {
 		}
 	};
 
-	public override bool CanInvoke() => this.Context.Editor is { Selection.Count: 1 };
-	
+	public override bool CanInvoke() => this.Context.Editor?.Transform.Target?.Targets.Count() is 1;
+
 	public override bool Invoke() {
         // bail if we have multiple or zero selections
 		if (!this.CanInvoke()) return false;
-        var selected = this.Context.Editor.Selection.GetFirstSelected();
-        if (selected is BoneNode bNode) {
-			var siblingNode = bNode.Pose.TryResolveSibling(bNode);
-            if (siblingNode != null) {
-                this.Context.Editor.Selection.Select(siblingNode, SelectMode.Multiple);
-                return true;
-            }
-        }
 
-        return false;
+		var target = this.Context.Editor!.Transform.Target!.Primary;
+		if (target is not BoneNode bNode)
+			return false;
+
+		var siblingNode = bNode.Pose.TryResolveSibling(bNode);
+		if (siblingNode == null)
+			return false;
+
+		this.Context.Editor.Selection.Select(siblingNode, SelectMode.Multiple);
+		return true;
 	}
 }
