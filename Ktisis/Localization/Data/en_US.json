@@ -108,9 +108,9 @@
 			"local": "Local Transform"
 		},
 		"flags": {
-			"parallel": "Parallel Transform",
-			"inverse": "Inverse Transform",
-			"reflect": "Mirror Transform"
+			"parallel": "Gizmo Mode: Parallel Transform",
+			"inverse": "Gizmo Mode: Inverse Transform",
+			"reflect": "Gizmo Mode: Mirror Transform"
 		},
 		"sibling": {
 			"available": "Multi-select sibling bone: %bone%",

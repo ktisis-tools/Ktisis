@@ -164,8 +164,10 @@ public class ObjectWindow : KtisisWindow {
 			flagKey = "reflect";
 		}
 		var flagHint = this._ctx.Locale.Translate($"transform_edit.flags.{flagKey}");
-		if (Buttons.IconButtonTooltip(flagIcon, flagHint, iconBtnSize))
+		if (Buttons.IconButtonTooltip(flagIcon, flagHint, iconBtnSize)) {
 			this._ctx.Config.Gizmo.SetNextMirrorRotation();
+			Ktisis.Log.Warning($"Mirror Rotation: {this._ctx.Config.Gizmo.MirrorRotation}");
+		}
 		
 		ImGui.SameLine(0, spacing);
 
