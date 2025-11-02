@@ -7,6 +7,7 @@ using Dalamud.Plugin.Ipc;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
+using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules.Actors;
@@ -80,7 +81,13 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
             if (!actor.IsValid || actor.Pose is null)
                 continue;
 
-            ret[actor.Actor.ObjectIndex] = actor.Children.OfType<BoneNode>().Where(s => s.IsSelected).Select(s => s.Name).ToHashSet();
+            ret[actor.Actor.ObjectIndex] = 
+                actor.Children.OfType<EntityPose>()
+                    .SelectMany(x => x.Recurse())
+                    .Where(s => s.IsSelected)
+                    .OfType<BoneNode>()
+                    .Select(s => s.Info.Name)
+                    .ToHashSet();
         }
 
         return ret;
@@ -90,7 +97,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     {
         var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
 
-        var bone = actor?.Pose?.Children.OfType<BoneNode>().FirstOrDefault(b => b.Name == boneName);
+        var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
         return bone?.GetMatrix();
     }
     
@@ -98,7 +105,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     {
         var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
 
-        var bone = actor?.Pose?.Children.OfType<BoneNode>().FirstOrDefault(b => b.Name == boneName);
+        var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
         if (bone is null)
             return false;
 
