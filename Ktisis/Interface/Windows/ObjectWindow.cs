@@ -20,6 +20,7 @@ using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Windows;
 
@@ -166,22 +167,34 @@ public class ObjectWindow : KtisisWindow {
 		// if we have 1 bonenode selected that has a sibling, enable the button
 		var selected = target?.Primary;
 		var selectionCount = target?.Targets.Count();
-		if (selectionCount != 0 && selected != null && selected is BoneNode bNode) {
-			var siblingNode = bNode.Pose.TryResolveSibling(bNode);
-			var siblingAvailable = siblingNode != null;
-			var siblingKey = siblingAvailable ? (selectionCount == 1 ? "available" : "multiple") : "unavailable";
-			var siblingHint = this._ctx.Locale.Translate(
-				$"transform_edit.sibling.{siblingKey}",
-				new Dictionary<string, string> {
-					{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
-				}
-			);
+		if (selectionCount != 0 && selected != null) {
+			EntityPose? pose = selected is ActorEntity actor ? actor.Pose : null;
 
-			using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
-				this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
+			if (selected is BoneNode bNode) {
+				pose = bNode.Pose;
+				var siblingNode = pose.TryResolveSibling(bNode);
+				var siblingAvailable = siblingNode != null;
+				var siblingKey = siblingAvailable ? (selectionCount == 1 ? "available" : "multiple") : "unavailable";
+				var siblingHint = this._ctx.Locale.Translate(
+					$"transform_edit.sibling.{siblingKey}",
+					new Dictionary<string, string> {
+						{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
+					}
+				);
 
-			ImGui.SameLine(0, spacing);
+				using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
+					this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
+
+				ImGui.SameLine(0, spacing);
+			}
+
+			if (pose != null) {
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowRightArrowLeft, this._ctx.Locale.Translate("transform_edit.flip_pose"), iconBtnSize))
+					this._ctx.Posing.ApplyFlipPose(pose);
+
+				ImGui.SameLine(0, spacing);
+			}
 		}
 
 		var avail = ImGui.GetContentRegionAvail().X;
