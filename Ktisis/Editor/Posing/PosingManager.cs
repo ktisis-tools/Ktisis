@@ -278,13 +278,11 @@ public class PosingManager : IPosingManager {
 		return this._framework.RunOnFrameworkThread(() => {
 			var converter = new EntityPoseConverter(pose);
 			var initial = converter.Save();
-
-			var final = converter.FlipPose();
-			if(final == null) return;
-
+			converter.FlipPose();
+			var final = converter.Save();
 			this._context.Actions.History.Add(new PoseMemento(converter) {
-				Modes = PoseMode.Body,
-				Transforms = PoseTransforms.Rotation,
+				Modes = PoseMode.All,
+				Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
 				Bones = null,
 				Initial = initial,
 				Final = final
