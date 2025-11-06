@@ -209,7 +209,7 @@ public class EntityPoseConverter(EntityPose target) {
 		var rootInitial = HavokPosing.GetModelTransform(rootPose, rootBone.BoneIndex)!;
 
 		for(var p = 0; p < skeleton->PartialSkeletonCount; p++) {
-			if(p is 1 or 2) continue; // skip face/hair bones
+			if(p is 1 or 2 or 4) continue; // skip face, hair & j_ex bones
 
 			var partial = skeleton->PartialSkeletons[p];
 			var pose = partial.GetHavokPose(0);
@@ -219,7 +219,8 @@ public class EntityPoseConverter(EntityPose target) {
 			var targets = new Dictionary<string, Quaternion>();
 			for(var i = 1; i < pose->Skeleton->Bones.Length; i++) {
 				var boneName = pose->Skeleton->Bones[i].Name.String;
-				if(boneName.IsNullOrEmpty()) continue;
+				if(boneName.IsNullOrEmpty() || boneName.StartsWith("iv_") || boneName.StartsWith("ya_"))
+					continue;
 				if(boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
 					var oppositeName = boneName.EndsWith("_l") ? boneName[..^1] + "r" : boneName[..^1] + "l";
 					if(HavokPosing.TryGetBoneNameIndex(pose, oppositeName) != -1) {
