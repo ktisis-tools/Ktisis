@@ -33,16 +33,13 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 	public unsafe bool IsHidden {
 		get {
-			var chara = (CharacterEx*)this.Character;
-			return chara != null && chara->Opacity == 0.0f;
+			var ptr = this.CsGameObject;
+			return ptr != null && !ptr->DrawObject->IsVisible;
 		}
 		set {
-			var chara = (CharacterEx*)this.Character;
-			if (chara != null)
-				if (chara->Opacity != 0.0f)
-					chara->Opacity = 0.0f;
-				else
-					chara->Opacity = 1.0f;
+			var ptr = this.CsGameObject;
+			if(ptr != null)
+				ptr->DrawObject->IsVisible = !ptr->DrawObject->IsVisible;
 		}
 	}
 
