@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using GLib.Widgets;
@@ -202,10 +203,10 @@ public class TransformTable {
 		=> ImGui.GetContentRegionAvail().X - CalcIconSpacing();
 
 	private static float CalcTableWidth()
-		=> UiBuilder.DefaultFont.FontSize * 4.00f * 3;
+		=> (UiBuilder.DefaultFontSizePx * 4.00f * 3) * ImGuiHelpers.GlobalScale;
 
 	private static float CalcIconSpacing()
-		=> UiBuilder.IconFont.FontSize + ImGui.GetStyle().ItemSpacing.X * 2;
+		=> (UiBuilder.DefaultFontSizePx + ImGui.GetStyle().ItemSpacing.X * 2) * ImGuiHelpers.GlobalScale;
 	
 	public static float CalcWidth()
 		=> CalcTableWidth() + CalcIconSpacing();

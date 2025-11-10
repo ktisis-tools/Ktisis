@@ -5,6 +5,7 @@ using System.Linq;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
@@ -131,7 +132,7 @@ public class ObjectWindow : KtisisWindow {
 	private void DrawToggles(ITransformTarget? target) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
-		var iconSize = UiBuilder.IconFont.FontSize * 2;
+		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
 
 		var mode = this._ctx.Config.Gizmo.Mode;

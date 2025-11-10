@@ -8,6 +8,7 @@ using Dalamud.Interface;
 using GLib.Widgets;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
@@ -177,7 +178,7 @@ public class SelectableGui {
 
 	private bool DrawIconDot(ImDrawListPtr drawList, Vector2 pos2d, EntityDisplay display, bool isSelect = false) {
 		var size = Icons.CalcIconSize(display.Icon);
-		var radius = UiBuilder.IconFont.FontSize;
+		var radius = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale;
 
 		var isHover = IsHovering(pos2d, radius);
 
