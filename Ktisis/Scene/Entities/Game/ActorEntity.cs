@@ -26,7 +26,7 @@ using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Scene.Entities.Game;
 
-public class ActorEntity : CharaEntity, IDeletable {
+public class ActorEntity : CharaEntity, IDeletable, IHideable {
 	public readonly IGameObject Actor;
 
 	public bool IsManaged { get; set; }
