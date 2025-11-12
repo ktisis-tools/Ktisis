@@ -241,7 +241,7 @@ public class SceneTree {
 
 	private void DrawHideButton(IHideable entity, ref float cursor, bool isHover) {
 		var color = entity.IsHidden ? 0x80FFFFFF : 0xEFFFFFFF;
-		if (this.DrawButton(ref cursor, FontAwesomeIcon.IdBadge, color) && isHover)
+		if(this.DrawButton(ref cursor, FontAwesomeIcon.Mask, color) && isHover)
 			entity.ToggleHidden();
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
