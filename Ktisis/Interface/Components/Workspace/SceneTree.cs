@@ -198,9 +198,9 @@ public class SceneTree {
 		this.DrawVisibilityButton(node, ref cursor, isHover);
 		if (node is IAttachable attach)
 			this.DrawAttachButton(attach, ref cursor, isHover);
-		if (node is ActorEntity actor)
-			this.DrawHideButton(actor, ref cursor, isHover);
-		
+		if (node is IHideable hideable)
+			this.DrawHideButton(hideable, ref cursor, isHover);
+
 		return initial - cursor;
 	}
 
@@ -233,14 +233,14 @@ public class SceneTree {
 		ImGui.Text($"Click to reset attachment\nClick+Drag to set new attachment");
 	}
 
-	private void DrawHideButton(ActorEntity actor, ref float cursor, bool isHover) {
-		var color = actor.IsHidden ? 0x80FFFFFF : 0xEFFFFFFF;
-		if (this.DrawButton(ref cursor, FontAwesomeIcon.IdBadge, color) && isHover)
-			actor.IsHidden = !actor.IsHidden;
+	private void DrawHideButton(IHideable entity, ref float cursor, bool isHover) {
+		var color = entity.IsHidden ? 0x80FFFFFF : 0xEFFFFFFF;
+		if(this.DrawButton(ref cursor, FontAwesomeIcon.Mask, color) && isHover)
+			entity.ToggleHidden();
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
 		using var _ = ImRaii.Tooltip();
-		ImGui.Text(actor.IsHidden ? "Unhide Actor" : "Hide Actor");
+		ImGui.Text(entity.IsHidden ? "Unhide Entity" : "Hide Entity");
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {
