@@ -11,6 +11,7 @@
 	
 	"actions": {
 		"Select_None": "Cancel selection",
+		"Select_Sibling": "Sibling select",
 		"Overlay_Toggle": "Toggle overlay visibility",
 		"History_Undo": "Undo action",
 		"History_Redo": "Redo action",
@@ -31,7 +32,7 @@
 		"Camera_Work_Down": "Work camera down",
 		"Camera_Work_Fast": "Work camera fast-speed modifier",
 		"Camera_Work_Slow": "Work camera slow-speed modifier",
-		"Gizmo_MirrorRotation": "Toggle mirror and parallel rotation modes"
+		"Gizmo_MirrorRotation": "Cycle rotation modes"
 	},
 	
 	"actors": {
@@ -108,8 +109,9 @@
 			"local": "Local Transform"
 		},
 		"flags": {
-			"parallel": "Parallel Transform",
-			"mirror": "Mirror Transform"
+			"parallel": "Gizmo Mode: Parallel Transform",
+			"inverse": "Gizmo Mode: Inverse Transform",
+			"reflect": "Gizmo Mode: Mirror Transform"
 		},
 		"sibling": {
 			"available": "Multi-select sibling bone: %bone%",
