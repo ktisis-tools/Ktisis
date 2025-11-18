@@ -76,9 +76,9 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this.UpdateTarget();
 		
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
+		DrawTab("Animation", this._anim.Draw);
 		DrawTab("Appearance", this._custom.Draw);
 		DrawTab("Equipment", this._equip.Draw);
-		DrawTab("Animation", this._anim.Draw);
 		DrawTab("Misc", this.DrawMisc);
 	}
 

@@ -11,6 +11,8 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Components.Workspace;
 using Ktisis.Interface.Editor.Types;
+using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Windows; 
 
@@ -87,6 +89,22 @@ public class WorkspaceWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Walking, this._ctx.Locale.Translate("chara_edit.title"))) {
+			var target = this._ctx.Selection.GetFirstSelected();
+			if (
+				target switch {
+					BoneNode node => node.Pose.Parent,
+					BoneNodeGroup group => group.Pose.Parent,
+					EntityPose pose => pose.Parent,
+					_ => target
+				} is ActorEntity actor
+			) this.Interface.OpenActorEditor(actor);
+			else
+				this.Interface.OpenActorEditor(this._ctx.Scene.GetFirstActor());
+		}
+
+		ImGui.SameLine(0, spacing);
+
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Portrait, this._ctx.Locale.Translate("pose_view.title")))
 			this.Interface.OpenPosingWindow();
 

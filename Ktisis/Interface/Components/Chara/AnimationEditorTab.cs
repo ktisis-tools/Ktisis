@@ -17,6 +17,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Animation.Game;
 using Ktisis.Editor.Animation.Types;
+using Ktisis.Localization;
 using Ktisis.Structs.Actors;
 
 namespace Ktisis.Interface.Components.Chara;
@@ -34,6 +35,7 @@ public class AnimationEditorTab {
 
 	private readonly ConfigManager _cfg;
 	private readonly ITextureProvider _tex;
+	private readonly LocaleManager _locale;
 	
 	private readonly GameAnimationData _animData;
 
@@ -46,9 +48,11 @@ public class AnimationEditorTab {
 	public AnimationEditorTab(
 		ConfigManager cfg,
 		IDataManager data,
+		LocaleManager locale,
 		ITextureProvider tex
 	) {
 		this._cfg = cfg;
+		this._locale = locale;
 		this._tex = tex;
 
 		this._animData = new GameAnimationData(data);
@@ -88,18 +92,26 @@ public class AnimationEditorTab {
 	// Animation selector
 	
 	private uint TimelineId;
+	private GameAnimation? PoseExpression;
 
 	private static float CalcItemHeight() => (ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y) * 2;
 
 	private void DrawAnimation() {
 		ImGui.Spacing();
+		// when in posemode, draw the pose expression selector
+		if (this.Editor.Posing) {
+			this.DrawPoseExpression();
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Spacing();
+		}
 		
 		var avail = ImGui.GetContentRegionAvail();
 		using (var _ = ImRaii.Child("##animFrame", avail with { X = avail.X * 0.35f })) {
-			ImGui.Text("Animation");
+			ImGui.Text(this._locale.Translate("chara_edit.animation.controls.animationSelect"));
 			this.DrawEmote();
 			ImGui.Spacing();
-			ImGui.Text("Idle Pose");
+			ImGui.Text(this._locale.Translate("chara_edit.animation.controls.idleSelect"));
 			this.DrawPose();
 		}
 		ImGui.SameLine(0, 0);
@@ -115,6 +127,8 @@ public class AnimationEditorTab {
 		if (this._animList.Draw(this._animData.GetAll(), this._animData.Count, out var anim, CalcItemHeight())) {
 			if (!this._animFilter.SlotFilterActive)
 				this.TimelineId = anim!.TimelineId;
+			if (anim is not null && anim.Slot == TimelineSlot.Expression)
+				this.PoseExpression = anim;
 			this.Editor.PlayAnimation(anim!, this.PlayEmoteStart);
 		}
 	}
@@ -131,17 +145,17 @@ public class AnimationEditorTab {
 		if (ImGui.InputInt("##emote", ref intId))
 			this.TimelineId = (uint)intId;
 
-		if (ImGui.Button("Play"))
+		if (ImGui.Button(this._locale.Translate("chara_edit.animation.controls.play")))
 			this.PlayTimeline((uint)intId);
 		ImGui.SameLine(0, space);
-		if (ImGui.Button("Reset"))
+		if (ImGui.Button(this._locale.Translate("chara_edit.animation.controls.reset")))
 			this.ResetTimeline();
 		ImGui.SameLine(0, space);
-		ImGui.Checkbox("Loop", ref this.ForceLoop);
+		ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.loop"), ref this.ForceLoop);
 		
 		ImGui.Spacing();
 		
-		ImGui.Checkbox("Play emote start", ref this.PlayEmoteStart);
+		ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.playStart"), ref this.PlayEmoteStart);
 	}
 
 	private void DrawPose() {
@@ -169,17 +183,53 @@ public class AnimationEditorTab {
 		ImGui.Spacing();
 
 		var isWeaponDrawn = this.Editor.IsWeaponDrawn;
-		if (ImGui.Checkbox("Weapon drawn", ref isWeaponDrawn))
+		if (ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.weapon"), ref isWeaponDrawn))
 			this.Editor.ToggleWeapon();
 
 		var posLock = this.Editor.PositionLockEnabled;
-		if (ImGui.Checkbox("Freeze positions", ref posLock))
+		if (ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.posLock"), ref posLock))
 			this.Editor.PositionLockEnabled = posLock;
+	}
+
+	private void DrawPoseExpression() {
+		using var _id = ImRaii.PushId($"pose_exp");
+		var space = ImGui.GetStyle().ItemInnerSpacing.X;
+		var height = CalcItemHeight();
+		ImGui.Text(this._locale.Translate("chara_edit.animation.poseExpression.title"));
+
+		using (ImRaii.PushColor(ImGuiCol.Text, 0xFF00D8FF))
+			ImGui.Text(this._locale.Translate("chara_edit.animation.poseExpression.warning"));
+		ImGui.TextWrapped(this._locale.Translate("chara_edit.animation.poseExpression.header"));
+
+		if (Buttons.IconButton(FontAwesomeIcon.Search))
+			this.OpenAnimationPopup(TimelineSlot.Expression);
+
+		ImGui.SameLine(0, space);
+		var applyWidth = ImGui.CalcTextSize("Apply").X + (ImGui.GetStyle().FramePadding.X * 2);
+		using (ImRaii.Disabled(this.PoseExpression is null))
+			if (ImGui.Button("Apply", new Vector2(applyWidth, Buttons.CalcSize())))
+				this.Editor.DoPoseExpression(this.PoseExpression!.TimelineId);
+
+		ImGui.SameLine(0, space);
+		var size = new Vector2(Buttons.CalcSize(), Buttons.CalcSize());
+		if (this.PoseExpression is { } anim) {
+			if (anim.Icon != 0 && this._tex.TryGetFromGameIcon((uint)anim.Icon, out var icon))
+				ImGui.Image(icon.GetWrapOrEmpty().Handle, size);
+			else
+				ImGui.Dummy(size);
+
+			ImGui.SameLine(0, space);
+			ImGui.Text(anim.Name);
+		} else {
+			ImGui.Dummy(size);
+			ImGui.SameLine(0, space);
+			ImGui.Text("No Selection");
+		}
 	}
 
 	private unsafe void DrawTimelines() {
 		var speedCtrl = this.Editor.SpeedControlEnabled;
-		if (ImGui.Checkbox("Enable speed control", ref speedCtrl)) {
+		if (ImGui.Checkbox(this._locale.Translate("chara_edit.animation.controls.enableSpeed"), ref speedCtrl)) {
 			if (!speedCtrl)
 				this.Editor.ResetTimelineSpeeds();
 			this.Editor.SpeedControlEnabled = speedCtrl;
@@ -231,7 +281,7 @@ public class AnimationEditorTab {
 			}
 			ImGui.SameLine(0, 0);
 			using (var _disable = ImRaii.Disabled(!speedCtrl))
-				ImGui.LabelText("{0}", "Playback Speed");
+				ImGui.LabelText("{0}", this._locale.Translate("chara_edit.animation.controls.speedSlider"));
 
 			if (ScrubSlots.Contains(slot) && !key.IsNullOrEmpty()) {
 				// draw active sliders for fullbody/upperbody if they have animations
@@ -257,7 +307,7 @@ public class AnimationEditorTab {
 			}
 			ImGui.SameLine(0, 0);
 			using (var _disable = ImRaii.Disabled(ScrubSlots.Contains(slot) && key.IsNullOrEmpty()))
-				ImGui.LabelText("{0}", "Scrub");
+				ImGui.LabelText("{0}", this._locale.Translate("chara_edit.animation.controls.scrub"));
 
 			ImGui.Spacing();
 			if (slot == TimelineSlot.Lips) continue;

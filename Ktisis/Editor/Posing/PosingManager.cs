@@ -19,6 +19,7 @@ using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Posing;
@@ -136,6 +137,29 @@ public class PosingManager : IPosingManager {
 		}
 		
 		this.PoseModule?.SetEnabled(enable);
+	}
+
+	public Task SyncFaceModelSpace(ActorEntity actor) {
+		return this._framework.RunOnTick(async () => {
+			if (actor.Pose is not { } pose) return;
+			// set up memento state
+			var converter = new EntityPoseConverter(pose);
+			var initial = converter.Save();
+
+			// await a face sync 2x to proc all changes
+			await this._framework.RunOnTick(() => this.PoseModule?.SyncFaceModelSpace(actor));
+			await this._framework.RunOnTick(() => this.PoseModule?.SyncFaceModelSpace(actor));
+
+			// finalize memento
+			var final = converter.Save();
+			this._context.Actions.History.Add(new PoseMemento(converter) {
+				Modes = PoseMode.All,
+				Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
+				Bones = null,
+				Initial = initial,
+				Final = final
+			});
+		});
 	}
 
 	public IIkController CreateIkController() => this.IkModule!.CreateController();
