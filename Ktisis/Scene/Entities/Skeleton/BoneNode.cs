@@ -37,7 +37,7 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 	
 	// Bone transforms
 
-	protected unsafe Matrix4x4? GetMatrixModel() {
+	public unsafe Matrix4x4? GetMatrixModel() {
 		var pose = this.GetPose();
 		return pose != null ? HavokPosing.GetMatrix(pose, this.Info.BoneIndex) : null;
 	}

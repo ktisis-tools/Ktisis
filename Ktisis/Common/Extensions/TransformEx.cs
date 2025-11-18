@@ -23,6 +23,7 @@ public static class TransformEx {
 	// hkVector4f
 	
 	public static Vector3 ToVector3(this hkVector4f hkVec) => new(hkVec.X, hkVec.Y, hkVec.Z);
+	public static hkVector4f ToHavok(this Vector3 v) => new() { X = v.X, Y = v.Y, Z = v.Z, W = 0.0f };
 	
 	// hkQuaternionf
 	
