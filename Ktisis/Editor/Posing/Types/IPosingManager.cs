@@ -36,4 +36,6 @@ public interface IPosingManager : IDisposable {
 
 	public Task StashPose(EntityPose pose);
 	public Task ApplyStashedPose(EntityPose pose);
+
+	public Task ApplyFlipPose(EntityPose pose);
 }

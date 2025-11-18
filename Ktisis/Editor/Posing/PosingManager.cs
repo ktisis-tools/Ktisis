@@ -273,7 +273,23 @@ public class PosingManager : IPosingManager {
 			this.StashedPose = null;
 		});
 	}
-	
+
+	public Task ApplyFlipPose(EntityPose pose) {
+		return this._framework.RunOnFrameworkThread(() => {
+			var converter = new EntityPoseConverter(pose);
+			var initial = converter.Save();
+			converter.FlipPose();
+			var final = converter.Save();
+			this._context.Actions.History.Add(new PoseMemento(converter) {
+				Modes = PoseMode.All,
+				Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
+				Bones = null,
+				Initial = initial,
+				Final = final
+			});
+		});
+	}
+
 	// Disposal
 
 	public void Dispose() {

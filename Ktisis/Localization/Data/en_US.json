@@ -32,6 +32,7 @@
 		"Camera_Work_Down": "Work camera down",
 		"Camera_Work_Fast": "Work camera fast-speed modifier",
 		"Camera_Work_Slow": "Work camera slow-speed modifier",
+		"Pose_FlipPose": "Flip pose",
 		"Gizmo_MirrorRotation": "Cycle rotation modes"
 	},
 	

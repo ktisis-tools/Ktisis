@@ -12,6 +12,7 @@ using GLib.Widgets;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Transforms;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.ImGuizmo;
@@ -21,7 +22,7 @@ using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
-using Ktisis.Editor.Transforms;
+using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Windows;
 
@@ -183,7 +184,7 @@ public class ObjectWindow : KtisisWindow {
 			var siblingHint = this._ctx.Locale.Translate(
 				$"transform_edit.sibling.{siblingKey}",
 				new Dictionary<string, string> {
-					{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
+						{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
 				}
 			);
 
