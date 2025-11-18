@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using GLib.Widgets;
@@ -87,14 +88,19 @@ public class TransformTable {
 
 		var op = flags.HasFlag(TransformTableFlags.Operation);
 		transOut = this.Transform.Set(transIn);
+		var pos = transOut.Position;
+		var rot = transOut.Rotation;
+		var scale = transOut.Scale;
 		if (flags.HasFlag(TransformTableFlags.Position))
-			this.DrawPosition(ref transOut.Position, op);
+			this.DrawPosition(ref pos, op);
 		if (flags.HasFlag(TransformTableFlags.Rotation))
-			this.DrawRotate(ref transOut.Rotation, op);
-		if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref transOut.Scale, op))
+			this.DrawRotate(ref rot, op);
+		if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref scale, op))
 			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 
-
+		transOut.Position = pos;
+		transOut.Rotation = rot;
+		transOut.Scale = scale;
 		return this.IsUsed;
 	}
 
@@ -108,6 +114,7 @@ public class TransformTable {
 
 		var operation = flags.HasFlag(TransformTableFlags.Operation);
 		this.DrawPosition(ref position, operation);
+
 		return this.IsUsed;
 	}
 	
@@ -192,7 +199,7 @@ public class TransformTable {
 		}
 	
 		this.IsActive |= ImGui.IsItemActive();
-		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit();
+		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | !ImGui.IsWindowFocused();
 		return result;
 	}
 	
@@ -202,10 +209,10 @@ public class TransformTable {
 		=> ImGui.GetContentRegionAvail().X - CalcIconSpacing();
 
 	private static float CalcTableWidth()
-		=> UiBuilder.DefaultFont.FontSize * 4.00f * 3;
+		=> (UiBuilder.DefaultFontSizePx * 4.00f * 3) * ImGuiHelpers.GlobalScale;
 
 	private static float CalcIconSpacing()
-		=> UiBuilder.IconFont.FontSize + ImGui.GetStyle().ItemSpacing.X * 2;
+		=> (UiBuilder.DefaultFontSizePx + ImGui.GetStyle().ItemSpacing.X * 2) * ImGuiHelpers.GlobalScale;
 	
 	public static float CalcWidth()
 		=> CalcTableWidth() + CalcIconSpacing();
