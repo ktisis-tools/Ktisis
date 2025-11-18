@@ -146,7 +146,18 @@ public class DebugWindow : KtisisWindow {
         overlay.DrawDebug(null);
 
         // todo: scenetree / actors and entities details
-    }
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+		var target = this._ctx.Transform.Target;
+		if (target?.GetTransform() == null)
+			return;
+		var trans = target.GetTransform()!;
+		ImGui.Text($"Target: {target.Primary?.Name}");
+		ImGui.Text($"Position:\n\tX: {trans.Position.X}\n\tY: {trans.Position.Y}\n\tZ: {trans.Position.Z}");
+		ImGui.Text($"Rotation:\n\tX: {trans.Rotation.X}\n\tY: {trans.Rotation.Y}\n\tZ: {trans.Rotation.Z}\n\tW: {trans.Rotation.W}");
+		ImGui.Text($"Scale:\n\tX: {trans.Scale.X}\n\tY: {trans.Scale.Y}\n\tZ: {trans.Scale.Z}");
+	}
 
     private bool CheckClipboard() {
         var text = ImGui.GetClipboardText();

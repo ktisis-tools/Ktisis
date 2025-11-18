@@ -11,10 +11,29 @@ namespace Ktisis.Common.Utility;
 
 [StructLayout(LayoutKind.Explicit)]
 public class Transform : IEquatable<Transform> {
-	[FieldOffset(0x00)] public Vector3 Position;
-	[FieldOffset(0x10)] public Quaternion Rotation;
-	[FieldOffset(0x20)] public Vector3 Scale;
-	
+	[FieldOffset(0x00)] private Vector3 _position;
+	[FieldOffset(0x10)] private Quaternion _rotation;
+	[FieldOffset(0x20)] private Vector3 _scale;
+
+	public Vector3 Position {
+		get => this._position;
+		set => this._position = new Vector3(
+			MathF.Round(value.X, 4), MathF.Round(value.Y, 4), MathF.Round(value.Z, 4)
+		);
+	}
+	public Quaternion Rotation {
+		get => this._rotation;
+		set => this._rotation = new Quaternion(
+			MathF.Round(value.X, 4), MathF.Round(value.Y, 4), MathF.Round(value.Z, 4), MathF.Round(value.W, 4)
+		);
+	}
+	public Vector3 Scale {
+		get => this._scale;
+		set => this._scale = new Vector3(
+			MathF.Round(value.X, 3), MathF.Round(value.Y, 3), MathF.Round(value.Z, 3)
+		);
+	}
+
 	// Constructors
 
 	public Transform() {
