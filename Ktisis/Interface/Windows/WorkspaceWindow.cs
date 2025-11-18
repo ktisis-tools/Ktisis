@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
@@ -62,7 +63,7 @@ public class WorkspaceWindow : KtisisWindow {
 		this._cameras.Draw();
 		this._workspace.Draw();
 
-		var botHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
+		var botHeight = (UiBuilder.DefaultFontSizePx + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2) * ImGuiHelpers.GlobalScale;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - botHeight;
 		this._sceneTree.Draw(treeHeight);
 

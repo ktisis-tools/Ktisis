@@ -172,6 +172,8 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildLightMenu(ContextMenuBuilder menu, LightEntity light) {
 		menu.Separator()
+			.Action($"{(light.IsHidden ? "Unhide" : "Hide")} Light", light.ToggleHidden)
+			.Separator()
 			.Action("Edit lighting", this.OpenEditor)
 			.Separator()
 			.Action("Import light file", () => this.Ui.OpenLightFile((path, file) => this.ImportLight(light, file)))

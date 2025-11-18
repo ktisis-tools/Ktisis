@@ -1,6 +1,8 @@
 using System.Numerics;
+using System;
 
 using Ktisis.ImGuizmo;
+using Ktisis.Editor.Transforms;
 
 namespace Ktisis.Data.Config.Sections;
 
@@ -10,7 +12,7 @@ public class GizmoConfig {
 	public Mode Mode = Mode.Local;
 	public Operation Operation = Operation.ROTATE;
 
-	public bool MirrorRotation = false;
+	public MirrorMode MirrorRotation = MirrorMode.Parallel;
 	public bool ParentBones = true;
 	public bool RelativeBones = true;
 
@@ -45,4 +47,9 @@ public class GizmoConfig {
 		ColorText = new Vector4(1.000f, 1.000f, 1.000f, 1.000f),
 		ColorTextShadow = new Vector4(0.000f, 0.000f, 0.000f, 1.000f)
 	};
+
+	public void SetNextMirrorRotation() {
+		var count = Enum.GetNames(typeof(MirrorMode)).Length;
+		this.MirrorRotation = (MirrorMode)((int)(this.MirrorRotation + 1) % count);
+	}
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -10,11 +11,11 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Extensions;
 
+using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 using CSCharacter = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
 using Ktisis.Editor.Characters.State;
-using Ktisis.Interface.Widgets;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.Skeleton;
@@ -26,7 +27,7 @@ using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Scene.Entities.Game;
 
-public class ActorEntity : CharaEntity, IDeletable {
+public class ActorEntity : CharaEntity, IDeletable, IHideable {
 	public readonly IGameObject Actor;
 
 	public bool IsManaged { get; set; }
@@ -119,6 +120,11 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 		var chara = this.GetHuman();
 		return chara != null ? chara->Customize[(byte)index] : (byte)0;
+	}
+
+	public unsafe string? GetRaceSexId() {
+		var human = this.GetHuman();
+		return human != null ? Convert.ToString((int)human->RaceSexId) : null;
 	}
 
 	// Viera ear handling

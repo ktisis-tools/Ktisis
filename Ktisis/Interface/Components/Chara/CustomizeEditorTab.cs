@@ -274,7 +274,7 @@ public class CustomizeEditorTab {
 		ImGui.SameLine();
 		using var _group = ImRaii.Group();
 		
-		var padHeight = btnHeight / 2 - (ImGui.GetFrameHeightWithSpacing() + UiBuilder.IconFont.FontSize);
+		var padHeight = btnHeight / 2 - (ImGui.GetFrameHeightWithSpacing() + (UiBuilder.DefaultFontSizePx));
 		ImGui.Dummy(Vector2.Zero with { Y = padHeight });
 		
 		ImGui.Text(feat.Name);

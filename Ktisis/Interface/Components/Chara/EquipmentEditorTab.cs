@@ -9,6 +9,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using Stain = Lumina.Excel.Sheets.Stain;
 
@@ -293,7 +294,7 @@ public class EquipmentEditorTab {
 		var bg = ImGui.GetWindowDrawList();
 		var min = ImGui.GetCursorScreenPos();
 		min.X -= style.WindowPadding.X + space;
-		var max = min + ImGui.GetContentRegionAvail() with { Y = UiBuilder.IconFont.FontSize + style.FramePadding.Y + space };
+		var max = min + ImGui.GetContentRegionAvail() with { Y = UiBuilder.DefaultFontSizePx + style.FramePadding.Y + space };
 		bg.AddRectFilled(min, max, color);
 
 		using var _textCol = ImRaii.PushColor(ImGuiCol.Text, GuiHelpers.CalcBlackWhiteTextColor(color));
@@ -472,7 +473,7 @@ public class EquipmentEditorTab {
 	private static float CalcItemWidth(float cursorStart) {
 		var innerSpace = ImGui.GetStyle().ItemInnerSpacing.X;
 		return Math.Min(
-			UiBuilder.IconFont.FontSize * 4 * 2 + innerSpace,
+			UiBuilder.DefaultFontSizePx * 4 * 2 + innerSpace,
 			ImGui.CalcItemWidth() - (ImGui.GetCursorPosX() - cursorStart) - innerSpace - ImGui.GetFrameHeight()
 		);
 	}

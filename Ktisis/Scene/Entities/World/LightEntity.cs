@@ -14,8 +14,20 @@ public enum LightEntityFlags {
 	Update = 1
 }
 
-public class LightEntity : WorldEntity, IDeletable {
+public class LightEntity : WorldEntity, IDeletable, IHideable {
 	public LightEntityFlags Flags { get; set; } = LightEntityFlags.None;
+
+	public unsafe bool IsHidden {
+		get {
+			var ptr = this.GetObject();
+			return ptr != null && !ptr->DrawObject.IsVisible;
+		}
+		set {
+			var ptr = this.GetObject();
+			if (ptr != null)
+				ptr->DrawObject.IsVisible = !ptr->DrawObject.IsVisible;
+		}
+	}
 
 	public unsafe new SceneLight* GetObject() => (SceneLight*)base.GetObject();
 	
@@ -46,6 +58,8 @@ public class LightEntity : WorldEntity, IDeletable {
 		base.SetTransform(trans);
 		this.Flags |= LightEntityFlags.Update;
 	}
+
+	public void ToggleHidden() => this.IsHidden = !this.IsHidden;
 
 	public bool Delete() {
 		this.GetModule().Delete(this);

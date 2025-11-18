@@ -114,7 +114,12 @@ public static class HavokPosing {
 		for (var i = boneIx; i < hkaSkele->Bones.Length; i++) {
 			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx)) continue;
 
-			var trans = GetModelTransform(pose, i)!;
+			var trans = GetModelTransform(pose, i);
+			if (trans == null) {
+				Ktisis.Log.Error($"HavokPosing.Propagate - null transform returned for pose; boneI {i} boneIx {boneIx}");
+				continue;
+			}
+
 			var scm = Matrix4x4.CreateScale(ClampVector3(trans.Scale));
 			var rtm = Matrix4x4.CreateFromQuaternion(deltaRot * trans.Rotation);
 			var trm = Matrix4x4.CreateTranslation(deltaPos + sourcePos + Vector3.Transform(trans.Position - sourcePos, deltaRot));
