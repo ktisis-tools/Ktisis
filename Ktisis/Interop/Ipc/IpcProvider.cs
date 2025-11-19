@@ -4,9 +4,14 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
+using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
+using Ktisis.Data.Config.Sections;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Posing;
+using Ktisis.Editor.Transforms;
+using Ktisis.ImGuizmo;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
@@ -23,8 +28,10 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     private ICallGateProvider<bool> IpcIsPosing { get; } = dpi.GetIpcProvider<bool>("Ktisis.IsPosing");
     private ICallGateProvider<uint, string, Task<bool>> IpcLoadPose { get; } = dpi.GetIpcProvider<uint, string, Task<bool>>("Ktisis.LoadPose");
     private ICallGateProvider<uint, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<uint, Task<string?>>("Ktisis.SavePose");
+    #if DEBUG
     private ICallGateProvider<uint, string, Matrix4x4, Task<bool>> IpcSetMatrix { get; } = dpi.GetIpcProvider<uint, string, Matrix4x4, Task<bool>>("Ktisis.SetMatrix");
     private ICallGateProvider<uint, string, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, Task<Matrix4x4?>>("Ktisis.GetMatrix");
+    #endif
     private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
 
     private (int, int) GetVersion() => (1, 0);
@@ -92,7 +99,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
         return ret;
     }
-
+    #if DEBUG
     private async Task<Matrix4x4?> GetMatrix(uint index, string boneName)
     {
         var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
@@ -103,15 +110,57 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     
     private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix)
     {
-        var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
+        var ctx = ctxManager.Current;
+        if (ctx is null)
+            return false;
+        
+        var actor = ctx.Scene?.GetEntityForIndex(index);
 
         var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
         if (bone is null)
             return false;
 
-        bone.SetMatrix(matrix);
+        var target = new TransformTarget(actor, [bone]);
+        var transform = ctx.Transform.Begin(target, setup =>
+        {
+            setup.MirrorRotation = true;
+            setup.ParentBones = true;
+            setup.RelativeBones = true;
+        });
+        
+        Ktisis.Log.Debug(target.GetTransform().ToString());
+        
+        transform.SetMatrix(matrix);
+        transform.Dispatch();
+        
+        
+        //
+        // unsafe
+        // {
+        //     var hkaPose = bone.GetPose();
+        //     if (hkaPose is null) return false;
+        //     
+        //     var initial = HavokPosing.GetModelTransform(hkaPose, bone.Info.BoneIndex);
+        //     
+        //     var transform = ctx.Transform.Begin(transformTarget);
+        //     
+        //     transform.SetTransform(new Transform(matrix));
+        //     transform.Dispatch();
+        //
+        //     if (!propogate)
+        //         return true;
+        //    
+        //     var target = HavokPosing.GetModelTransform(hkaPose, bone.Info.BoneIndex);
+        //     if (target is null) return false;
+        //         
+        //     HavokPosing.Propagate(bone.GetSkeleton(), bone.Info.PartialIndex, bone.Info.BoneIndex, target, initial);
+        // }
+
+
+        // bone.SetMatrix(matrix);
         return true;
     }
+    #endif
     
     public void RegisterIpc()
     {
@@ -120,8 +169,10 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         IpcIsPosing.RegisterFunc(IsActive);
         IpcLoadPose.RegisterFunc(LoadPose);
         IpcSavePose.RegisterFunc(SavePose);
-        IpcSetMatrix.RegisterFunc(SetMatrix);
+        #if DEBUG
         IpcGetMatrix.RegisterFunc(GetMatrix);
+        IpcSetMatrix.RegisterFunc(SetMatrix);
+        #endif
         IpcSelectedBones.RegisterFunc(SelectedBones);
     }
 }
