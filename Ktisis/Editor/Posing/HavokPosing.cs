@@ -54,7 +54,9 @@ public static class HavokPosing {
 	private unsafe static void SetCachedAbdomenMatrix(hkaPose* pose, Matrix4x4 matrix) {
 		_abdomenMatrixCache[(nint)pose] = matrix;
 	}
-	
+
+	public static void ClearCachedAbdomenMatrix() => _abdomenMatrixCache.Clear();
+
 	// Model transform
 	
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
@@ -66,7 +68,7 @@ public static class HavokPosing {
 	public unsafe static void SetModelTransform(hkaPose* pose, int boneIx, Transform trans) {
 		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
 			return;
-		SetMatrix(pose->ModelPose.Data + boneIx, trans.ComposeMatrix());
+		SetMatrix(pose, boneIx, trans.ComposeMatrix());
 	}
 
 	public unsafe static Transform? GetLocalTransform(hkaPose* pose, int boneIx) {

@@ -135,7 +135,9 @@ public class PosingManager : IPosingManager {
 				Ktisis.Log.Error(err.ToString());
 			}
 		}
-		
+
+		HavokPosing.ClearCachedAbdomenMatrix();
+
 		this.PoseModule?.SetEnabled(enable);
 	}
 
