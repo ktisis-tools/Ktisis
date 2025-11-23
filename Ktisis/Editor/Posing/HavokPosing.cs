@@ -18,6 +18,7 @@ public static class HavokPosing {
 	// Matrix wrappers
 	
 	private readonly static Alloc<Matrix4x4> Matrix = new(16);
+	private readonly static Dictionary<nint, Matrix4x4> _abdomenMatrixCache = new();
 
 	public unsafe static Matrix4x4 GetMatrix(hkQsTransformf* transform) {
 		transform->get4x4ColumnMajor((float*)Matrix.Address);
@@ -37,6 +38,21 @@ public static class HavokPosing {
 
 	public unsafe static void SetMatrix(hkaPose* pose, int boneIndex, Matrix4x4 matrix) {
 		SetMatrix(pose->ModelPose.Data + boneIndex, matrix);
+
+		if (pose->Skeleton->Bones[boneIndex].Name.String == "n_hara") {
+			SetCachedAbdomenMatrix(pose, matrix);
+		}
+	}
+
+	public unsafe static Matrix4x4 GetCachedAbdomenMatrix(hkaPose* pose, int boneIndex) {
+		if (_abdomenMatrixCache.TryGetValue((nint)pose, out var cached))
+			return cached;
+
+		return _abdomenMatrixCache[(nint)pose] = GetMatrix(pose->ModelPose.Data + boneIndex);
+	}
+
+	private unsafe static void SetCachedAbdomenMatrix(hkaPose* pose, Matrix4x4 matrix) {
+		_abdomenMatrixCache[(nint)pose] = matrix;
 	}
 	
 	// Model transform

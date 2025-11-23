@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
@@ -89,14 +90,11 @@ public sealed class PosingModule : HookModule {
 	private unsafe nint CalcBoneModelSpace(ref hkaPose pose, int boneIdx) {
 		if (this.Manager.IsSolvingIk)
 			return this._calcBoneModelSpaceHook.Original(ref pose, boneIdx);
-		// TODO: convert to simpler normalization, apply only to index-1 bones of *primary* skeletons
-		if (boneIdx == 1) {
-			// to prevent n_hara drift from this hook, modify the underlying hk transform values to match our rounded Transform vectors
-			var hkTransform = pose.ModelPose.Data + boneIdx;
-			var transform = new Transform(*hkTransform);
-			hkTransform->Translation = transform.Position.ToHavok();
-			hkTransform->Rotation = transform.Rotation.ToHavok();
-			hkTransform->Scale = transform.Scale.ToHavok();
+
+		if(pose.Skeleton->Bones[boneIdx].Name.String == "n_hara") {
+			var ptr = (hkaPose*)Unsafe.AsPointer(ref pose);
+			var cached = HavokPosing.GetCachedAbdomenMatrix(ptr, boneIdx);
+			HavokPosing.SetMatrix(ptr->ModelPose.Data + boneIdx, cached);
 		}
 		return (nint)(pose.ModelPose.Data + boneIdx);
 	}
