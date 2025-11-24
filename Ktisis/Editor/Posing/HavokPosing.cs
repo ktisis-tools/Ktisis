@@ -1,13 +1,14 @@
-using System.Numerics;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Numerics;
 
 using Dalamud.Utility;
 
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok.Animation.Rig;
 using FFXIVClientStructs.Havok.Common.Base.Container.Array;
 using FFXIVClientStructs.Havok.Common.Base.Math.Matrix;
 using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Common.Utility;
 using Ktisis.Interop;
@@ -18,7 +19,7 @@ public static class HavokPosing {
 	// Matrix wrappers
 	
 	private readonly static Alloc<Matrix4x4> Matrix = new(16);
-	private readonly static Dictionary<nint, Matrix4x4> _abdomenMatrixCache = new();
+	private readonly static ConcurrentDictionary<nint, Matrix4x4> _abdomenMatrixCache = new();
 
 	public unsafe static Matrix4x4 GetMatrix(hkQsTransformf* transform) {
 		transform->get4x4ColumnMajor((float*)Matrix.Address);
@@ -45,10 +46,9 @@ public static class HavokPosing {
 	}
 
 	public unsafe static Matrix4x4 GetCachedAbdomenMatrix(hkaPose* pose, int boneIndex) {
-		if (_abdomenMatrixCache.TryGetValue((nint)pose, out var cached))
-			return cached;
-
-		return _abdomenMatrixCache[(nint)pose] = GetMatrix(pose->ModelPose.Data + boneIndex);
+		return _abdomenMatrixCache.GetOrAdd((nint)pose, _ => {
+			return GetMatrix(pose->ModelPose.Data + boneIndex);
+		});
 	}
 
 	private unsafe static void SetCachedAbdomenMatrix(hkaPose* pose, Matrix4x4 matrix) {
