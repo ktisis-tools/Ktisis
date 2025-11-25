@@ -89,14 +89,14 @@ public sealed class PosingModule : HookModule {
 	private unsafe nint CalcBoneModelSpace(ref hkaPose pose, int boneIdx) {
 		if (this.Manager.IsSolvingIk)
 			return this._calcBoneModelSpaceHook.Original(ref pose, boneIdx);
-		// TODO: convert to simpler normalization, apply only to index-1 bones of *primary* skeletons
-		if (boneIdx == 1) {
+		// TODO: apply only to index-1 bones of *primary* skeletons
+		if (boneIdx == 1 && pose.Skeleton->Bones[boneIdx].Name.String == "n_hara") {
 			// to prevent n_hara drift from this hook, modify the underlying hk transform values to match our rounded Transform vectors
 			var hkTransform = pose.ModelPose.Data + boneIdx;
 			var transform = new Transform(*hkTransform);
-			hkTransform->Translation = transform.Position.ToHavok();
-			hkTransform->Rotation = transform.Rotation.ToHavok();
-			hkTransform->Scale = transform.Scale.ToHavok();
+			hkTransform->Translation = transform.Position.ToHavokRounded();
+			hkTransform->Rotation = transform.Rotation.ToHavokRounded();
+			hkTransform->Scale = transform.Scale.ToHavokRounded();
 		}
 		return (nint)(pose.ModelPose.Data + boneIdx);
 	}

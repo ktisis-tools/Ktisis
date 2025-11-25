@@ -91,19 +91,13 @@ public class TransformTable {
 
 		var op = flags.HasFlag(TransformTableFlags.Operation);
 		transOut = this.Transform.Set(transIn);
-		var pos = transOut.Position;
-		var rot = transOut.Rotation;
-		var scale = transOut.Scale;
 		if (flags.HasFlag(TransformTableFlags.Position))
-			this.DrawPosition(ref pos, op);
+			this.DrawPosition(ref transOut.Position, op);
 		if (flags.HasFlag(TransformTableFlags.Rotation))
-			this.DrawRotate(ref rot, op);
-		if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref scale, op))
+			this.DrawRotate(ref transOut.Rotation, op);
+		if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref transOut.Scale, op))
 			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 
-		transOut.Position = pos;
-		transOut.Rotation = rot;
-		transOut.Scale = scale;
 		return this.IsUsed;
 	}
 
