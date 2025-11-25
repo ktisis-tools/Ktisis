@@ -28,10 +28,8 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     private ICallGateProvider<bool> IpcIsPosing { get; } = dpi.GetIpcProvider<bool>("Ktisis.IsPosing");
     private ICallGateProvider<uint, string, Task<bool>> IpcLoadPose { get; } = dpi.GetIpcProvider<uint, string, Task<bool>>("Ktisis.LoadPose");
     private ICallGateProvider<uint, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<uint, Task<string?>>("Ktisis.SavePose");
-    #if DEBUG
     private ICallGateProvider<uint, string, Matrix4x4, Task<bool>> IpcSetMatrix { get; } = dpi.GetIpcProvider<uint, string, Matrix4x4, Task<bool>>("Ktisis.SetMatrix");
     private ICallGateProvider<uint, string, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, Task<Matrix4x4?>>("Ktisis.GetMatrix");
-    #endif
     private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
 
     private (int, int) GetVersion() => (1, 0);
@@ -160,6 +158,9 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         // bone.SetMatrix(matrix);
         return true;
     }
+    #else
+    private async Task<Matrix4x4?> GetMatrix(uint index, string boneName) => null;
+    private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix) => false;
     #endif
     
     public void RegisterIpc()
@@ -169,10 +170,8 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         IpcIsPosing.RegisterFunc(IsActive);
         IpcLoadPose.RegisterFunc(LoadPose);
         IpcSavePose.RegisterFunc(SavePose);
-        #if DEBUG
         IpcGetMatrix.RegisterFunc(GetMatrix);
         IpcSetMatrix.RegisterFunc(SetMatrix);
-        #endif
         IpcSelectedBones.RegisterFunc(SelectedBones);
     }
 }
