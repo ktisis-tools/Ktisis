@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Dalamud.Bindings.ImGui;
@@ -23,6 +24,7 @@ using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Interface.Components.Chara;
+using Ktisis.Scene.Modules.Lights;
 
 namespace Ktisis.Interface.Editor;
 
@@ -157,7 +159,10 @@ public class EditorInterface : IEditorInterface {
 
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
 	
-	public void RefreshGposeActors() => this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
+	public void RefreshSceneEntities() {
+		this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
+		this._ctx.Scene.GetModule<LightModule>().RefreshLightEntities();
+	}
 
 	// Entity windows
 	
@@ -165,7 +170,7 @@ public class EditorInterface : IEditorInterface {
 	public void OpenSavePreset(ActorEntity entity) => this._gui.CreatePopup<PresetSaveModal>(entity).Open();
 	
 	public void OpenActorEditor(ActorEntity actor) {
-		if (!this._ctx.Config.Editor.UseLegacyWindowBehavior)
+		if (!this._ctx.Config.Editor.UseLegacyWindowBehavior && this._ctx.Selection.Count > 0 && !this._ctx.Selection.GetSelected().Any(ent => ent.Equals(actor)))
 			actor.Select(SelectMode.Force);
 		this.OpenEditor<ActorWindow, ActorEntity>(actor);
 	}
@@ -222,6 +227,11 @@ public class EditorInterface : IEditorInterface {
 		var file = await this._ctx.Posing.SavePoseFile(pose);
 		this.ExportPoseFile(file);
 	}
+
+	public async Task OpenLightExport(LightEntity light) {
+		var file = await this._ctx.Scene.SaveLightFile(light);
+		this.ExportLightFile(file);
+	}
 	
 	// Import/export dialogs
 	
@@ -230,9 +240,18 @@ public class EditorInterface : IEditorInterface {
 		Extension = ".chara"
 	};
 
-	private readonly static FileDialogOptions PoseFileOptions = new() {
-		Filters = "Pose Files{.pose}",
+	private readonly static FileDialogOptions ExportPoseFileOptions = new() {
+		Filters = "Pose Files{.pose,.cmp}",
 		Extension = ".pose"
+	};
+
+	private readonly static FileDialogOptions LightFileOptions = new() {
+		Filters = "Light Files{.ktlight}",
+		Extension = ".ktlight"
+  };
+  
+	private readonly static FileDialogOptions ImportPoseFileOptions = new() {
+		Filters = "Pose Files{.pose,.cmp}"
 	};
 
 	private readonly static FileDialogOptions McdfFileOptions = new() {
@@ -247,20 +266,32 @@ public class EditorInterface : IEditorInterface {
 		this._gui.FileDialogs.OpenFile<PoseFile>("Open Pose File", (path, file) => {
 			file.ConvertLegacyBones();
 			handler.Invoke(path, file);
-		}, PoseFileOptions);
+		}, ImportPoseFileOptions);
 	}
 	
 	public void OpenMcdfFile(Action<string> handler) {
 		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions);
 	}
 
+	public void OpenLightFile(Action<string, LightFile> handler)
+		=> this._gui.FileDialogs.OpenFile("Open Light File", handler, LightFileOptions);
+
 	public void OpenReferenceImages(Action<string> handler) {
 		this._gui.FileDialogs.OpenImage("image", handler);
 	}
 
-	public void ExportCharaFile(CharaFile file)
-		=> this._gui.FileDialogs.SaveFile("Export Chara File", file, CharaFileOptions);
+	public void ExportCharaFile(CharaFile file) {
+		var options = CharaFileOptions;
+		options.DefaultFileName = file.Nickname;
+		this._gui.FileDialogs.SaveFile("Export Chara File", file, options);
+	}
 	
 	public void ExportPoseFile(PoseFile file)
-		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, PoseFileOptions);
+		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, ExportPoseFileOptions);
+
+	public void ExportLightFile(LightFile file) {
+		var options = LightFileOptions;
+		options.DefaultFileName = file.Nickname;
+		this._gui.FileDialogs.SaveFile("Export Light File", file, options);
+	}
 }

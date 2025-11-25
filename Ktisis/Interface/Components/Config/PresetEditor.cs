@@ -2,6 +2,7 @@
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -61,7 +62,7 @@ public class PresetEditor {
 	private void DrawPresetList() {
 		ImGui.TableNextColumn();
 		
-		using var _ = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, UiBuilder.DefaultFont.FontSize);
+		using var _ = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale);
 		foreach (var (name, bones) in Config.Presets) {
 			var flags = ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.SpanAvailWidth;
 			var isDefault = Config.PresetIsDefault(name);

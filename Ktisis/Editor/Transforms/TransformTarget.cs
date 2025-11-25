@@ -52,8 +52,17 @@ public class TransformTarget : ITransformTarget {
 			deltaMx = initialInverse * transform.ComposeMatrix();
 		else return;
 
-		if (this.Setup.MirrorRotation)
-			Matrix4x4.Invert(deltaMx, out deltaMx);
+		switch (this.Setup.MirrorRotation) {
+			case MirrorMode.Inverse:
+				Matrix4x4.Invert(deltaMx, out deltaMx);
+				break;
+			case MirrorMode.Reflect:
+				// todo: better handle reflection for separate objects not in same skeleton
+				Matrix4x4.Invert(deltaMx, out deltaMx);
+				break;
+			case MirrorMode.Parallel:
+				break;
+		}
 
 		foreach (var entity in this.Targets.Where(tar => tar is { IsValid: true } and not BoneNode)) {
 			if (entity is not ITransform manip) continue;
@@ -109,7 +118,7 @@ public class TransformTarget : ITransformTarget {
 		var boneTrans = bone.GetTransform();
 		if (boneTrans == null) return;
 
-		var mirror = this.Setup.MirrorRotation;
+		var mirror = this.Setup.MirrorRotation is MirrorMode.Inverse or MirrorMode.Reflect;
 		if (mirror && this.Primary is BoneNode pNode)
 			mirror &= !bone.IsBoneDescendantOf(pNode);
 
@@ -120,9 +129,17 @@ public class TransformTarget : ITransformTarget {
 			var newScale = boneTrans.Scale * delta.Scale;
 			Quaternion deltaRot;
 			Vector3 deltaPos;
-			
+
 			if (mirror) {
-				deltaRot = Quaternion.Conjugate(delta.Rotation);
+				if (this.Setup.MirrorRotation == MirrorMode.Inverse)
+					deltaRot = Quaternion.Conjugate(delta.Rotation);
+				else
+					deltaRot = new Quaternion(
+						delta.Rotation.X,
+						-delta.Rotation.Y,
+						-delta.Rotation.Z,
+						delta.Rotation.W
+					);
 				deltaPos = -delta.Position;
 			} else {
 				deltaRot = delta.Rotation;

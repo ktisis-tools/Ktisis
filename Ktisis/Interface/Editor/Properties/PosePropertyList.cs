@@ -62,6 +62,10 @@ public class PosePropertyList : ObjectPropertyList {
 
 		if (ImGui.Button("Export Pose"))
 			this._ctx.Interface.OpenPoseExport(pose);
+		ImGui.SameLine(0, spacing);
+
+		if (ImGui.Button("Flip Pose"))
+			this._ctx.Posing.ApplyFlipPose(pose);
 		ImGui.Spacing();
 
 		if (ImGui.Button("Set to Reference Pose"))

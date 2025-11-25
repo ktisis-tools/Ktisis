@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text;
 
@@ -9,6 +10,8 @@ using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
+using FFXIVClientStructs.Havok.Animation.Rig;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Editor.Context.Types;
@@ -60,6 +63,32 @@ public static class GameObjectEx {
 			return null;
 		
 		return ((CharacterBase*)drawObject)->Skeleton;
+	}
+
+	public unsafe static hkaDefaultAnimationControl* GetDefaultControlForIndex(this IGameObject gameObject, int animationIndex) {
+		// hacky reimplement of GetAnimationControl's clientstructs hka traversal
+		// todo: find a neater way to get the scrub & duration values
+		if (!gameObject.IsValid()) return null;
+
+		var skeleton = GetSkeleton(gameObject);
+		if (skeleton == null) return null;
+
+		// iterate all partials to try and find an animating skeleton that's valid for the provided index
+		var partials = new Span<PartialSkeleton>(skeleton->PartialSkeletons, skeleton->PartialSkeletonCount);
+		foreach (var partial in partials) {
+			var hkaAnimated = partial.GetHavokAnimatedSkeleton(0);
+			if (hkaAnimated == null) continue;
+			if (hkaAnimated->AnimationControls.Length == 0) continue;
+			if (animationIndex >= hkaAnimated->AnimationControls.Length) continue;
+			if (hkaAnimated->AnimationControls[animationIndex].Value == null) continue;
+
+			var defaultControl = hkaAnimated->AnimationControls[animationIndex].Value;
+			if (defaultControl->hkaAnimationControl.Binding.ptr == null) continue;
+			if (defaultControl->hkaAnimationControl.Binding.ptr->Animation.ptr == null) continue;
+			return defaultControl;
+		}
+
+		return null;
 	}
 
 	public unsafe static bool IsDrawing(this IGameObject gameObject) {

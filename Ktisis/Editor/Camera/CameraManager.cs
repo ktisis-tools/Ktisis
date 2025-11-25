@@ -29,6 +29,7 @@ public interface ICameraManager : IDisposable {
 	public void ToggleWorkCameraMode();
 
 	public KtisisCamera Create(CameraFlags flags = CameraFlags.None);
+	public bool DeleteCurrent();
 
 	public IGameObject? ResolveOrbitTarget(EditorCamera camera);
 }
@@ -171,6 +172,23 @@ public class CameraManager : ICameraManager {
 		this.SetCurrent(camera);
 		
 		return camera;
+	}
+
+	public bool DeleteCurrent() {
+		if (this.Current is not { IsValid: true } active || active.IsDefault )
+			return false;
+
+		try {
+			this.SetPrevious();
+			this.CameraList.Remove(active);
+			if (active is KtisisCamera ktActive)
+				ktActive.Dispose();
+		} catch (Exception e) {
+			Ktisis.Log.Error($"CameraManager.DeleteCurrent: {e}");
+			return false;
+		}
+
+		return true;
 	}
 
 	private unsafe bool CopyOntoCamera(EditorCamera camera) {

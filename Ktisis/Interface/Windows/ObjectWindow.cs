@@ -5,12 +5,14 @@ using System.Linq;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Transforms;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.ImGuizmo;
@@ -20,6 +22,7 @@ using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Interface.Windows;
 
@@ -131,7 +134,7 @@ public class ObjectWindow : KtisisWindow {
 	private void DrawToggles(ITransformTarget? target) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
-		var iconSize = UiBuilder.IconFont.FontSize * 2;
+		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
 
 		var mode = this._ctx.Config.Gizmo.Mode;
@@ -151,13 +154,21 @@ public class ObjectWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 
-		var isMirror = this._ctx.Config.Gizmo.MirrorRotation;
-		var flagIcon = isMirror ? FontAwesomeIcon.ArrowDownUpAcrossLine : FontAwesomeIcon.GripLines;
-		var flagKey = isMirror ? "mirror" : "parallel";
+		var mirrorState = this._ctx.Config.Gizmo.MirrorRotation;
+		var flagIcon = FontAwesomeIcon.GripLines;
+		var flagKey = "parallel";
+		if (mirrorState == MirrorMode.Inverse) {
+			flagIcon = FontAwesomeIcon.ArrowDownUpAcrossLine;
+			flagKey = "inverse";
+		}
+		else if (mirrorState == MirrorMode.Reflect) {
+			flagIcon = FontAwesomeIcon.ArrowsLeftRightToLine;
+			flagKey = "reflect";
+		}
 		var flagHint = this._ctx.Locale.Translate($"transform_edit.flags.{flagKey}");
 		if (Buttons.IconButtonTooltip(flagIcon, flagHint, iconBtnSize))
-			this._ctx.Config.Gizmo.MirrorRotation ^= true;
-		
+			this._ctx.Config.Gizmo.SetNextMirrorRotation();
+
 		ImGui.SameLine(0, spacing);
 
 		// Sibling Link selector
@@ -173,7 +184,7 @@ public class ObjectWindow : KtisisWindow {
 			var siblingHint = this._ctx.Locale.Translate(
 				$"transform_edit.sibling.{siblingKey}",
 				new Dictionary<string, string> {
-					{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
+						{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
 				}
 			);
 

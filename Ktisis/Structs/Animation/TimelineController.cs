@@ -9,6 +9,8 @@ public struct TimelineController {
 	[FieldOffset(0x18)] public unsafe TrackController* TrackController;
 	[FieldOffset(0x20)] public unsafe void* Child;
 	[FieldOffset(0x28)] public unsafe byte* Data;
+
+	// [FieldOffset(0x34)] public float CurrentTimestamp; ?? see ClientStructs, not sure if useful
 	
 	[FieldOffset(0x50)] public uint QueuedClipCount;
 	[FieldOffset(0x54)] public uint Flags;

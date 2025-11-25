@@ -30,7 +30,7 @@ public interface IEditorInterface {
 	public void OpenAssignCProfile(ActorEntity entity);
 	public void OpenOverworldActorList();
 	
-	public void RefreshGposeActors();
+	public void RefreshSceneEntities();
 
 	public void OpenRenameEntity(SceneEntity entity);
 	public void OpenSavePreset(ActorEntity actorEntity);
@@ -47,10 +47,12 @@ public interface IEditorInterface {
 	public Task OpenCharaExport(ActorEntity actor);
 	public void OpenPoseImport(ActorEntity actor);
 	public Task OpenPoseExport(EntityPose pose);
+	public Task OpenLightExport(LightEntity light);
 
 	public void OpenCharaFile(Action<string, CharaFile> handler);
 	public void OpenPoseFile(Action<string, PoseFile> handler);
 	public void OpenMcdfFile(Action<string> handler);
+	public void OpenLightFile(Action<string, LightFile> handler);
 
 	public void OpenReferenceImages(Action<string> handler);
 	

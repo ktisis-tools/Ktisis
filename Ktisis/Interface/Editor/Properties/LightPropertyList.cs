@@ -1,19 +1,29 @@
-﻿using System;
+using System;
 
+using Dalamud.Interface;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility.Raii;
+
+using GLib.Widgets;
 
 using Ktisis.Interface.Editor.Properties.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Structs.Lights;
+using Ktisis.Editor.Context.Types;
 
 namespace Ktisis.Interface.Editor.Properties;
 
 public class LightPropertyList : ObjectPropertyList {
+	private readonly IEditorContext _ctx;
 	private readonly LocaleManager _locale;
 
-	public LightPropertyList(LocaleManager locale) {
+	public LightPropertyList(
+		IEditorContext ctx,
+		LocaleManager locale
+	) {
+		this._ctx = ctx;
 		this._locale = locale;
 	}
 	
@@ -53,13 +63,14 @@ public class LightPropertyList : ObjectPropertyList {
 			case LightType.AreaLight:
 				var angleSpace = ImGui.GetStyle().ItemInnerSpacing.X;
 				var angleWidth = ImGui.CalcItemWidth() / 2 - angleSpace;
-				ImGui.PushItemWidth(angleWidth);
-				ImGui.SliderAngle("##AngleX", ref light->AreaAngle.X, -90, 90);
-				ImGui.SameLine(0, angleSpace);
-				ImGui.SliderAngle("Light Angle##AngleY", ref light->AreaAngle.Y, -90, 90);
-				ImGui.PopItemWidth();
+				using (var _ = ImRaii.ItemWidth(angleWidth)) {
+					ImGui.SliderAngle("##AngleX", ref light->AreaAngle.X, -90, 90);
+					ImGui.SameLine(0, angleSpace);
+					ImGui.SliderAngle("Light Angle##AngleY", ref light->AreaAngle.Y, -90, 90);
+				}
 				ImGui.SliderFloat("Falloff Angle##LightAngle", ref light->FalloffAngle, 0.0f, 180.0f, "%0.0f deg");
 				break;
+			
 		}
 		
 		ImGui.Spacing();
@@ -88,6 +99,14 @@ public class LightPropertyList : ObjectPropertyList {
 		ImGui.DragFloat("Intensity", ref light->Color.Intensity, 0.01f, 0.0f, 100.0f);
 		if (ImGui.DragFloat("Range##LightRange", ref light->Range, 0.1f, 0, 999))
 			entity.Flags |= LightEntityFlags.Update;
+
+		ImGui.Spacing();
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, "Import light settings"))
+			this._ctx.Interface.OpenLightFile((path, file) => this._ctx.Scene.ApplyLightFile(entity, file));
+
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Save, "Export light settings"))
+			this._ctx.Interface.OpenLightExport(entity);
 	}
 
 	private unsafe void DrawShadowsTab(LightEntity entity) {

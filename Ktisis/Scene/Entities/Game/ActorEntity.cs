@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -10,11 +11,11 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Extensions;
 
+using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 using CSCharacter = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
 using Ktisis.Editor.Characters.State;
-using Ktisis.Interface.Widgets;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.Skeleton;
@@ -26,7 +27,7 @@ using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Scene.Entities.Game;
 
-public class ActorEntity : CharaEntity, IDeletable {
+public class ActorEntity : CharaEntity, IDeletable, IHideable {
 	public readonly IGameObject Actor;
 
 	public bool IsManaged { get; set; }
@@ -119,6 +120,11 @@ public class ActorEntity : CharaEntity, IDeletable {
 
 		var chara = this.GetHuman();
 		return chara != null ? chara->Customize[(byte)index] : (byte)0;
+	}
+
+	public unsafe string? GetRaceSexId() {
+		var human = this.GetHuman();
+		return human != null ? Convert.ToString((int)human->RaceSexId) : null;
 	}
 
 	// Viera ear handling
@@ -282,5 +288,54 @@ public class ActorEntity : CharaEntity, IDeletable {
 				this._presetStates.Remove(preset);
 			}
 		}
+	}
+
+	// Gaze
+	public unsafe void SetActorGazeTarget(ActorEntity? otherActor) {
+		if (otherActor == null || otherActor.CsGameObject == null) return;
+
+		var targetId = otherActor.CsGameObject->GetGameObjectId();
+		// for PCs, set hard target and for non-PCs, bail if they have no gaze
+		if (this.Actor.IsPcCharacter()) {
+			this.Character->SetTargetId(targetId);
+			this.Character->SetSoftTargetId(targetId);
+			return;
+		} else if (this.GetActorGazeTarget() == 0)
+			return;
+
+		// for a non-pc with a gaze already, overwrite gaze target where it exists
+		var chara = (CharacterEx*)this.Character;
+		if (chara == null) return;
+
+		if (this.Gaze == null) this.Gaze = chara->Gaze;
+		var gaze = (ActorGaze)this.Gaze;
+
+		for (var i = 0; i < 3; i++) {
+			var type = (GazeControl)i;
+			var ctrl = gaze[type];
+			if (ctrl.TargetId.Type > 0 && ctrl.TargetId.ObjectId > 0) {
+				ctrl.TargetId = targetId;
+				gaze[type] = ctrl;
+			}
+		}
+		this.Gaze = gaze;
+	}
+
+	public unsafe uint GetActorGazeTarget() {
+		var chara = this.IsValid ? (CharacterEx*)this.Character : null;
+		if (chara == null) return 0;
+
+		for (var i = 0; i < 3; i++) {
+			var type = (GazeControl)i;
+			var baseGaze = chara->Gaze[type];
+			if (baseGaze.Mode == GazeMode.Object
+				&& baseGaze.TargetId.Type > 0
+				&& baseGaze.TargetId.ObjectId >= 201
+				&& baseGaze.TargetId.ObjectId <= 243
+			)
+				return baseGaze.TargetId.ObjectId;
+		}
+
+		return 0;
 	}
 }
