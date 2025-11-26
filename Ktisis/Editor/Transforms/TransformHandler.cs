@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Numerics;
 
@@ -53,8 +54,12 @@ public class TransformHandler : ITransformHandler {
 	
 	// Transformation
 
-	public ITransformMemento Begin(ITransformTarget target) {
-		target.Setup.Configure(this._context.Config.Gizmo);
+	public ITransformMemento Begin(ITransformTarget target) => this.Begin(target, s => s.Configure(this._context.Config.Gizmo));
+
+	public ITransformMemento Begin(ITransformTarget target, Action<TransformSetup> configure)
+	{
+		configure(target.Setup);
+		
 		return new TransformMemento(
 			this,
 			target
