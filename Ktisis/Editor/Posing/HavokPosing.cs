@@ -9,6 +9,8 @@ using FFXIVClientStructs.Havok.Animation.Rig;
 using FFXIVClientStructs.Havok.Common.Base.Container.Array;
 using FFXIVClientStructs.Havok.Common.Base.Math.Matrix;
 using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
+using FFXIVClientStructs.Havok.Common.Base.Math.Quaternion;
+using FFXIVClientStructs.Havok.Common.Base.Math.Vector;
 
 using Ktisis.Common.Utility;
 using Ktisis.Interop;
@@ -19,7 +21,7 @@ public static class HavokPosing {
 	// Matrix wrappers
 	
 	private readonly static Alloc<Matrix4x4> Matrix = new(16);
-	private readonly static ConcurrentDictionary<nint, Matrix4x4> _abdomenMatrixCache = new();
+	private readonly static ConcurrentDictionary<nint, Transform?> _abdomenTransformCache = new();
 
 	public unsafe static Matrix4x4 GetMatrix(hkQsTransformf* transform) {
 		transform->get4x4ColumnMajor((float*)Matrix.Address);
@@ -39,42 +41,94 @@ public static class HavokPosing {
 
 	public unsafe static void SetMatrix(hkaPose* pose, int boneIndex, Matrix4x4 matrix) {
 		SetMatrix(pose->ModelPose.Data + boneIndex, matrix);
-
-		if (pose->Skeleton->Bones[boneIndex].Name.String == "n_hara") {
-			SetCachedAbdomenMatrix(pose, matrix);
-		}
 	}
-
-	public unsafe static Matrix4x4 GetCachedAbdomenMatrix(hkaPose* pose, int boneIndex) {
-		return _abdomenMatrixCache.GetOrAdd((nint)pose, _ => {
-			return GetMatrix(pose->ModelPose.Data + boneIndex);
-		});
-	}
-
-	private unsafe static void SetCachedAbdomenMatrix(hkaPose* pose, Matrix4x4 matrix) {
-		_abdomenMatrixCache[(nint)pose] = matrix;
-	}
-
-	public static void ClearCachedAbdomenMatrix() => _abdomenMatrixCache.Clear();
 
 	// Model transform
-	
+
+	public unsafe static void CalcCachedAbdomenModelTransform(hkaPose* pose, int boneIndex) {
+		var cached = _abdomenTransformCache.GetOrAdd((nint)pose, _ => {
+			return GetModelTransform(pose, boneIndex);
+		});
+		if(cached == null) return;
+
+		var qs = pose->ModelPose.Data + boneIndex;
+		qs->Translation = new hkVector4f {
+			X = cached.Position.X,
+			Y = cached.Position.Y,
+			Z = cached.Position.Z,
+			W = 0f
+		};
+		qs->Rotation = new hkQuaternionf {
+			X = cached.Rotation.X,
+			Y = cached.Rotation.Y,
+			Z = cached.Rotation.Z,
+			W = cached.Rotation.W
+		};
+		qs->Scale = new hkVector4f {
+			X = cached.Scale.X,
+			Y = cached.Scale.Y,
+			Z = cached.Scale.Z,
+			W = 0f
+		};
+	}
+
+	private unsafe static void SetCachedAbdomenModelTransform(hkaPose* pose, Transform transform) {
+		_abdomenTransformCache[(nint)pose] = transform;
+	}
+
+	public static void ClearCachedAbdomenModelTransform() => _abdomenTransformCache.Clear();
+
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
-		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
+		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx >= pose->ModelPose.Length)
 			return null;
-		return new Transform(GetMatrix(pose->ModelPose.Data + boneIx));
+
+		var qs = pose->ModelPose.Data + boneIx;
+		var pos = new Vector3(qs->Translation.X, qs->Translation.Y, qs->Translation.Z);
+		var rot = new Quaternion(qs->Rotation.X, qs->Rotation.Y, qs->Rotation.Z, qs->Rotation.W);
+		var sca = new Vector3(qs->Scale.X, qs->Scale.Y, qs->Scale.Z);
+
+		return new Transform(pos, rot, sca);
 	}
 
 	public unsafe static void SetModelTransform(hkaPose* pose, int boneIx, Transform trans) {
-		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx > pose->ModelPose.Length)
+		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx >= pose->ModelPose.Length)
 			return;
-		SetMatrix(pose, boneIx, trans.ComposeMatrix());
+
+		var qs = pose->ModelPose.Data + boneIx;
+		qs->Translation = new hkVector4f {
+			X = trans.Position.X,
+			Y = trans.Position.Y,
+			Z = trans.Position.Z,
+			W = 0f
+		};
+		qs->Rotation = new hkQuaternionf {
+			X = trans.Rotation.X,
+			Y = trans.Rotation.Y,
+			Z = trans.Rotation.Z,
+			W = trans.Rotation.W
+		};
+		qs->Scale = new hkVector4f {
+			X = trans.Scale.X,
+			Y = trans.Scale.Y,
+			Z = trans.Scale.Z,
+			W = 0f
+		};
+
+		if (pose->Skeleton->Bones[boneIx].Name.String == "n_hara") {
+			SetCachedAbdomenModelTransform(pose, trans);
+		}
 	}
 
 	public unsafe static Transform? GetLocalTransform(hkaPose* pose, int boneIx) {
-		if (pose == null || pose->LocalPose.Data == null || boneIx < 0 || boneIx > pose->LocalPose.Length)
+		if (pose == null || pose->LocalPose.Data == null || boneIx < 0 || boneIx >= pose->LocalPose.Length)
 			return null;
-		return new Transform(GetMatrix(pose->LocalPose.Data + boneIx));
+
+		var qs = pose->LocalPose.Data + boneIx;
+		var pos = new Vector3(qs->Translation.X, qs->Translation.Y, qs->Translation.Z);
+		var rot = new Quaternion(qs->Rotation.X, qs->Rotation.Y, qs->Rotation.Z, qs->Rotation.W);
+		var sca = new Vector3(qs->Scale.X, qs->Scale.Y, qs->Scale.Z);
+
+		return new Transform(pos, rot, sca);
 	}
 	
 	// Propagation
@@ -138,10 +192,10 @@ public static class HavokPosing {
 				continue;
 			}
 
-			var scm = Matrix4x4.CreateScale(ClampVector3(trans.Scale));
-			var rtm = Matrix4x4.CreateFromQuaternion(deltaRot * trans.Rotation);
-			var trm = Matrix4x4.CreateTranslation(deltaPos + sourcePos + Vector3.Transform(trans.Position - sourcePos, deltaRot));
-			SetMatrix(pose, i, scm * rtm * trm);
+			var pos = deltaPos + sourcePos + Vector3.Transform(trans.Position - sourcePos, deltaRot);
+			var rot = Quaternion.Normalize(deltaRot * trans.Rotation);
+			var sca = ClampVector3(trans.Scale);
+			SetModelTransform(pose, i, new Transform(pos, rot, sca));
 		}
 	}
 	private static Vector3 ClampVector3(Vector3 vector) {

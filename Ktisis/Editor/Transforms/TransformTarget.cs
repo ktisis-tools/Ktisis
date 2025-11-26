@@ -73,7 +73,7 @@ public class TransformTarget : ITransformTarget {
 			if (entity == this.Primary) {
 				manip.SetTransform(transform);
 			} else {
-				trans.DecomposeMatrix(trans.ComposeMatrix() * deltaMx);
+				trans.DecomposeMatrixPrecise(trans.ComposeMatrix() * deltaMx, trans);
 				manip.SetTransform(trans);
 			}
 		}
@@ -161,7 +161,7 @@ public class TransformTarget : ITransformTarget {
 		}
 		
 		var bInitial = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
-		bone.SetMatrix(newMx);
+		bone.SetTransform(new Transform(newMx, bInitial));
 
 		if (!this.Setup.ParentBones) return;
 

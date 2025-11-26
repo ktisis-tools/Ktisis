@@ -241,7 +241,7 @@ public class ObjectWindow : KtisisWindow {
 		this._gizmo.End();
 
 		if (result)
-			transform.DecomposeMatrix(matrix);
+			transform.DecomposeMatrixPrecise(matrix, transform);
 
 		return result;
 	}

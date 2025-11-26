@@ -93,8 +93,7 @@ public sealed class PosingModule : HookModule {
 
 		if(pose.Skeleton->Bones[boneIdx].Name.String == "n_hara") {
 			var ptr = (hkaPose*)Unsafe.AsPointer(ref pose);
-			var cached = HavokPosing.GetCachedAbdomenMatrix(ptr, boneIdx);
-			HavokPosing.SetMatrix(ptr->ModelPose.Data + boneIdx, cached);
+			HavokPosing.CalcCachedAbdomenModelTransform(ptr, boneIdx);
 		}
 		return (nint)(pose.ModelPose.Data + boneIdx);
 	}
