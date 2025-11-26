@@ -23,6 +23,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     private ICallGateProvider<bool> IpcRefreshActions { get; } = dpi.GetIpcProvider<bool>("Ktisis.RefreshActors");
     private ICallGateProvider<bool> IpcIsPosing { get; } = dpi.GetIpcProvider<bool>("Ktisis.IsPosing");
     private ICallGateProvider<uint, string, Task<bool>> IpcLoadPose { get; } = dpi.GetIpcProvider<uint, string, Task<bool>>("Ktisis.LoadPose");
+    private ICallGateProvider<uint, string, bool, bool, bool, Task<bool>> IpcLoadPoseExtended { get; } = dpi.GetIpcProvider<uint, string, bool, bool, bool, Task<bool>>("Ktisis.LoadPoseExtended");
     private ICallGateProvider<uint, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<uint, Task<string?>>("Ktisis.SavePose");
     private ICallGateProvider<uint, string, Matrix4x4, Task<bool>> IpcSetMatrix { get; } = dpi.GetIpcProvider<uint, string, Matrix4x4, Task<bool>>("Ktisis.SetMatrix");
     private ICallGateProvider<uint, string, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, Task<Matrix4x4?>>("Ktisis.GetMatrix");
@@ -37,8 +38,21 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     }
 
     private bool IsActive() => ctxManager.Current?.Posing.IsEnabled ?? false;
+    
+    private async Task<bool> LoadPose(uint index, string json, bool rotation, bool position, bool scale)
+    {
+        var transforms = PoseTransforms.None;
+        if (rotation) transforms |= PoseTransforms.Rotation;
+        if (position) transforms |= PoseTransforms.Position;
+        if (scale) transforms |= PoseTransforms.Scale;
 
+        return await LoadPose(index, json, transforms);
+    }
+    
     private async Task<bool> LoadPose(uint index, string json)
+        => await LoadPose(index, json, PoseTransforms.Rotation);
+
+    private async Task<bool> LoadPose(uint index, string json, PoseTransforms transforms )
     {
         if (ctxManager.Current is null)
             return false;
@@ -52,7 +66,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         await ctxManager.Current.Posing.ApplyPoseFile(
             actor.Pose!,
             file,
-            transforms: PoseTransforms.Position | PoseTransforms.Rotation | PoseTransforms.Scale
+            transforms: transforms
         );
         
         return true;
@@ -170,6 +184,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         IpcRefreshActions.RegisterFunc(RefreshActors);
         IpcIsPosing.RegisterFunc(IsActive);
         IpcLoadPose.RegisterFunc(LoadPose);
+        IpcLoadPoseExtended.RegisterFunc(LoadPose);
         IpcSavePose.RegisterFunc(SavePose);
         IpcGetMatrix.RegisterFunc(GetMatrix);
         IpcSetMatrix.RegisterFunc(SetMatrix);
