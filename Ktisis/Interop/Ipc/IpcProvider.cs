@@ -4,15 +4,11 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
-using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
-using Ktisis.Data.Config.Sections;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
-using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Transforms;
-using Ktisis.ImGuizmo;
-using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules.Actors;
@@ -53,7 +49,12 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         if (actor is null || file is null)
             return false;
 
-        await ctxManager.Current.Posing.ApplyPoseFile(actor.Pose!, file);
+        await ctxManager.Current.Posing.ApplyPoseFile(
+            actor.Pose!,
+            file,
+            transforms: PoseTransforms.Position | PoseTransforms.Rotation | PoseTransforms.Scale
+        );
+        
         return true;
     }
 
@@ -121,7 +122,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         var target = new TransformTarget(actor, [bone]);
         var transform = ctx.Transform.Begin(target, setup =>
         {
-            setup.MirrorRotation = true;
+            setup.MirrorRotation = MirrorMode.Inverse;
             setup.ParentBones = true;
             setup.RelativeBones = true;
         });
