@@ -191,6 +191,7 @@ public class TransformTable {
 
 	private bool DrawAxis(string id, ref float value, float speed, uint col) {
 		bool result;
+		bool stepped = false;
 		using (ImRaii.PushStyle(ImGuiStyleVar.FramePadding, ImGui.GetStyle().FramePadding + new Vector2(0.1f, 0.1f))) {
 			using var _ = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0.1f);
 			using var __ = ImRaii.PushColor(ImGuiCol.Border, col);
@@ -207,13 +208,14 @@ public class TransformTable {
 
 					value += mw * step;
 					result = true;
+					stepped = true;
 				}
 			}
 		}
 
 		this.IsActive |= ImGui.IsItemActive();
 		// if we lose focus after having been focused, say we're disabled to represent clicking out and not breaking other transformtables
-		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | (this.WasFocused && !ImGui.IsWindowFocused());
+		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | stepped | (this.WasFocused && !ImGui.IsWindowFocused());
 		return result;
 	}
 
