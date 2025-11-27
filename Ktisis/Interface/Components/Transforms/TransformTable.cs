@@ -50,6 +50,7 @@ public class TransformTable {
 	
 	public bool IsActive { get; private set; }
 	public bool IsDeactivated { get; private set; }
+	private bool WasFocused;
 
 	private Vector3 Angles = Vector3.Zero;
 	private Quaternion Value = Quaternion.Identity;
@@ -98,6 +99,7 @@ public class TransformTable {
 		if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref transOut.Scale, op))
 			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 
+		this.WasFocused = ImGui.IsWindowFocused();
 		return this.IsUsed;
 	}
 
@@ -166,7 +168,7 @@ public class TransformTable {
 	}
 
 	private bool DrawEuler(string id, ref Vector3 vec) {
-		var used = this.DrawXYZ(id, ref vec, 0.2f, true);
+		var used = this.DrawXYZ(id, ref vec, 0.2f);
 		if (used) vec = vec.NormalizeAngles();
 		this.IsUsed |= used;
 		return used;
@@ -174,20 +176,20 @@ public class TransformTable {
 	
 	// Individual components
 
-	private bool DrawXYZ(string id, ref Vector3 vec, float speed, bool isEuler = false) {
+	private bool DrawXYZ(string id, ref Vector3 vec, float speed) {
 		var result = false;
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		using var _ = ImRaii.ItemWidth((ImGui.CalcItemWidth() - spacing * 2) / 3);
 		
-		result |= this.DrawAxis($"{id}_X", ref vec.X, speed, AxisColors[0], isEuler);
+		result |= this.DrawAxis($"{id}_X", ref vec.X, speed, AxisColors[0]);
 		ImGui.SameLine(0, spacing);
-		result |= this.DrawAxis($"{id}_Y", ref vec.Y, speed, AxisColors[1], isEuler);
+		result |= this.DrawAxis($"{id}_Y", ref vec.Y, speed, AxisColors[1]);
 		ImGui.SameLine(0, spacing);
-		result |= this.DrawAxis($"{id}_Z", ref vec.Z, speed, AxisColors[2], isEuler);
+		result |= this.DrawAxis($"{id}_Z", ref vec.Z, speed, AxisColors[2]);
 		return result;
 	}
 
-	private bool DrawAxis(string id, ref float value, float speed, uint col, bool isEuler) {
+	private bool DrawAxis(string id, ref float value, float speed, uint col) {
 		bool result;
 		using (ImRaii.PushStyle(ImGuiStyleVar.FramePadding, ImGui.GetStyle().FramePadding + new Vector2(0.1f, 0.1f))) {
 			using var _ = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0.1f);
@@ -197,7 +199,7 @@ public class TransformTable {
 				ImGuiP.SetItemUsingMouseWheel();
 				var mw = (int)ImGui.GetIO().MouseWheel;
 				if (mw != 0) {
-					var step = speed *= 10f; // scale steps by 1 place since its kinda slow by default
+					var step = speed * 10f; // scale steps by 1 place since its kinda slow by default
 					if (ImGui.IsKeyDown(ImGuiKey.ModShift))
 						step *= FastStep;
 					else if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
@@ -208,12 +210,13 @@ public class TransformTable {
 				}
 			}
 		}
-	
+
 		this.IsActive |= ImGui.IsItemActive();
-		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | !ImGui.IsWindowFocused();
+		// if we lose focus after having been focused, say we're disabled to represent clicking out and not breaking other transformtables
+		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | (this.WasFocused && !ImGui.IsWindowFocused());
 		return result;
 	}
-	
+
 	// Space calculations
 
 	private static float CalcTableAvail()

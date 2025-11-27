@@ -39,7 +39,7 @@ public interface IEditorInterface {
 	public void OpenActorEditor(ActorEntity actor);
 	public void OpenLightEditor(LightEntity light);
 	
-	public void OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity;
+	public bool OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity;
 	
 	public void OpenEditorFor(SceneEntity entity);
 

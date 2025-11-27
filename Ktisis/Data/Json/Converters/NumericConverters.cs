@@ -101,7 +101,7 @@ internal class TransformConverter(JsonFileSerializer json) : JsonConverter<Trans
 
 	public override void Write(Utf8JsonWriter writer, Transform value, JsonSerializerOptions options) {
 		writer.WriteStartObject();
-		foreach (var prop in typeof(Transform).GetProperties()) {
+		foreach (var prop in typeof(Transform).GetFields()) {
 			writer.WritePropertyName(prop.Name);
 
 			// did I complain about how bad this is yet?
