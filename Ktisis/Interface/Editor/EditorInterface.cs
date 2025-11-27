@@ -170,9 +170,14 @@ public class EditorInterface : IEditorInterface {
 	public void OpenSavePreset(ActorEntity entity) => this._gui.CreatePopup<PresetSaveModal>(entity).Open();
 	
 	public void OpenActorEditor(ActorEntity actor) {
-		if (!this._ctx.Config.Editor.UseLegacyWindowBehavior && this._ctx.Selection.Count > 0 && !this._ctx.Selection.GetSelected().Any(ent => ent.Equals(actor)))
+		var opened = this.OpenEditor<ActorWindow, ActorEntity>(actor);
+		if (
+			opened
+			&& !this._ctx.Config.Editor.UseLegacyWindowBehavior
+			&& this._ctx.Selection.Count > 0
+			&& !this._ctx.Selection.GetSelected().Any(ent => ent.Equals(actor))
+		)
 			actor.Select(SelectMode.Force);
-		this.OpenEditor<ActorWindow, ActorEntity>(actor);
 	}
 	
 	public void OpenLightEditor(LightEntity light) {
@@ -183,7 +188,7 @@ public class EditorInterface : IEditorInterface {
 		this.OpenObjectEditor(light);
 	}
 
-	public void OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
+	public bool OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);
 		editor.SetTarget(entity);
 
@@ -193,6 +198,7 @@ public class EditorInterface : IEditorInterface {
 			editor.Open();
 			ImGui.SetWindowFocus(editor.WindowName);
 		}
+		return editor.IsOpen;
 	}
     
 	public void OpenEditorFor(SceneEntity entity) {
