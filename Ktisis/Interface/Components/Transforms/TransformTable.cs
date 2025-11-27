@@ -47,7 +47,8 @@ public class TransformTable {
 	// State
 
 	private bool IsUsed;
-	
+	private bool WasUsed;
+
 	public bool IsActive { get; private set; }
 	public bool IsDeactivated { get; private set; }
 
@@ -97,6 +98,13 @@ public class TransformTable {
 			this.DrawRotate(ref transOut.Rotation, op);
 		if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref transOut.Scale, op))
 			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
+
+		if (this.IsUsed)
+			this.WasUsed = true;
+		if (!ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow) && this.WasUsed)
+			this.IsDeactivated = true;
+		if (this.IsDeactivated && this.WasUsed)
+			this.WasUsed = false;
 
 		return this.IsUsed;
 	}
@@ -210,7 +218,7 @@ public class TransformTable {
 		}
 	
 		this.IsActive |= ImGui.IsItemActive();
-		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | !ImGui.IsWindowFocused();
+		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit();
 		return result;
 	}
 	
