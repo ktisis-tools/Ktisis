@@ -51,6 +51,7 @@ public class TransformTable {
 	public bool IsActive { get; private set; }
 	public bool IsDeactivated { get; private set; }
 	private bool WasFocused;
+	private string? WasStepping = null;
 
 	private Vector3 Angles = Vector3.Zero;
 	private Quaternion Value = Quaternion.Identity;
@@ -191,11 +192,13 @@ public class TransformTable {
 
 	private bool DrawAxis(string id, ref float value, float speed, uint col) {
 		bool result;
+		bool stopStepping = false;
 		using (ImRaii.PushStyle(ImGuiStyleVar.FramePadding, ImGui.GetStyle().FramePadding + new Vector2(0.1f, 0.1f))) {
 			using var _ = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0.1f);
 			using var __ = ImRaii.PushColor(ImGuiCol.Border, col);
 			result = ImGui.DragFloat(id, ref value, speed, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
 			if (ImGui.IsItemHovered()) {
+				Ktisis.Log.Info($"{id} Hovered, checking mouse wheel.");
 				ImGuiP.SetItemUsingMouseWheel();
 				var mw = (int)ImGui.GetIO().MouseWheel;
 				if (mw != 0) {
@@ -207,13 +210,26 @@ public class TransformTable {
 
 					value += mw * step;
 					result = true;
+					WasStepping = id;
+					Ktisis.Log.Info($"{id} Step, WasStepping set to true");
 				}
+			} else {
+				Ktisis.Log.Info($"{id} Not hovered.");
+				if (WasStepping == id) {
+					stopStepping = true;
+					Ktisis.Log.Info($"{id} No Step, setting it to false.");
+				}
+				
 			}
-		}
+		} 
 
 		this.IsActive |= ImGui.IsItemActive();
 		// if we lose focus after having been focused, say we're disabled to represent clicking out and not breaking other transformtables
-		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | (this.WasFocused && !ImGui.IsWindowFocused());
+		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | (WasStepping == id && stopStepping) | (this.WasFocused && !ImGui.IsWindowFocused());
+		
+		if (stopStepping)
+			WasStepping = null;
+		
 		return result;
 	}
 
