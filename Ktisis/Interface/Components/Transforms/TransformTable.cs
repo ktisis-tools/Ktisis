@@ -198,7 +198,6 @@ public class TransformTable {
 			using var __ = ImRaii.PushColor(ImGuiCol.Border, col);
 			result = ImGui.DragFloat(id, ref value, speed, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
 			if (ImGui.IsItemHovered()) {
-				Ktisis.Log.Info($"{id} Hovered, checking mouse wheel.");
 				ImGuiP.SetItemUsingMouseWheel();
 				var mw = (int)ImGui.GetIO().MouseWheel;
 				if (mw != 0) {
@@ -211,15 +210,9 @@ public class TransformTable {
 					value += mw * step;
 					result = true;
 					WasStepping = id;
-					Ktisis.Log.Info($"{id} Step, WasStepping set to true");
 				}
-			} else {
-				Ktisis.Log.Info($"{id} Not hovered.");
-				if (WasStepping == id) {
-					stopStepping = true;
-					Ktisis.Log.Info($"{id} No Step, setting it to false.");
-				}
-				
+			} else if (WasStepping == id) {
+				stopStepping = true;
 			}
 		} 
 
