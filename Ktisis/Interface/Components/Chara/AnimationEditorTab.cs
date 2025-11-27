@@ -82,6 +82,7 @@ public class AnimationEditorTab {
 				Ktisis.Log.Error($"Failed to fetch animations:\n{task.Exception}");
 		});
 	}
+	public void ClearPoseExpression() => this.PoseExpression = null;
 	
 	// Draw
 	
@@ -104,7 +105,8 @@ public class AnimationEditorTab {
 			ImGui.Spacing();
 			ImGui.Separator();
 			ImGui.Spacing();
-		}
+		} else
+			this.PoseExpression = null;
 		
 		var avail = ImGui.GetContentRegionAvail();
 		using (var _ = ImRaii.Child("##animFrame", avail with { X = avail.X * 0.35f })) {
