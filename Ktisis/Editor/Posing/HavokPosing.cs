@@ -142,7 +142,7 @@ public static class HavokPosing {
 		
 		var sourcePos = target.Position;
 		var deltaPos = sourcePos - initial.Position;
-		var deltaRot = target.Rotation / initial.Rotation;
+		var deltaRot = Quaternion.Normalize(target.Rotation / initial.Rotation);
 		Propagate(pose, boneIx, sourcePos, deltaPos, deltaRot);
 
 		if (partialIx != 0 || !propagatePartials) return;
@@ -192,10 +192,10 @@ public static class HavokPosing {
 				continue;
 			}
 
-			var pos = deltaPos + sourcePos + Vector3.Transform(trans.Position - sourcePos, deltaRot);
-			var rot = Quaternion.Normalize(deltaRot * trans.Rotation);
-			var sca = ClampVector3(trans.Scale);
-			SetModelTransform(pose, i, new Transform(pos, rot, sca));
+			var scm = Matrix4x4.CreateScale(ClampVector3(trans.Scale));
+			var rtm = Matrix4x4.CreateFromQuaternion(Quaternion.Normalize(deltaRot * trans.Rotation));
+			var trm = Matrix4x4.CreateTranslation(deltaPos + sourcePos + Vector3.Transform(trans.Position - sourcePos, deltaRot));
+			SetModelTransform(pose, i, new Transform(scm * rtm * trm, trans));
 		}
 	}
 	private static Vector3 ClampVector3(Vector3 vector) {
@@ -223,13 +223,13 @@ public static class HavokPosing {
 		var initial = GetModelTransform(pose, partial.ConnectedBoneIndex)!;
 		var target = GetModelTransform(rootPose, partial.ConnectedParentBoneIndex)!;
 		
-		var deltaRot = target.Rotation / initial.Rotation;
+		var deltaRot = Quaternion.Normalize(target.Rotation / initial.Rotation);
 
 		var step1 = new Transform(target.Position, initial.Rotation, initial.Scale);
 		SetModelTransform(pose, partial.ConnectedBoneIndex, step1);
 		Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step1, initial);
 
-		var step2 = new Transform(target.Position, deltaRot * initial.Rotation, target.Scale);
+		var step2 = new Transform(target.Position, Quaternion.Normalize(deltaRot * initial.Rotation), target.Scale);
 		SetModelTransform(pose, partial.ConnectedBoneIndex, step2);
 		Propagate(modelSkeleton, partialIndex, partial.ConnectedBoneIndex, step2, step1);
 		
@@ -253,7 +253,7 @@ public static class HavokPosing {
 			var model = GetModelTransform(pose, i)!;
 
 			model.Position = parent.Position + Vector3.Transform(local.Position, parent.Rotation);
-			model.Rotation = parent.Rotation * local.Rotation;
+			model.Rotation = Quaternion.Normalize(parent.Rotation * local.Rotation);
 			SetModelTransform(pose, i, model);
 		}
 		

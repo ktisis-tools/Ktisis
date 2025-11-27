@@ -154,7 +154,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 			var transform = HavokPosing.GetModelTransform(poseOut, parentId)!;
 			
 			transform.Position += Vector3.Transform(local.Position, transform.Rotation);
-			transform.Rotation *= local.Rotation; 
+			transform.Rotation = Quaternion.Normalize(transform.Rotation * local.Rotation);
 			transform.Scale *= local.Scale;
 			HavokPosing.SetModelTransform(poseOut, i, transform);
 		}

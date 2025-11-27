@@ -91,7 +91,7 @@ public sealed class PosingModule : HookModule {
 		if (this.Manager.IsSolvingIk)
 			return this._calcBoneModelSpaceHook.Original(ref pose, boneIdx);
 
-		if(boneIdx == 1 && pose.Skeleton->Bones[boneIdx].Name.String == "n_hara") {
+		if (boneIdx == 1 && pose.Skeleton->Bones[boneIdx].Name.String == "n_hara") {
 			var ptr = (hkaPose*)Unsafe.AsPointer(ref pose);
 			HavokPosing.CalcCachedAbdomenModelTransform(ptr, boneIdx);
 		}
