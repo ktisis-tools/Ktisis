@@ -244,19 +244,16 @@ public class CustomizeEditorTab {
 	private void DrawFeatIconParams(MakeTypeRace data) {
 		var style = ImGui.GetStyle();
 		var width = ImGui.GetContentRegionAvail().X / 2 - this.ButtonSize.X - (style.FramePadding.X + style.ItemSpacing.X) * 2;
-		ImGui.PushItemWidth(width);
-		try {
-			var i = 0;
-			var isSameLine = false;
-			foreach (var feat in FeatIconParams) {
-				if (!this.DrawFeatIconParams(data, feat)) continue;
-				isSameLine = ++i % 2 != 0;
-				if (isSameLine) ImGui.SameLine();
-			}
-			if (isSameLine) ImGui.Dummy(Vector2.Zero);
-		} finally {
-			ImGui.PopItemWidth();
+		using var _ = ImRaii.ItemWidth(width);
+		
+		var i = 0;
+		var isSameLine = false;
+		foreach (var feat in FeatIconParams) {
+			if (!this.DrawFeatIconParams(data, feat)) continue;
+			isSameLine = ++i % 2 != 0;
+			if (isSameLine) ImGui.SameLine();
 		}
+		if (isSameLine) ImGui.Dummy(Vector2.Zero);
 	}
 
 	private bool DrawFeatIconParams(MakeTypeRace data, CustomizeIndex index) {
@@ -277,7 +274,7 @@ public class CustomizeEditorTab {
 		ImGui.SameLine();
 		using var _group = ImRaii.Group();
 		
-		var padHeight = btnHeight / 2 - (ImGui.GetFrameHeightWithSpacing() + UiBuilder.IconFont.FontSize);
+		var padHeight = btnHeight / 2 - (ImGui.GetFrameHeightWithSpacing() + (UiBuilder.DefaultFontSizePx));
 		ImGui.Dummy(Vector2.Zero with { Y = padHeight });
 		
 		ImGui.Text(feat.Name);

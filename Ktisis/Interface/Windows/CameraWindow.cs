@@ -1,6 +1,7 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
@@ -258,7 +259,7 @@ public class CameraWindow : KtisisWindow {
 
 	private void DrawIconAlign(FontAwesomeIcon icon, out float spacing, string hint = "") {
 		var padding = ImGui.GetStyle().CellPadding.X;
-		var iconSpace = (UiBuilder.IconFont.FontSize - Icons.CalcIconSize(icon).X) / 2;
+		var iconSpace = ((UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale) - Icons.CalcIconSize(icon).X) / 2;
 
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + padding + iconSpace);
 		Icons.DrawIcon(icon);

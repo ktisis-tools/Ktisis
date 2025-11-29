@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface.Utility.Raii;
@@ -47,12 +48,12 @@ public class ActionKeybindEditor {
 
 	private readonly static Vector2 CellPadding = new(8, 8);
 
-	public void Draw() {
+	public void Draw(string? pattern = null) {
 		// TODO: allow sorting that isnt alphabetical
 		using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), false);
 		if (!frame.Success) return;
-		
+
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, Vector2.Zero);
 		using var table = ImRaii.Table("##KeyActionTable", 2, ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders);
 		if (!table.Success) return;
@@ -62,8 +63,14 @@ public class ActionKeybindEditor {
 
 		ImGui.TableSetupColumn("Keys");
 		ImGui.TableSetupColumn("Action");
-		
-		foreach (var action in this.Actions)
+
+		// allow a regex param to be provided to show only those matching a pattern in the action's name
+		var actions = this.Actions;
+		if (pattern is not null) {
+			var regex = new Regex(pattern);
+			actions = actions.Where(x => regex.IsMatch(x.GetName().ToLower())).ToList();
+		}
+		foreach (var action in actions)
 			this.DrawAction(action);
 	}
 

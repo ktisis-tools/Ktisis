@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 
 using Dalamud.Interface;
@@ -7,6 +9,7 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
+using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
@@ -17,17 +20,20 @@ using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Config;
+using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Data;
 using Ktisis.Localization;
 using Ktisis.Interop.Ipc;
 using Ktisis.Interface.Overlay;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Windows;
 
 public class DebugWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
 	private readonly GuiManager _gui;
+    private readonly TransformTable _transformTable;
 
     // tester inputs
     private int _gameObjectId;
@@ -36,6 +42,10 @@ public class DebugWindow : KtisisWindow {
     // tester outputs
     private (int, int)? _apiVersion = null;
     private bool? _isPosing = null;
+    
+    //Transform stuff
+    private Transform _transform = new();
+    private string _boneName = string.Empty;
 
 
     // ktisis subscriptions
@@ -44,11 +54,16 @@ public class DebugWindow : KtisisWindow {
     private readonly ICallGateSubscriber<bool> _ktisisIsPosing;
     private readonly ICallGateSubscriber<uint, string, Task<bool>> _ktisisLoadPose;
     private readonly ICallGateSubscriber<uint, Task<string?>> _ktisisSavePose;
+    private readonly ICallGateSubscriber<Task<Dictionary<int, HashSet<string>>>> _ktisisSelectedBones;
+    private readonly ICallGateSubscriber<uint, string, Task<Matrix4x4?>> _ktisisGetMatrix;
+    private readonly ICallGateSubscriber<uint, string, Matrix4x4, Task<bool>> _ktisisSetMatrix;
 
-	public DebugWindow(
+    public DebugWindow(
 		IEditorContext ctx,
         GuiManager gui,
-		IDalamudPluginInterface dpi
+		IDalamudPluginInterface dpi,
+        ConfigManager cfg,
+        LocaleManager locale
     ) : base(
         "Debug Window"
     ) {
@@ -61,6 +76,10 @@ public class DebugWindow : KtisisWindow {
         this._ktisisIsPosing = dpi.GetIpcSubscriber<bool>("Ktisis.IsPosing");
         this._ktisisLoadPose = dpi.GetIpcSubscriber<uint, string, Task<bool>>("Ktisis.LoadPose");
         this._ktisisSavePose = dpi.GetIpcSubscriber<uint, Task<string?>>("Ktisis.SavePose");
+        this._ktisisSelectedBones = dpi.GetIpcSubscriber<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
+        this._ktisisGetMatrix = dpi.GetIpcSubscriber<uint, string, Task<Matrix4x4?>>("Ktisis.GetMatrix");
+        this._ktisisSetMatrix = dpi.GetIpcSubscriber<uint, string, Matrix4x4, Task<bool>>("Ktisis.SetMatrix");
+        this._transformTable = new TransformTable(cfg, locale);
     }
 
 	public override void Draw() {
@@ -82,7 +101,7 @@ public class DebugWindow : KtisisWindow {
 		handler.Invoke();
 	}
 
-	private async void DrawProviderTab() {
+    private async void DrawProviderTab() {
         ImGui.InputInt("GameObject Index", ref _gameObjectId);
         ImGui.Text($"Clipboard Pose Data: {_hasClip}");
         ImGui.Spacing();
@@ -134,6 +153,54 @@ public class DebugWindow : KtisisWindow {
                 Ktisis.Log.Debug($"[DEBUG] Exported pose to clipboard from actor {_gameObjectId}: {clip}");
             }
         ImGui.Spacing();
+        
+        ImGui.Text("Ktisis.SelectedBones");
+        if (ImGui.Button("GET##SelectedBones"))
+        {
+            var bones = await this._ktisisSelectedBones.InvokeFunc();
+            
+            foreach (var (actorId, boneSet) in bones) {
+                Ktisis.Log.Debug($"[DEBUG] Actor {actorId} selected bones: {string.Join(", ", boneSet)}");
+            }
+        }
+        
+        ImGui.Spacing();
+        ImGui.Text("Bone Transform Get/Set");
+        ImGui.InputText("Bone Name", ref _boneName, 64);
+        
+        using (ImRaii.Disabled(_gameObjectId < 1 || string.IsNullOrEmpty(_boneName)))
+        {
+            if (ImGui.Button("GET##GetBoneTransform"))
+            {
+                var matrix = await this._ktisisGetMatrix.InvokeFunc((uint)_gameObjectId, _boneName);
+                if (matrix != null)
+                {
+                    _transform = new Transform(matrix.Value);
+                    Ktisis.Log.Debug($"[DEBUG] Got matrix for bone {_boneName} on actor {_gameObjectId}");
+                } else
+                {
+                    Ktisis.Log.Warning($"[DEBUG] Failed to get matrix for bone {_boneName} on actor {_gameObjectId}");
+                }
+            }
+            
+            ImGui.Text("Transform Matrix:"); 
+            if (this._transformTable.Draw(_transform, out var result, TransformTableFlags.Default))
+                _transform = result;
+
+            if (ImGui.Button("SET##SetBoneTransform"))
+            {
+                var success = await this._ktisisSetMatrix.InvokeFunc((uint)_gameObjectId, _boneName, _transform.ComposeMatrix());
+                if (success)
+                {
+                    Ktisis.Log.Debug($"[DEBUG] Set matrix for bone {_boneName} on actor {_gameObjectId}");
+                }
+                else
+                {
+                    Ktisis.Log.Warning($"[DEBUG] Failed to set matrix for bone {_boneName} on actor {_gameObjectId}");
+                }
+            }
+        }
+        
     }
 
     private void DrawManagerTab() {
@@ -146,7 +213,33 @@ public class DebugWindow : KtisisWindow {
         overlay.DrawDebug(null);
 
         // todo: scenetree / actors and entities details
-    }
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+		var target = this._ctx.Transform.Target;
+		if (target?.GetTransform() == null)
+			return;
+		var trans = target.GetTransform()!;
+		ImGui.Text($"Target: {target.Primary?.Name}");
+		ImGui.Text($"Position:\n\tX: {trans.Position.X}\n\tY: {trans.Position.Y}\n\tZ: {trans.Position.Z}");
+		ImGui.Text($"Rotation:\n\tX: {trans.Rotation.X}\n\tY: {trans.Rotation.Y}\n\tZ: {trans.Rotation.Z}\n\tW: {trans.Rotation.W}");
+		ImGui.Text($"Scale:\n\tX: {trans.Scale.X}\n\tY: {trans.Scale.Y}\n\tZ: {trans.Scale.Z}");
+		var selection = this._ctx.Selection.GetFirstSelected();
+		if (selection is BoneNode bone) {
+			var matrix = bone.GetMatrixModel()!?? Matrix4x4.Identity;
+			Matrix4x4.Decompose(
+				matrix,
+				out var scl,
+				out var rot,
+				out var pos
+			);
+			ImGui.Spacing();
+			ImGui.Text($"Havok Transform");
+			ImGui.Text($"Position:\n\tX: {pos.X}\n\tY: {pos.Y}\n\tZ: {pos.Z}");
+			ImGui.Text($"Rotation:\n\tX: {rot.X}\n\tY: {rot.Y}\n\tZ: {rot.Z}\n\tW: {rot.W}");
+			ImGui.Text($"Scale:\n\tX: {scl.X}\n\tY: {scl.Y}\n\tZ: {scl.Z}");
+		}
+	}
 
     private bool CheckClipboard() {
         var text = ImGui.GetClipboardText();

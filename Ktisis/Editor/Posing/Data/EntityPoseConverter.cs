@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 using Dalamud.Utility;
 
+using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Entities.Skeleton;
@@ -118,6 +121,18 @@ public class EntityPoseConverter(EntityPose target) {
 		
 		return result;
 	}
+
+	public unsafe PoseContainer FilterExcludeBones(PoseContainer pose, string[] excludes) {
+		var result = new PoseContainer();
+
+		var bones = this.GetBones().ToList();
+		foreach (var bone in bones) {
+			if (!excludes.Contains(bone.Name) && pose.TryGetValue(bone.Name, out var value))
+				result[bone.Name] = value;
+		}
+
+		return result;
+    }
 	
 	// Pose mapping
 
@@ -180,5 +195,71 @@ public class EntityPoseConverter(EntityPose target) {
 					continue;
 			}
 		}
+	}
+
+	public unsafe void FlipPose() {
+		var bones = this.GetBones().ToList();
+		if(bones.Count == 0) return;
+
+		var skeleton = target.GetSkeleton();
+
+		// Store root for yaw/rot correction after
+		var rootBone = bones[0];
+		var rootPose = skeleton->PartialSkeletons[rootBone.PartialIndex].GetHavokPose(0);
+		var rootInitial = HavokPosing.GetModelTransform(rootPose, rootBone.BoneIndex)!;
+
+		for(var p = 0; p < skeleton->PartialSkeletonCount; p++) {
+			if(p is 1 or 2 or 4) continue; // skip face, hair & j_ex bones
+
+			var partial = skeleton->PartialSkeletons[p];
+			var pose = partial.GetHavokPose(0);
+			if(pose == null || pose->Skeleton == null) continue;
+
+			// Build flipped transforms
+			var targets = new Dictionary<string, Quaternion>();
+			for(var i = 1; i < pose->Skeleton->Bones.Length; i++) {
+				var boneName = pose->Skeleton->Bones[i].Name.String;
+				if(boneName.IsNullOrEmpty() || boneName.StartsWith("iv_") || boneName.StartsWith("ya_"))
+					continue;
+				if(boneName.EndsWith("_l") || boneName.EndsWith("_r")) {
+					var oppositeName = boneName.EndsWith("_l") ? boneName[..^1] + "r" : boneName[..^1] + "l";
+					if(HavokPosing.TryGetBoneNameIndex(pose, oppositeName) != -1) {
+						boneName = oppositeName; // only flip as opposite if it exists
+					}
+				}
+
+				var transform = HavokPosing.GetModelTransform(pose, i)!;
+				targets[boneName] = new Quaternion(-transform.Rotation.X, -transform.Rotation.Y, transform.Rotation.Z, transform.Rotation.W);
+			}
+
+			// Apply flipped transforms
+			for(var i = 1; i < pose->Skeleton->Bones.Length; i++) {
+				var boneName = pose->Skeleton->Bones[i].Name.String;
+				if(boneName.IsNullOrEmpty() || !targets.TryGetValue(boneName, out var flippedRotation)) continue;
+
+				var initial = HavokPosing.GetModelTransform(pose, i)!;
+				var target = new Transform(initial.Position, flippedRotation, initial.Scale);
+
+				HavokPosing.SetModelTransform(pose, i, target);
+				HavokPosing.Propagate(skeleton, p, i, target, initial);
+			}
+		}
+
+		var rootCurrent = HavokPosing.GetModelTransform(rootPose, rootBone.BoneIndex)!;
+		var rootTarget = new Transform(rootCurrent.Position, rootCurrent.Rotation, rootCurrent.Scale);
+
+		// Correct root yaw to be relative to foward direction (via difference from initial)
+		var initialYaw = HkaEulerAngles.GetYaw(rootInitial.Rotation);
+		var currentYaw = HkaEulerAngles.GetYaw(rootCurrent.Rotation);
+		var yawDifference = initialYaw - currentYaw;
+		var correctionY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, yawDifference);
+		rootTarget.Rotation = correctionY * rootCurrent.Rotation;
+
+		// Correct root flip around Y axis
+		var flip180 = Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathF.PI);
+		rootTarget.Rotation = flip180 * rootTarget.Rotation;
+		
+		HavokPosing.SetModelTransform(rootPose, rootBone.BoneIndex, rootTarget);
+		HavokPosing.Propagate(skeleton, rootBone.PartialIndex, rootBone.BoneIndex, rootTarget, rootCurrent);
 	}
 }

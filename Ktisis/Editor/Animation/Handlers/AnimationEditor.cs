@@ -1,14 +1,24 @@
 ﻿using System.Collections.Generic;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Editor.Animation.Game;
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.Havok.Animation.Playback.Control.Default;
+using FFXIVClientStructs.Havok.Animation.Rig;
+
+using Ktisis.Editor.Context.Types;
+
 namespace Ktisis.Editor.Animation.Handlers;
 
 public class AnimationEditor(
 	IAnimationManager mgr,
+	IEditorContext ctx,
 	ActorEntity actor
 ) : IAnimationEditor {
 	private readonly static List<uint> IdlePoses = [ 0, 91, 92, 107, 108, 218, 219 ];
@@ -40,6 +50,8 @@ public class AnimationEditor(
 		get => mgr.PositionLockEnabled;
 		set => mgr.PositionLockEnabled = value;
 	}
+
+	public bool Posing => ctx.Posing.IsEnabled;
 	
 	// Poses
 
@@ -113,6 +125,27 @@ public class AnimationEditor(
 	}
 	
 	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);
+	public void ResetTimelineSpeeds() => mgr.ResetTimelineSpeeds(actor);
+
+	public async void DoPoseExpression(uint id) {
+		// play face expression & proc model sync to propagate to frozen expression
+		mgr.PlayTimeline(actor, id);
+		await ctx.Posing.SyncFaceModelSpace(actor);
+	}
+
+	// animation scrubbing helpers
+
+	public unsafe hkaDefaultAnimationControl* GetHkaControl(int index) =>
+		actor.Actor.GetDefaultControlForIndex(index);
+
+	public unsafe float? GetHkaDuration(hkaDefaultAnimationControl* control) =>
+		control != null ? control->hkaAnimationControl.Binding.ptr->Animation.ptr->Duration : null;
+
+	public unsafe float? GetHkaLocalTime(hkaDefaultAnimationControl* control) =>
+		control != null ? control->hkaAnimationControl.LocalTime : null;
+
+	public unsafe void SetHkaLocalTime(hkaDefaultAnimationControl* control, float time) =>
+		control->hkaAnimationControl.LocalTime = time;
 	
 	// Weapons
 

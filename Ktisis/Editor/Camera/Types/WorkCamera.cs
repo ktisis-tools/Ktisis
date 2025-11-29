@@ -142,7 +142,7 @@ public class WorkCamera : KtisisCamera {
 		);
 	}
 
-	private Vector3 CalculateLookDirection() => new(
+	public Vector3 CalculateLookDirection() => new(
 		MathF.Sin(this.Rotation.X) * MathF.Cos(this.Rotation.Y),
 		MathF.Sin(this.Rotation.Y),
 		MathF.Cos(this.Rotation.X) * MathF.Cos(this.Rotation.Y)

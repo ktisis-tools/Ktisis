@@ -55,6 +55,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 		this._anim.Editor = this.Animation.GetAnimationEditor(target);
+		this._anim.ClearPoseExpression();
 	}
 
 	// Draw tabs
@@ -76,9 +77,9 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this.UpdateTarget();
 		
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
+		DrawTab("Animation", this._anim.Draw);
 		DrawTab("Appearance", this._custom.Draw);
 		DrawTab("Equipment", this._equip.Draw);
-		DrawTab("Animation", this._anim.Draw);
 		DrawTab("Misc", this.DrawMisc);
 	}
 

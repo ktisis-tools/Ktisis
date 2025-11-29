@@ -55,8 +55,8 @@ public class OverlayWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
-		this.Size = ImGui.GetIO().DisplaySize;
-		this.Position = Vector2.Zero;
+		this.Size = ImGui.GetMainViewport().Size;
+		this.Position = ImGui.GetMainViewport().Pos;
 	}
 	
 	// Main draw function
@@ -96,7 +96,7 @@ public class OverlayWindow : KtisisWindow {
 
 		var size = this.Size.Value;
 		this._gizmo.SetMatrix(view.Value, proj.Value);
-		this._gizmo.BeginFrame(Vector2.Zero, size);
+		this._gizmo.BeginFrame(this.Position!.Value, size);
 
 		var cfg = this._ctx.Config.Gizmo;
 		this._gizmo.Mode = cfg.Mode;
@@ -144,7 +144,7 @@ public class OverlayWindow : KtisisWindow {
 		this._gizmoGaze.SetMatrix(view.Value, proj.Value);
 
 		// set target to decomposed position for ActorPropertyList to consume
-		this._gizmoGaze.BeginFrame(Vector2.Zero, size);
+		this._gizmoGaze.BeginFrame(this.Position!.Value, size);
 		var isManipulate = this._gizmoGaze.Manipulate(ref matrix, out _);
 		transform.DecomposeMatrix(matrix);
 		this.GazeTarget = transform.Position;

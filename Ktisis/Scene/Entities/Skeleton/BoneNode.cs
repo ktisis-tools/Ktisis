@@ -37,7 +37,7 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 	
 	// Bone transforms
 
-	protected unsafe Matrix4x4? GetMatrixModel() {
+	public unsafe Matrix4x4? GetMatrixModel() {
 		var pose = this.GetPose();
 		return pose != null ? HavokPosing.GetMatrix(pose, this.Info.BoneIndex) : null;
 	}
@@ -68,10 +68,24 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 
 	protected void SetTransformWorld(Transform transform)
 		=> this.SetMatrixWorld(transform.ComposeMatrix());
-	
+
 	public Transform? CalcTransformWorld() {
 		var matrix = this.CalcMatrixWorld();
 		return matrix != null ? new Transform(matrix.Value) : null;
+	}
+
+	public Transform? CalcTransformOverlay() {
+		var matrix = this.CalcMatrixWorld();
+		if (matrix is null) return null;
+		var transform = new Transform(matrix.Value);
+
+		var offset = this.Scene.Context.Config.Offsets.GetOffset(this);
+		if (offset is not null) {
+			var offsetTransformed = Vector3.Transform((Vector3)offset, transform.Rotation);
+			transform.Position += offsetTransformed;
+		}
+
+		return transform;
 	}
 
 	public Transform? GetTransformModel() {

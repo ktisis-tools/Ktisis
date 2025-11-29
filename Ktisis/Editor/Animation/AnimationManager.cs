@@ -73,7 +73,7 @@ public class AnimationManager : IAnimationManager {
 	
 	// Editors
 
-	public IAnimationEditor GetAnimationEditor(ActorEntity actor) => new AnimationEditor(this, actor);
+	public IAnimationEditor GetAnimationEditor(ActorEntity actor) => new AnimationEditor(this, _ctx, actor);
 	
 	// Pose control
 
@@ -118,5 +118,13 @@ public class AnimationManager : IAnimationManager {
 		if (chara == null) return;
 
 		this.Module?.SetTimelineSpeed(&chara->Animation.Timeline, slot, speed);
+	}
+
+	public unsafe void ResetTimelineSpeeds(ActorEntity actor) {
+		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
+		if (chara == null) return;
+
+		foreach (var slot in Enum.GetValues<TimelineSlot>())
+			this.Module?.SetTimelineSpeed(&chara->Animation.Timeline, (uint)slot, 1.0f);
 	}
 }

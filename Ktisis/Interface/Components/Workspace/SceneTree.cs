@@ -6,6 +6,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
@@ -50,7 +51,7 @@ public class SceneTree {
 	
 	// Draw scene entities
 
-	private static float IconSpacing => UiBuilder.IconFont.FontSize;
+	private static float IconSpacing => UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale;
 
 	private float MinY;
 	private float MaxY;
@@ -167,24 +168,17 @@ public class SceneTree {
 			TreeNodeFlag.Expand => FontAwesomeIcon.CaretDown,
 			_ => FontAwesomeIcon.None
 		};
-		
+
 		using (ImRaii.PushColor(ImGuiCol.Text, color.SetAlpha(0xCF)))
 			Icons.DrawIcon(caretIcon);
 
 		ImGui.SameLine();
-		
+
 		var spacing = ImGui.GetStyle().ItemInnerSpacing;
 		cursor += spacing.X + IconSpacing;
 		ImGui.SetCursorPosX(cursor);
-		
-		var iconSize = Icons.CalcIconSize(caretIcon);
-		var frameHeight = ImGui.GetFrameHeight();
-		return ButtonsEx.IsClicked(
-			new Vector2(
-				IconSpacing - iconSize.X,
-				(frameHeight - iconSize.Y - spacing.Y / 2) / 2
-			)
-		);
+
+		return ButtonsEx.IsClicked();
 	}
 
 	private void DrawNodeIcon(FontAwesomeIcon icon) {
@@ -204,9 +198,9 @@ public class SceneTree {
 		this.DrawVisibilityButton(node, ref cursor, isHover);
 		if (node is IAttachable attach)
 			this.DrawAttachButton(attach, ref cursor, isHover);
-		if (node is ActorEntity actor)
-			this.DrawHideButton(actor, ref cursor, isHover);
-		
+		if (node is IHideable hideable)
+			this.DrawHideButton(hideable, ref cursor, isHover);
+
 		return initial - cursor;
 	}
 
@@ -239,18 +233,18 @@ public class SceneTree {
 		ImGui.Text($"Click to reset attachment\nClick+Drag to set new attachment");
 	}
 
-	private void DrawHideButton(ActorEntity actor, ref float cursor, bool isHover) {
-		var color = actor.IsHidden ? 0x80FFFFFF : 0xEFFFFFFF;
-		if (this.DrawButton(ref cursor, FontAwesomeIcon.IdBadge, color) && isHover)
-			actor.IsHidden = !actor.IsHidden;
+	private void DrawHideButton(IHideable entity, ref float cursor, bool isHover) {
+		var color = entity.IsHidden ? 0x80FFFFFF : 0xEFFFFFFF;
+		if(this.DrawButton(ref cursor, FontAwesomeIcon.Mask, color) && isHover)
+			entity.ToggleHidden();
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
 		using var _ = ImRaii.Tooltip();
-		ImGui.Text(actor.IsHidden ? "Unhide Actor" : "Hide Actor");
+		ImGui.Text(entity.IsHidden ? "Unhide Entity" : "Hide Entity");
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {
-		cursor -= Icons.CalcIconSize(icon).X + ImGui.GetStyle().ItemSpacing.X;
+		cursor -= (Icons.CalcIconSize(icon).X / ImGuiHelpers.GlobalScale) + ImGui.GetStyle().ItemSpacing.X;
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(cursor);
 		using var _ = ImRaii.PushColor(ImGuiCol.Text, color ?? 0, color.HasValue);

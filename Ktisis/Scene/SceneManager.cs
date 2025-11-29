@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Plugin.Services;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
@@ -15,6 +17,9 @@ using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Modules.Lights;
 using Ktisis.Scene.Types;
+using Ktisis.Editor.Lights;
+using Ktisis.Data.Files;
+using Ktisis.Scene.Entities.World;
 
 namespace Ktisis.Scene;
 
@@ -23,17 +28,20 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
+	private readonly IFramework _framework;
 
 	private readonly SceneRoot Root;
 	
 	public SceneManager(
 		IEditorContext context,
 		HookScope scope,
+		IFramework framework,
 		IEntityFactory factory
 	) : base(scope) {
 		this.Context = context;
 		this.Factory = factory;
 		this.Root = new SceneRoot(this);
+		this._framework = framework;
 	}
 	
 	// Initialization
@@ -107,6 +115,24 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		.Where(entity => entity is ActorEntity { IsValid: true })
 		.Cast<ActorEntity>()
 		.FirstOrDefault(entity => entity.Actor.ObjectIndex == objectIndex);
+
+	public ActorEntity GetFirstActor() => this.Children
+		.Where(entity => entity is ActorEntity { IsValid: true })
+		.Cast<ActorEntity>()
+		.OrderBy(entity => entity.Actor.ObjectIndex)
+		.First();
+
+	// Lights Utility (todo: should these live here longterm?)
+
+	public Task ApplyLightFile(LightEntity light, LightFile file) {
+		var converter = new EntityLightConverter(light);
+		return this._framework.RunOnFrameworkThread(() => converter.Apply(file));
+	}
+
+	public Task<LightFile> SaveLightFile(LightEntity light) {
+		var converter = new EntityLightConverter(light);
+		return this._framework.RunOnFrameworkThread(() => converter.Save());
+	}
 	
 	// Disposal
 

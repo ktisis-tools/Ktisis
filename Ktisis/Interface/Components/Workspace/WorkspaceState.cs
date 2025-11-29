@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
@@ -76,7 +77,7 @@ public class WorkspaceState {
 		ImGui.SameLine();
 
 		var style = ImGui.GetStyle();
-		var labelHeight = UiBuilder.IconFont.FontSize * 2 + style.ItemInnerSpacing.Y;
+		var labelHeight = (UiBuilder.DefaultFontSizePx * 2 + style.ItemInnerSpacing.Y) * ImGuiHelpers.GlobalScale;
 		ImGui.SetCursorPosY(cursorY + (avail - labelHeight) / 2);
 		ImGui.BeginGroup();
 		
