@@ -7,14 +7,24 @@ using Dalamud.Plugin.Ipc;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
+
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules.Actors;
+using Ktisis.Scene.Decor;
+using Ktisis.Common.Utility;
 using Newtonsoft.Json;
 
 namespace Ktisis.Interop.Ipc;
+
+public enum BoneSpace : byte {
+	World = 0,
+	Actor = 1,
+	Parent = 2
+}
 
 [Singleton]
 public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
@@ -25,9 +35,13 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
     private ICallGateProvider<uint, string, Task<bool>> IpcLoadPose { get; } = dpi.GetIpcProvider<uint, string, Task<bool>>("Ktisis.LoadPose");
     private ICallGateProvider<uint, string, bool, bool, bool, Task<bool>> IpcLoadPoseExtended { get; } = dpi.GetIpcProvider<uint, string, bool, bool, bool, Task<bool>>("Ktisis.LoadPoseExtended");
     private ICallGateProvider<uint, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<uint, Task<string?>>("Ktisis.SavePose");
-    private ICallGateProvider<uint, string, Matrix4x4, Task<bool>> IpcSetMatrix { get; } = dpi.GetIpcProvider<uint, string, Matrix4x4, Task<bool>>("Ktisis.SetMatrix");
-    private ICallGateProvider<uint, string, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, Task<Matrix4x4?>>("Ktisis.GetMatrix");
-    private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
+
+	private ICallGateProvider<uint, string, Matrix4x4, byte, Task<bool>> IpcSetMatrix { get; } = dpi.GetIpcProvider<uint, string, Matrix4x4, byte, Task<bool>>("Ktisis.SetMatrix");
+	private ICallGateProvider<uint, string, byte, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, byte, Task<Matrix4x4?>>("Ktisis.GetMatrix");
+	private ICallGateProvider<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>> IpcBatchGetMatrix { get; } = dpi.GetIpcProvider<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.BatchGetMatrix");
+	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>> IpcBatchSetMatrix { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>>("Ktisis.BatchSetMatrix");
+
+	private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
 
     private (int, int) GetVersion() => (1, 0);
 
@@ -112,73 +126,158 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
         return ret;
     }
-    #if DEBUG
-    private async Task<Matrix4x4?> GetMatrix(uint index, string boneName)
+
+	#region Matrix IPC 
+	private unsafe Matrix4x4? GetBoneMatrix(BoneNode bone, BoneSpace space) 
+	{
+		if (space == BoneSpace.World) return bone.GetMatrix();
+		if (space == BoneSpace.Actor) return bone.GetMatrixModel();
+		if (space == BoneSpace.Parent) 
+		{
+			var boneWorld = bone.GetMatrix();
+			if (boneWorld == null) return null;
+
+			var current = bone.Parent;
+			Transform? parentTransform = null;
+			while (current != null) 
+			{
+				if (current is ITransform tNode)
+				{
+					parentTransform = tNode.GetTransform();
+					if (parentTransform != null) break;
+				}
+				current = current.Parent;
+			}
+			if (parentTransform == null) return null;
+
+			var parentWithoutScale = new Transform(parentTransform.Position, parentTransform.Rotation, Vector3.One);
+			if (Matrix4x4.Invert(parentWithoutScale.ComposeMatrix(), out var parentInverse)) 
+			{
+				return boneWorld.Value * parentInverse;
+			}
+			return null;
+		}
+		return null;
+	}
+
+	private unsafe bool SetBoneMatrix(IEditorContext ctx, BoneNode bone, Matrix4x4 matrix, BoneSpace space) {
+		Matrix4x4 targetWorld = matrix;
+
+		if (space == BoneSpace.Actor)
+		{
+			var skeleton = bone.GetSkeleton();
+			if (skeleton == null) return false;
+			var model = new Transform(skeleton->Transform);
+			// Convert Model to World
+			var m = matrix;
+			m.Translation *= model.Scale;
+			m = Matrix4x4.Transform(m, model.Rotation);
+			m.Translation += model.Position;
+			targetWorld = m;
+		} else if (space == BoneSpace.Parent)
+		{
+			var current = bone.Parent;
+			Transform? parentTransform = null;
+			while (current != null)
+			{
+				if (current is ITransform tNode)
+				{
+					parentTransform = tNode.GetTransform();
+					if (parentTransform != null) break;
+				}
+				current = current.Parent;
+			}
+			if (parentTransform == null) return false;
+
+			var parentWithoutScale = new Transform(parentTransform.Position, parentTransform.Rotation, Vector3.One);
+			targetWorld = matrix * parentWithoutScale.ComposeMatrix();
+		}
+
+		// Pass bone as primary target
+		var target = new TransformTarget(bone, [bone]);
+		var transformAction = ctx.Transform.Begin(target, setup => {
+			setup.MirrorRotation = MirrorMode.Inverse;
+			setup.ParentBones = true;
+			setup.RelativeBones = true;
+		});
+
+		transformAction.SetMatrix(targetWorld);
+		transformAction.Dispatch();
+		return true;
+	}
+
+	private async Task<Matrix4x4?> GetMatrix(uint index, string boneName, byte spaceCode) {
+		var space = (BoneSpace)spaceCode;
+		var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
+		var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
+
+		if (bone is null) return null;
+		return GetBoneMatrix(bone, space);
+	}
+
+	private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix, byte spaceCode) {
+		var space = (BoneSpace)spaceCode;
+		var ctx = ctxManager.Current;
+		if (ctx is null) return false;
+
+		var actor = ctx.Scene?.GetEntityForIndex(index);
+		var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
+
+		if (bone is null) return false;
+
+		return SetBoneMatrix(ctx, bone, matrix, space);
+	}
+	private async Task<Dictionary<string, Matrix4x4?>> BatchGetMatrix(uint index, List<string> boneNames, byte spaceCode)
     {
+        var ret = new Dictionary<string, Matrix4x4?>();
+        var space = (BoneSpace)spaceCode;
+        
         var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
-
-        var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
-        return bone?.GetMatrix();
-    }
-    
-    private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix)
-    {
-        var ctx = ctxManager.Current;
-        if (ctx is null)
-            return false;
+        if (actor == null) return ret;
         
-        var actor = ctx.Scene?.GetEntityForIndex(index);
-
-        var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
-        if (bone is null)
-            return false;
-
-        var target = new TransformTarget(actor, [bone]);
-        var transform = ctx.Transform.Begin(target, setup =>
+        var allBones = actor.Pose?.Recurse().OfType<BoneNode>().ToDictionary(b => b.Info.Name, b => b);
+        if (allBones == null) return ret;
+        
+        foreach (var name in boneNames)
         {
-            setup.MirrorRotation = MirrorMode.Inverse;
-            setup.ParentBones = true;
-            setup.RelativeBones = true;
-        });
-        
-        Ktisis.Log.Debug(target.GetTransform().ToString());
-        
-        transform.SetMatrix(matrix);
-        transform.Dispatch();
-        
-        
-        //
-        // unsafe
-        // {
-        //     var hkaPose = bone.GetPose();
-        //     if (hkaPose is null) return false;
-        //     
-        //     var initial = HavokPosing.GetModelTransform(hkaPose, bone.Info.BoneIndex);
-        //     
-        //     var transform = ctx.Transform.Begin(transformTarget);
-        //     
-        //     transform.SetTransform(new Transform(matrix));
-        //     transform.Dispatch();
-        //
-        //     if (!propogate)
-        //         return true;
-        //    
-        //     var target = HavokPosing.GetModelTransform(hkaPose, bone.Info.BoneIndex);
-        //     if (target is null) return false;
-        //         
-        //     HavokPosing.Propagate(bone.GetSkeleton(), bone.Info.PartialIndex, bone.Info.BoneIndex, target, initial);
-        // }
-
-
-        // bone.SetMatrix(matrix);
-        return true;
+            if (allBones.TryGetValue(name, out var bone))
+            {
+                ret[name] = GetBoneMatrix(bone, space);
+            }
+            else
+            {
+                ret[name] = null;
+            }
+        }
+        return ret;
     }
-    #else
-    private async Task<Matrix4x4?> GetMatrix(uint index, string boneName) => null;
-    private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix) => false;
-    #endif
-    
-    public void RegisterIpc()
+
+	private async Task<bool> BatchSetMatrix(uint index, Dictionary<string, Matrix4x4> matrices, byte spaceCode) {
+		var space = (BoneSpace)spaceCode;
+		var ctx = ctxManager.Current;
+		if (ctx is null) return false;
+
+		var actor = ctx.Scene?.GetEntityForIndex(index);
+		if (actor == null) return false;
+
+		var allBones = actor.Pose?.Recurse().OfType<BoneNode>().ToDictionary(b => b.Info.Name, b => b);
+		if (allBones == null) return false;
+
+		bool anySuccess = false;
+		foreach (var kvp in matrices)
+		{
+			if (allBones.TryGetValue(kvp.Key, out var bone))
+			{
+				if (SetBoneMatrix(ctx, bone, kvp.Value, space))
+					anySuccess = true;
+			}
+		}
+		return anySuccess;
+	}
+
+	#endregion
+
+	public void RegisterIpc()
     {
         IpcVersion.RegisterFunc(GetVersion);
         IpcRefreshActions.RegisterFunc(RefreshActors);
@@ -189,5 +288,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
         IpcGetMatrix.RegisterFunc(GetMatrix);
         IpcSetMatrix.RegisterFunc(SetMatrix);
         IpcSelectedBones.RegisterFunc(SelectedBones);
+        IpcBatchGetMatrix.RegisterFunc(BatchGetMatrix);
+        IpcBatchSetMatrix.RegisterFunc(BatchSetMatrix);
     }
 }
