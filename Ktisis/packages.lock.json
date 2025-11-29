@@ -10,9 +10,9 @@
       },
       "Glamourer.Api": {
         "type": "Direct",
-        "requested": "[2.6.0, )",
-        "resolved": "2.6.0",
-        "contentHash": "zysCZgNBRm3k3qvibyw/31MmEckX0Uh0ZsT+Sax3ZHnYIRELr9Qhbz3cjJz7u0RHGIrNJiRpktu/LxgHEqDItw=="
+        "requested": "[2.7.0, )",
+        "resolved": "2.7.0",
+        "contentHash": "H4yRNEhdSQ+YkZlnE7qRM67GaNieb9Xe9Vpj3rvHvcSB0eWgMF1nHqCvkBNb4L38AV4WyWTzwtXh6+Rv5GuVTw=="
       },
       "JetBrains.Annotations": {
         "type": "Direct",

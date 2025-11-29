@@ -118,6 +118,8 @@ public class ActorModule : SceneModule {
 		var gpose = this._gpose.GetGPoseState();
 		if (gpose == null) return;
 
+		this.Scene.Context.Characters.Mcdf.RevertIfTouched(actor.Actor);
+
 		var gameObject = (CSGameObject*)actor.Actor.Address;
 		this._framework.RunOnFrameworkThread(() => {
 			var mgr = ClientObjectManager.Instance();
