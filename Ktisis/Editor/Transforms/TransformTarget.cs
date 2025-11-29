@@ -73,7 +73,7 @@ public class TransformTarget : ITransformTarget {
 			if (entity == this.Primary) {
 				manip.SetTransform(transform);
 			} else {
-				trans.DecomposeMatrix(trans.ComposeMatrix() * deltaMx);
+				trans.DecomposeMatrixPrecise(trans.ComposeMatrix() * deltaMx, trans);
 				manip.SetTransform(trans);
 			}
 		}
@@ -82,7 +82,7 @@ public class TransformTarget : ITransformTarget {
 	private unsafe void TransformSkeletons(Transform transform, Transform initial) {
 		var delta = new Transform(
 			transform.Position - initial.Position,
-			transform.Rotation / initial.Rotation,
+			Quaternion.Normalize(transform.Rotation / initial.Rotation),
 			transform.Scale / initial.Scale
 		);
 		
@@ -145,14 +145,16 @@ public class TransformTarget : ITransformTarget {
 				deltaRot = delta.Rotation;
 				deltaPos = delta.Position;
 			}
+			deltaRot = Quaternion.Normalize(deltaRot);
 
 			Quaternion rotation;
 			if (this.Setup.RelativeBones) {
-				var linkDelta = boneTrans.Rotation / initial.Rotation;
+				var linkDelta = Quaternion.Normalize(boneTrans.Rotation / initial.Rotation);
 				rotation = linkDelta * deltaRot * initial.Rotation;
 			} else {
 				rotation = deltaRot * boneTrans.Rotation;
 			}
+			rotation = Quaternion.Normalize(rotation);
 
 			var scale = Matrix4x4.CreateScale(newScale);
 			var rot = Matrix4x4.CreateFromQuaternion(rotation);
@@ -161,7 +163,7 @@ public class TransformTarget : ITransformTarget {
 		}
 		
 		var bInitial = HavokPosing.GetModelTransform(hkaPose, bIndex)!;
-		bone.SetMatrix(newMx);
+		bone.SetTransform(new Transform(newMx, bInitial));
 
 		if (!this.Setup.ParentBones) return;
 

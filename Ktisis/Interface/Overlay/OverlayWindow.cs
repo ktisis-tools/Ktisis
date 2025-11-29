@@ -1,19 +1,19 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
-using Matrix4x4 = System.Numerics.Matrix4x4;
-using Vector3 = System.Numerics.Vector3;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Plugin.Services;
 
-using FFXIVClientStructs.FFXIV.Common.Math;
-
+using Ktisis.Common.Utility;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.ImGuizmo;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
-using Ktisis.Common.Utility;
+
+using Matrix4x4 = System.Numerics.Matrix4x4;
+using Vector3 = System.Numerics.Vector3;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -108,7 +108,7 @@ public class OverlayWindow : KtisisWindow {
 		var isRaySnap = this.HandleShiftRaycast(ref matrix);
 		if (isManipulate || isRaySnap) {
 			this.Transform ??= this._ctx.Transform.Begin(target);
-			this.Transform.SetMatrix(matrix);
+			this.Transform.SetTransform(new Transform(matrix, transform));
 		}
 
 		this._gizmo.EndFrame();
@@ -146,7 +146,7 @@ public class OverlayWindow : KtisisWindow {
 		// set target to decomposed position for ActorPropertyList to consume
 		this._gizmoGaze.BeginFrame(this.Position!.Value, size);
 		var isManipulate = this._gizmoGaze.Manipulate(ref matrix, out _);
-		transform.DecomposeMatrix(matrix);
+		transform.DecomposeMatrixPrecise(matrix, transform);
 		this.GazeTarget = transform.Position;
 		this._gizmoGaze.EndFrame();
 
