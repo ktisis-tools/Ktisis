@@ -257,18 +257,36 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
 		var allBones = actor.Pose?.Recurse().OfType<BoneNode>().ToDictionary(b => b.Info.Name, b => b);
 		if (allBones == null) return false;
-
 		bool anySuccess = false;
-		foreach (var kvp in matrices)
+
+		var sortedUpdates = matrices.Keys
+			.Where(k => allBones.ContainsKey(k))
+			.Select(k => allBones[k])
+			.OrderBy(b => GetBoneDepth(b))
+			.ToList();
+
+		foreach (var bone in sortedUpdates)
 		{
-			if (allBones.TryGetValue(kvp.Key, out var bone))
+			if (matrices.TryGetValue(bone.Info.Name, out var matrix))
 			{
-				if (SetBoneMatrix(ctx, bone, kvp.Value, space))
+				if (SetBoneMatrix(ctx, bone, matrix, space))
 					anySuccess = true;
 			}
 		}
 		return anySuccess;
 	}
+
+	private int GetBoneDepth(BoneNode bone) {
+		int depth = 0;
+		var current = bone.Parent;
+		while (current != null)
+		{
+			depth++;
+			current = current.Parent;
+		}
+		return depth;
+	}
+
 	private async Task<Dictionary<string, Matrix4x4?>> GetAllMatrices(uint index, byte spaceCode) {
 		var ret = new Dictionary<string, Matrix4x4?>();
 		var space = (BoneSpace)spaceCode;
