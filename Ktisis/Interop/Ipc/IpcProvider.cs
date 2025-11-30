@@ -129,38 +129,33 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
 	#region Matrix IPC 
 	private unsafe Matrix4x4? GetBoneMatrix(BoneNode bone, BoneSpace space)
-		{
+	{
 		if (space == BoneSpace.World) return bone.GetMatrix();
 		if (space == BoneSpace.Actor) return bone.GetMatrixModel();
 		if (space == BoneSpace.Parent)
 		{
-			var boneWorld = bone.GetMatrix();
-			if (boneWorld == null) return null;
+			var boneModel = bone.GetMatrixModel();
+			if (boneModel == null) return null;
+			var parentBone = bone.Pose.Recurse().OfType<BoneNode>()
+								 .FirstOrDefault(p => bone.IsBoneChildOf(p));
 
-			var current = bone.Parent;
-			Transform? parentTransform = null;
-			while (current != null)
+			Matrix4x4 parentModel = Matrix4x4.Identity;
+			if (parentBone != null)
 			{
-				if (current is ITransform tNode)
-				{
-					parentTransform = tNode.GetTransform();
-					if (parentTransform != null) break;
-				}
-				current = current.Parent;
+				var pm = parentBone.GetMatrixModel();
+				if (pm.HasValue) parentModel = pm.Value;
 			}
-			if (parentTransform == null) return null;
-
-			var parentWithoutScale = new Transform(parentTransform.Position, parentTransform.Rotation, Vector3.One);
-			if (Matrix4x4.Invert(parentWithoutScale.ComposeMatrix(), out var parentInverse))
+			if (Matrix4x4.Invert(parentModel, out var parentInverse))
 			{
-				return boneWorld.Value * parentInverse;
+				return boneModel.Value * parentInverse;
 			}
 			return null;
 		}
 		return null;
 	}
 
-	private unsafe bool SetBoneMatrix(IEditorContext ctx, BoneNode bone, Matrix4x4 matrix, BoneSpace space) {
+	private unsafe bool SetBoneMatrix(IEditorContext ctx, BoneNode bone, Matrix4x4 matrix, BoneSpace space)
+	{
 		Matrix4x4 targetWorld = matrix;
 
 		if (space == BoneSpace.Actor)
@@ -169,26 +164,23 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 			if (skeleton == null) return false;
 			var actorTransform = new Transform(skeleton->Transform);
 			targetWorld = matrix * actorTransform.ComposeMatrix();
-		} else if (space == BoneSpace.Parent)
+		} 
+		else if (space == BoneSpace.Parent)
 		{
-			var current = bone.Parent;
-			Transform? parentTransform = null;
-			while (current != null)
-			{
-				if (current is ITransform tNode)
-				{
-					parentTransform = tNode.GetTransform();
-					if (parentTransform != null) break;
-				}
-				current = current.Parent;
-			}
-			if (parentTransform == null) return false;
+			var parentBone = bone.Pose.Recurse().OfType<BoneNode>()
+								 .FirstOrDefault(p => bone.IsBoneChildOf(p));
 
-			var parentWithoutScale = new Transform(parentTransform.Position, parentTransform.Rotation, Vector3.One);
-			targetWorld = matrix * parentWithoutScale.ComposeMatrix();
+			Matrix4x4 parentModel = Matrix4x4.Identity;
+			if (parentBone != null)
+			{
+				var pm = parentBone.GetMatrixModel();
+				if (pm.HasValue) parentModel = pm.Value;
+			}
+
+			var targetModel = matrix * parentModel;
+			return SetBoneMatrix(ctx, bone, targetModel, BoneSpace.Actor);
 		}
 
-		// Pass bone as primary target
 		var target = new TransformTarget(bone, [bone]);
 		var transformAction = ctx.Transform.Begin(target, setup => {
 			setup.MirrorRotation = MirrorMode.Inverse;
@@ -201,93 +193,82 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		return true;
 	}
 
-	private async Task<Matrix4x4?> GetMatrix(uint index, string boneName, byte spaceCode) {
+	private async Task<Matrix4x4?> GetMatrix(uint index, string boneName, byte spaceCode)
+	{
 		var space = (BoneSpace)spaceCode;
 		var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
-		var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
+		var bone = actor?.Pose?.FindBoneByName(boneName);
 
 		if (bone is null) return null;
 		return GetBoneMatrix(bone, space);
 	}
 
-	private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix, byte spaceCode) {
+	private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix, byte spaceCode)
+		{
 		var space = (BoneSpace)spaceCode;
 		var ctx = ctxManager.Current;
 		if (ctx is null) return false;
 
 		var actor = ctx.Scene?.GetEntityForIndex(index);
-		var bone = actor?.Pose?.Recurse().OfType<BoneNode>().FirstOrDefault(b => b.Info.Name == boneName);
-
+		var bone = actor?.Pose?.FindBoneByName(boneName);
 		if (bone is null) return false;
-
 		return SetBoneMatrix(ctx, bone, matrix, space);
 	}
+
 	private async Task<Dictionary<string, Matrix4x4?>> BatchGetMatrix(uint index, List<string> boneNames, byte spaceCode)
-		{
+	{
 		var ret = new Dictionary<string, Matrix4x4?>();
 		var space = (BoneSpace)spaceCode;
-
 		var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
 		if (actor == null) return ret;
-
 		var allBones = actor.Pose?.Recurse().OfType<BoneNode>().ToDictionary(b => b.Info.Name, b => b);
 		if (allBones == null) return ret;
 
 		foreach (var name in boneNames)
 		{
-			if (allBones.TryGetValue(name, out var bone))
-			{
-				ret[name] = GetBoneMatrix(bone, space);
-			}
-			else
-			{
-				ret[name] = null;
-			}
+			if (allBones.TryGetValue(name, out var bone)) ret[name] = GetBoneMatrix(bone, space);
+			else ret[name] = null;
 		}
 		return ret;
 	}
 
-	private async Task<bool> BatchSetMatrix(uint index, Dictionary<string, Matrix4x4> matrices, byte spaceCode) {
+	private async Task<bool> BatchSetMatrix(uint index, Dictionary<string, Matrix4x4> matrices, byte spaceCode)
+	{
 		var space = (BoneSpace)spaceCode;
 		var ctx = ctxManager.Current;
-		if (ctx is null) return false;
+		var actor = ctx?.Scene?.GetEntityForIndex(index);
 
-		var actor = ctx.Scene?.GetEntityForIndex(index);
-		if (actor == null) return false;
+		if (actor?.Pose == null || matrices.Count == 0) return false;
 
-		var allBones = actor.Pose?.Recurse().OfType<BoneNode>().ToDictionary(b => b.Info.Name, b => b);
-		if (allBones == null) return false;
+		var allBonesList = actor.Pose.Recurse().OfType<BoneNode>().ToList();
 		bool anySuccess = false;
-
-		var sortedUpdates = matrices.Keys
-			.Where(k => allBones.ContainsKey(k))
-			.Select(k => allBones[k])
-			.OrderBy(b => GetBoneDepth(b))
-			.ToList();
-
-		foreach (var bone in sortedUpdates)
+		foreach (var bone in allBonesList)
 		{
-			if (matrices.TryGetValue(bone.Info.Name, out var matrix))
+			if (!matrices.TryGetValue(bone.Info.Name, out var matrix)) continue;
+
+			if (space == BoneSpace.Parent)
 			{
-				if (SetBoneMatrix(ctx, bone, matrix, space))
-					anySuccess = true;
+				var parentNode = allBonesList.FirstOrDefault(p => bone.IsBoneChildOf(p));
+				Matrix4x4 parentModel = Matrix4x4.Identity;
+				if (parentNode != null)
+				{
+					var pm = parentNode.GetMatrixModel();
+					if (pm.HasValue)
+					{
+						parentModel = pm.Value;
+					}
+				}
+				if (SetBoneMatrix(ctx, bone, matrix * parentModel, BoneSpace.Actor)) anySuccess = true;}
+			else
+			{
+				if (SetBoneMatrix(ctx, bone, matrix, space)) anySuccess = true;
 			}
 		}
 		return anySuccess;
 	}
 
-	private int GetBoneDepth(BoneNode bone) {
-		int depth = 0;
-		var current = bone.Parent;
-		while (current != null)
-		{
-			depth++;
-			current = current.Parent;
-		}
-		return depth;
-	}
-
-	private async Task<Dictionary<string, Matrix4x4?>> GetAllMatrices(uint index, byte spaceCode) {
+	private async Task<Dictionary<string, Matrix4x4?>> GetAllMatrices(uint index, byte spaceCode)
+	{
 		var ret = new Dictionary<string, Matrix4x4?>();
 		var space = (BoneSpace)spaceCode;
 
