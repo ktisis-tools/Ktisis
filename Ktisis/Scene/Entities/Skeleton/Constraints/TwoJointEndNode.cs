@@ -28,7 +28,7 @@ public class TwoJointEndNode : IkEndNode, ITwoJointsNode {
 
 	public override Transform GetTransformTarget(Transform offset, Transform world) {
 		offset.Position += this.Group.TargetPosition.ModelToWorldPos(offset);
-		offset.Rotation *= this.Group.TargetRotation;
+		offset.Rotation = Quaternion.Normalize(offset.Rotation * this.Group.TargetRotation);
 		offset.Scale = world.Scale;
 		return offset;
 	}
@@ -47,7 +47,7 @@ public class TwoJointEndNode : IkEndNode, ITwoJointsNode {
 		}
 
 		if (this.Group.EnforceRotation) {
-			this.Group.TargetRotation = Quaternion.Inverse(offset.Rotation) * transform.Rotation;
+			this.Group.TargetRotation = Quaternion.Normalize(Quaternion.Inverse(offset.Rotation) * transform.Rotation);
 		} else {
 			world.Rotation = transform.Rotation;
 			setWorld = true;
