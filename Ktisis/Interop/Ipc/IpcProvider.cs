@@ -40,7 +40,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	private ICallGateProvider<uint, string, byte, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, byte, Task<Matrix4x4?>>("Ktisis.GetMatrix");
 	private ICallGateProvider<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>> IpcBatchGetMatrix { get; } = dpi.GetIpcProvider<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.BatchGetMatrix");
 	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>> IpcBatchSetMatrix { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>>("Ktisis.BatchSetMatrix");
-
+	private ICallGateProvider<uint, byte, Task<Dictionary<string, Matrix4x4?>>> IpcGetAllMatrices { get; } = dpi.GetIpcProvider<uint, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
 	private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
 
 	private (int, int) GetVersion() => (1, 0);
@@ -269,7 +269,22 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		}
 		return anySuccess;
 	}
+	private async Task<Dictionary<string, Matrix4x4?>> GetAllMatrices(uint index, byte spaceCode) {
+		var ret = new Dictionary<string, Matrix4x4?>();
+		var space = (BoneSpace)spaceCode;
 
+		var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
+		if (actor == null) return ret;
+
+		var allBones = actor.Pose?.Recurse().OfType<BoneNode>();
+		if (allBones == null) return ret;
+
+		foreach (var bone in allBones)
+		{
+			ret[bone.Info.Name] = GetBoneMatrix(bone, space);
+		}
+		return ret;
+	}
 	#endregion
 
 	public void RegisterIpc()
@@ -285,5 +300,6 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		IpcSelectedBones.RegisterFunc(SelectedBones);
 		IpcBatchGetMatrix.RegisterFunc(BatchGetMatrix);
 		IpcBatchSetMatrix.RegisterFunc(BatchSetMatrix);
+		IpcGetAllMatrices.RegisterFunc(GetAllMatrices);
 	}
 }

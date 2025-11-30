@@ -62,6 +62,7 @@ public class DebugWindow : KtisisWindow {
 	private readonly ICallGateSubscriber<uint, string, byte, Task<Matrix4x4?>> _ktisisGetMatrix;
 	private readonly ICallGateSubscriber<uint, string, Matrix4x4, byte, Task<bool>> _ktisisSetMatrix;
 	private readonly ICallGateSubscriber<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>> _ktisisBatchGetMatrix;
+	private readonly ICallGateSubscriber<uint, byte, Task<Dictionary<string, Matrix4x4?>>> _ktisisGetAllMatrices;
 	private readonly ICallGateSubscriber<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>> _ktisisBatchSetMatrix;
 
 	public DebugWindow(
@@ -88,6 +89,7 @@ public class DebugWindow : KtisisWindow {
 		this._ktisisGetMatrix = dpi.GetIpcSubscriber<uint, string, byte, Task<Matrix4x4?>>("Ktisis.GetMatrix");
 		this._ktisisSetMatrix = dpi.GetIpcSubscriber<uint, string, Matrix4x4, byte, Task<bool>>("Ktisis.SetMatrix");
 		this._ktisisBatchGetMatrix = dpi.GetIpcSubscriber<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.BatchGetMatrix");
+		this._ktisisGetAllMatrices = dpi.GetIpcSubscriber<uint, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
 		this._ktisisBatchSetMatrix = dpi.GetIpcSubscriber<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>>("Ktisis.BatchSetMatrix");
 
 		this._transformTable = new TransformTable(cfg, locale);
@@ -140,9 +142,11 @@ public class DebugWindow : KtisisWindow {
 
 		ImGui.Text("Ktisis.LoadPose");
 		using (ImRaii.Disabled(_gameObjectId < 1 || !_hasClip))
-            if (ImGui.Button("APPLY (Clipboard)##LoadPose")) {
+			if (ImGui.Button("APPLY (Clipboard)##LoadPose"))
+			{
 				_hasClip = CheckClipboard();
-                if (_hasClip) {
+				if (_hasClip)
+				{
 					var applied = await this._ktisisLoadPose.InvokeFunc((uint)_gameObjectId, ImGui.GetClipboardText());
 					if (applied)
 						Ktisis.Log.Debug($"[DEBUG] Loaded clipboard pose to actor {_gameObjectId}");
@@ -157,7 +161,8 @@ public class DebugWindow : KtisisWindow {
 		// todo: popup bubble with the json output ala glamourer IPC tester
 		ImGui.Text("Ktisis.SavePose");
 		using (ImRaii.Disabled(_gameObjectId < 1))
-            if (ImGui.Button("GET (Clipboard)##SavePose")) {
+			if (ImGui.Button("GET (Clipboard)##SavePose"))
+			{
 				var clip = await this._ktisisSavePose.InvokeFunc((uint)_gameObjectId);
 				ImGui.SetClipboardText(clip);
 				_hasClip = true;
@@ -170,7 +175,8 @@ public class DebugWindow : KtisisWindow {
 		{
 			var bones = await this._ktisisSelectedBones.InvokeFunc();
 
-            foreach (var (actorId, boneSet) in bones) {
+			foreach (var (actorId, boneSet) in bones)
+			{
 				Ktisis.Log.Debug($"[DEBUG] Actor {actorId} selected bones: {string.Join(", ", boneSet)}");
 			}
 		}
@@ -253,6 +259,25 @@ public class DebugWindow : KtisisWindow {
 
 				var result = await _ktisisBatchSetMatrix.InvokeFunc((uint)_gameObjectId, dict, (byte)_boneSpace);
 				Ktisis.Log.Debug($"[DEBUG] Batch Set Result: {result}");
+			}
+
+			ImGui.Spacing();
+			if (ImGui.Button("Get All Matrices"))
+			{
+				var matrices = await _ktisisGetAllMatrices.InvokeFunc((uint)_gameObjectId, (byte)_boneSpace);
+				if (matrices != null)
+				{
+					Ktisis.Log.Debug($"[DEBUG] GetAllMatrices returned {matrices.Count} entries.");
+					foreach (var (name, matrix) in matrices)
+					{
+						var val = matrix.HasValue ? matrix.Value.ToString() : "null";
+						Ktisis.Log.Debug($"[DEBUG] {name}: {val}");
+					}
+				} 
+				else
+				{
+					Ktisis.Log.Warning("[DEBUG] GetAllMatrices returned null.");
+				}
 			}
 		}
 	}
