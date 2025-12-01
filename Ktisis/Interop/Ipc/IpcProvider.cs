@@ -154,16 +154,20 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		return null;
 	}
 
-	private unsafe bool SetBoneMatrix(IEditorContext ctx, BoneNode bone, Matrix4x4 matrix, BoneSpace space)
+	private unsafe bool SetBoneMatrix(IEditorContext ctx, BoneNode bone, Matrix4x4 matrix, BoneSpace space) 
 	{
 		Matrix4x4 targetWorld = matrix;
-
 		if (space == BoneSpace.Actor)
 		{
 			var skeleton = bone.GetSkeleton();
 			if (skeleton == null) return false;
 			var actorTransform = new Transform(skeleton->Transform);
-			targetWorld = matrix * actorTransform.ComposeMatrix();
+			var m = matrix;
+			m.Translation *= actorTransform.Scale;
+			var rootRotPos = Matrix4x4.CreateFromQuaternion(actorTransform.Rotation)
+						   * Matrix4x4.CreateTranslation(actorTransform.Position);
+
+			targetWorld = m * rootRotPos;
 		} 
 		else if (space == BoneSpace.Parent)
 		{
@@ -180,7 +184,6 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 			var targetModel = matrix * parentModel;
 			return SetBoneMatrix(ctx, bone, targetModel, BoneSpace.Actor);
 		}
-
 		var target = new TransformTarget(bone, [bone]);
 		var transformAction = ctx.Transform.Begin(target, setup => {
 			setup.MirrorRotation = MirrorMode.Inverse;
