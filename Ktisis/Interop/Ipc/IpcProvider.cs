@@ -244,6 +244,14 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		if (actor?.Pose == null || matrices.Count == 0) return false;
 
 		var allBonesList = actor.Pose.Recurse().OfType<BoneNode>().ToList();
+		// sort because facebones are annoying
+		allBonesList.Sort((a, b) => {
+			int partialCompare = a.Info.PartialIndex.CompareTo(b.Info.PartialIndex);
+			if (partialCompare != 0) return partialCompare;
+
+			return a.Info.BoneIndex.CompareTo(b.Info.BoneIndex);
+		});
+
 		bool anySuccess = false;
 		foreach (var bone in allBonesList)
 		{
@@ -261,7 +269,8 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 						parentModel = pm.Value;
 					}
 				}
-				if (SetBoneMatrix(ctx, bone, matrix * parentModel, BoneSpace.Actor)) anySuccess = true;}
+				if (SetBoneMatrix(ctx, bone, matrix * parentModel, BoneSpace.Actor)) anySuccess = true;
+			}
 			else
 			{
 				if (SetBoneMatrix(ctx, bone, matrix, space)) anySuccess = true;
