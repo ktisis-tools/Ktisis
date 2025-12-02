@@ -49,7 +49,7 @@ public class Gizmo2D {
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
 		using var _border = ImRaii.PushStyle(ImGuiStyleVar.ChildBorderSize, 0f);
 		
-		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize);
+		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
 
 		var cursorPos = ImGui.GetCursorScreenPos();
 		var innerSize = ImGui.GetContentRegionAvail();
@@ -74,7 +74,7 @@ public class Gizmo2D {
 	
 	public void End() {
 		this.Gizmo.EndFrame();
-		ImGui.End();
+		ImGui.EndChild();
 		ImGui.EndChildFrame();
 	}
 }
