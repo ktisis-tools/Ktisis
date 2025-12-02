@@ -197,22 +197,24 @@ public class TransformTable {
 			using var _ = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0.1f);
 			using var __ = ImRaii.PushColor(ImGuiCol.Border, col);
 			result = ImGui.DragFloat(id, ref value, speed, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
-			if (ImGui.IsItemHovered()) {
-				ImGuiP.SetItemUsingMouseWheel();
-				var mw = (int)ImGui.GetIO().MouseWheel;
-				if (mw != 0) {
-					var step = speed * 10f; // scale steps by 1 place since its kinda slow by default
-					if (ImGui.IsKeyDown(ImGuiKey.ModShift))
-						step *= FastStep;
-					else if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
-						step *= SlowStep;
+			if (this._cfg.File.Keybinds.ScrollAllow) {
+				if (ImGui.IsItemHovered() && (!this._cfg.File.Keybinds.ScrollModifier || ImGui.IsKeyDown(ImGuiKey.ModAlt))) {
+					ImGuiP.SetItemUsingMouseWheel();
+					var mw = (int)ImGui.GetIO().MouseWheel;
+					if (mw != 0) {
+						var step = speed * 10f; // scale steps by 1 place since its kinda slow by default
+						if (ImGui.IsKeyDown(ImGuiKey.ModShift))
+							step *= FastStep;
+						else if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
+							step *= SlowStep;
 
-					value += mw * step;
-					result = true;
-					WasStepping = id;
+						value += mw * step;
+						result = true;
+						WasStepping = id;
+					}
+				} else if (WasStepping == id) {
+					stopStepping = true;
 				}
-			} else if (WasStepping == id) {
-				stopStepping = true;
 			}
 		} 
 
