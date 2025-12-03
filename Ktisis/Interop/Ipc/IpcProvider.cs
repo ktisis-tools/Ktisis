@@ -22,12 +22,6 @@ using Newtonsoft.Json;
 
 namespace Ktisis.Interop.Ipc;
 
-public enum BoneSpace : byte {
-	World = 0,
-	Actor = 1,
-	Parent = 2
-}
-
 [Singleton]
 public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	{
@@ -38,17 +32,19 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	private ICallGateProvider<uint, string, bool, bool, bool, Task<bool>> IpcLoadPoseExtended { get; } = dpi.GetIpcProvider<uint, string, bool, bool, bool, Task<bool>>("Ktisis.LoadPoseExtended");
 	private ICallGateProvider<uint, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<uint, Task<string?>>("Ktisis.SavePose");
 
-	private ICallGateProvider<uint, string, Matrix4x4, byte, Task<bool>> IpcSetMatrix { get; } = dpi.GetIpcProvider<uint, string, Matrix4x4, byte, Task<bool>>("Ktisis.SetMatrix");
-	private ICallGateProvider<uint, string, byte, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, byte, Task<Matrix4x4?>>("Ktisis.GetMatrix");
-	private ICallGateProvider<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>> IpcBatchGetMatrix { get; } = dpi.GetIpcProvider<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.BatchGetMatrix");
-	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>> IpcBatchSetMatrix { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>>("Ktisis.BatchSetMatrix");
-	private ICallGateProvider<uint, byte, Task<Dictionary<string, Matrix4x4?>>> IpcGetAllMatrices { get; } = dpi.GetIpcProvider<uint, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
+	private ICallGateProvider<uint, string, Matrix4x4, bool, Task<bool>> IpcSetMatrix { get; } = dpi.GetIpcProvider<uint, string, Matrix4x4, bool, Task<bool>>("Ktisis.SetMatrix");
+	private ICallGateProvider<uint, string, bool, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, bool, Task<Matrix4x4?>>("Ktisis.GetMatrix");
+	private ICallGateProvider<uint, List<string>, bool, Task<Dictionary<string, Matrix4x4?>>> IpcBatchGetMatrix { get; } = dpi.GetIpcProvider<uint, List<string>, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.BatchGetMatrix");
+	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>> IpcBatchSetMatrix { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>>("Ktisis.BatchSetMatrix");
+	private ICallGateProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>> IpcGetAllMatrices { get; } = dpi.GetIpcProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
 	private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
 
 	private ICallGateProvider<uint, uint, Task<bool>> IpcSetAnimation { get; } = dpi.GetIpcProvider<uint, uint, Task<bool>>("Ktisis.SetAnimation");
 	
 	private ICallGateProvider<Task<Dictionary<string, Tuple<Vector3?, ushort?, uint, float, Vector3>>>> IpcGetCameras { get; } = dpi.GetIpcProvider<Task<Dictionary<string, Tuple<Vector3?, ushort?, uint, float, Vector3>>>>("Ktisis.GetCameras");
 	private ICallGateProvider<string, Tuple<Vector3?, ushort?, uint, float, Vector3>, Task<bool>> IpcSetCamera { get; } = dpi.GetIpcProvider<string, Tuple<Vector3?, ushort?, uint, float, Vector3>, Task<bool>>("Ktisis.SetCamera");
+
+	#region core
 	private (int, int) GetVersion() => (1, 0);
 
 	private bool RefreshActors()
@@ -132,179 +128,179 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
 		return ret;
 	}
+	#endregion
 
 	#region Matrix IPC 
-	private unsafe Matrix4x4? GetBoneMatrix(BoneNode bone, BoneSpace space)
-	{
-		if (space == BoneSpace.World) return bone.GetMatrix();
-		if (space == BoneSpace.Actor) return bone.GetMatrixModel();
-		if (space == BoneSpace.Parent)
-		{
-			var boneModel = bone.GetMatrixModel();
-			if (boneModel == null) return null;
-			var parentBone = bone.Pose.Recurse().OfType<BoneNode>()
-								 .FirstOrDefault(p => bone.IsBoneChildOf(p));
 
-			Matrix4x4 parentModel = Matrix4x4.Identity;
-			if (parentBone != null)
-			{
-				var pm = parentBone.GetMatrixModel();
-				if (pm.HasValue) parentModel = pm.Value;
-			}
-			if (Matrix4x4.Invert(parentModel, out var parentInverse))
-			{
-				return boneModel.Value * parentInverse;
-			}
-			return null;
-		}
-		return null;
+	private ActorEntity? GetEntity(uint index)
+		=> ctxManager.Current?.Scene?.GetEntityForIndex(index);
+	private BoneNode? GetParentBone(BoneNode bone)
+		=> bone.Pose.Recurse().OfType<BoneNode>().FirstOrDefault(p => bone.IsBoneChildOf(p));
+
+	private async Task<Matrix4x4?> GetMatrix(uint index, string boneName, bool useWorldSpace) {
+		var actor = GetEntity(index);
+		var bone = actor?.Pose?.FindBoneByName(boneName);
+		if (bone is null) return null;
+		//ws
+		if (useWorldSpace) return bone.GetMatrix();
+
+		// ps relative
+		var model = bone.GetMatrixModel();
+		if (model == null) return null;
+
+		var parentModel = GetParentBone(bone)?.GetMatrixModel() ?? Matrix4x4.Identity;
+
+		return Matrix4x4.Invert(parentModel, out var inv)
+			? model.Value * inv
+			: null;
 	}
 
-	private unsafe bool SetBoneMatrix(IEditorContext ctx, BoneNode bone, Matrix4x4 matrix, BoneSpace space) 
-	{
-		Matrix4x4 targetWorld = matrix;
-		if (space == BoneSpace.Actor)
-		{
-			var skeleton = bone.GetSkeleton();
-			if (skeleton == null) return false;
-			var actorTransform = new Transform(skeleton->Transform);
-			var m = matrix;
-			m.Translation *= actorTransform.Scale;
-			var rootRotPos = Matrix4x4.CreateFromQuaternion(actorTransform.Rotation)
-						   * Matrix4x4.CreateTranslation(actorTransform.Position);
+	private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix, bool useWorldSpace) {
+		var ctx = ctxManager.Current;
+		var actor = GetEntity(index);
+		var bone = actor?.Pose?.FindBoneByName(boneName);
 
-			targetWorld = m * rootRotPos;
-		} 
-		else if (space == BoneSpace.Parent)
-		{
-			var parentBone = bone.Pose.Recurse().OfType<BoneNode>()
-								 .FirstOrDefault(p => bone.IsBoneChildOf(p));
+		if (ctx is null || bone is null) return false;
 
-			Matrix4x4 parentModel = Matrix4x4.Identity;
-			if (parentBone != null)
+		var targetMatrix = CalculateWorldMatrix(bone, matrix, useWorldSpace);
+		return ApplyBoneTransform(ctx, bone, targetMatrix);
+	}
+
+	private async Task<Dictionary<string, Matrix4x4?>> BatchGetMatrix(uint index, List<string> names, bool useWorldSpace) {
+		var actor = GetEntity(index);
+		var ret = new Dictionary<string, Matrix4x4?>();
+
+		if (actor?.Pose == null) return ret;
+
+		// lookup dict
+		var allBones = actor.Pose.Recurse()
+			.OfType<BoneNode>()
+			.ToDictionary(b => b.Info.Name, b => b);
+
+		foreach (var name in names)
+		{
+			if (!allBones.TryGetValue(name, out var bone))
 			{
-				var pm = parentBone.GetMatrixModel();
-				if (pm.HasValue) parentModel = pm.Value;
+				ret[name] = null;
+				continue;
 			}
-
-			var targetModel = matrix * parentModel;
-			return SetBoneMatrix(ctx, bone, targetModel, BoneSpace.Actor);
+			if (useWorldSpace)
+			{
+				ret[name] = bone.GetMatrix();
+			} else
+			{
+				var model = bone.GetMatrixModel();
+				if (model == null)
+				{
+					ret[name] = null;
+					continue;
+				}
+				var parentModel = GetParentBone(bone)?.GetMatrixModel() ?? Matrix4x4.Identity;
+				ret[name] = Matrix4x4.Invert(parentModel, out var inv) ? model.Value * inv : null;
+			}
 		}
-		var target = new TransformTarget(bone, [bone]);
-		var transformAction = ctx.Transform.Begin(target, setup => {
+
+		return ret;
+	}
+
+	private async Task<bool> BatchSetMatrix(uint index, Dictionary<string, Matrix4x4> matrices, bool useWorldSpace) {
+		var ctx = ctxManager.Current;
+		var actor = GetEntity(index);
+
+		if (ctx == null || actor?.Pose == null || matrices.Count == 0) return false;
+
+		var bones = actor.Pose.Recurse().OfType<BoneNode>().ToList();
+
+		// sort because face bones are annoying
+		bones.Sort((a, b) => {
+			int p = a.Info.PartialIndex.CompareTo(b.Info.PartialIndex);
+			return p != 0 ? p : a.Info.BoneIndex.CompareTo(b.Info.BoneIndex);
+		});
+
+		bool anySuccess = false;
+
+		foreach (var bone in bones)
+		{
+			if (!matrices.TryGetValue(bone.Info.Name, out var matrix))
+				continue;
+
+			var targetMatrix = CalculateWorldMatrix(bone, matrix, useWorldSpace);
+
+			if (ApplyBoneTransform(ctx, bone, targetMatrix))
+				anySuccess = true;
+		}
+
+		return anySuccess;
+	}
+
+	private async Task<Dictionary<string, Matrix4x4?>> GetAllMatrices(uint index, bool useWorldSpace) {
+		var actor = GetEntity(index);
+		var ret = new Dictionary<string, Matrix4x4?>();
+
+		if (actor?.Pose == null) return ret;
+
+		foreach (var bone in actor.Pose.Recurse().OfType<BoneNode>())
+		{
+			if (useWorldSpace)
+			{
+				ret[bone.Info.Name] = bone.GetMatrix();
+			} else
+			{
+				var model = bone.GetMatrixModel();
+				if (model == null)
+				{
+					ret[bone.Info.Name] = null;
+					continue;
+				}
+				var parentModel = GetParentBone(bone)?.GetMatrixModel() ?? Matrix4x4.Identity;
+				ret[bone.Info.Name] = Matrix4x4.Invert(parentModel, out var inv) ? model.Value * inv : null;
+			}
+		}
+
+		return ret;
+	}
+
+	private unsafe Matrix4x4 CalculateWorldMatrix(BoneNode bone, Matrix4x4 inputMatrix, bool inputIsWorldSpace) {
+		if (inputIsWorldSpace) return inputMatrix;
+
+		// ActorSpace = ParentSpace * ParentModel
+		var parent = GetParentBone(bone);
+		var parentModel = parent?.GetMatrixModel() ?? Matrix4x4.Identity;
+		var actorSpaceMatrix = inputMatrix * parentModel;
+
+		// Convert Actor Space to World Space
+		var skeleton = bone.GetSkeleton();
+		if (skeleton == null) return Matrix4x4.Identity;
+
+		var actorTx = new Transform(skeleton->Transform);
+		var m = actorSpaceMatrix;
+
+		m.Translation *= actorTx.Scale;
+
+		var root = Matrix4x4.CreateFromQuaternion(actorTx.Rotation)
+				 * Matrix4x4.CreateTranslation(actorTx.Position);
+
+		// Result = Matrix * Root
+		return m * root;
+	}
+
+	private bool ApplyBoneTransform(IEditorContext ctx, BoneNode bone, Matrix4x4 worldTarget) {
+		var target = new TransformTarget(bone, new[] { bone });
+
+		var action = ctx.Transform.Begin(target, setup => {
 			setup.MirrorRotation = MirrorMode.Inverse;
 			setup.ParentBones = true;
 			setup.RelativeBones = true;
 		});
 
-		transformAction.SetMatrix(targetWorld);
-		transformAction.Dispatch();
+		action.SetMatrix(worldTarget);
+		action.Dispatch();
 		return true;
 	}
 
-	private async Task<Matrix4x4?> GetMatrix(uint index, string boneName, byte spaceCode)
-	{
-		var space = (BoneSpace)spaceCode;
-		var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
-		var bone = actor?.Pose?.FindBoneByName(boneName);
-
-		if (bone is null) return null;
-		return GetBoneMatrix(bone, space);
-	}
-
-	private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix, byte spaceCode)
-		{
-		var space = (BoneSpace)spaceCode;
-		var ctx = ctxManager.Current;
-		if (ctx is null) return false;
-
-		var actor = ctx.Scene?.GetEntityForIndex(index);
-		var bone = actor?.Pose?.FindBoneByName(boneName);
-		if (bone is null) return false;
-		return SetBoneMatrix(ctx, bone, matrix, space);
-	}
-
-	private async Task<Dictionary<string, Matrix4x4?>> BatchGetMatrix(uint index, List<string> boneNames, byte spaceCode)
-	{
-		var ret = new Dictionary<string, Matrix4x4?>();
-		var space = (BoneSpace)spaceCode;
-		var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
-		if (actor == null) return ret;
-		var allBones = actor.Pose?.Recurse().OfType<BoneNode>().ToDictionary(b => b.Info.Name, b => b);
-		if (allBones == null) return ret;
-
-		foreach (var name in boneNames)
-		{
-			if (allBones.TryGetValue(name, out var bone)) ret[name] = GetBoneMatrix(bone, space);
-			else ret[name] = null;
-		}
-		return ret;
-	}
-
-	private async Task<bool> BatchSetMatrix(uint index, Dictionary<string, Matrix4x4> matrices, byte spaceCode)
-	{
-		var space = (BoneSpace)spaceCode;
-		var ctx = ctxManager.Current;
-		var actor = ctx?.Scene?.GetEntityForIndex(index);
-
-		if (actor?.Pose == null || matrices.Count == 0) return false;
-
-		var allBonesList = actor.Pose.Recurse().OfType<BoneNode>().ToList();
-		// sort because facebones are annoying
-		allBonesList.Sort((a, b) => {
-			int partialCompare = a.Info.PartialIndex.CompareTo(b.Info.PartialIndex);
-			if (partialCompare != 0) return partialCompare;
-
-			return a.Info.BoneIndex.CompareTo(b.Info.BoneIndex);
-		});
-
-		bool anySuccess = false;
-		foreach (var bone in allBonesList)
-		{
-			if (!matrices.TryGetValue(bone.Info.Name, out var matrix)) continue;
-
-			if (space == BoneSpace.Parent)
-			{
-				var parentNode = allBonesList.FirstOrDefault(p => bone.IsBoneChildOf(p));
-				Matrix4x4 parentModel = Matrix4x4.Identity;
-				if (parentNode != null)
-				{
-					var pm = parentNode.GetMatrixModel();
-					if (pm.HasValue)
-					{
-						parentModel = pm.Value;
-					}
-				}
-				if (SetBoneMatrix(ctx, bone, matrix * parentModel, BoneSpace.Actor)) anySuccess = true;
-			}
-			else
-			{
-				if (SetBoneMatrix(ctx, bone, matrix, space)) anySuccess = true;
-			}
-		}
-		return anySuccess;
-	}
-
-	private async Task<Dictionary<string, Matrix4x4?>> GetAllMatrices(uint index, byte spaceCode)
-	{
-		var ret = new Dictionary<string, Matrix4x4?>();
-		var space = (BoneSpace)spaceCode;
-
-		var actor = ctxManager.Current?.Scene?.GetEntityForIndex(index);
-		if (actor == null) return ret;
-
-		var allBones = actor.Pose?.Recurse().OfType<BoneNode>();
-		if (allBones == null) return ret;
-
-		foreach (var bone in allBones)
-		{
-			ret[bone.Info.Name] = GetBoneMatrix(bone, space);
-		}
-		return ret;
-	}
 	#endregion
 
-	
+
 	#region Animations
 
 	public async Task<bool> SetAnimation(uint index, uint id) {

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -48,7 +48,7 @@ public class DebugWindow : KtisisWindow {
 	//Transform stuff
 	private Transform _transform = new();
 	private string _boneName = string.Empty;
-	private BoneSpace _boneSpace = BoneSpace.World;
+	private bool _useWorldSpace = true;
 	private string _batchBoneNames = "j_kao";
 
 	// ktisis subscriptions
@@ -59,11 +59,11 @@ public class DebugWindow : KtisisWindow {
 	private readonly ICallGateSubscriber<uint, Task<string?>> _ktisisSavePose;
 	private readonly ICallGateSubscriber<Task<Dictionary<int, HashSet<string>>>> _ktisisSelectedBones;
 
-	private readonly ICallGateSubscriber<uint, string, byte, Task<Matrix4x4?>> _ktisisGetMatrix;
-	private readonly ICallGateSubscriber<uint, string, Matrix4x4, byte, Task<bool>> _ktisisSetMatrix;
-	private readonly ICallGateSubscriber<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>> _ktisisBatchGetMatrix;
-	private readonly ICallGateSubscriber<uint, byte, Task<Dictionary<string, Matrix4x4?>>> _ktisisGetAllMatrices;
-	private readonly ICallGateSubscriber<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>> _ktisisBatchSetMatrix;
+	private readonly ICallGateSubscriber<uint, string, bool, Task<Matrix4x4?>> _ktisisGetMatrix;
+	private readonly ICallGateSubscriber<uint, string, Matrix4x4, bool, Task<bool>> _ktisisSetMatrix;
+	private readonly ICallGateSubscriber<uint, List<string>, bool, Task<Dictionary<string, Matrix4x4?>>> _ktisisBatchGetMatrix;
+	private readonly ICallGateSubscriber<uint, bool, Task<Dictionary<string, Matrix4x4?>>> _ktisisGetAllMatrices;
+	private readonly ICallGateSubscriber<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>> _ktisisBatchSetMatrix;
 
 	public DebugWindow(
 		IEditorContext ctx,
@@ -86,11 +86,11 @@ public class DebugWindow : KtisisWindow {
 		this._ktisisSelectedBones = dpi.GetIpcSubscriber<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
 
 		// Matrix subs
-		this._ktisisGetMatrix = dpi.GetIpcSubscriber<uint, string, byte, Task<Matrix4x4?>>("Ktisis.GetMatrix");
-		this._ktisisSetMatrix = dpi.GetIpcSubscriber<uint, string, Matrix4x4, byte, Task<bool>>("Ktisis.SetMatrix");
-		this._ktisisBatchGetMatrix = dpi.GetIpcSubscriber<uint, List<string>, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.BatchGetMatrix");
-		this._ktisisGetAllMatrices = dpi.GetIpcSubscriber<uint, byte, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
-		this._ktisisBatchSetMatrix = dpi.GetIpcSubscriber<uint, Dictionary<string, Matrix4x4>, byte, Task<bool>>("Ktisis.BatchSetMatrix");
+		this._ktisisGetMatrix = dpi.GetIpcSubscriber<uint, string, bool, Task<Matrix4x4?>>("Ktisis.GetMatrix");
+		this._ktisisSetMatrix = dpi.GetIpcSubscriber<uint, string, Matrix4x4, bool, Task<bool>>("Ktisis.SetMatrix");
+		this._ktisisBatchGetMatrix = dpi.GetIpcSubscriber<uint, List<string>, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.BatchGetMatrix");
+		this._ktisisGetAllMatrices = dpi.GetIpcSubscriber<uint, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
+		this._ktisisBatchSetMatrix = dpi.GetIpcSubscriber<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>>("Ktisis.BatchSetMatrix");
 
 		this._transformTable = new TransformTable(cfg, locale);
 	}
@@ -185,15 +185,9 @@ public class DebugWindow : KtisisWindow {
 		ImGui.Separator();
 		ImGui.Text("Bone Transform Get/Set");
 
-		if (ImGui.BeginCombo("Coordinate Space", _boneSpace.ToString()))
-		{
-			foreach (var space in Enum.GetValues<BoneSpace>())
-			{
-				if (ImGui.Selectable(space.ToString(), space == _boneSpace))
-					_boneSpace = space;
-			}
-			ImGui.EndCombo();
-		}
+		ImGui.Checkbox("Use World Space", ref _useWorldSpace);
+		ImGui.SameLine();
+		ImGui.TextDisabled(_useWorldSpace ? "(World → Default)" : "(Parent-Relative)");
 
 		ImGui.InputText("Bone Name", ref _boneName, 64);
 
@@ -201,11 +195,11 @@ public class DebugWindow : KtisisWindow {
 		{
 			if (ImGui.Button("GET##GetBoneTransform"))
 			{
-				var matrix = await this._ktisisGetMatrix.InvokeFunc((uint)_gameObjectId, _boneName, (byte)_boneSpace);
+				var matrix = await this._ktisisGetMatrix.InvokeFunc((uint)_gameObjectId, _boneName, _useWorldSpace);
 				if (matrix != null)
 				{
 					_transform = new Transform(matrix.Value);
-					Ktisis.Log.Debug($"[DEBUG] Got matrix for bone {_boneName} on actor {_gameObjectId} in {_boneSpace} space");
+					Ktisis.Log.Debug($"[DEBUG] Got matrix for bone {_boneName} on actor {_gameObjectId}");
 				} else
 				{
 					Ktisis.Log.Warning($"[DEBUG] Failed to get matrix for bone {_boneName} on actor {_gameObjectId}");
@@ -218,10 +212,10 @@ public class DebugWindow : KtisisWindow {
 
 			if (ImGui.Button("SET##SetBoneTransform"))
 			{
-				var success = await this._ktisisSetMatrix.InvokeFunc((uint)_gameObjectId, _boneName, _transform.ComposeMatrix(), (byte)_boneSpace);
+				var success = await this._ktisisSetMatrix.InvokeFunc((uint)_gameObjectId, _boneName, _transform.ComposeMatrix(), _useWorldSpace);
 				if (success)
 				{
-					Ktisis.Log.Debug($"[DEBUG] Set matrix for bone {_boneName} on actor {_gameObjectId} in {_boneSpace} space");
+					Ktisis.Log.Debug($"[DEBUG] Set matrix for bone {_boneName} on actor {_gameObjectId}");
 				}
 				else
 				{
@@ -237,7 +231,7 @@ public class DebugWindow : KtisisWindow {
 			if (ImGui.Button("Batch GET"))
 			{
 				var names = _batchBoneNames.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
-				var results = await _ktisisBatchGetMatrix.InvokeFunc((uint)_gameObjectId, names, (byte)_boneSpace);
+				var results = await _ktisisBatchGetMatrix.InvokeFunc((uint)_gameObjectId, names, _useWorldSpace);
 				if (results != null)
 				{
 					foreach (var kvp in results)
@@ -257,14 +251,14 @@ public class DebugWindow : KtisisWindow {
 				var mat = _transform.ComposeMatrix();
 				foreach (var name in names) dict[name] = mat;
 
-				var result = await _ktisisBatchSetMatrix.InvokeFunc((uint)_gameObjectId, dict, (byte)_boneSpace);
+				var result = await _ktisisBatchSetMatrix.InvokeFunc((uint)_gameObjectId, dict, _useWorldSpace);
 				Ktisis.Log.Debug($"[DEBUG] Batch Set Result: {result}");
 			}
 
 			ImGui.Spacing();
 			if (ImGui.Button("Get All Matrices"))
 			{
-				var matrices = await _ktisisGetAllMatrices.InvokeFunc((uint)_gameObjectId, (byte)_boneSpace);
+				var matrices = await _ktisisGetAllMatrices.InvokeFunc((uint)_gameObjectId, _useWorldSpace);
 				if (matrices != null)
 				{
 					Ktisis.Log.Debug($"[DEBUG] GetAllMatrices returned {matrices.Count} entries.");
