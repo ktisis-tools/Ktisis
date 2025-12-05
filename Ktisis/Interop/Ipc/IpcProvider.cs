@@ -25,7 +25,7 @@ using Newtonsoft.Json;
 namespace Ktisis.Interop.Ipc;
 
 [Singleton]
-public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi) {
+public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi) : IDisposable {
 	private ICallGateProvider<(int, int)> IpcVersion { get; } = dpi.GetIpcProvider<(int, int)>("Ktisis.ApiVersion");
 	private ICallGateProvider<bool> IpcRefreshActions { get; } = dpi.GetIpcProvider<bool>("Ktisis.RefreshActors");
 	private ICallGateProvider<bool> IpcIsPosing { get; } = dpi.GetIpcProvider<bool>("Ktisis.IsPosing");
@@ -295,5 +295,25 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		IpcBatchGetMatrix.RegisterFunc(BatchGetMatrix);
 		IpcBatchSetMatrix.RegisterFunc(BatchSetMatrix);
 		IpcGetAllMatrices.RegisterFunc(GetAllMatrices);
+	}
+
+	private void UnregisterIpc() {
+		IpcVersion.UnregisterFunc();
+		IpcRefreshActions.UnregisterFunc();
+		IpcIsPosing.UnregisterFunc();
+		IpcLoadPose.UnregisterFunc();
+		IpcLoadPoseExtended.UnregisterFunc();
+		IpcSavePose.UnregisterFunc();
+		IpcGetMatrix.UnregisterFunc();
+		IpcSetMatrix.UnregisterFunc();
+		IpcSelectedBones.UnregisterFunc();
+		IpcBatchGetMatrix.UnregisterFunc();
+		IpcBatchSetMatrix.UnregisterFunc();
+		IpcGetAllMatrices.UnregisterFunc();
+	}
+
+	public void Dispose() {
+		Ktisis.Log.Info("Disposing Ktisis IPC Provider.");
+		this.UnregisterIpc();
 	}
 }
