@@ -5,6 +5,8 @@ namespace Ktisis.Data.Config.Actions;
 public class InputConfig {
 	public bool BlockTargetLeftClick;
 	public bool BlockTargetRightClick;
+	public bool ScrollModifier;
+	public bool ScrollAllow = true;
 	public bool Enabled;
 
 	public Dictionary<string, ActionKeybind> Keybinds = new();

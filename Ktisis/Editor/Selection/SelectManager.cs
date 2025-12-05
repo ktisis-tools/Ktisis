@@ -5,6 +5,8 @@ using System.Linq;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Events;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Editor.Selection;
 
@@ -26,6 +28,8 @@ public interface ISelectManager {
 	public IEnumerable<SceneEntity> GetSelected();
 
 	public SceneEntity? GetFirstSelected();
+
+	public bool IsActorSelected(ActorEntity actor);
 
 	public bool IsSelected(SceneEntity entity);
 
@@ -69,6 +73,20 @@ public class SelectManager : ISelectManager {
 
 	public bool IsSelected(SceneEntity entity)
 		=> this.Selected.Contains(entity);
+
+	public bool IsActorSelected(ActorEntity actor) {
+		foreach (var target in this.GetSelected()) {
+			if (
+				target switch {
+					BoneNode node => node.Pose.Parent,
+					BoneNodeGroup group => group.Pose.Parent,
+					EntityPose pose => pose.Parent,
+					_ => target
+				} is ActorEntity targetActor && targetActor == actor
+			) return true;
+		}
+		return false;
+	}
 
 	public void Select(SceneEntity entity) {
 		this.Selected.Remove(entity);

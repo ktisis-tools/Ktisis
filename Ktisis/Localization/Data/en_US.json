@@ -177,6 +177,7 @@
 			"poseExpression": {
 				"title": "Pose Expression",
 				"warning": "⚠ Posing is currently enabled!",
+				"brioWarning": "⚠ Brio is currently enabled! An incompatibility currently prevents this feature from functioning - to load Pose Expressions, please disable Brio first.",
 				"header": "WARNING: This is an experimental feature! It will overwrite any current face pose, and may deform ears or other face parts. However, you can still undo any changes made."
 			}
 		}
@@ -338,6 +339,8 @@
 			"help": "Click keybinds to modify them. Right click to clear. Keybinds must be enabled to edit.",
 			"blockLeft": "Disable GPose change target on left click",
 			"blockRight": "Disable GPose change target on right click",
+			"scrollAllow": "Enable scrollwheel input for transform sliders",
+			"scrollMod": "Require ALT to be held for scrollwheel control of transform sliders",
 			"cameras": {
 				"title": "Cameras",
 				"header": "Camera Controls:"

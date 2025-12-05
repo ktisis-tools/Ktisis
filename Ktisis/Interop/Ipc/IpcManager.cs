@@ -27,6 +27,8 @@ public class IpcManager {
 	public bool IsGlamourerActive => this.GetPluginInstalled("Glamourer");
 	public GlamourerIpcProvider GetGlamourerIpc() => new(this._dpi);
 
+	public bool IsBrioActive => this.GetPluginInstalled("Brio");
+
 	private bool GetPluginInstalled(string internalName)
 		=> this._dpi.InstalledPlugins.Any(p => p.IsLoaded && p.InternalName == internalName);
 }
