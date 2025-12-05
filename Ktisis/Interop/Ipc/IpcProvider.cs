@@ -38,12 +38,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>> IpcBatchSetMatrix { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>>("Ktisis.BatchSetMatrix");
 	private ICallGateProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>> IpcGetAllMatrices { get; } = dpi.GetIpcProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
 	private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
-
-	private ICallGateProvider<uint, uint, Task<bool>> IpcSetAnimation { get; } = dpi.GetIpcProvider<uint, uint, Task<bool>>("Ktisis.SetAnimation");
 	
-	private ICallGateProvider<Task<Dictionary<string, Tuple<Vector3?, ushort?, uint, float, Vector3>>>> IpcGetCameras { get; } = dpi.GetIpcProvider<Task<Dictionary<string, Tuple<Vector3?, ushort?, uint, float, Vector3>>>>("Ktisis.GetCameras");
-	private ICallGateProvider<string, Tuple<Vector3?, ushort?, uint, float, Vector3>, Task<bool>> IpcSetCamera { get; } = dpi.GetIpcProvider<string, Tuple<Vector3?, ushort?, uint, float, Vector3>, Task<bool>>("Ktisis.SetCamera");
-
 	#region core
 	private (int, int) GetVersion() => (1, 0);
 
@@ -299,44 +294,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	}
 
 	#endregion
-
-
-	#region Animations
-
-	public async Task<bool> SetAnimation(uint index, uint id) {
-		var ctx = ctxManager.Current;
-		var editor = ctx.Animation.GetAnimationEditor(ctx.Scene.GetEntityForIndex(index));
-		if (editor is null) return false;
-		editor.PlayTimeline(id);
-		return true;
-	}
 	
-	#endregion
-
-	#region Entity Control
-
-	//Fixed Position, Orbit Target, Flags, Ortho Zoom, Relative Offset
-	public async Task<Dictionary<string, Tuple<Vector3?, ushort?, uint, float, Vector3>>> GetCameras() {
-		var dict = new  Dictionary<string, Tuple<Vector3?, ushort?, uint, float, Vector3>>(); 
-		foreach (var camera in ctxManager.Current?.Cameras.GetCameras().ToArray()) {
-			dict.Add(camera.Name, new Tuple<Vector3?, ushort?, uint, float, Vector3>(camera.FixedPosition, camera.OrbitTarget, (uint)camera.Flags, camera.OrthographicZoom, camera.RelativeOffset));
-		}
-		return dict;
-	}
-	public async Task<bool> SetCamera(string name, Tuple<Vector3?, ushort?, uint, float, Vector3> values) {
-		var target = ctxManager.Current?.Cameras.GetCameras().FirstOrDefault((p) => p.Name == name);
-		if(target is { IsValid: true }) {
-			target.FixedPosition = values.Item1;
-			target.OrbitTarget = values.Item2;
-			target.Flags = (CameraFlags)values.Item3;
-			target.OrthographicZoom = values.Item4;
-			target.RelativeOffset = values.Item5;
-			return true;
-		}
-		return false;
-	}
-
-	#endregion
 	public void RegisterIpc()
 		{
 		IpcVersion.RegisterFunc(GetVersion);
@@ -351,8 +309,5 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		IpcBatchGetMatrix.RegisterFunc(BatchGetMatrix);
 		IpcBatchSetMatrix.RegisterFunc(BatchSetMatrix);
 		IpcGetAllMatrices.RegisterFunc(GetAllMatrices);
-		IpcSetAnimation.RegisterFunc(SetAnimation);
-		IpcGetCameras.RegisterFunc(GetCameras);
-		IpcSetCamera.RegisterFunc(SetCamera);
 	}
 }
