@@ -17,6 +17,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Animation.Game;
 using Ktisis.Editor.Animation.Types;
+using Ktisis.Interop.Ipc;
 using Ktisis.Localization;
 using Ktisis.Structs.Actors;
 
@@ -36,6 +37,7 @@ public class AnimationEditorTab {
 	private readonly ConfigManager _cfg;
 	private readonly ITextureProvider _tex;
 	private readonly LocaleManager _locale;
+	private readonly IpcManager _ipc;
 	
 	private readonly GameAnimationData _animData;
 
@@ -49,11 +51,13 @@ public class AnimationEditorTab {
 		ConfigManager cfg,
 		IDataManager data,
 		LocaleManager locale,
-		ITextureProvider tex
+		ITextureProvider tex,
+		IpcManager ipc
 	) {
 		this._cfg = cfg;
 		this._locale = locale;
 		this._tex = tex;
+		this._ipc = ipc;
 
 		this._animData = new GameAnimationData(data);
 
@@ -201,6 +205,12 @@ public class AnimationEditorTab {
 
 		using (ImRaii.PushColor(ImGuiCol.Text, 0xFF00D8FF))
 			ImGui.Text(this._locale.Translate("chara_edit.animation.poseExpression.warning"));
+
+		// TODO: remove addtl brio warning if resolved
+		if (this._ipc.IsBrioActive)
+			using (ImRaii.PushColor(ImGuiCol.Text, 0xFF504EC4))
+				ImGui.TextWrapped(this._locale.Translate("chara_edit.animation.poseExpression.brioWarning"));
+
 		ImGui.TextWrapped(this._locale.Translate("chara_edit.animation.poseExpression.header"));
 
 		if (Buttons.IconButton(FontAwesomeIcon.Search))

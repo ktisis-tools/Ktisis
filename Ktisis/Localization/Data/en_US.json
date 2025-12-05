@@ -177,6 +177,7 @@
 			"poseExpression": {
 				"title": "Pose Expression",
 				"warning": "⚠ Posing is currently enabled!",
+				"brioWarning": "⚠ Brio is currently enabled! An incompatibility currently prevents this feature from functioning - to load Pose Expressions, please disable Brio first.",
 				"header": "WARNING: This is an experimental feature! It will overwrite any current face pose, and may deform ears or other face parts. However, you can still undo any changes made."
 			}
 		}
