@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
+
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
-
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Entities.Game;
@@ -18,13 +19,13 @@ using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Decor;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
+
 using Newtonsoft.Json;
 
 namespace Ktisis.Interop.Ipc;
 
 [Singleton]
-public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
-	{
+public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi) : IDisposable {
 	private ICallGateProvider<(int, int)> IpcVersion { get; } = dpi.GetIpcProvider<(int, int)>("Ktisis.ApiVersion");
 	private ICallGateProvider<bool> IpcRefreshActions { get; } = dpi.GetIpcProvider<bool>("Ktisis.RefreshActors");
 	private ICallGateProvider<bool> IpcIsPosing { get; } = dpi.GetIpcProvider<bool>("Ktisis.IsPosing");
@@ -38,20 +39,19 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>> IpcBatchSetMatrix { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>>("Ktisis.BatchSetMatrix");
 	private ICallGateProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>> IpcGetAllMatrices { get; } = dpi.GetIpcProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
 	private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
-	
+
 	#region core
+
 	private (int, int) GetVersion() => (1, 0);
 
-	private bool RefreshActors()
-		{
+	private bool RefreshActors() {
 		ctxManager.Current?.Scene.GetModule<ActorModule>().RefreshGPoseActors();
 		return true;
 	}
 
 	private bool IsActive() => ctxManager.Current?.Posing.IsEnabled ?? false;
 
-	private async Task<bool> LoadPose(uint index, string json, bool rotation, bool position, bool scale)
-		{
+	private async Task<bool> LoadPose(uint index, string json, bool rotation, bool position, bool scale) {
 		var transforms = PoseTransforms.None;
 		if (rotation) transforms |= PoseTransforms.Rotation;
 		if (position) transforms |= PoseTransforms.Position;
@@ -63,8 +63,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	private async Task<bool> LoadPose(uint index, string json)
 		=> await LoadPose(index, json, PoseTransforms.Rotation);
 
-    private async Task<bool> LoadPose(uint index, string json, PoseTransforms transforms )
-		{
+	private async Task<bool> LoadPose(uint index, string json, PoseTransforms transforms) {
 		if (ctxManager.Current is null)
 			return false;
 
@@ -83,8 +82,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		return true;
 	}
 
-	private async Task<string?> SavePose(uint index)
-		{
+	private async Task<string?> SavePose(uint index) {
 		if (ctxManager.Current is null)
 			return null;
 
@@ -96,19 +94,17 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		return JsonConvert.SerializeObject(file);
 	}
 
-	private async Task<Dictionary<int, HashSet<string>>> SelectedBones()
-		{
+	private async Task<Dictionary<int, HashSet<string>>> SelectedBones() {
 		var sceneChildren = ctxManager.Current?.Scene?.Children
 			.OfType<ActorEntity>()
 			.ToList();
 
 		if (sceneChildren is null || sceneChildren.Count == 0)
-			return new ();
+			return new();
 
 		var ret = new Dictionary<int, HashSet<string>>();
 
-		foreach (var actor in sceneChildren)
-		{
+		foreach (var actor in sceneChildren) {
 			if (!actor.IsValid || actor.Pose is null)
 				continue;
 
@@ -123,9 +119,10 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
 		return ret;
 	}
+
 	#endregion
 
-	#region Matrix IPC 
+	#region Matrix IPC
 
 	private ActorEntity? GetEntity(uint index)
 		=> ctxManager.Current?.Scene?.GetEntityForIndex(index);
@@ -172,21 +169,16 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 			.OfType<BoneNode>()
 			.ToDictionary(b => b.Info.Name, b => b);
 
-		foreach (var name in names)
-		{
-			if (!allBones.TryGetValue(name, out var bone))
-			{
+		foreach (var name in names) {
+			if (!allBones.TryGetValue(name, out var bone)) {
 				ret[name] = null;
 				continue;
 			}
-			if (useWorldSpace)
-			{
+			if (useWorldSpace) {
 				ret[name] = bone.GetMatrix();
-			} else
-			{
+			} else {
 				var model = bone.GetMatrixModel();
-				if (model == null)
-				{
+				if (model == null) {
 					ret[name] = null;
 					continue;
 				}
@@ -214,8 +206,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
 		bool anySuccess = false;
 
-		foreach (var bone in bones)
-		{
+		foreach (var bone in bones) {
 			if (!matrices.TryGetValue(bone.Info.Name, out var matrix))
 				continue;
 
@@ -234,16 +225,12 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
 		if (actor?.Pose == null) return ret;
 
-		foreach (var bone in actor.Pose.Recurse().OfType<BoneNode>())
-		{
-			if (useWorldSpace)
-			{
+		foreach (var bone in actor.Pose.Recurse().OfType<BoneNode>()) {
+			if (useWorldSpace) {
 				ret[bone.Info.Name] = bone.GetMatrix();
-			} else
-			{
+			} else {
 				var model = bone.GetMatrixModel();
-				if (model == null)
-				{
+				if (model == null) {
 					ret[bone.Info.Name] = null;
 					continue;
 				}
@@ -273,7 +260,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		m.Translation *= actorTx.Scale;
 
 		var root = Matrix4x4.CreateFromQuaternion(actorTx.Rotation)
-				 * Matrix4x4.CreateTranslation(actorTx.Position);
+			* Matrix4x4.CreateTranslation(actorTx.Position);
 
 		// Result = Matrix * Root
 		return m * root;
@@ -294,9 +281,8 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	}
 
 	#endregion
-	
-	public void RegisterIpc()
-		{
+
+	public void RegisterIpc() {
 		IpcVersion.RegisterFunc(GetVersion);
 		IpcRefreshActions.RegisterFunc(RefreshActors);
 		IpcIsPosing.RegisterFunc(IsActive);
@@ -309,5 +295,25 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		IpcBatchGetMatrix.RegisterFunc(BatchGetMatrix);
 		IpcBatchSetMatrix.RegisterFunc(BatchSetMatrix);
 		IpcGetAllMatrices.RegisterFunc(GetAllMatrices);
+	}
+
+	private void UnregisterIpc() {
+		IpcVersion.UnregisterFunc();
+		IpcRefreshActions.UnregisterFunc();
+		IpcIsPosing.UnregisterFunc();
+		IpcLoadPose.UnregisterFunc();
+		IpcLoadPoseExtended.UnregisterFunc();
+		IpcSavePose.UnregisterFunc();
+		IpcGetMatrix.UnregisterFunc();
+		IpcSetMatrix.UnregisterFunc();
+		IpcSelectedBones.UnregisterFunc();
+		IpcBatchGetMatrix.UnregisterFunc();
+		IpcBatchSetMatrix.UnregisterFunc();
+		IpcGetAllMatrices.UnregisterFunc();
+	}
+
+	public void Dispose() {
+		Ktisis.Log.Info("Disposing Ktisis IPC Provider.");
+		this.UnregisterIpc();
 	}
 }
