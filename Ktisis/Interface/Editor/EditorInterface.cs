@@ -175,7 +175,7 @@ public class EditorInterface : IEditorInterface {
 			opened
 			&& !this._ctx.Config.Editor.UseLegacyWindowBehavior
 			&& this._ctx.Selection.Count > 0
-			&& !this._ctx.Selection.GetSelected().Any(ent => ent.Equals(actor))
+			&& !this._ctx.Selection.IsActorSelected(actor)
 		)
 			actor.Select(SelectMode.Force);
 	}
