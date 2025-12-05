@@ -294,7 +294,8 @@ public class PosingManager : IPosingManager {
 				Final = this.StashedPose.Final,
 			});
 
-			this.StashedPose = null;
+			// TODO: more graceful stash storage
+			// this.StashedPose = null;
 		});
 	}
 
@@ -318,6 +319,8 @@ public class PosingManager : IPosingManager {
 
 	public void Dispose() {
 		try {
+			this.StashedPose = null;
+
 			this.PoseModule?.Dispose();
 			this.PoseModule = null;
 			
