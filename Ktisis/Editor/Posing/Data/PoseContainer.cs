@@ -179,12 +179,12 @@ public class PoseContainer : Dictionary<string, Transform> {
 		var posRoot = partialIndex == 0 && boneIndex == 1 && transforms.HasFlag(PoseTransforms.PositionRoot);
 
 		if (posRoot)
-			initial.Rotation = offset * model.Rotation;
+			initial.Rotation = Quaternion.Normalize(offset * model.Rotation);
 		
 		if (transforms.HasFlag(PoseTransforms.Position) || posRoot)
 			target.Position = model.Position;
 		if (transforms.HasFlag(PoseTransforms.Rotation))
-			target.Rotation = offset * model.Rotation;
+			target.Rotation = Quaternion.Normalize(offset * model.Rotation);
 		if (transforms.HasFlag(PoseTransforms.Scale))
 			target.Scale = model.Scale;
 		

@@ -60,12 +60,12 @@ public static class AttachUtility {
 		// worldPos = rootPos + ((modelPos + (elementPos + attachPos * elementRot) * modelRot) * rootRot) * rootScale
 		
 		var pModel = HavokPosing.GetModelTransform(pPose, parentId)!;
-		var worldRot = (Quaternion)pSkele->Transform.Rotation * pModel.Rotation * eRotate;
+		var worldRot = Quaternion.Normalize((Quaternion)pSkele->Transform.Rotation * pModel.Rotation * eRotate);
 		var inverseRot = Quaternion.Inverse(worldRot);
 		
 		var offset = new Transform(attach->Param->Transform);
 		offset.Position += Vector3.Transform(target.Position - source.Position, inverseRot);
-		offset.Rotation = inverseRot * target.Rotation;
+		offset.Rotation = Quaternion.Normalize(inverseRot * target.Rotation);
 		attach->Param->Transform = offset;
 	}
 

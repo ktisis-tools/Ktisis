@@ -253,11 +253,11 @@ public class EntityPoseConverter(EntityPose target) {
 		var currentYaw = HkaEulerAngles.GetYaw(rootCurrent.Rotation);
 		var yawDifference = initialYaw - currentYaw;
 		var correctionY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, yawDifference);
-		rootTarget.Rotation = correctionY * rootCurrent.Rotation;
+		rootTarget.Rotation = Quaternion.Normalize(correctionY * rootCurrent.Rotation);
 
 		// Correct root flip around Y axis
 		var flip180 = Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathF.PI);
-		rootTarget.Rotation = flip180 * rootTarget.Rotation;
+		rootTarget.Rotation = Quaternion.Normalize(flip180 * rootTarget.Rotation);
 		
 		HavokPosing.SetModelTransform(rootPose, rootBone.BoneIndex, rootTarget);
 		HavokPosing.Propagate(skeleton, rootBone.PartialIndex, rootBone.BoneIndex, rootTarget, rootCurrent);

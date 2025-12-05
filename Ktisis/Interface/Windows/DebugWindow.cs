@@ -27,6 +27,7 @@ using Ktisis.Localization;
 using Ktisis.Interop.Ipc;
 using Ktisis.Interface.Overlay;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface.Windows;
 
@@ -233,11 +234,12 @@ public class DebugWindow : KtisisWindow {
 				out var rot,
 				out var pos
 			);
+			var t = bone.GetTransformModel() ?? new Transform();
 			ImGui.Spacing();
-			ImGui.Text($"Havok Transform");
-			ImGui.Text($"Position:\n\tX: {pos.X}\n\tY: {pos.Y}\n\tZ: {pos.Z}");
-			ImGui.Text($"Rotation:\n\tX: {rot.X}\n\tY: {rot.Y}\n\tZ: {rot.Z}\n\tW: {rot.W}");
-			ImGui.Text($"Scale:\n\tX: {scl.X}\n\tY: {scl.Y}\n\tZ: {scl.Z}");
+			ImGui.Text($"Havok (Matrix Decompose / Raw Transform)");
+			ImGui.Text($"Position:\n\tX: {pos.X} / {t.Position.X}\n\tY: {pos.Y} / {t.Position.Y}\n\tZ: {pos.Z} / {t.Position.Z}");
+			ImGui.Text($"Rotation:\n\tX: {rot.X} / {t.Rotation.X}\n\tY: {rot.Y} / {t.Rotation.Y}\n\tZ: {rot.Z} / {t.Rotation.Z}\n\tW: {rot.W} / {t.Rotation.W}");
+			ImGui.Text($"Scale:\n\tX: {scl.X} / {t.Scale.X}\n\tY: {scl.Y} / {t.Scale.Y}\n\tZ: {scl.Z} / {t.Scale.Z}");
 		}
 	}
 
