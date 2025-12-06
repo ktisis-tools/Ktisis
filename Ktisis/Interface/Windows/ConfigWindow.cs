@@ -231,6 +231,9 @@ public class ConfigWindow : KtisisWindow {
 
 	private void DrawInputTab() {
 		ImGui.Checkbox(this.Locale.Translate("config.input.enable"), ref this.Config.Keybinds.Enabled);
+		ImGui.Checkbox(this.Locale.Translate("config.input.scrollAllow"), ref this.Config.Keybinds.ScrollAllow);
+		using (ImRaii.Disabled(!this.Config.Keybinds.ScrollAllow))
+			ImGui.Checkbox(this.Locale.Translate("config.input.scrollMod"), ref this.Config.Keybinds.ScrollModifier);
 		ImGui.Checkbox(this.Locale.Translate("config.input.blockLeft"), ref this.Config.Keybinds.BlockTargetLeftClick);
 		ImGui.Checkbox(this.Locale.Translate("config.input.blockRight"), ref this.Config.Keybinds.BlockTargetRightClick);
 		ImGui.Spacing();
