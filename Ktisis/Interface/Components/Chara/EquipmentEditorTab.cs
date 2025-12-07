@@ -92,6 +92,9 @@ public class EquipmentEditorTab {
 		
 		this.DrawGlassesSelect();
 
+		ImGui.Separator();
+		this.DrawPropPicker();
+
 		this.DrawPopups();
 	}
 
@@ -99,6 +102,10 @@ public class EquipmentEditorTab {
 		this.DrawItemSelectPopup();
 		this.DrawDyeSelectPopup();
 		this.DrawGlassesSelectPopup();
+	}
+
+	private void DrawPropPicker() {
+		ImGui.TextWrapped("Search equippable props...");
 	}
 	
 	// Draw item slot
