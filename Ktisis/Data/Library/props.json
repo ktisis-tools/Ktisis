@@ -1,0 +1,7972 @@
+[
+  {
+    "Item": "G-Warrior Sword",
+    "Model": 201,
+    "Submodel": 70,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Electric Guitar",
+    "Model": 690,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Violin",
+    "Model": 691,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Trumpet",
+    "Model": 692,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Flute",
+    "Model": 693,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Drum",
+    "Model": 696,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Harp",
+    "Model": 697,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Shuriken",
+    "Model": 1901,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ninja Rabbit Medium",
+    "Model": 1902,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "head",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ninja Hellfrog",
+    "Model": 1903,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "root",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ronkan Flute",
+    "Model": 1907,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hand Net",
+    "Model": 1908,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Diadem Gun",
+    "Model": 1910,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Reaper Avatar",
+    "Model": 1911,
+    "Submodel": 1,
+    "Variant": 0,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Golden Wings",
+    "Model": 1913,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Violin",
+    "Model": 1914,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Machinist Sniper",
+    "Model": 1915,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Seagull",
+    "Model": 1920,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "Identical model to the dove that flies out during the hat trick emote",
+    "Wields to": "root",
+    "Sheathes to": "",
+    "Notes": "it's a dove..? for animation 8080 (magic trick emote)"
+  },
+  {
+    "Item": "Lady's Day Fan",
+    "Model": 1921,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lopporit Ears",
+    "Model": 1922,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Titania Wings",
+    "Model": 1924,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hydaelyn's Sword",
+    "Model": 1925,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bucket of Fried Chicken",
+    "Model": 1926,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Frying Pan",
+    "Model": 1927,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Painted Moogle",
+    "Model": 1928,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Phoenix Wings",
+    "Model": 1929,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Painted Creature",
+    "Model": 1930,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Namazu Fan",
+    "Model": 1932,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Sword",
+    "Model": 1933,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Wyrm (DRG)",
+    "Model": 1934,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ninja (Hyur)",
+    "Model": 1935,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ninja (Lalafell)",
+    "Model": 1936,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ninja (Roegadyn)",
+    "Model": 1937,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Painted Wings",
+    "Model": 1938,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Painted Paw",
+    "Model": 1939,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Painted Teeth",
+    "Model": 1940,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Painted Hammer",
+    "Model": 1941,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Fat Chocobo",
+    "Model": 1942,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Painted Spriggan",
+    "Model": 1943,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tomephone",
+    "Model": 1944,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Balloons on a Stick",
+    "Model": 1946,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Nail",
+    "Model": 5321,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "held in offhand along with 5301,1,10 or any GSM cross-pein hammer in main hand for animation ID 895 (hammering nail) for male midlander & male lalafell only"
+  },
+  {
+    "Item": "Gaius' Gunblade",
+    "Model": 8003,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Large Stick",
+    "Model": 9001,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "Wooden Stick",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Lighter"
+  },
+  {
+    "Item": "Large Stick",
+    "Model": 9001,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "Wooden Stick",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Darker"
+  },
+  {
+    "Item": "Harp",
+    "Model": 9001,
+    "Submodel": 3,
+    "Variant": 1,
+    "Description": "Harp",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Horn",
+    "Model": 9001,
+    "Submodel": 4,
+    "Variant": 1,
+    "Description": "Blowing Horn",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Basket with Flowers",
+    "Model": 9001,
+    "Submodel": 5,
+    "Variant": 1,
+    "Description": "Flower Basket",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "White Flowers"
+  },
+  {
+    "Item": "Basket with Flowers",
+    "Model": 9001,
+    "Submodel": 5,
+    "Variant": 2,
+    "Description": "Flower Basket",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Red and White Flowers"
+  },
+  {
+    "Item": "Basket",
+    "Model": 9001,
+    "Submodel": 6,
+    "Variant": 1,
+    "Description": "Closed Basket",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Flower Basket without Flowers"
+  },
+  {
+    "Item": "Single White Flower",
+    "Model": 9001,
+    "Submodel": 7,
+    "Variant": 1,
+    "Description": "Flower",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "White"
+  },
+  {
+    "Item": "Big Hammer",
+    "Model": 9001,
+    "Submodel": 8,
+    "Variant": 1,
+    "Description": "War Hammer",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Double-headed, two-handed"
+  },
+  {
+    "Item": "Cooking Ladle",
+    "Model": 9001,
+    "Submodel": 9,
+    "Variant": 1,
+    "Description": "Ladle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Cooking Whisk",
+    "Model": 9001,
+    "Submodel": 10,
+    "Variant": 1,
+    "Description": "Whisk",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Spatula",
+    "Model": 9001,
+    "Submodel": 11,
+    "Variant": 1,
+    "Description": "Spatula",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hot Iron in Tongs",
+    "Model": 9001,
+    "Submodel": 12,
+    "Variant": 1,
+    "Description": "Tongs with Hot Iron",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "no emissive"
+  },
+  {
+    "Item": "Smelting Ladle",
+    "Model": 9001,
+    "Submodel": 13,
+    "Variant": 1,
+    "Description": "Smelting Ladle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "empty"
+  },
+  {
+    "Item": "White Rock",
+    "Model": 9001,
+    "Submodel": 14,
+    "Variant": 1,
+    "Description": "Rock",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Held in right hand against grinding wheel in animation ID 895 (chair) for female midlander & male miqo'te only"
+  },
+  {
+    "Item": "Stone Tablet",
+    "Model": 9001,
+    "Submodel": 15,
+    "Variant": 1,
+    "Description": "Stone Tablet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "dark, white writing"
+  },
+  {
+    "Item": "Bowl/Wok",
+    "Model": 9001,
+    "Submodel": 16,
+    "Variant": 1,
+    "Description": "Bowl",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "empty, with pouring tip"
+  },
+  {
+    "Item": "Metal Cup",
+    "Model": 9001,
+    "Submodel": 17,
+    "Variant": 1,
+    "Description": "Metal Cup",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "empty. Goes with animation ID 821 (drinking while standing)"
+  },
+  {
+    "Item": "Baby",
+    "Model": 9001,
+    "Submodel": 18,
+    "Variant": 1,
+    "Description": "Baby",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "pink skin"
+  },
+  {
+    "Item": "Baby",
+    "Model": 9001,
+    "Submodel": 18,
+    "Variant": 2,
+    "Description": "Baby",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "dark skin"
+  },
+  {
+    "Item": "Rectangular Crate",
+    "Model": 9001,
+    "Submodel": 19,
+    "Variant": 1,
+    "Description": "Wooden Crate",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "rectangular"
+  },
+  {
+    "Item": "Wine Bottle",
+    "Model": 9001,
+    "Submodel": 20,
+    "Variant": 1,
+    "Description": "Green Bottle, blank label, no cork",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to main hand for animation ID 915 (conversing drunk w/ bottle) for all except aura, M hrothgar & F viera, or 918 for roegadyn only"
+  },
+  {
+    "Item": "Wine Cup (Purple)",
+    "Model": 9001,
+    "Submodel": 21,
+    "Variant": 1,
+    "Description": "Copper Wine Glass",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "opaque (EW SPOILER) the ones used while dining w/ Zenos"
+  },
+  {
+    "Item": "Wine Cup (White)",
+    "Model": 9001,
+    "Submodel": 21,
+    "Variant": 2,
+    "Description": "Silver Wine Glass",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "opaque"
+  },
+  {
+    "Item": "Watering Can",
+    "Model": 9001,
+    "Submodel": 23,
+    "Variant": 1,
+    "Description": "Watering Can",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Single Blue Flower",
+    "Model": 9001,
+    "Submodel": 24,
+    "Variant": 1,
+    "Description": "Flower",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Blue, bendy stalk"
+  },
+  {
+    "Item": "Horn",
+    "Model": 9001,
+    "Submodel": 26,
+    "Variant": 1,
+    "Description": "Brass Horn",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "straight"
+  },
+  {
+    "Item": "Cymbal",
+    "Model": 9001,
+    "Submodel": 27,
+    "Variant": 1,
+    "Description": "Cymbal",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tankard",
+    "Model": 9001,
+    "Submodel": 28,
+    "Variant": 1,
+    "Description": "Metal Mug",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "large. Equip to main hand for animation ID 916 (bent over table drunk) for M midlander only"
+  },
+  {
+    "Item": "Feather Quill",
+    "Model": 9001,
+    "Submodel": 30,
+    "Variant": 1,
+    "Description": "Feather Quill",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "large, white, goes with animation IDs 923, 978 or 1043 (taking notes while standing)"
+  },
+  {
+    "Item": "White Glowing Orb",
+    "Model": 9001,
+    "Submodel": 31,
+    "Variant": 1,
+    "Description": "Sphere",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Glass or Pearl?"
+  },
+  {
+    "Item": "Worn out/Cracked wooden mask",
+    "Model": 9001,
+    "Submodel": 34,
+    "Variant": 1,
+    "Description": "Wooden mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Gridanian, cracked, white gem"
+  },
+  {
+    "Item": "Mask",
+    "Model": 9001,
+    "Submodel": 35,
+    "Variant": 1,
+    "Description": "Wooden mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Gridanian"
+  },
+  {
+    "Item": "Wooden mask",
+    "Model": 9001,
+    "Submodel": 35,
+    "Variant": 2,
+    "Description": "Wooden mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Gridanian, blue gem"
+  },
+  {
+    "Item": "Circlet",
+    "Model": 9001,
+    "Submodel": 36,
+    "Variant": 1,
+    "Description": "Circlet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Golden, white gem, held in main hand for animation ID 895 (inspecting on chair) for male elezen only"
+  },
+  {
+    "Item": "Alchemical Tools",
+    "Model": 9001,
+    "Submodel": 37,
+    "Variant": 1,
+    "Description": "Alchemical Tool",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "looks like a bottle spinner?"
+  },
+  {
+    "Item": "Alchemical Phial",
+    "Model": 9001,
+    "Submodel": 38,
+    "Variant": 1,
+    "Description": "Test Tube",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "opaque, metal"
+  },
+  {
+    "Item": "Crate",
+    "Model": 9001,
+    "Submodel": 42,
+    "Variant": 1,
+    "Description": "Wooden Crate",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "cubical"
+  },
+  {
+    "Item": "Shortened Arrow",
+    "Model": 9001,
+    "Submodel": 45,
+    "Variant": 1,
+    "Description": "Crossbow Bolt",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "broadhead"
+  },
+  {
+    "Item": "Large Wooden Spoon",
+    "Model": 9001,
+    "Submodel": 46,
+    "Variant": 1,
+    "Description": "Wooden Spoon",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "large"
+  },
+  {
+    "Item": "Serving Tray",
+    "Model": 9001,
+    "Submodel": 47,
+    "Variant": 1,
+    "Description": "Wooden Tray",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "empty"
+  },
+  {
+    "Item": "Notepad",
+    "Model": 9001,
+    "Submodel": 48,
+    "Variant": 1,
+    "Description": "Notepad",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "often used in left hand with the feather quill in right hand, goes with animation IDs 923 or 1043 (taking notes while standing)"
+  },
+  {
+    "Item": "Pot",
+    "Model": 9001,
+    "Submodel": 50,
+    "Variant": 1,
+    "Description": "Ceramic Pot",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Looks to contain dirt"
+  },
+  {
+    "Item": "Pitchfork",
+    "Model": 9001,
+    "Submodel": 51,
+    "Variant": 1,
+    "Description": "Pitchfork",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to main hand for animation ID 846 (raking or plowing)"
+  },
+  {
+    "Item": "Washcloth",
+    "Model": 9001,
+    "Submodel": 52,
+    "Variant": 1,
+    "Description": "Washcloth",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Rectangular, rather dirty. Equip to main hand for animation ID 847 (cleaning animal while petting it)"
+  },
+  {
+    "Item": "Axe",
+    "Model": 9001,
+    "Submodel": 53,
+    "Variant": 1,
+    "Description": "Axe",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Rusty, curved handle"
+  },
+  {
+    "Item": "Oar",
+    "Model": 9001,
+    "Submodel": 54,
+    "Variant": 1,
+    "Description": "Oar",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Long, thin paddle"
+  },
+  {
+    "Item": "White Smoking Pipe",
+    "Model": 9001,
+    "Submodel": 55,
+    "Variant": 1,
+    "Description": "White, wooden smoking pipe",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to main hand for animation ID 910 (smoking pipe)"
+  },
+  {
+    "Item": "Baskets on a Stick",
+    "Model": 9001,
+    "Submodel": 56,
+    "Variant": 1,
+    "Description": "Two Baskets on a Stick",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Poster",
+    "Model": 9001,
+    "Submodel": 57,
+    "Variant": 1,
+    "Description": "Paper Notice",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "text, too low res to read. Equip to main hand for animation ID 913 (reading flyer) for all except aura"
+  },
+  {
+    "Item": "Stack of Posters",
+    "Model": 9001,
+    "Submodel": 58,
+    "Variant": 1,
+    "Description": "Stack of Papers",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "same cover as 9001, 57, 1"
+  },
+  {
+    "Item": "Colorful Present Stack",
+    "Model": 9001,
+    "Submodel": 59,
+    "Variant": 1,
+    "Description": "Stack of Wrapped Presents",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "multipe shapes and colours"
+  },
+  {
+    "Item": "Burlap Sack Pile",
+    "Model": 9001,
+    "Submodel": 60,
+    "Variant": 1,
+    "Description": "Pile of Sacks",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "burlap or other rough cloth material"
+  },
+  {
+    "Item": "Length of Rope",
+    "Model": 9001,
+    "Submodel": 61,
+    "Variant": 1,
+    "Description": "Length of Rope",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "entirely straight, no bends or bones"
+  },
+  {
+    "Item": "Pole",
+    "Model": 9001,
+    "Submodel": 62,
+    "Variant": 1,
+    "Description": "Length of Wire",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "entirely straight, no bends or bones"
+  },
+  {
+    "Item": "Hammer",
+    "Model": 9001,
+    "Submodel": 63,
+    "Variant": 1,
+    "Description": "Hammer",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Single-handed, black, very ornate"
+  },
+  {
+    "Item": "Skyworker’s Goggles",
+    "Model": 9001,
+    "Submodel": 64,
+    "Variant": 1,
+    "Description": "Goggles",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Blue lenses, opaque"
+  },
+  {
+    "Item": "Crystal of Light, Fire",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 1,
+    "Description": "Crystal of Light, Red",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows"
+  },
+  {
+    "Item": "Crystal of Light, Ice",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 2,
+    "Description": "Crystal of Light, Blue",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows, cyan-blue"
+  },
+  {
+    "Item": "Crystal of Light, Wind",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 3,
+    "Description": "Crystal of Light, Green",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows"
+  },
+  {
+    "Item": "Crystal of Light, Earth",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 4,
+    "Description": "Crystal of Light, Orange",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows"
+  },
+  {
+    "Item": "Crystal of Light, Lightning",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 5,
+    "Description": "Crystal of Light, Pink",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows, pinkish purple"
+  },
+  {
+    "Item": "Crystal of Light, Water",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 6,
+    "Description": "Crystal of Light, Blue",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows, more pale blue"
+  },
+  {
+    "Item": "Crystal of Light, Darkness",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 7,
+    "Description": "Crystal of Light, Purple",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows, bluish purple"
+  },
+  {
+    "Item": "Crystal of Light, Grey",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 8,
+    "Description": "Crystal of Light, Grey",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows, but very dim"
+  },
+  {
+    "Item": "Crystal of Light, Auracite",
+    "Model": 9001,
+    "Submodel": 66,
+    "Variant": 9,
+    "Description": "Crystal of Light, Auracite",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows intensely"
+  },
+  {
+    "Item": "Maelstrom Decal",
+    "Model": 9001,
+    "Submodel": 67,
+    "Variant": 1,
+    "Description": "Maelstrom Map Marker",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "one-sided"
+  },
+  {
+    "Item": "Immortal Flames Decal",
+    "Model": 9001,
+    "Submodel": 68,
+    "Variant": 1,
+    "Description": "Immortal Flames Map Marker",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "one-sided"
+  },
+  {
+    "Item": "Twin Adder Decal",
+    "Model": 9001,
+    "Submodel": 69,
+    "Variant": 1,
+    "Description": "Twin Adder Map Marker",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "one-sided"
+  },
+  {
+    "Item": "Garlean Decal",
+    "Model": 9001,
+    "Submodel": 70,
+    "Variant": 1,
+    "Description": "Garlean Map Marker, Grey",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "One-sided, grey border"
+  },
+  {
+    "Item": "Garlean Map Marker, Red",
+    "Model": 9001,
+    "Submodel": 70,
+    "Variant": 2,
+    "Description": "Garlean Map Marker, Red",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "One-sided, red border"
+  },
+  {
+    "Item": "Silver Tipped Arrow",
+    "Model": 9001,
+    "Submodel": 71,
+    "Variant": 1,
+    "Description": "Arrow",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "broadhead, light head"
+  },
+  {
+    "Item": "Black Tipped Arrow",
+    "Model": 9001,
+    "Submodel": 72,
+    "Variant": 1,
+    "Description": "Arrow",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "broadhead, dark head"
+  },
+  {
+    "Item": "Small Purple Crystal",
+    "Model": 9001,
+    "Submodel": 73,
+    "Variant": 1,
+    "Description": "Purple Crystal",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "very small"
+  },
+  {
+    "Item": "Yellow Glowing Crystal",
+    "Model": 9001,
+    "Submodel": 74,
+    "Variant": 1,
+    "Description": "Oval Crystal, Yellow",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows, large"
+  },
+  {
+    "Item": "Map Marker",
+    "Model": 9001,
+    "Submodel": 75,
+    "Variant": 1,
+    "Description": "Map Marker",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "One-sided, represent player party"
+  },
+  {
+    "Item": "PLD Soulstone",
+    "Model": 9001,
+    "Submodel": 76,
+    "Variant": 1,
+    "Description": "Soulstone, Paladin",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "MNK Soulstone",
+    "Model": 9001,
+    "Submodel": 77,
+    "Variant": 1,
+    "Description": "Soulstone, Monk",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "WAR Soulstone",
+    "Model": 9001,
+    "Submodel": 78,
+    "Variant": 1,
+    "Description": "Soulstone, Warrior",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "DRG Soulstone",
+    "Model": 9001,
+    "Submodel": 79,
+    "Variant": 1,
+    "Description": "Soulstone, Dragoon",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "BRD Soulstone",
+    "Model": 9001,
+    "Submodel": 80,
+    "Variant": 1,
+    "Description": "Soulstone, Bard",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "WHM Soulstone",
+    "Model": 9001,
+    "Submodel": 81,
+    "Variant": 1,
+    "Description": "Soulstone,White Mage",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Round Blue Gem",
+    "Model": 9001,
+    "Submodel": 81,
+    "Variant": 2,
+    "Description": "Round Blue Gem",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "BLM Soulstone",
+    "Model": 9001,
+    "Submodel": 82,
+    "Variant": 1,
+    "Description": "Soulstone, Black Mage",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "SMN Soulstone",
+    "Model": 9001,
+    "Submodel": 83,
+    "Variant": 1,
+    "Description": "Soulstone, Summoner",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "SCH Soulstone",
+    "Model": 9001,
+    "Submodel": 84,
+    "Variant": 1,
+    "Description": "Soulstone, Scholar",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Horn-shaped Crystal, Yellow",
+    "Model": 9001,
+    "Submodel": 85,
+    "Variant": 1,
+    "Description": "Horn-shaped Crystal, Yellow",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows yellow"
+  },
+  {
+    "Item": "Horn-shaped Crystal, Red",
+    "Model": 9001,
+    "Submodel": 85,
+    "Variant": 2,
+    "Description": "Horn-shaped Crystal, Red",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows red"
+  },
+  {
+    "Item": "Horn-shaped Crystal, Blue",
+    "Model": 9001,
+    "Submodel": 85,
+    "Variant": 3,
+    "Description": "Horn-shaped Crystal, Blue",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows blue"
+  },
+  {
+    "Item": "Horn-shaped Crystal, Green",
+    "Model": 9001,
+    "Submodel": 85,
+    "Variant": 4,
+    "Description": "Horn-shaped Crystal, Green",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "glows green"
+  },
+  {
+    "Item": "Niddhog’s Eye",
+    "Model": 9001,
+    "Submodel": 86,
+    "Variant": 1,
+    "Description": "Niddhog’s Eye",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "red"
+  },
+  {
+    "Item": "Hraesvelgr’s Eye",
+    "Model": 9001,
+    "Submodel": 86,
+    "Variant": 2,
+    "Description": "Hraesvelgr’s Eye",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "yellow"
+  },
+  {
+    "Item": "Niddhog’s Eye",
+    "Model": 9001,
+    "Submodel": 86,
+    "Variant": 3,
+    "Description": "Niddhog’s Eye",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "no VFX"
+  },
+  {
+    "Item": "Hraesvelgr’s Eye",
+    "Model": 9001,
+    "Submodel": 86,
+    "Variant": 4,
+    "Description": "Hraesvelgr’s Eye",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "no VFX"
+  },
+  {
+    "Item": "Large Briefcase",
+    "Model": 9001,
+    "Submodel": 91,
+    "Variant": 1,
+    "Description": "Briefcase",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "large, rectangular"
+  },
+  {
+    "Item": "Calling Card",
+    "Model": 9001,
+    "Submodel": 92,
+    "Variant": 1,
+    "Description": "Note",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "from the first Hildibrand questline"
+  },
+  {
+    "Item": "Note attached with Knife",
+    "Model": 9001,
+    "Submodel": 92,
+    "Variant": 2,
+    "Description": "Note attached with Knife",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "from the first Hildibrand questline"
+  },
+  {
+    "Item": "Note",
+    "Model": 9001,
+    "Submodel": 92,
+    "Variant": 3,
+    "Description": "Note",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "higher resolution version of 9001, 92, 1"
+  },
+  {
+    "Item": "Nael van Darnus’ helmet",
+    "Model": 9001,
+    "Submodel": 93,
+    "Variant": 1,
+    "Description": "Nael van Darnus’ helmet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Garlean armour fragment",
+    "Model": 9001,
+    "Submodel": 94,
+    "Variant": 1,
+    "Description": "Garlean armour fragment",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "part of Nael van Darnus armor?"
+  },
+  {
+    "Item": "Shoulderpad",
+    "Model": 9001,
+    "Submodel": 95,
+    "Variant": 1,
+    "Description": "Shoulderpad",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "part of Nael van Darnus armor?"
+  },
+  {
+    "Item": "Discarded Face Mask",
+    "Model": 9001,
+    "Submodel": 96,
+    "Variant": 1,
+    "Description": "Discarded Face Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "from the first Hildibrand questline"
+  },
+  {
+    "Item": "Bunch of Green Bananas",
+    "Model": 9001,
+    "Submodel": 97,
+    "Variant": 1,
+    "Description": "Green Bananas",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "7 in a bunch, large"
+  },
+  {
+    "Item": "Golden Ring, Red Gem",
+    "Model": 9001,
+    "Submodel": 98,
+    "Variant": 1,
+    "Description": "Golden Ring, Red Gem",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bouquet of Lillies",
+    "Model": 9001,
+    "Submodel": 100,
+    "Variant": 1,
+    "Description": "Flower Bouquet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Mixed flowers"
+  },
+  {
+    "Item": "Moenbryda’s Aether Siphon",
+    "Model": 9001,
+    "Submodel": 101,
+    "Variant": 1,
+    "Description": "Moenbryda’s Aether Siphon",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Emperor Varis’ Helmet",
+    "Model": 9001,
+    "Submodel": 102,
+    "Variant": 1,
+    "Description": "Emperor Varis’ Helmet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "NIN Soulstone",
+    "Model": 9001,
+    "Submodel": 103,
+    "Variant": 1,
+    "Description": "Soulstone, Ninja",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tupsimati, Top part",
+    "Model": 9001,
+    "Submodel": 104,
+    "Variant": 1,
+    "Description": "Tupsimati, Top part",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Goblet",
+    "Model": 9001,
+    "Submodel": 105,
+    "Variant": 1,
+    "Description": "Goblet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Gold, jeweled"
+  },
+  {
+    "Item": "Raubahn’s Left Arm",
+    "Model": 9001,
+    "Submodel": 106,
+    "Variant": 1,
+    "Description": "Raubahn’s Left Arm",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Menu/Flier",
+    "Model": 9001,
+    "Submodel": 107,
+    "Variant": 1,
+    "Description": "House Fortemps missive?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Says “Honored V”-something"
+  },
+  {
+    "Item": "Horned Helmet",
+    "Model": 9001,
+    "Submodel": 108,
+    "Variant": 1,
+    "Description": "Horned Helmet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ascalon",
+    "Model": 9001,
+    "Submodel": 109,
+    "Variant": 1,
+    "Description": "the sword Ascalon",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Bright red gem"
+  },
+  {
+    "Item": "Ascalon",
+    "Model": 9001,
+    "Submodel": 110,
+    "Variant": 1,
+    "Description": "the sword Ascalon",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Dark gem"
+  },
+  {
+    "Item": "Machinist Ammo Pack",
+    "Model": 9001,
+    "Submodel": 111,
+    "Variant": 1,
+    "Description": "Aetherotransformer",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "used by MCH"
+  },
+  {
+    "Item": "Wrench",
+    "Model": 9001,
+    "Submodel": 112,
+    "Variant": 1,
+    "Description": "Wrench",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "used by MCH. Used with animation 9143 (bike maintenance, male midlander only)"
+  },
+  {
+    "Item": "MCH Soulstone",
+    "Model": 9001,
+    "Submodel": 113,
+    "Variant": 1,
+    "Description": "Soulstone, Machinist",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "AST Soulstone",
+    "Model": 9001,
+    "Submodel": 114,
+    "Variant": 1,
+    "Description": "Soulstone, Astrologian",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "DRK Soulstone",
+    "Model": 9001,
+    "Submodel": 115,
+    "Variant": 1,
+    "Description": "Soulstone, Dark Knight",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ravana’s Sword",
+    "Model": 9001,
+    "Submodel": 116,
+    "Variant": 1,
+    "Description": "Ravana’s Sword",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "HUGE, glowing"
+  },
+  {
+    "Item": "Bouquet of White Flowers",
+    "Model": 9001,
+    "Submodel": 117,
+    "Variant": 1,
+    "Description": "Bundle of White flowers",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Blue center, small blue tie"
+  },
+  {
+    "Item": "Magitek Projectile?",
+    "Model": 9001,
+    "Submodel": 118,
+    "Variant": 1,
+    "Description": "Magitek Projectile?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Dark red, grey"
+  },
+  {
+    "Item": "Star chart",
+    "Model": 9001,
+    "Submodel": 119,
+    "Variant": 1,
+    "Description": "Star chart",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "6 star constellations"
+  },
+  {
+    "Item": "Rolled paper",
+    "Model": 9001,
+    "Submodel": 120,
+    "Variant": 1,
+    "Description": "Rolled up Star chart",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "same chart as 9001, 119, 1"
+  },
+  {
+    "Item": "Crown/Circlet",
+    "Model": 9001,
+    "Submodel": 121,
+    "Variant": 1,
+    "Description": "Crown/Circlet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Helmet, Dragoon?",
+    "Model": 9001,
+    "Submodel": 122,
+    "Variant": 1,
+    "Description": "Helmet, Dragoon?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Silver"
+  },
+  {
+    "Item": "Astrology plate?",
+    "Model": 9001,
+    "Submodel": 123,
+    "Variant": 1,
+    "Description": "Astrology plate?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Several circles"
+  },
+  {
+    "Item": "Decorated Flintlock",
+    "Model": 9001,
+    "Submodel": 124,
+    "Variant": 1,
+    "Description": "Gun",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Deep Blue Phial",
+    "Model": 9001,
+    "Submodel": 125,
+    "Variant": 1,
+    "Description": "Blue Potion",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Black Potion",
+    "Model": 9001,
+    "Submodel": 125,
+    "Variant": 2,
+    "Description": "Black Potion",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Silver Bottle",
+    "Model": 9001,
+    "Submodel": 126,
+    "Variant": 1,
+    "Description": "Silver Potion",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Purple Phial",
+    "Model": 9001,
+    "Submodel": 127,
+    "Variant": 1,
+    "Description": "Lavender Potion",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Red Flask",
+    "Model": 9001,
+    "Submodel": 128,
+    "Variant": 1,
+    "Description": "Brown Flask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Charred Book",
+    "Model": 9001,
+    "Submodel": 129,
+    "Variant": 1,
+    "Description": "Burnt Book",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Kunai",
+    "Model": 9001,
+    "Submodel": 130,
+    "Variant": 1,
+    "Description": "Throwing Knife",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Small Blue Cushion",
+    "Model": 9001,
+    "Submodel": 131,
+    "Variant": 1,
+    "Description": "Small Blue Cushion",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Eye of Nidhogg",
+    "Model": 9001,
+    "Submodel": 132,
+    "Variant": 1,
+    "Description": "Niddhog’s Eye",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "No VFX"
+  },
+  {
+    "Item": "Crystal",
+    "Model": 9001,
+    "Submodel": 133,
+    "Variant": 1,
+    "Description": "Rock or Crystal",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Dark grey or purple"
+  },
+  {
+    "Item": "Rock",
+    "Model": 9001,
+    "Submodel": 133,
+    "Variant": 2,
+    "Description": "Rock",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Dark grey or purple"
+  },
+  {
+    "Item": "Bouquet of Flowers",
+    "Model": 9001,
+    "Submodel": 134,
+    "Variant": 1,
+    "Description": "Bouquet of Flowers",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Mixed flowers, brown paper"
+  },
+  {
+    "Item": "Silver Mask",
+    "Model": 9001,
+    "Submodel": 135,
+    "Variant": 1,
+    "Description": "Griffin’s Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Sophia's Spiked Halo",
+    "Model": 9001,
+    "Submodel": 136,
+    "Variant": 1,
+    "Description": "Sophia's sarcophagus halo",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Golden, huge, appears ahead of character"
+  },
+  {
+    "Item": "Sophia's Sarcophagus",
+    "Model": 9001,
+    "Submodel": 137,
+    "Variant": 1,
+    "Description": "Contains Sophia in her intro",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Golden, huge, other half of 9001, 138, 1"
+  },
+  {
+    "Item": "Arm Guard",
+    "Model": 9001,
+    "Submodel": 138,
+    "Variant": 1,
+    "Description": "Piece of armor or sarcophagus?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Golden, huge, other half of 9001, 137, 1"
+  },
+  {
+    "Item": "Arrow",
+    "Model": 9001,
+    "Submodel": 139,
+    "Variant": 1,
+    "Description": "White Arrow",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Missile",
+    "Model": 9001,
+    "Submodel": 140,
+    "Variant": 1,
+    "Description": "Magitek Missile",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Short, finned"
+  },
+  {
+    "Item": "Tea Cup",
+    "Model": 9001,
+    "Submodel": 143,
+    "Variant": 1,
+    "Description": "Cup with green liquid",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "beige liquid or glacing on the top"
+  },
+  {
+    "Item": "Sake Cup",
+    "Model": 9001,
+    "Submodel": 144,
+    "Variant": 1,
+    "Description": "tokkuri, sake bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to offhand with either of below cups for animation 5487 (pouring sake, sitting, male midlander & au ra only)"
+  },
+  {
+    "Item": "Cup",
+    "Model": 9001,
+    "Submodel": 145,
+    "Variant": 1,
+    "Description": "ochoko, sake cup, empty",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand with above bottle on offhand for animation 5487 (pouring sake, sitting, male midlander & au ra only)"
+  },
+  {
+    "Item": "Sake cup, filled",
+    "Model": 9001,
+    "Submodel": 145,
+    "Variant": 2,
+    "Description": "ochoko, sake cup, filled",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand with above bottle on offhand for animation 5487 (pouring sake, sitting, male midlander & au ra only)"
+  },
+  {
+    "Item": "Huge Rolled Tatami",
+    "Model": 9001,
+    "Submodel": 147,
+    "Variant": 1,
+    "Description": "Rolled up cot or bale",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Samurai Blade",
+    "Model": 9001,
+    "Submodel": 149,
+    "Variant": 1,
+    "Description": "Katana blade, no hilt",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hingan Scroll",
+    "Model": 9001,
+    "Submodel": 150,
+    "Variant": 1,
+    "Description": "Scroll",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hingan Brush",
+    "Model": 9001,
+    "Submodel": 151,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Chopsticks",
+    "Model": 9001,
+    "Submodel": 152,
+    "Variant": 1,
+    "Description": "wooden, dark brown",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand paired with bowl below on offhand for animation 5488 (eating bowl of rice, sitting, male midlander & roegadyn only)"
+  },
+  {
+    "Item": "Bowl of Rice",
+    "Model": 9001,
+    "Submodel": 153,
+    "Variant": 1,
+    "Description": "wooden, dark brown bowl, filled with white rice",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to offhand paired with above chopsticks on mainhand for animation 5488 (eating bowl of rice, sitting, male midlander & roegadyn only)"
+  },
+  {
+    "Item": "Stack of Wood",
+    "Model": 9001,
+    "Submodel": 155,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Stack of Logs",
+    "Model": 9001,
+    "Submodel": 156,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Stack of Bamboo",
+    "Model": 9001,
+    "Submodel": 157,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Urushi Jar",
+    "Model": 9001,
+    "Submodel": 158,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Morin Khuur Fiddle",
+    "Model": 9001,
+    "Submodel": 160,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Morin Khuur Base",
+    "Model": 9001,
+    "Submodel": 161,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Japanese hat",
+    "Model": 9001,
+    "Submodel": 162,
+    "Variant": 1,
+    "Description": "Japanese hat",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "a “kasa”? Big, black"
+  },
+  {
+    "Item": "Hammer",
+    "Model": 9001,
+    "Submodel": 163,
+    "Variant": 1,
+    "Description": "Hammer",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Silver"
+  },
+  {
+    "Item": "Zenos’ Sword Carrier: All swords",
+    "Model": 9001,
+    "Submodel": 164,
+    "Variant": 0,
+    "Description": "Zenos’ Sword Carrier: All swords",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Zenos’ Sword Carrier",
+    "Model": 9001,
+    "Submodel": 164,
+    "Variant": 1,
+    "Description": "Zenos’ Sword Carrier: No swords",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Zenos’ Sword Hilt, Black",
+    "Model": 9001,
+    "Submodel": 165,
+    "Variant": 1,
+    "Description": "Zenos’ Sword Hilt, Black",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "From Zenos’ Sword Carrier"
+  },
+  {
+    "Item": "Zenos’ Sword Hilt, White",
+    "Model": 9001,
+    "Submodel": 166,
+    "Variant": 1,
+    "Description": "Zenos’ Sword Hilt, White",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "From Zenos’ Sword Carrier"
+  },
+  {
+    "Item": "Regulus Van Hydrus’ Sword Hilt Fragment",
+    "Model": 9001,
+    "Submodel": 167,
+    "Variant": 1,
+    "Description": "Broken Gunblade",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Hilt plus base of blade"
+  },
+  {
+    "Item": "Regulus Van Hydrus’ Sword Blade Fragment",
+    "Model": 9001,
+    "Submodel": 168,
+    "Variant": 1,
+    "Description": "Broken Gunblade",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Blade"
+  },
+  {
+    "Item": "Japanese Smoking Pipe",
+    "Model": 9001,
+    "Submodel": 169,
+    "Variant": 1,
+    "Description": "Wood with metal ends.",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animation 910"
+  },
+  {
+    "Item": "Red Pot",
+    "Model": 9001,
+    "Submodel": 170,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Turns greyish towards the bottom"
+  },
+  {
+    "Item": "Hingan Card 3",
+    "Model": 9001,
+    "Submodel": 171,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hingan Card 2",
+    "Model": 9001,
+    "Submodel": 172,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hingan Card 1",
+    "Model": 9001,
+    "Submodel": 173,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gladiator Sword",
+    "Model": 9001,
+    "Submodel": 174,
+    "Variant": 1,
+    "Description": "Gladius",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Short, wide"
+  },
+  {
+    "Item": "Ascian Mask",
+    "Model": 9001,
+    "Submodel": 175,
+    "Variant": 1,
+    "Description": "Elidibus’ Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Flintlock Pistol",
+    "Model": 9001,
+    "Submodel": 176,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Ornate"
+  },
+  {
+    "Item": "Glasses",
+    "Model": 9001,
+    "Submodel": 177,
+    "Variant": 1,
+    "Description": "Nero’s Sunglasses",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Grey Beret",
+    "Model": 9001,
+    "Submodel": 178,
+    "Variant": 1,
+    "Description": "Grey Beret",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Broken Garlean Sword",
+    "Model": 9001,
+    "Submodel": 179,
+    "Variant": 1,
+    "Description": "Broken Garlean Sword",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Hilt and most of the blade"
+  },
+  {
+    "Item": "Garlean Sword Blade Fragment",
+    "Model": 9001,
+    "Submodel": 180,
+    "Variant": 1,
+    "Description": "Broken Garlean Sword",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Tip of the blade"
+  },
+  {
+    "Item": "Floating platform or drone?",
+    "Model": 9001,
+    "Submodel": 181,
+    "Variant": 1,
+    "Description": "Floating platform or drone?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Round Bullet",
+    "Model": 9001,
+    "Submodel": 183,
+    "Variant": 1,
+    "Description": "Round Bullet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "small metal ball"
+  },
+  {
+    "Item": "Split Round Bullet",
+    "Model": 9001,
+    "Submodel": 184,
+    "Variant": 1,
+    "Description": "Split Round Bullet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "small metal ball cut in half"
+  },
+  {
+    "Item": "Large Glass Gem",
+    "Model": 9001,
+    "Submodel": 185,
+    "Variant": 1,
+    "Description": "Large Circular Blueish Crystal",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Susano’s Sword",
+    "Model": 9001,
+    "Submodel": 186,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "HUGE"
+  },
+  {
+    "Item": "Yasakani no Magatama",
+    "Model": 9001,
+    "Submodel": 187,
+    "Variant": 1,
+    "Description": "Magitama Bead",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "RDM Soulstone",
+    "Model": 9001,
+    "Submodel": 188,
+    "Variant": 1,
+    "Description": "Soulstone, Red Mage",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "SAM Soulstone",
+    "Model": 9001,
+    "Submodel": 189,
+    "Variant": 1,
+    "Description": "Soulstone, Samurai",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Horn from Zenos’ Helmet",
+    "Model": 9001,
+    "Submodel": 190,
+    "Variant": 1,
+    "Description": "Severed part of Zenos’ Helmet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "pinkish"
+  },
+  {
+    "Item": "Zenos’ Helmet",
+    "Model": 9001,
+    "Submodel": 191,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Missing one horn"
+  },
+  {
+    "Item": "Helmet",
+    "Model": 9001,
+    "Submodel": 192,
+    "Variant": 1,
+    "Description": "Bucket Helmet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Half of DRK Soulstone",
+    "Model": 9001,
+    "Submodel": 193,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crest or armor piece?",
+    "Model": 9001,
+    "Submodel": 194,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Silver, gold symbol"
+  },
+  {
+    "Item": "Zenos’ Eye FX",
+    "Model": 9001,
+    "Submodel": 195,
+    "Variant": 1,
+    "Description": "Visual Effect for Eye glow",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Visible on Zenos when he controlled Shinryu"
+  },
+  {
+    "Item": "Large Rolled Papers",
+    "Model": 9001,
+    "Submodel": 196,
+    "Variant": 1,
+    "Description": "Roll of Paper",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "White Gemstone",
+    "Model": 9001,
+    "Submodel": 197,
+    "Variant": 1,
+    "Description": "Large white gem",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Red Present with Hearts",
+    "Model": 9001,
+    "Submodel": 198,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Green ribbon"
+  },
+  {
+    "Item": "Lute",
+    "Model": 9001,
+    "Submodel": 199,
+    "Variant": 1,
+    "Description": "Plain Lute",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lute",
+    "Model": 9001,
+    "Submodel": 199,
+    "Variant": 2,
+    "Description": "Ornate Lute",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tomestone Phone",
+    "Model": 9001,
+    "Submodel": 200,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Yotsuyu’s Mirror",
+    "Model": 9001,
+    "Submodel": 202,
+    "Variant": 1,
+    "Description": "Metal disk",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Given to Yotsuyu"
+  },
+  {
+    "Item": "Scraper",
+    "Model": 9001,
+    "Submodel": 203,
+    "Variant": 1,
+    "Description": "Ryoba, a double-edged japanese saw",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to main hand for animation 5551 (male midlander & roegadyn only)"
+  },
+  {
+    "Item": "Hand Plane",
+    "Model": 9001,
+    "Submodel": 204,
+    "Variant": 1,
+    "Description": "Wooden tool",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "used to plane wooden planks or boards"
+  },
+  {
+    "Item": "Large Wooden Spike",
+    "Model": 9001,
+    "Submodel": 205,
+    "Variant": 1,
+    "Description": "Enormous Toothpick",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "a sharpened wooden rod"
+  },
+  {
+    "Item": "Poro Rogo Card",
+    "Model": 9001,
+    "Submodel": 206,
+    "Variant": 1,
+    "Description": "Playing Card",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "image of a frog on one side"
+  },
+  {
+    "Item": "Water Card",
+    "Model": 9001,
+    "Submodel": 206,
+    "Variant": 2,
+    "Description": "Playing Card",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "image of a water drop hitting water"
+  },
+  {
+    "Item": "Size Card?",
+    "Model": 9001,
+    "Submodel": 206,
+    "Variant": 3,
+    "Description": "Playing Card",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "image of a figure growing or shrinking?"
+  },
+  {
+    "Item": "Empty Bowl",
+    "Model": 9001,
+    "Submodel": 207,
+    "Variant": 1,
+    "Description": "Wooden Bowl",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Wooden Spoon",
+    "Model": 9001,
+    "Submodel": 208,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "sized for eating with. Equip on main hand for animation ID 5711 (eating & choking on food) for male midlander only"
+  },
+  {
+    "Item": "Brown Pouch",
+    "Model": 9001,
+    "Submodel": 209,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Hand-sized"
+  },
+  {
+    "Item": "Black Pouch",
+    "Model": 9001,
+    "Submodel": 209,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Hand-sized"
+  },
+  {
+    "Item": "Porridge?",
+    "Model": 9001,
+    "Submodel": 210,
+    "Variant": 1,
+    "Description": "Food “cover” texture",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "To make empty bowl look full"
+  },
+  {
+    "Item": "Red Gem",
+    "Model": 9001,
+    "Submodel": 211,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Gem",
+    "Model": 9001,
+    "Submodel": 211,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Yellow Gem",
+    "Model": 9001,
+    "Submodel": 211,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Rag",
+    "Model": 9001,
+    "Submodel": 212,
+    "Variant": 1,
+    "Description": "Piece of cloth, white",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "clean. Equip to main hand for animation ID 5647 (cleaning table) for M midlander only"
+  },
+  {
+    "Item": "Short Wooden Pole",
+    "Model": 9001,
+    "Submodel": 213,
+    "Variant": 1,
+    "Description": "Pole or Handle?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Rounded ends"
+  },
+  {
+    "Item": "Minor Ascian Mask",
+    "Model": 9001,
+    "Submodel": 214,
+    "Variant": 1,
+    "Description": "Black Ascian Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Resembles Lahabrea’s mask"
+  },
+  {
+    "Item": "Bamboo Blowgun",
+    "Model": 9001,
+    "Submodel": 215,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Large Fish",
+    "Model": 9001,
+    "Submodel": 216,
+    "Variant": 1,
+    "Description": "Seen @ The Doman Enclave (7.9, 5.5)",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animation 5555 (fish call, standing) for male midlander & roegadyn only"
+  },
+  {
+    "Item": "Odder Otter Taiyaki",
+    "Model": 9001,
+    "Submodel": 217,
+    "Variant": 1,
+    "Description": "amezaiku. Seen @ The Doman Enclave (7.6, 5.7)",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animation 5553 (male child hyur only) with a tongue equipped to offhand"
+  },
+  {
+    "Item": "Bom Boko Taiyaki",
+    "Model": 9001,
+    "Submodel": 218,
+    "Variant": 1,
+    "Description": "amezaiku",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animation 5553 (male child hyur only) with a tongue equipped to offhand"
+  },
+  {
+    "Item": "Sparrow Taiyaki",
+    "Model": 9001,
+    "Submodel": 219,
+    "Variant": 1,
+    "Description": "amezaiku",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animation 5553 (male child hyur only) with a tongue equipped to offhand"
+  },
+  {
+    "Item": "Unlit Paper Lantern",
+    "Model": 9001,
+    "Submodel": 220,
+    "Variant": 1,
+    "Description": "wooden frame, turquoise paper. Seen @ Doman Enclave (7.6, 8.0)",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to offhand paired with 9001,151,1 on mainhand for animation 5557 (male midlander only)"
+  },
+  {
+    "Item": "Corked Alcohol Bottle",
+    "Model": 9001,
+    "Submodel": 221,
+    "Variant": 1,
+    "Description": "Brown Bottle, old, dirty, blank label",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Probably the Dalmascan Lea Monde Valens you dig up under Drest's house that Shamani Lohmani identifies"
+  },
+  {
+    "Item": "Corked Rose Alcohol Bottle",
+    "Model": 9001,
+    "Submodel": 222,
+    "Variant": 1,
+    "Description": "Wine Bottle, rose label, corked",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "The vintage Suhd Viandja rosé requested by Wandering Dramaturge. Fanciest wine bottle known?"
+  },
+  {
+    "Item": "Cait Sith Wine",
+    "Model": 9001,
+    "Submodel": 222,
+    "Variant": 2,
+    "Description": "Blue bottle, Cait Sith label, corked",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Also super fancy. Gegeruju owns one. And (EW SPOILER) it's the bottle Fandaniel serves WoL and Zenos"
+  },
+  {
+    "Item": "Vintage Wine Bottle",
+    "Model": 9001,
+    "Submodel": 222,
+    "Variant": 3,
+    "Description": "Brown bottle, old, dirty, corked",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "open"
+  },
+  {
+    "Item": "Necklace",
+    "Model": 9001,
+    "Submodel": 223,
+    "Variant": 1,
+    "Description": "Blue Gem Necklace",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Round blue gem on a strap"
+  },
+  {
+    "Item": "Necklace",
+    "Model": 9001,
+    "Submodel": 224,
+    "Variant": 1,
+    "Description": "Blue Gem Necklace",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Square blue gem on a strap"
+  },
+  {
+    "Item": "Zenos’ Katana",
+    "Model": 9001,
+    "Submodel": 225,
+    "Variant": 1,
+    "Description": "Katana",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Blue blade, no guard"
+  },
+  {
+    "Item": "Tsukoyomi’s Katana",
+    "Model": 9001,
+    "Submodel": 225,
+    "Variant": 2,
+    "Description": "Katana",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "White blade, no guard"
+  },
+  {
+    "Item": "Japanese Bell",
+    "Model": 9001,
+    "Submodel": 226,
+    "Variant": 1,
+    "Description": "Namazu Bell",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Japanese Fan",
+    "Model": 9001,
+    "Submodel": 227,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Red"
+  },
+  {
+    "Item": "Target",
+    "Model": 9001,
+    "Submodel": 228,
+    "Variant": 1,
+    "Description": "Round target",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Katana",
+    "Model": 9001,
+    "Submodel": 229,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Curved"
+  },
+  {
+    "Item": "Package",
+    "Model": 9001,
+    "Submodel": 230,
+    "Variant": 1,
+    "Description": "Brown Parcel",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Golden Pouch",
+    "Model": 9001,
+    "Submodel": 231,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Hand-sized"
+  },
+  {
+    "Item": "Enormous Painter’s Brush",
+    "Model": 9001,
+    "Submodel": 232,
+    "Variant": 1,
+    "Description": "Wooden Brush",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Plain, enormous"
+  },
+  {
+    "Item": "Painter’s Brush",
+    "Model": 9001,
+    "Submodel": 232,
+    "Variant": 2,
+    "Description": "Black Brush",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Black, normal-sized"
+  },
+  {
+    "Item": "Painter’s Brush",
+    "Model": 9001,
+    "Submodel": 232,
+    "Variant": 3,
+    "Description": "Black Brush w/Paint",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "dipped in red paint"
+  },
+  {
+    "Item": "Painter’s Brush",
+    "Model": 9001,
+    "Submodel": 232,
+    "Variant": 4,
+    "Description": "Black Brush w/Paint",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "dipped in blue paint"
+  },
+  {
+    "Item": "Painter’s Brush",
+    "Model": 9001,
+    "Submodel": 232,
+    "Variant": 5,
+    "Description": "Black Brush w/Paint",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "dipped in teal paint"
+  },
+  {
+    "Item": "Potion",
+    "Model": 9001,
+    "Submodel": 233,
+    "Variant": 1,
+    "Description": "Potion Bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Round, blue"
+  },
+  {
+    "Item": "Potion",
+    "Model": 9001,
+    "Submodel": 233,
+    "Variant": 2,
+    "Description": "Potion Bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Round, green"
+  },
+  {
+    "Item": "Potion",
+    "Model": 9001,
+    "Submodel": 233,
+    "Variant": 3,
+    "Description": "Potion Bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Round, purple"
+  },
+  {
+    "Item": "white half orb",
+    "Model": 9001,
+    "Submodel": 234,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "eye cover effect?"
+  },
+  {
+    "Item": "Sealed Envelope",
+    "Model": 9001,
+    "Submodel": 235,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "wax seal"
+  },
+  {
+    "Item": "Envelope",
+    "Model": 9001,
+    "Submodel": 235,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "closed but no wax seal"
+  },
+  {
+    "Item": "White Ball",
+    "Model": 9001,
+    "Submodel": 236,
+    "Variant": 1,
+    "Description": "Metal Ball",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Silvery"
+  },
+  {
+    "Item": "Black Ball",
+    "Model": 9001,
+    "Submodel": 236,
+    "Variant": 2,
+    "Description": "Metal Ball",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Grey Ball",
+    "Model": 9001,
+    "Submodel": 236,
+    "Variant": 3,
+    "Description": "Metal Ball",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Golden Key",
+    "Model": 9001,
+    "Submodel": 237,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Silver Key",
+    "Model": 9001,
+    "Submodel": 237,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Brass Key?",
+    "Model": 9001,
+    "Submodel": 237,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Glass Bottle",
+    "Model": 9001,
+    "Submodel": 238,
+    "Variant": 1,
+    "Description": "Elegant Bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "blue, metal seal"
+  },
+  {
+    "Item": "Metal Mug",
+    "Model": 9001,
+    "Submodel": 239,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "empty"
+  },
+  {
+    "Item": "Sable Death Mask",
+    "Model": 9001,
+    "Submodel": 240,
+    "Variant": 1,
+    "Description": "Half mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "silver, glowing red eye"
+  },
+  {
+    "Item": "Unknown Wooden Tool",
+    "Model": 9001,
+    "Submodel": 241,
+    "Variant": 1,
+    "Description": "sasumata, Japanese man catcher, catchspear, spear fork",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "used by the hingan garrison for training. Equip to offhand for animation 5581 (male midlander only)"
+  },
+  {
+    "Item": "Sickle",
+    "Model": 9001,
+    "Submodel": 242,
+    "Variant": 1,
+    "Description": "Hand Sickle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Staff",
+    "Model": 9001,
+    "Submodel": 243,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hancock’s Glasses",
+    "Model": 9001,
+    "Submodel": 244,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Piece of Gaius Helm",
+    "Model": 9001,
+    "Submodel": 245,
+    "Variant": 1,
+    "Description": "Mask from Gaius’ Helm",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "BLU Soulstone",
+    "Model": 9001,
+    "Submodel": 246,
+    "Variant": 1,
+    "Description": "Soulstone, Blue Mage",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "GNB Soulstone",
+    "Model": 9001,
+    "Submodel": 247,
+    "Variant": 1,
+    "Description": "Soulstone, Gunbreaker",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "DNC Soulstone",
+    "Model": 9001,
+    "Submodel": 248,
+    "Variant": 1,
+    "Description": "Soulstone, Dancer",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Apple",
+    "Model": 9001,
+    "Submodel": 249,
+    "Variant": 1,
+    "Description": "Red Apple",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Grub",
+    "Model": 9001,
+    "Submodel": 250,
+    "Variant": 1,
+    "Description": "Worm or larva",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "curled up"
+  },
+  {
+    "Item": "Fruit",
+    "Model": 9001,
+    "Submodel": 251,
+    "Variant": 1,
+    "Description": "Peach",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Meol",
+    "Model": 9001,
+    "Submodel": 252,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Shovel",
+    "Model": 9001,
+    "Submodel": 253,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Coin",
+    "Model": 9001,
+    "Submodel": 254,
+    "Variant": 1,
+    "Description": "gold",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "no engraving"
+  },
+  {
+    "Item": "Coin",
+    "Model": 9001,
+    "Submodel": 254,
+    "Variant": 2,
+    "Description": "engraved gold coin",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "shield with a two-headed wolf or dragon"
+  },
+  {
+    "Item": "Large Box of Crystals",
+    "Model": 9001,
+    "Submodel": 255,
+    "Variant": 1,
+    "Description": "Crate with Blue Crystals",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Large Box of Potions",
+    "Model": 9001,
+    "Submodel": 256,
+    "Variant": 1,
+    "Description": "Crate with Potions",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Large Box of Hay",
+    "Model": 9001,
+    "Submodel": 257,
+    "Variant": 1,
+    "Description": "Crate of Hay",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tankard of Ale (Wood)",
+    "Model": 9001,
+    "Submodel": 258,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tankard of Ale (Empty)",
+    "Model": 9001,
+    "Submodel": 258,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tankard of Ale (No Handle)",
+    "Model": 9001,
+    "Submodel": 258,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Basket of Fruits",
+    "Model": 9001,
+    "Submodel": 259,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "four apples and 7 lemons"
+  },
+  {
+    "Item": "Paint Brush",
+    "Model": 9001,
+    "Submodel": 260,
+    "Variant": 1,
+    "Description": "Small painting brush",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Brush",
+    "Model": 9001,
+    "Submodel": 260,
+    "Variant": 2,
+    "Description": "Small painting brush",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "darkened tip"
+  },
+  {
+    "Item": "Hair Brush",
+    "Model": 9001,
+    "Submodel": 261,
+    "Variant": 1,
+    "Description": "Brush",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "no handle, used to brush chocobos with animation ID 5675"
+  },
+  {
+    "Item": "Royal Crown",
+    "Model": 9001,
+    "Submodel": 262,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "gold, red gemstones"
+  },
+  {
+    "Item": "Royal Bracelet",
+    "Model": 9001,
+    "Submodel": 263,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "gold, red gemstones"
+  },
+  {
+    "Item": "Green Gem",
+    "Model": 9001,
+    "Submodel": 264,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "rounded and smooth"
+  },
+  {
+    "Item": "Large Ronkan Disc",
+    "Model": 9001,
+    "Submodel": 265,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "golden, owl motif"
+  },
+  {
+    "Item": "Ardbert’s Axe of Light",
+    "Model": 9001,
+    "Submodel": 266,
+    "Variant": 1,
+    "Description": "Glowing white axe",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "entirely emissive"
+  },
+  {
+    "Item": "Alcohol Mixer",
+    "Model": 9001,
+    "Submodel": 267,
+    "Variant": 1,
+    "Description": "Margarita Shaker",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "silvery metal, goes with animation ID 5648 (mixing drink, male only)"
+  },
+  {
+    "Item": "Il Mheg Looking Grass",
+    "Model": 9001,
+    "Submodel": 268,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "stalk with spiraling end"
+  },
+  {
+    "Item": "Gigantic Meol",
+    "Model": 9001,
+    "Submodel": 269,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Reddish-Pink Ring",
+    "Model": 9001,
+    "Submodel": 270,
+    "Variant": 1,
+    "Description": "Golden Ring",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "gold, red gemstones"
+  },
+  {
+    "Item": "Ring with huge gemstone",
+    "Model": 9001,
+    "Submodel": 271,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Large blue-green gemstone"
+  },
+  {
+    "Item": "Blue Signet Ring",
+    "Model": 9001,
+    "Submodel": 272,
+    "Variant": 1,
+    "Description": "Ring with purple gemstone",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Massive Gear",
+    "Model": 9001,
+    "Submodel": 273,
+    "Variant": 1,
+    "Description": "Cog-shaped door?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "has a Garlond Ironworks insignia"
+  },
+  {
+    "Item": "Person-sized planet?",
+    "Model": 9001,
+    "Submodel": 274,
+    "Variant": 1,
+    "Description": "white miniature gas giant?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "kind of resembles jupiter, but white and tiny"
+  },
+  {
+    "Item": "Letter or note",
+    "Model": 9001,
+    "Submodel": 275,
+    "Variant": 1,
+    "Description": "Paper with handwriting",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hades Mask",
+    "Model": 9001,
+    "Submodel": 276,
+    "Variant": 1,
+    "Description": "Ascian Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "red with white markings, very large"
+  },
+  {
+    "Item": "Ascian Martyr’s Mask",
+    "Model": 9001,
+    "Submodel": 277,
+    "Variant": 1,
+    "Description": "Black Ascian Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ascian Martyr’s Mask",
+    "Model": 9001,
+    "Submodel": 277,
+    "Variant": 2,
+    "Description": "Red six-eyed Ascian Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ascian Martyr’s Mask",
+    "Model": 9001,
+    "Submodel": 277,
+    "Variant": 3,
+    "Description": "Purple Ascian Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ascian Martyr’s Mask",
+    "Model": 9001,
+    "Submodel": 277,
+    "Variant": 4,
+    "Description": "Striped Ascian Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "grey with purple stripes"
+  },
+  {
+    "Item": "Ascian Martyr’s Mask",
+    "Model": 9001,
+    "Submodel": 277,
+    "Variant": 5,
+    "Description": "Red-Purple Ascian Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ascian Martyr’s Mask",
+    "Model": 9001,
+    "Submodel": 277,
+    "Variant": 6,
+    "Description": "Full-Face Ascian Mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "White Feather",
+    "Model": 9001,
+    "Submodel": 278,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Dwarven Helmet",
+    "Model": 9001,
+    "Submodel": 279,
+    "Variant": 1,
+    "Description": "Green Dwarven Helmet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Horned, no beard"
+  },
+  {
+    "Item": "Dwarven Helmet",
+    "Model": 9001,
+    "Submodel": 279,
+    "Variant": 2,
+    "Description": "Blue Dwarven Helmet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Horned, no beard"
+  },
+  {
+    "Item": "Dwarven Helmet",
+    "Model": 9001,
+    "Submodel": 279,
+    "Variant": 3,
+    "Description": "White Dwarven Helmet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Horned, no beard"
+  },
+  {
+    "Item": "Purple Flower",
+    "Model": 9001,
+    "Submodel": 280,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "purple with yellow, three petals"
+  },
+  {
+    "Item": "Metal Spear or Lance",
+    "Model": 9001,
+    "Submodel": 281,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Yellow-silver-y"
+  },
+  {
+    "Item": "Spearfishing Gig",
+    "Model": 9001,
+    "Submodel": 282,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Cyan Mushroom",
+    "Model": 9001,
+    "Submodel": 283,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Green wine bottle",
+    "Model": 9001,
+    "Submodel": 284,
+    "Variant": 1,
+    "Description": "Corked Bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "label says something Vylbrant?"
+  },
+  {
+    "Item": "Green wine bottle",
+    "Model": 9001,
+    "Submodel": 284,
+    "Variant": 2,
+    "Description": "Open bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "label says something Vylbrant?"
+  },
+  {
+    "Item": "Green wine bottle",
+    "Model": 9001,
+    "Submodel": 284,
+    "Variant": 3,
+    "Description": "Corked Bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "label says something Vylbrant?"
+  },
+  {
+    "Item": "Green wine bottle",
+    "Model": 9001,
+    "Submodel": 284,
+    "Variant": 4,
+    "Description": "Open bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "label says something Vylbrant?"
+  },
+  {
+    "Item": "Red wine bottle",
+    "Model": 9001,
+    "Submodel": 285,
+    "Variant": 1,
+    "Description": "Corked Bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Red wine bottle",
+    "Model": 9001,
+    "Submodel": 285,
+    "Variant": 2,
+    "Description": "Open bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Red wine bottle",
+    "Model": 9001,
+    "Submodel": 285,
+    "Variant": 3,
+    "Description": "Corked Bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Red wine bottle",
+    "Model": 9001,
+    "Submodel": 285,
+    "Variant": 4,
+    "Description": "Open bottle",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Nero’s Scanner",
+    "Model": 9001,
+    "Submodel": 286,
+    "Variant": 1,
+    "Description": "Nero’s Wrist Device",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Alisaie’s Clay Porxie",
+    "Model": 9001,
+    "Submodel": 287,
+    "Variant": 1,
+    "Description": "Clay Pig Figure",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lump of Clay",
+    "Model": 9001,
+    "Submodel": 288,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Silver Bracelet",
+    "Model": 9001,
+    "Submodel": 289,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "blue gem"
+  },
+  {
+    "Item": "Broken Kickumbob Machine Part",
+    "Model": 9001,
+    "Submodel": 290,
+    "Variant": 1,
+    "Description": "Machine Part",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "from nier raid quests"
+  },
+  {
+    "Item": "Tarnished Thingamajig Machine part",
+    "Model": 9001,
+    "Submodel": 291,
+    "Variant": 1,
+    "Description": "Machine Part",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "from nier raid quests"
+  },
+  {
+    "Item": "Rusty Whatsit Machine Part",
+    "Model": 9001,
+    "Submodel": 292,
+    "Variant": 1,
+    "Description": "Machine Part",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "from nier raid quests, not actually rusty"
+  },
+  {
+    "Item": "Bullet Casing",
+    "Model": 9001,
+    "Submodel": 293,
+    "Variant": 1,
+    "Description": "Bullet in casing",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bullet Casing",
+    "Model": 9001,
+    "Submodel": 293,
+    "Variant": 2,
+    "Description": "Casing without bullet",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bullet Casing",
+    "Model": 9001,
+    "Submodel": 293,
+    "Variant": 3,
+    "Description": "Bullet in casing",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "more reddish bullet"
+  },
+  {
+    "Item": "Bullet Casing",
+    "Model": 9001,
+    "Submodel": 293,
+    "Variant": 4,
+    "Description": "Bullet in casing",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Mask of Azuro",
+    "Model": 9001,
+    "Submodel": 294,
+    "Variant": 1,
+    "Description": "Blue mask",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Handgun",
+    "Model": 9001,
+    "Submodel": 295,
+    "Variant": 1,
+    "Description": "Large ornate revolver",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bullet",
+    "Model": 9001,
+    "Submodel": 296,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Cid’s Locket Necklace",
+    "Model": 9001,
+    "Submodel": 297,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Rubber Tube?",
+    "Model": 9001,
+    "Submodel": 298,
+    "Variant": 1,
+    "Description": "Machine Part?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Black"
+  },
+  {
+    "Item": "Archon Loaf Bread Slice",
+    "Model": 9001,
+    "Submodel": 299,
+    "Variant": 1,
+    "Description": "Slice of Bread",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Archon Loaf Bread Slice",
+    "Model": 9001,
+    "Submodel": 299,
+    "Variant": 2,
+    "Description": "Bitten Slice of Bread",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "lightly nibbled"
+  },
+  {
+    "Item": "Imperial Pot Helm",
+    "Model": 9001,
+    "Submodel": 300,
+    "Variant": 1,
+    "Description": "Garlean Helm",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Thancred’s Gunblade",
+    "Model": 9001,
+    "Submodel": 301,
+    "Variant": 1,
+    "Description": "Lion Heart",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Engraved Sword Blade",
+    "Model": 9001,
+    "Submodel": 302,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "metal with gold trim"
+  },
+  {
+    "Item": "Gil Coin",
+    "Model": 9001,
+    "Submodel": 303,
+    "Variant": 1,
+    "Description": "gold",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "w/ Nymeia's face on front & tree on back. Supposed to be 100gil? (see 1st Encyclopedia p. 20)"
+  },
+  {
+    "Item": "Gil Coin (right half only)",
+    "Model": 9001,
+    "Submodel": 303,
+    "Variant": 2,
+    "Description": "gold",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "w/ Nymeia's face on front & tree on back. Supposed to be 100gil? (see 1st Encyclopedia p. 20)"
+  },
+  {
+    "Item": "Gil Coin (left half only)",
+    "Model": 9001,
+    "Submodel": 303,
+    "Variant": 3,
+    "Description": "gold",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "w/ Nymeia's face on front & tree on back. Supposed to be 100gil? (see 1st Encyclopedia p. 20)"
+  },
+  {
+    "Item": "Coffee Cup (Dark)",
+    "Model": 9001,
+    "Submodel": 318,
+    "Variant": 1,
+    "Description": "white cup, dark coffee",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Goes with animation ID 9033 (chair) or 821 (standing)"
+  },
+  {
+    "Item": "Coffee Cup (Light)",
+    "Model": 9001,
+    "Submodel": 318,
+    "Variant": 2,
+    "Description": "white cup, light coffee",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Goes with animation ID 9033 (chair) or 821 (standing)"
+  },
+  {
+    "Item": "Coffee Cup (Sharlayan)",
+    "Model": 9001,
+    "Submodel": 318,
+    "Variant": 3,
+    "Description": "white cup, dark coffee",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Goes with animation ID 9033 (chair) or 821 (standing)"
+  },
+  {
+    "Item": "Brass Mug with Lime",
+    "Model": 9001,
+    "Submodel": 319,
+    "Variant": 1,
+    "Description": "red tea w/ ice cubes",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 5723 (chair) for female hyur, female aura, male & female lalafell, or 5722 (standing) for M/F lalafell only"
+  },
+  {
+    "Item": "Diamond Ring",
+    "Model": 9001,
+    "Submodel": 322,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Scale",
+    "Model": 9001,
+    "Submodel": 323,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Branch",
+    "Model": 9001,
+    "Submodel": 324,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Branch",
+    "Model": 9001,
+    "Submodel": 325,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Carrot (Orange)",
+    "Model": 9001,
+    "Submodel": 326,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "huge. doesn't have root like regular carrot"
+  },
+  {
+    "Item": "Giant Carrot (Red)",
+    "Model": 9001,
+    "Submodel": 326,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Carrot (White)",
+    "Model": 9001,
+    "Submodel": 326,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Carrot (Black)",
+    "Model": 9001,
+    "Submodel": 326,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Carrot (Yellow)",
+    "Model": 9001,
+    "Submodel": 326,
+    "Variant": 5,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Carrot (Blue)",
+    "Model": 9001,
+    "Submodel": 326,
+    "Variant": 6,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Chain",
+    "Model": 9001,
+    "Submodel": 327,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Walnut",
+    "Model": 9001,
+    "Submodel": 328,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Sack",
+    "Model": 9001,
+    "Submodel": 329,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "RPR Soulstone",
+    "Model": 9001,
+    "Submodel": 330,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "SGE Soulstone",
+    "Model": 9001,
+    "Submodel": 331,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Coin",
+    "Model": 9001,
+    "Submodel": 332,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bullet",
+    "Model": 9001,
+    "Submodel": 333,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bottle of Wine",
+    "Model": 9001,
+    "Submodel": 334,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Wine Glass (Purple)",
+    "Model": 9001,
+    "Submodel": 335,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Plate",
+    "Model": 9001,
+    "Submodel": 336,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Stack of Blankets",
+    "Model": 9001,
+    "Submodel": 337,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Rapier",
+    "Model": 9001,
+    "Submodel": 338,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Wicker Tray",
+    "Model": 9001,
+    "Submodel": 339,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Zenos' Scythe",
+    "Model": 9001,
+    "Submodel": 340,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "White Ancient Mask",
+    "Model": 9001,
+    "Submodel": 341,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Kairos",
+    "Model": 9001,
+    "Submodel": 342,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hythlodaeus' Arrow",
+    "Model": 9001,
+    "Submodel": 343,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Envelope (Open)",
+    "Model": 9001,
+    "Submodel": 344,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Omicron Head",
+    "Model": 9001,
+    "Submodel": 345,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Omicron Leg",
+    "Model": 9001,
+    "Submodel": 346,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Brass Mug",
+    "Model": 9001,
+    "Submodel": 347,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Fish",
+    "Model": 9001,
+    "Submodel": 348,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Missile",
+    "Model": 9001,
+    "Submodel": 349,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Coiled Necklace",
+    "Model": 9001,
+    "Submodel": 350,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Zero's Hat",
+    "Model": 9001,
+    "Submodel": 351,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Withered Apple",
+    "Model": 9001,
+    "Submodel": 352,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Sword",
+    "Model": 9001,
+    "Submodel": 353,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Apple",
+    "Model": 9001,
+    "Submodel": 354,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Plate (Ornate)",
+    "Model": 9001,
+    "Submodel": 355,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ewer",
+    "Model": 9001,
+    "Submodel": 356,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "3/4ths of a Pie",
+    "Model": 9001,
+    "Submodel": 357,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "1/4th of a Pie",
+    "Model": 9001,
+    "Submodel": 357,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Gem set in Gold",
+    "Model": 9001,
+    "Submodel": 358,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass w/ Orange Liquid and Straw",
+    "Model": 9001,
+    "Submodel": 359,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass w/ Green Liquid and Straw",
+    "Model": 9001,
+    "Submodel": 359,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Alien Plant Thing",
+    "Model": 9001,
+    "Submodel": 360,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Half a Dumpling",
+    "Model": 9001,
+    "Submodel": 361,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Half a Dumping",
+    "Model": 9001,
+    "Submodel": 361,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Quarter of a Dumpling",
+    "Model": 9001,
+    "Submodel": 361,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Half a Dumpling",
+    "Model": 9001,
+    "Submodel": 361,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tomestone (Poetics)",
+    "Model": 9001,
+    "Submodel": 362,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Treasure Map",
+    "Model": 9001,
+    "Submodel": 363,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "White Ancient Mask",
+    "Model": 9001,
+    "Submodel": 364,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Red Tag",
+    "Model": 9001,
+    "Submodel": 365,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Arcane Plug",
+    "Model": 9001,
+    "Submodel": 366,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Armor Plate",
+    "Model": 9001,
+    "Submodel": 367,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lightbulb (Blue)",
+    "Model": 9001,
+    "Submodel": 368,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lightbulb (Red)",
+    "Model": 9001,
+    "Submodel": 368,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lightbulb (Yellow)",
+    "Model": 9001,
+    "Submodel": 368,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lightbulb (Orange)",
+    "Model": 9001,
+    "Submodel": 368,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Can - Handle Up (Red)",
+    "Model": 9001,
+    "Submodel": 369,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Can - Handle Up (Blue)",
+    "Model": 9001,
+    "Submodel": 369,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Can - Handle Up (Teal)",
+    "Model": 9001,
+    "Submodel": 369,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Can - Handle Up (White)",
+    "Model": 9001,
+    "Submodel": 369,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Can - Handle Down (Red)",
+    "Model": 9001,
+    "Submodel": 369,
+    "Variant": 5,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Can - Handle Down (Blue)",
+    "Model": 9001,
+    "Submodel": 369,
+    "Variant": 6,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Can - Handle Down (Teal)",
+    "Model": 9001,
+    "Submodel": 369,
+    "Variant": 7,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paint Can - Handle Down (White)",
+    "Model": 9001,
+    "Submodel": 369,
+    "Variant": 8,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "New Years' Box",
+    "Model": 9001,
+    "Submodel": 370,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Branches with Leaves",
+    "Model": 9001,
+    "Submodel": 371,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Branches with Leaves (Frosted)",
+    "Model": 9001,
+    "Submodel": 371,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tea Cup (Full)",
+    "Model": 9001,
+    "Submodel": 372,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Saucer",
+    "Model": 9001,
+    "Submodel": 373,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ornate Sword",
+    "Model": 9001,
+    "Submodel": 374,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Golbez's Helmet",
+    "Model": 9001,
+    "Submodel": 375,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Pipe",
+    "Model": 9001,
+    "Submodel": 376,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Metal Cage",
+    "Model": 9001,
+    "Submodel": 377,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal of Light (Corrupted)",
+    "Model": 9001,
+    "Submodel": 378,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Envelope (Turali)",
+    "Model": 9001,
+    "Submodel": 379,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Letter (Turali)",
+    "Model": 9001,
+    "Submodel": 380,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tray with Ngiri",
+    "Model": 9001,
+    "Submodel": 381,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bowl of Soup (Orange)",
+    "Model": 9001,
+    "Submodel": 382,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bowl of Soup (Red)",
+    "Model": 9001,
+    "Submodel": 382,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bowl of Soup (Empty)",
+    "Model": 9001,
+    "Submodel": 383,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Flatbread",
+    "Model": 9001,
+    "Submodel": 383,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Flatbread (Heart)",
+    "Model": 9001,
+    "Submodel": 384,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Piece of Flatbread",
+    "Model": 9001,
+    "Submodel": 385,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass with Caramel Drink",
+    "Model": 9001,
+    "Submodel": 386,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Empty Glass",
+    "Model": 9001,
+    "Submodel": 386,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass with Milk",
+    "Model": 9001,
+    "Submodel": 386,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass with Purple Juice",
+    "Model": 9001,
+    "Submodel": 386,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass with Red Juice",
+    "Model": 9001,
+    "Submodel": 386,
+    "Variant": 5,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass with Green Liquid",
+    "Model": 9001,
+    "Submodel": 386,
+    "Variant": 6,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass with Blue Juice",
+    "Model": 9001,
+    "Submodel": 386,
+    "Variant": 7,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glass with Yellow Juice",
+    "Model": 9001,
+    "Submodel": 386,
+    "Variant": 8,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Reporter's Mask",
+    "Model": 9001,
+    "Submodel": 387,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Single White Lily",
+    "Model": 9001,
+    "Submodel": 388,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Single Red Lily",
+    "Model": 9001,
+    "Submodel": 388,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Single Blue Lily",
+    "Model": 9001,
+    "Submodel": 388,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Chunk of Wall",
+    "Model": 9001,
+    "Submodel": 389,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gigantic Sword",
+    "Model": 9001,
+    "Submodel": 390,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Allagan Orb",
+    "Model": 9001,
+    "Submodel": 391,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Krile's Earring",
+    "Model": 9001,
+    "Submodel": 392,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pork Chop",
+    "Model": 9001,
+    "Submodel": 393,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pork Chop (Eaten)",
+    "Model": 9001,
+    "Submodel": 393,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pork Chop Bone",
+    "Model": 9001,
+    "Submodel": 394,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Fall Guys Crown",
+    "Model": 9001,
+    "Submodel": 395,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Flan",
+    "Model": 9001,
+    "Submodel": 396,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Rolled Up Map",
+    "Model": 9001,
+    "Submodel": 397,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Scythe Head",
+    "Model": 9001,
+    "Submodel": 398,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Scythe Shaft",
+    "Model": 9001,
+    "Submodel": 399,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tablet with Gem (Turali)",
+    "Model": 9001,
+    "Submodel": 400,
+    "Variant": 45298,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tablet without Gem (Turali)",
+    "Model": 9001,
+    "Submodel": 401,
+    "Variant": 45298,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gem Cube (Blue)",
+    "Model": 9001,
+    "Submodel": 402,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gem Cube (Orange)",
+    "Model": 9001,
+    "Submodel": 402,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gem Cube (Red)",
+    "Model": 9001,
+    "Submodel": 402,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gem Cube (Aqua)",
+    "Model": 9001,
+    "Submodel": 402,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gem Cube (Yellow)",
+    "Model": 9001,
+    "Submodel": 402,
+    "Variant": 5,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gem Cube (Green)",
+    "Model": 9001,
+    "Submodel": 402,
+    "Variant": 6,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gem Cube (Multi)",
+    "Model": 9001,
+    "Submodel": 402,
+    "Variant": 7,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tortilla with Meat",
+    "Model": 9001,
+    "Submodel": 403,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tortilla with Meat (Closed)",
+    "Model": 9001,
+    "Submodel": 404,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Green Fruit",
+    "Model": 9001,
+    "Submodel": 405,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Wine Jug",
+    "Model": 9001,
+    "Submodel": 406,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Taco",
+    "Model": 9001,
+    "Submodel": 407,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "equip to main hand for animation ID 9134 (eating taco on chair) or 9133 (standing) for M/F hrothgar & M midlander only"
+  },
+  {
+    "Item": "Spatula",
+    "Model": 9001,
+    "Submodel": 408,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Flute",
+    "Model": 9001,
+    "Submodel": 410,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Earthenware Bottle",
+    "Model": 9001,
+    "Submodel": 411,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Earthenware Mug",
+    "Model": 9001,
+    "Submodel": 412,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Banana",
+    "Model": 9001,
+    "Submodel": 413,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Stone Hammer",
+    "Model": 9001,
+    "Submodel": 414,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "just a rock tied to a stick"
+  },
+  {
+    "Item": "Long Rock",
+    "Model": 9001,
+    "Submodel": 415,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "long grey rock, kind of comet shaped?"
+  },
+  {
+    "Item": "Spraypaint",
+    "Model": 9001,
+    "Submodel": 416,
+    "Variant": 1,
+    "Description": "Red Can",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animation 9151"
+  },
+  {
+    "Item": "Spraypaint",
+    "Model": 9001,
+    "Submodel": 416,
+    "Variant": 2,
+    "Description": "Blue Can",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animation 9151"
+  },
+  {
+    "Item": "Mate Cup",
+    "Model": 9001,
+    "Submodel": 417,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tea Cup",
+    "Model": 9001,
+    "Submodel": 418,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Narwhal Totem",
+    "Model": 9001,
+    "Submodel": 422,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Scorpion Totem",
+    "Model": 9001,
+    "Submodel": 423,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Morpho Totrm",
+    "Model": 9001,
+    "Submodel": 424,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pangolin Totem",
+    "Model": 9001,
+    "Submodel": 425,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Owl Totem",
+    "Model": 9001,
+    "Submodel": 426,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Three Multi Scoop Ice Cream",
+    "Model": 9001,
+    "Submodel": 427,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Multi Scoop Ice Cream Cone",
+    "Model": 9001,
+    "Submodel": 428,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand with tongue on offhand for animation 9181 (eating ice cream, standing, female midlander only) or 9180 (selling ice cream, standing, male midlander only)"
+  },
+  {
+    "Item": "A Moogle",
+    "Model": 9001,
+    "Submodel": 431,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Western Wanted Poster",
+    "Model": 9001,
+    "Submodel": 434,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Miqo Man on it"
+  },
+  {
+    "Item": "Western Wanted Poster",
+    "Model": 9001,
+    "Submodel": 434,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Hyur Man"
+  },
+  {
+    "Item": "Western Wanted Poster",
+    "Model": 9001,
+    "Submodel": 434,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Miqo Woman"
+  },
+  {
+    "Item": "Western Wanted Poster",
+    "Model": 9001,
+    "Submodel": 434,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Bald Roe Man"
+  },
+  {
+    "Item": "Pictomancer Job Stone",
+    "Model": 9001,
+    "Submodel": 435,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Viber Job Stone",
+    "Model": 9001,
+    "Submodel": 436,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Quill (Blue)",
+    "Model": 9001,
+    "Submodel": 439,
+    "Variant": 1,
+    "Description": "brass handle, blue feather",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to main hand for animation IDs 923, 978 or 1043 (taking notes while standing)"
+  },
+  {
+    "Item": "Basket of Fruit",
+    "Model": 9001,
+    "Submodel": 440,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Kinderpunsch mug (full)",
+    "Model": 9001,
+    "Submodel": 441,
+    "Variant": 1,
+    "Description": "white ceramic w/ Gridania art, Starlight event 2024",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to main hand for animation 9204 or 821 (standing), 9033 (sitting)"
+  },
+  {
+    "Item": "Kinderpunsch mug (empty)",
+    "Model": 9001,
+    "Submodel": 441,
+    "Variant": 2,
+    "Description": "white ceramic w/ Gridania art, Starlight event 2024",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to main hand for animation 9204 or 821 (standing), 9033 (sitting)"
+  },
+  {
+    "Item": "Thick Book 1 (Red)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "Red cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 1 (Ornate Black)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 2,
+    "Description": "Gilded black cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 1 (Plain Black)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 3,
+    "Description": "Plain black cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 1 (Worn Red)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 4,
+    "Description": "Worn, gilded red cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 1 (Ornate Yellow)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 5,
+    "Description": "Ornate gilded yellow cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 1 (Blue)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 6,
+    "Description": "Blue cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 1 (Green)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 7,
+    "Description": "Green cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 1 (Ornate Red)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 8,
+    "Description": "Unique gilded red cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 1 (Peacock Black)",
+    "Model": 9002,
+    "Submodel": 1,
+    "Variant": 9,
+    "Description": "Unique gilded black cover with peacock artwork, worn pages, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 2 (Red)",
+    "Model": 9002,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "Ornate worn red cover, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 2 (Black)",
+    "Model": 9002,
+    "Submodel": 2,
+    "Variant": 2,
+    "Description": "Ornate worn black cover, page filligree, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 2 (Brown)",
+    "Model": 9002,
+    "Submodel": 2,
+    "Variant": 3,
+    "Description": "Worn brown cover, worn pages, Eorzean text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 3",
+    "Model": 9002,
+    "Submodel": 3,
+    "Variant": 1,
+    "Description": "Ornate red Heavensward cover, signed by Edmont de Fortemps. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thick Book 3 (Incomplete)",
+    "Model": 9002,
+    "Submodel": 3,
+    "Variant": 2,
+    "Description": "Ornate red Heavensward cover, signed by Edmont de Fortemps. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Thin Book",
+    "Model": 9002,
+    "Submodel": 4,
+    "Variant": 1,
+    "Description": "Labeled blue cover, Hingan text. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Archon Book",
+    "Model": 9002,
+    "Submodel": 5,
+    "Variant": 1,
+    "Description": "Gilded velvet red cover, archon symbol, worn pages. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Scion Book",
+    "Model": 9002,
+    "Submodel": 6,
+    "Variant": 1,
+    "Description": "3D ornate brown cover, scion symbol, worn pages. Appears open or closed depending on animation used",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Yok Huy Book",
+    "Model": 9002,
+    "Submodel": 7,
+    "Variant": 1,
+    "Description": "Carved greenish stone cover, worn pages. Appears open or closed depending on animation used. Appears during the Wachumekimeki quest Written in Stone",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to offhand for animation ID 9021 (reading floating book, standing), 9022 (sitting on chair) or 937 (standing)"
+  },
+  {
+    "Item": "Letter",
+    "Model": 9003,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Half a Steering Wheel",
+    "Model": 9004,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Steering Wheel - Light",
+    "Model": 9004,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Steering Wheel - Worn",
+    "Model": 9004,
+    "Submodel": 3,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Metal Lever",
+    "Model": 9005,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "T-shaped, two-handed, part of a smithing forge's box bellow",
+    "Wields to": "root",
+    "Sheathes to": "",
+    "Notes": "used for animation 859 (male roegadyn & male hrothgar only)"
+  },
+  {
+    "Item": "Wooden Chest",
+    "Model": 9007,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Raubahn's Helmet",
+    "Model": 9014,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Palm Leaf ( for miqote fan emote )",
+    "Model": 9016,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paper",
+    "Model": 9019,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "single, white w/ Eorzean text",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to main hand for animation ID 5750 (reading letter on chair) or 996 (standing)"
+  },
+  {
+    "Item": "Aetherometer (Scions)",
+    "Model": 9020,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Maelstrom Flag",
+    "Model": 9023,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Immortal Flames Flag",
+    "Model": 9024,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Twin Adders Flag",
+    "Model": 9025,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Nero's Compass",
+    "Model": 9026,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Big Bomb",
+    "Model": 9030,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lit Bomb (Sparkling)",
+    "Model": 9030,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lit Bomb (Static)",
+    "Model": 9030,
+    "Submodel": 1,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Big Hunk of Ore",
+    "Model": 9030,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Cocoon",
+    "Model": 9030,
+    "Submodel": 3,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bag of Pumpkins",
+    "Model": 9030,
+    "Submodel": 4,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Large Pot",
+    "Model": 9030,
+    "Submodel": 5,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Easter Egg",
+    "Model": 9030,
+    "Submodel": 6,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bombard",
+    "Model": 9030,
+    "Submodel": 7,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pure Black Orb (Cannon Ball?)",
+    "Model": 9030,
+    "Submodel": 8,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Realm Reborn Red",
+    "Model": 9030,
+    "Submodel": 9,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Card Spread",
+    "Model": 9030,
+    "Submodel": 10,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Small Ball",
+    "Model": 9030,
+    "Submodel": 11,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Blue Orb",
+    "Model": 9030,
+    "Submodel": 12,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Astrologian Card",
+    "Model": 9030,
+    "Submodel": 13,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Big Egg",
+    "Model": 9030,
+    "Submodel": 14,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Gnath Pot",
+    "Model": 9030,
+    "Submodel": 16,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pommander",
+    "Model": 9030,
+    "Submodel": 17,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Japanese Cask",
+    "Model": 9030,
+    "Submodel": 19,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Burlap Sack",
+    "Model": 9030,
+    "Submodel": 20,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Nanamo's Crown",
+    "Model": 9031,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Comb",
+    "Model": 9032,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Watering Can",
+    "Model": 9032,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Mallet",
+    "Model": 9032,
+    "Submodel": 3,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Serving Tray with Glasses",
+    "Model": 9032,
+    "Submodel": 4,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Fork",
+    "Model": 9032,
+    "Submodel": 10,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Knife",
+    "Model": 9032,
+    "Submodel": 11,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Small Red Lantern",
+    "Model": 9032,
+    "Submodel": 12,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tall Lantern",
+    "Model": 9032,
+    "Submodel": 13,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Knocked Out Namazu",
+    "Model": 9032,
+    "Submodel": 14,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pink Bento",
+    "Model": 9032,
+    "Submodel": 15,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Red Japanese Umbrella",
+    "Model": 9032,
+    "Submodel": 17,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Red Sealed Jar",
+    "Model": 9032,
+    "Submodel": 18,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Koban",
+    "Model": 9032,
+    "Submodel": 19,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Rectangular Block of Wood",
+    "Model": 9032,
+    "Submodel": 20,
+    "Variant": 1,
+    "Description": "used traditionally for hinoyoujin, fire safety PSAs",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "used by Actor #236 around the Doman Enclave, spawns at x6.4, y5.4"
+  },
+  {
+    "Item": "Conductor's Baton",
+    "Model": 9032,
+    "Submodel": 21,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Phial",
+    "Model": 9032,
+    "Submodel": 22,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Piece of Armor with Feathers",
+    "Model": 9032,
+    "Submodel": 23,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Baby",
+    "Model": 9032,
+    "Submodel": 24,
+    "Variant": 1,
+    "Description": "pastel green swaddle /w ribbon",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Equip\" to main hand to hold with animation ID 1046 for F midlander & F elezen only"
+  },
+  {
+    "Item": "Forge Hammer",
+    "Model": 9032,
+    "Submodel": 25,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Block of Stone",
+    "Model": 9032,
+    "Submodel": 26,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Cut Block of Stone",
+    "Model": 9032,
+    "Submodel": 27,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Sealed Barrel",
+    "Model": 9032,
+    "Submodel": 28,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Basket of Fruit",
+    "Model": 9032,
+    "Submodel": 29,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Lunch Bag",
+    "Model": 9032,
+    "Submodel": 30,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Paper Bag",
+    "Model": 9032,
+    "Submodel": 30,
+    "Variant": 1,
+    "Description": "light brown",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Perfume Bottle",
+    "Model": 9032,
+    "Submodel": 32,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tray with Kebab",
+    "Model": 9032,
+    "Submodel": 34,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tray with Curry and Naan",
+    "Model": 9032,
+    "Submodel": 35,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tray with Shakers and Bowl",
+    "Model": 9032,
+    "Submodel": 36,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Spoon",
+    "Model": 9032,
+    "Submodel": 37,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Empty Lunch Sack",
+    "Model": 9032,
+    "Submodel": 38,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Red Carrot",
+    "Model": 9032,
+    "Submodel": 39,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Yellow Carrot",
+    "Model": 9032,
+    "Submodel": 39,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Blue Carrot",
+    "Model": 9032,
+    "Submodel": 39,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Basket with Potatoes and Tomatoes",
+    "Model": 9032,
+    "Submodel": 40,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Cat Crate",
+    "Model": 9032,
+    "Submodel": 41,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Burlap Bag",
+    "Model": 9032,
+    "Submodel": 42,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bundle of Reeds (Tan)",
+    "Model": 9032,
+    "Submodel": 43,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bundle of Reeds (Green)",
+    "Model": 9032,
+    "Submodel": 43,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Starbucks Coffee Cup (Black)",
+    "Model": 9032,
+    "Submodel": 45,
+    "Variant": 1,
+    "Description": "Black w/ white lid",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animations 9148, 9149 (standing) or 9150 (chair)"
+  },
+  {
+    "Item": "Starbucks Coffee Cup (Purple)",
+    "Model": 9032,
+    "Submodel": 45,
+    "Variant": 2,
+    "Description": "Black/purple gradient w/ gray lid",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animations 9148, 9149 (standing) or 9150 (chair)"
+  },
+  {
+    "Item": "Auracite",
+    "Model": 9033,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Blue Orb",
+    "Model": 9033,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Chunk of Auracite",
+    "Model": 9033,
+    "Submodel": 3,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Pendant",
+    "Model": 9033,
+    "Submodel": 4,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Teleportation Device",
+    "Model": 9033,
+    "Submodel": 5,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Teleportation Device (Dark)",
+    "Model": 9033,
+    "Submodel": 5,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Metal Horn with Crystal Knob",
+    "Model": 9033,
+    "Submodel": 6,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Metal Horn",
+    "Model": 9033,
+    "Submodel": 6,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Auracite (Ornate)",
+    "Model": 9033,
+    "Submodel": 7,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Broken Crystal of Light (White)",
+    "Model": 9033,
+    "Submodel": 8,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Broken Crystal of Light (Pink)",
+    "Model": 9033,
+    "Submodel": 8,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Chunk of Auracite",
+    "Model": 9033,
+    "Submodel": 9,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Fragment of Rock",
+    "Model": 9033,
+    "Submodel": 10,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Allagan Cube",
+    "Model": 9033,
+    "Submodel": 11,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Estinien's Lance (Red)",
+    "Model": 9033,
+    "Submodel": 12,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer (Glow)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer w/ Blood (Dim)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer w/ Blood (Glow)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer w/ Blood (Glow)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer (Dim)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 5,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer w/ Blood (Dim)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 6,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer (Dim)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 7,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer w/ Blood (Glow)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 8,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Crystal Coffer (Glow)",
+    "Model": 9033,
+    "Submodel": 13,
+    "Variant": 9,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Memory Crystal",
+    "Model": 9033,
+    "Submodel": 14,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Aries"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Taurus"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Gemini"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Cancer"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 5,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Leo"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 6,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Virgo"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 7,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Libra"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 8,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Scorpio"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 9,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Sagittarius"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 10,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Capricorn"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 11,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Aquarius"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 12,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Pisces"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 13,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Ophiuchus"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 14,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Sun"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 15,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Blank"
+  },
+  {
+    "Item": "Constellation Crystal",
+    "Model": 9033,
+    "Submodel": 15,
+    "Variant": 16,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "Red Pisces"
+  },
+  {
+    "Item": "Giant White Ball",
+    "Model": 9033,
+    "Submodel": 16,
+    "Variant": 1,
+    "Description": "Snowball. Big! huge! BEEEG BALL.",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Broken Memory Crystal (Base)",
+    "Model": 9033,
+    "Submodel": 17,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Broken Memory Crystal (Top)",
+    "Model": 9033,
+    "Submodel": 18,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pilot Chair",
+    "Model": 9033,
+    "Submodel": 19,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Coiled Necklace (Auracite)",
+    "Model": 9033,
+    "Submodel": 20,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Scrunched Necklace (Auracite)",
+    "Model": 9033,
+    "Submodel": 21,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Imperial Grenade",
+    "Model": 9033,
+    "Submodel": 22,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Yellow",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Gold",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Red",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Blue",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 5,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Green",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 6,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Purple",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 7,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Cream",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 8,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Black",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 9,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Cream 2",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 10,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Purple 2",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 11,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Elpis Flower - Gold 2",
+    "Model": 9033,
+    "Submodel": 23,
+    "Variant": 12,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Warding Scale",
+    "Model": 9033,
+    "Submodel": 24,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Glyph",
+    "Model": 9033,
+    "Submodel": 25,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Aetheryte Shard",
+    "Model": 9033,
+    "Submodel": 26,
+    "Variant": 1,
+    "Description": "Blue crystal chunk, seen at Old Sharlayan (9.4, 10.4)",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to mainhand for animation 9060 (examining prop, standing, male midlander & elezen only) or offhand for 9061 (examining floating prop, standing, male midlander & elezen only)"
+  },
+  {
+    "Item": "Lugae Head",
+    "Model": 9033,
+    "Submodel": 27,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Memoriam Crystal (Glow)",
+    "Model": 9033,
+    "Submodel": 28,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Memoriam Crystal (Dark)",
+    "Model": 9033,
+    "Submodel": 28,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Memoriam Crystal (Dim)",
+    "Model": 9033,
+    "Submodel": 28,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bowl of Salad",
+    "Model": 9033,
+    "Submodel": 29,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Giant Canister",
+    "Model": 9033,
+    "Submodel": 30,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Demon Head",
+    "Model": 9033,
+    "Submodel": 31,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Canister",
+    "Model": 9033,
+    "Submodel": 32,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Glowing Blue Teardrop",
+    "Model": 9033,
+    "Submodel": 33,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Regulator",
+    "Model": 9033,
+    "Submodel": 34,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Regulator - Large",
+    "Model": 9033,
+    "Submodel": 34,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Regulator - Purple",
+    "Model": 9033,
+    "Submodel": 34,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "City of Gold Key",
+    "Model": 9033,
+    "Submodel": 35,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Electrope Block",
+    "Model": 9033,
+    "Submodel": 36,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Sphene's Headpiece",
+    "Model": 9033,
+    "Submodel": 37,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Stepstool",
+    "Model": 9034,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "Root",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Prybar",
+    "Model": 9034,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "Root",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Opera Glasses",
+    "Model": 9035,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Spyglass",
+    "Model": 9035,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tray with Glasses",
+    "Model": 9035,
+    "Submodel": 3,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tiki Torch (Unlit)",
+    "Model": 9035,
+    "Submodel": 4,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Rake",
+    "Model": 9035,
+    "Submodel": 5,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Spyglass",
+    "Model": 9035,
+    "Submodel": 6,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ornate Metal Sphere",
+    "Model": 9036,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "Offhand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Fan of Cards",
+    "Model": 9037,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Very Thick Book",
+    "Model": 9042,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Sealed Book",
+    "Model": 9043,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "White Sealed Book",
+    "Model": 9043,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Compass",
+    "Model": 9044,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hraesvelgr's Wing",
+    "Model": 9045,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Nullstone",
+    "Model": 9046,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Broom",
+    "Model": 9047,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "simple broomstick, light wood",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "equip to main hand for animation ID 5506 (sweeping the floor) for M/F midlander & M lalafell only"
+  },
+  {
+    "Item": "Tongue",
+    "Model": 9053,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "Appears on top of original tongue, much lighter color",
+    "Wields to": "Offhand",
+    "Sheathes to": "",
+    "Notes": "Equip to offhand for animation 9181 (eating ice cream, standing, female midlander only) or 5553 (eating taiyaki, standing, male child hyur only)"
+  },
+  {
+    "Item": "Doman Suketa",
+    "Model": 9054,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "traditional papermaking mould w/ wooden frame & 2 ropes",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": "equip to main hand for animation 5571 (M/F midlander only)"
+  },
+  {
+    "Item": "NIER Pod",
+    "Model": 9061,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Backpack",
+    "Model": 9079,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Archon Burger",
+    "Model": 9083,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "White sheet of paper",
+    "Model": 9084,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Revolver",
+    "Model": 9085,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tea Cup with saucer",
+    "Model": 9088,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "Root",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ornate Tea Cup (Filled)",
+    "Model": 9090,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Ornate Tea Cup (Empty)",
+    "Model": 9090,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Seraph",
+    "Model": 9101,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "MCH Drone",
+    "Model": 9102,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Water Flask",
+    "Model": 9200,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "Root",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Robot Face (Neutral)",
+    "Model": 9201,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Robot Face (Angry)",
+    "Model": 9201,
+    "Submodel": 1,
+    "Variant": 2,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Robot Face (Confused)",
+    "Model": 9201,
+    "Submodel": 1,
+    "Variant": 3,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Robot Face (Surprised)",
+    "Model": 9201,
+    "Submodel": 1,
+    "Variant": 4,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blank Robot Face Screen",
+    "Model": 9201,
+    "Submodel": 1,
+    "Variant": 5,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Purple Robot Face (Neutral)",
+    "Model": 9201,
+    "Submodel": 1,
+    "Variant": 6,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Purple Robot Face (Angry)",
+    "Model": 9201,
+    "Submodel": 1,
+    "Variant": 7,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Robot Face (Blank)",
+    "Model": 9201,
+    "Submodel": 1,
+    "Variant": 8,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Regulator (On)",
+    "Model": 9246,
+    "Submodel": 1,
+    "Variant": "",
+    "Description": "",
+    "Wields to": "Head",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Regulator (Off)",
+    "Model": 9246,
+    "Submodel": 2,
+    "Variant": "",
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Bread Bun",
+    "Model": 9901,
+    "Submodel": 1,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Water Flask",
+    "Model": 9901,
+    "Submodel": 2,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Chocolate Heart",
+    "Model": 9901,
+    "Submodel": 3,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Cake Slice",
+    "Model": 9901,
+    "Submodel": 4,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Chicken Wing",
+    "Model": 9901,
+    "Submodel": 5,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Skewer 2",
+    "Model": 9901,
+    "Submodel": 6,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Fried Fish",
+    "Model": 9901,
+    "Submodel": 7,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Muffin",
+    "Model": 9901,
+    "Submodel": 8,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Salad",
+    "Model": 9901,
+    "Submodel": 9,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Skewered Meat",
+    "Model": 9901,
+    "Submodel": 10,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Egg Slice",
+    "Model": 9901,
+    "Submodel": 11,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Small Tankard",
+    "Model": 9901,
+    "Submodel": 12,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Pouch",
+    "Model": 9901,
+    "Submodel": 14,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Carrot",
+    "Model": 9901,
+    "Submodel": 15,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Apple",
+    "Model": 9901,
+    "Submodel": 16,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Meat Chunk",
+    "Model": 9901,
+    "Submodel": 17,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Tropical Fish",
+    "Model": 9901,
+    "Submodel": 18,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Fish",
+    "Model": 9901,
+    "Submodel": 19,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Mushroom",
+    "Model": 9901,
+    "Submodel": 20,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Cheese Slice",
+    "Model": 9901,
+    "Submodel": 21,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Potion 2",
+    "Model": 9901,
+    "Submodel": 22,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Yellow Potion",
+    "Model": 9901,
+    "Submodel": 23,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Blue Potion",
+    "Model": 9901,
+    "Submodel": 24,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Jack Cookie",
+    "Model": 9901,
+    "Submodel": 25,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "identical model to the one in the pumpkin cookie eating emote /cookie (animation 8009)"
+  },
+  {
+    "Item": "Onigiri",
+    "Model": 9901,
+    "Submodel": 26,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "identical model to the one in the riceball eating emote /riceball (animation 8005)"
+  },
+  {
+    "Item": "Mitarashi Dango",
+    "Model": 9901,
+    "Submodel": 27,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Hanami Dango",
+    "Model": 9901,
+    "Submodel": 28,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Salmon Sushi",
+    "Model": 9901,
+    "Submodel": 29,
+    "Variant": 1,
+    "Description": "Nigiri sushi, can be seen @ The Doman Enclave (7.9, 5.4)",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Equip to offhand for animation 5554 (making sushi, standing) or mainhand for animation 4349 (eating sushi, sitting on chair) for male midlanders only"
+  },
+  {
+    "Item": "Persimmon",
+    "Model": 9901,
+    "Submodel": 30,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Baked Potato",
+    "Model": 9901,
+    "Submodel": 31,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Onigiri",
+    "Model": 9901,
+    "Submodel": 32,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Higher definition than the model used for the riceball eating emote"
+  },
+  {
+    "Item": "Pizza",
+    "Model": 9901,
+    "Submodel": 33,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "identical to the pizza eating animation 8047"
+  },
+  {
+    "Item": "Egg (brown)",
+    "Model": 9901,
+    "Submodel": 34,
+    "Variant": 1,
+    "Description": "brown, speckled shell",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Egg (white)",
+    "Model": 9901,
+    "Submodel": 35,
+    "Variant": 1,
+    "Description": "white, peeled?",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": ""
+  },
+  {
+    "Item": "Moogle Cookie",
+    "Model": 9901,
+    "Submodel": 36,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Appears flipped when used with regular eating emotes, but can be used (the right way around) with animation 9208 only on child models of any race"
+  },
+  {
+    "Item": "Fat Chocobo Cookie",
+    "Model": 9901,
+    "Submodel": 37,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Appears flipped when used with regular eating emotes, but can be used (the right way around) with animation 9208 only on child models of any race"
+  },
+  {
+    "Item": "Sylph Cookie",
+    "Model": 9901,
+    "Submodel": 38,
+    "Variant": 1,
+    "Description": "",
+    "Wields to": "hand",
+    "Sheathes to": "",
+    "Notes": "Appears flipped when used with regular eating emotes, but can be used (the right way around) with animation 9208 only on child models of any race"
+  }
+]
