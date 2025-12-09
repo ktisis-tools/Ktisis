@@ -53,6 +53,8 @@ public class Gizmo2D {
 
 		var cursorPos = ImGui.GetCursorScreenPos();
 		var innerSize = ImGui.GetContentRegionAvail();
+		ImGui.SetNextWindowPos(ImGui.GetMainViewport().Pos);
+		ImGui.SetNextWindowSize(ImGui.GetMainViewport().Size);
 		
 		ImGui.Begin("##Gizmo2D", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 		
