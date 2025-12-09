@@ -19,6 +19,8 @@ using GLib.Widgets;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
+using Ktisis.Data.Config.Props;
+using Ktisis.Data.Serialization;
 using Ktisis.Editor.Characters.State;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.GameData.Excel;
@@ -34,8 +36,11 @@ public class EquipmentEditorTab {
 	private readonly PopupList<ItemSheet> _itemSelectPopup;
 	private readonly PopupList<Stain> _dyeSelectPopup;
 	private readonly PopupList<Glasses> _glassesSelectPopup;
+	private readonly PopupList<PropEntry> _propSelectPopup;
 
 	private IEquipmentEditor _editor;
+
+	private PropSchema _propSchema;
 
 	public IEquipmentEditor Editor {
 		private get => this._editor;
@@ -51,6 +56,7 @@ public class EquipmentEditorTab {
 	) {
 		this._data = data;
 		this._tex = tex;
+		this._propSchema = SchemaReader.ReadProps();
 		
 		this._itemSelectPopup = new PopupList<ItemSheet>(
 			"##ItemSelectPopup",
@@ -66,6 +72,11 @@ public class EquipmentEditorTab {
 			"##GlassesSelectPopup",
 			GlassesSelectDrawRow
 		).WithSearch(GlassesSelectSearchPredicate);
+
+		this._propSelectPopup = new PopupList<PropEntry>(
+			"##PropSelectPopup",
+			PropDrawRow
+		).WithSearch(PropSearchPredicate);
 	}
 	
 	// Draw
@@ -75,6 +86,7 @@ public class EquipmentEditorTab {
 		.ToArray();
 
 	private readonly static Vector2 ButtonSize = new(42, 42);
+	private static float CalcItemHeight() => (ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y) * 2;
 	
 	public void Draw() {
 		this.FetchData();
@@ -92,9 +104,6 @@ public class EquipmentEditorTab {
 		
 		this.DrawGlassesSelect();
 
-		ImGui.Separator();
-		this.DrawPropPicker();
-
 		this.DrawPopups();
 	}
 
@@ -102,10 +111,7 @@ public class EquipmentEditorTab {
 		this.DrawItemSelectPopup();
 		this.DrawDyeSelectPopup();
 		this.DrawGlassesSelectPopup();
-	}
-
-	private void DrawPropPicker() {
-		ImGui.TextWrapped("Search equippable props...");
+		this.DrawPropPopup();
 	}
 	
 	// Draw item slot
@@ -173,6 +179,13 @@ public class EquipmentEditorTab {
 			using var _col1 = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.TextDisabled), isToggled);
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Mask, "Toggle visor"))
 				info.SetVisorToggled(!isToggled);
+		}
+
+		if (slot == EquipSlot.MainHand) {
+			using var _col0 = ImRaii.PushColor(ImGuiCol.Button, 0);
+			ImGui.SameLine(0, innerSpace);
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.WandMagicSparkles, "Search equippable props...\nNote: Weapon may need to be unsheathed!"))
+				this.OpenPropPopup();
 		}
 	}
 
@@ -379,6 +392,49 @@ public class EquipmentEditorTab {
 	private static bool GlassesSelectDrawRow(Glasses glasses, bool isFocus)
 		=> ImGui.Selectable(!glasses.Name.IsNullOrEmpty() ? glasses.Name : "None", isFocus);
 	
+	// props
+	private void OpenPropPopup() {
+		this.ItemSelectSlot = EquipSlot.MainHand;
+		this.ItemSelectList.Clear();
+		this._propSelectPopup.Open();
+	}
+
+	private void DrawPropPopup() {
+		if (!this._propSelectPopup.IsOpen) return;
+
+		lock (this.Props) {
+			if (!this._propSelectPopup.Draw(this.Props, this.Props.Count, out var selected, CalcItemHeight())) return;
+
+			lock (this.Equipped) {
+				if (!this.Equipped.TryGetValue(this.ItemSelectSlot, out var info)) return;
+				if (info is WeaponInfo wep)
+					wep.SetModel((ushort)selected!.Model, (ushort)selected.Submodel, (byte)selected.Variant);
+			}
+		}
+	}
+
+	private static bool PropDrawRow(PropEntry prop, bool isFocus) {
+		var height = CalcItemHeight();
+		var space = ImGui.GetStyle().ItemInnerSpacing.X;
+		var cursor = ImGui.GetCursorPosX();
+		var desc = prop.Description.IsNullOrEmpty() ? $"{prop.Model}, {prop.Submodel}, {prop.Variant}" : prop.Description;
+
+		var result = ImGui.Button(string.Empty, new Vector2(ImGui.GetContentRegionAvail().X, height));
+
+		ImGui.SameLine(cursor, space);
+		ImGui.Text(prop.Item.FitToWidth(ImGui.GetContentRegionAvail().X));
+
+		using var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xAF));
+		ImGui.SameLine(cursor, space);
+		ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetTextLineHeight());
+		ImGui.Text(desc.FitToWidth(ImGui.GetContentRegionAvail().X));
+
+		return result;
+	}
+
+	private static bool PropSearchPredicate(PropEntry prop, string query)
+		=> prop.Item.Contains(query, StringComparison.OrdinalIgnoreCase) || prop.Description.Contains(query, StringComparison.OrdinalIgnoreCase);
+
 	// Data
 
 	private bool _itemsRaii;
@@ -386,6 +442,7 @@ public class EquipmentEditorTab {
 	private readonly List<ItemSheet> Items = new();
 	private readonly List<Stain> Stains = new();
 	private readonly List<Glasses> Glasses = new();
+	private readonly List<PropEntry> Props = new();
 
 	private readonly object _equipUpdateLock = new();
 	private readonly Dictionary<EquipSlot, ItemInfo> Equipped = new();
@@ -431,6 +488,10 @@ public class EquipmentEditorTab {
 		var glasses = this._data.Excel.GetSheet<Glasses>()
 			.Where(x => x.RowId == 0 || !x.Name.IsNullOrEmpty());
 		lock (this.Glasses) this.Glasses.AddRange(glasses);
+
+		// Props
+		var props = this._propSchema.Props;
+		lock (this.Props) this.Props.AddRange(props);
 	}
 
 	private void UpdateSlot(EquipSlot slot) {

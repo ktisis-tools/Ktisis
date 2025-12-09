@@ -24,7 +24,7 @@ public static class PropsReader {
 			reader.CloseInput = false;
 			reader.SupportMultipleContent = true;
 			while (reader.Read()) {
-				result.Add(serializer.Deserialize<PropEntry>(reader)!);
+				result = serializer.Deserialize<List<PropEntry>>(reader)!;
 			}
 		}
 
