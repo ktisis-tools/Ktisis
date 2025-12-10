@@ -100,14 +100,34 @@ public class Gizmo : IGizmo {
 
 		if (this.HasDrawn) return false;
 
-		var result = ImGuizmo.Gizmo.Manipulate(
-			this.ViewMatrix,
-			this.ProjMatrix,
-			this.Operation,
-			this.Mode,
-			ref mx,
-			out delta
-		);
+		var result = false;
+		if (this._cfg.AllowHoldSnap && ImGui.IsKeyDown(ImGuiKey.ModCtrl)) {
+			var snap = Vector3.One;
+			if (this.Operation is Operation.ROTATE) snap *= 5;
+			else snap /= 10;
+
+			if (ImGui.IsKeyDown(ImGuiKey.ModShift))
+				snap /= 10;
+
+			result = ImGuizmo.Gizmo.Manipulate(
+				this.ViewMatrix,
+				this.ProjMatrix,
+				this.Operation,
+				this.Mode,
+				ref mx,
+				out delta,
+				snap
+			);
+		} else {
+			result = ImGuizmo.Gizmo.Manipulate(
+				this.ViewMatrix,
+				this.ProjMatrix,
+				this.Operation,
+				this.Mode,
+				ref mx,
+				out delta
+			);
+		}
 
 		this.HasDrawn = true;
 		return result;
