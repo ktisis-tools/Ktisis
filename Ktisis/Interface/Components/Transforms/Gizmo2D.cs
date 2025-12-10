@@ -20,6 +20,7 @@ public class Gizmo2D {
 		this.Gizmo = gizmo;
 		this.Gizmo.Operation = Operation.ROTATE;
 		this.Gizmo.ScaleFactor = ScaleFactor;
+		this.Gizmo.AllowAxisFlip = false;
 	}
 	
 	// Gizmo state
@@ -53,6 +54,8 @@ public class Gizmo2D {
 
 		var cursorPos = ImGui.GetCursorScreenPos();
 		var innerSize = ImGui.GetContentRegionAvail();
+		ImGui.SetNextWindowPos(ImGui.GetMainViewport().Pos);
+		ImGui.SetNextWindowSize(ImGui.GetMainViewport().Size);
 		
 		ImGui.Begin("##Gizmo2D", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 		
@@ -66,6 +69,7 @@ public class Gizmo2D {
 	}
 	
 	private static void DrawGizmoCircle(Vector2 pos, Vector2 size, float width) {
+		// background circle drawn behind the gizmo
 		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * ScaleFactor) / 2.05f, 0xCF202020);
 	}
 

@@ -165,6 +165,9 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.Checkbox(this.Locale.Translate("config.gizmo.flip"), ref this.Config.Gizmo.AllowAxisFlip);
 		ImGui.Checkbox(this.Locale.Translate("config.gizmo.raySnap"), ref this.Config.Gizmo.AllowRaySnap);
+		this.DrawHint("config.gizmo.rayHint");
+		ImGui.Checkbox(this.Locale.Translate("config.gizmo.holdSnap"), ref this.Config.Gizmo.AllowHoldSnap);
+		this.DrawHint("config.gizmo.hintHoldSnap");
 
 		ImGui.Spacing();
 		this._gizmoStyle.Draw();
