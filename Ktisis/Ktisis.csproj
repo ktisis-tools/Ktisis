@@ -1,5 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
+<Project Sdk="Dalamud.NET.Sdk/13.0.0">
+    <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
 		<Version>0.3.13</Version>
@@ -18,56 +18,12 @@
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(OS)' != 'Windows_NT' OR '$(CI)' == 'true'">
-		<DalamudLibPath>$(DALAMUD_HOME)/</DalamudLibPath>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Glamourer.Api" Version="2.7.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-		<PackageReference Include="DalamudPackager" Version="2.1.13" />
 		<PackageReference Include="K4os.Compression.LZ4.Legacy" Version="1.3.8" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Penumbra.Api" Version="5.10.0" />
-		<Reference Include="FFXIVClientStructs">
-			<HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="InteropGenerator.Runtime">
-			<HintPath>$(DalamudLibPath)InteropGenerator.Runtime.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Dalamud">
-			<HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Dalamud.Bindings.ImGui">
-			<HintPath>$(DalamudLibPath)Dalamud.Bindings.ImGui.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Dalamud.Bindings.ImPlot">
-			<HintPath>$(DalamudLibPath)Dalamud.Bindings.ImPlot.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="ImGuiScene">
-			<HintPath>$(DalamudLibPath)ImGuiScene.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Lumina">
-			<HintPath>$(DalamudLibPath)Lumina.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Lumina.Excel">
-			<HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-		<Reference Include="Newtonsoft.Json">
-			<HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Data\Schema\Categories.xml" />
