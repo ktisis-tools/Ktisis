@@ -12,6 +12,7 @@
 	"actions": {
 		"Select_None": "Cancel selection",
 		"Select_Sibling": "Sibling select",
+		"Select_All": "Select all entities",
 		"Overlay_Toggle": "Toggle overlay visibility",
 		"History_Undo": "Undo action",
 		"History_Redo": "Redo action",
@@ -96,7 +97,6 @@
 		},
 		"create": "Create new...",
 		"refresh_entities": "Refresh scene entities",
-		"select_entities": "Select all entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.toggle": "Toggle screen overlay"
 	},

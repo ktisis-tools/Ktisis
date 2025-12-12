@@ -135,9 +135,5 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
-		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		// TODO: make this a hotkey
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsDownToPeople, this._ctx.Locale.Translate("workspace.select_entities")))
-			this.Interface.SelectAllEntities();
 	}
 }
