@@ -12,6 +12,7 @@
 	"actions": {
 		"Select_None": "Cancel selection",
 		"Select_Sibling": "Sibling select",
+		"Select_Children": "Children select",
 		"Select_All": "Select all entities",
 		"Overlay_Toggle": "Toggle overlay visibility",
 		"History_Undo": "Undo action",
