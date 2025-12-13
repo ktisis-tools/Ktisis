@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-
+using System.Net.Http.Headers;
 using Dalamud.Utility;
 
 using GLib.Popups.ImFileDialog;
@@ -14,6 +14,9 @@ using Ktisis.Data.Json;
 using Ktisis.Services.Meta;
 using Ktisis.Common.Utility;
 
+using DalamudFile = Dalamud.Interface.ImGuiFileDialog.FileDialog;
+using DalamudFileManager = Dalamud.Interface.ImGuiFileDialog.FileDialogManager;
+
 namespace Ktisis.Interface;
 
 [Singleton]
@@ -22,6 +25,7 @@ public class FileDialogManager {
 	private readonly ImageDataProvider _img;
 
 	private readonly JsonFileSerializer _serializer = new();
+	private readonly DalamudFileManager _fileManager = new();
 
 	public event Action<FileDialog>? OnOpenDialog;
 	
@@ -36,6 +40,7 @@ public class FileDialogManager {
 	// Initialization
 
 	public void Initialize() => this._img.Initialize();
+	public void Draw() => this._fileManager.Draw();
 	
 	// Dialog state
 
@@ -55,30 +60,40 @@ public class FileDialogManager {
 	
 	// File handling
 
-	public FileDialog OpenFile(
+	public void OpenFile(
 		string name,
 		Action<string> handler,
 		FileDialogOptions? options = null
 	) {
+		//
 		options ??= new FileDialogOptions();
 		this.PopulateOptions(options);
 
-		var dialog = new FileDialog(name, (sender, paths) => {
-			this.SaveDialogState(sender);
-			var path = paths.FirstOrDefault();
-			if (path.IsNullOrEmpty()) return;
-			handler.Invoke(path);
-		}, options with { Flags = FileDialogFlags.OpenMode });
+		Ktisis.Log.Info("Opening file dialog...");
 		
-		return this.OpenDialog(dialog);
+		this._fileManager.OpenFileDialog(
+			name,
+			options.Filters,
+			(isOk, paths) => {
+				if (!isOk) return;
+				
+				//this.SaveDialogState(sender);
+				var path = paths.FirstOrDefault();
+				if (path.IsNullOrEmpty()) return;
+				handler.Invoke(path);
+			},
+			options.MaxOpenCount,
+			null,
+			true
+		);
 	}
 
-	public FileDialog OpenFile<T>(
+	public void OpenFile<T>(
 		string name,
 		Action<string, T> handler,
 		FileDialogOptions? options = null
 	) where T : JsonFile {
-		return this.OpenFile(name, path => {
+		this.OpenFile(name, path => {
 			var content = File.ReadAllText(path);
 			if (Path.GetExtension(path).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
 			var file = this._serializer.Deserialize<T>(content);
@@ -86,32 +101,41 @@ public class FileDialogManager {
 		}, options);
 	}
 
-	public FileDialog SaveFile(
+	public void SaveFile(
 		string name,
 		string content,
 		FileDialogOptions? options = null
 	) {
-		options ??= new FileDialogOptions();
+		options ??= new ();
 		this.PopulateOptions(options);
-
-		var dialog = new FileDialog(name, (sender, paths) => {
-			this.SaveDialogState(sender);
-			var path = paths.FirstOrDefault();
-			if (path.IsNullOrEmpty()) return;
-			
-			File.WriteAllText(path, content);
-		}, options);
-
-		return this.OpenDialog(dialog);
+		
+		var defaultFilename = options.DefaultFileName;
+		if (options.Extension is not null && !defaultFilename.EndsWith(options.Extension)) 
+			defaultFilename += options.Extension;
+		
+		this._fileManager.SaveFileDialog(
+			name,
+			options.Filters,
+			defaultFilename,
+			options.Extension ?? "",
+			(isOk, path) =>
+			{
+				if (!isOk || path.IsNullOrEmpty()) return;
+				
+				File.WriteAllText(path, content);
+			}, 
+			null,
+			isModal: true
+		);
 	}
 
-	public FileDialog SaveFile<T>(
+	public void SaveFile<T>(
 		string name,
 		T file,
 		FileDialogOptions? options = null
 	) where T : JsonFile {
 		var content = this._serializer.Serialize(file);
-		return this.SaveFile(name, content, options);
+		this.SaveFile(name, content, options);
 	}
 		
 	// Image handling
@@ -121,7 +145,7 @@ public class FileDialogManager {
 		Filters = "Images{.png,.jpg,.jpeg}"
 	};
 
-	public FileDialog OpenImage(
+	public void OpenImage(
 		string name,
 		Action<string> handler
 	) {
@@ -131,7 +155,7 @@ public class FileDialogManager {
 		}, this.ImageOptions);
 		
 		this._img.BindMetadata(dialog);
-		return this.OpenDialog(dialog);
+		this.OpenDialog(dialog);
 	}
 	
 	// Options
@@ -147,7 +171,7 @@ public class FileDialogManager {
 		
 		if (!options.Locations.Contains(this.AutoSaveLoc)) {
 			options.Locations.Add(this.AutoSaveLoc);
-			Ktisis.Log.Info($"Added autosave: {savePath}");
+			Ktisis.Log.Debug($"Added autosave: {savePath}");
 		}
 	}
 }

@@ -56,6 +56,7 @@ public class GuiManager : IDisposable {
 	private void Draw() {
 		this._ws.Draw();
 		this._popup.Draw();
+		this.FileDialogs.Draw();
 	}
 	
 	// Window management
