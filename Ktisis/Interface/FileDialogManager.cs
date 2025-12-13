@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using Dalamud.Utility;
 
 using GLib.Popups.ImFileDialog;
@@ -12,9 +11,7 @@ using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
 using Ktisis.Services.Meta;
-using Ktisis.Common.Utility;
 
-using DalamudFile = Dalamud.Interface.ImGuiFileDialog.FileDialog;
 using DalamudFileManager = Dalamud.Interface.ImGuiFileDialog.FileDialogManager;
 
 namespace Ktisis.Interface;
