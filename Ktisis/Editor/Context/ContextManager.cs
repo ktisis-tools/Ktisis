@@ -35,8 +35,9 @@ public class ContextManager : IDisposable {
 		this._gpose.StateChanged += this.OnGPoseEvent;
 		this._gpose.Subscribe();
 
-		if (this._gpose.IsGPosing)
-			this.SetupEditor();
+		// TODO: resolve flaky actor spawns and off-thread objecttable access before allowing hot reloads
+		// if (this._gpose.IsGPosing)
+		// 	this.SetupEditor();
 	}
 	
 	// Handlers

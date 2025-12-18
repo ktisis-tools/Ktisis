@@ -48,8 +48,8 @@ public class ActorModule : SceneModule {
 		this._spawner = hook.Create<ActorSpawner>();
 	}
 
-	public async override void Setup() {
-		await foreach (var actor in this._actors.GetGPoseActors())
+	public override void Setup() {
+		foreach (var actor in this._actors.GetGPoseActors())
 			this.AddActor(actor, false);
 		
 		this.Subscribe();
@@ -180,7 +180,7 @@ public class ActorModule : SceneModule {
 		this.Scene.Factory.BuildActor(actor).Add();
 	}
 	
-	public async void RefreshGPoseActors() {
+	public void RefreshGPoseActors() {
 		var current = this.Scene.Children
 			.Where(entity => entity is ActorEntity)
 			.Cast<ActorEntity>()
@@ -199,7 +199,7 @@ public class ActorModule : SceneModule {
 			this.Delete(entityForActor);
 		}
 
-		await foreach (var actor in this._actors.GetGPoseActors()) {
+		foreach (var actor in this._actors.GetGPoseActors()) {
 			if (this.Scene.GetEntityForActor(actor) is not null) continue;
 			this.AddActor(actor, false);
 		}
