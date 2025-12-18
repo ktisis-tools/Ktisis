@@ -133,34 +133,16 @@ public class MakeTypeData {
 		var options = row.FacialFeatureOption;
 		for (byte x = 0; x < face.Params.Length; x++) {
 			var id = face.Params[x].Value;
+			if (options.Count != 8)
+				continue;
 			var icons = new uint[7];
-
-			switch (options.Count) {
-				case 0:
-					break;
-				case 1:
-					icons[0] = (uint)options[x].Option1;
-					goto case 2;
-				case 2:
-					icons[1] = (uint)options[x].Option2;
-					goto case 3;
-				case 3:
-					icons[2] = (uint)options[x].Option3;
-					goto case 4;
-				case 4:
-					icons[3] = (uint)options[x].Option4;
-					goto case 5;
-				case 5:
-					icons[4] =  (uint)options[x].Option5;
-					goto case 6;
-				case 6:
-					icons[5] = (uint)options[x].Option6;
-					goto case 7;
-				case 7:
-					icons[6] = (uint)options[x].Option7;
-					break;
-
-			}
+			icons[0] = (uint)options[x].Option1;
+			icons[1] = (uint)options[x].Option2;
+			icons[2] = (uint)options[x].Option3;
+			icons[3] = (uint)options[x].Option4;
+			icons[4] = (uint)options[x].Option5;
+			icons[5] = (uint)options[x].Option6;
+			icons[6] = (uint)options[x].Option7;
 			data.FaceFeatureIcons[id] = icons;
 		}
 	}
