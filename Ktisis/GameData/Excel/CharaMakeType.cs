@@ -15,7 +15,9 @@ namespace Ktisis.GameData.Excel;
 // It gets parsed as an int[8] rather than an int[8,7]. I've reached out to perchbird about this issue.
 
 [Sheet( "CharaMakeType", columnHash: 0x80d7db6d)]
-public partial struct CharaMakeType(uint row) : IExcelRow<CharaMakeType> {
+public partial struct CharaMakeType(ExcelPage page, uint offset, uint row) : IExcelRow<CharaMakeType> {
+	public ExcelPage ExcelPage => page;
+	public uint RowOffset { get; } = offset;
 	public uint RowId { get; } = row;
 
 	public struct CharaMakeStructStruct {
@@ -86,7 +88,7 @@ public partial struct CharaMakeType(uint row) : IExcelRow<CharaMakeType> {
 			equipment[i].SubWeapon = page.ReadUInt64(offset + (ushort)(i * 56 + 12272));
 		}
 		
-		return new CharaMakeType(row) {
+		return new CharaMakeType(page, offset, row) {
 			CharaMakeStruct = charaMakeStruct,
 			VoiceStruct = voiceStruct,
 			FacialFeatureOption = facialFeatureOption,

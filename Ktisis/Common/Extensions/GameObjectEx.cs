@@ -101,7 +101,7 @@ public static class GameObjectEx {
 	public unsafe static bool IsEnabled(this IGameObject gameObject) {
 		var csActor = (CSGameObject*)gameObject.Address;
 		if (csActor == null) return false;
-		return (csActor->RenderFlags & 2) == 0;
+		return (csActor->RenderFlags & VisibilityFlags.Model) == 0;
 	}
 	
 	public unsafe static void SetWorld(this IGameObject gameObject, ushort world) {

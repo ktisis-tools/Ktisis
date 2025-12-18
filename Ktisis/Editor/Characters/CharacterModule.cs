@@ -75,7 +75,7 @@ public class CharacterModule : HookModule {
 		if (!this.IsValid) return this.EnableDrawHook.Original(gameObject);
 
 		var c1 = ((byte)gameObject->TargetableStatus & 0x80) != 0;
-		var c2 = (gameObject->RenderFlags & 0x2000000) == 0;
+		var c2 = ((uint)gameObject->RenderFlags & 0x2000000) == 0;
 		var isNew = !(c1 && c2);
 
 		if (!isNew) return this.EnableDrawHook.Original(gameObject);

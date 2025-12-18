@@ -10,7 +10,9 @@ using Ktisis.Structs.Characters;
 namespace Ktisis.GameData.Excel;
 
 [Sheet("BNpcBase", columnHash: 0xD5D82616)]
-public struct BattleNpc(uint row) : IExcelRow<BattleNpc>, INpcBase {
+public struct BattleNpc(ExcelPage page, uint offset, uint row) : IExcelRow<BattleNpc>, INpcBase {
+	public ExcelPage ExcelPage => page;
+	public uint RowOffset { get; } = offset;
 	public uint RowId { get; } = row;
 
 	public float Scale { get; init; }
@@ -20,7 +22,7 @@ public struct BattleNpc(uint row) : IExcelRow<BattleNpc>, INpcBase {
 	private RowRef<NpcEquipment> Equipment { get; init; }
 
 	static BattleNpc IExcelRow<BattleNpc>.Create(ExcelPage page, uint offset, uint row) {
-		return new BattleNpc(row) {
+		return new BattleNpc(page, offset, row) {
 			Scale = page.ReadColumn<float>(4, offset),
 			ModelChara = page.ReadRowRef<ModelChara>(5, offset),
 			Customize = page.ReadRowRef<BNpcCustomize>(6, offset),
@@ -43,13 +45,15 @@ public struct BattleNpc(uint row) : IExcelRow<BattleNpc>, INpcBase {
 	// BNpcCustomize
 	
 	[Sheet("BNpcCustomize", columnHash: 0x18f060d4)]
-	private struct BNpcCustomize(uint row) : IExcelRow<BNpcCustomize> {
+	private struct BNpcCustomize(ExcelPage page, uint offset, uint row) : IExcelRow<BNpcCustomize> {
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset { get; } = offset;
 		public uint RowId { get; } = row;
 
 		public CustomizeContainer Customize { get; private init; }
 
 		static BNpcCustomize IExcelRow<BNpcCustomize>.Create(ExcelPage page, uint offset, uint row) {
-			return new BNpcCustomize(row) {
+			return new BNpcCustomize(page, offset, row) {
 				Customize = page.ReadCustomize(0, offset)
 			};
 		}
