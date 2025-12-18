@@ -221,7 +221,7 @@ public class CameraWindow : KtisisWindow {
 		var distanceHint = this._ctx.Locale.Translate("camera_edit.sliders.distance");
 		using (ImRaii.Disabled(IsWork))
 			this.DrawSliderAngle("##CameraRotate", FontAwesomeIcon.CameraRotate, ref ptr->Rotation, -180.0f, 180.0f, 0.5f, rotateHint);
-		this.DrawSliderAngle("##CameraZoom", FontAwesomeIcon.VectorSquare, ref ptr->Zoom, -40.0f, 100.0f, 0.5f, zoomHint);
+		this.DrawSliderAngle("##CameraZoom", FontAwesomeIcon.Binoculars, ref ptr->Zoom, -40.0f, 100.0f, 0.5f, zoomHint);
 		this.DrawSliderFloat("##CameraDistance", FontAwesomeIcon.Moon, ref ptr->Distance, ptr->DistanceMin, ptr->DistanceMax, 0.05f, distanceHint);
 		if (camera.IsOrthographic) {
 			var orthoHint = this._ctx.Locale.Translate("camera_edit.sliders.ortho_zoom");
