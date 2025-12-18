@@ -14,7 +14,6 @@ using Lumina.Excel.Sheets;
 
 using Ktisis.Services.Data;
 using Ktisis.Structs.Characters;
-using CharaMakeType = Ktisis.GameData.Excel.CharaMakeType;
 using Tribe = Ktisis.Structs.Characters.Tribe;
 
 namespace Ktisis.Editor.Characters.Make;
@@ -127,6 +126,7 @@ public class MakeTypeData {
 	}
 	
 	private static void BuildRowFaceFeatures(CharaMakeType row, MakeTypeRace data) {
+		// ty karou :3
 		var face = data.GetFeature(CustomizeIndex.FaceType);
 		if (face == null) return;
 
@@ -134,12 +134,37 @@ public class MakeTypeData {
 		for (byte x = 0; x < face.Params.Length; x++) {
 			var id = face.Params[x].Value;
 			var icons = new uint[7];
-			for (var y = 0; y < options.GetLength(1); y++)
-				icons[y] = (uint)options[x, y];
+
+			switch (options.Count) {
+				case 0:
+					break;
+				case 1:
+					icons[0] = (uint)options[x].Option1;
+					goto case 2;
+				case 2:
+					icons[1] = (uint)options[x].Option2;
+					goto case 3;
+				case 3:
+					icons[2] = (uint)options[x].Option3;
+					goto case 4;
+				case 4:
+					icons[3] = (uint)options[x].Option4;
+					goto case 5;
+				case 5:
+					icons[4] =  (uint)options[x].Option5;
+					goto case 6;
+				case 6:
+					icons[5] = (uint)options[x].Option6;
+					goto case 7;
+				case 7:
+					icons[6] = (uint)options[x].Option7;
+					break;
+
+			}
 			data.FaceFeatureIcons[id] = icons;
 		}
 	}
-	
+
 	// Populate customize data
 
 	private void PopulateCustomizeIcons(IDataManager data) {
