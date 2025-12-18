@@ -19,11 +19,14 @@ public class ActorService {
 	public const ushort GPoseCount = 42;
 	
 	private readonly IObjectTable _objectTable;
+	private readonly IFramework _framework;
 
 	public ActorService(
-		IObjectTable objectTable
+		IObjectTable objectTable,
+		IFramework framework
 	) {
 		this._objectTable = objectTable;
+		this._framework = framework;
 	}
 	
 	// Object table wrappers
@@ -36,9 +39,9 @@ public class ActorService {
 	
 	// Actor enumerators
 
-	public IEnumerable<IGameObject> GetGPoseActors() {
+	public async IAsyncEnumerable<IGameObject> GetGPoseActors() {
 		for (var i = GPoseIndex; i < GPoseIndex + GPoseCount; i++) {
-			var actor = this.GetIndex(i);
+			var actor = await this._framework.RunOnTick(() => this.GetIndex(i));
 			if (actor != null)
 				yield return actor;
 		}

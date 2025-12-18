@@ -34,6 +34,9 @@ public class ContextManager : IDisposable {
 		this._plugin = context;
 		this._gpose.StateChanged += this.OnGPoseEvent;
 		this._gpose.Subscribe();
+
+		if (this._gpose.IsGPosing)
+			this.SetupEditor();
 	}
 	
 	// Handlers
@@ -46,7 +49,7 @@ public class ContextManager : IDisposable {
 	
 	// Context setup
 
-	private void SetupEditor() {
+	public void SetupEditor() {
 		if (!this._isInit || this._plugin == null)
 			throw new Exception("Attempted to setup uninitialized context.");
 		
