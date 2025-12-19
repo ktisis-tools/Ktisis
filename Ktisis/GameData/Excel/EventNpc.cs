@@ -10,7 +10,9 @@ using Ktisis.Structs.Characters;
 namespace Ktisis.GameData.Excel;
 
 [Sheet("ENpcBase", columnHash: 0x5ba9e1a6)]
-public struct EventNpc(uint row) : IExcelRow<EventNpc>, INpcBase {
+public struct EventNpc(ExcelPage page, uint offset, uint row) : IExcelRow<EventNpc>, INpcBase {
+	public ExcelPage ExcelPage => page;
+	public uint RowOffset { get; } = offset;
 	public uint RowId { get; } = row;
 
 	public RowRef<ModelChara> ModelChara { get; init; }
@@ -20,7 +22,7 @@ public struct EventNpc(uint row) : IExcelRow<EventNpc>, INpcBase {
 	public EquipmentContainer Equipment { get; init; }
 
 	static EventNpc IExcelRow<EventNpc>.Create(ExcelPage page, uint offset, uint row) {
-		return new EventNpc(row) {
+		return new EventNpc(page, offset, row) {
 			Name = $"E:{row:D7}",
 			ModelChara = page.ReadRowRef<ModelChara>(35, offset),
 			Customize = page.ReadCustomize(36, offset),

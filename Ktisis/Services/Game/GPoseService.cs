@@ -13,7 +13,7 @@ public delegate void GPoseStateHandler(GPoseService sender, bool state);
 
 [Singleton]
 public class GPoseService : IDisposable {
-	public readonly IClientState _clientState;
+	private readonly IClientState _clientState;
 	private readonly IFramework _framework;
 	private readonly ITargetManager _targets;
 	
@@ -66,7 +66,7 @@ public class GPoseService : IDisposable {
 			Ktisis.Log.Info($"GPose state changed: {state}");
 			this._gposeEvent.Invoke(this, state);
 		}
-		
+
 		if (state) this._updateEvent.Invoke();
 	}
 

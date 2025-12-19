@@ -131,16 +131,25 @@ public class TransformTarget : ITransformTarget {
 			Vector3 deltaPos;
 
 			if (mirror) {
-				if (this.Setup.MirrorRotation == MirrorMode.Inverse)
+				var localDeltaPos = Vector3.Transform(delta.Position, Quaternion.Inverse(initial.Rotation));
+				if (this.Setup.MirrorRotation == MirrorMode.Inverse) {
 					deltaRot = Quaternion.Conjugate(delta.Rotation);
-				else
-					deltaRot = new Quaternion(
-						delta.Rotation.X,
-						-delta.Rotation.Y,
-						-delta.Rotation.Z,
-						delta.Rotation.W
+					localDeltaPos = new Vector3(-localDeltaPos.X, -localDeltaPos.Y, -localDeltaPos.Z);
+				} else {
+					var localDeltaRot = Quaternion.Inverse(initial.Rotation) * delta.Rotation * initial.Rotation;
+					var m = new Matrix4x4(
+						-1, 0, 0, 0,
+						 0, -1, 0, 0,
+						 0, 0, 1, 0,
+						 0, 0, 0, 1
 					);
-				deltaPos = -delta.Position;
+					var r = Matrix4x4.CreateFromQuaternion(Quaternion.Normalize(localDeltaRot));
+					localDeltaRot = Quaternion.Normalize(Quaternion.CreateFromRotationMatrix(m * r * m));
+					deltaRot = initial.Rotation * localDeltaRot * Quaternion.Inverse(initial.Rotation);
+
+					localDeltaPos = new Vector3(localDeltaPos.X, localDeltaPos.Y, -localDeltaPos.Z);
+				}
+				deltaPos = Vector3.Transform(localDeltaPos, boneTrans.Rotation);
 			} else {
 				deltaRot = delta.Rotation;
 				deltaPos = delta.Position;

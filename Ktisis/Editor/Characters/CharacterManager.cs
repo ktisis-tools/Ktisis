@@ -23,8 +23,7 @@ namespace Ktisis.Editor.Characters;
 
 public class CharacterManager : ICharacterManager {
 	private readonly IEditorContext _context;
-	private readonly IClientState _clientState;
-	// todo: cleaner way of getting iclientstate? currently pulled from public gpose var
+	private readonly IObjectTable _objectTable;
 	private readonly HookScope _scope;
 	private readonly IFramework _framework;
 
@@ -36,13 +35,13 @@ public class CharacterManager : ICharacterManager {
 
 	public CharacterManager(
 		IEditorContext context,
-		IClientState clientState,
+		IObjectTable objectTable,
 		HookScope scope,
 		IFramework framework,
 		McdfManager mcdf
 	) {
 		this._context = context;
-		this._clientState = clientState;
+		this._objectTable = objectTable;
 		this._scope = scope;
 		this._framework = framework;
 		this.Mcdf = mcdf;
@@ -103,7 +102,7 @@ public class CharacterManager : ICharacterManager {
 	}
 
 	private unsafe Transform* GetLocalPlayerPosition() {
-		var localPlayer = (CSGameObject*)this._clientState.LocalPlayer.Address;
+		var localPlayer = (CSGameObject*)this._objectTable.LocalPlayer?.Address;
 		if (localPlayer != null && localPlayer->DrawObject != null)
 			return (Transform*)&localPlayer->DrawObject->Position;
 		return null;

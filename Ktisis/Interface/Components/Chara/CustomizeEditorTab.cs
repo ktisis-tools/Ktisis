@@ -351,8 +351,8 @@ public class CustomizeEditorTab {
 	private void DrawFacialFeatureToggles(MakeTypeRace data, byte current) {
 		using var _group = ImRaii.Group();
 		var style = ImGui.GetStyle();
-		
 		var faceId = this.Editor.GetCustomization(CustomizeIndex.FaceType);
+
 		if (!data.FaceFeatureIcons.TryGetValue(faceId, out var iconIds))
 			iconIds = data.FaceFeatureIcons.Values.FirstOrDefault();
 		iconIds ??= Array.Empty<uint>();
@@ -360,7 +360,7 @@ public class CustomizeEditorTab {
 		var icons = iconIds
 			.Select(id => this._tex.GetFromGameIcon(id))
 			.Append(this._tex.GetFromGame(LegacyTexPath));
-		
+
 		var i = 0;
 		foreach (var icon in icons) {
 			if (i++ % 4 != 0)
