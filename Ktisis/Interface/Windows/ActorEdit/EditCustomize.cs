@@ -20,8 +20,6 @@ using Ktisis.Interface.Windows.ActorEdit;
 
 using Lumina.Excel;
 
-using CharaMakeType = Lumina.Excel.Sheets.CharaMakeType;
-
 namespace Ktisis.Interface.Windows {
 	public struct MenuOption {
 		public Menu Option;
@@ -115,10 +113,10 @@ namespace Ktisis.Interface.Windows {
 				if (custom.Race == Race.Hrothgar)
 					index -= 4; // ???
 
-				if (index < 0 || index >= data.FacialFeatureOption.Count)
+				if (index < 0 || index >= data.FacialFeatures.Length)
 					index = 8 * i;
 
-				var iconId = (uint)data.FacialFeatureOption[index];
+				var iconId = (uint)data.FacialFeatures[index];
 				if (iconId == 0)
 					iconId = (uint)data.FacialFeatures[8 * i];
 
