@@ -6,8 +6,10 @@ using Ktisis.Structs.Extensions;
 
 namespace Ktisis.Data.Excel {
 	[Sheet("ENpcResident", columnHash: 0xf74fa88c)]
-	public struct ResidentNpc(uint row) : IExcelRow<ResidentNpc>, INpcBase {
+	public struct ResidentNpc(ExcelPage page, uint offset, uint row) : IExcelRow<ResidentNpc>, INpcBase {
 		// Excel
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset => offset;
 
 		public uint RowId => row;
 		
@@ -18,7 +20,7 @@ namespace Ktisis.Data.Excel {
 		public static ResidentNpc Create(ExcelPage page, uint offset, uint row) {
 			var singular = page.ReadColumn<string>(0, offset);
 			var article = page.ReadColumn<sbyte>(7, offset);
-			return new ResidentNpc(row) {
+			return new ResidentNpc(page, offset, row) {
 				Name = singular.FormatName(article) ?? $"E:{row:D7}",
 				EventNpc = new RowRef<EventNpc>(page.Module, row, page.Language),
 				Map = page.ReadColumn<byte>(9, offset)
