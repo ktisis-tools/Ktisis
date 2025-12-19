@@ -24,17 +24,25 @@ public class ChildSelectAction(IPluginContext ctx) : KeyAction(ctx) {
 
 	public override bool CanInvoke() => this.Context.Editor!.Selection.GetSelected().Count() == 1;
 
-	public override bool Invoke() {
+	public unsafe override bool Invoke() {
 		// bail if we have multiple or zero selections
 		if (!this.CanInvoke()) return false;
 
-		// bail if selection has no children
 		var selection = this.Context.Editor!.Selection.GetFirstSelected();
-		if (selection == null || !selection.Children.Any())
+		if (selection == null)
 			return false;
 
 		// TODO: framerate hitch when selecting all bones
-		foreach (var child in selection.Recurse()) child.Select(SelectMode.Multiple);
-		return true;
+		if (selection.Children.Any()) {
+			foreach (var child in selection.Recurse()) child.Select(SelectMode.Multiple);
+			return true;
+		}
+
+		// try bone->descendants if selection has no children
+		if (selection is BoneNode bone) {
+			foreach (var b in bone.Pose.GetAllBones().Where(b => b.IsBoneDescendantOf(bone))) b.Select(SelectMode.Multiple);
+			return true;
+		}
+		return false;
 	}
 }
