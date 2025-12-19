@@ -22,7 +22,7 @@ public sealed class McdfManager : IDisposable {
 	private readonly GPoseService _gpose;
 	private readonly IFramework _framework;
 	private readonly IpcManager _ipc;
-	private readonly IClientState _client;
+	private readonly IObjectTable _objectTable;
 	
 	private Dictionary<IGameObject, Guid?> actors;
 
@@ -30,7 +30,7 @@ public sealed class McdfManager : IDisposable {
 		GPoseService gpose,
 		IFramework framework,
 		IpcManager ipc,
-		IClientState client
+		IObjectTable objectTable
 	) {
 		this._gpose = gpose;
 		this._gpose.StateChanged += this.OnGPoseEvent;
@@ -38,7 +38,7 @@ public sealed class McdfManager : IDisposable {
 
 		this._framework = framework;
 		this._ipc = ipc;
-		this._client = client;
+		this._objectTable = objectTable;
 
 		this.actors = new Dictionary<IGameObject, Guid?>();
 	}
@@ -148,7 +148,7 @@ public sealed class McdfManager : IDisposable {
 	private void DeleteGlamourerData(IGameObject actor) {
         if (this._ipc.IsGlamourerActive) {
 			var ipc = this._ipc.GetGlamourerIpc();
-			var res = ipc.DeleteState(actor, this._client.LocalPlayer);
+			var res = ipc.DeleteState(actor, this._objectTable.LocalPlayer);
 			if (res) return;
         }
 

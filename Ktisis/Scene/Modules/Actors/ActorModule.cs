@@ -27,7 +27,7 @@ namespace Ktisis.Scene.Modules.Actors;
 
 public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
-	private readonly IClientState _clientState;
+	private readonly IObjectTable _objectTable;
 	private readonly IFramework _framework;
 	private readonly GroupPoseModule _gpose;
 	
@@ -37,12 +37,12 @@ public class ActorModule : SceneModule {
 		IHookMediator hook,
 		ISceneManager scene,
 		ActorService actors,
-		IClientState clientState,
+		IObjectTable objectTable,
 		IFramework framework,
 		GroupPoseModule gpose
 	) : base(hook, scene) {
 		this._actors = actors;
-		this._clientState = clientState;
+		this._objectTable = objectTable;
 		this._framework = framework;
 		this._gpose = gpose;
 		this._spawner = hook.Create<ActorSpawner>();
@@ -78,7 +78,7 @@ public class ActorModule : SceneModule {
 	// Spawning
 
 	public async Task<ActorEntity> Spawn() {
-		var localPlayer = this._clientState.LocalPlayer;
+		var localPlayer = this._objectTable.LocalPlayer;
 		if (localPlayer == null)
 			throw new Exception("Local player not found.");
 		

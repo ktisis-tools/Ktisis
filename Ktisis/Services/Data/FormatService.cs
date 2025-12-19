@@ -14,13 +14,16 @@ namespace Ktisis.Services.Data;
 [Singleton]
 public class FormatService {
 	private readonly IClientState _client;
+	private readonly IObjectTable _objectTable;
 	private readonly IDataManager _data;
 	
 	public FormatService(
 		IClientState client,
+		IObjectTable objectTable,
 		IDataManager data
 	) {
 		this._client = client;
+		this._objectTable = objectTable;
 		this._data = data;
 	}
 
@@ -54,15 +57,15 @@ public class FormatService {
 	};
 
 	private string GetPlayerName() {
-		return this.StripInvalidChars(this._client.LocalPlayer?.Name.ToString() ?? "Unknown");
+		return this.StripInvalidChars(this._objectTable.LocalPlayer?.Name.ToString() ?? "Unknown");
 	}
 
 	private string GetCurrentWorld() {
-		return this.StripInvalidChars(this._client.LocalPlayer?.CurrentWorld.Value.Name.ToString() ?? "Unknown");
+		return this.StripInvalidChars(this._objectTable.LocalPlayer?.CurrentWorld.Value.Name.ToString() ?? "Unknown");
 	}
 	
 	private string GetHomeWorld() {
-		return this.StripInvalidChars(this._client.LocalPlayer?.HomeWorld.Value.Name.ToString() ?? "Unknown");
+		return this.StripInvalidChars(this._objectTable.LocalPlayer?.HomeWorld.Value.Name.ToString() ?? "Unknown");
 	}
 
 	private string GetZone() {

@@ -42,6 +42,12 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this._npcs = npcs;
 		this._npcs.OnSelected += this.OnNpcSelect;
 	}
+
+	public override void PreOpenCheck() {
+		if (this.Context.IsValid) return;
+		Ktisis.Log.Verbose("Context for actor window is stale, closing...");
+		this.Close();
+	}
 	
 	// Target
 
