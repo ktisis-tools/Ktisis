@@ -79,9 +79,7 @@ public class Transform : IEquatable<Transform> {
 	}
 
 	public void DecomposeMatrixPrecise(Matrix4x4 mx, Transform initial) {
-		const float posEps = 1e-4f;
-		const float rotAngleEps = 1e-4f;
-		const float scaRelEps = 1e-4f;
+		const float eps = 1e-6f;
 
 		var aPos = initial.Position;
 		var aRot = initial.Rotation;
@@ -89,19 +87,19 @@ public class Transform : IEquatable<Transform> {
 
 		Matrix4x4.Decompose(mx, out var bSca, out var bRot, out var bPos);
 
-		this.Position = (bPos - aPos).LengthSquared() < posEps * posEps ? aPos : bPos;
+		this.Position = (bPos - aPos).LengthSquared() < eps * eps ? aPos : bPos;
 
 		if (Quaternion.Dot(bRot, aRot) < 0f) {
 			bRot = new Quaternion(-bRot.X, -bRot.Y, -bRot.Z, -bRot.W);
 		}
 		var dot = Math.Clamp(Quaternion.Dot(bRot, aRot), -1f, 1f);
 		var angle = 2f * MathF.Acos(dot);
-		this.Rotation = angle < rotAngleEps ? aRot : bRot;
+		this.Rotation = angle < eps ? aRot : bRot;
 
 		Vector3 resSca = bSca;
-		resSca.X = IsScaleJitter(aSca.X, bSca.X, scaRelEps) ? aSca.X : bSca.X;
-		resSca.Y = IsScaleJitter(aSca.Y, bSca.Y, scaRelEps) ? aSca.Y : bSca.Y;
-		resSca.Z = IsScaleJitter(aSca.Z, bSca.Z, scaRelEps) ? aSca.Z : bSca.Z;
+		resSca.X = IsScaleJitter(aSca.X, bSca.X, eps) ? aSca.X : bSca.X;
+		resSca.Y = IsScaleJitter(aSca.Y, bSca.Y, eps) ? aSca.Y : bSca.Y;
+		resSca.Z = IsScaleJitter(aSca.Z, bSca.Z, eps) ? aSca.Z : bSca.Z;
 		this.Scale = resSca;
 	}
 

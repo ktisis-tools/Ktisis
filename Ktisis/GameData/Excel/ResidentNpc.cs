@@ -9,7 +9,9 @@ using Ktisis.Structs.Characters;
 namespace Ktisis.GameData.Excel;
 
 [Sheet("ENpcResident", columnHash: 0xf74fa88c)]
-public struct ResidentNpc(uint row) : IExcelRow<ResidentNpc>, INpcBase {
+public struct ResidentNpc(ExcelPage page, uint offset, uint row) : IExcelRow<ResidentNpc>, INpcBase {
+	public ExcelPage ExcelPage => page;
+	public uint RowOffset { get; } = offset;
 	public uint RowId { get; } = row;
 
 	public byte Map { get; init; }
@@ -18,7 +20,7 @@ public struct ResidentNpc(uint row) : IExcelRow<ResidentNpc>, INpcBase {
 	static ResidentNpc IExcelRow<ResidentNpc>.Create(ExcelPage page, uint offset, uint row) {
 		var singular = page.ReadColumn<string>(0, offset);
 		var article = page.ReadColumn<sbyte>(7, offset);
-		return new ResidentNpc(row) {
+		return new ResidentNpc(page, offset, row) {
 			Name = singular.FormatName(article) ?? $"E:{row:D7}",
 			Map = page.ReadColumn<byte>(9, offset),
 			EventNpc = new RowRef<EventNpc>(page.Module, row, page.Language)

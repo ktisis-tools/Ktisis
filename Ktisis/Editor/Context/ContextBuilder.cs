@@ -33,6 +33,7 @@ public class ContextBuilder {
 	private readonly NamingService _naming;
 	private readonly FormatService _format;
 	private readonly McdfManager _mcdf;
+	private readonly IObjectTable _objectTable;
 
 	public ContextBuilder(
 		GPoseService gpose,
@@ -42,7 +43,8 @@ public class ContextBuilder {
 		IKeyState keyState,
 		NamingService naming,
 		FormatService format,
-		McdfManager mcdf
+		McdfManager mcdf,
+		IObjectTable objectTable
 	) {
 		this._gpose = gpose;
 		this._interop = interop;
@@ -52,6 +54,7 @@ public class ContextBuilder {
 		this._naming = naming;
 		this._format = format;
 		this._mcdf = mcdf;
+		this._objectTable = objectTable;
 	}
 
 	public IEditorContext Create(
@@ -72,7 +75,7 @@ public class ContextBuilder {
 			Actions = actions,
 			Animation = new AnimationManager(context, scope, this._data, this._framework),
 			Cameras = new CameraManager(context, scope),
-			Characters = new CharacterManager(context, this._gpose._clientState, scope, this._framework, this._mcdf),
+			Characters = new CharacterManager(context, this._objectTable, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
 			Scene = new SceneManager(context, scope, this._framework, factory),
