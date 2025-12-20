@@ -77,7 +77,8 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		if (this.Partials.TryGetValue(index, out var info)) {
 			prevId = info.Id;
 		} else {
-			info = new PartialSkeletonInfo(id);
+			var name = GetPartialName(partial);
+			info = name != null ? new PartialSkeletonInfo(id, name) : new PartialSkeletonInfo(id);
 			this.Partials.Add(index, info);
 		}
 
@@ -99,6 +100,7 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		if (prevId != 0) this.Clean(index, id);
 
 		info.CopyPartial(id, partial);
+		info.Name = GetPartialName(partial);
 		if (id != 0) builder.BindTo(this);
 		this.FilterTree();
 
@@ -123,6 +125,10 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	private unsafe static uint GetPartialId(PartialSkeleton partial) {
 		var resource = partial.SkeletonResourceHandle;
 		return resource != null ? resource->Id : 0;
+	}
+	private unsafe static string? GetPartialName(PartialSkeleton partial) {
+		var resource = partial.SkeletonResourceHandle;
+		return resource != null ? resource->DefaultResourceHandle.FileName.ToString() : null;
 	}
 	
 	// Filtering
@@ -211,6 +217,8 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 
 	public PartialSkeletonInfo? GetPartialInfo(int index)
 		=> this.Partials.GetValueOrDefault(index);
+
+	public IEnumerable<int> GetPartialIndices() => this.Partials.Keys;
 
 	public bool ShouldDraw() {
 		return this.Recurse().OfType<IVisibility>().Any(vis => vis.Visible);
