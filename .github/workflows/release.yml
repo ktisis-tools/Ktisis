@@ -5,11 +5,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Only run this workflow when a tag is pushed when the tag starts with "v".
+# Only run this workflow when a tag is pushed when the tag starts with "v0.2.".
 on:
   push:
     tags:
-      - 'v*'
+      - 'v0.2.*'
 
 # So we can use the GitHub API to create releases with the run token.
 permissions:
@@ -35,7 +35,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Download Dalamud Library
         run: |
@@ -82,9 +82,7 @@ jobs:
 
           sed -i repo.json -E \
               -e 's#"AssemblyVersion": "([0-9]*\.){2,3}[0-9]*"#"AssemblyVersion": "'"$release_version"'"#g' \
-              -e 's#"TestingAssemblyVersion": "([0-9]*\.){2,3}[0-9]*"#"TestingAssemblyVersion": "'"$release_version"'"#' \
               -e 's#"DownloadLinkInstall": "[^"]*"#"DownloadLinkInstall": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g' \
-              -e 's#"DownloadLinkTesting": "[^"]*"#"DownloadLinkTesting": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g' \
               -e 's#"DownloadLinkUpdate": "[^"]*"#"DownloadLinkUpdate": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g'
 
           git add repo.json
