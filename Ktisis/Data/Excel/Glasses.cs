@@ -8,6 +8,8 @@ using Lumina.Text.ReadOnly;
 namespace Ktisis.Data.Excel {
 	[Sheet("Glasses")]
 	public struct Glasses(ExcelPage page, uint offset, uint row) : IExcelRow<Glasses> {
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset => offset;
 		public uint RowId => row;
 		
 		public string Name { get; set; } = string.Empty;

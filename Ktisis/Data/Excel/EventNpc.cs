@@ -10,6 +10,8 @@ namespace Ktisis.Data.Excel {
 	public struct EventNpc : IExcelRow<EventNpc>, INpcBase {
 		// Excel
 		
+		public ExcelPage ExcelPage { get; }
+		public uint RowOffset { get; }
 		public uint RowId { get; }
 
 		public ushort EventHandler { get; set; }
@@ -22,6 +24,8 @@ namespace Ktisis.Data.Excel {
 		public Equipment Equipment { get; set; }
 
 		public EventNpc(ExcelPage page, uint offset, uint row) {
+			this.ExcelPage = page;
+			this.RowOffset = offset;
 			this.RowId = row;
 
 			this.Name = $"E:{this.RowId:D7}";

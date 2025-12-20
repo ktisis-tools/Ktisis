@@ -38,6 +38,8 @@ namespace Ktisis.Data.Excel {
 
 	[Sheet("Item")]
 	public struct Item : IExcelRow<Item> {
+		public ExcelPage ExcelPage { get; }
+		public uint RowOffset { get; }
 		public uint RowId { get; }
 		
 		public string Name { get; set; } = "";
@@ -54,6 +56,8 @@ namespace Ktisis.Data.Excel {
 		public bool IsWeapon() => IsEquippable(EquipSlot.MainHand) || IsEquippable(EquipSlot.OffHand);
 
 		public Item(uint row, ExcelPage page, uint offset) {
+			this.ExcelPage = page;
+			this.RowOffset = offset;
 			this.RowId = row;
 			
 			this.Name = page.ReadColumn<string>(9, offset);
@@ -82,7 +86,9 @@ namespace Ktisis.Data.Excel {
 	}
 
 	[Sheet("EquipSlotCategory")]
-	public struct EquipSlotCategory(uint row) : IExcelRow<EquipSlotCategory> {
+	public struct EquipSlotCategory(ExcelPage page, uint offset, uint row) : IExcelRow<EquipSlotCategory> {
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset => offset;
 		public uint RowId => row;
 		
 		public sbyte[] Slots { get; set; } = new sbyte[14];
@@ -90,7 +96,7 @@ namespace Ktisis.Data.Excel {
 		public bool IsEquippable(EquipSlot slot) => Slots[(int)slot] == 1 || (slot == EquipSlot.MainHand && Slots[1] == 1) || (slot == EquipSlot.OffHand && Slots[0] == 1);
 
 		public static EquipSlotCategory Create(ExcelPage page, uint offset, uint row) {
-			return new EquipSlotCategory(row) {
+			return new EquipSlotCategory(page, offset, row) {
 				Slots = ReadSlots(page, offset).ToArray()
 			};
 		}

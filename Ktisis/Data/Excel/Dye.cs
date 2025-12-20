@@ -10,7 +10,9 @@ using Lumina.Excel.Sheets;
 
 namespace Ktisis.Data.Excel {
 	[Sheet("Stain")]
-	public struct Dye(uint row) : IExcelRow<Dye> {
+	public struct Dye(ExcelPage page, uint offset, uint row) : IExcelRow<Dye> {
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset => offset;
 		public uint RowId => row;
 		
 		public string Name { get; set; }
@@ -33,7 +35,7 @@ namespace Ktisis.Data.Excel {
 		
 		public static Dye Create(ExcelPage page, uint offset, uint row) {
 			var name = page.ReadColumn<string>(3, offset);
-			return new Dye(row) {
+			return new Dye(page, offset, row) {
 				Name = !name.IsNullOrEmpty() ? name : "Undyed", // TODO: translation
 				Color = page.ReadColumn<uint>(0, offset),
 				Shade = page.ReadColumn<byte>(1, offset),

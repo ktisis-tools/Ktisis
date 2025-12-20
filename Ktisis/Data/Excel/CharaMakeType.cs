@@ -38,7 +38,7 @@ namespace Ktisis.Data.Excel {
 	}
 
 	[Sheet("CharaMakeType")]
-	public struct CharaMakeType(uint row) : IExcelRow<CharaMakeType> {
+	public struct CharaMakeType(ExcelPage page, uint offset, uint row) : IExcelRow<CharaMakeType> {
 		// Consts
 
 		public const int MenuCt = 28;
@@ -47,6 +47,8 @@ namespace Ktisis.Data.Excel {
 		public const int FacialFeaturesCt = 7 * 8;
 
 		// Properties
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset => offset;
 
 		public uint RowId => row;
 
@@ -67,7 +69,7 @@ namespace Ktisis.Data.Excel {
 		public static CharaMakeType Create(ExcelPage page, uint offset, uint row) {
 			var features = new int[FacialFeaturesCt];
 			for (var i = 0; i < FacialFeaturesCt; i++)
-				features[i] = page.ReadColumn<int>(3291 + i, offset);
+				features[i] = page.ReadColumn<int>(3459 + i, offset);
 
 			var menus = new Menu[MenuCt];
 			for (var i = 0; i < MenuCt; i++) {
@@ -87,7 +89,7 @@ namespace Ktisis.Data.Excel {
 					for (var p = 0; p < ct; p++)
 						menu.Params[p] = page.ReadColumn<uint>(3 + (7 + p) * MenuCt + i, offset);
 					for (var g = 0; g < GraphicCt; g++)
-						menu.Graphics[g] = page.ReadColumn<byte>(3 + (107 + g) * MenuCt + i, offset);
+						menu.Graphics[g] = page.ReadColumn<byte>(3 + (113 + g) * MenuCt + i, offset);
 				}
 				
 				if (menu.IsFeature) {
@@ -100,7 +102,7 @@ namespace Ktisis.Data.Excel {
 				menus[i] = menu;
 			}
 			
-			return new CharaMakeType(row) {
+			return new CharaMakeType(page, offset, row) {
 				Race = page.ReadRowRef<Race>(0, offset),
 				Tribe = page.ReadRowRef<Tribe>(1, offset),
 				Gender = page.ReadColumn<sbyte>(2, offset),

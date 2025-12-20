@@ -7,7 +7,9 @@ using Lumina.Excel;
 
 namespace Ktisis.Data.Excel {
 	[Sheet("HairMakeType")]
-	public struct HairMakeType(uint row) : IExcelRow<HairMakeType> {
+	public struct HairMakeType(ExcelPage page, uint offset, uint row) : IExcelRow<HairMakeType> {
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset => offset;
 		public uint RowId => row;
 		
 		// Properties
@@ -26,7 +28,7 @@ namespace Ktisis.Data.Excel {
 		static HairMakeType IExcelRow<HairMakeType>.Create(ExcelPage page, uint offset, uint row) {
 			var hairStartIndex = page.ReadColumn<uint>(66, offset);
 			var facePaintStartIndex = page.ReadColumn<uint>(82, offset);
-			return new HairMakeType(row) {
+			return new HairMakeType(page, offset, row) {
 				HairStartIndex = hairStartIndex,
 				FacepaintStartIndex = facePaintStartIndex,
 				HairStyles = GetRange(page, hairStartIndex, HairLength).ToList(),

@@ -4,12 +4,14 @@ using Lumina.Excel.Sheets;
 using Ktisis.Data.Npc;
 using Ktisis.Structs.Actor;
 using Ktisis.Structs.Extensions;
+using Lumina.Text.ReadOnly;
 
 namespace Ktisis.Data.Excel {
 	[Sheet("BNpcBase", columnHash: 0xD5D82616)]
-	public struct BattleNpc(uint row) : IExcelRow<BattleNpc>, INpcBase {
+	public struct BattleNpc(ExcelPage page, uint offset, uint row) : IExcelRow<BattleNpc>, INpcBase {
 		// Excel
-
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset => offset;
 		public uint RowId => row;
         
 		public float Scale { get; set; }
@@ -18,7 +20,7 @@ namespace Ktisis.Data.Excel {
 		private RowRef<NpcEquipment> NpcEquipment { get; set; }
 		
 		public static BattleNpc Create(ExcelPage page, uint offset, uint row) {
-			return new BattleNpc(row) {
+			return new BattleNpc(page, offset, row) {
 				Scale = page.ReadColumn<float>(4, offset),
 				ModelChara = page.ReadRowRef<ModelChara>(5, offset),
 				CustomizeSheet = page.ReadRowRef<BNpcCustomizeSheet>(6, offset),
@@ -48,13 +50,15 @@ namespace Ktisis.Data.Excel {
 		// Customize Sheet
 		
 		[Sheet("BNpcCustomize", columnHash: 0x18f060d4)]
-		private struct BNpcCustomizeSheet(uint row) : IExcelRow<BNpcCustomizeSheet> {
+		private struct BNpcCustomizeSheet(ExcelPage page, uint offset, uint row) : IExcelRow<BNpcCustomizeSheet> {
+			public ExcelPage ExcelPage => page;
+			public uint RowOffset => offset;
 			public uint RowId => row;
 			
 			public Customize Customize { get; set; }
 			
 			public static BNpcCustomizeSheet Create(ExcelPage page, uint offset, uint row) {
-				return new BNpcCustomizeSheet(row) {
+				return new BNpcCustomizeSheet(page, offset, row) {
 					Customize = page.ReadCustomize(0, offset)
 				};
 			}
