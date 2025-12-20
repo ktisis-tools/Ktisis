@@ -82,10 +82,6 @@ public class PosePropertyList : ObjectPropertyList {
 			await this._ctx.Posing.ApplyFlipPose(pose);
 		ImGui.Spacing();
 
-		// if (ImGui.Button("Set to Reference Pose"))
-		// 	await this._ctx.Posing.ApplyReferencePose(pose);
-		// ImGui.SameLine(0, spacing);
-
 		if (ImGui.Button("Stash Pose"))
 			await this._ctx.Posing.StashPose(pose);
 		ImGui.SameLine(0, spacing);
