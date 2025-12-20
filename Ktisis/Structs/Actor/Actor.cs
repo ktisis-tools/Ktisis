@@ -19,7 +19,7 @@ namespace Ktisis.Structs.Actor {
 		[FieldOffset(0x100)] public unsafe ActorModel* Model;
 		[FieldOffset(0x118)] public RenderMode RenderMode;
 		
-		[FieldOffset(0x6E8)] public ActorDrawData DrawData;
+		[FieldOffset(0x6F8)] public ActorDrawData DrawData;
 
 		[FieldOffset(0x936)] public bool IsHatHidden;
 

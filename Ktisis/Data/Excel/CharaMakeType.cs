@@ -69,7 +69,7 @@ namespace Ktisis.Data.Excel {
 		public static CharaMakeType Create(ExcelPage page, uint offset, uint row) {
 			var features = new int[FacialFeaturesCt];
 			for (var i = 0; i < FacialFeaturesCt; i++)
-				features[i] = page.ReadColumn<int>(3291 + i, offset);
+				features[i] = page.ReadColumn<int>(3459 + i, offset);
 
 			var menus = new Menu[MenuCt];
 			for (var i = 0; i < MenuCt; i++) {
@@ -89,7 +89,7 @@ namespace Ktisis.Data.Excel {
 					for (var p = 0; p < ct; p++)
 						menu.Params[p] = page.ReadColumn<uint>(3 + (7 + p) * MenuCt + i, offset);
 					for (var g = 0; g < GraphicCt; g++)
-						menu.Graphics[g] = page.ReadColumn<byte>(3 + (107 + g) * MenuCt + i, offset);
+						menu.Graphics[g] = page.ReadColumn<byte>(3 + (113 + g) * MenuCt + i, offset);
 				}
 				
 				if (menu.IsFeature) {
