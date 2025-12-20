@@ -32,12 +32,12 @@ public class PosePropertyList : ObjectPropertyList {
 
 	private string LabelForPartial(EntityPose pose, int partialIndex) {
 		if (partialIndex == -1) return "Reset All Skeletons";
-		var name = pose.GetPartialInfo(partialIndex)?.Name;
+		var name = pose.GetPartialInfo(partialIndex)?.Name ?? "N/A";
 		return partialIndex switch {
 			0 => "Reset Body",
 			1 => "Reset Face",
 			2 => "Reset Hair",
-			_ => $"Skeleton #{partialIndex}" + (name != null ? $" ({name})" : "")
+			_ => $"Reset Skeleton #{partialIndex} ({name})"
 		};
 	}
 
@@ -110,7 +110,9 @@ public class PosePropertyList : ObjectPropertyList {
 
 			// add element for each partial index on pose
 			foreach (var partial in pose.GetPartialIndices()) {
-				if (ImGui.Selectable(this.LabelForPartial(pose, partial), this._partialIndex == partial))
+				var label = this.LabelForPartial(pose, partial);
+				label = label.Length <= 60 ? label : label[..60] + "..."; // truncate to ellipsis in case of really long filepaths
+				if (ImGui.Selectable(label, this._partialIndex == partial))
 					this._partialIndex = partial;
 			}
 			ImGui.EndCombo();
