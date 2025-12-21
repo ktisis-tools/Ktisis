@@ -12,6 +12,7 @@ using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Structs.Lights;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Scene.Modules.Lights;
 
 namespace Ktisis.Interface.Editor.Properties;
 
@@ -49,8 +50,13 @@ public class LightPropertyList : ObjectPropertyList {
 		if (ImGui.BeginCombo("Light Type", lightTypePreview)) {
 			foreach (var value in Enum.GetValues<LightType>()) {
 				var valueLabel = this._locale.Translate($"lightType.{value}");
-				if (ImGui.Selectable(valueLabel, light->LightType == value))
+				if (ImGui.Selectable(valueLabel, light->LightType == value)) {
+					// if (value == LightType.PointLight) {
+					// 	Ktisis.Log.Info($"switching to PointLight, resetting texture");
+					// 	this._ctx.Scene.GetModule<LightModule>()?.UpdateSceneLightTexture(sceneLight, "garbage.tex\0");
+					// }
 					light->LightType = value;
+				}
 			}
 			ImGui.EndCombo();
 		}
@@ -99,6 +105,11 @@ public class LightPropertyList : ObjectPropertyList {
 		ImGui.DragFloat("Intensity", ref light->Color.Intensity, 0.01f, 0.0f, 100.0f);
 		if (ImGui.DragFloat("Range##LightRange", ref light->Range, 0.1f, 0, 999))
 			entity.Flags |= LightEntityFlags.Update;
+		
+		ImGui.Spacing();
+		if (ImGui.Button($"Update Texture"))
+			this._ctx.Scene.GetModule<LightModule>()?.UpdateSceneLightTexture(sceneLight, null);
+			// this._ctx.Scene.GetModule<LightModule>()?.UpdateSceneLightTexture(sceneLight, "bg/ex3/01_nvt_n4/dun/n4d8/texture/n4d8_a3_gla01_i.tex");
 
 		ImGui.Spacing();
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, "Import light settings"))

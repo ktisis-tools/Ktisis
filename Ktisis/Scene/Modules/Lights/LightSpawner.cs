@@ -57,21 +57,15 @@ public class LightSpawner : HookModule {
 	private SceneLightInitializeDelegate _sceneLightInit = null!;
 	private unsafe delegate bool SceneLightInitializeDelegate(SceneLight* self);
 
-	[Signature("40 53 48 83 EC ?? 48 8B D9 C7 44 24 ?? ?? ?? ?? ?? 33 C9")]
-	private SceneLightTextureDelegate _sceneLightTexture = null!;
-	private unsafe delegate bool SceneLightTextureDelegate(SceneLight* self, ResourceCategory* category, CStringPointer path);
-
 	[Signature("F6 41 38 01")]
 	private SceneLightSetupDelegate _sceneLightSpawn = null!;
 	private unsafe delegate nint SceneLightSetupDelegate(SceneLight* self);
 
 	public unsafe SceneLight* Create() {
 		var light = (SceneLight*)IMemorySpace.GetDefaultSpace()->Malloc<SceneLight>();
-		Ktisis.Log.Info($"{(nint)light:X}");
 		this._sceneLightCtor(light);
 		this._sceneLightInit(light);
 		this._sceneLightSpawn(light);
-
 
 		// use freecam values if applicable, else point to scenecamera
 		var editorCamera = this._context.Cameras.Current;
@@ -102,19 +96,16 @@ public class LightSpawner : HookModule {
 			render->CharaShadowRange = 100.0f;
 		}
 
-
-		string path = "bgcommon/hou/indoor/general/1133/texture/fun_b0_m1133_0b_i.tex\0";
-		byte* texPtr = stackalloc byte[path.Length];
-		for (int i = 0; i < path.Length; ++i) {
-			texPtr[i] = (byte)path[i];
-		}
-		ResourceCategory* resourceCat = stackalloc ResourceCategory[1];
-		resourceCat[0] = ResourceCategory.BgCommon;
-
-		this._sceneLightTexture(light, resourceCat, texPtr);
+		// string path = "bgcommon/hou/indoor/general/1133/texture/fun_b0_m1133_0b_i.tex\0";
+		// byte* texPtr = stackalloc byte[path.Length];
+		// for (int i = 0; i < path.Length; ++i) {
+		// 	texPtr[i] = (byte)path[i];
+		// }
+		// ResourceCategory* resourceCat = stackalloc ResourceCategory[1];
+		// resourceCat[0] = ResourceCategory.BgCommon;
+		//
+		// this._sceneLightTexture(light, resourceCat, texPtr);
 		this._created.Add((nint)light);
-
-		Ktisis.Log.Info($"{(nint)light:X}");
 		return light;
 	}
 	
