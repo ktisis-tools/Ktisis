@@ -52,7 +52,6 @@ public class LightPropertyList : ObjectPropertyList {
 		
 		builder.AddHeader("Light", () => this.DrawLightTab(light));
 		builder.AddHeader("Shadows", () => this.DrawShadowsTab(light));
-		builder.AddHeader("Texture", () => this.DrawTextureTab(light));
 	}
 
 	private unsafe void DrawLightTab(LightEntity entity) {
@@ -117,13 +116,29 @@ public class LightPropertyList : ObjectPropertyList {
 		// Base light settings
 		
 		ImGui.Spacing();
-		
 		var color = light->Color.RGB;
 		if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Hdr | ImGuiColorEditFlags.Uint8))
 			light->Color.RGB = color;
 		ImGui.DragFloat("Intensity", ref light->Color.Intensity, 0.01f, 0.0f, 100.0f);
 		if (ImGui.DragFloat("Range##LightRange", ref light->Range, 0.1f, 0, 999))
 			entity.Flags |= LightEntityFlags.Update;
+
+		// RenderLight projection settings
+		ImGui.Spacing();
+		ImGui.AlignTextToFramePadding();
+		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
+		if (ImGui.IsItemHovered()) {
+			using var _ = ImRaii.Tooltip();
+			ImGui.Text("For Spot and Area Lights, a vanilla texture can now be applied.\nThis acts as a gobo, blocking or coloring some of the light source as if projected through the image.");
+		}
+		ImGui.SameLine();
+		using (ImRaii.Disabled(light->LightType is (LightType.Directional or LightType.PointLight))) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Image, "Choose a texture for this light to project"))
+				this._goboPopup.Open();
+
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.Text($"Current Texture: {(entity.Gobo == null ? "None" : entity.Gobo.Name)}");
+		}
 
 		ImGui.Spacing();
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, "Import light settings"))
@@ -132,6 +147,8 @@ public class LightPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Save, "Export light settings"))
 			this._ctx.Interface.OpenLightExport(entity);
+
+		this.DrawGoboPopup(entity);
 	}
 
 	private unsafe void DrawShadowsTab(LightEntity entity) {
@@ -152,31 +169,12 @@ public class LightPropertyList : ObjectPropertyList {
 		ImGui.DragFloat("Shadow Far", ref light->ShadowFar, 0.01f, 0.0f, 1000.0f);
 	}
 
-	private unsafe void DrawTextureTab(LightEntity entity) {
-		var sceneLight = entity.GetObject();
-		var light = sceneLight != null ? sceneLight->RenderLight : null;
-		if (light == null) return;
-
-		if (ImGui.Button($"Update Texture"))
-			this._ctx.Scene.GetModule<LightModule>().UpdateSceneLightTexture(sceneLight, "bgcommon/hou/indoor/general/1133/texture/fun_b0_m1133_0b_i.tex");
-		if (ImGui.Button($"Update Texture 2"))
-			this._ctx.Scene.GetModule<LightModule>().UpdateSceneLightTexture(sceneLight, "bgcommon/hou/indoor/general/0954/texture/fun_b0_m0954_0d_i.tex");
-
-		ImGui.Spacing();
-		if (ImGui.Button("Choose Texture..."))
-			this._goboPopup.Open();
-		ImGui.Spacing();
-		ImGui.Text($"Current Texture: {(this.Gobo == null ? "None" : this.Gobo.Name)}");
-
-		this.DrawGoboPopup(sceneLight);
-	}
-
-	private unsafe void DrawGoboPopup(SceneLight* sceneLight) {
+	private unsafe void DrawGoboPopup(LightEntity entity) {
 		if (!this._goboPopup.IsOpen) return;
 		if (!this._goboPopup.Draw(this._goboSchema.Gobos, this._goboSchema.Gobos.Count, out var selected, CalcItemHeight())) return;
 
-		this.Gobo = selected;
-		this._ctx.Scene.GetModule<LightModule>().UpdateSceneLightTexture(sceneLight, this.Gobo!.Path);
+		entity.Gobo = selected;
+		this._ctx.Scene.GetModule<LightModule>().UpdateSceneLightTexture(entity.GetObject(), entity.Gobo!.Path);
 	}
 
 	private static float CalcItemHeight() => (ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y) * 2;
@@ -199,7 +197,7 @@ public class LightPropertyList : ObjectPropertyList {
 		try {
 			img = this._tex.GetFromGame(gobo.Path);
 		} catch {
-			Ktisis.Log.Error($"[LightPropertyList] Couldn't resolve ITextureProvider path for gobo: {gobo.Name} @ {gobo.Path}!");
+			Ktisis.Log.Error($"[LightPropertyList] Couldn't resolve ITextureProvider path for gobo!\n{gobo.Name} @ {gobo.Path}");
 		}
 		if (img != null)
 			ImGui.Image(img.GetWrapOrEmpty().Handle, size);

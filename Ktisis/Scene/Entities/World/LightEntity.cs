@@ -1,6 +1,7 @@
 using System;
 
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Gobos;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Modules.Lights;
 using Ktisis.Scene.Types;
@@ -16,6 +17,7 @@ public enum LightEntityFlags {
 
 public class LightEntity : WorldEntity, IDeletable, IHideable {
 	public LightEntityFlags Flags { get; set; } = LightEntityFlags.None;
+	public GoboEntry? Gobo { get; set; }
 
 	public unsafe bool IsHidden {
 		get {
