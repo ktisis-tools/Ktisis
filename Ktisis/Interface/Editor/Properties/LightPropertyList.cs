@@ -1,11 +1,18 @@
 using System;
+using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Plugin.Services;
 
+using GLib.Popups;
 using GLib.Widgets;
 
+using Ktisis.Common.Extensions;
+using Ktisis.Data.Config.Gobos;
+using Ktisis.Data.Serialization;
 using Ktisis.Interface.Editor.Properties.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities;
@@ -18,14 +25,25 @@ namespace Ktisis.Interface.Editor.Properties;
 
 public class LightPropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
+	private readonly ITextureProvider _tex;
 	private readonly LocaleManager _locale;
+	private readonly GoboSchema _goboSchema;
+	private readonly PopupList<GoboEntry> _goboPopup;
+	private GoboEntry? Gobo;
 
 	public LightPropertyList(
 		IEditorContext ctx,
+		ITextureProvider tex,
 		LocaleManager locale
 	) {
 		this._ctx = ctx;
+		this._tex = tex;
 		this._locale = locale;
+		this._goboSchema = SchemaReader.ReadGobos();
+		this._goboPopup = new PopupList<GoboEntry>(
+			"##GoboPopup",
+			this.DrawGoboRow
+		).WithSearch(GoboSearchPredicate);
 	}
 	
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
@@ -34,6 +52,7 @@ public class LightPropertyList : ObjectPropertyList {
 		
 		builder.AddHeader("Light", () => this.DrawLightTab(light));
 		builder.AddHeader("Shadows", () => this.DrawShadowsTab(light));
+		builder.AddHeader("Texture", () => this.DrawTextureTab(light));
 	}
 
 	private unsafe void DrawLightTab(LightEntity entity) {
@@ -105,11 +124,6 @@ public class LightPropertyList : ObjectPropertyList {
 		ImGui.DragFloat("Intensity", ref light->Color.Intensity, 0.01f, 0.0f, 100.0f);
 		if (ImGui.DragFloat("Range##LightRange", ref light->Range, 0.1f, 0, 999))
 			entity.Flags |= LightEntityFlags.Update;
-		
-		ImGui.Spacing();
-		if (ImGui.Button($"Update Texture"))
-			this._ctx.Scene.GetModule<LightModule>()?.UpdateSceneLightTexture(sceneLight, null);
-			// this._ctx.Scene.GetModule<LightModule>()?.UpdateSceneLightTexture(sceneLight, "bg/ex3/01_nvt_n4/dun/n4d8/texture/n4d8_a3_gla01_i.tex");
 
 		ImGui.Spacing();
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, "Import light settings"))
@@ -137,6 +151,66 @@ public class LightPropertyList : ObjectPropertyList {
 		ImGui.DragFloat("Shadow Near", ref light->ShadowNear, 0.01f, 0.0f, 1000.0f);
 		ImGui.DragFloat("Shadow Far", ref light->ShadowFar, 0.01f, 0.0f, 1000.0f);
 	}
+
+	private unsafe void DrawTextureTab(LightEntity entity) {
+		var sceneLight = entity.GetObject();
+		var light = sceneLight != null ? sceneLight->RenderLight : null;
+		if (light == null) return;
+
+		if (ImGui.Button($"Update Texture"))
+			this._ctx.Scene.GetModule<LightModule>().UpdateSceneLightTexture(sceneLight, "bgcommon/hou/indoor/general/1133/texture/fun_b0_m1133_0b_i.tex");
+		if (ImGui.Button($"Update Texture 2"))
+			this._ctx.Scene.GetModule<LightModule>().UpdateSceneLightTexture(sceneLight, "bgcommon/hou/indoor/general/0954/texture/fun_b0_m0954_0d_i.tex");
+
+		ImGui.Spacing();
+		if (ImGui.Button("Choose Texture..."))
+			this._goboPopup.Open();
+		ImGui.Spacing();
+		ImGui.Text($"Current Texture: {(this.Gobo == null ? "None" : this.Gobo.Name)}");
+
+		this.DrawGoboPopup(sceneLight);
+	}
+
+	private unsafe void DrawGoboPopup(SceneLight* sceneLight) {
+		if (!this._goboPopup.IsOpen) return;
+		if (!this._goboPopup.Draw(this._goboSchema.Gobos, this._goboSchema.Gobos.Count, out var selected, CalcItemHeight())) return;
+
+		this.Gobo = selected;
+		this._ctx.Scene.GetModule<LightModule>().UpdateSceneLightTexture(sceneLight, this.Gobo!.Path);
+	}
+
+	private static float CalcItemHeight() => (ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y) * 2;
+	private bool DrawGoboRow(GoboEntry gobo, bool isFocus) {
+		var height = CalcItemHeight();
+		var space = ImGui.GetStyle().ItemInnerSpacing.X;
+		var cursor = ImGui.GetCursorPosX();
+		var result = ImGui.Button(string.Empty, new Vector2(ImGui.GetContentRegionAvail().X, height));
+		ImGui.SameLine(cursor, height+space);
+		ImGui.Text(gobo.Name);
+
+		ImGui.SameLine(cursor, height+space);
+		ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetTextLineHeight());
+		using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xAF)))
+			ImGui.Text(gobo.Path);
+
+		ImGui.SameLine(cursor);
+		var size = new Vector2(height, height);
+		ISharedImmediateTexture? img = null;
+		try {
+			img = this._tex.GetFromGame(gobo.Path);
+		} catch {
+			Ktisis.Log.Error($"[LightPropertyList] Couldn't resolve ITextureProvider path for gobo: {gobo.Name} @ {gobo.Path}!");
+		}
+		if (img != null)
+			ImGui.Image(img.GetWrapOrEmpty().Handle, size);
+		else
+			ImGui.Dummy(size);
+
+		return result;
+	}
+
+	private static bool GoboSearchPredicate(GoboEntry gobo, string query)
+		=> gobo.Name.Contains(query, StringComparison.OrdinalIgnoreCase) || gobo.Path.Contains(query, StringComparison.OrdinalIgnoreCase);
 	
 	private unsafe void DrawLightFlag(string label, RenderLight* light, LightFlags flag) {
 		var active = light->Flags.HasFlag(flag);
