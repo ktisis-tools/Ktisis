@@ -11,5 +11,6 @@ public enum EntityType {
 	Weapon,
 	Light,
 	RefImage,
-	TalkOverlay
+	TalkOverlay,
+	BalloonOverlay
 }

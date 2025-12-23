@@ -44,37 +44,56 @@ public class OverlayPropertyList : ObjectPropertyList {
 		if (ImGui.Checkbox("Movable", ref movable))
 			overlay.Draggable = movable;
 
-		if (overlay is not TalkOverlay talk) return;
-		ImGui.Spacing();
-		var speaker = talk.Speaker;
-		if (ImGui.InputText("Speaker", ref speaker, 64))
-			talk.Speaker = speaker;
+		if (overlay is TalkOverlay talk) {
+			
+			ImGui.Spacing();
+			var speaker = talk.Speaker;
+			if (ImGui.InputText("Speaker", ref speaker, 64))
+				talk.Speaker = speaker;
 		
-		ImGui.Spacing();
-		var dialog = talk.Dialog;
-		if (ImGui.InputTextMultiline("Dialog", ref dialog, 1000))
-			talk.Dialog = dialog;
+			ImGui.Spacing();
+			var dialog = talk.Dialog;
+			if (ImGui.InputTextMultiline("Dialog", ref dialog, 1000))
+				talk.Dialog = dialog;
 		
-		ImGui.Spacing();
-		var background = talk.Background;
-		if (ImGui.BeginCombo("Background", this._locale.Translate($"background.{background}"))) {
-			foreach (var value in Enum.GetValues<TalkBackground>()) {
-				var valueLabel = this._locale.Translate($"background.{value}");
-				if (ImGui.Selectable(valueLabel, background == value))
-					talk.Background = value;
+			ImGui.Spacing();
+			var background = talk.Background;
+			if (ImGui.BeginCombo("Background", this._locale.Translate($"background.{background}"))) {
+				foreach (var value in Enum.GetValues<TalkBackground>()) {
+					var valueLabel = this._locale.Translate($"background.{value}");
+					if (ImGui.Selectable(valueLabel, background == value))
+						talk.Background = value;
+				}
+				ImGui.EndCombo();
 			}
-			ImGui.EndCombo();
+		
+			ImGui.Spacing();
+			var cursor = talk.Cursor;
+			if (ImGui.BeginCombo("Cursor", this._locale.Translate($"cursor.{cursor}"))) {
+				foreach (var value in Enum.GetValues<TalkCursor>()) {
+					var valueLabel = this._locale.Translate($"cursor.{value}");
+					if (ImGui.Selectable(valueLabel, cursor == value))
+						talk.Cursor = value;
+				}
+				ImGui.EndCombo();
+			}
 		}
-		
-		ImGui.Spacing();
-		var cursor = talk.Cursor;
-		if (ImGui.BeginCombo("Cursor", this._locale.Translate($"cursor.{cursor}"))) {
-			foreach (var value in Enum.GetValues<TalkCursor>()) {
-				var valueLabel = this._locale.Translate($"cursor.{value}");
-				if (ImGui.Selectable(valueLabel, cursor == value))
-					talk.Cursor = value;
+		else if (overlay is BalloonOverlay balloon) {
+			ImGui.Spacing();
+			var dialog = balloon.Dialog;
+			if (ImGui.InputText("Dialog", ref dialog, 64))
+				balloon.Dialog = dialog;
+
+			ImGui.Spacing();
+			var background = balloon.Background;
+			if (ImGui.BeginCombo("Background", this._locale.Translate($"background.{background}"))) {
+				foreach (var value in Enum.GetValues<BalloonBackground>()) {
+					var valueLabel = this._locale.Translate($"background.{value}");
+					if (ImGui.Selectable(valueLabel, background == value))
+						balloon.Background = value;
+				}
+				ImGui.EndCombo();
 			}
-			ImGui.EndCombo();
 		}
 	}
 }

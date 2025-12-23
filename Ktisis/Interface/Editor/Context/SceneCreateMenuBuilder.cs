@@ -4,6 +4,7 @@ using GLib.Popups.Context;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Structs.Lights;
 
@@ -59,7 +60,8 @@ public class SceneCreateMenuBuilder {
 
 	private void BuildUtilityGroup(ContextMenuBuilder sub) {
 		sub.Action("Add reference image", this.OpenReferenceImage);
-		sub.Action("Add overlay dialog", () => this.Factory.BuildTalk().Add());
+		sub.Action("Add overlay dialog", () => this.Factory.BuildOverlay(OverlayTypes.Talk).Add());
+		sub.Action("Add overlay balloon", () => this.Factory.BuildOverlay(OverlayTypes.Balloon).Add());
 	}
 	
 	// Actor handling
