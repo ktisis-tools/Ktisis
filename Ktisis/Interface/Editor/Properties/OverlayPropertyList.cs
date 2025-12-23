@@ -94,6 +94,18 @@ public class OverlayPropertyList : ObjectPropertyList {
 				}
 				ImGui.EndCombo();
 			}
+			
+			ImGui.Spacing();
+			var arrow = balloon.Arrow;
+			if (ImGui.Checkbox("Arrow", ref arrow))
+				balloon.Arrow = arrow;
+			
+			ImGui.Spacing();
+			using (ImRaii.Disabled(!balloon.Arrow)) {
+				var arrowX = balloon.ArrowX;
+				if (ImGui.SliderFloat("Arrow Position", ref arrowX, 32.0f, 130.0f))
+					balloon.ArrowX = arrowX;
+			}
 		}
 	}
 }

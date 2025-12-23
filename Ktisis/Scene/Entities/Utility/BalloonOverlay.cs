@@ -18,7 +18,9 @@ public class BalloonOverlay : OverlayEntity {
 
 		this.Node = new BalloonNode(
 			BalloonBackground.Alliance,
-			"I am One Cool Bunny..."
+			"I am One Cool Bunny...",
+			true,
+			130.0f
 		) {
 			Size = new Vector2(200.0f, 90.0f),
 			Position = new Vector2(500.0f, 500.0f),
@@ -35,5 +37,13 @@ public class BalloonOverlay : OverlayEntity {
 	public BalloonBackground Background {
 		get => this.Node.BgChoice;
 		set => this.Node.BgChoice = value;
+	}
+	public bool Arrow {
+		get => this.Node.ArrowVisible;
+		set => this.Node.ArrowVisible = value;
+	}
+	public float ArrowX {
+		get => this.Node.ArrowX;
+		set => this.Node.ArrowX = value;
 	}
 }

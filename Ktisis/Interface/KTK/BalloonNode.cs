@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Numerics;
 
@@ -34,13 +35,19 @@ public class BalloonNode : OverlayNode {
 	public override bool HideWithNativeUi => false;
 	public BalloonBackground BgChoice;
 	public string Dialog;
+	public bool ArrowVisible;
+	public float ArrowX;
 
 	public BalloonNode(
 		BalloonBackground bgChoice,
-		string dialog
+		string dialog,
+		bool arrowVisible,
+		float arrowX
 	) {
 		this.BgChoice = bgChoice;
 		this.Dialog = dialog;
+		this.ArrowVisible = arrowVisible;
+		this.ArrowX = arrowX;
 
 		this.BalloonBg = this.SetBalloonBg();
 		this.BalloonArrow = this.SetBalloonArrow();
@@ -57,6 +64,10 @@ public class BalloonNode : OverlayNode {
 		this.TalkText.String = this.Dialog;
 		// update bg texture
 		this.BalloonBg.TextureCoordinates = this.CoordinatesForBg();
+		// update arrow visibility, position
+		this.BalloonArrow.IsVisible = this.ArrowVisible;
+		if (this.ArrowVisible)
+			this.BalloonArrow.Position = new Vector2(Math.Clamp(this.ArrowX, 32.0f, 130.0f), 70.0f);
 	}
 
 	private SimpleNineGridNode SetBalloonBg() {
@@ -78,9 +89,8 @@ public class BalloonNode : OverlayNode {
 			TexturePath = "ui/uld/MiniTalkPlayer_hr1.tex",
 			TextureSize = new Vector2(32.0f, 32.0f),
 			TextureCoordinates = new Vector2(0, 992.0f),
-			Position = new Vector2(49, 72),
-			Size = new Vector2(32.0f, 32.0f),
-			Scale = new Vector2(0.5f, 0.5f)
+			Position = new Vector2(49, 70),
+			Size = new Vector2(32.0f, 32.0f)
 		};
 	}
 
@@ -91,6 +101,7 @@ public class BalloonNode : OverlayNode {
 			TextColor = KnownColor.Black.Vector(),
 			FontType = FontType.Axis,
 			TextFlags = TextFlags.Ellipsis,
+			AlignmentType = AlignmentType.Center,
 			FontSize = 12,
 			LineSpacing = 14,
 			String = this.Dialog
