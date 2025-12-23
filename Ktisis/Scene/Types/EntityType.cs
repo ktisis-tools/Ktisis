@@ -10,5 +10,6 @@ public enum EntityType {
 	ModelSlot,
 	Weapon,
 	Light,
-	RefImage
+	RefImage,
+	TalkOverlay
 }
