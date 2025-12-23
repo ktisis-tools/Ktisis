@@ -28,11 +28,11 @@ public class OverlayService : IDisposable {
 		this._init = true;
 	}
 	
-	public bool AddNode(TalkNode node) {
+	public bool AddNode(OverlayNode node) {
 		this._controller.AddNode(node);
 		return true;
 	}
-	public bool RemoveNode(TalkNode node) {
+	public bool RemoveNode(OverlayNode node) {
 		this._controller.RemoveNode(node);
 		return true;
 	}
