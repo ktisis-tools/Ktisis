@@ -11,7 +11,7 @@ public interface IEntityFactory {
 	public ILightBuilder BuildLight();
 	public IObjectBuilder BuildObject();
 	public IPoseBuilder BuildPose();
-	public IOverlayBuilder BuildTalk();
+	public IOverlayBuilder BuildOverlay(OverlayTypes type);
 
 	public IActorCreator CreateActor();
 	public ILightCreator CreateLight();

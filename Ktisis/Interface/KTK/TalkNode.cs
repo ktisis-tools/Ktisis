@@ -57,8 +57,6 @@ public class TalkNode : OverlayNode {
 		this.Speaker = speaker;
 		this.Dialog = dialog;
 
-		this.EnableMoving = true;
-
 		this.TalkBgNode = this.SetTalkBg();
 		this.SpeakerBgNode = this.SetSpeakerBg();
 		this.ClickyNode = this.SetClicky();
