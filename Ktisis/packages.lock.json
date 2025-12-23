@@ -60,6 +60,11 @@
         "resolved": "10.0.0",
         "contentHash": "L3AdmZ1WOK4XXT5YFPEwyt0ep6l8lGIPs7F5OOBZc77Zqeo01Of7XXICy47628sdVl0v/owxYJTe86DTgFwKCA=="
       },
+      "SixLabors.ImageSharp": {
+        "type": "Transitive",
+        "resolved": "3.1.12",
+        "contentHash": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A=="
+      },
       "glib": {
         "type": "Project"
       },
@@ -67,6 +72,12 @@
         "type": "Project",
         "dependencies": {
           "JetBrains.Annotations": "[2022.3.1, )"
+        }
+      },
+      "kamitoolkit": {
+        "type": "Project",
+        "dependencies": {
+          "SixLabors.ImageSharp": "[3.1.12, )"
         }
       }
     }
