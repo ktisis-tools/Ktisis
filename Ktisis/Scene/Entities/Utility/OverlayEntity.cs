@@ -8,7 +8,7 @@ using Ktisis.Scene.Types;
 namespace Ktisis.Scene.Entities.Utility;
 
 public abstract class OverlayEntity : SceneEntity, IVisibility, IDeletable {
-	private OverlayNode Node;
+	protected abstract OverlayNode Node { get; }
 	private bool _visible = true;
 
 	public OverlayEntity(
@@ -21,16 +21,16 @@ public abstract class OverlayEntity : SceneEntity, IVisibility, IDeletable {
 		get => this._visible;
 		set {
 			this._visible = value;
-			this.Node!.IsVisible = value;
+			this.Node.IsVisible = value;
 		}
 	}
 	public Vector2 Position {
-		get => this.Node!.Position;
-		set => this.Node!.Position = value;
+		get => this.Node.Position;
+		set => this.Node.Position = value;
 	}
 	public bool Draggable {
-		get => this.Node!.EnableMoving;
-		set => this.Node!.EnableMoving = value;
+		get => this.Node.EnableMoving;
+		set => this.Node.EnableMoving = value;
 	}
 
 	public bool Delete() {
