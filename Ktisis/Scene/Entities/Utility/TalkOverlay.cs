@@ -9,7 +9,7 @@ using Ktisis.Services.Game;
 namespace Ktisis.Scene.Entities.Utility;
 
 public class TalkOverlay : OverlayEntity {
-	private override TalkNode Node;
+	protected override sealed TalkNode Node { get; }
 	
 	public TalkOverlay(
 		ISceneManager scene
