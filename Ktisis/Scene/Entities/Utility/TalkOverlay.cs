@@ -8,9 +8,8 @@ using Ktisis.Services.Game;
 
 namespace Ktisis.Scene.Entities.Utility;
 
-public class TalkOverlay : SceneEntity, IVisibility, IDeletable {
-	private TalkNode Node;
-	private bool _visible = true;
+public class TalkOverlay : OverlayEntity {
+	private override TalkNode Node;
 	
 	public TalkOverlay(
 		ISceneManager scene
@@ -31,23 +30,6 @@ public class TalkOverlay : SceneEntity, IVisibility, IDeletable {
 		this.Scene.Overlay.AddNode(this.Node);
 	}
 
-	// todo: make these generic
-	public bool Visible {
-		get => this._visible;
-		set {
-			this._visible = value;
-			this.Node.IsVisible = value;
-		}
-	}
-	public Vector2 Position {
-		get => this.Node.Position;
-		set => this.Node.Position = value;
-	}
-	public bool Draggable {
-		get => this.Node.EnableMoving;
-		set => this.Node.EnableMoving = value;
-	}
-
 	public string Speaker {
 		get => this.Node.Speaker;
 		set => this.Node.Speaker = value;
@@ -63,12 +45,5 @@ public class TalkOverlay : SceneEntity, IVisibility, IDeletable {
 	public TalkCursor Cursor {
 		get => this.Node.CursorChoice;
 		set => this.Node.CursorChoice = value;
-	}
-
-	public bool Delete() {
-		this.Scene.Overlay.RemoveNode(this.Node);
-		this.Node.Dispose();
-		this.Remove();
-		return true;
 	}
 }

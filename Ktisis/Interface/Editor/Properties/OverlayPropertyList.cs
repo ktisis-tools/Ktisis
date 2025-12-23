@@ -28,22 +28,23 @@ public class OverlayPropertyList : ObjectPropertyList {
 	}
 	
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
-		if (entity is not TalkOverlay talk)
+		if (entity is not OverlayEntity overlay)
 			return;
 		
-		builder.AddHeader("Dialog", () => this.DrawTalkTab(talk));
+		builder.AddHeader("Dialog", () => this.DrawTalkTab(overlay));
 	}
 
-	private void DrawTalkTab(TalkOverlay talk) {
-		var position = talk.Position;
+	private void DrawTalkTab(OverlayEntity overlay) {
+		var position = overlay.Position;
 		if (ImGui.DragFloat2("Position", ref position))
-			talk.Position = position;
+			overlay.Position = position;
 		
 		ImGui.Spacing();
-		var movable = talk.Draggable;
+		var movable = overlay.Draggable;
 		if (ImGui.Checkbox("Movable", ref movable))
-			talk.Draggable = movable;
-		
+			overlay.Draggable = movable;
+
+		if (overlay is not TalkOverlay talk) return;
 		ImGui.Spacing();
 		var speaker = talk.Speaker;
 		if (ImGui.InputText("Speaker", ref speaker, 64))

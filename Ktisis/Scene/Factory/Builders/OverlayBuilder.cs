@@ -9,9 +9,9 @@ using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Factory.Builders;
 
-public interface IOverlayBuilder : IEntityBuilder<TalkOverlay, IOverlayBuilder> { }
+public interface IOverlayBuilder : IEntityBuilder<OverlayEntity, IOverlayBuilder> { }
 
-public sealed class OverlayBuilder : EntityBuilder<TalkOverlay, IOverlayBuilder>, IOverlayBuilder {
+public sealed class OverlayBuilder : EntityBuilder<OverlayEntity, IOverlayBuilder>, IOverlayBuilder {
 	public OverlayBuilder(
 		ISceneManager scene
 	) : base(scene) { }
