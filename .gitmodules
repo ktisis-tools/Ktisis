@@ -4,3 +4,6 @@
 [submodule "GLib"]
 	path = GLib
 	url = git@github.com:ktisis-tools/GLib.git
+[submodule "KamiToolKit"]
+	path = KamiToolKit
+	url = https://github.com/MidoriKami/KamiToolKit.git
