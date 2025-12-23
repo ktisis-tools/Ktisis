@@ -34,6 +34,7 @@ public class PropertyEditor {
 			.Create<BasePropertyList>()
 			.Create<PosePropertyList>(ctx, gui)
 			.Create<LightPropertyList>(ctx)
+			.Create<OverlayPropertyList>(ctx)
 			.Create<ImagePropertyList>(ctx)
 			.Create<WeaponPropertyList>()
 			.Create<PresetPropertyList>(ctx);

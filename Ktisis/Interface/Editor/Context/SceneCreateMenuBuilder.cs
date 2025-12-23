@@ -60,6 +60,7 @@ public class SceneCreateMenuBuilder {
 
 	private void BuildUtilityGroup(ContextMenuBuilder sub) {
 		sub.Action("Add reference image", this.OpenReferenceImage);
+		sub.Action("Add overlay dialog", () => this.Factory.BuildTalk().Add());
 	}
 	
 	// Actor handling

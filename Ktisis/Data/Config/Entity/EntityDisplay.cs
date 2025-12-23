@@ -41,6 +41,7 @@ public record EntityDisplay {
 		{ EntityType.ModelSlot, new EntityDisplay(color: ModelMint) },
 		{ EntityType.Weapon, new EntityDisplay(icon: FontAwesomeIcon.Magic) },
 		{ EntityType.Light, new EntityDisplay(color: LightLemon, icon: FontAwesomeIcon.Lightbulb) },
-		{ EntityType.RefImage, new EntityDisplay(icon: FontAwesomeIcon.Image) }
+		{ EntityType.RefImage, new EntityDisplay(icon: FontAwesomeIcon.Image) },
+		{ EntityType.TalkOverlay, new EntityDisplay(icon: FontAwesomeIcon.Comment) }
 	};
 }

@@ -762,5 +762,22 @@
 		"Linear": "Linear",
 		"Quadratic": "Quadratic",
 		"Cubic": "Cubic"
+	},
+	
+	"background": {
+		"Basic": "Basic",
+		"Thought": "Thought",
+		"Echo": "Echo",
+		"Computer": "Computer",
+		"Yell": "Yell",
+		"Parchment": "Parchment",
+		"Dragonspeak": "Dragonspeak",
+		"Linkpearl": "Linkpearl",
+		"Narration": "Narration"
+	},
+	"cursor": {
+		"None": "None",
+		"Pin": "Pin",
+		"Loop": "Loop"
 	}
 }

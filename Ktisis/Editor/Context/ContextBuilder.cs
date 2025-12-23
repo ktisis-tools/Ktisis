@@ -25,6 +25,7 @@ namespace Ktisis.Editor.Context;
 
 [Singleton]
 public class ContextBuilder {
+	private readonly OverlayService _overlay;
 	private readonly GPoseService _gpose;
 	private readonly InteropService _interop;
 	private readonly IFramework _framework;
@@ -36,6 +37,7 @@ public class ContextBuilder {
 	private readonly IObjectTable _objectTable;
 
 	public ContextBuilder(
+		OverlayService overlay,
 		GPoseService gpose,
 		InteropService interop,
 		IFramework framework,
@@ -46,6 +48,7 @@ public class ContextBuilder {
 		McdfManager mcdf,
 		IObjectTable objectTable
 	) {
+		this._overlay = overlay;
 		this._gpose = gpose;
 		this._interop = interop;
 		this._framework = framework;
@@ -78,7 +81,7 @@ public class ContextBuilder {
 			Characters = new CharacterManager(context, this._objectTable, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
-			Scene = new SceneManager(context, scope, this._framework, factory),
+			Scene = new SceneManager(context, scope, this._framework, factory, this._overlay),
 			Selection = select,
 			Transform = new TransformHandler(context, actions, select)
 		};
