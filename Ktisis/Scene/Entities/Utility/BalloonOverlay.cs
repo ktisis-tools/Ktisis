@@ -17,8 +17,8 @@ public class BalloonOverlay : OverlayEntity {
 		this.Type = EntityType.BalloonOverlay;
 
 		this.Node = new BalloonNode(
-			BalloonBackground.Alliance,
-			"I am One Cool Bunny...",
+			BalloonBackground.Say,
+			"New dialog...",
 			true,
 			130.0f
 		) {
