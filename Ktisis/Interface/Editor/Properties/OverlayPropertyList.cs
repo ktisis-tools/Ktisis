@@ -107,5 +107,28 @@ public class OverlayPropertyList : ObjectPropertyList {
 					balloon.ArrowX = arrowX;
 			}
 		}
+		else if (overlay is StatusOverlay status) {
+			ImGui.Spacing();
+			var text = status.StatusText;
+			if (ImGui.InputText("Status Text", ref text, 64))
+				status.StatusText = text;
+			
+			ImGui.Spacing();
+			var path = status.IconPath;
+			if (ImGui.InputText("Icon Path", ref path, 128))
+				status.IconPath = path;
+			
+			ImGui.Spacing();
+			var type = status.StatusType;
+			if (ImGui.BeginCombo("Type", this._locale.Translate($"status.{type}"))) {
+				foreach (var value in Enum.GetValues<StatusType>()) {
+					var valueLabel = this._locale.Translate($"status.{value}");
+					if (ImGui.Selectable(valueLabel, type == value))
+						status.StatusType = value;
+				}
+				ImGui.EndCombo();
+			}
+			
+		}
 	}
 }

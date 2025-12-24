@@ -13,7 +13,8 @@ namespace Ktisis.Scene.Factory.Builders;
 
 public enum OverlayTypes {
 	Talk,
-	Balloon
+	Balloon,
+	Status
 }
 
 public interface IOverlayBuilder : IEntityBuilder<OverlayEntity, IOverlayBuilder> { }
@@ -32,6 +33,7 @@ public sealed class OverlayBuilder : EntityBuilder<OverlayEntity, IOverlayBuilde
 	protected override OverlayEntity Build() => this._type switch {
 		OverlayTypes.Talk => this.BuildTalk(),
 		OverlayTypes.Balloon => this.BuildBalloon(),
+		OverlayTypes.Status => this.BuildStatus(),
 		_ => this.BuildTalk()
 	};
 
@@ -49,6 +51,15 @@ public sealed class OverlayBuilder : EntityBuilder<OverlayEntity, IOverlayBuilde
 			this.Name = $"Balloon {this.Scene.Children.OfType<BalloonOverlay>().Count() + 1}";
 
 		return new BalloonOverlay(this.Scene) {
+			Name = this.Name
+		};
+	}
+
+	private StatusOverlay BuildStatus() {
+		if (this.Name.IsNullOrEmpty())
+			this.Name = $"Status {this.Scene.Children.OfType<StatusOverlay>().Count() + 1}";
+
+		return new StatusOverlay(this.Scene) {
 			Name = this.Name
 		};
 	}

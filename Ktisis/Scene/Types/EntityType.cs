@@ -12,5 +12,6 @@ public enum EntityType {
 	Light,
 	RefImage,
 	TalkOverlay,
-	BalloonOverlay
+	BalloonOverlay,
+	StatusOverlay
 }
