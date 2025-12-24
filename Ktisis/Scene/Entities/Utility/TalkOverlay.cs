@@ -19,11 +19,11 @@ public class TalkOverlay : OverlayEntity {
 		this.Node = new TalkNode(
 			TalkBackground.Basic,
 			TalkCursor.Pin,
-			"Cool Bunny",
-			"I am One Cool Bunny..."
+			"Speaker",
+			"New dialog..."
 		) {
 			Size = new Vector2(680.0f, 180.0f),
-			Position = new Vector2(500.0f, 500.0f),
+			Position = new Vector2(600.0f, 600.0f),
 			EnableMoving = false,
 			IsVisible = true
 		};

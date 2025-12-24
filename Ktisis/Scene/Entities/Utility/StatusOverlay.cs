@@ -15,11 +15,11 @@ public class StatusOverlay : OverlayEntity {
 
 		this.Node = new StatusNode(
 			StatusType.Buff,
-			"Bunnymoded",
+			"New Status",
 			"ui/icon/213000/213001_hr1.tex"
 		) {
 			Size = new Vector2(247.0f, 32.0f),
-			Position = new Vector2(500.0f, 500.0f),
+			Position = new Vector2(450.0f, 450.0f),
 			EnableMoving = false,
 			IsVisible = true
 		};

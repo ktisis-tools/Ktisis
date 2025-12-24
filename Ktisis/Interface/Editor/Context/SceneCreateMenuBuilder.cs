@@ -38,7 +38,7 @@ public class SceneCreateMenuBuilder {
 	}
 	
 	private void BuildLightGroup(ContextMenuBuilder sub)
-		=> sub.SubMenu("Create new light", this.BuildLightMenu);
+		=> sub.SubMenu("Create new light...", this.BuildLightMenu);
 	
 	private void BuildLightMenu(ContextMenuBuilder sub) {
 		sub.Action("Point", () => SpawnLight(LightType.PointLight))
@@ -59,10 +59,14 @@ public class SceneCreateMenuBuilder {
 	}
 
 	private void BuildUtilityGroup(ContextMenuBuilder sub) {
+		sub.SubMenu("Add new overlay...", this.BuildOverlayGroup);
 		sub.Action("Add reference image", this.OpenReferenceImage);
-		sub.Action("Add overlay dialog", () => this.Factory.BuildOverlay(OverlayTypes.Talk).Add());
-		sub.Action("Add overlay balloon", () => this.Factory.BuildOverlay(OverlayTypes.Balloon).Add());
-		sub.Action("Add overlay status", () => this.Factory.BuildOverlay(OverlayTypes.Status).Add());
+	}
+
+	private void BuildOverlayGroup(ContextMenuBuilder sub) {
+		sub.Action("Dialog", () => this.Factory.BuildOverlay(OverlayTypes.Talk).Add())
+			.Action("Balloon", () => this.Factory.BuildOverlay(OverlayTypes.Balloon).Add())
+			.Action("Status", () => this.Factory.BuildOverlay(OverlayTypes.Status).Add());
 	}
 	
 	// Actor handling

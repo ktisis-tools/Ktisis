@@ -28,6 +28,17 @@ public abstract class OverlayEntity : SceneEntity, IVisibility, IDeletable {
 		get => this.Node.Position;
 		set => this.Node.Position = value;
 	}
+	public float Scale {
+		get => this.Node.ScaleX;
+		set {
+			this.Node.ScaleX = value;
+			this.Node.ScaleY = value;
+		}
+	}
+	public Vector2 Size {
+		get => this.Node.Size;
+		private set => this.Node.Size = value;
+	}
 	public bool Draggable {
 		get => this.Node.EnableMoving;
 		set => this.Node.EnableMoving = value;
