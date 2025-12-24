@@ -63,6 +63,7 @@ public class SceneCreateMenuBuilder {
 		sub.Action("Add reference image", this.OpenReferenceImage);
 		sub.Action("Add overlay dialog", () => this.Factory.BuildOverlay(OverlayTypes.Talk).Add());
 		sub.Action("Add overlay balloon", () => this.Factory.BuildOverlay(OverlayTypes.Balloon).Add());
+		sub.Action("Add overlay status", () => this.Factory.BuildOverlay(OverlayTypes.Status).Add());
 	}
 	
 	// Actor handling

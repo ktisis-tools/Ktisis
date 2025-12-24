@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Globalization;
+using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
 
@@ -42,4 +44,18 @@ public static class GuiHelpers {
 
 	public static void OpenBrowser(string url)
 		=> Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+
+	public static Vector4 VectorColorFromString(string color) {
+		var hex = color.TrimStart('#');
+		var r = byte.Parse(hex[0..2], NumberStyles.HexNumber);
+		var g = byte.Parse(hex[2..4], NumberStyles.HexNumber);
+		var b = byte.Parse(hex[4..6], NumberStyles.HexNumber);
+		var a = byte.Parse(hex[6..8], NumberStyles.HexNumber);
+		return new Vector4(
+			r / 255.0f,
+			g / 255.0f,
+			b / 255.0f,
+			a / 255.0f
+		);
+	}
 }

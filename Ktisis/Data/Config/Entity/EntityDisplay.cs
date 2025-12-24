@@ -43,6 +43,7 @@ public record EntityDisplay {
 		{ EntityType.Light, new EntityDisplay(color: LightLemon, icon: FontAwesomeIcon.Lightbulb) },
 		{ EntityType.RefImage, new EntityDisplay(icon: FontAwesomeIcon.Image) },
 		{ EntityType.TalkOverlay, new EntityDisplay(icon: FontAwesomeIcon.Comment) },
-		{ EntityType.BalloonOverlay, new EntityDisplay(icon: FontAwesomeIcon.Comments) }
+		{ EntityType.BalloonOverlay, new EntityDisplay(icon: FontAwesomeIcon.Comments) },
+		{ EntityType.StatusOverlay, new EntityDisplay(icon: FontAwesomeIcon.ChartBar) }
 	};
 }
