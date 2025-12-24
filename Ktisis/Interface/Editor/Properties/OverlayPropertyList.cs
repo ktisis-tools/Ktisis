@@ -38,6 +38,9 @@ public class OverlayPropertyList : ObjectPropertyList {
 	private void DrawOverlayTab(OverlayEntity overlay) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
+		ImGui.Text("Position");
+		ImGui.Spacing();
+
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), overlay.Draggable))
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.HandSpock, "Draggable"))
 				overlay.Draggable = !overlay.Draggable;
@@ -47,18 +50,27 @@ public class OverlayPropertyList : ObjectPropertyList {
 			overlay.Position = GetCenter(overlay);
 
 		ImGui.SameLine(0, spacing);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		var position = overlay.Position;
 		if (ImGui.DragFloat2("Position", ref position))
 			overlay.Position = position;
+
+		ImGui.Spacing();
+		ImGui.Text("Scale");
 
 		ImGui.Spacing();
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowCircleLeft, "Reset scale"))
 			overlay.Scale = 1.0f;
 
 		ImGui.SameLine(0, spacing);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		var scale = overlay.Scale;
 		if (ImGui.DragFloat("Scale", ref scale, 0.01f, 0f, 5.0f))
 			overlay.Scale = scale;
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
 
 		switch (overlay) {
 			case TalkOverlay talk:
@@ -126,10 +138,10 @@ public class OverlayPropertyList : ObjectPropertyList {
 
 		ImGui.Spacing();
 		var arrow = balloon.Arrow;
-		if (ImGui.Checkbox("Arrow", ref arrow))
+		if (ImGui.Checkbox("Show Bubble Arrow", ref arrow))
 			balloon.Arrow = arrow;
 
-		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.Spacing();
 		using (ImRaii.Disabled(!balloon.Arrow)) {
 			var arrowX = balloon.ArrowX;
 			if (ImGui.SliderFloat("Arrow Position", ref arrowX, 32.0f, 130.0f))
