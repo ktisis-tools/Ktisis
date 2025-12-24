@@ -757,11 +757,27 @@
 		"Parchment": "Parchment",
 		"Dragonspeak": "Dragonspeak",
 		"Linkpearl": "Linkpearl",
-		"Narration": "Narration"
+		"Narration": "Narration",
+		"Say": "Say",
+		"Party": "Party",
+		"Tell": "Tell",
+		"Alliance": "Alliance",
+		"Shout": "Shout",
+		"FC": "Free Company",
+		"LS": "Linkshell",
+		"CWLS": "Cross-World Linkshell",
+		"Novice": "Novice",
+		"PVP": "PVP"
 	},
 	"cursor": {
 		"None": "None",
 		"Pin": "Pin",
 		"Loop": "Loop"
+	},
+	"status": {
+		"None": "None",
+		"Buff": "Buff",
+		"Debuff": "Debuff",
+		"Falloff": "Falloff"
 	}
 }
