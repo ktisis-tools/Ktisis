@@ -36,7 +36,6 @@ public class OverlayPropertyList : ObjectPropertyList {
 	private readonly LocaleManager _locale;
 	private readonly List<StatusRow> _statuses;
 	private readonly PopupList<StatusRow> _statusPopup;
-	private StatusRow? _selectedStatus;
 
 	public OverlayPropertyList(
 		IDataManager data,
@@ -210,10 +209,11 @@ public class OverlayPropertyList : ObjectPropertyList {
 			this._statusPopup.Open();
 
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		ImGui.Text($"Texture: {(this._selectedStatus == null ? "Default" : this._selectedStatus.Name)}");
-		if (this._selectedStatus != null) {
+		var currentStatus = this._statuses.FirstOrDefault(stat => stat.Path == status.IconPath);
+		ImGui.Text($"Texture: {currentStatus?.Name}");
+		if (currentStatus != null) {
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-			ImGui.Image(this._texture.GetFromGameIcon(this._selectedStatus.Icon).GetWrapOrEmpty().Handle, new Vector2(24.0f, 32.0f));
+			ImGui.Image(this._texture.GetFromGameIcon(currentStatus.Icon).GetWrapOrEmpty().Handle, new Vector2(24.0f, 32.0f));
 		}
 
 		this.DrawStatusPopup(status);
@@ -223,7 +223,6 @@ public class OverlayPropertyList : ObjectPropertyList {
 		if (!this._statusPopup.IsOpen) return;
 		if (!this._statusPopup.Draw(this._statuses, this._statuses.Count, out var selected, 32.0f)) return;
 
-		this._selectedStatus = selected;
 		status.IconPath = selected!.Path;
 	}
 
