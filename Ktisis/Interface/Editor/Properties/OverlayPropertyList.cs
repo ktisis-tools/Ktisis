@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Plugin.Services;
 
+using GLib.Popups;
 using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
@@ -14,18 +19,55 @@ using Ktisis.Localization;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Utility;
 
+using Lumina.Excel.Sheets;
+
 namespace Ktisis.Interface.Editor.Properties;
 
+public record StatusRow {
+	public uint Icon = 0;
+	public string Name = string.Empty;
+	public string Path = string.Empty;
+}
+
 public class OverlayPropertyList : ObjectPropertyList {
+	private readonly IDataManager _data;
+	private readonly ITextureProvider _texture;
 	private readonly IEditorContext _ctx;
 	private readonly LocaleManager _locale;
+	private readonly List<StatusRow> _statuses;
+	private readonly PopupList<StatusRow> _statusPopup;
+	private StatusRow? _selectedStatus;
 
 	public OverlayPropertyList(
+		IDataManager data,
+		ITextureProvider texture,
 		IEditorContext ctx,
 		LocaleManager locale
 	) {
+		this._data = data;
+		this._texture = texture;
 		this._ctx = ctx;
 		this._locale = locale;
+		this._statuses = new List<StatusRow>();
+
+		foreach (var status in this._data.GetExcelSheet<Status>()) {
+			if (!status.Name.IsEmpty && status.Icon != 0 && this._statuses.All(statusRow => statusRow.Icon != status.Icon)) {
+				try {
+					this._statuses.Add(new StatusRow() {
+						Icon = status.Icon,
+						Name = status.Name.ExtractText(),
+						Path = this._texture.GetIconPath(status.Icon)
+					});
+				} catch (FileNotFoundException e) {
+					Ktisis.Log.Warning(e.ToString());
+				}
+			}
+		}
+
+		this._statusPopup = new PopupList<StatusRow>(
+			"##StatusPopup",
+			this.DrawStatusRow
+		).WithSearch(StatusSearchPredicate);
 	}
 
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
@@ -86,7 +128,6 @@ public class OverlayPropertyList : ObjectPropertyList {
 	}
 
 	private void DrawTalk(TalkOverlay talk) {
-		ImGui.Spacing();
 		var speaker = talk.Speaker;
 		if (ImGui.InputText("Speaker", ref speaker, 64))
 			talk.Speaker = speaker;
@@ -120,7 +161,6 @@ public class OverlayPropertyList : ObjectPropertyList {
 	}
 
 	private void DrawBalloon(BalloonOverlay balloon) {
-		ImGui.Spacing();
 		var dialog = balloon.Dialog;
 		if (ImGui.InputText("Dialog", ref dialog, 64))
 			balloon.Dialog = dialog;
@@ -150,15 +190,9 @@ public class OverlayPropertyList : ObjectPropertyList {
 	}
 
 	private void DrawStatus(StatusOverlay status) {
-		ImGui.Spacing();
 		var text = status.StatusText;
 		if (ImGui.InputText("Status Text", ref text, 64))
 			status.StatusText = text;
-
-		ImGui.Spacing();
-		var path = status.IconPath;
-		if (ImGui.InputText("Icon Path", ref path, 128))
-			status.IconPath = path;
 
 		ImGui.Spacing();
 		var type = status.StatusType;
@@ -170,7 +204,44 @@ public class OverlayPropertyList : ObjectPropertyList {
 			}
 			ImGui.EndCombo();
 		}
+
+		ImGui.Spacing();
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Image, "Choose an icon for this status"))
+			this._statusPopup.Open();
+
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.Text($"Texture: {(this._selectedStatus == null ? "Default" : this._selectedStatus.Name)}");
+		if (this._selectedStatus != null) {
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.Image(this._texture.GetFromGameIcon(this._selectedStatus.Icon).GetWrapOrEmpty().Handle, new Vector2(24.0f, 32.0f));
+		}
+
+		this.DrawStatusPopup(status);
 	}
+
+	private unsafe void DrawStatusPopup(StatusOverlay status) {
+		if (!this._statusPopup.IsOpen) return;
+		if (!this._statusPopup.Draw(this._statuses, this._statuses.Count, out var selected, 32.0f)) return;
+
+		this._selectedStatus = selected;
+		status.IconPath = selected!.Path;
+	}
+
+	private bool DrawStatusRow(StatusRow status, bool isFocus) {
+		var space = ImGui.GetStyle().ItemSpacing.X;
+		var cursor = ImGui.GetCursorPosX();
+		var result = ImGui.Button(string.Empty, new Vector2(ImGui.GetContentRegionAvail().X, 32.0f));
+		ImGui.SameLine(cursor, 24.0f + space);
+		ImGui.Text(status.Name);
+
+		ImGui.SameLine(cursor);
+		ImGui.Image(this._texture.GetFromGameIcon(status.Icon).GetWrapOrEmpty().Handle, new Vector2(24.0f, 32.0f));
+
+		return result;
+	}
+
+	private static bool StatusSearchPredicate(StatusRow status, string query)
+		=> status.Name.Contains(query, StringComparison.OrdinalIgnoreCase);
 
 	private static Vector2 GetCenter(OverlayEntity entity) {
 		var screenSize = ImGui.GetMainViewport().Size;
