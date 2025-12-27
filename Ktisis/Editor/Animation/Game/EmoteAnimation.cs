@@ -7,7 +7,7 @@ namespace Ktisis.Editor.Animation.Game;
 
 public class EmoteAnimation(Emote emote, int index = 0) : GameAnimation {
 	public override string Name => emote.Name.ExtractText();
-	public override ushort Icon => emote.Icon;
+	public override uint Icon => emote.Icon;
 	public override uint TimelineId => this.Timeline.RowId;
 	public override TimelineSlot Slot => this.Timeline.IsValid ? (TimelineSlot)this.Timeline.Value.Stance : 0;
 

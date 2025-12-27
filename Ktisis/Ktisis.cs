@@ -8,6 +8,8 @@ using Dalamud.Interface.ImGuiNotification;
 using Microsoft.Extensions.DependencyInjection;
 
 using Ktisis.Core;
+using Ktisis.Editor.Context;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Ipc;
 
 namespace Ktisis;

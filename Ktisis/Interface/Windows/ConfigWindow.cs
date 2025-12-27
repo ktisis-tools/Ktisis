@@ -243,7 +243,7 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.Text(this.Locale.Translate("config.input.help"));
 		using var _disable = ImRaii.Disabled(!this.Config.Keybinds.Enabled);
-		this._keybinds.Draw("history|select|overlay");
+		this._keybinds.Draw("history|select|overlay|pose");
 	}
 
 	private void DrawCamerasInputTab() {
