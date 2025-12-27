@@ -81,8 +81,15 @@ public class OverlayWindow : KtisisWindow {
 	}
 
 	private bool DrawGizmo() {
-		if (!this._ctx.Config.Gizmo.Visible)
+		// if gizmo becomes invisible mid-manipulation, force stop it
+		if (!this._ctx.Config.Gizmo.Visible) {
+			if (this._gizmo.IsUsedPrev) {
+				this.Transform?.Dispatch();
+				this.Transform = null;
+				this._gizmo.Reset();
+			}
 			return false;
+		}
 		
 		var target = this._ctx.Transform.Target;
 		var transform = target?.GetTransform();
