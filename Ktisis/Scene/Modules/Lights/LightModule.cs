@@ -124,7 +124,10 @@ public class LightModule : SceneModule {
 			texPtr[i] = (byte)path[i];
 		}
 		var resourceCat = stackalloc ResourceCategory[1];
-		resourceCat[0] = ResourceCategory.BgCommon;
+		if (path.Contains("bgcommon"))
+			resourceCat[0] = ResourceCategory.BgCommon;
+		else
+			resourceCat[0] = ResourceCategory.Bg;
 
 		this._sceneLightTexture(self, resourceCat, texPtr);
 	}
