@@ -46,9 +46,10 @@ public class LightPropertyList : ObjectPropertyList {
 		).WithSearch(GoboSearchPredicate);
 	}
 	
-	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
+	public unsafe override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
 		if (entity is not LightEntity light)
 			return;
+		ImGui.Text($"DEBUG: SceneLight {light.Address:X} | RenderLight {(uint)light.GetObject()->RenderLight:X}");
 		
 		builder.AddHeader("Light", () => this.DrawLightTab(light));
 		builder.AddHeader("Shadows", () => this.DrawShadowsTab(light));
