@@ -17,6 +17,7 @@ using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Editor.Selection;
+using Ktisis.Scene.Entities.World;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -236,8 +237,9 @@ public class SceneTree {
 		var color = isVisible ? 0xEFFFFFFF : 0x80FFFFFF;
 		if (!isActive)
 			color = color.SetAlpha((byte)(isVisible ? 0x60 : 0x30));
-		
-		if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, color) && isHover)
+
+		var icon = vis is WorldEntity ? FontAwesomeIcon.LocationCrosshairs : FontAwesomeIcon.Eye;
+		if (this.DrawButton(ref cursor, icon, color) && isHover)
 			vis.Toggle();
 	}
 
