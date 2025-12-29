@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
@@ -10,6 +11,8 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Components.Workspace;
 using Ktisis.Interface.Editor.Types;
+using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Windows; 
 
@@ -62,7 +65,7 @@ public class WorkspaceWindow : KtisisWindow {
 		this._cameras.Draw();
 		this._workspace.Draw();
 
-		var botHeight = UiBuilder.IconFont.FontSize + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2;
+		var botHeight = (UiBuilder.DefaultFontSizePx + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2) * ImGuiHelpers.GlobalScale;
 		var treeHeight = ImGui.GetContentRegionAvail().Y - botHeight;
 		this._sceneTree.Draw(treeHeight);
 
@@ -86,6 +89,22 @@ public class WorkspaceWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Walking, this._ctx.Locale.Translate("chara_edit.title"))) {
+			var target = this._ctx.Selection.GetFirstSelected();
+			if (
+				target switch {
+					BoneNode node => node.Pose.Parent,
+					BoneNodeGroup group => group.Pose.Parent,
+					EntityPose pose => pose.Parent,
+					_ => target
+				} is ActorEntity actor
+			) this.Interface.OpenActorEditor(actor);
+			else
+				this.Interface.OpenActorEditor(this._ctx.Scene.GetFirstActor());
+		}
+
+		ImGui.SameLine(0, spacing);
+
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Portrait, this._ctx.Locale.Translate("pose_view.title")))
 			this.Interface.OpenPosingWindow();
 
@@ -111,11 +130,10 @@ public class WorkspaceWindow : KtisisWindow {
 	// Scene tree buttons
 
 	private void DrawSceneTreeButtons() {
-		if (Buttons.IconButton(FontAwesomeIcon.Plus))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, this._ctx.Locale.Translate("workspace.create")))
 			this.Interface.OpenSceneCreateMenu();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_actors")))
-			this.Interface.RefreshGposeActors();
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
+			this.Interface.RefreshSceneEntities();
 	}
 }
- 

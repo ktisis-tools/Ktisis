@@ -12,6 +12,8 @@ using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Actors;
 using Ktisis.Structs.Characters;
+using Ktisis.Interface.Components.Chara.Select;
+using Ktisis.GameData.Excel.Types;
 
 namespace Ktisis.Interface.Windows.Editors;
 
@@ -24,16 +26,27 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 
 	private IAnimationManager Animation => this.Context.Animation;
 	private ICharacterManager Manager => this.Context.Characters;
+
+	private readonly NpcSelect _npcs;
 	
 	public ActorWindow(
 		IEditorContext ctx,
 		CustomizeEditorTab custom,
 		EquipmentEditorTab equip,
-		AnimationEditorTab anim
+		AnimationEditorTab anim,
+		NpcSelect npcs
 	) : base($"Actor Editor###{WindowId}", ctx) {
 		this._custom = custom;
 		this._equip = equip;
 		this._anim = anim;
+		this._npcs = npcs;
+		this._npcs.OnSelected += this.OnNpcSelect;
+	}
+
+	public override void PreOpenCheck() {
+		if (this.Context.IsValid) return;
+		Ktisis.Log.Verbose("Context for actor window is stale, closing...");
+		this.Close();
 	}
 	
 	// Target
@@ -41,13 +54,14 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private ICustomizeEditor _editCustom = null!;
 
 	public override void SetTarget(ActorEntity target) {
-		this.WindowName = $"{target.Name}###{WindowId}";
+		this.WindowName = $"Actor Editor - {target.Name}###{WindowId}";
 		
 		base.SetTarget(target);
 		
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 		this._anim.Editor = this.Animation.GetAnimationEditor(target);
+		this._anim.ClearPoseExpression();
 	}
 
 	// Draw tabs
@@ -69,9 +83,9 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this.UpdateTarget();
 		
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
+		DrawTab("Animation", this._anim.Draw);
 		DrawTab("Appearance", this._custom.Draw);
 		DrawTab("Equipment", this._equip.Draw);
-		DrawTab("Animation", this._anim.Draw);
 		DrawTab("Misc", this.DrawMisc);
 	}
 
@@ -83,11 +97,19 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	// Advanced tab
 
 	private unsafe void DrawMisc() {
+		var space = ImGui.GetStyle().ItemInnerSpacing.X;
 		ImGui.Spacing();
 		
 		var modelId = (int)this._editCustom.GetModelId();
-		if (ImGui.InputInt("Model ID", ref modelId))
+		if (ImGui.InputInt("Model ID", ref modelId, flags: ImGuiInputTextFlags.EnterReturnsTrue))
 			this._editCustom.SetModelId((uint)modelId);
+		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+			using var _ = ImRaii.Tooltip();
+			ImGui.Text("Press enter to submit");
+		}
+
+		ImGui.SameLine(0, space);
+		this._npcs.DrawSearchIcon();
 
 		var chara = (CharacterEx*)this.Target.Character;
 		if (chara != null) {
@@ -138,4 +160,6 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 			state.Wetness = chara != null ? chara->Wetness : null;
 		}
 	}
+
+	private void OnNpcSelect(INpcBase npc) => this._editCustom.SetModelId((uint)npc.GetModelId());
 }

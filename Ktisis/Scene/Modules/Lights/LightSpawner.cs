@@ -8,22 +8,28 @@ using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 
+using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Structs;
 using Ktisis.Structs.Common;
 using Ktisis.Structs.Lights;
 using Ktisis.Interop.Hooking;
 using Ktisis.Structs.Camera;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Scene.Modules.Lights;
 
 public class LightSpawner : HookModule {
 	private readonly IFramework _framework;
+	private readonly IEditorContext _context;
 	
 	public LightSpawner(
 		IHookMediator hook,
-		IFramework framework
+		IFramework framework,
+		IEditorContext context
 	) : base(hook) {
 		this._framework = framework;
+		this._context = context;
 	}
 	
 	// Initialization
@@ -60,10 +66,14 @@ public class LightSpawner : HookModule {
 		this._sceneLightInit(light);
 		this._sceneLightSpawn(light);
 
-		var activeCamera = GameCameraEx.GetActive();
-		if (activeCamera != null) {
-			light->Transform.Position = activeCamera->Position;
-			light->Transform.Rotation = activeCamera->CalcPointDirection();
+		// use freecam values if applicable, else point to scenecamera
+		var editorCamera = this._context.Cameras.Current;
+		if (editorCamera is WorkCamera freeCam) {
+			light->Transform.Position = freeCam.Position;
+			light->Transform.Rotation = freeCam.CalculateLookDirection().EulerAnglesToQuaternion();
+		} else {
+			light->Transform.Position = editorCamera.Camera->Position;
+			light->Transform.Rotation = editorCamera.Camera->CalcPointDirection();
 		}
 
 		*(ulong*)((nint)light + 56) |= 2u;

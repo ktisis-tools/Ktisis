@@ -14,6 +14,9 @@ public class FileConfig {
 	
 	public bool ImportPoseSelectedBones = false;
 	public bool AnchorPoseSelectedBones = false;
+
+	// patch fix pending better blanket exclusion/selection options
+	public bool ExcludePoseEarBones = false;
 	public PoseTransforms ImportPoseTransforms = PoseTransforms.Rotation;
 	public PoseMode ImportPoseModes = PoseMode.All;
 }

@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Diagnostics;
-
+using System.Linq;
 using Dalamud.Plugin;
 
 using Newtonsoft.Json;
@@ -42,6 +44,11 @@ public class ConfigManager : IDisposable {
 			
 			if (cfg is { Version: < 10 }) {
 				cfg.Version = 10;
+				this.MigrateSchema(cfg);
+			}
+			if (cfg is { Version: < 11 }) {
+				cfg.Version = 11;
+				this.GenerateDefaultPresets(cfg);
 				this.MigrateSchema(cfg);
 			}
 		} catch (Exception err) {
@@ -90,6 +97,22 @@ public class ConfigManager : IDisposable {
 		}
 
 		cfg.Categories = categories;
+	}
+
+	private void GenerateDefaultPresets(Configuration cfg) {
+		var categories = SchemaReader.ReadCategories();
+
+		var allPresetNames = categories.CategoryList.SelectMany(x => x.Presets).Distinct().ToList();
+		Ktisis.Log.Info("All Presets: {0}", string.Join(", ", allPresetNames));
+		var presets = allPresetNames.ToDictionary(
+			x => x, 
+			key => categories.CategoryList.Where(x => x.Presets.Contains(key)).SelectMany(x => x.Bones.Select(y => y.Name)).ToImmutableHashSet()
+		);
+
+		foreach (var (preset, bones) in presets)
+		{
+			cfg.Presets.Presets.TryAdd(preset, bones);
+		}
 	}
 	
 	// TEMPORARY: v3 config file

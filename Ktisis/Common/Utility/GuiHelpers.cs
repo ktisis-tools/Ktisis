@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 using Dalamud.Bindings.ImGui;
 
 using Ktisis.Editor.Selection;
@@ -37,4 +39,7 @@ public static class GuiHelpers {
 		const uint white = 0xFFFFFFFF;
 		return CalcContrastRatio(background, white) < 2.0f ? black : white;
 	}
+
+	public static void OpenBrowser(string url)
+		=> Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
 }

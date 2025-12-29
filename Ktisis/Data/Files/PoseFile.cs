@@ -38,7 +38,7 @@ public class PoseFile : JsonFile {
 		}
 	}
 
-	private readonly static Dictionary<string, string> AnamLegacyConversions = new() {
+	public readonly static Dictionary<string, string> AnamLegacyConversions = new() {
 		{ "Root", "n_root" },
 		{ "Abdomen", "n_hara" },
 		{ "Throw", "n_throw" },

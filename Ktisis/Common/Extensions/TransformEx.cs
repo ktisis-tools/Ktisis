@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 using FFXIVClientStructs.Havok.Common.Base.Math.Quaternion;
@@ -23,10 +24,23 @@ public static class TransformEx {
 	// hkVector4f
 	
 	public static Vector3 ToVector3(this hkVector4f hkVec) => new(hkVec.X, hkVec.Y, hkVec.Z);
+	public static hkVector4f ToHavok(this Vector3 v) => new() { X = v.X, Y = v.Y, Z = v.Z, W = 0.0f };
+	public static hkVector4f ToHavokRounded(this Vector3 v) => new() {
+		X = MathF.Round(v.X, 4),
+		Y = MathF.Round(v.Y, 4),
+		Z = MathF.Round(v.Z, 4),
+		W = 0.0f
+	};
 	
 	// hkQuaternionf
 	
 	public static Quaternion ToQuaternion(this hkQuaternionf hkQuat) => new(hkQuat.X, hkQuat.Y, hkQuat.Z, hkQuat.W);
 
 	public static hkQuaternionf ToHavok(this Quaternion quat) => new() { X = quat.X, Y = quat.Y, Z = quat.Z, W = quat.W };
+	public static hkQuaternionf ToHavokRounded(this Quaternion quat) => new() {
+		X = MathF.Round(quat.X, 4),
+		Y = MathF.Round(quat.Y, 4),
+		Z = MathF.Round(quat.Z, 4),
+		W = MathF.Round(quat.W, 4)
+	};
 }

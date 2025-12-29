@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
@@ -6,8 +7,12 @@ using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok.Animation.Rig;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
+using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Posing;
@@ -67,6 +72,14 @@ public sealed class PosingModule : HookModule {
 		
 		// do nothing
 	}
+
+	// call externally to overwrite posed face with unfrozen model pose
+	public unsafe void SyncFaceModelSpace(ActorEntity actor) {
+		var cBase = actor.GetCharacter();
+		var skeleton = cBase->Skeleton;
+		var pose = skeleton->PartialSkeletons[1].GetHavokPose(0);
+		this._syncModelSpaceHook.Original(pose);
+	}
 	
 	// CalcBoneModelSpace
 	
@@ -77,6 +90,11 @@ public sealed class PosingModule : HookModule {
 	private unsafe nint CalcBoneModelSpace(ref hkaPose pose, int boneIdx) {
 		if (this.Manager.IsSolvingIk)
 			return this._calcBoneModelSpaceHook.Original(ref pose, boneIdx);
+
+		if (boneIdx == 1 && pose.Skeleton->Bones[boneIdx].Name.String == "n_hara") {
+			var ptr = (hkaPose*)Unsafe.AsPointer(ref pose);
+			HavokPosing.CalcCachedAbdomenModelTransform(ptr, boneIdx);
+		}
 		return (nint)(pose.ModelPose.Data + boneIdx);
 	}
 	

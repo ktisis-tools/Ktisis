@@ -44,7 +44,12 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		
 		ImGui.Text($"Importing pose for {this.Target.Name}");
 		ImGui.Spacing();
-		
+
+		this.DrawEmbed();
+	}
+
+	public void DrawEmbed() {
+		this.PreDraw();
 		this._select.Draw();
 		
 		ImGui.Spacing();
@@ -118,6 +123,8 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 				file.ImportPoseModes ^= PoseMode.Face;
 		}
 
+		ImGui.Checkbox("Exclude ear bones", ref file.ExcludePoseEarBones);
+
 		var hasPosition = file.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
 		using (ImRaii.Disabled(!isSelectBones || !file.ImportPoseSelectedBones || !hasPosition))
 			ImGui.Checkbox("Anchor group positions", ref file.AnchorPoseSelectedBones);
@@ -135,6 +142,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		var cfg = this._ctx.Config.File;
 		var selectedBones = isSelectBones && cfg.ImportPoseSelectedBones;
 		var anchorGroups = cfg.AnchorPoseSelectedBones;
-		this._ctx.Posing.ApplyPoseFile(pose, file, cfg.ImportPoseModes, cfg.ImportPoseTransforms, selectedBones, anchorGroups);
+		var excludeEars = cfg.ExcludePoseEarBones;
+		this._ctx.Posing.ApplyPoseFile(pose, file, cfg.ImportPoseModes, cfg.ImportPoseTransforms, selectedBones, anchorGroups, excludeEars);
 	}
 }

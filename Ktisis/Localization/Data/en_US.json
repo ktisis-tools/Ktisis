@@ -11,6 +11,7 @@
 	
 	"actions": {
 		"Select_None": "Cancel selection",
+		"Select_Sibling": "Sibling select",
 		"Overlay_Toggle": "Toggle overlay visibility",
 		"History_Undo": "Undo action",
 		"History_Redo": "Redo action",
@@ -22,7 +23,17 @@
 		"Gizmo_SetUniversalMode": "Switch to universal mode",
 		"Camera_SetNext": "Switch to next camera",
 		"Camera_SetPrevious": "Switch to previous camera",
-		"Camera_Work_Toggle": "Toggle work camera"
+		"Camera_Work_Toggle": "Toggle work camera",
+		"Camera_Work_Forward": "Work camera forward",
+		"Camera_Work_Left": "Work camera left",
+		"Camera_Work_Back": "Work camera backward",
+		"Camera_Work_Right": "Work camera right",
+		"Camera_Work_Up": "Work camera up",
+		"Camera_Work_Down": "Work camera down",
+		"Camera_Work_Fast": "Work camera fast-speed modifier",
+		"Camera_Work_Slow": "Work camera slow-speed modifier",
+		"Pose_FlipPose": "Flip pose",
+		"Gizmo_MirrorRotation": "Cycle rotation modes"
 	},
 	
 	"actors": {
@@ -74,14 +85,17 @@
 		"posing": {
 			"toggle": {
 				"enable": "Posing Enabled",
+				"enable-blocked": "Posing Enabled, hold SHIFT & click to disable.",
 				"disable": "Posing Disabled"
 			},
 			"hint": {
 				"enable": "Bone manipulation is currently enabled.",
+				"enable-blocked": "To disable, hold SHIFT.",
 				"disable": "Bone manipulation is currently disabled."
 			}
 		},
-		"refresh_actors": "Refresh scene actors",
+		"create": "Create new...",
+		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.toggle": "Toggle screen overlay"
 	},
@@ -96,8 +110,14 @@
 			"local": "Local Transform"
 		},
 		"flags": {
-			"parallel": "Parallel Transform",
-			"mirror": "Mirror Transform"
+			"parallel": "Gizmo Mode: Parallel Transform",
+			"inverse": "Gizmo Mode: Inverse Transform",
+			"reflect": "Gizmo Mode: Mirror Transform"
+		},
+		"sibling": {
+			"available": "Multi-select sibling bone: %bone%",
+			"unavailable": "Bone %bone% has no sibling",
+			"multiple": "Multi-select sibling bone: %bone%\nCan only select sibling when 1 bone is selected!"
 		},
 		"gizmo": {
 			"show": "Show rotation gizmo",
@@ -127,9 +147,40 @@
 		}
 	},
 	
+	"preset_edit": {
+		"title": "Presets",
+		"add": {
+			"title": "Add new preset",
+			"label": "Preset Name",
+			"save": "Save",
+			"cancel": "Cancel"
+		}
+	},
+	
 	"chara_edit": {
-		"title": "Appearance Editor",
-		"hint": "Edit appearance"
+		"title": "Actor Editor",
+		"hint": "Edit appearance & animations",
+		"animation": {
+			"controls": {
+				"animationSelect": "Animation",
+				"idleSelect": "Idle Pose",
+				"play": "Play",
+				"reset": "Reset",
+				"loop": "Loop",
+				"playStart": "Play emote start",
+				"weapon": "Weapon drawn",
+				"posLock": "Freeze positions",
+				"enableSpeed": "Enable speed control",
+				"speedSlider": "Playback Speed",
+				"scrub": "Scrub"
+			},
+			"poseExpression": {
+				"title": "Pose Expression",
+				"warning": "⚠ Posing is currently enabled!",
+				"brioWarning": "⚠ Brio is currently enabled! An incompatibility currently prevents this feature from functioning - to load Pose Expressions, please disable Brio first.",
+				"header": "WARNING: This is an experimental feature! It will overwrite any current face pose, and may deform ears or other face parts. However, you can still undo any changes made."
+			}
+		}
 	},
 	
 	"camera_edit": {
@@ -172,14 +223,14 @@
 	"config": {
 		"title": "Ktisis Settings",
 		"categories": {
-			"title": "Categories",
-			"allow_nsfw": "Display NSFW categories",
-			"hint_nsfw": "Requires IVCS or any custom skeleton",
+			"title": "Personalize",
+			"allow_nsfw": "Display NSFW bones",
+			"hint_nsfw": "Requires IVCS, YAS, or any custom skeleton",
 			"show_all_viera_ears": "Show unused ear bones",
 			"hint_viera_ears": "Show bones for all viera ears, including those for other ear options.",
 			"show_friendly_bone_names": "Display friendly bone names",
 			"hint_friendly_bones": "Use localized names for bones where available, rather than SE defaults.",
-			"header": "Categories:",
+			"header": "Bone Categories:",
 			"editor": {
 				"color_header": "Colors:",
 				"group_color": "Group Color",
@@ -192,7 +243,7 @@
 			"title": "Gizmo",
 			"flip": "Flip axis to face camera",
 			"raySnap": "Hold shift to ray snap objects",
-			"header": "Style:",
+			"header": "Gizmo Style:",
 			"editor": {
 				"general": {
 					"title": "General",
@@ -237,6 +288,7 @@
 		},
 		"overlay": {
 			"title": "Overlay",
+			"header": "Configure Skeleton Overlay:",
 			"lines": {
 				"draw": "Draw lines on skeleton",
 				"draw_gizmo": "Draw lines on skeleton while using gizmo",
@@ -253,27 +305,136 @@
 			"draw_title": "Draw title for reference images"
 		},
 		"workspace": {
-			"title": "Workspace",
+			"title": "General",
+			"header": "Workspace Settings",
 			"init": "Open workspace when entering GPose",
+			"toggleOpenWindows": "UI buttons toggle windows open & closed",
+			"initPosLock": "Freeze actor positions when entering GPose",
 			"editOnSelect": "Toggle object editor when selecting",
+			"closeOnDeselect": "Close object editor when nothing is selected",
+			"incognitoPlayerNames": "Incognito Mode",
+			"hintIncognito": "Censors all player names from actor list and GPose window",
+			"hintPosLock": "WIP: If enabled, actors may snap to the player character's GPose origin instead of their out-of-gpose locations!",
+			"hintInit": "If disabled, you can open the Ktisis Workspace by typing /ktisis while in GPose",
+			"windowHeader": "Window Behavior Options",
+			"legacyHeader": "Legacy Interface Options [will be deprecated with v0.3 release]",
 			"legacyWindows": "Prefer legacy window behavior",
+			"legacyWindowHint": "Controls how and whether windows refer solely to the targeted actor",
 			"legacyPoseTabs": "Prefer legacy pose view tabs",
-			"legacyLightEditor": "Prefer legacy light editor"
+			"legacyPoseHint": "Draws a tab at the top of the Pose View for each actor in the scene",
+			"legacyLightEditor": "Prefer legacy light editor",
+			"legacyLightHint": "Allows opening the Light Editor window, now moved to the Object Editor",
+			"confirmExit": "Ensure shift has to be held to exit posing mode",
+			"workcam": {
+				"speed": "Work camera speed",
+				"fastMulti": "Work camera fast-multiplier",
+				"slowMulti": "Work camera slow-multiplier",
+				"vertMulti": "Work camera up/down speed multiplier",
+				"sens": "Work camera mouse sensitivity"
+			}
 		},
 		"input": {
-			"title": "Input",
+			"title": "Inputs",
 			"enable": "Enable keybinds",
-			"help": "Click keybinds to modify them. Right click to clear."
+			"help": "Click keybinds to modify them. Right click to clear. Keybinds must be enabled to edit.",
+			"blockLeft": "Disable GPose change target on left click",
+			"blockRight": "Disable GPose change target on right click",
+			"scrollAllow": "Enable scrollwheel input for transform sliders",
+			"scrollMod": "Require ALT to be held for scrollwheel control of transform sliders",
+			"cameras": {
+				"title": "Cameras",
+				"header": "Camera Controls:"
+			},
+			"gizmo": {
+				"title": "Gizmo",
+				"header": "Gizmo Actions:"
+			}
 		},
 		"autosave": {
-			"title": "AutoSave",
+			"title": "Auto Save",
 			"enable": "Enable auto saves",
 			"clear": "Clear auto saves on exit",
+			"ondisable": "Always save on disabling posing mode",
 			"disconnect": "Always save on server disconnect",
 			"interval": "Save interval",
 			"count": "Save count",
 			"path": "Save path",
 			"dir": "Folder name"
+		},
+		"presets": {
+			"title": "Presets",
+			"description": "View and edit your defined bone visibility presets below.",
+			"defaults": "Right click any preset to mark it as Default. Default presets will be initially enabled for any GPose actors.",
+			"delete_tooltip": "Hold shift to delete",
+			"delete": "Delete",
+			"rename": "Rename"
+		},
+		"poseview": {
+			"title": "Pose View",
+			"description": "Select your own images to use in the Pose View interface below.",
+			"body": "Body",
+			"armor": "Armor (Clothing)",
+			"ears": "Ears (Viera)",
+			"face": "Face",
+			"hands": "Hands",
+			"lips": "Lips",
+			"mouth": "Mouth",
+			"tail": "Tail",
+			"linkout": {
+				"description": "Download template images here:",
+				"button": "GitHub",
+				"link": "https://github.com/ktisis-tools/Ktisis/tree/v0.3/main/Ktisis/Data/Images/Templates"
+			}
+		},
+		"offsets": {
+			"title": "Bone Offsets",
+			"description": "Import and edit Visual Bone Offsets",
+			"help": "By setting a translation for a bone below, its clickable node on Ktisis' overlay will be offset by those values.",
+			"ui": {
+				"copy_all": "Copy All to Clipboard",
+				"load_all": "Load All from Clipboard",
+				"load_all_warning": "Warning: This will replace ALL your current offsets.\nHold CTRL+Shift to confirm.",
+				"add_bone": "Add offset",
+				"load_legacy": "Load Legacy Offsets",
+				"copy_bone": "Copy offset values",
+				"load_bone": "Paste offset values",
+				"clear_bone": "Shift+click to clear bone offset"
+			},
+			"race_sex": {
+				"101": "Midlander Male",
+				"201": "Midlander Female",
+				"301": "Highlander Male",
+				"401": "Highlander Female",
+				"501": "Elezen Male",
+				"601": "Elezen Female",
+				"701": "Miqote Male",
+				"801": "Miqote Female",
+				"901": "Roegadyn Male",
+				"1001": "Roegadyn Female",
+				"1101": "Lalafell Male",
+				"1201": "Lalafell Female",
+				"1301": "Au Ra Male",
+				"1401": "Au Ra Female",
+				"1501": "Hrothgar Male",
+				"1601": "Hrothgar Female",
+				"1701": "Viera Male",
+				"1801": "Viera Female"
+			}
+		},
+		"about": {
+			"title": "About",
+			"header": "About Ktisis",
+			"readme": "Ktisis is a robust posing tool for creating screenshots within FFXIV's GPose mode which allows you to pose characters by clicking on bones and moving them in any way you want, bringing additional features such as animation control and character editing. Our primary aim is to make posing more accessible for all.",
+			"gitLinkout": {
+				"description": "You can submit any issues or help our development on GitHub:",
+				"button": "GitHub",
+				"link": "https://github.com/ktisis-tools/Ktisis/"
+			},
+			"discordLinkout": {
+				"description": "Join our Discord community for support, screenshot sharing, changelogs, and more:",
+				"button": "Discord",
+				"link": "https://discord.com/invite/kUG3W8B8Ny/"
+			}
 		}
 	},
 
@@ -567,11 +728,15 @@
 		"SkelomaeCreaturesCentaurBody": "Centaur Body",
 		"SkelomaeCreaturesCentaurBodyFrontLegs": "Front Legs",
 		"SkelomaeCreaturesCentaurBodyBackLegs": "Back Legs",
-		"SkelomaeCreaturesCentaurTail": "Tail"
+		"SkelomaeCreaturesCentaurTail": "Tail",
+      
+		"CustomArms": "Custom Skeleton Arms",
+		"CustomAbdomen": "Custom Skeleton Abdomen",
+		"CustomLegs": "Custom Skeleton Legs"
 	},
 	
 	"lightType": {
-		"Directional": "Directional",
+		"Directional": "Sun Light (Directional)",
 		"PointLight": "Point Light",
 		"SpotLight": "Spot Light",
 		"AreaLight": "Area Light"

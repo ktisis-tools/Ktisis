@@ -6,6 +6,7 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using Ktisis.Editor.Characters.Make;
 using Ktisis.Editor.Characters.Types;
@@ -46,7 +47,7 @@ public class FeatureSelectPopup {
 		var style = ImGui.GetStyle();
 		ImGui.SetNextWindowSizeConstraints(Vector2.Zero, new Vector2(
 			(ButtonSize.X + style.FramePadding.X * 2 + style.ItemSpacing.X) * MaxColumns + style.ItemSpacing.X + style.ScrollbarSize,
-			(ButtonSize.Y + (style.FramePadding.X + style.ItemSpacing.Y) * 2 + UiBuilder.IconFont.FontSize) * MaxRows + style.WindowPadding.Y
+			(ButtonSize.Y + (style.FramePadding.X + style.ItemSpacing.Y) * 2 + UiBuilder.DefaultFontSizePx) * MaxRows + style.WindowPadding.Y
 		));
 		
 		using var _popup = ImRaii.Popup(this.PopupId, ImGuiWindowFlags.AlwaysAutoResize);

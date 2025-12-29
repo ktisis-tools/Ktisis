@@ -34,6 +34,10 @@ public class ContextManager : IDisposable {
 		this._plugin = context;
 		this._gpose.StateChanged += this.OnGPoseEvent;
 		this._gpose.Subscribe();
+
+		// TODO: resolve flaky actor spawns and off-thread objecttable access before allowing hot reloads
+		// if (this._gpose.IsGPosing)
+		// 	this.SetupEditor();
 	}
 	
 	// Handlers
@@ -46,7 +50,7 @@ public class ContextManager : IDisposable {
 	
 	// Context setup
 
-	private void SetupEditor() {
+	public void SetupEditor() {
 		if (!this._isInit || this._plugin == null)
 			throw new Exception("Attempted to setup uninitialized context.");
 		

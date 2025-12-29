@@ -29,6 +29,7 @@ public interface ICameraManager : IDisposable {
 	public void ToggleWorkCameraMode();
 
 	public KtisisCamera Create(CameraFlags flags = CameraFlags.None);
+	public bool DeleteCurrent();
 
 	public IGameObject? ResolveOrbitTarget(EditorCamera camera);
 }
@@ -76,7 +77,7 @@ public class CameraManager : ICameraManager {
 	}
 
 	private void SetupWorkCamera() {
-		this.WorkCamera ??= new WorkCamera(this) { Name = "Work Camera" };
+		this.WorkCamera ??= new WorkCamera(this, this._context) { Name = "Work Camera" };
 		if (!this.CopyOntoCamera(this.WorkCamera))
 			throw new Exception("Failed to setup work camera.");
 	}
@@ -173,6 +174,23 @@ public class CameraManager : ICameraManager {
 		return camera;
 	}
 
+	public bool DeleteCurrent() {
+		if (this.Current is not { IsValid: true } active || active.IsDefault )
+			return false;
+
+		try {
+			this.SetPrevious();
+			this.CameraList.Remove(active);
+			if (active is KtisisCamera ktActive)
+				ktActive.Dispose();
+		} catch (Exception e) {
+			Ktisis.Log.Error($"CameraManager.DeleteCurrent: {e}");
+			return false;
+		}
+
+		return true;
+	}
+
 	private unsafe bool CopyOntoCamera(EditorCamera camera) {
 		if (this.Current is not { IsValid: true } active || active == camera)
 			return false;
@@ -182,8 +200,10 @@ public class CameraManager : ICameraManager {
 		camera.RelativeOffset = active.RelativeOffset;
 		*camera.GameCamera = *active.GameCamera;
 
-		if (camera is WorkCamera freeCam)
+		if (camera is WorkCamera freeCam) {
 			freeCam.SetInitialPosition(active.GetPosition()!.Value, active.Camera->CalcRotation());
+			freeCam.Camera->Zoom = 0.0f; // new behavior, should this be a config toggle?
+		}
 		else
 			camera.Flags = active.Flags & ~CameraFlags.DefaultCamera;
 

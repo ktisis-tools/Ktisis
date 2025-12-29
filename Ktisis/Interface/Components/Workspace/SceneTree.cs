@@ -6,6 +6,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
@@ -15,6 +16,8 @@ using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -48,7 +51,7 @@ public class SceneTree {
 	
 	// Draw scene entities
 
-	private static float IconSpacing => UiBuilder.IconFont.FontSize;
+	private static float IconSpacing => UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale;
 
 	private float MinY;
 	private float MaxY;
@@ -110,6 +113,7 @@ public class SceneTree {
 		if (isRender) {
 			var flag = isExpand switch {
 				_ when children.Count is 0 => TreeNodeFlag.Leaf,
+				_ when node is EntityPose => TreeNodeFlag.Leaf,
 				true => TreeNodeFlag.Expand,
 				false => TreeNodeFlag.Collapse
 			};
@@ -130,24 +134,26 @@ public class SceneTree {
 			}
 		}
 
-		if (isExpand) this.IterateTree(children);
+		if (isExpand || node is EntityPose) this.IterateTree(children);
 	}
 
 	private bool DrawNodeLabel(SceneEntity item, Vector2 pos, TreeNodeFlag flag, float rightAdjust = 0.0f) {
 		var display = this._ctx.Config.GetEntityDisplay(item);
-        
+
         // Caret
 
+		var expand = false;
 		var style = ImGui.GetStyle();
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(pos.X - style.ItemSpacing.X);
-		var expand = this.DrawNodeCaret(display.Color, flag);
-		
+		if (item is not EntityPose)
+			expand = this.DrawNodeCaret(display.Color, flag);
+
 		// Icon + Label
 
 		using var _ = ImRaii.PushColor(ImGuiCol.Text, display.Color);
 		this.DrawNodeIcon(display.Icon);
-			
+
 		var avail = ImGui.GetContentRegionAvail().X;
 		ImGui.Text(item.Name.FitToWidth(avail - rightAdjust));
 
@@ -162,24 +168,17 @@ public class SceneTree {
 			TreeNodeFlag.Expand => FontAwesomeIcon.CaretDown,
 			_ => FontAwesomeIcon.None
 		};
-		
+
 		using (ImRaii.PushColor(ImGuiCol.Text, color.SetAlpha(0xCF)))
 			Icons.DrawIcon(caretIcon);
 
 		ImGui.SameLine();
-		
+
 		var spacing = ImGui.GetStyle().ItemInnerSpacing;
 		cursor += spacing.X + IconSpacing;
 		ImGui.SetCursorPosX(cursor);
-		
-		var iconSize = Icons.CalcIconSize(caretIcon);
-		var frameHeight = ImGui.GetFrameHeight();
-		return ButtonsEx.IsClicked(
-			new Vector2(
-				IconSpacing - iconSize.X,
-				(frameHeight - iconSize.Y - spacing.Y / 2) / 2
-			)
-		);
+
+		return ButtonsEx.IsClicked();
 	}
 
 	private void DrawNodeIcon(FontAwesomeIcon icon) {
@@ -199,7 +198,9 @@ public class SceneTree {
 		this.DrawVisibilityButton(node, ref cursor, isHover);
 		if (node is IAttachable attach)
 			this.DrawAttachButton(attach, ref cursor, isHover);
-		
+		if (node is IHideable hideable)
+			this.DrawHideButton(hideable, ref cursor, isHover);
+
 		return initial - cursor;
 	}
 
@@ -229,10 +230,21 @@ public class SceneTree {
 		var name = bone != null ? this._ctx.Locale.GetBoneName(bone) : "UNKNOWN";
 		using var _ = ImRaii.Tooltip();
 		ImGui.Text($"Attached to {name}");
+		ImGui.Text($"Click to reset attachment\nClick+Drag to set new attachment");
+	}
+
+	private void DrawHideButton(IHideable entity, ref float cursor, bool isHover) {
+		var color = entity.IsHidden ? 0x80FFFFFF : 0xEFFFFFFF;
+		if(this.DrawButton(ref cursor, FontAwesomeIcon.Mask, color) && isHover)
+			entity.ToggleHidden();
+
+		if (!isHover || !ImGui.IsItemHovered()) return;
+		using var _ = ImRaii.Tooltip();
+		ImGui.Text(entity.IsHidden ? "Unhide Entity" : "Hide Entity");
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {
-		cursor -= Icons.CalcIconSize(icon).X + ImGui.GetStyle().ItemSpacing.X;
+		cursor -= (Icons.CalcIconSize(icon).X / ImGuiHelpers.GlobalScale) + ImGui.GetStyle().ItemSpacing.X;
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(cursor);
 		using var _ = ImRaii.PushColor(ImGuiCol.Text, color ?? 0, color.HasValue);

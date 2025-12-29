@@ -23,6 +23,9 @@ public class Configuration : IPluginConfiguration {
 	public LocaleConfig Locale = new();
 	public OverlayConfig Overlay = new();
 	public AutoSaveConfig AutoSave = new();
+	public PresetConfig Presets = new();
+	public PoseViewConfig PoseView = new();
+	public OffsetConfig Offsets = new();
 
 	public EntityDisplay GetEntityDisplay(SceneEntity entity) {
 		var display = this.Editor.GetDisplayForType(entity.Type);

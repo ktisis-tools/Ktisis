@@ -47,16 +47,13 @@ public class Gizmo2D {
 
 	public void Begin(Vector2 rectSize) {
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
+		using var _border = ImRaii.PushStyle(ImGuiStyleVar.ChildBorderSize, 0f);
 		
-		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize);
+		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
 
 		var cursorPos = ImGui.GetCursorScreenPos();
 		var innerSize = ImGui.GetContentRegionAvail();
 		
-		// Hack: This uses the full display region due to constraints where the mouse must be within the frame.
-		var io = ImGui.GetIO();
-		ImGui.SetNextWindowPos(Vector2.Zero);
-		ImGui.SetNextWindowSize(io.DisplaySize);
 		ImGui.Begin("##Gizmo2D", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 		
 		var minDim = Math.Min(innerSize.X, innerSize.Y);
@@ -77,7 +74,7 @@ public class Gizmo2D {
 	
 	public void End() {
 		this.Gizmo.EndFrame();
-		ImGui.End();
+		ImGui.EndChild();
 		ImGui.EndChildFrame();
 	}
 }

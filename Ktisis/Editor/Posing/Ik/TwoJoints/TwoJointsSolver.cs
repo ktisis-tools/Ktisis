@@ -3,6 +3,7 @@ using System.Numerics;
 
 using FFXIVClientStructs.Havok.Animation.Rig;
 
+using Ktisis.Common.Utility;
 using Ktisis.Interop;
 using Ktisis.Structs.Havok;
 
@@ -12,6 +13,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 	private readonly Alloc<TwoJointsIkSetup> AllocIkSetup = new(16);
 	
 	public unsafe TwoJointsIkSetup* IkSetup => this.AllocIkSetup.Data;
+	private Transform? LastPoseInModel = null;
 	
 	// Setup parameters
 
@@ -123,6 +125,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 		
 		var start = this.IkSetup->m_firstJointIdx;
 		var end = this.IkSetup->m_endBoneIdx;
+		var poseInModel = HavokPosing.GetModelTransform(poseIn, end)!;
 		
 		for (var i = 1; i < poseOut->Skeleton->Bones.Length; i++) {
 			var apply = i == start || HavokPosing.IsBoneDescendantOf(parents, i, start);
@@ -136,16 +139,26 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 				target->Rotation = solved.Rotation;
 				continue;
 			}
-			
+
+			// only update child bone transforms (ex fingers, toes) if there's been a change since last frame!
+			// only works consistently with end rotation enforced
+			// TODO: just fix the local->model math below; this is a bandaid over IK bone drift
+			if (
+				this.LastPoseInModel != null
+				&& this.IkSetup->m_enforceEndRotation
+				&& this.LastPoseInModel.Equals(poseInModel)
+			) continue;
+
 			var parentId = parents[i];
 			var local = HavokPosing.GetLocalTransform(poseIn, i)!;
 			var transform = HavokPosing.GetModelTransform(poseOut, parentId)!;
 			
 			transform.Position += Vector3.Transform(local.Position, transform.Rotation);
-			transform.Rotation *= local.Rotation; 
+			transform.Rotation = Quaternion.Normalize(transform.Rotation * local.Rotation);
 			transform.Scale *= local.Scale;
 			HavokPosing.SetModelTransform(poseOut, i, transform);
 		}
+		this.LastPoseInModel = poseInModel;
 	}
 
 	private unsafe void ApplyModelPoseDynamic(hkaPose* poseIn, hkaPose* poseOut) {
@@ -164,6 +177,7 @@ public class TwoJointsSolver(IkModule module) : IDisposable {
 	public bool IsDisposed { get; private set; }
 	
 	public void Dispose() {
+		this.LastPoseInModel = null;
 		this.IsDisposed = true;
 		this.AllocIkSetup.Dispose();
 		GC.SuppressFinalize(this);

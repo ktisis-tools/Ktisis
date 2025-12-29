@@ -27,13 +27,35 @@ public class LightModule : SceneModule {
 	) : base(hook, scene) {
 		this._gpose = gpose;
 		this._framework = framework;
-		this._spawner = hook.Create<LightSpawner>();
+		this._spawner = hook.Create<LightSpawner>(scene.Context);
 	}
 
 	public override void Setup() {
 		this.EnableAll();
 		this.BuildLightEntities();
 		this._spawner.TryInitialize();
+	}
+
+	public unsafe void RefreshLightEntities() {
+		// check current lights against gpose state
+		var valid = this.CheckValid();
+		if (!valid) return;
+		var state = this._gpose.GetGPoseState();
+		if (state == null) return;
+
+		var lights = state->GetLights();
+		for (var i = 0; i < lights.Length; i++) {
+			var found = state->GetLight((uint)i);
+			if (found == null) continue; // if there's no light to process at the index, skip
+			var existing = this.Scene.Children
+				.FirstOrDefault(entity => entity is LightEntity lightEntity && lightEntity.Address == (nint)found);
+
+			// if we find a vanilla light from gpose state but no lightentity matching its address, make one
+			if (existing == null) {
+				Ktisis.Log.Debug($"backfilling gpose LightEntity for index {i}");
+				this.AddLight(lights[i].Value, (uint)i);
+			}
+		}
 	}
 
 	private unsafe void BuildLightEntities() {

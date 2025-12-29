@@ -29,13 +29,14 @@ public class PropertyEditor {
 	
 	// Initialize property editors
 
-	public void Prepare(IEditorContext ctx) {
-		this.Create<ActorPropertyList>(ctx)
+	public void Prepare(IEditorContext ctx, GuiManager gui) {
+		this.Create<ActorPropertyList>(ctx, gui)
 			.Create<BasePropertyList>()
-			.Create<PosePropertyList>(ctx)
-			.Create<LightPropertyList>()
+			.Create<PosePropertyList>(ctx, gui)
+			.Create<LightPropertyList>(ctx)
 			.Create<ImagePropertyList>(ctx)
-			.Create<WeaponPropertyList>();
+			.Create<WeaponPropertyList>()
+			.Create<PresetPropertyList>(ctx);
 	}
 
 	private PropertyEditor Create<T>(params object[] parameters) where T : ObjectPropertyList {

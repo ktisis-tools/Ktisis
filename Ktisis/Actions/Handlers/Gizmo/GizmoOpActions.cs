@@ -48,7 +48,7 @@ public class OpRotateAction(IPluginContext ctx) : GizmoOpAction(ctx) {
 
 [Action("Gizmo_SetScaleMode")]
 public class OpScaleAction(IPluginContext ctx) : GizmoOpAction(ctx) {
-	protected override ImGuizmoOperation TargetOp { get; init; } = ImGuizmoOperation.Scale;
+	protected override ImGuizmoOperation TargetOp { get; init; } = ImGuizmoOperation.Scale | ImGuizmoOperation.ScaleU; //TODO: Check
 	
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,

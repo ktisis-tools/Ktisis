@@ -1,11 +1,13 @@
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 using GLib.Widgets;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context;
@@ -21,13 +23,15 @@ public class CameraWindow : KtisisWindow {
 
 	private readonly TransformTable _fixedPos;
 	private readonly TransformTable _relativePos;
+	private bool IsWork = false;
+	private const string WindowId = "KtisisCameraEditor";
 	
 	public CameraWindow(
 		IEditorContext ctx,
 		TransformTable fixedPos,
 		TransformTable relativePos
 	) : base(
-		"Camera Editor"
+		$"Camera Editor###{WindowId}"
 	) {
 		this._ctx = ctx;
 		this._fixedPos = fixedPos;
@@ -48,6 +52,8 @@ public class CameraWindow : KtisisWindow {
 			MinimumSize = new(TransformTable.CalcWidth(), 300.0f),
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.75f
 		};
+		IsWork = this._ctx.Cameras.IsWorkCameraActive;
+		this.WindowName = $"Camera Editor{(IsWork ? " [Work Camera]" : "")}###{WindowId}";
 	}
 	
 	public override void Draw() {
@@ -55,21 +61,24 @@ public class CameraWindow : KtisisWindow {
 		if (camera is not { IsValid: true }) return;
 
 		this.DrawToggles(camera);
-		
-		ImGui.Spacing();
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-		ImGui.InputText("##CameraName", ref camera.Name, 64);
-		
-		ImGui.Spacing();
-		ImGui.Separator();
-		ImGui.Spacing();
-		
-		this.DrawOrbitTarget(camera);
-		ImGui.Spacing();
-		this.DrawFixedPosition(camera);
-		this.DrawRelativeOffset(camera);
-		ImGui.Spacing();
-		this.DrawAnglePan(camera);
+
+		using (ImRaii.Disabled(IsWork)) {
+			ImGui.Spacing();
+			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			ImGui.InputText("##CameraName", ref camera.Name, 64);
+
+			ImGui.Spacing();
+			ImGui.Separator();
+			ImGui.Spacing();
+
+			this.DrawOrbitTarget(camera);
+			ImGui.Spacing();
+			this.DrawFixedPosition(camera);
+			this.DrawRelativeOffset(camera);
+			ImGui.Spacing();
+			this.DrawAnglePan(camera);
+		}
+
 		ImGui.Spacing();
 		this.DrawSliders(camera);
 	}
@@ -77,9 +86,11 @@ public class CameraWindow : KtisisWindow {
 	// Toggles
 
 	private void DrawToggles(EditorCamera camera) {
-		var collide = !camera.Flags.HasFlag(CameraFlags.NoCollide);
-		if (ImGui.Checkbox(this._ctx.Locale.Translate("camera_edit.toggles.collide"), ref collide))
-			camera.Flags ^= CameraFlags.NoCollide;
+		var collide = !camera.Flags.HasFlag(CameraFlags.NoCollide) && !IsWork;
+		using (ImRaii.Disabled(IsWork)) {
+			if (ImGui.Checkbox(this._ctx.Locale.Translate("camera_edit.toggles.collide"), ref collide))
+				camera.Flags ^= CameraFlags.NoCollide;
+		}
 		
 		ImGui.SameLine();
 		
@@ -118,7 +129,7 @@ public class CameraWindow : KtisisWindow {
 
 		ImGui.SameLine();
 
-		var text = $"Orbiting: {target.Name.TextValue}";
+		var text = $"Orbiting: {target.GetNameOrFallback(this._ctx)}";
 		if (isFixed)
 			ImGui.Text(text);
 		else
@@ -208,8 +219,9 @@ public class CameraWindow : KtisisWindow {
 		var rotateHint = this._ctx.Locale.Translate("camera_edit.sliders.rotation");
 		var zoomHint = this._ctx.Locale.Translate("camera_edit.sliders.zoom");
 		var distanceHint = this._ctx.Locale.Translate("camera_edit.sliders.distance");
-		this.DrawSliderAngle("##CameraRotate", FontAwesomeIcon.CameraRotate, ref ptr->Rotation, -180.0f, 180.0f, 0.5f, rotateHint);
-		this.DrawSliderAngle("##CameraZoom", FontAwesomeIcon.VectorSquare, ref ptr->Zoom, -40.0f, 100.0f, 0.5f, zoomHint);
+		using (ImRaii.Disabled(IsWork))
+			this.DrawSliderAngle("##CameraRotate", FontAwesomeIcon.CameraRotate, ref ptr->Rotation, -180.0f, 180.0f, 0.5f, rotateHint);
+		this.DrawSliderAngle("##CameraZoom", FontAwesomeIcon.Binoculars, ref ptr->Zoom, -40.0f, 100.0f, 0.5f, zoomHint);
 		this.DrawSliderFloat("##CameraDistance", FontAwesomeIcon.Moon, ref ptr->Distance, ptr->DistanceMin, ptr->DistanceMax, 0.05f, distanceHint);
 		if (camera.IsOrthographic) {
 			var orthoHint = this._ctx.Locale.Translate("camera_edit.sliders.ortho_zoom");
@@ -247,7 +259,7 @@ public class CameraWindow : KtisisWindow {
 
 	private void DrawIconAlign(FontAwesomeIcon icon, out float spacing, string hint = "") {
 		var padding = ImGui.GetStyle().CellPadding.X;
-		var iconSpace = (UiBuilder.IconFont.FontSize - Icons.CalcIconSize(icon).X) / 2;
+		var iconSpace = ((UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale) - Icons.CalcIconSize(icon).X) / 2;
 
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + padding + iconSpace);
 		Icons.DrawIcon(icon);

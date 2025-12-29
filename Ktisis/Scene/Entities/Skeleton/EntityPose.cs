@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.Havok.Animation.Rig;
 using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
@@ -175,8 +176,14 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	// Skeleton access
 
 	public unsafe RenderSkeleton* GetSkeleton() {
+		if (!this.IsValid)
+			return null;
 		if (this.Parent is not CharaEntity parent || !parent.IsDrawing())
 			return null;
+		// abort skeleton fetch if pose's parent is an actor which is drawing
+		if (this.Parent is ActorEntity actor && !actor.Actor.IsDrawing())
+			return null;
+
 		var character = parent.GetCharacter();
 		return character != null ? character->Skeleton : null; 
 	}
@@ -194,9 +201,20 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	public BoneNode? FindBoneByName(string name)
 		=> this.BoneMap.Values.FirstOrDefault(bone => bone.Info.Name == name);
 
+	public BoneNode? TryResolveSibling(BoneNode bone) {
+		var name = bone.Info.Name;
+		if (!name.EndsWith("_l") && !name.EndsWith("_r")) return null;
+
+		var prefix = name[..^2];
+		return this.BoneMap.Values.FirstOrDefault(potentialBone => potentialBone.Info.Name[..^2] == prefix && potentialBone.Info.Name != name);
+	}
+
 	public PartialSkeletonInfo? GetPartialInfo(int index)
 		=> this.Partials.GetValueOrDefault(index);
-	
+
+	public bool ShouldDraw() {
+		return this.Recurse().OfType<IVisibility>().Any(vis => vis.Visible);
+	}
 	// Remove handlers
 
 	public override void Remove() {

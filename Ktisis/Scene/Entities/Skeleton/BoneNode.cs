@@ -1,7 +1,6 @@
 using System.Numerics;
 
 using FFXIVClientStructs.Havok.Animation.Rig;
-using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing;
@@ -9,6 +8,8 @@ using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;
+
+using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 namespace Ktisis.Scene.Entities.Skeleton;
 
@@ -37,7 +38,7 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 	
 	// Bone transforms
 
-	protected unsafe Matrix4x4? GetMatrixModel() {
+	public unsafe Matrix4x4? GetMatrixModel() {
 		var pose = this.GetPose();
 		return pose != null ? HavokPosing.GetMatrix(pose, this.Info.BoneIndex) : null;
 	}
@@ -58,27 +59,42 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 		var skeleton = this.GetSkeleton();
 		var pose = skeleton != null ? this.GetPose() : null;
 		if (pose == null) return;
+		if(this.GetTransformModel() is not Transform transform) return;
 
 		var model = new Transform(skeleton->Transform);
 		matrix.Translation -= model.Position;
 		matrix = Matrix4x4.Transform(matrix, Quaternion.Inverse(model.Rotation));
 		matrix.Translation /= model.Scale;
-		HavokPosing.SetMatrix(pose, this.Info.BoneIndex, matrix);
+		HavokPosing.SetModelTransform(pose, this.Info.BoneIndex, new Transform(matrix, transform));
 	}
 
 	protected void SetTransformWorld(Transform transform)
 		=> this.SetMatrixWorld(transform.ComposeMatrix());
-	
+
 	public Transform? CalcTransformWorld() {
 		var matrix = this.CalcMatrixWorld();
-		return matrix != null ? new Transform(matrix.Value) : null;
+		if (matrix is null || this.GetTransformModel() is not Transform transform) return null;
+		return new Transform(matrix.Value, transform);
 	}
 
-	public Transform? GetTransformModel() {
-		var matrix = this.GetMatrixModel();
-		return matrix != null ? new Transform(matrix.Value) : null;
+	public Transform? CalcTransformOverlay() {
+		var transform = this.CalcTransformWorld();
+		if (transform is null) return null;
+
+		var offset = this.Scene.Context.Config.Offsets.GetOffset(this);
+		if (offset is not null) {
+			var offsetTransformed = Vector3.Transform((Vector3)offset, transform.Rotation);
+			transform.Position += offsetTransformed;
+		}
+
+		return transform;
 	}
-	
+
+	public unsafe Transform? GetTransformModel() {
+		var pose = this.GetPose();
+		return pose != null ? HavokPosing.GetModelTransform(pose, this.Info.BoneIndex) : null;
+	}
+
 	// Bone chain
 
 	public unsafe bool IsBoneChildOf(BoneNode node) {

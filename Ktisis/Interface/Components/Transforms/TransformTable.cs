@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using GLib.Widgets;
@@ -13,6 +14,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Selection;
+using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components.Transforms;
 
@@ -30,13 +32,16 @@ public enum TransformTableFlags {
 [Transient]
 public class TransformTable {
 	private readonly ConfigManager _cfg;
+	private readonly LocaleManager _locale;
 
 	private GizmoConfig GizmoConfig => this._cfg.File.Gizmo;
 
 	public TransformTable(
-		ConfigManager cfg
+		ConfigManager cfg,
+		LocaleManager locale
 	) {
 		this._cfg = cfg;
+		this._locale = locale;
 	}
 	
 	// State
@@ -45,6 +50,8 @@ public class TransformTable {
 	
 	public bool IsActive { get; private set; }
 	public bool IsDeactivated { get; private set; }
+	private bool WasFocused;
+	private string? WasStepping = null;
 
 	private Vector3 Angles = Vector3.Zero;
 	private Quaternion Value = Quaternion.Identity;
@@ -57,13 +64,16 @@ public class TransformTable {
 	
 	// Draw UI
 
-	private readonly static Vector3 MinScale = new(0.1f, 0.1f, 0.1f);
+	private readonly static Vector3 MinScale = new(0.001f, 0.001f, 0.001f);
 
 	private static uint[] AxisColors = [
 		0xFF3553FF,
 		0xFF00D154,
 		0xFFFF5400
 	];
+
+	private readonly static float FastStep = 10f;
+	private readonly static float SlowStep = 0.1f;
 
 	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default) {
 		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
@@ -77,22 +87,20 @@ public class TransformTable {
 		this.IsActive = false;
 		this.IsDeactivated = false;
 
-		try {
-			var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
-			ImGui.PushItemWidth(useAvail ? CalcTableAvail() : CalcTableWidth());
+		
+		var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
+		using var __ = ImRaii.ItemWidth(useAvail ? CalcTableAvail() : CalcTableWidth());
 
-			var op = flags.HasFlag(TransformTableFlags.Operation);
-			transOut = this.Transform.Set(transIn);
-			if (flags.HasFlag(TransformTableFlags.Position))
-				this.DrawPosition(ref transOut.Position, op);
-			if (flags.HasFlag(TransformTableFlags.Rotation))
-				this.DrawRotate(ref transOut.Rotation, op);
-			if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref transOut.Scale, op))
-				transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
-		} finally {
-			ImGui.PopItemWidth();
-		}
+		var op = flags.HasFlag(TransformTableFlags.Operation);
+		transOut = this.Transform.Set(transIn);
+		if (flags.HasFlag(TransformTableFlags.Position))
+			this.DrawPosition(ref transOut.Position, op);
+		if (flags.HasFlag(TransformTableFlags.Rotation))
+			this.DrawRotate(ref transOut.Rotation, op);
+		if (flags.HasFlag(TransformTableFlags.Scale) && this.DrawScale(ref transOut.Scale, op))
+			transOut.Scale = Vector3.Max(transOut.Scale, MinScale);
 
+		this.WasFocused = ImGui.IsWindowFocused();
 		return this.IsUsed;
 	}
 
@@ -100,14 +108,13 @@ public class TransformTable {
 		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
 		this.IsUsed = false;
 		this.IsDeactivated = false;
-		try {
-			var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
-			ImGui.PushItemWidth(useAvail ? ImGui.GetContentRegionAvail().X : CalcTableWidth());
-			var operation = flags.HasFlag(TransformTableFlags.Operation);
-			this.DrawPosition(ref position, operation);
-		} finally {
-			ImGui.PopItemWidth();
-		}
+		
+		var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
+		using var __ = ImRaii.ItemWidth(useAvail ? ImGui.GetContentRegionAvail().X : CalcTableWidth());
+
+		var operation = flags.HasFlag(TransformTableFlags.Operation);
+		this.DrawPosition(ref position, operation);
+
 		return this.IsUsed;
 	}
 	
@@ -140,10 +147,10 @@ public class TransformTable {
 		ImGui.SameLine(0, spacing);
 
 		var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
-		ImGui.PushStyleColor(ImGuiCol.Text, enable);
-		if (Buttons.IconButtonTooltip(icon, hint))
-			this.ChangeOperation(op);
-		ImGui.PopStyleColor();
+		using (ImRaii.PushColor(ImGuiCol.Text, enable)) {
+			if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
+				this.ChangeOperation(op);
+		}
 	}
 
 	private void ChangeOperation(ImGuizmoOperation op) {
@@ -173,38 +180,64 @@ public class TransformTable {
 	private bool DrawXYZ(string id, ref Vector3 vec, float speed) {
 		var result = false;
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		ImGui.PushItemWidth((ImGui.CalcItemWidth() - spacing * 2) / 3);
+		using var _ = ImRaii.ItemWidth((ImGui.CalcItemWidth() - spacing * 2) / 3);
+		
 		result |= this.DrawAxis($"{id}_X", ref vec.X, speed, AxisColors[0]);
 		ImGui.SameLine(0, spacing);
 		result |= this.DrawAxis($"{id}_Y", ref vec.Y, speed, AxisColors[1]);
 		ImGui.SameLine(0, spacing);
 		result |= this.DrawAxis($"{id}_Z", ref vec.Z, speed, AxisColors[2]);
-		ImGui.PopItemWidth();
 		return result;
 	}
 
 	private bool DrawAxis(string id, ref float value, float speed, uint col) {
-		ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, ImGui.GetStyle().FramePadding + new Vector2(0.1f, 0.1f));
-		ImGui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 0.1f);
-		ImGui.PushStyleColor(ImGuiCol.Border, col);
-		var result = ImGui.DragFloat(id, ref value, speed, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
-		ImGui.PopStyleColor();
-		ImGui.PopStyleVar(2);
+		bool result;
+		bool stopStepping = false;
+		using (ImRaii.PushStyle(ImGuiStyleVar.FramePadding, ImGui.GetStyle().FramePadding + new Vector2(0.1f, 0.1f))) {
+			using var _ = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0.1f);
+			using var __ = ImRaii.PushColor(ImGuiCol.Border, col);
+			result = ImGui.DragFloat(id, ref value, speed, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
+			if (this._cfg.File.Keybinds.ScrollAllow) {
+				if (ImGui.IsItemHovered() && (!this._cfg.File.Keybinds.ScrollModifier || ImGui.IsKeyDown(ImGuiKey.ModAlt))) {
+					ImGuiP.SetItemUsingMouseWheel();
+					var mw = (int)ImGui.GetIO().MouseWheel;
+					if (mw != 0) {
+						var step = speed * 10f; // scale steps by 1 place since its kinda slow by default
+						if (ImGui.IsKeyDown(ImGuiKey.ModShift))
+							step *= FastStep;
+						else if (ImGui.IsKeyDown(ImGuiKey.ModCtrl))
+							step *= SlowStep;
+
+						value += mw * step;
+						result = true;
+						WasStepping = id;
+					}
+				} else if (WasStepping == id) {
+					stopStepping = true;
+				}
+			}
+		} 
+
 		this.IsActive |= ImGui.IsItemActive();
-		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit();
+		// if we lose focus after having been focused, say we're disabled to represent clicking out and not breaking other transformtables
+		this.IsDeactivated |= ImGui.IsItemDeactivatedAfterEdit() | (WasStepping == id && stopStepping) | (this.WasFocused && !ImGui.IsWindowFocused());
+		
+		if (stopStepping)
+			WasStepping = null;
+		
 		return result;
 	}
-	
+
 	// Space calculations
 
 	private static float CalcTableAvail()
 		=> ImGui.GetContentRegionAvail().X - CalcIconSpacing();
 
 	private static float CalcTableWidth()
-		=> UiBuilder.DefaultFont.FontSize * 4.00f * 3;
+		=> (UiBuilder.DefaultFontSizePx * 4.00f * 3) * ImGuiHelpers.GlobalScale;
 
 	private static float CalcIconSpacing()
-		=> UiBuilder.IconFont.FontSize + ImGui.GetStyle().ItemSpacing.X * 2;
+		=> (UiBuilder.DefaultFontSizePx + ImGui.GetStyle().ItemSpacing.X * 2) * ImGuiHelpers.GlobalScale;
 	
 	public static float CalcWidth()
 		=> CalcTableWidth() + CalcIconSpacing();

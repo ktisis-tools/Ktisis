@@ -156,4 +156,8 @@ internal static class HkaEulerAngles {
 		qu.X = a[0]; qu.Y = a[1]; qu.Z = a[2];
 		return qu;
 	}
+
+	public static float GetYaw(Quaternion q) {
+		return MathF.Atan2(2f * (q.W * q.Y + q.X * q.Z), 1f - 2f * (q.Y * q.Y + q.Z * q.Z));
+	}
 }

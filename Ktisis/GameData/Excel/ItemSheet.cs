@@ -36,6 +36,8 @@ public class ItemModel(ulong var, bool isWep = false) {
 
 [Sheet("Item", columnHash: 0xe9a33c9d)]
 public struct ItemSheet : IExcelRow<ItemSheet> {
+	public uint RowOffset { get; }
+	public ExcelPage ExcelPage { get; }
 	public uint RowId { get; }
 
 	public string Name { get; }
@@ -59,6 +61,8 @@ public struct ItemSheet : IExcelRow<ItemSheet> {
 
 	public ItemSheet(ExcelPage page, uint offset, uint row) {
 		this.RowId = row;
+		this.RowOffset = offset;
+		this.ExcelPage = page;
 
 		this.Name = page.ReadColumn<string>(9, offset);
 		this.Icon = page.ReadColumn<ushort>(10, offset);
@@ -75,7 +79,9 @@ public struct ItemSheet : IExcelRow<ItemSheet> {
 	// Equip slots
 
 	[Sheet("EquipSlotCategory")]
-	private struct EquipSlotCategoryRow(uint row) : IExcelRow<EquipSlotCategoryRow> {
+	private struct EquipSlotCategoryRow(ExcelPage page, uint offset, uint row) : IExcelRow<EquipSlotCategoryRow> {
+		public ExcelPage ExcelPage => page;
+		public uint RowOffset { get; } = offset;
 		public uint RowId { get; } = row;
 
 		private bool[] Slots { get; set; } = new bool[14];
@@ -90,7 +96,7 @@ public struct ItemSheet : IExcelRow<ItemSheet> {
 			var slots = new bool[14];
 			for (var i = 0; i < 14; i++)
 				slots[i] = page.ReadColumn<sbyte>(i, offset) != 0;
-			return new EquipSlotCategoryRow(row) {
+			return new EquipSlotCategoryRow(page, offset, row) {
 				Slots = slots
 			};
 		}

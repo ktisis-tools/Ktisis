@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
@@ -80,7 +81,7 @@ public class BoneCategoryEditor {
 	private void DrawCategoryList() {
 		ImGui.TableNextColumn();
 
-		using var _ = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, UiBuilder.DefaultFont.FontSize);
+		using var _ = ImRaii.PushStyle(ImGuiStyleVar.IndentSpacing, UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale);
 		this.DrawCategoryList(string.Empty);
 	}
 	

@@ -13,18 +13,21 @@ using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Structs.GPose;
+using Ktisis.Structs.Actors;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Scene.Types;
 using Ktisis.Services.Game;
+using Ktisis.Structs.Camera;
+using Ktisis.Editor.Camera.Types;
 
 namespace Ktisis.Scene.Modules.Actors;
 
 public class ActorModule : SceneModule {
 	private readonly ActorService _actors;
-	private readonly IClientState _clientState;
+	private readonly IObjectTable _objectTable;
 	private readonly IFramework _framework;
 	private readonly GroupPoseModule _gpose;
 	
@@ -34,12 +37,12 @@ public class ActorModule : SceneModule {
 		IHookMediator hook,
 		ISceneManager scene,
 		ActorService actors,
-		IClientState clientState,
+		IObjectTable objectTable,
 		IFramework framework,
 		GroupPoseModule gpose
 	) : base(hook, scene) {
 		this._actors = actors;
-		this._clientState = clientState;
+		this._objectTable = objectTable;
 		this._framework = framework;
 		this._gpose = gpose;
 		this._spawner = hook.Create<ActorSpawner>();
@@ -75,7 +78,7 @@ public class ActorModule : SceneModule {
 	// Spawning
 
 	public async Task<ActorEntity> Spawn() {
-		var localPlayer = this._clientState.LocalPlayer;
+		var localPlayer = this._objectTable.LocalPlayer;
 		if (localPlayer == null)
 			throw new Exception("Local player not found.");
 		
@@ -114,6 +117,8 @@ public class ActorModule : SceneModule {
 		
 		var gpose = this._gpose.GetGPoseState();
 		if (gpose == null) return;
+
+		this.Scene.Context.Characters.Mcdf.RevertIfTouched(actor.Actor);
 
 		var gameObject = (CSGameObject*)actor.Actor.Address;
 		this._framework.RunOnFrameworkThread(() => {
@@ -221,6 +226,70 @@ public class ActorModule : SceneModule {
 	[Signature("45 33 D2 4C 8D 81 ?? ?? ?? ?? 41 8B C2 4C 8B C9 49 3B 10")]
 	private RemoveCharacterDelegate _removeCharacter = null!;
 	private unsafe delegate nint RemoveCharacterDelegate(GPoseState* gpose, CSGameObject* gameObject);
+
+	[Signature("E8 ?? ?? ?? ?? 8B D6 48 8B CF E8 ?? ?? ?? ?? EB 2A")]
+	private ActorLookAtDelegate _actorLookAt = null!;
+	private unsafe delegate char ActorLookAtDelegate(ActorGaze* writeTo, Gaze* readFrom, GazeControl bodyPart, IntPtr unk4);
+
+	[Signature("E8 ?? ?? ?? ?? 48 83 C3 08 48 83 EF 01 75 CF", DetourName = nameof(ControlGazeDetour))]
+	private Hook <ControlGazeDelegate>? ControlGazeHook = null!;
+	private delegate void ControlGazeDelegate(nint a1);
+	private unsafe void ControlGazeDetour(nint a1) {
+		if (!this.CheckValid()) return;
+
+		// check current scene ActorEntities
+		var current = this.Scene.Children
+			.OfType<ActorEntity>()
+			.ToList();
+
+		foreach (ActorEntity actor in current) {
+			// valid actor with a modified gaze to use
+			if (!actor.IsValid || actor.Gaze == null) continue;
+
+			// actor address matches character being detoured
+			if (actor.Actor.Address != a1 - CharacterEx.GazeOffset) continue;
+
+			// get a characterEx we can work with from the gaze being detoured
+			var detourCharacterEx = (CharacterEx*)(a1 - CharacterEx.GazeOffset);
+			// get the ktisis-made ActorGaze on matched ActorEntity
+			var gaze = (ActorGaze)actor.Gaze;
+			// overwrite gaze at a1 with stored gaze for each gazetype on ActorEntity
+			for (var i = -1; i < 3; i++) {
+				var type = (GazeControl)i;
+				var ctrl = gaze[type];
+				if (ctrl.Mode != 0) {
+					// un-set fake followcam mode and modify position
+					if (ctrl.Mode == GazeMode._KtisisFollowCam_) {
+						if (this.Scene.Context.Cameras.IsWorkCameraActive) {
+							var freeCam = (WorkCamera)this.Scene.Context.Cameras.Current;
+							ctrl.Pos = freeCam.Position;
+							gaze[type] = ctrl;
+						} else {
+							var camera = GameCameraEx.GetActive();
+							if (camera != null) {
+								ctrl.Pos = camera->Position;
+								gaze[type] = ctrl;
+							}
+						}
+						ctrl.Mode = GazeMode.Target;
+					}
+
+					// un-set fake gizmo mode w/o modifications
+					if (ctrl.Mode == GazeMode._KtisisFollowGizmo_)
+						ctrl.Mode = GazeMode.Target;
+
+					this._actorLookAt(&detourCharacterEx->Gaze, &ctrl, type, IntPtr.Zero);
+
+					if (type == GazeControl.All)
+						break;
+				}
+			}
+		}
+
+		// call original after we've made our modifications
+		this.ControlGazeHook!.Original(a1);
+	}
+
 	
 	// Disposal
 

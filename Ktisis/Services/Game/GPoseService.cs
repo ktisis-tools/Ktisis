@@ -66,7 +66,7 @@ public class GPoseService : IDisposable {
 			Ktisis.Log.Info($"GPose state changed: {state}");
 			this._gposeEvent.Invoke(this, state);
 		}
-		
+
 		if (state) this._updateEvent.Invoke();
 	}
 

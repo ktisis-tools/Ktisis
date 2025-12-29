@@ -21,7 +21,8 @@ public enum EmoteModeEnum : uint {
 
 [StructLayout(LayoutKind.Explicit, Size = 0x22E0)]
 public struct CharacterEx {
-	public const int AnimationOffset = 0xA20;
+	public const int AnimationOffset = 0xA30;
+	public const int GazeOffset = 0xD80;
 	
 	[FieldOffset(0)] public Character Character;
 
@@ -30,17 +31,19 @@ public struct CharacterEx {
 	[FieldOffset(0x130)] public Vector3 CameraOffsetSmooth;
 	[FieldOffset(0x180)] public Vector3 CameraOffset;
 
-	[FieldOffset(0x620)] public unsafe nint* _emoteControllerVf;
-	[FieldOffset(0x620)] public EmoteController EmoteController;
+	[FieldOffset(0x630)] public unsafe nint* _emoteControllerVf;
+	[FieldOffset(0x630)] public EmoteController EmoteController;
 	
 	[FieldOffset(0x0CE2)] public CombatFlags CombatFlags;
 	
 	[FieldOffset(AnimationOffset)] public AnimationContainer Animation;
 
-	[FieldOffset(0x22D8)] public float Opacity;
+	[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
 
-	[FieldOffset(0x2354)] public byte Mode;
-	[FieldOffset(0x2355)] public EmoteModeEnum EmoteMode;
+	[FieldOffset(0x22E8)] public float Opacity;
+
+	[FieldOffset(0x2364)] public byte Mode;
+	[FieldOffset(0x2365)] public EmoteModeEnum EmoteMode;
 
 	public bool IsGPose => this.Character.ObjectIndex is >= 201 and <= 243;
 }
