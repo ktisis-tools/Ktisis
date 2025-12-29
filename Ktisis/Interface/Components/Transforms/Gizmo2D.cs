@@ -2,9 +2,10 @@ using System;
 using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility.Raii;
 
-using Ktisis.ImGuizmo;
+
 using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Interface.Components.Transforms;
@@ -18,13 +19,13 @@ public class Gizmo2D {
 
 	public Gizmo2D(IGizmo gizmo) {
 		this.Gizmo = gizmo;
-		this.Gizmo.Operation = Operation.ROTATE;
+		this.Gizmo.Operation = ImGuizmoOperation.Rotate;
 		this.Gizmo.ScaleFactor = ScaleFactor;
 	}
 	
 	// Gizmo state
 
-	public Mode Mode {
+	public ImGuizmoMode Mode {
 		get => this.Gizmo.Mode;
 		set => this.Gizmo.Mode = value;
 	}

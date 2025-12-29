@@ -1,16 +1,16 @@
 using Dalamud.Game.ClientState.Keys;
+using Dalamud.Bindings.ImGuizmo;
 
 using Ktisis.Actions.Attributes;
 using Ktisis.Actions.Binds;
 using Ktisis.Actions.Types;
 using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
-using Ktisis.ImGuizmo;
 
 namespace Ktisis.Actions.Handlers.Gizmo;
 
 public abstract class GizmoOpAction(IPluginContext ctx) : KeyAction(ctx) {
-	protected abstract Operation TargetOp { get; init; }
+	protected abstract ImGuizmoOperation TargetOp { get; init; }
 
 	public override bool Invoke() {
 		if (this.Context.Editor == null || this.Context.Editor.Selection.Count == 0)
@@ -22,7 +22,7 @@ public abstract class GizmoOpAction(IPluginContext ctx) : KeyAction(ctx) {
 
 [Action("Gizmo_SetTranslateMode")]
 public class OpTranslateAction(IPluginContext ctx) : GizmoOpAction(ctx) {
-	protected override Operation TargetOp { get; init; } = Operation.TRANSLATE;
+	protected override ImGuizmoOperation TargetOp { get; init; } = ImGuizmoOperation.Translate;
 	
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
@@ -35,7 +35,7 @@ public class OpTranslateAction(IPluginContext ctx) : GizmoOpAction(ctx) {
 
 [Action("Gizmo_SetRotateMode")]
 public class OpRotateAction(IPluginContext ctx) : GizmoOpAction(ctx) {
-	protected override Operation TargetOp { get; init; } = Operation.ROTATE;
+	protected override ImGuizmoOperation TargetOp { get; init; } = ImGuizmoOperation.Rotate;
 
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
@@ -48,7 +48,7 @@ public class OpRotateAction(IPluginContext ctx) : GizmoOpAction(ctx) {
 
 [Action("Gizmo_SetScaleMode")]
 public class OpScaleAction(IPluginContext ctx) : GizmoOpAction(ctx) {
-	protected override Operation TargetOp { get; init; } = Operation.SCALE | Operation.SCALE_U;
+	protected override ImGuizmoOperation TargetOp { get; init; } = ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu;
 	
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,
@@ -61,7 +61,7 @@ public class OpScaleAction(IPluginContext ctx) : GizmoOpAction(ctx) {
 
 [Action("Gizmo_SetUniversalMode")]
 public class OpUniversalAction(IPluginContext ctx) : GizmoOpAction(ctx) {
-	protected override Operation TargetOp { get; init; } = Operation.UNIVERSAL;
+	protected override ImGuizmoOperation TargetOp { get; init; } = ImGuizmoOperation.Universal;
 	
 	public override KeybindInfo BindInfo { get; } = new() {
 		Trigger = KeybindTrigger.OnDown,

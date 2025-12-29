@@ -1,9 +1,9 @@
 using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Ktisis.Data.Config.Sections;
-using Ktisis.ImGuizmo;
 
 namespace Ktisis.Interface.Overlay;
 
@@ -19,8 +19,8 @@ public interface IGizmo {
 	
 	public float ScaleFactor { get; set; }
 	
-	public Mode Mode { get; set; }
-	public Operation Operation { get; set; }
+	public ImGuizmoMode Mode { get; set; }
+	public ImGuizmoOperation Operation { get; set; }
 
 	public bool AllowAxisFlip { get; set; }
 
@@ -61,8 +61,8 @@ public class Gizmo : IGizmo {
 	private Matrix4x4 ViewMatrix = Matrix4x4.Identity;
 	private Matrix4x4 ProjMatrix = Matrix4x4.Identity;
 
-	public Mode Mode { get; set; } = Mode.Local;
-	public Operation Operation { get; set; } = Operation.UNIVERSAL;
+	public ImGuizmoMode Mode { get; set; } = ImGuizmoMode.Local;
+	public ImGuizmoOperation Operation { get; set; } = ImGuizmoOperation.Universal;
 
 	public bool AllowAxisFlip { get; set; } = true;
 
@@ -78,19 +78,19 @@ public class Gizmo : IGizmo {
 	public void BeginFrame(Vector2 pos, Vector2 size) {
 		this.HasDrawn = false;
 
-		ImGuizmo.Gizmo.SetDrawRect(pos.X, pos.Y, size.X, size.Y);
+		ImGuizmo.SetRect(pos.X, pos.Y, size.X, size.Y);
 
-		ImGuizmo.Gizmo.ID = (int)this.Id;
-		ImGuizmo.Gizmo.GizmoScale = this.ScaleFactor;
-		ImGuizmo.Gizmo.AllowAxisFlip = this.AllowAxisFlip;
-		ImGuizmo.Gizmo.Style = this._cfg.Style;
-		ImGuizmo.Gizmo.BeginFrame();
+		ImGuizmo.SetID((int) this.Id);
+		ImGuizmo.SetGizmoSizeClipSpace(this.ScaleFactor);
+		ImGuizmo.AllowAxisFlip(this.AllowAxisFlip);
+		//ImGuizmo.GetStyle().Handle = &this._cfg.Style;
+		ImGuizmo.BeginFrame();
 
-		this.IsUsedPrev = ImGuizmo.Gizmo.IsUsing;
+		this.IsUsedPrev = ImGuizmo.IsUsing();
 	}
 
 	public unsafe void PushDrawList() {
-		ImGuizmo.Gizmo.DrawList = (nint)ImGui.GetWindowDrawList().Handle;
+		ImGuizmo.SetDrawlist(ImGui.GetWindowDrawList().Handle);
 	}
 
 	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
@@ -98,13 +98,13 @@ public class Gizmo : IGizmo {
 
 		if (this.HasDrawn) return false;
 
-		var result = ImGuizmo.Gizmo.Manipulate(
-			this.ViewMatrix,
-			this.ProjMatrix,
+		var result = ImGuizmo.Manipulate(
+			ref this.ViewMatrix,
+			ref this.ProjMatrix,
 			this.Operation,
 			this.Mode,
 			ref mx,
-			out delta
+			ref delta  //TODO: This wont work?
 		);
 
 		this.HasDrawn = true;
@@ -112,6 +112,6 @@ public class Gizmo : IGizmo {
 	}
 
 	public void EndFrame() {
-		this.IsEnded = !ImGuizmo.Gizmo.IsUsing && this.IsUsedPrev;
+		this.IsEnded = !ImGuizmo.IsUsing() && this.IsUsedPrev;
 	}
 }

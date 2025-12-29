@@ -1,7 +1,8 @@
 using System.Numerics;
 using System;
 
-using Ktisis.ImGuizmo;
+using Dalamud.Bindings.ImGuizmo;
+
 using Ktisis.Editor.Transforms;
 
 namespace Ktisis.Data.Config.Sections;
@@ -9,8 +10,8 @@ namespace Ktisis.Data.Config.Sections;
 public class GizmoConfig {
 	public bool Visible = true;
 	
-	public Mode Mode = Mode.Local;
-	public Operation Operation = Operation.ROTATE;
+	public ImGuizmoMode Mode = ImGuizmoMode.Local;
+	public ImGuizmoOperation Operation = ImGuizmoOperation.Rotate;
 
 	public MirrorMode MirrorRotation = MirrorMode.Parallel;
 	public bool ParentBones = true;
@@ -19,6 +20,7 @@ public class GizmoConfig {
 	public bool AllowAxisFlip = true;
 	public bool AllowRaySnap = true;
 
+	
 	public Style Style = DefaultStyle;
 
 	public readonly static Style DefaultStyle = new() {
@@ -30,22 +32,22 @@ public class GizmoConfig {
 		ScaleLineCircleSize = 6.0f,
 		HatchedAxisLineThickness = 6.0f,
 		CenterCircleSize = 6.0f,
-		
-		ColorDirectionX = new Vector4(0.666f, 0.000f, 0.000f, 1.000f),
-		ColorDirectionY = new Vector4(0.000f, 0.666f, 0.000f, 1.000f),
-		ColorDirectionZ = new Vector4(0.000f, 0.000f, 0.666f, 1.000f),
-		ColorPlaneX = new Vector4(0.666f, 0.000f, 0.000f, 0.380f),
-		ColorPlaneY = new Vector4(0.000f, 0.666f, 0.000f, 0.380f),
-		ColorPlaneZ = new Vector4(0.000f, 0.000f, 0.666f, 0.380f),
-		ColorSelection = new Vector4(1.000f, 0.500f, 0.062f, 0.541f),
-		ColorInactive = new Vector4(0.600f, 0.600f, 0.600f, 0.600f),
-		ColorTranslationLine = new Vector4(0.666f, 0.666f, 0.666f, 0.666f),
-		ColorScaleLine = new Vector4(0.250f, 0.250f, 0.250f, 1.000f),
-		ColorRotationUsingBorder = new Vector4(1.000f, 0.500f, 0.062f, 1.000f),
-		ColorRotationUsingFill = new Vector4(1.000f, 0.500f, 0.062f, 0.500f),
-		ColorHatchedAxisLines = new Vector4(0.000f, 0.000f, 0.000f, 0.500f),
-		ColorText = new Vector4(1.000f, 1.000f, 1.000f, 1.000f),
-		ColorTextShadow = new Vector4(0.000f, 0.000f, 0.000f, 1.000f)
+
+		DirectionX = new Vector4(0.666f, 0.000f, 0.000f, 1.000f),
+		DirectionY = new Vector4(0.000f, 0.666f, 0.000f, 1.000f),
+		DirectionZ = new Vector4(0.000f, 0.000f, 0.666f, 1.000f),
+		PlaneX = new Vector4(0.666f, 0.000f, 0.000f, 0.380f),
+		PlaneY = new Vector4(0.000f, 0.666f, 0.000f, 0.380f),
+		PlaneZ = new Vector4(0.000f, 0.000f, 0.666f, 0.380f),
+		Selection = new Vector4(1.000f, 0.500f, 0.062f, 0.541f),
+		Inactive = new Vector4(0.600f, 0.600f, 0.600f, 0.600f),
+		TranslationLine = new Vector4(0.666f, 0.666f, 0.666f, 0.666f),
+		ScaleLine = new Vector4(0.250f, 0.250f, 0.250f, 1.000f),
+		RotationUsingBorder = new Vector4(1.000f, 0.500f, 0.062f, 1.000f),
+		RotationUsingFill = new Vector4(1.000f, 0.500f, 0.062f, 0.500f),
+		HatchedAxisLines = new Vector4(0.000f, 0.000f, 0.000f, 0.500f),
+		Text = new Vector4(1.000f, 1.000f, 1.000f, 1.000f),
+		TextShadow = new Vector4(0.000f, 0.000f, 0.000f, 1.000f)
 	};
 
 	public void SetNextMirrorRotation() {
