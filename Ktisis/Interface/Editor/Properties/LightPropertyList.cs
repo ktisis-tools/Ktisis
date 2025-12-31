@@ -49,7 +49,6 @@ public class LightPropertyList : ObjectPropertyList {
 	public unsafe override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
 		if (entity is not LightEntity light)
 			return;
-		ImGui.Text($"DEBUG: SceneLight {light.Address:X} | RenderLight {(uint)light.GetObject()->RenderLight:X}");
 		
 		builder.AddHeader("Light", () => this.DrawLightTab(light));
 		builder.AddHeader("Shadows", () => this.DrawShadowsTab(light));
@@ -70,10 +69,8 @@ public class LightPropertyList : ObjectPropertyList {
 			foreach (var value in Enum.GetValues<LightType>()) {
 				var valueLabel = this._locale.Translate($"lightType.{value}");
 				if (ImGui.Selectable(valueLabel, light->LightType == value)) {
-					// if (value == LightType.PointLight) {
-					// 	Ktisis.Log.Info($"switching to PointLight, resetting texture");
-					// 	this._ctx.Scene.GetModule<LightModule>()?.UpdateSceneLightTexture(sceneLight, "garbage.tex\0");
-					// }
+					if (value is not (LightType.SpotLight or LightType.AreaLight))
+						entity.RemoveTexture();
 					light->LightType = value;
 				}
 			}
@@ -134,8 +131,13 @@ public class LightPropertyList : ObjectPropertyList {
 		}
 		ImGui.SameLine();
 		using (ImRaii.Disabled(light->LightType is (LightType.Directional or LightType.PointLight))) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Image, "Choose a texture for this light to project"))
+			var tooltip = "Choose a texture for this light to project";
+			if (entity.Gobo != null)
+				tooltip += "\nRight-click to remove";
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Image, tooltip))
 				this._goboPopup.Open();
+			if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+				entity.RemoveTexture();
 
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 			ImGui.Text($"Current Texture: {(entity.Gobo == null ? "None" : entity.Gobo.Name)}");

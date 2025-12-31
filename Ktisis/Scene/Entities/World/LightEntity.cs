@@ -63,6 +63,17 @@ public class LightEntity : WorldEntity, IDeletable, IHideable {
 
 	public void ToggleHidden() => this.IsHidden = !this.IsHidden;
 
+	public unsafe void RemoveTexture() {
+		this.Gobo = null;
+		var sceneLight = this.GetObject();
+		if (sceneLight != null && sceneLight->Texture != null) {
+			sceneLight->Texture->DecRef();
+			sceneLight->Texture = null;
+		}
+		if (sceneLight != null && sceneLight->RenderLight != null && sceneLight->RenderLight->Texture != null)
+			sceneLight->RenderLight->Texture = null;
+	}
+
 	public bool Delete() {
 		this.GetModule().Delete(this);
 		return this.Address == nint.Zero;

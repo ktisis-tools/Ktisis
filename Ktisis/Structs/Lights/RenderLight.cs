@@ -48,5 +48,5 @@ public struct RenderLight {
 	[FieldOffset(0x88)] public float FalloffAngle; // 0-90deg
 	[FieldOffset(0x8C)] public float Range;
 	[FieldOffset(0x90)] public float CharaShadowRange;
-	// [FieldOffset(0x120)] internal unsafe Kernel::TextureDx11* Texture;
+	[FieldOffset(0x120)] public unsafe void* Texture;
 }
