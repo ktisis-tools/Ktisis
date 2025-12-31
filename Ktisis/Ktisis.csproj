@@ -1,4 +1,4 @@
-<Project Sdk="Dalamud.NET.Sdk/14.0.1">
+﻿<Project Sdk="Dalamud.NET.Sdk/14.0.1">
     <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
@@ -65,11 +65,6 @@
 	<ItemGroup>
 	  <Folder Include="Data\Library\" />
       <EmbeddedResource Include="Data\Library\props.json" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Reference Include="KamiToolKit">
-	    <HintPath>..\KamiToolKit\bin\Debug\KamiToolKit.dll</HintPath>
-	  </Reference>
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec ContinueOnError="WarnAndContinue" Command="if $(OS) == Windows_NT (&#xA;copy &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot; /Y&#xA;) else (&#xA;cp &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
