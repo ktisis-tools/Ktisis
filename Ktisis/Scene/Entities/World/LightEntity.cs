@@ -63,7 +63,7 @@ public class LightEntity : WorldEntity, IDeletable, IHideable {
 
 	public void ToggleHidden() => this.IsHidden = !this.IsHidden;
 
-	public unsafe void RemoveTexture() {
+	public unsafe void RemoveGobo() {
 		this.Gobo = null;
 		var sceneLight = this.GetObject();
 		if (sceneLight != null && sceneLight->Texture != null) {
@@ -72,6 +72,10 @@ public class LightEntity : WorldEntity, IDeletable, IHideable {
 		}
 		if (sceneLight != null && sceneLight->RenderLight != null && sceneLight->RenderLight->Texture != null)
 			sceneLight->RenderLight->Texture = null;
+	}
+	public unsafe void SetGobo(GoboEntry selected) {
+		this.Gobo = selected;
+		this.Scene.GetModule<LightModule>().UpdateSceneLightTexture(this.GetObject(), selected.Path);
 	}
 
 	public bool Delete() {

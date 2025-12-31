@@ -70,7 +70,7 @@ public class LightPropertyList : ObjectPropertyList {
 				var valueLabel = this._locale.Translate($"lightType.{value}");
 				if (ImGui.Selectable(valueLabel, light->LightType == value)) {
 					if (value is not (LightType.SpotLight or LightType.AreaLight))
-						entity.RemoveTexture();
+						entity.RemoveGobo();
 					light->LightType = value;
 				}
 			}
@@ -137,7 +137,7 @@ public class LightPropertyList : ObjectPropertyList {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Image, tooltip))
 				this._goboPopup.Open();
 			if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-				entity.RemoveTexture();
+				entity.RemoveGobo();
 
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 			ImGui.Text($"Current Texture: {(entity.Gobo == null ? "None" : entity.Gobo.Name)}");
@@ -176,8 +176,7 @@ public class LightPropertyList : ObjectPropertyList {
 		if (!this._goboPopup.IsOpen) return;
 		if (!this._goboPopup.Draw(this._goboSchema.Gobos, this._goboSchema.Gobos.Count, out var selected, CalcItemHeight())) return;
 
-		entity.Gobo = selected;
-		this._ctx.Scene.GetModule<LightModule>().UpdateSceneLightTexture(entity.GetObject(), entity.Gobo!.Path);
+		entity.SetGobo(selected!);
 	}
 
 	private static float CalcItemHeight() => (ImGui.GetTextLineHeight() + ImGui.GetStyle().ItemInnerSpacing.Y) * 2;
