@@ -7,9 +7,6 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
-using FFXIVClientStructs.FFXIV.Client.System.Resource;
-
-using InteropGenerator.Runtime;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Camera.Types;
@@ -96,15 +93,6 @@ public class LightSpawner : HookModule {
 			render->CharaShadowRange = 100.0f;
 		}
 
-		// string path = "bgcommon/hou/indoor/general/1133/texture/fun_b0_m1133_0b_i.tex\0";
-		// byte* texPtr = stackalloc byte[path.Length];
-		// for (int i = 0; i < path.Length; ++i) {
-		// 	texPtr[i] = (byte)path[i];
-		// }
-		// ResourceCategory* resourceCat = stackalloc ResourceCategory[1];
-		// resourceCat[0] = ResourceCategory.BgCommon;
-		//
-		// this._sceneLightTexture(light, resourceCat, texPtr);
 		this._created.Add((nint)light);
 		return light;
 	}

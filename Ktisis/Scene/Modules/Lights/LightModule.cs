@@ -114,11 +114,11 @@ public class LightModule : SceneModule {
 	}
 
 	public unsafe void UpdateSceneLightTexture(SceneLight* self, string? path) {
-		// path = "bgcommon/hou/indoor/general/1133/texture/fun_b0_m1133_0b_i.tex\0";
 		if (path == null)
 			return;
 		path += "\0"; // append null terminator to our clean paths for assignment
-		Ktisis.Log.Info($"updating texture for light {(nint)self:X} to {path}");
+		Ktisis.Log.Debug($"updating texture for light {(nint)self:X} to {path}");
+
 		var texPtr = stackalloc byte[path.Length];
 		for (var i = 0; i < path.Length; ++i) {
 			texPtr[i] = (byte)path[i];
