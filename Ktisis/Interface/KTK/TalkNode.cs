@@ -147,6 +147,7 @@ public class TalkNode : OverlayNode {
 			Size = new Vector2(300.0f, 36.0f),
 			Position = new Vector2(60.0f, 2.0f),
 			TextColor = KnownColor.White.Vector(),
+			TextOutlineColor = KnownColor.Black.Vector(),
 			FontType = FontType.Axis,
 			FontSize = 18,
 			AlignmentType = AlignmentType.Left,
