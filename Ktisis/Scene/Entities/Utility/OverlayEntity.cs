@@ -13,9 +13,7 @@ public abstract class OverlayEntity : SceneEntity, IVisibility, IDeletable {
 
 	public OverlayEntity(
 		ISceneManager scene
-	) : base(scene) {
-		// this.Type = EntityType.TalkOverlay;
-	}
+	) : base(scene) { }
 
 	public bool Visible {
 		get => this._visible;
