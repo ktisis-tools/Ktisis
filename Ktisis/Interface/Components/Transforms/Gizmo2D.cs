@@ -69,8 +69,8 @@ public class Gizmo2D {
 		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * ScaleFactor) / 2.05f, 0xCF202020);
 	}
 
-	public bool Manipulate(ref Matrix4x4 matrix, ref Matrix4x4 delta)
-		=> this.Gizmo.Manipulate(ref matrix, ref delta);
+	public bool Manipulate(ref Matrix4x4 matrix, out Matrix4x4 delta)
+		=> this.Gizmo.Manipulate(ref matrix, out delta);
 	
 	public void End() {
 		this.Gizmo.EndFrame();

@@ -242,7 +242,7 @@ public class SelectableGui {
 				var dir = Vector3.Transform(new Vector3(0, 0, range), (Quaternion)rot);
 				if (!CameraService.WorldToScreen(camera, worldPos + dir, out var endPos2d)) return;
 
-				var opacity = ImGuizmo.Gizmo.IsUsing ? ctx.Config.Overlay.LineOpacityUsing : ctx.Config.Overlay.LineOpacity;
+				var opacity = ImGuizmo.IsUsing() ? ctx.Config.Overlay.LineOpacityUsing : ctx.Config.Overlay.LineOpacity;
 				var drawList = ImGui.GetWindowDrawList();
 				var display = ctx.Config.GetEntityDisplay(light);
 				drawList.AddLine(pos2d, endPos2d, display.Color.SetAlpha(opacity), ctx.Config.Overlay.LineThickness);

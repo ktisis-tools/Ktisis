@@ -31,7 +31,7 @@ public interface IGizmo {
 	public void BeginFrame(Vector2 pos, Vector2 size);
 	public void PushDrawList();
 
-	public bool Manipulate(ref Matrix4x4 mx, ref Matrix4x4 delta);
+	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta);
 
 	public void EndFrame();
 }
@@ -93,7 +93,7 @@ public class Gizmo : IGizmo {
 		ImGuizmo.SetDrawlist(ImGui.GetWindowDrawList().Handle);
 	}
 
-	public bool Manipulate(ref Matrix4x4 mx, ref Matrix4x4 delta) {
+	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
 		delta = Matrix4x4.Identity;
 
 		if (this.HasDrawn) return false;

@@ -104,8 +104,7 @@ public class OverlayWindow : KtisisWindow {
 		this._gizmo.AllowAxisFlip = cfg.AllowAxisFlip;
 
 		var matrix = transform.ComposeMatrix();
-		var delta = new Matrix4x4();
-		var isManipulate = this._gizmo.Manipulate(ref matrix, ref delta);
+		var isManipulate = this._gizmo.Manipulate(ref matrix, out var delta);
 		var isRaySnap = this.HandleShiftRaycast(ref matrix);
 		if (isManipulate || isRaySnap) {
 			this.Transform ??= this._ctx.Transform.Begin(target);
@@ -136,8 +135,8 @@ public class OverlayWindow : KtisisWindow {
 		var matrix = transform.ComposeMatrix();
 
 		var cfg = this._ctx.Config.Gizmo;
-		this._gizmoGaze.Mode = Mode.World;
-		this._gizmoGaze.Operation = Operation.TRANSLATE;
+		this._gizmoGaze.Mode = ImGuizmoMode.World;
+		this._gizmoGaze.Operation = ImGuizmoOperation.Translate;
 		this._gizmoGaze.AllowAxisFlip = cfg.AllowAxisFlip;
 		this._gizmoGaze.ScaleFactor = 0.075f;
 
@@ -180,8 +179,8 @@ public class OverlayWindow : KtisisWindow {
 		ImGui.Text($"Scene: {this._ctx.Scene.GetHashCode():X} {this._ctx.Scene.UpdateTime:00.00}ms");
 		if (t != null)
 			ImGui.Text($"Overlay: {this.GetHashCode()} {t.Elapsed.TotalMilliseconds:00.00}ms");
-		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.Gizmo.IsUsing()})");
-		ImGui.Text($"Gaze Gizmo?: {this._gizmoGaze.GetHashCode():X} {this._gizmoGaze.Id} ({this._gizmoGaze.Operation}, {ImGuizmo.Gizmo.IsUsing()})");
+		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.IsUsing()})");
+		ImGui.Text($"Gaze Gizmo?: {this._gizmoGaze.GetHashCode():X} {this._gizmoGaze.Id} ({this._gizmoGaze.Operation}, {ImGuizmo.IsUsing()})");
 		var target = this._ctx.Transform.Target;
 		ImGui.Text($"Target: {target?.GetHashCode() ?? 0:X7} {target?.GetType().Name ?? "NULL"} ({target?.Targets?.Count() ?? 0}, {target?.Primary?.Name ?? "NULL"})");
 		var history = this._ctx.Actions.History;
