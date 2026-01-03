@@ -4,31 +4,21 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using Ktisis.Common.Utility;
-using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
-using Ktisis.Editor.Context;
-using Ktisis.Scene.Modules.Actors;
 using Newtonsoft.Json;
 
 using Ktisis.Data.Config;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
-using Ktisis.Interface.Components.Config;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
-using Ktisis.Services.Data;
 using Ktisis.Localization;
-using Ktisis.Interop.Ipc;
 using Ktisis.Interface.Overlay;
 using Ktisis.Scene.Entities.Skeleton;
-using Ktisis.Common.Utility;
 
 namespace Ktisis.Interface.Windows;
 
@@ -44,6 +34,8 @@ public class DebugWindow : KtisisWindow {
 	// tester outputs
 	private (int, int)? _apiVersion = null;
 	private bool? _isPosing = null;
+	private bool? _lastPosingEventValue = null;
+	private string? _lastPosingEventTime = null;
 
 	//Transform stuff
 	private Transform _transform = new();
@@ -58,6 +50,7 @@ public class DebugWindow : KtisisWindow {
 	private readonly ICallGateSubscriber<uint, string, Task<bool>> _ktisisLoadPose;
 	private readonly ICallGateSubscriber<uint, Task<string?>> _ktisisSavePose;
 	private readonly ICallGateSubscriber<Task<Dictionary<int, HashSet<string>>>> _ktisisSelectedBones;
+	private readonly ICallGateSubscriber<bool, bool> _ktisisPosingChanged;
 
 	private readonly ICallGateSubscriber<uint, string, bool, Task<Matrix4x4?>> _ktisisGetMatrix;
 	private readonly ICallGateSubscriber<uint, string, Matrix4x4, bool, Task<bool>> _ktisisSetMatrix;
@@ -84,6 +77,8 @@ public class DebugWindow : KtisisWindow {
 		this._ktisisLoadPose = dpi.GetIpcSubscriber<uint, string, Task<bool>>("Ktisis.LoadPose");
 		this._ktisisSavePose = dpi.GetIpcSubscriber<uint, Task<string?>>("Ktisis.SavePose");
 		this._ktisisSelectedBones = dpi.GetIpcSubscriber<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
+		this._ktisisPosingChanged = dpi.GetIpcSubscriber<bool, bool>("Ktisis.PosingChanged");
+		this._ktisisPosingChanged.Subscribe(this.SetLastPosingChanged);
 
 		// Matrix subs
 		this._ktisisGetMatrix = dpi.GetIpcSubscriber<uint, string, bool, Task<Matrix4x4?>>("Ktisis.GetMatrix");
@@ -139,6 +134,9 @@ public class DebugWindow : KtisisWindow {
 		using (ImRaii.Disabled(_isPosing == null))
 			ImGui.Text($"Posing: {_isPosing}");
 		ImGui.Spacing();
+		ImGui.Text("Ktisis.PosingChanged");
+		ImGui.Text($"Last Published: {this._lastPosingEventTime}");
+		ImGui.Text($"Last Value: {this._lastPosingEventValue}");
 
 		ImGui.Text("Ktisis.LoadPose");
 		using (ImRaii.Disabled(_gameObjectId < 1 || !_hasClip))
@@ -327,5 +325,10 @@ public class DebugWindow : KtisisWindow {
 			}
 		}
 		return false;
+	}
+
+	private void SetLastPosingChanged(bool status) {
+		this._lastPosingEventValue = status;
+		this._lastPosingEventTime = DateTime.Now.ToString("hh-mm-ss");
 	}
 }
