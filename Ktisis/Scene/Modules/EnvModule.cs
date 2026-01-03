@@ -6,6 +6,7 @@ using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 
+using Ktisis.Interface.Components.Environment.Editors;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Env;
@@ -37,9 +38,13 @@ public interface IEnvModule : IHookModule {
 public class EnvModule : SceneModule, IEnvModule {
 	public EnvModule(
 		IHookMediator hook,
-		ISceneManager scene
-	) : base(hook, scene) { }
+		ISceneManager scene,
+		WaterEditor water
+	) : base(hook, scene) {
+		this._water = water;
+	}
 
+	private readonly WaterEditor _water;
 	protected override bool OnInitialize() {
 		this.EnableAll();
 		return true;
@@ -135,6 +140,8 @@ public class EnvModule : SceneModule, IEnvModule {
 	[Signature("48 8B C4 48 89 58 18 57 48 81 EC ?? ?? ?? ?? 0F B6 B9 ?? ?? ?? ??", DetourName = nameof(UpdateWaterDetour))]
 	private Hook<UpdateWaterDelegate> UpdateWaterHook = null!;
 	private nint UpdateWaterDetour(nint a1) {
-		return 0;
+		if (this._water.Frozen)
+			return 0;
+		return this.UpdateWaterHook.Original(a1);
 	}
 }
