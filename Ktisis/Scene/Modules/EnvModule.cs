@@ -93,6 +93,7 @@ public class EnvModule : SceneModule, IEnvModule {
 	private unsafe delegate nint EnvStateCopyDelegate(EnvState* dest, EnvState* src);
 	private unsafe delegate nint EnvManagerUpdateDelegate(EnvManagerEx* env, float a2, float a3);
 	private delegate void UpdateTimeDelegate(nint a1);
+	private delegate nint UpdateWaterDelegate(nint a1);
 
 	[Signature("E8 ?? ?? ?? ?? 49 3B F5 75 0D")]
 	private EnvStateCopyDelegate EnvStateCopy = null!;
@@ -129,5 +130,11 @@ public class EnvModule : SceneModule, IEnvModule {
 			clientTime->EorzeaTimeOverride = currentTime;
 		}
 		this.UpdateTimeHook.Original(a1);
+	}
+
+	[Signature("48 8B C4 48 89 58 18 57 48 81 EC ?? ?? ?? ?? 0F B6 B9 ?? ?? ?? ??", DetourName = nameof(UpdateWaterDetour))]
+	private Hook<UpdateWaterDelegate> UpdateWaterHook = null!;
+	private nint UpdateWaterDetour(nint a1) {
+		return 0;
 	}
 }
