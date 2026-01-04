@@ -80,7 +80,10 @@ public abstract class IkEndNode : BoneNode, IIkNode {
 
 	public override void SetMatrix(Matrix4x4 matrix) {
 		if (this.IsOverride)
-			this.SetTransform(new Transform(matrix));
+			if (this.GetTransform() is { } transform)
+				this.SetTransform(new Transform(matrix, transform));
+			else
+				this.SetTransform(new Transform(matrix));
 		else
 			this.SetMatrixWorld(matrix);
 	}
