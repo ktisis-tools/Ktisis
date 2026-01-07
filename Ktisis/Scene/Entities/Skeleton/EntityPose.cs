@@ -105,6 +105,8 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		this.FilterTree();
 
 		this.BuildBoneMap(index, id);
+		if (this.Scene.Context.Posing.IsEnabled)
+			this.Scene.Context.Posing.ApplyPartialReferencePose(this, index); // trigger refpose when a partial skeleton updates mid-pose
 		
 		t.Stop();
 		Ktisis.Log.Debug($"Rebuild took {t.Elapsed.TotalMilliseconds:00.00}ms");
