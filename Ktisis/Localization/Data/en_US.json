@@ -97,7 +97,8 @@
 		"create": "Create new...",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
-		"overlay.toggle": "Toggle screen overlay"
+		"overlay.toggle": "Toggle screen overlay",
+		"overlay.world_toggle": "Toggle world object overlay"
 	},
 	
 	"transform_edit": {
@@ -288,7 +289,7 @@
 		},
 		"overlay": {
 			"title": "Overlay",
-			"header": "Configure Skeleton Overlay:",
+			"header": "Configure Overlay:",
 			"lines": {
 				"draw": "Draw lines on skeleton",
 				"draw_gizmo": "Draw lines on skeleton while using gizmo",
@@ -299,6 +300,11 @@
 			"dots": {
 				"draw_gizmo": "Draw dots while using gizmo",
 				"radius": "Dot radius"
+			},
+			"world": {
+				"dot_radius": "World dot radius",
+				"dot_thickness": "World dot outline thickness",
+				"color": "World dot fill color"
 			}
 		},
 		"references": {

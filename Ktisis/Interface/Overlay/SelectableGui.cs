@@ -139,7 +139,7 @@ public class SelectableGui {
 		ImGui.SetNextFrameWantCaptureMouse(true);
 		
 		// Check for mouse click
-		var isClick = ImGui.IsMouseReleased(ImGuiMouseButton.Left);
+		var isClick = ImGui.IsMouseClicked(ImGuiMouseButton.Left);
 
 		for (var i = 0; i < list.Count; i++) {
 			var item = list[i];

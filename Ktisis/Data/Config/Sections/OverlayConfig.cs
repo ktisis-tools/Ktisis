@@ -11,6 +11,11 @@ public class OverlayConfig {
 	public float LineThickness = 2.0f;
 	public float LineOpacity = 0.95f;
 	public float LineOpacityUsing = 0.15f;
-	
+
 	public bool DrawReferenceTitle = true;
+
+	public float WorldDotRadius = 5.0f;
+	public float WorldDotOutlineWidth = 1.0f;
+	public uint WorldDotColor = 0xFFFFFFFF;
+	public float WorldCameraRange = 30.0f;
 }

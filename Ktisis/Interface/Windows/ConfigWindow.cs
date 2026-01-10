@@ -187,6 +187,11 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
+
+		ImGui.Spacing();
+		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_radius"), ref this.Config.Overlay.WorldDotRadius, 0.1f);
+		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_thickness"), ref this.Config.Overlay.WorldDotOutlineWidth, 0.1f);
+		DrawColorEdit(this.Locale.Translate("config.overlay.world.color"), ref this.Config.Overlay.WorldDotColor);
 	}
 	
 	// Workspace
@@ -453,6 +458,13 @@ public class ConfigWindow : KtisisWindow {
 
 	private void SetPoseViewImage(Action<string> handler) {
 		this._gui.FileDialogs.OpenImage("image", handler);
+	}
+
+	private static bool DrawColorEdit(string label, ref uint color) {
+		var colorVec = ImGui.ColorConvertU32ToFloat4(color);
+		var result = ImGui.ColorEdit4(label, ref colorVec);
+		if (result) color = ImGui.ColorConvertFloat4ToU32(colorVec);
+		return result;
 	}
 
 	public override void OnClose() {

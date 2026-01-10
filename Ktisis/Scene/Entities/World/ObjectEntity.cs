@@ -1,5 +1,3 @@
-using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Objects;
 
@@ -14,6 +12,7 @@ public class ObjectEntity : WorldEntity {
 	) : base(scene) {
 		this.Type = EntityType.Models;
 		this.Object = obj;
+		this.Visible = true;
 	}
 
 	public void Reset() => this.SetTransform(this.Object.InitialTransform);

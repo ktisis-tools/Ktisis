@@ -4,7 +4,6 @@ using System.Linq;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Structs.Objects;
 
@@ -35,9 +34,9 @@ public class WorldService : IDisposable {
 	}
 
 	private void BuildWorld() {
-		Ktisis.Log.Debug($"starting worldobject fetch...");
+		Ktisis.Log.Verbose($"starting worldobject fetch...");
 		this.Objects.AddRange(this.RecurseWorld().Where(obj => obj.ObjectType is ObjectType.BgObject));
-		Ktisis.Log.Debug($"finished! {this.Objects.Count} bgobjects found");
+		Ktisis.Log.Verbose($"finished! {this.Objects.Count} bgobjects found");
 		this._init = true;
 	}
 

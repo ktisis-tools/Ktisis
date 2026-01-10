@@ -136,14 +136,19 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
+
+		// world overlay
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Mountain, "Add First BgObject")) {
-			var obj = this._ctx.Scene.World.Objects.First();
-			this._ctx.Scene.Factory
-				.BuildObject()
-				.SetName("Object")
-				.SetAddress(obj.Address)
-				.Add();
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), this._ctx.ShowWorldObjects)) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Mountain, this._ctx.Locale.Translate("workspace.overlay.world_toggle")))
+				this._ctx.ShowWorldObjects = !this._ctx.ShowWorldObjects;
 		}
+		if (!this._ctx.ShowWorldObjects) return;
+
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.Text("Range:");
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+		ImGui.SliderFloat("##RangeSlider", ref this._ctx.Config.Overlay.WorldCameraRange, 1.0f, 100.0f, "%.2fy");
 	}
 }
