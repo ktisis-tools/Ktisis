@@ -16,7 +16,6 @@ public class WorldService : IDisposable {
 	private bool _init;
 
 	public readonly List<WorldObject> Objects = [];
-	public readonly Dictionary<nint, Transform> Transforms = new();
 
 	public WorldService(
 		GPoseService gpose
@@ -28,20 +27,6 @@ public class WorldService : IDisposable {
 	private void OnGPoseEvent(object sender, bool active) {
 		this.Clean();
 		if (active) this.BuildWorld();
-	}
-
-	public bool Touch(WorldObject obj) {
-		if (!this.Objects.Contains(obj)) {
-			Ktisis.Log.Error($"Object {obj} is not present in world!");
-			return false;
-		}
-		if (this.Transforms.ContainsKey(obj.Address)) {
-			Ktisis.Log.Error($"Object {obj} has already been added to scene!");
-			return false;
-		}
-
-		this.Transforms.Add(obj.Address, obj.Transform);
-		return true;
 	}
 
 	public void Refresh() {
@@ -59,7 +44,7 @@ public class WorldService : IDisposable {
 	private IEnumerable<WorldObject> RecurseWorld() {
 		var worldObj = this.GetWorld();
 		if (worldObj == null) yield break;
-		yield return worldObj.Value;
+		// yield return worldObj.Value; - don't include World root
 
 		foreach (var sibling in worldObj.Value.GetSiblings()) {
 			yield return sibling;
@@ -89,7 +74,6 @@ public class WorldService : IDisposable {
 		if (!this._init) return;
 
 		this.Objects.Clear();
-		this.Transforms.Clear();
 		this._init = false;
 	}
 

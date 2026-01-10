@@ -81,7 +81,7 @@ public class ContextBuilder {
 			Characters = new CharacterManager(context, this._objectTable, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
-			Scene = new SceneManager(context, scope, this._framework, factory),
+			Scene = new SceneManager(context, scope, this._framework, factory, this._world),
 			Selection = select,
 			Transform = new TransformHandler(context, actions, select)
 		};

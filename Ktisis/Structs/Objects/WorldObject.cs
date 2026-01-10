@@ -14,27 +14,33 @@ namespace Ktisis.Structs.Objects;
 
 public struct WorldObject : IEquatable<WorldObject> {
 	private readonly Pointer<Object> Pointer;
-	public nint Address;
 
-	public unsafe WorldObject(Pointer<Object> ptr) {
+	public nint Address { get; }
+	public Transform InitialTransform { get; }
+
+public unsafe WorldObject(Pointer<Object> ptr) {
 		this.Pointer = ptr;
 		this.Address = (nint)ptr.Value;
+		this.InitialTransform = new Transform(
+			this.Pointer.Value->Position,
+			this.Pointer.Value->Rotation,
+			this.Pointer.Value->Scale
+		);
 	}
 
 	public unsafe WorldObject(Object* ptr) {
 		this.Pointer = ptr;
 		this.Address = (nint)ptr;
+		this.InitialTransform = new Transform(
+			this.Pointer.Value->Position,
+			this.Pointer.Value->Rotation,
+			this.Pointer.Value->Scale
+		);
 	}
 
 	// Data wrappers
 
 	public unsafe ObjectType ObjectType => this.Pointer.Value->GetObjectType();
-
-	public unsafe Transform Transform => new (
-		this.Pointer.Value->Position,
-		this.Pointer.Value->Rotation,
-		this.Pointer.Value->Scale
-	);
 
 	// Enumerate children & siblings
 

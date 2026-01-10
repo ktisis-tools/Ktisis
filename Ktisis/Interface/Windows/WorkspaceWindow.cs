@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -135,5 +136,14 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Mountain, "Add First BgObject")) {
+			var obj = this._ctx.Scene.World.Objects.First();
+			this._ctx.Scene.Factory
+				.BuildObject()
+				.SetName("Object")
+				.SetAddress(obj.Address)
+				.Add();
+		}
 	}
 }
