@@ -22,10 +22,10 @@ public class WorldService : IDisposable {
 		GPoseService gpose
 	) {
 		this._gpose = gpose;
+		this._gpose.StateChanged += this.OnGPoseEvent;
 	}
 
 	private void OnGPoseEvent(object sender, bool active) {
-		if (!this._init) return;
 		this.Clean();
 		if (active) this.BuildWorld();
 	}
@@ -86,6 +86,8 @@ public class WorldService : IDisposable {
 	}
 
 	private void Clean() {
+		if (!this._init) return;
+
 		this.Objects.Clear();
 		this.Transforms.Clear();
 		this._init = false;

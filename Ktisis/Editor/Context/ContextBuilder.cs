@@ -25,6 +25,7 @@ namespace Ktisis.Editor.Context;
 
 [Singleton]
 public class ContextBuilder {
+	private readonly WorldService _world;
 	private readonly GPoseService _gpose;
 	private readonly InteropService _interop;
 	private readonly IFramework _framework;
@@ -36,6 +37,7 @@ public class ContextBuilder {
 	private readonly IObjectTable _objectTable;
 
 	public ContextBuilder(
+		WorldService world,
 		GPoseService gpose,
 		InteropService interop,
 		IFramework framework,
@@ -46,6 +48,7 @@ public class ContextBuilder {
 		McdfManager mcdf,
 		IObjectTable objectTable
 	) {
+		this._world = world;
 		this._gpose = gpose;
 		this._interop = interop;
 		this._framework = framework;
