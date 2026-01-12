@@ -1,9 +1,12 @@
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+
+using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Objects;
 
 namespace Ktisis.Scene.Entities.World;
 
-public class ObjectEntity : WorldEntity {
+public class ObjectEntity : WorldEntity, IHideable {
 	public readonly WorldObject Object;
 
 	public ObjectEntity(
@@ -15,7 +18,27 @@ public class ObjectEntity : WorldEntity {
 		this.Visible = true;
 	}
 
-	public void Reset() => this.SetTransform(this.Object.InitialTransform);
+	public unsafe bool IsHidden {
+		get {
+			var drawPtr = (DrawObject*)this.Address;
+			return drawPtr != null && !drawPtr->IsVisible;
+		}
+		set {
+			var drawPtr = (DrawObject*)this.Address;
+			if (drawPtr != null)
+				drawPtr->IsVisible = !drawPtr->IsVisible;
+		}
+	}
+	public void ToggleHidden() => this.IsHidden = !this.IsHidden;
+
+	public unsafe void Reset() {
+		this.SetTransform(this.Object.InitialTransform);
+
+		if (this.Object.ObjectType != ObjectType.BgObject || this.Object.InitialFlags == null) return;
+
+		var drawPtr = (DrawObject*)this.Address;
+		drawPtr->Flags = this.Object.InitialFlags.Value;
+	}
 
 	public override void Remove() {
 		try {

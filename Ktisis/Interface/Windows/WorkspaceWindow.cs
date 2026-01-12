@@ -149,6 +149,6 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.Text("Range:");
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-		ImGui.SliderFloat("##RangeSlider", ref this._ctx.Config.Overlay.WorldCameraRange, 1.0f, 100.0f, "%.2fy");
+		ImGui.SliderFloat("##RangeSlider", ref this._ctx.Config.Overlay.WorldCameraRange, 5.0f, 100.0f, "%.2fy");
 	}
 }

@@ -14,8 +14,9 @@ public class OverlayConfig {
 
 	public bool DrawReferenceTitle = true;
 
-	public float WorldDotRadius = 5.0f;
-	public float WorldDotOutlineWidth = 1.0f;
-	public uint WorldDotColor = 0xFFFFFFFF;
+	public float WorldNodeRadius = 5.0f;
+	public float WorldNodeOutlineWidth = 1.0f;
+	public float WorldNodeScaleFactor = 1.0f;
+	public uint WorldNodeColor = 0xFFFFFFFF;
 	public float WorldCameraRange = 30.0f;
 }

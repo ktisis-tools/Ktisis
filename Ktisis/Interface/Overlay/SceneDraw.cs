@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -13,6 +14,7 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Interface.Editor.Popup;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
@@ -30,15 +32,19 @@ public class SceneDraw {
 	private bool _isHoveringWorld = false;
 	
 	private IEditorContext _ctx = null!;
+	private readonly GuiManager _gui;
+	private WorldObjectPopup? _popup;
 
 	private OverlayConfig Config => this._ctx.Config.Overlay;
 
 	public SceneDraw(
 		SelectableGui select,
-		RefOverlay refs
+		RefOverlay refs,
+		GuiManager gui
 	) {
 		this._select = select;
 		this._refs = refs;
+		this._gui = gui;
 	}
 
 	public void SetContext(IEditorContext ctx) => this._ctx = ctx;
@@ -148,34 +154,40 @@ public class SceneDraw {
 		foreach (var obj in this._ctx.Scene.World.Objects) {
 			if (this._ctx.Scene.Children.OfType<ObjectEntity>().Any(ent => ent.Object.Equals(obj))) continue;
 			if (!CameraService.WorldToScreen(camera, obj.InitialTransform.Position, out var worldPos2d)) continue;
-			if (!this.IsObjectInRange(obj)) continue;
+			var distance = this.ObjectDistance(obj);
+			if (distance > this.Config.WorldCameraRange) continue;
 
-			drawList.AddCircleFilled(worldPos2d, this.Config.WorldDotRadius + this.Config.WorldDotOutlineWidth - 1.0f, this.Config.WorldDotColor);
-			if (this.Config.WorldDotOutlineWidth > 0.0f)
-				drawList.AddCircle(worldPos2d, this.Config.WorldDotRadius + this.Config.WorldDotOutlineWidth / 2, 0xFF000000, 16, this.Config.WorldDotOutlineWidth);
+			var nodeScale = float.Lerp(1.0f, this.Config.WorldNodeScaleFactor, (distance / this.Config.WorldCameraRange));
 
-			// if hovering a different dot, or hovering a ImGui window, or not hovering this, skip
-			var radius = 6.0f + this.Config.WorldDotRadius + this.Config.WorldDotOutlineWidth / 2;
+			drawList.AddNgonFilled(worldPos2d, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth - 1.0f) * nodeScale, this.Config.WorldNodeColor, 4);
+			if (this.Config.WorldNodeOutlineWidth > 0.0f)
+				drawList.AddNgon(worldPos2d, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale, 0xFF000000, 4, this.Config.WorldNodeOutlineWidth);
+
+			// if hovering a different dot, or hovering a ImGui window, or not hovering this, or the popup is open for this obj already, skip
+			var radius = (6.0f + this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale;
 			var radVec = new Vector2(radius, radius);
-			if (this._isHoveringWorld || ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow) || !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec))
+			if (this._isHoveringWorld
+				|| ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow)
+				|| !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec)
+				|| (this._popup is { IsOpen: true } && this._popup.WorldObj.Equals(obj))
+			)
 				continue;
 
 			this._isHoveringWorld = true;
 			using (ImRaii.Tooltip()) {
-				using var _col = ImRaii.PushColor(ImGuiCol.Text, this.Config.WorldDotColor);
-				ImGui.Text($"Click to add Object");
+				using var _col = ImRaii.PushColor(ImGuiCol.Text, this.Config.WorldNodeColor);
+				ImGui.Text($"Object Details...");
 			}
+
 			ImGui.SetNextFrameWantCaptureMouse(true);
-			if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-				this._ctx.Scene.Factory
-					.BuildObject()
-					.SetName($"Object {this._ctx.Scene.Children.OfType<ObjectEntity>().Count() + 1}")
-					.SetAddress(obj.Address)
-					.Add();
+			if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
+				this._popup = this._gui.CreatePopup<WorldObjectPopup>(obj, distance, this._ctx);
+				this._popup.Open();
+			}
 		}
 	}
 
-	private unsafe bool IsObjectInRange(WorldObject obj) {
+	private unsafe float ObjectDistance(WorldObject obj) {
 		var objPos = new Vector2(obj.InitialTransform.Position.X, obj.InitialTransform.Position.Z);
 		var camPos = new Vector2();
 		var currentCamera = this._ctx.Cameras.Current;
@@ -185,8 +197,8 @@ public class SceneDraw {
 		} else if (currentCamera != null) {
 			camPos.X = currentCamera.Camera->Position.X;
 			camPos.Y = currentCamera.Camera->Position.Z;
-		} else return false;
+		}
 
-		return Vector2.Distance(camPos, objPos) <= this.Config.WorldCameraRange;
+		return Vector2.Distance(camPos, objPos);
 	}
 }

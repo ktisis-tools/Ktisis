@@ -189,9 +189,10 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
 
 		ImGui.Spacing();
-		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_radius"), ref this.Config.Overlay.WorldDotRadius, 0.1f);
-		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_thickness"), ref this.Config.Overlay.WorldDotOutlineWidth, 0.1f);
-		DrawColorEdit(this.Locale.Translate("config.overlay.world.color"), ref this.Config.Overlay.WorldDotColor);
+		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_radius"), ref this.Config.Overlay.WorldNodeRadius, 0.1f);
+		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_thickness"), ref this.Config.Overlay.WorldNodeOutlineWidth, 0.1f);
+		ImGui.SliderFloat(this.Locale.Translate("config.overlay.world.scale_factor"), ref  this.Config.Overlay.WorldNodeScaleFactor, 0.1f, 1.0f);
+		DrawColorEdit(this.Locale.Translate("config.overlay.world.color"), ref this.Config.Overlay.WorldNodeColor);
 	}
 	
 	// Workspace

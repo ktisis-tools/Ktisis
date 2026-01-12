@@ -15,8 +15,11 @@ namespace Ktisis.Structs.Objects;
 public struct WorldObject : IEquatable<WorldObject> {
 	private readonly Pointer<Object> Pointer;
 
-	public nint Address { get; }
 	public Transform InitialTransform { get; }
+	public byte? InitialFlags { get; }
+
+	public nint Address { get; }
+	public string Path { get; }
 
 public unsafe WorldObject(Pointer<Object> ptr) {
 		this.Pointer = ptr;
@@ -26,7 +29,17 @@ public unsafe WorldObject(Pointer<Object> ptr) {
 			this.Pointer.Value->Rotation,
 			this.Pointer.Value->Scale
 		);
-	}
+		this.Path = $"{this.Address:X}"; // default a path to a unique address string
+
+		if (ptr.Value->GetObjectType() == ObjectType.BgObject) {
+			var bgPtr = (BgObject*)this.Address;
+			this.InitialFlags = bgPtr->Flags;
+
+			var resource = bgPtr->ModelResourceHandle;
+			if (resource != null)
+				this.Path = resource->FileName.ToString();
+		}
+}
 
 	public unsafe WorldObject(Object* ptr) {
 		this.Pointer = ptr;
@@ -36,6 +49,16 @@ public unsafe WorldObject(Pointer<Object> ptr) {
 			this.Pointer.Value->Rotation,
 			this.Pointer.Value->Scale
 		);
+		this.Path = $"{this.Address:X}"; // default a path to a unique address string
+
+		if (ptr->GetObjectType() == ObjectType.BgObject) {
+			var bgPtr = (BgObject*)this.Address;
+			this.InitialFlags = bgPtr->Flags;
+
+			var resource = bgPtr->ModelResourceHandle;
+			if (resource != null)
+				this.Path = resource->FileName.ToString();
+		}
 	}
 
 	// Data wrappers

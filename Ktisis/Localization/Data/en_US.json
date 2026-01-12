@@ -302,9 +302,10 @@
 				"radius": "Dot radius"
 			},
 			"world": {
-				"dot_radius": "World dot radius",
-				"dot_thickness": "World dot outline thickness",
-				"color": "World dot fill color"
+				"dot_radius": "World node radius",
+				"dot_thickness": "World node outline thickness",
+				"scale_factor": "World node scale factor",
+				"color": "World node fill color"
 			}
 		},
 		"references": {
