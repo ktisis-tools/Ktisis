@@ -29,7 +29,7 @@ namespace Ktisis.Interface.Overlay;
 public class SceneDraw {
 	private readonly SelectableGui _select;
 	private readonly RefOverlay _refs;
-	private bool _isHoveringWorld = false;
+	private WorldObject? _hovered;
 	
 	private IEditorContext _ctx = null!;
 	private readonly GuiManager _gui;
@@ -50,7 +50,6 @@ public class SceneDraw {
 	public void SetContext(IEditorContext ctx) => this._ctx = ctx;
 	
 	public void DrawScene(bool gizmo = false, bool gizmoIsEnded = false) {
-		this._isHoveringWorld = false;
 		var frame = this._select.BeginFrame();
 		this.DrawEntities(frame, this._ctx.Scene.Children);
 		this.DrawSelect(frame, gizmo, gizmoIsEnded);
@@ -147,6 +146,7 @@ public class SceneDraw {
 	}
 
 	private unsafe void DrawWorldObjects() {
+		var isHoveringWorld = false;
 		var drawList = ImGui.GetBackgroundDrawList();
 		var camera = CameraService.GetSceneCamera();
 		if (camera == null) return;
@@ -166,14 +166,15 @@ public class SceneDraw {
 			// if hovering a different dot, or hovering a ImGui window, or not hovering this, or the popup is open for this obj already, skip
 			var radius = (6.0f + this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale;
 			var radVec = new Vector2(radius, radius);
-			if (this._isHoveringWorld
+			if (isHoveringWorld
 				|| ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow)
 				|| !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec)
 				|| (this._popup is { IsOpen: true } && this._popup.WorldObj.Equals(obj))
 			)
 				continue;
 
-			this._isHoveringWorld = true;
+			isHoveringWorld = true;
+			this.SetHovered(obj);
 			using (ImRaii.Tooltip()) {
 				using var _col = ImRaii.PushColor(ImGuiCol.Text, this.Config.WorldNodeColor);
 				ImGui.Text($"Object Details...");
@@ -185,6 +186,9 @@ public class SceneDraw {
 				this._popup.Open();
 			}
 		}
+
+		if (!isHoveringWorld)
+			this.SetHovered(null);
 	}
 
 	private unsafe float ObjectDistance(WorldObject obj) {
@@ -200,5 +204,13 @@ public class SceneDraw {
 		}
 
 		return Vector2.Distance(camPos, objPos);
+	}
+
+	private void SetHovered(WorldObject? obj) {
+		if (obj.Equals(this._hovered)) return;
+		this._hovered?.SetOutline(OutlineChoice.None);
+
+		this._hovered = obj;
+		this._hovered?.SetOutline(this.Config.WorldOutlineColor);
 	}
 }

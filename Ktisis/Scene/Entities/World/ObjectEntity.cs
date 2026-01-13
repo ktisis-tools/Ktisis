@@ -4,6 +4,8 @@ using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Objects;
 
+using DrawObject = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.DrawObject;
+
 namespace Ktisis.Scene.Entities.World;
 
 public class ObjectEntity : WorldEntity, IHideable {

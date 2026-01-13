@@ -18,6 +18,7 @@ using Ktisis.Interface.Components.Config;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Data;
 using Ktisis.Localization;
+using Ktisis.Structs.Objects;
 
 namespace Ktisis.Interface.Windows;
 
@@ -193,6 +194,12 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_thickness"), ref this.Config.Overlay.WorldNodeOutlineWidth, 0.1f);
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.world.scale_factor"), ref  this.Config.Overlay.WorldNodeScaleFactor, 0.1f, 1.0f);
 		DrawColorEdit(this.Locale.Translate("config.overlay.world.color"), ref this.Config.Overlay.WorldNodeColor);
+
+		using (var _combo = ImRaii.Combo("Highlight color when hovering", Enum.GetName(this.Config.Overlay.WorldOutlineColor)))
+			if (_combo.Success)
+				foreach (var color in Enum.GetValues<OutlineChoice>())
+					if (ImGui.Selectable(Enum.GetName(color), color == this.Config.Overlay.WorldOutlineColor))
+						this.Config.Overlay.WorldOutlineColor = color;
 	}
 	
 	// Workspace

@@ -65,6 +65,13 @@ public unsafe WorldObject(Pointer<Object> ptr) {
 
 	public unsafe ObjectType ObjectType => this.Pointer.Value->GetObjectType();
 
+	public unsafe void SetOutline(OutlineChoice color) {
+		var drawObject = (DrawObject*)this.Address;
+		if (drawObject == null) return;
+
+		drawObject->OutlineFlags = color;
+	}
+
 	// Enumerate children & siblings
 
 	private unsafe WorldObject? GetFirstChild() {

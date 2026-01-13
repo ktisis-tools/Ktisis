@@ -6,8 +6,6 @@ using Dalamud.Bindings.ImGui;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
-using Ktisis.Scene.Decor;
-using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Structs.Objects;
 
@@ -18,6 +16,9 @@ public class WorldObjectPopup(WorldObject obj, float distance, IEditorContext ct
 	protected override void OnDraw() {
 		this.WorldObj = obj;
 		ImGui.Text($"Object Details");
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		using (ImRaii.Disabled())
+			ImGui.Text($"\tAddress: {obj.Address:X}");
 
 		ImGui.Separator();
 		ImGui.Text($"Model path: {obj.Path}");
