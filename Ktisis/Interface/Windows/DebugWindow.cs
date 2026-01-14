@@ -10,9 +10,6 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
-using Dalamud.Utility;
-
-using InteropGenerator.Runtime;
 
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
@@ -33,7 +30,6 @@ using Ktisis.Interop.Ipc;
 using Ktisis.Interface.Overlay;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Common.Utility;
-using Ktisis.Structs.Env;
 
 namespace Ktisis.Interface.Windows;
 
@@ -280,29 +276,9 @@ public class DebugWindow : KtisisWindow {
 			}
 		}
 	}
-	private string address = "";
 
-	private unsafe void DrawManagerTab() {
+	private void DrawManagerTab() {
 		ImGui.Text("TODO");
-		ImGui.InputText($"Address:", ref address, 5000, ImGuiInputTextFlags.EnterReturnsTrue);
-		if (address.IsNullOrEmpty()) return;
-
-		var addr = Convert.ToUInt64(address, 16);
-		var renderer = (WaterRendererEx*)addr;
-		if (renderer == null) return;
-
-		var unk1 = renderer->Unk1;
-		var unk2 = renderer->Unk2;
-		var unk3 = renderer->Unk3;
-		var unk4 =  renderer->Unk4;
-		if (ImGui.DragFloat("Unk1", ref unk1))
-			renderer->Unk1 = unk1;
-		if (ImGui.DragFloat("Unk2", ref unk2))
-			renderer->Unk2 = unk2;
-		if (ImGui.DragFloat("Unk3", ref unk3))
-			renderer->Unk3 = unk3;
-		if (ImGui.DragFloat("Unk4", ref unk4))
-			renderer->Unk4 = unk4;
 	}
 
 	private void DrawDiagnosticsTab() {
