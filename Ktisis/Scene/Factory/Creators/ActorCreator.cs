@@ -55,6 +55,8 @@ public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IA
 		if (this.McdfFile != null)
 			this.McdfManager.LoadAndApplyTo(this.McdfFile, entity.Actor);
 
+		entity.EnsurePresetVisibility();
+
 		return entity;
 	}
 }
