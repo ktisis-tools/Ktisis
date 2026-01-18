@@ -5,6 +5,8 @@ using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 
+using GLib.Widgets;
+
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context;
@@ -114,13 +116,13 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		}
 
 		if (isSelectiveImport) {
-			ImGui.Indent();
-			ImGui.Checkbox("Include descendants", ref file.SelectedBonesIncludeDescendants);
+			using (ImRaii.PushIndent()) {
+				ImGui.Checkbox("Include descendants", ref file.SelectedBonesIncludeDescendants);
 
-			var hasPosition = file.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
-			using(ImRaii.Disabled(!hasPosition))
-				ImGui.Checkbox("Anchor group positions", ref file.AnchorPoseSelectedBones);
-			ImGui.Unindent();
+				var hasPosition = file.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
+				using (ImRaii.Disabled(!hasPosition))
+					ImGui.Checkbox("Anchor group positions", ref file.AnchorPoseSelectedBones);
+			}
 		}
 
 		if (!isSelectiveImport || file.SelectedBonesIncludeDescendants) {
@@ -135,9 +137,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 				file.ImportPoseModes ^= PoseMode.Face;
 			if (face && this._select.IsFileOpened && this.Target.Pose?.HasDTFace() != _select.Selected?.File.HasDTFace()) {
 				ImGui.SameLine();
-				ImGui.PushFont(UiBuilder.IconFont);
-				ImGui.TextColored(ImGuiColors.DalamudYellow, FontAwesomeIcon.ExclamationTriangle.ToIconString());
-				ImGui.PopFont();
+				Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
 				if (ImGui.IsItemHovered())
 					ImGui.SetTooltip("Face will not be imported from the selected pose file due to incompatibility with the selected actor.");
 			}
