@@ -6,6 +6,7 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Overlay;
 
@@ -70,8 +71,7 @@ public class TalkNode : OverlayNode {
 		this.SpeakerText.AttachNode(this);
 	}
 
-	public override void Update() {
-		base.Update();
+	protected override void OnUpdate() {
 		// update strings, font color
 		this.TalkText.String = this.Dialog;
 		this.TalkText.TextColor = this.TextColorForBg();

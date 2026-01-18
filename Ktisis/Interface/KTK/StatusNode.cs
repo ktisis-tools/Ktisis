@@ -9,6 +9,7 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using Ktisis.Common.Utility;
 
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Overlay;
 
@@ -46,8 +47,7 @@ public class StatusNode : OverlayNode {
 		this.StatusText.AttachNode(this);
 	}
 
-	public override void Update() {
-		base.Update();
+	protected override void OnUpdate() {
 		// update text
 		this.StatusText.String = this.GetTextForType();
 		this.StatusText.TextColor = GetTextColorForType(this.Type);
