@@ -7,6 +7,7 @@ using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using KamiToolKit.Classes;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Overlay;
 
@@ -58,8 +59,7 @@ public class BalloonNode : OverlayNode {
 		this.TalkText.AttachNode(this);
 	}
 
-	public override void Update() {
-		base.Update();
+	protected override void OnUpdate() {
 		// update string
 		this.TalkText.String = this.Dialog;
 		// update bg texture
