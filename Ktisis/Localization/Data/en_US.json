@@ -330,6 +330,8 @@
 			"legacyLightEditor": "Prefer legacy light editor",
 			"legacyLightHint": "Allows opening the Light Editor window, now moved to the Object Editor",
 			"confirmExit": "Ensure shift has to be held to exit posing mode",
+			"showHints": "Enable Ktisis Tips",
+			"hintHint": "The first time you enter GPose after launching Ktisis, an overlay will display a random tip, hint, or fun fact!",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
@@ -795,5 +797,10 @@
 		"Buff": "Buff",
 		"Debuff": "Debuff",
 		"Falloff": "Falloff"
+	},
+	"hints": {
+		"1": "Ktisis can autosave your poses, even when you disconnect! You can enable them in the Config window.",
+		"2": "'Ktisis' is an Ancient Greek term referring to the act of creation, founding, or construction. Its adjective form is 'ktistic.'",
+		"3": "When the bunny"
 	}
 }

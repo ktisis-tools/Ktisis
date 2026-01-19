@@ -8,6 +8,7 @@ using KamiToolKit;
 using KamiToolKit.Overlay;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.KTK;
 
 namespace Ktisis.Services.Game;
@@ -18,20 +19,23 @@ public class OverlayService : IDisposable {
 	private readonly IFramework _framework;
 
 	private bool _init = false;
+	private bool _showedHint = false;
 	private OverlayController _controller;
 	private PreviewNode? _preview;
 
 	public OverlayService(IDalamudPluginInterface dpi, IFramework framework) {
 		this._dpi = dpi;
 		this._framework = framework;
-		this.Initialize();
 	}
 
-	public void Initialize() {
+	public void Initialize(IEditorContext context) {
 		if (this._init) return;
 		KamiToolKitLibrary.Initialize(this._dpi);
 		this._controller = new OverlayController();
 		this._init = true;
+
+		if (context.Config.Editor.ShowHints && !this._showedHint)
+			this.ShowHint(context);
 	}
 
 	public bool AddNode(OverlayNode node) {
@@ -39,9 +43,13 @@ public class OverlayService : IDisposable {
 		return true;
 	}
 
-	public void ShowHint() {
+	public void ShowHint(IEditorContext context) {
 		var r = new Random();
-		this._controller.AddNode(new HintNode((uint)r.Next(73001, 73287), "Ktisis can autosave your poses, including when you disconnect! Set it up in the Config menu.", 15, 300) {
+		var icon = r.Next(73001, 73288);
+		var key = context.Locale.RandomHintKey();
+		var hint = context.Locale.Translate($"hints.{key}");
+
+		this._controller.AddNode(new HintNode((uint)icon, hint, key, 300) {
 			Position = new Vector2(87.0f, 138.0f),
 			Size = new Vector2(640.0f, 80.0f),
 			Scale = new Vector2(1.0f, 1.0f),
@@ -50,6 +58,7 @@ public class OverlayService : IDisposable {
 				Size = new Vector2(749.0f, 256.0f)
 			}
 		});
+		this._showedHint = true;
 	}
 
 	public void ToggleCharaViewTexture() {
@@ -70,9 +79,14 @@ public class OverlayService : IDisposable {
 		return true;
 	}
 
-	public void Dispose() {
+	public void Disable() {
 		this._controller.Dispose();
 		KamiToolKitLibrary.Dispose();
 		this._init = false;
+	}
+
+	public void Dispose() {
+		this.Disable();
+		this._showedHint = false;
 	}
 }

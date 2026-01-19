@@ -22,7 +22,7 @@ public unsafe class HintNode : OverlayNode {
 	private TextNode BText;
 	private ImageNode Countdown;
 
-	public override OverlayLayer OverlayLayer => OverlayLayer.BehindUserInterface;
+	public override OverlayLayer OverlayLayer => OverlayLayer.Foreground;
 	public override bool HideWithNativeUi => false;
 	protected override void OnUpdate() { }
 

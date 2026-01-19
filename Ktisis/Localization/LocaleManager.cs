@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Ktisis.Core.Attributes;
@@ -57,5 +58,13 @@ public class LocaleManager {
 	public string GetCategoryName(BoneCategory category) {
 		var key = $"boneCategory.{category.Name}";
 		return this.HasTranslationFor(key) ? this.Translate(key) : category.Name;
+	}
+
+	public int RandomHintKey() {
+		var count = this.Data?.KeysMatchingPrefix("hints.");
+		if (count == null) return 0;
+
+		var r = new Random();
+		return r.Next(0, count.Value) + 1;
 	}
 }
