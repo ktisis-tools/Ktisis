@@ -135,5 +135,11 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.WalkieTalkie, "Show a hint"))
+			this._ctx.Scene.Overlay.ShowHint();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "CharaViewTexture"))
+			this._ctx.Scene.Overlay.ToggleCharaViewTexture();
 	}
 }
