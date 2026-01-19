@@ -62,7 +62,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		this.AddModule<EnvModule>();
 		this.InitializeModules();
 		this.SetupSavedState();
-		this.Overlay.Initialize();
+		this.Overlay.Initialize(this.Context);
 	}
 
 	private void SetupSavedState() {
@@ -148,7 +148,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		try {
 			this.Root.Clear();
 			this.DisposeModules();
-			this.Overlay.Dispose();
+			this.Overlay.Disable();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to dispose scene!\n{err}");
 		}

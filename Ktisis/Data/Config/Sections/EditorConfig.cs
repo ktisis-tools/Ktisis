@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Numerics;
 
 using Ktisis.Data.Config.Entity;
 using Ktisis.Scene.Entities.Utility;
@@ -13,6 +14,7 @@ public class EditorConfig {
 	public bool ToggleOpenWindows = true;
 	public bool ConfirmExit = false;
 	public bool InitPosLock = false;
+	public bool ShowHints = true;
 
 	public bool ToggleEditorOnSelect = true;
 	public bool CloseEditorOnDeselect = false;

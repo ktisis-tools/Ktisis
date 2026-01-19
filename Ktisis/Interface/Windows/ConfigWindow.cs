@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -204,6 +205,8 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirmExit"), ref this.Config.Editor.ConfirmExit);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.initPosLock"), ref this.Config.Editor.InitPosLock);
 		this.DrawHint("config.workspace.hintPosLock");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.showHints"), ref this.Config.Editor.ShowHints);
+		this.DrawHint("config.workspace.hintHint");
 		ImGui.Spacing();
 
 		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.windowHeader"))) {
