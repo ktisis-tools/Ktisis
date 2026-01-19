@@ -29,12 +29,13 @@ public unsafe class HintNode : OverlayNode {
 	public HintNode(
 		uint iconId,
 		string hint,
+		int hintNum,
 		int? countdownFrames
 	) {
 		this.SpeakerImage = new IconImageNode() {
 			IconId = iconId,
 			TextureSize = new Vector2(640.0f, 512.0f),
-			Size = new Vector2(336.0f, 256.0f),
+			Size = new Vector2(320.0f, 256.0f),
 			Position = new Vector2(-99.0f, -155.0f),
 			FitTexture = true
 		};
@@ -45,7 +46,7 @@ public unsafe class HintNode : OverlayNode {
 			BottomOffset = 26.0f,
 			LeftOffset = 48.0f,
 			RightOffset = 48.0f,
-			Size = new Vector2(640.0f, 48.0f),
+			Size = new Vector2(625.0f, 64.0f),
 			Position = new Vector2(0.0f, 12.0f)
 		};
 		this.SpeakerBg = new SimpleNineGridNode() {
@@ -64,28 +65,31 @@ public unsafe class HintNode : OverlayNode {
 			FontSize = 14,
 			AlignmentType = AlignmentType.Left,
 			TextFlags = TextFlags.Edge,
-			String = "Did You Know?"
+			String = $"Ktisis Tip #{hintNum}"
 		};
 		this.BText = new TextNode() {
-			Size = new Vector2(576.0f, 20.0f),
-			Position = new Vector2(32.0f, 24.0f),
+			Size = new Vector2(576.0f, 44.0f),
+			Position = new Vector2(22.0f, 22.0f),
 			TextColor = KnownColor.Black.Vector(),
 			TextOutlineColor = KnownColor.Black.Vector(),
 			FontType = FontType.Axis,
-			FontSize = 18,
+			FontSize = 16,
 			AlignmentType = AlignmentType.Left,
 			TextFlags = TextFlags.WordWrap | TextFlags.MultiLine | TextFlags.OverflowHidden,
 			LineSpacing = 18,
 			String = hint
 		};
-		if (countdownFrames != null) this.SetCountdown(countdownFrames.Value);
 
 		this.SpeakerImage.AttachNode(this);
 		this.BTextBg.AttachNode(this);
 		this.SpeakerBg.AttachNode(this);
 		this.SpeakerText.AttachNode(this);
 		this.BText.AttachNode(this);
-
+		if (countdownFrames != null) {
+			this.SetCountdown(countdownFrames.Value);
+			this.Countdown?.AttachNode(this);
+			this.Timeline?.PlayAnimation(101);
+		}
 
 		this.CollisionNode.NodeFlags |= NodeFlags.Visible;
 		this.CollisionNode.AddEvent(AtkEventType.MouseDown, this.DetachNode);
@@ -95,7 +99,7 @@ public unsafe class HintNode : OverlayNode {
 	private void SetCountdown(int countdownFrames) {
 		this.Countdown = new ImageNode() {
 			Size = new Vector2(20.0f, 20.0f),
-			Position = new Vector2(608.0f, 23.0f),
+			Position = new Vector2(592.0f, 40.0f),
 			WrapMode = WrapMode.Tile,
 			NodeFlags = NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents
 		};
@@ -117,7 +121,6 @@ public unsafe class HintNode : OverlayNode {
 			.Build()
 		);
 
-		this.Countdown.AttachNode(this);
 		this.AddTimeline(new TimelineBuilder()
 			.BeginFrameSet(11, countdownFrames)
 			.AddLabel(11, 101, AtkTimelineJumpBehavior.Start, 0)
@@ -125,6 +128,5 @@ public unsafe class HintNode : OverlayNode {
 			.EndFrameSet()
 			.Build()
 		);
-		this.Timeline?.PlayAnimation(101);
 	}
 }

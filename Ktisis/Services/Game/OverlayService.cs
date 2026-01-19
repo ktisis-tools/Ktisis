@@ -41,9 +41,10 @@ public class OverlayService : IDisposable {
 
 	public void ShowHint() {
 		var r = new Random();
-		this._controller.AddNode(new HintNode((uint)r.Next(73000, 73287), "This is a dummy hint bubble!! Wow", 450) {
-			Position = new Vector2(400.0f, 400.0f),
-			Size = new Vector2(640.0f, 256.0f),
+		this._controller.AddNode(new HintNode((uint)r.Next(73001, 73287), "Ktisis can autosave your poses, including when you disconnect! Set it up in the Config menu.", 15, 300) {
+			Position = new Vector2(87.0f, 138.0f),
+			Size = new Vector2(640.0f, 80.0f),
+			Scale = new Vector2(1.0f, 1.0f),
 			CollisionNode = {
 				Position = new Vector2(-99.0f, -155.0f),
 				Size = new Vector2(749.0f, 256.0f)
