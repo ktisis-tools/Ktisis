@@ -20,7 +20,7 @@ public class OverlayService : IDisposable {
 
 	private bool _init = false;
 	private bool _showedHint = false;
-	private OverlayController _controller;
+	private OverlayController? _controller;
 	private PreviewNode? _preview;
 
 	public OverlayService(IDalamudPluginInterface dpi, IFramework framework) {
@@ -39,7 +39,7 @@ public class OverlayService : IDisposable {
 	}
 
 	public bool AddNode(OverlayNode node) {
-		this._controller.AddNode(node);
+		this._controller?.AddNode(node);
 		return true;
 	}
 
@@ -49,7 +49,7 @@ public class OverlayService : IDisposable {
 		var key = context.Locale.RandomHintKey();
 		var hint = context.Locale.Translate($"hints.{key}");
 
-		this._controller.AddNode(new HintNode((uint)icon, hint, key, 300) {
+		this._controller?.AddNode(new HintNode((uint)icon, hint, key, 300) {
 			Position = new Vector2(87.0f, 138.0f),
 			Size = new Vector2(640.0f, 80.0f),
 			Scale = new Vector2(1.0f, 1.0f),
@@ -63,7 +63,7 @@ public class OverlayService : IDisposable {
 
 	public void ToggleCharaViewTexture() {
 		if (this._preview != null) { // currently isnt cleared when exiting gpose
-			this._controller.RemoveNode(this._preview);
+			this._controller?.RemoveNode(this._preview);
 			this._preview.Dispose();
 			this._preview = null;
 			return;
@@ -71,16 +71,16 @@ public class OverlayService : IDisposable {
 		this._preview = new PreviewNode() {
 			Position = new Vector2(500.0f, 500.0f)
 		};
-		this._controller.AddNode(this._preview);
+		this._controller?.AddNode(this._preview);
 	}
 
 	public bool RemoveNode(OverlayNode node) {
-		this._controller.RemoveNode(node);
+		this._controller?.RemoveNode(node);
 		return true;
 	}
 
 	public void Disable() {
-		this._controller.Dispose();
+		this._controller?.Dispose();
 		KamiToolKitLibrary.Dispose();
 		this._init = false;
 	}
