@@ -17,15 +17,17 @@ namespace Ktisis.Services.Game;
 public class OverlayService : IDisposable {
 	private readonly IDalamudPluginInterface _dpi;
 	private readonly IFramework _framework;
+	private readonly IObjectTable _objectTable;
 
 	private bool _init = false;
 	private bool _showedHint = false;
 	private OverlayController? _controller;
 	private PreviewNode? _preview;
 
-	public OverlayService(IDalamudPluginInterface dpi, IFramework framework) {
+	public OverlayService(IDalamudPluginInterface dpi, IFramework framework, IObjectTable objectTable) {
 		this._dpi = dpi;
 		this._framework = framework;
+		this._objectTable =  objectTable;
 	}
 
 	public void Initialize(IEditorContext context) {
@@ -68,7 +70,7 @@ public class OverlayService : IDisposable {
 			this._preview = null;
 			return;
 		}
-		this._preview = new PreviewNode() {
+		this._preview = new PreviewNode(this._framework, this._objectTable) {
 			Position = new Vector2(500.0f, 500.0f)
 		};
 		this._controller?.AddNode(this._preview);
