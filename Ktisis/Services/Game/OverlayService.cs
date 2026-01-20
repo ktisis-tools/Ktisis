@@ -80,6 +80,7 @@ public class OverlayService : IDisposable {
 	}
 
 	public void Disable() {
+		if (!this._init) return;
 		this._controller?.Dispose();
 		KamiToolKitLibrary.Dispose();
 		this._init = false;
@@ -87,6 +88,5 @@ public class OverlayService : IDisposable {
 
 	public void Dispose() {
 		this.Disable();
-		this._showedHint = false;
 	}
 }
