@@ -8,6 +8,7 @@ using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
@@ -52,6 +53,7 @@ public unsafe class PreviewNode : OverlayNode {
 
 		this._renderTargetManager = RenderTargetManager.Instance();
 		this._agentTryon = AgentTryon.Instance();
+		this._agentTryon->Show();
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
 			ImageNodeFlags = (ImageNodeFlags)0x8C,
@@ -59,7 +61,10 @@ public unsafe class PreviewNode : OverlayNode {
 		};
 		var part = this.Image.AddPart(new Part());
 		part->LoadTexture(this._renderTargetManager->CharaViewTextures[2]);
-		this._agentTryon->CharaView.Initialize(null, 2, 0);
+
+		this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
+		this._agentTryon->Update(1);
+		this._agentTryon->HideAddon();
 		this._renderTargetManager->CharaViewTextures[2].Value->IncRef();
 		// if (this._ctx.Selection.GetFirstSelected() is ActorEntity actor) {
 		// 	var modelData = this._agentTryon->CharaView.ModelData;
