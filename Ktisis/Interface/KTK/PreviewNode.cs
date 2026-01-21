@@ -51,9 +51,19 @@ public unsafe class PreviewNode : OverlayNode {
 		this._objectTable = objectTable;
 		this._counter = 1;
 
+		
+		var needsInit = false;
 		this._renderTargetManager = RenderTargetManager.Instance();
+		if(this._agentTryon == null)
+			needsInit = true;
+
 		this._agentTryon = AgentTryon.Instance();
-		this._agentTryon->Show();
+		if (needsInit) {
+			this._framework.RunOnFrameworkThread(() => {
+				this._agentTryon->Update(1);
+				this._agentTryon->Hide();
+			});
+		}
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
 			ImageNodeFlags = (ImageNodeFlags)0x8C,
@@ -61,20 +71,20 @@ public unsafe class PreviewNode : OverlayNode {
 		};
 		var part = this.Image.AddPart(new Part());
 		part->LoadTexture(this._renderTargetManager->CharaViewTextures[2]);
-
-		this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
-		this._agentTryon->Update(1);
-		this._agentTryon->HideAddon();
 		this._renderTargetManager->CharaViewTextures[2].Value->IncRef();
+
+		this._framework.RunOnFrameworkThread(() => {
+			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
+			var modelData = this._agentTryon->CharaView.ModelData;
+			modelData.CopyFromCharacter((Character*)this._objectTable.LocalPlayer?.Address);
+			this._agentTryon->CharaView.SetModelData(&modelData);
+		});
+
 		// if (this._ctx.Selection.GetFirstSelected() is ActorEntity actor) {
 		// 	var modelData = this._agentTryon->CharaView.ModelData;
 		// 	modelData.CopyFromCharacter(actor.Character);
 		// 	this._agentTryon->CharaView.SetModelData(&modelData);
 		// }
-		var modelData = this._agentTryon->CharaView.ModelData;
-		modelData.CopyFromCharacter((Character*)this._objectTable.LocalPlayer?.Address);
-		this._agentTryon->CharaView.SetModelData(&modelData);
-
 		this._framework.Update += this.OnFramework;
 		this.Image.AttachNode(this);
 	}
