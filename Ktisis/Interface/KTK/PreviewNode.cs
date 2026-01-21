@@ -19,6 +19,8 @@ using KamiToolKit.Overlay;
 using KamiToolKit.Extensions;
 
 using Ktisis.Common.Extensions;
+using Ktisis.Editor.Context.Types;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Plugin;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -36,14 +38,18 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
 	private uint _counter;
+	private readonly IEditorContext _ctx;
 
 	public PreviewNode(
+		IEditorContext context,
 		IFramework framework,
-		IObjectTable objectTable) {
+		IObjectTable objectTable
+	) {
+		this._ctx = context;
 		this._framework = framework;
-		this._objectTable =  objectTable;
+		this._objectTable = objectTable;
 		this._counter = 1;
-		
+
 		this._renderTargetManager = RenderTargetManager.Instance();
 		this._agentTryon = AgentTryon.Instance();
 		this.Image = new ImageNode() {
@@ -55,14 +61,20 @@ public unsafe class PreviewNode : OverlayNode {
 		part->LoadTexture(this._renderTargetManager->CharaViewTextures[2]);
 		this._agentTryon->CharaView.Initialize(null, 2, 0);
 		this._renderTargetManager->CharaViewTextures[2].Value->IncRef();
-		this._framework.Update += OnFramework;
+		// if (this._ctx.Selection.GetFirstSelected() is ActorEntity actor) {
+		// 	var modelData = this._agentTryon->CharaView.ModelData;
+		// 	modelData.CopyFromCharacter(actor.Character);
+		// 	this._agentTryon->CharaView.SetModelData(&modelData);
+		// }
+		var modelData = this._agentTryon->CharaView.ModelData;
+		modelData.CopyFromCharacter((Character*)this._objectTable.LocalPlayer?.Address);
+		this._agentTryon->CharaView.SetModelData(&modelData);
+
+		this._framework.Update += this.OnFramework;
 		this.Image.AttachNode(this);
 	}
-	
 
-	void OnFramework(IFramework framework) => this.Update();
-	public void Update() {
+	private void OnFramework(IFramework framework) {
 		this._agentTryon->CharaView.Render(this._counter++);
-		
 	}
 }
