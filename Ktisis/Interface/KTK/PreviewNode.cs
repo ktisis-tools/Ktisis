@@ -34,19 +34,21 @@ public unsafe class PreviewNode : OverlayNode {
 	protected override void OnUpdate() { }
 
 	private readonly ImageNode Image;
+	private readonly NineGridNode Border;
+	private uint _counter;
+	
 	private readonly RenderTargetManager* _renderTargetManager;
 	private readonly AgentTryon* _agentTryon;
+	
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
-	private uint _counter;
-	private readonly IEditorContext _ctx;
+
 
 	public PreviewNode(
 		IEditorContext context,
 		IFramework framework,
 		IObjectTable objectTable
 	) {
-		this._ctx = context;
 		this._framework = framework;
 		this._objectTable = objectTable;
 		this._counter = 1;
@@ -66,9 +68,23 @@ public unsafe class PreviewNode : OverlayNode {
 		}
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
+			Position = new Vector2(4, 3),
 			ImageNodeFlags = (ImageNodeFlags)0x8C,
 			WrapMode = WrapMode.Tile
 		};
+		this.Border = new NineGridNode() {
+			Size = new Vector2(200.0f, 328.0f),
+			TopOffset = 14.0f,
+			LeftOffset = 14.0f,
+			RightOffset = 14.0f,
+			BottomOffset = 14.0f
+		};
+		this.Border.AddPart(new Part {
+			TexturePath = "ui/uld/PreviewA_hr1.tex",
+			Size = new Vector2(36.0f, 36.0f),
+			TextureCoordinates = new Vector2( 0, 0f),
+			Id = 0
+		});
 		var part = this.Image.AddPart(new Part());
 		part->LoadTexture(this._renderTargetManager->CharaViewTextures[2]);
 		this._renderTargetManager->CharaViewTextures[2].Value->IncRef();
@@ -87,6 +103,7 @@ public unsafe class PreviewNode : OverlayNode {
 		// }
 		this._framework.Update += this.OnFramework;
 		this.Image.AttachNode(this);
+		this.Border.AttachNode(this);
 	}
 
 	private void OnFramework(IFramework framework) {
