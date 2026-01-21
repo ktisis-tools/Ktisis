@@ -63,14 +63,8 @@ public class OverlayService : IDisposable {
 		this._showedHint = true;
 	}
 
-	public void ToggleCharaViewTexture() {
-		if (this._preview != null) { // currently isnt cleared when exiting gpose
-			this._controller?.RemoveNode(this._preview);
-			this._preview.Dispose();
-			this._preview = null;
-			return;
-		}
-		this._preview = new PreviewNode(this._framework, this._objectTable) {
+	public void ToggleCharaViewTexture(IEditorContext context) {
+		this._preview = new PreviewNode(context, this._framework, this._objectTable) {
 			Position = new Vector2(500.0f, 500.0f)
 		};
 		this._controller?.AddNode(this._preview);
@@ -83,6 +77,12 @@ public class OverlayService : IDisposable {
 
 	public void Disable() {
 		if (!this._init) return;
+
+		if (this._preview != null) {
+			this._controller?.RemoveNode(this._preview);
+			this._preview.Dispose();
+			this._preview = null;
+		}
 		this._controller?.Dispose();
 		KamiToolKitLibrary.Dispose();
 		this._init = false;
