@@ -37,7 +37,7 @@ public class HousingEditor(HousingDataService housingDataService) : EditorBase
         }
 			
         float currentLight = housingDataService.IndoorLight;
-        if (ImGui.SliderFloat("Brightness", ref currentLight, 0.0f, 3.0f))
+        if (ImGui.SliderFloat("Brightness", ref currentLight, 0.0f, 1.0f))
         {
             housingDataService.IndoorLight = currentLight;
         }
