@@ -23,7 +23,8 @@ public enum EnvOverride {
 	Clouds = 0x020,
 	Rain = 0x040,
 	Dust = 0x080,
-	Wind = 0x100
+	Wind = 0x100,
+	Housing = 0x200,
 }
 
 public interface IEnvModule : IHookModule {
