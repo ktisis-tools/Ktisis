@@ -27,7 +27,8 @@ public class EnvWindow : KtisisWindow {
 		Rain,
 		Particles,
 		Stars,
-		Wind
+		Wind,
+		Housing,
 	}
 	
 	private readonly ISceneManager _scene;
@@ -48,7 +49,8 @@ public class EnvWindow : KtisisWindow {
 		RainEditor rain,
 		ParticlesEditor dust,
 		StarsEditor stars,
-		WindEditor wind
+		WindEditor wind,
+		HousingEditor housingEditor
 	) : base(
 		"Environment Editor"
 	) {
@@ -61,7 +63,8 @@ public class EnvWindow : KtisisWindow {
 			.Setup(EnvEditorTab.Rain, rain)
 			.Setup(EnvEditorTab.Particles, dust)
 			.Setup(EnvEditorTab.Stars, stars)
-			.Setup(EnvEditorTab.Wind, wind);
+			.Setup(EnvEditorTab.Wind, wind)
+			.Setup(EnvEditorTab.Housing, housingEditor);
 	}
 
 	private EnvWindow Setup(EnvEditorTab id, EditorBase editor) {

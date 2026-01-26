@@ -289,6 +289,12 @@ public class DebugWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.Separator();
 		ImGui.Spacing();
+		
+		DrawTransform();
+	}
+
+	private void DrawTransform()
+	{
 		var target = this._ctx.Transform.Target;
 		if (target?.GetTransform() == null)
 			return;

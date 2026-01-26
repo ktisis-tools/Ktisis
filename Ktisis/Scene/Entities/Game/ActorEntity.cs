@@ -229,7 +229,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		this.DefaultsInitialized = true;
 	}
 
-	private void EnsurePresetVisibility() {
+	internal void EnsurePresetVisibility() {
 		var bones = new HashSet<string>(128);
 		foreach (var presetName in _presetStates.Where(s => s.Value == PresetState.Enabled).Select(s => s.Key)) {
 			if (!this.Scene.Context.Config.Presets.Presets.TryGetValue(presetName, out var preset)) {
