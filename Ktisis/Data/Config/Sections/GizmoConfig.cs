@@ -1,16 +1,16 @@
 using System.Numerics;
 using System;
 
-using Ktisis.ImGuizmo;
 using Ktisis.Editor.Transforms;
+using Dalamud.Bindings.ImGuizmo;
 
 namespace Ktisis.Data.Config.Sections;
 
 public class GizmoConfig {
 	public bool Visible = true;
 	
-	public Mode Mode = Mode.Local;
-	public Operation Operation = Operation.ROTATE;
+	public ImGuizmoMode Mode = ImGuizmoMode.Local;
+	public ImGuizmoOperation Operation = ImGuizmoOperation.Rotate;
 
 	public MirrorMode MirrorRotation = MirrorMode.Parallel;
 	public bool ParentBones = true;
@@ -19,6 +19,7 @@ public class GizmoConfig {
 	public bool AllowAxisFlip = true;
 	public bool AllowRaySnap = true;
 
+	/*
 	public Style Style = DefaultStyle;
 
 	public readonly static Style DefaultStyle = new() {
@@ -46,7 +47,7 @@ public class GizmoConfig {
 		ColorHatchedAxisLines = new Vector4(0.000f, 0.000f, 0.000f, 0.500f),
 		ColorText = new Vector4(1.000f, 1.000f, 1.000f, 1.000f),
 		ColorTextShadow = new Vector4(0.000f, 0.000f, 0.000f, 1.000f)
-	};
+	};*/
 
 	public void SetNextMirrorRotation() {
 		var count = Enum.GetNames(typeof(MirrorMode)).Length;
