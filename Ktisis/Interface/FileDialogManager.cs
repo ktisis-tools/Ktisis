@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Dalamud.Interface;
 using Dalamud.Utility;
 
 using GLib.Popups.ImFileDialog;
@@ -67,6 +68,7 @@ public class FileDialogManager {
 		this.PopulateOptions(options);
 
 		Ktisis.Log.Info("Opening file dialog...");
+		EnsureFileDialogOptions(options);
 		
 		this._fileManager.OpenFileDialog(
 			name,
@@ -109,6 +111,8 @@ public class FileDialogManager {
 		var defaultFilename = options.DefaultFileName;
 		if (options.Extension is not null && !defaultFilename.EndsWith(options.Extension)) 
 			defaultFilename += options.Extension;
+		
+		EnsureFileDialogOptions(options);
 		
 		this._fileManager.SaveFileDialog(
 			name,
@@ -154,6 +158,21 @@ public class FileDialogManager {
 		this._img.BindMetadata(dialog);
 		this.OpenDialog(dialog);
 	}
+
+	public void OpenFolder(
+		string name,
+		Action<string> handler
+	) {
+		this._fileManager.OpenFolderDialog(
+			name,
+			(isOk, path) => {
+				if (!isOk || path.IsNullOrEmpty()) return;
+				handler.Invoke(path);
+			},
+			null,
+			true
+		);
+	}
 	
 	// Options
 
@@ -162,13 +181,28 @@ public class FileDialogManager {
 	private void PopulateOptions(FileDialogOptions options) {
 		var savePath = this._cfg.File.AutoSave.FilePath;
 		if (this.AutoSaveLoc == null)
-			this.AutoSaveLoc = new FileDialogLocation("AutoSave", savePath);
-		else if (this.AutoSaveLoc.FullPath != savePath)
+			this.AutoSaveLoc = new FileDialogLocation("AutoSave", savePath, position: -1);
+		else if (!string.Equals(this.AutoSaveLoc.FullPath, savePath, StringComparison.CurrentCultureIgnoreCase))
 			this.AutoSaveLoc.FullPath = savePath;
 		
 		if (!options.Locations.Contains(this.AutoSaveLoc)) {
 			options.Locations.Add(this.AutoSaveLoc);
 			Ktisis.Log.Debug($"Added autosave: {savePath}");
+		}
+	}
+	
+	private void EnsureFileDialogOptions(FileDialogOptions options)
+	{
+		_fileManager.CustomSideBarItems.Clear();
+		
+		foreach (var location in options.Locations)
+		{
+			_fileManager.CustomSideBarItems.Add((location.Name, location.FullPath, location.Icon, location.Position));
+		}
+
+		foreach (var (path, name) in _cfg.File.File.CustomLocations)
+		{
+			_fileManager.CustomSideBarItems.Add((name, path, FontAwesomeIcon.Folder, -1));
 		}
 	}
 }

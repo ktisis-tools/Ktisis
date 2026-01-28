@@ -336,6 +336,17 @@
 				"slowMulti": "Work camera slow-multiplier",
 				"vertMulti": "Work camera up/down speed multiplier",
 				"sens": "Work camera mouse sensitivity"
+			},
+			"customLocations": {
+				"header": "Custom file Locations",
+				"description": "Manage custom folder locations for the file dialog.",
+				"columnName": "Name",
+				"columnPath": "Path",
+				"browse": "Browse",
+				"remove": "Remove",
+				"add": "Add New Location",
+				"moving": "Moving %name%",
+				"selectFolder": "Select Folder"
 			}
 		},
 		"input": {
