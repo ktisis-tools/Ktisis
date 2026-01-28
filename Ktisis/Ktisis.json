@@ -6,7 +6,7 @@
 	"InternalName": "Ktisis",
 	"RepoUrl": "https://github.com/ktisis-tools/Ktisis",
 	"IconUrl": "https://github.com/ktisis-tools/Ktisis/raw/main/icon.png",
-	"AssemblyVersion": "0.3.15",
+	"AssemblyVersion": "0.3.16",
 	"ApplicableVersion": "any",
 	"DalamudApiLevel": 14,
 	"TestingDalamudApiLevel": 14,
