@@ -30,6 +30,8 @@ public class BoneNode : SkeletonNode, ITransform, IVisibility, IAttachTarget {
 		this.Info = bone;
 		this.PartialId = partialId;
 	}
+
+	public unsafe override bool IsValid => base.IsValid && this.GetSkeleton() != null && this.GetPose() != null;
 	
 	public unsafe hkaPose* GetPose() => this.Pose.GetPose(this.Info.PartialIndex);
 	public unsafe RenderSkeleton* GetSkeleton() => this.Pose.GetSkeleton();

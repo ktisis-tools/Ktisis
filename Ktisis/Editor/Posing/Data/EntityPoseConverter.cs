@@ -94,7 +94,24 @@ public class EntityPoseConverter(EntityPose target) {
 			HavokPosing.SyncModelSpace(skeleton, p);
 		}
 	}
-	
+
+	public unsafe void LoadReferencePose(int partialIndex) {
+		var skeleton = target.GetSkeleton();
+		if (skeleton == null) return;
+
+		var partial = skeleton->PartialSkeletons[partialIndex];
+		var pose = partial.GetHavokPose(0);
+		if (pose == null) return;
+
+		pose->SetToReferencePose();
+		HavokPosing.SyncModelSpace(skeleton, partialIndex);
+		if (partialIndex > 0) return;
+
+		// handle child partials if we're reference posing main
+		for (var p = 1; p < skeleton->PartialSkeletonCount; p++)
+			HavokPosing.ParentSkeleton(skeleton, p);
+	}
+
 	// Filter container
 
 	public unsafe PoseContainer FilterSelectedBones(PoseContainer pose, bool all = true, bool includeDescendants = false, PoseMode modes = PoseMode.All) {
