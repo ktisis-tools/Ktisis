@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Numerics;
+using System.IO;
 
 using Dalamud.Interface;
-using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
-
-using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using GLib.Widgets;
 
@@ -227,6 +224,10 @@ public class ConfigWindow : KtisisWindow {
 		}
 		ImGui.Spacing();
 
+		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.customLocations.header"))) {
+			this.DrawCustomLocations();
+		}
+
 		if (refresh) this.RefreshScene();
 	}
 
@@ -434,6 +435,88 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (ImGui.Button(this.Locale.Translate("config.about.gitLinkout.button")))
 			GuiHelpers.OpenBrowser(this.Locale.Translate("config.about.gitLinkout.link"));
+	}
+
+	// Custom Locations
+
+	private void DrawCustomLocations() {
+		var locations = this.Config.File.CustomLocations;
+
+		ImGui.TextWrapped(this.Locale.Translate("config.workspace.customLocations.description"));
+		ImGui.Spacing();
+
+		var buttonSize = Buttons.CalcSize();
+		var moveWidth = buttonSize * 2 + ImGui.GetStyle().ItemSpacing.X + ImGui.GetStyle().CellPadding.X * 2;
+
+		using (var table = ImRaii.Table("##CustomLocationsTable", 4, ImGuiTableFlags.BordersInnerV | ImGuiTableFlags.Resizable)) {
+			if (table) {
+				ImGui.TableSetupColumn("##Move", ImGuiTableColumnFlags.WidthFixed, moveWidth);
+				ImGui.TableSetupColumn(this.Locale.Translate("config.workspace.customLocations.columnName"), ImGuiTableColumnFlags.WidthStretch, 0.3f);
+				ImGui.TableSetupColumn(this.Locale.Translate("config.workspace.customLocations.columnPath"), ImGuiTableColumnFlags.WidthStretch, 0.7f);
+				ImGui.TableSetupColumn("##Remove", ImGuiTableColumnFlags.WidthFixed, buttonSize + ImGui.GetStyle().CellPadding.X * 2);
+				ImGui.TableHeadersRow();
+
+				for (var i = 0; i < locations.Count; i++) {
+					using var _id = ImRaii.PushId(i);
+					var (path, name) = locations[i];
+					ImGui.TableNextRow();
+
+					ImGui.TableNextColumn();
+					using (var _up = ImRaii.Disabled(i == 0)) {
+						if (Buttons.IconButton(FontAwesomeIcon.ArrowUp)) {
+							(locations[i], locations[i - 1]) = (locations[i - 1], locations[i]);
+							this._cfg.Save();
+						}
+					}
+					
+					ImGui.SameLine();
+					using (var _down = ImRaii.Disabled(i == locations.Count - 1)) {
+						if (Buttons.IconButton(FontAwesomeIcon.ArrowDown)) {
+							(locations[i], locations[i + 1]) = (locations[i + 1], locations[i]);
+							this._cfg.Save();
+						}
+					}
+
+					ImGui.TableNextColumn();
+					ImGui.SetNextItemWidth(-1);
+					if (ImGui.InputText($"##name", ref name, 256)) {
+						locations[i] = (path, name);
+						this._cfg.Save();
+					}
+
+					ImGui.TableNextColumn();
+					ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - (buttonSize + ImGui.GetStyle().ItemSpacing.X));
+					if (ImGui.InputText($"##path", ref path, 512)) {
+						locations[i] = (path, name);
+						this._cfg.Save();
+					}
+
+					ImGui.SameLine();
+					if (Buttons.IconButtonTooltip(FontAwesomeIcon.FolderOpen, this.Locale.Translate("config.workspace.customLocations.browse"))) {
+						var index = i;
+						this._gui.FileDialogs.OpenFolder(this.Locale.Translate("config.workspace.customLocations.selectFolder"), p => {
+							locations[index] = (p, locations[index].Name);
+							this._cfg.Save();
+						});
+					}
+
+					ImGui.TableNextColumn();
+					if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, this.Locale.Translate("config.workspace.customLocations.remove"))) {
+						locations.RemoveAt(i);
+						this._cfg.Save();
+						i--;
+					}
+				}
+			}
+		}
+
+		ImGui.Spacing();
+		if (ImGui.Button(this.Locale.Translate("config.workspace.customLocations.add"))) {
+			this._gui.FileDialogs.OpenFolder(this.Locale.Translate("config.workspace.customLocations.selectFolder"), p => {
+				locations.Add((p, new DirectoryInfo(p).Name));
+				this._cfg.Save();
+			});
+		}
 	}
 
 	// Handlers
