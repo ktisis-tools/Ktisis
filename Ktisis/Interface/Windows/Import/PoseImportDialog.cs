@@ -92,13 +92,24 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		
 		ImGui.SameLine();
 
+		// if operating on a .cmp file, force disable position and scale as they're always dummy
+		var isCmp = this._select.Selected != null && this._select.Selected.Path.EndsWith(".cmp");
+
 		var position = trans.HasFlag(PoseTransforms.Position);
+		var scale = trans.HasFlag(PoseTransforms.Scale);
+		using var _ = ImRaii.Disabled(isCmp);
+		if (isCmp) {
+			position = false;
+			file.ImportPoseTransforms &= ~PoseTransforms.Position;
+			scale = false;
+			file.ImportPoseTransforms &= ~PoseTransforms.Scale;
+		}
+
 		if (ImGui.Checkbox("Position##PoseImportPos", ref position))
 			file.ImportPoseTransforms ^= PoseTransforms.Position;
 		
 		ImGui.SameLine();
 
-		var scale = trans.HasFlag(PoseTransforms.Scale);
 		if (ImGui.Checkbox("Scale##PoseImportScale", ref scale))
 			file.ImportPoseTransforms ^= PoseTransforms.Scale;
 	}
