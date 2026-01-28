@@ -1,5 +1,5 @@
 using Dalamud.Game.ClientState.Objects.Types;
-
+using Ktisis.Data.Mcdf;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Factory.Creators;
@@ -13,15 +13,18 @@ namespace Ktisis.Scene.Factory;
 public class EntityFactory : IEntityFactory {
 	private readonly IEditorContext _ctx;
 	private readonly INameResolver _naming;
+	private readonly McdfManager _mcdfManager;
 
 	private ISceneManager Scene => this._ctx.Scene;
 	
 	public EntityFactory(
 		IEditorContext ctx,
-		INameResolver naming
+		INameResolver naming,
+		McdfManager mcdfManager
 	) {
 		this._ctx = ctx;
 		this._naming = naming;
+		this._mcdfManager = mcdfManager;
 	}
 	
 	// Builders
@@ -38,7 +41,7 @@ public class EntityFactory : IEntityFactory {
 	
 	// Creators
 
-	public IActorCreator CreateActor() => new ActorCreator(this.Scene);
+	public IActorCreator CreateActor() => new ActorCreator(this.Scene, this._mcdfManager);
 
 	public ILightCreator CreateLight() => new LightCreator(this.Scene);
 

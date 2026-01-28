@@ -1,7 +1,11 @@
 using System.Linq;
 
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
+using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility.Raii;
+
+using GLib.Widgets;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
@@ -111,7 +115,17 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 				file.ImportPoseSelectedBones ^= true;
 		}
 
-		if (!isSelectiveImport) {
+		if (isSelectiveImport) {
+			using (ImRaii.PushIndent()) {
+				ImGui.Checkbox("Include descendants", ref file.SelectedBonesIncludeDescendants);
+
+				var hasPosition = file.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
+				using (ImRaii.Disabled(!hasPosition))
+					ImGui.Checkbox("Anchor group positions", ref file.AnchorPoseSelectedBones);
+			}
+		}
+
+		if (!isSelectiveImport || file.SelectedBonesIncludeDescendants) {
 			var body = modes.HasFlag(PoseMode.Body);
 			if (ImGui.Checkbox("Body##PoseImportBody", ref body))
 				file.ImportPoseModes ^= PoseMode.Body;
@@ -121,13 +135,15 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 			var face = modes.HasFlag(PoseMode.Face);
 			if (ImGui.Checkbox("Face##PoseImportFace", ref face))
 				file.ImportPoseModes ^= PoseMode.Face;
+			if (face && this._select.IsFileOpened && this.Target.Pose?.HasDTFace() != _select.Selected?.File.HasDTFace()) {
+				ImGui.SameLine();
+				Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+				if (ImGui.IsItemHovered())
+					ImGui.SetTooltip("Face will not be imported from the selected pose file due to incompatibility with the selected actor.");
+			}
 		}
 
 		ImGui.Checkbox("Exclude ear bones", ref file.ExcludePoseEarBones);
-
-		var hasPosition = file.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
-		using (ImRaii.Disabled(!isSelectBones || !file.ImportPoseSelectedBones || !hasPosition))
-			ImGui.Checkbox("Anchor group positions", ref file.AnchorPoseSelectedBones);
 	}
 	
 	// Apply pose
@@ -141,8 +157,9 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 
 		var cfg = this._ctx.Config.File;
 		var selectedBones = isSelectBones && cfg.ImportPoseSelectedBones;
+		var includeDescendants = cfg.SelectedBonesIncludeDescendants;
 		var anchorGroups = cfg.AnchorPoseSelectedBones;
 		var excludeEars = cfg.ExcludePoseEarBones;
-		this._ctx.Posing.ApplyPoseFile(pose, file, cfg.ImportPoseModes, cfg.ImportPoseTransforms, selectedBones, anchorGroups, excludeEars);
+		this._ctx.Posing.ApplyPoseFile(pose, file, cfg.ImportPoseModes, cfg.ImportPoseTransforms, selectedBones, includeDescendants, anchorGroups, excludeEars);
 	}
 }

@@ -11,6 +11,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Actions.Types;
 using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Attachment;
@@ -38,21 +39,6 @@ public class PosingManager : IPosingManager {
 	public IAttachManager Attachments { get; }
 
 	private readonly PoseAutoSave AutoSave;
-
-	// todo: separate concerns, move this
-	private string[] ExcludeEars = [
-		"j_mimi_l", "j_mimi_r",
-		"n_ear_a_l", "n_ear_a_r",
-		"n_ear_b_l", "n_ear_b_r",
-		"j_zera_a_l", "j_zera_b_l",
-		"j_zera_a_r", "j_zera_b_r",
-		"j_zerb_a_l", "j_zerb_b_l",
-		"j_zerb_a_r", "j_zerb_b_r",
-		"j_zerc_a_l", "j_zerc_b_l",
-		"j_zerc_a_r", "j_zerc_b_r",
-		"j_zerd_a_l", "j_zerd_b_l",
-		"j_zerd_a_r", "j_zerd_b_r"
-	];
 
 	public PosingManager(
 		IEditorContext context,
@@ -211,44 +197,53 @@ public class PosingManager : IPosingManager {
 		PoseMode modes = PoseMode.All,
 		PoseTransforms transforms = PoseTransforms.Rotation,
 		bool selectedBones = false,
+		bool includeDescendants = false,
 		bool anchorGroups = false,
 		bool excludeEars = false
 	) {
 		return this._framework.RunOnFrameworkThread(() => {
 			if (file.Bones == null) return;
 
-			var container = file.Bones;
 			var converter = new EntityPoseConverter(pose);
 			var initial = converter.Save();
+			var container = file.Bones;
 
 			var mementos = new List<IMemento>();
 
 			if (excludeEars)
-				container = converter.FilterExcludeBones(container, ExcludeEars);
+				container = converter.FilterExcludeBones(container, PoseUtil.EarBones);
 
-			if (selectedBones)
-				converter.LoadSelectedBones(container, transforms);
-			else
+			if (pose.HasDTFace() != file.HasDTFace()) {
+				container = converter.FilterExcludeBones(container, ["j_kao"]);
+				if (modes.HasFlag(PoseMode.Face))
+					modes ^= PoseMode.Face;
+			}
+
+			if (selectedBones) {
+				converter.LoadSelectedBones(container, transforms, modes, includeDescendants);
+				container = converter.Save(container);
+			} else {
 				converter.Load(container, modes, transforms);
+			}
 
 			mementos.Add(new PoseMemento(converter) {
 				Modes = modes,
 				Transforms = transforms,
-				Bones = selectedBones ? converter.GetSelectedBones().ToList() : null,
-				Initial = selectedBones ? converter.FilterSelectedBones(initial) : initial,
-				Final = selectedBones ? converter.FilterSelectedBones(container) : container
+				Bones = selectedBones ? converter.GetSelectedBones(true, includeDescendants).ToList() : null,
+				Initial = selectedBones ? converter.FilterSelectedBones(initial, true, includeDescendants) : initial,
+				Final = selectedBones ? converter.FilterSelectedBones(container, true, includeDescendants) : container
 			});
 
 			if (selectedBones && anchorGroups && transforms.HasFlag(PoseTransforms.Position)) {
-				var restored = converter.GetSelectedBones(false).ToList();
-				converter.LoadBones(initial, restored, PoseTransforms.Position);
+				var restored = converter.GetSelectedBones(false, includeDescendants).ToList();
+				converter.LoadBones(initial, restored, PoseTransforms.Position, modes);
 
 				mementos.Add(new PoseMemento(converter) {
 					Modes = modes,
 					Transforms = PoseTransforms.Position,
 					Bones = restored,
-					Initial = converter.FilterSelectedBones(container, false),
-					Final = converter.FilterSelectedBones(initial, false)
+					Initial = converter.FilterSelectedBones(container, false, includeDescendants),
+					Final = converter.FilterSelectedBones(initial, false, includeDescendants)
 				});
 			}
 
