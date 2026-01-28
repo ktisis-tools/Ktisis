@@ -81,8 +81,15 @@ public class OverlayWindow : KtisisWindow {
 	}
 
 	private bool DrawGizmo() {
-		if (!this._ctx.Config.Gizmo.Visible)
+		// if gizmo becomes invisible mid-manipulation, force stop it
+		if (!this._ctx.Config.Gizmo.Visible) {
+			if (this._gizmo.IsUsedPrev) {
+				this.Transform?.Dispatch();
+				this.Transform = null;
+				this._gizmo.Reset();
+			}
 			return false;
+		}
 		
 		var target = this._ctx.Transform.Target;
 		var transform = target?.GetTransform();
@@ -115,6 +122,11 @@ public class OverlayWindow : KtisisWindow {
 		if (this._gizmo.IsEnded) {
 			this.Transform?.Dispatch();
 			this.Transform = null;
+		} else if (this._gizmo.IsUsedPrev && !ImGui.IsMouseDown(ImGuiMouseButton.Left) && !ImGui.IsWindowHovered()) {
+			// workaround for Guizmo bug; if gizmo is released while hovering a non-overlay window, stop manipulating & force the gizmo to ended state by resetting it
+			this.Transform?.Dispatch();
+			this.Transform = null;
+			this._gizmo.Reset();
 		}
 
 		return true;

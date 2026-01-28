@@ -30,7 +30,7 @@ public interface IPosingManager : IDisposable {
 	public Task ApplyReferencePose(EntityPose pose);
 	public Task ApplyPartialReferencePose(EntityPose pose, int partialIndex);
 
-	public Task ApplyPoseFile(EntityPose pose, PoseFile file, PoseMode modes = PoseMode.All, PoseTransforms transforms = PoseTransforms.Rotation, bool selectedBones = false, bool anchorGroups = false, bool excludeEars = false);
+	public Task ApplyPoseFile(EntityPose pose, PoseFile file, PoseMode modes = PoseMode.All, PoseTransforms transforms = PoseTransforms.Rotation, bool selectedBones = false, bool includeDescendants = false, bool anchorGroups = false, bool excludeEars = false);
 	public Task<PoseFile> SavePoseFile(EntityPose pose);
 
 	public Task StashPose(EntityPose pose);

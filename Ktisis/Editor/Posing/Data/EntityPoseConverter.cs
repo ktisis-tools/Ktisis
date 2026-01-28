@@ -17,11 +17,12 @@ public class EntityPoseConverter(EntityPose target) {
 	
 	// Save pose file
 
-	public unsafe PoseContainer Save() {
+	public unsafe PoseContainer Save(PoseContainer? filter = null) {
 		var bones = new PoseContainer();
 		var skeleton = target.GetSkeleton();
 		if (skeleton != null)
-			bones.Store(skeleton);
+			bones.Store(skeleton, filter);
+
 		return bones;
 	}
 
@@ -60,19 +61,24 @@ public class EntityPoseConverter(EntityPose target) {
 	public unsafe void LoadBones(
 		PoseContainer pose,
 		IEnumerable<PartialBoneInfo> bones,
-		PoseTransforms transforms
+		PoseTransforms transforms,
+		PoseMode modes = PoseMode.All
 	) {
 		var skeleton = target.GetSkeleton();
 		if (skeleton == null) return;
-		pose.ApplyToBones(skeleton, bones, transforms);
+		pose.ApplyToBones(skeleton, bones, transforms, modes);
 	}
 
 	public void LoadSelectedBones(
 		PoseContainer pose,
-		PoseTransforms transforms
+		PoseTransforms transforms,
+		PoseMode modes,
+		bool includeDescendants
 	) {
 		var selected = this.GetSelectedBones();
-		this.LoadBones(pose, selected, transforms);
+		if (includeDescendants)
+			selected = this.ExpandToDescendants(selected, modes);
+		this.LoadBones(pose, selected, transforms, modes);
 	}
 	
 	public unsafe void LoadReferencePose() {
@@ -108,10 +114,12 @@ public class EntityPoseConverter(EntityPose target) {
 
 	// Filter container
 
-	public unsafe PoseContainer FilterSelectedBones(PoseContainer pose, bool all = true) {
+	public unsafe PoseContainer FilterSelectedBones(PoseContainer pose, bool all = true, bool includeDescendants = false, PoseMode modes = PoseMode.All) {
 		var result = new PoseContainer();
 
-		var bones = this.GetSelectedBones(all).ToList();
+		var bones = this.GetSelectedBones(all, includeDescendants, modes).ToList();
+		if (bones.Count == 0) return result;
+
 		foreach (var bone in bones) {
 			if (pose.TryGetValue(bone.Name, out var value))
 				result[bone.Name] = value;
@@ -125,6 +133,9 @@ public class EntityPoseConverter(EntityPose target) {
 			return result;
 
 		for (var p = 1; p < skeleton->PartialSkeletonCount; p++) {
+			if(p is (1 or 2) && !modes.HasFlag(PoseMode.Face)) continue;
+			if(p is not (1 or 2) && !modes.HasFlag(PoseMode.Body)) continue;
+
 			var partial = skeleton->PartialSkeletons[p];
 			var subPose = partial.GetHavokPose(0);
 			if (subPose == null || subPose->Skeleton == null) continue;
@@ -139,7 +150,7 @@ public class EntityPoseConverter(EntityPose target) {
 		return result;
 	}
 
-	public unsafe PoseContainer FilterExcludeBones(PoseContainer pose, string[] excludes) {
+	public PoseContainer FilterExcludeBones(PoseContainer pose, string[] excludes) {
 		var result = new PoseContainer();
 
 		var bones = this.GetBones().ToList();
@@ -150,6 +161,15 @@ public class EntityPoseConverter(EntityPose target) {
 
 		return result;
     }
+
+	public IEnumerable<PartialBoneInfo> FilterBonesByModes(IEnumerable<PartialBoneInfo> bones, PoseMode modes) {
+		return bones.Where(b => {
+			return b.PartialIndex switch {
+				1 or 2 => modes.HasFlag(PoseMode.Face),
+				_ => modes.HasFlag(PoseMode.Body),
+			};
+		});
+	}
 	
 	// Pose mapping
 
@@ -169,8 +189,7 @@ public class EntityPoseConverter(EntityPose target) {
 		if (skeleton == null || skeleton->PartialSkeletons == null)
 			return [];
 
-		List<PartialBoneInfo> result = [];
-		result.AddRange(this.GetPartialBones(0));
+		var result = new List<PartialBoneInfo>();
 		for (var p = 0; p < skeleton->PartialSkeletonCount; p++)
 			result.AddRange(this.GetPartialBones(p));
 		return result;
@@ -190,12 +209,13 @@ public class EntityPoseConverter(EntityPose target) {
 	
 	// Iterate selected bones
 
-	public IEnumerable<PartialBoneInfo> GetSelectedBones(bool all = true) {
+	public IEnumerable<PartialBoneInfo> GetSelectedBones(bool all = true, bool includeDescendants = false, PoseMode modes = PoseMode.All) {
 		var selected = target.Recurse()
 			.Prepend(target)
 			.Where(entity => entity is SkeletonNode { IsSelected: true })
 			.Cast<SkeletonNode>();
-		return this.GetBoneSelectionFrom(selected, all).Distinct();
+		var selectedBones = this.GetBoneSelectionFrom(selected, all).Distinct();
+		return includeDescendants ? this.ExpandToDescendants(selectedBones, modes) : selectedBones;
 	}
 
 	private IEnumerable<PartialBoneInfo> GetBoneSelectionFrom(IEnumerable<SkeletonNode> nodes, bool all = true) {
@@ -212,6 +232,13 @@ public class EntityPoseConverter(EntityPose target) {
 					continue;
 			}
 		}
+	}
+
+	public IEnumerable<PartialBoneInfo> ExpandToDescendants(IEnumerable<PartialBoneInfo> bones, PoseMode modes) {
+		if(bones == null) return [];
+
+		var result = target.ExpandToDescendants(bones);
+		return this.FilterBonesByModes(result, modes);
 	}
 
 	public unsafe void FlipPose() {

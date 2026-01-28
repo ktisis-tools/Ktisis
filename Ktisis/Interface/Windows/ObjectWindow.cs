@@ -235,7 +235,7 @@ public class ObjectWindow : KtisisWindow {
 		}
 		
 		var matrix = transform.ComposeMatrix();
-		this._gizmo.SetLookAt(cameraPos, matrix.Translation, cameraFov, (size.X - ImGui.GetStyle().WindowPadding.X * 2) / (size.Y - ImGui.GetStyle().WindowPadding.Y * 2));
+		this._gizmo.SetLookAt(cameraPos, transform.Position, cameraFov, (size.X - ImGui.GetStyle().WindowPadding.X * 2) / (size.Y - ImGui.GetStyle().WindowPadding.Y * 2));
 		var result = this._gizmo.Manipulate(ref matrix, out _);
 		
 		this._gizmo.End();

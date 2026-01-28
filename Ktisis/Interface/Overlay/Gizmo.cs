@@ -16,6 +16,7 @@ public enum GizmoId : int {
 
 public interface IGizmo {
 	public GizmoId Id { get; }
+	public bool IsUsedPrev { get; }
 	
 	public float ScaleFactor { get; set; }
 	
@@ -34,6 +35,7 @@ public interface IGizmo {
 	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta);
 
 	public void EndFrame();
+	public void Reset();
 }
 
 public class Gizmo : IGizmo {
@@ -55,7 +57,7 @@ public class Gizmo : IGizmo {
 	
 	// State
 
-	private bool IsUsedPrev;
+	public bool IsUsedPrev { get; private set; }
 	private bool HasDrawn;
 
 	private Matrix4x4 ViewMatrix = Matrix4x4.Identity;
@@ -98,14 +100,34 @@ public class Gizmo : IGizmo {
 
 		if (this.HasDrawn) return false;
 
-		var result = ImGuizmo.Gizmo.Manipulate(
-			this.ViewMatrix,
-			this.ProjMatrix,
-			this.Operation,
-			this.Mode,
-			ref mx,
-			out delta
-		);
+		var result = false;
+		if (this._cfg.AllowHoldSnap && ImGui.IsKeyDown(ImGuiKey.ModCtrl)) {
+			var snap = Vector3.One;
+			if (this.Operation is Operation.ROTATE) snap *= 5;
+			else snap /= 10;
+
+			if (ImGui.IsKeyDown(ImGuiKey.ModShift))
+				snap /= 10;
+
+			result = ImGuizmo.Gizmo.Manipulate(
+				this.ViewMatrix,
+				this.ProjMatrix,
+				this.Operation,
+				this.Mode,
+				ref mx,
+				out delta,
+				snap
+			);
+		} else {
+			result = ImGuizmo.Gizmo.Manipulate(
+				this.ViewMatrix,
+				this.ProjMatrix,
+				this.Operation,
+				this.Mode,
+				ref mx,
+				out delta
+			);
+		}
 
 		this.HasDrawn = true;
 		return result;
@@ -113,5 +135,11 @@ public class Gizmo : IGizmo {
 
 	public void EndFrame() {
 		this.IsEnded = !ImGuizmo.Gizmo.IsUsing && this.IsUsedPrev;
+	}
+
+	public void Reset() {
+		ImGuizmo.Gizmo.Enable = false;
+		ImGuizmo.Gizmo.Enable = true;
+		this.IsEnded = true;
 	}
 }

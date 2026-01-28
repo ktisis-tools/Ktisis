@@ -13,6 +13,7 @@ public class FileConfig {
 	public bool ImportNpcApplyOnSelect = false;
 	
 	public bool ImportPoseSelectedBones = false;
+	public bool SelectedBonesIncludeDescendants = false;
 	public bool AnchorPoseSelectedBones = false;
 
 	// patch fix pending better blanket exclusion/selection options

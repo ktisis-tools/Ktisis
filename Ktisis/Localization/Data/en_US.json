@@ -12,6 +12,8 @@
 	"actions": {
 		"Select_None": "Cancel selection",
 		"Select_Sibling": "Sibling select",
+		"Select_Children": "Children select",
+		"Select_All": "Select all entities",
 		"Overlay_Toggle": "Toggle overlay visibility",
 		"History_Undo": "Undo action",
 		"History_Redo": "Redo action",
@@ -242,7 +244,10 @@
 		"gizmo": {
 			"title": "Gizmo",
 			"flip": "Flip axis to face camera",
-			"raySnap": "Hold shift to ray snap objects",
+			"raySnap": "Hold Shift to ray snap objects",
+			"rayHint": "When moving a translation gizmo for XYZ, holding Shift will snap the object to world surfaces",
+			"holdSnap": "Hold Control for gizmo snapping (+Shift for precision)",
+			"hintHoldSnap": "Snaps gizmo values to nearest numbers while dragging the mouse",
 			"header": "Gizmo Style:",
 			"editor": {
 				"general": {

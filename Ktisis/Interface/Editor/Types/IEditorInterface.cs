@@ -31,6 +31,7 @@ public interface IEditorInterface {
 	public void OpenOverworldActorList();
 	
 	public void RefreshSceneEntities();
+	public void SelectAllEntities();
 
 	public void OpenRenameEntity(SceneEntity entity);
 	public void OpenSavePreset(ActorEntity actorEntity);
