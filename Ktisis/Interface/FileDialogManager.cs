@@ -67,7 +67,7 @@ public class FileDialogManager {
 		options ??= new FileDialogOptions();
 		this.PopulateOptions(options);
 
-		Ktisis.Log.Info("Opening file dialog...");
+		Ktisis.Log.Debug("Opening file dialog...");
 		EnsureFileDialogOptions(options);
 		
 		this._fileManager.OpenFileDialog(
