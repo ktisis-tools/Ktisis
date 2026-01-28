@@ -16,9 +16,7 @@ using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules.Actors;
-using Ktisis.Scene.Decor;
 using Ktisis.Common.Utility;
-using Ktisis.Editor.Camera.Types;
 
 using Newtonsoft.Json;
 
@@ -39,6 +37,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>> IpcBatchSetMatrix { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>>("Ktisis.BatchSetMatrix");
 	private ICallGateProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>> IpcGetAllMatrices { get; } = dpi.GetIpcProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
 	private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
+	private ICallGateProvider<bool, bool> IpcPosingChangedEvent { get; } = dpi.GetIpcProvider<bool, bool>("Ktisis.PosingChanged");
 
 	#region core
 
@@ -282,6 +281,10 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 
 	#endregion
 
+	public void InvokePosingChanged(bool status) {
+		this.IpcPosingChangedEvent.SendMessage(status);
+	}
+
 	public void RegisterIpc() {
 		IpcVersion.RegisterFunc(GetVersion);
 		IpcRefreshActions.RegisterFunc(RefreshActors);
@@ -295,6 +298,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		IpcBatchGetMatrix.RegisterFunc(BatchGetMatrix);
 		IpcBatchSetMatrix.RegisterFunc(BatchSetMatrix);
 		IpcGetAllMatrices.RegisterFunc(GetAllMatrices);
+		// IpcPosingChangedEvent.RegisterFunc(); no func to register since we're firing messages
 	}
 
 	private void UnregisterIpc() {
@@ -310,6 +314,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		IpcBatchGetMatrix.UnregisterFunc();
 		IpcBatchSetMatrix.UnregisterFunc();
 		IpcGetAllMatrices.UnregisterFunc();
+		IpcPosingChangedEvent.UnregisterFunc();
 	}
 
 	public void Dispose() {
