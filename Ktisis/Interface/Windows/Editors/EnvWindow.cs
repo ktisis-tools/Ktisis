@@ -28,7 +28,8 @@ public class EnvWindow : KtisisWindow {
 		Particles,
 		Stars,
 		Wind,
-		Housing,
+		Water,
+		Housing
 	}
 	
 	private readonly ISceneManager _scene;
@@ -50,6 +51,7 @@ public class EnvWindow : KtisisWindow {
 		ParticlesEditor dust,
 		StarsEditor stars,
 		WindEditor wind,
+		WaterEditor water,
 		HousingEditor housingEditor
 	) : base(
 		"Environment Editor"
@@ -64,6 +66,7 @@ public class EnvWindow : KtisisWindow {
 			.Setup(EnvEditorTab.Particles, dust)
 			.Setup(EnvEditorTab.Stars, stars)
 			.Setup(EnvEditorTab.Wind, wind)
+			.Setup(EnvEditorTab.Water, water)
 			.Setup(EnvEditorTab.Housing, housingEditor);
 	}
 
@@ -178,6 +181,10 @@ public class EnvWindow : KtisisWindow {
 		ImGui.Text(editor.Name);
 		ImGui.Separator();
 		ImGui.Spacing();
+		if (editor is WaterEditor water) { // todo: add to flags enum ala HousingEditor
+			water.Draw();
+			return;
+		}
 		editor.Draw(this._module, ref env->EnvState);
 	}
 }
