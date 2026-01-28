@@ -35,11 +35,11 @@ public class GizmoStyleEditor {
 		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), true);
 
 		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.general.title"))) {
-			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_x"), ref style.ColorDirectionX, defaults.ColorDirectionX);
-			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_y"), ref style.ColorDirectionY, defaults.ColorDirectionY);
-			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_z"), ref style.ColorDirectionZ, defaults.ColorDirectionZ);
-			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.active"), ref style.ColorSelection, defaults.ColorSelection);
-			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.inactive"), ref style.ColorInactive, defaults.ColorInactive);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_x"), ref style.DirectionX, defaults.DirectionX);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_y"), ref style.DirectionY, defaults.DirectionY);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_z"), ref style.DirectionZ, defaults.DirectionZ);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.active"), ref style.Selection, defaults.Selection);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.inactive"), ref style.Inactive, defaults.Inactive);
 		}
 
 		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.position.title"))) {
@@ -65,28 +65,28 @@ public class GizmoStyleEditor {
 			);
 			DrawStyleColor(
 				$"{this._locale.Translate("config.gizmo.editor.position.plane_x")}##PosPlaneColorX",
-				ref style.ColorPlaneX,
-				defaults.ColorPlaneX
+				ref style.PlaneX,
+				defaults.PlaneX
 			);
 			DrawStyleColor(
 				$"{this._locale.Translate("config.gizmo.editor.position.plane_y")}##PosPlaneColorY",
-				ref style.ColorPlaneY,
-				defaults.ColorPlaneY
+				ref style.PlaneY,
+				defaults.PlaneY
 			);
 			DrawStyleColor(
 				$"{this._locale.Translate("config.gizmo.editor.position.plane_z")}##PosPlaneColorZ",
-				ref style.ColorPlaneZ,
-				defaults.ColorPlaneZ
+				ref style.PlaneZ,
+				defaults.PlaneZ
 			);
 			DrawStyleColor(
 				$"{this._locale.Translate("config.gizmo.editor.position.line_color")}##PosLineColor",
-				ref style.ColorTranslationLine,
-				defaults.ColorTranslationLine
+				ref style.TranslationLine,
+				defaults.TranslationLine
 			);
 			DrawStyleColor(
 				this._locale.Translate("config.gizmo.editor.position.axis_color"),
-				ref style.ColorHatchedAxisLines,
-				defaults.ColorHatchedAxisLines
+				ref style.HatchedAxisLines,
+				defaults.HatchedAxisLines
 			);
 		}
 
@@ -103,13 +103,13 @@ public class GizmoStyleEditor {
 			);
 			DrawStyleColor(
 				$"{this._locale.Translate("config.gizmo.editor.rotation.border_color")}##RotateUsingBorder",
-				ref style.ColorRotationUsingBorder,
-				defaults.ColorRotationUsingBorder
+				ref style.RotationUsingBorder,
+				defaults.RotationUsingBorder
 			);
 			DrawStyleColor(
 				$"{this._locale.Translate("config.gizmo.editor.rotation.fill_color")}##RotateUsingFill",
-				ref style.ColorRotationUsingFill,
-				defaults.ColorRotationUsingFill
+				ref style.RotationUsingFill,
+				defaults.RotationUsingFill
 			);
 		}
 
@@ -126,14 +126,14 @@ public class GizmoStyleEditor {
 			);
 			DrawStyleColor(
 				$"{this._locale.Translate("config.gizmo.editor.scale.line_color")}##ScaleColor",
-				ref style.ColorScaleLine,
-				defaults.ColorScaleLine
+				ref style.ScaleLine,
+				defaults.ScaleLine
 			);
 		}
 
 		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.text.title"))) {
-			DrawStyleColor(this._locale.Translate("config.gizmo.editor.text.color"), ref style.ColorText, defaults.ColorText);
-			DrawStyleColor(this._locale.Translate("config.gizmo.editor.text.shadow_color"), ref style.ColorTextShadow, defaults.ColorTextShadow);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.text.color"), ref style.Text, defaults.Text);
+			DrawStyleColor(this._locale.Translate("config.gizmo.editor.text.shadow_color"), ref style.TextShadow, defaults.TextShadow);
 		}
 
 		this.Config.Gizmo.Style = style;
