@@ -118,7 +118,7 @@ public class PosePropertyList : ObjectPropertyList {
 			ImGui.EndCombo();
 		}
 		ImGui.SameLine(0, spacing);
-		if (ImGui.Button("Apply")) {
+		if (ImGui.Button("Reset Pose")) {
 			if (this._partialIndex == -1)
 				await this._ctx.Posing.ApplyReferencePose(pose);
 			else
