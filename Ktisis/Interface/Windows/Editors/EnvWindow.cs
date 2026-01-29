@@ -56,6 +56,7 @@ public class EnvWindow : KtisisWindow {
 	) : base(
 		"Environment Editor"
 	) {
+		this.HelpUrl = "https://sleepybnuuy.github.io/ktisis-docs/windows/environment";
 		this._scene = scene;
 		this._module = module;
 		this._weatherSelect = weatherSelect;
