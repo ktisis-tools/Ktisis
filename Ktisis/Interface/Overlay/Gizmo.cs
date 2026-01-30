@@ -94,7 +94,7 @@ public class Gizmo : IGizmo {
 		ImGuizmo.SetDrawlist(ImGui.GetWindowDrawList().Handle);
 	}
 
-	public unsafe bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
+	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
 		delta = Matrix4x4.Identity;
 
 		if (this.HasDrawn) return false;
