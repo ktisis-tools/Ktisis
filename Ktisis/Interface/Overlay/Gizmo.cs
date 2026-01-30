@@ -16,6 +16,7 @@ public enum GizmoId : int {
 
 public interface IGizmo {
 	public GizmoId Id { get; }
+	public bool IsUsedPrev { get; }
 	
 	public float ScaleFactor { get; set; }
 	
@@ -34,6 +35,7 @@ public interface IGizmo {
 	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta);
 
 	public void EndFrame();
+	public void Reset();
 }
 
 public class Gizmo : IGizmo {
@@ -55,7 +57,7 @@ public class Gizmo : IGizmo {
 	
 	// State
 
-	private bool IsUsedPrev;
+	public bool IsUsedPrev { get; private set; }
 	private bool HasDrawn;
 
 	private Matrix4x4 ViewMatrix = Matrix4x4.Identity;
@@ -77,9 +79,8 @@ public class Gizmo : IGizmo {
 
 	public void BeginFrame(Vector2 pos, Vector2 size) {
 		this.HasDrawn = false;
-		
+
 		ImGuizmo.SetRect(pos.X, pos.Y, size.X, size.Y);
-		
 		ImGuizmo.SetID((int) this.Id);
 		ImGuizmo.SetGizmoSizeClipSpace(this.ScaleFactor);
 		ImGuizmo.AllowAxisFlip(this.AllowAxisFlip);
@@ -93,19 +94,39 @@ public class Gizmo : IGizmo {
 		ImGuizmo.SetDrawlist(ImGui.GetWindowDrawList().Handle);
 	}
 
-	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
+	public unsafe bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
 		delta = Matrix4x4.Identity;
 
 		if (this.HasDrawn) return false;
 
-		var result = Dalamud.Bindings.ImGuizmo.ImGuizmo.Manipulate(
-			ref this.ViewMatrix,
-			ref this.ProjMatrix,
-			this.Operation,
-			this.Mode,
-			ref mx,
-			ref delta
-		);
+		var result = false;
+		if (this._cfg.AllowHoldSnap && ImGui.IsKeyDown(ImGuiKey.ModCtrl)) {
+			var snap = 1.0f;
+			if (this.Operation is ImGuizmoOperation.Rotate) snap *= 5;
+			else snap /= 10;
+
+			if (ImGui.IsKeyDown(ImGuiKey.ModShift))
+				snap /= 10;
+
+			result = ImGuizmo.Manipulate(
+				ref this.ViewMatrix,
+				ref this.ProjMatrix,
+				this.Operation,
+				this.Mode,
+				ref mx,
+				ref delta,
+				ref snap
+			);
+		} else {
+			result = ImGuizmo.Manipulate(
+				ref this.ViewMatrix,
+				ref this.ProjMatrix,
+				this.Operation,
+				this.Mode,
+				ref mx,
+				ref delta
+			);
+		}
 
 		this.HasDrawn = true;
 		return result;
@@ -114,5 +135,11 @@ public class Gizmo : IGizmo {
 	public void EndFrame() {
 		this.IsEnded = !ImGuizmo.IsUsing() && this.IsUsedPrev;
 		ImGuizmo.SetGizmoSizeClipSpace(0.1f); //Reset back to original gizmo size.
+	}
+
+	public void Reset() {
+		ImGuizmo.Enable(false);
+		ImGuizmo.Enable(true);
+		this.IsEnded = true;
 	}
 }

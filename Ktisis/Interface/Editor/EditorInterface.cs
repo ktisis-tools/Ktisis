@@ -164,6 +164,13 @@ public class EditorInterface : IEditorInterface {
 		this._ctx.Scene.GetModule<LightModule>().RefreshLightEntities();
 	}
 
+	public void SelectAllEntities() {
+		// clear selection then select all SceneEntities
+		this._ctx.Selection.Clear();
+		foreach (var entity in this._ctx.Scene.Children)
+			this._ctx.Selection.Select(entity, SelectMode.Multiple);
+	}
+
 	// Entity windows
 	
 	public void OpenRenameEntity(SceneEntity entity) => this._gui.CreatePopup<EntityRenameModal>(entity).Open();

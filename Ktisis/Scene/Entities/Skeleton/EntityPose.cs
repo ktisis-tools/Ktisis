@@ -8,6 +8,7 @@ using FFXIVClientStructs.Havok.Animation.Rig;
 using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
@@ -77,7 +78,8 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		if (this.Partials.TryGetValue(index, out var info)) {
 			prevId = info.Id;
 		} else {
-			info = new PartialSkeletonInfo(id);
+			var name = GetPartialName(partial);
+			info = name != null ? new PartialSkeletonInfo(id, name) : new PartialSkeletonInfo(id);
 			this.Partials.Add(index, info);
 		}
 
@@ -99,10 +101,13 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 		if (prevId != 0) this.Clean(index, id);
 
 		info.CopyPartial(id, partial);
+		info.Name = GetPartialName(partial);
 		if (id != 0) builder.BindTo(this);
 		this.FilterTree();
 
 		this.BuildBoneMap(index, id);
+		if (this.Scene.Context.Posing.IsEnabled)
+			this.Scene.Context.Posing.ApplyPartialReferencePose(this, index); // trigger refpose when a partial skeleton updates mid-pose
 		
 		t.Stop();
 		Ktisis.Log.Debug($"Rebuild took {t.Elapsed.TotalMilliseconds:00.00}ms");
@@ -123,6 +128,10 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	private unsafe static uint GetPartialId(PartialSkeleton partial) {
 		var resource = partial.SkeletonResourceHandle;
 		return resource != null ? resource->Id : 0;
+	}
+	private unsafe static string? GetPartialName(PartialSkeleton partial) {
+		var resource = partial.SkeletonResourceHandle;
+		return resource != null ? resource->DefaultResourceHandle.FileName.ToString() : null;
 	}
 	
 	// Filtering
@@ -158,21 +167,10 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	
 	// Human features
 
-	private bool HasTail() => this.FindBoneByName("n_sippo_a") != null;
-	private bool HasEars() {
-		return (
-			this.FindBoneByName("j_zera_a_l") != null
-			|| this.FindBoneByName("j_zerb_a_l") != null
-			|| this.FindBoneByName("j_zerc_a_l") != null
-			|| this.FindBoneByName("j_zerd_a_l") != null
-		);
-	}
-	
-	public void CheckFeatures(out bool hasTail, out bool isBunny) {
-		hasTail = this.HasTail();
-		isBunny = this.HasEars();
-	}
-	
+	public bool HasDTFace() => this.BoneExists("j_f_face");
+	public bool HasBunnyEars() => this.AnyBoneExists(PoseUtil.BunnyEarBones);
+	public bool HasTail() => this.BoneExists("n_sippo_a");
+
 	// Skeleton access
 
 	public unsafe RenderSkeleton* GetSkeleton() {
@@ -201,6 +199,12 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	public BoneNode? FindBoneByName(string name)
 		=> this.BoneMap.Values.FirstOrDefault(bone => bone.Info.Name == name);
 
+	public bool BoneExists(string name)
+		=> this.BoneMap.Values.Any(bone => bone.Info.Name == name);
+
+	public bool AnyBoneExists(string[] names)
+		=> this.BoneMap.Values.Any(bone => names.Contains(bone.Info.Name));
+
 	public BoneNode? TryResolveSibling(BoneNode bone) {
 		var name = bone.Info.Name;
 		if (!name.EndsWith("_l") && !name.EndsWith("_r")) return null;
@@ -212,9 +216,37 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	public PartialSkeletonInfo? GetPartialInfo(int index)
 		=> this.Partials.GetValueOrDefault(index);
 
+	public IEnumerable<int> GetPartialIndices() => this.Partials.Keys;
+
+	public IEnumerable<PartialBoneInfo> ExpandToDescendants(IEnumerable<PartialBoneInfo> bones) {
+		var expanded = new HashSet<PartialBoneInfo>(bones);
+		var stack = new Stack<PartialBoneInfo>(expanded);
+		var allNodes = BoneMap.Values.ToArray();
+
+		while(stack.Count > 0) {
+			var current = stack.Pop();
+			var parentNode = GetBoneFromMap(current.PartialIndex, current.BoneIndex);
+			if (parentNode == null)
+				continue;
+
+			foreach(var child in allNodes) {
+				if (expanded.Contains(child.Info))
+					continue;
+
+				if (child.IsBoneDescendantOf(parentNode)) {
+					expanded.Add(child.Info);
+					stack.Push(child.Info);
+				}
+			}
+		}
+
+		return expanded;
+	}
+
 	public bool ShouldDraw() {
 		return this.Recurse().OfType<IVisibility>().Any(vis => vis.Visible);
 	}
+
 	// Remove handlers
 
 	public override void Remove() {

@@ -25,7 +25,7 @@ public abstract class SkeletonGroup(ISceneManager scene) : SkeletonNode(scene), 
 					group.Clean(pIndex, pId);
 					return group.IsStale();
 				case BoneNode bone:
-					return bone.Info.PartialIndex == pIndex && bone.PartialId != pId;
+					return (bone.Info.PartialIndex == pIndex && bone.PartialId != pId) || !bone.IsValid;
 				default:
 					return false;
 			}

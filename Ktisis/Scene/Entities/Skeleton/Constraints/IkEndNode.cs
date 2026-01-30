@@ -52,7 +52,7 @@ public abstract class IkEndNode : BoneNode, IIkNode {
 	// ITransform
 
 	public unsafe override Transform? GetTransform() {
-		var skeleton = this.Pose.GetSkeleton();
+		var skeleton = this.GetSkeleton();
 		if (skeleton == null) return null;
 		
 		var offset = new Transform(skeleton->Transform);
@@ -63,7 +63,7 @@ public abstract class IkEndNode : BoneNode, IIkNode {
 	}
 
 	public unsafe override void SetTransform(Transform transform) {
-		var skeleton = this.Pose.GetSkeleton();
+		var skeleton = this.GetSkeleton();
 		if (skeleton == null) return;
 
 		var offset = new Transform(skeleton->Transform);
@@ -80,7 +80,10 @@ public abstract class IkEndNode : BoneNode, IIkNode {
 
 	public override void SetMatrix(Matrix4x4 matrix) {
 		if (this.IsOverride)
-			this.SetTransform(new Transform(matrix));
+			if (this.GetTransform() is { } transform)
+				this.SetTransform(new Transform(matrix, transform));
+			else
+				this.SetTransform(new Transform(matrix));
 		else
 			this.SetMatrixWorld(matrix);
 	}

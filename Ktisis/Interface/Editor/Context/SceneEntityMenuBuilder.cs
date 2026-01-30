@@ -47,6 +47,12 @@ public class SceneEntityMenuBuilder {
 			menu.Action("Select", () => this._entity.Select(SelectMode.Multiple));
 		else
 			menu.Action("Unselect", this._entity.Unselect);
+		if (this._entity.Children.Any())
+			menu.Action("Select hierarchy", () => {
+				foreach (var entity in this._entity.Children.Where(entity => !entity.IsSelected))
+					entity.Select(SelectMode.Multiple);
+				if (!this._entity.IsSelected) this._entity.Select(SelectMode.Multiple);
+			});
 
 		if (this._entity is IVisibility vis)
 			menu.Action("Toggle display", () => vis.Toggle());

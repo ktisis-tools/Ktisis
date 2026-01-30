@@ -8,7 +8,7 @@ namespace Ktisis.Data.Config.Sections;
 
 public class GizmoConfig {
 	public bool Visible = true;
-	
+
 	public ImGuizmoMode Mode = ImGuizmoMode.Local;
 	public ImGuizmoOperation Operation = ImGuizmoOperation.Rotate;
 
@@ -18,6 +18,7 @@ public class GizmoConfig {
 
 	public bool AllowAxisFlip = true;
 	public bool AllowRaySnap = true;
+	public bool AllowHoldSnap = true;
 
 	/*
 	public Style Style = DefaultStyle;

@@ -16,10 +16,12 @@ public abstract class EditorBase {
 	protected ImRaii.IEndObject Disable(IEnvModule module)
 		=> ImRaii.Disabled(!this.IsActivated(module.Override));
 
-	protected void DrawToggleCheckbox(string label, EnvOverride flag, IEnvModule module) {
+	protected bool DrawToggleCheckbox(string label, EnvOverride flag, IEnvModule module) {
 		var active = module.Override.HasFlag(flag);
-		if (ImGui.Checkbox(label, ref active))
+		var toggled = ImGui.Checkbox(label, ref active);
+		if (toggled)
 			module.Override ^= flag;
 		ImGui.Spacing();
+		return toggled;
 	}
 }
