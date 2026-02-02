@@ -41,7 +41,7 @@ public class ActorCProfilePopup : KtisisPopup {
 		
 		if (this._isOpening) {
 			this._isOpening = false;
-			this._profiles = this._ipc.GetProfileList().ToList();
+			this._profiles = this._ipc.GetProfileList().OrderBy(x => x.Name).ToList();
 			Ktisis.Log.Info($"Fetched {this._profiles.Count} profiles");
 		}
 
