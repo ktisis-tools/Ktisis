@@ -98,12 +98,11 @@ public sealed class McdfManager : IDisposable {
 				Ktisis.WarningNotification("MCDF has Customize+ data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
 			return null;
 		}
-		
+
 		var ipc = this._ipc.GetCustomizeIpc();
 		var jsonData = !rawData.IsNullOrEmpty()
 			? Encoding.UTF8.GetString(Convert.FromBase64String(rawData))
 			: "{}";
-		Ktisis.Log.Verbose(jsonData);
 
 		var resp = ipc.SetTemporaryProfile(actor.ObjectIndex, jsonData);
 		if (resp.Id == null) Ktisis.Log.Warning($"Customize+ SetTemporaryProfile returned null Guid! status: {resp.Item1}");

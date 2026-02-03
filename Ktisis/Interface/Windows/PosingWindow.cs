@@ -41,7 +41,7 @@ public class PosingWindow : KtisisWindow {
 		LocaleManager locale,
 		GPoseService gpose
 	) : base(
-		"Pose View"
+		"Pose View###KtisisPoseView"
 	) {
 		this._ctx = ctx;
 		this._locale = locale;
@@ -76,18 +76,26 @@ public class PosingWindow : KtisisWindow {
 			return;
 		}
 
-		var selected = (ActorEntity?)this._ctx.Selection.GetSelected()
-			.FirstOrDefault(entity => entity is ActorEntity);
-
-		if (selected != null && this._target != selected)
-			this._target = selected;
+		if (this.UpdateTarget())
+			this.WindowName = "Pose View - " + this._target!.Name + "###KtisisPoseView";
 
 		if (this._target is not { IsValid: true }) {
 			ImGui.Text("Select an actor to start editing its pose.");
 			return;
 		}
-		
+
 		this.DrawWindow(this._target);
+	}
+
+	private bool UpdateTarget() {
+		var selected = (ActorEntity?)this._ctx.Selection.GetSelected()
+			.FirstOrDefault(entity => entity is ActorEntity);
+
+		if (selected == null || this._target == selected)
+			return false;
+
+		this._target = selected;
+		return true;
 	}
 
 	private IEnumerable<ActorEntity> GetValidTargets() {
