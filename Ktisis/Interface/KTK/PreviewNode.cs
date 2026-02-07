@@ -1,6 +1,9 @@
+using System;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.JavaScript;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
@@ -55,13 +58,15 @@ public unsafe class PreviewNode : OverlayNode {
 		this._objectTable = objectTable;
 		this._counter = 1;
 		this._fileWindow = null;
-		
+
+
 		var needsInit = false;
 		this._renderTargetManager = RenderTargetManager.Instance();
+		this._agentTryon = AgentTryon.Instance();  //idk why this was below the eval before?
 		if(this._agentTryon == null)
 			needsInit = true;
 
-		this._agentTryon = AgentTryon.Instance();
+
 		if (needsInit) {
 			this._framework.RunOnFrameworkThread(() => {
 				this._agentTryon->Update(1);
@@ -112,10 +117,21 @@ public unsafe class PreviewNode : OverlayNode {
 		this._agentTryon->CharaView.Render(this._counter++);
 
 		if (this._fileWindow.IsNull) {
+			this.IsVisible = false;
 			this._fileWindow = ImGuiP.FindWindowByName("Open Pose File###OpenFileDialog");
-		} else {
+		} else if (this._fileWindow.Active == false)
+		{
+			this.IsVisible = false;
+		}
+		else {
+			this.IsVisible = true;
 			this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
 		}
 
+	}
+
+	private string TryFetchSelectedFile() {
+		string filePath = String.Empty;
+		return filePath;
 	}
 }

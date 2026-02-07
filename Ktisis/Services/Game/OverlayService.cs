@@ -38,6 +38,7 @@ public class OverlayService : IDisposable {
 
 		if (context.Config.Editor.ShowHints && !this._showedHint)
 			this.ShowHint(context);
+		ToggleCharaViewTexture(context);
 	}
 
 	public bool AddNode(OverlayNode node) {
