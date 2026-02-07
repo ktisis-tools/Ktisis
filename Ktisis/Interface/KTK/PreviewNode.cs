@@ -2,6 +2,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
@@ -43,6 +44,7 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
 
+	private ImGuiWindowPtr _fileWindow;
 
 	public PreviewNode(
 		IEditorContext context,
@@ -52,7 +54,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._framework = framework;
 		this._objectTable = objectTable;
 		this._counter = 1;
-
+		this._fileWindow = null;
 		
 		var needsInit = false;
 		this._renderTargetManager = RenderTargetManager.Instance();
@@ -108,5 +110,12 @@ public unsafe class PreviewNode : OverlayNode {
 
 	private void OnFramework(IFramework framework) {
 		this._agentTryon->CharaView.Render(this._counter++);
+
+		if (this._fileWindow.IsNull) {
+			this._fileWindow = ImGuiP.FindWindowByName("Open Pose File###OpenFileDialog");
+		} else {
+			this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
+		}
+
 	}
 }

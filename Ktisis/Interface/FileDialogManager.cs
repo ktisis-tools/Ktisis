@@ -83,7 +83,7 @@ public class FileDialogManager {
 			},
 			options.MaxOpenCount,
 			null,
-			true
+			false
 		);
 	}
 
