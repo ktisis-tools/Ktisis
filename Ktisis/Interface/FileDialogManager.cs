@@ -29,14 +29,15 @@ public class FileDialogManager {
 	private readonly DalamudFileManager _fileManager = new();
 
 	public event Action<FileDialog>? OnOpenDialog;
+	public event EventHandler<string>? OnSelectionChanged; 
 	
 	public FileDialogManager(
 		ConfigManager cfg,
-		ImageDataProvider img,
-		IEditorContext ctx
+		ImageDataProvider img
 	) {
 		this._cfg = cfg;
 		this._img = img;
+		this._fileManager.SelectionChanged += this.OnSelectionChanged;
 	}
 	
 	// Initialization
@@ -167,7 +168,6 @@ public class FileDialogManager {
 		string name,
 		Action<string> handler
 	) {
-		this._fileManager.SelectionChanged += this._ctx.Scene.Overlay.HandleFileDialogEvent;
 		this._fileManager.OpenFolderDialog(
 			name,
 			(isOk, path) => {

@@ -36,7 +36,8 @@ public class OverlayService : IDisposable {
 		KamiToolKitLibrary.Initialize(this._dpi);
 		this._controller = new OverlayController();
 		this._init = true;
-
+		context.Plugin.Gui.FileDialogs.OnSelectionChanged += this.HandleFileDialogEvent;
+		
 		if (context.Config.Editor.ShowHints && !this._showedHint)
 			this.ShowHint(context);
 		ToggleCharaViewTexture(context);
@@ -79,7 +80,8 @@ public class OverlayService : IDisposable {
 
 	public void HandleFileDialogEvent(object? sender, string path) {
 
-		var temp = path;
+		//figure out logic for handling mcdf chara pose later
+		
 	}
 
 	public bool RemoveNode(OverlayNode node) {
