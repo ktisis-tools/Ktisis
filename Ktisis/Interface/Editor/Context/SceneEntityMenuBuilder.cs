@@ -165,8 +165,10 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void ImportPose(EntityPose pose) {
-		if (pose.Parent is ActorEntity actor)
+		if (pose.Parent is ActorEntity actor) {
+			this._ctx.Scene.Overlay.SetCharaViewData(actor, this._ctx);
 			this.Ui.OpenPoseImport(actor);
+		}
 	}
 	
 	private async void ExportPose(EntityPose? pose) {

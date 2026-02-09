@@ -5,7 +5,7 @@
 		<Version>0.3.16</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
 	</PropertyGroup>
-
+        
 	<PropertyGroup>
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<Platforms>x64</Platforms>
@@ -17,6 +17,10 @@
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
+
+    <PropertyGroup>
+        <DalamudLibPath>C:\Users\Karou\source\repos\Dalamud\bin\Debug</DalamudLibPath>  
+    </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Glamourer.Api" Version="2.7.0" />

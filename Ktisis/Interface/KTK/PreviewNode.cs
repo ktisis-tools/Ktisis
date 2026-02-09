@@ -12,6 +12,7 @@ using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -24,8 +25,10 @@ using KamiToolKit.Overlay;
 using KamiToolKit.Extensions;
 
 using Ktisis.Common.Extensions;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Factory.Builders;
 using Ktisis.Services.Plugin;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -50,6 +53,8 @@ public unsafe class PreviewNode : OverlayNode {
 
 	private ImGuiWindowPtr _fileWindow;
 
+	private Character* _chara;
+
 	public PreviewNode(
 		IEditorContext context,
 		IFramework framework,
@@ -59,7 +64,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._objectTable = objectTable;
 		this._counter = 1;
 		this._fileWindow = null;
-
+		this._chara = null;
 
 		var needsInit = false;
 		this._renderTargetManager = RenderTargetManager.Instance();
@@ -117,22 +122,38 @@ public unsafe class PreviewNode : OverlayNode {
 	private void OnFramework(IFramework framework) {
 		this._agentTryon->CharaView.Render(this._counter++);
 
-		if (this._fileWindow.IsNull) {
-			this.IsVisible = false;
-			this._fileWindow = ImGuiP.FindWindowByName("Open Pose File###OpenFileDialog");
-		} else if (this._fileWindow.Active == false)
-		{
+		this._fileWindow = ImGuiP.FindWindowByName("Open Pose File###OpenFileDialog");
+		if (this._fileWindow.IsNull || this._fileWindow.Active == false ) {
 			this.IsVisible = false;
 		}
 		else {
 			this.IsVisible = true;
 			this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
+
+			var path = TryFetchSelectedFile();
+			if (path != String.Empty) {
+				
+			}
 		}
+
+	}
+
+	public void UpdateActorData(ActorEntity actor, IEditorContext context) {
+
+		
+			//this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
+			var modelData = this._agentTryon->CharaView.ModelData;
+			modelData.CopyFromCharacter((Character*)actor.Actor.Address);
+			this._agentTryon->CharaView.SetModelData(&modelData);
 
 	}
 
 	private string TryFetchSelectedFile() {
 		string filePath = String.Empty;
+		
+			//this is dummy code until I can reflect in to the file dialog and get the current selected file, sue me
+			filePath = "E:\\Documents\\Brio\\Poses\\[Mika] Casual Pack 1\\[Mika] Ace.pose";
+		
 		return filePath;
 	}
 }

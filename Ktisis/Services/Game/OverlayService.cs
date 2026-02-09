@@ -10,6 +10,7 @@ using KamiToolKit.Overlay;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.KTK;
+using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Services.Game;
 
@@ -64,11 +65,21 @@ public class OverlayService : IDisposable {
 		this._showedHint = true;
 	}
 
+	public void SetCharaViewData(ActorEntity actor, IEditorContext ctx) => this._preview?.UpdateActorData(actor, ctx);
 	public void ToggleCharaViewTexture(IEditorContext context) {
 		this._preview = new PreviewNode(context, this._framework, this._objectTable) {
 			Position = new Vector2(500.0f, 500.0f)
 		};
 		this._controller?.AddNode(this._preview);
+		if (context.Selection.Count == 1) {
+			SetCharaViewData((ActorEntity)context.Selection.GetFirstSelected(), context);
+		}
+
+	}
+
+	public void HandleFileDialogEvent(object? sender, string path) {
+
+		var temp = path;
 	}
 
 	public bool RemoveNode(OverlayNode node) {

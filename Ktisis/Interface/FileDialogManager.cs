@@ -1,8 +1,11 @@
 using System;
 using System.IO;
 using System.Linq;
+
 using Dalamud.Interface;
 using Dalamud.Utility;
+
+using FFXIVClientStructs;
 
 using GLib.Popups.ImFileDialog;
 using GLib.Popups.ImFileDialog.Data;
@@ -11,17 +14,17 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Services.Meta;
 
 using DalamudFileManager = Dalamud.Interface.ImGuiFileDialog.FileDialogManager;
-
 namespace Ktisis.Interface;
 
 [Singleton]
 public class FileDialogManager {
 	private readonly ConfigManager _cfg;
 	private readonly ImageDataProvider _img;
-
+	
 	private readonly JsonFileSerializer _serializer = new();
 	private readonly DalamudFileManager _fileManager = new();
 
@@ -29,7 +32,8 @@ public class FileDialogManager {
 	
 	public FileDialogManager(
 		ConfigManager cfg,
-		ImageDataProvider img
+		ImageDataProvider img,
+		IEditorContext ctx
 	) {
 		this._cfg = cfg;
 		this._img = img;
@@ -158,11 +162,12 @@ public class FileDialogManager {
 		this._img.BindMetadata(dialog);
 		this.OpenDialog(dialog);
 	}
-
+	
 	public void OpenFolder(
 		string name,
 		Action<string> handler
 	) {
+		this._fileManager.SelectionChanged += this._ctx.Scene.Overlay.HandleFileDialogEvent;
 		this._fileManager.OpenFolderDialog(
 			name,
 			(isOk, path) => {
