@@ -80,8 +80,8 @@ public class OverlayService : IDisposable {
 
 	public void HandleFileDialogEvent(object? sender, string path) {
 
-		//figure out logic for handling mcdf chara pose later
-		
+		this._preview.PoseActor(path);
+
 	}
 
 	public bool RemoveNode(OverlayNode node) {

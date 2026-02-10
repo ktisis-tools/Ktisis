@@ -1,19 +1,13 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.JavaScript;
 
 using Dalamud.Bindings.ImGui;
-using Dalamud.Game;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
-using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
@@ -24,14 +18,16 @@ using KamiToolKit.Nodes;
 using KamiToolKit.Overlay;
 using KamiToolKit.Extensions;
 
-using Ktisis.Common.Extensions;
-using Ktisis.Editor.Characters;
+using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Posing.Data;
+using Ktisis.Editor.Posing.Ik;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Factory.Builders;
-using Ktisis.Services.Plugin;
 
-using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+
 
 namespace Ktisis.Interface.KTK;
 
@@ -50,10 +46,10 @@ public unsafe class PreviewNode : OverlayNode {
 	
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
-
+	private readonly IEditorContext _ctx;
+	
 	private ImGuiWindowPtr _fileWindow;
-
-	private Character* _chara;
+	
 
 	public PreviewNode(
 		IEditorContext context,
@@ -64,7 +60,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._objectTable = objectTable;
 		this._counter = 1;
 		this._fileWindow = null;
-		this._chara = null;
+		this._ctx = context;
 
 		var needsInit = false;
 		this._renderTargetManager = RenderTargetManager.Instance();
@@ -129,15 +125,18 @@ public unsafe class PreviewNode : OverlayNode {
 		else {
 			this.IsVisible = true;
 			this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
-
-			var path = TryFetchSelectedFile();
-			if (path != String.Empty) {
-				
-			}
+			
 		}
 
 	}
 
+	public void PoseActor(string path) {
+		ActorEntity actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[442]);
+		var content = File.ReadAllText(path);
+		if (Path.GetExtension(path).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
+		var file = JsonConvert.DeserializeObject<PoseFile>(content);
+		this._ctx.Posing.ApplyPoseFile(actor.Pose, file, transforms: PoseTransforms.Rotation);
+	}
 	public void UpdateActorData(ActorEntity actor, IEditorContext context) {
 
 		
@@ -147,13 +146,5 @@ public unsafe class PreviewNode : OverlayNode {
 			this._agentTryon->CharaView.SetModelData(&modelData);
 
 	}
-
-	private string TryFetchSelectedFile() {
-		string filePath = String.Empty;
-		
-			//this is dummy code until I can reflect in to the file dialog and get the current selected file, sue me
-			filePath = "E:\\Documents\\Brio\\Poses\\[Mika] Casual Pack 1\\[Mika] Ace.pose";
-		
-		return filePath;
-	}
+	
 }

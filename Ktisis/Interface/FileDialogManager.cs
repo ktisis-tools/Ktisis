@@ -37,11 +37,12 @@ public class FileDialogManager {
 	) {
 		this._cfg = cfg;
 		this._img = img;
-		this._fileManager.SelectionChanged += this.OnSelectionChanged;
+		this._fileManager.SelectionChanged += this.SelectionChange;
 	}
 	
 	// Initialization
 
+	public void SelectionChange(object? sender, string path) => this.OnSelectionChanged?.Invoke(sender, path);
 	public void Initialize() => this._img.Initialize();
 	public void Draw() => this._fileManager.Draw();
 	
