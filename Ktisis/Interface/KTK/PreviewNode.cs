@@ -10,7 +10,6 @@ using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
@@ -54,7 +53,7 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly JsonFileSerializer _serializer;
 
 	
-	private ImGuiWindowPtr _fileWindow;
+
 	
 
 	public PreviewNode(

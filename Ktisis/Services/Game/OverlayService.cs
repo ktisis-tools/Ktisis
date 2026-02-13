@@ -84,6 +84,7 @@ public class OverlayService : IDisposable {
 		
 		var extension = path.Substring(path.LastIndexOf('.') + 1).ToLower();
 
+		if (extension == "pose" || extension == "cmp") {
 			this._preview.PoseActor(path);
 		}else if (extension == "chara") {
 			this._preview.LoadChara(path);
