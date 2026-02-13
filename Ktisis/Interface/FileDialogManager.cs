@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -31,6 +32,12 @@ public class FileDialogManager {
 	public event Action<FileDialog>? OnOpenDialog;
 	public event EventHandler<string>? OnSelectionChanged; 
 	
+	private Dictionary<string, bool> OpenDialogs { get; } = new() {
+		{"pose", false},
+		{"mcdf", false},
+		{"chara", false},
+		{"other", false},
+	};
 	public FileDialogManager(
 		ConfigManager cfg,
 		ImageDataProvider img
@@ -45,7 +52,26 @@ public class FileDialogManager {
 	public void SelectionChange(object? sender, string path) => this.OnSelectionChanged?.Invoke(sender, path);
 	public void Initialize() => this._img.Initialize();
 	public void Draw() => this._fileManager.Draw();
-	
+	public void SetOpenFlag(string type) {
+
+		switch (type) {
+			case "mcdf":
+				OpenDialogs["mcdf"] ^= true;
+				break;
+			case "pose":
+				OpenDialogs["pose"] ^= true;
+				break;
+			case "chara":
+				OpenDialogs["chara"] ^= true;
+				break;
+			default:
+				OpenDialogs["other"] ^= true;
+				break;
+		}
+		
+	}
+
+	public bool IsDialogOpen() => OpenDialogs.Any((k) => k.Value);
 	// Dialog state
 
 	private T OpenDialog<T>(T dialog) where T : FileDialog {
@@ -67,9 +93,11 @@ public class FileDialogManager {
 	public void OpenFile(
 		string name,
 		Action<string> handler,
-		FileDialogOptions? options = null
+		FileDialogOptions? options = null,
+		string? type = null
 	) {
-		//
+		if (type != null)
+			SetOpenFlag(type);
 		options ??= new FileDialogOptions();
 		this.PopulateOptions(options);
 
@@ -80,6 +108,8 @@ public class FileDialogManager {
 			name,
 			options.Filters,
 			(isOk, paths) => {
+				if (type != null)
+					SetOpenFlag(type);
 				if (!isOk) return;
 				
 				//this.SaveDialogState(sender);
@@ -96,14 +126,15 @@ public class FileDialogManager {
 	public void OpenFile<T>(
 		string name,
 		Action<string, T> handler,
-		FileDialogOptions? options = null
+		FileDialogOptions? options = null,
+		string? type = null
 	) where T : JsonFile {
 		this.OpenFile(name, path => {
 			var content = File.ReadAllText(path);
 			if (Path.GetExtension(path).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
 			var file = this._serializer.Deserialize<T>(content);
 			if (file != null) handler.Invoke(path, file);
-		}, options);
+		}, options, type);
 	}
 
 	public void SaveFile(

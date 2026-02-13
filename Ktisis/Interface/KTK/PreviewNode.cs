@@ -19,6 +19,7 @@ using KamiToolKit.Overlay;
 using KamiToolKit.Extensions;
 
 using Ktisis.Data.Files;
+using Ktisis.Data.Json;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik;
@@ -40,13 +41,18 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly ImageNode Image;
 	private readonly NineGridNode Border;
 	private uint _counter;
+	private ActorEntity _actor;
+	private bool _doUpdate;
 	
 	private readonly RenderTargetManager* _renderTargetManager;
 	private readonly AgentTryon* _agentTryon;
+	private ImGuiWindowPtr _fileWindow;
 	
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
 	private readonly IEditorContext _ctx;
+	private readonly JsonFileSerializer _serializer;
+
 	
 	private ImGuiWindowPtr _fileWindow;
 	
@@ -61,6 +67,8 @@ public unsafe class PreviewNode : OverlayNode {
 		this._counter = 1;
 		this._fileWindow = null;
 		this._ctx = context;
+		this._serializer = new JsonFileSerializer();
+		this._doUpdate = false;
 
 		var needsInit = false;
 		this._renderTargetManager = RenderTargetManager.Instance();
@@ -110,41 +118,110 @@ public unsafe class PreviewNode : OverlayNode {
 		// 	modelData.CopyFromCharacter(actor.Character);
 		// 	this._agentTryon->CharaView.SetModelData(&modelData);
 		// }
+		
+		_actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[442]);
+		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
 		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
 	}
-
+	
+	/// <summary>
+	/// Framework update for our preview window, required to work 
+	/// </summary>
+	
 	private void OnFramework(IFramework framework) {
 		this._agentTryon->CharaView.Render(this._counter++);
+		
 
-		this._fileWindow = ImGuiP.FindWindowByName("Open Pose File###OpenFileDialog");
-		if (this._fileWindow.IsNull || this._fileWindow.Active == false ) {
+		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
+		if (!this._ctx.Plugin.Gui.FileDialogs.IsDialogOpen()) {
+			if(this.IsVisible)
+				this.Cleanup();
 			this.IsVisible = false;
+			this._counter = 0;
+			
+			return; //lets try to not overflow the games renderer
 		}
-		else {
-			this.IsVisible = true;
-			this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
+		
+		
+		if (this.IsVisible == false) {
+			//this.UpdateActorData(this._ctx.Selection.GetFirstSelected());
 			
 		}
 
-	}
+		this.IsVisible = true;
+		this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
 
+
+	}
+	public void Cleanup() {
+		this._ctx.Posing.ApplyReferencePose(this._actor.Pose); //reset pose
+                         ////set it to first actor, will find a better way later
+		this._ctx.Characters.Mcdf.RevertIfTouched(this._objectTable[442]);
+		this._framework.RunOnFrameworkThread(() => {
+			this._agentTryon->CharaView.Release();
+			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
+			while (!this._agentTryon->CharaView.CharacterLoaded);
+			var modelData = this._agentTryon->CharaView.ModelData;
+			modelData.CopyFromCharacter((Character*)this._objectTable.LocalPlayer?.Address);
+			this._agentTryon->CharaView.SetModelData(&modelData);
+			this._agentTryon->CharaView.DoUpdate = true;
+		});
+	}
+	
+	/// <summary>
+	/// Poses the actor in the preview window
+	/// </summary>
+	/// <param name="path">Path of the pose file</param>
 	public void PoseActor(string path) {
-		ActorEntity actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[442]);
 		var content = File.ReadAllText(path);
 		if (Path.GetExtension(path).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
-		var file = JsonConvert.DeserializeObject<PoseFile>(content);
-		this._ctx.Posing.ApplyPoseFile(actor.Pose, file, transforms: PoseTransforms.Rotation);
+		var file = this._serializer.Deserialize<PoseFile>(content);
+		this._ctx.Posing.ApplyPoseFile(_actor.Pose, file, transforms: PoseTransforms.Rotation);
 	}
-	public void UpdateActorData(ActorEntity actor, IEditorContext context) {
+	
+	/// <summary>
+	/// Updates actor, should be called when a new target is selected for import
+	/// </summary>
+	/// <param name="actor">The actor you wish to show</param>
+	/// <param name="context">Editor context</param>
+	public async void UpdateActorData(ActorEntity actor) {
+		//
 
-		
-			//this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
+		this._framework.RunOnFrameworkThread(() => {
+			this._agentTryon->CharaView.Release();
+			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
 			var modelData = this._agentTryon->CharaView.ModelData;
 			modelData.CopyFromCharacter((Character*)actor.Actor.Address);
 			this._agentTryon->CharaView.SetModelData(&modelData);
+			this._agentTryon->CharaView.DoUpdate = true;
+		});
+		
+	}
 
+/*	public ActorEntity GetFakeCharacter() {
+
+		Character container = new Character();
+		var containerPtr = &container;
+		
+		return new
+		
+	}
+*/
+	public void LoadMcdf(string path) {
+		
+		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, this._objectTable[442], true);
+		this.UpdateActorData(this._actor);
 	}
 	
+	public void LoadChara(string path) {
+		var content = File.ReadAllText(path);
+		var file = this._serializer.Deserialize<CharaFile>(content);
+		this._ctx.Characters.ApplyCharaFile(this._actor, file);
+	}
+	
+	
+	
+
 }

@@ -66,7 +66,7 @@ public class OverlayService : IDisposable {
 		this._showedHint = true;
 	}
 
-	public void SetCharaViewData(ActorEntity actor, IEditorContext ctx) => this._preview?.UpdateActorData(actor, ctx);
+	public void SetCharaViewData(ActorEntity actor, IEditorContext ctx) => this._preview?.UpdateActorData(actor);
 	public void ToggleCharaViewTexture(IEditorContext context) {
 		this._preview = new PreviewNode(context, this._framework, this._objectTable) {
 			Position = new Vector2(500.0f, 500.0f)
@@ -81,6 +81,16 @@ public class OverlayService : IDisposable {
 	public void HandleFileDialogEvent(object? sender, string path) {
 
 		this._preview.PoseActor(path);
+		
+		var extension = path.Substring(path.LastIndexOf('.') + 1).ToLower();
+
+			this._preview.PoseActor(path);
+		}else if (extension == "chara") {
+			this._preview.LoadChara(path);
+		}else if (extension == "mcdf") {
+			this._preview.LoadMcdf(path);
+		}
+
 
 	}
 
