@@ -58,7 +58,7 @@ public class OverlayPropertyList : ObjectPropertyList {
 						Path = this._texture.GetIconPath(status.Icon)
 					});
 				} catch (FileNotFoundException e) {
-					Ktisis.Log.Warning(e.ToString());
+					Ktisis.Log.Verbose(e.ToString());
 				}
 			}
 		}
@@ -93,7 +93,7 @@ public class OverlayPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, spacing);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		var position = overlay.Position;
-		if (ImGui.DragFloat2("Position", ref position))
+		if (ImGui.DragFloat2("##OverlayPosition", ref position))
 			overlay.Position = position;
 
 		ImGui.Spacing();
@@ -106,8 +106,17 @@ public class OverlayPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, spacing);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		var scale = overlay.Scale;
-		if (ImGui.DragFloat("Scale", ref scale, 0.01f, 0f, 5.0f))
+		if (ImGui.DragFloat("##OverlayScale", ref scale, 0.01f, 0f, 5.0f))
 			overlay.Scale = scale;
+
+		ImGui.Spacing();
+		ImGui.Text("Opacity");
+
+		ImGui.Spacing();
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+		var alpha = overlay.Alpha / 255.0f;
+		if (ImGui.SliderFloat("##OverlayAlpha", ref alpha, 0f, 1.0f))
+			overlay.Alpha = alpha;
 
 		ImGui.Spacing();
 		ImGui.Separator();

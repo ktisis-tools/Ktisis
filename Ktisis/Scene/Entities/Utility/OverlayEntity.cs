@@ -42,6 +42,17 @@ public abstract class OverlayEntity : SceneEntity, IVisibility, IDeletable {
 		set => this.Node.EnableMoving = value;
 	}
 
+	// TODO: rotation for text nodes?
+	// public float Rotation {
+	// 	get => this.Node.RotationDegrees;
+	// 	set => this.Node.RotationDegrees = value;
+	// }
+
+	public float Alpha {
+		get => this.Node.Alpha;
+		set => this.Node.Alpha = value;
+	}
+
 	public bool Delete() {
 		this.Scene.Overlay.RemoveNode(this.Node);
 		this.Node.Dispose();
