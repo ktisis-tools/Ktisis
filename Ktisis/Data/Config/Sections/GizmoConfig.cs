@@ -18,6 +18,7 @@ public class GizmoConfig {
 
 	public bool AllowAxisFlip = true;
 	public bool AllowRaySnap = true;
+	public bool AllowHoldSnap = true;
 
 	/*
 	public Style Style = DefaultStyle;

@@ -3,15 +3,15 @@ using System.Runtime.CompilerServices;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
+using Dalamud.Plugin;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok.Animation.Rig;
-using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
-using Ktisis.Common.Extensions;
-using Ktisis.Common.Utility;
+using Ktisis.Editor.Context;
 using Ktisis.Interop.Hooking;
+using Ktisis.Interop.Ipc;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Game;
 
@@ -22,6 +22,7 @@ public unsafe delegate void SkeletonInitHandler(IGameObject owner, Skeleton* ske
 public sealed class PosingModule : HookModule {
 	private readonly PosingManager Manager;
 	private readonly ActorService _actors;
+	private readonly IpcProvider _ipc;
 
 	public event SkeletonInitHandler? OnSkeletonInit;
 	public event Action? OnDisconnect;
@@ -29,10 +30,13 @@ public sealed class PosingModule : HookModule {
 	public PosingModule(
 		IHookMediator hook,
 		PosingManager manager,
-		ActorService actors
+		ActorService actors,
+		ContextManager contextManager,
+		IDalamudPluginInterface dpi
 	) : base(hook) {
 		this.Manager = manager;
 		this._actors = actors;
+		this._ipc = new IpcProvider(contextManager, dpi);
 	}
 	
 	// Module interface
@@ -42,11 +46,13 @@ public sealed class PosingModule : HookModule {
 	public override void EnableAll() {
 		base.EnableAll();
 		this.IsEnabled = true;
+		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
 
 	public override void DisableAll() {
 		base.DisableAll();
 		this.IsEnabled = false;
+		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
 	
 	// Posing hooks - thanks to perchbird (@lmcintyre) for his initial implementation of these.

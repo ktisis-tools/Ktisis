@@ -36,7 +36,8 @@ public enum PoseMode {
 [Serializable]
 public class PoseContainer : Dictionary<string, Transform> {
 	public unsafe void Store(
-		Skeleton* modelSkeleton
+		Skeleton* modelSkeleton,
+		PoseContainer? filter = null
 	) {
 		if (modelSkeleton == null) return;
 		
@@ -56,6 +57,7 @@ public class PoseContainer : Dictionary<string, Transform> {
 
 				var name = skeleton->Bones[i].Name.String;
 				if (name.IsNullOrEmpty()) continue;
+				if(filter != null && (!filter.ContainsKey(name) || p == 4)) continue;
 				this[name] = new Transform(pose->ModelPose[i]);
 			}
 		}
@@ -67,6 +69,7 @@ public class PoseContainer : Dictionary<string, Transform> {
 		PoseTransforms transforms = PoseTransforms.Rotation
 	) {
 		if (modelSkeleton == null) return;
+		if (!modes.HasFlag(PoseMode.Face) && !modes.HasFlag(PoseMode.Body)) return;
 		for (var p = 0; p < modelSkeleton->PartialSkeletonCount; p++) {
 			switch (p) {
 				case 1 or 2:
@@ -78,14 +81,15 @@ public class PoseContainer : Dictionary<string, Transform> {
 						continue;
 					break;
 			}
-			this.ApplyToPartial(modelSkeleton, p, transforms);
+			this.ApplyToPartial(modelSkeleton, p, transforms, modes);
 		}
 	}
 
 	public unsafe void ApplyToBones(
 		Skeleton* modelSkeleton,
 		IEnumerable<PartialBoneInfo> bones,
-		PoseTransforms transforms = PoseTransforms.Rotation
+		PoseTransforms transforms = PoseTransforms.Rotation,
+		PoseMode modes = PoseMode.All
 	) {
 		var boneMap = new Dictionary<int, List<int>>();
 		
@@ -100,14 +104,15 @@ public class PoseContainer : Dictionary<string, Transform> {
 
 		for (var index = 0; index < modelSkeleton->PartialSkeletonCount; index++) {
 			if (!boneMap.TryGetValue(index, out var boneList)) continue;
-			this.ApplyToPartialBones(modelSkeleton, index, boneList, transforms);
+			this.ApplyToPartialBones(modelSkeleton, index, boneList, transforms, modes, true);
 		}
 	}
 
 	public unsafe void ApplyToPartial(
 		Skeleton* modelSkeleton,
 		int partialIndex,
-		PoseTransforms transforms = PoseTransforms.Rotation
+		PoseTransforms transforms = PoseTransforms.Rotation,
+		PoseMode modes = PoseMode.All
 	) {
 		var partial = modelSkeleton->PartialSkeletons[partialIndex];
 		var pose = partial.GetHavokPose(0);
@@ -117,7 +122,8 @@ public class PoseContainer : Dictionary<string, Transform> {
 			modelSkeleton,
 			partialIndex,
 			Enumerable.Range(1, pose->Skeleton->Bones.Length - 1),
-			transforms
+			transforms,
+			modes
 		);
 	}
 
@@ -125,7 +131,9 @@ public class PoseContainer : Dictionary<string, Transform> {
 		Skeleton* modelSkeleton,
 		int partialIndex,
 		IEnumerable<int> bones,
-		PoseTransforms transforms = PoseTransforms.Rotation
+		PoseTransforms transforms = PoseTransforms.Rotation,
+		PoseMode modes = PoseMode.All,
+		bool isSelective = false
 	) {
 		if (modelSkeleton == null) return;
 		
@@ -152,7 +160,7 @@ public class PoseContainer : Dictionary<string, Transform> {
 		
 		var range = Enumerable.Range(1, skeleton->Bones.Length - 1);
 		foreach (var i in range.Intersect(bones))
-			this.ApplyToBone(modelSkeleton, pose, partialIndex, i, offset, transforms);
+			this.ApplyToBone(modelSkeleton, pose, partialIndex, i, offset, transforms, modes, isSelective);
 	}
 	
 	public unsafe void ApplyToBone(
@@ -161,7 +169,9 @@ public class PoseContainer : Dictionary<string, Transform> {
 		int partialIndex,
 		int boneIndex,
 		Quaternion offset,
-		PoseTransforms transforms = PoseTransforms.Rotation
+		PoseTransforms transforms = PoseTransforms.Rotation,
+		PoseMode modes = PoseMode.All,
+		bool isSelective = false
 	) {
 		var name = pose->Skeleton->Bones[boneIndex].Name.String;
 		if (name.IsNullOrEmpty()) return;
@@ -169,26 +179,75 @@ public class PoseContainer : Dictionary<string, Transform> {
 		if (!this.TryGetValue(name, out var model)) return;
 		
 		var initial = HavokPosing.GetModelTransform(pose, boneIndex)!;
-
 		var target = new Transform(initial.Position, initial.Rotation, initial.Scale);
+
+		var applyRotation = transforms.HasFlag(PoseTransforms.Rotation);
+		var applyPosition = transforms.HasFlag(PoseTransforms.Position);
+		var applyScale = transforms.HasFlag(PoseTransforms.Scale);
+		var posRoot = partialIndex == 0 && boneIndex == 1 && transforms.HasFlag(PoseTransforms.PositionRoot);
 
 		// sanitize posroot (e.g. n_hara) rotation from file - this fixes weird quaternion propagation bugs
 		if (partialIndex == 0 && boneIndex == 1)
 			model.Rotation = Quaternion.Identity;
 
-		var posRoot = partialIndex == 0 && boneIndex == 1 && transforms.HasFlag(PoseTransforms.PositionRoot);
-
 		if (posRoot)
 			initial.Rotation = Quaternion.Normalize(offset * model.Rotation);
-		
-		if (transforms.HasFlag(PoseTransforms.Position) || posRoot)
-			target.Position = model.Position;
-		if (transforms.HasFlag(PoseTransforms.Rotation))
-			target.Rotation = Quaternion.Normalize(offset * model.Rotation);
-		if (transforms.HasFlag(PoseTransforms.Scale))
+		if (applyScale)
 			target.Scale = model.Scale;
-		
+
+		Transform modelParent = new();
+		Transform currentParent = new();
+		var applyRelative = isSelective ? (applyPosition || applyRotation) : applyPosition && modes.HasFlag(PoseMode.Face) && !modes.HasFlag(PoseMode.Body);
+		var relativeParent = applyRelative && TryGetRelativeParent(pose, partialIndex, boneIndex, out modelParent, out currentParent);
+
+		if (applyPosition || posRoot) {
+			if (relativeParent) {
+				var localPos = model.Position - modelParent.Position;
+				var rotDelta = Quaternion.Normalize(currentParent.Rotation * Quaternion.Inverse(modelParent.Rotation));
+				target.Position = currentParent.Position + Vector3.Transform(localPos, rotDelta);
+			} else {
+				target.Position = model.Position;
+			}
+		}
+
+		if (applyRotation) {
+			if (isSelective && relativeParent) {
+				var localRot = Quaternion.Normalize(Quaternion.Inverse(modelParent.Rotation) * model.Rotation);
+				target.Rotation = Quaternion.Normalize(currentParent.Rotation * localRot);
+			} else {
+				target.Rotation = Quaternion.Normalize(offset * model.Rotation);
+			}
+		}
+
 		HavokPosing.SetModelTransform(pose, boneIndex, target);
 		HavokPosing.Propagate(modelSkeleton, partialIndex, boneIndex, target, initial);
+	}
+
+	private unsafe bool TryGetRelativeParent(
+		hkaPose* pose, 
+		int partialIndex, 
+		int boneIndex, 
+		out Transform modelParent, 
+		out Transform currentParent
+	) {
+		modelParent = new();
+		currentParent = new();
+		var parentIndex = -1;
+
+		// face/hair relative root j_kao
+		if (partialIndex is 1 or 2) {
+			parentIndex = 0;
+		} else {
+			parentIndex = pose->Skeleton->ParentIndices[boneIndex];
+			if (parentIndex == -1)
+				return false;
+		}
+
+		var parentName = pose->Skeleton->Bones[parentIndex].Name.String;
+		if(parentName.IsNullOrEmpty() || !this.TryGetValue(parentName, out modelParent!))
+			return false;
+
+		currentParent = HavokPosing.GetModelTransform(pose, parentIndex)!;
+		return true;
 	}
 }

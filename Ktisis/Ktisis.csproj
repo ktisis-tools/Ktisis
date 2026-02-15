@@ -2,7 +2,7 @@
     <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
-		<Version>0.3.15</Version>
+		<Version>0.3.16</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
 	</PropertyGroup>
 
@@ -10,7 +10,7 @@
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<Platforms>x64</Platforms>
 		<Nullable>enable</Nullable>
-		<LangVersion>latest</LangVersion>
+		<LangVersion>14</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -62,5 +62,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Data\Library\" />
+      <EmbeddedResource Include="Data\Library\props.json" />
 	</ItemGroup>
 </Project>

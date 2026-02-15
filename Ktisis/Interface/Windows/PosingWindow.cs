@@ -194,9 +194,8 @@ public class PosingWindow : KtisisWindow {
 					
 					ImGui.Spacing();
 					
-					var hasTail = false;
-					var isBunny = false;
-					target.Pose?.CheckFeatures(out hasTail, out isBunny);
+					var hasTail = target.Pose?.HasTail() ?? false;
+					var isBunny = target.Pose?.HasBunnyEars() ?? false;
 					
 					var template = this._render.BuildTemplate(target);
 					

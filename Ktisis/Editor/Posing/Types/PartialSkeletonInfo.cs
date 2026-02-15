@@ -9,12 +9,17 @@ namespace Ktisis.Editor.Posing.Types;
 
 public class PartialSkeletonInfo {
 	public uint Id;
+	public string? Name;
 	public short ConnectedBoneIndex;
 	public short ConnectedParentBoneIndex;
 	public short[] ParentIds = Array.Empty<short>();
 
 	public PartialSkeletonInfo(uint id) {
 		this.Id = id;
+	}
+	public PartialSkeletonInfo(uint id, string name) {
+		this.Id = id;
+		this.Name = name;
 	}
 	
 	public unsafe void CopyPartial(uint id, PartialSkeleton partial) {
