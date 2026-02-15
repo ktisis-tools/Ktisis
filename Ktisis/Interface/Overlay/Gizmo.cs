@@ -95,14 +95,14 @@ public class Gizmo : IGizmo {
 		ImGuizmo.SetDrawlist(ImGui.GetWindowDrawList().Handle);
 	}
 
-	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
+	public unsafe bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
 		delta = Matrix4x4.Identity;
 
 		if (this.HasDrawn) return false;
 
 		var result = false;
 		if (this._cfg.AllowHoldSnap && ImGui.IsKeyDown(ImGuiKey.ModCtrl)) {
-			var snap = 1.0f;
+			var snap = Vector3.One;
 			if (this.Operation is ImGuizmoOperation.Rotate) snap *= 5;
 			else snap /= 10;
 
@@ -110,13 +110,13 @@ public class Gizmo : IGizmo {
 				snap /= 10;
 
 			result = ImGuizmo.Manipulate(
-				ref this.ViewMatrix,
-				ref this.ProjMatrix,
+				ref this.ViewMatrix.M11,
+				ref this.ProjMatrix.M11,
 				this.Operation,
 				this.Mode,
-				ref mx,
-				ref delta,
-				ref snap
+				ref mx.M11,
+				ref delta.M11,
+				&snap.X
 			);
 		} else {
 			result = ImGuizmo.Manipulate(

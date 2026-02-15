@@ -76,7 +76,7 @@ public class GizmoConfig {
 		ColorHatchedAxisLines = new Vector4(0.000f, 0.000f, 0.000f, 0.500f),
 		ColorText = new Vector4(1.000f, 1.000f, 1.000f, 1.000f),
 		ColorTextShadow = new Vector4(0.000f, 0.000f, 0.000f, 1.000f)
-	};*/
+	};
 
 	public void SetNextMirrorRotation() {
 		var count = Enum.GetNames(typeof(MirrorMode)).Length;
