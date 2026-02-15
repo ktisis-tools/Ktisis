@@ -95,19 +95,39 @@ public class Gizmo : IGizmo {
 		ImGuizmo.SetDrawlist(ImGui.GetWindowDrawList().Handle);
 	}
 
-	public bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
+	public unsafe bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
 		delta = Matrix4x4.Identity;
 
 		if (this.HasDrawn) return false;
 
-		var result = Dalamud.Bindings.ImGuizmo.ImGuizmo.Manipulate(
-			ref this.ViewMatrix,
-			ref this.ProjMatrix,
-			this.Operation,
-			this.Mode,
-			ref mx,
-			ref delta
-		);
+		var result = false;
+		if (this._cfg.AllowHoldSnap && ImGui.IsKeyDown(ImGuiKey.ModCtrl)) {
+			var snap = Vector3.One;
+			if (this.Operation is ImGuizmoOperation.Rotate) snap *= 5;
+			else snap /= 10;
+
+			if (ImGui.IsKeyDown(ImGuiKey.ModShift))
+				snap /= 10;
+
+			result = ImGuizmo.Manipulate(
+				ref this.ViewMatrix.M11,
+				ref this.ProjMatrix.M11,
+				this.Operation,
+				this.Mode,
+				ref mx.M11,
+				ref delta.M11,
+				&snap.X
+			);
+		} else {
+			result = ImGuizmo.Manipulate(
+				ref this.ViewMatrix,
+				ref this.ProjMatrix,
+				this.Operation,
+				this.Mode,
+				ref mx,
+				ref delta
+			);
+		}
 
 		this.HasDrawn = true;
 		return result;
@@ -119,8 +139,8 @@ public class Gizmo : IGizmo {
 	}
 
 	public void Reset() {
-		ImGuizmo.Gizmo.Enable = false;
-		ImGuizmo.Gizmo.Enable = true;
+		ImGuizmo.Enable(false);
+		ImGuizmo.Enable(true);
 		this.IsEnded = true;
 	}
 }
