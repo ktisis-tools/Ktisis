@@ -42,19 +42,16 @@ public unsafe class PreviewNode : OverlayNode {
 	private uint _counter;
 	private ActorEntity _actor;
 	private bool _doUpdate;
-	
+
 	private readonly RenderTargetManager* _renderTargetManager;
 	private readonly AgentTryon* _agentTryon;
 	private ImGuiWindowPtr _fileWindow;
-	
+
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
 	private readonly IEditorContext _ctx;
 	private readonly JsonFileSerializer _serializer;
 
-	
-
-	
 
 	public PreviewNode(
 		IEditorContext context,
@@ -71,7 +68,7 @@ public unsafe class PreviewNode : OverlayNode {
 
 		var needsInit = false;
 		this._renderTargetManager = RenderTargetManager.Instance();
-		this._agentTryon = AgentTryon.Instance();  //idk why this was below the eval before?
+		this._agentTryon = AgentTryon.Instance(); //idk why this was below the eval before?
 
 		if (this._agentTryon->CharaView.Agent == null) {
 			this._framework.RunOnFrameworkThread(() => {
@@ -95,7 +92,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this.Border.AddPart(new Part {
 			TexturePath = "ui/uld/PreviewA_hr1.tex",
 			Size = new Vector2(36.0f, 36.0f),
-			TextureCoordinates = new Vector2( 0, 0f),
+			TextureCoordinates = new Vector2(0, 0f),
 			Id = 0
 		});
 		var part = this.Image.AddPart(new Part());
@@ -114,36 +111,35 @@ public unsafe class PreviewNode : OverlayNode {
 		// 	modelData.CopyFromCharacter(actor.Character);
 		// 	this._agentTryon->CharaView.SetModelData(&modelData);
 		// }
-		
+
 		_actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[442]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
 		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
 	}
-	
+
 	/// <summary>
 	/// Framework update for our preview window, required to work 
 	/// </summary>
-	
 	private void OnFramework(IFramework framework) {
 		this._agentTryon->CharaView.Render(this._counter++);
-		
+
 
 		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
 		if (!this._ctx.Plugin.Gui.FileDialogs.IsDialogOpen()) {
-			if(this.IsVisible)
+			if (this.IsVisible)
 				//this.Cleanup();
-			this.IsVisible = false;
+				this.IsVisible = false;
 			this._counter = 0;
-			
+
 			return; //lets try to not overflow the games renderer
 		}
-		
-		
+
+
 		if (this.IsVisible == false) {
 			//this.UpdateActorData(this._ctx.Selection.GetFirstSelected());
-			
+
 		}
 
 		this.IsVisible = true;
@@ -153,7 +149,7 @@ public unsafe class PreviewNode : OverlayNode {
 	}
 	public void Cleanup() {
 		this._ctx.Posing.ApplyReferencePose(this._actor.Pose); //reset pose
-                         ////set it to first actor, will find a better way later
+		////set it to first actor, will find a better way later
 		this._ctx.Characters.Mcdf.RevertIfTouched(this._objectTable[442]);
 		this._framework.RunOnFrameworkThread(() => {
 			this._agentTryon->CharaView.Release();
@@ -164,7 +160,7 @@ public unsafe class PreviewNode : OverlayNode {
 			this._agentTryon->CharaView.DoUpdate = true;
 		});
 	}
-	
+
 	/// <summary>
 	/// Poses the actor in the preview window
 	/// </summary>
@@ -175,15 +171,13 @@ public unsafe class PreviewNode : OverlayNode {
 		var file = this._serializer.Deserialize<PoseFile>(content);
 		this._ctx.Posing.ApplyPoseFile(_actor.Pose, file, transforms: PoseTransforms.Rotation);
 	}
-	
+
 	/// <summary>
 	/// Updates actor, should be called when a new target is selected for import
 	/// </summary>
 	/// <param name="actor">The actor you wish to show</param>
 	/// <param name="context">Editor context</param>
 	public void UpdateActorData(ActorEntity actor) {
-		//
-
 		this._framework.RunOnFrameworkThread(() => {
 			this._agentTryon->CharaView.Release();
 			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
@@ -192,21 +186,5 @@ public unsafe class PreviewNode : OverlayNode {
 			this._agentTryon->CharaView.SetModelData(&modelData);
 			this._agentTryon->CharaView.DoUpdate = true;
 		});
-		
 	}
-	
-	public void LoadMcdf(string path) {
-		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, this._objectTable[442], true);
-		this.UpdateActorData(this._actor);
-	}
-	
-	public void LoadChara(string path) {
-		var content = File.ReadAllText(path);
-		var file = this._serializer.Deserialize<CharaFile>(content);
-		this._ctx.Characters.ApplyCharaFile(this._actor, file);
-	}
-	
-	
-	
-
 }

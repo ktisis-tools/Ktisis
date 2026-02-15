@@ -37,10 +37,11 @@ public class OverlayService : IDisposable {
 		this._controller = new OverlayController();
 		this._init = true;
 		context.Plugin.Gui.FileDialogs.OnSelectionChanged += this.HandleFileDialogEvent;
-		
+
 		if (context.Config.Editor.ShowHints && !this._showedHint)
 			this.ShowHint(context);
-		ToggleCharaViewTexture(context);
+
+		this.ToggleCharaViewTexture(context);
 	}
 
 	public bool AddNode(OverlayNode node) {
@@ -73,24 +74,17 @@ public class OverlayService : IDisposable {
 		};
 		this._controller?.AddNode(this._preview);
 		if (context.Selection.Count == 1) {
-			SetCharaViewData((ActorEntity)context.Selection.GetFirstSelected(), context);
+			this.SetCharaViewData((ActorEntity)context.Selection.GetFirstSelected(), context);
 		}
 
 	}
 
-	public void HandleFileDialogEvent(object? sender, string path) {
+	private void HandleFileDialogEvent(object? sender, string path) {
+		var extension = path[(path.LastIndexOf('.') + 1)..].ToLower();
 
-		this._preview.PoseActor(path);
-		
-		var extension = path.Substring(path.LastIndexOf('.') + 1).ToLower();
-
-		if (extension == "pose" || extension == "cmp") {
-			this._preview.PoseActor(path);
-		}/*else if (extension == "chara") {
-			this._preview.LoadChara(path);
-		}else if (extension == "mcdf") {
-			this._preview.LoadMcdf(path);
-		}*/
+		if (extension is "pose" or "cmp") {
+			this._preview?.PoseActor(path);
+		}
 	}
 
 	public bool RemoveNode(OverlayNode node) {

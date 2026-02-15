@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 using Dalamud.Interface;
 using Dalamud.Utility;
-
-using FFXIVClientStructs;
 
 using GLib.Popups.ImFileDialog;
 using GLib.Popups.ImFileDialog.Data;
@@ -15,14 +12,13 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
-using Ktisis.Editor.Context.Types;
 using Ktisis.Services.Meta;
 
 using DalamudFileManager = Dalamud.Interface.ImGuiFileDialog.FileDialogManager;
 namespace Ktisis.Interface;
 
 public enum DialogType {
-	MCDF,
+	Mcdf,
 	Pose,
 	Chara,
 	Other,
@@ -32,7 +28,7 @@ public enum DialogType {
 public class FileDialogManager {
 	private readonly ConfigManager _cfg;
 	private readonly ImageDataProvider _img;
-	
+
 	private readonly JsonFileSerializer _serializer = new();
 	private readonly DalamudFileManager _fileManager = new();
 
@@ -51,10 +47,9 @@ public class FileDialogManager {
 	
 	// Initialization
 
-	public void SelectionChange(object? sender, string path) => this.OnSelectionChanged?.Invoke(sender, path);
+	private void SelectionChange(object? sender, string path) => this.OnSelectionChanged?.Invoke(sender, path);
 	public void Initialize() => this._img.Initialize();
 	public void Draw() => this._fileManager.Draw();
-
 
 	// We can use this to control our PreviewNode
 	public bool IsDialogOpen() => this._openDialog == DialogType.Pose;
@@ -180,7 +175,7 @@ public class FileDialogManager {
 		this._img.BindMetadata(dialog);
 		this.OpenDialog(dialog);
 	}
-	
+
 	public void OpenFolder(
 		string name,
 		Action<string> handler

@@ -273,7 +273,7 @@ public class EditorInterface : IEditorInterface {
 	};
 	
 	public void OpenCharaFile(Action<string, CharaFile> handler)
-		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions, DialogType.Chara);
+		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions);
 
 	public void OpenPoseFile(Action<string, PoseFile> handler) {
 		this._gui.FileDialogs.OpenFile<PoseFile>("Open Pose File", (path, file) => {
@@ -283,7 +283,7 @@ public class EditorInterface : IEditorInterface {
 	}
 	
 	public void OpenMcdfFile(Action<string> handler) {
-		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions, DialogType.MCDF);
+		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions);
 	}
 
 	public void OpenLightFile(Action<string, LightFile> handler)

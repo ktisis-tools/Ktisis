@@ -49,14 +49,14 @@ public sealed class McdfManager : IDisposable {
 	
 	// MCDF loading
 
-	public void LoadAndApplyTo(string path, IGameObject actor, bool previewNode = false) {
-		_ = this.LoadAndApplyToAsync(path, actor, previewNode).ContinueWith(task => {
+	public void LoadAndApplyTo(string path, IGameObject actor) {
+		_ = this.LoadAndApplyToAsync(path, actor).ContinueWith(task => {
 			if (task.Exception != null)
 				Ktisis.Log.Error($"Failed to load MCDF:\n{task.Exception.InnerException}");
 		}, TaskContinuationOptions.OnlyOnFaulted);
 	}
 
-	private async Task LoadAndApplyToAsync(string path, IGameObject actor, bool previewNode) {
+	private async Task LoadAndApplyToAsync(string path, IGameObject actor) {
 		using var reader = McdfReader.FromPath(path);
 		
 		var temp = GetTempPath(create: true);
@@ -79,8 +79,7 @@ public sealed class McdfManager : IDisposable {
 
 		var collectionId = this.ApplyPenumbraMods(actor, data, files);
 		this.ApplyGlamourerData(actor, data);
-		if(!previewNode)
-			await this.RedrawAndWait(actor);
+		await this.RedrawAndWait(actor);
 		if (collectionId != null) {
 			var ipc = this._ipc.GetPenumbraIpc();
 			ipc.DeleteTemporaryCollection(collectionId.Value);
