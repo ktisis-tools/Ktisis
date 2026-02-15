@@ -91,8 +91,6 @@ public class OverlayService : IDisposable {
 		}else if (extension == "mcdf") {
 			this._preview.LoadMcdf(path);
 		}
-
-
 	}
 
 	public bool RemoveNode(OverlayNode node) {

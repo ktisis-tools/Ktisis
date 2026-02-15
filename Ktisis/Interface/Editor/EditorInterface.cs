@@ -273,17 +273,17 @@ public class EditorInterface : IEditorInterface {
 	};
 	
 	public void OpenCharaFile(Action<string, CharaFile> handler)
-		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions, "chara");
+		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions, DialogType.Chara);
 
 	public void OpenPoseFile(Action<string, PoseFile> handler) {
 		this._gui.FileDialogs.OpenFile<PoseFile>("Open Pose File", (path, file) => {
 			file.ConvertLegacyBones();
 			handler.Invoke(path, file);
-		}, ImportPoseFileOptions, "pose");
+		}, ImportPoseFileOptions, DialogType.Pose);
 	}
 	
 	public void OpenMcdfFile(Action<string> handler) {
-		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions, "mcdf");
+		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions, DialogType.MCDF);
 	}
 
 	public void OpenLightFile(Action<string, LightFile> handler)

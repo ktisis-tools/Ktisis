@@ -21,6 +21,13 @@ using Ktisis.Services.Meta;
 using DalamudFileManager = Dalamud.Interface.ImGuiFileDialog.FileDialogManager;
 namespace Ktisis.Interface;
 
+public enum DialogType {
+	MCDF,
+	Pose,
+	Chara,
+	Other,
+	None
+}
 [Singleton]
 public class FileDialogManager {
 	private readonly ConfigManager _cfg;
@@ -30,14 +37,9 @@ public class FileDialogManager {
 	private readonly DalamudFileManager _fileManager = new();
 
 	public event Action<FileDialog>? OnOpenDialog;
-	public event EventHandler<string>? OnSelectionChanged; 
-	
-	private Dictionary<string, bool> OpenDialogs { get; } = new() {
-		{"pose", false},
-		{"mcdf", false},
-		{"chara", false},
-		{"other", false},
-	};
+	public event EventHandler<string>? OnSelectionChanged;
+	private DialogType _openDialog = DialogType.None;
+
 	public FileDialogManager(
 		ConfigManager cfg,
 		ImageDataProvider img
@@ -52,26 +54,11 @@ public class FileDialogManager {
 	public void SelectionChange(object? sender, string path) => this.OnSelectionChanged?.Invoke(sender, path);
 	public void Initialize() => this._img.Initialize();
 	public void Draw() => this._fileManager.Draw();
-	public void SetOpenFlag(string type) {
 
-		switch (type) {
-			case "mcdf":
-				OpenDialogs["mcdf"] ^= true;
-				break;
-			case "pose":
-				OpenDialogs["pose"] ^= true;
-				break;
-			case "chara":
-				OpenDialogs["chara"] ^= true;
-				break;
-			default:
-				OpenDialogs["other"] ^= true;
-				break;
-		}
-		
-	}
 
-	public bool IsDialogOpen() => OpenDialogs.Any((k) => k.Value);
+	// We can use this to control our PreviewNode
+	public bool IsDialogOpen() => this._openDialog == DialogType.Pose;
+	
 	// Dialog state
 
 	private T OpenDialog<T>(T dialog) where T : FileDialog {
@@ -94,10 +81,9 @@ public class FileDialogManager {
 		string name,
 		Action<string> handler,
 		FileDialogOptions? options = null,
-		string? type = null
+		DialogType type = DialogType.Other
 	) {
-		if (type != null)
-			SetOpenFlag(type);
+		this._openDialog = type;
 		options ??= new FileDialogOptions();
 		this.PopulateOptions(options);
 
@@ -108,8 +94,7 @@ public class FileDialogManager {
 			name,
 			options.Filters,
 			(isOk, paths) => {
-				if (type != null)
-					SetOpenFlag(type);
+				this._openDialog = DialogType.None;
 				if (!isOk) return;
 				
 				//this.SaveDialogState(sender);
@@ -127,7 +112,7 @@ public class FileDialogManager {
 		string name,
 		Action<string, T> handler,
 		FileDialogOptions? options = null,
-		string? type = null
+		DialogType type = DialogType.Other
 	) where T : JsonFile {
 		this.OpenFile(name, path => {
 			var content = File.ReadAllText(path);

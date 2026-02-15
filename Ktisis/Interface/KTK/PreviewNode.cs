@@ -72,11 +72,8 @@ public unsafe class PreviewNode : OverlayNode {
 		var needsInit = false;
 		this._renderTargetManager = RenderTargetManager.Instance();
 		this._agentTryon = AgentTryon.Instance();  //idk why this was below the eval before?
-		if(this._agentTryon == null)
-			needsInit = true;
 
-
-		if (needsInit) {
+		if (this._agentTryon->CharaView.Agent == null) {
 			this._framework.RunOnFrameworkThread(() => {
 				this._agentTryon->Update(1);
 				this._agentTryon->Hide();
@@ -136,7 +133,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
 		if (!this._ctx.Plugin.Gui.FileDialogs.IsDialogOpen()) {
 			if(this.IsVisible)
-				this.Cleanup();
+				//this.Cleanup();
 			this.IsVisible = false;
 			this._counter = 0;
 			
@@ -161,7 +158,6 @@ public unsafe class PreviewNode : OverlayNode {
 		this._framework.RunOnFrameworkThread(() => {
 			this._agentTryon->CharaView.Release();
 			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
-			while (!this._agentTryon->CharaView.CharacterLoaded);
 			var modelData = this._agentTryon->CharaView.ModelData;
 			modelData.CopyFromCharacter((Character*)this._objectTable.LocalPlayer?.Address);
 			this._agentTryon->CharaView.SetModelData(&modelData);
@@ -185,7 +181,7 @@ public unsafe class PreviewNode : OverlayNode {
 	/// </summary>
 	/// <param name="actor">The actor you wish to show</param>
 	/// <param name="context">Editor context</param>
-	public async void UpdateActorData(ActorEntity actor) {
+	public void UpdateActorData(ActorEntity actor) {
 		//
 
 		this._framework.RunOnFrameworkThread(() => {
@@ -198,18 +194,8 @@ public unsafe class PreviewNode : OverlayNode {
 		});
 		
 	}
-
-/*	public ActorEntity GetFakeCharacter() {
-
-		Character container = new Character();
-		var containerPtr = &container;
-		
-		return new
-		
-	}
-*/
+	
 	public void LoadMcdf(string path) {
-		
 		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, this._objectTable[442], true);
 		this.UpdateActorData(this._actor);
 	}
