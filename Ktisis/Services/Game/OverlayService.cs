@@ -86,11 +86,11 @@ public class OverlayService : IDisposable {
 
 		if (extension == "pose" || extension == "cmp") {
 			this._preview.PoseActor(path);
-		}else if (extension == "chara") {
+		}/*else if (extension == "chara") {
 			this._preview.LoadChara(path);
 		}else if (extension == "mcdf") {
 			this._preview.LoadMcdf(path);
-		}
+		}*/
 	}
 
 	public bool RemoveNode(OverlayNode node) {

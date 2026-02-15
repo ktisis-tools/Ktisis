@@ -35,9 +35,12 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		this._ctx = ctx;
 		this._select = select;
 		select.OnOpenDialog = this.OnFileDialogOpen;
+
 	}
 	
+
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {
+		this._ctx.Scene.Overlay.SetCharaViewData(this.Target, this._ctx);
 		this._ctx.Interface.OpenPoseFile(sender.SetFile);
 	}
 
