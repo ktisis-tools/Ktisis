@@ -79,8 +79,9 @@ public class Gizmo : IGizmo {
 
 	public void BeginFrame(Vector2 pos, Vector2 size) {
 		this.HasDrawn = false;
-
+		
 		ImGuizmo.SetRect(pos.X, pos.Y, size.X, size.Y);
+		
 		ImGuizmo.SetID((int) this.Id);
 		ImGuizmo.SetGizmoSizeClipSpace(this.ScaleFactor);
 		ImGuizmo.AllowAxisFlip(this.AllowAxisFlip);
