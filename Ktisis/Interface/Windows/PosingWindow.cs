@@ -77,7 +77,7 @@ public class PosingWindow : KtisisWindow {
 		}
 
 		if (this.UpdateTarget())
-			this.WindowName = "Pose View - " + this._target!.Name + "###KtisisPoseView";
+			this.WindowName = $"Pose View - {this._target!.Name}###KtisisPoseView";
 
 		if (this._target is not { IsValid: true }) {
 			ImGui.Text("Select an actor to start editing its pose.");
