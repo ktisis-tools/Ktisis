@@ -42,7 +42,7 @@ public class ActorCollectionPopup : KtisisPopup {
 		ImGui.Text($"Assigning collection for {this._entity.Name}");
 		ImGui.TextDisabled($"Currently set to: {this._current}");
 
-		var list = this._ipc.GetCollections().ToList();
+		var list = this._ipc.GetCollections().OrderBy(x => x.Value).ToList();
 		if (this._list.Draw(list, out var selected)) {
 			if (this._ipc.SetCollectionForObject(this._entity.Actor, selected.Key))
 				this._entity.Redraw();

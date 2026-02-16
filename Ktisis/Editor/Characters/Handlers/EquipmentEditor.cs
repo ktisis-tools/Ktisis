@@ -37,7 +37,7 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		if (!actor.IsValid) return;
 		actor.Appearance.Equipment[index] = model;
 		var chara = actor.GetCharacter();
-		if (chara != null) chara->FlagSlotForUpdate((uint)index, &model);
+		if (chara != null) chara->SetEquipmentSlotModel((uint)index, &model);
 	}
 
 	public void SetEquipIdVariant(EquipIndex index, ushort id, byte variant) {
@@ -67,7 +67,7 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		if (chara == null) return;
 		
 		var current = this.GetEquipIndex(index);
-		chara->FlagSlotForUpdate((uint)index, &current);
+		chara->SetEquipmentSlotModel((uint)index, &current);
 	}
 	
 	// Hat visibility
@@ -83,7 +83,7 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		actor.Character->DrawData.HideHeadgear(0, !visible);
 		if (visible) this.ForceUpdateEquipIndex(EquipIndex.Head);
 	}
-	
+
 	// Visor toggle
 
 	public unsafe bool GetVisorToggled() => actor.IsValid

@@ -41,7 +41,7 @@ public class ActorDesignPopup : KtisisPopup {
 
 		ImGui.Text($"Apply design for {this._entity.Name}");
 
-		var list = this._ipc.GetDesignList().ToList();
+		var list = this._ipc.GetDesignList().OrderBy(x => x.Value).ToList();
 		if (this._list.Draw(list, out var selected)) {
 			if (this._ipc.ApplyDesignToObject(this._entity.Actor, selected.Key))
 				this._entity.Redraw();
