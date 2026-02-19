@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -11,6 +12,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
+using KamiToolKit;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
@@ -39,6 +41,9 @@ public unsafe class PreviewNode : OverlayNode {
 
 	private readonly ImageNode Image;
 	private readonly NineGridNode Border;
+	private readonly NodeBase Buttons;
+	private List<ButtonBase> buttonList = new List<ButtonBase>();
+	
 	private uint _counter;
 	private ActorEntity _actor;
 	private bool _doUpdate;
@@ -106,6 +111,8 @@ public unsafe class PreviewNode : OverlayNode {
 			this._agentTryon->CharaView.SetModelData(&modelData);
 		});
 
+		Buttons = this.SetupButtons();
+
 		// if (this._ctx.Selection.GetFirstSelected() is ActorEntity actor) {
 		// 	var modelData = this._agentTryon->CharaView.ModelData;
 		// 	modelData.CopyFromCharacter(actor.Character);
@@ -115,8 +122,10 @@ public unsafe class PreviewNode : OverlayNode {
 		_actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[442]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
+		this.Buttons.AttachNode(this);
 		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
+
 	}
 
 	/// <summary>
@@ -147,18 +156,9 @@ public unsafe class PreviewNode : OverlayNode {
 
 
 	}
-	public void Cleanup() {
-		this._ctx.Posing.ApplyReferencePose(this._actor.Pose); //reset pose
-		////set it to first actor, will find a better way later
-		this._ctx.Characters.Mcdf.RevertIfTouched(this._objectTable[442]);
-		this._framework.RunOnFrameworkThread(() => {
-			this._agentTryon->CharaView.Release();
-			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
-			var modelData = this._agentTryon->CharaView.ModelData;
-			modelData.CopyFromCharacter((Character*)this._objectTable.LocalPlayer?.Address);
-			this._agentTryon->CharaView.SetModelData(&modelData);
-			this._agentTryon->CharaView.DoUpdate = true;
-		});
+
+	public void MoveCamera(float pitch, float yaw) {
+		this._agentTryon->CharaView.SetCameraYawAndPitch(yaw, pitch);
 	}
 
 	/// <summary>
@@ -178,13 +178,27 @@ public unsafe class PreviewNode : OverlayNode {
 	/// <param name="actor">The actor you wish to show</param>
 	/// <param name="context">Editor context</param>
 	public void UpdateActorData(ActorEntity actor) {
-		this._framework.RunOnFrameworkThread(() => {
-			this._agentTryon->CharaView.Release();
-			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
 			var modelData = this._agentTryon->CharaView.ModelData;
 			modelData.CopyFromCharacter((Character*)actor.Actor.Address);
 			this._agentTryon->CharaView.SetModelData(&modelData);
 			this._agentTryon->CharaView.DoUpdate = true;
-		});
+	}
+
+	public NodeBase SetupButtons() {
+
+		NodeBase node = new ResNode() {
+			Size =  new Vector2(160.0f, 40.0f),
+			Position = new Vector2(16f, 280f)
+		};
+			
+		ButtonBase button = new CircleButtonNode() {
+			Icon = ButtonIcon.ArrowDown,
+			Position = new Vector2(80f, 40f)
+		};
+		this.buttonList.Add(button);
+		foreach (var b in this.buttonList) {
+			b.AttachNode(node);
+		}
+		return node;
 	}
 }
