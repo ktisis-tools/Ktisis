@@ -31,9 +31,10 @@ public class GizmoStyleEditor {
 	public void Draw() {
 		var defaults = GizmoConfig.DefaultStyle;
 		var style = this.Config.Gizmo.Style;
-		
-		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), true);
 
+		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), true);
+		using var _ = ImRaii.Disabled(); // TODO: undisable
+		ImGui.TextWrapped("Gizmo Styling is currently disabled in this build, pending a Dalamud update!");
 		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.general.title"))) {
 			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_x"), ref style.ColorDirectionX, defaults.ColorDirectionX);
 			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_y"), ref style.ColorDirectionY, defaults.ColorDirectionY);

@@ -30,7 +30,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\GLib\GLib\GLib.csproj" />
-	  <ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET\ImGuizmo.NET.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Localization\Data\*.json" />
@@ -65,7 +64,4 @@
 	  <Folder Include="Data\Library\" />
       <EmbeddedResource Include="Data\Library\props.json" />
 	</ItemGroup>
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec ContinueOnError="WarnAndContinue" Command="if $(OS) == Windows_NT (&#xA;copy &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot; /Y&#xA;) else (&#xA;cp &quot;$(SolutionDir)ImGuizmo.NET\NativeComponents\ImGuizmo-Bridge.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;&#xA;)" />
-	</Target>
 </Project>

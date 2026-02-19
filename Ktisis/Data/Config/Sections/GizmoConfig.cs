@@ -1,16 +1,44 @@
 using System.Numerics;
 using System;
 
-using Ktisis.ImGuizmo;
 using Ktisis.Editor.Transforms;
+using Dalamud.Bindings.ImGuizmo;
 
 namespace Ktisis.Data.Config.Sections;
 
+// TODO: replace with actual gizmo style
+public struct Style {
+	public float TranslationLineThickness;
+	public float TranslationLineArrowSize;
+	public float RotationLineThickness;
+	public float RotationOuterLineThickness;
+	public float ScaleLineThickness;
+	public float ScaleLineCircleSize;
+	public float HatchedAxisLineThickness;
+	public float CenterCircleSize;
+
+	public Vector4 ColorDirectionX;
+	public Vector4 ColorDirectionY;
+	public Vector4 ColorDirectionZ;
+	public Vector4 ColorPlaneX;
+	public Vector4 ColorPlaneY;
+	public Vector4 ColorPlaneZ;
+	public Vector4 ColorSelection;
+	public Vector4 ColorInactive;
+	public Vector4 ColorTranslationLine;
+	public Vector4 ColorScaleLine;
+	public Vector4 ColorRotationUsingBorder;
+	public Vector4 ColorRotationUsingFill;
+	public Vector4 ColorHatchedAxisLines;
+	public Vector4 ColorText;
+	public Vector4 ColorTextShadow;
+}
+
 public class GizmoConfig {
 	public bool Visible = true;
-	
-	public Mode Mode = Mode.Local;
-	public Operation Operation = Operation.ROTATE;
+
+	public ImGuizmoMode Mode = ImGuizmoMode.Local;
+	public ImGuizmoOperation Operation = ImGuizmoOperation.Rotate;
 
 	public MirrorMode MirrorRotation = MirrorMode.Parallel;
 	public bool ParentBones = true;
@@ -18,8 +46,8 @@ public class GizmoConfig {
 
 	public bool AllowAxisFlip = true;
 	public bool AllowRaySnap = true;
-
 	public bool AllowHoldSnap = true;
+
 
 	public Style Style = DefaultStyle;
 
@@ -32,7 +60,7 @@ public class GizmoConfig {
 		ScaleLineCircleSize = 6.0f,
 		HatchedAxisLineThickness = 6.0f,
 		CenterCircleSize = 6.0f,
-		
+
 		ColorDirectionX = new Vector4(0.666f, 0.000f, 0.000f, 1.000f),
 		ColorDirectionY = new Vector4(0.000f, 0.666f, 0.000f, 1.000f),
 		ColorDirectionZ = new Vector4(0.000f, 0.000f, 0.666f, 1.000f),

@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -13,7 +14,6 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Selection;
-using Ktisis.ImGuizmo;
 using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components.Transforms;
@@ -56,9 +56,9 @@ public class TransformTable {
 	private Vector3 Angles = Vector3.Zero;
 	private Quaternion Value = Quaternion.Identity;
 
-	private const Operation PositionOp = Operation.TRANSLATE;
-	private const Operation RotateOp = Operation.ROTATE;
-	private const Operation ScaleOp = Operation.SCALE | Operation.SCALE_U;
+	private const ImGuizmoOperation PositionOp = ImGuizmoOperation.Translate;
+	private const ImGuizmoOperation RotateOp = ImGuizmoOperation.Rotate;
+	private const ImGuizmoOperation ScaleOp = ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu;
 
 	private Transform Transform = new();
 	
@@ -142,7 +142,7 @@ public class TransformTable {
 		return result;
 	}
 
-	private void DrawOperation(Operation op, FontAwesomeIcon icon, string hint) {
+	private void DrawOperation(ImGuizmoOperation op, FontAwesomeIcon icon, string hint) {
 		var spacing = ImGui.GetStyle().ItemSpacing.X;
 		ImGui.SameLine(0, spacing);
 
@@ -153,7 +153,7 @@ public class TransformTable {
 		}
 	}
 
-	private void ChangeOperation(Operation op) {
+	private void ChangeOperation(ImGuizmoOperation op) {
 		if (GuiHelpers.GetSelectMode() == SelectMode.Multiple)
 			this.GizmoConfig.Operation |= op;
 		else
