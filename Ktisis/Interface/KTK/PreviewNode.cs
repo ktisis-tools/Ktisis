@@ -61,7 +61,8 @@ public unsafe class PreviewNode : OverlayNode {
 	public PreviewNode(
 		IEditorContext context,
 		IFramework framework,
-		IObjectTable objectTable
+		IObjectTable objectTable,
+		ActorEntity target
 	) {
 		this._framework = framework;
 		this._objectTable = objectTable;
@@ -106,11 +107,13 @@ public unsafe class PreviewNode : OverlayNode {
 
 		this._framework.RunOnFrameworkThread(() => {
 			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
+		});
+		this._framework.DelayTicks(1);
+		this._framework.RunOnFrameworkThread(() => {
 			var modelData = this._agentTryon->CharaView.ModelData;
-			modelData.CopyFromCharacter((Character*)this._objectTable.LocalPlayer?.Address);
+			modelData.CopyFromCharacter((Character*)target.Actor.Address);
 			this._agentTryon->CharaView.SetModelData(&modelData);
 		});
-
 		Buttons = this.SetupButtons();
 
 		// if (this._ctx.Selection.GetFirstSelected() is ActorEntity actor) {
@@ -137,18 +140,9 @@ public unsafe class PreviewNode : OverlayNode {
 
 		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
 		if (!this._ctx.Plugin.Gui.FileDialogs.IsDialogOpen()) {
-			if (this.IsVisible)
-				//this.Cleanup();
-				this.IsVisible = false;
-			this._counter = 0;
-
+			
+			this.Dispose();
 			return; //lets try to not overflow the games renderer
-		}
-
-
-		if (this.IsVisible == false) {
-			//this.UpdateActorData(this._ctx.Selection.GetFirstSelected());
-
 		}
 
 		this.IsVisible = true;
@@ -184,6 +178,11 @@ public unsafe class PreviewNode : OverlayNode {
 			this._agentTryon->CharaView.DoUpdate = true;
 	}
 
+	public void Cleanup() {
+		this._agentTryon->CharaView.Release();
+		this.Dispose();
+	}
+	
 	public NodeBase SetupButtons() {
 
 		NodeBase node = new ResNode() {

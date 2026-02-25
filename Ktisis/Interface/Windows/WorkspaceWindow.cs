@@ -139,7 +139,7 @@ public class WorkspaceWindow : KtisisWindow {
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.WalkieTalkie, "DEBUG: Show a hint"))
 			this._ctx.Scene.Overlay.ShowHint(this._ctx);
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "DEBUG: CharaViewTexture"))
-			this._ctx.Scene.Overlay.ToggleCharaViewTexture(this._ctx);
+		//if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "DEBUG: CharaViewTexture"))
+			//this._ctx.Scene.Overlay.ToggleCharaViewTexture(this._ctx);
 	}
 }

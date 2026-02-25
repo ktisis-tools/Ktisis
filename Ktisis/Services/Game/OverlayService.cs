@@ -40,8 +40,6 @@ public class OverlayService : IDisposable {
 
 		if (context.Config.Editor.ShowHints && !this._showedHint)
 			this.ShowHint(context);
-
-		this.ToggleCharaViewTexture(context);
 	}
 
 	public bool AddNode(OverlayNode node) {
@@ -68,15 +66,15 @@ public class OverlayService : IDisposable {
 	}
 
 	public void SetCharaViewData(ActorEntity actor, IEditorContext ctx) => this._preview?.UpdateActorData(actor);
-	public void ToggleCharaViewTexture(IEditorContext context) {
-		this._preview = new PreviewNode(context, this._framework, this._objectTable) {
+	public void ToggleCharaViewTexture(IEditorContext context, ActorEntity actor) {
+		if (this._preview != null) {
+			this._preview.Cleanup();
+			this._preview = null;
+		}
+		this._preview = new PreviewNode(context, this._framework, this._objectTable, actor) {
 			Position = new Vector2(500.0f, 500.0f)
 		};
 		this._controller?.AddNode(this._preview);
-		if (context.Selection.Count == 1) {
-			this.SetCharaViewData((ActorEntity)context.Selection.GetFirstSelected(), context);
-		}
-
 	}
 
 	private void HandleFileDialogEvent(object? sender, string path) {
