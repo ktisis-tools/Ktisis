@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Timers;
 
 using Dalamud.Plugin.Services;
@@ -9,13 +12,20 @@ using Dalamud.Utility;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
+using Ktisis.Data.Files;
 using Ktisis.Data.Json;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Entities.Character;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Types;
 using Ktisis.Services.Data;
+
+using Lumina.Extensions;
+
+using Newtonsoft.Json;
 
 namespace Ktisis.Editor.Posing.AutoSave;
 
@@ -42,6 +52,8 @@ public class PoseAutoSave : IDisposable {
 		this._format = format;
 	}
 
+
+	
 	public void Initialize(Configuration cfg) {
 		this._timer.Elapsed += this.OnElapsed;
 		this.Configure(cfg);
@@ -73,6 +85,7 @@ public class PoseAutoSave : IDisposable {
 	public void Save() {
 		var prefix = this._format.Replace(this._cfg.FolderFormat);
 		var folder = Path.Combine(this._cfg.FilePath, prefix);
+		var scene = new SceneFile();
 		this._prefixes.Enqueue(prefix);
 
 		if (!Directory.Exists(folder))
@@ -89,21 +102,48 @@ public class PoseAutoSave : IDisposable {
 		}
 		
 		Ktisis.Log.Info($"Auto saving poses for {entities.Count} character(s)");
-		
+		var serializer = new JsonFileSerializer();
 		foreach (var chara in entities) {
 			if (chara.Pose == null) continue;
 
 			var dupeCt = 1;
 			var name = this._format.StripInvalidChars(chara.Name);
-			var path = Path.Combine(folder, $"{name}.pose");
+			var path = Path.Combine(folder, $"{name}");
 			while (Path.Exists(path))
-				path = Path.Combine(folder, $"{name} ({++dupeCt}).pose");
+				path = Path.Combine(folder, $"{name} ({++dupeCt})");
 
-			var serializer = new JsonFileSerializer();
-			var file = new EntityPoseConverter(chara.Pose).SaveFile();
-			File.WriteAllText(path, serializer.Serialize(file));
+			
+			var poseFile = new EntityPoseConverter(chara.Pose).SaveFile();
+			File.WriteAllText(path+".pose", serializer.Serialize(poseFile));
+			
+			var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
+			File.WriteAllText(path+".chara", serializer.Serialize(charaFile));
+			//todo mcdf shit
+
+			var actor = (ActorEntity)chara;
+
+			var worldLocation = new SceneFile.LocationInfo() {
+				Position = actor.Actor.Position,
+				Rotation = actor.Actor.Rotation,
+			};
+			var relativeLocation = new SceneFile.LocationInfo();
+			
+			scene.Actors.Add(new SceneFile.ActorInfo() {
+				Pose = path + ".pose",
+				Chara = path + ".chara",
+				WorldRelative = worldLocation,
+				OriginRelative = relativeLocation,
+				MCDF = String.Empty
+			});
 		}
+
+
+		File.WriteAllText(folder + "\\scene.scn", serializer.Serialize(scene));
 		
+		var readin = File.ReadAllText(folder + "\\scene.scn");
+
+		var tst = serializer.Deserialize<SceneFile>(readin);
+			
 		Ktisis.Log.Verbose($"Prefix count: {this._prefixes.Count} max: {this._cfg.Count}");
 		while (this._prefixes.Count > this._cfg.Count)
 			this.DeleteOldest();
