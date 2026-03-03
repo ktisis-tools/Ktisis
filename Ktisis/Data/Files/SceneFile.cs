@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Numerics;
 
+using MemoryPack;
+
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.System.Memory.Regular;
 using FFXIVClientStructs.Havok.Animation.Rig;
@@ -9,7 +11,9 @@ using Ktisis.Editor.Camera.Types;
 
 namespace Ktisis.Data.Files;
 
-public class SceneFile : JsonFile {
+[MemoryPackable]
+public partial class SceneFile  {
+	[MemoryPackIgnore]
 	public new string FileExtension { get; set; } = ".ktscene";
 	public new string TypeName { get; set; } = "Ktisis Scene";
 	

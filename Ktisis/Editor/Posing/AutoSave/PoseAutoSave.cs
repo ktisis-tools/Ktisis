@@ -137,12 +137,12 @@ public class PoseAutoSave : IDisposable {
 			});
 		}
 
-
-		File.WriteAllText(folder + "\\scene.scn", serializer.Serialize(scene));
+		var binary = MemoryPack.MemoryPackSerializer.Serialize<SceneFile>(scene);
+		File.WriteAllBytes(folder + "\\scene.ktscene", binary);
 		
-		var readin = File.ReadAllText(folder + "\\scene.scn");
+		var readin = File.ReadAllBytes(folder + "\\scene.scn");
 
-		var tst = serializer.Deserialize<SceneFile>(readin);
+		var test = MemoryPack.MemoryPackSerializer.Deserialize<SceneFile>(readin);
 			
 		Ktisis.Log.Verbose($"Prefix count: {this._prefixes.Count} max: {this._cfg.Count}");
 		while (this._prefixes.Count > this._cfg.Count)
