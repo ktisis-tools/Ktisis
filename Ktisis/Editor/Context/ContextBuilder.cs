@@ -69,7 +69,8 @@ public class ContextBuilder {
 		var factory = new EntityFactory(context, this._naming, this._mcdf);
 		var select = new SelectManager(context);
 		var attach = new AttachManager();
-		var autoSave = new PoseAutoSave(context, this._framework, this._format);
+		var sceneData = new SceneDataService(context, this._objectTable);
+		var autoSave = new PoseAutoSave(context, this._framework, this._format, sceneData );
 
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
@@ -78,7 +79,7 @@ public class ContextBuilder {
 			Characters = new CharacterManager(context, this._objectTable, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
-			Scene = new SceneManager(context, scope, this._framework, factory),
+			Scene = new SceneManager(context, scope, this._framework, factory, this._objectTable),
 			Selection = select,
 			Transform = new TransformHandler(context, actions, select)
 		};
