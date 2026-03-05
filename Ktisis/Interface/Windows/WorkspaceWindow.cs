@@ -13,6 +13,7 @@ using Ktisis.Interface.Components.Workspace;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Interface.Windows; 
 
@@ -135,5 +136,7 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "DEBUG: CharaViewTexture"))
+		// this._ctx.
 	}
 }
