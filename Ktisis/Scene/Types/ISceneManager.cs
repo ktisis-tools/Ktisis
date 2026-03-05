@@ -11,6 +11,7 @@ using Ktisis.Scene.Modules;
 using Ktisis.Editor.Lights;
 using Ktisis.Data.Files;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Scene.Types;
 
@@ -19,6 +20,7 @@ public interface ISceneManager : IComposite, IDisposable {
 	
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
+	public SceneDataService Data { get; }
 
 	public T GetModule<T>() where T : SceneModule;
 	public bool TryGetModule<T>(out T? module) where T : SceneModule;

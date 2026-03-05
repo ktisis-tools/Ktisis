@@ -137,6 +137,6 @@ public class WorkspaceWindow : KtisisWindow {
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "DEBUG: CharaViewTexture"))
-		// this._ctx.
+			this._ctx.Plugin.Gui.FileDialogs.OpenFile("open .ktscene", s => this._ctx.Scene.Data.Load(s));
 	}
 }
