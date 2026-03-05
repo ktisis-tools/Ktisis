@@ -70,7 +70,7 @@ public class ContextBuilder {
 		var factory = new EntityFactory(context, this._naming, this._mcdf);
 		var select = new SelectManager(context);
 		var attach = new AttachManager();
-		this._sceneData = new SceneDataService(context, this._objectTable);
+		this._sceneData = new SceneDataService(context, this._objectTable, this._framework);
 		var autoSave = new PoseAutoSave(context, this._framework, this._format, this._sceneData );
 
 

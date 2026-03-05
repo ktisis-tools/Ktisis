@@ -31,16 +31,19 @@ public class SceneDataService {
 	
 	IEditorContext? _ctx;
 	IObjectTable _objectTable;
+	private IFramework _framework;
 	
 	private ISceneManager Scene => this._ctx.Scene;
 	private IPosingManager Posing => this._ctx.Posing;
 	
 	public SceneDataService(
 		IEditorContext ctx,
-		IObjectTable objectTable
+		IObjectTable objectTable,
+		IFramework framework
 	) {
 		this._ctx = ctx;
 		this._objectTable = objectTable;
+		this._framework = framework;
 	}
 
 	public unsafe bool Save(string path) {
@@ -98,6 +101,8 @@ public class SceneDataService {
 			}
 			
 			var serializer = new JsonFileSerializer();
+			serializer.GetConverter<Vector3>();
+			serializer.GetConverter<Transform>();
 			File.WriteAllText(path, serializer.Serialize(scene));
 		} catch (Exception a) {
 			return false;
@@ -120,7 +125,9 @@ public class SceneDataService {
 				for (var i = 0; i < diff; i++) {
 					this._ctx.Scene.Factory.CreateActor().Spawn().ContinueWith(task => {
 						currentSceneActors.Add(task.Result);
+						this._framework.DelayTicks(2);
 					});
+
 				}
 			}
 			foreach (var loaded in scene.Actors) {
