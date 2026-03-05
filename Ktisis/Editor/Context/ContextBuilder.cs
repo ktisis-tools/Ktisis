@@ -34,7 +34,7 @@ public class ContextBuilder {
 	private readonly FormatService _format;
 	private readonly McdfManager _mcdf;
 	private readonly IObjectTable _objectTable;
-	private readonly SceneDataService _sceneData;
+	public SceneDataService _sceneData;
 
 	public ContextBuilder(
 		GPoseService gpose,
@@ -45,8 +45,7 @@ public class ContextBuilder {
 		NamingService naming,
 		FormatService format,
 		McdfManager mcdf,
-		IObjectTable objectTable,
-		SceneDataService sceneData
+		IObjectTable objectTable
 	) {
 		this._gpose = gpose;
 		this._interop = interop;
@@ -57,7 +56,6 @@ public class ContextBuilder {
 		this._format = format;
 		this._mcdf = mcdf;
 		this._objectTable = objectTable;
-		this._sceneData = sceneData;
 	}
 
 	public IEditorContext Create(
@@ -72,8 +70,11 @@ public class ContextBuilder {
 		var factory = new EntityFactory(context, this._naming, this._mcdf);
 		var select = new SelectManager(context);
 		var attach = new AttachManager();
+		this._sceneData = new SceneDataService(context, this._objectTable);
 		var autoSave = new PoseAutoSave(context, this._framework, this._format, this._sceneData );
 
+
+		
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
 			Animation = new AnimationManager(context, scope, this._data, this._framework),

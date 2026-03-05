@@ -271,6 +271,10 @@ public class EditorInterface : IEditorInterface {
 		Filters = "MCDF Files{.mcdf}",
 		Extension = ".mcdf"
 	};
+	private readonly static FileDialogOptions SceneFileOptions = new() {
+		Filters = "Ktisis Scene Files{.ktscene}",
+		Extension = ".ktscene"
+	};
 	
 	public void OpenCharaFile(Action<string, CharaFile> handler)
 		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions);
@@ -284,6 +288,9 @@ public class EditorInterface : IEditorInterface {
 	
 	public void OpenMcdfFile(Action<string> handler) {
 		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions);
+	}
+	public void OpenSceneFile(Action<string> handler) {
+		this._gui.FileDialogs.OpenFile("Open Scene File", handler, SceneFileOptions);
 	}
 
 	public void OpenLightFile(Action<string, LightFile> handler)

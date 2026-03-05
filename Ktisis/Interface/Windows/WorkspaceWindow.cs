@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -5,6 +6,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 
+using GLib.Popups.ImFileDialog;
 using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
@@ -136,7 +138,8 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "DEBUG: CharaViewTexture"))
-			this._ctx.Plugin.Gui.FileDialogs.OpenFile("open .ktscene", s => this._ctx.Scene.Data.Load(s));
+			this._ctx.Interface.OpenSceneFile((s => this._ctx.Scene.Data.Load(s)));
 	}
 }
