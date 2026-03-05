@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
@@ -103,29 +105,32 @@ public class SceneDataService {
 		return true;
 	}
 
-	public unsafe bool Load(String path, bool autoSaveLoading = false) {
+	public async unsafe Task Load(String path, bool autoSaveLoading = true) {
 
-		if (File.Exists(path) && Path.GetExtension(path) == ".ktscene") {
+		if (File.Exists(path) && Path.GetExtension(path) == ".ktscene") {   //fix this later idc
 			
 			var file = File.ReadAllText(path);
 			var serializer = new JsonFileSerializer();
 			var scene = serializer.Deserialize<SceneFile>(file);
-			
-			
-			foreach (var loaded in scene.Actors) {
-				var actor = (ActorEntity?)this.Scene.Children
-					.FirstOrDefault(entity => entity is CharaEntity && entity.Name == loaded.Chara.Nickname);
-				
-				if (actor == null) {
-					var actorCtr = this._ctx.Scene.Factory.CreateActor();
-					actorCtr.WithAppearance(loaded.Chara);
-					actorCtr.SetName(loaded.Chara.Nickname);
-					actor = actorCtr.Spawn().Result;
-				} else {
-					this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
+
+			var currentSceneActors = this.Scene.Children.Where(entity => entity is CharaEntity).ToList();
+
+			if (currentSceneActors.Count < scene.Actors.Count) {
+				var diff =  scene.Actors.Count - currentSceneActors.Count;
+				for (var i = 0; i < diff; i++) {
+					this._ctx.Scene.Factory.CreateActor().Spawn().ContinueWith(task => {
+						currentSceneActors.Add(task.Result);
+					});
 				}
+			}
+			foreach (var loaded in scene.Actors) {
+
+				var actor = (ActorEntity?)currentSceneActors
+					.First();
+				currentSceneActors.Remove(actor);
 
 
+				this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
 				var actorDraw = actor.Actor.GetDrawObject();
 				if (autoSaveLoading) {
 					actorDraw->Position = loaded.WorldRelative.Position;
@@ -144,9 +149,9 @@ public class SceneDataService {
 				this._ctx.Scene.ApplyLightFile(light, loaded.Light);
 				light.SetTransform(loaded.WorldRelative);
 			}
-			return true;
+			return;
 		}
-		return false;
+		return;
 	}
 	
 }
