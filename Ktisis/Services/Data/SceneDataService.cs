@@ -148,9 +148,5 @@ public class SceneDataService {
 		}
 		return false;
 	}
-
-		
-		
-	
 	
 }

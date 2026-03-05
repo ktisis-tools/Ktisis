@@ -22,6 +22,7 @@ using Ktisis.Scene.Types;
 using Ktisis.Editor.Lights;
 using Ktisis.Data.Files;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Scene;
 
@@ -30,6 +31,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
+	public SceneDataService Data { get; }
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
 
@@ -41,13 +43,15 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		HookScope scope,
 		IFramework framework,
 		IEntityFactory factory,
-		IObjectTable objectTable
+		IObjectTable objectTable,
+		SceneDataService sceneDataService
 	) : base(scope) {
 		this.Context = context;
 		this.Factory = factory;
 		this.Root = new SceneRoot(this);
 		this._framework = framework;
 		this._objectTable = objectTable;
+		this.Data = sceneDataService;
 	}
 	
 	// Initialization
