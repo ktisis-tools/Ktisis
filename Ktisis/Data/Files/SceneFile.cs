@@ -1,41 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Text.Json.Serialization;
 
-using MemoryPack;
-
-using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-using FFXIVClientStructs.FFXIV.Client.System.Memory.Regular;
-using FFXIVClientStructs.Havok.Animation.Rig;
-
-using Ktisis.Editor.Camera.Types;
+using Ktisis.Common.Utility;
 
 namespace Ktisis.Data.Files;
+public class SceneFile : JsonFile {
 
-[MemoryPackable]
-public partial class SceneFile  {
-	[MemoryPackIgnore]
 	public new string FileExtension { get; set; } = ".ktscene";
 	public new string TypeName { get; set; } = "Ktisis Scene";
 	
 	public const int CurrentVersion = 1;
 	public new int FileVersion { get; set; } = CurrentVersion;
 
-	public List<ActorInfo> Actors = new List<ActorInfo>();
-	public List<LightFile> Lights = new List<LightFile>();
-	public List<EditorCamera> EditorCameras = new List<EditorCamera>();
+	[JsonInclude]
+	public List<ActorInfo> Actors { get; set; } = new List<ActorInfo>();
+	[JsonInclude]
+	public List<LightInfo> Lights { get; set; } = new List<LightInfo>();
+	//public List<EditorCamera> EditorCameras = new List<EditorCamera>();
 	
-	
+	[Serializable]
 	public struct ActorInfo {
-		internal string Pose;
-		internal string Chara;
-		internal string MCDF;
-		internal LocationInfo WorldRelative;
-		internal LocationInfo OriginRelative;
+		public PoseFile Pose { get; set; }
+		public CharaFile Chara { get; set; }
+		public Transform WorldRelative { get; set; }
+		public Vector3 RelativePosition { get; set; }
+		public String MCDF { get; set; }
 	}
 	
-	public struct LocationInfo {
-		internal Vector3 Position;
-		internal float Rotation;
+	[Serializable]
+	public struct LightInfo {
+		public LightFile Light { get; set; }
+		public Transform WorldRelative { get; set; }
+		public Vector3 RelativePosition { get; set; }
+		public String Name { get; set; }
 	}
-
+	
 }

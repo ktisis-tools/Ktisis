@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Decor;
@@ -29,19 +31,23 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
 	private readonly IFramework _framework;
+	private readonly IObjectTable _objectTable;
 
 	private readonly SceneRoot Root;
+	private Tuple<Vector3, Quaternion, Vector3> SceneOrigin;
 	
 	public SceneManager(
 		IEditorContext context,
 		HookScope scope,
 		IFramework framework,
-		IEntityFactory factory
+		IEntityFactory factory,
+		IObjectTable objectTable
 	) : base(scope) {
 		this.Context = context;
 		this.Factory = factory;
 		this.Root = new SceneRoot(this);
 		this._framework = framework;
+		this._objectTable = objectTable;
 	}
 	
 	// Initialization
@@ -49,8 +55,13 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	public void Initialize() {
 		Ktisis.Log.Info("Initializing scene...");
 		this.SetupModules();
+		this.SetSceneOrigin();
 	}
-	
+
+	public unsafe void SetSceneOrigin() {
+		var lp = this._objectTable.LocalPlayer.GetDrawObject();
+		this.SceneOrigin = Tuple.Create((Vector3)lp->Position, (Quaternion)lp->Rotation, (Vector3)lp->Scale);
+	}
 	private void SetupModules() {
 		var gpose = this.AddModule<GroupPoseModule>();
 		this.AddModule<ActorModule>(gpose);
@@ -121,6 +132,10 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		.Cast<ActorEntity>()
 		.OrderBy(entity => entity.Actor.ObjectIndex)
 		.First();
+
+	public Tuple<Vector3, Quaternion, Vector3> GetSceneOrigin() => this.SceneOrigin;
+
+	public Vector3 GetActorRelativePosition(Vector3 Position) => Position - this.SceneOrigin.Item1;
 
 	// Lights Utility (todo: should these live here longterm?)
 
