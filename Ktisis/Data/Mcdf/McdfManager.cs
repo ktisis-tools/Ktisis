@@ -131,9 +131,8 @@ public sealed class McdfManager : IDisposable {
 		var ipc = this._ipc.GetPenumbraIpc();
 		var collectionId = ipc.CreateTemporaryCollection($"KtisisMCDF_{actor.ObjectIndex}");
 		ipc.AssignTemporaryCollection(collectionId, actor.ObjectIndex);
-		var id = Guid.NewGuid();
-		ipc.AssignTemporaryMods(id, collectionId, files);
-		ipc.AssignManipulationData(id, collectionId, data.ManipulationData);
+		ipc.AssignTemporaryMods(collectionId, files);
+		ipc.AssignManipulationData(collectionId, data.ManipulationData);
 		return collectionId;
 	}
 

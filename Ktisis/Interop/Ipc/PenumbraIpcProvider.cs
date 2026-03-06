@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
+
+using Ktisis.Common.Utility;
+
+using Newtonsoft.Json;
 
 using Penumbra.Api.Enums;
 using Penumbra.Api.IpcSubscribers;
@@ -11,6 +17,7 @@ using Penumbra.Api.IpcSubscribers;
 namespace Ktisis.Interop.Ipc;
 
 public class PenumbraIpcProvider {
+	private readonly IDalamudPluginInterface _dpi;
 	private readonly GetCollections _getCollections;
 	private readonly GetCollectionForObject _getCollectionForObject;
 	private readonly SetCollectionForObject _setCollectionForObject;
@@ -26,13 +33,13 @@ public class PenumbraIpcProvider {
 	public PenumbraIpcProvider(
 		IDalamudPluginInterface dpi
 	) {
+		this._dpi = dpi;
 		this._getCollections = new GetCollections(dpi);
 		this._getCollectionForObject = new GetCollectionForObject(dpi);
 		this._setCollectionForObject = new SetCollectionForObject(dpi);
 		this._getCutsceneParentIndex = new GetCutsceneParentIndex(dpi);
 		this._setCutsceneParentIndex = new SetCutsceneParentIndex(dpi);
 		this._assignTemporaryCollection = new AssignTemporaryCollection(dpi);
-		//this._createTemporaryCollection = new CreateTemporaryCollection(dpi);
 		this._createTemporaryCollection = dpi.GetIpcSubscriber<string, string, (PenumbraApiEc, Guid Guid)>("Penumbra.CreateTemporaryCollection.V6");
 		this._deleteTemporaryCollection = new DeleteTemporaryCollection(dpi);
 		this._addTemporaryMod = new AddTemporaryMod(dpi);
@@ -85,15 +92,39 @@ public class PenumbraIpcProvider {
 		return success;
 	}
 
-	public void AssignTemporaryMods(Guid id, Guid collectionId, Dictionary<string, string> paths) {
+	public void AssignTemporaryMods(Guid collectionId, Dictionary<string, string> paths) {
 		var rem = this._removeTemporaryMod.Invoke("MareChara_Files", collectionId, 0);
 		var add = this._addTemporaryMod.Invoke("MareChara_Files", collectionId, paths, string.Empty, 0);
 		Ktisis.Log.Info($"{rem} {add}");
 	}
 
-	public void AssignManipulationData(Guid id, Guid collectionId, string manipData) {
+	public void AssignManipulationData(Guid collectionId, string manipData) {
 		this._addTemporaryMod.Invoke("MareChara_Meta", collectionId, [], manipData, 0);
 	}
 
+	public void AssignInvisibleSkin(IGameObject gameObject) {
+		Ktisis.Log.Verbose($"Creating invisible skin collection for '{gameObject.Name}' ({gameObject.ObjectIndex})");
+
+		var collectionId = this.CreateTemporaryCollection($"KtisisInvisibleSkin_{gameObject.ObjectIndex}");
+		this.AssignTemporaryCollection(collectionId, gameObject.ObjectIndex);
+		this.AssignTemporaryMods(collectionId, this.BuildInvisibleSkinPaths());
+	}
+
 	public void Redraw(int index) => this._redrawObject.Invoke(index);
+
+	private Dictionary<string, string> BuildInvisibleSkinPaths() {
+		var stream = ResourceUtil.GetManifestResource("Data.Library.skin-paths.json");
+		var assetPath = Path.Combine(this._dpi.AssemblyLocation.DirectoryName!, "Assets");
+		var mtrlPath = Path.Combine(assetPath, "mt_c0101b0001_a.mtrl");
+
+		using var reader = new StreamReader(stream);
+		var content = reader.ReadToEnd();
+		var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(content);
+		if (dict is null)
+			throw new Exception("Could not deserialize skin-paths.json!");
+
+		foreach (var p in dict)
+			dict[p.Key] = mtrlPath;
+		return dict;
+	}
 }
