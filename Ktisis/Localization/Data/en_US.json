@@ -319,7 +319,7 @@
 			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",
 			"hintIncognito": "Censors all player names from actor list and GPose window",
-			"hintPosLock": "WIP: If enabled, actors may snap to the player character's GPose origin instead of their out-of-gpose locations!",
+			"hintPosLock": "WIP: If enabled, GPose actors should spawn at their overworld coordinates and be movable while animating.",
 			"hintInit": "If disabled, you can open the Ktisis Workspace by typing /ktisis while in GPose",
 			"windowHeader": "Window Behavior Options",
 			"legacyHeader": "Legacy Interface Options [will be deprecated with v0.3 release]",

@@ -43,6 +43,11 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 
 	// Draw UI
 
+	public override void PreDraw() {
+		if (this._ctx.IsValid) return;
+		Ktisis.Log.Verbose($"State for PoseImportDialog is stale, closing...");
+		this.Close();
+	}
 	public override void Draw() {
 		this.UpdateTarget();
 		
