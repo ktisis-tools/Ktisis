@@ -155,6 +155,13 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		}
 
 		ImGui.Checkbox("Exclude ear bones", ref file.ExcludePoseEarBones);
+
+		if (this._ctx.Posing.IsIkEnabled) {
+			ImGui.Spacing();
+			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.TextWrapped("Inverse Kinematics are enabled! These may override imported limbs.");
+		}
 	}
 	
 	// Apply pose

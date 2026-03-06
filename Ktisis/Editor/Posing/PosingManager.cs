@@ -57,6 +57,7 @@ public class PosingManager : IPosingManager {
 	// Initialization
 	
 	public bool IsSolvingIk { get; set; }
+	public bool IsIkEnabled { get; set; }
 	
 	private PosingModule? PoseModule { get; set; }
 	private IkModule? IkModule { get; set; }
