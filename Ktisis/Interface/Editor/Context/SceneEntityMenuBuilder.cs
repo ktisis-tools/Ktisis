@@ -149,9 +149,14 @@ public class SceneEntityMenuBuilder {
 	private async void DuplicateActor(ActorEntity actor) {
 		// pack actor into a temp charafile to apply to new actor after creation
 		var file = await this._ctx.Characters.SaveCharaFile(actor);
-		this._ctx.Scene.Factory.CreateActor()
+		var dupe = await this._ctx.Scene.Factory.CreateActor()
 			.WithAppearance(file)
 			.Spawn();
+
+		// copy glamourer state if applicable
+		if (!this._ctx.Plugin.Ipc.IsGlamourerActive) return;
+		var ipc = this._ctx.Plugin.Ipc.GetGlamourerIpc();
+		ipc.CopyState(actor.Actor.ObjectIndex, dupe.Actor.ObjectIndex);
 	}
 	
 	// Poses
