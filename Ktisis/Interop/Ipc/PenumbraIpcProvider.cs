@@ -102,12 +102,14 @@ public class PenumbraIpcProvider {
 		this._addTemporaryMod.Invoke("MareChara_Meta", collectionId, [], manipData, 0);
 	}
 
-	public void AssignInvisibleSkin(IGameObject gameObject) {
+	public Guid? AssignInvisibleSkin(IGameObject gameObject) {
 		Ktisis.Log.Verbose($"Creating invisible skin collection for '{gameObject.Name}' ({gameObject.ObjectIndex})");
 
 		var collectionId = this.CreateTemporaryCollection($"KtisisInvisibleSkin_{gameObject.ObjectIndex}");
 		this.AssignTemporaryCollection(collectionId, gameObject.ObjectIndex);
 		this.AssignTemporaryMods(collectionId, this.BuildInvisibleSkinPaths());
+
+		return collectionId;
 	}
 
 	public void Redraw(int index) => this._redrawObject.Invoke(index);

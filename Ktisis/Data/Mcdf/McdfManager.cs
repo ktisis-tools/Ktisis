@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
@@ -12,8 +13,11 @@ using Dalamud.Utility;
 using Ktisis.Common.Extensions;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Interop.Ipc;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Game;
+using Ktisis.Structs.Characters;
 
 namespace Ktisis.Data.Mcdf;
 
@@ -187,6 +191,23 @@ public sealed class McdfManager : IDisposable {
 		var path = Path.Join(Path.GetTempPath(), "Ktisis");
 		if (create && !Directory.Exists(path)) Directory.CreateDirectory(path);
 		return path;
+	}
+
+	// Mod Application
+	public async void SetInvisibleSkin(ActorEntity actor) {
+		var ipc = this._ipc.GetPenumbraIpc();
+		await this._framework.RunOnFrameworkThread(() => {
+			var editor = new CustomizeEditor(actor);
+			if (actor.GetRaceSexId() != "1601")
+				editor.SetCustomization(CustomizeIndex.HairStyle, 101);
+			else
+				editor.SetCustomization(CustomizeIndex.HairStyle, 178); // f hroth hack since missing Snow hairstyle
+		});
+		var collectionId = ipc.AssignInvisibleSkin(actor.Actor);
+		await this.RedrawAndWait(actor.Actor);
+
+		if (collectionId != null)
+			ipc.DeleteTemporaryCollection(collectionId.Value);
 	}
 
 	public async void Revert(IGameObject actor) {
