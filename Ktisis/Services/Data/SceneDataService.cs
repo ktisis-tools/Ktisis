@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
@@ -110,7 +111,7 @@ public class SceneDataService {
 		return true;
 	}
 
-	public async unsafe Task Load(String path, bool autoSaveLoading = true) {
+	public async Task Load(String path, bool autoSaveLoading = true) {
 
 		if (File.Exists(path) && Path.GetExtension(path) == ".ktscene") {   //fix this later idc
 			
@@ -121,16 +122,11 @@ public class SceneDataService {
 			var currentSceneActors = this.Scene.Children.Where(entity => entity is CharaEntity).ToList();
 
 			if (currentSceneActors.Count < scene.Actors.Count) {
-				var diff =  scene.Actors.Count - currentSceneActors.Count;
-				for (var i = 0; i < diff; i++) {
-					this._ctx.Scene.Factory.CreateActor().Spawn().ContinueWith(task => {
-						currentSceneActors.Add(task.Result);
-						this._framework.DelayTicks(2);
-					});
-
-				}
+				var toJoin = await this.PrepareExtraActors(currentSceneActors.Count - scene.Actors.Count);
+				currentSceneActors.AddRange(toJoin);
 			}
-			foreach (var loaded in scene.Actors) {
+
+			await Parallel.ForEachAsync(scene.Actors,((loaded, token) => {
 
 				var actor = (ActorEntity?)currentSceneActors
 					.First();
@@ -138,18 +134,17 @@ public class SceneDataService {
 
 
 				this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
-				var actorDraw = actor.Actor.GetDrawObject();
-				if (autoSaveLoading) {
-					actorDraw->Position = loaded.WorldRelative.Position;
+				if (!autoSaveLoading) {
+					loaded.Pose.Position = loaded.RelativePosition + this._objectTable.LocalPlayer.Position;
 				} else {
-					actorDraw->Position = loaded.RelativePosition + this._objectTable.LocalPlayer.Position;
+					loaded.Pose.Position = loaded.WorldRelative.Position;
 				}
-
-				actorDraw->Rotation = loaded.WorldRelative.Rotation;
-				actorDraw->Scale = loaded.WorldRelative.Scale;
-
+				loaded.Pose.Rotation = loaded.WorldRelative.Rotation;
 				this._ctx.Posing.ApplyPoseFile(actor.Pose, loaded.Pose);
-			}
+
+				//actor.SetTransform(loaded.WorldRelative);
+				return default;
+			}));
 
 			foreach (var loaded in scene.Lights) {
 				var light = this._ctx.Scene.Factory.CreateLight().Spawn().Result;
@@ -160,5 +155,15 @@ public class SceneDataService {
 		}
 		return;
 	}
-	
+
+	private async Task<List<ActorEntity>> PrepareExtraActors(int numToAdd) {
+		List<ActorEntity> list = new List<ActorEntity>();
+		for (var i = 0; i < numToAdd; i++) {
+			await this._ctx.Scene.Factory.CreateActor().Spawn().ContinueWith(task => {
+				list.Add(task.Result);
+			});
+		}
+		return list;
+	}
+
 }
