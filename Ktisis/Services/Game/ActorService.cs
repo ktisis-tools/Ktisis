@@ -47,24 +47,16 @@ public class ActorService {
 	}
 
 	public IEnumerable<IGameObject> GetOverworldActors() {
-		foreach (var actor in this._objectTable.CharacterManagerObjects) { // 0-199
-			if (!actor.IsEnabled()) continue;
-			yield return actor;
-		}
-		foreach (var actor in this._objectTable.ClientObjects.Where(gameObject => gameObject.ObjectIndex > GPoseIndex + GPoseCount)) { // 243-448
-			if (!actor.IsEnabled()) continue;
-			yield return actor;
-		}
-		foreach (var actor in this._objectTable.StandObjects) { // 489-628
-			if (
-				!actor.IsEnabled()
-				|| !actor.IsDrawing()
-				|| actor is not { ObjectKind: ObjectKind.Player or ObjectKind.BattleNpc or ObjectKind.EventNpc or ObjectKind.Companion or ObjectKind.MountType }
-			) continue;
+		var actors = this._objectTable.CharacterManagerObjects
+			.Concat(this._objectTable.ClientObjects.Where(gameObject => gameObject.ObjectIndex > GPoseIndex + GPoseCount))
+			.Concat(this._objectTable.StandObjects.Where(gameObject => gameObject is { ObjectKind: ObjectKind.BattleNpc or ObjectKind.EventNpc or ObjectKind.Companion or ObjectKind.MountType }));
+
+		foreach (var actor in actors) {
+			if (!actor.IsEnabled() || !actor.IsDrawing()) continue;
 			yield return actor;
 		}
 	}
-	
+
 	// Skeleton wrappers
 
 	public unsafe IGameObject? GetSkeletonOwner(Skeleton* skeleton) {
