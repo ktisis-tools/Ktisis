@@ -36,6 +36,6 @@ public interface ISceneManager : IComposite, IDisposable {
 	public ActorEntity GetFirstActor();
 	public Task ApplyLightFile(LightEntity light, LightFile file);
 	public Task<LightFile> SaveLightFile(LightEntity light);
-	public Tuple<Vector3, Quaternion, Vector3> GetSceneOrigin();
+	public Vector3 GetSceneOrigin();
 	public Vector3 GetActorRelativePosition(Vector3 Position);
 }

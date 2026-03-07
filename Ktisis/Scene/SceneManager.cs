@@ -36,7 +36,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	private readonly IObjectTable _objectTable;
 
 	private readonly SceneRoot Root;
-	private Tuple<Vector3, Quaternion, Vector3> SceneOrigin;
+	private Vector3 SceneOrigin;
 	
 	public SceneManager(
 		IEditorContext context,
@@ -64,7 +64,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 
 	public unsafe void SetSceneOrigin() {
 		var lp = this._objectTable.LocalPlayer.GetDrawObject();
-		this.SceneOrigin = Tuple.Create((Vector3)lp->Position, (Quaternion)lp->Rotation, (Vector3)lp->Scale);
+		this.SceneOrigin = lp->Position;
 	}
 	private void SetupModules() {
 		var gpose = this.AddModule<GroupPoseModule>();
@@ -137,9 +137,9 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		.OrderBy(entity => entity.Actor.ObjectIndex)
 		.First();
 
-	public Tuple<Vector3, Quaternion, Vector3> GetSceneOrigin() => this.SceneOrigin;
+	public Vector3 GetSceneOrigin() => this.SceneOrigin;
 
-	public Vector3 GetActorRelativePosition(Vector3 Position) => Position - this.SceneOrigin.Item1;
+	public Vector3 GetActorRelativePosition(Vector3 position) => position - this.SceneOrigin;
 
 	// Lights Utility (todo: should these live here longterm?)
 

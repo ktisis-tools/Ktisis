@@ -53,7 +53,7 @@ public class SceneDataService {
 
 		try {
 			var scene = new SceneFile();
-			var sceneOrigin = this._ctx.Scene.GetSceneOrigin();
+			scene.SceneOrigin = this._ctx.Scene.GetSceneOrigin();
 
 			var entities = this.Scene.Children
 				.Where(entity => entity is CharaEntity)
@@ -71,10 +71,8 @@ public class SceneDataService {
 				
 				var actor = ((ActorEntity)chara).Actor.GetDrawObject();
 
-				var worldLocation = new Transform(actor->Position, actor->Rotation, actor->Scale);
-	
-
-				var relativeLocation = this.Scene.GetActorRelativePosition(worldLocation.Position);
+				var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
+				
 				
 				var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
 				var poseFile = new EntityPoseConverter(chara.Pose).SaveFile();
@@ -82,8 +80,7 @@ public class SceneDataService {
 				scene.Actors.Add(new SceneFile.ActorInfo() {
 					Chara = charaFile,
 					Pose = poseFile,
-					WorldRelative = worldLocation,
-					RelativePosition = relativeLocation,
+					Location = location,
 					MCDF = String.Empty
 				});
 
@@ -92,16 +89,17 @@ public class SceneDataService {
 			foreach (var light in lights) {
 				var lightFile = Scene.SaveLightFile(light).Result;
 				var l = light.GetObject()->Transform;
-				var worldLocation = new Transform(l.Position, l.Rotation, l.Scale);
-				var relativeLocation = this.Scene.GetActorRelativePosition(worldLocation.Position);
+				var location = new Transform(this.Scene.GetActorRelativePosition(l.Position), l.Rotation, l.Scale);
 				var lightObj = new SceneFile.LightInfo() {
 					Light = lightFile,
-					WorldRelative = worldLocation,
-					RelativePosition = relativeLocation,
+					Location = location,
 					Name = light.Name,
 				};
 				scene.Lights.Add(lightObj);
 			}
+			
+			
+			
 			
 			var serializer = new JsonFileSerializer();
 			serializer.GetConverter<Vector3>();
@@ -121,22 +119,22 @@ public class SceneDataService {
 			var serializer = new JsonFileSerializer();
 			var scene = serializer.Deserialize<SceneFile>(file);
 
-			foreach (var e in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
-				e.Remove();
+			foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
+				var e = (ActorEntity)sceneEntity;
+				e.Delete();
+			}
+			Vector3 sceneOrigin;
+			if (!autoSaveLoading) {
+				sceneOrigin = this._objectTable.LocalPlayer.Position;
+			} else {
+				sceneOrigin = scene.SceneOrigin;
 			}
 
 
-
 			foreach (var loaded in scene.Actors) {
-
-				if (!autoSaveLoading) {
-					loaded.Pose.Position = loaded.RelativePosition + this._objectTable.LocalPlayer.Position;
-				} else {
-					loaded.Pose.Position = loaded.WorldRelative.Position;
-				}
-
+				loaded.Location.Position += sceneOrigin;
 				await this._framework.RunOnFrameworkThread(() => {
-					this._ctx.Scene.Factory.CreateActor().Spawn().ContinueWith((p) => {
+					this._ctx.Scene.Factory.CreateActor().WithAppearance(loaded.Chara).Spawn().ContinueWith((p) => {
 						SetupActor(loaded, p.Result);
 					});
 				});
@@ -147,20 +145,24 @@ public class SceneDataService {
 			foreach (var loaded in scene.Lights) {
 				var light = this._ctx.Scene.Factory.CreateLight().Spawn().Result;
 				this._ctx.Scene.ApplyLightFile(light, loaded.Light);
-				light.SetTransform(loaded.WorldRelative);
+				loaded.Location.Position += sceneOrigin;
+				light.SetTransform(loaded.Location);
 			}
 			return;
 		}
 	}
 
 	private async void SetupActor(SceneFile.ActorInfo loaded, ActorEntity actor) {
-		this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
-		loaded.Pose.Rotation = loaded.WorldRelative.Rotation;
-		await this._framework.DelayTicks(5);
-		this._ctx.Posing.ApplyPoseFile(actor.Pose, loaded.Pose);
+		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
+		await this._framework.DelayTicks(15);
 		actor.Name = loaded.Chara.Nickname;
+
+		loaded.Pose.Rotation = loaded.Location.Rotation;
+		loaded.Pose.Position = loaded.Location.Position;
+
+		await this._ctx?.Posing.ApplyPoseFile(actor.Pose!, loaded.Pose, PoseMode.All,(PoseTransforms)0xF)!;
+		
+
 	}
 	
-
-
 }
