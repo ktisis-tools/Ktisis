@@ -113,40 +113,36 @@ public class SceneDataService {
 		return true;
 	}
 
-	public async Task Load(String path, bool autoSaveLoading = true) {
+	public async Task Load(String path, bool autoSaveLoading = false) {
 
-		if (File.Exists(path) && Path.GetExtension(path) == ".ktscene") {   //fix this later idc
-			
+		if (File.Exists(path) && Path.GetExtension(path) == ".ktscene") { //fix this later idc
+
 			var file = File.ReadAllText(path);
 			var serializer = new JsonFileSerializer();
 			var scene = serializer.Deserialize<SceneFile>(file);
 
-			var currentSceneActors = this.Scene.Children.Where(entity => entity is CharaEntity).ToList();
-
-			if (currentSceneActors.Count < scene.Actors.Count) {
-				var toJoin = await this.PrepareExtraActors(scene.Actors.Count - currentSceneActors.Count);
-				currentSceneActors.AddRange(toJoin);
+			foreach (var e in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
+				e.Remove();
 			}
 
-			
-			var pairs = currentSceneActors.Zip(scene.Actors, (a, b) => new Tuple<ActorEntity, SceneFile.ActorInfo>((ActorEntity)a, b)).ToList();
-			await Parallel.ForEachAsync(pairs,((loaded, token) => {
 
-				if (!loaded.Item1.Actor.IsDrawing())
-					this._framework.DelayTicks(50);
-				
-				this._ctx.Characters.ApplyCharaFile(loaded.Item1, loaded.Item2.Chara);
+
+			foreach (var loaded in scene.Actors) {
+
 				if (!autoSaveLoading) {
-					loaded.Item2.Pose.Position = loaded.Item2.RelativePosition + this._objectTable.LocalPlayer.Position;
+					loaded.Pose.Position = loaded.RelativePosition + this._objectTable.LocalPlayer.Position;
 				} else {
-					loaded.Item2.Pose.Position = loaded.Item2.WorldRelative.Position;
+					loaded.Pose.Position = loaded.WorldRelative.Position;
 				}
-				loaded.Item2.Pose.Rotation = loaded.Item2.WorldRelative.Rotation;
-				this._ctx.Posing.ApplyPoseFile(loaded.Item1.Pose, loaded.Item2.Pose);
-				loaded.Item1.Name = loaded.Item2.Chara.Nickname;
-				//actor.SetTransform(loaded.WorldRelative);
-				return default;
-			}));
+
+				await this._framework.RunOnFrameworkThread(() => {
+					this._ctx.Scene.Factory.CreateActor().Spawn().ContinueWith((p) => {
+						SetupActor(loaded, p.Result);
+					});
+				});
+				await this._framework.DelayTicks(10);
+			}
+			
 
 			foreach (var loaded in scene.Lights) {
 				var light = this._ctx.Scene.Factory.CreateLight().Spawn().Result;
@@ -155,20 +151,16 @@ public class SceneDataService {
 			}
 			return;
 		}
-		return;
 	}
 
-	private async Task<List<ActorEntity>> PrepareExtraActors(int numToAdd) {
-		List<ActorEntity> list = new List<ActorEntity>();
-		for (var i = 0; i < numToAdd; i++) {
-			this._framework.RunOnFrameworkThread(async () => {
-				await this._ctx.Scene.Factory.CreateActor().Spawn().ContinueWith(task => {
-					list.Add(task.Result);
-				});
-			});
-
-		}
-		return list;
+	private async void SetupActor(SceneFile.ActorInfo loaded, ActorEntity actor) {
+		this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
+		loaded.Pose.Rotation = loaded.WorldRelative.Rotation;
+		await this._framework.DelayTicks(5);
+		this._ctx.Posing.ApplyPoseFile(actor.Pose, loaded.Pose);
+		actor.Name = loaded.Chara.Nickname;
 	}
+	
+
 
 }
