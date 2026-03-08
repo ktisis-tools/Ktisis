@@ -72,8 +72,6 @@ public class SceneDataService {
 				var actor = ((ActorEntity)chara).Actor.GetDrawObject();
 
 				var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
-				
-				
 				var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
 				var poseFile = new EntityPoseConverter(chara.Pose).SaveFile();
 				
@@ -97,8 +95,15 @@ public class SceneDataService {
 				};
 				scene.Lights.Add(lightObj);
 			}
-			
-			
+
+			foreach (var camera in this._ctx.Cameras.GetCameras()) {
+				var c = new SceneFile.CameraInfo();
+				c.FixedPosition = camera.GetPosition();
+				c.Flags = camera.Flags;
+				c.IsActive = (this._ctx.Cameras.Current ==  camera);
+				c.Name = camera.Name;
+				c.OrthographicZoom = camera.OrthographicZoom;
+			}
 			
 			
 			var serializer = new JsonFileSerializer();
@@ -111,7 +116,8 @@ public class SceneDataService {
 		return true;
 	}
 
-	public async Task Load(String path, bool autoSaveLoading = false) {
+	public async Task Load(String path, bool autoSaveLoading = true) {
+
 
 		if (File.Exists(path) && Path.GetExtension(path) == ".ktscene") { //fix this later idc
 
@@ -134,13 +140,21 @@ public class SceneDataService {
 			foreach (var loaded in scene.Actors) {
 				loaded.Location.Position += sceneOrigin;
 				await this._framework.RunOnFrameworkThread(() => {
-					this._ctx.Scene.Factory.CreateActor().WithAppearance(loaded.Chara).Spawn().ContinueWith((p) => {
-						SetupActor(loaded, p.Result);
+					this._ctx.Scene.Factory.CreateActor().WithAppearance(loaded.Chara).Spawn().ContinueWith(async (p) => {
+						var a = p.GetResultSafely();
+						await this._framework.DelayTicks(15);
+						a.Name = loaded.Chara.Nickname!;
+						SetupActor(loaded, a);
+						await this._ctx?.Posing.ApplyPoseFile(a.Pose!, loaded.Pose, PoseMode.All,(PoseTransforms)0xF)!;
 					});
 				});
 				await this._framework.DelayTicks(10);
 			}
-			
+
+			foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is LightEntity).ToList()) {
+				LightEntity lightEntity = (LightEntity)sceneEntity;
+				lightEntity.Delete();
+			}
 
 			foreach (var loaded in scene.Lights) {
 				var light = this._ctx.Scene.Factory.CreateLight().Spawn().Result;
@@ -148,21 +162,21 @@ public class SceneDataService {
 				loaded.Location.Position += sceneOrigin;
 				light.SetTransform(loaded.Location);
 			}
+
+			
+			//always at least one camera (I hope....)
+
+			//var primaryCamera = this._ctx.Cameras.GetCameras().First();
 			return;
 		}
 	}
 
-	private async void SetupActor(SceneFile.ActorInfo loaded, ActorEntity actor) {
+	private unsafe void SetupActor(SceneFile.ActorInfo loaded, ActorEntity actor) {
 		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
-		await this._framework.DelayTicks(15);
-		actor.Name = loaded.Chara.Nickname;
-
-		loaded.Pose.Rotation = loaded.Location.Rotation;
-		loaded.Pose.Position = loaded.Location.Position;
-
-		await this._ctx?.Posing.ApplyPoseFile(actor.Pose!, loaded.Pose, PoseMode.All,(PoseTransforms)0xF)!;
-		
-
+		var draw = actor.GetCharacter();
+		draw->Position = loaded.Location.Position;
+		draw->Rotation = loaded.Location.Rotation;
+		draw->Scale = loaded.Location.Scale;
 	}
 	
 }

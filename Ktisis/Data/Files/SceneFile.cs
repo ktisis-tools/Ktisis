@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Text.Json.Serialization;
 
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Camera.Types;
 
 namespace Ktisis.Data.Files;
 public class SceneFile : JsonFile {
@@ -19,7 +20,7 @@ public class SceneFile : JsonFile {
 	public List<ActorInfo> Actors { get; set; } = new List<ActorInfo>();
 	[JsonInclude]
 	public List<LightInfo> Lights { get; set; } = new List<LightInfo>();
-	//public List<EditorCamera> EditorCameras = new List<EditorCamera>();
+	public List<CameraInfo> Cameras = new List<CameraInfo>();
 	
 	[Serializable]
 	public struct ActorInfo {
@@ -35,5 +36,15 @@ public class SceneFile : JsonFile {
 		public Transform Location { get; set; }
 		public String Name { get; set; }
 	}
-	
+
+	[Serializable]
+	public struct CameraInfo {
+		public CameraFlags  Flags { get; set; }
+		public ushort? OrbitTarget { get; set; }
+		public Vector3? FixedPosition { get; set; }
+		public Vector3 RelativeOffset { get; set; }
+		public float OrthographicZoom { get; set; }
+		public string Name { get; set; }
+		public bool IsActive { get; set; }
+	}
 }
