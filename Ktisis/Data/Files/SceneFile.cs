@@ -20,7 +20,7 @@ public class SceneFile : JsonFile {
 	public List<ActorInfo> Actors { get; set; } = new List<ActorInfo>();
 	[JsonInclude]
 	public List<LightInfo> Lights { get; set; } = new List<LightInfo>();
-	public List<CameraInfo> Cameras = new List<CameraInfo>();
+	public List<CameraInfo> Cameras  { get; set; } = new List<CameraInfo>();
 	
 	[Serializable]
 	public struct ActorInfo {
@@ -39,7 +39,7 @@ public class SceneFile : JsonFile {
 
 	[Serializable]
 	public struct CameraInfo {
-		public CameraFlags  Flags { get; set; }
+		public uint  Flags { get; set; }
 		public ushort? OrbitTarget { get; set; }
 		public Vector3? FixedPosition { get; set; }
 		public Vector3 RelativeOffset { get; set; }
