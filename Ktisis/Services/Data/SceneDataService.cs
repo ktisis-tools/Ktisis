@@ -17,6 +17,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
@@ -65,8 +66,8 @@ public class SceneDataService {
 				.Cast<LightEntity>()
 				.ToList();
 			
-			//var cameras = this._ctx.Cameras.GetCameras().ToList();
-			
+
+			//TODO: Add MCDF logic
 			foreach (var chara in entities) {
 				
 				var actor = ((ActorEntity)chara).Actor.GetDrawObject();
@@ -95,14 +96,16 @@ public class SceneDataService {
 				};
 				scene.Lights.Add(lightObj);
 			}
-
+			
+			//TODO: Setup actor orbit
 			foreach (var camera in this._ctx.Cameras.GetCameras()) {
 				var c = new SceneFile.CameraInfo();
 				c.FixedPosition = camera.GetPosition();
-				c.Flags = camera.Flags;
+				c.Flags = (uint)camera.Flags;
 				c.IsActive = (this._ctx.Cameras.Current ==  camera);
 				c.Name = camera.Name;
 				c.OrthographicZoom = camera.OrthographicZoom;
+				scene.Cameras.Add(c);
 			}
 			
 			
@@ -124,7 +127,8 @@ public class SceneDataService {
 			var file = File.ReadAllText(path);
 			var serializer = new JsonFileSerializer();
 			var scene = serializer.Deserialize<SceneFile>(file);
-
+			
+			//TODO: Fix localplayer entity not being deleted?
 			foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 				var e = (ActorEntity)sceneEntity;
 				e.Delete();
@@ -166,8 +170,13 @@ public class SceneDataService {
 			
 			//always at least one camera (I hope....)
 
-			//var primaryCamera = this._ctx.Cameras.GetCameras().First();
-			return;
+			var primaryCamera = this._ctx.Cameras.Current;
+			primaryCamera.ResetState();
+			var primaryInfo = scene.Cameras.Find(c => c.IsActive);
+			primaryCamera.FixedPosition = primaryInfo.FixedPosition;
+			primaryCamera.OrthographicZoom = primaryInfo.OrthographicZoom;
+			primaryCamera.Flags = (CameraFlags)primaryInfo.Flags;
+			
 		}
 	}
 
