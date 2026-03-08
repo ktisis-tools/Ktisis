@@ -100,6 +100,8 @@ public class SceneDataService {
 			//TODO: Setup actor orbit
 			foreach (var camera in this._ctx.Cameras.GetCameras()) {
 				var c = new SceneFile.CameraInfo();
+				var orbitTarget = camera.OrbitTarget ?? camera.GameCamera->GetCameraTargetObject()->ObjectIndex;
+				
 				c.FixedPosition = camera.GetPosition();
 				c.Flags = (uint)camera.Flags;
 				c.IsActive = (this._ctx.Cameras.Current ==  camera);
@@ -128,11 +130,14 @@ public class SceneDataService {
 			var serializer = new JsonFileSerializer();
 			var scene = serializer.Deserialize<SceneFile>(file);
 			
+	
 			//TODO: Fix localplayer entity not being deleted?
 			foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 				var e = (ActorEntity)sceneEntity;
 				e.Delete();
+				this.Scene.Remove(e);
 			}
+			
 			Vector3 sceneOrigin;
 			if (!autoSaveLoading) {
 				sceneOrigin = this._objectTable.LocalPlayer.Position;
@@ -149,6 +154,7 @@ public class SceneDataService {
 						await this._framework.DelayTicks(15);
 						a.Name = loaded.Chara.Nickname!;
 						SetupActor(loaded, a);
+						await this._framework.DelayTicks(15);
 						await this._ctx?.Posing.ApplyPoseFile(a.Pose!, loaded.Pose, PoseMode.All,(PoseTransforms)0xF)!;
 					});
 				});
@@ -178,6 +184,10 @@ public class SceneDataService {
 			primaryCamera.Flags = (CameraFlags)primaryInfo.Flags;
 			
 		}
+		
+		this.Scene.Update();
+		this.Scene.Refresh();
+		//surely one of these does what I want
 	}
 
 	private unsafe void SetupActor(SceneFile.ActorInfo loaded, ActorEntity actor) {
@@ -187,5 +197,6 @@ public class SceneDataService {
 		draw->Rotation = loaded.Location.Rotation;
 		draw->Scale = loaded.Location.Scale;
 	}
-	
+
+
 }
