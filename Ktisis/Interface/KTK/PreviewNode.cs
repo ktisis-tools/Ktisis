@@ -43,11 +43,13 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly ImageNode Image;
 	private readonly NineGridNode Border;
 	private readonly NodeBase Buttons;
+	private readonly ResNode Container;
 	private List<ButtonBase> buttonList = new List<ButtonBase>();
 	
 	private uint _counter;
 	private ActorEntity _actor;
-	private bool _doUpdate;
+	private float _pitch = 0;
+	private float _yaw = 0;
 
 	private readonly RenderTargetManager* _renderTargetManager;
 	private readonly AgentInspect* _agentInspect;
@@ -57,7 +59,7 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly IObjectTable _objectTable;
 	private readonly IEditorContext _ctx;
 	private readonly JsonFileSerializer _serializer;
-
+	
 
 	public PreviewNode(
 		IEditorContext context,
@@ -74,7 +76,6 @@ public unsafe class PreviewNode : OverlayNode {
 		this._fileWindow = null;
 		this._ctx = context;
 		this._serializer = new JsonFileSerializer();
-		this._doUpdate = false;
 		
 		
 		this._renderTargetManager = RenderTargetManager.Instance();
@@ -86,18 +87,20 @@ public unsafe class PreviewNode : OverlayNode {
 				this._agentInspect->Hide();
 			});
 		}
+		this.Container = new ResNode();
+
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
 			Position = new Vector2(4, 3),
 			ImageNodeFlags = (ImageNodeFlags)0x8C,
-			WrapMode = WrapMode.Tile
+			WrapMode = WrapMode.Tile,
 		};
 		this.Border = new NineGridNode() {
 			Size = new Vector2(200.0f, 328.0f),
 			TopOffset = 14.0f,
 			LeftOffset = 14.0f,
 			RightOffset = 14.0f,
-			BottomOffset = 14.0f
+			BottomOffset = 14.0f,
 		};
 		this.Border.AddPart(new Part {
 			TexturePath = "ui/uld/PreviewA_hr1.tex",
@@ -120,10 +123,12 @@ public unsafe class PreviewNode : OverlayNode {
 		_actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
-		this.Buttons.AttachNode(this);
-		this.Image.AttachNode(this);
-		this.Border.AttachNode(this);
 
+
+		this.Image.AttachNode(this.Container);
+		this.Border.AttachNode(this);
+		this.Buttons.AttachNode(this);
+		this.Container.AttachNode(this);
 	}
 
 	/// <summary>
@@ -147,7 +152,18 @@ public unsafe class PreviewNode : OverlayNode {
 	}
 
 	public void MoveCamera(float pitch, float yaw) {
+		this._pitch += pitch;
+		this._yaw += yaw;
 		this._agentInspect->CharaView.SetCameraYawAndPitch(yaw, pitch);
+	}
+
+	/// <summary>
+	/// Resets the camera position
+	/// </summary>
+	public void ResetCamera() {
+		this._agentInspect->CharaView.SetCameraYawAndPitch(this._yaw * -1 , this._pitch * -1);
+		this._pitch = 0;
+		this._yaw = 0;
 	}
 
 	/// <summary>
@@ -176,7 +192,8 @@ public unsafe class PreviewNode : OverlayNode {
 			
 		ButtonBase button = new CircleButtonNode() {
 			Icon = ButtonIcon.ArrowDown,
-			Position = new Vector2(80f, 40f)
+			Position = new Vector2(80f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
 		};
 		this.buttonList.Add(button);
 		foreach (var b in this.buttonList) {
