@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 
 using KamiToolKit;
 using KamiToolKit.Classes;
@@ -21,6 +27,7 @@ using KamiToolKit.Extensions;
 
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
+using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik;
@@ -57,6 +64,9 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly IEditorContext _ctx;
 	private readonly JsonFileSerializer _serializer;
 
+	private CharaView* _view;
+	private Character* _chara;
+	private Texture* _texture;
 
 	public PreviewNode(
 		IEditorContext context,
@@ -71,17 +81,20 @@ public unsafe class PreviewNode : OverlayNode {
 		this._ctx = context;
 		this._serializer = new JsonFileSerializer();
 		this._doUpdate = false;
+		
+		
+		this._renderTargetManager = RenderTargetManager.Instance(); //idk why this was below the eval before?
+		this._view = IMemorySpace.GetDefaultSpace()->Create<CharaView>();
+		var instance = ClientObjectManager.Instance();
 
-		var needsInit = false;
-		this._renderTargetManager = RenderTargetManager.Instance();
-		this._agentTryon = AgentTryon.Instance(); //idk why this was below the eval before?
-
-		if (this._agentTryon->CharaView.Agent == null) {
-			this._framework.RunOnFrameworkThread(() => {
-				this._agentTryon->Update(1);
-				this._agentTryon->Hide();
-			});
-		}
+		/*var index = instance->CalculateNextAvailableIndex();
+		instance->CreateBattleCharacter(index);
+		this._chara = (Character*) instance->GetObjectByIndex((ushort)index);
+		this._chara->CharacterSetup.CopyFromCharacter(target.Character, CharacterSetupContainer.CopyFlags.None);*/
+		
+		
+		
+		
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
 			Position = new Vector2(4, 3),
@@ -102,17 +115,15 @@ public unsafe class PreviewNode : OverlayNode {
 			Id = 0
 		});
 		var part = this.Image.AddPart(new Part());
-		part->LoadTexture(this._renderTargetManager->CharaViewTextures[2]);
-		this._renderTargetManager->CharaViewTextures[2].Value->IncRef();
+		this._texture = this._renderTargetManager->GetCharaViewTexture(2);
+		part->LoadTexture(this._texture);
+		this._texture->IncRef();
 
+		this._actor = target;									//Hold this until the callback returns to setup the new actor
+		
 		this._framework.RunOnFrameworkThread(() => {
-			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
-		});
-		this._framework.DelayTicks(1);
-		this._framework.RunOnFrameworkThread(() => {
-			var modelData = this._agentTryon->CharaView.ModelData;
-			modelData.CopyFromCharacter((Character*)target.Actor.Address);
-			this._agentTryon->CharaView.SetModelData(&modelData);
+			this._view->Initialize(null, 2, 0);
+			this._view->ModelData.CopyFromCharacter(this._actor.Character);
 		});
 		Buttons = this.SetupButtons();
 
@@ -121,40 +132,35 @@ public unsafe class PreviewNode : OverlayNode {
 		// 	modelData.CopyFromCharacter(actor.Character);
 		// 	this._agentTryon->CharaView.SetModelData(&modelData);
 		// }
-
 		_actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[442]);
 		this._actor.Setup();
-		this._framework.Update += this.OnFramework;
 		this.Buttons.AttachNode(this);
 		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
-
+		this._framework.Update += this.OnFramework;
 	}
-
+	
 	/// <summary>
 	/// Framework update for our preview window, required to work 
 	/// </summary>
 	private void OnFramework(IFramework framework) {
-		this._agentTryon->CharaView.Render(this._counter++);
-
+		this._view->Render(this._counter++);
+		
 
 		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
 		if (!this._ctx.Plugin.Gui.FileDialogs.IsDialogOpen()) {
-			
-			this.Dispose();
+			this.Cleanup();
 			return; //lets try to not overflow the games renderer
 		}
-
 		this.IsVisible = true;
 		this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
-
-
 	}
-
+	
 	public void MoveCamera(float pitch, float yaw) {
 		this._agentTryon->CharaView.SetCameraYawAndPitch(yaw, pitch);
 	}
-
+	
+	
 	/// <summary>
 	/// Poses the actor in the preview window
 	/// </summary>
@@ -165,21 +171,33 @@ public unsafe class PreviewNode : OverlayNode {
 		var file = this._serializer.Deserialize<PoseFile>(content);
 		this._ctx.Posing.ApplyPoseFile(_actor.Pose, file, transforms: PoseTransforms.Rotation);
 	}
-
+	
 	/// <summary>
 	/// Updates actor, should be called when a new target is selected for import
 	/// </summary>
 	/// <param name="actor">The actor you wish to show</param>
 	/// <param name="context">Editor context</param>
-	public void UpdateActorData(ActorEntity actor) {
+	public async void UpdateActorData(ActorEntity actor) {
+		//
+
+		this._framework.RunOnFrameworkThread(() => {
+			this._agentTryon->CharaView.Release();
+			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
 			var modelData = this._agentTryon->CharaView.ModelData;
 			modelData.CopyFromCharacter((Character*)actor.Actor.Address);
 			this._agentTryon->CharaView.SetModelData(&modelData);
 			this._agentTryon->CharaView.DoUpdate = true;
+		});
+		
 	}
 
 	public void Cleanup() {
-		this._agentTryon->CharaView.Release();
+		this._framework.Update -= this.OnFramework;
+		this._view->Release();
+		this._view->Dtor(freeFlags: 0);
+		this._chara->Terminate();
+		this._chara->Dtor(freeFlags: 0);
+		this._texture->DecRef();
 		this.Dispose();
 	}
 	
@@ -200,4 +218,5 @@ public unsafe class PreviewNode : OverlayNode {
 		}
 		return node;
 	}
+	
 }

@@ -104,6 +104,7 @@ public class OverlayService : IDisposable {
 	}
 
 	public void Dispose() {
+		this._preview?.Cleanup();
 		this.Disable();
 	}
 }
