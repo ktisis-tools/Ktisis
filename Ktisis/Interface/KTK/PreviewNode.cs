@@ -9,6 +9,7 @@ using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
@@ -49,7 +50,7 @@ public unsafe class PreviewNode : OverlayNode {
 	private bool _doUpdate;
 
 	private readonly RenderTargetManager* _renderTargetManager;
-	private readonly AgentTryon* _agentTryon;
+	private readonly AgentInspect* _agentInspect;
 	private ImGuiWindowPtr _fileWindow;
 
 	private readonly IFramework _framework;
@@ -64,6 +65,9 @@ public unsafe class PreviewNode : OverlayNode {
 		IObjectTable objectTable,
 		ActorEntity target
 	) {
+		if (target.GetHuman() == null)
+			return;
+		
 		this._framework = framework;
 		this._objectTable = objectTable;
 		this._counter = 1;
@@ -71,15 +75,15 @@ public unsafe class PreviewNode : OverlayNode {
 		this._ctx = context;
 		this._serializer = new JsonFileSerializer();
 		this._doUpdate = false;
-
-		var needsInit = false;
+		
+		
 		this._renderTargetManager = RenderTargetManager.Instance();
-		this._agentTryon = AgentTryon.Instance(); //idk why this was below the eval before?
+		this._agentInspect = AgentInspect.Instance(); //idk why this was below the eval before?
 
-		if (this._agentTryon->CharaView.Agent == null) {
+		if (this._agentInspect->CharaView.Agent == null) {
 			this._framework.RunOnFrameworkThread(() => {
-				this._agentTryon->Update(1);
-				this._agentTryon->Hide();
+				this._agentInspect->Update(1);
+				this._agentInspect->Hide();
 			});
 		}
 		this.Image = new ImageNode() {
@@ -101,28 +105,19 @@ public unsafe class PreviewNode : OverlayNode {
 			TextureCoordinates = new Vector2(0, 0f),
 			Id = 0
 		});
+		
 		var part = this.Image.AddPart(new Part());
-		part->LoadTexture(this._renderTargetManager->CharaViewTextures[2]);
-		this._renderTargetManager->CharaViewTextures[2].Value->IncRef();
+		part->LoadTexture(this._renderTargetManager->CharaViewTextures[1]);
+		this._renderTargetManager->CharaViewTextures[1].Value->IncRef();
 
 		this._framework.RunOnFrameworkThread(() => {
-			this._agentTryon->CharaView.Initialize(&this._agentTryon->AgentInterface, 2, 0);
+			this._agentInspect->CharaView.Initialize(&this._agentInspect->AgentInterface, 1, 0);
+			this._agentInspect->CharaView.ModelData.CopyFromCharacter((Character*)target.Actor.Address);
 		});
-		this._framework.DelayTicks(1);
-		this._framework.RunOnFrameworkThread(() => {
-			var modelData = this._agentTryon->CharaView.ModelData;
-			modelData.CopyFromCharacter((Character*)target.Actor.Address);
-			this._agentTryon->CharaView.SetModelData(&modelData);
-		});
+
 		Buttons = this.SetupButtons();
 
-		// if (this._ctx.Selection.GetFirstSelected() is ActorEntity actor) {
-		// 	var modelData = this._agentTryon->CharaView.ModelData;
-		// 	modelData.CopyFromCharacter(actor.Character);
-		// 	this._agentTryon->CharaView.SetModelData(&modelData);
-		// }
-
-		_actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[442]);
+		_actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
 		this.Buttons.AttachNode(this);
@@ -135,7 +130,7 @@ public unsafe class PreviewNode : OverlayNode {
 	/// Framework update for our preview window, required to work 
 	/// </summary>
 	private void OnFramework(IFramework framework) {
-		this._agentTryon->CharaView.Render(this._counter++);
+		this._agentInspect->CharaView.Render(this._counter++);
 
 
 		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
@@ -152,7 +147,7 @@ public unsafe class PreviewNode : OverlayNode {
 	}
 
 	public void MoveCamera(float pitch, float yaw) {
-		this._agentTryon->CharaView.SetCameraYawAndPitch(yaw, pitch);
+		this._agentInspect->CharaView.SetCameraYawAndPitch(yaw, pitch);
 	}
 
 	/// <summary>
@@ -166,20 +161,9 @@ public unsafe class PreviewNode : OverlayNode {
 		this._ctx.Posing.ApplyPoseFile(_actor.Pose, file, transforms: PoseTransforms.Rotation);
 	}
 
-	/// <summary>
-	/// Updates actor, should be called when a new target is selected for import
-	/// </summary>
-	/// <param name="actor">The actor you wish to show</param>
-	/// <param name="context">Editor context</param>
-	public void UpdateActorData(ActorEntity actor) {
-			var modelData = this._agentTryon->CharaView.ModelData;
-			modelData.CopyFromCharacter((Character*)actor.Actor.Address);
-			this._agentTryon->CharaView.SetModelData(&modelData);
-			this._agentTryon->CharaView.DoUpdate = true;
-	}
 
 	public void Cleanup() {
-		this._agentTryon->CharaView.Release();
+		this._agentInspect->CharaView.Release();
 		this.Dispose();
 	}
 	
