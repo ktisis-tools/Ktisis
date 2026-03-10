@@ -43,7 +43,6 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly ImageNode Image;
 	private readonly NineGridNode Border;
 	private readonly NodeBase Buttons;
-	private readonly ResNode Container;
 	private List<ButtonBase> buttonList = new List<ButtonBase>();
 	
 	private uint _counter;
@@ -87,7 +86,7 @@ public unsafe class PreviewNode : OverlayNode {
 				this._agentInspect->Hide();
 			});
 		}
-		this.Container = new ResNode();
+
 
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
@@ -125,10 +124,9 @@ public unsafe class PreviewNode : OverlayNode {
 		this._framework.Update += this.OnFramework;
 
 
-		this.Image.AttachNode(this.Container);
+		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
 		this.Buttons.AttachNode(this);
-		this.Container.AttachNode(this);
 	}
 
 	/// <summary>
@@ -155,6 +153,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._pitch += pitch;
 		this._yaw += yaw;
 		this._agentInspect->CharaView.SetCameraYawAndPitch(yaw, pitch);
+		//this._agentInspect->CharaView.Camera->Rotation
 	}
 
 	/// <summary>
@@ -186,16 +185,62 @@ public unsafe class PreviewNode : OverlayNode {
 	public NodeBase SetupButtons() {
 
 		NodeBase node = new ResNode() {
-			Size =  new Vector2(160.0f, 40.0f),
-			Position = new Vector2(16f, 280f)
+			Size =  new Vector2(168.0f, 32.0f),
+			Position = new Vector2(8f, 286f),
+			Priority = 1
 		};
-			
-		ButtonBase button = new CircleButtonNode() {
+		
+		/*	ButtonBase buttonDown = new CircleButtonNode() {
 			Icon = ButtonIcon.ArrowDown,
-			Position = new Vector2(80f, 0f),
+			Position = new Vector2(0f , 0f),
 			Size = new Vector2(32.0f, 32.0f),
 		};
-		this.buttonList.Add(button);
+		buttonDown.OnClick = () => {
+			this.MoveCamera(-25, 0);
+		};
+		this.buttonList.Add(buttonDown);
+		
+		ButtonBase buttonUp = new CircleButtonNode() {
+			Icon = ButtonIcon.UpArrow,
+			Position = new Vector2(32f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
+		};
+		buttonUp.OnClick = () => {
+			this.MoveCamera(25, 0);
+		};
+		this.buttonList.Add(buttonUp);*/
+		
+		ButtonBase buttonLeft = new CircleButtonNode() {
+			Icon = ButtonIcon.RightArrow,
+			Position = new Vector2(64f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
+			Scale = new Vector2(-1f, 1f),
+		};
+		buttonLeft.OnClick = () => {
+			this.MoveCamera(0, -25f);
+		};
+		this.buttonList.Add(buttonLeft);
+		
+		ButtonBase buttonRight = new CircleButtonNode() {
+			Icon = ButtonIcon.RightArrow,
+			Position = new Vector2(64f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
+		};
+		buttonRight.OnClick = () => {
+			this.MoveCamera(0, 25f);
+		};
+		this.buttonList.Add(buttonRight);
+
+		ButtonBase buttonReset = new CircleButtonNode() {
+			Icon = ButtonIcon.Undo,
+			Position = new Vector2(148f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
+		};
+		buttonReset.OnClick = () => {
+			this.ResetCamera();
+		};
+		this.buttonList.Add(buttonReset);
+		
 		foreach (var b in this.buttonList) {
 			b.AttachNode(node);
 		}
