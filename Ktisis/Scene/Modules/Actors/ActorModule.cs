@@ -109,8 +109,8 @@ public class ActorModule : SceneModule {
 	
 	// Deletion
 	
-	public unsafe void Delete(ActorEntity actor) {
-		if (this._gpose.IsPrimaryActor(actor)) {
+	public unsafe void Delete(ActorEntity actor, bool force = false) {
+		if (this._gpose.IsPrimaryActor(actor) && !force) {
 			Ktisis.Log.Warning("Refusing to delete primary actor.");
 			return;
 		}

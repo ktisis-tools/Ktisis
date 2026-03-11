@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
+using Ktisis.Scene.Modules;
+using Ktisis.Structs.Env;
+using Ktisis.Structs.Env.Weather;
 
 namespace Ktisis.Data.Files;
 public class SceneFile : JsonFile {
@@ -21,6 +24,7 @@ public class SceneFile : JsonFile {
 	[JsonInclude]
 	public List<LightInfo> Lights { get; set; } = new List<LightInfo>();
 	public List<CameraInfo> Cameras  { get; set; } = new List<CameraInfo>();
+	//public EnviromentInfo Enviroment { get; set; } = new EnviromentInfo();
 	
 	[Serializable]
 	public struct ActorInfo {
@@ -47,4 +51,9 @@ public class SceneFile : JsonFile {
 		public string Name { get; set; }
 		public bool IsActive { get; set; }
 	}
+	/*[Serializable]
+	public struct EnviromentInfo {
+		public EnvOverride Override { get; set; }
+		public EnvState? State { get; set; }
+	}*/
 }
