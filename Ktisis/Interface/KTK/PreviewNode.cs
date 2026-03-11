@@ -79,7 +79,12 @@ public unsafe class PreviewNode : OverlayNode {
 		
 		this._renderTargetManager = RenderTargetManager.Instance();
 		this._agentInspect = AgentInspect.Instance(); //idk why this was below the eval before?
-
+		if (AgentInspect.Instance()->CharaView.Agent == null) {
+			this._framework.RunOnFrameworkThread(() => {
+				AgentInspect.Instance()->Update(1);
+				AgentInspect.Instance()->Hide();
+			});
+		}
 
 
 
@@ -175,7 +180,6 @@ public unsafe class PreviewNode : OverlayNode {
 	public void Cleanup() {
 		this._framework.Update -= this.OnFramework;
 		this._agentInspect->CharaView.Release();
-		this._renderTargetManager->CharaViewTextures[1].Value->DecRef();
 		this.Dispose();
 	}
 	
