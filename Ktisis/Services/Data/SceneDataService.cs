@@ -25,7 +25,10 @@ using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Modules;
+using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
+using Ktisis.Structs.Env;
 
 
 namespace Ktisis.Services.Data;
@@ -110,6 +113,13 @@ public class SceneDataService {
 				scene.Cameras.Add(c);
 			}
 			
+			/*if (this._ctx.Scene.GetModule<EnvModule>().Override != 0x000) {
+				var env = new SceneFile.EnviromentInfo();
+				env.Override = this._ctx.Scene.GetModule<EnvModule>().Override;
+				env.State = EnvManagerEx.Instance()->EnvState;
+				scene.Enviroment = env;
+			}*/
+
 			
 			var serializer = new JsonFileSerializer();
 			serializer.GetConverter<Vector3>();
@@ -134,7 +144,7 @@ public class SceneDataService {
 			//TODO: Fix localplayer entity not being deleted?
 			foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 				var e = (ActorEntity)sceneEntity;
-				e.Delete();
+				this.Scene.GetModule<ActorModule>().Delete(e, true);
 				this.Scene.Remove(e);
 			}
 			
@@ -144,18 +154,20 @@ public class SceneDataService {
 			} else {
 				sceneOrigin = scene.SceneOrigin;
 			}
-
+			
+			
 
 			foreach (var loaded in scene.Actors) {
 				loaded.Location.Position += sceneOrigin;
 				await this._framework.RunOnFrameworkThread(() => {
+					var temp = loaded;
 					this._ctx.Scene.Factory.CreateActor().WithAppearance(loaded.Chara).Spawn().ContinueWith(async (p) => {
 						var a = p.GetResultSafely();
 						await this._framework.DelayTicks(15);
-						a.Name = loaded.Chara.Nickname!;
-						SetupActor(loaded, a);
+						a.Name = temp.Chara.Nickname!;
+						SetupActor(temp, a);
 						await this._framework.DelayTicks(15);
-						await this._ctx?.Posing.ApplyPoseFile(a.Pose!, loaded.Pose, PoseMode.All,(PoseTransforms)0xF)!;
+						await this._ctx?.Posing.ApplyPoseFile(a.Pose!, temp.Pose, PoseMode.All,(PoseTransforms)0xF)!;
 					});
 				});
 				await this._framework.DelayTicks(10);
@@ -184,12 +196,14 @@ public class SceneDataService {
 			primaryCamera.Flags = (CameraFlags)primaryInfo.Flags;
 			
 		}
-		
+
+
 		this.Scene.Update();
 		this.Scene.Refresh();
 		//surely one of these does what I want
 	}
 
+	
 	private unsafe void SetupActor(SceneFile.ActorInfo loaded, ActorEntity actor) {
 		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
 		var draw = actor.GetCharacter();
