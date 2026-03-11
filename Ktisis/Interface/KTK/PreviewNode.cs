@@ -78,12 +78,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._renderTargetManager = RenderTargetManager.Instance();
 		this._agentInspect = AgentInspect.Instance(); // idk why this was below the eval before?
 
-		if (this._agentInspect->CharaView.Agent == null) {
-			this._framework.RunOnFrameworkThread(() => {
-				this._agentInspect->Update(1);
-				this._agentInspect->Hide();
-			});
-		}
+
 
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),

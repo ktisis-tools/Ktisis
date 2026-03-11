@@ -3,7 +3,7 @@ using System.Numerics;
 
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit;
 using KamiToolKit.Overlay;
 
@@ -31,7 +31,7 @@ public class OverlayService : IDisposable {
 		this._objectTable =  objectTable;
 	}
 
-	public void Initialize(IEditorContext context) {
+	public unsafe void Initialize(IEditorContext context) {
 		if (this._init) return;
 		KamiToolKitLibrary.Initialize(this._dpi);
 		this._controller = new OverlayController();
@@ -40,6 +40,12 @@ public class OverlayService : IDisposable {
 
 		if (context.Config.Editor.ShowHints && !this._showedHint)
 			this.ShowHint(context);
+		if (AgentInspect.Instance()->CharaView.Agent == null) {
+			this._framework.RunOnFrameworkThread(() => {
+				AgentInspect.Instance()->Update(1);
+				AgentInspect.Instance()->Hide();
+			});
+		}
 	}
 
 	public bool AddNode(OverlayNode node) {
