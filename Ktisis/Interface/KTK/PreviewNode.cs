@@ -224,7 +224,6 @@ public unsafe class PreviewNode : OverlayNode {
 	public void Cleanup() {
 		this._framework.Update -= this.OnFramework;
 		this._agentInspect->CharaView.Release();
-		this._renderTargetManager->CharaViewTextures[1].Value->DecRef();
 		this.Dispose();
 	}
 }

@@ -40,12 +40,6 @@ public class OverlayService : IDisposable {
 
 		if (context.Config.Editor.ShowHints && !this._showedHint)
 			this.ShowHint(context);
-		if (AgentInspect.Instance()->CharaView.Agent == null) {
-			this._framework.RunOnFrameworkThread(() => {
-				AgentInspect.Instance()->Update(1);
-				AgentInspect.Instance()->Hide();
-			});
-		}
 	}
 
 	public bool AddNode(OverlayNode node) {
