@@ -65,13 +65,8 @@ public class OverlayService : IDisposable {
 		this._showedHint = true;
 	}
 
-	//public void SetCharaViewData(ActorEntity actor, IEditorContext ctx) => this._preview?.UpdateActorData(actor);
 	public void ToggleCharaViewTexture(IEditorContext context, ActorEntity actor) {
-		if (this._preview != null) {
-			this._controller?.RemoveNode(this._preview);
-			this._preview.Cleanup();
-			this._preview = null;
-		}
+		this.DisablePreview();
 		this._preview = new PreviewNode(context, this._framework, this._objectTable, actor) {
 			Position = new Vector2(500.0f, 500.0f)
 		};
@@ -94,18 +89,20 @@ public class OverlayService : IDisposable {
 	public void Disable() {
 		if (!this._init) return;
 
-		if (this._preview != null) {
-			this._controller?.RemoveNode(this._preview);
-			this._preview.Cleanup();
-			this._preview = null;
-		}
+		this.DisablePreview();
 		this._controller?.Dispose();
 		KamiToolKitLibrary.Dispose();
 		this._init = false;
 	}
 
+	private void DisablePreview() {
+		if (this._preview == null) return;
+		this._controller?.RemoveNode(this._preview);
+		this._preview.Cleanup();
+		this._preview = null;
+	}
+
 	public void Dispose() {
-		this._preview?.Cleanup();
 		this.Disable();
 	}
 }
