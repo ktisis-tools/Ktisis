@@ -139,7 +139,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
 		if (!this._ctx.Plugin.Gui.FileDialogs.IsDialogOpen()) {
 			
-			this.Dispose();
+			this.Cleanup();
 			return; //lets try to not overflow the games renderer
 		}
 
@@ -178,7 +178,9 @@ public unsafe class PreviewNode : OverlayNode {
 
 
 	public void Cleanup() {
+		this._framework.Update -= this.OnFramework;
 		this._agentInspect->CharaView.Release();
+		this._renderTargetManager->CharaViewTextures[1].Value->DecRef();
 		this.Dispose();
 	}
 	

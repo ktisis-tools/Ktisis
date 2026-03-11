@@ -68,6 +68,7 @@ public class OverlayService : IDisposable {
 	//public void SetCharaViewData(ActorEntity actor, IEditorContext ctx) => this._preview?.UpdateActorData(actor);
 	public void ToggleCharaViewTexture(IEditorContext context, ActorEntity actor) {
 		if (this._preview != null) {
+			this._controller?.RemoveNode(this._preview);
 			this._preview.Cleanup();
 			this._preview = null;
 		}
@@ -95,7 +96,7 @@ public class OverlayService : IDisposable {
 
 		if (this._preview != null) {
 			this._controller?.RemoveNode(this._preview);
-			this._preview.Dispose();
+			this._preview.Cleanup();
 			this._preview = null;
 		}
 		this._controller?.Dispose();
