@@ -78,8 +78,6 @@ public unsafe class PreviewNode : OverlayNode {
 		this._renderTargetManager = RenderTargetManager.Instance();
 		this._agentInspect = AgentInspect.Instance(); // idk why this was below the eval before?
 
-
-
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
 			Position = new Vector2(4, 3),
