@@ -43,8 +43,7 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly ImageNode Image;
 	private readonly NineGridNode Border;
 	private readonly NodeBase Buttons;
-	private List<ButtonBase> buttonList = new List<ButtonBase>();
-	
+
 	private uint _counter;
 	private ActorEntity _actor;
 	private float _pitch = 0;
@@ -58,7 +57,7 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly IObjectTable _objectTable;
 	private readonly IEditorContext _ctx;
 	private readonly JsonFileSerializer _serializer;
-	
+
 
 	public PreviewNode(
 		IEditorContext context,
@@ -68,25 +67,16 @@ public unsafe class PreviewNode : OverlayNode {
 	) {
 		if (target.GetHuman() == null)
 			return;
-		
+
 		this._framework = framework;
 		this._objectTable = objectTable;
 		this._counter = 1;
 		this._fileWindow = null;
 		this._ctx = context;
 		this._serializer = new JsonFileSerializer();
-		
-		
+
 		this._renderTargetManager = RenderTargetManager.Instance();
-		this._agentInspect = AgentInspect.Instance(); //idk why this was below the eval before?
-		if (AgentInspect.Instance()->CharaView.Agent == null) {
-			this._framework.RunOnFrameworkThread(() => {
-				AgentInspect.Instance()->Update(1);
-				AgentInspect.Instance()->Hide();
-			});
-		}
-
-
+		this._agentInspect = AgentInspect.Instance(); // idk why this was below the eval before?
 
 		this.Image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
@@ -107,7 +97,7 @@ public unsafe class PreviewNode : OverlayNode {
 			TextureCoordinates = new Vector2(0, 0f),
 			Id = 0
 		});
-		
+
 		var part = this.Image.AddPart(new Part());
 		part->LoadTexture(this._renderTargetManager->CharaViewTextures[1]);
 		this._renderTargetManager->CharaViewTextures[1].Value->IncRef();
@@ -117,12 +107,11 @@ public unsafe class PreviewNode : OverlayNode {
 			this._agentInspect->CharaView.ModelData.CopyFromCharacter((Character*)target.Actor.Address);
 		});
 
-		Buttons = this.SetupButtons();
+		this.Buttons = this.SetupButtons();
 
-		_actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
+		this._actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
-
 
 		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
@@ -135,32 +124,88 @@ public unsafe class PreviewNode : OverlayNode {
 	private void OnFramework(IFramework framework) {
 		this._agentInspect->CharaView.Render(this._counter++);
 
-
 		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
 		if (!this._ctx.Plugin.Gui.FileDialogs.IsDialogOpen()) {
-			
 			this.Cleanup();
-			return; //lets try to not overflow the games renderer
+			return; // lets try to not overflow the games renderer
 		}
 
 		this.IsVisible = true;
 		this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
-
-
 	}
 
-	public void MoveCamera(float pitch, float yaw) {
+	private NodeBase SetupButtons() {
+		NodeBase buttonsNode = new ResNode() {
+			Size = new Vector2(168.0f, 32.0f),
+			Position = new Vector2(8f, 286f),
+			Priority = 1
+		};
+
+		/*	ButtonBase buttonDown = new CircleButtonNode() {
+			Icon = ButtonIcon.ArrowDown,
+			Position = new Vector2(0f , 0f),
+			Size = new Vector2(32.0f, 32.0f),
+		};
+		buttonDown.OnClick = () => {
+			this.MoveCamera(-25, 0);
+		};
+		this.buttonList.Add(buttonDown);
+
+		ButtonBase buttonUp = new CircleButtonNode() {
+			Icon = ButtonIcon.UpArrow,
+			Position = new Vector2(32f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
+		};
+		buttonUp.OnClick = () => {
+			this.MoveCamera(25, 0);
+		};
+		this.buttonList.Add(buttonUp);*/
+
+		ButtonBase buttonLeft = new CircleButtonNode() {
+			Icon = ButtonIcon.RightArrow,
+			Position = new Vector2(64f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
+			Scale = new Vector2(-1f, 1f),
+		};
+		buttonLeft.OnClick = () => {
+			this.MoveCamera(0, -50f);
+		};
+
+		ButtonBase buttonRight = new CircleButtonNode() {
+			Icon = ButtonIcon.RightArrow,
+			Position = new Vector2(64f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
+		};
+		buttonRight.OnClick = () => {
+			this.MoveCamera(0, 50f);
+		};
+
+		ButtonBase buttonReset = new CircleButtonNode() {
+			Icon = ButtonIcon.Undo,
+			Position = new Vector2(148f, 0f),
+			Size = new Vector2(32.0f, 32.0f),
+		};
+		buttonReset.OnClick = () => {
+			this.ResetCamera();
+		};
+
+		buttonLeft.AttachNode(buttonsNode);
+		buttonRight.AttachNode(buttonsNode);
+		buttonReset.AttachNode(buttonsNode);
+		return buttonsNode;
+	}
+
+	private void MoveCamera(float pitch, float yaw) {
 		this._pitch += pitch;
 		this._yaw += yaw;
 		this._agentInspect->CharaView.SetCameraYawAndPitch(yaw, pitch);
-		//this._agentInspect->CharaView.Camera->Rotation
 	}
 
 	/// <summary>
 	/// Resets the camera position
 	/// </summary>
-	public void ResetCamera() {
-		this._agentInspect->CharaView.SetCameraYawAndPitch(this._yaw * -1 , this._pitch * -1);
+	private void ResetCamera() {
+		this._agentInspect->CharaView.SetCameraYawAndPitch(this._yaw * -1, this._pitch * -1);
 		this._pitch = 0;
 		this._yaw = 0;
 	}
@@ -176,75 +221,9 @@ public unsafe class PreviewNode : OverlayNode {
 		this._ctx.Posing.ApplyPoseFile(_actor.Pose, file, transforms: PoseTransforms.Rotation);
 	}
 
-
 	public void Cleanup() {
 		this._framework.Update -= this.OnFramework;
 		this._agentInspect->CharaView.Release();
 		this.Dispose();
-	}
-	
-	public NodeBase SetupButtons() {
-
-		NodeBase node = new ResNode() {
-			Size =  new Vector2(168.0f, 32.0f),
-			Position = new Vector2(8f, 286f),
-			Priority = 1
-		};
-		
-		/*	ButtonBase buttonDown = new CircleButtonNode() {
-			Icon = ButtonIcon.ArrowDown,
-			Position = new Vector2(0f , 0f),
-			Size = new Vector2(32.0f, 32.0f),
-		};
-		buttonDown.OnClick = () => {
-			this.MoveCamera(-25, 0);
-		};
-		this.buttonList.Add(buttonDown);
-		
-		ButtonBase buttonUp = new CircleButtonNode() {
-			Icon = ButtonIcon.UpArrow,
-			Position = new Vector2(32f, 0f),
-			Size = new Vector2(32.0f, 32.0f),
-		};
-		buttonUp.OnClick = () => {
-			this.MoveCamera(25, 0);
-		};
-		this.buttonList.Add(buttonUp);*/
-		
-		ButtonBase buttonLeft = new CircleButtonNode() {
-			Icon = ButtonIcon.RightArrow,
-			Position = new Vector2(64f, 0f),
-			Size = new Vector2(32.0f, 32.0f),
-			Scale = new Vector2(-1f, 1f),
-		};
-		buttonLeft.OnClick = () => {
-			this.MoveCamera(0, -25f);
-		};
-		this.buttonList.Add(buttonLeft);
-		
-		ButtonBase buttonRight = new CircleButtonNode() {
-			Icon = ButtonIcon.RightArrow,
-			Position = new Vector2(64f, 0f),
-			Size = new Vector2(32.0f, 32.0f),
-		};
-		buttonRight.OnClick = () => {
-			this.MoveCamera(0, 25f);
-		};
-		this.buttonList.Add(buttonRight);
-
-		ButtonBase buttonReset = new CircleButtonNode() {
-			Icon = ButtonIcon.Undo,
-			Position = new Vector2(148f, 0f),
-			Size = new Vector2(32.0f, 32.0f),
-		};
-		buttonReset.OnClick = () => {
-			this.ResetCamera();
-		};
-		this.buttonList.Add(buttonReset);
-		
-		foreach (var b in this.buttonList) {
-			b.AttachNode(node);
-		}
-		return node;
 	}
 }
