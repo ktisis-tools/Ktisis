@@ -49,6 +49,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 	private bool DefaultsInitialized = false;
 
+	public String? MCDF;
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
 
 	public ActorGaze? Gaze;
