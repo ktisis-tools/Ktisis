@@ -139,7 +139,10 @@ public class WorkspaceWindow : KtisisWindow {
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "DEBUG: CharaViewTexture"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "DEBUG: Load Scene file"))
 			this._ctx.Interface.OpenSceneFile((s => this._ctx.Scene.Data.Load(s)));
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Save, "DEBUG: Save Scene file"))
+			this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save()));
 	}
 }

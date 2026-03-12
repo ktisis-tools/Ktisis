@@ -107,7 +107,7 @@ public class PoseAutoSave : IDisposable {
 			File.WriteAllText(path, serializer.Serialize(file));
 		}
 
-		this._sceneData.Save(folder + "\\autosave.ktscene");
+		this._sceneData.WriteFile(folder + "\\autosave.ktscene");
 		Ktisis.Log.Verbose($"Prefix count: {this._prefixes.Count} max: {this._cfg.Count}");
 		while (this._prefixes.Count > this._cfg.Count)
 			this.DeleteOldest();

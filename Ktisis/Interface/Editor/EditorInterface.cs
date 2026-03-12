@@ -309,6 +309,11 @@ public class EditorInterface : IEditorInterface {
 	public void ExportPoseFile(PoseFile file)
 		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, ExportPoseFileOptions);
 
+	public void ExportSceneFile(SceneFile file) {
+		var options = SceneFileOptions;
+		this._gui.FileDialogs.SaveFile("Export Scene File", file, options);
+	}
+
 	public void ExportLightFile(LightFile file) {
 		var options = LightFileOptions;
 		options.DefaultFileName = file.Nickname;

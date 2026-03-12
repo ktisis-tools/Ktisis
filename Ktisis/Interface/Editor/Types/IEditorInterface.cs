@@ -60,4 +60,5 @@ public interface IEditorInterface {
 	
 	public void ExportCharaFile(CharaFile file);
 	public void ExportPoseFile(PoseFile file);
+	public void ExportSceneFile(SceneFile file);
 }

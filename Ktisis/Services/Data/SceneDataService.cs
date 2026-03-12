@@ -39,9 +39,12 @@ public class SceneDataService {
 	IEditorContext? _ctx;
 	IObjectTable _objectTable;
 	private IFramework _framework;
+	private Task? _task;
+	private Dictionary<ushort, ActorEntity> _idMap;
 	
-	private ISceneManager Scene => this._ctx.Scene;
-	private IPosingManager Posing => this._ctx.Posing;
+	private ISceneManager Scene => this._ctx!.Scene;
+	private IPosingManager Posing => this._ctx!.Posing;
+
 	
 	public SceneDataService(
 		IEditorContext ctx,
@@ -53,11 +56,23 @@ public class SceneDataService {
 		this._framework = framework;
 	}
 
-	public unsafe bool Save(string path) {
-
+	public unsafe bool WriteFile(string path) {
 		try {
+			var file = this.Save();
+			var serializer = new JsonFileSerializer();
+			serializer.GetConverter<Vector3>();
+			serializer.GetConverter<Transform>();
+			File.WriteAllText(path, serializer.Serialize(file));
+			return true;
+		} catch {
+			return false;
+		}
+	}
+	public unsafe SceneFile Save() {
+
+
 			var scene = new SceneFile();
-			scene.SceneOrigin = this._ctx.Scene.GetSceneOrigin();
+			scene.SceneOrigin = this._ctx!.Scene.GetSceneOrigin();
 
 			var entities = this.Scene.Children
 				.Where(entity => entity is CharaEntity)
@@ -77,13 +92,14 @@ public class SceneDataService {
 
 				var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
 				var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
-				var poseFile = new EntityPoseConverter(chara.Pose).SaveFile();
+				var poseFile = new EntityPoseConverter(chara.Pose!).SaveFile();
 				
 				scene.Actors.Add(new SceneFile.ActorInfo() {
 					Chara = charaFile,
 					Pose = poseFile,
 					Location = location,
-					MCDF = String.Empty
+					MCDF = String.Empty,
+					Index = ((ActorEntity)chara).Actor.ObjectIndex
 				});
 
 			}
@@ -103,9 +119,10 @@ public class SceneDataService {
 			//TODO: Setup actor orbit
 			foreach (var camera in this._ctx.Cameras.GetCameras()) {
 				var c = new SceneFile.CameraInfo();
-				var orbitTarget = camera.OrbitTarget ?? camera.GameCamera->GetCameraTargetObject()->ObjectIndex;
+				c.OrbitTarget = camera.OrbitTarget ?? camera.GameCamera->GetCameraTargetObject()->ObjectIndex;
 				
-				c.FixedPosition = camera.GetPosition();
+
+				c.FixedPosition = this.Scene.GetActorRelativePosition((Vector3)camera.GetPosition());
 				c.Flags = (uint)camera.Flags;
 				c.IsActive = (this._ctx.Cameras.Current ==  camera);
 				c.Name = camera.Name;
@@ -119,16 +136,10 @@ public class SceneDataService {
 				env.State = EnvManagerEx.Instance()->EnvState;
 				scene.Enviroment = env;
 			}*/
+			return scene;
 
-			
-			var serializer = new JsonFileSerializer();
-			serializer.GetConverter<Vector3>();
-			serializer.GetConverter<Transform>();
-			File.WriteAllText(path, serializer.Serialize(scene));
-		} catch (Exception a) {
-			return false;
-		}
-		return true;
+
+	
 	}
 
 	public async Task Load(String path, bool autoSaveLoading = true) {
@@ -139,9 +150,9 @@ public class SceneDataService {
 			var file = File.ReadAllText(path);
 			var serializer = new JsonFileSerializer();
 			var scene = serializer.Deserialize<SceneFile>(file);
-			
+			this._idMap	= new Dictionary<ushort, ActorEntity>();
 	
-			//TODO: Fix localplayer entity not being deleted?
+
 			foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 				var e = (ActorEntity)sceneEntity;
 				this.Scene.GetModule<ActorModule>().Delete(e, true);
@@ -150,37 +161,36 @@ public class SceneDataService {
 			
 			Vector3 sceneOrigin;
 			if (!autoSaveLoading) {
-				sceneOrigin = this._objectTable.LocalPlayer.Position;
+				sceneOrigin = this._objectTable.LocalPlayer!.Position;
 			} else {
-				sceneOrigin = scene.SceneOrigin;
+				sceneOrigin = scene!.SceneOrigin;
 			}
-			
-			
 
-			foreach (var loaded in scene.Actors) {
+
+			foreach (var loaded in scene!.Actors.Where(info => info.Chara.ModelType != 0)) {
 				loaded.Location.Position += sceneOrigin;
-				await this._framework.RunOnFrameworkThread(() => {
-					var temp = loaded;
-					this._ctx.Scene.Factory.CreateActor().WithAppearance(loaded.Chara).Spawn().ContinueWith(async (p) => {
-						var a = p.GetResultSafely();
-						await this._framework.DelayTicks(15);
-						a.Name = temp.Chara.Nickname!;
-						SetupActor(temp, a);
-						await this._framework.DelayTicks(15);
-						await this._ctx?.Posing.ApplyPoseFile(a.Pose!, temp.Pose, PoseMode.All,(PoseTransforms)0xF)!;
-					});
-				});
+				await this._framework.RunOnFrameworkThread(() => SetupActor(loaded));
+				await this._framework.DelayTicks(10);
+				
+			}
+			await this._framework.DelayTicks(30);
+			foreach (var loaded in scene!.Actors.Where(info => info.Chara.ModelType == 0)) {
+				loaded.Location.Position += sceneOrigin;
+				await this._framework.RunOnFrameworkThread(() => SetupActor(loaded));
 				await this._framework.DelayTicks(10);
 			}
+			
+			//spawn non humans after?
 
+			
 			foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is LightEntity).ToList()) {
 				LightEntity lightEntity = (LightEntity)sceneEntity;
 				lightEntity.Delete();
 			}
 
 			foreach (var loaded in scene.Lights) {
-				var light = this._ctx.Scene.Factory.CreateLight().Spawn().Result;
-				this._ctx.Scene.ApplyLightFile(light, loaded.Light);
+				var light = this._ctx!.Scene.Factory.CreateLight().Spawn().Result;
+				_ = this._ctx.Scene.ApplyLightFile(light, loaded.Light);
 				loaded.Location.Position += sceneOrigin;
 				light.SetTransform(loaded.Location);
 			}
@@ -188,23 +198,39 @@ public class SceneDataService {
 			
 			//always at least one camera (I hope....)
 
-			var primaryCamera = this._ctx.Cameras.Current;
-			primaryCamera.ResetState();
+			var primaryCamera = this._ctx!.Cameras.Current;
+			primaryCamera!.ResetState();
 			var primaryInfo = scene.Cameras.Find(c => c.IsActive);
-			primaryCamera.FixedPosition = primaryInfo.FixedPosition;
+			primaryCamera.FixedPosition = primaryInfo.FixedPosition + sceneOrigin;
 			primaryCamera.OrthographicZoom = primaryInfo.OrthographicZoom;
 			primaryCamera.Flags = (CameraFlags)primaryInfo.Flags;
+			if(primaryInfo.OrbitTarget != 0)
+				primaryCamera.OrbitTarget = (this._idMap[primaryInfo.OrbitTarget].Actor.ObjectIndex); // might fail so it goes last
 			
 		}
 
 
-		this.Scene.Update();
-		this.Scene.Refresh();
+
 		//surely one of these does what I want
 	}
 
 	
-	private unsafe void SetupActor(SceneFile.ActorInfo loaded, ActorEntity actor) {
+
+	private  void SetupActor(SceneFile.ActorInfo actor) {
+		this._ctx!.Scene.Factory.CreateActor().WithAppearance(actor.Chara).Spawn().ContinueWith(async (p) => {
+			var a = p.GetResultSafely();
+			this._idMap.Add(actor.Index, a);
+			await this._framework.DelayTicks(15);
+			a.Name = actor.Chara.Nickname!;
+			this.SetupActorPosition(actor, a);
+			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
+			this._task?.Wait();
+			this._task =  this._ctx?.Posing.ApplyPoseFile(a.Pose!, actor.Pose, PoseMode.All,(PoseTransforms)0xF)!;
+		});
+	}
+	
+	//TODO: The BattleChara should have the position set too, its what the camera orbit bases itself off of
+	private unsafe void SetupActorPosition(SceneFile.ActorInfo loaded, ActorEntity actor) {
 		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
 		var draw = actor.GetCharacter();
 		draw->Position = loaded.Location.Position;

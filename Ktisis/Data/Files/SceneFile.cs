@@ -32,6 +32,7 @@ public class SceneFile : JsonFile {
 		public CharaFile Chara { get; set; }
 		public Transform Location { get; set; }
 		public String MCDF { get; set; }
+		public ushort Index { get; set; }
 	}
 	
 	[Serializable]
@@ -44,7 +45,7 @@ public class SceneFile : JsonFile {
 	[Serializable]
 	public struct CameraInfo {
 		public uint  Flags { get; set; }
-		public ushort? OrbitTarget { get; set; }
+		public ushort OrbitTarget { get; set; }
 		public Vector3? FixedPosition { get; set; }
 		public Vector3 RelativeOffset { get; set; }
 		public float OrthographicZoom { get; set; }
