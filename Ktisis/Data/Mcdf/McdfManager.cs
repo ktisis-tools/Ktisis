@@ -25,7 +25,8 @@ public sealed class McdfManager : IDisposable {
 	private readonly IObjectTable _objectTable;
 	
 	private Dictionary<IGameObject, Guid?> actors;
-
+	private Dictionary<IGameObject, string> mcdfLocation;
+	
 	public McdfManager(
 		GPoseService gpose,
 		IFramework framework,
@@ -41,6 +42,7 @@ public sealed class McdfManager : IDisposable {
 		this._objectTable = objectTable;
 
 		this.actors = new Dictionary<IGameObject, Guid?>();
+		this.mcdfLocation = new Dictionary<IGameObject, string>();
 	}
 
 	private void OnGPoseEvent(object sender, bool active) {
@@ -57,6 +59,7 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private async Task LoadAndApplyToAsync(string path, IGameObject actor) {
+		this.mcdfLocation.Add(actor, path);
 		using var reader = McdfReader.FromPath(path);
 		
 		var temp = GetTempPath(create: true);
@@ -193,6 +196,7 @@ public sealed class McdfManager : IDisposable {
 
 	public async void Revert(IGameObject actor) {
 		Ktisis.Log.Debug($"IPC - Revert Actor '{actor.ObjectIndex}' ...");
+		this.mcdfLocation.Remove(actor);
 		this.RevertGlamourerData(actor);
 		await this.RedrawAndWait(actor);
 		this.RevertCustomizeData(actor.ObjectIndex);
@@ -211,6 +215,7 @@ public sealed class McdfManager : IDisposable {
 			this.RevertCustomizeData(actor.ObjectIndex);
 		else
 			this.DeleteCustomizeData((Guid)guid);
+		this.mcdfLocation.Remove(actor);
 		this.actors.Remove(actor);
     }
 
@@ -228,6 +233,7 @@ public sealed class McdfManager : IDisposable {
 		this._ipc.GetGlamourerIpc().Unlock();
 	}
 
+	public string LoadedMCDFPath(IGameObject actor) => this.mcdfLocation.ContainsKey(actor) ? this.mcdfLocation[actor] : string.Empty;
 	// IDisposable
 
 	public void Dispose() {
