@@ -113,6 +113,16 @@ public class EditorInterface : IEditorInterface {
 		}
 	}
 
+	public void OpenSceneWindow() {
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<SceneWindow>(this._ctx).Toggle();
+		else {
+			var _win = this._gui.GetOrCreate<SceneWindow>(this._ctx);
+			_win.Open();
+			ImGui.SetWindowFocus(_win.WindowName);
+		}
+	}
+
 	public void OpenObjectEditor(bool forceOpen = false) {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
 		if (this._ctx.Config.Editor.ToggleOpenWindows && !forceOpen)

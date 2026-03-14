@@ -18,6 +18,7 @@ public class SceneFile : JsonFile {
 	public const int CurrentVersion = 1;
 	public new int FileVersion { get; set; } = CurrentVersion;
 	public Vector3 SceneOrigin { get; set; }
+	public uint MapID { get; set; }
 	
 	[JsonInclude]
 	public List<ActorInfo> Actors { get; set; } = new List<ActorInfo>();
