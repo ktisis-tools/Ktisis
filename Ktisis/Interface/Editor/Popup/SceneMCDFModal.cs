@@ -16,17 +16,19 @@ public class SceneMCDFModal(SceneFile.ActorInfo entity, IEditorContext context) 
 	protected override void OnDraw() {
 		using var wrap = ImRaii.TextWrapPos(ImGui.GetWindowContentRegionMax().X);
 		ImGui.TextUnformatted($"The MCDF linked to the actor {entity.Chara.Nickname} wasn't found, do you want select a file to load for them?");
-		ImGui.SetCursorPos(new Vector2(ImGui.GetContentRegionAvail().Y * .80f,ImGui.GetContentRegionAvail().X * .25f));
 		if (ImGui.Button("Pick File")) {
+			this.Close();
 			context.Interface.OpenMcdfFile((s => {
 				var f = this._sceneFile.Actors.Find(e => e.Index == entity.Index);
 				f.MCDF = s;
 			}));
 			
 		}
+		ImGui.SameLine();
 		if (ImGui.Button("Ignore")) {
 			var f =this._sceneFile.Actors.Find(e => e.Index == entity.Index);
 			f.MCDF = string.Empty;
+			this.Close();
 		}
 	}
 

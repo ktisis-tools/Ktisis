@@ -47,7 +47,6 @@ public class SceneWindow : KtisisWindow {
 	private SceneFile? _sceneFile;
 	private ISharedImmediateTexture? _texture;
 	private Map _source;
-	private bool _popup;
 	private List<SceneFile.ActorInfo> _badactors;
 	private SceneMCDFModal _popupWindow;
 	
@@ -103,16 +102,15 @@ public class SceneWindow : KtisisWindow {
 		}
 	}
 	private void OpenPopupModal(SceneFile.ActorInfo entity) {
-		var popup = this._ctx.Plugin.Gui.CreatePopup<SceneMCDFModal>(entity, this._ctx);
-		popup.SetScene(ref this._sceneFile);
-		popup.Open();
+		this._popupWindow = this._ctx.Plugin.Gui.CreatePopup<SceneMCDFModal>(entity, this._ctx);
+		this._popupWindow.SetScene(ref this._sceneFile);
+		this._popupWindow.Open();
 	}
 
 	public unsafe override void Draw() {
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
 		int cameras, actors, lights;
-		this._popup = false;
 		if (this._sceneFile != null) {
 			actors = this._sceneFile.Actors.Count;
 			cameras = this._sceneFile.Cameras.Count;
@@ -140,6 +138,8 @@ public class SceneWindow : KtisisWindow {
 		}
 
 		if (this._badactors.Count > 0) {
+			if(this._popupWindow != null && !this._popupWindow.IsOpen)
+				this.TestMCDFBeforeLoad();
 			OpenPopupModal(this._badactors.First());
 		} 
 		
