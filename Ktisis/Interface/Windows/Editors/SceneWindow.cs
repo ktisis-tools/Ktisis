@@ -84,7 +84,7 @@ public class SceneWindow : KtisisWindow {
 	public void TestMCDFBeforeLoad() {
 		foreach (var entity in this._sceneFile.Actors) {
 			var ignored = false;
-			while(entity.MCDF != string.Empty && !Path.Exists(entity.MCDF) && !ignored) {
+			if(entity.MCDF != string.Empty && !Path.Exists(entity.MCDF) && !ignored) {
 				DrawPopupModal(entity);
 			}
 		}

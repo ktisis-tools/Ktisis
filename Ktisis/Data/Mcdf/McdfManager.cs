@@ -63,7 +63,9 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private async Task LoadAndApplyToAsync(string path, IGameObject actor) {
-		this.mcdfLocation.Add(actor, path);
+
+		this.mcdfLocation[actor] = path;
+
 		using var reader = McdfReader.FromPath(path);
 		
 		var temp = GetTempPath(create: true);
