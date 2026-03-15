@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.JavaScript;
 
 using Dalamud.Bindings.ImGui;
@@ -11,6 +13,8 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
+
+using FFXIVClientStructs;
 
 using GLib.Widgets;
 
@@ -38,10 +42,12 @@ public class SceneWindow : KtisisWindow {
 	private readonly ITextureProvider _textureProvider;
 	private readonly IDataManager _dataManager;
 	
-	private bool autosave = false;
+	private bool _autosave = false;
 	private SceneFile? _sceneFile;
 	private ISharedImmediateTexture? _texture;
 	private Map _source;
+	private bool _popup;
+	private List<SceneFile.ActorInfo> _badactors;
 	
 	public SceneWindow(
 		IEditorContext ctx,
@@ -55,6 +61,7 @@ public class SceneWindow : KtisisWindow {
 		this._sceneFile = null;
 		this._dataManager = dataManager;
 		this._textureProvider = textureProvider;
+		this._badactors = new List<SceneFile.ActorInfo>();
 	}
 	
 	public override void PreOpenCheck() {
@@ -82,18 +89,20 @@ public class SceneWindow : KtisisWindow {
 	}
 
 	public void TestMCDFBeforeLoad() {
+		this._badactors.Clear();
 		foreach (var entity in this._sceneFile.Actors) {
-			var ignored = false;
-			if(entity.MCDF != string.Empty && !Path.Exists(entity.MCDF) && !ignored) {
-				DrawPopupModal(entity);
+			if(entity.MCDF != string.Empty && !Path.Exists(entity.MCDF)) {
+				this._badactors.Add(entity);
 			}
 		}
-		this._sceneDataService.Load(this._sceneFile);
-		this._sceneFile = null;
+		if (this._badactors.Count == 0) {
+			this._sceneDataService.Load(this._sceneFile);
+			this._sceneFile = null;
+		}
 	}
 
 	public bool DrawPopupModal(SceneFile.ActorInfo entity) {
-		using (var popup = ImRaii.PopupModal("MCDF not found!###MCDFWarn")) {
+		using (var popup = ImRaii.PopupModal("MCDF not found!##MCDFWarn")) {
 			if (popup.Success) {
 				using var wrap = ImRaii.TextWrapPos(ImGui.GetWindowContentRegionMax().X);
 				ImGui.TextUnformatted($"The MCDF linked to the actor {entity.Chara.Nickname} wasn't found, do you want select a file to load for them?");
@@ -106,19 +115,21 @@ public class SceneWindow : KtisisWindow {
 					return true;
 				}
 				if (ImGui.Button("Ignore")) {
-					return true;
+					var f = this._sceneFile.Actors.Find(e => e.Index == entity.Index);
+					f.MCDF = string.Empty;
 				}
 			}
-
+			TestMCDFBeforeLoad();
 		}
+		
 		return false;
 	}
 	
 	public unsafe override void Draw() {
-		var style = ImGui.GetStyle();
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
 		int cameras, actors, lights;
+		this._popup = false;
 		if (this._sceneFile != null) {
 			actors = this._sceneFile.Actors.Count;
 			cameras = this._sceneFile.Cameras.Count;
@@ -139,13 +150,17 @@ public class SceneWindow : KtisisWindow {
 
 		if (this._sceneFile != null) {
 			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -(iconBtnSize.Y * 2.5f));  //space for 2 buttons?
-			if (Buttons.IconButtonTooltip(this.autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, "Choose coordinate type", iconBtnSize))
-				this.autosave = !this.autosave;
+			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, "Choose coordinate type", iconBtnSize))
+				this._autosave = !this._autosave;
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Check, "Apply Scene", iconBtnSize))
 				this.TestMCDFBeforeLoad();
 		}
 
-
+		if (this._badactors.Count > 0) {
+			DrawPopupModal(this._badactors.First());
+		} 
+		
+		
 		ImGui.EndGroup();
 		
 		ImGui.SameLine();
