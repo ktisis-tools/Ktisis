@@ -83,22 +83,35 @@ public class SceneWindow : KtisisWindow {
 
 	public void TestMCDFBeforeLoad() {
 		foreach (var entity in this._sceneFile.Actors) {
-			if (entity.MCDF != string.Empty && !Path.Exists(entity.MCDF)) {
-				using (var popup = ImRaii.PopupModal("###MCDFWarn")) {
-					using var wrap = ImRaii.TextWrapPos(ImGui.GetWindowContentRegionMax().X);
-					ImGui.TextUnformatted($"The MCDF linked to the actor {entity.Chara.Nickname} wasn't found, do you want select a file to load for them?");
-					ImGui.SetCursorPos(new Vector2(ImGui.GetContentRegionAvail().Y * .80f,ImGui.GetContentRegionAvail().X * .25f));
-					if (ImGui.Button("Pick File")) {
-						this._ctx.Interface.OpenMcdfFile((s => {
-							var f = entity.MCDF = s;
-						}));
-					}
-					if (ImGui.Button("Ignore")) {
-						continue;
-					}
-				}
+			var ignored = false;
+			while(entity.MCDF != string.Empty && !Path.Exists(entity.MCDF) && !ignored) {
+				DrawPopupModal(entity);
 			}
 		}
+		this._sceneDataService.Load(this._sceneFile);
+		this._sceneFile = null;
+	}
+
+	public bool DrawPopupModal(SceneFile.ActorInfo entity) {
+		using (var popup = ImRaii.PopupModal("MCDF not found!###MCDFWarn")) {
+			if (popup.Success) {
+				using var wrap = ImRaii.TextWrapPos(ImGui.GetWindowContentRegionMax().X);
+				ImGui.TextUnformatted($"The MCDF linked to the actor {entity.Chara.Nickname} wasn't found, do you want select a file to load for them?");
+				ImGui.SetCursorPos(new Vector2(ImGui.GetContentRegionAvail().Y * .80f,ImGui.GetContentRegionAvail().X * .25f));
+				if (ImGui.Button("Pick File")) {
+					this._ctx.Interface.OpenMcdfFile((s => {
+						var f = this._sceneFile.Actors.Find(e => e.Index == entity.Index);
+						f.MCDF = s;
+					}));
+					return true;
+				}
+				if (ImGui.Button("Ignore")) {
+					return true;
+				}
+			}
+
+		}
+		return false;
 	}
 	
 	public unsafe override void Draw() {
@@ -125,7 +138,7 @@ public class SceneWindow : KtisisWindow {
 			this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save()));
 
 		if (this._sceneFile != null) {
-			ImGui.SetCursorPosY(ImGui.GetContentRegionAvail().Y -( iconBtnSize.Y * 2));  //space for 2 buttons?
+			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -(iconBtnSize.Y * 2.5f));  //space for 2 buttons?
 			if (Buttons.IconButtonTooltip(this.autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, "Choose coordinate type", iconBtnSize))
 				this.autosave = !this.autosave;
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Check, "Apply Scene", iconBtnSize))
