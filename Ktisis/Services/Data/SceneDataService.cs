@@ -158,7 +158,7 @@ public class SceneDataService {
 	
 	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true) {
 
-
+			
 
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 

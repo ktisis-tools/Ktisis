@@ -48,7 +48,7 @@ public class SceneWindow : KtisisWindow {
 	private ISharedImmediateTexture? _texture;
 	private Map _source;
 	private List<SceneFile.ActorInfo> _badactors;
-	private SceneMCDFModal _popupWindow;
+	private SceneMCDFModal? _popupWindow;
 	
 	public SceneWindow(
 		IEditorContext ctx,
@@ -137,10 +137,11 @@ public class SceneWindow : KtisisWindow {
 				this.TestMCDFBeforeLoad();
 		}
 
-		if (this._badactors.Count > 0) {
-			if(this._popupWindow != null && !this._popupWindow.IsOpen)
-				this.TestMCDFBeforeLoad();
-			OpenPopupModal(this._badactors.First());
+		
+		if (this._badactors.Count == 0 && this._sceneFile != null) {
+			this.TestMCDFBeforeLoad();
+			if(this._badactors.Count > 0)
+				OpenPopupModal(this._badactors.First());
 		} 
 		
 		

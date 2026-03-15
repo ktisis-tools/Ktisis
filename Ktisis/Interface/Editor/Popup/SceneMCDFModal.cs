@@ -17,11 +17,12 @@ public class SceneMCDFModal(SceneFile.ActorInfo entity, IEditorContext context) 
 		using var wrap = ImRaii.TextWrapPos(ImGui.GetWindowContentRegionMax().X);
 		ImGui.TextUnformatted($"The MCDF linked to the actor {entity.Chara.Nickname} wasn't found, do you want select a file to load for them?");
 		if (ImGui.Button("Pick File")) {
-			this.Close();
+
 			context.Interface.OpenMcdfFile((s => {
 				var f = this._sceneFile.Actors.Find(e => e.Index == entity.Index);
 				f.MCDF = s;
 			}));
+			this.Close();
 			
 		}
 		ImGui.SameLine();
