@@ -20,6 +20,7 @@ using GLib.Widgets;
 
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Interface.Editor.Popup;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.World;
@@ -48,6 +49,7 @@ public class SceneWindow : KtisisWindow {
 	private Map _source;
 	private bool _popup;
 	private List<SceneFile.ActorInfo> _badactors;
+	private SceneMCDFModal _popupWindow;
 	
 	public SceneWindow(
 		IEditorContext ctx,
@@ -100,31 +102,12 @@ public class SceneWindow : KtisisWindow {
 			this._sceneFile = null;
 		}
 	}
-
-	public bool DrawPopupModal(SceneFile.ActorInfo entity) {
-		using (var popup = ImRaii.PopupModal("MCDF not found!##MCDFWarn")) {
-			if (popup.Success) {
-				using var wrap = ImRaii.TextWrapPos(ImGui.GetWindowContentRegionMax().X);
-				ImGui.TextUnformatted($"The MCDF linked to the actor {entity.Chara.Nickname} wasn't found, do you want select a file to load for them?");
-				ImGui.SetCursorPos(new Vector2(ImGui.GetContentRegionAvail().Y * .80f,ImGui.GetContentRegionAvail().X * .25f));
-				if (ImGui.Button("Pick File")) {
-					this._ctx.Interface.OpenMcdfFile((s => {
-						var f = this._sceneFile.Actors.Find(e => e.Index == entity.Index);
-						f.MCDF = s;
-					}));
-					return true;
-				}
-				if (ImGui.Button("Ignore")) {
-					var f = this._sceneFile.Actors.Find(e => e.Index == entity.Index);
-					f.MCDF = string.Empty;
-				}
-			}
-			TestMCDFBeforeLoad();
-		}
-		
-		return false;
+	private void OpenPopupModal(SceneFile.ActorInfo entity) {
+		var popup = this._ctx.Plugin.Gui.CreatePopup<SceneMCDFModal>(entity, this._ctx);
+		popup.SetScene(ref this._sceneFile);
+		popup.Open();
 	}
-	
+
 	public unsafe override void Draw() {
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
@@ -157,7 +140,7 @@ public class SceneWindow : KtisisWindow {
 		}
 
 		if (this._badactors.Count > 0) {
-			DrawPopupModal(this._badactors.First());
+			OpenPopupModal(this._badactors.First());
 		} 
 		
 		
