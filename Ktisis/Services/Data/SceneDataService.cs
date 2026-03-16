@@ -126,8 +126,9 @@ public class SceneDataService {
 			foreach (var camera in this._ctx.Cameras.GetCameras()) {
 				var c = new SceneFile.CameraInfo();
 				c.OrbitTarget = camera.OrbitTarget ?? camera.GameCamera->GetCameraTargetObject()->ObjectIndex;
-				
 
+				c.isDelmited = camera.IsDelimited;
+				c.Angle = new Vector3(camera.Camera->Angle.X, camera.Camera->Angle.Y, camera.Camera->Distance);
 				c.FixedPosition = this.Scene.GetActorRelativePosition((Vector3)camera.GetPosition());
 				c.Flags = (uint)camera.Flags;
 				c.IsActive = (this._ctx.Cameras.Current ==  camera);
@@ -212,7 +213,17 @@ public class SceneDataService {
 				var primaryCamera = this._ctx!.Cameras.Current;
 				primaryCamera!.ResetState();
 				var primaryInfo = scene.Cameras.Find(c => c.IsActive);
-				primaryCamera.FixedPosition = primaryInfo.FixedPosition + sceneOrigin;
+				if (primaryInfo.isDelmited) {
+					primaryCamera.FixedPosition = primaryInfo.FixedPosition + sceneOrigin;
+				} else {
+					unsafe {
+						primaryCamera.Camera->Angle.X = primaryInfo.Angle.Value.X;
+						primaryCamera.Camera->Angle.Y = primaryInfo.Angle.Value.Y;
+						primaryCamera.Camera->Distance = primaryInfo.Angle.Value.Z;
+					}
+					
+				}
+
 				primaryCamera.OrthographicZoom = primaryInfo.OrthographicZoom;
 				primaryCamera.Flags = (CameraFlags)primaryInfo.Flags;
 				if (primaryInfo.OrbitTarget != 0) {

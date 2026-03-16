@@ -47,8 +47,10 @@ public class SceneFile : JsonFile {
 	public struct CameraInfo {
 		public uint  Flags { get; set; }
 		public ushort OrbitTarget { get; set; }
+		public bool isDelmited { get; set; }
 		public Vector3? FixedPosition { get; set; }
-		public Vector3 RelativeOffset { get; set; }
+		public Vector3? Angle { get; set; }
+		
 		public float OrthographicZoom { get; set; }
 		public string Name { get; set; }
 		public bool IsActive { get; set; }
