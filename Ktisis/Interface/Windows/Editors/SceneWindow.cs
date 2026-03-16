@@ -133,16 +133,19 @@ public class SceneWindow : KtisisWindow {
 			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -(iconBtnSize.Y * 2.5f));  //space for 2 buttons?
 			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, "Choose coordinate type", iconBtnSize))
 				this._autosave = !this._autosave;
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Check, "Apply Scene", iconBtnSize))
-				this.TestMCDFBeforeLoad();
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Check, "Apply Scene", iconBtnSize)) {
+				this._sceneDataService.Load(this._sceneFile);
+				this._sceneFile = null;
+			}
+				//this.TestMCDFBeforeLoad();
 		}
 
 		
-		if (this._badactors.Count == 0 && this._sceneFile != null) {
+		/*if (this._badactors.Count == 0 && this._sceneFile != null) {
 			this.TestMCDFBeforeLoad();
 			if(this._badactors.Count > 0)
 				OpenPopupModal(this._badactors.First());
-		} 
+		} */
 		
 		
 		ImGui.EndGroup();
