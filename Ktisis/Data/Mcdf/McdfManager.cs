@@ -206,6 +206,14 @@ public sealed class McdfManager : IDisposable {
 		var collectionId = ipc.AssignInvisibleSkin(actor.Actor);
 		await this.RedrawAndWait(actor.Actor);
 
+		unsafe {
+			var model = actor.GetHuman()->Models[10];
+			actor.GetHuman()->Models[10] = null;
+
+			model->ModelResourceHandle->DecRef();
+			model->RefCount = 0;
+		}
+
 		if (collectionId != null)
 			ipc.DeleteTemporaryCollection(collectionId.Value);
 	}

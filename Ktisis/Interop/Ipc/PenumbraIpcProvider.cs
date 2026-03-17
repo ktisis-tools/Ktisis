@@ -29,6 +29,8 @@ public class PenumbraIpcProvider {
 	private readonly AddTemporaryMod _addTemporaryMod;
 	private readonly RemoveTemporaryMod _removeTemporaryMod;
 	private readonly RedrawObject _redrawObject;
+	private readonly AddTemporaryCollectionInheritance _addTemporaryCollectionInheritance;
+	private readonly RemoveTemporaryCollectionInheritance _removeTemporaryCollectionInheritance;
     
 	public PenumbraIpcProvider(
 		IDalamudPluginInterface dpi
@@ -45,6 +47,8 @@ public class PenumbraIpcProvider {
 		this._addTemporaryMod = new AddTemporaryMod(dpi);
 		this._removeTemporaryMod = new RemoveTemporaryMod(dpi);
 		this._redrawObject = new RedrawObject(dpi);
+		this._addTemporaryCollectionInheritance = new AddTemporaryCollectionInheritance(dpi);
+		this._removeTemporaryCollectionInheritance = new RemoveTemporaryCollectionInheritance(dpi);
 	}
 
 	public Dictionary<Guid, string> GetCollections() => this._getCollections.Invoke();
@@ -98,18 +102,31 @@ public class PenumbraIpcProvider {
 		Ktisis.Log.Info($"{rem} {add}");
 	}
 
-	public void AssignManipulationData(Guid collectionId, string manipData) {
-		this._addTemporaryMod.Invoke("MareChara_Meta", collectionId, [], manipData, 0);
+	public void AddTemporaryCollectionInheritance(Guid inheritor, Guid parent) {
+		this._addTemporaryCollectionInheritance.Invoke(inheritor, parent);
+	}
+	public void RemoveTemporaryCollectionInheritance(Guid inheritor, Guid parent) {
+		this._removeTemporaryCollectionInheritance.Invoke(inheritor, parent);
 	}
 
 	public Guid? AssignInvisibleSkin(IGameObject gameObject) {
 		Ktisis.Log.Verbose($"Creating invisible skin collection for '{gameObject.Name}' ({gameObject.ObjectIndex})");
 
+		var parent = this._getCollectionForObject.Invoke(gameObject.ObjectIndex);
+
+			
 		var collectionId = this.CreateTemporaryCollection($"KtisisInvisibleSkin_{gameObject.ObjectIndex}");
+
+		if (parent is { IndividualSet: true, ObjectValid: true })
+			this.AddTemporaryCollectionInheritance(collectionId, parent.EffectiveCollection.Id);
+		
 		this.AssignTemporaryCollection(collectionId, gameObject.ObjectIndex);
 		this.AssignTemporaryMods(collectionId, this.BuildInvisibleSkinPaths());
 
 		return collectionId;
+	}
+	public void AssignManipulationData(Guid collectionId, string manipData) {
+		this._addTemporaryMod.Invoke("MareChara_Meta", collectionId, [], manipData, 0);
 	}
 
 	public void Redraw(int index) => this._redrawObject.Invoke(index);
