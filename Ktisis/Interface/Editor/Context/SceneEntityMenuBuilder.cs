@@ -133,8 +133,7 @@ public class SceneEntityMenuBuilder {
 		menu.SubMenu("IPC appearance", sub => {
 			if (this._ctx.Plugin.Ipc.IsPenumbraActive) {
 				sub.Action("Penumbra: Assign collection", () => this.Ui.OpenAssignCollection(actor));
-				if (actor.Actor.ObjectIndex != 201)
-					sub.Action("Penumbra: Invisible Skin", () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
+				sub.Action("Penumbra: Invisible Skin", () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
 			}
 			if (this._ctx.Plugin.Ipc.IsGlamourerActive)
 				sub.Action("Glamourer: Apply design", () => this.Ui.OpenApplyDesign(actor));

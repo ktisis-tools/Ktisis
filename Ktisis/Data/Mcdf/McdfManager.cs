@@ -196,13 +196,6 @@ public sealed class McdfManager : IDisposable {
 	// Mod Application
 	public async void SetInvisibleSkin(ActorEntity actor) {
 		var ipc = this._ipc.GetPenumbraIpc();
-		await this._framework.RunOnFrameworkThread(() => {
-			var editor = new CustomizeEditor(actor);
-			if (actor.GetRaceSexId() != "1601")
-				editor.SetCustomization(CustomizeIndex.HairStyle, 101);
-			else
-				editor.SetCustomization(CustomizeIndex.HairStyle, 178); // f hroth hack since missing Snow hairstyle
-		});
 		var collectionId = ipc.AssignInvisibleSkin(actor.Actor);
 		await this.RedrawAndWait(actor.Actor);
 
