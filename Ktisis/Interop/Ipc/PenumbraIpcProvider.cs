@@ -97,8 +97,8 @@ public class PenumbraIpcProvider {
 	}
 
 	public void AssignTemporaryMods(Guid collectionId, Dictionary<string, string> paths) {
-		var rem = this._removeTemporaryMod.Invoke("MareChara_Files", collectionId, 0);
-		var add = this._addTemporaryMod.Invoke("MareChara_Files", collectionId, paths, string.Empty, 0);
+		var rem = this._removeTemporaryMod.Invoke("MareChara_Files", collectionId, 100);
+		var add = this._addTemporaryMod.Invoke("MareChara_Files", collectionId, paths, string.Empty, 100);
 		Ktisis.Log.Info($"{rem} {add}");
 	}
 
@@ -108,6 +108,10 @@ public class PenumbraIpcProvider {
 	public void RemoveTemporaryCollectionInheritance(Guid inheritor, Guid parent) {
 		this._removeTemporaryCollectionInheritance.Invoke(inheritor, parent);
 	}
+	public void RemoveTemporaryMod (Guid? Collection) {
+		if(Collection != null)
+			this._removeTemporaryMod.Invoke("MareChara_Files", (Guid)Collection, 100);
+	}
 
 	public Guid? AssignInvisibleSkin(IGameObject gameObject) {
 		Ktisis.Log.Verbose($"Creating invisible skin collection for '{gameObject.Name}' ({gameObject.ObjectIndex})");
@@ -115,15 +119,15 @@ public class PenumbraIpcProvider {
 		var parent = this._getCollectionForObject.Invoke(gameObject.ObjectIndex);
 
 			
-		var collectionId = this.CreateTemporaryCollection($"KtisisInvisibleSkin_{gameObject.ObjectIndex}");
+		/*var collectionId = this.CreateTemporaryCollection($"KtisisInvisibleSkin_{gameObject.ObjectIndex}");
 
 		if (parent is { IndividualSet: true, ObjectValid: true })
 			this.AddTemporaryCollectionInheritance(collectionId, parent.EffectiveCollection.Id);
 		
-		this.AssignTemporaryCollection(collectionId, gameObject.ObjectIndex);
-		this.AssignTemporaryMods(collectionId, this.BuildInvisibleSkinPaths());
+		this.AssignTemporaryCollection(collectionId, gameObject.ObjectIndex);*/
+		this.AssignTemporaryMods(parent.EffectiveCollection.Id, this.BuildInvisibleSkinPaths());
 
-		return collectionId;
+		return parent.EffectiveCollection.Id;
 	}
 	public void AssignManipulationData(Guid collectionId, string manipData) {
 		this._addTemporaryMod.Invoke("MareChara_Meta", collectionId, [], manipData, 0);

@@ -206,9 +206,9 @@ public sealed class McdfManager : IDisposable {
 			model->ModelResourceHandle->DecRef();
 			model->RefCount = 0;
 		}
-
-		if (collectionId != null)
-			ipc.DeleteTemporaryCollection(collectionId.Value);
+		ipc.RemoveTemporaryMod(collectionId);
+		//if (collectionId != null)
+			//ipc.DeleteTemporaryCollection(collectionId.Value);
 	}
 
 	public async void Revert(IGameObject actor) {
