@@ -217,6 +217,10 @@
 	"env_edit": {
 		"title": "Environment Editor"
 	},
+
+	"scene_edit": {
+		"title": "Scene Editor"
+	},
 	
 	"pose_view": {
 		"title": "Pose View"
