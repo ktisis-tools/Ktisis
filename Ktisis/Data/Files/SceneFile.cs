@@ -33,6 +33,7 @@ public class SceneFile : JsonFile {
 		public CharaFile Chara { get; set; }
 		public Transform Location { get; set; }
 		public String MCDF { get; set; }
+		public float DefaultRotation { get; set; }
 		public ushort Index { get; set; }
 	}
 	

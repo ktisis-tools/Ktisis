@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 using Lumina.Excel;
@@ -99,12 +100,14 @@ public class SceneDataService {
 				var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
 				var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
 				var poseFile = new EntityPoseConverter(chara.Pose!).SaveFile();
+				var defaultRotation = ((ActorEntity)chara).CsGameObject->Rotation;
 				
 				scene.Actors.Add(new SceneFile.ActorInfo() {
 					Chara = charaFile,
 					Pose = poseFile,
 					Location = location,
 					MCDF = this._ctx.Characters.Mcdf.LoadedMCDFPath(((ActorEntity)chara).Actor),
+					DefaultRotation = defaultRotation,
 					Index = ((ActorEntity)chara).Actor.ObjectIndex
 				});
 
@@ -276,8 +279,6 @@ public class SceneDataService {
 			this.SetupActorPosition(actor, a);
 			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
 			this._task?.Wait();
-			if(actor.MCDF != String.Empty && Path.Exists(actor.MCDF))
-				this._ctx.Characters.Mcdf.LoadAndApplyTo(actor.MCDF, a.Actor);
 			this._task =  this._ctx?.Posing.ApplyPoseFile(a.Pose!, actor.Pose, PoseMode.All,(PoseTransforms)0xF)!;
 		});
 
@@ -286,10 +287,23 @@ public class SceneDataService {
 	//TODO: The BattleChara should have the position set too, its what the camera orbit bases itself off of
 	private unsafe void SetupActorPosition(SceneFile.ActorInfo loaded, ActorEntity actor) {
 		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
+		var bc = (BattleChara*)actor.CsGameObject;
+		bc->DefaultPosition = loaded.Location.Position;
+		bc->DefaultRotation = loaded.DefaultRotation;
+		bc->SetPosition(loaded.Location.Position.X,  loaded.Location.Position.Y, loaded.Location.Position.Z);
+		bc->SetRotation(loaded.DefaultRotation);
+		
+		
+		
 		var draw = actor.GetCharacter();
+		
 		draw->Position = loaded.Location.Position;
 		draw->Rotation = loaded.Location.Rotation;
 		draw->Scale = loaded.Location.Scale;
+		
+		//i hate my life so much lol
+
+
 	}
 
 
