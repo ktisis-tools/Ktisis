@@ -268,7 +268,10 @@ public class SceneDataService {
 		IActorCreator t = this._ctx!.Scene.Factory.CreateActor();
 		if (this.ValidMCDFPath(actor))
 			t = t.WithMcdf(actor.MCDF);
-		else
+		else if (actor.MCDF != String.Empty) {
+			t = t.WithAppearance(actor.Chara);
+			Ktisis.WarningNotification($"Couldn't find the MCDF linked to the actor {actor.Chara.Nickname}, please try and load it manually.");
+		}else
 			t = t.WithAppearance(actor.Chara);
 
 		t.Spawn().ContinueWith(async (p) => {
