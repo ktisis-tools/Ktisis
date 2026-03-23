@@ -134,7 +134,7 @@ public class SceneWindow : KtisisWindow {
 			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, "Choose coordinate type", iconBtnSize))
 				this._autosave = !this._autosave;
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Check, "Apply Scene", iconBtnSize)) {
-				this._sceneDataService.Load(this._sceneFile);
+				this._sceneDataService.Load(this._sceneFile, this._autosave);
 				this._sceneFile = null;
 			}
 				//this.TestMCDFBeforeLoad();
