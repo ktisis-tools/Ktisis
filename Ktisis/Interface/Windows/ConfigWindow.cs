@@ -208,6 +208,7 @@ public class ConfigWindow : KtisisWindow {
 
 		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.windowHeader"))) {
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleOpenWindows"), ref this.Config.Editor.ToggleOpenWindows);
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyPoseTabs"), ref this.Config.Editor.UseLegacyPoseViewTabs);
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.editOnSelect"), ref this.Config.Editor.ToggleEditorOnSelect);
 			using (ImRaii.Disabled(!this.Config.Editor.ToggleEditorOnSelect))
 				ImGui.Checkbox(this.Locale.Translate("config.workspace.closeOnDeselect"), ref this.Config.Editor.CloseEditorOnDeselect);
@@ -217,8 +218,6 @@ public class ConfigWindow : KtisisWindow {
 		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.legacyHeader"))) {
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyWindows"), ref this.Config.Editor.UseLegacyWindowBehavior);
 			this.DrawHint("config.workspace.legacyWindowHint");
-			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyPoseTabs"), ref this.Config.Editor.UseLegacyPoseViewTabs);
-			this.DrawHint("config.workspace.legacyPoseHint");
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyLightEditor"), ref this.Config.Editor.UseLegacyLightEditor);
 			this.DrawHint("config.workspace.legacyLightHint");
 		}
