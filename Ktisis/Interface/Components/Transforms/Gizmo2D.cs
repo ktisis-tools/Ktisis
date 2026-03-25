@@ -5,21 +5,26 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility.Raii;
 
+using Ktisis.Data.Config.Sections;
 using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Interface.Components.Transforms;
 
 public class Gizmo2D {
-	public const float ScaleFactor = 0.5f;
+	private readonly GizmoConfig _cfg;
 	
 	// Constructor & creation
 
 	private readonly IGizmo Gizmo;
 
-	public Gizmo2D(IGizmo gizmo) {
+	public Gizmo2D(
+		GizmoConfig cfg,
+		IGizmo gizmo
+	) {
+		this._cfg = cfg;
 		this.Gizmo = gizmo;
 		this.Gizmo.Operation = ImGuizmoOperation.Rotate;
-		this.Gizmo.ScaleFactor = ScaleFactor;
+		this.Gizmo.ScaleFactor = this._cfg.Gizmo2DScaleFactor;
 		this.Gizmo.AllowAxisFlip = false;
 	}
 	
@@ -49,6 +54,8 @@ public class Gizmo2D {
 	public void Begin(Vector2 rectSize) {
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
 		using var _border = ImRaii.PushStyle(ImGuiStyleVar.ChildBorderSize, 0f);
+		rectSize.Y *= this._cfg.Gizmo2DScaleFactor;
+		this.Gizmo.ScaleFactor = this._cfg.Gizmo2DScaleFactor;
 		
 		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
 
@@ -65,12 +72,12 @@ public class Gizmo2D {
 		
 		this.Gizmo.BeginFrame(drawPos, drawSize);
 		this.Gizmo.PushDrawList();
-		DrawGizmoCircle(drawPos, drawSize, drawSize.X);
+		DrawGizmoCircle(drawPos, drawSize, drawSize.X, this._cfg.Gizmo2DScaleFactor);
 	}
 	
-	private static void DrawGizmoCircle(Vector2 pos, Vector2 size, float width) {
+	private static void DrawGizmoCircle(Vector2 pos, Vector2 size, float width, float scaleFactor) {
 		// background circle drawn behind the gizmo
-		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * ScaleFactor) / 2.05f, 0xCF202020);
+		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * scaleFactor) / 2.05f, 0xCF202020);
 	}
 
 	public bool Manipulate(ref Matrix4x4 matrix, out Matrix4x4 delta)

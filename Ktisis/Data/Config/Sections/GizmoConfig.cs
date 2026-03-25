@@ -48,6 +48,7 @@ public class GizmoConfig {
 	public bool AllowRaySnap = true;
 	public bool AllowHoldSnap = true;
 
+	public float Gizmo2DScaleFactor = 0.5f;
 
 	public Style Style = DefaultStyle;
 
