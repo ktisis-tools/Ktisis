@@ -57,7 +57,7 @@ public class TransformTable {
 	private Quaternion Value = Quaternion.Identity;
 
 	private const ImGuizmoOperation PositionOp = ImGuizmoOperation.Translate;
-	private const ImGuizmoOperation RotateOp = ImGuizmoOperation.Rotate;
+	private const ImGuizmoOperation RotateOp = ImGuizmoOperation.Rotate ^ ImGuizmoOperation.RotateScreen;
 	private const ImGuizmoOperation ScaleOp = ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu;
 
 	private Transform Transform = new();
@@ -147,15 +147,19 @@ public class TransformTable {
 		ImGui.SameLine(0, spacing);
 
 		var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
-		using (ImRaii.PushColor(ImGuiCol.Text, enable)) {
-			if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
-				this.ChangeOperation(op);
-		}
+		var isRotateScreen = op.HasFlag(RotateOp) && this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateScreen);
+		using var _ = ImRaii.PushColor(ImGuiCol.Text, enable);
+		using var _color = ImRaii.PushColor(ImGuiCol.Text, isRotateScreen ? 0xAF0FFFFF : 0xAFFFFFFF, isRotateScreen);
+		
+		if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
+			this.ChangeOperation(op);
 	}
 
 	private void ChangeOperation(ImGuizmoOperation op) {
 		if (GuiHelpers.GetSelectMode() == SelectMode.Multiple)
 			this.GizmoConfig.Operation |= op;
+		else if (this.GizmoConfig.Operation.HasFlag(RotateOp) && ImGui.GetIO().KeyShift)
+			this.GizmoConfig.Operation ^= ImGuizmoOperation.RotateScreen;
 		else
 			this.GizmoConfig.Operation = op;
 	}

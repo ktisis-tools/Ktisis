@@ -110,10 +110,6 @@ public class OverlayWindow : KtisisWindow {
 		this._gizmo.Operation = cfg.Operation;
 		this._gizmo.AllowAxisFlip = cfg.AllowAxisFlip;
 
-		if (this._gizmo.Operation == ImGuizmoOperation.Rotate && !cfg.ShowGizmoOrbit) {
-			this._gizmo.Operation ^= ImGuizmoOperation.RotateScreen;
-		}
-
 		var matrix = transform.ComposeMatrix();
 		var isManipulate = this._gizmo.Manipulate(ref matrix, out var delta);
 		var isRaySnap = this.HandleShiftRaycast(ref matrix);

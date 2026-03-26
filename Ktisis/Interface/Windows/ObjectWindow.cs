@@ -145,14 +145,6 @@ public class ObjectWindow : KtisisWindow {
 			this._ctx.Config.Gizmo.Mode = mode == ImGuizmoMode.World ? ImGuizmoMode.Local : ImGuizmoMode.World;
 		
 		ImGui.SameLine(0, spacing);
-		
-		var showGizmoOrbit = this._ctx.Config.Gizmo.ShowGizmoOrbit;
-		var orbitIcon = showGizmoOrbit ? FontAwesomeIcon.ToggleOn : FontAwesomeIcon.ToggleOff;
-		var orbitHint = "Toggle Gizmo Orbit"; // _ctx.Locale.Translate("...");
-		if (Buttons.IconButtonTooltip(orbitIcon, orbitHint, iconBtnSize))
-			this._ctx.Config.Gizmo.ShowGizmoOrbit = !showGizmoOrbit;
-		
-		ImGui.SameLine(0, spacing);
 
 		var visible = this._ctx.Config.Gizmo.Visible;
 		var visIcon = visible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
@@ -223,10 +215,6 @@ public class ObjectWindow : KtisisWindow {
 		this._gizmo.Begin(size);
 		this._gizmo.Mode = this._ctx.Config.Gizmo.Mode;
 		this._gizmo.Operation = this._ctx.Config.Gizmo.Operation;
-		
-		if (this._gizmo.Operation == ImGuizmoOperation.Rotate && !this._ctx.Config.Gizmo.ShowGizmoOrbit) {
-			this._gizmo.Operation ^= ImGuizmoOperation.RotateScreen;
-		}
 		
 		if (disabled) {
 			this._gizmo.End();
