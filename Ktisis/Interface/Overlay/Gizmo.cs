@@ -103,7 +103,7 @@ public class Gizmo : IGizmo {
 		var result = false;
 		if (this._cfg.AllowHoldSnap && ImGui.IsKeyDown(ImGuiKey.ModCtrl)) {
 			var snap = Vector3.One;
-			if (this.Operation is ImGuizmoOperation.Rotate) snap *= 5;
+			if (this.Operation is ImGuizmoOperation.Rotate or (ImGuizmoOperation.Rotate ^ ImGuizmoOperation.RotateScreen)) snap *= 5;
 			else snap /= 10;
 
 			if (ImGui.IsKeyDown(ImGuiKey.ModShift))

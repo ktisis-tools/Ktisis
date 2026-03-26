@@ -48,6 +48,7 @@ public class GizmoConfig {
 	public bool AllowRaySnap = true;
 	public bool AllowHoldSnap = true;
 
+	public bool ShowGizmoOrbit = true;
 
 	public Style Style = DefaultStyle;
 
