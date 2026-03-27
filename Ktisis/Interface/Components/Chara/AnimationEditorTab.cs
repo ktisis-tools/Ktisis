@@ -372,7 +372,8 @@ public class AnimationEditorTab {
 			Action,
 			Emote,
 			Expression,
-			RawTimeline
+			RawTimeline,
+			All
 		}
 
 		private AnimType Type = AnimType.Action;
@@ -385,6 +386,7 @@ public class AnimationEditorTab {
 			
 			var values = Enum.GetValues<AnimType>();
 			var excludes = this.GetExcludes();
+			var numButtons = 0;
 			for (var i = 0; i < values.Length; i++) {
 				// if we got an excludes list, skip any radio buttons irrelevant to the picked timeline slot
 				if (excludes.Contains(i)) {
@@ -392,13 +394,14 @@ public class AnimationEditorTab {
 						this.Type = this.BestDefaultTypeForExcludes(excludes);
 					continue;
 				}
-				if (excludes.Count > 0 || (i % 3) != 0) ImGui.SameLine();
+				if (numButtons % 3 != 0) ImGui.SameLine(); // max 3 buttons per line
 
 				var value = values[i];
 				if (ImGui.RadioButton($"{value}", this.Type == value)) {
 					this.Type = value;
 					update = true;
 				}
+				numButtons += 1;
 			}
 			
 			ImGui.Spacing();
@@ -406,6 +409,9 @@ public class AnimationEditorTab {
 		}
 		
 		public bool Filter(GameAnimation item) {
+			// if we're on All, return any animation for filters
+			if ((!this.SlotFilterActive || this.Slot == item.Slot) && this.Type == AnimType.All) return true;
+
 			return (!this.SlotFilterActive || this.Slot == item.Slot) && item switch {
 				ActionAnimation => this.Type == AnimType.Action,
 				EmoteAnimation emote => this.Type == (emote.IsExpression ? AnimType.Expression: AnimType.Emote),
@@ -416,7 +422,7 @@ public class AnimationEditorTab {
 
 		private List<int> GetExcludes() {
 			// conditionally exclude radio buttons based on availability for selected slotfilter
-			if (!this.SlotFilterActive) return new List<int>();
+			if (!this.SlotFilterActive) return new List<int> {};
 
 			if (this.Slot == TimelineSlot.FullBody || this.Slot == TimelineSlot.UpperBody)
 				return new List<int> {(int)AnimType.Expression};
@@ -425,9 +431,9 @@ public class AnimationEditorTab {
 			else if (this.Slot == TimelineSlot.Additive)
 				return new List<int> {(int)AnimType.Action, (int)AnimType.Expression};
 			else if (this.Slot == TimelineSlot.Lips)
-				return new List<int> {(int)AnimType.Action, (int)AnimType.Emote, (int)AnimType.Expression};
+				return new List<int> {(int)AnimType.Action, (int)AnimType.Emote, (int)AnimType.Expression, (int)AnimType.All};
 
-			return new List<int>();
+			return new List<int> {};
 		}
 
 		private AnimType BestDefaultTypeForExcludes(List<int> excludes) {
