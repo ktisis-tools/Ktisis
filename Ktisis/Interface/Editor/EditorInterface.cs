@@ -113,9 +113,9 @@ public class EditorInterface : IEditorInterface {
 		}
 	}
 
-	public void OpenObjectEditor() {
+	public void OpenObjectEditor(bool forceOpen = false) {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
-		if (this._ctx.Config.Editor.ToggleOpenWindows)
+		if (this._ctx.Config.Editor.ToggleOpenWindows && !forceOpen)
 			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(this._ctx.Config.Gizmo, gizmo), this._gui).Toggle();
 		else {
 			var _win = this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(this._ctx.Config.Gizmo, gizmo), this._gui);
@@ -124,9 +124,9 @@ public class EditorInterface : IEditorInterface {
 		}
 	}
 
-	public void OpenObjectEditor(SceneEntity entity) {
+	public void OpenObjectEditor(SceneEntity entity, bool forceOpen = false) {
 		entity.Select(SelectMode.Force);
-		this.OpenObjectEditor();
+		this.OpenObjectEditor(forceOpen);
 	}
 
 	public void OpenPosingWindow() {
@@ -192,7 +192,7 @@ public class EditorInterface : IEditorInterface {
 			this.OpenEditor<LightWindow, LightEntity>(light);
 			return;
 		}
-		this.OpenObjectEditor(light);
+		this.OpenObjectEditor(light, true);
 	}
 
 	public bool OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {

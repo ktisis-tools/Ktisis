@@ -54,9 +54,6 @@ public class SceneEntityMenuBuilder {
 				if (!this._entity.IsSelected) this._entity.Select(SelectMode.Multiple);
 			});
 
-		if (this._entity is IVisibility vis)
-			menu.Action("Toggle display", () => vis.Toggle());
-
 		if (this._entity.Root is ActorEntity actorEntity)
 			menu.SubMenu("Presets...", sub => {
 				foreach (var (name, isEnabled) in actorEntity.GetPresets()) {
@@ -107,7 +104,6 @@ public class SceneEntityMenuBuilder {
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
-			.Action($"{(actor.IsHidden ? "Unhide" : "Hide")} Actor", actor.ToggleHidden)
 			.Separator()
 			.Action("Edit appearance", this.OpenEditor)
 			.Group(sub => this.BuildActorIpcMenu(sub, actor))
@@ -183,8 +179,6 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildLightMenu(ContextMenuBuilder menu, LightEntity light) {
 		menu.Separator()
-			.Action($"{(light.IsHidden ? "Unhide" : "Hide")} Light", light.ToggleHidden)
-			.Separator()
 			.Action("Edit lighting", this.OpenEditor)
 			.Separator()
 			.Action("Import light file", () => this.Ui.OpenLightFile((path, file) => this.ImportLight(light, file)))
