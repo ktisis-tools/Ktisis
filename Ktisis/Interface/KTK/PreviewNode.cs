@@ -46,8 +46,6 @@ public unsafe class PreviewNode : OverlayNode {
 
 	private uint _counter;
 	private ActorEntity _actor;
-	private float _pitch = 0;
-	private float _yaw = 0;
 
 	private readonly RenderTargetManager* _renderTargetManager;
 	private readonly AgentInspect* _agentInspect;
@@ -75,6 +73,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._ctx = context;
 		this._serializer = new JsonFileSerializer();
 
+		
 		this._renderTargetManager = RenderTargetManager.Instance();
 		this._agentInspect = AgentInspect.Instance(); // idk why this was below the eval before?
 
@@ -83,6 +82,8 @@ public unsafe class PreviewNode : OverlayNode {
 			Position = new Vector2(4, 3),
 			ImageNodeFlags = (ImageNodeFlags)0x8C,
 			WrapMode = WrapMode.Tile,
+			NodeFlags = (NodeFlags)0x3F,
+			FitTexture = true
 		};
 		this.Border = new NineGridNode() {
 			Size = new Vector2(200.0f, 328.0f),
@@ -98,12 +99,20 @@ public unsafe class PreviewNode : OverlayNode {
 			Id = 0
 		});
 
-		var part = this.Image.AddPart(new Part());
+		
+
+		var part = this.Image.AddPart(new Part { 		
+			Height = 320,
+			Width = 192,});
 		part->LoadTexture(this._renderTargetManager->CharaViewTextures[1]);
 		this._renderTargetManager->CharaViewTextures[1].Value->IncRef();
 
+		var ipc = this._ctx.Plugin.Ipc.GetPenumbraIpc();
+		var collection = ipc.GetCollectionForObject(target.Actor);
+
 		this._framework.RunOnFrameworkThread(() => {
 			this._agentInspect->CharaView.Initialize(&this._agentInspect->AgentInterface, 1, 0);
+			ipc.SetCollectionForObject(this._objectTable[441], collection.Id);
 			this._agentInspect->CharaView.ModelData.CopyFromCharacter((Character*)target.Actor.Address);
 		});
 
@@ -196,8 +205,6 @@ public unsafe class PreviewNode : OverlayNode {
 	}
 
 	private void MoveCamera(float pitch, float yaw) {
-		this._pitch += pitch;
-		this._yaw += yaw;
 		this._agentInspect->CharaView.SetCameraYawAndPitch(yaw, pitch);
 	}
 
@@ -205,9 +212,8 @@ public unsafe class PreviewNode : OverlayNode {
 	/// Resets the camera position
 	/// </summary>
 	private void ResetCamera() {
-		this._agentInspect->CharaView.SetCameraYawAndPitch(this._yaw * -1, this._pitch * -1);
-		this._pitch = 0;
-		this._yaw = 0;
+		this._agentInspect->CharaView.ResetPositions();
+		//this._agentInspect->CharaView.SetCameraYawAndPitch(this._yaw * -1, this._pitch * -1);
 	}
 
 	/// <summary>
