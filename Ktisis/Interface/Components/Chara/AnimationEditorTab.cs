@@ -34,6 +34,14 @@ public class AnimationEditorTab {
 		TimelineSlot.FullBody, TimelineSlot.UpperBody
 	];
 
+	private enum AnimType {
+		Action,
+		Emote,
+		Expression,
+		RawTimeline,
+		All
+	}
+
 	private readonly ConfigManager _cfg;
 	private readonly ITextureProvider _tex;
 	private readonly LocaleManager _locale;
@@ -343,7 +351,7 @@ public class AnimationEditorTab {
 		ImGui.SameLine(cursor, height + space);
 		ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetTextLineHeight());
 		using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xAF)))
-			ImGui.Text($"{anim.Slot}");
+			ImGui.Text($"{anim.Slot} {TypeForAnim(anim)}");
 		
 		ImGui.SameLine(cursor);
 
@@ -367,15 +375,16 @@ public class AnimationEditorTab {
 	private static bool AnimSearchPredicate(GameAnimation anim, string query)
 		=> anim.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase);
 
-	private class AnimationFilter : IFilterProvider<GameAnimation> {
-		private enum AnimType {
-			Action,
-			Emote,
-			Expression,
-			RawTimeline,
-			All
-		}
+	private static AnimType TypeForAnim(GameAnimation anim) {
+		return anim switch {
+			ActionAnimation => AnimType.Action,
+			EmoteAnimation emote => emote.IsExpression ? AnimType.Expression : AnimType.Emote,
+			TimelineAnimation => AnimType.RawTimeline,
+			_ => AnimType.All
+		};
+	}
 
+	private class AnimationFilter : IFilterProvider<GameAnimation> {
 		private AnimType Type = AnimType.Action;
 
 		public bool SlotFilterActive;

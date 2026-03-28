@@ -165,7 +165,7 @@ public class ConfigWindow : KtisisWindow {
 		this.DrawHint("config.gizmo.rayHint");
 		ImGui.Checkbox(this.Locale.Translate("config.gizmo.holdSnap"), ref this.Config.Gizmo.AllowHoldSnap);
 		this.DrawHint("config.gizmo.hintHoldSnap");
-		ImGui.SliderFloat(this.Locale.Translate("config.gizmo.2d_scale"), ref this.Config.Gizmo.Gizmo2DScaleFactor, 0.1f, 0.75f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+		ImGui.SliderFloat(this.Locale.Translate("config.gizmo.2d_scale"), ref this.Config.Gizmo.Gizmo2DScaleFactor, 0.4f, 0.75f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
 
 		ImGui.Spacing();
 		this._gizmoStyle.Draw();
