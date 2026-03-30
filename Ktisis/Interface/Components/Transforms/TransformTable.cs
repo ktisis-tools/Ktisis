@@ -57,7 +57,7 @@ public class TransformTable {
 	private Quaternion Value = Quaternion.Identity;
 
 	private const ImGuizmoOperation PositionOp = ImGuizmoOperation.Translate;
-	private const ImGuizmoOperation RotateOp = ImGuizmoOperation.Rotate ^ ImGuizmoOperation.RotateScreen;
+	private const ImGuizmoOperation RotateOp = ImGuizmoOperation.Rotate;
 	private const ImGuizmoOperation ScaleOp = ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu;
 
 	private Transform Transform = new();
@@ -146,20 +146,23 @@ public class TransformTable {
 		var spacing = ImGui.GetStyle().ItemSpacing.X;
 		ImGui.SameLine(0, spacing);
 
-		var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
-		var isRotateScreen = op.HasFlag(RotateOp) && this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateScreen);
-		using var _ = ImRaii.PushColor(ImGuiCol.Text, enable);
-		using var _color = ImRaii.PushColor(ImGuiCol.Text, isRotateScreen ? 0xAF0FFFFF : 0xAFFFFFFF, isRotateScreen);
-		
-		if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
-			this.ChangeOperation(op);
+		var isModified = this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateX) && !this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateScreen);
+		var isCurrent = this.GizmoConfig.Operation.HasFlag(op);
+		var color = (op, isCurrent, isModified) switch {
+			(RotateOp, _, true) => 0xAF0FFFFF,
+			(_, true, _) => 0xFFFFFFFF,
+			_ => 0xAFFFFFFF
+		};
+		using var _ = ImRaii.PushColor(ImGuiCol.Text, color);
 	}
 
 	private void ChangeOperation(ImGuizmoOperation op) {
+		// if rotate was shift-clicked and we're not currently XYZ rotating, make op a XYZ rotate - else treat as normal rotation w screen
+		if (op is ImGuizmoOperation.Rotate && ImGui.GetIO().KeyShift)
+			if (!this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateX) || this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateScreen))
+				op ^= ImGuizmoOperation.RotateScreen;
 		if (GuiHelpers.GetSelectMode() == SelectMode.Multiple)
 			this.GizmoConfig.Operation |= op;
-		else if (this.GizmoConfig.Operation.HasFlag(RotateOp) && ImGui.GetIO().KeyShift)
-			this.GizmoConfig.Operation ^= ImGuizmoOperation.RotateScreen;
 		else
 			this.GizmoConfig.Operation = op;
 	}
