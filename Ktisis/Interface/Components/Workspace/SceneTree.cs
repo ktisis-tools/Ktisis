@@ -241,6 +241,11 @@ public class SceneTree {
 		var icon = vis is WorldEntity ? FontAwesomeIcon.LocationCrosshairs : FontAwesomeIcon.Eye;
 		if (this.DrawButton(ref cursor, icon, color) && isHover)
 			vis.Toggle();
+
+		if (!isHover || !ImGui.IsItemHovered()) return;
+		using var _ = ImRaii.Tooltip();
+		var visibleType = vis is WorldEntity ? node.Type + " Root" : "Overlay";
+		ImGui.Text((vis.Visible ? "Hide " : "Show ") + visibleType);
 	}
 
 	private void DrawAttachButton(IAttachable attach, ref float cursor, bool isHover) {
@@ -265,7 +270,8 @@ public class SceneTree {
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
 		using var _ = ImRaii.Tooltip();
-		ImGui.Text(entity.IsHidden ? "Unhide Entity" : "Hide Entity");
+		var hideType = entity is SceneEntity ent ? ent.Type.ToString() : "Entity";
+		ImGui.Text((entity.IsHidden ? "Show " : "Hide ") + hideType);
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {

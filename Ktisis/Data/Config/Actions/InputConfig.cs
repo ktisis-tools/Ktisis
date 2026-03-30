@@ -7,7 +7,7 @@ public class InputConfig {
 	public bool BlockTargetRightClick;
 	public bool ScrollModifier;
 	public bool ScrollAllow = true;
-	public bool Enabled;
+	public bool Enabled = true;
 
 	public Dictionary<string, ActionKeybind> Keybinds = new();
 

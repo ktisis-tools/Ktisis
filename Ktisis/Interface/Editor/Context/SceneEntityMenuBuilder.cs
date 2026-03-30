@@ -54,9 +54,6 @@ public class SceneEntityMenuBuilder {
 				if (!this._entity.IsSelected) this._entity.Select(SelectMode.Multiple);
 			});
 
-		if (this._entity is IVisibility vis)
-			menu.Action("Toggle display", () => vis.Toggle());
-
 		if (this._entity.Root is ActorEntity actorEntity)
 			menu.SubMenu("Presets...", sub => {
 				foreach (var (name, isEnabled) in actorEntity.GetPresets()) {
@@ -107,7 +104,6 @@ public class SceneEntityMenuBuilder {
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
-			.Action($"{(actor.IsHidden ? "Unhide" : "Hide")} Actor", actor.ToggleHidden)
 			.Separator()
 			.Action("Edit appearance", this.OpenEditor)
 			.Group(sub => this.BuildActorIpcMenu(sub, actor))
@@ -149,9 +145,14 @@ public class SceneEntityMenuBuilder {
 	private async void DuplicateActor(ActorEntity actor) {
 		// pack actor into a temp charafile to apply to new actor after creation
 		var file = await this._ctx.Characters.SaveCharaFile(actor);
-		this._ctx.Scene.Factory.CreateActor()
+		var dupe = await this._ctx.Scene.Factory.CreateActor()
 			.WithAppearance(file)
 			.Spawn();
+
+		// copy glamourer state if applicable
+		if (!this._ctx.Plugin.Ipc.IsGlamourerActive) return;
+		var ipc = this._ctx.Plugin.Ipc.GetGlamourerIpc();
+		ipc.CopyState(actor.Actor.ObjectIndex, dupe.Actor.ObjectIndex);
 	}
 	
 	// Poses
@@ -178,8 +179,6 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildLightMenu(ContextMenuBuilder menu, LightEntity light) {
 		menu.Separator()
-			.Action($"{(light.IsHidden ? "Unhide" : "Hide")} Light", light.ToggleHidden)
-			.Separator()
 			.Action("Edit lighting", this.OpenEditor)
 			.Separator()
 			.Action("Import light file", () => this.Ui.OpenLightFile((path, file) => this.ImportLight(light, file)))

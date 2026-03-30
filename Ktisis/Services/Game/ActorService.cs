@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
@@ -45,13 +47,16 @@ public class ActorService {
 	}
 
 	public IEnumerable<IGameObject> GetOverworldActors() {
-		for (var i = 0; i < GPoseIndex - 1; i++) {
-			var actor = this.GetIndex(i);
-			if (actor != null && actor.IsEnabled())
-				yield return actor;
+		var actors = this._objectTable.CharacterManagerObjects
+			.Concat(this._objectTable.ClientObjects.Where(gameObject => gameObject.ObjectIndex > GPoseIndex + GPoseCount))
+			.Concat(this._objectTable.StandObjects.Where(gameObject => gameObject is { ObjectKind: ObjectKind.BattleNpc or ObjectKind.EventNpc or ObjectKind.Companion or ObjectKind.MountType }));
+
+		foreach (var actor in actors) {
+			if (!actor.IsEnabled() || !actor.IsDrawing()) continue;
+			yield return actor;
 		}
 	}
-	
+
 	// Skeleton wrappers
 
 	public unsafe IGameObject? GetSkeletonOwner(Skeleton* skeleton) {
