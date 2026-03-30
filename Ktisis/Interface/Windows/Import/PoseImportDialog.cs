@@ -52,6 +52,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	public void DrawEmbed() {
 		this.PreDraw();
 		if (!this.Context.IsValid) return; // despite closing in predraw, we might continue to later draw funcs, so stop drawing here
+		using var _id = ImRaii.PushId($"PoseEmbed_{this.GetHashCode():X}");
 
 		this._select.Draw();
 		

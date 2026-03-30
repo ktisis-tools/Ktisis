@@ -49,6 +49,7 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	public void DrawEmbed() {
 		this.PreDraw();
 		if (!this.Context.IsValid) return; // despite closing in predraw, we might continue to later draw funcs, so stop drawing here
+		using var _id = ImRaii.PushId($"CharaEmbed_{this.GetHashCode():X}");
 
 		this._import.DrawLoadMethods();
 		ImGui.Spacing();
