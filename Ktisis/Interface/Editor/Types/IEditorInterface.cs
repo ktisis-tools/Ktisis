@@ -19,7 +19,7 @@ public interface IEditorInterface {
 
 	public void OpenCameraWindow();
 	public void OpenEnvironmentWindow();
-	public void OpenObjectEditor();
+	public void OpenObjectEditor(bool forceOpen = false);
 	public void OpenPosingWindow();
 
 	public void OpenSceneCreateMenu();

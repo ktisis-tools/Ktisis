@@ -34,6 +34,14 @@ public class AnimationEditorTab {
 		TimelineSlot.FullBody, TimelineSlot.UpperBody
 	];
 
+	private enum AnimType {
+		Action,
+		Emote,
+		Expression,
+		RawTimeline,
+		All
+	}
+
 	private readonly ConfigManager _cfg;
 	private readonly ITextureProvider _tex;
 	private readonly LocaleManager _locale;
@@ -343,7 +351,7 @@ public class AnimationEditorTab {
 		ImGui.SameLine(cursor, height + space);
 		ImGui.SetCursorPosY(ImGui.GetCursorPosY() + ImGui.GetTextLineHeight());
 		using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xAF)))
-			ImGui.Text($"{anim.Slot}");
+			ImGui.Text($"{anim.Slot} {TypeForAnim(anim)}");
 		
 		ImGui.SameLine(cursor);
 
@@ -367,14 +375,16 @@ public class AnimationEditorTab {
 	private static bool AnimSearchPredicate(GameAnimation anim, string query)
 		=> anim.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase);
 
-	private class AnimationFilter : IFilterProvider<GameAnimation> {
-		private enum AnimType {
-			Action,
-			Emote,
-			Expression,
-			RawTimeline
-		}
+	private static AnimType TypeForAnim(GameAnimation anim) {
+		return anim switch {
+			ActionAnimation => AnimType.Action,
+			EmoteAnimation emote => emote.IsExpression ? AnimType.Expression : AnimType.Emote,
+			TimelineAnimation => AnimType.RawTimeline,
+			_ => AnimType.All
+		};
+	}
 
+	private class AnimationFilter : IFilterProvider<GameAnimation> {
 		private AnimType Type = AnimType.Action;
 
 		public bool SlotFilterActive;
@@ -385,6 +395,7 @@ public class AnimationEditorTab {
 			
 			var values = Enum.GetValues<AnimType>();
 			var excludes = this.GetExcludes();
+			var numButtons = 0;
 			for (var i = 0; i < values.Length; i++) {
 				// if we got an excludes list, skip any radio buttons irrelevant to the picked timeline slot
 				if (excludes.Contains(i)) {
@@ -392,13 +403,14 @@ public class AnimationEditorTab {
 						this.Type = this.BestDefaultTypeForExcludes(excludes);
 					continue;
 				}
-				if (excludes.Count > 0 || (i % 3) != 0) ImGui.SameLine();
+				if (numButtons % 3 != 0) ImGui.SameLine(); // max 3 buttons per line
 
 				var value = values[i];
 				if (ImGui.RadioButton($"{value}", this.Type == value)) {
 					this.Type = value;
 					update = true;
 				}
+				numButtons += 1;
 			}
 			
 			ImGui.Spacing();
@@ -406,6 +418,9 @@ public class AnimationEditorTab {
 		}
 		
 		public bool Filter(GameAnimation item) {
+			// if we're on All, return any animation for filters
+			if ((!this.SlotFilterActive || this.Slot == item.Slot) && this.Type == AnimType.All) return true;
+
 			return (!this.SlotFilterActive || this.Slot == item.Slot) && item switch {
 				ActionAnimation => this.Type == AnimType.Action,
 				EmoteAnimation emote => this.Type == (emote.IsExpression ? AnimType.Expression: AnimType.Emote),
@@ -416,7 +431,7 @@ public class AnimationEditorTab {
 
 		private List<int> GetExcludes() {
 			// conditionally exclude radio buttons based on availability for selected slotfilter
-			if (!this.SlotFilterActive) return new List<int>();
+			if (!this.SlotFilterActive) return new List<int> {};
 
 			if (this.Slot == TimelineSlot.FullBody || this.Slot == TimelineSlot.UpperBody)
 				return new List<int> {(int)AnimType.Expression};
@@ -425,9 +440,9 @@ public class AnimationEditorTab {
 			else if (this.Slot == TimelineSlot.Additive)
 				return new List<int> {(int)AnimType.Action, (int)AnimType.Expression};
 			else if (this.Slot == TimelineSlot.Lips)
-				return new List<int> {(int)AnimType.Action, (int)AnimType.Emote, (int)AnimType.Expression};
+				return new List<int> {(int)AnimType.Action, (int)AnimType.Emote, (int)AnimType.Expression, (int)AnimType.All};
 
-			return new List<int>();
+			return new List<int> {};
 		}
 
 		private AnimType BestDefaultTypeForExcludes(List<int> excludes) {

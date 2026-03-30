@@ -20,8 +20,6 @@ using Ktisis.Scene.Entities.Skeleton;
 namespace Ktisis.Interface.Windows.Import;
 
 public class PoseImportDialog : EntityEditWindow<ActorEntity> {
-	private readonly IEditorContext _ctx;
-
 	private readonly FileSelect<PoseFile> _select;
 
 	public PoseImportDialog(
@@ -32,13 +30,12 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		ctx,
 		ImGuiWindowFlags.AlwaysAutoResize
 	) {
-		this._ctx = ctx;
 		this._select = select;
 		select.OnOpenDialog = this.OnFileDialogOpen;
 	}
 	
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {
-		this._ctx.Interface.OpenPoseFile(sender.SetFile);
+		this.Context.Interface.OpenPoseFile(sender.SetFile);
 	}
 
 	// Draw UI
@@ -54,6 +51,9 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 
 	public void DrawEmbed() {
 		this.PreDraw();
+		if (!this.Context.IsValid) return; // despite closing in predraw, we might continue to later draw funcs, so stop drawing here
+		using var _id = ImRaii.PushId($"PoseEmbed_{this.GetHashCode():X}");
+
 		this._select.Draw();
 		
 		ImGui.Spacing();
@@ -83,7 +83,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	private void DrawTransformSelect() {
 		ImGui.Text("Transforms:");
 
-		var file = this._ctx.Config.File;
+		var file = this.Context.Config.File;
 		var trans = file.ImportPoseTransforms;
 
 		var rotation = trans.HasFlag(PoseTransforms.Rotation);
@@ -117,7 +117,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	private void DrawApplyModes(bool isSelectBones) {
 		ImGui.Text("Modes:");
 
-		var file = this._ctx.Config.File;
+		var file = this.Context.Config.File;
 		var modes = file.ImportPoseModes;
 
 		var isSelectiveImport = file.ImportPoseSelectedBones && isSelectBones;
@@ -155,6 +155,13 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		}
 
 		ImGui.Checkbox("Exclude ear bones", ref file.ExcludePoseEarBones);
+
+		if (this._select.IsFileOpened && this.Context.Posing.IsIkEnabled) {
+			ImGui.Spacing();
+			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.TextWrapped("Inverse Kinematics are enabled! These may override imported limbs.");
+		}
 	}
 	
 	// Apply pose
@@ -166,11 +173,11 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		var pose = this.Target.Pose;
 		if (pose == null) return;
 
-		var cfg = this._ctx.Config.File;
+		var cfg = this.Context.Config.File;
 		var selectedBones = isSelectBones && cfg.ImportPoseSelectedBones;
 		var includeDescendants = cfg.SelectedBonesIncludeDescendants;
 		var anchorGroups = cfg.AnchorPoseSelectedBones;
 		var excludeEars = cfg.ExcludePoseEarBones;
-		this._ctx.Posing.ApplyPoseFile(pose, file, cfg.ImportPoseModes, cfg.ImportPoseTransforms, selectedBones, includeDescendants, anchorGroups, excludeEars);
+		this.Context.Posing.ApplyPoseFile(pose, file, cfg.ImportPoseModes, cfg.ImportPoseTransforms, selectedBones, includeDescendants, anchorGroups, excludeEars);
 	}
 }

@@ -210,7 +210,7 @@ public class ObjectWindow : KtisisWindow {
 	// Gizmo
 
 	private unsafe bool DrawGizmo(ref Transform transform, float width, bool disabled) {
-		var size = new Vector2(width, 200);
+		var size = new Vector2(width, 300);
 
 		this._gizmo.Begin(size);
 		this._gizmo.Mode = this._ctx.Config.Gizmo.Mode;

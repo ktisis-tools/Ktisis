@@ -35,7 +35,7 @@ public class ConfigWindow : KtisisWindow {
 	private Configuration Config => this._cfg.File;
 
 	const ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.ReadOnly;
-	private const ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.OpenOnArrow;
+	private const ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.DefaultOpen;
 	private const ImGuiTreeNodeFlags leafFlags = ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.Leaf;
 
 	// ty OGT https://git.anna.lgbt/anna/OrangeGuidanceTomestone/src/branch/main/client/Ui/MainWindowTabs/Settings.cs#L23
@@ -165,6 +165,7 @@ public class ConfigWindow : KtisisWindow {
 		this.DrawHint("config.gizmo.rayHint");
 		ImGui.Checkbox(this.Locale.Translate("config.gizmo.holdSnap"), ref this.Config.Gizmo.AllowHoldSnap);
 		this.DrawHint("config.gizmo.hintHoldSnap");
+		ImGui.SliderFloat(this.Locale.Translate("config.gizmo.2d_scale"), ref this.Config.Gizmo.Gizmo2DScaleFactor, 0.4f, 0.75f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
 
 		ImGui.Spacing();
 		this._gizmoStyle.Draw();
@@ -208,6 +209,7 @@ public class ConfigWindow : KtisisWindow {
 
 		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.windowHeader"))) {
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleOpenWindows"), ref this.Config.Editor.ToggleOpenWindows);
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyPoseTabs"), ref this.Config.Editor.UseLegacyPoseViewTabs);
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.editOnSelect"), ref this.Config.Editor.ToggleEditorOnSelect);
 			using (ImRaii.Disabled(!this.Config.Editor.ToggleEditorOnSelect))
 				ImGui.Checkbox(this.Locale.Translate("config.workspace.closeOnDeselect"), ref this.Config.Editor.CloseEditorOnDeselect);
@@ -217,8 +219,6 @@ public class ConfigWindow : KtisisWindow {
 		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.legacyHeader"))) {
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyWindows"), ref this.Config.Editor.UseLegacyWindowBehavior);
 			this.DrawHint("config.workspace.legacyWindowHint");
-			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyPoseTabs"), ref this.Config.Editor.UseLegacyPoseViewTabs);
-			this.DrawHint("config.workspace.legacyPoseHint");
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyLightEditor"), ref this.Config.Editor.UseLegacyLightEditor);
 			this.DrawHint("config.workspace.legacyLightHint");
 		}

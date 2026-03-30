@@ -20,6 +20,7 @@ public class GlamourerIpcProvider {
 	private readonly UnlockStateName _unlockStateName;
 	private readonly UnlockAll _unlockAll;
 	private readonly DeletePlayerState _deleteState;
+	private readonly GetStateBase64 _getState;
 	private readonly uint Key = 0x0001F407;
 	
 	public GlamourerIpcProvider(
@@ -34,6 +35,7 @@ public class GlamourerIpcProvider {
 		this._unlockStateName = new UnlockStateName(dpi);
 		this._unlockAll = new UnlockAll(dpi);
 		this._deleteState = new DeletePlayerState(dpi);
+		this._getState = new GetStateBase64(dpi);
 	}
 
 	public Dictionary<Guid, string> GetDesignList() => this._getDesignList.Invoke();
@@ -76,6 +78,12 @@ public class GlamourerIpcProvider {
 
 		return result == GlamourerApiEc.Success;
     }
+
+	public void CopyState(int sourceIndex, int targetIndex) {
+		var getResult = this._getState.Invoke(sourceIndex);
+		if (getResult.Item1 != GlamourerApiEc.Success || getResult.Item2 is null) return;
+		this._applyState.Invoke(getResult.Item2, targetIndex); // do not key so this remains editable by the user after copy
+	}
 
 	public void ApplyState(string state, int index) {
 		this._applyState.Invoke(state, index, Key);
