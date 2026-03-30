@@ -154,6 +154,9 @@ public class TransformTable {
 			_ => 0xAFFFFFFF
 		};
 		using var _ = ImRaii.PushColor(ImGuiCol.Text, color);
+
+		if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
+			this.ChangeOperation(op);
 	}
 
 	private void ChangeOperation(ImGuizmoOperation op) {
