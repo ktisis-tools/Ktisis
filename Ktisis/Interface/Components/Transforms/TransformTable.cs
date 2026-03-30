@@ -146,14 +146,24 @@ public class TransformTable {
 		var spacing = ImGui.GetStyle().ItemSpacing.X;
 		ImGui.SameLine(0, spacing);
 
-		var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
-		using (ImRaii.PushColor(ImGuiCol.Text, enable)) {
-			if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
-				this.ChangeOperation(op);
-		}
+		var isModified = this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateX) && !this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateScreen);
+		var isCurrent = this.GizmoConfig.Operation.HasFlag(op);
+		var color = (op, isCurrent, isModified) switch {
+			(RotateOp, _, true) => 0xAF0FFFFF,
+			(_, true, _) => 0xFFFFFFFF,
+			_ => 0xAFFFFFFF
+		};
+		using var _ = ImRaii.PushColor(ImGuiCol.Text, color);
+
+		if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
+			this.ChangeOperation(op);
 	}
 
 	private void ChangeOperation(ImGuizmoOperation op) {
+		// if rotate was shift-clicked and we're not currently XYZ rotating, make op a XYZ rotate - else treat as normal rotation w screen
+		if (op is ImGuizmoOperation.Rotate && ImGui.GetIO().KeyShift)
+			if (!this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateX) || this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateScreen))
+				op ^= ImGuizmoOperation.RotateScreen;
 		if (GuiHelpers.GetSelectMode() == SelectMode.Multiple)
 			this.GizmoConfig.Operation |= op;
 		else

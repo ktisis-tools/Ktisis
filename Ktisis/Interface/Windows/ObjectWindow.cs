@@ -214,6 +214,7 @@ public class ObjectWindow : KtisisWindow {
 
 		this._gizmo.Begin(size);
 		this._gizmo.Mode = this._ctx.Config.Gizmo.Mode;
+		this._gizmo.Operation = this._ctx.Config.Gizmo.Operation;
 		
 		if (disabled) {
 			this._gizmo.End();

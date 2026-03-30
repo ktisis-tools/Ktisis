@@ -53,7 +53,7 @@
 	
 	"transform": {
 		"position": "Position",
-		"rotation": "Rotation",
+		"rotation": "Rotation\nHold shift to toggle screen orbit.",
 		"scale": "Scale"
 	},
 	

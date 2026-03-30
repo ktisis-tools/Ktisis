@@ -35,6 +35,11 @@ public class Gizmo2D {
 		set => this.Gizmo.Mode = value;
 	}
 
+	public ImGuizmoOperation Operation {
+		get => this.Gizmo.Operation;
+		set => this.Gizmo.Operation = value;
+	}
+
 	public bool IsEnded => this.Gizmo.IsEnded;
 
 	// Draw
