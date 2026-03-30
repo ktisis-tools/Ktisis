@@ -46,9 +46,9 @@
       },
       "Penumbra.Api": {
         "type": "Direct",
-        "requested": "[5.10.0, )",
-        "resolved": "5.10.0",
-        "contentHash": "ZRIIXQCluNlLoI4I4gNYuYXqb7p48OR1P2/LcL27owToR/A/IG0mH8Ks2HguB/Kjq4RpCinaVkyufpGxGspbTA=="
+        "requested": "[5.13.1, )",
+        "resolved": "5.13.1",
+        "contentHash": "kmpqhcbnnF+Ib0F9g7+1W17IbZ8Q8G2zn3MJURd/rmQiB3D7cm8YS2JRmvhDzrN5w9OMlfq7MFxVtwG419YkIA=="
       },
       "K4os.Compression.LZ4": {
         "type": "Transitive",
@@ -62,12 +62,6 @@
       },
       "glib": {
         "type": "Project"
-      },
-      "imguizmo.net": {
-        "type": "Project",
-        "dependencies": {
-          "JetBrains.Annotations": "[2022.3.1, )"
-        }
       }
     }
   }

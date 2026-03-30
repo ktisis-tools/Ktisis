@@ -23,7 +23,7 @@
 		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
 		<PackageReference Include="K4os.Compression.LZ4.Legacy" Version="1.3.8" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
-		<PackageReference Include="Penumbra.Api" Version="5.10.0" />
+		<PackageReference Include="Penumbra.Api" Version="5.13.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Data\Schema\Categories.xml" />
@@ -33,8 +33,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Localization\Data\*.json" />
-		<None Remove="Data\Library\bnpc-index.json" />
-		<EmbeddedResource Include="Data\Library\bnpc-index.json" />
 		<None Remove="Data\Schema\Views.xml" />
 		<EmbeddedResource Include="Data\Schema\Views.xml" />
 		<None Remove="Data\Images\ahmi.png" />
@@ -62,6 +60,11 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Data\Library\" />
+      <EmbeddedResource Include="Data\Library\bnpc-index.json" />
       <EmbeddedResource Include="Data\Library\props.json" />
+      <EmbeddedResource Include="Data\Library\skin-paths.json" />
 	</ItemGroup>
+    <ItemGroup>
+      <Content Include="Assets\**\*" CopyToOutputDirectory="Always"/>
+    </ItemGroup>
 </Project>

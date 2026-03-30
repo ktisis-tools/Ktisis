@@ -112,7 +112,7 @@ public class SceneEntityMenuBuilder {
 				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
 					.Action("NPC", () => this.Ui.OpenCharaImport(actor, true))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
-				
+
 				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
 					builder.Action("Mare data (.mcdf)", () => {
 						this.Ui.OpenMcdfFile(path => this.ImportMcdf(actor, path));
@@ -127,8 +127,10 @@ public class SceneEntityMenuBuilder {
 
 	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.SubMenu("IPC appearance", sub => {
-			if (this._ctx.Plugin.Ipc.IsPenumbraActive)
+			if (this._ctx.Plugin.Ipc.IsPenumbraActive) {
 				sub.Action("Penumbra: Assign collection", () => this.Ui.OpenAssignCollection(actor));
+				sub.Action("Penumbra: Invisible Skin", () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
+			}
 			if (this._ctx.Plugin.Ipc.IsGlamourerActive)
 				sub.Action("Glamourer: Apply design", () => this.Ui.OpenApplyDesign(actor));
 			if (this._ctx.Plugin.Ipc.IsCustomizeActive)
