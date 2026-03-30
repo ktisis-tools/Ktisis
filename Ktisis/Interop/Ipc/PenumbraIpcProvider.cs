@@ -29,8 +29,6 @@ public class PenumbraIpcProvider {
 	private readonly AddTemporaryMod _addTemporaryMod;
 	private readonly RemoveTemporaryMod _removeTemporaryMod;
 	private readonly RedrawObject _redrawObject;
-	private readonly AddTemporaryCollectionInheritance _addTemporaryCollectionInheritance;
-	private readonly RemoveTemporaryCollectionInheritance _removeTemporaryCollectionInheritance;
     
 	public PenumbraIpcProvider(
 		IDalamudPluginInterface dpi
@@ -47,8 +45,6 @@ public class PenumbraIpcProvider {
 		this._addTemporaryMod = new AddTemporaryMod(dpi);
 		this._removeTemporaryMod = new RemoveTemporaryMod(dpi);
 		this._redrawObject = new RedrawObject(dpi);
-		this._addTemporaryCollectionInheritance = new AddTemporaryCollectionInheritance(dpi);
-		this._removeTemporaryCollectionInheritance = new RemoveTemporaryCollectionInheritance(dpi);
 	}
 
 	public Dictionary<Guid, string> GetCollections() => this._getCollections.Invoke();
@@ -101,13 +97,7 @@ public class PenumbraIpcProvider {
 		var add = this._addTemporaryMod.Invoke("MareChara_Files", collectionId, paths, string.Empty, 100);
 		Ktisis.Log.Info($"{rem} {add}");
 	}
-
-	public void AddTemporaryCollectionInheritance(Guid inheritor, Guid parent) {
-		this._addTemporaryCollectionInheritance.Invoke(inheritor, parent);
-	}
-	public void RemoveTemporaryCollectionInheritance(Guid inheritor, Guid parent) {
-		this._removeTemporaryCollectionInheritance.Invoke(inheritor, parent);
-	}
+	
 	public void RemoveTemporaryMod (Guid? Collection) {
 		if(Collection != null)
 			this._removeTemporaryMod.Invoke("MareChara_Files", (Guid)Collection, 100);
@@ -117,14 +107,7 @@ public class PenumbraIpcProvider {
 		Ktisis.Log.Verbose($"Creating invisible skin collection for '{gameObject.Name}' ({gameObject.ObjectIndex})");
 
 		var parent = this._getCollectionForObject.Invoke(gameObject.ObjectIndex);
-
-			
-		/*var collectionId = this.CreateTemporaryCollection($"KtisisInvisibleSkin_{gameObject.ObjectIndex}");
-
-		if (parent is { IndividualSet: true, ObjectValid: true })
-			this.AddTemporaryCollectionInheritance(collectionId, parent.EffectiveCollection.Id);
 		
-		this.AssignTemporaryCollection(collectionId, gameObject.ObjectIndex);*/
 		this.AssignTemporaryMods(parent.EffectiveCollection.Id, this.BuildInvisibleSkinPaths());
 
 		return parent.EffectiveCollection.Id;
