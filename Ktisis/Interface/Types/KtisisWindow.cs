@@ -1,8 +1,12 @@
 using System;
+using System.Numerics;
 
 using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 
+using Ktisis.Common.Utility;
 using Ktisis.Events;
 
 namespace Ktisis.Interface.Types; 
@@ -22,6 +26,23 @@ public abstract class KtisisWindow : Window {
 		bool forceMainWindow = false
 	) : base(name, flags, forceMainWindow) {
 		this.RespectCloseHotkey = false;
+
+		this.SetHelpButton();
+	}
+
+	// help link
+
+	public string HelpUrl = "https://sleepybnuuy.github.io/ktisis-docs/";
+	private void SetHelpButton() {
+		this.TitleBarButtons.Add(new() {
+			Icon = FontAwesomeIcon.QuestionCircle,
+			IconOffset = new Vector2(2.5f, 1.0f),
+			ShowTooltip = () => {
+				using var _ = ImRaii.Tooltip();
+				ImGui.Text("Open Ktisis Docs...");
+			},
+			Click = _ => GuiHelpers.OpenBrowser(this.HelpUrl)
+		});
 	}
 
 	public void Open() => this.IsOpen = true;
