@@ -214,7 +214,9 @@ public class ObjectWindow : KtisisWindow {
 
 		this._gizmo.Begin(size);
 		this._gizmo.Mode = this._ctx.Config.Gizmo.Mode;
-		this._gizmo.Operation = this._ctx.Config.Gizmo.Operation;
+		this._gizmo.Operation = this._ctx.Config.Gizmo.Operation.HasFlag(ImGuizmoOperation.RotateX) && !this._ctx.Config.Gizmo.Operation.HasFlag(ImGuizmoOperation.RotateScreen)
+			? ImGuizmoOperation.RotateX | ImGuizmoOperation.RotateY | ImGuizmoOperation.RotateZ
+			: ImGuizmoOperation.Rotate;
 		
 		if (disabled) {
 			this._gizmo.End();
