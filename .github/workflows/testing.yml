@@ -1,4 +1,4 @@
-name: Release
+name: Testing
 
 # Add a concurrency group incase a tag is created, deleted, and then recreated while a release is in progress.
 concurrency:
@@ -15,8 +15,8 @@ permissions:
   contents: write
 
 jobs:
-  Release:
-    if: github.event.release.prerelease == false #only run on pre-release tags.
+  Testing:
+    if: github.event.release.prerelease == true #only run on pre-release tags.
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -34,7 +34,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 7.0.x
 
       - name: Download Dalamud Library
         run: |
@@ -83,9 +83,8 @@ jobs:
           repo_url=$(echo ${{ github.server_url }}/${{ github.repository }} | sed 's/#/\\#/g')
 
           sed -i repo.json -E \
-              -e 's#"AssemblyVersion": "([0-9]*\.){2,3}[0-9]*"#"AssemblyVersion": "'"$release_version"'"#g' \
-              -e 's#"DownloadLinkInstall": "[^"]*"#"DownloadLinkInstall": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g' \
-              -e 's#"DownloadLinkUpdate": "[^"]*"#"DownloadLinkUpdate": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g'
+              -e 's#"TestingAssemblyVersion": "([0-9]*\.){2,3}[0-9]*"#"TestingAssemblyVersion": "'"$release_version"'"#' \
+              -e 's#"DownloadLinkTesting": "[^"]*"#"DownloadLinkTesting": "'"$repo_url/releases/download/${{ github.ref_name }}/latest.zip"'"#g' \
 
           git add repo.json
           git commit -m "Update repo.json for ${{ github.ref_name }}"
