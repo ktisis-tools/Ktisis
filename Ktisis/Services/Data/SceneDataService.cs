@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-
+using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
@@ -19,6 +22,7 @@ using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
+using Ktisis.Data.Json.Converters;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
@@ -27,8 +31,10 @@ using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Creators;
+using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Scene.Types;
+using Ktisis.Structs.Env;
 
 using Lumina.Excel.Sheets;
 
@@ -96,7 +102,7 @@ public class SceneDataService {
 			foreach (var chara in entities) {
 				
 				var actor = ((ActorEntity)chara).Actor.GetDrawObject();
-
+					
 				var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
 				var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
 				var poseFile = new EntityPoseConverter(chara.Pose!).SaveFile();
@@ -140,18 +146,29 @@ public class SceneDataService {
 				scene.Cameras.Add(c);
 			}
 			
-			/*if (this._ctx.Scene.GetModule<EnvModule>().Override != 0x000) {
-				var env = new SceneFile.EnviromentInfo();
-				env.Override = this._ctx.Scene.GetModule<EnvModule>().Override;
-				env.State = EnvManagerEx.Instance()->EnvState;
-				scene.Enviroment = env;
-			}*/
+			
+			//Environment info 
+			var module = this._ctx.Scene.GetModule<EnvModule>();
+			var flags = (uint)module.Override;
+
+			var env = new SceneFile.EnvironmentInfo();
+			env.Override = flags;
+
+			var marshalled = Marshal.PtrToStructure<EnvManagerEx>((IntPtr) EnvManagerEx.Instance());
+			
+			env.State = marshalled.EnvState;
+
+			env.Day = module.Day;
+			env.Time = module.Time;
+			env.Weather = module.Weather;
+			
+			scene.Environment = env;
 			return scene;
-
-
-	
+		
 	}
 
+	
+	
 	public SceneFile LoadFile(String path) {
 			var file = File.ReadAllText(path);
 			var serializer = new JsonFileSerializer();
@@ -160,7 +177,7 @@ public class SceneDataService {
 		
 	}
 	
-	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true) {
+	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true) {
 
 			
 
@@ -181,17 +198,24 @@ public class SceneDataService {
 			}
 
 			if (loadActors) {
-				foreach (var loaded in scene!.Actors.Where(info => info.Chara.ModelType != 0)) {
+				foreach (var loaded in scene!.Actors.Where(info => info.Chara.ModelType == 0)) {
 					loaded.Location.Position += sceneOrigin;
 					await this._framework.RunOnFrameworkThread(() => SetupActor(loaded));
 					await this._framework.DelayTicks(10);
 
 				}
 				await this._framework.DelayTicks(30);
-				foreach (var loaded in scene!.Actors.Where(info => info.Chara.ModelType == 0)) {
+				foreach (var loaded in scene!.Actors.Where(info => info.Chara.ModelType != 0)) {
 					loaded.Location.Position += sceneOrigin;
 					await this._framework.RunOnFrameworkThread(() => SetupActor(loaded));
 					await this._framework.DelayTicks(10);
+					if (loaded.Chara.ObjectKind == ObjectKind.Ornament) {
+						var orn = this._idMap[loaded.Index];
+						orn.Appearance.ModelId = loaded.Chara.ModelType;
+						orn.Redraw();
+					}
+						
+						
 				}
 			}
 			//spawn non humans after?
@@ -235,7 +259,25 @@ public class SceneDataService {
 				}
 			}
 			
-		
+			//Env stuff
+			if (loadEnv) {
+				unsafe {
+					var flags = scene.Environment.Override;
+
+					var module = this._ctx.Scene.GetModule<EnvModule>();
+					module.Override = (EnvOverride)flags;
+
+					if (flags > 0) {
+						Marshal.StructureToPtr<EnvState>(scene.Environment.State, (IntPtr)EnvManagerEx.Instance()+0x058, false);
+					}
+					if (module.Override.HasFlag(EnvOverride.TimeWeather)) {
+						module.Day = scene.Environment.Day;
+						module.Time =  scene.Environment.Time;
+						module.Weather = scene.Environment.Weather;
+					}
+				}
+			}
+
 
 	}
 
@@ -262,7 +304,7 @@ public class SceneDataService {
 	}
 	
 	//Actor functions
-	private bool ValidMCDFPath(SceneFile.ActorInfo a) => a.MCDF != String.Empty && Path.Exists(a.MCDF);
+	internal bool ValidMCDFPath(SceneFile.ActorInfo a) => a.MCDF != String.Empty && Path.Exists(a.MCDF);
 
 	private void SetupActor(SceneFile.ActorInfo actor) {
 		IActorCreator t = this._ctx!.Scene.Factory.CreateActor();
