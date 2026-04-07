@@ -123,6 +123,8 @@ public class EditorInterface : IEditorInterface {
 		}
 	}
 
+	
+
 	public void OpenObjectEditor(bool forceOpen = false) {
 		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
 		if (this._ctx.Config.Editor.ToggleOpenWindows && !forceOpen)
