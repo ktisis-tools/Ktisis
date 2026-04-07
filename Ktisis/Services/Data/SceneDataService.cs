@@ -47,7 +47,6 @@ public class SceneDataService {
 	private IEditorContext? _ctx;
 	private IObjectTable _objectTable;
 	private IFramework _framework;
-	private IDataManager _data;
 	
 	private Task? _task;
 	private Dictionary<ushort, ActorEntity> _idMap;
@@ -60,6 +59,7 @@ public class SceneDataService {
 		IEditorContext ctx,
 		IObjectTable objectTable,
 		IFramework framework
+		
 	) {
 		this._ctx = ctx;
 		this._objectTable = objectTable;
@@ -295,13 +295,7 @@ public class SceneDataService {
 	
 	//Map data
 	public unsafe uint GetCurrentMapID() => AgentMap.Instance()->CurrentMapId;
-
-	private Map GetMapSheetData(uint mapId) {
-		ExcelSheet<Map> map = null!;
-		map = this._data.GetExcelSheet<Map>();
-		map.TryGetRow(mapId, out var mapRow);
-		return mapRow;
-	}
+	
 	
 	//Actor functions
 	internal bool ValidMCDFPath(SceneFile.ActorInfo a) => a.MCDF != String.Empty && Path.Exists(a.MCDF);
