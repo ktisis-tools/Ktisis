@@ -25,7 +25,7 @@ public class SceneFile : JsonFile {
 	[JsonInclude]
 	public List<LightInfo> Lights { get; set; } = new List<LightInfo>();
 	public List<CameraInfo> Cameras  { get; set; } = new List<CameraInfo>();
-	//public EnviromentInfo Enviroment { get; set; } = new EnviromentInfo();
+	public EnvironmentInfo Environment { get; set; } = new EnvironmentInfo();
 	
 	[Serializable]
 	public struct ActorInfo {
@@ -35,6 +35,7 @@ public class SceneFile : JsonFile {
 		public String MCDF { get; set; }
 		public float DefaultRotation { get; set; }
 		public ushort Index { get; set; }
+		
 	}
 	
 	[Serializable]
@@ -56,9 +57,15 @@ public class SceneFile : JsonFile {
 		public string Name { get; set; }
 		public bool IsActive { get; set; }
 	}
-	/*[Serializable]
-	public struct EnviromentInfo {
-		public EnvOverride Override { get; set; }
-		public EnvState? State { get; set; }
-	}*/
+
+
+	public struct EnvironmentInfo {
+		public uint Override { get; set; }
+		public EnvState State { get; set; }
+		public float Time { get; set; }
+		public int Day { get; set; }
+
+		public byte Weather { get; set; }
+		
+	}
 }
