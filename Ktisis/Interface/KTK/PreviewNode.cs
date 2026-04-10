@@ -56,6 +56,14 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly IEditorContext _ctx;
 	private readonly JsonFileSerializer _serializer;
 
+	//Stuff for auto dialog application
+	private PoseFile? _currentPose;
+	private PoseTransforms _currentTransforms;
+	private PoseMode _currentMode;
+	private bool _currentEars;
+	private bool _currentAnchor;
+	private bool _currentBones;
+	private bool _currentChildren;
 
 	public PreviewNode(
 		IEditorContext context,
@@ -66,6 +74,7 @@ public unsafe class PreviewNode : OverlayNode {
 		if (target.GetHuman() == null)
 			return;
 
+		this._currentPose = null;
 		this._framework = framework;
 		this._objectTable = objectTable;
 		this._counter = 1;
@@ -81,9 +90,7 @@ public unsafe class PreviewNode : OverlayNode {
 			Size = new Vector2(192.0f, 320.0f),
 			Position = new Vector2(4, 3),
 			ImageNodeFlags = (ImageNodeFlags)0x8C,
-			WrapMode = WrapMode.Tile,
-			NodeFlags = (NodeFlags)0x3F,
-			FitTexture = true
+			WrapMode = WrapMode.Tile
 		};
 		this.Border = new NineGridNode() {
 			Size = new Vector2(200.0f, 328.0f),
@@ -98,8 +105,6 @@ public unsafe class PreviewNode : OverlayNode {
 			TextureCoordinates = new Vector2(0, 0f),
 			Id = 0
 		});
-
-		
 
 		var part = this.Image.AddPart(new Part { 		
 			Height = 320,
@@ -141,6 +146,12 @@ public unsafe class PreviewNode : OverlayNode {
 
 		this.IsVisible = true;
 		this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
+
+		if (this.NeedsUpdate() && this._currentPose != null) {
+			this._ctx.Posing.ApplyReferencePose(_actor.Pose);
+			this._ctx.Posing.SyncFaceModelSpace(_actor);
+			this.ApplyPose();
+		}
 	}
 
 	private NodeBase SetupButtons() {
@@ -223,9 +234,28 @@ public unsafe class PreviewNode : OverlayNode {
 	public void PoseActor(string path) {
 		var content = File.ReadAllText(path);
 		if (Path.GetExtension(path).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
-		var file = this._serializer.Deserialize<PoseFile>(content);
-		this._ctx.Posing.ApplyPoseFile(_actor.Pose, file, transforms: PoseTransforms.Rotation);
+		this._currentPose = this._serializer.Deserialize<PoseFile>(content);
+		this._ctx.Posing.ApplyReferencePose(_actor.Pose);
+		this.ApplyPose();
 	}
+	
+	private void ApplyPose() =>this._ctx.Posing.ApplyPoseFile(_actor.Pose,
+		this._currentPose,
+		transforms: this._ctx.Config.File.ImportPoseTransforms,
+		modes: this._ctx.Config.File.ImportPoseModes,
+		anchorGroups:this._ctx.Config.File.AnchorPoseSelectedBones,
+		selectedBones:this._ctx.Config.File.ImportPoseSelectedBones,
+		includeDescendants: this._ctx.Config.File.SelectedBonesIncludeDescendants,
+		excludeEars: this._ctx.Config.File.ExcludePoseEarBones
+		);
+
+	private bool NeedsUpdate() => this._currentAnchor != this._ctx.Config.File.AnchorPoseSelectedBones ||
+		this._currentBones != this._ctx.Config.File.ImportPoseSelectedBones ||
+		this._currentAnchor != this._ctx.Config.File.AnchorPoseSelectedBones ||
+		this._currentChildren != this._ctx.Config.File.SelectedBonesIncludeDescendants ||
+		this._currentEars != this._ctx.Config.File.ExcludePoseEarBones ||
+		this._currentMode != this._ctx.Config.File.ImportPoseModes ||
+		this._currentTransforms != this._ctx.Config.File.ImportPoseTransforms;
 
 	public void Cleanup() {
 		this._framework.Update -= this.OnFramework;

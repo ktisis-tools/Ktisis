@@ -65,7 +65,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	// Pose application
 
 	private void DrawPoseApplication() {
-		using var _ = ImRaii.Disabled(!this._select.IsFileOpened);
+		//using var _ = ImRaii.Disabled(!this._select.IsFileOpened);
 		
 		var isSelectBones = this.Target.Recurse()
 			.Where(child => child is SkeletonNode)
