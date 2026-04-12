@@ -125,7 +125,7 @@ public class SceneWindow : KtisisWindow {
 				this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save()));
 
 		if (this._sceneFile != null) {
-			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -((iconBtnSize.Y *1.5f)* 3.3f));  //space for 2 buttons?
+			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -(((iconBtnSize.Y *1.5f) + ImGui.GetStyle().ItemInnerSpacing.X  )* 3f + ImGui.GetStyle().WindowPadding.Y + 0.01f));  //space for 2 buttons?
 			if(Buttons.IconButtonTooltip(FontAwesomeIcon.Times, "Unload File", iconBtnSize*1.5f))
 				this._sceneFile = null;
 			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, $"Choose coordinate type\nCurrently: {(this._autosave ? "World space" : "Local space")}", iconBtnSize*1.5f))
