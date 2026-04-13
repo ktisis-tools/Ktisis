@@ -16,6 +16,7 @@ using SceneCameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera
 
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Structs.Camera;
 using Ktisis.Structs.Input;
 
@@ -241,9 +242,15 @@ public class CameraModule : HookModule {
 	private unsafe float* CameraCalculateLookPositionDetour(GameCamera* pointer, float* targetPosition, float* cameraPosition, char mode) {
 		if (this.Manager.Current?.Target != null) {
 			Vector3 pos = this.Manager.Current.Target.CalcTransformWorld()!.Position;
-			targetPosition[0] = pos.X;
-			targetPosition[1] = pos.Y;
-			targetPosition[2] = pos.Z;
+			if (this.Manager.Current.OnlyFollow) {
+				ActorEntity actor = (ActorEntity)this.Manager.Current.Target.Root;
+				this.Manager.Current?.RelativeOffset = pos - actor.Actor.Position;
+				this.Manager.Current?.RelativeOffset.Y = actor.Actor.Position.Y;  //math comes later :)
+			} else {
+				targetPosition[0] = pos.X;
+				targetPosition[1] = pos.Y;
+				targetPosition[2] = pos.Z;
+			}
 		}
 		return  this.CameraCalculateLookPositionHook!.Original(pointer, targetPosition, cameraPosition, mode);
 	}

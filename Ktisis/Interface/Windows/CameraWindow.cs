@@ -77,6 +77,8 @@ public class CameraWindow : KtisisWindow {
 			this.DrawRelativeOffset(camera);
 			ImGui.Spacing();
 			this.DrawAnglePan(camera);
+			ImGui.Spacing();
+			this.DrawTracking(camera);
 		}
 
 		ImGui.Spacing();
@@ -210,6 +212,15 @@ public class CameraWindow : KtisisWindow {
 		}
 	}
 	
+	private unsafe void DrawTracking(EditorCamera camera) {
+		if(camera.Target != null)
+		{
+			ImGui.TextUnformatted($"Tracking {camera.Target.Name}");
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize());
+			ImGui.SameLine();
+			ImGui.Checkbox("Follow instead of track", ref camera.OnlyFollow);
+		}
+	}
 	// Sliders
 
 	private unsafe void DrawSliders(EditorCamera camera) {

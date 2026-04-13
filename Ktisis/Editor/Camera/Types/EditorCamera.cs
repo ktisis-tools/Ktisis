@@ -38,6 +38,7 @@ public class EditorCamera {
 	public bool IsDelimited => this.Flags.HasFlag(CameraFlags.Delimit);
 
 	public BoneNode? Target { get; set; } = null;
+	public bool OnlyFollow = true;
 	
 	public unsafe GameCamera* GameCamera => (GameCamera*)this.Address;
 	public unsafe GameCameraEx* Camera => (GameCameraEx*)this.Address;
