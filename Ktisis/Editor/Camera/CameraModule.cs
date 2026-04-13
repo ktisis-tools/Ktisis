@@ -63,6 +63,7 @@ public class CameraModule : HookModule {
 		this.CameraControlHook.Enable();
 		this.CameraCollideHook.Enable();
 		this.CameraTargetHook?.Enable();
+		this.CameraCalculateLookPositionHook.Enable();
 	}
 	
 	// Camera change handler
@@ -229,8 +230,23 @@ public class CameraModule : HookModule {
 		using var _ = this.Redirect();
 		this.CameraUiHook.Original(a1);
 	}
-	
+
+	[Signature("4C 8B DC 49 89 5B ?? 49 89 73 ?? 55 57 41 56 49 8D 6B ?? 48 81 EC ?? ?? ?? ?? 45 0F 29 4B", DetourName = nameof(CameraCalculateLookPositionDetour))]
+	private Hook<CameraCalculateLookPositionDelegate> CameraCalculateLookPositionHook = null!;
+
+	private unsafe delegate float* CameraCalculateLookPositionDelegate(GameCamera* pointer, float* position, float* unk1, char unk2); // both float* are position spans XYZ, think unk1 is the camera itself
 	// Orbit target hooks
+
+	private unsafe float* CameraCalculateLookPositionDetour(GameCamera* pointer, float* targetPosition, float* unk1, char unk2) {
+		if (this.Manager.Current?.Target != null) {
+			var pos = this.Manager.Current.Target.CalcTransformWorld()!.Position;
+			targetPosition[0] = pos.X;
+			targetPosition[1] = pos.Y;
+			targetPosition[2] = pos.Z;
+		}
+		return  this.CameraCalculateLookPositionHook!.Original(pointer, targetPosition, unk1, unk2);;
+	}
+	
 	
 	private Hook<CameraTargetDelegate>? CameraTargetHook;
 	private delegate nint CameraTargetDelegate(nint a1);

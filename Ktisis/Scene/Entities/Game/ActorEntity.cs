@@ -85,12 +85,18 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		if (!this.IsObjectValid) return;
 		this.UpdateChara();
 		base.Update();
+		SyncBattleChara();
 
 		// after we're drawing, run the default presetter once
 		if (!this.DefaultsInitialized)
 			this.SetDefaultPresets();
 	}
 
+	private unsafe void SyncBattleChara() {
+		var bc = (BattleChara*)this.CsGameObject;
+		//var boner = this.Actor.GetDrawObject()->GetAttachBoneWorldLocation(1);
+		//bc->SetPosition(boner->X, boner->Y, boner->Z);
+	}
 	private unsafe void UpdateChara() {
 		var chara = this.CharacterBaseEx;
 

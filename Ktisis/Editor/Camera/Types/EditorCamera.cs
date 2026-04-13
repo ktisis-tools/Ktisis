@@ -1,6 +1,8 @@
 using System;
 using System.Numerics;
 
+using Ktisis.Editor.Posing.Types;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Structs.Camera;
 
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
@@ -34,6 +36,8 @@ public class EditorCamera {
 	public bool IsNoCollide => this.Flags.HasFlag(CameraFlags.NoCollide);
 	public bool IsOrthographic => this.Flags.HasFlag(CameraFlags.Orthographic);
 	public bool IsDelimited => this.Flags.HasFlag(CameraFlags.Delimit);
+
+	public BoneNode? Target { get; set; } = null;
 	
 	public unsafe GameCamera* GameCamera => (GameCamera*)this.Address;
 	public unsafe GameCameraEx* Camera => (GameCameraEx*)this.Address;

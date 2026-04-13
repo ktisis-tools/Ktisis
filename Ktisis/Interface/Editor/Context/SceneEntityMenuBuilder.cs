@@ -2,6 +2,9 @@
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using Dalamud.Bindings.ImGui;
+
+using FFXIVClientStructs;
+
 using GLib.Popups.Context;
 
 using Ktisis.Data.Files;
@@ -93,6 +96,9 @@ public class SceneEntityMenuBuilder {
 				break;
 			case LightEntity light:
 				this.BuildLightMenu(menu, light);
+				break;
+			case BoneNode bone:
+				this.BuildBoneMenu(menu, bone);
 				break;
 		}
 	}
@@ -195,5 +201,12 @@ public class SceneEntityMenuBuilder {
 		var file = await this._ctx.Scene.SaveLightFile(light);
 		var newLight = await this._ctx.Scene.Factory.CreateLight().Spawn();
 		this.ImportLight(newLight, file);
+	}
+
+
+	private void BuildBoneMenu(ContextMenuBuilder menu, BoneNode bone) {
+		menu.Separator()
+			.Action("Set as Camera target", () => {
+				this._ctx.Cameras.Current.Target = bone;});
 	}
 }
