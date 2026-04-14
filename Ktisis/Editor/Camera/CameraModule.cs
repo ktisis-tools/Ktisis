@@ -254,7 +254,7 @@ public class CameraModule : HookModule {
 					targetPosition[2] = pos.Z;
 					break;
 				case TrackingMode.FollowAndPan:
-					var lerp = Vector3.Lerp(actor.Actor.Position, pos , Vector3.Hypot(Vector3.Normalize(actor.Actor.Position), Vector3.Normalize(pos)).ToScalar() / float.RootN(2, 2));
+					var lerp = Vector3.Lerp(actor.Actor.Position, pos, Vector3.Hypot(Vector3.Normalize(actor.Actor.Position), Vector3.Normalize(pos)).ToScalar() / float.RootN(2, 2));          
 					this.Manager.Current?.RelativeOffset = lerp - actor.Actor.Position;
 					this.Manager.Current?.RelativeOffset.Y = actor.Actor.Position.Y;
 					targetPosition[0] = lerp.X;
@@ -268,7 +268,12 @@ public class CameraModule : HookModule {
 		}
 		return  this.CameraCalculateLookPositionHook!.Original(pointer, targetPosition, cameraPosition, mode);
 	}
-	
+	/*
+	 this is to explain the thinking behind that freaky ass math above
+	 for the amount we normailze the two position vectors so they both have length = 1 and then take the hypotenuse of them, which results in a vector of maximum length sqrt2 if the vectors are completely tangential.
+	 we use this as a factor to ease in and out, where when the original position is roughly where the actors starting location was, the factor should be close to 0, meaning the camera will behave roughly the same.
+	 this gives us a factor that will gradually go towards .5~ but shouldn't exceed it.	
+	*/
 	
 	private Hook<CameraTargetDelegate>? CameraTargetHook;
 	private delegate nint CameraTargetDelegate(nint a1);
