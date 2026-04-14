@@ -10,6 +10,13 @@ using CsVector3 = FFXIVClientStructs.FFXIV.Common.Math.Vector3;
 
 namespace Ktisis.Editor.Camera.Types;
 
+public enum TrackingMode {
+	Follow,
+	Pan,
+	FollowAndPan,
+	None
+}
+
 public class EditorCamera {
 	protected readonly ICameraManager Manager;
 	
@@ -38,7 +45,7 @@ public class EditorCamera {
 	public bool IsDelimited => this.Flags.HasFlag(CameraFlags.Delimit);
 
 	public BoneNode? Target { get; set; } = null;
-	public bool OnlyFollow = true;
+	public TrackingMode Tracking = TrackingMode.None;
 	
 	public unsafe GameCamera* GameCamera => (GameCamera*)this.Address;
 	public unsafe GameCameraEx* Camera => (GameCameraEx*)this.Address;

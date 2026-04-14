@@ -1,3 +1,6 @@
+using System;
+using System.Reflection.Metadata.Ecma335;
+
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
@@ -218,9 +221,21 @@ public class CameraWindow : KtisisWindow {
 			ImGui.TextUnformatted($"Tracking {camera.Target.Name}");
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize());
 			ImGui.SameLine();
-			ImGui.Checkbox("Follow instead of track", ref camera.OnlyFollow);
+			if(ImGui.Button("Set Tracking Mode"))
+				ImGui.OpenPopup("TrackingPopup");
+
+			if (!ImGui.IsPopupOpen("TrackingPopup"))
+				return;
+			
+			using var _ = ImRaii.Popup("TrackingPopup");
+			var curMode = camera.Tracking;
+			foreach (TrackingMode mode in Enum.GetValues(curMode.GetType())) {
+				if (ImGui.Selectable($"{Enum.GetName(mode)}", curMode == mode)) 
+					camera.Tracking = mode;
+			}
 		}
 	}
+		
 	// Sliders
 
 	private unsafe void DrawSliders(EditorCamera camera) {

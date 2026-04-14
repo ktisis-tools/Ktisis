@@ -240,16 +240,30 @@ public class CameraModule : HookModule {
 	// Orbit target hooks
 
 	private unsafe float* CameraCalculateLookPositionDetour(GameCamera* pointer, float* targetPosition, float* cameraPosition, char mode) {
-		if (this.Manager.Current?.Target != null) {
+		if (this.Manager.Current?.Target != null && this.Manager.Current?.Tracking != TrackingMode.None ) {
 			Vector3 pos = this.Manager.Current.Target.CalcTransformWorld()!.Position;
-			if (this.Manager.Current.OnlyFollow) {
-				ActorEntity actor = (ActorEntity)this.Manager.Current.Target.Root;
-				this.Manager.Current?.RelativeOffset = pos - actor.Actor.Position;
-				this.Manager.Current?.RelativeOffset.Y = actor.Actor.Position.Y;  //math comes later :)
-			} else {
-				targetPosition[0] = pos.X;
-				targetPosition[1] = pos.Y;
-				targetPosition[2] = pos.Z;
+			ActorEntity actor = (ActorEntity)this.Manager.Current.Target.Root;
+			switch (this.Manager.Current.Tracking) {
+				case TrackingMode.Follow:
+					this.Manager.Current?.RelativeOffset = pos - (actor.Actor.Position);
+					this.Manager.Current?.RelativeOffset.Y = actor.Actor.Position.Y;
+					break;
+				case TrackingMode.Pan:
+					targetPosition[0] = pos.X;
+					targetPosition[1] = pos.Y;
+					targetPosition[2] = pos.Z;
+					break;
+				case TrackingMode.FollowAndPan:
+					var lerp = Vector3.Lerp(actor.Actor.Position, pos , Vector3.Hypot(Vector3.Normalize(actor.Actor.Position), Vector3.Normalize(pos)).ToScalar() / float.RootN(2, 2));
+					this.Manager.Current?.RelativeOffset = lerp - actor.Actor.Position;
+					this.Manager.Current?.RelativeOffset.Y = actor.Actor.Position.Y;
+					targetPosition[0] = lerp.X;
+					targetPosition[1] = lerp.Y;
+					targetPosition[2] = lerp.Z;
+					break;
+				case TrackingMode.None:
+					this.Manager.Current?.RelativeOffset = actor.Actor.Position;
+					break;
 			}
 		}
 		return  this.CameraCalculateLookPositionHook!.Original(pointer, targetPosition, cameraPosition, mode);
