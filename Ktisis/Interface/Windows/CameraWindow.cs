@@ -75,17 +75,23 @@ public class CameraWindow : KtisisWindow {
 			ImGui.Spacing();
 
 			this.DrawOrbitTarget(camera);
+
 			ImGui.Spacing();
 			this.DrawFixedPosition(camera);
 			this.DrawRelativeOffset(camera);
 			ImGui.Spacing();
 			this.DrawAnglePan(camera);
 			ImGui.Spacing();
-			this.DrawTracking(camera);
+
 		}
 
 		ImGui.Spacing();
 		this.DrawSliders(camera);
+
+		using (ImRaii.Disabled(IsWork)) {
+			ImGui.Separator();
+			this.DrawTracking(camera);
+		}
 	}
 	
 	// Toggles
@@ -215,24 +221,24 @@ public class CameraWindow : KtisisWindow {
 		}
 	}
 	
-	private unsafe void DrawTracking(EditorCamera camera) {
-		if(camera.Target != null)
+	private unsafe void DrawTracking(EditorCamera camera) { 
+		using (var _ = ImRaii.Disabled(camera.Target == null))
 		{
-			ImGui.TextUnformatted($"Tracking {camera.Target.Name}");
-			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize());
-			ImGui.SameLine();
-			if(ImGui.Button("Set Tracking Mode"))
-				ImGui.OpenPopup("TrackingPopup");
-
-			if (!ImGui.IsPopupOpen("TrackingPopup"))
-				return;
+			ImGui.SetCursorPosX(Buttons.CalcSize() + (ImGui.GetStyle().ItemSpacing.X * 2));
+			ImGui.TextUnformatted($"Tracking Bone: {(camera.Target != null? camera.Target.Name : "None")}");
 			
-			using var _ = ImRaii.Popup("TrackingPopup");
+			ImGui.SetCursorPosX(Buttons.CalcSize() + (ImGui.GetStyle().ItemSpacing.X * 2));
+			ImGui.AlignTextToFramePadding();
+			ImGui.TextUnformatted("Tracking Mode:");
+			ImGui.SameLine();
+			using var _combo = ImRaii.Combo("", Enum.GetName(camera.Tracking));
+			if (!_combo.Success) return;
 			var curMode = camera.Tracking;
 			foreach (TrackingMode mode in Enum.GetValues(curMode.GetType())) {
-				if (ImGui.Selectable($"{Enum.GetName(mode)}", curMode == mode)) 
+				if (ImGui.Selectable($"{Enum.GetName(mode)}", curMode == mode))
 					camera.Tracking = mode;
 			}
+			
 		}
 	}
 		

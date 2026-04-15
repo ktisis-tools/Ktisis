@@ -246,7 +246,8 @@ public class CameraModule : HookModule {
 			switch (this.Manager.Current.Tracking) {
 				case TrackingMode.Follow:
 					this.Manager.Current?.RelativeOffset = pos - (actor.Actor.Position);
-					this.Manager.Current?.RelativeOffset.Y = actor.Actor.Position.Y;
+					var _ = actor.Character->Height;
+					this.Manager.Current?.RelativeOffset.Y = 0;
 					break;
 				case TrackingMode.Pan:
 					targetPosition[0] = pos.X;
@@ -254,9 +255,9 @@ public class CameraModule : HookModule {
 					targetPosition[2] = pos.Z;
 					break;
 				case TrackingMode.FollowAndPan:
-					var lerp = Vector3.Lerp(actor.Actor.Position, pos, Vector3.Hypot(Vector3.Normalize(actor.Actor.Position), Vector3.Normalize(pos)).ToScalar() / float.RootN(2, 2));          
+					var lerp = Vector3.Lerp(actor.Actor.Position, pos, Vector3.Hypot(Vector3.Normalize(actor.Actor.Position with{Y = actor.Actor.Position.Y + actor.CsGameObject->CameraOffset.Y}), Vector3.Normalize(pos)).ToScalar() / float.RootN(2, 2));          
 					this.Manager.Current?.RelativeOffset = lerp - actor.Actor.Position;
-					this.Manager.Current?.RelativeOffset.Y = actor.Actor.Position.Y;
+					this.Manager.Current?.RelativeOffset.Y = 0;
 					targetPosition[0] = lerp.X;
 					targetPosition[1] = lerp.Y;
 					targetPosition[2] = lerp.Z;

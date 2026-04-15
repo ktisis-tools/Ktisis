@@ -9,6 +9,7 @@ using GLib.Popups.Context;
 
 using Ktisis.Data.Files;
 using Ktisis.Common.Extensions;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Interface.Editor.Types;
@@ -206,7 +207,23 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildBoneMenu(ContextMenuBuilder menu, BoneNode bone) {
 		menu.Separator()
-			.Action("Set as Camera target", () => {
-				this._ctx.Cameras.Current.Target = bone;});
+			.SubMenu("Set as Camera target", sub => {
+				sub.Action("Follow", () => {
+					this._ctx.Cameras.Current.Tracking = TrackingMode.Follow;
+					this._ctx.Cameras.Current.Target = bone;
+					this._ctx.Interface.OpenCameraWindow();
+				});
+				sub.Action("Pan", () => {
+					this._ctx.Cameras.Current.Tracking = TrackingMode.Pan;
+					this._ctx.Cameras.Current.Target = bone;
+					this._ctx.Interface.OpenCameraWindow();
+				});
+				sub.Action("Pan and Follow", () => {
+					this._ctx.Cameras.Current.Tracking = TrackingMode.FollowAndPan;
+					this._ctx.Cameras.Current.Target = bone;
+					this._ctx.Interface.OpenCameraWindow();
+				});
+			});
+
 	}
 }
