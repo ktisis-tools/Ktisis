@@ -259,7 +259,7 @@ public class CameraModule : HookModule {
 					this.Manager.Current?.RelativeOffset.Y = 0;
 					var diff = (lerp - actor.Actor.Position);
 					targetPosition[0] = pos.X - diff.X;
-					targetPosition[1] = pos.Y - diff.Y;
+					targetPosition[1] = pos.Y;
 					targetPosition[2] = pos.Z - diff.Z;
 					break;
 				case TrackingMode.None:
