@@ -240,7 +240,7 @@ public class CameraModule : HookModule {
 	// Orbit target hooks
 
 	private unsafe float* CameraCalculateLookPositionDetour(GameCamera* pointer, float* targetPosition, float* cameraPosition, char mode) {
-		if (this.Manager.Current?.Target != null && this.Manager.Current?.Tracking != TrackingMode.None ) {
+		if (this.Manager.Current?.Target != null) {
 			Vector3 pos = this.Manager.Current.Target.CalcTransformWorld()!.Position;
 			ActorEntity actor = (ActorEntity)this.Manager.Current.Target.Root;
 			switch (this.Manager.Current.Tracking) {
