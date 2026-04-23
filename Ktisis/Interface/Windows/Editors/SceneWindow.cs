@@ -9,13 +9,10 @@ using System.Runtime.InteropServices.JavaScript;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
-using Dalamud.Interface.Style;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
-
-using FFXIVClientStructs;
 
 using GLib.Widgets;
 
@@ -28,13 +25,9 @@ using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Types;
 using Ktisis.Services.Data;
-using Ktisis.Services.Plugin;
 using Ktisis.Structs.Characters;
 
 using Lumina.Excel.Sheets;
-using Lumina.Text.ReadOnly;
-
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Ktisis.Interface.Windows.Editors;
 
@@ -80,6 +73,15 @@ public class SceneWindow : KtisisWindow {
 			MinimumSize = new Vector2(400, 400),
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.90f
 		};
+
+	}
+	private void OpenPopupModal(SceneFile.ActorInfo entity) {
+		this._popupWindow = this._ctx.Plugin.Gui.CreatePopup<SceneMCDFModal>(entity, this._ctx);
+		this._popupWindow.SetScene(ref this._sceneFile);
+		this._popupWindow.Open();
+	}
+
+	private void MapStuff() {
 		var mapId = this._sceneDataService.GetCurrentMapID();
 		if (this._sceneFile != null) {
 			mapId = this._sceneFile.MapID;
@@ -91,13 +93,8 @@ public class SceneWindow : KtisisWindow {
 			this._texture = this._textureProvider.GetFromGame(path);
 		}
 	}
-	private void OpenPopupModal(SceneFile.ActorInfo entity) {
-		this._popupWindow = this._ctx.Plugin.Gui.CreatePopup<SceneMCDFModal>(entity, this._ctx);
-		this._popupWindow.SetScene(ref this._sceneFile);
-		this._popupWindow.Open();
-	}
-
-	public unsafe override void Draw() {
+	public override void Draw() {
+		this.MapStuff();
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
 		int cameras, actors, lights;
@@ -118,14 +115,13 @@ public class SceneWindow : KtisisWindow {
 		ImGui.BeginGroup();
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "Load Scene file", iconBtnSize*1.5f))
 			this._ctx.Interface.OpenSceneFile(s => this._sceneFile = this._ctx.Scene.Data.LoadFile(s));
-			//this._ctx.Interface.OpenSceneFile((s => this._ctx.Scene.Data.Load(this._ctx.Scene.Data., this.autosave)));
 		
 		using(ImRaii.Disabled(this._sceneFile != null))
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Save, $"{(this._sceneFile == null? "Save Scene file" : "Unload current Scene before saving" )}", iconBtnSize*1.5f))
 				this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save()));
 
 		if (this._sceneFile != null) {
-			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -(((iconBtnSize.Y *1.5f) + ImGui.GetStyle().ItemInnerSpacing.X  )* 3f + ImGui.GetStyle().WindowPadding.Y + 0.01f));  //space for 2 buttons?
+			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -((iconBtnSize.Y *1.5f)* 3.3f));  //space for 2 buttons?
 			if(Buttons.IconButtonTooltip(FontAwesomeIcon.Times, "Unload File", iconBtnSize*1.5f))
 				this._sceneFile = null;
 			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, $"Choose coordinate type\nCurrently: {(this._autosave ? "World space" : "Local space")}", iconBtnSize*1.5f))
@@ -135,26 +131,28 @@ public class SceneWindow : KtisisWindow {
 				this._sceneFile = null;
 			}
 		}
-
-		
-		
 		
 		ImGui.EndGroup();
 		
 		ImGui.SameLine();
-
+		
 		ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(74f, 74f, 74f, 138f)/255);
 		ImGui.PushStyleVar(ImGuiStyleVar.ChildRounding, 4 );
-		using (var child = ImRaii.Child("##SceneData", Vector2.Zero,false, ImGuiWindowFlags.AlwaysAutoResize)) {
-			// Check if this child is drawing
+		using (var child = ImRaii.Child("##SceneData", (this._ctx.Config.Editor.UseToolbar? new Vector2(ImGui.GetContentRegionAvail().X - 0.1f, 470) :Vector2.Zero),false, ImGuiWindowFlags.AlwaysAutoResize)) {
+
 			var cursorPos = ImGui.GetCursorScreenPos();
+
 			if (child.Success) {
 
 				var dl = ImGui.GetWindowDrawList();
-				dl.AddImageRounded(this._texture.GetWrapOrEmpty().Handle, cursorPos, new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().X * .563f) + cursorPos, Vector2.Zero, Vector2.One, 0xFFFFFFFF, 4f);
+				if(this._texture != null)
+					dl.AddImageRounded(this._texture.GetWrapOrEmpty().Handle, cursorPos, new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().X * .563f) + cursorPos, Vector2.Zero, Vector2.One, 0xFFFFFFFF, 4f);
 
 				using var wrap = ImRaii.TextWrapPos(ImGui.GetWindowContentRegionMax().X);
-				ImGui.PushStyleColor(ImGuiCol.Text, this._source.RowId == this._sceneDataService.GetCurrentMapID() ? ImGuiColors.HealerGreen : ImGuiColors.DPSRed);
+				if (this._sceneFile == null)
+					ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.HealerGreen);
+				else
+					ImGui.PushStyleColor(ImGuiCol.Text, this._source.RowId == this._sceneDataService.GetCurrentMapID() ? ImGuiColors.HealerGreen : ImGuiColors.DPSRed);
 				ImGui.SetCursorPosY(ImGui.GetContentRegionAvail().X * .563f + ImGui.GetStyle().ItemSpacing.Y);
 				ImGui.BeginGroup();
 				ImGui.TextUnformatted($"From: {this._source.PlaceName.Value.Name}");
@@ -204,7 +202,6 @@ public class SceneWindow : KtisisWindow {
 					}
 					ImGui.Unindent();
 				}
-
 				if (lights > 0)
 
 					if (ImGui.CollapsingHeader($"Lights {lights}")) {
@@ -222,8 +219,7 @@ public class SceneWindow : KtisisWindow {
 						}
 						ImGui.Unindent();
 					}
-
-
+				
 				if (envOver)
 					if (ImGui.CollapsingHeader($"Environment")) {
 						if (this._sceneFile != null) {
@@ -274,6 +270,4 @@ public class SceneWindow : KtisisWindow {
 		ImGui.PopStyleColor();
 		ImGui.PopStyleVar();
 	}
-	
-
 }

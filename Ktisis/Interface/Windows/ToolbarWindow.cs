@@ -49,7 +49,7 @@ public class ToolbarWindow : KtisisWindow {
 			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, "Pose View", typeof(Pose)),
 			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, "Environment Editor", typeof(Env)),
 			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, "Camera Editor", typeof(CameraWindow)),
-			//new(this.DrawConfigWindow, FontAwesomeIcon.G, "Scene Editor"),
+			new(this.DrawSceneWindow, FontAwesomeIcon.UsersLine, "Scene Editor", typeof(SceneWindow)),
 			new(this.DrawConfigWindow, FontAwesomeIcon.Cogs, "Settings", typeof(ConfigWindow)),
 		};
 	}
@@ -108,6 +108,7 @@ public class ToolbarWindow : KtisisWindow {
 	internal void DrawPosingWindow() => this.SetSubWindow<Pose>();
 	internal void DrawEnvWindow() => this.SetSubWindow<Env>();
 	internal void DrawCameraWindow() => this.SetSubWindow<CameraWindow>();
+	internal void DrawSceneWindow() => this.SetSubWindow<SceneWindow>();
 	internal void DrawConfigWindow() => this.SetSubWindow<ConfigWindow>();
 	
 	private void SetSubWindow<T>() where T : KtisisWindow {
@@ -130,7 +131,9 @@ public class ToolbarWindow : KtisisWindow {
 		{
 			this._subWindow = this._gui.GetOrCreate<T>(this._ctx);
 			this._subWindow.Size = new Vector2(0, 400);
-		}else {
+		}else if (typeof(T) == typeof(SceneWindow)) {
+			this._subWindow = this._gui.GetOrCreate<SceneWindow>(this._ctx);
+		} else {
 			this._subWindow = this._gui.GetOrCreate<T>(this._ctx);
 		}
 
