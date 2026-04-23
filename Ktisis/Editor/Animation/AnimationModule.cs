@@ -15,7 +15,6 @@ public class AnimationModule : HookModule {
 	) : base(hook) { }
 	
 	public bool SpeedControlEnabled { get; set; }
-	public bool PositionLockEnabled { get; set; }
 	
 	// Speed control
 
@@ -44,7 +43,7 @@ public class AnimationModule : HookModule {
 	private unsafe delegate void UpdatePosDelegate(CharacterEx* chara);
 
 	private unsafe void UpdatePosDetour(CharacterEx* chara) {
-		if (this.PositionLockEnabled && chara->IsGPose)
+		if (chara->IsGPose)
 			return;
 		
 		this.UpdatePosHook.Original(chara);

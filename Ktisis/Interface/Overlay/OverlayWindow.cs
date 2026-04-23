@@ -62,7 +62,10 @@ public class OverlayWindow : KtisisWindow {
 	// Main draw function
 
 	public override void Draw() {
-		if (!this._ctx.Config.Overlay.Visible) return;
+		if (!this._ctx.Config.Overlay.Visible) {
+			this.CheckResetGizmo();
+			return;
+		}
 		
 		// var t = new Stopwatch();
 		// t.Start();
@@ -83,11 +86,7 @@ public class OverlayWindow : KtisisWindow {
 	private bool DrawGizmo() {
 		// if gizmo becomes invisible mid-manipulation, force stop it
 		if (!this._ctx.Config.Gizmo.Visible) {
-			if (this._gizmo.IsUsedPrev) {
-				this.Transform?.Dispatch();
-				this.Transform = null;
-				this._gizmo.Reset();
-			}
+			this.CheckResetGizmo();
 			return false;
 		}
 		
@@ -178,6 +177,14 @@ public class OverlayWindow : KtisisWindow {
 
 		matrix.Translation = hitPos;
 		return true;
+	}
+
+	private void CheckResetGizmo() {
+		if (!this._gizmo.IsUsedPrev) return;
+
+		this.Transform?.Dispatch();
+		this.Transform = null;
+		this._gizmo.Reset();
 	}
 
 	private void DrawDebugOverlay(Stopwatch? t) {

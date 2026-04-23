@@ -56,7 +56,7 @@ public class BoneCategoryEditor {
 	
 	public void Draw() {
 		using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
-		using var frame = ImRaii.Child("##BoneCategoriesFrame", ImGui.GetContentRegionAvail(), true);
+		using var frame = ImRaii.Child("##BoneCategoriesFrame", ImGui.GetContentRegionAvail() - (this._cfg.File.Editor.UseToolbar?new Vector2(0, 2): Vector2.Zero), true);
 		if (!frame.Success) return;
 		
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(10, 10));

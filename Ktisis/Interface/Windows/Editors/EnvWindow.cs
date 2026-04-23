@@ -19,7 +19,7 @@ using Ktisis.Structs.Env;
 namespace Ktisis.Interface.Windows.Editors;
 
 public class EnvWindow : KtisisWindow {
-	private enum EnvEditorTab {
+	internal enum EnvEditorTab {
 		None,
 		Sky,
 		Light,
@@ -37,7 +37,7 @@ public class EnvWindow : KtisisWindow {
 
 	private readonly WeatherSelect _weatherSelect;
 	
-	private EnvEditorTab Current = EnvEditorTab.None;
+	protected private EnvEditorTab Current = EnvEditorTab.None;
 	private readonly Dictionary<EnvEditorTab, EditorBase> _editors = new();
 	
 	public EnvWindow(
@@ -114,7 +114,7 @@ public class EnvWindow : KtisisWindow {
 		this.DrawAdvancedList();
 	}
 
-	private unsafe void DrawWeatherTimeControls(EnvManagerEx* env, float width) {
+	protected private unsafe void DrawWeatherTimeControls(EnvManagerEx* env, float width) {
 		//var spacing = ImGui.GetStyle().ItemSpacing.X;
 		
 		//Icons.DrawIcon(FontAwesomeIcon.Sun);
@@ -149,7 +149,7 @@ public class EnvWindow : KtisisWindow {
 			this._module.Day = day;
 	}
 
-	private void DrawAdvancedList() {
+	protected private void DrawAdvancedList() {
 		//Icons.DrawIcon(FontAwesomeIcon.Cog);
 		//ImGui.SameLine();
 		ImGui.Text("Advanced Editing");
@@ -171,8 +171,8 @@ public class EnvWindow : KtisisWindow {
 	
 	// Advanced Editor
 
-	private unsafe void DrawAdvancedEditor(EnvManagerEx* env) {
-		using var _frame = ImRaii.Child("##AdvancedFrame", ImGui.GetContentRegionAvail());
+	protected private unsafe void DrawAdvancedEditor(EnvManagerEx* env) {
+		using var _frame = ImRaii.Child("##AdvancedFrame", (this._scene.Context.Config.Editor.UseToolbar? new Vector2(300 ,ImGui.GetContentRegionAvail().Y): ImGui.GetContentRegionAvail()));
 		if (!_frame.Success) return;
 
 		if (!this._editors.TryGetValue(this.Current, out var editor))

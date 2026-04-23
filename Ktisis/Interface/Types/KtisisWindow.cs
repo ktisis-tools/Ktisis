@@ -40,4 +40,5 @@ public abstract class KtisisWindow : Window {
 	public override void OnClose() {
 		this._closedEvent.Invoke(this);
 	}
+	
 }

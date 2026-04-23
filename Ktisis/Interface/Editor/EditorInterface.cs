@@ -47,7 +47,10 @@ public class EditorInterface : IEditorInterface {
 
 	public void Prepare() {
 		if (this._ctx.Config.Editor.OpenOnEnterGPose)
-			this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Open();
+			if(this._ctx.Config.Editor.UseToolbar)
+				this._gui.GetOrCreate<ToolbarWindow>(this._ctx, this._gui).Open();
+			else 
+				this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Open();
 
 		this._ctx.Selection.Changed += this.OnSelectChanged;
 
@@ -60,7 +63,7 @@ public class EditorInterface : IEditorInterface {
 	}
 
 	private void OnSelectChanged(ISelectManager sender) {
-		if (!this._ctx.Config.Editor.ToggleEditorOnSelect) return;
+		if (!this._ctx.Config.Editor.ToggleEditorOnSelect ) return;
 
 		var open = sender.Count > 0;
 		
@@ -86,30 +89,42 @@ public class EditorInterface : IEditorInterface {
 		}
 	}
 
-	public void ToggleWorkspaceWindow() => this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Toggle();
+	public void ToggleWorkspaceWindow() {
+		if (this._ctx.Config.Editor.UseToolbar)
+			this._gui.GetOrCreate<ToolbarWindow>(this._ctx).Toggle();
+		else
+			this._gui.GetOrCreate<WorkspaceWindow>(this._ctx).Toggle();
+	}
 	public void ToggleDebugWindow() => this._gui.GetOrCreate<DebugWindow>(this._ctx).Toggle();
 	
 	// Editor windows
 	
 	public void OpenCameraWindow() {
-		if (this._ctx.Config.Editor.ToggleOpenWindows)
-			this._gui.GetOrCreate<CameraWindow>(this._ctx).Toggle();
-		else {
-			var _win = this._gui.GetOrCreate<CameraWindow>(this._ctx);
-			_win.Open();
-			ImGui.SetWindowFocus(_win.WindowName);
-		}
+		if(this._ctx.Config.Editor.UseToolbar)
+			this._gui.Get<ToolbarWindow>()!.DrawCameraWindow();
+		else
+			if (this._ctx.Config.Editor.ToggleOpenWindows)
+				this._gui.GetOrCreate<CameraWindow>(this._ctx).Toggle();
+			else {
+				var _win = this._gui.GetOrCreate<CameraWindow>(this._ctx);
+				_win.Open();
+				ImGui.SetWindowFocus(_win.WindowName);
+			}
 	}
 	
 	public void OpenEnvironmentWindow() {
-		var scene = this._ctx.Scene;
-		var module = scene.GetModule<EnvModule>();
-		if (this._ctx.Config.Editor.ToggleOpenWindows)
-			this._gui.GetOrCreate<EnvWindow>(scene, module).Toggle();
+		if(this._ctx.Config.Editor.UseToolbar)
+			this._gui.Get<ToolbarWindow>()!.DrawEnvWindow();
 		else {
-			var _win = this._gui.GetOrCreate<EnvWindow>(scene, module);
-			_win.Open();
-			ImGui.SetWindowFocus(_win.WindowName);
+			var scene = this._ctx.Scene;
+			var module = scene.GetModule<EnvModule>();
+			if (this._ctx.Config.Editor.ToggleOpenWindows)
+				this._gui.GetOrCreate<EnvWindow>(scene, module).Toggle();
+			else {
+				var _win = this._gui.GetOrCreate<EnvWindow>(scene, module);
+				_win.Open();
+				ImGui.SetWindowFocus(_win.WindowName);
+			}
 		}
 	}
 
@@ -126,28 +141,40 @@ public class EditorInterface : IEditorInterface {
 	
 
 	public void OpenObjectEditor(bool forceOpen = false) {
-		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
-		if (this._ctx.Config.Editor.ToggleOpenWindows && !forceOpen)
-			this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(this._ctx.Config.Gizmo, gizmo), this._gui).Toggle();
+		if(this._ctx.Config.Editor.UseToolbar)
+			this._gui.Get<ToolbarWindow>()!.DrawObjectWindow();
 		else {
-			var _win = this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(this._ctx.Config.Gizmo, gizmo), this._gui);
-			_win.Open();
-			ImGui.SetWindowFocus(_win.WindowName);
+			var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
+			if (this._ctx.Config.Editor.ToggleOpenWindows && !forceOpen)
+				this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(this._ctx.Config.Gizmo, gizmo), this._gui).Toggle();
+			else {
+				var _win = this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(this._ctx.Config.Gizmo, gizmo), this._gui);
+				_win.Open();
+				ImGui.SetWindowFocus(_win.WindowName);
+			}
 		}
 	}
-
+	public ObjectWindow GetObjectWindow() {
+		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
+		return this._gui.GetOrCreate<ObjectWindow>(this._ctx, new Gizmo2D(this._ctx.Config.Gizmo, gizmo), this._gui);
+	}
+	
 	public void OpenObjectEditor(SceneEntity entity, bool forceOpen = false) {
 		entity.Select(SelectMode.Force);
 		this.OpenObjectEditor(forceOpen);
 	}
 
 	public void OpenPosingWindow() {
-		if (this._ctx.Config.Editor.ToggleOpenWindows)
-			this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Toggle();
+		if(this._ctx.Config.Editor.UseToolbar)
+			this._gui.Get<ToolbarWindow>()!.DrawPosingWindow();
 		else {
-			var _win = this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale);
-			_win.Open();
-			ImGui.SetWindowFocus(_win.WindowName);
+			if (this._ctx.Config.Editor.ToggleOpenWindows)
+				this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Toggle();
+			else {
+				var _win = this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale);
+				_win.Open();
+				ImGui.SetWindowFocus(_win.WindowName);
+			}
 		}
 	}
 	
@@ -187,18 +214,21 @@ public class EditorInterface : IEditorInterface {
 	
 	public void OpenRenameEntity(SceneEntity entity) => this._gui.CreatePopup<EntityRenameModal>(entity).Open();
 	public void OpenSavePreset(ActorEntity entity) => this._gui.CreatePopup<PresetSaveModal>(entity).Open();
-	
+
 	public void OpenActorEditor(ActorEntity actor) {
-		var opened = this.OpenEditor<ActorWindow, ActorEntity>(actor);
-		if (
-			opened
-			&& !this._ctx.Config.Editor.UseLegacyWindowBehavior
-			&& this._ctx.Selection.Count > 0
-			&& !this._ctx.Selection.IsActorSelected(actor)
-		)
-			actor.Select(SelectMode.Force);
+		if (this._ctx.Config.Editor.UseToolbar)
+			this._gui.Get<ToolbarWindow>()!.DrawActorWindow();
+		else {
+			var opened = this.OpenEditor<ActorWindow, ActorEntity>(actor);
+			if (
+				opened
+				&& !this._ctx.Config.Editor.UseLegacyWindowBehavior
+				&& this._ctx.Selection.Count > 0
+				&& !this._ctx.Selection.IsActorSelected(actor)
+			)
+				actor.Select(SelectMode.Force);
+		}
 	}
-	
 	public void OpenLightEditor(LightEntity light) {
 		if (this._ctx.Config.Editor.UseLegacyLightEditor) {
 			this.OpenEditor<LightWindow, LightEntity>(light);

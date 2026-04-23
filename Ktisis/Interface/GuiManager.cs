@@ -10,6 +10,7 @@ using GLib.Popups.ImFileDialog;
 
 using Ktisis.Core;
 using Ktisis.Core.Attributes;
+using Ktisis.Interface.Overlay;
 using Ktisis.Interface.Types;
 using Ktisis.Interface.Windows;
 using Ktisis.Localization;
@@ -131,7 +132,12 @@ public class GuiManager : IDisposable {
 	}
 	
 	// Disposal
-
+	internal void ResetWorkspace() {
+		foreach (var window in this._windows.ToList().Where((window => (window.GetType().BaseType != typeof(KtisisPopup)))))
+			this.Remove(window);
+		this._windows.Clear();
+	}
+	
 	private void RemoveAll() {
 		foreach (var window in this._windows.ToList())
 			this.Remove(window);

@@ -22,9 +22,9 @@ namespace Ktisis.Interface.Windows;
 public class WorkspaceWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
 
-	private readonly CameraSelector _cameras;
-	private readonly WorkspaceState _workspace;
-	private readonly SceneTree _sceneTree;
+	protected private readonly CameraSelector _cameras;
+	protected readonly WorkspaceState _workspace;
+	protected private readonly SceneTree _sceneTree;
 
 	private IEditorInterface Interface => this._ctx.Interface;
 	
@@ -69,7 +69,7 @@ public class WorkspaceWindow : KtisisWindow {
 		this._workspace.Draw();
 
 		var botHeight = (UiBuilder.DefaultFontSizePx + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2) * ImGuiHelpers.GlobalScale;
-		var treeHeight = ImGui.GetContentRegionAvail().Y - botHeight;
+		var treeHeight = Math.Max(ImGui.GetContentRegionAvail().Y, ImGui.GetTextLineHeightWithSpacing()*10) - botHeight;
 		this._sceneTree.Draw(treeHeight);
 
 		ImGui.Spacing();
@@ -79,7 +79,7 @@ public class WorkspaceWindow : KtisisWindow {
 	
 	// Context buttons
 
-	private void DrawContextButtons() {
+	protected private void DrawContextButtons() {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsAlt, this._ctx.Locale.Translate("transform_edit.title")))
@@ -136,7 +136,7 @@ public class WorkspaceWindow : KtisisWindow {
 	
 	// Scene tree buttons
 
-	private void DrawSceneTreeButtons() {
+	protected private void DrawSceneTreeButtons() {
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, this._ctx.Locale.Translate("workspace.create")))
 			this.Interface.OpenSceneCreateMenu();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);

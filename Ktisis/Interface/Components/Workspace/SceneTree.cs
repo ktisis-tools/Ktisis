@@ -18,6 +18,7 @@ using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Editor.Selection;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -45,6 +46,8 @@ public class SceneTree {
 		var frame = false;
 		try {
 			var id = ImGui.GetID("SceneTree_Frame");
+			//if (this._ctx.Config.Editor.UseToolbar)
+				//height += this.HeightCheck();
 			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
 			if (!frame) return;
 			this.DrawScene(height);
@@ -54,7 +57,6 @@ public class SceneTree {
 			if (frame) ImGui.EndChildFrame();
 		}
 	}
-	
 	// Draw scene entities
 
 	private static float IconSpacing => UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale;
@@ -140,7 +142,7 @@ public class SceneTree {
 				state.SetBool(imKey, isExpand = !isExpand);
 
 			if (isHover && this.IsNodeHovered(pos, size, rightAdjust)) {
-				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) {
+				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) && !this._ctx.Config.Editor.UseToolbar) {
 					this._ctx.Interface.OpenEditorFor(node);
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
 					// if we shift-click, handle the multi-select for this node later after tree rendering
@@ -151,6 +153,10 @@ public class SceneTree {
 					}
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
 					this._ctx.Interface.OpenSceneEntityMenu(node);
+				}
+
+				if (this._ctx.Config.Editor.UseToolbar && ImGui.IsMouseClicked(ImGuiMouseButton.Middle)) {
+					this._ctx.Interface.OpenEditorFor(node);
 				}
 
 				if (ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !shiftClicked)

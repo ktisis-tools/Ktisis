@@ -20,5 +20,6 @@ public class FileConfig {
 	public bool ExcludePoseEarBones = false;
 	public PoseTransforms ImportPoseTransforms = PoseTransforms.Rotation;
 	public PoseMode ImportPoseModes = PoseMode.All;
+	public string DefaultLocation = string.Empty;
 	public List<(string Path, string Name)> CustomLocations { get; set; } = new();
 }

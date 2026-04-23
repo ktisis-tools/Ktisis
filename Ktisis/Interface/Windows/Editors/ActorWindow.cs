@@ -67,7 +67,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	// Draw tabs
 
 	public override void OnOpen() {
-		this._custom.Setup();
+		this._custom.Setup(this.Context);
 		this._anim.Setup();
 	}
 

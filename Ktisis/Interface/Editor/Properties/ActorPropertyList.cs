@@ -78,12 +78,7 @@ public class ActorPropertyList : ObjectPropertyList {
 
 	private void DrawActorTab(ActorEntity actor) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-
-		// Position lock
-
-		var posLock = this._ctx.Animation.PositionLockEnabled;
-		if (ImGui.Checkbox(this._locale.Translate("actors.pos_lock"), ref posLock))
-			this._ctx.Animation.PositionLockEnabled = posLock;
+		
 
 		ImGui.Spacing();
 
@@ -227,9 +222,11 @@ public class ActorPropertyList : ObjectPropertyList {
 		// calc button space for camera and gizmo buttons
 		var btnSpace = Icons.CalcIconSize(FontAwesomeIcon.Eye).X
 			+ Icons.CalcIconSize(FontAwesomeIcon.LocationArrow).X
-			+ spacing * 3;
+			+ spacing * 5;
 		ImGui.SameLine(0, spacing);
-		ImGui.SameLine(0, ImGui.GetContentRegionAvail().X - btnSpace);
+
+		ImGui.SameLine(0, 0);
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() +  ImGui.GetContentRegionAvail().X - btnSpace);  
 
 		// camera tracking - when pressed, toggle enabled and change gaze mode to KtisisFollowCam (or revert to Target mode)
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
@@ -333,7 +330,7 @@ public class ActorPropertyList : ObjectPropertyList {
 
 			var btnSpace = Icons.CalcIconSize(FontAwesomeIcon.HandPointer).X
 				+ Icons.CalcIconSize(FontAwesomeIcon.EllipsisH).X
-				+ spacing * 3;
+				+ spacing * 5;
 
 			ImGui.SameLine(0, spacing);
 			ImGui.SameLine(0, ImGui.GetContentRegionAvail().X - btnSpace);

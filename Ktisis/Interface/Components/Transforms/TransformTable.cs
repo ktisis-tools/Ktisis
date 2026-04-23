@@ -26,7 +26,7 @@ public enum TransformTableFlags {
 	Scale = 4,
 	Operation = 8,
 	UseAvailable = 16,
-	Default = Position | Rotation | Scale | Operation
+	Default = Position | Rotation | Scale
 }
 
 [Transient]
@@ -75,7 +75,7 @@ public class TransformTable {
 	private readonly static float FastStep = 10f;
 	private readonly static float SlowStep = 0.1f;
 
-	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default) {
+	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default | TransformTableFlags.Operation) {
 		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
 
 		if (!this.IsActive && !transIn.Rotation.Equals(this.Value)) {
@@ -89,7 +89,7 @@ public class TransformTable {
 
 		
 		var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
-		using var __ = ImRaii.ItemWidth(useAvail ? CalcTableAvail() : CalcTableWidth());
+		using var __ = ImRaii.ItemWidth(useAvail ? CalcTableAvail() - (this._cfg.File.Editor.UseToolbar? 0.1f : 0) : CalcTableWidth());
 
 		var op = flags.HasFlag(TransformTableFlags.Operation);
 		transOut = this.Transform.Set(transIn);
@@ -104,13 +104,13 @@ public class TransformTable {
 		return this.IsUsed;
 	}
 
-	public bool DrawPosition(ref Vector3 position, TransformTableFlags flags = TransformTableFlags.Default) {
+	public bool DrawPosition(ref Vector3 position, TransformTableFlags flags = TransformTableFlags.Default | TransformTableFlags.Operation) {
 		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
 		this.IsUsed = false;
 		this.IsDeactivated = false;
 		
 		var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
-		using var __ = ImRaii.ItemWidth(useAvail ? ImGui.GetContentRegionAvail().X : CalcTableWidth());
+		using var __ = ImRaii.ItemWidth(useAvail ? ImGui.GetContentRegionAvail().X - (this._cfg.File.Editor.UseToolbar? 0.1f : 0): CalcTableWidth());
 
 		var operation = flags.HasFlag(TransformTableFlags.Operation);
 		this.DrawPosition(ref position, operation);

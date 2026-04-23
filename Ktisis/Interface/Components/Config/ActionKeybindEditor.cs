@@ -51,7 +51,15 @@ public class ActionKeybindEditor {
 	public void Draw(string? pattern = null) {
 		// TODO: allow sorting that isnt alphabetical
 		using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
-		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), false);
+		
+		// allow a regex param to be provided to show only those matching a pattern in the action's name
+		var actions = this.Actions;
+		if (pattern is not null) {
+			var regex = new Regex(pattern);
+			actions = actions.Where(x => regex.IsMatch(x.GetName().ToLower())).ToList();
+		}
+		
+		using var frame = ImRaii.Child("##CfgStyleFrame", new Vector2(ImGui.GetContentRegionAvail().X, actions.Count * (ImGui.GetTextLineHeightWithSpacing() + CellPadding.Y*2 )), false);
 		if (!frame.Success) return;
 
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, Vector2.Zero);
@@ -64,12 +72,7 @@ public class ActionKeybindEditor {
 		ImGui.TableSetupColumn("Keys");
 		ImGui.TableSetupColumn("Action");
 
-		// allow a regex param to be provided to show only those matching a pattern in the action's name
-		var actions = this.Actions;
-		if (pattern is not null) {
-			var regex = new Regex(pattern);
-			actions = actions.Where(x => regex.IsMatch(x.GetName().ToLower())).ToList();
-		}
+
 		foreach (var action in actions)
 			this.DrawAction(action);
 	}
