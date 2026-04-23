@@ -47,6 +47,7 @@ public class SceneDataService {
 	private IEditorContext? _ctx;
 	private IObjectTable _objectTable;
 	private IFramework _framework;
+	private IDataManager _data;
 	
 	private Task? _task;
 	private Dictionary<ushort, ActorEntity> _idMap;
@@ -59,7 +60,6 @@ public class SceneDataService {
 		IEditorContext ctx,
 		IObjectTable objectTable,
 		IFramework framework
-		
 	) {
 		this._ctx = ctx;
 		this._objectTable = objectTable;
@@ -68,16 +68,15 @@ public class SceneDataService {
 		_idMap = new Dictionary<ushort, ActorEntity>();
 	}
 
-	public unsafe bool WriteFile(string path) {
+	public void WriteFile(string path) {
 		try {
 			var file = this.Save();
 			var serializer = new JsonFileSerializer();
 			serializer.GetConverter<Vector3>();
 			serializer.GetConverter<Transform>();
 			File.WriteAllText(path, serializer.Serialize(file));
-			return true;
 		} catch {
-			return false;
+			Ktisis.Log.Warning("Failed to write Scene file");
 		}
 	}
 	public unsafe SceneFile Save() {
@@ -131,7 +130,6 @@ public class SceneDataService {
 				scene.Lights.Add(lightObj);
 			}
 			
-			//TODO: Setup actor orbit
 			foreach (var camera in this._ctx.Cameras.GetCameras()) {
 				var c = new SceneFile.CameraInfo();
 				c.OrbitTarget = camera.OrbitTarget ?? camera.GameCamera->GetCameraTargetObject()->ObjectIndex;
@@ -164,23 +162,17 @@ public class SceneDataService {
 			
 			scene.Environment = env;
 			return scene;
-		
 	}
-
-	
 	
 	public SceneFile LoadFile(String path) {
 			var file = File.ReadAllText(path);
 			var serializer = new JsonFileSerializer();
 			var scene = serializer.Deserialize<SceneFile>(file);
 			return scene!;
-		
 	}
 	
 	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true) {
-
-			
-
+		
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 
 			if (loadActors) {
@@ -202,7 +194,6 @@ public class SceneDataService {
 					loaded.Location.Position += sceneOrigin;
 					await this._framework.RunOnFrameworkThread(() => SetupActor(loaded));
 					await this._framework.DelayTicks(10);
-
 				}
 				await this._framework.DelayTicks(30);
 				foreach (var loaded in scene!.Actors.Where(info => info.Chara.ModelType != 0)) {
@@ -214,8 +205,6 @@ public class SceneDataService {
 						orn.Appearance.ModelId = loaded.Chara.ModelType;
 						orn.Redraw();
 					}
-						
-						
 				}
 			}
 			//spawn non humans after?
@@ -248,9 +237,7 @@ public class SceneDataService {
 						primaryCamera.Camera->Angle.Y = primaryInfo.Angle.Value.Y;
 						primaryCamera.Camera->Distance = primaryInfo.Angle.Value.Z;
 					}
-					
 				}
-
 				primaryCamera.OrthographicZoom = primaryInfo.OrthographicZoom;
 				primaryCamera.Flags = (CameraFlags)primaryInfo.Flags;
 				if (primaryInfo.OrbitTarget != 0) {
@@ -277,21 +264,7 @@ public class SceneDataService {
 					}
 				}
 			}
-
-
 	}
-
-
-	public void GetVitalStats(string path) {
-		var file = File.ReadAllText(path);
-		var serializer = new JsonFileSerializer();
-		var scene = serializer.Deserialize<SceneFile>(file);
-		
-		
-		
-	}
-	
-	
 	
 	//Map data
 	public unsafe uint GetCurrentMapID() => AgentMap.Instance()->CurrentMapId;
@@ -324,7 +297,7 @@ public class SceneDataService {
 	}
 	
 	//TODO: The BattleChara should have the position set too, its what the camera orbit bases itself off of
-	private unsafe void SetupActorPosition(SceneFile.ActorInfo loaded, ActorEntity actor) {
+	private unsafe void SetupActorPosition(SceneFile.ActorInfo loaded, ActorEntity actor) { 		//I hate my life so much lol
 		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
 		var bc = (BattleChara*)actor.CsGameObject;
 		bc->DefaultPosition = loaded.Location.Position;
@@ -332,19 +305,10 @@ public class SceneDataService {
 		bc->SetPosition(loaded.Location.Position.X,  loaded.Location.Position.Y, loaded.Location.Position.Z);
 		bc->SetRotation(loaded.DefaultRotation);
 		
-		
-		
 		var draw = actor.GetCharacter();
 		
 		draw->Position = loaded.Location.Position;
 		draw->Rotation = loaded.Location.Rotation;
 		draw->Scale = loaded.Location.Scale;
-		
-		//i hate my life so much lol
-
-
 	}
-
-
-
 }

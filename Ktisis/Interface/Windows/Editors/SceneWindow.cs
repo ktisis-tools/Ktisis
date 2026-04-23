@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.JavaScript;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
@@ -74,8 +71,8 @@ public class SceneWindow : KtisisWindow {
 			MinimumSize = new Vector2(400, 400),
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.90f
 		};
-
 	}
+	
 	private void OpenPopupModal(SceneFile.ActorInfo entity) {
 		this._popupWindow = this._ctx.Plugin.Gui.CreatePopup<SceneMCDFModal>(entity, this._ctx);
 		this._popupWindow.SetScene(ref this._sceneFile);
@@ -111,7 +108,6 @@ public class SceneWindow : KtisisWindow {
 			cameras = this._ctx.Cameras.GetCameras().Count();
 			envOver = this._ctx.Scene.GetModule<EnvModule>().Override > 0;
 		}
-
 		
 		ImGui.BeginGroup();
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "Load Scene file", iconBtnSize*1.5f))
@@ -144,7 +140,6 @@ public class SceneWindow : KtisisWindow {
 			var cursorPos = ImGui.GetCursorScreenPos();
 
 			if (child.Success) {
-
 				var dl = ImGui.GetWindowDrawList();
 				if(this._texture != null)
 					dl.AddImageRounded(this._texture.GetWrapOrEmpty().Handle, cursorPos, new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().X * .563f) + cursorPos, Vector2.Zero, Vector2.One, 0xFFFFFFFF, 4f);
@@ -176,9 +171,7 @@ public class SceneWindow : KtisisWindow {
 								if (ImGui.IsItemHovered())
 									using (ImRaii.Tooltip())
 										ImGui.TextUnformatted("MCDF wasnt found for this character\nPlease try applying manually after loading the scene");
-
 							}
-
 						}
 					} else {
 						ImGui.Indent();
@@ -204,7 +197,6 @@ public class SceneWindow : KtisisWindow {
 					ImGui.Unindent();
 				}
 				if (lights > 0)
-
 					if (ImGui.CollapsingHeader($"Lights {lights}")) {
 						if (this._sceneFile != null) {
 							ImGui.Checkbox("Load lights", ref this._includeLights);
@@ -258,7 +250,6 @@ public class SceneWindow : KtisisWindow {
 								}
 								if (env.HasFlag(en))
 									list.Add(Enum.GetName(en));
-								
 							}
 							var str =  string.Join(", ", list);
 							ImGui.TextUnformatted(str);
@@ -268,7 +259,7 @@ public class SceneWindow : KtisisWindow {
 				ImGui.EndGroup();
 
 			}
-
+			ImGui.Dummy(new Vector2(2));
 		}
 		ImGui.PopStyleColor();
 		ImGui.PopStyleVar();
