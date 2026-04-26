@@ -6,6 +6,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit;
 using KamiToolKit.Overlay;
+using KamiToolKit.Overlay.UiOverlay;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context.Types;

@@ -35,6 +35,15 @@
           "K4os.Compression.LZ4": "1.3.8"
         }
       },
+      "KamiToolKit": {
+        "type": "Direct",
+        "requested": "[1.0.2, )",
+        "resolved": "1.0.2",
+        "contentHash": "8TYLEw/m0WGVsM/qmCyuAzVgqn/HchhYa8DgfW+OIHueWKkK6anFDm8EUP3nNCsFsQ6803MxoPCK0rLoUNP1Aw==",
+        "dependencies": {
+          "SixLabors.ImageSharp": "3.1.12"
+        }
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Direct",
         "requested": "[10.0.0, )",
@@ -67,18 +76,6 @@
       },
       "glib": {
         "type": "Project"
-      },
-      "imguizmo.net": {
-        "type": "Project",
-        "dependencies": {
-          "JetBrains.Annotations": "[2022.3.1, )"
-        }
-      },
-      "kamitoolkit": {
-        "type": "Project",
-        "dependencies": {
-          "SixLabors.ImageSharp": "[3.1.12, )"
-        }
       }
     }
   }
