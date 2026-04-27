@@ -28,7 +28,7 @@ public interface ICameraManager : IDisposable {
 	public void SetWorkCameraMode(bool enabled);
 	public void ToggleWorkCameraMode();
 
-	public KtisisCamera Create(CameraFlags flags = CameraFlags.None);
+	public KtisisCamera Create(CameraFlags flags = CameraFlags.None, bool setActive = true);
 	public bool DeleteCurrent();
 
 	public IGameObject? ResolveOrbitTarget(EditorCamera camera);
@@ -156,7 +156,7 @@ public class CameraManager : ICameraManager {
 	
 	// Camera creation
 
-	public KtisisCamera Create(CameraFlags flags = CameraFlags.None) {
+	public KtisisCamera Create(CameraFlags flags = CameraFlags.None, bool setActive = true) {
 		var camera = new KtisisCamera(this) {
 			Name = this.GetNextAvailableName(),
 			Flags = flags
@@ -169,7 +169,8 @@ public class CameraManager : ICameraManager {
 			throw new Exception("Failed to setup new camera.");
 		
 		this.CameraList.Add(camera);
-		this.SetCurrent(camera);
+		if(setActive)
+			this.SetCurrent(camera);
 		
 		return camera;
 	}

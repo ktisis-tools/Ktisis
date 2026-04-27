@@ -224,26 +224,43 @@ public class SceneDataService {
 				}
 			}
 			
-			//always at least one camera (I hope....)
+			
 			if (loadCameras) {
-				var primaryCamera = this._ctx!.Cameras.Current;
-				primaryCamera!.ResetState();
-				var primaryInfo = scene.Cameras.Find(c => c.IsActive);
-				if (primaryInfo.isDelmited) {
-					primaryCamera.FixedPosition = primaryInfo.FixedPosition + sceneOrigin;
-				} else {
-					unsafe {
-						primaryCamera.Camera->Angle.X = primaryInfo.Angle.Value.X;
-						primaryCamera.Camera->Angle.Y = primaryInfo.Angle.Value.Y;
-						primaryCamera.Camera->Distance = primaryInfo.Angle.Value.Z;
+				var defaultCam =   this._ctx!.Cameras.GetCameras().First(c => c.IsDefault);
+				this._ctx!.Cameras.SetCurrent(defaultCam);
+				foreach (var sceneCamera in this._ctx!.Cameras.GetCameras()) {
+					if (sceneCamera != defaultCam) {
+						this._ctx!.Cameras.SetCurrent(sceneCamera);
+						this._ctx!.Cameras.DeleteCurrent();
 					}
 				}
-				primaryCamera.OrthographicZoom = primaryInfo.OrthographicZoom;
-				primaryCamera.Flags = (CameraFlags)primaryInfo.Flags;
-				if (primaryInfo.OrbitTarget != 0) {
-					primaryCamera.OrbitTarget = (this._idMap[primaryInfo.OrbitTarget].Actor.ObjectIndex);
-					this._idMap[primaryInfo.OrbitTarget].Actor.SetGPoseTarget();
+				foreach (var camera in scene.Cameras) {
+					EditorCamera ktCam;
+					if (camera.IsActive) {
+						ktCam = this._ctx!.Cameras.Current!;
+						ktCam!.ResetState();
+					} else {
+						ktCam = this._ctx!.Cameras.Create(setActive: false);
+					}
+					
+					if (camera.isDelmited) {
+						ktCam.FixedPosition = camera.FixedPosition + sceneOrigin;
+					} else {
+						unsafe {
+							ktCam.Camera->Angle.X = camera.Angle.Value.X;
+							ktCam.Camera->Angle.Y = camera.Angle.Value.Y;
+							ktCam.Camera->Distance = camera.Angle.Value.Z;
+						}
+					}
+					ktCam.OrthographicZoom = camera.OrthographicZoom;
+					ktCam.Flags = (CameraFlags)camera.Flags;
+					if (camera.OrbitTarget != 0) {
+						ktCam.OrbitTarget = (this._idMap[camera.OrbitTarget].Actor.ObjectIndex);
+						this._idMap[camera.OrbitTarget].Actor.SetGPoseTarget();
+					}
+					
 				}
+				
 			}
 			
 			//Env stuff
