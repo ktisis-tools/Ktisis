@@ -36,6 +36,7 @@ public class SceneFile : JsonFile {
 		public float DefaultRotation { get; set; }
 		public ushort Index { get; set; }
 		
+		public AttachInfo? Attach { get; set; }
 	}
 	
 	[Serializable]
@@ -43,6 +44,8 @@ public class SceneFile : JsonFile {
 		public LightFile Light { get; set; }
 		public Transform Location { get; set; }
 		public String Name { get; set; }
+		
+		public AttachInfo? Attach { get; set; }
 	}
 
 	[Serializable]
@@ -56,6 +59,8 @@ public class SceneFile : JsonFile {
 		public float OrthographicZoom { get; set; }
 		public string Name { get; set; }
 		public bool IsActive { get; set; }
+		
+		public AttachInfo? Attach { get; set; }
 	}
 
 
@@ -64,8 +69,12 @@ public class SceneFile : JsonFile {
 		public EnvState State { get; set; }
 		public float Time { get; set; }
 		public int Day { get; set; }
-
 		public byte Weather { get; set; }
-		
+	}
+
+	[Serializable]
+	public struct AttachInfo {
+		public ushort ParentIndex { get; set; }
+		public string NodeName { get; set; }
 	}
 }
