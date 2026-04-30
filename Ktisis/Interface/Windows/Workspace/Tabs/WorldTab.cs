@@ -19,7 +19,7 @@ namespace Ktisis.Interface.Windows.Workspace.Tabs {
 		
 		private static CancellationTokenSource? TokenSource;
 
-		private static ushort TerritoryType = ushort.MaxValue;
+		private static uint TerritoryType = ushort.MaxValue;
 		private static List<WeatherInfo> Weather = new();
 		
 		// UI Draw

@@ -121,11 +121,15 @@ namespace Ktisis.Structs.Actor {
 			var result = false;
 			
 			var human = (Human*)this.Model;
-			if (this.Model->IsHuman())
-				result = human->UpdateDrawData((byte*)&this.Model->Customize, true);
-			
-			fixed (Customize* ptr = &DrawData.Customize)
-				return result | ((Human*)Model)->UpdateDrawData((byte*)ptr, true);
+			if (this.Model->IsHuman()) {
+				var act = new Human.DrawData();
+				act.CustomizeData = human->Customize;
+				result = human->UpdateDrawData(&act, true);
+			}
+
+			// fixed (Customize* ptr = &DrawData.Customize) {
+			return result;
+			// }
 		}
 
 		// Apply new customize

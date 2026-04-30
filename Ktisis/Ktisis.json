@@ -8,7 +8,7 @@
 	"IconUrl": "https://github.com/ktisis-tools/Ktisis/raw/main/icon.png",
 	"AssemblyVersion": "0.2.30",
 	"ApplicableVersion": "any",
-	"DalamudApiLevel": 14,
+	"DalamudApiLevel": 15,
 	"Tags": [
 		"gpose",
 		"posing"

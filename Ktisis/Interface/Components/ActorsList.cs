@@ -18,10 +18,10 @@ namespace Ktisis.Interface.Components {
 		private static List<DalamudGameObject>? SelectorList = null;
 		private static string Search = "";
 		private static readonly HashSet<ObjectKind> WhitelistObjectKinds = new(){
-				ObjectKind.Player,
+				ObjectKind.Pc,
 				ObjectKind.BattleNpc,
 				ObjectKind.EventNpc,
-				ObjectKind.MountType,
+				ObjectKind.Mount,
 				ObjectKind.Companion,
 			};
 
@@ -186,9 +186,9 @@ namespace Ktisis.Interface.Components {
 			// this matches the weird object on ObjectID 200
 			GetGposeId(gameObject) == 200;
 		private static bool IsPlayer(DalamudGameObject gameObject) =>
-			gameObject.ObjectKind == ObjectKind.Player;
+			gameObject.ObjectKind == ObjectKind.Pc;
 		private static bool IsPlayerNotGpose(DalamudGameObject gameObject) =>
-			gameObject.ObjectKind == ObjectKind.Player && GetGposeId(gameObject) < 200;
+			gameObject.ObjectKind == ObjectKind.Pc && GetGposeId(gameObject) < 200;
 		private unsafe static ushort GetGposeId(DalamudGameObject gameObject) =>
 			((Actor*)gameObject.Address)->ObjectID;
 
