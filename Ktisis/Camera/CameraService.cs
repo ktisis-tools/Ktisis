@@ -132,6 +132,7 @@ namespace Ktisis.Camera {
 		// CameraManager wrappers
 
 		internal unsafe static void Reset() {
+			Ktisis.Log.Debug("Resetting camera");
 			CheckFreecam();
 			Override = null;
 			SetCamera(Services.Camera->Camera);
@@ -146,6 +147,8 @@ namespace Ktisis.Camera {
 		// Overrides
 		
 		internal unsafe static void SetOverride(KtisisCamera camera) {
+			Ktisis.Log.Debug($"Setting camera to {camera.Name}");
+			
 			CheckFreecam(camera);
 			
 			if (camera.IsNative || !camera.IsValid()) {

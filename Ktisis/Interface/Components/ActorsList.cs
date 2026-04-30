@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using Dalamud.Interface;
 using DalamudGameObject = Dalamud.Game.ClientState.Objects.Types.IGameObject;
@@ -189,7 +189,7 @@ namespace Ktisis.Interface.Components {
 			gameObject.ObjectKind == ObjectKind.Player;
 		private static bool IsPlayerNotGpose(DalamudGameObject gameObject) =>
 			gameObject.ObjectKind == ObjectKind.Player && GetGposeId(gameObject) < 200;
-		private unsafe static byte GetGposeId(DalamudGameObject gameObject) =>
+		private unsafe static ushort GetGposeId(DalamudGameObject gameObject) =>
 			((Actor*)gameObject.Address)->ObjectID;
 
 	}

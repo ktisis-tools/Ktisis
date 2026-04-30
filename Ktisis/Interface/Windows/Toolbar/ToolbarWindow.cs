@@ -2,9 +2,8 @@ using System.Numerics;
 
 using Dalamud.Interface;
 
-using ImGuiNET;
-
-using ImGuizmoNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Ktisis.History;
 using Ktisis.Interface.Components;
@@ -133,11 +132,11 @@ namespace Ktisis.Interface.Windows.Toolbar {
 
 		public static void DrawMainButtons() {
 			// Operations
-			ControlButtons.ButtonChangeOperation(OPERATION.TRANSLATE, IconsPool.Position);
+			ControlButtons.ButtonChangeOperation(ImGuizmoOperation.Translate, IconsPool.Position);
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.ROTATE, IconsPool.Rotation);
+			ControlButtons.ButtonChangeOperation(ImGuizmoOperation.Rotate, IconsPool.Rotation);
 			ImGui.SameLine();
-			ControlButtons.ButtonChangeOperation(OPERATION.SCALE, IconsPool.Scale);
+			ControlButtons.ButtonChangeOperation(ImGuizmoOperation.Scale, IconsPool.Scale);
 			ImGui.SameLine();
 			ControlButtons.VerticalAlignTextOnButtonSize(0.9f);
 			if (GuiHelpers.IconButtonTooltip(IconsPool.DownMore, "Show transform table ")) {
@@ -156,8 +155,8 @@ namespace Ktisis.Interface.Windows.Toolbar {
 			ImGui.SameLine(0, ImGui.GetFontSize());
 			// Extra Options
 			var gizmoMode = Ktisis.Configuration.GizmoMode;
-			if (GuiHelpers.IconButtonTooltip(gizmoMode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ControlButtons.ButtonSize))
-				Ktisis.Configuration.GizmoMode = gizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+			if (GuiHelpers.IconButtonTooltip(gizmoMode == ImGuizmoMode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ControlButtons.ButtonSize))
+				Ktisis.Configuration.GizmoMode = gizmoMode == ImGuizmoMode.World ? ImGuizmoMode.Local : ImGuizmoMode.World;
 
 			ImGui.SameLine();
 

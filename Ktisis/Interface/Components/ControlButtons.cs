@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Numerics;
 
-using ImGuiNET;
-using ImGuizmoNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
@@ -27,8 +27,8 @@ namespace Ktisis.Interface.Components {
 
 		public static void DrawExtra() {
 			var gizmode = Ktisis.Configuration.GizmoMode;
-			if (GuiHelpers.IconButtonTooltip(gizmode == MODE.WORLD ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ButtonSize))
-				Ktisis.Configuration.GizmoMode = gizmode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+			if (GuiHelpers.IconButtonTooltip(gizmode == ImGuizmoMode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home, "Local / World orientation mode switch.", ButtonSize))
+				Ktisis.Configuration.GizmoMode = gizmode == ImGuizmoMode.World ? ImGuizmoMode.Local : ImGuizmoMode.World;
 
 			ImGui.SameLine();
 			var showSkeleton = Ktisis.Configuration.ShowSkeleton;
@@ -121,15 +121,15 @@ namespace Ktisis.Interface.Components {
 
 		}
 
-		public static void ButtonChangeOperation(OPERATION operation, FontAwesomeIcon icon) {
-			var isCurrentOperation = Ktisis.Configuration.GizmoOp.HasFlag(OPERATION.ROTATE_X) ? (Ktisis.Configuration.GizmoOp | OPERATION.ROTATE).HasFlag(operation) : Ktisis.Configuration.GizmoOp.HasFlag(operation);
+		public static void ButtonChangeOperation(ImGuizmoOperation operation, FontAwesomeIcon icon) {
+			var isCurrentOperation = Ktisis.Configuration.GizmoOp.HasFlag(ImGuizmoOperation.RotateX) ? (Ktisis.Configuration.GizmoOp | ImGuizmoOperation.Rotate).HasFlag(operation) : Ktisis.Configuration.GizmoOp.HasFlag(operation);
 			if (isCurrentOperation) ImGui.PushStyleColor(ImGuiCol.Text, GuiHelpers.VisibleCheckmarkColor());
 
 			if (GuiHelpers.IconButton(icon, ButtonSize))
 				if (!isCurrentOperation)
 					Ktisis.Configuration.GizmoOp = ImGui.GetIO().KeyShift ? Ktisis.Configuration.GizmoOp.AddFlag(operation) : operation;
 				else if (ImGui.GetIO().KeyCtrl)
-					Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(OPERATION.ROTATE, OPERATION.ROTATE_X, OPERATION.ROTATE_Y, OPERATION.ROTATE_Z);
+					Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.ToggleFlag(ImGuizmoOperation.Rotate, ImGuizmoOperation.RotateX, ImGuizmoOperation.RotateY, ImGuizmoOperation.RotateZ);
 				else if (ImGui.GetIO().KeyShift)
 					Ktisis.Configuration.GizmoOp = Ktisis.Configuration.GizmoOp.RemoveFlag(operation);
 				else
@@ -144,10 +144,10 @@ namespace Ktisis.Interface.Components {
 				help += "Change gizmo operation to ";
 
 			help += operation switch {
-				OPERATION.TRANSLATE => "Position",
-				OPERATION.ROTATE => "Rotation",
-				OPERATION.SCALE => "Scale",
-				OPERATION.UNIVERSAL => "Universal",
+				ImGuizmoOperation.Translate => "Position",
+				ImGuizmoOperation.Rotate => "Rotation",
+				ImGuizmoOperation.Scale => "Scale",
+				ImGuizmoOperation.Universal => "Universal",
 				var _ => throw new ArgumentOutOfRangeException(nameof(operation), operation, null)
 			};
 

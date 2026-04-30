@@ -1,4 +1,4 @@
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Util;
 using Dalamud.Interface;

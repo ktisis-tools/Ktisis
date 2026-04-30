@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-using ImGuiNET;
-using ImGuizmoNET;
+using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 
 using Ktisis.Structs;
 using Ktisis.Structs.Actor;

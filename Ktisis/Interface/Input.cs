@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using ImGuizmoNET;
+using Dalamud.Bindings.ImGuizmo;
 
 using Dalamud.Game.ClientState.Keys;
 
@@ -80,19 +80,19 @@ namespace Ktisis.Interface {
 				var isUsing = ImGuizmo.IsUsing();
 				switch (purpose) {
 					case Purpose.SwitchToTranslate:
-						if (!isUsing) Ktisis.Configuration.GizmoOp = OPERATION.TRANSLATE;
+						if (!isUsing) Ktisis.Configuration.GizmoOp = ImGuizmoOperation.Translate;
 						break;
 					case Purpose.SwitchToRotate:
-						if (!isUsing) Ktisis.Configuration.GizmoOp = OPERATION.ROTATE;
+						if (!isUsing) Ktisis.Configuration.GizmoOp = ImGuizmoOperation.Rotate;
 						break;
 					case Purpose.SwitchToScale:
-						if (!isUsing) Ktisis.Configuration.GizmoOp = OPERATION.SCALE;
+						if (!isUsing) Ktisis.Configuration.GizmoOp = ImGuizmoOperation.Scale;
 						break;
 					case Purpose.SwitchToUniversal:
-						if (!isUsing) Ktisis.Configuration.GizmoOp = OPERATION.UNIVERSAL;
+						if (!isUsing) Ktisis.Configuration.GizmoOp = ImGuizmoOperation.Universal;
 						break;
 					case Purpose.ToggleLocalWorld:
-						if (!isUsing) Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == MODE.WORLD ? MODE.LOCAL : MODE.WORLD;
+						if (!isUsing) Ktisis.Configuration.GizmoMode = Ktisis.Configuration.GizmoMode == ImGuizmoMode.World ? ImGuizmoMode.Local : ImGuizmoMode.World;
 						break;
 					case Purpose.ClearCategoryVisibilityOverload:
 						Category.VisibilityOverload.Clear();
@@ -277,6 +277,6 @@ namespace Ktisis.Interface {
 				return (purpose: p, state);
 			}).ToDictionary(kp => kp.purpose, kp => kp.state);
 		}
-		internal unsafe static bool IsChatInputActive() => ((UIModule*)Services.GameGui.GetUIModule())->GetRaptureAtkModule()->AtkModule.IsTextInputActive();
+		internal unsafe static bool IsChatInputActive() => ((UIModule*)Services.GameGui.GetUIModule().Address)->GetRaptureAtkModule()->AtkModule.IsTextInputActive();
 	}
 }

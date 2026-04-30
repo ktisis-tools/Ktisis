@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Structs.Actor;
 using Ktisis.Interop.Hooks;

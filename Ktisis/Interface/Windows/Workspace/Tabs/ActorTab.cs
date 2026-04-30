@@ -4,10 +4,9 @@ using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Widgets;
-
-using ImGuiNET;
 
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;

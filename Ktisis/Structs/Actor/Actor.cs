@@ -10,24 +10,28 @@ using Ktisis.Interop;
 using Ktisis.Data.Excel;
 
 namespace Ktisis.Structs.Actor {
-	[StructLayout(LayoutKind.Explicit, Size = 0x84A)]
+	[StructLayout(LayoutKind.Explicit, Size = 0x22E0)]
 	public struct Actor {
 		[FieldOffset(0)] public GameObject GameObject;
 
-		[FieldOffset(0x88)] public byte ObjectID;
+		[FieldOffset(0x8C)] public ushort ObjectID;
 
 		[FieldOffset(0x100)] public unsafe ActorModel* Model;
-		[FieldOffset(0x114)] public RenderMode RenderMode;
-		[FieldOffset(0x1AC)] public uint ModelId;
+		[FieldOffset(0x118)] public RenderMode RenderMode;
+		
+		[FieldOffset(0x6F8)] public ActorDrawData DrawData;
 
-		[FieldOffset(0x708)] public ActorDrawData DrawData;
+		[FieldOffset(0x936)] public bool IsHatHidden;
 
-		[FieldOffset(0x8D6)] public bool IsHatHidden;
-
-		public const int GazeOffset = 0xD00;
+		public const int GazeOffset = 0xD80;
 		[FieldOffset(GazeOffset + 0x10)] public ActorGaze Gaze;
 		
-		[FieldOffset(0x21C8)] public float Transparency;
+		// FFXIVClientStructs.FFXIV.Client.Game.Character
+		// ModelContainer is at 0x1B28
+		// ModelCharaId is at 0x10 within ModelContainer
+		[FieldOffset(0x1B28 + 0x10)] public uint ModelId;
+		
+		[FieldOffset(0x22E8)] public float Transparency;
 
 		public unsafe string? GetName() {
 			fixed (byte* ptr = GameObject.Name)

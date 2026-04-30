@@ -1,8 +1,7 @@
 using System;
 using System.Numerics;
 
-using ImGuiNET;
-
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 
 using Ktisis.Interface.Components;
@@ -134,16 +133,19 @@ namespace Ktisis.Util
 
 		public static Vector4 VisibleCheckmarkColor() {
 			var currentCol = ImGui.GetStyle().Colors[(int)ImGuiCol.CheckMark];
-			ImGui.ColorConvertRGBtoHSV(currentCol.X, currentCol.Y, currentCol.Z, out var h, out var s, out var v);
+			var h = 0.0f;
+			var s = 0.0f;
+			var v = 0.0f;
+			ImGui.ColorConvertRGBtoHSV(currentCol.X, currentCol.Y, currentCol.Z, ref h, ref s, ref v);
 			s = 0.55f;
 			v = Math.Clamp(v * 1.25f, 0.0f, 1.0f);
-			ImGui.ColorConvertHSVtoRGB(h, s, v, out currentCol.X, out currentCol.Y, out currentCol.Z);
+			ImGui.ColorConvertHSVtoRGB(h, s, v, ref currentCol.X, ref currentCol.Y, ref currentCol.Z);
 			return currentCol;
 		}
 		
 		// Copy from Dalamud's ToggleButton but with colorizable circle
 		public static bool ToggleButton(string id, ref bool v, Vector4 circleColor) {
-			RangeAccessor<Vector4> colors = ImGui.GetStyle().Colors;
+			var colors = ImGui.GetStyle().Colors;
 			Vector2 cursorScreenPos = ImGui.GetCursorScreenPos();
 			ImDrawListPtr windowDrawList = ImGui.GetWindowDrawList();
 			float frameHeight = ImGui.GetFrameHeight();

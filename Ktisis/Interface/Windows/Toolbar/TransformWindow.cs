@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using Ktisis.Interface.Components;
 using Ktisis.Overlay;

@@ -5,8 +5,7 @@ using System.Numerics;
 
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 namespace Ktisis.Interface.Windows {
 	internal static class References {
@@ -43,7 +42,7 @@ namespace Ktisis.Interface.Windows {
 			if (ImGui.Begin($"{reference.Path}##reference{key}", flags)) {
 				var scaled = new Vector2(ImGui.GetWindowWidth(), texture.Height * ImGui.GetWindowWidth() / texture.Width );
 				var tintColor = new Vector4(1f, 1f, 1f, cfg.ReferenceAlpha);
-				ImGui.Image(texture.ImGuiHandle, scaled, Vector2.Zero, Vector2.One, tintColor);
+				ImGui.Image(texture.Handle, scaled, Vector2.Zero, Vector2.One, tintColor);
 			}
 			ImGui.PopStyleVar(2);
 			ImGui.End();

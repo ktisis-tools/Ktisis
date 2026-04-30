@@ -68,7 +68,7 @@ namespace Ktisis.Interop.Hooks {
 			var animFrozen = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 0F B6 F8 84 C0 74 12");
 			AnimFrozenHook = Services.Hooking.HookFromAddress<AnimFrozenDelegate>(animFrozen, AnimFrozenDetour);
 			
-			var updatePos = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 84 DB 74 45");
+			var updatePos = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 84 DB 74 3A");
 			UpdatePosHook = Services.Hooking.HookFromAddress<UpdatePosDelegate>(updatePos, UpdatePosDetour);
 
 			var loadSkele = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 C1 E5 08");

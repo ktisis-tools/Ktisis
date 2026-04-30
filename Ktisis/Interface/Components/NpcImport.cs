@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 using Dalamud.Utility.Numerics;
 using Dalamud.Game.ClientState.Objects.Enums;
-
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 
 using GLib.Popups;
 
