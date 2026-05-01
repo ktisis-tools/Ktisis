@@ -1,3 +1,5 @@
+using System;
+
 using Ktisis.Structs.Actor;
 
 namespace Ktisis.Data.Files {
@@ -46,14 +48,19 @@ namespace Ktisis.Data.Files {
 			return Colors[start..(start+192)];
 		}
 
+		// ty Ergo https://github.com/imchillin/Anamnesis/commit/af766e20c028ed552c354ecb23d82b6d0218f12d
 		public static int GetTribeSkinIndex(Tribe tribe, Gender gender) {
 			var genderOffset = gender == Gender.Masculine ? 0 : 1;
-			return (((int)tribe * 2 + genderOffset) * 5 + 3) * 256;
+			var tribeGenderIndex = Math.Max(0, (((int)tribe - 1) * 2) + genderOffset);
+			// return (((int)tribe * 2 + genderOffset) * 5 + 3) * 256;
+			return (int)(4608 + (tribeGenderIndex * 1280) + (3 * 256));
 		}
 
 		public static int GetTribeHairIndex(Tribe tribe, Gender gender) {
 			var genderOffset = gender == Gender.Masculine ? 0 : 1;
-			return (((int)tribe * 2 + genderOffset) * 5 + 4) * 256;
+			var tribeGenderIndex = Math.Max(0, (((int)tribe - 1) * 2) + genderOffset);
+			// return (((int)tribe * 2 + genderOffset) * 5 + 4) * 256;
+			return (int)(4608 + (tribeGenderIndex * 1280) + (4 * 256));
 		}
 	}
 }
