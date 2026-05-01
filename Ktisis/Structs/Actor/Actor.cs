@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
@@ -121,11 +122,18 @@ namespace Ktisis.Structs.Actor {
 			var result = false;
 			
 			var human = (Human*)this.Model;
-			if (this.Model->IsHuman())
-				result = human->UpdateDrawData((byte*)&this.Model->Customize, true);
-			
-			fixed (Customize* ptr = &DrawData.Customize)
-				return result | ((Human*)Model)->UpdateDrawData((byte*)ptr, true);
+			if (this.Model->IsHuman()) {
+				var act = new Human.DrawData();
+				act.CustomizeData = human->Customize;
+				result = human->UpdateDrawData(&act, true);
+			}
+
+			fixed (Customize* ptr = &DrawData.Customize) {
+				var act = new Human.DrawData();
+				var ptAct = &act;
+				ptAct->CustomizeData = *(CustomizeData*)(byte*)ptr;
+				return result | ((Human*)Model)->UpdateDrawData(&act, true);
+			}
 		}
 
 		// Apply new customize

@@ -33,14 +33,16 @@ namespace Ktisis.Data.Excel {
 			}
 		}
 		
-		public static Dye Create(ExcelPage page, uint offset, uint row) {
-			var name = page.ReadColumn<string>(3, offset);
+		public static Dye Create(ExcelPage page, uint offset, uint row)
+		{
+			var name = page.ReadString(offset + 4, offset).ToString();
+
 			return new Dye(page, offset, row) {
 				Name = !name.IsNullOrEmpty() ? name : "Undyed", // TODO: translation
-				Color = page.ReadColumn<uint>(0, offset),
-				Shade = page.ReadColumn<byte>(1, offset),
-				SubOrder = page.ReadColumn<byte>(2, offset),
-				IsMetallic = page.ReadColumn<bool>(5, offset)
+				Color = page.ReadUInt32(offset + 8),
+				Shade = page.ReadUInt8(offset + 20),
+				SubOrder = page.ReadUInt8(offset + 21),
+				IsMetallic = page.ReadPackedBool(offset + 22, 0)
 			};
 		}
 	}

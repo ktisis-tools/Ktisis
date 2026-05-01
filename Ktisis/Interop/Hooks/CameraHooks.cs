@@ -214,7 +214,7 @@ namespace Ktisis.Interop.Hooks {
 			var camCtrlAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 83 3D ?? ?? ?? ?? ?? 74 0C");
             ControlHook = Services.Hooking.HookFromAddress<ControlDelegate>(camCtrlAddr, ControlDetour);
 
-			var preUpdateAddr = Services.SigScanner.ScanText("48 83 EC 28 8B 41 48");
+			var preUpdateAddr = Services.SigScanner.ScanText("8B 41 ?? 85 C0 74 ?? 83 F8 ?? 75 ?? 48 8B 41");
 			PreUpdateHook = Services.Hooking.HookFromAddress<PreUpdateDelegate>(preUpdateAddr, PreUpdateDetour);
             
 			var actCamAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 45 32 FF 40 32 F6");
@@ -235,7 +235,7 @@ namespace Ktisis.Interop.Hooks {
 			var loadMxAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 8B 17 48 8D 4D E0");
 			LoadMatrix = Marshal.GetDelegateForFunctionPointer<LoadMatrixDelegate>(loadMxAddr);
             
-			var collideAddr = Services.SigScanner.ScanText("E8 ?? ?? ?? ?? 4C 8D 45 97 89 83 ?? ?? ?? ??");
+			var collideAddr = Services.SigScanner.ScanText("48 8B C4 48 89 58 ?? 48 89 70 ?? 48 89 78 ?? 55 41 56 41 57 48 8D 68 ?? 48 81 EC ?? ?? ?? ?? F3 0F 58 1D");
             CameraCollisionHook = Services.Hooking.HookFromAddress<CameraCollisionDelegate>(collideAddr, CameraCollisionDetour);
         }
 

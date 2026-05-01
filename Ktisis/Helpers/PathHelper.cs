@@ -15,12 +15,12 @@ namespace Ktisis.Helpers {
 			{"%Time%", () => DateTime.Now.ToString("hh-mm-ss")},
 			{"%PlayerName%", () => {
 				if (Ktisis.Configuration.DisplayCharName)
-					return Services.ClientState.LocalPlayer?.Name.ToString() ?? "Unknown";
+					return Services.PlayerState.CharacterName ?? "Unknown";
 
 				return "Player";
 			}},
-			{"%CurrentWorld%", () => Services.ClientState.LocalPlayer?.CurrentWorld.Value.Name.ToString() ?? "Unknown"},
-			{"%HomeWorld%", () => Services.ClientState.LocalPlayer?.HomeWorld.Value.Name.ToString() ?? "Unknown" },
+			{"%CurrentWorld%", () => Services.PlayerState.CurrentWorld.Value.Name.ToString() ?? "Unknown"},
+			{"%HomeWorld%", () => Services.PlayerState.HomeWorld.Value.Name.ToString() ?? "Unknown" },
 			{"%Zone%", () => Services.DataManager.GetExcelSheet<TerritoryType>()?.GetRow(Services.ClientState.TerritoryType).PlaceName.Value.Name.ToString() ?? "Unknown"},
 		};
 		
