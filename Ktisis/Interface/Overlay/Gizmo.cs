@@ -130,11 +130,12 @@ public class Gizmo : IGizmo {
 				ref delta
 			);
 		}
-		Matrix4x4.Decompose(delta, out var deltaScale, out var deltaRotation, out var deltaPosition);
+		Matrix4x4.Decompose(delta, out var deltaScale, out _ , out var deltaPosition);
 		Matrix4x4.Decompose(mx, out var scale, out var rotation, out var position);
 		switch (this.Operation) {
 			case ImGuizmoOperation.Rotate:
-				rotation *= deltaRotation;
+				Matrix4x4.Decompose(transform, out _, out Quaternion deltaRotation, out _);
+				rotation = deltaRotation;
 				break;
 			case (ImGuizmoOperation.ScaleX | ImGuizmoOperation.ScaleY | ImGuizmoOperation.ScaleZ | ImGuizmoOperation.ScaleXu | ImGuizmoOperation.ScaleYu | ImGuizmoOperation.ScaleZu | ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu):
 				scale *= deltaScale;
