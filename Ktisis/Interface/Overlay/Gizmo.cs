@@ -3,6 +3,7 @@ using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 
+using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Interface.Overlay;
@@ -98,6 +99,7 @@ public class Gizmo : IGizmo {
 	public unsafe bool Manipulate(ref Matrix4x4 mx, out Matrix4x4 delta) {
 		delta = Matrix4x4.Identity;
 
+		var transform = mx;
 		if (this.HasDrawn) return false;
 
 		var result = false;
@@ -114,7 +116,7 @@ public class Gizmo : IGizmo {
 				ref this.ProjMatrix.M11,
 				this.Operation,
 				this.Mode,
-				ref mx.M11,
+				ref transform.M11,
 				ref delta.M11,
 				&snap.X
 			);
@@ -124,11 +126,27 @@ public class Gizmo : IGizmo {
 				ref this.ProjMatrix,
 				this.Operation,
 				this.Mode,
-				ref mx,
+				ref transform,
 				ref delta
 			);
 		}
-
+		Matrix4x4.Decompose(delta, out var deltaScale, out _ , out var deltaPosition);
+		Matrix4x4.Decompose(mx, out var scale, out var rotation, out var position);
+		switch (this.Operation) {
+			case ImGuizmoOperation.Rotate:
+				Matrix4x4.Decompose(transform, out _, out Quaternion deltaRotation, out _);
+				rotation = deltaRotation;
+				break;
+			case (ImGuizmoOperation.ScaleX | ImGuizmoOperation.ScaleY | ImGuizmoOperation.ScaleZ | ImGuizmoOperation.ScaleXu | ImGuizmoOperation.ScaleYu | ImGuizmoOperation.ScaleZu | ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu):
+				scale *= deltaScale;
+				break;
+			case ImGuizmoOperation.Translate:
+				position += deltaPosition;
+				break;
+		}
+		mx = new Transform(position, rotation, scale).ComposeMatrix();
+		
+        
 		this.HasDrawn = true;
 		return result;
 	}
