@@ -42,16 +42,16 @@ public class SceneTree {
 	
 	// Draw frame
     
-		public void Draw(float height) {
-			try {
-				var id = ImGui.GetID("SceneTree_Frame");
-				using (ImRaii.ChildFrame(id, new Vector2(-1, height))) {
-					this.DrawScene(height);
-				}
-			} catch(Exception err) {
-				Ktisis.Log.Error($"Error drawing scene tree: {err}");
+	public void Draw(float height) {
+		try {
+			var id = ImGui.GetID("SceneTree_Frame");
+			using (ImRaii.ChildFrame(id, new Vector2(-1, height))) {
+				this.DrawScene(height);
 			}
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Error drawing scene tree: {err}");
 		}
+	}
 	// Draw scene entities
 
 	private static float IconSpacing => UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale;
