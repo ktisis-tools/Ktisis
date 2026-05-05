@@ -74,7 +74,7 @@ public class PosePropertyList : ObjectPropertyList {
 		// todo: GLib.ButtonTooltip? currently only have a helper for IconButtonTooltip
 		var _hint = "";
 		using (var _disabled = ImRaii.Disabled(this._ctx.Posing.StashedPose == null)) {
-			_hint = _disabled ? "" : $"Pose stashed at {this._ctx.Posing.StashedAt} from Actor {this._ctx.Posing.StashedFrom}";
+			_hint = _disabled.Count > 0 ? "" : $"Pose stashed at {this._ctx.Posing.StashedAt} from Actor {this._ctx.Posing.StashedFrom}";
 			if (ImGui.Button("Apply Pose"))
 				await this._ctx.Posing.ApplyStashedPose(pose);
 		}

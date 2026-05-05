@@ -46,7 +46,7 @@ public class ToolbarWindow : KtisisWindow {
 			new(this.DrawWorkspaceWindow, FontAwesomeIcon.PersonThroughWindow, "Workspace", typeof(Workspace)),
 			new(this.DrawObjectWindow, FontAwesomeIcon.ArrowsAlt, "Object Editor", typeof(ObjectWindow)),
 			new(this.DrawActorWindow, FontAwesomeIcon.Walking, "Actor Editor", typeof(ActorWindow)),
-			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, "Pose View", typeof(Pose)),
+			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, "Pose View", typeof(PosingWindow)),
 			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, "Environment Editor", typeof(Env)),
 			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, "Camera Editor", typeof(CameraWindow)),
 			new(this.DrawSceneWindow, FontAwesomeIcon.UsersLine, "Scene Editor", typeof(SceneWindow)),
@@ -66,7 +66,7 @@ public class ToolbarWindow : KtisisWindow {
 	}
 
 	public override void Draw() {
-		ImGuiP.CalcWindowNextAutoFitSize(ImGuiP.GetCurrentWindow());
+		using var a = ImRaii.PushId("##ToolbarMain");
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		
 		// WorkspaceState
@@ -81,7 +81,12 @@ public class ToolbarWindow : KtisisWindow {
 		// Subwindow Buttons
 		foreach (var button in _buttons) {
 			Vector4 color;
-			var bgCol = this._subWindow?.GetType() == button.WindowType ? ImGuiCol.ButtonActive : ImGuiCol.Button;
+			ImGuiCol bgCol;
+			if(button.WindowType != typeof(PosingWindow))
+				bgCol= this._subWindow?.GetType() == button.WindowType ? ImGuiCol.ButtonActive : ImGuiCol.Button;
+			else {
+				bgCol = this._ctx.Plugin.Gui.Get<PosingWindow>() is { IsOpen: true } ? ImGuiCol.ButtonActive : ImGuiCol.Button;
+			}
 			unsafe {
 				color =  *ImGui.GetStyleColorVec4(bgCol);
 			}
@@ -105,7 +110,7 @@ public class ToolbarWindow : KtisisWindow {
 	internal void DrawWorkspaceWindow() => this.SetSubWindow<Workspace>();
 	internal void DrawObjectWindow() => this.SetSubWindow<ObjectWindow>();
 	internal void DrawActorWindow() => this.SetSubWindow<ActorWindow>();
-	internal void DrawPosingWindow() => this.SetSubWindow<Pose>();
+	internal void DrawPosingWindow() => this.Interface.OpenPosingWindow();
 	internal void DrawEnvWindow() => this.SetSubWindow<Env>();
 	internal void DrawCameraWindow() => this.SetSubWindow<CameraWindow>();
 	internal void DrawSceneWindow() => this.SetSubWindow<SceneWindow>();
@@ -154,9 +159,9 @@ public class ToolbarWindow : KtisisWindow {
 		this._subWindow.OnOpen();
 	}
 
-	public override void OnSafeToRemove() {
+	public override void OnClose() {
 		this._subWindow?.Close();
 		this._subWindow?.OnSafeToRemove();
-		base.OnSafeToRemove();
+		base.OnClose();
 	}
 }

@@ -12,7 +12,7 @@ public class ChangeStatePopup: KtisisPopup {
 	public ChangeStatePopup(
 
 		IEditorContext ctx,
-		ImGuiWindowFlags flags = ImGuiWindowFlags.Modal
+		ImGuiWindowFlags flags = ImGuiWindowFlags.Modal | ImGuiWindowFlags.NoMove
 	) : base("##ToolbarConfirmPopup", flags) {
 		this._ctx = ctx;
 		this._state = this._ctx.Config.Editor.UseToolbar;

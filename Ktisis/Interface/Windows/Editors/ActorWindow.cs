@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Windowing;
 
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Characters.Types;

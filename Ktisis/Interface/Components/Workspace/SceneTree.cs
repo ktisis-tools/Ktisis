@@ -46,8 +46,6 @@ public class SceneTree {
 		var frame = false;
 		try {
 			var id = ImGui.GetID("SceneTree_Frame");
-			//if (this._ctx.Config.Editor.UseToolbar)
-				//height += this.HeightCheck();
 			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
 			if (!frame) return;
 			this.DrawScene(height);
@@ -141,10 +139,11 @@ public class SceneTree {
 			if (this.DrawNodeLabel(node, pos, flag, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
+			var io = ImGui.GetIO();
 			if (isHover && this.IsNodeHovered(pos, size, rightAdjust)) {
-				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left) && !this._ctx.Config.Editor.UseToolbar) {
+				if (ImGui.IsMouseClicked(ImGuiMouseButton.Middle)) {
 					this._ctx.Interface.OpenEditorFor(node);
-				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
+				} else if (io.MouseReleased[0] && io.MouseDownDurationPrev[0] < 0.5f) {
 					// if we shift-click, handle the multi-select for this node later after tree rendering
 					if (ImGui.IsKeyDown(ImGuiKey.ModShift)) shiftClicked = true;
 					else {
@@ -153,10 +152,6 @@ public class SceneTree {
 					}
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
 					this._ctx.Interface.OpenSceneEntityMenu(node);
-				}
-
-				if (this._ctx.Config.Editor.UseToolbar && ImGui.IsMouseClicked(ImGuiMouseButton.Middle)) {
-					this._ctx.Interface.OpenEditorFor(node);
 				}
 
 				if (ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !shiftClicked)

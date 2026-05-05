@@ -6,15 +6,29 @@ using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
+using Dalamud.Interface;
+using Dalamud.Interface.Utility;
+using Dalamud.Interface.Windowing;
 
+using GLib.Widgets;
+
+using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Data.Serialization;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Selection;
+using Ktisis.Editor.Transforms;
+using Ktisis.Editor.Transforms.Types;
 using Ktisis.Interface.Components.Posing;
 using Ktisis.Interface.Components.Posing.Types;
+using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Localization;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Windows;
@@ -24,11 +38,15 @@ public class PosingWindow : KtisisWindow {
 	private readonly LocaleManager _locale;
 	private readonly GPoseService _gpose;
 	private readonly PoseViewRenderer _render;
+	private readonly Gizmo2D _gizmo;
+	private readonly TransformTable _table;
+
 
 	private PoseViewSchema? _schema;
 	private ViewEnum _view = ViewEnum.Body;
 
 	internal ActorEntity? _target;
+	private ITransformMemento? Transform;
 
 	private enum ViewEnum {
 		Body,
@@ -39,7 +57,9 @@ public class PosingWindow : KtisisWindow {
 		IEditorContext ctx,
 		ITextureProvider tex,
 		LocaleManager locale,
-		GPoseService gpose
+		GPoseService gpose,
+		TransformTable table,
+		Gizmo2D gizmo
 	) : base(
 		"Pose View###KtisisPoseView"
 	) {
@@ -47,6 +67,8 @@ public class PosingWindow : KtisisWindow {
 		this._locale = locale;
 		this._gpose = gpose;
 		this._render = new PoseViewRenderer(ctx.Config, tex);
+		this._table = table;
+		this._gizmo = gizmo;
 	}
 
 	public override void OnOpen() {
@@ -60,13 +82,13 @@ public class PosingWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
-		if(!this._ctx.Config.Editor.UseToolbar)
-			this.SizeConstraints = new WindowSizeConstraints {
-				MinimumSize = new Vector2(500, 350)
-			};
+		this.SizeConstraints = new WindowSizeConstraints {
+			MinimumSize = new Vector2(500, 350)
+		};
 	}
-
+	
 	public override void Draw() {
+		var target = this._ctx.Transform.Target;
 		if (this._ctx.Config.Editor.UseLegacyPoseViewTabs && !this._ctx.Config.Editor.UseToolbar) {
 			this.DrawLegacyTabs();
 			return;
@@ -86,6 +108,27 @@ public class PosingWindow : KtisisWindow {
 		}
 
 		this.DrawWindow(this._target);
+
+		
+		if (this._ctx.Config.Editor.UseToolbar) {
+			if (this._ctx.Config.Editor.FlyoutOpen) {
+				ImGui.SameLine();
+				using var _ = ImRaii.Group();
+				this.DrawToggles(target);
+				this.DrawTransform(target);
+				ImGui.SetCursorPos((ImGui.GetContentRegionMax().Sub(Buttons.CalcSize()) - ImGui.GetStyle().WindowPadding).SubX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
+				if (ImGui.Button("<")) {
+					ImGui.SetWindowSize(ImGui.GetWindowSize().SubX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
+					this._ctx.Config.Editor.FlyoutOpen = false;
+				}
+			} else {
+				ImGui.SetCursorPos(ImGui.GetContentRegionMax().Sub(Buttons.CalcSize()) - ImGui.GetStyle().WindowPadding );
+				if (ImGui.Button(">")) {
+					ImGui.SetWindowSize(ImGui.GetWindowSize().AddX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
+					this._ctx.Config.Editor.FlyoutOpen = true;
+				}
+			}
+		}
 	}
 
 	private bool UpdateTarget() {
@@ -143,8 +186,8 @@ public class PosingWindow : KtisisWindow {
 
 	private unsafe void DrawWindow(ActorEntity target) {
 		var avail = ImGui.GetContentRegionAvail();
-		if (this._ctx.Config.Editor.UseToolbar)
-			avail = new Vector2(avail.X * .70f, 275);
+		if (this._ctx.Config.Editor.UseToolbar && this._ctx.Config.Editor.FlyoutOpen)
+			avail = avail.SubX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2);
 
 		var width = avail.X * 0.90f;
 		var spacing = ImGui.GetStyle().ItemSpacing.X * 2;
@@ -152,7 +195,7 @@ public class PosingWindow : KtisisWindow {
 		var viewRegion = avail with { X = width - spacing };
 		this.DrawView(target, viewRegion);
 		ImGui.SameLine();
-		if (!this._ctx.Config.Editor.UseToolbar)
+		if (!this._ctx.Config.Editor.UseToolbar || !this._ctx.Config.Editor.FlyoutOpen)
 			ImGui.SetCursorPosX(width);
 		this.DrawSideMenu(target);
 	}
@@ -255,4 +298,162 @@ public class PosingWindow : KtisisWindow {
 
 		frame.DrawView(view, width, height, template);
 	}
+	
+	//Gizmo
+
+	private void DrawTransform(ITransformTarget? target) {
+		var transform = target?.GetTransform() ?? new Transform();
+
+		var disabled = target == null;
+		using var _ = ImRaii.Disabled(disabled);
+
+		var moved = this.DrawTransform(ref transform, out var isEnded, disabled);
+		if (target != null && moved) {
+			this.Transform ??= this._ctx.Transform.Begin(target);
+			this.Transform.SetTransform(transform);
+		}
+		
+		if (!isEnded) return;
+		this.Transform?.Dispatch();
+		this.Transform = null;
+	}
+	
+	private bool DrawTransform(ref Transform transform, out bool isEnded, bool disabled) {
+		isEnded = false;
+		
+		var gizmo = false;
+		if (!this._ctx.Config.Editor.TransformHide) {
+			gizmo = this.DrawGizmo(ref transform, ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 0.1f: 0), disabled);
+			isEnded = this._gizmo.IsEnded;
+		}
+
+		var table = this._table.Draw(
+			transform,
+			out var result,
+			TransformTableFlags.Default | TransformTableFlags.UseAvailable | TransformTableFlags.Operation
+		);
+		if (table) transform = result;
+		isEnded |= this._table.IsDeactivated;
+
+		return gizmo || table;
+	}
+	private unsafe bool DrawGizmo(ref Transform transform, float width, bool disabled) {
+		var size = new Vector2(width, 300);
+
+		this._gizmo.Begin(size, "pose");
+		this._gizmo.Mode = this._ctx.Config.Gizmo.Mode;
+		this._gizmo.Operation = this._ctx.Config.Gizmo.Operation.HasFlag(ImGuizmoOperation.RotateX) && !this._ctx.Config.Gizmo.Operation.HasFlag(ImGuizmoOperation.RotateScreen)
+			? ImGuizmoOperation.RotateX | ImGuizmoOperation.RotateY | ImGuizmoOperation.RotateZ
+			: ImGuizmoOperation.Rotate;
+		
+		if (disabled) {
+			this._gizmo.End();
+			return false;
+		}
+
+		var cameraFov = 1.0f;
+		var cameraPos = Vector3.Zero;
+		if (this._ctx.Cameras.IsWorkCameraActive) {
+			var freeCam = (WorkCamera)this._ctx.Cameras.Current;
+			cameraFov = freeCam.Camera->RenderEx->FoV;
+			cameraPos = freeCam.Position;
+		} else {
+			var camera = CameraService.GetGameCamera();
+			if (camera != null) {
+				cameraFov = camera->FoV;
+				cameraPos = camera->CameraBase.SceneCamera.Object.Position;
+			}
+		}
+		
+		var matrix = transform.ComposeMatrix();
+		this._gizmo.SetLookAt(cameraPos, transform.Position, cameraFov, (size.X - ImGui.GetStyle().WindowPadding.X * 2) / (size.Y - ImGui.GetStyle().WindowPadding.Y * 2));
+		var result = this._gizmo.Manipulate(ref matrix, out _);
+		
+		this._gizmo.End();
+
+		if (result)
+			transform.DecomposeMatrixPrecise(matrix, transform);
+
+		return result;
+	}
+	
+	private void DrawToggles(ITransformTarget? target) {
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+
+		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
+		var iconBtnSize = new Vector2(iconSize, iconSize);
+
+		var mode = this._ctx.Config.Gizmo.Mode;
+		var modeIcon = mode == ImGuizmoMode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home;
+		var modeKey = mode == ImGuizmoMode.World ? "world" : "local";
+		var modeHint = this._ctx.Locale.Translate($"transform_edit.mode.{modeKey}");
+		if (Buttons.IconButtonTooltip(modeIcon, modeHint, iconBtnSize))
+			this._ctx.Config.Gizmo.Mode = mode == ImGuizmoMode.World ? ImGuizmoMode.Local : ImGuizmoMode.World;
+		
+		ImGui.SameLine(0, spacing);
+
+		var visible = this._ctx.Config.Gizmo.Visible;
+		var visIcon = visible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
+		var visHint = this._ctx.Locale.Translate("actions.Gizmo_Toggle");
+		if (Buttons.IconButtonTooltip(visIcon, visHint, iconBtnSize))
+			this._ctx.Config.Gizmo.Visible = !visible;
+
+		ImGui.SameLine(0, spacing);
+
+		var mirrorState = this._ctx.Config.Gizmo.MirrorRotation;
+		var flagIcon = FontAwesomeIcon.GripLines;
+		var flagKey = "parallel";
+		if (mirrorState == MirrorMode.Inverse) {
+			flagIcon = FontAwesomeIcon.ArrowDownUpAcrossLine;
+			flagKey = "inverse";
+		}
+		else if (mirrorState == MirrorMode.Reflect) {
+			flagIcon = FontAwesomeIcon.ArrowsLeftRightToLine;
+			flagKey = "reflect";
+		}
+		var flagHint = this._ctx.Locale.Translate($"transform_edit.flags.{flagKey}");
+		if (Buttons.IconButtonTooltip(flagIcon, flagHint, iconBtnSize))
+			this._ctx.Config.Gizmo.SetNextMirrorRotation();
+
+		ImGui.SameLine(0, spacing);
+
+		// Sibling Link selector
+		// if we have a selection & target's primary entity is a bone node, draw the button
+		// if we have >1 bonenodes selected or no sibling, disable the button
+		// if we have 1 bonenode selected that has a sibling, enable the button
+		var selected = target?.Primary;
+		var selectionCount = target?.Targets.Count();
+		if (selectionCount != 0 && selected != null && selected is BoneNode bNode) {
+			var siblingNode = bNode.Pose.TryResolveSibling(bNode);
+			var siblingAvailable = siblingNode != null;
+			var siblingKey = siblingAvailable ? (selectionCount == 1 ? "available" : "multiple") : "unavailable";
+			var siblingHint = this._ctx.Locale.Translate(
+				$"transform_edit.sibling.{siblingKey}",
+				new Dictionary<string, string> {
+						{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
+				}
+			);
+
+			using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
+				this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
+
+			ImGui.SameLine(0, spacing);
+		} else {
+			ImGui.Dummy(iconBtnSize);
+			ImGui.SameLine(0, spacing);
+		}
+
+		var avail = ImGui.GetContentRegionAvail().X;
+		if (avail > iconSize)
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
+
+		var hide = this._ctx.Config.Editor.TransformHide;
+		var gizmoIcon = hide ? FontAwesomeIcon.CaretUp : FontAwesomeIcon.CaretDown;
+		var gizmoKey = hide ? "show" : "hide";
+		var gizmoHint = this._ctx.Locale.Translate($"transform_edit.gizmo.{gizmoKey}");
+		if (Buttons.IconButtonTooltip(gizmoIcon, gizmoHint, iconBtnSize))
+			this._ctx.Config.Editor.TransformHide = !hide;
+	}
+	
 }

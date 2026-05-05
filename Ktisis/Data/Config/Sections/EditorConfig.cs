@@ -52,6 +52,10 @@ public class EditorConfig {
 
 	public bool AutoResizeObjectEditor = false;
 	
+	// Pose View
+
+	public bool FlyoutOpen = false;
+	
 	// Helpers
 
 	public EntityDisplay GetDisplayForType(EntityType type)

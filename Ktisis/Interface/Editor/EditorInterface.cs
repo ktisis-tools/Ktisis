@@ -165,17 +165,15 @@ public class EditorInterface : IEditorInterface {
 	}
 
 	public void OpenPosingWindow() {
-		if(this._ctx.Config.Editor.UseToolbar)
-			this._gui.Get<ToolbarWindow>()!.DrawPosingWindow();
-		else {
+		var gizmo = this._gizmo.Create(GizmoId.TransformEditor);
 			if (this._ctx.Config.Editor.ToggleOpenWindows)
-				this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale).Toggle();
+				this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale, new Gizmo2D(this._ctx.Config.Gizmo, gizmo)).Toggle();
 			else {
-				var _win = this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale);
+				var _win = this._gui.GetOrCreate<PosingWindow>(this._ctx, this._ctx.Locale, new Gizmo2D(this._ctx.Config.Gizmo, gizmo));
 				_win.Open();
 				ImGui.SetWindowFocus(_win.WindowName);
+			
 			}
-		}
 	}
 	
 	// Context menus

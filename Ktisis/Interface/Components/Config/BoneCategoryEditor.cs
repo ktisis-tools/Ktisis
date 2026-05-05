@@ -101,7 +101,7 @@ public class BoneCategoryEditor {
 		if (node.Success) this.DrawCategoryList(category.Name);
 	}
 
-	private ImRaii.IEndObject DrawCategoryNode(BoneCategory category) {
+	private ImRaii.TreeNodeDisposable DrawCategoryNode(BoneCategory category) {
 		using var _ = ImRaii.PushColor(ImGuiCol.Text, category.GroupColor);
 
 		var flags = ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.SpanAvailWidth;
