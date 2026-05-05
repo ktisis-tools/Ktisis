@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
@@ -92,10 +93,24 @@ public class CharacterManager : ICharacterManager {
 			// if this is an initial draw of an obj and positions are locked for animations,
 			// 	send to a probably-nice scene coord instead of 0,0,0
 			if (gameObj->DrawObject != null)
-				gameObj->DrawObject->Position = gameObj->Position;
+				if (!gameObj->DrawOffset.Equals(Vector3.Zero))
+					FactorDrawOffset(gameObj);
+				else
+					gameObj->DrawObject->Position = gameObj->Position + gameObj->DrawOffset;
 		}
 	}
 
+	private unsafe void FactorDrawOffset(CSGameObject* gameObj) {
+		var offset = gameObj->DrawOffset;
+		var pos = gameObj->Position;
+		var cos = MathF.Cos(gameObj->DefaultRotation);
+		var sin = MathF.Sin(gameObj->DefaultRotation);
+		gameObj->DrawObject->Position.X = ((offset.X * cos) + (offset.Z * sin)) + pos.X;
+		gameObj->DrawObject->Position.Z = ((offset.Z * cos) - (offset.X * sin)) + pos.Z;
+		gameObj->DrawObject->Position.Y = offset.Y + pos.Y;
+
+
+	}
 	private unsafe Transform* GetLocalPlayerPosition() {
 		var localPlayer = (CSGameObject*)this._objectTable.LocalPlayer?.Address;
 		if (localPlayer != null && localPlayer->DrawObject != null)
