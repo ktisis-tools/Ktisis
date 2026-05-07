@@ -5,6 +5,7 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using Ktisis.Scene.Decor;
+using Ktisis.Scene.Entities.World;
 
 namespace Ktisis.Editor.Posing.Attachment;
 
@@ -21,6 +22,9 @@ public class AttachManager : IAttachManager {
 		Ktisis.Log.Info($"Attaching {child} {child.GetHashCode():X}");
 		if (child.IsValid && target.TryAcceptAttach(child))
 			this.Attachments.Add(child);
+
+		if (child is LightEntity light)
+			light.SetAttach(target);
 	}
 
 	public void Detach(IAttachable child) {

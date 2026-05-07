@@ -7,6 +7,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Windowing;
 
 using GLib.Widgets;
 
@@ -64,6 +65,13 @@ public class ObjectWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
+		if(this._ctx.Config.Editor.UseToolbar)
+			this.Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize;
+		else if (this._ctx.Config.Editor.AutoResizeObjectEditor)
+			this.Flags = ImGuiWindowFlags.NoScrollbar;
+		else
+			this.Flags = ImGuiWindowFlags.None;
+		
 		var width = TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2;
 		this.SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = new Vector2(width, 0)
@@ -76,6 +84,15 @@ public class ObjectWindow : KtisisWindow {
 
 		this.DrawTransform(target);
 		this.DrawProperties(target);
+		if(this._ctx.Config.Editor.AutoResizeObjectEditor)
+			this.Autoresize();					//Need to add toolbar here too
+	}
+
+	public void DrawCompact() {
+		var target = this._ctx.Transform.Target;
+		this.DrawToggles(target);
+
+		this.DrawTransform(target);
 	}
 	
 	// Property editor: Transform
@@ -114,14 +131,14 @@ public class ObjectWindow : KtisisWindow {
 		
 		var gizmo = false;
 		if (!this._ctx.Config.Editor.TransformHide) {
-			gizmo = this.DrawGizmo(ref transform, ImGui.GetContentRegionAvail().X, disabled);
+			gizmo = this.DrawGizmo(ref transform, ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 0.1f: 0), disabled);
 			isEnded = this._gizmo.IsEnded;
 		}
 
 		var table = this._table.Draw(
 			transform,
 			out var result,
-			TransformTableFlags.Default | TransformTableFlags.UseAvailable
+			TransformTableFlags.Default | TransformTableFlags.UseAvailable | TransformTableFlags.Operation
 		);
 		if (table) transform = result;
 		isEnded |= this._table.IsDeactivated;
@@ -193,9 +210,12 @@ public class ObjectWindow : KtisisWindow {
 				this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
 
 			ImGui.SameLine(0, spacing);
+		} else {
+			ImGui.Dummy(iconBtnSize);
+			ImGui.SameLine(0, spacing);
 		}
 
-		var avail = ImGui.GetContentRegionAvail().X;
+		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 0.1f: 0);
 		if (avail > iconSize)
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
 
@@ -210,10 +230,13 @@ public class ObjectWindow : KtisisWindow {
 	// Gizmo
 
 	private unsafe bool DrawGizmo(ref Transform transform, float width, bool disabled) {
-		var size = new Vector2(width, 200);
+		var size = new Vector2(width, 300);
 
 		this._gizmo.Begin(size);
 		this._gizmo.Mode = this._ctx.Config.Gizmo.Mode;
+		this._gizmo.Operation = this._ctx.Config.Gizmo.Operation.HasFlag(ImGuizmoOperation.RotateX) && !this._ctx.Config.Gizmo.Operation.HasFlag(ImGuizmoOperation.RotateScreen)
+			? ImGuizmoOperation.RotateX | ImGuizmoOperation.RotateY | ImGuizmoOperation.RotateZ
+			: ImGuizmoOperation.Rotate;
 		
 		if (disabled) {
 			this._gizmo.End();
@@ -245,4 +268,14 @@ public class ObjectWindow : KtisisWindow {
 
 		return result;
 	}
+	
+	//Autoresize
+
+	private void Autoresize() {
+		var window = ImGuiP.GetCurrentWindow();
+		var sizeDiff = window.ContentSizeIdeal.Y  - window.ContentRegionRect.GetHeight();
+		if(sizeDiff != 0)
+			ImGui.SetWindowSize(new Vector2(ImGui.GetWindowSize().X, ImGui.GetWindowSize().Y + sizeDiff ));
+	}
+	
 }

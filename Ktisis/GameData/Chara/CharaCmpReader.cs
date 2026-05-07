@@ -54,6 +54,10 @@ public class CharaCmpReader(BinaryReader br) {
 		this.SeekNextBlock();
 		var highlightColors = this.ReadArray(ExtendedDataLength);
 		this.SeekNextBlock();
+		this.SeekNextBlock();
+		this.SeekNextBlock();
+		this.SeekNextBlock();
+		this.SeekNextBlock(); // TODO: help i'm trapped in a streamreader
 		var lipColors = this.ReadArray(AlphaLength);
 		this.SeekNextBlock();
 		var raceFeatColors = this.ReadArray(ExtendedDataLength);
@@ -73,10 +77,13 @@ public class CharaCmpReader(BinaryReader br) {
 	// Read tribe data
 
 	public TribeColors ReadTribeData(Tribe tribe, Gender gender) {
-		this.SeekTo(TribesSeekTo + TribeBlockSize * (uint)(tribe - 1) + GenderBlockSize * (uint)gender);
+		// ty ergo https://github.com/imchillin/Anamnesis/commit/af766e20c028ed552c354ecb23d82b6d0218f12d
+		// TODO: less magic
+		var tribeGenderIdx = Math.Max(0, (((uint)tribe - 1) * 2) + (uint)gender);
+		this.SeekTo((4608 + (tribeGenderIdx * 1280) + (3 * 256)) * 4);
 
 		var skinColors = this.ReadArray(DataLength);
-		this.SeekNextBlock();
+		this.SeekTo((4608 + (tribeGenderIdx * 1280) + (4 * 256)) * 4);
 
 		var isHairExtended = tribe is not (Tribe.Lost or Tribe.Helion);
 		var hairColors = this.ReadArray(isHairExtended ? ExtendedDataLength : DataLength);

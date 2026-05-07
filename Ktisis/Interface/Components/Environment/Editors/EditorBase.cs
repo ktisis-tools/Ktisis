@@ -13,7 +13,7 @@ public abstract class EditorBase {
 
 	public abstract void Draw(IEnvModule module, ref EnvState state);
 
-	protected ImRaii.IEndObject Disable(IEnvModule module)
+	protected ImRaii.DisabledDisposable Disable(IEnvModule module)
 		=> ImRaii.Disabled(!this.IsActivated(module.Override));
 
 	protected bool DrawToggleCheckbox(string label, EnvOverride flag, IEnvModule module) {

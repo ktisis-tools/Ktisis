@@ -32,7 +32,7 @@ public class GizmoStyleEditor {
 		var defaults = GizmoConfig.DefaultStyle;
 		var style = this.Config.Gizmo.Style;
 
-		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail(), true);
+		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail()- (this._cfg.File.Editor.UseToolbar?new Vector2(0, 2): Vector2.Zero), true);
 		using var _ = ImRaii.Disabled(); // TODO: undisable
 		ImGui.TextWrapped("Gizmo Styling is currently disabled in this build, pending a Dalamud update!");
 		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.general.title"))) {

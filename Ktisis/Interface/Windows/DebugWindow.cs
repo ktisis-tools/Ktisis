@@ -206,7 +206,7 @@ public class DebugWindow : KtisisWindow {
 			}
 
 			ImGui.Text("Transform Matrix:");
-			if (this._transformTable.Draw(_transform, out var result, TransformTableFlags.Default))
+			if (this._transformTable.Draw(_transform, out var result, TransformTableFlags.Default | TransformTableFlags.Operation))
 				_transform = result;
 
 			if (ImGui.Button("SET##SetBoneTransform"))

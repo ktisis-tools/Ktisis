@@ -5,21 +5,26 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility.Raii;
 
+using Ktisis.Data.Config.Sections;
 using Ktisis.Interface.Overlay;
 
 namespace Ktisis.Interface.Components.Transforms;
 
 public class Gizmo2D {
-	public const float ScaleFactor = 0.5f;
+	private readonly GizmoConfig _cfg;
 	
 	// Constructor & creation
 
 	private readonly IGizmo Gizmo;
 
-	public Gizmo2D(IGizmo gizmo) {
+	public Gizmo2D(
+		GizmoConfig cfg,
+		IGizmo gizmo
+	) {
+		this._cfg = cfg;
 		this.Gizmo = gizmo;
 		this.Gizmo.Operation = ImGuizmoOperation.Rotate;
-		this.Gizmo.ScaleFactor = ScaleFactor;
+		this.Gizmo.ScaleFactor = this._cfg.Gizmo2DScaleFactor;
 		this.Gizmo.AllowAxisFlip = false;
 	}
 	
@@ -28,6 +33,11 @@ public class Gizmo2D {
 	public ImGuizmoMode Mode {
 		get => this.Gizmo.Mode;
 		set => this.Gizmo.Mode = value;
+	}
+
+	public ImGuizmoOperation Operation {
+		get => this.Gizmo.Operation;
+		set => this.Gizmo.Operation = value;
 	}
 
 	public bool IsEnded => this.Gizmo.IsEnded;
@@ -46,9 +56,11 @@ public class Gizmo2D {
 		this.Gizmo.SetMatrix(viewMatrix, projectionMatrix);
 	}
 
-	public void Begin(Vector2 rectSize) {
+	public void Begin(Vector2 rectSize, string? nameAppend = null) {
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
 		using var _border = ImRaii.PushStyle(ImGuiStyleVar.ChildBorderSize, 0f);
+		rectSize.Y *= this._cfg.Gizmo2DScaleFactor;
+		this.Gizmo.ScaleFactor = this._cfg.Gizmo2DScaleFactor;
 		
 		ImGui.BeginChildFrame(0xD546_0+(uint)this.Gizmo.Id, rectSize, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse);
 
@@ -57,7 +69,7 @@ public class Gizmo2D {
 		ImGui.SetNextWindowPos(ImGui.GetMainViewport().Pos);
 		ImGui.SetNextWindowSize(ImGui.GetMainViewport().Size);
 		
-		ImGui.Begin("##Gizmo2D", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
+		ImGui.Begin($"##Gizmo2D{nameAppend}", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 		
 		var minDim = Math.Min(innerSize.X, innerSize.Y);
 		var drawSize = new Vector2(minDim, minDim);
@@ -65,12 +77,12 @@ public class Gizmo2D {
 		
 		this.Gizmo.BeginFrame(drawPos, drawSize);
 		this.Gizmo.PushDrawList();
-		DrawGizmoCircle(drawPos, drawSize, drawSize.X);
+		DrawGizmoCircle(drawPos, drawSize, drawSize.X, this._cfg.Gizmo2DScaleFactor);
 	}
 	
-	private static void DrawGizmoCircle(Vector2 pos, Vector2 size, float width) {
+	private static void DrawGizmoCircle(Vector2 pos, Vector2 size, float width, float scaleFactor) {
 		// background circle drawn behind the gizmo
-		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * ScaleFactor) / 2.05f, 0xCF202020);
+		ImGui.GetWindowDrawList().AddCircleFilled(pos + size / 2, (width * scaleFactor) / 2.05f, 0xCF202020);
 	}
 
 	public bool Manipulate(ref Matrix4x4 matrix, out Matrix4x4 delta)

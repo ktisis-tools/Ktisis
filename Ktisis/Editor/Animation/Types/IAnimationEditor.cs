@@ -7,7 +7,6 @@ namespace Ktisis.Editor.Animation.Types;
 
 public interface IAnimationEditor {
 	public bool SpeedControlEnabled { get; set; }
-	public bool PositionLockEnabled { get; set; }
 	public bool Posing { get; }
 	
 	public bool TryGetModeAndPose(out PoseModeEnum mode, out int pose);

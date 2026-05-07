@@ -103,6 +103,7 @@ public class PoseViewRenderer {
 			);
 			var size = img.Size * scale;
 
+			
 			ImGui.Image(img.Handle, size);
 			
 			this.Views.Add(new ViewData {

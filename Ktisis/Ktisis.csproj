@@ -1,8 +1,8 @@
-﻿<Project Sdk="Dalamud.NET.Sdk/14.0.1">
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
     <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
-		<Version>0.3.16.4</Version>
+		<Version>0.3.18.1</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
 	</PropertyGroup>
 
@@ -22,21 +22,18 @@
 		<PackageReference Include="Glamourer.Api" Version="2.7.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
 		<PackageReference Include="K4os.Compression.LZ4.Legacy" Version="1.3.8" />
-		<PackageReference Include="KamiToolKit" Version="1.0.2" />
+		<PackageReference Include="KamiToolKit" Version="1.1.13" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
-		<PackageReference Include="Penumbra.Api" Version="5.10.0" />
+		<PackageReference Include="Penumbra.Api" Version="5.13.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="Data\Schema\Categories.xml" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\GLib\GLib\GLib.csproj" />
-      <ProjectReference Include="..\KamiToolKit\KamiToolKit.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Localization\Data\*.json" />
-		<None Remove="Data\Library\bnpc-index.json" />
-		<EmbeddedResource Include="Data\Library\bnpc-index.json" />
 		<None Remove="Data\Schema\Views.xml" />
 		<EmbeddedResource Include="Data\Schema\Views.xml" />
 		<None Remove="Data\Images\ahmi.png" />
@@ -64,6 +61,11 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Data\Library\" />
+      <EmbeddedResource Include="Data\Library\bnpc-index.json" />
       <EmbeddedResource Include="Data\Library\props.json" />
+      <EmbeddedResource Include="Data\Library\skin-paths.json" />
 	</ItemGroup>
+    <ItemGroup>
+      <Content Include="Assets\**\*" CopyToOutputDirectory="Always"/>
+    </ItemGroup>
 </Project>

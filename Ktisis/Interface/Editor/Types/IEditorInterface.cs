@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using Ktisis.Data.Files;
 using Ktisis.Interface.Types;
+using Ktisis.Interface.Windows;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
@@ -19,7 +20,10 @@ public interface IEditorInterface {
 
 	public void OpenCameraWindow();
 	public void OpenEnvironmentWindow();
-	public void OpenObjectEditor();
+
+	public ObjectWindow GetObjectWindow();
+	public void OpenObjectEditor(bool forceOpen = false);
+	
 	public void OpenPosingWindow();
 
 	public void OpenSceneCreateMenu();
