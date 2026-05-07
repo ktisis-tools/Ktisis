@@ -26,6 +26,7 @@ using Ktisis.Data.Json;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik;
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Factory.Builders;
@@ -42,11 +43,13 @@ public unsafe class PreviewNode : OverlayNode {
 	protected override void OnUpdate() { }
 
 	private readonly ImageNode Image;
+	private readonly ImageNode ImageBacking;
 	private readonly NineGridNode Border;
 	private readonly NodeBase Buttons;
 
 	private uint _counter;
 	private ActorEntity _actor;
+	private ActorEntity _target;
 
 	private readonly RenderTargetManager* _renderTargetManager;
 	private readonly AgentInspect* _agentInspect;
@@ -75,6 +78,7 @@ public unsafe class PreviewNode : OverlayNode {
 		if (target.GetHuman() == null)
 			return;
 
+		this._target = target;
 		this._currentPose = null;
 		this._framework = framework;
 		this._objectTable = objectTable;
@@ -93,6 +97,12 @@ public unsafe class PreviewNode : OverlayNode {
 			ImageNodeFlags = (ImageNodeFlags)0x8C,
 			WrapMode = WrapMode.Tile
 		};
+		this.ImageBacking = new ImageNode() {
+			Size = new Vector2(192.0f, 320.0f),
+			Position = new Vector2(4, 3),
+			ImageNodeFlags = ImageNodeFlags.AutoFit,
+			WrapMode = WrapMode.Tile
+		};
 		this.Border = new NineGridNode() {
 			Size = new Vector2(200.0f, 328.0f),
 			TopOffset = 14.0f,
@@ -107,12 +117,20 @@ public unsafe class PreviewNode : OverlayNode {
 			Id = 0
 		});
 
+
+		
 		var part = this.Image.AddPart(new Part { 		
 			Height = 320,
 			Width = 192,});
 		part->LoadTexture(this._renderTargetManager->CharaViewTextures[1]);
 		this._renderTargetManager->CharaViewTextures[1].Value->IncRef();
+		
+		var bgpart = this.ImageBacking.AddPart(new Part { 		
+			Height = 320,
+			Width = 192,});
+		bgpart->LoadTexture("ui/common/characterbg_hr1.tex");
 
+		
 		var ipc = this._ctx.Plugin.Ipc.GetPenumbraIpc();
 		var collection = ipc.GetCollectionForObject(target.Actor);
 
@@ -127,16 +145,19 @@ public unsafe class PreviewNode : OverlayNode {
 		this._actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
-
+		
+		this.ImageBacking.AttachNode(this);
 		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
 		this.Buttons.AttachNode(this);
+
 	}
 
 	/// <summary>
 	/// Framework update for our preview window, required to work 
 	/// </summary>
 	private void OnFramework(IFramework framework) {
+		this._agentInspect->CharaView.Update(this._counter, this._actor.Character);
 		this._agentInspect->CharaView.Render(this._counter++);
 
 		this._fileWindow = ImGuiP.FindWindowByName("###OpenFileDialog");
@@ -150,8 +171,11 @@ public unsafe class PreviewNode : OverlayNode {
 
 		if (this.NeedsUpdate() && this._currentPose != null) {
 			this._ctx.Posing.ApplyReferencePose(_actor.Pose);
-			this._ctx.Posing.SyncFaceModelSpace(_actor);
+			if (this._ctx.Config.File.ImportPoseSelectedBones)
+				this.CopySelectedBones();
+
 			this.ApplyPose();
+			this.UpdateLocals();
 		}
 	}
 
@@ -236,20 +260,80 @@ public unsafe class PreviewNode : OverlayNode {
 		var content = File.ReadAllText(path);
 		if (Path.GetExtension(path).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
 		this._currentPose = this._serializer.Deserialize<PoseFile>(content);
+
+		
 		this._ctx.Posing.ApplyReferencePose(_actor.Pose);
+		if (this._ctx.Config.File.ImportPoseSelectedBones)
+			this.CopySelectedBones();
+
 		this.ApplyPose();
+		this.UpdateLocals();
 	}
 	
 	private void ApplyPose() =>this._ctx.Posing.ApplyPoseFile(_actor.Pose,
 		this._currentPose,
 		transforms: this._ctx.Config.File.ImportPoseTransforms,
-		modes: this._ctx.Config.File.ImportPoseModes,
+		modes: this._ctx.Config.File.ImportPoseModes == PoseMode.All ? PoseMode.BodyFace : this._ctx.Config.File.ImportPoseModes ,
 		anchorGroups:this._ctx.Config.File.AnchorPoseSelectedBones,
-		selectedBones:this._ctx.Config.File.ImportPoseSelectedBones,
+		selectedBones:(this._target.Pose.Recurse().Any((b)=> { return b.IsSelected;})? this._ctx.Config.File.ImportPoseSelectedBones : false),
 		includeDescendants: this._ctx.Config.File.SelectedBonesIncludeDescendants,
 		excludeEars: this._ctx.Config.File.ExcludePoseEarBones
 		);
 
+	private void UpdateLocals() {
+		this._currentAnchor = this._ctx.Config.File.AnchorPoseSelectedBones;
+		this._currentBones = this._ctx.Config.File.ImportPoseSelectedBones;
+		this._currentAnchor = this._ctx.Config.File.AnchorPoseSelectedBones;
+		this._currentChildren = this._ctx.Config.File.SelectedBonesIncludeDescendants;
+		this._currentEars = this._ctx.Config.File.ExcludePoseEarBones;
+		this._currentMode = this._ctx.Config.File.ImportPoseModes;
+		this._currentTransforms = this._ctx.Config.File.ImportPoseTransforms;
+	}
+
+	private void CopySelectedBones() {
+		//clear currently selected bones for the preview actor
+		var previewBones = this._actor.Pose.Recurse()
+			.Prepend(this._actor)
+			.Where(entity => entity is SkeletonNode { IsSelected: true })
+			.Cast<SkeletonNode>();
+		foreach (var bone in previewBones) {
+			this._ctx.Selection.Unselect(bone);
+		}
+		//this._actor.Pose.Update();
+		//get selected bones in target
+		var selected = this._target.Pose.Recurse()
+			.Prepend(this._target)
+			.Where(entity => entity is SkeletonNode { IsSelected: true })
+			.Cast<SkeletonNode>();
+		var selectedBones =  this.GetBoneSelectionFrom(selected, true).Distinct();
+		if (this._ctx.Config.File.SelectedBonesIncludeDescendants)
+			selectedBones = this._target.Pose.ExpandToDescendants(selectedBones);
+		
+		//copy selected bones
+		foreach (var bone in selectedBones) {
+			var node = this._actor.Pose.FindBoneByName(bone.Name);
+			if(node != null)
+				node.Select();
+		}
+
+	}
+	private IEnumerable<PartialBoneInfo> GetBoneSelectionFrom(IEnumerable<SkeletonNode> nodes, bool all = true) {
+		foreach (var node in nodes) {
+			switch (node) {
+				case BoneNode bone:
+					yield return bone.Info;
+					continue;
+				case SkeletonGroup group:
+					foreach (var bone in this.GetBoneSelectionFrom(all ? group.GetAllBones() : group.GetIndividualBones()))
+						yield return bone;
+					continue;
+				default:
+					continue;
+			}
+		}
+	}
+	
+	
 	private bool NeedsUpdate() => this._currentAnchor != this._ctx.Config.File.AnchorPoseSelectedBones ||
 		this._currentBones != this._ctx.Config.File.ImportPoseSelectedBones ||
 		this._currentAnchor != this._ctx.Config.File.AnchorPoseSelectedBones ||

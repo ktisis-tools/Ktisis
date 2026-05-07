@@ -99,7 +99,7 @@ public class FileDialogManager {
 			},
 			options.MaxOpenCount,
 			this._cfg.File.File.DefaultLocation == string.Empty? null : this._cfg.File.File.DefaultLocation,
-			true
+			false
 		);
 	}
 
@@ -187,7 +187,7 @@ public class FileDialogManager {
 				handler.Invoke(path);
 			},
 			this._cfg.File.File.DefaultLocation == string.Empty? null : this._cfg.File.File.DefaultLocation,
-			true
+			false
 		);
 	}
 	
