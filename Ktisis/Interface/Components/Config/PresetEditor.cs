@@ -52,7 +52,7 @@ public class PresetEditor {
 		if (!table.Success) return;
 			
 		ImGui.TableSetupColumn("PresetList");
-		ImGui.TableSetupColumn("PresetOptions");
+		ImGui.TableSetupColumn("PresetOptions", ImGuiTableColumnFlags.WidthStretch);
 		ImGui.TableNextRow();
 
 		this.DrawPresetList();

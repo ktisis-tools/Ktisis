@@ -27,7 +27,7 @@ public class CameraSelector {
 		
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - (Buttons.CalcSize() + spacing) * 3);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - (Buttons.CalcSize() + spacing) * 3 - (this._ctx.Config.Editor.UseToolbar? 0.1f: 0));
 		this.DrawSelector();
 		
 		ImGui.SameLine(0, spacing);

@@ -4,6 +4,7 @@ using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Windowing;
 
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;

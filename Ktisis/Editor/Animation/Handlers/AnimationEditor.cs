@@ -45,11 +45,7 @@ public class AnimationEditor(
 		get => mgr.SpeedControlEnabled;
 		set => mgr.SpeedControlEnabled = value;
 	}
-
-	public bool PositionLockEnabled {
-		get => mgr.PositionLockEnabled;
-		set => mgr.PositionLockEnabled = value;
-	}
+	
 
 	public bool Posing => ctx.Posing.IsEnabled;
 	

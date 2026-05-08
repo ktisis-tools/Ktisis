@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
@@ -12,8 +13,11 @@ using Dalamud.Utility;
 using Ktisis.Common.Extensions;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Editor.Characters.Handlers;
 using Ktisis.Interop.Ipc;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Game;
+using Ktisis.Structs.Characters;
 
 namespace Ktisis.Data.Mcdf;
 
@@ -25,7 +29,8 @@ public sealed class McdfManager : IDisposable {
 	private readonly IObjectTable _objectTable;
 	
 	private Dictionary<IGameObject, Guid?> actors;
-
+	private Dictionary<IGameObject, string> mcdfLocation;
+	
 	public McdfManager(
 		GPoseService gpose,
 		IFramework framework,
@@ -41,6 +46,7 @@ public sealed class McdfManager : IDisposable {
 		this._objectTable = objectTable;
 
 		this.actors = new Dictionary<IGameObject, Guid?>();
+		this.mcdfLocation = new Dictionary<IGameObject, string>();
 	}
 
 	private void OnGPoseEvent(object sender, bool active) {
@@ -57,6 +63,9 @@ public sealed class McdfManager : IDisposable {
 	}
 
 	private async Task LoadAndApplyToAsync(string path, IGameObject actor) {
+
+		this.mcdfLocation[actor] = path;
+
 		using var reader = McdfReader.FromPath(path);
 		
 		var temp = GetTempPath(create: true);
@@ -98,12 +107,11 @@ public sealed class McdfManager : IDisposable {
 				Ktisis.WarningNotification("MCDF has Customize+ data, but no IPC was found!\nCheck to make sure all plugins are enabled.");
 			return null;
 		}
-		
+
 		var ipc = this._ipc.GetCustomizeIpc();
 		var jsonData = !rawData.IsNullOrEmpty()
 			? Encoding.UTF8.GetString(Convert.FromBase64String(rawData))
 			: "{}";
-		Ktisis.Log.Verbose(jsonData);
 
 		var resp = ipc.SetTemporaryProfile(actor.ObjectIndex, jsonData);
 		if (resp.Id == null) Ktisis.Log.Warning($"Customize+ SetTemporaryProfile returned null Guid! status: {resp.Item1}");
@@ -132,9 +140,8 @@ public sealed class McdfManager : IDisposable {
 		var ipc = this._ipc.GetPenumbraIpc();
 		var collectionId = ipc.CreateTemporaryCollection($"KtisisMCDF_{actor.ObjectIndex}");
 		ipc.AssignTemporaryCollection(collectionId, actor.ObjectIndex);
-		var id = Guid.NewGuid();
-		ipc.AssignTemporaryMods(id, collectionId, files);
-		ipc.AssignManipulationData(id, collectionId, data.ManipulationData);
+		ipc.AssignTemporaryMods(collectionId, files);
+		ipc.AssignManipulationData(collectionId, data.ManipulationData);
 		return collectionId;
 	}
 
@@ -191,8 +198,44 @@ public sealed class McdfManager : IDisposable {
 		return path;
 	}
 
+	// Mod Application
+	public async void SetInvisibleSkin(ActorEntity actor) {
+		var ipc = this._ipc.GetPenumbraIpc();
+		var collectionId = ipc.AssignInvisibleSkin(actor.Actor);
+		await this.RedrawAndWait(actor.Actor);
+
+		unsafe {
+			//Hair
+			var model = actor.GetHuman()->Models[10];
+			actor.GetHuman()->Models[10] = null;
+
+			model->ModelResourceHandle->DecRef();
+			model->RefCount = 0;
+			
+			//Face
+			model = actor.GetHuman()->Models[11];
+			actor.GetHuman()->Models[11] = null;
+			
+			model->ModelResourceHandle->DecRef();
+			model->RefCount = 0;
+			
+			//Tail
+			model = actor.GetHuman()->Models[12];
+			if (model != null) {    //can be non-null for tail-less races
+				actor.GetHuman()->Models[12] = null;
+				model->ModelResourceHandle->DecRef();
+				model->RefCount = 0;
+			}
+
+			
+
+		}
+		ipc.RemoveTemporaryMod(collectionId);
+	}
+
 	public async void Revert(IGameObject actor) {
 		Ktisis.Log.Debug($"IPC - Revert Actor '{actor.ObjectIndex}' ...");
+		this.mcdfLocation.Remove(actor);
 		this.RevertGlamourerData(actor);
 		await this.RedrawAndWait(actor);
 		this.RevertCustomizeData(actor.ObjectIndex);
@@ -211,6 +254,7 @@ public sealed class McdfManager : IDisposable {
 			this.RevertCustomizeData(actor.ObjectIndex);
 		else
 			this.DeleteCustomizeData((Guid)guid);
+		this.mcdfLocation.Remove(actor);
 		this.actors.Remove(actor);
     }
 
@@ -228,6 +272,7 @@ public sealed class McdfManager : IDisposable {
 		this._ipc.GetGlamourerIpc().Unlock();
 	}
 
+	public string LoadedMCDFPath(IGameObject actor) => this.mcdfLocation.ContainsKey(actor) ? this.mcdfLocation[actor] : string.Empty;
 	// IDisposable
 
 	public void Dispose() {

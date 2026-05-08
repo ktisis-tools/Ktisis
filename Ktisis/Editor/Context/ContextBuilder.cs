@@ -35,6 +35,7 @@ public class ContextBuilder {
 	private readonly FormatService _format;
 	private readonly McdfManager _mcdf;
 	private readonly IObjectTable _objectTable;
+	public SceneDataService _sceneData;
 
 	public ContextBuilder(
 		WorldService world,
@@ -69,11 +70,14 @@ public class ContextBuilder {
 
 		var input = new InputManager(context, scope, this._keyState);
 		var actions = new ActionManager(context, input);
-		var factory = new EntityFactory(context, this._naming);
+		var factory = new EntityFactory(context, this._naming, this._mcdf);
 		var select = new SelectManager(context);
 		var attach = new AttachManager();
-		var autoSave = new PoseAutoSave(context, this._framework, this._format);
+		this._sceneData = new SceneDataService(context, this._objectTable, this._framework);
+		var autoSave = new PoseAutoSave(context, this._framework, this._format, this._sceneData );
 
+
+		
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
 			Animation = new AnimationManager(context, scope, this._data, this._framework),
@@ -81,7 +85,7 @@ public class ContextBuilder {
 			Characters = new CharacterManager(context, this._objectTable, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
-			Scene = new SceneManager(context, scope, this._framework, factory, this._world),
+			Scene = new SceneManager(context, scope, this._framework, factory, this._objectTable, this._sceneData, this._world),
 			Selection = select,
 			Transform = new TransformHandler(context, actions, select)
 		};

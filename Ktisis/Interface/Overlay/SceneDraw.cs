@@ -5,6 +5,7 @@ using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Bindings.ImGuizmo;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
@@ -111,7 +112,7 @@ public class SceneDraw {
 				// Draw lines to children.
 
 				if (!this.Config.DrawLines) continue;
-				if (!this.Config.DrawLinesGizmo && ImGuizmo.Gizmo.IsUsing) continue;
+				if (!this.Config.DrawLinesGizmo && ImGuizmo.IsUsing()) continue;
 
 				for (var c = i; c < boneCt; c++) {
 					if (hkaSkeleton->ParentIndices[c] != i) continue;
@@ -133,7 +134,7 @@ public class SceneDraw {
 		if (!CameraService.WorldToScreen(camera, fromPos, out var fromPos2d)) return;
 		if (!CameraService.WorldToScreen(camera, toPos, out var toPos2d)) return;
 
-		var opacity = ImGuizmo.Gizmo.IsUsing ? this.Config.LineOpacityUsing : this.Config.LineOpacity;
+		var opacity = ImGuizmo.IsUsing() ? this.Config.LineOpacityUsing : this.Config.LineOpacity;
 		drawList.AddLine(fromPos2d, toPos2d, color.SetAlpha(opacity), this.Config.LineThickness);
 	}
 	

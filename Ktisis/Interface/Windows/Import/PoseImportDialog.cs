@@ -1,7 +1,11 @@
 using System.Linq;
 
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
+using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility.Raii;
+
+using GLib.Widgets;
 
 using Ktisis.Data.Config;
 using Ktisis.Data.Files;
@@ -16,8 +20,6 @@ using Ktisis.Scene.Entities.Skeleton;
 namespace Ktisis.Interface.Windows.Import;
 
 public class PoseImportDialog : EntityEditWindow<ActorEntity> {
-	private readonly IEditorContext _ctx;
-
 	private readonly FileSelect<PoseFile> _select;
 
 	public PoseImportDialog(
@@ -28,13 +30,12 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		ctx,
 		ImGuiWindowFlags.AlwaysAutoResize
 	) {
-		this._ctx = ctx;
 		this._select = select;
 		select.OnOpenDialog = this.OnFileDialogOpen;
 	}
 	
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {
-		this._ctx.Interface.OpenPoseFile(sender.SetFile);
+		this.Context.Interface.OpenPoseFile(sender.SetFile);
 	}
 
 	// Draw UI
@@ -50,6 +51,9 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 
 	public void DrawEmbed() {
 		this.PreDraw();
+		if (!this.Context.IsValid) return; // despite closing in predraw, we might continue to later draw funcs, so stop drawing here
+		using var _id = ImRaii.PushId($"PoseEmbed_{this.GetHashCode():X}");
+
 		this._select.Draw();
 		
 		ImGui.Spacing();
@@ -79,7 +83,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	private void DrawTransformSelect() {
 		ImGui.Text("Transforms:");
 
-		var file = this._ctx.Config.File;
+		var file = this.Context.Config.File;
 		var trans = file.ImportPoseTransforms;
 
 		var rotation = trans.HasFlag(PoseTransforms.Rotation);
@@ -88,13 +92,24 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		
 		ImGui.SameLine();
 
+		// if operating on a .cmp file, force disable position and scale as they're always dummy
+		var isCmp = this._select.Selected != null && this._select.Selected.Path.EndsWith(".cmp");
+
 		var position = trans.HasFlag(PoseTransforms.Position);
+		var scale = trans.HasFlag(PoseTransforms.Scale);
+		using var _ = ImRaii.Disabled(isCmp);
+		if (isCmp) {
+			position = false;
+			file.ImportPoseTransforms &= ~PoseTransforms.Position;
+			scale = false;
+			file.ImportPoseTransforms &= ~PoseTransforms.Scale;
+		}
+
 		if (ImGui.Checkbox("Position##PoseImportPos", ref position))
 			file.ImportPoseTransforms ^= PoseTransforms.Position;
 		
 		ImGui.SameLine();
 
-		var scale = trans.HasFlag(PoseTransforms.Scale);
 		if (ImGui.Checkbox("Scale##PoseImportScale", ref scale))
 			file.ImportPoseTransforms ^= PoseTransforms.Scale;
 	}
@@ -102,7 +117,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	private void DrawApplyModes(bool isSelectBones) {
 		ImGui.Text("Modes:");
 
-		var file = this._ctx.Config.File;
+		var file = this.Context.Config.File;
 		var modes = file.ImportPoseModes;
 
 		var isSelectiveImport = file.ImportPoseSelectedBones && isSelectBones;
@@ -111,7 +126,17 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 				file.ImportPoseSelectedBones ^= true;
 		}
 
-		if (!isSelectiveImport) {
+		if (isSelectiveImport) {
+			using (ImRaii.PushIndent()) {
+				ImGui.Checkbox("Include descendants", ref file.SelectedBonesIncludeDescendants);
+
+				var hasPosition = file.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
+				using (ImRaii.Disabled(!hasPosition))
+					ImGui.Checkbox("Anchor group positions", ref file.AnchorPoseSelectedBones);
+			}
+		}
+
+		if (!isSelectiveImport || file.SelectedBonesIncludeDescendants) {
 			var body = modes.HasFlag(PoseMode.Body);
 			if (ImGui.Checkbox("Body##PoseImportBody", ref body))
 				file.ImportPoseModes ^= PoseMode.Body;
@@ -121,13 +146,22 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 			var face = modes.HasFlag(PoseMode.Face);
 			if (ImGui.Checkbox("Face##PoseImportFace", ref face))
 				file.ImportPoseModes ^= PoseMode.Face;
+			if (face && this._select.IsFileOpened && this.Target.Pose?.HasDTFace() != _select.Selected?.File.HasDTFace()) {
+				ImGui.SameLine();
+				Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+				if (ImGui.IsItemHovered())
+					ImGui.SetTooltip("Face will not be imported from the selected pose file due to incompatibility with the selected actor.");
+			}
 		}
 
 		ImGui.Checkbox("Exclude ear bones", ref file.ExcludePoseEarBones);
 
-		var hasPosition = file.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
-		using (ImRaii.Disabled(!isSelectBones || !file.ImportPoseSelectedBones || !hasPosition))
-			ImGui.Checkbox("Anchor group positions", ref file.AnchorPoseSelectedBones);
+		if (this._select.IsFileOpened && this.Context.Posing.IsIkEnabled) {
+			ImGui.Spacing();
+			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.TextWrapped("Inverse Kinematics are enabled! These may override imported limbs.");
+		}
 	}
 	
 	// Apply pose
@@ -139,10 +173,11 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		var pose = this.Target.Pose;
 		if (pose == null) return;
 
-		var cfg = this._ctx.Config.File;
+		var cfg = this.Context.Config.File;
 		var selectedBones = isSelectBones && cfg.ImportPoseSelectedBones;
+		var includeDescendants = cfg.SelectedBonesIncludeDescendants;
 		var anchorGroups = cfg.AnchorPoseSelectedBones;
 		var excludeEars = cfg.ExcludePoseEarBones;
-		this._ctx.Posing.ApplyPoseFile(pose, file, cfg.ImportPoseModes, cfg.ImportPoseTransforms, selectedBones, anchorGroups, excludeEars);
+		this.Context.Posing.ApplyPoseFile(pose, file, cfg.ImportPoseModes, cfg.ImportPoseTransforms, selectedBones, includeDescendants, anchorGroups, excludeEars);
 	}
 }

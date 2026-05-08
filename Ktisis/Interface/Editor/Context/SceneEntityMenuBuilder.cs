@@ -47,9 +47,12 @@ public class SceneEntityMenuBuilder {
 			menu.Action("Select", () => this._entity.Select(SelectMode.Multiple));
 		else
 			menu.Action("Unselect", this._entity.Unselect);
-
-		if (this._entity is IVisibility vis)
-			menu.Action("Toggle display", () => vis.Toggle());
+		if (this._entity.Children.Any())
+			menu.Action("Select hierarchy", () => {
+				foreach (var entity in this._entity.Children.Where(entity => !entity.IsSelected))
+					entity.Select(SelectMode.Multiple);
+				if (!this._entity.IsSelected) this._entity.Select(SelectMode.Multiple);
+			});
 
 		if (this._entity.Root is ActorEntity actorEntity)
 			menu.SubMenu("Presets...", sub => {
@@ -106,7 +109,6 @@ public class SceneEntityMenuBuilder {
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
 			.Action("Target", actor.Actor.SetGPoseTarget)
-			.Action($"{(actor.IsHidden ? "Unhide" : "Hide")} Actor", actor.ToggleHidden)
 			.Separator()
 			.Action("Edit appearance", this.OpenEditor)
 			.Group(sub => this.BuildActorIpcMenu(sub, actor))
@@ -115,7 +117,7 @@ public class SceneEntityMenuBuilder {
 				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
 					.Action("NPC", () => this.Ui.OpenCharaImport(actor, true))
 					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
-				
+
 				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
 					builder.Action("Mare data (.mcdf)", () => {
 						this.Ui.OpenMcdfFile(path => this.ImportMcdf(actor, path));
@@ -130,8 +132,10 @@ public class SceneEntityMenuBuilder {
 
 	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.SubMenu("IPC appearance", sub => {
-			if (this._ctx.Plugin.Ipc.IsPenumbraActive)
+			if (this._ctx.Plugin.Ipc.IsPenumbraActive) {
 				sub.Action("Penumbra: Assign collection", () => this.Ui.OpenAssignCollection(actor));
+				sub.Action("Penumbra: Invisible Skin", () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
+			}
 			if (this._ctx.Plugin.Ipc.IsGlamourerActive)
 				sub.Action("Glamourer: Apply design", () => this.Ui.OpenApplyDesign(actor));
 			if (this._ctx.Plugin.Ipc.IsCustomizeActive)
@@ -148,9 +152,14 @@ public class SceneEntityMenuBuilder {
 	private async void DuplicateActor(ActorEntity actor) {
 		// pack actor into a temp charafile to apply to new actor after creation
 		var file = await this._ctx.Characters.SaveCharaFile(actor);
-		this._ctx.Scene.Factory.CreateActor()
+		var dupe = await this._ctx.Scene.Factory.CreateActor()
 			.WithAppearance(file)
 			.Spawn();
+
+		// copy glamourer state if applicable
+		if (!this._ctx.Plugin.Ipc.IsGlamourerActive) return;
+		var ipc = this._ctx.Plugin.Ipc.GetGlamourerIpc();
+		ipc.CopyState(actor.Actor.ObjectIndex, dupe.Actor.ObjectIndex);
 	}
 	
 	// Poses
@@ -177,8 +186,6 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildLightMenu(ContextMenuBuilder menu, LightEntity light) {
 		menu.Separator()
-			.Action($"{(light.IsHidden ? "Unhide" : "Hide")} Light", light.ToggleHidden)
-			.Separator()
 			.Action("Edit lighting", this.OpenEditor)
 			.Separator()
 			.Action("Import light file", () => this.Ui.OpenLightFile((path, file) => this.ImportLight(light, file)))

@@ -41,6 +41,50 @@ public class WorkspaceState {
 		}
 	}
 
+	internal void DrawCompact() {
+		var style = ImGui.GetStyle();
+		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
+
+		var frame = false;
+		try {
+			var id = ImGui.GetID("SceneState_Frame");
+			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
+			if (!frame) return;
+			
+			var cursorY = ImGui.GetCursorPosY();
+			var avail = ImGui.GetContentRegionAvail().Y;
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetStyle().ItemSpacing.X);
+			ImGui.SetCursorPosY(cursorY + (avail - ImGui.GetFrameHeight()) / 2);
+		
+			var isPosing = this._ctx.Posing.IsEnabled;
+		
+			var shiftHeld = ImGui.IsKeyDown(ImGuiKey.ModShift);
+			var shouldBlock = this._ctx.Config.Editor.ConfirmExit && isPosing && !shiftHeld;
+
+			var locKey = (isPosing, shouldBlock) switch {
+				(true, false) => "enable",
+				(true, true) => "enable-blocked",
+				(false, _) => "disable",
+			};
+		
+			if (shouldBlock)
+				ImGui.BeginDisabled();
+		
+			var color = isPosing ? 0xFF3AD86A : 0xFF504EC4;
+			using var button = ImRaii.PushColor(ImGuiCol.Button, isPosing ? 0xFF00FF00 : 0xFF7070C0);
+			
+			if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+				using var _ = ImRaii.Tooltip();
+				ImGui.Text(this._ctx.Locale.Translate($"workspace.posing.hint.{locKey}"));
+			}
+		
+			if (shouldBlock)
+				ImGui.EndDisabled();
+			
+		} finally {
+			if (frame) ImGui.EndChildFrame();
+		}
+	}
 	private void DrawContext() {
 		var cursorY = ImGui.GetCursorPosY();
 		var avail = ImGui.GetContentRegionAvail().Y;

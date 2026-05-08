@@ -21,6 +21,8 @@ public class PoseFile : JsonFile {
 	public PoseContainer? OffHand { get; set; }
 	public PoseContainer? Prop { get; set; }
 	
+	public bool HasDTFace() => Bones?.ContainsKey("j_f_face") ?? false;
+
 	// Legacy conversions
 
 	public void ConvertLegacyBones() {

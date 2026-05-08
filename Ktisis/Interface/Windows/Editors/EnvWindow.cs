@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Windowing;
 
 using GLib.Widgets;
 
@@ -19,7 +20,7 @@ using Ktisis.Structs.Env;
 namespace Ktisis.Interface.Windows.Editors;
 
 public class EnvWindow : KtisisWindow {
-	private enum EnvEditorTab {
+	internal enum EnvEditorTab {
 		None,
 		Sky,
 		Light,
@@ -27,7 +28,9 @@ public class EnvWindow : KtisisWindow {
 		Rain,
 		Particles,
 		Stars,
-		Wind
+		Wind,
+		Water,
+		Housing
 	}
 	
 	private readonly ISceneManager _scene;
@@ -35,7 +38,7 @@ public class EnvWindow : KtisisWindow {
 
 	private readonly WeatherSelect _weatherSelect;
 	
-	private EnvEditorTab Current = EnvEditorTab.None;
+	protected private EnvEditorTab Current = EnvEditorTab.None;
 	private readonly Dictionary<EnvEditorTab, EditorBase> _editors = new();
 	
 	public EnvWindow(
@@ -48,7 +51,9 @@ public class EnvWindow : KtisisWindow {
 		RainEditor rain,
 		ParticlesEditor dust,
 		StarsEditor stars,
-		WindEditor wind
+		WindEditor wind,
+		WaterEditor water,
+		HousingEditor housingEditor
 	) : base(
 		"Environment Editor"
 	) {
@@ -61,7 +66,9 @@ public class EnvWindow : KtisisWindow {
 			.Setup(EnvEditorTab.Rain, rain)
 			.Setup(EnvEditorTab.Particles, dust)
 			.Setup(EnvEditorTab.Stars, stars)
-			.Setup(EnvEditorTab.Wind, wind);
+			.Setup(EnvEditorTab.Wind, wind)
+			.Setup(EnvEditorTab.Water, water)
+			.Setup(EnvEditorTab.Housing, housingEditor);
 	}
 
 	private EnvWindow Setup(EnvEditorTab id, EditorBase editor) {
@@ -108,7 +115,7 @@ public class EnvWindow : KtisisWindow {
 		this.DrawAdvancedList();
 	}
 
-	private unsafe void DrawWeatherTimeControls(EnvManagerEx* env, float width) {
+	protected private unsafe void DrawWeatherTimeControls(EnvManagerEx* env, float width) {
 		//var spacing = ImGui.GetStyle().ItemSpacing.X;
 		
 		//Icons.DrawIcon(FontAwesomeIcon.Sun);
@@ -143,7 +150,7 @@ public class EnvWindow : KtisisWindow {
 			this._module.Day = day;
 	}
 
-	private void DrawAdvancedList() {
+	protected private void DrawAdvancedList() {
 		//Icons.DrawIcon(FontAwesomeIcon.Cog);
 		//ImGui.SameLine();
 		ImGui.Text("Advanced Editing");
@@ -165,8 +172,8 @@ public class EnvWindow : KtisisWindow {
 	
 	// Advanced Editor
 
-	private unsafe void DrawAdvancedEditor(EnvManagerEx* env) {
-		using var _frame = ImRaii.Child("##AdvancedFrame", ImGui.GetContentRegionAvail());
+	protected private unsafe void DrawAdvancedEditor(EnvManagerEx* env) {
+		using var _frame = ImRaii.Child("##AdvancedFrame", (this._scene.Context.Config.Editor.UseToolbar? new Vector2(300 ,ImGui.GetContentRegionAvail().Y): ImGui.GetContentRegionAvail()));
 		if (!_frame.Success) return;
 
 		if (!this._editors.TryGetValue(this.Current, out var editor))
@@ -175,6 +182,10 @@ public class EnvWindow : KtisisWindow {
 		ImGui.Text(editor.Name);
 		ImGui.Separator();
 		ImGui.Spacing();
+		if (editor is WaterEditor water) { // todo: add to flags enum ala HousingEditor
+			water.Draw();
+			return;
+		}
 		editor.Draw(this._module, ref env->EnvState);
 	}
 }
