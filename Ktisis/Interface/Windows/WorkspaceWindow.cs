@@ -7,6 +7,7 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
+using GLib.Popups.ImFileDialog;
 using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
@@ -15,6 +16,7 @@ using Ktisis.Interface.Components.Workspace;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Interface.Windows; 
 
@@ -91,6 +93,10 @@ public class WorkspaceWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.UsersLine, this._ctx.Locale.Translate("scene_edit.title")))
+			this.Interface.OpenSceneWindow();
+
+		ImGui.SameLine(0, spacing);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Walking, this._ctx.Locale.Translate("chara_edit.title"))) {
 			var target = this._ctx.Selection.GetFirstSelected();
 			if (
@@ -137,5 +143,6 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 	}
 }
