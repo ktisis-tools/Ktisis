@@ -13,6 +13,7 @@ using Dalamud.Interface.Style;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs;
