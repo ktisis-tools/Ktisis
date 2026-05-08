@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -13,7 +14,6 @@ using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Selection;
-using Ktisis.ImGuizmo;
 using Ktisis.Localization;
 
 namespace Ktisis.Interface.Components.Transforms;
@@ -26,7 +26,7 @@ public enum TransformTableFlags {
 	Scale = 4,
 	Operation = 8,
 	UseAvailable = 16,
-	Default = Position | Rotation | Scale | Operation
+	Default = Position | Rotation | Scale
 }
 
 [Transient]
@@ -56,9 +56,9 @@ public class TransformTable {
 	private Vector3 Angles = Vector3.Zero;
 	private Quaternion Value = Quaternion.Identity;
 
-	private const Operation PositionOp = Operation.TRANSLATE;
-	private const Operation RotateOp = Operation.ROTATE;
-	private const Operation ScaleOp = Operation.SCALE | Operation.SCALE_U;
+	private const ImGuizmoOperation PositionOp = ImGuizmoOperation.Translate;
+	private const ImGuizmoOperation RotateOp = ImGuizmoOperation.Rotate;
+	private const ImGuizmoOperation ScaleOp = ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu;
 
 	private Transform Transform = new();
 	
@@ -75,7 +75,7 @@ public class TransformTable {
 	private readonly static float FastStep = 10f;
 	private readonly static float SlowStep = 0.1f;
 
-	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default) {
+	public bool Draw(Transform transIn, out Transform transOut, TransformTableFlags flags = TransformTableFlags.Default | TransformTableFlags.Operation) {
 		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
 
 		if (!this.IsActive && !transIn.Rotation.Equals(this.Value)) {
@@ -89,7 +89,7 @@ public class TransformTable {
 
 		
 		var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
-		using var __ = ImRaii.ItemWidth(useAvail ? CalcTableAvail() : CalcTableWidth());
+		using var __ = ImRaii.ItemWidth(useAvail ? CalcTableAvail() - (this._cfg.File.Editor.UseToolbar? 0.1f : 0) : CalcTableWidth());
 
 		var op = flags.HasFlag(TransformTableFlags.Operation);
 		transOut = this.Transform.Set(transIn);
@@ -104,13 +104,13 @@ public class TransformTable {
 		return this.IsUsed;
 	}
 
-	public bool DrawPosition(ref Vector3 position, TransformTableFlags flags = TransformTableFlags.Default) {
+	public bool DrawPosition(ref Vector3 position, TransformTableFlags flags = TransformTableFlags.Default | TransformTableFlags.Operation) {
 		using var _ = ImRaii.PushId($"TransformTable_{this.GetHashCode():X}");
 		this.IsUsed = false;
 		this.IsDeactivated = false;
 		
 		var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
-		using var __ = ImRaii.ItemWidth(useAvail ? ImGui.GetContentRegionAvail().X : CalcTableWidth());
+		using var __ = ImRaii.ItemWidth(useAvail ? ImGui.GetContentRegionAvail().X - (this._cfg.File.Editor.UseToolbar? 0.1f : 0): CalcTableWidth());
 
 		var operation = flags.HasFlag(TransformTableFlags.Operation);
 		this.DrawPosition(ref position, operation);
@@ -142,18 +142,28 @@ public class TransformTable {
 		return result;
 	}
 
-	private void DrawOperation(Operation op, FontAwesomeIcon icon, string hint) {
+	private void DrawOperation(ImGuizmoOperation op, FontAwesomeIcon icon, string hint) {
 		var spacing = ImGui.GetStyle().ItemSpacing.X;
 		ImGui.SameLine(0, spacing);
 
-		var enable = this.GizmoConfig.Operation.HasFlag(op) ? 0xFFFFFFFF : 0xAFFFFFFF;
-		using (ImRaii.PushColor(ImGuiCol.Text, enable)) {
-			if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
-				this.ChangeOperation(op);
-		}
+		var isModified = this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateX) && !this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateScreen);
+		var isCurrent = this.GizmoConfig.Operation.HasFlag(op);
+		var color = (op, isCurrent, isModified) switch {
+			(RotateOp, _, true) => 0xAF0FFFFF,
+			(_, true, _) => 0xFFFFFFFF,
+			_ => 0xAFFFFFFF
+		};
+		using var _ = ImRaii.PushColor(ImGuiCol.Text, color);
+
+		if (Buttons.IconButtonTooltip(icon, this._locale.Translate(hint)))
+			this.ChangeOperation(op);
 	}
 
-	private void ChangeOperation(Operation op) {
+	private void ChangeOperation(ImGuizmoOperation op) {
+		// if rotate was shift-clicked and we're not currently XYZ rotating, make op a XYZ rotate - else treat as normal rotation w screen
+		if (op is ImGuizmoOperation.Rotate && ImGui.GetIO().KeyShift)
+			if (!this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateX) || this.GizmoConfig.Operation.HasFlag(ImGuizmoOperation.RotateScreen))
+				op ^= ImGuizmoOperation.RotateScreen;
 		if (GuiHelpers.GetSelectMode() == SelectMode.Multiple)
 			this.GizmoConfig.Operation |= op;
 		else

@@ -10,6 +10,9 @@ using FFXIVClientStructs.FFXIV.Client.System.Resource;
 
 using InteropGenerator.Runtime;
 
+using Ktisis.Common.Utility;
+using Ktisis.Editor.Camera.Types;
+using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Types;
@@ -22,6 +25,7 @@ public class LightModule : SceneModule {
 	private readonly GroupPoseModule _gpose;
 	private readonly IFramework _framework;
 	private readonly LightSpawner _spawner;
+	private readonly IEditorContext _ctx;
 
 	public LightModule(
 		IHookMediator hook,
@@ -29,9 +33,10 @@ public class LightModule : SceneModule {
 		GroupPoseModule gpose,
 		IFramework framework
 	) : base(hook, scene) {
+		this._ctx = scene.Context;
 		this._gpose = gpose;
 		this._framework = framework;
-		this._spawner = hook.Create<LightSpawner>(scene.Context);
+		this._spawner = hook.Create<LightSpawner>(this._ctx);
 	}
 
 	public override void Setup() {
@@ -149,9 +154,16 @@ public class LightModule : SceneModule {
 			result = this.ToggleLightHook!.Original(state, index);
 			if (valid && result) {
 				var light = state->GetLight(index);
-				if (light != null && light != prev)
+				if (light != null && light != prev) {
+					// override lighting position when toggling if we're using a freecam
+					var editorCamera = this._ctx.Cameras.Current;
+					if (editorCamera is WorkCamera freeCam) {
+						light->Transform.Position = freeCam.Position;
+						light->Transform.Rotation = freeCam.CalculateLookDirection().EulerAnglesToQuaternion();
+					}
+
 					this.AddLight(light, index);
-				else if (light == null && prev != null)
+				} else if (light == null && prev != null)
 					this.RemoveLight(prev);
 			}
 		} catch (Exception err) {

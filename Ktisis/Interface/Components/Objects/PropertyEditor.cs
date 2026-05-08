@@ -31,7 +31,6 @@ public class PropertyEditor {
 
 	public void Prepare(IEditorContext ctx, GuiManager gui) {
 		this.Create<ActorPropertyList>(ctx, gui)
-			.Create<BasePropertyList>()
 			.Create<PosePropertyList>(ctx, gui)
 			.Create<LightPropertyList>(ctx)
 			.Create<ImagePropertyList>(ctx)

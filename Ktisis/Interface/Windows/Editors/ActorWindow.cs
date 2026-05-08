@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Windowing;
 
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Characters.Types;
@@ -67,7 +68,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	// Draw tabs
 
 	public override void OnOpen() {
-		this._custom.Setup();
+		this._custom.Setup(this.Context);
 		this._anim.Setup();
 	}
 

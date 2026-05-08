@@ -85,8 +85,11 @@ public class Transform : IEquatable<Transform> {
 		var aRot = initial.Rotation;
 		var aSca = initial.Scale;
 
-		Matrix4x4.Decompose(mx, out var bSca, out var bRot, out var bPos);
-
+		var decomp = Matrix4x4.Decompose(mx, out var bSca, out var bRot, out var bPos);
+		
+		if(!decomp)
+			Ktisis.Log.Warning("Failed to decompose matrix!");
+		
 		this.Position = (bPos - aPos).LengthSquared() < eps * eps ? aPos : bPos;
 
 		if (Quaternion.Dot(bRot, aRot) < 0f) {

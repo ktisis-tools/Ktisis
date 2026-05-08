@@ -1,6 +1,7 @@
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Gobos;
 using Ktisis.Data.Config.Pose2D;
+using Ktisis.Data.Config.Props;
 using Ktisis.Data.Config.Sections;
 
 namespace Ktisis.Data.Serialization;
@@ -31,5 +32,14 @@ public static class SchemaReader {
 	public static GoboSchema ReadGobos() {
 		var stream = ResourceUtil.GetManifestResource(GoboSchemaPath);
 		return GoboReader.ReadStream(stream);
+	}
+
+	// Props
+
+	private const string PropSchemaPath = "Data.Library.props.json";
+
+	public static PropSchema ReadProps() {
+		var stream = ResourceUtil.GetManifestResource(PropSchemaPath);
+		return PropsReader.ReadStream(stream);
 	}
 }

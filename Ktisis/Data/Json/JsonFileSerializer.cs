@@ -15,7 +15,8 @@ public class JsonFileSerializer {
 			PropertyNameCaseInsensitive = false,
 			AllowTrailingCommas = true,
 			ReadCommentHandling = JsonCommentHandling.Skip,
-			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+			IncludeFields = true,
 		};
 		
 		this.Options.Converters.Add(new JsonStringEnumConverter());

@@ -3,12 +3,12 @@ using System.Diagnostics;
 using System.Linq;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Plugin.Services;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms.Types;
-using Ktisis.ImGuizmo;
 using Ktisis.Interface.Types;
 using Ktisis.Services.Game;
 
@@ -62,7 +62,10 @@ public class OverlayWindow : KtisisWindow {
 	// Main draw function
 
 	public override void Draw() {
-		if (!this._ctx.Config.Overlay.Visible) return;
+		if (!this._ctx.Config.Overlay.Visible) {
+			this.CheckResetGizmo();
+			return;
+		}
 		
 		// var t = new Stopwatch();
 		// t.Start();
@@ -81,8 +84,11 @@ public class OverlayWindow : KtisisWindow {
 	}
 
 	private bool DrawGizmo() {
-		if (!this._ctx.Config.Gizmo.Visible)
+		// if gizmo becomes invisible mid-manipulation, force stop it
+		if (!this._ctx.Config.Gizmo.Visible) {
+			this.CheckResetGizmo();
 			return false;
+		}
 		
 		var target = this._ctx.Transform.Target;
 		var transform = target?.GetTransform();
@@ -104,7 +110,7 @@ public class OverlayWindow : KtisisWindow {
 		this._gizmo.AllowAxisFlip = cfg.AllowAxisFlip;
 
 		var matrix = transform.ComposeMatrix();
-		var isManipulate = this._gizmo.Manipulate(ref matrix, out _);
+		var isManipulate = this._gizmo.Manipulate(ref matrix, out var delta);
 		var isRaySnap = this.HandleShiftRaycast(ref matrix);
 		if (isManipulate || isRaySnap) {
 			this.Transform ??= this._ctx.Transform.Begin(target);
@@ -115,6 +121,12 @@ public class OverlayWindow : KtisisWindow {
 		if (this._gizmo.IsEnded) {
 			this.Transform?.Dispatch();
 			this.Transform = null;
+		} else if (this._gizmo.IsUsedPrev && this.Transform != null && !ImGui.IsMouseDown(ImGuiMouseButton.Left) && !ImGui.IsWindowHovered()) {
+			// workaround for Guizmo bug; if gizmo is released while hovering a non-overlay window, stop manipulating & force the gizmo to ended state by resetting it
+			// only reset if Transform is non-null -- otherwise, IsUsedPrev may be false-positive from 2D or gaze gizmos
+			this.Transform?.Dispatch();
+			this.Transform = null;
+			this._gizmo.Reset();
 		}
 
 		return true;
@@ -135,8 +147,8 @@ public class OverlayWindow : KtisisWindow {
 		var matrix = transform.ComposeMatrix();
 
 		var cfg = this._ctx.Config.Gizmo;
-		this._gizmoGaze.Mode = Mode.World;
-		this._gizmoGaze.Operation = Operation.TRANSLATE;
+		this._gizmoGaze.Mode = ImGuizmoMode.World;
+		this._gizmoGaze.Operation = ImGuizmoOperation.Translate;
 		this._gizmoGaze.AllowAxisFlip = cfg.AllowAxisFlip;
 		this._gizmoGaze.ScaleFactor = 0.075f;
 
@@ -157,7 +169,7 @@ public class OverlayWindow : KtisisWindow {
 		if (!this._ctx.Config.Gizmo.AllowRaySnap)
 			return false;
 		
-		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGuizmo.Gizmo.IsUsing || ImGuizmo.Gizmo.CurrentOperation != Operation.TRANSLATE)
+		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGuizmo.IsUsing() || this._gizmo.Operation != ImGuizmoOperation.Translate)
 			return false;
 
 		if (!this._gui.ScreenToWorld(ImGui.GetMousePos(), out var hitPos))
@@ -165,6 +177,14 @@ public class OverlayWindow : KtisisWindow {
 
 		matrix.Translation = hitPos;
 		return true;
+	}
+
+	private void CheckResetGizmo() {
+		if (!this._gizmo.IsUsedPrev) return;
+
+		this.Transform?.Dispatch();
+		this.Transform = null;
+		this._gizmo.Reset();
 	}
 
 	private void DrawDebugOverlay(Stopwatch? t) {
@@ -179,8 +199,8 @@ public class OverlayWindow : KtisisWindow {
 		ImGui.Text($"Scene: {this._ctx.Scene.GetHashCode():X} {this._ctx.Scene.UpdateTime:00.00}ms");
 		if (t != null)
 			ImGui.Text($"Overlay: {this.GetHashCode()} {t.Elapsed.TotalMilliseconds:00.00}ms");
-		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.Gizmo.IsUsing})");
-		ImGui.Text($"Gaze Gizmo?: {this._gizmoGaze.GetHashCode():X} {this._gizmoGaze.Id} ({this._gizmoGaze.Operation}, {ImGuizmo.Gizmo.IsUsing})");
+		ImGui.Text($"Gizmo: {this._gizmo.GetHashCode():X} {this._gizmo.Id} ({this._gizmo.Operation}, {ImGuizmo.IsUsing()})");
+		ImGui.Text($"Gaze Gizmo?: {this._gizmoGaze.GetHashCode():X} {this._gizmoGaze.Id} ({this._gizmoGaze.Operation}, {ImGuizmo.IsUsing()})");
 		var target = this._ctx.Transform.Target;
 		ImGui.Text($"Target: {target?.GetHashCode() ?? 0:X7} {target?.GetType().Name ?? "NULL"} ({target?.Targets?.Count() ?? 0}, {target?.Primary?.Name ?? "NULL"})");
 		var history = this._ctx.Actions.History;

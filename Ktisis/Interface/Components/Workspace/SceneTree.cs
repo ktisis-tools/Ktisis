@@ -12,12 +12,13 @@ using GLib.Widgets;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
-using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
-using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Editor.Selection;
+using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -25,30 +26,32 @@ public class SceneTree {
 	private readonly IEditorContext _ctx;
 	
 	private readonly SceneDragDropHandler _dragDrop;
+	private List<SceneEntity> _nodes;
+	private SceneEntity? _shiftNode;
+	private int? _originIndex;
 	
 	public SceneTree(
 		IEditorContext ctx
 	) {
 		this._ctx = ctx;
 		this._dragDrop = new SceneDragDropHandler(ctx);
+		this._nodes = new List<SceneEntity>();
+		this._shiftNode = null;
+		this._originIndex = null;
 	}
 	
 	// Draw frame
     
 	public void Draw(float height) {
-		var frame = false;
 		try {
 			var id = ImGui.GetID("SceneTree_Frame");
-			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
-			if (!frame) return;
-			this.DrawScene(height);
+			using (ImRaii.ChildFrame(id, new Vector2(-1, height))) {
+				this.DrawScene(height);
+			}
 		} catch (Exception err) {
-			Ktisis.Log.Error($"Error drawing scene tree:\n{err}");
-		} finally {
-			if (frame) ImGui.EndChildFrame();
+			Ktisis.Log.Error($"Error drawing scene tree: {err}");
 		}
 	}
-	
 	// Draw scene entities
 
 	private static float IconSpacing => UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale;
@@ -63,18 +66,28 @@ public class SceneTree {
 	}
 
 	private void DrawScene(float height) {
+		this._nodes.Clear();
+		this._shiftNode = null;
 		this.PreCalc(height);
 
 		var spacing = ImGui.GetStyle().ItemSpacing;
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, spacing with { Y = 5.0f });
 		this.IterateTree(this._ctx.Scene.Children);
+
+		// handle any shift-clicked node using target node & ordered tree list
+		if (this._shiftNode != null) this.ResolveShiftSelect();
 	}
 
 	private void IterateTree(IEnumerable<SceneEntity> entities) {
 		try {
 			ImGui.TreePush(nint.Zero);
-			foreach (var item in entities)
-				this.DrawNode(item);
+			foreach (var item in entities) {
+				this._nodes.Add(item); // put each iterated node in order on the shared list
+				this.DrawNode(item, out var shiftClicked);
+				if (shiftClicked) {
+					this._shiftNode = item; // while recursing, store if a node was shift-clicked to handle after root finishes
+				}
+			}
 		} finally {
 			ImGui.TreePop();
 		}
@@ -88,7 +101,8 @@ public class SceneTree {
 		Collapse
 	}
 
-	private void DrawNode(SceneEntity node) {
+	private void DrawNode(SceneEntity node, out bool shiftClicked) {
+		shiftClicked = false;
 		var pos = ImGui.GetCursorPos();
 		var isRender = pos.Y > this.MinY && pos.Y < this.MaxY;
 
@@ -122,15 +136,23 @@ public class SceneTree {
 			if (this.DrawNodeLabel(node, pos, flag, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
+			var io = ImGui.GetIO();
 			if (isHover && this.IsNodeHovered(pos, size, rightAdjust)) {
-				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) {
+				if (ImGui.IsMouseClicked(ImGuiMouseButton.Middle)) {
 					this._ctx.Interface.OpenEditorFor(node);
-				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
-					var mode = GuiHelpers.GetSelectMode();
-					node.Select(mode);
+				} else if (io.MouseReleased[0] && io.MouseDownDurationPrev[0] < 0.5f) {
+					// if we shift-click, handle the multi-select for this node later after tree rendering
+					if (ImGui.IsKeyDown(ImGuiKey.ModShift)) shiftClicked = true;
+					else {
+						var mode = GuiHelpers.GetSelectMode();
+						node.Select(mode);
+					}
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
 					this._ctx.Interface.OpenSceneEntityMenu(node);
 				}
+
+				if (ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !shiftClicked)
+					this._originIndex = this._nodes.Count - 1;
 			}
 		}
 
@@ -213,9 +235,15 @@ public class SceneTree {
 		var color = isVisible ? 0xEFFFFFFF : 0x80FFFFFF;
 		if (!isActive)
 			color = color.SetAlpha((byte)(isVisible ? 0x60 : 0x30));
-		
-		if (this.DrawButton(ref cursor, FontAwesomeIcon.Eye, color) && isHover)
+
+		var icon = vis is WorldEntity ? FontAwesomeIcon.LocationCrosshairs : FontAwesomeIcon.Eye;
+		if (this.DrawButton(ref cursor, icon, color) && isHover)
 			vis.Toggle();
+
+		if (!isHover || !ImGui.IsItemHovered()) return;
+		using var _ = ImRaii.Tooltip();
+		var visibleType = vis is WorldEntity ? node.Type + " Root" : "Overlay";
+		ImGui.Text((vis.Visible ? "Hide " : "Show ") + visibleType);
 	}
 
 	private void DrawAttachButton(IAttachable attach, ref float cursor, bool isHover) {
@@ -240,7 +268,8 @@ public class SceneTree {
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
 		using var _ = ImRaii.Tooltip();
-		ImGui.Text(entity.IsHidden ? "Unhide Entity" : "Hide Entity");
+		var hideType = entity is SceneEntity ent ? ent.Type.ToString() : "Entity";
+		ImGui.Text((entity.IsHidden ? "Show " : "Hide ") + hideType);
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {
@@ -259,5 +288,27 @@ public class SceneTree {
 		var min = ImGui.GetWindowPos() + pos.AddX(pad).SubY(ImGui.GetScrollY() + 2);
 		var max = min.Add(size.X - pos.X - pad - rightAdjust, size.Y);
 		return ImGui.IsMouseHoveringRect(min, max);
+	}
+
+	// Handle shift-click multiselect
+	private void ResolveShiftSelect() {
+		// user has shiftclicked a SceneEntity _shiftNode at indexTarget in _nodes
+		var indexTarget = this._nodes.IndexOf(this._shiftNode!);
+		if (indexTarget < 0) return; // shift-clicked node was not in recursed _nodes list
+
+		// find the index of the most recently selected entity that's also present in _nodes (at indexOrigin),
+		if (this._originIndex == null || this._originIndex == indexTarget) return;
+		if (this._originIndex >= this._nodes.Count) this._originIndex = this._nodes.Count - 1; // list has shrunk since last originindex, reset to last entry
+
+		// and multi-select every node between indexOrigin (exclusive) and indexTarget (inclusive)
+		if (this._originIndex > indexTarget) {
+			for (var i = indexTarget; i < this._originIndex; i++)
+				if (this._nodes[i] is { IsSelected: false } node) node.Select(SelectMode.Multiple); // moving DOWN the tree
+		} else {
+			for (var i = indexTarget; i > this._originIndex; i--)
+				if (this._nodes[i] is { IsSelected: false } node) node.Select(SelectMode.Multiple); // moving UP the tree
+		}
+
+		this._originIndex = indexTarget;
 	}
 }

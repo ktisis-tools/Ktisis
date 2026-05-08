@@ -12,6 +12,8 @@
 	"actions": {
 		"Select_None": "Cancel selection",
 		"Select_Sibling": "Sibling select",
+		"Select_Children": "Children select",
+		"Select_All": "Select all entities",
 		"Overlay_Toggle": "Toggle overlay visibility",
 		"History_Undo": "Undo action",
 		"History_Redo": "Redo action",
@@ -33,7 +35,14 @@
 		"Camera_Work_Fast": "Work camera fast-speed modifier",
 		"Camera_Work_Slow": "Work camera slow-speed modifier",
 		"Pose_FlipPose": "Flip pose",
-		"Gizmo_MirrorRotation": "Cycle rotation modes"
+		"Gizmo_MirrorRotation": "Cycle rotation modes",
+		"Toolbar_ToggleWorkspace": "Switch to the Workspace Window",
+		"Toolbar_ToggleObject": "Switch to the Object Editor",
+		"Toolbar_ToggleActor": "Switch to the Actor Editor",
+		"Toolbar_TogglePose": "Switch to Pose View",
+		"Toolbar_ToggleEnv": "Switch to the Environment Editor",
+		"Toolbar_ToggleCamera": "Switch to the Camera Editor",
+		"Toolbar_ToggleConfig": "Switch to the Configuration Window"
 	},
 	
 	"actors": {
@@ -51,7 +60,7 @@
 	
 	"transform": {
 		"position": "Position",
-		"rotation": "Rotation",
+		"rotation": "Rotation\nHold shift to toggle screen orbit.",
 		"scale": "Scale"
 	},
 	
@@ -215,6 +224,10 @@
 	"env_edit": {
 		"title": "Environment Editor"
 	},
+
+	"scene_edit": {
+		"title": "Scene Editor"
+	},
 	
 	"pose_view": {
 		"title": "Pose View"
@@ -242,7 +255,11 @@
 		"gizmo": {
 			"title": "Gizmo",
 			"flip": "Flip axis to face camera",
-			"raySnap": "Hold shift to ray snap objects",
+			"raySnap": "Hold Shift to ray snap objects",
+			"rayHint": "When moving a translation gizmo for XYZ, holding Shift will snap the object to world surfaces",
+			"holdSnap": "Hold Control for gizmo snapping (+Shift for precision)",
+			"hintHoldSnap": "Snaps gizmo values to nearest numbers while dragging the mouse",
+			"2d_scale": "2D gizmo scale",
 			"header": "Gizmo Style:",
 			"editor": {
 				"general": {
@@ -309,28 +326,44 @@
 			"header": "Workspace Settings",
 			"init": "Open workspace when entering GPose",
 			"toggleOpenWindows": "UI buttons toggle windows open & closed",
-			"initPosLock": "Freeze actor positions when entering GPose",
-			"editOnSelect": "Toggle object editor when selecting",
+			"toolbar": "Use Ktisis Toolbar",
+			"hintToolbar": "Experimental: This is an alternate UI which puts all of Ktisis' editors into one window.\nPlease provide any feedback, as this option is actively under development!",
+			"editOnSelect": "Open object editor when selecting from the workspace",
 			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",
 			"hintIncognito": "Censors all player names from actor list and GPose window",
-			"hintPosLock": "WIP: If enabled, actors may snap to the player character's GPose origin instead of their out-of-gpose locations!",
 			"hintInit": "If disabled, you can open the Ktisis Workspace by typing /ktisis while in GPose",
 			"windowHeader": "Window Behavior Options",
 			"legacyHeader": "Legacy Interface Options [will be deprecated with v0.3 release]",
 			"legacyWindows": "Prefer legacy window behavior",
 			"legacyWindowHint": "Controls how and whether windows refer solely to the targeted actor",
-			"legacyPoseTabs": "Prefer legacy pose view tabs",
-			"legacyPoseHint": "Draws a tab at the top of the Pose View for each actor in the scene",
+			"legacyPoseTabs": "Pose View: Change actors via tabs instead of the workspace",
 			"legacyLightEditor": "Prefer legacy light editor",
 			"legacyLightHint": "Allows opening the Light Editor window, now moved to the Object Editor",
 			"confirmExit": "Ensure shift has to be held to exit posing mode",
+			"AutoResizeObjectEditor": "Automatically expand the Object Editor when opening new dropdowns",
+			"hint_AutoResizeObj": "This disables the ability to resize the editors height, but you can still change its width",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
 				"slowMulti": "Work camera slow-multiplier",
 				"vertMulti": "Work camera up/down speed multiplier",
 				"sens": "Work camera mouse sensitivity"
+			},
+			"customLocations": {
+				"header": "Custom File Locations",
+				"description": "Manage custom folder locations for the file dialog.",
+				"columnName": "Name",
+				"columnPath": "Path",
+				"browse": "Browse",
+				"remove": "Remove",
+				"add": "Add New Location",
+				"moving": "Moving %name%",
+				"selectFolder": "Select Folder"
+			},
+			"defaultLocation": {
+				"remove": "Unset this folder as default",
+				"add": "Set this folder as default place to open when using the file browser"
 			}
 		},
 		"input": {
@@ -348,6 +381,10 @@
 			"gizmo": {
 				"title": "Gizmo",
 				"header": "Gizmo Actions:"
+			},
+			"toolbar":{
+				"title": "Toolbar",
+				"header": "Toolbar Controls:"
 			}
 		},
 		"autosave": {
@@ -544,6 +581,7 @@
 		"n_sippo_d": "Tail D",
 		"n_sippo_e": "Tail E",
 		"j_ago": "Jaw",
+		"j_sita": "Tongue",
 		"j_f_dmab_l": "Left Lower Eyelid",
 		"j_f_dmab_r": "Right Lower Eyelid",
 		"j_f_eye_l": "Left Eye",
@@ -660,7 +698,64 @@
 		"j_f_dmiken_l": "Left Glabella",
 		"j_f_dmiken_r": "Right Glabella",
 
-		"j_ex_met_vb": "Visor"
+		"j_ex_met_vb": "Visor",
+
+		"iv_asi_oya_a_l": "IVCS Big Toe A Left",
+		"iv_asi_oya_b_l": "IVCS Big Toe B Left",
+		"iv_asi_hito_a_l": "IVCS Index Toe A Left",
+		"iv_asi_hito_b_l": "IVCS Index Toe B Left",
+		"iv_asi_naka_a_l": "IVCS Middle Toe A Left",
+		"iv_asi_naka_b_l": "IVCS Middle Toe B Left",
+		"iv_asi_kusu_a_l": "IVCS Fore Toe A Left",
+		"iv_asi_kusu_b_l": "IVCS Fore Toe B Left",
+		"iv_asi_ko_a_l": "IVCS Pinky Toe A Left",
+		"iv_asi_ko_b_l": "IVCS Pinky Toe B Left",
+
+		"iv_asi_oya_a_r": "IVCS Big Toe A Right",
+		"iv_asi_oya_b_r": "IVCS Big Toe B Right",
+		"iv_asi_hito_a_r": "IVCS Index Toe A Right",
+		"iv_asi_hito_b_r": "IVCS Index Toe B Right",
+		"iv_asi_naka_a_r": "IVCS Middle Toe A Right",
+		"iv_asi_naka_b_r": "IVCS Middle Toe B Right",
+		"iv_asi_kusu_a_r": "IVCS Fore Toe A Right",
+		"iv_asi_kusu_b_r": "IVCS Fore Toe B Right",
+		"iv_asi_ko_a_r": "IVCS Pinky Toe A Right",
+		"iv_asi_ko_b_r": "IVCS Pinky Toe B Right",
+
+		"iv_hito_c_l": "IVCS Index C Left",
+		"iv_naka_c_l": "IVCS Middle C Left",
+		"iv_kusu_c_l": "IVCS Ring C Left",
+		"iv_ko_c_l": "IVCS Pinky C Left",
+		"iv_hito_c_r": "IVCS Index C Right",
+		"iv_naka_c_r": "IVCS Middle C Right",
+		"iv_kusu_c_r": "IVCS Ring C Right",
+		"iv_ko_c_r": "IVCS Pinky C Right",
+
+		"iv_nitoukin_l": "IVCS Bicep Left",
+		"iv_nitoukin_r": "IVCS Bicep Right",
+
+		"iv_c_mune_l": "IVCS Breast Left",
+		"iv_c_mune_r": "IVCS Breast Right",
+
+		"iv_kougan_l": "IVCS Scrotum Left",
+		"iv_kougan_r": "IVCS Scrotum Right",
+		"iv_ochinko_a": "IVCS Penis A",
+		"iv_ochinko_b": "IVCS Penis B",
+		"iv_ochinko_c": "IVCS Penis C",
+		"iv_ochinko_d": "IVCS Penis D",
+		"iv_ochinko_e": "IVCS Penis E",
+		"iv_ochinko_f": "IVCS Penis F",
+
+		"iv_kuritto": "IVCS Clitoris",
+		"iv_inshin_l": "IVCS Labia Left",
+		"iv_inshin_r": "IVCS Labia Right",
+		"iv_omanko": "IVCS Vagina",
+
+		"iv_koumon": "IVCS Anus",
+		"iv_koumon_l": "IVCS Anus Left",
+		"iv_koumon_r": "IVCS Anus Right",
+		"iv_shiri_l": "IVCS Buttock Left",
+		"iv_shiri_r": "IVCS Buttock Right"
 	},
 
 	"boneCategory": {

@@ -8,6 +8,7 @@ using Dalamud.Interface;
 using GLib.Widgets;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility;
 
 using Ktisis.Common.Extensions;
@@ -67,7 +68,7 @@ public class SelectableGui {
 	) {
 		clicked = null;
 
-		if (!this.Config.Overlay.DrawDotsGizmo && ImGuizmo.Gizmo.IsUsing)
+		if (!this.Config.Overlay.DrawDotsGizmo && ImGuizmo.IsUsing())
 			return false;
 		
 		var drawList = ImGui.GetWindowDrawList();
@@ -99,7 +100,7 @@ public class SelectableGui {
 		bool gizmo
 	) {
 		clicked = null;
-		if (items.Count == 0 || (gizmo && (ImGuizmo.Gizmo.IsUsing || ImGuizmo.Gizmo.IsOver)))
+		if (items.Count == 0 || (gizmo && (ImGuizmo.IsUsing() || ImGuizmo.IsOver())))
 			return false;
 
 		var begin = false;
@@ -241,7 +242,7 @@ public class SelectableGui {
 				var dir = Vector3.Transform(new Vector3(0, 0, range), (Quaternion)rot);
 				if (!CameraService.WorldToScreen(camera, worldPos + dir, out var endPos2d)) return;
 
-				var opacity = ImGuizmo.Gizmo.IsUsing ? ctx.Config.Overlay.LineOpacityUsing : ctx.Config.Overlay.LineOpacity;
+				var opacity = ImGuizmo.IsUsing() ? ctx.Config.Overlay.LineOpacityUsing : ctx.Config.Overlay.LineOpacity;
 				var drawList = ImGui.GetWindowDrawList();
 				var display = ctx.Config.GetEntityDisplay(light);
 				drawList.AddLine(pos2d, endPos2d, display.Color.SetAlpha(opacity), ctx.Config.Overlay.LineThickness);

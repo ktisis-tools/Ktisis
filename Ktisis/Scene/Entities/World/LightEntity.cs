@@ -1,11 +1,18 @@
 using System;
+using System.Linq;
+
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Gobos;
+using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules.Lights;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Lights;
+
+using Attach = Ktisis.Structs.Attachment.Attach;
 
 namespace Ktisis.Scene.Entities.World;
 
@@ -15,7 +22,7 @@ public enum LightEntityFlags {
 	Update = 1
 }
 
-public class LightEntity : WorldEntity, IDeletable, IHideable {
+public class LightEntity : WorldEntity, IDeletable, IHideable, IAttachable {
 	public LightEntityFlags Flags { get; set; } = LightEntityFlags.None;
 	public GoboEntry? Gobo { get; set; }
 
@@ -32,6 +39,22 @@ public class LightEntity : WorldEntity, IDeletable, IHideable {
 	}
 
 	public unsafe new SceneLight* GetObject() => (SceneLight*)base.GetObject();
+
+	// IAttachable
+	private IAttachTarget? _attachTarget;
+	public void SetAttach(IAttachTarget attachTarget) => this._attachTarget = attachTarget;
+	public bool IsAttached() => this._attachTarget != null;
+	public unsafe Attach* GetAttach() => null;
+	public PartialBoneInfo? GetParentBone() {
+		if (this._attachTarget is BoneNode bone)
+			return bone.Info;
+		if (this._attachTarget is BoneNodeGroup group)
+			return group.GetIndividualBones().Where(b => b.Info.PartialIndex == 0).MinBy(b => b.Info.BoneIndex)?.Info;
+
+		return null;
+	}
+	public void Detach() => this._attachTarget = null;
+	public unsafe CharacterBase* GetCharacter() => null;
 	
 	public LightEntity(
 		ISceneManager scene
@@ -49,6 +72,9 @@ public class LightEntity : WorldEntity, IDeletable, IHideable {
 
 	public override void Update() {
 		if (!this.IsValid) return;
+
+		if (this.IsAttached() && this._attachTarget is ITransform transform && transform.GetTransform() is { } trans)
+			base.SetTransform(trans);
 		
 		if (this.Flags.HasFlag(LightEntityFlags.Update))
 			this.GetModule().UpdateLightObject(this);

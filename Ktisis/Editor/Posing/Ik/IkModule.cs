@@ -119,6 +119,8 @@ public sealed class IkModule : HookModule {
 		lock (this.Controllers)
 			controllers = this.Controllers.Where(controller => controller.IsEnabled()).ToList();
 
+		this.Manager.IsIkEnabled = controllers.Any();
+
 		try {
 			this.Manager.IsSolvingIk = true;
 			foreach (var controller in controllers)

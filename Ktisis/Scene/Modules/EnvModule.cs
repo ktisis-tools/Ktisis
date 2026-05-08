@@ -6,6 +6,7 @@ using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 
+using Ktisis.Interface.Components.Environment.Editors;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Env;
@@ -23,7 +24,8 @@ public enum EnvOverride {
 	Clouds = 0x020,
 	Rain = 0x040,
 	Dust = 0x080,
-	Wind = 0x100
+	Wind = 0x100,
+	Housing = 0x200,
 }
 
 public interface IEnvModule : IHookModule {
@@ -37,9 +39,13 @@ public interface IEnvModule : IHookModule {
 public class EnvModule : SceneModule, IEnvModule {
 	public EnvModule(
 		IHookMediator hook,
-		ISceneManager scene
-	) : base(hook, scene) { }
+		ISceneManager scene,
+		WaterEditor water
+	) : base(hook, scene) {
+		this._water = water;
+	}
 
+	private readonly WaterEditor _water;
 	protected override bool OnInitialize() {
 		this.EnableAll();
 		return true;
@@ -93,6 +99,7 @@ public class EnvModule : SceneModule, IEnvModule {
 	private unsafe delegate nint EnvStateCopyDelegate(EnvState* dest, EnvState* src);
 	private unsafe delegate nint EnvManagerUpdateDelegate(EnvManagerEx* env, float a2, float a3);
 	private delegate void UpdateTimeDelegate(nint a1);
+	private delegate nint UpdateWaterDelegate(nint a1);
 
 	[Signature("E8 ?? ?? ?? ?? 49 3B F5 75 0D")]
 	private EnvStateCopyDelegate EnvStateCopy = null!;
@@ -129,5 +136,13 @@ public class EnvModule : SceneModule, IEnvModule {
 			clientTime->EorzeaTimeOverride = currentTime;
 		}
 		this.UpdateTimeHook.Original(a1);
+	}
+
+	[Signature("48 8B C4 48 89 58 18 57 48 81 EC ?? ?? ?? ?? 0F B6 B9 ?? ?? ?? ??", DetourName = nameof(UpdateWaterDetour))]
+	private Hook<UpdateWaterDelegate> UpdateWaterHook = null!;
+	private nint UpdateWaterDetour(nint a1) {
+		if (this._water.Frozen)
+			return 0;
+		return this.UpdateWaterHook.Original(a1);
 	}
 }
