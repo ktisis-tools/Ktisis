@@ -174,6 +174,9 @@ public unsafe class PreviewNode : OverlayNode {
 			if (this._ctx.Config.File.ImportPoseSelectedBones)
 				this.CopySelectedBones();
 
+			if(!this._actor.Pose.HasDTFace())
+				this._actor.Pose.Update();
+			
 			this.ApplyPose();
 			this.UpdateLocals();
 		}
@@ -266,16 +269,19 @@ public unsafe class PreviewNode : OverlayNode {
 		if (this._ctx.Config.File.ImportPoseSelectedBones)
 			this.CopySelectedBones();
 
+		if(!this._actor.Pose.HasDTFace())
+			this._actor.Pose.Update();
+		
 		this.ApplyPose();
 		this.UpdateLocals();
 	}
 	
-	private void ApplyPose() =>this._ctx.Posing.ApplyPoseFile(_actor.Pose,
+	private void ApplyPose() => this._ctx.Posing.ApplyPoseFile(_actor.Pose,
 		this._currentPose,
 		transforms: this._ctx.Config.File.ImportPoseTransforms,
 		modes: this._ctx.Config.File.ImportPoseModes == PoseMode.All ? PoseMode.BodyFace : this._ctx.Config.File.ImportPoseModes ,
-		anchorGroups:this._ctx.Config.File.AnchorPoseSelectedBones,
-		selectedBones:(this._target.Pose.Recurse().Any((b)=> { return b.IsSelected;})? this._ctx.Config.File.ImportPoseSelectedBones : false),
+		anchorGroups: this._ctx.Config.File.AnchorPoseSelectedBones,
+		selectedBones: (this._target.Pose.Recurse().Any((b)=> { return b.IsSelected;})? this._ctx.Config.File.ImportPoseSelectedBones : false),
 		includeDescendants: this._ctx.Config.File.SelectedBonesIncludeDescendants,
 		excludeEars: this._ctx.Config.File.ExcludePoseEarBones
 		);
