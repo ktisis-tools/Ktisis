@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -50,6 +51,7 @@ public unsafe class PreviewNode : OverlayNode {
 	private uint _counter;
 	private ActorEntity _actor;
 	private ActorEntity _target;
+	private bool needsToApplyCollection = true;
 
 	private readonly RenderTargetManager* _renderTargetManager;
 	private readonly AgentInspect* _agentInspect;
@@ -129,19 +131,15 @@ public unsafe class PreviewNode : OverlayNode {
 			Height = 320,
 			Width = 192,});
 		bgpart->LoadTexture("ui/common/characterbg_hr1.tex");
-
 		
-		var ipc = this._ctx.Plugin.Ipc.GetPenumbraIpc();
-		var collection = ipc.GetCollectionForObject(target.Actor);
 
 		this._framework.RunOnFrameworkThread(() => {
 			this._agentInspect->CharaView.Initialize(&this._agentInspect->AgentInterface, 1, 0);
-			ipc.SetCollectionForObject(this._objectTable[441], collection.Id);
 			this._agentInspect->CharaView.ModelData.CopyFromCharacter((Character*)target.Actor.Address);
 		});
 
 		this.Buttons = this.SetupButtons();
-
+		
 		this._actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
@@ -150,13 +148,21 @@ public unsafe class PreviewNode : OverlayNode {
 		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
 		this.Buttons.AttachNode(this);
-
+		
+		this._agentInspect->CharaView.Update(this._counter, this._agentInspect->CharaView.GetCharacter());
 	}
 
 	/// <summary>
 	/// Framework update for our preview window, required to work 
 	/// </summary>
 	private void OnFramework(IFramework framework) {
+		/*if (this.needsToApplyCollection && this._objectTable[441]?.Address != null) {
+			var ipc = this._ctx.Plugin.Ipc.GetPenumbraIpc();
+			var collection = ipc.GetCollectionForObject(this._target.Actor);
+			ipc.SetCollectionForObject(this._objectTable[441], collection.Id);
+			this.needsToApplyCollection = false;
+		}*/
+
 		this._agentInspect->CharaView.Update(this._counter, this._actor.Character);
 		this._agentInspect->CharaView.Render(this._counter++);
 
