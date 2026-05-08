@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Decor;
@@ -21,6 +23,7 @@ using Ktisis.Editor.Lights;
 using Ktisis.Data.Files;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Services.Game;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Scene;
 
@@ -30,21 +33,29 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
 	public OverlayService Overlay { get; }
+	public SceneDataService Data { get; }
+
 	private readonly IFramework _framework;
+	private readonly IObjectTable _objectTable;
 
 	private readonly SceneRoot Root;
+	private Vector3 SceneOrigin;
 	
 	public SceneManager(
 		IEditorContext context,
 		HookScope scope,
 		IFramework framework,
 		IEntityFactory factory,
+		IObjectTable objectTable,
+		SceneDataService sceneDataService,
 		OverlayService overlay
 	) : base(scope) {
 		this.Context = context;
 		this.Factory = factory;
 		this.Root = new SceneRoot(this);
 		this._framework = framework;
+		this._objectTable = objectTable;
+		this.Data = sceneDataService;
 		this.Overlay = overlay;
 	}
 	
@@ -53,8 +64,13 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	public void Initialize() {
 		Ktisis.Log.Info("Initializing scene...");
 		this.SetupModules();
+		this.SetSceneOrigin();
 	}
-	
+
+	public unsafe void SetSceneOrigin() {
+		var lp = this._objectTable.LocalPlayer.GetDrawObject();
+		this.SceneOrigin = lp->Position;
+	}
 	private void SetupModules() {
 		var gpose = this.AddModule<GroupPoseModule>();
 		this.AddModule<ActorModule>(gpose);
@@ -126,6 +142,10 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		.Cast<ActorEntity>()
 		.OrderBy(entity => entity.Actor.ObjectIndex)
 		.First();
+
+	public Vector3 GetSceneOrigin() => this.SceneOrigin;
+
+	public Vector3 GetActorRelativePosition(Vector3 position) => position - this.SceneOrigin;
 
 	// Lights Utility (todo: should these live here longterm?)
 

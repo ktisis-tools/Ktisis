@@ -8,7 +8,6 @@ using Dalamud.Interface;
 using Dalamud.Interface.Style;
 using Dalamud.Interface.Utility.Raii;
 
-
 using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
@@ -23,6 +22,7 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules;
 
 namespace Ktisis.Interface.Windows;
+
 internal record WindowButtons(DrawContentDelegate Window, FontAwesomeIcon Icon, string TooltipText, Type WindowType);
 internal delegate void DrawContentDelegate();
 
@@ -33,7 +33,7 @@ public class ToolbarWindow : KtisisWindow {
 	private readonly WorkspaceState _workspace;
 	private IEditorInterface Interface => this._ctx.Interface;
 
-	private List<WindowButtons> _buttons; 
+	private List<WindowButtons> _buttons;
 	public ToolbarWindow(
 		IEditorContext ctx,
 		GuiManager gui
@@ -42,22 +42,18 @@ public class ToolbarWindow : KtisisWindow {
 		this._gui = gui;
 		this._workspace = new WorkspaceState(ctx);
 		this.Flags = this.Flags | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
-		this._buttons =  new() {
+		this._buttons = new() {
 			new(this.DrawWorkspaceWindow, FontAwesomeIcon.PersonThroughWindow, "Workspace", typeof(Workspace)),
 			new(this.DrawObjectWindow, FontAwesomeIcon.ArrowsAlt, "Object Editor", typeof(ObjectWindow)),
 			new(this.DrawActorWindow, FontAwesomeIcon.Walking, "Actor Editor", typeof(ActorWindow)),
 			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, "Pose View", typeof(PosingWindow)),
 			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, "Environment Editor", typeof(Env)),
 			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, "Camera Editor", typeof(CameraWindow)),
-			//new(this.DrawConfigWindow, FontAwesomeIcon.G, "Scene Editor"),
+			new(this.DrawConfigWindow, FontAwesomeIcon.UsersLine, "Scene Editor", typeof(SceneWindow)),
 			new(this.DrawConfigWindow, FontAwesomeIcon.Cogs, "Settings", typeof(ConfigWindow)),
 		};
 	}
 
-	public override void PreDraw() {
-		base.PreDraw();
-		this.Size = Vector2.Zero;
-	}
 
 	public override void PreOpenCheck() {
 		if (this._ctx.IsValid) return;
@@ -66,45 +62,52 @@ public class ToolbarWindow : KtisisWindow {
 	}
 
 	public override void Draw() {
-		using var a = ImRaii.PushId("##ToolbarMain");
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		
+
 		// WorkspaceState
 		this._workspace.Draw();
 		ImGui.Spacing();
-		
+
 		// Try to center it?
-		
-		var offset = ((ImGuiP.GetCurrentWindow().ContentSize.X - (this._buttons.Count * (48 + spacing))-spacing) / 2);
+
+		var offset = ((ImGuiP.GetCurrentWindow().ContentSize.X - (this._buttons.Count * (48 + spacing)) - (2 * spacing) - Buttons.CalcSize()) / 2);
 		ImGui.SetCursorPosX(offset);
-		
+
 		// Subwindow Buttons
 		foreach (var button in _buttons) {
 			Vector4 color;
 			ImGuiCol bgCol;
-			if(button.WindowType != typeof(PosingWindow))
-				bgCol= this._subWindow?.GetType() == button.WindowType ? ImGuiCol.ButtonActive : ImGuiCol.Button;
+			if (button.WindowType != typeof(PosingWindow))
+				bgCol = this._subWindow?.GetType() == button.WindowType ? ImGuiCol.ButtonActive : ImGuiCol.Button;
 			else {
 				bgCol = this._ctx.Plugin.Gui.Get<PosingWindow>() is { IsOpen: true } ? ImGuiCol.ButtonActive : ImGuiCol.Button;
 			}
 			unsafe {
-				color =  *ImGui.GetStyleColorVec4(bgCol);
+				color = *ImGui.GetStyleColorVec4(bgCol);
 			}
 			using var _ = ImRaii.PushColor(ImGuiCol.Button, color);
 			if (Buttons.IconButtonTooltip(button.Icon, button.TooltipText, new Vector2(48, 48)))
 				button.Window();
-			if(button != this._buttons.Last())
-				ImGui.SameLine(0, spacing * 2);
+			ImGui.SameLine(0, spacing * 2);
+		}
+		ImGui.SameLine();
+		using (ImRaii.Group()) {
+			var size = (48 - spacing) / 2;
+			using (var _ = ImRaii.Disabled(!this._ctx.Actions.History.CanUndo))
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepBackward, this._ctx.Locale.Translate("actions.History_Undo"), new Vector2(size, size)))
+					this._ctx.Actions.History.Undo();
+
+			using (var _ = ImRaii.Disabled(!this._ctx.Actions.History.CanRedo))
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepForward, this._ctx.Locale.Translate("actions.History_Redo"), new Vector2(size, size)))
+					this._ctx.Actions.History.Redo();
 		}
 		// Subwindow
 		if (this._subWindow != null) {
 			ImGui.Spacing();
 			ImGui.Spacing();
-			
-			using var _frame = ImRaii.Group();
 			this._subWindow.Draw();
 
-		} 
+		}
 	}
 
 	internal void DrawWorkspaceWindow() => this.SetSubWindow<Workspace>();
@@ -113,17 +116,18 @@ public class ToolbarWindow : KtisisWindow {
 	internal void DrawPosingWindow() => this.Interface.OpenPosingWindow();
 	internal void DrawEnvWindow() => this.SetSubWindow<Env>();
 	internal void DrawCameraWindow() => this.SetSubWindow<CameraWindow>();
+	internal void DrawSceneWindow() => this.SetSubWindow<SceneWindow>();
 	internal void DrawConfigWindow() => this.SetSubWindow<ConfigWindow>();
-	
+
 	private void SetSubWindow<T>() where T : KtisisWindow {
-		if(this._subWindow?.GetType() ==  typeof(ObjectWindow) && typeof(T) != typeof(ObjectWindow))
+		if (this._subWindow?.GetType() == typeof(ObjectWindow) && typeof(T) != typeof(ObjectWindow))
 			this._subWindow?.Close();
 		if (this._subWindow?.GetType() == typeof(T)) {
 			this._subWindow.OnClose();
 			this._subWindow = null; // unset subwindow if same button clicked
 			return;
 		}
-		
+
 		if (typeof(T) == typeof(Env)) {
 			var module = this._ctx.Scene.GetModule<EnvModule>();
 			this._subWindow = this._gui.GetOrCreate<Env>(this._ctx.Scene, module);
@@ -131,11 +135,12 @@ public class ToolbarWindow : KtisisWindow {
 			this._subWindow = this.Interface.GetObjectWindow();
 		} else if (typeof(T) == typeof(ConfigWindow)) {
 			this._subWindow = this._gui.GetOrCreate<ConfigWindow>();
-		} else if(typeof(T) == typeof(ActorWindow))
-		{
+		} else if (typeof(T) == typeof(ActorWindow)) {
 			this._subWindow = this._gui.GetOrCreate<T>(this._ctx);
 			this._subWindow.Size = new Vector2(0, 400);
-		}else {
+		} else if (typeof(T) == typeof(SceneWindow)) {
+			this._subWindow = this._gui.GetOrCreate<SceneWindow>(this._ctx);
+		} else {
 			this._subWindow = this._gui.GetOrCreate<T>(this._ctx);
 		}
 
@@ -157,8 +162,7 @@ public class ToolbarWindow : KtisisWindow {
 	}
 
 	public override void OnClose() {
-		this._subWindow?.Close();
-		this._subWindow?.OnSafeToRemove();
 		base.OnClose();
+		this._gui.Remove(this);
 	}
 }

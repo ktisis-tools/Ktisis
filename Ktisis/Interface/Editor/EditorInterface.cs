@@ -128,6 +128,18 @@ public class EditorInterface : IEditorInterface {
 		}
 	}
 
+	public void OpenSceneWindow() {
+		if (this._ctx.Config.Editor.ToggleOpenWindows)
+			this._gui.GetOrCreate<SceneWindow>(this._ctx).Toggle();
+		else {
+			var _win = this._gui.GetOrCreate<SceneWindow>(this._ctx);
+			_win.Open();
+			ImGui.SetWindowFocus(_win.WindowName);
+		}
+	}
+
+	
+
 	public void OpenObjectEditor(bool forceOpen = false) {
 		if(this._ctx.Config.Editor.UseToolbar)
 			this._gui.Get<ToolbarWindow>()!.DrawObjectWindow();
@@ -299,6 +311,10 @@ public class EditorInterface : IEditorInterface {
 		Filters = "MCDF Files{.mcdf}",
 		Extension = ".mcdf"
 	};
+	private readonly static FileDialogOptions SceneFileOptions = new() {
+		Filters = "Ktisis Scene Files{.ktscene}",
+		Extension = ".ktscene"
+	};
 	
 	public void OpenCharaFile(Action<string, CharaFile> handler)
 		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions);
@@ -312,6 +328,9 @@ public class EditorInterface : IEditorInterface {
 	
 	public void OpenMcdfFile(Action<string> handler) {
 		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions);
+	}
+	public void OpenSceneFile(Action<string> handler) {
+		this._gui.FileDialogs.OpenFile("Open Scene File", handler, SceneFileOptions);
 	}
 
 	public void OpenLightFile(Action<string, LightFile> handler)
@@ -329,6 +348,11 @@ public class EditorInterface : IEditorInterface {
 	
 	public void ExportPoseFile(PoseFile file)
 		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, ExportPoseFileOptions);
+
+	public void ExportSceneFile(SceneFile file) {
+		var options = SceneFileOptions;
+		this._gui.FileDialogs.SaveFile("Export Scene File", file, options);
+	}
 
 	public void ExportLightFile(LightFile file) {
 		var options = LightFileOptions;
