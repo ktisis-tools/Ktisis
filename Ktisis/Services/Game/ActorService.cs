@@ -49,7 +49,7 @@ public class ActorService {
 	public IEnumerable<IGameObject> GetOverworldActors() {
 		var actors = this._objectTable.CharacterManagerObjects
 			.Concat(this._objectTable.ClientObjects.Where(gameObject => gameObject.ObjectIndex > GPoseIndex + GPoseCount))
-			.Concat(this._objectTable.StandObjects.Where(gameObject => gameObject is { ObjectKind: ObjectKind.BattleNpc or ObjectKind.EventNpc or ObjectKind.Companion or ObjectKind.MountType }));
+			.Concat(this._objectTable.StandObjects.Where(gameObject => gameObject is { ObjectKind: ObjectKind.BattleNpc or ObjectKind.EventNpc or ObjectKind.Companion or ObjectKind.Mount }));
 
 		foreach (var actor in actors) {
 			if (!actor.IsEnabled() || !actor.IsDrawing()) continue;

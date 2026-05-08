@@ -122,7 +122,7 @@ public class EquipmentEditor(ActorEntity actor) : IEquipmentEditor {
 		actor.Appearance.Weapons[index] = model;
 		var chara = actor.Character;
 		if (chara != null)
-			chara->DrawData.LoadWeapon((DrawDataContainer.WeaponSlot)index, model, 0, 0, 0, 0);
+			chara->DrawData.LoadWeapon((DrawDataContainer.WeaponSlot)index, model, 0, 0, 0, 0, false);  //TODO: Check this bool, seems to route to a different legacy function
 	}
 
 	public void SetWeaponIdBaseVariant(WeaponIndex index, ushort id, ushort second, byte variant) {

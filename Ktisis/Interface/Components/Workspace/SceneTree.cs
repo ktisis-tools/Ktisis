@@ -18,6 +18,7 @@ using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Editor.Selection;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -42,19 +43,15 @@ public class SceneTree {
 	// Draw frame
     
 	public void Draw(float height) {
-		var frame = false;
 		try {
 			var id = ImGui.GetID("SceneTree_Frame");
-			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
-			if (!frame) return;
-			this.DrawScene(height);
+			using (ImRaii.ChildFrame(id, new Vector2(-1, height))) {
+				this.DrawScene(height);
+			}
 		} catch (Exception err) {
-			Ktisis.Log.Error($"Error drawing scene tree:\n{err}");
-		} finally {
-			if (frame) ImGui.EndChildFrame();
+			Ktisis.Log.Error($"Error drawing scene tree: {err}");
 		}
 	}
-	
 	// Draw scene entities
 
 	private static float IconSpacing => UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale;
@@ -139,10 +136,11 @@ public class SceneTree {
 			if (this.DrawNodeLabel(node, pos, flag, rightAdjust))
 				state.SetBool(imKey, isExpand = !isExpand);
 
+			var io = ImGui.GetIO();
 			if (isHover && this.IsNodeHovered(pos, size, rightAdjust)) {
-				if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left)) {
+				if (ImGui.IsMouseClicked(ImGuiMouseButton.Middle)) {
 					this._ctx.Interface.OpenEditorFor(node);
-				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
+				} else if (io.MouseReleased[0] && io.MouseDownDurationPrev[0] < 0.5f) {
 					// if we shift-click, handle the multi-select for this node later after tree rendering
 					if (ImGui.IsKeyDown(ImGuiKey.ModShift)) shiftClicked = true;
 					else {

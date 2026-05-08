@@ -9,7 +9,7 @@ using Ktisis.Structs.Characters;
 
 namespace Ktisis.GameData.Excel;
 
-[Sheet("BNpcBase", columnHash: 0xD5D82616)]
+[Sheet("BNpcBase", columnHash: 0xAD223303)]
 public struct BattleNpc(ExcelPage page, uint offset, uint row) : IExcelRow<BattleNpc>, INpcBase {
 	public ExcelPage ExcelPage => page;
 	public uint RowOffset { get; } = offset;

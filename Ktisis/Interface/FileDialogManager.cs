@@ -82,7 +82,7 @@ public class FileDialogManager {
 				handler.Invoke(path);
 			},
 			options.MaxOpenCount,
-			null,
+			this._cfg.File.File.DefaultLocation == string.Empty? null : this._cfg.File.File.DefaultLocation,
 			true
 		);
 	}
@@ -169,7 +169,7 @@ public class FileDialogManager {
 				if (!isOk || path.IsNullOrEmpty()) return;
 				handler.Invoke(path);
 			},
-			null,
+			this._cfg.File.File.DefaultLocation == string.Empty? null : this._cfg.File.File.DefaultLocation,
 			true
 		);
 	}

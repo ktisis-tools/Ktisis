@@ -76,14 +76,16 @@ internal class TransformConverter(JsonFileSerializer json) : JsonConverter<Trans
 		var result = new Transform();
 
 		reader.Read();
-		for (var i = 0; i < 3; i++) {
+		for (var i = 0; i < 4; i++) {
 			if (reader.TokenType == JsonTokenType.EndObject)
 				break;
 
 			var prop = reader.GetString();
 			reader.Read();
 
-			if (prop == "Rotation") {
+			if (prop == "BoneDepth") {
+				// ignore BoneDepth and any other invalid Transform entries; increment i< range if more are added in future
+			} else if (prop == "Rotation") {
 				result.Rotation = ((QuaternionConverter)json.GetConverter<Quaternion>()).Read(ref reader, type, options);
 			} else {
 				var vec = ((Vector3Converter)json.GetConverter<Vector3>()).Read(ref reader, type, options);

@@ -5,6 +5,7 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
+using Dalamud.Interface.Windowing;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
@@ -28,6 +29,7 @@ public class CameraWindow : KtisisWindow {
 	private readonly TransformTable _relativePos;
 	private bool IsWork = false;
 	private const string WindowId = "KtisisCameraEditor";
+	private float _toolbar = 0f;
 	
 	public CameraWindow(
 		IEditorContext ctx,
@@ -39,9 +41,10 @@ public class CameraWindow : KtisisWindow {
 		this._ctx = ctx;
 		this._fixedPos = fixedPos;
 		this._relativePos = relativePos;
+		this._toolbar = this._ctx.Config.Editor.UseToolbar? 0.1f : 0;
 	}
 
-	private const TransformTableFlags TransformFlags = TransformTableFlags.Default | TransformTableFlags.UseAvailable & ~TransformTableFlags.Operation;
+	private const TransformTableFlags TransformFlags = TransformTableFlags.Default | TransformTableFlags.UseAvailable;
 
 	public override void PreOpenCheck() {
 		if (this._ctx is { IsValid: true, Cameras.Current: not null }) return;
@@ -67,7 +70,7 @@ public class CameraWindow : KtisisWindow {
 
 		using (ImRaii.Disabled(IsWork)) {
 			ImGui.Spacing();
-			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+			ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - this._toolbar);
 			ImGui.InputText("##CameraName", ref camera.Name, 64);
 
 			ImGui.Spacing();
@@ -146,8 +149,8 @@ public class CameraWindow : KtisisWindow {
 		else
 			ImGui.TextDisabled(text);
 		
-		ImGui.SameLine();
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize());
+		ImGui.SameLine(0, 0);
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - (Buttons.CalcSize()) - this._toolbar); //fuckin good enough
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("camera_edit.offset.to_target"))) {
 			var gameObject = (GameObject*)target.Address;
 			var drawObject = gameObject->DrawObject;
@@ -200,7 +203,7 @@ public class CameraWindow : KtisisWindow {
 		var angleHint = this._ctx.Locale.Translate("camera_edit.angle");
 		this.DrawIconAlign(FontAwesomeIcon.ArrowsSpin, out var spacing, angleHint);
 		ImGui.SameLine(0, spacing);
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - this._toolbar);
 
 		var angleDeg = ptr->Angle * MathHelpers.Rad2Deg;
 		if (ImGui.DragFloat2("##CameraAngle", ref angleDeg, 0.25f))
@@ -211,7 +214,7 @@ public class CameraWindow : KtisisWindow {
 		var panHint = this._ctx.Locale.Translate("camera_edit.pan");
 		this.DrawIconAlign(FontAwesomeIcon.ArrowsAlt, out spacing, panHint);
 		ImGui.SameLine(0, spacing);
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - this._toolbar);
 		
 		var panDeg = ptr->Pan * MathHelpers.Rad2Deg;
 		if (ImGui.DragFloat2("##CameraPan", ref panDeg, 0.25f)) {
@@ -283,7 +286,7 @@ public class CameraWindow : KtisisWindow {
 	
 	private bool DrawSliderDrag(string label, ref float value, float min, float max, float drag, bool angle) {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - this._toolbar);
 		return ImGui.DragFloat($"{label}##Drag", ref value, drag, min, max, angle ? "%.0f°" : "%.3f");
 	}
 	

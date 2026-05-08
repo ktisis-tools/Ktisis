@@ -7,7 +7,6 @@ public interface IAnimationManager {
 	public void Initialize();
 	
 	public bool SpeedControlEnabled { get; set; }
-	public bool PositionLockEnabled { get; set; }
 
 	public IAnimationEditor GetAnimationEditor(ActorEntity actor);
 

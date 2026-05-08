@@ -56,7 +56,7 @@ public class Gizmo2D {
 		this.Gizmo.SetMatrix(viewMatrix, projectionMatrix);
 	}
 
-	public void Begin(Vector2 rectSize) {
+	public void Begin(Vector2 rectSize, string? nameAppend = null) {
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
 		using var _border = ImRaii.PushStyle(ImGuiStyleVar.ChildBorderSize, 0f);
 		rectSize.Y *= this._cfg.Gizmo2DScaleFactor;
@@ -69,7 +69,7 @@ public class Gizmo2D {
 		ImGui.SetNextWindowPos(ImGui.GetMainViewport().Pos);
 		ImGui.SetNextWindowSize(ImGui.GetMainViewport().Size);
 		
-		ImGui.Begin("##Gizmo2D", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
+		ImGui.Begin($"##Gizmo2D{nameAppend}", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 		
 		var minDim = Math.Min(innerSize.X, innerSize.Y);
 		var drawSize = new Vector2(minDim, minDim);

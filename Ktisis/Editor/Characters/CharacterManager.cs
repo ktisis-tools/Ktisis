@@ -88,7 +88,7 @@ public class CharacterManager : ICharacterManager {
 				*(Transform*)&gameObj->DrawObject->Position = transform;
 
 			this._savedTransforms.Remove(index);
-		} else if (this._context.Animation.PositionLockEnabled) {
+		} else {
 			// if this is an initial draw of an obj and positions are locked for animations,
 			// 	send to a probably-nice scene coord instead of 0,0,0
 			if (gameObj->DrawObject != null)

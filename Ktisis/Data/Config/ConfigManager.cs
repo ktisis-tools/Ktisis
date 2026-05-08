@@ -65,6 +65,7 @@ public class ConfigManager : IDisposable {
 		this.File = cfg;
 		this._isLoaded = true;
 		
+
 		timer.Stop();
 		Ktisis.Log.Debug($"Configuration loaded in {timer.Elapsed.TotalMilliseconds:0.00}ms");
 	}
