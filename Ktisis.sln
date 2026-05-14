@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ktisis", "Ktisis\Ktisis.csproj", "{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GLib", "GLib", "{621156E2-C9A4-4315-8A20-9259A98026E2}"
@@ -9,37 +8,17 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
-		Debug|Any CPU = Debug|Any CPU
-		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
-		Release|Any CPU = Release|Any CPU
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Debug|x64.ActiveCfg = Debug|x64
 		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Debug|x64.Build.0 = Debug|x64
-		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Debug|x86.Build.0 = Debug|Any CPU
 		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Release|x64.ActiveCfg = Release|x64
 		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Release|x64.Build.0 = Release|x64
-		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Release|x86.ActiveCfg = Release|Any CPU
-		{9E03EDFF-6FF6-4230-9496-FB398EBFA3C7}.Release|x86.Build.0 = Release|Any CPU
 		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Debug|x64.Build.0 = Debug|Any CPU
-		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Debug|x86.Build.0 = Debug|Any CPU
 		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Release|x64.ActiveCfg = Release|Any CPU
 		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Release|x64.Build.0 = Release|Any CPU
-		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Release|x86.ActiveCfg = Release|Any CPU
-		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

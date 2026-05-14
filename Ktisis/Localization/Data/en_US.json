@@ -343,6 +343,7 @@
 			"confirmExit": "Ensure shift has to be held to exit posing mode",
 			"AutoResizeObjectEditor": "Automatically expand the Object Editor when opening new dropdowns",
 			"hint_AutoResizeObj": "This disables the ability to resize the editors height, but you can still change its width",
+			"showHints": "Display Ktisis Tips on Startup",
 			"hintHint": "The first time you enter GPose after launching Ktisis, an overlay will display a random tip, hint, or fun fact!",
 			"workcam": {
 				"speed": "Work camera speed",
@@ -913,6 +914,7 @@
 		"35": "The scrollwheel lets you move Ktisis' colored transform sliders one tick at a time, or faster/slower by holding Shift or Control.",
 		"36": "Since updates made in FFXIV Dawntrail, face-expression poses may only load correctly on the race/gender they were created with.",
 		"37": "The vanilla GPose menu has a button to add stickers over your screen - try them out for different icons, emojis and text.",
-		"38": "There's over 280 possible character portraits to display along with these hints."
+		"38": "There's over 280 possible character portraits to display along with these hints.",
+		"39": "Too many windows? Try the alternate Ktisis Toolbar UI in your settings menu!"
 	}
 }
