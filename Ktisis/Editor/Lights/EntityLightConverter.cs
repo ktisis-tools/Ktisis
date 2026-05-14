@@ -1,14 +1,20 @@
 using System;
 
+using Ktisis.Data.Config.Gobos;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Data.Files;
+using Ktisis.Data.Serialization;
 
 namespace Ktisis.Editor.Lights;
 
 public class EntityLightConverter {
+	private readonly GoboSchema _goboSchema;
     private LightEntity _light;
 
-    public EntityLightConverter(LightEntity light) => this._light = light;
+	public EntityLightConverter(LightEntity light) {
+		this._light = light;
+		this._goboSchema = SchemaReader.ReadGobos();
+	}
 
     public unsafe void Apply(LightFile file) {
 		var sceneLight = this._light.GetObject();
@@ -32,6 +38,11 @@ public class EntityLightConverter {
         light->FalloffAngle = file.FalloffAngle;
         light->Range = file.Range;
         light->CharaShadowRange = file.CharaShadowRange;
+
+		if (file.Gobo != null) {
+			var gobo = this._goboSchema.Gobos.Find(gob => gob.Path == file.Gobo);
+			if  (gobo != null) this._light.SetGobo(gobo);
+		}
     }
 
     public LightFile Save() {
@@ -59,5 +70,6 @@ public class EntityLightConverter {
         file.FalloffAngle = light->FalloffAngle;
         file.Range = light->Range;
         file.CharaShadowRange = light->CharaShadowRange;
-    }
+		file.Gobo = this._light.Gobo?.Path;
+	}
 }
