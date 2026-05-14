@@ -22,6 +22,7 @@ using Ktisis.Scene.Types;
 using Ktisis.Editor.Lights;
 using Ktisis.Data.Files;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Services.Game;
 using Ktisis.Services.Data;
 
 namespace Ktisis.Scene;
@@ -31,7 +32,9 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
+	public WorldService World { get; }
 	public SceneDataService Data { get; }
+
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
 
@@ -44,12 +47,14 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		IFramework framework,
 		IEntityFactory factory,
 		IObjectTable objectTable,
-		SceneDataService sceneDataService
+		SceneDataService sceneDataService,
+		WorldService world
 	) : base(scope) {
 		this.Context = context;
 		this.Factory = factory;
 		this.Root = new SceneRoot(this);
 		this._framework = framework;
+		this.World = world;
 		this._objectTable = objectTable;
 		this.Data = sceneDataService;
 	}
