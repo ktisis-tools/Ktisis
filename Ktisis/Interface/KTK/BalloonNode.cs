@@ -36,6 +36,8 @@ public class BalloonNode : OverlayNode {
 	
 	public override OverlayLayer OverlayLayer => OverlayLayer.BehindUserInterface;
 	public override bool HideWithNativeUi => false;
+	public override bool HideWithUiToggled => false;
+
 	public BalloonBackground BgChoice;
 	public string Dialog;
 	public bool ArrowVisible;

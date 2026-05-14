@@ -29,6 +29,8 @@ public class StatusNode : OverlayNode {
 	private TextNode StatusText;
 	public override OverlayLayer OverlayLayer => OverlayLayer.BehindUserInterface;
 	public override bool HideWithNativeUi => false;
+	public override bool HideWithUiToggled => false;
+
 	public StatusType Type;
 	public string Text;
 	public string IconPath;

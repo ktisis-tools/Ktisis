@@ -26,6 +26,8 @@ public unsafe class HintNode : OverlayNode {
 
 	public override OverlayLayer OverlayLayer => OverlayLayer.Foreground;
 	public override bool HideWithNativeUi => false;
+	public override bool HideWithUiToggled => false;
+
 	protected override void OnUpdate() { }
 
 	public HintNode(

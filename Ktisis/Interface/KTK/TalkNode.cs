@@ -44,6 +44,8 @@ public class TalkNode : OverlayNode {
 
 	public override OverlayLayer OverlayLayer => OverlayLayer.BehindUserInterface;
 	public override bool HideWithNativeUi => false;
+	public override bool HideWithUiToggled => false;
+
 	public TalkBackground BgChoice;
 	public TalkCursor CursorChoice;
 	public string Speaker;
