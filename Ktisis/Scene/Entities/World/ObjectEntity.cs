@@ -1,5 +1,6 @@
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using Ktisis.Common.Utility;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Objects;
@@ -9,7 +10,7 @@ using DrawObject = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.DrawObject;
 namespace Ktisis.Scene.Entities.World;
 
 public class ObjectEntity : WorldEntity, IHideable {
-	public readonly WorldObject Object;
+	public WorldObject Object;
 
 	public ObjectEntity(
 		ISceneManager scene,
@@ -18,6 +19,11 @@ public class ObjectEntity : WorldEntity, IHideable {
 		this.Type = EntityType.Models;
 		this.Object = obj;
 		this.Visible = true;
+	}
+
+	public override void SetTransform(Transform trans) {
+		base.SetTransform(trans);
+		this.Object.Update();
 	}
 
 	public unsafe bool IsHidden {

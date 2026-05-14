@@ -21,26 +21,6 @@ public struct WorldObject : IEquatable<WorldObject> {
 	public nint Address { get; }
 	public string Path { get; }
 
-public unsafe WorldObject(Pointer<Object> ptr) {
-		this.Pointer = ptr;
-		this.Address = (nint)ptr.Value;
-		this.InitialTransform = new Transform(
-			this.Pointer.Value->Position,
-			this.Pointer.Value->Rotation,
-			this.Pointer.Value->Scale
-		);
-		this.Path = $"{this.Address:X}"; // default a path to a unique address string
-
-		if (ptr.Value->GetObjectType() == ObjectType.BgObject) {
-			var bgPtr = (BgObject*)this.Address;
-			this.InitialFlags = bgPtr->Flags;
-
-			var resource = bgPtr->ModelResourceHandle;
-			if (resource != null)
-				this.Path = resource->FileName.ToString();
-		}
-}
-
 	public unsafe WorldObject(Object* ptr) {
 		this.Pointer = ptr;
 		this.Address = (nint)ptr;
@@ -58,6 +38,15 @@ public unsafe WorldObject(Pointer<Object> ptr) {
 			var resource = bgPtr->ModelResourceHandle;
 			if (resource != null)
 				this.Path = resource->FileName.ToString();
+		}
+	}
+
+	public unsafe void Update() {
+		if (this.Pointer.Value == null) return;
+		this.Pointer.Value->UpdateRender();
+		if (this.Pointer.Value->GetObjectType() == ObjectType.BgObject) {
+			var bgPtr = (BgObject*)this.Address;
+			bgPtr->UpdateCulling();
 		}
 	}
 
