@@ -4,6 +4,7 @@ using Dalamud.Interface;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Bindings.ImGui;
 
+using Ktisis.Helpers;
 using Ktisis.Util;
 using Ktisis.Overlay;
 using Ktisis.Structs.Actor;
@@ -15,6 +16,7 @@ using Ktisis.Interface.Windows.Workspace.Tabs;
 namespace Ktisis.Interface.Windows.Workspace {
     public static class Workspace {
 		public static bool Visible = false;
+		private static bool Dismissed = false;
 		
 		public static Vector4 ColGreen = new Vector4(0, 255, 0, 255);
 		public static Vector4 ColYellow = new Vector4(255, 250, 0, 255);
@@ -95,6 +97,24 @@ namespace Ktisis.Interface.Windows.Workspace {
 						CameraTab.Draw();
 					if (ImGui.BeginTabItem("World"))
 						WorldTab.Draw();
+				}
+
+				if (!Dismissed) {
+					ImGui.Spacing();
+					ImGui.Separator();
+					ImGui.Spacing();
+					ImGui.TextColored(ColYellow, "You're not using the latest Ktisis version!");
+					ImGui.TextWrapped("In the coming months, Ktisis Alpha will be replaced with our v0.3 / Testing version, AKA Ktisis Workspace, which has been in development since 2024.");
+					ImGui.TextWrapped("This Alpha version is missing a variety of stability & feature updates, and is a low priority for updates going forward until v0.3 is officially released.");
+					ImGui.TextWrapped("We encourage current v0.2 users to try the Testing version and provide feedback in our Discord to help shape its development. "
+						+ "Testing is available from the Dalamud Plugin Installer, and detailed instructions can be found in our #ktisis-faq channel. Thank you!");
+
+					ImGui.Spacing();
+					if (ImGui.Button("Dismiss"))
+						Dismissed = true;
+					ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+					if (ImGui.Button("Our Discord"))
+						Common.OpenBrowser("https://discord.gg/kUG3W8B8Ny");
 				}
 			}
 
