@@ -90,17 +90,17 @@ public class CharacterManager : ICharacterManager {
 
 			this._savedTransforms.Remove(index);
 		} else {
-			// if this is an initial draw of an obj and positions are locked for animations,
-			// 	send to a probably-nice scene coord instead of 0,0,0
 			if (gameObj->DrawObject != null)
-				if (!gameObj->DrawOffset.Equals(Vector3.Zero))
-					FactorDrawOffset(gameObj);
-				else
-					gameObj->DrawObject->Position = gameObj->Position + gameObj->DrawOffset;
+				SetDrawObjectPosition(gameObj);
 		}
 	}
 
-	private unsafe void FactorDrawOffset(CSGameObject* gameObj) {
+	private unsafe static void SetDrawObjectPosition(CSGameObject* gameObj) {
+		if (gameObj->DrawOffset.Equals(Vector3.Zero)) {
+			gameObj->DrawObject->Position = gameObj->Position;
+			return;
+		}
+
 		var offset = gameObj->DrawOffset;
 		var pos = gameObj->Position;
 		var cos = MathF.Cos(gameObj->DefaultRotation);
@@ -108,9 +108,8 @@ public class CharacterManager : ICharacterManager {
 		gameObj->DrawObject->Position.X = ((offset.X * cos) + (offset.Z * sin)) + pos.X;
 		gameObj->DrawObject->Position.Z = ((offset.Z * cos) - (offset.X * sin)) + pos.Z;
 		gameObj->DrawObject->Position.Y = offset.Y + pos.Y;
-
-
 	}
+
 	private unsafe Transform* GetLocalPlayerPosition() {
 		var localPlayer = (CSGameObject*)this._objectTable.LocalPlayer?.Address;
 		if (localPlayer != null && localPlayer->DrawObject != null)
