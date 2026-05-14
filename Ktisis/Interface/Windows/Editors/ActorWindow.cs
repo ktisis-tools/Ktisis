@@ -36,13 +36,12 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		CustomizeEditorTab custom,
 		EquipmentEditorTab equip,
 		AnimationEditorTab anim,
-		PluginDataEditorTab ipc,
 		NpcSelect npcs
 	) : base($"Actor Editor###{WindowId}", ctx) {
 		this._custom = custom;
 		this._equip = equip;
 		this._anim = anim;
-		this._ipc = ipc;
+		this._ipc = new PluginDataEditorTab(ctx);
 		this._npcs = npcs;
 		this._npcs.OnSelected += this.OnNpcSelect;
 	}
