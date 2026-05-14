@@ -49,7 +49,7 @@ public class ToolbarWindow : KtisisWindow {
 			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, "Pose View", typeof(PosingWindow)),
 			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, "Environment Editor", typeof(Env)),
 			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, "Camera Editor", typeof(CameraWindow)),
-			new(this.DrawConfigWindow, FontAwesomeIcon.UsersLine, "Scene Editor", typeof(SceneWindow)),
+			new(this.DrawSceneWindow, FontAwesomeIcon.UsersLine, "Scene Editor", typeof(SceneWindow)),
 			new(this.DrawConfigWindow, FontAwesomeIcon.Cogs, "Settings", typeof(ConfigWindow)),
 		};
 	}
