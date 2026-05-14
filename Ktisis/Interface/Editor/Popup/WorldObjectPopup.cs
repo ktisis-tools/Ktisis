@@ -25,7 +25,7 @@ public class WorldObjectPopup(WorldObject obj, float distance, IEditorContext ct
 		ImGui.Text($"Distance: {distance:0.00}y");
 
 		ImGui.Spacing();
-		if (ImGui.Button("Confirm"))
+		if (ImGui.Button("Add"))
 			this.Confirm();
 
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
