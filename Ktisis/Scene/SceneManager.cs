@@ -33,6 +33,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
 	public OverlayService Overlay { get; }
+	public WorldService World { get; }
 	public SceneDataService Data { get; }
 
 	private readonly IFramework _framework;
@@ -48,7 +49,8 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		IEntityFactory factory,
 		IObjectTable objectTable,
 		SceneDataService sceneDataService,
-		OverlayService overlay
+		OverlayService overlay,
+		WorldService world
 	) : base(scope) {
 		this.Context = context;
 		this.Factory = factory;
@@ -57,6 +59,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		this._objectTable = objectTable;
 		this.Data = sceneDataService;
 		this.Overlay = overlay;
+		this.World = world;
 	}
 	
 	// Initialization

@@ -84,6 +84,11 @@ public class SceneEntityMenuBuilder {
 				menu.Action("Duplicate", () => this.DuplicateOverlay(overlay));
 			menu.Action("Delete", () => deletable.Delete());
 		}
+		if (this._entity is ObjectEntity obj) {
+			menu.Separator();
+			menu.Action("Reset", () => obj.Reset());
+			menu.Action("Untrack", () => obj.Remove());
+		}
 	}
 	
 	// Entity types

@@ -22,6 +22,7 @@ public interface ISceneManager : IComposite, IDisposable {
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
 	public OverlayService Overlay { get; }
+	public WorldService World { get; }
 	public SceneDataService Data { get; }
 
 	public T GetModule<T>() where T : SceneModule;
