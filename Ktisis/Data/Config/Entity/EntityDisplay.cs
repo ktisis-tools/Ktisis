@@ -38,7 +38,7 @@ public record EntityDisplay {
 		{ EntityType.Armature, new EntityDisplay(color: BoneBlue, icon: FontAwesomeIcon.CircleNodes) },
 		{ EntityType.BoneGroup, new EntityDisplay(color: BoneBlue, mode: DisplayMode.None) },
 		{ EntityType.BoneNode, new EntityDisplay(mode: DisplayMode.Dot) }, // May deprecate this in future for display of category colors.
-		{ EntityType.Models, new EntityDisplay(color: ModelMint, icon: FontAwesomeIcon.CubesStacked) },
+		{ EntityType.Model, new EntityDisplay(color: ModelMint, icon: FontAwesomeIcon.CubesStacked) },
 		{ EntityType.ModelSlot, new EntityDisplay(color: ModelMint) },
 		{ EntityType.Weapon, new EntityDisplay(icon: FontAwesomeIcon.Magic) },
 		{ EntityType.Light, new EntityDisplay(color: LightLemon, icon: FontAwesomeIcon.Lightbulb) },

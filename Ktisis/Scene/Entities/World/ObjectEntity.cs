@@ -16,7 +16,7 @@ public class ObjectEntity : WorldEntity, IHideable {
 		ISceneManager scene,
 		WorldObject obj
 	) : base(scene) {
-		this.Type = EntityType.Models;
+		this.Type = EntityType.Model;
 		this.Object = obj;
 		this.Visible = true;
 	}
