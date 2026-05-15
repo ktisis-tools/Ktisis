@@ -166,6 +166,10 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		return (CharacterBase*)ptr;
 	}
 
+	/// <summary>
+	/// Gets Human
+	/// </summary>
+	/// <returns>if Character is Human, Human* otherwise null</returns>
 	public unsafe Human* GetHuman() {
 		var chara = this.GetCharacter();
 		if (chara != null && chara->GetModelType() == CharacterBase.ModelType.Human)

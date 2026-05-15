@@ -16,7 +16,10 @@ using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Entities.Utility;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Factory.Builders;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Editor.Context;
 
@@ -77,6 +80,8 @@ public class SceneEntityMenuBuilder {
 				menu.Action("Duplicate", () => this.DuplicateActor(actor));
 			if (this._entity is LightEntity light)
 				menu.Action("Duplicate", () => this.DuplicateLight(light));
+			if (this._entity is OverlayEntity overlay)
+				menu.Action("Duplicate", () => this.DuplicateOverlay(overlay));
 			menu.Action("Delete", () => deletable.Delete());
 		}
 		if (this._entity is ObjectEntity obj) {
@@ -173,8 +178,9 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void ImportPose(EntityPose pose) {
-		if (pose.Parent is ActorEntity actor)
+		if (pose.Parent is ActorEntity actor) {
 			this.Ui.OpenPoseImport(actor);
+		}
 	}
 	
 	private async void ExportPose(EntityPose? pose) {
@@ -200,5 +206,35 @@ public class SceneEntityMenuBuilder {
 		var file = await this._ctx.Scene.SaveLightFile(light);
 		var newLight = await this._ctx.Scene.Factory.CreateLight().Spawn();
 		this.ImportLight(newLight, file);
+	}
+
+	private void DuplicateOverlay(OverlayEntity overlay) {
+		var overlayType = overlay.Type switch {
+			EntityType.TalkOverlay => OverlayTypes.Talk,
+			EntityType.BalloonOverlay => OverlayTypes.Balloon,
+			EntityType.StatusOverlay => OverlayTypes.Status
+		};
+
+		var entity = this._ctx.Scene.Factory.BuildOverlay(overlayType).Add();
+		entity.Alpha = overlay.Alpha * 255.0f;
+		entity.Position = overlay.Position;
+		entity.Scale = overlay.Scale;
+		entity.Visible = overlay.Visible;
+
+		if (entity is TalkOverlay newTalk && overlay is TalkOverlay oldTalk) {
+			newTalk.Speaker = oldTalk.Speaker;
+			newTalk.Background = oldTalk.Background;
+			newTalk.Cursor = oldTalk.Cursor;
+			newTalk.Dialog = oldTalk.Dialog;
+		} else if (entity is BalloonOverlay newBalloon && overlay is BalloonOverlay oldBalloon) {
+			newBalloon.Background = oldBalloon.Background;
+			newBalloon.Dialog = oldBalloon.Dialog;
+			newBalloon.Arrow = oldBalloon.Arrow;
+			newBalloon.ArrowX = oldBalloon.ArrowX;
+		} else if (entity is StatusOverlay newStatus && overlay is StatusOverlay oldStatus) {
+			newStatus.IconPath = oldStatus.IconPath;
+			newStatus.StatusText = oldStatus.StatusText;
+			newStatus.StatusType = oldStatus.StatusType;
+		}
 	}
 }
