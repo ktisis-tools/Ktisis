@@ -29,7 +29,7 @@ public enum FalloffType : uint {
 	Cubic = 2
 }
 
-[StructLayout(LayoutKind.Explicit, Size = 0xA0)]
+[StructLayout(LayoutKind.Explicit, Size = 0x130)]
 public struct RenderLight {
 	[FieldOffset(0x18)] public LightFlags Flags;
 	[FieldOffset(0x1C)] public LightType LightType;
@@ -48,4 +48,5 @@ public struct RenderLight {
 	[FieldOffset(0x88)] public float FalloffAngle; // 0-90deg
 	[FieldOffset(0x8C)] public float Range;
 	[FieldOffset(0x90)] public float CharaShadowRange;
+	[FieldOffset(0x120)] public unsafe void* Texture;
 }

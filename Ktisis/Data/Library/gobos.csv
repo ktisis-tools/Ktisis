@@ -1,0 +1,64 @@
+path,name
+bgcommon/hou/indoor/general/0954/texture/fun_b0_m0954_0d_i.tex,Cracked Arch Window
+bgcommon/hou/indoor/general/1133/texture/fun_b0_m1133_0b_i.tex,Imitation Stained Crystal Roundel
+bgcommon/hou/indoor/general/1215/texture/fun_b0_m1215_0c_i.tex,Far Eastern Stained Crystal Roundel
+bgcommon/hou/indoor/general/1253/texture/fun_b0_m1253_0b_i.tex,Imitation Moonlit Window
+bgcommon/hou/indoor/general/1459/texture/fun_b0_m1459_i.tex,Decorative Hingan Window
+bgcommon/hou/indoor/general/1441/texture/fun_b0_m1441_0c_i.tex,Weathered Porthole
+bgcommon/hou/indoor/general/1371/texture/fun_b0_m1371_i.tex,Decorative Hingan Door
+bgcommon/hou/indoor/general/1258/texture/fun_b0_m1258_0c_i.tex,Imitation Curtained Window
+bgcommon/hou/indoor/general/1156/texture/fun_b0_m1156_0b_i.tex,Imitation Highland Window
+bgcommon/hou/indoor/general/1152/texture/fun_b0_m1152_0b_i.tex,Wondrous Windoor
+bgcommon/hou/indoor/general/1131/texture/fun_b0_m1131_0b_i.tex,Simple Arched Window
+bgcommon/hou/indoor/general/0806/texture/fun_b0_m0806_0a_i.tex,Imitation Stained Crystal Pane
+bgcommon/hou/indoor/general/0727/texture/fun_b0_m0727_0d_i.tex,Imitation Shuttered Window
+bgcommon/hou/indoor/general/0702/texture/fun_b0_m0702_0a_i.tex,Fool's Threshold
+bgcommon/hou/indoor/general/0591/texture/fun_b0_m0591_0a_i.tex,Imitation Stained Crystal Ornament
+bgcommon/hou/indoor/general/0538/texture/fun_b0_m0538_0a_i.tex,Imitation Square Window
+bgcommon/hou/dyna/w1h0/wid/0001/texture/w1h0_c_wid0001_i.tex,Shuttered Capsule
+bgcommon/hou/dyna/w1h0/wid/0002/texture/w1h0_c_wid0002_i.tex,Shuttered Arch
+bgcommon/hou/dyna/w1h0/wid/0003/texture/w1h0_c_wid0003_i.tex,Shuttered Butterfly
+bgcommon/hou/dyna/s1h0/wid/0003/texture/s1h0_c_wid0003_i.tex,Shuttered Curves
+bgcommon/hou/dyna/r1h0/wid/0002/texture/r1h0_c_wid0002_i.tex,Blocky Arch
+bgcommon/hou/dyna/r1h0/wid/0003/texture/r1h0_c_wid0003_i.tex,Diamond Mesh
+bgcommon/hou/dyna/f1h0/wid/0001/texture/f1h0_c_wid0001_i.tex,Ornate Doors
+bgcommon/hou/dyna/f1h0/wid/0002/texture/f1h0_c_wid0002_i.tex,Dotted Cross
+bgcommon/hou/dyna/f1h0/wid/0003/texture/f1h0_c_wid0003_i.tex,Wide Cross
+bgcommon/hou/dyna/e1h0/wid/0001/texture/e1h0_c_wid0001_i.tex,Grid
+bgcommon/hou/dyna/e1h0/wid/0002/texture/e1h0_c_wid0002_i.tex,Mirrored Grid
+bgcommon/hou/craft/bil/03/0019/texture/wid_t4_m0019_i.tex,Shutters and Archway
+bgcommon/hou/craft/bil/03/0018/texture/wid_t4_m0018_i.tex,Spotlight Shutters
+bgcommon/hou/craft/bil/03/0016/texture/wid_t4_m0016_i.tex,Ornate Window
+bgcommon/hou/craft/bil/03/0014/texture/wid_t4_m0014_i.tex,Nine Grid
+bgcommon/hou/craft/bil/03/0013/texture/wid_t4_m0013_i.tex,Pillars
+bgcommon/hou/craft/bil/03/0009/texture/wid_t4_m0009_i.tex,Bars
+bgcommon/hou/craft/bil/03/0008/texture/wid_t4_m0008_i.tex,Pages
+bgcommon/hou/craft/bil/03/0007/texture/wid_t4_m0007_i.tex,Heart
+bgcommon/hou/craft/bil/03/0006/texture/wid_t4_m0006_i.tex,Three-Part Circle
+bgcommon/hou/craft/bil/03/0005/texture/wid_t4_m0005_i.tex,Split Capsule
+bgcommon/hou/craft/bil/03/0003/texture/wid_t4_m0003_i.tex,Decorated Panes
+bgcommon/hou/craft/bil/03/0002/texture/wid_t4_m0002_i.tex,Decorated Arch
+bgcommon/hou/craft/bil/03/0001/texture/wid_t4_m0001_i.tex,Crossed Panes
+bgcommon/hou/craft/bil/02/0019/texture/dor_t4_m0019_i.tex,Barred Arch
+bgcommon/hou/craft/bil/02/0019/texture/dor_t4_a0019_i.tex,Wide Arch
+bgcommon/hou/craft/bil/02/0017/texture/dor_t4_a0017_i.tex,Crossed Circle
+bgcommon/hou/craft/bil/02/0016/texture/dor_t4_m0016_i.tex,Decorated Frame
+bgcommon/hou/craft/bil/02/0015/texture/dor_t4_a0015_i.tex,Mesh Frame
+bgcommon/hou/craft/bil/02/0014/texture/dor_t4_a0014_i.tex,Angled Frame
+bgcommon/hou/craft/bil/02/0012/texture/dor_t4_m0012_i.tex,Twelve-Grid Frames
+bgcommon/hou/craft/bil/02/0011/texture/dor_t4_b0011_i.tex,Indented Frame
+bgcommon/hou/craft/bil/02/0005/texture/dor_t4_a0005_i.tex,Crescent Frame
+bgcommon/hou/craft/bil/02/0001/texture/dor_t4_m0001_i.tex,Doorframe
+bg/ffxiv/wil_w1/evt/w1ec/texture/w1ec_m0_mtwd1_i.tex,Angled Grate
+bg/ffxiv/wil_w1/twn/w1tg/texture/w1tg_a0_mtwd1_i.tex,Diamond Grates
+bg/ffxiv/sea_s1/evt/s1e5/texture/s1e5_a0_wind1_i.tex,Boat Window
+bg/ffxiv/sea_s1/evt/s1e6/texture/s1e6_m0_wind3_i.tex,Trimmed Blocks
+bg/ffxiv/roc_r1/fld/r1fz/texture/r1fz_b1_lmk01_i.tex,Magic Panes
+bg/ffxiv/roc_r1/evt/r1e1/texture/r1e1_a0_mad1a_i.tex,Bright Frame
+bg/ffxiv/fst_f1/twn/common/texture/_f1t0_ia1_win4_i.tex,Flowered Arches
+bg/ffxiv/fst_f1/evt/f1e4/texture/f1e4_00_wind2_i.tex,Flower Filigree
+bg/ffxiv/fst_f1/evt/f1e4/texture/f1e4_00_wind1_i.tex,Flower Arch
+bg/ffxiv/fst_f1/evt/f1e6/texture/f1e6_a1_win01_i.tex,Church Windows
+bg/ffxiv/fst_f1/evt/f1e6/texture/f1e6_a3_wall3_i.tex,Twelve One
+bg/ffxiv/fst_f1/evt/f1e6/texture/f1e6_a4_wall3_i.tex,Twelve Two
+bg/ffxiv/fst_f1/dun/f1d2/texture/f1d2_a3_stgr1_i.tex,Blue Glass

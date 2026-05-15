@@ -22,6 +22,7 @@ using Ktisis.Scene.Types;
 using Ktisis.Editor.Lights;
 using Ktisis.Data.Files;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Services.Game;
 using Ktisis.Services.Data;
 
 namespace Ktisis.Scene;
@@ -31,7 +32,10 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	
 	public IEditorContext Context { get; }
 	public IEntityFactory Factory { get; }
+	public OverlayService Overlay { get; }
+	public WorldService World { get; }
 	public SceneDataService Data { get; }
+
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
 
@@ -44,7 +48,9 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		IFramework framework,
 		IEntityFactory factory,
 		IObjectTable objectTable,
-		SceneDataService sceneDataService
+		SceneDataService sceneDataService,
+		OverlayService overlay,
+		WorldService world
 	) : base(scope) {
 		this.Context = context;
 		this.Factory = factory;
@@ -52,6 +58,8 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		this._framework = framework;
 		this._objectTable = objectTable;
 		this.Data = sceneDataService;
+		this.Overlay = overlay;
+		this.World = world;
 	}
 	
 	// Initialization
@@ -73,6 +81,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		this.AddModule<EnvModule>();
 		this.InitializeModules();
 		this.SetupSavedState();
+		this.Overlay.Initialize(this.Context);
 	}
 
 	private void SetupSavedState() {
@@ -162,6 +171,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		try {
 			this.Root.Clear();
 			this.DisposeModules();
+			this.Overlay.Disable();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to dispose scene!\n{err}");
 		}

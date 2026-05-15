@@ -323,7 +323,7 @@ public class EditorInterface : IEditorInterface {
 		this._gui.FileDialogs.OpenFile<PoseFile>("Open Pose File", (path, file) => {
 			file.ConvertLegacyBones();
 			handler.Invoke(path, file);
-		}, ImportPoseFileOptions);
+		}, ImportPoseFileOptions, DialogType.Pose);
 	}
 	
 	public void OpenMcdfFile(Action<string> handler) {

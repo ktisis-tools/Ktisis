@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.FFXIV.Client.System.Resource.Handle;
 
 namespace Ktisis.Structs.Lights;
 
@@ -19,4 +20,5 @@ public struct SceneLight {
 	[FieldOffset(0x89)] public byte Flags01; // 1 = UpdateMaterials
 
 	[FieldOffset(0x90)] public unsafe RenderLight* RenderLight;
+	[FieldOffset(0x98)] public unsafe TextureResourceHandle* Texture;
 }

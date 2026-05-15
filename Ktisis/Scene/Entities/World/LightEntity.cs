@@ -4,6 +4,7 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Gobos;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities.Skeleton;
@@ -23,6 +24,7 @@ public enum LightEntityFlags {
 
 public class LightEntity : WorldEntity, IDeletable, IHideable, IAttachable {
 	public LightEntityFlags Flags { get; set; } = LightEntityFlags.None;
+	public GoboEntry? Gobo { get; set; }
 
 	public unsafe bool IsHidden {
 		get {
@@ -86,6 +88,21 @@ public class LightEntity : WorldEntity, IDeletable, IHideable, IAttachable {
 	}
 
 	public void ToggleHidden() => this.IsHidden = !this.IsHidden;
+
+	public unsafe void RemoveGobo() {
+		this.Gobo = null;
+		var sceneLight = this.GetObject();
+		if (sceneLight != null && sceneLight->Texture != null) {
+			sceneLight->Texture->DecRef();
+			sceneLight->Texture = null;
+		}
+		if (sceneLight != null && sceneLight->RenderLight != null && sceneLight->RenderLight->Texture != null)
+			sceneLight->RenderLight->Texture = null;
+	}
+	public unsafe void SetGobo(GoboEntry selected) {
+		this.Gobo = selected;
+		this.Scene.GetModule<LightModule>().UpdateSceneLightTexture(this.GetObject(), selected.Path);
+	}
 
 	public bool Delete() {
 		this.GetModule().Delete(this);
