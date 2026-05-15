@@ -6,6 +6,10 @@ using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
+using FFXIVClientStructs.FFXIV.Client.System.Resource;
+
+using InteropGenerator.Runtime;
+
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
@@ -99,6 +103,10 @@ public class LightModule : SceneModule {
 	[Signature("40 53 48 83 EC 20 0F B6 81 ?? ?? ?? ?? 48 8B D9 A8 04 75 45 0C 04 B2 05")]
 	private SceneLightUpdateMaterialsDelegate _sceneLightUpdateMaterials = null!;
 	private unsafe delegate void SceneLightUpdateMaterialsDelegate(SceneLight* self);
+	
+	[Signature("40 53 48 83 EC ?? 48 8B D9 C7 44 24 ?? ?? ?? ?? ?? 33 C9")]
+	private SceneLightTextureDelegate _sceneLightTexture = null!;
+	private unsafe delegate bool SceneLightTextureDelegate(SceneLight* self, ResourceCategory* category, CStringPointer path);
 
 	public unsafe void UpdateLightObject(LightEntity entity) {
 		if (!this.IsInit || !entity.IsValid) return;
@@ -108,6 +116,25 @@ public class LightModule : SceneModule {
 			this._sceneLightUpdateMaterials(ptr);
 		}
 		entity.Flags &= ~LightEntityFlags.Update;
+	}
+
+	public unsafe void UpdateSceneLightTexture(SceneLight* self, string? path) {
+		if (path == null)
+			return;
+		path += "\0"; // append null terminator to our clean paths for assignment
+		Ktisis.Log.Debug($"updating texture for light {(nint)self:X} to {path}");
+
+		var texPtr = stackalloc byte[path.Length];
+		for (var i = 0; i < path.Length; ++i) {
+			texPtr[i] = (byte)path[i];
+		}
+		var resourceCat = stackalloc ResourceCategory[1];
+		if (path.Contains("bgcommon"))
+			resourceCat[0] = ResourceCategory.BgCommon;
+		else
+			resourceCat[0] = ResourceCategory.Bg;
+
+		this._sceneLightTexture(self, resourceCat, texPtr);
 	}
 	
 	// Camera light hooks
