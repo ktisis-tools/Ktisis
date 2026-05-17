@@ -220,17 +220,17 @@ public class SceneEntityMenuBuilder {
 			.SubMenu("Set as Camera target", sub => {
 				sub.Action("Follow", () => {
 					this._ctx.Cameras.Current.Tracking = TrackingMode.Follow;
-					this._ctx.Cameras.Current.Target = bone;
+					this._ctx.Cameras.Current.Target.Add(bone);
 					this._ctx.Interface.OpenCameraWindow();
 				});
 				sub.Action("Pan", () => {
 					this._ctx.Cameras.Current.Tracking = TrackingMode.Pan;
-					this._ctx.Cameras.Current.Target = bone;
+					this._ctx.Cameras.Current.Target.Add(bone);
 					this._ctx.Interface.OpenCameraWindow();
 				});
 				sub.Action("Pan and Follow", () => {
 					this._ctx.Cameras.Current.Tracking = TrackingMode.FollowAndPan;
-					this._ctx.Cameras.Current.Target = bone;
+					this._ctx.Cameras.Current.Target.Add(bone);
 					this._ctx.Interface.OpenCameraWindow();
 				});
 			});

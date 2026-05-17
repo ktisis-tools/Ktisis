@@ -224,10 +224,18 @@ public class CameraWindow : KtisisWindow {
 	}
 	
 	private unsafe void DrawTracking(EditorCamera camera) { 
-		using (var _ = ImRaii.Disabled(camera.Target == null))
+		using (var _ = ImRaii.Disabled(camera.Target.Count == 0))
 		{
 			ImGui.SetCursorPosX(Buttons.CalcSize() + (ImGui.GetStyle().ItemSpacing.X * 2));
-			ImGui.TextUnformatted($"Tracking Bone: {(camera.Target != null? camera.Target.Name : "None")}");
+			if (camera.Target.Count > 0) {
+				ImGui.TextUnformatted($"Tracking Bones: ");
+				foreach (var bone in camera.Target) {
+					ImGui.SameLine();
+					ImGui.TextUnformatted($"{bone.Name} ");
+				}
+				
+			}
+		
 			
 			ImGui.SetCursorPosX(Buttons.CalcSize() + (ImGui.GetStyle().ItemSpacing.X * 2));
 			ImGui.AlignTextToFramePadding();

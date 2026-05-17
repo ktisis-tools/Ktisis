@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Game;
@@ -17,6 +19,7 @@ using SceneCameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Structs.Camera;
 using Ktisis.Structs.Input;
 
@@ -240,9 +243,9 @@ public class CameraModule : HookModule {
 	// Orbit target hooks
 
 	private unsafe float* CameraCalculateLookPositionDetour(GameCamera* pointer, float* targetPosition, float* cameraPosition, char mode) {
-		if (this.Manager.Current?.Target != null) {
-			Vector3 pos = this.Manager.Current.Target.CalcTransformWorld()!.Position;
-			ActorEntity actor = (ActorEntity)this.Manager.Current.Target.Root;
+		if (this.Manager.Current?.Target.Count > 0) {
+			Vector3 pos = this.CalculateAveragePosition(this.Manager.Current.Target);
+			ActorEntity actor = (ActorEntity)this.Manager.Current.Target.First().Root;
 			switch (this.Manager.Current.Tracking) {
 				case TrackingMode.Follow:
 					this.Manager.Current?.RelativeOffset = pos - (actor.Actor.Position);
@@ -263,7 +266,7 @@ public class CameraModule : HookModule {
 					targetPosition[2] = pos.Z - diff.Z;
 					break;
 				case TrackingMode.None:
-					this.Manager.Current?.RelativeOffset = actor.Actor.Position;
+					this.Manager.Current?.RelativeOffset = this.ResolveOrbitTarget(this.Manager.Current).Position;
 					break;
 			}
 		}
@@ -275,6 +278,17 @@ public class CameraModule : HookModule {
 	 we use this as a factor to ease in and out, where when the original position is roughly where the actors starting location was, the factor should be close to 0, meaning the camera will behave roughly the same.
 	 this gives us a factor that will gradually go towards .5~ but shouldn't exceed it.	
 	*/
+	private Vector3 CalculateAveragePosition(List<BoneNode> points) {
+		Vector3 average = new Vector3();
+
+		foreach (var position in points.Where(p => p.GetTransform() != null)) {
+			average += position.CalcTransformWorld()!.Position;
+		}
+		average /= points.Count(p => p.GetTransform() != null);
+		return average;
+	}
+	
+	
 	
 	private Hook<CameraTargetDelegate>? CameraTargetHook;
 	private delegate nint CameraTargetDelegate(nint a1);

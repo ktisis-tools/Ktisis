@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 using Ktisis.Editor.Posing.Types;
@@ -35,6 +36,7 @@ public class EditorCamera {
 		ICameraManager manager
 	) {
 		this.Manager = manager;
+		this.Target = new List<BoneNode>();
 	}
 	
 	public bool IsValid => this.Manager.IsValid && this.Address != nint.Zero;
@@ -44,7 +46,7 @@ public class EditorCamera {
 	public bool IsOrthographic => this.Flags.HasFlag(CameraFlags.Orthographic);
 	public bool IsDelimited => this.Flags.HasFlag(CameraFlags.Delimit);
 
-	public BoneNode? Target { get; set; } = null;
+	public List<BoneNode> Target { get; set; }
 	public TrackingMode Tracking = TrackingMode.None;
 	
 	public unsafe GameCamera* GameCamera => (GameCamera*)this.Address;
