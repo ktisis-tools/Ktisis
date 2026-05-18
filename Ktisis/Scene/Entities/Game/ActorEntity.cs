@@ -55,6 +55,8 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 	private readonly Dictionary<string, PresetState> _presetStates = new();
 
+	public Guid? AssignedProfile = null;
+
 	private string Anonymized;
 	private string RealName;
 	public override string Name {
