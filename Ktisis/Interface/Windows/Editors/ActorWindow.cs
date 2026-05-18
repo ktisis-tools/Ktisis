@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
+using Dalamud.Plugin;
 
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Characters.Types;
@@ -36,12 +37,13 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		CustomizeEditorTab custom,
 		EquipmentEditorTab equip,
 		AnimationEditorTab anim,
-		NpcSelect npcs
+		NpcSelect npcs,
+		IDalamudPluginInterface dpi
 	) : base($"Actor Editor###{WindowId}", ctx) {
 		this._custom = custom;
 		this._equip = equip;
 		this._anim = anim;
-		this._ipc = new PluginDataEditorTab(ctx);
+		this._ipc = new PluginDataEditorTab(ctx, dpi);
 		this._npcs = npcs;
 		this._npcs.OnSelected += this.OnNpcSelect;
 	}
