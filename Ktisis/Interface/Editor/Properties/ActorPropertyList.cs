@@ -97,9 +97,7 @@ public class ActorPropertyList : ObjectPropertyList {
 			this._ctx.Interface.OpenCharaExport(actor);
 
 		ImGui.Spacing();
-		ImGui.Separator();
-		ImGui.Spacing();
-		ImGui.Text("Import actor appearance...");
+		Separators.SeparatorText("Import actor appearance", textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
 
 		var embedEditor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);
@@ -111,17 +109,17 @@ public class ActorPropertyList : ObjectPropertyList {
 	// Advanced tab
 
 	private void DrawAdvancedTab(ActorEntity actor) {
-		ImGui.Text("Gaze Control");
+		Separators.SeparatorText("Gaze Control", textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		this.DrawGazeTab(actor);
 
 		if (!TryGetEntityPose(actor, out var pose) || pose.IkController.GroupCount == 0)
 			return;
 
 		ImGui.Spacing();
-		ImGui.Separator();
+		Separators.SeparatorText("Inverse Kinematics", textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
 
-		ImGui.Text("Inverse Kinematics");
+		
 		this.DrawConstraintsTab(pose);
 	}
 
@@ -226,7 +224,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, spacing);
 
 		ImGui.SameLine(0, 0);
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() +  ImGui.GetContentRegionAvail().X - btnSpace);  
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - btnSpace - ImGui.GetStyle().WindowPadding.X);  
 
 		// camera tracking - when pressed, toggle enabled and change gaze mode to KtisisFollowCam (or revert to Target mode)
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
@@ -332,8 +330,9 @@ public class ActorPropertyList : ObjectPropertyList {
 				+ Icons.CalcIconSize(FontAwesomeIcon.EllipsisH).X
 				+ spacing * 5;
 
-			ImGui.SameLine(0, spacing);
-			ImGui.SameLine(0, ImGui.GetContentRegionAvail().X - btnSpace);
+
+			ImGui.SameLine(0, 0);
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - btnSpace - ImGui.GetStyle().WindowPadding.X);  
 
 			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), node.IsSelected)) {
 				var canSelect = !node.IsSelected || this._ctx.Selection.Count > 1;
