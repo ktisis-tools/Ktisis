@@ -3,6 +3,8 @@
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
 
+using GLib.Widgets;
+
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
 using Ktisis.Interface.Widgets;
@@ -40,8 +42,7 @@ public class PresetPropertyList(IEditorContext ctx, LocaleManager locale) : Obje
 
 		ImGui.Columns();
 		
-		ImGui.Separator();
-		ImGui.Text(locale.Translate("preset_edit.add.title"));
+		Separators.SeparatorText(locale.Translate("preset_edit.add.title"), textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.InputText(locale.Translate("preset_edit.add.label"), ref _name);
 		var isValid = _name.Length > 0 && !ctx.Config.Presets.Presets.ContainsKey(_name);
 
