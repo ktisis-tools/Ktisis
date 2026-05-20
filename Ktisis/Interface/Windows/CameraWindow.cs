@@ -1,23 +1,30 @@
 using System;
+using System.Linq;
+using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Style;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
+using GLib.Popups;
 using GLib.Widgets;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Objects;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
+using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Windows;
 
@@ -29,6 +36,8 @@ public class CameraWindow : KtisisWindow {
 	private bool IsWork = false;
 	private const string WindowId = "KtisisCameraEditor";
 	private float _toolbar = 0f;
+	private readonly PopupList<BoneNode> _boneList;
+	
 	
 	public CameraWindow(
 		IEditorContext ctx,
@@ -41,6 +50,8 @@ public class CameraWindow : KtisisWindow {
 		this._fixedPos = fixedPos;
 		this._relativePos = relativePos;
 		this._toolbar = this._ctx.Config.Editor.UseToolbar? 0.1f : 0;
+		this._boneList = new PopupList<BoneNode>("##BoneList", this.DrawBoneSelect)
+			.WithSearch(BoneSearchPredicate);
 	}
 
 	private const TransformTableFlags TransformFlags = TransformTableFlags.Default | TransformTableFlags.UseAvailable;
@@ -79,7 +90,10 @@ public class CameraWindow : KtisisWindow {
 			this.DrawOrbitTarget(camera);
 
 			ImGui.Spacing();
-			this.DrawFixedPosition(camera);
+			if(!camera.IsTracking)
+				this.DrawFixedPosition(camera);
+			else 
+				this.DrawTracking(camera);
 			this.DrawRelativeOffset(camera);
 			ImGui.Spacing();
 			this.DrawAnglePan(camera);
@@ -89,11 +103,6 @@ public class CameraWindow : KtisisWindow {
 
 		ImGui.Spacing();
 		this.DrawSliders(camera);
-
-		using (ImRaii.Disabled(IsWork)) {
-			ImGui.Separator();
-			this.DrawTracking(camera);
-		}
 	}
 	
 	// Toggles
@@ -142,19 +151,58 @@ public class CameraWindow : KtisisWindow {
 
 		ImGui.SameLine();
 
-		var text = $"Orbiting: {target.GetNameOrFallback(this._ctx)}";
-		if (isFixed)
-			ImGui.Text(text);
-		else
-			ImGui.TextDisabled(text);
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsToCircle, $"Turn camera tracking {(camera.IsTracking ? "off" : "on")}", iconColor: camera.IsTracking ? *ImGui.GetStyleColorVec4(ImGuiCol.TabActive) : *ImGui.GetStyleColorVec4(ImGuiCol.Text))) {
+			camera.IsTracking = !camera.IsTracking;
+		}
 		
-		ImGui.SameLine(0, 0);
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - (Buttons.CalcSize()) - this._toolbar); //fuckin good enough
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("camera_edit.offset.to_target"))) {
-			var gameObject = (GameObject*)target.Address;
-			var drawObject = gameObject->DrawObject;
-			if (drawObject != null)
-				camera.RelativeOffset = drawObject->Object.Position -  gameObject->Position;
+		ImGui.SameLine();
+		
+		if (!camera.IsTracking) {
+			var text = $"Orbiting: {target.GetNameOrFallback(this._ctx)}";
+			if (isFixed)
+				ImGui.Text(text);
+			else
+				ImGui.TextDisabled(text);
+
+			ImGui.SameLine(0, 0);
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - (Buttons.CalcSize()) - this._toolbar); //fuckin good enough
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("camera_edit.offset.to_target"))) {
+				var gameObject = (GameObject*)target.Address;
+				var drawObject = gameObject->DrawObject;
+				if (drawObject != null)
+					camera.RelativeOffset = drawObject->Object.Position - gameObject->Position;
+			}
+		} else {
+			ImGui.Text($"Tracking mode: {camera.Tracking}");
+			ImGui.SameLine(0, 0);
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - (Buttons.CalcSize()) - this._toolbar);
+			var button = "";
+			TrackingMode next = TrackingMode.None;
+			switch (camera.Tracking) {
+				case TrackingMode.Follow:
+					button = "2";
+					next = TrackingMode.Pan;
+					break;
+				case TrackingMode.FollowAndPan:
+					button = "0";
+					next = TrackingMode.None;
+					break;
+				case TrackingMode.Pan:
+					button = "3";
+					next = TrackingMode.FollowAndPan;
+					break;
+				case TrackingMode.None:
+					button = "1";
+					next = TrackingMode.Follow;
+					break;
+			}
+			if (ImGui.Button(button, Vector2.Create(Buttons.CalcSize()))){
+				camera.Tracking = next;
+			}
+			if(ImGui.IsItemHovered())
+				using (ImRaii.Tooltip()) {
+					ImGui.Text(next.ToString());
+				}
 		}
 	}
 	
@@ -222,36 +270,47 @@ public class CameraWindow : KtisisWindow {
 			ptr->Pan = panDeg * MathHelpers.Deg2Rad;
 		}
 	}
-	
-	private unsafe void DrawTracking(EditorCamera camera) { 
-		using (var _ = ImRaii.Disabled(camera.Target.Count == 0))
-		{
-			ImGui.SetCursorPosX(Buttons.CalcSize() + (ImGui.GetStyle().ItemSpacing.X * 2));
-			if (camera.Target.Count > 0) {
-				ImGui.TextUnformatted($"Tracking Bones: ");
-				foreach (var bone in camera.Target) {
-					ImGui.SameLine();
-					ImGui.TextUnformatted($"{bone.Name} ");
-				}
-				
-			}
-		
-			
-			ImGui.SetCursorPosX(Buttons.CalcSize() + (ImGui.GetStyle().ItemSpacing.X * 2));
-			ImGui.AlignTextToFramePadding();
-			ImGui.TextUnformatted("Tracking Mode:");
-			ImGui.SameLine();
-			using var _combo = ImRaii.Combo("", Enum.GetName(camera.Tracking));
-			if (!_combo.Success) return;
-			var curMode = camera.Tracking;
-			foreach (TrackingMode mode in Enum.GetValues(curMode.GetType())) {
-				if (ImGui.Selectable($"{Enum.GetName(mode)}", curMode == mode))
-					camera.Tracking = mode;
-			}
-			
+
+	private unsafe void DrawTracking(EditorCamera camera) {
+
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Add bone to track")) {
+			this._boneList.Open();
 		}
+		ImGui.SameLine();
+		using (ImRaii.Disabled(this._ctx.Selection.GetSelected().Count(e => e.Type == EntityType.BoneNode) > 0)) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Repeat, "Track selected bones")) {
+				camera.Target.Clear();
+				foreach (var sceneEntity in this._ctx.Selection.GetSelected().Where(e => e.Type == EntityType.BoneNode)) {
+					var bone = (BoneNode)sceneEntity;
+					camera.Target.Add(bone);
+				}
+			}
+		}
+
+		ImGui.SameLine();
+		ImGui.Text($"Bones tracked:");
+		if (camera.Target.Count == 0) {
+			ImGui.SameLine();
+			ImGui.Text("None");
+		}
+		else if (camera.Target.Count == 1) {
+			ImGui.SameLine();
+			ImGui.Text($"{camera.Target[0].Name} on {camera.Target[0].Root.Name}");
+		} else {
+			ImGui.SameLine();
+			ImGui.Text("Multiple"); //build a hover for this
+		}
+
 	}
+	
+	private static bool BoneSearchPredicate(BoneNode bone, string query)
+		=> bone.Name.Contains(query, StringComparison.InvariantCultureIgnoreCase);
 		
+	
+	private bool DrawBoneSelect(BoneNode bone, bool isFocus) {
+		var result = ImGui.Button($"{bone.Name} - {bone.Root.Name}" );
+		return result;
+	}
 	// Sliders
 
 	private unsafe void DrawSliders(EditorCamera camera) {

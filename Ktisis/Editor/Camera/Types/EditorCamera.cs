@@ -48,6 +48,7 @@ public class EditorCamera {
 
 	public List<BoneNode> Target { get; set; }
 	public TrackingMode Tracking = TrackingMode.None;
+	public bool IsTracking = false;
 	
 	public unsafe GameCamera* GameCamera => (GameCamera*)this.Address;
 	public unsafe GameCameraEx* Camera => (GameCameraEx*)this.Address;
