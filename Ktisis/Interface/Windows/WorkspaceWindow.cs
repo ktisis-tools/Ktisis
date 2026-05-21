@@ -75,7 +75,12 @@ public class WorkspaceWindow : KtisisWindow {
 		
 		this.DrawSceneTreeButtons();
 	}
-	
+
+	public override void OnClose() {
+		this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
+		base.OnClose();
+	}
+
 	// Context buttons
 
 	protected private void DrawContextButtons() {
@@ -138,4 +143,5 @@ public class WorkspaceWindow : KtisisWindow {
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
 	}
+	
 }
