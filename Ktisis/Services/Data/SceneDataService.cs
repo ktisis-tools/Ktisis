@@ -228,38 +228,27 @@ public class SceneDataService {
 			if (loadCameras) {
 				var defaultCam =   this._ctx!.Cameras.GetCameras().First(c => c.IsDefault);
 				this._ctx!.Cameras.SetCurrent(defaultCam);
-				foreach (var sceneCamera in this._ctx!.Cameras.GetCameras()) {
-					if (sceneCamera != defaultCam) {
-						this._ctx!.Cameras.SetCurrent(sceneCamera);
+
+				var diff = scene.Cameras.Count - this._ctx!.Cameras.GetCameras().Count();
+
+				if (diff > 0) {
+					for(var i = 0; i < diff; i++)
+						this._ctx!.Cameras.Create(setActive: false);
+				} else if( diff < 0 ) {
+					diff *= -1;
+					for (var i = 0; i < diff; i++)
 						this._ctx!.Cameras.DeleteCurrent();
-					}
 				}
-				foreach (var camera in scene.Cameras) {
-					EditorCamera ktCam;
-					if (camera.IsActive) {
-						ktCam = this._ctx!.Cameras.Current!;
-						ktCam!.ResetState();
-					} else {
-						ktCam = this._ctx!.Cameras.Create(setActive: false);
-					}
-					
-					if (camera.isDelmited) {
-						ktCam.FixedPosition = camera.FixedPosition + sceneOrigin;
-					} else {
-						unsafe {
-							ktCam.Camera->Angle.X = camera.Angle.Value.X;
-							ktCam.Camera->Angle.Y = camera.Angle.Value.Y;
-							ktCam.Camera->Distance = camera.Angle.Value.Z;
-						}
-					}
-					ktCam.OrthographicZoom = camera.OrthographicZoom;
-					ktCam.Flags = (CameraFlags)camera.Flags;
-					if (camera.OrbitTarget != 0) {
-						ktCam.OrbitTarget = (this._idMap[camera.OrbitTarget].Actor.ObjectIndex);
-						this._idMap[camera.OrbitTarget].Actor.SetGPoseTarget();
-					}
-					
-				}
+
+
+
+				var currentCam = scene.Cameras.First(c => c.IsActive);
+				var currentKtCam = this._ctx.Cameras.Current;
+
+				var zipped = scene.Cameras.Where(c=> !c.IsActive).Zip(this._ctx.Cameras.GetCameras().Where(c=> c != currentKtCam));
+				ApplyCamera(currentCam, currentKtCam, sceneOrigin);
+				foreach (var set in zipped) 
+					ApplyCamera(set.First, set.Second, sceneOrigin);
 				
 			}
 			
@@ -282,8 +271,28 @@ public class SceneDataService {
 				}
 			}
 	}
+
+	public void ApplyCamera(SceneFile.CameraInfo camera, EditorCamera ktCam, Vector3 sceneOrigin) {
+		if (camera.isDelmited) {
+			ktCam.FixedPosition = camera.FixedPosition + sceneOrigin;
+		} else {
+			unsafe {
+				ktCam.Camera->Angle.X = camera.Angle.Value.X;
+				ktCam.Camera->Angle.Y = camera.Angle.Value.Y;
+				ktCam.Camera->Distance = camera.Angle.Value.Z;
+			}
+		}
+		ktCam.OrthographicZoom = camera.OrthographicZoom;
+		ktCam.Flags = (CameraFlags)camera.Flags;
+		if (camera.OrbitTarget != 0) {
+			ktCam.OrbitTarget = (this._idMap[camera.OrbitTarget].Actor.ObjectIndex);
+			this._idMap[camera.OrbitTarget].Actor.SetGPoseTarget();
+		}
+					
+	}
 	
 	//Map data
+	
 	public unsafe uint GetCurrentMapID() => AgentMap.Instance()->CurrentMapId;
 	
 	//Actor functions
