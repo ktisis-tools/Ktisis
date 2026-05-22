@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
@@ -96,6 +98,10 @@ public class CharacterManager : ICharacterManager {
 	}
 
 	private unsafe static void SetDrawObjectPosition(CSGameObject* gameObj) {
+		if (gameObj->ObjectKind == ObjectKind.Companion && ((Character*)gameObj)->Effects.CurrentFloatHeight > 0) {
+			gameObj->DrawObject->Position = gameObj->Position;
+			gameObj->Position.Y += ((Character*)gameObj)->Effects.CurrentFloatHeight;
+		}
 		if (gameObj->DrawOffset.Equals(Vector3.Zero)) {
 			gameObj->DrawObject->Position = gameObj->Position;
 			return;
