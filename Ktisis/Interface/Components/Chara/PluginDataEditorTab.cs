@@ -24,6 +24,8 @@ public class PluginDataEditorTab {
 	private readonly IpcManager _ipcManager;
 	private readonly IEditorContext _ctx;
 	private readonly IDalamudPluginInterface _dpi;
+
+	private ActorEntity? _actor;
 	
 	private readonly IList<IPCProfileDataTuple> _cPlusProfiles = new List<IPCProfileDataTuple>();
 	private readonly Dictionary<Guid, string> _penumbraCollections = new Dictionary<Guid, string>();
@@ -39,6 +41,7 @@ public class PluginDataEditorTab {
 		this._ctx = ctx;
 		this._ipcManager = ctx.Plugin.Ipc;
 		this._dpi = dpi;
+		this._actor = null;
 		
 		if (this._ipcManager.IsCustomizeActive)
 			this._cPlusProfiles = this._ipcManager.GetCustomizeIpc().GetProfileList().OrderBy(x => x.Name).ToList();
@@ -47,36 +50,42 @@ public class PluginDataEditorTab {
 		if (this._ipcManager.IsGlamourerActive)
 			this._glamourerCollections = this._ipcManager.GetGlamourerIpc().GetDesignList();
 	}
-	public void Draw() {
-		var actor = (ActorEntity)this._ctx.Selection.GetSelected().FirstOrDefault(a => a.Type == EntityType.Actor);
-		if (actor == null) {
+
+	public void SetTarget(ActorEntity actor) => this._actor = actor;
+	
+	public unsafe void Draw() {
+		if (this._actor == null) {
 			ImGui.Text("Please select an actor!");
 			return;
 		}
-		
-		if (ImGui.Button("Load MCDF")) {
-			this._ctx.Interface.OpenMcdfFile(path => this.ImportMcdf(actor, path));
-		}
-		
-		ImGui.SameLine();
-		if (ImGui.Button("Revert all IPC data")) {
-			actor.AssignedProfile = null;
-			this._ctx.Characters.Mcdf.Revert(actor.Actor);
-		}
 
+		using (ImRaii.Disabled(!this._ipcManager.IsAnyMcdfActive && this._actor.GetHuman() != null)) {
+			if (ImGui.Button("Load MCDF")) 
+				this._ctx.Interface.OpenMcdfFile(path => this.ImportMcdf(this._actor, path));
+			if(ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+				using (ImRaii.Tooltip())
+					ImGui.Text("A MCDF or 'Mare Character Data File' contains all of a players Penumbra, Glamourer\nand CustomizePlus data that is applied to them at the time of the capture.");
+			ImGui.SameLine();
+			if (ImGui.Button("Revert all IPC data")) {
+				this._actor.AssignedProfile = null;
+				this._ctx.Characters.Mcdf.Revert(this._actor.Actor);
+			}
+			
+		}
+		
 		if (this._ipcManager.IsCustomizeActive) {
 			Separators.SeparatorText("Customize+", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
-			this.DrawCustomizePlus(actor);
+			this.DrawCustomizePlus(this._actor);
 		}
 
 		if (this._ipcManager.IsPenumbraActive) {
 			Separators.SeparatorText("Penumbra", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
-			this.DrawPenumbra(actor);
+			this.DrawPenumbra(this._actor);
 		} 
 
 		if (this._ipcManager.IsGlamourerActive) {
 			Separators.SeparatorText("Glamourer", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
-			this.DrawGlamourer(actor);
+			this.DrawGlamourer(this._actor);
 		} 
 	}
 

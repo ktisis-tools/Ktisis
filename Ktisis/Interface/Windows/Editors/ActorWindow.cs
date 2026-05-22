@@ -66,6 +66,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 		this._anim.Editor = this.Animation.GetAnimationEditor(target);
+		this._ipc.SetTarget(target);
 		this._anim.ClearPoseExpression();
 	}
 
