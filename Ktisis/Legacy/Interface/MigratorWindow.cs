@@ -56,7 +56,7 @@ public class MigratorWindow : KtisisWindow {
 		
 		Icons.DrawIcon(FontAwesomeIcon.ExclamationCircle);
 		ImGui.SameLine();
-		ImGui.Text("You have installed a development version of Ktisis.");
+		ImGui.Text("You have installed the testing version of Ktisis.");
 		
 		ImGui.Spacing();
 		
@@ -67,7 +67,7 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.SameLine(0, style.ItemInnerSpacing.X);
 		ImGui.Text(" - it is primarily a testbed for new features.");
 		
-		ImGui.Text("Only the bare essentials have been implemented at this stage so a lot of UI/UX will be missing.");
+		ImGui.Text("In the coming months, it will officially replace the v0.2/Alpha version.");
 		
 		ImGui.Spacing();
 		ImGui.Separator();
@@ -79,26 +79,17 @@ public class MigratorWindow : KtisisWindow {
 		
 		ImGui.Spacing();
 		
-		ImGui.Text("This is not the full feature set of the final release.");
 		ImGui.Text(
-			"The following will be introduced at a later point during testing:\n" +
-			"	• Everything missing from the current release\n" +
-			"	• Editing spawned weapons and props\n" +
-			"	• Equipment model manipulation\n" +
-			"	• Importing and exporting light presets\n" +
-			"	• Animation controls\n" +
-			"	• Copy & paste\n"
+			"This is not the final settings migrator - in the full release:\n" +
+			"	• Applicable v0.2 settings may be converted to v0.3 counterparts\n" +
+			"	• More info will be provided on changed functions and new locations for v0.2 features\n" +
+			"	• Our wiki and discord will be linked for further support\n"
 		);
 		
 		ImGui.Spacing();
-		ImGui.Text("Undo and redo is currently only implemented for object transforms.");
-		ImGui.Text("Support is planned for edits made to objects, such as appearance changes.");
-		ImGui.Spacing();
-		ImGui.Text("Character appearance edits may also conflict with changes made by Glamourer.");
-		ImGui.Text("I hope to discuss with its developer about implementing an IPC to resolve this.");
-		ImGui.Spacing();
-		ImGui.Text("Many configuration options will also be missing, which will be added during the testing period.");
-		ImGui.Text("Your current configuration will not be carried over into this version.");
+		ImGui.Text("If you're coming to Ktisis from v0.2, we recommend trying the Toolbar UI.");
+		ImGui.Text("This alternate UI mode consolidates the many new windows & editors into one master window to save on screenspace.");
+		ImGui.Text("Thank you for bearing with us and for your ongoing support!");
 		
 		ImGui.Spacing();
 		ImGui.Separator();
