@@ -20,6 +20,7 @@ public class TrayIcon : KtisisWindow {
 	private ITextureProvider _tex;
 	private IEditorContext _ctx;
 	private bool _holding = false;
+	private Vector2? _offset = null;
 	
 	public TrayIcon(
 		ITextureProvider tex,
@@ -52,25 +53,27 @@ public class TrayIcon : KtisisWindow {
 
 		
 		var file = "simple";
-		if (ImGui.IsAnyItemHovered() && !this._holding)
+		if (ImGui.IsWindowHovered() && !this._holding)
 			file = "colored";
 		var icon = this._tex.GetFromManifestResource(assembly, $"{name}.Data.Images.icon_{file}.png");
 
-		ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, Vector2.Create(64f));
 		var io = ImGui.GetIO();
+		ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, Vector2.Create(64f));
 
-		if(ImGui.IsAnyItemHovered()){
+		if(ImGui.IsWindowHovered()){
 			if (io.MouseReleased[0] && io.MouseDownDurationPrev[0] < 0.5f) {
 				this._ctx.Interface.ToggleWorkspaceWindow();
 				this.Close();
 			} else if(io.MouseDown[0] && io.MouseDownDuration[0] > 0.5f) {
+				this._offset ??= ImGui.GetMousePos() - ImGui.GetWindowPos();
 				this._holding = true;
 			}
 		}
 		if (this._holding) {
 			if (!io.MouseReleased[0]) {
-				ImGui.SetWindowPos(io.MousePos.Sub(32));
+				ImGui.SetWindowPos(ImGui.GetMousePos() - this._offset.Value);
 			} else {
+				this._offset = null;
 				this._holding = false;
 			}
 		}

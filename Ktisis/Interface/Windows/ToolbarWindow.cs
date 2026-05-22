@@ -160,7 +160,8 @@ public class ToolbarWindow : KtisisWindow {
 
 	public override void OnClose() {
 		base.OnClose();
-		this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
+		if(this._ctx.Config.Editor.OpenTrayOnWorkspaceClose)
+			this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
 		this._gui.Remove(this);
 	}
 	
