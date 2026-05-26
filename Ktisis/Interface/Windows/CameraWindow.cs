@@ -277,10 +277,10 @@ public class CameraWindow : KtisisWindow {
 			this._boneList.Open();
 		}
 		ImGui.SameLine();
-		using (ImRaii.Disabled(this._ctx.Selection.GetSelected().Count(e => e.Type == EntityType.BoneNode) > 0)) {
+		using (ImRaii.Disabled(this._ctx.Selection.GetSelected().Count(e => e.Type is EntityType.BoneNode) == 0)) {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Repeat, "Track selected bones")) {
 				camera.Target.Clear();
-				foreach (var sceneEntity in this._ctx.Selection.GetSelected().Where(e => e.Type == EntityType.BoneNode)) {
+				foreach (var sceneEntity in this._ctx.Selection.GetSelected().Where(e => e.Type is EntityType.BoneNode)) {
 					var bone = (BoneNode)sceneEntity;
 					camera.Target.Add(bone);
 				}
