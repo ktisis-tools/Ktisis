@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -37,6 +38,7 @@ public class CameraWindow : KtisisWindow {
 	private const string WindowId = "KtisisCameraEditor";
 	private float _toolbar = 0f;
 	private readonly PopupList<BoneNode> _boneList;
+	private BoneNode? _selected;
 	
 	
 	public CameraWindow(
@@ -286,6 +288,22 @@ public class CameraWindow : KtisisWindow {
 				}
 			}
 		}
+		if (this._boneList.IsOpen) {
+			List<BoneNode> list = new List<BoneNode>();
+
+			foreach (var e in this._ctx.Scene.Children) {
+				list.AddRange(e.Recurse().OfType<BoneNode>().Where(e => e.Type is EntityType.BoneNode));
+			}
+			this._boneList.Draw(list, out this._selected);
+		}
+		if (this._selected != null) {
+			if(camera.Target.Contains(this._selected))
+				camera.Target.Remove(this._selected);
+			else
+				camera.Target.Add(this._selected);
+			this._selected = null;
+		}
+			
 
 		ImGui.SameLine();
 		ImGui.Text($"Bones tracked:");
@@ -299,6 +317,16 @@ public class CameraWindow : KtisisWindow {
 		} else {
 			ImGui.SameLine();
 			ImGui.Text("Multiple"); //build a hover for this
+			if(ImGui.IsItemHovered())
+				using (ImRaii.Tooltip()) {
+					var groups = camera.Target.GroupBy(t => t.Root.Name);
+					foreach (var g in groups) {
+						Separators.SeparatorText(g.Key, textPosition:.5f);
+						foreach (var node in g) {
+							ImGui.Text(node.Name);
+						}
+					}
+				}
 		}
 
 	}
