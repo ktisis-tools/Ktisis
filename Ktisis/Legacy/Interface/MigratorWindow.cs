@@ -64,6 +64,16 @@ public class MigratorWindow : KtisisWindow {
 		var v2text = "Ktisis v3 was built to ensure that going forward, we can bring new features to our users, you, more easily.\nThis required rewriting nearly all of the code blah blah blah you can skip this and use the defaults if you want by pressing skip.";
 		var v3text = "A lot has changed since we started working on v3, and as we've worked on Ktisis we've changed and improved some features.\nThese settings below have new defaults, you can keep your old settings if you wish to, or you can use the new recommended settings.";
 		ImGui.Text($"Thank you for using Ktisis! v3 is now our stable version.\n{(this._migrator.WasUserOnV2? v2text : v3text)}");
+		if (!this._migrator.WasUserOnV2) {
+			ImGui.Spacing();
+			ImGui.Text("Since you were using the v3 beta, we suggest you disable receive testing versions.\n");
+			ImGui.AlignTextToFramePadding();
+			ImGui.Text("You can open the plugin installer with this button");
+			ImGui.SameLine();
+			if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
+				this._dpi.OpenPluginInstallerTo(searchText: "Ktisis");
+			}
+		}
 	}
 
 	public void DrawV3() {
