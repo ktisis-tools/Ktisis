@@ -6,10 +6,13 @@ using System.Text.Json.Serialization;
 using Dalamud.Configuration;
 using Dalamud.Plugin;
 
+using FFXIVClientStructs;
+
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Interface;
 using Ktisis.Legacy.Interface;
+using Ktisis.Localization;
 using Ktisis.Services;
 using Ktisis.Services.Game;
 
@@ -23,6 +26,10 @@ public class LegacyMigrator {
 	private readonly GuiManager _gui;
 	private readonly IDalamudPluginInterface _dpi;
 	private readonly ConfigManager _cfg;
+	internal LegacyConfig.Configuration? _legacyCfg;
+	public readonly LocaleManager Locale;
+	
+	public bool WasUserOnV2;
 
 	public event Action? OnConfirmed;
 	
@@ -30,41 +37,40 @@ public class LegacyMigrator {
 		GPoseService gpose,
 		GuiManager gui,
 		IDalamudPluginInterface dpi,
-		ConfigManager cfg
+		ConfigManager cfg,
+		LocaleManager localeManager
 	) {
 		this._gpose = gpose;
 		this._gui = gui;
 		this._dpi = dpi;
 		this._cfg = cfg;
+		this.Locale = localeManager;
 	}
 	
 	// Setup
 
-	public void Setup() {
-		Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
+	public void Setup(bool v2 = true) {
+		this.WasUserOnV2 = v2;
+		if(v2)
+			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
+		else 
+			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
+		if (this.WasUserOnV2) {
+			var configurations = new PluginConfigurations(new DirectoryInfo(this._dpi.GetPluginConfigDirectory()).Parent.ToString());
+			this._legacyCfg = configurations?.LoadForType<LegacyConfig.Configuration>("Ktisis");
+		}
+		this._cfg.Load();
 		this._gpose.StateChanged += this.OnGPoseStateChanged;
 		this._gpose.Subscribe();
-		this.MigrateConfig();
 	}
 
 	private void OnGPoseStateChanged(object sender, bool state) {
 		if (!state || this._confirmed) return;
-		var window = this._gui.GetOrCreate<MigratorWindow>(this);
+		var window = this._gui.GetOrCreate<MigratorWindow>(this, this._cfg);
 		window.Open();
 	}
 
-	private void MigrateConfig() {
-		var configurations = new PluginConfigurations(new DirectoryInfo(this._dpi.GetPluginConfigDirectory()).Parent.ToString());
-		var legacyConfig = configurations?.LoadForType<LegacyConfig.Configuration>("Ktisis");
-
-		if (legacyConfig != null) {
-			this._cfg.Load();
-			if (this._cfg.GetConfigFileExists()) {
-				this._cfg.File.AutoSave.Enabled = legacyConfig.EnableAutoSave ?? this._cfg.File.AutoSave.Enabled;
-				this._cfg.File.Editor.IncognitoPlayerNames = !legacyConfig.DisplayCharName ?? this._cfg.File.Editor.IncognitoPlayerNames;
-				this._cfg.File.Categories.ShowNsfwBones = !legacyConfig.CensorNsfw ?? this._cfg.File.Categories.ShowNsfwBones;
-			}
-		}
+	internal void MigrateConfig() {
 	}
 
 

@@ -48,10 +48,15 @@ public class PluginContext : IPluginContext {
 	}
 
 	public void Initialize() {
-		if (this.Config.GetConfigFileExists())
-			this.Setup();
+		if (this.Config.GetConfigFileExists()) {
+			this.Config.Load();
+			if(this.Config.File.Version < 12)
+				this.SetupLegacy(false);
+			else
+				this.Setup();
+		}
 		else
-			this.SetupLegacy();
+			this.SetupLegacy(true);
 		this.Gui.Initialize();
 	}
 
@@ -64,8 +69,8 @@ public class PluginContext : IPluginContext {
 		this.Gui.Locale.Initialize();
 	}
 
-	private void SetupLegacy() {
-		this._legacy.Setup();
+	private void SetupLegacy(bool v2) {
+		this._legacy.Setup(v2);
 		this._legacy.OnConfirmed += this.Setup;
 	}
 }
