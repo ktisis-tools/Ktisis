@@ -51,15 +51,15 @@ public class LegacyMigrator {
 
 	public void Setup(bool v2 = true) {
 		this.WasUserOnV2 = v2;
-		if(v2)
-			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
-		else 
-			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
-		if (this.WasUserOnV2) {
-			var configurations = new PluginConfigurations(new DirectoryInfo(this._dpi.GetPluginConfigDirectory()).Parent.ToString());
-			this._legacyCfg = configurations?.LoadForType<LegacyConfig.Configuration>("Ktisis");
-		}
 		this._cfg.Load();
+		if (v2) {
+			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
+			var configurations = new PluginConfigurations(new DirectoryInfo(this._dpi.GetPluginConfigDirectory()).Parent.ToString() );
+			this._legacyCfg = configurations.LoadForType<LegacyConfig.Configuration>("Ktisis");
+			this.MigrateConfig();
+		} else 
+			Ktisis.Log.Warning("User is migrating from Ktisis v0.3 beta, activating legacy mode.");
+
 		this._gpose.StateChanged += this.OnGPoseStateChanged;
 		this._gpose.Subscribe();
 	}
@@ -70,9 +70,20 @@ public class LegacyMigrator {
 		window.Open();
 	}
 
-	internal void MigrateConfig() {
+	private void MigrateConfig() {
+		var cfg = this._cfg.File;
+		
+		cfg.Editor.IncognitoPlayerNames = this._legacyCfg?.DisplayCharName ?? cfg.Editor.IncognitoPlayerNames;
+		cfg.Categories.ShowNsfwBones = !this._legacyCfg?.CensorNsfw ?? cfg.Categories.ShowNsfwBones;
+		cfg.Keybinds.Enabled = this._legacyCfg?.EnableKeybinds ?? cfg.Keybinds.Enabled;
 	}
 
+	internal void v3Skip() {
+		var cfg = this._cfg.File;
+
+		cfg.Keybinds.Enabled = true;
+		cfg.Editor.ToggleOpenWindows = true;
+	}
 
 	// Begin from UI
 

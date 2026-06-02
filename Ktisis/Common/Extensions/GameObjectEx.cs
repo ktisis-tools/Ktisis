@@ -21,6 +21,8 @@ using Ktisis.Core.Types;
 using Ktisis.Core.Attributes;
 using Ktisis.Actions.Types;
 
+using ObjectType = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.ObjectType;
+
 namespace Ktisis.Common.Extensions;
 
 public static class GameObjectEx {

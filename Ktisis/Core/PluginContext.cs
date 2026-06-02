@@ -1,3 +1,5 @@
+using Dalamud.Plugin;
+
 using Ktisis.Actions;
 using Ktisis.Core.Attributes;
 using Ktisis.Core.Types;
@@ -18,6 +20,7 @@ public class PluginContext : IPluginContext {
 	private readonly DllResolver _dll;
 	private readonly ContextManager _context;
 	private readonly LegacyMigrator _legacy;
+	private readonly IDalamudPluginInterface _dpi;
 	
 	public ActionService Actions { get; }
 	public ConfigManager Config { get; }
@@ -34,12 +37,14 @@ public class PluginContext : IPluginContext {
 		ContextManager context,
 		GuiManager gui,
 		IpcManager ipc,
-		LegacyMigrator legacy
+		LegacyMigrator legacy,
+		IDalamudPluginInterface dpi
 	) {
 		this._cmd = cmd;
 		this._dll = dll;
 		this._context = context;
 		this._legacy = legacy;
+		this._dpi = dpi;
 		
 		this.Actions = actions;
 		this.Config = cfg;
@@ -54,9 +59,12 @@ public class PluginContext : IPluginContext {
 				this.SetupLegacy(false);
 			else
 				this.Setup();
+		} else {
+			if(this._dpi.GetPluginConfig() != null)
+				this.SetupLegacy(true);
+			else 
+				this.Setup();
 		}
-		else
-			this.SetupLegacy(true);
 		this.Gui.Initialize();
 	}
 

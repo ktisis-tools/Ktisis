@@ -20,6 +20,7 @@ public class MigratorWindow : KtisisWindow {
 	private readonly IDalamudPluginInterface _dpi;
 	private readonly LegacyMigrator _migrator;
 	private readonly V2MigratorWindow? _v2Window;
+	private readonly ConfigManager _cfg;
 
 	public MigratorWindow(
 		IDalamudPluginInterface dpi,
@@ -30,13 +31,14 @@ public class MigratorWindow : KtisisWindow {
 		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings
 	) {
 		this.SizeConstraints = new WindowSizeConstraints() {
-			MinimumSize = new Vector2(400, 50)
+			MinimumSize = new Vector2(500, 50)
 		};
 		this._dpi = dpi;
 		this._migrator = migrator;
 		if (this._migrator.WasUserOnV2) {
 			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, cfg);
 		}
+		this._cfg = cfg;
 
 		this.ShowCloseButton = false;
 		this.RespectCloseHotkey = false;
@@ -48,7 +50,7 @@ public class MigratorWindow : KtisisWindow {
 	
 	private const uint ColorYellow = 0xFF00FFFF;
 	
-	private const int WaitTime = 10;
+	private const int WaitTime = 15;
 
 	private bool CanBegin => this._timer.Elapsed.TotalSeconds >= WaitTime || this._elapsed;
 
@@ -65,8 +67,9 @@ public class MigratorWindow : KtisisWindow {
 	}
 
 	public void DrawV3() {
-
-		
+		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty, "Toggle open Windows", string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, "Use Ktisis Toolbar", string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Keybinds.Enabled, true, string.Empty, "Enable Hotkeys", string.Empty);
 	}
 	
 	/* TODO: V3 changed settings
@@ -106,16 +109,35 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.Separator();
 		ImGui.Spacing();
-		var text = this.CanBegin ? "Begin" : $"Begin ({Math.Ceiling((decimal)WaitTime - this._timer.Elapsed.Seconds)}s)";
-		ImGui.SetCursorPosX( ImGui.GetContentRegionAvail().X - ImGui.CalcTextSize(text).X - ImGui.CalcTextSize("Next").X - (ImGui.GetStyle().CellPadding.X * 2) - .1f);
-		if (this._migrator.WasUserOnV2 && this._page < 3) {
+		var text = this.CanBegin ? "Skip and use defaults" : $"Skip and use defaults ({Math.Ceiling((decimal)WaitTime - this._timer.Elapsed.Seconds)}s)";
+
+		if (this._page == 0) {
+			using (var _ = ImRaii.Disabled(!this.CanBegin && !(ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyDown(ImGuiKey.ModShift)))) {
+				ImGui.SameLine();
+				if (ImGui.Button(text)) {
+					if(!this._migrator.WasUserOnV2)
+						this._migrator.v3Skip();
+					this._migrator.Begin();
+					this.Close();
+				}
+			}
+		}
+		
+		if ((this._migrator.WasUserOnV2 && this._page < 3) || (!this._migrator.WasUserOnV2 && this._page == 0)) {
+			ImGui.SameLine();
+			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize("Next").X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			if (ImGui.Button("Next")) {
 				this._page++;
 			}
 		}
-		
-		using (var _ = ImRaii.Disabled(!this.CanBegin && !(ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyDown(ImGuiKey.ModShift)))) {
+
+		if ((this._migrator.WasUserOnV2 && this._page == 3) || (!this._migrator.WasUserOnV2 && this._page == 1)) {
+			ImGui.SameLine();
+			ImGui.SetCursorPosX(ImGui.GetWindowWidth() - ImGui.CalcTextSize("Finish").X - (ImGui.GetStyle().CellPadding.X * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
+			text = "Finish";
 			if (ImGui.Button(text)) {
+				if(!this._migrator.WasUserOnV2)
+					this._migrator.v3Skip();
 				this._migrator.Begin();
 				this.Close();
 			}
