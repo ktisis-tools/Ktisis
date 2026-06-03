@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Numerics;
-using System.Threading.Tasks;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
@@ -46,9 +45,7 @@ public class MigratorWindow : KtisisWindow {
 	
 	private readonly Stopwatch _timer = new();
 	private bool _elapsed;
-	private int _page = 0;
-	
-	private const uint ColorYellow = 0xFF00FFFF;
+	private int _page;
 	
 	private const int WaitTime = 15;
 
@@ -92,8 +89,7 @@ public class MigratorWindow : KtisisWindow {
 			this._timer.Stop();
 			this._elapsed = true;
 		}
-
-	
+		
 		switch (this._page) {
 			case 0:
 				this.DrawIntroPage();
