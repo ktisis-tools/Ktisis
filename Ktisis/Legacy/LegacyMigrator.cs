@@ -73,10 +73,24 @@ public class LegacyMigrator {
 	private void MigrateConfig() {
 		var cfg = this._cfg.File;
 		
+		//The big 3 so to speak
 		cfg.Editor.IncognitoPlayerNames = this._legacyCfg?.DisplayCharName ?? cfg.Editor.IncognitoPlayerNames;
 		cfg.Categories.ShowNsfwBones = !this._legacyCfg?.CensorNsfw ?? cfg.Categories.ShowNsfwBones;
 		cfg.Keybinds.Enabled = this._legacyCfg?.EnableKeybinds ?? cfg.Keybinds.Enabled;
-
+		
+		
+		//File
+		if (this._legacyCfg?.SavedDirPaths?.Count > 0) {
+			foreach (var path in this._legacyCfg?.SavedDirPaths!) {
+				cfg.File.CustomLocations.Add((path.Key, path.Value));
+			}
+		}
+	
+		//Input
+		cfg.Keybinds.BlockTargetLeftClick = this._legacyCfg?.DisableChangeTargetOnLeftClick ?? cfg.Keybinds.BlockTargetLeftClick;
+		cfg.Keybinds.BlockTargetRightClick = this._legacyCfg?.DisableChangeTargetOnRightClick ?? cfg.Keybinds.BlockTargetRightClick;
+		
+		//Overlay
 		cfg.Overlay.DrawLines = this._legacyCfg?.DrawLinesOnSkeleton ?? cfg.Overlay.DrawLines;
 		cfg.Overlay.DrawLinesGizmo = this._legacyCfg?.DrawLinesWithGizmo ?? cfg.Overlay.DrawLinesGizmo;
 		cfg.Overlay.DrawDotsGizmo = this._legacyCfg?.DrawDotsWithGizmo ?? cfg.Overlay.DrawDotsGizmo;
@@ -84,8 +98,30 @@ public class LegacyMigrator {
 		cfg.Overlay.LineOpacity = this._legacyCfg?.SkeletonLineOpacity ?? cfg.Overlay.LineOpacity;
 		cfg.Overlay.LineOpacityUsing = this._legacyCfg?.SkeletonLineOpacityWhileUsing ?? cfg.Overlay.LineOpacityUsing;
 		cfg.Overlay.DotRadius = this._legacyCfg?.SkeletonDotRadius ?? cfg.Overlay.DotRadius;
+		
+		//Gizmo
+		cfg.Gizmo.AllowAxisFlip = this._legacyCfg?.AllowAxisFlip ?? cfg.Gizmo.AllowAxisFlip;
 
+		//Autosave
 		cfg.AutoSave.Enabled = this._legacyCfg?.EnableAutoSave ?? cfg.AutoSave.Enabled;
+		cfg.AutoSave.Interval = this._legacyCfg?.AutoSaveInterval ?? cfg.AutoSave.Interval;
+		cfg.AutoSave.Count = this._legacyCfg?.AutoSaveCount ?? cfg.AutoSave.Count;
+		cfg.AutoSave.FilePath = this._legacyCfg?.AutoSavePath ?? cfg.AutoSave.FilePath;
+		cfg.AutoSave.FolderFormat = this._legacyCfg?.AutoSaveFormat ?? cfg.AutoSave.FolderFormat;
+		cfg.AutoSave.ClearOnExit = this._legacyCfg?.ClearAutoSavesOnExit ?? cfg.AutoSave.ClearOnExit;
+		
+		//Camera
+		cfg.Editor.WorkcamMoveSpeed = this._legacyCfg?.FreecamMoveSpeed ?? cfg.Editor.WorkcamMoveSpeed;
+		cfg.Editor.WorkcamSens = this._legacyCfg?.FreecamSensitivity ?? cfg.Editor.WorkcamSens;
+		cfg.Editor.WorkcamFastMulti = this._legacyCfg?.FreecamShiftMuli ?? cfg.Editor.WorkcamFastMulti;
+		cfg.Editor.WorkcamSlowMulti = this._legacyCfg?.FreecamCtrlMuli ?? cfg.Editor.WorkcamSlowMulti;
+		cfg.Editor.WorkcamVertMulti = this._legacyCfg?.FreecamUpDownMuli ?? cfg.Editor.WorkcamVertMulti;
+		
+		//Keybinds
+		//ngl fuck this
+		
+		//Offsets TODO:Validate
+		cfg.Offsets.BoneOffsets = this._legacyCfg?.CustomBoneOffset ?? cfg.Offsets.BoneOffsets;
 
 	}
 
@@ -104,6 +140,7 @@ public class LegacyMigrator {
 		if (this._confirmed) return;
 		this._confirmed = true;
 		this._gpose.StateChanged -= this.OnGPoseStateChanged;
+		this._cfg.File.Version = 12;
 		this._gpose.Reset();
 		this.OnConfirmed?.Invoke();
 	}

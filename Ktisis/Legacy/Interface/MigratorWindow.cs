@@ -110,6 +110,12 @@ public class MigratorWindow : KtisisWindow {
 			case 3:
 				this._v2Window?.DrawOverlay();
 				break;
+			case 4:
+				this._v2Window?.DrawAutoSave();
+				break;
+			case 5:
+				this._v2Window?.DrawCamera();
+				break;
 		}
 		ImGui.Spacing();
 		this.DrawBottomBar();
@@ -133,7 +139,7 @@ public class MigratorWindow : KtisisWindow {
 			}
 		}
 		
-		if ((this._migrator.WasUserOnV2 && this._page < 3) || (!this._migrator.WasUserOnV2 && this._page == 0)) {
+		if ((this._migrator.WasUserOnV2 && this._page < 5) || (!this._migrator.WasUserOnV2 && this._page == 0)) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize("Next").X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			if (ImGui.Button("Next")) {
@@ -141,7 +147,7 @@ public class MigratorWindow : KtisisWindow {
 			}
 		}
 
-		if ((this._migrator.WasUserOnV2 && this._page == 3) || (!this._migrator.WasUserOnV2 && this._page == 1)) {
+		if ((this._migrator.WasUserOnV2 && this._page == 5) || (!this._migrator.WasUserOnV2 && this._page == 1) || (!this._migrator.WasUserOnV2 && this._cfg.File.Keybinds.Enabled && this._cfg.File.Editor.ToggleOpenWindows)) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth() - ImGui.CalcTextSize("Finish").X - (ImGui.GetStyle().CellPadding.X * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			text = "Finish";

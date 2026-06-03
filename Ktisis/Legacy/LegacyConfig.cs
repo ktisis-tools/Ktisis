@@ -19,73 +19,71 @@ public class LegacyConfig {
 		public bool? DisplayCharName { get; set; }
 		public bool? CensorNsfw { get; set; }
 
-		public bool? TransformTableDisplayMultiplierInputs { get; set; } = false;
-		public float? TransformTableBaseSpeedPos { get; set; } = 0.0005f;
-		public float? TransformTableBaseSpeedRot { get; set; } = 0.1f;
-		public float? TransformTableBaseSpeedSca { get; set; } = 0.001f;
-		public float? TransformTableModifierMultCtrl { get; set; } = 0.1f;
-		public float? TransformTableModifierMultShift { get; set; } = 10f;
-		public int? TransformTableDigitPrecision { get; set; } = 3;
-		public float? CustomWidthMarginDebug { get; set; } = 0.1f;
+		public bool? TransformTableDisplayMultiplierInputs { get; set; }
+		public float? TransformTableBaseSpeedPos { get; set; }
+		public float? TransformTableBaseSpeedRot { get; set; }
+		public float? TransformTableBaseSpeedSca { get; set; }
+		public float? TransformTableModifierMultCtrl { get; set; }
+		public float? TransformTableModifierMultShift { get; set; }
+		public int? TransformTableDigitPrecision { get; set; }
 
 		// Input
-		public bool? EnableKeybinds { get; set; } = false;
+		public bool? EnableKeybinds { get; set; }
 
-		public Dictionary<Input.Purpose, List<VirtualKey>> KeyBinds { get; set; } = new();
+		public Dictionary<Input.Purpose, List<VirtualKey>> KeyBinds { get; set; }
 
-		public bool? DisableChangeTargetOnLeftClick { get; set; } = false;
-		public bool? DisableChangeTargetOnRightClick { get; set; } = false;
+		public bool? DisableChangeTargetOnLeftClick { get; set; }
+		public bool? DisableChangeTargetOnRightClick { get; set; }
 
 		// Overlay
 
-		public bool? OrderBoneListByDistance { get; set; } = false;
+		public bool? OrderBoneListByDistance { get; set; }
 
-		public bool? DrawLinesOnSkeleton { get; set; } = true;
-		public bool? DrawLinesWithGizmo { get; set; } = true;
-		public bool? DrawDotsWithGizmo { get; set; } = true;
+		public bool? DrawLinesOnSkeleton { get; set; }
+		public bool? DrawLinesWithGizmo { get; set; }
+		public bool? DrawDotsWithGizmo { get; set; }
 
-		public float? SkeletonLineThickness { get; set; } = 2.0F;
-		public float? SkeletonLineOpacity { get; set; } = 0.95F;
-		public float? SkeletonLineOpacityWhileUsing { get; set; } = 0.15F;
-		public float? SkeletonDotRadius { get; set; } = 3.0F;
+		public float? SkeletonLineThickness { get; set; }
+		public float? SkeletonLineOpacity { get; set; }
+		public float? SkeletonLineOpacityWhileUsing { get; set; }
+		public float? SkeletonDotRadius { get; set; }
 
 		//AutoSave
-		public bool? EnableAutoSave { get; set; } = false;
-		public int? AutoSaveInterval { get; set; } = 60;
-		public int? AutoSaveCount { get; set; } = 5;
+		public bool? EnableAutoSave { get; set; }
+		public int? AutoSaveInterval { get; set; }
+		public int? AutoSaveCount { get; set; }
 		public string? AutoSavePath { get; set; } 
-		public string? AutoSaveFormat { get; set; } = "AutoSave - %Date% %Time%";
-		public bool? ClearAutoSavesOnExit { get; set; } = false;
+		public string? AutoSaveFormat { get; set; }
+		public bool? ClearAutoSavesOnExit { get; set; }
 		
 		
-		public bool? AllowAxisFlip { get; set; } = true;
-		
-		
-		public Dictionary<string, bool>? ShowBoneByCategory = new();
-		public bool? LinkBoneCategoryColors { get; set; } = false;
-		public Vector4? LinkedBoneCategoryColor { get; set; } = new(1.0F, 1.0F, 1.0F, 0.5647059F);
-		public Dictionary<string, Vector4>? BoneCategoryColors = new();
-		
-		
-		public bool? PositionWeapons { get; set; } = true;
+		public bool? AllowAxisFlip { get; set; }
 
-		public bool? EnableParenting { get; set; } = true;
 
-		public bool? LinkedGaze { get; set; } = true;
+		public Dictionary<string, bool>? ShowBoneByCategory;
+		public bool? LinkBoneCategoryColors { get; set; }
+		public Vector4? LinkedBoneCategoryColor { get; set; }
+		public Dictionary<string, Vector4>? BoneCategoryColors;
+		
+		
+		public bool? PositionWeapons { get; set; }
 
-		public bool? ShowToolbar { get; set; } = false;
+		public bool? EnableParenting { get; set; }
 
-		public Dictionary<string, string>? SavedDirPaths { get; set; } = new();
+		public bool? LinkedGaze { get; set; }
+		
+
+		public Dictionary<string, string>? SavedDirPaths { get; set; }
 
 		// Camera
 
-		public float? FreecamMoveSpeed { get; set; } = 0.1f;
+		public float? FreecamMoveSpeed { get; set; } 
 
-		public float? FreecamShiftMuli { get; set; } = 2.5f;
-		public float? FreecamCtrlMuli { get; set; } = 0.25f;
-		public float? FreecamUpDownMuli { get; set; } = 1f;
+		public float? FreecamShiftMuli { get; set; }
+		public float? FreecamCtrlMuli { get; set; }
+		public float? FreecamUpDownMuli { get; set; }
 
-		public float? FreecamSensitivity { get; set; } = 0.215f;
+		public float? FreecamSensitivity { get; set; } 
 
 		public Keybind? FreecamForward { get; set; }
 		public Keybind? FreecamLeft { get; set; } 
@@ -98,13 +96,18 @@ public class LegacyConfig {
 		public Keybind? FreecamSlow { get; set; } 
 
 		// Data memory
-		public Dictionary<string, Dictionary<string, Vector3>>? CustomBoneOffset { get; set; } = new();
+		public Dictionary<string, Dictionary<string, Vector3>>? CustomBoneOffset { get; set; } 
 		
 		
 	}
 
 	[Serializable]
-	public class Keybind { }
+	public class Keybind {
+		public VirtualKey[] Keys = {};
+
+		public Keybind(params VirtualKey[] keys) => Keys = keys;
+
+	}
 
 	
 	[Serializable]

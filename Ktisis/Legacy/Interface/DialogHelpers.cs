@@ -52,6 +52,29 @@ public static class DialogHelpers {
 		}
 	}
 	
+	public static void BuildDialog(ref int newSet, int newDefault, string tooltipString, string newSettingName, string secondaryText) {
+		ImGui.AlignTextToFramePadding();
+		ImGui.Text(newSettingName);
+		if(tooltipString != string.Empty)
+			DrawHint(tooltipString);//this._migrator.Locale.Translate(newSettingName)
+		var defaultText = $"Default: {newDefault}";
+		ImGui.SameLine(ImGui.GetContentRegionAvail().X - 80f - ImGui.CalcTextSize(defaultText).X - ImGui.GetStyle().FramePadding.X);
+		ImGui.TextDisabled(defaultText);
+		ImGui.SameLine();
+		ImGui.PushItemWidth(80f);
+		ImGui.InputInt($"##{newSettingName}", ref newSet);
+		ImGui.PopItemWidth();
+
+		if (secondaryText != string.Empty) {
+			ImGui.Indent();
+			using (ImRaii.TextWrapPos(ImGui.GetContentRegionMax().X * .65f)) {
+				ImGui.TextWrapped(secondaryText);
+			}
+		
+			ImGui.Unindent();
+		}
+	}
+	
 	public static void DrawHint(string tooltipString) {
 		ImGui.SameLine();
 		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
