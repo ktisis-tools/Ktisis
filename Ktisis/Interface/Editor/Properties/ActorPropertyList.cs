@@ -316,6 +316,26 @@ public class ActorPropertyList : ObjectPropertyList {
 		var style = ImGui.GetStyle();
 		var spacing = style.ItemInnerSpacing.X;
 
+		var anyEnabled = pose.IkController.GetGroups().Any(p => p.group.IsEnabled);
+		var allEnabled = pose.IkController.GetGroups().All(p => p.group.IsEnabled);
+
+		using (ImRaii.Disabled(allEnabled)) {
+			if (ImGui.Button("Enable All")) {
+				foreach (var group in pose.IkController.GetGroups()) {
+					group.group.IsEnabled = true;
+				}
+			}
+		}
+		ImGui.SameLine();
+		using (ImRaii.Disabled(!anyEnabled)) {
+			if (ImGui.Button("Disable All")) {
+				foreach (var group in pose.IkController.GetGroups()) {
+					group.group.IsEnabled = false;
+				}
+				
+			}
+		}
+		
 		foreach (var (name, group) in pose.IkController.GetGroups()) {
 			if (!TryGetGroupEndNode(pose, group, out var node))
 				continue;
