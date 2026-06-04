@@ -1,4 +1,5 @@
 using System;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -65,10 +66,22 @@ public class MigratorWindow : KtisisWindow {
 			ImGui.Spacing();
 			ImGui.Text("Since you were using the v3 beta, we suggest you disable receive testing versions.\n");
 			ImGui.AlignTextToFramePadding();
-			ImGui.Text("You can open the plugin installer with this button");
+			ImGui.Text("You can open the plugin installer with this button.");
 			ImGui.SameLine();
 			if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 				this._dpi.OpenPluginInstallerTo(searchText: "Ktisis");
+			}
+		} else {
+			ImGui.Spacing();
+			ImGui.AlignTextToFramePadding();
+			ImGui.Text("To find out more about the changes between Ktisis v2 and v3, you can click the button to open our wiki page.");
+			ImGui.SameLine();
+			if(Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
+				var _ = new ProcessStartInfo{
+					FileName = "https://docs.ktisis.tools/migration/",
+					UseShellExecute = true
+				};
+				Process.Start(_);
 			}
 		}
 	}
