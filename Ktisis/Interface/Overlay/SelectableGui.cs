@@ -75,9 +75,12 @@ public class SelectableGui {
 
 		var items = frame.GetItems().ToList();
 
+		var clip = WindowOverlaps();
+		
 		var isHovering = false;
 		foreach (var item in items) {
 			var display = this.Config.GetEntityDisplay(item.Entity);
+			
 
 			var isSelect = item.Entity.IsSelected;
 			item.IsHovered = display.Mode switch {
@@ -85,10 +88,11 @@ public class SelectableGui {
 				DisplayMode.Icon => this.DrawIconDot(drawList, item.ScreenPos, display, isSelect),
 				_ => false
 			};
-
-			isHovering |= item.IsHovered;
+			
+			if(!CheckPosClip(item.ScreenPos, clip))
+				isHovering |= item.IsHovered;
 		}
-
+		
 		if (!isHovering) return false;
 		items.RemoveAll(item => !item.IsHovered);
 		return this.DrawSelectWindow(items, out clicked, gizmo);
@@ -250,8 +254,31 @@ public class SelectableGui {
 		}
 	}
 	
-	// Item selection info
+	
+	private unsafe List<ImRect> WindowOverlaps() {
+		List<ImRect> windowList = new List<ImRect>();
+		var viewport = ImGui.GetWindowViewport();
+		
+		foreach (var window in ImGui.GetCurrentContext().Windows.Where(w=>(w.WasActive))) {
+			if(window.Pos != Vector2.Zero)
+				windowList.Add(new ImRect(min:window.Pos, max:window.Size+window.Pos));
+		}
+		return windowList;
+	}
 
+	private bool CheckPosClip(Vector2 position, List<ImRect> clipRects) {
+		bool retVal = false;
+		
+		foreach (var rect in clipRects.Where(w=>w.Min != Vector2.Zero)) {
+			var imRect = rect;
+			if (imRect.Contains(position))
+				retVal = true;
+		}
+		return retVal;
+	}
+
+	// Item selection info
+	
 	private class ItemSelect : IItemSelect {
 		public string Name => this.Entity.Name;
 		
