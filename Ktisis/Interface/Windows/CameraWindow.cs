@@ -182,7 +182,7 @@ public class CameraWindow : KtisisWindow {
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - (Buttons.CalcSize()) - this._toolbar);
 			var button = "";
 			TrackingMode next = TrackingMode.None;
-			switch (camera.Tracking) {
+			switch (camera.Tracking) {			//replace with FontAwesome chars once in Dalamud
 				case TrackingMode.Follow:
 					button = "2";
 					next = TrackingMode.Pan;
@@ -281,8 +281,9 @@ public class CameraWindow : KtisisWindow {
 			this._boneList.Open();
 		}
 		ImGui.SameLine();
+		
 		using (ImRaii.Disabled(this._ctx.Selection.GetSelected().Count(e => e.Type is EntityType.BoneNode) == 0)) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Repeat, "Track selected bones")) {
+			if (Buttons.IconButton(FontAwesomeIcon.Repeat)) {
 				camera.Target.Clear();
 				foreach (var sceneEntity in this._ctx.Selection.GetSelected().Where(e => e.Type is EntityType.BoneNode)) {
 					var bone = (BoneNode)sceneEntity;
@@ -290,6 +291,11 @@ public class CameraWindow : KtisisWindow {
 				}
 			}
 		}
+		if(ImGui.IsItemHovered())
+			using (ImRaii.Tooltip()) {
+				ImGui.Text("Track selected bones");
+			}
+
 		if (this._boneList.IsOpen) {
 			List<BoneNode> list = new List<BoneNode>();
 
