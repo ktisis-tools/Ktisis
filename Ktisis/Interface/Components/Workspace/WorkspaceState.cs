@@ -30,7 +30,7 @@ public class WorkspaceState {
 		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
 		
 		var id = ImGui.GetID("SceneState_Frame");
-		using(ImRaii.ChildFrame(id, new Vector2(-1, height)))
+		using (ImRaii.ChildFrame(id, new Vector2(-1, height)))
 		{
 			this.DrawContext();
 			this.DrawOverlayToggle();
