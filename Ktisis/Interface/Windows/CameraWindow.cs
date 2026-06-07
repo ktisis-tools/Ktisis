@@ -11,6 +11,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 
 using GLib.Popups;
 using GLib.Widgets;
@@ -39,6 +40,7 @@ public class CameraWindow : KtisisWindow {
 	private float _toolbar = 0f;
 	private readonly PopupList<BoneNode> _boneList;
 	private BoneNode? _selected;
+	private BoneNode? _previouslyDrawn;
 	
 	
 	public CameraWindow(
@@ -274,7 +276,7 @@ public class CameraWindow : KtisisWindow {
 	}
 
 	private unsafe void DrawTracking(EditorCamera camera) {
-
+		this._previouslyDrawn = null;
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Add bone to track")) {
 			this._boneList.Open();
 		}
@@ -336,7 +338,14 @@ public class CameraWindow : KtisisWindow {
 		
 	
 	private bool DrawBoneSelect(BoneNode bone, bool isFocus) {
-		var result = ImGui.Button($"{bone.Name} - {bone.Root.Name}" );
+		if (this._previouslyDrawn?.Root.Name != bone.Root.Name) {
+			Separators.SeparatorText(bone.Root?.Name);
+			Separators.SeparatorText(bone.Parent?.Name, textPosition: 0.5f, height:Separators.LineHeight.Middle);
+		}else if (this._previouslyDrawn?.Parent?.Name != bone.Parent?.Name) {
+			Separators.SeparatorText(bone.Parent?.Name, textPosition: 0.5f, height:Separators.LineHeight.Middle);
+		}
+		this._previouslyDrawn = bone;
+		var result = ImGui.Selectable($"{bone.Name}" );
 		return result;
 	}
 	// Sliders
