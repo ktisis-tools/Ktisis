@@ -13,6 +13,8 @@ using GLib.Widgets;
 
 using Ktisis.Data.Config;
 using Ktisis.Interface.Types;
+using Ktisis.Legacy.Interface;
+using Ktisis.Localization;
 
 namespace Ktisis.Legacy.Interface;
 
@@ -21,11 +23,13 @@ public class MigratorWindow : KtisisWindow {
 	private readonly LegacyMigrator _migrator;
 	private readonly V2MigratorWindow? _v2Window;
 	private readonly ConfigManager _cfg;
+	private readonly LocaleManager Locale;
 
 	public MigratorWindow(
 		IDalamudPluginInterface dpi,
 		LegacyMigrator migrator,
-		ConfigManager cfg
+		ConfigManager cfg,
+		LocaleManager locale
 	) : base(
 		"Ktisis v3 Setup",
 		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings
@@ -35,8 +39,9 @@ public class MigratorWindow : KtisisWindow {
 		};
 		this._dpi = dpi;
 		this._migrator = migrator;
+		this.Locale = locale;
 		if (this._migrator.WasUserOnV2) {
-			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, cfg);
+			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, cfg, this.Locale);
 		}
 		this._cfg = cfg;
 
@@ -59,14 +64,13 @@ public class MigratorWindow : KtisisWindow {
 	}
 
 	public void DrawIntroPage() {
-		var v2text = "Ktisis v3 was built to ensure that going forward, we can bring new features to our users, you, more easily.\nThis required rewriting nearly all of the code blah blah blah you can skip this and use the defaults if you want by pressing skip.";
-		var v3text = "A lot has changed since we started working on v3, and as we've worked on Ktisis we've changed and improved some features.\nThese settings below have new defaults, you can keep your old settings if you wish to, or you can use the new recommended settings.";
-		ImGui.Text($"Thank you for using Ktisis! v3 is now our stable version.\n{(this._migrator.WasUserOnV2? v2text : v3text)}");
+
+		ImGui.Text($"{this.Locale.Translate("migrator.mainWindow.main_Desc")}{(this._migrator.WasUserOnV2? this.Locale.Translate("migrator.mainWindow.v2.main_Desc") : this.Locale.Translate("migrator.mainWindow.v3.main_Desc"))}");
 		if (!this._migrator.WasUserOnV2) {
 			ImGui.Spacing();
-			ImGui.Text("Since you were using the v3 beta, we suggest you disable receive testing versions.\n");
+			ImGui.Text(this.Locale.Translate("migrator.mainWindow.v3.testing"));
 			ImGui.AlignTextToFramePadding();
-			ImGui.Text("You can open the plugin installer with this button.");
+			ImGui.Text(this.Locale.Translate("migrator.mainWindow.v3.installer"));
 			ImGui.SameLine();
 			if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 				this._dpi.OpenPluginInstallerTo(searchText: "Ktisis");
@@ -74,7 +78,7 @@ public class MigratorWindow : KtisisWindow {
 		} else {
 			ImGui.Spacing();
 			ImGui.AlignTextToFramePadding();
-			ImGui.Text("To find out more about the changes between Ktisis v2 and v3, you can click the button to open our wiki page.");
+			ImGui.Text(this.Locale.Translate("migrator.mainWindow.v2.wiki"));
 			ImGui.SameLine();
 			if(Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 				var _ = new ProcessStartInfo{
@@ -87,16 +91,11 @@ public class MigratorWindow : KtisisWindow {
 	}
 
 	public void DrawV3() {
-		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty, "Toggle open Windows", string.Empty);
-		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, "Use Ktisis Toolbar", string.Empty);
-		DialogHelpers.BuildDialog(ref this._cfg.File.Keybinds.Enabled, true, string.Empty, "Enable Hotkeys", string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty,this.Locale.Translate("migrator.v3.openWindowToggle") , string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, this.Locale.Translate("migrator.v3.toolbar"), string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Keybinds.Enabled, true, string.Empty, this.Locale.Translate("migrator.v3.keybinds"), string.Empty);
 	}
 	
-	/* TODO: V3 changed settings
-	 * AutoSaveConfig.OnDisable = false?
-	 * ToggleOpenWindows = true
-	 * InputConfig.Enabled = false
-	 */
 	public override void Draw() {
 		if (!this._elapsed && this.CanBegin) {
 			this._timer.Stop();
@@ -134,7 +133,7 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.Separator();
 		ImGui.Spacing();
-		var text = this.CanBegin ? "Skip and use defaults" : $"Skip and use defaults ({Math.Ceiling((decimal)WaitTime - this._timer.Elapsed.Seconds)}s)";
+		var text = this.CanBegin ? this.Locale.Translate("migrator.mainWindow.skip") : $"{this.Locale.Translate("migrator.mainWindow.skip")} ({Math.Ceiling((decimal)WaitTime - this._timer.Elapsed.Seconds)}s)";
 
 		if (this._page == 0) {
 			using (var _ = ImRaii.Disabled(!this.CanBegin && !(ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyDown(ImGuiKey.ModShift)))) {
@@ -148,15 +147,13 @@ public class MigratorWindow : KtisisWindow {
 			}
 		}
 		
-		if ((this._migrator.WasUserOnV2 && this._page < 5) || (!this._migrator.WasUserOnV2 && this._page == 0)) {
+		if ((this._migrator.WasUserOnV2 && this._page < 5) || (!this._migrator.WasUserOnV2 && this._page == 0) || (!this._migrator.WasUserOnV2 && !this._cfg.File.Keybinds.Enabled && !this._cfg.File.Editor.ToggleOpenWindows)) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize("Next").X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			if (ImGui.Button("Next")) {
 				this._page++;
 			}
-		}
-
-		if ((this._migrator.WasUserOnV2 && this._page == 5) || (!this._migrator.WasUserOnV2 && this._page == 1) || (!this._migrator.WasUserOnV2 && this._cfg.File.Keybinds.Enabled && this._cfg.File.Editor.ToggleOpenWindows)) {
+		}else if((this._migrator.WasUserOnV2 && this._page == 5) || (!this._migrator.WasUserOnV2 && this._page == 1) || (!this._migrator.WasUserOnV2 && this._cfg.File.Keybinds.Enabled && this._cfg.File.Editor.ToggleOpenWindows)) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth() - ImGui.CalcTextSize("Finish").X - (ImGui.GetStyle().CellPadding.X * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			text = "Finish";

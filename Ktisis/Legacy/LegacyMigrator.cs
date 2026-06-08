@@ -52,6 +52,7 @@ public class LegacyMigrator {
 	public void Setup(bool v2 = true) {
 		this.WasUserOnV2 = v2;
 		this._cfg.Load();
+		this.Locale.Initialize();
 		if (v2) {
 			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
 			var configurations = new PluginConfigurations(new DirectoryInfo(this._dpi.GetPluginConfigDirectory()).Parent.ToString() );
@@ -66,7 +67,7 @@ public class LegacyMigrator {
 
 	private void OnGPoseStateChanged(object sender, bool state) {
 		if (!state || this._confirmed) return;
-		var window = this._gui.GetOrCreate<MigratorWindow>(this, this._cfg);
+		var window = this._gui.GetOrCreate<MigratorWindow>(this, this._cfg, this.Locale);
 		window.Open();
 	}
 

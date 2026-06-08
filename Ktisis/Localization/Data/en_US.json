@@ -471,6 +471,72 @@
 		}
 	},
 
+	"migrator": {
+		"mainWindow": {
+			"main_Desc": "Thank you for using Ktisis! v3 is now our stable version.\n",
+			"skip": "Skip and use defaults",
+			"v3": {
+				"main_Desc": "A lot has changed since we started working on v3, and as we've worked on Ktisis we've changed and improved some features.\nThese settings below have new defaults, you can keep your old settings if you wish to, or you can use the new recommended settings.",
+				"testing" : "Since you were using the v3 beta, we suggest you disable receive testing versions.\n",
+				"installer": "You can open the plugin installer with this button."
+			},
+			"v2": {
+				"main_Desc": "Ktisis v3 was built to ensure that going forward, we can bring new features to our users, you, more easily.\nThis required rewriting nearly all of the code blah blah blah you can skip this and use the defaults if you want by pressing skip.",
+				"wiki": "To find out more about the changes between Ktisis v2 and v3, you can click the button to open our wiki page."
+			}
+		},
+		"v3":{
+			"openWindowToggle": "Toggle open Windows",
+			"toolbar": "Use Ktisis Toolbar",
+			"keybinds": "Enable Hotkeys"
+			
+		},
+		"v2": {
+			"editor": {
+				"header": "Editor settings",
+				"nsfw": "Show NSFW Bones",
+				"nsfwTooltip": "v2 setting: Censor NSFW bones",
+				"incognito": "Incognito Mode",
+				"incognitoTooltip": "v2 setting: Hide Player Names",
+				"toolbar": "Use Ktisis Toolbar",
+				"toolbarSub": "This is recommended for v2 users for a more familiar UI"
+			},
+			"input": {
+				"header": "Input settings",
+				"keybinds": "Enable Keybinds",
+				"allowAxisFlip": "Flip axis to face camera",
+				"leftClick": "Disable GPose change target on left click",
+				"rightClick": "Disable GPose change target on right click"
+			},
+			"overlay": {
+				"header": "Overlay settings",
+				"drawLines": "Draw lines on skeleton",
+				"drawLinesGizmo": "Draw lines on skeleton while using gizmo",
+				"drawDotsGizmo": "Draw dots while using gizmo",
+				"lineThickness": "Line thickness",
+				"lineOpacity": "Line opacity",
+				"lineOpacityUsing": "Line opacity using",
+				"dotRadius": "Dot radius"
+			},
+			"autosave": {
+				"header": "Auto save settings",
+				"enabled": "Enabled",
+				"interval": "Interval",
+				"numToSave": "Number to save",
+				"clearOnExit": "Clear on Exit",
+				"autoOnDC": "Autosave on Disconnect"
+			},
+			"camera": {
+				"header": "Work Camera settings",
+				"sens": "Sensitivity",
+				"movSpeed": "Movement speed",
+				"fastMulti": "Fast Multiplier",
+				"slowMulti": "Slow Multiplier",
+				"vertMulti": "Vertical Multiplier"
+			}
+		}
+	},
+	
 	"bone": {
 		"n_root": "Root",
 		"n_hara": "Abdomen",
