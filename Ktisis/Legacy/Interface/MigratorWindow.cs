@@ -149,6 +149,7 @@ public class MigratorWindow : KtisisWindow {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize("Next").X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			if (ImGui.Button("Next")) {
+				this._migrator.MigrateConfig();
 				this._page++;
 			}
 		}else if((this._migrator.WasUserOnV2 && this._page == 5) || (!this._migrator.WasUserOnV2 && this._page == 1) || (!this._migrator.WasUserOnV2 && this._cfg.File.Keybinds.Enabled && this._cfg.File.Editor.ToggleOpenWindows)) {
@@ -156,8 +157,6 @@ public class MigratorWindow : KtisisWindow {
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth() - ImGui.CalcTextSize("Finish").X - (ImGui.GetStyle().CellPadding.X * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			text = "Finish";
 			if (ImGui.Button(text)) {
-				if(!this._migrator.WasUserOnV2)
-					this._migrator.v3Skip();
 				this._migrator.Begin();
 				this.Close();
 			}

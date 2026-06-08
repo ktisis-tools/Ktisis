@@ -57,7 +57,6 @@ public class LegacyMigrator {
 			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
 			var configurations = new PluginConfigurations(new DirectoryInfo(this._dpi.GetPluginConfigDirectory()).Parent.ToString() );
 			this._legacyCfg = configurations.LoadForType<LegacyConfig.Configuration>("Ktisis");
-			this.MigrateConfig();
 		} else 
 			Ktisis.Log.Warning("User is migrating from Ktisis v0.3 beta, activating legacy mode.");
 
@@ -71,7 +70,7 @@ public class LegacyMigrator {
 		window.Open();
 	}
 
-	private void MigrateConfig() {
+	internal void MigrateConfig() {
 		var cfg = this._cfg.File;
 		
 		//The big 3 so to speak
