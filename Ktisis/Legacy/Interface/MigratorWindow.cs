@@ -134,10 +134,8 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Separator();
 		ImGui.Spacing();
 		var text = this.CanBegin ? this.Locale.Translate("migrator.mainWindow.skip") : $"{this.Locale.Translate("migrator.mainWindow.skip")} ({Math.Ceiling((decimal)WaitTime - this._timer.Elapsed.Seconds)}s)";
-
 		if (this._page == 0) {
 			using (var _ = ImRaii.Disabled(!this.CanBegin && !(ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyDown(ImGuiKey.ModShift)))) {
-				ImGui.SameLine();
 				if (ImGui.Button(text)) {
 					if(!this._migrator.WasUserOnV2)
 						this._migrator.v3Skip();
