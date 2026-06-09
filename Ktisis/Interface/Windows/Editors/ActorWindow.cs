@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
+using Dalamud.Plugin;
 
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Characters.Types;
@@ -24,6 +25,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private readonly CustomizeEditorTab _custom;
 	private readonly EquipmentEditorTab _equip;
 	private readonly AnimationEditorTab _anim;
+	private readonly PluginDataEditorTab _ipc;
 
 	private IAnimationManager Animation => this.Context.Animation;
 	private ICharacterManager Manager => this.Context.Characters;
@@ -35,11 +37,13 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		CustomizeEditorTab custom,
 		EquipmentEditorTab equip,
 		AnimationEditorTab anim,
-		NpcSelect npcs
+		NpcSelect npcs,
+		IDalamudPluginInterface dpi
 	) : base($"Actor Editor###{WindowId}", ctx) {
 		this._custom = custom;
 		this._equip = equip;
 		this._anim = anim;
+		this._ipc = new PluginDataEditorTab(ctx, dpi);
 		this._npcs = npcs;
 		this._npcs.OnSelected += this.OnNpcSelect;
 	}
@@ -62,6 +66,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 		this._anim.Editor = this.Animation.GetAnimationEditor(target);
+		this._ipc.SetTarget(target);
 		this._anim.ClearPoseExpression();
 	}
 
@@ -87,6 +92,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		DrawTab("Animation", this._anim.Draw);
 		DrawTab("Appearance", this._custom.Draw);
 		DrawTab("Equipment", this._equip.Draw);
+		DrawTab("Plugins (IPC)", this._ipc.Draw);
 		DrawTab("Misc", this.DrawMisc);
 	}
 

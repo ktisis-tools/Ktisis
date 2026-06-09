@@ -1,3 +1,7 @@
+using Dalamud.Plugin.Services;
+
+using FFXIVClientStructs.FFXIV.Client.Game;
+
 using Ktisis.Actions;
 using Ktisis.Core.Attributes;
 using Ktisis.Core.Types;
@@ -18,6 +22,7 @@ public class PluginContext : IPluginContext {
 	private readonly DllResolver _dll;
 	private readonly ContextManager _context;
 	private readonly LegacyMigrator _legacy;
+	private readonly IFramework _framework;
 	
 	public ActionService Actions { get; }
 	public ConfigManager Config { get; }
@@ -34,12 +39,14 @@ public class PluginContext : IPluginContext {
 		ContextManager context,
 		GuiManager gui,
 		IpcManager ipc,
-		LegacyMigrator legacy
+		LegacyMigrator legacy,
+		IFramework framework
 	) {
 		this._cmd = cmd;
 		this._dll = dll;
 		this._context = context;
 		this._legacy = legacy;
+		this._framework = framework;
 		
 		this.Actions = actions;
 		this.Config = cfg;
@@ -53,6 +60,13 @@ public class PluginContext : IPluginContext {
 		else
 			this.SetupLegacy();
 		this.Gui.Initialize();
+		if (GameMain.IsInGPose()) {
+			this._framework.RunOnFrameworkThread(() => {
+				this._context.SetupEditor();
+				Ktisis.Log.Verbose("Setup onload");
+			});
+			this._context.Current?.Interface.ToggleWorkspaceWindow();
+		}
 	}
 
 	private void Setup() {
