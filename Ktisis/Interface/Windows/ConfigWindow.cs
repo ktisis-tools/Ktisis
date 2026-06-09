@@ -88,6 +88,7 @@ public class ConfigWindow : KtisisWindow {
 	// Open
 
 	public override void OnOpen() {
+		if (!this._cfg.GetConfigFileExists()) return; // bail if we're going to throw errors due to missing config
 		this._keybinds.Setup();
 		this._boneCategories.Setup();
 		this._presetEditor.Setup();
@@ -110,6 +111,11 @@ public class ConfigWindow : KtisisWindow {
 	}
 
 	public override void Draw() {
+		if (!this._cfg.GetConfigFileExists()) {
+			ImGui.Text("Please enter GPose to initialize Ktisis.");
+			return;
+		}
+
 		using var _table = ImRaii.Table("##ConfigTable", 2);
 		if (!_table.Success) return;
 		ImGui.TableSetupColumn("##tabs", ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.NoResize);
