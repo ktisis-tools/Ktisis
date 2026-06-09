@@ -106,6 +106,20 @@ public class SceneDataService {
 				var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
 				var poseFile = new EntityPoseConverter(chara.Pose!).SaveFile();
 				var defaultRotation = ((ActorEntity)chara).CsGameObject->Rotation;
+				var ipc = this._ctx.Plugin.Ipc;
+				Guid penumCollection = Guid.Empty;
+				Guid cPlus = Guid.Empty;
+				if (ipc.IsPenumbraActive && ((ActorEntity)chara).MCDF == null) {
+					var penum = ipc.GetPenumbraIpc().GetCollectionForObject(((ActorEntity)chara).Actor);
+					if (penum.Id != Guid.Empty) {
+						penumCollection = penum.Id;
+					}
+				}
+				if (ipc.IsCustomizeActive && ((ActorEntity)chara).MCDF == null && ((ActorEntity)chara).AssignedProfile != Guid.Empty) {
+					var assignedProfile = ((ActorEntity)chara).AssignedProfile;
+					if (assignedProfile != null) cPlus = (Guid)assignedProfile;
+				}
+				
 				
 				scene.Actors.Add(new SceneFile.ActorInfo() {
 					Chara = charaFile,
@@ -113,7 +127,9 @@ public class SceneDataService {
 					Location = location,
 					MCDF = this._ctx.Characters.Mcdf.LoadedMCDFPath(((ActorEntity)chara).Actor),
 					DefaultRotation = defaultRotation,
-					Index = ((ActorEntity)chara).Actor.ObjectIndex
+					Index = ((ActorEntity)chara).Actor.ObjectIndex,
+					PenumbraCollection = penumCollection,
+					CustomizePlus = cPlus
 				});
 
 			}
@@ -126,6 +142,7 @@ public class SceneDataService {
 					Light = lightFile,
 					Location = location,
 					Name = light.Name,
+					State = !light.IsHidden
 				};
 				scene.Lights.Add(lightObj);
 			}
@@ -221,6 +238,8 @@ public class SceneDataService {
 					_ = this._ctx.Scene.ApplyLightFile(light, loaded.Light);
 					loaded.Location.Position += sceneOrigin;
 					light.SetTransform(loaded.Location);
+					if(!loaded.State)
+						light.ToggleHidden();
 				}
 			}
 			
@@ -314,12 +333,24 @@ public class SceneDataService {
 			this._idMap.Add(actor.Index, a);
 			await this._framework.DelayTicks(15);
 			a.Name = actor.Chara.Nickname!;
+			var act = a.Actor;
+			if (actor.PenumbraCollection != Guid.Empty && this._ctx.Plugin.Ipc.IsPenumbraActive)
+				if(this._ctx.Plugin.Ipc.GetPenumbraIpc().GetCollections().ContainsKey(actor.PenumbraCollection))
+					this._ctx.Plugin.Ipc.GetPenumbraIpc().SetCollectionForObject(act, actor.PenumbraCollection);
+			
+			if (actor.CustomizePlus != Guid.Empty && this._ctx.Plugin.Ipc.IsCustomizeActive) {
+				var profile = this._ctx.Plugin.Ipc.GetCustomizeIpc().GetProfileByUniqueId(actor.CustomizePlus);
+				if (profile.Data != string.Empty) {
+					this._ctx.Plugin.Ipc.GetCustomizeIpc().SetTemporaryProfile(a.Actor.ObjectIndex, profile.Data);
+					a.AssignedProfile = actor.CustomizePlus;
+				}
+			}
+
 			this.SetupActorPosition(actor, a);
 			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
 			this._task?.Wait();
-			this._task =  this._ctx?.Posing.ApplyPoseFile(a.Pose!, actor.Pose, PoseMode.All,(PoseTransforms)0xF)!;
+			this._task = this._ctx?.Posing.ApplyPoseFile(a.Pose!, actor.Pose, PoseMode.All,(PoseTransforms)0xF)!;
 		});
-
 	}
 	
 	//TODO: The BattleChara should have the position set too, its what the camera orbit bases itself off of

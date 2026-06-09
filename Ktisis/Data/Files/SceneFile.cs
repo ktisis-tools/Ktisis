@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text.Json.Serialization;
 
+using Glamourer.Api.IpcSubscribers.Legacy;
+
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Scene.Modules;
@@ -29,21 +31,41 @@ public class SceneFile : JsonFile {
 	
 	[Serializable]
 	public struct ActorInfo {
+		public ActorInfo(PoseFile pose, CharaFile chara, Transform location, string mcdf, float defaultRotation, ushort index, Guid penumbraCollection, Guid customizePlus, AttachInfo? attach = null) {
+			Pose = pose;
+			Chara = chara;
+			Location = location;
+			MCDF = mcdf;
+			DefaultRotation = defaultRotation;
+			Index = index;
+			PenumbraCollection = penumbraCollection;
+			CustomizePlus = customizePlus;
+			Attach = attach;
+		}
 		public PoseFile Pose { get; set; }
 		public CharaFile Chara { get; set; }
 		public Transform Location { get; set; }
-		public String MCDF { get; set; }
+		public string MCDF { get; set; }
 		public float DefaultRotation { get; set; }
 		public ushort Index { get; set; }
-		
+		public Guid PenumbraCollection { get; set; } = Guid.Empty;
+		public Guid CustomizePlus { get; set; } = Guid.Empty;
 		public AttachInfo? Attach { get; set; }
 	}
 	
 	[Serializable]
 	public struct LightInfo {
+		public LightInfo(LightFile light, Transform location, string name, bool state, AttachInfo? attach = null) {
+			Light = light;
+			Location = location;
+			Name = name;
+			Attach = attach;
+			State = state;
+		}
 		public LightFile Light { get; set; }
 		public Transform Location { get; set; }
-		public String Name { get; set; }
+		public string Name { get; set; }
+		public bool State { get; set; } = true;
 		
 		public AttachInfo? Attach { get; set; }
 	}
