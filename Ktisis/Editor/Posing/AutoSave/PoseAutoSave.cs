@@ -23,6 +23,7 @@ public class PoseAutoSave : IDisposable {
 	private readonly IEditorContext _ctx;
 	private readonly IFramework _framework;
 	private readonly FormatService _format;
+	private readonly SceneDataService _sceneData;
 	
 	private IPosingManager Posing => this._ctx.Posing;
 	private ISceneManager Scene => this._ctx.Scene;
@@ -35,11 +36,13 @@ public class PoseAutoSave : IDisposable {
 	public PoseAutoSave(
 		IEditorContext ctx,
 		IFramework framework,
-		FormatService format
+		FormatService format,
+		SceneDataService sceneService
 	) {
 		this._ctx = ctx;
 		this._framework = framework;
 		this._format = format;
+		this._sceneData = sceneService;
 	}
 
 	public void Initialize(Configuration cfg) {
@@ -103,7 +106,8 @@ public class PoseAutoSave : IDisposable {
 			var file = new EntityPoseConverter(chara.Pose).SaveFile();
 			File.WriteAllText(path, serializer.Serialize(file));
 		}
-		
+
+		this._sceneData.WriteFile(folder + "\\autosave.ktscene");
 		Ktisis.Log.Verbose($"Prefix count: {this._prefixes.Count} max: {this._cfg.Count}");
 		while (this._prefixes.Count > this._cfg.Count)
 			this.DeleteOldest();

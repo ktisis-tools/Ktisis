@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+
 using Dalamud.Interface;
 using Dalamud.Utility;
 
@@ -14,9 +15,15 @@ using Ktisis.Data.Json;
 using Ktisis.Services.Meta;
 
 using DalamudFileManager = Dalamud.Interface.ImGuiFileDialog.FileDialogManager;
-
 namespace Ktisis.Interface;
 
+public enum DialogType {
+	Mcdf,
+	Pose,
+	Chara,
+	Other,
+	None
+}
 [Singleton]
 public class FileDialogManager {
 	private readonly ConfigManager _cfg;
@@ -26,19 +33,26 @@ public class FileDialogManager {
 	private readonly DalamudFileManager _fileManager = new();
 
 	public event Action<FileDialog>? OnOpenDialog;
-	
+	public event EventHandler<string>? OnSelectionChanged;
+	private DialogType _openDialog = DialogType.None;
+
 	public FileDialogManager(
 		ConfigManager cfg,
 		ImageDataProvider img
 	) {
 		this._cfg = cfg;
 		this._img = img;
+		this._fileManager.SelectionChanged += this.SelectionChange;
 	}
 	
 	// Initialization
 
+	private void SelectionChange(object? sender, string path) => this.OnSelectionChanged?.Invoke(sender, path);
 	public void Initialize() => this._img.Initialize();
 	public void Draw() => this._fileManager.Draw();
+
+	// We can use this to control our PreviewNode
+	public bool IsDialogOpen() => this._openDialog == DialogType.Pose;
 	
 	// Dialog state
 
@@ -61,9 +75,10 @@ public class FileDialogManager {
 	public void OpenFile(
 		string name,
 		Action<string> handler,
-		FileDialogOptions? options = null
+		FileDialogOptions? options = null,
+		DialogType type = DialogType.Other
 	) {
-		//
+		this._openDialog = type;
 		options ??= new FileDialogOptions();
 		this.PopulateOptions(options);
 
@@ -74,6 +89,7 @@ public class FileDialogManager {
 			name,
 			options.Filters,
 			(isOk, paths) => {
+				this._openDialog = DialogType.None;
 				if (!isOk) return;
 				
 				//this.SaveDialogState(sender);
@@ -83,21 +99,22 @@ public class FileDialogManager {
 			},
 			options.MaxOpenCount,
 			this._cfg.File.File.DefaultLocation == string.Empty? null : this._cfg.File.File.DefaultLocation,
-			true
+			false
 		);
 	}
 
 	public void OpenFile<T>(
 		string name,
 		Action<string, T> handler,
-		FileDialogOptions? options = null
+		FileDialogOptions? options = null,
+		DialogType type = DialogType.Other
 	) where T : JsonFile {
 		this.OpenFile(name, path => {
 			var content = File.ReadAllText(path);
 			if (Path.GetExtension(path).Equals(".cmp")) content = LegacyPoseHelpers.ConvertLegacyPose(content);
 			var file = this._serializer.Deserialize<T>(content);
 			if (file != null) handler.Invoke(path, file);
-		}, options);
+		}, options, type);
 	}
 
 	public void SaveFile(
@@ -170,7 +187,7 @@ public class FileDialogManager {
 				handler.Invoke(path);
 			},
 			this._cfg.File.File.DefaultLocation == string.Empty? null : this._cfg.File.File.DefaultLocation,
-			true
+			false
 		);
 	}
 	

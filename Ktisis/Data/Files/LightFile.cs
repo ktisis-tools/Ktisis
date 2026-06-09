@@ -12,7 +12,7 @@ namespace Ktisis.Data.Files;
 public class LightFile : JsonFile {
 	public new string FileExtension { get; set; } = ".ktlight";
 	public new string TypeName { get; set; } = "Ktisis Light";
-	public const int CurrentVersion = 1;
+	public const int CurrentVersion = 2;
 	public new int FileVersion { get; set; } = CurrentVersion;
 
 	public string? Nickname { get; set; } = null;
@@ -30,4 +30,5 @@ public class LightFile : JsonFile {
 	public float FalloffAngle { get; set; } = 0.0f;
 	public float Range { get; set; } = 0.0f;
 	public float CharaShadowRange { get; set; } = 0.0f;
+	public string? Gobo { get; set; }
 }
