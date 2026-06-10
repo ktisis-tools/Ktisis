@@ -22,14 +22,16 @@ public class TrayIcon : KtisisWindow {
 
 	private bool _holding;
 	private Vector2? _offset;
-
+	public readonly ImRaii.StyleDisposable WindowStyle = new();
+	public readonly ImRaii.ColorDisposable WindowColor = new();
+	
 	public TrayIcon(
 		ITextureProvider tex,
 		IEditorContext ctx,
 		GuiManager gui,
 		ImGuiWindowFlags flags = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoDocking
 	) : base("##TrayIcon", flags) {
-		this.Size = new Vector2(68, 68);
+		this.Size = new Vector2(64, 64);
 		this._tex = tex;
 		this._ctx = ctx;
 		this._gui = gui;
@@ -42,20 +44,33 @@ public class TrayIcon : KtisisWindow {
 
 	public override void PreDraw() {
 		base.PreDraw();
+		this.WindowStyle.Push(ImGuiStyleVar.WindowBorderSize, 0f);
+		this.WindowStyle.Push(ImGuiStyleVar.WindowPadding, Vector2.Zero);
+		this.WindowStyle.Push(ImGuiStyleVar.WindowBorderSize, 0f);
+		this.WindowStyle.Push(ImGuiStyleVar.FramePadding, Vector2.Zero);
+		this.WindowColor.Push(ImGuiCol.Button, 0x00000000);
+		this.WindowColor.Push(ImGuiCol.ButtonHovered, 0x00000000);
+		this.WindowColor.Push(ImGuiCol.ButtonActive, 0x00000000);
 		if (this._ctx is { IsGPosing: true, IsValid: true }) return;
 		this.Close();
 	}
+	public override void PostDraw() {
+		this.WindowColor.Dispose();
+		this.WindowStyle.Dispose();
+		base.PostDraw();
+	}
+
+	public override void OnClose() {
+		this.WindowColor.Dispose();
+		this.WindowStyle.Dispose();
+		base.OnClose();
+	}
 
 	public override void Draw() {
-		using var s1 = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
-		using var s2 = ImRaii.PushStyle(ImGuiStyleVar.WindowBorderSize, 0f);
-		using var s3 = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
-		using var c1 = ImRaii.PushColor(ImGuiCol.Button, 0x00000000);
-		using var c2 = ImRaii.PushColor(ImGuiCol.ButtonHovered, 0x00000000);
-		using var c3 = ImRaii.PushColor(ImGuiCol.ButtonActive, 0x00000000);
-
+		
 		var rightClick = false;
 		var hovered = ImGui.IsWindowHovered();
+		ImGui.SetCursorPos(Vector2.Zero);
 		if (hovered && !this._holding)
 			ImGui.ImageButton(this.ColoredIcon.GetWrapOrEmpty().Handle, Vector2.Create(64.0f));
 		else
@@ -103,5 +118,7 @@ public class TrayIcon : KtisisWindow {
 				this._holding = false;
 			}
 		}
+		this.WindowColor.Dispose();
+		this.WindowStyle.Dispose();
 	}
 }
