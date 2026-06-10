@@ -6,6 +6,7 @@ using FFXIVClientStructs;
 
 using GLib.Widgets;
 
+using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Localization;
 
@@ -25,6 +26,15 @@ public class V2MigratorWindow {
 		this._migrator = migrator;
 		this._cfg = cfg;
 		this.Locale = locale;
+	}
+	public void DrawIntro() {
+		ImGui.Text(this.Locale.Translate("migrator.mainWindow.v2.main_Desc"));
+		ImGui.Spacing();
+		ImGui.AlignTextToFramePadding();
+		ImGui.Text(this.Locale.Translate("migrator.mainWindow.v2.wiki"));
+		ImGui.SameLine();
+		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare))
+			GuiHelpers.OpenBrowser("https://docs.ktisis.tools/migration/");
 	}
 	public void DrawEditor() {
 		using var _ = ImRaii.PushId("Editor");

@@ -1,11 +1,15 @@
 using System;
 using System.IO;
+using System.Linq;
 
 using Dalamud.Configuration;
 using Dalamud.Plugin;
 
+using Ktisis.Actions.Binds;
+using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
+using Ktisis.Data.Config.Actions;
 using Ktisis.Interface;
 using Ktisis.Legacy.Interface;
 using Ktisis.Localization;
@@ -71,6 +75,7 @@ public class LegacyMigrator {
 		cfg.Categories.ShowNsfwBones = !this._legacyCfg?.CensorNsfw ?? cfg.Categories.ShowNsfwBones;
 		cfg.Keybinds.Enabled = this._legacyCfg?.EnableKeybinds ?? cfg.Keybinds.Enabled;
 
+		cfg.Editor.UseToolbar = true; // teehee
 
 		// File
 		if (this._legacyCfg?.SavedDirPaths?.Count > 0) {
@@ -111,11 +116,38 @@ public class LegacyMigrator {
 		cfg.Editor.WorkcamVertMulti = this._legacyCfg?.FreecamUpDownMuli ?? cfg.Editor.WorkcamVertMulti;
 
 		// Keybinds
-		// ngl fuck this
+		if(this._legacyCfg?.FreecamForward != null)
+			this.MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Forward"].Combo, this._legacyCfg?.FreecamForward!);
+		if(this._legacyCfg?.FreecamBack != null)
+			this.MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Back"].Combo, this._legacyCfg?.FreecamBack!);
+		if(this._legacyCfg?.FreecamRight != null)
+			this.MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Right"].Combo, this._legacyCfg?.FreecamRight!);
+		if(this._legacyCfg?.FreecamLeft != null)
+			this.MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Left"].Combo, this._legacyCfg?.FreecamLeft!);
+		if(this._legacyCfg?.FreecamUp != null)
+			this.MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Up"].Combo, this._legacyCfg?.FreecamUp!);
+		if(this._legacyCfg?.FreecamDown != null)
+			this.MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Down"].Combo, this._legacyCfg?.FreecamDown!);
+		if(this._legacyCfg?.FreecamFast != null)
+			this.MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Fast"].Combo, this._legacyCfg?.FreecamFast!);
+		if(this._legacyCfg?.FreecamSlow != null)
+			this.MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Slow"].Combo, this._legacyCfg?.FreecamSlow!);
+		
+		
+		
 
 		// Offsets TODO:Validate
 		cfg.Offsets.BoneOffsets = this._legacyCfg?.CustomBoneOffset ?? cfg.Offsets.BoneOffsets;
 
+	}
+
+	private void MigrateKeybind(ref KeyCombo newSetting, LegacyConfig.Keybind keybind) {
+		foreach (var key in keybind.Keys) {
+			if (KeyHelpers.IsModifierKey(key))
+				newSetting.AddModifier(key);
+			else
+				newSetting.Key = key;
+		}
 	}
 
 	internal void V3Skip() {
