@@ -134,6 +134,7 @@ public class LegacyMigrator {
 		this._confirmed = true;
 		this._gpose.StateChanged -= this.OnGPoseStateChanged;
 		this._cfg.File.Version = 12;
+		this._cfg.Save();
 		this._gpose.Reset();
 		this.OnConfirmed?.Invoke();
 	}
