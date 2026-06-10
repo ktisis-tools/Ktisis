@@ -59,6 +59,13 @@ public class TrayIcon : KtisisWindow {
 		base.PostDraw();
 	}
 
+	public override void OnClose() {
+		// safety first!
+		this.WindowColor.Dispose();
+		this.WindowStyle.Dispose();
+		base.OnClose();
+	}
+
 	public override void Draw() {
 		var rightClick = false;
 		var hovered = ImGui.IsWindowHovered();
@@ -110,5 +117,9 @@ public class TrayIcon : KtisisWindow {
 				this._holding = false;
 			}
 		}
+
+		// safety first!
+		this.WindowColor.Dispose();
+		this.WindowStyle.Dispose();
 	}
 }
