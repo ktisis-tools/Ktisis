@@ -44,13 +44,12 @@ public class TrayIcon : KtisisWindow {
 
 	public override void PreDraw() {
 		base.PreDraw();
-		this.WindowStyle.Push(ImGuiStyleVar.WindowBorderSize, 0f);
 		this.WindowStyle.Push(ImGuiStyleVar.WindowPadding, Vector2.Zero);
-		this.WindowStyle.Push(ImGuiStyleVar.WindowBorderSize, 0f);
+		this.WindowStyle.Push(ImGuiStyleVar.WindowBorderSize, 0.0f);
 		this.WindowStyle.Push(ImGuiStyleVar.FramePadding, Vector2.Zero);
-		this.WindowColor.Push(ImGuiCol.Button, 0x00000000);
-		this.WindowColor.Push(ImGuiCol.ButtonHovered, 0x00000000);
-		this.WindowColor.Push(ImGuiCol.ButtonActive, 0x00000000);
+		this.WindowColor.Push(ImGuiCol.Button, 0);
+		this.WindowColor.Push(ImGuiCol.ButtonHovered, 0);
+		this.WindowColor.Push(ImGuiCol.ButtonActive, 0);
 		if (this._ctx is { IsGPosing: true, IsValid: true }) return;
 		this.Close();
 	}
@@ -60,14 +59,7 @@ public class TrayIcon : KtisisWindow {
 		base.PostDraw();
 	}
 
-	public override void OnClose() {
-		this.WindowColor.Dispose();
-		this.WindowStyle.Dispose();
-		base.OnClose();
-	}
-
 	public override void Draw() {
-		
 		var rightClick = false;
 		var hovered = ImGui.IsWindowHovered();
 		ImGui.SetCursorPos(Vector2.Zero);
@@ -118,7 +110,5 @@ public class TrayIcon : KtisisWindow {
 				this._holding = false;
 			}
 		}
-		this.WindowColor.Dispose();
-		this.WindowStyle.Dispose();
 	}
 }
