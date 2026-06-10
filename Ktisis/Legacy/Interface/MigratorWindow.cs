@@ -10,6 +10,7 @@ using Dalamud.Plugin;
 
 using GLib.Widgets;
 
+using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Types;
 using Ktisis.Localization;
@@ -77,13 +78,8 @@ public class MigratorWindow : KtisisWindow {
 			ImGui.AlignTextToFramePadding();
 			ImGui.Text(this.Locale.Translate("migrator.mainWindow.v2.wiki"));
 			ImGui.SameLine();
-			if(Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
-				var _ = new ProcessStartInfo{
-					FileName = "https://docs.ktisis.tools/migration/",
-					UseShellExecute = true
-				};
-				Process.Start(_);
-			}
+			if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare))
+				GuiHelpers.OpenBrowser("https://docs.ktisis.tools/migration/");
 		}
 	}
 

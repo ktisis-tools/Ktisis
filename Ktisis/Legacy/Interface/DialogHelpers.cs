@@ -21,11 +21,10 @@ public static class DialogHelpers {
 		ImGui.Checkbox($"##{newSettingName}", ref newSet);
 
 		if (secondaryText != string.Empty) {
-			ImGui.Indent();
+			using var _ = ImRaii.PushIndent();
 			using (ImRaii.TextWrapPos(ImGui.GetContentRegionMax().X * .65f)) {
 				ImGui.TextWrapped(secondaryText);
 			}
-			ImGui.Unindent();
 		}
 	}
 
@@ -38,17 +37,14 @@ public static class DialogHelpers {
 		ImGui.SameLine(ImGui.GetContentRegionAvail().X - 80f - ImGui.CalcTextSize(defaultText).X - ImGui.GetStyle().FramePadding.X);
 		ImGui.TextDisabled(defaultText);
 		ImGui.SameLine();
-		ImGui.PushItemWidth(80f);
-		ImGui.InputFloat($"##{newSettingName}", ref newSet);
-		ImGui.PopItemWidth();
+		using (ImRaii.ItemWidth(80.0f))
+			ImGui.InputFloat($"##{newSettingName}", ref newSet);
 
 		if (secondaryText != string.Empty) {
-			ImGui.Indent();
+			using var _ = ImRaii.PushIndent();
 			using (ImRaii.TextWrapPos(ImGui.GetContentRegionMax().X * .65f)) {
 				ImGui.TextWrapped(secondaryText);
 			}
-
-			ImGui.Unindent();
 		}
 	}
 
@@ -61,21 +57,18 @@ public static class DialogHelpers {
 		ImGui.SameLine(ImGui.GetContentRegionAvail().X - 80f - ImGui.CalcTextSize(defaultText).X - ImGui.GetStyle().FramePadding.X);
 		ImGui.TextDisabled(defaultText);
 		ImGui.SameLine();
-		ImGui.PushItemWidth(80f);
-		ImGui.InputInt($"##{newSettingName}", ref newSet);
-		ImGui.PopItemWidth();
+		using (ImRaii.ItemWidth(80.0f))
+			ImGui.InputInt($"##{newSettingName}", ref newSet);
 
 		if (secondaryText != string.Empty) {
-			ImGui.Indent();
+			using var _ = ImRaii.PushIndent();
 			using (ImRaii.TextWrapPos(ImGui.GetContentRegionMax().X * .65f)) {
 				ImGui.TextWrapped(secondaryText);
 			}
-
-			ImGui.Unindent();
 		}
 	}
 
-	public static void DrawHint(string tooltipString) {
+	private static void DrawHint(string tooltipString) {
 		ImGui.SameLine();
 		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
 		if (ImGui.IsItemHovered()) {
