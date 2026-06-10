@@ -3,6 +3,8 @@
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 
+using GLib.Widgets;
+
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
 using Ktisis.Interface.Windows.Import;
@@ -84,9 +86,8 @@ public class PosePropertyList : ObjectPropertyList {
 		}
 
 		ImGui.Spacing();
-		ImGui.Separator();
+		Separators.SeparatorText("Reference pose", textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
-		ImGui.Text("Reference pose...");
 		var combo = ImGui.BeginCombo("##PartialSelectList", this.LabelForPartial(pose, this._partialIndex));
 		if (combo) {
 			// add select-all as the first element
@@ -111,9 +112,7 @@ public class PosePropertyList : ObjectPropertyList {
 		}
 
 		ImGui.Spacing();
-		ImGui.Separator();
-		ImGui.Spacing();
-		ImGui.Text($"Import pose file...");
+		Separators.SeparatorText("Import pose file", textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
 
 		// pose import dialog

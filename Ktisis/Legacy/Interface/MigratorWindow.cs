@@ -1,5 +1,4 @@
 using System;
-using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -13,7 +12,6 @@ using GLib.Widgets;
 
 using Ktisis.Data.Config;
 using Ktisis.Interface.Types;
-using Ktisis.Legacy.Interface;
 using Ktisis.Localization;
 
 namespace Ktisis.Legacy.Interface;
@@ -64,7 +62,6 @@ public class MigratorWindow : KtisisWindow {
 	}
 
 	public void DrawIntroPage() {
-
 		ImGui.Text($"{this.Locale.Translate("migrator.mainWindow.main_Desc")}{(this._migrator.WasUserOnV2? this.Locale.Translate("migrator.mainWindow.v2.main_Desc") : this.Locale.Translate("migrator.mainWindow.v3.main_Desc"))}");
 		if (!this._migrator.WasUserOnV2) {
 			ImGui.Spacing();
@@ -101,7 +98,7 @@ public class MigratorWindow : KtisisWindow {
 			this._timer.Stop();
 			this._elapsed = true;
 		}
-		
+
 		switch (this._page) {
 			case 0:
 				this.DrawIntroPage();
@@ -144,7 +141,7 @@ public class MigratorWindow : KtisisWindow {
 				}
 			}
 		}
-		
+
 		if ((this._migrator.WasUserOnV2 && this._page < 5) || (!this._migrator.WasUserOnV2 && this._page == 0) || (!this._migrator.WasUserOnV2 && !this._cfg.File.Keybinds.Enabled && !this._cfg.File.Editor.ToggleOpenWindows)) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize("Next").X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);

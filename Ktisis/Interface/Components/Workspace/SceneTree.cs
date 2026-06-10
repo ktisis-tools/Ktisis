@@ -150,8 +150,7 @@ public class SceneTree {
 				} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
 					this._ctx.Interface.OpenSceneEntityMenu(node);
 				}
-
-				if (ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !shiftClicked)
+				if (io.MouseReleased[0] && io.MouseDownDurationPrev[0] < 0.5f && !shiftClicked)
 					this._originIndex = this._nodes.Count - 1;
 			}
 		}

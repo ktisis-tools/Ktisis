@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Utility;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Plugin;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context.Types;
@@ -20,103 +20,112 @@ namespace Ktisis.Interface.Components.Chara;
 
 [Transient]
 public class PluginDataEditorTab {
-
 	
 	private readonly IpcManager _ipcManager;
 	private readonly IEditorContext _ctx;
+	private readonly IDalamudPluginInterface _dpi;
+
+	private ActorEntity? _actor;
+	
 	private readonly IList<IPCProfileDataTuple> _cPlusProfiles = new List<IPCProfileDataTuple>();
 	private readonly Dictionary<Guid, string> _penumbraCollections = new Dictionary<Guid, string>();
 	private readonly Dictionary<Guid, string> _glamourerCollections = new Dictionary<Guid, string>();
 	
-	private (Guid Id, string Name) _currentCPlus = (Guid.Empty, string.Empty);
 	private (Guid Id, string Name) _currentPenumbra = (Guid.Empty, string.Empty);
-	
+	private Guid? _selectedGlamourer = null;
 	
 	public PluginDataEditorTab(
-		IEditorContext ctx
+		IEditorContext ctx,
+		IDalamudPluginInterface dpi
 	) {
 		this._ctx = ctx;
 		this._ipcManager = ctx.Plugin.Ipc;
+		this._dpi = dpi;
+		this._actor = null;
+		
 		if (this._ipcManager.IsCustomizeActive)
 			this._cPlusProfiles = this._ipcManager.GetCustomizeIpc().GetProfileList().OrderBy(x => x.Name).ToList();
 		if (this._ipcManager.IsPenumbraActive)
 			this._penumbraCollections = this._ipcManager.GetPenumbraIpc().GetCollections();
 		if (this._ipcManager.IsGlamourerActive)
 			this._glamourerCollections = this._ipcManager.GetGlamourerIpc().GetDesignList();
-
 	}
-	public void Draw() {
-		var actor = (ActorEntity)this._ctx.Selection.GetSelected().FirstOrDefault(a => a.Type == EntityType.Actor);
-		if (actor == null)
+
+	public void SetTarget(ActorEntity actor) => this._actor = actor;
+	
+	public unsafe void Draw() {
+		if (this._actor == null) {
+			ImGui.Text("Please select an actor!");
 			return;
+		}
+
+		using (ImRaii.Disabled(!this._ipcManager.IsAnyMcdfActive && this._actor.GetHuman() != null)) {
+			if (ImGui.Button("Load MCDF")) 
+				this._ctx.Interface.OpenMcdfFile(path => this.ImportMcdf(this._actor, path));
+			if(ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+				using (ImRaii.Tooltip())
+					ImGui.Text("A MCDF or 'Mare Character Data File' contains all of a players Penumbra, Glamourer\nand CustomizePlus data that is applied to them at the time of the capture.");
+			ImGui.SameLine();
+			if (ImGui.Button("Revert all IPC data")) {
+				this._actor.AssignedProfile = null;
+				this._ctx.Characters.Mcdf.Revert(this._actor.Actor);
+			}
+			
+		}
 		
-		if (ImGui.Button("Load MCDF")) {
-			this._ctx.Interface.OpenMcdfFile(path => this.ImportMcdf(actor, path));
-		}
-		ImGui.SameLine();
-		if (ImGui.Button("Revert all IPC data")) {
-			this._ctx.Characters.Mcdf.Revert(actor.Actor);
-		}
-		Separators.SeparatorText("Customize+", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
 		if (this._ipcManager.IsCustomizeActive) {
-			this.DrawCustomizePlus(actor);
-		} else {
-			ImGui.Text("Customize+ wasn't found");
+			Separators.SeparatorText("Customize+", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
+			this.DrawCustomizePlus(this._actor);
 		}
-		Separators.SeparatorText("Penumbra", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
-		if (this._ipcManager.IsCustomizeActive) {
-			this.DrawPenumbra(actor);
-		} else {
-			ImGui.Text("Penumbra wasn't found");
-		}
-		Separators.SeparatorText("Glamourer", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
-		if (this._ipcManager.IsCustomizeActive) {
-			this.DrawGlamourer(actor);
-		} else {
-			ImGui.Text("Glamourer wasn't found");
-		}
+
+		if (this._ipcManager.IsPenumbraActive) {
+			Separators.SeparatorText("Penumbra", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
+			this.DrawPenumbra(this._actor);
+		} 
+
+		if (this._ipcManager.IsGlamourerActive) {
+			Separators.SeparatorText("Glamourer", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
+			this.DrawGlamourer(this._actor);
+		} 
 	}
 
 	public unsafe void DrawCustomizePlus(ActorEntity actor) {
 		var cPlus = this._ipcManager.GetCustomizeIpc();
-
 		
 		var currentId = cPlus.GetActiveProfileId(actor.Actor.ObjectIndex).Id;
-		if (currentId != null) {
-			foreach (var profile in this._cPlusProfiles) {
-				if (profile.UniqueId != currentId) continue;
-				this._currentCPlus = (profile.UniqueId, profile.Name);
-			}
-		}
+		if (actor.AssignedProfile != null)
+			currentId = actor.AssignedProfile;
 
-		if(ImGui.BeginCombo("##CPlus", this._currentCPlus != default ? this._currentCPlus.Name : ""))
+		if(ImGui.BeginCombo("##CPlus", currentId != null ? this._cPlusProfiles.FirstOrDefault(p => p.UniqueId == currentId).Name : ""))
 		{
-			/*ImGuiTextFilter filter = new ImGuiTextFilter();  TODO: read for inspo https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Interface/Internal/Windows/ConsoleWindow.cs#L33
-			filter.Draw("##Filter");*/
-
 			foreach (var profile in this._cPlusProfiles) {
-				bool selected = profile.UniqueId == this._currentCPlus.Id;
-				//if (filter.PassFilter(profile.Name)) {
+				bool selected = profile.UniqueId == currentId;
+
 					if (ImGui.Selectable(profile.Name, selected)) {
 						if (selected) {
 							cPlus.DeleteTemporaryProfile(actor.Character->ObjectIndex);
-							this._currentCPlus = (Guid.Empty, string.Empty);
+							actor.AssignedProfile= null;
 							break;
 						}
 						cPlus.DeleteTemporaryProfile(actor.Character->ObjectIndex);
-						cPlus.SetTemporaryProfile(actor.Character->ObjectIndex, cPlus.GetProfileByUniqueId(profile.UniqueId).Data);
-						this._currentCPlus.Id = profile.UniqueId;
-						this._currentCPlus.Name = profile.Name;
-					//}
+						var o = cPlus.SetTemporaryProfile(actor.Character->ObjectIndex, cPlus.GetProfileByUniqueId(profile.UniqueId).Data);
+						actor.AssignedProfile = profile.UniqueId;
 				}
 			}
 			ImGui.EndCombo();
+		}
+		ImGui.SameLine();
+		ImGui.Text("C+ Profile");
+		
+		ImGui.SameLine();
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);
+		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
+			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "CustomizePlus", IsLoaded: true })!.OpenMainUi();
 		}
 	}
 
 	public void DrawPenumbra(ActorEntity actor) {
 		var pen = this._ipcManager.GetPenumbraIpc();
-
 		
 		var currentCollection = pen.GetCollectionForObject(actor.Actor);
 		if (currentCollection.Id != Guid.Empty) {
@@ -128,12 +137,9 @@ public class PluginDataEditorTab {
 
 		if(ImGui.BeginCombo("##Penumbra", this._currentPenumbra != default ? this._currentPenumbra.Name : ""))
 		{
-			/*ImGuiTextFilter filter = new ImGuiTextFilter();  TODO: read for inspo https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Interface/Internal/Windows/ConsoleWindow.cs#L33
-			filter.Draw("##Filter");*/
-
 			foreach (var profile in this._penumbraCollections) {
 				bool selected = profile.Key == this._currentPenumbra.Id;
-				//if (filter.PassFilter(profile.Name)) {
+
 				if (ImGui.Selectable(profile.Value, selected)) {
 					if (selected) {
 						pen.SetCollectionForObject(actor.Actor, null);
@@ -142,10 +148,16 @@ public class PluginDataEditorTab {
 					pen.SetCollectionForObject(actor.Actor, profile.Key);
 					this._currentPenumbra.Id = profile.Key;
 					this._currentPenumbra.Name = profile.Value;
-					//}
 				}
 			}
 			ImGui.EndCombo();
+		}
+		ImGui.SameLine();
+		ImGui.Text("Collection");
+		ImGui.SameLine();
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);
+		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
+			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Penumbra", IsLoaded: true })!.OpenMainUi();
 		}
 
 		if (ImGui.Button("Apply Invisible skin")) {
@@ -155,20 +167,43 @@ public class PluginDataEditorTab {
 
 	public void DrawGlamourer(ActorEntity actor) {
 		var glam = this._ipcManager.GetGlamourerIpc();
-		
-		if(ImGui.BeginCombo("##Glamourer", ""))
-		{
-			/*ImGuiTextFilter filter = new ImGuiTextFilter();  TODO: read for inspo https://github.com/goatcorp/Dalamud/blob/master/Dalamud/Interface/Internal/Windows/ConsoleWindow.cs#L33
-			filter.Draw("##Filter");*/
 
-			foreach (var profile in this._glamourerCollections) {
-				//if (filter.PassFilter(profile.Name)) {
-				if (ImGui.Selectable(profile.Value, false)) {
-					glam.ApplyDesignToObject(actor.Actor, profile.Key);
-					//}
+		using (var group = ImRaii.Group()) {
+			ImGuiTextFilter filter = new ImGuiTextFilter();
+			filter.Draw("##Filter");
+			
+			using (ImRaii.ListBox("##Glamourer")) {
+				foreach (var profile in this._glamourerCollections.OrderBy(p => p.Value)) {
+					if (filter.PassFilter(profile.Value)) {
+						if (ImGui.Selectable(profile.Value, profile.Key == this._selectedGlamourer)) {
+							if (this._selectedGlamourer.HasValue && this._selectedGlamourer.Value == profile.Key)
+								this._selectedGlamourer = null;
+							else
+								this._selectedGlamourer = profile.Key;
+						}
+					}
 				}
 			}
-			ImGui.EndCombo();
+		}
+		ImGui.SameLine();
+
+		using (ImRaii.Group()) {
+			
+			using (ImRaii.Disabled(this._selectedGlamourer == null)) {
+				ImGui.Text($"Current selection:");
+				
+				ImGui.TextWrapped($"{(this._selectedGlamourer == null ? "None" : this._glamourerCollections[this._selectedGlamourer.Value])}");
+				
+				if (ImGui.Button("Apply")) {
+					glam.ApplyDesignToObject(actor.Actor, this._selectedGlamourer!.Value);
+					this._selectedGlamourer = null;
+				}
+			}
+		}
+		ImGui.SameLine();	
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);
+		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
+			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Glamourer", IsLoaded: true })!.OpenMainUi();
 		}
 	}
 	
