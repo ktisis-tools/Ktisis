@@ -243,6 +243,12 @@ public class SceneDataService {
 					this.Scene.Remove(e);
 				}
 			}
+			if(loadOverlays)
+				foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is OverlayEntity).ToList()) {
+					sceneEntity.Remove();
+				}
+			
+
 			Vector3 sceneOrigin;
 			if (!autoSaveLoading) {
 				sceneOrigin = this._objectTable.LocalPlayer!.Position;

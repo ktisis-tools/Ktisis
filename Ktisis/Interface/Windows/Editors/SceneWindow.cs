@@ -19,6 +19,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Popup;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Character;
+using Ktisis.Scene.Entities.Utility;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Types;
@@ -42,7 +43,7 @@ public class SceneWindow : KtisisWindow {
 	private ISharedImmediateTexture? _texture;
 	private Map _source;
 	private SceneMCDFModal? _popupWindow;
-	private bool _includeActors, _includeLights, _includeCameras, _includeEnv;
+	private bool _includeActors, _includeLights, _includeCameras, _includeEnv, _includeOverlays;
 	
 	public SceneWindow(
 		IEditorContext ctx,
@@ -56,7 +57,7 @@ public class SceneWindow : KtisisWindow {
 		this._sceneFile = null;
 		this._dataManager = dataManager;
 		this._textureProvider = textureProvider;
-		this._includeActors = this._includeCameras = this._includeLights = this._includeEnv = true;
+		this._includeActors = this._includeCameras = this._includeLights = this._includeEnv = this._includeOverlays = true;
 	}
 	
 	public override void PreOpenCheck() {
@@ -95,16 +96,18 @@ public class SceneWindow : KtisisWindow {
 		this.MapStuff();
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
-		int cameras, actors, lights;
+		int cameras, actors, lights, overlays;
 		bool envOver;
 		if (this._sceneFile != null) {
 			actors = this._sceneFile.Actors.Count;
 			cameras = this._sceneFile.Cameras.Count;
 			lights = this._sceneFile.Lights.Count;
+			overlays = this._sceneFile.Overlays.Count;
 			envOver = this._sceneFile.Environment.Override > 0;
 		} else {
 			actors = this._ctx.Scene.Children.Count(entity => entity is CharaEntity);
 			lights = this._ctx.Scene.Children.Count(entity => entity is LightEntity);
+			overlays = this._ctx.Scene.Children.Count(entity => entity is OverlayEntity);
 			cameras = this._ctx.Cameras.GetCameras().Count();
 			envOver = this._ctx.Scene.GetModule<EnvModule>().Override > 0;
 		}
@@ -208,6 +211,22 @@ public class SceneWindow : KtisisWindow {
 							ImGui.Indent();
 							foreach (var lightInfo in this._ctx.Scene.Children.Where(entity => entity is LightEntity)) {
 								ImGui.TextUnformatted($"{lightInfo.Name}");
+							}
+						}
+						ImGui.Unindent();
+					}
+				if (overlays > 0)
+					if (ImGui.CollapsingHeader($"Overlays {overlays}")) {
+						if (this._sceneFile != null) {
+							ImGui.Checkbox("Load Overlays", ref this._includeOverlays);
+							ImGui.Indent();
+							foreach (var overlayInfo in this._sceneFile!.Overlays) {
+								ImGui.TextUnformatted($"{overlayInfo.Name}");
+							}
+						} else {
+							ImGui.Indent();
+							foreach (var overlayInfo in this._ctx.Scene.Children.Where(entity => entity is OverlayEntity)) {
+								ImGui.TextUnformatted($"{overlayInfo.Name}");
 							}
 						}
 						ImGui.Unindent();
