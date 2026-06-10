@@ -38,10 +38,10 @@ public class MigratorWindow : KtisisWindow {
 		this._dpi = dpi;
 		this._migrator = migrator;
 		this.Locale = locale;
-		if (this._migrator.WasUserOnV2) {
-			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, cfg, this.Locale);
-		}
 		this._cfg = cfg;
+
+		if (this._migrator.WasUserOnV2 && this._migrator._legacyCfg != null)
+			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, this._cfg, this.Locale);
 
 		this.ShowCloseButton = false;
 		this.RespectCloseHotkey = false;
@@ -61,7 +61,7 @@ public class MigratorWindow : KtisisWindow {
 		this._elapsed = false;
 	}
 
-	public void DrawIntroPage() {
+	private void DrawIntroPage() {
 		ImGui.Text($"{this.Locale.Translate("migrator.mainWindow.main_Desc")}{(this._migrator.WasUserOnV2? this.Locale.Translate("migrator.mainWindow.v2.main_Desc") : this.Locale.Translate("migrator.mainWindow.v3.main_Desc"))}");
 		if (!this._migrator.WasUserOnV2) {
 			ImGui.Spacing();
@@ -87,12 +87,12 @@ public class MigratorWindow : KtisisWindow {
 		}
 	}
 
-	public void DrawV3() {
+	private void DrawV3() {
 		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty,this.Locale.Translate("migrator.v3.openWindowToggle") , string.Empty);
 		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, this.Locale.Translate("migrator.v3.toolbar"), string.Empty);
 		DialogHelpers.BuildDialog(ref this._cfg.File.Keybinds.Enabled, true, string.Empty, this.Locale.Translate("migrator.v3.keybinds"), string.Empty);
 	}
-	
+
 	public override void Draw() {
 		if (!this._elapsed && this.CanBegin) {
 			this._timer.Stop();
@@ -106,7 +106,7 @@ public class MigratorWindow : KtisisWindow {
 			case 1:
 				if(this._migrator.WasUserOnV2)
 					this._v2Window?.DrawEditor();
-				else 
+				else
 					this.DrawV3();
 				break;
 			case 2:
@@ -126,19 +126,18 @@ public class MigratorWindow : KtisisWindow {
 		this.DrawBottomBar();
 	}
 
-	public void DrawBottomBar() {
+	private void DrawBottomBar() {
 		ImGui.Spacing();
 		ImGui.Separator();
 		ImGui.Spacing();
 		var text = this.CanBegin ? this.Locale.Translate("migrator.mainWindow.skip") : $"{this.Locale.Translate("migrator.mainWindow.skip")} ({Math.Ceiling((decimal)WaitTime - this._timer.Elapsed.Seconds)}s)";
 		if (this._page == 0) {
-			using (var _ = ImRaii.Disabled(!this.CanBegin && !(ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyDown(ImGuiKey.ModShift)))) {
-				if (ImGui.Button(text)) {
-					if(!this._migrator.WasUserOnV2)
-						this._migrator.v3Skip();
-					this._migrator.Begin();
-					this.Close();
-				}
+			using var _ = ImRaii.Disabled(!this.CanBegin && !(ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyDown(ImGuiKey.ModShift)));
+			if (ImGui.Button(text)) {
+				if(!this._migrator.WasUserOnV2)
+					this._migrator.V3Skip();
+				this._migrator.Begin();
+				this.Close();
 			}
 		}
 
@@ -149,7 +148,7 @@ public class MigratorWindow : KtisisWindow {
 				this._migrator.MigrateConfig();
 				this._page++;
 			}
-		}else if((this._migrator.WasUserOnV2 && this._page == 5) || (!this._migrator.WasUserOnV2 && this._page == 1) || (!this._migrator.WasUserOnV2 && this._cfg.File.Keybinds.Enabled && this._cfg.File.Editor.ToggleOpenWindows)) {
+		} else if ((this._migrator.WasUserOnV2 && this._page == 5) || (!this._migrator.WasUserOnV2 && this._page == 1) || (!this._migrator.WasUserOnV2 && this._cfg.File.Keybinds.Enabled && this._cfg.File.Editor.ToggleOpenWindows)) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth() - ImGui.CalcTextSize("Finish").X - (ImGui.GetStyle().CellPadding.X * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			text = "Finish";

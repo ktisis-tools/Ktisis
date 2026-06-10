@@ -12,7 +12,7 @@ public static class DialogHelpers {
 	public static void BuildDialog(ref bool newSet, bool newDefault, string tooltipString, string newSettingName, string secondaryText) {
 		ImGui.AlignTextToFramePadding();
 		ImGui.Text(newSettingName);
-		if(tooltipString!= string.Empty) //this._migrator.Locale.Translate(newSettingName)
+		if (tooltipString != string.Empty) //this._migrator.Locale.Translate(newSettingName)
 			DrawHint(tooltipString);
 		var defaultText = $"Default: {(newDefault ? "On" : "Off")}";
 		ImGui.SameLine(ImGui.GetContentRegionAvail().X - ImGui.GetFrameHeight() - ImGui.CalcTextSize(defaultText).X - ImGui.GetStyle().FramePadding.X);
@@ -28,12 +28,12 @@ public static class DialogHelpers {
 			ImGui.Unindent();
 		}
 	}
-	
+
 	public static void BuildDialog(ref float newSet, float newDefault, string tooltipString, string newSettingName, string secondaryText) {
 		ImGui.AlignTextToFramePadding();
 		ImGui.Text(newSettingName);
-		if(tooltipString != string.Empty)
-			DrawHint(tooltipString);//this._migrator.Locale.Translate(newSettingName)
+		if (tooltipString != string.Empty)
+			DrawHint(tooltipString); //this._migrator.Locale.Translate(newSettingName)
 		var defaultText = $"Default: {newDefault}";
 		ImGui.SameLine(ImGui.GetContentRegionAvail().X - 80f - ImGui.CalcTextSize(defaultText).X - ImGui.GetStyle().FramePadding.X);
 		ImGui.TextDisabled(defaultText);
@@ -47,16 +47,16 @@ public static class DialogHelpers {
 			using (ImRaii.TextWrapPos(ImGui.GetContentRegionMax().X * .65f)) {
 				ImGui.TextWrapped(secondaryText);
 			}
-		
+
 			ImGui.Unindent();
 		}
 	}
-	
+
 	public static void BuildDialog(ref int newSet, int newDefault, string tooltipString, string newSettingName, string secondaryText) {
 		ImGui.AlignTextToFramePadding();
 		ImGui.Text(newSettingName);
-		if(tooltipString != string.Empty)
-			DrawHint(tooltipString);//this._migrator.Locale.Translate(newSettingName)
+		if (tooltipString != string.Empty)
+			DrawHint(tooltipString); //this._migrator.Locale.Translate(newSettingName)
 		var defaultText = $"Default: {newDefault}";
 		ImGui.SameLine(ImGui.GetContentRegionAvail().X - 80f - ImGui.CalcTextSize(defaultText).X - ImGui.GetStyle().FramePadding.X);
 		ImGui.TextDisabled(defaultText);
@@ -70,11 +70,11 @@ public static class DialogHelpers {
 			using (ImRaii.TextWrapPos(ImGui.GetContentRegionMax().X * .65f)) {
 				ImGui.TextWrapped(secondaryText);
 			}
-		
+
 			ImGui.Unindent();
 		}
 	}
-	
+
 	public static void DrawHint(string tooltipString) {
 		ImGui.SameLine();
 		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);

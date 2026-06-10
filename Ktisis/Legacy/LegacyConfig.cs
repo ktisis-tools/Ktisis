@@ -11,7 +11,7 @@ namespace Ktisis.Legacy;
 
 public class LegacyConfig {
 	[Serializable]
-	public class Configuration: IPluginConfiguration {
+	public class Configuration : IPluginConfiguration {
 
 		public const int CurVersion = 3;
 		public int Version { get; set; } = CurVersion;
@@ -52,11 +52,11 @@ public class LegacyConfig {
 		public bool? EnableAutoSave { get; set; }
 		public int? AutoSaveInterval { get; set; }
 		public int? AutoSaveCount { get; set; }
-		public string? AutoSavePath { get; set; } 
+		public string? AutoSavePath { get; set; }
 		public string? AutoSaveFormat { get; set; }
 		public bool? ClearAutoSavesOnExit { get; set; }
-		
-		
+
+
 		public bool? AllowAxisFlip { get; set; }
 
 
@@ -64,52 +64,52 @@ public class LegacyConfig {
 		public bool? LinkBoneCategoryColors { get; set; }
 		public Vector4? LinkedBoneCategoryColor { get; set; }
 		public Dictionary<string, Vector4>? BoneCategoryColors;
-		
-		
+
+
 		public bool? PositionWeapons { get; set; }
 
 		public bool? EnableParenting { get; set; }
 
 		public bool? LinkedGaze { get; set; }
-		
+
 
 		public Dictionary<string, string>? SavedDirPaths { get; set; }
 
 		// Camera
 
-		public float? FreecamMoveSpeed { get; set; } 
+		public float? FreecamMoveSpeed { get; set; }
 
 		public float? FreecamShiftMuli { get; set; }
 		public float? FreecamCtrlMuli { get; set; }
 		public float? FreecamUpDownMuli { get; set; }
 
-		public float? FreecamSensitivity { get; set; } 
+		public float? FreecamSensitivity { get; set; }
 
 		public Keybind? FreecamForward { get; set; }
-		public Keybind? FreecamLeft { get; set; } 
-		public Keybind? FreecamBack { get; set; } 
+		public Keybind? FreecamLeft { get; set; }
+		public Keybind? FreecamBack { get; set; }
 		public Keybind? FreecamRight { get; set; }
 		public Keybind? FreecamUp { get; set; }
 		public Keybind? FreecamDown { get; set; }
 
 		public Keybind? FreecamFast { get; set; }
-		public Keybind? FreecamSlow { get; set; } 
+		public Keybind? FreecamSlow { get; set; }
 
 		// Data memory
-		public Dictionary<string, Dictionary<string, Vector3>>? CustomBoneOffset { get; set; } 
-		
-		
+		public Dictionary<string, Dictionary<string, Vector3>>? CustomBoneOffset { get; set; }
+
+
 	}
 
 	[Serializable]
 	public class Keybind {
-		public VirtualKey[] Keys = {};
+		public VirtualKey[] Keys = { };
 
 		public Keybind(params VirtualKey[] keys) => Keys = keys;
 
 	}
 
-	
+
 	[Serializable]
 	public enum OpenKtisisMethod {
 		Manually,
