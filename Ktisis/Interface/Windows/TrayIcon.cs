@@ -10,6 +10,8 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
+using GLib.Popups.Context;
+
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
@@ -18,20 +20,22 @@ namespace Ktisis.Interface.Windows;
 
 public class TrayIcon : KtisisWindow {
 
-	private ITextureProvider _tex;
-	private IEditorContext _ctx;
+	private readonly ITextureProvider _tex;
+	private readonly IEditorContext _ctx;
+	private readonly GuiManager _gui;
 	private bool _holding;
 	private Vector2? _offset;
-	private bool _rightClick;
 
 	public TrayIcon(
 		ITextureProvider tex,
 		IEditorContext ctx,
+		GuiManager gui,
 		string name = "##TrayIcon"
 	) : base(name) {
 		this.Size = new Vector2(68, 68);
 		this._tex = tex;
 		this._ctx = ctx;
+		this._gui = gui;
 	}
 	public override void PreDraw() {
 		ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
@@ -52,7 +56,7 @@ public class TrayIcon : KtisisWindow {
 			this.Close();
 		var assembly = Assembly.GetExecutingAssembly();
 		var name = assembly.GetName().Name!;
-
+		var rightClick = false;
 
 		var file = "simple";
 		if (ImGui.IsWindowHovered() && !this._holding)
@@ -70,29 +74,30 @@ public class TrayIcon : KtisisWindow {
 				this._offset ??= ImGui.GetMousePos() - ImGui.GetWindowPos();
 				this._holding = true;
 			} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
-				this._rightClick = true;
+				rightClick = true;
 			}
 		}
-		if (this._rightClick) {
-			ImGui.PushStyleVar(ImGuiStyleVar.PopupRounding, 4f);
-			using (ImRaii.ContextPopup("##TrayPopup")) {
-					if (ImGui.Selectable(" Dismiss"))
-						this.Close();
-					else if (ImGui.Selectable(" Toggle Overlay"))
-						this._ctx.Config.Overlay.Visible ^= true;
-					else if (ImGui.Selectable(" Offset Camera to Target Model", size: ImGui.CalcTextSize(" Offset Camera to Target Model") + new Vector2(6, 2))) {
-						unsafe {
-							var camera = this._ctx.Cameras.Current;
-							var target = this._ctx.Cameras.ResolveOrbitTarget(camera);
-							var gameObject = (GameObject*)target.Address;
-							var drawObject = gameObject->DrawObject;
-							if (drawObject != null)
-								camera.RelativeOffset = drawObject->Object.Position - gameObject->Position;
-						}
+		if (rightClick) {
+			var menu = new ContextMenuBuilder()
+				.Action("Dismiss", this.Close)
+				.Action("Toggle Overlay", () => this._ctx.Config.Overlay.Visible ^= true)
+				.Action("Offset Camera to Target Model", () => {
+					unsafe {
+						var camera = this._ctx.Cameras.Current;
+						if (camera == null) return;
+
+						var target = this._ctx.Cameras.ResolveOrbitTarget(camera);
+						if (target == null) return;
+
+						var gameObject = (GameObject*)target.Address;
+						var drawObject = gameObject->DrawObject;
+						if (drawObject == null) return;
+
+						camera.RelativeOffset = drawObject->Object.Position - gameObject->Position;
 					}
-			}
-	
-			ImGui.PopStyleVar();
+				})
+				.Build($"TrayContextMenu_{this.GetHashCode():X}");
+			this._gui.AddPopup(menu.Open());
 		}
 		if (this._holding) {
 			if (!io.MouseReleased[0]) {
