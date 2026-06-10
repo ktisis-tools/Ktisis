@@ -2,27 +2,24 @@
 using System.Reflection;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-
-using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
-
 using GLib.Popups.Context;
 
-using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 
 namespace Ktisis.Interface.Windows;
 
 public class TrayIcon : KtisisWindow {
-
 	private readonly ITextureProvider _tex;
 	private readonly IEditorContext _ctx;
 	private readonly GuiManager _gui;
+	private readonly ISharedImmediateTexture SimpleIcon;
+	private readonly ISharedImmediateTexture ColoredIcon;
+
 	private bool _holding;
 	private Vector2? _offset;
 
@@ -30,53 +27,53 @@ public class TrayIcon : KtisisWindow {
 		ITextureProvider tex,
 		IEditorContext ctx,
 		GuiManager gui,
-		string name = "##TrayIcon"
-	) : base(name) {
+		ImGuiWindowFlags flags = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoDocking
+	) : base("##TrayIcon", flags) {
 		this.Size = new Vector2(68, 68);
 		this._tex = tex;
 		this._ctx = ctx;
 		this._gui = gui;
-	}
-	public override void PreDraw() {
-		ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
-		ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f);
-		ImGui.PushStyleColor(ImGuiCol.Button, 0x00000000);
-		ImGui.PushStyleColor(ImGuiCol.ButtonHovered, 0x00000000);
-		ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0x00000000);
-		base.PreDraw();
-	}
-	public override void PostDraw() {
-		ImGui.PopStyleVar(2);
-		ImGui.PopStyleColor(3);
-		base.PostDraw();
-	}
-	public override void Draw() {
-		this.Flags = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoResize;
-		if (!this._ctx.IsGPosing)
-			this.Close();
+
 		var assembly = Assembly.GetExecutingAssembly();
 		var name = assembly.GetName().Name!;
-		var rightClick = false;
+		this.SimpleIcon = this._tex.GetFromManifestResource(assembly, $"{name}.Data.Images.icon_simple.png");
+		this.ColoredIcon = this._tex.GetFromManifestResource(assembly, $"{name}.Data.Images.icon_colored.png");
+	}
 
-		var file = "simple";
-		if (ImGui.IsWindowHovered() && !this._holding)
-			file = "colored";
-		var icon = this._tex.GetFromManifestResource(assembly, $"{name}.Data.Images.icon_{file}.png");
+	public override void PreDraw() {
+		base.PreDraw();
+		if (this._ctx is { IsGPosing: true, IsValid: true }) return;
+		this.Close();
+	}
+
+	public override void Draw() {
+		using var s1 = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
+		using var s2 = ImRaii.PushStyle(ImGuiStyleVar.WindowBorderSize, 0f);
+		using var s3 = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, Vector2.Zero);
+		using var c1 = ImRaii.PushColor(ImGuiCol.Button, 0x00000000);
+		using var c2 = ImRaii.PushColor(ImGuiCol.ButtonHovered, 0x00000000);
+		using var c3 = ImRaii.PushColor(ImGuiCol.ButtonActive, 0x00000000);
+
+		var rightClick = false;
+		var hovered = ImGui.IsWindowHovered();
+		if (hovered && !this._holding)
+			ImGui.ImageButton(this.ColoredIcon.GetWrapOrEmpty().Handle, Vector2.Create(64.0f));
+		else
+			ImGui.ImageButton(this.SimpleIcon.GetWrapOrEmpty().Handle, Vector2.Create(64.0f));
 
 		var io = ImGui.GetIO();
-		ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, Vector2.Create(64f));
-
-		if (ImGui.IsWindowHovered()) {
-			if (io.MouseReleased[0] && io.MouseDownDurationPrev[0] < 0.5f) {
+		if (hovered) {
+			if (io.MouseReleased[0] && io.MouseDownDurationPrev[0] <= 0.25f) {
 				this._ctx.Interface.ToggleWorkspaceWindow();
 				this.Close();
-			} else if (io.MouseDown[0] && io.MouseDownDuration[0] > 0.5f) {
+			} else if (io.MouseDown[0] && io.MouseDownDuration[0] > 0.25f) {
 				this._offset ??= ImGui.GetMousePos() - ImGui.GetWindowPos();
 				this._holding = true;
 			} else if (ImGui.IsMouseClicked(ImGuiMouseButton.Right)) {
 				rightClick = true;
 			}
 		}
+
 		if (rightClick) {
 			var menu = new ContextMenuBuilder()
 				.Action("Dismiss", this.Close)
@@ -98,8 +95,7 @@ public class TrayIcon : KtisisWindow {
 				})
 				.Build($"TrayContextMenu_{this.GetHashCode():X}");
 			this._gui.AddPopup(menu.Open());
-		}
-		if (this._holding) {
+		} else if (this._holding && this._offset != null) {
 			if (!io.MouseReleased[0]) {
 				ImGui.SetWindowPos(ImGui.GetMousePos() - this._offset.Value);
 			} else {
