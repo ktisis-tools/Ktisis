@@ -69,7 +69,6 @@ public class TrayIcon : KtisisWindow {
 	public override void Draw() {
 		var rightClick = false;
 		var hovered = ImGui.IsWindowHovered();
-		ImGui.SetCursorPos(Vector2.Zero);
 		if (hovered && !this._holding)
 			ImGui.ImageButton(this.ColoredIcon.GetWrapOrEmpty().Handle, Vector2.Create(64.0f));
 		else
