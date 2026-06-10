@@ -15,6 +15,8 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
+using KamiToolKit.Overlay.UiOverlay;
+
 using Lumina.Excel;
 
 using Ktisis.Common.Extensions;
@@ -27,9 +29,12 @@ using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
+using Ktisis.Interface.KTK;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Utility;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Factory.Creators;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
@@ -95,6 +100,9 @@ public class SceneDataService {
 				.Where(entity => entity is LightEntity)
 				.Cast<LightEntity>()
 				.ToList();
+		
+			var overlays = this.Scene.Children.OfType<OverlayEntity>()
+				.ToList();
 			
 			
 			//TODO: Add MCDF logic
@@ -151,7 +159,7 @@ public class SceneDataService {
 				var c = new SceneFile.CameraInfo();
 				c.OrbitTarget = camera.OrbitTarget ?? camera.GameCamera->GetCameraTargetObject()->ObjectIndex;
 
-				c.isDelmited = camera.IsDelimited;
+				c.IsDelmited = camera.IsDelimited;
 				c.Angle = new Vector3(camera.Camera->Angle.X, camera.Camera->Angle.Y, camera.Camera->Distance);
 				c.FixedPosition = this.Scene.GetActorRelativePosition((Vector3)camera.GetPosition());
 				c.Flags = (uint)camera.Flags;
@@ -159,6 +167,42 @@ public class SceneDataService {
 				c.Name = camera.Name;
 				c.OrthographicZoom = camera.OrthographicZoom;
 				scene.Cameras.Add(c);
+			}
+
+			foreach (var overlay in overlays) {
+				SceneFile.OverlayInfo.Type type = SceneFile.OverlayInfo.Type.None;
+				string dialog = string.Empty;
+				if (overlay.Type == EntityType.BalloonOverlay) {
+					type = SceneFile.OverlayInfo.Type.Balloon;
+					dialog = ((BalloonOverlay)overlay).Dialog;
+
+				}else if (overlay.Type == EntityType.StatusOverlay) {
+					type = SceneFile.OverlayInfo.Type.Status;
+					dialog = ((StatusOverlay)overlay).StatusText;
+				}
+				else if (overlay.Type == EntityType.TalkOverlay) {
+					type = SceneFile.OverlayInfo.Type.Talk;
+					dialog = ((TalkOverlay)overlay).Dialog;
+				}
+				
+				
+				scene.Overlays.Add(new SceneFile.OverlayInfo() {
+					OverlayType = type,
+					Dialog = dialog,
+					Position = overlay.Position,
+					Opacity = overlay.Alpha,
+					Scale = overlay.Scale,
+					Visible = overlay.Visible,
+					Name = overlay.Name,
+					ArrowPosition = overlay.Type == EntityType.BalloonOverlay ? ((BalloonOverlay)overlay).ArrowX : 0,
+					ShowArrow = overlay.Type == EntityType.BalloonOverlay && ((BalloonOverlay)overlay).Arrow,
+					BalloonBackground = overlay.Type == EntityType.BalloonOverlay ? ((BalloonOverlay)overlay).Background : default,
+					TalkBackground =  overlay.Type == EntityType.TalkOverlay ? ((TalkOverlay)overlay).Background : default,
+					TalkCursor =  overlay.Type == EntityType.TalkOverlay ? ((TalkOverlay)overlay).Cursor : default,
+					Speaker = overlay.Type == EntityType.TalkOverlay ? ((TalkOverlay)overlay).Speaker : string.Empty,
+					StatusType = overlay.Type == EntityType.StatusOverlay ? ((StatusOverlay)overlay).StatusType : default,
+					StatusIcon = overlay.Type == EntityType.StatusOverlay ? ((StatusOverlay)overlay).IconPath : string.Empty
+				});
 			}
 			
 			
@@ -188,7 +232,7 @@ public class SceneDataService {
 			return scene!;
 	}
 	
-	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true) {
+	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true) {
 		
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 
@@ -270,6 +314,44 @@ public class SceneDataService {
 					ApplyCamera(set.First, set.Second, sceneOrigin);
 				
 			}
+
+			if (loadOverlays) {
+				foreach (var overlayInfo in scene.Overlays) {
+					this._framework.RunOnFrameworkThread(() => {
+						OverlayEntity? overlay = null;
+						switch (overlayInfo.OverlayType) {
+							case SceneFile.OverlayInfo.Type.Balloon:
+								overlay = this._ctx!.Scene.Factory.BuildOverlay(OverlayTypes.Balloon).SetName(overlayInfo.Name).Add();
+								((BalloonOverlay)overlay).Arrow = overlayInfo.ShowArrow;
+								((BalloonOverlay)overlay).ArrowX = overlayInfo.ArrowPosition;
+								((BalloonOverlay)overlay).Background = overlayInfo.BalloonBackground;
+								((BalloonOverlay)overlay).Dialog = overlayInfo.Dialog;
+								break;
+							case SceneFile.OverlayInfo.Type.Talk:
+								overlay = this._ctx!.Scene.Factory.BuildOverlay(OverlayTypes.Talk).SetName(overlayInfo.Name).Add();
+								((TalkOverlay)overlay).Background = overlayInfo.TalkBackground;
+								((TalkOverlay)overlay).Cursor = overlayInfo.TalkCursor;
+								((TalkOverlay)overlay).Dialog = overlayInfo.Dialog;
+								((TalkOverlay)overlay).Speaker = overlayInfo.Speaker;
+								break;
+							case SceneFile.OverlayInfo.Type.Status:
+								overlay = this._ctx!.Scene.Factory.BuildOverlay(OverlayTypes.Status).SetName(overlayInfo.Name).Add();
+								((StatusOverlay)overlay).IconPath = overlayInfo.StatusIcon;
+								((StatusOverlay)overlay).StatusText = overlayInfo.Dialog;
+								((StatusOverlay)overlay).StatusType = overlayInfo.StatusType;
+								break;
+						}
+
+						if (overlay != null) {
+							overlay.Alpha = overlayInfo.Opacity / 255.0f;
+							overlay.Position = overlayInfo.Position;
+							overlay.Scale = overlayInfo.Scale;
+							overlay.Visible = overlayInfo.Visible;
+						}
+
+					});
+				}
+			}
 			
 			//Env stuff
 			if (loadEnv) {
@@ -292,7 +374,7 @@ public class SceneDataService {
 	}
 
 	public void ApplyCamera(SceneFile.CameraInfo camera, EditorCamera ktCam, Vector3 sceneOrigin) {
-		if (camera.isDelmited) {
+		if (camera.IsDelmited) {
 			ktCam.FixedPosition = camera.FixedPosition + sceneOrigin;
 		} else {
 			unsafe {

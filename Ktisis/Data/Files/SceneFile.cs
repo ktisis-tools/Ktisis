@@ -7,6 +7,7 @@ using Glamourer.Api.IpcSubscribers.Legacy;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Camera.Types;
+using Ktisis.Interface.KTK;
 using Ktisis.Scene.Modules;
 using Ktisis.Structs.Env;
 using Ktisis.Structs.Env.Weather;
@@ -28,6 +29,7 @@ public class SceneFile : JsonFile {
 	public List<LightInfo> Lights { get; set; } = new List<LightInfo>();
 	public List<CameraInfo> Cameras  { get; set; } = new List<CameraInfo>();
 	public EnvironmentInfo Environment { get; set; } = new EnvironmentInfo();
+	public List<OverlayInfo> Overlays { get; set; } = new List<OverlayInfo>();
 	
 	[Serializable]
 	public struct ActorInfo {
@@ -74,7 +76,7 @@ public class SceneFile : JsonFile {
 	public struct CameraInfo {
 		public uint  Flags { get; set; }
 		public ushort OrbitTarget { get; set; }
-		public bool isDelmited { get; set; }
+		public bool IsDelmited { get; set; }
 		public Vector3? FixedPosition { get; set; }
 		public Vector3? Angle { get; set; }
 		
@@ -94,6 +96,40 @@ public class SceneFile : JsonFile {
 		public byte Weather { get; set; }
 	}
 
+	[Serializable]
+	public struct OverlayInfo {
+		public Type OverlayType { get; set; }
+		
+		//Status
+		public StatusType StatusType { get; set; }
+		public string StatusIcon { get; set; }
+		
+		//Balloon
+		public BalloonBackground BalloonBackground { get; set; }
+		public bool ShowArrow { get; set; }
+		public float ArrowPosition { get; set; }
+		
+		//Talk
+		public TalkBackground TalkBackground { get; set; }
+		public TalkCursor TalkCursor { get; set; }
+		public string Speaker { get; set; }
+
+		
+		public Vector2 Position { get; set; }
+		public float Scale { get; set; }
+		public float Opacity { get; set; }
+		public string Dialog { get; set; }
+		public bool Visible { get; set; }
+		public string Name { get; set; }
+		
+		public enum Type {
+			Balloon,
+			Status,
+			Talk,
+			None
+		}
+	}
+	
 	[Serializable]
 	public struct AttachInfo {
 		public ushort ParentIndex { get; set; }
