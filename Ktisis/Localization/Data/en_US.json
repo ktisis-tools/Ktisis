@@ -339,6 +339,8 @@
 			"confirmExit": "Ensure shift has to be held to exit posing mode",
 			"AutoResizeObjectEditor": "Automatically expand the Object Editor when opening new dropdowns",
 			"hint_AutoResizeObj": "This disables the ability to resize the editors height, but you can still change its width",
+			"openTray": "When closing the workspace in GPose, open a Ktisis Tray icon",
+			"hintTrayIcon": "The widget is movable when you click and drag, and will reopen the workspace when clicked",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
