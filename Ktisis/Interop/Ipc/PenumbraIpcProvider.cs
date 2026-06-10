@@ -54,7 +54,7 @@ public class PenumbraIpcProvider {
 		return collection;
 	}
 
-	public bool SetCollectionForObject(IGameObject gameObject, Guid id) {
+	public bool SetCollectionForObject(IGameObject gameObject, Guid? id) {
 		Ktisis.Log.Verbose($"Setting collection for '{gameObject.Name}' ({gameObject.ObjectIndex}) to '{id}'");
 		
 		var (result, prev) = this._setCollectionForObject.Invoke(gameObject.ObjectIndex, id, true, true);

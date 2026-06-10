@@ -46,6 +46,8 @@ public class ActorCProfilePopup : KtisisPopup {
 		}
 
 		var currentId = this._ipc.GetActiveProfileId(this._entity.Actor.ObjectIndex).Id;
+		if (this._entity.AssignedProfile != null)
+			currentId = this._entity.AssignedProfile;
 		if (currentId != null) {
 			foreach (var profile in this._profiles) {
 				if (profile.UniqueId != currentId) continue;
@@ -59,6 +61,7 @@ public class ActorCProfilePopup : KtisisPopup {
 		if (this._list.Draw(this._profiles, out var selected)) {
 			var profile = this._ipc.GetProfileByUniqueId(selected.UniqueId);
 			if (profile.Data != null) this.SetProfile(profile.Data);
+			this._entity.AssignedProfile = selected.UniqueId;
 		}
 	}
 
