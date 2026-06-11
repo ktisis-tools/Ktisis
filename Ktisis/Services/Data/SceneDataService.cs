@@ -104,8 +104,7 @@ public class SceneDataService {
 			var overlays = this.Scene.Children.OfType<OverlayEntity>()
 				.ToList();
 			
-			
-			//TODO: Add MCDF logic
+			//TODO: Attaches
 			foreach (var chara in entities) {
 				
 				var actor = ((ActorEntity)chara).Actor.GetDrawObject();
@@ -441,7 +440,6 @@ public class SceneDataService {
 		});
 	}
 	
-	//TODO: The BattleChara should have the position set too, its what the camera orbit bases itself off of
 	private unsafe void SetupActorPosition(SceneFile.ActorInfo loaded, ActorEntity actor) { 		//I hate my life so much lol
 		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
 		var bc = (BattleChara*)actor.CsGameObject;
