@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
@@ -43,7 +44,12 @@ public class SceneDraw {
 		this.DrawEntities(frame, this._ctx.Scene.Children);
 		this.DrawSelect(frame, gizmo, gizmoIsEnded);
 	}
-	
+
+	public void DrawRefOverlay() {
+		foreach (var image in this._ctx.Scene.Children.OfType<ReferenceImage>())
+			this._refs.DrawInstance(image);
+	}
+
 	private void DrawEntities(ISelectableFrame frame, IEnumerable<SceneEntity> entities) {
 		foreach (var entity in entities) {
 			switch (entity) {
@@ -55,9 +61,6 @@ public class SceneDraw {
 					if (position != null)
 						frame.AddItem(entity, position.Value, this._ctx);
 					break;
-				case ReferenceImage image:
-					this._refs.DrawInstance(image);
-					continue;
 			}
 
 			this.DrawEntities(frame, entity.Children);
