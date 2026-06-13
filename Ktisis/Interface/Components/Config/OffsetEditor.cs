@@ -164,7 +164,6 @@ public class OffsetEditor {
 		ImGui.SameLine(0, spacing);
 		ImGui.Text($"Skeleton: {this._locale.Translate($"config.offsets.race_sex.{this.SelectedRaceSexId}")}");
 
-		// todo: remove with v0.3 release
 		var label = this._locale.Translate("config.offsets.ui.load_legacy");
 		var buttonPadding = ImGui.GetStyle().FramePadding.X * 2;
 		var textSize = ImGui.CalcTextSize(label).X;
@@ -178,7 +177,7 @@ public class OffsetEditor {
 				using var _ = ImRaii.Tooltip();
 				ImGui.Text($"Warning: This will replace ALL current offsets for {
 					this._locale.Translate($"config.offsets.race_sex.{this.SelectedRaceSexId}")
-				}.\nThis function is only usable with a valid set of v0.2 offsets and will be deprecated with v0.3's release.\nHold CTRL+Shift to confirm.");
+				}.\nThis function is only usable with a valid set of v0.2 offsets.\nHold CTRL+Shift to confirm.");
 			}
 		}
 

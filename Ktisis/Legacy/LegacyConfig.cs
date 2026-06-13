@@ -97,18 +97,12 @@ public class LegacyConfig {
 
 		// Data memory
 		public Dictionary<string, Dictionary<string, Vector3>>? CustomBoneOffset { get; set; }
-
-
 	}
 
 	[Serializable]
-	public class Keybind {
-		public VirtualKey[] Keys = { };
-
-		public Keybind(params VirtualKey[] keys) => Keys = keys;
-
+	public class Keybind(params VirtualKey[] keys) {
+		public VirtualKey[] Keys = keys;
 	}
-
 
 	[Serializable]
 	public enum OpenKtisisMethod {
@@ -139,5 +133,4 @@ public class LegacyConfig {
 			NewCamera,
 		}
 	}
-
 }
