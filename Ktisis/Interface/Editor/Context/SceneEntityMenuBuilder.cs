@@ -127,15 +127,17 @@ public class SceneEntityMenuBuilder {
 
 	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.SubMenu("IPC appearance", sub => {
+			var isHuman = actor.GetHuman() != null;
 			if (this._ctx.Plugin.Ipc.IsPenumbraActive) {
 				sub.Action("Penumbra: Assign collection", () => this.Ui.OpenAssignCollection(actor));
-				sub.Action("Penumbra: Invisible Skin", () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
+				if (isHuman)
+					sub.Action("Penumbra: Invisible Skin", () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
 			}
 			if (this._ctx.Plugin.Ipc.IsGlamourerActive)
 				sub.Action("Glamourer: Apply design", () => this.Ui.OpenApplyDesign(actor));
 			if (this._ctx.Plugin.Ipc.IsCustomizeActive)
 				sub.Action("Customize: Assign profile", () => this.Ui.OpenAssignCProfile(actor));
-			if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
+			if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && isHuman) {
 				sub.Action("Revert all IPC data", () => {
 					this._ctx.Characters.Mcdf.Revert(actor.Actor);
 					actor.AssignedProfile = null;
