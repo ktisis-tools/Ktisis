@@ -62,7 +62,7 @@ public class PluginContext : IPluginContext {
 		if (this.Config.GetConfigFileExists()) {
 			this.Config.Load();
 			if (this.Config.File.Version < 12)
-				this.SetupLegacy(false);
+				this.SetupLegacy(this._dpi.GetPluginConfig() != null);
 			else
 				this.Setup();
 		} else {

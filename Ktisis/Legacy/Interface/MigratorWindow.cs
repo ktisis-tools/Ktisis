@@ -176,7 +176,6 @@ public class MigratorWindow : KtisisWindow {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize("Next").X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
 			if (ImGui.Button("Next")) {
-				this._migrator.MigrateConfig();
 				this._page++;
 			}
 		} else if ((this._migrator.WasUserOnV2 && this._page == 6) || (!this._migrator.WasUserOnV2 && this._page == 1)) {
