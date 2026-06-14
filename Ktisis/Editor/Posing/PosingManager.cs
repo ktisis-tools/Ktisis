@@ -14,6 +14,7 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Expressions;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.AutoSave;
 using Ktisis.Editor.Posing.Data;
@@ -265,12 +266,33 @@ public class PosingManager : IPosingManager {
 			}
 
 			this._context.Actions.History.Add(new MultipleMemento(mementos));
+
+			// Reapply saved expression sliders (the visual is already restored via
+			// Bones; this seeds the editor so the sliders can be tweaked again).
+			// Requires a captured neutral to avoid double-applying onto the baked
+			// face, and respects the DT/pre-DT face guard above (modes loses Face
+			// on a topology mismatch).
+			if (file.Expressions is { Count: > 0 } && file.ExpressionNeutral != null
+				&& modes.HasFlag(PoseMode.Face) && pose.Parent is ActorEntity exprActor) {
+				this._context.Expressions.GetEditor(exprActor)
+					.LoadState(file.Expressions, file.ExpressionNeutral);
+			}
 		});
 	}
 
-	public Task<PoseFile> SavePoseFile(EntityPose pose) => this._framework.RunOnFrameworkThread(
-		() => new EntityPoseConverter(pose).SaveFile()
-	);
+	public Task<PoseFile> SavePoseFile(EntityPose pose) => this._framework.RunOnFrameworkThread(() => {
+		var file = new EntityPoseConverter(pose).SaveFile();
+
+		if (pose.Parent is ActorEntity actor) {
+			var state = this._context.Expressions.GetState(actor.Actor.ObjectIndex);
+			if (state.Weights.Count > 0) {
+				file.Expressions = new Dictionary<string, float>(state.Weights);
+				file.ExpressionNeutral = state.Neutral;
+			}
+		}
+
+		return file;
+	});
 
 	public Task StashPose(EntityPose pose) {
 		// todo: modes/transforms choices? could skip face or positions to allow better luck when transferring cross-races/genders

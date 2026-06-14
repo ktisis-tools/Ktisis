@@ -10,8 +10,8 @@ public class PoseFile : JsonFile {
 	public new string FileExtension { get; set; } = ".pose";
 	public new string TypeName { get; set; } = "Ktisis Pose";
 
-	public const int CurrentVersion = 2;
-	
+	public const int CurrentVersion = 3;
+
 	public Vector3 Position { get; set; }
 	public Quaternion Rotation { get; set; }
 
@@ -20,6 +20,13 @@ public class PoseFile : JsonFile {
 	public PoseContainer? MainHand { get; set; }
 	public PoseContainer? OffHand { get; set; }
 	public PoseContainer? Prop { get; set; }
+
+	// FACS facial-expression Action Unit weights (AU id -> slider value), and the
+	// captured neutral face baseline they were blended on top of. Optional; older
+	// files omit them. The blended result is already baked into Bones, so these
+	// only restore the expression sliders for further editing.
+	public Dictionary<string, float>? Expressions { get; set; }
+	public PoseContainer? ExpressionNeutral { get; set; }
 	
 	public bool HasDTFace() => Bones?.ContainsKey("j_f_face") ?? false;
 

@@ -63,6 +63,7 @@
       <EmbeddedResource Include="Data\Library\bnpc-index.json" />
       <EmbeddedResource Include="Data\Library\props.json" />
       <EmbeddedResource Include="Data\Library\skin-paths.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\*.json" />
 	</ItemGroup>
     <ItemGroup>
       <Content Include="Assets\**\*" CopyToOutputDirectory="Always"/>
