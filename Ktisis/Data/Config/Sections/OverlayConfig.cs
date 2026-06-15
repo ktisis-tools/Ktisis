@@ -2,6 +2,7 @@
 
 public class OverlayConfig {
 	public bool Visible = true;
+	public bool BulkVisOverride = false;
 
 	public bool DrawLines = true;
 	public bool DrawLinesGizmo = true;

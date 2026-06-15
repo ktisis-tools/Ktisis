@@ -70,7 +70,7 @@ public class SceneDraw {
 	// Skeletons
 
 	private unsafe void DrawSkeleton(ISelectableFrame frame, EntityPose pose) {
-		if (!pose.ShouldDraw()) return;
+		if (!pose.ShouldDraw() && !this.Config.BulkVisOverride) return;
 
 		var skeleton = pose.GetSkeleton();
 		if (skeleton == null || skeleton->PartialSkeletons == null) return;
@@ -91,10 +91,10 @@ public class SceneDraw {
 			var boneCt = hkaSkeleton->Bones.Length;
 			for (var i = 0; i < boneCt; i++) {
 				var node = pose.GetBoneFromMap(index, i);
-				if (node?.Visible != true) continue;
+				if (node?.Visible != true && !this.Config.BulkVisOverride) continue;
 
-				var transform = node.CalcTransformOverlay();
-				if (transform == null) continue;
+				var transform = node?.CalcTransformOverlay();
+				if (transform == null || node == null) continue;
 				
 				frame.AddItem(node, transform.Position, this._ctx);
 				
@@ -107,9 +107,9 @@ public class SceneDraw {
 					if (hkaSkeleton->ParentIndices[c] != i) continue;
 
 					var bone = pose.GetBoneFromMap(index, c);
-					if (bone?.Visible != true) continue;
+					if (bone?.Visible != true && !this.Config.BulkVisOverride) continue;
 
-					var lineTo = bone.CalcTransformOverlay();
+					var lineTo = bone?.CalcTransformOverlay();
 					if (lineTo == null) continue;
 
 					var display = this._ctx.Config.GetEntityDisplay(node);
