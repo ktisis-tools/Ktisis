@@ -12,7 +12,8 @@ namespace Ktisis.Scene.Entities.Utility;
 
 public class BalloonOverlay : OverlayEntity {
 	protected override sealed BalloonNode Node { get; }
-	
+	public readonly uint[] FontSizes = [8, 9, 10, 11, 12, 14, 16, 18];
+
 	public BalloonOverlay(
 		ISceneManager scene
 	) : base(scene) {
@@ -23,7 +24,8 @@ public class BalloonOverlay : OverlayEntity {
 			BalloonColor.Default,
 			"New dialog...",
 			true,
-			130.0f
+			130.0f,
+			12
 		) {
 			Size = new Vector2(200.0f, 90.0f),
 			Position = new Vector2(500.0f, 500.0f),
@@ -52,5 +54,9 @@ public class BalloonOverlay : OverlayEntity {
 	public float ArrowX {
 		get => this.Node.ArrowX;
 		set => this.Node.ArrowX = value;
+	}
+	public uint FontSize {
+		get => this.Node.FontSize;
+		set => this.Node.FontSize = value;
 	}
 }

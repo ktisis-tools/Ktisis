@@ -146,6 +146,15 @@ public class OverlayPropertyList : ObjectPropertyList {
 			talk.Dialog = dialog;
 
 		ImGui.Spacing();
+		var size = talk.FontSize;
+		if (ImGui.BeginCombo("Dialog Font Size", size.ToString())) {
+			foreach (var value in talk.FontSizes)
+				if (ImGui.Selectable(value.ToString(), size == value))
+					talk.FontSize = value;
+			ImGui.EndCombo();
+		}
+
+		ImGui.Spacing();
 		var background = talk.Background;
 		if (ImGui.BeginCombo("Background", this._locale.Translate($"background.{background}"))) {
 			foreach (var value in Enum.GetValues<TalkBackground>()) {
@@ -172,6 +181,15 @@ public class OverlayPropertyList : ObjectPropertyList {
 		var dialog = balloon.Dialog;
 		if (ImGui.InputText("Dialog", ref dialog, 64))
 			balloon.Dialog = dialog;
+
+		ImGui.Spacing();
+		var size = balloon.FontSize;
+		if (ImGui.BeginCombo("Font Size", size.ToString())) {
+			foreach (var value in balloon.FontSizes)
+				if (ImGui.Selectable(value.ToString(), size == value))
+					balloon.FontSize = value;
+			ImGui.EndCombo();
+		}
 
 		ImGui.Spacing();
 		var background = balloon.Background;

@@ -63,19 +63,22 @@ public class BalloonNode : OverlayNode {
 	public string Dialog;
 	public bool ArrowVisible;
 	public float ArrowX;
+	public uint FontSize;
 
 	public BalloonNode(
 		BalloonBackground bgChoice,
 		BalloonColor colorChoice,
 		string dialog,
 		bool arrowVisible,
-		float arrowX
+		float arrowX,
+		uint fontSize
 	) {
 		this.BgChoice = bgChoice;
 		this.ColorChoice = colorChoice;
 		this.Dialog = dialog;
 		this.ArrowVisible = arrowVisible;
 		this.ArrowX = arrowX;
+		this.FontSize = fontSize;
 
 		this.BalloonBg = this.SetBalloonBg();
 		this.BalloonGradient = this.SetBalloonGradient();
@@ -91,6 +94,7 @@ public class BalloonNode : OverlayNode {
 	protected override void OnUpdate() {
 		// update string
 		this.TalkText.String = this.Dialog;
+		this.TalkText.FontSize = this.FontSize;
 		// update bg texture
 		this.BalloonBg.TextureCoordinates = this.CoordinatesForBg();
 		this.BalloonGradient.TextureCoordinates = this.CoordinatesForGradient();
@@ -148,7 +152,7 @@ public class BalloonNode : OverlayNode {
 			FontType = FontType.Axis,
 			TextFlags = TextFlags.Ellipsis,
 			AlignmentType = AlignmentType.Center,
-			FontSize = 12,
+			FontSize = this.FontSize,
 			LineSpacing = 14,
 			String = this.Dialog
 		};
