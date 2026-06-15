@@ -121,6 +121,7 @@ public class SceneFile : JsonFile {
 		public string Dialog { get; set; }
 		public bool Visible { get; set; }
 		public string Name { get; set; }
+		public int FontSize { get; set; }
 		
 		public enum Type {
 			Balloon,

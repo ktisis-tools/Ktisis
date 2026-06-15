@@ -183,9 +183,8 @@ public class SceneDataService {
 					type = SceneFile.OverlayInfo.Type.Talk;
 					dialog = ((TalkOverlay)overlay).Dialog;
 				}
-				
-				
-				scene.Overlays.Add(new SceneFile.OverlayInfo() {
+
+				var file = new SceneFile.OverlayInfo() {
 					OverlayType = type,
 					Dialog = dialog,
 					Position = overlay.Position,
@@ -193,15 +192,27 @@ public class SceneDataService {
 					Scale = overlay.Scale,
 					Visible = overlay.Visible,
 					Name = overlay.Name,
-					ArrowPosition = overlay.Type == EntityType.BalloonOverlay ? ((BalloonOverlay)overlay).ArrowX : 0,
-					ShowArrow = overlay.Type == EntityType.BalloonOverlay && ((BalloonOverlay)overlay).Arrow,
-					BalloonBackground = overlay.Type == EntityType.BalloonOverlay ? ((BalloonOverlay)overlay).Background : default,
-					TalkBackground =  overlay.Type == EntityType.TalkOverlay ? ((TalkOverlay)overlay).Background : default,
-					TalkCursor =  overlay.Type == EntityType.TalkOverlay ? ((TalkOverlay)overlay).Cursor : default,
-					Speaker = overlay.Type == EntityType.TalkOverlay ? ((TalkOverlay)overlay).Speaker : string.Empty,
-					StatusType = overlay.Type == EntityType.StatusOverlay ? ((StatusOverlay)overlay).StatusType : default,
-					StatusIcon = overlay.Type == EntityType.StatusOverlay ? ((StatusOverlay)overlay).IconPath : string.Empty
-				});
+				};
+				
+				switch (overlay.Type)
+				{
+					case EntityType.BalloonOverlay:
+						file.ArrowPosition = ((BalloonOverlay)overlay).ArrowX;
+						file.ShowArrow = ((BalloonOverlay)overlay).Arrow;
+						file.BalloonBackground = ((BalloonOverlay)overlay).Background;
+						break;
+					case EntityType.TalkOverlay:
+						file.TalkBackground = ((TalkOverlay)overlay).Background;
+						file.TalkCursor = ((TalkOverlay)overlay).Cursor;
+						file.Speaker = ((TalkOverlay)overlay).Speaker;
+						break;
+					case EntityType.StatusOverlay:
+						file.StatusIcon = ((StatusOverlay)overlay).IconPath;
+						file.StatusType = ((StatusOverlay)overlay).StatusType;
+						break;
+				}
+				
+				scene.Overlays.Add(file);
 			}
 			
 			
