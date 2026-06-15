@@ -106,14 +106,10 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private unsafe void DrawMisc() {
 		var space = ImGui.GetStyle().ItemInnerSpacing.X;
 		ImGui.Spacing();
-		
-		var modelId = (int)this._editCustom.GetModelId();
-		if (ImGui.InputInt("Model ID", ref modelId, flags: ImGuiInputTextFlags.EnterReturnsTrue))
-			this._editCustom.SetModelId((uint)modelId);
-		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
-			using var _ = ImRaii.Tooltip();
-			ImGui.Text("Press enter to submit");
-		}
+
+		var modelId = this._editCustom.GetModelId();
+		if (ImGui.InputUInt("Model ID", ref modelId, 1, flags: ImGuiInputTextFlags.EnterReturnsTrue))
+			this._editCustom.SetModelId(modelId);
 
 		ImGui.SameLine(0, space);
 		this._npcs.DrawSearchIcon();
@@ -123,7 +119,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 			ImGui.Spacing();
 			ImGui.SliderFloat("Opacity", ref chara->Opacity, 0.0f, 1.0f);
 		}
-		
+
 		ImGui.Spacing();
 		ImGui.Spacing();
 
