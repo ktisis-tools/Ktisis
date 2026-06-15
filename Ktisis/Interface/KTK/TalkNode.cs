@@ -50,17 +50,20 @@ public class TalkNode : OverlayNode {
 	public TalkCursor CursorChoice;
 	public string Speaker;
 	public string Dialog;
+	public uint FontSize;
 
 	public TalkNode(
 		TalkBackground bgChoice,
 		TalkCursor cursorChoice,
 		string speaker,
-		string dialog
+		string dialog,
+		uint fontSize
 	) {
 		this.BgChoice = bgChoice;
 		this.CursorChoice = cursorChoice;
 		this.Speaker = speaker;
 		this.Dialog = dialog;
+		this.FontSize = fontSize;
 
 		this.TalkBgNode = this.SetTalkBg();
 		this.SpeakerBgNode = this.SetSpeakerBg();
@@ -79,6 +82,7 @@ public class TalkNode : OverlayNode {
 		// update strings, font color
 		this.TalkText.String = this.Dialog;
 		this.TalkText.TextColor = this.TextColorForBg();
+		this.TalkText.FontSize = this.FontSize;
 		this.SpeakerText.String = this.Speaker;
 
 		// update clicky texture/visiblity
@@ -140,7 +144,7 @@ public class TalkNode : OverlayNode {
 			TextColor = this.TextColorForBg(),
 			FontType = FontType.Axis,
 			TextFlags = TextFlags.WordWrap | TextFlags.MultiLine | TextFlags.OverflowHidden,
-			FontSize = 14,
+			FontSize = this.FontSize,
 			LineSpacing = 18,
 			String = this.Dialog
 		};
