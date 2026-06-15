@@ -13,6 +13,7 @@ using Ktisis.Data.Files;
 using Ktisis.Data.Json;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Entities.Game;
@@ -30,13 +31,9 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 	private ICallGateProvider<uint, string, bool, bool, bool, Task<bool>> IpcLoadPoseExtended { get; } = dpi.GetIpcProvider<uint, string, bool, bool, bool, Task<bool>>("Ktisis.LoadPoseExtended");
 	private ICallGateProvider<uint, Task<string?>> IpcSavePose { get; } = dpi.GetIpcProvider<uint, Task<string?>>("Ktisis.SavePose");
 
-	private ICallGateProvider<uint, string, Matrix4x4, bool, Task<bool>> IpcSetMatrix { get; } = dpi.GetIpcProvider<uint, string, Matrix4x4, bool, Task<bool>>("Ktisis.SetMatrix");
-	private ICallGateProvider<uint, string, bool, Task<Matrix4x4?>> IpcGetMatrix { get; } = dpi.GetIpcProvider<uint, string, bool, Task<Matrix4x4?>>("Ktisis.GetMatrix");
-	private ICallGateProvider<uint, List<string>, bool, Task<Dictionary<string, Matrix4x4?>>> IpcBatchGetMatrix { get; } = dpi.GetIpcProvider<uint, List<string>, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.BatchGetMatrix");
-	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>> IpcBatchSetMatrix { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>>("Ktisis.BatchSetMatrix");
-	private ICallGateProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>> IpcGetAllMatrices { get; } = dpi.GetIpcProvider<uint, bool, Task<Dictionary<string, Matrix4x4?>>>("Ktisis.GetAllMatrices");
 	private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
 	private ICallGateProvider<bool, bool> IpcPosingChangedEvent { get; } = dpi.GetIpcProvider<bool, bool>("Ktisis.PosingChanged");
+	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, Task<bool>> IpcApplyLocalPoses { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, Task<bool>>("Ktisis.ApplyLocalPoses");
 
 	#region core
 
@@ -127,158 +124,43 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 	private BoneNode? GetParentBone(BoneNode bone)
 		=> bone.Pose.Recurse().OfType<BoneNode>().FirstOrDefault(p => bone.IsBoneChildOf(p));
 
-	private async Task<Matrix4x4?> GetMatrix(uint index, string boneName, bool useWorldSpace) {
+	private async Task<bool> ApplyLocalPoses(uint index, Dictionary<string, Matrix4x4> localMatrices) 
+	{
 		var actor = GetEntity(index);
-		var bone = actor?.Pose?.FindBoneByName(boneName);
+		if (actor?.Pose == null || localMatrices.Count == 0) return false;
 
-		if (bone is null) return null;
-		//ws
-		if (useWorldSpace) return bone.GetMatrix();
+		unsafe 
+		{
+			var skeleton = actor.Pose.GetSkeleton();
+			if (skeleton == null) return false;
+			
+			foreach (var kvp in localMatrices) 
+			{
+				var bone = actor.Pose.FindBoneByName(kvp.Key);
+				if (bone == null) continue;
 
-		// ps relative
-		var model = bone.GetMatrixModel();
-		if (model == null) return null;
+				var pose = bone.GetPose();
+				if (pose == null || pose->LocalPose.Data == null) continue;
 
-		var parentModel = GetParentBone(bone)?.GetMatrixModel() ?? Matrix4x4.Identity;
+				Matrix4x4.Decompose(kvp.Value, out var scale, out var rot, out var pos);
 
-		return Matrix4x4.Invert(parentModel, out var inv)
-			? model.Value * inv
-			: null;
-	}
-
-	private async Task<bool> SetMatrix(uint index, string boneName, Matrix4x4 matrix, bool useWorldSpace) {
-		var ctx = ctxManager.Current;
-		var actor = GetEntity(index);
-		var bone = actor?.Pose?.FindBoneByName(boneName);
-
-		if (ctx is null || bone is null) return false;
-
-		var targetMatrix = CalculateWorldMatrix(bone, matrix, useWorldSpace);
-		return ApplyBoneTransform(ctx, bone, targetMatrix);
-	}
-
-	private async Task<Dictionary<string, Matrix4x4?>> BatchGetMatrix(uint index, List<string> names, bool useWorldSpace) {
-		var actor = GetEntity(index);
-		var ret = new Dictionary<string, Matrix4x4?>();
-
-		if (actor?.Pose == null) return ret;
-
-		// lookup dict
-		var allBones = actor.Pose.Recurse()
-			.OfType<BoneNode>()
-			.ToDictionary(b => b.Info.Name, b => b);
-
-		foreach (var name in names) {
-			if (!allBones.TryGetValue(name, out var bone)) {
-				ret[name] = null;
-				continue;
+				var qsLocal = pose->LocalPose.Data + bone.Info.BoneIndex;
+				qsLocal->Translation = new FFXIVClientStructs.Havok.Common.Base.Math.Vector.hkVector4f { X = pos.X, Y = pos.Y, Z = pos.Z, W = 0f };
+				qsLocal->Rotation = new FFXIVClientStructs.Havok.Common.Base.Math.Quaternion.hkQuaternionf { X = rot.X, Y = rot.Y, Z = rot.Z, W = rot.W };
+				qsLocal->Scale = new FFXIVClientStructs.Havok.Common.Base.Math.Vector.hkVector4f { X = scale.X, Y = scale.Y, Z = scale.Z, W = 0f };
+				
+				var qsModel = pose->ModelPose.Data + bone.Info.BoneIndex;
+				qsModel->Scale = new FFXIVClientStructs.Havok.Common.Base.Math.Vector.hkVector4f { X = scale.X, Y = scale.Y, Z = scale.Z, W = 0f };
 			}
-			if (useWorldSpace) {
-				ret[name] = bone.GetMatrix();
-			} else {
-				var model = bone.GetMatrixModel();
-				if (model == null) {
-					ret[name] = null;
-					continue;
-				}
-				var parentModel = GetParentBone(bone)?.GetMatrixModel() ?? Matrix4x4.Identity;
-				ret[name] = Matrix4x4.Invert(parentModel, out var inv) ? model.Value * inv : null;
+			
+			for (int pIndex = 0; pIndex < skeleton->PartialSkeletonCount; pIndex++) 
+			{
+				HavokPosing.SyncModelSpace(skeleton, pIndex);
 			}
 		}
-
-		return ret;
-	}
-
-	private async Task<bool> BatchSetMatrix(uint index, Dictionary<string, Matrix4x4> matrices, bool useWorldSpace) {
-		var ctx = ctxManager.Current;
-		var actor = GetEntity(index);
-
-		if (ctx == null || actor?.Pose == null || matrices.Count == 0) return false;
-
-		var bones = actor.Pose.Recurse().OfType<BoneNode>().ToList();
-
-		// sort because face bones are annoying
-		bones.Sort((a, b) => {
-			int p = a.Info.PartialIndex.CompareTo(b.Info.PartialIndex);
-			return p != 0 ? p : a.Info.BoneIndex.CompareTo(b.Info.BoneIndex);
-		});
-
-		bool anySuccess = false;
-
-		foreach (var bone in bones) {
-			if (!matrices.TryGetValue(bone.Info.Name, out var matrix))
-				continue;
-
-			var targetMatrix = CalculateWorldMatrix(bone, matrix, useWorldSpace);
-
-			if (ApplyBoneTransform(ctx, bone, targetMatrix))
-				anySuccess = true;
-		}
-
-		return anySuccess;
-	}
-
-	private async Task<Dictionary<string, Matrix4x4?>> GetAllMatrices(uint index, bool useWorldSpace) {
-		var actor = GetEntity(index);
-		var ret = new Dictionary<string, Matrix4x4?>();
-
-		if (actor?.Pose == null) return ret;
-
-		foreach (var bone in actor.Pose.Recurse().OfType<BoneNode>()) {
-			if (useWorldSpace) {
-				ret[bone.Info.Name] = bone.GetMatrix();
-			} else {
-				var model = bone.GetMatrixModel();
-				if (model == null) {
-					ret[bone.Info.Name] = null;
-					continue;
-				}
-				var parentModel = GetParentBone(bone)?.GetMatrixModel() ?? Matrix4x4.Identity;
-				ret[bone.Info.Name] = Matrix4x4.Invert(parentModel, out var inv) ? model.Value * inv : null;
-			}
-		}
-
-		return ret;
-	}
-
-	private unsafe Matrix4x4 CalculateWorldMatrix(BoneNode bone, Matrix4x4 inputMatrix, bool inputIsWorldSpace) {
-		if (inputIsWorldSpace) return inputMatrix;
-
-		// ActorSpace = ParentSpace * ParentModel
-		var parent = GetParentBone(bone);
-		var parentModel = parent?.GetMatrixModel() ?? Matrix4x4.Identity;
-		var actorSpaceMatrix = inputMatrix * parentModel;
-
-		// Convert Actor Space to World Space
-		var skeleton = bone.GetSkeleton();
-		if (skeleton == null) return Matrix4x4.Identity;
-
-		var actorTx = new Transform(skeleton->Transform);
-		var m = actorSpaceMatrix;
-
-		m.Translation *= actorTx.Scale;
-
-		var root = Matrix4x4.CreateFromQuaternion(actorTx.Rotation)
-			* Matrix4x4.CreateTranslation(actorTx.Position);
-
-		// Result = Matrix * Root
-		return m * root;
-	}
-
-	private bool ApplyBoneTransform(IEditorContext ctx, BoneNode bone, Matrix4x4 worldTarget) {
-		var target = new TransformTarget(bone, new[] { bone });
-
-		var action = ctx.Transform.Begin(target, setup => {
-			setup.MirrorRotation = MirrorMode.Inverse;
-			setup.ParentBones = true;
-			setup.RelativeBones = true;
-		});
-
-		action.SetMatrix(worldTarget);
-		action.Dispatch();
+		
 		return true;
 	}
-
 	#endregion
 
 	public void InvokePosingChanged(bool status) {
@@ -292,12 +174,8 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 		IpcLoadPose.RegisterFunc(LoadPose);
 		IpcLoadPoseExtended.RegisterFunc(LoadPose);
 		IpcSavePose.RegisterFunc(SavePose);
-		IpcGetMatrix.RegisterFunc(GetMatrix);
-		IpcSetMatrix.RegisterFunc(SetMatrix);
 		IpcSelectedBones.RegisterFunc(SelectedBones);
-		IpcBatchGetMatrix.RegisterFunc(BatchGetMatrix);
-		IpcBatchSetMatrix.RegisterFunc(BatchSetMatrix);
-		IpcGetAllMatrices.RegisterFunc(GetAllMatrices);
+		IpcApplyLocalPoses.RegisterFunc(ApplyLocalPoses);
 		// IpcPosingChangedEvent.RegisterFunc(); no func to register since we're firing messages
 	}
 
@@ -308,13 +186,9 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 		IpcLoadPose.UnregisterFunc();
 		IpcLoadPoseExtended.UnregisterFunc();
 		IpcSavePose.UnregisterFunc();
-		IpcGetMatrix.UnregisterFunc();
-		IpcSetMatrix.UnregisterFunc();
 		IpcSelectedBones.UnregisterFunc();
-		IpcBatchGetMatrix.UnregisterFunc();
-		IpcBatchSetMatrix.UnregisterFunc();
-		IpcGetAllMatrices.UnregisterFunc();
 		IpcPosingChangedEvent.UnregisterFunc();
+		IpcApplyLocalPoses.UnregisterFunc();
 	}
 
 	public void Dispose() {
