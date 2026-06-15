@@ -105,8 +105,9 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 
 			ret[actor.Actor.ObjectIndex] =
 				actor.Children.OfType<EntityPose>()
-					.SelectMany(x => x.Recurse())
+					.SelectMany(x => x.Recurse().Append(x))
 					.Where(s => s.IsSelected)
+					.SelectMany(s => s.Recurse().Append(s))
 					.OfType<BoneNode>()
 					.Select(s => s.Info.Name)
 					.ToHashSet();
