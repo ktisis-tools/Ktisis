@@ -200,11 +200,14 @@ public class SceneDataService {
 						file.ArrowPosition = ((BalloonOverlay)overlay).ArrowX;
 						file.ShowArrow = ((BalloonOverlay)overlay).Arrow;
 						file.BalloonBackground = ((BalloonOverlay)overlay).Background;
+						file.BalloonColor = ((BalloonOverlay)overlay).Color;
+						file.FontSize = ((BalloonOverlay)overlay).FontSize;
 						break;
 					case EntityType.TalkOverlay:
 						file.TalkBackground = ((TalkOverlay)overlay).Background;
 						file.TalkCursor = ((TalkOverlay)overlay).Cursor;
 						file.Speaker = ((TalkOverlay)overlay).Speaker;
+						file.FontSize = ((TalkOverlay)overlay).FontSize;
 						break;
 					case EntityType.StatusOverlay:
 						file.StatusIcon = ((StatusOverlay)overlay).IconPath;

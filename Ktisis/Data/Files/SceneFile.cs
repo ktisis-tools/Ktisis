@@ -108,6 +108,7 @@ public class SceneFile : JsonFile {
 		public BalloonBackground BalloonBackground { get; set; }
 		public bool ShowArrow { get; set; }
 		public float ArrowPosition { get; set; }
+		public BalloonColor BalloonColor { get; set; }
 		
 		//Talk
 		public TalkBackground TalkBackground { get; set; }
@@ -121,7 +122,7 @@ public class SceneFile : JsonFile {
 		public string Dialog { get; set; }
 		public bool Visible { get; set; }
 		public string Name { get; set; }
-		public int FontSize { get; set; }
+		public uint FontSize { get; set; }
 		
 		public enum Type {
 			Balloon,
