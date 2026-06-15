@@ -185,6 +185,17 @@ public class OverlayPropertyList : ObjectPropertyList {
 		}
 
 		ImGui.Spacing();
+		var color = balloon.Color;
+		if (ImGui.BeginCombo("Color Gradient", this._locale.Translate($"gradient.{color}"))) {
+			foreach (var value in Enum.GetValues<BalloonColor>()) {
+				var valueLabel = this._locale.Translate($"gradient.{value}");
+				if (ImGui.Selectable(valueLabel, color == value))
+					balloon.Color = value;
+			}
+			ImGui.EndCombo();
+		}
+
+		ImGui.Spacing();
 		var arrow = balloon.Arrow;
 		if (ImGui.Checkbox("Show Bubble Arrow", ref arrow))
 			balloon.Arrow = arrow;

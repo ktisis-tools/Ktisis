@@ -1,5 +1,7 @@
 using System.Numerics;
 
+using FFXIVClientStructs.FFXIV.Client.Game;
+
 using Ktisis.Data.Config;
 using Ktisis.Interface.KTK;
 using Ktisis.Scene.Decor;
@@ -18,6 +20,7 @@ public class BalloonOverlay : OverlayEntity {
 
 		this.Node = new BalloonNode(
 			BalloonBackground.Say,
+			BalloonColor.Default,
 			"New dialog...",
 			true,
 			130.0f
@@ -37,6 +40,10 @@ public class BalloonOverlay : OverlayEntity {
 	public BalloonBackground Background {
 		get => this.Node.BgChoice;
 		set => this.Node.BgChoice = value;
+	}
+	public BalloonColor Color {
+		get => this.Node.ColorChoice;
+		set => this.Node.ColorChoice = value;
 	}
 	public bool Arrow {
 		get => this.Node.ArrowVisible;

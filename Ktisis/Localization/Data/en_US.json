@@ -872,6 +872,24 @@
 		"Novice": "Novice",
 		"PVP": "PVP"
 	},
+	"gradient": {
+		"Default": "Default",
+		"Lime": "Lime",
+		"Orange": "Orange",
+		"Violet": "Violet",
+		"SkyBlue": "Sky Blue",
+		"Clay": "Clay",
+		"LightJeans": "Light Jeans",
+		"GrassGreen": "Grass Green",
+		"Gray": "Gray",
+		"Pink": "Pink",
+		"DarkJeans": "Dark Jeans",
+		"Green": "Green",
+		"Purple": "Purple",
+		"Brown": "Brown",
+		"CloudyBlue": "Cloudy Blue",
+		"RoyalPurple": "Royal Purple"
+	},
 	"cursor": {
 		"None": "None",
 		"Pin": "Pin",
