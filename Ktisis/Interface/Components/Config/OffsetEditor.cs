@@ -168,7 +168,8 @@ public class OffsetEditor {
 		var buttonPadding = ImGui.GetStyle().FramePadding.X * 2;
 		var textSize = ImGui.CalcTextSize(label).X;
 		// nudge to the edge with respect to legacy button size + spacing + trash button size
-		ImGui.SameLine(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - buttonPadding - textSize - spacing - Buttons.CalcSize());
+		ImGui.SameLine();
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - buttonPadding - textSize - spacing - Buttons.CalcSize());
 		using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGui.IsKeyDown(ImGuiKey.ModCtrl))) {
 			if (ImGui.Button(label))
 				this.Config.LoadLegacyFromClipboard(this.SelectedRaceSexId);

@@ -7,6 +7,9 @@ using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Plugin;
 
+using FFXIVClientStructs;
+
+using Ktisis.Actions;
 using Ktisis.Actions.Binds;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
@@ -92,7 +95,7 @@ public class LegacyMigrator {
 
 	internal void MigrateConfig() {
 		var cfg = this._cfg.File;
-
+		
 		// The big 3 so to speak
 		cfg.Editor.IncognitoPlayerNames = this._legacyCfg?.DisplayCharName ?? cfg.Editor.IncognitoPlayerNames;
 		cfg.Categories.ShowNsfwBones = !this._legacyCfg?.CensorNsfw ?? cfg.Categories.ShowNsfwBones;
@@ -138,45 +141,48 @@ public class LegacyMigrator {
 		cfg.Editor.WorkcamSlowMulti = this._legacyCfg?.FreecamCtrlMuli ?? cfg.Editor.WorkcamSlowMulti;
 		cfg.Editor.WorkcamVertMulti = this._legacyCfg?.FreecamUpDownMuli ?? cfg.Editor.WorkcamVertMulti;
 
+		
 		// Keybinds
 		if (this._legacyCfg?.FreecamForward != null)
-			MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Forward"].Combo, this._legacyCfg?.FreecamForward!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Forward", MigrateKeybind(this._legacyCfg?.FreecamForward!));
+
 		if (this._legacyCfg?.FreecamBack != null)
-			MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Back"].Combo, this._legacyCfg?.FreecamBack!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Back", MigrateKeybind(this._legacyCfg?.FreecamBack!));
 		if (this._legacyCfg?.FreecamRight != null)
-			MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Right"].Combo, this._legacyCfg?.FreecamRight!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Right", MigrateKeybind(this._legacyCfg?.FreecamRight!));
 		if (this._legacyCfg?.FreecamLeft != null)
-			MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Left"].Combo, this._legacyCfg?.FreecamLeft!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Left", MigrateKeybind(this._legacyCfg?.FreecamLeft!));
 		if (this._legacyCfg?.FreecamUp != null)
-			MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Up"].Combo, this._legacyCfg?.FreecamUp!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Up", MigrateKeybind(this._legacyCfg?.FreecamUp!));
 		if (this._legacyCfg?.FreecamDown != null)
-			MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Down"].Combo, this._legacyCfg?.FreecamDown!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Down", MigrateKeybind(this._legacyCfg?.FreecamDown!));
 		if (this._legacyCfg?.FreecamFast != null)
-			MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Fast"].Combo, this._legacyCfg?.FreecamFast!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Fast",MigrateKeybind( this._legacyCfg?.FreecamFast!));
 		if (this._legacyCfg?.FreecamSlow != null)
-			MigrateKeybind(ref cfg.Keybinds.Keybinds["Camera_Work_Slow"].Combo, this._legacyCfg?.FreecamSlow!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Slow", MigrateKeybind(this._legacyCfg?.FreecamSlow!));
 
 		// KeyBinds dict
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToTranslate) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Gizmo_SetTranslateMode"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToTranslate]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_SetTranslateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToTranslate]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToRotate) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Gizmo_SetRotateMode"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToRotate]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_SetRotateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToRotate]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToScale) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Gizmo_SetScaleMode"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToScale]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_SetScaleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToScale]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToUniversal) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Gizmo_SetUniversalMode"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToUniversal]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_SetUniversalMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToUniversal]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.ToggleLocalWorld) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Gizmo_ToggleMode"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleLocalWorld]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_ToggleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleLocalWorld]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Gizmo_MirrorRotation"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_MirrorRotation", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.DeselectGizmo) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Select_None"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.DeselectGizmo]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Select_None", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.DeselectGizmo]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.NextCamera) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Camera_SetNext"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.NextCamera]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_SetNext", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.NextCamera]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.PreviousCamera) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Camera_SetPrevious"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.PreviousCamera]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_SetPrevious", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.PreviousCamera]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.ToggleFreeCam) ?? false)
-			MigrateKeys(ref cfg.Keybinds.Keybinds["Camera_Work_Toggle"].Combo, this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleFreeCam]!);
+			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Toggle", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleFreeCam]!));
+	
 
 		// Offsets
 		if (this._legacyCfg?.CustomBoneOffset != null) {
@@ -192,22 +198,29 @@ public class LegacyMigrator {
 		}
 	}
 
-	private static void MigrateKeybind(ref KeyCombo newSetting, LegacyConfig.Keybind keybind) {
+
+	private static ActionKeybind MigrateKeybind(LegacyConfig.Keybind keybind) {
+		ActionKeybind bind = new ActionKeybind();
+		
 		foreach (var key in keybind.Keys) {
 			if (KeyHelpers.IsModifierKey(key))
-				newSetting.AddModifier(key);
+				bind.Combo.AddModifier(key);
 			else
-				newSetting.Key = key;
+				bind.Combo.Key = key;
 		}
+		return bind;
 	}
 
-	private static void MigrateKeys(ref KeyCombo newSetting, List<VirtualKey> keys) {
+	private static ActionKeybind MigrateKeys(List<VirtualKey> keys) {
+		ActionKeybind bind = new ActionKeybind();
+		
 		foreach (var key in keys) {
 			if (KeyHelpers.IsModifierKey(key))
-				newSetting.AddModifier(key);
+				bind.Combo.AddModifier(key);
 			else
-				newSetting.Key = key;
+				bind.Combo.Key = key;
 		}
+		return bind;
 	}
 
 	internal void V3Skip() {
