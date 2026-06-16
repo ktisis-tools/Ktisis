@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 
-using Ktisis.Common.Utility;
+using FFXIVClientStructs.Havok.Common.Base.Math.Vector;
+using FFXIVClientStructs.Havok.Common.Base.Math.Quaternion;
+
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
 using Ktisis.Editor.Context;
-using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Data;
-using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules.Actors;
@@ -33,7 +33,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 
 	private ICallGateProvider<Task<Dictionary<int, HashSet<string>>>> IpcSelectedBones { get; } = dpi.GetIpcProvider<Task<Dictionary<int, HashSet<string>>>>("Ktisis.SelectedBones");
 	private ICallGateProvider<bool, bool> IpcPosingChangedEvent { get; } = dpi.GetIpcProvider<bool, bool>("Ktisis.PosingChanged");
-	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, Task<bool>> IpcApplyLocalPoses { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, Task<bool>>("Ktisis.ApplyLocalPoses");
+	private ICallGateProvider<uint, Dictionary<string, Matrix4x4>, Task<bool>> IpcApplyAbsolutePoses { get; } = dpi.GetIpcProvider<uint, Dictionary<string, Matrix4x4>, Task<bool>>("Ktisis.ApplyAbsolutePoses");
 
 	#region core
 
@@ -118,24 +118,23 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 
 	#endregion
 
-	#region Matrix IPC
+	#region Absolute Posing IPC
 
-	private ActorEntity? GetEntity(uint index)
-		=> ctxManager.Current?.Scene?.GetEntityForIndex(index);
-	private BoneNode? GetParentBone(BoneNode bone)
-		=> bone.Pose.Recurse().OfType<BoneNode>().FirstOrDefault(p => bone.IsBoneChildOf(p));
+	private ActorEntity? GetEntity(uint index) => ctxManager.Current?.Scene?.GetEntityForIndex(index);
+	private BoneNode? GetParentBone(BoneNode bone) => bone.Pose.Recurse().OfType<BoneNode>().FirstOrDefault(p => bone.IsBoneChildOf(p));
 
-	private async Task<bool> ApplyLocalPoses(uint index, Dictionary<string, Matrix4x4> localMatrices) 
-	{
+	/// <summary>
+	/// Local Pos/Rot, Model Scale to circumvent Racial Offset
+	/// </summary>
+	private async Task<bool> ApplyAbsolutePoses(uint index, Dictionary<string, Matrix4x4> matrices) {
 		var actor = GetEntity(index);
-		if (actor?.Pose == null || localMatrices.Count == 0) return false;
+		if (actor?.Pose == null || matrices.Count == 0) return false;
 
-		unsafe 
-		{
+		unsafe {
 			var skeleton = actor.Pose.GetSkeleton();
 			if (skeleton == null) return false;
 			
-			foreach (var kvp in localMatrices) 
+			foreach (var kvp in matrices) // local pos/rot
 			{
 				var bone = actor.Pose.FindBoneByName(kvp.Key);
 				if (bone == null) continue;
@@ -143,20 +142,28 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 				var pose = bone.GetPose();
 				if (pose == null || pose->LocalPose.Data == null) continue;
 
-				Matrix4x4.Decompose(kvp.Value, out var scale, out var rot, out var pos);
+				Matrix4x4.Decompose(kvp.Value, out _, out var rot, out var pos);
 
 				var qsLocal = pose->LocalPose.Data + bone.Info.BoneIndex;
-				qsLocal->Translation = new FFXIVClientStructs.Havok.Common.Base.Math.Vector.hkVector4f { X = pos.X, Y = pos.Y, Z = pos.Z, W = 0f };
-				qsLocal->Rotation = new FFXIVClientStructs.Havok.Common.Base.Math.Quaternion.hkQuaternionf { X = rot.X, Y = rot.Y, Z = rot.Z, W = rot.W };
-				qsLocal->Scale = new FFXIVClientStructs.Havok.Common.Base.Math.Vector.hkVector4f { X = scale.X, Y = scale.Y, Z = scale.Z, W = 0f };
-				
-				var qsModel = pose->ModelPose.Data + bone.Info.BoneIndex;
-				qsModel->Scale = new FFXIVClientStructs.Havok.Common.Base.Math.Vector.hkVector4f { X = scale.X, Y = scale.Y, Z = scale.Z, W = 0f };
+				qsLocal->Translation = new hkVector4f { X = pos.X, Y = pos.Y, Z = pos.Z, W = 0f };
+				qsLocal->Rotation = new hkQuaternionf { X = rot.X, Y = rot.Y, Z = rot.Z, W = rot.W };
+			}
+			for (int pIndex = 0; pIndex < skeleton->PartialSkeletonCount; pIndex++) {
+				HavokPosing.SyncModelSpace(skeleton, pIndex);
 			}
 			
-			for (int pIndex = 0; pIndex < skeleton->PartialSkeletonCount; pIndex++) 
+			foreach (var kvp in matrices) //overwrite with model scale
 			{
-				HavokPosing.SyncModelSpace(skeleton, pIndex);
+				var bone = actor.Pose.FindBoneByName(kvp.Key);
+				if (bone == null) continue;
+				
+				var pose = bone.GetPose();
+				if (pose == null || pose->ModelPose.Data == null) continue;
+				
+				Matrix4x4.Decompose(kvp.Value, out var scale, out _, out _);
+				
+				var qsModel = pose->ModelPose.Data + bone.Info.BoneIndex;
+				qsModel->Scale = new hkVector4f { X = scale.X, Y = scale.Y, Z = scale.Z, W = 0f };
 			}
 		}
 		
@@ -176,7 +183,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 		IpcLoadPoseExtended.RegisterFunc(LoadPose);
 		IpcSavePose.RegisterFunc(SavePose);
 		IpcSelectedBones.RegisterFunc(SelectedBones);
-		IpcApplyLocalPoses.RegisterFunc(ApplyLocalPoses);
+		IpcApplyAbsolutePoses.RegisterFunc(ApplyAbsolutePoses);
 		// IpcPosingChangedEvent.RegisterFunc(); no func to register since we're firing messages
 	}
 
@@ -189,7 +196,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 		IpcSavePose.UnregisterFunc();
 		IpcSelectedBones.UnregisterFunc();
 		IpcPosingChangedEvent.UnregisterFunc();
-		IpcApplyLocalPoses.UnregisterFunc();
+		IpcApplyAbsolutePoses.UnregisterFunc();
 	}
 
 	public void Dispose() {
