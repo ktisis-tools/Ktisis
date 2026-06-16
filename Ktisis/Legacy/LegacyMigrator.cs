@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 
+using Dalamud.Bindings.ImGui;
 using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Plugin;
@@ -52,6 +54,26 @@ public class LegacyMigrator {
 		{ "Viera_Feminine", "1801" },
 	};
 
+	private readonly Dictionary<string, string> LegacyCategoryMap = new Dictionary<string, string>() {
+		{"clothes", "Clothing"},
+		{"body", "Body"},
+		{"eyes", "Eyes"},
+		{"mouth", "Mouth"},
+		{"face", "Face"},
+		{"hair", "Hair"},
+		{"weapons", "Weapons"},
+		{"right hand", "RightHand"},
+		{"left hand", "LeftHand"},
+		{"tail", "Tail"},
+		{"ears", "Ears"},
+		{"ivcs left hand", "LeftHandIvcs"},
+		{"ivcs right hand", "RightHandIvcs"},
+		{"ivcs left foot", "LeftFootIvcs"},
+		{"ivcs right foot", "RightFootIvcs"},
+		{"ivcs penis", "PenisIvcs"},
+		{"ivcs vagina", "VaginaIvcs"},
+		{"ivcs buttocks", "BottomIvcs"}
+	};
 	public bool WasUserOnV2;
 
 	public event Action? OnConfirmed;
@@ -182,7 +204,14 @@ public class LegacyMigrator {
 			this._cfg.File.Keybinds.GetOrSetDefault("Camera_SetPrevious", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.PreviousCamera]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.ToggleFreeCam) ?? false)
 			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Toggle", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleFreeCam]!));
-	
+
+		if(this._legacyCfg?.BoneCategoryColors != null)
+			foreach (var categoryColor in this._legacyCfg?.BoneCategoryColors!) {
+				if (!this.LegacyCategoryMap.ContainsKey(categoryColor.Key)) continue;
+				var color = ImGui.ColorConvertFloat4ToU32(categoryColor.Value);
+				this._cfg.File.Categories.GetByName(this.LegacyCategoryMap[categoryColor.Key])?.BoneColor = color;
+			}
+
 
 		// Offsets
 		if (this._legacyCfg?.CustomBoneOffset != null) {
