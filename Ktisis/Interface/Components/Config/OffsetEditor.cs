@@ -192,9 +192,10 @@ public class OffsetEditor {
 	private void DrawBoneOffsets() {
 		// buttons | X | Y | Z | bonename
 		CellSize = ImGui.GetContentRegionAvail().X / 5;
+
 		var oldPadding = ImGui.GetStyle().CellPadding;
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(2, 2));
-		using var _table = ImRaii.Table("##BoneOffsetTable", 5, ImGuiTableFlags.Borders);
+		using var _table = ImRaii.Table("##BoneOffsetTable", 5, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingStretchSame);
 		if (!_table.Success) return;
 		
 		ImGui.TableSetupColumn("##BoneButtons", ImGuiTableColumnFlags.WidthFixed);
@@ -242,17 +243,17 @@ public class OffsetEditor {
 
 		
 		ImGui.TableNextColumn();
-		ImGui.SetNextItemWidth(this.CellSize);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		result |= ImGui.DragFloat("##X", ref vec.X, 0.001f, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
 
 		// Y
 		ImGui.TableNextColumn();
-		ImGui.SetNextItemWidth(this.CellSize);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		result |= ImGui.DragFloat("##Y", ref vec.Y, 0.001f, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
 
 		// Z
 		ImGui.TableNextColumn();
-		ImGui.SetNextItemWidth(this.CellSize);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		result |= ImGui.DragFloat("##Z", ref vec.Z, 0.001f, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
 
 		// BoneName (FriendlyName)
