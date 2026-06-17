@@ -47,9 +47,12 @@ public class GuiManager : IDisposable {
 	public void Initialize() {
 		this._uiBuilder.DisableGposeUiHide = true;
 		this._uiBuilder.Draw += this.Draw;
-		this._uiBuilder.OpenConfigUi += this.OnOpenConfigUi;
 		this.FileDialogs.OnOpenDialog += this.OnOpenDialog;
 		this.FileDialogs.Initialize();
+	}
+
+	internal void AddSettings() {
+		this._uiBuilder.OpenConfigUi += this.OnOpenConfigUi;
 	}
 	
 	// Draw

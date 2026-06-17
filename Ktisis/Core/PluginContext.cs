@@ -83,6 +83,7 @@ public class PluginContext : IPluginContext {
 
 	private void Setup() {
 		this.Config.Load();
+		this.Gui.AddSettings();
 		this._dll.Create();
 		this.Actions.RegisterActions(this);
 		this._context.Initialize(this);
