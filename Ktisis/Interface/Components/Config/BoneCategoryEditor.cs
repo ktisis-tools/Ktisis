@@ -166,7 +166,9 @@ public class BoneCategoryEditor {
 	}
 
 	private void DrawSwitches(BoneCategory category) {
-		ImGui.Checkbox(this._locale.Translate("config.categories.editor.subcategories"), ref this.ColorSub);
+		if (ImGui.Checkbox(this._locale.Translate("config.categories.editor.subcategories"), ref this.ColorSub))
+			if (this.ColorSub)
+				this.SetColors(category, category); // update child colors as soon as subcategories is turned on
 		ImGui.Checkbox(this._locale.Translate("config.categories.editor.link_colors"), ref category.LinkedColors);
 	}
 
