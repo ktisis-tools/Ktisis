@@ -100,7 +100,7 @@ public class ConfigManager : IDisposable {
 		cfg.Categories = categories;
 	}
 
-	private void GenerateDefaultPresets(Configuration cfg) {
+	internal void GenerateDefaultPresets(Configuration cfg) {
 		var categories = SchemaReader.ReadCategories();
 
 		var allPresetNames = categories.CategoryList.SelectMany(x => x.Presets).Distinct().ToList();

@@ -212,7 +212,8 @@ public class LegacyMigrator {
 				this._cfg.File.Categories.GetByName(this.LegacyCategoryMap[categoryColor.Key])?.BoneColor = color;
 			}
 
-
+		this._cfg.GenerateDefaultPresets(this._cfg.File);  //this doesnt happen because we set the version to 12 to avoid the check but we inadvertently blow the check up lol
+		
 		// Offsets
 		if (this._legacyCfg?.CustomBoneOffset != null) {
 			foreach (var dictPair in this._legacyCfg.CustomBoneOffset) {

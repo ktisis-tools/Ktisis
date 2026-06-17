@@ -55,6 +55,9 @@ public class BoneCategoryEditor {
 	// Draw
 	
 	public void Draw() {
+		ImGui.SetCursorPosX(600);		//hack to make this work in toolbar
+		ImGui.Dummy(Vector2.Zero);
+		
 		using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 		using var frame = ImRaii.Child("##BoneCategoriesFrame", ImGui.GetContentRegionAvail() - (this._cfg.File.Editor.UseToolbar?new Vector2(0, 2): Vector2.Zero), true);
 		if (!frame.Success) return;
@@ -62,7 +65,6 @@ public class BoneCategoryEditor {
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(10, 10));
 		using var table = ImRaii.Table("##BoneCategoriesTable", 2, ImGuiTableFlags.Resizable);
 		if (!table.Success) return;
-		
 		ImGui.TableSetupColumn("CategoryList");
 		ImGui.TableSetupColumn("CategoryInfo");
 
