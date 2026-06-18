@@ -1,4 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+
+using Dalamud.Plugin;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
@@ -8,32 +14,56 @@ using Ktisis.Editor.Posing.Types;
 namespace Ktisis.Localization;
 
 [Singleton]
-public class LocaleManager {
+public class LocaleManager : IDisposable {
 	// Service
-
+	
 	private readonly ConfigManager _cfg;
+	private readonly IDalamudPluginInterface _dpi;
 	
 	private readonly LocaleDataLoader Loader = new();
-	
-	private LocaleData? Data;
+
+	public List<LocaleMetaData> AvailableLocales = new();
+	public LocaleData? Data;
 
 	public LocaleManager(
-		ConfigManager cfg
+		ConfigManager cfg,
+		IDalamudPluginInterface dpi
 	) {
 		this._cfg = cfg;
+		this._dpi = dpi;
 	}
 
 	public void Initialize() {
 		// TODO: Listen for locale changes.
+		this.HandleLanguageChangeDelegate();
+		var locales = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+		foreach (var resource in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(s => s.StartsWith("Ktisis.Localization.Data"))) {
+			if(this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
+				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
+		}
 		this.LoadLocale(this._cfg.File.Locale.LocaleId);
 	}
-	
+
+	public void HandleLanguageChangeDelegate() {
+		this._dpi.LanguageChanged -= this.LanguageChanged;
+		if (this._cfg.File.Locale.AutoDetect) {
+			this._dpi.LanguageChanged += this.LanguageChanged;
+		}
+	}
+	public void LanguageChanged(string lang) {
+		var localeFile = lang + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
+		if (this.HasTranslationFor(localeFile)) {
+			this._cfg.File.Locale.LocaleId = localeFile;
+		}
+			
+	}
 	// Localization methods
 
 	public string Translate(string handle, Dictionary<string, string>? parameters = null) {
 		return this.Data?.Translate(handle, parameters) ?? handle;
 	}
 
+	public string GetLocaleName(string handle) => this.Data?.MetaData.DisplayName ?? "";
 	public bool HasTranslationFor(string handle) {
 		return this.Data?.HasTranslationFor(handle) ?? false;
 	}
@@ -57,5 +87,10 @@ public class LocaleManager {
 	public string GetCategoryName(BoneCategory category) {
 		var key = $"boneCategory.{category.Name}";
 		return this.HasTranslationFor(key) ? this.Translate(key) : category.Name;
+	}
+	
+
+	public void Dispose() {
+			this._dpi.LanguageChanged -= this.LanguageChanged;
 	}
 }

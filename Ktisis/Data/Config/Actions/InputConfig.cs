@@ -17,9 +17,5 @@ public class InputConfig {
 		this.Keybinds.Add(name, defaultValue);
 		return defaultValue;
 	}
-	public ActionKeybind SetDefault(string name, ActionKeybind defaultValue) {
-		this.Keybinds.Add(name, defaultValue);
-		return defaultValue;
-	}
-	
+	public void SetDefault(string name, ActionKeybind defaultValue) => this.Keybinds[name] = defaultValue; 
 }

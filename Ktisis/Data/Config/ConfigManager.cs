@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Dalamud.Plugin;
 
@@ -48,7 +49,7 @@ public class ConfigManager : IDisposable {
 				this.MigrateSchema(cfg);
 			}
 			if (cfg is { Version: < 11 }) {
-				cfg.Version = 12;
+				cfg.Version = 11;
 				this.GenerateDefaultPresets(cfg);
 				this.MigrateSchema(cfg);
 			}
@@ -69,6 +70,8 @@ public class ConfigManager : IDisposable {
 		this._isLoaded = true;
 		if (created)
 			this.Save();
+
+
 
 		timer.Stop();
 		Ktisis.Log.Debug($"Configuration loaded in {timer.Elapsed.TotalMilliseconds:0.00}ms");

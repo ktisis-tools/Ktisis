@@ -43,7 +43,7 @@ public class ConfigWindow : KtisisWindow {
 
 	// ty OGT https://git.anna.lgbt/anna/OrangeGuidanceTomestone/src/branch/main/client/Ui/MainWindowTabs/Settings.cs#L23
 	private delegate void DrawContentDelegate();
-	private IReadOnlyList<(string, DrawContentDelegate)> Tabs { get; }
+	private IReadOnlyList<(string, DrawContentDelegate?)> Tabs { get; }
 	private int _tabIndex = 0;
 
 	public ConfigWindow(
@@ -82,7 +82,9 @@ public class ConfigWindow : KtisisWindow {
 			(this.Locale.Translate("config.input.cameras.title"), this.DrawCamerasInputTab),
 			(this.Locale.Translate("config.input.gizmo.title"), this.DrawGizmoInputTab),
 			(this.Locale.Translate("config.input.toolbar.title"), this.DrawToolbarInputTab),
-			(this.Locale.Translate("config.about.title"), this.DrawAboutTab)
+			(this.Locale.Translate("config.misc.title"), null),
+			(this.Locale.Translate("config.language.title"), this.DrawLanguageTab),
+			(this.Locale.Translate("config.about.title"), this.DrawAboutTab),
 		];
 	}
 	
@@ -108,9 +110,9 @@ public class ConfigWindow : KtisisWindow {
 			append += this.Tabs[(int)parentIndex].Item1;
 		else
 			append += this.Tabs[index].Item1;
-
-		if (ImGui.Selectable(this.Tabs[index].Item1 + append, this._tabIndex == index ))
-			this._tabIndex = index;
+		if(this.Tabs[index].Item2 != null)
+			if (ImGui.Selectable(this.Tabs[index].Item1 + append, this._tabIndex == index ))
+				this._tabIndex = index;
 		if (hasChildren)
 			foreach (var childIndex in children!)
 				this.DrawTabNode(childIndex, parentIndex: index);
@@ -121,7 +123,7 @@ public class ConfigWindow : KtisisWindow {
 			this.DrawTabNode(0, [1, 2]);
 			this.DrawTabNode(3, [4, 5, 6, 7]);
 			this.DrawTabNode(8, [9, 10, 11]);
-			this.DrawTabNode(12);
+			this.DrawTabNode(12, [13, 14]);
 		}
 
 		ImGui.SameLine();
@@ -439,6 +441,24 @@ public class ConfigWindow : KtisisWindow {
 				this.SetPoseViewImage(path => cfg.EarsPath = path);
 			this.DrawPoseViewPath(ref cfg.EarsPath, loc);
 		}
+	}
+
+	private void DrawLanguageTab() {
+		if (ImGui.Checkbox(this.Locale.Translate("config.language.autoselect"), ref this._cfg.File.Locale.AutoDetect)) {
+			this.Locale.HandleLanguageChangeDelegate();
+		}
+		using var _disabled = ImRaii.Disabled(this._cfg.File.Locale.AutoDetect);
+		using var _combo = ImRaii.Combo(this.Locale.Translate("config.language.selector"), this.Locale.Data?.MetaData.DisplayName);
+		if(_combo.Success)
+			foreach (var locales in this.Locale.AvailableLocales) {
+				if(ImGui.Selectable(locales.DisplayName, locales.TechnicalName == this.Locale.Data?.MetaData.TechnicalName))
+				{
+					if (locales.TechnicalName != this.Locale.Data?.MetaData.TechnicalName) {
+						this._cfg.File.Locale.LocaleId = locales.TechnicalName;
+						this.Locale.LoadLocale(locales.TechnicalName);
+					}
+				}
+			}
 	}
 
 	private void DrawAboutTab() {
