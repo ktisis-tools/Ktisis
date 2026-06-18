@@ -40,8 +40,6 @@ public class ConfigWindow : KtisisWindow {
 	private Configuration Config => this._cfg.File;
 
 	const ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.ReadOnly;
-	private const ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.FramePadding;
-	private const ImGuiTreeNodeFlags leafFlags = ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.FramePadding;
 
 	// ty OGT https://git.anna.lgbt/anna/OrangeGuidanceTomestone/src/branch/main/client/Ui/MainWindowTabs/Settings.cs#L23
 	private delegate void DrawContentDelegate();
@@ -71,8 +69,6 @@ public class ConfigWindow : KtisisWindow {
 		this.Locale = locale;
 		this._gui = gui;
 
-
-		
 		this.Tabs = [
 			(this.Locale.Translate("config.workspace.title"), this.DrawWorkspaceTab),
 			(this.Locale.Translate("config.presets.title"), this.DrawPresetsTab),
@@ -104,7 +100,7 @@ public class ConfigWindow : KtisisWindow {
 
 	private void DrawTabNode(int index, List<int>? children = null, int? parentIndex = null) {
 		var hasChildren = children != null;
-		if(hasChildren)
+		if (hasChildren)
 			Separators.SeparatorText(this.Tabs[index].Item1, textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
 
 		var append = "##";
@@ -112,7 +108,7 @@ public class ConfigWindow : KtisisWindow {
 			append += this.Tabs[(int)parentIndex].Item1;
 		else
 			append += this.Tabs[index].Item1;
-		
+
 		if (ImGui.Selectable(this.Tabs[index].Item1 + append, this._tabIndex == index ))
 			this._tabIndex = index;
 		if (hasChildren)
@@ -121,15 +117,13 @@ public class ConfigWindow : KtisisWindow {
 	}
 
 	public override void Draw() {
-		
-		
 		using (ImRaii.Child("##nav", new Vector2(150, Math.Clamp(ImGui.GetContentRegionAvail().Y- 0.1f, 400f, float.MaxValue)))) {
 			this.DrawTabNode(0, [1, 2]);
 			this.DrawTabNode(3, [4, 5, 6, 7]);
 			this.DrawTabNode(8, [9, 10, 11]);
 			this.DrawTabNode(12);
 		}
-		
+
 		ImGui.SameLine();
 		using var _frame = ImRaii.Group();
 		var (_, drawFn) = this.Tabs[this._tabIndex];
