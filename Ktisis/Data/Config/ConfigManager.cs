@@ -33,6 +33,7 @@ public class ConfigManager : IDisposable {
 	// Load & Save
 
 	public void Load() {
+		var created = false;
 		var timer = new Stopwatch();
 		timer.Start();
 
@@ -57,6 +58,8 @@ public class ConfigManager : IDisposable {
 
 		try {
 			cfg ??= this.CreateDefault();
+			this.GenerateDefaultPresets(cfg);
+			created = true;
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to create default configuration:\n{err}");
 			throw;
@@ -64,7 +67,8 @@ public class ConfigManager : IDisposable {
 
 		this.File = cfg;
 		this._isLoaded = true;
-		
+		if (created)
+			this.Save();
 
 		timer.Stop();
 		Ktisis.Log.Debug($"Configuration loaded in {timer.Elapsed.TotalMilliseconds:0.00}ms");
