@@ -121,7 +121,6 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 	#region Absolute Posing IPC
 
 	private ActorEntity? GetEntity(uint index) => ctxManager.Current?.Scene?.GetEntityForIndex(index);
-	private BoneNode? GetParentBone(BoneNode bone) => bone.Pose.Recurse().OfType<BoneNode>().FirstOrDefault(p => bone.IsBoneChildOf(p));
 
 	/// <summary>
 	/// Local Pos/Rot, Model Scale to circumvent Racial Offset
@@ -134,16 +133,19 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 			var skeleton = actor.Pose.GetSkeleton();
 			if (skeleton == null) return false;
 			
-			foreach (var kvp in matrices) // local pos/rot
+			var decomposedTransforms = new Dictionary<string, (Vector3 pos, Quaternion rot, Vector3 scale)>();
+			
+			foreach (var boneTransform in matrices) // local pos/rot
 			{
-				var bone = actor.Pose.FindBoneByName(kvp.Key);
+				var bone = actor.Pose.FindBoneByName(boneTransform.Key);
 				if (bone == null) continue;
 
 				var pose = bone.GetPose();
 				if (pose == null || pose->LocalPose.Data == null) continue;
 
-				Matrix4x4.Decompose(kvp.Value, out _, out var rot, out var pos);
-
+				Matrix4x4.Decompose(boneTransform.Value, out var scale, out var rot, out var pos);
+				decomposedTransforms[boneTransform.Key] = (pos, rot, scale);
+				
 				var qsLocal = pose->LocalPose.Data + bone.Info.BoneIndex;
 				qsLocal->Translation = new hkVector4f { X = pos.X, Y = pos.Y, Z = pos.Z, W = 0f };
 				qsLocal->Rotation = new hkQuaternionf { X = rot.X, Y = rot.Y, Z = rot.Z, W = rot.W };
@@ -152,15 +154,15 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi,
 				HavokPosing.SyncModelSpace(skeleton, pIndex);
 			}
 			
-			foreach (var kvp in matrices) //overwrite with model scale
+			foreach (var boneTransform in decomposedTransforms) 
 			{
-				var bone = actor.Pose.FindBoneByName(kvp.Key);
+				var bone = actor.Pose.FindBoneByName(boneTransform.Key);
 				if (bone == null) continue;
-				
+          
 				var pose = bone.GetPose();
 				if (pose == null || pose->ModelPose.Data == null) continue;
-				
-				Matrix4x4.Decompose(kvp.Value, out var scale, out _, out _);
+          
+				var scale = boneTransform.Value.scale;
 				
 				var qsModel = pose->ModelPose.Data + bone.Info.BoneIndex;
 				qsModel->Scale = new hkVector4f { X = scale.X, Y = scale.Y, Z = scale.Z, W = 0f };
