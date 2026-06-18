@@ -30,7 +30,6 @@ public class OffsetEditor {
 	private readonly LocaleManager _locale;
 
 	private OffsetConfig Config => this._cfg.File.Offsets;
-	private float CellSize;
 
 	public OffsetEditor(
 		ConfigManager cfg,
@@ -115,7 +114,7 @@ public class OffsetEditor {
 
 	private void DrawBoneSelection() {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		string boneDisplay = "None";
+		var boneDisplay = "None";
 		string? infoName = null;
 		string? raceSex = null;
 
@@ -191,13 +190,13 @@ public class OffsetEditor {
 
 	private void DrawBoneOffsets() {
 		// buttons | X | Y | Z | bonename
-		CellSize = ImGui.GetContentRegionAvail().X / 5;
-
 		var oldPadding = ImGui.GetStyle().CellPadding;
+
+		using var frame = ImRaii.Child("##BoneCategoriesFrame", ImGui.GetContentRegionAvail() - (this._cfg.File.Editor.UseToolbar ? new Vector2(0, 4) : Vector2.Zero), true);
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(2, 2));
 		using var _table = ImRaii.Table("##BoneOffsetTable", 5, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingStretchSame);
 		if (!_table.Success) return;
-		
+
 		ImGui.TableSetupColumn("##BoneButtons", ImGuiTableColumnFlags.WidthFixed);
 		ImGui.TableSetupColumn("X");
 		ImGui.TableSetupColumn("Y");
@@ -215,7 +214,7 @@ public class OffsetEditor {
 	private bool DrawOffsetRow(string bone, ref Vector3 vec, Vector2 padding) {
 		var result = false;
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		
+
 		ImGui.TableNextRow();
 		using var _id = ImRaii.PushId($"##{bone}OffsetRow");
 
@@ -240,8 +239,6 @@ public class OffsetEditor {
 
 		// todo: centering vertically
 		// X
-
-		
 		ImGui.TableNextColumn();
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		result |= ImGui.DragFloat("##X", ref vec.X, 0.001f, 0, 0, "%.3f", ImGuiSliderFlags.NoRoundToFormat);
@@ -258,7 +255,7 @@ public class OffsetEditor {
 
 		// BoneName (FriendlyName)
 		ImGui.TableNextColumn();
-		string friendlyName = bone;
+		var friendlyName = bone;
 		if (this._locale.HasTranslationFor($"bone.{bone}"))
 			friendlyName += $" ({this._locale.Translate($"bone.{bone}")})";
 		ImGui.Text(friendlyName);

@@ -240,6 +240,10 @@ public class ConfigWindow : KtisisWindow {
 			this.DrawCustomLocations();
 		}
 
+		// add dummy to pad right side during toolbar mode
+		ImGui.SetCursorPosX(600);
+		ImGui.Dummy(Vector2.Zero);
+
 		if (refresh) this.RefreshScene();
 	}
 
@@ -348,7 +352,7 @@ public class ConfigWindow : KtisisWindow {
 		var cfg = this.Config.Presets;
 
 		this._presetEditor.Draw();
-		
+
 		var style = ImGui.GetStyle();
 		var dummy = ImGui.GetContentRegionAvail() with { X = 0.0f };
 		dummy.Y -= style.ItemSpacing.Y + style.CellPadding.Y;
