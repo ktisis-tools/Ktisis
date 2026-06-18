@@ -49,8 +49,26 @@
 		"pos_lock": "Freeze actor positions"
 	},
 	
+	"cameras": {
+		"main": "Main Camera",
+		"work": "Work Camera",
+		"camera": "Camera",
+		"new": "New Camera"
+	},
+	
 	"common": {
-		"options": "Options"
+		"options": "Options",
+		"appearance": "Appearance",
+		"equipment": "Equipment",
+		"chara_parts": {
+			"body": "Body",
+			"face": "Face",
+			"hair": "Hair",
+			"gear": "Gear",
+			"accessories": "Accessories",
+			"weapons": "Weapons"
+		}
+		
 	},
 	
 	"context": {
@@ -70,7 +88,9 @@
 		"chara": {
 			"name": "Character (.chara)",
 			"ctx_import": "Import appearance...",
-			"ctx_export": "Export appearance..."
+			"ctx_export": "Export appearance...",
+			"file": "File",
+			"apply": "Apply on selection"
 		},
 		"pose": {
 			"name": "Pose File (.pose)",
@@ -189,6 +209,15 @@
 				"brioWarning": "⚠ Brio is currently enabled! An incompatibility currently prevents this feature from functioning - to load Pose Expressions, please disable Brio first.",
 				"header": "WARNING: This is an experimental feature! It will overwrite any current face pose, and may deform ears or other face parts. However, you can still undo any changes made."
 			}
+		},
+		"customize": {
+			"iris": "Small Iris",
+			"primary": "Primary Features",
+			"face": "Facial Features",
+			"facepaint_flip": "Flip Face Paint",
+			"highlights": "Highlights",
+			"eye_color": "Eye Color",
+			"lipstick": "Lipstick"
 		}
 	},
 	
@@ -257,6 +286,7 @@
 			"hintHoldSnap": "Snaps gizmo values to nearest numbers while dragging the mouse",
 			"2d_scale": "2D gizmo scale",
 			"header": "Gizmo Style:",
+			"disabled": "Gizmo Styling is currently disabled in this build, pending a Dalamud update!",
 			"editor": {
 				"general": {
 					"title": "General",
@@ -423,6 +453,7 @@
 			"title": "Bone Offsets",
 			"description": "Import and edit Visual Bone Offsets",
 			"help": "By setting a translation for a bone below, its clickable node on Ktisis' overlay will be offset by those values.",
+			"selected": "Selected Bone",
 			"ui": {
 				"copy_all": "Copy All to Clipboard",
 				"load_all": "Load All from Clipboard",
@@ -454,6 +485,7 @@
 				"1801": "Viera Female"
 			}
 		},
+		"misc.title": "Misc",
 		"about": {
 			"title": "About",
 			"header": "About Ktisis",
@@ -468,6 +500,11 @@
 				"button": "Discord",
 				"link": "https://discord.com/invite/kUG3W8B8Ny/"
 			}
+		},
+		"language": {
+			"title": "Language",
+			"autoselect": "Automatically set language",
+			"selector": "Force Language"
 		}
 	},
 
@@ -475,12 +512,17 @@
 		"mainWindow": {
 			"main_Desc": "Thank you for using Ktisis! v3 is now our stable version.\n",
 			"skip": "Skip and use defaults",
+			"skip_desc": "Skip migrating and start v0.3 with default settings.",
 			"v3": {
+				"from": "I'm coming from v0.3",
+				"from_desc": "Start Mirating based on your Ktisis Settings from v0.3.\nThis will ignore any legacy settings from v0.2.",
 				"main_Desc": "A lot has changed since we started working on v3, and as we've worked on Ktisis we've changed and improved some features.\nThese settings below have new defaults, you can keep your old settings if you wish to, or you can use the new recommended settings.",
 				"testing" : "Since you were using the v3 beta, we suggest you disable receive testing versions.\n",
 				"installer": "You can open the plugin installer with this button."
 			},
 			"v2": {
+				"from": "I'm coming from v0.2",
+				"from_desc": "Start Mirating based on your Ktisis Settings from v0.2.\nThis will overwrite your existing v0.3 settings.",
 				"main_Desc": "Ktisis v3 was built to ensure that going forward, we can bring new features to our users, you, more easily.\nThis required rewriting nearly all of the code blah blah blah you can skip this and use the defaults if you want by pressing skip.",
 				"wiki": "To find out more about the changes between Ktisis v2 and v3, you can click the button to open our wiki page."
 			}
@@ -534,7 +576,9 @@
 				"slowMulti": "Slow Multiplier",
 				"vertMulti": "Vertical Multiplier"
 			}
-		}
+		},
+		"next": "Next",
+		"finish": "Finish"
 	},
 	
 	"bone": {

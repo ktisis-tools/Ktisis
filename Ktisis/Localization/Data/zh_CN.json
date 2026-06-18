@@ -49,6 +49,13 @@
 		"pos_lock": "冻结角色位置"
 	},
 
+	"cameras": {
+		"main": "主摄像机",
+		"work": "工作摄像机",
+		"camera": "相机",
+		"new": "新摄像机"
+	},
+
 	"common": {
 		"options": "选项"
 	},

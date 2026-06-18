@@ -31,7 +31,6 @@ public class LegacyMigrator {
 	private readonly IDalamudPluginInterface _dpi;
 	private readonly ConfigManager _cfg;
 	internal LegacyConfig.Configuration? _legacyCfg;
-	private readonly LocaleManager Locale;
 
 	private readonly Dictionary<string, string> LegacyRaceSexMap = new() {
 		{ "Midlander_Masculine", "101" },
@@ -82,14 +81,12 @@ public class LegacyMigrator {
 		GPoseService gpose,
 		GuiManager gui,
 		IDalamudPluginInterface dpi,
-		ConfigManager cfg,
-		LocaleManager localeManager
+		ConfigManager cfg
 	) {
 		this._gpose = gpose;
 		this._gui = gui;
 		this._dpi = dpi;
 		this._cfg = cfg;
-		this.Locale = localeManager;
 	}
 
 	// Setup
@@ -97,7 +94,7 @@ public class LegacyMigrator {
 	public void Setup(bool v2 = true) {
 		this.WasUserOnV2 = v2;
 		this._cfg.Load();
-		this.Locale.Initialize();
+		Ktisis.Locale.Initialize(this._cfg);
 		if (v2) {
 			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
 			var configurations = new PluginConfigurations(new DirectoryInfo(this._dpi.GetPluginConfigDirectory()).Parent!.ToString());
@@ -111,7 +108,7 @@ public class LegacyMigrator {
 
 	private void OnGPoseStateChanged(object sender, bool state) {
 		if (!state || this._confirmed) return;
-		var window = this._gui.GetOrCreate<MigratorWindow>(this, this._cfg, this.Locale);
+		var window = this._gui.GetOrCreate<MigratorWindow>(this, this._cfg);
 		window.Open();
 	}
 

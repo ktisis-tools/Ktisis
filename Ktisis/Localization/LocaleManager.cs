@@ -17,7 +17,7 @@ namespace Ktisis.Localization;
 public class LocaleManager : IDisposable {
 	// Service
 	
-	private readonly ConfigManager _cfg;
+	private ConfigManager? _cfg;
 	private readonly IDalamudPluginInterface _dpi;
 	
 	private readonly LocaleDataLoader Loader = new();
@@ -26,17 +26,15 @@ public class LocaleManager : IDisposable {
 	public LocaleData? Data;
 
 	public LocaleManager(
-		ConfigManager cfg,
 		IDalamudPluginInterface dpi
 	) {
-		this._cfg = cfg;
 		this._dpi = dpi;
 	}
 
-	public void Initialize() {
+	public void Initialize(ConfigManager cfg) {
+		this._cfg = cfg;
 		// TODO: Listen for locale changes.
 		this.HandleLanguageChangeDelegate();
-		var locales = Assembly.GetExecutingAssembly().GetManifestResourceNames();
 		foreach (var resource in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(s => s.StartsWith("Ktisis.Localization.Data"))) {
 			if(this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));

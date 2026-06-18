@@ -14,7 +14,7 @@ using GLib.Widgets;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Types;
-using Ktisis.Localization;
+using Ktisis.Localization;	
 
 namespace Ktisis.Legacy.Interface;
 
@@ -23,13 +23,11 @@ public class MigratorWindow : KtisisWindow {
 	private readonly LegacyMigrator _migrator;
 	private readonly V2MigratorWindow? _v2Window;
 	private readonly ConfigManager _cfg;
-	private readonly LocaleManager Locale;
 
 	public MigratorWindow(
 		IDalamudPluginInterface dpi,
 		LegacyMigrator migrator,
-		ConfigManager cfg,
-		LocaleManager locale
+		ConfigManager cfg
 	) : base(
 		"Ktisis v3 Setup",
 		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings
@@ -39,11 +37,10 @@ public class MigratorWindow : KtisisWindow {
 		};
 		this._dpi = dpi;
 		this._migrator = migrator;
-		this.Locale = locale;
 		this._cfg = cfg;
 
 		if (this._dpi.ConfigFile.Exists) 
-			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, this._cfg, this.Locale);
+			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, this._cfg, Ktisis.Locale);
 
 		this.ShowCloseButton = false;
 		this.RespectCloseHotkey = false;
@@ -64,30 +61,30 @@ public class MigratorWindow : KtisisWindow {
 	}
 
 	private void DrawIntroPage() {
-		ImGui.Text($"{this.Locale.Translate("migrator.mainWindow.main_Desc")}");
+		ImGui.Text($"{Ktisis.Locale.Translate("migrator.mainWindow.main_Desc")}");
 
 		var buttonSize = new Vector2(ImGui.GetContentRegionMax().X * .3f, (ImGui.GetContentRegionMax().X * .3f) * .33f);
 		if (this._dpi.ConfigFile.Exists) {
-			if (ImGui.Button("I'm coming from v0.2", buttonSize)) {
+			if (ImGui.Button(Ktisis.Locale.Translate("migrator.mainWindow.v2.from"), buttonSize)) {
 				this._migrator.MigrateConfig();
 				this._page++;
 				this._migrator.WasUserOnV2 = true;
 			}
 			ImGui.SameLine();
-			ImGui.Text("Start Mirating based on your Ktisis Settings from v0.2.\nThis will overwrite your existing v0.3 settings.");
+			ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v2.from_desc"));
 		}
 		
 		if(File.Exists(this._dpi.ConfigDirectory + "\\KtisisV3.json"))
 		{
-			if (ImGui.Button("I'm coming from v0.3", buttonSize)) {
+			if (ImGui.Button(Ktisis.Locale.Translate("migrator.mainWindow.v3.from"), buttonSize)) {
 				this._migrator.WasUserOnV2 = false;
 				this._page++;
 			}
 			ImGui.SameLine();
-			ImGui.Text("Start Mirating based on your Ktisis Settings from v0.3.\nThis will ignore any legacy settings from v0.2.");
+			ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v3.from_desc"));
 		}
 		
-		var text = this.CanBegin ? this.Locale.Translate("migrator.mainWindow.skip") : $"{this.Locale.Translate("migrator.mainWindow.skip")} ({Math.Ceiling((decimal)WaitTime - this._timer.Elapsed.Seconds)}s)";
+		var text = this.CanBegin ? Ktisis.Locale.Translate("migrator.mainWindow.skip") : $"{Ktisis.Locale.Translate("migrator.mainWindow.skip")} ({Math.Ceiling((decimal)WaitTime - this._timer.Elapsed.Seconds)}s)";
 
 		using var _ = ImRaii.Disabled(!this.CanBegin && !(ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyDown(ImGuiKey.ModShift)));
 		if (ImGui.Button(text, buttonSize)) {
@@ -97,26 +94,39 @@ public class MigratorWindow : KtisisWindow {
 			this.Close();
 		}
 		ImGui.SameLine();
-		ImGui.Text("Skip migrating and start v0.3 with default settings.");
+		ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.skip_desc"));
+		_.Pop();
+		
+		using var _combo = ImRaii.Combo(Ktisis.Locale.Translate("config.language.selector"), Ktisis.Locale.Data?.MetaData.DisplayName);
+		if(_combo.Success)
+			foreach (var locales in Ktisis.Locale.AvailableLocales) {
+				if(ImGui.Selectable(locales.DisplayName, locales.TechnicalName == Ktisis.Locale.Data?.MetaData.TechnicalName))
+				{
+					if (locales.TechnicalName != Ktisis.Locale.Data?.MetaData.TechnicalName) {
+						this._cfg.File.Locale.LocaleId = locales.TechnicalName;
+						Ktisis.Locale.LoadLocale(locales.TechnicalName);
+					}
+				}
+			}
 		
 	}
 
 	private void DrawV3() {
-		ImGui.Text(this.Locale.Translate("migrator.mainWindow.v3.main_Desc"));
+		ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v3.main_Desc"));
 		ImGui.Spacing();
 		if (this._dpi.IsTesting) {
-			ImGui.Text(this.Locale.Translate("migrator.mainWindow.v3.testing"));
+			ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v3.testing"));
 			ImGui.AlignTextToFramePadding();
-			ImGui.Text(this.Locale.Translate("migrator.mainWindow.v3.installer"));
+			ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v3.installer"));
 			ImGui.SameLine();
 			if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 				this._dpi.OpenPluginInstallerTo(searchText: "Ktisis");
 			}
 		}
 
-		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty,this.Locale.Translate("migrator.v3.openWindowToggle") , string.Empty);
-		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, this.Locale.Translate("migrator.v3.toolbar"), string.Empty);
-		DialogHelpers.BuildDialog(ref this._cfg.File.Keybinds.Enabled, true, string.Empty, this.Locale.Translate("migrator.v3.keybinds"), string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty,Ktisis.Locale.Translate("migrator.v3.openWindowToggle") , string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, Ktisis.Locale.Translate("migrator.v3.toolbar"), string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Keybinds.Enabled, true, string.Empty, Ktisis.Locale.Translate("migrator.v3.keybinds"), string.Empty);
 	}
 
 	public override void Draw() {
@@ -174,15 +184,14 @@ public class MigratorWindow : KtisisWindow {
 
 		if ((this._migrator.WasUserOnV2 && this._page < 6) || (!this._migrator.WasUserOnV2 && this._page == 0)) {
 			ImGui.SameLine();
-			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize("Next").X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
-			if (ImGui.Button("Next")) {
+			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize(Ktisis.Locale.Translate("migrator.next")).X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
+			if (ImGui.Button(Ktisis.Locale.Translate("migrator.next"))) {
 				this._page++;
 			}
 		} else if ((this._migrator.WasUserOnV2 && this._page == 6) || (!this._migrator.WasUserOnV2 && this._page == 1)) {
 			ImGui.SameLine();
-			ImGui.SetCursorPosX(ImGui.GetWindowWidth() - ImGui.CalcTextSize("Finish").X - (ImGui.GetStyle().CellPadding.X * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
-			text = "Finish";
-			if (ImGui.Button(text)) {
+			ImGui.SetCursorPosX(ImGui.GetWindowWidth() - ImGui.CalcTextSize(Ktisis.Locale.Translate("migrator.finish")).X - (ImGui.GetStyle().CellPadding.X * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
+			if (ImGui.Button(Ktisis.Locale.Translate("migrator.finish"))) {
 				this._migrator.Begin();
 				this.Close();
 			}

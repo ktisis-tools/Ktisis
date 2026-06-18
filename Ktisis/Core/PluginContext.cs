@@ -88,7 +88,7 @@ public class PluginContext : IPluginContext {
 		this.Actions.RegisterActions(this);
 		this._context.Initialize(this);
 		this._cmd.RegisterHandlers();
-		this.Gui.Locale.Initialize();
+		this.Gui.Locale.Initialize(this.Config);
 	}
 
 	private void SetupLegacy(bool v2) {

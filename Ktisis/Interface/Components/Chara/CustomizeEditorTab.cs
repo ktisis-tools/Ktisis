@@ -145,7 +145,7 @@ public class CustomizeEditorTab {
 	}
 
 	private void DrawTribeSelect(Tribe current) {
-		using var _combo = ImRaii.Combo("Body", current.ToString());
+		using var _combo = ImRaii.Combo(Ktisis.Locale.Translate("common.chara_parts.body"), current.ToString());
 		if (!_combo.Success) return;
 		
 		foreach (var tribe in Enum.GetValues<Tribe>()) {
