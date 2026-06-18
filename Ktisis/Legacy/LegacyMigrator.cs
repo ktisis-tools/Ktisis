@@ -166,44 +166,44 @@ public class LegacyMigrator {
 		
 		// Keybinds
 		if (this._legacyCfg?.FreecamForward != null)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Forward", MigrateKeybind(this._legacyCfg?.FreecamForward!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Forward", MigrateKeybind(this._legacyCfg?.FreecamForward!));
 
 		if (this._legacyCfg?.FreecamBack != null)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Back", MigrateKeybind(this._legacyCfg?.FreecamBack!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Back", MigrateKeybind(this._legacyCfg?.FreecamBack!));
 		if (this._legacyCfg?.FreecamRight != null)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Right", MigrateKeybind(this._legacyCfg?.FreecamRight!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Right", MigrateKeybind(this._legacyCfg?.FreecamRight!));
 		if (this._legacyCfg?.FreecamLeft != null)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Left", MigrateKeybind(this._legacyCfg?.FreecamLeft!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Left", MigrateKeybind(this._legacyCfg?.FreecamLeft!));
 		if (this._legacyCfg?.FreecamUp != null)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Up", MigrateKeybind(this._legacyCfg?.FreecamUp!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Up", MigrateKeybind(this._legacyCfg?.FreecamUp!));
 		if (this._legacyCfg?.FreecamDown != null)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Down", MigrateKeybind(this._legacyCfg?.FreecamDown!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Down", MigrateKeybind(this._legacyCfg?.FreecamDown!));
 		if (this._legacyCfg?.FreecamFast != null)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Fast",MigrateKeybind( this._legacyCfg?.FreecamFast!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Fast",MigrateKeybind( this._legacyCfg?.FreecamFast!));
 		if (this._legacyCfg?.FreecamSlow != null)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Slow", MigrateKeybind(this._legacyCfg?.FreecamSlow!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Slow", MigrateKeybind(this._legacyCfg?.FreecamSlow!));
 
 		// KeyBinds dict
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToTranslate) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_SetTranslateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToTranslate]!));
+			this._cfg.File.Keybinds.SetDefault("Gizmo_SetTranslateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToTranslate]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToRotate) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_SetRotateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToRotate]!));
+			this._cfg.File.Keybinds.SetDefault("Gizmo_SetRotateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToRotate]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToScale) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_SetScaleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToScale]!));
+			this._cfg.File.Keybinds.SetDefault("Gizmo_SetScaleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToScale]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToUniversal) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_SetUniversalMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToUniversal]!));
+			this._cfg.File.Keybinds.SetDefault("Gizmo_SetUniversalMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToUniversal]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.ToggleLocalWorld) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_ToggleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleLocalWorld]!));
+			this._cfg.File.Keybinds.SetDefault("Gizmo_ToggleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleLocalWorld]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Gizmo_MirrorRotation", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes]!));
+			this._cfg.File.Keybinds.SetDefault("Gizmo_MirrorRotation", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.DeselectGizmo) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Select_None", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.DeselectGizmo]!));
+			this._cfg.File.Keybinds.SetDefault("Select_None", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.DeselectGizmo]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.NextCamera) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_SetNext", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.NextCamera]!));
+			this._cfg.File.Keybinds.SetDefault("Camera_SetNext", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.NextCamera]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.PreviousCamera) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_SetPrevious", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.PreviousCamera]!));
+			this._cfg.File.Keybinds.SetDefault("Camera_SetPrevious", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.PreviousCamera]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.ToggleFreeCam) ?? false)
-			this._cfg.File.Keybinds.GetOrSetDefault("Camera_Work_Toggle", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleFreeCam]!));
+			this._cfg.File.Keybinds.SetDefault("Camera_Work_Toggle", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleFreeCam]!));
 
 		if(this._legacyCfg?.BoneCategoryColors != null)
 			foreach (var categoryColor in this._legacyCfg?.BoneCategoryColors!) {
