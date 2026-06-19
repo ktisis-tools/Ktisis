@@ -24,6 +24,7 @@ public class LocaleManager : IDisposable {
 
 	public List<LocaleMetaData> AvailableLocales = new();
 	public LocaleData? Data;
+	public LocaleData? FallbackData;
 
 	public LocaleManager(
 		IDalamudPluginInterface dpi
@@ -40,6 +41,8 @@ public class LocaleManager : IDisposable {
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
 		}
 		this.LoadLocale(this._cfg.File.Locale.LocaleId);
+		if(this._cfg.File.Locale.LocaleId != "en_US")
+			this.LoadFallbackLocale();
 	}
 
 	public void HandleLanguageChangeDelegate() {
@@ -53,26 +56,37 @@ public class LocaleManager : IDisposable {
 		var localeFile = lang + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
 		if (this.HasTranslationFor(localeFile)) {
 			this._cfg.File.Locale.LocaleId = localeFile;
+			this.LoadLocale(localeFile);
 		}
 			
 	}
 	// Localization methods
 
 	public string Translate(string handle, Dictionary<string, string>? parameters = null) {
-		return this.Data?.Translate(handle, parameters) ?? handle;
+		return this.Data?.Translate(handle, parameters) ?? (this.FallbackData?.Translate(handle, parameters) ?? handle);
 	}
-
-	public string GetLocaleName(string handle) => this.Data?.MetaData.DisplayName ?? "";
+	
 	public bool HasTranslationFor(string handle) {
 		return this.Data?.HasTranslationFor(handle) ?? false;
 	}
 
 	public void LoadLocale(string technicalName) {
 		Ktisis.Log.Verbose($"Reading localization file for '{technicalName}'");
-		if (this.Data == null || this.Data.MetaData.TechnicalName != technicalName)
+		if (this.Data == null || this.Data.MetaData.TechnicalName != technicalName) {
 			this.Data = this.Loader.LoadData(technicalName);
+			if (technicalName != "en_US")
+				LoadFallbackLocale();
+			else
+				this.FallbackData = null;
+		}
+			
 	}
 	
+	public void LoadFallbackLocale() {
+		Ktisis.Log.Verbose($"Reading localization file for 'en_US'");
+		if (this.FallbackData == null || this.FallbackData.MetaData.TechnicalName != "en_US")
+			this.FallbackData = this.Loader.LoadData("en_US");
+	}
 	// Helpers
 	
 	public string GetBoneName(PartialBoneInfo bone) => this.GetBoneName(bone.Name);
