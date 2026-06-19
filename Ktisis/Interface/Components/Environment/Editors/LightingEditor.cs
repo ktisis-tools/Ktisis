@@ -10,7 +10,7 @@ namespace Ktisis.Interface.Components.Environment.Editors;
 
 [Transient]
 public class LightingEditor : EditorBase {
-	public override string Name { get; } = Ktisis.Locale.Translate("env_edit.lighting.title");
+	public override string Name => Ktisis.Locale.Translate("env_edit.lighting.title");
 
 	public override bool IsActivated(EnvOverride flags)
 		=> flags.HasFlag(EnvOverride.Lighting);

@@ -61,6 +61,9 @@
 		"appearance": "Appearance",
 		"equipment": "Equipment",
 		"unknown": "Unknown",
+		"hide": "Hide",
+		"show": "Show",
+		"entity": "Entity",
 		"chara_parts": {
 			"body": "Body",
 			"face": "Face",
@@ -68,8 +71,7 @@
 			"gear": "Gear",
 			"accessories": "Accessories",
 			"weapons": "Weapons"
-		}
-		
+		}		
 	},
 	
 	"context": {
@@ -86,6 +88,7 @@
 	"file": {
 		"import": "Import...",
 		"export": "Export...",
+		"select": "Select a file to open...",
 		"chara": {
 			"name": "Character (.chara)",
 			"ctx_import": "Import appearance...",
@@ -123,6 +126,10 @@
 				"enable-blocked": "To disable, hold SHIFT.",
 				"disable": "Bone manipulation is currently disabled."
 			}
+		},
+		"scene_tree":{
+			"attached_to": "Attached to",
+			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment"
 		},
 		"create": "Create new...",
 		"refresh_entities": "Refresh scene entities",
@@ -262,18 +269,75 @@
 			"opacity": "Opacity",
 			"sky_vis": "Sky Visibility"
 		},
+		"housing": {
+			"title": "Housing",
+			"unavailable": "Housing light is not available.",
+			"brightness": "Brightness",
+			"ssao": "SSAO"
+		},
 		"lighting": {
 			"title": "Light",
 			"sunlight": "Sunlight",
 			"moonlight": "Moonlight",
 			"ambient": "Ambient",
 			"saturation": "Saturation",
-			"temperature": "Temperature",
-			
-			
+			"temperature": "Temperature"
+		},
+		"particles": {
+			"title": "Particles",
+			"intensity": "Intensity",
+			"size": "Size",
+			"glow": "Glow",
+			"color": "Color",
+			"weight": "Weight",
+			"spread": "Spread",
+			"speed": "Speed",
+			"spin": "Spin"
+		},
+		"sky": {
+			"title": "Sky",
+			"edit_sky": "Edit skybox",
+			"texture": "Sky Texture",
+			"edit_clouds": "Edit clouds",
+			"top": "Top Clouds",
+			"side": "Side Clouds",
+			"color": "Cloud Color",
+			"shadow_color": "Shadow Color",
+			"shadows": "Shadows",
+			"side_height": "Side Height"
+		},
+		"rain": {
+			"title": "Rain",
+			"intensity": "Intensity",
+			"thickness": "Thickness",
+			"color": "Color",
+			"weight": "Weight",
+			"scattering": "Scattering",
+			"raindrops": "Raindrops"
+		},
+		"stars":{
+			"title": "Stars",
+			"intensity": "Intensity",
+			"constellations": "Constellations",
+			"galaxy_intensity": "Galaxy Intensity",
+			"moon_color": "Moon Color",
+			"moon_brightness": "Moon Brightness"
+		},
+		"water": {
+			"title": "Water",
+			"water_one": "Water One",
+			"water_two": "Water Two",
+			"water_three": "Water Three",
+			"water_four": "Water Four"
+		},
+		"wind": {
+			"title": "Wind",
+			"direction": "Direction",
+			"angle": "Angle",
+			"speed": "Speed"
 		}
+		
 	},
-	
 	
 	"pose_view": {
 		"title": "Pose View"
@@ -968,5 +1032,9 @@
 		"Linear": "Linear",
 		"Quadratic": "Quadratic",
 		"Cubic": "Cubic"
+	},
+	
+	"misc": {
+		"command_desc": "Toggle the main Ktisis window."
 	}
 }

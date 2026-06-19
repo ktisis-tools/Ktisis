@@ -9,7 +9,7 @@ namespace Ktisis.Interface.Components.Environment.Editors;
 
 [Transient]
 public class FogEditor : EditorBase {
-	public override string Name { get; } = Ktisis.Locale.Translate("env_edit.fog.title");
+	public override string Name => Ktisis.Locale.Translate("env_edit.fog.title");
 
 	public override bool IsActivated(EnvOverride flags)
 		=> flags.HasFlag(EnvOverride.Fog);
