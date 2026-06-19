@@ -49,6 +49,7 @@ public class LocaleManager : IDisposable {
 		}
 	}
 	public void LanguageChanged(string lang) {
+		//TODO: Check for default names on Camera and Actors to repopulate
 		var localeFile = lang + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
 		if (this.HasTranslationFor(localeFile)) {
 			this._cfg.File.Locale.LocaleId = localeFile;

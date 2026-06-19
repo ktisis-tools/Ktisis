@@ -60,6 +60,7 @@
 		"options": "Options",
 		"appearance": "Appearance",
 		"equipment": "Equipment",
+		"unknown": "Unknown",
 		"chara_parts": {
 			"body": "Body",
 			"face": "Face",
@@ -251,8 +252,28 @@
 	},
 	
 	"env_edit": {
-		"title": "Environment Editor"
+		"title": "Environment Editor",
+		"enable": "Enable",
+		"fog": {
+			"title": "Fog",
+			"color": "Color",
+			"distance": "Distance",
+			"thickness": "Thickness",
+			"opacity": "Opacity",
+			"sky_vis": "Sky Visibility"
+		},
+		"lighting": {
+			"title": "Light",
+			"sunlight": "Sunlight",
+			"moonlight": "Moonlight",
+			"ambient": "Ambient",
+			"saturation": "Saturation",
+			"temperature": "Temperature",
+			
+			
+		}
 	},
+	
 	
 	"pose_view": {
 		"title": "Pose View"

@@ -14,7 +14,7 @@ public class StarsEditor : EditorBase {
 		=> flags.HasFlag(EnvOverride.Stars);
 	
 	public override void Draw(IEnvModule module, ref EnvState state) {
-		this.DrawToggleCheckbox("Enable", EnvOverride.Stars, module);
+		this.DrawToggleCheckbox(Ktisis.Locale.Translate("env_edit.enable"), EnvOverride.Stars, module);
 		using var _ = this.Disable(module);
 
 		ImGui.SliderFloat("Stars", ref state.Stars.Stars, 0.0f, 20.0f);

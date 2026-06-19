@@ -48,7 +48,7 @@ public class WaterEditor : EditorBase, IDisposable {
 	}
 
 	public unsafe void Draw() {
-		ImGui.Checkbox("Enable", ref this.Frozen);
+		ImGui.Checkbox(Ktisis.Locale.Translate("env_edit.enable"), ref this.Frozen);
 		ImGui.Spacing();
 		using var _ = ImRaii.Disabled(!this.Frozen);
 

@@ -24,7 +24,7 @@ public class ParticlesEditor : EditorBase {
 		=> flags.HasFlag(EnvOverride.Dust);
 	
 	public override void Draw(IEnvModule module, ref EnvState state) {
-		this.DrawToggleCheckbox("Enable", EnvOverride.Dust, module);
+		this.DrawToggleCheckbox(Ktisis.Locale.Translate("env_edit.enable"), EnvOverride.Dust, module);
 		using var _ = this.Disable(module);
 
 		ImGui.SliderFloat("Intensity", ref state.Dust.Intensity, 0.0f, 1.0f);

@@ -15,7 +15,7 @@ public class WindEditor : EditorBase {
 		=> flags.HasFlag(EnvOverride.Wind);
 	
 	public override void Draw(IEnvModule module, ref EnvState state) {
-		this.DrawToggleCheckbox("Enable", EnvOverride.Wind, module);
+		this.DrawToggleCheckbox(Ktisis.Locale.Translate("env_edit.enable"), EnvOverride.Wind, module);
 		using var _ = this.Disable(module);
 		
 		this.DrawAngle("Direction", ref state.Wind.Direction, 0.0f, 360.0f);

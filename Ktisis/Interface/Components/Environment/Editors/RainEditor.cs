@@ -14,7 +14,7 @@ public class RainEditor : EditorBase {
 		=> flags.HasFlag(EnvOverride.Rain);
 	
 	public override void Draw(IEnvModule module, ref EnvState state) {
-		this.DrawToggleCheckbox("Enable", EnvOverride.Rain, module);
+		this.DrawToggleCheckbox(Ktisis.Locale.Translate("env_edit.enable"), EnvOverride.Rain, module);
 		using var _ = this.Disable(module);
 
 		ImGui.SliderFloat("Intensity", ref state.Rain.Intensity, 0.0f, 1.0f);

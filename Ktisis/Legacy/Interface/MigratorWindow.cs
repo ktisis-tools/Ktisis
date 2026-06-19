@@ -11,10 +11,8 @@ using Dalamud.Plugin;
 
 using GLib.Widgets;
 
-using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
 using Ktisis.Interface.Types;
-using Ktisis.Localization;	
 
 namespace Ktisis.Legacy.Interface;
 
