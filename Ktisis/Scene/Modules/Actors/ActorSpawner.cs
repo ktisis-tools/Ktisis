@@ -94,12 +94,19 @@ public class ActorSpawner : HookModule {
 		IGameObject original,
 		CancellationToken token
 	) {
+
 		var index = await this._framework.RunOnFrameworkThread(() => {
-			if (!this.TryDispatch(original, out var index))
-				throw new Exception("Object table is full.");
+			if (!this.TryDispatch(original, out var index)) {
+				Ktisis.Log.Error("Object table is full.");
+				return 0xFFFFFFFF;
+			}
+				
 			return index;
 		});
-		
+
+		if (index == 0xFFFFFFFF)
+			return nint.Zero;
+
 		while (!token.IsCancellationRequested) {
 			var result = await this._framework.RunOnFrameworkThread(
 				() => {
@@ -117,9 +124,14 @@ public class ActorSpawner : HookModule {
 		throw new TaskCanceledException($"Actor spawn at index {index} timed out.");
 	}
 
-	private bool TryDispatch(IGameObject original, out uint index) {
-		index = this.CalculateNextIndex();
-		if (index == ushort.MaxValue) return false;
+	private unsafe bool TryDispatch(IGameObject original, out uint index) {
+		int id;
+		unchecked {
+			id = (int)FFXIVClientStructs.FFXIV.Client.Game.Object.ClientObjectManager.Instance()->CalculateNextAvailableIndex();
+			index = (uint)id;
+		}
+		if (id == -1) return false;
+		index += 200; //ClientObjectManager starts at 200
 		Ktisis.Log.Info($"Dispatching, expecting spawn on {index}");
 		this.DispatchSpawn(original);
 		return true;
@@ -142,14 +154,7 @@ public class ActorSpawner : HookModule {
 		var handler = (nint)EventFramework.Instance() + 432 + 152;
 		this._dispatchEvent(handler, task);
 	}
-
-	private ushort CalculateNextIndex() {
-		for (var i = Start; i <= Start + HardCap; i++) {
-			var actor = this._objectTable[i];
-			if (actor == null) return i;
-		}
-		return ushort.MaxValue;
-	}
+	
 	
 	// Finalize hook
 	
