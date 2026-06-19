@@ -70,21 +70,21 @@ public class ConfigWindow : KtisisWindow {
 		this._gui = gui;
 
 		this.Tabs = [
-			(this.Locale.Translate("config.workspace.title"), this.DrawWorkspaceTab),
-			(this.Locale.Translate("config.presets.title"), this.DrawPresetsTab),
-			(this.Locale.Translate("config.autosave.title"), this.DrawAutoSaveTab),
-			(this.Locale.Translate("config.categories.title"), this.DrawCategoriesTab),
-			(this.Locale.Translate("config.gizmo.title"), this.DrawGizmoTab),
-			(this.Locale.Translate("config.overlay.title"), this.DrawOverlayTab),
-			(this.Locale.Translate("config.offsets.title"), this.DrawOffsetsTab),
-			(this.Locale.Translate("config.poseview.title"), this.DrawPoseViewTab),
-			(this.Locale.Translate("config.input.title"), this.DrawInputTab),
-			(this.Locale.Translate("config.input.cameras.title"), this.DrawCamerasInputTab),
-			(this.Locale.Translate("config.input.gizmo.title"), this.DrawGizmoInputTab),
-			(this.Locale.Translate("config.input.toolbar.title"), this.DrawToolbarInputTab),
-			(this.Locale.Translate("config.misc.title"), null),
-			(this.Locale.Translate("config.language.title"), this.DrawLanguageTab),
-			(this.Locale.Translate("config.about.title"), this.DrawAboutTab),
+			("config.workspace.title", this.DrawWorkspaceTab),
+			("config.presets.title", this.DrawPresetsTab),
+			("config.autosave.title", this.DrawAutoSaveTab),
+			("config.categories.title", this.DrawCategoriesTab),
+			("config.gizmo.title", this.DrawGizmoTab),
+			("config.overlay.title", this.DrawOverlayTab),
+			("config.offsets.title", this.DrawOffsetsTab),
+			("config.poseview.title", this.DrawPoseViewTab),
+			("config.input.title", this.DrawInputTab),
+			("config.input.cameras.title", this.DrawCamerasInputTab),
+			("config.input.gizmo.title", this.DrawGizmoInputTab),
+			("config.input.toolbar.title", this.DrawToolbarInputTab),
+			("config.misc.title", null),
+			("config.language.title", this.DrawLanguageTab),
+			("config.about.title", this.DrawAboutTab),
 		];
 	}
 	
@@ -103,7 +103,7 @@ public class ConfigWindow : KtisisWindow {
 	private void DrawTabNode(int index, List<int>? children = null, int? parentIndex = null) {
 		var hasChildren = children != null;
 		if (hasChildren)
-			Separators.SeparatorText(this.Tabs[index].Item1, textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
+			Separators.SeparatorText(this.Locale.Translate(this.Tabs[index].Item1), textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
 
 		var append = "##";
 		if (parentIndex != null)
@@ -111,7 +111,7 @@ public class ConfigWindow : KtisisWindow {
 		else
 			append += this.Tabs[index].Item1;
 		if(this.Tabs[index].Item2 != null)
-			if (ImGui.Selectable(this.Tabs[index].Item1 + append, this._tabIndex == index ))
+			if (ImGui.Selectable(this.Locale.Translate(this.Tabs[index].Item1) + append, this._tabIndex == index ))
 				this._tabIndex = index;
 		if (hasChildren)
 			foreach (var childIndex in children!)
@@ -442,7 +442,7 @@ public class ConfigWindow : KtisisWindow {
 			this.DrawPoseViewPath(ref cfg.EarsPath, loc);
 		}
 	}
-
+	//TODO: Translation
 	private void DrawLanguageTab() {
 		if (ImGui.Checkbox(this.Locale.Translate("config.language.autoselect"), ref this._cfg.File.Locale.AutoDetect)) {
 			this.Locale.HandleLanguageChangeDelegate();
@@ -451,7 +451,12 @@ public class ConfigWindow : KtisisWindow {
 		using var _combo = ImRaii.Combo(this.Locale.Translate("config.language.selector"), this.Locale.Data?.MetaData.DisplayName);
 		if(_combo.Success)
 			foreach (var locales in this.Locale.AvailableLocales) {
-				if(ImGui.Selectable(locales.DisplayName, locales.TechnicalName == this.Locale.Data?.MetaData.TechnicalName))
+				var name = locales.SelfName;
+				
+				if(locales.DisplayName != locales.SelfName) 
+					name += $" ({locales.DisplayName})";
+
+				if(ImGui.Selectable(name, locales.TechnicalName == this.Locale.Data?.MetaData.TechnicalName))
 				{
 					if (locales.TechnicalName != this.Locale.Data?.MetaData.TechnicalName) {
 						this._cfg.File.Locale.LocaleId = locales.TechnicalName;
