@@ -182,13 +182,13 @@ public class MigratorWindow : KtisisWindow {
 
 		if ((this._migrator.WasUserOnV2 && this._page < 6) || (!this._migrator.WasUserOnV2 && this._page == 0)) {
 			ImGui.SameLine();
-			ImGui.SetCursorPosX(ImGui.GetWindowWidth()  - ImGui.CalcTextSize(Ktisis.Locale.Translate("migrator.next")).X - (ImGui.GetStyle().CellPadding.X  * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
+			ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X  - ImGui.CalcTextSize(Ktisis.Locale.Translate("migrator.next")).X - (ImGui.GetStyle().FramePadding.X  * 2) - .1f);
 			if (ImGui.Button(Ktisis.Locale.Translate("migrator.next"))) {
 				this._page++;
 			}
 		} else if ((this._migrator.WasUserOnV2 && this._page == 6) || (!this._migrator.WasUserOnV2 && this._page == 1)) {
 			ImGui.SameLine();
-			ImGui.SetCursorPosX(ImGui.GetWindowWidth() - ImGui.CalcTextSize(Ktisis.Locale.Translate("migrator.finish")).X - (ImGui.GetStyle().CellPadding.X * 2) - ImGui.GetStyle().WindowPadding.X - .1f);
+			ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - ImGui.CalcTextSize(Ktisis.Locale.Translate("migrator.finish")).X - (ImGui.GetStyle().FramePadding.X * 2) - .1f);
 			if (ImGui.Button(Ktisis.Locale.Translate("migrator.finish"))) {
 				this._migrator.Begin();
 				this.Close();
