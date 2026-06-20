@@ -76,6 +76,7 @@ public class ExpressionEditor(
 		}
 
 		this.State.Neutral = neutral;
+		this.State.LastTouched.Clear();
 	}
 
 	public void InvalidateNeutral() => this.State.Neutral = null;
@@ -122,11 +123,14 @@ public class ExpressionEditor(
 		var skeleton = pose.GetSkeleton();
 		if (skeleton == null) return;
 
-		var neutral = this.State.Neutral;
+		var state = this.State;
+		var neutral = state.Neutral;
 		if (neutral == null) return;
 
 		var library = this.Library;
-		var weights = this.State.Weights;
+		var weights = state.Weights;
+		var lastTouched = state.LastTouched;
+		var touched = new HashSet<string>();
 
 		foreach (var partialIx in FacePartials) {
 			if (partialIx >= skeleton->PartialSkeletonCount) continue;
@@ -136,10 +140,41 @@ public class ExpressionEditor(
 			var head = HavokPosing.GetModelTransform(hkaPose, 0);
 			if (head == null) continue;
 
+			var bones = hkaPose->Skeleton->Bones;
+			var parents = hkaPose->Skeleton->ParentIndices;
+
+			// Protected bones (eyeballs, iris, tongue) are user-owned: the solver never
+			// drives or resets them, but they DO ride their parent so they look natural
+			// (the tongue follows the jaw, the eyes follow the head). Capture each one's
+			// transform RELATIVE TO ITS PARENT up front — that local pose carries the
+			// user's manual tweak and is invariant to how the parent moves — then rebuild
+			// it from the parent's new model transform after the blend.
+			var protectedLocals = new List<(int idx, int parent, Transform local)>();
+			for (var i = 1; i < bones.Length; i++) {
+				if (!IsProtected(bones[i].Name.String)) continue;
+				var parent = parents[i];
+				var pm = HavokPosing.GetModelTransform(hkaPose, parent);
+				var cm = HavokPosing.GetModelTransform(hkaPose, i);
+				if (pm == null || cm == null) continue;
+				protectedLocals.Add((i, parent, ToParentLocal(pm, cm)));
+			}
+
+			// Phase 1: restore ONLY the bones we moved last pass back to neutral.
+			// Resetting the whole face would clobber eyes/lips the user posed by hand;
+			// bones the solver never drives are left untouched. This also undoes the
+			// previous pass's propagation, so sliders returning toward 0 — and
+			// descendants like the tongue — settle back cleanly without drift.
+			for (var i = 1; i < bones.Length; i++) {
+				var name = bones[i].Name.String;
+				if (name.IsNullOrEmpty() || !lastTouched.Contains(name)) continue;
+				if (!neutral.TryGetValue(name, out var baseline)) continue;
+				HavokPosing.SetModelTransform(hkaPose, i, HeadToModel(head, baseline.Rotation, baseline.Position, baseline.Scale));
+			}
+
 			// Affected bones in this partial, applied parent-first (ascending index).
 			var targets = new List<(int idx, string name)>();
-			for (var i = 1; i < hkaPose->Skeleton->Bones.Length; i++) {
-				var name = hkaPose->Skeleton->Bones[i].Name.String;
+			for (var i = 1; i < bones.Length; i++) {
+				var name = bones[i].Name.String;
 				if (name.IsNullOrEmpty()) continue;
 				if (!library.AffectedBones.Contains(name)) continue;
 				if (!neutral.ContainsKey(name)) continue;
@@ -147,23 +182,11 @@ public class ExpressionEditor(
 			}
 			targets.Sort((a, b) => a.idx.CompareTo(b.idx));
 
-			// Phase 1: pin EVERY captured bone to its head-relative neutral — a clean,
-			// drift-free slate. We can't reset only the affected bones: non-affected
-			// descendants (e.g. the tongue under the jaw) are moved by phase-2
-			// propagation and, if not re-anchored each pass, accumulate offsets across
-			// the many ApplyBlend calls a slider drag produces. Pinning the whole face
-			// keeps ApplyBlend idempotent. Neutral is the captured face (incl. manual
-			// posing), so this only deviates where an active AU drives a bone.
-			for (var i = 1; i < hkaPose->Skeleton->Bones.Length; i++) {
-				var name = hkaPose->Skeleton->Bones[i].Name.String;
-				if (name.IsNullOrEmpty() || !neutral.TryGetValue(name, out var baseline)) continue;
-				HavokPosing.SetModelTransform(hkaPose, i, HeadToModel(head, baseline.Rotation, baseline.Position, baseline.Scale));
-			}
-
 			// Phase 2: apply only the *active* AUs (parent-first), propagating so each
 			// bone carries the chain below it — e.g. Jaw Open rotates the jaw and the
-			// lower-mouth bones follow. Inactive affected bones are left at neutral or
-			// carried by an active ancestor instead of being pinned.
+			// lower-mouth bones (teeth, tongue, lower lip) follow. Record every bone we
+			// move — the driven bone plus its propagated descendants — so the next pass
+			// restores exactly these.
 			foreach (var (i, name) in targets) {
 				var (deltaRot, posDelta) = this.ComposeDelta(library.Catalog, name, weights);
 				if (IsIdentity(deltaRot) && posDelta.LengthSquared() < 1e-10f) continue;
@@ -178,8 +201,52 @@ public class ExpressionEditor(
 
 				HavokPosing.SetModelTransform(hkaPose, i, target);
 				HavokPosing.Propagate(skeleton, partialIx, i, target, initial);
+
+				touched.Add(name);
+				for (var j = i + 1; j < bones.Length; j++) {
+					if (!HavokPosing.IsBoneDescendantOf(parents, j, i)) continue;
+					var dn = bones[j].Name.String;
+					if (dn.IsNullOrEmpty() || IsProtected(dn)) continue; // tongue stays put
+					touched.Add(dn);
+				}
+			}
+
+			// Final step (parent-first): rebuild each protected bone from its parent's
+			// NEW model transform, re-applying its captured local pose. The parent may
+			// have moved this pass (jaw dropped) so the bone rides along, while the local
+			// tweak the user dialed in sits on top — e.g. a tongue lifted 3 degrees ends
+			// up 3 degrees above wherever the dropped jaw carries it.
+			foreach (var (i, parent, local) in protectedLocals) {
+				var pm = HavokPosing.GetModelTransform(hkaPose, parent);
+				if (pm == null) continue;
+				HavokPosing.SetModelTransform(hkaPose, i, FromParentLocal(pm, local));
 			}
 		}
+
+		state.LastTouched = touched;
+	}
+
+	// Eyeballs, iris and tongue are never driven or reset by the expression solver —
+	// the user poses them by hand; they ride their parent but keep their local pose.
+	private static bool IsProtected(string name)
+		=> !name.IsNullOrEmpty()
+		&& (name.Contains("eye") || name.Contains("iris") || name.Contains("bero"));
+
+	// A bone's transform expressed in its parent's frame (model -> parent-local).
+	private static Transform ToParentLocal(Transform parent, Transform child) {
+		var invRot = Quaternion.Inverse(parent.Rotation);
+		return new Transform(
+			Vector3.Transform(child.Position - parent.Position, invRot),
+			Quaternion.Normalize(invRot * child.Rotation),
+			child.Scale);
+	}
+
+	// Rebuilds a model transform from a parent-local pose and the parent's model.
+	private static Transform FromParentLocal(Transform parent, Transform local) {
+		return new Transform(
+			parent.Position + Vector3.Transform(local.Position, parent.Rotation),
+			Quaternion.Normalize(parent.Rotation * local.Rotation),
+			local.Scale);
 	}
 
 	// Converts a head-relative rotation/position back to a model-space transform via

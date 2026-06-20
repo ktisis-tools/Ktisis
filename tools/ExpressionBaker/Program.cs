@@ -32,11 +32,16 @@ internal static class Program {
 	private static readonly string[] ExcludeSubstr = { "noanim", "iris", "eyeprm", "eyepuru" };
 	private static readonly string[] ExcludeExact = { "j_f_face", "j_f_eye_l", "j_f_eye_r" };
 
-	// Id, Label, source expression, bone-name regex, split L/R, bidirectional, scale.
-	private record Atomic(string Id, string Label, string Source, string Pattern, bool Split, bool Bidirectional, float Scale = 1f);
+	// Id, Label, source expression, bone-name regex, split L/R, bidirectional, scale,
+	// invertRight. invertRight negates the captured right-side delta: per-side capture
+	// of the mirrored right-hand bones yields the INVERSE of the rig-correct mirror of
+	// the left (Ktisis FlipPose mirrors a model rotation as (-x,-y,z,w)), so without
+	// this the right slider drives the opposite way from the left. Only matters for
+	// rotation-led bidirectional controls where the reversal is visible (e.g. brow).
+	private record Atomic(string Id, string Label, string Source, string Pattern, bool Split, bool Bidirectional, float Scale = 1f, bool InvertRight = false);
 
 	private static readonly Atomic[] Atomics = {
-		new("BrowUp",     "Brow Up",     "Alert",     @"^j_f_(mayu|mmayu)_",                       true,  true),
+		new("BrowUp",     "Brow Up",     "Alert",     @"^j_f_(mayu|mmayu)_",                       true,  true,  1f, InvertRight: true),
 		new("BrowFurrow", "Brow Furrow", "Furrow",    @"^j_f_(miken|dmiken|memoto|dmemoto)",       true,  false),
 		new("Blink",      "Blink",       "Shut Eyes", @"^j_f_mab",                                 true,  false),
 		new("EyeWide",    "Eye Wide",    "Amazed",    @"^j_f_mab",                                 true,  false),
@@ -45,7 +50,8 @@ internal static class Program {
 		new("Frown",      "Frown",       "Sad",       @"^j_f_(ulip|dlip|umlip|dmlip|uslip|dslip)_", true,  false, 1.2f),
 		new("Sneer",      "Sneer",       "Sneer",     @"^j_f_(ulip|umlip|uslip)_|^j_f_hana_",      true,  false),
 		new("JawOpen",    "Jaw Open",    "Ouch",      @"^j_f_(ago|dago|haguki)",                   false, false, 3f),
-		new("LipsOpen",   "Lips Open",   "Ouch",      @"^j_f_(ulip|dlip|umlip|dmlip)_",            false, true,  5f),
+		new("UpperLipOpen", "Upper Lip Open", "Ouch", @"^j_f_(ulip|umlip)_",                       false, true,  5f),
+		new("LowerLipOpen", "Lower Lip Open", "Ouch", @"^j_f_(dlip|dmlip)_",                       false, true,  5f),
 		new("LipPucker",  "Lip Pucker",  "Pucker Up", @"^j_f_(ulip|dlip|umlip|dmlip|uslip|dslip)", false, false),
 	};
 
@@ -135,6 +141,8 @@ internal static class Program {
 			if (a.Split) {
 				foreach (var (suffix, idSfx, lblSfx) in new[] { ("_l", "L", " (L)"), ("_r", "R", " (R)") }) {
 					var bones = DeltaBones(neutral, rel, a.Scale, n => re.IsMatch(n) && n.EndsWith(suffix, StringComparison.Ordinal));
+					if (a.InvertRight && idSfx == "R")
+						bones = bones.ToDictionary(kv => kv.Key, kv => new Bone(-kv.Value.Pos, Quaternion.Inverse(kv.Value.Rot)));
 					if (bones.Count > 0) units.Add(Unit(a.Id + idSfx, a.Label + lblSfx, bones, a.Bidirectional));
 				}
 			} else {
