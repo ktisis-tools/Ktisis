@@ -277,6 +277,11 @@
 			"title": "Inverse Kinematics",
 			"enable": "Enable IK constraints",
 			"advanced": "Advanced parameters",
+			"enable_all": "Enable All",
+			"disable_all": "Disable All",
+			"target": "Select",
+			"edit": "Configure",
+			"active": "Enabled",
 			"ccd": {
 				"gain": "Gain",
 				"iterations": "Iterations"
@@ -287,7 +292,13 @@
 				"fixed": "Fixed target",
 				"relative": "Bone relative",
 				"gain": "Gain:",
-				"hinges": "Hinges:"
+				"gain.shoulder": "Shoulder",
+				"gain.elbow": "Elbow",
+				"gain.hand": "Hand",
+				"hinges": "Hinges:",
+				"hinges.min": "Minimum",
+				"hinges.max": "Maximum",
+				"hinges.axis": "Axis"
 			}
 		}
 	},
@@ -365,6 +376,85 @@
 			"wetness.weather": "Weather Wetness",
 			"wetness.swim": "Swimming Wetness",
 			"wetness.depth": "Wetness Depth"
+		}
+	},
+
+	"object_edit": {
+		"actor": {
+			"headers": {
+				"actor": "Actor",
+				"adv": "Advanced (Gaze/IK)",
+				"import": "Import actor appearance",
+				"gaze": "Gaze Control",
+				"ik": "Inverse Kinematics"
+			},
+			"gaze": {
+				"linked": "Linked",
+				"unlinked": "Unlinked",
+				"camera": "Camera Tracking",
+				"gizmo": "Gizmo Tracking",
+				"target": "Select target actor",
+				"targeting": "Targeting:",
+				"unk": "Unknown",
+				"null": "No Target"
+			},
+			"chara_edit": "Actor Editor",
+			"export": "Export Chara"
+		},
+		"pose": {
+			"headers.pose": "Pose",
+			"headers.reference": "Reference pose",
+			"headers.import": "Import pose file",
+			"export": "Export Pose",
+			"flip": "Flip Pose",
+			"stash": "Stash Pose",
+			"stash.apply": "Apply Pose",
+			"stash.time": "Pose stashed at",
+			"stash.from": "from Actor",
+			"reference": "Reset Pose",
+			"reference_labels": {
+				"all": "Reset All Skeletons",
+				"null": "N/A",
+				"body": "Reset Body",
+				"face": "Reset Face",
+				"hair": "Reset Hair",
+				"custom": "Reset Skeleton"
+			}
+		},
+		"light": {
+			"headers": {
+				"light": "Light",
+				"shadows": "Shadows"
+			},
+			"light": {
+				"reflection": "Enable reflections",
+				"type": "Light Type",
+				"color": "Color",
+				"intensity": "Intensity",
+				"range": "Range",
+				"import": "Import light settings",
+				"export": "Export light settings",
+				"spot.angle": "Cone Angle",
+				"spot.falloff": "Falloff Angle",
+				"area.angle": "Light Angle",
+				"area.falloff": "Falloff Angle",
+				"falloff.type": "Falloff Type",
+				"falloff.power": "Falloff Power"
+			},
+			"shadow": {
+				"dynamic": "Dynamic shadows",
+				"chara": "Cast character shadows",
+				"object": "Cast object shadows",
+				"range": "Shadow Range",
+				"near": "Shadow Near",
+				"far": "Shadow Far"
+			}
+		},
+		"image": {
+			"header": "Reference Image",
+			"visible": "Enabled",
+			"load": "Load image",
+			"opacity": "Opacity"
 		}
 	},
 	
