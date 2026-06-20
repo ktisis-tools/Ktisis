@@ -121,7 +121,11 @@ public class LegacyMigrator {
 	}
 
 	internal void MigrateConfig() {
+		
 		this._cfg.ResetConfig();
+		this._cfg.File.Version = -1;
+
+
 		var cfg = this._cfg.File;
 		
 		// The big 3 so to speak
@@ -232,6 +236,7 @@ public class LegacyMigrator {
 				}
 			}
 		}
+		this._cfg.Save();
 	}
 
 
