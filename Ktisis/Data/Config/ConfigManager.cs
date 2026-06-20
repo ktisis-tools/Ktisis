@@ -159,7 +159,10 @@ public class ConfigManager : IDisposable {
 			Categories = SchemaReader.ReadCategories()
 		};
 	}
-	
+
+	internal void ResetConfig() {
+		this.File = this.CreateDefault();
+	}
 	// IDisposable
 
 	private bool _isDisposing;

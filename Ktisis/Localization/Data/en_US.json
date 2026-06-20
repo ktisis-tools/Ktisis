@@ -760,14 +760,14 @@
 			"skip_desc": "Skip migrating and start v0.3 with default settings.",
 			"v3": {
 				"from": "I'm coming from v0.3",
-				"from_desc": "Start Mirating based on your Ktisis Settings from v0.3.\nThis will ignore any legacy settings from v0.2.",
+				"from_desc": "Start Mirating based on your Ktisis Settings from v0.3.\nThis will ignore any legacy settings from v0.2 if applicable.",
 				"main_Desc": "A lot has changed since we started working on v3, and as we've worked on Ktisis we've changed and improved some features.\nThese settings below have new defaults, you can keep your old settings if you wish to, or you can use the new recommended settings.",
 				"testing" : "Since you were using the v3 beta, we suggest you disable receive testing versions.\n",
 				"installer": "You can open the plugin installer with this button."
 			},
 			"v2": {
 				"from": "I'm coming from v0.2",
-				"from_desc": "Start Mirating based on your Ktisis Settings from v0.2.\nThis will overwrite your existing v0.3 settings.",
+				"from_desc": "Start Mirating based on your Ktisis Settings from v0.2.\nThis will overwrite your existing v0.3 settings if applicable.",
 				"main_Desc": "Ktisis v3 was built to ensure that going forward, we can bring new features to our users, you, more easily.\nThis required rewriting nearly all of the code blah blah blah you can skip this and use the defaults if you want by pressing skip.",
 				"wiki": "To find out more about the changes between Ktisis v2 and v3, you can click the button to open our wiki page."
 			}

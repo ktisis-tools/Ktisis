@@ -62,20 +62,20 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Text($"{Ktisis.Locale.Translate("migrator.mainWindow.main_Desc")}");
 
 		var buttonSize = new Vector2(ImGui.GetContentRegionMax().X * .3f, (ImGui.GetContentRegionMax().X * .3f) * .33f);
-		if (this._dpi.ConfigFile.Exists) {
+		if (this._migrator.v2ConfigExists) {
 			if (ImGui.Button(Ktisis.Locale.Translate("migrator.mainWindow.v2.from"), buttonSize)) {
 				this._migrator.MigrateConfig();
 				this._page++;
-				this._migrator.WasUserOnV2 = true;
+				this._migrator.v2ConfigExists = true;
 			}
 			ImGui.SameLine();
 			ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v2.from_desc"));
 		}
 		
-		if(File.Exists(this._dpi.ConfigDirectory + "\\KtisisV3.json"))
+		if(this._migrator.v3ConfigExists)
 		{
 			if (ImGui.Button(Ktisis.Locale.Translate("migrator.mainWindow.v3.from"), buttonSize)) {
-				this._migrator.WasUserOnV2 = false;
+				this._migrator.v2ConfigExists = false;
 				this._page++;
 			}
 			ImGui.SameLine();
@@ -86,7 +86,7 @@ public class MigratorWindow : KtisisWindow {
 
 		using var _ = ImRaii.Disabled(!this.CanBegin && !(ImGui.IsKeyDown(ImGuiKey.ModCtrl) && ImGui.IsKeyDown(ImGuiKey.ModShift)));
 		if (ImGui.Button(text, buttonSize)) {
-			if(!this._migrator.WasUserOnV2)
+			if(!this._migrator.v2ConfigExists)
 				this._migrator.V3Skip();
 			this._migrator.Begin();
 			this.Close();
@@ -138,7 +138,7 @@ public class MigratorWindow : KtisisWindow {
 				this.DrawIntroPage();
 				break;
 			case 1:
-				if (this._migrator.WasUserOnV2) 
+				if (this._migrator.v2ConfigExists) 
 					this._v2Window?.DrawIntro();
 				else
 					this.DrawV3();
@@ -180,13 +180,13 @@ public class MigratorWindow : KtisisWindow {
 		ImGui.Spacing();
 		var text = string.Empty;
 
-		if ((this._migrator.WasUserOnV2 && this._page < 6) || (!this._migrator.WasUserOnV2 && this._page == 0)) {
+		if ((this._migrator.v2ConfigExists && this._page < 6) || (!this._migrator.v2ConfigExists && this._page == 0)) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X  - ImGui.CalcTextSize(Ktisis.Locale.Translate("migrator.next")).X - (ImGui.GetStyle().FramePadding.X  * 2) - .1f);
 			if (ImGui.Button(Ktisis.Locale.Translate("migrator.next"))) {
 				this._page++;
 			}
-		} else if ((this._migrator.WasUserOnV2 && this._page == 6) || (!this._migrator.WasUserOnV2 && this._page == 1)) {
+		} else if ((this._migrator.v2ConfigExists && this._page == 6) || (!this._migrator.v2ConfigExists && this._page == 1)) {
 			ImGui.SameLine();
 			ImGui.SetCursorPosX(ImGui.GetContentRegionMax().X - ImGui.CalcTextSize(Ktisis.Locale.Translate("migrator.finish")).X - (ImGui.GetStyle().FramePadding.X * 2) - .1f);
 			if (ImGui.Button(Ktisis.Locale.Translate("migrator.finish"))) {

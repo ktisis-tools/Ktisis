@@ -73,7 +73,8 @@ public class LegacyMigrator {
 		{"ivcs vagina", "VaginaIvcs"},
 		{"ivcs buttocks", "BottomIvcs"}
 	};
-	public bool WasUserOnV2;
+	public bool v2ConfigExists;
+	public bool v3ConfigExists;
 
 	public event Action? OnConfirmed;
 
@@ -91,11 +92,18 @@ public class LegacyMigrator {
 
 	// Setup
 
-	public void Setup(bool v2 = true) {
-		this.WasUserOnV2 = v2;
+	public void Setup() {
+		this.v2ConfigExists = this._dpi.ConfigFile.Exists;
+		this.v3ConfigExists = File.Exists(this._dpi.ConfigDirectory + "\\KtisisV3.json");
 		this._cfg.Load();
+		if (!this.v3ConfigExists || this._cfg.File.Version == -1) {   //If a user on v2 opened the migrator, then restarted their game before completing the process, we have made a v3 config, so we need to detect that when they open it again
+			this.v3ConfigExists = false;
+			this._cfg.File.Version = -1;
+			this._cfg.Save();
+		}
+
 		Ktisis.Locale.Initialize(this._cfg);
-		if (v2) {
+		if (this.v2ConfigExists) {
 			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
 			var configurations = new PluginConfigurations(new DirectoryInfo(this._dpi.GetPluginConfigDirectory()).Parent!.ToString());
 			this._legacyCfg = configurations.LoadForType<LegacyConfig.Configuration>("Ktisis");
@@ -113,6 +121,7 @@ public class LegacyMigrator {
 	}
 
 	internal void MigrateConfig() {
+		this._cfg.ResetConfig();
 		var cfg = this._cfg.File;
 		
 		// The big 3 so to speak
