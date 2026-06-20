@@ -26,6 +26,9 @@ public class LocaleManager : IDisposable {
 	public LocaleData? Data;
 	public LocaleData? FallbackData;
 
+	internal delegate void LocaleChange();
+	internal event LocaleChange LocaleChanged;
+	
 	public LocaleManager(
 		IDalamudPluginInterface dpi
 	) {
@@ -78,6 +81,7 @@ public class LocaleManager : IDisposable {
 				LoadFallbackLocale();
 			else
 				this.FallbackData = null;
+			LocaleChanged?.Invoke();
 		}
 			
 	}

@@ -57,7 +57,7 @@ public class ConfigWindow : KtisisWindow {
 		OffsetEditor offsetEditor,
 		LocaleManager locale,
 		GuiManager gui
-	) : base("Ktisis Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse) {
+	) : base("config.title", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse, "###Config") {
 		this._cfg = cfg;
 		this._context = context;
 		this._format = format;
