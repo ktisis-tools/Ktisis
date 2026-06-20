@@ -40,7 +40,7 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 	public override void Draw() {
 		this.UpdateTarget();
 		
-		ImGui.Text($"Importing appearance for {this.Target.Name}");
+		ImGui.Text($"{Ktisis.Locale.Translate("chara_import.header")} {this.Target.Name}");
 		ImGui.Spacing();
 
 		this.DrawEmbed();
@@ -65,7 +65,7 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 		ImGui.Spacing();
 		
 		using var _ = ImRaii.Disabled(!this._import.HasSelection);
-		if (ImGui.Button("Apply"))
+		if (ImGui.Button(Ktisis.Locale.Translate("chara_import.apply")))
 			this._import.ApplyTo(this.Target);
 		
 		ImGui.Spacing();

@@ -89,11 +89,11 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this.UpdateTarget();
 		
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
-		DrawTab("Animation", this._anim.Draw);
-		DrawTab("Appearance", this._custom.Draw);
-		DrawTab("Equipment", this._equip.Draw);
-		DrawTab("Plugins (IPC)", this._ipc.Draw);
-		DrawTab("Misc", this.DrawMisc);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.animation.tab"), this._anim.Draw);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.customize.tab"), this._custom.Draw);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.equip.tab"), this._equip.Draw);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.ipc.tab"), this._ipc.Draw);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.misc.tab"), this.DrawMisc);
 	}
 
 	private static void DrawTab(string name, Action draw) {
@@ -108,11 +108,11 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		ImGui.Spacing();
 		
 		var modelId = (int)this._editCustom.GetModelId();
-		if (ImGui.InputInt("Model ID", ref modelId, flags: ImGuiInputTextFlags.EnterReturnsTrue))
+		if (ImGui.InputInt(Ktisis.Locale.Translate("chara_edit.misc.model"), ref modelId, flags: ImGuiInputTextFlags.EnterReturnsTrue))
 			this._editCustom.SetModelId((uint)modelId);
 		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
 			using var _ = ImRaii.Tooltip();
-			ImGui.Text("Press enter to submit");
+			ImGui.Text(Ktisis.Locale.Translate("chara_edit.misc.model_tip"));
 		}
 
 		ImGui.SameLine(0, space);
@@ -121,7 +121,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		var chara = (CharacterEx*)this.Target.Character;
 		if (chara != null) {
 			ImGui.Spacing();
-			ImGui.SliderFloat("Opacity", ref chara->Opacity, 0.0f, 1.0f);
+			ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.opacity"), ref chara->Opacity, 0.0f, 1.0f);
 		}
 		
 		ImGui.Spacing();
@@ -134,7 +134,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 
 	private void DrawWetness() {
 		var isWetActive = this.Target.Appearance.Wetness != null;
-		if (ImGui.Checkbox("Wetness Override", ref isWetActive))
+		if (ImGui.Checkbox(Ktisis.Locale.Translate("chara_edit.misc.wetness"), ref isWetActive))
 			this.ToggleWetness();
 
 		var wetness = this.GetWetness();
@@ -145,9 +145,9 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 
 		var changed = false;
 		var values = (WetnessState)wetness;
-		changed |= ImGui.SliderFloat("Weather Wetness", ref values.WeatherWetness, 0.0f, 1.0f);
-		changed |= ImGui.SliderFloat("Swimming Wetness", ref values.SwimmingWetness, 0.0f, 1.0f);
-		changed |= ImGui.SliderFloat("Wetness Depth", ref values.WetnessDepth, 0.0f, 3.0f);
+		changed |= ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.wetness.weather"), ref values.WeatherWetness, 0.0f, 1.0f);
+		changed |= ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.wetness.swim"), ref values.SwimmingWetness, 0.0f, 1.0f);
+		changed |= ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.wetness.depth"), ref values.WetnessDepth, 0.0f, 3.0f);
 		if (changed) this.Target.Appearance.Wetness = values;
 	}
 

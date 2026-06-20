@@ -43,7 +43,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	public override void Draw() {
 		this.UpdateTarget();
 		
-		ImGui.Text($"Importing pose for {this.Target.Name}");
+		ImGui.Text($"{Ktisis.Locale.Translate("pose_import.header")} {this.Target.Name}");
 		ImGui.Spacing();
 
 		this.DrawEmbed();
@@ -76,18 +76,18 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		ImGui.Spacing();
 		ImGui.Spacing();
 
-		if (ImGui.Button("Apply"))
+		if (ImGui.Button(Ktisis.Locale.Translate("pose_import.apply")))
 			this.ApplyPoseFile(isSelectBones);
 	}
 
 	private void DrawTransformSelect() {
-		ImGui.Text("Transforms:");
+		ImGui.Text(Ktisis.Locale.Translate("pose_import.transforms.header"));
 
 		var file = this.Context.Config.File;
 		var trans = file.ImportPoseTransforms;
 
 		var rotation = trans.HasFlag(PoseTransforms.Rotation);
-		if (ImGui.Checkbox("Rotation##PoseImportRot", ref rotation))
+		if (ImGui.Checkbox($"{Ktisis.Locale.Translate("common.rotation")}##PoseImportRot", ref rotation))
 			file.ImportPoseTransforms ^= PoseTransforms.Rotation;
 		
 		ImGui.SameLine();
@@ -105,62 +105,62 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 			file.ImportPoseTransforms &= ~PoseTransforms.Scale;
 		}
 
-		if (ImGui.Checkbox("Position##PoseImportPos", ref position))
+		if (ImGui.Checkbox($"{Ktisis.Locale.Translate("common.position")}##PoseImportPos", ref position))
 			file.ImportPoseTransforms ^= PoseTransforms.Position;
 		
 		ImGui.SameLine();
 
-		if (ImGui.Checkbox("Scale##PoseImportScale", ref scale))
+		if (ImGui.Checkbox($"{Ktisis.Locale.Translate("common.scale")}##PoseImportScale", ref scale))
 			file.ImportPoseTransforms ^= PoseTransforms.Scale;
 	}
 
 	private void DrawApplyModes(bool isSelectBones) {
-		ImGui.Text("Modes:");
+		ImGui.Text(Ktisis.Locale.Translate("pose_import.modes.header"));
 
 		var file = this.Context.Config.File;
 		var modes = file.ImportPoseModes;
 
 		var isSelectiveImport = file.ImportPoseSelectedBones && isSelectBones;
 		using (ImRaii.Disabled(!isSelectBones)) {
-			if (ImGui.Checkbox("Apply selected bones", ref isSelectiveImport))
+			if (ImGui.Checkbox(Ktisis.Locale.Translate("pose_import.modes.selective_import"), ref isSelectiveImport))
 				file.ImportPoseSelectedBones ^= true;
 		}
 
 		if (isSelectiveImport) {
 			using (ImRaii.PushIndent()) {
-				ImGui.Checkbox("Include descendants", ref file.SelectedBonesIncludeDescendants);
+				ImGui.Checkbox(Ktisis.Locale.Translate("pose_import.modes.descendants"), ref file.SelectedBonesIncludeDescendants);
 
 				var hasPosition = file.ImportPoseTransforms.HasFlag(PoseTransforms.Position);
 				using (ImRaii.Disabled(!hasPosition))
-					ImGui.Checkbox("Anchor group positions", ref file.AnchorPoseSelectedBones);
+					ImGui.Checkbox(Ktisis.Locale.Translate("pose_import.modes.anchor"), ref file.AnchorPoseSelectedBones);
 			}
 		}
 
 		if (!isSelectiveImport || file.SelectedBonesIncludeDescendants) {
 			var body = modes.HasFlag(PoseMode.Body);
-			if (ImGui.Checkbox("Body##PoseImportBody", ref body))
+			if (ImGui.Checkbox($"{Ktisis.Locale.Translate("common.chara_parts.body")}##PoseImportBody", ref body))
 				file.ImportPoseModes ^= PoseMode.Body;
 
 			ImGui.SameLine();
 
 			var face = modes.HasFlag(PoseMode.Face);
-			if (ImGui.Checkbox("Face##PoseImportFace", ref face))
+			if (ImGui.Checkbox($"{Ktisis.Locale.Translate("common.chara_parts.face")}##PoseImportFace", ref face))
 				file.ImportPoseModes ^= PoseMode.Face;
 			if (face && this._select.IsFileOpened && this.Target.Pose?.HasDTFace() != _select.Selected?.File.HasDTFace()) {
 				ImGui.SameLine();
 				Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
 				if (ImGui.IsItemHovered())
-					ImGui.SetTooltip("Face will not be imported from the selected pose file due to incompatibility with the selected actor.");
+					ImGui.SetTooltip(Ktisis.Locale.Translate("pose_import.modes.warn_face_compat"));
 			}
 		}
 
-		ImGui.Checkbox("Exclude ear bones", ref file.ExcludePoseEarBones);
+		ImGui.Checkbox(Ktisis.Locale.Translate("pose_import.modes.exclude_ears"), ref file.ExcludePoseEarBones);
 
 		if (this._select.IsFileOpened && this.Context.Posing.IsIkEnabled) {
 			ImGui.Spacing();
 			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-			ImGui.TextWrapped("Inverse Kinematics are enabled! These may override imported limbs.");
+			ImGui.TextWrapped(Ktisis.Locale.Translate("pose_import.modes.warn_ik_on"));
 		}
 	}
 	

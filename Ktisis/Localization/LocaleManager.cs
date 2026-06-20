@@ -83,7 +83,7 @@ public class LocaleManager : IDisposable {
 	}
 	
 	public void LoadFallbackLocale() {
-		Ktisis.Log.Verbose($"Reading localization file for 'en_US'");
+		Ktisis.Log.Verbose($"FALLBACK - Reading localization file for 'en_US'");
 		if (this.FallbackData == null || this.FallbackData.MetaData.TechnicalName != "en_US")
 			this.FallbackData = this.Loader.LoadData("en_US");
 	}

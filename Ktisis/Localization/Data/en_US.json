@@ -53,7 +53,13 @@
 		"main": "Main Camera",
 		"work": "Work Camera",
 		"camera": "Camera",
-		"new": "New Camera"
+		"new": "New Camera",
+		"selector": {
+			"create": "Create new camera",
+			"delete": "Delete camera",
+			"edit": "Edit camera",
+			"edit_can_delete": "(or hold Shift to delete)"
+		}
 	},
 	
 	"common": {
@@ -71,7 +77,10 @@
 			"gear": "Gear",
 			"accessories": "Accessories",
 			"weapons": "Weapons"
-		}		
+		},
+		"rotation": "Rotation",
+		"position": "Position",
+		"scale": "Scale"
 	},
 	
 	"context": {
@@ -102,6 +111,28 @@
 			"ctx_import.group": "Import group...",
 			"ctx_import.select": "Import selected...",
 			"ctx_export": "Export pose..."
+		},
+		"dialog": {
+			"chara": {
+				"filter": "Character Files",
+				"load": "Open Chara File",
+				"save": "Save Chara File"
+			},
+			"pose": {
+				"filter": "Pose Files",
+				"load": "Open Pose File",
+				"save": "Save Pose File"
+			},
+			"light": {
+				"filter": "Light Files",
+				"load": "Open Light File",
+				"save": "Save Light File"
+			},
+			"mcdf": {
+				"filter": "MCDF Files",
+				"load": "Open MCDF File"
+			},
+			"image.load": "Import Reference Image"
 		}
 	},
 	
@@ -127,14 +158,91 @@
 				"disable": "Bone manipulation is currently disabled."
 			}
 		},
-		"scene_tree":{
+		"scene_tree": {
 			"attached_to": "Attached to",
 			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment"
+		},
+		"create_menu": {
+			"actor": {
+				"create": "Create new actor",
+				"file": "Import actor from file",
+				"mcdf": "Import actor from MCDF",
+				"overworld": "Add overworld actor"
+			},
+			"light": {
+				"create": "Create new light",
+				"point": "Point",
+				"spot": "Spot",
+				"area": "Area",
+				"directional": "Sun (Directional)",
+				"file": "From file... (.ktlight)"
+			},
+			"reference": "Add reference image"
+		},
+		"entity_menu": {
+			"base": {
+				"select": "Select",
+				"deselect": "Unselect",
+				"hierarchy": "Select hierarchy",
+				"presets": "Presets...",
+				"presets_save": "Save New",
+				"detach": "Detach",
+				"rename": "Rename",
+				"duplicate": "Duplicate",
+				"delete": "Delete"
+			},
+			"actor": {
+				"target": "Target",
+				"edit": "Edit appearance",
+				"import": "Import...",
+				"export": "Export...",
+				"chara": "Character (.chara)",
+				"npc": "NPC",
+				"pose": "Pose file (.pose)",
+				"mcdf": "Mare data (.mcdf)"
+			},
+			"ipc": {
+				"submenu": "IPC appearance",
+				"penumbra": {
+					"collection": "Penumbra: Assign collection",
+					"invisible_skin": "Penumbra: Invisible skin"
+				},
+				"glamourer": {
+					"design": "Glamourer: Apply design"
+				},
+				"customize": {
+					"profile": "Customize: Assign profile"
+				},
+				"revert": "Revert all IPC data"
+			},
+			"pose": {
+				"import": "Import pose",
+				"export": "Export pose",
+				"reference": "Set to reference pose"
+			},
+			"light": {
+				"edit": "Edit lighting",
+				"import": "Import light file",
+				"export": "Export light file"
+			}
 		},
 		"create": "Create new...",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.toggle": "Toggle screen overlay"
+	},
+
+	"toolbar": {
+		"buttons": {
+			"workspace": "Workspace",
+			"object": "Object Editor",
+			"actor": "Actor Editor",
+			"posing": "Pose View",
+			"env": "Environment Editor",
+			"camera": "Camera Editor",
+			"scene": "Scene Editor",
+			"config": "Settings"
+		}
 	},
 	
 	"transform_edit": {
@@ -198,6 +306,7 @@
 		"title": "Actor Editor",
 		"hint": "Edit appearance & animations",
 		"animation": {
+			"tab": "Animation",
 			"controls": {
 				"animationSelect": "Animation",
 				"idleSelect": "Idle Pose",
@@ -219,6 +328,7 @@
 			}
 		},
 		"customize": {
+			"tab": "Appearance",
 			"iris": "Small Iris",
 			"primary": "Primary Features",
 			"face": "Facial Features",
@@ -226,6 +336,35 @@
 			"highlights": "Highlights",
 			"eye_color": "Eye Color",
 			"lipstick": "Lipstick"
+		},
+		"equip.tab": "Equipment",
+		"ipc": {
+			"tab": "Plugins (IPC)",
+			"warn_actor": "Please select an actor!",
+			"mcdf_load": "Load MCDF",
+			"mcdf_tip": "A MCDF or 'Mare Character Data File' contains all of a players Penumbra, Glamourer\\nand CustomizePlus data that is applied to them at the time of the capture.",
+			"customize.title": "Customize+",
+			"penumbra": {
+				"title": "Penumbra",
+				"collection": "Collection",
+				"invisible_skin": "Apply Invisible skin"
+			},
+			"glamourer": {
+				"title": "Glamourer",
+				"design.select": "Current selection:",
+				"design.none": "None",
+				"design.apply": "Apply"
+			}
+		},
+		"misc": {
+			"tab": "Misc",
+			"model": "Model ID",
+			"model_tip": "Press enter to submit",
+			"opacity": "Opacity",
+			"wetness": "Wetness Override",
+			"wetness.weather": "Weather Wetness",
+			"wetness.swim": "Swimming Wetness",
+			"wetness.depth": "Wetness Depth"
 		}
 	},
 	
@@ -261,6 +400,9 @@
 	"env_edit": {
 		"title": "Environment Editor",
 		"enable": "Enable",
+		"weather": "Weather",
+		"time": "Time and Day",
+		"advanced": "Advanced Editing",
 		"fog": {
 			"title": "Fog",
 			"color": "Color",
@@ -315,7 +457,7 @@
 			"scattering": "Scattering",
 			"raindrops": "Raindrops"
 		},
-		"stars":{
+		"stars": {
 			"title": "Stars",
 			"intensity": "Intensity",
 			"constellations": "Constellations",
@@ -336,11 +478,29 @@
 			"angle": "Angle",
 			"speed": "Speed"
 		}
-		
 	},
 	
 	"pose_view": {
 		"title": "Pose View"
+	},
+
+	"chara_import": {
+		"header": "Importing appearance for",
+		"apply": "Apply"
+	},
+	"pose_import": {
+		"header": "Importing pose for",
+		"apply": "Apply",
+		"transforms.header": "Transforms:",
+		"modes": {
+			"header": "Modes:",
+			"selective_import": "Apply selected bones",
+			"descendants": "Include descendants",
+			"anchor": "Anchor group positions",
+			"exclude_ears": "Exclude ear bones",
+			"warn_face_compat": "Face will not be imported from the selected pose file due to incompatibility with the selected actor.",
+			"warn_ik_on": "Inverse Kinematics are enabled! These may override imported limbs."
+		}
 	},
 
 	"config": {
@@ -493,7 +653,7 @@
 				"title": "Gizmo",
 				"header": "Gizmo Actions:"
 			},
-			"toolbar":{
+			"toolbar": {
 				"title": "Toolbar",
 				"header": "Toolbar Controls:"
 			}
@@ -612,7 +772,7 @@
 				"wiki": "To find out more about the changes between Ktisis v2 and v3, you can click the button to open our wiki page."
 			}
 		},
-		"v3":{
+		"v3": {
 			"openWindowToggle": "Toggle open Windows",
 			"toolbar": "Use Ktisis Toolbar",
 			"keybinds": "Enable Hotkeys"
