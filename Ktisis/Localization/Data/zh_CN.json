@@ -1,7 +1,7 @@
 {
 	"$meta": {
-		"displayName": "简体字",
-		"selfName": "简体字",
+		"displayName": "简体中文",
+		"selfName": "简体中文",
 		"__comment": "Boilerplate",
 		"maintainers": [
 			"@meowzwr",
@@ -57,7 +57,21 @@
 	},
 
 	"common": {
-		"options": "选项"
+		"options": "选项",
+		"appearance": "外观",
+		"equipment": "装备",
+		"unknown": "未知",
+		"hide": "隐藏",
+		"show": "显示",
+		"entity": "实体",
+		"chara_parts": {
+			"body": "身体",
+			"face": "面部",
+			"hair": "头发",
+			"gear": "装备",
+			"accessories": "配饰",
+			"weapons": "武器"
+		}
 	},
 
 	"context": {
@@ -74,10 +88,13 @@
 	"file": {
 		"import": "导入...",
 		"export": "导出...",
+		"select": "选择要打开的文件...",
 		"chara": {
 			"name": "角色 (.chara)",
 			"ctx_import": "导入外观...",
-			"ctx_export": "导出外观..."
+			"ctx_export": "导出外观...",
+			"file": "文件",
+			"apply": "应用于所选对象"
 		},
 		"pose": {
 			"name": "姿势文件 (.pose)",
@@ -109,6 +126,10 @@
 				"enable-blocked": "要禁用，请按住SHIFT。",
 				"disable": "骨骼操纵当前处于禁用状态。"
 			}
+		},
+		"scene_tree": {
+			"attached_to": "附着于",
+			"reset_tooltip": "点击重置附着\n点击并拖拽设置新附着点"
 		},
 		"create": "新建...",
 		"refresh_entities": "刷新场景实体",
@@ -196,6 +217,15 @@
 				"brioWarning": "⚠ Brio当前已启用！当前的不兼容性阻止此功能正常工作 - 要加载姿势表情，请先禁用Brio。",
 				"header": "警告：这是一个实验性功能！它将覆盖任何当前的正面姿势，并可能变形耳朵或其他面部部位。但是，您仍然可以撤销任何做出的更改。"
 			}
+		},
+		"customize": {
+			"iris": "小瞳孔",
+			"primary": "主要特征",
+			"face": "面部特征",
+			"facepaint_flip": "翻转面妆",
+			"highlights": "高光",
+			"eye_color": "眼睛颜色",
+			"lipstick": "口红"
 		}
 	},
 
@@ -229,7 +259,84 @@
 	},
 
 	"env_edit": {
-		"title": "环境编辑器"
+		"title": "环境编辑器",
+		"enable": "启用",
+		"fog": {
+			"title": "雾",
+			"color": "颜色",
+			"distance": "距离",
+			"thickness": "厚度",
+			"opacity": "不透明度",
+			"sky_vis": "天空可见度"
+		},
+		"housing": {
+			"title": "房屋",
+			"unavailable": "房屋灯光不可用。",
+			"brightness": "亮度",
+			"ssao": "SSAO"
+		},
+		"lighting": {
+			"title": "光照",
+			"sunlight": "阳光",
+			"moonlight": "月光",
+			"ambient": "环境光",
+			"saturation": "饱和度",
+			"temperature": "色温"
+		},
+		"particles": {
+			"title": "粒子",
+			"intensity": "强度",
+			"size": "大小",
+			"glow": "发光",
+			"color": "颜色",
+			"weight": "权重",
+			"spread": "扩散",
+			"speed": "速度",
+			"spin": "旋转"
+		},
+		"sky": {
+			"title": "天空",
+			"edit_sky": "编辑天空盒",
+			"texture": "天空纹理",
+			"edit_clouds": "编辑云层",
+			"top": "顶部云层",
+			"side": "侧向云层",
+			"color": "云层颜色",
+			"shadow_color": "阴影颜色",
+			"shadows": "阴影",
+			"side_height": "侧向高度"
+		},
+		"rain": {
+			"title": "雨",
+			"intensity": "强度",
+			"thickness": "厚度",
+			"color": "颜色",
+			"weight": "权重",
+			"scattering": "散射",
+			"raindrops": "雨滴"
+		},
+		"stars": {
+			"title": "星星",
+			"intensity": "强度",
+			"constellations": "星座",
+			"galaxy_intensity": "银河强度",
+			"moon_color": "月亮颜色",
+			"moon_brightness": "月亮亮度"
+		},
+		"water": {
+			"title": "水",
+			"water_one": "水体一",
+			"water_two": "水体二",
+			"water_three": "水体三",
+			"water_four": "水体四"
+		},
+		"wind": {
+			"title": "风",
+			"direction": "方向",
+			"angle": "角度",
+			"speed": "速度"
+		}
+		
 	},
 
 	"pose_view": {
@@ -264,6 +371,7 @@
 			"hintHoldSnap": "拖拽鼠标时将操作柄数值吸附到最近的刻度",
 			"2d_scale": "2D 操作柄缩放",
 			"header": "操作柄样式：",
+			"disabled": "当前版本中操作柄样式功能暂不可用，等待 Dalamud 更新！",
 			"editor": {
 				"general": {
 					"title": "常规",
@@ -430,6 +538,7 @@
 			"title": "骨骼偏移",
 			"description": "导入与编辑可视化骨骼偏移",
 			"help": "在下方为骨骼设置平移后，Ktisis界面上该骨骼的可点击节点位置会被调整为新值。",
+			"selected": "已选骨骼",
 			"ui": {
 				"copy_all": "全部复制到剪贴板",
 				"load_all": "从剪贴板加载全部",
@@ -461,6 +570,7 @@
 				"1801": "维埃拉女性"
 			}
 		},
+		"misc.title": "杂项",
 		"about": {
 			"title": "关于",
 			"header": "关于Ktisis",
@@ -475,9 +585,87 @@
 				"button": "Discord",
 				"link": "https://discord.com/invite/kUG3W8B8Ny/"
 			}
+		},
+		"language": {
+			"title": "语言",
+			"autoselect": "自动设置语言",
+			"selector": "强制使用语言"
 		}
 	},
 
+	"migrator": {
+		"mainWindow": {
+			"main_Desc": "感谢使用 Ktisis！v3 现已成为稳定版本。\n",
+			"skip": "跳过并使用默认设置",
+			"skip_desc": "跳过迁移，以默认设置启动 v0.3。",
+			"v3": {
+				"from": "我来自 v0.3",
+				"from_desc": "基于 v0.3 的 Ktisis 设置开始迁移。\n这将忽略 v0.2 的所有旧版设置。",
+				"main_Desc": "自我们开始开发 v3 以来变化很大，在开发 Ktisis 的过程中我们更改并改进了部分功能。\n以下设置有了新的默认值，你可以保留旧设置，也可以使用新的推荐设置。",
+				"testing": "由于你曾使用 v3 测试版，建议你关闭接收测试版本。\n",
+				"installer": "你可以使用此按钮打开插件安装器。"
+			},
+			"v2": {
+				"from": "我来自 v0.2",
+				"from_desc": "基于 v0.2 的 Ktisis 设置开始迁移。\n这将覆盖你现有的 v0.3 设置。",
+				"main_Desc": "Ktisis v3 旨在确保未来能更轻松地为用户（也就是你）带来新功能。\n这需要重写几乎所有代码……如果不想迁移，可以按跳过使用默认设置。",
+				"wiki": "要了解 Ktisis v2 与 v3 之间的变化，可点击按钮打开我们的 Wiki 页面。"
+			}
+		},
+		"v3": {
+			"openWindowToggle": "切换窗口开关",
+			"toolbar": "使用 Ktisis 工具栏",
+			"keybinds": "启用快捷键"
+			
+		},
+		"v2": {
+			"editor": {
+				"header": "编辑器设置",
+				"nsfw": "显示 NSFW 骨骼",
+				"nsfwTooltip": "v2 设置：屏蔽 NSFW 骨骼",
+				"incognito": "隐身模式",
+				"incognitoTooltip": "v2 设置：隐藏玩家名称",
+				"toolbar": "使用 Ktisis 工具栏",
+				"toolbarSub": "建议 v2 用户使用，以获得更熟悉的界面"
+			},
+			"input": {
+				"header": "输入设置",
+				"keybinds": "启用按键绑定",
+				"allowAxisFlip": "面向相机翻转轴",
+				"leftClick": "左键点击时禁用 GPose 更改目标",
+				"rightClick": "右键点击时禁用 GPose 更改目标"
+			},
+			"overlay": {
+				"header": "叠加层设置",
+				"drawLines": "在骨骼上绘制线",
+				"drawLinesGizmo": "使用变换器时在骨骼上绘制线",
+				"drawDotsGizmo": "使用变换器时在骨骼上绘制点",
+				"lineThickness": "线条粗细",
+				"lineOpacity": "线条不透明度",
+				"lineOpacityUsing": "使用时的线条不透明度",
+				"dotRadius": "点半径"
+			},
+			"autosave": {
+				"header": "自动保存设置",
+				"enabled": "已启用",
+				"interval": "间隔",
+				"numToSave": "保存数量",
+				"clearOnExit": "退出时清除",
+				"autoOnDC": "断开连接时自动保存"
+			},
+			"camera": {
+				"header": "工作相机设置",
+				"sens": "灵敏度",
+				"movSpeed": "移动速度",
+				"fastMulti": "快速倍率",
+				"slowMulti": "慢速倍率",
+				"vertMulti": "垂直倍率"
+			}
+		},
+		"next": "下一步",
+		"finish": "完成"
+	},
+	
 	"bone": {
 		"n_root": "根骨骼 (Root)",
 		"n_hara": "腹部 (Abdomen)",
@@ -844,5 +1032,9 @@
 		"Linear": "线性衰减",
 		"Quadratic": "二次衰减",
 		"Cubic": "三次衰减"
+	},
+	
+	"misc": {
+		"command_desc": "切换 Ktisis 主窗口。"
 	}
 }
