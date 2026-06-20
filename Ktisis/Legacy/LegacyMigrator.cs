@@ -121,7 +121,11 @@ public class LegacyMigrator {
 	}
 
 	internal void MigrateConfig() {
-		this._cfg.ResetConfig();
+		if (!this.v3ConfigExists || this._cfg.File.Version == -1) {   //If a user on v2 opened the migrator, then restarted their game before completing the process, we have made a v3 config, so we need to detect that when they open it again
+			this._cfg.ResetConfig();
+			this._cfg.File.Version = -1;
+		}
+
 		var cfg = this._cfg.File;
 		
 		// The big 3 so to speak
