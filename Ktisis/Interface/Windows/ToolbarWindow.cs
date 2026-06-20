@@ -37,7 +37,7 @@ public class ToolbarWindow : KtisisWindow {
 	public ToolbarWindow(
 		IEditorContext ctx,
 		GuiManager gui
-	) : base("Ktisis Toolbar") {
+	) : base("toolbar.title", windowId:"###KtisisToolbar") {
 		this._ctx = ctx;
 		this._gui = gui;
 		this._workspace = new WorkspaceState(ctx);

@@ -61,7 +61,7 @@ public class PosingWindow : KtisisWindow {
 		TransformTable table,
 		Gizmo2D gizmo
 	) : base(
-		"Pose View###KtisisPoseView"
+		"pose_view.title", windowId:"###KtisisPoseView"
 	) {
 		this._ctx = ctx;
 		this._locale = locale;
@@ -100,7 +100,7 @@ public class PosingWindow : KtisisWindow {
 		}
 
 		if (this.UpdateTarget())
-			this.WindowName = $"Pose View - {this._target!.Name}###KtisisPoseView";
+			this.WindowName = $"{Ktisis.Locale.Translate(this._localeWindowName)} - {this._target!.Name}{this._windowId}";
 
 		if (this._target is not { IsValid: true }) {
 			ImGui.Text("Select an actor to start editing its pose.");

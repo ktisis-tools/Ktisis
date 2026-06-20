@@ -233,6 +233,7 @@
 	},
 
 	"toolbar": {
+		"title": "Ktisis Toolbar",
 		"buttons": {
 			"workspace": "Workspace",
 			"object": "Object Editor",
@@ -380,6 +381,7 @@
 	},
 
 	"object_edit": {
+		"title": "Object Editor",
 		"actor": {
 			"headers": {
 				"actor": "Actor",
@@ -575,10 +577,12 @@
 	},
 
 	"chara_import": {
+		"title": "Import Appearance",
 		"header": "Importing appearance for",
 		"apply": "Apply"
 	},
 	"pose_import": {
+		"title": "Import Pose",
 		"header": "Importing pose for",
 		"apply": "Apply",
 		"transforms.header": "Transforms:",
@@ -844,6 +848,7 @@
 	},
 
 	"migrator": {
+		"title": "Ktisis v0.3 Setup",
 		"mainWindow": {
 			"main_Desc": "Thank you for using Ktisis! v3 is now our stable version.\n",
 			"skip": "Skip and use defaults",

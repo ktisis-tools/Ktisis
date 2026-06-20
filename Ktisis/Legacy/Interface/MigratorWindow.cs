@@ -27,8 +27,9 @@ public class MigratorWindow : KtisisWindow {
 		LegacyMigrator migrator,
 		ConfigManager cfg
 	) : base(
-		"Ktisis v3 Setup",
-		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings
+		"migrator.title",
+		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings,
+		"###KtisisMigrator"
 	) {
 		this.SizeConstraints = new WindowSizeConstraints() {
 			MinimumSize = new Vector2(550, 50)

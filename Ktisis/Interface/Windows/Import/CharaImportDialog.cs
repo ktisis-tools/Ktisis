@@ -17,9 +17,10 @@ public class CharaImportDialog : EntityEditWindow<ActorEntity> {
 		IEditorContext ctx,
 		CharaImportUI import
 	) : base(
-		"Import Appearance",
+		"chara_import.title",
 		ctx,
-		ImGuiWindowFlags.AlwaysAutoResize
+		ImGuiWindowFlags.AlwaysAutoResize,
+		"###CharaImportDialog"
 	) {
 		this._ctx = ctx;
 		this._import = import;
