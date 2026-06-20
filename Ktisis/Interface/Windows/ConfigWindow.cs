@@ -443,12 +443,16 @@ public class ConfigWindow : KtisisWindow {
 		}
 	}
 	//TODO: Translation
+	
 	private void DrawLanguageTab() {
 		if (ImGui.Checkbox(this.Locale.Translate("config.language.autoselect"), ref this._cfg.File.Locale.AutoDetect)) {
 			this.Locale.HandleLanguageChangeDelegate();
 		}
 		using var _disabled = ImRaii.Disabled(this._cfg.File.Locale.AutoDetect);
-		using var _combo = ImRaii.Combo(this.Locale.Translate("config.language.selector"), this.Locale.Data?.MetaData.DisplayName);
+		var current = this.Locale.Data?.MetaData.SelfName;
+		if(this.Locale.Data?.MetaData.DisplayName != this.Locale.Data?.MetaData.SelfName)
+			current +=$" ({this.Locale.Data?.MetaData.DisplayName})";
+		using var _combo = ImRaii.Combo(this.Locale.Translate("config.language.selector"), current);
 		if(_combo.Success)
 			foreach (var locales in this.Locale.AvailableLocales) {
 				var name = locales.SelfName;
