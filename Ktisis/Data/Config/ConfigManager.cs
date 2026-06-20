@@ -43,15 +43,16 @@ public class ConfigManager : IDisposable {
 		try {
 			// TODO: Legacy migration
 			cfg = this.OpenConfigFile();
-			
-			if (cfg is { Version: < 10 }) {
-				cfg.Version = 10;
-				this.MigrateSchema(cfg);
-			}
-			if (cfg is { Version: < 11 }) {
-				cfg.Version = 12;
-				this.GenerateDefaultPresets(cfg);
-				this.MigrateSchema(cfg);
+			if (cfg is not { Version: -1 }) {
+				if (cfg is { Version: < 10 }) {
+					cfg.Version = 10;
+					this.MigrateSchema(cfg);
+				}
+				if (cfg is { Version: < 11 }) {
+					cfg.Version = 11;
+					this.GenerateDefaultPresets(cfg);
+					this.MigrateSchema(cfg);
+				}
 			}
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");
