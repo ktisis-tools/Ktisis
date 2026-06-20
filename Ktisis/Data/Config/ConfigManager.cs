@@ -49,7 +49,7 @@ public class ConfigManager : IDisposable {
 				this.MigrateSchema(cfg);
 			}
 			if (cfg is { Version: < 11 }) {
-				cfg.Version = 11;
+				cfg.Version = 12;
 				this.GenerateDefaultPresets(cfg);
 				this.MigrateSchema(cfg);
 			}
