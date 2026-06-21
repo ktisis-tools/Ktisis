@@ -26,9 +26,10 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		IEditorContext ctx,
 		FileSelect<PoseFile> select
 	) : base(
-		"Import Pose",
+		"pose_import.title",
 		ctx,
-		ImGuiWindowFlags.AlwaysAutoResize
+		ImGuiWindowFlags.AlwaysAutoResize,
+		"###PoseImportDialog"
 	) {
 		this._select = select;
 		select.OnOpenDialog = this.OnFileDialogOpen;

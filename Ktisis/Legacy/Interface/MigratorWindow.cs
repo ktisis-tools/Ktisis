@@ -27,8 +27,9 @@ public class MigratorWindow : KtisisWindow {
 		LegacyMigrator migrator,
 		ConfigManager cfg
 	) : base(
-		"Ktisis v3 Setup",
-		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings
+		"migrator.title",
+		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings,
+		"###KtisisMigrator"
 	) {
 		this.SizeConstraints = new WindowSizeConstraints() {
 			MinimumSize = new Vector2(550, 50)
@@ -122,8 +123,8 @@ public class MigratorWindow : KtisisWindow {
 			}
 		}
 
-		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty,Ktisis.Locale.Translate("migrator.v3.openWindowToggle") , string.Empty);
-		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, Ktisis.Locale.Translate("migrator.v3.toolbar"), string.Empty);
+		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty,Ktisis.Locale.Translate("migrator.v3.openWindowToggle") , Ktisis.Locale.Translate("migrator.v3.openWindowToggleSub"));
+		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, Ktisis.Locale.Translate("migrator.v3.toolbar"), Ktisis.Locale.Translate("migrator.v3.toolbarSub"));
 		DialogHelpers.BuildDialog(ref this._cfg.File.Keybinds.Enabled, true, string.Empty, Ktisis.Locale.Translate("migrator.v3.keybinds"), string.Empty);
 	}
 

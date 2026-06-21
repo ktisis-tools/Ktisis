@@ -55,7 +55,7 @@ public class EnvWindow : KtisisWindow {
 		WaterEditor water,
 		HousingEditor housingEditor
 	) : base(
-		"Environment Editor"
+		"env_edit.title", windowId:"###KtisisEnvWindow"
 	) {
 		this._scene = scene;
 		this._module = module;

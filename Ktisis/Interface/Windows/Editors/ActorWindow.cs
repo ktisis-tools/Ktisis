@@ -20,8 +20,6 @@ using Ktisis.GameData.Excel.Types;
 namespace Ktisis.Interface.Windows.Editors;
 
 public class ActorWindow : EntityEditWindow<ActorEntity> {
-	private const string WindowId = "KtisisActorEditor";
-	
 	private readonly CustomizeEditorTab _custom;
 	private readonly EquipmentEditorTab _equip;
 	private readonly AnimationEditorTab _anim;
@@ -39,7 +37,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		AnimationEditorTab anim,
 		NpcSelect npcs,
 		IDalamudPluginInterface dpi
-	) : base($"Actor Editor###{WindowId}", ctx) {
+	) : base("chara_edit.title", ctx, windowId:"###KtisisActorEditor") {
 		this._custom = custom;
 		this._equip = equip;
 		this._anim = anim;
@@ -59,7 +57,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private ICustomizeEditor _editCustom = null!;
 
 	public override void SetTarget(ActorEntity target) {
-		this.WindowName = $"Actor Editor - {target.Name}###{WindowId}";
+		this.WindowName = $"{Ktisis.Locale.Translate(this._localeWindowName)} - {target.Name}{this._windowId}";
 		
 		base.SetTarget(target);
 		
