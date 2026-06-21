@@ -17,7 +17,7 @@
 		"Overlay_Toggle": "切换叠加层可见性",
 		"History_Undo": "撤销",
 		"History_Redo": "重做",
-		"Gizmo_Toggle": "切换变换器可见性",
+		"Gizmo_Toggle": "切换操作柄可见性",
 		"Gizmo_ToggleMode": "切换世界/本地模式",
 		"Gizmo_SetTranslateMode": "切换到位置模式",
 		"Gizmo_SetRotateMode": "切换到旋转模式",
@@ -53,7 +53,13 @@
 		"main": "主摄像机",
 		"work": "工作摄像机",
 		"camera": "相机",
-		"new": "新摄像机"
+		"new": "新摄像机",
+		"selector": {
+			"create": "创建新摄像机",
+			"delete": "删除摄像机",
+			"edit": "编辑摄像机",
+			"edit_can_delete": "（或按住 Shift 删除）"
+		}
 	},
 
 	"common": {
@@ -71,7 +77,10 @@
 			"gear": "装备",
 			"accessories": "配饰",
 			"weapons": "武器"
-		}
+		},
+		"rotation": "旋转",
+		"position": "位置",
+		"scale": "缩放"
 	},
 
 	"context": {
@@ -102,6 +111,28 @@
 			"ctx_import.group": "导入组...",
 			"ctx_import.select": "导入所选内容...",
 			"ctx_export": "导出姿势..."
+		},
+		"dialog": {
+			"chara": {
+				"filter": "角色文件",
+				"load": "打开角色文件",
+				"save": "保存角色文件"
+			},
+			"pose": {
+				"filter": "姿势文件",
+				"load": "打开姿势文件",
+				"save": "保存姿势文件"
+			},
+			"light": {
+				"filter": "灯光文件",
+				"load": "打开灯光文件",
+				"save": "保存灯光文件"
+			},
+			"mcdf": {
+				"filter": "MCDF 文件",
+				"load": "打开 MCDF 文件"
+			},
+			"image.load": "导入参考图像"
 		}
 	},
 
@@ -131,10 +162,88 @@
 			"attached_to": "附着于",
 			"reset_tooltip": "点击重置附着\n点击并拖拽设置新附着点"
 		},
+		"create_menu": {
+			"actor": {
+				"create": "创建新角色",
+				"file": "从文件导入角色",
+				"mcdf": "从 MCDF 导入角色",
+				"overworld": "添加大世界角色"
+			},
+			"light": {
+				"create": "创建新灯光",
+				"point": "点光源",
+				"spot": "聚光灯",
+				"area": "区域光",
+				"directional": "太阳（定向光）",
+				"file": "从文件导入... (.ktlight)"
+			},
+			"reference": "添加参考图像"
+		},
+		"entity_menu": {
+			"base": {
+				"select": "选择",
+				"deselect": "取消选择",
+				"hierarchy": "选择层级",
+				"presets": "预设...",
+				"presets_save": "保存新预设",
+				"detach": "解除附着",
+				"rename": "重命名",
+				"duplicate": "复制",
+				"delete": "删除"
+			},
+			"actor": {
+				"target": "目标",
+				"edit": "编辑外观",
+				"import": "导入...",
+				"export": "导出...",
+				"chara": "角色 (.chara)",
+				"npc": "NPC",
+				"pose": "姿势文件 (.pose)",
+				"mcdf": "Mare 数据 (.mcdf)"
+			},
+			"ipc": {
+				"submenu": "IPC 外观",
+				"penumbra": {
+					"collection": "Penumbra：分配合集",
+					"invisible_skin": "Penumbra：隐形皮肤"
+				},
+				"glamourer": {
+					"design": "Glamourer：应用设计"
+				},
+				"customize": {
+					"profile": "Customize+：分配配置"
+				},
+				"revert": "还原所有 IPC 数据"
+			},
+			"pose": {
+				"import": "导入姿势",
+				"export": "导出姿势",
+				"reference": "设为参考姿势"
+			},
+			"light": {
+				"edit": "编辑灯光",
+				"import": "导入灯光文件",
+				"export": "导出灯光文件"
+			}
+		},
 		"create": "新建...",
 		"refresh_entities": "刷新场景实体",
 		"edit_mode.hint": "选择编辑模式",
 		"overlay.toggle": "切换屏幕叠加层"
+	},
+
+	"toolbar": {
+		"title": "Ktisis 工具栏",
+		"buttons": {
+			"workspace": "工作区",
+			"object": "对象编辑器",
+			"actor": "角色编辑器",
+			"posing": "姿势视图",
+			"env": "环境编辑器",
+			"camera": "相机编辑器",
+			"scene": "场景编辑器",
+			"config": "设置"
+		}
 	},
 
 	"transform_edit": {
@@ -169,6 +278,11 @@
 			"title": "反向运动（IK）",
 			"enable": "启用IK约束",
 			"advanced": "高级参数",
+			"enable_all": "全部启用",
+			"disable_all": "全部禁用",
+			"target": "选择",
+			"edit": "配置",
+			"active": "已启用",
 			"ccd": {
 				"gain": "增益",
 				"iterations": "迭代次数"
@@ -179,7 +293,13 @@
 				"fixed": "固定目标",
 				"relative": "骨骼相关",
 				"gain": "增益：",
-				"hinges": "铰链："
+				"gain.shoulder": "肩部",
+				"gain.elbow": "肘部",
+				"gain.hand": "手部",
+				"hinges": "铰链：",
+				"hinges.min": "最小值",
+				"hinges.max": "最大值",
+				"hinges.axis": "轴向"
 			}
 		}
 	},
@@ -196,8 +316,9 @@
 
 	"chara_edit": {
 		"title": "角色编辑器",
-		"hint": "编辑外观",
+		"hint": "编辑外观与动画",
 		"animation": {
+			"tab": "动画",
 			"controls": {
 				"animationSelect": "动画",
 				"idleSelect": "空闲姿势",
@@ -215,17 +336,131 @@
 				"title": "姿势表情",
 				"warning": "⚠ 姿态模式当前已启用！",
 				"brioWarning": "⚠ Brio当前已启用！当前的不兼容性阻止此功能正常工作 - 要加载姿势表情，请先禁用Brio。",
-				"header": "警告：这是一个实验性功能！它将覆盖任何当前的正面姿势，并可能变形耳朵或其他面部部位。但是，您仍然可以撤销任何做出的更改。"
+				"header": "警告：这是一个实验性功能！它将覆盖任何当前的面部姿势，并可能变形耳朵或其他面部部位。但是，您仍然可以撤销任何做出的更改。",
+				"null": "未选择",
+				"apply": "应用"
 			}
 		},
 		"customize": {
+			"tab": "外观",
 			"iris": "小瞳孔",
 			"primary": "主要特征",
 			"face": "面部特征",
+			"face_tat": "纹身",
 			"facepaint_flip": "翻转面妆",
 			"highlights": "高光",
 			"eye_color": "眼睛颜色",
 			"lipstick": "口红"
+		},
+		"equip.tab": "装备",
+		"ipc": {
+			"tab": "插件 (IPC)",
+			"warn_actor": "请选择一个角色！",
+			"mcdf_load": "加载 MCDF",
+			"mcdf_tip": "MCDF（Mare Character Data File）包含捕获时应用于该玩家的全部 Penumbra、Glamourer\n与 CustomizePlus 数据。",
+			"customize.title": "Customize+",
+			"customize.profile": "C+ 配置",
+			"penumbra": {
+				"title": "Penumbra",
+				"collection": "合集",
+				"invisible_skin": "应用隐形皮肤"
+			},
+			"glamourer": {
+				"title": "Glamourer",
+				"design.select": "当前选择：",
+				"design.none": "无",
+				"design.apply": "应用"
+			}
+		},
+		"misc": {
+			"tab": "杂项",
+			"model": "模型 ID",
+			"model_tip": "按 Enter 提交",
+			"opacity": "不透明度",
+			"wetness": "湿润度覆盖",
+			"wetness.weather": "天气湿润度",
+			"wetness.swim": "游泳湿润度",
+			"wetness.depth": "湿润深度"
+		}
+	},
+
+	"object_edit": {
+		"title": "对象编辑器",
+		"actor": {
+			"headers": {
+				"actor": "角色",
+				"adv": "高级（视线/IK）",
+				"import": "导入角色外观",
+				"gaze": "视线控制",
+				"ik": "反向运动（IK）"
+			},
+			"gaze": {
+				"linked": "已链接",
+				"unlinked": "未链接",
+				"camera": "相机追踪",
+				"gizmo": "变换器追踪",
+				"target": "选择目标角色",
+				"targeting": "目标：",
+				"unk": "未知",
+				"null": "无目标"
+			},
+			"chara_edit": "角色编辑器",
+			"export": "导出角色"
+		},
+		"pose": {
+			"headers.pose": "姿势",
+			"headers.reference": "参考姿势",
+			"headers.import": "导入姿势文件",
+			"export": "导出姿势",
+			"flip": "翻转姿势",
+			"stash": "暂存姿势",
+			"stash.apply": "应用姿势",
+			"stash.time": "姿势暂存于",
+			"stash.from": "来自角色",
+			"reference": "重置姿势",
+			"reference_labels": {
+				"all": "重置全部骨架",
+				"null": "不适用",
+				"body": "重置身体",
+				"face": "重置面部",
+				"hair": "重置头发",
+				"custom": "重置骨架"
+			}
+		},
+		"light": {
+			"headers": {
+				"light": "灯光",
+				"shadows": "阴影"
+			},
+			"light": {
+				"reflection": "启用反射",
+				"type": "灯光类型",
+				"color": "颜色",
+				"intensity": "强度",
+				"range": "范围",
+				"import": "导入灯光设置",
+				"export": "导出灯光设置",
+				"spot.angle": "锥角",
+				"spot.falloff": "衰减角",
+				"area.angle": "光照角",
+				"area.falloff": "衰减角",
+				"falloff.type": "衰减类型",
+				"falloff.power": "衰减强度"
+			},
+			"shadow": {
+				"dynamic": "动态阴影",
+				"chara": "投射角色阴影",
+				"object": "投射物体阴影",
+				"range": "阴影范围",
+				"near": "阴影近裁剪",
+				"far": "阴影远裁剪"
+			}
+		},
+		"image": {
+			"header": "参考图像",
+			"visible": "启用",
+			"load": "加载图像",
+			"opacity": "不透明度"
 		}
 	},
 
@@ -261,6 +496,9 @@
 	"env_edit": {
 		"title": "环境编辑器",
 		"enable": "启用",
+		"weather": "天气",
+		"time": "时间与日期",
+		"advanced": "高级编辑",
 		"fog": {
 			"title": "雾",
 			"color": "颜色",
@@ -340,7 +578,32 @@
 	},
 
 	"pose_view": {
-		"title": "姿势视图"
+		"title": "姿势视图",
+		"view_chooser": "视图：",
+		"import": "导入",
+		"export": "导出",
+		"no_target": "请选择一个角色以开始编辑其姿势。"
+	},
+
+	"chara_import": {
+		"title": "导入外观",
+		"header": "正在为以下对象导入外观",
+		"apply": "应用"
+	},
+	"pose_import": {
+		"title": "导入姿势",
+		"header": "正在为以下对象导入姿势",
+		"apply": "应用",
+		"transforms.header": "变换：",
+		"modes": {
+			"header": "模式：",
+			"selective_import": "应用所选骨骼",
+			"descendants": "包含子骨骼",
+			"anchor": "锚定组位置",
+			"exclude_ears": "排除耳朵骨骼",
+			"warn_face_compat": "由于与所选角色不兼容，所选姿势文件中的面部将不会被导入。",
+			"warn_ik_on": "反向运动（IK）已启用！这可能会覆盖导入的肢体。"
+		}
 	},
 
 	"config": {
@@ -594,52 +857,59 @@
 	},
 
 	"migrator": {
+		"title": "Ktisis v0.3 设置",
 		"mainWindow": {
-			"main_Desc": "感谢使用 Ktisis！v3 现已成为稳定版本。\n",
-			"skip": "跳过并使用默认设置",
-			"skip_desc": "跳过迁移，以默认设置启动 v0.3。",
+			"main_Desc": "感谢使用 Ktisis！v0.3 现已成为稳定版本。\n此迁移工具可帮助你转移 Ktisis Alpha 设置，或更新 Ktisis 工作区设置。",
+			"skip": "跳过迁移",
+			"skip_desc": "跳过迁移并以默认设置启动 v0.3。\n你将无法再次访问迁移工具，所有旧设置将被丢弃。",
 			"v3": {
-				"from": "我来自 v0.3",
-				"from_desc": "基于 v0.3 的 Ktisis 设置开始迁移。\n这将忽略 v0.2 的所有旧版设置。",
-				"main_Desc": "自我们开始开发 v3 以来变化很大，在开发 Ktisis 的过程中我们更改并改进了部分功能。\n以下设置有了新的默认值，你可以保留旧设置，也可以使用新的推荐设置。",
-				"testing": "由于你曾使用 v3 测试版，建议你关闭接收测试版本。\n",
-				"installer": "你可以使用此按钮打开插件安装器。"
+				"from": "我来自 v0.3！",
+				"from_desc": "基于 v0.3 的 Ktisis 设置开始迁移（测试版）。\n如有适用，将忽略 v0.2 的所有旧版设置。",
+				"main_Desc": "自我们开始开发 v0.3 以来变化很大，在开发 Ktisis 的过程中，部分功能已更改或改进。\n以下设置有了新的默认值，你可以保留旧配置，也可以使用新的推荐值。",
+				"testing": "v0.3 已正式发布，建议你在 Dalamud 中关闭「接收测试版本」。",
+				"installer": "你可以在此打开插件安装器以更改 Ktisis 的此设置："
 			},
 			"v2": {
-				"from": "我来自 v0.2",
-				"from_desc": "基于 v0.2 的 Ktisis 设置开始迁移。\n这将覆盖你现有的 v0.3 设置。",
-				"main_Desc": "Ktisis v3 旨在确保未来能更轻松地为用户（也就是你）带来新功能。\n这需要重写几乎所有代码……如果不想迁移，可以按跳过使用默认设置。",
-				"wiki": "要了解 Ktisis v2 与 v3 之间的变化，可点击按钮打开我们的 Wiki 页面。"
+				"from": "我来自 v0.2！",
+				"from_desc": "基于 v0.2 的 Ktisis 设置开始迁移（Alpha）。\n如有适用，将覆盖你现有的 v0.3 设置。",
+				"main_Desc": "感谢使用 Ktisis！v0.3 是我们的最新版本，凝聚了多位作者超过 2 年的改进工作。\nv0.2 中几乎所有代码都已更新，感谢你的持续支持。这些重写为未来的开发奠定了稳定基础。\n除了 v0.2 的新功能外，我们还有许多更大的想法待探索，敬请期待！",
+				"migration_desc": "此更新工具会将 v0.2 的设置尽可能转换为 v0.3。请注意各页面的工具提示与说明。\n你可以在每页自行覆盖，迁移后也可随时更改这些设置。",
+				"wiki": "要了解 Ktisis v0.2 与 v0.3 之间的变化，请访问我们的 Wiki 文档："
 			}
 		},
 		"v3": {
 			"openWindowToggle": "切换窗口开关",
+			"openWindowToggleSub": "启用后，工作区按钮可同时打开和关闭对应的窗口。",
 			"toolbar": "使用 Ktisis 工具栏",
+			"toolbarSub": "Ktisis 工具栏是一种替代 UI 模式，推荐给 v0.2 用户以及更习惯紧凑单窗口界面的用户。",
 			"keybinds": "启用快捷键"
-			
 		},
 		"v2": {
 			"editor": {
 				"header": "编辑器设置",
 				"nsfw": "显示 NSFW 骨骼",
-				"nsfwTooltip": "v2 设置：屏蔽 NSFW 骨骼",
+				"nsfwTooltip": "v0.2 设置：屏蔽 NSFW 骨骼",
 				"incognito": "隐身模式",
-				"incognitoTooltip": "v2 设置：隐藏玩家名称",
+				"incognitoTooltip": "v0.2 设置：隐藏玩家名称",
+				"incognitoSub": "分享 UI 截图时建议启用此选项，以保护玩家隐私。",
 				"toolbar": "使用 Ktisis 工具栏",
-				"toolbarSub": "建议 v2 用户使用，以获得更熟悉的界面"
+				"toolbarSub": "Ktisis 工具栏是一种替代 UI 模式，推荐给 v0.2 用户以及更习惯紧凑单窗口界面的用户。"
 			},
 			"input": {
 				"header": "输入设置",
+				"detail": "你的 v0.2 按键绑定将尽可能迁移到 v0.3 对应项。你可以随时在「设置 > 输入」中更新。",
 				"keybinds": "启用按键绑定",
-				"allowAxisFlip": "面向相机翻转轴",
 				"leftClick": "左键点击时禁用 GPose 更改目标",
 				"rightClick": "右键点击时禁用 GPose 更改目标"
 			},
 			"overlay": {
 				"header": "叠加层设置",
+				"detail": "迁移后可在「设置 > 个性化」中自定义各类骨骼的颜色与透明度。",
 				"drawLines": "在骨骼上绘制线",
-				"drawLinesGizmo": "使用变换器时在骨骼上绘制线",
-				"drawDotsGizmo": "使用变换器时在骨骼上绘制点",
+				"drawLinesGizmo": "使用操作柄时在骨骼上绘制线",
+				"drawDotsGizmo": "使用操作柄时在骨骼上绘制点",
+				"allowAxisFlip": "面向相机翻转轴",
+				"allowAxisFlipTip": "允许 3D 操作柄根据 GPose 相机角度重新定向",
 				"lineThickness": "线条粗细",
 				"lineOpacity": "线条不透明度",
 				"lineOpacityUsing": "使用时的线条不透明度",
@@ -647,9 +917,11 @@
 			},
 			"autosave": {
 				"header": "自动保存设置",
+				"detail": "迁移后可在「设置 > 自动保存」中进一步自定义自动保存的目标文件夹与命名方案。",
 				"enabled": "已启用",
 				"interval": "间隔",
-				"numToSave": "保存数量",
+				"intervalTip": "每次自动保存之间等待的秒数",
+				"numToSave": "自动保存最大数量",
 				"clearOnExit": "退出时清除",
 				"autoOnDC": "断开连接时自动保存"
 			},
