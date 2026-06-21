@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Configuration;
@@ -121,9 +122,11 @@ public class LegacyMigrator {
 	}
 
 	internal void MigrateConfig() {
-		
+
+		bool resetVersion = (this._cfg.File.Version == -1 || !this.v3ConfigExists);
 		this._cfg.ResetConfig();
-		this._cfg.File.Version = -1;
+		if(resetVersion)
+			this._cfg.File.Version = -1;
 
 
 		var cfg = this._cfg.File;
