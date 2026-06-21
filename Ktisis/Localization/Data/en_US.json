@@ -243,6 +243,17 @@
 			"camera": "Camera Editor",
 			"scene": "Scene Editor",
 			"config": "Settings"
+		},
+		"popup": {
+			"close": "This will close",
+			"close_workspace": "all open Ktisis windows and reopen the Toolbar.",
+			"close_toolbar": "the toolbar and reopen the Workspace Window.",
+			"state": "You are about to",
+			"state_end": "the toolbar.",
+			"state_enable": "enable",
+			"state_disable": "disable",
+			"yes": "Continue",
+			"no": "Cancel"
 		}
 	},
 	
