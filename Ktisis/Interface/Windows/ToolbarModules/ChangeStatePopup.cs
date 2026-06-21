@@ -20,6 +20,7 @@ public class ChangeStatePopup: KtisisPopup {
 	}
 
 	protected override void OnDraw() {
+			ImGuiP.SetWindowPos(ImGuiP.GetCurrentWindow(), ImGui.GetWindowViewport().GetCenter() - (ImGui.GetWindowSize()/2));  //TODO: Move to GLib somehow
 			var width = ImGui.CalcTextSize($"This will close {(this._state ? "all open Ktisis windows and reopen the Toolbar." : "the toolbar and reopen the Workspace Window.")})").X;
 			ImGui.SetCursorPosX((width - ImGui.CalcTextSize($"You are about to {(this._state ? "enable" : "disable")} the toolbar.").X)/2);
 			ImGui.TextUnformatted($"You are about to {(this._state? "enable" : "disable")} the toolbar.");
