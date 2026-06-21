@@ -115,7 +115,7 @@ public class PluginDataEditorTab {
 			ImGui.EndCombo();
 		}
 		ImGui.SameLine();
-		ImGui.Text("C+ Profile");
+		ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.customize.profile"));
 		
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);

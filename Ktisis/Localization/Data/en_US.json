@@ -336,7 +336,9 @@
 				"title": "Pose Expression",
 				"warning": "⚠ Posing is currently enabled!",
 				"brioWarning": "⚠ Brio is currently enabled! An incompatibility currently prevents this feature from functioning - to load Pose Expressions, please disable Brio first.",
-				"header": "WARNING: This is an experimental feature! It will overwrite any current face pose, and may deform ears or other face parts. However, you can still undo any changes made."
+				"header": "WARNING: This is an experimental feature! It will overwrite any current face pose, and may deform ears or other face parts. However, you can still undo any changes made.",
+				"null": "No Selection",
+				"apply": "Apply"
 			}
 		},
 		"customize": {
@@ -344,6 +346,7 @@
 			"iris": "Small Iris",
 			"primary": "Primary Features",
 			"face": "Facial Features",
+			"face_tat": "Tattoos",
 			"facepaint_flip": "Flip Face Paint",
 			"highlights": "Highlights",
 			"eye_color": "Eye Color",
@@ -356,6 +359,7 @@
 			"mcdf_load": "Load MCDF",
 			"mcdf_tip": "A MCDF or 'Mare Character Data File' contains all of a players Penumbra, Glamourer\\nand CustomizePlus data that is applied to them at the time of the capture.",
 			"customize.title": "Customize+",
+			"customize.profile": "C+ Profile",
 			"penumbra": {
 				"title": "Penumbra",
 				"collection": "Collection",
@@ -573,7 +577,11 @@
 	},
 	
 	"pose_view": {
-		"title": "Pose View"
+		"title": "Pose View",
+		"view_chooser": "View:",
+		"import": "Import",
+		"export": "Export",
+		"no_target": "Select an actor to start editing its pose."
 	},
 
 	"chara_import": {
