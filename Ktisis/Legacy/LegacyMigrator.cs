@@ -32,6 +32,7 @@ public class LegacyMigrator {
 	private readonly IDalamudPluginInterface _dpi;
 	private readonly ConfigManager _cfg;
 	internal LegacyConfig.Configuration? _legacyCfg;
+	internal Configuration _tempConfig;
 
 	private readonly Dictionary<string, string> LegacyRaceSexMap = new() {
 		{ "Midlander_Masculine", "101" },
@@ -96,13 +97,8 @@ public class LegacyMigrator {
 	public void Setup() {
 		this.v2ConfigExists = this._dpi.ConfigFile.Exists;
 		this.v3ConfigExists = File.Exists(this._dpi.ConfigDirectory + "\\KtisisV3.json");
-		this._cfg.Load();
-		if (!this.v3ConfigExists || this._cfg.File.Version == -1) {   //If a user on v2 opened the migrator, then restarted their game before completing the process, we have made a v3 config, so we need to detect that when they open it again
-			this.v3ConfigExists = false;
-			this._cfg.File.Version = -1;
-			this._cfg.Save();
-		}
-
+		this._tempConfig = this._cfg.GenerateOrLoad();
+		
 		Ktisis.Locale.Initialize(this._cfg);
 		if (this.v2ConfigExists) {
 			Ktisis.Log.Warning("User is migrating from Ktisis v0.2, activating legacy mode.");
@@ -117,19 +113,13 @@ public class LegacyMigrator {
 
 	private void OnGPoseStateChanged(object sender, bool state) {
 		if (!state || this._confirmed) return;
-		var window = this._gui.GetOrCreate<MigratorWindow>(this, this._cfg);
+		var window = this._gui.GetOrCreate<MigratorWindow>(this);
 		window.Open();
 	}
 
 	internal void MigrateConfig() {
 
-		bool resetVersion = (this._cfg.File.Version == -1 || !this.v3ConfigExists);
-		this._cfg.ResetConfig();
-		if(resetVersion)
-			this._cfg.File.Version = -1;
-
-
-		var cfg = this._cfg.File;
+		var cfg = this._tempConfig = this._cfg.CreateDefault();
 		
 		// The big 3 so to speak
 		cfg.Editor.IncognitoPlayerNames = this._legacyCfg?.DisplayCharName ?? cfg.Editor.IncognitoPlayerNames;
@@ -179,53 +169,53 @@ public class LegacyMigrator {
 		
 		// Keybinds
 		if (this._legacyCfg?.FreecamForward != null)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Forward", MigrateKeybind(this._legacyCfg?.FreecamForward!));
+			cfg.Keybinds.SetDefault("Camera_Work_Forward", MigrateKeybind(this._legacyCfg?.FreecamForward!));
 
 		if (this._legacyCfg?.FreecamBack != null)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Back", MigrateKeybind(this._legacyCfg?.FreecamBack!));
+			cfg.Keybinds.SetDefault("Camera_Work_Back", MigrateKeybind(this._legacyCfg?.FreecamBack!));
 		if (this._legacyCfg?.FreecamRight != null)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Right", MigrateKeybind(this._legacyCfg?.FreecamRight!));
+			cfg.Keybinds.SetDefault("Camera_Work_Right", MigrateKeybind(this._legacyCfg?.FreecamRight!));
 		if (this._legacyCfg?.FreecamLeft != null)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Left", MigrateKeybind(this._legacyCfg?.FreecamLeft!));
+			cfg.Keybinds.SetDefault("Camera_Work_Left", MigrateKeybind(this._legacyCfg?.FreecamLeft!));
 		if (this._legacyCfg?.FreecamUp != null)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Up", MigrateKeybind(this._legacyCfg?.FreecamUp!));
+			cfg.Keybinds.SetDefault("Camera_Work_Up", MigrateKeybind(this._legacyCfg?.FreecamUp!));
 		if (this._legacyCfg?.FreecamDown != null)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Down", MigrateKeybind(this._legacyCfg?.FreecamDown!));
+			cfg.Keybinds.SetDefault("Camera_Work_Down", MigrateKeybind(this._legacyCfg?.FreecamDown!));
 		if (this._legacyCfg?.FreecamFast != null)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Fast",MigrateKeybind( this._legacyCfg?.FreecamFast!));
+			cfg.Keybinds.SetDefault("Camera_Work_Fast",MigrateKeybind( this._legacyCfg?.FreecamFast!));
 		if (this._legacyCfg?.FreecamSlow != null)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Slow", MigrateKeybind(this._legacyCfg?.FreecamSlow!));
+			cfg.Keybinds.SetDefault("Camera_Work_Slow", MigrateKeybind(this._legacyCfg?.FreecamSlow!));
 
 		// KeyBinds dict
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToTranslate) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Gizmo_SetTranslateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToTranslate]!));
+			cfg.Keybinds.SetDefault("Gizmo_SetTranslateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToTranslate]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToRotate) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Gizmo_SetRotateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToRotate]!));
+			cfg.Keybinds.SetDefault("Gizmo_SetRotateMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToRotate]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToScale) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Gizmo_SetScaleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToScale]!));
+			cfg.Keybinds.SetDefault("Gizmo_SetScaleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToScale]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.SwitchToUniversal) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Gizmo_SetUniversalMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToUniversal]!));
+			cfg.Keybinds.SetDefault("Gizmo_SetUniversalMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.SwitchToUniversal]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.ToggleLocalWorld) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Gizmo_ToggleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleLocalWorld]!));
+			cfg.Keybinds.SetDefault("Gizmo_ToggleMode", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleLocalWorld]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Gizmo_MirrorRotation", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes]!));
+			cfg.Keybinds.SetDefault("Gizmo_MirrorRotation", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.CircleThroughSiblingLinkModes]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.DeselectGizmo) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Select_None", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.DeselectGizmo]!));
+			cfg.Keybinds.SetDefault("Select_None", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.DeselectGizmo]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.NextCamera) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Camera_SetNext", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.NextCamera]!));
+			cfg.Keybinds.SetDefault("Camera_SetNext", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.NextCamera]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.PreviousCamera) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Camera_SetPrevious", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.PreviousCamera]!));
+			cfg.Keybinds.SetDefault("Camera_SetPrevious", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.PreviousCamera]!));
 		if (this._legacyCfg?.KeyBinds.ContainsKey(LegacyConfig.Input.Purpose.ToggleFreeCam) ?? false)
-			this._cfg.File.Keybinds.SetDefault("Camera_Work_Toggle", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleFreeCam]!));
+			cfg.Keybinds.SetDefault("Camera_Work_Toggle", MigrateKeys(this._legacyCfg?.KeyBinds[LegacyConfig.Input.Purpose.ToggleFreeCam]!));
 
 		if(this._legacyCfg?.BoneCategoryColors != null)
 			foreach (var categoryColor in this._legacyCfg?.BoneCategoryColors!) {
 				if (!this.LegacyCategoryMap.ContainsKey(categoryColor.Key)) continue;
 				var color = ImGui.ColorConvertFloat4ToU32(categoryColor.Value);
-				this._cfg.File.Categories.GetByName(this.LegacyCategoryMap[categoryColor.Key])?.BoneColor = color;
+				cfg.Categories.GetByName(this.LegacyCategoryMap[categoryColor.Key])?.BoneColor = color;
 			}
 
-		this._cfg.GenerateDefaultPresets(this._cfg.File);  //this doesnt happen because we set the version to 12 to avoid the check but we inadvertently blow the check up lol
+		this._cfg.GenerateDefaultPresets(this._tempConfig);  //this doesnt happen because we set the version to 12 to avoid the check but we inadvertently blow the check up lol
 		
 		// Offsets
 		if (this._legacyCfg?.CustomBoneOffset != null) {
@@ -239,7 +229,7 @@ public class LegacyMigrator {
 				}
 			}
 		}
-		this._cfg.Save();
+		this._tempConfig = cfg;
 	}
 
 
@@ -268,7 +258,7 @@ public class LegacyMigrator {
 	}
 
 	internal void V3Skip() {
-		var cfg = this._cfg.File;
+		var cfg = this._tempConfig;
 
 		cfg.Keybinds.Enabled = true;
 		cfg.Editor.ToggleOpenWindows = true;
@@ -282,7 +272,8 @@ public class LegacyMigrator {
 		if (this._confirmed) return;
 		this._confirmed = true;
 		this._gpose.StateChanged -= this.OnGPoseStateChanged;
-		this._cfg.File.Version = 12;
+		this._cfg.File = this._tempConfig;
+		this._cfg._isLoaded = true;
 		this._cfg.Save();
 		this._gpose.Reset();
 		this.OnConfirmed?.Invoke();

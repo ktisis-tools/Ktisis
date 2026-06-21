@@ -43,14 +43,20 @@ public class LocaleManager : IDisposable {
 			if(this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
 		}
-		this.LoadLocale(this._cfg.File.Locale.LocaleId);
-		if(this._cfg.File.Locale.LocaleId != "en_US")
-			this.LoadFallbackLocale();
+		if (cfg.File == null) {
+			this.LoadLocale("en_US");
+
+		} else {
+			this.LoadLocale(this._cfg.File.Locale.LocaleId);
+			if(this._cfg.File.Locale.LocaleId != "en_US")
+				this.LoadFallbackLocale();
+		}
+
 	}
 
 	public void HandleLanguageChangeDelegate() {
 		this._dpi.LanguageChanged -= this.LanguageChanged;
-		if (this._cfg.File.Locale.AutoDetect) {
+		if (this._cfg is { File.Locale.AutoDetect: true }) {
 			this._dpi.LanguageChanged += this.LanguageChanged;
 		}
 	}

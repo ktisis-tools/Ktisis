@@ -7,6 +7,8 @@ using System.Globalization;
 using System.Linq;
 using Dalamud.Plugin;
 
+using FFXIVClientStructs;
+
 using Newtonsoft.Json;
 
 using Ktisis.Core.Attributes;
@@ -20,8 +22,8 @@ public delegate void OnConfigSaved(Configuration cfg);
 public class ConfigManager : IDisposable {
 	private readonly IDalamudPluginInterface _dpi;
 
-	private bool _isLoaded;
-	public Configuration File { get; private set; } = null!;
+	internal bool _isLoaded;
+	public Configuration File { get; internal set; } = null!;
 
 	public event OnConfigSaved? OnSaved;
 
@@ -155,15 +157,14 @@ public class ConfigManager : IDisposable {
 	
 	// Create default config
 
-	private Configuration CreateDefault() {
+	internal Configuration CreateDefault() {
 		return new Configuration {
 			Categories = SchemaReader.ReadCategories()
 		};
 	}
+	
 
-	internal void ResetConfig() {
-		this.File = this.CreateDefault();
-	}
+	internal Configuration GenerateOrLoad() => (this.GetConfigFileExists() ? this.OpenConfigFile() : this.CreateDefault()) ?? this.CreateDefault();
 	// IDisposable
 
 	private bool _isDisposing;

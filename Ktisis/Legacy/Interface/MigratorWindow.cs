@@ -20,12 +20,10 @@ public class MigratorWindow : KtisisWindow {
 	private readonly IDalamudPluginInterface _dpi;
 	private readonly LegacyMigrator _migrator;
 	private readonly V2MigratorWindow? _v2Window;
-	private readonly ConfigManager _cfg;
 
 	public MigratorWindow(
 		IDalamudPluginInterface dpi,
-		LegacyMigrator migrator,
-		ConfigManager cfg
+		LegacyMigrator migrator
 	) : base(
 		"migrator.title",
 		ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoSavedSettings,
@@ -36,10 +34,9 @@ public class MigratorWindow : KtisisWindow {
 		};
 		this._dpi = dpi;
 		this._migrator = migrator;
-		this._cfg = cfg;
 
 		if (this._dpi.ConfigFile.Exists) 
-			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, this._cfg, Ktisis.Locale);
+			this._v2Window = new V2MigratorWindow(this._migrator, this._migrator._legacyCfg, Ktisis.Locale);
 
 		this.ShowCloseButton = false;
 		this.RespectCloseHotkey = false;
@@ -102,7 +99,7 @@ public class MigratorWindow : KtisisWindow {
 				if(ImGui.Selectable(locales.DisplayName, locales.TechnicalName == Ktisis.Locale.Data?.MetaData.TechnicalName))
 				{
 					if (locales.TechnicalName != Ktisis.Locale.Data?.MetaData.TechnicalName) {
-						this._cfg.File.Locale.LocaleId = locales.TechnicalName;
+						this._migrator._tempConfig.Locale.LocaleId = locales.TechnicalName;
 						Ktisis.Locale.LoadLocale(locales.TechnicalName);
 					}
 				}
@@ -123,9 +120,9 @@ public class MigratorWindow : KtisisWindow {
 			}
 		}
 
-		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.ToggleOpenWindows, true, string.Empty,Ktisis.Locale.Translate("migrator.v3.openWindowToggle") , Ktisis.Locale.Translate("migrator.v3.openWindowToggleSub"));
-		DialogHelpers.BuildDialog(ref this._cfg.File.Editor.UseToolbar, false, string.Empty, Ktisis.Locale.Translate("migrator.v3.toolbar"), Ktisis.Locale.Translate("migrator.v3.toolbarSub"));
-		DialogHelpers.BuildDialog(ref this._cfg.File.Keybinds.Enabled, true, string.Empty, Ktisis.Locale.Translate("migrator.v3.keybinds"), string.Empty);
+		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Editor.ToggleOpenWindows, true, string.Empty,Ktisis.Locale.Translate("migrator.v3.openWindowToggle") , Ktisis.Locale.Translate("migrator.v3.openWindowToggleSub"));
+		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Editor.UseToolbar, false, string.Empty, Ktisis.Locale.Translate("migrator.v3.toolbar"), Ktisis.Locale.Translate("migrator.v3.toolbarSub"));
+		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Keybinds.Enabled, true, string.Empty, Ktisis.Locale.Translate("migrator.v3.keybinds"), string.Empty);
 	}
 
 	public override void Draw() {
