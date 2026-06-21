@@ -863,8 +863,9 @@
 			"v2": {
 				"from": "I'm coming from v0.2!",
 				"from_desc": "Start Migrating based on your Ktisis Settings from v0.2 (Alpha).\nThis will overwrite your existing v0.3 settings if applicable.",
-				"main_Desc": "Ktisis v3 was built to ensure that going forward, we can bring new features to our users, you, more easily.\nThis required rewriting nearly all of the code blah blah blah you can skip this and use the defaults if you want by pressing skip.",
-				"wiki": "To find out more about the changes between Ktisis v2 and v3, you can click the button to open our wiki page."
+				"main_Desc": "Thank you for using Ktisis! v0.3 is our latest version, and represents over 2 years of work by multiple authors to improve on the Alpha version.\nNearly all of the code from v0.2 has been updated in that time, so we appreciate you for sticking with us. These rewrites have given us a stable foundation for future work.\nBeyond just the new features in v0.2, we have lots of big ideas still to explore, so stay tuned!",
+				"migration_desc": "This updater will take your settings from v0.2 and convert them to v0.3, wherever possible. Please note any tooltips & descriptions for your benefit.\nYou can override them yourself on each page and can change these settings after migration, too.",
+				"wiki": "To learn more about the changes between Ktisis v0.2 and v0.3, visit our Wiki docs here:"
 			}
 		},
 		"v3": {
@@ -878,34 +879,40 @@
 			"editor": {
 				"header": "Editor settings",
 				"nsfw": "Show NSFW Bones",
-				"nsfwTooltip": "v2 setting: Censor NSFW bones",
+				"nsfwTooltip": "v0.2 setting: Censor NSFW bones",
 				"incognito": "Incognito Mode",
-				"incognitoTooltip": "v2 setting: Hide Player Names",
+				"incognitoTooltip": "v0.2 setting: Hide Player Names",
+				"incognitoSub": "We recommend this to be enabled when sharing any UI screenshots for player privacy concerns.",
 				"toolbar": "Use Ktisis Toolbar",
 				"toolbarSub": "Ktisis Toolbar is an alternate UI mode recommended for v0.2 users and those more comfortable with a compact, single-window UI."
 			},
 			"input": {
 				"header": "Input settings",
+				"detail": "Your v0.2 keybinds will be migrated to their v0.3 counterparts where possible. You can update these anytime in the Settings > Inputs menus.",
 				"keybinds": "Enable Keybinds",
-				"allowAxisFlip": "Flip axis to face camera",
 				"leftClick": "Disable GPose change target on left click",
 				"rightClick": "Disable GPose change target on right click"
 			},
 			"overlay": {
 				"header": "Overlay settings",
+				"detail": "Color and transparency choices for each category of bones can be customized in the Settings > Personalize menu after migration.",
 				"drawLines": "Draw lines on skeleton",
 				"drawLinesGizmo": "Draw lines on skeleton while using gizmo",
 				"drawDotsGizmo": "Draw dots while using gizmo",
+				"allowAxisFlip": "Flip axis to face camera",
+				"allowAxisFlipTip": "Allows the 3D Gizmo to reorient itself based on the GPose camera angle",
 				"lineThickness": "Line thickness",
 				"lineOpacity": "Line opacity",
 				"lineOpacityUsing": "Line opacity using",
 				"dotRadius": "Dot radius"
 			},
 			"autosave": {
-				"header": "Auto save settings",
+				"header": "Auto Save settings",
+				"detail": "A destination folder and naming schema for autosaves can be further customized in the Settings > Auto Save menu after migration.",
 				"enabled": "Enabled",
 				"interval": "Interval",
-				"numToSave": "Number to save",
+				"intervalTip": "Number of seconds to wait between each autosave",
+				"numToSave": "Maximum number of autosaves",
 				"clearOnExit": "Clear on Exit",
 				"autoOnDC": "Autosave on Disconnect"
 			},
