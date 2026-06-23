@@ -61,7 +61,7 @@ public class PosingWindow : KtisisWindow {
 		TransformTable table,
 		Gizmo2D gizmo
 	) : base(
-		"Pose View###KtisisPoseView"
+		"pose_view.title", windowId:"###KtisisPoseView"
 	) {
 		this._ctx = ctx;
 		this._locale = locale;
@@ -100,10 +100,10 @@ public class PosingWindow : KtisisWindow {
 		}
 
 		if (this.UpdateTarget())
-			this.WindowName = $"Pose View - {this._target!.Name}###KtisisPoseView";
+			this.WindowName = $"{Ktisis.Locale.Translate(this._localeWindowName)} - {this._target!.Name}{this._windowId}";
 
 		if (this._target is not { IsValid: true }) {
-			ImGui.Text("Select an actor to start editing its pose.");
+			ImGui.Text(Ktisis.Locale.Translate("pose_view.no_target"));
 			return;
 		}
 
@@ -213,7 +213,7 @@ public class PosingWindow : KtisisWindow {
 	private void DrawViewSelect() {
 		using var _ = ImRaii.Group();
 
-		ImGui.Text("View:");
+		ImGui.Text(Ktisis.Locale.Translate("pose_view.view_chooser"));
 		
 		foreach (var value in Enum.GetValues<ViewEnum>()) {
 			if (ImGui.RadioButton(value.ToString(), this._view == value))
@@ -224,10 +224,10 @@ public class PosingWindow : KtisisWindow {
 	private void DrawImportExport(ActorEntity target) {
 		if (target.Pose == null) return;
 
-		if (ImGui.Button("Import"))
+		if (ImGui.Button(Ktisis.Locale.Translate("pose_view.import")))
 			this._ctx.Interface.OpenPoseImport(target);
 
-		if (ImGui.Button("Export"))
+		if (ImGui.Button(Ktisis.Locale.Translate("pose_view.export")))
 			this._ctx.Interface.OpenPoseExport(target.Pose);
 	}
 	

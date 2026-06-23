@@ -12,7 +12,7 @@ namespace Ktisis.Interface.Components.Environment.Editors;
 public class ParticlesEditor : EditorBase {
 	private readonly SetTextureSelect _texDust;
 	
-	public override string Name { get; } = "Particles";
+	public override string Name => Ktisis.Locale.Translate("env_edit.particles.title");
 
 	public ParticlesEditor(
 		SetTextureSelect texDust
@@ -24,19 +24,19 @@ public class ParticlesEditor : EditorBase {
 		=> flags.HasFlag(EnvOverride.Dust);
 	
 	public override void Draw(IEnvModule module, ref EnvState state) {
-		this.DrawToggleCheckbox("Enable", EnvOverride.Dust, module);
+		this.DrawToggleCheckbox(Ktisis.Locale.Translate("env_edit.enable"), EnvOverride.Dust, module);
 		using var _ = this.Disable(module);
 
-		ImGui.SliderFloat("Intensity", ref state.Dust.Intensity, 0.0f, 1.0f);
-		ImGui.SliderFloat("Size", ref state.Dust.Size, 0.0f, 20.0f);
-		ImGui.SliderFloat("Glow", ref state.Dust.Glow, 0.0f, 10.0f);
-		ImGui.ColorEdit4("Color", ref state.Dust.Color);
+		ImGui.SliderFloat(Ktisis.Locale.Translate("env_edit.particles.intensity"), ref state.Dust.Intensity, 0.0f, 1.0f);
+		ImGui.SliderFloat(Ktisis.Locale.Translate("env_edit.particles.size"), ref state.Dust.Size, 0.0f, 20.0f);
+		ImGui.SliderFloat(Ktisis.Locale.Translate("env_edit.particles.glow"), ref state.Dust.Glow, 0.0f, 10.0f);
+		ImGui.ColorEdit4(Ktisis.Locale.Translate("env_edit.particles.color"), ref state.Dust.Color);
 		ImGui.Spacing();
-		ImGui.SliderFloat("Weight", ref state.Dust.Weight, 0.0f, 10.0f);
+		ImGui.SliderFloat(Ktisis.Locale.Translate("env_edit.particles.weight"), ref state.Dust.Weight, 0.0f, 10.0f);
 		ImGui.Spacing();
-		ImGui.SliderFloat("Spread", ref state.Dust.Spread, 0.0f, 10.0f);
-		ImGui.SliderFloat("Speed", ref state.Dust.Speed, 0.0f, 1.0f);
-		ImGui.SliderFloat("Spin", ref state.Dust.Spin, 0.05f, 5.0f);
+		ImGui.SliderFloat(Ktisis.Locale.Translate("env_edit.particles.spread"), ref state.Dust.Spread, 0.0f, 10.0f);
+		ImGui.SliderFloat(Ktisis.Locale.Translate("env_edit.particles.speed"), ref state.Dust.Speed, 0.0f, 1.0f);
+		ImGui.SliderFloat(Ktisis.Locale.Translate("env_edit.particles.spin"), ref state.Dust.Spin, 0.05f, 5.0f);
 		ImGui.Spacing();
 		this._texDust.Draw("Texture", ref state.Dust.TextureId, this.ResolvePath);
 	}

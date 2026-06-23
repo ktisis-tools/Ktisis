@@ -24,6 +24,7 @@ public class GuiManager : IDisposable {
 	
 	private readonly WindowSystem _ws = new("Ktisis");
 	private readonly PopupManager _popup = new();
+	private bool _hasConfig = false;
 	
 	private readonly List<KtisisWindow> _windows = new();
 
@@ -47,9 +48,13 @@ public class GuiManager : IDisposable {
 	public void Initialize() {
 		this._uiBuilder.DisableGposeUiHide = true;
 		this._uiBuilder.Draw += this.Draw;
-		this._uiBuilder.OpenConfigUi += this.OnOpenConfigUi;
 		this.FileDialogs.OnOpenDialog += this.OnOpenDialog;
 		this.FileDialogs.Initialize();
+	}
+
+	internal void AddSettings() {
+		this._hasConfig = true;
+		this._uiBuilder.OpenConfigUi += this.OnOpenConfigUi;
 	}
 	
 	// Draw
@@ -146,7 +151,10 @@ public class GuiManager : IDisposable {
 	
 	public void Dispose() {
 		this._uiBuilder.Draw -= this.Draw;
-		this._uiBuilder.OpenConfigUi -= this.OnOpenConfigUi;
+		if (this._hasConfig) {
+			this._uiBuilder.OpenConfigUi -= this.OnOpenConfigUi;
+			this._hasConfig = false;
+		}
 		this.RemoveAll();
 	}
 }

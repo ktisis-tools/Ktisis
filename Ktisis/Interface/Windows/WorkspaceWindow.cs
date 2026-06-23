@@ -29,7 +29,7 @@ public class WorkspaceWindow : KtisisWindow {
 	
 	public WorkspaceWindow(
 		IEditorContext ctx
-	) : base("Ktisis Workspace") {
+	) : base("workspace.title", windowId:"###KtisisWorkspace") {
 		this._ctx = ctx;
 		this._cameras = new CameraSelector(ctx);
 		this._workspace = new WorkspaceState(ctx);

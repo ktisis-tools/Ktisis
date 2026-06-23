@@ -114,7 +114,7 @@ public class OffsetEditor {
 
 	private void DrawBoneSelection() {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		string boneDisplay = "None";
+		var boneDisplay = "None";
 		string? infoName = null;
 		string? raceSex = null;
 
@@ -150,7 +150,7 @@ public class OffsetEditor {
 		}
 
 		ImGui.SameLine(0, spacing);
-		ImGui.Text($"Selected Bone: {boneDisplay}");
+		ImGui.Text($"{this._locale.Translate("config.offsets.selected")}: {boneDisplay}");
 	}
 
 	private void DrawSkeletonCombo() {
@@ -164,12 +164,12 @@ public class OffsetEditor {
 		ImGui.SameLine(0, spacing);
 		ImGui.Text($"Skeleton: {this._locale.Translate($"config.offsets.race_sex.{this.SelectedRaceSexId}")}");
 
-		// todo: remove with v0.3 release
 		var label = this._locale.Translate("config.offsets.ui.load_legacy");
 		var buttonPadding = ImGui.GetStyle().FramePadding.X * 2;
 		var textSize = ImGui.CalcTextSize(label).X;
 		// nudge to the edge with respect to legacy button size + spacing + trash button size
-		ImGui.SameLine(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - buttonPadding - textSize - spacing - Buttons.CalcSize());
+		ImGui.SameLine();
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - buttonPadding - textSize - spacing - Buttons.CalcSize());
 		using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGui.IsKeyDown(ImGuiKey.ModCtrl))) {
 			if (ImGui.Button(label))
 				this.Config.LoadLegacyFromClipboard(this.SelectedRaceSexId);
@@ -178,7 +178,7 @@ public class OffsetEditor {
 				using var _ = ImRaii.Tooltip();
 				ImGui.Text($"Warning: This will replace ALL current offsets for {
 					this._locale.Translate($"config.offsets.race_sex.{this.SelectedRaceSexId}")
-				}.\nThis function is only usable with a valid set of v0.2 offsets and will be deprecated with v0.3's release.\nHold CTRL+Shift to confirm.");
+				}.\nThis function is only usable with a valid set of v0.2 offsets.\nHold CTRL+Shift to confirm.");
 			}
 		}
 
@@ -191,8 +191,10 @@ public class OffsetEditor {
 	private void DrawBoneOffsets() {
 		// buttons | X | Y | Z | bonename
 		var oldPadding = ImGui.GetStyle().CellPadding;
+
+		using var frame = ImRaii.Child("##BoneCategoriesFrame", ImGui.GetContentRegionAvail() - (this._cfg.File.Editor.UseToolbar ? new Vector2(0, 4) : Vector2.Zero), true);
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(2, 2));
-		using var _table = ImRaii.Table("##BoneOffsetTable", 5, ImGuiTableFlags.Borders);
+		using var _table = ImRaii.Table("##BoneOffsetTable", 5, ImGuiTableFlags.Borders | ImGuiTableFlags.SizingStretchSame);
 		if (!_table.Success) return;
 
 		ImGui.TableSetupColumn("##BoneButtons", ImGuiTableColumnFlags.WidthFixed);
@@ -253,7 +255,7 @@ public class OffsetEditor {
 
 		// BoneName (FriendlyName)
 		ImGui.TableNextColumn();
-		string friendlyName = bone;
+		var friendlyName = bone;
 		if (this._locale.HasTranslationFor($"bone.{bone}"))
 			friendlyName += $" ({this._locale.Translate($"bone.{bone}")})";
 		ImGui.Text(friendlyName);

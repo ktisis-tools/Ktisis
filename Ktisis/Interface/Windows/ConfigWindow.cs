@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Style;
+using Dalamud.Interface.Windowing;
 
 using GLib.Widgets;
 
@@ -37,12 +40,10 @@ public class ConfigWindow : KtisisWindow {
 	private Configuration Config => this._cfg.File;
 
 	const ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.ReadOnly;
-	private const ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.DefaultOpen;
-	private const ImGuiTreeNodeFlags leafFlags = ImGuiTreeNodeFlags.SpanFullWidth | ImGuiTreeNodeFlags.Leaf;
 
 	// ty OGT https://git.anna.lgbt/anna/OrangeGuidanceTomestone/src/branch/main/client/Ui/MainWindowTabs/Settings.cs#L23
 	private delegate void DrawContentDelegate();
-	private IReadOnlyList<(string, DrawContentDelegate)> Tabs { get; }
+	private IReadOnlyList<(string, DrawContentDelegate?)> Tabs { get; }
 	private int _tabIndex = 0;
 
 	public ConfigWindow(
@@ -56,7 +57,7 @@ public class ConfigWindow : KtisisWindow {
 		OffsetEditor offsetEditor,
 		LocaleManager locale,
 		GuiManager gui
-	) : base("Ktisis Settings", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse) {
+	) : base("config.title", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse, "###KtisisConfig") {
 		this._cfg = cfg;
 		this._context = context;
 		this._format = format;
@@ -69,19 +70,21 @@ public class ConfigWindow : KtisisWindow {
 		this._gui = gui;
 
 		this.Tabs = [
-			(this.Locale.Translate("config.workspace.title"), this.DrawWorkspaceTab),
-			(this.Locale.Translate("config.presets.title"), this.DrawPresetsTab),
-			(this.Locale.Translate("config.autosave.title"), this.DrawAutoSaveTab),
-			(this.Locale.Translate("config.categories.title"), this.DrawCategoriesTab),
-			(this.Locale.Translate("config.gizmo.title"), this.DrawGizmoTab),
-			(this.Locale.Translate("config.overlay.title"), this.DrawOverlayTab),
-			(this.Locale.Translate("config.offsets.title"), this.DrawOffsetsTab),
-			(this.Locale.Translate("config.poseview.title"), this.DrawPoseViewTab),
-			(this.Locale.Translate("config.input.title"), this.DrawInputTab),
-			(this.Locale.Translate("config.input.cameras.title"), this.DrawCamerasInputTab),
-			(this.Locale.Translate("config.input.gizmo.title"), this.DrawGizmoInputTab),
-			(this.Locale.Translate("config.input.toolbar.title"), this.DrawToolbarInputTab),
-			(this.Locale.Translate("config.about.title"), this.DrawAboutTab)
+			("config.workspace.title", this.DrawWorkspaceTab),
+			("config.presets.title", this.DrawPresetsTab),
+			("config.autosave.title", this.DrawAutoSaveTab),
+			("config.categories.title", this.DrawCategoriesTab),
+			("config.gizmo.title", this.DrawGizmoTab),
+			("config.overlay.title", this.DrawOverlayTab),
+			("config.offsets.title", this.DrawOffsetsTab),
+			("config.poseview.title", this.DrawPoseViewTab),
+			("config.input.title", this.DrawInputTab),
+			("config.input.cameras.title", this.DrawCamerasInputTab),
+			("config.input.gizmo.title", this.DrawGizmoInputTab),
+			("config.input.toolbar.title", this.DrawToolbarInputTab),
+			("config.misc.title", null),
+			("config.language.title", this.DrawLanguageTab),
+			("config.about.title", this.DrawAboutTab),
 		];
 	}
 	
@@ -97,39 +100,33 @@ public class ConfigWindow : KtisisWindow {
 	
 	// Draw
 
-	private void DrawTabNode(int index, List<int>? children = null) {
+	private void DrawTabNode(int index, List<int>? children = null, int? parentIndex = null) {
 		var hasChildren = children != null;
-		var flags = hasChildren ? treeFlags : leafFlags;
-		if (this._tabIndex == index) flags |= ImGuiTreeNodeFlags.Selected;
+		if (hasChildren)
+			Separators.SeparatorText(this.Locale.Translate(this.Tabs[index].Item1), textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
 
-		using var _tab = ImRaii.TreeNode(this.Tabs[index].Item1, flags);
-		if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-			this._tabIndex = index;
-		if (hasChildren && _tab.Success)
+		var append = "##";
+		if (parentIndex != null)
+			append += this.Tabs[(int)parentIndex].Item1;
+		else
+			append += this.Tabs[index].Item1;
+		if(this.Tabs[index].Item2 != null)
+			if (ImGui.Selectable(this.Locale.Translate(this.Tabs[index].Item1) + append, this._tabIndex == index ))
+				this._tabIndex = index;
+		if (hasChildren)
 			foreach (var childIndex in children!)
-				this.DrawTabNode(childIndex);
+				this.DrawTabNode(childIndex, parentIndex: index);
 	}
 
 	public override void Draw() {
-		if (!this._cfg.GetConfigFileExists()) {
-			ImGui.Text("Please enter GPose to initialize Ktisis.");
-			return;
+		using (ImRaii.Child("##nav", new Vector2(150, Math.Clamp(ImGui.GetContentRegionAvail().Y- 0.1f, 400f, float.MaxValue)))) {
+			this.DrawTabNode(0, [1, 2]);
+			this.DrawTabNode(3, [4, 5, 6, 7]);
+			this.DrawTabNode(8, [9, 10, 11]);
+			this.DrawTabNode(12, [13, 14]);
 		}
 
-		using var _table = ImRaii.Table("##ConfigTable", 2);
-		if (!_table.Success) return;
-		ImGui.TableSetupColumn("##tabs", ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.NoResize);
-		ImGui.TableSetupColumn("##content", ImGuiTableColumnFlags.NoResize);
-		ImGui.TableNextRow();
-
-		ImGui.TableNextColumn();
-		this.DrawTabNode(0, [1, 2]);
-		this.DrawTabNode(3, [4, 5, 6, 7]);
-		this.DrawTabNode(8, [9, 10, 11]);
-		this.DrawTabNode(12);
-
-		ImGui.TableNextColumn();
-		var avail = ImGui.GetContentRegionAvail();
+		ImGui.SameLine();
 		using var _frame = ImRaii.Group();
 		var (_, drawFn) = this.Tabs[this._tabIndex];
 		drawFn();
@@ -247,6 +244,10 @@ public class ConfigWindow : KtisisWindow {
 			this.DrawCustomLocations();
 		}
 
+		// add dummy to pad right side during toolbar mode
+		ImGui.SetCursorPosX(600);
+		ImGui.Dummy(Vector2.Zero);
+
 		if (refresh) this.RefreshScene();
 	}
 
@@ -355,7 +356,7 @@ public class ConfigWindow : KtisisWindow {
 		var cfg = this.Config.Presets;
 
 		this._presetEditor.Draw();
-		
+
 		var style = ImGui.GetStyle();
 		var dummy = ImGui.GetContentRegionAvail() with { X = 0.0f };
 		dummy.Y -= style.ItemSpacing.Y + style.CellPadding.Y;
@@ -442,6 +443,33 @@ public class ConfigWindow : KtisisWindow {
 				this.SetPoseViewImage(path => cfg.EarsPath = path);
 			this.DrawPoseViewPath(ref cfg.EarsPath, loc);
 		}
+	}
+	//TODO: Translation
+	
+	private void DrawLanguageTab() {
+		if (ImGui.Checkbox(this.Locale.Translate("config.language.autoselect"), ref this._cfg.File.Locale.AutoDetect)) {
+			this.Locale.HandleLanguageChangeDelegate();
+		}
+		using var _disabled = ImRaii.Disabled(this._cfg.File.Locale.AutoDetect);
+		var current = this.Locale.Data?.MetaData.SelfName;
+		if(this.Locale.Data?.MetaData.DisplayName != this.Locale.Data?.MetaData.SelfName)
+			current +=$" ({this.Locale.Data?.MetaData.DisplayName})";
+		using var _combo = ImRaii.Combo(this.Locale.Translate("config.language.selector"), current);
+		if(_combo.Success)
+			foreach (var locales in this.Locale.AvailableLocales) {
+				var name = locales.SelfName;
+				
+				if(locales.DisplayName != locales.SelfName) 
+					name += $" ({locales.DisplayName})";
+
+				if(ImGui.Selectable(name, locales.TechnicalName == this.Locale.Data?.MetaData.TechnicalName))
+				{
+					if (locales.TechnicalName != this.Locale.Data?.MetaData.TechnicalName) {
+						this._cfg.File.Locale.LocaleId = locales.TechnicalName;
+						this.Locale.LoadLocale(locales.TechnicalName);
+					}
+				}
+			}
 	}
 
 	private void DrawAboutTab() {

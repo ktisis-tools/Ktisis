@@ -69,7 +69,7 @@ public class CameraManager : ICameraManager {
 		if (gameCamera == null) return;
 
 		this.Active = this.Default = new EditorCamera(this) {
-			Name = "Main Camera",
+			Name = (Ktisis.Locale.Translate("cameras.main")),
 			Address = (nint)gameCamera,
 			Flags = CameraFlags.DefaultCamera
 		};
@@ -77,7 +77,7 @@ public class CameraManager : ICameraManager {
 	}
 
 	private void SetupWorkCamera() {
-		this.WorkCamera ??= new WorkCamera(this, this._context) { Name = "Work Camera" };
+		this.WorkCamera ??= new WorkCamera(this, this._context) { Name = Ktisis.Locale.Translate("cameras.work") };
 		if (!this.CopyOntoCamera(this.WorkCamera))
 			throw new Exception("Failed to setup work camera.");
 	}
@@ -214,12 +214,12 @@ public class CameraManager : ICameraManager {
 
 	private string GetNextAvailableName() {
 		for (var i = this.CameraList.Count + 1; i <= 100; i++) {
-			var name = $"Camera #{i}";
+			var name = $"{Ktisis.Locale.Translate("cameras.camera")} #{i}";
 			if (this.CameraList.Any(camera => camera.Name == name))
 				continue;
 			return name;
 		}
-		return "New Camera";
+		return Ktisis.Locale.Translate("cameras.new");
 	}
 	
 	// Camera helpers

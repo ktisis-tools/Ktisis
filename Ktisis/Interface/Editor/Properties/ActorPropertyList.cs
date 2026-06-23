@@ -68,8 +68,8 @@ public class ActorPropertyList : ObjectPropertyList {
 			} is not ActorEntity actor
 		) return;
 
-		builder.AddHeader("Actor", () => this.DrawActorTab(actor), priority: 0);
-		builder.AddHeader("Advanced (Gaze/IK)", () => this.DrawAdvancedTab(actor), priority: 2);
+		builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.actor"), () => this.DrawActorTab(actor), priority: 0);
+		builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.adv"), () => this.DrawAdvancedTab(actor), priority: 2);
 	}
 
 	// Actor tab
@@ -87,17 +87,17 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (Buttons.IconButton(FontAwesomeIcon.Edit))
 			this._ctx.Interface.OpenActorEditor(actor);
 		ImGui.SameLine(0, spacing);
-		ImGui.Text("Actor Editor");
+		ImGui.Text(Ktisis.Locale.Translate("object_edit.actor.chara_edit"));
 
 		ImGui.Spacing();
 
 		// Import/export
 
-		if (ImGui.Button("Export Chara"))
+		if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.export")))
 			this._ctx.Interface.OpenCharaExport(actor);
 
 		ImGui.Spacing();
-		Separators.SeparatorText("Import actor appearance", textColor:ImGui.GetColorU32(ImGuiCol.Header));
+		Separators.SeparatorText(Ktisis.Locale.Translate("object_edit.actor.headers.import"), textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
 
 		var embedEditor = this._gui.GetOrCreate<CharaImportDialog>(this._ctx);
@@ -109,14 +109,14 @@ public class ActorPropertyList : ObjectPropertyList {
 	// Advanced tab
 
 	private void DrawAdvancedTab(ActorEntity actor) {
-		Separators.SeparatorText("Gaze Control", textColor:ImGui.GetColorU32(ImGuiCol.Header));
+		Separators.SeparatorText(Ktisis.Locale.Translate("object_edit.actor.headers.gaze"), textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		this.DrawGazeTab(actor);
 
 		if (!TryGetEntityPose(actor, out var pose) || pose.IkController.GroupCount == 0)
 			return;
 
 		ImGui.Spacing();
-		Separators.SeparatorText("Inverse Kinematics", textColor:ImGui.GetColorU32(ImGuiCol.Header));
+		Separators.SeparatorText(Ktisis.Locale.Translate("object_edit.actor.headers.ik"), textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
 
 		
@@ -155,7 +155,7 @@ public class ActorPropertyList : ObjectPropertyList {
 					IsLinked = !IsLinked;
 				}
 				ImGui.SameLine(0, spacing);
-				ImGui.Text(IsLinked ? "Linked" : "Unlinked");
+				ImGui.Text(IsLinked ? Ktisis.Locale.Translate("object_edit.actor.gaze.linked") : Ktisis.Locale.Translate("object_edit.actor.gaze.unlinked"));
 				ImGui.Spacing();
 			}
 
@@ -228,7 +228,7 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		// camera tracking - when pressed, toggle enabled and change gaze mode to KtisisFollowCam (or revert to Target mode)
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isTracking)) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Eye, "Camera Tracking", Vector2.Zero)) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Eye, Ktisis.Locale.Translate("object_edit.actor.gaze.camera"), Vector2.Zero)) {
 				result = true;
 				enabled = true;
 				gaze.Mode = isTracking ? GazeMode.Target : GazeMode._KtisisFollowCam_;
@@ -243,7 +243,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		// 	- draw a translate gizmo at the targeted gaze position
 		using (ImRaii.Disabled(anyGizmo && !isGizmo)) {
 			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isGizmo)) {
-				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, "Gizmo Tracking", Vector2.Zero)) {
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.LocationArrow, Ktisis.Locale.Translate("object_edit.actor.gaze.gizmo"), Vector2.Zero)) {
 					// if this wasnt enabled, set the gaze target to a friendly lerp
 					if (!enabled)
 						gaze.Pos = GetCameraLerpFor(actor);
@@ -282,7 +282,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		// 2. show current target if one is set
 		// todo: can you unset targets?
 		// button
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Users, "Select target actor"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Users, Ktisis.Locale.Translate("object_edit.actor.gaze.target")))
 			this._gui.CreatePopup<ActorGazeTargetPopup>(this._ctx, actor).Open();
 
 		// label
@@ -296,7 +296,7 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		ImGui.AlignTextToFramePadding();
 		var hasTarget = targetId != 0;
-		var label = hasTarget ? $"Targeting: {(targetEntity != null ? targetEntity.Name : $"Unknown ({targetId})")}" : "No Target";
+		var label = hasTarget ? $"{Ktisis.Locale.Translate("object_edit.actor.gaze.targeting")}: {(targetEntity != null ? targetEntity.Name : $"{Ktisis.Locale.Translate("object_edit.actor.gaze.unk")} ({targetId})")}" : Ktisis.Locale.Translate("object_edit.actor.gaze.null");
 		using (ImRaii.Disabled(!hasTarget)) {
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 			ImGui.Text(label);
@@ -320,7 +320,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		var allEnabled = pose.IkController.GetGroups().All(p => p.group.IsEnabled);
 
 		using (ImRaii.Disabled(allEnabled)) {
-			if (ImGui.Button("Enable All")) {
+			if (ImGui.Button(Ktisis.Locale.Translate("transform_edit.ik.enable_all"))) {
 				foreach (var group in pose.IkController.GetGroups()) {
 					group.group.IsEnabled = true;
 				}
@@ -328,7 +328,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		}
 		ImGui.SameLine();
 		using (ImRaii.Disabled(!anyEnabled)) {
-			if (ImGui.Button("Disable All")) {
+			if (ImGui.Button(Ktisis.Locale.Translate("transform_edit.ik.disable_all"))) {
 				foreach (var group in pose.IkController.GetGroups()) {
 					group.group.IsEnabled = false;
 				}
@@ -356,13 +356,13 @@ public class ActorPropertyList : ObjectPropertyList {
 
 			using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), node.IsSelected)) {
 				var canSelect = !node.IsSelected || this._ctx.Selection.Count > 1;
-				if (Buttons.IconButtonTooltip(FontAwesomeIcon.HandPointer, "Select", Vector2.Zero) && canSelect)
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.HandPointer, Ktisis.Locale.Translate("transform_edit.ik.target"), Vector2.Zero) && canSelect)
 					node.Select(GuiHelpers.GetSelectMode());
 			}
 
 			ImGui.SameLine(0, spacing);
 
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.EllipsisH, "Configure", Vector2.Zero))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.EllipsisH, Ktisis.Locale.Translate("transform_edit.ik.edit"), Vector2.Zero))
 				ImGui.OpenPopup(IkCfgPopup);
 
 			if (!ImGui.IsPopupOpen(IkCfgPopup)) continue;
@@ -374,7 +374,7 @@ public class ActorPropertyList : ObjectPropertyList {
 
 	private void DrawIkConfig(IIkNode ik) {
 		var isEnabled = ik.IsEnabled;
-		if (ImGui.Checkbox("Enabled", ref isEnabled)) {
+		if (ImGui.Checkbox(Ktisis.Locale.Translate("transform_edit.ik.active"), ref isEnabled)) {
 			if (isEnabled)
 				ik.Enable();
 			else
@@ -418,9 +418,9 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.Spacing();
 
 		ImGui.Text(this._locale.Translate("transform_edit.ik.two_joints.gain"));
-		ImGui.SliderFloat("Shoulder##FirstWeight", ref node.Group.FirstBoneGain, 0.0f, 1.0f, "%.2f");
-		ImGui.SliderFloat("Elbow##SecondWeight", ref node.Group.SecondBoneGain, 0.0f, 1.0f, "%.2f");
-		ImGui.SliderFloat("Hand##HandWeight", ref node.Group.EndBoneGain, 0.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat($"{this._locale.Translate("transform_edit.ik.two_joints.gain.shoulder")}##FirstWeight", ref node.Group.FirstBoneGain, 0.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat($"{this._locale.Translate("transform_edit.ik.two_joints.gain.elbow")}##SecondWeight", ref node.Group.SecondBoneGain, 0.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat($"{this._locale.Translate("transform_edit.ik.two_joints.gain.hand")}##HandWeight", ref node.Group.EndBoneGain, 0.0f, 1.0f, "%.2f");
 
 		ImGui.Spacing();
 		ImGui.Separator();
@@ -428,9 +428,9 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		ImGui.Text(this._locale.Translate("transform_edit.ik.two_joints.hinges"));
 		ImGui.Spacing();
-		ImGui.SliderFloat("Minimum", ref node.Group.MinHingeAngle, -1.0f, 1.0f, "%.2f");
-		ImGui.SliderFloat("Maximum", ref node.Group.MaxHingeAngle, -1.0f, 1.0f, "%.2f");
-		ImGui.SliderFloat3("Axis", ref node.Group.HingeAxis, -1.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat(this._locale.Translate("transform_edit.ik.two_joints.hinges.min"), ref node.Group.MinHingeAngle, -1.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat(this._locale.Translate("transform_edit.ik.two_joints.hinges.max"), ref node.Group.MaxHingeAngle, -1.0f, 1.0f, "%.2f");
+		ImGui.SliderFloat3(this._locale.Translate("transform_edit.ik.two_joints.hinges.axis"), ref node.Group.HingeAxis, -1.0f, 1.0f, "%.2f");
 
 		ImGui.Spacing();
 	}
