@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
+using Dalamud.Plugin;
 
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Characters.Types;
@@ -19,11 +20,10 @@ using Ktisis.GameData.Excel.Types;
 namespace Ktisis.Interface.Windows.Editors;
 
 public class ActorWindow : EntityEditWindow<ActorEntity> {
-	private const string WindowId = "KtisisActorEditor";
-	
 	private readonly CustomizeEditorTab _custom;
 	private readonly EquipmentEditorTab _equip;
 	private readonly AnimationEditorTab _anim;
+	private readonly PluginDataEditorTab _ipc;
 
 	private IAnimationManager Animation => this.Context.Animation;
 	private ICharacterManager Manager => this.Context.Characters;
@@ -35,11 +35,13 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		CustomizeEditorTab custom,
 		EquipmentEditorTab equip,
 		AnimationEditorTab anim,
-		NpcSelect npcs
-	) : base($"Actor Editor###{WindowId}", ctx) {
+		NpcSelect npcs,
+		IDalamudPluginInterface dpi
+	) : base("chara_edit.title", ctx, windowId:"###KtisisActorEditor") {
 		this._custom = custom;
 		this._equip = equip;
 		this._anim = anim;
+		this._ipc = new PluginDataEditorTab(ctx, dpi);
 		this._npcs = npcs;
 		this._npcs.OnSelected += this.OnNpcSelect;
 	}
@@ -55,13 +57,14 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private ICustomizeEditor _editCustom = null!;
 
 	public override void SetTarget(ActorEntity target) {
-		this.WindowName = $"Actor Editor - {target.Name}###{WindowId}";
+		this.WindowName = $"{Ktisis.Locale.Translate(this._localeWindowName)} - {target.Name}{this._windowId}";
 		
 		base.SetTarget(target);
 		
 		this._editCustom = this._custom.Editor = this.Manager.GetCustomizeEditor(target);
 		this._equip.Editor = this.Manager.GetEquipmentEditor(target);
 		this._anim.Editor = this.Animation.GetAnimationEditor(target);
+		this._ipc.SetTarget(target);
 		this._anim.ClearPoseExpression();
 	}
 
@@ -84,10 +87,11 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		this.UpdateTarget();
 		
 		using var _ = ImRaii.TabBar("##ActorEditTabs");
-		DrawTab("Animation", this._anim.Draw);
-		DrawTab("Appearance", this._custom.Draw);
-		DrawTab("Equipment", this._equip.Draw);
-		DrawTab("Misc", this.DrawMisc);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.animation.tab"), this._anim.Draw);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.customize.tab"), this._custom.Draw);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.equip.tab"), this._equip.Draw);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.ipc.tab"), this._ipc.Draw);
+		DrawTab(Ktisis.Locale.Translate("chara_edit.misc.tab"), this.DrawMisc);
 	}
 
 	private static void DrawTab(string name, Action draw) {
@@ -102,11 +106,11 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		ImGui.Spacing();
 		
 		var modelId = (int)this._editCustom.GetModelId();
-		if (ImGui.InputInt("Model ID", ref modelId, flags: ImGuiInputTextFlags.EnterReturnsTrue))
+		if (ImGui.InputInt(Ktisis.Locale.Translate("chara_edit.misc.model"), ref modelId, flags: ImGuiInputTextFlags.EnterReturnsTrue))
 			this._editCustom.SetModelId((uint)modelId);
 		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
 			using var _ = ImRaii.Tooltip();
-			ImGui.Text("Press enter to submit");
+			ImGui.Text(Ktisis.Locale.Translate("chara_edit.misc.model_tip"));
 		}
 
 		ImGui.SameLine(0, space);
@@ -115,7 +119,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		var chara = (CharacterEx*)this.Target.Character;
 		if (chara != null) {
 			ImGui.Spacing();
-			ImGui.SliderFloat("Opacity", ref chara->Opacity, 0.0f, 1.0f);
+			ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.opacity"), ref chara->Opacity, 0.0f, 1.0f);
 		}
 		
 		ImGui.Spacing();
@@ -128,7 +132,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 
 	private void DrawWetness() {
 		var isWetActive = this.Target.Appearance.Wetness != null;
-		if (ImGui.Checkbox("Wetness Override", ref isWetActive))
+		if (ImGui.Checkbox(Ktisis.Locale.Translate("chara_edit.misc.wetness"), ref isWetActive))
 			this.ToggleWetness();
 
 		var wetness = this.GetWetness();
@@ -139,9 +143,9 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 
 		var changed = false;
 		var values = (WetnessState)wetness;
-		changed |= ImGui.SliderFloat("Weather Wetness", ref values.WeatherWetness, 0.0f, 1.0f);
-		changed |= ImGui.SliderFloat("Swimming Wetness", ref values.SwimmingWetness, 0.0f, 1.0f);
-		changed |= ImGui.SliderFloat("Wetness Depth", ref values.WetnessDepth, 0.0f, 3.0f);
+		changed |= ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.wetness.weather"), ref values.WeatherWetness, 0.0f, 1.0f);
+		changed |= ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.wetness.swim"), ref values.SwimmingWetness, 0.0f, 1.0f);
+		changed |= ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.wetness.depth"), ref values.WetnessDepth, 0.0f, 3.0f);
 		if (changed) this.Target.Appearance.Wetness = values;
 	}
 

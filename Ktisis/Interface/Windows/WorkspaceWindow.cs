@@ -29,7 +29,7 @@ public class WorkspaceWindow : KtisisWindow {
 	
 	public WorkspaceWindow(
 		IEditorContext ctx
-	) : base("Ktisis Workspace") {
+	) : base("workspace.title", windowId:"###KtisisWorkspace") {
 		this._ctx = ctx;
 		this._cameras = new CameraSelector(ctx);
 		this._workspace = new WorkspaceState(ctx);
@@ -75,7 +75,13 @@ public class WorkspaceWindow : KtisisWindow {
 		
 		this.DrawSceneTreeButtons();
 	}
-	
+
+	public override void OnClose() {
+		if(this._ctx.Config.Editor.OpenTrayOnWorkspaceClose)
+			this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
+		base.OnClose();
+	}
+
 	// Context buttons
 
 	protected private void DrawContextButtons() {
@@ -138,4 +144,5 @@ public class WorkspaceWindow : KtisisWindow {
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
 			this.Interface.RefreshSceneEntities();
 	}
+	
 }

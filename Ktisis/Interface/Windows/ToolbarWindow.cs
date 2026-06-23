@@ -37,20 +37,20 @@ public class ToolbarWindow : KtisisWindow {
 	public ToolbarWindow(
 		IEditorContext ctx,
 		GuiManager gui
-	) : base("Ktisis Toolbar") {
+	) : base("toolbar.title", windowId:"###KtisisToolbar") {
 		this._ctx = ctx;
 		this._gui = gui;
 		this._workspace = new WorkspaceState(ctx);
 		this.Flags = this.Flags | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
 		this._buttons = new() {
-			new(this.DrawWorkspaceWindow, FontAwesomeIcon.PersonThroughWindow, "Workspace", typeof(Workspace)),
-			new(this.DrawObjectWindow, FontAwesomeIcon.ArrowsAlt, "Object Editor", typeof(ObjectWindow)),
-			new(this.DrawActorWindow, FontAwesomeIcon.Walking, "Actor Editor", typeof(ActorWindow)),
-			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, "Pose View", typeof(PosingWindow)),
-			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, "Environment Editor", typeof(Env)),
-			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, "Camera Editor", typeof(CameraWindow)),
-			//new(this.DrawConfigWindow, FontAwesomeIcon.G, "Scene Editor"),
-			new(this.DrawConfigWindow, FontAwesomeIcon.Cogs, "Settings", typeof(ConfigWindow)),
+			new(this.DrawWorkspaceWindow, FontAwesomeIcon.PersonThroughWindow, Ktisis.Locale.Translate("toolbar.buttons.workspace"), typeof(Workspace)),
+			new(this.DrawObjectWindow, FontAwesomeIcon.ArrowsAlt, Ktisis.Locale.Translate("toolbar.buttons.object"), typeof(ObjectWindow)),
+			new(this.DrawActorWindow, FontAwesomeIcon.Walking, Ktisis.Locale.Translate("toolbar.buttons.actor"), typeof(ActorWindow)),
+			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, Ktisis.Locale.Translate("toolbar.buttons.posing"), typeof(PosingWindow)),
+			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, Ktisis.Locale.Translate("toolbar.buttons.env"), typeof(Env)),
+			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, Ktisis.Locale.Translate("toolbar.buttons.camera"), typeof(CameraWindow)),
+			//new(this.DrawConfigWindow, FontAwesomeIcon.G, Ktisis.Locale.Translate("toolbar.buttons.scene")),
+			new(this.DrawConfigWindow, FontAwesomeIcon.Cogs, Ktisis.Locale.Translate("toolbar.buttons.config"), typeof(ConfigWindow)),
 		};
 	}
 
@@ -160,6 +160,9 @@ public class ToolbarWindow : KtisisWindow {
 
 	public override void OnClose() {
 		base.OnClose();
+		if(this._ctx.Config.Editor.OpenTrayOnWorkspaceClose)
+			this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
 		this._gui.Remove(this);
 	}
+	
 }

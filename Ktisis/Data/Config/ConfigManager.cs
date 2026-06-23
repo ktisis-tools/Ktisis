@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Dalamud.Plugin;
+
+using FFXIVClientStructs;
 
 using Newtonsoft.Json;
 
@@ -19,8 +22,8 @@ public delegate void OnConfigSaved(Configuration cfg);
 public class ConfigManager : IDisposable {
 	private readonly IDalamudPluginInterface _dpi;
 
-	private bool _isLoaded;
-	public Configuration File { get; private set; } = null!;
+	internal bool _isLoaded;
+	public Configuration File { get; internal set; } = null!;
 
 	public event OnConfigSaved? OnSaved;
 
@@ -33,6 +36,7 @@ public class ConfigManager : IDisposable {
 	// Load & Save
 
 	public void Load() {
+		var created = false;
 		var timer = new Stopwatch();
 		timer.Start();
 
@@ -41,15 +45,16 @@ public class ConfigManager : IDisposable {
 		try {
 			// TODO: Legacy migration
 			cfg = this.OpenConfigFile();
-			
-			if (cfg is { Version: < 10 }) {
-				cfg.Version = 10;
-				this.MigrateSchema(cfg);
-			}
-			if (cfg is { Version: < 11 }) {
-				cfg.Version = 11;
-				this.GenerateDefaultPresets(cfg);
-				this.MigrateSchema(cfg);
+			if (cfg is not { Version: -1 }) {
+				if (cfg is { Version: < 10 }) {
+					cfg.Version = 10;
+					this.MigrateSchema(cfg);
+				}
+				if (cfg is { Version: < 11 }) {
+					cfg.Version = 11;
+					this.GenerateDefaultPresets(cfg);
+					this.MigrateSchema(cfg);
+				}
 			}
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");
@@ -57,6 +62,8 @@ public class ConfigManager : IDisposable {
 
 		try {
 			cfg ??= this.CreateDefault();
+			this.GenerateDefaultPresets(cfg);
+			created = true;
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to create default configuration:\n{err}");
 			throw;
@@ -64,7 +71,10 @@ public class ConfigManager : IDisposable {
 
 		this.File = cfg;
 		this._isLoaded = true;
-		
+		if (created)
+			this.Save();
+
+
 
 		timer.Stop();
 		Ktisis.Log.Debug($"Configuration loaded in {timer.Elapsed.TotalMilliseconds:0.00}ms");
@@ -100,7 +110,7 @@ public class ConfigManager : IDisposable {
 		cfg.Categories = categories;
 	}
 
-	private void GenerateDefaultPresets(Configuration cfg) {
+	internal void GenerateDefaultPresets(Configuration cfg) {
 		var categories = SchemaReader.ReadCategories();
 
 		var allPresetNames = categories.CategoryList.SelectMany(x => x.Presets).Distinct().ToList();
@@ -147,12 +157,14 @@ public class ConfigManager : IDisposable {
 	
 	// Create default config
 
-	private Configuration CreateDefault() {
+	internal Configuration CreateDefault() {
 		return new Configuration {
 			Categories = SchemaReader.ReadCategories()
 		};
 	}
 	
+
+	internal Configuration GenerateOrLoad() => (this.GetConfigFileExists() ? this.OpenConfigFile() : this.CreateDefault()) ?? this.CreateDefault();
 	// IDisposable
 
 	private bool _isDisposing;

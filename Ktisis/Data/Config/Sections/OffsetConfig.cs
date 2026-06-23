@@ -73,21 +73,24 @@ public class OffsetConfig {
 		}
 	}
 
-	// todo: remove with v0.3 release
 	public bool LoadLegacyFromClipboard(string? raceSexId) {
 		if (raceSexId is null) return false;
 
 		try {
 			var offsets = JsonConvert.DeserializeObject<Dictionary<string, Vector3>>(Encoding.UTF8.GetString(Convert.FromBase64String(ImGui.GetClipboardText())));
 			if (offsets is null) return false;
-			// modify translation for legacy conversion??????
-			foreach (var key in offsets.Keys)
-				offsets[key] = new Vector3(offsets[key].X, offsets[key].Y, offsets[key].Z);
-			this.BoneOffsets[raceSexId] = offsets;
-			return true;
+			this.LoadLegacy(raceSexId, offsets);
 		} catch (Exception e) {
 			Ktisis.Log.Error($"Could not deserialize legacy offsets from clipboard: {e}");
 			return false;
 		}
+
+		return true;
+	}
+
+	public void LoadLegacy(string raceSexId, Dictionary<string, Vector3> offsets) {
+		foreach (var key in offsets.Keys)
+			offsets[key] = new Vector3(offsets[key].X, offsets[key].Y, offsets[key].Z);
+		this.BoneOffsets[raceSexId] = offsets;
 	}
 }
