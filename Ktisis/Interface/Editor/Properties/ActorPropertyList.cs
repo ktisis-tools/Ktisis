@@ -321,18 +321,21 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		using (ImRaii.Disabled(allEnabled)) {
 			if (ImGui.Button(Ktisis.Locale.Translate("transform_edit.ik.enable_all"))) {
-				foreach (var group in pose.IkController.GetGroups()) {
-					group.group.IsEnabled = true;
+				foreach (var (name, group) in pose.IkController.GetGroups().Where((tuple => !tuple.group.IsEnabled))) {
+					if (!TryGetGroupEndNode(pose, group, out var node))
+						continue;
+					node.Toggle();
 				}
 			}
 		}
 		ImGui.SameLine();
 		using (ImRaii.Disabled(!anyEnabled)) {
 			if (ImGui.Button(Ktisis.Locale.Translate("transform_edit.ik.disable_all"))) {
-				foreach (var group in pose.IkController.GetGroups()) {
-					group.group.IsEnabled = false;
+				foreach (var (name, group) in pose.IkController.GetGroups().Where((tuple => tuple.group.IsEnabled))) {
+					if (!TryGetGroupEndNode(pose, group, out var node))
+						continue;
+					node.Toggle();
 				}
-				
 			}
 		}
 		
