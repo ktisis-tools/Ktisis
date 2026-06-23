@@ -263,8 +263,11 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 
 		ImGui.Text(this.Locale.Translate("config.input.help"));
-		using var _disable = ImRaii.Disabled(!this.Config.Keybinds.Enabled);
-		this._keybinds.Draw("history|select|overlay|pose");
+		using(ImRaii.Disabled(!this.Config.Keybinds.Enabled))
+			this._keybinds.Draw("history|select|overlay|pose");
+		
+		if (ImGui.Button(Ktisis.Locale.Translate("config.input.reset"))) 
+			this._keybinds.ResetBinds("history|select|overlay|pose");
 	}
 
 	private void DrawCamerasInputTab() {
@@ -279,8 +282,11 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 
 		ImGui.Text(this.Locale.Translate("config.input.help"));
-		using var _disable = ImRaii.Disabled(!this.Config.Keybinds.Enabled);
-		this._keybinds.Draw("camera");
+		using(ImRaii.Disabled(!this.Config.Keybinds.Enabled))
+			this._keybinds.Draw("camera");
+		
+		if (ImGui.Button(Ktisis.Locale.Translate("config.input.reset"))) 
+			this._keybinds.ResetBinds("camera");
 	}
 
 	private void DrawGizmoInputTab() {
@@ -288,8 +294,11 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 
 		ImGui.Text(this.Locale.Translate("config.input.help"));
-		using var _disable = ImRaii.Disabled(!this.Config.Keybinds.Enabled);
-		this._keybinds.Draw("gizmo");
+		using(ImRaii.Disabled(!this.Config.Keybinds.Enabled))
+			this._keybinds.Draw("gizmo");
+		
+		if (ImGui.Button(Ktisis.Locale.Translate("config.input.reset"))) 
+			this._keybinds.ResetBinds("gizmo");
 	}
 	
 	private void DrawToolbarInputTab() {
@@ -297,8 +306,13 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 
 		ImGui.Text(this.Locale.Translate("config.input.help"));
-		using var _disable = ImRaii.Disabled(!this.Config.Keybinds.Enabled);
-		this._keybinds.Draw("toolbar");
+
+
+		using(ImRaii.Disabled(!this.Config.Keybinds.Enabled))
+			this._keybinds.Draw("toolbar");
+
+		if (ImGui.Button(Ktisis.Locale.Translate("config.input.reset"))) 
+			this._keybinds.ResetBinds("toolbar");
 	}
 	
 	
