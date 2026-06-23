@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
@@ -43,7 +44,12 @@ public class SceneDraw {
 		this.DrawEntities(frame, this._ctx.Scene.Children);
 		this.DrawSelect(frame, gizmo, gizmoIsEnded);
 	}
-	
+
+	public void DrawRefOverlay() {
+		foreach (var image in this._ctx.Scene.Children.OfType<ReferenceImage>())
+			this._refs.DrawInstance(image);
+	}
+
 	private void DrawEntities(ISelectableFrame frame, IEnumerable<SceneEntity> entities) {
 		foreach (var entity in entities) {
 			switch (entity) {
@@ -55,9 +61,6 @@ public class SceneDraw {
 					if (position != null)
 						frame.AddItem(entity, position.Value, this._ctx);
 					break;
-				case ReferenceImage image:
-					this._refs.DrawInstance(image);
-					continue;
 			}
 
 			this.DrawEntities(frame, entity.Children);
@@ -67,7 +70,7 @@ public class SceneDraw {
 	// Skeletons
 
 	private unsafe void DrawSkeleton(ISelectableFrame frame, EntityPose pose) {
-		if (!pose.ShouldDraw()) return;
+		if (!pose.ShouldDraw() && !this.Config.BulkVisOverride) return;
 
 		var skeleton = pose.GetSkeleton();
 		if (skeleton == null || skeleton->PartialSkeletons == null) return;
@@ -88,10 +91,10 @@ public class SceneDraw {
 			var boneCt = hkaSkeleton->Bones.Length;
 			for (var i = 0; i < boneCt; i++) {
 				var node = pose.GetBoneFromMap(index, i);
-				if (node?.Visible != true) continue;
+				if (node?.Visible != true && !this.Config.BulkVisOverride) continue;
 
-				var transform = node.CalcTransformOverlay();
-				if (transform == null) continue;
+				var transform = node?.CalcTransformOverlay();
+				if (transform == null || node == null) continue;
 				
 				frame.AddItem(node, transform.Position, this._ctx);
 				
@@ -104,9 +107,9 @@ public class SceneDraw {
 					if (hkaSkeleton->ParentIndices[c] != i) continue;
 
 					var bone = pose.GetBoneFromMap(index, c);
-					if (bone?.Visible != true) continue;
+					if (bone?.Visible != true && !this.Config.BulkVisOverride) continue;
 
-					var lineTo = bone.CalcTransformOverlay();
+					var lineTo = bone?.CalcTransformOverlay();
 					if (lineTo == null) continue;
 
 					var display = this._ctx.Config.GetEntityDisplay(node);
