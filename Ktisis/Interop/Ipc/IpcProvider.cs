@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 
+using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Files;
+using Ktisis.Data.Json;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
@@ -16,14 +18,11 @@ using Ktisis.Editor.Transforms;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules.Actors;
-using Ktisis.Common.Utility;
-
-using Newtonsoft.Json;
 
 namespace Ktisis.Interop.Ipc;
 
 [Singleton]
-public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi) : IDisposable {
+public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi, JsonFileSerializer fileSerializer) : IDisposable {
 	private ICallGateProvider<(int, int)> IpcVersion { get; } = dpi.GetIpcProvider<(int, int)>("Ktisis.ApiVersion");
 	private ICallGateProvider<bool> IpcRefreshActions { get; } = dpi.GetIpcProvider<bool>("Ktisis.RefreshActors");
 	private ICallGateProvider<bool> IpcIsPosing { get; } = dpi.GetIpcProvider<bool>("Ktisis.IsPosing");
@@ -66,7 +65,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 		if (ctxManager.Current is null)
 			return false;
 
-		var file = JsonConvert.DeserializeObject<PoseFile>(json);
+		var file = fileSerializer.Deserialize<PoseFile>(json);
 		var actor = ctxManager.Current.Scene.GetEntityForIndex(index);
 
 		if (actor is null || file is null)
@@ -90,7 +89,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 			return null;
 
 		var file = await ctxManager.Current.Posing.SavePoseFile(actor.Pose);
-		return JsonConvert.SerializeObject(file);
+		return fileSerializer.Serialize(file);
 	}
 
 	private async Task<Dictionary<int, HashSet<string>>> SelectedBones() {
@@ -131,6 +130,7 @@ public class IpcProvider(ContextManager ctxManager, IDalamudPluginInterface dpi)
 	private async Task<Matrix4x4?> GetMatrix(uint index, string boneName, bool useWorldSpace) {
 		var actor = GetEntity(index);
 		var bone = actor?.Pose?.FindBoneByName(boneName);
+
 		if (bone is null) return null;
 		//ws
 		if (useWorldSpace) return bone.GetMatrix();
