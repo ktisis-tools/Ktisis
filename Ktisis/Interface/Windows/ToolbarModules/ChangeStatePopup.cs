@@ -19,6 +19,7 @@ public class ChangeStatePopup: KtisisPopup {
 	}
 
 	protected override void OnDraw() {
+		ImGuiP.SetWindowPos(ImGuiP.GetCurrentWindow(), ImGui.GetWindowViewport().GetCenter() - (ImGui.GetWindowSize()/2));  //TODO: Move to GLib somehow
 		var closeString = $"{Ktisis.Locale.Translate("toolbar.popup.close")} {(this._state ? Ktisis.Locale.Translate("toolbar.popup.close_workspace") : Ktisis.Locale.Translate("toolbar.popup.close_toolbar"))}";
 		var stateString = $"{Ktisis.Locale.Translate("toolbar.popup.state")} {(this._state ? Ktisis.Locale.Translate("toolbar.popup.state_enable") : Ktisis.Locale.Translate("toolbar.popup.state_disable"))} {Ktisis.Locale.Translate("toolbar.popup.state_end")}";
 		var yesString = Ktisis.Locale.Translate("toolbar.popup.yes");
