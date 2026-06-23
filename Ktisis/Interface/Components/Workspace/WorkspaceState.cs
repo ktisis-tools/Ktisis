@@ -13,6 +13,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.Interface.Widgets;
+using Ktisis.Scene.Decor;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -33,6 +34,7 @@ public class WorkspaceState {
 		using (ImRaii.ChildFrame(id, new Vector2(-1, height)))
 		{
 			this.DrawContext();
+			this.DrawShowAll();
 			this.DrawOverlayToggle();
 		}
 	}
@@ -162,6 +164,24 @@ public class WorkspaceState {
 		}
 	}
 
+	private void DrawShowAll() {
+		using var _ = ImRaii.PushId("##OverlayBulkVisButton");
+		using var bgCol = ImRaii.PushColor(ImGuiCol.Button, 0);
+
+		ImGui.SameLine();
+
+		var isActive = this._ctx.Config.Overlay.BulkVisOverride;
+		using var color = ImRaii.PushColor(ImGuiCol.Text, isActive ? 0xEFFFFFFF : 0x80FFFFFF);
+
+		var label = isActive ? "Hide All Bones" : "Show All Bones";
+
+		var avail = ImGui.GetContentRegionAvail();
+		var height = avail.Y - ImGui.GetCursorPosY() / 2;
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail.X - height*2 - ImGui.GetStyle().ItemInnerSpacing.X);
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.CircleNodes, label, new Vector2(height, height)))
+			this._ctx.Config.Overlay.BulkVisOverride = !isActive;
+	}
+
 	private void DrawOverlayToggle() {
 		using var _ = ImRaii.PushId("##OverlayToggleButton");
 		using var bgCol = ImRaii.PushColor(ImGuiCol.Button, 0);
@@ -172,11 +192,11 @@ public class WorkspaceState {
 		using var color = ImRaii.PushColor(ImGuiCol.Text, isActive ? 0xEFFFFFFF : 0x80FFFFFF);
 
 		var icon = isActive ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
-		var label = this._ctx.Locale.Translate("actions.Overlay_Toggle");
+		var label = isActive ? this._ctx.Locale.Translate("workspace.overlay.hide") : this._ctx.Locale.Translate("workspace.overlay.show");
 		
 		var avail = ImGui.GetContentRegionAvail();
 		var height = avail.Y - ImGui.GetCursorPosY() / 2;
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail.X - height);
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(icon, label, new Vector2(height, height)))
 			this._ctx.Config.Overlay.Visible = !isActive;
 	}

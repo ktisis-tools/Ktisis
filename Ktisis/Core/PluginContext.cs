@@ -1,3 +1,4 @@
+using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -22,6 +23,7 @@ public class PluginContext : IPluginContext {
 	private readonly DllResolver _dll;
 	private readonly ContextManager _context;
 	private readonly LegacyMigrator _legacy;
+	private readonly IDalamudPluginInterface _dpi;
 	private readonly IFramework _framework;
 	
 	public ActionService Actions { get; }
@@ -40,14 +42,16 @@ public class PluginContext : IPluginContext {
 		GuiManager gui,
 		IpcManager ipc,
 		LegacyMigrator legacy,
+		IDalamudPluginInterface dpi,
 		IFramework framework
 	) {
 		this._cmd = cmd;
 		this._dll = dll;
 		this._context = context;
 		this._legacy = legacy;
+		this._dpi = dpi;
 		this._framework = framework;
-		
+
 		this.Actions = actions;
 		this.Config = cfg;
 		this.Gui = gui;
@@ -55,10 +59,18 @@ public class PluginContext : IPluginContext {
 	}
 
 	public void Initialize() {
-		if (this.Config.GetConfigFileExists())
-			this.Setup();
-		else
-			this.SetupLegacy();
+		if (this.Config.GetConfigFileExists()) {
+			this.Config.Load();
+			if (this.Config.File.Version < 12)
+				this.SetupLegacy();
+			else
+				this.Setup();
+		} else {
+			if (this._dpi.GetPluginConfig() != null)
+				this.SetupLegacy();
+			else
+				this.Setup();
+		}
 		this.Gui.Initialize();
 		if (GameMain.IsInGPose()) {
 			this._framework.RunOnFrameworkThread(() => {
@@ -71,11 +83,12 @@ public class PluginContext : IPluginContext {
 
 	private void Setup() {
 		this.Config.Load();
+		this.Gui.AddSettings();
 		this._dll.Create();
 		this.Actions.RegisterActions(this);
 		this._context.Initialize(this);
 		this._cmd.RegisterHandlers();
-		this.Gui.Locale.Initialize();
+		this.Gui.Locale.Initialize(this.Config);
 	}
 
 	private void SetupLegacy() {
