@@ -57,15 +57,25 @@ public class LocaleManager : IDisposable {
 	public void HandleLanguageChangeDelegate() {
 		this._dpi.LanguageChanged -= this.LanguageChanged;
 		if (this._cfg is { File.Locale.AutoDetect: true }) {
+			this.LanguageChanged(this._dpi.UiLanguage);
 			this._dpi.LanguageChanged += this.LanguageChanged;
 		}
 	}
 	public void LanguageChanged(string lang) {
 		//TODO: Check for default names on Camera and Actors to repopulate
 		var localeFile = lang + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
-		if (this.HasTranslationFor(localeFile)) {
+		if (this.Data?.MetaData.TechnicalName.Equals(localeFile)?? false) {
 			this._cfg.File.Locale.LocaleId = localeFile;
 			this.LoadLocale(localeFile);
+		} else if (this.AvailableLocales.Any(l => l.TechnicalName == localeFile)) {
+			this._cfg.File.Locale.LocaleId = localeFile;
+			this.LoadLocale(localeFile);
+		} else if (this.AvailableLocales.Any(l => l.TechnicalName.StartsWith(lang))) {
+			this._cfg.File.Locale.LocaleId = this.AvailableLocales.First(l => l.TechnicalName.StartsWith(lang)).TechnicalName;
+			this.LoadLocale(this._cfg.File.Locale.LocaleId);
+		} else {
+			this._cfg.File.Locale.LocaleId = "en_US";
+			this.LoadLocale("en_US");
 		}
 			
 	}
