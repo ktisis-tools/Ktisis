@@ -1,10 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+using Ktisis.Core.Attributes;
 using Ktisis.Data.Json.Converters;
 
 namespace Ktisis.Data.Json;
 
+[Singleton]
 public class JsonFileSerializer {
 	private readonly JsonSerializerOptions Options;
 	private readonly JsonSerializerOptions DeserializeOptions;
