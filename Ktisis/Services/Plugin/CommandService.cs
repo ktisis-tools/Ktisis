@@ -45,8 +45,9 @@ public class CommandService : IDisposable {
 
     public void RegisterHandlers() {
         this.BuildCommand("/ktisis", this.OnMainCommand)
-            .SetMessage(Ktisis.Locale.Translate("misc.command.desc"))
-            .Create();
+            // .SetMessage(Ktisis.Locale.Translate("misc.command_desc"))
+			.SetMessage("Toggle the main Ktisis window.")
+			.Create();
     }
 
     private void Add(string name, CommandInfo info) {
