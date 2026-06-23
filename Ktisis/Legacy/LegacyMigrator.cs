@@ -272,6 +272,7 @@ public class LegacyMigrator {
 		if (this._confirmed) return;
 		this._confirmed = true;
 		this._gpose.StateChanged -= this.OnGPoseStateChanged;
+		this._tempConfig.Version = 12;
 		this._cfg.File = this._tempConfig;
 		this._cfg._isLoaded = true;
 		this._cfg.Save();
