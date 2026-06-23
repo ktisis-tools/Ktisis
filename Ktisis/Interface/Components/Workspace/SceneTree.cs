@@ -241,7 +241,15 @@ public class SceneTree {
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
 		using var _ = ImRaii.Tooltip();
-		var visibleType = vis is WorldEntity ? node.Type + " Root" : "Overlay";
+
+		var visibleType = vis switch {
+			WorldEntity => node.Type + " Root",
+			BoneNode => "Bone",
+			EntityPose => "Skeleton",
+			SkeletonGroup => "Bones",
+			_ => "Overlay"
+		};
+		// var visibleType = vis is WorldEntity ? node.Type + " Root" : "Overlay";
 		ImGui.Text(Ktisis.Locale.Translate($"common.{(vis.Visible ? "hide" : "show")}") + " " + visibleType);
 	}
 

@@ -229,7 +229,8 @@
 		"create": "Create new...",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
-		"overlay.toggle": "Toggle screen overlay"
+		"overlay.hide": "Hide Ktisis overlay",
+		"overlay.show": "Show Ktisis overlay"
 	},
 
 	"toolbar": {
