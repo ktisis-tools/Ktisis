@@ -38,6 +38,7 @@ public class EquipmentEditorTab {
 	private readonly PopupList<Glasses> _glassesSelectPopup;
 	private readonly PopupList<PropEntry> _propSelectPopup;
 
+	private Task _fetchData;
 	private IEquipmentEditor _editor;
 
 	private PropSchema _propSchema;
@@ -254,6 +255,8 @@ public class EquipmentEditorTab {
 
 	private void DrawDyeButton(ItemInfo info, int index) {
 		Stain? stain = null;
+		if (!this._fetchData.IsCompleted)
+			return;
 		foreach (var row in this.Stains) {
 			if (row.RowId != info.StainIds[index])
 				continue;
@@ -450,7 +453,8 @@ public class EquipmentEditorTab {
 	private void FetchData() {
 		if (this._itemsRaii) return;
 		this._itemsRaii = true;
-		this.LoadItems().ContinueWith(task => {
+		this._fetchData = this.LoadItems();
+		this._fetchData.ContinueWith(task => {
 			if (task.Exception != null)
 				Ktisis.Log.Error($"Failed to fetch items:\n{task.Exception}");
 		});
