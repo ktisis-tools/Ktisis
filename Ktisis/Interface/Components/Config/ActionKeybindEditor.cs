@@ -12,6 +12,7 @@ using Ktisis.Actions.Binds;
 using Ktisis.Actions.Types;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
+using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
 using Ktisis.Localization;
 
@@ -184,5 +185,13 @@ public class ActionKeybindEditor {
 		var text = textCombo.GetShortcutString();
 		ImGui.InputText("##EditKeybind", ref text, 256, ImGuiInputTextFlags.ReadOnly & ~ImGuiInputTextFlags.AutoSelectAll);
 		ImGui.SetKeyboardFocusHere(-1);
+	}
+
+	internal void ResetBinds(string pattern) {
+		var regex = new Regex(pattern);
+		var actions = this.Actions.Where(x => regex.IsMatch(x.GetName().ToLower()));
+		foreach (var key in actions) {
+			key.GetKeybind().Combo = key.BindInfo.Default.Combo;
+		}
 	}
 }

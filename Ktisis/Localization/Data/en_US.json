@@ -761,6 +761,7 @@
 			"blockRight": "Disable GPose change target on right click",
 			"scrollAllow": "Enable scrollwheel input for transform sliders",
 			"scrollMod": "Require ALT to be held for scrollwheel control of transform sliders",
+			"reset": "Reset Keybinds",
 			"cameras": {
 				"title": "Cameras",
 				"header": "Camera Controls:"
