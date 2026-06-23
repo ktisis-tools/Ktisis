@@ -55,18 +55,18 @@ public class PluginDataEditorTab {
 	
 	public unsafe void Draw() {
 		if (this._actor == null) {
-			ImGui.Text("Please select an actor!");
+			ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.warn_actor"));
 			return;
 		}
 
 		using (ImRaii.Disabled(!this._ipcManager.IsAnyMcdfActive && this._actor.GetHuman() != null)) {
-			if (ImGui.Button("Load MCDF")) 
+			if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.mcdf_load")))
 				this._ctx.Interface.OpenMcdfFile(path => this.ImportMcdf(this._actor, path));
 			if(ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
 				using (ImRaii.Tooltip())
-					ImGui.Text("A MCDF or 'Mare Character Data File' contains all of a players Penumbra, Glamourer\nand CustomizePlus data that is applied to them at the time of the capture.");
+					ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.mcdf_tip"));
 			ImGui.SameLine();
-			if (ImGui.Button("Revert all IPC data")) {
+			if (ImGui.Button(Ktisis.Locale.Translate("workspace.entity_menu.ipc.revert"))) {
 				this._actor.AssignedProfile = null;
 				this._ctx.Characters.Mcdf.Revert(this._actor.Actor);
 			}
@@ -74,17 +74,17 @@ public class PluginDataEditorTab {
 		}
 		
 		if (this._ipcManager.IsCustomizeActive) {
-			Separators.SeparatorText("Customize+", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
+			Separators.SeparatorText(Ktisis.Locale.Translate("chara_edit.ipc.customize.title"), textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
 			this.DrawCustomizePlus(this._actor);
 		}
 
 		if (this._ipcManager.IsPenumbraActive) {
-			Separators.SeparatorText("Penumbra", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
+			Separators.SeparatorText(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.title"), textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
 			this.DrawPenumbra(this._actor);
 		} 
 
 		if (this._ipcManager.IsGlamourerActive) {
-			Separators.SeparatorText("Glamourer", textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
+			Separators.SeparatorText(Ktisis.Locale.Translate("chara_edit.ipc.glamourer.title"), textColor: ImGui.GetColorU32(ImGuiCol.TextDisabled));
 			this.DrawGlamourer(this._actor);
 		} 
 	}
@@ -115,7 +115,7 @@ public class PluginDataEditorTab {
 			ImGui.EndCombo();
 		}
 		ImGui.SameLine();
-		ImGui.Text("C+ Profile");
+		ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.customize.profile"));
 		
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);
@@ -153,14 +153,14 @@ public class PluginDataEditorTab {
 			ImGui.EndCombo();
 		}
 		ImGui.SameLine();
-		ImGui.Text("Collection");
+		ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.collection"));
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Penumbra", IsLoaded: true })!.OpenMainUi();
 		}
 
-		if (ImGui.Button("Apply Invisible skin")) {
+		if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.invisible_skin"))) {
 			this._ctx.Characters.Mcdf.SetInvisibleSkin(actor);
 		}
 	}
@@ -190,11 +190,11 @@ public class PluginDataEditorTab {
 		using (ImRaii.Group()) {
 			
 			using (ImRaii.Disabled(this._selectedGlamourer == null)) {
-				ImGui.Text($"Current selection:");
+				ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.glamourer.design.select"));
 				
-				ImGui.TextWrapped($"{(this._selectedGlamourer == null ? "None" : this._glamourerCollections[this._selectedGlamourer.Value])}");
+				ImGui.TextWrapped($"{(this._selectedGlamourer == null ? Ktisis.Locale.Translate("chara_edit.ipc.glamourer.design.none") : this._glamourerCollections[this._selectedGlamourer.Value])}");
 				
-				if (ImGui.Button("Apply")) {
+				if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.glamourer.design.apply"))) {
 					glam.ApplyDesignToObject(actor.Actor, this._selectedGlamourer!.Value);
 					this._selectedGlamourer = null;
 				}

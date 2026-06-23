@@ -38,7 +38,7 @@ public class WaterEditor : EditorBase, IDisposable {
 		}, delayTicks:1);
 	}
 
-	public override string Name { get; } = "Water";
+	public override string Name => Ktisis.Locale.Translate("env_edit.water.title");
 
 	public override bool IsActivated(EnvOverride flags)
 		=> this.Frozen;
@@ -48,21 +48,21 @@ public class WaterEditor : EditorBase, IDisposable {
 	}
 
 	public unsafe void Draw() {
-		ImGui.Checkbox("Enable", ref this.Frozen);
+		ImGui.Checkbox(Ktisis.Locale.Translate("env_edit.enable"), ref this.Frozen);
 		ImGui.Spacing();
 		using var _ = ImRaii.Disabled(!this.Frozen);
 
 		var scrub1 = this._renderer->Unk1;
-		if (ImGui.DragFloat("Water One", ref scrub1))
+		if (ImGui.DragFloat(Ktisis.Locale.Translate("env_edit.water.water_one"), ref scrub1))
 			this._renderer->Unk1 = scrub1;
 		var scrub2 = this._renderer->Unk2;
-		if (ImGui.DragFloat("Water Two", ref scrub2))
+		if (ImGui.DragFloat(Ktisis.Locale.Translate("env_edit.water.water_two"), ref scrub2))
 			this._renderer->Unk2 = scrub2;
 		var scrub3 = this._renderer->Unk3;
-		if (ImGui.DragFloat("Water Three", ref scrub3))
+		if (ImGui.DragFloat(Ktisis.Locale.Translate("env_edit.water.water_three"), ref scrub3))
 			this._renderer->Unk3 = scrub3;
 		var scrub4 = this._renderer->Unk4;
-		if (ImGui.DragFloat("Water Four", ref scrub4))
+		if (ImGui.DragFloat(Ktisis.Locale.Translate("env_edit.water.water_four"), ref scrub4))
 			this._renderer->Unk4 = scrub4;
 	}
 

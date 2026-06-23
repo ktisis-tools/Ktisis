@@ -34,7 +34,7 @@ public class GizmoStyleEditor {
 
 		using var frame = ImRaii.Child("##CfgStyleFrame", ImGui.GetContentRegionAvail()- (this._cfg.File.Editor.UseToolbar?new Vector2(0, 2): Vector2.Zero), true);
 		using var _ = ImRaii.Disabled(); // TODO: undisable
-		ImGui.TextWrapped("Gizmo Styling is currently disabled in this build, pending a Dalamud update!");
+		ImGui.TextWrapped(Ktisis.Locale.Translate("config.gizmo.disabled"));
 		if (ImGui.CollapsingHeader(this._locale.Translate("config.gizmo.editor.general.title"))) {
 			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_x"), ref style.ColorDirectionX, defaults.ColorDirectionX);
 			DrawStyleColor(this._locale.Translate("config.gizmo.editor.general.dir_y"), ref style.ColorDirectionY, defaults.ColorDirectionY);
@@ -145,7 +145,7 @@ public class GizmoStyleEditor {
 		
 		using var _ = ImRaii.PushId($"##StyleFloat_{label}");
 		using (var unused = ImRaii.Disabled(value.Equals(defaultValue))) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Undo, "Reset to default"))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Undo, Ktisis.Locale.Translate("config.gizmo.editor.undo")))
 				value = defaultValue;
 		}
 		
@@ -159,7 +159,7 @@ public class GizmoStyleEditor {
 
 		using var _ = ImRaii.PushId($"##StyleFloat_{label}");
 		using (var unused = ImRaii.Disabled(value.Equals(defaultValue))) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Undo, "Reset to default"))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Undo, Ktisis.Locale.Translate("config.gizmo.editor.undo")))
 				value = defaultValue;
 		}
 		

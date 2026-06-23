@@ -241,6 +241,7 @@ public class SceneTree {
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
 		using var _ = ImRaii.Tooltip();
+
 		var visibleType = vis switch {
 			WorldEntity => node.Type + " Root",
 			BoneNode => "Bone",
@@ -249,7 +250,7 @@ public class SceneTree {
 			_ => "Overlay"
 		};
 		// var visibleType = vis is WorldEntity ? node.Type + " Root" : "Overlay";
-		ImGui.Text((vis.Visible ? "Hide " : "Show ") + visibleType);
+		ImGui.Text(Ktisis.Locale.Translate($"common.{(vis.Visible ? "hide" : "show")}") + " " + visibleType);
 	}
 
 	private void DrawAttachButton(IAttachable attach, ref float cursor, bool isHover) {
@@ -261,10 +262,10 @@ public class SceneTree {
 		if (!isHover || !ImGui.IsItemHovered()) return;
 
 		var bone = attach.GetParentBone();
-		var name = bone != null ? this._ctx.Locale.GetBoneName(bone) : "UNKNOWN";
+		var name = bone != null ? this._ctx.Locale.GetBoneName(bone) : Ktisis.Locale.Translate("common.unknown");
 		using var _ = ImRaii.Tooltip();
-		ImGui.Text($"Attached to {name}");
-		ImGui.Text($"Click to reset attachment\nClick+Drag to set new attachment");
+		ImGui.Text($"{Ktisis.Locale.Translate("workspace.scene_tree.attached_to")} {name}");
+		ImGui.Text(Ktisis.Locale.Translate("workspace.scene_tree.reset_tooltip"));
 	}
 
 	private void DrawHideButton(IHideable entity, ref float cursor, bool isHover) {
@@ -274,8 +275,8 @@ public class SceneTree {
 
 		if (!isHover || !ImGui.IsItemHovered()) return;
 		using var _ = ImRaii.Tooltip();
-		var hideType = entity is SceneEntity ent ? ent.Type.ToString() : "Entity";
-		ImGui.Text((entity.IsHidden ? "Show " : "Hide ") + hideType);
+		var hideType = entity is SceneEntity ent ? ent.Type.ToString() : Ktisis.Locale.Translate("common.entity");
+		ImGui.Text(Ktisis.Locale.Translate($"common.{(entity.IsHidden ? "hide" : "show")}") + " " + hideType);
 	}
 
 	private bool DrawButton(ref float cursor, FontAwesomeIcon icon, uint? color = null) {
