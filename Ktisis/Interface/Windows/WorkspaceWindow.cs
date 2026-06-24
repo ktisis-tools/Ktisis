@@ -47,7 +47,10 @@ public class WorkspaceWindow : KtisisWindow {
 		Ktisis.Log.Verbose("Context for workspace window is stale, closing...");
 		this.Close();
 	}
-	
+	public override void OnOpen() {
+		this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Close();
+		base.OnOpen();
+	}
 	public override void PreDraw() {
 		this.SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = MinimumSize,

@@ -11,6 +11,7 @@ using HandlerDelegate = Dalamud.Game.Command.IReadOnlyCommandInfo.HandlerDelegat
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context;
 using Ktisis.Interface;
+using Ktisis.Interface.Windows;
 
 namespace Ktisis.Services.Plugin;
 
@@ -95,7 +96,8 @@ public class CommandService : IDisposable {
 			Ktisis.Notification.AddNotification(notif);
 			return;
 		}
-
+		
+		ctx?.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Close();
         ctx?.Interface.ToggleWorkspaceWindow();
     }
 
