@@ -22,6 +22,11 @@ public class LocaleManager : IDisposable {
 	
 	private readonly LocaleDataLoader Loader = new();
 
+	private List<List<string>> CompatibleLanguages = new List<List<string>>() {
+		new List<string>(){"zh_CN", "zh_SG"},
+		new List<string>(){"zh_TW", "zh_MO", "zh_HK"}
+	};
+
 	public List<LocaleMetaData> AvailableLocales = new();
 	public LocaleData? Data;
 	public LocaleData? FallbackData;
@@ -67,7 +72,11 @@ public class LocaleManager : IDisposable {
 		if (this.Data?.MetaData.TechnicalName.Equals(localeFile)?? false) {
 			this._cfg.File.Locale.LocaleId = localeFile;
 			this.LoadLocale(localeFile);
-		} else if (this.AvailableLocales.Any(l => l.TechnicalName == localeFile)) {
+		} else if(this.CompatibleLanguages.Any(l => l.Contains(localeFile) && this.AvailableLocales.Any(p=> p.TechnicalName == l.First()))) {
+			var locale = this.CompatibleLanguages.First(l => l.Contains(localeFile)).First();
+			this._cfg.File.Locale.LocaleId = locale;
+			this.LoadLocale(locale);
+		} else if (this.AvailableLocales.Any(l => l.TechnicalName == localeFile) && this.CompatibleLanguages.All(l => !l.Contains(localeFile))) {
 			this._cfg.File.Locale.LocaleId = localeFile;
 			this.LoadLocale(localeFile);
 		} else if (this.AvailableLocales.Any(l => l.TechnicalName.StartsWith(lang))) {
