@@ -7,6 +7,7 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Style;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Utility.Numerics;
 
 using GLib.Widgets;
 
@@ -32,6 +33,7 @@ public class ToolbarWindow : KtisisWindow {
 	private KtisisWindow? _subWindow;
 	private readonly WorkspaceState _workspace;
 	private IEditorInterface Interface => this._ctx.Interface;
+	private readonly ImRaii.StyleDisposable WindowStyle = new();
 
 	private List<WindowButtons> _buttons;
 	public ToolbarWindow(
@@ -59,6 +61,23 @@ public class ToolbarWindow : KtisisWindow {
 		if (this._ctx.IsValid) return;
 		Ktisis.Log.Verbose("Context for toolbar window is stale, closing...");
 		this.Close();
+	}
+
+	public override void PreDraw() {
+		var style = ImGui.GetStyle();
+
+		// to prevent auto-resize pain, override custom style vars to dalamud defaults if they exceed certain bounds
+		if (style.ItemSpacing.X < 8)
+			this.WindowStyle.Push(ImGuiStyleVar.ItemSpacing, StyleModelV1.DalamudClassic.ItemSpacing.WithY(style.ItemSpacing.Y));
+		if (style.FramePadding.X > 4)
+			this.WindowStyle.Push(ImGuiStyleVar.FramePadding, StyleModelV1.DalamudClassic.FramePadding.WithY(style.FramePadding.Y));
+		if (style.CellPadding.X > 4)
+			this.WindowStyle.Push(ImGuiStyleVar.CellPadding, StyleModelV1.DalamudClassic.CellPadding.WithY(style.CellPadding.Y));
+
+		// force align button text
+		this.WindowStyle.Push(ImGuiStyleVar.ButtonTextAlign, StyleModelV1.DalamudClassic.ButtonTextAlign);
+
+		base.PreDraw();
 	}
 
 	public override void Draw() {
@@ -108,6 +127,11 @@ public class ToolbarWindow : KtisisWindow {
 			this._subWindow.Draw();
 
 		}
+	}
+
+	public override void PostDraw() {
+		base.PostDraw();
+		this.WindowStyle.Dispose();
 	}
 
 	internal void DrawWorkspaceWindow() => this.SetSubWindow<Workspace>();
