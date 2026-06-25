@@ -96,8 +96,8 @@ public class CommandService : IDisposable {
 			Ktisis.Notification.AddNotification(notif);
 			return;
 		}
-		
-		ctx?.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Close();
+
+		ctx?.Plugin.Gui.Get<TrayIcon>()?.Close();
         ctx?.Interface.ToggleWorkspaceWindow();
     }
 
