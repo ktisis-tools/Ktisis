@@ -5,6 +5,7 @@ using System.Threading;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Services.Environment;
@@ -40,7 +41,7 @@ public class WeatherSelect {
 		var current = this._resource.Find(currentId);
 
 		var style = ImGui.GetStyle();
-		var padding = style.FramePadding.Y + WeatherIconSize.Y - ImGui.GetFrameHeight();
+		var padding = (style.FramePadding.Y + WeatherIconSize.Y) * ImGuiHelpers.GlobalScale - ImGui.GetFrameHeight();
 		using var _style = ImRaii.PushStyle(ImGuiStyleVar.FramePadding, style.FramePadding with { Y = padding });
 		
 		var result = this.DrawWeatherCombo(currentId, current, weathers, out selected);
