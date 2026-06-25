@@ -89,7 +89,7 @@ public class TransformTable {
 
 		
 		var useAvail = flags.HasFlag(TransformTableFlags.UseAvailable);
-		using var __ = ImRaii.ItemWidth(useAvail ? CalcTableAvail() - (this._cfg.File.Editor.UseToolbar ? 0.1f + ImGui.GetStyle().WindowBorderSize : 0) : CalcTableWidth());
+		using var __ = ImRaii.ItemWidth(useAvail ? CalcTableAvail() - (this._cfg.File.Editor.UseToolbar? 0.1f : 0) : CalcTableWidth());
 
 		var op = flags.HasFlag(TransformTableFlags.Operation);
 		transOut = this.Transform.Set(transIn);
