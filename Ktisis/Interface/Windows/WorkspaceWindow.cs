@@ -80,7 +80,7 @@ public class WorkspaceWindow : KtisisWindow {
 	}
 
 	public override void OnClose() {
-		if(this._ctx.Config.Editor.OpenTrayOnWorkspaceClose)
+		if (this._ctx.Config.Editor.OpenTrayOnWorkspaceClose && !this._ctx.Config.Editor.UseToolbar)
 			this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
 		base.OnClose();
 	}
