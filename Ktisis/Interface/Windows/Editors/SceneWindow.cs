@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.JavaScript;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
-using Dalamud.Interface.Style;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
-
-using FFXIVClientStructs;
 
 using GLib.Widgets;
 
@@ -25,17 +19,14 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Popup;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Character;
+using Ktisis.Scene.Entities.Utility;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
 using Ktisis.Scene.Types;
 using Ktisis.Services.Data;
-using Ktisis.Services.Plugin;
 using Ktisis.Structs.Characters;
 
 using Lumina.Excel.Sheets;
-using Lumina.Text.ReadOnly;
-
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Ktisis.Interface.Windows.Editors;
 
@@ -52,7 +43,7 @@ public class SceneWindow : KtisisWindow {
 	private ISharedImmediateTexture? _texture;
 	private Map _source;
 	private SceneMCDFModal? _popupWindow;
-	private bool _includeActors, _includeLights, _includeCameras, _includeEnv;
+	private bool _includeActors, _includeLights, _includeCameras, _includeEnv, _includeOverlays;
 	
 	public SceneWindow(
 		IEditorContext ctx,
@@ -66,7 +57,7 @@ public class SceneWindow : KtisisWindow {
 		this._sceneFile = null;
 		this._dataManager = dataManager;
 		this._textureProvider = textureProvider;
-		this._includeActors = this._includeCameras = this._includeLights = this._includeEnv = true;
+		this._includeActors = this._includeCameras = this._includeLights = this._includeEnv = this._includeOverlays = true;
 	}
 	
 	public override void PreOpenCheck() {
@@ -81,8 +72,8 @@ public class SceneWindow : KtisisWindow {
 			MinimumSize = new Vector2(400, 400),
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.90f
 		};
-
 	}
+	
 	private void OpenPopupModal(SceneFile.ActorInfo entity) {
 		this._popupWindow = this._ctx.Plugin.Gui.CreatePopup<SceneMCDFModal>(entity, this._ctx);
 		this._popupWindow.SetScene(ref this._sceneFile);
@@ -101,24 +92,25 @@ public class SceneWindow : KtisisWindow {
 			this._texture = this._textureProvider.GetFromGame(path);
 		}
 	}
-	public unsafe override void Draw() {
+	public override void Draw() {
 		this.MapStuff();
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
-		int cameras, actors, lights;
+		int cameras, actors, lights, overlays;
 		bool envOver;
 		if (this._sceneFile != null) {
 			actors = this._sceneFile.Actors.Count;
 			cameras = this._sceneFile.Cameras.Count;
 			lights = this._sceneFile.Lights.Count;
+			overlays = this._sceneFile.Overlays.Count;
 			envOver = this._sceneFile.Environment.Override > 0;
 		} else {
 			actors = this._ctx.Scene.Children.Count(entity => entity is CharaEntity);
 			lights = this._ctx.Scene.Children.Count(entity => entity is LightEntity);
+			overlays = this._ctx.Scene.Children.Count(entity => entity is OverlayEntity);
 			cameras = this._ctx.Cameras.GetCameras().Count();
 			envOver = this._ctx.Scene.GetModule<EnvModule>().Override > 0;
 		}
-
 		
 		ImGui.BeginGroup();
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PersonBurst, "Load Scene file", iconBtnSize*1.5f))
@@ -139,25 +131,18 @@ public class SceneWindow : KtisisWindow {
 				this._sceneFile = null;
 			}
 		}
-
-		
-		
 		
 		ImGui.EndGroup();
 		
 		ImGui.SameLine();
-
-
+		
 		ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(74f, 74f, 74f, 138f)/255);
 		ImGui.PushStyleVar(ImGuiStyleVar.ChildRounding, 4 );
-		using (var child = ImRaii.Child("##SceneData", (this._ctx.Config.Editor.UseToolbar? new Vector2(ImGui.GetContentRegionAvail().X, 470) :Vector2.Zero),false, ImGuiWindowFlags.AlwaysAutoResize)) {
-			// Check if this child is drawing
-
+		using (var child = ImRaii.Child("##SceneData", (this._ctx.Config.Editor.UseToolbar? new Vector2(ImGui.GetContentRegionAvail().X - 0.1f, 470) :Vector2.Zero),false, ImGuiWindowFlags.AlwaysAutoResize)) {
 
 			var cursorPos = ImGui.GetCursorScreenPos();
 
 			if (child.Success) {
-
 				var dl = ImGui.GetWindowDrawList();
 				if(this._texture != null)
 					dl.AddImageRounded(this._texture.GetWrapOrEmpty().Handle, cursorPos, new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetContentRegionAvail().X * .563f) + cursorPos, Vector2.Zero, Vector2.One, 0xFFFFFFFF, 4f);
@@ -189,9 +174,7 @@ public class SceneWindow : KtisisWindow {
 								if (ImGui.IsItemHovered())
 									using (ImRaii.Tooltip())
 										ImGui.TextUnformatted("MCDF wasnt found for this character\nPlease try applying manually after loading the scene");
-
 							}
-
 						}
 					} else {
 						ImGui.Indent();
@@ -216,9 +199,7 @@ public class SceneWindow : KtisisWindow {
 					}
 					ImGui.Unindent();
 				}
-
 				if (lights > 0)
-
 					if (ImGui.CollapsingHeader($"Lights {lights}")) {
 						if (this._sceneFile != null) {
 							ImGui.Checkbox("Load lights", ref this._includeLights);
@@ -234,8 +215,23 @@ public class SceneWindow : KtisisWindow {
 						}
 						ImGui.Unindent();
 					}
-
-
+				if (overlays > 0)
+					if (ImGui.CollapsingHeader($"Overlays {overlays}")) {
+						if (this._sceneFile != null) {
+							ImGui.Checkbox("Load Overlays", ref this._includeOverlays);
+							ImGui.Indent();
+							foreach (var overlayInfo in this._sceneFile!.Overlays) {
+								ImGui.TextUnformatted($"{overlayInfo.Name}");
+							}
+						} else {
+							ImGui.Indent();
+							foreach (var overlayInfo in this._ctx.Scene.Children.Where(entity => entity is OverlayEntity)) {
+								ImGui.TextUnformatted($"{overlayInfo.Name}");
+							}
+						}
+						ImGui.Unindent();
+					}
+				
 				if (envOver)
 					if (ImGui.CollapsingHeader($"Environment")) {
 						if (this._sceneFile != null) {
@@ -273,7 +269,6 @@ public class SceneWindow : KtisisWindow {
 								}
 								if (env.HasFlag(en))
 									list.Add(Enum.GetName(en));
-								
 							}
 							var str =  string.Join(", ", list);
 							ImGui.TextUnformatted(str);
@@ -283,11 +278,9 @@ public class SceneWindow : KtisisWindow {
 				ImGui.EndGroup();
 
 			}
-
+			ImGui.Dummy(new Vector2(2));
 		}
 		ImGui.PopStyleColor();
 		ImGui.PopStyleVar();
 	}
-	
-
 }
