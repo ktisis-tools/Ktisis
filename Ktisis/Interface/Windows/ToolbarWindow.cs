@@ -71,8 +71,8 @@ public class ToolbarWindow : KtisisWindow {
 
 		// Try to center it?
 
-		var offset = ((ImGuiP.GetCurrentWindow().ContentSize.X - (this._buttons.Count * ((48 * ImGuiHelpers.GlobalScale)  + spacing)) - (2 * spacing) - (Buttons.CalcSize())) / 2);
-		ImGui.SetCursorPosX( + offset);
+		var offset = ((ImGuiP.GetCurrentWindow().ContentSize.X - (this._buttons.Count * ((48 * ImGuiHelpers.GlobalScale)  + spacing)) - (2 * spacing) - Buttons.CalcSize()) / 2);
+		ImGui.SetCursorPosX(offset);
 
 		// Subwindow Buttons
 		foreach (var button in _buttons) {
