@@ -30,6 +30,7 @@ public record EntityDisplay {
 	private const uint BoneBlue = 0xFFFF9F68;
 	private const uint ModelMint = 0xFFBAFFB2;
 	private const uint LightLemon = 0xFF68EDFF;
+	private const uint OverlayOrange = 0xFF0094FF;
 	
 	public static Dictionary<EntityType, EntityDisplay> GetDefaults() => new() {
 		{ EntityType.Invalid, new EntityDisplay() },
@@ -37,10 +38,13 @@ public record EntityDisplay {
 		{ EntityType.Armature, new EntityDisplay(color: BoneBlue, icon: FontAwesomeIcon.CircleNodes) },
 		{ EntityType.BoneGroup, new EntityDisplay(color: BoneBlue, mode: DisplayMode.None) },
 		{ EntityType.BoneNode, new EntityDisplay(mode: DisplayMode.Dot) }, // May deprecate this in future for display of category colors.
-		{ EntityType.Models, new EntityDisplay(color: ModelMint, icon: FontAwesomeIcon.CubesStacked) },
+		{ EntityType.Model, new EntityDisplay(color: ModelMint, icon: FontAwesomeIcon.CubesStacked) },
 		{ EntityType.ModelSlot, new EntityDisplay(color: ModelMint) },
 		{ EntityType.Weapon, new EntityDisplay(icon: FontAwesomeIcon.Magic) },
 		{ EntityType.Light, new EntityDisplay(color: LightLemon, icon: FontAwesomeIcon.Lightbulb) },
-		{ EntityType.RefImage, new EntityDisplay(icon: FontAwesomeIcon.Image) }
+		{ EntityType.RefImage, new EntityDisplay(icon: FontAwesomeIcon.Image) },
+		{ EntityType.TalkOverlay, new EntityDisplay(color: OverlayOrange, icon: FontAwesomeIcon.Comment) },
+		{ EntityType.BalloonOverlay, new EntityDisplay(color: OverlayOrange, icon: FontAwesomeIcon.Comments) },
+		{ EntityType.StatusOverlay, new EntityDisplay(color: OverlayOrange, icon: FontAwesomeIcon.ChartBar) }
 	};
 }

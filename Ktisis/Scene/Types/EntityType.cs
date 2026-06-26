@@ -6,9 +6,12 @@ public enum EntityType {
 	Armature,
 	BoneGroup,
 	BoneNode,
-	Models,
+	Model,
 	ModelSlot,
 	Weapon,
 	Light,
-	RefImage
+	RefImage,
+	TalkOverlay,
+	BalloonOverlay,
+	StatusOverlay
 }

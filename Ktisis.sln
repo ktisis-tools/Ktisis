@@ -20,6 +20,9 @@ Global
 		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Release|x64.ActiveCfg = Release|Any CPU
 		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BD7A2117-AA9F-4C23-8551-BD6793E4FFE3} = {621156E2-C9A4-4315-8A20-9259A98026E2}
 	EndGlobalSection

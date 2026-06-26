@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Ktisis.Localization; 
@@ -26,6 +27,10 @@ public class LocaleData {
 
 	public bool HasTranslationFor(string key) {
 		return this._translationData.ContainsKey(key);
+	}
+
+	public int KeysMatchingPrefix(string prefix) {
+		return this._translationData.Keys.Count(k => k.StartsWith(prefix));
 	}
 
 	private string ReplaceParameters(string handle, string translationString, Dictionary<string, string>? parameters) {

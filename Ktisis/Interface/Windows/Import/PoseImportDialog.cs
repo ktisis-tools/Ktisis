@@ -34,8 +34,9 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		this._select = select;
 		select.OnOpenDialog = this.OnFileDialogOpen;
 	}
-	
+
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {
+		this.Context.Scene.Overlay.ToggleCharaViewTexture(this.Context, this.Target);
 		this.Context.Interface.OpenPoseFile(sender.SetFile);
 	}
 
@@ -65,7 +66,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	// Pose application
 
 	private void DrawPoseApplication() {
-		using var _ = ImRaii.Disabled(!this._select.IsFileOpened);
+		//using var _ = ImRaii.Disabled(!this._select.IsFileOpened);
 		
 		var isSelectBones = this.Target.Recurse()
 			.Where(child => child is SkeletonNode)

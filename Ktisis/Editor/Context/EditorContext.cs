@@ -37,7 +37,8 @@ public class EditorContext : IEditorContext {
 	// Wrappers
 	
 	public bool IsGPosing => this._gpose.IsGPosing;
-	
+	public bool ShowWorldObjects { get; set; } = false;
+
 	// State management
 	
 	public IPluginContext Plugin { get; }
