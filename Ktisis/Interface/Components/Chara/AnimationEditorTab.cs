@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
@@ -122,7 +123,7 @@ public class AnimationEditorTab {
 		
 		var avail = ImGui.GetContentRegionAvail();
 		if (this.Config.Editor.UseToolbar)
-			avail = new Vector2(500, 420);
+			avail = new Vector2(500, 420) * ImGuiHelpers.GlobalScale;
 		using (var _ = ImRaii.Child("##animFrame", avail with { X = avail.X * 0.35f })) {
 			ImGui.Text(this._locale.Translate("chara_edit.animation.controls.animationSelect"));
 			this.DrawEmote();

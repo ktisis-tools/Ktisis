@@ -8,6 +8,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Style;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
 using GLib.Widgets;
@@ -119,7 +120,7 @@ public class ConfigWindow : KtisisWindow {
 	}
 
 	public override void Draw() {
-		using (ImRaii.Child("##nav", new Vector2(150, Math.Clamp(ImGui.GetContentRegionAvail().Y- 0.1f, 400f, float.MaxValue)))) {
+		using (ImRaii.Child("##nav", new Vector2(150 * ImGuiHelpers.GlobalScale, Math.Clamp(ImGui.GetContentRegionAvail().Y- 0.1f, 400f * ImGuiHelpers.GlobalScale , float.MaxValue) ))) {
 			this.DrawTabNode(0, [1, 2]);
 			this.DrawTabNode(3, [4, 5, 6, 7]);
 			this.DrawTabNode(8, [9, 10, 11]);

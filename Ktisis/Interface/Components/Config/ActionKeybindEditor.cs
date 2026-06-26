@@ -60,7 +60,7 @@ public class ActionKeybindEditor {
 			actions = actions.Where(x => regex.IsMatch(x.GetName().ToLower())).ToList();
 		}
 		
-		using var frame = ImRaii.Child("##CfgStyleFrame", new Vector2(ImGui.GetContentRegionAvail().X, actions.Count * (ImGui.GetTextLineHeightWithSpacing() + CellPadding.Y*2 )), false);
+		using var frame = ImRaii.Child("##CfgStyleFrame", new Vector2(ImGui.GetContentRegionAvail().X - 0.1f, actions.Count * (ImGui.GetTextLineHeightWithSpacing() + CellPadding.Y*2 )), false);
 		if (!frame.Success) return;
 
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, Vector2.Zero);

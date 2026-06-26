@@ -20,6 +20,7 @@ using Ktisis.Interface.Windows.ToolbarModules;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules;
+using ImGuiHelpers = Dalamud.Interface.Utility.ImGuiHelpers;
 
 namespace Ktisis.Interface.Windows;
 
@@ -74,7 +75,7 @@ public class ToolbarWindow : KtisisWindow {
 
 		// Try to center it?
 
-		var offset = ((ImGuiP.GetCurrentWindow().ContentSize.X - (this._buttons.Count * (48 + spacing)) - (2 * spacing) - Buttons.CalcSize()) / 2);
+		var offset = ((ImGuiP.GetCurrentWindow().ContentSize.X - (this._buttons.Count * ((48 * ImGuiHelpers.GlobalScale)  + spacing)) - (2 * spacing) - Buttons.CalcSize()) / 2);
 		ImGui.SetCursorPosX(offset);
 
 		// Subwindow Buttons
@@ -90,13 +91,13 @@ public class ToolbarWindow : KtisisWindow {
 				color = *ImGui.GetStyleColorVec4(bgCol);
 			}
 			using var _ = ImRaii.PushColor(ImGuiCol.Button, color);
-			if (Buttons.IconButtonTooltip(button.Icon, button.TooltipText, new Vector2(48, 48)))
+			if (Buttons.IconButtonTooltip(button.Icon, button.TooltipText, new Vector2(48, 48) * ImGuiHelpers.GlobalScale))
 				button.Window();
 			ImGui.SameLine(0, spacing * 2);
 		}
 		ImGui.SameLine();
 		using (ImRaii.Group()) {
-			var size = (48 - spacing) / 2;
+			var size = ((48 * ImGuiHelpers.GlobalScale) - spacing) / 2;
 			using (var _ = ImRaii.Disabled(!this._ctx.Actions.History.CanUndo))
 				if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepBackward, this._ctx.Locale.Translate("actions.History_Undo"), new Vector2(size, size)))
 					this._ctx.Actions.History.Undo();
