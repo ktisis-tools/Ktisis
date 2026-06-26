@@ -183,6 +183,21 @@ public class EditorInterface : IEditorInterface {
 		this._gui.AddPopup(menu.Create()).Open();
 	}
 
+	public void OpenActorCreateMenu() {
+		var menu = new SceneCreateMenuBuilder(this._ctx);
+		this._gui.AddPopup(menu.CreateActor()).Open();
+	}
+
+	public void OpenLightCreateMenu() {
+		var menu = new SceneCreateMenuBuilder(this._ctx);
+		this._gui.AddPopup(menu.CreateLight()).Open();
+	}
+
+	public void OpenOverlayCreateMenu() {
+		var menu = new SceneCreateMenuBuilder(this._ctx);
+		this._gui.AddPopup(menu.CreateOverlay()).Open();
+	}
+
 	public void OpenSceneEntityMenu(SceneEntity entity) {
 		var menu = new SceneEntityMenuBuilder(this._ctx, entity);
 		this._gui.AddPopup(menu.Create()).Open();

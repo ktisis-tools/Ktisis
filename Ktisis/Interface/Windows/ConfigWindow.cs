@@ -283,10 +283,10 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.Text(this.Locale.Translate("config.input.help"));
 		using (ImRaii.Disabled(!this.Config.Keybinds.Enabled))
-			this._keybinds.Draw("history|select|overlay|pose");
+			this._keybinds.Draw("history|select|overlay|pose|scene");
 
 		if (ImGui.Button(Ktisis.Locale.Translate("config.input.reset")))
-			this._keybinds.ResetBinds("history|select|overlay|pose");
+			this._keybinds.ResetBinds("history|select|overlay|pose|scene");
 	}
 
 	private void DrawCamerasInputTab() {
@@ -328,10 +328,10 @@ public class ConfigWindow : KtisisWindow {
 
 
 		using (ImRaii.Disabled(!this.Config.Keybinds.Enabled))
-			this._keybinds.Draw("toolbar");
+			this._keybinds.Draw("toolbar", true);
 
 		if (ImGui.Button(Ktisis.Locale.Translate("config.input.reset")))
-			this._keybinds.ResetBinds("toolbar");
+			this._keybinds.ResetBinds("toolbar", true);
 	}
 	
 	

@@ -42,7 +42,8 @@
 		"Toolbar_TogglePose": "Switch to Pose View",
 		"Toolbar_ToggleEnv": "Switch to the Environment Editor",
 		"Toolbar_ToggleCamera": "Switch to the Camera Editor",
-		"Toolbar_ToggleConfig": "Switch to the Configuration Window"
+		"Toolbar_ToggleConfig": "Switch to the Configuration Window",
+		"Scene_RefreshEntities": "Refresh scene entities"
 	},
 	
 	"actors": {
@@ -227,6 +228,9 @@
 			}
 		},
 		"create": "Create new...",
+		"create_actor": "Create Actor\nRight-click for options...",
+		"create_light": "Create Light\nRight-click for options...",
+		"create_overlay": "Create Overlay\nRight-click for options...",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.hide": "Hide Ktisis overlay",

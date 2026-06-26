@@ -28,6 +28,10 @@ public interface IEditorInterface {
 	public void OpenSceneWindow();
 
 	public void OpenSceneCreateMenu();
+	public void OpenActorCreateMenu();
+	public void OpenLightCreateMenu();
+	public void OpenOverlayCreateMenu();
+
 	public void OpenSceneEntityMenu(SceneEntity entity);
 
 	public void OpenAssignCollection(ActorEntity entity);
