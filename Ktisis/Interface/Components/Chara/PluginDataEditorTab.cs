@@ -160,7 +160,7 @@ public class PluginDataEditorTab {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Penumbra", IsLoaded: true })!.OpenMainUi();
 		}
 
-		using (ImRaii.Disabled(actor.GetHuman() != null))
+		using (ImRaii.Disabled(actor.GetHuman() == null))
 			if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.invisible_skin")))
 				this._ctx.Characters.Mcdf.SetInvisibleSkin(actor);
 	}
