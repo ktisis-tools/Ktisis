@@ -5,6 +5,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
@@ -122,7 +123,7 @@ public class AnimationEditorTab {
 		
 		var avail = ImGui.GetContentRegionAvail();
 		if (this.Config.Editor.UseToolbar)
-			avail = new Vector2(500, 420);
+			avail = new Vector2(500, 420) * ImGuiHelpers.GlobalScale;
 		using (var _ = ImRaii.Child("##animFrame", avail with { X = avail.X * 0.35f })) {
 			ImGui.Text(this._locale.Translate("chara_edit.animation.controls.animationSelect"));
 			this.DrawEmote();
@@ -226,9 +227,10 @@ public class AnimationEditorTab {
 			this.OpenAnimationPopup(TimelineSlot.Expression);
 
 		ImGui.SameLine(0, space);
-		var applyWidth = ImGui.CalcTextSize("Apply").X + (ImGui.GetStyle().FramePadding.X * 2);
+		var label = Ktisis.Locale.Translate("chara_edit.animation.poseExpression.apply");
+		var applyWidth = ImGui.CalcTextSize(label).X + (ImGui.GetStyle().FramePadding.X * 2);
 		using (ImRaii.Disabled(this.PoseExpression is null))
-			if (ImGui.Button("Apply", new Vector2(applyWidth, Buttons.CalcSize())))
+			if (ImGui.Button(label, new Vector2(applyWidth, Buttons.CalcSize())))
 				this.Editor.DoPoseExpression(this.PoseExpression!.TimelineId);
 
 		ImGui.SameLine(0, space);
@@ -244,7 +246,7 @@ public class AnimationEditorTab {
 		} else {
 			ImGui.Dummy(size);
 			ImGui.SameLine(0, space);
-			ImGui.Text("No Selection");
+			ImGui.Text(Ktisis.Locale.Translate("chara_edit.animation.poseExpression.null"));
 		}
 	}
 

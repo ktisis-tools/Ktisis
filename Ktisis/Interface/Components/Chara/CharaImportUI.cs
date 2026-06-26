@@ -102,7 +102,7 @@ public class CharaImportUI {
 			case LoadMethod.Npc:
 				this._npcs.Draw();
 				ImGui.Spacing();
-				ImGui.Checkbox("Apply on selection", ref this.Context.Config.File.ImportNpcApplyOnSelect);
+				ImGui.Checkbox(Ktisis.Locale.Translate("file.chara.apply"), ref this.Context.Config.File.ImportNpcApplyOnSelect);
 				break;
 			default:
 				throw new ArgumentOutOfRangeException(this.Method.ToString());
@@ -112,7 +112,7 @@ public class CharaImportUI {
 	public void DrawLoadMethods(float cursorY = -1.0f) {
 		var setCursorY = cursorY > -1.0f;
 		if (setCursorY) ImGui.SetCursorPosY(cursorY);
-		this.DrawMethodRadio("File", LoadMethod.File);
+		this.DrawMethodRadio(Ktisis.Locale.Translate("file.chara.file"), LoadMethod.File);
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (setCursorY) ImGui.SetCursorPosY(cursorY);
 		this.DrawMethodRadio("NPC", LoadMethod.Npc);
@@ -127,21 +127,21 @@ public class CharaImportUI {
 	
 	public void DrawModesSelect() {
 		using var _ = ImRaii.Disabled(this.DisableModes);
-		ImGui.Text("Appearance");
-		this.DrawModeSwitch("Body", SaveModes.AppearanceBody);
+		ImGui.Text(Ktisis.Locale.Translate("common.appearance"));
+		this.DrawModeSwitch(Ktisis.Locale.Translate("common.chara_parts.body"), SaveModes.AppearanceBody);
 		ImGui.SameLine();
-		this.DrawModeSwitch("Face", SaveModes.AppearanceFace);
+		this.DrawModeSwitch(Ktisis.Locale.Translate("common.chara_parts.face"), SaveModes.AppearanceFace);
 		ImGui.SameLine();
-		this.DrawModeSwitch("Hair", SaveModes.AppearanceHair);
+		this.DrawModeSwitch(Ktisis.Locale.Translate("common.chara_parts.hair"), SaveModes.AppearanceHair);
 
 		ImGui.Spacing();
 
-		ImGui.Text("Equipment");
-		this.DrawModeSwitch("Gear", SaveModes.EquipmentGear);
+		ImGui.Text(Ktisis.Locale.Translate("common.equipment"));
+		this.DrawModeSwitch(Ktisis.Locale.Translate("common.chara_parts.gear"), SaveModes.EquipmentGear);
 		ImGui.SameLine();
-		this.DrawModeSwitch("Accessories", SaveModes.EquipmentAccessories);
+		this.DrawModeSwitch(Ktisis.Locale.Translate("common.chara_parts.accessories"), SaveModes.EquipmentAccessories);
 		ImGui.SameLine();
-		this.DrawModeSwitch("Weapons", SaveModes.EquipmentWeapons);
+		this.DrawModeSwitch(Ktisis.Locale.Translate("common.chara_parts.weapons"), SaveModes.EquipmentWeapons);
 	}
 	
 	private void DrawModeSwitch(string label, SaveModes mode) {

@@ -16,14 +16,21 @@ public abstract class KtisisWindow : Window {
 		remove => this._closedEvent.Remove(value.Invoke);
 	}
 
+	internal string _localeWindowName;
+	internal string _windowId;
 	protected KtisisWindow(
-		string name,
+		string localeWindowName,
 		ImGuiWindowFlags flags = ImGuiWindowFlags.None,
+		string windowId = "",
 		bool forceMainWindow = false
-	) : base(name, flags, forceMainWindow) {
+	) : base($"{Ktisis.Locale.Translate(localeWindowName)}{windowId}", flags, forceMainWindow) {
+		this._localeWindowName = localeWindowName;
+		this._windowId = windowId;
 		this.RespectCloseHotkey = false;
+		Ktisis.Locale.LocaleChanged += this.ChangeWindowLocale;
 	}
-
+	
+	
 	public void Open() => this.IsOpen = true;
 
 	public void Close() {
@@ -35,9 +42,14 @@ public abstract class KtisisWindow : Window {
 		}
 	}
 
+	private void ChangeWindowLocale() {
+		this.WindowName = Ktisis.Locale.Translate($"{this._localeWindowName}") + this._windowId;
+	}
+
 	public virtual void OnCreate() { }
 
 	public override void OnClose() {
+		Ktisis.Locale.LocaleChanged -= this.ChangeWindowLocale;
 		this._closedEvent.Invoke(this);
 	}
 	

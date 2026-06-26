@@ -21,7 +21,7 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 	public LightWindow(
 		IEditorContext ctx,
 		LocaleManager locale
-	) : base("Light Editor", ctx) {
+	) : base("Light Editor", ctx, windowId:"###KtisisLightEditor") {
 		this._locale = locale;
 	}
 

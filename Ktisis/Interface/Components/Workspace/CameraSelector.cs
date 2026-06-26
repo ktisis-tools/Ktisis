@@ -31,15 +31,15 @@ public class CameraSelector {
 		this.DrawSelector();
 		
 		ImGui.SameLine(0, spacing);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Create new camera"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, Ktisis.Locale.Translate("cameras.selector.create")))
 			this.Cameras.Create();
 
 		ImGui.SameLine(0, spacing);
 		var cantDelete = this.Cameras.Current is { IsDefault: true } or WorkCamera;
 		if (!ImGui.IsKeyDown(ImGuiKey.ModShift) || cantDelete) {
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, $"Edit camera{(cantDelete ? "" : " (or hold Shift to delete)")}"))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PencilAlt, Ktisis.Locale.Translate("cameras.selector.edit") + (cantDelete ? "" : $" {Ktisis.Locale.Translate("cameras.selector.edit_can_delete")}")))
 				this._ctx.Interface.OpenCameraWindow();
-		} else if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, "Delete camera"))
+		} else if (Buttons.IconButtonTooltip(FontAwesomeIcon.Trash, Ktisis.Locale.Translate("cameras.selector.delete")))
 			this.Cameras.DeleteCurrent();
 
 		ImGui.SameLine(0, spacing);
@@ -51,7 +51,7 @@ public class CameraSelector {
 		using var bgCol = ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), isFreecam);
 		using var iconCol = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.Text).SetAlpha(0xCF), !isFreecam);
 		
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Camera, "Toggle work camera"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Camera, Ktisis.Locale.Translate("actions.Camera_Work_Toggle")))
 			this.Cameras.ToggleWorkCameraMode();
 	}
 	

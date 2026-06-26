@@ -4,6 +4,7 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
 using GLib.Widgets;
@@ -55,7 +56,7 @@ public class EnvWindow : KtisisWindow {
 		WaterEditor water,
 		HousingEditor housingEditor
 	) : base(
-		"Environment Editor"
+		"env_edit.title", windowId:"###KtisisEnvWindow"
 	) {
 		this._scene = scene;
 		this._module = module;
@@ -120,7 +121,7 @@ public class EnvWindow : KtisisWindow {
 		
 		//Icons.DrawIcon(FontAwesomeIcon.Sun);
 		//ImGui.SameLine();
-		ImGui.Text("Weather");
+		ImGui.Text(Ktisis.Locale.Translate("env_edit.weather"));
 		
 		if (this._weatherSelect.Draw(env, out var newWeather) && newWeather != null) {
 			var id = (byte)newWeather.RowId;
@@ -138,7 +139,7 @@ public class EnvWindow : KtisisWindow {
 			this._module.Override ^= EnvOverride.TimeWeather;
 		}
 		ImGui.SameLine();
-		ImGui.Text("Time and Day");
+		ImGui.Text(Ktisis.Locale.Translate("env_edit.time"));
 
 		using var _disable = ImRaii.Disabled(!isLocked);
 		
@@ -153,7 +154,7 @@ public class EnvWindow : KtisisWindow {
 	protected private void DrawAdvancedList() {
 		//Icons.DrawIcon(FontAwesomeIcon.Cog);
 		//ImGui.SameLine();
-		ImGui.Text("Advanced Editing");
+		ImGui.Text(Ktisis.Locale.Translate("env_edit.advanced"));
 		
 		var size = ImGui.GetContentRegionAvail();
 		size.Y -= ImGui.GetStyle().WindowPadding.Y / 2;
@@ -173,7 +174,7 @@ public class EnvWindow : KtisisWindow {
 	// Advanced Editor
 
 	protected private unsafe void DrawAdvancedEditor(EnvManagerEx* env) {
-		using var _frame = ImRaii.Child("##AdvancedFrame", (this._scene.Context.Config.Editor.UseToolbar? new Vector2(300 ,ImGui.GetContentRegionAvail().Y): ImGui.GetContentRegionAvail()));
+		using var _frame = ImRaii.Child("##AdvancedFrame", (this._scene.Context.Config.Editor.UseToolbar? new Vector2(300 * ImGuiHelpers.GlobalScale ,ImGui.GetContentRegionAvail().Y): ImGui.GetContentRegionAvail()));
 		if (!_frame.Success) return;
 
 		if (!this._editors.TryGetValue(this.Current, out var editor))

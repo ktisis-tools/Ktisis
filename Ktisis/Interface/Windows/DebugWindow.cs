@@ -66,7 +66,7 @@ public class DebugWindow : KtisisWindow {
 		ConfigManager cfg,
 		LocaleManager locale
 	) : base(
-		"Debug Window"
+		"Debug Window", windowId:"###KtisisDebug"
 	) {
 		this._ctx = ctx;
 		this._gui = gui;

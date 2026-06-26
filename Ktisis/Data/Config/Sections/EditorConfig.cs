@@ -13,6 +13,7 @@ public class EditorConfig {
 	public bool ToggleOpenWindows = true;
 	public bool ConfirmExit = false;
 	public bool UseToolbar = false;
+	public bool OpenTrayOnWorkspaceClose = true;
 	public bool ShowHints = true;
 	
 	public bool ToggleEditorOnSelect = true;
