@@ -60,7 +60,7 @@ public class ToolbarWindow : KtisisWindow {
 		Ktisis.Log.Verbose("Context for toolbar window is stale, closing...");
 		this.Close();
 	}
-
+	
 	public override void Draw() {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
