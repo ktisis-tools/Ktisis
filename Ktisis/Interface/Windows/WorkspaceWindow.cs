@@ -16,6 +16,7 @@ using Ktisis.Interface.Components.Workspace;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Factory.Builders;
 using Ktisis.Services.Data;
 
 namespace Ktisis.Interface.Windows; 
@@ -147,11 +148,23 @@ public class WorkspaceWindow : KtisisWindow {
 	// Scene tree buttons
 
 	protected private void DrawSceneTreeButtons() {
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, this._ctx.Locale.Translate("workspace.create")))
-			this.Interface.OpenSceneCreateMenu();
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleGroup, this._ctx.Locale.Translate("workspace.create_actor")))
+			this._ctx.Scene.Factory.CreateActor().Spawn();
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			this.Interface.OpenActorCreateMenu();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
-			this.Interface.RefreshSceneEntities();
+
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Lightbulb, this._ctx.Locale.Translate("workspace.create_light")))
+			this._ctx.Scene.Factory.CreateLight().Spawn();
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			this.Interface.OpenLightCreateMenu();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.CommentDots, this._ctx.Locale.Translate("workspace.create_overlay")))
+			this._ctx.Scene.Factory.BuildOverlay(OverlayTypes.Talk).Add();
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			this.Interface.OpenOverlayCreateMenu();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
 		// world overlay
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
