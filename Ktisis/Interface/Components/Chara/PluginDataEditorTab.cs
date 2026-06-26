@@ -119,7 +119,7 @@ public class PluginDataEditorTab {
 		ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.customize.profile"));
 		
 		ImGui.SameLine();
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "CustomizePlus", IsLoaded: true })!.OpenMainUi();
 		}
@@ -155,7 +155,7 @@ public class PluginDataEditorTab {
 		ImGui.SameLine();
 		ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.collection"));
 		ImGui.SameLine();
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Penumbra", IsLoaded: true })!.OpenMainUi();
 		}
@@ -200,7 +200,7 @@ public class PluginDataEditorTab {
 			}
 		}
 		ImGui.SameLine();
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - .1f);
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Glamourer", IsLoaded: true })!.OpenMainUi();
 		}
