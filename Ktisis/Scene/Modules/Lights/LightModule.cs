@@ -108,6 +108,10 @@ public class LightModule : SceneModule {
 	private SceneLightTextureDelegate _sceneLightTexture = null!;
 	private unsafe delegate bool SceneLightTextureDelegate(SceneLight* self, ResourceCategory* category, CStringPointer path);
 
+	[Signature("40 53 48 83 EC ?? ?? ?? ?? ?? 4C 8B CA 0F BE 42")]
+	private GetResourceCategoryForPathDelegate _resourceCat = null!;
+	private unsafe delegate ResourceCategory* GetResourceCategoryForPathDelegate(ResourceCategory* category, CStringPointer path);
+
 	public unsafe void UpdateLightObject(LightEntity entity) {
 		if (!this.IsInit || !entity.IsValid) return;
 		var ptr = entity.GetObject();
@@ -128,11 +132,9 @@ public class LightModule : SceneModule {
 		for (var i = 0; i < path.Length; ++i) {
 			texPtr[i] = (byte)path[i];
 		}
+
 		var resourceCat = stackalloc ResourceCategory[1];
-		if (path.Contains("bgcommon"))
-			resourceCat[0] = ResourceCategory.BgCommon;
-		else
-			resourceCat[0] = ResourceCategory.Bg;
+		this._resourceCat(resourceCat, texPtr);
 
 		this._sceneLightTexture(self, resourceCat, texPtr);
 	}
