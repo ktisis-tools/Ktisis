@@ -152,6 +152,7 @@ public class SceneDraw {
 		var isHoveringWorld = false;
 		var drawList = ImGui.GetBackgroundDrawList();
 		var camera = CameraService.GetSceneCamera();
+		var clip = SelectableGui.WindowOverlaps();
 		if (camera == null) return;
 
 		foreach (var obj in this._ctx.Scene.World.Objects) {
@@ -170,7 +171,7 @@ public class SceneDraw {
 			var radius = (6.0f + this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale;
 			var radVec = new Vector2(radius, radius);
 			if (isHoveringWorld
-				|| ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow)
+				|| SelectableGui.CheckPosClip(worldPos2d, clip)
 				|| !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec)
 				|| (this._popup is { IsOpen: true } && this._popup.WorldObj.Equals(obj))
 			)
