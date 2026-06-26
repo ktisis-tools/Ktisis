@@ -23,6 +23,7 @@ public class OffsetConfig {
 	public Dictionary<string, Dictionary<string, Vector3>> BoneOffsets = new();
 
 	public Vector3? GetOffset(BoneNode bone) {
+		if (this.BoneOffsets is null) return null; // this happened somehow
 		if (bone.Pose.Parent is not ActorEntity actor) return null;
 
 		var raceSexId = actor.GetRaceSexId();

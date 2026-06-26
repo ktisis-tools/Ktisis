@@ -60,21 +60,21 @@ public class ConfigManager : IDisposable {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");
 		}
 
-		try {
-			cfg ??= this.CreateDefault();
-			this.GenerateDefaultPresets(cfg);
-			created = true;
-		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to create default configuration:\n{err}");
-			throw;
+		if (cfg is null) {
+			try {
+				cfg = this.CreateDefault();
+				this.GenerateDefaultPresets(cfg);
+				created = true;
+			} catch (Exception err) {
+				Ktisis.Log.Error($"Failed to create default configuration:\n{err}");
+				throw;
+			}
 		}
 
 		this.File = cfg;
 		this._isLoaded = true;
 		if (created)
 			this.Save();
-
-
 
 		timer.Stop();
 		Ktisis.Log.Debug($"Configuration loaded in {timer.Elapsed.TotalMilliseconds:0.00}ms");

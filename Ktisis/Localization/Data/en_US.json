@@ -442,7 +442,7 @@
 		"light": {
 			"headers": {
 				"light": "Light",
-				"shadows": "Shadows"
+				"shadow": "Shadows"
 			},
 			"light": {
 				"reflection": "Enable reflections",
