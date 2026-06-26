@@ -60,7 +60,7 @@ public class ConfigManager : IDisposable {
 			Ktisis.Log.Error($"Failed to load configuration:\n{err}");
 		}
 
-		if (cfg is null)
+		if (cfg is null) {
 			try {
 				cfg = this.CreateDefault();
 				this.GenerateDefaultPresets(cfg);
@@ -69,6 +69,7 @@ public class ConfigManager : IDisposable {
 				Ktisis.Log.Error($"Failed to create default configuration:\n{err}");
 				throw;
 			}
+		}
 
 		this.File = cfg;
 		this._isLoaded = true;
