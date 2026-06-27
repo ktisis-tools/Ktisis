@@ -36,7 +36,6 @@ public class ExpressionManager : IExpressionManager {
 		return state;
 	}
 
-	// Resolves (and caches) the AU catalog matching the actor's race/gender/clan.
 	public ExpressionLibrary GetLibrary(ActorEntity actor) {
 		var key = ResolveKey(actor);
 		if (!this._libraries.TryGetValue(key, out var library)) {
@@ -46,6 +45,7 @@ public class ExpressionManager : IExpressionManager {
 			library = new ExpressionLibrary(catalog);
 			this._libraries[key] = library;
 		}
+
 		return library;
 	}
 
@@ -65,19 +65,29 @@ public class ExpressionManager : IExpressionManager {
 		return $"{raceName}_{genderName}";
 	}
 
-	// FFXIV customize Race byte -> Anamnesis race folder.
 	private static readonly Dictionary<byte, string> RaceFolder = new() {
-		{ 1, "Hyur" }, { 2, "Elezen" }, { 3, "Lalafell" }, { 4, "Miqote" },
-		{ 5, "Roegadyn" }, { 6, "AuRa" }, { 7, "Hrothgar" }, { 8, "Viera" }
+		{ 1, "Hyur" },
+		{ 2, "Elezen" },
+		{ 3, "Lalafell" },
+		{ 4, "Miqote" },
+		{ 5, "Roegadyn" },
+		{ 6, "AuRa" },
+		{ 7, "Hrothgar" },
+		{ 8, "Viera" },
 	};
 
-	// Races whose library splits by clan (others have no clan subfolder).
 	private static readonly HashSet<byte> ClanRaces = new() { 1, 2, 3, 4, 5 };
 
-	// FFXIV customize Tribe byte -> clan folder (only for ClanRaces).
 	private static readonly Dictionary<byte, string> ClanFolder = new() {
-		{ 1, "Midlander" }, { 2, "Highlander" }, { 3, "Wildwood" }, { 4, "Duskwight" },
-		{ 5, "Plainsfolk" }, { 6, "Dunesfolk" }, { 7, "SeekerOfTheSun" }, { 8, "KeeperOfTheMoon" },
-		{ 9, "SeaWolf" }, { 10, "Hellsguard" }
+		{ 1, "Midlander" },
+		{ 2, "Highlander" },
+		{ 3, "Wildwood" },
+		{ 4, "Duskwight" },
+		{ 5, "Plainsfolk" },
+		{ 6, "Dunesfolk" },
+		{ 7, "SeekerOfTheSun" },
+		{ 8, "KeeperOfTheMoon" },
+		{ 9, "SeaWolf" },
+		{ 10, "Hellsguard" },
 	};
 }

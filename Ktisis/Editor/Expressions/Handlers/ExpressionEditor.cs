@@ -281,14 +281,13 @@ public class ExpressionEditor(
 
 	private static float Ratio(float a, float b) => MathF.Abs(b) > 1e-6f ? a / b : 1f;
 
-	// Layers a tweak (from ExtractTweak) back onto a solver parent-local pose.
+	// Layers a tweak from ExtractTweak back onto a solver parent-local pose.
 	private static Transform ApplyTweak(Transform solver, Transform tweak) => new(
 		solver.Position + tweak.Position,
 		Quaternion.Normalize(solver.Rotation * tweak.Rotation),
 		solver.Scale * tweak.Scale);
 
-	// Converts a head-relative rotation/position back to a model-space transform via
-	// the head's current model transform.
+	// Converts a head-relative rotation/position back to a model-space transform
 	private static Transform HeadToModel(Transform head, Quaternion relRot, Vector3 relPos, Vector3 scale) {
 		var modelRot = Quaternion.Normalize(head.Rotation * relRot);
 		var modelPos = head.Position + Vector3.Transform(relPos, head.Rotation);
@@ -297,9 +296,6 @@ public class ExpressionEditor(
 
 	private static bool IsIdentity(Quaternion q) => MathF.Abs(q.W) > 0.999995f;
 
-	// Composes the weighted AU deltas for a single bone, in head-relative space.
-	// Rotation: slerp-from-identity scaled by weight, multiplied in catalog order.
-	// Position: linear sum of weighted deltas (only for AUs that opt in).
 	private (Quaternion deltaRot, Vector3 posDelta) ComposeDelta(
 		ActionUnitCatalog catalog,
 		string name,
