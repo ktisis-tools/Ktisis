@@ -3,14 +3,6 @@ using System.Linq;
 
 namespace Ktisis.Editor.Expressions.Data;
 
-public class ActionUnitGroup {
-	public string Name { get; set; } = string.Empty;
-	public List<ActionUnit> Units { get; set; } = new();
-}
-
-// The ordered catalog of Action Units. Order is significant: AU deltas are
-// composed in catalog order (see ExpressionEditor.ApplyBlend), so the on-disk
-// ordering is the authoritative blend order.
 public class ActionUnitCatalog {
 	public List<ActionUnitGroup> Groups { get; set; } = new();
 

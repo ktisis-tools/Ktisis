@@ -1,5 +1,5 @@
 using Dalamud.Bindings.ImGui;
-
+using Dalamud.Interface.Utility.Raii;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Posing;
 using Ktisis.Interface.Editor.Properties.Types;
@@ -9,8 +9,6 @@ using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Editor.Properties;
 
-// Adds the "Expressions" (FACS Action Unit) section to the Object Editor, sitting
-// directly under the Pose section.
 public class ExpressionPropertyList : ObjectPropertyList {
 	private readonly IEditorContext _ctx;
 	private readonly ExpressionEditorPanel _panel;
@@ -31,15 +29,16 @@ public class ExpressionPropertyList : ObjectPropertyList {
 	}
 
 	private void Draw(ActorEntity actor) {
-		// The blend writes to the frozen model pose, so it only sticks while posing
-		// is enabled; capturing a neutral off a live animation would be a bad baseline.
-		if (!this._ctx.Posing.IsEnabled) {
+		var isEnabled = !this._ctx.Posing.IsEnabled;
+		
+		if (isEnabled) {
 			ImGui.TextDisabled("Enable posing to edit facial expressions.");
-			return;
 		}
+		
+		using var _ = ImRaii.Disabled(isEnabled);
 
-		this._panel.Editor = this._ctx.Expressions.GetEditor(actor);
-		this._panel.Draw();
+		//TODO: Better UI
+		this._panel.Draw(this._ctx.Expressions.GetEditor(actor));
 	}
 
 	private static ActorEntity? ResolveActor(SceneEntity entity) => entity switch {

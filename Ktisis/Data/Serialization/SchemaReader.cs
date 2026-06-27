@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Data.Config.Props;
@@ -34,14 +36,12 @@ public static class SchemaReader {
 		return PropsReader.ReadStream(stream);
 	}
 
-	// Action Units (facial expressions), per race+gender+clan variant key
-	// (e.g. "Miqote_Feminine_SeekerOfTheSun"). Returns null if no catalog is
-	// embedded for that key.
-
+	//Facial Action Units
+	
 	public static ActionUnitCatalog? ReadActionUnits(string key) {
 		try {
 			using var stream = ResourceUtil.GetManifestResource($"Data.Library.Expressions.{key}.json");
-			return ActionUnitReader.ReadStream(stream);
+			return JsonSerializer.Deserialize<ActionUnitCatalog>(stream, new JsonSerializerOptions());
 		} catch (System.IO.FileNotFoundException) {
 			return null;
 		}
