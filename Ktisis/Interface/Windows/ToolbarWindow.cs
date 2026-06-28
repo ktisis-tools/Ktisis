@@ -7,6 +7,7 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Style;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Utility.Numerics;
 
 using GLib.Widgets;
 
@@ -20,6 +21,7 @@ using Ktisis.Interface.Windows.ToolbarModules;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules;
+using ImGuiHelpers = Dalamud.Interface.Utility.ImGuiHelpers;
 
 namespace Ktisis.Interface.Windows;
 
@@ -32,25 +34,26 @@ public class ToolbarWindow : KtisisWindow {
 	private KtisisWindow? _subWindow;
 	private readonly WorkspaceState _workspace;
 	private IEditorInterface Interface => this._ctx.Interface;
+	private readonly ImRaii.StyleDisposable WindowStyle = new();
 
 	private List<WindowButtons> _buttons;
 	public ToolbarWindow(
 		IEditorContext ctx,
 		GuiManager gui
-	) : base("Ktisis Toolbar") {
+	) : base("toolbar.title", windowId:"###KtisisToolbar") {
 		this._ctx = ctx;
 		this._gui = gui;
 		this._workspace = new WorkspaceState(ctx);
 		this.Flags = this.Flags | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
 		this._buttons = new() {
-			new(this.DrawWorkspaceWindow, FontAwesomeIcon.PersonThroughWindow, "Workspace", typeof(Workspace)),
-			new(this.DrawObjectWindow, FontAwesomeIcon.ArrowsAlt, "Object Editor", typeof(ObjectWindow)),
-			new(this.DrawActorWindow, FontAwesomeIcon.Walking, "Actor Editor", typeof(ActorWindow)),
-			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, "Pose View", typeof(PosingWindow)),
-			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, "Environment Editor", typeof(Env)),
-			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, "Camera Editor", typeof(CameraWindow)),
+			new(this.DrawWorkspaceWindow, FontAwesomeIcon.PersonThroughWindow, Ktisis.Locale.Translate("toolbar.buttons.workspace"), typeof(Workspace)),
+			new(this.DrawObjectWindow, FontAwesomeIcon.ArrowsAlt, Ktisis.Locale.Translate("toolbar.buttons.object"), typeof(ObjectWindow)),
+			new(this.DrawActorWindow, FontAwesomeIcon.Walking, Ktisis.Locale.Translate("toolbar.buttons.actor"), typeof(ActorWindow)),
+			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, Ktisis.Locale.Translate("toolbar.buttons.posing"), typeof(PosingWindow)),
+			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, Ktisis.Locale.Translate("toolbar.buttons.env"), typeof(Env)),
+			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, Ktisis.Locale.Translate("toolbar.buttons.camera"), typeof(CameraWindow)),
 			new(this.DrawSceneWindow, FontAwesomeIcon.UsersLine, "Scene Editor", typeof(SceneWindow)),
-			new(this.DrawConfigWindow, FontAwesomeIcon.Cogs, "Settings", typeof(ConfigWindow)),
+			new(this.DrawConfigWindow, FontAwesomeIcon.Cogs, Ktisis.Locale.Translate("toolbar.buttons.config"), typeof(ConfigWindow)),
 		};
 	}
 
@@ -59,6 +62,27 @@ public class ToolbarWindow : KtisisWindow {
 		if (this._ctx.IsValid) return;
 		Ktisis.Log.Verbose("Context for toolbar window is stale, closing...");
 		this.Close();
+	}
+	public override void OnOpen() {
+		this._ctx.Plugin.Gui.Get<TrayIcon>()?.Close();
+		base.OnOpen();
+	}
+
+	public override void PreDraw() {
+		var style = ImGui.GetStyle();
+
+		// to prevent auto-resize pain, override custom style vars to dalamud defaults if they exceed certain bounds
+		if (style.ItemSpacing.X < 8)
+			this.WindowStyle.Push(ImGuiStyleVar.ItemSpacing, StyleModelV1.DalamudClassic.ItemSpacing.WithY(style.ItemSpacing.Y));
+		if (style.FramePadding.X > 4)
+			this.WindowStyle.Push(ImGuiStyleVar.FramePadding, StyleModelV1.DalamudClassic.FramePadding.WithY(style.FramePadding.Y));
+		if (style.CellPadding.X > 4)
+			this.WindowStyle.Push(ImGuiStyleVar.CellPadding, StyleModelV1.DalamudClassic.CellPadding.WithY(style.CellPadding.Y));
+
+		// force align button text
+		this.WindowStyle.Push(ImGuiStyleVar.ButtonTextAlign, StyleModelV1.DalamudClassic.ButtonTextAlign);
+
+		base.PreDraw();
 	}
 
 	public override void Draw() {
@@ -70,7 +94,7 @@ public class ToolbarWindow : KtisisWindow {
 
 		// Try to center it?
 
-		var offset = ((ImGuiP.GetCurrentWindow().ContentSize.X - (this._buttons.Count * (48 + spacing)) - (2 * spacing) - Buttons.CalcSize()) / 2);
+		var offset = ((ImGuiP.GetCurrentWindow().ContentSize.X - (this._buttons.Count * ((48 * ImGuiHelpers.GlobalScale)  + spacing)) - (2 * spacing) - Buttons.CalcSize()) / 2);
 		ImGui.SetCursorPosX(offset);
 
 		// Subwindow Buttons
@@ -86,13 +110,13 @@ public class ToolbarWindow : KtisisWindow {
 				color = *ImGui.GetStyleColorVec4(bgCol);
 			}
 			using var _ = ImRaii.PushColor(ImGuiCol.Button, color);
-			if (Buttons.IconButtonTooltip(button.Icon, button.TooltipText, new Vector2(48, 48)))
+			if (Buttons.IconButtonTooltip(button.Icon, button.TooltipText, new Vector2(48, 48) * ImGuiHelpers.GlobalScale))
 				button.Window();
 			ImGui.SameLine(0, spacing * 2);
 		}
 		ImGui.SameLine();
 		using (ImRaii.Group()) {
-			var size = (48 - spacing) / 2;
+			var size = ((48 * ImGuiHelpers.GlobalScale) - spacing) / 2;
 			using (var _ = ImRaii.Disabled(!this._ctx.Actions.History.CanUndo))
 				if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepBackward, this._ctx.Locale.Translate("actions.History_Undo"), new Vector2(size, size)))
 					this._ctx.Actions.History.Undo();
@@ -108,6 +132,11 @@ public class ToolbarWindow : KtisisWindow {
 			this._subWindow.Draw();
 
 		}
+	}
+
+	public override void PostDraw() {
+		base.PostDraw();
+		this.WindowStyle.Dispose();
 	}
 
 	internal void DrawWorkspaceWindow() => this.SetSubWindow<Workspace>();
@@ -163,6 +192,9 @@ public class ToolbarWindow : KtisisWindow {
 
 	public override void OnClose() {
 		base.OnClose();
+		if(this._ctx.Config.Editor.OpenTrayOnWorkspaceClose)
+			this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
 		this._gui.Remove(this);
 	}
+	
 }

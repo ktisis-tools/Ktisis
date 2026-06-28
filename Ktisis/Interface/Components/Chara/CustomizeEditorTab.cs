@@ -8,6 +8,7 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Plugin.Services;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
@@ -100,7 +101,7 @@ public class CustomizeEditorTab {
 		var size = ImGui.GetContentRegionAvail();
 		
 		if (this._context.Config.Editor.UseToolbar)
-			size = new Vector2(MathF.Max(size.X * SideRatio, 240.0f),420);
+			size = new Vector2(MathF.Max(size.X * SideRatio, 240.0f),420) * ImGuiHelpers.GlobalScale;
 		else
 			size.X = MathF.Max(size.X * SideRatio, 240.0f);
 
@@ -145,7 +146,7 @@ public class CustomizeEditorTab {
 	}
 
 	private void DrawTribeSelect(Tribe current) {
-		using var _combo = ImRaii.Combo("Body", current.ToString());
+		using var _combo = ImRaii.Combo(Ktisis.Locale.Translate("common.chara_parts.body"), current.ToString());
 		if (!_combo.Success) return;
 		
 		foreach (var tribe in Enum.GetValues<Tribe>()) {
@@ -201,14 +202,14 @@ public class CustomizeEditorTab {
 		
 		var eyes = this.Editor.GetCustomization(CustomizeIndex.EyeShape);
 		var isSmall = (eyes & 0x80) != 0;
-		if (ImGui.Checkbox("Small Iris", ref isSmall))
+		if (ImGui.Checkbox(Ktisis.Locale.Translate("chara_edit.customize.iris"), ref isSmall))
 			this.Editor.SetCustomization(CustomizeIndex.EyeShape, (byte)(eyes ^ 0x80));
 	}
 	
 	// Main frame
 
 	private void DrawMainFrame(MakeTypeRace data) {
-		using var _frame = ImRaii.Child("##CustomizeMainFrame", (this._context.Config.Editor.UseToolbar? new Vector2(300, 420) :ImGui.GetContentRegionAvail()));
+		using var _frame = ImRaii.Child("##CustomizeMainFrame", (this._context.Config.Editor.UseToolbar? new Vector2(300, 420) * ImGuiHelpers.GlobalScale :ImGui.GetContentRegionAvail()));
 		if (!_frame.Success) return;
 
 		ImGui.Spacing();
@@ -217,16 +218,16 @@ public class CustomizeEditorTab {
 		this.DrawFacePaintOptions(data);
 		ImGui.Spacing();
 
-		if (ImGui.CollapsingHeader("Primary Features"))
+		if (ImGui.CollapsingHeader(Ktisis.Locale.Translate("chara_edit.customize.primary")))
 			this.DrawFeatIconParams(data);
 		
 		ImGui.Spacing();
 
-		var faceFeatLabel = "Facial Features";
+		var faceFeatLabel = Ktisis.Locale.Translate("chara_edit.customize.face");
 		var faceFeat = data.GetFeature(CustomizeIndex.FaceFeatures);
 		if (faceFeat != null && HasUniqueFeature(data.Tribe))
 			faceFeatLabel += $" / {faceFeat.Name}";
-		faceFeatLabel += " / Tattoos";
+		faceFeatLabel += $" / {Ktisis.Locale.Translate("chara_edit.customize.face_tat")}";
 		
 		if (ImGui.CollapsingHeader(faceFeatLabel))
 			this.DrawFacialFeatures(data);
@@ -332,7 +333,7 @@ public class CustomizeEditorTab {
 		
 		var facePaint = this.Editor.GetCustomization(CustomizeIndex.Facepaint);
 		var isFlipped = (facePaint & 0x80) != 0;
-		if (ImGui.Checkbox("Flip Face Paint", ref isFlipped))
+		if (ImGui.Checkbox(Ktisis.Locale.Translate("chara_edit.customize.facepaint_flip"), ref isFlipped))
 			this.Editor.SetCustomization(CustomizeIndex.Facepaint, (byte)(facePaint ^ 0x80));
 	}
 	
@@ -452,7 +453,7 @@ public class CustomizeEditorTab {
 		using var _disable = ImRaii.Disabled(!hasHighlights);
 		this.DrawColorButton(CustomizeIndex.HairColor2, colors);
 		ImGui.SameLine(0, style.ItemInnerSpacing.X);
-		ImGui.Text("Highlights");
+		ImGui.Text(Ktisis.Locale.Translate("chara_edit.customize.highlights"));
 	}
 
 	private void DrawEyeColorSwitch() {
@@ -485,7 +486,7 @@ public class CustomizeEditorTab {
 		this.DrawColorButton(isHetero ? CustomizeIndex.EyeColor2 : CustomizeIndex.EyeColor, colors);
 
 		ImGui.SameLine(0, style.ItemInnerSpacing.X);
-		ImGui.Text("Eye Color");
+		ImGui.Text(Ktisis.Locale.Translate("chara_edit.customize.eye_color"));
 	}
 
 	private void DrawLipColorSwitch() {
@@ -508,6 +509,6 @@ public class CustomizeEditorTab {
 			this.DrawColorButton(CustomizeIndex.LipColor, colors);
 
 		ImGui.SameLine(0, style.ItemInnerSpacing.X);
-		ImGui.Text("Lipstick");
+		ImGui.Text(Ktisis.Locale.Translate("chara_edit.customize.lipstick"));
 	}
 }

@@ -57,7 +57,12 @@ public class SceneDraw {
 		if (this._ctx.ShowWorldObjects)
 			this.DrawWorldObjects();
 	}
-	
+
+	public void DrawRefOverlay() {
+		foreach (var image in this._ctx.Scene.Children.OfType<ReferenceImage>())
+			this._refs.DrawInstance(image);
+	}
+
 	private void DrawEntities(ISelectableFrame frame, IEnumerable<SceneEntity> entities) {
 		foreach (var entity in entities) {
 			switch (entity) {
@@ -69,9 +74,6 @@ public class SceneDraw {
 					if (position != null)
 						frame.AddItem(entity, position.Value, this._ctx);
 					break;
-				case ReferenceImage image:
-					this._refs.DrawInstance(image);
-					continue;
 			}
 
 			this.DrawEntities(frame, entity.Children);
@@ -81,7 +83,7 @@ public class SceneDraw {
 	// Skeletons
 
 	private unsafe void DrawSkeleton(ISelectableFrame frame, EntityPose pose) {
-		if (!pose.ShouldDraw()) return;
+		if (!pose.ShouldDraw() && !this.Config.BulkVisOverride) return;
 
 		var skeleton = pose.GetSkeleton();
 		if (skeleton == null || skeleton->PartialSkeletons == null) return;
@@ -102,10 +104,10 @@ public class SceneDraw {
 			var boneCt = hkaSkeleton->Bones.Length;
 			for (var i = 0; i < boneCt; i++) {
 				var node = pose.GetBoneFromMap(index, i);
-				if (node?.Visible != true) continue;
+				if (node?.Visible != true && !this.Config.BulkVisOverride) continue;
 
-				var transform = node.CalcTransformOverlay();
-				if (transform == null) continue;
+				var transform = node?.CalcTransformOverlay();
+				if (transform == null || node == null) continue;
 				
 				frame.AddItem(node, transform.Position, this._ctx);
 				
@@ -118,9 +120,9 @@ public class SceneDraw {
 					if (hkaSkeleton->ParentIndices[c] != i) continue;
 
 					var bone = pose.GetBoneFromMap(index, c);
-					if (bone?.Visible != true) continue;
+					if (bone?.Visible != true && !this.Config.BulkVisOverride) continue;
 
-					var lineTo = bone.CalcTransformOverlay();
+					var lineTo = bone?.CalcTransformOverlay();
 					if (lineTo == null) continue;
 
 					var display = this._ctx.Config.GetEntityDisplay(node);
@@ -150,6 +152,7 @@ public class SceneDraw {
 		var isHoveringWorld = false;
 		var drawList = ImGui.GetBackgroundDrawList();
 		var camera = CameraService.GetSceneCamera();
+		var clip = SelectableGui.WindowOverlaps();
 		if (camera == null) return;
 
 		foreach (var obj in this._ctx.Scene.World.Objects) {
@@ -168,7 +171,7 @@ public class SceneDraw {
 			var radius = (6.0f + this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale;
 			var radVec = new Vector2(radius, radius);
 			if (isHoveringWorld
-				|| ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow)
+				|| SelectableGui.CheckPosClip(worldPos2d, clip)
 				|| !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec)
 				|| (this._popup is { IsOpen: true } && this._popup.WorldObj.Equals(obj))
 			)

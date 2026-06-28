@@ -12,6 +12,7 @@ using Ktisis.Actions.Binds;
 using Ktisis.Actions.Types;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
+using Ktisis.Core.Types;
 using Ktisis.Data.Config.Actions;
 using Ktisis.Localization;
 
@@ -48,7 +49,7 @@ public class ActionKeybindEditor {
 
 	private readonly static Vector2 CellPadding = new(8, 8);
 
-	public void Draw(string? pattern = null) {
+	public void Draw(string? pattern = null, bool allowToolbar = false) {
 		// TODO: allow sorting that isnt alphabetical
 		using var pad = ImRaii.PushStyle(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 		
@@ -56,10 +57,15 @@ public class ActionKeybindEditor {
 		var actions = this.Actions;
 		if (pattern is not null) {
 			var regex = new Regex(pattern);
-			actions = actions.Where(x => regex.IsMatch(x.GetName().ToLower())).ToList();
+
+			var filtered = actions.Where(x => regex.IsMatch(x.GetName().ToLower()));
+			if (!allowToolbar)
+				filtered = filtered.Where(x => !x.GetName().StartsWith("Toolbar")).ToList();
+
+			actions = filtered.ToList();
 		}
 		
-		using var frame = ImRaii.Child("##CfgStyleFrame", new Vector2(ImGui.GetContentRegionAvail().X, actions.Count * (ImGui.GetTextLineHeightWithSpacing() + CellPadding.Y*2 )), false);
+		using var frame = ImRaii.Child("##CfgStyleFrame", new Vector2(ImGui.GetContentRegionAvail().X - 0.1f, actions.Count * (ImGui.GetTextLineHeightWithSpacing() + CellPadding.Y*2 )), false);
 		if (!frame.Success) return;
 
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, Vector2.Zero);
@@ -184,5 +190,17 @@ public class ActionKeybindEditor {
 		var text = textCombo.GetShortcutString();
 		ImGui.InputText("##EditKeybind", ref text, 256, ImGuiInputTextFlags.ReadOnly & ~ImGuiInputTextFlags.AutoSelectAll);
 		ImGui.SetKeyboardFocusHere(-1);
+	}
+
+	internal void ResetBinds(string pattern, bool allowToolbar = false) {
+		var regex = new Regex(pattern);
+
+		var actions = this.Actions.Where(x => regex.IsMatch(x.GetName().ToLower()));
+		if (!allowToolbar)
+			actions = actions.Where(x => !x.GetName().StartsWith("Toolbar"));
+
+		foreach (var key in actions) {
+			key.GetKeybind().Combo = key.BindInfo.Default.Combo;
+		}
 	}
 }

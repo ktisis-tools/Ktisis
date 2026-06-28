@@ -35,9 +35,9 @@ public class FileSelect<T> where T : notnull {
 	// Draw UI
 
 	public void Draw() {
-		const string DefaultText = "Select a file to open..."; // TODO: Localize
+		string defaultText = Ktisis.Locale.Translate("file.select") ;
 		
-		var path = this.Selected?.Name ?? DefaultText;
+		var path = this.Selected?.Name ?? defaultText;
 		ImGui.InputText("##FileSelectPath", ref path, 256, ImGuiInputTextFlags.ReadOnly);
 		
 		ImGui.SameLine();

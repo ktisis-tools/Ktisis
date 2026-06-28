@@ -183,6 +183,21 @@ public class EditorInterface : IEditorInterface {
 		this._gui.AddPopup(menu.Create()).Open();
 	}
 
+	public void OpenActorCreateMenu() {
+		var menu = new SceneCreateMenuBuilder(this._ctx);
+		this._gui.AddPopup(menu.CreateActor()).Open();
+	}
+
+	public void OpenLightCreateMenu() {
+		var menu = new SceneCreateMenuBuilder(this._ctx);
+		this._gui.AddPopup(menu.CreateLight()).Open();
+	}
+
+	public void OpenOverlayCreateMenu() {
+		var menu = new SceneCreateMenuBuilder(this._ctx);
+		this._gui.AddPopup(menu.CreateOverlay()).Open();
+	}
+
 	public void OpenSceneEntityMenu(SceneEntity entity) {
 		var menu = new SceneEntityMenuBuilder(this._ctx, entity);
 		this._gui.AddPopup(menu.Create()).Open();
@@ -289,26 +304,26 @@ public class EditorInterface : IEditorInterface {
 	// Import/export dialogs
 	
 	private readonly static FileDialogOptions CharaFileOptions = new() {
-		Filters = "Character Files{.chara}",
+		Filters = Ktisis.Locale.Translate("file.dialog.chara.filter") + "{.chara}",
 		Extension = ".chara"
 	};
 
 	private readonly static FileDialogOptions ExportPoseFileOptions = new() {
-		Filters = "Pose Files{.pose,.cmp}",
+		Filters = Ktisis.Locale.Translate("file.dialog.pose.filter") + "{.pose,.cmp}",
 		Extension = ".pose"
 	};
 
 	private readonly static FileDialogOptions LightFileOptions = new() {
-		Filters = "Light Files{.ktlight}",
+		Filters = Ktisis.Locale.Translate("file.dialog.light.filter") + "{.ktlight}",
 		Extension = ".ktlight"
   };
   
 	private readonly static FileDialogOptions ImportPoseFileOptions = new() {
-		Filters = "Pose Files{.pose,.cmp}"
+		Filters = Ktisis.Locale.Translate("file.dialog.pose.filter") + "{.pose,.cmp}"
 	};
 
 	private readonly static FileDialogOptions McdfFileOptions = new() {
-		Filters = "MCDF Files{.mcdf}",
+		Filters = Ktisis.Locale.Translate("file.dialog.mcdf.filter") + "{.mcdf}",
 		Extension = ".mcdf"
 	};
 	private readonly static FileDialogOptions SceneFileOptions = new() {
@@ -317,37 +332,37 @@ public class EditorInterface : IEditorInterface {
 	};
 	
 	public void OpenCharaFile(Action<string, CharaFile> handler)
-		=> this._gui.FileDialogs.OpenFile("Open Chara File", handler, CharaFileOptions);
+		=> this._gui.FileDialogs.OpenFile(Ktisis.Locale.Translate("file.dialog.chara.load"), handler, CharaFileOptions);
 
 	public void OpenPoseFile(Action<string, PoseFile> handler) {
-		this._gui.FileDialogs.OpenFile<PoseFile>("Open Pose File", (path, file) => {
+		this._gui.FileDialogs.OpenFile<PoseFile>(Ktisis.Locale.Translate("file.dialog.pose.load"), (path, file) => {
 			file.ConvertLegacyBones();
 			handler.Invoke(path, file);
 		}, ImportPoseFileOptions, DialogType.Pose);
 	}
 	
 	public void OpenMcdfFile(Action<string> handler) {
-		this._gui.FileDialogs.OpenFile("Open MCDF File", handler, McdfFileOptions);
+		this._gui.FileDialogs.OpenFile(Ktisis.Locale.Translate("file.dialog.mcdf.load"), handler, McdfFileOptions);
 	}
 	public void OpenSceneFile(Action<string> handler) {
 		this._gui.FileDialogs.OpenFile("Open Scene File", handler, SceneFileOptions);
 	}
 
 	public void OpenLightFile(Action<string, LightFile> handler)
-		=> this._gui.FileDialogs.OpenFile("Open Light File", handler, LightFileOptions);
+		=> this._gui.FileDialogs.OpenFile(Ktisis.Locale.Translate("file.dialog.light.load"), handler, LightFileOptions);
 
 	public void OpenReferenceImages(Action<string> handler) {
-		this._gui.FileDialogs.OpenImage("image", handler);
+		this._gui.FileDialogs.OpenImage(Ktisis.Locale.Translate("file.dialog.image.load"), handler);
 	}
 
 	public void ExportCharaFile(CharaFile file) {
 		var options = CharaFileOptions;
 		options.DefaultFileName = file.Nickname;
-		this._gui.FileDialogs.SaveFile("Export Chara File", file, options);
+		this._gui.FileDialogs.SaveFile(Ktisis.Locale.Translate("file.dialog.chara.save"), file, options);
 	}
 	
 	public void ExportPoseFile(PoseFile file)
-		=> this._gui.FileDialogs.SaveFile("Export Pose File", file, ExportPoseFileOptions);
+		=> this._gui.FileDialogs.SaveFile(Ktisis.Locale.Translate("file.dialog.pose.save"), file, ExportPoseFileOptions);
 
 	public void ExportSceneFile(SceneFile file) {
 		var options = SceneFileOptions;
@@ -357,6 +372,6 @@ public class EditorInterface : IEditorInterface {
 	public void ExportLightFile(LightFile file) {
 		var options = LightFileOptions;
 		options.DefaultFileName = file.Nickname;
-		this._gui.FileDialogs.SaveFile("Export Light File", file, options);
+		this._gui.FileDialogs.SaveFile(Ktisis.Locale.Translate("file.dialog.light.save"), file, options);
 	}
 }

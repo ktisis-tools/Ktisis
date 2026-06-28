@@ -12,6 +12,7 @@ using Ktisis.Data.Config;
 using Ktisis.Editor.Context;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Ipc;
+using Ktisis.Localization;
 using Ktisis.Services.Plugin;
 
 namespace Ktisis;
@@ -20,6 +21,7 @@ public sealed class Ktisis : IDalamudPlugin {
 	public static LoggingService Log { get; private set; } = null!;
 	public static INotificationManager Notification { get; private set; } = null!;
 
+	public static LocaleManager Locale { get; private set; } = null!;
 
 	private readonly ServiceProvider _services;
 
@@ -30,11 +32,13 @@ public sealed class Ktisis : IDalamudPlugin {
 	) {
 		Log = new LoggingService(logger);
 		Notification = notification;
+		Locale = new LocaleManager(dpi);
 		this._services = new ServiceComposer()
 			.AddFromAttributes()
 			.AddDalamudServices(dpi)
 			.AddSingleton(Log)
 			.AddSingleton(notification)
+			.AddSingleton(Locale)
 			.BuildProvider();
 
 		this._services.GetRequiredService<PluginContext>()

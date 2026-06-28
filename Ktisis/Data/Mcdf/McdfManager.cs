@@ -205,31 +205,34 @@ public sealed class McdfManager : IDisposable {
 		await this.RedrawAndWait(actor.Actor);
 
 		unsafe {
-			//Hair
-			var model = actor.GetHuman()->Models[10];
-			actor.GetHuman()->Models[10] = null;
+			var human = actor.GetHuman();
+			if (human != null) {
+				// Hair
+				var model = human->Models[10];
+				if (model != null) {
+					human->Models[10] = null;
+					model->ModelResourceHandle->DecRef();
+					model->RefCount = 0;
+				}
 
-			model->ModelResourceHandle->DecRef();
-			model->RefCount = 0;
-			
-			//Face
-			model = actor.GetHuman()->Models[11];
-			actor.GetHuman()->Models[11] = null;
-			
-			model->ModelResourceHandle->DecRef();
-			model->RefCount = 0;
-			
-			//Tail
-			model = actor.GetHuman()->Models[12];
-			if (model != null) {    //can be non-null for tail-less races
-				actor.GetHuman()->Models[12] = null;
-				model->ModelResourceHandle->DecRef();
-				model->RefCount = 0;
+				// Face
+				model = human->Models[11];
+				if (model != null) {
+					human->Models[11] = null;
+					model->ModelResourceHandle->DecRef();
+					model->RefCount = 0;
+				}
+
+				// Tail
+				model = human->Models[12];
+				if (model != null) {
+					human->Models[12] = null;
+					model->ModelResourceHandle->DecRef();
+					model->RefCount = 0;
+				}
 			}
-
-			
-
 		}
+
 		ipc.RemoveTemporaryMod(collectionId);
 	}
 

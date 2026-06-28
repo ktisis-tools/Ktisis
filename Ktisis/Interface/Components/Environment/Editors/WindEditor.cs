@@ -9,18 +9,18 @@ namespace Ktisis.Interface.Components.Environment.Editors;
 
 [Transient]
 public class WindEditor : EditorBase {
-	public override string Name { get; } = "Wind";
+	public override string Name => Ktisis.Locale.Translate("env_edit.wind.title");
 
 	public override bool IsActivated(EnvOverride flags)
 		=> flags.HasFlag(EnvOverride.Wind);
 	
 	public override void Draw(IEnvModule module, ref EnvState state) {
-		this.DrawToggleCheckbox("Enable", EnvOverride.Wind, module);
+		this.DrawToggleCheckbox(Ktisis.Locale.Translate("env_edit.enable"), EnvOverride.Wind, module);
 		using var _ = this.Disable(module);
 		
-		this.DrawAngle("Direction", ref state.Wind.Direction, 0.0f, 360.0f);
-		this.DrawAngle("Angle", ref state.Wind.Angle, 0.0f, 180.0f);
-		ImGui.SliderFloat("Speed", ref state.Wind.Speed, 0.0f, 1.5f);
+		this.DrawAngle(Ktisis.Locale.Translate("env_edit.wind.direction"), ref state.Wind.Direction, 0.0f, 360.0f);
+		this.DrawAngle(Ktisis.Locale.Translate("env_edit.wind.angle"), ref state.Wind.Angle, 0.0f, 180.0f);
+		ImGui.SliderFloat(Ktisis.Locale.Translate("env_edit.wind.speed"), ref state.Wind.Speed, 0.0f, 1.5f);
 	}
 
 	private void DrawAngle(string label, ref float angle, float min, float max) {

@@ -15,12 +15,12 @@ public class LocaleData {
 		this.MetaData = metaData;
 	}
 
-	public string Translate(string key, Dictionary<string, string>? parameters = null) {
+	public string? Translate(string key, Dictionary<string, string>? parameters = null) {
 		/* TODO: Implementing some form of fallback system might be good here. */
 		if(!this._translationData.TryGetValue(key, out string? translationString)) {
 			if(this.warnedKeys.Add(key))
 				Ktisis.Log.Warning("Unassigned translation key '{0}' for locale '{1}'", key, this.MetaData.TechnicalName);
-			return key;
+			return null;
 		}
 		return this.ReplaceParameters(key, translationString, parameters);
 	}

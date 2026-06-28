@@ -20,8 +20,9 @@ public abstract class EntityEditWindow<T> : KtisisWindow where T : SceneEntity {
 	protected EntityEditWindow(
 		string name,
 		IEditorContext ctx,
-		ImGuiWindowFlags flags = ImGuiWindowFlags.None
-	) : base(name, flags) {
+		ImGuiWindowFlags flags = ImGuiWindowFlags.None,
+		string windowId = ""
+	) : base(name, flags, windowId) {
 		this.Context = ctx;
 	}
 	
