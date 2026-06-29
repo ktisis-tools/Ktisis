@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok.Animation.Rig;
 using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
 
+using Ktisis.Data.Json;
 using Ktisis.Editor.Context;
 using Ktisis.Interop.Hooking;
 using Ktisis.Interop.Ipc;
@@ -33,11 +34,12 @@ public sealed class PosingModule : HookModule {
 		PosingManager manager,
 		ActorService actors,
 		ContextManager contextManager,
-		IDalamudPluginInterface dpi
+		IDalamudPluginInterface dpi,
+		JsonFileSerializer fileSerializer
 	) : base(hook) {
 		this.Manager = manager;
 		this._actors = actors;
-		this._ipc = new IpcProvider(contextManager, dpi);
+		this._ipc = new IpcProvider(contextManager, dpi, fileSerializer);
 	}
 	
 	// Module interface

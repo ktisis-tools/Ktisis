@@ -11,6 +11,7 @@ using HandlerDelegate = Dalamud.Game.Command.IReadOnlyCommandInfo.HandlerDelegat
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context;
 using Ktisis.Interface;
+using Ktisis.Interface.Windows;
 
 namespace Ktisis.Services.Plugin;
 
@@ -45,8 +46,9 @@ public class CommandService : IDisposable {
 
     public void RegisterHandlers() {
         this.BuildCommand("/ktisis", this.OnMainCommand)
-            .SetMessage("Toggle the main Ktisis window.")
-            .Create();
+            // .SetMessage(Ktisis.Locale.Translate("misc.command_desc"))
+			.SetMessage("Toggle the main Ktisis window.")
+			.Create();
     }
 
     private void Add(string name, CommandInfo info) {
@@ -95,6 +97,7 @@ public class CommandService : IDisposable {
 			return;
 		}
 
+		ctx?.Plugin.Gui.Get<TrayIcon>()?.Close();
         ctx?.Interface.ToggleWorkspaceWindow();
     }
 

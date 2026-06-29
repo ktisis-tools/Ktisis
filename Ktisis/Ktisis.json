@@ -6,7 +6,7 @@
 	"Description": "A multifaceted scene editor and posing tool for GPose.",
 	"RepoUrl": "https://github.com/ktisis-tools/Ktisis",
 	"IconUrl": "https://github.com/ktisis-tools/Ktisis/raw/main/icon.png",
-	"AssemblyVersion": "0.3.19.0",
+	"AssemblyVersion": "0.3.19.3",
 	"ApplicableVersion": "any",
 	"DalamudApiLevel": 15,
 	"TestingDalamudApiLevel": 15,

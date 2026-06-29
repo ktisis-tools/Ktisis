@@ -62,6 +62,8 @@ public class OverlayWindow : KtisisWindow {
 	// Main draw function
 
 	public override void Draw() {
+		this._sceneDraw.DrawRefOverlay(); // draw ref images regardless of overall Overlay visibility
+
 		if (!this._ctx.Config.Overlay.Visible) {
 			this.CheckResetGizmo();
 			return;

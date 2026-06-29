@@ -34,7 +34,6 @@ public class ObjectWindow : KtisisWindow {
 
 	private readonly TransformTable _table;
 	private readonly PropertyEditor _propEditor;
-	private const string WindowId = "KtisisObjectEditor";
 
 	public ObjectWindow(
 		IEditorContext ctx,
@@ -43,7 +42,7 @@ public class ObjectWindow : KtisisWindow {
 		TransformTable table,
 		PropertyEditor propEditor
 	) : base(
-		$"Object Editor###{WindowId}"
+		"object_edit.title", windowId:"###KtisisObjectEditor"
 	) {
 		this._ctx = ctx;
 		this._gizmo = gizmo;
@@ -119,7 +118,7 @@ public class ObjectWindow : KtisisWindow {
 	private void DrawProperties(ITransformTarget? target) {
 		var selected = this._ctx.Selection.GetFirstSelected() ?? target?.Primary;
 		if (selected != null) {
-			this.WindowName = $"Object Editor - {selected.Name}###{WindowId}";
+			this.WindowName = $"{Ktisis.Locale.Translate(this._localeWindowName)} - {selected.Name}{this._windowId}";
 			this._propEditor.Draw(selected);
 		}
 	}

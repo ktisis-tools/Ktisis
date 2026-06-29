@@ -47,6 +47,8 @@ public class TrayIcon : KtisisWindow {
 		this.WindowStyle.Push(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 		this.WindowStyle.Push(ImGuiStyleVar.WindowBorderSize, 0.0f);
 		this.WindowStyle.Push(ImGuiStyleVar.FramePadding, Vector2.Zero);
+		this.WindowStyle.Push(ImGuiStyleVar.FrameBorderSize, 0.0f);
+
 		this.WindowColor.Push(ImGuiCol.Button, 0);
 		this.WindowColor.Push(ImGuiCol.ButtonHovered, 0);
 		this.WindowColor.Push(ImGuiCol.ButtonActive, 0);
