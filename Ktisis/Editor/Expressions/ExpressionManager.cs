@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Dalamud.Game.ClientState.Objects.Enums;
@@ -23,23 +24,25 @@ public class ExpressionManager(IEditorContext ctx) : IExpressionManager {
 	public IExpressionEditor GetEditor(ActorEntity actor) => new ExpressionEditor(this, ctx, actor);
 
 	public ExpressionState GetState(ushort objectIndex) {
-		if (!this._states.TryGetValue(objectIndex, out var state)) {
-			state = new ExpressionState();
-			this._states[objectIndex] = state;
-		}
+		if (this._states.TryGetValue(objectIndex, out var state))
+			return state;
+
+		state = new ();
+		this._states[objectIndex] = state;
 		return state;
 	}
 
 	public ExpressionLibrary GetLibrary(ActorEntity actor) {
 		var key = ResolveKey(actor);
-		
+
 		if (this._libraries.TryGetValue(key, out var library))
 			return library;
-		
+
 		var catalog = SchemaReader.ReadActionUnits(key)
 			?? SchemaReader.ReadActionUnits(FallbackKey)
 			?? new ActionUnitCatalog();
-		library = new ExpressionLibrary(catalog);
+
+		library = new (catalog);
 		this._libraries[key] = library;
 
 		return library;
@@ -50,46 +53,23 @@ public class ExpressionManager(IEditorContext ctx) : IExpressionManager {
 		var gender = actor.GetCustomizeValue(CustomizeIndex.Gender);
 		var tribe = actor.GetCustomizeValue(CustomizeIndex.Tribe);
 
-		if (!RaceFolder.TryGetValue(race, out var raceName))
-			return FallbackKey;
-
 		var genderName = gender == 1 ? "Feminine" : "Masculine";
 
-		if (ClanRaces.Contains(race) && ClanFolder.TryGetValue(tribe, out var clan))
-			return $"{raceName}_{genderName}_{clan}";
-
-		return $"{raceName}_{genderName}";
+		return (race, tribe) switch {
+			(8, _) => $"Viera_{genderName}",
+			(7, _) => $"Hrothgar_{genderName}",
+			(6, _) => $"AuRa_{genderName}",
+			(5, 9) => $"Roegadyn_{genderName}_SeaWolf",
+			(5, 10) => $"Roegadyn_{genderName}_Hellsguard",
+			(4, 7) => $"Miqote_{genderName}_SeekerOfTheSun",
+			(4, 8) => $"Miqote_{genderName}_KeeperOfTheMoon",
+			(3, 5) => $"Lalafell_{genderName}_Dunesfolk",
+			(3, 6) => $"Lalafell_{genderName}_Plainsfolk",
+			(2, 3) => $"Elezen_{genderName}_Wildwood",
+			(2, 4) => $"Elezen_{genderName}_Duskwight",
+			(1, 1) => $"Hyur_{genderName}_Midlander",
+			(1, 2) => $"Hyur_{genderName}_Highlander",
+			_ => FallbackKey,
+		};
 	}
-
-	private readonly static Dictionary<byte, string> RaceFolder = new() {
-		{ 1, "Hyur" },
-		{ 2, "Elezen" },
-		{ 3, "Lalafell" },
-		{ 4, "Miqote" },
-		{ 5, "Roegadyn" },
-		{ 6, "AuRa" },
-		{ 7, "Hrothgar" },
-		{ 8, "Viera" },
-	};
-
-	private readonly static HashSet<byte> ClanRaces = [
-		1, 
-		2,
-		3, 
-		4,
-		5,
-	];
-
-	private readonly static Dictionary<byte, string> ClanFolder = new() {
-		{ 1, "Midlander" },
-		{ 2, "Highlander" },
-		{ 3, "Wildwood" },
-		{ 4, "Duskwight" },
-		{ 5, "Plainsfolk" },
-		{ 6, "Dunesfolk" },
-		{ 7, "SeekerOfTheSun" },
-		{ 8, "KeeperOfTheMoon" },
-		{ 9, "SeaWolf" },
-		{ 10, "Hellsguard" },
-	};
 }
