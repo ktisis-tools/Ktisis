@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using Ktisis.Editor.Expressions.Data;
 using Ktisis.Editor.Posing.Data;
 

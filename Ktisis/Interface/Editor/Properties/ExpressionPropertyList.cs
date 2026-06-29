@@ -9,17 +9,10 @@ using Ktisis.Scene.Entities.Skeleton;
 
 namespace Ktisis.Interface.Editor.Properties;
 
-public class ExpressionPropertyList : ObjectPropertyList {
-	private readonly IEditorContext _ctx;
-	private readonly ExpressionEditorPanel _panel;
-
-	public ExpressionPropertyList(
-		IEditorContext ctx,
-		ExpressionEditorPanel panel
-	) {
-		this._ctx = ctx;
-		this._panel = panel;
-	}
+public class ExpressionPropertyList(
+	IEditorContext ctx,
+	ExpressionEditorPanel panel
+) : ObjectPropertyList {
 
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
 		if (ResolveActor(entity) is not { } actor) return;
@@ -29,7 +22,7 @@ public class ExpressionPropertyList : ObjectPropertyList {
 	}
 
 	private void Draw(ActorEntity actor) {
-		var isEnabled = !this._ctx.Posing.IsEnabled;
+		var isEnabled = !ctx.Posing.IsEnabled;
 		
 		if (isEnabled) {
 			ImGui.TextDisabled("Enable posing to edit facial expressions.");
@@ -37,8 +30,8 @@ public class ExpressionPropertyList : ObjectPropertyList {
 		
 		using var _ = ImRaii.Disabled(isEnabled);
 
-		//TODO: Better UI
-		this._panel.Draw(this._ctx.Expressions.GetEditor(actor));
+		
+		panel.Draw(ctx.Expressions.GetEditor(actor));
 	}
 
 	private static ActorEntity? ResolveActor(SceneEntity entity) => entity switch {

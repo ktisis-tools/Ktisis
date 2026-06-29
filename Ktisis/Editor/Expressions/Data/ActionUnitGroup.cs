@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace Ktisis.Editor.Expressions.Data;
 

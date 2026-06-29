@@ -20,12 +20,8 @@ public class ExpressionEditor(
 	IEditorContext ctx,
 	ActorEntity actor
 ) : IExpressionEditor {
-	private static readonly int[] FacePartials = [1, 2];
-
-	// Rotations below this angle (radians) are treated as noise when capturing.
-	private const float CaptureEpsilon = 0.0087f; // ~0.5 degrees
-	private const float CapturePosEpsilon = 0.0005f;
-
+	private readonly static int[] FacePartials = [1, 2];
+	
 	private ExpressionLibrary Library => mgr.GetLibrary(actor);
 
 	public ActionUnitCatalog Catalog => this.Library.Catalog;
@@ -91,7 +87,7 @@ public class ExpressionEditor(
 
 	// Blend application
 
-	public unsafe void ApplyBlend() {
+	private unsafe void ApplyBlend() {
 		var pose = actor.Pose;
 		if (pose == null) return;
 		var skeleton = pose.GetSkeleton();
@@ -148,7 +144,7 @@ public class ExpressionEditor(
 			//Normalise to any user edits.
 			var tweaks = new Dictionary<string, Transform>();
 			foreach (var (i, name) in targets) {
-				Transform? baseline = lastSolver.TryGetValue(name, out var s)
+				var baseline = lastSolver.TryGetValue(name, out var s)
 					? s : NeutralParentLocal(neutral, bones[parents[i]].Name.String ?? "UNKNOWN", name);
 				if (baseline == null) continue;
 				var pm = HavokPosing.GetModelTransform(hkaPose, parents[i]);
@@ -169,7 +165,7 @@ public class ExpressionEditor(
 			
 			var touchedHere = new List<(int idx, string name)>();
 			foreach (var (i, name) in targets) {
-				var (deltaRot, posDelta) = this.ComposeDelta(library.Catalog, name, weights);
+				var (deltaRot, posDelta) = ComposeDelta(library.Catalog, name, weights);
 				if (IsIdentity(deltaRot) && posDelta.LengthSquared() < 1e-10f) continue;
 
 				var bl = neutral[name];
@@ -229,7 +225,7 @@ public class ExpressionEditor(
 
 	private static Transform ToLocal(Transform parent, Transform child) {
 		var invRot = Quaternion.Inverse(parent.Rotation);
-		return new Transform(
+		return new(
 			Vector3.Transform(child.Position - parent.Position, invRot),
 			Quaternion.Normalize(invRot * child.Rotation),
 			child.Scale);
@@ -271,12 +267,12 @@ public class ExpressionEditor(
 	private static Transform HeadToModel(Transform head, Quaternion relRot, Vector3 relPos, Vector3 scale) {
 		var modelRot = Quaternion.Normalize(head.Rotation * relRot);
 		var modelPos = head.Position + Vector3.Transform(relPos, head.Rotation);
-		return new Transform(modelPos, modelRot, scale);
+		return new(modelPos, modelRot, scale);
 	}
 
 	private static bool IsIdentity(Quaternion q) => MathF.Abs(q.W) > 0.999995f;
 
-	private (Quaternion deltaRot, Vector3 posDelta) ComposeDelta(
+	private static (Quaternion deltaRot, Vector3 posDelta) ComposeDelta(
 		ActionUnitCatalog catalog,
 		string name,
 		IReadOnlyDictionary<string, float> weights
@@ -324,7 +320,7 @@ public class ExpressionEditor(
 			Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
 			Bones = null,
 			Initial = initial,
-			Final = final
+			Final = final,
 		});
 	}
 }

@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 
 using Ktisis.Common.Utility;
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace Ktisis.Editor.Expressions.Data;
 
