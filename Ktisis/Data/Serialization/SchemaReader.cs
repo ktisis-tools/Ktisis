@@ -42,7 +42,9 @@ public static class SchemaReader {
 	public static ActionUnitCatalog? ReadActionUnits(string key) {
 		try {
 			using var stream = ResourceUtil.GetManifestResource($"Data.Library.Expressions.{key}.json");
-			return JsonSerializer.Deserialize<ActionUnitCatalog>(stream);
+			return JsonSerializer.Deserialize<ActionUnitCatalog>(stream, new JsonSerializerOptions {
+				IncludeFields = true
+			});
 		} catch (System.IO.FileNotFoundException) {
 			return null;
 		}
