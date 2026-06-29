@@ -11,22 +11,16 @@ using Ktisis.Scene.Entities.Game;
 
 namespace Ktisis.Editor.Expressions;
 
-public class ExpressionManager : IExpressionManager {
+public class ExpressionManager(IEditorContext ctx) : IExpressionManager {
 	// Used when the actor's race/gender/clan has no embedded catalog.
 	private const string FallbackKey = "Hyur_Feminine_Midlander";
-
-	private readonly IEditorContext _ctx;
 
 	private readonly Dictionary<ushort, ExpressionState> _states = new();
 	private readonly Dictionary<string, ExpressionLibrary> _libraries = new();
 
-	public ExpressionManager(IEditorContext ctx) {
-		this._ctx = ctx;
-	}
-
 	public void Initialize() { }
 
-	public IExpressionEditor GetEditor(ActorEntity actor) => new ExpressionEditor(this, this._ctx, actor);
+	public IExpressionEditor GetEditor(ActorEntity actor) => new ExpressionEditor(this, ctx, actor);
 
 	public ExpressionState GetState(ushort objectIndex) {
 		if (!this._states.TryGetValue(objectIndex, out var state)) {
@@ -38,13 +32,15 @@ public class ExpressionManager : IExpressionManager {
 
 	public ExpressionLibrary GetLibrary(ActorEntity actor) {
 		var key = ResolveKey(actor);
-		if (!this._libraries.TryGetValue(key, out var library)) {
-			var catalog = SchemaReader.ReadActionUnits(key)
-				?? SchemaReader.ReadActionUnits(FallbackKey)
-				?? new ActionUnitCatalog();
-			library = new ExpressionLibrary(catalog);
-			this._libraries[key] = library;
-		}
+		
+		if (this._libraries.TryGetValue(key, out var library))
+			return library;
+		
+		var catalog = SchemaReader.ReadActionUnits(key)
+			?? SchemaReader.ReadActionUnits(FallbackKey)
+			?? new ActionUnitCatalog();
+		library = new ExpressionLibrary(catalog);
+		this._libraries[key] = library;
 
 		return library;
 	}
@@ -65,7 +61,7 @@ public class ExpressionManager : IExpressionManager {
 		return $"{raceName}_{genderName}";
 	}
 
-	private static readonly Dictionary<byte, string> RaceFolder = new() {
+	private readonly static Dictionary<byte, string> RaceFolder = new() {
 		{ 1, "Hyur" },
 		{ 2, "Elezen" },
 		{ 3, "Lalafell" },
@@ -76,9 +72,15 @@ public class ExpressionManager : IExpressionManager {
 		{ 8, "Viera" },
 	};
 
-	private static readonly HashSet<byte> ClanRaces = new() { 1, 2, 3, 4, 5 };
+	private readonly static HashSet<byte> ClanRaces = [
+		1, 
+		2,
+		3, 
+		4,
+		5,
+	];
 
-	private static readonly Dictionary<byte, string> ClanFolder = new() {
+	private readonly static Dictionary<byte, string> ClanFolder = new() {
 		{ 1, "Midlander" },
 		{ 2, "Highlander" },
 		{ 3, "Wildwood" },

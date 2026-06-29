@@ -32,7 +32,6 @@ public class ExpressionEditor(
 
 	private ExpressionState State => mgr.GetState(actor.Actor.ObjectIndex);
 
-	public bool HasNeutral => this.State.Neutral != null;
 	
 	public void EnsureNeutral() {
 		if (this.State.Neutral == null)
@@ -87,25 +86,6 @@ public class ExpressionEditor(
 
 	public void ResetWeights() {
 		this.State.Weights.Clear();
-		this.ApplyBlend();
-	}
-
-	public Dictionary<string, float> ExportWeights()
-		=> new(this.State.Weights);
-
-	public void LoadState(IReadOnlyDictionary<string, float>? weights, PoseContainer? neutral) {
-		var state = this.State;
-		state.Weights.Clear();
-		if (neutral != null)
-			state.Neutral = neutral;
-		else
-			this.CaptureNeutral();
-
-		if (weights != null) {
-			foreach (var (id, weight) in weights)
-				state.Weights[id] = weight;
-		}
-
 		this.ApplyBlend();
 	}
 
@@ -323,66 +303,10 @@ public class ExpressionEditor(
 		return (accum, posDelta);
 	}
 
-	public unsafe ActionUnit CaptureCurrentAsAu(string id, string label) {
-		var unit = new ActionUnit { Id = id, Label = label };
-
-		var entityPose = actor.Pose;
-		var neutral = this.State.Neutral;
-		if (entityPose == null || neutral == null) return unit;
-		var skeleton = entityPose.GetSkeleton();
-		if (skeleton == null) return unit;
-
-		foreach (var partialIx in FacePartials) {
-			if (partialIx >= skeleton->PartialSkeletonCount) continue;
-			var pose = entityPose.GetPose(partialIx);
-			if (pose == null || pose->Skeleton == null) continue;
-
-			var head = HavokPosing.GetModelTransform(pose, 0);
-			if (head == null) continue;
-			var invHeadRot = Quaternion.Inverse(head.Rotation);
-
-			for (var i = 1; i < pose->Skeleton->Bones.Length; i++) {
-				var name = pose->Skeleton->Bones[i].Name.String;
-				if (name.IsNullOrEmpty() || !neutral.TryGetValue(name, out var baseline)) continue;
-
-				var model = HavokPosing.GetModelTransform(pose, i);
-				if (model == null) continue;
-				var current = ToHeadRelative(model, head, invHeadRot);
-
-				var deltaRot = Quaternion.Normalize(current.Rotation * Quaternion.Inverse(baseline.Rotation));
-				var posDelta = current.Position - baseline.Position;
-
-				var hasRot = IsSignificant(deltaRot);
-				var hasPos = posDelta.Length() > CapturePosEpsilon;
-				if (!hasRot && !hasPos) continue;
-
-				if (hasPos) unit.UsePosition = true;
-				unit.Bones[name] = new Transform(posDelta, deltaRot, Vector3.One);
-			}
-		}
-
-		if (unit.Bones.Count > 0)
-			this.Library.AddCapturedUnit(unit);
-
-		return unit;
-	}
-
-	public void RemoveUnit(string id) {
-		this.State.Weights[id] = 0f;
-		this.ApplyBlend();
-		this.Library.RemoveUnit(id);
-	}
-
 	private static Transform ToHeadRelative(Transform model, Transform head, Quaternion invHeadRot) {
 		var relRot = Quaternion.Normalize(invHeadRot * model.Rotation);
 		var relPos = Vector3.Transform(model.Position - head.Position, invHeadRot);
-		return new Transform(relPos, relRot, model.Scale);
-	}
-
-	private static bool IsSignificant(Quaternion delta) {
-		var dot = Math.Clamp(MathF.Abs(delta.W), -1f, 1f);
-		var angle = 2f * MathF.Acos(dot);
-		return angle > CaptureEpsilon;
+		return new(relPos, relRot, model.Scale);
 	}
 
 	// Undo

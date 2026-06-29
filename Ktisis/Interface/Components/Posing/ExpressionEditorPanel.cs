@@ -14,18 +14,12 @@ namespace Ktisis.Interface.Components.Posing;
 [Transient]
 public class ExpressionEditorPanel {
 
-	private string _captureId = string.Empty;
-	private string _captureLabel = string.Empty;
-
 	private PoseContainer? _editInitial;
-	private string? _pendingDelete;
 
 	public void Draw(IExpressionEditor editor) {
 		editor.EnsureNeutral();
 
 		this.DrawToolbar(editor);
-		ImGui.Spacing();
-		ImGui.Separator();
 		ImGui.Spacing();
 
 		foreach (var group in editor.Catalog.Groups) {
@@ -33,23 +27,14 @@ public class ExpressionEditorPanel {
 
 			Separators.SeparatorText(group.Name, textColor: ImGui.GetColorU32(ImGuiCol.Header));
 
-			using var _id = ImRaii.PushId(group.Name);
+			using var _ = ImRaii.PushId(group.Name);
 			foreach (var unit in group.Units)
 				this.DrawUnitSlider(editor, unit);
-		}
-
-		if (this._pendingDelete != null) {
-			editor.RemoveUnit(this._pendingDelete);
-			this._pendingDelete = null;
 		}
 	}
 
 	private void DrawUnitSlider(IExpressionEditor editor, ActionUnit unit) {
-		using var id = ImRaii.PushId(unit.Id);
-
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.TrashAlt, $"Delete '{unit.Label}'"))
-			this._pendingDelete = unit.Id;
-		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		using var _ = ImRaii.PushId(unit.Id);
 
 		var weight = editor.GetWeight(unit.Id);
 		var min = unit.Bidirectional ? -1.0f : 0.0f;
@@ -67,43 +52,11 @@ public class ExpressionEditorPanel {
 	}
 
 	private void DrawToolbar(IExpressionEditor editor) {
-		if (ImGui.Button("Reset All")) {
-			var initial = editor.BeginEdit();
-			editor.ResetWeights();
-			editor.CommitEdit(initial);
-		}
-#if DEBUG
-		ImGui.SameLine();
-		if (ImGui.Button("Recapture Neutral"))
-			editor.CaptureNeutral();
-
-		ImGui.SameLine();
-		if (ImGui.Button("Capture as AU"))
-			ImGui.OpenPopup("##capture_au");
-
-		this.DrawCapturePopup(editor);
-#endif
-	}
-
-	private void DrawCapturePopup(IExpressionEditor editor) {
-		using var popup = ImRaii.Popup("##capture_au");
-		if (!popup.Success) return;
-
-		ImGui.Text("Capture the current face as a new Action Unit.");
-		ImGui.Spacing();
-
-		ImGui.InputText("Id", ref this._captureId, 64);
-		ImGui.InputText("Label", ref this._captureLabel, 64);
-
-		ImGui.Spacing();
-		using (ImRaii.Disabled(string.IsNullOrWhiteSpace(this._captureId))) {
-			if (ImGui.Button("Capture")) {
-				var label = string.IsNullOrWhiteSpace(this._captureLabel) ? this._captureId : this._captureLabel;
-				editor.CaptureCurrentAsAu(this._captureId, label);
-				this._captureId = string.Empty;
-				this._captureLabel = string.Empty;
-				ImGui.CloseCurrentPopup();
-			}
-		}
+		if (!ImGui.Button("Reset All"))
+			return;
+		
+		var initial = editor.BeginEdit();
+		editor.ResetWeights();
+		editor.CommitEdit(initial);
 	}
 }
