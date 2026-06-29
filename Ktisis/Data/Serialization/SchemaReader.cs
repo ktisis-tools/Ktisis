@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Ktisis.Common.Utility;
@@ -41,7 +42,7 @@ public static class SchemaReader {
 	public static ActionUnitCatalog? ReadActionUnits(string key) {
 		try {
 			using var stream = ResourceUtil.GetManifestResource($"Data.Library.Expressions.{key}.json");
-			return JsonSerializer.Deserialize<ActionUnitCatalog>(stream, new JsonSerializerOptions());
+			return JsonSerializer.Deserialize<ActionUnitCatalog>(stream);
 		} catch (System.IO.FileNotFoundException) {
 			return null;
 		}
