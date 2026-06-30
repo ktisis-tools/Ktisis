@@ -118,7 +118,7 @@ public class SceneWindow : KtisisWindow {
 		
 		using(ImRaii.Disabled(this._sceneFile != null))
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Save, $"{(this._sceneFile == null? "Save Scene file" : "Unload current Scene before saving" )}", iconBtnSize*1.5f))
-				this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save()));
+				this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save(this._includeActors, this._includeLights, this._includeCameras, this._includeEnv, this._includeOverlays)));
 
 		if (this._sceneFile != null) {
 			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -((iconBtnSize.Y *1.5f)* 3.3f));  //space for 2 buttons?
@@ -158,7 +158,7 @@ public class SceneWindow : KtisisWindow {
 				ImGui.PopStyleColor();
 				if (ImGui.CollapsingHeader($"Actors {actors}")) {
 
-					if (this._sceneFile != null) {
+					if (this._sceneFile is { Actors.Count: > 0 }) {
 						ImGui.Checkbox("Load actors", ref this._includeActors);
 						ImGui.Indent();
 						foreach (var actorInfo in this._sceneFile!.Actors) {
@@ -177,6 +177,7 @@ public class SceneWindow : KtisisWindow {
 							}
 						}
 					} else {
+						ImGui.Checkbox("Save actors", ref this._includeActors);
 						ImGui.Indent();
 						foreach (var charaInfo in this._ctx.Scene.Children.Where(entity => entity is CharaEntity)) {
 							ImGui.TextUnformatted($"{charaInfo.Name}");
@@ -184,30 +185,33 @@ public class SceneWindow : KtisisWindow {
 					}
 					ImGui.Unindent();
 				}
-				if (ImGui.CollapsingHeader($"Cameras {cameras}")) {
-					if (this._sceneFile != null) {
-						ImGui.Checkbox("Load cameras", ref this._includeCameras);
-						ImGui.Indent();
-						foreach (var cameraInfo in this._sceneFile!.Cameras) {
-							ImGui.TextUnformatted($"{cameraInfo.Name}");
+				if(cameras > 0)
+					if (ImGui.CollapsingHeader($"Cameras {cameras}")) {
+						if (this._sceneFile != null) {
+							ImGui.Checkbox("Load cameras", ref this._includeCameras);
+							ImGui.Indent();
+							foreach (var cameraInfo in this._sceneFile!.Cameras) {
+								ImGui.TextUnformatted($"{cameraInfo.Name}");
+							}
+						} else {
+							ImGui.Checkbox("Save cameras", ref this._includeCameras);
+							ImGui.Indent();
+							foreach (var cameraInfo in this._ctx.Cameras.GetCameras()) {
+								ImGui.TextUnformatted($"{cameraInfo.Name}");
+							}
 						}
-					} else {
-						ImGui.Indent();
-						foreach (var cameraInfo in this._ctx.Cameras.GetCameras()) {
-							ImGui.TextUnformatted($"{cameraInfo.Name}");
-						}
+						ImGui.Unindent();
 					}
-					ImGui.Unindent();
-				}
 				if (lights > 0)
 					if (ImGui.CollapsingHeader($"Lights {lights}")) {
-						if (this._sceneFile != null) {
+						if (this._sceneFile is { Lights.Count: > 0 }) {
 							ImGui.Checkbox("Load lights", ref this._includeLights);
 							ImGui.Indent();
 							foreach (var lightInfo in this._sceneFile!.Lights) {
 								ImGui.TextUnformatted($"{lightInfo.Name}");
 							}
 						} else {
+							ImGui.Checkbox("Save lights", ref this._includeLights);
 							ImGui.Indent();
 							foreach (var lightInfo in this._ctx.Scene.Children.Where(entity => entity is LightEntity)) {
 								ImGui.TextUnformatted($"{lightInfo.Name}");
@@ -217,13 +221,14 @@ public class SceneWindow : KtisisWindow {
 					}
 				if (overlays > 0)
 					if (ImGui.CollapsingHeader($"Overlays {overlays}")) {
-						if (this._sceneFile != null) {
+						if (this._sceneFile is { Overlays.Count: > 0 }) {
 							ImGui.Checkbox("Load Overlays", ref this._includeOverlays);
 							ImGui.Indent();
 							foreach (var overlayInfo in this._sceneFile!.Overlays) {
 								ImGui.TextUnformatted($"{overlayInfo.Name}");
 							}
 						} else {
+							ImGui.Checkbox("Save Overlays", ref this._includeOverlays);
 							ImGui.Indent();
 							foreach (var overlayInfo in this._ctx.Scene.Children.Where(entity => entity is OverlayEntity)) {
 								ImGui.TextUnformatted($"{overlayInfo.Name}");
@@ -255,6 +260,7 @@ public class SceneWindow : KtisisWindow {
 							var str =  string.Join(", ", list);
 							ImGui.TextUnformatted(str);
 						} else {
+							ImGui.Checkbox("Save Environment", ref this._includeEnv);
 							ImGui.Indent();
 							var env = (this._ctx.Scene.GetModule<EnvModule>().Override);
 							var list = new List<string> { };
