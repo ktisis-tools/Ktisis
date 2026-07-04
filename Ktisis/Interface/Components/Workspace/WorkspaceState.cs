@@ -13,6 +13,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Transforms;
 using Ktisis.Editor.Transforms.Types;
 using Ktisis.Interface.Widgets;
+using Ktisis.Scene.Decor;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -28,16 +29,13 @@ public class WorkspaceState {
 	public void Draw() {
 		var style = ImGui.GetStyle();
 		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
-
-		var frame = false;
-		try {
-			var id = ImGui.GetID("SceneState_Frame");
-			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
-			if (!frame) return;
+		
+		var id = ImGui.GetID("SceneState_Frame");
+		using (ImRaii.ChildFrame(id, new Vector2(-1, height)))
+		{
 			this.DrawContext();
+			this.DrawShowAll();
 			this.DrawOverlayToggle();
-		} finally {
-			if (frame) ImGui.EndChildFrame();
 		}
 	}
 
@@ -45,19 +43,16 @@ public class WorkspaceState {
 		var style = ImGui.GetStyle();
 		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
 
-		var frame = false;
-		try {
-			var id = ImGui.GetID("SceneState_Frame");
-			frame = ImGui.BeginChildFrame(id, new Vector2(-1, height));
-			if (!frame) return;
-			
+		var id = ImGui.GetID("SceneState_Frame");
+		using (ImRaii.ChildFrame(id, new Vector2(-1, height))) {
+
 			var cursorY = ImGui.GetCursorPosY();
 			var avail = ImGui.GetContentRegionAvail().Y;
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetStyle().ItemSpacing.X);
 			ImGui.SetCursorPosY(cursorY + (avail - ImGui.GetFrameHeight()) / 2);
-		
+
 			var isPosing = this._ctx.Posing.IsEnabled;
-		
+
 			var shiftHeld = ImGui.IsKeyDown(ImGuiKey.ModShift);
 			var shouldBlock = this._ctx.Config.Editor.ConfirmExit && isPosing && !shiftHeld;
 
@@ -66,24 +61,22 @@ public class WorkspaceState {
 				(true, true) => "enable-blocked",
 				(false, _) => "disable",
 			};
-		
+
 			if (shouldBlock)
 				ImGui.BeginDisabled();
-		
+
 			var color = isPosing ? 0xFF3AD86A : 0xFF504EC4;
 			using var button = ImRaii.PushColor(ImGuiCol.Button, isPosing ? 0xFF00FF00 : 0xFF7070C0);
-			
+
 			if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
 				using var _ = ImRaii.Tooltip();
 				ImGui.Text(this._ctx.Locale.Translate($"workspace.posing.hint.{locKey}"));
 			}
-		
+
 			if (shouldBlock)
 				ImGui.EndDisabled();
-			
-		} finally {
-			if (frame) ImGui.EndChildFrame();
 		}
+
 	}
 	private void DrawContext() {
 		var cursorY = ImGui.GetCursorPosY();
@@ -171,6 +164,24 @@ public class WorkspaceState {
 		}
 	}
 
+	private void DrawShowAll() {
+		using var _ = ImRaii.PushId("##OverlayBulkVisButton");
+		using var bgCol = ImRaii.PushColor(ImGuiCol.Button, 0);
+
+		ImGui.SameLine();
+
+		var isActive = this._ctx.Config.Overlay.BulkVisOverride;
+		using var color = ImRaii.PushColor(ImGuiCol.Text, isActive ? 0xEFFFFFFF : 0x80FFFFFF);
+
+		var label = isActive ? "Hide All Bones" : "Show All Bones";
+
+		var avail = ImGui.GetContentRegionAvail();
+		var height = avail.Y - ImGui.GetCursorPosY() / 2;
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail.X - height*2 - ImGui.GetStyle().ItemInnerSpacing.X);
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.CircleNodes, label, new Vector2(height, height)))
+			this._ctx.Config.Overlay.BulkVisOverride = !isActive;
+	}
+
 	private void DrawOverlayToggle() {
 		using var _ = ImRaii.PushId("##OverlayToggleButton");
 		using var bgCol = ImRaii.PushColor(ImGuiCol.Button, 0);
@@ -181,11 +192,11 @@ public class WorkspaceState {
 		using var color = ImRaii.PushColor(ImGuiCol.Text, isActive ? 0xEFFFFFFF : 0x80FFFFFF);
 
 		var icon = isActive ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
-		var label = this._ctx.Locale.Translate("actions.Overlay_Toggle");
+		var label = isActive ? this._ctx.Locale.Translate("workspace.overlay.hide") : this._ctx.Locale.Translate("workspace.overlay.show");
 		
 		var avail = ImGui.GetContentRegionAvail();
 		var height = avail.Y - ImGui.GetCursorPosY() / 2;
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail.X - height);
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (Buttons.IconButtonTooltip(icon, label, new Vector2(height, height)))
 			this._ctx.Config.Overlay.Visible = !isActive;
 	}

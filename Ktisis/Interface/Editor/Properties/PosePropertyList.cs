@@ -3,6 +3,8 @@
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 
+using GLib.Widgets;
+
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Properties.Types;
 using Ktisis.Interface.Windows.Import;
@@ -20,13 +22,13 @@ public class PosePropertyList : ObjectPropertyList {
 	private int _partialIndex;
 
 	private string LabelForPartial(EntityPose pose, int partialIndex) {
-		if (partialIndex == -1) return "Reset All Skeletons";
-		var name = pose.GetPartialInfo(partialIndex)?.Name ?? "N/A";
+		if (partialIndex == -1) return Ktisis.Locale.Translate("object_edit.pose.reference_labels.all");
+		var name = pose.GetPartialInfo(partialIndex)?.Name ?? Ktisis.Locale.Translate("object_edit.pose.reference_labels.null");
 		return partialIndex switch {
-			0 => "Reset Body",
-			1 => "Reset Face",
-			2 => "Reset Hair",
-			_ => $"Reset Skeleton #{partialIndex} ({name})"
+			0 => Ktisis.Locale.Translate("object_edit.pose.reference_labels.body"),
+			1 => Ktisis.Locale.Translate("object_edit.pose.reference_labels.face"),
+			2 => Ktisis.Locale.Translate("object_edit.pose.reference_labels.hair"),
+			_ => $"{Ktisis.Locale.Translate("object_edit.pose.reference_labels.custom")} #{partialIndex} ({name})"
 		};
 	}
 
@@ -45,7 +47,7 @@ public class PosePropertyList : ObjectPropertyList {
 		if (!TryGetEntityPose(entity, out var pose))
 			return;
 		
-		builder.AddHeader("Pose", () => this.DrawPoseTab(pose), priority: 1);
+		builder.AddHeader(Ktisis.Locale.Translate("object_edit.pose.headers.pose"), () => this.DrawPoseTab(pose), priority: 1);
 	}
 
 	private async void DrawPoseTab(EntityPose pose) {
@@ -59,23 +61,23 @@ public class PosePropertyList : ObjectPropertyList {
 		if (actor is not ActorEntity) return;
 		ImGui.Spacing();
 
-		if (ImGui.Button("Export Pose"))
+		if (ImGui.Button(Ktisis.Locale.Translate("object_edit.pose.export")))
 			await this._ctx.Interface.OpenPoseExport(pose);
 		ImGui.SameLine(0, spacing);
 
-		if (ImGui.Button("Flip Pose"))
+		if (ImGui.Button(Ktisis.Locale.Translate("object_edit.pose.flip")))
 			await this._ctx.Posing.ApplyFlipPose(pose);
 		ImGui.Spacing();
 
-		if (ImGui.Button("Stash Pose"))
+		if (ImGui.Button(Ktisis.Locale.Translate("object_edit.pose.stash")))
 			await this._ctx.Posing.StashPose(pose);
 		ImGui.SameLine(0, spacing);
 
 		// todo: GLib.ButtonTooltip? currently only have a helper for IconButtonTooltip
 		var _hint = "";
 		using (var _disabled = ImRaii.Disabled(this._ctx.Posing.StashedPose == null)) {
-			_hint = _disabled.Count > 0 ? "" : $"Pose stashed at {this._ctx.Posing.StashedAt} from Actor {this._ctx.Posing.StashedFrom}";
-			if (ImGui.Button("Apply Pose"))
+			_hint = _disabled.Count > 0 ? "" : $"{Ktisis.Locale.Translate("object_edit.pose.stash.time")} {this._ctx.Posing.StashedAt} {Ktisis.Locale.Translate("object_edit.pose.stash.from")} {this._ctx.Posing.StashedFrom}";
+			if (ImGui.Button(Ktisis.Locale.Translate("object_edit.pose.stash.apply")))
 				await this._ctx.Posing.ApplyStashedPose(pose);
 		}
 		if (ImGui.IsItemHovered()) {
@@ -84,9 +86,8 @@ public class PosePropertyList : ObjectPropertyList {
 		}
 
 		ImGui.Spacing();
-		ImGui.Separator();
+		Separators.SeparatorText(Ktisis.Locale.Translate("object_edit.pose.headers.reference"), textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
-		ImGui.Text("Reference pose...");
 		var combo = ImGui.BeginCombo("##PartialSelectList", this.LabelForPartial(pose, this._partialIndex));
 		if (combo) {
 			// add select-all as the first element
@@ -103,7 +104,7 @@ public class PosePropertyList : ObjectPropertyList {
 			ImGui.EndCombo();
 		}
 		ImGui.SameLine(0, spacing);
-		if (ImGui.Button("Reset Pose")) {
+		if (ImGui.Button(Ktisis.Locale.Translate("object_edit.pose.reference"))) {
 			if (this._partialIndex == -1)
 				await this._ctx.Posing.ApplyReferencePose(pose);
 			else
@@ -111,9 +112,7 @@ public class PosePropertyList : ObjectPropertyList {
 		}
 
 		ImGui.Spacing();
-		ImGui.Separator();
-		ImGui.Spacing();
-		ImGui.Text($"Import pose file...");
+		Separators.SeparatorText(Ktisis.Locale.Translate("object_edit.pose.headers.import"), textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
 
 		// pose import dialog

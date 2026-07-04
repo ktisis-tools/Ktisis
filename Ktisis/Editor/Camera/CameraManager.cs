@@ -28,7 +28,7 @@ public interface ICameraManager : IDisposable {
 	public void SetWorkCameraMode(bool enabled);
 	public void ToggleWorkCameraMode();
 
-	public KtisisCamera Create(CameraFlags flags = CameraFlags.None);
+	public KtisisCamera Create(CameraFlags flags = CameraFlags.None, bool setActive = true);
 	public bool DeleteCurrent();
 
 	public IGameObject? ResolveOrbitTarget(EditorCamera camera);
@@ -69,7 +69,7 @@ public class CameraManager : ICameraManager {
 		if (gameCamera == null) return;
 
 		this.Active = this.Default = new EditorCamera(this) {
-			Name = "Main Camera",
+			Name = (Ktisis.Locale.Translate("cameras.main")),
 			Address = (nint)gameCamera,
 			Flags = CameraFlags.DefaultCamera
 		};
@@ -77,7 +77,7 @@ public class CameraManager : ICameraManager {
 	}
 
 	private void SetupWorkCamera() {
-		this.WorkCamera ??= new WorkCamera(this, this._context) { Name = "Work Camera" };
+		this.WorkCamera ??= new WorkCamera(this, this._context) { Name = Ktisis.Locale.Translate("cameras.work") };
 		if (!this.CopyOntoCamera(this.WorkCamera))
 			throw new Exception("Failed to setup work camera.");
 	}
@@ -156,7 +156,7 @@ public class CameraManager : ICameraManager {
 	
 	// Camera creation
 
-	public KtisisCamera Create(CameraFlags flags = CameraFlags.None) {
+	public KtisisCamera Create(CameraFlags flags = CameraFlags.None, bool setActive = true) {
 		var camera = new KtisisCamera(this) {
 			Name = this.GetNextAvailableName(),
 			Flags = flags
@@ -169,7 +169,8 @@ public class CameraManager : ICameraManager {
 			throw new Exception("Failed to setup new camera.");
 		
 		this.CameraList.Add(camera);
-		this.SetCurrent(camera);
+		if(setActive)
+			this.SetCurrent(camera);
 		
 		return camera;
 	}
@@ -214,12 +215,12 @@ public class CameraManager : ICameraManager {
 
 	private string GetNextAvailableName() {
 		for (var i = this.CameraList.Count + 1; i <= 100; i++) {
-			var name = $"Camera #{i}";
+			var name = $"{Ktisis.Locale.Translate("cameras.camera")} #{i}";
 			if (this.CameraList.Any(camera => camera.Name == name))
 				continue;
 			return name;
 		}
-		return "New Camera";
+		return Ktisis.Locale.Translate("cameras.new");
 	}
 	
 	// Camera helpers

@@ -10,6 +10,7 @@ namespace Ktisis.Scene.Entities.Utility;
 
 public class TalkOverlay : OverlayEntity {
 	protected override sealed TalkNode Node { get; }
+	public readonly uint[] FontSizes = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24];
 	
 	public TalkOverlay(
 		ISceneManager scene
@@ -20,7 +21,8 @@ public class TalkOverlay : OverlayEntity {
 			TalkBackground.Basic,
 			TalkCursor.Pin,
 			"Speaker",
-			"New dialog..."
+			"New dialog...",
+			14
 		) {
 			Size = new Vector2(680.0f, 180.0f),
 			Position = new Vector2(600.0f, 600.0f),
@@ -45,5 +47,9 @@ public class TalkOverlay : OverlayEntity {
 	public TalkCursor Cursor {
 		get => this.Node.CursorChoice;
 		set => this.Node.CursorChoice = value;
+	}
+	public uint FontSize {
+		get => this.Node.FontSize;
+		set => this.Node.FontSize = value;
 	}
 }

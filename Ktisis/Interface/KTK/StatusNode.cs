@@ -72,7 +72,7 @@ public class StatusNode : OverlayNode {
 
 	private TextNode SetStatusText() {
 		return new TextNode() {
-			Size = new Vector2(220.0f, 28.0f),
+			Size = new Vector2(660.0f, 28.0f),
 			Position = new Vector2(27.0f, 2.0f),
 			TextColor = GetTextColorForType(this.Type),
 			TextOutlineColor = GetEdgeColorForType(this.Type),

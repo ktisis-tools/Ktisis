@@ -2,7 +2,7 @@
     <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
-		<Version>0.3.18.2</Version>
+		<Version>0.3.19.3</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
 	</PropertyGroup>
 
@@ -69,5 +69,7 @@
 	</ItemGroup>
     <ItemGroup>
       <Content Include="Assets\**\*" CopyToOutputDirectory="Always"/>
+      <EmbeddedResource Include="Data\Images\icon_colored.png" />
+      <EmbeddedResource Include="Data\Images\icon_simple.png" />
     </ItemGroup>
 </Project>

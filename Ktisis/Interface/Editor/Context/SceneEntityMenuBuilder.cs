@@ -51,39 +51,39 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildEntityBaseTop(ContextMenuBuilder menu) {
 		if (!this._entity.IsSelected)
-			menu.Action("Select", () => this._entity.Select(SelectMode.Multiple));
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.select"), () => this._entity.Select(SelectMode.Multiple));
 		else
-			menu.Action("Unselect", this._entity.Unselect);
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.deselect"), this._entity.Unselect);
 		if (this._entity.Children.Any())
-			menu.Action("Select hierarchy", () => {
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.hierarchy"), () => {
 				foreach (var entity in this._entity.Children.Where(entity => !entity.IsSelected))
 					entity.Select(SelectMode.Multiple);
 				if (!this._entity.IsSelected) this._entity.Select(SelectMode.Multiple);
 			});
 
 		if (this._entity.Root is ActorEntity actorEntity)
-			menu.SubMenu("Presets...", sub => {
+			menu.SubMenu(Ktisis.Locale.Translate("workspace.entity_menu.base.presets"), sub => {
 				foreach (var (name, isEnabled) in actorEntity.GetPresets()) {
 					sub.CheckableAction(name, isEnabled != PresetState.Disabled, () => actorEntity.TogglePreset(name));
 				}
 
 				sub.Separator()
-					.Action("Save New", () => this.Ui.OpenSavePreset(actorEntity));
+					.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.presets_save"), () => this.Ui.OpenSavePreset(actorEntity));
 			});
 	}
 
 	private void BuildEntityBaseBottom(ContextMenuBuilder menu) {
 		if (this._entity is IAttachable attach && attach.IsAttached())
-			menu.Separator().Action("Detach", () => this._ctx.Posing.Attachments.Detach(attach));
+			menu.Separator().Action(Ktisis.Locale.Translate("workspace.entity_menu.base.detach"), () => this._ctx.Posing.Attachments.Detach(attach));
 
-		menu.Separator().Action("Rename", () => this.Ui.OpenRenameEntity(this._entity));
+		menu.Separator().Action(Ktisis.Locale.Translate("workspace.entity_menu.base.rename"), () => this.Ui.OpenRenameEntity(this._entity));
 
 		if (this._entity is IDeletable deletable) {
 			menu.Separator();
 			if (this._entity is ActorEntity actor)
-				menu.Action("Duplicate", () => this.DuplicateActor(actor));
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateActor(actor));
 			if (this._entity is LightEntity light)
-				menu.Action("Duplicate", () => this.DuplicateLight(light));
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateLight(light));
 			if (this._entity is OverlayEntity overlay)
 				menu.Action("Duplicate", () => this.DuplicateOverlay(overlay));
 			menu.Action("Delete", () => deletable.Delete());
@@ -117,40 +117,46 @@ public class SceneEntityMenuBuilder {
 
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.Separator()
-			.Action("Target", actor.Actor.SetGPoseTarget)
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.target"), actor.Actor.SetGPoseTarget)
 			.Separator()
-			.Action("Edit appearance", this.OpenEditor)
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.edit"), this.OpenEditor)
 			.Group(sub => this.BuildActorIpcMenu(sub, actor))
 			.Separator()
-			.SubMenu("Import...", sub => {
-				var builder = sub.Action("Character (.chara)", () => this.Ui.OpenCharaImport(actor))
-					.Action("NPC", () => this.Ui.OpenCharaImport(actor, true))
-					.Action("Pose file (.pose)", () => this.Ui.OpenPoseImport(actor));
+			.SubMenu(Ktisis.Locale.Translate("workspace.entity_menu.actor.import"), sub => {
+				var builder = sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.chara"), () => this.Ui.OpenCharaImport(actor))
+					.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.npc"), () => this.Ui.OpenCharaImport(actor, true))
+					.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.pose"), () => this.Ui.OpenPoseImport(actor));
 
 				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
-					builder.Action("Mare data (.mcdf)", () => {
+					builder.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.mcdf"), () => {
 						this.Ui.OpenMcdfFile(path => this.ImportMcdf(actor, path));
 					});
 				}
 			})
-			.SubMenu("Export...", sub => {
-				sub.Action("Character (.chara)", () => this.Ui.OpenCharaExport(actor))
-					.Action("Pose file (.pose)", () => this.ExportPose(actor.Pose));
+			.SubMenu(Ktisis.Locale.Translate("workspace.entity_menu.actor.export"), sub => {
+				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.chara"), () => this.Ui.OpenCharaExport(actor))
+					.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.pose"), () => this.ExportPose(actor.Pose));
 			});
 	}
 
 	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
-		menu.SubMenu("IPC appearance", sub => {
+		menu.SubMenu(Ktisis.Locale.Translate("workspace.entity_menu.ipc.submenu"), sub => {
+			var isHuman = actor.GetHuman() != null;
 			if (this._ctx.Plugin.Ipc.IsPenumbraActive) {
-				sub.Action("Penumbra: Assign collection", () => this.Ui.OpenAssignCollection(actor));
-				sub.Action("Penumbra: Invisible Skin", () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
+				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.penumbra.collection"), () => this.Ui.OpenAssignCollection(actor));
+				if (isHuman)
+				  sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.penumbra.invisible_skin"), () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
 			}
 			if (this._ctx.Plugin.Ipc.IsGlamourerActive)
-				sub.Action("Glamourer: Apply design", () => this.Ui.OpenApplyDesign(actor));
+				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.glamourer.design"), () => this.Ui.OpenApplyDesign(actor));
 			if (this._ctx.Plugin.Ipc.IsCustomizeActive)
-				sub.Action("Customize: Assign profile", () => this.Ui.OpenAssignCProfile(actor));
-			if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null)
-				sub.Action("Revert all IPC data", () => this._ctx.Characters.Mcdf.Revert(actor.Actor));
+				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.customize.profile"), () => this.Ui.OpenAssignCProfile(actor));
+			if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && isHuman) {
+				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.revert"), () => {
+					this._ctx.Characters.Mcdf.Revert(actor.Actor);
+					actor.AssignedProfile = null;
+				});
+			}
 		});
 	}
 
@@ -175,10 +181,10 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildPoseMenu(ContextMenuBuilder menu, EntityPose pose) {
 		menu.Separator()
-			.Action("Import pose", () => this.ImportPose(pose))
-			.Action("Export pose", () => this.ExportPose(pose))
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.pose.import"), () => this.ImportPose(pose))
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.pose.export"), () => this.ExportPose(pose))
 			.Separator()
-			.Action("Set to reference pose", () => this._ctx.Posing.ApplyReferencePose(pose));
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.pose.reference"), () => this._ctx.Posing.ApplyReferencePose(pose));
 	}
 
 	private void ImportPose(EntityPose pose) {
@@ -196,10 +202,10 @@ public class SceneEntityMenuBuilder {
 
 	private void BuildLightMenu(ContextMenuBuilder menu, LightEntity light) {
 		menu.Separator()
-			.Action("Edit lighting", this.OpenEditor)
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.light.edit"), this.OpenEditor)
 			.Separator()
-			.Action("Import light file", () => this.Ui.OpenLightFile((path, file) => this.ImportLight(light, file)))
-			.Action("Export light file", () => this.Ui.OpenLightExport(light));
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.light.import"), () => this.Ui.OpenLightFile((path, file) => this.ImportLight(light, file)))
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.light.export"), () => this.Ui.OpenLightExport(light));
 	}
 
 	private async void ImportLight(LightEntity light, LightFile file) {

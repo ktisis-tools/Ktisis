@@ -6,7 +6,6 @@ using Ktisis.Interface.Types;
 namespace Ktisis.Interface.Windows.ToolbarModules;
 
 public class ChangeStatePopup: KtisisPopup {
-
 	private IEditorContext _ctx;
 	private bool _state;
 	public ChangeStatePopup(
@@ -20,26 +19,31 @@ public class ChangeStatePopup: KtisisPopup {
 	}
 
 	protected override void OnDraw() {
-			var width = ImGui.CalcTextSize($"This will close {(this._state ? "all open Ktisis windows and reopen the Toolbar." : "the toolbar and reopen the Workspace Window.")})").X;
-			ImGui.SetCursorPosX((width - ImGui.CalcTextSize($"You are about to {(this._state ? "enable" : "disable")} the toolbar.").X)/2);
-			ImGui.TextUnformatted($"You are about to {(this._state? "enable" : "disable")} the toolbar.");
-			ImGui.TextUnformatted($"This will close {(this._state? "all open Ktisis windows and open the Toolbar." : "the toolbar and open the Workspace Window.")}");
+		ImGuiP.SetWindowPos(ImGuiP.GetCurrentWindow(), ImGui.GetWindowViewport().GetCenter() - (ImGui.GetWindowSize()/2));  //TODO: Move to GLib somehow
+		var closeString = $"{Ktisis.Locale.Translate("toolbar.popup.close")} {(this._state ? Ktisis.Locale.Translate("toolbar.popup.close_workspace") : Ktisis.Locale.Translate("toolbar.popup.close_toolbar"))}";
+		var stateString = $"{Ktisis.Locale.Translate("toolbar.popup.state")} {(this._state ? Ktisis.Locale.Translate("toolbar.popup.state_enable") : Ktisis.Locale.Translate("toolbar.popup.state_disable"))} {Ktisis.Locale.Translate("toolbar.popup.state_end")}";
+		var yesString = Ktisis.Locale.Translate("toolbar.popup.yes");
+		var noString = Ktisis.Locale.Translate("toolbar.popup.no");
 
-			
-			var buttons = ImGui.CalcTextSize("Continue").X + ImGui.CalcTextSize("Cancel").X + (ImGui.GetStyle().FramePadding.X * 4);
-			ImGui.SetCursorPosX((width-buttons)/2);
-			
-			if (ImGui.Button("Continue")) {
-				this._ctx.Plugin.Gui.ResetWorkspace();
-				this._ctx.Config.Editor.UseToolbar = this._state;
-				this._ctx.Interface.Prepare();
-				this.Close();
-			}
+		var width = ImGui.CalcTextSize(closeString).X;
+		ImGui.SetCursorPosX((width - ImGui.CalcTextSize(stateString).X)/2);
+		ImGui.TextUnformatted(stateString);
+		ImGui.TextUnformatted(closeString);
 
-			ImGui.SameLine();
-			if (ImGui.Button("Cancel")) {
-				this.Close();
-			}
+		var buttons = ImGui.CalcTextSize(yesString).X + ImGui.CalcTextSize(noString).X + (ImGui.GetStyle().FramePadding.X * 4);
+		ImGui.SetCursorPosX((width-buttons)/2);
+
+		if (ImGui.Button(yesString)) {
+			this._ctx.Plugin.Gui.ResetWorkspace();
+			this._ctx.Config.Editor.UseToolbar = this._state;
+			this._ctx.Interface.Prepare();
+			this.Close();
+		}
+
+		ImGui.SameLine();
+		if (ImGui.Button(noString)) {
+			this.Close();
+		}
 	}
 }
 	

@@ -50,8 +50,8 @@ public class LightPropertyList : ObjectPropertyList {
 		if (entity is not LightEntity light)
 			return;
 		
-		builder.AddHeader("Light", () => this.DrawLightTab(light));
-		builder.AddHeader("Shadows", () => this.DrawShadowsTab(light));
+		builder.AddHeader(Ktisis.Locale.Translate("object_edit.light.headers.light"), () => this.DrawLightTab(light));
+		builder.AddHeader(Ktisis.Locale.Translate("object_edit.light.headers.shadow"), () => this.DrawShadowsTab(light));
 	}
 
 	private unsafe void DrawLightTab(LightEntity entity) {
@@ -59,13 +59,13 @@ public class LightPropertyList : ObjectPropertyList {
 		var light = sceneLight != null ? sceneLight->RenderLight : null;
 		if (light == null) return;
 		
-		this.DrawLightFlag("Enable reflections", light, LightFlags.Reflection);
+		this.DrawLightFlag(Ktisis.Locale.Translate("object_edit.light.light.reflection"), light, LightFlags.Reflection);
 		ImGui.Spacing();
 		
 		// Light type
 		
 		var lightTypePreview = this._locale.Translate($"lightType.{light->LightType}");
-		if (ImGui.BeginCombo("Light Type", lightTypePreview)) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.light.light.type"), lightTypePreview)) {
 			foreach (var value in Enum.GetValues<LightType>()) {
 				var valueLabel = this._locale.Translate($"lightType.{value}");
 				if (ImGui.Selectable(valueLabel, light->LightType == value)) {
@@ -79,8 +79,8 @@ public class LightPropertyList : ObjectPropertyList {
 		
 		switch (light->LightType) {
 			case LightType.SpotLight:
-				ImGui.SliderFloat("Cone Angle##LightAngle", ref light->LightAngle, 0.0f, 180.0f, "%0.0f deg");
-				ImGui.SliderFloat("Falloff Angle##LightAngle", ref light->FalloffAngle, 0.0f, 180.0f, "%0.0f deg");
+				ImGui.SliderFloat($"{Ktisis.Locale.Translate("object_edit.light.light.spot.angle")}##LightAngle", ref light->LightAngle, 0.0f, 180.0f, "%0.0f deg");
+				ImGui.SliderFloat($"{Ktisis.Locale.Translate("object_edit.light.light.spot.falloff")}##LightAngle", ref light->FalloffAngle, 0.0f, 180.0f, "%0.0f deg");
 				break;
 			case LightType.AreaLight:
 				var angleSpace = ImGui.GetStyle().ItemInnerSpacing.X;
@@ -88,9 +88,9 @@ public class LightPropertyList : ObjectPropertyList {
 				using (var _ = ImRaii.ItemWidth(angleWidth)) {
 					ImGui.SliderAngle("##AngleX", ref light->AreaAngle.X, -90, 90);
 					ImGui.SameLine(0, angleSpace);
-					ImGui.SliderAngle("Light Angle##AngleY", ref light->AreaAngle.Y, -90, 90);
+					ImGui.SliderAngle($"{Ktisis.Locale.Translate("object_edit.light.light.area.angle")}##AngleY", ref light->AreaAngle.Y, -90, 90);
 				}
-				ImGui.SliderFloat("Falloff Angle##LightAngle", ref light->FalloffAngle, 0.0f, 180.0f, "%0.0f deg");
+				ImGui.SliderFloat($"{Ktisis.Locale.Translate("object_edit.light.light.area.falloff")}##LightAngle", ref light->FalloffAngle, 0.0f, 180.0f, "%0.0f deg");
 				break;
 			
 		}
@@ -100,7 +100,7 @@ public class LightPropertyList : ObjectPropertyList {
 		// Falloff
 		
 		var falloffPreview = this._locale.Translate($"lightFalloff.{light->FalloffType}");
-		if (ImGui.BeginCombo("Falloff Type", falloffPreview)) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.light.light.falloff.type"), falloffPreview)) {
 			foreach (var value in Enum.GetValues<FalloffType>()) {
 				var valueLabel = this._locale.Translate($"lightFalloff.{value}");
 				if (ImGui.Selectable(valueLabel, light->FalloffType == value))
@@ -109,16 +109,16 @@ public class LightPropertyList : ObjectPropertyList {
 			ImGui.EndCombo();
 		}
 
-		ImGui.DragFloat("Falloff Power##FalloffPower", ref light->Falloff, 0.01f, 0.0f, 1000.0f);
+		ImGui.DragFloat($"{Ktisis.Locale.Translate("object_edit.light.light.falloff.power")}##FalloffPower", ref light->Falloff, 0.01f, 0.0f, 1000.0f);
 		
 		// Base light settings
 		
 		ImGui.Spacing();
 		var color = light->Color.RGB;
-		if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Hdr | ImGuiColorEditFlags.Uint8))
+		if (ImGui.ColorEdit3(Ktisis.Locale.Translate("object_edit.light.light.color"), ref color, ImGuiColorEditFlags.Hdr | ImGuiColorEditFlags.Uint8))
 			light->Color.RGB = color;
-		ImGui.DragFloat("Intensity", ref light->Color.Intensity, 0.01f, 0.0f, 100.0f);
-		if (ImGui.DragFloat("Range##LightRange", ref light->Range, 0.1f, 0, 999))
+		ImGui.DragFloat(Ktisis.Locale.Translate("object_edit.light.light.intensity"), ref light->Color.Intensity, 0.01f, 0.0f, 100.0f);
+		if (ImGui.DragFloat($"{Ktisis.Locale.Translate("object_edit.light.light.range")}##LightRange", ref light->Range, 0.1f, 0, 999))
 			entity.Flags |= LightEntityFlags.Update;
 
 		// RenderLight projection settings
@@ -144,11 +144,11 @@ public class LightPropertyList : ObjectPropertyList {
 		}
 
 		ImGui.Spacing();
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, "Import light settings"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, Ktisis.Locale.Translate("object_edit.light.light.import")))
 			this._ctx.Interface.OpenLightFile((path, file) => this._ctx.Scene.ApplyLightFile(entity, file));
 
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Save, "Export light settings"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Save, Ktisis.Locale.Translate("object_edit.light.light.export")))
 			this._ctx.Interface.OpenLightExport(entity);
 
 		this.DrawGoboPopup(entity);
@@ -159,17 +159,17 @@ public class LightPropertyList : ObjectPropertyList {
 		var light = sceneLight != null ? sceneLight->RenderLight : null;
 		if (light == null) return;
 		
-		this.DrawLightFlag("Dynamic shadows", light, LightFlags.Dynamic);
+		this.DrawLightFlag(Ktisis.Locale.Translate("object_edit.light.shadow.dynamic"), light, LightFlags.Dynamic);
 		ImGui.Spacing();
 		
-		this.DrawLightFlag("Cast character shadows", light, LightFlags.CharaShadow);
-		this.DrawLightFlag("Cast object shadows", light, LightFlags.ObjectShadow);
+		this.DrawLightFlag(Ktisis.Locale.Translate("object_edit.light.shadow.chara"), light, LightFlags.CharaShadow);
+		this.DrawLightFlag(Ktisis.Locale.Translate("object_edit.light.shadow.object"), light, LightFlags.ObjectShadow);
 
 		ImGui.Spacing();
-		ImGui.DragFloat("Shadow Range", ref light->CharaShadowRange, 0.1f, 0.0f, 1000.0f);
+		ImGui.DragFloat(Ktisis.Locale.Translate("object_edit.light.shadow.range"), ref light->CharaShadowRange, 0.1f, 0.0f, 1000.0f);
 		ImGui.Spacing();
-		ImGui.DragFloat("Shadow Near", ref light->ShadowNear, 0.01f, 0.0f, 1000.0f);
-		ImGui.DragFloat("Shadow Far", ref light->ShadowFar, 0.01f, 0.0f, 1000.0f);
+		ImGui.DragFloat(Ktisis.Locale.Translate("object_edit.light.shadow.near"), ref light->ShadowNear, 0.01f, 0.0f, 1000.0f);
+		ImGui.DragFloat(Ktisis.Locale.Translate("object_edit.light.shadow.far"), ref light->ShadowFar, 0.01f, 0.0f, 1000.0f);
 	}
 
 	private unsafe void DrawGoboPopup(LightEntity entity) {

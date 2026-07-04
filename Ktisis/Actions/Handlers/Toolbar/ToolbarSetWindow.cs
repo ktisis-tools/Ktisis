@@ -33,7 +33,7 @@ public class ToggleWorkspace(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.KEY_1)
+			Combo = new KeyCombo(VirtualKey.F1)
 		}
 	};
 
@@ -49,7 +49,7 @@ public class ToggleObject(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.KEY_2)
+			Combo = new KeyCombo(VirtualKey.F2)
 		}
 	};
 
@@ -65,7 +65,7 @@ public class ToggleActor(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.KEY_3)
+			Combo = new KeyCombo(VirtualKey.F3)
 		}
 	};
 
@@ -81,7 +81,7 @@ public class TogglePose(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.KEY_4)
+			Combo = new KeyCombo(VirtualKey.F4)
 		}
 	};
 
@@ -96,7 +96,7 @@ public class ToggleEnv(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.KEY_5)
+			Combo = new KeyCombo(VirtualKey.F5)
 		}
 	};
 
@@ -111,12 +111,27 @@ public class ToggleCamera(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.KEY_6)
+			Combo = new KeyCombo(VirtualKey.F6)
 		}
 	};
 
 	override internal void Call(ToolbarWindow window) => window.DrawCameraWindow();
 	
+}
+[Action("Toolbar_ToggleScene")]
+public class ToggleScene(IPluginContext ctx) : ToolbarSetWindow(ctx) {
+	
+	
+	public override KeybindInfo BindInfo { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.F7)
+		}
+	};
+
+	override internal void Call(ToolbarWindow window) => window.DrawSceneWindow();
+
 }
 [Action("Toolbar_ToggleConfig")]
 public class ToggleConfig(IPluginContext ctx) : ToolbarSetWindow(ctx) {
@@ -126,7 +141,7 @@ public class ToggleConfig(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.KEY_7)
+			Combo = new KeyCombo(VirtualKey.F8)
 		}
 	};
 

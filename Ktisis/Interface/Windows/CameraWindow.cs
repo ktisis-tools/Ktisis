@@ -36,7 +36,6 @@ public class CameraWindow : KtisisWindow {
 	private readonly TransformTable _fixedPos;
 	private readonly TransformTable _relativePos;
 	private bool IsWork = false;
-	private const string WindowId = "KtisisCameraEditor";
 	private float _toolbar = 0f;
 	private readonly PopupList<BoneNode> _boneList;
 	private BoneNode? _selected;
@@ -48,7 +47,7 @@ public class CameraWindow : KtisisWindow {
 		TransformTable fixedPos,
 		TransformTable relativePos
 	) : base(
-		$"Camera Editor###{WindowId}"
+		"camera_edit.title", windowId:"###KtisisCameraEditor"
 	) {
 		this._ctx = ctx;
 		this._fixedPos = fixedPos;
@@ -73,7 +72,7 @@ public class CameraWindow : KtisisWindow {
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.75f
 		};
 		IsWork = this._ctx.Cameras.IsWorkCameraActive;
-		this.WindowName = $"Camera Editor{(IsWork ? " [Work Camera]" : "")}###{WindowId}";
+		this.WindowName = $"{Ktisis.Locale.Translate(this._localeWindowName)}{(IsWork ? " [Work Camera]" : "")}{this._windowId}";
 	}
 	
 	public override void Draw() {
