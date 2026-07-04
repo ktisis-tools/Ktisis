@@ -49,7 +49,7 @@ public class AttachManager : IAttachManager {
 	
 	// State
 	
-	private readonly HashSet<IAttachable> Attachments = new();
+	internal readonly HashSet<IAttachable> Attachments = new();
 	
 	private void Clear() {
 		foreach (var item in this.Attachments)

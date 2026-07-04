@@ -10,11 +10,9 @@ using FFXIVClientStructs.FFXIV.Client.System.Memory;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Camera.Types;
-using Ktisis.Structs;
 using Ktisis.Structs.Common;
 using Ktisis.Structs.Lights;
 using Ktisis.Interop.Hooking;
-using Ktisis.Structs.Camera;
 using Ktisis.Common.Utility;
 
 namespace Ktisis.Scene.Modules.Lights;
@@ -55,7 +53,7 @@ public class LightSpawner : HookModule {
 	[Signature("E8 ?? ?? ?? ?? 48 8B 94 FB ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ??")]
 	private SceneLightInitializeDelegate _sceneLightInit = null!;
 	private unsafe delegate bool SceneLightInitializeDelegate(SceneLight* self);
-	
+
 	[Signature("F6 41 38 01")]
 	private SceneLightSetupDelegate _sceneLightSpawn = null!;
 	private unsafe delegate nint SceneLightSetupDelegate(SceneLight* self);

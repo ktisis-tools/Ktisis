@@ -26,6 +26,8 @@ namespace Ktisis.Editor.Context;
 
 [Singleton]
 public class ContextBuilder {
+	private readonly OverlayService _overlay;
+	private readonly WorldService _world;
 	private readonly GPoseService _gpose;
 	private readonly InteropService _interop;
 	private readonly IFramework _framework;
@@ -35,8 +37,11 @@ public class ContextBuilder {
 	private readonly FormatService _format;
 	private readonly McdfManager _mcdf;
 	private readonly IObjectTable _objectTable;
+	public SceneDataService _sceneData;
 
 	public ContextBuilder(
+		OverlayService overlay,
+		WorldService world,
 		GPoseService gpose,
 		InteropService interop,
 		IFramework framework,
@@ -47,6 +52,8 @@ public class ContextBuilder {
 		McdfManager mcdf,
 		IObjectTable objectTable
 	) {
+		this._overlay = overlay;
+		this._world = world;
 		this._gpose = gpose;
 		this._interop = interop;
 		this._framework = framework;
@@ -70,8 +77,11 @@ public class ContextBuilder {
 		var factory = new EntityFactory(context, this._naming, this._mcdf);
 		var select = new SelectManager(context);
 		var attach = new AttachManager();
-		var autoSave = new PoseAutoSave(context, this._framework, this._format);
+		this._sceneData = new SceneDataService(context, this._objectTable, this._framework);
+		var autoSave = new PoseAutoSave(context, this._framework, this._format, this._sceneData );
 
+
+		
 		var editor = new EditorState(context, scope) {
 			Actions = actions,
 			Animation = new AnimationManager(context, scope, this._data, this._framework),
@@ -80,7 +90,7 @@ public class ContextBuilder {
 			Interface = new EditorInterface(context, state.Gui),
 			Expressions = new ExpressionManager(context),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
-			Scene = new SceneManager(context, scope, this._framework, factory),
+			Scene = new SceneManager(context, scope, this._framework, factory, this._objectTable, this._sceneData, this._overlay, this._world),
 			Selection = select,
 			Transform = new TransformHandler(context, actions, select)
 		};

@@ -118,6 +118,21 @@ public class ToggleCamera(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 	override internal void Call(ToolbarWindow window) => window.DrawCameraWindow();
 	
 }
+[Action("Toolbar_ToggleScene")]
+public class ToggleScene(IPluginContext ctx) : ToolbarSetWindow(ctx) {
+	
+	
+	public override KeybindInfo BindInfo { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.F7)
+		}
+	};
+
+	override internal void Call(ToolbarWindow window) => window.DrawSceneWindow();
+
+}
 [Action("Toolbar_ToggleConfig")]
 public class ToggleConfig(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 	
@@ -126,7 +141,7 @@ public class ToggleConfig(IPluginContext ctx) : ToolbarSetWindow(ctx) {
 		Trigger = KeybindTrigger.OnDown,
 		Default = new ActionKeybind {
 			Enabled = true,
-			Combo = new KeyCombo(VirtualKey.F7)
+			Combo = new KeyCombo(VirtualKey.F8)
 		}
 	};
 

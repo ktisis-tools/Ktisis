@@ -1,4 +1,6 @@
-﻿namespace Ktisis.Data.Config.Sections;
+﻿using Ktisis.Structs.Objects;
+
+namespace Ktisis.Data.Config.Sections;
 
 public class OverlayConfig {
 	public bool Visible = true;
@@ -12,6 +14,13 @@ public class OverlayConfig {
 	public float LineThickness = 2.0f;
 	public float LineOpacity = 0.95f;
 	public float LineOpacityUsing = 0.15f;
-	
+
 	public bool DrawReferenceTitle = true;
+
+	public float WorldNodeRadius = 5.0f;
+	public float WorldNodeOutlineWidth = 1.0f;
+	public float WorldNodeScaleFactor = 1.0f;
+	public uint WorldNodeColor = 0xFFFFFFFF;
+	public OutlineChoice WorldOutlineColor = OutlineChoice.Yellow;
+	public float WorldCameraRange = 30.0f;
 }

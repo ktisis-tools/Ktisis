@@ -22,6 +22,7 @@ public interface IEditorContext : IDisposable {
 	public IPluginContext Plugin { get; }
 	
 	public bool IsGPosing { get; }
+	public bool ShowWorldObjects { get; set; }
 	
 	public Configuration Config { get; }
 	public LocaleManager Locale { get; }

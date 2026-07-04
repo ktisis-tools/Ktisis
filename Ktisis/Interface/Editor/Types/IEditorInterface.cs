@@ -25,8 +25,13 @@ public interface IEditorInterface {
 	public void OpenObjectEditor(bool forceOpen = false);
 	
 	public void OpenPosingWindow();
+	public void OpenSceneWindow();
 
 	public void OpenSceneCreateMenu();
+	public void OpenActorCreateMenu();
+	public void OpenLightCreateMenu();
+	public void OpenOverlayCreateMenu();
+
 	public void OpenSceneEntityMenu(SceneEntity entity);
 
 	public void OpenAssignCollection(ActorEntity entity);
@@ -43,6 +48,7 @@ public interface IEditorInterface {
 	
 	public void OpenActorEditor(ActorEntity actor);
 	public void OpenLightEditor(LightEntity light);
+
 	
 	public bool OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity;
 	
@@ -58,9 +64,12 @@ public interface IEditorInterface {
 	public void OpenPoseFile(Action<string, PoseFile> handler);
 	public void OpenMcdfFile(Action<string> handler);
 	public void OpenLightFile(Action<string, LightFile> handler);
+	public void OpenSceneFile(Action<string> handler);
+	
 
 	public void OpenReferenceImages(Action<string> handler);
 	
 	public void ExportCharaFile(CharaFile file);
 	public void ExportPoseFile(PoseFile file);
+	public void ExportSceneFile(SceneFile file);
 }

@@ -2,6 +2,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Gobos;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Data.Config.Props;
 using Ktisis.Data.Config.Sections;
@@ -26,6 +27,15 @@ public static class SchemaReader {
 	public static PoseViewSchema ReadPoseView() {
 		var stream = ResourceUtil.GetManifestResource(ViewSchemaPath);
 		return PoseViewReader.ReadStream(stream);
+	}
+	
+	// Gobos
+
+	private const string GoboSchemaPath = "Data.Library.gobos.csv";
+
+	public static GoboSchema ReadGobos() {
+		var stream = ResourceUtil.GetManifestResource(GoboSchemaPath);
+		return GoboReader.ReadStream(stream);
 	}
 
 	// Props

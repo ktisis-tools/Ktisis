@@ -130,9 +130,16 @@ public class LocaleManager : IDisposable {
 		var key = $"boneCategory.{category.Name}";
 		return this.HasTranslationFor(key) ? this.Translate(key) : category.Name;
 	}
-	
+
+	public int RandomHintKey() {
+		var count = this.Data?.KeysMatchingPrefix("hints.");
+		if (count == null) return 0;
+
+		var r = new Random();
+		return r.Next(0, count.Value) + 1;
+	}
 
 	public void Dispose() {
 			this._dpi.LanguageChanged -= this.LanguageChanged;
-	}
+  }
 }

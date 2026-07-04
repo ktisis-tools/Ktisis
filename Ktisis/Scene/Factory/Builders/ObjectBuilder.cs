@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 using Dalamud.Utility;
 
@@ -10,6 +11,8 @@ using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Types;
 using Ktisis.Services.Data;
+
+using Lumina.Extensions;
 
 namespace Ktisis.Scene.Factory.Builders;
 
@@ -64,6 +67,7 @@ public sealed class ObjectBuilder : EntityBuilder<WorldEntity, IObjectBuilder>, 
 		var result = type switch {
 			ObjectType.Light => new LightEntity(this.Scene),
 			ObjectType.CharacterBase => this.BuildCharaBase(),
+			ObjectType.BgObject => this.BuildWorldObject(),
 			// TODO: VFX?
 			_ => this.BuildDefault()
 		};
@@ -83,6 +87,14 @@ public sealed class ObjectBuilder : EntityBuilder<WorldEntity, IObjectBuilder>, 
 		};
 		this.SetFallbackName(type.ToString());
 		return result;
+	}
+
+	private ObjectEntity BuildWorldObject() {
+		var obj = this.Scene.World.Objects.Where(w => w.Address == this.Address).FirstOrNull();
+		if (obj == null)
+			throw new Exception($"Attempted to build BgObject not present in WorldService.\nAddress: {this.Address:X}");
+
+		return new ObjectEntity(this.Scene, obj.Value);
 	}
 	
 	// Weapons

@@ -7,6 +7,7 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
+using GLib.Popups.ImFileDialog;
 using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
@@ -15,6 +16,8 @@ using Ktisis.Interface.Components.Workspace;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Factory.Builders;
+using Ktisis.Services.Data;
 
 namespace Ktisis.Interface.Windows; 
 
@@ -100,6 +103,10 @@ public class WorkspaceWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 		
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.UsersLine, this._ctx.Locale.Translate("scene_edit.title")))
+			this.Interface.OpenSceneWindow();
+
+		ImGui.SameLine(0, spacing);
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Walking, this._ctx.Locale.Translate("chara_edit.title"))) {
 			var target = this._ctx.Selection.GetFirstSelected();
 			if (
@@ -141,11 +148,37 @@ public class WorkspaceWindow : KtisisWindow {
 	// Scene tree buttons
 
 	protected private void DrawSceneTreeButtons() {
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, this._ctx.Locale.Translate("workspace.create")))
-			this.Interface.OpenSceneCreateMenu();
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleGroup, this._ctx.Locale.Translate("workspace.create_actor")))
+			this._ctx.Scene.Factory.CreateActor().Spawn();
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			this.Interface.OpenActorCreateMenu();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("workspace.refresh_entities")))
-			this.Interface.RefreshSceneEntities();
+
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Lightbulb, this._ctx.Locale.Translate("workspace.create_light")))
+			this._ctx.Scene.Factory.CreateLight().Spawn();
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			this.Interface.OpenLightCreateMenu();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.CommentDots, this._ctx.Locale.Translate("workspace.create_overlay")))
+			this._ctx.Scene.Factory.BuildOverlay(OverlayTypes.Talk).Add();
+		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
+			this.Interface.OpenOverlayCreateMenu();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
+		// world overlay
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), this._ctx.ShowWorldObjects)) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Mountain, this._ctx.Locale.Translate("workspace.overlay.world_toggle")))
+				this._ctx.ShowWorldObjects = !this._ctx.ShowWorldObjects;
+		}
+		if (!this._ctx.ShowWorldObjects) return;
+
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.Text("Range:");
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+		ImGui.SliderFloat("##RangeSlider", ref this._ctx.Config.Overlay.WorldCameraRange, 5.0f, 100.0f, "%.2fy");
 	}
 	
 }

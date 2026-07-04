@@ -143,7 +143,7 @@ public class SelectableGui {
 		ImGui.SetNextFrameWantCaptureMouse(true);
 		
 		// Check for mouse click
-		var isClick = ImGui.IsMouseReleased(ImGuiMouseButton.Left);
+		var isClick = ImGui.IsMouseClicked(ImGuiMouseButton.Left);
 
 		for (var i = 0; i < list.Count; i++) {
 			var item = list[i];
@@ -253,7 +253,7 @@ public class SelectableGui {
 		}
 	}
 
-	private static List<ImRect> WindowOverlaps() {
+	public static List<ImRect> WindowOverlaps() {
 		var windowList = new List<ImRect>();
 
 		foreach (var window in ImGui.GetCurrentContext().Windows.Where(w => w.WasActive)) {
@@ -263,7 +263,7 @@ public class SelectableGui {
 		return windowList;
 	}
 
-	private static bool CheckPosClip(Vector2 position, List<ImRect> clipRects) {
+	public static bool CheckPosClip(Vector2 position, List<ImRect> clipRects) {
 		foreach (var rect in clipRects.Where(w => w.Min != Vector2.Zero)) {
 			var imRect = rect;
 			if (imRect.Contains(position))

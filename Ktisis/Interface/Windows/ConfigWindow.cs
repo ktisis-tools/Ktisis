@@ -21,6 +21,7 @@ using Ktisis.Interface.Types;
 using Ktisis.Interface.Windows.ToolbarModules;
 using Ktisis.Services.Data;
 using Ktisis.Localization;
+using Ktisis.Structs.Objects;
 
 namespace Ktisis.Interface.Windows;
 
@@ -195,6 +196,21 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+
+		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_radius"), ref this.Config.Overlay.WorldNodeRadius, 0.1f);
+		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_thickness"), ref this.Config.Overlay.WorldNodeOutlineWidth, 0.1f);
+		ImGui.SliderFloat(this.Locale.Translate("config.overlay.world.scale_factor"), ref  this.Config.Overlay.WorldNodeScaleFactor, 0.1f, 1.0f);
+		DrawColorEdit(this.Locale.Translate("config.overlay.world.color"), ref this.Config.Overlay.WorldNodeColor);
+
+		using (var _combo = ImRaii.Combo("Highlight color when hovering", Enum.GetName(this.Config.Overlay.WorldOutlineColor)))
+			if (_combo.Success)
+				foreach (var color in Enum.GetValues<OutlineChoice>())
+					if (ImGui.Selectable(Enum.GetName(color), color == this.Config.Overlay.WorldOutlineColor))
+						this.Config.Overlay.WorldOutlineColor = color;
 	}
 	
 	// Workspace
@@ -219,6 +235,8 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirmExit"), ref this.Config.Editor.ConfirmExit);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.openTray"), ref this.Config.Editor.OpenTrayOnWorkspaceClose);
 		this.DrawHint("config.workspace.hintTrayIcon");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.showHints"), ref this.Config.Editor.ShowHints);
+		this.DrawHint("config.workspace.hintHint");
 
 		ImGui.Spacing();
 
@@ -265,10 +283,10 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.Text(this.Locale.Translate("config.input.help"));
 		using (ImRaii.Disabled(!this.Config.Keybinds.Enabled))
-			this._keybinds.Draw("history|select|overlay|pose");
+			this._keybinds.Draw("history|select|overlay|pose|scene");
 
 		if (ImGui.Button(Ktisis.Locale.Translate("config.input.reset")))
-			this._keybinds.ResetBinds("history|select|overlay|pose");
+			this._keybinds.ResetBinds("history|select|overlay|pose|scene");
 	}
 
 	private void DrawCamerasInputTab() {
@@ -310,10 +328,10 @@ public class ConfigWindow : KtisisWindow {
 
 
 		using (ImRaii.Disabled(!this.Config.Keybinds.Enabled))
-			this._keybinds.Draw("toolbar");
+			this._keybinds.Draw("toolbar", true);
 
 		if (ImGui.Button(Ktisis.Locale.Translate("config.input.reset")))
-			this._keybinds.ResetBinds("toolbar");
+			this._keybinds.ResetBinds("toolbar", true);
 	}
 	
 	
@@ -625,6 +643,13 @@ public class ConfigWindow : KtisisWindow {
 
 	private void SetPoseViewImage(Action<string> handler) {
 		this._gui.FileDialogs.OpenImage("image", handler);
+	}
+
+	private static bool DrawColorEdit(string label, ref uint color) {
+		var colorVec = ImGui.ColorConvertU32ToFloat4(color);
+		var result = ImGui.ColorEdit4(label, ref colorVec);
+		if (result) color = ImGui.ColorConvertFloat4ToU32(colorVec);
+		return result;
 	}
 
 	public override void OnClose() {

@@ -4,6 +4,7 @@ using GLib.Popups.Context;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Structs.Lights;
 
@@ -30,11 +31,31 @@ public class SceneCreateMenuBuilder {
 			.Build($"##SceneCreateMenu_{this.GetHashCode():X}");
 	}
 
+	public ContextMenu CreateActor() {
+		return new ContextMenuBuilder()
+			.Group(this.BuildActorGroup)
+			.Build($"##SceneCreateActorMenu_{this.GetHashCode():X}");
+	}
+
+	public ContextMenu CreateLight() {
+		return new ContextMenuBuilder()
+			.Group(this.BuildLightMenu)
+			.Build($"##SceneCreateLightMenu_{this.GetHashCode():X}");
+	}
+
+	public ContextMenu CreateOverlay() {
+		return new ContextMenuBuilder()
+			.Group(this.BuildOverlayGroup)
+			.Build($"##SceneCreateOverlayMenu_{this.GetHashCode():X}");
+	}
+
 	private void BuildActorGroup(ContextMenuBuilder sub) {
 		sub.Action(Ktisis.Locale.Translate("workspace.create_menu.actor.create"), () => this.Factory.CreateActor().Spawn())
 			.Action(Ktisis.Locale.Translate("workspace.create_menu.actor.file"), this.ImportCharaFromFile)
 			.Action(Ktisis.Locale.Translate("workspace.create_menu.actor.mcdf"), this.ImportCharaFromMcdf)
-			.Action(Ktisis.Locale.Translate("workspace.create_menu.actor.overworld"), this._ctx.Interface.OpenOverworldActorList);
+			.Action(Ktisis.Locale.Translate("workspace.create_menu.actor.overworld"), this._ctx.Interface.OpenOverworldActorList)
+			.Separator()
+			.Action("Refresh scene entities", () => this._ctx.Interface.RefreshSceneEntities());
 	}
 	
 	private void BuildLightGroup(ContextMenuBuilder sub)
@@ -59,7 +80,16 @@ public class SceneCreateMenuBuilder {
 	}
 
 	private void BuildUtilityGroup(ContextMenuBuilder sub) {
+		sub.SubMenu("Add new overlay...", this.BuildOverlayGroup);
 		sub.Action(Ktisis.Locale.Translate("workspace.create_menu.reference"), this.OpenReferenceImage);
+	}
+
+	private void BuildOverlayGroup(ContextMenuBuilder sub) {
+		sub.Action("Dialog", () => this.Factory.BuildOverlay(OverlayTypes.Talk).Add())
+			.Action("Balloon", () => this.Factory.BuildOverlay(OverlayTypes.Balloon).Add())
+			.Action("Status", () => this.Factory.BuildOverlay(OverlayTypes.Status).Add())
+			.Separator()
+			.Action(Ktisis.Locale.Translate("workspace.create_menu.reference"), this.OpenReferenceImage);
 	}
 	
 	// Actor handling
