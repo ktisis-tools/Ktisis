@@ -108,9 +108,6 @@ public class SceneEntityMenuBuilder {
 			case LightEntity light:
 				this.BuildLightMenu(menu, light);
 				break;
-			case BoneNode bone:
-				this.BuildBoneMenu(menu, bone);
-				break;
 		}
 	}
 
@@ -213,27 +210,6 @@ public class SceneEntityMenuBuilder {
 		var file = await this._ctx.Scene.SaveLightFile(light);
 		var newLight = await this._ctx.Scene.Factory.CreateLight().Spawn();
 		this.ImportLight(newLight, file);
-	}
-
-	private void BuildBoneMenu(ContextMenuBuilder menu, BoneNode bone) {
-		menu.Separator()
-			.SubMenu("Set as Camera target", sub => {
-				sub.Action("Follow", () => {
-					this._ctx.Cameras.Current.Tracking = TrackingMode.Follow;
-					this._ctx.Cameras.Current.Target.Add(bone);
-					this._ctx.Interface.OpenCameraWindow();
-				});
-				sub.Action("Pan", () => {
-					this._ctx.Cameras.Current.Tracking = TrackingMode.Pan;
-					this._ctx.Cameras.Current.Target.Add(bone);
-					this._ctx.Interface.OpenCameraWindow();
-				});
-				sub.Action("Pan and Follow", () => {
-					this._ctx.Cameras.Current.Tracking = TrackingMode.FollowAndPan;
-					this._ctx.Cameras.Current.Target.Add(bone);
-					this._ctx.Interface.OpenCameraWindow();
-				});
-			});
 	}
 
 	private void DuplicateOverlay(OverlayEntity overlay) {

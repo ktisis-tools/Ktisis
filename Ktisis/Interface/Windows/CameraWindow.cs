@@ -41,7 +41,7 @@ public class CameraWindow : KtisisWindow {
 	private readonly PopupList<BoneNode> _boneList;
 	private BoneNode? _selected;
 	private BoneNode? _previouslyDrawn;
-	
+	private List<BoneNode> tracked;
 	
 	public CameraWindow(
 		IEditorContext ctx,
@@ -276,9 +276,13 @@ public class CameraWindow : KtisisWindow {
 	}
 
 	private unsafe void DrawTracking(EditorCamera camera) {
+		this.tracked = camera.Target;
 		this._previouslyDrawn = null;
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Add bone to track")) {
-			this._boneList.Open();
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Add bone to track\nHold shift to clear tracked bones")) {
+			if(!ImGui.IsKeyDown(ImGuiKey.ModShift))
+				this._boneList.Open();
+			else 
+				camera.Target.Clear();
 		}
 		ImGui.SameLine();
 		
@@ -351,7 +355,7 @@ public class CameraWindow : KtisisWindow {
 			Separators.SeparatorText(bone.Parent?.Name, textPosition: 0.5f, height:Separators.LineHeight.Middle);
 		}
 		this._previouslyDrawn = bone;
-		var result = ImGui.Selectable($"{bone.Name}" );
+		var result = ImGui.Selectable($"{bone.Name}", this.tracked.Contains(bone));
 		return result;
 	}
 	// Sliders
