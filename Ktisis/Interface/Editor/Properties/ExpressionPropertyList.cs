@@ -14,9 +14,10 @@ public class ExpressionPropertyList(
 	ExpressionEditorPanel panel
 ) : ObjectPropertyList {
 
-	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
+	public unsafe override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
 		if (ResolveActor(entity) is not { } actor) return;
 		if (actor.Pose is not { IsValid: true }) return;
+		if (actor.GetHuman() == null) return;
 
 		builder.AddHeader("Expressions", () => this.Draw(actor), priority: 2);
 	}
