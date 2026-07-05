@@ -1,5 +1,6 @@
+using System.Collections.Generic;
+
 using Ktisis.Editor.Expressions.Data;
-using Ktisis.Editor.Posing.Data;
 
 namespace Ktisis.Editor.Expressions.Types;
 
@@ -13,7 +14,6 @@ public interface IExpressionEditor {
 	void SetWeight(string id, float weight);
 	void ResetWeights();
 
-
-	PoseContainer BeginEdit();
-	void CommitEdit(PoseContainer initial);
+	Dictionary<string, float> BeginEdit();
+	void CommitEdit(Dictionary<string, float> initial);
 }

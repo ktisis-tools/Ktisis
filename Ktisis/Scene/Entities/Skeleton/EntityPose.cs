@@ -9,6 +9,7 @@ using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Expressions;
 using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
@@ -23,7 +24,9 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	private readonly IPoseBuilder _builder;
 	
 	public readonly IIkController IkController;
-	
+
+	public ExpressionState ExpressionState { get; } = new();
+
 	public EntityPose(
 		ISceneManager scene,
 		IPoseBuilder builder,

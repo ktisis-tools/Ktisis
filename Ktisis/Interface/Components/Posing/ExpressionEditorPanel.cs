@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 
@@ -6,14 +8,13 @@ using GLib.Widgets;
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Expressions.Data;
 using Ktisis.Editor.Expressions.Types;
-using Ktisis.Editor.Posing.Data;
 
 namespace Ktisis.Interface.Components.Posing;
 
 [Transient]
 public class ExpressionEditorPanel {
 
-	private PoseContainer? _editInitial;
+	private Dictionary<string, float>? _editInitial;
 
 	public void Draw(IExpressionEditor editor) {
 		editor.EnsureNeutral();

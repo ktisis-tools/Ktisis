@@ -26,7 +26,7 @@ public class ExpressionEditor(
 
 	public ActionUnitCatalog Catalog => this.Library.Catalog;
 
-	private ExpressionState State => mgr.GetState(actor.Actor.ObjectIndex);
+	private ExpressionState State => actor.Pose!.ExpressionState;
 
 	
 	public void EnsureNeutral() {
@@ -307,20 +307,13 @@ public class ExpressionEditor(
 
 	// Undo
 
-	public PoseContainer BeginEdit() => new EntityPoseConverter(actor.Pose!).Save();
+	public Dictionary<string, float> BeginEdit()
+		=> new(this.State.Weights);
 
-	public void CommitEdit(PoseContainer initial) {
-		var pose = actor.Pose;
-		if (pose == null) return;
-
-		var converter = new EntityPoseConverter(pose);
-		var final = converter.Save();
-		ctx.Actions.History.Add(new PoseMemento(converter) {
-			Modes = PoseMode.All,
-			Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
-			Bones = null,
+	public void CommitEdit(Dictionary<string, float> initial) {
+		ctx.Actions.History.Add(new ExpressionMemento(this.State, this.ApplyBlend) {
 			Initial = initial,
-			Final = final,
+			Final = new Dictionary<string, float>(this.State.Weights),
 		});
 	}
 }

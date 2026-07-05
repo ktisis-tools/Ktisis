@@ -7,8 +7,6 @@ public interface IExpressionManager {
 
 	IExpressionEditor GetEditor(ActorEntity actor);
 
-	ExpressionState GetState(ushort objectIndex);
-
 	// The AU catalog (and affected-bone set) matching the actor's race/gender/clan.
 	ExpressionLibrary GetLibrary(ActorEntity actor);
 }

@@ -16,21 +16,11 @@ public class ExpressionManager(IEditorContext ctx) : IExpressionManager {
 	// Used when the actor's race/gender/clan has no embedded catalog.
 	private const string FallbackKey = "Hyur_Feminine_Midlander";
 
-	private readonly Dictionary<ushort, ExpressionState> _states = new();
 	private readonly Dictionary<string, ExpressionLibrary> _libraries = new();
 
 	public void Initialize() { }
 
 	public IExpressionEditor GetEditor(ActorEntity actor) => new ExpressionEditor(this, ctx, actor);
-
-	public ExpressionState GetState(ushort objectIndex) {
-		if (this._states.TryGetValue(objectIndex, out var state))
-			return state;
-
-		state = new ();
-		this._states[objectIndex] = state;
-		return state;
-	}
 
 	public ExpressionLibrary GetLibrary(ActorEntity actor) {
 		var key = ResolveKey(actor);
