@@ -121,7 +121,7 @@ public class SceneWindow : KtisisWindow {
 				this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save(this._includeActors, this._includeLights, this._includeCameras, this._includeEnv, this._includeOverlays)));
 
 		if (this._sceneFile != null) {
-			ImGui.SetCursorPosY(ImGui.GetWindowHeight() -((iconBtnSize.Y *1.5f)* 3.3f));  //space for 2 buttons?
+			ImGui.SetCursorPosY(ImGui.GetWindowHeight()  + ImGui.GetStyle().ItemSpacing.Y - (((iconBtnSize.Y * 1.5f + ImGui.GetStyle().ItemSpacing.Y) * 3f ) + ImGui.GetStyle().WindowPadding.Y));  //space for 2 buttons?
 			if(Buttons.IconButtonTooltip(FontAwesomeIcon.Times, "Unload File", iconBtnSize*1.5f))
 				this._sceneFile = null;
 			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, $"Choose coordinate type\nCurrently: {(this._autosave ? "World space" : "Local space")}", iconBtnSize*1.5f))
@@ -138,7 +138,7 @@ public class SceneWindow : KtisisWindow {
 		
 		ImGui.PushStyleColor(ImGuiCol.ChildBg, new Vector4(74f, 74f, 74f, 138f)/255);
 		ImGui.PushStyleVar(ImGuiStyleVar.ChildRounding, 4 );
-		using (var child = ImRaii.Child("##SceneData", (this._ctx.Config.Editor.UseToolbar? new Vector2(ImGui.GetContentRegionAvail().X - 0.1f, 470) :Vector2.Zero),false, ImGuiWindowFlags.AlwaysAutoResize)) {
+		using (var child = ImRaii.Child("##SceneData", (this._ctx.Config.Editor.UseToolbar? new Vector2(ImGui.GetContentRegionAvail().X - 1f, Math.Clamp(ImGui.GetContentRegionAvail().Y - ImGui.GetStyle().WindowPadding.Y, 480, 900)) :Vector2.Zero),false, ImGuiWindowFlags.AlwaysAutoResize)) {
 
 			var cursorPos = ImGui.GetCursorScreenPos();
 
