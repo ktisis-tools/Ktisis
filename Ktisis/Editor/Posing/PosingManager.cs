@@ -113,6 +113,7 @@ public class PosingManager : IPosingManager {
 	// Module wrappers
 
 	public bool IsEnabled => this.PoseModule?.IsEnabled ?? false;
+	public event Action<bool>? OnPosingChanged;
 
 	public void SetEnabled(bool enable) {
 		if (enable && !this.IsValid) return;
@@ -129,6 +130,7 @@ public class PosingManager : IPosingManager {
 		HavokPosing.ClearCachedAbdomenModelTransform();
 
 		this.PoseModule?.SetEnabled(enable);
+		this.OnPosingChanged?.Invoke(enable);
 	}
 
 	public Task SyncFaceModelSpace(ActorEntity actor) {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Dalamud.Game.ClientState.Objects.Enums;
 
@@ -18,9 +19,22 @@ public class ExpressionManager(IEditorContext ctx) : IExpressionManager {
 
 	private readonly Dictionary<string, ExpressionLibrary> _libraries = new();
 
-	public void Initialize() { }
+	public void Initialize() {
+		ctx.Posing.OnPosingChanged += this.HandlePosingChanged;
+	}
 
 	public IExpressionEditor GetEditor(ActorEntity actor) => new ExpressionEditor(this, ctx, actor);
+
+	private void HandlePosingChanged(bool isEnabled) {
+		if (!isEnabled)
+			this.OnPosingDisabled();
+	}
+
+	private void OnPosingDisabled() {
+		foreach (var actor in ctx.Scene.Recurse().OfType<ActorEntity>()) {
+			actor.Pose?.ExpressionState.Reset();
+		}
+	}
 
 	public ExpressionLibrary GetLibrary(ActorEntity actor) {
 		var key = ResolveKey(actor);

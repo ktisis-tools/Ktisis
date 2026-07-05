@@ -23,6 +23,7 @@ public interface IPosingManager : IDisposable {
 
 	public bool IsEnabled { get; }
 	public bool IsIkEnabled { get; set; }
+	public event Action<bool>? OnPosingChanged;
 	public void SetEnabled(bool enable);
 	public Task SyncFaceModelSpace(ActorEntity actor);
 

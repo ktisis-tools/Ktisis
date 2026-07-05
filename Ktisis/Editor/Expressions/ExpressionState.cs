@@ -10,6 +10,13 @@ public class ExpressionState {
 	public Dictionary<string, float> Weights { get; } = new();
 
 	public HashSet<string> LastTouched { get; set; } = new();
-	
+
 	public Dictionary<string, Transform> SolverLocal { get; set; } = new();
+
+	public void Reset() {
+		this.Neutral = null;
+		this.Weights.Clear();
+		this.LastTouched.Clear();
+		this.SolverLocal.Clear();
+	}
 }
