@@ -252,11 +252,11 @@ public class SceneDataService {
 			return scene!;
 	}
 	
-	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true) {
+	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true, bool preserveExistingActors = false) {
 		
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 
-			if (loadActors) {
+			if (loadActors && !preserveExistingActors) {
 				foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 					var e = (ActorEntity)sceneEntity;
 					this.Scene.GetModule<ActorModule>().Delete(e, true);

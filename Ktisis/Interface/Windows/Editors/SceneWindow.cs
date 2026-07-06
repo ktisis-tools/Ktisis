@@ -43,7 +43,7 @@ public class SceneWindow : KtisisWindow {
 	private ISharedImmediateTexture? _texture;
 	private Map _source;
 	private SceneMCDFModal? _popupWindow;
-	private bool _includeActors, _includeLights, _includeCameras, _includeEnv, _includeOverlays;
+	private bool _includeActors, _includeLights, _includeCameras, _includeEnv, _includeOverlays, _preserveActors;
 	
 	public SceneWindow(
 		IEditorContext ctx,
@@ -57,7 +57,8 @@ public class SceneWindow : KtisisWindow {
 		this._sceneFile = null;
 		this._dataManager = dataManager;
 		this._textureProvider = textureProvider;
-		this._includeActors = this._includeCameras = this._includeLights = this._includeEnv = this._includeOverlays = true;
+		this._includeActors = this._includeCameras = this._includeLights = this._includeEnv = this._includeOverlays  = true;
+		this._preserveActors = false;
 	}
 	
 	public override void PreOpenCheck() {
@@ -127,7 +128,7 @@ public class SceneWindow : KtisisWindow {
 			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, $"Choose coordinate type\nCurrently: {(this._autosave ? "World space" : "Local space")}", iconBtnSize*1.5f))
 				this._autosave = !this._autosave;
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Check, "Apply Scene", iconBtnSize*1.5f)) {
-				this._sceneDataService.Load(this._sceneFile, this._autosave, this._includeActors, this._includeLights, this._includeCameras);
+				this._sceneDataService.Load(this._sceneFile, this._autosave, this._includeActors, this._includeLights, this._includeCameras, this._includeEnv,  this._includeOverlays, this._preserveActors);
 				this._sceneFile = null;
 			}
 		}
@@ -160,6 +161,11 @@ public class SceneWindow : KtisisWindow {
 
 					if (this._sceneFile is { Actors.Count: > 0 }) {
 						ImGui.Checkbox("Load actors", ref this._includeActors);
+						if (this._includeActors) {
+							ImGui.SameLine();
+							ImGui.Checkbox("Keep existing actors", ref this._preserveActors);
+						}
+
 						ImGui.Indent();
 						foreach (var actorInfo in this._sceneFile!.Actors) {
 
