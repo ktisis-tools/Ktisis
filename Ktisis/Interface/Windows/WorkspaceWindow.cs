@@ -148,21 +148,24 @@ public class WorkspaceWindow : KtisisWindow {
 	// Scene tree buttons
 
 	protected private void DrawSceneTreeButtons() {
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleGroup, this._ctx.Locale.Translate("workspace.create_actor")))
+		if (Buttons.IconButtonDropdown(FontAwesomeIcon.PeopleGroup, this.Interface.OpenActorCreateMenu))
 			this._ctx.Scene.Factory.CreateActor().Spawn();
-		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-			this.Interface.OpenActorCreateMenu();
+		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+			using var _ = ImRaii.Tooltip();
+			ImGui.Text(this._ctx.Locale.Translate("workspace.create_actor"));
+		}
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Lightbulb, this._ctx.Locale.Translate("workspace.create_light")))
+		if (Buttons.IconButtonDropdown(FontAwesomeIcon.Lightbulb, this.Interface.OpenLightCreateMenu))
 			this._ctx.Scene.Factory.CreateLight().Spawn();
-		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
-			this.Interface.OpenLightCreateMenu();
+		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+			using var _ = ImRaii.Tooltip();
+			ImGui.Text(this._ctx.Locale.Translate("workspace.create_light"));
+		}
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
 
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.CommentDots, this._ctx.Locale.Translate("workspace.create_overlay")))
-			this._ctx.Scene.Factory.BuildOverlay(OverlayTypes.Talk).Add();
-		if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
 			this.Interface.OpenOverlayCreateMenu();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 

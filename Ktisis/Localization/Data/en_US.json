@@ -228,9 +228,9 @@
 			}
 		},
 		"create": "Create new...",
-		"create_actor": "Create Actor\nRight-click for options...",
-		"create_light": "Create Light\nRight-click for options...",
-		"create_overlay": "Create Overlay\nRight-click for options...",
+		"create_actor": "Create Actor\nDrop-down for options...",
+		"create_light": "Create Light\nDrop-down for options...",
+		"create_overlay": "Create Overlay",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.hide": "Hide Ktisis overlay",
