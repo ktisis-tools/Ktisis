@@ -84,7 +84,7 @@ public class SceneDataService {
 			Ktisis.Log.Warning("Failed to write Scene file");
 		}
 	}
-	public unsafe SceneFile Save() {
+	public unsafe SceneFile Save(bool saveActors = true, bool saveLights = true, bool saveCameras = true, bool saveEnv = true, bool saveOverlays = true) {
 
 
 			var scene = new SceneFile();
@@ -103,138 +103,145 @@ public class SceneDataService {
 		
 			var overlays = this.Scene.Children.OfType<OverlayEntity>()
 				.ToList();
-			
+
 			//TODO: Attaches
-			foreach (var chara in entities) {
-				
-				var actor = ((ActorEntity)chara).Actor.GetDrawObject();
+			if(saveActors)
+				foreach (var chara in entities) {
 					
-				var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
-				var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
-				var poseFile = new EntityPoseConverter(chara.Pose!).SaveFile();
-				var defaultRotation = ((ActorEntity)chara).CsGameObject->Rotation;
-				var ipc = this._ctx.Plugin.Ipc;
-				Guid penumCollection = Guid.Empty;
-				Guid cPlus = Guid.Empty;
-				if (ipc.IsPenumbraActive && ((ActorEntity)chara).MCDF == null) {
-					var penum = ipc.GetPenumbraIpc().GetCollectionForObject(((ActorEntity)chara).Actor);
-					if (penum.Id != Guid.Empty) {
-						penumCollection = penum.Id;
+					var actor = ((ActorEntity)chara).Actor.GetDrawObject();
+						
+					var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
+					var charaFile = this._ctx.Characters.SaveCharaFile((ActorEntity)chara).GetResultSafely();
+					var poseFile = new EntityPoseConverter(chara.Pose!).SaveFile();
+					var defaultRotation = ((ActorEntity)chara).CsGameObject->Rotation;
+					var ipc = this._ctx.Plugin.Ipc;
+					Guid penumCollection = Guid.Empty;
+					Guid cPlus = Guid.Empty;
+					if (ipc.IsPenumbraActive && ((ActorEntity)chara).MCDF == null) {
+						var penum = ipc.GetPenumbraIpc().GetCollectionForObject(((ActorEntity)chara).Actor);
+						if (penum.Id != Guid.Empty) {
+							penumCollection = penum.Id;
+						}
 					}
-				}
-				if (ipc.IsCustomizeActive && ((ActorEntity)chara).MCDF == null && ((ActorEntity)chara).AssignedProfile != Guid.Empty) {
-					var assignedProfile = ((ActorEntity)chara).AssignedProfile;
-					if (assignedProfile != null) cPlus = (Guid)assignedProfile;
-				}
-				
-				
-				scene.Actors.Add(new SceneFile.ActorInfo() {
-					Chara = charaFile,
-					Pose = poseFile,
-					Location = location,
-					MCDF = this._ctx.Characters.Mcdf.LoadedMCDFPath(((ActorEntity)chara).Actor),
-					DefaultRotation = defaultRotation,
-					Index = ((ActorEntity)chara).Actor.ObjectIndex,
-					PenumbraCollection = penumCollection,
-					CustomizePlus = cPlus
-				});
+					if (ipc.IsCustomizeActive && ((ActorEntity)chara).MCDF == null && ((ActorEntity)chara).AssignedProfile != Guid.Empty) {
+						var assignedProfile = ((ActorEntity)chara).AssignedProfile;
+						if (assignedProfile != null) cPlus = (Guid)assignedProfile;
+					}
+					
+					
+					scene.Actors.Add(new SceneFile.ActorInfo() {
+						Chara = charaFile,
+						Pose = poseFile,
+						Location = location,
+						MCDF = this._ctx.Characters.Mcdf.LoadedMCDFPath(((ActorEntity)chara).Actor),
+						DefaultRotation = defaultRotation,
+						Index = ((ActorEntity)chara).Actor.ObjectIndex,
+						PenumbraCollection = penumCollection,
+						CustomizePlus = cPlus
+					});
 
-			}
-
-			foreach (var light in lights) {
-				var lightFile = Scene.SaveLightFile(light).Result;
-				var l = light.GetObject()->Transform;
-				var location = new Transform(this.Scene.GetActorRelativePosition(l.Position), l.Rotation, l.Scale);
-				var lightObj = new SceneFile.LightInfo() {
-					Light = lightFile,
-					Location = location,
-					Name = light.Name,
-					State = !light.IsHidden
-				};
-				scene.Lights.Add(lightObj);
-			}
+				}
 			
-			foreach (var camera in this._ctx.Cameras.GetCameras()) {
-				var c = new SceneFile.CameraInfo();
-				c.OrbitTarget = camera.OrbitTarget ?? camera.GameCamera->GetCameraTargetObject()->ObjectIndex;
-
-				c.IsDelmited = camera.IsDelimited;
-				c.Angle = new Vector3(camera.Camera->Angle.X, camera.Camera->Angle.Y, camera.Camera->Distance);
-				c.FixedPosition = this.Scene.GetActorRelativePosition((Vector3)camera.GetPosition());
-				c.Flags = (uint)camera.Flags;
-				c.IsActive = (this._ctx.Cameras.Current ==  camera);
-				c.Name = camera.Name;
-				c.OrthographicZoom = camera.OrthographicZoom;
-				scene.Cameras.Add(c);
-			}
-
-			foreach (var overlay in overlays) {
-				SceneFile.OverlayInfo.Type type = SceneFile.OverlayInfo.Type.None;
-				string dialog = string.Empty;
-				if (overlay.Type == EntityType.BalloonOverlay) {
-					type = SceneFile.OverlayInfo.Type.Balloon;
-					dialog = ((BalloonOverlay)overlay).Dialog;
-
-				}else if (overlay.Type == EntityType.StatusOverlay) {
-					type = SceneFile.OverlayInfo.Type.Status;
-					dialog = ((StatusOverlay)overlay).StatusText;
+			if(saveLights)
+				foreach (var light in lights) {
+					var lightFile = Scene.SaveLightFile(light).Result;
+					var l = light.GetObject()->Transform;
+					var location = new Transform(this.Scene.GetActorRelativePosition(l.Position), l.Rotation, l.Scale);
+					var lightObj = new SceneFile.LightInfo() {
+						Light = lightFile,
+						Location = location,
+						Name = light.Name,
+						State = !light.IsHidden
+					};
+					scene.Lights.Add(lightObj);
 				}
-				else if (overlay.Type == EntityType.TalkOverlay) {
-					type = SceneFile.OverlayInfo.Type.Talk;
-					dialog = ((TalkOverlay)overlay).Dialog;
+			
+			if(saveCameras)
+				foreach (var camera in this._ctx.Cameras.GetCameras()) {
+					var c = new SceneFile.CameraInfo();
+					c.OrbitTarget = camera.OrbitTarget ?? camera.GameCamera->GetCameraTargetObject()->ObjectIndex;
+
+					c.IsDelmited = camera.IsDelimited;
+					c.Angle = new Vector3(camera.Camera->Angle.X, camera.Camera->Angle.Y, camera.Camera->Distance);
+					c.FixedPosition = this.Scene.GetActorRelativePosition((Vector3)camera.GetPosition());
+					c.Flags = (uint)camera.Flags;
+					c.IsActive = (this._ctx.Cameras.Current ==  camera);
+					c.Name = camera.Name;
+					c.OrthographicZoom = camera.OrthographicZoom;
+					scene.Cameras.Add(c);
 				}
 
-				var file = new SceneFile.OverlayInfo() {
-					OverlayType = type,
-					Dialog = dialog,
-					Position = overlay.Position,
-					Opacity = overlay.Alpha,
-					Scale = overlay.Scale,
-					Visible = overlay.Visible,
-					Name = overlay.Name,
-				};
-				
-				switch (overlay.Type)
-				{
-					case EntityType.BalloonOverlay:
-						file.ArrowPosition = ((BalloonOverlay)overlay).ArrowX;
-						file.ShowArrow = ((BalloonOverlay)overlay).Arrow;
-						file.BalloonBackground = ((BalloonOverlay)overlay).Background;
-						file.BalloonColor = ((BalloonOverlay)overlay).Color;
-						file.FontSize = ((BalloonOverlay)overlay).FontSize;
-						break;
-					case EntityType.TalkOverlay:
-						file.TalkBackground = ((TalkOverlay)overlay).Background;
-						file.TalkCursor = ((TalkOverlay)overlay).Cursor;
-						file.Speaker = ((TalkOverlay)overlay).Speaker;
-						file.FontSize = ((TalkOverlay)overlay).FontSize;
-						break;
-					case EntityType.StatusOverlay:
-						file.StatusIcon = ((StatusOverlay)overlay).IconPath;
-						file.StatusType = ((StatusOverlay)overlay).StatusType;
-						break;
+			if(saveOverlays)
+				foreach (var overlay in overlays) {
+					SceneFile.OverlayInfo.Type type = SceneFile.OverlayInfo.Type.None;
+					string dialog = string.Empty;
+					if (overlay.Type == EntityType.BalloonOverlay) {
+						type = SceneFile.OverlayInfo.Type.Balloon;
+						dialog = ((BalloonOverlay)overlay).Dialog;
+
+					}else if (overlay.Type == EntityType.StatusOverlay) {
+						type = SceneFile.OverlayInfo.Type.Status;
+						dialog = ((StatusOverlay)overlay).StatusText;
+					}
+					else if (overlay.Type == EntityType.TalkOverlay) {
+						type = SceneFile.OverlayInfo.Type.Talk;
+						dialog = ((TalkOverlay)overlay).Dialog;
+					}
+
+					var file = new SceneFile.OverlayInfo() {
+						OverlayType = type,
+						Dialog = dialog,
+						Position = overlay.Position,
+						Opacity = overlay.Alpha,
+						Scale = overlay.Scale,
+						Visible = overlay.Visible,
+						Name = overlay.Name,
+					};
+					
+					switch (overlay.Type)
+					{
+						case EntityType.BalloonOverlay:
+							file.ArrowPosition = ((BalloonOverlay)overlay).ArrowX;
+							file.ShowArrow = ((BalloonOverlay)overlay).Arrow;
+							file.BalloonBackground = ((BalloonOverlay)overlay).Background;
+							file.BalloonColor = ((BalloonOverlay)overlay).Color;
+							file.FontSize = ((BalloonOverlay)overlay).FontSize;
+							break;
+						case EntityType.TalkOverlay:
+							file.TalkBackground = ((TalkOverlay)overlay).Background;
+							file.TalkCursor = ((TalkOverlay)overlay).Cursor;
+							file.Speaker = ((TalkOverlay)overlay).Speaker;
+							file.FontSize = ((TalkOverlay)overlay).FontSize;
+							break;
+						case EntityType.StatusOverlay:
+							file.StatusIcon = ((StatusOverlay)overlay).IconPath;
+							file.StatusType = ((StatusOverlay)overlay).StatusType;
+							break;
+					}
+					
+					scene.Overlays.Add(file);
 				}
-				
-				scene.Overlays.Add(file);
-			}
 			
 			
 			//Environment info 
-			var module = this._ctx.Scene.GetModule<EnvModule>();
-			var flags = (uint)module.Override;
+			if (saveEnv) {
+				var module = this._ctx.Scene.GetModule<EnvModule>();
+				var flags = (uint)module.Override;
 
-			var env = new SceneFile.EnvironmentInfo();
-			env.Override = flags;
+				var env = new SceneFile.EnvironmentInfo();
+				env.Override = flags;
 
-			var marshalled = Marshal.PtrToStructure<EnvManagerEx>((IntPtr) EnvManagerEx.Instance());
+				var marshalled = Marshal.PtrToStructure<EnvManagerEx>((IntPtr) EnvManagerEx.Instance());
 			
-			env.State = marshalled.EnvState;
+				env.State = marshalled.EnvState;
 
-			env.Day = module.Day;
-			env.Time = module.Time;
-			env.Weather = module.Weather;
+				env.Day = module.Day;
+				env.Time = module.Time;
+				env.Weather = module.Weather;
 			
-			scene.Environment = env;
+				scene.Environment = env;
+			}
+
 			return scene;
 	}
 	
@@ -245,11 +252,11 @@ public class SceneDataService {
 			return scene!;
 	}
 	
-	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true) {
+	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true, bool preserveExistingActors = false) {
 		
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 
-			if (loadActors) {
+			if (loadActors && !preserveExistingActors) {
 				foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 					var e = (ActorEntity)sceneEntity;
 					this.Scene.GetModule<ActorModule>().Delete(e, true);
