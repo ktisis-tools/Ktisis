@@ -14,6 +14,7 @@ using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.Utility;
 using Ktisis.Services.Game;
@@ -26,15 +27,18 @@ public class SceneDraw {
 	private readonly RefOverlay _refs;
 	
 	private IEditorContext _ctx = null!;
+	private readonly GPoseService _gpose;
 
 	private OverlayConfig Config => this._ctx.Config.Overlay;
 
 	public SceneDraw(
 		SelectableGui select,
-		RefOverlay refs
+		RefOverlay refs,
+		GPoseService gpose
 	) {
 		this._select = select;
 		this._refs = refs;
+		this._gpose = gpose;
 	}
 
 	public void SetContext(IEditorContext ctx) => this._ctx = ctx;
@@ -113,17 +117,23 @@ public class SceneDraw {
 					if (lineTo == null) continue;
 
 					var display = this._ctx.Config.GetEntityDisplay(node);
-					this.DrawLine(camera, drawList, transform.Position, lineTo.Position, display.Color);
+					float? opacity = null;
+					if (pose.Parent is ActorEntity actor)
+						opacity = this.GetOpacityMultiplier(actor);
+
+					this.DrawLine(camera, drawList, transform.Position, lineTo.Position, display.Color, opacity);
 				}
 			}
 		}
 	}
 	
-	private unsafe void DrawLine(Camera* camera, ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos, uint color) {
+	private unsafe void DrawLine(Camera* camera, ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos, uint color, float? opacityMultiplier) {
 		if (!CameraService.WorldToScreen(camera, fromPos, out var fromPos2d)) return;
 		if (!CameraService.WorldToScreen(camera, toPos, out var toPos2d)) return;
 
 		var opacity = ImGuizmo.IsUsing() ? this.Config.LineOpacityUsing : this.Config.LineOpacity;
+		if (opacityMultiplier is not null)
+			opacity *= opacityMultiplier.Value;
 		drawList.AddLine(fromPos2d, toPos2d, color.SetAlpha(opacity), this.Config.LineThickness);
 	}
 	
@@ -133,5 +143,19 @@ public class SceneDraw {
 		if (gizmo && gizmoIsEnded) return;
 		var mode = GuiHelpers.GetSelectMode();
 		this._ctx.Selection.Select(clicked, mode);
+	}
+
+	private float GetOpacityMultiplier(ActorEntity actor) {
+		if (!this.Config.DimOverlayForInactiveActors) return 1.0f;
+
+		if (this.Config.ActiveStateType is ActiveState.Target or ActiveState.Both) {
+			if (this._gpose.GPoseTarget?.ObjectIndex == actor.Actor.ObjectIndex)
+				return 1.0f;
+		} else if (this.Config.ActiveStateType is ActiveState.Selection or ActiveState.Both) {
+			if (actor.IsSelected || actor.Recurse().Any(x => x.IsSelected))
+				return 1.0f;
+		}
+
+		return this.Config.InactiveOpacity;
 	}
 }
