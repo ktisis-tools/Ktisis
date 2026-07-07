@@ -177,7 +177,7 @@ public class SelectableGui {
 		drawList.AddCircle(
 			pos2d,
 			radius,
-			0xFF000000,
+			0xFF000000.SetAlpha(finalAlpha),
 			16,
 			isSelect ? 2.5f : 1.0f
 		);

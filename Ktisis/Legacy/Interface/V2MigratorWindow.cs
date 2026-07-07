@@ -69,6 +69,8 @@ public class V2MigratorWindow {
 		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Overlay.LineOpacity, 0.95f, string.Empty, this.Locale.Translate("migrator.v2.overlay.lineOpacity"), string.Empty);
 		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Overlay.LineOpacityUsing, 0.15f, string.Empty, this.Locale.Translate("migrator.v2.overlay.lineOpacityUsing"), string.Empty);
 		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Overlay.DotRadius, 7.0f, string.Empty, this.Locale.Translate("migrator.v2.overlay.dotRadius"), string.Empty);
+		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Editor.SelectOnTarget, false, string.Empty, this.Locale.Translate("migrator.v2.overlay.selectTarget"), this.Locale.Translate("migrator.v2.overlay.selectTargetTip"));
+		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Overlay.DimOverlayForInactiveActors, false, string.Empty, this.Locale.Translate("migrator.v2.overlay.dimInactive"), this.Locale.Translate("migrator.v2.overlay.dimInactiveTip"));
 	}
 
 	public void DrawAutoSave() {

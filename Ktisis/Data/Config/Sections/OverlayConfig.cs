@@ -9,7 +9,7 @@ public class OverlayConfig {
 	public bool DrawDotsGizmo = true;
 
 	public bool DimOverlayForInactiveActors = false;
-	public ActiveState ActiveStateType = ActiveState.Selection;
+	public ActiveState ActiveStateType = ActiveState.Target;
 	public float InactiveOpacity = 0.5f;
 
 	public float DotRadius = 7.0f;
@@ -21,7 +21,7 @@ public class OverlayConfig {
 }
 
 public enum ActiveState {
-	Selection,
 	Target,
+	Selection,
 	Both
 }
