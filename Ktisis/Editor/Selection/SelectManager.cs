@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Dalamud.Game.ClientState.Objects.Types;
+
 using Ktisis.Editor.Context.Types;
 using Ktisis.Events;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Selection;
 
@@ -41,6 +44,7 @@ public interface ISelectManager {
 
 public class SelectManager : ISelectManager {
 	private readonly IEditorContext _context;
+	private readonly GPoseService _gpose;
 
 	private readonly Event<Action<ISelectManager>> _changed = new();
 	public event SelectChangedHandler Changed {
@@ -49,18 +53,31 @@ public class SelectManager : ISelectManager {
 	}
 
 	private readonly List<SceneEntity> Selected = new();
+	private IGameObject? Targeted;
 	
 	public SelectManager(
-		IEditorContext context
+		IEditorContext context,
+		GPoseService gpose
 	) {
 		this._context = context;
+		this._gpose = gpose;
 	}
 	
 	// Update handler
 
 	public void Update() {
+		// remove any invalid entities and flag selection changed if we do
 		var remove = this.Selected.RemoveAll(item => !item.IsValid);
 		if (remove > 0) this.InvokeChanged();
+
+		// check SelectOnTarget and update selection if we should
+		if (this._context.Config.Editor.SelectOnTarget && this.Targeted is not null && this._gpose.GPoseTarget is not null && !this.Targeted.Equals(this._gpose.GPoseTarget)) {
+			var actor = this._context.Scene.GetEntityForIndex(this._gpose.GPoseTarget.ObjectIndex);
+			if (actor is not null)
+				this.Select(actor, SelectMode.Force);
+		}
+		// update internal previous target to compare next frame
+		this.Targeted = this._gpose.GPoseTarget;
 	}
 	
 	// Selection

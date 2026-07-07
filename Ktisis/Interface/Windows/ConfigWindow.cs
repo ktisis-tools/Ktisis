@@ -219,6 +219,8 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirmExit"), ref this.Config.Editor.ConfirmExit);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.openTray"), ref this.Config.Editor.OpenTrayOnWorkspaceClose);
 		this.DrawHint("config.workspace.hintTrayIcon");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.selectTarget"), ref this.Config.Editor.SelectOnTarget);
+		this.DrawHint("config.workspace.hintSelectTarget");
 
 		ImGui.Spacing();
 

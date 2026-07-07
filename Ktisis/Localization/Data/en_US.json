@@ -730,6 +730,8 @@
 			"hint_AutoResizeObj": "This disables the ability to resize the editors height, but you can still change its width",
 			"openTray": "When closing the workspace in GPose, open a Ktisis Tray icon",
 			"hintTrayIcon": "The widget is movable when you click and drag, and will reopen the workspace when clicked",
+			"selectTarget": "Automatically Select actors when Targeted",
+			"hintSelectTarget": "An actor is Targeted when clicked or tabbed-to with vanilla GPose controls.\nThis toggle will override Ktisis' current Selection to your new Target when one is chosen.",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
