@@ -15,6 +15,7 @@ using GLib.Widgets;
 
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
+using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Config;
 using Ktisis.Interface.Types;
@@ -195,6 +196,22 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+
+		ImGui.Checkbox(this.Locale.Translate("config.overlay.dim_inactive"), ref this.Config.Overlay.DimOverlayForInactiveActors);
+		ImGui.Spacing();
+		using (ImRaii.Disabled(!this.Config.Overlay.DimOverlayForInactiveActors)) {
+			using (var _combo = ImRaii.Combo(this.Locale.Translate("config.overlay.active_state_chooser"), this.Config.Overlay.ActiveStateType.ToString()))
+				if (_combo.Success)
+					foreach (var stateType in Enum.GetValues<ActiveState>())
+						if (ImGui.Selectable(stateType.ToString(), stateType == this.Config.Overlay.ActiveStateType))
+							this.Config.Overlay.ActiveStateType = stateType;
+
+			ImGui.SliderFloat(this.Locale.Translate("config.overlay.inactive_opacity"), ref this.Config.Overlay.InactiveOpacity, 0.0f, 1.0f);
+		}
 	}
 	
 	// Workspace

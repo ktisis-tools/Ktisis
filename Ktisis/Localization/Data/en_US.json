@@ -701,7 +701,10 @@
 			"dots": {
 				"draw_gizmo": "Draw dots while using gizmo",
 				"radius": "Dot radius"
-			}
+			},
+			"dim_inactive": "Dim bones on inactive actors",
+			"active_state_chooser": "Active state for actors",
+			"inactive_opacity": "Opacity while inactive"
 		},
 		"references": {
 			"draw_title": "Draw title for reference images"
