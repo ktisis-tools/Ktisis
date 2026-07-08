@@ -6,8 +6,12 @@ using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGuizmo;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Utility;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
@@ -18,9 +22,11 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Popup;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.Utility;
 using Ktisis.Scene.Entities.World;
+using Ktisis.Scene.Modules.Actors;
 using Ktisis.Services.Game;
 using Ktisis.Structs.Objects;
 
@@ -31,21 +37,27 @@ public class SceneDraw {
 	private readonly SelectableGui _select;
 	private readonly RefOverlay _refs;
 	private WorldObject? _hovered;
+	private IGameObject? _hoveredActor;
+	private bool _isHoveringWorld;
+	private bool _isHoveringActor;
 	
 	private IEditorContext _ctx = null!;
 	private readonly GuiManager _gui;
 	private WorldObjectPopup? _popup;
+	private ActorService _actors;
 
 	private OverlayConfig Config => this._ctx.Config.Overlay;
 
 	public SceneDraw(
 		SelectableGui select,
 		RefOverlay refs,
-		GuiManager gui
+		GuiManager gui,
+		ActorService actors
 	) {
 		this._select = select;
 		this._refs = refs;
 		this._gui = gui;
+		this._actors = actors;
 	}
 
 	public void SetContext(IEditorContext ctx) => this._ctx = ctx;
@@ -54,8 +66,18 @@ public class SceneDraw {
 		var frame = this._select.BeginFrame();
 		this.DrawEntities(frame, this._ctx.Scene.Children);
 		this.DrawSelect(frame, gizmo, gizmoIsEnded);
-		if (this._ctx.ShowWorldObjects)
+		if (this._ctx.ShowWorldObjects) {
+			this._isHoveringWorld = false;
+			this._isHoveringActor = false;
+
 			this.DrawWorldObjects();
+			this.DrawWorldActors();
+
+			if (!this._isHoveringWorld)
+				this.SetHovered(null);
+			if (!this._isHoveringActor)
+				this.SetHoveredActor(null);
+		}
 	}
 
 	public void DrawRefOverlay() {
@@ -149,7 +171,6 @@ public class SceneDraw {
 	}
 
 	private unsafe void DrawWorldObjects() {
-		var isHoveringWorld = false;
 		var drawList = ImGui.GetBackgroundDrawList();
 		var camera = CameraService.GetSceneCamera();
 		var clip = SelectableGui.WindowOverlaps();
@@ -158,7 +179,7 @@ public class SceneDraw {
 		foreach (var obj in this._ctx.Scene.World.Objects) {
 			if (this._ctx.Scene.Children.OfType<ObjectEntity>().Any(ent => ent.Object.Equals(obj))) continue;
 			if (!CameraService.WorldToScreen(camera, obj.InitialTransform.Position, out var worldPos2d)) continue;
-			var distance = this.ObjectDistance(obj);
+			var distance = this.ObjectDistance(new Vector2(obj.InitialTransform.Position.X, obj.InitialTransform.Position.Z));
 			if (distance > this.Config.WorldCameraRange) continue;
 
 			var nodeScale = float.Lerp(1.0f, this.Config.WorldNodeScaleFactor, (distance / this.Config.WorldCameraRange));
@@ -170,14 +191,14 @@ public class SceneDraw {
 			// if hovering a different dot, or hovering a ImGui window, or not hovering this, or the popup is open for this obj already, skip
 			var radius = (6.0f + this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale;
 			var radVec = new Vector2(radius, radius);
-			if (isHoveringWorld
+			if (this._isHoveringWorld
 				|| SelectableGui.CheckPosClip(worldPos2d, clip)
 				|| !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec)
 				|| (this._popup is { IsOpen: true } && this._popup.WorldObj.Equals(obj))
 			)
 				continue;
 
-			isHoveringWorld = true;
+			this._isHoveringWorld = true;
 			this.SetHovered(obj);
 			using (ImRaii.Tooltip()) {
 				using var _col = ImRaii.PushColor(ImGuiCol.Text, this.Config.WorldNodeColor);
@@ -190,13 +211,52 @@ public class SceneDraw {
 				this._popup.Open();
 			}
 		}
-
-		if (!isHoveringWorld)
-			this.SetHovered(null);
 	}
 
-	private unsafe float ObjectDistance(WorldObject obj) {
-		var objPos = new Vector2(obj.InitialTransform.Position.X, obj.InitialTransform.Position.Z);
+	private unsafe void DrawWorldActors() {
+		var drawList = ImGui.GetBackgroundDrawList();
+		var camera = CameraService.GetSceneCamera();
+		var clip = SelectableGui.WindowOverlaps();
+		if (camera == null) return;
+
+		foreach (var overworldActor in this._actors.GetOverworldActors()) {
+			if (this._ctx.Scene.Children.OfType<ActorEntity>().Any(ent => ent.Actor.ObjectIndex == overworldActor.ObjectIndex)) continue;
+			if (!CameraService.WorldToScreen(camera, overworldActor.Position, out var worldPos2d)) continue;
+			var distance = this.ObjectDistance(new Vector2(overworldActor.Position.X, overworldActor.Position.Z));
+			if (distance > this.Config.WorldCameraRange) continue;
+
+			var nodeScale = float.Lerp(1.0f, this.Config.WorldNodeScaleFactor, (distance / this.Config.WorldCameraRange));
+
+			drawList.AddNgonFilled(worldPos2d, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth - 1.0f) * nodeScale, this.Config.ActorNodeColor, 5);
+			if (this.Config.WorldNodeOutlineWidth > 0.0f)
+				drawList.AddNgon(worldPos2d, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale, 0xFF000000, 5, this.Config.WorldNodeOutlineWidth);
+
+			var radius = (6.0f + this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale;
+			var radVec = new Vector2(radius, radius);
+			if (this._isHoveringWorld
+				|| this._isHoveringActor
+				|| SelectableGui.CheckPosClip(worldPos2d, clip)
+				|| !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec)
+				|| (this._popup is { IsOpen: true })
+			)
+				continue;
+
+			this._isHoveringActor = true;
+			this.SetHoveredActor(overworldActor);
+			using (ImRaii.Tooltip()) {
+				using var _col = ImRaii.PushColor(ImGuiCol.Text, this.Config.WorldNodeColor);
+				var label = overworldActor.Name.TextValue.IsNullOrEmpty() ? $"{overworldActor.ObjectIndex}" : $"{overworldActor.Name} ({overworldActor.ObjectIndex})";
+				ImGui.Text($"Add Actor {label}");
+			}
+			ImGui.SetNextFrameWantCaptureMouse(true);
+			if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
+				var module = this._ctx.Scene.GetModule<ActorModule>();
+				module.AddFromOverworld(overworldActor);
+			}
+		}
+	}
+
+	private unsafe float ObjectDistance(Vector2 xzPosition) {
 		var camPos = new Vector2();
 		var currentCamera = this._ctx.Cameras.Current;
 		if (currentCamera is WorkCamera freeCam) {
@@ -207,7 +267,7 @@ public class SceneDraw {
 			camPos.Y = currentCamera.Camera->Position.Z;
 		}
 
-		return Vector2.Distance(camPos, objPos);
+		return Vector2.Distance(camPos, xzPosition);
 	}
 
 	private void SetHovered(WorldObject? obj) {
@@ -216,5 +276,36 @@ public class SceneDraw {
 
 		this._hovered = obj;
 		this._hovered?.SetOutline(this.Config.WorldOutlineColor);
+	}
+
+	private void SetHoveredActor(IGameObject? actor) {
+		if (actor is not null && actor.Equals(this._hoveredActor)) return;
+		this.SetActorHighlight(false);
+
+		this._hoveredActor = actor;
+		this.SetActorHighlight(true);
+	}
+
+	private static ObjectHighlightColor GetHighlightColor(OutlineChoice choice) => choice switch {
+		OutlineChoice.None => ObjectHighlightColor.None,
+		OutlineChoice.Red => ObjectHighlightColor.Red,
+		OutlineChoice.Green => ObjectHighlightColor.Green,
+		OutlineChoice.Blue => ObjectHighlightColor.Blue,
+		OutlineChoice.Yellow => ObjectHighlightColor.Yellow,
+		OutlineChoice.Orange => ObjectHighlightColor.Orange,
+		OutlineChoice.Pink => ObjectHighlightColor.Magenta,
+		_ => ObjectHighlightColor.None
+	};
+
+	private unsafe void SetActorHighlight(bool highlightOn) {
+		if (this._hoveredActor is null) return;
+
+		var csPtr = (CSGameObject*)this._hoveredActor.Address;
+		if (csPtr == null || csPtr->DrawObject == null) return;
+
+		if (highlightOn) {
+			csPtr->Highlight(GetHighlightColor(this.Config.WorldOutlineColor));
+		} else
+			csPtr->Highlight(ObjectHighlightColor.None);
 	}
 }
