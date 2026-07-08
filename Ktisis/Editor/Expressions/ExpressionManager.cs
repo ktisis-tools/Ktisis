@@ -60,19 +60,16 @@ public class ExpressionManager(IEditorContext ctx) : IExpressionManager {
 		var genderName = gender == 1 ? "Feminine" : "Masculine";
 
 		return (race, tribe) switch {
-			(8, _) => $"Viera_{genderName}",
-			(7, _) => $"Hrothgar_{genderName}",
-			(6, _) => $"AuRa_{genderName}",
-			(5, 9) => $"Roegadyn_{genderName}_SeaWolf",
-			(5, 10) => $"Roegadyn_{genderName}_Hellsguard",
-			(4, 7) => $"Miqote_{genderName}_SeekerOfTheSun",
-			(4, 8) => $"Miqote_{genderName}_KeeperOfTheMoon",
-			(3, 5) => $"Lalafell_{genderName}_Dunesfolk",
-			(3, 6) => $"Lalafell_{genderName}_Plainsfolk",
-			(2, 3) => $"Elezen_{genderName}_Wildwood",
-			(2, 4) => $"Elezen_{genderName}_Duskwight",
 			(1, 1) => $"Hyur_{genderName}_Midlander",
 			(1, 2) => $"Hyur_{genderName}_Highlander",
+			(2, _) => $"Elezen_{genderName}",
+			(3, _) => $"Lalafell_{genderName}",
+			(5, 9) => $"Roegadyn_{genderName}_SeaWolf",
+			(5, 10) => $"Roegadyn_{genderName}_Hellsguard",
+			(4, _) => $"Miqote_{genderName}",
+			(6, _) => $"AuRa_{genderName}",
+			(7, _) => $"Hrothgar_{genderName}",
+			(8, _) => $"Viera_{genderName}",
 			_ => FallbackKey,
 		};
 	}
