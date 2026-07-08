@@ -27,7 +27,9 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Entities.Utility;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules.Actors;
+using Ktisis.Scene.Modules.Lights;
 using Ktisis.Services.Game;
+using Ktisis.Structs.Lights;
 using Ktisis.Structs.Objects;
 
 namespace Ktisis.Interface.Overlay;
@@ -40,6 +42,7 @@ public class SceneDraw {
 	private IGameObject? _hoveredActor;
 	private bool _isHoveringWorld;
 	private bool _isHoveringActor;
+	private bool _isHoveringLight;
 	
 	private IEditorContext _ctx = null!;
 	private readonly GuiManager _gui;
@@ -69,9 +72,11 @@ public class SceneDraw {
 		if (this._ctx.ShowWorldObjects) {
 			this._isHoveringWorld = false;
 			this._isHoveringActor = false;
+			this._isHoveringLight = false;
 
 			this.DrawWorldObjects();
 			this.DrawWorldActors();
+			this.DrawWorldLights();
 
 			if (!this._isHoveringWorld)
 				this.SetHovered(null);
@@ -252,6 +257,52 @@ public class SceneDraw {
 			if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
 				var module = this._ctx.Scene.GetModule<ActorModule>();
 				module.AddFromOverworld(overworldActor);
+			}
+		}
+	}
+
+	private unsafe void DrawWorldLights() {
+		var drawList = ImGui.GetBackgroundDrawList();
+		var camera = CameraService.GetSceneCamera();
+		var clip = SelectableGui.WindowOverlaps();
+		if (camera == null) return;
+
+		foreach (var light in this._ctx.Scene.World.Lights) {
+			if (this._ctx.Scene.Children.OfType<LightEntity>().Any(ent => ent.WorldLight.Equals(light))) continue;
+			if (!CameraService.WorldToScreen(camera, light.InitialTransform.Position, out var worldPos2d)) continue;
+			var distance = this.ObjectDistance(new Vector2(light.InitialTransform.Position.X, light.InitialTransform.Position.Z));
+			if (distance > this.Config.WorldCameraRange) continue;
+			var sceneLight = (SceneLight*)light.Address;
+			if (sceneLight is null || !sceneLight->DrawObject.IsVisible) continue;
+
+			var nodeScale = float.Lerp(1.0f, this.Config.WorldNodeScaleFactor, (distance / this.Config.WorldCameraRange));
+
+			drawList.AddNgonFilled(worldPos2d, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth - 1.0f) * nodeScale, this.Config.LightNodeColor, 3);
+			if (this.Config.WorldNodeOutlineWidth > 0.0f)
+				drawList.AddNgon(worldPos2d, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale, 0xFF000000, 3, this.Config.WorldNodeOutlineWidth);
+
+			// if hovering a different dot, or hovering a ImGui window, or not hovering this, or the popup is open for this obj already, skip
+			var radius = (6.0f + this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale;
+			var radVec = new Vector2(radius, radius);
+			if (this._isHoveringWorld
+				|| this._isHoveringActor
+				|| this._isHoveringLight
+				|| SelectableGui.CheckPosClip(worldPos2d, clip)
+				|| !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec)
+				|| (this._popup is { IsOpen: true })
+			)
+				continue;
+
+			this._isHoveringLight = true;
+			using (ImRaii.Tooltip()) {
+				using var _col = ImRaii.PushColor(ImGuiCol.Text, this.Config.WorldNodeColor);
+				ImGui.Text($"Add World Light");
+			}
+
+			ImGui.SetNextFrameWantCaptureMouse(true);
+			if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
+				var module = this._ctx.Scene.GetModule<LightModule>();
+				module.AddFromOverworld(light);
 			}
 		}
 	}

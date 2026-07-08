@@ -22,7 +22,7 @@ public class OverlayConfig {
 	public float WorldNodeScaleFactor = 1.0f;
 	public uint WorldNodeColor = 0xFFFFFFFF;
 	public uint ActorNodeColor = 0xFFFF006D;
-	public uint LightNodeColor = 0xFFFFFFFF;
+	public uint LightNodeColor = 0xFF00DEFF;
 	public OutlineChoice WorldOutlineColor = OutlineChoice.Yellow;
 	public float WorldCameraRange = 30.0f;
 }

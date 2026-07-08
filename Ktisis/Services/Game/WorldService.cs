@@ -15,6 +15,7 @@ public class WorldService : IDisposable {
 	private bool _init;
 
 	public readonly List<WorldObject> Objects = [];
+	public readonly List<WorldObject> Lights = [];
 
 	public WorldService(
 		GPoseService gpose
@@ -34,9 +35,11 @@ public class WorldService : IDisposable {
 	}
 
 	private void BuildWorld() {
-		Ktisis.Log.Verbose($"starting worldobject fetch...");
-		this.Objects.AddRange(this.RecurseWorld().Where(obj => obj.ObjectType is ObjectType.BgObject));
-		Ktisis.Log.Verbose($"finished! {this.Objects.Count} bgobjects found");
+		Ktisis.Log.Debug($"starting worldobject fetch...");
+		var worldObjects = this.RecurseWorld().ToList();
+		this.Objects.AddRange(worldObjects.Where(obj => obj.ObjectType is ObjectType.BgObject));
+		this.Lights.AddRange(worldObjects.Where(light => light.ObjectType is ObjectType.Light));
+		Ktisis.Log.Debug($"finished!\n{this.Objects.Count} bgobjects found\n{this.Lights.Count} lights found");
 		this._init = true;
 	}
 

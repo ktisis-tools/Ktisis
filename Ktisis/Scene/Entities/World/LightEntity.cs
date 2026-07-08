@@ -11,6 +11,7 @@ using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Modules.Lights;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Lights;
+using Ktisis.Structs.Objects;
 
 using Attach = Ktisis.Structs.Attachment.Attach;
 
@@ -25,6 +26,7 @@ public enum LightEntityFlags {
 public class LightEntity : WorldEntity, IDeletable, IHideable, IAttachable {
 	public LightEntityFlags Flags { get; set; } = LightEntityFlags.None;
 	public GoboEntry? Gobo { get; set; }
+	public WorldObject? WorldLight { get; set; }
 
 	public unsafe bool IsHidden {
 		get {
@@ -78,6 +80,9 @@ public class LightEntity : WorldEntity, IDeletable, IHideable, IAttachable {
 		
 		if (this.Flags.HasFlag(LightEntityFlags.Update))
 			this.GetModule().UpdateLightObject(this);
+
+		if (this.WorldLight.HasValue)
+			this.UpdateWorldLight();
 		
 		base.Update();
 	}
@@ -104,8 +109,29 @@ public class LightEntity : WorldEntity, IDeletable, IHideable, IAttachable {
 		this.Scene.GetModule<LightModule>().UpdateSceneLightTexture(this.GetObject(), selected.Path);
 	}
 
-	public bool Delete() {
+	private unsafe void UpdateWorldLight() {
+		// each frame, ensure the worldlight is off while the Ktisis copy exists
+		var light = (SceneLight*)this.WorldLight!.Value.Address;
+		if (light == null) return;
+		light->DrawObject.IsVisible = false;
+	}
+
+	private unsafe void ResetWorldLight() {
+		if (!this.WorldLight.HasValue) return;
+		var light = (SceneLight*)this.WorldLight.Value.Address;
+		if (light is not null)
+			light->DrawObject.IsVisible = true;
+	}
+
+	public unsafe bool Delete() {
+		// if we instantiated based off a worldlight, set it back to visible once deleted
+		this.ResetWorldLight();
 		this.GetModule().Delete(this);
 		return this.Address == nint.Zero;
+	}
+
+	public override void Remove() {
+		this.ResetWorldLight();
+		base.Remove();
 	}
 }

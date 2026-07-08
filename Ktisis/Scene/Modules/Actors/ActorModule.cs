@@ -96,6 +96,7 @@ public class ActorModule : SceneModule {
 		var address = await this._spawner.CreateActor(actor);
 		var entity = this.AddSpawnedActor(address);
 		entity.Actor.SetTargetable(true);
+		entity.Visible = true; // draw the root node for newly added overworld actors
 		return entity;
 	}
 
