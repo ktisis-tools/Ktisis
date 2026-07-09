@@ -18,9 +18,6 @@ using Ktisis.Structs.Events;
 namespace Ktisis.Scene.Modules.Actors;
 
 public class ActorSpawner : HookModule {
-	private const ushort Start = 200;
-	private const ushort SoftCap = 30;
-	private const ushort HardCap = SoftCap + 8;
 	
 	private readonly IObjectTable _objectTable;
 	private readonly IFramework _framework;
