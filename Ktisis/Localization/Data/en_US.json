@@ -323,7 +323,9 @@
 			"label": "Preset Name",
 			"save": "Save",
 			"cancel": "Cancel"
-		}
+		},
+		"clear": "Clear",
+		"toggle_other": "Toggle other"
 	},
 	
 	"chara_edit": {

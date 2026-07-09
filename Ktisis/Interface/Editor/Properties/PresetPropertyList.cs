@@ -45,13 +45,13 @@ public class PresetPropertyList(IEditorContext ctx, LocaleManager locale) : Obje
 			ImGui.NextColumn();
 		}
 
-		if (ImGui.Button("Toggle Other")) {
+		if (ImGui.Button(locale.Translate("preset_edit.toggle_other"))) {
 			actor.ToggleOtherPreset(true);
 		}
 		
 		ImGui.NextColumn();
 		
-		if (ImGui.Button("Clear")) {
+		if (ImGui.Button(locale.Translate("preset_edit.clear"))) {
 			actor.ClearVisibility();
 		}
 
