@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility.Raii;
@@ -38,6 +39,20 @@ public class PresetPropertyList(IEditorContext ctx, LocaleManager locale) : Obje
 			}
 			
 			ImGui.NextColumn();
+		}
+
+		if (ImGui.GetColumnIndex() == 1) {
+			ImGui.NextColumn();
+		}
+
+		if (ImGui.Button("Toggle Other")) {
+			actor.ToggleOtherPreset(true);
+		}
+		
+		ImGui.NextColumn();
+		
+		if (ImGui.Button("Clear")) {
+			actor.ClearVisibility();
 		}
 
 		ImGui.Columns();

@@ -63,7 +63,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		get { return this.Scene.Context.Config.Editor.IncognitoPlayerNames ? this.Anonymized : this.RealName; }
 		set { this.RealName = value; }
 	}
- 
+
 
 	public ActorEntity(
 		ISceneManager scene,
@@ -180,18 +180,17 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 	// Deletable
 
-    public bool Delete() {
-        this.Scene.GetModule<ActorModule>().Delete(this);
-        PresetConfig.PresetRemovedEvent -= RemovePreset;
-        return false;
-    }
-	
-    //Presets
-    public IEnumerable<(string name, PresetState isEnabled)> GetPresets() {
+	public bool Delete() {
+		this.Scene.GetModule<ActorModule>().Delete(this);
+		PresetConfig.PresetRemovedEvent -= RemovePreset;
+		return false;
+	}
+
+	//Presets
+	public IEnumerable<(string name, PresetState isEnabled)> GetPresets() {
 		var presets = this.Scene.Context.Config.Presets.Presets.Keys;
 
-		foreach (var preset in presets)
-		{
+		foreach (var preset in presets) {
 			yield return (preset, this._presetStates.GetValueOrDefault(preset, PresetState.Disabled));
 		}
 	}
@@ -205,8 +204,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 		this.ToggleView(preset, op);
 
-		if (op)
-		{
+		if (op) {
 			this._presetStates[presetName] = PresetState.Enabled;
 		} else {
 			this._presetStates.Remove(presetName);
@@ -218,7 +216,32 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		return true;
 	}
 
-	private void SetDefaultPresets() {
+	public void ToggleOtherPreset(bool? state = null) {
+		var op = state ?? this._presetStates.Values.All(s => s == PresetState.Disabled);
+
+		HashSet<string> allPresets = this.Scene.Context.Config.Presets.Presets.Values.SelectMany(s => s).ToHashSet();
+
+		foreach (var bone in this.Recurse().OfType<BoneNode>()) {
+			if (allPresets.Contains(bone.Info.Name)) {
+				bone.Visible = !op;
+			} else {
+				bone.Visible = op;
+			}
+		}
+
+		this._presetStates.Clear();
+	}
+
+	public void ClearVisibility() {
+		foreach (var bone in this.Recurse().OfType<BoneNode>()) {
+			bone.Visible = false;
+		}
+		
+		this._presetStates.Clear();
+	}
+
+
+private void SetDefaultPresets() {
 		var allBones = this.Recurse().OfType<BoneNode>().ToList()!;
 		if (!allBones.Any())
 			return;
