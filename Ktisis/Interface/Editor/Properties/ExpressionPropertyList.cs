@@ -18,6 +18,7 @@ public class ExpressionPropertyList(
 		if (ResolveActor(entity) is not { } actor) return;
 		if (actor.Pose is not { IsValid: true }) return;
 		if (actor.GetHuman() == null) return;
+		if (!actor.Pose?.HasDTFace() ?? false) return;
 
 		builder.AddHeader("Expressions", () => this.Draw(actor), priority: 2);
 	}
@@ -30,7 +31,6 @@ public class ExpressionPropertyList(
 		}
 		
 		using var _ = ImRaii.Disabled(isEnabled);
-
 		
 		panel.Draw(ctx.Expressions.GetEditor(actor));
 	}
