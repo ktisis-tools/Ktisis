@@ -64,7 +64,7 @@ public class ConfigManager : IDisposable {
 		if (cfg is null) {
 			if (fileExists) {
 				this.BackupConfigFile();
-				Ktisis.Log.Warning($"Configuration failed to load; existing file backed up'");
+				Ktisis.Log.Warning($"Configuration failed to load; existing file backed up");
 				Ktisis.WarningNotification($"Failed to load Ktisis configuration. A backup of the old file was saved.");
 			}
 			try {
