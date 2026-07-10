@@ -102,16 +102,16 @@ public class SelectManager : ISelectManager {
 				// only need to do any preset stuff if we had actor/s selected previously
 				if (this.PreviousActors.Count > 0) {
 					// all selected actors will have equivalent presets to work with
-					var presets = this.PreviousActors.First().GetPresets().ToList();
+					var presets = this.PreviousActors.First().GetPresets().Where(p => p.isEnabled == PresetState.Enabled).ToList();
 
 					// for actors in selection and not prev, post their presets
 					foreach (var actor in actorsInSelection.Except(this.PreviousActors))
-						foreach (var preset in presets.Where(p => p.isEnabled == PresetState.Enabled))
+						foreach (var preset in presets)
 							actor.TogglePreset(preset.name, true);
 
 					// for actors in prev and not selection, clear their presets
 					foreach (var actor in this.PreviousActors.Except(actorsInSelection))
-						foreach (var preset in presets.Where(p => p.isEnabled == PresetState.Enabled))
+						foreach (var preset in presets)
 							actor.TogglePreset(preset.name, false);
 				}
 
