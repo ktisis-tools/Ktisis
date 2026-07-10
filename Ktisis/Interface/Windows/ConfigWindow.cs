@@ -201,17 +201,16 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Separator();
 		ImGui.Spacing();
 
-		ImGui.Checkbox(this.Locale.Translate("config.overlay.dim_inactive"), ref this.Config.Overlay.DimOverlayForInactiveActors);
+		using (var _combo = ImRaii.Combo(this.Locale.Translate("config.overlay.active_state_chooser"), this.Config.Overlay.ActiveStateType.ToString()))
+			if (_combo.Success)
+				foreach (var stateType in Enum.GetValues<ActiveState>())
+					if (ImGui.Selectable(stateType.ToString(), stateType == this.Config.Overlay.ActiveStateType))
+						this.Config.Overlay.ActiveStateType = stateType;
 		ImGui.Spacing();
-		using (ImRaii.Disabled(!this.Config.Overlay.DimOverlayForInactiveActors)) {
-			using (var _combo = ImRaii.Combo(this.Locale.Translate("config.overlay.active_state_chooser"), this.Config.Overlay.ActiveStateType.ToString()))
-				if (_combo.Success)
-					foreach (var stateType in Enum.GetValues<ActiveState>())
-						if (ImGui.Selectable(stateType.ToString(), stateType == this.Config.Overlay.ActiveStateType))
-							this.Config.Overlay.ActiveStateType = stateType;
-
+		ImGui.Checkbox(this.Locale.Translate("config.overlay.keep_presets_on_active"), ref this.Config.Overlay.PresetsOnActiveActor);
+		ImGui.Checkbox(this.Locale.Translate("config.overlay.dim_inactive"), ref this.Config.Overlay.DimOverlayForInactiveActors);
+		if (this.Config.Overlay.DimOverlayForInactiveActors)
 			ImGui.SliderFloat(this.Locale.Translate("config.overlay.inactive_opacity"), ref this.Config.Overlay.InactiveOpacity, 0.0f, 1.0f);
-		}
 	}
 	
 	// Workspace

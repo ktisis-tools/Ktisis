@@ -9,6 +9,7 @@ public class OverlayConfig {
 	public bool DrawDotsGizmo = true;
 
 	public bool DimOverlayForInactiveActors = false;
+	public bool PresetsOnActiveActor = false;
 	public ActiveState ActiveStateType = ActiveState.Target;
 	public float InactiveOpacity = 0.5f;
 

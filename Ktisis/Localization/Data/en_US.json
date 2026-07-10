@@ -702,6 +702,7 @@
 				"draw_gizmo": "Draw dots while using gizmo",
 				"radius": "Dot radius"
 			},
+			"keep_presets_on_active": "Keep Presets enabled when active actor changes",
 			"dim_inactive": "Dim bones on inactive actors",
 			"active_state_chooser": "Active state for actors",
 			"inactive_opacity": "Opacity while inactive"
