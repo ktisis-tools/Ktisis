@@ -1,20 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json;
 
 using Dalamud.Plugin.Services;
-
-using Lumina.Excel.Sheets;
 
 using Ktisis.Core.Attributes;
 using Ktisis.GameData.Excel;
 using Ktisis.GameData.Excel.Types;
 using Ktisis.Common.Extensions;
+
+using LuminaSupplemental.Excel.Model;
+using LuminaSupplemental.Excel.Services;
 
 namespace Ktisis.Services.Data;
 
@@ -59,17 +57,15 @@ public class NpcService {
 	private async Task<IEnumerable<INpcBase>> GetBattleNpcs() {
 		await Task.Yield();
 
-		var nameIndexTask = GetNameIndex();
-
+		var nameIndex = CsvLoader.LoadResource<BNpcLink>(CsvLoader.BNpcLinkResourceName, false, out var failed, out var exceptions, this._data.GameData, this._data.GameData.Options.DefaultExcelLanguage);
+		
 		var npcSheet = this._data.GetExcelSheet<BattleNpc>();
-		var namesSheet = this._data.GetExcelSheet<BNpcName>();
-
-		var nameIndexDict = await nameIndexTask;
+		
 		return npcSheet.Skip(1).Select(row => {
 			string? name = null;
-			if (nameIndexDict.TryGetValue(row.RowId.ToString(), out var nameIndex) && namesSheet.HasRow(nameIndex)) {
-				var nameRow = namesSheet.GetRow(nameIndex);
-				name = nameRow.Singular.ExtractText().FormatName(nameRow.Article);
+			if (nameIndex.Any((link => link.BNpcBase.RowId == row.RowId))) {
+				var nameRow = nameIndex.First(link => link.BNpcBase.RowId == row.RowId).BNpcName;
+				name = nameRow.Value.Singular.ExtractText().FormatName(nameRow.Value.Article);
 			}
 			row.Name = name ?? $"B:{row.RowId:D7}";
 			return row;
@@ -79,25 +75,5 @@ public class NpcService {
 	private async Task<IEnumerable<INpcBase>> GetResidentNpcs() {
 		await Task.Yield();
 		return this._data.GetExcelSheet<ResidentNpc>().Where(npc => npc.Map != 0).Cast<INpcBase>();
-	}
-	
-	// Gubal BNPC index
-	
-	private async static Task<Dictionary<string, uint>> GetNameIndex() {
-		using var reader = new StreamReader(GetNameIndexStream());
-		var content = await reader.ReadToEndAsync();
-		return JsonConvert.DeserializeObject<Dictionary<string, uint>>(content) ?? [];
-	}
-	
-	private static Stream GetNameIndexStream() {
-		var assembly = Assembly.GetExecutingAssembly();
-		var assemblyName = assembly.GetName().Name!;
-		
-		var path = $"{assemblyName}.Data.Library.bnpc-index.json";
-
-		var stream = assembly.GetManifestResourceStream(path);
-		if (stream == null)
-			throw new FileNotFoundException(path);
-		return stream;
 	}
 }
