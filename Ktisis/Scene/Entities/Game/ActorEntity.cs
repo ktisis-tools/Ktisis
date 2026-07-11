@@ -236,12 +236,12 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		foreach (var bone in this.Recurse().OfType<BoneNode>()) {
 			bone.Visible = false;
 		}
-		
+
 		this._presetStates.Clear();
 	}
 
 
-private void SetDefaultPresets() {
+	private void SetDefaultPresets() {
 		var allBones = this.Recurse().OfType<BoneNode>().ToList()!;
 		if (!allBones.Any())
 			return;
