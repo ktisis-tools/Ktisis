@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using Ktisis.Interface.Components.Environment;
@@ -30,7 +31,7 @@ public class Env : EnvWindow {
 		}
 	}
 	private  unsafe void DrawSideBar(EnvManagerEx* env) {
-		var avail = new Vector2(400, 400);
+		var avail = new Vector2(400, 400) * ImGuiHelpers.GlobalScale;
 		avail.X *= 0.35f;
 		using var _frame = ImRaii.Child("##EnvWeather", avail);
 		

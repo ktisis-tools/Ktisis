@@ -142,10 +142,12 @@ public class PluginDataEditorTab {
 
 				if (ImGui.Selectable(profile.Value, selected)) {
 					if (selected) {
-						pen.SetCollectionForObject(actor.Actor, null);
+						if (pen.SetCollectionForObject(actor.Actor, null))
+							actor.Redraw();
 						break;
 					}
-					pen.SetCollectionForObject(actor.Actor, profile.Key);
+					if (pen.SetCollectionForObject(actor.Actor, profile.Key))
+						actor.Redraw();
 					this._currentPenumbra.Id = profile.Key;
 					this._currentPenumbra.Name = profile.Value;
 				}
@@ -160,7 +162,7 @@ public class PluginDataEditorTab {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Penumbra", IsLoaded: true })!.OpenMainUi();
 		}
 
-		using (ImRaii.Disabled(actor.GetHuman() != null))
+		using (ImRaii.Disabled(actor.GetHuman() == null))
 			if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.invisible_skin")))
 				this._ctx.Characters.Mcdf.SetInvisibleSkin(actor);
 	}

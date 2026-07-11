@@ -43,6 +43,8 @@ public class OffsetEditor {
 
 	public void Setup() {
 		this.UpdateContext();
+		if (this.Config.BoneOffsets is null) // this happened somehow
+			this.Config.BoneOffsets = new();
 		// set a default skeleton to view to the first entry
 		if (this.Config.BoneOffsets.Keys.Count > 0)
 			this.SelectedRaceSexId = this.Config.BoneOffsets.Keys.OrderBy(k => k).First();
@@ -204,10 +206,12 @@ public class OffsetEditor {
 		ImGui.TableSetupColumn("Bone Name");
 		ImGui.TableHeadersRow();
 
-		foreach (var (bone, vec) in this.Config.BoneOffsets[this.SelectedRaceSexId!].OrderBy(k => k.Key).ToList()) {
-			var vector = vec;
-			if (this.DrawOffsetRow(bone, ref vector, oldPadding))
-				this.Config.UpsertOffset(this.SelectedRaceSexId!, bone, vector);
+		if (this.Config.BoneOffsets.TryGetValue(this.SelectedRaceSexId!, out var d)) {
+			foreach (var (bone, vec) in d.OrderBy(k => k.Key).ToList()) {
+				var vector = vec;
+				if (this.DrawOffsetRow(bone, ref vector, oldPadding))
+					this.Config.UpsertOffset(this.SelectedRaceSexId!, bone, vector);
+			}
 		}
 	}
 
