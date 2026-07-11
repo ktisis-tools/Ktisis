@@ -67,7 +67,7 @@ public class ContextBuilder {
 		var input = new InputManager(context, scope, this._keyState);
 		var actions = new ActionManager(context, input);
 		var factory = new EntityFactory(context, this._naming, this._mcdf);
-		var select = new SelectManager(context);
+		var select = new SelectManager(context, this._gpose);
 		var attach = new AttachManager();
 		var autoSave = new PoseAutoSave(context, this._framework, this._format);
 
