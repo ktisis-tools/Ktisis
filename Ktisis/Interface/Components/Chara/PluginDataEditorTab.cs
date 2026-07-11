@@ -142,10 +142,12 @@ public class PluginDataEditorTab {
 
 				if (ImGui.Selectable(profile.Value, selected)) {
 					if (selected) {
-						pen.SetCollectionForObject(actor.Actor, null);
+						if (pen.SetCollectionForObject(actor.Actor, null))
+							actor.Redraw();
 						break;
 					}
-					pen.SetCollectionForObject(actor.Actor, profile.Key);
+					if (pen.SetCollectionForObject(actor.Actor, profile.Key))
+						actor.Redraw();
 					this._currentPenumbra.Id = profile.Key;
 					this._currentPenumbra.Name = profile.Value;
 				}
