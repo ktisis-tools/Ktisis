@@ -61,7 +61,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Data\Library\" />
-      <EmbeddedResource Include="Data\Library\bnpc-index.json" />
       <EmbeddedResource Include="Data\Library\props.json" />
       <EmbeddedResource Include="Data\Library\skin-paths.json" />
 	</ItemGroup>
