@@ -45,7 +45,8 @@ public class SceneTree {
 	public void Draw(float height) {
 		try {
 			var id = ImGui.GetID("SceneTree_Frame");
-			using (ImRaii.ChildFrame(id, new Vector2(-1, height))) {
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 3);
+			using (ImRaii.ChildFrame(id, new Vector2(ImGui.GetContentRegionAvail().X - 3, height))) {
 				this.DrawScene(height);
 			}
 		} catch (Exception err) {

@@ -63,6 +63,7 @@ public class ToolbarWindow : KtisisWindow {
 		Ktisis.Log.Verbose("Context for toolbar window is stale, closing...");
 		this.Close();
 	}
+
 	public override void OnOpen() {
 		this._ctx.Plugin.Gui.Get<TrayIcon>()?.Close();
 		base.OnOpen();
