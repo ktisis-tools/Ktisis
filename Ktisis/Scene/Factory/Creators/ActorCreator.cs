@@ -42,10 +42,13 @@ public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IA
 		return this;
 	}
 
-	public async Task<ActorEntity> Spawn() {
+	public async Task<ActorEntity?> Spawn() {
 		var module = this.Scene.GetModule<ActorModule>();
 
 		var entity = await module.Spawn();
+
+		if (entity == null)
+			return null;
 		
 		entity.Name = this.Name.IsNullOrEmpty() ? $"Actor #{entity.Actor.ObjectIndex}" : this.Name;
 

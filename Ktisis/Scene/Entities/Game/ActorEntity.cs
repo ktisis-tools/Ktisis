@@ -333,7 +333,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 			if (baseGaze.Mode == GazeMode.Object
 				&& baseGaze.TargetId.Type > 0
 				&& baseGaze.TargetId.ObjectId >= 201
-				&& baseGaze.TargetId.ObjectId <= 243
+				&& baseGaze.TargetId.ObjectId <= 448
 			)
 				return baseGaze.TargetId.ObjectId;
 		}
