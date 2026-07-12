@@ -108,6 +108,7 @@ public class ExpressionEditor(
 		if (hkaPose == null || hkaPose->Skeleton == null) return;
 		var head = HavokPosing.GetModelTransform(hkaPose, 0);
 		if (head == null) return;
+		var invHeadRot = Quaternion.Inverse(head.Rotation);
 
 		var bones = hkaPose->Skeleton->Bones;
 		var parents = hkaPose->Skeleton->ParentIndices;
@@ -150,27 +151,39 @@ public class ExpressionEditor(
 		}
 
 		var touchedHere = new List<(int idx, int parent, string name)>();
-		foreach (var (i, name) in targets) {
-			var (deltaRot, posDelta) = ComposeDelta(library.Catalog, name, weights);
-			if (IsIdentity(deltaRot) && posDelta.LengthSquared() < 1e-10f) continue;
+		foreach (var unit in library.Catalog.AllUnits()) {
+			if (!weights.TryGetValue(unit.Id, out var weight) || weight == 0f) continue;
 
-			var bl = neutral[name];
-			var relRot = Quaternion.Normalize(deltaRot * bl.Rotation);
-			var relPos = bl.Position + posDelta;
-			var target = HeadToModel(head, relRot, relPos, bl.Scale);
+			var snapshots = new List<(int idx, string name, Transform model)>();
+			foreach (var (i, name) in targets) {
+				if (!unit.Bones.ContainsKey(name)) continue;
+				var model = HavokPosing.GetModelTransform(hkaPose, i);
+				if (model != null) snapshots.Add((i, name, model));
+			}
 
-			var initial = HavokPosing.GetModelTransform(hkaPose, i);
-			if (initial == null) continue;
+			foreach (var (i, name, snapshot) in snapshots) {
+				var delta = unit.Bones[name];
+				var effective = weight >= 0f ? delta.Rotation : Quaternion.Inverse(delta.Rotation);
+				var deltaRot = Quaternion.Slerp(Quaternion.Identity, effective, MathF.Abs(weight));
+				var posDelta = unit.UsePosition ? delta.Position * weight : Vector3.Zero;
+				if (IsIdentity(deltaRot) && posDelta.LengthSquared() < 1e-10f) continue;
 
-			HavokPosing.SetModelTransform(hkaPose, i, target);
-			HavokPosing.Propagate(skeleton, FacePartial, i, target, initial);
+				var cur = ToHeadRelative(snapshot, head, invHeadRot);
+				var target = HeadToModel(head, Quaternion.Normalize(deltaRot * cur.Rotation), cur.Position + posDelta, cur.Scale);
 
-			if (touched.Add(name)) touchedHere.Add((i, parents[i], name));
-			for (var j = i + 1; j < bones.Length; j++) {
-				if (!HavokPosing.IsBoneDescendantOf(parents, j, i)) continue;
-				var dn = bones[j].Name.String;
-				if (dn.IsNullOrEmpty() || IsProtected(dn)) continue;
-				if (touched.Add(dn)) touchedHere.Add((j, parents[j], dn));
+				var initial = HavokPosing.GetModelTransform(hkaPose, i);
+				if (initial == null) continue;
+
+				HavokPosing.SetModelTransform(hkaPose, i, target);
+				HavokPosing.Propagate(skeleton, FacePartial, i, target, initial);
+
+				if (touched.Add(name)) touchedHere.Add((i, parents[i], name));
+				for (var j = i + 1; j < bones.Length; j++) {
+					if (!HavokPosing.IsBoneDescendantOf(parents, j, i)) continue;
+					var dn = bones[j].Name.String;
+					if (dn.IsNullOrEmpty() || IsProtected(dn)) continue;
+					if (touched.Add(dn)) touchedHere.Add((j, parents[j], dn));
+				}
 			}
 		}
 
@@ -249,36 +262,9 @@ public class ExpressionEditor(
 
 	private static bool IsIdentity(Quaternion q) => MathF.Abs(q.W) > 0.999995f;
 
-	private static (Quaternion deltaRot, Vector3 posDelta) ComposeDelta(
-		ActionUnitCatalog catalog,
-		string name,
-		IReadOnlyDictionary<string, float> weights
-	) {
-		var accum = Quaternion.Identity;
-		var posDelta = Vector3.Zero;
-
-		foreach (var unit in catalog.AllUnits()) {
-			if (!unit.Bones.TryGetValue(name, out var delta)) continue;
-			if (!weights.TryGetValue(unit.Id, out var weight)) continue;
-
-			var min = unit.Bidirectional ? -1f : 0f;
-			weight = Math.Clamp(weight, min, 1f);
-			if (weight == 0f) continue;
-
-			var effective = weight >= 0f ? delta.Rotation : Quaternion.Inverse(delta.Rotation);
-			var scaled = Quaternion.Slerp(Quaternion.Identity, effective, MathF.Abs(weight));
-			accum = Quaternion.Normalize(scaled * accum);
-
-			if (unit.UsePosition)
-				posDelta += delta.Position * weight;
-		}
-
-		return (accum, posDelta);
-	}
-
-	private static Transform ToHeadRelative(Transform model, Transform head, Quaternion invHeadRot) {
-		var relRot = Quaternion.Normalize(invHeadRot * model.Rotation);
-		var relPos = Vector3.Transform(model.Position - head.Position, invHeadRot);
+	private static Transform ToHeadRelative(Transform model, Transform head, Quaternion invertedHeadRotation) {
+		var relRot = Quaternion.Normalize(invertedHeadRotation * model.Rotation);
+		var relPos = Vector3.Transform(model.Position - head.Position, invertedHeadRotation);
 		return new(relPos, relRot, model.Scale);
 	}
 
