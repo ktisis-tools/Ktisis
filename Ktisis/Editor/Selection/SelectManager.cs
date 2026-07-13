@@ -2,11 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Dalamud.Game.ClientState.Objects.Types;
+
+using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Events;
+using Ktisis.Scene;
 using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Editor.Selection;
 
@@ -41,6 +46,7 @@ public interface ISelectManager {
 
 public class SelectManager : ISelectManager {
 	private readonly IEditorContext _context;
+	private readonly GPoseService _gpose;
 
 	private readonly Event<Action<ISelectManager>> _changed = new();
 	public event SelectChangedHandler Changed {
@@ -48,19 +54,75 @@ public class SelectManager : ISelectManager {
 		remove => this._changed.Remove(value.Invoke);
 	}
 
+	private readonly HashSet<ActorEntity> PreviousActors = new();
 	private readonly List<SceneEntity> Selected = new();
+	private IGameObject? Targeted;
 	
 	public SelectManager(
-		IEditorContext context
+		IEditorContext context,
+		GPoseService gpose
 	) {
 		this._context = context;
+		this._gpose = gpose;
 	}
 	
 	// Update handler
 
 	public void Update() {
+		// remove any invalid entities and flag selection changed if we do
 		var remove = this.Selected.RemoveAll(item => !item.IsValid);
 		if (remove > 0) this.InvokeChanged();
+
+		// check SelectOnTarget and update selection if we should
+		if (this._context.Config.Editor.SelectOnTarget && this.Targeted is not null && this._gpose.GPoseTarget is not null && !this.Targeted.Equals(this._gpose.GPoseTarget)) {
+			var actor = this._context.Scene.GetEntityForIndex(this._gpose.GPoseTarget.ObjectIndex);
+			if (actor is not null)
+				this.Select(actor, SelectMode.Force);
+		}
+
+		// handle application of presets on any changed active actors
+		if (this._context.Config.Overlay.PresetsOnActiveActor) {
+			// handle preset update based on gpose target change
+			if (this._context.Config.Overlay.ActiveStateType is ActiveState.Target or ActiveState.Both) {
+				if (this.Targeted is not null && this._gpose.GPoseTarget is not null && !this.Targeted.Equals(this._gpose.GPoseTarget)) {
+					var prevTarget = this._context.Scene.GetEntityForIndex(this.Targeted.ObjectIndex);
+					var newTarget = this._context.Scene.GetEntityForIndex(this._gpose.GPoseTarget.ObjectIndex);
+					if (prevTarget is not null && newTarget is not null)
+						foreach (var preset in prevTarget.GetPresets().Where(p => p.isEnabled == PresetState.Enabled)) {
+							newTarget.TogglePreset(preset.name, true);
+							prevTarget.TogglePreset(preset.name, false);
+						}
+				}
+			}
+
+			// handle preset update based on selection change
+			if (this._context.Config.Overlay.ActiveStateType is ActiveState.Selection or ActiveState.Both) {
+				var actorsInSelection = this._context.Scene.Children.OfType<ActorEntity>().Where(this.IsActorSelected).ToList();
+
+				// only need to do any preset stuff if we had actor/s selected previously
+				if (this.PreviousActors.Count > 0) {
+					// all selected actors will have equivalent presets to work with
+					var presets = this.PreviousActors.First().GetPresets().Where(p => p.isEnabled == PresetState.Enabled).ToList();
+
+					// for actors in selection and not prev, post their presets
+					foreach (var actor in actorsInSelection.Except(this.PreviousActors))
+						foreach (var preset in presets)
+							actor.TogglePreset(preset.name, true);
+
+					// for actors in prev and not selection, clear their presets
+					foreach (var actor in this.PreviousActors.Except(actorsInSelection))
+						foreach (var preset in presets)
+							actor.TogglePreset(preset.name, false);
+				}
+
+				// flush and update internal previous selections for next frame comparisons
+				this.PreviousActors.Clear();
+				this.PreviousActors.UnionWith(actorsInSelection);
+			}
+		}
+
+		// update internal previous target to compare next frame
+		this.Targeted = this._gpose.GPoseTarget;
 	}
 	
 	// Selection

@@ -4,6 +4,7 @@ using Dalamud.Hooking;
 using Dalamud.Utility.Signatures;
 using Dalamud.Game.ClientState.Objects.Enums;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
@@ -175,4 +176,20 @@ public class CharacterModule : HookModule {
 		
 		this.Manager.GetEquipmentEditor(entity).ApplyStateFlags();
 	}
+	
+	[Signature("48 89 5C 24 ?? 55 56 41 54 41 56 41 57 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 0F B6 82", DetourName = nameof(CharacterSetupDetour))]
+	private Hook<CopyFromCharacterDelegate> CopyFromCharacterHook = null!;
+	private unsafe delegate CharacterSetupContainer* CopyFromCharacterDelegate(CharacterSetupContainer* self, Character* source, CharacterSetupContainer.CopyFlags flags);
+
+	private unsafe CharacterSetupContainer* CharacterSetupDetour(CharacterSetupContainer* self, Character* source, CharacterSetupContainer.CopyFlags flags) {
+		var ret = this.CopyFromCharacterHook.Original.Invoke(self, source, flags);
+
+		var newChar = self->OwnerObject;
+
+		newChar->Effects.CurrentFloatHeight = source->Effects.CurrentFloatHeight;
+		newChar->DrawOffset.Y += source->Effects.CurrentFloatHeight;
+		
+		return ret;
+	}
+
 }

@@ -7,6 +7,7 @@ using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Expressions.Types;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms;
@@ -69,6 +70,7 @@ public class EditorContext : IEditorContext {
 	public ICharacterManager Characters => this.State.Characters;
 	public ICameraManager Cameras => this.State.Cameras;
 	public IEditorInterface Interface => this.State.Interface;
+	public IExpressionManager Expressions => this.State.Expressions;
 	public IPosingManager Posing => this.State.Posing;
 	public ISceneManager Scene => this.State.Scene;
 	public ISelectManager Selection => this.State.Selection;

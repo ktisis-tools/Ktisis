@@ -1,8 +1,12 @@
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Gobos;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Data.Config.Props;
 using Ktisis.Data.Config.Sections;
+using Ktisis.Editor.Expressions.Data;
 
 namespace Ktisis.Data.Serialization;
 
@@ -41,5 +45,18 @@ public static class SchemaReader {
 	public static PropSchema ReadProps() {
 		var stream = ResourceUtil.GetManifestResource(PropSchemaPath);
 		return PropsReader.ReadStream(stream);
+	}
+
+	//Facial Action Units
+	
+	public static ActionUnitCatalog? ReadActionUnits(string key) {
+		try {
+			using var stream = ResourceUtil.GetManifestResource($"Data.Library.Expressions.{key}.json");
+			return JsonSerializer.Deserialize<ActionUnitCatalog>(stream, new JsonSerializerOptions {
+				IncludeFields = true
+			});
+		} catch (System.IO.FileNotFoundException) {
+			return null;
+		}
 	}
 }

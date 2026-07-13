@@ -12,6 +12,8 @@ public class WorkCamera : KtisisCamera {
 	private readonly IEditorContext _ctx;
 	private readonly static Vector3 UpVector = Vector3.UnitY;
 	private const float ClampY = 1.57072f;
+	private const float ReferenceFrameMs = 1000f / 60f;
+	private const float MaxDeltaMs = 1000.0f;
 
 	public Vector3 Position;
 	public Vector3 Rotation;
@@ -92,7 +94,7 @@ public class WorkCamera : KtisisCamera {
 
 	public unsafe void Update() {
 		var now = DateTime.Now;
-		var delta = Math.Max((float)(now - this.LastTime).TotalMilliseconds, 1.0f);
+		var delta = Math.Clamp((float)(now - this.LastTime).TotalMilliseconds, 1.0f, MaxDeltaMs);
 		this.LastTime = now;
 		
 		var fov = Math.Abs(this.Camera->RenderEx->FoV);
@@ -102,8 +104,8 @@ public class WorkCamera : KtisisCamera {
 		this.Rotation.Y = Math.Clamp(this.Rotation.Y + this.MouseDelta.Y, -ClampY, ClampY);
 		this.MouseDelta = Vector2.Zero;
 		
-		this.Position += this.Velocity * this.MoveSpeed * fov;
-		this.InterpPos = Vector3.Lerp(this.InterpPos, this.Position, MathF.Pow(0.5f, delta * 0.05f));
+		this.Position += this.Velocity * this.MoveSpeed * fov * (delta / ReferenceFrameMs);
+		this.InterpPos = Vector3.Lerp(this.InterpPos, this.Position, 1f - MathF.Pow(0.5f, delta * 0.05f));
 	}
 
 	public Matrix4x4 CalculateViewMatrix() {

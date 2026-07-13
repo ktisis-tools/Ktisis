@@ -48,6 +48,7 @@ public class SceneDraw {
 	private readonly GuiManager _gui;
 	private WorldObjectPopup? _popup;
 	private ActorService _actors;
+	private readonly GPoseService _gpose;
 
 	private OverlayConfig Config => this._ctx.Config.Overlay;
 
@@ -55,12 +56,14 @@ public class SceneDraw {
 		SelectableGui select,
 		RefOverlay refs,
 		GuiManager gui,
-		ActorService actors
+		ActorService actors,
+		GPoseService gpose
 	) {
 		this._select = select;
 		this._refs = refs;
 		this._gui = gui;
 		this._actors = actors;
+		this._gpose = gpose;
 	}
 
 	public void SetContext(IEditorContext ctx) => this._ctx = ctx;
@@ -90,7 +93,7 @@ public class SceneDraw {
 			this._refs.DrawInstance(image);
 	}
 
-	private void DrawEntities(ISelectableFrame frame, IEnumerable<SceneEntity> entities) {
+	private void DrawEntities(ISelectableFrame frame, IEnumerable<SceneEntity> entities, float opacity = 1.0f) {
 		foreach (var entity in entities) {
 			switch (entity) {
 				case EntityPose pose:
@@ -99,11 +102,14 @@ public class SceneDraw {
 				case IVisibility { Visible: true } and ITransform manip:
 					var position = manip.GetTransform()?.Position;
 					if (position != null)
-						frame.AddItem(entity, position.Value, this._ctx);
+						frame.AddItem(entity, position.Value, this._ctx, opacity);
 					break;
 			}
 
-			this.DrawEntities(frame, entity.Children);
+			if (entity is ActorEntity actor)
+				this.DrawEntities(frame, entity.Children, this.GetOpacityMultiplier(actor));
+			else
+				this.DrawEntities(frame, entity.Children);
 		}
 	}
 	
@@ -120,6 +126,10 @@ public class SceneDraw {
 
 		var drawList = ImGui.GetWindowDrawList();
 
+		float? opacity = null;
+		if (pose.Parent is ActorEntity actor)
+			opacity = this.GetOpacityMultiplier(actor);
+
 		var partialCt = skeleton->PartialSkeletonCount;
 		for (var index = 0; index < partialCt; index++) {
 			var partial = skeleton->PartialSkeletons[index];
@@ -129,6 +139,7 @@ public class SceneDraw {
 
 			var hkaSkeleton = hkaPose->Skeleton;
 			var boneCt = hkaSkeleton->Bones.Length;
+
 			for (var i = 0; i < boneCt; i++) {
 				var node = pose.GetBoneFromMap(index, i);
 				if (node?.Visible != true && !this.Config.BulkVisOverride) continue;
@@ -136,7 +147,10 @@ public class SceneDraw {
 				var transform = node?.CalcTransformOverlay();
 				if (transform == null || node == null) continue;
 				
-				frame.AddItem(node, transform.Position, this._ctx);
+				if (opacity is not null)
+					frame.AddItem(node, transform.Position, this._ctx, opacity.Value);
+				else
+					frame.AddItem(node, transform.Position, this._ctx);
 				
 				// Draw lines to children.
 
@@ -153,17 +167,19 @@ public class SceneDraw {
 					if (lineTo == null) continue;
 
 					var display = this._ctx.Config.GetEntityDisplay(node);
-					this.DrawLine(camera, drawList, transform.Position, lineTo.Position, display.Color);
+					this.DrawLine(camera, drawList, transform.Position, lineTo.Position, display.Color, opacity);
 				}
 			}
 		}
 	}
 	
-	private unsafe void DrawLine(Camera* camera, ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos, uint color) {
+	private unsafe void DrawLine(Camera* camera, ImDrawListPtr drawList, Vector3 fromPos, Vector3 toPos, uint color, float? opacityMultiplier) {
 		if (!CameraService.WorldToScreen(camera, fromPos, out var fromPos2d)) return;
 		if (!CameraService.WorldToScreen(camera, toPos, out var toPos2d)) return;
 
 		var opacity = ImGuizmo.IsUsing() ? this.Config.LineOpacityUsing : this.Config.LineOpacity;
+		if (opacityMultiplier is not null)
+			opacity *= opacityMultiplier.Value;
 		drawList.AddLine(fromPos2d, toPos2d, color.SetAlpha(opacity), this.Config.LineThickness);
 	}
 	
@@ -358,5 +374,19 @@ public class SceneDraw {
 			csPtr->Highlight(GetHighlightColor(this.Config.WorldOutlineColor));
 		} else
 			csPtr->Highlight(ObjectHighlightColor.None);
+  }
+
+	private float GetOpacityMultiplier(ActorEntity actor) {
+		if (!this.Config.DimOverlayForInactiveActors) return 1.0f;
+
+		if (this.Config.ActiveStateType is ActiveState.Target or ActiveState.Both) {
+			if (this._gpose.GPoseTarget?.ObjectIndex == actor.Actor.ObjectIndex)
+				return 1.0f;
+		} else if (this.Config.ActiveStateType is ActiveState.Selection or ActiveState.Both) {
+			if (actor.IsSelected || actor.Recurse().Any(x => x.IsSelected))
+				return 1.0f;
+		}
+
+		return this.Config.InactiveOpacity;
 	}
 }

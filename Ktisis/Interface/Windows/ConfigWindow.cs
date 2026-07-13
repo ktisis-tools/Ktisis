@@ -15,6 +15,7 @@ using GLib.Widgets;
 
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config;
+using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context;
 using Ktisis.Interface.Components.Config;
 using Ktisis.Interface.Types;
@@ -201,6 +202,21 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Separator();
 		ImGui.Spacing();
 
+		using (var _combo = ImRaii.Combo(this.Locale.Translate("config.overlay.active_state_chooser"), this.Config.Overlay.ActiveStateType.ToString()))
+			if (_combo.Success)
+				foreach (var stateType in Enum.GetValues<ActiveState>())
+					if (ImGui.Selectable(stateType.ToString(), stateType == this.Config.Overlay.ActiveStateType))
+						this.Config.Overlay.ActiveStateType = stateType;
+		ImGui.Spacing();
+		ImGui.Checkbox(this.Locale.Translate("config.overlay.keep_presets_on_active"), ref this.Config.Overlay.PresetsOnActiveActor);
+		ImGui.Checkbox(this.Locale.Translate("config.overlay.dim_inactive"), ref this.Config.Overlay.DimOverlayForInactiveActors);
+		if (this.Config.Overlay.DimOverlayForInactiveActors)
+			ImGui.SliderFloat(this.Locale.Translate("config.overlay.inactive_opacity"), ref this.Config.Overlay.InactiveOpacity, 0.0f, 1.0f);
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+
 		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_radius"), ref this.Config.Overlay.WorldNodeRadius, 0.1f);
 		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_thickness"), ref this.Config.Overlay.WorldNodeOutlineWidth, 0.1f);
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.world.scale_factor"), ref  this.Config.Overlay.WorldNodeScaleFactor, 0.1f, 1.0f);
@@ -237,6 +253,8 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirmExit"), ref this.Config.Editor.ConfirmExit);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.openTray"), ref this.Config.Editor.OpenTrayOnWorkspaceClose);
 		this.DrawHint("config.workspace.hintTrayIcon");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.selectTarget"), ref this.Config.Editor.SelectOnTarget);
+		this.DrawHint("config.workspace.hintSelectTarget");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.showHints"), ref this.Config.Editor.ShowHints);
 		this.DrawHint("config.workspace.hintHint");
 

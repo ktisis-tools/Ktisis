@@ -29,9 +29,11 @@ public class WorkspaceState {
 	public void Draw() {
 		var style = ImGui.GetStyle();
 		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
+		var width = ImGui.GetContentRegionAvail().X - 6;
 		
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 3);
 		var id = ImGui.GetID("SceneState_Frame");
-		using (ImRaii.ChildFrame(id, new Vector2(-1, height)))
+		using (ImRaii.ChildFrame(id, new Vector2(width, height)))
 		{
 			this.DrawContext();
 			this.DrawShowAll();
@@ -42,9 +44,11 @@ public class WorkspaceState {
 	internal void DrawCompact() {
 		var style = ImGui.GetStyle();
 		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
-
+		var width = ImGui.GetContentRegionAvail().X - 6;
+		
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 3);
 		var id = ImGui.GetID("SceneState_Frame");
-		using (ImRaii.ChildFrame(id, new Vector2(-1, height))) {
+		using (ImRaii.ChildFrame(id, new Vector2(width, height))) {
 
 			var cursorY = ImGui.GetCursorPosY();
 			var avail = ImGui.GetContentRegionAvail().Y;

@@ -27,7 +27,7 @@ namespace Ktisis.Interface.Overlay;
 public interface ISelectableFrame {
 	public IEnumerable<IItemSelect> GetItems();
 	
-	public void AddItem(SceneEntity entity, Vector3 worldPos, IEditorContext ctx);
+	public void AddItem(SceneEntity entity, Vector3 worldPos, IEditorContext ctx, float opacityMultiplier = 1.0f);
 }
 
 public interface IItemSelect {
@@ -37,6 +37,7 @@ public interface IItemSelect {
 	public Vector2 ScreenPos { get; }
 	
 	public float Distance { get; }
+	public float OpacityMultiplier { get; }
 	
 	public bool IsHovered { get; set; }
 }
@@ -83,7 +84,7 @@ public class SelectableGui {
 
 			var isSelect = item.Entity.IsSelected;
 			item.IsHovered = display.Mode switch {
-				DisplayMode.Dot => this.DrawPrimDot(drawList, item.ScreenPos, display, isSelect),
+				DisplayMode.Dot => this.DrawPrimDot(drawList, item.ScreenPos, display, item.OpacityMultiplier, isSelect),
 				DisplayMode.Icon => this.DrawIconDot(drawList, item.ScreenPos, display, isSelect),
 				_ => false
 			};
@@ -158,21 +159,25 @@ public class SelectableGui {
 	
 	// Draw UI dots
 
-	private bool DrawPrimDot(ImDrawListPtr drawList, Vector2 pos2d, EntityDisplay display, bool isSelect = false) {
+	private bool DrawPrimDot(ImDrawListPtr drawList, Vector2 pos2d, EntityDisplay display, float opacityMultiplier, bool isSelect = false) {
 		var radius = this.Config.Overlay.DotRadius;
 		if (isSelect) radius += 1.0f;
-		
+
+		var alpha = (byte)((display.Color & 0xFF000000) >> 24);
+		var finalAlpha = alpha == 0 ? opacityMultiplier : (alpha / 255.0f) * opacityMultiplier;
+		var col = display.Color.SetAlpha(finalAlpha);
+
 		drawList.AddCircleFilled(
 			pos2d,
 			radius,
-			display.Color,
+			col,
 			16
 		);
 
 		drawList.AddCircle(
 			pos2d,
 			radius,
-			0xFF000000,
+			0xFF000000.SetAlpha(finalAlpha),
 			16,
 			isSelect ? 2.5f : 1.0f
 		);
@@ -218,14 +223,14 @@ public class SelectableGui {
 
 		public IEnumerable<IItemSelect> GetItems() => this.Items.AsReadOnly();
 		
-		public unsafe void AddItem(SceneEntity entity, Vector3 worldPos, IEditorContext ctx) {
+		public unsafe void AddItem(SceneEntity entity, Vector3 worldPos, IEditorContext ctx, float opacityMultiplier = 1.0f) {
 			var camera = CameraService.GetSceneCamera();
 			if (camera == null) return;
 
 			if (!CameraService.WorldToScreen(camera, worldPos, out var pos2d)) return;
 
 			var dist = Vector3.Distance(camera->Object.Position, worldPos);
-			var select = new ItemSelect(entity, pos2d, dist);
+			var select = new ItemSelect(entity, pos2d, dist, opacityMultiplier);
 			this.Items.Add(select);
 
 			// render a short ray in the facing-direction for LightEntities
@@ -282,14 +287,16 @@ public class SelectableGui {
 		public Vector2 ScreenPos { get; }
 
 		public float Distance { get; }
+		public float OpacityMultiplier { get; }
 		public readonly int SortPriority;
 
 		public bool IsHovered { get; set; }
 
-		public ItemSelect(SceneEntity entity, Vector2 screenPos, float dist) {
+		public ItemSelect(SceneEntity entity, Vector2 screenPos, float dist, float opacityMultiplier) {
 			this.Entity = entity;
 			this.ScreenPos = screenPos;
 			this.Distance = dist;
+			this.OpacityMultiplier = opacityMultiplier;
 		}
 	}
 }
