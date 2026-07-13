@@ -39,8 +39,6 @@ public abstract class EntityEditWindow<T> : KtisisWindow where T : SceneEntity {
 	}
 
 	protected void UpdateTarget() {
-		if (this.Context.Config.Editor.UseLegacyWindowBehavior) return;
-
 		var target = (T?)this.Context.Selection.GetSelected()
 			.FirstOrDefault(entity => entity is T);
 

@@ -94,11 +94,6 @@ public class PosingWindow : KtisisWindow {
 			return;
 		}
 
-		if (this._ctx.Config.Editor.UseLegacyWindowBehavior) {
-			this.DrawLegacyTarget();
-			return;
-		}
-
 		if (this.UpdateTarget())
 			this.WindowName = $"{Ktisis.Locale.Translate(this._localeWindowName)} - {this._target!.Name}{this._windowId}";
 
