@@ -1,0 +1,282 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
+
+using Dalamud.Utility;
+
+using Ktisis.Common.Utility;
+using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Expressions.Data;
+using Ktisis.Editor.Expressions.Types;
+using Ktisis.Editor.Posing;
+using Ktisis.Editor.Posing.Data;
+using Ktisis.Scene.Entities.Game;
+
+namespace Ktisis.Editor.Expressions.Handlers;
+
+public class ExpressionEditor(
+	IExpressionManager mgr,
+	IEditorContext ctx,
+	ActorEntity actor
+) : IExpressionEditor {
+	private const int FacePartial = 1;
+
+	private ExpressionLibrary Library => mgr.GetLibrary(actor);
+
+	public ActionUnitCatalog Catalog => this.Library.Catalog;
+
+	private ExpressionState State => actor.Pose!.ExpressionState;
+
+
+	public void EnsureNeutral() {
+		if (this.State.Neutral == null)
+			this.CaptureNeutral();
+	}
+
+	public unsafe void CaptureNeutral() {
+		var entityPose = actor.Pose;
+		if (entityPose == null) return;
+		var skeleton = entityPose.GetSkeleton();
+		if (skeleton == null) return;
+
+		var neutral = new PoseContainer();
+		this.State.Neutral = neutral;
+		this.State.LastTouched.Clear();
+		this.State.SolverLocal.Clear();
+
+		if (FacePartial >= skeleton->PartialSkeletonCount) return;
+		var pose = entityPose.GetPose(FacePartial);
+		if (pose == null || pose->Skeleton == null) return;
+		var head = HavokPosing.GetModelTransform(pose, 0);
+		if (head == null) return;
+		var invHeadRot = Quaternion.Inverse(head.Rotation);
+
+		for (var i = 0; i < pose->Skeleton->Bones.Length; i++) {
+			var name = pose->Skeleton->Bones[i].Name.String;
+			if (name.IsNullOrEmpty()) continue;
+			var model = HavokPosing.GetModelTransform(pose, i);
+			if (model == null) continue;
+			neutral[name] = ToHeadRelative(model, head, invHeadRot);
+		}
+	}
+
+	// Weights
+
+	public float GetWeight(string id) => this.State.Weights.GetValueOrDefault(id, 0f);
+
+	public void SetWeight(string id, float weight) {
+		if (this.HasActiveWeights())
+			this.EnsureNeutral();
+		else
+			this.CaptureNeutral();
+
+		this.State.Weights[id] = weight;
+		this.ApplyBlend();
+	}
+
+	private bool HasActiveWeights() => this.State.Weights.Values.Any(weight => weight != 0f);
+
+	public void ResetWeights() {
+		this.State.Weights.Clear();
+		this.ApplyBlend();
+	}
+
+	// Blend application
+
+	private unsafe void ApplyBlend() {
+		var pose = actor.Pose;
+		if (pose == null) return;
+		var skeleton = pose.GetSkeleton();
+		if (skeleton == null) return;
+
+		var state = this.State;
+		var neutral = state.Neutral;
+		if (neutral == null) return;
+
+		var library = this.Library;
+		var weights = state.Weights;
+		var lastTouched = state.LastTouched;
+		var lastSolver = state.SolverLocal;
+		var touched = new HashSet<string>();
+		var newSolver = new Dictionary<string, Transform>();
+		state.LastTouched = touched;
+		state.SolverLocal = newSolver;
+
+		if (FacePartial >= skeleton->PartialSkeletonCount) return;
+		var hkaPose = pose.GetPose(FacePartial);
+		if (hkaPose == null || hkaPose->Skeleton == null) return;
+		var head = HavokPosing.GetModelTransform(hkaPose, 0);
+		if (head == null) return;
+		var invHeadRot = Quaternion.Inverse(head.Rotation);
+
+		var bones = hkaPose->Skeleton->Bones;
+		var parents = hkaPose->Skeleton->ParentIndices;
+
+		var protectedLocals = new List<(int idx, int parent, Transform local)>();
+		var targets = new List<(int idx, string name)>();
+		for (var i = 1; i < bones.Length; i++) {
+			var name = bones[i].Name.String;
+			if (name.IsNullOrEmpty()) continue;
+
+			if (IsProtected(name)) {
+				var parent = parents[i];
+				var parentTransform = HavokPosing.GetModelTransform(hkaPose, parent);
+				var cm = HavokPosing.GetModelTransform(hkaPose, i);
+				if (parentTransform != null && cm != null)
+					protectedLocals.Add((i, parent, ToLocal(parentTransform, cm)));
+			}
+
+			if (!library.AffectedBones.Contains(name) || !neutral.ContainsKey(name)) continue;
+			targets.Add((i, name));
+		}
+
+		var tweaks = new Dictionary<string, Transform>();
+		foreach (var (i, name) in targets) {
+			var baseline = lastSolver.TryGetValue(name, out var s)
+				? s : NeutralParentLocal(neutral, bones[parents[i]].Name.String ?? "UNKNOWN", name);
+			if (baseline == null) continue;
+			var pm = HavokPosing.GetModelTransform(hkaPose, parents[i]);
+			var cm = HavokPosing.GetModelTransform(hkaPose, i);
+			if (pm == null || cm == null) continue;
+			var tweak = ExtractUserCustomisation(baseline, ToLocal(pm, cm));
+			if (tweak != null) tweaks[name] = tweak;
+		}
+
+		for (var i = 1; i < bones.Length; i++) {
+			var name = bones[i].Name.String;
+			if (name.IsNullOrEmpty() || !lastTouched.Contains(name)) continue;
+			if (!neutral.TryGetValue(name, out var bl)) continue;
+			HavokPosing.SetModelTransform(hkaPose, i, HeadToModel(head, bl.Rotation, bl.Position, bl.Scale));
+		}
+
+		var touchedHere = new List<(int idx, int parent, string name)>();
+		foreach (var unit in library.Catalog.AllUnits()) {
+			if (!weights.TryGetValue(unit.Id, out var weight) || weight == 0f) continue;
+
+			var snapshots = new List<(int idx, string name, Transform model)>();
+			foreach (var (i, name) in targets) {
+				if (!unit.Bones.ContainsKey(name)) continue;
+				var model = HavokPosing.GetModelTransform(hkaPose, i);
+				if (model != null) snapshots.Add((i, name, model));
+			}
+
+			foreach (var (i, name, snapshot) in snapshots) {
+				var delta = unit.Bones[name];
+				var effective = weight >= 0f ? delta.Rotation : Quaternion.Inverse(delta.Rotation);
+				var deltaRot = Quaternion.Slerp(Quaternion.Identity, effective, MathF.Abs(weight));
+				var posDelta = unit.UsePosition ? delta.Position * weight : Vector3.Zero;
+				if (IsIdentity(deltaRot) && posDelta.LengthSquared() < 1e-10f) continue;
+
+				var cur = ToHeadRelative(snapshot, head, invHeadRot);
+				var target = HeadToModel(head, Quaternion.Normalize(deltaRot * cur.Rotation), cur.Position + posDelta, cur.Scale);
+
+				var initial = HavokPosing.GetModelTransform(hkaPose, i);
+				if (initial == null) continue;
+
+				HavokPosing.SetModelTransform(hkaPose, i, target);
+				HavokPosing.Propagate(skeleton, FacePartial, i, target, initial);
+
+				if (touched.Add(name)) touchedHere.Add((i, parents[i], name));
+				for (var j = i + 1; j < bones.Length; j++) {
+					if (!HavokPosing.IsBoneDescendantOf(parents, j, i)) continue;
+					var dn = bones[j].Name.String;
+					if (dn.IsNullOrEmpty() || IsProtected(dn)) continue;
+					if (touched.Add(dn)) touchedHere.Add((j, parents[j], dn));
+				}
+			}
+		}
+
+		touchedHere.Sort((a, b) => a.idx.CompareTo(b.idx));
+		var solverLocals = new Dictionary<string, Transform>(touchedHere.Count);
+		foreach (var (i, parent, name) in touchedHere) {
+			var pm = HavokPosing.GetModelTransform(hkaPose, parent);
+			var cm = HavokPosing.GetModelTransform(hkaPose, i);
+			if (pm != null && cm != null)
+				solverLocals[name] = ToLocal(pm, cm);
+		}
+
+		foreach (var (i, parent, name) in touchedHere) {
+			if (!solverLocals.TryGetValue(name, out var local)) continue;
+			newSolver[name] = local;
+			var pm = HavokPosing.GetModelTransform(hkaPose, parent);
+			if (pm == null) continue;
+			var finalLocal = tweaks.TryGetValue(name, out var t) ? ApplyTweak(local, t) : local;
+			HavokPosing.SetModelTransform(hkaPose, i, FromParentLocal(pm, finalLocal));
+		}
+
+		foreach (var (i, parent, local) in protectedLocals) {
+			var pm = HavokPosing.GetModelTransform(hkaPose, parent);
+			if (pm == null) continue;
+			HavokPosing.SetModelTransform(hkaPose, i, FromParentLocal(pm, local));
+		}
+	}
+
+	private static bool IsProtected(string name)
+		=> !name.IsNullOrEmpty()
+		&& (name.Contains("eye") || name.Contains("iris") || name.Contains("bero"));
+
+	private static Transform ToLocal(Transform parent, Transform child) {
+		var invRot = Quaternion.Inverse(parent.Rotation);
+		return new(
+			Vector3.Transform(child.Position - parent.Position, invRot),
+			Quaternion.Normalize(invRot * child.Rotation),
+			child.Scale);
+	}
+
+	private static Transform FromParentLocal(Transform parent, Transform local) => new(
+		parent.Position + Vector3.Transform(local.Position, parent.Rotation),
+		Quaternion.Normalize(parent.Rotation * local.Rotation),
+		local.Scale);
+
+	private static Transform? NeutralParentLocal(PoseContainer neutral, string parentName, string name)
+		=> neutral.TryGetValue(parentName, out var p) && neutral.TryGetValue(name, out var c)
+			? ToLocal(p, c) : null;
+
+	private static Transform? ExtractUserCustomisation(Transform baseline, Transform current) {
+		var rot = Quaternion.Normalize(Quaternion.Inverse(baseline.Rotation) * current.Rotation);
+		var pos = current.Position - baseline.Position;
+		var scale = new Vector3(
+			Ratio(current.Scale.X, baseline.Scale.X),
+			Ratio(current.Scale.Y, baseline.Scale.Y),
+			Ratio(current.Scale.Z, baseline.Scale.Z));
+
+		var rotated = MathF.Abs(rot.W) < 0.9999995f;
+		var moved = pos.LengthSquared() > 1e-12f;
+		var scaled = MathF.Abs(scale.X - 1f) > 1e-5f || MathF.Abs(scale.Y - 1f) > 1e-5f || MathF.Abs(scale.Z - 1f) > 1e-5f;
+		return rotated || moved || scaled ? new Transform(pos, rot, scale) : null;
+	}
+
+	private static float Ratio(float a, float b) => MathF.Abs(b) > 1e-6f ? a / b : 1f;
+
+	private static Transform ApplyTweak(Transform solver, Transform tweak) => new(
+		solver.Position + tweak.Position,
+		Quaternion.Normalize(solver.Rotation * tweak.Rotation),
+		solver.Scale * tweak.Scale);
+
+	private static Transform HeadToModel(Transform head, Quaternion relRot, Vector3 relPos, Vector3 scale) {
+		var modelRot = Quaternion.Normalize(head.Rotation * relRot);
+		var modelPos = head.Position + Vector3.Transform(relPos, head.Rotation);
+		return new(modelPos, modelRot, scale);
+	}
+
+	private static bool IsIdentity(Quaternion q) => MathF.Abs(q.W) > 0.999995f;
+
+	private static Transform ToHeadRelative(Transform model, Transform head, Quaternion invertedHeadRotation) {
+		var relRot = Quaternion.Normalize(invertedHeadRotation * model.Rotation);
+		var relPos = Vector3.Transform(model.Position - head.Position, invertedHeadRotation);
+		return new(relPos, relRot, model.Scale);
+	}
+
+	// Undo
+
+	public Dictionary<string, float> BeginEdit()
+		=> new(this.State.Weights);
+
+	public void CommitEdit(Dictionary<string, float> initial) {
+		ctx.Actions.History.Add(new ExpressionMemento(this.State, this.ApplyBlend) {
+			Initial = initial,
+			Final = new Dictionary<string, float>(this.State.Weights),
+		});
+	}
+}

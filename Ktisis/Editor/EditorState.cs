@@ -5,6 +5,7 @@ using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters.Types;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Expressions.Types;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms.Types;
@@ -25,6 +26,7 @@ public class EditorState : IDisposable {
 	public required ICameraManager Cameras { get; init; }
 	public required ICharacterManager Characters { get; init; }
 	public required IEditorInterface Interface { get; init; }
+	public required IExpressionManager Expressions { get; init; }
 	public required IPosingManager Posing { get; init; }
 	public required ISceneManager Scene { get; init; }
 	public required ISelectManager Selection { get; init; }
@@ -50,6 +52,7 @@ public class EditorState : IDisposable {
 			this.Characters.Initialize();
 			this.Cameras.Initialize();
 			this.Posing.Initialize();
+			this.Expressions.Initialize();
 			this.Scene.Initialize();
 		} catch {
 			this.Dispose();

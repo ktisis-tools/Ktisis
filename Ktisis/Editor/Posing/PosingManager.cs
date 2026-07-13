@@ -14,6 +14,7 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Expressions;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.AutoSave;
 using Ktisis.Editor.Posing.Data;
@@ -35,7 +36,7 @@ public class PosingManager : IPosingManager {
 	public PoseMemento? StashedPose { get; set; } = null;
 	public DateTime? StashedAt { get; set; } = null;
 	public string? StashedFrom { get; set; } = null;
-	
+
 	public IAttachManager Attachments { get; }
 
 	private readonly PoseAutoSave AutoSave;
@@ -53,12 +54,12 @@ public class PosingManager : IPosingManager {
 		this.Attachments = attach;
 		this.AutoSave = autoSave;
 	}
-	
+
 	// Initialization
-	
+
 	public bool IsSolvingIk { get; set; }
 	public bool IsIkEnabled { get; set; }
-	
+
 	private PosingModule? PoseModule { get; set; }
 	private IkModule? IkModule { get; set; }
 
@@ -66,18 +67,18 @@ public class PosingManager : IPosingManager {
 		try {
 			this.PoseModule = this._scope.Create<PosingModule>(this);
 			this.PoseModule.Initialize();
-			
+
 			this.IkModule = this._scope.Create<IkModule>(this);
 			this.IkModule.Initialize();
-			
+
 			this.AutoSave.Initialize(this._context.Config);
-			
+
 			this.Subscribe();
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize posing manager:\n{err}");
 		}
 	}
-	
+
 	// Events
 
 	private unsafe void Subscribe() {
@@ -92,24 +93,27 @@ public class PosingManager : IPosingManager {
 	}
 
 	private void OnDisconnect() {
-		if (!this._context.Config.AutoSave.Enabled || !this._context.Config.AutoSave.OnDisconnect) return;
+		if (!this._context.Config.AutoSave.Enabled || !this._context.Config.AutoSave.OnDisconnect)
+			return;
 		Ktisis.Log.Verbose("Disconnected, triggering pose save.");
 		this.AutoSave.Save();
 	}
 
 	private unsafe void OnDisableDraw(IGameObject gameObject, DrawObject* drawObject) {
 		Ktisis.Log.Verbose($"Preserving state for {gameObject.Name} ({gameObject.ObjectIndex})");
-		
+
 		var skeleton = gameObject.GetSkeleton();
-		if (skeleton == null) return;
+		if (skeleton == null)
+			return;
 
 		this.Attachments.Invalidate(skeleton);
 		this.PreservePoseFor(gameObject.ObjectIndex, skeleton);
 	}
-	
+
 	// Module wrappers
 
 	public bool IsEnabled => this.PoseModule?.IsEnabled ?? false;
+	public event Action<bool>? OnPosingChanged;
 
 	public void SetEnabled(bool enable) {
 		if (enable && !this.IsValid) return;
@@ -126,6 +130,7 @@ public class PosingManager : IPosingManager {
 		HavokPosing.ClearCachedAbdomenModelTransform();
 
 		this.PoseModule?.SetEnabled(enable);
+		this.OnPosingChanged?.Invoke(enable);
 	}
 
 	public Task SyncFaceModelSpace(ActorEntity actor) {
@@ -152,7 +157,7 @@ public class PosingManager : IPosingManager {
 	}
 
 	public IIkController CreateIkController() => this.IkModule!.CreateController();
-	
+
 	// Skeleton state
 
 	private readonly Dictionary<ushort, PoseState> _savedPoses = new();
@@ -160,9 +165,7 @@ public class PosingManager : IPosingManager {
 	private unsafe void PreservePoseFor(ushort objectIndex, Skeleton* skeleton) {
 		var pose = new PoseContainer();
 		pose.Store(skeleton);
-		this._savedPoses[objectIndex] = new PoseState {
-			Pose = pose
-		};
+		this._savedPoses[objectIndex] = new PoseState { Pose = pose };
 	}
 
 	private unsafe void RestorePoseFor(ushort objectIndex, Skeleton* skeleton, ushort partialId) {
@@ -173,9 +176,9 @@ public class PosingManager : IPosingManager {
 	private record PoseState {
 		public required PoseContainer Pose;
 	}
-	
+
 	// Pose loading & saving
-	
+
 	public Task ApplyReferencePose(EntityPose pose) {
 		return this._framework.RunOnFrameworkThread(() => {
 			var converter = new EntityPoseConverter(pose);
@@ -268,9 +271,7 @@ public class PosingManager : IPosingManager {
 		});
 	}
 
-	public Task<PoseFile> SavePoseFile(EntityPose pose) => this._framework.RunOnFrameworkThread(
-		() => new EntityPoseConverter(pose).SaveFile()
-	);
+	public Task<PoseFile> SavePoseFile(EntityPose pose) => this._framework.RunOnFrameworkThread(() =>  new EntityPoseConverter(pose).SaveFile());
 
 	public Task StashPose(EntityPose pose) {
 		// todo: modes/transforms choices? could skip face or positions to allow better luck when transferring cross-races/genders
@@ -337,12 +338,12 @@ public class PosingManager : IPosingManager {
 
 			this.PoseModule?.Dispose();
 			this.PoseModule = null;
-			
+
 			this.IkModule?.Dispose();
 			this.IkModule = null;
-			
+
 			this.Attachments.Dispose();
-			
+ 
 			this._context.Plugin.Config.OnSaved -= this.AutoSave.Configure;
 			this.AutoSave.Dispose();
 		} catch (Exception err) {

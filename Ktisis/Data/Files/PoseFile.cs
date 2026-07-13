@@ -11,7 +11,7 @@ public class PoseFile : JsonFile {
 	public new string TypeName { get; set; } = "Ktisis Pose";
 
 	public const int CurrentVersion = 2;
-	
+
 	public Vector3 Position { get; set; }
 	public Quaternion Rotation { get; set; }
 
