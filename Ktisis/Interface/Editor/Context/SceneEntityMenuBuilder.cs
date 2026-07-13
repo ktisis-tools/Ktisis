@@ -2,10 +2,14 @@
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using Dalamud.Bindings.ImGui;
+
+using FFXIVClientStructs;
+
 using GLib.Popups.Context;
 
 using Ktisis.Data.Files;
 using Ktisis.Common.Extensions;
+using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Interface.Editor.Types;

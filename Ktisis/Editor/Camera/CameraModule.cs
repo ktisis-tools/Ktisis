@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Game;
@@ -8,6 +10,7 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
+
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using SceneCamera = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera;
 using GameCameraManager = FFXIVClientStructs.FFXIV.Client.Game.Control.CameraManager;
@@ -15,6 +18,8 @@ using SceneCameraManager = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Camera
 
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Interop.Hooking;
+using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Structs.Camera;
 using Ktisis.Structs.Input;
 
@@ -63,6 +68,7 @@ public class CameraModule : HookModule {
 		this.CameraControlHook.Enable();
 		this.CameraCollideHook.Enable();
 		this.CameraTargetHook?.Enable();
+		this.CameraCalculateLookPositionHook.Enable();
 	}
 	
 	// Camera change handler
@@ -229,8 +235,61 @@ public class CameraModule : HookModule {
 		using var _ = this.Redirect();
 		this.CameraUiHook.Original(a1);
 	}
-	
+
+	[Signature("4C 8B DC 49 89 5B ?? 49 89 73 ?? 55 57 41 56 49 8D 6B ?? 48 81 EC ?? ?? ?? ?? 45 0F 29 4B", DetourName = nameof(CameraCalculateLookPositionDetour))]
+	private Hook<CameraCalculateLookPositionDelegate> CameraCalculateLookPositionHook = null!;
+
+	private unsafe delegate float* CameraCalculateLookPositionDelegate(GameCamera* pointer, float* lookAtVector, float* cameraPosition, char cameraMode); // both float* can be cast to CS Vector3* 
 	// Orbit target hooks
+
+	private unsafe float* CameraCalculateLookPositionDetour(GameCamera* pointer, float* targetPosition, float* cameraPosition, char mode) {
+		if (this.Manager.Current?.Target.Count > 0 && this.Manager.Current!.IsTracking) {
+			Vector3 pos = this.CalculateAveragePosition(this.Manager.Current.Target);
+			ActorEntity actor = (ActorEntity)this.Manager.Current.Target.First().Root;
+			switch (this.Manager.Current.Tracking) {
+				case TrackingMode.Follow:
+					this.Manager.Current?.RelativeOffset = pos - (actor.Actor.Position);
+					this.Manager.Current?.RelativeOffset.Y = (pos.Y - actor.Actor.Position.Y) - actor.CsGameObject->CameraOffset.Y;
+					break;
+				case TrackingMode.Pan:
+					targetPosition[0] = pos.X;
+					targetPosition[1] = pos.Y;
+					targetPosition[2] = pos.Z;
+					this.Manager.Current?.RelativeOffset = Vector3.Zero;
+					break;
+				case TrackingMode.FollowAndPan:
+					var lerp = Vector3.Lerp(actor.Actor.Position, pos, Vector3.Hypot(Vector3.Normalize(actor.Actor.Position with{Y = actor.Actor.Position.Y + actor.CsGameObject->CameraOffset.Y}), Vector3.Normalize(pos)).ToScalar() / float.RootN(2, 2));          
+					this.Manager.Current?.RelativeOffset = lerp - actor.Actor.Position;
+					this.Manager.Current?.RelativeOffset.Y = 0;
+					var diff = (lerp - actor.Actor.Position);
+					targetPosition[0] = pos.X - diff.X;
+					targetPosition[1] = pos.Y;
+					targetPosition[2] = pos.Z - diff.Z;
+					break;
+				case TrackingMode.None:
+					this.Manager.Current?.RelativeOffset = Vector3.Zero;
+					break;
+			}
+		}
+		return  this.CameraCalculateLookPositionHook!.Original(pointer, targetPosition, cameraPosition, mode);
+	}
+	/*
+	 this is to explain the thinking behind that freaky ass math above
+	 for the amount we normailze the two position vectors so they both have length = 1 and then take the hypotenuse of them, which results in a vector of maximum length sqrt2 if the vectors are completely tangential.
+	 we use this as a factor to ease in and out, where when the original position is roughly where the actors starting location was, the factor should be close to 0, meaning the camera will behave roughly the same.
+	 this gives us a factor that will gradually go towards .5~ but shouldn't exceed it.	
+	*/
+	private Vector3 CalculateAveragePosition(List<BoneNode> points) {
+		Vector3 average = new Vector3();
+
+		foreach (var position in points.Where(p => p.GetTransform() != null)) {
+			average += position.CalcTransformWorld()!.Position;
+		}
+		average /= points.Count(p => p.GetTransform() != null);
+		return average;
+	}
+	
+	
 	
 	private Hook<CameraTargetDelegate>? CameraTargetHook;
 	private delegate nint CameraTargetDelegate(nint a1);

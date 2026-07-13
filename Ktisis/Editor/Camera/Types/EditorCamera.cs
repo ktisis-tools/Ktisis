@@ -1,12 +1,22 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
+using Ktisis.Editor.Posing.Types;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Structs.Camera;
 
 using GameCamera = FFXIVClientStructs.FFXIV.Client.Game.Camera;
 using CsVector3 = FFXIVClientStructs.FFXIV.Common.Math.Vector3;
 
 namespace Ktisis.Editor.Camera.Types;
+
+public enum TrackingMode {
+	Follow,
+	Pan,
+	FollowAndPan,
+	None
+}
 
 public class EditorCamera {
 	protected readonly ICameraManager Manager;
@@ -26,6 +36,7 @@ public class EditorCamera {
 		ICameraManager manager
 	) {
 		this.Manager = manager;
+		this.Target = new List<BoneNode>();
 	}
 	
 	public bool IsValid => this.Manager.IsValid && this.Address != nint.Zero;
@@ -34,6 +45,10 @@ public class EditorCamera {
 	public bool IsNoCollide => this.Flags.HasFlag(CameraFlags.NoCollide);
 	public bool IsOrthographic => this.Flags.HasFlag(CameraFlags.Orthographic);
 	public bool IsDelimited => this.Flags.HasFlag(CameraFlags.Delimit);
+
+	public List<BoneNode> Target { get; set; }
+	public TrackingMode Tracking = TrackingMode.None;
+	public bool IsTracking = false;
 	
 	public unsafe GameCamera* GameCamera => (GameCamera*)this.Address;
 	public unsafe GameCameraEx* Camera => (GameCameraEx*)this.Address;
