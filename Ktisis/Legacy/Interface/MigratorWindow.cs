@@ -110,15 +110,14 @@ public class MigratorWindow : KtisisWindow {
 	private void DrawV3() {
 		ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v3.main_Desc"));
 		ImGui.Spacing(); 
-		/*if (this._dpi.IsTesting && false) {		//TODO was supposed to go out with v3 on main release, refactor to do same thing elsewhere
+		if (this._dpi.IsTesting) {
 			ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v3.testing"));
 			ImGui.AlignTextToFramePadding();
 			ImGui.Text(Ktisis.Locale.Translate("migrator.mainWindow.v3.installer"));
 			ImGui.SameLine();
-			if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
+			if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare))
 				this._dpi.OpenPluginInstallerTo(searchText: "Ktisis");
-			}
-		}*/
+		}
 
 		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Editor.ToggleOpenWindows, true, string.Empty,Ktisis.Locale.Translate("migrator.v3.openWindowToggle") , Ktisis.Locale.Translate("migrator.v3.openWindowToggleSub"));
 		DialogHelpers.BuildDialog(ref this._migrator._tempConfig.Editor.UseToolbar, false, string.Empty, Ktisis.Locale.Translate("migrator.v3.toolbar"), Ktisis.Locale.Translate("migrator.v3.toolbarSub"));

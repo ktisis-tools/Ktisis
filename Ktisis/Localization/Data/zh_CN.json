@@ -857,16 +857,16 @@
 	},
 
 	"migrator": {
-		"title": "Ktisis v0.3 设置",
+		"title": "Ktisis v0.4 设置",
 		"mainWindow": {
-			"main_Desc": "感谢使用 Ktisis！v0.3 现已成为稳定版本。\n此迁移工具可帮助你转移 Ktisis Alpha 设置，或更新 Ktisis 工作区设置。",
+			"main_Desc": "感谢使用 Ktisis！v0.4 现已成为稳定版本。\n此迁移工具可帮助你转移 Ktisis Alpha 设置，或更新 Ktisis 工作区设置。",
 			"skip": "跳过迁移",
-			"skip_desc": "跳过迁移并以默认设置启动 v0.3。\n你将无法再次访问迁移工具，所有旧设置将被丢弃。",
+			"skip_desc": "跳过迁移并以默认设置启动 v0.4。\n你将无法再次访问迁移工具，所有旧设置将被丢弃。",
 			"v3": {
 				"from": "我来自 v0.3！",
 				"from_desc": "基于 v0.3 的 Ktisis 设置开始迁移（测试版）。\n如有适用，将忽略 v0.2 的所有旧版设置。",
 				"main_Desc": "自我们开始开发 v0.3 以来变化很大，在开发 Ktisis 的过程中，部分功能已更改或改进。\n以下设置有了新的默认值，你可以保留旧配置，也可以使用新的推荐值。",
-				"testing": "v0.3 已正式发布，建议你在 Dalamud 中关闭「接收测试版本」。",
+				"testing": "v0.4 已正式发布，建议你在 Dalamud 中关闭「接收测试版本」。",
 				"installer": "你可以在此打开插件安装器以更改 Ktisis 的此设置："
 			},
 			"v2": {

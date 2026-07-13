@@ -930,24 +930,24 @@
 	},
 
 	"migrator": {
-		"title": "Ktisis v0.3 Setup",
+		"title": "Ktisis v0.4 Setup",
 		"mainWindow": {
-			"main_Desc": "Thank you for using Ktisis! v0.3 is now our stable version.\nThis migrator will allow you to transfer your Ktisis Alpha settings, or update your Ktisis Workspace settings.",
+			"main_Desc": "Thank you for using Ktisis! v0.4 is now our stable version.\nThis migrator will allow you to transfer your Ktisis Alpha settings, or update your Ktisis Workspace settings.",
 			"skip": "Skip migration",
-			"skip_desc": "Skip Migrating and start v0.3 with default settings.\nYou will not be able to revisit the migrator. Any old settings will be discarded.",
+			"skip_desc": "Skip Migrating and start v0.4 with default settings.\nYou will not be able to revisit the migrator. Any old settings will be discarded.",
 			"v3": {
 				"from": "I'm coming from v0.3!",
 				"from_desc": "Start Migrating based on your Ktisis Settings from v0.3 (Testing).\nThis will ignore any legacy settings from v0.2 if applicable.",
 				"main_Desc": "A lot has changed since we started developing v0.3, and as we've worked on Ktisis, some features have changed or improved.\nThe following settings have new defaults. You can keep your old configuration if you wish to, or you can use the new recommended values.",
-				"testing": "Now that v0.3 is officially released, we suggest that you disable [Receive Testing Versions] in Dalamud.",
+				"testing": "Now that v0.4 is officially released, we suggest that you disable [Receive Testing Versions] in Dalamud.",
 				"installer": "You can open the Plugin Installer to change this setting for Ktisis here:"
 			},
 			"v2": {
 				"from": "I'm coming from v0.2!",
 				"from_desc": "Start Migrating based on your Ktisis Settings from v0.2 (Alpha).\nThis will overwrite your existing v0.3 settings if applicable.",
-				"main_Desc": "Thank you for using Ktisis! v0.3 is our latest version, and represents over 2 years of work by multiple authors to improve on the Alpha version.\nNearly all of the code from v0.2 has been updated in that time, so we appreciate you for sticking with us. These rewrites have given us a stable foundation for future work.\nBeyond just the new features in v0.2, we have lots of big ideas still to explore, so stay tuned!",
-				"migration_desc": "This updater will take your settings from v0.2 and convert them to v0.3, wherever possible. Please note any tooltips & descriptions for your benefit.\nYou can override them yourself on each page and can change these settings after migration, too.",
-				"wiki": "To learn more about the changes between Ktisis v0.2 and v0.3, visit our Wiki docs here:"
+				"main_Desc": "Thank you for using Ktisis! v0.4 is our latest version, and represents over 2 years of work by multiple authors to improve on the Alpha version.\nNearly all of the code from v0.2 has been updated in that time, so we appreciate you for sticking with us. These rewrites have given us a stable foundation for future work.\nBeyond just the new features in v0.2, we have lots of big ideas still to explore, so stay tuned!",
+				"migration_desc": "This updater will take your settings from v0.2 and convert them to v0.4, wherever possible. Please note any tooltips & descriptions for your benefit.\nYou can override them yourself on each page and can change these settings after migration, too.",
+				"wiki": "To learn more about the changes between Ktisis v0.2 and v0.4, visit our Wiki docs here:"
 			}
 		},
 		"v3": {
@@ -970,7 +970,7 @@
 			},
 			"input": {
 				"header": "Input settings",
-				"detail": "Your v0.2 keybinds will be migrated to their v0.3 counterparts where possible. You can update these anytime in the Settings > Inputs menus.",
+				"detail": "Your v0.2 keybinds will be migrated to their v0.4 counterparts where possible. You can update these anytime in the Settings > Inputs menus.",
 				"keybinds": "Enable Keybinds",
 				"leftClick": "Disable GPose change target on left click",
 				"rightClick": "Disable GPose change target on right click"
