@@ -235,7 +235,8 @@
 		"edit_mode.hint": "Select editing mode",
 		"overlay.hide": "Hide Ktisis overlay",
 		"overlay.show": "Show Ktisis overlay",
-		"overlay.world_toggle": "Toggle world object overlay"
+		"overlay.world_toggle": "Toggle world object overlay",
+		"overlay.range": "Range:"
 	},
 
 	"toolbar": {
@@ -464,7 +465,13 @@
 				"area.angle": "Light Angle",
 				"area.falloff": "Falloff Angle",
 				"falloff.type": "Falloff Type",
-				"falloff.power": "Falloff Power"
+				"falloff.power": "Falloff Power",
+				"gobos": {
+					"info": "For Spot and Area Lights, a vanilla texture can now be applied.\nThis acts as a gobo, blocking or coloring some of the light source as if projected through the image.",
+					"choose": "Choose a texture for this light to project",
+					"remove": "\nRight-click to remove",
+					"current": "Current Texture:"
+				}
 			},
 			"shadow": {
 				"dynamic": "Dynamic shadows",
@@ -480,6 +487,36 @@
 			"visible": "Enabled",
 			"load": "Load image",
 			"opacity": "Opacity"
+		},
+		"overlay": {
+			"header": "Overlay",
+			"pos": "Position",
+			"pos_drag": "Draggable",
+			"pos_snap": "Snap to center",
+			"scale": "Scale",
+			"scale_reset": "Reset scale",
+			"alpha": "Opacity",
+			"talk": {
+				"speaker": "Speaker",
+				"content": "Dialog",
+				"fontsize": "Dialog Font Size",
+				"bg": "Background",
+				"cursor": "Cursor"
+			},
+			"balloon": {
+				"content": "Dialog",
+				"fontsize": "Font Size",
+				"bg": "Background",
+				"gradient": "Color Gradient",
+				"arrow_show": "Show Bubble Arrow",
+				"arrow_pos": "Arrow Position"
+			},
+			"status": {
+				"content": "Status Text",
+				"type": "Type",
+				"tex": "Texture:",
+				"tex_hint": "Choose an icon for this status"
+			}
 		}
 	},
 	
@@ -509,7 +546,13 @@
 			"from_base": "Offset from base position"
 		},
 		"pan": "Camera pan",
-		"angle": "Camera orbit angle"
+		"angle": "Camera orbit angle",
+		"tracking": {
+			"info": "Add bone to track\nHold shift to clear tracked bones",
+			"track": "Track selected bones",
+			"current": "Bones tracked:",
+			"multi": "Multiple..."
+		}
 	},
 	
 	"env_edit": {

@@ -178,10 +178,9 @@ public class WorkspaceWindow : KtisisWindow {
 		if (!this._ctx.ShowWorldObjects) return;
 
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		ImGui.Text("Range:");
+		ImGui.Text(this._ctx.Locale.Translate("workspace.overlay.range"));
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
 		ImGui.SliderFloat("##RangeSlider", ref this._ctx.Config.Overlay.WorldCameraRange, 5.0f, 100.0f, "%.2fy");
 	}
-	
 }
