@@ -85,8 +85,13 @@ public class SceneEntityMenuBuilder {
 			if (this._entity is LightEntity light)
 				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateLight(light));
 			if (this._entity is OverlayEntity overlay)
-				menu.Action("Duplicate", () => this.DuplicateOverlay(overlay));
-			menu.Action("Delete", () => deletable.Delete());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateOverlay(overlay));
+
+			// rename delete to Untrack if we have a worldlight tied to the lightentity in this menu
+			if (this._entity is LightEntity { WorldLight: not null })
+				menu.Action("Untrack", () => deletable.Delete());
+			else
+				menu.Action("Delete", () => deletable.Delete());
 		}
 		if (this._entity is ObjectEntity obj) {
 			menu.Separator();

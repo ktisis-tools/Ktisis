@@ -11,6 +11,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Resource;
 using InteropGenerator.Runtime;
 
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Gobos;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
@@ -18,6 +19,7 @@ using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.GPose;
 using Ktisis.Structs.Lights;
+using Ktisis.Structs.Objects;
 
 namespace Ktisis.Scene.Modules.Lights;
 
@@ -64,6 +66,56 @@ public class LightModule : SceneModule {
 				Ktisis.Log.Debug($"backfilling gpose LightEntity for index {i}");
 				this.AddLight(lights[i].Value, (uint)i);
 			}
+		}
+	}
+
+	public unsafe void AddFromOverworld(WorldObject worldLight) {
+		var light = (SceneLight*)worldLight.Address;
+		if (light is null) return;
+
+		var existing = this.Scene.Children
+			.FirstOrDefault(entity => entity is LightEntity lightEntity && lightEntity.Address == (nint)light);
+		if (existing is null) {
+			Ktisis.Log.Debug($"adding gpose LightEntity for overworld light {worldLight.Address:X}");
+			var newLight = this._spawner.Create();
+			if (newLight is null) return;
+			var renderLight = newLight->RenderLight;
+			if (renderLight is null) return;
+			var worldRenderLight = light->RenderLight;
+			if (worldRenderLight is null) return;
+
+			// port settings from overworld light to new light
+			newLight->Transform = light->Transform;
+			renderLight->Flags = worldRenderLight->Flags;
+			renderLight->LightType = worldRenderLight->LightType;
+			renderLight->Color.RGB = worldRenderLight->Color.RGB;
+			renderLight->Color.Intensity = worldRenderLight->Color.Intensity;
+			renderLight->ShadowNear = worldRenderLight->ShadowNear;
+			renderLight->ShadowFar = worldRenderLight->ShadowFar;
+			renderLight->FalloffType = worldRenderLight->FalloffType;
+			renderLight->Falloff = worldRenderLight->Falloff;
+			renderLight->FalloffAngle = worldRenderLight->FalloffAngle;
+			renderLight->AreaAngle = worldRenderLight->AreaAngle;
+			renderLight->LightAngle = worldRenderLight->LightAngle;
+			renderLight->Range = worldRenderLight->Range;
+			renderLight->CharaShadowRange = worldRenderLight->CharaShadowRange;
+
+			var entity = this.Scene.Factory.BuildLight()
+				.SetName($"World Light")
+				.SetAddress(newLight)
+				.SetWorldLight(worldLight)
+				.Add();
+
+			// set an arbitrary gobo if we have a path already on the light
+			if (light->Texture is not null) {
+				var path = light->Texture->FileName.ToString();
+				var gobo = new GoboEntry {
+					Name = path,
+					Path = path
+				};
+				entity.SetGobo(gobo);
+			}
+			entity.Visible = true;
 		}
 	}
 

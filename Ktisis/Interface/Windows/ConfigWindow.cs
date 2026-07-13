@@ -221,8 +221,10 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_thickness"), ref this.Config.Overlay.WorldNodeOutlineWidth, 0.1f);
 		ImGui.SliderFloat(this.Locale.Translate("config.overlay.world.scale_factor"), ref  this.Config.Overlay.WorldNodeScaleFactor, 0.1f, 1.0f);
 		DrawColorEdit(this.Locale.Translate("config.overlay.world.color"), ref this.Config.Overlay.WorldNodeColor);
+		DrawColorEdit(this.Locale.Translate("config.overlay.world.color_actor"), ref this.Config.Overlay.ActorNodeColor);
+		DrawColorEdit(this.Locale.Translate("config.overlay.world.color_light"), ref this.Config.Overlay.LightNodeColor);
 
-		using (var _combo = ImRaii.Combo("Highlight color when hovering", Enum.GetName(this.Config.Overlay.WorldOutlineColor)))
+		using (var _combo = ImRaii.Combo(this.Locale.Translate("config.overlay.world.highlight_color"), Enum.GetName(this.Config.Overlay.WorldOutlineColor)))
 			if (_combo.Success)
 				foreach (var color in Enum.GetValues<OutlineChoice>())
 					if (ImGui.Selectable(Enum.GetName(color), color == this.Config.Overlay.WorldOutlineColor))

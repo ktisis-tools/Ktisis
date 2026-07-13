@@ -748,7 +748,10 @@
 				"dot_radius": "World node radius",
 				"dot_thickness": "World node outline thickness",
 				"scale_factor": "World node scale factor",
-				"color": "World node fill color"
+				"color": "World node fill color",
+				"color_actor": "Actor node fill color",
+				"color_light": "Light node fill color",
+				"highlight_color": "Highlight color when hovering"
 			},
 			"keep_presets_on_active": "Keep Presets enabled when active actor changes",
 			"dim_inactive": "Dim bones on inactive actors",
