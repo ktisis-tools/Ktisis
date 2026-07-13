@@ -11,6 +11,7 @@ using FFXIVClientStructs.FFXIV.Client.System.Resource;
 using InteropGenerator.Runtime;
 
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Gobos;
 using Ktisis.Editor.Camera.Types;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
@@ -98,9 +99,6 @@ public class LightModule : SceneModule {
 			renderLight->LightAngle = worldRenderLight->LightAngle;
 			renderLight->Range = worldRenderLight->Range;
 			renderLight->CharaShadowRange = worldRenderLight->CharaShadowRange;
-			if (light->Texture is not null) {
-				this.UpdateSceneLightTexture(newLight, light->Texture->FileName.ToString());
-			}
 
 			var entity = this.Scene.Factory.BuildLight()
 				.SetName($"World Light")
@@ -108,6 +106,15 @@ public class LightModule : SceneModule {
 				.SetWorldLight(worldLight)
 				.Add();
 
+			// set an arbitrary gobo if we have a path already on the light
+			if (light->Texture is not null) {
+				var path = light->Texture->FileName.ToString();
+				var gobo = new GoboEntry {
+					Name = path,
+					Path = path
+				};
+				entity.SetGobo(gobo);
+			}
 			entity.Visible = true;
 		}
 	}
