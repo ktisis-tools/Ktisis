@@ -328,7 +328,9 @@
 			"label": "Preset Name",
 			"save": "Save",
 			"cancel": "Cancel"
-		}
+		},
+		"clear": "Clear",
+		"toggle_other": "Toggle other"
 	},
 	
 	"chara_edit": {
@@ -716,7 +718,11 @@
 				"dot_thickness": "World node outline thickness",
 				"scale_factor": "World node scale factor",
 				"color": "World node fill color"
-			}
+			},
+			"keep_presets_on_active": "Keep Presets enabled when active actor changes",
+			"dim_inactive": "Dim bones on inactive actors",
+			"active_state_chooser": "Active state for actors",
+			"inactive_opacity": "Opacity while inactive"
 		},
 		"references": {
 			"draw_title": "Draw title for reference images"
@@ -747,6 +753,8 @@
 			"hintTrayIcon": "The widget is movable when you click and drag, and will reopen the workspace when clicked",
 			"showHints": "Display Ktisis Tips on Startup",
 			"hintHint": "The first time you enter GPose after launching Ktisis, an overlay will display a random tip, hint, or fun fact!",
+			"selectTarget": "Automatically Select actors when Targeted",
+			"hintSelectTarget": "An actor is Targeted when clicked or tabbed-to with vanilla GPose controls.\nThis toggle will override Ktisis' current Selection to your new Target when one is chosen.",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
@@ -944,7 +952,11 @@
 				"lineThickness": "Line thickness",
 				"lineOpacity": "Line opacity",
 				"lineOpacityUsing": "Line opacity using",
-				"dotRadius": "Dot radius"
+				"dotRadius": "Dot radius",
+				"selectTarget": "Select actors when Targeted",
+				"selectTargetTip": "Unlike v0.2, Ktisis v0.3 allows multiple actors to be edited simultaneously, allowing the camera to orbit independently of your selected actor's skeleton. This setting links camera targeting to actor selection for a more familiar muscle memory to v0.2.",
+				"dimInactive": "Dim bones on inactive actors",
+				"dimInactiveTip": "If multiple skeletons are visible, this setting will add a transparency/dimming effect to those not in focus. This can be further customized in the Overlay settings after migration."
 			},
 			"autosave": {
 				"header": "Auto Save settings",

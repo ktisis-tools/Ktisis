@@ -44,6 +44,17 @@
           "SixLabors.ImageSharp": "3.1.12"
         }
       },
+      "LuminaSupplemental.Excel": {
+        "type": "Direct",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "Qnirl8t1QEBq1aOiPwin7AM9NC+lXS1ZtDjlctzPXC/VIDHfm5Zl9qqxK+/A5Bo0OOE+Ai4IOM7k+ZwGERbJ0g==",
+        "dependencies": {
+          "CSVFile": "3.2.1",
+          "CsvHelper": "30.0.1",
+          "Sylvan.Data.Csv": "1.4.3"
+        }
+      },
       "MemoryPack": {
         "type": "Direct",
         "requested": "[1.21.4, )",
@@ -69,6 +80,16 @@
         "resolved": "5.13.1",
         "contentHash": "kmpqhcbnnF+Ib0F9g7+1W17IbZ8Q8G2zn3MJURd/rmQiB3D7cm8YS2JRmvhDzrN5w9OMlfq7MFxVtwG419YkIA=="
       },
+      "CSVFile": {
+        "type": "Transitive",
+        "resolved": "3.2.1",
+        "contentHash": "hXWPP7BGA8DS+UxdDEjAsLPdo6OUiCdaCiprxuRxpTy3nwI9DqwNWxaC5imfyD3kCb9/S2mW35s7f08uaokTUA=="
+      },
+      "CsvHelper": {
+        "type": "Transitive",
+        "resolved": "30.0.1",
+        "contentHash": "rcZtgbWR+As4G3Vpgx0AMNmShGuQLFjkHAPIIflzrfkJCx8/AOd4m96ZRmiU1Wi39qS5UVjV0P8qdgqOo5Cwyg=="
+      },
       "K4os.Compression.LZ4": {
         "type": "Transitive",
         "resolved": "1.3.8",
@@ -93,6 +114,11 @@
         "type": "Transitive",
         "resolved": "3.1.12",
         "contentHash": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A=="
+      },
+      "Sylvan.Data.Csv": {
+        "type": "Transitive",
+        "resolved": "1.4.3",
+        "contentHash": "ZUFTqs5doO9aGrR2g0tjASSfxaMUnsxRBXCYFvDRn74XfIc0PUZ0FYRbI3Yu/4W/IFc/DBKH30OOeZ2xGqGyFQ=="
       },
       "glib": {
         "type": "Project"

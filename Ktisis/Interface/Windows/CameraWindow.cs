@@ -37,7 +37,7 @@ public class CameraWindow : KtisisWindow {
 		this._ctx = ctx;
 		this._fixedPos = fixedPos;
 		this._relativePos = relativePos;
-		this._toolbar = this._ctx.Config.Editor.UseToolbar? 0.1f : 0;
+		this._toolbar = this._ctx.Config.Editor.UseToolbar? 3f : 0;
 	}
 
 	private const TransformTableFlags TransformFlags = TransformTableFlags.Default | TransformTableFlags.UseAvailable;
