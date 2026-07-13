@@ -131,6 +131,7 @@ public class LegacyConfig {
 			PreviousCamera,
 			ToggleFreeCam,
 			NewCamera,
+			ToggleHighResMode
 		}
 	}
 }

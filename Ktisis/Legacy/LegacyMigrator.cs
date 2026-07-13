@@ -127,6 +127,8 @@ public class LegacyMigrator {
 		cfg.Keybinds.Enabled = this._legacyCfg?.EnableKeybinds ?? cfg.Keybinds.Enabled;
 
 		cfg.Editor.UseToolbar = true; // teehee
+		cfg.Editor.SelectOnTarget = true;
+		cfg.Overlay.DimOverlayForInactiveActors = true; // set these also for v2 enjoyers
 
 		// File
 		if (this._legacyCfg?.SavedDirPaths?.Count > 0) {

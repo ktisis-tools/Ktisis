@@ -130,7 +130,8 @@ public class ObjectWindow : KtisisWindow {
 		
 		var gizmo = false;
 		if (!this._ctx.Config.Editor.TransformHide) {
-			gizmo = this.DrawGizmo(ref transform, ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 0.1f: 0), disabled);
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 3);
+			gizmo = this.DrawGizmo(ref transform, ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 3f: 0), disabled);
 			isEnded = this._gizmo.IsEnded;
 		}
 
@@ -214,7 +215,7 @@ public class ObjectWindow : KtisisWindow {
 			ImGui.SameLine(0, spacing);
 		}
 
-		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 0.1f: 0);
+		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 3f: 0);
 		if (avail > iconSize)
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
 

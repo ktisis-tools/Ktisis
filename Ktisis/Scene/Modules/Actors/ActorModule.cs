@@ -83,6 +83,8 @@ public class ActorModule : SceneModule {
 			throw new Exception("Local player not found.");
 		
 		var address = await this._spawner.CreateActor(localPlayer);
+		if (address == nint.Zero)
+			return null;
 		var entity = this.AddSpawnedActor(address);
 		entity.Actor.SetName(PlayerNameUtil.CalcActorName(entity.Actor.ObjectIndex));
 		entity.Actor.SetWorld((ushort)localPlayer.CurrentWorld.RowId);
@@ -94,6 +96,8 @@ public class ActorModule : SceneModule {
 		if (!this._spawner.IsInit)
 			throw new Exception("Actor spawner is uninitialized.");
 		var address = await this._spawner.CreateActor(actor);
+		if (address == nint.Zero)
+			return null;
 		var entity = this.AddSpawnedActor(address);
 		entity.Actor.SetTargetable(true);
 		return entity;

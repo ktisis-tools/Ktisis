@@ -52,7 +52,7 @@ public class CameraWindow : KtisisWindow {
 		this._ctx = ctx;
 		this._fixedPos = fixedPos;
 		this._relativePos = relativePos;
-		this._toolbar = this._ctx.Config.Editor.UseToolbar? 0.1f : 0;
+		this._toolbar = this._ctx.Config.Editor.UseToolbar? 3f : 0;
 		this._boneList = new PopupList<BoneNode>("##BoneList", this.DrawBoneSelect)
 			.WithSearch(BoneSearchPredicate);
 	}
