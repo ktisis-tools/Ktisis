@@ -22,9 +22,9 @@ public class OverlayConfig {
 
 	public bool DrawReferenceTitle = true;
 
-	public float WorldNodeRadius = 5.0f;
+	public float WorldNodeRadius = 7.0f;
 	public float WorldNodeOutlineWidth = 1.0f;
-	public float WorldNodeScaleFactor = 1.0f;
+	public float WorldNodeScaleFactor = 0.6f;
 	public uint WorldNodeColor = 0xFFFFFFFF;
 	public uint ActorNodeColor = 0xFFFF006D;
 	public uint LightNodeColor = 0xFF00DEFF;
