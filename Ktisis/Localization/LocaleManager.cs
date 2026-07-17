@@ -48,9 +48,10 @@ public class LocaleManager : IDisposable {
 			if(this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
 		}
-		if (cfg.File == null) {
+		if(cfg is { _isLoaded: true, File.Locale.AutoDetect: true })
+			this.LanguageChanged(this._dpi.UiLanguage);
+		else if (!cfg._isLoaded) {
 			this.LoadLocale("en_US");
-
 		} else {
 			this.LoadLocale(this._cfg.File.Locale.LocaleId);
 			if(this._cfg.File.Locale.LocaleId != "en_US")
