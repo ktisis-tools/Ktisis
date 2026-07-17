@@ -1519,6 +1519,14 @@
 		"36": "Since updates made in FFXIV Dawntrail, face-expression poses may only load correctly on the race/gender they were created with.",
 		"37": "The vanilla GPose menu has a button to add stickers over your screen - try them out for different icons, emojis and text.",
 		"38": "There's over 280 possible character portraits to display along with these hints.",
-		"39": "Too many windows? Try the alternate Ktisis Toolbar UI in your settings menu!"
+		"39": "Too many windows? Try the alternate Ktisis Toolbar UI in your settings menu!",
+		"40": "You can copy Lights and Actors into your Scene from the World Overlay, just like with objects.",
+		"41": "Bones can be made more transparent on actors you're not currently selecting or camera targeting; check out the Overlay settings!",
+		"42": "The Expressions tab of the Object Editor lets you blend different sliders to mutate or create new facial expressions.",
+		"43": "You can keep Presets visible on your selected or camera-targeted actor with options in our Overlay settings.",
+		"44": "We have our own wiki! Visit docs.ktisis.tools to read up or contribute.",
+		"45": "You can browse Dalamud for these portraits, and many other vanilla icons, using the command: /xldata icon",
+		"46": "Squapes are part of a balanced breakfast.",
+		"47": "Tracking controls in the Camera Editor let you focus the GPose camera on any bone, or even combinations of bones. Try it out!"
 	}
 }

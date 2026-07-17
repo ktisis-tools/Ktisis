@@ -49,7 +49,7 @@ public class OverlayService : IDisposable {
 
 	public void ShowHint(IEditorContext context) {
 		var r = new Random();
-		var icon = r.Next(73001, 73288);
+		var icon = r.Next(73001, 73291);
 		var key = context.Locale.RandomHintKey();
 		var hint = context.Locale.Translate($"hints.{key}");
 
