@@ -15,8 +15,6 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
-using KamiToolKit.Overlay.UiOverlay;
-
 using Lumina.Excel;
 
 using Ktisis.Common.Extensions;

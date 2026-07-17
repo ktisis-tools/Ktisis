@@ -9,10 +9,9 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Overlay;
-using KamiToolKit.Overlay.UiOverlay;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
+using KamiToolKit.UiOverlay;
 
 namespace Ktisis.Interface.KTK;
 
@@ -22,7 +21,8 @@ public unsafe class HintNode : OverlayNode {
 	private SimpleNineGridNode SpeakerBg;
 	private TextNode SpeakerText;
 	private TextNode BText;
-	private ImageNode Countdown;
+	private ImageNode? Countdown;
+	private SimpleComponentNode ComponentNode;
 
 	public override OverlayLayer OverlayLayer => OverlayLayer.Foreground;
 	public override bool HideWithNativeUi => false;
@@ -83,7 +83,12 @@ public unsafe class HintNode : OverlayNode {
 			LineSpacing = 18,
 			String = hint
 		};
+		this.ComponentNode = new SimpleComponentNode() {
+			Position = new Vector2(-99.0f, -155.0f),
+			Size = new Vector2(749.0f, 256.0f)
+		};
 
+		this.ComponentNode.AttachNode(this);
 		this.SpeakerImage.AttachNode(this);
 		this.BTextBg.AttachNode(this);
 		this.SpeakerBg.AttachNode(this);
@@ -95,8 +100,7 @@ public unsafe class HintNode : OverlayNode {
 			this.Timeline?.PlayAnimation(101);
 		}
 
-		this.CollisionNode.NodeFlags |= NodeFlags.Visible;
-		this.CollisionNode.AddEvent(AtkEventType.MouseDown, this.DetachNode);
+		this.ComponentNode.AddEvent(AtkEventType.MouseDown, this.DetachNode);
 		this.AddEvent(AtkEventType.TimelineActiveLabelChanged, this.DetachNode);
 	}
 

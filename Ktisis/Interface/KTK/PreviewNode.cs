@@ -15,12 +15,12 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 using KamiToolKit;
+using KamiToolKit.BaseTypes;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Overlay;
 using KamiToolKit.Extensions;
-using KamiToolKit.Overlay.UiOverlay;
+using KamiToolKit.UiOverlay;
 
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
@@ -216,7 +216,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this.buttonList.Add(buttonUp);*/
 
 		ButtonBase buttonLeft = new CircleButtonNode() {
-			Icon = ButtonIcon.RightArrow,
+			Icon = CircleButtonIcon.RightArrow,
 			Position = new Vector2(64f, 0f),
 			Size = new Vector2(32.0f, 32.0f),
 			Scale = new Vector2(-1f, 1f),
@@ -226,7 +226,7 @@ public unsafe class PreviewNode : OverlayNode {
 		};
 
 		ButtonBase buttonRight = new CircleButtonNode() {
-			Icon = ButtonIcon.RightArrow,
+			Icon = CircleButtonIcon.RightArrow,
 			Position = new Vector2(64f, 0f),
 			Size = new Vector2(32.0f, 32.0f),
 		};
@@ -235,7 +235,7 @@ public unsafe class PreviewNode : OverlayNode {
 		};
 
 		ButtonBase buttonReset = new CircleButtonNode() {
-			Icon = ButtonIcon.Undo,
+			Icon = CircleButtonIcon.Undo,
 			Position = new Vector2(148f, 0f),
 			Size = new Vector2(32.0f, 32.0f),
 		};

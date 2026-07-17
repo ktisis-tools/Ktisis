@@ -37,12 +37,9 @@
       },
       "KamiToolKit": {
         "type": "Direct",
-        "requested": "[1.1.17, )",
-        "resolved": "1.1.17",
-        "contentHash": "ECMa5erA5dyvy63BF8yNbGRbWLahu4+BXwIFDQPgITr8jF3efzxMHUzYrTTqzcmpm5mBRCnTBTp2nHgdymCd9w==",
-        "dependencies": {
-          "SixLabors.ImageSharp": "3.1.12"
-        }
+        "requested": "[2.1.9, )",
+        "resolved": "2.1.9",
+        "contentHash": "Kikeo7G7awFSKxKPSSGieDp5lSItRaDwkVICQrYxHOt04TIWYaF1tf5hGjArs8x8HHfAh5wWKRUVaDj5su6QrA=="
       },
       "LuminaSupplemental.Excel": {
         "type": "Direct",
@@ -109,11 +106,6 @@
         "type": "Transitive",
         "resolved": "10.0.0",
         "contentHash": "L3AdmZ1WOK4XXT5YFPEwyt0ep6l8lGIPs7F5OOBZc77Zqeo01Of7XXICy47628sdVl0v/owxYJTe86DTgFwKCA=="
-      },
-      "SixLabors.ImageSharp": {
-        "type": "Transitive",
-        "resolved": "3.1.12",
-        "contentHash": "iAg6zifihXEFS/t7fiHhZBGAdCp3FavsF4i2ZIDp0JfeYeDVzvmlbY1CNhhIKimaIzrzSi5M/NBFcWvZT2rB/A=="
       },
       "Sylvan.Data.Csv": {
         "type": "Transitive",
