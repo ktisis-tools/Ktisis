@@ -66,7 +66,8 @@ public class CommandService : IDisposable {
 
 	private void Remove(string name) {
 		this._register.Remove(name);
-		this._cmd.RemoveHandler(name);
+		if (this._cmd.Commands.ContainsKey("/ktisis"))
+			this._cmd.RemoveHandler(name);
 	}
 
     private CommandFactory BuildCommand(string name, HandlerDelegate handler)
