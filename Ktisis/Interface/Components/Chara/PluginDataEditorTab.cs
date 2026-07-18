@@ -32,6 +32,7 @@ public class PluginDataEditorTab {
 
 	private (Guid Id, string Name) _currentPenumbra = (Guid.Empty, string.Empty);
 	private Guid? _selectedGlamourer = null;
+	private ImGuiTextFilter _glamourerFilter;
 
 	public PluginDataEditorTab(
 		IEditorContext ctx,
@@ -41,6 +42,7 @@ public class PluginDataEditorTab {
 		this._ipcManager = ctx.Plugin.Ipc;
 		this._dpi = dpi;
 		this._actor = null;
+		this._glamourerFilter = new ImGuiTextFilter();
 
 		if (this._ipcManager.IsCustomizeActive)
 			this._cPlusProfiles = this._ipcManager.GetCustomizeIpc().GetProfileList().OrderBy(x => x.Name).ToList();
@@ -171,12 +173,11 @@ public class PluginDataEditorTab {
 		var glam = this._ipcManager.GetGlamourerIpc();
 
 		using (var group = ImRaii.Group()) {
-			var filter = new ImGuiTextFilter();
-			filter.Draw("##Filter");
+			this._glamourerFilter.Draw("##Filter");
 
 			using (ImRaii.ListBox("##Glamourer")) {
 				foreach (var profile in this._glamourerCollections.OrderBy(p => p.Value)) {
-					if (filter.PassFilter(profile.Value)) {
+					if (this._glamourerFilter.PassFilter(profile.Value)) {
 						if (ImGui.Selectable(profile.Value, profile.Key == this._selectedGlamourer)) {
 							if (this._selectedGlamourer.HasValue && this._selectedGlamourer.Value == profile.Key)
 								this._selectedGlamourer = null;

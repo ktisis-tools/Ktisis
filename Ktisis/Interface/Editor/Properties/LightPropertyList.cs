@@ -127,20 +127,20 @@ public class LightPropertyList : ObjectPropertyList {
 		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
 		if (ImGui.IsItemHovered()) {
 			using var _ = ImRaii.Tooltip();
-			ImGui.Text("For Spot and Area Lights, a vanilla texture can now be applied.\nThis acts as a gobo, blocking or coloring some of the light source as if projected through the image.");
+			ImGui.Text(Ktisis.Locale.Translate("object_edit.light.light.gobos.info"));
 		}
 		ImGui.SameLine();
 		using (ImRaii.Disabled(light->LightType is (LightType.Directional or LightType.PointLight))) {
-			var tooltip = "Choose a texture for this light to project";
+			var tooltip = Ktisis.Locale.Translate("object_edit.light.light.gobos.choose");
 			if (entity.Gobo != null)
-				tooltip += "\nRight-click to remove";
+				tooltip += Ktisis.Locale.Translate("object_edit.light.light.gobos.remove");
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Image, tooltip))
 				this._goboPopup.Open();
 			if (ImGui.IsItemClicked(ImGuiMouseButton.Right))
 				entity.RemoveGobo();
 
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-			ImGui.Text($"Current Texture: {(entity.Gobo == null ? "None" : entity.Gobo.Name)}");
+			ImGui.Text($"{Ktisis.Locale.Translate("object_edit.light.light.gobos.current")} {(entity.Gobo == null ? "N/A" : entity.Gobo.Name)}");
 		}
 
 		ImGui.Spacing();

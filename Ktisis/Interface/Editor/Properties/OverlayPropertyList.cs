@@ -73,21 +73,21 @@ public class OverlayPropertyList : ObjectPropertyList {
 		if (entity is not OverlayEntity overlay)
 			return;
 
-		builder.AddHeader("Overlay", () => this.DrawOverlayTab(overlay));
+		builder.AddHeader(Ktisis.Locale.Translate("object_edit.overlay.header"), () => this.DrawOverlayTab(overlay));
 	}
 
 	private void DrawOverlayTab(OverlayEntity overlay) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 
-		ImGui.Text("Position");
+		ImGui.Text(Ktisis.Locale.Translate("object_edit.overlay.pos"));
 		ImGui.Spacing();
 
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), overlay.Draggable))
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.HandSpock, "Draggable"))
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.HandSpock, Ktisis.Locale.Translate("object_edit.overlay.pos_drag")))
 				overlay.Draggable = !overlay.Draggable;
 
 		ImGui.SameLine(0, spacing);
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsToDot, "Snap to center"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsToDot, Ktisis.Locale.Translate("object_edit.overlay.pos_snap")))
 			overlay.Position = GetCenter(overlay);
 
 		ImGui.SameLine(0, spacing);
@@ -97,10 +97,10 @@ public class OverlayPropertyList : ObjectPropertyList {
 			overlay.Position = position;
 
 		ImGui.Spacing();
-		ImGui.Text("Scale");
+		ImGui.Text(Ktisis.Locale.Translate("object_edit.overlay.scale"));
 
 		ImGui.Spacing();
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowCircleLeft, "Reset scale"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowCircleLeft, Ktisis.Locale.Translate("object_edit.overlay.scale_reset")))
 			overlay.Scale = 1.0f;
 
 		ImGui.SameLine(0, spacing);
@@ -110,7 +110,7 @@ public class OverlayPropertyList : ObjectPropertyList {
 			overlay.Scale = scale;
 
 		ImGui.Spacing();
-		ImGui.Text("Opacity");
+		ImGui.Text(Ktisis.Locale.Translate("object_edit.overlay.alpha"));
 
 		ImGui.Spacing();
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
@@ -137,17 +137,17 @@ public class OverlayPropertyList : ObjectPropertyList {
 
 	private void DrawTalk(TalkOverlay talk) {
 		var speaker = talk.Speaker;
-		if (ImGui.InputText("Speaker", ref speaker, 64))
+		if (ImGui.InputText(Ktisis.Locale.Translate("object_edit.overlay.talk.speaker"), ref speaker, 64))
 			talk.Speaker = speaker;
 
 		ImGui.Spacing();
 		var dialog = talk.Dialog;
-		if (ImGui.InputTextMultiline("Dialog", ref dialog, 1000))
+		if (ImGui.InputTextMultiline(Ktisis.Locale.Translate("object_edit.overlay.talk.content"), ref dialog, 1000))
 			talk.Dialog = dialog;
 
 		ImGui.Spacing();
 		var size = talk.FontSize;
-		if (ImGui.BeginCombo("Dialog Font Size", size.ToString())) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.overlay.talk.fontsize"), size.ToString())) {
 			foreach (var value in talk.FontSizes)
 				if (ImGui.Selectable(value.ToString(), size == value))
 					talk.FontSize = value;
@@ -156,7 +156,7 @@ public class OverlayPropertyList : ObjectPropertyList {
 
 		ImGui.Spacing();
 		var background = talk.Background;
-		if (ImGui.BeginCombo("Background", this._locale.Translate($"background.{background}"))) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.overlay.talk.bg"), this._locale.Translate($"background.{background}"))) {
 			foreach (var value in Enum.GetValues<TalkBackground>()) {
 				var valueLabel = this._locale.Translate($"background.{value}");
 				if (ImGui.Selectable(valueLabel, background == value))
@@ -167,7 +167,7 @@ public class OverlayPropertyList : ObjectPropertyList {
 
 		ImGui.Spacing();
 		var cursor = talk.Cursor;
-		if (ImGui.BeginCombo("Cursor", this._locale.Translate($"cursor.{cursor}"))) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.overlay.talk.cursor"), this._locale.Translate($"cursor.{cursor}"))) {
 			foreach (var value in Enum.GetValues<TalkCursor>()) {
 				var valueLabel = this._locale.Translate($"cursor.{value}");
 				if (ImGui.Selectable(valueLabel, cursor == value))
@@ -179,12 +179,12 @@ public class OverlayPropertyList : ObjectPropertyList {
 
 	private void DrawBalloon(BalloonOverlay balloon) {
 		var dialog = balloon.Dialog;
-		if (ImGui.InputText("Dialog", ref dialog, 64))
+		if (ImGui.InputText(Ktisis.Locale.Translate("object_edit.overlay.balloon.content"), ref dialog, 64))
 			balloon.Dialog = dialog;
 
 		ImGui.Spacing();
 		var size = balloon.FontSize;
-		if (ImGui.BeginCombo("Font Size", size.ToString())) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.overlay.balloon.fontsize"), size.ToString())) {
 			foreach (var value in balloon.FontSizes)
 				if (ImGui.Selectable(value.ToString(), size == value))
 					balloon.FontSize = value;
@@ -193,7 +193,7 @@ public class OverlayPropertyList : ObjectPropertyList {
 
 		ImGui.Spacing();
 		var background = balloon.Background;
-		if (ImGui.BeginCombo("Background", this._locale.Translate($"background.{background}"))) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.overlay.balloon.bg"), this._locale.Translate($"background.{background}"))) {
 			foreach (var value in Enum.GetValues<BalloonBackground>()) {
 				var valueLabel = this._locale.Translate($"background.{value}");
 				if (ImGui.Selectable(valueLabel, background == value))
@@ -204,7 +204,7 @@ public class OverlayPropertyList : ObjectPropertyList {
 
 		ImGui.Spacing();
 		var color = balloon.Color;
-		if (ImGui.BeginCombo("Color Gradient", this._locale.Translate($"gradient.{color}"))) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.overlay.balloon.gradient"), this._locale.Translate($"gradient.{color}"))) {
 			foreach (var value in Enum.GetValues<BalloonColor>()) {
 				var valueLabel = this._locale.Translate($"gradient.{value}");
 				if (ImGui.Selectable(valueLabel, color == value))
@@ -215,25 +215,25 @@ public class OverlayPropertyList : ObjectPropertyList {
 
 		ImGui.Spacing();
 		var arrow = balloon.Arrow;
-		if (ImGui.Checkbox("Show Bubble Arrow", ref arrow))
+		if (ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.overlay.balloon.arrow_show"), ref arrow))
 			balloon.Arrow = arrow;
 
 		ImGui.Spacing();
 		using (ImRaii.Disabled(!balloon.Arrow)) {
 			var arrowX = balloon.ArrowX;
-			if (ImGui.SliderFloat("Arrow Position", ref arrowX, 32.0f, 130.0f))
+			if (ImGui.SliderFloat(Ktisis.Locale.Translate("object_edit.overlay.balloon.arrow_pos"), ref arrowX, 32.0f, 130.0f))
 				balloon.ArrowX = arrowX;
 		}
 	}
 
 	private void DrawStatus(StatusOverlay status) {
 		var text = status.StatusText;
-		if (ImGui.InputText("Status Text", ref text, 64))
+		if (ImGui.InputText(Ktisis.Locale.Translate("object_edit.overlay.status.content"), ref text, 64))
 			status.StatusText = text;
 
 		ImGui.Spacing();
 		var type = status.StatusType;
-		if (ImGui.BeginCombo("Type", this._locale.Translate($"status.{type}"))) {
+		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.overlay.status.type"), this._locale.Translate($"status.{type}"))) {
 			foreach (var value in Enum.GetValues<StatusType>()) {
 				var valueLabel = this._locale.Translate($"status.{value}");
 				if (ImGui.Selectable(valueLabel, type == value))
@@ -243,12 +243,12 @@ public class OverlayPropertyList : ObjectPropertyList {
 		}
 
 		ImGui.Spacing();
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Image, "Choose an icon for this status"))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Image, Ktisis.Locale.Translate("object_edit.overlay.status.tex_hint")))
 			this._statusPopup.Open();
 
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		var currentStatus = this._statuses.FirstOrDefault(stat => stat.Path == status.IconPath);
-		ImGui.Text($"Texture: {currentStatus?.Name}");
+		ImGui.Text($"{Ktisis.Locale.Translate("object_edit.overlay.status.tex")} {currentStatus?.Name}");
 		if (currentStatus != null) {
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 			ImGui.Image(this._texture.GetFromGameIcon(currentStatus.Icon).GetWrapOrEmpty().Handle, new Vector2(24.0f, 32.0f));

@@ -271,14 +271,6 @@ public class ConfigWindow : KtisisWindow {
 		}
 		ImGui.Spacing();
 
-		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.legacyHeader"))) {
-			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyWindows"), ref this.Config.Editor.UseLegacyWindowBehavior);
-			this.DrawHint("config.workspace.legacyWindowHint");
-			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyLightEditor"), ref this.Config.Editor.UseLegacyLightEditor);
-			this.DrawHint("config.workspace.legacyLightHint");
-		}
-		ImGui.Spacing();
-
 		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.customLocations.header"))) {
 			this.DrawCustomLocations();
 		}

@@ -214,6 +214,7 @@ public class EditorInterface : IEditorInterface {
 	public void RefreshSceneEntities() {
 		this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
 		this._ctx.Scene.GetModule<LightModule>().RefreshLightEntities();
+		this._ctx.Scene.World.Refresh();
 	}
 
 	public void SelectAllEntities() {
@@ -235,20 +236,13 @@ public class EditorInterface : IEditorInterface {
 			var opened = this.OpenEditor<ActorWindow, ActorEntity>(actor);
 			if (
 				opened
-				&& !this._ctx.Config.Editor.UseLegacyWindowBehavior
 				&& this._ctx.Selection.Count > 0
 				&& !this._ctx.Selection.IsActorSelected(actor)
 			)
 				actor.Select(SelectMode.Force);
 		}
 	}
-	public void OpenLightEditor(LightEntity light) {
-		if (this._ctx.Config.Editor.UseLegacyLightEditor) {
-			this.OpenEditor<LightWindow, LightEntity>(light);
-			return;
-		}
-		this.OpenObjectEditor(light, true);
-	}
+	public void OpenLightEditor(LightEntity light) => this.OpenObjectEditor(light, true);
 
 	public bool OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);

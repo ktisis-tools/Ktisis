@@ -94,6 +94,7 @@ public class PluginContext : IPluginContext {
 
 	private void SetupLegacy() {
 		this._legacy.Setup();
+		this._cmd.RegisterLegacy();
 		this._legacy.OnConfirmed += this.Setup;
 	}
 }

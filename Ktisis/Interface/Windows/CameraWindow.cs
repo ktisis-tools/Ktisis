@@ -277,7 +277,7 @@ public class CameraWindow : KtisisWindow {
 	private unsafe void DrawTracking(EditorCamera camera) {
 		this.tracked = camera.Target;
 		this._previouslyDrawn = null;
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, "Add bone to track\nHold shift to clear tracked bones")) {
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, this._ctx.Locale.Translate("camera_edit.tracking.info"))) {
 			if(!ImGui.IsKeyDown(ImGuiKey.ModShift))
 				this._boneList.Open();
 			else 
@@ -295,9 +295,8 @@ public class CameraWindow : KtisisWindow {
 			}
 		}
 		if(ImGui.IsItemHovered())
-			using (ImRaii.Tooltip()) {
-				ImGui.Text("Track selected bones");
-			}
+			using (ImRaii.Tooltip())
+				ImGui.Text(this._ctx.Locale.Translate("camera_edit.tracking.track"));
 
 		if (this._boneList.IsOpen) {
 			List<BoneNode> list = new List<BoneNode>();
@@ -317,18 +316,18 @@ public class CameraWindow : KtisisWindow {
 			
 
 		ImGui.SameLine();
-		ImGui.Text($"Bones tracked:");
+		ImGui.Text(this._ctx.Locale.Translate("camera_edit.tracking.current"));
 		if (camera.Target.Count == 0) {
 			ImGui.SameLine();
-			ImGui.Text("None");
+			ImGui.Text("N/A");
 		}
 		else if (camera.Target.Count == 1) {
 			ImGui.SameLine();
 			ImGui.Text($"{camera.Target[0].Name} on {camera.Target[0].Root.Name}");
 		} else {
 			ImGui.SameLine();
-			ImGui.Text("Multiple"); //build a hover for this
-			if(ImGui.IsItemHovered())
+			ImGui.Text(this._ctx.Locale.Translate("camera_edit.tracking.multi"));
+			if (ImGui.IsItemHovered())
 				using (ImRaii.Tooltip()) {
 					var groups = camera.Target.GroupBy(t => t.Root.Name);
 					foreach (var g in groups) {
