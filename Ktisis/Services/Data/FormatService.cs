@@ -39,7 +39,7 @@ public class FormatService {
 	
 	// Replacements
 	
-	private readonly List<string> ReplacerKeys = [ "%Date%", "%Year%", "%Month%", "%Day%", "%Time%", "%PlayerName%", "%CurrentWorld%", "%HomeWorld%", "%Zone%" ];
+	private readonly List<string> ReplacerKeys = [ "%Date%", "%Year%", "%Month%", "%Day%", "%Time%", "%Time12%", "%PlayerName%", "%CurrentWorld%", "%HomeWorld%", "%Zone%" ];
 
 	public Dictionary<string, string> GetReplacements() => this.ReplacerKeys.ToDictionary(key => key, this.GetKeyReplacement);
 	
@@ -48,7 +48,8 @@ public class FormatService {
 		"%Year%" => DateTime.Now.ToString("yyyy"),
 		"%Month%" => DateTime.Now.ToString("MM"),
 		"%Day%" => DateTime.Now.ToString("dd"),
-		"%Time%" => DateTime.Now.ToString("hh-mm-ss"),
+		"%Time%" => DateTime.Now.ToString("HH-mm-ss"),
+		"%Time12%" => DateTime.Now.ToString("hh-mm-ss"),
 		"%PlayerName%" => this.GetPlayerName(),
 		"%CurrentWorld%" => this.GetCurrentWorld(),
 		"%HomeWorld%" => this.GetHomeWorld(),
