@@ -5,7 +5,8 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit;
-using KamiToolKit.UiOverlay;
+using KamiToolKit.Overlay;
+using KamiToolKit.Overlay.UiOverlay;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Editor.Context.Types;
@@ -57,6 +58,10 @@ public class OverlayService : IDisposable {
 			Position = new Vector2(87.0f, 138.0f),
 			Size = new Vector2(640.0f, 80.0f),
 			Scale = new Vector2(1.0f, 1.0f),
+			CollisionNode = {
+				Position = new Vector2(-99.0f, -155.0f),
+				Size = new Vector2(749.0f, 256.0f)
+			}
 		});
 		this._showedHint = true;
 	}

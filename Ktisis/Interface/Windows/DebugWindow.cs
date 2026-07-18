@@ -101,7 +101,6 @@ public class DebugWindow : KtisisWindow {
 		if (!tabs.Success) return;
 		DrawTab("IPC Provider", this.DrawProviderTab);
 		DrawTab("IPC Manager", this.DrawManagerTab);
-		DrawTab("Services", this.DrawServicesTab);
 		DrawTab("Diagnostics", this.DrawDiagnosticsTab);
 	}
 	private static void DrawTab(string name, Action handler) {
@@ -278,12 +277,6 @@ public class DebugWindow : KtisisWindow {
 
 	private void DrawManagerTab() {
 		ImGui.Text("TODO");
-	}
-
-	private void DrawServicesTab() {
-		ImGui.Text("TODO");
-		if (ImGui.Button("Show KTK Hint"))
-			this._ctx.Scene.Overlay.ShowHint(this._ctx);
 	}
 
 	private void DrawDiagnosticsTab() {

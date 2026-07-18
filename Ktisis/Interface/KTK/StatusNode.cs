@@ -11,8 +11,9 @@ using Ktisis.Common.Utility;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Nodes.Simplified;
-using KamiToolKit.UiOverlay;
+using KamiToolKit.Overlay;
+using KamiToolKit.Overlay.UiOverlay;
+using KamiToolKit.Premade.Node.Simple;
 
 namespace Ktisis.Interface.KTK;
 
