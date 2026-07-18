@@ -214,6 +214,7 @@ public class EditorInterface : IEditorInterface {
 	public void RefreshSceneEntities() {
 		this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
 		this._ctx.Scene.GetModule<LightModule>().RefreshLightEntities();
+		this._ctx.Scene.World.Refresh();
 	}
 
 	public void SelectAllEntities() {
