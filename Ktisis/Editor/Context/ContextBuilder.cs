@@ -9,7 +9,6 @@ using Ktisis.Editor.Animation;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters;
 using Ktisis.Editor.Context.Types;
-using Ktisis.Editor.Expressions;
 using Ktisis.Editor.Posing;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.AutoSave;
@@ -88,7 +87,6 @@ public class ContextBuilder {
 			Cameras = new CameraManager(context, scope),
 			Characters = new CharacterManager(context, this._objectTable, scope, this._framework, this._mcdf),
 			Interface = new EditorInterface(context, state.Gui),
-			Expressions = new ExpressionManager(context),
 			Posing = new PosingManager(context, scope, this._framework, attach, autoSave),
 			Scene = new SceneManager(context, scope, this._framework, factory, this._objectTable, this._sceneData, this._overlay, this._world),
 			Selection = select,
