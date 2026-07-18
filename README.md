@@ -1,3 +1,5 @@
+<img width="1920" height="576" alt="Ktisis Logo Horizontal White" src="https://github.com/user-attachments/assets/c2c171ef-8df3-40d0-a8eb-5204a2876097" />
+
 # Ktisis
 [![discord](https://img.shields.io/discord/975894364020686878)](https://discord.gg/kUG3W8B8Ny)
 
