@@ -671,37 +671,6 @@
 		}
 	},
 
-	"expression": {
-		"group": {
-			"Face": "Face"
-		},
-		"reset_all": "Reset All",
-		"link": "Link L/R sliders",
-		"unlink": "Unlink L/R sliders",
-		"unit": {
-			"BrowUpL": "Brow Up (L)",
-			"BrowUpR": "Brow Up (R)",
-			"BrowFurrowL": "Brow Furrow (L)",
-			"BrowFurrowR": "Brow Furrow (R)",
-			"BlinkL": "Blink (L)",
-			"BlinkR": "Blink (R)",
-			"EyeWideL": "Eye Wide (L)",
-			"EyeWideR": "Eye Wide (R)",
-			"CheekRaiseL": "Cheek Raise (L)",
-			"CheekRaiseR": "Cheek Raise (R)",
-			"SmileL": "Smile (L)",
-			"SmileR": "Smile (R)",
-			"FrownL": "Frown (L)",
-			"FrownR": "Frown (R)",
-			"SneerL": "Sneer (L)",
-			"SneerR": "Sneer (R)",
-			"JawOpen": "Jaw Open",
-			"UpperLipOpen": "Upper Lip Open",
-			"LowerLipOpen": "Lower Lip Open",
-			"LipPucker": "Lip Pucker"
-		}
-	},
-
 	"config": {
 		"title": "Ktisis Settings",
 		"categories": {

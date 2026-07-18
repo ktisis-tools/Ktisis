@@ -91,8 +91,8 @@ public class LocaleManager : IDisposable {
 	}
 	// Localization methods
 
-	public string Translate(string handle, Dictionary<string, string>? parameters = null, string? fallback = null) {
-		return this.Data?.Translate(handle, parameters) ?? (this.FallbackData?.Translate(handle, parameters) ?? fallback ?? handle);
+	public string Translate(string handle, Dictionary<string, string>? parameters = null) {
+		return this.Data?.Translate(handle, parameters) ?? (this.FallbackData?.Translate(handle, parameters) ?? handle);
 	}
 	
 	public bool HasTranslationFor(string handle) {

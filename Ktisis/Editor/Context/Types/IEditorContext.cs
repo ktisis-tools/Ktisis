@@ -6,7 +6,6 @@ using Ktisis.Editor.Actions;
 using Ktisis.Editor.Animation.Types;
 using Ktisis.Editor.Camera;
 using Ktisis.Editor.Characters.Types;
-using Ktisis.Editor.Expressions.Types;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Editor.Selection;
 using Ktisis.Editor.Transforms.Types;
@@ -32,7 +31,6 @@ public interface IEditorContext : IDisposable {
 	public ICharacterManager Characters { get; }
 	public ICameraManager Cameras { get; }
 	public IEditorInterface Interface { get; }
-	public IExpressionManager Expressions { get; }
 	public IPosingManager Posing { get; }
 	public ISceneManager Scene { get; }
 	public ISelectManager Selection { get; }
