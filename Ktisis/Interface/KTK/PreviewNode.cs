@@ -239,9 +239,7 @@ public unsafe class PreviewNode : OverlayNode {
 			Position = new Vector2(148f, 0f),
 			Size = new Vector2(32.0f, 32.0f),
 		};
-		buttonReset.OnClick = () => {
-			this.ResetCamera();
-		};
+		buttonReset.OnClick = this.ResetCamera;
 
 		buttonLeft.AttachNode(buttonsNode);
 		buttonRight.AttachNode(buttonsNode);
@@ -285,12 +283,12 @@ public unsafe class PreviewNode : OverlayNode {
 	private void ApplyPose() => this._ctx.Posing.ApplyPoseFile(_actor.Pose,
 		this._currentPose,
 		transforms: this._ctx.Config.File.ImportPoseTransforms,
-		modes: this._ctx.Config.File.ImportPoseModes == PoseMode.All ? PoseMode.BodyFace : this._ctx.Config.File.ImportPoseModes ,
+		modes: PoseMode.Body,
 		anchorGroups: this._ctx.Config.File.AnchorPoseSelectedBones,
-		selectedBones: (this._target.Pose.Recurse().Any((b)=> { return b.IsSelected;})? this._ctx.Config.File.ImportPoseSelectedBones : false),
+		selectedBones: (this._target.Pose.Recurse().Any(b => b.IsSelected) ? this._ctx.Config.File.ImportPoseSelectedBones : false),
 		includeDescendants: this._ctx.Config.File.SelectedBonesIncludeDescendants,
 		excludeEars: this._ctx.Config.File.ExcludePoseEarBones
-		);
+	);
 
 	private void UpdateLocals() {
 		this._currentAnchor = this._ctx.Config.File.AnchorPoseSelectedBones;
@@ -344,8 +342,7 @@ public unsafe class PreviewNode : OverlayNode {
 			}
 		}
 	}
-	
-	
+
 	private bool NeedsUpdate() => this._currentAnchor != this._ctx.Config.File.AnchorPoseSelectedBones ||
 		this._currentBones != this._ctx.Config.File.ImportPoseSelectedBones ||
 		this._currentAnchor != this._ctx.Config.File.AnchorPoseSelectedBones ||
