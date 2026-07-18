@@ -45,16 +45,29 @@ public class CommandService : IDisposable {
     // Handler registration
 
     public void RegisterHandlers() {
+		this.Remove("/ktisis");
         this.BuildCommand("/ktisis", this.OnMainCommand)
             // .SetMessage(Ktisis.Locale.Translate("misc.command_desc"))
 			.SetMessage("Toggle the main Ktisis window.")
 			.Create();
     }
 
+	public void RegisterLegacy() {
+		this.BuildCommand("/ktisis", this.OnMainCommandLegacy)
+			// .SetMessage(Ktisis.Locale.Translate("misc.command_desc"))
+			.SetMessage("Toggle the main Ktisis window.")
+			.Create();
+	}
+
     private void Add(string name, CommandInfo info) {
         if (this._register.Add(name))
             this._cmd.AddHandler(name, info);
     }
+
+	private void Remove(string name) {
+		this._register.Remove(name);
+		this._cmd.RemoveHandler(name);
+	}
 
     private CommandFactory BuildCommand(string name, HandlerDelegate handler)
         => new(this, name, handler);
@@ -100,6 +113,11 @@ public class CommandService : IDisposable {
 		ctx?.Plugin.Gui.Get<TrayIcon>()?.Close();
         ctx?.Interface.ToggleWorkspaceWindow();
     }
+
+	private void OnMainCommandLegacy(string command, string arguments) {
+		Ktisis.Log.Info("Main command used");
+		this._chat.PrintError("Enter GPose to complete legacy config setup.");
+	}
 
 	// Disposal
 
