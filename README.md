@@ -26,16 +26,9 @@ Available through the [Sea Of Stars](https://github.com/Ottermandias/SeaOfStars)
 
 ## Contributing
 
-Contributions are generally welcome, as long as they adhere to the following principles:
-- Manipulation of any ingame object must be confined within GPose.
-- It must not automate any tasks that result in network packets being sent to the server.
-- Any changes to the client state must not be:
-  - a) Permanent or irreversible by the user.
-  - b) Detectable by the server, directly or indirectly.
+All contributions are welcome. Feel free to reach out in the discord's #ktisis-dev channel if you want to work on something!
 
-Ktisis makes heavy use of unsafe code. If you are inexperienced or unfamiliar with the risks of this, then refrain from making code contributions that depend on it. Pull requests that show a reckless disregard for memory safety may be closed without further review.
-
-Pull requests containing new features must be reviewed by an organization member or repo maintainer before being merged. Follow the [Dalamud Code of Conduct](https://dalamud.dev/code-of-conduct) when submitting.
+Be aware that changes to unsafe code may be subject to extra scrutiny due to the possibility of causing client crashes or unintended behaviour.
 
 ## Acknowledgements
 
