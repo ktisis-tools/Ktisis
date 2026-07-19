@@ -260,7 +260,6 @@ public class SelectableGui {
 
 	public static List<ImRect> WindowOverlaps() {
 		var windowList = new List<ImRect>();
-		var viewport = ImGui.GetMainViewport();
 
 		foreach (var window in ImGui.GetCurrentContext().Windows.Where(w => w.WasActive)) {
 			if (window.Pos != Vector2.Zero)
