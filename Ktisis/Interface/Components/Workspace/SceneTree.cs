@@ -73,7 +73,7 @@ public class SceneTree {
 
 		var spacing = ImGui.GetStyle().ItemSpacing;
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, spacing with { Y = 5.0f });
-		this.IterateTree(this._ctx.Scene.Children);
+		this.IterateTree(this._ctx.Scene.Children.ToList());  // TODO: test performance impact of ToList()
 
 		// handle any shift-clicked node using target node & ordered tree list
 		if (this._shiftNode != null) this.ResolveShiftSelect();

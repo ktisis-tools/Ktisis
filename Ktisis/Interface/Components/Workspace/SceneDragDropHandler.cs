@@ -1,8 +1,11 @@
 using System;
+using System.Linq;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+
+using FFXIVClientStructs.FFXIV.Client.System.Resource.Handle;
 
 using GLib.Widgets;
 
@@ -18,6 +21,7 @@ namespace Ktisis.Interface.Components.Workspace;
 public class SceneDragDropHandler {
 	private readonly IEditorContext _ctx;
 
+	private bool UnhandledType(EntityType type) => type is not (EntityType.BoneGroup or EntityType.Armature or EntityType.BoneNode or EntityType.Invalid or EntityType.ModelSlot);
 	private IAttachManager Manager => this._ctx.Posing.Attachments;
 	
 	public SceneDragDropHandler(
@@ -38,8 +42,8 @@ public class SceneDragDropHandler {
 			this.HandleTarget(entity);
 	}
 
-	private void HandleSource(SceneEntity entity, bool targetingFolder = false) {
-		if (entity is not IAttachable) return;
+	private void HandleSource(SceneEntity entity) {
+		if (!UnhandledType(entity.Type)) return;
 		using var src = ImRaii.DragDropSource(ImGuiDragDropFlags.SourceNoDisableHover);
 		if (!src.Success) return;
 		
@@ -72,10 +76,14 @@ public class SceneDragDropHandler {
 
 		if (target is IAttachTarget tar && source is IAttachable attach)
 			this.Manager.Attach(attach, tar);
-		if (target is FolderEntity && source.Type is not (EntityType.BoneGroup or EntityType.Armature or EntityType.BoneNode or EntityType.Invalid or EntityType.Model or EntityType.ModelSlot)) {
+		if (target is FolderEntity && UnhandledType(source.Type)) {
 			target.Add(source);
 			source.Parent = target;
 			target.Update();
-		} 
+		} else if (source.Parent?.Type == EntityType.Folder) {
+			source.Parent.Remove(source);
+			this._ctx.Scene.Add(source);
+			this._ctx.Scene.Refresh();
+		}
 	}
 }
