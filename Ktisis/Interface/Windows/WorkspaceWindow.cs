@@ -16,6 +16,7 @@ using Ktisis.Interface.Components.Workspace;
 using Ktisis.Interface.Editor.Types;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Entities.Utility;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Services.Data;
 
@@ -169,6 +170,10 @@ public class WorkspaceWindow : KtisisWindow {
 			this.Interface.OpenOverlayCreateMenu();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Folder, this._ctx.Locale.Translate("workspace.add_folder")))
+			this._ctx.Scene.Add(new FolderEntity(this._ctx.Scene));
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		
 		// world overlay
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), this._ctx.ShowWorldObjects)) {

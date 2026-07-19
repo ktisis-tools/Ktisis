@@ -36,7 +36,7 @@ public class SceneDragDropHandler {
 			this.HandleTarget(entity);
 	}
 
-	private void HandleSource(SceneEntity entity) {
+	private void HandleSource(SceneEntity entity, bool targetingFolder = false) {
 		if (entity is not IAttachable) return;
 		using var src = ImRaii.DragDropSource(ImGuiDragDropFlags.SourceNoDisableHover);
 		if (!src.Success) return;

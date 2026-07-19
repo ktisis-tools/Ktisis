@@ -31,6 +31,7 @@ public record EntityDisplay {
 	private const uint ModelMint = 0xFFBAFFB2;
 	private const uint LightLemon = 0xFF68EDFF;
 	private const uint OverlayOrange = 0xFF0094FF;
+	private const uint FolderGrey = 0xFF4A4A4A;
 	
 	public static Dictionary<EntityType, EntityDisplay> GetDefaults() => new() {
 		{ EntityType.Invalid, new EntityDisplay() },
@@ -45,6 +46,7 @@ public record EntityDisplay {
 		{ EntityType.RefImage, new EntityDisplay(icon: FontAwesomeIcon.Image) },
 		{ EntityType.TalkOverlay, new EntityDisplay(color: OverlayOrange, icon: FontAwesomeIcon.Comment) },
 		{ EntityType.BalloonOverlay, new EntityDisplay(color: OverlayOrange, icon: FontAwesomeIcon.Comments) },
-		{ EntityType.StatusOverlay, new EntityDisplay(color: OverlayOrange, icon: FontAwesomeIcon.ChartBar) }
+		{ EntityType.StatusOverlay, new EntityDisplay(color: OverlayOrange, icon: FontAwesomeIcon.ChartBar) },
+		{ EntityType.Folder, new EntityDisplay(color: FolderGrey, icon: FontAwesomeIcon.Folder) }
 	};
 }
