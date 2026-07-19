@@ -10,6 +10,8 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Entities;
+using Ktisis.Scene.Entities.Utility;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -70,5 +72,10 @@ public class SceneDragDropHandler {
 
 		if (target is IAttachTarget tar && source is IAttachable attach)
 			this.Manager.Attach(attach, tar);
+		if (target is FolderEntity && source.Type is not (EntityType.BoneGroup or EntityType.Armature or EntityType.BoneNode or EntityType.Invalid or EntityType.Model or EntityType.ModelSlot)) {
+			target.Add(source);
+			source.Parent = target;
+			target.Update();
+		} 
 	}
 }
