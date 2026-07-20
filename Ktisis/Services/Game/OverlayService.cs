@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 
+using Dalamud.Bindings.ImGui;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -9,6 +10,7 @@ using KamiToolKit.Overlay;
 using KamiToolKit.Overlay.UiOverlay;
 
 using Ktisis.Core.Attributes;
+using Ktisis.Data.Config.Sections;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.KTK;
 using Ktisis.Scene.Entities.Game;
@@ -20,6 +22,10 @@ public class OverlayService : IDisposable {
 	private readonly IDalamudPluginInterface _dpi;
 	private readonly IFramework _framework;
 	private readonly IObjectTable _objectTable;
+	private const float HintOffsetX = 87.0f;
+	private const float HintOffsetY = 138.0f;
+	private const float HintSizeX = 640.0f;
+	private const float HintSizeY = 80.0f;
 
 	private bool _init = false;
 	private bool _showedHint = false;
@@ -40,7 +46,7 @@ public class OverlayService : IDisposable {
 		context.Plugin.Gui.FileDialogs.OnSelectionChanged += this.HandleFileDialogEvent;
 
 		if (context.Config.Editor.ShowHints && !this._showedHint)
-			this.ShowHint(context);
+			this.ShowHint(context.Config.Editor.HintLocation);
 	}
 
 	public bool AddNode(OverlayNode node) {
@@ -48,15 +54,15 @@ public class OverlayService : IDisposable {
 		return true;
 	}
 
-	public void ShowHint(IEditorContext context) {
+	private void ShowHint(HintLoc location) {
 		var r = new Random();
 		var icon = r.Next(73001, 73291);
-		var key = context.Locale.RandomHintKey();
-		var hint = context.Locale.Translate($"hints.{key}");
+		var key = Ktisis.Locale.RandomHintKey();
+		var hint = Ktisis.Locale.Translate($"hints.{key}");
 
 		this._controller?.AddNode(new HintNode((uint)icon, hint, key, 300) {
-			Position = new Vector2(87.0f, 138.0f),
-			Size = new Vector2(640.0f, 80.0f),
+			Position = GetPositionForLoc(location),
+			Size = new Vector2(HintSizeX, HintSizeY),
 			Scale = new Vector2(1.0f, 1.0f),
 			CollisionNode = {
 				Position = new Vector2(-99.0f, -155.0f),
@@ -102,6 +108,14 @@ public class OverlayService : IDisposable {
 		this._preview.Cleanup();
 		this._preview = null;
 	}
+
+	private static Vector2 GetPositionForLoc(HintLoc loc) => loc switch {
+		HintLoc.TopLeft => new Vector2(HintOffsetX, HintOffsetY),
+		HintLoc.TopRight => new Vector2(ImGui.GetMainViewport().Size.X - HintSizeX, HintOffsetY),
+		HintLoc.BottomLeft => new Vector2(HintOffsetX, ImGui.GetMainViewport().Size.Y - HintSizeY),
+		HintLoc.BottomRight => new Vector2(ImGui.GetMainViewport().Size.X - HintSizeX, ImGui.GetMainViewport().Size.Y - HintSizeY),
+		_ => throw new ArgumentOutOfRangeException()
+	};
 
 	public void Dispose() {
 		this.Disable();

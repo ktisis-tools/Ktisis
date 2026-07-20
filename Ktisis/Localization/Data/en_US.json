@@ -822,6 +822,13 @@
 			"defaultLocation": {
 				"remove": "Unset this folder as default",
 				"add": "Set this folder as default place to open when using the file browser"
+			},
+			"hintLocation": {
+				"label": "On-Screen Location:",
+				"TopLeft": "Top Left",
+				"TopRight": "Top Right",
+				"BottomLeft": "Bottom Left",
+				"BottomRight": "Bottom Right"
 			}
 		},
 		"input": {
