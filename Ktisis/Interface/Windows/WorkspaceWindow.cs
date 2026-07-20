@@ -170,7 +170,7 @@ public class WorkspaceWindow : KtisisWindow {
 			this.Interface.OpenOverlayCreateMenu();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
-		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Folder, this._ctx.Locale.Translate("workspace.add_folder")))
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Folder, this._ctx.Locale.Translate("workspace.create_folder")))
 			this._ctx.Scene.Add(new FolderEntity(this._ctx.Scene));
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		

@@ -6,7 +6,7 @@ using Ktisis.Scene.Types;
 
 namespace Ktisis.Scene.Entities.Utility;
 
-public class FolderEntity: SceneEntity, IHideable {
+public class FolderEntity: SceneEntity, IHideable, IDeletable {
 
 	private bool _Hidden = false;
 	public FolderEntity(
@@ -24,6 +24,24 @@ public class FolderEntity: SceneEntity, IHideable {
 				child.Visible = !value;
 			this._Hidden = value;
 		}
+	}
+
+	public void Dissolve() {
+		foreach (var child in Children.ToList()) {
+			this.Scene.Add(child);
+		}
+		this.Remove();
+		this.Scene.Refresh();
+	}
+	public bool Delete() {
+		foreach (var child in Children.ToList().Where(child => child is IDeletable).Cast<IDeletable>()) {
+			child.Delete();
+		}
+		foreach (var nondeletable in Children.ToList()) {
+			this.Scene.Add(nondeletable);
+		}
+		this.Remove();
+		return true;
 	}
 
 	public void ToggleHidden() => IsHidden = !IsHidden;
