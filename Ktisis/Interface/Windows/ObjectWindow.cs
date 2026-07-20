@@ -192,6 +192,7 @@ public class ObjectWindow : KtisisWindow {
 		// if we have a selection & target's primary entity is a bone node, draw the button
 		// if we have >1 bonenodes selected or no sibling, disable the button
 		// if we have 1 bonenode selected that has a sibling, enable the button
+		// if right-clicked; enable persistent sibling link - whenever a bone is selected, check and attempt to sibling-select if possible
 		var selected = target?.Primary;
 		var selectionCount = target?.Targets.Count();
 		if (selectionCount != 0 && selected != null && selected is BoneNode bNode) {
@@ -205,9 +206,21 @@ public class ObjectWindow : KtisisWindow {
 				}
 			);
 
-			using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
-				this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
+			unsafe {
+				using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
+				if (Buttons.IconButtonTooltip(
+					FontAwesomeIcon.PeopleArrows,
+					siblingHint,
+					iconBtnSize,
+					this._ctx.Config.Editor.PersistentSiblingLink ? *ImGui.GetStyleColorVec4(ImGuiCol.TabActive) : *ImGui.GetStyleColorVec4(ImGuiCol.Text)
+				))
+					this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
+				if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
+					this._ctx.Config.Editor.PersistentSiblingLink = !this._ctx.Config.Editor.PersistentSiblingLink; // toggle persistent links on right-click
+					if (this._ctx.Config.Editor.PersistentSiblingLink)
+						this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if we enable persistence, sibling select at the same time
+				}
+			}
 
 			ImGui.SameLine(0, spacing);
 		} else {
@@ -215,7 +228,7 @@ public class ObjectWindow : KtisisWindow {
 			ImGui.SameLine(0, spacing);
 		}
 
-		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 3f: 0);
+		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar ? 3f : 0);
 		if (avail > iconSize)
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
 

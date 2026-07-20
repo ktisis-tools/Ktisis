@@ -19,6 +19,7 @@ public class EditorConfig {
 	public bool ToggleEditorOnSelect = true;
 	public bool CloseEditorOnDeselect = false;
 	public bool SelectOnTarget = false;
+	public bool PersistentSiblingLink = false;
 
 	public bool IncognitoPlayerNames = false;
 

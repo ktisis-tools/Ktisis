@@ -279,7 +279,7 @@
 			"reflect": "Gizmo Mode: Mirror Transform"
 		},
 		"sibling": {
-			"available": "Multi-select sibling bone: %bone%",
+			"available": "Multi-select sibling bone: %bone%\nRight-click to toggle persistent sibling links",
 			"unavailable": "Bone %bone% has no sibling",
 			"multiple": "Multi-select sibling bone: %bone%\nCan only select sibling when 1 bone is selected!"
 		},
