@@ -172,11 +172,14 @@ public class SelectManager : ISelectManager {
 		if (!modeMulti)
 			this.Selected.Clear();
 
-		if (!isSelect || !modeMulti && isMulti)
+		if (!isSelect || !modeMulti && isMulti) {
 			this.Selected.Add(entity);
-		else
+			this.TrySiblingSelect(entity, true);
+		} else {
 			this.Selected.Remove(entity);
-		
+			this.TrySiblingSelect(entity, false);
+		}
+
 		this.InvokeChanged();
 	}
 
@@ -188,6 +191,22 @@ public class SelectManager : ISelectManager {
 	public void Clear() {
 		this.Selected.Clear();
 		this.InvokeChanged();
+	}
+
+	private void TrySiblingSelect(SceneEntity entity, bool select) {
+		if (!this._context.Config.Editor.PersistentSiblingLink) return;
+		if (entity is not BoneNode bone) return;
+
+		var sibling = bone.Pose.TryResolveSibling(bone);
+		if (sibling is null) return;
+
+		this.Selected.Add(sibling);
+	}
+
+	private static BoneNode? TryGetSibling(SceneEntity entity) {
+		if (entity is not BoneNode bone) return null;
+		var sibling = bone.Pose.TryResolveSibling(bone);
+		return sibling;
 	}
 	
 	// Event invocation
