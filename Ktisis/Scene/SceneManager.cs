@@ -79,6 +79,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		this.AddModule<ActorModule>(gpose);
 		this.AddModule<LightModule>(gpose);
 		this.AddModule<EnvModule>();
+		this.AddModule<CharacterHooks>();
 		this.InitializeModules();
 		this.SetupSavedState();
 		this.Overlay.Initialize(this.Context);
