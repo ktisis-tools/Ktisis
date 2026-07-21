@@ -79,7 +79,7 @@ public class SceneTree {
 		if (this._shiftNode != null) this.ResolveShiftSelect();
 	}
 
-	private void IterateTree(IEnumerable<SceneEntity> entities) {
+	private void IterateTree(List<SceneEntity> entities) {
 		try {
 			ImGui.TreePush(nint.Zero);
 			foreach (var item in entities) {
