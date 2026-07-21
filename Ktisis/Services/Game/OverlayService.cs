@@ -68,7 +68,7 @@ public class OverlayService : IDisposable {
 
 	public unsafe void ToggleCharaViewTexture(IEditorContext context, ActorEntity actor) {
 		this.DisablePreview();
-		if (actor.GetHuman() != null && actor.Appearance.ModelId == 0) {
+		if (actor.GetHuman() != null && actor.Appearance.ModelId is 0 or null) {
 			this._preview = new PreviewNode(context, this._framework, this._objectTable, actor) {
 				Position = new Vector2(500.0f, 500.0f)
 			};
