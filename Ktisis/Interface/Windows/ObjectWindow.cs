@@ -9,6 +9,8 @@ using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
+using FFXIVClientStructs;
+
 using GLib.Widgets;
 
 using Ktisis.Common.Utility;
@@ -189,44 +191,19 @@ public class ObjectWindow : KtisisWindow {
 		ImGui.SameLine(0, spacing);
 
 		// Sibling Link selector
-		// if we have a selection & target's primary entity is a bone node, draw the button
-		// if we have >1 bonenodes selected or no sibling, disable the button
-		// if we have 1 bonenode selected that has a sibling, enable the button
-		// if right-clicked; enable persistent sibling link - whenever a bone is selected, check and attempt to sibling-select if possible
-		var selected = target?.Primary;
-		var selectionCount = target?.Targets.Count();
-		if (selectionCount != 0 && selected != null && selected is BoneNode bNode) {
-			var siblingNode = bNode.Pose.TryResolveSibling(bNode);
-			var siblingAvailable = siblingNode != null;
-			var siblingKey = siblingAvailable ? (selectionCount == 1 ? "available" : "multiple") : "unavailable";
-			var siblingHint = this._ctx.Locale.Translate(
-				$"transform_edit.sibling.{siblingKey}",
-				new Dictionary<string, string> {
-						{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
-				}
-			);
+		// 7-20-26 - switched from 1x sibling button to an always-visible toggle. on enable, try forcing sibling selections if any are already chosen
+		// if enabled, SelectManager handles auto-multi-selecting (and deselecting) Siblings (L/R paired bone names) whenever applicable
 
-			unsafe {
-				using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
-				if (Buttons.IconButtonTooltip(
-					FontAwesomeIcon.PeopleArrows,
-					siblingHint,
-					iconBtnSize,
-					this._ctx.Config.Editor.PersistentSiblingLink ? *ImGui.GetStyleColorVec4(ImGuiCol.TabActive) : *ImGui.GetStyleColorVec4(ImGuiCol.Text)
-				))
-					this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
-				if (ImGui.IsItemClicked(ImGuiMouseButton.Right)) {
-					this._ctx.Config.Editor.PersistentSiblingLink = !this._ctx.Config.Editor.PersistentSiblingLink; // toggle persistent links on right-click
-					if (this._ctx.Config.Editor.PersistentSiblingLink)
-						this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if we enable persistence, sibling select at the same time
-				}
+		var linked = this._ctx.Config.Editor.PersistentSiblingLink;
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), linked)) {
+			var label = linked ? "transform_edit.sibling.linkDisable" : "transform_edit.sibling.linkEnable";
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, Ktisis.Locale.Translate(label), iconBtnSize)) {
+				this._ctx.Config.Editor.PersistentSiblingLink = !this._ctx.Config.Editor.PersistentSiblingLink;
+				if (this._ctx.Config.Editor.PersistentSiblingLink)
+					this._ctx.Selection.TryUpdateSelectedSiblings();
 			}
-
-			ImGui.SameLine(0, spacing);
-		} else {
-			ImGui.Dummy(iconBtnSize);
-			ImGui.SameLine(0, spacing);
 		}
+		ImGui.SameLine(0, spacing);
 
 		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar ? 3f : 0);
 		if (avail > iconSize)

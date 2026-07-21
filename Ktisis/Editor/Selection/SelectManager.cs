@@ -42,6 +42,7 @@ public interface ISelectManager {
 	public void Unselect(SceneEntity entity);
 	
 	public void Clear();
+	public void TryUpdateSelectedSiblings();
 }
 
 public class SelectManager : ISelectManager {
@@ -193,20 +194,28 @@ public class SelectManager : ISelectManager {
 		this.InvokeChanged();
 	}
 
+	public void TryUpdateSelectedSiblings() {
+		var entities = this.GetSelected().ToList(); // copy to local var to avoid changing list mid-enumeration
+		foreach (var entity in entities)
+			this.TrySiblingSelect(entity, true);
+
+		this.InvokeChanged();
+	}
+
+	// called whenever a selection is added or removed to update its paired sibling if necessary
 	private void TrySiblingSelect(SceneEntity entity, bool select) {
 		if (!this._context.Config.Editor.PersistentSiblingLink) return;
 		if (entity is not BoneNode bone) return;
 
 		var sibling = bone.Pose.TryResolveSibling(bone);
 		if (sibling is null) return;
+		if (select && this.Selected.Contains(sibling)) return; // break if trying to add when already present
+		if (!select && !this.Selected.Contains(sibling)) return; // break if trying to remove when not present
 
-		this.Selected.Add(sibling);
-	}
-
-	private static BoneNode? TryGetSibling(SceneEntity entity) {
-		if (entity is not BoneNode bone) return null;
-		var sibling = bone.Pose.TryResolveSibling(bone);
-		return sibling;
+		if (select)
+			this.Selected.Add(sibling);
+		else
+			this.Selected.Remove(sibling);
 	}
 	
 	// Event invocation
