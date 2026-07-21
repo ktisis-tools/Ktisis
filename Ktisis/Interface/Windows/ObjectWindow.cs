@@ -156,6 +156,8 @@ public class ObjectWindow : KtisisWindow {
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
 
+		// Gizmo Global/Local
+
 		var mode = this._ctx.Config.Gizmo.Mode;
 		var modeIcon = mode == ImGuizmoMode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home;
 		var modeKey = mode == ImGuizmoMode.World ? "world" : "local";
@@ -165,6 +167,8 @@ public class ObjectWindow : KtisisWindow {
 		
 		ImGui.SameLine(0, spacing);
 
+		// Gizmo Visibility
+
 		var visible = this._ctx.Config.Gizmo.Visible;
 		var visIcon = visible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
 		var visHint = this._ctx.Locale.Translate("actions.Gizmo_Toggle");
@@ -172,6 +176,8 @@ public class ObjectWindow : KtisisWindow {
 			this._ctx.Config.Gizmo.Visible = !visible;
 
 		ImGui.SameLine(0, spacing);
+
+		// Mirror Modes
 
 		var mirrorState = this._ctx.Config.Gizmo.MirrorRotation;
 		var flagIcon = FontAwesomeIcon.GripLines;
@@ -190,20 +196,33 @@ public class ObjectWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 
+		// Bone Parenting
+
+		var parenting = this._ctx.Config.Gizmo.ParentBones;
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), !parenting)) {
+			var pLabel = parenting ? "transform_edit.transforms.parentingDisable" : "transform_edit.transforms.parenting";
+			var icon = parenting ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink;
+			if (Buttons.IconButtonTooltip(icon, Ktisis.Locale.Translate(pLabel), iconBtnSize))
+				this._ctx.Config.Gizmo.ParentBones = !parenting;
+		}
+		ImGui.SameLine(0, spacing);
+
 		// Sibling Link selector
 		// 7-20-26 - switched from 1x sibling button to an always-visible toggle. on enable, try forcing sibling selections if any are already chosen
 		// if enabled, SelectManager handles auto-multi-selecting (and deselecting) Siblings (L/R paired bone names) whenever applicable
 
 		var linked = this._ctx.Config.Editor.PersistentSiblingLink;
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), linked)) {
-			var label = linked ? "transform_edit.sibling.linkDisable" : "transform_edit.sibling.linkEnable";
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, Ktisis.Locale.Translate(label), iconBtnSize)) {
-				this._ctx.Config.Editor.PersistentSiblingLink = !this._ctx.Config.Editor.PersistentSiblingLink;
+			var sLabel = linked ? "transform_edit.sibling.linkDisable" : "transform_edit.sibling.linkEnable";
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, Ktisis.Locale.Translate(sLabel), iconBtnSize)) {
+				this._ctx.Config.Editor.PersistentSiblingLink = !linked;
 				if (this._ctx.Config.Editor.PersistentSiblingLink)
 					this._ctx.Selection.TryUpdateSelectedSiblings();
 			}
 		}
 		ImGui.SameLine(0, spacing);
+
+		// jump to right-boundary for TransformEditor show/hide caret
 
 		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar ? 3f : 0);
 		if (avail > iconSize)
