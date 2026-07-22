@@ -45,18 +45,21 @@ public class LocaleManager : IDisposable {
 
 	public void Initialize(ConfigManager cfg) {
 		this._cfg = cfg;
-		// TODO: Listen for locale changes.
-		this.HandleLanguageChangeDelegate();
 		foreach (var resource in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(s => s.StartsWith("Ktisis.Localization.Data"))) {
 			if(this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
 		}
 		cfg.WithConfigLoaded(config => {
 			if(config.Locale.AutoDetect) {
-				this.LanguageChanged(this._dpi.UiLanguage);
+				this.HandleLanguageChangeDelegate();
+				/* (n.b. the above method will call LanguageChanged immediately) */
 			} else {
-				this.LoadLocale(this._cfg.File.Locale.LocaleId);
-				if(this._cfg.File.Locale.LocaleId != "en_US")
+				/* we need to check for available locales here in case anyone has an old configuration that names an unavailable locale */
+				string targetLocale = this.GetBestAvailableLocale(config.Locale.LocaleId) ?? "en_US";
+				this.LoadLocale(targetLocale);
+				/* (n.b. we don't write the locale back to the config file in case the user's preferred locale becomes available again in a new version) */
+
+				if(targetLocale != "en_US")
 					this.LoadFallbackLocale();
 			}
 		});
