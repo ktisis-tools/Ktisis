@@ -34,9 +34,11 @@ public abstract class EntityEditWindow<T> : KtisisWindow where T : SceneEntity {
 
 	public virtual void SetTarget(T target) {
 		try {
+			if (!target.IsValid)
+				throw new Exception("Attempted to set invalid target.");
 			this.Target = target;
-		} catch {
-			throw new Exception("Attempted to set invalid target.");
+		} catch (Exception err) {
+			Ktisis.Log.Error($"Attempting to set target raised exception:\n{err}");
 		}
 	}
 

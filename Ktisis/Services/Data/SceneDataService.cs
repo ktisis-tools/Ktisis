@@ -104,10 +104,12 @@ public class SceneDataService {
 			var overlays = this.Scene.Children.OfType<OverlayEntity>()
 				.ToList();
 
+			Ktisis.Log.Debug("Collected all entity lists");
 			//TODO: Attaches
 			if(saveActors)
 				foreach (var chara in entities) {
-					
+					Ktisis.Log.Debug($"Exporting {chara.Name}");
+					Ktisis.Log.Debug($"Data: {chara}");
 					var actor = ((ActorEntity)chara).Actor.GetDrawObject();
 						
 					var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
