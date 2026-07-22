@@ -72,7 +72,7 @@ public class OverlayService : IDisposable {
 			this._preview = new PreviewNode(context, this._framework, this._objectTable, actor) {
 				Position = new Vector2(500.0f, 500.0f)
 			};
-		this._controller?.AddNode(this._preview);
+			this._controller?.AddNode(this._preview);
 		}
 	}
 
