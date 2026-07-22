@@ -62,13 +62,28 @@
         <EmbeddedResource Include="Data\Schema\Categories.xml" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Data\Library\" />
       <EmbeddedResource Include="Data\Library\gobos.csv" />
       <EmbeddedResource Include="Data\Library\props.json" />
       <EmbeddedResource Include="Data\Library\skin-paths.json" />
 	</ItemGroup>
     <ItemGroup>
       <Content Include="Assets\**\*" CopyToOutputDirectory="Always"/>
+      <EmbeddedResource Include="Data\Library\Expressions\AuRaFeminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\AuRaMasculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\ElezenFeminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\ElezenMasculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\HrothgarFeminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\HrothgarMasculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\HyurFeminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\HyurMasculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\LalafellFeminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\LalafellMasculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\MiqoteFeminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\MiqoteMasculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\RoegadynFeminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\RoegadynMasculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\VieraFeminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\VieraMasculine.json" />
       <EmbeddedResource Include="Data\Images\icon_colored.png" />
       <EmbeddedResource Include="Data\Images\icon_simple.png" />
     </ItemGroup>
