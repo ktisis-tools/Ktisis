@@ -22,9 +22,10 @@ public class LocaleManager : IDisposable {
 	
 	private readonly LocaleDataLoader Loader = new();
 
-	private List<List<string>> CompatibleLanguages = new List<List<string>>() {
-		new List<string>(){"zh_CN", "zh_SG"},
-		new List<string>(){"zh_TW", "zh_MO", "zh_HK"}
+	private static Dictionary<string, string> localeFallbackMap = new() {
+		{ "zh_SG", "zh_CN" },
+		{ "zh_MO", "zh_TW" },
+		{ "zh_HK", "zh_TW" },
 	};
 
 	public List<LocaleMetaData> AvailableLocales = new();
@@ -68,28 +69,31 @@ public class LocaleManager : IDisposable {
 			this._dpi.LanguageChanged += this.LanguageChanged;
 		}
 	}
-	public void LanguageChanged(string lang) {
+	public void LanguageChanged(string uiLanguage) {
 		//TODO: Check for default names on Camera and Actors to repopulate
-		var localeFile = lang + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
-		if (this.Data?.MetaData.TechnicalName.Equals(localeFile)?? false) {
-			this._cfg.File.Locale.LocaleId = localeFile;
-			this.LoadLocale(localeFile);
-		} else if(this.CompatibleLanguages.Any(l => l.Contains(localeFile) && this.AvailableLocales.Any(p=> p.TechnicalName == l.First()))) {
-			var locale = this.CompatibleLanguages.First(l => l.Contains(localeFile)).First();
-			this._cfg.File.Locale.LocaleId = locale;
-			this.LoadLocale(locale);
-		} else if (this.AvailableLocales.Any(l => l.TechnicalName == localeFile) && this.CompatibleLanguages.All(l => !l.Contains(localeFile))) {
-			this._cfg.File.Locale.LocaleId = localeFile;
-			this.LoadLocale(localeFile);
-		} else if (this.AvailableLocales.Any(l => l.TechnicalName.StartsWith(lang))) {
-			this._cfg.File.Locale.LocaleId = this.AvailableLocales.First(l => l.TechnicalName.StartsWith(lang)).TechnicalName;
-			this.LoadLocale(this._cfg.File.Locale.LocaleId);
-		} else {
-			this._cfg.File.Locale.LocaleId = "en_US";
-			this.LoadLocale("en_US");
+		if(this.config is {} config) {
+			/* Sanity check */
+			if(!config.Locale.AutoDetect) return;
+			string envLocale = uiLanguage + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
+			string targetLocale = this.GetBestAvailableLocale(envLocale) ?? "en_US";
+			config.Locale.LocaleId = targetLocale;
+			this.LoadLocale(targetLocale);
 		}
-			
 	}
+
+	private string? GetBestAvailableLocale(string inputLocale) {
+		var availableLocales = this.AvailableLocales.Select(x => x.TechnicalName).ToHashSet();
+		if(availableLocales.Contains(inputLocale)) return inputLocale;
+		if(localeFallbackMap.TryGetValue(inputLocale, out var remappedLocale)) {
+			if(availableLocales.Contains(inputLocale)) return remappedLocale;
+		}
+		var languageMatch = inputLocale.Split("_")[0] + "_";
+		var languageFallback = this.AvailableLocales.FirstOrDefault(x => x.TechnicalName.StartsWith(languageMatch));
+		if(languageFallback != null) return languageFallback.TechnicalName;
+		return null;
+	}
+
+
 	// Localization methods
 
 	public string Translate(string handle, Dictionary<string, string>? parameters = null) {
