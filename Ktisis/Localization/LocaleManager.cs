@@ -40,6 +40,8 @@ public class LocaleManager : IDisposable {
 		this._dpi = dpi;
 	}
 
+	private Configuration? config => this._cfg._isLoaded ? this._cfg.File : null;
+
 	public void Initialize(ConfigManager cfg) {
 		this._cfg = cfg;
 		// TODO: Listen for locale changes.
@@ -48,21 +50,20 @@ public class LocaleManager : IDisposable {
 			if(this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
 		}
-		if(cfg is { _isLoaded: true, File.Locale.AutoDetect: true })
-			this.LanguageChanged(this._dpi.UiLanguage);
-		else if (!cfg._isLoaded) {
-			this.LoadLocale("en_US");
-		} else {
-			this.LoadLocale(this._cfg.File.Locale.LocaleId);
-			if(this._cfg.File.Locale.LocaleId != "en_US")
-				this.LoadFallbackLocale();
-		}
-
+		cfg.WithConfigLoaded(config => {
+			if(config.Locale.AutoDetect) {
+				this.LanguageChanged(this._dpi.UiLanguage);
+			} else {
+				this.LoadLocale(this._cfg.File.Locale.LocaleId);
+				if(this._cfg.File.Locale.LocaleId != "en_US")
+					this.LoadFallbackLocale();
+			}
+		});
 	}
 
 	public void HandleLanguageChangeDelegate() {
 		this._dpi.LanguageChanged -= this.LanguageChanged;
-		if (this._cfg is { File.Locale.AutoDetect: true }) {
+		if (this.config?.Locale.AutoDetect ?? false) {
 			this.LanguageChanged(this._dpi.UiLanguage);
 			this._dpi.LanguageChanged += this.LanguageChanged;
 		}
@@ -123,7 +124,7 @@ public class LocaleManager : IDisposable {
 
 	public string GetBoneName(string name) {
 		var key = $"bone.{name}";
-		var friendly_bone_names = this._cfg.File.Categories.ShowFriendlyBoneNames;
+		var friendly_bone_names = this.config?.Categories.ShowFriendlyBoneNames ?? false;
 		return friendly_bone_names && this.HasTranslationFor(key) ? this.Translate(key) : name;
 	}
 
