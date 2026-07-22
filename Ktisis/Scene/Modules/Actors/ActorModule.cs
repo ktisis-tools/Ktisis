@@ -33,19 +33,29 @@ public class ActorModule : SceneModule {
 	
 	private readonly ActorSpawner _spawner;
 	
-	public ActorModule(
+	//Creation/Destruction hooks.
+	private readonly Hook<Character.Delegates.Terminate> _terminateHook;
+	private readonly Hook<Character.Delegates.Dtor> _destroyHook;
+	private readonly Hook<Character.Delegates.OnInitialize> _initializeHook;
+
+	public unsafe ActorModule(
 		IHookMediator hook,
 		ISceneManager scene,
 		ActorService actors,
 		IObjectTable objectTable,
 		IFramework framework,
-		GroupPoseModule gpose
+		GroupPoseModule gpose,
+		IGameInteropProvider hooks
 	) : base(hook, scene) {
 		this._actors = actors;
 		this._objectTable = objectTable;
 		this._framework = framework;
 		this._gpose = gpose;
 		this._spawner = hook.Create<ActorSpawner>();
+		
+		_terminateHook = hooks.HookFromAddress<Character.Delegates.Terminate>((nint)Character.StaticVirtualTablePointer->Terminate, Terminate);
+		_destroyHook = hooks.HookFromAddress<Character.Delegates.Dtor>((nint)Character.StaticVirtualTablePointer->Dtor, Destructor);
+		_initializeHook = hooks.HookFromAddress<Character.Delegates.OnInitialize>((nint)Character.StaticVirtualTablePointer->OnInitialize, InitializeHook);
 	}
 
 	public override void Setup() {
@@ -211,22 +221,6 @@ public class ActorModule : SceneModule {
 	}
 	
 	// Hooks
-	
-	[Signature("40 56 57 48 83 EC 38 48 89 5C 24 ??", DetourName = nameof(AddCharacterDetour))]
-	private Hook<AddCharacterDelegate>? AddCharacterHook = null!;
-	private delegate void AddCharacterDelegate(nint a1, nint a2, ulong a3, nint a4);
-
-	private void AddCharacterDetour(nint gpose, nint address, ulong id, nint a4) {
-		this.AddCharacterHook!.Original(gpose, address, id, a4);
-		if (!this.CheckValid()) return;
-		
-		try {
-			if (id != 0xE0000000)
-				this.AddActor(address, true);
-		} catch (Exception err) {
-			Ktisis.Log.Error($"Failed to handle character add for 0x{address:X}:\n{err}");
-		}
-	}
 
 	[Signature("45 33 D2 4C 8D 81 ?? ?? ?? ?? 41 8B C2 4C 8B C9 49 3B 10")]
 	private RemoveCharacterDelegate _removeCharacter = null!;
@@ -295,12 +289,100 @@ public class ActorModule : SceneModule {
 		this.ControlGazeHook!.Original(a1);
 	}
 
+
+#region Creation/Destroy hooks
+
+	private unsafe void InitializeHook(Character* thisPtr) {
+		Ktisis.Log.Verbose("[Initialize] New Character? {0:X}", (nint) thisPtr);
+		
+		try {
+			_initializeHook.OriginalDisposeSafe(thisPtr);
+		} catch (Exception e) {
+			Ktisis.Log.Error(e, "Error on Initialize");
+		}
+		
+		if (!this.CheckValid()) return;
+		
+		_framework.RunOnTick(() => {
+			this.Add(thisPtr);
+		}, delayTicks: 1); //delayed to allow internal code to handle 
+	}
+	
+	private unsafe GameObject* Destructor(Character* thisPtr, byte freeFlags) {
+		Remove(thisPtr);
+
+		try {
+			return _destroyHook.OriginalDisposeSafe(thisPtr, freeFlags);
+		} catch (Exception e) {
+			Ktisis.Log.Error(e, "Error on dtor");
+			return null;
+		}
+	}
+	
+	private unsafe void Terminate(Character* character) {
+		Remove(character);
+		
+		try {
+			_terminateHook.OriginalDisposeSafe(character);
+		} catch (Exception e) {
+			Ktisis.Log.Error(e, "Error on terminate");
+		}
+	}
+
+	private unsafe void Remove(Character* character) {
+		try {
+			Ktisis.Log.Debug("Trying to remove actor {0:x}", (nint) character);
+			var gameObject = this._actors.GetAddress((nint)character);
+			if (gameObject is null) {
+				Ktisis.Log.Verbose("Unable to find gameobject for {0:X}", (nint)character);
+
+				return;
+			}
+
+			var entity = this.Scene.GetEntityForActor(gameObject);
+
+			if (entity is null) {
+				Ktisis.Log.Verbose("Unable to find entity for actor {0:X}", (nint)character);
+
+				return;
+			}
+
+			entity.Remove();
+		} catch (Exception e) {
+			Ktisis.Log.Error(e, "Error on Remove");
+		}
+	}
+
+	private unsafe void Add(Character* character) {
+		var gameObject = this._actors.GetAddress((nint)character);
+		if (gameObject is null || gameObject.ObjectIndex < 200) {
+			Ktisis.Log.Verbose("Unable to find gameobject, or below 200 for {0:X} ({1})", (nint)character, gameObject?.ObjectIndex);
+
+			return;
+		}
+			
+		var entity = this.Scene.GetEntityForActor(gameObject);
+
+		if (entity is not null) {
+			return;
+		}
+
+		try {
+			Ktisis.Log.Info("Trying to add actor {0:X}", (nint)character);
+			this.AddActor((nint)character, true);
+		} catch (Exception e) {
+			Ktisis.Log.Error(e, "Error on Remove");
+		}
+	}
+
+#endregion
+
 	
 	// Disposal
 
 	public override void Dispose() {
 		base.Dispose();
 		this._spawner.Dispose();
-		GC.SuppressFinalize(this);
+		GC.SuppressFinalize(this); 
 	}
 }
