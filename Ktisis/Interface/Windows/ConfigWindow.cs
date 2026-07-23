@@ -113,6 +113,10 @@ public class ConfigWindow : KtisisWindow {
 			append += this.Tabs[(int)parentIndex].Item1;
 		else
 			append += this.Tabs[index].Item1;
+
+		if (append == "##") // if we're still ## such as during loading/before a tab is properly open, post _something_ to fill out the ID
+			append += "ConfigLoading";
+
 		if(this.Tabs[index].Item2 != null)
 			if (ImGui.Selectable(this.Locale.Translate(this.Tabs[index].Item1) + append, this._tabIndex == index ))
 				this._tabIndex = index;
