@@ -257,6 +257,17 @@ public class ConfigWindow : KtisisWindow {
 		this.DrawHint("config.workspace.hintSelectTarget");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.showHints"), ref this.Config.Editor.ShowHints);
 		this.DrawHint("config.workspace.hintHint");
+		if (this.Config.Editor.ShowHints) {
+			using var _ = ImRaii.PushIndent();
+			ImGui.AlignTextToFramePadding();
+			ImGui.Text(this.Locale.Translate("config.workspace.hintLocation.label"));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			using (var _combo = ImRaii.Combo("", this.Locale.Translate($"config.workspace.hintLocation.{this.Config.Editor.HintLocation.ToString()}")))
+				if (_combo.Success)
+					foreach (var loc in Enum.GetValues<HintLoc>())
+						if (ImGui.Selectable(this.Locale.Translate($"config.workspace.hintLocation.{loc.ToString()}"), loc == this.Config.Editor.HintLocation))
+							this.Config.Editor.HintLocation = loc;
+		}
 
 		ImGui.Spacing();
 
