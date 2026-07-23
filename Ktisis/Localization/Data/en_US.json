@@ -431,7 +431,8 @@
 				"target": "Select target actor",
 				"targeting": "Targeting:",
 				"unk": "Unknown",
-				"null": "No Target"
+				"null": "No Target",
+				"disabled": "Unable to control gaze while pose mode active"
 			},
 			"chara_edit": "Actor Editor",
 			"export": "Export Chara"
