@@ -149,6 +149,6 @@ public class LocaleManager : IDisposable {
 	}
 
 	public void Dispose() {
-			this._dpi.LanguageChanged -= this.LanguageChanged;
-  }
+		this._dpi.LanguageChanged -= this.LanguageChanged;
+	}
 }
