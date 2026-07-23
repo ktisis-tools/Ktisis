@@ -89,14 +89,14 @@ public class SceneEntityMenuBuilder {
 
 			// rename delete to Untrack if we have a worldlight tied to the lightentity in this menu
 			if (this._entity is LightEntity { WorldLight: not null })
-				menu.Action("Untrack", () => deletable.Delete());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => deletable.Delete());
 			else
-				menu.Action("Delete", () => deletable.Delete());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.delete"), () => deletable.Delete());
 		}
 		if (this._entity is ObjectEntity obj) {
 			menu.Separator();
-			menu.Action("Reset", () => obj.Reset());
-			menu.Action("Untrack", () => obj.Remove());
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
 		}
 	}
 	

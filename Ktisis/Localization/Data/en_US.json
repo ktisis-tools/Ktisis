@@ -178,7 +178,13 @@
 				"directional": "Sun (Directional)",
 				"file": "From file... (.ktlight)"
 			},
-			"reference": "Add reference image"
+			"reference": "Add reference image",
+			"overlay": {
+				"create": "Add new overlay...",
+				"dialog": "Dialog",
+				"balloon": "Balloon",
+				"status": "Status"
+			}
 		},
 		"entity_menu": {
 			"base": {
@@ -190,7 +196,9 @@
 				"detach": "Detach",
 				"rename": "Rename",
 				"duplicate": "Duplicate",
-				"delete": "Delete"
+				"delete": "Delete",
+				"untrack": "Untrack",
+				"reset": "Reset"
 			},
 			"actor": {
 				"target": "Target",

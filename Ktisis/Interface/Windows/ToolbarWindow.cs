@@ -52,7 +52,7 @@ public class ToolbarWindow : KtisisWindow {
 			new(this.DrawPosingWindow, FontAwesomeIcon.Portrait, Ktisis.Locale.Translate("toolbar.buttons.posing"), typeof(PosingWindow)),
 			new(this.DrawEnvWindow, FontAwesomeIcon.CloudSun, Ktisis.Locale.Translate("toolbar.buttons.env"), typeof(Env)),
 			new(this.DrawCameraWindow, FontAwesomeIcon.CameraRetro, Ktisis.Locale.Translate("toolbar.buttons.camera"), typeof(CameraWindow)),
-			new(this.DrawSceneWindow, FontAwesomeIcon.UsersLine, "Scene Editor", typeof(SceneWindow)),
+			new(this.DrawSceneWindow, FontAwesomeIcon.UsersLine, Ktisis.Locale.Translate("toolbar.buttons.scene"), typeof(SceneWindow)),
 			new(this.DrawConfigWindow, FontAwesomeIcon.Cogs, Ktisis.Locale.Translate("toolbar.buttons.config"), typeof(ConfigWindow)),
 		};
 	}
