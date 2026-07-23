@@ -2,7 +2,6 @@
   "Data": [
     {
       "Id": "BrowUpL",
-      "Label": "Brow Up (L)",
       "Transforms": {
         "j_f_mayu_l": {
           "Position": "0.00088040903, -0.0024308264, 0.00075027347",
@@ -28,7 +27,6 @@
     },
     {
       "Id": "BrowUpR",
-      "Label": "Brow Up (R)",
       "Transforms": {
         "j_f_mayu_r": {
           "Position": "0.0034889989, 0.0042892992, -0.0016859248",
@@ -54,7 +52,6 @@
     },
     {
       "Id": "BrowFurrowL",
-      "Label": "Brow Furrow (L)",
       "Transforms": {
         "j_f_dmemoto_l": {
           "Position": "0.00045286864, 0.0002588248, -0.00027434528",
@@ -80,7 +77,6 @@
     },
     {
       "Id": "BrowFurrowR",
-      "Label": "Brow Furror (R)",
       "Transforms": {
         "j_f_dmemoto_r": {
           "Position": "0.0004528612, 0.00025882386, 0.00027435645",
@@ -106,7 +102,6 @@
     },
     {
       "Id": "BlinkL",
-      "Label": "Blink (L)",
       "Transforms": {
         "j_f_mab_l": {
           "Position": "8.9854E-06, -1.9200146E-05, 1.5199184E-05",
@@ -147,7 +142,6 @@
     },
     {
       "Id": "BlinkR",
-      "Label": "Blink (R)",
       "Transforms": {
         "j_f_mab_r": {
           "Position": "8.9854E-06, -1.9203871E-05, -1.5199184E-05",
@@ -188,7 +182,6 @@
     },
     {
       "Id": "EyeWideL",
-      "Label": "Eye Wide (L)",
       "Transforms": {
         "j_f_mab_l": {
           "Position": "1.110509E-05, -4.3153763E-05, -2.6548281E-05",
@@ -229,7 +222,6 @@
     },
     {
       "Id": "EyeWideR",
-      "Label": "Eye Wide (R)",
       "Transforms": {
         "j_f_mab_r": {
           "Position": "1.1116266E-05, -4.3153763E-05, 2.654083E-05",
@@ -270,7 +262,6 @@
     },
     {
       "Id": "JawOpen",
-      "Label": "Jaw Open",
       "Transforms": {
         "j_f_ago": {
           "Position": "0.0044361437, -0.0017333841, 5.4178884E-14",
@@ -291,7 +282,6 @@
     },
     {
       "Id": "CheekRaiseL",
-      "Label": "Cheek Raise (L)",
       "Transforms": {
         "j_f_dhoho_l": {
           "Position": "-0.00086636655, -0.00055959634, -0.00028936565",
@@ -312,7 +302,6 @@
     },
     {
       "Id": "CheekRaiseR",
-      "Label": "Cheek Raise (R)",
       "Transforms": {
         "j_f_dhoho_r": {
           "Position": "-0.0008663684, -0.0005595982, 0.00028936937",
@@ -333,7 +322,6 @@
     },
     {
       "Id": "SmileL",
-      "Label": "Smile (L)",
       "Transforms": {
         "j_f_dlip_01_l": {
           "Position": "0.00041786954, 0.0013899691, 0.00011141086",
@@ -389,7 +377,6 @@
     },
     {
       "Id": "SmileR",
-      "Label": "Smile (R)",
       "Transforms": {
         "j_f_dlip_01_r": {
           "Position": "0.00041786954, 0.0013900921, -0.0001121331",
@@ -445,7 +432,6 @@
     },
     {
       "Id": "GrinL",
-      "Label": "Grin (L)",
       "Transforms": {
         "j_f_dlip_01_l": {
           "Position": "-0.00056704506, -0.0023063235, -9.613531E-05",
@@ -501,7 +487,6 @@
     },
     {
       "Id": "GrinR",
-      "Label": "Grin (R)",
       "Transforms": {
         "j_f_dlip_01_r": {
           "Position": "-0.0005670376, -0.0023063235, 9.6024014E-05",
@@ -557,7 +542,6 @@
     },
     {
       "Id": "FrownL",
-      "Label": "Frown (L)",
       "Transforms": {
         "j_f_dlip_01_l": {
           "Position": "0.0009793378, 0.0017575324, -2.4472363E-05",
@@ -613,7 +597,6 @@
     },
     {
       "Id": "FrownR",
-      "Label": "Frown (R)",
       "Transforms": {
         "j_f_dlip_01_r": {
           "Position": "0.0009793378, 0.0017574131, 2.4475157E-05",
@@ -669,7 +652,6 @@
     },
     {
       "Id": "UpperLipOpen",
-      "Label": "Upper Lip Open",
       "Transforms": {
         "j_f_ulip_01_l": {
           "Position": "0.00050672144, 0.0012367396, -0.00051124115",
@@ -715,7 +697,6 @@
     },
     {
       "Id": "LowerLipOpen",
-      "Label": "Lower Lip Open",
       "Transforms": {
         "j_f_dlip_01_l": {
           "Position": "0.0003431253, -0.0017229281, -0.0006462736",
@@ -761,7 +742,6 @@
     },
     {
       "Id": "LipPucker",
-      "Label": "Lip Pucker",
       "Transforms": {
         "j_f_dlip_01_l": {
           "Position": "0.004005242, -0.0005845651, 0.00076613855",

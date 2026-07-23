@@ -10,10 +10,9 @@ using System.Threading.Tasks;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Plugin.Services;
 
-using JetBrains.Annotations;
-
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
+using Ktisis.Data.Expressions;
 using Ktisis.Data.Json;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Entities.Game;
@@ -26,31 +25,30 @@ public class FaceLibraryGenerator {
 	// Data
 
 	private readonly static Expression[] Expressions = [
-		new( "BrowUpL", "Brow Up (L)", 6261, [ "j_f_miken_l", "j_f_mayu_l", "j_f_mmayu_l", "j_f_miken_01_l", "j_f_miken_02_l" ] ),
-		new( "BrowUpR", "Brow Up (R)", 6261, [ "j_f_miken_r", "j_f_mayu_r", "j_f_mmayu_r", "j_f_miken_01_r", "j_f_miken_02_r" ] ),
-		new( "BrowFurrowL", "Brow Furrow (L)", 6228, [ "j_f_dmemoto_l", "j_f_dmiken_l", "j_f_miken_01_l", "j_f_miken_02_l", "j_f_miken_l" ] ),
-		new( "BrowFurrowR", "Brow Furror (R)", 6228, [ "j_f_dmemoto_r", "j_f_dmiken_r", "j_f_miken_01_r", "j_f_miken_02_r", "j_f_miken_r" ] ),
-		new( "BlinkL", "Blink (L)", 611, [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ] ),
-		new( "BlinkR", "Blink (R)", 611, [ "j_f_mab_r", "j_f_mabdn_01_r", "j_f_mabdn_02out_r", "j_f_mabdn_03in_r", "j_f_mabup_01_r", "j_f_mabup_02out_r", "j_f_mabup_03in_r" ] ),
-		new( "EyeWideL", "Eye Wide (L)", 618, [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ] ),
-		new( "EyeWideR", "Eye Wide (R)", 618, [ "j_f_mab_r", "j_f_mabdn_01_r", "j_f_mabdn_02out_r", "j_f_mabdn_03in_r", "j_f_mabup_01_r", "j_f_mabup_02out_r", "j_f_mabup_03in_r" ] ),
-		new( "CheekRaiseL", "Cheek Raise (L)", 616, [ "j_f_dhoho_l", "j_f_hoho_l", "j_f_shoho_l" ] ),
-		new( "CheekRaiseR", "Cheek Raise (R)", 616, [ "j_f_dhoho_r", "j_f_hoho_r", "j_f_shoho_r" ] ),
-		new( "SmileL", "Smile (L)", 606, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
-		new( "SmileR", "Smile (R)", 606, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
-		new( "GrinL", "Grin (L)", 8021, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
-		new( "GrinR", "Grin (R)", 8021, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
-		new( "FrownL", "Frown (L)", 625, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
-		new( "FrownR", "Frown (R)", 625, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
-		new( "JawOpen", "Jaw Open", 618, [ "j_f_ago", "j_f_dago", "j_f_hagukidn" ] ),
-		new( "UpperLipOpen", "Upper Lip Open", 609, [ "j_f_ulip_a", "j_f_ulip_b", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_umlip_01_r", "j_f_umlip_02_r" ] ),
-		new( "LowerLipOpen", "Lower Lip Open", 609, [ "j_f_dlip_a", "j_f_dlip_b", "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dmlip_01_r", "j_f_dmlip_02_r"] ),
-		new( "LipPucker", "Lip Pucker", 623, [ "j_f_dlip_01_l", "j_f_dlip_01_r", "j_f_dlip_02_l", "j_f_dlip_02_r", "j_f_dlip_a", "j_f_dlip_b", "j_f_dmlip_01_l", "j_f_dmlip_01_r", "j_f_dmlip_02_l", "j_f_dmlip_02_r", "j_f_dslip_l", "j_f_dslip_r", "j_f_ulip_01_l",  "j_f_ulip_01_r", "j_f_ulip_02_l", "j_f_ulip_02_r", "j_f_ulip_a", "j_f_ulip_b", "j_f_umlip_01_l", "j_f_umlip_01_r", "j_f_umlip_02_l", "j_f_umlip_02_r", "j_f_uslip_l", "j_f_uslip_r" ] )
+		new( "BrowUpL", 6261, [ "j_f_miken_l", "j_f_mayu_l", "j_f_mmayu_l", "j_f_miken_01_l", "j_f_miken_02_l" ] ),
+		new( "BrowUpR", 6261, [ "j_f_miken_r", "j_f_mayu_r", "j_f_mmayu_r", "j_f_miken_01_r", "j_f_miken_02_r" ] ),
+		new( "BrowFurrowL", 6228, [ "j_f_dmemoto_l", "j_f_dmiken_l", "j_f_miken_01_l", "j_f_miken_02_l", "j_f_miken_l" ] ),
+		new( "BrowFurrowR", 6228, [ "j_f_dmemoto_r", "j_f_dmiken_r", "j_f_miken_01_r", "j_f_miken_02_r", "j_f_miken_r" ] ),
+		new( "BlinkL", 611, [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ] ),
+		new( "BlinkR", 611, [ "j_f_mab_r", "j_f_mabdn_01_r", "j_f_mabdn_02out_r", "j_f_mabdn_03in_r", "j_f_mabup_01_r", "j_f_mabup_02out_r", "j_f_mabup_03in_r" ] ),
+		new( "EyeWideL", 618, [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ] ),
+		new( "EyeWideR", 618, [ "j_f_mab_r", "j_f_mabdn_01_r", "j_f_mabdn_02out_r", "j_f_mabdn_03in_r", "j_f_mabup_01_r", "j_f_mabup_02out_r", "j_f_mabup_03in_r" ] ),
+		new( "CheekRaiseL", 616, [ "j_f_dhoho_l", "j_f_hoho_l", "j_f_shoho_l" ] ),
+		new( "CheekRaiseR", 616, [ "j_f_dhoho_r", "j_f_hoho_r", "j_f_shoho_r" ] ),
+		new( "SmileL", 606, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
+		new( "SmileR", 606, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
+		new( "GrinL", 8021, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
+		new( "GrinR", 8021, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
+		new( "FrownL", 625, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
+		new( "FrownR", 625, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
+		new( "JawOpen", 618, [ "j_f_ago", "j_f_dago", "j_f_hagukidn" ] ),
+		new( "UpperLipOpen", 609, [ "j_f_ulip_a", "j_f_ulip_b", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_umlip_01_r", "j_f_umlip_02_r" ] ),
+		new( "LowerLipOpen", 609, [ "j_f_dlip_a", "j_f_dlip_b", "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dmlip_01_r", "j_f_dmlip_02_r"] ),
+		new( "LipPucker", 623, [ "j_f_dlip_01_l", "j_f_dlip_01_r", "j_f_dlip_02_l", "j_f_dlip_02_r", "j_f_dlip_a", "j_f_dlip_b", "j_f_dmlip_01_l", "j_f_dmlip_01_r", "j_f_dmlip_02_l", "j_f_dmlip_02_r", "j_f_dslip_l", "j_f_dslip_r", "j_f_ulip_01_l",  "j_f_ulip_01_r", "j_f_ulip_02_l", "j_f_ulip_02_r", "j_f_ulip_a", "j_f_ulip_b", "j_f_umlip_01_l", "j_f_umlip_01_r", "j_f_umlip_02_l", "j_f_umlip_02_r", "j_f_uslip_l", "j_f_uslip_r" ] )
 	];
 	
 	private record Expression(
 		string Id,
-		string Label,
 		uint TimelineId,
 		string[] Bones
 	);
@@ -63,18 +61,15 @@ public class FaceLibraryGenerator {
 	// Dependencies + ctor
 	
 	private readonly IFramework _framework;
-	private readonly IDataManager _data;
 	private readonly JsonFileSerializer _json;
 
 	public IEditorContext Context { get; set; } = null!;
 	
 	public FaceLibraryGenerator(
 		IFramework framework,
-		IDataManager data,
 		JsonFileSerializer json
 	) {
 		this._framework = framework;
-		this._data = data;
 		this._json = json;
 	}
 	
@@ -106,16 +101,6 @@ public class FaceLibraryGenerator {
 		public byte Tribe;
 		public ExpressionData[] Data = [];
 	}
-
-	private record ExpressionData {
-		public required string Id;
-		public required string Label;
-		public required Dictionary<string, Transform> Transforms = [];
-	}
-
-	private record FileData(
-		[UsedImplicitly] ExpressionData[] Data
-	);
 
 	private readonly Lock _lock = new();
 	private TaskState? _state;
@@ -169,7 +154,7 @@ public class FaceLibraryGenerator {
 			data = this._state?.Data.ToDictionary() ?? [];
 		
 		foreach (var (key, info) in data) {
-			var fileData = new FileData(info.Data);
+			var fileData = new ExpressionsSchemaFile { Data = info.Data };
 			var text = this._json.Serialize(fileData);
 			
 			var raceName = info.Tribe != 0
@@ -264,7 +249,6 @@ public class FaceLibraryGenerator {
 			
 			// Set emote
 			await this.PlayTimeline(actor, animId, ct);
-			//await this._framework.DelayTicks(30, ct);
 			var data = await this._framework.RunOnTick(() => CapturePose(actor), cancellationToken: ct);
 			
 			// Capture expressions
@@ -272,9 +256,7 @@ public class FaceLibraryGenerator {
 				var expression = Expressions[index];
 				
 				var expressionData = new ExpressionData {
-					Id = expression.Id,
-					Label = expression.Label,
-					Transforms = []
+					Id = expression.Id
 				};
 
 				foreach (var bone in expression.Bones) {
