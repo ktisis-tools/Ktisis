@@ -71,17 +71,17 @@ public class ToolbarWindow : KtisisWindow {
 
 	public override void PreDraw() {
 		var style = ImGui.GetStyle();
-
+		
 		// to prevent auto-resize pain, override custom style vars to dalamud defaults if they exceed certain bounds
 		if (style.ItemSpacing.X < 8)
-			this.WindowStyle.Push(ImGuiStyleVar.ItemSpacing, StyleModelV1.DalamudClassic.ItemSpacing.WithY(style.ItemSpacing.Y));
+			this.WindowStyle.Push(ImGuiStyleVar.ItemSpacing, style.ItemSpacing with { X = 8 });
 		if (style.FramePadding.X > 4)
-			this.WindowStyle.Push(ImGuiStyleVar.FramePadding, StyleModelV1.DalamudClassic.FramePadding.WithY(style.FramePadding.Y));
+			this.WindowStyle.Push(ImGuiStyleVar.FramePadding, style.FramePadding with { X = 4 });
 		if (style.CellPadding.X > 4)
-			this.WindowStyle.Push(ImGuiStyleVar.CellPadding, StyleModelV1.DalamudClassic.CellPadding.WithY(style.CellPadding.Y));
+			this.WindowStyle.Push(ImGuiStyleVar.CellPadding, style.CellPadding with { X = 4 });
 
 		// force align button text
-		this.WindowStyle.Push(ImGuiStyleVar.ButtonTextAlign, StyleModelV1.DalamudClassic.ButtonTextAlign);
+		this.WindowStyle.Push(ImGuiStyleVar.ButtonTextAlign, new Vector2(0.5f, 0.5f));
 
 		base.PreDraw();
 	}
