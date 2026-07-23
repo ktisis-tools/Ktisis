@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using Ktisis.Data.Config.Sections;
@@ -67,7 +68,7 @@ public class Gizmo2D {
 		var cursorPos = ImGui.GetCursorScreenPos();
 		var innerSize = ImGui.GetContentRegionAvail();
 		ImGui.SetNextWindowPos(ImGui.GetMainViewport().Pos);
-		ImGui.SetNextWindowSize(ImGui.GetMainViewport().Size);
+		ImGui.SetNextWindowSize(ImGui.GetMainViewport().Size / ImGuiHelpers.GlobalScale);
 		
 		ImGui.Begin($"##Gizmo2D{nameAppend}", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 		

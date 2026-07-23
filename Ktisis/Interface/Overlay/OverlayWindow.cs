@@ -4,6 +4,7 @@ using System.Linq;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
+using Dalamud.Interface.Utility;
 using Dalamud.Plugin.Services;
 
 using Ktisis.Common.Utility;
@@ -55,7 +56,8 @@ public class OverlayWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
-		this.Size = ImGui.GetMainViewport().Size;
+		
+		this.Size = ImGui.GetMainViewport().Size / ImGuiHelpers.GlobalScale;
 		this.Position = ImGui.GetMainViewport().Pos;
 	}
 	
