@@ -9,6 +9,7 @@ using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
+using Ktisis.Editor.Expressions.Types;
 using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Scene.Decor;
@@ -23,14 +24,17 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	private readonly IPoseBuilder _builder;
 	
 	public readonly IIkController IkController;
+	public readonly IExpressionController Expressions;
 	
 	public EntityPose(
 		ISceneManager scene,
 		IPoseBuilder builder,
-		IIkController ik
+		IIkController ik,
+		IExpressionController expressions
 	) : base(scene) {
 		this._builder = builder;
 		this.IkController = ik;
+		this.Expressions = expressions;
 		
 		this.Type = EntityType.Armature;
 		this.Name = "Pose";
@@ -47,6 +51,7 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	public override void Update() {
 		if (!this.IsValid) return;
 		this.UpdatePose();
+		this.Expressions.Update();
 	}
 
 	public unsafe void Refresh() {

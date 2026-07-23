@@ -412,7 +412,8 @@
 				"adv": "Advanced (Gaze/IK)",
 				"import": "Import actor appearance",
 				"gaze": "Gaze Control",
-				"ik": "Inverse Kinematics"
+				"ik": "Inverse Kinematics",
+				"expressions": "Expressions"
 			},
 			"gaze": {
 				"linked": "Linked",
