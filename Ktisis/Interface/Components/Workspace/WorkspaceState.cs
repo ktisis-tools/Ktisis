@@ -158,12 +158,12 @@ public class WorkspaceState {
 			}
 		));
 
-		var targets = transform.Target!.Targets.Where(tar => tar.Name != name).ToList();
+		var targets = transform.Target!.Targets.Except([target.Primary!]).ToList();
 		if (ImGui.IsItemHovered()) {
 			using var _ = ImRaii.Tooltip();
 
-			for (int i = 0; i < count; i++)
-				ImGui.Text($"{targets[i].Name}");
+			foreach (var t in targets)
+				ImGui.Text(t.Name);
 		}
 	}
 
