@@ -200,7 +200,7 @@ public class SelectManager : ISelectManager {
 		foreach (var entity in entities)
 			this.TrySiblingSelect(entity, true);
 
-		this.InvokeChanged();
+		this.InvokeChanged(true);
 	}
 
 	// called whenever a selection is added or removed to update its paired sibling(s) if necessary
