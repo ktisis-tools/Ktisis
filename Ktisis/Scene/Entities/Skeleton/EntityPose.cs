@@ -257,6 +257,7 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 	public override void Remove() {
 		try {
 			this.IkController.Destroy();
+			this.Expressions.Destroy();
 		} finally {
 			base.Remove();
 		}

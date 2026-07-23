@@ -140,4 +140,10 @@ public class ExpressionController : IExpressionController {
 
 		state.Weight = weight;
 	}
+	
+	// Remove handlers
+
+	public void Destroy() {
+		this._mgr.RemoveController(this);
+	}
 }

@@ -21,4 +21,6 @@ public interface IExpressionController {
 	public void ResetBlendState();
 
 	public void ApplyBlend(string id, float weight);
+
+	public void Destroy();
 }
