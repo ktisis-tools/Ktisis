@@ -26,7 +26,7 @@ Available through the [Sea Of Stars](https://github.com/Ottermandias/SeaOfStars)
 
 ## Contributing
 
-Please follow the rules & best practices described in [CONTRIBUTING.md](https://raw.githubusercontent.com/ktisis-tools/Ktisis/main/CONTRIBUTING.md) when making any pull request. Reach out to a developer over Discord if you have any further questions or clarifications.
+Please follow the rules & best practices described in [CONTRIBUTING.md](https://github.com/ktisis-tools/Ktisis/blob/main/CONTRIBUTING.md) when making any pull request. Reach out to a developer over Discord if you have any further questions or clarifications.
 
 ## Acknowledgements
 
