@@ -72,12 +72,14 @@ public class OverlayService : IDisposable {
 		this._showedHint = true;
 	}
 
-	public void ToggleCharaViewTexture(IEditorContext context, ActorEntity actor) {
+	public unsafe void ToggleCharaViewTexture(IEditorContext context, ActorEntity actor) {
 		this.DisablePreview();
-		this._preview = new PreviewNode(context, this._framework, this._objectTable, actor) {
-			Position = new Vector2(500.0f, 500.0f)
-		};
-		this._controller?.AddNode(this._preview);
+		if (actor.GetHuman() != null && actor.Appearance.ModelId is 0 or null) {
+			this._preview = new PreviewNode(context, this._framework, this._objectTable, actor) {
+				Position = new Vector2(500.0f, 500.0f)
+			};
+			this._controller?.AddNode(this._preview);
+		}
 	}
 
 	private void HandleFileDialogEvent(object? sender, string path) {
