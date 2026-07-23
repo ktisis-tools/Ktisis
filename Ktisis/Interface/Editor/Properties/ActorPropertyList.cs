@@ -69,7 +69,9 @@ public class ActorPropertyList : ObjectPropertyList {
 		) return;
 
 		builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.actor"), () => this.DrawActorTab(actor), priority: 0);
-		builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.adv"), () => this.DrawAdvancedTab(actor), priority: 2);
+		if (actor.Pose?.Expressions.Count > 0)
+			builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.expressions"), () => this.DrawExpressionsTab(actor), priority: 2);
+		builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.adv"), () => this.DrawAdvancedTab(actor), priority: 3);
 	}
 
 	// Actor tab
@@ -78,7 +80,6 @@ public class ActorPropertyList : ObjectPropertyList {
 
 	private void DrawActorTab(ActorEntity actor) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-		
 
 		ImGui.Spacing();
 
@@ -105,6 +106,22 @@ public class ActorPropertyList : ObjectPropertyList {
 		embedEditor.SetTarget(actor);
 		embedEditor.DrawEmbed();
 	}
+	
+	// Expressions tab
+
+	private void DrawExpressionsTab(ActorEntity actor) {
+		var expCon = actor.Pose?.Expressions;
+		if (expCon == null) return;
+
+		using var _disable = ImRaii.Disabled(!this._ctx.Posing.IsEnabled);
+
+		foreach (var (id, state) in expCon.GetExpressions()) {
+			var label = Ktisis.Locale.Translate($"expression.{id}");
+			var weight = state.Weight;
+			if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f))
+				expCon.ApplyBlend(id, weight);
+		}
+	}
 
 	// Advanced tab
 
@@ -118,7 +135,6 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.Spacing();
 		Separators.SeparatorText(Ktisis.Locale.Translate("object_edit.actor.headers.ik"), textColor:ImGui.GetColorU32(ImGuiCol.Header));
 		ImGui.Spacing();
-
 		
 		this.DrawConstraintsTab(pose);
 	}

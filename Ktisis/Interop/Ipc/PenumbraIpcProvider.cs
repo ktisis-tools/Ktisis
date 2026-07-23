@@ -119,7 +119,7 @@ public class PenumbraIpcProvider {
 	public void Redraw(int index) => this._redrawObject.Invoke(index);
 
 	private Dictionary<string, string> BuildInvisibleSkinPaths() {
-		var stream = ResourceUtil.GetManifestResource("Data.Library.skin-paths.json");
+		var stream = ResourceUtil.GetManifestResource("Ktisis.Data.Library.skin-paths.json");
 		var assetPath = Path.Combine(this._dpi.AssemblyLocation.DirectoryName!, "Assets");
 		var mtrlPath = Path.Combine(assetPath, "mt_c0101b0001_a.mtrl");
 
