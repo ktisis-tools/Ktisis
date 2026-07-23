@@ -151,7 +151,7 @@ public class SelectManager : ISelectManager {
 	}
 
 	public void Select(SceneEntity entity) {
-		var removed = this.Selected.Remove(entity);
+		this.Selected.Remove(entity);
 		this.Selected.Add(entity);
 		this.InvokeChanged(false);
 	}
