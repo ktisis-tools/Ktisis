@@ -43,6 +43,7 @@
 		"Toolbar_ToggleEnv": "Switch to the Environment Editor",
 		"Toolbar_ToggleCamera": "Switch to the Camera Editor",
 		"Toolbar_ToggleConfig": "Switch to the Configuration Window",
+		"Toolbar_ToggleScene": "Switch to the Scene Editor",
 		"Scene_RefreshEntities": "Refresh scene entities"
 	},
 	
