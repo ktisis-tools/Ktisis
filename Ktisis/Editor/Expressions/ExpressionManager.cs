@@ -23,14 +23,17 @@ public class ExpressionManager : IExpressionManager {
 
 	public IExpressionController CreateController() {
 		var controller = new ExpressionController(this);
-		lock (this._controllers)
-			this._controllers.Add(controller);
+		this._controllers.Add(controller);
 		return controller;
 	}
 
 	public bool RemoveController(IExpressionController controller) {
-		lock (this._controllers)
-			return this._controllers.Remove(controller);
+		return this._controllers.Remove(controller);
+	}
+
+	public void ResetBlendStates() {
+		foreach (var con in this._controllers)
+			con.ResetBlendState();
 	}
 	
 	// Data
@@ -38,4 +41,6 @@ public class ExpressionManager : IExpressionManager {
 	public bool TryGetSchemaFile(ushort raceSexId, [NotNullWhen(true)] out ExpressionsSchemaFile? entry) {
 		return this._schema.TryGetEntry(raceSexId, out entry);
 	}
+	
+	//private void 
 }

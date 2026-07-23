@@ -120,13 +120,17 @@ public class PosingManager : IPosingManager {
 	public void SetEnabled(bool enable) {
 		if (enable && !this.IsValid) return;
 
-		if (!enable && this._context.Config.AutoSave.Enabled && this._context.Config.AutoSave.OnDisable) {
-			Ktisis.Log.Verbose("Posing disabled, triggering pose save.");
-			try {
-				this.AutoSave.Save();
-			} catch (Exception err) {
-				Ktisis.Log.Error(err.ToString());
+		if (!enable) {
+			if (this._context.Config.AutoSave is { Enabled: true, OnDisable: true }) {
+				Ktisis.Log.Verbose("Posing disabled, triggering pose save.");
+				try {
+					this.AutoSave.Save();
+				} catch (Exception err) {
+					Ktisis.Log.Error(err.ToString());
+				}
 			}
+			
+			this.Expressions.ResetBlendStates();
 		}
 
 		HavokPosing.ClearCachedAbdomenModelTransform();

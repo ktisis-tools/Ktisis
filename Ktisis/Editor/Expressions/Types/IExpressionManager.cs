@@ -10,5 +10,7 @@ public interface IExpressionManager {
 	public IExpressionController CreateController();
 	public bool RemoveController(IExpressionController controller);
 
+	public void ResetBlendStates();
+
 	public bool TryGetSchemaFile(ushort raceSexId, [NotNullWhen(true)] out ExpressionsSchemaFile? entry);
 }
