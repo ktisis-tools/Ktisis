@@ -12,8 +12,6 @@ using Dalamud.Plugin.Services;
 
 using JetBrains.Annotations;
 
-using Race = Lumina.Excel.Sheets.Race;
-
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Json;
@@ -60,7 +58,7 @@ public class FaceLibraryGenerator {
 	// Constants
 	
 	private const int RaceCt = 8;
-	private const int StepCt = RaceCt * 2;
+	private const int StepCt = RaceCt * 2 + 2;
 	
 	// Dependencies + ctor
 	
@@ -99,7 +97,14 @@ public class FaceLibraryGenerator {
 		
 		public int Step;
 
-		public readonly Dictionary<(uint Race, int Sex), ExpressionData[]> Data = [];
+		public readonly Dictionary<string, SkeletonInfo> Data = [];
+	}
+
+	private record SkeletonInfo {
+		public byte Race;
+		public byte Sex;
+		public byte Tribe;
+		public ExpressionData[] Data = [];
 	}
 
 	private record ExpressionData {
@@ -159,20 +164,19 @@ public class FaceLibraryGenerator {
 		
 		var tempDir = Directory.CreateTempSubdirectory("Ktisis-");
 
-		Dictionary<(uint Race, int Sex), ExpressionData[]> data;
+		Dictionary<string, SkeletonInfo> data;
 		lock (this._lock)
 			data = this._state?.Data.ToDictionary() ?? [];
 		
-		var raceSheet = this._data.GetExcelSheet<Race>();
-		
-		foreach (var (key, expressions) in data) {
-			var race = raceSheet.GetRow(key.Race);
+		foreach (var (key, info) in data) {
+			var fileData = new FileData(info.Data);
+			var text = this._json.Serialize(fileData);
 			
-			var objData = new FileData(expressions);
-			var text = this._json.Serialize(objData);
-
-			var simpleRaceName = race.Feminine.ToString().Replace(" ", "").Replace("'", "");
-			var filePath = Path.Join(tempDir.FullName, $"{simpleRaceName}{(Gender)key.Sex}.json");
+			var raceName = info.Tribe != 0
+				? ((Tribe)info.Tribe).ToString()
+				: ((Race)info.Race).ToString();
+			
+			var filePath = Path.Join(tempDir.FullName, $"{key}_{raceName}_{(Gender)info.Sex}.json");
 			await File.WriteAllTextAsync(filePath, text, ct);
 		}
 		
@@ -188,24 +192,34 @@ public class FaceLibraryGenerator {
 		for (var i = 0; i < StepCt; i++) {
 			ct.ThrowIfCancellationRequested();
 			
-			var race = (byte)(Math.Floor((decimal)i / 2) + 1);
+			var race = (byte)(Math.Floor((decimal)Math.Max(i - 2, 0) / 2) + 1);
 			var sex = (byte)(i % 2);
-			await this.ProcCaptureData(actor, race, sex, ct);
+			var tribe = (race, i) switch {
+				(1, < 2) => (byte)Tribe.Midlander,
+				(1, _) => (byte)Tribe.Highlander,
+				_ => (byte)0
+			};
+			await this.ProcCaptureData(actor, race, sex, tribe, ct);
 		}
 
 		// Revert changes to race + sex
 		await this._framework.Run(() => {
 			actor.Appearance.Customize.Unset(CustomizeIndex.Race);
 			actor.Appearance.Customize.Unset(CustomizeIndex.Gender);
+			actor.Appearance.Customize.Unset(CustomizeIndex.Tribe);
 			actor.Redraw();
 		}, ct);
 	}
 	
-	private async Task ProcCaptureData(ActorEntity actor, byte race, byte sex, CancellationToken ct) {
+	private async Task ProcCaptureData(ActorEntity actor, byte race, byte sex, byte tribe, CancellationToken ct) {
 		// Set actor race and sex
 		await this._framework.Run(() => {
 			actor.Appearance.Customize[CustomizeIndex.Race] = race;
 			actor.Appearance.Customize[CustomizeIndex.Gender] = sex;
+			if (tribe != 0)
+				actor.Appearance.Customize[CustomizeIndex.Tribe] = tribe;
+			else
+				actor.Appearance.Customize.Unset(CustomizeIndex.Tribe);
 			actor.Redraw();
 		}, ct);
 
@@ -216,7 +230,13 @@ public class FaceLibraryGenerator {
 			data.Add(test);
 
 		lock (this._lock) {
-			this._state!.Data[(race, sex)] = data.ToArray();
+			var raceSexId = actor.GetRaceSexId() ?? string.Empty;
+			this._state!.Data[raceSexId] = new SkeletonInfo {
+				Race = race,
+				Sex = sex,
+				Tribe = tribe,
+				Data = data.ToArray()
+			};
 			this._state.Step++;
 		}
 	}

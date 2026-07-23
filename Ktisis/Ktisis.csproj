@@ -68,22 +68,24 @@
 	</ItemGroup>
     <ItemGroup>
       <Content Include="Assets\**\*" CopyToOutputDirectory="Always"/>
-      <EmbeddedResource Include="Data\Library\Expressions\AuRaFeminine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\AuRaMasculine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\ElezenFeminine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\ElezenMasculine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\HrothgarFeminine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\HrothgarMasculine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\HyurFeminine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\HyurMasculine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\LalafellFeminine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\LalafellMasculine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\MiqoteFeminine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\MiqoteMasculine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\RoegadynFeminine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\RoegadynMasculine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\VieraFeminine.json" />
-      <EmbeddedResource Include="Data\Library\Expressions\VieraMasculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1001_Roegadyn_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\101_Midlander_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1101_Lalafell_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1201_Lalafell_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1301_AuRa_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1401_AuRa_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1501_Hrothgar_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1601_Hrothgar_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1701_Viera_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1801_Viera_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\201_Midlander_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\301_Highlander_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\401_Highlander_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\501_Elezen_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\601_Elezen_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\701_Miqote_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\801_Miqote_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\901_Roegadyn_Masculine.json" />
       <EmbeddedResource Include="Data\Images\icon_colored.png" />
       <EmbeddedResource Include="Data\Images\icon_simple.png" />
     </ItemGroup>
