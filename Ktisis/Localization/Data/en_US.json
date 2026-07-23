@@ -288,9 +288,8 @@
 			"reflect": "Gizmo Mode: Mirror Transform"
 		},
 		"sibling": {
-			"available": "Multi-select sibling bone: %bone%",
-			"unavailable": "Bone %bone% has no sibling",
-			"multiple": "Multi-select sibling bone: %bone%\nCan only select sibling when 1 bone is selected!"
+			"linkDisable": "Disable Sibling Links",
+			"linkEnable": "Enable Sibling Links\nWhen a L/R bone is selected, its sibling will be automatically multi-selected."
 		},
 		"gizmo": {
 			"show": "Show rotation gizmo",
@@ -299,6 +298,7 @@
 		"transforms": {
 			"title": "Bone Transforms",
 			"parenting": "Enable bone parenting",
+			"parentingDisable": "Disable bone parenting",
 			"relative": "Relative rotation"
 		},
 		"ik": {
@@ -328,7 +328,7 @@
 				"hinges.max": "Maximum",
 				"hinges.axis": "Axis"
 			}
-		}
+		},
 	},
 	
 	"preset_edit": {
