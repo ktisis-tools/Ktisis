@@ -32,7 +32,7 @@ public class TransformHandler : ITransformHandler {
 	
 	public ITransformTarget? Target { get; private set; }
 
-	private void OnSelectionChanged(ISelectManager sender) {
+	private void OnSelectionChanged(ISelectManager sender, bool multi) {
 		var selected = this._select.GetSelected()
 			.Where(entity => entity is { IsValid: true });
 		
