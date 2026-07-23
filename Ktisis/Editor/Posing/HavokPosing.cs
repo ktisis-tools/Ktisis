@@ -194,10 +194,11 @@ public static class HavokPosing {
 
 			var scm = Matrix4x4.CreateScale(ClampVector3(trans.Scale));
 			var rtm = Matrix4x4.CreateFromQuaternion(Quaternion.Normalize(deltaRot * trans.Rotation));
-			var trm = Matrix4x4.CreateTranslation(deltaPos + sourcePos + Vector3.Transform(trans.Position - sourcePos, deltaRot));
+			var trm = Matrix4x4.CreateTranslation(sourcePos + Vector3.Transform(trans.Position - (sourcePos - deltaPos), deltaRot));
 			SetModelTransform(pose, i, new Transform(scm * rtm * trm, trans));
 		}
 	}
+	
 	private static Vector3 ClampVector3(Vector3 vector) {
 		// use to restrict 0-scaled bones from c+
 		var x = (vector.X < 0.001f && vector.X > -0.001f) ? 0.001f : vector.X;
