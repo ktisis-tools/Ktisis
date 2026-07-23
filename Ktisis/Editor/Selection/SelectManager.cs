@@ -42,6 +42,7 @@ public interface ISelectManager {
 	public void Unselect(SceneEntity entity);
 	
 	public void Clear();
+	public void TryUpdateSelectedSiblings();
 }
 
 public class SelectManager : ISelectManager {
@@ -172,11 +173,14 @@ public class SelectManager : ISelectManager {
 		if (!modeMulti)
 			this.Selected.Clear();
 
-		if (!isSelect || !modeMulti && isMulti)
+		if (!isSelect || !modeMulti && isMulti) {
 			this.Selected.Add(entity);
-		else
+			this.TrySiblingSelect(entity, true);
+		} else {
 			this.Selected.Remove(entity);
-		
+			this.TrySiblingSelect(entity, false);
+		}
+
 		this.InvokeChanged(this.Selected.Count > 1 || modeMulti);
 	}
 
@@ -189,6 +193,39 @@ public class SelectManager : ISelectManager {
 		var count = this.Selected.Count;
 		this.Selected.Clear();
 		this.InvokeChanged(count > 1);
+	}
+
+	public void TryUpdateSelectedSiblings() {
+		var entities = this.GetSelected().ToList(); // copy to local var to avoid changing list mid-enumeration
+		foreach (var entity in entities)
+			this.TrySiblingSelect(entity, true);
+
+		this.InvokeChanged();
+	}
+
+	// called whenever a selection is added or removed to update its paired sibling(s) if necessary
+	private void TrySiblingSelect(SceneEntity entity, bool select) {
+		if (!this._context.Config.Editor.PersistentSiblingLink) return;
+		List<BoneNode> bones = [];
+		switch (entity) {
+			case BoneNode bone:
+				bones.Add(bone);
+				break;
+			case SkeletonGroup group:
+				bones.AddRange(group.GetIndividualBones());
+				break;
+		}
+
+		foreach (var sibling in bones.Select(bone => bone.Pose.TryResolveSibling(bone))) {
+			if (sibling is null) return;
+			if (select && this.Selected.Contains(sibling)) return; // break if trying to add when already present
+			if (!select && !this.Selected.Contains(sibling)) return; // break if trying to remove when not present
+
+			if (select)
+				this.Selected.Add(sibling);
+			else
+				this.Selected.Remove(sibling);
+		}
 	}
 	
 	// Event invocation

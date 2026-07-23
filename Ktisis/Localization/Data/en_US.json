@@ -43,6 +43,7 @@
 		"Toolbar_ToggleEnv": "Switch to the Environment Editor",
 		"Toolbar_ToggleCamera": "Switch to the Camera Editor",
 		"Toolbar_ToggleConfig": "Switch to the Configuration Window",
+		"Toolbar_ToggleScene": "Switch to the Scene Editor",
 		"Scene_RefreshEntities": "Refresh scene entities"
 	},
 	
@@ -178,7 +179,13 @@
 				"directional": "Sun (Directional)",
 				"file": "From file... (.ktlight)"
 			},
-			"reference": "Add reference image"
+			"reference": "Add reference image",
+			"overlay": {
+				"create": "Add new overlay...",
+				"dialog": "Dialog",
+				"balloon": "Balloon",
+				"status": "Status"
+			}
 		},
 		"entity_menu": {
 			"base": {
@@ -190,7 +197,9 @@
 				"detach": "Detach",
 				"rename": "Rename",
 				"duplicate": "Duplicate",
-				"delete": "Delete"
+				"delete": "Delete",
+				"untrack": "Untrack",
+				"reset": "Reset"
 			},
 			"actor": {
 				"target": "Target",
@@ -279,9 +288,8 @@
 			"reflect": "Gizmo Mode: Mirror Transform"
 		},
 		"sibling": {
-			"available": "Multi-select sibling bone: %bone%",
-			"unavailable": "Bone %bone% has no sibling",
-			"multiple": "Multi-select sibling bone: %bone%\nCan only select sibling when 1 bone is selected!"
+			"linkDisable": "Disable Sibling Links",
+			"linkEnable": "Enable Sibling Links\nWhen a L/R bone is selected, its sibling will be automatically multi-selected."
 		},
 		"gizmo": {
 			"show": "Show rotation gizmo",
@@ -290,6 +298,7 @@
 		"transforms": {
 			"title": "Bone Transforms",
 			"parenting": "Enable bone parenting",
+			"parentingDisable": "Disable bone parenting",
 			"relative": "Relative rotation"
 		},
 		"ik": {
@@ -319,7 +328,7 @@
 				"hinges.max": "Maximum",
 				"hinges.axis": "Axis"
 			}
-		}
+		},
 	},
 	
 	"preset_edit": {
@@ -422,7 +431,8 @@
 				"target": "Select target actor",
 				"targeting": "Targeting:",
 				"unk": "Unknown",
-				"null": "No Target"
+				"null": "No Target",
+				"disabled": "Unable to control gaze while pose mode active"
 			},
 			"chara_edit": "Actor Editor",
 			"export": "Export Chara"
@@ -780,7 +790,7 @@
 			"toggleOpenWindows": "UI buttons toggle windows open & closed",
 			"toolbar": "Use Ktisis Toolbar",
 			"hintToolbar": "Experimental: This is an alternate UI which puts all of Ktisis' editors into one window.\nPlease provide any feedback, as this option is actively under development!",
-			"editOnSelect": "Open object editor when selecting from the workspace",
+			"editOnSelect": "Open object editor on selection",
 			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",
 			"hintIncognito": "Censors all player names from actor list and GPose window",
@@ -822,6 +832,13 @@
 			"defaultLocation": {
 				"remove": "Unset this folder as default",
 				"add": "Set this folder as default place to open when using the file browser"
+			},
+			"hintLocation": {
+				"label": "On-Screen Location:",
+				"TopLeft": "Top Left",
+				"TopRight": "Top Right",
+				"BottomLeft": "Bottom Left",
+				"BottomRight": "Bottom Right"
 			}
 		},
 		"input": {

@@ -26,7 +26,8 @@ public class CameraSelector {
 		using var _ = ImRaii.PushId("##CameraSelect");
 		
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
-
+		
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 3);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - (Buttons.CalcSize() + spacing) * 3 - (this._ctx.Config.Editor.UseToolbar? 3f: 0));
 		this.DrawSelector();
 		

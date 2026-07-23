@@ -244,7 +244,13 @@ public class EditorInterface : IEditorInterface {
 				actor.Select(SelectMode.Force);
 		}
 	}
-	public void OpenLightEditor(LightEntity light) => this.OpenObjectEditor(light, true);
+	public void OpenLightEditor(LightEntity light) {
+		if (this._ctx.Config.Editor.UseLegacyLightEditor) {
+			this.OpenEditor<LightWindow, LightEntity>(light);
+			return;
+		}
+		this.OpenObjectEditor(light, true);
+	}
 
 	public bool OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);

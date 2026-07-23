@@ -44,9 +44,8 @@ public class WorkspaceState {
 	internal void DrawCompact() {
 		var style = ImGui.GetStyle();
 		var height = (ImGui.GetFontSize() + style.ItemInnerSpacing.Y) * 2 + style.ItemSpacing.Y;
-		var width = ImGui.GetContentRegionAvail().X - 6;
+		var width = ImGui.GetContentRegionAvail().X - 5;
 		
-		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 3);
 		var id = ImGui.GetID("SceneState_Frame");
 		using (ImRaii.ChildFrame(id, new Vector2(width, height))) {
 

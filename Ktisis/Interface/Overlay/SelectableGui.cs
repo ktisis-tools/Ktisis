@@ -269,7 +269,9 @@ public class SelectableGui {
 	}
 
 	public static bool CheckPosClip(Vector2 position, List<ImRect> clipRects) {
-		foreach (var rect in clipRects.Where(w => w.Min != Vector2.Zero)) {
+		// compare windows against both 0,0 min and viewport Pos+Size to determine if they're fullscreen overlays that should not block posclipping
+		var viewport = ImGui.GetMainViewport();
+		foreach (var rect in clipRects.Where(w => w.Min != Vector2.Zero && !(w.Min == viewport.Pos && w.Max == viewport.Pos + viewport.Size))) {
 			var imRect = rect;
 			if (imRect.Contains(position))
 				return true;

@@ -178,7 +178,7 @@ public class PluginDataEditorTab {
 			using (ImRaii.ListBox("##Glamourer")) {
 				foreach (var profile in this._glamourerCollections.OrderBy(p => p.Value)) {
 					if (this._glamourerFilter.PassFilter(profile.Value)) {
-						if (ImGui.Selectable(profile.Value, profile.Key == this._selectedGlamourer)) {
+						if (ImGui.Selectable(profile.Value + $"##{profile.Key.ToString()}", profile.Key == this._selectedGlamourer)) {
 							if (this._selectedGlamourer.HasValue && this._selectedGlamourer.Value == profile.Key)
 								this._selectedGlamourer = null;
 							else

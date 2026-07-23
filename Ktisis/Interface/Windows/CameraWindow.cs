@@ -93,15 +93,15 @@ public class CameraWindow : KtisisWindow {
 			this.DrawOrbitTarget(camera);
 
 			ImGui.Spacing();
-			if(!camera.IsTracking)
+			if (!camera.IsTracking)
 				this.DrawFixedPosition(camera);
-			else 
+			else
 				this.DrawTracking(camera);
 			this.DrawRelativeOffset(camera);
+
 			ImGui.Spacing();
 			this.DrawAnglePan(camera);
 			ImGui.Spacing();
-
 		}
 
 		ImGui.Spacing();
@@ -140,9 +140,9 @@ public class CameraWindow : KtisisWindow {
 
 	private unsafe void DrawOrbitTarget(EditorCamera camera) {
 		using var _ = ImRaii.PushId("CameraOrbitTarget");
-		
+
 		var target = this._ctx.Cameras.ResolveOrbitTarget(camera);
-		if (target == null) return;
+		using var disable = ImRaii.Disabled(target == null);
 
 		var isFixed = camera.OrbitTarget != null;
 		var lockIcon = isFixed ? FontAwesomeIcon.Lock : FontAwesomeIcon.Unlock;
@@ -150,27 +150,27 @@ public class CameraWindow : KtisisWindow {
 			? this._ctx.Locale.Translate("camera_edit.orbit.unlock")
 			: this._ctx.Locale.Translate("camera_edit.orbit.lock");
 		if (Buttons.IconButtonTooltip(lockIcon, lockHint))
-			camera.OrbitTarget = isFixed ? null : target.ObjectIndex;
+			camera.OrbitTarget = isFixed ? null : target?.ObjectIndex;
 
 		ImGui.SameLine();
 
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.ArrowsToCircle, $"Turn camera tracking {(camera.IsTracking ? "off" : "on")}", iconColor: camera.IsTracking ? *ImGui.GetStyleColorVec4(ImGuiCol.TabActive) : *ImGui.GetStyleColorVec4(ImGuiCol.Text))) {
 			camera.IsTracking = !camera.IsTracking;
 		}
-		
+
 		ImGui.SameLine();
-		
+
 		if (!camera.IsTracking) {
-			var text = $"Orbiting: {target.GetNameOrFallback(this._ctx)}";
+			var text = $"Orbiting: {target?.GetNameOrFallback(this._ctx)}";
 			if (isFixed)
 				ImGui.Text(text);
 			else
 				ImGui.TextDisabled(text);
 
 			ImGui.SameLine(0, 0);
-			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - (Buttons.CalcSize()) - this._toolbar); //fuckin good enough
+			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - (Buttons.CalcSize()) - this._toolbar); // fuckin good enough
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Sync, this._ctx.Locale.Translate("camera_edit.offset.to_target"))) {
-				var gameObject = (GameObject*)target.Address;
+				var gameObject = (GameObject*)target?.Address;
 				var drawObject = gameObject->DrawObject;
 				if (drawObject != null)
 					camera.RelativeOffset = drawObject->Object.Position - gameObject->Position;
@@ -179,8 +179,9 @@ public class CameraWindow : KtisisWindow {
 			ImGui.Text($"Tracking mode: {camera.Tracking}");
 			ImGui.SameLine(0, 0);
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - (Buttons.CalcSize()) - this._toolbar);
-			var button = "";
-			TrackingMode next = TrackingMode.None;
+
+			string button;
+			TrackingMode next;
 			switch (camera.Tracking) {			//replace with FontAwesome chars once in Dalamud
 				case TrackingMode.Follow:
 					button = "2";
@@ -198,14 +199,14 @@ public class CameraWindow : KtisisWindow {
 					button = "1";
 					next = TrackingMode.Follow;
 					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
-			if (ImGui.Button(button, Vector2.Create(Buttons.CalcSize()))){
+			if (ImGui.Button(button, Vector2.Create(Buttons.CalcSize())))
 				camera.Tracking = next;
-			}
-			if(ImGui.IsItemHovered())
-				using (ImRaii.Tooltip()) {
+			if (ImGui.IsItemHovered())
+				using (ImRaii.Tooltip())
 					ImGui.Text(next.ToString());
-				}
 		}
 	}
 	
@@ -274,18 +275,21 @@ public class CameraWindow : KtisisWindow {
 		}
 	}
 
-	private unsafe void DrawTracking(EditorCamera camera) {
+	private void DrawTracking(EditorCamera camera) {
 		this.tracked = camera.Target;
+		var target = this._ctx.Cameras.ResolveOrbitTarget(camera);
+		using var disable = ImRaii.Disabled(target == null); // disable this section too if we enter a bad orbit-target state
+
 		this._previouslyDrawn = null;
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Plus, this._ctx.Locale.Translate("camera_edit.tracking.info"))) {
-			if(!ImGui.IsKeyDown(ImGuiKey.ModShift))
+			if (!ImGui.IsKeyDown(ImGuiKey.ModShift))
 				this._boneList.Open();
-			else 
+			else
 				camera.Target.Clear();
 		}
 		ImGui.SameLine();
-		
-		using (ImRaii.Disabled(this._ctx.Selection.GetSelected().Count(e => e.Type is EntityType.BoneNode) == 0)) {
+
+		using (ImRaii.Disabled(!this._ctx.Selection.GetSelected().Any(e => e.Type is EntityType.BoneNode))) {
 			if (Buttons.IconButton(FontAwesomeIcon.Repeat)) {
 				camera.Target.Clear();
 				foreach (var sceneEntity in this._ctx.Selection.GetSelected().Where(e => e.Type is EntityType.BoneNode)) {
@@ -294,12 +298,12 @@ public class CameraWindow : KtisisWindow {
 				}
 			}
 		}
-		if(ImGui.IsItemHovered())
+		if (ImGui.IsItemHovered())
 			using (ImRaii.Tooltip())
 				ImGui.Text(this._ctx.Locale.Translate("camera_edit.tracking.track"));
 
 		if (this._boneList.IsOpen) {
-			List<BoneNode> list = new List<BoneNode>();
+			var list = new List<BoneNode>();
 
 			foreach (var e in this._ctx.Scene.Children) {
 				list.AddRange(e.Recurse().OfType<BoneNode>().Where(e => e.Type is EntityType.BoneNode));
@@ -307,13 +311,10 @@ public class CameraWindow : KtisisWindow {
 			this._boneList.Draw(list, out this._selected);
 		}
 		if (this._selected != null) {
-			if(camera.Target.Contains(this._selected))
-				camera.Target.Remove(this._selected);
-			else
+			if (!camera.Target.Remove(this._selected))
 				camera.Target.Add(this._selected);
 			this._selected = null;
 		}
-			
 
 		ImGui.SameLine();
 		ImGui.Text(this._ctx.Locale.Translate("camera_edit.tracking.current"));

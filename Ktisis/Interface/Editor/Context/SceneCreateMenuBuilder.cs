@@ -55,7 +55,7 @@ public class SceneCreateMenuBuilder {
 			.Action(Ktisis.Locale.Translate("workspace.create_menu.actor.mcdf"), this.ImportCharaFromMcdf)
 			.Action(Ktisis.Locale.Translate("workspace.create_menu.actor.overworld"), this._ctx.Interface.OpenOverworldActorList)
 			.Separator()
-			.Action("Refresh scene entities", () => this._ctx.Interface.RefreshSceneEntities());
+			.Action(Ktisis.Locale.Translate("workspace.refresh_entities"), () => this._ctx.Interface.RefreshSceneEntities());
 	}
 	
 	private void BuildLightGroup(ContextMenuBuilder sub)
@@ -80,14 +80,14 @@ public class SceneCreateMenuBuilder {
 	}
 
 	private void BuildUtilityGroup(ContextMenuBuilder sub) {
-		sub.SubMenu("Add new overlay...", this.BuildOverlayGroup);
+		sub.SubMenu(Ktisis.Locale.Translate("workspace.create_menu.overlay.create"), this.BuildOverlayGroup);
 		sub.Action(Ktisis.Locale.Translate("workspace.create_menu.reference"), this.OpenReferenceImage);
 	}
 
 	private void BuildOverlayGroup(ContextMenuBuilder sub) {
-		sub.Action("Dialog", () => this.Factory.BuildOverlay(OverlayTypes.Talk).Add())
-			.Action("Balloon", () => this.Factory.BuildOverlay(OverlayTypes.Balloon).Add())
-			.Action("Status", () => this.Factory.BuildOverlay(OverlayTypes.Status).Add())
+		sub.Action(Ktisis.Locale.Translate("workspace.create_menu.overlay.dialog"), () => this.Factory.BuildOverlay(OverlayTypes.Talk).Add())
+			.Action(Ktisis.Locale.Translate("workspace.create_menu.overlay.balloon"), () => this.Factory.BuildOverlay(OverlayTypes.Balloon).Add())
+			.Action(Ktisis.Locale.Translate("workspace.create_menu.overlay.status"), () => this.Factory.BuildOverlay(OverlayTypes.Status).Add())
 			.Separator()
 			.Action(Ktisis.Locale.Translate("workspace.create_menu.reference"), this.OpenReferenceImage);
 	}

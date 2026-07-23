@@ -27,6 +27,10 @@ public class ConfigManager : IDisposable {
 
 	public event OnConfigSaved? OnSaved;
 
+	public delegate void ConfigLoaded(Configuration config);
+
+	private ConfigLoaded configLoadedCallbacks;
+
 	public ConfigManager(
 		IDalamudPluginInterface dpi
 	) {
@@ -84,6 +88,17 @@ public class ConfigManager : IDisposable {
 
 		timer.Stop();
 		Ktisis.Log.Debug($"Configuration loaded in {timer.Elapsed.TotalMilliseconds:0.00}ms");
+
+		this.configLoadedCallbacks(this.File);
+		this.configLoadedCallbacks = default;
+	}
+
+	public void WithConfigLoaded(ConfigLoaded callback) {
+		if(this._isLoaded) {
+			callback(this.File);
+		} else {
+			this.configLoadedCallbacks += callback;
+		}
 	}
 
 	private void BackupConfigFile() {
