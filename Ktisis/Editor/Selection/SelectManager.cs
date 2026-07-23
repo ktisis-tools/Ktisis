@@ -202,20 +202,29 @@ public class SelectManager : ISelectManager {
 		this.InvokeChanged();
 	}
 
-	// called whenever a selection is added or removed to update its paired sibling if necessary
+	// called whenever a selection is added or removed to update its paired sibling(s) if necessary
 	private void TrySiblingSelect(SceneEntity entity, bool select) {
 		if (!this._context.Config.Editor.PersistentSiblingLink) return;
-		if (entity is not BoneNode bone) return;
+		List<BoneNode> bones = [];
+		switch (entity) {
+			case BoneNode bone:
+				bones.Add(bone);
+				break;
+			case SkeletonGroup group:
+				bones.AddRange(group.GetIndividualBones());
+				break;
+		}
 
-		var sibling = bone.Pose.TryResolveSibling(bone);
-		if (sibling is null) return;
-		if (select && this.Selected.Contains(sibling)) return; // break if trying to add when already present
-		if (!select && !this.Selected.Contains(sibling)) return; // break if trying to remove when not present
+		foreach (var sibling in bones.Select(bone => bone.Pose.TryResolveSibling(bone))) {
+			if (sibling is null) return;
+			if (select && this.Selected.Contains(sibling)) return; // break if trying to add when already present
+			if (!select && !this.Selected.Contains(sibling)) return; // break if trying to remove when not present
 
-		if (select)
-			this.Selected.Add(sibling);
-		else
-			this.Selected.Remove(sibling);
+			if (select)
+				this.Selected.Add(sibling);
+			else
+				this.Selected.Remove(sibling);
+		}
 	}
 	
 	// Event invocation
