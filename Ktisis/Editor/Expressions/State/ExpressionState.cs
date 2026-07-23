@@ -8,7 +8,6 @@ namespace Ktisis.Editor.Expressions.State;
 public record ExpressionState {
 	public float Weight;
 	public readonly Dictionary<string, Transform> Blend = [];
-	public readonly Dictionary<string, Transform> Delta = [];
 	
 	public required ExpressionData Data;
 
@@ -18,9 +17,7 @@ public record ExpressionState {
 	}
 
 	public void PrepareBlend() {
-		foreach (var bone in this.Data.Transforms.Keys) {
+		foreach (var bone in this.Data.Transforms.Keys)
 			this.Blend[bone] = new();
-			this.Delta[bone] = new();
-		}
 	}
 }
