@@ -104,7 +104,7 @@ public class OverlayWindow : KtisisWindow {
 		if (view == null || proj == null || this.Size == null)
 			return false;
 
-		var size = this.Size.Value;
+		var size = this.Size.Value * ImGuiHelpers.GlobalScale;
 		this._gizmo.SetMatrix(view.Value, proj.Value);
 		this._gizmo.BeginFrame(this.Position!.Value, size);
 
@@ -156,7 +156,7 @@ public class OverlayWindow : KtisisWindow {
 		this._gizmoGaze.AllowAxisFlip = cfg.AllowAxisFlip;
 		this._gizmoGaze.ScaleFactor = 0.075f;
 
-		var size = this.Size.Value;
+		var size = this.Size.Value * ImGuiHelpers.GlobalScale;
 		this._gizmoGaze.SetMatrix(view.Value, proj.Value);
 
 		// set target to decomposed position for ActorPropertyList to consume
