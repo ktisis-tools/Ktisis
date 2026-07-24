@@ -135,6 +135,7 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.SameLine();
 		using var _frame = ImRaii.Group();
+		using var _id = ImRaii.PushId($"##ConfigContents"); // try to resolve ImGui Empty ID ## root assertion
 		var (_, drawFn) = this.Tabs[this._tabIndex];
 		drawFn();
 	}
