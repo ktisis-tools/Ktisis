@@ -328,7 +328,7 @@
 				"hinges.max": "Maximum",
 				"hinges.axis": "Axis"
 			}
-		},
+		}
 	},
 	
 	"preset_edit": {
@@ -880,7 +880,9 @@
 			"defaults": "Right click any preset to mark it as Default. Default presets will be initially enabled for any GPose actors.",
 			"delete_tooltip": "Hold shift to delete",
 			"delete": "Delete",
-			"rename": "Rename"
+			"rename": "Rename",
+			"regen": "Regenerate Defaults",
+			"regen_tooltip": "Force generates Ktisis' default presets (Body, Arms, etc.)\nHold Ctrl+Shift to use"
 		},
 		"poseview": {
 			"title": "Pose View",
