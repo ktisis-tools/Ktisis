@@ -369,7 +369,7 @@ public class ActorModule : SceneModule {
 
 		try {
 			Ktisis.Log.Info("Trying to add actor {0:X}", (nint)character);
-			this.AddActor((nint)character, true);
+			this.AddActor((nint)character, false);
 		} catch (Exception e) {
 			Ktisis.Log.Error(e, "Error on Remove");
 		}
