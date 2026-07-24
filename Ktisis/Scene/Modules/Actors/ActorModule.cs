@@ -360,7 +360,12 @@ public class ActorModule : SceneModule {
 
 			return;
 		}
-			
+
+		if (!gameObject.IsDrawing()) {
+			Ktisis.Log.Debug("Actor[{0:X} / {1}] Actor not drawing, not adding", (nint)character, gameObject.ObjectIndex);
+			return;
+		}
+
 		var entity = this.Scene.GetEntityForActor(gameObject);
 
 		if (entity is not null) {
