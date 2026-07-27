@@ -65,6 +65,10 @@ public class PresetPropertyList(IEditorContext ctx, LocaleManager locale) : Obje
 			SavePreset(actor);
 		}
 
+		ImGui.Spacing();
+		using (ImRaii.Disabled())
+			ImGui.Text(Ktisis.Locale.Translate("preset_edit.add.explain"));
+
 		using (var _ = ImRaii.Disabled(!isValid)) {
 			if (ImGui.Button(locale.Translate("preset_edit.add.save"))) {
 				SavePreset(actor);
