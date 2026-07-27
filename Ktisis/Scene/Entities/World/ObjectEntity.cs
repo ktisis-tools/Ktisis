@@ -39,6 +39,7 @@ public class ObjectEntity : WorldEntity, IHideable {
 		if (obj->ModelResourceHandle->LoadState == 7) {
 			obj->UpdateCulling();
 			obj->UpdateRender();
+			obj->UpdateMaterials();
 			this.NeedsCulling = false;
 		}
 	}
