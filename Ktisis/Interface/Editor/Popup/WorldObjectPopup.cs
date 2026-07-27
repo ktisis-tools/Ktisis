@@ -3,6 +3,9 @@ using System.Linq;
 using Dalamud.Interface.Utility.Raii;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
+
+using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
@@ -21,6 +24,9 @@ public class WorldObjectPopup(WorldObject obj, float distance, IEditorContext ct
 			ImGui.Text($"\t{Ktisis.Locale.Translate("popups.world_obj.addr")}: {obj.Address:X}");
 
 		ImGui.Separator();
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Clipboard, Ktisis.Locale.Translate("object_edit.object.copy_path")))
+			ImGui.SetClipboardText(obj.Path);
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.Text($"{Ktisis.Locale.Translate("popups.world_obj.path")}: {obj.Path}");
 		ImGui.Text($"{Ktisis.Locale.Translate("popups.world_obj.dist")}: {distance:0.00}y");
 
