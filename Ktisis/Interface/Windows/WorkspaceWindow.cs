@@ -74,6 +74,9 @@ public class WorkspaceWindow : KtisisWindow {
 		this._workspace.Draw();
 
 		var botHeight = (UiBuilder.DefaultFontSizePx + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2) * ImGuiHelpers.GlobalScale;
+		if (this._ctx.ShowWorldObjects)
+			botHeight *= 2; // draw another row at the bottom if we're showing the overlay range+filters buttons
+
 		var treeHeight = Math.Max(ImGui.GetContentRegionAvail().Y, ImGui.GetTextLineHeightWithSpacing()*10) - botHeight;
 		this._sceneTree.Draw(treeHeight);
 
@@ -148,6 +151,7 @@ public class WorkspaceWindow : KtisisWindow {
 	// Scene tree buttons
 
 	protected private void DrawSceneTreeButtons() {
+		// actor button
 		if (Buttons.IconButtonDropdown(FontAwesomeIcon.PeopleGroup, this.Interface.OpenActorCreateMenu))
 			this._ctx.Scene.Factory.CreateActor().Spawn();
 		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
@@ -156,6 +160,7 @@ public class WorkspaceWindow : KtisisWindow {
 		}
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
+		// light button
 		if (Buttons.IconButtonDropdown(FontAwesomeIcon.Lightbulb, this.Interface.OpenLightCreateMenu))
 			this._ctx.Scene.Factory.CreateLight().Spawn();
 		if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
@@ -165,19 +170,24 @@ public class WorkspaceWindow : KtisisWindow {
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
 
+		// dialog button
 		if (Buttons.IconButtonTooltip(FontAwesomeIcon.CommentDots, this._ctx.Locale.Translate("workspace.create_overlay")))
 			this.Interface.OpenOverlayCreateMenu();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
-		// world overlay
+		// object spawner
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Cube, this._ctx.Locale.Translate("workspace.create_object")))
+			this.Interface.OpenObjectCreate();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
+		// world overlay
 		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), this._ctx.ShowWorldObjects)) {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Mountain, this._ctx.Locale.Translate("workspace.overlay.world_toggle")))
 				this._ctx.ShowWorldObjects = !this._ctx.ShowWorldObjects;
 		}
 		if (!this._ctx.ShowWorldObjects) return;
 
-		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.Spacing(); // newline for overlay controls
 		ImGui.Text(this._ctx.Locale.Translate("workspace.overlay.range"));
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);

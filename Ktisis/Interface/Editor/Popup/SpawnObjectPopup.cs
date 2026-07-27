@@ -5,13 +5,9 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Utility;
 
-using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
-
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
-using Ktisis.Scene.Entities.World;
-using Ktisis.Structs.Objects;
 
 namespace Ktisis.Interface.Editor.Popup;
 
@@ -22,14 +18,19 @@ public class SpawnObjectPopup(IEditorContext ctx) : KtisisPopup("##SpawnObjectPo
 		ImGui.Text("Spawn Object");
 		using (ImRaii.Disabled()) {
 			ImGui.Text("Enter a valid .mdl path below to spawn a new BgObject.");
-			ImGui.TextWrapped("File paths can be sourced from Pathfinder, Textools, Brio, and Ktisis' world objects.");
+			ImGui.Text("File paths can be sourced from Pathfinder, Textools, Brio, and Ktisis' world objects.");
 		}
 
 		ImGui.Spacing();
-		ImGui.InputText("Path:", ref this.ModelPath);
+		ImGui.Text("Path:");
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
+		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
+		ImGui.InputText("##spawnerinputtext", ref this.ModelPath);
 		ImGui.Spacing();
+
 		using (ImRaii.Disabled(this.ModelPath.IsNullOrEmpty()))
-			if (ImGui.Button("Load"))
+			if (ImGui.Button("Spawn"))
 				this.Confirm();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (ImGui.Button("Close"))
