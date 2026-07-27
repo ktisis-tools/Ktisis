@@ -95,6 +95,7 @@ public class SceneEntityMenuBuilder {
 		}
 		if (this._entity is ObjectEntity obj) {
 			menu.Separator();
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateObject(obj));
 			if (obj.Object is not null) {
 				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
 				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
@@ -255,5 +256,28 @@ public class SceneEntityMenuBuilder {
 			newStatus.StatusText = oldStatus.StatusText;
 			newStatus.StatusType = oldStatus.StatusType;
 		}
+	}
+
+	private unsafe void DuplicateObject(ObjectEntity obj) {
+		var transform = obj.GetTransform();
+		if (transform is null) {
+			Ktisis.WarningNotification($"Could not duplicate object with null transform");
+			return;
+		}
+
+		var path = obj.GetPath();
+		var ptr = this._ctx.Scene.World.BuildObject(path);
+		if (ptr is null) {
+			Ktisis.WarningNotification($"Could not duplicate object with path: {path}");
+			return;
+		}
+
+		var name = obj.Name + " (Copy)";
+		var entity = this._ctx.Scene.Factory
+			.BuildObject()
+			.SetName(name)
+			.SetAddress(ptr)
+			.Add();
+		entity.SetTransform(transform);
 	}
 }
