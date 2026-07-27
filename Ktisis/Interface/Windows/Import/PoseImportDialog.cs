@@ -33,11 +33,21 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	) {
 		this._select = select;
 		select.OnOpenDialog = this.OnFileDialogOpen;
+		select.OnSelectedFile = this.OnFileSelected;
 	}
 
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {
 		this.Context.Scene.Overlay.ToggleCharaViewTexture(this.Context, this.Target);
 		this.Context.Interface.OpenPoseFile(sender.SetFile);
+	}
+
+	private void OnFileSelected(FileSelect<PoseFile> sender) {
+		if (!this.Context.Config.File.ImportPoseApplyOnSelect) return;
+
+		var isSelectBones = this.Target.Recurse()
+			.Where(child => child is SkeletonNode)
+			.Any(child => child.IsSelected);
+		this.ApplyPoseFile(isSelectBones);
 	}
 
 	// Draw UI
@@ -72,6 +82,8 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 			.Where(child => child is SkeletonNode)
 			.Any(child => child.IsSelected);
 		
+		ImGui.Checkbox(Ktisis.Locale.Translate("file.pose.apply"), ref this.Context.Config.File.ImportPoseApplyOnSelect);
+		ImGui.Spacing();
 		this.DrawTransformSelect();
 		ImGui.Spacing();
 		this.DrawApplyModes(isSelectBones);
