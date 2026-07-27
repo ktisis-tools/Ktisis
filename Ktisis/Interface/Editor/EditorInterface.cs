@@ -212,6 +212,8 @@ public class EditorInterface : IEditorInterface {
 	public void OpenAssignCProfile(ActorEntity entity) => this._gui.CreatePopup<ActorCProfilePopup>(this._ctx, entity).Open();
 
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
+
+	public void OpenObjectCreate() => this._gui.CreatePopup<SpawnObjectPopup>(this._ctx).Open();
 	
 	public void RefreshSceneEntities() {
 		this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();

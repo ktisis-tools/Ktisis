@@ -95,8 +95,12 @@ public class SceneEntityMenuBuilder {
 		}
 		if (this._entity is ObjectEntity obj) {
 			menu.Separator();
-			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
-			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
+			if (obj.Object is not null) {
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
+			} else {
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.delete"), () => obj.Remove());
+			}
 		}
 	}
 	
