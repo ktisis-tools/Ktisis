@@ -3,16 +3,20 @@ using System.Linq;
 using Dalamud.Interface.Utility.Raii;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility;
 
 using Ktisis.Common.Utility;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
 
+using Lumina.Data.Files;
+
 namespace Ktisis.Interface.Editor.Popup;
 
-public class SpawnObjectPopup(IEditorContext ctx) : KtisisPopup("##SpawnObjectPopup", ImGuiWindowFlags.Modal) {
+public class SpawnObjectPopup(IEditorContext ctx, IDataManager data) : KtisisPopup("##SpawnObjectPopup", ImGuiWindowFlags.Modal) {
 	private string ModelPath = "";
+	private bool Valid;
 
 	protected override void OnDraw() {
 		ImGui.Text(Ktisis.Locale.Translate("popups.spawn_obj.header"));
@@ -26,15 +30,21 @@ public class SpawnObjectPopup(IEditorContext ctx) : KtisisPopup("##SpawnObjectPo
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-		ImGui.InputText("##spawnerinputtext", ref this.ModelPath);
+		if (ImGui.InputText("##spawnerinputtext", ref this.ModelPath))
+			this.Validate();
 		ImGui.Spacing();
 
-		using (ImRaii.Disabled(this.ModelPath.IsNullOrEmpty()))
+		using (ImRaii.Disabled(this.ModelPath.IsNullOrEmpty() || !this.Valid))
 			if (ImGui.Button(Ktisis.Locale.Translate("popups.spawn_obj.spawn")))
 				this.Confirm();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		if (ImGui.Button(Ktisis.Locale.Translate("popups.spawn_obj.close")))
 			this.Close();
+	}
+
+	private void Validate() {
+		this.Valid = data.GetFile<MdlFile>(this.ModelPath) != null;
+		Ktisis.Log.Verbose($"Path: {this.ModelPath}\nValid: {this.Valid}");
 	}
 
 	private unsafe void Confirm() {
