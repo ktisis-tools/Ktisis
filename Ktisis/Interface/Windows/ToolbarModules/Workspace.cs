@@ -34,7 +34,14 @@ public class Workspace : WorkspaceWindow  {
 		this._workspace.DrawCompact();
 
 		var botHeight = (UiBuilder.DefaultFontSizePx + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2) * ImGuiHelpers.GlobalScale;
-		var treeHeight = ((ImGui.GetTextLineHeightWithSpacing() + 5) * (Math.Max(10, this._editorContext.Scene.Children.Count())+ 5)) - botHeight; //TODO: would prefer sizing based upon expanded nodes but this will do for now
+		var treeHeight = ((ImGui.GetTextLineHeightWithSpacing() + 5) * (Math.Max(10, this._editorContext.Scene.Children.Count()) + 5)) - botHeight; //TODO: would prefer sizing based upon expanded nodes but this will do for now
+		var viewportSize = ImGui.GetIO().DisplaySize;
+		var calculatedEnd = ImGui.GetCursorScreenPos().Y + treeHeight + botHeight;
+
+		if (calculatedEnd > viewportSize.Y) {
+			treeHeight -=  calculatedEnd - viewportSize.Y; //reduce to stay on screen.
+		}
+
 		this._sceneTree.Draw(treeHeight);
 
 		ImGui.Spacing();
