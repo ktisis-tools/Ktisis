@@ -527,6 +527,17 @@
 				"tex": "Texture:",
 				"tex_hint": "Choose an icon for this status"
 			}
+		},
+		"object": {
+			"header": "Object",
+			"title": "Object Info",
+			"rename": "Name",
+			"copy_path": "Copy Path",
+			"path": "Model Path",
+			"type": "Object Type",
+			"type.world": "World Object",
+			"type.spawned": "Spawned Object",
+			"addr": "Address"
 		}
 	},
 	

@@ -60,6 +60,18 @@ public class ObjectEntity : WorldEntity, IHideable {
 				drawPtr->IsVisible = !drawPtr->IsVisible;
 		}
 	}
+
+	public unsafe string GetPath() {
+		if (this.Object is not null)
+			return this.Object.Value.Path;
+
+		var obj = (BgObject*)this.Address;
+		if (obj is null || obj->ModelResourceHandle is null) return "N/A";
+		return obj->ModelResourceHandle->FileName.ToString();
+	}
+
+	public bool IsWorldObject() => this.Object is not null;
+
 	public void ToggleHidden() => this.IsHidden = !this.IsHidden;
 
 	public unsafe void Reset() {
