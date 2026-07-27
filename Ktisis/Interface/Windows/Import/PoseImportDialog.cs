@@ -42,7 +42,7 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	}
 
 	private void OnFileSelected(FileSelect<PoseFile> sender) {
-		if (!this.Context.Config.File.ImportPoseApplyOnSelect) return;
+		if (!this.Context.Config.File.ImportPoseApplyOnSelect || !this.Context.Posing.IsEnabled) return;
 
 		var isSelectBones = this.Target.Recurse()
 			.Where(child => child is SkeletonNode)
