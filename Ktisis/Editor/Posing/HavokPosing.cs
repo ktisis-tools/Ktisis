@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Utility;
@@ -79,14 +80,43 @@ public static class HavokPosing {
 	public static void ClearCachedAbdomenModelTransform() => _abdomenTransformCache.Clear();
 
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
-		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx >= pose->ModelPose.Length)
+		if (pose == null) {
+			Ktisis.Log.Error($"GetModelTransform - null hkaPose for boneIx {boneIx}");
 			return null;
+		}
+		if (pose->ModelPose.Data == null) {
+			Ktisis.Log.Error($"GetModelTransform - null ModelPose for hkaPose {(uint)pose:X}; boneIx {boneIx}");
+			return null;
+		}
+		if (boneIx < 0 || boneIx >= pose->ModelPose.Length) {
+			Ktisis.Log.Error($"GetModelTransform - boneIx {boneIx} out of bounds for modelpose length {pose->ModelPose.Length}");
+			return null;
+		}
 
 		var qs = pose->ModelPose.Data + boneIx;
 		var pos = new Vector3(qs->Translation.X, qs->Translation.Y, qs->Translation.Z);
 		var rot = new Quaternion(qs->Rotation.X, qs->Rotation.Y, qs->Rotation.Z, qs->Rotation.W);
 		var sca = new Vector3(qs->Scale.X, qs->Scale.Y, qs->Scale.Z);
 
+		return new Transform(pos, rot, sca);
+	}
+
+	public unsafe static Transform? GetModelTransformFromSpace(hkaPose* pose, int boneIx) {
+		// fallback method to attempt grabbing values from SyncedPoseModelSpace instead
+		if (pose == null) {
+			Ktisis.Log.Error($"GetModelTransformFromSpace - null hkaPose for boneIx {boneIx}");
+			return null;
+		}
+		var modelSpace = pose->GetSyncedPoseModelSpace();
+		if (boneIx < 0 || boneIx >= modelSpace->Length) {
+			Ktisis.Log.Error($"GetModelTransformFromSpace - boneIx {boneIx} out of bounds for ModelSpace length {modelSpace->Length}");
+			return null;
+		}
+
+		var qs = modelSpace->Data[boneIx];
+		var pos = new Vector3(qs.Translation.X, qs.Translation.Y, qs.Translation.Z);
+		var rot = new Quaternion(qs.Rotation.X, qs.Rotation.Y, qs.Rotation.Z, qs.Rotation.W);
+		var sca = new Vector3(qs.Scale.X, qs.Scale.Y, qs.Scale.Z);
 		return new Transform(pos, rot, sca);
 	}
 
@@ -166,7 +196,7 @@ public static class HavokPosing {
 				var rootBoneIdx = subPartial.ConnectedBoneIndex;
 				var parentBoneIdx = subPartial.ConnectedParentBoneIndex;
 
-				// bail out if the bone being manipulated is neither the parent of this skeleton OR a parent of that parent
+				// bail out if the bone being manipulated is neither the parent of this skeleton NOR a parent of that parent
 				// ex: break on Hair skele if we're manipulating Left Hand; propagate if we're manipulating Head or Neck
 				if (parentBoneIdx != boneIx && !IsBoneDescendantOf(hkaSkele->ParentIndices, parentBoneIdx, boneIx)) continue;
 
@@ -191,15 +221,25 @@ public static class HavokPosing {
 
 	private unsafe static void Propagate(hkaPose* pose, int boneIx, Vector3 sourcePos, Vector3 deltaPos, Quaternion deltaRot) {
 		// handles propagating a bone to its immediate children
-
 		var hkaSkele = pose->Skeleton;
 		for (var i = boneIx; i < hkaSkele->Bones.Length; i++) {
 			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx)) continue;
 
 			var trans = GetModelTransform(pose, i);
 			if (trans == null) {
+				List<short> parentIndices = [];
+				for (var iter = 0; iter < pose->Skeleton->ParentIndices.Length; iter++)
+					parentIndices.Add(pose->Skeleton->ParentIndices[iter]);
+				List<string?> boneNames = [];
+				for (var iter = 0; iter < pose->Skeleton->Bones.Length; iter++)
+					boneNames.Add(pose->Skeleton->Bones[iter].Name.String);
+
 				Ktisis.Log.Error($"HavokPosing.Propagate - null transform returned for pose; boneI {i} boneIx {boneIx}");
-				continue;
+				Ktisis.Log.Error($"Pose->Skeleton name: {pose->Skeleton->Name.ToString()}\nParentIndices: {string.Join(", ", parentIndices)}\nBones: {string.Join(", ", boneNames)}");
+				Ktisis.Log.Error($"PoseValidity: {pose->CheckPoseValidity()}\nPoseTransformsValidity: {pose->CheckPoseTransformsValidity()}");
+				trans = GetModelTransformFromSpace(pose, i); // kooky attempt to fallback to modelspace transform
+				if (trans == null)
+					continue;
 			}
 
 			var scm = Matrix4x4.CreateScale(ClampVector3(trans.Scale));
