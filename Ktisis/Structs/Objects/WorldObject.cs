@@ -49,6 +49,7 @@ public struct WorldObject : IEquatable<WorldObject> {
 			bgPtr->UpdateCulling();
 			bgPtr->UpdateRender();
 			bgPtr->UpdateMaterials();
+			bgPtr->UpdateTransforms(false);
 		}
 	}
 

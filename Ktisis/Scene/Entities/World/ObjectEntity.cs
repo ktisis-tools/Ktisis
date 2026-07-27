@@ -40,6 +40,7 @@ public class ObjectEntity : WorldEntity, IHideable {
 			obj->UpdateCulling();
 			obj->UpdateRender();
 			obj->UpdateMaterials();
+			obj->UpdateTransforms(false);
 			this.NeedsCulling = false;
 		}
 	}
