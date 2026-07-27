@@ -200,6 +200,8 @@ public static class HavokPosing {
 				// ex: break on Hair skele if we're manipulating Left Hand; propagate if we're manipulating Head or Neck
 				if (parentBoneIdx != boneIx && !IsBoneDescendantOf(hkaSkele->ParentIndices, parentBoneIdx, boneIx)) continue;
 
+				if (rootBoneIdx == -1)
+					Ktisis.Log.Debug($"Calling -1 Propagate for skeleton {p}\nManipulated BoneIx: {boneIx} / Name: {hkaSkele->Bones[boneIx].Name.String}");
 				Propagate(subPose, rootBoneIdx, sourcePos, deltaPos, deltaRot);
 			} else {
 				// propagate against each root in a multi-root partial (i.e. j_ex_top_a_l to left arm && j_ex_top_a_r to right arm)
@@ -213,7 +215,11 @@ public static class HavokPosing {
 					// 2. boneIx being posed is the parent of a rootIdx within the parent skeleton (ex: left clavicle on parent Partial)
 					var boneIsMultiRoot = hkaSkele->Bones[boneIx].Name.String == subSkele->Bones[rootIdx].Name.String;
 					var boneIsParent = parentRootIdx != -1 && IsBoneDescendantOf(hkaSkele->ParentIndices, parentRootIdx, boneIx);
-					if (boneIsMultiRoot || boneIsParent) Propagate(subPose, rootIdx, sourcePos, deltaPos, deltaRot);
+					if (boneIsMultiRoot || boneIsParent) {
+						if (rootIdx == -1)
+							Ktisis.Log.Debug($"Calling -1 Multi-Root Propagate for skeleton {p}\nManipulated BoneIx: {boneIx} / Name: {hkaSkele->Bones[boneIx].Name.String}");
+						Propagate(subPose, rootIdx, sourcePos, deltaPos, deltaRot);
+					}
 				}
 			}
 		}
