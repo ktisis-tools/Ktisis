@@ -110,6 +110,7 @@
 		"pose": {
 			"name": "Pose File (.pose)",
 			"apply": "Apply on selection",
+			"posemode_warn": "Must be in Pose Mode to apply a pose file!",
 			"ctx_import": "Import pose...",
 			"ctx_import.group": "Import group...",
 			"ctx_import.select": "Import selected...",

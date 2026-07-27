@@ -90,8 +90,15 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		ImGui.Spacing();
 		ImGui.Spacing();
 
-		if (ImGui.Button(Ktisis.Locale.Translate("pose_import.apply")))
-			this.ApplyPoseFile(isSelectBones);
+		using (ImRaii.Disabled(!this.Context.Posing.IsEnabled)) {
+			if (ImGui.Button(Ktisis.Locale.Translate("pose_import.apply")))
+				this.ApplyPoseFile(isSelectBones);
+
+			if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+				using var _ = ImRaii.Tooltip();
+				ImGui.Text(Ktisis.Locale.Translate("file.pose.posemode_warn"));
+			}
+		}
 	}
 
 	private void DrawTransformSelect() {
