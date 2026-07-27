@@ -240,6 +240,7 @@
 		"create_actor": "Create Actor\nDrop-down for options...",
 		"create_light": "Create Light\nDrop-down for options...",
 		"create_overlay": "Create Overlay",
+		"create_object": "[Alpha] Create Object from Path",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.hide": "Hide Ktisis overlay",
