@@ -219,7 +219,9 @@ public class EditorInterface : IEditorInterface {
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
 
 	public void OpenObjectCreate() => this._gui.CreatePopup<SpawnObjectPopup>(this._ctx, this._data).Open();
-	
+
+	public void OpenWorldFilters() => this._gui.CreatePopup<WorldFilterPopup>(this._ctx).Open();
+
 	public void RefreshSceneEntities() {
 		this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
 		this._ctx.Scene.GetModule<LightModule>().RefreshLightEntities();

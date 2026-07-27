@@ -246,6 +246,7 @@
 		"overlay.hide": "Hide Ktisis overlay",
 		"overlay.show": "Show Ktisis overlay",
 		"overlay.world_toggle": "Toggle world object overlay",
+		"overlay.world_filters": "World filters",
 		"overlay.range": "Range:"
 	},
 
@@ -710,6 +711,11 @@
 			"path": "Path",
 			"spawn": "Spawn",
 			"close": "Close"
+		},
+		"world_filters": {
+			"objects": "Objects",
+			"actors": "Actors",
+			"lights": "Lights"
 		}
 	},
 

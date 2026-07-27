@@ -188,6 +188,12 @@ public class WorkspaceWindow : KtisisWindow {
 		if (!this._ctx.ShowWorldObjects) return;
 
 		ImGui.Spacing(); // newline for overlay controls
+		// filter popup
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Filter, this._ctx.Locale.Translate("workspace.overlay.world_filters")))
+			this.Interface.OpenWorldFilters();
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
+		// range slider
 		ImGui.Text(this._ctx.Locale.Translate("workspace.overlay.range"));
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
