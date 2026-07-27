@@ -4,8 +4,13 @@ using System.Linq;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Utility.Numerics;
+
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
 
 using GLib.Popups;
+
+using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Editor.Context.Types;
@@ -49,9 +54,31 @@ public class OverworldActorPopup : KtisisPopup {
 		var module = this._ctx.Scene.GetModule<ActorModule>();
 		await module.AddFromOverworld(actor);
 	}
-	
-	private bool DrawActorName(IGameObject actor, bool isFocus)
-		=> ImGui.Selectable(actor.GetNameOrFallback(this._ctx) + (actor.CurrentDistance > 0 ? $" ({actor.CurrentDistance:#y})" : ""), isFocus);
+
+	private unsafe bool DrawActorName(IGameObject actor, bool isFocus) {
+		var style = ImGui.GetStyle();
+		var fontSize = ImGui.GetFontSize();
+
+		var result = ImGui.Selectable("##", isFocus, 0, ImGui.GetContentRegionAvail().WithY(fontSize));
+		if (ImGui.IsItemHovered()) {
+			var csPtr = (CSGameObject*)actor.Address;
+			if (csPtr != null && csPtr->DrawObject != null && actor.GetDrawObject()->OutlineColor != ObjectHighlightColor.Yellow)
+				csPtr->Highlight(ObjectHighlightColor.Yellow);
+		} else {
+			var csPtr = (CSGameObject*)actor.Address;
+			if (csPtr != null && csPtr->DrawObject != null && actor.GetDrawObject()->OutlineColor != ObjectHighlightColor.None)
+				csPtr->Highlight(ObjectHighlightColor.None);
+		}
+
+		ImGui.SameLine(style.ItemInnerSpacing.X, 0);
+		ImGui.Text(actor.GetNameOrFallback(this._ctx));
+		if (actor.CurrentDistance > 0) {
+			ImGui.SameLine(0, style.ItemInnerSpacing.X);
+			ImGui.Text($"({actor.CurrentDistance:#y})");
+		}
+
+		return result;
+	}
 
 	private static bool MatchQuery(IGameObject actor, string query)
 		=> actor.Name.ToString().Contains(query, StringComparison.OrdinalIgnoreCase);
