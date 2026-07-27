@@ -68,6 +68,8 @@ public class SceneEntityMenuBuilder {
 				}
 
 				sub.Separator()
+					.Action(Ktisis.Locale.Translate("preset_edit.toggle_other"), () => actorEntity.ToggleOtherPreset(true))
+					.Action(Ktisis.Locale.Translate("preset_edit.clear"), () => actorEntity.ClearVisibility())
 					.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.presets_save"), () => this.Ui.OpenSavePreset(actorEntity));
 			});
 	}
