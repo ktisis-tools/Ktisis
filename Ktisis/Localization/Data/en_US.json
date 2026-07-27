@@ -692,6 +692,26 @@
 		}
 	},
 
+	"popups": {
+		"world_obj": {
+			"header": "Object Details",
+			"addr": "Address",
+			"path": "Model Path",
+			"dist": "Distance",
+			"add": "Add",
+			"hide": "Hide",
+			"cancel": "Cancel"
+		},
+		"spawn_obj": {
+			"header": "Spawn Object",
+			"explain_1": "Enter a valid .mdl path below to spawn a new BgObject.",
+			"explain_2": "File paths can be sourced from Pathfinder, Textools, Brio, and Ktisis' world objects.",
+			"path": "Path",
+			"spawn": "Spawn",
+			"close": "Close"
+		}
+	},
+
 	"config": {
 		"title": "Ktisis Settings",
 		"categories": {

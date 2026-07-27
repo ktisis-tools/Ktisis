@@ -15,14 +15,14 @@ public class SpawnObjectPopup(IEditorContext ctx) : KtisisPopup("##SpawnObjectPo
 	private string ModelPath = "";
 
 	protected override void OnDraw() {
-		ImGui.Text("Spawn Object");
+		ImGui.Text(Ktisis.Locale.Translate("popups.spawn_obj.header"));
 		using (ImRaii.Disabled()) {
-			ImGui.Text("Enter a valid .mdl path below to spawn a new BgObject.");
-			ImGui.Text("File paths can be sourced from Pathfinder, Textools, Brio, and Ktisis' world objects.");
+			ImGui.Text(Ktisis.Locale.Translate("popups.spawn_obj.explain_1"));
+			ImGui.Text(Ktisis.Locale.Translate("popups.spawn_obj.explain_2"));
 		}
 
 		ImGui.Spacing();
-		ImGui.Text("Path:");
+		ImGui.Text($"{Ktisis.Locale.Translate("popups.spawn_obj.path")}:");
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
 		ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
@@ -30,10 +30,10 @@ public class SpawnObjectPopup(IEditorContext ctx) : KtisisPopup("##SpawnObjectPo
 		ImGui.Spacing();
 
 		using (ImRaii.Disabled(this.ModelPath.IsNullOrEmpty()))
-			if (ImGui.Button("Spawn"))
+			if (ImGui.Button(Ktisis.Locale.Translate("popups.spawn_obj.spawn")))
 				this.Confirm();
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (ImGui.Button("Close"))
+		if (ImGui.Button(Ktisis.Locale.Translate("popups.spawn_obj.close")))
 			this.Close();
 	}
 
