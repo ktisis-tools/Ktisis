@@ -958,6 +958,11 @@
 		}
 	},
 
+	"titlebar": {
+		"help": "Help - Ktisis Docs",
+		"helpLinkout": "https://docs.ktisis.tools/"
+	},
+
 	"migrator": {
 		"title": "Ktisis v0.4 Setup",
 		"mainWindow": {
