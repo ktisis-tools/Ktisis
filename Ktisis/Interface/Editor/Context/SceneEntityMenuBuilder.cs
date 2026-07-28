@@ -89,9 +89,9 @@ public class SceneEntityMenuBuilder {
 
 			// rename delete to Untrack if we have a worldlight tied to the lightentity in this menu
 			if (this._entity is LightEntity { WorldLight: not null })
-				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => deletable.Delete());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => this.DoDelete(deletable));
 			else
-				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.delete"), () => deletable.Delete());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.delete"), () => this.DoDelete(deletable));
 		}
 		if (this._entity is ObjectEntity obj) {
 			menu.Separator();
@@ -117,7 +117,14 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void OpenEditor() => this.Ui.OpenEditorFor(this._entity);
-	
+
+	private void DoDelete(IDeletable deletable) {
+		// delete the individually action'd object and any others that are currently multi-selected
+		deletable.Delete();
+		foreach (var del in this._ctx.Selection.GetSelected().OfType<IDeletable>().Where(d => d.CanDelete))
+			del.Delete();
+	}
+
 	// Actors
 
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {
