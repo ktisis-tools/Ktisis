@@ -47,9 +47,9 @@ public class PluginDataEditorTab {
 		if (this._ipcManager.IsCustomizeActive)
 			this._cPlusProfiles = this._ipcManager.GetCustomizeIpc().GetProfileList().OrderBy(x => x.Name).ToList();
 		if (this._ipcManager.IsPenumbraActive)
-			this._penumbraCollections = this._ipcManager.GetPenumbraIpc().GetCollections();
+			this._penumbraCollections = this._ipcManager.GetPenumbraIpc().GetCollections().OrderBy(x => x.Value).ToDictionary();
 		if (this._ipcManager.IsGlamourerActive)
-			this._glamourerCollections = this._ipcManager.GetGlamourerIpc().GetDesignList();
+			this._glamourerCollections = this._ipcManager.GetGlamourerIpc().GetDesignList().OrderBy(x => x.Value).ToDictionary();
 	}
 
 	public void SetTarget(ActorEntity actor) => this._actor = actor;
