@@ -124,6 +124,7 @@ public class ActorPropertyList : ObjectPropertyList {
 	}
 
 	private unsafe void DrawGazeTab(ActorEntity actor) {
+		using var _ = ImRaii.PushId("##GazePropertyListTab");
 		if (GazeTables == null)
 			GazeTables = new();
 
