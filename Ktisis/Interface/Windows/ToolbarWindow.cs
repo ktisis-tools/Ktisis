@@ -83,6 +83,13 @@ public class ToolbarWindow : KtisisWindow {
 		// force align button text
 		this.WindowStyle.Push(ImGuiStyleVar.ButtonTextAlign, new Vector2(0.5f, 0.5f));
 
+		// Subwindow
+		if (this._subWindow is not null) {
+			var pos = new Vector2(0, 150f);
+			pos += ImGuiP.FindWindowByName(this.WindowName).Pos;
+			ImGuiP.SetWindowPos(ImGuiP.FindWindowByName(this._subWindow.WindowName), pos);
+		}
+
 		base.PreDraw();
 	}
 
@@ -126,13 +133,6 @@ public class ToolbarWindow : KtisisWindow {
 				if (Buttons.IconButtonTooltip(FontAwesomeIcon.StepForward, this._ctx.Locale.Translate("actions.History_Redo"), new Vector2(size, size)))
 					this._ctx.Actions.History.Redo();
 		}
-		// Subwindow
-		if (this._subWindow != null) {
-			ImGui.Spacing();
-			ImGui.Spacing();
-			this._subWindow.Draw();
-
-		}
 	}
 
 	public override void PostDraw() {
@@ -140,7 +140,7 @@ public class ToolbarWindow : KtisisWindow {
 		this.WindowStyle.Dispose();
 	}
 
-	internal void DrawWorkspaceWindow() => this.SetSubWindow<Workspace>();
+	internal void DrawWorkspaceWindow() => this.SetSubWindow<WorkspaceWindow>();
 	internal void DrawObjectWindow() => this.SetSubWindow<ObjectWindow>();
 	internal void DrawActorWindow() => this.SetSubWindow<ActorWindow>();
 	internal void DrawPosingWindow() => this.Interface.OpenPosingWindow();
@@ -150,13 +150,15 @@ public class ToolbarWindow : KtisisWindow {
 	internal void DrawConfigWindow() => this.SetSubWindow<ConfigWindow>();
 
 	private void SetSubWindow<T>() where T : KtisisWindow {
-		if (this._subWindow?.GetType() == typeof(ObjectWindow) && typeof(T) != typeof(ObjectWindow))
-			this._subWindow?.Close();
+		// if (this._subWindow?.GetType() == typeof(ObjectWindow) && typeof(T) != typeof(ObjectWindow))
+		// 	this._subWindow?.Close();
 		if (this._subWindow?.GetType() == typeof(T)) {
-			this._subWindow.OnClose();
+			this._subWindow.Close();
 			this._subWindow = null; // unset subwindow if same button clicked
 			return;
 		}
+		this._subWindow?.Close();
+		this._subWindow = null;
 
 		if (typeof(T) == typeof(Env)) {
 			var module = this._ctx.Scene.GetModule<EnvModule>();
@@ -188,7 +190,7 @@ public class ToolbarWindow : KtisisWindow {
 			else
 				win.SetTarget(this._ctx.Scene.GetFirstActor());
 		}
-		this._subWindow.OnOpen();
+		this._subWindow.Open();
 	}
 
 	public override void OnClose() {
@@ -197,5 +199,4 @@ public class ToolbarWindow : KtisisWindow {
 			this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
 		this._gui.Remove(this);
 	}
-	
 }
