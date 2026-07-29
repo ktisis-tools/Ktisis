@@ -163,7 +163,9 @@
 		},
 		"scene_tree": {
 			"attached_to": "Attached to",
-			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment"
+			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment",
+			"bulkVisWarning": "Show All Bones enabled!",
+			"bulkVisExplain": "While turned on, individual bones' visibility settings are ignored."
 		},
 		"create_menu": {
 			"actor": {
