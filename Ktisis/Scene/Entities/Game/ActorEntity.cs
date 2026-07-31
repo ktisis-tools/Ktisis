@@ -10,6 +10,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
 using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 
 using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
@@ -367,5 +368,18 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		}
 
 		return 0;
+	}
+	
+	
+	public unsafe override void SetTransform(Transform trans) {
+		var drawPtr = this.GetObject();
+		var gameObjPtr = this.Character;
+		if (drawPtr == null || gameObjPtr == null) return;
+		drawPtr->Position = trans.Position;
+		drawPtr->Rotation = trans.Rotation;
+		drawPtr->Scale = trans.Scale;
+		
+		gameObjPtr->SetPosition(trans.Position.X - gameObjPtr->DrawOffset.X,  trans.Position.Y - gameObjPtr->DrawOffset.Y, trans.Position.Z - gameObjPtr->DrawOffset.Z);
+		gameObjPtr->DefaultPosition = gameObjPtr->Position;
 	}
 }
