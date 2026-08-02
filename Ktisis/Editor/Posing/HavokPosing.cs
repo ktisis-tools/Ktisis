@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Utility;
@@ -79,14 +80,43 @@ public static class HavokPosing {
 	public static void ClearCachedAbdomenModelTransform() => _abdomenTransformCache.Clear();
 
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
-		if (pose == null || pose->ModelPose.Data == null || boneIx < 0 || boneIx >= pose->ModelPose.Length)
+		if (pose == null) {
+			Ktisis.Log.Error($"GetModelTransform - null hkaPose for boneIx {boneIx}");
 			return null;
+		}
+		if (pose->ModelPose.Data == null) {
+			Ktisis.Log.Error($"GetModelTransform - null ModelPose for hkaPose {(uint)pose:X}; boneIx {boneIx}");
+			return null;
+		}
+		if (boneIx < 0 || boneIx >= pose->ModelPose.Length) {
+			Ktisis.Log.Error($"GetModelTransform - boneIx {boneIx} out of bounds for modelpose length {pose->ModelPose.Length}");
+			return null;
+		}
 
 		var qs = pose->ModelPose.Data + boneIx;
 		var pos = new Vector3(qs->Translation.X, qs->Translation.Y, qs->Translation.Z);
 		var rot = new Quaternion(qs->Rotation.X, qs->Rotation.Y, qs->Rotation.Z, qs->Rotation.W);
 		var sca = new Vector3(qs->Scale.X, qs->Scale.Y, qs->Scale.Z);
 
+		return new Transform(pos, rot, sca);
+	}
+
+	public unsafe static Transform? GetModelTransformFromSpace(hkaPose* pose, int boneIx) {
+		// fallback method to attempt grabbing values from SyncedPoseModelSpace instead
+		if (pose == null) {
+			Ktisis.Log.Error($"GetModelTransformFromSpace - null hkaPose for boneIx {boneIx}");
+			return null;
+		}
+		var modelSpace = pose->GetSyncedPoseModelSpace();
+		if (boneIx < 0 || boneIx >= modelSpace->Length) {
+			Ktisis.Log.Error($"GetModelTransformFromSpace - boneIx {boneIx} out of bounds for ModelSpace length {modelSpace->Length}");
+			return null;
+		}
+
+		var qs = modelSpace->Data[boneIx];
+		var pos = new Vector3(qs.Translation.X, qs.Translation.Y, qs.Translation.Z);
+		var rot = new Quaternion(qs.Rotation.X, qs.Rotation.Y, qs.Rotation.Z, qs.Rotation.W);
+		var sca = new Vector3(qs.Scale.X, qs.Scale.Y, qs.Scale.Z);
 		return new Transform(pos, rot, sca);
 	}
 
@@ -130,24 +160,27 @@ public static class HavokPosing {
 
 		return new Transform(pos, rot, sca);
 	}
-	
+
 	// Propagation
 
 	public unsafe static void Propagate(Skeleton* skele, int partialIx, int boneIx, Transform target, Transform initial, bool propagatePartials = true) {
+		// handles propagating a bone to its children and any affected partial skeletons
+
 		var partial = skele->PartialSkeletons[partialIx];
 		var pose = partial.GetHavokPose(0);
 		if (pose == null || pose->Skeleton == null) return;
 
 		// Calculate transform delta & propagate to children
-		
+
 		var sourcePos = target.Position;
 		var deltaPos = sourcePos - initial.Position;
 		var deltaRot = Quaternion.Normalize(target.Rotation / initial.Rotation);
 		Propagate(pose, boneIx, sourcePos, deltaPos, deltaRot);
 
+		// bail out if partialIx is non-zero (indicating we're trying Propagate on a partial, which can't have its own partials) or skipping propagatePartials
 		if (partialIx != 0 || !propagatePartials) return;
-		
-		// Propagate connected partial skeletons
+
+		// Iterate and propagate to connected partial skeletons
 
 		var hkaSkele = pose->Skeleton;
 		for (var p = 0; p < skele->PartialSkeletonCount; p++) {
@@ -155,41 +188,64 @@ public static class HavokPosing {
 			if (subPartial.HavokPoses.IsEmpty) continue;
 
 			var subPose = subPartial.GetHavokPose(0);
-			if (subPose == null) continue;
+			if (subPose == null || subPose->Skeleton == null) continue;
 
 			var subSkele = subPose->Skeleton;
 			if (!IsMultiRootSkeleton(subSkele->ParentIndices)) {
 				// propagate normally if this is a single-binding partial (i.e. hair, face to j_kao)
-				var rootBone = subPartial.ConnectedBoneIndex;
-				var parentBone = subPartial.ConnectedParentBoneIndex;
-				if (parentBone != boneIx && !IsBoneDescendantOf(hkaSkele->ParentIndices, parentBone, boneIx)) continue;
-				Propagate(subPose, rootBone, sourcePos, deltaPos, deltaRot);
-			} else {
-				// propagate against each root in a multi-root partial (i.e. j_ex_top_a_l to j_ude_a_l && j_ex_top_a_r to j_ude_a_r)
-				var multi_roots = GetMultiRoots(subSkele->ParentIndices);
-				foreach(int root_idx in multi_roots) {
-					var parent_root_idx = TryGetBoneNameIndex(pose, subSkele->Bones[root_idx].Name.String);
+				var rootBoneIdx = subPartial.ConnectedBoneIndex;
+				var parentBoneIdx = subPartial.ConnectedParentBoneIndex;
 
-					// account for either:
-					// 1. boneIx being posed refers to the same bone as a root_idx
-					// 2. boneIx being posed is the parent of a root_idx within the parent skeleton
-					bool manipulated_bone_is_multi_root = hkaSkele->Bones[boneIx].Name.String == subSkele->Bones[root_idx].Name.String;
-					bool manipulated_bone_is_parent = parent_root_idx != -1 ? IsBoneDescendantOf(hkaSkele->ParentIndices, parent_root_idx, boneIx) : false;
-					if (manipulated_bone_is_multi_root || manipulated_bone_is_parent) Propagate(subPose, root_idx, sourcePos, deltaPos, deltaRot);
+				// bail out if the bone being manipulated is neither the parent of this skeleton NOR a parent of that parent
+				// ex: break on Hair skele if we're manipulating Left Hand; propagate if we're manipulating Head or Neck
+				if (parentBoneIdx != boneIx && !IsBoneDescendantOf(hkaSkele->ParentIndices, parentBoneIdx, boneIx)) continue;
+
+				if (rootBoneIdx == -1)
+					Ktisis.Log.Debug($"Calling -1 Propagate for skeleton {p}\nManipulated BoneIx: {boneIx} / Name: {hkaSkele->Bones[boneIx].Name.String}");
+				Propagate(subPose, rootBoneIdx, sourcePos, deltaPos, deltaRot);
+			} else {
+				// propagate against each root in a multi-root partial (i.e. j_ex_top_a_l to left arm && j_ex_top_a_r to right arm)
+				var multiRoots = GetMultiRoots(subSkele->ParentIndices);
+				foreach (var rootIdx in multiRoots) {
+					// for each root on the multiroot Partial, try to find its counterpart index in the parent Partial by matching names
+					var parentRootIdx = TryGetBoneNameIndex(pose, subSkele->Bones[rootIdx].Name.String);
+
+					// Propagate if either:
+					// 1. boneIx being posed refers to the same bone as a rootIdx (ex: left arm on parent Partial)
+					// 2. boneIx being posed is the parent of a rootIdx within the parent skeleton (ex: left clavicle on parent Partial)
+					var boneIsMultiRoot = hkaSkele->Bones[boneIx].Name.String == subSkele->Bones[rootIdx].Name.String;
+					var boneIsParent = parentRootIdx != -1 && IsBoneDescendantOf(hkaSkele->ParentIndices, parentRootIdx, boneIx);
+					if (boneIsMultiRoot || boneIsParent) {
+						if (rootIdx == -1)
+							Ktisis.Log.Debug($"Calling -1 Multi-Root Propagate for skeleton {p}\nManipulated BoneIx: {boneIx} / Name: {hkaSkele->Bones[boneIx].Name.String}");
+						Propagate(subPose, rootIdx, sourcePos, deltaPos, deltaRot);
+					}
 				}
 			}
 		}
 	}
 
 	private unsafe static void Propagate(hkaPose* pose, int boneIx, Vector3 sourcePos, Vector3 deltaPos, Quaternion deltaRot) {
+		// handles propagating a bone to its immediate children
 		var hkaSkele = pose->Skeleton;
 		for (var i = boneIx; i < hkaSkele->Bones.Length; i++) {
 			if (!IsBoneDescendantOf(hkaSkele->ParentIndices, i, boneIx)) continue;
 
 			var trans = GetModelTransform(pose, i);
 			if (trans == null) {
+				List<short> parentIndices = [];
+				for (var iter = 0; iter < pose->Skeleton->ParentIndices.Length; iter++)
+					parentIndices.Add(pose->Skeleton->ParentIndices[iter]);
+				List<string?> boneNames = [];
+				for (var iter = 0; iter < pose->Skeleton->Bones.Length; iter++)
+					boneNames.Add(pose->Skeleton->Bones[iter].Name.String);
+
 				Ktisis.Log.Error($"HavokPosing.Propagate - null transform returned for pose; boneI {i} boneIx {boneIx}");
-				continue;
+				Ktisis.Log.Error($"Pose->Skeleton name: {pose->Skeleton->Name.ToString()}\nParentIndices: {string.Join(", ", parentIndices)}\nBones: {string.Join(", ", boneNames)}");
+				Ktisis.Log.Error($"PoseValidity: {pose->CheckPoseValidity()}\nPoseTransformsValidity: {pose->CheckPoseTransformsValidity()}");
+				trans = GetModelTransformFromSpace(pose, i); // kooky attempt to fallback to modelspace transform
+				if (trans == null)
+					continue;
 			}
 
 			var scm = Matrix4x4.CreateScale(ClampVector3(trans.Scale));
@@ -198,6 +254,7 @@ public static class HavokPosing {
 			SetModelTransform(pose, i, new Transform(scm * rtm * trm, trans));
 		}
 	}
+
 	private static Vector3 ClampVector3(Vector3 vector) {
 		// use to restrict 0-scaled bones from c+
 		var x = (vector.X < 0.001f && vector.X > -0.001f) ? 0.001f : vector.X;
@@ -293,16 +350,15 @@ public static class HavokPosing {
 	}
 
 	// Helpers for multi-binding partials
-	public static bool IsMultiRootSkeleton(hkArray<short> indices) {
-		if (GetMultiRoots(indices).Count > 1) return true;
-		return false;
+	// these expect a hkArray<short> ParentIndices from an hkaSkeleton, and evaluate based on whether values in the sklb's bone->parent mapping match -1 to indicate multiple roots
+
+	private static List<int> GetMultiRoots(hkArray<short> indices) {
+		List<int> parentIndices = [];
+		for(var p = 0; p < indices.Length; p++) {
+			if (indices[p] == -1) parentIndices.Add(p);
+		}
+		return parentIndices;
 	}
 
-	public static List<int> GetMultiRoots(hkArray<short> indices) {
-		List<int> parent_indices = new();
-		for(var p = 0; p < indices.Length; p++) {
-			if (indices[p] == -1) parent_indices.Add(p);
-		}
-		return parent_indices;
-	}
+	private static bool IsMultiRootSkeleton(hkArray<short> indices) => GetMultiRoots(indices).Count > 1;
 }
