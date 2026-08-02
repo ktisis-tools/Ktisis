@@ -17,6 +17,10 @@
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
+    </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Glamourer.Api" Version="2.7.0" />
