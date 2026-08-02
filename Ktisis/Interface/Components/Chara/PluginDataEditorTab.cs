@@ -129,9 +129,11 @@ public class PluginDataEditorTab {
 		
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
+		ImGui.PushID("##CPlus");
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "CustomizePlus", IsLoaded: true })!.OpenMainUi();
 		}
+		ImGui.PopID();
 	}
 
 	private unsafe void DrawPenumbra(ActorEntity actor) {
@@ -167,10 +169,12 @@ public class PluginDataEditorTab {
 		ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.collection"));
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
+		ImGui.PushID("##Penumbra");
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Penumbra", IsLoaded: true })!.OpenMainUi();
 		}
-
+		ImGui.PopID();
+		
 		using (ImRaii.Disabled(actor.GetHuman() == null))
 			if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.invisible_skin")))
 				this._ctx.Characters.Mcdf.SetInvisibleSkin(actor);
@@ -211,12 +215,14 @@ public class PluginDataEditorTab {
 		}
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
+		ImGui.PushID("##Glamourer");
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
+
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Glamourer", IsLoaded: true })!.OpenMainUi();
+
 		}
+		ImGui.PopID();
 	}
 
-	private void ImportMcdf(ActorEntity actor, string path) {
-		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, actor.Actor);
-	}
+	private void ImportMcdf(ActorEntity actor, string path) => this._ctx.Characters.Mcdf.LoadAndApplyTo(path, actor.Actor);
 }
