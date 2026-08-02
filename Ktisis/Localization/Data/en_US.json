@@ -670,6 +670,7 @@
 		"title": "Import Pose",
 		"header": "Importing pose for",
 		"apply": "Apply",
+		"posemode_warn": "Pose Mode must be enabled to load poses!",
 		"transforms.header": "Transforms:",
 		"modes": {
 			"header": "Modes:",
