@@ -341,7 +341,8 @@
 			"title": "Add new preset",
 			"label": "Preset Name",
 			"save": "Save",
-			"cancel": "Cancel"
+			"cancel": "Cancel",
+			"explain": "The new Preset will contain all visible bones on the actor."
 		},
 		"clear": "Clear",
 		"toggle_other": "Toggle other"

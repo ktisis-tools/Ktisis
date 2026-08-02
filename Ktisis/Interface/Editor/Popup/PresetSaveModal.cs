@@ -13,7 +13,10 @@ public class PresetSaveModal(ActorEntity entity, LocaleManager locale)  : Ktisis
 	private string Name = "";
 	
 	protected override void OnDraw() {
-		ImGui.Text($"Save Preset':");
+		ImGui.Text(Ktisis.Locale.Translate("preset_edit.add.title"));
+		ImGui.Spacing();
+		using (ImRaii.Disabled())
+			ImGui.Text(Ktisis.Locale.Translate("preset_edit.add.explain"));
 		
 		ImGui.InputText("##NameInput", ref this.Name, 100);
 		
