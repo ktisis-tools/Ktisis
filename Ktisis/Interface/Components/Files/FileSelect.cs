@@ -38,7 +38,7 @@ public class FileSelect<T> where T : notnull {
 	// Draw UI
 
 	public void Draw() {
-		string defaultText = Ktisis.Locale.Translate("file.select");
+		string defaultText = Ktisis.Locale.Translate("file.select") ;
 		
 		var path = this.Selected?.Name ?? defaultText;
 		ImGui.InputText("##FileSelectPath", ref path, 256, ImGuiInputTextFlags.ReadOnly);
