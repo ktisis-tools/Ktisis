@@ -32,6 +32,7 @@ namespace Ktisis.Interface.KTK;
 public unsafe class PreviewNode : OverlayNode {
 	public override OverlayLayer OverlayLayer => OverlayLayer.BehindUserInterface;
 	public override bool HideWithNativeUi => false;
+	public override bool HideWithUiToggled => false;
 	public override bool IsVisible { get; set; } = false;
 	protected override void OnUpdate() { }
 

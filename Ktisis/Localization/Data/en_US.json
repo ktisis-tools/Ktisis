@@ -110,6 +110,7 @@
 		},
 		"pose": {
 			"name": "Pose File (.pose)",
+			"apply": "Apply on selection",
 			"ctx_import": "Import pose...",
 			"ctx_import.group": "Import group...",
 			"ctx_import.select": "Import selected...",
@@ -674,6 +675,7 @@
 		"title": "Import Pose",
 		"header": "Importing pose for",
 		"apply": "Apply",
+		"posemode_warn": "Pose Mode must be enabled to load poses!",
 		"transforms.header": "Transforms:",
 		"modes": {
 			"header": "Modes:",
