@@ -44,7 +44,8 @@
 		"Toolbar_ToggleCamera": "Switch to the Camera Editor",
 		"Toolbar_ToggleConfig": "Switch to the Configuration Window",
 		"Toolbar_ToggleScene": "Switch to the Scene Editor",
-		"Scene_RefreshEntities": "Refresh scene entities"
+		"Scene_RefreshEntities": "Refresh scene entities",
+		"Toggle_Siblink_Select": "Toggle persistent Sibling Links"
 	},
 	
 	"actors": {
@@ -162,7 +163,9 @@
 		},
 		"scene_tree": {
 			"attached_to": "Attached to",
-			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment"
+			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment",
+			"bulkVisWarning": "Show All Bones enabled!",
+			"bulkVisExplain": "While turned on, individual bones' visibility settings are ignored."
 		},
 		"create_menu": {
 			"actor": {
@@ -223,7 +226,8 @@
 				"customize": {
 					"profile": "Customize: Assign profile"
 				},
-				"revert": "Revert all IPC data"
+				"revert": "Revert all IPC data",
+				"refresh": "Refresh all IPC lists"
 			},
 			"pose": {
 				"import": "Import pose",
@@ -328,7 +332,7 @@
 				"hinges.max": "Maximum",
 				"hinges.axis": "Axis"
 			}
-		},
+		}
 	},
 	
 	"preset_edit": {
