@@ -226,7 +226,8 @@
 				"customize": {
 					"profile": "Customize: Assign profile"
 				},
-				"revert": "Revert all IPC data"
+				"revert": "Revert all IPC data",
+				"refresh": "Refresh all IPC lists"
 			},
 			"pose": {
 				"import": "Import pose",

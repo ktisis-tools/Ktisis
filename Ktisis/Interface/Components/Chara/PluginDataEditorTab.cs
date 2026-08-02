@@ -26,9 +26,9 @@ public class PluginDataEditorTab {
 
 	private ActorEntity? _actor;
 
-	private readonly IList<IPCProfileDataTuple> _cPlusProfiles = new List<IPCProfileDataTuple>();
-	private readonly Dictionary<Guid, string> _penumbraCollections = new Dictionary<Guid, string>();
-	private readonly Dictionary<Guid, string> _glamourerCollections = new Dictionary<Guid, string>();
+	private IList<IPCProfileDataTuple> _cPlusProfiles = new List<IPCProfileDataTuple>();
+	private Dictionary<Guid, string> _penumbraCollections = new Dictionary<Guid, string>();
+	private Dictionary<Guid, string> _glamourerCollections = new Dictionary<Guid, string>();
 
 	private (Guid Id, string Name) _currentPenumbra = (Guid.Empty, string.Empty);
 	private Guid? _selectedGlamourer = null;
@@ -44,6 +44,10 @@ public class PluginDataEditorTab {
 		this._actor = null;
 		this._glamourerFilter = new ImGuiTextFilter();
 
+		RefreshIpc();
+	}
+	
+	private void RefreshIpc() {
 		if (this._ipcManager.IsCustomizeActive)
 			this._cPlusProfiles = this._ipcManager.GetCustomizeIpc().GetProfileList().OrderBy(x => x.Name).ToList();
 		if (this._ipcManager.IsPenumbraActive)
@@ -71,7 +75,10 @@ public class PluginDataEditorTab {
 				this._actor.AssignedProfile = null;
 				this._ctx.Characters.Mcdf.Revert(this._actor.Actor);
 			}
-
+			ImGui.SameLine();
+			if (ImGui.Button(Ktisis.Locale.Translate("workspace.entity_menu.ipc.refresh"))) {
+				this.RefreshIpc();
+			}
 		}
 
 		if (this._ipcManager.IsCustomizeActive) {
