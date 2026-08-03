@@ -16,6 +16,7 @@ using Ktisis.Data.Expressions;
 using Ktisis.Data.Json;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Services.Data;
 using Ktisis.Structs.Characters;
 
 namespace Ktisis.Data.Generation;
@@ -25,32 +26,35 @@ public class FaceLibraryGenerator {
 	// Data
 
 	private readonly static Expression[] Expressions = [
-		new( "BrowUpL", 6261, [ "j_f_miken_l", "j_f_mayu_l", "j_f_mmayu_l", "j_f_miken_01_l", "j_f_miken_02_l" ] ),
-		new( "BrowUpR", 6261, [ "j_f_miken_r", "j_f_mayu_r", "j_f_mmayu_r", "j_f_miken_01_r", "j_f_miken_02_r" ] ),
-		new( "BrowFurrowL", 6228, [ "j_f_dmemoto_l", "j_f_dmiken_l", "j_f_miken_01_l", "j_f_miken_02_l", "j_f_miken_l" ] ),
-		new( "BrowFurrowR", 6228, [ "j_f_dmemoto_r", "j_f_dmiken_r", "j_f_miken_01_r", "j_f_miken_02_r", "j_f_miken_r" ] ),
-		new( "BlinkL", 611, [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ] ),
-		new( "BlinkR", 611, [ "j_f_mab_r", "j_f_mabdn_01_r", "j_f_mabdn_02out_r", "j_f_mabdn_03in_r", "j_f_mabup_01_r", "j_f_mabup_02out_r", "j_f_mabup_03in_r" ] ),
-		new( "EyeWideL", 618, [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ] ),
-		new( "EyeWideR", 618, [ "j_f_mab_r", "j_f_mabdn_01_r", "j_f_mabdn_02out_r", "j_f_mabdn_03in_r", "j_f_mabup_01_r", "j_f_mabup_02out_r", "j_f_mabup_03in_r" ] ),
-		new( "CheekRaiseL", 616, [ "j_f_dhoho_l", "j_f_hoho_l", "j_f_shoho_l" ] ),
-		new( "CheekRaiseR", 616, [ "j_f_dhoho_r", "j_f_hoho_r", "j_f_shoho_r" ] ),
-		new( "SmileL", 606, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
-		new( "SmileR", 606, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
-		new( "GrinL", 8021, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
-		new( "GrinR", 8021, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
-		new( "FrownL", 625, [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ] ),
-		new( "FrownR", 625, [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ] ),
-		new( "JawOpen", 618, [ "j_f_ago", "j_f_dago", "j_f_hagukidn" ] ),
-		new( "UpperLipOpen", 609, [ "j_f_ulip_a", "j_f_ulip_b", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_umlip_01_r", "j_f_umlip_02_r" ] ),
-		new( "LowerLipOpen", 609, [ "j_f_dlip_a", "j_f_dlip_b", "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dmlip_01_r", "j_f_dmlip_02_r"] ),
-		new( "LipPucker", 623, [ "j_f_dlip_01_l", "j_f_dlip_01_r", "j_f_dlip_02_l", "j_f_dlip_02_r", "j_f_dlip_a", "j_f_dlip_b", "j_f_dmlip_01_l", "j_f_dmlip_01_r", "j_f_dmlip_02_l", "j_f_dmlip_02_r", "j_f_dslip_l", "j_f_dslip_r", "j_f_ulip_01_l",  "j_f_ulip_01_r", "j_f_ulip_02_l", "j_f_ulip_02_r", "j_f_ulip_a", "j_f_ulip_b", "j_f_umlip_01_l", "j_f_umlip_01_r", "j_f_umlip_02_l", "j_f_umlip_02_r", "j_f_uslip_l", "j_f_uslip_r" ] )
+		new( "BrowUpL", 6261, 0, "BrowUpR", [ "j_f_miken_l", "j_f_mayu_l", "j_f_mmayu_l", "j_f_miken_01_l", "j_f_miken_02_l" ], false ),
+		new( "BrowUpR", 6261, 1, "BrowUpL", [ "j_f_miken_r", "j_f_mayu_r", "j_f_mmayu_r", "j_f_miken_01_r", "j_f_miken_02_r" ], false ),
+		new( "BrowFurrowL", 6228, 2, "BrowFurrowR", [ "j_f_dmemoto_l", "j_f_dmiken_l", "j_f_miken_01_l", "j_f_miken_02_l", "j_f_miken_l" ], false ),
+		new( "BrowFurrowR", 6228, 3, "BrowFurrowL", [ "j_f_dmemoto_r", "j_f_dmiken_r", "j_f_miken_01_r", "j_f_miken_02_r", "j_f_miken_r" ], false ),
+		new( "BlinkL", 611, 4, "BlinkR", [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ], true ),
+		new( "BlinkR", 611, 5, "BlinkL", [ "j_f_mab_r", "j_f_mabdn_01_r", "j_f_mabdn_02out_r", "j_f_mabdn_03in_r", "j_f_mabup_01_r", "j_f_mabup_02out_r", "j_f_mabup_03in_r" ], true ),
+		new( "EyeWideL", 618, 6, "EyeWideR", [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ], false ),
+		new( "EyeWideR", 618, 7, "EyeWideL", [ "j_f_mab_r", "j_f_mabdn_01_r", "j_f_mabdn_02out_r", "j_f_mabdn_03in_r", "j_f_mabup_01_r", "j_f_mabup_02out_r", "j_f_mabup_03in_r" ], false ),
+		new( "CheekRaiseL", 616, 8, "CheekRaiseR", [ "j_f_dhoho_l", "j_f_hoho_l", "j_f_shoho_l" ], false ),
+		new( "CheekRaiseR", 616, 9, "CheekRaiseL", [ "j_f_dhoho_r", "j_f_hoho_r", "j_f_shoho_r" ], false ),
+		new( "SmileL", 606, 10, "SmileR", [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ], false ),
+		new( "SmileR", 606, 11, "SmileL", [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ], false ),
+		new( "GrinL", 8021, 12, "GrinR", [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ], false ),
+		new( "GrinR", 8021, 13, "GrinL", [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ], false ),
+		new( "FrownL", 625, 14, "FrownR", [ "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dslip_l", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_uslip_l" ], false ),
+		new( "FrownR", 625, 15, "FrownL", [ "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_r", "j_f_dmlip_02_r", "j_f_dslip_r", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_r", "j_f_umlip_02_r", "j_f_uslip_r" ], false ),
+		new( "JawOpen", 618, 19, null, [ "j_f_ago", "j_f_dago", "j_f_hagukidn" ], false ),
+		new( "UpperLipOpen", 609, 17, null, [ "j_f_ulip_a", "j_f_ulip_b", "j_f_ulip_01_l", "j_f_ulip_02_l", "j_f_ulip_01_r", "j_f_ulip_02_r", "j_f_umlip_01_l", "j_f_umlip_02_l", "j_f_umlip_01_r", "j_f_umlip_02_r" ], false ),
+		new( "LowerLipOpen", 609, 18, null, [ "j_f_dlip_a", "j_f_dlip_b", "j_f_dlip_01_l", "j_f_dlip_02_l", "j_f_dlip_01_r", "j_f_dlip_02_r", "j_f_dmlip_01_l", "j_f_dmlip_02_l", "j_f_dmlip_01_r", "j_f_dmlip_02_r"], false ),
+		new( "LipPucker", 623, 16, null, [ "j_f_dlip_01_l", "j_f_dlip_01_r", "j_f_dlip_02_l", "j_f_dlip_02_r", "j_f_dlip_a", "j_f_dlip_b", "j_f_dmlip_01_l", "j_f_dmlip_01_r", "j_f_dmlip_02_l", "j_f_dmlip_02_r", "j_f_dslip_l", "j_f_dslip_r", "j_f_ulip_01_l",  "j_f_ulip_01_r", "j_f_ulip_02_l", "j_f_ulip_02_r", "j_f_ulip_a", "j_f_ulip_b", "j_f_umlip_01_l", "j_f_umlip_01_r", "j_f_umlip_02_l", "j_f_umlip_02_r", "j_f_uslip_l", "j_f_uslip_r" ], false )
 	];
 	
 	private record Expression(
 		string Id,
 		uint TimelineId,
-		string[] Bones
+		int Priority,
+		string? Pair,
+		string[] Bones,
+		bool ParseSkeletons
 	);
 	
 	// Constants
@@ -62,15 +66,18 @@ public class FaceLibraryGenerator {
 	
 	private readonly IFramework _framework;
 	private readonly JsonFileSerializer _json;
+	private readonly CustomizeService _discovery;
 
 	public IEditorContext Context { get; set; } = null!;
 	
 	public FaceLibraryGenerator(
 		IFramework framework,
-		JsonFileSerializer json
+		JsonFileSerializer json,
+		CustomizeService discovery
 	) {
 		this._framework = framework;
 		this._json = json;
+		this._discovery = discovery;
 	}
 	
 	// Public getters
@@ -256,19 +263,49 @@ public class FaceLibraryGenerator {
 				var expression = Expressions[index];
 				
 				var expressionData = new ExpressionData {
-					Id = expression.Id
+					Id = expression.Id,
+					Priority = expression.Priority,
+					Pair = expression.Pair
 				};
 
-				foreach (var bone in expression.Bones) {
-					if (data.TryGetValue(bone, out var transform))
-						expressionData.Transforms[bone] = transform;
+				if (!expression.ParseSkeletons) {
+					expressionData.Transforms = [];
+					foreach (var bone in expression.Bones) {
+						if (data.TryGetValue(bone, out var transform))
+							expressionData.Transforms[bone] = transform;
+					}
+				} else {
+					Ktisis.Log.Info("Beginning CaptureData for each face");
+					expressionData.Skeletons = [];
+					await foreach (var (faceId, skeletonData) in this.GetDataForSkeletons(actor, animId, ct)) {
+						expressionData.Skeletons[faceId] = [];
+						foreach (var bone in expression.Bones) {
+							if (skeletonData.TryGetValue(bone, out var transform))
+								expressionData.Skeletons[faceId][bone] = transform;
+						}
+					}
 				}
 
 				yield return expressionData;
 			}
 		}
 	}
-	
+
+	private async IAsyncEnumerable<Tuple<byte, Dictionary<string, Transform>>> GetDataForSkeletons(ActorEntity actor, uint animId, [EnumeratorCancellation] CancellationToken ct) {
+		foreach (var faceId in this._discovery.GetFaceTypes(this._discovery.CalcDataIdFor((Tribe)actor.GetCustomizeValue(CustomizeIndex.Tribe), (Gender)actor.GetCustomizeValue(CustomizeIndex.Gender))).Order().ToList()[..4]) {
+			await this._framework.Run(() => {
+				actor.Appearance.Customize[CustomizeIndex.FaceType] = faceId;
+				actor.Redraw();
+			}, ct);
+			await this.WaitForRedraw(actor, ct);
+
+			await this.PlayTimeline(actor, animId, ct);
+			var skeletonData = await this._framework.RunOnTick(() => CapturePose(actor), cancellationToken: ct);
+
+			yield return new (faceId, skeletonData);
+		}
+	}
+
 	private async Task PlayTimeline(ActorEntity actor, uint animId, CancellationToken ct) {
 		await this._framework.Run(() => this.Context.Animation.PlayTimeline(actor, animId), ct);
 		

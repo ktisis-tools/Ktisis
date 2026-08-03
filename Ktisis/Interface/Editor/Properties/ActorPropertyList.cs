@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Linq;
@@ -114,12 +115,30 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (expCon == null) return;
 
 		using var _disable = ImRaii.Disabled(!this._ctx.Posing.IsEnabled);
+		List<string> drawnIds = [];
 
-		foreach (var (id, state) in expCon.GetExpressions()) {
-			var label = Ktisis.Locale.Translate($"expression.{id}");
-			var weight = state.Weight;
-			if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f))
-				expCon.ApplyBlend(id, weight);
+		foreach (var (id, state) in expCon.GetExpressions().OrderBy(kvp => kvp.Value.Data.Priority)) {
+			if (drawnIds.Contains(id)) continue;
+
+			if (state.Data.Pair is not null) {
+				var label = Ktisis.Locale.Translate($"expression.{id[..^1]}");
+				var weight1 = state.Weight;
+				var weight2 = expCon.GetExpressions()[state.Data.Pair].Weight;
+				var weightV = new Vector2(weight1, weight2);
+				if (ImGui.SliderFloat2(label, ref weightV, 0.0f, 1.0f)) {
+					if (Math.Abs(weightV.X - weight1) > float.Epsilon)
+						expCon.ApplyBlend(id, weightV.X);
+					else if (Math.Abs(weightV.Y - weight2) > float.Epsilon)
+						expCon.ApplyBlend(state.Data.Pair, weightV.Y);
+				}
+				drawnIds.Add(state.Data.Pair);
+			} else {
+				var label = Ktisis.Locale.Translate($"expression.{id}");
+				var weight = state.Weight;
+				if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f))
+					expCon.ApplyBlend(id, weight);
+			}
+			drawnIds.Add(id);
 		}
 	}
 
