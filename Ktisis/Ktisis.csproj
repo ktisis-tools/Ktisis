@@ -2,7 +2,7 @@
     <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
-		<Version>0.4.0.1</Version>
+		<Version>0.4.0.4</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
 	</PropertyGroup>
 
@@ -17,6 +17,10 @@
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
+    </PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Glamourer.Api" Version="2.7.0" />

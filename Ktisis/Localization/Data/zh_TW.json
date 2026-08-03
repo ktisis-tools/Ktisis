@@ -1,0 +1,1497 @@
+{
+	"$meta": {
+		"displayName": "Traditional Chinese",
+		"selfName": "繁體中文",
+		"__comment": "Boilerplate",
+		"maintainers": [
+			"@meowzwr",
+			null
+		]
+	},
+	"actions": {
+		"Select_None": "取消選擇",
+		"Select_Sibling": "選擇同級骨骼",
+		"Select_Children": "選擇子骨骼",
+		"Select_All": "選擇所有實體",
+		"Overlay_Toggle": "切換疊加層可見性",
+		"History_Undo": "撤銷",
+		"History_Redo": "重做",
+		"Gizmo_Toggle": "切換操作柄可見性",
+		"Gizmo_ToggleMode": "切換世界/本地模式",
+		"Gizmo_SetTranslateMode": "切換到位置模式",
+		"Gizmo_SetRotateMode": "切換到旋轉模式",
+		"Gizmo_SetScaleMode": "切換到縮放模式",
+		"Gizmo_SetUniversalMode": "切換到通用模式",
+		"Camera_SetNext": "切換到下一個攝像機",
+		"Camera_SetPrevious": "切換到上一個攝像機",
+		"Camera_Work_Toggle": "切換工作攝像機",
+		"Camera_Work_Forward": "工作攝像機前進",
+		"Camera_Work_Left": "工作攝像機左移",
+		"Camera_Work_Back": "工作攝像機後退",
+		"Camera_Work_Right": "工作攝像機右移",
+		"Camera_Work_Up": "工作攝像機上移",
+		"Camera_Work_Down": "工作攝像機下移",
+		"Camera_Work_Fast": "工作攝像機高速移動修飾鍵",
+		"Camera_Work_Slow": "工作攝像機低速移動修飾鍵",
+		"Pose_FlipPose": "翻轉姿勢",
+		"Gizmo_MirrorRotation": "循環旋轉模式（鏡像/平行）",
+		"Toolbar_ToggleWorkspace": "切換到工作區視窗",
+		"Toolbar_ToggleObject": "切換到物件編輯器",
+		"Toolbar_ToggleActor": "切換到角色編輯器",
+		"Toolbar_TogglePose": "切換到姿勢檢視",
+		"Toolbar_ToggleEnv": "切換到環境編輯器",
+		"Toolbar_ToggleCamera": "切換到相機編輯器",
+		"Toolbar_ToggleConfig": "切換到設定視窗",
+		"Scene_RefreshEntities": "重新整理場景實體"
+	},
+	"actors": {
+		"pos_lock": "凍結角色位置"
+	},
+	"cameras": {
+		"main": "主攝像機",
+		"work": "工作攝像機",
+		"camera": "相機",
+		"new": "新攝像機",
+		"selector": {
+			"create": "建立新攝像機",
+			"delete": "刪除攝像機",
+			"edit": "編輯攝像機",
+			"edit_can_delete": "（或按住 Shift 刪除）"
+		}
+	},
+	"common": {
+		"options": "選項",
+		"appearance": "外觀",
+		"equipment": "裝備",
+		"unknown": "未知",
+		"hide": "隱藏",
+		"show": "顯示",
+		"entity": "實體",
+		"chara_parts": {
+			"body": "身體",
+			"face": "面部",
+			"hair": "頭髮",
+			"gear": "裝備",
+			"accessories": "配飾",
+			"weapons": "武器"
+		},
+		"rotation": "旋轉",
+		"position": "位置",
+		"scale": "縮放"
+	},
+	"context": {
+		"select": "選擇",
+		"unselect": "取消選擇"
+	},
+	"transform": {
+		"position": "位置",
+		"rotation": "旋轉\n按住 Shift 切換螢幕軌道。",
+		"scale": "縮放"
+	},
+	"file": {
+		"import": "匯入...",
+		"export": "匯出...",
+		"select": "選擇要開啟的檔案...",
+		"chara": {
+			"name": "角色 (.chara)",
+			"ctx_import": "匯入外觀...",
+			"ctx_export": "匯出外觀...",
+			"file": "檔案",
+			"apply": "應用於所選物件"
+		},
+		"pose": {
+			"name": "姿勢檔案 (.pose)",
+			"ctx_import": "匯入姿勢...",
+			"ctx_import.group": "匯入組...",
+			"ctx_import.select": "匯入所選內容...",
+			"ctx_export": "匯出姿勢..."
+		},
+		"dialog": {
+			"chara": {
+				"filter": "角色檔案",
+				"load": "開啟角色檔案",
+				"save": "儲存角色檔案"
+			},
+			"pose": {
+				"filter": "姿勢檔案",
+				"load": "開啟姿勢檔案",
+				"save": "儲存姿勢檔案"
+			},
+			"light": {
+				"filter": "燈光檔案",
+				"load": "開啟燈光檔案",
+				"save": "儲存燈光檔案"
+			},
+			"mcdf": {
+				"filter": "MCDF 檔案",
+				"load": "開啟 MCDF 檔案"
+			},
+			"image.load": "匯入參考影象"
+		}
+	},
+	"workspace": {
+		"title": "Ktisis 工作區",
+		"state": {
+			"dormant": "正在等待場景...",
+			"select_count": {
+				"single": "%target% + %count% 個其他物件",
+				"plural": "%target% + %count% 個其他物件",
+				"none": "未選擇."
+			}
+		},
+		"posing": {
+			"toggle": {
+				"enable": "姿態模式已啟用",
+				"enable-blocked": "姿態模式已啟用，按住SHIFT並點選以禁用。",
+				"disable": "姿態模式已禁用"
+			},
+			"hint": {
+				"enable": "骨骼操縱當前處於啟用狀態。",
+				"enable-blocked": "要禁用，請按住SHIFT。",
+				"disable": "骨骼操縱當前處於禁用狀態。"
+			}
+		},
+		"scene_tree": {
+			"attached_to": "附著於",
+			"reset_tooltip": "點選重置附著\n點選並拖拽設定新附著點"
+		},
+		"create_menu": {
+			"actor": {
+				"create": "建立新角色",
+				"file": "從檔案匯入角色",
+				"mcdf": "從 MCDF 匯入角色",
+				"overworld": "新增大世界角色"
+			},
+			"light": {
+				"create": "建立新燈光",
+				"point": "點光源",
+				"spot": "聚光燈",
+				"area": "區域光",
+				"directional": "太陽（定向光）",
+				"file": "從檔案匯入... (.ktlight)"
+			},
+			"reference": "新增參考影象",
+			"overlay": {
+				"create": "新增疊加層...",
+				"dialog": "對話框",
+				"balloon": "氣泡",
+				"status": "狀態"
+			}
+		},
+		"entity_menu": {
+			"base": {
+				"select": "選擇",
+				"deselect": "取消選擇",
+				"hierarchy": "選擇層級",
+				"presets": "預設...",
+				"presets_save": "儲存新預設",
+				"detach": "解除附著",
+				"rename": "重新命名",
+				"duplicate": "複製",
+				"delete": "刪除",
+				"untrack": "取消追蹤",
+				"reset": "重設"
+			},
+			"actor": {
+				"target": "目標",
+				"edit": "編輯外觀",
+				"import": "匯入...",
+				"export": "匯出...",
+				"chara": "角色 (.chara)",
+				"npc": "NPC",
+				"pose": "姿勢檔案 (.pose)",
+				"mcdf": "Mare 資料 (.mcdf)"
+			},
+			"ipc": {
+				"submenu": "IPC 外觀",
+				"penumbra": {
+					"collection": "Penumbra：分配合集",
+					"invisible_skin": "Penumbra：隱形皮膚"
+				},
+				"glamourer": {
+					"design": "Glamourer：應用設計"
+				},
+				"customize": {
+					"profile": "Customize+：分配配置"
+				},
+				"revert": "還原所有 IPC 資料"
+			},
+			"pose": {
+				"import": "匯入姿勢",
+				"export": "匯出姿勢",
+				"reference": "設為參考姿勢"
+			},
+			"light": {
+				"edit": "編輯燈光",
+				"import": "匯入燈光檔案",
+				"export": "匯出燈光檔案"
+			}
+		},
+		"create": "新建...",
+		"create_actor": "建立角色\n下拉選單查看選項...",
+		"create_light": "建立燈光\n下拉選單查看選項...",
+		"create_overlay": "建立疊加層",
+		"refresh_entities": "重新整理場景實體",
+		"edit_mode.hint": "選擇編輯模式",
+		"overlay.hide": "隱藏 Ktisis 疊加層",
+		"overlay.show": "顯示 Ktisis 疊加層",
+		"overlay.world_toggle": "切換世界物件疊加層",
+		"overlay.range": "範圍："
+	},
+	"toolbar": {
+		"title": "Ktisis 工具欄",
+		"buttons": {
+			"workspace": "工作區",
+			"object": "物件編輯器",
+			"actor": "角色編輯器",
+			"posing": "姿勢檢視",
+			"env": "環境編輯器",
+			"camera": "相機編輯器",
+			"scene": "場景編輯器",
+			"config": "設定"
+		},
+		"popup": {
+			"close": "這將關閉",
+			"close_workspace": "所有已開啟的 Ktisis 視窗並重新開啟工具欄。",
+			"close_toolbar": "工具欄並重新開啟工作區視窗。",
+			"state": "您即將",
+			"state_end": "工具欄。",
+			"state_enable": "啟用",
+			"state_disable": "禁用",
+			"yes": "繼續",
+			"no": "取消"
+		}
+	},
+	"transform_edit": {
+		"title": "變換編輯器",
+		"actors": {
+			"title": "參與角色"
+		},
+		"mode": {
+			"world": "世界變換",
+			"local": "本地變換"
+		},
+		"flags": {
+			"parallel": "並行變換",
+			"inverse": "逆向變換",
+			"reflect": "鏡像變換"
+		},
+		"sibling": {
+			"available": "多選兄弟骨骼：%bone%",
+			"unavailable": "骨骼 %bone% 沒有兄弟骨骼",
+			"multiple": "多選兄弟骨骼：%bone%\n只能在選擇1個骨骼時選擇兄弟骨骼！"
+		},
+		"gizmo": {
+			"show": "顯示旋轉變換器",
+			"hide": "隱藏旋轉變換器"
+		},
+		"transforms": {
+			"title": "骨骼變換",
+			"parenting": "骨骼父級",
+			"relative": "相對旋轉"
+		},
+		"ik": {
+			"title": "反向運動（IK）",
+			"enable": "啟用IK約束",
+			"advanced": "高階引數",
+			"enable_all": "全部啟用",
+			"disable_all": "全部禁用",
+			"target": "選擇",
+			"edit": "配置",
+			"active": "已啟用",
+			"ccd": {
+				"gain": "增益",
+				"iterations": "迭代次數"
+			},
+			"two_joints": {
+				"enforce": "強制末端旋轉",
+				"mode": "變換模式：",
+				"fixed": "固定目標",
+				"relative": "骨骼相關",
+				"gain": "增益：",
+				"gain.shoulder": "肩部",
+				"gain.elbow": "肘部",
+				"gain.hand": "手部",
+				"hinges": "鉸鏈：",
+				"hinges.min": "最小值",
+				"hinges.max": "最大值",
+				"hinges.axis": "軸向"
+			}
+		}
+	},
+	"preset_edit": {
+		"title": "預設",
+		"add": {
+			"title": "新增新預設",
+			"label": "預設名稱",
+			"save": "儲存",
+			"cancel": "取消"
+		},
+		"clear": "清除",
+		"toggle_other": "切換其他"
+	},
+	"chara_edit": {
+		"title": "角色編輯器",
+		"hint": "編輯外觀與動畫",
+		"animation": {
+			"tab": "動畫",
+			"controls": {
+				"animationSelect": "動畫",
+				"idleSelect": "空閒姿勢",
+				"play": "播放",
+				"reset": "重置",
+				"loop": "迴圈",
+				"playStart": "播放表情開始",
+				"weapon": "拔出武器",
+				"posLock": "凍結位置",
+				"enableSpeed": "啟用速度控制",
+				"speedSlider": "播放速度",
+				"scrub": "拖拽播放"
+			},
+			"poseExpression": {
+				"title": "姿勢表情",
+				"warning": "⚠ 姿態模式當前已啟用！",
+				"brioWarning": "⚠ Brio當前已啟用！當前的不相容性阻止此功能正常工作 - 要載入姿勢表情，請先禁用Brio。",
+				"header": "警告：這是一個實驗性功能！它將覆蓋任何當前的面部姿勢，並可能變形耳朵或其他面部部位。但是，您仍然可以撤銷任何做出的更改。",
+				"null": "未選擇",
+				"apply": "應用"
+			}
+		},
+		"customize": {
+			"tab": "外觀",
+			"iris": "小瞳孔",
+			"primary": "主要特徵",
+			"face": "面部特徵",
+			"face_tat": "紋身",
+			"facepaint_flip": "翻轉面妝",
+			"highlights": "高光",
+			"eye_color": "眼睛顏色",
+			"lipstick": "口紅"
+		},
+		"equip.tab": "裝備",
+		"ipc": {
+			"tab": "外掛 (IPC)",
+			"warn_actor": "請選擇一個角色！",
+			"mcdf_load": "載入 MCDF",
+			"mcdf_tip": "MCDF（Mare Character Data File）包含捕獲時應用於該玩家的全部 Penumbra、Glamourer\n與 CustomizePlus 資料。",
+			"customize.title": "Customize+",
+			"customize.profile": "C+ 配置",
+			"penumbra": {
+				"title": "Penumbra",
+				"collection": "合集",
+				"invisible_skin": "應用隱形皮膚"
+			},
+			"glamourer": {
+				"title": "Glamourer",
+				"design.select": "當前選擇：",
+				"design.none": "無",
+				"design.apply": "應用"
+			}
+		},
+		"misc": {
+			"tab": "雜項",
+			"model": "模型 ID",
+			"model_tip": "按 Enter 提交",
+			"opacity": "不透明度",
+			"wetness": "溼潤度覆蓋",
+			"wetness.weather": "天氣溼潤度",
+			"wetness.swim": "游泳溼潤度",
+			"wetness.depth": "溼潤深度"
+		}
+	},
+	"object_edit": {
+		"title": "物件編輯器",
+		"actor": {
+			"headers": {
+				"actor": "角色",
+				"adv": "高階（視線/IK）",
+				"import": "匯入角色外觀",
+				"gaze": "視線控制",
+				"ik": "反向運動（IK）"
+			},
+			"gaze": {
+				"linked": "已連結",
+				"unlinked": "未連結",
+				"camera": "相機追蹤",
+				"gizmo": "變換器追蹤",
+				"target": "選擇目標角色",
+				"targeting": "目標：",
+				"unk": "未知",
+				"null": "無目標"
+			},
+			"chara_edit": "角色編輯器",
+			"export": "匯出角色"
+		},
+		"pose": {
+			"headers.pose": "姿勢",
+			"headers.reference": "參考姿勢",
+			"headers.import": "匯入姿勢檔案",
+			"export": "匯出姿勢",
+			"flip": "翻轉姿勢",
+			"stash": "暫存姿勢",
+			"stash.apply": "應用姿勢",
+			"stash.time": "姿勢暫存於",
+			"stash.from": "來自角色",
+			"reference": "重置姿勢",
+			"reference_labels": {
+				"all": "重置全部骨架",
+				"null": "不適用",
+				"body": "重置身體",
+				"face": "重置面部",
+				"hair": "重置頭髮",
+				"custom": "重置骨架"
+			}
+		},
+		"light": {
+			"headers": {
+				"light": "燈光",
+				"shadow": "陰影"
+			},
+			"light": {
+				"reflection": "啟用反射",
+				"type": "燈光型別",
+				"color": "顏色",
+				"intensity": "強度",
+				"range": "範圍",
+				"import": "匯入燈光設定",
+				"export": "匯出燈光設定",
+				"spot.angle": "錐角",
+				"spot.falloff": "衰減角",
+				"area.angle": "光照角",
+				"area.falloff": "衰減角",
+				"falloff.type": "衰減型別",
+				"falloff.power": "衰減強度",
+				"gobos": {
+					"info": "聚光燈與區域光現可套用原版貼圖。\n該貼圖作為遮光板（gobo），如同透過圖像投影，可遮擋或為光源著色。",
+					"choose": "選擇要投影的貼圖",
+					"remove": "\n右鍵點擊移除",
+					"current": "目前貼圖："
+				}
+			},
+			"shadow": {
+				"dynamic": "動態陰影",
+				"chara": "投射角色陰影",
+				"object": "投射物體陰影",
+				"range": "陰影範圍",
+				"near": "陰影近裁剪",
+				"far": "陰影遠裁剪"
+			}
+		},
+		"image": {
+			"header": "參考影象",
+			"visible": "啟用",
+			"load": "載入影象",
+			"opacity": "不透明度"
+		},
+		"overlay": {
+			"header": "疊加層",
+			"pos": "位置",
+			"pos_drag": "可拖曳",
+			"pos_snap": "吸附至中心",
+			"scale": "縮放",
+			"scale_reset": "重設縮放",
+			"alpha": "不透明度",
+			"talk": {
+				"speaker": "說話者",
+				"content": "對話",
+				"fontsize": "對話字型大小",
+				"bg": "背景",
+				"cursor": "游標"
+			},
+			"balloon": {
+				"content": "對話",
+				"fontsize": "字型大小",
+				"bg": "背景",
+				"gradient": "顏色漸層",
+				"arrow_show": "顯示氣泡箭頭",
+				"arrow_pos": "箭頭位置"
+			},
+			"status": {
+				"content": "狀態文字",
+				"type": "類型",
+				"tex": "貼圖：",
+				"tex_hint": "為此狀態選擇圖示"
+			}
+		}
+	},
+	"camera_edit": {
+		"title": "相機編輯器",
+		"toggles": {
+			"collide": "碰撞",
+			"delimit": "解限",
+			"ortho": "正交檢視"
+		},
+		"sliders": {
+			"rotation": "相機旋轉",
+			"zoom": "相機變焦",
+			"distance": "相機距離",
+			"ortho_zoom": "正交檢視相機變焦"
+		},
+		"position": {
+			"lock": "鎖定到固定位置",
+			"unlock": "解鎖固定位置"
+		},
+		"orbit": {
+			"lock": "鎖定軌道目標",
+			"unlock": "解鎖軌道目標"
+		},
+		"offset": {
+			"to_target": "偏移相機到目標模型",
+			"from_base": "從基礎位置偏移"
+		},
+		"pan": "相機平移",
+		"angle": "相機軌道角度",
+		"tracking": {
+			"info": "新增要追蹤的骨骼\n按住 Shift 清除已追蹤骨骼",
+			"track": "追蹤所選骨骼",
+			"current": "已追蹤骨骼：",
+			"multi": "多個..."
+		}
+	},
+	"env_edit": {
+		"title": "環境編輯器",
+		"enable": "啟用",
+		"weather": "天氣",
+		"time": "時間與日期",
+		"advanced": "高階編輯",
+		"fog": {
+			"title": "霧",
+			"color": "顏色",
+			"distance": "距離",
+			"thickness": "厚度",
+			"opacity": "不透明度",
+			"sky_vis": "天空可見度"
+		},
+		"housing": {
+			"title": "房屋",
+			"unavailable": "房屋燈光不可用。",
+			"brightness": "亮度",
+			"ssao": "SSAO"
+		},
+		"lighting": {
+			"title": "光照",
+			"sunlight": "陽光",
+			"moonlight": "月光",
+			"ambient": "環境光",
+			"saturation": "飽和度",
+			"temperature": "色溫"
+		},
+		"particles": {
+			"title": "粒子",
+			"intensity": "強度",
+			"size": "大小",
+			"glow": "發光",
+			"color": "顏色",
+			"weight": "權重",
+			"spread": "擴散",
+			"speed": "速度",
+			"spin": "旋轉"
+		},
+		"sky": {
+			"title": "天空",
+			"edit_sky": "編輯天空盒",
+			"texture": "天空紋理",
+			"edit_clouds": "編輯雲層",
+			"top": "頂部雲層",
+			"side": "側向雲層",
+			"color": "雲層顏色",
+			"shadow_color": "陰影顏色",
+			"shadows": "陰影",
+			"side_height": "側向高度"
+		},
+		"rain": {
+			"title": "雨",
+			"intensity": "強度",
+			"thickness": "厚度",
+			"color": "顏色",
+			"weight": "權重",
+			"scattering": "散射",
+			"raindrops": "雨滴"
+		},
+		"stars": {
+			"title": "星星",
+			"intensity": "強度",
+			"constellations": "星座",
+			"galaxy_intensity": "銀河強度",
+			"moon_color": "月亮顏色",
+			"moon_brightness": "月亮亮度"
+		},
+		"water": {
+			"title": "水",
+			"water_one": "水體一",
+			"water_two": "水體二",
+			"water_three": "水體三",
+			"water_four": "水體四"
+		},
+		"wind": {
+			"title": "風",
+			"direction": "方向",
+			"angle": "角度",
+			"speed": "速度"
+		}
+	},
+	"scene_edit": {
+		"title": "場景編輯器"
+	},
+	"pose_view": {
+		"title": "姿勢檢視",
+		"view_chooser": "檢視：",
+		"import": "匯入",
+		"export": "匯出",
+		"no_target": "請選擇一個角色以開始編輯其姿勢。"
+	},
+	"chara_import": {
+		"title": "匯入外觀",
+		"header": "正在為以下物件匯入外觀",
+		"apply": "應用"
+	},
+	"pose_import": {
+		"title": "匯入姿勢",
+		"header": "正在為以下物件匯入姿勢",
+		"apply": "應用",
+		"transforms.header": "變換：",
+		"modes": {
+			"header": "模式：",
+			"selective_import": "應用所選骨骼",
+			"descendants": "包含子骨骼",
+			"anchor": "錨定組位置",
+			"exclude_ears": "排除耳朵骨骼",
+			"warn_face_compat": "由於與所選角色不相容，所選姿勢檔案中的面部將不會被匯入。",
+			"warn_ik_on": "反向運動（IK）已啟用！這可能會覆蓋匯入的肢體。"
+		}
+	},
+	"expression": {
+		"group": {
+			"Face": "面部"
+		},
+		"reset_all": "全部重設",
+		"link": "連結左右滑桿",
+		"unlink": "取消連結左右滑桿",
+		"unit": {
+			"BrowUpL": "眉上揚（左）",
+			"BrowUpR": "眉上揚（右）",
+			"BrowFurrowL": "眉皺起（左）",
+			"BrowFurrowR": "眉皺起（右）",
+			"BlinkL": "眨眼（左）",
+			"BlinkR": "眨眼（右）",
+			"EyeWideL": "睜大眼（左）",
+			"EyeWideR": "睜大眼（右）",
+			"CheekRaiseL": "提頰（左）",
+			"CheekRaiseR": "提頰（右）",
+			"SmileL": "微笑（左）",
+			"SmileR": "微笑（右）",
+			"FrownL": "皺眉（左）",
+			"FrownR": "皺眉（右）",
+			"SneerL": "冷笑（左）",
+			"SneerR": "冷笑（右）",
+			"JawOpen": "張頜",
+			"UpperLipOpen": "上唇張開",
+			"LowerLipOpen": "下唇張開",
+			"LipPucker": "嘴唇噘起"
+		}
+	},
+	"config": {
+		"title": "Ktisis 設定",
+		"categories": {
+			"title": "個性化",
+			"allow_nsfw": "顯示NSFW骨骼",
+			"hint_nsfw": "需要IVCS、YAS或任何自定義骨架。",
+			"show_all_viera_ears": "顯示未使用的耳朵骨骼",
+			"hint_viera_ears": "顯示所有維埃拉族耳朵的骨骼，包括其他耳朵選項的骨骼。",
+			"show_friendly_bone_names": "顯示友好的骨骼名稱",
+			"hint_friendly_bones": "在可用的情況下為骨骼使用本地化名稱，而不是SE預設名稱。",
+			"header": "骨骼類別：",
+			"editor": {
+				"color_header": "顏色：",
+				"group_color": "組顏色",
+				"bone_color": "骨骼顏色",
+				"subcategories": "應用於子類別",
+				"link_colors": "連結組與骨骼的顏色"
+			}
+		},
+		"gizmo": {
+			"title": "操作柄",
+			"flip": "面向相機翻轉軸",
+			"raySnap": "按住 Shift 進行射線吸附",
+			"rayHint": "移動 XYZ 平移操作柄時，按住 Shift 可將物件吸附到世界表面",
+			"holdSnap": "按住 Ctrl 吸附操作柄數值（再加 Shift 提高精度）",
+			"hintHoldSnap": "拖拽滑鼠時將操作柄數值吸附到最近的刻度",
+			"2d_scale": "2D 操作柄縮放",
+			"header": "操作柄樣式：",
+			"disabled": "當前版本中操作柄樣式功能暫不可用，等待 Dalamud 更新！",
+			"editor": {
+				"general": {
+					"title": "常規",
+					"dir_x": "方向 X",
+					"dir_y": "方向 Y",
+					"dir_z": "方向 Z",
+					"active": "選中顏色",
+					"inactive": "未啟用顏色"
+				},
+				"position": {
+					"title": "位置",
+					"line_thick": "線條厚度",
+					"line_color": "線條顏色",
+					"axis_thick": "座標軸填充圖案厚度",
+					"axis_color": "座標軸填充圖案顏色",
+					"circle_size": "中心圓大小",
+					"arrow_size": "箭頭尺寸",
+					"plane_x": "平面 X",
+					"plane_y": "平面 Y",
+					"plane_z": "平面 Z"
+				},
+				"rotation": {
+					"title": "旋轉",
+					"inner_thick": "內部線條厚度",
+					"outer_thick": "外部線條厚度",
+					"border_color": "啟用邊框的顏色",
+					"fill_color": "啟用的填充顏色"
+				},
+				"scale": {
+					"title": "縮放",
+					"line_thick": "線條厚度",
+					"line_color": "啟用線條的顏色",
+					"circle_size": "圓圈尺寸"
+				},
+				"text": {
+					"title": "文字",
+					"color": "文字顏色",
+					"shadow_color": "陰影顏色"
+				},
+				"undo": "重置為預設值"
+			}
+		},
+		"overlay": {
+			"title": "疊加層",
+			"header": "配置骨骼疊加層：",
+			"lines": {
+				"draw": "在骨骼上繪製線",
+				"draw_gizmo": "使用變換器時在骨骼上繪製線",
+				"thick": "線條粗細",
+				"opacity": "線條不透明度",
+				"opacity_gizmo": "使用變換器時的線條不透明度"
+			},
+			"dots": {
+				"draw_gizmo": "使用變換器時繪製點",
+				"radius": "點半徑"
+			},
+			"world": {
+				"dot_radius": "世界節點半徑",
+				"dot_thickness": "世界節點描邊粗細",
+				"scale_factor": "世界節點縮放係數",
+				"color": "世界節點填滿顏色",
+				"color_actor": "角色節點填滿顏色",
+				"color_light": "燈光節點填滿顏色",
+				"highlight_color": "懸停醒目提示顏色"
+			},
+			"keep_presets_on_active": "切換活動角色時保持預設啟用",
+			"dim_inactive": "淡化非活動角色的骨骼",
+			"active_state_chooser": "角色活動狀態判定",
+			"inactive_opacity": "非活動時的不透明度"
+		},
+		"references": {
+			"draw_title": "為參考影象繪製標題。"
+		},
+		"workspace": {
+			"title": "通用",
+			"header": "工作區設定",
+			"init": "進入 GPose 時開啟工作區",
+			"toggleOpenWindows": "UI 按鈕切換視窗開關",
+			"toolbar": "使用 Ktisis 工具欄",
+			"hintToolbar": "實驗功能：將 Ktisis 各編輯器整合到單一視窗的替代介面。\n該選項仍在積極開發中，歡迎反饋！",
+			"editOnSelect": "從工作區選中物件時開啟物件編輯器",
+			"closeOnDeselect": "未選中任何物件時關閉物件編輯器",
+			"incognitoPlayerNames": "隱身模式",
+			"hintIncognito": "在角色列表與集體拍照視窗中隱藏所有玩家名稱",
+			"hintInit": "若關閉，可在 GPose 中輸入 /ktisis 開啟 Ktisis 工作區",
+			"windowHeader": "視窗行為",
+			"legacyHeader": "傳統介面選項（v0.3 釋出後將棄用）",
+			"legacyWindows": "優先使用傳統視窗行為",
+			"legacyWindowHint": "控制各視窗是否以及如何僅針對當前目標角色",
+			"legacyPoseTabs": "姿勢檢視：透過標籤頁切換角色（而非工作區）",
+			"legacyLightEditor": "優先使用傳統燈光編輯器",
+			"legacyLightHint": "允許單獨開啟燈光編輯器視窗（已遷至物件編輯器）",
+			"confirmExit": "退出姿勢模式時需按住 Shift 確認",
+			"AutoResizeObjectEditor": "開啟新下拉選單時自動擴充套件物件編輯器高度",
+			"hint_AutoResizeObj": "開啟後將無法手動調整編輯器高度，仍可調整寬度",
+			"openTray": "在 GPose 中關閉工作區時，開啟 Ktisis 托盤圖示",
+			"hintTrayIcon": "點選並拖動可移動該控制元件，點選後將重新開啟工作區",
+			"showHints": "啟動時顯示 Ktisis 提示",
+			"hintHint": "啟動 Ktisis 後首次進入 GPose 時，疊加層會顯示一則隨機小秘訣、提示或趣味事實！",
+			"selectTarget": "選中目標時自動選擇角色",
+			"hintSelectTarget": "用原版 GPose 點選或 Tab 切換時，角色會被設為目標。\n開啟後，選擇新目標時會覆蓋 Ktisis 當前的選中狀態。",
+			"workcam": {
+				"speed": "工作相機速度",
+				"fastMulti": "工作相機快速倍率",
+				"slowMulti": "工作相機慢速倍率",
+				"vertMulti": "工作相機上下速度倍率",
+				"sens": "工作相機滑鼠靈敏度"
+			},
+			"customLocations": {
+				"header": "自定義檔案位置",
+				"description": "管理檔案對話方塊中的自定義資料夾快捷位置。",
+				"columnName": "名稱",
+				"columnPath": "路徑",
+				"browse": "瀏覽",
+				"remove": "移除",
+				"add": "新增新位置",
+				"moving": "移動 %name%",
+				"selectFolder": "選擇資料夾"
+			},
+			"defaultLocation": {
+				"remove": "取消將此資料夾設為預設",
+				"add": "將此資料夾設為使用檔案瀏覽器時的預設開啟位置"
+			}
+		},
+		"input": {
+			"title": "輸入",
+			"enable": "啟用按鍵綁定",
+			"help": "點選按鍵綁定以修改它們。右鍵點選以清除。必須啟用按鍵綁定才能編輯。",
+			"blockLeft": "左鍵點選時禁用GPose更改目標",
+			"blockRight": "右鍵點選時禁用GPose更改目標",
+			"scrollAllow": "為變換滑塊啟用滾輪輸入",
+			"scrollMod": "需要按住ALT鍵才能使用滾輪控制變換滑塊",
+			"reset": "重置按鍵綁定",
+			"cameras": {
+				"title": "相機",
+				"header": "相機控制："
+			},
+			"gizmo": {
+				"title": "操作柄",
+				"header": "操作柄快捷鍵："
+			},
+			"toolbar": {
+				"title": "工具欄",
+				"header": "工具欄快捷鍵："
+			}
+		},
+		"autosave": {
+			"title": "自動儲存",
+			"enable": "啟用自動儲存",
+			"clear": "退出時清除自動儲存",
+			"ondisable": "禁用姿勢模式時始終儲存",
+			"disconnect": "伺服器斷開連線時始終儲存",
+			"interval": "儲存間隔",
+			"count": "儲存計數",
+			"path": "儲存路徑",
+			"dir": "資料夾名稱"
+		},
+		"presets": {
+			"title": "預設",
+			"description": "在下方檢視和編輯您定義的骨骼可見性預設。",
+			"defaults": "右鍵點選任何預設將其標記為預設。預設預設將初始為任何GPose角色啟用。",
+			"delete_tooltip": "按住SHIFT以刪除",
+			"delete": "刪除",
+			"rename": "重新命名"
+		},
+		"poseview": {
+			"title": "姿勢檢視",
+			"description": "在下方選擇您自己的影象以在姿勢檢視介面中使用。",
+			"body": "身體",
+			"armor": "護甲（服裝）",
+			"ears": "耳朵（維埃拉）",
+			"face": "臉部",
+			"hands": "手部",
+			"lips": "嘴唇",
+			"mouth": "嘴部",
+			"tail": "尾巴",
+			"linkout": {
+				"description": "在此下載模板影象：",
+				"button": "GitHub",
+				"link": "https://github.com/ktisis-tools/Ktisis/tree/v0.3/main/Ktisis/Data/Images/Templates"
+			}
+		},
+		"offsets": {
+			"title": "骨骼偏移",
+			"description": "匯入與編輯視覺化骨骼偏移",
+			"help": "在下方為骨骼設定平移後，Ktisis介面上該骨骼的可點選節點位置會被調整為新值。",
+			"selected": "已選骨骼",
+			"ui": {
+				"copy_all": "全部複製到剪貼簿",
+				"load_all": "從剪貼簿載入全部",
+				"load_all_warning": "警告：此操作將替換你當前的全部偏移配置。\n按住CTRL+Shift確認。",
+				"add_bone": "新增骨骼偏移",
+				"load_legacy": "載入舊版偏移",
+				"copy_bone": "複製該骨骼偏移值",
+				"load_bone": "貼上該骨骼偏移值",
+				"clear_bone": "Shift+點選清除該骨骼偏移"
+			},
+			"race_sex": {
+				"101": "中原男性",
+				"201": "中原女性",
+				"301": "高地男性",
+				"401": "高地女性",
+				"501": "精靈男性",
+				"601": "精靈女性",
+				"701": "貓魅男性",
+				"801": "貓魅女性",
+				"901": "魯加男性",
+				"1001": "魯加女性",
+				"1101": "拉拉菲爾男性",
+				"1201": "拉拉菲爾女性",
+				"1301": "敖龍男性",
+				"1401": "敖龍女性",
+				"1501": "赫爾加男性",
+				"1601": "赫爾加女性",
+				"1701": "維埃拉男性",
+				"1801": "維埃拉女性"
+			}
+		},
+		"misc.title": "雜項",
+		"about": {
+			"title": "關於",
+			"header": "關於Ktisis",
+			"readme": "Ktisis是一款強大的拍照姿態工具，可在FFXIV的GPose模式下，透過點選骨骼並自由移動實現對角色的全方位造型。工具還支援動畫控制與角色編輯，我們的目標是讓造型操作更加便捷易用。",
+			"gitLinkout": {
+				"description": "歡迎在GitHub提交問題或參與開發：",
+				"button": "GitHub",
+				"link": "https://github.com/ktisis-tools/Ktisis/"
+			},
+			"discordLinkout": {
+				"description": "加入我們的Discord社群，獲取技術支援、分享截圖、獲取更新日誌等：",
+				"button": "Discord",
+				"link": "https://discord.com/invite/kUG3W8B8Ny/"
+			}
+		},
+		"language": {
+			"title": "語言",
+			"autoselect": "自動設定語言",
+			"selector": "強制使用語言"
+		}
+	},
+	"migrator": {
+		"title": "Ktisis v0.3 設定",
+		"mainWindow": {
+			"main_Desc": "感謝使用 Ktisis！v0.3 現已成為穩定版本。\n此遷移工具可幫助你轉移 Ktisis Alpha 設定，或更新 Ktisis 工作區設定。",
+			"skip": "跳過遷移",
+			"skip_desc": "跳過遷移並以預設設定啟動 v0.3。\n你將無法再次訪問遷移工具，所有舊設定將被丟棄。",
+			"v3": {
+				"from": "我來自 v0.3！",
+				"from_desc": "基於 v0.3 的 Ktisis 設定開始遷移（測試版）。\n如有適用，將忽略 v0.2 的所有舊版設定。",
+				"main_Desc": "自我們開始開發 v0.3 以來變化很大，在開發 Ktisis 的過程中，部分功能已更改或改進。\n以下設定有了新的預設值，你可以保留舊配置，也可以使用新的推薦值。",
+				"testing": "v0.3 已正式釋出，建議你在 Dalamud 中關閉「接收測試版本」。",
+				"installer": "你可以在此開啟外掛安裝器以更改 Ktisis 的此設定："
+			},
+			"v2": {
+				"from": "我來自 v0.2！",
+				"from_desc": "基於 v0.2 的 Ktisis 設定開始遷移（Alpha）。\n如有適用，將覆蓋你現有的 v0.3 設定。",
+				"main_Desc": "感謝使用 Ktisis！v0.3 是我們的最新版本，凝聚了多位作者超過 2 年的改進工作。\nv0.2 中幾乎所有程式碼都已更新，感謝你的持續支援。這些重寫為未來的開發奠定了穩定基礎。\n除了 v0.2 的新功能外，我們還有許多更大的想法待探索，敬請期待！",
+				"migration_desc": "此更新工具會將 v0.2 的設定儘可能轉換為 v0.3。請注意各頁面的工具提示與說明。\n你可以在每頁自行覆蓋，遷移後也可隨時更改這些設定。",
+				"wiki": "要了解 Ktisis v0.2 與 v0.3 之間的變化，請訪問我們的 Wiki 文件："
+			}
+		},
+		"v3": {
+			"openWindowToggle": "切換視窗開關",
+			"openWindowToggleSub": "啟用後，工作區按鈕可同時開啟和關閉對應的視窗。",
+			"toolbar": "使用 Ktisis 工具欄",
+			"toolbarSub": "Ktisis 工具欄是一種替代 UI 模式，推薦給 v0.2 使用者以及更習慣緊湊單視窗介面的使用者。",
+			"keybinds": "啟用快捷鍵"
+		},
+		"v2": {
+			"editor": {
+				"header": "編輯器設定",
+				"nsfw": "顯示 NSFW 骨骼",
+				"nsfwTooltip": "v0.2 設定：遮蔽 NSFW 骨骼",
+				"incognito": "隱身模式",
+				"incognitoTooltip": "v0.2 設定：隱藏玩家名稱",
+				"incognitoSub": "分享 UI 截圖時建議啟用此選項，以保護玩家隱私。",
+				"toolbar": "使用 Ktisis 工具欄",
+				"toolbarSub": "Ktisis 工具欄是一種替代 UI 模式，推薦給 v0.2 使用者以及更習慣緊湊單視窗介面的使用者。"
+			},
+			"input": {
+				"header": "輸入設定",
+				"detail": "你的 v0.2 按鍵綁定將儘可能遷移到 v0.3 對應項。你可以隨時在「設定 > 輸入」中更新。",
+				"keybinds": "啟用按鍵綁定",
+				"leftClick": "左鍵點選時禁用 GPose 更改目標",
+				"rightClick": "右鍵點選時禁用 GPose 更改目標"
+			},
+			"overlay": {
+				"header": "疊加層設定",
+				"detail": "遷移後可在「設定 > 個性化」中自定義各類骨骼的顏色與透明度。",
+				"drawLines": "在骨骼上繪製線",
+				"drawLinesGizmo": "使用操作柄時在骨骼上繪製線",
+				"drawDotsGizmo": "使用操作柄時在骨骼上繪製點",
+				"allowAxisFlip": "面向相機翻轉軸",
+				"allowAxisFlipTip": "允許 3D 操作柄根據 GPose 相機角度重新定向",
+				"lineThickness": "線條粗細",
+				"lineOpacity": "線條不透明度",
+				"lineOpacityUsing": "使用時的線條不透明度",
+				"dotRadius": "點半徑",
+				"selectTarget": "設為目標時選擇角色",
+				"selectTargetTip": "與 v0.2 不同，Ktisis v0.3 可同時編輯多個角色，相機軌道可獨立於所選角色骨骼。此設定將相機目標與角色選擇連動，更接近 v0.2 的操作習慣。",
+				"dimInactive": "淡化非活動角色的骨骼",
+				"dimInactiveTip": "若同時顯示多個骨架，此設定會對未聚焦的骨架加入透明/淡化效果。遷移後可在疊加層設定中進一步自訂。"
+			},
+			"autosave": {
+				"header": "自動儲存設定",
+				"detail": "遷移後可在「設定 > 自動儲存」中進一步自定義自動儲存的目標資料夾與命名方案。",
+				"enabled": "已啟用",
+				"interval": "間隔",
+				"intervalTip": "每次自動儲存之間等待的秒數",
+				"numToSave": "自動儲存最大數量",
+				"clearOnExit": "退出時清除",
+				"autoOnDC": "斷開連線時自動儲存"
+			},
+			"camera": {
+				"header": "工作相機設定",
+				"sens": "靈敏度",
+				"movSpeed": "移動速度",
+				"fastMulti": "快速倍率",
+				"slowMulti": "慢速倍率",
+				"vertMulti": "垂直倍率"
+			}
+		},
+		"next": "下一步",
+		"finish": "完成"
+	},
+	"bone": {
+		"n_root": "根骨骼 (Root)",
+		"n_hara": "腹部 (Abdomen)",
+		"n_throw": "投擲物 (Throw)",
+		"j_kosi": "腰部 (Waist)",
+		"j_sebo_a": "腰椎 (Lumbar)",
+		"j_asi_a_l": "左腿 (Left Leg)",
+		"j_asi_a_r": "右腿 (Right Leg)",
+		"j_buki2_kosi_l": "左槍套 (Left Holster)",
+		"j_buki2_kosi_r": "右槍套 (Right Holster)",
+		"j_buki_kosi_l": "左刀鞘 (Left Sheathe)",
+		"j_buki_kosi_r": "右刀鞘 (Right Sheathe)",
+		"j_sebo_b": "胸椎 (Thoracic)",
+		"j_sk_b_a_l": "衣服後側左A (Left Cloth Back A)",
+		"j_sk_b_a_r": "衣服後側右A (Right Cloth Back A)",
+		"j_sk_f_a_l": "衣服前側左A (Left Cloth Front A)",
+		"j_sk_f_a_r": "衣服前側右A (Right Cloth Front A)",
+		"j_sk_s_a_l": "衣服左側A (Left Cloth Side A)",
+		"j_sk_s_a_r": "衣服右側A (Right Cloth Side A)",
+		"j_asi_b_l": "左膝蓋 (Left Knee)",
+		"j_asi_b_r": "右膝蓋 (Right Knee)",
+		"j_mune_l": "左乳房 (Left Breast)",
+		"j_mune_r": "右乳房 (Right Breast)",
+		"j_sebo_c": "頸椎 (Cervical)",
+		"j_sk_b_b_l": "衣服後側左B (Left Cloth Back B)",
+		"j_sk_b_b_r": "衣服後側右B (Right Cloth Back B)",
+		"j_sk_f_b_l": "衣服前側左B (Left Cloth Front B)",
+		"j_sk_f_b_r": "衣服前側右B (Right Cloth Front B)",
+		"j_sk_s_b_l": "衣服左側B (Left Cloth Side B)",
+		"j_sk_s_b_r": "衣服右側B (Right Cloth Side B)",
+		"j_asi_c_l": "左小腿 (Left Calf)",
+		"j_asi_c_r": "右小腿 (Right Calf)",
+		"j_buki_sebo_l": "左護胸 (Left Scabbard)",
+		"j_buki_sebo_r": "右護胸 (Right Scabbard)",
+		"j_kubi": "頸部 (Neck)",
+		"j_sako_l": "左鎖骨 (Left Clavicle)",
+		"j_sako_r": "右鎖骨 (Right Clavicle)",
+		"j_sk_b_c_l": "衣服後側左C (Left Cloth Back C)",
+		"j_sk_b_c_r": "衣服後側右C (Right Cloth Back C)",
+		"j_sk_f_c_l": "衣服前側左C (Left Cloth Front C)",
+		"j_sk_f_c_r": "衣服前側右C (Right Cloth Front C)",
+		"j_sk_s_c_l": "衣服左側C (Left Cloth Side C)",
+		"j_sk_s_c_r": "衣服右側C (Right Cloth Side C)",
+		"n_hizasoubi_l": "左護膝 (Left Poleyn)",
+		"n_hizasoubi_r": "右護膝 (Right Poleyn)",
+		"j_asi_d_l": "左腳 (Left Foot)",
+		"j_asi_d_r": "右腳 (Right Foot)",
+		"j_kao": "頭部 (Head)",
+		"j_ude_a_l": "左臂 (Left Arm)",
+		"j_ude_a_r": "右臂 (Right Arm)",
+		"n_kataarmor_l": "左肩甲 (Left Pauldron)",
+		"n_kataarmor_r": "右肩甲 (Right Pauldron)",
+		"j_asi_e_l": "左腳趾 (Left Toes)",
+		"j_asi_e_r": "右腳趾 (Right Toes)",
+		"j_kami_a": "頭髮A (Hair A)",
+		"j_kami_f_l": "左前發 (Left Hair Front)",
+		"j_kami_f_r": "右前發 (Right Hair Front)",
+		"j_mimi_l": "左耳 (Left Ear)",
+		"j_mimi_r": "右耳 (Right Ear)",
+		"j_ude_b_l": "左前臂 (Left Forearm)",
+		"j_ude_b_r": "右前臂 (Right Forearm)",
+		"n_hkata_l": "左肩 (Left Shoulder / Twist)",
+		"n_hkata_r": "右肩 (Right Shoulder / Twist)",
+		"j_kami_b": "頭髮B (Hair B)",
+		"j_te_l": "左手 (Left Hand)",
+		"j_te_r": "右手 (Right Hand)",
+		"n_buki_tate_l": "左盾牌 (Left Shield)",
+		"n_buki_tate_r": "右盾牌 (Right Shield)",
+		"n_ear_a_l": "左耳環A (Left Earring A)",
+		"n_ear_a_r": "右耳環A (Right Earring A)",
+		"n_hhiji_l": "左肘 (Left Elbow / Twist)",
+		"n_hhiji_r": "右肘 (Right Elbow / Twist)",
+		"n_hijisoubi_l": "左護肘 (Left Couter)",
+		"n_hijisoubi_r": "右護肘 (Right Couter)",
+		"n_hte_l": "左手腕 (Left Wrist)",
+		"n_hte_r": "右手腕 (Right Wrist)",
+		"j_hito_a_l": "左食指A (Left Index A)",
+		"j_hito_a_r": "右食指A (Right Index A)",
+		"j_ko_a_l": "左小指A (Left Pinky A)",
+		"j_ko_a_r": "右小指A (Right Pinky A)",
+		"j_kusu_a_l": "左無名指A (Left Ring A)",
+		"j_kusu_a_r": "右無名指A (Right Ring A)",
+		"j_naka_a_l": "左中指A (Left Middle A)",
+		"j_naka_a_r": "右中指A (Right Middle A)",
+		"j_oya_a_l": "左拇指A (Left Thumb A)",
+		"j_oya_a_r": "右拇指A (Right Thumb A)",
+		"n_buki_l": "左武器 (Left Weapon)",
+		"n_buki_r": "右武器 (Right Weapon)",
+		"n_ear_b_l": "左耳環B (Left Earring B)",
+		"n_ear_b_r": "右耳環B (Right Earring B)",
+		"j_hito_b_l": "左食指B (Left Index B)",
+		"j_hito_b_r": "右食指B (Right Index B)",
+		"j_ko_b_l": "左小指B (Left Pinky B)",
+		"j_ko_b_r": "右小指B (Right Pinky B)",
+		"j_kusu_b_l": "左無名指B (Left Ring B)",
+		"j_kusu_b_r": "右無名指B (Right Ring B)",
+		"j_naka_b_l": "左中指B (Left Middle B)",
+		"j_naka_b_r": "右中指B (Right Middle B)",
+		"j_oya_b_l": "左拇指B (Left Thumb B)",
+		"j_oya_b_r": "右拇指B (Right Thumb B)",
+		"n_sippo_a": "尾巴A (Tail A)",
+		"n_sippo_b": "尾巴B (Tail B)",
+		"n_sippo_c": "尾巴C (Tail C)",
+		"n_sippo_d": "尾巴D (Tail D)",
+		"n_sippo_e": "尾巴E (Tail E)",
+		"j_ago": "下頜 (Jaw)",
+		"j_sita": "舌頭 (Tongue)",
+		"j_f_dmab_l": "左下眼瞼 (Left Lower Eyelid)",
+		"j_f_dmab_r": "右下眼瞼 (Right Lower Eyelid)",
+		"j_f_eye_l": "左眼 (Left Eye)",
+		"j_f_eye_r": "右眼 (Right Eye)",
+		"j_f_hana": "鼻子 (Nose)",
+		"j_f_lip_l": "左唇 (Left Lips)",
+		"j_f_lip_r": "右唇 (Right Lips)",
+		"j_f_memoto": "額骨橋 (Bridge)",
+		"j_f_miken_l": "左眉心 (Left Brow)",
+		"j_f_miken_r": "右眉心 (Right Brow)",
+		"j_f_ulip_a": "上唇A (Upper Lip A)",
+		"j_f_umab_l": "左上眼瞼 (Left Upper Eyelid)",
+		"j_f_umab_r": "右上眼瞼 (Right Upper Eyelid)",
+		"j_f_dlip_a": "下唇A (Lower Lip A)",
+		"j_f_ulip_b": "上唇B (Upper Lip B)",
+		"j_f_dlip_b": "下唇B (Lower Lip B)",
+		"j_zera_a_l": "左耳部A (Left Ear 1A)",
+		"j_zera_a_r": "右耳部A (Right Ear 1A)",
+		"j_zera_b_l": "左耳部B (Left Ear 1B)",
+		"j_zera_b_r": "右耳部B (Right Ear 1B)",
+		"j_zerb_a_l": "左耳部A (Left Ear 2A)",
+		"j_zerb_a_r": "右耳部A (Right Ear 2A)",
+		"j_zerb_b_l": "左耳部B (Left Ear 2B)",
+		"j_zerb_b_r": "右耳部B (Right Ear 2B)",
+		"j_zerc_a_l": "左耳部A (Left Ear 3A)",
+		"j_zerc_a_r": "右耳部A (Right Ear 3A)",
+		"j_zerc_b_l": "左耳部B (Left Ear 3B)",
+		"j_zerc_b_r": "右耳部B (Right Ear 3B)",
+		"j_zerd_a_l": "左耳部A (Left Ear 4A)",
+		"j_zerd_a_r": "右耳部A (Right Ear 4A)",
+		"j_zerd_b_l": "左耳部B (Left Ear 4B)",
+		"j_zerd_b_r": "右耳部B (Right Ear 4B)",
+		"j_f_hige_l": "左鬍鬚 (Left Whiskers)",
+		"j_f_hige_r": "右鬍鬚 (Right Whiskers)",
+		"j_f_uago": "上唇A (Upper Lip A)",
+		"j_f_ulip": "上唇B (Upper Lip B)",
+		"n_f_lip_l": "左唇 (Left Lips)",
+		"n_f_lip_r": "右唇 (Right Lips)",
+		"n_f_ulip_l": "左上唇 (Left Upper Lip)",
+		"n_f_ulip_r": "右上唇 (Right Upper Lip)",
+		"j_f_dlip": "下唇 (Lower Lip)",
+		"j_ex_met_va": "面罩 (Visor)",
+		"mh_n_hara": "主手 (Main Hand)",
+		"oh_n_hara": "副手 (Off Hand)",
+		"j_half_l": "左半部分 (Left Half)",
+		"j_half_r": "右半部分 (Right Half)",
+		"j_f_ago": "下頜",
+		"j_f_dago": "僅下頜",
+		"j_f_bero_01": "舌頭A",
+		"j_f_bero_02": "舌頭B",
+		"j_f_bero_03": "舌頭C",
+		"j_f_hagukiup": "上牙",
+		"j_f_hagukidn": "下牙",
+		"j_f_dlip_01_l": "下唇左中部A",
+		"j_f_dlip_02_l": "下唇左中部B",
+		"j_f_dlip_01_r": "下唇右中部A",
+		"j_f_dlip_02_r": "下唇右中部B",
+		"j_f_ulip_01_l": "上唇左中部A",
+		"j_f_ulip_02_l": "上唇左中部B",
+		"j_f_ulip_01_r": "上唇右中部A",
+		"j_f_ulip_02_r": "上唇右中部B",
+		"j_f_dmlip_01_l": "下唇左側A",
+		"j_f_dmlip_02_l": "下唇左側B",
+		"j_f_dmlip_01_r": "下唇右側A",
+		"j_f_dmlip_02_r": "下唇右側B",
+		"j_f_umlip_01_l": "上唇左側A",
+		"j_f_umlip_02_l": "上唇左側B",
+		"j_f_umlip_01_r": "上唇右側A",
+		"j_f_umlip_02_r": "上唇右側B",
+		"j_f_uslip_l": "上唇左角A",
+		"j_f_dslip_l": "下唇左角A",
+		"j_f_uslip_r": "上唇右角A",
+		"j_f_dslip_r": "下唇右角A",
+		"j_f_mab_l": "左眼皮",
+		"j_f_mab_r": "右眼皮",
+		"j_f_eyepuru_l": "左眼拉動",
+		"j_f_eyepuru_r": "右眼拉動",
+		"j_f_mabup_01_l": "左上眼皮",
+		"j_f_mabdn_01_l": "左下眼皮",
+		"j_f_mabup_01_r": "右上眼皮",
+		"j_f_mabdn_01_r": "右下眼皮",
+		"j_f_mabup_02out_l": "左上外眼角",
+		"j_f_mabdn_02out_l": "左下外眼角",
+		"j_f_mabup_03in_l": "左上內眼角",
+		"j_f_mabdn_03in_l": "左下內眼角",
+		"j_f_mabup_02out_r": "右上外眼角",
+		"j_f_mabdn_02out_r": "右下外眼角",
+		"j_f_mabup_03in_r": "右上內眼角",
+		"j_f_mabdn_03in_r": "右下內眼角",
+		"j_f_mayu_l": "左外眉",
+		"j_f_mayu_r": "右外眉",
+		"j_f_mmayu_l": "左中眉",
+		"j_f_mmayu_r": "右中眉",
+		"j_f_miken_01_l": "左內眉A",
+		"j_f_miken_02_l": "左內眉B",
+		"j_f_miken_01_r": "右內眉A",
+		"j_f_miken_02_r": "右內眉B",
+		"j_f_face": "面部",
+		"j_f_hoho_l": "左上頰",
+		"j_f_hoho_r": "右上頰",
+		"j_f_dhoho_l": "左中頰",
+		"j_f_dhoho_r": "右中頰",
+		"j_f_shoho_l": "左下頰",
+		"j_f_shoho_r": "右下頰",
+		"j_f_dmemoto_l": "左前頰",
+		"j_f_dmemoto_r": "右前頰",
+		"j_f_uhana": "鼻樑",
+		"j_f_hana_l": "左鼻孔",
+		"j_f_hana_r": "右鼻孔",
+		"j_f_dmiken_l": "左鼻樑",
+		"j_f_dmiken_r": "右鼻樑",
+		"j_ex_met_vb": "面甲",
+		"iv_asi_oya_a_l": "IVCS 左腳大趾 A",
+		"iv_asi_oya_b_l": "IVCS 左腳大趾 B",
+		"iv_asi_hito_a_l": "IVCS 左腳食趾 A",
+		"iv_asi_hito_b_l": "IVCS 左腳食趾 B",
+		"iv_asi_naka_a_l": "IVCS 左腳趾中節 A",
+		"iv_asi_naka_b_l": "IVCS 左腳趾中節 B",
+		"iv_asi_kusu_a_l": "IVCS 左腳無名趾 A",
+		"iv_asi_kusu_b_l": "IVCS 左腳無名趾 B",
+		"iv_asi_ko_a_l": "IVCS 左腳小趾 A",
+		"iv_asi_ko_b_l": "IVCS 左腳小趾 B",
+		"iv_asi_oya_a_r": "IVCS 右腳大趾 A",
+		"iv_asi_oya_b_r": "IVCS 右腳大趾 B",
+		"iv_asi_hito_a_r": "IVCS 右腳食趾 A",
+		"iv_asi_hito_b_r": "IVCS 右腳食趾 B",
+		"iv_asi_naka_a_r": "IVCS 右腳趾中節 A",
+		"iv_asi_naka_b_r": "IVCS 右腳趾中節 B",
+		"iv_asi_kusu_a_r": "IVCS 右腳無名趾 A",
+		"iv_asi_kusu_b_r": "IVCS 右腳無名趾 B",
+		"iv_asi_ko_a_r": "IVCS 右腳小趾 A",
+		"iv_asi_ko_b_r": "IVCS 右腳小趾 B",
+		"iv_hito_c_l": "IVCS 左手食指 C",
+		"iv_naka_c_l": "IVCS 左手中指 C",
+		"iv_kusu_c_l": "IVCS 左手無名指 C",
+		"iv_ko_c_l": "IVCS 左手小指 C",
+		"iv_hito_c_r": "IVCS 右手食指 C",
+		"iv_naka_c_r": "IVCS 右手中指 C",
+		"iv_kusu_c_r": "IVCS 右手無名指 C",
+		"iv_ko_c_r": "IVCS 右手小指 C",
+		"iv_nitoukin_l": "IVCS 左肱二頭肌",
+		"iv_nitoukin_r": "IVCS 右肱二頭肌",
+		"iv_c_mune_l": "IVCS 左胸",
+		"iv_c_mune_r": "IVCS 右胸",
+		"iv_kougan_l": "IVCS 左陰囊",
+		"iv_kougan_r": "IVCS 右陰囊",
+		"iv_ochinko_a": "IVCS 陰莖 A",
+		"iv_ochinko_b": "IVCS 陰莖 B",
+		"iv_ochinko_c": "IVCS 陰莖 C",
+		"iv_ochinko_d": "IVCS 陰莖 D",
+		"iv_ochinko_e": "IVCS 陰莖 E",
+		"iv_ochinko_f": "IVCS 陰莖 F",
+		"iv_kuritto": "IVCS 陰蒂",
+		"iv_inshin_l": "IVCS 左陰唇",
+		"iv_inshin_r": "IVCS 右陰唇",
+		"iv_omanko": "IVCS 陰道",
+		"iv_koumon": "IVCS 肛門",
+		"iv_koumon_l": "IVCS 肛門左側",
+		"iv_koumon_r": "IVCS 肛門右側",
+		"iv_shiri_l": "IVCS 左臀",
+		"iv_shiri_r": "IVCS 右臀"
+	},
+	"boneCategory": {
+		"Head": "頭部",
+		"Hair": "頭髮",
+		"Ears": "耳朵",
+		"LeftEar": "左耳",
+		"RightEar": "右耳",
+		"Face": "臉部",
+		"Brow": "額頭",
+		"LeftBrow": "左眉",
+		"RightBrow": "右眉",
+		"Eyebrows": "眉毛",
+		"Eyes": "眼睛",
+		"LeftEye": "左眼",
+		"RightEye": "右眼",
+		"Eyelids": "眼瞼",
+		"LeftEyelid": "左眼眼瞼",
+		"RightEyelid": "右眼眼瞼",
+		"Mouth": "嘴",
+		"UpperMouth": "嘴（上）",
+		"LowerMouth": "嘴（下）",
+		"UpperLip": "上唇",
+		"LowerLip": "下唇",
+		"Cheeks": "臉頰",
+		"LeftCheek": "左臉頰",
+		"RightCheek": "右臉頰",
+		"Body": "身體",
+		"Arms": "手臂",
+		"LeftArm": "左臂",
+		"LeftHand": "左手",
+		"RightArm": "右臂",
+		"RightHand": "右手",
+		"Spine": "脊柱",
+		"Breasts": "乳房",
+		"Legs": "腿部",
+		"LeftLeg": "左腿",
+		"LeftFoot": "左足",
+		"RightLeg": "右腿",
+		"RightFoot": "右足",
+		"Tail": "尾巴",
+		"Clothing": "服裝",
+		"Cloth": "衣服",
+		"Earring": "耳飾",
+		"Weapons": "武器",
+		"Other": "其他",
+		"LeftHandIvcs": "IVCS 左手",
+		"RightHandIvcs": "IVCS 右手",
+		"BreastsIvcs": "IVCS 乳房",
+		"LeftFootIvcs": "IVCS 左足",
+		"RightFootIvcs": "IVCS 右足",
+		"GenitalsIvcs": "IVCS 生殖器",
+		"PenisIvcs": "IVCS 陰莖",
+		"VaginaIvcs": "IVCS 陰道",
+		"BottomIvcs": "IVCS 下體",
+		"SkelomaeWings": "Skelomae 翅膀",
+		"SkelomaeWingsLeft": "Skelomae 左側翅膀",
+		"SkelomaeWingsRight": "Skelomae 右側翅膀",
+		"SkelomaeCreatures": "Skelomae 生物",
+		"SkelomaeCreaturesLamia": "蛇女",
+		"SkelomaeCreaturesGenetals": "生殖器",
+		"SkelomaeCreaturesCentaur": "半人馬",
+		"SkelomaeCreaturesCentaurBody": "半人馬身體",
+		"SkelomaeCreaturesCentaurBodyFrontLegs": "前腿",
+		"SkelomaeCreaturesCentaurBodyBackLegs": "後腿",
+		"SkelomaeCreaturesCentaurTail": "尾巴",
+		"CustomArms": "自定義骨架手臂",
+		"CustomAbdomen": "自定義骨架腹部",
+		"CustomLegs": "自定義骨架腿部"
+	},
+	"lightType": {
+		"Directional": "太陽光（定向光）",
+		"PointLight": "點光源",
+		"SpotLight": "聚光燈",
+		"AreaLight": "區域光"
+	},
+	"lightFalloff": {
+		"Linear": "線性衰減",
+		"Quadratic": "二次衰減",
+		"Cubic": "三次衰減"
+	},
+	"misc": {
+		"command_desc": "切換 Ktisis 主視窗。"
+	},
+	"background": {
+		"Basic": "基礎",
+		"Thought": "思考",
+		"Echo": "回響",
+		"Computer": "終端",
+		"Yell": "呼喊",
+		"Parchment": "羊皮紙",
+		"Dragonspeak": "龍語",
+		"Linkpearl": "通訊珠",
+		"Narration": "旁白",
+		"Say": "說話",
+		"Party": "小隊",
+		"Tell": "悄悄話",
+		"Alliance": "團隊",
+		"Shout": "喊話",
+		"FC": "部隊",
+		"LS": "通訊貝",
+		"CWLS": "跨服通訊貝",
+		"Novice": "新人",
+		"PVP": "對戰"
+	},
+	"gradient": {
+		"Default": "預設",
+		"Lime": "青檸",
+		"Orange": "橙色",
+		"Violet": "紫羅蘭",
+		"SkyBlue": "天藍",
+		"Clay": "黏土",
+		"LightJeans": "淺藍牛仔",
+		"GrassGreen": "草綠",
+		"Gray": "灰色",
+		"Pink": "粉色",
+		"DarkJeans": "深藍牛仔",
+		"Green": "綠色",
+		"Purple": "紫色",
+		"Brown": "棕色",
+		"CloudyBlue": "雲藍",
+		"RoyalPurple": "皇室紫"
+	},
+	"cursor": {
+		"None": "無",
+		"Pin": "固定",
+		"Loop": "循環"
+	},
+	"status": {
+		"None": "無",
+		"Buff": "增益",
+		"Debuff": "減益",
+		"Falloff": "衰減"
+	},
+	"hints": {
+		"1": "Ktisis 可以自動儲存你的姿勢，即使斷線也沒問題！可在設定視窗中啟用。",
+		"2": "「Ktisis」源自古希臘語，意為創造、創立或建造。其形容詞形式為「ktistic」。",
+		"3": "擺姿勢要負責任！隱身模式會在拍攝 UI 時隱藏所有玩家名稱。",
+		"4": "打開燈光吧！Ktisis 可以建立自己的燈光，也可編輯原版 GPose 視窗建立的燈光。",
+		"5": "工作區中可同時容納超過 40 個角色——此限制不適用於燈光及其他實體。",
+		"6": "你知道嗎？SimpleTweaks 有暫時提高解析度的選項，可拍出更精細的截圖！",
+		"7": "武器會附著在玩家骨架的特定骨骼上，但你也可以把玩家和其他物件附著到不同骨骼。",
+		"8": "Ctrl+點擊可同時選擇多個物件；在工作區中 Shift+點擊可選擇兩點之間的所有實體。",
+		"9": "選取多個實體時，不同的變換類型（平行、反向、鏡像）可讓你同時修改它們。",
+		"10": "新建角色不必是玩家角色的複本——你也可以從大世界匯入其他 NPC 或玩家。",
+		"11": "厭倦了坐下又站起重設動畫？角色編輯器可讓你重設或選擇任意動畫/閒置姿勢，套用到任何角色。",
+		"12": "Ahmi 是姿勢檢視的預設角色，你可在設定視窗用範本換成自己的圖像。",
+		"13": "許多 ReShade 安裝包含色度鍵（Chroma Key）著色器，可為圖像摳出完美透明背景。",
+		"14": "即使姿勢擺到一半，也能透過角色編輯器的姿勢表情功能載入原版面部表情。",
+		"15": "參考姿勢可直接疊加在遊戲中，幫你把角度調得恰到好處。",
+		"16": "相機編輯器包含正交檢視選項，可用移軸視角拍攝場景。",
+		"17": "NPC 外觀可像 .chara 檔案一樣匯入，或透過 Glamourer 等其他外掛套用。",
+		"18": "Ktisis 可透過 IPC 與其他外掛協作，包括：Penumbra 合集、Glamourer 設計與 C+ 範本。",
+		"19": "疊加層氣泡（以及這些提示！）使用 KamiToolKit 以原版風格繪製，與 VanillaPlus 外掛同源。",
+		"20": "有建議或遇到 Bug？歡迎發到我們的 Discord 伺服器！",
+		"21": "聚光燈與區域光可在前方載入貼圖以套用不同顏色與效果——我們稱之為遮光板（gobo）！",
+		"22": "點擊平移操作柄的中心點可在 3D 中移動角色——按住 Shift 可吸附到世界地形！",
+		"23": "角色編輯器的動畫控制可把動畫套用到身體不同部位，例如嘴唇的說話動畫。",
+		"24": "若使用會生成道具的情感動作（如 /tomestone），可用 Ktisis 像擺武器一樣擺姿勢。",
+		"25": "角色編輯器的裝備頁也可裝備非武器道具，例如：職業水晶、酒瓶、書籍，以及尼德霍格之眼。",
+		"26": "Ktisis 編輯的大世界物件僅為暫時變更——碰撞箱與碰撞資料也會保持原樣。",
+		"27": "不同水體對水編輯器滑桿的用途各不相同——動手試試，看看哪項影響哪裡！",
+		"28": "反向運動學（IK）可在姿勢模式內外改變肢體位置，即使動畫正在播放也行。",
+		"29": "非人類角色也可能相容視線控制，包括寵物與魔物。",
+		"30": "可在「設定 > 個人化」中變更 Ktisis 疊加層的多種顏色（操作柄、骨骼、工作區分類）。",
+		"31": "頭髮與面部屬於不同於主體的局部骨架，部分頭盔與胸甲亦然。",
+		"32": "擺姿勢用的球/箭頭叫操作柄（Gizmo），由 ImGui 的 ImGuizmo 工具繪製！",
+		"33": "可用骨骼偏移變更骨骼顯示位置，對面部骨骼等密集簇特別有用。",
+		"34": "左鍵點擊可關閉這些提示，也可在設定中完全停用。",
+		"35": "滾輪可逐格調節 Ktisis 彩色變換滑桿；按住 Shift 或 Control 可加快/減慢。",
+		"36": "自 FFXIV 金曦之遺輝更新起，面部表情姿勢可能僅在建立時所用的種族/性別上正確載入。",
+		"37": "原版 GPose 選單有新增貼紙的按鈕——試試不同圖示、表情與文字吧。",
+		"38": "這些提示搭配顯示的角色頭像多達 280 多種。",
+		"39": "視窗太多？試試設定選單中的替代 Ktisis 工具列介面！",
+		"40": "可從世界疊加層將燈光與角色複製到場景，就像複製物件一樣。",
+		"41": "可讓目前未選取或非相機目標的角色骨骼更透明；請查看疊加層設定！",
+		"42": "物件編輯器的表情頁可用滑桿混合，以修改或建立新的面部表情。",
+		"43": "可在疊加層設定中保持預設顯示在所選或相機目標角色上。",
+		"44": "我們有自己的 Wiki！造訪 docs.ktisis.tools 閱讀或貢獻。",
+		"45": "可用指令 /xldata icon 在 Dalamud 中瀏覽這些頭像以及許多其他原版圖示。",
+		"46": "Squapes 是均衡早餐的一部分。",
+		"47": "相機編輯器的追蹤控制可讓 GPose 相機聚焦任意骨骼，甚至多塊骨骼的組合。試試看！"
+	}
+}

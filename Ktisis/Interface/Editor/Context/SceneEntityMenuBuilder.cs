@@ -68,6 +68,8 @@ public class SceneEntityMenuBuilder {
 				}
 
 				sub.Separator()
+					.Action(Ktisis.Locale.Translate("preset_edit.toggle_other"), () => actorEntity.ToggleOtherPreset(true))
+					.Action(Ktisis.Locale.Translate("preset_edit.clear"), () => actorEntity.ClearVisibility())
 					.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.presets_save"), () => this.Ui.OpenSavePreset(actorEntity));
 			});
 	}
@@ -89,14 +91,14 @@ public class SceneEntityMenuBuilder {
 
 			// rename delete to Untrack if we have a worldlight tied to the lightentity in this menu
 			if (this._entity is LightEntity { WorldLight: not null })
-				menu.Action("Untrack", () => deletable.Delete());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => this.DoDelete(deletable));
 			else
-				menu.Action("Delete", () => deletable.Delete());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.delete"), () => this.DoDelete(deletable));
 		}
 		if (this._entity is ObjectEntity obj) {
 			menu.Separator();
-			menu.Action("Reset", () => obj.Reset());
-			menu.Action("Untrack", () => obj.Remove());
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
 		}
 	}
 	
@@ -117,7 +119,14 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void OpenEditor() => this.Ui.OpenEditorFor(this._entity);
-	
+
+	private void DoDelete(IDeletable deletable) {
+		// delete the individually action'd object and any others that are currently multi-selected
+		deletable.Delete();
+		foreach (var del in this._ctx.Selection.GetSelected().OfType<IDeletable>().Where(d => d.CanDelete))
+			del.Delete();
+	}
+
 	// Actors
 
 	private unsafe void BuildActorMenu(ContextMenuBuilder menu, ActorEntity actor) {

@@ -21,7 +21,7 @@ public enum SelectMode {
 	Force
 }
 
-public delegate void SelectChangedHandler(ISelectManager sender);
+public delegate void SelectChangedHandler(ISelectManager sender, bool multi);
 
 public interface ISelectManager {
 	public event SelectChangedHandler Changed;
@@ -42,13 +42,14 @@ public interface ISelectManager {
 	public void Unselect(SceneEntity entity);
 	
 	public void Clear();
+	public void TryUpdateSelectedSiblings();
 }
 
 public class SelectManager : ISelectManager {
 	private readonly IEditorContext _context;
 	private readonly GPoseService _gpose;
 
-	private readonly Event<Action<ISelectManager>> _changed = new();
+	private readonly Event<Action<ISelectManager, bool>> _changed = new();
 	public event SelectChangedHandler Changed {
 		add => this._changed.Add(value.Invoke);
 		remove => this._changed.Remove(value.Invoke);
@@ -71,7 +72,7 @@ public class SelectManager : ISelectManager {
 	public void Update() {
 		// remove any invalid entities and flag selection changed if we do
 		var remove = this.Selected.RemoveAll(item => !item.IsValid);
-		if (remove > 0) this.InvokeChanged();
+		if (remove > 0) this.InvokeChanged(remove > 1);
 
 		// check SelectOnTarget and update selection if we should
 		if (this._context.Config.Editor.SelectOnTarget && this.Targeted is not null && this._gpose.GPoseTarget is not null && !this.Targeted.Equals(this._gpose.GPoseTarget)) {
@@ -153,7 +154,7 @@ public class SelectManager : ISelectManager {
 	public void Select(SceneEntity entity) {
 		this.Selected.Remove(entity);
 		this.Selected.Add(entity);
-		this.InvokeChanged();
+		this.InvokeChanged(false);
 	}
 
 	public void Select(SceneEntity entity, SelectMode mode) {
@@ -162,7 +163,7 @@ public class SelectManager : ISelectManager {
 				return;
 			this.Selected.Clear();
 			this.Selected.Add(entity);
-			this.InvokeChanged();
+			this.InvokeChanged(false);
 			return;
 		}
 		
@@ -172,29 +173,66 @@ public class SelectManager : ISelectManager {
 		if (!modeMulti)
 			this.Selected.Clear();
 
-		if (!isSelect || !modeMulti && isMulti)
+		if (!isSelect || !modeMulti && isMulti) {
 			this.Selected.Add(entity);
-		else
+			this.TrySiblingSelect(entity, true);
+		} else {
 			this.Selected.Remove(entity);
-		
-		this.InvokeChanged();
+			this.TrySiblingSelect(entity, false);
+		}
+
+		this.InvokeChanged(this.Selected.Count > 1 || modeMulti);
 	}
 
 	public void Unselect(SceneEntity entity) {
 		if (this.Selected.Remove(entity))
-			this.InvokeChanged();
+			this.InvokeChanged(false);
 	}
 
 	public void Clear() {
+		var count = this.Selected.Count;
 		this.Selected.Clear();
-		this.InvokeChanged();
+		this.InvokeChanged(count > 1);
+	}
+
+	public void TryUpdateSelectedSiblings() {
+		var entities = this.GetSelected().ToList(); // copy to local var to avoid changing list mid-enumeration
+		foreach (var entity in entities)
+			this.TrySiblingSelect(entity, true);
+
+		this.InvokeChanged(true);
+	}
+
+	// called whenever a selection is added or removed to update its paired sibling(s) if necessary
+	private void TrySiblingSelect(SceneEntity entity, bool select) {
+		if (!this._context.Config.Editor.PersistentSiblingLink) return;
+		List<BoneNode> bones = [];
+		switch (entity) {
+			case BoneNode bone:
+				bones.Add(bone);
+				break;
+			case SkeletonGroup group:
+				bones.AddRange(group.GetIndividualBones());
+				break;
+		}
+
+		foreach (var sibling in bones.Select(bone => bone.Pose.TryResolveSibling(bone))) {
+			if (sibling is null) return;
+			if (select && this.Selected.Contains(sibling)) return; // break if trying to add when already present
+			if (!select && !this.Selected.Contains(sibling)) return; // break if trying to remove when not present
+
+			if (select)
+				this.Selected.Add(sibling);
+			else
+				this.Selected.Remove(sibling);
+		}
 	}
 	
 	// Event invocation
 
-	private void InvokeChanged() {
+	private void InvokeChanged(bool multi) {
 		try {
-			this._changed.Invoke(this);
+			this._changed.Invoke(this, multi);
 		} catch (Exception err) {
 			Ktisis.Log.Error(err.ToString());
 		}

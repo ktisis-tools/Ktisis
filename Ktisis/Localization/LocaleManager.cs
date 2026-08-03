@@ -22,9 +22,10 @@ public class LocaleManager : IDisposable {
 	
 	private readonly LocaleDataLoader Loader = new();
 
-	private List<List<string>> CompatibleLanguages = new List<List<string>>() {
-		new List<string>(){"zh_CN", "zh_SG"},
-		new List<string>(){"zh_TW", "zh_MO", "zh_HK"}
+	private static Dictionary<string, string> localeFallbackMap = new() {
+		{ "zh_SG", "zh_CN" },
+		{ "zh_MO", "zh_TW" },
+		{ "zh_HK", "zh_TW" },
 	};
 
 	public List<LocaleMetaData> AvailableLocales = new();
@@ -40,55 +41,62 @@ public class LocaleManager : IDisposable {
 		this._dpi = dpi;
 	}
 
+	private Configuration? config => this._cfg._isLoaded ? this._cfg.File : null;
+
 	public void Initialize(ConfigManager cfg) {
 		this._cfg = cfg;
-		// TODO: Listen for locale changes.
-		this.HandleLanguageChangeDelegate();
 		foreach (var resource in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(s => s.StartsWith("Ktisis.Localization.Data"))) {
 			if(this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
 		}
-		if(cfg is { _isLoaded: true, File.Locale.AutoDetect: true })
-			this.LanguageChanged(this._dpi.UiLanguage);
-		else if (!cfg._isLoaded) {
-			this.LoadLocale("en_US");
-		} else {
-			this.LoadLocale(this._cfg.File.Locale.LocaleId);
-			if(this._cfg.File.Locale.LocaleId != "en_US")
-				this.LoadFallbackLocale();
-		}
+		cfg.WithConfigLoaded(config => {
+			if(config.Locale.AutoDetect) {
+				this.HandleLanguageChangeDelegate();
+				/* (n.b. the above method will call LanguageChanged immediately) */
+			} else {
+				/* we need to check for available locales here in case anyone has an old configuration that names an unavailable locale */
+				string targetLocale = this.GetBestAvailableLocale(config.Locale.LocaleId) ?? "en_US";
+				this.LoadLocale(targetLocale);
+				/* (n.b. we don't write the locale back to the config file in case the user's preferred locale becomes available again in a new version) */
 
+				if(targetLocale != "en_US")
+					this.LoadFallbackLocale();
+			}
+		});
 	}
 
 	public void HandleLanguageChangeDelegate() {
 		this._dpi.LanguageChanged -= this.LanguageChanged;
-		if (this._cfg is { File.Locale.AutoDetect: true }) {
+		if (this.config?.Locale.AutoDetect ?? false) {
 			this.LanguageChanged(this._dpi.UiLanguage);
 			this._dpi.LanguageChanged += this.LanguageChanged;
 		}
 	}
-	public void LanguageChanged(string lang) {
+	public void LanguageChanged(string uiLanguage) {
 		//TODO: Check for default names on Camera and Actors to repopulate
-		var localeFile = lang + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
-		if (this.Data?.MetaData.TechnicalName.Equals(localeFile)?? false) {
-			this._cfg.File.Locale.LocaleId = localeFile;
-			this.LoadLocale(localeFile);
-		} else if(this.CompatibleLanguages.Any(l => l.Contains(localeFile) && this.AvailableLocales.Any(p=> p.TechnicalName == l.First()))) {
-			var locale = this.CompatibleLanguages.First(l => l.Contains(localeFile)).First();
-			this._cfg.File.Locale.LocaleId = locale;
-			this.LoadLocale(locale);
-		} else if (this.AvailableLocales.Any(l => l.TechnicalName == localeFile) && this.CompatibleLanguages.All(l => !l.Contains(localeFile))) {
-			this._cfg.File.Locale.LocaleId = localeFile;
-			this.LoadLocale(localeFile);
-		} else if (this.AvailableLocales.Any(l => l.TechnicalName.StartsWith(lang))) {
-			this._cfg.File.Locale.LocaleId = this.AvailableLocales.First(l => l.TechnicalName.StartsWith(lang)).TechnicalName;
-			this.LoadLocale(this._cfg.File.Locale.LocaleId);
-		} else {
-			this._cfg.File.Locale.LocaleId = "en_US";
-			this.LoadLocale("en_US");
+		if(this.config is {} config) {
+			/* Sanity check */
+			if(!config.Locale.AutoDetect) return;
+			string envLocale = uiLanguage + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
+			string targetLocale = this.GetBestAvailableLocale(envLocale) ?? "en_US";
+			config.Locale.LocaleId = targetLocale;
+			this.LoadLocale(targetLocale);
 		}
-			
 	}
+
+	private string? GetBestAvailableLocale(string inputLocale) {
+		var availableLocales = this.AvailableLocales.Select(x => x.TechnicalName).ToHashSet();
+		if(availableLocales.Contains(inputLocale)) return inputLocale;
+		if(localeFallbackMap.TryGetValue(inputLocale, out var remappedLocale)) {
+			if(availableLocales.Contains(inputLocale)) return remappedLocale;
+		}
+		var languageMatch = inputLocale.Split("_")[0] + "_";
+		var languageFallback = this.AvailableLocales.FirstOrDefault(x => x.TechnicalName.StartsWith(languageMatch));
+		if(languageFallback != null) return languageFallback.TechnicalName;
+		return null;
+	}
+
+
 	// Localization methods
 
 	public string Translate(string handle, Dictionary<string, string>? parameters = null) {
@@ -123,7 +131,7 @@ public class LocaleManager : IDisposable {
 
 	public string GetBoneName(string name) {
 		var key = $"bone.{name}";
-		var friendly_bone_names = this._cfg.File.Categories.ShowFriendlyBoneNames;
+		var friendly_bone_names = this.config?.Categories.ShowFriendlyBoneNames ?? false;
 		return friendly_bone_names && this.HasTranslationFor(key) ? this.Translate(key) : name;
 	}
 
@@ -141,6 +149,6 @@ public class LocaleManager : IDisposable {
 	}
 
 	public void Dispose() {
-			this._dpi.LanguageChanged -= this.LanguageChanged;
-  }
+		this._dpi.LanguageChanged -= this.LanguageChanged;
+	}
 }

@@ -157,40 +157,41 @@ public class SceneWindow : KtisisWindow {
 				ImGui.BeginGroup();
 				ImGui.TextUnformatted($"From: {this._source.PlaceName.Value.Name}");
 				ImGui.PopStyleColor();
-				if (ImGui.CollapsingHeader($"Actors {actors}")) {
+				if(actors > 0)
+					if (ImGui.CollapsingHeader($"Actors {actors}")) {
 
-					if (this._sceneFile is { Actors.Count: > 0 }) {
-						ImGui.Checkbox("Load actors", ref this._includeActors);
-						if (this._includeActors) {
-							ImGui.SameLine();
-							ImGui.Checkbox("Keep existing actors", ref this._preserveActors);
-						}
-
-						ImGui.Indent();
-						foreach (var actorInfo in this._sceneFile!.Actors) {
-
-							if (!this._ctx.Config.Editor.IncognitoPlayerNames)
-								ImGui.TextUnformatted($"{actorInfo.Chara.Nickname}");
-							else
-								ImGui.TextUnformatted($"A {((int)actorInfo.Chara.Race!.Value <= 8 ? (actorInfo.Chara.Gender == Gender.Masculine ? "\u2642" : "\u2640") + actorInfo.Chara.Race.ToString() : "Non-Humanoid Actor")} ");
-							if (actorInfo.MCDF != string.Empty && !this._sceneDataService.ValidMCDFPath(actorInfo)) {
+						if (this._sceneFile != null) {
+							ImGui.Checkbox("Load actors", ref this._includeActors);
+							if (this._includeActors) {
 								ImGui.SameLine();
-								using (ImRaii.PushFont(UiBuilder.IconFont))
-									ImGui.TextColored(ImGuiColors.DalamudYellow, FontAwesomeIcon.ExclamationTriangle.ToIconString());
-								if (ImGui.IsItemHovered())
-									using (ImRaii.Tooltip())
-										ImGui.TextUnformatted("MCDF wasnt found for this character\nPlease try applying manually after loading the scene");
+								ImGui.Checkbox("Keep existing actors", ref this._preserveActors);
+							}
+
+							ImGui.Indent();
+							foreach (var actorInfo in this._sceneFile!.Actors) {
+
+								if (!this._ctx.Config.Editor.IncognitoPlayerNames)
+									ImGui.TextUnformatted($"{actorInfo.Chara.Nickname}");
+								else
+									ImGui.TextUnformatted($"A {((int)actorInfo.Chara.Race!.Value <= 8 ? (actorInfo.Chara.Gender == Gender.Masculine ? "\u2642" : "\u2640") + actorInfo.Chara.Race.ToString() : "Non-Humanoid Actor")} ");
+								if (actorInfo.MCDF != string.Empty && !this._sceneDataService.ValidMCDFPath(actorInfo)) {
+									ImGui.SameLine();
+									using (ImRaii.PushFont(UiBuilder.IconFont))
+										ImGui.TextColored(ImGuiColors.DalamudYellow, FontAwesomeIcon.ExclamationTriangle.ToIconString());
+									if (ImGui.IsItemHovered())
+										using (ImRaii.Tooltip())
+											ImGui.TextUnformatted("MCDF wasnt found for this character\nPlease try applying manually after loading the scene");
+								}
+							}
+						} else {
+							ImGui.Checkbox("Save actors", ref this._includeActors);
+							ImGui.Indent();
+							foreach (var charaInfo in this._ctx.Scene.Children.Where(entity => entity is CharaEntity)) {
+								ImGui.TextUnformatted($"{charaInfo.Name}");
 							}
 						}
-					} else {
-						ImGui.Checkbox("Save actors", ref this._includeActors);
-						ImGui.Indent();
-						foreach (var charaInfo in this._ctx.Scene.Children.Where(entity => entity is CharaEntity)) {
-							ImGui.TextUnformatted($"{charaInfo.Name}");
-						}
+						ImGui.Unindent();
 					}
-					ImGui.Unindent();
-				}
 				if(cameras > 0)
 					if (ImGui.CollapsingHeader($"Cameras {cameras}")) {
 						if (this._sceneFile != null) {

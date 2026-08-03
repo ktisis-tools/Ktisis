@@ -62,14 +62,16 @@ public class EditorInterface : IEditorInterface {
 		).Open();
 	}
 
-	private void OnSelectChanged(ISelectManager sender) {
+	private void OnSelectChanged(ISelectManager sender, bool multi) {
 		if (!this._ctx.Config.Editor.ToggleEditorOnSelect ) return;
 
 		var open = sender.Count > 0;
-		
+
 		var editor = this._gui.Get<ObjectWindow>();
 		if (editor == null) {
-			if (open) this.OpenObjectEditor();
+			// open Object Editor if >=1 object is still selected
+			// DON'T do this if we're in toolbar mode and more than one object was modified in the action (e.g. clear, multiselect) or if it was ModeMulti with 1 selection
+			if (open && !(this._ctx.Config.Editor.UseToolbar && multi)) this.OpenObjectEditor();
 			return;
 		}
 
@@ -242,7 +244,13 @@ public class EditorInterface : IEditorInterface {
 				actor.Select(SelectMode.Force);
 		}
 	}
-	public void OpenLightEditor(LightEntity light) => this.OpenObjectEditor(light, true);
+	public void OpenLightEditor(LightEntity light) {
+		if (this._ctx.Config.Editor.UseLegacyLightEditor) {
+			this.OpenEditor<LightWindow, LightEntity>(light);
+			return;
+		}
+		this.OpenObjectEditor(light, true);
+	}
 
 	public bool OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);

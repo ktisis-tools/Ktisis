@@ -53,9 +53,6 @@ public class PosePropertyList : ObjectPropertyList {
 	private async void DrawPoseTab(EntityPose pose) {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		
-		// Parenting toggle
-		ImGui.Checkbox(this._locale.Translate("transform_edit.transforms.parenting"), ref this._ctx.Config.Gizmo.ParentBones);
-		
 		// Import/export when ActorEntity is being drawn for
 		var actor = pose.Parent;
 		if (actor is not ActorEntity) return;

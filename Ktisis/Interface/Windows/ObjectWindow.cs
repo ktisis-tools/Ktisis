@@ -9,6 +9,8 @@ using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
+using FFXIVClientStructs;
+
 using GLib.Widgets;
 
 using Ktisis.Common.Utility;
@@ -154,6 +156,8 @@ public class ObjectWindow : KtisisWindow {
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
 
+		// Gizmo Global/Local
+
 		var mode = this._ctx.Config.Gizmo.Mode;
 		var modeIcon = mode == ImGuizmoMode.World ? FontAwesomeIcon.Globe : FontAwesomeIcon.Home;
 		var modeKey = mode == ImGuizmoMode.World ? "world" : "local";
@@ -163,6 +167,8 @@ public class ObjectWindow : KtisisWindow {
 		
 		ImGui.SameLine(0, spacing);
 
+		// Gizmo Visibility
+
 		var visible = this._ctx.Config.Gizmo.Visible;
 		var visIcon = visible ? FontAwesomeIcon.Eye : FontAwesomeIcon.EyeSlash;
 		var visHint = this._ctx.Locale.Translate("actions.Gizmo_Toggle");
@@ -170,6 +176,8 @@ public class ObjectWindow : KtisisWindow {
 			this._ctx.Config.Gizmo.Visible = !visible;
 
 		ImGui.SameLine(0, spacing);
+
+		// Mirror Modes
 
 		var mirrorState = this._ctx.Config.Gizmo.MirrorRotation;
 		var flagIcon = FontAwesomeIcon.GripLines;
@@ -188,34 +196,35 @@ public class ObjectWindow : KtisisWindow {
 
 		ImGui.SameLine(0, spacing);
 
-		// Sibling Link selector
-		// if we have a selection & target's primary entity is a bone node, draw the button
-		// if we have >1 bonenodes selected or no sibling, disable the button
-		// if we have 1 bonenode selected that has a sibling, enable the button
-		var selected = target?.Primary;
-		var selectionCount = target?.Targets.Count();
-		if (selectionCount != 0 && selected != null && selected is BoneNode bNode) {
-			var siblingNode = bNode.Pose.TryResolveSibling(bNode);
-			var siblingAvailable = siblingNode != null;
-			var siblingKey = siblingAvailable ? (selectionCount == 1 ? "available" : "multiple") : "unavailable";
-			var siblingHint = this._ctx.Locale.Translate(
-				$"transform_edit.sibling.{siblingKey}",
-				new Dictionary<string, string> {
-						{ "bone", siblingAvailable ? siblingNode.Name : bNode.Name }
-				}
-			);
+		// Bone Parenting
 
-			using var _ = ImRaii.Disabled(!siblingAvailable || selectionCount != 1); // disable if current bone has no sibling or if multiple selections
-			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, siblingHint, iconBtnSize))
-				this._ctx.Selection.Select(siblingNode, SelectMode.Multiple); // if a sibling exists, select it assuming SelectMode.Multiple
-
-			ImGui.SameLine(0, spacing);
-		} else {
-			ImGui.Dummy(iconBtnSize);
-			ImGui.SameLine(0, spacing);
+		var parenting = this._ctx.Config.Gizmo.ParentBones;
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), !parenting)) {
+			var pLabel = parenting ? "transform_edit.transforms.parentingDisable" : "transform_edit.transforms.parenting";
+			var icon = parenting ? FontAwesomeIcon.Link : FontAwesomeIcon.Unlink;
+			if (Buttons.IconButtonTooltip(icon, Ktisis.Locale.Translate(pLabel), iconBtnSize))
+				this._ctx.Config.Gizmo.ParentBones = !parenting;
 		}
+		ImGui.SameLine(0, spacing);
 
-		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar? 3f: 0);
+		// Sibling Link selector
+		// 7-20-26 - switched from 1x sibling button to an always-visible toggle. on enable, try forcing sibling selections if any are already chosen
+		// if enabled, SelectManager handles auto-multi-selecting (and deselecting) Siblings (L/R paired bone names) whenever applicable
+
+		var linked = this._ctx.Config.Editor.PersistentSiblingLink;
+		using (ImRaii.PushColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive), linked)) {
+			var sLabel = linked ? "transform_edit.sibling.linkDisable" : "transform_edit.sibling.linkEnable";
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.PeopleArrows, Ktisis.Locale.Translate(sLabel), iconBtnSize)) {
+				this._ctx.Config.Editor.PersistentSiblingLink = !linked;
+				if (this._ctx.Config.Editor.PersistentSiblingLink)
+					this._ctx.Selection.TryUpdateSelectedSiblings();
+			}
+		}
+		ImGui.SameLine(0, spacing);
+
+		// jump to right-boundary for TransformEditor show/hide caret
+
+		var avail = ImGui.GetContentRegionAvail().X - (this._ctx.Config.Editor.UseToolbar ? 3f : 0);
 		if (avail > iconSize)
 			ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - iconSize);
 

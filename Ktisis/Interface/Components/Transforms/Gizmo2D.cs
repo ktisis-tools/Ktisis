@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using Ktisis.Data.Config.Sections;

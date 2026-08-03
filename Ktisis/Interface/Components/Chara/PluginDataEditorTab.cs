@@ -26,9 +26,9 @@ public class PluginDataEditorTab {
 
 	private ActorEntity? _actor;
 
-	private readonly IList<IPCProfileDataTuple> _cPlusProfiles = new List<IPCProfileDataTuple>();
-	private readonly Dictionary<Guid, string> _penumbraCollections = new Dictionary<Guid, string>();
-	private readonly Dictionary<Guid, string> _glamourerCollections = new Dictionary<Guid, string>();
+	private IList<IPCProfileDataTuple> _cPlusProfiles = new List<IPCProfileDataTuple>();
+	private Dictionary<Guid, string> _penumbraCollections = new Dictionary<Guid, string>();
+	private Dictionary<Guid, string> _glamourerCollections = new Dictionary<Guid, string>();
 
 	private (Guid Id, string Name) _currentPenumbra = (Guid.Empty, string.Empty);
 	private Guid? _selectedGlamourer = null;
@@ -44,12 +44,16 @@ public class PluginDataEditorTab {
 		this._actor = null;
 		this._glamourerFilter = new ImGuiTextFilter();
 
+		RefreshIpc();
+	}
+	
+	private void RefreshIpc() {
 		if (this._ipcManager.IsCustomizeActive)
 			this._cPlusProfiles = this._ipcManager.GetCustomizeIpc().GetProfileList().OrderBy(x => x.Name).ToList();
 		if (this._ipcManager.IsPenumbraActive)
-			this._penumbraCollections = this._ipcManager.GetPenumbraIpc().GetCollections();
+			this._penumbraCollections = this._ipcManager.GetPenumbraIpc().GetCollections().OrderBy(x => x.Value).ToDictionary();
 		if (this._ipcManager.IsGlamourerActive)
-			this._glamourerCollections = this._ipcManager.GetGlamourerIpc().GetDesignList();
+			this._glamourerCollections = this._ipcManager.GetGlamourerIpc().GetDesignList().OrderBy(x => x.Value).ToDictionary();
 	}
 
 	public void SetTarget(ActorEntity actor) => this._actor = actor;
@@ -71,7 +75,10 @@ public class PluginDataEditorTab {
 				this._actor.AssignedProfile = null;
 				this._ctx.Characters.Mcdf.Revert(this._actor.Actor);
 			}
-
+			ImGui.SameLine();
+			if (ImGui.Button(Ktisis.Locale.Translate("workspace.entity_menu.ipc.refresh"))) {
+				this.RefreshIpc();
+			}
 		}
 
 		if (this._ipcManager.IsCustomizeActive) {
@@ -122,9 +129,11 @@ public class PluginDataEditorTab {
 		
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
+		ImGui.PushID("##CPlus");
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "CustomizePlus", IsLoaded: true })!.OpenMainUi();
 		}
+		ImGui.PopID();
 	}
 
 	private unsafe void DrawPenumbra(ActorEntity actor) {
@@ -160,10 +169,12 @@ public class PluginDataEditorTab {
 		ImGui.Text(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.collection"));
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
+		ImGui.PushID("##Penumbra");
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Penumbra", IsLoaded: true })!.OpenMainUi();
 		}
-
+		ImGui.PopID();
+		
 		using (ImRaii.Disabled(actor.GetHuman() == null))
 			if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.invisible_skin")))
 				this._ctx.Characters.Mcdf.SetInvisibleSkin(actor);
@@ -178,7 +189,7 @@ public class PluginDataEditorTab {
 			using (ImRaii.ListBox("##Glamourer")) {
 				foreach (var profile in this._glamourerCollections.OrderBy(p => p.Value)) {
 					if (this._glamourerFilter.PassFilter(profile.Value)) {
-						if (ImGui.Selectable(profile.Value, profile.Key == this._selectedGlamourer)) {
+						if (ImGui.Selectable(profile.Value + $"##{profile.Key.ToString()}", profile.Key == this._selectedGlamourer)) {
 							if (this._selectedGlamourer.HasValue && this._selectedGlamourer.Value == profile.Key)
 								this._selectedGlamourer = null;
 							else
@@ -204,12 +215,14 @@ public class PluginDataEditorTab {
 		}
 		ImGui.SameLine();
 		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ImGui.GetContentRegionAvail().X - Buttons.CalcSize() - 3f);
+		ImGui.PushID("##Glamourer");
 		if (Buttons.IconButton(FontAwesomeIcon.ArrowUpRightFromSquare)) {
+
 			this._dpi.InstalledPlugins.FirstOrDefault(p => p is { InternalName: "Glamourer", IsLoaded: true })!.OpenMainUi();
+
 		}
+		ImGui.PopID();
 	}
 
-	private void ImportMcdf(ActorEntity actor, string path) {
-		this._ctx.Characters.Mcdf.LoadAndApplyTo(path, actor.Actor);
-	}
+	private void ImportMcdf(ActorEntity actor, string path) => this._ctx.Characters.Mcdf.LoadAndApplyTo(path, actor.Actor);
 }

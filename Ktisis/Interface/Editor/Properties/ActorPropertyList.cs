@@ -140,6 +140,7 @@ public class ActorPropertyList : ObjectPropertyList {
 	}
 
 	private unsafe void DrawGazeTab(ActorEntity actor) {
+		using var _ = ImRaii.PushId("##GazePropertyListTab");
 		if (GazeTables == null)
 			GazeTables = new();
 
@@ -151,6 +152,11 @@ public class ActorPropertyList : ObjectPropertyList {
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		var result = false;
 
+		if (this._ctx.Posing.IsEnabled) {
+			using (ImRaii.PushColor(ImGuiCol.Text, 0xFF504EC4))
+				ImGui.TextWrapped(this._locale.Translate("object_edit.actor.gaze.disabled"));
+		}
+		
 		using (ImRaii.Disabled(this._ctx.Posing.IsEnabled)) {
 			DrawActorTargeting(actor);
 			if (isHuman) {
