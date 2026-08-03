@@ -441,6 +441,12 @@
 				"null": "No Target",
 				"disabled": "Unable to control gaze while pose mode active"
 			},
+			"expressions": {
+				"combine": "Combine L/R Sliders",
+				"link": "Link L/R Sliders",
+				"posemode_warn": "Pose Mode must be enabled to use Expression Sliders!",
+				"dtface_warn": "Expression Sliders are unavailable for non-Dawntrail faces!"
+			},
 			"chara_edit": "Actor Editor",
 			"export": "Export Chara"
 		},

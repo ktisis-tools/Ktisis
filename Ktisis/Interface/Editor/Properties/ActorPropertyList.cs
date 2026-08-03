@@ -115,6 +115,15 @@ public class ActorPropertyList : ObjectPropertyList {
 		var expCon = actor.Pose?.Expressions;
 		if (expCon == null) return;
 
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.combine"), ref this._ctx.Config.Editor.CombineExpressions);
+		ImGui.SameLine(0, spacing * 2);
+		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.link"), ref this._ctx.Config.Editor.LinkExpressions);
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+
 		// individual warnings for either exit case so users know ahead of time whether their face is incompatible
 		if (!this._ctx.Posing.IsEnabled) {
 			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
@@ -135,26 +144,35 @@ public class ActorPropertyList : ObjectPropertyList {
 		foreach (var (id, state) in expCon.GetExpressions().OrderBy(kvp => kvp.Value.Data.Priority)) {
 			if (drawnIds.Contains(id)) continue;
 
-			if (state.Data.Pair is not null) {
+			if (this._ctx.Config.Editor.CombineExpressions && state.Data.Pair is not null) {
 				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 3);
 				var weight1 = state.Weight;
-				if (ImGui.SliderFloat($"##{id}_L", ref weight1, 0.0f, 1.0f, "%.3f L"))
+				if (ImGui.SliderFloat($"##{id}_L", ref weight1, 0.0f, 1.0f, "%.3f L")) {
 					expCon.ApplyBlend(id, weight1);
-				ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+					if (this._ctx.Config.Editor.LinkExpressions)
+						expCon.ApplyBlend(state.Data.Pair, weight1);
+				}
+				ImGui.SameLine(0, spacing);
 
 				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 2);
 				var weight2 = expCon.GetExpressions()[state.Data.Pair].Weight;
-				if (ImGui.SliderFloat($"##{id}_R", ref weight2, 0.0f, 1.0f, "%.3f R"))
+				if (ImGui.SliderFloat($"##{id}_R", ref weight2, 0.0f, 1.0f, "%.3f R")) {
 					expCon.ApplyBlend(state.Data.Pair, weight2);
-				ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+					if (this._ctx.Config.Editor.LinkExpressions)
+						expCon.ApplyBlend(id, weight2);
+				}
+				ImGui.SameLine(0, spacing);
 
 				ImGui.Text(Ktisis.Locale.Translate($"expression.{id[..^1]}"));
-				drawnIds.Add(state.Data.Pair);
+				drawnIds.Add(state.Data.Pair); // add pair to drawn IDs so we don't do it again when consolidating pairs
 			} else {
 				var label = Ktisis.Locale.Translate($"expression.{id}");
 				var weight = state.Weight;
-				if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f))
+				if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f)) {
 					expCon.ApplyBlend(id, weight);
+					if (this._ctx.Config.Editor.LinkExpressions && state.Data.Pair is not null)
+						expCon.ApplyBlend(state.Data.Pair, weight);
+				}
 			}
 			drawnIds.Add(id);
 		}
