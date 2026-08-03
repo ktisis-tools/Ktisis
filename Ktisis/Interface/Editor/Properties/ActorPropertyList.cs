@@ -7,6 +7,7 @@ using System.Linq;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Colors;
 
 using GLib.Widgets;
 
@@ -114,23 +115,40 @@ public class ActorPropertyList : ObjectPropertyList {
 		var expCon = actor.Pose?.Expressions;
 		if (expCon == null) return;
 
-		using var _disable = ImRaii.Disabled(!this._ctx.Posing.IsEnabled);
+		// individual warnings for either exit case so users know ahead of time whether their face is incompatible
+		if (!this._ctx.Posing.IsEnabled) {
+			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.Text(Ktisis.Locale.Translate($"object_edit.actor.expressions.posemode_warn"));
+			ImGui.Spacing();
+		}
+		if (!actor.Pose!.HasDTFace()) {
+			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.Text(Ktisis.Locale.Translate($"object_edit.actor.expressions.dtface_warn"));
+			ImGui.Spacing();
+		}
+
+		using var _disable = ImRaii.Disabled(!this._ctx.Posing.IsEnabled || !actor.Pose!.HasDTFace());
 		List<string> drawnIds = [];
 
 		foreach (var (id, state) in expCon.GetExpressions().OrderBy(kvp => kvp.Value.Data.Priority)) {
 			if (drawnIds.Contains(id)) continue;
 
 			if (state.Data.Pair is not null) {
-				var label = Ktisis.Locale.Translate($"expression.{id[..^1]}");
+				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 3);
 				var weight1 = state.Weight;
+				if (ImGui.SliderFloat($"##{id}_L", ref weight1, 0.0f, 1.0f, "%.3f L"))
+					expCon.ApplyBlend(id, weight1);
+				ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
+				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 2);
 				var weight2 = expCon.GetExpressions()[state.Data.Pair].Weight;
-				var weightV = new Vector2(weight1, weight2);
-				if (ImGui.SliderFloat2(label, ref weightV, 0.0f, 1.0f)) {
-					if (Math.Abs(weightV.X - weight1) > float.Epsilon)
-						expCon.ApplyBlend(id, weightV.X);
-					else if (Math.Abs(weightV.Y - weight2) > float.Epsilon)
-						expCon.ApplyBlend(state.Data.Pair, weightV.Y);
-				}
+				if (ImGui.SliderFloat($"##{id}_R", ref weight2, 0.0f, 1.0f, "%.3f R"))
+					expCon.ApplyBlend(state.Data.Pair, weight2);
+				ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+
+				ImGui.Text(Ktisis.Locale.Translate($"expression.{id[..^1]}"));
 				drawnIds.Add(state.Data.Pair);
 			} else {
 				var label = Ktisis.Locale.Translate($"expression.{id}");

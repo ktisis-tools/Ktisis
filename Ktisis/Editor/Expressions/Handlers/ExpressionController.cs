@@ -84,8 +84,7 @@ public class ExpressionController : IExpressionController {
 			faceId = ((Human*)owner)->Customize.Face;
 		}
 
-		if (this.RaceSexId == raceSexId) return; // skip updating if raceSex hasnt changed
-		if (this.FaceId == faceId) return; // skip updating if face also hasnt changed
+		if (this.RaceSexId == raceSexId && this.FaceId == faceId) return; // skip updating if raceSex and face both haven't changed
 
 		if (raceSexId == 0) {
 			this.Unload();
