@@ -16,6 +16,8 @@ using Ktisis.Common.Utility;
 using Ktisis.Structs.Camera;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Expressions.Types;
+using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik.TwoJoints;
 using Ktisis.Editor.Posing.Ik.Types;
 using Ktisis.Interface.Editor.Properties.Types;
@@ -148,18 +150,26 @@ public class ActorPropertyList : ObjectPropertyList {
 				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 3);
 				var weight1 = state.Weight;
 				if (ImGui.SliderFloat($"##{id}_L", ref weight1, 0.0f, 1.0f, "%.3f L")) {
-					expCon.ApplyBlend(id, weight1);
 					if (this._ctx.Config.Editor.LinkExpressions)
-						expCon.ApplyBlend(state.Data.Pair, weight1);
+						this.Blend(actor, new Dictionary<string, float>() {
+							{ id, weight1 },
+							{ state.Data.Pair, weight1 }
+						});
+					else
+						this.Blend(actor, id, weight1);
 				}
 				ImGui.SameLine(0, spacing);
 
 				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 2);
 				var weight2 = expCon.GetExpressions()[state.Data.Pair].Weight;
 				if (ImGui.SliderFloat($"##{id}_R", ref weight2, 0.0f, 1.0f, "%.3f R")) {
-					expCon.ApplyBlend(state.Data.Pair, weight2);
 					if (this._ctx.Config.Editor.LinkExpressions)
-						expCon.ApplyBlend(id, weight2);
+						this.Blend(actor, new Dictionary<string, float>() {
+							{ state.Data.Pair, weight2 },
+							{ id, weight2 }
+						});
+					else
+						this.Blend(actor, state.Data.Pair, weight2);
 				}
 				ImGui.SameLine(0, spacing);
 
@@ -169,13 +179,55 @@ public class ActorPropertyList : ObjectPropertyList {
 				var label = Ktisis.Locale.Translate($"expression.{id}");
 				var weight = state.Weight;
 				if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f)) {
-					expCon.ApplyBlend(id, weight);
 					if (this._ctx.Config.Editor.LinkExpressions && state.Data.Pair is not null)
-						expCon.ApplyBlend(state.Data.Pair, weight);
+						this.Blend(actor, new Dictionary<string, float>() {
+							{ id, weight },
+							{ state.Data.Pair, weight }
+						});
+					else
+						this.Blend(actor, id, weight);
 				}
 			}
 			drawnIds.Add(id);
 		}
+	}
+
+	private void Blend(ActorEntity actor, string id, float weight) {
+		// blend single with memento
+		var expCon = actor.Pose?.Expressions;
+		if (expCon == null) return;
+		var exists = expCon.GetExpressions().TryGetValue(id, out var state);
+		if (!exists || state is null) return;
+
+		var initial = state.Weight;
+		expCon.ApplyBlend(id, weight);
+		this._ctx.Actions.History.Add(new ExpressionMemento(expCon) {
+			ExpressionId = id,
+			Initial = initial,
+			Final = weight
+		});
+	}
+
+	private void Blend(ActorEntity actor, Dictionary<string, float> weights) {
+		// blend multi with memento (e.g. while linked sliders)
+		var expCon = actor.Pose?.Expressions;
+		if (expCon == null) return;
+
+		var mementos = new List<ExpressionMemento>();
+		foreach (var (id, weight) in weights) {
+			var exists = expCon.GetExpressions().TryGetValue(id, out var state);
+			if (!exists || state is null) continue;
+
+			var initial = state.Weight;
+			expCon.ApplyBlend(id, weight);
+			mementos.Add(new ExpressionMemento(expCon) {
+				ExpressionId = id,
+				Initial = initial,
+				Final = weight
+			});
+		}
+		if (mementos.Count > 0)
+			this._ctx.Actions.History.Add(new MultipleMemento(mementos));
 	}
 
 	// Advanced tab
