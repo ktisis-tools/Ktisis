@@ -106,13 +106,15 @@ public class LocaleManager : IDisposable {
 	}
 
 	public void LoadLocale(string technicalName) {
+		if(technicalName == this.FallbackData?.MetaData.TechnicalName) {
+			Ktisis.Log.Verbose($"Switching locale to '{technicalName}', already loaded as fallback");
+			this.Data = this.FallbackData;
+			this.LocaleChanged?.Invoke();
+			return;
+		}
 		Ktisis.Log.Verbose($"Reading localization file for '{technicalName}'");
 		if (this.Data == null || this.Data.MetaData.TechnicalName != technicalName) {
 			this.Data = this.Loader.LoadData(technicalName);
-			if (technicalName != "en_US")
-				this.LoadFallbackLocale();
-			else
-				this.FallbackData = null;
 			this.LocaleChanged?.Invoke();
 		}
 	}
