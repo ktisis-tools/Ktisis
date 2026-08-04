@@ -79,8 +79,9 @@ public class ActorPropertyList : ObjectPropertyList {
 		if (actor.Pose?.Expressions.Count > 0)
 			builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.expressions"), () => {
 				var result = this.DrawExpressionsTab(actor);
-				if ((!result) && this._expressionMementos.Count > 0) {
+				if (!result && this._expressionMementos.Count > 0) {
 					// if we drew expressions and aren't manipulating, and WERE manipulating via memento, post the memento and null it for next manipulation
+					// TODO: any extra conditions to exit here? ex. !result && !WindowFocused - seems to handle fine in testing but this is where extra checks would go
 					this._ctx.Actions.History.Add(new MultipleMemento(this._expressionMementos));
 					this._expressionMementos = [];
 				}
