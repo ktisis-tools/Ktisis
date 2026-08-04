@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Linq;
@@ -6,14 +7,18 @@ using System.Linq;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Colors;
 
 using GLib.Widgets;
 
+using Ktisis.Actions.Types;
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Structs.Camera;
 using Ktisis.Data.Config;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Expressions.Types;
+using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik.TwoJoints;
 using Ktisis.Editor.Posing.Ik.Types;
 using Ktisis.Interface.Editor.Properties.Types;
@@ -38,6 +43,7 @@ public class ActorPropertyList : ObjectPropertyList {
 	private readonly GuiManager _gui;
 	private readonly ConfigManager _cfg;
 	private readonly LocaleManager _locale;
+	private List<ExpressionMemento> _expressionMementos;
 	private static Dictionary<GazeControl, TransformTable>? GazeTables;
 	private const string IkCfgPopup = "##IkCfgPopup";
 
@@ -56,6 +62,7 @@ public class ActorPropertyList : ObjectPropertyList {
 		this._gui = gui;
 		this._cfg = cfg;
 		this._locale = locale;
+		this._expressionMementos = [];
 	}
 
 	public override void Invoke(IPropertyListBuilder builder, SceneEntity entity) {
@@ -70,7 +77,15 @@ public class ActorPropertyList : ObjectPropertyList {
 
 		builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.actor"), () => this.DrawActorTab(actor), priority: 0);
 		if (actor.Pose?.Expressions.Count > 0)
-			builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.expressions"), () => this.DrawExpressionsTab(actor), priority: 2);
+			builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.expressions"), () => {
+				var result = this.DrawExpressionsTab(actor);
+				if (!result && this._expressionMementos.Count > 0) {
+					// if we drew expressions and aren't manipulating, and WERE manipulating via memento, post the memento and null it for next manipulation
+					// TODO: any extra conditions to exit here? ex. !result && !WindowFocused - seems to handle fine in testing but this is where extra checks would go
+					this._ctx.Actions.History.Add(new MultipleMemento(this._expressionMementos));
+					this._expressionMementos = [];
+				}
+			}, priority: 2);
 		builder.AddHeader(Ktisis.Locale.Translate("object_edit.actor.headers.adv"), () => this.DrawAdvancedTab(actor), priority: 3);
 	}
 
@@ -109,17 +124,112 @@ public class ActorPropertyList : ObjectPropertyList {
 	
 	// Expressions tab
 
-	private void DrawExpressionsTab(ActorEntity actor) {
+	private bool DrawExpressionsTab(ActorEntity actor) {
+		var expCon = actor.Pose?.Expressions;
+		if (expCon == null) return false;
+
+		var active = false;
+		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.combine"), ref this._ctx.Config.Editor.CombineExpressions);
+		ImGui.SameLine(0, spacing * 2);
+		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.link"), ref this._ctx.Config.Editor.LinkExpressions);
+
+		ImGui.Spacing();
+		ImGui.Separator();
+		ImGui.Spacing();
+
+		// individual warnings for either exit case so users know ahead of time whether their face is incompatible
+		if (!this._ctx.Posing.IsEnabled) {
+			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.Text(Ktisis.Locale.Translate($"object_edit.actor.expressions.posemode_warn"));
+			ImGui.Spacing();
+		}
+		if (!actor.Pose!.HasDTFace()) {
+			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.Text(Ktisis.Locale.Translate($"object_edit.actor.expressions.dtface_warn"));
+			ImGui.Spacing();
+		}
+
+		using var _disable = ImRaii.Disabled(!this._ctx.Posing.IsEnabled || !actor.Pose!.HasDTFace());
+		List<string> drawnIds = [];
+
+		foreach (var (id, state) in expCon.GetExpressions().OrderBy(kvp => kvp.Value.Data.Priority)) {
+			if (drawnIds.Contains(id)) continue;
+
+			if (this._ctx.Config.Editor.CombineExpressions && state.Data.Pair is not null) {
+				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 3);
+				var weight1 = state.Weight;
+				if (ImGui.SliderFloat($"##{id}_L", ref weight1, 0.0f, 1.0f, "%.3f L")) {
+					if (this._ctx.Config.Editor.LinkExpressions)
+						this.Blend(actor, [
+							new (id, weight1),
+							new (state.Data.Pair, weight1)
+						]);
+					else
+						this.Blend(actor, [new (id, weight1)]);
+				}
+				active |= ImGui.IsItemActive();
+				ImGui.SameLine(0, spacing);
+
+				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 2);
+				var weight2 = expCon.GetExpressions()[state.Data.Pair].Weight;
+				if (ImGui.SliderFloat($"##{id}_R", ref weight2, 0.0f, 1.0f, "%.3f R")) {
+					if (this._ctx.Config.Editor.LinkExpressions)
+						this.Blend(actor, [
+							new (state.Data.Pair, weight2),
+							new (id, weight2)
+						]);
+					else
+						this.Blend(actor, [new (state.Data.Pair, weight2)]);
+				}
+				active |= ImGui.IsItemActive();
+				ImGui.SameLine(0, spacing);
+
+				ImGui.Text(Ktisis.Locale.Translate($"expression.{id[..^1]}"));
+				drawnIds.Add(state.Data.Pair); // add pair to drawn IDs so we don't do it again when consolidating pairs
+			} else {
+				var label = Ktisis.Locale.Translate($"expression.{id}");
+				var weight = state.Weight;
+				if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f)) {
+					if (this._ctx.Config.Editor.LinkExpressions && state.Data.Pair is not null)
+						this.Blend(actor, [
+							new(id, weight),
+							new(state.Data.Pair, weight)
+						]);
+					else
+						this.Blend(actor, [new (id, weight)]);
+				}
+				active |= ImGui.IsItemActive();
+			}
+			drawnIds.Add(id);
+		}
+
+		return active;
+	}
+
+	private void Blend(ActorEntity actor, List<Tuple<string, float>> weights) {
+		// blend multi with memento (e.g. while linked sliders)
 		var expCon = actor.Pose?.Expressions;
 		if (expCon == null) return;
 
-		using var _disable = ImRaii.Disabled(!this._ctx.Posing.IsEnabled);
+		foreach (var (id, weight) in weights) {
+			var exists = expCon.GetExpressions().TryGetValue(id, out var state);
+			if (!exists || state is null) continue;
 
-		foreach (var (id, state) in expCon.GetExpressions()) {
-			var label = Ktisis.Locale.Translate($"expression.{id}");
-			var weight = state.Weight;
-			if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f))
-				expCon.ApplyBlend(id, weight);
+			var initial = state.Weight;
+			expCon.ApplyBlend(id, weight); // update the state while dragging
+
+			// if we already are tracking this slider in mementos, update its final state before it gets committed; if not, add it to tracking
+			if (this._expressionMementos.Find(x => x.ExpressionId == id) is { } m)
+				m.Final = weight;
+			else
+				this._expressionMementos.Add(new ExpressionMemento(expCon) {
+					ExpressionId = id,
+					Initial = initial,
+					Final = weight
+				});
 		}
 	}
 

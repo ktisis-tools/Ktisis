@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
@@ -29,6 +30,7 @@ public class ExpressionController : IExpressionController {
 	// Expression state
 	
 	public ushort RaceSexId { get; private set; }
+	public byte FaceId { get; private set; }
 
 	public int Count => this._state.Count;
 
@@ -36,10 +38,11 @@ public class ExpressionController : IExpressionController {
 
 	private readonly Dictionary<string, ExpressionState> _state = new();
 
-	public void Load(ushort raceSexId) {
-		Ktisis.Log.Debug($"Loading expression data: {raceSexId}");
+	public void Load(ushort raceSexId, byte faceId) {
+		Ktisis.Log.Debug($"Loading expression data: {raceSexId} | Face: {faceId}");
 		
 		this.RaceSexId = raceSexId;
+		this.FaceId = faceId;
 		if (!this._mgr.TryGetSchemaFile(raceSexId, out var file)) {
 			Ktisis.Log.Warning($"Expression data not found for {raceSexId}");
 			this.Unload();
@@ -48,13 +51,14 @@ public class ExpressionController : IExpressionController {
 		
 		this._state.Clear();
 		foreach (var data in file.Data) {
-			var state = this._state[data.Id] = new ExpressionState { Data = data };
+			var state = this._state[data.Id] = new ExpressionState { Data = data, Face = faceId };
 			state.PrepareBlend();
 		}
 	}
 
 	public void Unload() {
 		this.RaceSexId = 0;
+		this.FaceId = 0;
 		this._state.Clear();
 	}
 	
@@ -69,22 +73,25 @@ public class ExpressionController : IExpressionController {
 		if (this.Skeleton == null) return;
 		
 		ushort raceSexId = 0;
+		byte faceId = 0;
 		
 		var skeleton = this.Skeleton.GetSkeleton();
 		if (skeleton == null) return;
 		
 		var owner = skeleton->Owner;
-		if (owner != null && owner->GetModelType() == CharacterBase.ModelType.Human)
+		if (owner != null && owner->GetModelType() == CharacterBase.ModelType.Human) {
 			raceSexId = ((Human*)owner)->RaceSexId;
+			faceId = ((Human*)owner)->Customize.Face;
+		}
 
-		if (this.RaceSexId == raceSexId) return;
+		if (this.RaceSexId == raceSexId && this.FaceId == faceId) return; // skip updating if raceSex and face both haven't changed
 
 		if (raceSexId == 0) {
 			this.Unload();
 			return;
 		}
 
-		this.Load(raceSexId);
+		this.Load(raceSexId, faceId);
 	}
 	
 	// Blending
@@ -107,7 +114,15 @@ public class ExpressionController : IExpressionController {
 
 			if (!state.Blend.TryGetValue(name, out var last))
 				continue;
-			var target = state.Data.Transforms[name];
+
+			// get target from Transforms, Skeletons[face] (if BlinkL/BlinkR), or break if both are somehow null
+			Transform target;
+			if (state.Data.Transforms is not null) target = state.Data.Transforms[name];
+			else if (state.Data.Skeletons is not null) {
+				byte faceId;
+				faceId = state.Data.Skeletons.ContainsKey(this.FaceId) ? this.FaceId : state.Data.Skeletons.Keys.First();
+				target = state.Data.Skeletons[faceId][name];
+			} else return;
 
 			// interpolate based on weight
 			var pos = Vector3.Lerp(Vector3.Zero, target.Position, weight);
