@@ -41,44 +41,43 @@ public class LocaleManager : IDisposable {
 		this._dpi = dpi;
 	}
 
-	private Configuration? config => this._cfg._isLoaded ? this._cfg.File : null;
+	private Configuration? Config => this._cfg._isLoaded ? this._cfg.File : null;
 
 	public void Initialize(ConfigManager cfg) {
 		this._cfg = cfg;
-		foreach (var resource in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(s => s.StartsWith("Ktisis.Localization.Data"))) {
-			if(this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
+		foreach (var resource in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(s => s.StartsWith("Ktisis.Localization.Data")))
+			if (this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
-		}
+
+		this.LoadFallbackLocale(); // set a fallback locale immediately in cases of no config
+
 		cfg.WithConfigLoaded(config => {
-			if(config.Locale.AutoDetect) {
+			if (config.Locale.AutoDetect) {
 				this.HandleLanguageChangeDelegate();
 				/* (n.b. the above method will call LanguageChanged immediately) */
 			} else {
 				/* we need to check for available locales here in case anyone has an old configuration that names an unavailable locale */
-				string targetLocale = this.GetBestAvailableLocale(config.Locale.LocaleId) ?? "en_US";
+				var targetLocale = this.GetBestAvailableLocale(config.Locale.LocaleId) ?? "en_US";
 				this.LoadLocale(targetLocale);
 				/* (n.b. we don't write the locale back to the config file in case the user's preferred locale becomes available again in a new version) */
-
-				if(targetLocale != "en_US")
-					this.LoadFallbackLocale();
 			}
 		});
 	}
 
 	public void HandleLanguageChangeDelegate() {
 		this._dpi.LanguageChanged -= this.LanguageChanged;
-		if (this.config?.Locale.AutoDetect ?? false) {
+		if (this.Config?.Locale.AutoDetect ?? false) {
 			this.LanguageChanged(this._dpi.UiLanguage);
 			this._dpi.LanguageChanged += this.LanguageChanged;
 		}
 	}
-	public void LanguageChanged(string uiLanguage) {
+	private void LanguageChanged(string uiLanguage) {
 		//TODO: Check for default names on Camera and Actors to repopulate
-		if(this.config is {} config) {
+		if (this.Config is {} config) {
 			/* Sanity check */
-			if(!config.Locale.AutoDetect) return;
-			string envLocale = uiLanguage + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
-			string targetLocale = this.GetBestAvailableLocale(envLocale) ?? "en_US";
+			if (!config.Locale.AutoDetect) return;
+			var envLocale = uiLanguage + "_" + RegionInfo.CurrentRegion.TwoLetterISORegionName;
+			var targetLocale = this.GetBestAvailableLocale(envLocale) ?? "en_US";
 			config.Locale.LocaleId = targetLocale;
 			this.LoadLocale(targetLocale);
 		}
@@ -87,13 +86,12 @@ public class LocaleManager : IDisposable {
 	private string? GetBestAvailableLocale(string inputLocale) {
 		var availableLocales = this.AvailableLocales.Select(x => x.TechnicalName).ToHashSet();
 		if(availableLocales.Contains(inputLocale)) return inputLocale;
-		if(localeFallbackMap.TryGetValue(inputLocale, out var remappedLocale)) {
+		if (localeFallbackMap.TryGetValue(inputLocale, out var remappedLocale)) {
 			if(availableLocales.Contains(inputLocale)) return remappedLocale;
 		}
 		var languageMatch = inputLocale.Split("_")[0] + "_";
 		var languageFallback = this.AvailableLocales.FirstOrDefault(x => x.TechnicalName.StartsWith(languageMatch));
-		if(languageFallback != null) return languageFallback.TechnicalName;
-		return null;
+		return languageFallback?.TechnicalName;
 	}
 
 
@@ -112,15 +110,14 @@ public class LocaleManager : IDisposable {
 		if (this.Data == null || this.Data.MetaData.TechnicalName != technicalName) {
 			this.Data = this.Loader.LoadData(technicalName);
 			if (technicalName != "en_US")
-				LoadFallbackLocale();
+				this.LoadFallbackLocale();
 			else
 				this.FallbackData = null;
-			LocaleChanged?.Invoke();
+			this.LocaleChanged?.Invoke();
 		}
-			
 	}
 	
-	public void LoadFallbackLocale() {
+	private void LoadFallbackLocale() {
 		Ktisis.Log.Verbose($"FALLBACK - Reading localization file for 'en_US'");
 		if (this.FallbackData == null || this.FallbackData.MetaData.TechnicalName != "en_US")
 			this.FallbackData = this.Loader.LoadData("en_US");
@@ -131,7 +128,7 @@ public class LocaleManager : IDisposable {
 
 	public string GetBoneName(string name) {
 		var key = $"bone.{name}";
-		var friendly_bone_names = this.config?.Categories.ShowFriendlyBoneNames ?? false;
+		var friendly_bone_names = this.Config?.Categories.ShowFriendlyBoneNames ?? false;
 		return friendly_bone_names && this.HasTranslationFor(key) ? this.Translate(key) : name;
 	}
 
