@@ -237,7 +237,7 @@ public class CameraModule : HookModule {
 		this.CameraUiHook.Original(a1);
 	}
 
-	[Signature("4C 8B DC 49 89 5B ?? 49 89 73 ?? 55 57 41 56 49 8D 6B ?? 48 81 EC ?? ?? ?? ?? 45 0F 29 4B", DetourName = nameof(CameraCalculateLookPositionDetour))]
+	[Signature("E8 ?? ?? ?? ?? F3 0F 10 64 24 ?? F3 0F 10 0D ?? ?? ?? ??", DetourName = nameof(CameraCalculateLookPositionDetour))]
 	private Hook<CameraCalculateLookPositionDelegate> CameraCalculateLookPositionHook = null!;
 
 	private unsafe delegate float* CameraCalculateLookPositionDelegate(GameCamera* pointer, float* lookAtVector, float* cameraPosition, char cameraMode); // both float* can be cast to CS Vector3* 
