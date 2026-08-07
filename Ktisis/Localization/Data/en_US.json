@@ -245,11 +245,13 @@
 		"create_actor": "Create Actor\nDrop-down for options...",
 		"create_light": "Create Light\nDrop-down for options...",
 		"create_overlay": "Create Overlay",
+		"create_object": "[Alpha] Create Object from Path",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.hide": "Hide Ktisis overlay",
 		"overlay.show": "Show Ktisis overlay",
 		"overlay.world_toggle": "Toggle world object overlay",
+		"overlay.world_filters": "World filters",
 		"overlay.range": "Range:"
 	},
 
@@ -533,6 +535,17 @@
 				"tex": "Texture:",
 				"tex_hint": "Choose an icon for this status"
 			}
+		},
+		"object": {
+			"header": "Object",
+			"title": "Object Info",
+			"rename": "Name",
+			"copy_path": "Copy Path",
+			"path": "Model Path",
+			"type": "Object Type",
+			"type.world": "World Object",
+			"type.spawned": "Spawned Object",
+			"addr": "Address"
 		}
 	},
 	
@@ -685,6 +698,31 @@
 			"exclude_ears": "Exclude ear bones",
 			"warn_face_compat": "Face will not be imported from the selected pose file due to incompatibility with the selected actor.",
 			"warn_ik_on": "Inverse Kinematics are enabled! These may override imported limbs."
+		}
+	},
+
+	"popups": {
+		"world_obj": {
+			"header": "Object Details",
+			"addr": "Address",
+			"path": "Model Path",
+			"dist": "Distance",
+			"add": "Add",
+			"hide": "Hide",
+			"cancel": "Cancel"
+		},
+		"spawn_obj": {
+			"header": "Spawn Object",
+			"explain_1": "Enter a valid .mdl path below to spawn a new BgObject.",
+			"explain_2": "File paths can be sourced from Pathfinder, Textools, Brio, and Ktisis' world objects.",
+			"path": "Path",
+			"spawn": "Spawn",
+			"close": "Close"
+		},
+		"world_filters": {
+			"objects": "Objects",
+			"actors": "Actors",
+			"lights": "Lights"
 		}
 	},
 

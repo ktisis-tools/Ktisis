@@ -47,6 +47,9 @@ public struct WorldObject : IEquatable<WorldObject> {
 		if (this.Pointer.Value->GetObjectType() == ObjectType.BgObject) {
 			var bgPtr = (BgObject*)this.Address;
 			bgPtr->UpdateCulling();
+			bgPtr->UpdateRender();
+			bgPtr->UpdateMaterials();
+			bgPtr->UpdateTransforms(false);
 		}
 	}
 
