@@ -296,16 +296,16 @@ public class ActorModule : SceneModule {
 		Ktisis.Log.Verbose("[Initialize] New Character? {0:X}", (nint) thisPtr);
 		
 		try {
-			_initializeHook.OriginalDisposeSafe(thisPtr);
+			this._initializeHook.OriginalDisposeSafe(thisPtr);
 		} catch (Exception e) {
 			Ktisis.Log.Error(e, "Error on Initialize");
 		}
 		
 		if (!this.CheckValid()) return;
 		
-		_framework.RunOnTick(() => {
+		this._framework.RunOnTick(() => {
 			this.Add(thisPtr);
-		}, delayTicks: 1); //delayed to allow internal code to handle 
+		}, delayTicks: 5); // delayed to allow internal code to handle, wait a bunch of ticks in case of chicanery
 	}
 	
 	private unsafe GameObject* Destructor(Character* thisPtr, byte freeFlags) {
@@ -355,21 +355,23 @@ public class ActorModule : SceneModule {
 
 	private unsafe void Add(Character* character) {
 		var gameObject = this._actors.GetAddress((nint)character);
-		if (gameObject is null || gameObject.ObjectIndex < 200) {
-			Ktisis.Log.Verbose("Unable to find gameobject, or below 200 for {0:X} ({1})", (nint)character, gameObject?.ObjectIndex);
-
+		if (gameObject is null) {
+			Ktisis.Log.Verbose($"GameObject is null for {(nint)character:X}");
+			return;
+		} if (gameObject.ObjectIndex <= 200) {
+			Ktisis.Log.Verbose($"GameObject at index {gameObject.ObjectIndex} is not in ClientObjectManager expected range, skipping");
+			return;
+		} if (!gameObject.IsValid()) {
+			Ktisis.Log.Verbose($"GameObject {gameObject.ObjectIndex} is currently invalid, skipping");
 			return;
 		}
 
-		// TODO: flaky?
-		// if (!gameObject.IsDrawing()) {
-		// 	Ktisis.Log.Debug("Actor[{0:X} / {1}] Actor not drawing, not adding", (nint)character, gameObject.ObjectIndex);
-		// 	return;
-		// }
-
 		var entity = this.Scene.GetEntityForActor(gameObject);
-
 		if (entity is not null) {
+			Ktisis.Log.Verbose($"GameObject already exists in workspace as {entity.Name}!");
+			return;
+		} if (gameObject.ObjectIndex == this._spawner.ExpectedIndex) {
+			Ktisis.Log.Verbose($"Spawner is already expecting a dispatched spawn for this actor at index {this._spawner.ExpectedIndex}");
 			return;
 		}
 
@@ -383,7 +385,7 @@ public class ActorModule : SceneModule {
 
 #endregion
 
-	
+
 	// Disposal
 
 	public override void Dispose() {

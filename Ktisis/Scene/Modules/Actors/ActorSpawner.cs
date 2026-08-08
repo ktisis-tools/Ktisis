@@ -21,6 +21,7 @@ public class ActorSpawner : HookModule {
 	
 	private readonly IObjectTable _objectTable;
 	private readonly IFramework _framework;
+	internal uint? ExpectedIndex;
 	
 	public ActorSpawner(
 		IHookMediator hook,
@@ -91,18 +92,20 @@ public class ActorSpawner : HookModule {
 		IGameObject original,
 		CancellationToken token
 	) {
-
 		var index = await this._framework.RunOnFrameworkThread(() => {
 			if (!this.TryDispatch(original, out var index)) {
 				Ktisis.Log.Error("Object table is full.");
+				this.ExpectedIndex = null;
 				return 0xFFFFFFFF;
 			}
-				
+
 			return index;
 		});
 
-		if (index == 0xFFFFFFFF)
+		if (index == 0xFFFFFFFF) {
+			this.ExpectedIndex = null;
 			return nint.Zero;
+		}
 
 		while (!token.IsCancellationRequested) {
 			var result = await this._framework.RunOnFrameworkThread(
@@ -112,12 +115,15 @@ public class ActorSpawner : HookModule {
 				}
 			);
 
-			if (result != nint.Zero)
+			if (result != nint.Zero) {
+				this.ExpectedIndex = null;
 				return result;
-			
+			}
+
 			await Task.Delay(10, CancellationToken.None);
 		}
-		
+
+		this.ExpectedIndex = null;
 		throw new TaskCanceledException($"Actor spawn at index {index} timed out.");
 	}
 
@@ -126,8 +132,9 @@ public class ActorSpawner : HookModule {
 		index = (uint)id;
 		if (id == -1) return false;
 
-		index += 200; //ClientObjectManager starts at 200
+		index += 200; // ClientObjectManager starts at 200
 		Ktisis.Log.Info($"Dispatching, expecting spawn on {index}");
+		this.ExpectedIndex = index; // flag that we're currently expecting an actor on this index, only remove the flag when we've finished or failed CreateActor
 		this.DispatchSpawn(original);
 		return true;
 	}
