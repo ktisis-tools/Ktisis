@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,6 +33,7 @@ public class ActorModule : SceneModule {
 	private readonly GroupPoseModule _gpose;
 	
 	private readonly ActorSpawner _spawner;
+	private readonly HashSet<nint> _enqueuedChars;
 	
 	//Creation/Destruction hooks.
 	private readonly Hook<Character.Delegates.Terminate> _terminateHook;
@@ -51,6 +53,7 @@ public class ActorModule : SceneModule {
 		this._objectTable = objectTable;
 		this._framework = framework;
 		this._gpose = gpose;
+		this._enqueuedChars = [];
 		this._spawner = hook.Create<ActorSpawner>();
 		
 		_terminateHook = hooks.HookFromAddress<Character.Delegates.Terminate>((nint)Character.StaticVirtualTablePointer->Terminate, Terminate);
@@ -293,7 +296,8 @@ public class ActorModule : SceneModule {
 #region Creation/Destroy hooks
 
 	private unsafe void InitializeHook(Character* thisPtr) {
-		Ktisis.Log.Verbose("[Initialize] New Character? {0:X}", (nint) thisPtr);
+		var addr = (nint)thisPtr;
+		Ktisis.Log.Verbose($"[Initialize] New Character? {addr:X}");
 		
 		try {
 			this._initializeHook.OriginalDisposeSafe(thisPtr);
@@ -302,14 +306,16 @@ public class ActorModule : SceneModule {
 		}
 		
 		if (!this.CheckValid()) return;
-		
+
+		this._enqueuedChars.Add(addr);
 		this._framework.RunOnTick(() => {
 			this.Add(thisPtr);
-		}, delayTicks: 5); // delayed to allow internal code to handle, wait a bunch of ticks in case of chicanery
+			this._enqueuedChars.Remove(addr);
+		}, delayTicks: 1 + this._enqueuedChars.Count); // delayed to allow internal code to handle - stagger tick timings so that these can resolve in order of appearance
 	}
 	
 	private unsafe GameObject* Destructor(Character* thisPtr, byte freeFlags) {
-		Remove(thisPtr);
+		this.Remove(thisPtr);
 
 		try {
 			return _destroyHook.OriginalDisposeSafe(thisPtr, freeFlags);
@@ -320,7 +326,7 @@ public class ActorModule : SceneModule {
 	}
 	
 	private unsafe void Terminate(Character* character) {
-		Remove(character);
+		this.Remove(character);
 		
 		try {
 			_terminateHook.OriginalDisposeSafe(character);
@@ -331,7 +337,7 @@ public class ActorModule : SceneModule {
 
 	private unsafe void Remove(Character* character) {
 		try {
-			Ktisis.Log.Debug("Trying to remove actor {0:x}", (nint) character);
+			Ktisis.Log.Debug("Trying to remove actor {0:X}", (nint) character);
 			var gameObject = this._actors.GetAddress((nint)character);
 			if (gameObject is null) {
 				Ktisis.Log.Verbose("Unable to find gameobject for {0:X}", (nint)character);
@@ -356,27 +362,27 @@ public class ActorModule : SceneModule {
 	private unsafe void Add(Character* character) {
 		var gameObject = this._actors.GetAddress((nint)character);
 		if (gameObject is null) {
-			Ktisis.Log.Verbose($"GameObject is null for {(nint)character:X}");
+			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject is null");
 			return;
 		} if (gameObject.ObjectIndex <= 200) {
-			Ktisis.Log.Verbose($"GameObject at index {gameObject.ObjectIndex} is not in ClientObjectManager expected range, skipping");
+			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject at index {gameObject.ObjectIndex} is not in ClientObjectManager expected range, skipping");
 			return;
 		} if (!gameObject.IsValid()) {
-			Ktisis.Log.Verbose($"GameObject {gameObject.ObjectIndex} is currently invalid, skipping");
+			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject {gameObject.ObjectIndex} is currently invalid, skipping");
 			return;
 		}
 
 		var entity = this.Scene.GetEntityForActor(gameObject);
 		if (entity is not null) {
-			Ktisis.Log.Verbose($"GameObject already exists in workspace as {entity.Name}!");
+			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject already exists in workspace as {entity.Name}!");
 			return;
 		} if (gameObject.ObjectIndex == this._spawner.ExpectedIndex) {
-			Ktisis.Log.Verbose($"Spawner is already expecting a dispatched spawn for this actor at index {this._spawner.ExpectedIndex}");
+			Ktisis.Log.Verbose($"{(nint)character:X} - Spawner is already expecting a dispatched spawn for this actor at index {this._spawner.ExpectedIndex}");
 			return;
 		}
 
 		try {
-			Ktisis.Log.Info("Trying to add actor {0:X}", (nint)character);
+			Ktisis.Log.Info($"{(nint)character:X} - Trying to add actor from index {gameObject.ObjectIndex}");
 			this.AddActor((nint)character, false);
 		} catch (Exception e) {
 			Ktisis.Log.Error(e, "Error on Remove");
@@ -391,6 +397,6 @@ public class ActorModule : SceneModule {
 	public override void Dispose() {
 		base.Dispose();
 		this._spawner.Dispose();
-		GC.SuppressFinalize(this); 
+		GC.SuppressFinalize(this);
 	}
 }
