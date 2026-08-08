@@ -14,6 +14,7 @@ using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Expressions.Types;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.AutoSave;
 using Ktisis.Editor.Posing.Data;
@@ -37,6 +38,7 @@ public class PosingManager : IPosingManager {
 	public string? StashedFrom { get; set; } = null;
 	
 	public IAttachManager Attachments { get; }
+	public IExpressionManager Expressions { get; }
 
 	private readonly PoseAutoSave AutoSave;
 
@@ -45,12 +47,14 @@ public class PosingManager : IPosingManager {
 		HookScope scope,
 		IFramework framework,
 		IAttachManager attach,
+		IExpressionManager expressions,
 		PoseAutoSave autoSave
 	) {
 		this._context = context;
 		this._scope = scope;
 		this._framework = framework;
 		this.Attachments = attach;
+		this.Expressions = expressions;
 		this.AutoSave = autoSave;
 	}
 	
@@ -69,6 +73,8 @@ public class PosingManager : IPosingManager {
 			
 			this.IkModule = this._scope.Create<IkModule>(this);
 			this.IkModule.Initialize();
+			
+			this.Expressions.Initialize();
 			
 			this.AutoSave.Initialize(this._context.Config);
 			
@@ -114,13 +120,17 @@ public class PosingManager : IPosingManager {
 	public void SetEnabled(bool enable) {
 		if (enable && !this.IsValid) return;
 
-		if (!enable && this._context.Config.AutoSave.Enabled && this._context.Config.AutoSave.OnDisable) {
-			Ktisis.Log.Verbose("Posing disabled, triggering pose save.");
-			try {
-				this.AutoSave.Save();
-			} catch (Exception err) {
-				Ktisis.Log.Error(err.ToString());
+		if (!enable) {
+			if (this._context.Config.AutoSave is { Enabled: true, OnDisable: true }) {
+				Ktisis.Log.Verbose("Posing disabled, triggering pose save.");
+				try {
+					this.AutoSave.Save();
+				} catch (Exception err) {
+					Ktisis.Log.Error(err.ToString());
+				}
 			}
+			
+			this.Expressions.ResetBlendStates();
 		}
 
 		HavokPosing.ClearCachedAbdomenModelTransform();
