@@ -122,12 +122,10 @@ public class ActorSpawner : HookModule {
 	}
 
 	private unsafe bool TryDispatch(IGameObject original, out uint index) {
-		int id;
-		unchecked {
-			id = (int)FFXIVClientStructs.FFXIV.Client.Game.Object.ClientObjectManager.Instance()->CalculateNextAvailableIndex();
-			index = (uint)id;
-		}
+		var id = FFXIVClientStructs.FFXIV.Client.Game.Object.ClientObjectManager.Instance()->CalculateNextAvailableIndex(false);
+		index = (uint)id;
 		if (id == -1) return false;
+
 		index += 200; //ClientObjectManager starts at 200
 		Ktisis.Log.Info($"Dispatching, expecting spawn on {index}");
 		this.DispatchSpawn(original);
