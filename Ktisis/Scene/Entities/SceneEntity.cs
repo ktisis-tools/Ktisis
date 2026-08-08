@@ -48,7 +48,7 @@ public abstract class SceneEntity : IComposite {
 
 	public virtual SceneEntity? Parent { get; set; } = null;
 
-	public virtual IEnumerable<SceneEntity> Children => this._children;
+	public virtual List<SceneEntity> Children => this._children;
 	protected List<SceneEntity> GetChildren() => this._children;
 
 	public virtual bool Add(SceneEntity entity) {
