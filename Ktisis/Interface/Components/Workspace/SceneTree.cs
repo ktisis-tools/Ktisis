@@ -83,6 +83,7 @@ public class SceneTree {
 		try {
 			ImGui.TreePush(nint.Zero);
 			foreach (var item in entities) {
+				if (item.Name == "Actor #441") continue;
 				this._nodes.Add(item); // put each iterated node in order on the shared list
 				this.DrawNode(item, out var shiftClicked);
 				if (shiftClicked) {
