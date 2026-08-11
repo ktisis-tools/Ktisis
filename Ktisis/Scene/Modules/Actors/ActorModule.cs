@@ -355,8 +355,8 @@ public class ActorModule : SceneModule {
 
 	private unsafe void Add(Character* character) {
 		var gameObject = this._actors.GetAddress((nint)character);
-		if (gameObject is null || gameObject.ObjectIndex < 200) {
-			Ktisis.Log.Verbose("Unable to find gameobject, or below 200 for {0:X} ({1})", (nint)character, gameObject?.ObjectIndex);
+		if (gameObject is null || gameObject.ObjectIndex < 200 || gameObject.ObjectIndex > 440) {
+			Ktisis.Log.Verbose("Unable to find gameobject, below 200 or above 440 for {0:X} ({1})", (nint)character, gameObject?.ObjectIndex);
 
 			return;
 		}
