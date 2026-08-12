@@ -661,6 +661,7 @@ public class ConfigWindow : KtisisWindow {
 		// draw remainder content after button and file dialog
 		// note: filedialog has to be outside of child method due to ref nonsense
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
+		var availableWidth = ImGui.GetContentRegionAvail().X - ImGui.GetCursorPosX();
 
 		ImGui.SameLine(0, spacing);
 		using (ImRaii.Disabled(string.IsNullOrEmpty(configPath))) {
@@ -668,7 +669,9 @@ public class ConfigWindow : KtisisWindow {
 				configPath = null;
 		}
 		ImGui.SameLine(0, spacing);
+		ImGui.PushItemWidth(availableWidth);
 		ImGui.InputText(locale, ref configPath, flags: inputFlags);
+		ImGui.PopItemWidth();
 	}
 
 	private void SetPoseViewImage(Action<string> handler) {
