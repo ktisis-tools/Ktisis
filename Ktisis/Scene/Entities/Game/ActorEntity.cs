@@ -49,6 +49,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 	}
 
 	private bool DefaultsInitialized = false;
+	private bool DirtyTransform = false;
 
 	public String? MCDF;
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
@@ -65,7 +66,6 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		get { return this.Scene.Context.Config.Editor.IncognitoPlayerNames ? this.Anonymized : this.RealName; }
 		set { this.RealName = value; }
 	}
-
 
 	public ActorEntity(
 		ISceneManager scene,
@@ -93,6 +93,10 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		// after we're drawing, run the default presetter once
 		if (!this.DefaultsInitialized)
 			this.SetDefaultPresets();
+
+		if (this.DirtyTransform && this.Scene.Context.Selection.Targeted?.ObjectIndex != this.Actor.ObjectIndex)
+			if (this.UpdateGameObjectTransform())
+				this.DirtyTransform = false;
 	}
 
 	private unsafe void UpdateChara() {
@@ -369,17 +373,25 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 		return 0;
 	}
-	
-	
-	public unsafe override void SetTransform(Transform trans) {
-		var drawPtr = this.GetObject();
-		var gameObjPtr = this.Character;
-		if (drawPtr == null || gameObjPtr == null) return;
-		drawPtr->Position = trans.Position;
-		drawPtr->Rotation = trans.Rotation;
-		drawPtr->Scale = trans.Scale;
-		
-		gameObjPtr->SetPosition(trans.Position.X - gameObjPtr->DrawOffset.X,  trans.Position.Y - gameObjPtr->DrawOffset.Y, trans.Position.Z - gameObjPtr->DrawOffset.Z);
-		gameObjPtr->DefaultPosition = gameObjPtr->Position;
+
+	public override void SetTransform(Transform trans) {
+		base.SetTransform(trans);
+		this.DirtyTransform = true;
+	}
+
+	private unsafe bool UpdateGameObjectTransform() {
+		var trans = this.GetTransform();
+		if (trans is null) return false;
+
+		var gameObj = this.Character;
+		if (gameObj is null) return false;
+
+		gameObj->SetPosition(
+			trans.Position.X - gameObj->DrawOffset.X,
+			trans.Position.Y - gameObj->DrawOffset.Y,
+			trans.Position.Z - gameObj->DrawOffset.Z
+		);
+		gameObj->DefaultPosition = gameObj->Position;
+		return true;
 	}
 }
