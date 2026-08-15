@@ -166,7 +166,7 @@ public unsafe class PreviewNode : OverlayNode {
 		}
 
 		this.IsVisible = true;
-		var offset = this._fileWindow.Pos.X + this._fileWindow.Size.X + this.Border.Size.X > ImGui.GetIO().DisplaySize.X
+		var offset = this._fileWindow.Pos.X + this._fileWindow.Size.X + this.Border.Size.X > ImGui.GetMainViewport().Size.X
 			? -this.Border.Size.X : this._fileWindow.Size.X;
 		this.Position = new Vector2(this._fileWindow.Pos.X + offset, this._fileWindow.Pos.Y);
 
