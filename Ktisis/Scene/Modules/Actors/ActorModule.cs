@@ -364,10 +364,10 @@ public class ActorModule : SceneModule {
 		if (gameObject is null) {
 			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject is null");
 			return;
-		} if (gameObject.ObjectIndex <= 200) {
+		} else if (gameObject.ObjectIndex <= 200) {
 			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject at index {gameObject.ObjectIndex} is not in ClientObjectManager expected range, skipping");
 			return;
-		} if (!gameObject.IsValid()) {
+		} else if (!gameObject.IsValid()) {
 			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject {gameObject.ObjectIndex} is currently invalid, skipping");
 			return;
 		}
@@ -376,7 +376,7 @@ public class ActorModule : SceneModule {
 		if (entity is not null) {
 			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject already exists in workspace as {entity.Name}!");
 			return;
-		} if (gameObject.ObjectIndex == this._spawner.ExpectedIndex) {
+		} else if (gameObject.ObjectIndex == this._spawner.ExpectedIndex) {
 			Ktisis.Log.Verbose($"{(nint)character:X} - Spawner is already expecting a dispatched spawn for this actor at index {this._spawner.ExpectedIndex}");
 			return;
 		}
