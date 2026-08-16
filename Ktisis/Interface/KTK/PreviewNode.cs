@@ -23,6 +23,7 @@ using Ktisis.Data.Json;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
+using Ktisis.Editor.Selection;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Scene.Factory.Builders;
@@ -296,7 +297,6 @@ public unsafe class PreviewNode : OverlayNode {
 	private void CopySelectedBones() {
 		//clear currently selected bones for the preview actor
 		var previewBones = this._actor.Pose.Recurse()
-			.Prepend(this._actor)
 			.Where(entity => entity is SkeletonNode { IsSelected: true })
 			.Cast<SkeletonNode>();
 		foreach (var bone in previewBones) {
@@ -305,19 +305,20 @@ public unsafe class PreviewNode : OverlayNode {
 		//this._actor.Pose.Update();
 		//get selected bones in target
 		var selected = this._target.Pose.Recurse()
-			.Prepend(this._target)
 			.Where(entity => entity is SkeletonNode { IsSelected: true })
 			.Cast<SkeletonNode>();
 		var selectedBones = this.GetBoneSelectionFrom(selected, true).Distinct();
 		if (this._ctx.Config.File.SelectedBonesIncludeDescendants)
 			selectedBones = this._target.Pose.ExpandToDescendants(selectedBones);
 
+
 		//copy selected bones
 		foreach (var bone in selectedBones) {
 			var node = this._actor.Pose.FindBoneByName(bone.Name);
 			if (node != null)
-				node.Select();
+				node.Select(SelectMode.Multiple);
 		}
+
 
 	}
 	private IEnumerable<PartialBoneInfo> GetBoneSelectionFrom(IEnumerable<SkeletonNode> nodes, bool all = true) {
