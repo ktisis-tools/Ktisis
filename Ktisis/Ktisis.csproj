@@ -4,6 +4,7 @@
 		<Company>Ktisis Tools</Company>
 		<Version>0.4.0.5</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
+		<Configurations>Debug;Release;Testing-Debug;Testing-Release</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -17,10 +18,34 @@
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
-    
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
-    </PropertyGroup>
+
+    <Choose>
+        <When Condition="'$(Configuration)' == 'Testing-Debug'">
+            <PropertyGroup>
+                <DefineConstants>TESTING;DEBUG</DefineConstants>
+                <OutputPath>bin\x64\Debug</OutputPath>
+            </PropertyGroup>
+        </When>
+        <When Condition="'$(Configuration)' == 'Testing-Release'">
+            <PropertyGroup>
+                <DefineConstants>TESTING</DefineConstants>
+                <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
+                <OutputPath>bin\Release</OutputPath>
+            </PropertyGroup>
+        </When>
+        <When Condition="'$(Configuration)' == 'Release'">
+            <PropertyGroup>
+                <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
+            </PropertyGroup>
+        </When>
+        <When Condition="'$(Configuration)' == 'Release'">
+            <PropertyGroup>
+                <DefineConstants>DEBUG</DefineConstants>
+            </PropertyGroup>
+        </When>
+                
+    </Choose>
+
 
 	<ItemGroup>
 		<PackageReference Include="Glamourer.Api" Version="2.7.0" />

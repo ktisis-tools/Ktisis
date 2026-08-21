@@ -75,4 +75,18 @@ public abstract class KtisisWindow : Window {
 			Click = _ => GuiHelpers.OpenBrowser(Ktisis.Locale.Translate("titlebar.helpLinkout"))
 		});
 	}
+	
+	// Testing branch stuff
+	#if TESTING
+	private ImRaii.ColorDisposable? WindowColor;
+	public override void PreDraw() {
+		this.WindowColor = new ImRaii.ColorDisposable();
+		this.WindowColor.Push(ImGuiCol.TitleBg, new Vector4(28, 28, 98, 255)/255);
+		this.WindowColor.Push(ImGuiCol.TitleBgCollapsed, new Vector4(28, 28, 98, 255)/255);
+		this.WindowColor.Push(ImGuiCol.TitleBgActive, new Vector4(28, 28, 98, 255)/255);
+	}
+	public override void PostDraw() {
+		this.WindowColor?.Dispose();
+	}
+	#endif
 }

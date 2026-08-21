@@ -123,8 +123,6 @@ public class PosingManager : IPosingManager {
 			}
 		}
 
-		HavokPosing.ClearCachedAbdomenModelTransform();
-
 		this.PoseModule?.SetEnabled(enable);
 	}
 
