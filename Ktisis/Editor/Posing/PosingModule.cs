@@ -91,6 +91,11 @@ public sealed class PosingModule : HookModule {
 	}
 	
 	// CalcBoneModelSpace
+	[Signature("4C 8B DC 53 56 57 41 56 41 57 48 81 EC ?? ?? ?? ?? 41 0F 29 73", DetourName = nameof(DetourUnknown))]  // asm at 44 0F 11 50 ?? 48 8B 43 was causing drift, we jump over this function to avoid it
+	private Hook<DetourUnknownFunctDelegate> _unknownDetour = null!;
+	private unsafe delegate nint DetourUnknownFunctDelegate(nint a1, nint a2, hkaPose* a3);
+
+	private unsafe nint DetourUnknown(nint a1, nint a2, hkaPose* a3) => (nint)a3->BoneFlags.Data;
 	
 	[Signature("40 53 48 83 EC 10 4C 8B 49 28", DetourName = nameof(CalcBoneModelSpace))]
 	private Hook<CalcBoneModelSpaceDelegate> _calcBoneModelSpaceHook = null!;
@@ -99,10 +104,7 @@ public sealed class PosingModule : HookModule {
 	private unsafe hkQsTransformf* CalcBoneModelSpace(hkaPose* pose, int boneIdx) {
 		if (this.Manager.IsSolvingIk)
 			return this._calcBoneModelSpaceHook.Original(pose, boneIdx);
-
-		if (boneIdx == 1 && pose->Skeleton->Bones[boneIdx].Name.String == "n_hara") {
-			HavokPosing.CalcCachedAbdomenModelTransform(pose, boneIdx);
-		}
+		
 		return pose->ModelPose.Data + boneIdx;
 	}
 	
