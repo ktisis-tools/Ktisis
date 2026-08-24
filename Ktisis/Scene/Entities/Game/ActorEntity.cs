@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
@@ -50,6 +52,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 	private bool DefaultsInitialized = false;
 	private bool DirtyTransform = false;
+	private uint DirtyTime = 0;
 
 	public String? MCDF;
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
@@ -94,7 +97,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		if (!this.DefaultsInitialized)
 			this.SetDefaultPresets();
 
-		if (this.DirtyTransform && this.Scene.Context.Selection.Targeted?.ObjectIndex != this.Actor.ObjectIndex)
+		if (this.DirtyTransform && CheckDirtyTime() && !ImGui.IsMouseDown(ImGuiMouseButton.Left))
 			if (this.UpdateGameObjectTransform())
 				this.DirtyTransform = false;
 	}
@@ -356,6 +359,21 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		this.Gaze = gaze;
 	}
 
+	public unsafe bool CheckDirtyTime() {
+		var framework = Framework.Instance()->FrameCounter;
+		uint delta = 0;
+		if ((this.DirtyTime - framework) > 5000) {  // edge case were the frame counter overflowed uint
+			delta = uint.MaxValue - this.DirtyTime + framework;
+		} else {
+			delta = framework - this.DirtyTime;
+		}
+		if (delta > 20) {
+			return true;
+		}
+		return false;
+
+	}
+
 	public unsafe uint GetActorGazeTarget() {
 		var chara = this.IsValid ? (CharacterEx*)this.Character : null;
 		if (chara == null) return 0;
@@ -377,6 +395,10 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 	public override void SetTransform(Transform trans) {
 		base.SetTransform(trans);
 		this.DirtyTransform = true;
+		unsafe {
+			this.DirtyTime = Framework.Instance()->FrameCounter;
+		}
+
 	}
 
 	private unsafe bool UpdateGameObjectTransform() {
