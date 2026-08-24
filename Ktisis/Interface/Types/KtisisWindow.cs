@@ -4,7 +4,9 @@ using System.Numerics;
 using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Utility.Numerics;
 
 using Ktisis.Common.Utility;
 using Ktisis.Events;
@@ -81,9 +83,10 @@ public abstract class KtisisWindow : Window {
 	private ImRaii.ColorDisposable? WindowColor;
 	public override void PreDraw() {
 		this.WindowColor = new ImRaii.ColorDisposable();
-		this.WindowColor.Push(ImGuiCol.TitleBg, new Vector4(28, 28, 98, 255)/255);
-		this.WindowColor.Push(ImGuiCol.TitleBgCollapsed, new Vector4(28, 28, 98, 255)/255);
-		this.WindowColor.Push(ImGuiCol.TitleBgActive, new Vector4(28, 28, 98, 255)/255);
+		
+		this.WindowColor.Push(ImGuiCol.TitleBg, ((Vector4.One - ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBg)))).WithW(ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBg)).W));
+		this.WindowColor.Push(ImGuiCol.TitleBgCollapsed, ((Vector4.One - ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBgCollapsed)))).WithW(ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBgCollapsed)).W));
+		this.WindowColor.Push(ImGuiCol.TitleBgActive, ((Vector4.One - ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBgActive)))).WithW(ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBgActive)).W));
 	}
 	public override void PostDraw() {
 		this.WindowColor?.Dispose();
