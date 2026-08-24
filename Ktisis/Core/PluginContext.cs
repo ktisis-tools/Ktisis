@@ -65,7 +65,8 @@ public class PluginContext : IPluginContext {
 	}
 
 	public void Initialize() {
-		this.RemoveTesting();
+		if(this._dpi.IsTesting)
+			this.RemoveTesting();
 			
 		if (this.Config.GetConfigFileExists()) {
 			this.Config.Load();
