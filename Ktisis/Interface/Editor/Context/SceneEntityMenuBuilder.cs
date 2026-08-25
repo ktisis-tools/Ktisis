@@ -75,30 +75,30 @@ public class SceneEntityMenuBuilder {
 	}
 
 	private void BuildEntityBaseBottom(ContextMenuBuilder menu) {
+		var entityMenu = Ktisis.Locale.WithPrefix("workspace.entity_menu.base");
 		if (this._entity is IAttachable attach && attach.IsAttached())
-			menu.Separator().Action(Ktisis.Locale.Translate("workspace.entity_menu.base.detach"), () => this._ctx.Posing.Attachments.Detach(attach));
+			menu.Separator().Action(entityMenu.Translate("detach"), () => this._ctx.Posing.Attachments.Detach(attach));
 
-		menu.Separator().Action(Ktisis.Locale.Translate("workspace.entity_menu.base.rename"), () => this.Ui.OpenRenameEntity(this._entity));
+		menu.Separator().Action(entityMenu.Translate("rename"), () => this.Ui.OpenRenameEntity(this._entity));
 
 		if (this._entity is IDeletable deletable) {
 			menu.Separator();
-			if (this._entity is ActorEntity actor)
-				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateActor(actor));
-			if (this._entity is LightEntity light)
-				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateLight(light));
-			if (this._entity is OverlayEntity overlay)
-				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateOverlay(overlay));
+			Action? action = this._entity switch {
+				ActorEntity actor => () => this.DuplicateActor(actor),
+				LightEntity light => () => this.DuplicateLight(light),
+				OverlayEntity overlay => () => this.DuplicateOverlay(overlay),
+				_ => null
+			};
+			if (action != null) menu.Action(entityMenu.Translate("duplicate"), action);
 
 			// rename delete to Untrack if we have a worldlight tied to the lightentity in this menu
-			if (this._entity is LightEntity { WorldLight: not null })
-				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => this.DoDelete(deletable));
-			else
-				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.delete"), () => this.DoDelete(deletable));
+			var actionKey = this._entity is LightEntity { WorldLight: not null } ? "delete" : "untrack";
+			menu.Action(entityMenu.Translate(actionKey), () => this.DoDelete(deletable));
 		}
 		if (this._entity is ObjectEntity obj) {
-			menu.Separator();
-			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
-			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
+			menu.Separator()
+				.Action(entityMenu.Translate("reset"), () => obj.Reset())
+				.Action(entityMenu.Translate("untrack"), () => obj.Remove());
 		}
 	}
 	
