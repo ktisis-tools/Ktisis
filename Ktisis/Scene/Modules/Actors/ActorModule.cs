@@ -364,7 +364,7 @@ public class ActorModule : SceneModule {
 		if (gameObject is null) {
 			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject is null");
 			return;
-		} else if (gameObject.ObjectIndex <= 200) {
+		} else if (gameObject.ObjectIndex is <= 200 or > 440) {
 			Ktisis.Log.Verbose($"{(nint)character:X} - GameObject at index {gameObject.ObjectIndex} is not in ClientObjectManager expected range, skipping");
 			return;
 		} else if (!gameObject.IsValid()) {
