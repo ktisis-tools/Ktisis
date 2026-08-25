@@ -150,4 +150,30 @@ public class LocaleManager : IDisposable {
 	public void Dispose() {
 		this._dpi.LanguageChanged -= this.LanguageChanged;
 	}
+	
+	public PrefixedLocaleProvider WithPrefix(string prefix, string separator = ".") {
+		return new PrefixedLocaleProvider(prefix, separator, this);
+	}
+
+	public class PrefixedLocaleProvider {
+		private string Separator;
+		private string Prefix;
+		private LocaleManager Manager;
+		
+		public PrefixedLocaleProvider(string prefix, string separator, LocaleManager manager) {
+			this.Separator = separator;
+			this.Prefix = prefix;
+			this.Manager = manager;
+		}
+
+		private string BuildKeyFrom(string handle) => this.Prefix + this.Separator + handle;
+
+		public PrefixedLocaleProvider WithPrefix(string prefix, string separator = ".") => new(this.BuildKeyFrom(prefix), separator, this.Manager);
+
+		public string Translate(string handle, Dictionary<string, string>? parameters = null) {
+			return this.Manager.Translate(this.BuildKeyFrom(handle), parameters);
+		}
+
+		public bool HasTranslationFor(string handle) => this.Manager.HasTranslationFor(this.BuildKeyFrom(handle));
+	}
 }
