@@ -80,16 +80,45 @@ public abstract class KtisisWindow : Window {
 	
 	// Testing branch stuff
 	#if TESTING
-	private ImRaii.ColorDisposable? WindowColor;
+	private ImRaii.ColorDisposable? _windowColor;
 	public override void PreDraw() {
-		this.WindowColor = new ImRaii.ColorDisposable();
+		this._windowColor = new ImRaii.ColorDisposable();
 		
-		this.WindowColor.Push(ImGuiCol.TitleBg, ((Vector4.One - ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBg)))).WithW(ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBg)).W));
-		this.WindowColor.Push(ImGuiCol.TitleBgCollapsed, ((Vector4.One - ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBgCollapsed)))).WithW(ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBgCollapsed)).W));
-		this.WindowColor.Push(ImGuiCol.TitleBgActive, ((Vector4.One - ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBgActive)))).WithW(ColorHelpers.RgbaUintToVector4(ImGui.GetColorU32(ImGuiCol.TitleBgActive)).W));
+		this.PushColor(ImGuiCol.TitleBg);
+		this.PushColor(ImGuiCol.TitleBgCollapsed);
+		this.PushColor(ImGuiCol.TitleBgActive);
 	}
+	public unsafe void PushColor(ImGuiCol col) {
+		var colVec = ImGui.GetStyleColorVec4(col);
+		Vector4 t = new Vector4(colVec->X, colVec->Y, colVec->Z, colVec->W );
+		Vector4* vec = &t;
+		var M = MathF.Max(MathF.Max(vec->X, vec->Y), vec->Z);
+		var m = MathF.Min(MathF.Min(vec->X, vec->Y), vec->Z);
+		var o = M - m;
+		float H, S;
+		
+		if (M == 0) {
+			S = 0;
+		} else {
+			S = o / M;
+		}
+
+		if(o == 0) {
+			H = 0;
+		}else if (M == vec->X) {
+			H = 60 * (((vec->Y - vec->Z) / o) % 360);
+		}else if (M == vec->Y) {
+			H = 60 * (((vec->Z - vec->X) / o) + 2);
+		} else {
+			H = 60 * (((vec->X - vec->Y) / o) + 4);
+		}
+		H += .5f;
+		ImGui.ColorConvertHSVtoRGB(H, S, M, &vec->X, &vec->Y, &vec->Z);
+
+		this._windowColor!.Push(col, *vec);
+	} 
 	public override void PostDraw() {
-		this.WindowColor?.Dispose();
+		this._windowColor?.Dispose();
 	}
 	#endif
 }

@@ -27,6 +27,7 @@ public abstract class EntityEditWindow<T> : KtisisWindow where T : SceneEntity {
 	}
 	
 	public override void PreDraw() {
+		base.PreDraw();
 		if (this.Context.IsValid && this._target is { IsValid: true }) return;
 		Ktisis.Log.Verbose($"State for {this.GetType().Name} is stale, closing...");
 		this.Close();
