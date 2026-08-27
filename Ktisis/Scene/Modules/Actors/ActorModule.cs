@@ -306,8 +306,9 @@ public class ActorModule : SceneModule {
 		}
 		
 		if (!this.CheckValid()) return;
+		var added = this._enqueuedChars.Add(addr);
+		if (!added) return; // back out if we've already enqueued for this ptr
 
-		this._enqueuedChars.Add(addr);
 		this._framework.RunOnTick(() => {
 			this.Add(thisPtr);
 			this._enqueuedChars.Remove(addr);
