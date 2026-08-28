@@ -167,7 +167,9 @@ public unsafe class PreviewNode : OverlayNode {
 		}
 
 		this.IsVisible = true;
-		this.Position = new Vector2(this._fileWindow.Pos.X + this._fileWindow.Size.X, this._fileWindow.Pos.Y);
+		var offset = this._fileWindow.Pos.X + this._fileWindow.Size.X + this.Border.Size.X > ImGui.GetMainViewport().Size.X
+			? -this.Border.Size.X : this._fileWindow.Size.X;
+		this.Position = new Vector2(this._fileWindow.Pos.X + offset, this._fileWindow.Pos.Y) - ImGui.GetMainViewport().Pos;
 
 		if (this.NeedsUpdate() && this._currentPose != null) {
 			this._ctx.Posing.ApplyReferencePose(_actor.Pose);
