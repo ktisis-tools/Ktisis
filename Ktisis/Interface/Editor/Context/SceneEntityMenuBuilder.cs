@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Objects.Enums;
 
 using FFXIVClientStructs;
 
@@ -78,7 +79,9 @@ public class SceneEntityMenuBuilder {
 		if (this._entity is IAttachable attach && attach.IsAttached())
 			menu.Separator().Action(Ktisis.Locale.Translate("workspace.entity_menu.base.detach"), () => this._ctx.Posing.Attachments.Detach(attach));
 
-		menu.Separator().Action(Ktisis.Locale.Translate("workspace.entity_menu.base.rename"), () => this.Ui.OpenRenameEntity(this._entity));
+		menu.Separator()
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.rename"), () => this.Ui.OpenRenameEntity(this._entity))
+			.WithDisabled(() => this._entity is ActorEntity { Actor.ObjectKind: ObjectKind.Pc } && this._ctx.Config.Editor.IncognitoPlayerNames);
 
 		if (this._entity is IDeletable deletable) {
 			menu.Separator();
