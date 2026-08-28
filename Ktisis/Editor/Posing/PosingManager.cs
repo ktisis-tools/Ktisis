@@ -202,19 +202,31 @@ public class PosingManager : IPosingManager {
 		});
 	}
 
-	public Task ApplyPartialReferencePose(EntityPose pose, int partialIndex) {
+	public Task ApplyPartialReferencePose(EntityPose pose, int partialIndex, IEnumerable<IMemento>? addtlMementos = null) {
 		return this._framework.RunOnFrameworkThread(() => {
 			var converter = new EntityPoseConverter(pose);
 			var initial = converter.Save();
 			converter.LoadReferencePose(partialIndex);
 			var final = converter.Save();
-			this._context.Actions.History.Add(new PoseMemento(converter) {
+
+			var memento = new PoseMemento(converter) {
 				Modes = PoseMode.All,
 				Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
 				Bones = null,
 				Initial = initial,
 				Final = final
-			});
+			};
+
+			// handle additional mementos to be processed in one-click (such as expression blends)
+			// get these blends from the caller since it will know if its a face ref pose or intended for a different skeleton
+			if (addtlMementos is not null) {
+				var mementos = new List<IMemento>();
+				mementos.AddRange(addtlMementos);
+				mementos.Add(memento);
+				this._context.Actions.History.Add(new MultipleMemento(mementos));
+			} else {
+				this._context.Actions.History.Add(memento);
+			}
 		});
 	}
 
@@ -274,6 +286,10 @@ public class PosingManager : IPosingManager {
 				});
 			}
 
+			// reset face blends if face mode was used for the pose import
+			// TODO: handle child-selected face bone changes?
+			if (modes.HasFlag(PoseMode.Face))
+				mementos.AddRange(pose.Expressions.ResetBlendWeights());
 			this._context.Actions.History.Add(new MultipleMemento(mementos));
 		});
 	}

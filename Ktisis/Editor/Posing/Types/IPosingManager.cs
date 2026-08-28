@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Ktisis.Actions.Types;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Expressions.Types;
 using Ktisis.Editor.Posing.Attachment;
@@ -31,7 +33,7 @@ public interface IPosingManager : IDisposable {
 	public IIkController CreateIkController();
 
 	public Task ApplyReferencePose(EntityPose pose);
-	public Task ApplyPartialReferencePose(EntityPose pose, int partialIndex);
+	public Task ApplyPartialReferencePose(EntityPose pose, int partialIndex, IEnumerable<IMemento>? addtlMementos = null);
 
 	public Task ApplyPoseFile(EntityPose pose, PoseFile file, PoseMode modes = PoseMode.All, PoseTransforms transforms = PoseTransforms.Rotation, bool selectedBones = false, bool includeDescendants = false, bool anchorGroups = false, bool excludeEars = false);
 	public Task<PoseFile> SavePoseFile(EntityPose pose);

@@ -136,9 +136,12 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, spacing * 2);
 		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.link"), ref this._ctx.Config.Editor.LinkExpressions);
 		ImGui.SameLine(0, spacing * 2);
-		using (ImRaii.Disabled(shouldDisable))
-			if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.expressions.reset")))
-				this.ResetBlends(actor);
+		using (ImRaii.Disabled(shouldDisable)) {
+			if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.expressions.reset"))) {
+				var mementos = expCon.ResetBlendWeights();
+				this._ctx.Posing.ApplyPartialReferencePose(actor.Pose!, 1, mementos);
+			}
+		}
 
 		ImGui.Spacing();
 		ImGui.Separator();
@@ -236,21 +239,6 @@ public class ActorPropertyList : ObjectPropertyList {
 					Initial = initial,
 					Final = weight
 				});
-		}
-	}
-
-	private void ResetBlends(ActorEntity actor) {
-		var expCon = actor.Pose?.Expressions;
-		if (expCon == null) return;
-
-		foreach (var expression in expCon.GetExpressions()) {
-			var initial = expression.Value.Weight;
-			expCon.ApplyBlend(expression.Key, 0.0f);
-			this._expressionMementos.Add(new ExpressionMemento(expCon) {
-				ExpressionId = expression.Key,
-				Initial = initial,
-				Final = 0.0f
-			});
 		}
 	}
 
