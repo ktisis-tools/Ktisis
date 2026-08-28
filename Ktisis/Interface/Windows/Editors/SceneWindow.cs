@@ -43,7 +43,7 @@ public class SceneWindow : KtisisWindow {
 	private ISharedImmediateTexture? _texture;
 	private Map _source;
 	private SceneMCDFModal? _popupWindow;
-	private bool _includeActors, _includeLights, _includeCameras, _includeEnv, _includeOverlays, _preserveActors;
+	private bool _includeActors, _includeLights, _includeCameras, _includeEnv, _includeOverlays, _includeObjects,  _preserveActors;
 	
 	public SceneWindow(
 		IEditorContext ctx,
@@ -57,7 +57,7 @@ public class SceneWindow : KtisisWindow {
 		this._sceneFile = null;
 		this._dataManager = dataManager;
 		this._textureProvider = textureProvider;
-		this._includeActors = this._includeCameras = this._includeLights = this._includeEnv = this._includeOverlays  = true;
+		this._includeActors = this._includeCameras = this._includeLights = this._includeEnv = this._includeOverlays = this._includeObjects = true;
 		this._preserveActors = false;
 	}
 	
@@ -97,19 +97,21 @@ public class SceneWindow : KtisisWindow {
 		this.MapStuff();
 		var iconSize = UiBuilder.DefaultFontSizePx * ImGuiHelpers.GlobalScale * 2;
 		var iconBtnSize = new Vector2(iconSize, iconSize);
-		int cameras, actors, lights, overlays;
+		int cameras, actors, lights, overlays, objects;
 		bool envOver;
 		if (this._sceneFile != null) {
 			actors = this._sceneFile.Actors.Count;
 			cameras = this._sceneFile.Cameras.Count;
 			lights = this._sceneFile.Lights.Count;
 			overlays = this._sceneFile.Overlays.Count;
+			objects = this._sceneFile.Objects.Count;
 			envOver = this._sceneFile.Environment.Override > 0;
 		} else {
 			actors = this._ctx.Scene.Children.Count(entity => entity is CharaEntity);
 			lights = this._ctx.Scene.Children.Count(entity => entity is LightEntity);
 			overlays = this._ctx.Scene.Children.Count(entity => entity is OverlayEntity);
 			cameras = this._ctx.Cameras.GetCameras().Count();
+			objects = this._ctx.Scene.Children.Count(entity => entity is ObjectEntity);
 			envOver = this._ctx.Scene.GetModule<EnvModule>().Override > 0;
 		}
 		
@@ -119,7 +121,7 @@ public class SceneWindow : KtisisWindow {
 		
 		using(ImRaii.Disabled(this._sceneFile != null))
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Save, $"{(this._sceneFile == null? "Save Scene file" : "Unload current Scene before saving" )}", iconBtnSize*1.5f))
-				this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save(this._includeActors, this._includeLights, this._includeCameras, this._includeEnv, this._includeOverlays)));
+				this._ctx.Interface.ExportSceneFile((this._ctx.Scene.Data.Save(this._includeActors, this._includeLights, this._includeCameras, this._includeEnv, this._includeOverlays, this._includeObjects)));
 
 		if (this._sceneFile != null) {
 			ImGui.SetCursorPosY(ImGui.GetWindowHeight()  + ImGui.GetStyle().ItemSpacing.Y - (((iconBtnSize.Y * 1.5f + ImGui.GetStyle().ItemSpacing.Y) * 3f ) + ImGui.GetStyle().WindowPadding.Y));  //space for 2 buttons?
@@ -128,7 +130,7 @@ public class SceneWindow : KtisisWindow {
 			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, $"Choose coordinate type\nCurrently: {(this._autosave ? "World space" : "Local space")}", iconBtnSize*1.5f))
 				this._autosave = !this._autosave;
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Check, "Apply Scene", iconBtnSize*1.5f)) {
-				this._sceneDataService.Load(this._sceneFile, this._autosave, this._includeActors, this._includeLights, this._includeCameras, this._includeEnv,  this._includeOverlays, this._preserveActors);
+				this._sceneDataService.Load(this._sceneFile, this._autosave, this._includeActors, this._includeLights, this._includeCameras, this._includeEnv,  this._includeOverlays, this._includeObjects, this._preserveActors);
 				this._sceneFile = null;
 			}
 		}
@@ -242,7 +244,23 @@ public class SceneWindow : KtisisWindow {
 						}
 						ImGui.Unindent();
 					}
-				
+				if (objects > 0)
+					if (ImGui.CollapsingHeader($"Objects {objects}")) {
+						if (this._sceneFile is { Objects.Count: > 0 }) {
+							ImGui.Checkbox("Load Objects", ref this._includeObjects);
+							ImGui.Indent();
+							foreach (var objectInfo in this._sceneFile!.Objects) {
+								ImGui.TextUnformatted($"{objectInfo.Name}");
+							}
+						} else {
+							ImGui.Checkbox("Save Objects", ref this._includeObjects);
+							ImGui.Indent();
+							foreach (var objectInfo in this._ctx.Scene.Children.Where(entity => entity is ObjectEntity)) {
+								ImGui.TextUnformatted($"{objectInfo.Name}");
+							}
+						}
+						ImGui.Unindent();
+					}
 				if (envOver)
 					if (ImGui.CollapsingHeader($"Environment")) {
 						if (this._sceneFile != null) {
