@@ -444,6 +444,7 @@
 			"expressions": {
 				"combine": "Combine L/R Sliders",
 				"link": "Link L/R Sliders",
+				"reset": "Reset",
 				"posemode_warn": "Pose Mode must be enabled to use Expression Sliders!",
 				"dtface_warn": "Expression Sliders are unavailable for non-Dawntrail faces!"
 			},

@@ -128,14 +128,17 @@ public class ActorPropertyList : ObjectPropertyList {
 		var expCon = actor.Pose?.Expressions;
 		if (expCon == null) return false;
 
+		var shouldDisable = !this._ctx.Posing.IsEnabled || !actor.Pose!.HasDTFace();
 		var active = false;
+
 		var spacing = ImGui.GetStyle().ItemInnerSpacing.X;
 		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.combine"), ref this._ctx.Config.Editor.CombineExpressions);
 		ImGui.SameLine(0, spacing * 2);
 		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.link"), ref this._ctx.Config.Editor.LinkExpressions);
 		ImGui.SameLine(0, spacing * 2);
-		if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.expressions.reset")))
-			this._ctx.Posing.ApplyPartialReferencePose(actor.Pose!, 1);
+		using (ImRaii.Disabled(shouldDisable))
+			if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.expressions.reset")))
+				this.ResetBlends(actor);
 
 		ImGui.Spacing();
 		ImGui.Separator();
@@ -155,7 +158,7 @@ public class ActorPropertyList : ObjectPropertyList {
 			ImGui.Spacing();
 		}
 
-		using var _disable = ImRaii.Disabled(!this._ctx.Posing.IsEnabled || !actor.Pose!.HasDTFace());
+		using var _disable = ImRaii.Disabled(shouldDisable);
 		List<string> drawnIds = [];
 
 		foreach (var (id, state) in expCon.GetExpressions().OrderBy(kvp => kvp.Value.Data.Priority)) {
@@ -233,6 +236,21 @@ public class ActorPropertyList : ObjectPropertyList {
 					Initial = initial,
 					Final = weight
 				});
+		}
+	}
+
+	private void ResetBlends(ActorEntity actor) {
+		var expCon = actor.Pose?.Expressions;
+		if (expCon == null) return;
+
+		foreach (var expression in expCon.GetExpressions()) {
+			var initial = expression.Value.Weight;
+			expCon.ApplyBlend(expression.Key, 0.0f);
+			this._expressionMementos.Add(new ExpressionMemento(expCon) {
+				ExpressionId = expression.Key,
+				Initial = initial,
+				Final = 0.0f
+			});
 		}
 	}
 
