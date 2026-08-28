@@ -22,6 +22,7 @@ public static class HavokPosing {
 	// Matrix wrappers
 	
 	private readonly static Alloc<Matrix4x4> Matrix = new(16);
+	private readonly static ConcurrentDictionary<nint, Transform?> _abdomenTransformCache = new();
 
 	public unsafe static Matrix4x4 GetMatrix(hkQsTransformf* transform) {
 		transform->get4x4ColumnMajor((float*)Matrix.Address);
@@ -44,6 +45,39 @@ public static class HavokPosing {
 	}
 
 	// Model transform
+
+	public unsafe static void CalcCachedAbdomenModelTransform(hkaPose* pose, int boneIndex) {
+		var cached = _abdomenTransformCache.GetOrAdd((nint)pose, _ => {
+			return GetModelTransform(pose, boneIndex);
+		});
+		if(cached == null) return;
+
+		var qs = pose->ModelPose.Data + boneIndex;
+		qs->Translation = new hkVector4f {
+			X = cached.Position.X,
+			Y = cached.Position.Y,
+			Z = cached.Position.Z,
+			W = 0f
+		};
+		qs->Rotation = new hkQuaternionf {
+			X = cached.Rotation.X,
+			Y = cached.Rotation.Y,
+			Z = cached.Rotation.Z,
+			W = cached.Rotation.W
+		};
+		qs->Scale = new hkVector4f {
+			X = cached.Scale.X,
+			Y = cached.Scale.Y,
+			Z = cached.Scale.Z,
+			W = 0f
+		};
+	}
+
+	private unsafe static void SetCachedAbdomenModelTransform(hkaPose* pose, Transform transform) {
+		_abdomenTransformCache[(nint)pose] = transform;
+	}
+
+	public static void ClearCachedAbdomenModelTransform() => _abdomenTransformCache.Clear();
 
 	public unsafe static Transform? GetModelTransform(hkaPose* pose, int boneIx) {
 		if (pose == null) {
@@ -109,6 +143,10 @@ public static class HavokPosing {
 			Z = trans.Scale.Z,
 			W = 0f
 		};
+
+		if (pose->Skeleton->Bones[boneIx].Name.String == "n_hara") {
+			SetCachedAbdomenModelTransform(pose, trans);
+		}
 	}
 
 	public unsafe static Transform? GetLocalTransform(hkaPose* pose, int boneIx) {

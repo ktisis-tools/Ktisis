@@ -139,8 +139,7 @@ public class ActionKeybindEditor {
 
 	private void FinishEdit() {
 		if (this.Editing == null || this.KeyCombo == null) return;
-		if (this.KeyCombo.Key != VirtualKey.NO_KEY || (ushort)this.KeyCombo.Key >= 0xFF
-			)
+		if (this.KeyCombo.Key != VirtualKey.NO_KEY)
 			this.Editing.Combo = this.KeyCombo;
 		Ktisis.Log.Info($"Applying edit ({this.KeyCombo.GetShortcutString()})");
 	}
