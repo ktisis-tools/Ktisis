@@ -52,7 +52,6 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 	private bool DefaultsInitialized = false;
 	private bool DirtyTransform = false;
-	private uint DirtyTime = 0;
 
 	public String? MCDF;
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
@@ -97,7 +96,9 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		if (!this.DefaultsInitialized)
 			this.SetDefaultPresets();
 
-		if (this.DirtyTransform && CheckDirtyTime() && !ImGui.IsMouseDown(ImGuiMouseButton.Left))
+		// delay update of gameobject position user isn't manipulating anything
+		// dirty flag is only set if camera update config flag is True (default)
+		if (this.DirtyTransform && !ImGui.IsMouseDown(ImGuiMouseButton.Left))
 			if (this.UpdateGameObjectTransform())
 				this.DirtyTransform = false;
 	}
@@ -359,21 +360,6 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		this.Gaze = gaze;
 	}
 
-	public unsafe bool CheckDirtyTime() {
-		var framework = Framework.Instance()->FrameCounter;
-		uint delta = 0;
-		if ((this.DirtyTime - framework) > 5000) {  // edge case were the frame counter overflowed uint
-			delta = uint.MaxValue - this.DirtyTime + framework;
-		} else {
-			delta = framework - this.DirtyTime;
-		}
-		if (delta > 20) {
-			return true;
-		}
-		return false;
-
-	}
-
 	public unsafe uint GetActorGazeTarget() {
 		var chara = this.IsValid ? (CharacterEx*)this.Character : null;
 		if (chara == null) return 0;
@@ -394,14 +380,13 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 
 	public override void SetTransform(Transform trans) {
 		base.SetTransform(trans);
-		this.DirtyTransform = true;
-		unsafe {
-			this.DirtyTime = Framework.Instance()->FrameCounter;
-		}
-
+		if (this.Scene.Context.Config.Editor.UpdateActorCameraPositions)
+			this.DirtyTransform = true;
 	}
 
 	private unsafe bool UpdateGameObjectTransform() {
+		// only ran with UpdateActorCameraPositions via Dirty flag from SetTransform
+		// gpose camera targeting is based on GameObject position, so we move the Character to match the DrawObject's new root position
 		var trans = this.GetTransform();
 		if (trans is null) return false;
 
