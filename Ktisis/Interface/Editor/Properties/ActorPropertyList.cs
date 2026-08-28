@@ -133,6 +133,9 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.combine"), ref this._ctx.Config.Editor.CombineExpressions);
 		ImGui.SameLine(0, spacing * 2);
 		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.link"), ref this._ctx.Config.Editor.LinkExpressions);
+		ImGui.SameLine(0, spacing * 2);
+		if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.expressions.reset")))
+			this._ctx.Posing.ApplyPartialReferencePose(actor.Pose!, 1);
 
 		ImGui.Spacing();
 		ImGui.Separator();
