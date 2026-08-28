@@ -21,6 +21,7 @@ public class EditorConfig {
 	public bool CloseEditorOnDeselect = false;
 	public bool SelectOnTarget = false;
 	public bool PersistentSiblingLink = false;
+	public bool UpdateActorCameraPositions = true;
 
 	public bool IncognitoPlayerNames = false;
 
