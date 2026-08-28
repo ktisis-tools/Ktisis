@@ -136,12 +136,9 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, spacing * 2);
 		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.link"), ref this._ctx.Config.Editor.LinkExpressions);
 		ImGui.SameLine(0, spacing * 2);
-		using (ImRaii.Disabled(shouldDisable)) {
-			if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.expressions.reset"))) {
-				var mementos = expCon.ResetBlendWeights();
-				this._ctx.Posing.ApplyPartialReferencePose(actor.Pose!, 1, mementos);
-			}
-		}
+		using (ImRaii.Disabled(shouldDisable))
+			if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.expressions.reset")))
+				this._ctx.Posing.ApplyPartialReferencePose(actor.Pose!, 1);
 
 		ImGui.Spacing();
 		ImGui.Separator();
