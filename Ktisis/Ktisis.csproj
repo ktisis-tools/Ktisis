@@ -38,7 +38,7 @@
                 <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
             </PropertyGroup>
         </When>
-        <When Condition="'$(Configuration)' == 'Release'">
+        <When Condition="'$(Configuration)' == 'Debug'">
             <PropertyGroup>
                 <DefineConstants>DEBUG</DefineConstants>
             </PropertyGroup>
