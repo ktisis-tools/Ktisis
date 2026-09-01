@@ -23,24 +23,26 @@
         <When Condition="'$(Configuration)' == 'Testing-Debug'">
             <PropertyGroup>
                 <DefineConstants>TESTING;DEBUG</DefineConstants>
-                <OutputPath>bin\x64\Debug</OutputPath>
+                <OutputPath>bin\x64\Testing-Debug</OutputPath>
             </PropertyGroup>
         </When>
         <When Condition="'$(Configuration)' == 'Testing-Release'">
             <PropertyGroup>
                 <DefineConstants>TESTING</DefineConstants>
                 <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
-                <OutputPath>bin\Release</OutputPath>
+                <OutputPath>bin\x64\Testing-Release</OutputPath>
             </PropertyGroup>
         </When>
         <When Condition="'$(Configuration)' == 'Release'">
             <PropertyGroup>
                 <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
+                <OutputPath>bin\x64\Release</OutputPath>
             </PropertyGroup>
         </When>
         <When Condition="'$(Configuration)' == 'Debug'">
             <PropertyGroup>
                 <DefineConstants>DEBUG</DefineConstants>
+                <OutputPath>bin\x64\Debug</OutputPath>
             </PropertyGroup>
         </When>
                 
