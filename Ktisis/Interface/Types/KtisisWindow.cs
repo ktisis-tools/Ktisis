@@ -30,7 +30,11 @@ public abstract class KtisisWindow : Window {
 		ImGuiWindowFlags flags = ImGuiWindowFlags.None,
 		string windowId = "",
 		bool forceMainWindow = false
+#if TESTING
+	) : base($"{Ktisis.Locale.Translate(localeWindowName)} [TESTING]{windowId}", flags, forceMainWindow) {
+#else
 	) : base($"{Ktisis.Locale.Translate(localeWindowName)}{windowId}", flags, forceMainWindow) {
+#endif
 		this._localeWindowName = localeWindowName;
 		this._windowId = windowId;
 		this.RespectCloseHotkey = false;
