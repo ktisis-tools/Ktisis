@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 using Dalamud.Interface.Windowing;
@@ -34,6 +35,9 @@ public abstract class KtisisWindow : Window {
 	) : base($"{Ktisis.Locale.Translate(localeWindowName)} [TESTING]{windowId}", flags, forceMainWindow) {
 #else
 	) : base($"{Ktisis.Locale.Translate(localeWindowName)}{windowId}", flags, forceMainWindow) {
+#endif
+#if TESTING
+		this._windowColor = new();
 #endif
 		this._localeWindowName = localeWindowName;
 		this._windowId = windowId;
@@ -85,12 +89,16 @@ public abstract class KtisisWindow : Window {
 	// Testing branch stuff
 	#if TESTING
 	private ImRaii.ColorDisposable? _windowColor;
+	private List<ImGuiCol> _properties = new List<ImGuiCol>() {
+		ImGuiCol.TitleBg,
+		ImGuiCol.TitleBgCollapsed,
+		ImGuiCol.TitleBgActive
+	};
 	public override void PreDraw() {
-		this._windowColor = new ImRaii.ColorDisposable();
 		
-		this.PushColor(ImGuiCol.TitleBg);
-		this.PushColor(ImGuiCol.TitleBgCollapsed);
-		this.PushColor(ImGuiCol.TitleBgActive);
+		foreach (var col in this._properties) 
+			this.PushColor(col);
+
 	}
 	public unsafe void PushColor(ImGuiCol col) {
 		var colVec = ImGui.GetStyleColorVec4(col);
