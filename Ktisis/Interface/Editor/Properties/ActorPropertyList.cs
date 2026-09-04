@@ -125,6 +125,7 @@ public class ActorPropertyList : ObjectPropertyList {
 	// Expressions tab
 
 	private bool DrawExpressionsTab(ActorEntity actor) {
+		using var _ = ImRaii.PushId("##ExpressionsPropertyListTab");
 		var expCon = actor.Pose?.Expressions;
 		if (expCon == null) return false;
 
@@ -136,9 +137,14 @@ public class ActorPropertyList : ObjectPropertyList {
 		ImGui.SameLine(0, spacing * 2);
 		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.link"), ref this._ctx.Config.Editor.LinkExpressions);
 		ImGui.SameLine(0, spacing * 2);
-		using (ImRaii.Disabled(shouldDisable))
-			if (ImGui.Button(Ktisis.Locale.Translate("object_edit.actor.expressions.reset")))
-				this._ctx.Posing.ApplyPartialReferencePose(actor.Pose!, 1);
+		ImGui.Checkbox(Ktisis.Locale.Translate("object_edit.actor.expressions.unlock"), ref this._ctx.Config.Editor.UnlockSliders);
+		ImGui.SameLine(0, spacing * 2);
+		using (ImRaii.Disabled(shouldDisable || expCon.GetExpressions().All(kvp => kvp.Value.Weight == 0.0f))) {
+			ImGui.AlignTextToFramePadding();
+			using (ImRaii.Disabled(expCon.GetExpressions().All(kvp => kvp.Value.Weight == 0.0f)))
+				if (Buttons.IconButtonTooltip(FontAwesomeIcon.UndoAlt, Ktisis.Locale.Translate("object_edit.actor.expressions.reset")))
+					this._expressionMementos = expCon.ResetBlendWeights(false);
+		}
 
 		ImGui.Spacing();
 		ImGui.Separator();
@@ -167,28 +173,48 @@ public class ActorPropertyList : ObjectPropertyList {
 			if (this._ctx.Config.Editor.CombineExpressions && state.Data.Pair is not null) {
 				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 3);
 				var weight1 = state.Weight;
-				if (ImGui.SliderFloat($"##{id}_L", ref weight1, 0.0f, 1.0f, "%.3f L")) {
-					if (this._ctx.Config.Editor.LinkExpressions)
-						this.Blend(actor, [
-							new (id, weight1),
-							new (state.Data.Pair, weight1)
-						]);
-					else
-						this.Blend(actor, [new (id, weight1)]);
+				if (!this._ctx.Config.Editor.UnlockSliders) {
+					if (ImGui.SliderFloat($"##{id}_L", ref weight1, 0.0f, 1.0f, "%.3f L"))
+						if (this._ctx.Config.Editor.LinkExpressions)
+							this.Blend(actor, [
+								new(id, weight1),
+								new(state.Data.Pair, weight1)
+							]);
+						else
+							this.Blend(actor, [new(id, weight1)]);
+				} else {
+					if (ImGui.DragFloat($"##{id}_L", ref weight1, vSpeed: 0.001f, format: "%.3f L"))
+						if (this._ctx.Config.Editor.LinkExpressions)
+							this.Blend(actor, [
+								new(id, weight1),
+								new(state.Data.Pair, weight1)
+							]);
+						else
+							this.Blend(actor, [new(id, weight1)]);
 				}
 				active |= ImGui.IsItemActive();
 				ImGui.SameLine(0, spacing);
 
 				ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X / 2);
 				var weight2 = expCon.GetExpressions()[state.Data.Pair].Weight;
-				if (ImGui.SliderFloat($"##{id}_R", ref weight2, 0.0f, 1.0f, "%.3f R")) {
-					if (this._ctx.Config.Editor.LinkExpressions)
-						this.Blend(actor, [
-							new (state.Data.Pair, weight2),
-							new (id, weight2)
-						]);
-					else
-						this.Blend(actor, [new (state.Data.Pair, weight2)]);
+				if (!this._ctx.Config.Editor.UnlockSliders) {
+					if (ImGui.SliderFloat($"##{id}_R", ref weight2, 0.0f, 1.0f, "%.3f R"))
+						if (this._ctx.Config.Editor.LinkExpressions)
+							this.Blend(actor, [
+								new (state.Data.Pair, weight2),
+								new (id, weight2)
+							]);
+						else
+							this.Blend(actor, [new (state.Data.Pair, weight2)]);
+				} else {
+					if (ImGui.DragFloat($"##{id}_R", ref weight2, vSpeed: 0.001f, format: "%.3f R"))
+						if (this._ctx.Config.Editor.LinkExpressions)
+							this.Blend(actor, [
+								new (state.Data.Pair, weight2),
+								new (id, weight2)
+							]);
+						else
+							this.Blend(actor, [new (state.Data.Pair, weight2)]);
 				}
 				active |= ImGui.IsItemActive();
 				ImGui.SameLine(0, spacing);
@@ -198,14 +224,24 @@ public class ActorPropertyList : ObjectPropertyList {
 			} else {
 				var label = Ktisis.Locale.Translate($"expression.{id}");
 				var weight = state.Weight;
-				if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f)) {
-					if (this._ctx.Config.Editor.LinkExpressions && state.Data.Pair is not null)
-						this.Blend(actor, [
-							new(id, weight),
-							new(state.Data.Pair, weight)
-						]);
-					else
-						this.Blend(actor, [new (id, weight)]);
+				if (!this._ctx.Config.Editor.UnlockSliders) {
+					if (ImGui.SliderFloat(label, ref weight, 0.0f, 1.0f))
+						if (this._ctx.Config.Editor.LinkExpressions && state.Data.Pair is not null)
+							this.Blend(actor, [
+								new(id, weight),
+								new(state.Data.Pair, weight)
+							]);
+						else
+							this.Blend(actor, [new (id, weight)]);
+				} else {
+					if (ImGui.DragFloat(label, ref weight, vSpeed: 0.001f))
+						if (this._ctx.Config.Editor.LinkExpressions && state.Data.Pair is not null)
+							this.Blend(actor, [
+								new(id, weight),
+								new(state.Data.Pair, weight)
+							]);
+						else
+							this.Blend(actor, [new (id, weight)]);
 				}
 				active |= ImGui.IsItemActive();
 			}

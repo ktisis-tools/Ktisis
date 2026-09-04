@@ -67,16 +67,22 @@ public class ExpressionController : IExpressionController {
 			state.Reset();
 	}
 
-	public List<ExpressionMemento> ResetBlendWeights() {
+	public List<ExpressionMemento> ResetBlendWeights(bool weightsOnly = true) {
 		List<ExpressionMemento> mementos = [];
 		foreach (var (id, state) in this._state) {
 			var initial = state.Weight;
-			state.Weight = 0.0f;
+
+			// if bulk resetting, actually apply blends - if not, just set the slider states
+			if (!weightsOnly)
+				this.ApplyBlend(id, 0.0f);
+			else
+				state.Weight = 0.0f;
+
 			mementos.Add(new ExpressionMemento(this) {
 				ExpressionId = id,
 				Initial = initial,
 				Final = 0.0f,
-				WeightsOnly = true
+				WeightsOnly = weightsOnly
 			});
 		}
 		return mementos;

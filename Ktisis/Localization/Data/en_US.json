@@ -444,7 +444,8 @@
 			"expressions": {
 				"combine": "Combine L/R Sliders",
 				"link": "Link L/R Sliders",
-				"reset": "Reset",
+				"unlock": "Unlock Sliders",
+				"reset": "Reset Blends to 0",
 				"posemode_warn": "Pose Mode must be enabled to use Expression Sliders!",
 				"dtface_warn": "Expression Sliders are unavailable for non-Dawntrail faces!"
 			},
