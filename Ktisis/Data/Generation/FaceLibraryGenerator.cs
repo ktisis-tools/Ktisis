@@ -26,8 +26,8 @@ public class FaceLibraryGenerator {
 	// Data
 
 	private readonly static Expression[] Expressions = [
-		new( "BrowUpL", 6261, 0, "BrowUpR", [ "j_f_miken_l", "j_f_mayu_l", "j_f_mmayu_l", "j_f_miken_01_l", "j_f_miken_02_l" ], false ),
-		new( "BrowUpR", 6261, 1, "BrowUpL", [ "j_f_miken_r", "j_f_mayu_r", "j_f_mmayu_r", "j_f_miken_01_r", "j_f_miken_02_r" ], false ),
+		new( "BrowUpL", 615, 0, "BrowUpR", [ "j_f_miken_l", "j_f_mayu_l", "j_f_mmayu_l", "j_f_miken_01_l", "j_f_miken_02_l" ], false ),
+		new( "BrowUpR", 615, 1, "BrowUpL", [ "j_f_miken_r", "j_f_mayu_r", "j_f_mmayu_r", "j_f_miken_01_r", "j_f_miken_02_r" ], false ),
 		new( "BrowFurrowL", 6228, 2, "BrowFurrowR", [ "j_f_dmemoto_l", "j_f_dmiken_l", "j_f_miken_01_l", "j_f_miken_02_l", "j_f_miken_l" ], false ),
 		new( "BrowFurrowR", 6228, 3, "BrowFurrowL", [ "j_f_dmemoto_r", "j_f_dmiken_r", "j_f_miken_01_r", "j_f_miken_02_r", "j_f_miken_r" ], false ),
 		new( "BlinkL", 611, 4, "BlinkR", [ "j_f_mab_l", "j_f_mabdn_01_l", "j_f_mabdn_02out_l", "j_f_mabdn_03in_l", "j_f_mabup_01_l", "j_f_mabup_02out_l", "j_f_mabup_03in_l" ], true ),
