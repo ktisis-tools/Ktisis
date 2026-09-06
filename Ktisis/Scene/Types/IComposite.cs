@@ -7,7 +7,7 @@ namespace Ktisis.Scene.Types;
 public interface IComposite {
 	public SceneEntity? Parent { get; set; }
 	
-	public IEnumerable<SceneEntity> Children { get; }
+	public List<SceneEntity> Children { get; }
 
 	public bool Add(SceneEntity entity);
 	public bool Remove(SceneEntity entity);

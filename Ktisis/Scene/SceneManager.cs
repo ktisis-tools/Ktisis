@@ -124,7 +124,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 		set => this.Root.Parent = value;
 	}
 	
-	public IEnumerable<SceneEntity> Children => this.Root.Children;
+	public List<SceneEntity> Children => this.Root.Children;
 
 	public bool Add(SceneEntity entity) => this.Root.Add(entity);
 	public bool Remove(SceneEntity entity) => this.Root.Remove(entity);
