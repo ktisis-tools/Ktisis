@@ -144,7 +144,7 @@ public class SceneEntityMenuBuilder {
 					.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.npc"), () => this.Ui.OpenCharaImport(actor, true))
 					.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.pose"), () => this.Ui.OpenPoseImport(actor));
 
-				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.GetHuman() != null) {
+				if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.IsHuman) {
 					builder.Action(Ktisis.Locale.Translate("workspace.entity_menu.actor.mcdf"), () => {
 						this.Ui.OpenMcdfFile(path => this.ImportMcdf(actor, path));
 					});
@@ -158,17 +158,16 @@ public class SceneEntityMenuBuilder {
 
 	private unsafe void BuildActorIpcMenu(ContextMenuBuilder menu, ActorEntity actor) {
 		menu.SubMenu(Ktisis.Locale.Translate("workspace.entity_menu.ipc.submenu"), sub => {
-			var isHuman = actor.GetHuman() != null;
 			if (this._ctx.Plugin.Ipc.IsPenumbraActive) {
 				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.penumbra.collection"), () => this.Ui.OpenAssignCollection(actor));
-				if (isHuman)
+				if (actor.IsHuman)
 				  sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.penumbra.invisible_skin"), () => this._ctx.Characters.Mcdf.SetInvisibleSkin(actor));
 			}
 			if (this._ctx.Plugin.Ipc.IsGlamourerActive)
 				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.glamourer.design"), () => this.Ui.OpenApplyDesign(actor));
 			if (this._ctx.Plugin.Ipc.IsCustomizeActive)
 				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.customize.profile"), () => this.Ui.OpenAssignCProfile(actor));
-			if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && isHuman) {
+			if (this._ctx.Plugin.Ipc.IsAnyMcdfActive && actor.IsHuman) {
 				sub.Action(Ktisis.Locale.Translate("workspace.entity_menu.ipc.revert"), () => {
 					this._ctx.Characters.Mcdf.Revert(actor.Actor);
 					actor.AssignedProfile = null;
