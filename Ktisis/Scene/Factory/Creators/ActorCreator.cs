@@ -13,12 +13,14 @@ namespace Ktisis.Scene.Factory.Creators;
 
 public interface IActorCreator : IEntityCreator<ActorEntity, IActorCreator> {
 	public IActorCreator WithAppearance(CharaFile file);
+	public IActorCreator WithGlamourerState(string base64String);
 	public IActorCreator WithMcdf(string McdfPath);
 }
 
 public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IActorCreator {
 	private CharaFile? Appearance;
 	private string? McdfFile;
+	private string? GlamourerState;
 	
 	private McdfManager McdfManager { get; init; }
 
@@ -36,7 +38,10 @@ public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IA
 		this.Appearance = file;
 		return this;
 	}
-
+	public IActorCreator WithGlamourerState(string base64String) {
+		this.GlamourerState = base64String;
+		return this;
+	}
 	public IActorCreator WithMcdf(string mcdfPath) {
 		this.McdfFile = mcdfPath;
 		return this;
@@ -54,6 +59,9 @@ public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IA
 
 		if (this.Appearance != null)
 			await this.Scene.Context.Characters.ApplyCharaFile(entity, this.Appearance, gameState: true);
+		
+		if(this.GlamourerState != null && this.Scene.Context.Plugin.Ipc.IsGlamourerActive)
+			this.Scene.Context.Plugin.Ipc.GetGlamourerIpc().ApplyState(this.GlamourerState, entity.Actor.ObjectIndex);
 
 		if (this.McdfFile != null)
 			this.McdfManager.LoadAndApplyTo(this.McdfFile, entity.Actor);
