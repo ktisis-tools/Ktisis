@@ -56,6 +56,9 @@ public class EditorConfig {
 	// Object Editor
 
 	public bool AutoResizeObjectEditor = false;
+	public bool CombineExpressions = true;
+	public bool LinkExpressions = false;
+	public bool UnlockSliders = false;
 	
 	// Pose View
 

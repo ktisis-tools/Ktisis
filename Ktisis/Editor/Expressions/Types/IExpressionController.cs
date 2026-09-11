@@ -15,12 +15,14 @@ public interface IExpressionController {
 
 	public void Update();
 
-	public void Load(ushort raceSexId);
+	public void Load(ushort raceSexId, byte faceId);
 	public void Unload();
 
 	public void ResetBlendState();
+	public List<ExpressionMemento> ResetBlendWeights(bool weightsOnly = true);
 
 	public void ApplyBlend(string id, float weight);
+	public void SetWeight(string id, float weight);
 
 	public void Destroy();
 }

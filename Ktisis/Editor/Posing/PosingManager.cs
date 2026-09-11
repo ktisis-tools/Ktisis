@@ -208,13 +208,20 @@ public class PosingManager : IPosingManager {
 			var initial = converter.Save();
 			converter.LoadReferencePose(partialIndex);
 			var final = converter.Save();
-			this._context.Actions.History.Add(new PoseMemento(converter) {
-				Modes = PoseMode.All,
-				Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
-				Bones = null,
-				Initial = initial,
-				Final = final
-			});
+
+			List<IMemento> mementos = [
+				new PoseMemento(converter) {
+					Modes = PoseMode.All,
+					Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
+					Bones = null,
+					Initial = initial,
+					Final = final
+				}
+			];
+			// handle expression blend updates if we're refposing a face skeleton
+			if (partialIndex == 1)
+				mementos.AddRange(pose.Expressions.ResetBlendWeights());
+			this._context.Actions.History.Add(new MultipleMemento(mementos));
 		});
 	}
 
@@ -274,6 +281,10 @@ public class PosingManager : IPosingManager {
 				});
 			}
 
+			// reset face blends if face mode was used for the pose import
+			// TODO: handle child-selected face bone changes?
+			if (modes.HasFlag(PoseMode.Face))
+				mementos.AddRange(pose.Expressions.ResetBlendWeights());
 			this._context.Actions.History.Add(new MultipleMemento(mementos));
 		});
 	}
