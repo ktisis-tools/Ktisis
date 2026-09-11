@@ -119,6 +119,7 @@ public class SceneDataService {
 					var ipc = this._ctx.Plugin.Ipc;
 					Guid penumCollection = Guid.Empty;
 					Guid cPlus = Guid.Empty;
+					string? state = null;
 					if (ipc.IsPenumbraActive && ((ActorEntity)chara).MCDF == null) {
 						var penum = ipc.GetPenumbraIpc().GetCollectionForObject(((ActorEntity)chara).Actor);
 						if (penum.Id != Guid.Empty) {
@@ -128,6 +129,14 @@ public class SceneDataService {
 					if (ipc.IsCustomizeActive && ((ActorEntity)chara).MCDF == null && ((ActorEntity)chara).AssignedProfile != Guid.Empty) {
 						var assignedProfile = ((ActorEntity)chara).AssignedProfile;
 						if (assignedProfile != null) cPlus = (Guid)assignedProfile;
+					}
+
+					if (ipc.IsGlamourerActive && ((ActorEntity)chara).MCDF == null)
+					{
+						var tempState = ipc.GetGlamourerIpc().GetState(((ActorEntity)chara).Actor.ObjectIndex);
+						if (tempState != null)
+							state = tempState;
+
 					}
 					
 					
@@ -139,7 +148,8 @@ public class SceneDataService {
 						DefaultRotation = defaultRotation,
 						Index = ((ActorEntity)chara).Actor.ObjectIndex,
 						PenumbraCollection = penumCollection,
-						CustomizePlus = cPlus
+						CustomizePlus = cPlus,
+						GlamourerState = state
 					});
 
 				}
@@ -435,7 +445,9 @@ public class SceneDataService {
 		else if (actor.MCDF != String.Empty) {
 			t = t.WithAppearance(actor.Chara);
 			Ktisis.WarningNotification($"Couldn't find the MCDF linked to the actor {actor.Chara.Nickname}, please try and load it manually.");
-		}else
+		}else if (actor.GlamourerState != null && this._ctx.Plugin.Ipc.IsGlamourerActive)
+			t = t.WithGlamourerState(actor.GlamourerState);
+		else
 			t = t.WithAppearance(actor.Chara);
 
 		t.Spawn().ContinueWith(async (p) => {
@@ -444,6 +456,7 @@ public class SceneDataService {
 			await this._framework.DelayTicks(15);
 			a.Name = actor.Chara.Nickname!;
 			var act = a.Actor;
+			
 			if (actor.PenumbraCollection != Guid.Empty && this._ctx.Plugin.Ipc.IsPenumbraActive)
 				if(this._ctx.Plugin.Ipc.GetPenumbraIpc().GetCollections().ContainsKey(actor.PenumbraCollection))
 					this._ctx.Plugin.Ipc.GetPenumbraIpc().SetCollectionForObject(act, actor.PenumbraCollection);
@@ -457,8 +470,10 @@ public class SceneDataService {
 			}
 
 			this.SetupActorPosition(actor, a);
-			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
 			this._task?.Wait();
+			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
+
+			
 			this._task = this._ctx?.Posing.ApplyPoseFile(a.Pose!, actor.Pose, PoseMode.All,(PoseTransforms)0xF)!;
 		});
 	}
