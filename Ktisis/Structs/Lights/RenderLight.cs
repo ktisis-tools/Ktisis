@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
 
 using Ktisis.Structs.Common;
 
@@ -16,12 +17,6 @@ public enum LightFlags : uint {
 	ObjectShadow = 0x08
 }
 
-public enum LightType : uint {
-	Directional = 1,
-	PointLight = 2,
-	SpotLight = 3,
-	AreaLight = 4
-}
 
 public enum FalloffType : uint {
 	Linear = 0,

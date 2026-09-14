@@ -1,5 +1,7 @@
 ﻿using System.IO;
 
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
+
 using GLib.Popups.Context;
 
 using Ktisis.Common.Extensions;
@@ -62,9 +64,11 @@ public class SceneCreateMenuBuilder {
 		=> sub.SubMenu(Ktisis.Locale.Translate("workspace.create_menu.light.create"), this.BuildLightMenu);
 	
 	private void BuildLightMenu(ContextMenuBuilder sub) {
-		sub.Action(Ktisis.Locale.Translate("workspace.create_menu.light.point"), () => SpawnLight(LightType.PointLight))
-			.Action(Ktisis.Locale.Translate("workspace.create_menu.light.spot"), () => SpawnLight(LightType.SpotLight))
-			.Action(Ktisis.Locale.Translate("workspace.create_menu.light.area"), () => SpawnLight(LightType.AreaLight))
+		sub.Action(Ktisis.Locale.Translate("workspace.create_menu.light.point"), () => SpawnLight(LightType.Point))
+			.Action(Ktisis.Locale.Translate("workspace.create_menu.light.spot"), () => SpawnLight(LightType.Spot))
+			.Action(Ktisis.Locale.Translate("workspace.create_menu.light.area"), () => SpawnLight(LightType.Plane))
+			.Action(Ktisis.Locale.Translate("workspace.create_menu.light.line"), () => SpawnLight(LightType.Line))
+			.Action(Ktisis.Locale.Translate("workspace.create_menu.light.specular"), () => SpawnLight(LightType.Specular))
 			.Action(Ktisis.Locale.Translate("workspace.create_menu.light.directional"), () => SpawnLight(LightType.Directional))
 			.Action(Ktisis.Locale.Translate("workspace.create_menu.light.file"), () => this.ImportLightFromFile());
 		
