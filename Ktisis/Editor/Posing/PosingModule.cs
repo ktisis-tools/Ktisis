@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
+using Dalamud;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
@@ -25,6 +27,7 @@ public sealed class PosingModule : HookModule {
 	private readonly PosingManager Manager;
 	private readonly ActorService _actors;
 	private readonly IpcProvider _ipc;
+	private readonly ISigScanner _sigScanner;
 
 	public event SkeletonInitHandler? OnSkeletonInit;
 	public event Action? OnDisconnect;
@@ -35,8 +38,10 @@ public sealed class PosingModule : HookModule {
 		ActorService actors,
 		ContextManager contextManager,
 		IDalamudPluginInterface dpi,
-		JsonFileSerializer fileSerializer
-	) : base(hook) {
+		JsonFileSerializer fileSerializer,
+		ISigScanner sigScanner
+		) : base(hook) {
+		this._sigScanner = sigScanner;
 		this.Manager = manager;
 		this._actors = actors;
 		this._ipc = new IpcProvider(contextManager, dpi, fileSerializer);
@@ -48,16 +53,23 @@ public sealed class PosingModule : HookModule {
 
 	public override void EnableAll() {
 		base.EnableAll();
+		SetupBonePhysicsPatch();
 		this.IsEnabled = true;
 		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
 
 	public override void DisableAll() {
 		base.DisableAll();
+		this.RemoveBonePhysicsPatch();
 		this.IsEnabled = false;
 		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
-	
+	public override void Dispose() {
+		if (this.PhysicsAddress != 0)
+			RemoveBonePhysicsPatch();
+		base.Dispose();
+	}
+
 	// Posing hooks - thanks to perchbird (@lmcintyre) for his initial implementation of these.
 	// https://github.com/ktisis-tools/Ktisis/pull/8
 	
@@ -88,6 +100,31 @@ public sealed class PosingModule : HookModule {
 		var skeleton = cBase->Skeleton;
 		var pose = skeleton->PartialSkeletons[1].GetHavokPose(0);
 		this._syncModelSpaceHook.Original(pose);
+	}
+	
+	// Client::Graphics::Physics::BonePhysicsUpdater_Update
+
+	private byte[] newInstructions = {
+		0x48, 0x89, 0x5C, 0x24, 0x10, 0x48, 0x89, 0x6C, 
+		0x24, 0x18, 0x48, 0x89, 0x74, 0x24, 0x20, 0x57
+	};
+	private byte[] oldInstructions;
+	private string PhyiscsSig = "48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 41 54 41 56 48 83 EC ?? 48 8B 59";
+	private nint PhysicsAddress = 0;
+	private void SetupBonePhysicsPatch() {
+		try {
+			PhysicsAddress = this._sigScanner.ScanText(PhyiscsSig);
+			SafeMemory.ReadBytes(PhysicsAddress, 16, out this.oldInstructions);
+			SafeMemory.WriteBytes(PhysicsAddress,  this.newInstructions);
+		} catch {Ktisis.Log.Warning("BonePhysics hook failed");}
+
+	}
+	
+	private void RemoveBonePhysicsPatch() {
+		try {
+			SafeMemory.WriteBytes(PhysicsAddress,  this.oldInstructions);
+		} catch {Ktisis.Log.Warning("Bone Physics hook failed");}
+
 	}
 	
 	// CalcBoneModelSpace
