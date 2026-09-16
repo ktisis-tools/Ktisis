@@ -1,5 +1,7 @@
 using Dalamud.Game.ClientState.Objects.Types;
 
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
+
 using Ktisis.Structs.Lights;
 using Ktisis.Scene.Factory.Builders;
 using Ktisis.Scene.Factory.Creators;

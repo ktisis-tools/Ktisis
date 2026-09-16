@@ -9,6 +9,8 @@ using Dalamud.Interface.Textures;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
+
 using GLib.Popups;
 using GLib.Widgets;
 
@@ -99,7 +101,7 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 			foreach (var value in Enum.GetValues<LightType>()) {
 				var valueLabel = this._locale.Translate($"lightType.{value}");
 				if (ImGui.Selectable(valueLabel, light->LightType == value)) {
-					if (value is not (LightType.SpotLight or LightType.AreaLight))
+					if (value is not (LightType.Spot or LightType.Plane))
 						entity.RemoveGobo();
 					light->LightType = value;
 				}
@@ -108,11 +110,11 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 		}
 		
 		switch (light->LightType) {
-			case LightType.SpotLight:
+			case LightType.Spot:
 				ImGui.SliderFloat($"{Ktisis.Locale.Translate("object_edit.light.light.spot.angle")}##LightAngle", ref light->LightAngle, 0.0f, 180.0f, "%0.0f deg");
 				ImGui.SliderFloat($"{Ktisis.Locale.Translate("object_edit.light.light.spot.falloff")}##LightAngle", ref light->FalloffAngle, 0.0f, 180.0f, "%0.0f deg");
 				break;
-			case LightType.AreaLight:
+			case LightType.Plane:
 				var angleSpace = ImGui.GetStyle().ItemInnerSpacing.X;
 				var angleWidth = ImGui.CalcItemWidth() / 2 - angleSpace;
 				using (var _ = ImRaii.ItemWidth(angleWidth)) {
@@ -160,7 +162,7 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 			ImGui.Text(Ktisis.Locale.Translate("object_edit.light.light.gobos.info"));
 		}
 		ImGui.SameLine();
-		using (ImRaii.Disabled(light->LightType is (LightType.Directional or LightType.PointLight))) {
+		using (ImRaii.Disabled(light->LightType is (LightType.Directional or LightType.Point))) {
 			var tooltip = Ktisis.Locale.Translate("object_edit.light.light.gobos.choose");
 			if (entity.Gobo != null)
 				tooltip += Ktisis.Locale.Translate("object_edit.light.light.gobos.remove");

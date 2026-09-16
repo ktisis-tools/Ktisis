@@ -1,5 +1,7 @@
 using System;
 
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
+
 using Ktisis.Data.Config.Gobos;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Data.Files;
@@ -7,9 +9,17 @@ using Ktisis.Data.Serialization;
 
 namespace Ktisis.Editor.Lights;
 
+
 public class EntityLightConverter {
 	private readonly GoboSchema _goboSchema;
     private LightEntity _light;
+	private enum LegacyLightType : uint {
+		Directional = 1,
+		PointLight = 2,
+		SpotLight = 3,
+		AreaLight = 4
+	}
+
 
 	public EntityLightConverter(LightEntity light) {
 		this._light = light;
@@ -21,11 +31,29 @@ public class EntityLightConverter {
 		var light = sceneLight != null ? sceneLight->RenderLight : null;
 		if (light == null) return;
 
+		if (file.FileVersion <= 2) {
+			switch ((LegacyLightType)light->LightType) {
+				case LegacyLightType.Directional:
+					light->LightType = LightType.Directional;
+					break;
+				case LegacyLightType.PointLight:
+					light->LightType = LightType.Point;
+					break;
+				case LegacyLightType.SpotLight:
+					light->LightType = LightType.Spot;
+					break;
+				case LegacyLightType.AreaLight:
+					light->LightType = LightType.Plane;
+					break;
+			}
+
+		} else {
+			light->LightType = file.LightType;
+		}
         this._light.Flags |= LightEntityFlags.Update;
         this._light.Name = file.Nickname;
 
         light->Flags = file.Flags;
-        light->LightType = file.LightType;
         // light->Transform = file.Transform; TODO
         light->Color.RGB = file.RGB;
         light->Color.Intensity = file.Intensity;
