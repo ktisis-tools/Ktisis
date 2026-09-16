@@ -7,6 +7,8 @@ using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using Ktisis.Core.Attributes;
 using Ktisis.Structs.Objects;
 
+using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
+
 namespace Ktisis.Services.Game;
 
 [Singleton]
@@ -27,6 +29,11 @@ public class WorldService : IDisposable {
 	private void OnGPoseEvent(object sender, bool active) {
 		this.Clean();
 		if (active) this.BuildWorld();
+	}
+
+	public unsafe Object* BuildObject(string modelPath) {
+		var objectPtr = BgObject.Create(modelPath, "ktisis", null);
+		return (Object*)objectPtr;
 	}
 
 	public void Refresh() {

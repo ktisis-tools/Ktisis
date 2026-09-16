@@ -30,6 +30,7 @@ public class SceneFile : JsonFile {
 	public List<CameraInfo> Cameras  { get; set; } = new List<CameraInfo>();
 	public EnvironmentInfo Environment { get; set; } = new EnvironmentInfo();
 	public List<OverlayInfo> Overlays { get; set; } = new List<OverlayInfo>();
+	public List<ObjectInfo> Objects { get; set; } = new List<ObjectInfo>();
 	
 	[Serializable]
 	public struct ActorInfo {
@@ -136,5 +137,13 @@ public class SceneFile : JsonFile {
 	public struct AttachInfo {
 		public ushort ParentIndex { get; set; }
 		public string NodeName { get; set; }
+	}
+	
+	[Serializable]
+	public struct ObjectInfo {
+		public string Path { get; set; }
+		public string Name { get; set; }
+		public Transform Transform { get; set; }
+		public bool IsHidden { get; set; }
 	}
 }
