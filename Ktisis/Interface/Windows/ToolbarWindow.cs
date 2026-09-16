@@ -44,7 +44,7 @@ public class ToolbarWindow : KtisisWindow {
 		this._ctx = ctx;
 		this._gui = gui;
 		this._workspace = new WorkspaceState(ctx);
-		this.Flags = this.Flags | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
+		this.Flags = this.Flags | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
 		this._buttons = new() {
 			new(this.DrawWorkspaceWindow, FontAwesomeIcon.PersonThroughWindow, Ktisis.Locale.Translate("toolbar.buttons.workspace"), typeof(Workspace)),
 			new(this.DrawObjectWindow, FontAwesomeIcon.ArrowsAlt, Ktisis.Locale.Translate("toolbar.buttons.object"), typeof(ObjectWindow)),

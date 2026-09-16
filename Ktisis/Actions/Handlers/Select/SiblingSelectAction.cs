@@ -41,3 +41,26 @@ public class SiblingSelectAction(IPluginContext ctx) : KeyAction(ctx) {
 		return true;
 	}
 }
+
+[Action("Toggle_Siblink_Select")]
+public class ToggleSiblink(IPluginContext ctx) : KeyAction(ctx) {
+	public override KeybindInfo BindInfo { get; } = new() {
+		Trigger = KeybindTrigger.OnDown,
+		Default = new ActionKeybind {
+			Enabled = true,
+			Combo = new KeyCombo(VirtualKey.PRIOR) // page-up
+		}
+	};
+
+	public override bool CanInvoke() => true;
+
+	public override bool Invoke() {
+		if (!this.CanInvoke()) return false;
+
+		this.Context.Config.File.Editor.PersistentSiblingLink = !this.Context.Config.File.Editor.PersistentSiblingLink;
+		if (this.Context.Config.File.Editor.PersistentSiblingLink)
+			this.Context.Editor?.Selection.TryUpdateSelectedSiblings();
+
+		return true;
+	}
+}

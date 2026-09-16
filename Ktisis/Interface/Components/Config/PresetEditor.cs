@@ -47,16 +47,28 @@ public class PresetEditor {
 		ImGui.Spacing();
 
 		using var tablePad = ImRaii.PushStyle(ImGuiStyleVar.CellPadding, new Vector2(10, 10));
-		using var table = ImRaii.Table("##PresetsTable", 2, ImGuiTableFlags.Resizable);
-		
-		if (!table.Success) return;
-			
-		ImGui.TableSetupColumn("PresetList");
-		ImGui.TableSetupColumn("PresetOptions", ImGuiTableColumnFlags.WidthStretch);
-		ImGui.TableNextRow();
+		using (var table = ImRaii.Table("##PresetsTable", 2, ImGuiTableFlags.Resizable)) {
+			if (!table.Success) return;
+			ImGui.TableSetupColumn("PresetList");
+			ImGui.TableSetupColumn("PresetOptions", ImGuiTableColumnFlags.WidthStretch);
+			ImGui.TableNextRow();
 
-		this.DrawPresetList();
-		this.DrawPresetConfig();
+			this.DrawPresetList();
+			this.DrawPresetConfig();
+		}
+
+		ImGui.Spacing();
+		using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.ModShift) || !ImGui.IsKeyDown(ImGuiKey.ModCtrl))) {
+			if (ImGui.Button(this._locale.Translate("config.presets.regen"))) {
+				this._cfg.GenerateDefaultPresets(this._cfg.File);
+				this._cfg.Save();
+			}
+
+			if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled)) {
+				using var _ = ImRaii.Tooltip();
+				ImGui.Text(this._locale.Translate("config.presets.regen_tooltip"));
+			}
+		}
 	}
 	
 	private void DrawPresetList() {

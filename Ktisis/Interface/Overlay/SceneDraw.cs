@@ -377,7 +377,7 @@ public class SceneDraw {
 			csPtr->Highlight(GetHighlightColor(this.Config.WorldOutlineColor));
 		} else
 			csPtr->Highlight(ObjectHighlightColor.None);
-  }
+	}
 
 	private float GetOpacityMultiplier(ActorEntity actor) {
 		if (!this.Config.DimOverlayForInactiveActors) return 1.0f;

@@ -15,7 +15,9 @@ public class FileSelect<T> where T : notnull {
 	// Events
 
 	public OpenDialogHandler? OnOpenDialog;
+	public SelectedFileHandler? OnSelectedFile;
 	public delegate void OpenDialogHandler(FileSelect<T> sender);
+	public delegate void SelectedFileHandler(FileSelect<T> sender);
 	
 	// State
 	
@@ -28,6 +30,7 @@ public class FileSelect<T> where T : notnull {
 			Path = path,
 			File = file
 		};
+		this.OnSelectedFile?.Invoke(this);
 	}
 
 	public void Clear() => this.Selected = null;

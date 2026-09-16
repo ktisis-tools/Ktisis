@@ -44,7 +44,8 @@
 		"Toolbar_ToggleCamera": "Switch to the Camera Editor",
 		"Toolbar_ToggleConfig": "Switch to the Configuration Window",
 		"Toolbar_ToggleScene": "Switch to the Scene Editor",
-		"Scene_RefreshEntities": "Refresh scene entities"
+		"Scene_RefreshEntities": "Refresh scene entities",
+		"Toggle_Siblink_Select": "Toggle persistent Sibling Links"
 	},
 	
 	"actors": {
@@ -109,6 +110,7 @@
 		},
 		"pose": {
 			"name": "Pose File (.pose)",
+			"apply": "Apply on selection",
 			"ctx_import": "Import pose...",
 			"ctx_import.group": "Import group...",
 			"ctx_import.select": "Import selected...",
@@ -162,7 +164,9 @@
 		},
 		"scene_tree": {
 			"attached_to": "Attached to",
-			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment"
+			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment",
+			"bulkVisWarning": "Show All Bones enabled!",
+			"bulkVisExplain": "While turned on, individual bones' visibility settings are ignored."
 		},
 		"create_menu": {
 			"actor": {
@@ -223,7 +227,8 @@
 				"customize": {
 					"profile": "Customize: Assign profile"
 				},
-				"revert": "Revert all IPC data"
+				"revert": "Revert all IPC data",
+				"refresh": "Refresh all IPC lists"
 			},
 			"pose": {
 				"import": "Import pose",
@@ -330,7 +335,7 @@
 				"hinges.max": "Maximum",
 				"hinges.axis": "Axis"
 			}
-		},
+		}
 	},
 	
 	"preset_edit": {
@@ -339,7 +344,8 @@
 			"title": "Add new preset",
 			"label": "Preset Name",
 			"save": "Save",
-			"cancel": "Cancel"
+			"cancel": "Cancel",
+			"explain": "The new Preset will contain all visible bones on the actor."
 		},
 		"clear": "Clear",
 		"toggle_other": "Toggle other"
@@ -423,7 +429,8 @@
 				"adv": "Advanced (Gaze/IK)",
 				"import": "Import actor appearance",
 				"gaze": "Gaze Control",
-				"ik": "Inverse Kinematics"
+				"ik": "Inverse Kinematics",
+				"expressions": "Expressions"
 			},
 			"gaze": {
 				"linked": "Linked",
@@ -435,6 +442,14 @@
 				"unk": "Unknown",
 				"null": "No Target",
 				"disabled": "Unable to control gaze while pose mode active"
+			},
+			"expressions": {
+				"combine": "Combine L/R Sliders",
+				"link": "Link L/R Sliders",
+				"unlock": "Unlock Sliders",
+				"reset": "Reset Blends to 0",
+				"posemode_warn": "Pose Mode must be enabled to use Expression Sliders!",
+				"dtface_warn": "Expression Sliders are unavailable for non-Dawntrail faces!"
 			},
 			"chara_edit": "Actor Editor",
 			"export": "Export Chara"
@@ -682,6 +697,7 @@
 		"title": "Import Pose",
 		"header": "Importing pose for",
 		"apply": "Apply",
+		"posemode_warn": "Pose Mode must be enabled to load poses!",
 		"transforms.header": "Transforms:",
 		"modes": {
 			"header": "Modes:",
@@ -843,12 +859,14 @@
 			"confirmExit": "Ensure shift has to be held to exit posing mode",
 			"AutoResizeObjectEditor": "Automatically expand the Object Editor when opening new dropdowns",
 			"hint_AutoResizeObj": "This disables the ability to resize the editors height, but you can still change its width",
-			"openTray": "When closing the workspace in GPose, open a Ktisis Tray icon",
+			"openTray": "Show Tray Icon when Ktisis is closed",
 			"hintTrayIcon": "The widget is movable when you click and drag, and will reopen the workspace when clicked",
 			"showHints": "Display Ktisis Tips on Startup",
 			"hintHint": "The first time you enter GPose after launching Ktisis, an overlay will display a random tip, hint, or fun fact!",
 			"selectTarget": "Automatically Select actors when Targeted",
 			"hintSelectTarget": "An actor is Targeted when clicked or tabbed-to with vanilla GPose controls.\nThis toggle will override Ktisis' current Selection to your new Target when one is chosen.",
+			"updateCameraPositions": "Update camera orbit with actor position",
+			"hintCameraPositions": "When enabled, the GPose camera will orbit the root position of a targeted actor.\nWhen disabled, the camera orbit will remain fixed when actor roots are moved.",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
@@ -918,7 +936,9 @@
 			"defaults": "Right click any preset to mark it as Default. Default presets will be initially enabled for any GPose actors.",
 			"delete_tooltip": "Hold shift to delete",
 			"delete": "Delete",
-			"rename": "Rename"
+			"rename": "Rename",
+			"regen": "Regenerate Defaults",
+			"regen_tooltip": "Force generates Ktisis' default presets (Body, Arms, etc.)\nHold Ctrl+Shift to use"
 		},
 		"poseview": {
 			"title": "Pose View",
@@ -994,6 +1014,11 @@
 			"autoselect": "Automatically set language",
 			"selector": "Force Language"
 		}
+	},
+
+	"titlebar": {
+		"help": "Help - Ktisis Docs",
+		"helpLinkout": "https://docs.ktisis.tools/"
 	},
 
 	"migrator": {
@@ -1437,6 +1462,37 @@
 		"CustomLegs": "Custom Skeleton Legs"
 	},
 	
+	"expression": {
+		"BrowUpL": "Brow Up (L)",
+		"BrowUpR": "Brow Up (R)",
+		"BrowUp": "Brow Up",
+		"BrowFurrowL": "Brow Furrow (L)",
+		"BrowFurrowR": "Brow Furrow (R)",
+		"BrowFurrow": "Brow Furrow",
+		"BlinkL": "Blink (L)",
+		"BlinkR": "Blink (R)",
+		"Blink": "Blink",
+		"EyeWideL": "Eye Wide (L)",
+		"EyeWideR": "Eye Wide (R)",
+		"EyeWide": "Eye Wide",
+		"CheekRaiseL": "Cheek Raise (L)",
+		"CheekRaiseR": "Cheek Raise (R)",
+		"CheekRaise": "Cheek Raise",
+		"SmileL": "Smile (L)",
+		"SmileR": "Smile (R)",
+		"Smile": "Smile",
+		"GrinL": "Grin (L)",
+		"GrinR": "Grin (R)",
+		"Grin": "Grin",
+		"FrownL": "Frown (L)",
+		"FrownR": "Frown (R)",
+		"Frown": "Frown",
+		"JawOpen": "Jaw Open",
+		"UpperLipOpen": "Upper Lip Open",
+		"LowerLipOpen": "Lower Lip Open",
+		"LipPucker": "Lip Pucker"
+	},
+	
 	"lightType": {
 		"Directional": "Sun Light (Directional)",
 		"PointLight": "Point Light",
@@ -1452,7 +1508,7 @@
 	
 	"misc": {
 		"command_desc": "Toggle the main Ktisis window."
-  },
+	},
 
 	"background": {
 		"Basic": "Basic",

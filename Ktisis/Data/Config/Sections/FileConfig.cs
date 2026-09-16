@@ -11,6 +11,7 @@ public class FileConfig {
 	
 	public SaveModes ImportCharaModes = SaveModes.All;
 	public bool ImportNpcApplyOnSelect = false;
+	public bool ImportPoseApplyOnSelect = false;
 	
 	public bool ImportPoseSelectedBones = false;
 	public bool SelectedBonesIncludeDescendants = false;

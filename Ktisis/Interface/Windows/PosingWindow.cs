@@ -27,6 +27,7 @@ using Ktisis.Interface.Components.Posing.Types;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Localization;
+using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Services.Game;
@@ -88,7 +89,6 @@ public class PosingWindow : KtisisWindow {
 	}
 	
 	public override void Draw() {
-		var target = this._ctx.Transform.Target;
 		if (this._ctx.Config.Editor.UseLegacyPoseViewTabs && !this._ctx.Config.Editor.UseToolbar) {
 			this.DrawLegacyTabs();
 			return;
@@ -104,35 +104,50 @@ public class PosingWindow : KtisisWindow {
 
 		this.DrawWindow(this._target);
 
-		
-		if (this._ctx.Config.Editor.UseToolbar) {
-			if (this._ctx.Config.Editor.FlyoutOpen) {
-				ImGui.SameLine();
-				using var _ = ImRaii.Group();
-				this.DrawToggles(target);
-				this.DrawTransform(target);
-				ImGui.SetCursorPos((ImGui.GetContentRegionMax().Sub(Buttons.CalcSize()) - ImGui.GetStyle().WindowPadding).SubX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
-				if (ImGui.Button("<")) {
-					ImGui.SetWindowSize(ImGui.GetWindowSize().SubX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
-					this._ctx.Config.Editor.FlyoutOpen = false;
-				}
-			} else {
-				ImGui.SetCursorPos(ImGui.GetContentRegionMax().Sub(Buttons.CalcSize()) - ImGui.GetStyle().WindowPadding );
-				if (ImGui.Button(">")) {
-					ImGui.SetWindowSize(ImGui.GetWindowSize().AddX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
-					this._ctx.Config.Editor.FlyoutOpen = true;
-				}
+		if (!this._ctx.Config.Editor.UseToolbar)
+			return;
+
+		if (this._ctx.Config.Editor.FlyoutOpen) {
+			var gizmoTarget = this._ctx.Transform.Target;
+
+			ImGui.SameLine();
+			using var _ = ImRaii.Group();
+			this.DrawToggles(gizmoTarget);
+			this.DrawTransform(gizmoTarget);
+			ImGui.SetCursorPos((ImGui.GetContentRegionMax().Sub(Buttons.CalcSize()) - ImGui.GetStyle().WindowPadding).SubX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
+			if (ImGui.Button("<")) {
+				ImGui.SetWindowSize(ImGui.GetWindowSize().SubX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
+				this._ctx.Config.Editor.FlyoutOpen = false;
+			}
+		} else {
+			ImGui.SetCursorPos(ImGui.GetContentRegionMax().Sub(Buttons.CalcSize()) - ImGui.GetStyle().WindowPadding );
+			if (ImGui.Button(">")) {
+				ImGui.SetWindowSize(ImGui.GetWindowSize().AddX(TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2));
+				this._ctx.Config.Editor.FlyoutOpen = true;
 			}
 		}
 	}
 
 	private bool UpdateTarget() {
-		var selected = (ActorEntity?)this._ctx.Selection.GetSelected()
-			.FirstOrDefault(entity => entity is ActorEntity);
+		// see if we're actively selecting an actor first
+		var selected = this._ctx.Selection.GetSelected().OfType<ActorEntity>().FirstOrDefault();
+		if (selected is null) {
+			// if not, see if we're selecting a child bone or pose of an actor and work upwards
+			var selection = this._ctx.Selection.GetFirstSelected() switch {
+				EntityPose p => p.Parent,
+				SkeletonNode s => s.Pose.Parent,
+				_ => null
+			};
 
-		if (selected == null || this._target == selected)
-			return false;
+			// if we got an actor from the pose parent, treat it as selected
+			if (selection is ActorEntity a)
+				selected = a;
+		}
 
+		// skip updating target if we can't find a selected actor or the selected actor matches our current target
+		if (selected is null || selected == this._target) return false;
+
+		// update target if we have a new actor focused
 		this._target = selected;
 		return true;
 	}
@@ -450,5 +465,4 @@ public class PosingWindow : KtisisWindow {
 		if (Buttons.IconButtonTooltip(gizmoIcon, gizmoHint, iconBtnSize))
 			this._ctx.Config.Editor.TransformHide = !hide;
 	}
-	
 }

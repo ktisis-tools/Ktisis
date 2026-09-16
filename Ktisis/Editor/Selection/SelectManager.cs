@@ -25,6 +25,8 @@ public delegate void SelectChangedHandler(ISelectManager sender, bool multi);
 
 public interface ISelectManager {
 	public event SelectChangedHandler Changed;
+
+	public IGameObject? Targeted { get; }
 	
 	public void Update();
 	
@@ -57,7 +59,7 @@ public class SelectManager : ISelectManager {
 
 	private readonly HashSet<ActorEntity> PreviousActors = new();
 	private readonly List<SceneEntity> Selected = new();
-	private IGameObject? Targeted;
+	public IGameObject? Targeted { get; private set; }
 	
 	public SelectManager(
 		IEditorContext context,
