@@ -427,7 +427,8 @@
 				"adv": "Advanced (Gaze/IK)",
 				"import": "Import actor appearance",
 				"gaze": "Gaze Control",
-				"ik": "Inverse Kinematics"
+				"ik": "Inverse Kinematics",
+				"expressions": "Expressions"
 			},
 			"gaze": {
 				"linked": "Linked",
@@ -439,6 +440,14 @@
 				"unk": "Unknown",
 				"null": "No Target",
 				"disabled": "Unable to control gaze while pose mode active"
+			},
+			"expressions": {
+				"combine": "Combine L/R Sliders",
+				"link": "Link L/R Sliders",
+				"unlock": "Unlock Sliders",
+				"reset": "Reset Blends to 0",
+				"posemode_warn": "Pose Mode must be enabled to use Expression Sliders!",
+				"dtface_warn": "Expression Sliders are unavailable for non-Dawntrail faces!"
 			},
 			"chara_edit": "Actor Editor",
 			"export": "Export Chara"
@@ -1415,6 +1424,37 @@
 		"CustomLegs": "Custom Skeleton Legs"
 	},
 	
+	"expression": {
+		"BrowUpL": "Brow Up (L)",
+		"BrowUpR": "Brow Up (R)",
+		"BrowUp": "Brow Up",
+		"BrowFurrowL": "Brow Furrow (L)",
+		"BrowFurrowR": "Brow Furrow (R)",
+		"BrowFurrow": "Brow Furrow",
+		"BlinkL": "Blink (L)",
+		"BlinkR": "Blink (R)",
+		"Blink": "Blink",
+		"EyeWideL": "Eye Wide (L)",
+		"EyeWideR": "Eye Wide (R)",
+		"EyeWide": "Eye Wide",
+		"CheekRaiseL": "Cheek Raise (L)",
+		"CheekRaiseR": "Cheek Raise (R)",
+		"CheekRaise": "Cheek Raise",
+		"SmileL": "Smile (L)",
+		"SmileR": "Smile (R)",
+		"Smile": "Smile",
+		"GrinL": "Grin (L)",
+		"GrinR": "Grin (R)",
+		"Grin": "Grin",
+		"FrownL": "Frown (L)",
+		"FrownR": "Frown (R)",
+		"Frown": "Frown",
+		"JawOpen": "Jaw Open",
+		"UpperLipOpen": "Upper Lip Open",
+		"LowerLipOpen": "Lower Lip Open",
+		"LipPucker": "Lip Pucker"
+	},
+	
 	"lightType": {
 		"Directional": "Sun Light (Directional)",
 		"PointLight": "Point Light",
@@ -1430,7 +1470,7 @@
 	
 	"misc": {
 		"command_desc": "Toggle the main Ktisis window."
-  },
+	},
 
 	"background": {
 		"Basic": "Basic",
