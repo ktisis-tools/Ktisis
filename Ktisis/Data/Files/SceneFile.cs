@@ -34,7 +34,7 @@ public class SceneFile : JsonFile {
 	
 	[Serializable]
 	public struct ActorInfo {
-		public ActorInfo(PoseFile pose, CharaFile chara, Transform location, string mcdf, float defaultRotation, ushort index, Guid penumbraCollection, Guid customizePlus, AttachInfo? attach = null) {
+		public ActorInfo(PoseFile pose, CharaFile chara, Transform location, string mcdf, float defaultRotation, ushort index, Guid penumbraCollection, Guid customizePlus, AttachInfo? attach = null, string? glamourerState = null) {
 			Pose = pose;
 			Chara = chara;
 			Location = location;
@@ -44,6 +44,7 @@ public class SceneFile : JsonFile {
 			PenumbraCollection = penumbraCollection;
 			CustomizePlus = customizePlus;
 			Attach = attach;
+			GlamourerState = glamourerState;
 		}
 		public PoseFile Pose { get; set; }
 		public CharaFile Chara { get; set; }
@@ -54,6 +55,7 @@ public class SceneFile : JsonFile {
 		public Guid PenumbraCollection { get; set; } = Guid.Empty;
 		public Guid CustomizePlus { get; set; } = Guid.Empty;
 		public AttachInfo? Attach { get; set; }
+		public string? GlamourerState { get; set; }
 	}
 	
 	[Serializable]
