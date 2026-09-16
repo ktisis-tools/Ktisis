@@ -66,6 +66,7 @@ public class CameraWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
+		base.PreDraw();
 		this.SizeCondition = ImGuiCond.Always;
 		this.SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = new(TransformTable.CalcWidth(), 300.0f),

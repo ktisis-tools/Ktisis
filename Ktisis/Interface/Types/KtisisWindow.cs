@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 using Dalamud.Interface.Windowing;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using Dalamud.Utility.Numerics;
 
 using Ktisis.Common.Utility;
 using Ktisis.Events;
@@ -28,7 +31,12 @@ public abstract class KtisisWindow : Window {
 		ImGuiWindowFlags flags = ImGuiWindowFlags.None,
 		string windowId = "",
 		bool forceMainWindow = false
+#if TESTING
+	) : base($"{Ktisis.Locale.Translate(localeWindowName)} [TESTING]{windowId}", flags, forceMainWindow) {
+#else
 	) : base($"{Ktisis.Locale.Translate(localeWindowName)}{windowId}", flags, forceMainWindow) {
+#endif
+
 		this._localeWindowName = localeWindowName;
 		this._windowId = windowId;
 		this.RespectCloseHotkey = false;
@@ -75,4 +83,5 @@ public abstract class KtisisWindow : Window {
 			Click = _ => GuiHelpers.OpenBrowser(Ktisis.Locale.Translate("titlebar.helpLinkout"))
 		});
 	}
+	
 }

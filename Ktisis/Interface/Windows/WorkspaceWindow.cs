@@ -55,6 +55,7 @@ public class WorkspaceWindow : KtisisWindow {
 		base.OnOpen();
 	}
 	public override void PreDraw() {
+		base.PreDraw();
 		this.SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = MinimumSize,
 			MaximumSize = ImGui.GetIO().DisplaySize * 0.9f

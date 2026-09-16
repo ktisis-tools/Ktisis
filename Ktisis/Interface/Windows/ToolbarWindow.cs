@@ -70,6 +70,7 @@ public class ToolbarWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
+		base.PreDraw();
 		var style = ImGui.GetStyle();
 		
 		// to prevent auto-resize pain, override custom style vars to dalamud defaults if they exceed certain bounds
