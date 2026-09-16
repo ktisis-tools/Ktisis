@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 using Dalamud;
+using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Plugin;
@@ -104,27 +106,25 @@ public sealed class PosingModule : HookModule {
 	
 	// Client::Graphics::Physics::BonePhysicsUpdater_Update
 
-	private byte[] newInstructions = {
-		0x48, 0x89, 0x5C, 0x24, 0x10, 0x48, 0x89, 0x6C, 
-		0x24, 0x18, 0x48, 0x89, 0x74, 0x24, 0x20, 0x57
-	};
+	private byte[] newInstructions;
 	private byte[] oldInstructions;
 	private string PhyiscsSig = "48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 41 54 41 56 48 83 EC ?? 48 8B 59";
 	private nint PhysicsAddress = 0;
 	private void SetupBonePhysicsPatch() {
 		try {
 			PhysicsAddress = this._sigScanner.ScanText(PhyiscsSig);
-			SafeMemory.ReadBytes(PhysicsAddress, 16, out this.oldInstructions);
+			var offset = PhysicsAddress - this._sigScanner.Module.BaseAddress;
+			SafeMemory.ReadBytes(PhysicsAddress, 64, out this.oldInstructions);
+			SafeMemory.ReadBytes(offset + this._sigScanner.SearchBase, 64, out this.newInstructions);
 			SafeMemory.WriteBytes(PhysicsAddress,  this.newInstructions);
-		} catch {Ktisis.Log.Warning("BonePhysics hook failed");}
+		} catch {Ktisis.Log.Warning("Bone Physics hook failed");}
 
 	}
 	
 	private void RemoveBonePhysicsPatch() {
 		try {
 			SafeMemory.WriteBytes(PhysicsAddress,  this.oldInstructions);
-		} catch {Ktisis.Log.Warning("Bone Physics hook failed");}
-
+		} catch {Ktisis.Log.Warning("Bone Physics unhook failed");}
 	}
 	
 	// CalcBoneModelSpace
