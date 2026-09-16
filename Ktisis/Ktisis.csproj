@@ -2,7 +2,7 @@
     <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
-		<Version>0.4.0.6</Version>
+		<Version>0.4.1.2</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
 		<Configurations>Debug;Release;Testing-Debug;Testing-Release</Configurations>
 	</PropertyGroup>
