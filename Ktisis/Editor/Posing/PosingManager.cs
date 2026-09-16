@@ -133,8 +133,6 @@ public class PosingManager : IPosingManager {
 			this.Expressions.ResetBlendStates();
 		}
 
-		HavokPosing.ClearCachedAbdomenModelTransform();
-
 		this.PoseModule?.SetEnabled(enable);
 	}
 
