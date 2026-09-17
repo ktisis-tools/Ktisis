@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 
 using Dalamud.Interface;
@@ -89,6 +91,8 @@ public class ConfigWindow : KtisisWindow {
 			("config.language.title", this.DrawLanguageTab),
 			("config.about.title", this.DrawAboutTab),
 		];
+
+		// this.Locale.Groups.Register("config-gizmo", ["config.gizmo.2d_scale"]);
 	}
 	
 	// Open
@@ -135,6 +139,7 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.SameLine();
 		using var _frame = ImRaii.Group();
+		using var _text = ImRaii.TextWrapPos(0);
 		using var _id = ImRaii.PushId($"##ConfigContents"); // try to resolve ImGui Empty ID ## root assertion
 		var (_, drawFn) = this.Tabs[this._tabIndex];
 		drawFn();
@@ -170,7 +175,8 @@ public class ConfigWindow : KtisisWindow {
 	
 	// Gizmo
 
-	private void DrawGizmoTab() {
+	[LocaleGroup("config.gizmo", ["config.gizmo.2d_scale"])]
+	public void DrawGizmoTab() {
 		ImGui.Text(this.Locale.Translate("config.gizmo.header"));
 		ImGui.Spacing();
 
@@ -179,7 +185,8 @@ public class ConfigWindow : KtisisWindow {
 		this.DrawHint("config.gizmo.rayHint");
 		ImGui.Checkbox(this.Locale.Translate("config.gizmo.holdSnap"), ref this.Config.Gizmo.AllowHoldSnap);
 		this.DrawHint("config.gizmo.hintHoldSnap");
-		ImGui.SliderFloat(this.Locale.Translate("config.gizmo.2d_scale"), ref this.Config.Gizmo.Gizmo2DScaleFactor, 0.4f, 0.75f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
+		using (this.Locale.Groups.ApplyMaxX("config.gizmo"))
+			ImGui.SliderFloat(this.Locale.Translate("config.gizmo.2d_scale"), ref this.Config.Gizmo.Gizmo2DScaleFactor, 0.4f, 0.75f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
 
 		ImGui.Spacing();
 		this._gizmoStyle.Draw();
@@ -187,7 +194,9 @@ public class ConfigWindow : KtisisWindow {
 	
 	// Overlay
 
-	private void DrawOverlayTab() {
+	[PatternLocaleGroup("config.overlay.world"), PatternLocaleGroup("config.overlay.lines")]
+	[LocaleGroup("state_chooser", ["config.overlay.active_state_chooser"])]
+	public void DrawOverlayTab() {
 		ImGui.Text(this.Locale.Translate("config.overlay.header"));
 		ImGui.Spacing();
 
@@ -197,21 +206,24 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.Checkbox(this.Locale.Translate("config.references.draw_title"), ref this.Config.Overlay.DrawReferenceTitle);
 		ImGui.Spacing();
-		ImGui.DragFloat(this.Locale.Translate("config.overlay.dots.radius"), ref this.Config.Overlay.DotRadius, 0.1f);
-		ImGui.DragFloat(this.Locale.Translate("config.overlay.lines.thick"), ref this.Config.Overlay.LineThickness, 0.1f);
-		ImGui.Spacing();
-		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
-		ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
+		using (this.Locale.Groups.ApplyMaxX("config.overlay.lines")) {
+			ImGui.DragFloat(this.Locale.Translate("config.overlay.dots.radius"), ref this.Config.Overlay.DotRadius, 0.1f);
+			ImGui.DragFloat(this.Locale.Translate("config.overlay.lines.thick"), ref this.Config.Overlay.LineThickness, 0.1f);
+			ImGui.Spacing();
+			ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
+			ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
+		}
 
 		ImGui.Spacing();
 		ImGui.Separator();
 		ImGui.Spacing();
-
+		var stateChooserWidth = this.Locale.Groups.ApplyMaxX("state_chooser");
 		using (var _combo = ImRaii.Combo(this.Locale.Translate("config.overlay.active_state_chooser"), this.Config.Overlay.ActiveStateType.ToString()))
 			if (_combo.Success)
 				foreach (var stateType in Enum.GetValues<ActiveState>())
 					if (ImGui.Selectable(stateType.ToString(), stateType == this.Config.Overlay.ActiveStateType))
 						this.Config.Overlay.ActiveStateType = stateType;
+		stateChooserWidth.Dispose();
 		ImGui.Spacing();
 		ImGui.Checkbox(this.Locale.Translate("config.overlay.keep_presets_on_active"), ref this.Config.Overlay.PresetsOnActiveActor);
 		ImGui.Checkbox(this.Locale.Translate("config.overlay.dim_inactive"), ref this.Config.Overlay.DimOverlayForInactiveActors);
@@ -221,10 +233,12 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.Separator();
 		ImGui.Spacing();
-
+		
+		using var _ = this.Locale.Groups.ApplyMaxX("config.overlay.world");
+		
 		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_radius"), ref this.Config.Overlay.WorldNodeRadius, 0.1f);
 		ImGui.DragFloat(this.Locale.Translate("config.overlay.world.dot_thickness"), ref this.Config.Overlay.WorldNodeOutlineWidth, 0.1f);
-		ImGui.SliderFloat(this.Locale.Translate("config.overlay.world.scale_factor"), ref  this.Config.Overlay.WorldNodeScaleFactor, 0.1f, 1.0f);
+		ImGui.SliderFloat(this.Locale.Translate("config.overlay.world.scale_factor"), ref this.Config.Overlay.WorldNodeScaleFactor, 0.1f, 1.0f);
 		DrawColorEdit(this.Locale.Translate("config.overlay.world.color"), ref this.Config.Overlay.WorldNodeColor);
 		DrawColorEdit(this.Locale.Translate("config.overlay.world.color_actor"), ref this.Config.Overlay.ActorNodeColor);
 		DrawColorEdit(this.Locale.Translate("config.overlay.world.color_light"), ref this.Config.Overlay.LightNodeColor);
@@ -238,7 +252,8 @@ public class ConfigWindow : KtisisWindow {
 	
 	// Workspace
 	
-	private void DrawWorkspaceTab() {
+	[PatternLocaleGroup("config.workspace.hintLocation")]
+	public void DrawWorkspaceTab() {
 		ImGui.Text(this.Locale.Translate("config.workspace.header"));
 		ImGui.Spacing();
 		
@@ -266,6 +281,7 @@ public class ConfigWindow : KtisisWindow {
 		this.DrawHint("config.workspace.hintHint");
 		if (this.Config.Editor.ShowHints) {
 			using var _ = ImRaii.PushIndent();
+			using var _width = this.Locale.Groups.ApplyMaxX("config.workspace.hintLocation");
 			ImGui.AlignTextToFramePadding();
 			ImGui.Text(this.Locale.Translate("config.workspace.hintLocation.label"));
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
@@ -321,15 +337,18 @@ public class ConfigWindow : KtisisWindow {
 			this._keybinds.ResetBinds("history|select|overlay|pose|scene");
 	}
 
-	private void DrawCamerasInputTab() {
+	[PatternLocaleGroup("config.workspace.workcam")]
+	public void DrawCamerasInputTab() {
 		ImGui.Text(this.Locale.Translate("config.input.cameras.header"));
 		ImGui.Spacing();
 
-		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.speed"), ref this.Config.Editor.WorkcamMoveSpeed, 0.001f, 0.0f, 100.0f);
-		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.fastMulti"), ref this.Config.Editor.WorkcamFastMulti, 0.001f, 0.0f, 100.0f);
-		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.slowMulti"), ref this.Config.Editor.WorkcamSlowMulti, 0.001f, 0.0f, 100.0f);
-		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.vertMulti"), ref this.Config.Editor.WorkcamVertMulti, 0.001f, 0.0f, 100.0f);
-		ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.sens"), ref this.Config.Editor.WorkcamSens, 0.001f, 0.0f, 100.0f);
+		using (this.Locale.Groups.ApplyMaxX("config.workspace.workcam")) {
+			ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.speed"), ref this.Config.Editor.WorkcamMoveSpeed, 0.001f, 0.0f, 100.0f);
+			ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.fastMulti"), ref this.Config.Editor.WorkcamFastMulti, 0.001f, 0.0f, 100.0f);
+			ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.slowMulti"), ref this.Config.Editor.WorkcamSlowMulti, 0.001f, 0.0f, 100.0f);
+			ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.vertMulti"), ref this.Config.Editor.WorkcamVertMulti, 0.001f, 0.0f, 100.0f);
+			ImGui.DragFloat(this.Locale.Translate("config.workspace.workcam.sens"), ref this.Config.Editor.WorkcamSens, 0.001f, 0.0f, 100.0f);
+		}
 		ImGui.Spacing();
 
 		ImGui.Text(this.Locale.Translate("config.input.help"));
@@ -369,7 +388,8 @@ public class ConfigWindow : KtisisWindow {
 	
 	// AutoSave
 
-	private void DrawAutoSaveTab() {
+	[PatternLocaleGroup("config.autosave", filter: ["interval", "count", "path", "dir"])]
+	public void DrawAutoSaveTab() {
 		var cfg = this.Config.AutoSave;
 
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.enable"), ref cfg.Enabled);
@@ -381,14 +401,16 @@ public class ConfigWindow : KtisisWindow {
 		
 		ImGui.Spacing();
 
-		ImGui.SliderInt(this.Locale.Translate("config.autosave.interval"), ref cfg.Interval, 10, 600, "%d s");
-		ImGui.SliderInt(this.Locale.Translate("config.autosave.count"), ref cfg.Count, 1, 20);
+		using (var width = this.Locale.Groups.ApplyMaxX("config.autosave")) {
+			ImGui.SliderInt(this.Locale.Translate("config.autosave.interval"), ref cfg.Interval, 10, 600, "%d s");
+			ImGui.SliderInt(this.Locale.Translate("config.autosave.count"), ref cfg.Count, 1, 20);
 		
-		ImGui.Spacing();
+			ImGui.Spacing();
 		
-		ImGui.InputText(this.Locale.Translate("config.autosave.path"), ref cfg.FilePath, 256);
-		ImGui.InputText(this.Locale.Translate("config.autosave.dir"), ref cfg.FolderFormat, 256);
-		
+			ImGui.InputText(this.Locale.Translate("config.autosave.path"), ref cfg.FilePath, 256);
+			ImGui.InputText(this.Locale.Translate("config.autosave.dir"), ref cfg.FolderFormat, 256);
+		}
+
 		using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.TextDisabled)))
 			ImGui.TextUnformatted($"Example folder name: {this._format.Replace(cfg.FolderFormat)}");
 		
@@ -398,7 +420,7 @@ public class ConfigWindow : KtisisWindow {
 	}
 
 	private void DrawAutoSaveFormatting() {
-		using var table = ImRaii.Table($"##AutoSaveFormatters", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.PadOuterX);
+		using var table = ImRaii.Table($"##AutoSaveFormatters", 2, ImGuiTableFlags.Borders | ImGuiTableFlags.PadOuterX);
 		if (!table.Success) return;
 
 		ImGui.TableSetupScrollFreeze(0, 1);
@@ -437,7 +459,8 @@ public class ConfigWindow : KtisisWindow {
 		dummy.Y -= style.ItemSpacing.Y + style.CellPadding.Y;
 		ImGui.Dummy(dummy);
 	}
-
+	
+	[PatternLocaleGroup("config.poseview", filter: ["body", "armor", "face", "lips", "mouth", "hands", "tail", "ears"])]
 	public void DrawPoseViewTab() {
 		var cfg = this.Config.PoseView;
 
@@ -452,6 +475,8 @@ public class ConfigWindow : KtisisWindow {
 
 		// draw file selectors
 		ImGui.Spacing();
+		
+		using var _ = this.Locale.Groups.ApplyMaxX("config.poseview");
 
 		var loc = this.Locale.Translate("config.poseview.body");
 		using (ImRaii.PushId($"poseview_{loc}")) {
@@ -511,7 +536,8 @@ public class ConfigWindow : KtisisWindow {
 	}
 	//TODO: Translation
 	
-	private void DrawLanguageTab() {
+	[PatternLocaleGroup("config.language.selector")]
+	public void DrawLanguageTab() {
 		if (ImGui.Checkbox(this.Locale.Translate("config.language.autoselect"), ref this._cfg.File.Locale.AutoDetect)) {
 			this.Locale.HandleLanguageChangeDelegate();
 		}
@@ -519,6 +545,7 @@ public class ConfigWindow : KtisisWindow {
 		var current = this.Locale.Data?.MetaData.SelfName;
 		if(this.Locale.Data?.MetaData.DisplayName != this.Locale.Data?.MetaData.SelfName)
 			current +=$" ({this.Locale.Data?.MetaData.DisplayName})";
+		using var _width = this.Locale.Groups.ApplyMaxX("config.language.selector");
 		using var _combo = ImRaii.Combo(this.Locale.Translate("config.language.selector"), current);
 		if(_combo.Success)
 			foreach (var locales in this.Locale.AvailableLocales) {
