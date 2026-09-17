@@ -185,7 +185,7 @@ public class ConfigWindow : KtisisWindow {
 		this.DrawHint("config.gizmo.rayHint");
 		ImGui.Checkbox(this.Locale.Translate("config.gizmo.holdSnap"), ref this.Config.Gizmo.AllowHoldSnap);
 		this.DrawHint("config.gizmo.hintHoldSnap");
-		using (this.Locale.Groups.ApplyMaxX("config-gizmo"))
+		using (this.Locale.Groups.ApplyMaxX("config.gizmo"))
 			ImGui.SliderFloat(this.Locale.Translate("config.gizmo.2d_scale"), ref this.Config.Gizmo.Gizmo2DScaleFactor, 0.4f, 0.75f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
 
 		ImGui.Spacing();
@@ -195,6 +195,7 @@ public class ConfigWindow : KtisisWindow {
 	// Overlay
 
 	[PatternLocaleGroup("config.overlay.world"), PatternLocaleGroup("config.overlay.lines")]
+	[LocaleGroup("state_chooser", ["config.overlay.active_state_chooser"])]
 	public void DrawOverlayTab() {
 		ImGui.Text(this.Locale.Translate("config.overlay.header"));
 		ImGui.Spacing();
@@ -205,10 +206,10 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.Checkbox(this.Locale.Translate("config.references.draw_title"), ref this.Config.Overlay.DrawReferenceTitle);
 		ImGui.Spacing();
-		ImGui.DragFloat(this.Locale.Translate("config.overlay.dots.radius"), ref this.Config.Overlay.DotRadius, 0.1f);
-		ImGui.DragFloat(this.Locale.Translate("config.overlay.lines.thick"), ref this.Config.Overlay.LineThickness, 0.1f);
-		ImGui.Spacing();
 		using (this.Locale.Groups.ApplyMaxX("config.overlay.lines")) {
+			ImGui.DragFloat(this.Locale.Translate("config.overlay.dots.radius"), ref this.Config.Overlay.DotRadius, 0.1f);
+			ImGui.DragFloat(this.Locale.Translate("config.overlay.lines.thick"), ref this.Config.Overlay.LineThickness, 0.1f);
+			ImGui.Spacing();
 			ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity"), ref this.Config.Overlay.LineOpacity, 0.0f, 1.0f);
 			ImGui.SliderFloat(this.Locale.Translate("config.overlay.lines.opacity_gizmo"), ref this.Config.Overlay.LineOpacityUsing, 0.0f, 1.0f);
 		}
@@ -216,12 +217,13 @@ public class ConfigWindow : KtisisWindow {
 		ImGui.Spacing();
 		ImGui.Separator();
 		ImGui.Spacing();
-
+		var stateChooserWidth = this.Locale.Groups.ApplyMaxX("state_chooser");
 		using (var _combo = ImRaii.Combo(this.Locale.Translate("config.overlay.active_state_chooser"), this.Config.Overlay.ActiveStateType.ToString()))
 			if (_combo.Success)
 				foreach (var stateType in Enum.GetValues<ActiveState>())
 					if (ImGui.Selectable(stateType.ToString(), stateType == this.Config.Overlay.ActiveStateType))
 						this.Config.Overlay.ActiveStateType = stateType;
+		stateChooserWidth.Dispose();
 		ImGui.Spacing();
 		ImGui.Checkbox(this.Locale.Translate("config.overlay.keep_presets_on_active"), ref this.Config.Overlay.PresetsOnActiveActor);
 		ImGui.Checkbox(this.Locale.Translate("config.overlay.dim_inactive"), ref this.Config.Overlay.DimOverlayForInactiveActors);
@@ -250,8 +252,8 @@ public class ConfigWindow : KtisisWindow {
 	
 	// Workspace
 	
-	[PatternLocaleGroup("hintLocation", "config.workspace.hintLocation.label.")]
-	private void DrawWorkspaceTab() {
+	[PatternLocaleGroup("config.workspace.hintLocation")]
+	public void DrawWorkspaceTab() {
 		ImGui.Text(this.Locale.Translate("config.workspace.header"));
 		ImGui.Spacing();
 		
@@ -279,6 +281,7 @@ public class ConfigWindow : KtisisWindow {
 		this.DrawHint("config.workspace.hintHint");
 		if (this.Config.Editor.ShowHints) {
 			using var _ = ImRaii.PushIndent();
+			using var _width = this.Locale.Groups.ApplyMaxX("config.workspace.hintLocation");
 			ImGui.AlignTextToFramePadding();
 			ImGui.Text(this.Locale.Translate("config.workspace.hintLocation.label"));
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
@@ -385,7 +388,8 @@ public class ConfigWindow : KtisisWindow {
 	
 	// AutoSave
 
-	private void DrawAutoSaveTab() {
+	[PatternLocaleGroup("config.autosave", filter: ["interval", "count", "path", "dir"])]
+	public void DrawAutoSaveTab() {
 		var cfg = this.Config.AutoSave;
 
 		ImGui.Checkbox(this.Locale.Translate("config.autosave.enable"), ref cfg.Enabled);
@@ -397,14 +401,16 @@ public class ConfigWindow : KtisisWindow {
 		
 		ImGui.Spacing();
 
-		ImGui.SliderInt(this.Locale.Translate("config.autosave.interval"), ref cfg.Interval, 10, 600, "%d s");
-		ImGui.SliderInt(this.Locale.Translate("config.autosave.count"), ref cfg.Count, 1, 20);
+		using (var width = this.Locale.Groups.ApplyMaxX("config.autosave")) {
+			ImGui.SliderInt(this.Locale.Translate("config.autosave.interval"), ref cfg.Interval, 10, 600, "%d s");
+			ImGui.SliderInt(this.Locale.Translate("config.autosave.count"), ref cfg.Count, 1, 20);
 		
-		ImGui.Spacing();
+			ImGui.Spacing();
 		
-		ImGui.InputText(this.Locale.Translate("config.autosave.path"), ref cfg.FilePath, 256);
-		ImGui.InputText(this.Locale.Translate("config.autosave.dir"), ref cfg.FolderFormat, 256);
-		
+			ImGui.InputText(this.Locale.Translate("config.autosave.path"), ref cfg.FilePath, 256);
+			ImGui.InputText(this.Locale.Translate("config.autosave.dir"), ref cfg.FolderFormat, 256);
+		}
+
 		using (var _ = ImRaii.PushColor(ImGuiCol.Text, ImGui.GetColorU32(ImGuiCol.TextDisabled)))
 			ImGui.TextUnformatted($"Example folder name: {this._format.Replace(cfg.FolderFormat)}");
 		
@@ -530,7 +536,8 @@ public class ConfigWindow : KtisisWindow {
 	}
 	//TODO: Translation
 	
-	private void DrawLanguageTab() {
+	[PatternLocaleGroup("config.language.selector")]
+	public void DrawLanguageTab() {
 		if (ImGui.Checkbox(this.Locale.Translate("config.language.autoselect"), ref this._cfg.File.Locale.AutoDetect)) {
 			this.Locale.HandleLanguageChangeDelegate();
 		}
@@ -538,6 +545,7 @@ public class ConfigWindow : KtisisWindow {
 		var current = this.Locale.Data?.MetaData.SelfName;
 		if(this.Locale.Data?.MetaData.DisplayName != this.Locale.Data?.MetaData.SelfName)
 			current +=$" ({this.Locale.Data?.MetaData.DisplayName})";
+		using var _width = this.Locale.Groups.ApplyMaxX("config.language.selector");
 		using var _combo = ImRaii.Combo(this.Locale.Translate("config.language.selector"), current);
 		if(_combo.Success)
 			foreach (var locales in this.Locale.AvailableLocales) {
