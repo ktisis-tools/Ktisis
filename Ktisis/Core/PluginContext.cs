@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
@@ -14,6 +18,8 @@ using Ktisis.Interop;
 using Ktisis.Interop.Ipc;
 using Ktisis.Legacy;
 using Ktisis.Services.Plugin;
+
+using Lumina.Extensions;
 
 namespace Ktisis.Core;
 
@@ -59,6 +65,9 @@ public class PluginContext : IPluginContext {
 	}
 
 	public void Initialize() {
+		if(this._dpi.IsTesting)
+			this.RemoveTesting();
+			
 		if (this.Config.GetConfigFileExists()) {
 			this.Config.Load();
 			if (this.Config.File.Version < 12)
@@ -79,6 +88,20 @@ public class PluginContext : IPluginContext {
 			});
 			this._context.Current?.Interface.ToggleWorkspaceWindow();
 		}
+	}
+
+	private void RemoveTesting() {
+		var temp = Assembly.GetAssembly(typeof(IDalamudPluginInterface)).DefinedTypes.First(t => t.Name == "DalamudConfiguration").AsType(); 
+		dynamic config =  this._dpi.GetService(temp);
+		var list = (System.Collections.IList)temp.GetProperty("PluginTestingOptIns")!.GetValue(config)!;
+		int index = -1;
+		foreach (var entry in list) {
+			string comp = (string)entry.GetType().GetProperty("InternalName")?.GetValue(entry);
+			if(comp == "Ktisis")
+				index = list.IndexOf(entry);
+		}
+		if(index != -1)
+			list.RemoveAt(index);
 	}
 
 	private void Setup() {
