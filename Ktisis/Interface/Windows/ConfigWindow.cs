@@ -414,7 +414,7 @@ public class ConfigWindow : KtisisWindow {
 	}
 
 	private void DrawAutoSaveFormatting() {
-		using var table = ImRaii.Table($"##AutoSaveFormatters", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders | ImGuiTableFlags.PadOuterX);
+		using var table = ImRaii.Table($"##AutoSaveFormatters", 2, ImGuiTableFlags.Borders | ImGuiTableFlags.PadOuterX);
 		if (!table.Success) return;
 
 		ImGui.TableSetupScrollFreeze(0, 1);
