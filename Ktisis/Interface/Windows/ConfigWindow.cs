@@ -135,6 +135,7 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.SameLine();
 		using var _frame = ImRaii.Group();
+		using var _id = ImRaii.PushId($"##ConfigContents"); // try to resolve ImGui Empty ID ## root assertion
 		var (_, drawFn) = this.Tabs[this._tabIndex];
 		drawFn();
 	}
@@ -255,10 +256,12 @@ public class ConfigWindow : KtisisWindow {
 		var refresh = ImGui.Checkbox(this.Locale.Translate("config.categories.allow_nsfw"), ref this.Config.Categories.ShowNsfwBones);
 		this.DrawHint("config.categories.hint_nsfw");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirmExit"), ref this.Config.Editor.ConfirmExit);
-		ImGui.Checkbox(this.Locale.Translate("config.workspace.openTray"), ref this.Config.Editor.OpenTrayOnWorkspaceClose);
-		this.DrawHint("config.workspace.hintTrayIcon");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.selectTarget"), ref this.Config.Editor.SelectOnTarget);
 		this.DrawHint("config.workspace.hintSelectTarget");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.updateCameraPositions"), ref this.Config.Editor.UpdateActorCameraPositions);
+		this.DrawHint("config.workspace.hintCameraPositions");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.openTray"), ref this.Config.Editor.OpenTrayOnWorkspaceClose);
+		this.DrawHint("config.workspace.hintTrayIcon");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.showHints"), ref this.Config.Editor.ShowHints);
 		this.DrawHint("config.workspace.hintHint");
 		if (this.Config.Editor.ShowHints) {

@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 
 using Ktisis.Common.Extensions;
+using Ktisis.Common.Utility;
 
 using Object = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.Object;
 using CSGameObject = FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject;
@@ -48,6 +51,7 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 	}
 
 	private bool DefaultsInitialized = false;
+	private bool DirtyTransform = false;
 
 	public String? MCDF;
 	public override bool IsValid => base.IsValid && this.Actor.IsValid();
@@ -64,7 +68,6 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		get { return this.Scene.Context.Config.Editor.IncognitoPlayerNames ? this.Anonymized : this.RealName; }
 		set { this.RealName = value; }
 	}
-
 
 	public ActorEntity(
 		ISceneManager scene,
@@ -92,6 +95,12 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		// after we're drawing, run the default presetter once
 		if (!this.DefaultsInitialized)
 			this.SetDefaultPresets();
+
+		// delay update of gameobject position user isn't manipulating anything
+		// dirty flag is only set if camera update config flag is True (default)
+		if (this.DirtyTransform && !ImGui.IsMouseDown(ImGuiMouseButton.Left))
+			if (this.UpdateGameObjectTransform())
+				this.DirtyTransform = false;
 	}
 
 	private unsafe void UpdateChara() {
@@ -367,5 +376,29 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		}
 
 		return 0;
+	}
+
+	public override void SetTransform(Transform trans) {
+		base.SetTransform(trans);
+		if (this.Scene.Context.Config.Editor.UpdateActorCameraPositions)
+			this.DirtyTransform = true;
+	}
+
+	private unsafe bool UpdateGameObjectTransform() {
+		// only ran with UpdateActorCameraPositions via Dirty flag from SetTransform
+		// gpose camera targeting is based on GameObject position, so we move the Character to match the DrawObject's new root position
+		var trans = this.GetTransform();
+		if (trans is null) return false;
+
+		var gameObj = this.Character;
+		if (gameObj is null) return false;
+
+		gameObj->SetPosition(
+			trans.Position.X - gameObj->DrawOffset.X,
+			trans.Position.Y - gameObj->DrawOffset.Y,
+			trans.Position.Z - gameObj->DrawOffset.Z
+		);
+		gameObj->DefaultPosition = gameObj->Position;
+		return true;
 	}
 }

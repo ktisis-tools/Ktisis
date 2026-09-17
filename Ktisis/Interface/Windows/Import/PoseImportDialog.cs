@@ -33,11 +33,21 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	) {
 		this._select = select;
 		select.OnOpenDialog = this.OnFileDialogOpen;
+		select.OnSelectedFile = this.OnFileSelected;
 	}
 
 	private void OnFileDialogOpen(FileSelect<PoseFile> sender) {
 		this.Context.Scene.Overlay.ToggleCharaViewTexture(this.Context, this.Target);
 		this.Context.Interface.OpenPoseFile(sender.SetFile);
+	}
+
+	private void OnFileSelected(FileSelect<PoseFile> sender) {
+		if (!this.Context.Config.File.ImportPoseApplyOnSelect || !this.Context.Posing.IsEnabled) return;
+
+		var isSelectBones = this.Target.Recurse()
+			.Where(child => child is SkeletonNode)
+			.Any(child => child.IsSelected);
+		this.ApplyPoseFile(isSelectBones);
 	}
 
 	// Draw UI
@@ -55,6 +65,13 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 		this.PreDraw();
 		if (!this.Context.IsValid) return; // despite closing in predraw, we might continue to later draw funcs, so stop drawing here
 		using var _id = ImRaii.PushId($"PoseEmbed_{this.GetHashCode():X}");
+		if (!this.Context.Posing.IsEnabled) {
+			Icons.DrawIcon(FontAwesomeIcon.ExclamationTriangle, ColorHelpers.RgbaVector4ToUint(ImGuiColors.DalamudYellow));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			ImGui.Text(Ktisis.Locale.Translate("pose_import.posemode_warn"));
+			ImGui.Spacing();
+		}
+		using var _disabled = ImRaii.Disabled(!this.Context.Posing.IsEnabled);
 
 		this._select.Draw();
 		
@@ -66,12 +83,12 @@ public class PoseImportDialog : EntityEditWindow<ActorEntity> {
 	// Pose application
 
 	private void DrawPoseApplication() {
-		//using var _ = ImRaii.Disabled(!this._select.IsFileOpened);
-		
 		var isSelectBones = this.Target.Recurse()
 			.Where(child => child is SkeletonNode)
 			.Any(child => child.IsSelected);
 		
+		ImGui.Checkbox(Ktisis.Locale.Translate("file.pose.apply"), ref this.Context.Config.File.ImportPoseApplyOnSelect);
+		ImGui.Spacing();
 		this.DrawTransformSelect();
 		ImGui.Spacing();
 		this.DrawApplyModes(isSelectBones);

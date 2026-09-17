@@ -77,9 +77,12 @@ public class SceneDraw {
 			this._isHoveringActor = false;
 			this._isHoveringLight = false;
 
-			this.DrawWorldObjects();
-			this.DrawWorldActors();
-			this.DrawWorldLights();
+			if (this.Config.ActiveWorldFilters.HasFlag(WorldFilters.Objects))
+				this.DrawWorldObjects();
+			if (this.Config.ActiveWorldFilters.HasFlag(WorldFilters.Actors))
+				this.DrawWorldActors();
+			if (this.Config.ActiveWorldFilters.HasFlag(WorldFilters.Lights))
+				this.DrawWorldLights();
 
 			if (!this._isHoveringWorld)
 				this.SetHovered(null);
@@ -374,7 +377,7 @@ public class SceneDraw {
 			csPtr->Highlight(GetHighlightColor(this.Config.WorldOutlineColor));
 		} else
 			csPtr->Highlight(ObjectHighlightColor.None);
-  }
+	}
 
 	private float GetOpacityMultiplier(ActorEntity actor) {
 		if (!this.Config.DimOverlayForInactiveActors) return 1.0f;

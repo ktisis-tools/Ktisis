@@ -91,8 +91,10 @@ public sealed class ObjectBuilder : EntityBuilder<WorldEntity, IObjectBuilder>, 
 
 	private ObjectEntity BuildWorldObject() {
 		var obj = this.Scene.World.Objects.Where(w => w.Address == this.Address).FirstOrNull();
+
+		// if we're building a non-world object, create using no WorldObject
 		if (obj == null)
-			throw new Exception($"Attempted to build BgObject not present in WorldService.\nAddress: {this.Address:X}");
+			return new ObjectEntity(this.Scene);
 
 		return new ObjectEntity(this.Scene, obj.Value);
 	}

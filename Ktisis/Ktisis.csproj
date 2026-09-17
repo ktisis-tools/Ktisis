@@ -2,8 +2,9 @@
     <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
-		<Version>0.4.0.3</Version>
+		<Version>0.4.1.2</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
+		<Configurations>Debug;Release;Testing-Debug;Testing-Release</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -18,12 +19,41 @@
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
+    <Choose>
+        <When Condition="'$(Configuration)' == 'Testing-Debug'">
+            <PropertyGroup>
+                <DefineConstants>TESTING;DEBUG</DefineConstants>
+                <OutputPath>bin\x64\Testing-Debug</OutputPath>
+            </PropertyGroup>
+        </When>
+        <When Condition="'$(Configuration)' == 'Testing-Release'">
+            <PropertyGroup>
+                <DefineConstants>TESTING</DefineConstants>
+                <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
+                <OutputPath>bin\x64\Testing-Release</OutputPath>
+            </PropertyGroup>
+        </When>
+        <When Condition="'$(Configuration)' == 'Release'">
+            <PropertyGroup>
+                <PathMap>$(MSBuildProjectDirectory)=$(MSBuildProjectName)-$(Version)</PathMap>
+                <OutputPath>bin\x64\Release</OutputPath>
+            </PropertyGroup>
+        </When>
+        <When Condition="'$(Configuration)' == 'Debug'">
+            <PropertyGroup>
+                <DefineConstants>DEBUG</DefineConstants>
+                <OutputPath>bin\x64\Debug</OutputPath>
+            </PropertyGroup>
+        </When>
+                
+    </Choose>
+
+
 	<ItemGroup>
 		<PackageReference Include="Glamourer.Api" Version="2.7.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
 		<PackageReference Include="K4os.Compression.LZ4.Legacy" Version="1.3.8" />
 		<PackageReference Include="KamiToolKit" Version="1.1.17" />
-		<PackageReference Include="MemoryPack" Version="1.21.4" />
 		<PackageReference Include="LuminaSupplemental.Excel" Version="5.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
 		<PackageReference Include="Penumbra.Api" Version="5.13.1" />
@@ -62,13 +92,30 @@
         <EmbeddedResource Include="Data\Schema\Categories.xml" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Data\Library\" />
       <EmbeddedResource Include="Data\Library\gobos.csv" />
       <EmbeddedResource Include="Data\Library\props.json" />
       <EmbeddedResource Include="Data\Library\skin-paths.json" />
 	</ItemGroup>
     <ItemGroup>
       <Content Include="Assets\**\*" CopyToOutputDirectory="Always"/>
+      <EmbeddedResource Include="Data\Library\Expressions\1001_Roegadyn_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\101_Midlander_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1101_Lalafell_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1201_Lalafell_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1301_AuRa_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1401_AuRa_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1501_Hrothgar_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1601_Hrothgar_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1701_Viera_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\1801_Viera_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\201_Midlander_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\301_Highlander_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\401_Highlander_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\501_Elezen_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\601_Elezen_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\701_Miqote_Masculine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\801_Miqote_Feminine.json" />
+      <EmbeddedResource Include="Data\Library\Expressions\901_Roegadyn_Masculine.json" />
       <EmbeddedResource Include="Data\Images\icon_colored.png" />
       <EmbeddedResource Include="Data\Images\icon_simple.png" />
     </ItemGroup>

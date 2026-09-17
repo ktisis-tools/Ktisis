@@ -84,7 +84,12 @@ public class SceneDataService {
 			Ktisis.Log.Warning("Failed to write Scene file");
 		}
 	}
-	public unsafe SceneFile Save(bool saveActors = true, bool saveLights = true, bool saveCameras = true, bool saveEnv = true, bool saveOverlays = true) {
+	public unsafe SceneFile Save(bool saveActors = true,
+		bool saveLights = true,
+		bool saveCameras = true,
+		bool saveEnv = true,
+		bool saveOverlays = true,
+		bool saveObjects = true) {
 
 
 			var scene = new SceneFile();
@@ -102,6 +107,9 @@ public class SceneDataService {
 				.ToList();
 		
 			var overlays = this.Scene.Children.OfType<OverlayEntity>()
+				.ToList();
+			
+			var objects = this.Scene.Children.OfType<ObjectEntity>()
 				.ToList();
 
 			Ktisis.Log.Debug("Collected all entity lists");
@@ -224,6 +232,11 @@ public class SceneDataService {
 					scene.Overlays.Add(file);
 				}
 			
+			if (saveObjects) {
+				foreach (var obj in objects) {
+					scene.Objects.Add(new SceneFile.ObjectInfo(){IsHidden = obj.IsHidden, Name = obj.Name, Path = obj.GetPath(), Transform = obj.GetTransform()});
+				}
+			}
 			
 			//Environment info 
 			if (saveEnv) {
@@ -254,7 +267,15 @@ public class SceneDataService {
 			return scene!;
 	}
 	
-	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true, bool preserveExistingActors = false) {
+	public async Task Load(SceneFile scene,
+		bool autoSaveLoading = true,
+		bool loadActors = true,
+		bool loadLights = true,
+		bool loadCameras = true,
+		bool loadEnv = true,
+		bool loadOverlays = true,
+		bool loadObjects = true,
+		bool preserveExistingActors = false) {
 		
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 
@@ -378,6 +399,18 @@ public class SceneDataService {
 						}
 
 					});
+				}
+			}
+			
+			if (loadObjects) {
+				unsafe {
+					foreach (var obj in scene.Objects) {
+						var ptr = this._ctx!.Scene.World.BuildObject(obj.Path);
+						var entity = this._ctx!.Scene.Factory.BuildObject().SetAddress(ptr).SetName(obj.Name).Add();
+						entity.Visible = obj.IsHidden;
+						entity.SetTransform(obj.Transform);
+						entity.Update();
+					}
 				}
 			}
 			
