@@ -188,6 +188,8 @@ public class ActorEntity : CharaEntity, IDeletable, IHideable {
 		return null;
 	}
 
+	public unsafe bool IsHuman => this.GetHuman() != null;
+
 	public void Redraw() => this.Actor.Redraw();
 
 	public void ToggleHidden() => this.IsHidden = !this.IsHidden;

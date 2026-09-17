@@ -71,7 +71,7 @@ public unsafe class PreviewNode : OverlayNode {
 		IObjectTable objectTable,
 		ActorEntity target
 	) {
-		if (target.GetHuman() == null)
+		if (target.IsHuman)
 			return;
 
 		this._target = target;

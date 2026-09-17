@@ -64,7 +64,7 @@ public class PluginDataEditorTab {
 			return;
 		}
 
-		using (ImRaii.Disabled(!this._ipcManager.IsAnyMcdfActive && this._actor.GetHuman() != null)) {
+		using (ImRaii.Disabled(!this._ipcManager.IsAnyMcdfActive && this._actor.IsHuman)) {
 			if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.mcdf_load")))
 				this._ctx.Interface.OpenMcdfFile(path => this.ImportMcdf(this._actor, path));
 			if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
@@ -175,7 +175,7 @@ public class PluginDataEditorTab {
 		}
 		ImGui.PopID();
 		
-		using (ImRaii.Disabled(actor.GetHuman() == null))
+		using (ImRaii.Disabled(actor.IsHuman))
 			if (ImGui.Button(Ktisis.Locale.Translate("chara_edit.ipc.penumbra.invisible_skin")))
 				this._ctx.Characters.Mcdf.SetInvisibleSkin(actor);
 	}
