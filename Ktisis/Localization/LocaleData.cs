@@ -33,6 +33,10 @@ public class LocaleData {
 		return this._translationData.Keys.Count(k => k.StartsWith(prefix));
 	}
 
+	public IEnumerable<string> KeysMatchingPattern(string prefix) {
+		return this._translationData.Keys.Where(key => key.StartsWith(prefix));
+	}
+
 	private string ReplaceParameters(string handle, string translationString, Dictionary<string, string>? parameters) {
 		StringBuilder result = new(translationString.Length);
 		StringBuilder key = new(16);
