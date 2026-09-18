@@ -70,9 +70,7 @@ public class ObjectWindow : KtisisWindow {
 		// 	this.Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize;
 		base.PreDraw();
 		if (this._ctx.Config.Editor.AutoResizeObjectEditor)
-			this.Flags = ImGuiWindowFlags.NoScrollbar;
-		else
-			this.Flags = ImGuiWindowFlags.None;
+			this.Flags |= ImGuiWindowFlags.NoScrollbar;
 		
 		var width = TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2;
 		this.SizeConstraints = new WindowSizeConstraints {

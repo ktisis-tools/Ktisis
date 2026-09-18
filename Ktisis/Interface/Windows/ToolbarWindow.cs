@@ -86,11 +86,13 @@ public class ToolbarWindow : KtisisWindow {
 
 		// Subwindow
 		if (this._subWindow is not null) {
-			var pos = new Vector2(0, 150f);
-			pos += ImGuiP.FindWindowByName(this.WindowName).Pos;
-			ImGuiP.SetWindowPos(ImGuiP.FindWindowByName(this._subWindow.WindowName), pos);
-		}
+			var win = ImGuiP.FindWindowByName(this.WindowName);
+			var pos = new Vector2(win.OuterRectClipped.Min.X, win.OuterRectClipped.Max.Y);
+			var sub = ImGuiP.FindWindowByName(this._subWindow.WindowName);
+			if (sub != ImGuiWindowPtr.Null)
+				ImGuiP.SetWindowPos(sub, pos);
 
+		}
 		base.PreDraw();
 	}
 
@@ -141,7 +143,7 @@ public class ToolbarWindow : KtisisWindow {
 		this.WindowStyle.Dispose();
 	}
 
-	internal void DrawWorkspaceWindow() => this.SetSubWindow<WorkspaceWindow>();
+	internal void DrawWorkspaceWindow() => this.SetSubWindow<Workspace>();
 	internal void DrawObjectWindow() => this.SetSubWindow<ObjectWindow>();
 	internal void DrawActorWindow() => this.SetSubWindow<ActorWindow>();
 	internal void DrawPosingWindow() => this.Interface.OpenPosingWindow();
@@ -154,6 +156,7 @@ public class ToolbarWindow : KtisisWindow {
 		// if (this._subWindow?.GetType() == typeof(ObjectWindow) && typeof(T) != typeof(ObjectWindow))
 		// 	this._subWindow?.Close();
 		if (this._subWindow?.GetType() == typeof(T)) {
+			this._subWindow.Flags &= ~ImGuiWindowFlags.NoTitleBar;
 			this._subWindow.Close();
 			this._subWindow = null; // unset subwindow if same button clicked
 			return;
@@ -170,12 +173,12 @@ public class ToolbarWindow : KtisisWindow {
 			this._subWindow = this._gui.GetOrCreate<ConfigWindow>();
 		} else if (typeof(T) == typeof(ActorWindow)) {
 			this._subWindow = this._gui.GetOrCreate<T>(this._ctx);
-			this._subWindow.Size = new Vector2(0, 400);
 		} else if (typeof(T) == typeof(SceneWindow)) {
 			this._subWindow = this._gui.GetOrCreate<SceneWindow>(this._ctx);
 		} else {
 			this._subWindow = this._gui.GetOrCreate<T>(this._ctx);
 		}
+		this._subWindow.Flags = ImGuiWindowFlags.NoTitleBar;
 
 		// handle window followup actions
 		if (this._subWindow is ActorWindow win) {
