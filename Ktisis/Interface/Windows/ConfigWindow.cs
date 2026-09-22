@@ -241,7 +241,7 @@ public class ConfigWindow : KtisisWindow {
 	private void DrawWorkspaceTab() {
 		ImGui.Text(this.Locale.Translate("config.workspace.header"));
 		ImGui.Spacing();
-		
+
 		if (ImGui.Checkbox(this.Locale.Translate("config.workspace.toolbar"), ref this.Config.Editor.UseToolbar)) {
 			if (this._context.Current is { IsValid: true, IsGPosing: true }) {
 				var popup = this._gui.CreatePopup<ChangeStatePopup>(this._context.Current!);
@@ -260,6 +260,8 @@ public class ConfigWindow : KtisisWindow {
 		this.DrawHint("config.workspace.hintSelectTarget");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.updateCameraPositions"), ref this.Config.Editor.UpdateActorCameraPositions);
 		this.DrawHint("config.workspace.hintCameraPositions");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.hideToasts"), ref this.Config.Editor.HideToasts);
+		this.DrawHint("config.workspace.hintHideToasts");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.openTray"), ref this.Config.Editor.OpenTrayOnWorkspaceClose);
 		this.DrawHint("config.workspace.hintTrayIcon");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.showHints"), ref this.Config.Editor.ShowHints);
