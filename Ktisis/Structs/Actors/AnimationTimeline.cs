@@ -16,7 +16,7 @@ public struct AnimationTimeline {
 
 	[FieldOffset(0x18C)] public unsafe fixed float TimelineWeights[14];
 
-	[FieldOffset(0x2D0)] public ushort ActionTimelineId;
+	//[FieldOffset(0x2D0)] public ushort ActionTimelineId;  //This is larger than the struct?
 
 	public unsafe SchedulerTimeline* GetSchedulerTimeline(int slot) {
 		var value = this.SchedulerTimelines[slot];
