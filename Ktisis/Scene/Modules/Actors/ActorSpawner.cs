@@ -7,9 +7,16 @@ using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 using Dalamud.Game.ClientState.Objects.Types;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
+using FFXIVClientStructs.FFXIV.Client.UI;
+
+using Ktisis.Common.Extensions;
+
 using Character = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 
 using Ktisis.Interop.Hooking;
@@ -103,6 +110,7 @@ public class ActorSpawner : HookModule {
 		});
 
 		if (index == 0xFFFFFFFF) {
+			
 			this.ExpectedIndex = null;
 			return nint.Zero;
 		}
@@ -142,16 +150,19 @@ public class ActorSpawner : HookModule {
 	private unsafe void DispatchSpawn(IGameObject original) {
 		if (this._hookVfTable == null)
 			throw new Exception("Hook vtable is not initialized!");
-		
+
 		var player = (Character*)original.Address;
 		if (player == null || !player->GameObject.IsCharacter())
 			throw new Exception($"Original object '{original.Name}' ({original.ObjectIndex}) is invalid.");
+		var pos = player->GameObject.Position;
+		if (original.ObjectIndex == 200)
+			pos = this._objectTable.LocalPlayer!.Position;
 		
 		// This gets freed by the event manager after handling.
 		var task = (GPoseActorEvent*)IMemorySpace.GetDefaultSpace()->Malloc<GPoseActorEvent>();
 		this._gPoseActorEventCtor(task, player, &player->GameObject.Position, 0x40, 30, 0, uint.MaxValue & ~0x4u & ~0x8000u, true);
 		task->__vfTable = this._hookVfTable;
-
+		
 		// TODO: Map this struct out.
 		var handler = (nint)EventFramework.Instance() + 432 + 152;
 		this._dispatchEvent(handler, task);
