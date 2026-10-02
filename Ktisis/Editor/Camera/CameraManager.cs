@@ -226,11 +226,11 @@ public class CameraManager : ICameraManager {
 	}
 
 	private void OnLocaleChange() {
-		foreach (var camera in this.CameraList) {
-			if (camera == this.Default) camera.Name = Ktisis.Locale.Translate("cameras.main");
-			else if (camera == this.WorkCamera) camera.Name = Ktisis.Locale.Translate("cameras.work");
-			else camera.Name = $"{Ktisis.Locale.Translate("cameras.camera")} {camera.Name.Split(" ")[^1]}";
-		}
+		this.WorkCamera?.Name = Ktisis.Locale.Translate("cameras.work");
+		foreach (var camera in this.CameraList)
+			camera.Name = camera == this.Default
+				? Ktisis.Locale.Translate("cameras.main")
+				: $"{Ktisis.Locale.Translate("cameras.camera")} {camera.Name.Split(" ")[^1]}";
 	}
 	
 	// Camera helpers
