@@ -46,6 +46,8 @@ public class CameraManager : ICameraManager {
 	) {
 		this._context = context;
 		this._scope = scope;
+		
+		Ktisis.Locale.LocaleChanged += this.OnLocaleChange;
 	}
 	
 	// Initialization
@@ -59,10 +61,8 @@ public class CameraManager : ICameraManager {
 			this.Module = this._scope.Create<CameraModule>(this);
 			if (this.Module.Initialize())
 				this.Module.Setup();
-			Ktisis.Locale.LocaleChanged += this.OnLocaleChange;
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to initialize camera manager:\n{err}");
-			Ktisis.Locale.LocaleChanged -= this.OnLocaleChange;
 		}
 	}
 	
