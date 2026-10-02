@@ -120,7 +120,7 @@ public unsafe class PreviewNode : OverlayNode {
 			FontSize = 14,
 			LineSpacing = 20,
 			TextFlags = TextFlags.WordWrap | TextFlags.MultiLine,
-			String = "The preview actor is currently hidden by GPose Display Settings\n\nCharacter Display Settings -> Controlled Character -> PC"
+			String = Ktisis.Locale.Translate("file.gpose_warning")
 		};
 
 		var part = this.Image.AddPart(new Part {
@@ -147,6 +147,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
+		Ktisis.Locale.LocaleChanged += this.OnLocaleChange;
 
 		this.ImageBacking.AttachNode(this);
 		this.Image.AttachNode(this);
@@ -195,6 +196,10 @@ public unsafe class PreviewNode : OverlayNode {
 			this.ApplyPose();
 			this.UpdateLocals();
 		}
+	}
+
+	private void OnLocaleChange() {
+		this.GPoseWarning.String = Ktisis.Locale.Translate("file.gpose_warning");
 	}
 
 	private NodeBase SetupButtons() {
@@ -362,6 +367,7 @@ public unsafe class PreviewNode : OverlayNode {
 
 	public void Cleanup() {
 		this._framework.Update -= this.OnFramework;
+		Ktisis.Locale.LocaleChanged -= this.OnLocaleChange;
 		this._agentInspect->CharaView.Release();
 		this.Dispose();
 	}
