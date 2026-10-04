@@ -99,6 +99,7 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 		var lightTypePreview = this._locale.Translate($"lightType.{light->LightType}");
 		if (ImGui.BeginCombo(Ktisis.Locale.Translate("object_edit.light.light.type"), lightTypePreview)) {
 			foreach (var value in Enum.GetValues<LightType>()) {
+				if(value == LightType.None) continue;
 				var valueLabel = this._locale.Translate($"lightType.{value}");
 				if (ImGui.Selectable(valueLabel, light->LightType == value)) {
 					if (value is not (LightType.Spot or LightType.Plane))

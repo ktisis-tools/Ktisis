@@ -181,6 +181,8 @@
 				"spot": "Spot",
 				"area": "Area",
 				"directional": "Sun (Directional)",
+				"line": "Line",
+				"specular": "Specular",
 				"file": "From file... (.ktlight)"
 			},
 			"reference": "Add reference image",
@@ -1417,9 +1419,11 @@
 	
 	"lightType": {
 		"Directional": "Sun Light (Directional)",
-		"PointLight": "Point Light",
-		"SpotLight": "Spot Light",
-		"AreaLight": "Area Light"
+		"Point": "Point Light",
+		"Spot": "Spot Light",
+		"Plane": "Area Light",
+		"Line": "Line Light",
+		"Specular": "Specular Light"
 	},
 	
 	"lightFalloff": {
