@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
+using System.Numerics;
 
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 
-using FFXIVClientStructs.FFXIV.Client.System.Resource.Handle;
 
 using GLib.Widgets;
 
@@ -44,7 +44,7 @@ public class SceneDragDropHandler {
 
 	private void HandleSource(SceneEntity entity) {
 		if (!UnhandledType(entity.Type)) return;
-		using var src = ImRaii.DragDropSource(ImGuiDragDropFlags.SourceNoDisableHover);
+		using var src = ImRaii.DragDropSource(ImGuiDragDropFlags.AcceptBeforeDelivery | ImGuiDragDropFlags.SourceNoDisableHover | ImGuiDragDropFlags.AcceptNoDrawDefaultRect);
 		if (!src.Success) return;
 		
 		ImGui.SetDragDropPayload(PayloadId, ReadOnlySpan<byte>.Empty, 0);
@@ -66,24 +66,85 @@ public class SceneDragDropHandler {
 		using var tar = ImRaii.DragDropTarget();
 		if (!tar.Success) return;
 
+		var itemMin = ImGui.GetItemRectMin();
+		var itemMax = ImGui.GetItemRectMax();
+		var itemSize = ImGui.GetItemRectSize();
+
+		bool cursorIsAbove = ImGui.GetMousePos().Y < (ImGui.GetItemRectMax().Y - (itemSize.Y * 0.75f));
+
+		bool cursorIsBelow = ImGui.GetMousePos().Y >= (ImGui.GetItemRectMax().Y - (itemSize.Y * 0.25f));
+
+
+			if (cursorIsAbove) {
+				ImGui.GetWindowDrawList().AddLine(
+					new Vector2(itemMin.X, itemMin.Y),
+					new Vector2(itemMax.X, itemMin.Y),
+					ImGui.GetColorU32(ImGuiCol.DragDropTarget)
+				);
+			} else if (cursorIsBelow) {
+				ImGui.GetWindowDrawList().AddLine(
+					new Vector2(itemMin.X, itemMax.Y),
+					new Vector2(itemMax.X, itemMax.Y),
+					ImGui.GetColorU32(ImGuiCol.DragDropTarget)
+				);
+			} else {
+				ImGui.GetWindowDrawList().AddRect(itemMin, itemMax, ImGui.GetColorU32(ImGuiCol.DragDropTarget));
+			}
 		var pl = ImGui.AcceptDragDropPayload(PayloadId);		
 		if (pl.Handle != null && this.Source is SceneEntity source)
 			this.HandlePayload(entity, source);
 	}
+	
+	// https://github.com/grittyfrog/MacroMate/blob/4b41fc0b40c6156fe67b0a3f64d83a4f00e430ae/MacroMate/Windows/MainWindow.cs#L529-L590
 
 	private unsafe void HandlePayload(SceneEntity target, SceneEntity source) {
-		Ktisis.Log.Info($"{target.Name} accepting payload from {source.Name}");
+		var payload = ImGui.GetDragDropPayload();
+		var itemSize = ImGui.GetItemRectSize();
 
-		if (target is IAttachTarget tar && source is IAttachable attach)
-			this.Manager.Attach(attach, tar);
-		if (target is FolderEntity && UnhandledType(source.Type)) {
-			target.Add(source);
-			source.Parent = target;
-			target.Update();
-		} else if (source.Parent?.Type == EntityType.Folder) {
-			source.Parent.Remove(source);
-			this._ctx.Scene.Add(source);
-			this._ctx.Scene.Refresh();
+		// For "beside" drag and drop (i.e. sibling drop) we need to decide how much of the item will count as "above" and "below"
+		//
+		// If we're also allowing an "into" drop we need to leave some room for the "into" part. This gives us the following spacing:
+		//
+		//                             | "Above" Size | "Into" Size | "Below" Size |
+		//     ------------------------+--------------+-------------+--------------+
+		//     allowInto + allowBeside | 25%          | 50%         | 25%          |
+		//     allowInto               | 0%           | 100%        | 0%           |
+		//                 allowBeside | 50%          | 0%          | 50%          |
+		//
+
+		bool cursorIsAbove = ImGui.GetMousePos().Y < (ImGui.GetItemRectMax().Y - (itemSize.Y * 0.75f));
+
+		bool cursorIsBelow = ImGui.GetMousePos().Y >= (ImGui.GetItemRectMax().Y - (itemSize.Y * 0.25f));
+
+		if (payload.IsDelivery()) {
+			Ktisis.Log.Info($"{target.Name} accepting payload from {source.Name}");
+			lock (this._ctx.Scene.Children) {
+				if (cursorIsBelow || cursorIsAbove) {
+					int index = target.Parent!.Children.Index().First(c => c.Item == target).Index;
+					
+					if (cursorIsBelow)
+						index += 1;
+
+					source.Parent?.Remove(source);
+					target.Parent!.AddAtIndex(source, index);
+					source.Parent = target.Parent;
+					target.Parent.Update();
+					this._ctx.Scene.Refresh();
+				} else {
+					if (target is IAttachTarget tar && source is IAttachable attach)
+						this.Manager.Attach(attach, tar);
+					if (target is FolderEntity && UnhandledType(source.Type)) {
+						target.Add(source);
+						source.Parent = target;
+						target.Update();
+					} else if (source.Parent?.Type == EntityType.Folder) {
+						source.Parent.Remove(source);
+						this._ctx.Scene.Add(source);
+						this._ctx.Scene.Refresh();
+					}
+				}
+
+			}
 		}
 	}
 }

@@ -48,7 +48,7 @@ public abstract class SceneEntity : IComposite {
 
 	public virtual SceneEntity? Parent { get; set; } = null;
 
-	public virtual List<SceneEntity> Children => this._children;
+	public virtual IEnumerable<SceneEntity> Children => this._children;
 	protected List<SceneEntity> GetChildren() => this._children;
 
 	public virtual bool Add(SceneEntity entity) {
@@ -94,7 +94,13 @@ public abstract class SceneEntity : IComposite {
 		}
 		return false;
 	}
-	
+
+	public void AddAtIndex(SceneEntity item, int index) {
+		if(index >= this._children.Count)
+			this._children.Add(item);
+		else
+			this._children.Insert(index, item);
+	}
 	//Presetting
 	protected void ToggleView(ImmutableHashSet<string> names, bool newState) {
 		if (this is BoneNode node && names.Contains(node.Info.Name)) {
