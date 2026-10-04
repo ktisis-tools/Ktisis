@@ -6,13 +6,14 @@ using Ktisis.Structs.Lights;
 using Ktisis.Structs.Common;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics;
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
 
 namespace Ktisis.Data.Files;
 
 public class LightFile : JsonFile {
 	public new string FileExtension { get; set; } = ".ktlight";
 	public new string TypeName { get; set; } = "Ktisis Light";
-	public const int CurrentVersion = 2;
+	public const int CurrentVersion = 3;
 	public new int FileVersion { get; set; } = CurrentVersion;
 
 	public string? Nickname { get; set; } = null;

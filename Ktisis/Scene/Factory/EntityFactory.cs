@@ -1,4 +1,7 @@
 using Dalamud.Game.ClientState.Objects.Types;
+
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
+
 using Ktisis.Data.Mcdf;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Scene.Factory.Builders;
