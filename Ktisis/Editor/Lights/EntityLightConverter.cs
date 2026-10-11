@@ -6,6 +6,8 @@ using Ktisis.Data.Config.Gobos;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
+using CsLight = FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer.LightType;
+using LightType = Ktisis.Data.Files.LightType;
 
 namespace Ktisis.Editor.Lights;
 
@@ -13,12 +15,7 @@ namespace Ktisis.Editor.Lights;
 public class EntityLightConverter {
 	private readonly GoboSchema _goboSchema;
     private LightEntity _light;
-	private enum LegacyLightType : uint {
-		Directional = 1,
-		PointLight = 2,
-		SpotLight = 3,
-		AreaLight = 4
-	}
+
 
 
 	public EntityLightConverter(LightEntity light) {
@@ -31,25 +28,7 @@ public class EntityLightConverter {
 		var light = sceneLight != null ? sceneLight->RenderLight : null;
 		if (light == null) return;
 
-		if (file.FileVersion <= 2) {
-			switch ((LegacyLightType)light->LightType) {
-				case LegacyLightType.Directional:
-					light->LightType = LightType.Directional;
-					break;
-				case LegacyLightType.PointLight:
-					light->LightType = LightType.Point;
-					break;
-				case LegacyLightType.SpotLight:
-					light->LightType = LightType.Spot;
-					break;
-				case LegacyLightType.AreaLight:
-					light->LightType = LightType.Plane;
-					break;
-			}
-
-		} else {
-			light->LightType = file.LightType;
-		}
+		light->LightType = (CsLight)file.LightType;
         this._light.Flags |= LightEntityFlags.Update;
         this._light.Name = file.Nickname;
 
@@ -85,7 +64,7 @@ public class EntityLightConverter {
 		if (light == null) return;
 
         file.Flags = light->Flags;
-        file.LightType = light->LightType;
+        file.LightType = (LightType)light->LightType;
         // file.Transform = light->Transform; TODO: local and world transform saving - scenelight vs renderlight transform?
         file.RGB = light->Color.RGB;
         file.Intensity = light->Color.Intensity;
