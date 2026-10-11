@@ -101,6 +101,12 @@ public abstract class SceneEntity : IComposite {
 		else
 			this._children.Insert(index, item);
 	}
+
+	public uint GetIndexOfChild(SceneEntity child) {
+		if (!this._children.Contains(child))
+			return uint.MaxValue;
+		return (uint)this._children.IndexOf(child);
+	}
 	//Presetting
 	protected void ToggleView(ImmutableHashSet<string> names, bool newState) {
 		if (this is BoneNode node && names.Contains(node.Info.Name)) {

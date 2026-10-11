@@ -91,6 +91,20 @@ public class SceneDataService {
 			scene.SceneOrigin = this._ctx!.Scene.GetSceneOrigin();
 			scene.MapID = this.GetCurrentMapID();
 			
+
+			scene.Folders.Add(new SceneFile.Folder("Scene Root"));
+			
+
+			foreach (var folder in this.Scene.Children  //what a fucked up for each syntax lol
+				.Where(entity => entity is FolderEntity)
+				.Cast<FolderEntity>()
+				.ToList()) {
+
+				var f = new SceneFile.Folder(folder.Name);
+				scene.Folders.Add(f);
+			}
+
+			
 			var entities = this.Scene.Children
 				.Where(entity => entity is CharaEntity)
 				.Cast<CharaEntity>()

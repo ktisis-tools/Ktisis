@@ -30,6 +30,20 @@ public class SceneFile : JsonFile {
 	public List<CameraInfo> Cameras  { get; set; } = new List<CameraInfo>();
 	public EnvironmentInfo Environment { get; set; } = new EnvironmentInfo();
 	public List<OverlayInfo> Overlays { get; set; } = new List<OverlayInfo>();
+	public List<Folder>? Folders { get; set; } = new List<Folder>();
+
+
+	[Serializable]
+	public struct Folder {
+		public Folder(string name) {
+			Name = name;
+			Guid = Guid.NewGuid();
+		}
+		public string Name { get; set; }
+		public Guid Guid { get; private set; }
+		public List<Guid> Children { get; set; } = new List<Guid>(); 
+	}
+	
 	
 	[Serializable]
 	public struct ActorInfo {
@@ -43,6 +57,7 @@ public class SceneFile : JsonFile {
 			PenumbraCollection = penumbraCollection;
 			CustomizePlus = customizePlus;
 			Attach = attach;
+			Guid = Guid.NewGuid();
 		}
 		public PoseFile Pose { get; set; }
 		public CharaFile Chara { get; set; }
@@ -53,6 +68,7 @@ public class SceneFile : JsonFile {
 		public Guid PenumbraCollection { get; set; } = Guid.Empty;
 		public Guid CustomizePlus { get; set; } = Guid.Empty;
 		public AttachInfo? Attach { get; set; }
+		public Guid Guid { get; private set; }
 	}
 	
 	[Serializable]
@@ -63,6 +79,7 @@ public class SceneFile : JsonFile {
 			Name = name;
 			Attach = attach;
 			State = state;
+			Guid = Guid.NewGuid();
 		}
 		public LightFile Light { get; set; }
 		public Transform Location { get; set; }
@@ -70,6 +87,7 @@ public class SceneFile : JsonFile {
 		public bool State { get; set; } = true;
 		
 		public AttachInfo? Attach { get; set; }
+		public Guid Guid { get; private set; }
 	}
 
 	[Serializable]
@@ -123,7 +141,15 @@ public class SceneFile : JsonFile {
 		public bool Visible { get; set; }
 		public string Name { get; set; }
 		public uint FontSize { get; set; }
-		
+
+		public Guid Guid {
+			get;
+			init {
+				field = value;
+				field = Guid.NewGuid();
+			}
+		}
+
 		public enum Type {
 			Balloon,
 			Status,
