@@ -125,7 +125,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	}
 	
 	public IEnumerable<SceneEntity> Children => this.Root.Children;
-
+	
 	public bool Add(SceneEntity entity) => this.Root.Add(entity);
 	public bool Remove(SceneEntity entity) => this.Root.Remove(entity);
 
@@ -146,10 +146,12 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 				this.Refresh();
 			}
 		}
-
-
 	}
-	
+
+	public SceneRoot SceneRoot {
+		get { return this.Root; }
+	}
+
 	// Utility
 	
 	public ActorEntity? GetEntityForActor(IGameObject actor) => this.GetEntityForIndex(actor.ObjectIndex);

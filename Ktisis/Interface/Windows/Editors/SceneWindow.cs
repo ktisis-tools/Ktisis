@@ -19,6 +19,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Editor.Popup;
 using Ktisis.Interface.Types;
 using Ktisis.Scene.Entities.Character;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Utility;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Modules;
@@ -106,9 +107,9 @@ public class SceneWindow : KtisisWindow {
 			overlays = this._sceneFile.Overlays.Count;
 			envOver = this._sceneFile.Environment.Override > 0;
 		} else {
-			actors = this._ctx.Scene.Children.Count(entity => entity is CharaEntity);
-			lights = this._ctx.Scene.Children.Count(entity => entity is LightEntity);
-			overlays = this._ctx.Scene.Children.Count(entity => entity is OverlayEntity);
+			actors = this._ctx.Scene.Recurse().Distinct().Count(entity => entity is ActorEntity);
+			lights = this._ctx.Scene.Recurse().Distinct().Count(entity => entity is LightEntity);
+			overlays = this._ctx.Scene.Recurse().Distinct().Count(entity => entity is OverlayEntity);
 			cameras = this._ctx.Cameras.GetCameras().Count();
 			envOver = this._ctx.Scene.GetModule<EnvModule>().Override > 0;
 		}
@@ -185,7 +186,7 @@ public class SceneWindow : KtisisWindow {
 					} else {
 						ImGui.Checkbox("Save actors", ref this._includeActors);
 						ImGui.Indent();
-						foreach (var charaInfo in this._ctx.Scene.Children.Where(entity => entity is CharaEntity)) {
+						foreach (var charaInfo in this._ctx.Scene.Recurse().Distinct().Where(entity => entity is ActorEntity)) {
 							ImGui.TextUnformatted($"{charaInfo.Name}");
 						}
 					}
@@ -219,7 +220,7 @@ public class SceneWindow : KtisisWindow {
 						} else {
 							ImGui.Checkbox("Save lights", ref this._includeLights);
 							ImGui.Indent();
-							foreach (var lightInfo in this._ctx.Scene.Children.Where(entity => entity is LightEntity)) {
+							foreach (var lightInfo in this._ctx.Scene.Recurse().Distinct().Where(entity => entity is LightEntity)) {
 								ImGui.TextUnformatted($"{lightInfo.Name}");
 							}
 						}
@@ -236,7 +237,7 @@ public class SceneWindow : KtisisWindow {
 						} else {
 							ImGui.Checkbox("Save Overlays", ref this._includeOverlays);
 							ImGui.Indent();
-							foreach (var overlayInfo in this._ctx.Scene.Children.Where(entity => entity is OverlayEntity)) {
+							foreach (var overlayInfo in this._ctx.Scene.Recurse().Distinct().Where(entity => entity is OverlayEntity)) {
 								ImGui.TextUnformatted($"{overlayInfo.Name}");
 							}
 						}

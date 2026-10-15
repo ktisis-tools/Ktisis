@@ -34,20 +34,21 @@ public class SceneFile : JsonFile {
 
 
 	[Serializable]
-	public struct Folder {
+	public struct Folder : ISortable {
 		public Folder(string name) {
 			Name = name;
-			Guid = Guid.NewGuid();
+			Depth = 0;
 		}
+		public ushort Depth { get; set; }
 		public string Name { get; set; }
-		public Guid Guid { get; private set; }
+		public Guid Guid { get;  set; }
 		public List<Guid> Children { get; set; } = new List<Guid>(); 
 	}
 	
 	
 	[Serializable]
-	public struct ActorInfo {
-		public ActorInfo(PoseFile pose, CharaFile chara, Transform location, string mcdf, float defaultRotation, ushort index, Guid penumbraCollection, Guid customizePlus, AttachInfo? attach = null) {
+	public struct ActorInfo : ISortable {
+		public ActorInfo(PoseFile pose, CharaFile chara, Transform location, string mcdf, float defaultRotation, ushort index, Guid penumbraCollection, Guid customizePlus, Guid guid, AttachInfo? attach = null) {
 			Pose = pose;
 			Chara = chara;
 			Location = location;
@@ -57,7 +58,7 @@ public class SceneFile : JsonFile {
 			PenumbraCollection = penumbraCollection;
 			CustomizePlus = customizePlus;
 			Attach = attach;
-			Guid = Guid.NewGuid();
+			Guid = guid;
 		}
 		public PoseFile Pose { get; set; }
 		public CharaFile Chara { get; set; }
@@ -68,18 +69,18 @@ public class SceneFile : JsonFile {
 		public Guid PenumbraCollection { get; set; } = Guid.Empty;
 		public Guid CustomizePlus { get; set; } = Guid.Empty;
 		public AttachInfo? Attach { get; set; }
-		public Guid Guid { get; private set; }
+		public Guid Guid { get; set; }
 	}
 	
 	[Serializable]
-	public struct LightInfo {
-		public LightInfo(LightFile light, Transform location, string name, bool state, AttachInfo? attach = null) {
+	public struct LightInfo : ISortable {
+		public LightInfo(LightFile light, Transform location, string name, bool state, Guid guid, AttachInfo? attach = null) {
 			Light = light;
 			Location = location;
 			Name = name;
 			Attach = attach;
 			State = state;
-			Guid = Guid.NewGuid();
+			Guid = guid;
 		}
 		public LightFile Light { get; set; }
 		public Transform Location { get; set; }
@@ -87,7 +88,7 @@ public class SceneFile : JsonFile {
 		public bool State { get; set; } = true;
 		
 		public AttachInfo? Attach { get; set; }
-		public Guid Guid { get; private set; }
+		public Guid Guid { get; set; }
 	}
 
 	[Serializable]
@@ -115,7 +116,7 @@ public class SceneFile : JsonFile {
 	}
 
 	[Serializable]
-	public struct OverlayInfo {
+	public struct OverlayInfo : ISortable {
 		public Type OverlayType { get; set; }
 		
 		//Status
@@ -142,13 +143,7 @@ public class SceneFile : JsonFile {
 		public string Name { get; set; }
 		public uint FontSize { get; set; }
 
-		public Guid Guid {
-			get;
-			init {
-				field = value;
-				field = Guid.NewGuid();
-			}
-		}
+		public Guid Guid { get; set; }
 
 		public enum Type {
 			Balloon,
@@ -162,5 +157,9 @@ public class SceneFile : JsonFile {
 	public struct AttachInfo {
 		public ushort ParentIndex { get; set; }
 		public string NodeName { get; set; }
+	}
+	
+	public interface ISortable {
+		Guid Guid { get; }
 	}
 }

@@ -30,6 +30,7 @@ using Ktisis.Editor.Context.Types;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Types;
 using Ktisis.Interface.KTK;
+using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.Character;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Utility;
@@ -56,6 +57,7 @@ public class SceneDataService {
 	
 	private Task? _task;
 	private Dictionary<ushort, ActorEntity> _idMap;
+	private Dictionary<Guid, SceneEntity> _guidMap;
 	
 	private ISceneManager Scene => this._ctx!.Scene;
 	private IPosingManager Posing => this._ctx!.Posing;
@@ -90,38 +92,67 @@ public class SceneDataService {
 			var scene = new SceneFile();
 			scene.SceneOrigin = this._ctx!.Scene.GetSceneOrigin();
 			scene.MapID = this.GetCurrentMapID();
-			
 
-			scene.Folders.Add(new SceneFile.Folder("Scene Root"));
-			
+			scene.Folders = new List<SceneFile.Folder>();
+			scene.Folders.Add(new SceneFile.Folder("Scene Root"){Guid = Guid.NewGuid()});
 
-			foreach (var folder in this.Scene.Children  //what a fucked up for each syntax lol
+			Dictionary<FolderEntity, Guid> lookup = new Dictionary<FolderEntity, Guid>();
+			foreach (var folder in this.Scene.Recurse() //what a fucked up for each syntax lol
+				.Where(entity => entity is FolderEntity)
+				.Distinct()
+				.Cast<FolderEntity>()
+				.ToList()) {
+				
+				var f = new SceneFile.Folder(folder.Name);
+
+				f.Guid = Guid.NewGuid();
+				ushort depth = 1;
+				
+				ushort DepthCalc(SceneEntity fld) {
+					if (fld.Parent?.Type != EntityType.Folder)
+						return depth;
+					depth++;
+					return DepthCalc(fld.Parent);
+				}
+
+				f.Depth = DepthCalc(folder);
+				
+				lookup.Add(folder, f.Guid);
+				scene.Folders.Add(f);
+			}
+			foreach (var folder in this.Scene.Recurse()  //Just in case we somehow get a folder who shows up before its parent
+				.Distinct()	
 				.Where(entity => entity is FolderEntity)
 				.Cast<FolderEntity>()
 				.ToList()) {
-
-				var f = new SceneFile.Folder(folder.Name);
-				scene.Folders.Add(f);
+				if(folder.Parent?.Type != EntityType.Folder)
+					scene.Folders[0].Children.Add(lookup[folder]);
+				else
+					scene.Folders.Find(f => f.Guid == lookup[(FolderEntity)folder.Parent]).Children.Add(lookup[folder]);
 			}
 
 			
-			var entities = this.Scene.Children
-				.Where(entity => entity is CharaEntity)
-				.Cast<CharaEntity>()
+			var entities = this.Scene.Recurse()
+				.Distinct()
+				.Where(entity => entity is ActorEntity)
+				.Cast<ActorEntity>()
 				.ToList();
 
-			var lights = this.Scene.Children
+			var lights = this.Scene.Recurse()
+				.Distinct()
 				.Where(entity => entity is LightEntity)
 				.Cast<LightEntity>()
 				.ToList();
 		
-			var overlays = this.Scene.Children.OfType<OverlayEntity>()
+			var overlays = this.Scene.Recurse()
+				.Distinct()
+				.OfType<OverlayEntity>()
 				.ToList();
 
 			//TODO: Attaches
 			if(saveActors)
 				foreach (var chara in entities) {
-					
+
 					var actor = ((ActorEntity)chara).Actor.GetDrawObject();
 						
 					var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
@@ -141,18 +172,25 @@ public class SceneDataService {
 						var assignedProfile = ((ActorEntity)chara).AssignedProfile;
 						if (assignedProfile != null) cPlus = (Guid)assignedProfile;
 					}
-					
-					
-					scene.Actors.Add(new SceneFile.ActorInfo() {
-						Chara = charaFile,
-						Pose = poseFile,
-						Location = location,
-						MCDF = this._ctx.Characters.Mcdf.LoadedMCDFPath(((ActorEntity)chara).Actor),
-						DefaultRotation = defaultRotation,
-						Index = ((ActorEntity)chara).Actor.ObjectIndex,
-						PenumbraCollection = penumCollection,
-						CustomizePlus = cPlus
-					});
+					var a = new SceneFile.ActorInfo(
+						poseFile,
+						charaFile,
+						location,
+						this._ctx.Characters.Mcdf.LoadedMCDFPath(((ActorEntity)chara).Actor),
+						defaultRotation,
+						((ActorEntity)chara).Actor.ObjectIndex,
+						penumCollection,
+						cPlus,
+						Guid.NewGuid());
+
+					scene.Actors.Add(a);
+					if (chara.Parent == this.Scene.SceneRoot)
+						scene.Folders[0].Children.Add(a.Guid);
+					else {
+						if (chara.Parent?.Type == EntityType.Folder) {
+							scene.Folders.Find(f => f.Guid ==lookup[(FolderEntity)chara.Parent]).Children.Add(a.Guid);
+						}
+					}
 
 				}
 			
@@ -161,13 +199,16 @@ public class SceneDataService {
 					var lightFile = Scene.SaveLightFile(light).Result;
 					var l = light.GetObject()->Transform;
 					var location = new Transform(this.Scene.GetActorRelativePosition(l.Position), l.Rotation, l.Scale);
-					var lightObj = new SceneFile.LightInfo() {
-						Light = lightFile,
-						Location = location,
-						Name = light.Name,
-						State = !light.IsHidden
-					};
+					var lightObj = new SceneFile.LightInfo(lightFile, location, light.Name, !light.IsHidden, Guid.NewGuid());
+
 					scene.Lights.Add(lightObj);
+					if (light.Parent == this.Scene.SceneRoot)
+						scene.Folders[0].Children.Add(lightObj.Guid);
+					else {
+						if (light.Parent?.Type == EntityType.Folder) {
+							scene.Folders.Find(f => f.Guid ==lookup[(FolderEntity)light.Parent]).Children.Add(lightObj.Guid);
+						}
+					}
 				}
 			
 			if(saveCameras)
@@ -232,8 +273,18 @@ public class SceneDataService {
 							file.StatusType = ((StatusOverlay)overlay).StatusType;
 							break;
 					}
+
+					file.Guid = Guid.NewGuid();
 					
 					scene.Overlays.Add(file);
+					
+					if (overlay.Parent == this.Scene.SceneRoot)
+						scene.Folders[0].Children.Add(file.Guid);
+					else {
+						if (overlay.Parent?.Type == EntityType.Folder) {
+							scene.Folders.Find(f => f.Guid ==lookup[(FolderEntity)overlay.Parent]).Children.Add(file.Guid);
+						}
+					}
 				}
 			
 			
@@ -269,7 +320,8 @@ public class SceneDataService {
 	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true, bool preserveExistingActors = false) {
 		
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
-
+			this._guidMap = new Dictionary<Guid, SceneEntity>();
+			
 			if (loadActors && !preserveExistingActors) {
 				foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 					var e = (ActorEntity)sceneEntity;
@@ -282,6 +334,10 @@ public class SceneDataService {
 					sceneEntity.Remove();
 				}
 			
+			if (scene.Folders != null) {
+				foreach (var f in this.Scene.Recurse().OfType<FolderEntity>()) {
+					f.Dissolve();
+				}
 
 			Vector3 sceneOrigin;
 			if (!autoSaveLoading) {
@@ -320,6 +376,7 @@ public class SceneDataService {
 				foreach (var loaded in scene.Lights) {
 					var light = this._ctx!.Scene.Factory.CreateLight().Spawn().Result;
 					_ = this._ctx.Scene.ApplyLightFile(light, loaded.Light);
+					this._guidMap.Add(loaded.Guid, light);
 					loaded.Location.Position += sceneOrigin;
 					light.SetTransform(loaded.Location);
 					if(!loaded.State)
@@ -387,8 +444,8 @@ public class SceneDataService {
 							overlay.Position = overlayInfo.Position;
 							overlay.Scale = overlayInfo.Scale;
 							overlay.Visible = overlayInfo.Visible;
+							this._guidMap.Add(overlayInfo.Guid, overlay);
 						}
-
 					});
 				}
 			}
@@ -411,6 +468,36 @@ public class SceneDataService {
 					}
 				}
 			}
+
+
+				
+				foreach (var folder in scene.Folders.OrderByDescending(c => c.Depth)) {
+					if(folder.Depth > 0){
+						var f = new FolderEntity(this._ctx!.Scene);
+						f.Name = folder.Name;
+						this._guidMap.Add(folder.Guid, f);
+						if (folder.Depth == 1)
+							f.Parent = this.Scene.SceneRoot;
+						this._ctx!.Scene.Add(f); 
+
+						foreach (var child in folder.Children ) {
+							if (this._guidMap.TryGetValue(child, out var entity)) {
+								entity.Parent?.Remove(entity);
+								f.AddAtIndex(entity, folder.Children.IndexOf(child));
+							}
+						}
+ 
+					}
+					
+				}
+				foreach (var c in scene.Folders[0].Children) {
+					if (this._guidMap.TryGetValue(c, out var entity)) {
+						this.Scene.SceneRoot.SetChildsIndex(entity, scene.Folders[0].Children.IndexOf(c));
+
+					}
+				}
+			}
+
 	}
 
 	public void ApplyCamera(SceneFile.CameraInfo camera, EditorCamera ktCam, Vector3 sceneOrigin) {
@@ -472,6 +559,7 @@ public class SceneDataService {
 			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
 			this._task?.Wait();
 			this._task = this._ctx?.Posing.ApplyPoseFile(a.Pose!, actor.Pose, PoseMode.All,(PoseTransforms)0xF)!;
+			this._guidMap.Add(actor.Guid, a);
 		});
 	}
 	

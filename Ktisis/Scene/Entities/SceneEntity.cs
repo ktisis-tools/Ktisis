@@ -100,6 +100,7 @@ public abstract class SceneEntity : IComposite {
 			this._children.Add(item);
 		else
 			this._children.Insert(index, item);
+		item.Parent = this;
 	}
 
 	public uint GetIndexOfChild(SceneEntity child) {
