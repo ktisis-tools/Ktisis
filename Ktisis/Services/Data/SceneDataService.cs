@@ -334,7 +334,8 @@ public class SceneDataService {
 					sceneEntity.Remove();
 				}
 			
-			if (scene.Folders != null) {
+			//this is broken and needs to be fixed
+			if (scene.Folders != null) 
 				foreach (var f in this.Scene.Recurse().OfType<FolderEntity>()) {
 					f.Dissolve();
 				}
@@ -496,9 +497,9 @@ public class SceneDataService {
 
 					}
 				}
-			}
-
 	}
+
+	
 
 	public void ApplyCamera(SceneFile.CameraInfo camera, EditorCamera ktCam, Vector3 sceneOrigin) {
 		if (camera.IsDelmited) {
