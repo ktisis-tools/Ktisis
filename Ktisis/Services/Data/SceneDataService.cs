@@ -317,17 +317,20 @@ public class SceneDataService {
 			return scene!;
 	}
 	
-	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true, bool preserveExistingActors = false) {
+	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true, bool preserveExistingActors = false, FolderHandling folderHandling = FolderHandling.Ignore) {
 		
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 			this._guidMap = new Dictionary<Guid, SceneEntity>();
 			
+
 			//this is broken and needs to be fixed
-			if (scene.Folders != null)
+			if (folderHandling == FolderHandling.Overwrite)
 				while (this.Scene.Children.OfType<FolderEntity>().Any()) {
 					this.Scene.Children.OfType<FolderEntity>().First().Dissolve();
 				}
-			
+			else if (folderHandling == FolderHandling.Append) {
+				preserveExistingActors = true;
+			}
 			if (loadActors && !preserveExistingActors) {
 				foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 					var e = (ActorEntity)sceneEntity;
@@ -339,9 +342,12 @@ public class SceneDataService {
 				foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is OverlayEntity).ToList()) {
 					sceneEntity.Remove();
 				}
+
+
+			var startIndex = 0;
+			if(folderHandling == FolderHandling.Append)
+				startIndex = this.Scene.SceneRoot.Children.Count();
 			
-
-
 			Vector3 sceneOrigin;
 			if (!autoSaveLoading) {
 				sceneOrigin = this._objectTable.LocalPlayer!.Position;
@@ -473,7 +479,7 @@ public class SceneDataService {
 			}
 
 
-			if (scene.Folders != null) {
+			if (folderHandling != FolderHandling.Ignore && scene.Folders != null) {
 				foreach (var folder in scene.Folders.OrderByDescending(c => c.Depth)) {
 					if (folder.Depth > 0) {
 						var f = new FolderEntity(this._ctx!.Scene);
@@ -495,7 +501,7 @@ public class SceneDataService {
 				}
 				foreach (var c in scene.Folders[0].Children) {
 					if (this._guidMap.TryGetValue(c, out var entity)) {
-						this.Scene.SceneRoot.SetChildsIndex(entity, scene.Folders[0].Children.IndexOf(c));
+						this.Scene.SceneRoot.SetChildsIndex(entity, scene.Folders[0].Children.IndexOf(c) + startIndex);
 
 					}
 				}
@@ -582,4 +588,10 @@ public class SceneDataService {
 		draw->Rotation = loaded.Location.Rotation;
 		draw->Scale = loaded.Location.Scale;
 	}
+}
+
+public enum FolderHandling {
+	Ignore,
+	Append,
+	Overwrite
 }

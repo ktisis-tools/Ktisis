@@ -45,6 +45,8 @@ public class SceneWindow : KtisisWindow {
 	private Map _source;
 	private SceneMCDFModal? _popupWindow;
 	private bool _includeActors, _includeLights, _includeCameras, _includeEnv, _includeOverlays, _preserveActors;
+	private FolderHandling method = FolderHandling.Ignore;
+	
 	
 	public SceneWindow(
 		IEditorContext ctx,
@@ -129,7 +131,7 @@ public class SceneWindow : KtisisWindow {
 			if (Buttons.IconButtonTooltip(this._autosave ? FontAwesomeIcon.Globe : FontAwesomeIcon.HouseChimney, $"Choose coordinate type\nCurrently: {(this._autosave ? "World space" : "Local space")}", iconBtnSize*1.5f))
 				this._autosave = !this._autosave;
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.Check, "Apply Scene", iconBtnSize*1.5f)) {
-				this._sceneDataService.Load(this._sceneFile, this._autosave, this._includeActors, this._includeLights, this._includeCameras, this._includeEnv,  this._includeOverlays, this._preserveActors);
+				this._sceneDataService.Load(this._sceneFile, this._autosave, this._includeActors, this._includeLights, this._includeCameras, this._includeEnv,  this._includeOverlays, this._preserveActors, this.method);
 				this._sceneFile = null;
 			}
 		}
@@ -158,6 +160,32 @@ public class SceneWindow : KtisisWindow {
 				ImGui.BeginGroup();
 				ImGui.TextUnformatted($"From: {this._source.PlaceName.Value.Name}");
 				ImGui.PopStyleColor();
+				if (this._sceneFile?.Folders?.Count > 0) {
+					ImGui.AlignTextToFramePadding();
+					ImGui.TextUnformatted("Has folder structure");
+					ImGui.SameLine();
+					ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X * .75f);
+					using var combo = ImRaii.Combo("", this.method.ToString());
+					if (combo.Success) {
+						if (ImGui.Selectable("Ignore", this.method == FolderHandling.Ignore)) {
+							this.method = FolderHandling.Ignore;
+						}
+						if (ImGui.Selectable("Append", this.method == FolderHandling.Append)) {
+							this.method = FolderHandling.Append;
+						}
+						if (ImGui.Selectable("Overwrite", this.method == FolderHandling.Overwrite)) {
+							this.method = FolderHandling.Overwrite;
+						}
+					}
+					combo.Dispose();
+					ImGui.SameLine();
+					Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
+					if (ImGui.IsItemHovered()) {
+						using var _ = ImRaii.Tooltip();
+						ImGui.Text("Selecting Append will force preservation of existing actors");
+					}
+					
+				}
 				if (ImGui.CollapsingHeader($"Actors {actors}")) {
 
 					if (this._sceneFile is { Actors.Count: > 0 }) {
