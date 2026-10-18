@@ -335,9 +335,9 @@ public class SceneDataService {
 				}
 			
 			//this is broken and needs to be fixed
-			if (scene.Folders != null) 
-				foreach (var f in this.Scene.Recurse().OfType<FolderEntity>()) {
-					f.Dissolve();
+			if (scene.Folders != null)
+				while (this.Scene.Children.OfType<FolderEntity>().Any()) {
+					this.Scene.Children.OfType<FolderEntity>().First().Dissolve();
 				}
 
 			Vector3 sceneOrigin;
