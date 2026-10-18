@@ -322,6 +322,12 @@ public class SceneDataService {
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 			this._guidMap = new Dictionary<Guid, SceneEntity>();
 			
+			//this is broken and needs to be fixed
+			if (scene.Folders != null)
+				while (this.Scene.Children.OfType<FolderEntity>().Any()) {
+					this.Scene.Children.OfType<FolderEntity>().First().Dissolve();
+				}
+			
 			if (loadActors && !preserveExistingActors) {
 				foreach (var sceneEntity in this.Scene.Children.Where(entity => entity is CharaEntity).ToList()) {
 					var e = (ActorEntity)sceneEntity;
@@ -334,11 +340,7 @@ public class SceneDataService {
 					sceneEntity.Remove();
 				}
 			
-			//this is broken and needs to be fixed
-			if (scene.Folders != null)
-				while (this.Scene.Children.OfType<FolderEntity>().Any()) {
-					this.Scene.Children.OfType<FolderEntity>().First().Dissolve();
-				}
+
 
 			Vector3 sceneOrigin;
 			if (!autoSaveLoading) {
@@ -471,25 +473,25 @@ public class SceneDataService {
 			}
 
 
-				
+			if (scene.Folders != null) {
 				foreach (var folder in scene.Folders.OrderByDescending(c => c.Depth)) {
-					if(folder.Depth > 0){
+					if (folder.Depth > 0) {
 						var f = new FolderEntity(this._ctx!.Scene);
 						f.Name = folder.Name;
 						this._guidMap.Add(folder.Guid, f);
 						if (folder.Depth == 1)
 							f.Parent = this.Scene.SceneRoot;
-						this._ctx!.Scene.Add(f); 
+						this._ctx!.Scene.Add(f);
 
-						foreach (var child in folder.Children ) {
+						foreach (var child in folder.Children) {
 							if (this._guidMap.TryGetValue(child, out var entity)) {
 								entity.Parent?.Remove(entity);
 								f.AddAtIndex(entity, folder.Children.IndexOf(child));
 							}
 						}
- 
+
 					}
-					
+
 				}
 				foreach (var c in scene.Folders[0].Children) {
 					if (this._guidMap.TryGetValue(c, out var entity)) {
@@ -497,6 +499,7 @@ public class SceneDataService {
 
 					}
 				}
+			}
 	}
 
 	
@@ -541,6 +544,7 @@ public class SceneDataService {
 		t.Spawn().ContinueWith(async (p) => {
 			var a = p.GetResultSafely();
 			this._idMap.Add(actor.Index, a);
+			this._guidMap.Add(actor.Guid, a);
 			await this._framework.DelayTicks(15);
 			a.Name = actor.Chara.Nickname!;
 			var act = a.Actor;
@@ -560,7 +564,7 @@ public class SceneDataService {
 			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
 			this._task?.Wait();
 			this._task = this._ctx?.Posing.ApplyPoseFile(a.Pose!, actor.Pose, PoseMode.All,(PoseTransforms)0xF)!;
-			this._guidMap.Add(actor.Guid, a);
+
 		});
 	}
 	
