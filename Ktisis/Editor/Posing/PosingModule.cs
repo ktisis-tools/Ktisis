@@ -116,8 +116,10 @@ public sealed class PosingModule : HookModule {
 			var offset = PhysicsAddress - this._sigScanner.Module.BaseAddress;
 			SafeMemory.ReadBytes(PhysicsAddress, 64, out this.oldInstructions);
 			SafeMemory.ReadBytes(offset + this._sigScanner.SearchBase, 64, out this.newInstructions);
-			SafeMemory.WriteBytes(PhysicsAddress,  this.newInstructions);
-		} catch {Ktisis.Log.Warning("Bone Physics hook failed");}
+			SafeMemory.WriteBytes(PhysicsAddress, this.newInstructions);
+		} catch {
+			Ktisis.Log.Warning("Bone Physics hook failed");
+		}
 
 	}
 	
