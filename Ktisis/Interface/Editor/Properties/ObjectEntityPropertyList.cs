@@ -1,6 +1,11 @@
+using System;
+using System.Numerics;
+
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+
+using FFXIVClientStructs.FFXIV.Client.Graphics;
 
 using GLib.Widgets;
 
@@ -43,6 +48,16 @@ public class ObjectEntityPropertyList : ObjectPropertyList {
 		ImGui.Text($"{Ktisis.Locale.Translate("object_edit.object.type")}: {(obj.IsWorldObject() ? Ktisis.Locale.Translate("object_edit.object.type.world") : Ktisis.Locale.Translate("object_edit.object.type.spawned"))}");
 		using (ImRaii.Disabled())
 			ImGui.Text($"{Ktisis.Locale.Translate("object_edit.object.addr")}: {obj.Address:X}");
+
+		if (obj.CanStain()) {
+			Vector4 existingColor = obj.GetStain();
+			if (ImGui.ColorEdit4("Stain", ref existingColor)) {
+				var srgbColor = new Vector4(MathF.Sqrt(existingColor.X), MathF.Sqrt(existingColor.Y), MathF.Sqrt(existingColor.Z), existingColor.Z) * byte.MaxValue;
+				var byteColor = new ByteColor() { R = (byte)srgbColor.X, G = (byte)srgbColor.Y, B = (byte)srgbColor.Z, A = (byte)srgbColor.W };
+				obj.TrySetStainColor(byteColor);
+
+			}
+		}
 
 		// buttons
 		ImGui.Spacing();
