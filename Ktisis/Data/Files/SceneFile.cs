@@ -34,7 +34,7 @@ public class SceneFile : JsonFile {
 	public List<ObjectInfo> Objects { get; set; } = new List<ObjectInfo>();
 	
 	[Serializable]
-	public struct Folder : ISortable {
+	public struct Folder {
 		public Folder(string name) {
 			Name = name;
 			Depth = 0;
@@ -47,7 +47,7 @@ public class SceneFile : JsonFile {
 	
 	
 	[Serializable]
-	public struct ActorInfo : ISortable {
+	public struct ActorInfo {
 		public ActorInfo(PoseFile pose, CharaFile chara, Transform location, string mcdf, float defaultRotation, ushort index, Guid penumbraCollection, Guid customizePlus, Guid guid, AttachInfo? attach = null) {
 			Pose = pose;
 			Chara = chara;
@@ -73,7 +73,7 @@ public class SceneFile : JsonFile {
 	}
 	
 	[Serializable]
-	public struct LightInfo : ISortable {
+	public struct LightInfo{
 		public LightInfo(LightFile light, Transform location, string name, bool state, Guid guid, AttachInfo? attach = null) {
 			Light = light;
 			Location = location;
@@ -116,7 +116,7 @@ public class SceneFile : JsonFile {
 	}
 
 	[Serializable]
-	public struct OverlayInfo : ISortable {
+	public struct OverlayInfo {
 		public Type OverlayType { get; set; }
 		
 		//Status
@@ -165,9 +165,6 @@ public class SceneFile : JsonFile {
 		public string Name { get; set; }
 		public Transform Transform { get; set; }
 		public bool IsHidden { get; set; }
-	}
-	
-	public interface ISortable {
-		Guid Guid { get; }
+		public Guid Guid { get; set; }
 	}
 }

@@ -299,7 +299,15 @@ public class SceneDataService {
 			
 			if (saveObjects) {
 				foreach (var obj in objects) {
-					scene.Objects.Add(new SceneFile.ObjectInfo(){IsHidden = obj.IsHidden, Name = obj.Name, Path = obj.GetPath(), Transform = obj.GetTransform()});
+					var o = new SceneFile.ObjectInfo(){IsHidden = obj.IsHidden, Name = obj.Name, Path = obj.GetPath(), Transform = obj.GetTransform(), Guid = Guid.NewGuid()};
+					if (obj.Parent == this.Scene.SceneRoot)
+						scene.Folders[0].Children.Add(o.Guid);
+					else {
+						if (obj.Parent?.Type == EntityType.Folder) {
+							scene.Folders.Find(f => f.Guid ==lookup[(FolderEntity)obj.Parent]).Children.Add(o.Guid);
+						}
+					}
+					scene.Objects.Add(o);
 				}
 			}
 			
@@ -491,6 +499,7 @@ public class SceneDataService {
 						entity.Visible = obj.IsHidden;
 						entity.SetTransform(obj.Transform);
 						entity.Update();
+						this._guidMap.Add(obj.Guid, entity);
 					}
 				}
 			}
