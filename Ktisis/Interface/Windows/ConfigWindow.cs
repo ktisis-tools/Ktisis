@@ -113,6 +113,10 @@ public class ConfigWindow : KtisisWindow {
 			append += this.Tabs[(int)parentIndex].Item1;
 		else
 			append += this.Tabs[index].Item1;
+
+		if (append == "##") // if we're still ## such as during loading/before a tab is properly open, post _something_ to fill out the ID
+			append += "ConfigLoading";
+
 		if(this.Tabs[index].Item2 != null)
 			if (ImGui.Selectable(this.Locale.Translate(this.Tabs[index].Item1) + append, this._tabIndex == index ))
 				this._tabIndex = index;
@@ -131,6 +135,7 @@ public class ConfigWindow : KtisisWindow {
 
 		ImGui.SameLine();
 		using var _frame = ImRaii.Group();
+		using var _id = ImRaii.PushId($"##ConfigContents"); // try to resolve ImGui Empty ID ## root assertion
 		var (_, drawFn) = this.Tabs[this._tabIndex];
 		drawFn();
 	}
@@ -251,18 +256,33 @@ public class ConfigWindow : KtisisWindow {
 		var refresh = ImGui.Checkbox(this.Locale.Translate("config.categories.allow_nsfw"), ref this.Config.Categories.ShowNsfwBones);
 		this.DrawHint("config.categories.hint_nsfw");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.confirmExit"), ref this.Config.Editor.ConfirmExit);
-		ImGui.Checkbox(this.Locale.Translate("config.workspace.openTray"), ref this.Config.Editor.OpenTrayOnWorkspaceClose);
-		this.DrawHint("config.workspace.hintTrayIcon");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.selectTarget"), ref this.Config.Editor.SelectOnTarget);
 		this.DrawHint("config.workspace.hintSelectTarget");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.updateCameraPositions"), ref this.Config.Editor.UpdateActorCameraPositions);
+		this.DrawHint("config.workspace.hintCameraPositions");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.openTray"), ref this.Config.Editor.OpenTrayOnWorkspaceClose);
+		this.DrawHint("config.workspace.hintTrayIcon");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.showHints"), ref this.Config.Editor.ShowHints);
 		this.DrawHint("config.workspace.hintHint");
+		if (this.Config.Editor.ShowHints) {
+			using var _ = ImRaii.PushIndent();
+			ImGui.AlignTextToFramePadding();
+			ImGui.Text(this.Locale.Translate("config.workspace.hintLocation.label"));
+			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+			using (var _combo = ImRaii.Combo("", this.Locale.Translate($"config.workspace.hintLocation.{this.Config.Editor.HintLocation.ToString()}")))
+				if (_combo.Success)
+					foreach (var loc in Enum.GetValues<HintLoc>())
+						if (ImGui.Selectable(this.Locale.Translate($"config.workspace.hintLocation.{loc.ToString()}"), loc == this.Config.Editor.HintLocation))
+							this.Config.Editor.HintLocation = loc;
+		}
 
 		ImGui.Spacing();
 
 		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.windowHeader"))) {
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleOpenWindows"), ref this.Config.Editor.ToggleOpenWindows);
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyPoseTabs"), ref this.Config.Editor.UseLegacyPoseViewTabs);
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.legacyLightEditor"), ref this.Config.Editor.UseLegacyLightEditor);
+			this.DrawHint("config.workspace.legacyLightHint");
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.editOnSelect"), ref this.Config.Editor.ToggleEditorOnSelect);
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.AutoResizeObjectEditor"), ref this.Config.Editor.AutoResizeObjectEditor);
 			this.DrawHint("config.workspace.hint_AutoResizeObj");

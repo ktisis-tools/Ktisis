@@ -250,8 +250,14 @@ public class SceneTree {
 			SkeletonGroup => "Bones",
 			_ => "Overlay"
 		};
-		// var visibleType = vis is WorldEntity ? node.Type + " Root" : "Overlay";
+
 		ImGui.Text(Ktisis.Locale.Translate($"common.{(vis.Visible ? "hide" : "show")}") + " " + visibleType);
+		if (this._ctx.Config.Overlay.BulkVisOverride && vis is BoneNode or EntityPose or SkeletonGroup) {
+			using var _d = ImRaii.Disabled();
+			ImGui.Separator();
+			ImGui.Text(Ktisis.Locale.Translate("workspace.scene_tree.bulkVisWarning"));
+			ImGui.Text(Ktisis.Locale.Translate("workspace.scene_tree.bulkVisExplain"));
+		}
 	}
 
 	private void DrawAttachButton(IAttachable attach, ref float cursor, bool isHover) {

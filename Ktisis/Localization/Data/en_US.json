@@ -43,7 +43,9 @@
 		"Toolbar_ToggleEnv": "Switch to the Environment Editor",
 		"Toolbar_ToggleCamera": "Switch to the Camera Editor",
 		"Toolbar_ToggleConfig": "Switch to the Configuration Window",
-		"Scene_RefreshEntities": "Refresh scene entities"
+		"Toolbar_ToggleScene": "Switch to the Scene Editor",
+		"Scene_RefreshEntities": "Refresh scene entities",
+		"Toggle_Siblink_Select": "Toggle persistent Sibling Links"
 	},
 	
 	"actors": {
@@ -108,6 +110,7 @@
 		},
 		"pose": {
 			"name": "Pose File (.pose)",
+			"apply": "Apply on selection",
 			"ctx_import": "Import pose...",
 			"ctx_import.group": "Import group...",
 			"ctx_import.select": "Import selected...",
@@ -161,7 +164,9 @@
 		},
 		"scene_tree": {
 			"attached_to": "Attached to",
-			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment"
+			"reset_tooltip": "Click to reset attachment\nClick+Drag to set new attachment",
+			"bulkVisWarning": "Show All Bones enabled!",
+			"bulkVisExplain": "While turned on, individual bones' visibility settings are ignored."
 		},
 		"create_menu": {
 			"actor": {
@@ -178,7 +183,13 @@
 				"directional": "Sun (Directional)",
 				"file": "From file... (.ktlight)"
 			},
-			"reference": "Add reference image"
+			"reference": "Add reference image",
+			"overlay": {
+				"create": "Add new overlay...",
+				"dialog": "Dialog",
+				"balloon": "Balloon",
+				"status": "Status"
+			}
 		},
 		"entity_menu": {
 			"base": {
@@ -190,7 +201,9 @@
 				"detach": "Detach",
 				"rename": "Rename",
 				"duplicate": "Duplicate",
-				"delete": "Delete"
+				"delete": "Delete",
+				"untrack": "Untrack",
+				"reset": "Reset"
 			},
 			"actor": {
 				"target": "Target",
@@ -214,7 +227,8 @@
 				"customize": {
 					"profile": "Customize: Assign profile"
 				},
-				"revert": "Revert all IPC data"
+				"revert": "Revert all IPC data",
+				"refresh": "Refresh all IPC lists"
 			},
 			"pose": {
 				"import": "Import pose",
@@ -234,12 +248,14 @@
 		"create_actor": "Create Actor\nDrop-down for options...",
 		"create_light": "Create Light\nDrop-down for options...",
 		"create_overlay": "Create Overlay",
+		"create_object": "[Alpha] Create Object from Path",
 		"create_folder": "Create Folder",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.hide": "Hide Ktisis overlay",
 		"overlay.show": "Show Ktisis overlay",
 		"overlay.world_toggle": "Toggle world object overlay",
+		"overlay.world_filters": "World filters",
 		"overlay.range": "Range:"
 	},
 
@@ -283,9 +299,8 @@
 			"reflect": "Gizmo Mode: Mirror Transform"
 		},
 		"sibling": {
-			"available": "Multi-select sibling bone: %bone%",
-			"unavailable": "Bone %bone% has no sibling",
-			"multiple": "Multi-select sibling bone: %bone%\nCan only select sibling when 1 bone is selected!"
+			"linkDisable": "Disable Sibling Links",
+			"linkEnable": "Enable Sibling Links\nWhen a L/R bone is selected, its sibling will be automatically multi-selected."
 		},
 		"gizmo": {
 			"show": "Show rotation gizmo",
@@ -294,6 +309,7 @@
 		"transforms": {
 			"title": "Bone Transforms",
 			"parenting": "Enable bone parenting",
+			"parentingDisable": "Disable bone parenting",
 			"relative": "Relative rotation"
 		},
 		"ik": {
@@ -332,7 +348,8 @@
 			"title": "Add new preset",
 			"label": "Preset Name",
 			"save": "Save",
-			"cancel": "Cancel"
+			"cancel": "Cancel",
+			"explain": "The new Preset will contain all visible bones on the actor."
 		},
 		"clear": "Clear",
 		"toggle_other": "Toggle other"
@@ -416,7 +433,8 @@
 				"adv": "Advanced (Gaze/IK)",
 				"import": "Import actor appearance",
 				"gaze": "Gaze Control",
-				"ik": "Inverse Kinematics"
+				"ik": "Inverse Kinematics",
+				"expressions": "Expressions"
 			},
 			"gaze": {
 				"linked": "Linked",
@@ -426,7 +444,16 @@
 				"target": "Select target actor",
 				"targeting": "Targeting:",
 				"unk": "Unknown",
-				"null": "No Target"
+				"null": "No Target",
+				"disabled": "Unable to control gaze while pose mode active"
+			},
+			"expressions": {
+				"combine": "Combine L/R Sliders",
+				"link": "Link L/R Sliders",
+				"unlock": "Unlock Sliders",
+				"reset": "Reset Blends to 0",
+				"posemode_warn": "Pose Mode must be enabled to use Expression Sliders!",
+				"dtface_warn": "Expression Sliders are unavailable for non-Dawntrail faces!"
 			},
 			"chara_edit": "Actor Editor",
 			"export": "Export Chara"
@@ -521,6 +548,17 @@
 				"tex": "Texture:",
 				"tex_hint": "Choose an icon for this status"
 			}
+		},
+		"object": {
+			"header": "Object",
+			"title": "Object Info",
+			"rename": "Name",
+			"copy_path": "Copy Path",
+			"path": "Model Path",
+			"type": "Object Type",
+			"type.world": "World Object",
+			"type.spawned": "Spawned Object",
+			"addr": "Address"
 		}
 	},
 	
@@ -663,6 +701,7 @@
 		"title": "Import Pose",
 		"header": "Importing pose for",
 		"apply": "Apply",
+		"posemode_warn": "Pose Mode must be enabled to load poses!",
 		"transforms.header": "Transforms:",
 		"modes": {
 			"header": "Modes:",
@@ -672,6 +711,31 @@
 			"exclude_ears": "Exclude ear bones",
 			"warn_face_compat": "Face will not be imported from the selected pose file due to incompatibility with the selected actor.",
 			"warn_ik_on": "Inverse Kinematics are enabled! These may override imported limbs."
+		}
+	},
+
+	"popups": {
+		"world_obj": {
+			"header": "Object Details",
+			"addr": "Address",
+			"path": "Model Path",
+			"dist": "Distance",
+			"add": "Add",
+			"hide": "Hide",
+			"cancel": "Cancel"
+		},
+		"spawn_obj": {
+			"header": "Spawn Object",
+			"explain_1": "Enter a valid .mdl path below to spawn a new BgObject.",
+			"explain_2": "File paths can be sourced from Pathfinder, Textools, Brio, and Ktisis' world objects.",
+			"path": "Path",
+			"spawn": "Spawn",
+			"close": "Close"
+		},
+		"world_filters": {
+			"objects": "Objects",
+			"actors": "Actors",
+			"lights": "Lights"
 		}
 	},
 
@@ -784,7 +848,7 @@
 			"toggleOpenWindows": "UI buttons toggle windows open & closed",
 			"toolbar": "Use Ktisis Toolbar",
 			"hintToolbar": "Experimental: This is an alternate UI which puts all of Ktisis' editors into one window.\nPlease provide any feedback, as this option is actively under development!",
-			"editOnSelect": "Open object editor when selecting from the workspace",
+			"editOnSelect": "Open object editor on selection",
 			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",
 			"hintIncognito": "Censors all player names from actor list and GPose window",
@@ -799,12 +863,14 @@
 			"confirmExit": "Ensure shift has to be held to exit posing mode",
 			"AutoResizeObjectEditor": "Automatically expand the Object Editor when opening new dropdowns",
 			"hint_AutoResizeObj": "This disables the ability to resize the editors height, but you can still change its width",
-			"openTray": "When closing the workspace in GPose, open a Ktisis Tray icon",
+			"openTray": "Show Tray Icon when Ktisis is closed",
 			"hintTrayIcon": "The widget is movable when you click and drag, and will reopen the workspace when clicked",
 			"showHints": "Display Ktisis Tips on Startup",
 			"hintHint": "The first time you enter GPose after launching Ktisis, an overlay will display a random tip, hint, or fun fact!",
 			"selectTarget": "Automatically Select actors when Targeted",
 			"hintSelectTarget": "An actor is Targeted when clicked or tabbed-to with vanilla GPose controls.\nThis toggle will override Ktisis' current Selection to your new Target when one is chosen.",
+			"updateCameraPositions": "Update camera orbit with actor position",
+			"hintCameraPositions": "When enabled, the GPose camera will orbit the root position of a targeted actor.\nWhen disabled, the camera orbit will remain fixed when actor roots are moved.",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
@@ -826,6 +892,13 @@
 			"defaultLocation": {
 				"remove": "Unset this folder as default",
 				"add": "Set this folder as default place to open when using the file browser"
+			},
+			"hintLocation": {
+				"label": "On-Screen Location:",
+				"TopLeft": "Top Left",
+				"TopRight": "Top Right",
+				"BottomLeft": "Bottom Left",
+				"BottomRight": "Bottom Right"
 			}
 		},
 		"input": {
@@ -867,7 +940,9 @@
 			"defaults": "Right click any preset to mark it as Default. Default presets will be initially enabled for any GPose actors.",
 			"delete_tooltip": "Hold shift to delete",
 			"delete": "Delete",
-			"rename": "Rename"
+			"rename": "Rename",
+			"regen": "Regenerate Defaults",
+			"regen_tooltip": "Force generates Ktisis' default presets (Body, Arms, etc.)\nHold Ctrl+Shift to use"
 		},
 		"poseview": {
 			"title": "Pose View",
@@ -943,6 +1018,11 @@
 			"autoselect": "Automatically set language",
 			"selector": "Force Language"
 		}
+	},
+
+	"titlebar": {
+		"help": "Help - Ktisis Docs",
+		"helpLinkout": "https://docs.ktisis.tools/"
 	},
 
 	"migrator": {
@@ -1386,6 +1466,37 @@
 		"CustomLegs": "Custom Skeleton Legs"
 	},
 	
+	"expression": {
+		"BrowUpL": "Brow Up (L)",
+		"BrowUpR": "Brow Up (R)",
+		"BrowUp": "Brow Up",
+		"BrowFurrowL": "Brow Furrow (L)",
+		"BrowFurrowR": "Brow Furrow (R)",
+		"BrowFurrow": "Brow Furrow",
+		"BlinkL": "Blink (L)",
+		"BlinkR": "Blink (R)",
+		"Blink": "Blink",
+		"EyeWideL": "Eye Wide (L)",
+		"EyeWideR": "Eye Wide (R)",
+		"EyeWide": "Eye Wide",
+		"CheekRaiseL": "Cheek Raise (L)",
+		"CheekRaiseR": "Cheek Raise (R)",
+		"CheekRaise": "Cheek Raise",
+		"SmileL": "Smile (L)",
+		"SmileR": "Smile (R)",
+		"Smile": "Smile",
+		"GrinL": "Grin (L)",
+		"GrinR": "Grin (R)",
+		"Grin": "Grin",
+		"FrownL": "Frown (L)",
+		"FrownR": "Frown (R)",
+		"Frown": "Frown",
+		"JawOpen": "Jaw Open",
+		"UpperLipOpen": "Upper Lip Open",
+		"LowerLipOpen": "Lower Lip Open",
+		"LipPucker": "Lip Pucker"
+	},
+	
 	"lightType": {
 		"Directional": "Sun Light (Directional)",
 		"PointLight": "Point Light",
@@ -1401,7 +1512,7 @@
 	
 	"misc": {
 		"command_desc": "Toggle the main Ktisis window."
-  },
+	},
 
 	"background": {
 		"Basic": "Basic",

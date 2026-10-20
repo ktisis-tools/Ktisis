@@ -8,7 +8,6 @@
 			null
 		]
 	},
-
 	"actions": {
 		"Select_None": "取消选择",
 		"Select_Sibling": "选择同级骨骼",
@@ -42,13 +41,12 @@
 		"Toolbar_TogglePose": "切换到姿势视图",
 		"Toolbar_ToggleEnv": "切换到环境编辑器",
 		"Toolbar_ToggleCamera": "切换到相机编辑器",
-		"Toolbar_ToggleConfig": "切换到设置窗口"
+		"Toolbar_ToggleConfig": "切换到设置窗口",
+		"Scene_RefreshEntities": "刷新场景实体"
 	},
-
 	"actors": {
 		"pos_lock": "冻结角色位置"
 	},
-
 	"cameras": {
 		"main": "主摄像机",
 		"work": "工作摄像机",
@@ -61,7 +59,6 @@
 			"edit_can_delete": "（或按住 Shift 删除）"
 		}
 	},
-
 	"common": {
 		"options": "选项",
 		"appearance": "外观",
@@ -82,18 +79,15 @@
 		"position": "位置",
 		"scale": "缩放"
 	},
-
 	"context": {
 		"select": "选择",
 		"unselect": "取消选择"
 	},
-
 	"transform": {
 		"position": "位置",
 		"rotation": "旋转\n按住 Shift 切换屏幕轨道。",
 		"scale": "缩放"
 	},
-
 	"file": {
 		"import": "导入...",
 		"export": "导出...",
@@ -135,7 +129,6 @@
 			"image.load": "导入参考图像"
 		}
 	},
-
 	"workspace": {
 		"title": "Ktisis 工作区",
 		"state": {
@@ -177,7 +170,13 @@
 				"directional": "太阳（定向光）",
 				"file": "从文件导入... (.ktlight)"
 			},
-			"reference": "添加参考图像"
+			"reference": "添加参考图像",
+			"overlay": {
+				"create": "添加新叠加层...",
+				"dialog": "对话框",
+				"balloon": "气泡",
+				"status": "状态"
+			}
 		},
 		"entity_menu": {
 			"base": {
@@ -189,7 +188,9 @@
 				"detach": "解除附着",
 				"rename": "重命名",
 				"duplicate": "复制",
-				"delete": "删除"
+				"delete": "删除",
+				"untrack": "取消追踪",
+				"reset": "重置"
 			},
 			"actor": {
 				"target": "目标",
@@ -227,11 +228,16 @@
 			}
 		},
 		"create": "新建...",
+		"create_actor": "创建角色\n下拉菜单查看选项...",
+		"create_light": "创建灯光\n下拉菜单查看选项...",
+		"create_overlay": "创建叠加层",
 		"refresh_entities": "刷新场景实体",
 		"edit_mode.hint": "选择编辑模式",
-		"overlay.toggle": "切换屏幕叠加层"
+		"overlay.hide": "隐藏 Ktisis 叠加层",
+		"overlay.show": "显示 Ktisis 叠加层",
+		"overlay.world_toggle": "切换世界物体叠加层",
+		"overlay.range": "范围："
 	},
-
 	"toolbar": {
 		"title": "Ktisis 工具栏",
 		"buttons": {
@@ -243,9 +249,19 @@
 			"camera": "相机编辑器",
 			"scene": "场景编辑器",
 			"config": "设置"
+		},
+		"popup": {
+			"close": "这将关闭",
+			"close_workspace": "所有已打开的 Ktisis 窗口并重新打开工具栏。",
+			"close_toolbar": "工具栏并重新打开工作区窗口。",
+			"state": "您即将",
+			"state_end": "工具栏。",
+			"state_enable": "启用",
+			"state_disable": "禁用",
+			"yes": "继续",
+			"no": "取消"
 		}
 	},
-
 	"transform_edit": {
 		"title": "变换编辑器",
 		"actors": {
@@ -303,7 +319,6 @@
 			}
 		}
 	},
-
 	"preset_edit": {
 		"title": "预设",
 		"add": {
@@ -311,9 +326,10 @@
 			"label": "预设名称",
 			"save": "保存",
 			"cancel": "取消"
-		}
+		},
+		"clear": "清除",
+		"toggle_other": "切换其他"
 	},
-
 	"chara_edit": {
 		"title": "角色编辑器",
 		"hint": "编辑外观与动画",
@@ -383,7 +399,6 @@
 			"wetness.depth": "湿润深度"
 		}
 	},
-
 	"object_edit": {
 		"title": "对象编辑器",
 		"actor": {
@@ -430,7 +445,7 @@
 		"light": {
 			"headers": {
 				"light": "灯光",
-				"shadows": "阴影"
+				"shadow": "阴影"
 			},
 			"light": {
 				"reflection": "启用反射",
@@ -445,7 +460,13 @@
 				"area.angle": "光照角",
 				"area.falloff": "衰减角",
 				"falloff.type": "衰减类型",
-				"falloff.power": "衰减强度"
+				"falloff.power": "衰减强度",
+				"gobos": {
+					"info": "聚光灯与区域光现可应用原版贴图。\n该贴图作为遮光板（gobo），如同透过图像投影，可遮挡或为光源着色。",
+					"choose": "选择要投影的贴图",
+					"remove": "\n右键点击移除",
+					"current": "当前贴图："
+				}
 			},
 			"shadow": {
 				"dynamic": "动态阴影",
@@ -461,9 +482,38 @@
 			"visible": "启用",
 			"load": "加载图像",
 			"opacity": "不透明度"
+		},
+		"overlay": {
+			"header": "叠加层",
+			"pos": "位置",
+			"pos_drag": "可拖动",
+			"pos_snap": "吸附至中心",
+			"scale": "缩放",
+			"scale_reset": "重置缩放",
+			"alpha": "不透明度",
+			"talk": {
+				"speaker": "说话者",
+				"content": "对话",
+				"fontsize": "对话字体大小",
+				"bg": "背景",
+				"cursor": "光标"
+			},
+			"balloon": {
+				"content": "对话",
+				"fontsize": "字体大小",
+				"bg": "背景",
+				"gradient": "颜色渐变",
+				"arrow_show": "显示气泡箭头",
+				"arrow_pos": "箭头位置"
+			},
+			"status": {
+				"content": "状态文本",
+				"type": "类型",
+				"tex": "贴图：",
+				"tex_hint": "为此状态选择图标"
+			}
 		}
 	},
-
 	"camera_edit": {
 		"title": "相机编辑器",
 		"toggles": {
@@ -490,9 +540,14 @@
 			"from_base": "从基础位置偏移"
 		},
 		"pan": "相机平移",
-		"angle": "相机轨道角度"
+		"angle": "相机轨道角度",
+		"tracking": {
+			"info": "添加要追踪的骨骼\n按住 Shift 清除已追踪骨骼",
+			"track": "追踪所选骨骼",
+			"current": "已追踪骨骼：",
+			"multi": "多个..."
+		}
 	},
-
 	"env_edit": {
 		"title": "环境编辑器",
 		"enable": "启用",
@@ -574,9 +629,10 @@
 			"angle": "角度",
 			"speed": "速度"
 		}
-		
 	},
-
+	"scene_edit": {
+		"title": "场景编辑器"
+	},
 	"pose_view": {
 		"title": "姿势视图",
 		"view_chooser": "视图：",
@@ -584,7 +640,6 @@
 		"export": "导出",
 		"no_target": "请选择一个角色以开始编辑其姿势。"
 	},
-
 	"chara_import": {
 		"title": "导入外观",
 		"header": "正在为以下对象导入外观",
@@ -605,7 +660,36 @@
 			"warn_ik_on": "反向运动（IK）已启用！这可能会覆盖导入的肢体。"
 		}
 	},
-
+	"expression": {
+		"group": {
+			"Face": "面部"
+		},
+		"reset_all": "全部重置",
+		"link": "链接左右滑块",
+		"unlink": "取消链接左右滑块",
+		"unit": {
+			"BrowUpL": "眉上扬（左）",
+			"BrowUpR": "眉上扬（右）",
+			"BrowFurrowL": "眉皱起（左）",
+			"BrowFurrowR": "眉皱起（右）",
+			"BlinkL": "眨眼（左）",
+			"BlinkR": "眨眼（右）",
+			"EyeWideL": "睁大眼（左）",
+			"EyeWideR": "睁大眼（右）",
+			"CheekRaiseL": "提颊（左）",
+			"CheekRaiseR": "提颊（右）",
+			"SmileL": "微笑（左）",
+			"SmileR": "微笑（右）",
+			"FrownL": "皱眉（左）",
+			"FrownR": "皱眉（右）",
+			"SneerL": "冷笑（左）",
+			"SneerR": "冷笑（右）",
+			"JawOpen": "张颌",
+			"UpperLipOpen": "上唇张开",
+			"LowerLipOpen": "下唇张开",
+			"LipPucker": "嘴唇撅起"
+		}
+	},
 	"config": {
 		"title": "Ktisis 设置",
 		"categories": {
@@ -690,7 +774,20 @@
 			"dots": {
 				"draw_gizmo": "使用变换器时绘制点",
 				"radius": "点半径"
-			}
+			},
+			"world": {
+				"dot_radius": "世界节点半径",
+				"dot_thickness": "世界节点描边粗细",
+				"scale_factor": "世界节点缩放系数",
+				"color": "世界节点填充颜色",
+				"color_actor": "角色节点填充颜色",
+				"color_light": "灯光节点填充颜色",
+				"highlight_color": "悬停高亮颜色"
+			},
+			"keep_presets_on_active": "切换活动角色时保持预设启用",
+			"dim_inactive": "淡化非活动角色的骨骼",
+			"active_state_chooser": "角色活动状态判定",
+			"inactive_opacity": "非活动时的不透明度"
 		},
 		"references": {
 			"draw_title": "为参考图像绘制标题。"
@@ -717,6 +814,12 @@
 			"confirmExit": "退出姿势模式时需按住 Shift 确认",
 			"AutoResizeObjectEditor": "打开新下拉菜单时自动扩展对象编辑器高度",
 			"hint_AutoResizeObj": "开启后将无法手动调整编辑器高度，仍可调整宽度",
+			"openTray": "在 GPose 中关闭工作区时，打开 Ktisis 托盘图标",
+			"hintTrayIcon": "点击并拖动可移动该控件，点击后将重新打开工作区",
+			"showHints": "启动时显示 Ktisis 提示",
+			"hintHint": "启动 Ktisis 后首次进入 GPose 时，叠加层会显示一条随机小贴士、提示或趣味事实！",
+			"selectTarget": "选中目标时自动选择角色",
+			"hintSelectTarget": "用原版 GPose 点击或 Tab 切换时，角色会被设为目标。\n开启后，选择新目标时会覆盖 Ktisis 当前的选中状态。",
 			"workcam": {
 				"speed": "工作相机速度",
 				"fastMulti": "工作相机快速倍率",
@@ -748,6 +851,7 @@
 			"blockRight": "右键点击时禁用GPose更改目标",
 			"scrollAllow": "为变换滑块启用滚轮输入",
 			"scrollMod": "需要按住ALT键才能使用滚轮控制变换滑块",
+			"reset": "重置按键绑定",
 			"cameras": {
 				"title": "相机",
 				"header": "相机控制："
@@ -855,7 +959,6 @@
 			"selector": "强制使用语言"
 		}
 	},
-
 	"migrator": {
 		"title": "Ktisis v0.4 设置",
 		"mainWindow": {
@@ -913,7 +1016,11 @@
 				"lineThickness": "线条粗细",
 				"lineOpacity": "线条不透明度",
 				"lineOpacityUsing": "使用时的线条不透明度",
-				"dotRadius": "点半径"
+				"dotRadius": "点半径",
+				"selectTarget": "设为目标时选择角色",
+				"selectTargetTip": "与 v0.2 不同，Ktisis v0.3 可同时编辑多个角色，相机轨道可独立于所选角色骨骼。此设置将相机目标与角色选择联动，更接近 v0.2 的操作习惯。",
+				"dimInactive": "淡化非活动角色的骨骼",
+				"dimInactiveTip": "若同时显示多个骨架，此设置会对未聚焦的骨架添加透明/淡化效果。迁移后可在叠加层设置中进一步自定义。"
 			},
 			"autosave": {
 				"header": "自动保存设置",
@@ -937,7 +1044,6 @@
 		"next": "下一步",
 		"finish": "完成"
 	},
-	
 	"bone": {
 		"n_root": "根骨骼 (Root)",
 		"n_hara": "腹部 (Abdomen)",
@@ -1091,7 +1197,6 @@
 		"oh_n_hara": "副手 (Off Hand)",
 		"j_half_l": "左半部分 (Left Half)",
 		"j_half_r": "右半部分 (Right Half)",
-
 		"j_f_ago": "下颌",
 		"j_f_dago": "仅下颌",
 		"j_f_bero_01": "舌头A",
@@ -1119,7 +1224,6 @@
 		"j_f_dslip_l": "下唇左角A",
 		"j_f_uslip_r": "上唇右角A",
 		"j_f_dslip_r": "下唇右角A",
-
 		"j_f_mab_l": "左眼皮",
 		"j_f_mab_r": "右眼皮",
 		"j_f_eyepuru_l": "左眼拉动",
@@ -1136,7 +1240,6 @@
 		"j_f_mabdn_02out_r": "右下外眼角",
 		"j_f_mabup_03in_r": "右上内眼角",
 		"j_f_mabdn_03in_r": "右下内眼角",
-
 		"j_f_mayu_l": "左外眉",
 		"j_f_mayu_r": "右外眉",
 		"j_f_mmayu_l": "左中眉",
@@ -1145,7 +1248,6 @@
 		"j_f_miken_02_l": "左内眉B",
 		"j_f_miken_01_r": "右内眉A",
 		"j_f_miken_02_r": "右内眉B",
-
 		"j_f_face": "面部",
 		"j_f_hoho_l": "左上颊",
 		"j_f_hoho_r": "右上颊",
@@ -1160,9 +1262,7 @@
 		"j_f_hana_r": "右鼻孔",
 		"j_f_dmiken_l": "左鼻梁",
 		"j_f_dmiken_r": "右鼻梁",
-
 		"j_ex_met_vb": "面甲",
-
 		"iv_asi_oya_a_l": "IVCS 左脚大趾 A",
 		"iv_asi_oya_b_l": "IVCS 左脚大趾 B",
 		"iv_asi_hito_a_l": "IVCS 左脚食趾 A",
@@ -1173,7 +1273,6 @@
 		"iv_asi_kusu_b_l": "IVCS 左脚无名趾 B",
 		"iv_asi_ko_a_l": "IVCS 左脚小趾 A",
 		"iv_asi_ko_b_l": "IVCS 左脚小趾 B",
-
 		"iv_asi_oya_a_r": "IVCS 右脚大趾 A",
 		"iv_asi_oya_b_r": "IVCS 右脚大趾 B",
 		"iv_asi_hito_a_r": "IVCS 右脚食趾 A",
@@ -1184,7 +1283,6 @@
 		"iv_asi_kusu_b_r": "IVCS 右脚无名趾 B",
 		"iv_asi_ko_a_r": "IVCS 右脚小趾 A",
 		"iv_asi_ko_b_r": "IVCS 右脚小趾 B",
-
 		"iv_hito_c_l": "IVCS 左手食指 C",
 		"iv_naka_c_l": "IVCS 左手中指 C",
 		"iv_kusu_c_l": "IVCS 左手无名指 C",
@@ -1193,13 +1291,10 @@
 		"iv_naka_c_r": "IVCS 右手中指 C",
 		"iv_kusu_c_r": "IVCS 右手无名指 C",
 		"iv_ko_c_r": "IVCS 右手小指 C",
-
 		"iv_nitoukin_l": "IVCS 左肱二头肌",
 		"iv_nitoukin_r": "IVCS 右肱二头肌",
-
 		"iv_c_mune_l": "IVCS 左胸",
 		"iv_c_mune_r": "IVCS 右胸",
-
 		"iv_kougan_l": "IVCS 左阴囊",
 		"iv_kougan_r": "IVCS 右阴囊",
 		"iv_ochinko_a": "IVCS 阴茎 A",
@@ -1208,19 +1303,16 @@
 		"iv_ochinko_d": "IVCS 阴茎 D",
 		"iv_ochinko_e": "IVCS 阴茎 E",
 		"iv_ochinko_f": "IVCS 阴茎 F",
-
 		"iv_kuritto": "IVCS 阴蒂",
 		"iv_inshin_l": "IVCS 左阴唇",
 		"iv_inshin_r": "IVCS 右阴唇",
 		"iv_omanko": "IVCS 阴道",
-
 		"iv_koumon": "IVCS 肛门",
 		"iv_koumon_l": "IVCS 肛门左侧",
 		"iv_koumon_r": "IVCS 肛门右侧",
 		"iv_shiri_l": "IVCS 左臀",
 		"iv_shiri_r": "IVCS 右臀"
 	},
-
 	"boneCategory": {
 		"Head": "头部",
 		"Hair": "头发",
@@ -1265,7 +1357,6 @@
 		"Earring": "耳饰",
 		"Weapons": "武器",
 		"Other": "其他",
-
 		"LeftHandIvcs": "IVCS 左手",
 		"RightHandIvcs": "IVCS 右手",
 		"BreastsIvcs": "IVCS 乳房",
@@ -1275,7 +1366,6 @@
 		"PenisIvcs": "IVCS 阴茎",
 		"VaginaIvcs": "IVCS 阴道",
 		"BottomIvcs": "IVCS 下体",
-
 		"SkelomaeWings": "Skelomae 翅膀",
 		"SkelomaeWingsLeft": "Skelomae 左侧翅膀",
 		"SkelomaeWingsRight": "Skelomae 右侧翅膀",
@@ -1287,26 +1377,121 @@
 		"SkelomaeCreaturesCentaurBodyFrontLegs": "前腿",
 		"SkelomaeCreaturesCentaurBodyBackLegs": "后腿",
 		"SkelomaeCreaturesCentaurTail": "尾巴",
-
 		"CustomArms": "自定义骨架手臂",
 		"CustomAbdomen": "自定义骨架腹部",
 		"CustomLegs": "自定义骨架腿部"
 	},
-
 	"lightType": {
 		"Directional": "太阳光（定向光）",
 		"PointLight": "点光源",
 		"SpotLight": "聚光灯",
 		"AreaLight": "区域光"
 	},
-
 	"lightFalloff": {
 		"Linear": "线性衰减",
 		"Quadratic": "二次衰减",
 		"Cubic": "三次衰减"
 	},
-	
 	"misc": {
 		"command_desc": "切换 Ktisis 主窗口。"
+	},
+	"background": {
+		"Basic": "基础",
+		"Thought": "思考",
+		"Echo": "回响",
+		"Computer": "终端",
+		"Yell": "呼喊",
+		"Parchment": "羊皮纸",
+		"Dragonspeak": "龙语",
+		"Linkpearl": "通讯珠",
+		"Narration": "旁白",
+		"Say": "说话",
+		"Party": "小队",
+		"Tell": "悄悄话",
+		"Alliance": "团队",
+		"Shout": "喊话",
+		"FC": "部队",
+		"LS": "通讯贝",
+		"CWLS": "跨服通讯贝",
+		"Novice": "新人",
+		"PVP": "对战"
+	},
+	"gradient": {
+		"Default": "默认",
+		"Lime": "青柠",
+		"Orange": "橙色",
+		"Violet": "紫罗兰",
+		"SkyBlue": "天蓝",
+		"Clay": "黏土",
+		"LightJeans": "浅蓝牛仔",
+		"GrassGreen": "草绿",
+		"Gray": "灰色",
+		"Pink": "粉色",
+		"DarkJeans": "深蓝牛仔",
+		"Green": "绿色",
+		"Purple": "紫色",
+		"Brown": "棕色",
+		"CloudyBlue": "云蓝",
+		"RoyalPurple": "皇室紫"
+	},
+	"cursor": {
+		"None": "无",
+		"Pin": "固定",
+		"Loop": "循环"
+	},
+	"status": {
+		"None": "无",
+		"Buff": "增益",
+		"Debuff": "减益",
+		"Falloff": "衰减"
+	},
+	"hints": {
+		"1": "Ktisis 可以自动保存你的姿势，即使断开连接也没问题！可在设置窗口中启用。",
+		"2": "「Ktisis」源自古希腊语，意为创造、创立或建造。其形容词形式为「ktistic」。",
+		"3": "摆姿势要负责任！隐身模式会在拍摄 UI 时隐藏所有玩家名称。",
+		"4": "打开灯光吧！Ktisis 可以创建自己的灯光，也可编辑原版 GPose 窗口创建的灯光。",
+		"5": "工作区中可同时容纳超过 40 个角色——此限制不适用于灯光及其他实体。",
+		"6": "你知道吗？SimpleTweaks 有临时提高分辨率的选项，可拍出更精细的截图！",
+		"7": "武器会附着在玩家骨架的特定骨骼上，但你也可以把玩家和其他物体附着到不同骨骼。",
+		"8": "Ctrl+点击可同时选择多个对象；在工作区中 Shift+点击可选择两点之间的所有实体。",
+		"9": "选中多个实体时，不同的变换类型（平行、反向、镜像）可让你同时修改它们。",
+		"10": "新建角色不必是玩家角色的副本——你也可以从大世界导入其他 NPC 或玩家。",
+		"11": "厌倦了坐下又站起重置动画？角色编辑器可让你重置或选择任意动画/空闲姿势，应用到任何角色。",
+		"12": "Ahmi 是姿势视图的默认角色，你可在设置窗口用模板换成自己的图像。",
+		"13": "许多 ReShade 安装包含色度键（Chroma Key）着色器，可为图像抠出完美透明背景。",
+		"14": "即使姿势摆到一半，也能通过角色编辑器的姿势表情功能加载原版面部表情。",
+		"15": "参考姿势可直接叠加在游戏中，帮你把角度调得恰到好处。",
+		"16": "相机编辑器包含正交视图选项，可用移轴视角拍摄场景。",
+		"17": "NPC 外观可像 .chara 文件一样导入，或通过 Glamourer 等其他插件应用。",
+		"18": "Ktisis 可通过 IPC 与其他插件协作，包括：Penumbra 合集、Glamourer 设计与 C+ 模板。",
+		"19": "叠加层气泡（以及这些提示！）使用 KamiToolKit 以原版风格绘制，与 VanillaPlus 插件同源。",
+		"20": "有建议或遇到 Bug？欢迎发到我们的 Discord 服务器！",
+		"21": "聚光灯与区域光可在前方加载贴图以应用不同颜色与效果——我们称之为遮光板（gobo）！",
+		"22": "点击平移操作柄的中心点可在 3D 中移动角色——按住 Shift 可吸附到世界地形！",
+		"23": "角色编辑器的动画控制可把动画应用到身体不同部位，例如嘴唇的说话动画。",
+		"24": "若使用会生成道具的情感动作（如 /tomestone），可用 Ktisis 像摆武器一样摆姿势。",
+		"25": "角色编辑器的装备页也可装备非武器道具，例如：职业水晶、酒瓶、书籍，以及尼德霍格之眼。",
+		"26": "Ktisis 编辑的大世界物体仅为临时更改——碰撞箱与碰撞数据也会保持原样。",
+		"27": "不同水体对水编辑器滑块的用途各不相同——动手试试，看看哪项影响哪里！",
+		"28": "反向运动学（IK）可在姿势模式内外改变肢体位置，即使动画正在播放也行。",
+		"29": "非人类角色也可能兼容视线控制，包括宠物与魔物。",
+		"30": "可在「设置 > 个性化」中更改 Ktisis 叠加层的多种颜色（操作柄、骨骼、工作区分类）。",
+		"31": "头发与面部属于不同于主体的局部骨架，部分头盔与胸甲亦然。",
+		"32": "摆姿势用的球/箭头叫操作柄（Gizmo），由 ImGui 的 ImGuizmo 工具绘制！",
+		"33": "可用骨骼偏移更改骨骼显示位置，对面部骨骼等密集簇特别有用。",
+		"34": "左键点击可关闭这些提示，也可在设置中完全禁用。",
+		"35": "滚轮可逐格调节 Ktisis 彩色变换滑块；按住 Shift 或 Control 可加快/减慢。",
+		"36": "自 FFXIV 金曦之遗辉更新起，面部表情姿势可能仅在创建时所用的种族/性别上正确加载。",
+		"37": "原版 GPose 菜单有添加贴纸的按钮——试试不同图标、表情与文字吧。",
+		"38": "这些提示搭配显示的角色头像多达 280 多种。",
+		"39": "窗口太多？试试设置菜单中的替代 Ktisis 工具栏界面！",
+		"40": "可从世界叠加层将灯光与角色复制到场景，就像复制物体一样。",
+		"41": "可让当前未选中或非相机目标的角色骨骼更透明；请查看叠加层设置！",
+		"42": "对象编辑器的表情页可用滑块混合，以修改或创建新的面部表情。",
+		"43": "可在叠加层设置中保持预设显示在所选或相机目标角色上。",
+		"44": "我们有自己的 Wiki！访问 docs.ktisis.tools 阅读或贡献。",
+		"45": "可用命令 /xldata icon 在 Dalamud 中浏览这些头像以及许多其他原版图标。",
+		"46": "Squapes 是均衡早餐的一部分。",
+		"47": "相机编辑器的追踪控制可让 GPose 相机聚焦任意骨骼，甚至多块骨骼的组合。试试看！"
 	}
 }

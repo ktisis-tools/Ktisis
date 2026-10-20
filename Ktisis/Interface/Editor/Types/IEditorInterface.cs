@@ -38,6 +38,8 @@ public interface IEditorInterface {
 	public void OpenApplyDesign(ActorEntity entity);
 	public void OpenAssignCProfile(ActorEntity entity);
 	public void OpenOverworldActorList();
+	public void OpenObjectCreate();
+	public void OpenWorldFilters();
 	
 	public void RefreshSceneEntities();
 	public void SelectAllEntities();

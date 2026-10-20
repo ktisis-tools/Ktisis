@@ -1,0 +1,28 @@
+<Project>
+    <Target Name="OverrideDalamudPackager"
+            AfterTargets="Build">
+        <DalamudPackager ProjectDir="$(ProjectDir)"
+                         OutputPath="$(OutputPath)"
+                         AssemblyName="$(AssemblyName)"
+                         MakeZip="true"
+                         Author="$(Author)"
+                         Name="$(Name)"
+                         MinimumDalamudVersion="$(MinimumDalamudVersion)"
+                         Punchline="$(Punchline)"
+                         Description="$(Description)"
+                         ApplicableVersion="$(ApplicableVersion)"
+                         RepoUrl="$(RepoUrl)"
+                         Tags="$(Tags)"
+                         CategoryTags="$(CategoryTags)"
+                         DalamudApiLevel="$(DalamudApiLevel)"
+                         LoadRequiredState="$(LoadRequiredState)"
+                         LoadSync="$(LoadSync)"
+                         CanUnloadAsync="$(CanUnloadAsync)"
+                         LoadPriority="$(LoadPriority)"
+                         ImageUrls="$(ImageUrls)"
+                         IconUrl="$(IconUrl)"
+                         Changelog="$(Changelog)"
+                         AcceptsFeedback="$(AcceptsFeedback)"
+                         FeedbackMessage="$(FeedbackMessage)" />
+    </Target>
+</Project>

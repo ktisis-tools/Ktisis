@@ -31,8 +31,8 @@ public class SceneFile : JsonFile {
 	public EnvironmentInfo Environment { get; set; } = new EnvironmentInfo();
 	public List<OverlayInfo> Overlays { get; set; } = new List<OverlayInfo>();
 	public List<Folder>? Folders { get; set; } = new List<Folder>();
-
-
+	public List<ObjectInfo> Objects { get; set; } = new List<ObjectInfo>();
+	
 	[Serializable]
 	public struct Folder : ISortable {
 		public Folder(string name) {
@@ -157,6 +157,14 @@ public class SceneFile : JsonFile {
 	public struct AttachInfo {
 		public ushort ParentIndex { get; set; }
 		public string NodeName { get; set; }
+	}
+	
+	[Serializable]
+	public struct ObjectInfo {
+		public string Path { get; set; }
+		public string Name { get; set; }
+		public Transform Transform { get; set; }
+		public bool IsHidden { get; set; }
 	}
 	
 	public interface ISortable {

@@ -3,6 +3,9 @@ using System.Linq;
 using Dalamud.Interface.Utility.Raii;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
+
+using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Types;
@@ -15,25 +18,28 @@ public class WorldObjectPopup(WorldObject obj, float distance, IEditorContext ct
 	public WorldObject WorldObj;
 	protected override void OnDraw() {
 		this.WorldObj = obj;
-		ImGui.Text($"Object Details");
+		ImGui.Text(Ktisis.Locale.Translate("popups.world_obj.header"));
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 		using (ImRaii.Disabled())
-			ImGui.Text($"\tAddress: {obj.Address:X}");
+			ImGui.Text($"\t{Ktisis.Locale.Translate("popups.world_obj.addr")}: {obj.Address:X}");
 
 		ImGui.Separator();
-		ImGui.Text($"Model path: {obj.Path}");
-		ImGui.Text($"Distance: {distance:0.00}y");
+		if (Buttons.IconButtonTooltip(FontAwesomeIcon.Clipboard, Ktisis.Locale.Translate("object_edit.object.copy_path")))
+			ImGui.SetClipboardText(obj.Path);
+		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+		ImGui.Text($"{Ktisis.Locale.Translate("popups.world_obj.path")}: {obj.Path}");
+		ImGui.Text($"{Ktisis.Locale.Translate("popups.world_obj.dist")}: {distance:0.00}y");
 
 		ImGui.Spacing();
-		if (ImGui.Button("Add"))
+		if (ImGui.Button(Ktisis.Locale.Translate("popups.world_obj.add")))
 			this.Confirm();
 
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (ImGui.Button("Hide"))
+		if (ImGui.Button(Ktisis.Locale.Translate("popups.world_obj.hide")))
 			this.ConfirmAndHide();
 
 		ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-		if (ImGui.Button("Cancel"))
+		if (ImGui.Button(Ktisis.Locale.Translate("popups.world_obj.cancel")))
 			this.Close();
 	}
 

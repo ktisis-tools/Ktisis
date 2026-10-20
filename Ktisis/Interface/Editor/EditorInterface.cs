@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Plugin.Services;
+
 using GLib.Popups.ImFileDialog;
 
 using Ktisis.Data.Files;
@@ -30,15 +32,18 @@ namespace Ktisis.Interface.Editor;
 
 public class EditorInterface : IEditorInterface {
 	private readonly IEditorContext _ctx;
+	private readonly IDataManager _data;
 	private readonly GuiManager _gui;
 
 	private readonly GizmoManager _gizmo;
 	
 	public EditorInterface(
 		IEditorContext ctx,
+		IDataManager data,
 		GuiManager gui
 	) {
 		this._ctx = ctx;
+		this._data = data;
 		this._gui = gui;
 		this._gizmo = new(ctx.Config);
 	}
@@ -62,14 +67,16 @@ public class EditorInterface : IEditorInterface {
 		).Open();
 	}
 
-	private void OnSelectChanged(ISelectManager sender) {
+	private void OnSelectChanged(ISelectManager sender, bool multi) {
 		if (!this._ctx.Config.Editor.ToggleEditorOnSelect ) return;
 
 		var open = sender.Count > 0;
-		
+
 		var editor = this._gui.Get<ObjectWindow>();
 		if (editor == null) {
-			if (open) this.OpenObjectEditor();
+			// open Object Editor if >=1 object is still selected
+			// DON'T do this if we're in toolbar mode and more than one object was modified in the action (e.g. clear, multiselect) or if it was ModeMulti with 1 selection
+			if (open && !(this._ctx.Config.Editor.UseToolbar && multi)) this.OpenObjectEditor();
 			return;
 		}
 
@@ -210,7 +217,11 @@ public class EditorInterface : IEditorInterface {
 	public void OpenAssignCProfile(ActorEntity entity) => this._gui.CreatePopup<ActorCProfilePopup>(this._ctx, entity).Open();
 
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
-	
+
+	public void OpenObjectCreate() => this._gui.CreatePopup<SpawnObjectPopup>(this._ctx, this._data).Open();
+
+	public void OpenWorldFilters() => this._gui.CreatePopup<WorldFilterPopup>(this._ctx).Open();
+
 	public void RefreshSceneEntities() {
 		this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
 		this._ctx.Scene.GetModule<LightModule>().RefreshLightEntities();
@@ -242,7 +253,13 @@ public class EditorInterface : IEditorInterface {
 				actor.Select(SelectMode.Force);
 		}
 	}
-	public void OpenLightEditor(LightEntity light) => this.OpenObjectEditor(light, true);
+	public void OpenLightEditor(LightEntity light) {
+		if (this._ctx.Config.Editor.UseLegacyLightEditor) {
+			this.OpenEditor<LightWindow, LightEntity>(light);
+			return;
+		}
+		this.OpenObjectEditor(light, true);
+	}
 
 	public bool OpenEditor<T, TA>(TA entity) where T : EntityEditWindow<TA> where TA : SceneEntity {
 		var editor = this._gui.GetOrCreate<T>(this._ctx);

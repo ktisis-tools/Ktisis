@@ -86,7 +86,12 @@ public class SceneDataService {
 			Ktisis.Log.Warning("Failed to write Scene file");
 		}
 	}
-	public unsafe SceneFile Save(bool saveActors = true, bool saveLights = true, bool saveCameras = true, bool saveEnv = true, bool saveOverlays = true) {
+	public unsafe SceneFile Save(bool saveActors = true,
+		bool saveLights = true,
+		bool saveCameras = true,
+		bool saveEnv = true,
+		bool saveOverlays = true,
+		bool saveObjects = true) {
 
 
 			var scene = new SceneFile();
@@ -148,11 +153,16 @@ public class SceneDataService {
 				.Distinct()
 				.OfType<OverlayEntity>()
 				.ToList();
+			
+			var objects = this.Scene.Children.OfType<ObjectEntity>()
+				.ToList();
 
+			Ktisis.Log.Debug("Collected all entity lists");
 			//TODO: Attaches
 			if(saveActors)
 				foreach (var chara in entities) {
-
+					Ktisis.Log.Debug($"Exporting {chara.Name}");
+					Ktisis.Log.Debug($"Data: {chara}");
 					var actor = ((ActorEntity)chara).Actor.GetDrawObject();
 						
 					var location = new Transform(this.Scene.GetActorRelativePosition(actor->Position), actor->Rotation, actor->Scale);
@@ -287,6 +297,11 @@ public class SceneDataService {
 					}
 				}
 			
+			if (saveObjects) {
+				foreach (var obj in objects) {
+					scene.Objects.Add(new SceneFile.ObjectInfo(){IsHidden = obj.IsHidden, Name = obj.Name, Path = obj.GetPath(), Transform = obj.GetTransform()});
+				}
+			}
 			
 			//Environment info 
 			if (saveEnv) {
@@ -317,7 +332,16 @@ public class SceneDataService {
 			return scene!;
 	}
 	
-	public async Task Load(SceneFile scene, bool autoSaveLoading = true, bool loadActors = true, bool loadLights = true, bool loadCameras = true, bool loadEnv = true, bool loadOverlays = true, bool preserveExistingActors = false, FolderHandling folderHandling = FolderHandling.Ignore) {
+	public async Task Load(SceneFile scene,
+		bool autoSaveLoading = true,
+		bool loadActors = true,
+		bool loadLights = true,
+		bool loadCameras = true,
+		bool loadEnv = true,
+		bool loadOverlays = true,
+		bool loadObjects = true,
+		bool preserveExistingActors = false,
+		FolderHandling folderHandling = FolderHandling.Ignore) {
 		
 			this._idMap	= new Dictionary<ushort, ActorEntity>();
 			this._guidMap = new Dictionary<Guid, SceneEntity>();
@@ -456,6 +480,18 @@ public class SceneDataService {
 							this._guidMap.Add(overlayInfo.Guid, overlay);
 						}
 					});
+				}
+			}
+			
+			if (loadObjects) {
+				unsafe {
+					foreach (var obj in scene.Objects) {
+						var ptr = this._ctx!.Scene.World.BuildObject(obj.Path);
+						var entity = this._ctx!.Scene.Factory.BuildObject().SetAddress(ptr).SetName(obj.Name).Add();
+						entity.Visible = obj.IsHidden;
+						entity.SetTransform(obj.Transform);
+						entity.Update();
+					}
 				}
 			}
 			

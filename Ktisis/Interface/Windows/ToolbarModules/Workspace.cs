@@ -21,9 +21,7 @@ public class Workspace : WorkspaceWindow  {
 	) : base(ctx) {
 		this._editorContext = ctx;
 	}
-
-	public override void PreDraw() {
-	}
+	
 	
 	public override void Draw() {
 		var style = ImGui.GetStyle();
@@ -34,7 +32,14 @@ public class Workspace : WorkspaceWindow  {
 		this._workspace.DrawCompact();
 
 		var botHeight = (UiBuilder.DefaultFontSizePx + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2) * ImGuiHelpers.GlobalScale;
-		var treeHeight = ((ImGui.GetTextLineHeightWithSpacing() + 5) * (Math.Max(10, this._editorContext.Scene.Children.Count())+ 5)) - botHeight; //TODO: would prefer sizing based upon expanded nodes but this will do for now
+		var treeHeight = ((ImGui.GetTextLineHeightWithSpacing() + 5) * (Math.Max(10, this._editorContext.Scene.Children.Count()) + 5)) - botHeight; //TODO: would prefer sizing based upon expanded nodes but this will do for now
+		var viewportSize = ImGui.GetIO().DisplaySize;
+		var calculatedEnd = ImGui.GetCursorScreenPos().Y + treeHeight + botHeight + ImGui.GetStyle().WindowPadding.Y;
+
+		if (calculatedEnd > viewportSize.Y) {
+			treeHeight = Math.Clamp(treeHeight - (calculatedEnd - viewportSize.Y), ImGui.GetTextLineHeightWithSpacing() * 5, float.MaxValue); //reduce to stay on screen.
+		}
+
 		this._sceneTree.Draw(treeHeight);
 
 		ImGui.Spacing();
