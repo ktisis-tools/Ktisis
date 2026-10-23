@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 using Dalamud;
@@ -20,6 +21,10 @@ using Ktisis.Interop.Hooking;
 using Ktisis.Interop.Ipc;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Game;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using SchedulerTimeline = FFXIVClientStructs.FFXIV.Client.System.Scheduler.Base.SchedulerTimeline;
 
 namespace Ktisis.Editor.Posing;
 
@@ -42,13 +47,18 @@ public sealed class PosingModule : HookModule {
 		IDalamudPluginInterface dpi,
 		JsonFileSerializer fileSerializer,
 		ISigScanner sigScanner
-		) : base(hook) {
+	) : base(hook) {
 		this._sigScanner = sigScanner;
+		unsafe {
+			_schedulerTimelineVirtualTable = (SchedulerTimeline.SchedulerTimelineVirtualTable*)dpi.GetService<ISigScanner>()?.GetStaticAddressFromSig("48 8D 05 ?? ?? ?? ?? 48 8B D9 ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 93");
+		}
 		this.Manager = manager;
 		this._actors = actors;
 		this._ipc = new IpcProvider(contextManager, dpi, fileSerializer);
 	}
 	
+	private unsafe SchedulerTimeline.SchedulerTimelineVirtualTable* _schedulerTimelineVirtualTable;
+
 	// Module interface
 	
 	public bool IsEnabled { get; private set; }
@@ -169,9 +179,17 @@ public sealed class PosingModule : HookModule {
 
 	[Signature("E8 ?? ?? ?? ?? 0F B6 F8 84 C0 74 12", DetourName = nameof(AnimFrozen))]
 	private Hook<AnimFrozenDelegate> _animFrozenHook = null!;
-	private delegate byte AnimFrozenDelegate(nint a1, int a2);
+	private unsafe delegate byte AnimFrozenDelegate(nint* a1, int a2);
 
-	private byte AnimFrozen(nint a1, int a2) => 1;
+	private unsafe byte AnimFrozen(nint* a1, int a2) {
+		IntPtr vtbl = *a1;
+		if (vtbl == (nint)this._schedulerTimelineVirtualTable) {
+			SchedulerTimeline* timeline = (SchedulerTimeline*)a1;
+			if (this._actors.IsActorGposeActor((ushort)timeline->GetOwningGameObjectIndex()))
+				return 1;
+		}
+		return this._animFrozenHook.Original.Invoke(a1, a2);
+	}
 	
 	// UpdatePos
 

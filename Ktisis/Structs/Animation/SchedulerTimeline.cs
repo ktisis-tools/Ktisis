@@ -6,7 +6,7 @@ using Ktisis.Structs.Common;
 
 namespace Ktisis.Structs.Animation;
 
-[StructLayout(LayoutKind.Explicit, Size = 0x274)]
+[StructLayout(LayoutKind.Explicit, Size = 0x280)]
 public struct SchedulerTimeline {
 	[FieldOffset(0)] public TimelineController Controller;
 

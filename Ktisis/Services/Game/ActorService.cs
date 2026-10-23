@@ -35,6 +35,8 @@ public class ActorService {
 	
 	public IGameObject? GetAddress(nint address)
 		=> this._objectTable.CreateObjectReference(address);
+
+	public bool IsActorGposeActor(ushort index) =>  index is >= GPoseIndex and <= GPoseIndex + GPoseCount && this.GetIndex(index) != null;
 	
 	// Actor enumerators
 
