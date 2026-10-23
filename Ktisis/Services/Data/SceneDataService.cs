@@ -15,7 +15,6 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
-using KamiToolKit.Overlay.UiOverlay;
 
 using Lumina.Excel;
 
@@ -53,7 +52,6 @@ public class SceneDataService {
 	private IEditorContext? _ctx;
 	private IObjectTable _objectTable;
 	private IFramework _framework;
-	private IDataManager _data;
 	
 	private Task? _task;
 	private Dictionary<ushort, ActorEntity> _idMap;
@@ -437,32 +435,7 @@ public class SceneDataService {
 			}
 			
 			
-			if (loadCameras) {
-				var defaultCam =   this._ctx!.Cameras.GetCameras().First(c => c.IsDefault);
-				this._ctx!.Cameras.SetCurrent(defaultCam);
 
-				var diff = scene.Cameras.Count - this._ctx!.Cameras.GetCameras().Count();
-
-				if (diff > 0) {
-					for(var i = 0; i < diff; i++)
-						this._ctx!.Cameras.Create(setActive: false);
-				} else if( diff < 0 ) {
-					diff *= -1;
-					for (var i = 0; i < diff; i++)
-						this._ctx!.Cameras.DeleteCurrent();
-				}
-
-
-
-				var currentCam = scene.Cameras.First(c => c.IsActive);
-				var currentKtCam = this._ctx.Cameras.Current;
-
-				var zipped = scene.Cameras.Where(c=> !c.IsActive).Zip(this._ctx.Cameras.GetCameras().Where(c=> c != currentKtCam));
-				ApplyCamera(currentCam, currentKtCam, sceneOrigin);
-				foreach (var set in zipped) 
-					ApplyCamera(set.First, set.Second, sceneOrigin);
-				
-			}
 
 			if (loadOverlays) {
 				foreach (var overlayInfo in scene.Overlays) {
@@ -475,6 +448,7 @@ public class SceneDataService {
 								((BalloonOverlay)overlay).ArrowX = overlayInfo.ArrowPosition;
 								((BalloonOverlay)overlay).Background = overlayInfo.BalloonBackground;
 								((BalloonOverlay)overlay).Dialog = overlayInfo.Dialog;
+								((BalloonOverlay)overlay).FontSize = (overlayInfo.FontSize != 0) ? overlayInfo.FontSize : 12;
 								break;
 							case SceneFile.OverlayInfo.Type.Talk:
 								overlay = this._ctx!.Scene.Factory.BuildOverlay(OverlayTypes.Talk).SetName(overlayInfo.Name).Add();
@@ -482,6 +456,7 @@ public class SceneDataService {
 								((TalkOverlay)overlay).Cursor = overlayInfo.TalkCursor;
 								((TalkOverlay)overlay).Dialog = overlayInfo.Dialog;
 								((TalkOverlay)overlay).Speaker = overlayInfo.Speaker;
+								((TalkOverlay)overlay).FontSize = (overlayInfo.FontSize != 0) ? overlayInfo.FontSize : 14;
 								break;
 							case SceneFile.OverlayInfo.Type.Status:
 								overlay = this._ctx!.Scene.Factory.BuildOverlay(OverlayTypes.Status).SetName(overlayInfo.Name).Add();
@@ -534,7 +509,7 @@ public class SceneDataService {
 				}
 			}
 
-
+			// folders
 			if (folderHandling != FolderHandling.Ignore && scene.Folders != null) {
 				foreach (var folder in scene.Folders.OrderByDescending(c => c.Depth)) {
 					if (folder.Depth > 0) {
@@ -562,9 +537,35 @@ public class SceneDataService {
 					}
 				}
 			}
-	}
 
-	
+			// cameras
+			// having this further up didnt give enough time for all actors to spawn TODO: build a task to do this after all actors are done
+			if (loadCameras) {
+				var defaultCam =   this._ctx!.Cameras.GetCameras().First(c => c.IsDefault);
+				this._ctx!.Cameras.SetCurrent(defaultCam);
+
+				var diff = scene.Cameras.Count - this._ctx!.Cameras.GetCameras().Count();
+
+				if (diff > 0) {
+					for(var i = 0; i < diff; i++)
+						this._ctx!.Cameras.Create(setActive: false);
+				} else if( diff < 0 ) {
+					diff *= -1;
+					for (var i = 0; i < diff; i++)
+						this._ctx!.Cameras.DeleteCurrent();
+				}
+
+
+
+				var currentCam = scene.Cameras.First(c => c.IsActive);
+				var currentKtCam = this._ctx.Cameras.Current;
+
+				var zipped = scene.Cameras.Where(c=> !c.IsActive).Zip(this._ctx.Cameras.GetCameras().Where(c=> c != currentKtCam));
+				ApplyCamera(currentCam, currentKtCam!, sceneOrigin);
+				foreach (var set in zipped) 
+					ApplyCamera(set.First, set.Second, sceneOrigin);
+			}
+	}
 
 	public void ApplyCamera(SceneFile.CameraInfo camera, EditorCamera ktCam, Vector3 sceneOrigin) {
 		if (camera.IsDelmited) {
@@ -579,8 +580,11 @@ public class SceneDataService {
 		ktCam.OrthographicZoom = camera.OrthographicZoom;
 		ktCam.Flags = (CameraFlags)camera.Flags;
 		if (camera.OrbitTarget != 0) {
-			ktCam.OrbitTarget = (this._idMap[camera.OrbitTarget].Actor.ObjectIndex);
-			this._idMap[camera.OrbitTarget].Actor.SetGPoseTarget();
+			unsafe {
+				ktCam.OrbitTarget = (this._idMap[camera.OrbitTarget].CsGameObject->ObjectIndex);
+				this._idMap[camera.OrbitTarget].Actor.SetGPoseTarget();
+			}
+
 		}
 					
 	}

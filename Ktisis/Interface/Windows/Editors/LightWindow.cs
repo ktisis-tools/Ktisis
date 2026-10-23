@@ -31,7 +31,6 @@ public class LightWindow : EntityEditWindow<LightEntity> {
 	private readonly ITextureProvider _tex;
 	private readonly GoboSchema _goboSchema;
 	private readonly PopupList<GoboEntry> _goboPopup;
-	private GoboEntry? Gobo;
 
 	public LightWindow(
 		IEditorContext ctx,
