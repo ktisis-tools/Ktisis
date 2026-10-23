@@ -172,6 +172,7 @@ public class SceneDataService {
 					var ipc = this._ctx.Plugin.Ipc;
 					Guid penumCollection = Guid.Empty;
 					Guid cPlus = Guid.Empty;
+					string? state = null;
 					if (ipc.IsPenumbraActive && ((ActorEntity)chara).MCDF == null) {
 						var penum = ipc.GetPenumbraIpc().GetCollectionForObject(((ActorEntity)chara).Actor);
 						if (penum.Id != Guid.Empty) {
@@ -182,16 +183,27 @@ public class SceneDataService {
 						var assignedProfile = ((ActorEntity)chara).AssignedProfile;
 						if (assignedProfile != null) cPlus = (Guid)assignedProfile;
 					}
-					var a = new SceneFile.ActorInfo(
-						poseFile,
-						charaFile,
-						location,
-						this._ctx.Characters.Mcdf.LoadedMCDFPath(((ActorEntity)chara).Actor),
-						defaultRotation,
-						((ActorEntity)chara).Actor.ObjectIndex,
-						penumCollection,
-						cPlus,
-						Guid.NewGuid());
+
+					if (ipc.IsGlamourerActive && ((ActorEntity)chara).MCDF == null)
+					{
+						var tempState = ipc.GetGlamourerIpc().GetState(((ActorEntity)chara).Actor.ObjectIndex);
+						if (tempState != null)
+							state = tempState;
+
+					}
+
+					var a = new SceneFile.ActorInfo() {
+						Chara = charaFile,
+						Pose = poseFile,
+						Location = location,
+						MCDF = this._ctx.Characters.Mcdf.LoadedMCDFPath(((ActorEntity)chara).Actor),
+						DefaultRotation = defaultRotation,
+						Index = ((ActorEntity)chara).Actor.ObjectIndex,
+						PenumbraCollection = penumCollection,
+						CustomizePlus = cPlus,
+						Guid = Guid.NewGuid(),
+						GlamourerState = state
+					};
 
 					scene.Actors.Add(a);
 					if (chara.Parent == this.Scene.SceneRoot)
@@ -201,9 +213,8 @@ public class SceneDataService {
 							scene.Folders.Find(f => f.Guid ==lookup[(FolderEntity)chara.Parent]).Children.Add(a.Guid);
 						}
 					}
-
 				}
-			
+
 			if(saveLights)
 				foreach (var light in lights) {
 					var lightFile = Scene.SaveLightFile(light).Result;
@@ -589,7 +600,9 @@ public class SceneDataService {
 		else if (actor.MCDF != String.Empty) {
 			t = t.WithAppearance(actor.Chara);
 			Ktisis.WarningNotification($"Couldn't find the MCDF linked to the actor {actor.Chara.Nickname}, please try and load it manually.");
-		}else
+		}else if (actor.GlamourerState != null && this._ctx.Plugin.Ipc.IsGlamourerActive)
+			t = t.WithGlamourerState(actor.GlamourerState);
+		else
 			t = t.WithAppearance(actor.Chara);
 
 		t.Spawn().ContinueWith(async (p) => {
@@ -599,6 +612,7 @@ public class SceneDataService {
 			await this._framework.DelayTicks(15);
 			a.Name = actor.Chara.Nickname!;
 			var act = a.Actor;
+			
 			if (actor.PenumbraCollection != Guid.Empty && this._ctx.Plugin.Ipc.IsPenumbraActive)
 				if(this._ctx.Plugin.Ipc.GetPenumbraIpc().GetCollections().ContainsKey(actor.PenumbraCollection))
 					this._ctx.Plugin.Ipc.GetPenumbraIpc().SetCollectionForObject(act, actor.PenumbraCollection);
@@ -612,8 +626,10 @@ public class SceneDataService {
 			}
 
 			this.SetupActorPosition(actor, a);
-			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
 			this._task?.Wait();
+			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
+
+			
 			this._task = this._ctx?.Posing.ApplyPoseFile(a.Pose!, actor.Pose, PoseMode.All,(PoseTransforms)0xF)!;
 
 		});
