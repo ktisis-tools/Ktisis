@@ -91,11 +91,12 @@ public class ActorModule : SceneModule {
 	// Spawning
 
 	public async Task<ActorEntity> Spawn() {
+		var basis = this._objectTable[200];
 		var localPlayer = this._objectTable.LocalPlayer;
 		if (localPlayer == null)
 			throw new Exception("Local player not found.");
 		
-		var address = await this._spawner.CreateActor(localPlayer);
+		var address = await this._spawner.CreateActor(basis!);
 		if (address == nint.Zero)
 			return null;
 		var entity = this.AddSpawnedActor(address);
