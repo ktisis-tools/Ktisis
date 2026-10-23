@@ -1,17 +1,21 @@
+using System.Numerics;
+
+using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Common.Utility;
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Objects;
 
 using DrawObject = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.DrawObject;
+using Transform = Ktisis.Common.Utility.Transform;
 
 namespace Ktisis.Scene.Entities.World;
 
 public class ObjectEntity : WorldEntity, IHideable {
 	public WorldObject? Object;
 	public bool NeedsCulling;
+	private ByteColor? OriginalStain;
 
 	public ObjectEntity(
 		ISceneManager scene,
@@ -45,6 +49,18 @@ public class ObjectEntity : WorldEntity, IHideable {
 		}
 	}
 
+	public unsafe Vector4 GetStain() {
+		if (this.CanStain()) {
+			if (this.OriginalStain == null) {
+				this.OriginalStain = ((BgObject*)this.Address)->StainBuffer->SrgbByteColor;
+			}
+			return ((BgObject*)this.Address)->StainBuffer->LinearFloatColor;
+		}
+		return Vector4.Zero;
+	}
+	
+	public unsafe bool TrySetStainColor(ByteColor srgb) => ((BgObject*)this.Address)->TrySetStainColor(srgb);
+	public unsafe bool CanStain() => ((BgObject*)this.Address)->StainBuffer != null;
 	public override void SetTransform(Transform trans) {
 		base.SetTransform(trans);
 		this.Object?.Update();
@@ -82,7 +98,10 @@ public class ObjectEntity : WorldEntity, IHideable {
 
 		if (this.Object.Value.ObjectType != ObjectType.BgObject || this.Object.Value.InitialFlags == null) return;
 
+			
 		var drawPtr = (DrawObject*)this.Address;
+		if (this.CanStain() && this.OriginalStain != null)
+			this.TrySetStainColor(this.OriginalStain.Value);
 		drawPtr->Flags = this.Object.Value.InitialFlags.Value;
 	}
 
