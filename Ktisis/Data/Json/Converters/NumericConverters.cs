@@ -8,7 +8,7 @@ using Ktisis.Common.Utility;
 
 namespace Ktisis.Data.Json.Converters;
 
-internal class QuaternionConverter(JsonFileSerializer json) : JsonConverter<Quaternion> {
+internal class QuaternionConverter() : JsonConverter<Quaternion> {
 	public override Quaternion Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) {
 		var str = reader.GetString() ?? "";
 		var split = str.Split(",");
@@ -29,7 +29,7 @@ internal class QuaternionConverter(JsonFileSerializer json) : JsonConverter<Quat
 	}
 }
 
-internal class Vector3Converter(JsonFileSerializer json) : JsonConverter<Vector3> {
+internal class Vector3Converter() : JsonConverter<Vector3> {
 	public override Vector3 Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) {
 		var str = reader.GetString() ?? "";
 		var split = str.Split(",");
@@ -49,7 +49,7 @@ internal class Vector3Converter(JsonFileSerializer json) : JsonConverter<Vector3
 	}
 }
 
-internal class Vector4Converter(JsonFileSerializer json) : JsonConverter<Vector4> {
+internal class Vector4Converter() : JsonConverter<Vector4> {
 	public override Vector4 Read(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options) {
 		var str = reader.GetString() ?? "";
 		var split = str.Split(",");

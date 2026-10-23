@@ -307,7 +307,7 @@ public class PosingManager : IPosingManager {
 				Final = container
 			};
 			this.StashedAt = DateTime.Now;
-			this.StashedFrom = pose.Parent.Name;
+			this.StashedFrom = pose.Parent!.Name;  //Pose should always be parented to an actor
 		});
 	}
 

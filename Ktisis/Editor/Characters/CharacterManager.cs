@@ -117,7 +117,7 @@ public class CharacterManager : ICharacterManager {
 	}
 
 	private unsafe Transform* GetLocalPlayerPosition() {
-		var localPlayer = (CSGameObject*)this._objectTable.LocalPlayer?.Address;
+		var localPlayer = (CSGameObject*)this._objectTable.LocalPlayer!.Address;
 		if (localPlayer != null && localPlayer->DrawObject != null)
 			return (Transform*)&localPlayer->DrawObject->Position;
 		return null;

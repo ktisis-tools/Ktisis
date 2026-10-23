@@ -71,7 +71,7 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	}
 
 	public unsafe void SetSceneOrigin() {
-		var lp = this._objectTable.LocalPlayer.GetDrawObject();
+		var lp = this._objectTable.LocalPlayer!.GetDrawObject();  // Can assert not-null, we only open in gpose, and there will always be a local player when in gpose
 		this.SceneOrigin = lp->Position;
 	}
 	private void SetupModules() {

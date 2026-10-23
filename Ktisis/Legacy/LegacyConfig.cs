@@ -30,7 +30,7 @@ public class LegacyConfig {
 		// Input
 		public bool? EnableKeybinds { get; set; }
 
-		public Dictionary<Input.Purpose, List<VirtualKey>> KeyBinds { get; set; }
+		public Dictionary<Input.Purpose, List<VirtualKey>> KeyBinds { get; set; } = null!;
 
 		public bool? DisableChangeTargetOnLeftClick { get; set; }
 		public bool? DisableChangeTargetOnRightClick { get; set; }

@@ -22,9 +22,9 @@ public class EntityLightConverter {
 		if (light == null) return;
 
         this._light.Flags |= LightEntityFlags.Update;
-        this._light.Name = file.Nickname;
+		if (file.Nickname != null) this._light.Name = file.Nickname;
 
-        light->Flags = file.Flags;
+		light->Flags = file.Flags;
         light->LightType = file.LightType;
         // light->Transform = file.Transform; TODO
         light->Color.RGB = file.RGB;

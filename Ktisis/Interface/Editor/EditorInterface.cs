@@ -368,7 +368,7 @@ public class EditorInterface : IEditorInterface {
 
 	public void ExportCharaFile(CharaFile file) {
 		var options = CharaFileOptions;
-		options.DefaultFileName = file.Nickname;
+		options.DefaultFileName = file.Nickname ?? "Character";
 		this._gui.FileDialogs.SaveFile(Ktisis.Locale.Translate("file.dialog.chara.save"), file, options);
 	}
 	
@@ -382,7 +382,7 @@ public class EditorInterface : IEditorInterface {
 
 	public void ExportLightFile(LightFile file) {
 		var options = LightFileOptions;
-		options.DefaultFileName = file.Nickname;
+		options.DefaultFileName = file.Nickname ?? "Light";
 		this._gui.FileDialogs.SaveFile(Ktisis.Locale.Translate("file.dialog.light.save"), file, options);
 	}
 }

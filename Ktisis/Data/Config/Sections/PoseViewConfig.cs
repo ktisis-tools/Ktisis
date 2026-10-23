@@ -26,7 +26,8 @@ public class PoseViewConfig {
             "Hands" => this.HandsPath,
             "Tail" => this.TailPath,
             "Armor" => this.ArmorPath,
-            "Ears" => this.EarsPath
-        };
+            "Ears" => this.EarsPath,
+			_ => throw new ArgumentOutOfRangeException(nameof(viewName), viewName, null)
+		};
     }
 }
