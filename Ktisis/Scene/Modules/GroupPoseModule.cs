@@ -5,7 +5,6 @@ using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 
-using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Types;
@@ -54,6 +53,16 @@ public class GroupPoseModule : SceneModule {
 	}
 	
 	// Native
+
+	[Signature("4C 8B DC 55 57 41 54 48 81 EC", DetourName = nameof(DetourToasts))]
+	private Hook<ToastRefresh>? _refreshToastHook = null!;
+	private unsafe delegate byte ToastRefresh(nint a1, uint a2, nint a3);
+
+	private unsafe byte DetourToasts(nint a1, uint a2, nint a3) {
+		// non-working - toasts still do not display when HideToasts is disabled
+		return this.Scene.Context.Config.Editor.HideToasts ? (byte)1 : this._refreshToastHook!.Original(a1, a2, a3);
+	}
+
 	
 	[Signature("E8 ?? ?? ?? ?? 0F B7 56 3C")]
 	private GetGPoseStateDelegate? _getGPoseState = null;
