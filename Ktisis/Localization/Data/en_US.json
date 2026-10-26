@@ -554,7 +554,11 @@
 			"type": "Object Type",
 			"type.world": "World Object",
 			"type.spawned": "Spawned Object",
-			"addr": "Address"
+			"addr": "Address",
+			"stain": "Stain",
+			"intensity": "Color intensity",
+			"tint": "Tint",
+			"intensityHint": "Not all objects can be Tinted right now.\nIf the color doesn't change, but the numbers don't automatically reset, make sure the Alpha (a) is above 0"
 		}
 	},
 	
