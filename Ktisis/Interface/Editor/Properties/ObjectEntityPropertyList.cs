@@ -57,22 +57,24 @@ public class ObjectEntityPropertyList : ObjectPropertyList {
 				obj.TrySetStainColor(byteColor);
 
 			}
+		} else {
+			byte curVal = obj.ColorIntensity;
+			Vector4 curCol = obj.Color;
+			if (ImGui.DragByte(Ktisis.Locale.Translate("object_edit.object.intensity"), ref curVal, vMax: 32)) {
+				obj.ColorIntensity = curVal;
+			}
+			if (ImGui.ColorEdit4(Ktisis.Locale.Translate("object_edit.object.tint"), ref curCol)) {
+				obj.Color = curCol;
+			}
+			ImGui.SameLine();
+			Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
+			if (ImGui.IsItemHovered()) {
+				using var _ = ImRaii.Tooltip();
+				ImGui.Text(Ktisis.Locale.Translate(Ktisis.Locale.Translate("object_edit.object.intensityHint")));
+			}
 		}
 
-		byte curVal = obj.ColorIntensity;
-		Vector4 curCol = obj.Color;
-		if (ImGui.DragByte(Ktisis.Locale.Translate("object_edit.object.intensity"), ref curVal, vMax: 32)) {
-			obj.ColorIntensity = curVal;
-		}
-		if (ImGui.ColorEdit4(Ktisis.Locale.Translate("object_edit.object.tint"), ref curCol)) {
-			obj.Color = curCol;
-		}
-		ImGui.SameLine();
-		Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
-		if (ImGui.IsItemHovered()) {
-			using var _ = ImRaii.Tooltip();
-			ImGui.Text(Ktisis.Locale.Translate(Ktisis.Locale.Translate("object_edit.object.intensityHint")));
-		}
+
 		
 		// buttons
 		ImGui.Spacing();
