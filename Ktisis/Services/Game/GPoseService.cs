@@ -85,10 +85,13 @@ public class GPoseService : IDisposable {
 					byte* dof = (byte*)(((nint)gpose) + 0x312);
 					*dof &= 0xFD;
 				}
-				if (this._cfg is { _isLoaded: true, File.Editor.DisableAnimationLoop: true }) {		// this gets reset, gotta figure it out
-					byte* anim = (byte*)(((nint)gpose) + 0x691);
-					*anim |= 0x1;
-				}
+				/*if (this._cfg is { _isLoaded: true, File.Editor.DisableAnimationLoop: true }) { // this gets reset, gotta figure it out
+					this._framework.DelayTicks(100).ContinueWith((a) => {
+						byte* anim = (byte*)(((nint)gpose) + 0x691);
+						*anim |= 0x1;
+					});
+
+				}*/
 			}
 		}
 	}

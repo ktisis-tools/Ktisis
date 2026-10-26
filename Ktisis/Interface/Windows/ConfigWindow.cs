@@ -301,7 +301,7 @@ public class ConfigWindow : KtisisWindow {
 			this.DrawHint("config.workspace.hintHideToasts");
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleSelectHighlight"), ref this.Config.Editor.DisableHighlighting);
 			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleDof"), ref this.Config.Editor.DisableCameraDofStartup);
-			ImGui.Checkbox(this.Locale.Translate("config.workspace.animLoop"), ref this.Config.Editor.DisableAnimationLoop);
+			//ImGui.Checkbox(this.Locale.Translate("config.workspace.animLoop"), ref this.Config.Editor.DisableAnimationLoop); TODO: fix
 		}
 		
 		// add dummy to pad right side during toolbar mode
