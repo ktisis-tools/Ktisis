@@ -59,9 +59,12 @@ public sealed class ActorCreator : EntityCreator<ActorEntity, IActorCreator>, IA
 
 		if (this.Appearance != null)
 			await this.Scene.Context.Characters.ApplyCharaFile(entity, this.Appearance, gameState: true);
-		
-		if(this.GlamourerState != null && this.Scene.Context.Plugin.Ipc.IsGlamourerActive)
+
+		if (this.GlamourerState != null && this.Scene.Context.Plugin.Ipc.IsGlamourerActive) {
 			this.Scene.Context.Plugin.Ipc.GetGlamourerIpc().ApplyState(this.GlamourerState, entity.Actor.ObjectIndex);
+			this.Scene.Context.Plugin.Ipc.GetGlamourerIpc().Unlock();
+		}
+
 
 		if (this.McdfFile != null)
 			this.McdfManager.LoadAndApplyTo(this.McdfFile, entity.Actor);
