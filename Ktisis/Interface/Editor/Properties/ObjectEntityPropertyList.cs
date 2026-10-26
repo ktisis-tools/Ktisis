@@ -49,7 +49,9 @@ public class ObjectEntityPropertyList : ObjectPropertyList {
 		using (ImRaii.Disabled())
 			ImGui.Text($"{Ktisis.Locale.Translate("object_edit.object.addr")}: {obj.Address:X}");
 
+		ImGui.Spacing();
 		if (obj.CanStain()) {
+			Separators.SeparatorText("Staining", textColor:ImGui.GetColorU32(ImGuiCol.Header));
 			Vector4 existingColor = obj.GetStain();
 			if (ImGui.ColorEdit4("Stain", ref existingColor)) {
 				var srgbColor = new Vector4(MathF.Sqrt(existingColor.X), MathF.Sqrt(existingColor.Y), MathF.Sqrt(existingColor.Z), existingColor.Z) * byte.MaxValue;
@@ -58,6 +60,9 @@ public class ObjectEntityPropertyList : ObjectPropertyList {
 
 			}
 		} else {
+
+			Separators.SeparatorText("[ALPHA] Tinting", textColor:ImGui.GetColorU32(ImGuiCol.Header));
+
 			byte curVal = obj.ColorIntensity;
 			Vector4 curCol = obj.Color;
 			if (ImGui.DragByte(Ktisis.Locale.Translate("object_edit.object.intensity"), ref curVal, vMax: 32)) {
