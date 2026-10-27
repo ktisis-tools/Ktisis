@@ -23,8 +23,6 @@ public class EditorConfig {
 	public bool SelectOnTarget = false;
 	public bool PersistentSiblingLink = false;
 	public bool UpdateActorCameraPositions = true;
-	public bool HideToasts = true;
-
 
 	public bool IncognitoPlayerNames = false;
 
