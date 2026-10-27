@@ -876,6 +876,10 @@
 			"hintCameraPositions": "When enabled, the GPose camera will orbit the root position of a targeted actor.\nWhen disabled, the camera orbit will remain fixed when actor roots are moved.",
 			"hideToasts": "Disable Toast notifications during GPose",
 			"hintHideToasts": "Prevents XIV popup texts such as FATE, Duty, FC, or Friend notifications",
+			"tweakHeader": "Vanilla behavior tweaks",
+			"toggleSelectHighlight": "Disable highlighting of newly selected actors",
+			"toggleDof": "Disable the vanilla depth of field effect when entering GPose",
+			"animLoop": "Disable animation looping when entering GPose",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",

@@ -298,6 +298,15 @@ public class ConfigWindow : KtisisWindow {
 			this.DrawCustomLocations();
 		}
 
+		ImGui.Spacing();
+		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.tweakHeader"))) {
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.hideToasts"), ref this.Config.Editor.HideToasts);
+			this.DrawHint("config.workspace.hintHideToasts");
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleSelectHighlight"), ref this.Config.Editor.DisableHighlighting);
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleDof"), ref this.Config.Editor.DisableCameraDofStartup);
+			//ImGui.Checkbox(this.Locale.Translate("config.workspace.animLoop"), ref this.Config.Editor.DisableAnimationLoop); TODO: fix
+		}
+		
 		// add dummy to pad right side during toolbar mode
 		ImGui.SetCursorPosX(600);
 		ImGui.Dummy(Vector2.Zero);
