@@ -3,6 +3,8 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
+using KamiToolKit.Extensions;
+
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Objects;
@@ -16,6 +18,8 @@ public class ObjectEntity : WorldEntity, IHideable {
 	public WorldObject? Object;
 	public bool NeedsCulling;
 	private ByteColor? OriginalStain;
+	private ByteColor? OriginalColor;
+	private byte? OriginalIntensity;
 
 	public ObjectEntity(
 		ISceneManager scene,
@@ -66,7 +70,25 @@ public class ObjectEntity : WorldEntity, IHideable {
 		this.Object?.Update();
 		this.NeedsCulling = true;
 	}
+	public unsafe Vector4 Color {
+		get {
+			if (this.OriginalColor == null) {
+				this.OriginalColor = ((BgObject*)this.Address)->Color;
+			}
+			return ((BgObject*)this.Address)->Color.ToVector4();
+		} 
+		set => ((BgObject*)this.Address)->Color = ByteColorExtensions.ToByteColor(value);
+	}
 
+	public unsafe byte ColorIntensity {
+		get {
+			if (this.OriginalIntensity == null) {
+				this.OriginalIntensity = ((BgObject*)this.Address)->ColorIntensity;
+			}
+			return ((BgObject*)this.Address)->ColorIntensity;
+		}
+		set => ((BgObject*)this.Address)->ColorIntensity = value;
+	}
 	public unsafe bool IsHidden {
 		get {
 			var drawPtr = (DrawObject*)this.Address;
@@ -102,6 +124,10 @@ public class ObjectEntity : WorldEntity, IHideable {
 		var drawPtr = (DrawObject*)this.Address;
 		if (this.CanStain() && this.OriginalStain != null)
 			this.TrySetStainColor(this.OriginalStain.Value);
+		if (this.OriginalIntensity != null && this.OriginalIntensity != ((BgObject*)this.Address)->ColorIntensity)
+			((BgObject*)this.Address)->ColorIntensity = this.OriginalIntensity.Value;
+		if (this.OriginalColor != null)
+			((BgObject*)this.Address)->Color = this.OriginalColor.Value;
 		drawPtr->Flags = this.Object.Value.InitialFlags.Value;
 	}
 
