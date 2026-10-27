@@ -426,7 +426,8 @@ public class SceneDataService {
 				foreach (var loaded in scene.Lights) {
 					var light = this._ctx!.Scene.Factory.CreateLight().Spawn().Result;
 					_ = this._ctx.Scene.ApplyLightFile(light, loaded.Light);
-					this._guidMap.Add(loaded.Guid, light);
+					if(loaded.Guid != Guid.Empty)
+						this._guidMap.TryAdd(loaded.Guid, light);
 					loaded.Location.Position += sceneOrigin;
 					light.SetTransform(loaded.Location);
 					if(!loaded.State)
@@ -471,7 +472,8 @@ public class SceneDataService {
 							overlay.Position = overlayInfo.Position;
 							overlay.Scale = overlayInfo.Scale;
 							overlay.Visible = overlayInfo.Visible;
-							this._guidMap.Add(overlayInfo.Guid, overlay);
+							if(overlayInfo.Guid != Guid.Empty)
+								this._guidMap.TryAdd(overlayInfo.Guid, overlay);
 						}
 					});
 				}
@@ -485,7 +487,8 @@ public class SceneDataService {
 						entity.Visible = obj.IsHidden;
 						entity.SetTransform(obj.Transform);
 						entity.Update();
-						this._guidMap.Add(obj.Guid, entity);
+						if(obj.Guid != Guid.Empty)
+							this._guidMap.TryAdd(obj.Guid, entity);
 					}
 				}
 			}
@@ -509,8 +512,7 @@ public class SceneDataService {
 				}
 			}
 
-			// folders
-			if (folderHandling != FolderHandling.Ignore && scene.Folders != null) {
+			if (folderHandling != FolderHandling.Ignore && scene.Folders != null && this._guidMap.Count > 0) {
 				foreach (var folder in scene.Folders.OrderByDescending(c => c.Depth)) {
 					if (folder.Depth > 0) {
 						var f = new FolderEntity(this._ctx!.Scene);
@@ -612,7 +614,9 @@ public class SceneDataService {
 		t.Spawn().ContinueWith(async (p) => {
 			var a = p.GetResultSafely();
 			this._idMap.Add(actor.Index, a);
-			this._guidMap.Add(actor.Guid, a);
+			
+			if(actor.Guid != Guid.Empty)
+				this._guidMap.TryAdd(actor.Guid, a);
 			await this._framework.DelayTicks(15);
 			a.Name = actor.Chara.Nickname!;
 			var act = a.Actor;

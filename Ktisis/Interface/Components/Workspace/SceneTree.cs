@@ -74,8 +74,7 @@ public class SceneTree {
 
 		var spacing = ImGui.GetStyle().ItemSpacing;
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, spacing with { Y = 5.0f });
-		var shadow = this._ctx.Scene.Children.ToImmutableArray();
-		this.IterateTree(shadow);
+		this.IterateTree(this._ctx.Scene.Children.ToImmutableArray());
 
 		// handle any shift-clicked node using target node & ordered tree list
 		if (this._shiftNode != null) this.ResolveShiftSelect();
