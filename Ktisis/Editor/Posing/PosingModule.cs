@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
@@ -33,6 +34,7 @@ public sealed class PosingModule : HookModule {
 
 	public event SkeletonInitHandler? OnSkeletonInit;
 	public event Action? OnDisconnect;
+	private List<BytePatch> Patches = new List<BytePatch>();
 
 	public PosingModule(
 		IHookMediator hook,
@@ -55,20 +57,22 @@ public sealed class PosingModule : HookModule {
 
 	public override void EnableAll() {
 		base.EnableAll();
-		SetupBonePhysicsPatch();
+		this.Patches.Add(new BytePatch("48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 41 54 41 56 48 83 EC ?? 48 8B 59", this._sigScanner));
+		this.Patches.Add(new BytePatch("40 53 57 41 54 41 55 48 83 EC ?? ?? 48 ?? ?? ?? ?? ?? ?? ?? 4C", this._sigScanner));
 		this.IsEnabled = true;
 		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
 
 	public override void DisableAll() {
 		base.DisableAll();
-		this.RemoveBonePhysicsPatch();
+		foreach (var p in this.Patches)
+			p.Dispose();
 		this.IsEnabled = false;
 		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
 	public override void Dispose() {
-		if (this.PhysicsAddress != 0)
-			RemoveBonePhysicsPatch();
+		foreach (var p in this.Patches)
+			p.Dispose();
 		base.Dispose();
 	}
 
@@ -106,28 +110,8 @@ public sealed class PosingModule : HookModule {
 	
 	// Client::Graphics::Physics::BonePhysicsUpdater_Update
 
-	private byte[] newInstructions;
-	private byte[] oldInstructions;
-	private string PhyiscsSig = "48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 41 54 41 56 48 83 EC ?? 48 8B 59";
-	private nint PhysicsAddress = 0;
-	private void SetupBonePhysicsPatch() {
-		try {
-			PhysicsAddress = this._sigScanner.ScanText(PhyiscsSig);
-			var offset = PhysicsAddress - this._sigScanner.Module.BaseAddress;
-			SafeMemory.ReadBytes(PhysicsAddress, 64, out this.oldInstructions);
-			SafeMemory.ReadBytes(offset + this._sigScanner.SearchBase, 64, out this.newInstructions);
-			SafeMemory.WriteBytes(PhysicsAddress, this.newInstructions);
-		} catch {
-			Ktisis.Log.Warning("Bone Physics hook failed");
-		}
-
-	}
 	
-	private void RemoveBonePhysicsPatch() {
-		try {
-			SafeMemory.WriteBytes(PhysicsAddress,  this.oldInstructions);
-		} catch {Ktisis.Log.Warning("Bone Physics unhook failed");}
-	}
+	
 	
 	// CalcBoneModelSpace
 	
