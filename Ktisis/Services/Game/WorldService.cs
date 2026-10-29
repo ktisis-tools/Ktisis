@@ -79,12 +79,9 @@ public class WorldService : IDisposable {
 		return new WorldObject(&world->Object);
 	}
 
-	private unsafe void Clean() {
+	private void Clean() {
 		if (!this._init) return;
-		foreach (var o in this.Objects) 
-			if(o.ObjectType == ObjectType.BgObject)
-				((BgObject*)o.Address)->UpdateMaterials();
-		
+
 		this.Objects.Clear();
 		this._init = false;
 	}
