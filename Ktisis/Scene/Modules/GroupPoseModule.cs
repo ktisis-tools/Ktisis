@@ -3,9 +3,10 @@ using Dalamud.Hooking;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 
+using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Editor.Context.Types;
 using Ktisis.Interop.Hooking;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Types;
@@ -40,6 +41,17 @@ public class GroupPoseModule : SceneModule {
 		return gpose != null ? gpose->GPoseTarget : null;
 	}*/
 
+	[Signature("48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 41 56 48 83 EC ?? ?? ?? ?? 45 0F B6 F1", DetourName = nameof(SetCharacterTintDetour))]
+	private Hook<SetCharacterTintDelegate> SetCharacterTintHook = null!;
+	private unsafe delegate CharacterBase* SetCharacterTintDelegate(BattleChara* a1, nint a2, ushort a3, byte a4);
+
+	private unsafe CharacterBase* SetCharacterTintDetour(BattleChara* a1, nint a2, ushort a3, byte a4) {
+		if (this.Scene.Context.Config.Editor.DisableHighlighting)
+			return a1->GetCharacterBase();
+		else
+			return this.SetCharacterTintHook.Original.Invoke(a1, a2, a3, a4);
+	}
+	
 	public unsafe bool IsPrimaryActor(ActorEntity actor) {
 		// TODO: This isn't accurate in cases where a lot of actors are fed into gpose!
 		return actor.Actor.ObjectIndex is 200 or 201;
@@ -54,6 +66,16 @@ public class GroupPoseModule : SceneModule {
 	}
 	
 	// Native
+
+	[Signature("4C 8B DC 55 57 41 54 48 81 EC", DetourName = nameof(DetourToasts))]
+	private Hook<ToastRefresh>? _refreshToastHook = null!;
+	private unsafe delegate byte ToastRefresh(nint a1, uint a2, nint a3);
+
+	private unsafe byte DetourToasts(nint a1, uint a2, nint a3) {
+		// non-working - toasts still do not display when HideToasts is disabled
+		return this.Scene.Context.Config.Editor.HideToasts ? (byte)1 : this._refreshToastHook!.Original(a1, a2, a3);
+	}
+
 	
 	[Signature("E8 ?? ?? ?? ?? 0F B7 56 3C")]
 	private GetGPoseStateDelegate? _getGPoseState = null;

@@ -1,7 +1,6 @@
 using System.Numerics;
 
-using KamiToolKit.Overlay;
-using KamiToolKit.Overlay.UiOverlay;
+using KamiToolKit.UiOverlay;
 
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;

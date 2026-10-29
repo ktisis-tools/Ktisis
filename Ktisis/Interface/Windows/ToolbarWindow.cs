@@ -35,6 +35,7 @@ public class ToolbarWindow : KtisisWindow {
 	private readonly WorkspaceState _workspace;
 	private IEditorInterface Interface => this._ctx.Interface;
 	private readonly ImRaii.StyleDisposable WindowStyle = new();
+	private bool isResizable = false;
 
 	private List<WindowButtons> _buttons;
 	public ToolbarWindow(
@@ -42,6 +43,7 @@ public class ToolbarWindow : KtisisWindow {
 		GuiManager gui
 	) : base("toolbar.title", windowId:"###KtisisToolbar") {
 		this._ctx = ctx;
+		this.isResizable = this._ctx.Config.Editor.ToolbarResizable;
 		this._gui = gui;
 		this._workspace = new WorkspaceState(ctx);
 		this.Flags = this.Flags | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
@@ -70,7 +72,18 @@ public class ToolbarWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
+		if (this.isResizable != this._ctx.Config.Editor.ToolbarResizable) { //Cleanup
+			this._subWindow!.OnClose();
+			if (!this.isResizable) {
+				this._subWindow.Close();
+				this._subWindow = null;
+				this.isResizable = this._ctx.Config.Editor.ToolbarResizable;
+				this.SetSubWindow<ConfigWindow>();
+			}
+			this.isResizable = this._ctx.Config.Editor.ToolbarResizable;
+		}
 		base.PreDraw();
+		
 		var style = ImGui.GetStyle();
 		
 		// to prevent auto-resize pain, override custom style vars to dalamud defaults if they exceed certain bounds
@@ -84,6 +97,15 @@ public class ToolbarWindow : KtisisWindow {
 		// force align button text
 		this.WindowStyle.Push(ImGuiStyleVar.ButtonTextAlign, new Vector2(0.5f, 0.5f));
 
+		// Subwindow
+		if (this._subWindow is not null && this.isResizable) {
+			var win = ImGuiP.FindWindowByName(this.WindowName);
+			var pos = new Vector2(win.OuterRectClipped.Min.X, win.OuterRectClipped.Max.Y);
+			var sub = ImGuiP.FindWindowByName(this._subWindow.WindowName);
+			if (sub != ImGuiWindowPtr.Null)
+				ImGuiP.SetWindowPos(sub, pos);
+
+		}
 		base.PreDraw();
 	}
 
@@ -128,7 +150,7 @@ public class ToolbarWindow : KtisisWindow {
 					this._ctx.Actions.History.Redo();
 		}
 		// Subwindow
-		if (this._subWindow != null) {
+		if (this._subWindow != null && !this.isResizable) {
 			ImGui.Spacing();
 			ImGui.Spacing();
 			this._subWindow.Draw();
@@ -151,13 +173,19 @@ public class ToolbarWindow : KtisisWindow {
 	internal void DrawConfigWindow() => this.SetSubWindow<ConfigWindow>();
 
 	private void SetSubWindow<T>() where T : KtisisWindow {
-		if (this._subWindow?.GetType() == typeof(ObjectWindow) && typeof(T) != typeof(ObjectWindow))
-			this._subWindow?.Close();
+		if (!this.isResizable) {
+			if (this._subWindow?.GetType() == typeof(ObjectWindow) && typeof(T) != typeof(ObjectWindow))
+				this._subWindow?.Close();
+		}
 		if (this._subWindow?.GetType() == typeof(T)) {
-			this._subWindow.OnClose();
+			this._subWindow.Flags &= ~ImGuiWindowFlags.NoTitleBar;
+			this._subWindow.Close();
 			this._subWindow = null; // unset subwindow if same button clicked
 			return;
 		}
+
+		this._subWindow?.Close();
+		this._subWindow = null;
 
 		if (typeof(T) == typeof(Env)) {
 			var module = this._ctx.Scene.GetModule<EnvModule>();
@@ -168,12 +196,13 @@ public class ToolbarWindow : KtisisWindow {
 			this._subWindow = this._gui.GetOrCreate<ConfigWindow>();
 		} else if (typeof(T) == typeof(ActorWindow)) {
 			this._subWindow = this._gui.GetOrCreate<T>(this._ctx);
-			this._subWindow.Size = new Vector2(0, 400);
 		} else if (typeof(T) == typeof(SceneWindow)) {
 			this._subWindow = this._gui.GetOrCreate<SceneWindow>(this._ctx);
 		} else {
 			this._subWindow = this._gui.GetOrCreate<T>(this._ctx);
 		}
+		if(this.isResizable)
+			this._subWindow.Flags = ImGuiWindowFlags.NoTitleBar;
 
 		// handle window followup actions
 		if (this._subWindow is ActorWindow win) {
@@ -189,14 +218,18 @@ public class ToolbarWindow : KtisisWindow {
 			else
 				win.SetTarget(this._ctx.Scene.GetFirstActor());
 		}
-		this._subWindow.OnOpen();
+		if(this.isResizable)
+			this._subWindow.Open();
+		else
+			this._subWindow.OnOpen();
 	}
 
 	public override void OnClose() {
 		base.OnClose();
 		if(this._ctx.Config.Editor.OpenTrayOnWorkspaceClose)
 			this._ctx.Plugin.Gui.GetOrCreate<TrayIcon>(this._ctx).Open();
+		if(this.isResizable)
+			this._subWindow?.Close();
 		this._gui.Remove(this);
 	}
-	
 }

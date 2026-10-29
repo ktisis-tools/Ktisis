@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
+using Dalamud;
+using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
@@ -17,6 +23,10 @@ using Ktisis.Interop.Ipc;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Game;
 
+using Microsoft.Extensions.DependencyInjection;
+
+using SchedulerTimeline = FFXIVClientStructs.FFXIV.Client.System.Scheduler.Base.SchedulerTimeline;
+
 namespace Ktisis.Editor.Posing;
 
 public unsafe delegate void SkeletonInitHandler(IGameObject owner, Skeleton* skeleton, ushort partialId);
@@ -25,9 +35,11 @@ public sealed class PosingModule : HookModule {
 	private readonly PosingManager Manager;
 	private readonly ActorService _actors;
 	private readonly IpcProvider _ipc;
+	private readonly ISigScanner _sigScanner;
 
 	public event SkeletonInitHandler? OnSkeletonInit;
 	public event Action? OnDisconnect;
+	private List<BytePatch> Patches = new List<BytePatch>();
 
 	public PosingModule(
 		IHookMediator hook,
@@ -35,29 +47,45 @@ public sealed class PosingModule : HookModule {
 		ActorService actors,
 		ContextManager contextManager,
 		IDalamudPluginInterface dpi,
-		JsonFileSerializer fileSerializer
+		JsonFileSerializer fileSerializer,
+		ISigScanner sigScanner
 	) : base(hook) {
+		this._sigScanner = sigScanner;
+		unsafe {
+			_schedulerTimelineVirtualTable = (SchedulerTimeline.SchedulerTimelineVirtualTable*)dpi.GetService<ISigScanner>()?.GetStaticAddressFromSig("48 8D 05 ?? ?? ?? ?? 48 8B D9 ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 93");
+		}
 		this.Manager = manager;
 		this._actors = actors;
 		this._ipc = new IpcProvider(contextManager, dpi, fileSerializer);
 	}
 	
+	private unsafe SchedulerTimeline.SchedulerTimelineVirtualTable* _schedulerTimelineVirtualTable;
+
 	// Module interface
 	
 	public bool IsEnabled { get; private set; }
 
 	public override void EnableAll() {
 		base.EnableAll();
+		this.Patches.Add(new BytePatch("48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 41 54 41 56 48 83 EC ?? 48 8B 59", this._sigScanner));
+		this.Patches.Add(new BytePatch("40 53 57 41 54 41 55 48 83 EC ?? ?? 48 ?? ?? ?? ?? ?? ?? ?? 4C", this._sigScanner));
 		this.IsEnabled = true;
 		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
 
 	public override void DisableAll() {
 		base.DisableAll();
+		foreach (var p in this.Patches)
+			p.Dispose();
 		this.IsEnabled = false;
 		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
-	
+	public override void Dispose() {
+		foreach (var p in this.Patches)
+			p.Dispose();
+		base.Dispose();
+	}
+
 	// Posing hooks - thanks to perchbird (@lmcintyre) for his initial implementation of these.
 	// https://github.com/ktisis-tools/Ktisis/pull/8
 	
@@ -89,6 +117,11 @@ public sealed class PosingModule : HookModule {
 		var pose = skeleton->PartialSkeletons[1].GetHavokPose(0);
 		this._syncModelSpaceHook.Original(pose);
 	}
+	
+	// Client::Graphics::Physics::BonePhysicsUpdater_Update
+
+	
+	
 	
 	// CalcBoneModelSpace
 	[Signature("4C 8B DC 53 56 57 41 56 41 57 48 81 EC ?? ?? ?? ?? 41 0F 29 73", DetourName = nameof(DetourUnknown))]  // asm at 44 0F 11 50 ?? 48 8B 43 was causing drift, we jump over this function to avoid it
@@ -130,9 +163,17 @@ public sealed class PosingModule : HookModule {
 
 	[Signature("E8 ?? ?? ?? ?? 0F B6 F8 84 C0 74 12", DetourName = nameof(AnimFrozen))]
 	private Hook<AnimFrozenDelegate> _animFrozenHook = null!;
-	private delegate byte AnimFrozenDelegate(nint a1, int a2);
+	private unsafe delegate byte AnimFrozenDelegate(nint* a1, int a2);
 
-	private byte AnimFrozen(nint a1, int a2) => 1;
+	private unsafe byte AnimFrozen(nint* a1, int a2) {
+		IntPtr vtbl = *a1;
+		if (vtbl == (nint)this._schedulerTimelineVirtualTable) {
+			SchedulerTimeline* timeline = (SchedulerTimeline*)a1;
+			if (this._actors.IsActorGposeActor((ushort)timeline->GetOwningGameObjectIndex()))
+				return 1;
+		}
+		return this._animFrozenHook.Original.Invoke(a1, a2);
+	}
 	
 	// UpdatePos
 

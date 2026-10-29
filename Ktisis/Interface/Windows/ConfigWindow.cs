@@ -241,7 +241,7 @@ public class ConfigWindow : KtisisWindow {
 	private void DrawWorkspaceTab() {
 		ImGui.Text(this.Locale.Translate("config.workspace.header"));
 		ImGui.Spacing();
-		
+
 		if (ImGui.Checkbox(this.Locale.Translate("config.workspace.toolbar"), ref this.Config.Editor.UseToolbar)) {
 			if (this._context.Current is { IsValid: true, IsGPosing: true }) {
 				var popup = this._gui.CreatePopup<ChangeStatePopup>(this._context.Current!);
@@ -249,6 +249,7 @@ public class ConfigWindow : KtisisWindow {
 			}
 		}
 		this.DrawHint("config.workspace.hintToolbar");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.toolbarResize"), ref this.Config.Editor.ToolbarResizable);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
 		this.DrawHint("config.workspace.hintInit");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.incognitoPlayerNames"), ref this.Config.Editor.IncognitoPlayerNames);
@@ -295,6 +296,15 @@ public class ConfigWindow : KtisisWindow {
 			this.DrawCustomLocations();
 		}
 
+		ImGui.Spacing();
+		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.tweakHeader"))) {
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.hideToasts"), ref this.Config.Editor.HideToasts);
+			this.DrawHint("config.workspace.hintHideToasts");
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleSelectHighlight"), ref this.Config.Editor.DisableHighlighting);
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleDof"), ref this.Config.Editor.DisableCameraDofStartup);
+			//ImGui.Checkbox(this.Locale.Translate("config.workspace.animLoop"), ref this.Config.Editor.DisableAnimationLoop); TODO: fix
+		}
+		
 		// add dummy to pad right side during toolbar mode
 		ImGui.SetCursorPosX(600);
 		ImGui.Dummy(Vector2.Zero);

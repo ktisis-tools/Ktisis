@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
+
 using Ktisis.Scene.Entities.World;
 using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Modules.Lights;
@@ -13,7 +15,7 @@ public interface ILightCreator : IEntityCreator<LightEntity, ILightCreator> {
 }
 
 public sealed class LightCreator : EntityCreator<LightEntity, ILightCreator>, ILightCreator {
-	private LightType Type = LightType.SpotLight;
+	private LightType Type = LightType.Spot;
 	
 	public LightCreator(
 		ISceneManager scene

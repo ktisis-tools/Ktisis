@@ -2,7 +2,7 @@
     <PropertyGroup>
 		<Authors>Chirp</Authors>
 		<Company>Ktisis Tools</Company>
-		<Version>0.4.1.2</Version>
+		<Version>0.4.1.5</Version>
 		<PackageProjectUrl>https://github.com/ktisis-tools/Ktisis</PackageProjectUrl>
 		<Configurations>Debug;Release;Testing-Debug;Testing-Release</Configurations>
 	</PropertyGroup>
@@ -53,7 +53,7 @@
 		<PackageReference Include="Glamourer.Api" Version="2.7.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
 		<PackageReference Include="K4os.Compression.LZ4.Legacy" Version="1.3.8" />
-		<PackageReference Include="KamiToolKit" Version="1.1.17" />
+		<PackageReference Include="KamiToolKit" Version="2.2.65" />
 		<PackageReference Include="LuminaSupplemental.Excel" Version="5.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
 		<PackageReference Include="Penumbra.Api" Version="5.13.1" />

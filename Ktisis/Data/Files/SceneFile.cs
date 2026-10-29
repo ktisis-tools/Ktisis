@@ -30,11 +30,25 @@ public class SceneFile : JsonFile {
 	public List<CameraInfo> Cameras  { get; set; } = new List<CameraInfo>();
 	public EnvironmentInfo Environment { get; set; } = new EnvironmentInfo();
 	public List<OverlayInfo> Overlays { get; set; } = new List<OverlayInfo>();
+	public List<Folder>? Folders { get; set; } = new List<Folder>();
 	public List<ObjectInfo> Objects { get; set; } = new List<ObjectInfo>();
 	
 	[Serializable]
+	public struct Folder {
+		public Folder(string name) {
+			Name = name;
+			Depth = 0;
+		}
+		public ushort Depth { get; set; }
+		public string Name { get; set; }
+		public Guid Guid { get;  set; }
+		public List<Guid> Children { get; set; } = new List<Guid>(); 
+	}
+	
+	
+	[Serializable]
 	public struct ActorInfo {
-		public ActorInfo(PoseFile pose, CharaFile chara, Transform location, string mcdf, float defaultRotation, ushort index, Guid penumbraCollection, Guid customizePlus, AttachInfo? attach = null) {
+		public ActorInfo(PoseFile pose, CharaFile chara, Transform location, string mcdf, float defaultRotation, ushort index, Guid penumbraCollection, Guid customizePlus, Guid guid, AttachInfo? attach = null, string? glamourerState = null) {
 			Pose = pose;
 			Chara = chara;
 			Location = location;
@@ -44,6 +58,8 @@ public class SceneFile : JsonFile {
 			PenumbraCollection = penumbraCollection;
 			CustomizePlus = customizePlus;
 			Attach = attach;
+			Guid = guid;
+			GlamourerState = glamourerState;
 		}
 		public PoseFile Pose { get; set; }
 		public CharaFile Chara { get; set; }
@@ -54,16 +70,19 @@ public class SceneFile : JsonFile {
 		public Guid PenumbraCollection { get; set; } = Guid.Empty;
 		public Guid CustomizePlus { get; set; } = Guid.Empty;
 		public AttachInfo? Attach { get; set; }
+		public Guid Guid { get; set; }
+		public string? GlamourerState { get; set; }
 	}
 	
 	[Serializable]
-	public struct LightInfo {
-		public LightInfo(LightFile light, Transform location, string name, bool state, AttachInfo? attach = null) {
+	public struct LightInfo{
+		public LightInfo(LightFile light, Transform location, string name, bool state, Guid guid, AttachInfo? attach = null) {
 			Light = light;
 			Location = location;
 			Name = name;
 			Attach = attach;
 			State = state;
+			Guid = guid;
 		}
 		public LightFile Light { get; set; }
 		public Transform Location { get; set; }
@@ -71,6 +90,7 @@ public class SceneFile : JsonFile {
 		public bool State { get; set; } = true;
 		
 		public AttachInfo? Attach { get; set; }
+		public Guid Guid { get; set; }
 	}
 
 	[Serializable]
@@ -124,7 +144,9 @@ public class SceneFile : JsonFile {
 		public bool Visible { get; set; }
 		public string Name { get; set; }
 		public uint FontSize { get; set; }
-		
+
+		public Guid Guid { get; set; }
+
 		public enum Type {
 			Balloon,
 			Status,
@@ -145,5 +167,6 @@ public class SceneFile : JsonFile {
 		public string Name { get; set; }
 		public Transform Transform { get; set; }
 		public bool IsHidden { get; set; }
+		public Guid Guid { get; set; }
 	}
 }
