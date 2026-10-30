@@ -1,17 +1,25 @@
+using System.Numerics;
+
+using FFXIVClientStructs.FFXIV.Client.Graphics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
 
-using Ktisis.Common.Utility;
+using KamiToolKit.Extensions;
+
 using Ktisis.Scene.Decor;
 using Ktisis.Scene.Types;
 using Ktisis.Structs.Objects;
 
 using DrawObject = FFXIVClientStructs.FFXIV.Client.Graphics.Scene.DrawObject;
+using Transform = Ktisis.Common.Utility.Transform;
 
 namespace Ktisis.Scene.Entities.World;
 
 public class ObjectEntity : WorldEntity, IHideable {
 	public WorldObject? Object;
 	public bool NeedsCulling;
+	private ByteColor? OriginalStain;
+	private ByteColor? OriginalColor;
+	private byte? OriginalIntensity;
 
 	public ObjectEntity(
 		ISceneManager scene,
@@ -45,12 +53,42 @@ public class ObjectEntity : WorldEntity, IHideable {
 		}
 	}
 
+	public unsafe Vector4 GetStain() {
+		if (this.CanStain()) {
+			if (this.OriginalStain == null) {
+				this.OriginalStain = ((BgObject*)this.Address)->StainBuffer->SrgbByteColor;
+			}
+			return ((BgObject*)this.Address)->StainBuffer->LinearFloatColor;
+		}
+		return Vector4.Zero;
+	}
+	
+	public unsafe bool TrySetStainColor(ByteColor srgb) => ((BgObject*)this.Address)->TrySetStainColor(srgb);
+	public unsafe bool CanStain() => ((BgObject*)this.Address)->StainBuffer != null;
 	public override void SetTransform(Transform trans) {
 		base.SetTransform(trans);
 		this.Object?.Update();
 		this.NeedsCulling = true;
 	}
+	public unsafe Vector4 Color {
+		get {
+			if (this.OriginalColor == null) {
+				this.OriginalColor = ((BgObject*)this.Address)->Color;
+			}
+			return ((BgObject*)this.Address)->Color.ToVector4();
+		} 
+		set => ((BgObject*)this.Address)->Color = ByteColorExtensions.ToByteColor(value);
+	}
 
+	public unsafe byte ColorIntensity {
+		get {
+			if (this.OriginalIntensity == null) {
+				this.OriginalIntensity = ((BgObject*)this.Address)->ColorIntensity;
+			}
+			return ((BgObject*)this.Address)->ColorIntensity;
+		}
+		set => ((BgObject*)this.Address)->ColorIntensity = value;
+	}
 	public unsafe bool IsHidden {
 		get {
 			var drawPtr = (DrawObject*)this.Address;
@@ -82,7 +120,14 @@ public class ObjectEntity : WorldEntity, IHideable {
 
 		if (this.Object.Value.ObjectType != ObjectType.BgObject || this.Object.Value.InitialFlags == null) return;
 
+			
 		var drawPtr = (DrawObject*)this.Address;
+		if (this.CanStain() && this.OriginalStain != null)
+			this.TrySetStainColor(this.OriginalStain.Value);
+		if (this.OriginalIntensity != null && this.OriginalIntensity != ((BgObject*)this.Address)->ColorIntensity)
+			((BgObject*)this.Address)->ColorIntensity = this.OriginalIntensity.Value;
+		if (this.OriginalColor != null)
+			((BgObject*)this.Address)->Color = this.OriginalColor.Value;
 		drawPtr->Flags = this.Object.Value.InitialFlags.Value;
 	}
 
