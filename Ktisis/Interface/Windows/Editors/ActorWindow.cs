@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 
@@ -116,8 +117,20 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		if (chara != null) {
 			ImGui.Spacing();
 			ImGui.SliderFloat(Ktisis.Locale.Translate("chara_edit.misc.opacity"), ref chara->Opacity, 0.0f, 1.0f);
+
+		}
+		if (this.Target.GetCharacter() != null) {
+			Vector4 color = this.Target.GetCharacter()->Tint;
+			if (ImGui.ColorEdit4("Actor Tint", ref color)) {
+				this.Target.GetCharacter()->Tint = color;
+			}
+			ImGui.SameLine();
+			if (GLib.Widgets.Buttons.IconButton(FontAwesomeIcon.Undo)) {
+				this.Target.GetCharacter()->Tint = Vector4.One;
+			}
 		}
 
+		
 		ImGui.Spacing();
 		ImGui.Spacing();
 
