@@ -844,6 +844,7 @@
 			"toggleOpenWindows": "UI buttons toggle windows open & closed",
 			"toolbar": "Use Ktisis Toolbar",
 			"hintToolbar": "Experimental: This is an alternate UI which puts all of Ktisis' editors into one window.\nPlease provide any feedback, as this option is actively under development!",
+			"toolbarResize": "Use resizable toolbar windows instead of fixed size (experimental)",
 			"editOnSelect": "Open object editor on selection",
 			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",

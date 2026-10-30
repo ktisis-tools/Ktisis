@@ -29,7 +29,8 @@ public class Workspace : WorkspaceWindow  {
 		// Context buttons
 		
 		this._cameras.Draw();
-		this._workspace.DrawCompact();
+		if(this._editorContext.Config.Editor is { UseToolbar: true, ToolbarResizable: false })
+			this._workspace.DrawCompact();
 
 		var botHeight = (UiBuilder.DefaultFontSizePx + (style.ItemSpacing.Y + style.ItemInnerSpacing.Y) * 2) * ImGuiHelpers.GlobalScale;
 		var treeHeight = ((ImGui.GetTextLineHeightWithSpacing() + 5) * (Math.Max(10, this._editorContext.Scene.Children.Count()) + 5)) - botHeight; //TODO: would prefer sizing based upon expanded nodes but this will do for now
