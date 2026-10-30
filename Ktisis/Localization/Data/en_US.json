@@ -867,6 +867,8 @@
 			"hintSelectTarget": "An actor is Targeted when clicked or tabbed-to with vanilla GPose controls.\nThis toggle will override Ktisis' current Selection to your new Target when one is chosen.",
 			"updateCameraPositions": "Update camera orbit with actor position",
 			"hintCameraPositions": "When enabled, the GPose camera will orbit the root position of a targeted actor.\nWhen disabled, the camera orbit will remain fixed when actor roots are moved.",
+			"hideToasts": "Disable Toast notifications during GPose",
+			"hintHideToasts": "Prevents XIV popup texts such as FATE, Duty, FC, or Friend notifications",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
