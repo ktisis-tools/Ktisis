@@ -101,6 +101,7 @@ public class AnimationEditor(
 					break;
 				goto default;
 			default:
+				this.SetForceTimeline((ushort)animation.TimelineId);
 				mgr.PlayTimeline(actor, animation.TimelineId);
 				break;
 		}
@@ -117,7 +118,8 @@ public class AnimationEditor(
 		var chara = this.GetChara();
 		if (chara == null) return;
 
-		chara->Animation.Timeline.ActionTimelineId = id;
+		chara->Animation.BaseOverride = id;
+		chara->Animation.ActionTimelineId = id;
 	}
 	
 	public void SetTimelineSpeed(uint slot, float speed) => mgr.SetTimelineSpeed(actor, slot, speed);

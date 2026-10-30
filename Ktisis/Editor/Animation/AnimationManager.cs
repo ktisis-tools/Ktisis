@@ -80,7 +80,7 @@ public class AnimationManager : IAnimationManager {
 	public unsafe bool PlayEmote(ActorEntity actor, uint id) {
 		var chara = (CharacterEx*)actor.Character;
 		if (chara == null) return false;
-		chara->Animation.Timeline.ActionTimelineId = 0;
+		chara->Animation.ActionTimelineId = 0;
 		chara->EmoteController.IsForceDefaultPose = false;
 		return this.Module!.PlayEmote(&chara->EmoteController, (nint)id, 0, 0);
 	}
@@ -92,7 +92,7 @@ public class AnimationManager : IAnimationManager {
 		var chara = actor.IsValid ? (CharacterEx*)actor.Character : null;
 		if (chara == null) return false;
 		
-		chara->Animation.Timeline.ActionTimelineId = 0;
+		chara->Animation.ActionTimelineId = 0;
 
 		if (timeline.Value.Pause) {
 			chara->Mode = 3;
