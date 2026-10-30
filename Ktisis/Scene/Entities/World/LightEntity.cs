@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
 
 using Ktisis.Common.Utility;
 using Ktisis.Data.Config.Gobos;
