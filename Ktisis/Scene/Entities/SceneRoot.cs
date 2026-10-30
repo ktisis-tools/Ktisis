@@ -13,6 +13,11 @@ public class SceneRoot(ISceneManager scene) : SceneEntity(scene) {
 		set => throw new Exception("Attempted to set parent of scene root.");
 	}
 
+	public void SetChildsIndex(SceneEntity child, int index) {
+		if (!child.IsChildOf(this)) return;
+		this.GetChildren().Remove(child);
+		this.GetChildren().Insert(index, child);
+	}
 	public override bool Add(SceneEntity entity) {
 		if (entity is ActorEntity actor)
 			Ktisis.Log.Debug($"Adding actor to scene: '{actor.Name}' (index: {actor.Actor.ObjectIndex})");

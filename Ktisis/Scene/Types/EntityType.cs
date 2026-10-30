@@ -13,5 +13,6 @@ public enum EntityType {
 	RefImage,
 	TalkOverlay,
 	BalloonOverlay,
-	StatusOverlay
+	StatusOverlay,
+	Folder
 }
