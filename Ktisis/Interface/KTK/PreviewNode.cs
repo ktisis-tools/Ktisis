@@ -18,6 +18,7 @@ using KamiToolKit.Nodes;
 using KamiToolKit.Extensions;
 using KamiToolKit.Overlay.UiOverlay;
 
+using Ktisis.Common.Extensions;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
 using Ktisis.Editor.Context.Types;
@@ -41,6 +42,7 @@ public unsafe class PreviewNode : OverlayNode {
 	private readonly ImageNode ImageBacking;
 	private readonly NineGridNode Border;
 	private readonly NodeBase Buttons;
+	private readonly TextNode GPoseWarning;
 
 	private uint _counter;
 	private ActorEntity _actor;
@@ -111,7 +113,15 @@ public unsafe class PreviewNode : OverlayNode {
 			TextureCoordinates = new Vector2(0, 0f),
 			Id = 0
 		});
-
+		this.GPoseWarning = new TextNode {
+			AlignmentType = AlignmentType.Center, 
+			Size = new Vector2(140, 180),
+			Position = new Vector2(30, 30),
+			FontSize = 14,
+			LineSpacing = 20,
+			TextFlags = TextFlags.WordWrap | TextFlags.MultiLine,
+			String = Ktisis.Locale.Translate("file.gpose_warning")
+		};
 
 		var part = this.Image.AddPart(new Part {
 			Height = 320,
@@ -137,11 +147,13 @@ public unsafe class PreviewNode : OverlayNode {
 		this._actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
+		Ktisis.Locale.LocaleChanged += this.OnLocaleChange;
 
 		this.ImageBacking.AttachNode(this);
 		this.Image.AttachNode(this);
 		this.Border.AttachNode(this);
 		this.Buttons.AttachNode(this);
+		this.GPoseWarning.AttachNode(this);
 
 		this._agentInspect->CharaView.Update(this._counter, this._agentInspect->CharaView.GetCharacter());
 	}
@@ -171,6 +183,8 @@ public unsafe class PreviewNode : OverlayNode {
 			? -this.Border.Size.X : this._fileWindow.Size.X;
 		this.Position = new Vector2(this._fileWindow.Pos.X + offset, this._fileWindow.Pos.Y) - ImGui.GetMainViewport().Pos;
 
+		this.GPoseWarning.IsVisible = !this._actor.Actor.IsDrawing();
+
 		if (this.NeedsUpdate() && this._currentPose != null) {
 			this._ctx.Posing.ApplyReferencePose(_actor.Pose);
 			if (this._ctx.Config.File.ImportPoseSelectedBones)
@@ -182,6 +196,10 @@ public unsafe class PreviewNode : OverlayNode {
 			this.ApplyPose();
 			this.UpdateLocals();
 		}
+	}
+
+	private void OnLocaleChange() {
+		this.GPoseWarning.String = Ktisis.Locale.Translate("file.gpose_warning");
 	}
 
 	private NodeBase SetupButtons() {
@@ -349,6 +367,7 @@ public unsafe class PreviewNode : OverlayNode {
 
 	public void Cleanup() {
 		this._framework.Update -= this.OnFramework;
+		Ktisis.Locale.LocaleChanged -= this.OnLocaleChange;
 		this._agentInspect->CharaView.Release();
 		this.Dispose();
 	}

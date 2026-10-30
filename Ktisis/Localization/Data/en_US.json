@@ -101,6 +101,7 @@
 		"import": "Import...",
 		"export": "Export...",
 		"select": "Select a file to open...",
+		"gpose_warning": "The preview actor is currently hidden by GPose Display Settings\n\nCharacter Display Settings -> Controlled Character -> PC", 
 		"chara": {
 			"name": "Character (.chara)",
 			"ctx_import": "Import appearance...",
