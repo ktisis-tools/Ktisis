@@ -6,8 +6,7 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using KamiToolKit;
-using KamiToolKit.Overlay;
-using KamiToolKit.Overlay.UiOverlay;
+using KamiToolKit.UiOverlay;
 
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config.Sections;
@@ -40,7 +39,7 @@ public class OverlayService : IDisposable {
 
 	public unsafe void Initialize(IEditorContext context) {
 		if (this._init) return;
-		KamiToolKitLibrary.Initialize(this._dpi);
+		KamiToolKitLibrary.InitializeAsync(this._dpi);
 		this._controller = new OverlayController();
 		this._init = true;
 		context.Plugin.Gui.FileDialogs.OnSelectionChanged += this.HandleFileDialogEvent;
@@ -64,10 +63,10 @@ public class OverlayService : IDisposable {
 			Position = GetPositionForLoc(location),
 			Size = new Vector2(HintSizeX, HintSizeY),
 			Scale = new Vector2(1.0f, 1.0f),
-			CollisionNode = {
+			/*CollisionNode = {
 				Position = new Vector2(-99.0f, -155.0f),
 				Size = new Vector2(749.0f, 256.0f)
-			}
+			}*/
 		});
 		this._showedHint = true;
 	}

@@ -49,6 +49,7 @@ public class CommandService : IDisposable {
         this.BuildCommand("/ktisis", this.OnMainCommand)
             // .SetMessage(Ktisis.Locale.Translate("misc.command_desc"))
 			.SetMessage("Toggle the main Ktisis window.")
+			.AddAlias("/kt")
 			.Create();
     }
 

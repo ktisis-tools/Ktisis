@@ -142,7 +142,7 @@ public class FileDialogManager {
 				
 				File.WriteAllText(path, content);
 			}, 
-			null,
+			this._cfg.File.File.DefaultLocation == string.Empty? null : this._cfg.File.File.DefaultLocation,
 			isModal: true
 		);
 	}
