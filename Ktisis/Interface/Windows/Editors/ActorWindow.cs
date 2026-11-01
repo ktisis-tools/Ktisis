@@ -29,6 +29,7 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 	private ICharacterManager Manager => this.Context.Characters;
 
 	private readonly NpcSelect _npcs;
+	private uint ModelId = 0;
 	
 	public ActorWindow(
 		IEditorContext ctx,
@@ -106,8 +107,10 @@ public class ActorWindow : EntityEditWindow<ActorEntity> {
 		ImGui.Spacing();
 
 		var modelId = this._editCustom.GetModelId();
-		if (ImGui.InputUInt(Ktisis.Locale.Translate("chara_edit.misc.model"), ref modelId, 1, flags: ImGuiInputTextFlags.EnterReturnsTrue))
-			this._editCustom.SetModelId(modelId);
+		if (modelId != uint.MaxValue)
+			this.ModelId = modelId;
+		if (ImGui.InputUInt(Ktisis.Locale.Translate("chara_edit.misc.model"), ref this.ModelId, 1, flags: ImGuiInputTextFlags.EnterReturnsTrue))
+			this._editCustom.SetModelId(this.ModelId);
 
 		ImGui.SameLine(0, space);
 		this._npcs.DrawSearchIcon();
