@@ -1,14 +1,17 @@
-﻿using Dalamud.Plugin.Services;
+﻿using System;
+
+using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.LayoutEngine;
+using FFXIVClientStructs.FFXIV.Client.System.Framework;
 
 using Ktisis.Core.Attributes;
 
 namespace Ktisis.Services.Game;
 
 [Singleton]
-public unsafe class FestivalService {
+public unsafe class FestivalService : IDisposable {
 	private readonly IFramework _framework;
 	public FestivalService(
 		IFramework framework
@@ -30,15 +33,35 @@ public unsafe class FestivalService {
 		fixed (GameMain.Festival* fst = this.ActiveFestivals)
 			instance->ActiveLayout->SetActiveFestivals(fst);
 
-		this._framework.DelayTicks(25);
-		var layer = instance->ActiveLayout->FestivalLayersToAdd.First->Value;
-		var e = layer->Instances.GetEnumerator();
-		foreach (var i in e) {
-			if (!i.Item2.IsNull) {
-				i.Item2.Value->SetColliderActive(false);
-				i.Item2.Value->UpdateCollider();
+		void Poller(IFramework f) {
+			if (instance->ActiveLayout->FestivalLayersToAdd.First != null) {
+				var layer = instance->ActiveLayout->FestivalLayersToAdd.First->Value;
+				var e = layer->Instances.GetEnumerator();
+				foreach (var i in e) {
+					if (!i.Item2.IsNull) {
+						i.Item2.Value->SetColliderActive(false);
+						i.Item2.Value->UpdateCollider();
+					}
+				}
+				e.Dispose();
+				this._framework.Update -= Poller;
 			}
-		}
-		e.Dispose();
+		};
+		
+		this._framework.Update += Poller;
+	}
+	
+	public void Reset() {
+		var instance = LayoutWorld.Instance();
+		instance->ActiveLayout->FestivalStatus = 0;
+		fixed (GameMain.Festival* fst = this.BaseFestivals)
+			instance->ActiveLayout->SetActiveFestivals(fst);
+		
+		instance->ActiveLayout->Update(&Framework.Instance()->FrameDeltaTime);
+	}
+
+	public void Dispose() {
+		
+		this.Reset();
 	}
 }
