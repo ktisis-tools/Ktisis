@@ -21,9 +21,7 @@ public class Workspace : WorkspaceWindow  {
 	) : base(ctx) {
 		this._editorContext = ctx;
 	}
-
-	public override void PreDraw() {
-	}
+	
 	
 	public override void Draw() {
 		var style = ImGui.GetStyle();

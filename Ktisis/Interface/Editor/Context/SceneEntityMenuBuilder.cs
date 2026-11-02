@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Game.ClientState.Objects.Enums;
 
 using FFXIVClientStructs;
 
@@ -78,7 +79,9 @@ public class SceneEntityMenuBuilder {
 		if (this._entity is IAttachable attach && attach.IsAttached())
 			menu.Separator().Action(Ktisis.Locale.Translate("workspace.entity_menu.base.detach"), () => this._ctx.Posing.Attachments.Detach(attach));
 
-		menu.Separator().Action(Ktisis.Locale.Translate("workspace.entity_menu.base.rename"), () => this.Ui.OpenRenameEntity(this._entity));
+		menu.Separator()
+			.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.rename"), () => this.Ui.OpenRenameEntity(this._entity))
+			.WithDisabled(() => this._entity is ActorEntity { Actor.ObjectKind: ObjectKind.Pc } && this._ctx.Config.Editor.IncognitoPlayerNames);
 
 		if (this._entity is IDeletable deletable) {
 			menu.Separator();
@@ -97,8 +100,13 @@ public class SceneEntityMenuBuilder {
 		}
 		if (this._entity is ObjectEntity obj) {
 			menu.Separator();
-			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
-			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateObject(obj));
+			if (obj.Object is not null) {
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
+			} else {
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.delete"), () => obj.Remove());
+			}
 		}
 	}
 	
@@ -260,5 +268,28 @@ public class SceneEntityMenuBuilder {
 			newStatus.StatusText = oldStatus.StatusText;
 			newStatus.StatusType = oldStatus.StatusType;
 		}
+	}
+
+	private unsafe void DuplicateObject(ObjectEntity obj) {
+		var transform = obj.GetTransform();
+		if (transform is null) {
+			Ktisis.WarningNotification($"Could not duplicate object with null transform");
+			return;
+		}
+
+		var path = obj.GetPath();
+		var ptr = this._ctx.Scene.World.BuildObject(path);
+		if (ptr is null) {
+			Ktisis.WarningNotification($"Could not duplicate object with path: {path}");
+			return;
+		}
+
+		var name = obj.Name + " (Copy)";
+		var entity = this._ctx.Scene.Factory
+			.BuildObject()
+			.SetName(name)
+			.SetAddress(ptr)
+			.Add();
+		entity.SetTransform(transform);
 	}
 }

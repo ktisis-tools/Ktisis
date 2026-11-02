@@ -66,6 +66,7 @@ public class ObjectWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
+		base.PreDraw();
 		if(this._ctx.Config.Editor.UseToolbar)
 			this.Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize;
 		else if (this._ctx.Config.Editor.AutoResizeObjectEditor)

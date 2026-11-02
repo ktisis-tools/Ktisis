@@ -83,6 +83,7 @@ public class PosingWindow : KtisisWindow {
 	}
 
 	public override void PreDraw() {
+		base.PreDraw();
 		this.SizeConstraints = new WindowSizeConstraints {
 			MinimumSize = new Vector2(500, 350)
 		};

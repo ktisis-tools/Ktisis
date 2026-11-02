@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
+using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
+using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 
 using GLib.Popups;
@@ -41,6 +44,9 @@ public class GuiManager : IDisposable {
 		this._uiBuilder = uiBuilder;
 		this.Locale = locale;
 		this.FileDialogs = dialogs;
+		#if TESTING
+		this._windowColor = new();
+		#endif
 	}
 	
 	// Initialization
@@ -60,8 +66,15 @@ public class GuiManager : IDisposable {
 	// Draw
 
 	private void Draw() {
+		#if TESTING
+		foreach (var col in this._properties) 
+				this.PushColor(col);
+		#endif
 		this._ws.Draw();
 		this._popup.Draw();
+		#if TESTING
+		this._windowColor?.Dispose();
+		#endif
 		this.FileDialogs.Draw();
 	}
 	
@@ -157,4 +170,46 @@ public class GuiManager : IDisposable {
 		}
 		this.RemoveAll();
 	}
+	
+	#region Color Tomfoolery
+	#if TESTING
+	private ImRaii.ColorDisposable? _windowColor;
+	private List<ImGuiCol> _properties = new List<ImGuiCol>() {
+		ImGuiCol.TitleBg,
+		ImGuiCol.TitleBgCollapsed,
+		ImGuiCol.TitleBgActive
+	};
+
+	public unsafe void PushColor(ImGuiCol col) {
+		var colVec = ImGui.GetStyleColorVec4(col);
+		Vector4 t = new Vector4(colVec->X, colVec->Y, colVec->Z, colVec->W );
+		Vector4* vec = &t;
+		var M = MathF.Max(MathF.Max(vec->X, vec->Y), vec->Z);
+		var m = MathF.Min(MathF.Min(vec->X, vec->Y), vec->Z);
+		var o = M - m;
+		float H, S;
+		
+		if (M == 0) {
+			S = 0;
+		} else {
+			S = o / M;
+		}
+
+		if(o == 0) {
+			H = 0;
+		}else if (M == vec->X) {
+			H = 60 * (((vec->Y - vec->Z) / o) % 360);
+		}else if (M == vec->Y) {
+			H = 60 * (((vec->Z - vec->X) / o) + 2);
+		} else {
+			H = 60 * (((vec->X - vec->Y) / o) + 4);
+		}
+		H += .5f;
+		ImGui.ColorConvertHSVtoRGB(H, S, M, &vec->X, &vec->Y, &vec->Z);
+
+		this._windowColor!.Push(col, *vec);
+	} 
+
+	#endif
+	#endregion
 }

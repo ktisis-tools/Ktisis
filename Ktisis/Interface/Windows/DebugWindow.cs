@@ -8,14 +8,16 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
+using Dalamud.Plugin.Services;
+
+using Newtonsoft.Json;
 
 using FFXIVClientStructs.FFXIV.Client.Game;
 
 using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
-using Newtonsoft.Json;
-
 using Ktisis.Data.Config;
+using Ktisis.Data.Generation;
 using Ktisis.Editor.Context.Types;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
@@ -30,8 +32,11 @@ namespace Ktisis.Interface.Windows;
 public class DebugWindow : KtisisWindow {
 	private readonly IEditorContext _ctx;
 	private readonly GuiManager _gui;
+	private readonly IFramework _framework;
 	private readonly TransformTable _transformTable;
 	private readonly FestivalService _festivalService;
+	
+	private readonly FaceLibraryGenerator _faceLibGen;
 
 	// tester inputs
 	private int _gameObjectId;
@@ -67,6 +72,8 @@ public class DebugWindow : KtisisWindow {
 	public DebugWindow(
 		IEditorContext ctx,
 		GuiManager gui,
+		IFramework framework,
+		FaceLibraryGenerator faceLibGen,
 		IDalamudPluginInterface dpi,
 		ConfigManager cfg,
 		LocaleManager locale,
@@ -77,6 +84,7 @@ public class DebugWindow : KtisisWindow {
 		this._ctx = ctx;
 		this._gui = gui;
 		this._festivalService = festivalService;
+		this._framework = framework;
 
 		// create our IPC subs from DPI
 		this._ktisisApiVersion = dpi.GetIpcSubscriber<(int, int)>("Ktisis.ApiVersion");
@@ -96,6 +104,10 @@ public class DebugWindow : KtisisWindow {
 		this._ktisisBatchSetMatrix = dpi.GetIpcSubscriber<uint, Dictionary<string, Matrix4x4>, bool, Task<bool>>("Ktisis.BatchSetMatrix");
 
 		this._transformTable = new TransformTable(cfg, locale);
+		
+		// Expression library
+		this._faceLibGen = faceLibGen;
+		this._faceLibGen.Context = this._ctx;
 	}
 
 	public override void Draw() {
@@ -109,6 +121,7 @@ public class DebugWindow : KtisisWindow {
 		DrawTab("IPC Provider", this.DrawProviderTab);
 		DrawTab("IPC Manager", this.DrawManagerTab);
 		DrawTab("Diagnostics", this.DrawDiagnosticsTab);
+		DrawTab("Expressions", this.DrawExpressionsTab);
 	}
 	private static void DrawTab(string name, Action handler) {
 		using var tab = ImRaii.TabItem(name);
@@ -348,5 +361,20 @@ public class DebugWindow : KtisisWindow {
 	private void SetLastPosingChanged(bool status) {
 		this._lastPosingEventValue = status;
 		this._lastPosingEventTime = DateTime.Now.ToString("hh-mm-ss");
+	}
+	
+	// Expressions tab
+
+	private void DrawExpressionsTab() {
+		if (ImGui.Button("Generate expressions")) {
+			var actor = this._ctx.Scene.GetFirstActor();
+			this._faceLibGen.StartCreateLibrary(actor);
+		}
+
+		if (!this._faceLibGen.InProgress)
+			return;
+
+		var prog = this._faceLibGen.GetStep;
+		ImGui.Text($"Generating: {prog.Current}/{prog.Max}");
 	}
 }

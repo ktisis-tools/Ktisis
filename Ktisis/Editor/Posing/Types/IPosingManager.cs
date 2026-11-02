@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Ktisis.Actions.Types;
 using Ktisis.Data.Files;
+using Ktisis.Editor.Expressions.Types;
 using Ktisis.Editor.Posing.Attachment;
 using Ktisis.Editor.Posing.Data;
 using Ktisis.Editor.Posing.Ik;
@@ -14,6 +17,7 @@ public interface IPosingManager : IDisposable {
 	public bool IsValid { get; }
 	
 	public IAttachManager Attachments { get; }
+	public IExpressionManager Expressions { get; }
 
 	public PoseMemento? StashedPose { get; set; }
 	public DateTime? StashedAt { get; set; }

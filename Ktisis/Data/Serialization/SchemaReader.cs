@@ -3,13 +3,14 @@ using Ktisis.Data.Config.Gobos;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Data.Config.Props;
 using Ktisis.Data.Config.Sections;
+using Ktisis.Data.Expressions;
 
 namespace Ktisis.Data.Serialization;
 
 public static class SchemaReader {
 	// Categories
 	
-	private const string CategorySchemaPath = "Data.Schema.Categories.xml";
+	private const string CategorySchemaPath = "Ktisis.Data.Schema.Categories.xml";
 
 	public static CategoryConfig ReadCategories() {
 		var stream = ResourceUtil.GetManifestResource(CategorySchemaPath);
@@ -18,7 +19,7 @@ public static class SchemaReader {
 	
 	// Views
 
-	private const string ViewSchemaPath = "Data.Schema.Views.xml";
+	private const string ViewSchemaPath = "Ktisis.Data.Schema.Views.xml";
 
 	public static PoseViewSchema ReadPoseView() {
 		var stream = ResourceUtil.GetManifestResource(ViewSchemaPath);
@@ -27,7 +28,7 @@ public static class SchemaReader {
 	
 	// Gobos
 
-	private const string GoboSchemaPath = "Data.Library.gobos.csv";
+	private const string GoboSchemaPath = "Ktisis.Data.Library.gobos.csv";
 
 	public static GoboSchema ReadGobos() {
 		var stream = ResourceUtil.GetManifestResource(GoboSchemaPath);
@@ -36,10 +37,29 @@ public static class SchemaReader {
 
 	// Props
 
-	private const string PropSchemaPath = "Data.Library.props.json";
+	private const string PropSchemaPath = "Ktisis.Data.Library.props.json";
 
 	public static PropSchema ReadProps() {
 		var stream = ResourceUtil.GetManifestResource(PropSchemaPath);
 		return PropsReader.ReadStream(stream);
+	}
+	
+	// Expressions
+
+	private const string ExpressionsSchemaPath = "Ktisis.Data.Library.Expressions";
+
+	public static ExpressionsSchema ReadExpressions() {
+		var reader = new ExpressionReader();
+
+		var paths = ResourceUtil.GetResourcesInNamespace(ExpressionsSchemaPath);
+		foreach (var path in paths) {
+			var name = path[(ExpressionsSchemaPath.Length + 1)..];
+			if (!ushort.TryParse(name.Split("_")[0], out var id))
+				continue;
+			var stream = ResourceUtil.GetManifestResource(path);
+			reader.ReadEntry(id, stream);
+		}
+		
+		return reader.GetResult();
 	}
 }
