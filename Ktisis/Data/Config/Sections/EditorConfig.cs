@@ -65,10 +65,14 @@ public class EditorConfig {
 
 	public bool FlyoutOpen = false;
 	
+	// Pose Previewer
+	public Size PreviewSize = Size.Medium;
+	
 	// Helpers
 
 	public EntityDisplay GetDisplayForType(EntityType type)
 		=> this.Display.GetValueOrDefault(type, new EntityDisplay());
+
 }
 
 public enum HintLoc {
@@ -76,4 +80,12 @@ public enum HintLoc {
 	TopRight,
 	BottomLeft,
 	BottomRight
+}
+
+public enum Size {
+	XSmall,
+	Small,
+	Medium,
+	Large,
+	XLarge
 }

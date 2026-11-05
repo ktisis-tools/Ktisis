@@ -81,6 +81,11 @@ public class OverlayService : IDisposable {
 			this._controller?.AddNode(this._preview);
 		}
 	}
+	public void UpdateCharaViewSize(Size size) {
+		if (this._preview != null) {
+			this._preview.Scale = this._preview.GetFactor(size);
+		}
+	}
 
 	private void HandleFileDialogEvent(object? sender, string path) {
 		var extension = path[(path.LastIndexOf('.') + 1)..].ToLower();

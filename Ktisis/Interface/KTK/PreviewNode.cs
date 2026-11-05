@@ -18,6 +18,7 @@ using KamiToolKit.Nodes;
 using KamiToolKit.Extensions;
 using KamiToolKit.Overlay.UiOverlay;
 
+using Ktisis.Data.Config.Sections;
 using Ktisis.Data.Files;
 using Ktisis.Data.Json;
 using Ktisis.Editor.Context.Types;
@@ -82,6 +83,7 @@ public unsafe class PreviewNode : OverlayNode {
 		this._fileWindow = null;
 		this._ctx = context;
 		this._serializer = new JsonFileSerializer();
+		this.Scale = this.GetFactor(this._ctx.Config.Editor.PreviewSize);
 
 		this._renderTargetManager = RenderTargetManager.Instance();
 		this._agentInspect = AgentInspect.Instance(); // idk why this was below the eval before?
@@ -338,7 +340,13 @@ public unsafe class PreviewNode : OverlayNode {
 			}
 		}
 	}
-
+	internal Vector2 GetFactor(Size size) => size switch {
+		global::Ktisis.Data.Config.Sections.Size.XSmall => new Vector2(.5f, .5f),
+		global::Ktisis.Data.Config.Sections.Size.Small => new Vector2(.75f, .75f),
+		global::Ktisis.Data.Config.Sections.Size.Medium => new Vector2(1f, 1f),
+		global::Ktisis.Data.Config.Sections.Size.Large => new Vector2(1.5f, 1.5f),
+		global::Ktisis.Data.Config.Sections.Size.XLarge => new Vector2(2f, 2f),
+	};
 	private bool NeedsUpdate() => this._currentAnchor != this._ctx.Config.File.AnchorPoseSelectedBones ||
 		this._currentBones != this._ctx.Config.File.ImportPoseSelectedBones ||
 		this._currentAnchor != this._ctx.Config.File.AnchorPoseSelectedBones ||
