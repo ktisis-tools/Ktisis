@@ -895,6 +895,14 @@
 				"TopRight": "Top Right",
 				"BottomLeft": "Bottom Left",
 				"BottomRight": "Bottom Right"
+			},
+			"previewSize": {
+				"label": "Pose Previewer Size:",
+				"XSmall": "Extra Small",
+				"Small": "Small",
+				"Medium": "Medium",
+				"Large": "Large",
+				"XLarge": "Extra Large"
 			}
 		},
 		"input": {
