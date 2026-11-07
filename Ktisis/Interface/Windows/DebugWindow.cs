@@ -15,13 +15,18 @@ using Newtonsoft.Json;
 using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Data.Config;
+using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Generation;
 using Ktisis.Editor.Context.Types;
+using Ktisis.Editor.Posing.Ik.Ccd;
 using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Localization;
 using Ktisis.Interface.Overlay;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Entities.Skeleton.Constraints;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Windows;
 
@@ -114,6 +119,7 @@ public class DebugWindow : KtisisWindow {
 		DrawTab("IPC Provider", this.DrawProviderTab);
 		DrawTab("IPC Manager", this.DrawManagerTab);
 		DrawTab("Diagnostics", this.DrawDiagnosticsTab);
+		DrawTab("Ik", this.DrawIkTab);
 		DrawTab("Expressions", this.DrawExpressionsTab);
 	}
 	private static void DrawTab(string name, Action handler) {
@@ -291,6 +297,45 @@ public class DebugWindow : KtisisWindow {
 	private void DrawManagerTab() {
 		ImGui.Text("TODO");
 	}
+	private BoneNode? StartBone;
+	private BoneNode? EndBone;
+	private unsafe void DrawIkTab() {
+		var selection = this._ctx.Selection.GetFirstSelected();
+		
+		if (selection is BoneNode bone) {
+			if (ImGui.Button("Set Start Bone")) {
+				this.StartBone = bone;
+			}
+			if (ImGui.Button("Set End Bone")) {
+				this.EndBone = bone;
+			}
+		}
+		if (this.EndBone != null && this.StartBone != null && this.EndBone.IsBoneDescendantOf(this.StartBone)) {
+			EntityPose? pose = ((ActorEntity)this.StartBone.Root).Pose;
+			if (ImGui.Button("Create CCD Chain")) {
+				if(pose.IkController.GroupCount == 0)
+					pose.IkController.Setup(pose);
+				
+				CcdGroupParams newGroup = new CcdGroupParams()
+				{
+					StartBone = new List<string>(){this.StartBone.Name},
+					EndBone = new List<string>(){this.EndBone.Name}
+				};
+				CcdGroup? group = null;
+
+				pose?.IkController.TrySetupGroup("customIk", newGroup, out group, (short)this.StartBone.Info.PartialIndex);
+				if (group != null) {
+					group.IsEnabled = true;
+					var end = new CcdEndNode(this._ctx.Scene, pose, this.EndBone.Info, this.EndBone.PartialId, group);
+					pose?.Add(end);
+					pose?.Children.First(p => p == this.EndBone).Remove();
+				}
+
+			}
+			var g = pose?.IkController.GetGroups().Where(g => g.name == "customIk");
+			if (g != null && g.FirstOrDefault() != default) ImGui.Text($"{g.First().name} has been made");
+		}
+	}
 
 	private void DrawDiagnosticsTab() {
 		// existing debug text from overlay
@@ -305,7 +350,7 @@ public class DebugWindow : KtisisWindow {
 		DrawTransform();
 	}
 
-	private void DrawTransform()
+	private unsafe void DrawTransform()
 	{
 		var target = this._ctx.Transform.Target;
 		if (target?.GetTransform() == null)
@@ -326,6 +371,16 @@ public class DebugWindow : KtisisWindow {
 			);
 			var t = bone.GetTransformModel() ?? new Transform();
 			ImGui.Spacing();
+			ImGui.Text($"Root: {bone.Root.Name}, Partial : {bone.Info.PartialIndex}, Bone : {bone.Info.BoneIndex}, Parent Index : {bone.Info.ParentIndex}");
+			ImGui.Text($"hkSkeleton Name: {bone.GetPose()->Skeleton->Name.String}\nParent Indices");
+			for (var i = 0; i < bone.GetPose()->Skeleton->ParentIndices.Length; i++) {
+				var index = bone.GetPose()->Skeleton->ParentIndices[i];
+
+				if (index > 0) {
+					ImGui.Text($"{index}, {bone.GetPose()->Skeleton->Bones[index].Name.String}");
+				}
+			}
+
 			ImGui.Text($"Havok (Matrix Decompose / Raw Transform)");
 			ImGui.Text($"Position:\n\tX: {pos.X} / {t.Position.X}\n\tY: {pos.Y} / {t.Position.Y}\n\tZ: {pos.Z} / {t.Position.Z}");
 			ImGui.Text($"Rotation:\n\tX: {rot.X} / {t.Rotation.X}\n\tY: {rot.Y} / {t.Rotation.Y}\n\tZ: {rot.Z} / {t.Rotation.Z}\n\tW: {rot.W} / {t.Rotation.W}");

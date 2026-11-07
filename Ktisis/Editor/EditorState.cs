@@ -58,6 +58,9 @@ public class EditorState : IDisposable {
 
 		try {
 			this.Interface.Prepare();
+            #if DEBUG
+				this.Interface.ToggleDebugWindow();
+			#endif
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Error preparing interface:\n{err}");
 		}
