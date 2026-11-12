@@ -266,8 +266,8 @@ public class SelectableGui {
 				if (facing) {
 					drawList.AddLine(pos2d, endPos2d, display.Color.SetAlpha(opacity), ctx.Config.Overlay.LineThickness);
 				} else {
-					Vector2 d = (endPos2d - pos2d) / 10;
-					for (var i = 0; i < 10; i++) {
+					Vector2 d = (endPos2d - pos2d) / 11;
+					for (var i = 0; i < 11; i++) {
 						if (i % 2 == 1) continue;
 						drawList.AddLine(pos2d + d * i, pos2d + d * (i+1), display.Color.SetAlpha(opacity), ctx.Config.Overlay.LineThickness );
 					}
