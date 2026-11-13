@@ -108,6 +108,19 @@ public sealed class PosingModule : HookModule {
 		return pose->ModelPose.Data + boneIdx;
 	}
 	
+	// Fuckass Eye Bullshit
+	
+	[Signature("4C 8B DC 56 41 56 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 4C 8B B1", DetourName = nameof(RecalculateIrisDetour))]
+	private Hook<RecalculateIrisDelegate> _recalculateIrisHook = null!;
+	private unsafe delegate nint RecalculateIrisDelegate(PartialSkeleton* a1, nint a2, short a3);
+
+	private unsafe nint RecalculateIrisDetour(PartialSkeleton* a1, nint a2, short a3) {
+		if (a3 == 0x33 || a3 == 0x34) {
+			a1->GetHavokPose(0)->BoneFlags.Data[a3] = (uint)(a1->GetHavokPose(0)->BoneFlags.Data[a3] | 1);
+		}
+		return this._recalculateIrisHook.Original.Invoke(a1, a2, a3);
+	}
+	
 	// LookAtIK
 
 	[Signature("48 8B C4 48 89 58 08 48 89 70 10 F3 0F 11 58", DetourName = nameof(LookAtIK))]
