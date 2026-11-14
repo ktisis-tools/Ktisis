@@ -16,7 +16,6 @@ public class PoseViewConfig {
     public string? TailPath;
 	public string? ToesPath;
 	public string? CustomBodyPath;
-	public string PenisPath;
 
     // helpers
     public string? CustomPathFor(string viewName) {
@@ -33,7 +32,7 @@ public class PoseViewConfig {
 			"Feet" => this.ToesPath,
 			"HandsEx" => this.HandsPath,
 			"CustomBody" => this.CustomBodyPath,
-			"Penis" => this.PenisPath
+			_ => ""
         };
     }
 }
