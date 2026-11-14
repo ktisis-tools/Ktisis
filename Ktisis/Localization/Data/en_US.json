@@ -239,6 +239,9 @@
 				"edit": "Edit lighting",
 				"import": "Import light file",
 				"export": "Export light file"
+			},
+			"folder": {
+				"dissolve": "Dissolve"
 			}
 		},
 		"create": "Create new...",
@@ -246,6 +249,7 @@
 		"create_light": "Create Light\nDrop-down for options...",
 		"create_overlay": "Create Overlay",
 		"create_object": "[Alpha] Create Object from Path",
+		"create_folder": "Create Folder",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.hide": "Hide Ktisis overlay",

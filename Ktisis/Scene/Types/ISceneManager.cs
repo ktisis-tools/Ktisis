@@ -10,6 +10,7 @@ using Ktisis.Scene.Factory.Types;
 using Ktisis.Scene.Modules;
 using Ktisis.Editor.Lights;
 using Ktisis.Data.Files;
+using Ktisis.Scene.Entities;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Services.Game;
 using Ktisis.Services.Data;
@@ -33,6 +34,8 @@ public interface ISceneManager : IComposite, IDisposable {
 	public void Initialize();
 	public void Update();
 	public void Refresh();
+
+	internal SceneRoot SceneRoot { get; }
 
 	public ActorEntity? GetEntityForActor(IGameObject actor);
 	public ActorEntity? GetEntityForIndex(uint objectIndex);

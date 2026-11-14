@@ -27,6 +27,7 @@ using Ktisis.Scene.Modules;
 using Ktisis.Scene.Modules.Actors;
 using Ktisis.Interface.Components.Chara;
 using Ktisis.Scene.Modules.Lights;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Editor;
 
@@ -69,6 +70,7 @@ public class EditorInterface : IEditorInterface {
 
 	private void OnSelectChanged(ISelectManager sender, bool multi) {
 		if (!this._ctx.Config.Editor.ToggleEditorOnSelect ) return;
+		if (sender.GetFirstSelected()?.Type == EntityType.Folder) return;
 
 		var open = sender.Count > 0;
 
