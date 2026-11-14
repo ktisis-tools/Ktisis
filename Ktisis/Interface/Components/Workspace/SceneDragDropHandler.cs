@@ -167,7 +167,6 @@ public class SceneDragDropHandler {
 					} else if (source.Parent?.Type == EntityType.Folder) {
 						source.Parent.Remove(source);
 						this._ctx.Scene.Add(source);
-						this._ctx.Scene.Refresh();
 					}
 				}
 
