@@ -84,6 +84,12 @@
 		<EmbeddedResource Include="Data\Images\armor.png" />
 		<None Remove="Data\Images\ears.png" />
 		<EmbeddedResource Include="Data\Images\ears.png" />
+        <None Remove="Data\Images\toes.png" />
+        <EmbeddedResource Include="Data\Images\toes.png" />
+        <None Remove="Data\Images\custombody.png" />
+        <EmbeddedResource Include="Data\Images\custombody.png" />
+        <None Remove="Data\Images\penis.png" />
+        <EmbeddedResource Include="Data\Images\penis.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Data\Images\Templates\*.png" />
