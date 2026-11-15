@@ -107,6 +107,9 @@ public class PosePropertyList : ObjectPropertyList {
 			else
 				await this._ctx.Posing.ApplyPartialReferencePose(pose, this._partialIndex);
 		}
+		if (ImGui.Button("reset selected bones")) {
+			await this._ctx.Posing.ResetSelectedBones(pose);
+		}
 
 		ImGui.Spacing();
 		Separators.SeparatorText(Ktisis.Locale.Translate("object_edit.pose.headers.import"), textColor:ImGui.GetColorU32(ImGuiCol.Header));

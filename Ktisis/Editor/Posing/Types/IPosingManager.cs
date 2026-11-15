@@ -34,6 +34,7 @@ public interface IPosingManager : IDisposable {
 
 	public Task ApplyReferencePose(EntityPose pose);
 	public Task ApplyPartialReferencePose(EntityPose pose, int partialIndex);
+	public unsafe Task ResetSelectedBones(EntityPose pose, PoseTransforms transforms = PoseTransforms.Rotation);
 
 	public Task ApplyPoseFile(EntityPose pose, PoseFile file, PoseMode modes = PoseMode.All, PoseTransforms transforms = PoseTransforms.Rotation, bool selectedBones = false, bool includeDescendants = false, bool anchorGroups = false, bool excludeEars = false);
 	public Task<PoseFile> SavePoseFile(EntityPose pose);
