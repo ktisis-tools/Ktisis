@@ -242,8 +242,11 @@ public class SelectableGui {
 				if (ptr == null || ptr->RenderLight == null) return;
 				if (ptr->RenderLight->LightType == LightType.PointLight) return;
 
-				if (light.IsSelected) 
-					HandleLightCone(light);
+				if (light.IsSelected) {
+					HandleLightProjection(light);
+					//return; this will return when its fully setup, right now this is just empty
+				}
+
 	
 				var range = Math.Min(ptr->RenderLight->Range, 1);
 				var rot = light.GetTransform()?.Rotation;
@@ -275,7 +278,7 @@ public class SelectableGui {
             }
 		}
 
-		private unsafe void HandleLightCone(LightEntity light) {
+		private unsafe void HandleLightProjection(LightEntity light) {
 			var ptr = light.GetObject();
 			switch (ptr->RenderLight->LightType) {
 				case LightType.AreaLight:
