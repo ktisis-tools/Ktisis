@@ -38,22 +38,16 @@ public unsafe class PreviewNode : OverlayNode {
 	public override bool IsVisible { get; set; } = false;
 	protected override void OnUpdate() { }
 
-	private readonly ImageNode Image;
-	private readonly ImageNode ImageBacking;
-	private readonly NineGridNode Border;
-	private readonly NodeBase Buttons;
+	private readonly NineGridNode _border;
 
 	private uint _counter;
 	private ActorEntity _actor;
 	private ActorEntity _target;
-	private bool needsToApplyCollection = true;
 
-	private readonly RenderTargetManager* _renderTargetManager;
 	private readonly AgentInspect* _agentInspect;
 	private ImGuiWindowPtr _fileWindow;
 
 	private readonly IFramework _framework;
-	private readonly IObjectTable _objectTable;
 	private readonly IEditorContext _ctx;
 	private readonly JsonFileSerializer _serializer;
 
@@ -78,35 +72,34 @@ public unsafe class PreviewNode : OverlayNode {
 		this._target = target;
 		this._currentPose = null;
 		this._framework = framework;
-		this._objectTable = objectTable;
 		this._counter = 1;
 		this._fileWindow = null;
 		this._ctx = context;
 		this._serializer = new JsonFileSerializer();
 
-		this._renderTargetManager = RenderTargetManager.Instance();
+		var renderTargetManager = RenderTargetManager.Instance();
 		this._agentInspect = AgentInspect.Instance(); // idk why this was below the eval before?
 
-		this.Image = new ImageNode() {
+		var image = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
 			Position = new Vector2(4, 3),
 			ImageNodeFlags = (ImageNodeFlags)0x8C,
 			WrapMode = WrapMode.Tile
 		};
-		this.ImageBacking = new ImageNode() {
+		var imageBacking = new ImageNode() {
 			Size = new Vector2(192.0f, 320.0f),
 			Position = new Vector2(4, 3),
 			ImageNodeFlags = ImageNodeFlags.AutoFit,
 			WrapMode = WrapMode.Tile
 		};
-		this.Border = new NineGridNode() {
+		this._border = new NineGridNode() {
 			Size = new Vector2(200.0f, 328.0f),
 			TopOffset = 14.0f,
 			LeftOffset = 14.0f,
 			RightOffset = 14.0f,
 			BottomOffset = 14.0f,
 		};
-		this.Border.AddPart(new Part {
+		this._border.AddPart(new Part {
 			TexturePath = "ui/uld/PreviewA_hr1.tex",
 			Size = new Vector2(36.0f, 36.0f),
 			TextureCoordinates = new Vector2(0, 0f),
@@ -114,14 +107,14 @@ public unsafe class PreviewNode : OverlayNode {
 		});
 
 
-		var part = this.Image.AddPart(new Part {
+		var part = image.AddPart(new Part {
 			Height = 320,
 			Width = 192,
 		});
-		part->LoadTexture(this._renderTargetManager->CharaViewTextures[1]);
-		this._renderTargetManager->CharaViewTextures[1].Value->IncRef();
+		part->LoadTexture(renderTargetManager->CharaViewTextures[1]);
+		renderTargetManager->CharaViewTextures[1].Value->IncRef();
 
-		var bgpart = this.ImageBacking.AddPart(new Part {
+		var bgpart = imageBacking.AddPart(new Part {
 			Height = 320,
 			Width = 192,
 		});
@@ -133,16 +126,16 @@ public unsafe class PreviewNode : OverlayNode {
 			this._agentInspect->CharaView.ModelData.CopyFromCharacter((Character*)target.Actor.Address);
 		});
 
-		this.Buttons = this.SetupButtons();
+		var buttons = this.SetupButtons();
 
-		this._actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), this._objectTable[441]);
+		this._actor = new ActorEntity(this._ctx.Scene, new PoseBuilder(this._ctx.Scene), objectTable[441]);
 		this._actor.Setup();
 		this._framework.Update += this.OnFramework;
 
-		this.ImageBacking.AttachNode(this);
-		this.Image.AttachNode(this);
-		this.Border.AttachNode(this);
-		this.Buttons.AttachNode(this);
+		imageBacking.AttachNode(this);
+		image.AttachNode(this);
+		this._border.AttachNode(this);
+		buttons.AttachNode(this);
 
 		this._agentInspect->CharaView.Update(this._counter, this._agentInspect->CharaView.GetCharacter());
 	}
@@ -168,8 +161,8 @@ public unsafe class PreviewNode : OverlayNode {
 		}
 
 		this.IsVisible = true;
-		var offset = this._fileWindow.Pos.X + this._fileWindow.Size.X + this.Border.Size.X > ImGui.GetMainViewport().Size.X
-			? -this.Border.Size.X : this._fileWindow.Size.X;
+		var offset = this._fileWindow.Pos.X + this._fileWindow.Size.X + this._border.Size.X > ImGui.GetMainViewport().Size.X
+			? -this._border.Size.X : this._fileWindow.Size.X;
 		this.Position = new Vector2(this._fileWindow.Pos.X + offset, this._fileWindow.Pos.Y) - ImGui.GetMainViewport().Pos;
 
 		if (this.NeedsUpdate() && this._currentPose != null) {
