@@ -73,6 +73,10 @@ indent_style = tab
 indent_size = tab
 tab_width = 4
 
+
+# CS0414: Field is assigned but its value is never used
+dotnet_diagnostic.CS0414.severity = suggestion
+
 [*.json]
 indent_style = tab
 indent_size = tab

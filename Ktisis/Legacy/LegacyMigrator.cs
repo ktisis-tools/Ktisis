@@ -1,26 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Numerics;
-using System.Reflection;
 
 using Dalamud.Bindings.ImGui;
 using Dalamud.Configuration;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Plugin;
 
-using FFXIVClientStructs;
-
-using Ktisis.Actions;
-using Ktisis.Actions.Binds;
 using Ktisis.Common.Utility;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
 using Ktisis.Data.Config.Actions;
 using Ktisis.Interface;
 using Ktisis.Legacy.Interface;
-using Ktisis.Localization;
 using Ktisis.Services.Game;
 
 namespace Ktisis.Legacy;

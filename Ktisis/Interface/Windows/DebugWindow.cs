@@ -295,7 +295,7 @@ public class DebugWindow : KtisisWindow {
 	private void DrawDiagnosticsTab() {
 		// existing debug text from overlay
 		var overlay = this._gui.Get<OverlayWindow>();
-		overlay.DrawDebug(null);
+		overlay?.DrawDebug(null);
 
 		// todo: scenetree / actors and entities details
 		ImGui.Spacing();

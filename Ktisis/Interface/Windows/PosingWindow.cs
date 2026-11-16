@@ -365,7 +365,7 @@ public class PosingWindow : KtisisWindow {
 		var cameraFov = 1.0f;
 		var cameraPos = Vector3.Zero;
 		if (this._ctx.Cameras.IsWorkCameraActive) {
-			var freeCam = (WorkCamera)this._ctx.Cameras.Current;
+			var freeCam = (WorkCamera)this._ctx.Cameras.Current!;
 			cameraFov = freeCam.Camera->RenderEx->FoV;
 			cameraPos = freeCam.Position;
 		} else {

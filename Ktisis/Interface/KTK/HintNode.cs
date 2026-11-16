@@ -9,10 +9,9 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
-using KamiToolKit.Overlay;
-using KamiToolKit.Overlay.UiOverlay;
-using KamiToolKit.Premade.Node.Simple;
+using KamiToolKit.Nodes.Simplified;
 using KamiToolKit.Timelines;
+using KamiToolKit.UiOverlay;
 
 namespace Ktisis.Interface.KTK;
 
@@ -95,8 +94,8 @@ public unsafe class HintNode : OverlayNode {
 			this.Timeline?.PlayAnimation(101);
 		}
 
-		this.CollisionNode.NodeFlags |= NodeFlags.Visible;
-		this.CollisionNode.AddEvent(AtkEventType.MouseDown, this.DetachNode);
+		this.AddNodeFlags(NodeFlags.Visible);
+		this.AddEvent(AtkEventType.MouseDown, this.DetachNode);
 		this.AddEvent(AtkEventType.TimelineActiveLabelChanged, this.DetachNode);
 	}
 

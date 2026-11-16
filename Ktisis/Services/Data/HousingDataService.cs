@@ -106,12 +106,12 @@ public unsafe class HousingDataService : IDisposable
     }
     
     [Singleton]
-    public unsafe class SSAOHook
+    public class SSAOHook
     {
-        private delegate nint ToggleSSAO(HousingManager* Instance, bool option);
+        private delegate nint ToggleSSAO(HousingManager* instance, bool option);
         
         [Signature("48 89 5C 24 ?? 57 48 83 EC ?? 48 8B 79 ?? 0F B6 DA")]
-        private readonly ToggleSSAO toggle = null;
+        private readonly ToggleSSAO _toggle = null!;
 
         public SSAOHook(IGameInteropProvider interopProvider)
         {
@@ -120,7 +120,7 @@ public unsafe class HousingDataService : IDisposable
 
         public void Set(bool state)
         {
-            toggle.Invoke(HousingManager.Instance(), state);
+            _toggle.Invoke(HousingManager.Instance(), state);
         }
     }
 }

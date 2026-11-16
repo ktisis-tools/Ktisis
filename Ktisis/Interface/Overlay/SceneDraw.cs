@@ -275,7 +275,7 @@ public class SceneDraw {
 			ImGui.SetNextFrameWantCaptureMouse(true);
 			if (ImGui.IsMouseClicked(ImGuiMouseButton.Left)) {
 				var module = this._ctx.Scene.GetModule<ActorModule>();
-				module.AddFromOverworld(overworldActor);
+				_ =module.AddFromOverworld(overworldActor);
 			}
 		}
 	}
@@ -288,7 +288,7 @@ public class SceneDraw {
 
 		foreach (var light in this._ctx.Scene.World.Lights) {
 			if (this._ctx.Scene.Children.OfType<LightEntity>().Any(ent => ent.WorldLight.Equals(light))) continue;
-			if (!CameraService.WorldToScreen(camera, light.InitialTransform.Position, out var worldPos2d)) continue;
+			if (!CameraService.WorldToScreen(camera, light.InitialTransform.Position, out var worldPos2D)) continue;
 			var distance = this.ObjectDistance(new Vector2(light.InitialTransform.Position.X, light.InitialTransform.Position.Z));
 			if (distance > this.Config.WorldCameraRange) continue;
 			var sceneLight = (SceneLight*)light.Address;
@@ -296,9 +296,9 @@ public class SceneDraw {
 
 			var nodeScale = float.Lerp(1.0f, this.Config.WorldNodeScaleFactor, (distance / this.Config.WorldCameraRange));
 
-			drawList.AddNgonFilled(worldPos2d, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth - 1.0f) * nodeScale, this.Config.LightNodeColor, 3);
+			drawList.AddNgonFilled(worldPos2D, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth - 1.0f) * nodeScale, this.Config.LightNodeColor, 3);
 			if (this.Config.WorldNodeOutlineWidth > 0.0f)
-				drawList.AddNgon(worldPos2d, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale, 0xFF000000, 3, this.Config.WorldNodeOutlineWidth);
+				drawList.AddNgon(worldPos2D, (this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale, 0xFF000000, 3, this.Config.WorldNodeOutlineWidth);
 
 			// if hovering a different dot, or hovering a ImGui window, or not hovering this, or the popup is open for this obj already, skip
 			var radius = (6.0f + this.Config.WorldNodeRadius + this.Config.WorldNodeOutlineWidth / 2) * nodeScale;
@@ -306,8 +306,8 @@ public class SceneDraw {
 			if (this._isHoveringWorld
 				|| this._isHoveringActor
 				|| this._isHoveringLight
-				|| SelectableGui.CheckPosClip(worldPos2d, clip)
-				|| !ImGui.IsMouseHoveringRect(worldPos2d - radVec, worldPos2d + radVec)
+				|| SelectableGui.CheckPosClip(worldPos2D, clip)
+				|| !ImGui.IsMouseHoveringRect(worldPos2D - radVec, worldPos2D + radVec)
 				|| (this._popup is { IsOpen: true })
 			)
 				continue;

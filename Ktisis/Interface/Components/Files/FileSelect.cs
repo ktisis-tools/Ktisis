@@ -56,8 +56,8 @@ public class FileSelect<T> where T : notnull {
 	}
 
 	public class FileSelectState {
-		public string Name;
-		public string Path;
-		public T File;
+		public required string Name;
+		public required string Path;
+		public required T File;
 	}
 }

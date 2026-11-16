@@ -23,9 +23,9 @@ public class JsonFileSerializer {
 		};
 		
 		this.Options.Converters.Add(new JsonStringEnumConverter());
-		this.Options.Converters.Add(new QuaternionConverter(this));
-		this.Options.Converters.Add(new Vector3Converter(this));
-		this.Options.Converters.Add(new Vector4Converter(this));
+		this.Options.Converters.Add(new QuaternionConverter());
+		this.Options.Converters.Add(new Vector3Converter());
+		this.Options.Converters.Add(new Vector4Converter());
 		this.Options.Converters.Add(new TransformConverter(this));
 
 		this.DeserializeOptions = new JsonSerializerOptions(this.Options);
