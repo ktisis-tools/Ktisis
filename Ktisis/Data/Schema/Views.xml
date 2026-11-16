@@ -194,63 +194,63 @@
 	</View>
 	<View name="Feet">
 		<Image file="toes.png"/>
-		<Bone label="LeftBigToeA" name="iv_asi_oya_a_l" x="0.7" y="0.885"/>
-		<Bone label="LeftBigToeB" name="iv_asi_oya_b_l" x="0.825" y="0.45"/>
-		<Bone label="LeftIndexToeA" name="iv_asi_hito_a_l" x="0.7" y="0.885"/>
-		<Bone label="LeftIndexToeB" name="iv_asi_hito_b_l" x="0.825" y="0.45"/>
-		<Bone label="LeftMiddleToeA" name="iv_asi_naka_a_l" x="0.7" y="0.885"/>
-		<Bone label="LeftMiddleToeB" name="iv_asi_naka_b_l" x="0.825" y="0.45"/>
-		<Bone label="LeftForeToeA" name="iv_asi_kusu_a_l" x="0.7" y="0.885"/>
-		<Bone label="LeftForeToeB" name="iv_asi_kusu_b_l" x="0.825" y="0.45"/>
-		<Bone label="LeftPinkyToeA" name="iv_asi_ko_a_l" x="0.7" y="0.885"/>
-		<Bone label="LeftPinkyToeB" name="iv_asi_ko_b_l" x="0.825" y="0.45"/>
-		<Bone label="RightBigToeA" name="iv_asi_oya_a_r" x="0.7" y="0.885"/>
-		<Bone label="RightBigToeB" name="iv_asi_oya_b_r" x="0.825" y="0.45"/>
-		<Bone label="RightIndexToeA" name="iv_asi_hito_a_r" x="0.7" y="0.885"/>
-		<Bone label="RightIndexToeB" name="iv_asi_hito_b_r" x="0.825" y="0.45"/>
-		<Bone label="RightMiddleToeA" name="iv_asi_naka_a_r" x="0.7" y="0.885"/>
-		<Bone label="RightMiddleToeB" name="iv_asi_naka_b_r" x="0.825" y="0.45"/>
-		<Bone label="RightForeToeA" name="iv_asi_kusu_a_r" x="0.7" y="0.885"/>
-		<Bone label="RightForeToeB" name="iv_asi_kusu_b_r" x="0.825" y="0.45"/>
-		<Bone label="RightPinkyToeA" name="iv_asi_ko_a_r" x="0.7" y="0.885"/>
-		<Bone label="RightPinkyToeB" name="iv_asi_ko_b_r" x="0.825" y="0.45"/>
+		<Bone label="LeftBigToeA" name="iv_asi_oya_a_l" x="0.38" y="0.23"/>
+		<Bone label="LeftBigToeB" name="iv_asi_oya_b_l" x="0.38" y="0.565"/>
+		<Bone label="LeftIndexToeA" name="iv_asi_hito_a_l" x="0.27" y="0.32"/>
+		<Bone label="LeftIndexToeB" name="iv_asi_hito_b_l" x="0.265" y="0.6"/>
+		<Bone label="LeftMiddleToeA" name="iv_asi_naka_a_l" x="0.19" y="0.385"/>
+		<Bone label="LeftMiddleToeB" name="iv_asi_naka_b_l" x="0.185" y="0.615"/>
+		<Bone label="LeftForeToeA" name="iv_asi_kusu_a_l" x="0.115" y="0.465"/>
+		<Bone label="LeftForeToeB" name="iv_asi_kusu_b_l" x="0.11" y="0.64"/>
+		<Bone label="LeftPinkyToeA" name="iv_asi_ko_a_l" x="0.05" y="0.55"/>
+		<Bone label="LeftPinkyToeB" name="iv_asi_ko_b_l" x="0.04" y="0.705"/>
+		<Bone label="RightBigToeA" name="iv_asi_oya_a_r" x="0.62" y="0.23"/>
+		<Bone label="RightBigToeB" name="iv_asi_oya_b_r" x="0.62" y="0.565"/>
+		<Bone label="RightIndexToeA" name="iv_asi_hito_a_r" x="0.73" y="0.32"/>
+		<Bone label="RightIndexToeB" name="iv_asi_hito_b_r" x="0.735" y="0.6"/>
+		<Bone label="RightMiddleToeA" name="iv_asi_naka_a_r" x="0.81" y="0.385"/>
+		<Bone label="RightMiddleToeB" name="iv_asi_naka_b_r" x="0.815" y="0.615"/>
+		<Bone label="RightForeToeA" name="iv_asi_kusu_a_r" x="0.885" y="0.465"/>
+		<Bone label="RightForeToeB" name="iv_asi_kusu_b_r" x="0.89" y="0.64"/>
+		<Bone label="RightPinkyToeA" name="iv_asi_ko_a_r" x="0.95" y="0.55"/>
+		<Bone label="RightPinkyToeB" name="iv_asi_ko_b_r" x="0.96" y="0.705"/>
 	</View>
 	<View name="HandsEx">
-		<Image file="hands.png"/>
+		<Image file="handsex.png"/>
 		<Bone label="LeftWrist" name="n_hte_l" x="0.665" y="0.925"/>
 		<Bone label="LeftHand" name="j_te_l" x="0.68" y="0.8"/>
 		<Bone label="LeftThumbA" name="j_oya_a_l" x="0.83" y="0.725"/>
 		<Bone label="LeftThumbB" name="j_oya_b_l" x="0.88" y="0.6"/>
-		<Bone label="LeftThumbC" name="iv_oya_c_l" x="0.88" y="0.55"/>
+		<Bone label="LeftThumbC" name="iv_oya_c_l" x="0.905" y="0.535"/>
 		<Bone label="LeftIndexA" name="j_hito_a_l" x="0.805" y="0.425"/>
-		<Bone label="LeftIndexB" name="j_hito_b_l" x="0.815" y="0.25"/>
-		<Bone label="LeftIndexC" name="iv_hito_c_l" x="0.815" y="0.15"/>
+		<Bone label="LeftIndexB" name="j_hito_b_l" x="0.815" y="0.295"/>
+		<Bone label="LeftIndexC" name="iv_hito_c_l" x="0.815" y="0.168"/>
 		<Bone label="LeftMiddleA" name="j_naka_a_l" x="0.72" y="0.4"/>
-		<Bone label="LeftMiddleB" name="j_naka_b_l" x="0.72" y="0.23"/>
+		<Bone label="LeftMiddleB" name="j_naka_b_l" x="0.724" y="0.28"/>
 		<Bone label="LeftMiddleC" name="iv_naka_c_l" x="0.72" y="0.13"/>
 		<Bone label="LeftRingA" name="j_kusu_a_l" x="0.635" y="0.4"/>
-		<Bone label="LeftRingB" name="j_kusu_b_l" x="0.635" y="0.23"/>
-		<Bone label="LeftRingC" name="iv_kusu_c_l" x="0.635" y="0.13"/>
+		<Bone label="LeftRingB" name="j_kusu_b_l" x="0.635" y="0.285"/>
+		<Bone label="LeftRingC" name="iv_kusu_c_l" x="0.635" y="0.16"/>
 		<Bone label="LeftPinkyA" name="j_ko_a_l" x="0.535" y="0.425"/>
-		<Bone label="LeftPinkyB" name="j_ko_b_l" x="0.55" y="0.25"/>
-		<Bone label="LeftPinkyC" name="iv_ko_c_l" x="0.55" y="0.15"/>
+		<Bone label="LeftPinkyB" name="j_ko_b_l" x="0.544" y="0.315"/>
+		<Bone label="LeftPinkyC" name="iv_ko_c_l" x="0.55" y="0.225"/>
 		<Bone label="RightWrist" name="n_hte_r" x="0.335" y="0.925"/>
 		<Bone label="RightHand" name="j_te_r" x="0.32" y="0.8"/>
 		<Bone label="RightThumbA" name="j_oya_a_r" x="0.18" y="0.725"/>
 		<Bone label="RightThumbB" name="j_oya_b_r" x="0.12" y="0.6"/>
-		<Bone label="RightThumbC" name="iv_oya_c_r" x="0.12" y="0.55"/>
+		<Bone label="RightThumbC" name="iv_oya_c_r" x="0.095" y="0.535"/>
 		<Bone label="RightIndexA" name="j_hito_a_r" x="0.175" y="0.425"/>
-		<Bone label="RightIndexB" name="j_hito_b_r" x="0.17" y="0.23"/>
-		<Bone label="RightIndexC" name="iv_hito_c_r" x="0.17" y="0.13"/>
+		<Bone label="RightIndexB" name="j_hito_b_r" x="0.17" y="0.295"/>
+		<Bone label="RightIndexC" name="iv_hito_c_r" x="0.17" y="0.168"/>
 		<Bone label="RightMiddleA" name="j_naka_a_r" x="0.265" y="0.425"/>
-		<Bone label="RightMiddleB" name="j_naka_b_r" x="0.265" y="0.23"/>
-		<Bone label="RightMiddleC" name="iv_naka_c_r" x="0.265" y="0.13"/>
+		<Bone label="RightMiddleB" name="j_naka_b_r" x="0.26" y="0.28"/>
+		<Bone label="RightMiddleC" name="iv_naka_c_r" x="0.25" y="0.145"/>
 		<Bone label="RightRingA" name="j_kusu_a_r" x="0.355" y="0.425"/>
-		<Bone label="RightRingB" name="j_kusu_b_r" x="0.345" y="0.23"/>
-		<Bone label="RightRingC" name="iv_kusu_c_r" x="0.345" y="0.13"/>
+		<Bone label="RightRingB" name="j_kusu_b_r" x="0.345" y="0.285"/>
+		<Bone label="RightRingC" name="iv_kusu_c_r" x="0.345" y="0.16"/>
 		<Bone label="RightPinkyA" name="j_ko_a_r" x="0.435" y="0.425"/>
-		<Bone label="RightPinkyB" name="j_ko_b_r" x="0.435" y="0.25"/>
-		<Bone label="RightPinkyC" name="iv_ko_c_r" x="0.435" y="0.15"/>
+		<Bone label="RightPinkyB" name="j_ko_b_r" x="0.435" y="0.315"/>
+		<Bone label="RightPinkyC" name="iv_ko_c_r" x="0.435" y="0.225"/>
 	</View>
 	<View name="CustomBody">
 		<Image file="custombody.png"/>
@@ -262,24 +262,27 @@
 		<Bone label="IVCS Bicep Right" name="iv_nitoukin_r" x="0.285" y="0.265"/>
 	</View>
 	<View name="Penis">
-		<Image file=""/>
-		<Bone label="Testicle Left" name="iv_kougan_l" x="0.574" y="0.265"/>
-		<Bone label="Testicle Right" name="iv_kougan_r" x="0.574" y="0.265"/>
-		<Bone label="Penis A" name="iv_ochinko_a" x="0.574" y="0.265"/>
-		<Bone label="Penis B" name="iv_ochinko_b" x="0.574" y="0.265"/>
-		<Bone label="Penis C" name="iv_ochinko_c" x="0.574" y="0.265"/>
-		<Bone label="Penis D" name="iv_ochinko_d" x="0.574" y="0.265"/>
-		<Bone label="Penis E" name="iv_ochinko_e" x="0.574" y="0.265"/>
-		<Bone label="Penis F" name="iv_ochinko_f" x="0.574" y="0.265"/>
+		<Image file="blank.png"/>
+		<Bone label="Testicle Left" name="iv_kougan_l" x="0.4" y="0.85"/>
+		<Bone label="Testicle Right" name="iv_kougan_r" x="0.6" y="0.85"/>
+		<Bone label="Penis A" name="iv_ochinko_a" x="0.5" y="0.71"/>
+		<Bone label="Penis B" name="iv_ochinko_b" x="0.5" y="0.58"/>
+		<Bone label="Penis C" name="iv_ochinko_c" x="0.5" y="0.45"/>
+		<Bone label="Penis D" name="iv_ochinko_d" x="0.5" y="0.32"/>
+		<Bone label="Penis E" name="iv_ochinko_e" x="0.5" y="0.21"/>
+		<Bone label="Penis F" name="iv_ochinko_f" x="0.5" y="0.1"/>
 	</View>
 	<View name="Vagina">
-		<Image file=""/>
-		<Bone label="IVCS Breast Left" name="iv_c_mune_l" x="0.574" y="0.265"/>
+		<Image file="blank.png"/>
+		<Bone label="Clitoris" name="iv_kuritto" x="0.5" y="0.375"/>
+		<Bone label="Labia Left" name="iv_inshin_l" x="0.4" y="0.5"/>
+		<Bone label="Labia Right" name="iv_inshin_r" x="0.6" y="0.5"/>
+		<Bone label="Vagina" name="iv_omanko" x="0.50" y="0.7"/>
 	</View>
 	<View name="Anus">
-		<Image file=""/>
-		<Bone label="Anus" name="iv_koumon" x="0.574" y="0.265"/>
-		<Bone label="Anus Left" name="iv_koumon_l" x="0.574" y="0.265"/>
-		<Bone label="Anus Right" name="iv_koumon_r" x="0.574" y="0.265"/>
+		<Image file="blank.png"/>
+		<Bone label="Anus" name="iv_koumon" x="0.5" y="0.5"/>
+		<Bone label="Anus Left" name="iv_koumon_l" x="0.4" y="0.5"/>
+		<Bone label="Anus Right" name="iv_koumon_r" x="0.6" y="0.5"/>
 	</View>
 </Views>

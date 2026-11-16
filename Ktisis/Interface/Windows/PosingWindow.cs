@@ -295,23 +295,25 @@ public class PosingWindow : KtisisWindow {
 					goto default;
 				}
 
-				this.DrawView(frame, "CustomBody", 0.35f);
-				ImGui.SameLine();
-				using (ImRaii.Group()) {
-					this.DrawView(frame, "Feet", 0.30f, 0.40f);
-					this.DrawView(frame, "HandsEx", 0.30f, 0.40f);
-				}
+				this.DrawView(frame, "CustomBody", 0.25f);
 				ImGui.SameLine();
 				if(this._ctx.Config.Categories.ShowNsfwBones)
 					using (ImRaii.Group()) {
 						if (this._target!.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("PenisIvcs")!.Bones)) {
-							this.DrawView(frame, "Penis", 0.30f, 0.40f);
+							this.DrawView(frame, "Penis", 0.20f, 0.40f);
 						}
 						if (this._target!.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("VaginaIvcs")!.Bones)) {
-							this.DrawView(frame, "Vagina", 0.30f, 0.40f);
+							this.DrawView(frame, "Vagina", 0.20f, 0.20f);
 						}
+						this.DrawView(frame, "Anus", 0.20f, 0.20f);
 					}
-				
+				ImGui.SameLine();
+				using (ImRaii.Group()) {
+					this.DrawView(frame, "Feet", 0.40f, 0.50f);
+					this.DrawView(frame, "HandsEx", 0.40f, 0.50f);
+				}
+
+
 				break;
 			
 			default:
