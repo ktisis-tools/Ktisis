@@ -508,6 +508,18 @@ public class ConfigWindow : KtisisWindow {
 				this.SetPoseViewImage(path => cfg.EarsPath = path);
 			this.DrawPoseViewPath(ref cfg.EarsPath, loc);
 		}
+		loc = this.Locale.Translate("config.poseview.feet");
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.ToesPath = path);
+			this.DrawPoseViewPath(ref cfg.ToesPath, loc);
+		}
+		loc = this.Locale.Translate("config.poseview.bodyex");
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.CustomBodyPath = path);
+			this.DrawPoseViewPath(ref cfg.CustomBodyPath, loc);
+		}
 	}
 	//TODO: Translation
 	
