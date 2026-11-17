@@ -233,8 +233,12 @@ public class PosingWindow : KtisisWindow {
 		ImGui.Text(Ktisis.Locale.Translate("pose_view.view_chooser"));
 		
 		foreach (var value in Enum.GetValues<ViewEnum>()) {
-			if (value == ViewEnum.Custom && !this._target!.Pose!.BoneExists("iv_c_mune_l"))
+			if (value == ViewEnum.Custom && !this._target!.Pose!.BoneExists("iv_c_mune_l")) {
+				if (this._view == ViewEnum.Custom)
+					this._view = ViewEnum.Face;
 				continue;
+			}
+
 			if (ImGui.RadioButton(value.ToString(), this._view == value))
 				this._view = value;
 		}
@@ -290,7 +294,7 @@ public class PosingWindow : KtisisWindow {
 				break;
 
 			case ViewEnum.Custom:
-				if (!IsTargetSkeletonCustom()) {
+				if (!this.IsTargetSkeletonCustom()) {
 					this._view = ViewEnum.Face;
 					goto default;
 				}
@@ -331,7 +335,11 @@ public class PosingWindow : KtisisWindow {
 	}
 
 
-	private unsafe bool IsTargetSkeletonCustom() => this._target!.Pose!.GetSkeleton()->SkeletonResourceHandles[0]->FileName.ContainsString("chara/human/c");
+	private unsafe bool IsTargetSkeletonCustom() { 
+		if(this._target?.Pose == null) return true;
+		if(this._target.Pose.GetSkeleton() == null) return true;	
+		return this._target.Pose.GetSkeleton()->SkeletonResourceHandles[0]->FileName.ContainsString("chara/human/c");
+	}
 
 	private void DrawView(
 		IViewFrame frame,
