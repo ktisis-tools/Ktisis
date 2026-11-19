@@ -91,6 +91,8 @@ public class SceneEntityMenuBuilder {
 				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateLight(light));
 			if (this._entity is OverlayEntity overlay)
 				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateOverlay(overlay));
+			if(this._entity is FolderEntity folder)
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.folder.dissolve"), folder.Dissolve);
 
 			// rename delete to Untrack if we have a worldlight tied to the lightentity in this menu
 			if (this._entity is LightEntity { WorldLight: not null })
@@ -100,8 +102,13 @@ public class SceneEntityMenuBuilder {
 		}
 		if (this._entity is ObjectEntity obj) {
 			menu.Separator();
-			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
-			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
+			menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.duplicate"), () => this.DuplicateObject(obj));
+			if (obj.Object is not null) {
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.reset"), () => obj.Reset());
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.untrack"), () => obj.Remove());
+			} else {
+				menu.Action(Ktisis.Locale.Translate("workspace.entity_menu.base.delete"), () => obj.Remove());
+			}
 		}
 	}
 	
@@ -125,9 +132,14 @@ public class SceneEntityMenuBuilder {
 
 	private void DoDelete(IDeletable deletable) {
 		// delete the individually action'd object and any others that are currently multi-selected
-		deletable.Delete();
-		foreach (var del in this._ctx.Selection.GetSelected().OfType<IDeletable>().Where(d => d.CanDelete))
-			del.Delete();
+		if (this._ctx.Selection.GetSelected().Contains((SceneEntity)deletable)) {
+			deletable.Delete();
+			foreach (var del in this._ctx.Selection.GetSelected().OfType<IDeletable>().Where(d => d.CanDelete))
+				del.Delete();
+		} else {
+			deletable.Delete();
+		}
+
 	}
 
 	// Actors
@@ -263,5 +275,28 @@ public class SceneEntityMenuBuilder {
 			newStatus.StatusText = oldStatus.StatusText;
 			newStatus.StatusType = oldStatus.StatusType;
 		}
+	}
+
+	private unsafe void DuplicateObject(ObjectEntity obj) {
+		var transform = obj.GetTransform();
+		if (transform is null) {
+			Ktisis.WarningNotification($"Could not duplicate object with null transform");
+			return;
+		}
+
+		var path = obj.GetPath();
+		var ptr = this._ctx.Scene.World.BuildObject(path);
+		if (ptr is null) {
+			Ktisis.WarningNotification($"Could not duplicate object with path: {path}");
+			return;
+		}
+
+		var name = obj.Name + " (Copy)";
+		var entity = this._ctx.Scene.Factory
+			.BuildObject()
+			.SetName(name)
+			.SetAddress(ptr)
+			.Add();
+		entity.SetTransform(transform);
 	}
 }

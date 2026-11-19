@@ -181,6 +181,8 @@
 				"spot": "Spot",
 				"area": "Area",
 				"directional": "Sun (Directional)",
+				"line": "Line",
+				"specular": "Specular",
 				"file": "From file... (.ktlight)"
 			},
 			"reference": "Add reference image",
@@ -239,17 +241,23 @@
 				"edit": "Edit lighting",
 				"import": "Import light file",
 				"export": "Export light file"
+			},
+			"folder": {
+				"dissolve": "Dissolve"
 			}
 		},
 		"create": "Create new...",
 		"create_actor": "Create Actor\nDrop-down for options...",
 		"create_light": "Create Light\nDrop-down for options...",
 		"create_overlay": "Create Overlay",
+		"create_object": "[Alpha] Create Object from Path",
+		"create_folder": "Create Folder",
 		"refresh_entities": "Refresh scene entities",
 		"edit_mode.hint": "Select editing mode",
 		"overlay.hide": "Hide Ktisis overlay",
 		"overlay.show": "Show Ktisis overlay",
 		"overlay.world_toggle": "Toggle world object overlay",
+		"overlay.world_filters": "World filters",
 		"overlay.range": "Range:"
 	},
 
@@ -427,7 +435,8 @@
 				"adv": "Advanced (Gaze/IK)",
 				"import": "Import actor appearance",
 				"gaze": "Gaze Control",
-				"ik": "Inverse Kinematics"
+				"ik": "Inverse Kinematics",
+				"expressions": "Expressions"
 			},
 			"gaze": {
 				"linked": "Linked",
@@ -439,6 +448,14 @@
 				"unk": "Unknown",
 				"null": "No Target",
 				"disabled": "Unable to control gaze while pose mode active"
+			},
+			"expressions": {
+				"combine": "Combine L/R Sliders",
+				"link": "Link L/R Sliders",
+				"unlock": "Unlock Sliders",
+				"reset": "Reset Blends to 0",
+				"posemode_warn": "Pose Mode must be enabled to use Expression Sliders!",
+				"dtface_warn": "Expression Sliders are unavailable for non-Dawntrail faces!"
 			},
 			"chara_edit": "Actor Editor",
 			"export": "Export Chara"
@@ -533,6 +550,21 @@
 				"tex": "Texture:",
 				"tex_hint": "Choose an icon for this status"
 			}
+		},
+		"object": {
+			"header": "Object",
+			"title": "Object Info",
+			"rename": "Name",
+			"copy_path": "Copy Path",
+			"path": "Model Path",
+			"type": "Object Type",
+			"type.world": "World Object",
+			"type.spawned": "Spawned Object",
+			"addr": "Address",
+			"stain": "Stain",
+			"intensity": "Color intensity",
+			"tint": "Tint",
+			"intensityHint": "Not all objects can be Tinted right now.\nIf the color doesn't change, but the numbers don't automatically reset, make sure the Alpha (a) is above 0"
 		}
 	},
 	
@@ -688,6 +720,31 @@
 		}
 	},
 
+	"popups": {
+		"world_obj": {
+			"header": "Object Details",
+			"addr": "Address",
+			"path": "Model Path",
+			"dist": "Distance",
+			"add": "Add",
+			"hide": "Hide",
+			"cancel": "Cancel"
+		},
+		"spawn_obj": {
+			"header": "Spawn Object",
+			"explain_1": "Enter a valid .mdl path below to spawn a new BgObject.",
+			"explain_2": "File paths can be sourced from Pathfinder, Textools, Brio, and Ktisis' world objects.",
+			"path": "Path",
+			"spawn": "Spawn",
+			"close": "Close"
+		},
+		"world_filters": {
+			"objects": "Objects",
+			"actors": "Actors",
+			"lights": "Lights"
+		}
+	},
+
 	"config": {
 		"title": "Ktisis Settings",
 		"categories": {
@@ -797,6 +854,7 @@
 			"toggleOpenWindows": "UI buttons toggle windows open & closed",
 			"toolbar": "Use Ktisis Toolbar",
 			"hintToolbar": "Experimental: This is an alternate UI which puts all of Ktisis' editors into one window.\nPlease provide any feedback, as this option is actively under development!",
+			"toolbarResize": "Use resizable toolbar windows instead of fixed size (experimental)",
 			"editOnSelect": "Open object editor on selection",
 			"closeOnDeselect": "Close object editor when nothing is selected",
 			"incognitoPlayerNames": "Incognito Mode",
@@ -820,6 +878,8 @@
 			"hintSelectTarget": "An actor is Targeted when clicked or tabbed-to with vanilla GPose controls.\nThis toggle will override Ktisis' current Selection to your new Target when one is chosen.",
 			"updateCameraPositions": "Update camera orbit with actor position",
 			"hintCameraPositions": "When enabled, the GPose camera will orbit the root position of a targeted actor.\nWhen disabled, the camera orbit will remain fixed when actor roots are moved.",
+			"hideToasts": "Disable Toast notifications during GPose",
+			"hintHideToasts": "Prevents XIV popup texts such as FATE, Duty, FC, or Friend notifications",
 			"workcam": {
 				"speed": "Work camera speed",
 				"fastMulti": "Work camera fast-multiplier",
@@ -1415,11 +1475,44 @@
 		"CustomLegs": "Custom Skeleton Legs"
 	},
 	
+	"expression": {
+		"BrowUpL": "Brow Up (L)",
+		"BrowUpR": "Brow Up (R)",
+		"BrowUp": "Brow Up",
+		"BrowFurrowL": "Brow Furrow (L)",
+		"BrowFurrowR": "Brow Furrow (R)",
+		"BrowFurrow": "Brow Furrow",
+		"BlinkL": "Blink (L)",
+		"BlinkR": "Blink (R)",
+		"Blink": "Blink",
+		"EyeWideL": "Eye Wide (L)",
+		"EyeWideR": "Eye Wide (R)",
+		"EyeWide": "Eye Wide",
+		"CheekRaiseL": "Cheek Raise (L)",
+		"CheekRaiseR": "Cheek Raise (R)",
+		"CheekRaise": "Cheek Raise",
+		"SmileL": "Smile (L)",
+		"SmileR": "Smile (R)",
+		"Smile": "Smile",
+		"GrinL": "Grin (L)",
+		"GrinR": "Grin (R)",
+		"Grin": "Grin",
+		"FrownL": "Frown (L)",
+		"FrownR": "Frown (R)",
+		"Frown": "Frown",
+		"JawOpen": "Jaw Open",
+		"UpperLipOpen": "Upper Lip Open",
+		"LowerLipOpen": "Lower Lip Open",
+		"LipPucker": "Lip Pucker"
+	},
+	
 	"lightType": {
 		"Directional": "Sun Light (Directional)",
-		"PointLight": "Point Light",
-		"SpotLight": "Spot Light",
-		"AreaLight": "Area Light"
+		"Point": "Point Light",
+		"Spot": "Spot Light",
+		"Plane": "Area Light",
+		"Line": "Line Light",
+		"Specular": "Specular Light"
 	},
 	
 	"lightFalloff": {
@@ -1430,7 +1523,7 @@
 	
 	"misc": {
 		"command_desc": "Toggle the main Ktisis window."
-  },
+	},
 
 	"background": {
 		"Basic": "Basic",

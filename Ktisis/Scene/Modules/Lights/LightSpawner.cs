@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 
 using Ktisis.Editor.Context.Types;
@@ -79,7 +80,7 @@ public class LightSpawner : HookModule {
 		var render = light->RenderLight;
 		if (render != null) {
 			render->Flags = LightFlags.Reflection;
-			render->LightType = LightType.PointLight;
+			render->LightType = LightType.Point;
 			render->Transform = &light->Transform;
 			render->Color = new ColorHDR();
 			render->ShadowNear = 0.1f;

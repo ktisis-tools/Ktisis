@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 
@@ -73,7 +74,7 @@ public class SceneTree {
 
 		var spacing = ImGui.GetStyle().ItemSpacing;
 		using var _ = ImRaii.PushStyle(ImGuiStyleVar.ItemSpacing, spacing with { Y = 5.0f });
-		this.IterateTree(this._ctx.Scene.Children);
+		this.IterateTree(this._ctx.Scene.Children.ToImmutableArray());
 
 		// handle any shift-clicked node using target node & ordered tree list
 		if (this._shiftNode != null) this.ResolveShiftSelect();
