@@ -67,12 +67,10 @@ public class ObjectWindow : KtisisWindow {
 
 	public override void PreDraw() {
 		base.PreDraw();
-		if(this._ctx.Config.Editor.UseToolbar)
-			this.Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize;
+		if(this._ctx.Config.Editor is { UseToolbar: true, ToolbarResizable: false })
+			this.Flags |= ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize;
 		else if (this._ctx.Config.Editor.AutoResizeObjectEditor)
-			this.Flags = ImGuiWindowFlags.NoScrollbar;
-		else
-			this.Flags = ImGuiWindowFlags.None;
+			this.Flags |= ImGuiWindowFlags.NoScrollbar;
 		
 		var width = TransformTable.CalcWidth() + ImGui.GetStyle().WindowPadding.X * 2;
 		this.SizeConstraints = new WindowSizeConstraints {

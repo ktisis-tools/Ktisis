@@ -125,12 +125,33 @@ public class SceneManager : SceneModuleContainer, ISceneManager {
 	}
 	
 	public IEnumerable<SceneEntity> Children => this.Root.Children;
-
+	
 	public bool Add(SceneEntity entity) => this.Root.Add(entity);
 	public bool Remove(SceneEntity entity) => this.Root.Remove(entity);
 
 	public IEnumerable<SceneEntity> Recurse() => this.Root.Recurse();
+
 	
+	/*
+	 *	if we dont have a before, then 
+	 * 
+	 */
+	public void MoveBetween(SceneEntity? after, SceneEntity obj, SceneEntity? before) {
+		if (after == null && before == null) return;
+
+		lock (this.Children) {
+			if (after == this.Children.Last()) {
+				obj.Parent!.Remove(obj);
+				this.Add(obj);
+				this.Refresh();
+			}
+		}
+	}
+
+	public SceneRoot SceneRoot {
+		get { return this.Root; }
+	}
+
 	// Utility
 	
 	public ActorEntity? GetEntityForActor(IGameObject actor) => this.GetEntityForIndex(actor.ObjectIndex);

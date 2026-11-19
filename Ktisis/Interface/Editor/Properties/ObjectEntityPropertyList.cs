@@ -1,6 +1,11 @@
+using System;
+using System.Numerics;
+
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
+
+using FFXIVClientStructs.FFXIV.Client.Graphics;
 
 using GLib.Widgets;
 
@@ -44,6 +49,38 @@ public class ObjectEntityPropertyList : ObjectPropertyList {
 		using (ImRaii.Disabled())
 			ImGui.Text($"{Ktisis.Locale.Translate("object_edit.object.addr")}: {obj.Address:X}");
 
+		ImGui.Spacing();
+		if (obj.CanStain()) {
+			Separators.SeparatorText("Staining", textColor:ImGui.GetColorU32(ImGuiCol.Header));
+			Vector4 existingColor = obj.GetStain();
+			if (ImGui.ColorEdit4("Stain", ref existingColor)) {
+				var srgbColor = new Vector4(MathF.Sqrt(existingColor.X), MathF.Sqrt(existingColor.Y), MathF.Sqrt(existingColor.Z), existingColor.Z) * byte.MaxValue;
+				var byteColor = new ByteColor() { R = (byte)srgbColor.X, G = (byte)srgbColor.Y, B = (byte)srgbColor.Z, A = (byte)srgbColor.W };
+				obj.TrySetStainColor(byteColor);
+
+			}
+		} else {
+
+			Separators.SeparatorText("[ALPHA] Tinting", textColor:ImGui.GetColorU32(ImGuiCol.Header));
+
+			byte curVal = obj.ColorIntensity;
+			Vector4 curCol = obj.Color;
+			if (ImGui.DragByte(Ktisis.Locale.Translate("object_edit.object.intensity"), ref curVal, vMax: 32)) {
+				obj.ColorIntensity = curVal;
+			}
+			if (ImGui.ColorEdit4(Ktisis.Locale.Translate("object_edit.object.tint"), ref curCol)) {
+				obj.Color = curCol;
+			}
+			ImGui.SameLine();
+			Icons.DrawIcon(FontAwesomeIcon.QuestionCircle);
+			if (ImGui.IsItemHovered()) {
+				using var _ = ImRaii.Tooltip();
+				ImGui.Text(Ktisis.Locale.Translate(Ktisis.Locale.Translate("object_edit.object.intensityHint")));
+			}
+		}
+
+
+		
 		// buttons
 		ImGui.Spacing();
 		if (obj.IsWorldObject()) {
