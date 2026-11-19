@@ -478,8 +478,11 @@ public class SceneDataService {
 			a.Name = actor.Chara.Nickname!;
 			var act = a.Actor;
 			if (actor.PenumbraCollection != Guid.Empty && this._ctx.Plugin.Ipc.IsPenumbraActive)
-				if(this._ctx.Plugin.Ipc.GetPenumbraIpc().GetCollections().ContainsKey(actor.PenumbraCollection))
+				if (this._ctx.Plugin.Ipc.GetPenumbraIpc().GetCollections().ContainsKey(actor.PenumbraCollection)) {
 					this._ctx.Plugin.Ipc.GetPenumbraIpc().SetCollectionForObject(act, actor.PenumbraCollection);
+					this._ctx.Plugin.Ipc.GetPenumbraIpc().Redraw(act.ObjectIndex);
+				}
+
 			
 			if (actor.CustomizePlus != Guid.Empty && this._ctx.Plugin.Ipc.IsCustomizeActive) {
 				var profile = this._ctx.Plugin.Ipc.GetCustomizeIpc().GetProfileByUniqueId(actor.CustomizePlus);
