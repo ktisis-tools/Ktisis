@@ -130,9 +130,14 @@ public class SceneEntityMenuBuilder {
 
 	private void DoDelete(IDeletable deletable) {
 		// delete the individually action'd object and any others that are currently multi-selected
-		deletable.Delete();
-		foreach (var del in this._ctx.Selection.GetSelected().OfType<IDeletable>().Where(d => d.CanDelete))
-			del.Delete();
+		if (this._ctx.Selection.GetSelected().Contains((SceneEntity)deletable)) {
+			deletable.Delete();
+			foreach (var del in this._ctx.Selection.GetSelected().OfType<IDeletable>().Where(d => d.CanDelete))
+				del.Delete();
+		} else {
+			deletable.Delete();
+		}
+
 	}
 
 	// Actors
