@@ -23,9 +23,6 @@ public class EditorConfig {
 	public bool SelectOnTarget = false;
 	public bool PersistentSiblingLink = false;
 	public bool UpdateActorCameraPositions = true;
-	public bool HideToasts = true;
-
-
 
 	public bool IncognitoPlayerNames = false;
 
@@ -76,6 +73,9 @@ public class EditorConfig {
 	public bool DisableAnimationLoop = false;
 	public bool HideToasts = false;
 	
+	// Pose Previewer
+	public Size PreviewSize = Size.Medium;
+	
 	// Helpers
 
 	public EntityDisplay GetDisplayForType(EntityType type)
@@ -87,4 +87,12 @@ public enum HintLoc {
 	TopRight,
 	BottomLeft,
 	BottomRight
+}
+
+public enum Size {
+	XSmall,
+	Small,
+	Medium,
+	Large,
+	XLarge
 }
