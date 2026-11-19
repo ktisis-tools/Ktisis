@@ -249,6 +249,7 @@ public class ConfigWindow : KtisisWindow {
 			}
 		}
 		this.DrawHint("config.workspace.hintToolbar");
+		ImGui.Checkbox(this.Locale.Translate("config.workspace.toolbarResize"), ref this.Config.Editor.ToolbarResizable);
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.init"), ref this.Config.Editor.OpenOnEnterGPose);
 		this.DrawHint("config.workspace.hintInit");
 		ImGui.Checkbox(this.Locale.Translate("config.workspace.incognitoPlayerNames"), ref this.Config.Editor.IncognitoPlayerNames);
