@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -39,4 +40,7 @@ public class JsonFileSerializer {
 
 	public T? Deserialize<T>(string json) where T : notnull
 		=> JsonSerializer.Deserialize<T>(json, this.DeserializeOptions);
+
+	public T? Deserialize<T>(Stream stream) where T : notnull
+		=> JsonSerializer.Deserialize<T>(stream, this.DeserializeOptions);
 }

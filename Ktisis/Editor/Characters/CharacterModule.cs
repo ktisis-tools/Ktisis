@@ -182,12 +182,18 @@ public class CharacterModule : HookModule {
 	private unsafe delegate CharacterSetupContainer* CopyFromCharacterDelegate(CharacterSetupContainer* self, Character* source, CharacterSetupContainer.CopyFlags flags);
 
 	private unsafe CharacterSetupContainer* CharacterSetupDetour(CharacterSetupContainer* self, Character* source, CharacterSetupContainer.CopyFlags flags) {
+		if (source->ObjectIndex == 200) {
+			source = GameObjectManager.Instance()->Objects.IndexSorted[0].Cast<BattleChara>()->GetAsCharacter();
+			flags &= ~CharacterSetupContainer.CopyFlags.Mount;
+		}
+
 		var ret = this.CopyFromCharacterHook.Original.Invoke(self, source, flags);
 
 		var newChar = self->OwnerObject;
 
 		newChar->Effects.CurrentFloatHeight = source->Effects.CurrentFloatHeight;
 		newChar->DrawOffset.Y += source->Effects.CurrentFloatHeight;
+		
 		
 		return ret;
 	}

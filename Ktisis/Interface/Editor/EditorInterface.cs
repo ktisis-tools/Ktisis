@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Dalamud.Bindings.ImGui;
+using Dalamud.Plugin.Services;
+
 using GLib.Popups.ImFileDialog;
 
 using Ktisis.Data.Files;
@@ -30,15 +32,18 @@ namespace Ktisis.Interface.Editor;
 
 public class EditorInterface : IEditorInterface {
 	private readonly IEditorContext _ctx;
+	private readonly IDataManager _data;
 	private readonly GuiManager _gui;
 
 	private readonly GizmoManager _gizmo;
 	
 	public EditorInterface(
 		IEditorContext ctx,
+		IDataManager data,
 		GuiManager gui
 	) {
 		this._ctx = ctx;
+		this._data = data;
 		this._gui = gui;
 		this._gizmo = new(ctx.Config);
 	}
@@ -212,7 +217,11 @@ public class EditorInterface : IEditorInterface {
 	public void OpenAssignCProfile(ActorEntity entity) => this._gui.CreatePopup<ActorCProfilePopup>(this._ctx, entity).Open();
 
 	public void OpenOverworldActorList() => this._gui.CreatePopup<OverworldActorPopup>(this._ctx).Open();
-	
+
+	public void OpenObjectCreate() => this._gui.CreatePopup<SpawnObjectPopup>(this._ctx, this._data).Open();
+
+	public void OpenWorldFilters() => this._gui.CreatePopup<WorldFilterPopup>(this._ctx).Open();
+
 	public void RefreshSceneEntities() {
 		this._ctx.Scene.GetModule<ActorModule>().RefreshGPoseActors();
 		this._ctx.Scene.GetModule<LightModule>().RefreshLightEntities();

@@ -11,6 +11,8 @@ using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility;
 
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
+
 using Ktisis.Common.Extensions;
 using Ktisis.Core.Attributes;
 using Ktisis.Data.Config;
@@ -238,13 +240,13 @@ public class SelectableGui {
 			if (entity is LightEntity light) {
 				var ptr = light.GetObject();
 				if (ptr == null || ptr->RenderLight == null) return;
-				if (ptr->RenderLight->LightType == LightType.PointLight) return;
+				if (ptr->RenderLight->LightType == LightType.Point) return;
 
 				var range = Math.Min(ptr->RenderLight->Range, 1);
 				var rot = light.GetTransform()?.Rotation;
 				if (rot == null) return;
 				// account for renderlight projection offset
-				if (ptr->RenderLight->LightType == LightType.AreaLight)
+				if (ptr->RenderLight->LightType == LightType.Plane)
 					rot *= (new Vector3(ptr->RenderLight->AreaAngle.X, ptr->RenderLight->AreaAngle.Y, 0) * MathHelpers.Rad2Deg).EulerAnglesToQuaternion();
 
 				var dir = Vector3.Transform(new Vector3(0, 0, range), (Quaternion)rot);

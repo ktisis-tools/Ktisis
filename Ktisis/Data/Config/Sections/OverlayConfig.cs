@@ -1,4 +1,6 @@
-﻿using Ktisis.Structs.Objects;
+﻿using System;
+
+using Ktisis.Structs.Objects;
 
 namespace Ktisis.Data.Config.Sections;
 
@@ -29,6 +31,7 @@ public class OverlayConfig {
 	public uint ActorNodeColor = 0xFFFF006D;
 	public uint LightNodeColor = 0xFF00DEFF;
 	public OutlineChoice WorldOutlineColor = OutlineChoice.Yellow;
+	public WorldFilters ActiveWorldFilters = WorldFilters.Objects | WorldFilters.Actors | WorldFilters.Lights;
 	public float WorldCameraRange = 30.0f;
 }
 
@@ -36,4 +39,12 @@ public enum ActiveState {
 	Target,
 	Selection,
 	Both
+}
+
+[Flags]
+public enum WorldFilters {
+	None = 0,
+	Objects = 1,
+	Actors = 2,
+	Lights = 4,
 }

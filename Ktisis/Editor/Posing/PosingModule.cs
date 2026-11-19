@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -22,6 +23,10 @@ using Ktisis.Interop.Ipc;
 using Ktisis.Scene.Entities.Game;
 using Ktisis.Services.Game;
 
+using Microsoft.Extensions.DependencyInjection;
+
+using SchedulerTimeline = FFXIVClientStructs.FFXIV.Client.System.Scheduler.Base.SchedulerTimeline;
+
 namespace Ktisis.Editor.Posing;
 
 public unsafe delegate void SkeletonInitHandler(IGameObject owner, Skeleton* skeleton, ushort partialId);
@@ -44,13 +49,18 @@ public sealed class PosingModule : HookModule {
 		IDalamudPluginInterface dpi,
 		JsonFileSerializer fileSerializer,
 		ISigScanner sigScanner
-		) : base(hook) {
+	) : base(hook) {
+		unsafe {
+			this._schedulerTimelineVirtualTable = (SchedulerTimeline.SchedulerTimelineVirtualTable*)dpi.GetService<ISigScanner>()?.GetStaticAddressFromSig("48 8D 05 ?? ?? ?? ?? 48 8B D9 ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 93");
+		}
 		this._sigScanner = sigScanner;
 		this.Manager = manager;
 		this._actors = actors;
 		this._ipc = new IpcProvider(contextManager, dpi, fileSerializer);
 	}
 	
+	private unsafe SchedulerTimeline.SchedulerTimelineVirtualTable* _schedulerTimelineVirtualTable; 
+
 	// Module interface
 	
 	public bool IsEnabled { get; private set; }
@@ -108,12 +118,12 @@ public sealed class PosingModule : HookModule {
 		this._syncModelSpaceHook.Original(pose);
 	}
 	
-	// Client::Graphics::Physics::BonePhysicsUpdater_Update
-
-	
-	
-	
 	// CalcBoneModelSpace
+	[Signature("4C 8B DC 53 56 57 41 56 41 57 48 81 EC ?? ?? ?? ?? 41 0F 29 73", DetourName = nameof(DetourUnknown))]  // asm at 44 0F 11 50 ?? 48 8B 43 was causing drift, we jump over this function to avoid it
+	private Hook<DetourUnknownFunctDelegate> _unknownDetour = null!;
+	private unsafe delegate nint DetourUnknownFunctDelegate(nint a1, nint a2, hkaPose* a3);
+
+	private unsafe nint DetourUnknown(nint a1, nint a2, hkaPose* a3) => (nint)a3->BoneFlags.Data;
 	
 	[Signature("40 53 48 83 EC 10 4C 8B 49 28", DetourName = nameof(CalcBoneModelSpace))]
 	private Hook<CalcBoneModelSpaceDelegate> _calcBoneModelSpaceHook = null!;
@@ -122,10 +132,7 @@ public sealed class PosingModule : HookModule {
 	private unsafe hkQsTransformf* CalcBoneModelSpace(hkaPose* pose, int boneIdx) {
 		if (this.Manager.IsSolvingIk)
 			return this._calcBoneModelSpaceHook.Original(pose, boneIdx);
-
-		if (boneIdx == 1 && pose->Skeleton->Bones[boneIdx].Name.String == "n_hara") {
-			HavokPosing.CalcCachedAbdomenModelTransform(pose, boneIdx);
-		}
+		
 		return pose->ModelPose.Data + boneIdx;
 	}
 	
@@ -151,9 +158,17 @@ public sealed class PosingModule : HookModule {
 
 	[Signature("E8 ?? ?? ?? ?? 0F B6 F8 84 C0 74 12", DetourName = nameof(AnimFrozen))]
 	private Hook<AnimFrozenDelegate> _animFrozenHook = null!;
-	private delegate byte AnimFrozenDelegate(nint a1, int a2);
+	private unsafe delegate byte AnimFrozenDelegate(nint* a1, int a2);
 
-	private byte AnimFrozen(nint a1, int a2) => 1;
+	private unsafe byte AnimFrozen(nint* a1, int a2) {
+		IntPtr vtbl = *a1;
+		if (vtbl == (nint)this._schedulerTimelineVirtualTable) {
+			SchedulerTimeline* timeline = (SchedulerTimeline*)a1;
+			if (this._actors.IsActorGposeActor((ushort)timeline->GetOwningGameObjectIndex()))
+				return 1;
+		}
+		return this._animFrozenHook.Original.Invoke(a1, a2);
+	}
 	
 	// UpdatePos
 

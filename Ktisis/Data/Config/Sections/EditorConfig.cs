@@ -13,6 +13,7 @@ public class EditorConfig {
 	public bool ToggleOpenWindows = true;
 	public bool ConfirmExit = false;
 	public bool UseToolbar = false;
+	public bool ToolbarResizable = false;
 	public bool OpenTrayOnWorkspaceClose = true;
 	public bool ShowHints = true;
 	public HintLoc HintLocation = HintLoc.TopLeft;
@@ -22,6 +23,7 @@ public class EditorConfig {
 	public bool SelectOnTarget = false;
 	public bool PersistentSiblingLink = false;
 	public bool UpdateActorCameraPositions = true;
+	public bool HideToasts = true;
 
 	public bool IncognitoPlayerNames = false;
 
@@ -57,6 +59,9 @@ public class EditorConfig {
 	// Object Editor
 
 	public bool AutoResizeObjectEditor = false;
+	public bool CombineExpressions = true;
+	public bool LinkExpressions = false;
+	public bool UnlockSliders = false;
 	
 	// Pose View
 
