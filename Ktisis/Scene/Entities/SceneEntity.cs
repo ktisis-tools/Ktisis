@@ -77,7 +77,7 @@ public abstract class SceneEntity : IComposite {
 	}
 
 	public IEnumerable<SceneEntity> Recurse() {
-		foreach (var child in this.Children) {
+		foreach (var child in this._children) {
 			yield return child;
 			foreach (var reChild in child.Recurse())
 				yield return reChild;
