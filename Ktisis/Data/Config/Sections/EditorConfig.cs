@@ -26,6 +26,7 @@ public class EditorConfig {
 	public bool HideToasts = true;
 
 
+
 	public bool IncognitoPlayerNames = false;
 
 	public bool UseLegacyWindowBehavior = false;
