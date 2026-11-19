@@ -1,15 +1,22 @@
 using System;
 
+using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
+
 using Ktisis.Data.Config.Gobos;
 using Ktisis.Scene.Entities.World;
 using Ktisis.Data.Files;
 using Ktisis.Data.Serialization;
+using CsLight = FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer.LightType;
+using LightType = Ktisis.Data.Files.LightType;
 
 namespace Ktisis.Editor.Lights;
+
 
 public class EntityLightConverter {
 	private readonly GoboSchema _goboSchema;
     private LightEntity _light;
+
+
 
 	public EntityLightConverter(LightEntity light) {
 		this._light = light;
@@ -21,11 +28,11 @@ public class EntityLightConverter {
 		var light = sceneLight != null ? sceneLight->RenderLight : null;
 		if (light == null) return;
 
+		light->LightType = (CsLight)file.LightType;
         this._light.Flags |= LightEntityFlags.Update;
         this._light.Name = file.Nickname;
 
         light->Flags = file.Flags;
-        light->LightType = file.LightType;
         // light->Transform = file.Transform; TODO
         light->Color.RGB = file.RGB;
         light->Color.Intensity = file.Intensity;
@@ -57,7 +64,7 @@ public class EntityLightConverter {
 		if (light == null) return;
 
         file.Flags = light->Flags;
-        file.LightType = light->LightType;
+        file.LightType = (LightType)light->LightType;
         // file.Transform = light->Transform; TODO: local and world transform saving - scenelight vs renderlight transform?
         file.RGB = light->Color.RGB;
         file.Intensity = light->Color.Intensity;
