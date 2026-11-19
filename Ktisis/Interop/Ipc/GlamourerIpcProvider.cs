@@ -88,6 +88,10 @@ public class GlamourerIpcProvider {
 	public void ApplyState(string state, int index) {
 		this._applyState.Invoke(state, index, Key);
 	}
+	
+	public string? GetState(int index) {
+		return this._getState.Invoke(index, Key).Item2;
+	}
 
 	public void Unlock() => this._unlockAll.Invoke(Key);
 
