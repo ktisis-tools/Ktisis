@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
+using Dalamud;
+using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Hooking;
 using Dalamud.Plugin;
@@ -31,9 +35,11 @@ public sealed class PosingModule : HookModule {
 	private readonly PosingManager Manager;
 	private readonly ActorService _actors;
 	private readonly IpcProvider _ipc;
+	private readonly ISigScanner _sigScanner;
 
 	public event SkeletonInitHandler? OnSkeletonInit;
 	public event Action? OnDisconnect;
+	private List<BytePatch> Patches = new List<BytePatch>();
 
 	public PosingModule(
 		IHookMediator hook,
@@ -41,11 +47,13 @@ public sealed class PosingModule : HookModule {
 		ActorService actors,
 		ContextManager contextManager,
 		IDalamudPluginInterface dpi,
-		JsonFileSerializer fileSerializer
+		JsonFileSerializer fileSerializer,
+		ISigScanner sigScanner
 	) : base(hook) {
 		unsafe {
-			_schedulerTimelineVirtualTable = (SchedulerTimeline.SchedulerTimelineVirtualTable*)dpi.GetService<ISigScanner>()?.GetStaticAddressFromSig("48 8D 05 ?? ?? ?? ?? 48 8B D9 ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 93");
+			this._schedulerTimelineVirtualTable = (SchedulerTimeline.SchedulerTimelineVirtualTable*)dpi.GetService<ISigScanner>()?.GetStaticAddressFromSig("48 8D 05 ?? ?? ?? ?? 48 8B D9 ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 93");
 		}
+		this._sigScanner = sigScanner;
 		this.Manager = manager;
 		this._actors = actors;
 		this._ipc = new IpcProvider(contextManager, dpi, fileSerializer);
@@ -59,16 +67,25 @@ public sealed class PosingModule : HookModule {
 
 	public override void EnableAll() {
 		base.EnableAll();
+		this.Patches.Add(new BytePatch("48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 41 54 41 56 48 83 EC ?? 48 8B 59", this._sigScanner));
+		this.Patches.Add(new BytePatch("40 53 57 41 54 41 55 48 83 EC ?? ?? 48 ?? ?? ?? ?? ?? ?? ?? 4C", this._sigScanner));
 		this.IsEnabled = true;
 		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
 
 	public override void DisableAll() {
 		base.DisableAll();
+		foreach (var p in this.Patches)
+			p.Dispose();
 		this.IsEnabled = false;
 		this._ipc.InvokePosingChanged(this.IsEnabled);
 	}
-	
+	public override void Dispose() {
+		foreach (var p in this.Patches)
+			p.Dispose();
+		base.Dispose();
+	}
+
 	// Posing hooks - thanks to perchbird (@lmcintyre) for his initial implementation of these.
 	// https://github.com/ktisis-tools/Ktisis/pull/8
 	
