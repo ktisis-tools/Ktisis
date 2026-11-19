@@ -12,6 +12,8 @@ using Dalamud.Plugin.Services;
 
 using Newtonsoft.Json;
 
+using FFXIVClientStructs.FFXIV.Client.Game;
+
 using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Data.Config;
@@ -22,6 +24,8 @@ using Ktisis.Interface.Types;
 using Ktisis.Localization;
 using Ktisis.Interface.Overlay;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Modules;
+using Ktisis.Services.Game;
 
 namespace Ktisis.Interface.Windows;
 
@@ -30,6 +34,7 @@ public class DebugWindow : KtisisWindow {
 	private readonly GuiManager _gui;
 	private readonly IFramework _framework;
 	private readonly TransformTable _transformTable;
+	private readonly FestivalService _festivalService;
 	
 	private readonly FaceLibraryGenerator _faceLibGen;
 
@@ -71,12 +76,14 @@ public class DebugWindow : KtisisWindow {
 		FaceLibraryGenerator faceLibGen,
 		IDalamudPluginInterface dpi,
 		ConfigManager cfg,
-		LocaleManager locale
+		LocaleManager locale,
+		FestivalService festivalService
 	) : base(
 		"Debug Window", windowId:"###KtisisDebug"
 	) {
 		this._ctx = ctx;
 		this._gui = gui;
+		this._festivalService = festivalService;
 		this._framework = framework;
 
 		// create our IPC subs from DPI
@@ -289,8 +296,12 @@ public class DebugWindow : KtisisWindow {
 	}
 
 	private void DrawManagerTab() {
-		ImGui.Text("TODO");
+		if (ImGui.Button("Spawn Moonfire Faire")) {
+			this._festivalService.SetFestivals(new GameMain.Festival(){Id = 174, Phase = 0});
+		}
 	}
+	
+	
 
 	private void DrawDiagnosticsTab() {
 		// existing debug text from overlay
