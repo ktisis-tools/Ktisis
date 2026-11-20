@@ -129,7 +129,7 @@ public class CustomizeEditor(ActorEntity actor) : ICustomizeEditor {
 
 	public unsafe uint GetModelId() {
 		if (!actor.IsValid)
-			throw new Exception($"Actor entity '{actor.Name}' is invalid.");
+			return uint.MaxValue;
 		return actor.Appearance.ModelId ?? GetGameModel(actor.Character);
 	}
 
