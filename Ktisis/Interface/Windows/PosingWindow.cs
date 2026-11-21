@@ -222,18 +222,18 @@ public class PosingWindow : KtisisWindow {
 	private void DrawSideMenu(ActorEntity target) {
 		using var _ = ImRaii.Group();
 		
-		this.DrawViewSelect();
+		this.DrawViewSelect(target);
 		for (var i = 0; i < 3; i++) ImGui.Spacing();
 		this.DrawImportExport(target);
 	}
 
-	private void DrawViewSelect() {
+	private void DrawViewSelect(ActorEntity target) {
 		using var _ = ImRaii.Group();
 
 		ImGui.Text(Ktisis.Locale.Translate("pose_view.view_chooser"));
 		
 		foreach (var value in Enum.GetValues<ViewEnum>()) {
-			if (value == ViewEnum.Custom && !this._target!.Pose!.BoneExists("iv_c_mune_l")) {
+			if (value == ViewEnum.Custom && !(target.Pose is not null && target.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("BottomIvcs")!.Bones))) {
 				if (this._view == ViewEnum.Custom)
 					this._view = ViewEnum.Face;
 				continue;
@@ -294,7 +294,7 @@ public class PosingWindow : KtisisWindow {
 				break;
 
 			case ViewEnum.Custom:
-				if (!this.IsTargetSkeletonCustom()) {
+				if (!this.IsTargetSkeletonCustom(target)) {
 					this._view = ViewEnum.Face;
 					goto default;
 				}
@@ -303,10 +303,10 @@ public class PosingWindow : KtisisWindow {
 				ImGui.SameLine();
 				if(this._ctx.Config.Categories.ShowNsfwBones)
 					using (ImRaii.Group()) {
-						if (this._target!.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("PenisIvcs")!.Bones)) {
+						if (target.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("PenisIvcs")!.Bones)) {
 							this.DrawView(frame, "Penis", 0.20f, 0.40f);
 						}
-						if (this._target!.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("VaginaIvcs")!.Bones)) {
+						if (target.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("VaginaIvcs")!.Bones)) {
 							this.DrawView(frame, "Vagina", 0.20f, 0.20f);
 						}
 						this.DrawView(frame, "Anus", 0.20f, 0.20f);
@@ -335,10 +335,10 @@ public class PosingWindow : KtisisWindow {
 	}
 
 
-	private unsafe bool IsTargetSkeletonCustom() { 
-		if(this._target?.Pose == null) return true;
-		if(this._target.Pose.GetSkeleton() == null) return true;	
-		return this._target.Pose.GetSkeleton()->SkeletonResourceHandles[0]->FileName.ContainsString("chara/human/c");
+	private unsafe bool IsTargetSkeletonCustom(ActorEntity target) { 
+		if(target.Pose == null) return true;
+		if(target.Pose.GetSkeleton() == null) return true;	
+		return target.Pose.GetSkeleton()->SkeletonResourceHandles[0]->FileName.ContainsString("chara/human/c");
 	}
 
 	private void DrawView(
