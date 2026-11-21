@@ -581,7 +581,7 @@
 				</Bones>
 				<Preset Name="Body (Custom)" />
 			</Category>
-			<Category Id="VaginaIvcs" IsNsfw="true">
+                <Category Id="VaginaIvcs" IsNsfw="true">
 				<Bones>
 					iv_omanko
 					iv_kuritto

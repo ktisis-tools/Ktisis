@@ -9,6 +9,7 @@ using RenderSkeleton = FFXIVClientStructs.FFXIV.Client.Graphics.Render.Skeleton;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Bones;
 using Ktisis.Editor.Expressions.Types;
 using Ktisis.Editor.Posing.Ik;
 using Ktisis.Editor.Posing.Types;
@@ -209,7 +210,9 @@ public class EntityPose : SkeletonGroup, ISkeleton, IConfigurable {
 
 	public bool AnyBoneExists(string[] names)
 		=> this.BoneMap.Values.Any(bone => names.Contains(bone.Info.Name));
-
+	public bool AnyBoneExists(List<CategoryBone> names)
+		=> this.BoneMap.Values.Any(bone => names.Any(p => p.Name == bone.Info.Name));
+	
 	public BoneNode? TryResolveSibling(BoneNode bone) {
 		var name = bone.Info.Name;
 		if (!name.EndsWith("_l") && !name.EndsWith("_r")) return null;
