@@ -12,6 +12,7 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using Dalamud.Utility.Signatures;
 
+using FFXIVClientStructs.FFXIV.Client.Graphics.Physics;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.Havok.Animation.Rig;
 using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
@@ -91,11 +92,35 @@ public sealed class PosingModule : HookModule {
 	
 	// SetBoneModelSpace
 	
+	[Signature("4C 8B DC 49 89 5B ?? 49 89 73 ?? 55 57 41 54 41 56 41 57 49 8D 6B ?? 48 81 EC ?? ?? ?? ?? 41 0F 29 73", DetourName = nameof(StrangePhysicsFunction))]
+	private Hook<WeirdPhysicsDelegate> _weirdPhysicsHook = null!;
+	private delegate void WeirdPhysicsDelegate(nint a1);
+
+	private unsafe void StrangePhysicsFunction(nint a1) { }
+
 	[Signature("48 8B C4 48 89 58 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ?? ?? ?? ?? 0F 29 70 B8 0F 29 78 A8 44 0F 29 40 ?? 44 0F 29 48 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B B1", DetourName = nameof(SetBoneModelSpace))]
 	private Hook<SetBoneModelSpaceDelegate> _setBoneModelSpaceHook = null!;
-	private delegate ulong SetBoneModelSpaceDelegate(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate);
+	private unsafe delegate ulong SetBoneModelSpaceDelegate(PartialSkeleton* partial, ushort boneId, hkQsTransformf* transform, bool enableSecondary, bool enablePropagate);
+	private unsafe ulong SetBoneModelSpace(PartialSkeleton* partial, ushort boneId, hkQsTransformf* transform, bool enableSecondary, bool enablePropagate) {
+		if (boneId is 20 or 21) {
+			transform->Scale = (partial->GetHavokPose(0)->ModelPose.Data + boneId)->Scale;
+			transform->Rotation = (partial->GetHavokPose(0)->ModelPose.Data + boneId)->Rotation;
+		}
 
-	private ulong SetBoneModelSpace(nint partial, ushort boneId, nint transform, bool enableSecondary, bool enablePropagate) => boneId;
+		return this._setBoneModelSpaceHook.Original.Invoke(partial, boneId, transform, enableSecondary, enablePropagate);
+	}
+	
+	[Signature("?? ?? ?? 4C 69 C0 ?? ?? ?? ?? 48 8B 41 ?? 49 8B 8C 00", DetourName = nameof(GetBoneModelSpace))]
+	private Hook<GetBoneModelSpaceDelegate> _getBoneModelSpaceHook = null!;
+	private unsafe delegate hkQsTransformf* GetBoneModelSpaceDelegate(Skeleton* a1, short* a2);
+
+	private unsafe hkQsTransformf* GetBoneModelSpace(Skeleton* a1, short* a2) {
+		
+		if ((a2[1] == 20 || a2[1] == 21 || a2[1] == 101) && a2[0] == 0)
+			a1->PartialSkeletons[a2[0]].GetHavokPose(0)->BoneFlags.Data[a2[1]] = 0x0;
+
+		return this._getBoneModelSpaceHook.Original.Invoke(a1, a2);
+	}
 	
 	// SyncModelSpace
 
