@@ -4,6 +4,8 @@ using System;
 using Ktisis.Editor.Transforms;
 using Dalamud.Bindings.ImGuizmo;
 
+using Ktisis.Interface.Components.Transforms;
+
 namespace Ktisis.Data.Config.Sections;
 
 // TODO: replace with actual gizmo style
@@ -82,5 +84,15 @@ public class GizmoConfig {
 	public void SetNextMirrorRotation() {
 		var count = Enum.GetNames(typeof(MirrorMode)).Length;
 		this.MirrorRotation = (MirrorMode)((int)(this.MirrorRotation + 1) % count);
+	}
+
+	public void SetNextOperation() {
+		Operation = Operation switch {
+			TransformTable.PositionOp => TransformTable.RotateOp,
+			TransformTable.RotateOp => TransformTable.ScaleOp,
+			TransformTable.ScaleOp => TransformTable.PositionOp,
+			
+			_ => ImGuizmoOperation.Translate,
+		};
 	}
 }
