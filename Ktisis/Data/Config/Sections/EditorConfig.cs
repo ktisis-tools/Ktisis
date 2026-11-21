@@ -25,6 +25,8 @@ public class EditorConfig {
 	public bool UpdateActorCameraPositions = true;
 	public bool HideToasts = true;
 
+
+
 	public bool IncognitoPlayerNames = false;
 
 	public bool UseLegacyWindowBehavior = false;
@@ -66,6 +68,13 @@ public class EditorConfig {
 	// Pose View
 
 	public bool FlyoutOpen = false;
+	
+	// Tweaks
+
+	public bool DisableHighlighting = false;
+	public bool DisableCameraDofStartup = false;
+	public bool DisableAnimationLoop = false;
+	public bool HideToasts = false;
 	
 	// Helpers
 
