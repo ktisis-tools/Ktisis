@@ -21,6 +21,7 @@ public class LocaleManager : IDisposable {
 	private readonly IDalamudPluginInterface _dpi;
 	
 	private readonly LocaleDataLoader Loader = new();
+	public readonly LocaleGroupManager Groups;
 
 	private static Dictionary<string, string> localeFallbackMap = new() {
 		{ "zh_SG", "zh_CN" },
@@ -39,12 +40,14 @@ public class LocaleManager : IDisposable {
 		IDalamudPluginInterface dpi
 	) {
 		this._dpi = dpi;
+		this.Groups = new LocaleGroupManager(this);
 	}
 
 	private Configuration? Config => this._cfg._isLoaded ? this._cfg.File : null;
 
 	public void Initialize(ConfigManager cfg) {
 		this._cfg = cfg;
+		this.Groups.Initialize();
 		foreach (var resource in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(s => s.StartsWith("Ktisis.Localization.Data")))
 			if (this.AvailableLocales.All(l => l.TechnicalName != resource.Split('.')[3]))
 				this.AvailableLocales.Add(this.Loader.LoadMeta(resource.Split('.')[3]));
@@ -149,5 +152,6 @@ public class LocaleManager : IDisposable {
 
 	public void Dispose() {
 		this._dpi.LanguageChanged -= this.LanguageChanged;
+		this.Groups.Dispose();
 	}
 }
