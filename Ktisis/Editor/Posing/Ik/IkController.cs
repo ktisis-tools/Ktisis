@@ -21,7 +21,7 @@ public interface IIkController {
 
 	public int GroupCount { get; }
 	public IEnumerable<(string name, IIkGroup group)> GetGroups();
-	public bool TrySetupGroup(string name, CcdGroupParams param, out CcdGroup? group);
+	public bool TrySetupGroup(string name, CcdGroupParams param, out CcdGroup? group, short partialIndex = 0);
 	public bool TrySetupGroup(string name, TwoJointsGroupParams param, out TwoJointsGroup? group);
 
 	public void Solve(bool frozen = false);
@@ -135,12 +135,12 @@ public class IkController : IIkController {
 	public IEnumerable<(string name, IIkGroup group)> GetGroups()
 		=> this.Groups.Select(pair => (pair.Key, pair.Value));
 
-	public unsafe bool TrySetupGroup(string name, CcdGroupParams param, out CcdGroup? group) {
+	public unsafe bool TrySetupGroup(string name, CcdGroupParams param, out CcdGroup? group, short partialIndex) {
 		group = null;
 		
 		Ktisis.Log.Verbose($"Setting up group for CCD IK: {name}");
 
-		if (this.Skeleton == null || SkeletonPoseData.TryGet(this.Skeleton, 0, 0) is not { } data)
+		if (this.Skeleton == null || SkeletonPoseData.TryGet(this.Skeleton, partialIndex, 0) is not { } data)
 			return false;
 		
 		if (this.Groups.TryGetValue(name, out var value))
