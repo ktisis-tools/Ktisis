@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices.Marshalling;
 
 using Dalamud.Interface;
 
@@ -260,11 +261,11 @@ public class SelectableGui {
 		}
 	}
 
-	public static List<ImRect> WindowOverlaps() {
+	public unsafe static List<ImRect> WindowOverlaps() {
 		var windowList = new List<ImRect>();
 
 		foreach (var window in ImGui.GetCurrentContext().Windows.Where(w => w.WasActive)) {
-			if (window.Pos != Vector2.Zero)
+			if (window.Pos != Vector2.Zero && Utf8StringMarshaller.ConvertToManaged(window.Name) is { } name && !name.Contains("##Gizmo2D"))
 				windowList.Add(new ImRect(min:window.Pos, max:window.Size+window.Pos));
 		}
 		return windowList;
