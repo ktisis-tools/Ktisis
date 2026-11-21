@@ -327,9 +327,24 @@ public class DebugWindow : KtisisWindow {
 			var t = bone.GetTransformModel() ?? new Transform();
 			ImGui.Spacing();
 			ImGui.Text($"Havok (Matrix Decompose / Raw Transform)");
-			ImGui.Text($"Position:\n\tX: {pos.X} / {t.Position.X}\n\tY: {pos.Y} / {t.Position.Y}\n\tZ: {pos.Z} / {t.Position.Z}");
-			ImGui.Text($"Rotation:\n\tX: {rot.X} / {t.Rotation.X}\n\tY: {rot.Y} / {t.Rotation.Y}\n\tZ: {rot.Z} / {t.Rotation.Z}\n\tW: {rot.W} / {t.Rotation.W}");
-			ImGui.Text($"Scale:\n\tX: {scl.X} / {t.Scale.X}\n\tY: {scl.Y} / {t.Scale.Y}\n\tZ: {scl.Z} / {t.Scale.Z}");
+			unsafe {
+				if (ImGui.Button("Copy Bone Position Address")) { 
+					var address = bone.GetPose()->ModelPose.Data + bone.Info.BoneIndex;
+					ImGui.SetClipboardText($"{(nint)address:X8}");
+				}
+				ImGui.Text($"Position:\n\tX: {pos.X} / {t.Position.X}\n\tY: {pos.Y} / {t.Position.Y}\n\tZ: {pos.Z} / {t.Position.Z}");
+				if (ImGui.Button("Copy Bone Rotation Address (pos+0x10)")) { 
+					var address = bone.GetPose()->ModelPose.Data + bone.Info.BoneIndex;
+					ImGui.SetClipboardText($"{(nint)address+0x10:X8}");
+				}
+				ImGui.Text($"Rotation:\n\tX: {rot.X} / {t.Rotation.X}\n\tY: {rot.Y} / {t.Rotation.Y}\n\tZ: {rot.Z} / {t.Rotation.Z}\n\tW: {rot.W} / {t.Rotation.W}");
+
+				if (ImGui.Button("Copy Bone Scale Address (pos+0x20)")) { 
+					var address = bone.GetPose()->ModelPose.Data + bone.Info.BoneIndex;
+					ImGui.SetClipboardText($"{(nint)address+0x20:X8}");
+				}
+				ImGui.Text($"Scale:\n\tX: {scl.X} / {t.Scale.X}\n\tY: {scl.Y} / {t.Scale.Y}\n\tZ: {scl.Z} / {t.Scale.Z}");
+			}
 		}
 	}
 
