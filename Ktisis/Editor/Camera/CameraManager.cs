@@ -46,6 +46,8 @@ public class CameraManager : ICameraManager {
 	) {
 		this._context = context;
 		this._scope = scope;
+		
+		Ktisis.Locale.LocaleChanged += this.OnLocaleChange;
 	}
 	
 	// Initialization
@@ -222,6 +224,14 @@ public class CameraManager : ICameraManager {
 		}
 		return Ktisis.Locale.Translate("cameras.new");
 	}
+
+	private void OnLocaleChange() {
+		this.WorkCamera?.Name = Ktisis.Locale.Translate("cameras.work");
+		foreach (var camera in this.CameraList)
+			camera.Name = camera == this.Default
+				? Ktisis.Locale.Translate("cameras.main")
+				: $"{Ktisis.Locale.Translate("cameras.camera")} {camera.Name.Split(" ")[^1]}";
+	}
 	
 	// Camera helpers
 
@@ -249,6 +259,7 @@ public class CameraManager : ICameraManager {
 		} catch (Exception err) {
 			Ktisis.Log.Error($"Failed to dispose camera manager!\n{err}");
 		}
+		Ktisis.Locale.LocaleChanged -= this.OnLocaleChange;
 		GC.SuppressFinalize(this);
 	}
 }
