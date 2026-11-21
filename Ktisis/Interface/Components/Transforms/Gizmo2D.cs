@@ -67,8 +67,17 @@ public class Gizmo2D {
 
 		var cursorPos = ImGui.GetCursorScreenPos();
 		var innerSize = ImGui.GetContentRegionAvail();
-		ImGui.SetNextWindowPos(ImGui.GetMainViewport().Pos);
-		ImGui.SetNextWindowSize(ImGui.GetMainViewport().Size);
+		if ((ImGui.GetCurrentContext().ConfigFlagsCurrFrame & ImGuiConfigFlags.ViewportsEnable) != 0) {
+			var s = GetViewportBoundingRect();
+			ImGui.SetNextWindowPos(s.GetTL());
+			ImGui.SetNextWindowSize(s.GetSize());
+			
+		} else {
+			ImGui.SetNextWindowPos(ImGui.GetMainViewport().Pos);
+			ImGui.SetNextWindowSize(ImGui.GetMainViewport().Size);
+		}
+
+
 		
 		ImGui.Begin($"##Gizmo2D{nameAppend}", ImGuiWindowFlags.ChildWindow | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoDecoration);
 		
@@ -79,6 +88,20 @@ public class Gizmo2D {
 		this.Gizmo.BeginFrame(drawPos, drawSize);
 		this.Gizmo.PushDrawList();
 		DrawGizmoCircle(drawPos, drawSize, drawSize.X, this._cfg.Gizmo2DScaleFactor);
+	}
+
+	private static ImRect GetViewportBoundingRect() {
+		float bottom = 0, top = 0, left = 0, right = 0;
+
+		foreach (var p in ImGui.GetCurrentContext().PlatformIO.Monitors) {
+
+			var rect = new ImRect(p.MainPos, p.MainPos + p.MainSize);
+			bottom = float.Max(bottom, rect.GetBR().Y);
+			top = float.Min(top, rect.GetTL().Y);
+			left = float.Min(left, rect.GetTL().X);
+			right = float.Max(right, rect.GetBR().X);
+		}
+		return new ImRect(new Vector2(left, top), new Vector2(right, bottom));
 	}
 	
 	private static void DrawGizmoCircle(Vector2 pos, Vector2 size, float width, float scaleFactor) {

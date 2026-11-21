@@ -56,9 +56,9 @@ public class TransformTable {
 	private Vector3 Angles = Vector3.Zero;
 	private Quaternion Value = Quaternion.Identity;
 
-	private const ImGuizmoOperation PositionOp = ImGuizmoOperation.Translate;
-	private const ImGuizmoOperation RotateOp = ImGuizmoOperation.Rotate;
-	private const ImGuizmoOperation ScaleOp = ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu;
+	internal const ImGuizmoOperation PositionOp = ImGuizmoOperation.Translate;
+	internal const ImGuizmoOperation RotateOp = ImGuizmoOperation.Rotate;
+	internal const ImGuizmoOperation ScaleOp = ImGuizmoOperation.Scale | ImGuizmoOperation.Scaleu;
 
 	private Transform Transform = new();
 	
