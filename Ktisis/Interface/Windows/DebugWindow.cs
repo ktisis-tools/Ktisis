@@ -10,6 +10,10 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Ipc;
 using Dalamud.Plugin.Services;
 
+using FFXIVClientStructs.Havok.Animation.Rig;
+
+using Ktisis.Common.Extensions;
+
 using Newtonsoft.Json;
 
 using Ktisis.Common.Utility;
@@ -21,7 +25,9 @@ using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Types;
 using Ktisis.Localization;
 using Ktisis.Interface.Overlay;
+using Ktisis.Scene.Entities.Game;
 using Ktisis.Scene.Entities.Skeleton;
+using Ktisis.Scene.Types;
 
 namespace Ktisis.Interface.Windows;
 
@@ -115,6 +121,7 @@ public class DebugWindow : KtisisWindow {
 		DrawTab("IPC Manager", this.DrawManagerTab);
 		DrawTab("Diagnostics", this.DrawDiagnosticsTab);
 		DrawTab("Expressions", this.DrawExpressionsTab);
+		DrawTab("Havok", this.DrawHavokTab);
 	}
 	private static void DrawTab(string name, Action handler) {
 		using var tab = ImRaii.TabItem(name);
@@ -288,9 +295,76 @@ public class DebugWindow : KtisisWindow {
 		}
 	}
 
+
 	private void DrawManagerTab() {
 		ImGui.Text("TODO");
 	}
+	private unsafe void DrawHavokTab() {
+		var selection = this._ctx.Selection.GetFirstSelected();
+
+		BoneNode? bone = null;
+		if (selection?.Type == EntityType.BoneNode) {
+			bone = (BoneNode?)selection;
+			selection = ((BoneNode)selection).Pose.Parent;
+		}
+
+		if (selection?.Type != EntityType.Actor)
+			selection = this._ctx.Scene.Recurse().OfType<ActorEntity>().FirstOrDefault(a => a.Actor.GetSkeleton() != null);
+		
+
+			
+		if (selection is ActorEntity actor && actor.GetHuman()->Skeleton != null) {
+			ImGui.Text($"Targeting {actor.Name}");
+			var sk = actor.GetHuman()->Skeleton;
+			for (var i = 0; i < sk->PartialSkeletonCount; i++) {
+				if(sk->PartialSkeletons[i].HavokPoses.ContainsAnyExcept((ulong)0))
+					if (ImGui.CollapsingHeader($"{GetPartialName(i)}")) {
+						ImGui.Text($"Connected Bone Index: {(nint)sk->PartialSkeletons[i].ConnectedBoneIndex:X8}");
+						if(sk->SkeletonResourceHandles[i] != null)
+							ImGui.Text($"Loaded from: {sk->SkeletonResourceHandles[i]->FileName}");
+						ImGui.Indent();
+						foreach (hkaPose* pose in sk->PartialSkeletons[i].HavokPoses) {
+							if (pose != null) {
+								ImGui.Separator();
+								ImGui.Text($"Pose {sk->PartialSkeletons[i].HavokPoses.IndexOf((ulong)pose)}");
+								ImGui.Text($"Pose Address: {(nint)pose:X8} ");
+								ImGui.SameLine();
+								if (ImGui.Button($"Copy##{(nint)pose}")) {
+									ImGui.SetClipboardText($"{(nint)pose:X8}");
+								}
+								if (ImGui.CollapsingHeader($"Connected Bone Info##{(nint)pose}")) {
+									if(sk->PartialSkeletons[i].ConnectedBoneIndex < pose->Skeleton->Bones.Length)
+										PrintSRT(pose, sk->PartialSkeletons[i].ConnectedBoneIndex);
+									else 
+										PrintSRT(pose, 1);
+								}
+								if (bone != null && bone.Info.PartialIndex == i) {
+									if (ImGui.CollapsingHeader($"Selected Bone Info##{(nint)pose}")) {
+										PrintSRT(pose, bone.Info.BoneIndex);
+									}
+								}
+							}
+						}
+						ImGui.Unindent(); 
+					}
+			}
+		}
+	}
+
+	private unsafe void PrintSRT(hkaPose* pose, int id) {
+		var local = pose->LocalPose.Data + id;
+		var model = pose->ModelPose.Data + id;
+		ImGui.Text($"Local in Sync: {pose->LocalInSync} Model in Sync: {pose->ModelInSync}");
+		ImGui.Text($"Position:\n\tX: {local->Translation.X} / {model->Translation.X}\n\tY: {local->Translation.Y} / {model->Translation.Y}\n\tZ: {local->Translation.Z} / {model->Translation.Z}");
+		ImGui.Text($"Rotation:\n\tX: {local->Rotation.X} / {model->Rotation.X}\n\tY: {local->Rotation.Y} / {model->Rotation.Y}\n\tZ: {local->Rotation.Z} / {model->Rotation.Z}\n\tW: {local->Rotation.W} / {model->Rotation.W}");
+		ImGui.Text($"Scale:\n\tX: {local->Scale.X} / {model->Scale.X}\n\tY: {local->Scale.Y} / {model->Scale.Y}\n\tZ: {local->Scale.Z} / {model->Scale.Z}");
+	}
+	private string GetPartialName(int a) => a switch {
+		0 => "Body",
+		1 => "Face",
+		2 => "Hair Extras",
+		_ => "Unknown"
+	};
 
 	private void DrawDiagnosticsTab() {
 		// existing debug text from overlay
@@ -324,12 +398,28 @@ public class DebugWindow : KtisisWindow {
 				out var rot,
 				out var pos
 			);
+			ImGui.Text($"Bone Index: {bone.Info.BoneIndex}");
 			var t = bone.GetTransformModel() ?? new Transform();
 			ImGui.Spacing();
 			ImGui.Text($"Havok (Matrix Decompose / Raw Transform)");
-			ImGui.Text($"Position:\n\tX: {pos.X} / {t.Position.X}\n\tY: {pos.Y} / {t.Position.Y}\n\tZ: {pos.Z} / {t.Position.Z}");
-			ImGui.Text($"Rotation:\n\tX: {rot.X} / {t.Rotation.X}\n\tY: {rot.Y} / {t.Rotation.Y}\n\tZ: {rot.Z} / {t.Rotation.Z}\n\tW: {rot.W} / {t.Rotation.W}");
-			ImGui.Text($"Scale:\n\tX: {scl.X} / {t.Scale.X}\n\tY: {scl.Y} / {t.Scale.Y}\n\tZ: {scl.Z} / {t.Scale.Z}");
+			unsafe {
+				if (ImGui.Button("Copy Bone Position Address")) {
+					var address = bone.GetPose()->ModelPose.Data + bone.Info.BoneIndex;
+					ImGui.SetClipboardText($"{(nint)address:X8}");
+				}
+				ImGui.Text($"Position:\n\tX: {pos.X} / {t.Position.X}\n\tY: {pos.Y} / {t.Position.Y}\n\tZ: {pos.Z} / {t.Position.Z}");
+				if (ImGui.Button("Copy Bone Rotation Address (pos+0x10)")) {
+					var address = bone.GetPose()->ModelPose.Data + bone.Info.BoneIndex;
+					ImGui.SetClipboardText($"{(nint)address + 0x10:X8}");
+				}
+				ImGui.Text($"Rotation:\n\tX: {rot.X} / {t.Rotation.X}\n\tY: {rot.Y} / {t.Rotation.Y}\n\tZ: {rot.Z} / {t.Rotation.Z}\n\tW: {rot.W} / {t.Rotation.W}");
+
+				if (ImGui.Button("Copy Bone Scale Address (pos+0x20)")) {
+					var address = bone.GetPose()->ModelPose.Data + bone.Info.BoneIndex;
+					ImGui.SetClipboardText($"{(nint)address + 0x20:X8}");
+				}
+				ImGui.Text($"Scale:\n\tX: {scl.X} / {t.Scale.X}\n\tY: {scl.Y} / {t.Scale.Y}\n\tZ: {scl.Z} / {t.Scale.Z}");
+			}
 		}
 	}
 
