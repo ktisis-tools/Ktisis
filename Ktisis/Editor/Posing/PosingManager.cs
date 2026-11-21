@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 
 using Dalamud.Game.ClientState.Objects.Types;
@@ -8,6 +9,7 @@ using Dalamud.Plugin.Services;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Render;
 using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+using FFXIVClientStructs.Havok.Animation.Rig;
 
 using Ktisis.Actions.Types;
 using Ktisis.Common.Extensions;
@@ -198,6 +200,43 @@ public class PosingManager : IPosingManager {
 				Final = final
 			});
 		});
+	}
+	public unsafe Task ResetSelectedBones(EntityPose pose,
+		PoseTransforms transforms = PoseTransforms.Rotation
+		) {
+		return this._framework.RunOnFrameworkThread(() => {
+			var converter = new EntityPoseConverter(pose);
+			var initial = converter.Save();
+			converter.ResetBones();
+			var final = converter.Save();
+
+			List<IMemento> mementos = [
+				new PoseMemento(converter) {
+					Modes = PoseMode.All,
+					Transforms = PoseTransforms.Position | PoseTransforms.Rotation,
+					Bones = null,
+					Initial = initial,
+					Final = final
+				}
+			];
+		});
+	}
+
+	
+	private IEnumerable<PartialBoneInfo> GetBoneSelectionFrom(IEnumerable<SkeletonNode> nodes, bool all = true) {
+		foreach (var node in nodes) {
+			switch (node) {
+				case BoneNode bone:
+					yield return bone.Info;
+					continue;
+				case SkeletonGroup group:
+					foreach (var bone in this.GetBoneSelectionFrom(all ? group.GetAllBones() : group.GetIndividualBones()))
+						yield return bone;
+					continue;
+				default:
+					continue;
+			}
+		}
 	}
 
 	public Task ApplyPartialReferencePose(EntityPose pose, int partialIndex) {

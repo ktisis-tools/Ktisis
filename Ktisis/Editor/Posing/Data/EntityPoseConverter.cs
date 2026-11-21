@@ -5,6 +5,9 @@ using System.Numerics;
 
 using Dalamud.Utility;
 
+using FFXIVClientStructs.Havok.Common.Base.Container.Array;
+using FFXIVClientStructs.Havok.Common.Base.Math.QsTransform;
+
 using Ktisis.Common.Utility;
 using Ktisis.Data.Files;
 using Ktisis.Editor.Posing.Types;
@@ -106,6 +109,25 @@ public class EntityPoseConverter(EntityPose target) {
 		pose->SetToReferencePose();
 		HavokPosing.SyncModelSpace(skeleton, partialIndex);
 		if (partialIndex > 0) return;
+
+		// handle child partials if we're reference posing main
+		for (var p = 1; p < skeleton->PartialSkeletonCount; p++)
+			HavokPosing.ParentSkeleton(skeleton, p);
+	}
+	
+	public unsafe void ResetBones() {
+		var skeleton = target.GetSkeleton();
+		if (skeleton == null) return;
+
+		var bones = this.GetSelectedBones();
+		
+		foreach (var bone in bones) {
+			skeleton->PartialSkeletons[bone.PartialIndex].GetHavokPose(0)->SyncLocalSpace();
+			var local = skeleton->PartialSkeletons[bone.PartialIndex].GetHavokPose(0)->AccessUnsyncedPoseLocalSpace()->Data + bone.BoneIndex;
+			local->Rotation = (skeleton->PartialSkeletons[bone.PartialIndex].GetHavokPose(0)->Skeleton->ReferencePose.Data + bone.BoneIndex)->Rotation;
+			(skeleton->PartialSkeletons[bone.PartialIndex].GetHavokPose(0)->AccessSyncedPoseModelSpace()->Data + bone.BoneIndex)->Rotation = skeleton->PartialSkeletons[bone.PartialIndex].GetHavokPose(0)->CalculateBoneModelSpace(bone.BoneIndex)->Rotation;
+		}
+		return;
 
 		// handle child partials if we're reference posing main
 		for (var p = 1; p < skeleton->PartialSkeletonCount; p++)

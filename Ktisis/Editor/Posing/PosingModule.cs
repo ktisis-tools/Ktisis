@@ -21,6 +21,7 @@ using Ktisis.Editor.Context;
 using Ktisis.Interop.Hooking;
 using Ktisis.Interop.Ipc;
 using Ktisis.Scene.Entities.Game;
+using Ktisis.Scene.Entities.Skeleton;
 using Ktisis.Services.Game;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -118,6 +119,10 @@ public sealed class PosingModule : HookModule {
 		this._syncModelSpaceHook.Original(pose);
 	}
 	
+	public unsafe void SynceModelSpace(EntityPose epose) {
+		var pose = epose.GetPose(0);
+		this._syncModelSpaceHook.Original(pose);
+	}
 	// CalcBoneModelSpace
 	[Signature("4C 8B DC 53 56 57 41 56 41 57 48 81 EC ?? ?? ?? ?? 41 0F 29 73", DetourName = nameof(DetourUnknown))]  // asm at 44 0F 11 50 ?? 48 8B 43 was causing drift, we jump over this function to avoid it
 	private Hook<DetourUnknownFunctDelegate> _unknownDetour = null!;
