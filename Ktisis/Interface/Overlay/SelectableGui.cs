@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices.Marshalling;
 
 using Dalamud.Interface;
 
@@ -10,6 +11,8 @@ using GLib.Widgets;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility;
+
+using FFXIVClientStructs.FFXIV.Client.Game;
 
 using FFXIVClientStructs.FFXIV.Client.LayoutEngine.Layer;
 
@@ -242,6 +245,12 @@ public class SelectableGui {
 				if (ptr == null || ptr->RenderLight == null) return;
 				if (ptr->RenderLight->LightType == LightType.Point) return;
 
+				if (light.IsSelected) {
+					HandleLightProjection(light);
+					//return; this will return when its fully setup, right now this is just empty
+				}
+
+	
 				var range = Math.Min(ptr->RenderLight->Range, 1);
 				var rot = light.GetTransform()?.Rotation;
 				if (rot == null) return;
@@ -250,21 +259,47 @@ public class SelectableGui {
 					rot *= (new Vector3(ptr->RenderLight->AreaAngle.X, ptr->RenderLight->AreaAngle.Y, 0) * MathHelpers.Rad2Deg).EulerAnglesToQuaternion();
 
 				var dir = Vector3.Transform(new Vector3(0, 0, range), (Quaternion)rot);
-				if (!CameraService.WorldToScreen(camera, worldPos + dir, out var endPos2d)) return;
 
+				var lightDirection = Vector3.Transform(Vector3.UnitZ, (Quaternion)rot);
+				var cameraToLight = worldPos - (Vector3)camera->Object.Position;
+				bool facing = Vector3.Dot(lightDirection, cameraToLight) > 0;
+				
 				var opacity = ImGuizmo.IsUsing() ? ctx.Config.Overlay.LineOpacityUsing : ctx.Config.Overlay.LineOpacity;
 				var drawList = ImGui.GetWindowDrawList();
 				var display = ctx.Config.GetEntityDisplay(light);
-				drawList.AddLine(pos2d, endPos2d, display.Color.SetAlpha(opacity), ctx.Config.Overlay.LineThickness);
+
+				if (!CameraService.WorldToScreen(camera, worldPos + dir, out var endPos2d)) return;
+				if (facing) {
+					drawList.AddLine(pos2d, endPos2d, display.Color.SetAlpha(opacity), ctx.Config.Overlay.LineThickness);
+				} else {
+					Vector2 d = (endPos2d - pos2d) / 11;
+					for (var i = 0; i < 11; i++) {
+						if (i % 2 == 1) continue;
+						drawList.AddLine(pos2d + d * i, pos2d + d * (i+1), display.Color.SetAlpha(opacity), ctx.Config.Overlay.LineThickness );
+					}
+				}
             }
+		}
+
+		private unsafe void HandleLightProjection(LightEntity light) {
+			var ptr = light.GetObject();
+			switch (ptr->RenderLight->LightType) {
+				case LightType.Plane:
+					break;
+				case LightType.Directional:
+					break;
+				case LightType.Spot:
+					//ptr->RenderLight->LightAngle
+					break;
+			}
 		}
 	}
 
-	public static List<ImRect> WindowOverlaps() {
+	public unsafe static List<ImRect> WindowOverlaps() {
 		var windowList = new List<ImRect>();
 
 		foreach (var window in ImGui.GetCurrentContext().Windows.Where(w => w.WasActive)) {
-			if (window.Pos != Vector2.Zero)
+			if (window.Pos != Vector2.Zero && Utf8StringMarshaller.ConvertToManaged(window.Name) is { } name && !name.Contains("##Gizmo2D"))
 				windowList.Add(new ImRect(min:window.Pos, max:window.Size+window.Pos));
 		}
 		return windowList;

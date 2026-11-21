@@ -272,12 +272,22 @@ public class ConfigWindow : KtisisWindow {
 			ImGui.AlignTextToFramePadding();
 			ImGui.Text(this.Locale.Translate("config.workspace.hintLocation.label"));
 			ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
-			using (var _combo = ImRaii.Combo("", this.Locale.Translate($"config.workspace.hintLocation.{this.Config.Editor.HintLocation.ToString()}")))
+			using (var _combo = ImRaii.Combo("##hint", this.Locale.Translate($"config.workspace.hintLocation.{this.Config.Editor.HintLocation.ToString()}")))
 				if (_combo.Success)
 					foreach (var loc in Enum.GetValues<HintLoc>())
 						if (ImGui.Selectable(this.Locale.Translate($"config.workspace.hintLocation.{loc.ToString()}"), loc == this.Config.Editor.HintLocation))
 							this.Config.Editor.HintLocation = loc;
 		}
+		ImGui.AlignTextToFramePadding();
+		ImGui.Text(this.Locale.Translate("config.workspace.previewSize.label"));
+		ImGui.SameLine();
+		using (var _combos = ImRaii.Combo("##size", this.Locale.Translate($"config.workspace.previewSize.{this.Config.Editor.PreviewSize.ToString()}")))
+			if (_combos.Success)
+				foreach (var size in Enum.GetValues<Size>())
+					if (ImGui.Selectable(this.Locale.Translate($"config.workspace.previewSize.{size.ToString()}"), size == this.Config.Editor.PreviewSize)) {
+						this.Config.Editor.PreviewSize = size;
+						this._context.Current?.Scene.Overlay.UpdateCharaViewSize(size);
+					}
 
 		ImGui.Spacing();
 
@@ -298,6 +308,15 @@ public class ConfigWindow : KtisisWindow {
 			this.DrawCustomLocations();
 		}
 
+		ImGui.Spacing();
+		if (ImGui.CollapsingHeader(this.Locale.Translate("config.workspace.tweakHeader"))) {
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.hideToasts"), ref this.Config.Editor.HideToasts);
+			this.DrawHint("config.workspace.hintHideToasts");
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleSelectHighlight"), ref this.Config.Editor.DisableHighlighting);
+			ImGui.Checkbox(this.Locale.Translate("config.workspace.toggleDof"), ref this.Config.Editor.DisableCameraDofStartup);
+			//ImGui.Checkbox(this.Locale.Translate("config.workspace.animLoop"), ref this.Config.Editor.DisableAnimationLoop); TODO: fix
+		}
+		
 		// add dummy to pad right side during toolbar mode
 		ImGui.SetCursorPosX(600);
 		ImGui.Dummy(Vector2.Zero);
@@ -510,6 +529,18 @@ public class ConfigWindow : KtisisWindow {
 			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
 				this.SetPoseViewImage(path => cfg.EarsPath = path);
 			this.DrawPoseViewPath(ref cfg.EarsPath, loc);
+		}
+		loc = this.Locale.Translate("config.poseview.feet");
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.ToesPath = path);
+			this.DrawPoseViewPath(ref cfg.ToesPath, loc);
+		}
+		loc = this.Locale.Translate("config.poseview.bodyex");
+		using (ImRaii.PushId($"poseview_{loc}")) {
+			if (Buttons.IconButtonTooltip(FontAwesomeIcon.FileImport, $"Load {loc} Image"))
+				this.SetPoseViewImage(path => cfg.CustomBodyPath = path);
+			this.DrawPoseViewPath(ref cfg.CustomBodyPath, loc);
 		}
 	}
 	//TODO: Translation

@@ -38,6 +38,7 @@ public class ContextBuilder {
 	private readonly McdfManager _mcdf;
 	private readonly IObjectTable _objectTable;
 
+
 	public ContextBuilder(
 		OverlayService overlay,
 		WorldService world,
@@ -80,6 +81,7 @@ public class ContextBuilder {
 		var sceneData = new SceneDataService(context, this._objectTable, this._framework);
 		var autoSave = new PoseAutoSave(context, this._framework, this._format, sceneData);
 		
+
 
 		var editor = new EditorState(context, scope) {
 			Actions = actions,

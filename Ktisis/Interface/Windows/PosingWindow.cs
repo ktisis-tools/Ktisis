@@ -11,10 +11,13 @@ using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 
+using FFXIVClientStructs.FFXIV.Client.Graphics.Scene;
+
 using GLib.Widgets;
 
 using Ktisis.Common.Extensions;
 using Ktisis.Common.Utility;
+using Ktisis.Data.Config.Bones;
 using Ktisis.Data.Config.Pose2D;
 using Ktisis.Data.Serialization;
 using Ktisis.Editor.Camera.Types;
@@ -45,13 +48,15 @@ public class PosingWindow : KtisisWindow {
 
 	private PoseViewSchema? _schema;
 	private ViewEnum _view = ViewEnum.Body;
+	private List<BoneCategory> customBones;
 
 	internal ActorEntity? _target;
 	private ITransformMemento? Transform;
 
 	private enum ViewEnum {
 		Body,
-		Face
+		Face,
+		Custom
 	}
 	
 	public PosingWindow(
@@ -74,6 +79,7 @@ public class PosingWindow : KtisisWindow {
 
 	public override void OnOpen() {
 		this._schema = SchemaReader.ReadPoseView();
+		
 	}
 	
 	public override void PreOpenCheck() {
@@ -227,6 +233,12 @@ public class PosingWindow : KtisisWindow {
 		ImGui.Text(Ktisis.Locale.Translate("pose_view.view_chooser"));
 		
 		foreach (var value in Enum.GetValues<ViewEnum>()) {
+			if (value == ViewEnum.Custom && !this._target!.Pose!.BoneExists("iv_c_mune_l")) {
+				if (this._view == ViewEnum.Custom)
+					this._view = ViewEnum.Face;
+				continue;
+			}
+
 			if (ImGui.RadioButton(value.ToString(), this._view == value))
 				this._view = value;
 		}
@@ -256,7 +268,7 @@ public class PosingWindow : KtisisWindow {
 				this.DrawView(frame, "Armor", 0.35f);
 				ImGui.SameLine();
 				using (ImRaii.Group()) {
-					this.DrawView(frame, "Hands", 0.30f, 0.60f);
+					this.DrawView(frame, "Hands", 0.30f, 0.40f);
 					
 					ImGui.Spacing();
 					
@@ -272,16 +284,43 @@ public class PosingWindow : KtisisWindow {
 					};
 
 					if (hasTail) {
-						this.DrawView(frame, "Tail", width, 0.40f);
+						this.DrawView(frame, "Tail", width, 0.20f);
 						if (isBunny) ImGui.SameLine();
 					}
 					
-					if (isBunny) this.DrawView(frame, "Ears", width, 0.40f, template);
+					if (isBunny) this.DrawView(frame, "Ears", width, 0.20f, template);
+
 				}
 				break;
-			default:
 
-					
+			case ViewEnum.Custom:
+				if (!this.IsTargetSkeletonCustom()) {
+					this._view = ViewEnum.Face;
+					goto default;
+				}
+
+				this.DrawView(frame, "CustomBody", 0.25f);
+				ImGui.SameLine();
+				if(this._ctx.Config.Categories.ShowNsfwBones)
+					using (ImRaii.Group()) {
+						if (this._target!.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("PenisIvcs")!.Bones)) {
+							this.DrawView(frame, "Penis", 0.20f, 0.40f);
+						}
+						if (this._target!.Pose!.AnyBoneExists(this._ctx.Config.Categories.GetByName("VaginaIvcs")!.Bones)) {
+							this.DrawView(frame, "Vagina", 0.20f, 0.20f);
+						}
+						this.DrawView(frame, "Anus", 0.20f, 0.20f);
+					}
+				ImGui.SameLine();
+				using (ImRaii.Group()) {
+					this.DrawView(frame, "Feet", 0.40f, 0.50f);
+					this.DrawView(frame, "HandsEx", 0.40f, 0.50f);
+				}
+
+
+				break;
+			
+			default:
 				this.DrawView(frame, "Face", 0.65f );
 				ImGui.SameLine();
 				using (ImRaii.Group()) {
@@ -293,6 +332,13 @@ public class PosingWindow : KtisisWindow {
 		
 		if (target.Pose != null)
 			frame.DrawBones(target.Pose);
+	}
+
+
+	private unsafe bool IsTargetSkeletonCustom() { 
+		if(this._target?.Pose == null) return true;
+		if(this._target.Pose.GetSkeleton() == null) return true;	
+		return this._target.Pose.GetSkeleton()->SkeletonResourceHandles[0]->FileName.ContainsString("chara/human/c");
 	}
 
 	private void DrawView(
