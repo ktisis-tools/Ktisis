@@ -5,15 +5,15 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGuizmo;
 using Dalamud.Interface.Utility;
 
 using GLib.Widgets;
 
 using Ktisis.Editor.Context.Types;
-using Ktisis.Editor.Transforms;
 using Ktisis.Editor.Transforms.Types;
+using Ktisis.Interface.Components.Transforms;
 using Ktisis.Interface.Widgets;
-using Ktisis.Scene.Decor;
 
 namespace Ktisis.Interface.Components.Workspace;
 
@@ -36,6 +36,7 @@ public class WorkspaceState {
 		using (ImRaii.ChildFrame(id, new Vector2(width, height)))
 		{
 			this.DrawContext();
+			this.DrawInputToggle();
 			this.DrawShowAll();
 			this.DrawOverlayToggle();
 		}
@@ -165,6 +166,44 @@ public class WorkspaceState {
 			foreach (var t in targets)
 				ImGui.Text(t.Name);
 		}
+	}
+
+	private void DrawInputToggle() {
+		using var _ = ImRaii.PushId("##OverlayInputToggle");
+		using var bgCol = ImRaii.PushColor(ImGuiCol.Button, 0);
+		
+		ImGui.SameLine();
+		
+		var avail = ImGui.GetContentRegionAvail();
+		var height = avail.Y - ImGui.GetCursorPosY() / 2;
+		ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail.X - height*3 - ImGui.GetStyle().ItemInnerSpacing.X);
+
+		if (Buttons.IconButton(GetOperationIcon(this._ctx.Config.Gizmo.Operation), new Vector2(height))) {
+			this._ctx.Config.Gizmo.SetNextOperation();
+		}
+
+		using (var popup = ImRaii.ContextPopup("##OverlayInputPopup")) {
+			if (popup.Success) {
+				if (ImGui.MenuItem(this._ctx.Locale.Translate("actions.Gizmo_SetTranslateMode"))) {
+					this._ctx.Config.Gizmo.Operation = TransformTable.PositionOp;
+				}
+				if (ImGui.MenuItem(this._ctx.Locale.Translate("actions.Gizmo_SetRotateMode"))) {
+					this._ctx.Config.Gizmo.Operation = TransformTable.RotateOp;
+				}
+				if (ImGui.MenuItem(this._ctx.Locale.Translate("actions.Gizmo_SetScaleMode"))) {
+					this._ctx.Config.Gizmo.Operation = TransformTable.ScaleOp;
+				}
+			}
+		}
+	}
+	
+	private FontAwesomeIcon GetOperationIcon(ImGuizmoOperation op) {
+		return op switch { 
+			TransformTable.PositionOp => FontAwesomeIcon.LocationArrow,
+			TransformTable.RotateOp => FontAwesomeIcon.ArrowsSpin,
+			TransformTable.ScaleOp => FontAwesomeIcon.Expand,
+			_ => FontAwesomeIcon.Question,
+		};
 	}
 
 	private void DrawShowAll() {
