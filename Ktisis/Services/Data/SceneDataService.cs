@@ -620,12 +620,16 @@ public class SceneDataService {
 			await this._framework.DelayTicks(15);
 			a.Name = actor.Chara.Nickname!;
 			var act = a.Actor;
-			
-			if (actor.PenumbraCollection != Guid.Empty && this._ctx.Plugin.Ipc.IsPenumbraActive)
-				if (this._ctx.Plugin.Ipc.GetPenumbraIpc().GetCollections().ContainsKey(actor.PenumbraCollection)) {
-					this._ctx.Plugin.Ipc.GetPenumbraIpc().SetCollectionForObject(act, actor.PenumbraCollection);
-					this._ctx.Plugin.Ipc.GetPenumbraIpc().Redraw(act.ObjectIndex);
-				}
+
+			_ = this._framework.RunOnFrameworkThread(() => {			
+				if (actor.PenumbraCollection != Guid.Empty && this._ctx.Plugin.Ipc.IsPenumbraActive)
+					if (this._ctx.Plugin.Ipc.GetPenumbraIpc().GetCollections().ContainsKey(actor.PenumbraCollection)) {
+						this._ctx.Plugin.Ipc.GetPenumbraIpc().SetCollectionForObject(act, actor.PenumbraCollection);
+						this._ctx.Plugin.Ipc.GetPenumbraIpc().Redraw(act.ObjectIndex);
+					}
+			}).ContinueWith((_)=> {
+				this.SetupActorPosition(actor, a);
+			});
 
 			
 			if (actor.CustomizePlus != Guid.Empty && this._ctx.Plugin.Ipc.IsCustomizeActive) {
@@ -635,7 +639,7 @@ public class SceneDataService {
 					a.AssignedProfile = actor.CustomizePlus;
 				}
 			}
-
+			
 			this.SetupActorPosition(actor, a);
 			this._task?.Wait();
 			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
@@ -649,8 +653,6 @@ public class SceneDataService {
 	private unsafe void SetupActorPosition(SceneFile.ActorInfo loaded, ActorEntity actor) { 		//I hate my life so much lol
 		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
 		var bc = (BattleChara*)actor.CsGameObject;
-		bc->DefaultPosition = loaded.Location.Position;
-		bc->DefaultRotation = loaded.DefaultRotation;
 		bc->SetPosition(loaded.Location.Position.X,  loaded.Location.Position.Y, loaded.Location.Position.Z);
 		bc->SetRotation(loaded.DefaultRotation);
 		
