@@ -640,7 +640,6 @@ public class SceneDataService {
 				}
 			}
 			
-			this.SetupActorPosition(actor, a);
 			this._task?.Wait();
 			await this._framework.DelayTicks(45);  //these delay ticks are unfortunately required or things start to go bad
 
@@ -653,7 +652,7 @@ public class SceneDataService {
 	private unsafe void SetupActorPosition(SceneFile.ActorInfo loaded, ActorEntity actor) { 		//I hate my life so much lol
 		//this._ctx.Characters.ApplyCharaFile(actor, loaded.Chara);
 		var bc = (BattleChara*)actor.CsGameObject;
-		bc->SetPosition(loaded.Location.Position.X,  loaded.Location.Position.Y, loaded.Location.Position.Z);
+		bc->SetPosition(loaded.Location.Position.X, loaded.Location.Position.Y, loaded.Location.Position.Z);
 		bc->SetRotation(loaded.DefaultRotation);
 		
 		var draw = actor.GetCharacter();
